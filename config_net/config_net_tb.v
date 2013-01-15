@@ -22,7 +22,7 @@ module config_net_tb;
     #171 bit_i = 0;
     #10 bit_i = 1;
     #30 bit_i = 0;
-    #30 bit_i = 1;
+    //#30 bit_i = 1;
   end
 
   always #5
@@ -33,7 +33,8 @@ module config_net_tb;
     $dumpvars;
   end
 
-  initial
-  #400 $finish; // ends at 100 ns
+  initial begin
+    #500 $finish; // simulation ends
+  end
 
 endmodule
