@@ -9,9 +9,9 @@ module config_net_tb;
 
   config_node     #(.id_width_p(4),
                     .info_width_p(5),
-                    .id_p(7),
+                    .id_p(14),
                     .config_bits_p(8),
-                    .default_p(1) )
+                    .default_p(10) )
     config_node_dut(.clk_i(clk_i),
                     .bit_i(bit_i),
                     .clk_o(clk_o0),
