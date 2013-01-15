@@ -8,9 +8,9 @@ module config_net_tb;
   wire [3:0] config_data;
 
   config_node     #(.id_width_p(4),
-                    .info_width_p(1),
+                    .info_width_p(5),
                     .id_p(1),
-                    .config_bits_p(4),
+                    .config_bits_p(8),
                     .default_p(1) )
     config_node_dut(.clk_i(clk_i),
                     .reset(reset),
@@ -42,6 +42,6 @@ module config_net_tb;
   //end
 
   initial
-  #100 $finish; // ends at 100 ns
+  #300 $finish; // ends at 100 ns
 
 endmodule
