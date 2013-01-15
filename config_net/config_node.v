@@ -11,7 +11,6 @@ module config_node
 
    (// Pins connected to IO pads
     input clk_i,
-    input reset, //==> to go
     input enable, //==> to go
     input bit_i,
     
@@ -63,9 +62,8 @@ module config_node
   assign config_o = count_r;
 
   initial begin
-    $display("\t\tCurrent Value of shift_width_c = %d\n", `shift_width_c);
-    $display("\t\ttime, \tclk_i, \treset, \tenable, \tbit_i, \tshift_r, \treset_n, \tvalid, \tconfig_len, \tconfig_id, \tconfig_d, \tconfig_r, \tcount_r, \tcount_rp");
-    $monitor("%d, \t %b, \t  %b, \t   %b, \t\t  %b, \t  %b, \t  %b, \t  %b, \t  %d, \t  %d, \t  %b, \t  %b, \t  %d, \t   %d",
-             $time, clk_i, reset, enable,    bit_i, shift_r, reset_n, valid, config_len, config_id, config_d, config_r, count_r, count_rp);
+    $display("\t\ttime, \tclk_i, \tenable, \tbit_i, \tshift_r, \treset_n, \tvalid, \tconfig_len, \tconfig_id, \tconfig_d, \tconfig_r, \tcount_r, \tcount_rp");
+    $monitor("%d, \t %b, \t   %b, \t\t  %b, \t  %b, \t  %b, \t  %b, \t  %d, \t  %d, \t  %b, \t  %b, \t  %d, \t   %d",
+             $time, clk_i, enable,   bit_i, shift_r, reset_n, valid, config_len, config_id, config_d, config_r, count_r, count_rp);
   end
 endmodule
