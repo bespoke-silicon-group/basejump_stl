@@ -33,7 +33,7 @@ module config_node
   wire [info_width_p - 1 : 0] count_d; //==> count_d might need to be renamed
   reg  [info_width_p - 1 : 0] count_r;
   wire                        count_ld;
-  wire                        count_dec;
+  wire                        count_non_zero;
 
   wire [config_bits_p - 1 : 0] config_d; //==> config_d might need to be renamed
   reg  [config_bits_p - 1 : 0] config_r;
@@ -48,29 +48,25 @@ module config_node
 
 
   //assign count_d = count_r + 1; ==>
-  assign count_d = (count_ld == 1) ? config_len : ((count_dec == 1) ? (count_r - 1) : count_r);
+  assign count_d = (count_ld == 1) ? config_len : ((count_non_zero == 1) ? (count_r - 1) : count_r);
   assign shift_d = {bit_i, shift_r[`shift_width_c - 1 : 1]};
   always @ (posedge clk_i) begin
     count_r <= count_d; //==>
-
-    if (config_en == 1) begin
-      config_r <= config_d;
-    end
-
+    config_r <= config_d;
     shift_r <= shift_d;
   end
 
 
   assign reset = & shift_r;
-  assign valid_n = shift_r[0];
+  assign valid_n = (count_non_zero == 0) ? shift_r[0] : 1'b1;
   assign config_len = shift_r[info_width_p + 1 - 1 : 1];
   assign config_id = shift_r[id_width_p + info_width_p + 1 - 1 : info_width_p + 1];
-  assign config_d = shift_r[config_bits_p + id_width_p + info_width_p + 1 - 1 : id_width_p + info_width_p + 1];
+  assign config_d = (config_en == 1) ? shift_r[config_bits_p + id_width_p + info_width_p + 1 - 1 : id_width_p + info_width_p + 1] : config_r;
 
   assign match = (config_id == id_p) ? 1'b1 : 1'b0;
   assign config_en = (~valid_n) & match;
   assign count_ld =  (~valid_n) & (~match);
-  assign count_dec = | count_r;
+  assign count_non_zero = | count_r;
 
   assign clk_o = clk_i;
   assign config_o = count_r;
