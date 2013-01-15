@@ -21,9 +21,10 @@ module config_node
 
   wire [`shift_width_c - 1 : 0] shift_d; //==> shift_d might need to be renamed
   reg  [`shift_width_c - 1 : 0] shift_r;
-  wire [id_width_p - 1 : 0] config_id;
-  wire                      valid_n;
-  wire                      reset;
+  wire [id_width_p - 1 : 0]     config_id;
+  wire                          valid_n;
+  wire                          reset;
+  wire                          match;
 
   wire [info_width_p - 1 : 0] config_len;
   wire [info_width_p - 1 : 0] count_d; //==> count_d might need to be renamed
@@ -56,14 +57,16 @@ module config_node
   assign config_id = shift_r[id_width_p + info_width_p + 1 - 1 : info_width_p + 1];
   assign config_d = shift_r[config_bits_p + id_width_p + info_width_p + 1 - 1 : id_width_p + info_width_p + 1];
 
+  assign match = (config_id == id_p) ? 1'b1 : 1'b0;
+
   assign count_rp = count_r + 1;
 
   assign clk_o = clk_i;
   assign config_o = count_r;
 
   initial begin
-    $display("\t\ttime, \tclk_i, \tbit_i, \tshift_r, \treset, \tvalid_n, \tconfig_len, \tconfig_id, \tconfig_d, \tconfig_r, \tcount_r, \tcount_rp");
-    $monitor("%d, \t %b, \t\t  %b, \t  %b, \t  %b, \t  %b, \t  %d, \t  %d, \t  %b, \t  %b, \t  %d, \t   %d",
-             $time, clk_i, bit_i, shift_r, reset, valid_n, config_len, config_id, config_d, config_r, count_r, count_rp);
+    $display("\t\ttime, \tclk_i, \tbit_i, \tshift_r, \treset, \tvalid_n, \tconfig_len, \tconfig_id, \tconfig_d, \tmatch, \tconfig_r, \tcount_r, \tcount_rp");
+    $monitor("%d, \t %b, \t\t  %b, \t  %b, \t  %b, \t  %b, \t  %d, \t  %d, \t %b, \t  %b, \t  %b, \t  %d, \t   %d",
+             $time, clk_i, bit_i, shift_r, reset, valid_n, config_len, config_id, match, config_d, config_r, count_r, count_rp);
   end
 endmodule

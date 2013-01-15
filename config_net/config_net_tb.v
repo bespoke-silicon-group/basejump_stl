@@ -9,7 +9,7 @@ module config_net_tb;
 
   config_node     #(.id_width_p(4),
                     .info_width_p(5),
-                    .id_p(1),
+                    .id_p(7),
                     .config_bits_p(8),
                     .default_p(1) )
     config_node_dut(.clk_i(clk_i),
@@ -26,7 +26,7 @@ module config_net_tb;
   end
 
   always #5
-    clk_i = !clk_i; // flip clock every 5 ns, cycle 10 ns
+    clk_i = !clk_i; // flip clock every 5 ns, period 10 ns
 
   initial begin
     $dumpfile( "config_net_tb.vcd" );
