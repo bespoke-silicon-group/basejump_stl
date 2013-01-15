@@ -7,7 +7,7 @@ HDL_SOURCE = config_node.v config_net_tb.v
 all: sim
 
 clean:
-	rm -rf testbench csrc testbench.daidir *.log *.dump *.vcd
+	rm -rf testbench csrc testbench.daidir .vcsmx_rebuild *.log *.dump *.vcd
 
 testbench: $(HDL_SOURCE)
 	$(VCS) $(VCS_FLAGS) $(HDL_SOURCE) 2>&1 | tee $@.log
