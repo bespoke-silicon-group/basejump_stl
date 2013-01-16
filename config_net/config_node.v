@@ -18,8 +18,8 @@ module config_node
    );
 
 
-  `define shift_width_c (config_bits_p + id_width_p + info_width_p + 1)
-
+  `define shift_width_c (config_bits_p + id_width_p + info_width_p + 1) //==> config-> data info->len
+  //assert ( id_width_p == 1 ) else $error( "P_PARAM out of range" ); //==>
 
   wire [`shift_width_c - 1 : 0] shift_d;
   reg  [`shift_width_c - 1 : 0] shift_r;
@@ -43,13 +43,14 @@ module config_node
   always @ (reset) begin // async reset_n
     if (reset == 1) begin
       count_r <= 0;
-      config_r <= default_p; //==> right assignment?
+      config_r <= default_p;
     end
   end
 
 
   assign count_d = (count_ld == 1) ? config_len : ((count_non_zero == 1) ? (count_r - 1) : count_r);
   assign shift_d = {bit_i, shift_r[`shift_width_c - 1 : 1]};
+
   always @ (posedge clk_i) begin
     count_r <= count_d;
     config_r <= config_d;
@@ -72,10 +73,11 @@ module config_node
   assign clk_o = clk_i;
   assign bit_o = shift_r[0];
 
-//Non-synthesizable part
+//synopsys translate_off
   initial begin
     $display("\t\ttime, \tclk_i, \tbit_i, \tshift_r, \treset, \tvalid_n, \tconfig_len, \tconfig_id, \tconfig_d, \tmatch, \tconfig_en, \tconfig_r, \tcount_ld, \tcount_r");
     $monitor("%d,   \t %b, \t  %b, \t  %b,  \t  %b, \t  %b, \t  %b,  \t  %d,     \t  %d,    \t %b, \t %b,     \t  %b,   \t  %b,   \t  %b,   \t   %d",
              $time, clk_i, bit_i,  shift_r, bit_o,  reset,  valid_n, config_len, config_id, match, config_en, config_d, config_r, count_ld, count_r);
   end
+//synopsys translate_on
 endmodule
