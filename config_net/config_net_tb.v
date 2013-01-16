@@ -3,31 +3,31 @@
 module config_net_tb;
 
   `define tb_id_width_p     4 //
-  `define tb_info_width_p   4 //
+  `define tb_len_width_p   4 //
   `define tb_id_p           7
-  `define tb_config_bits_p  4 //
+  `define tb_data_bits_p    4 //
   `define tb_default_p     10
-  `define tb_shift_width_c (`tb_config_bits_p + `tb_id_width_p + `tb_info_width_p + 1)
+  `define tb_shift_width_c (`tb_data_bits_p + `tb_id_width_p + `tb_len_width_p + 1)
 
   `define input_vec_bits   28
   `define input_vec_init   `input_vec_bits'b1_1000_0111_1100_0_11111111111110
   //                                          data   id  len v         reset
 
-  reg                               clk_i;
-  reg  [`input_vec_bits - 1 : 0]    input_vec;
-  reg                               bit_i;
-  wire                              clk_o_0;
-  wire                              bit_o_0;
-  wire [`tb_config_bits_p - 1 : 0]  config_data;
+  reg                             clk_i;
+  reg  [`input_vec_bits - 1 : 0]  input_vec;
+  reg                             bit_i;
+  wire                            clk_o_0;
+  wire                            bit_o_0;
+  wire [`tb_data_bits_p - 1 : 0]  config_data;
 
   config_node     #(.id_width_p(`tb_id_width_p),
-                    .info_width_p(`tb_info_width_p),
+                    .len_width_p(`tb_len_width_p),
                     .id_p(`tb_id_p),
-                    .config_bits_p(`tb_config_bits_p),
+                    .data_bits_p(`tb_data_bits_p),
                     .default_p(`tb_default_p) )
     config_node_dut(.clk_i(clk_i),
                     .bit_i(bit_i),
-                    .config_o(config_data),
+                    .data_o(config_data),
                     .bit_o(bit_o_0),
                     .clk_o(clk_o_0) );
   initial begin
