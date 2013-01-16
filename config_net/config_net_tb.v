@@ -3,15 +3,17 @@
 module config_net_tb;
 
   `define tb_id_p           7
-  `define tb_data_bits_p    4 //
+  `define tb_data_bits_p   21 //
   `define tb_len_width_c    8 //
   `define tb_id_width_c     8 //
   `define tb_default_p     10
   `define tb_shift_width_c (`tb_data_bits_p + `tb_id_width_p + `tb_len_width_p + 1)
 
-  `define input_vec_bits   44
-  `define input_vec_init   `input_vec_bits'b1_1000_00000111_00010100_0_1111111111111111111110
-  //                                          data       id      len v             reset
+  `define input_vec_bits   500 // should be long enought to keep input_vec_init
+  `define input_vec_init   `input_vec_bits'b0_10001_0_01100011_0_10101000_0_00000111_0_00101010_0_0_0_11111111_0_11101101_0_00010001_0_00100101_0_1111111111111111111111111111111
+  //   non-match packet:                                                                          f f          f     data f       id f      len v                           reset
+  //       match packet:                            f          f     data f       id f      len v
+  //                                      f indicates framing bits, v indicates valid bits
 
   reg                             tb_clk_i;
   reg  [`input_vec_bits - 1 : 0]  tb_input_vec;
@@ -51,7 +53,7 @@ module config_net_tb;
   end
 
   initial begin
-    #600 $finish; // simulation ends
+    #3500 $finish; // simulation ends
   end
 
 endmodule

@@ -13,5 +13,5 @@ testbench: $(HDL_SOURCE)
 	$(VCS) $(VCS_FLAGS) $(HDL_SOURCE) 2>&1 | tee $@.log
 
 sim: testbench
-	./testbench
+	./testbench 2>&1 | tee $@.log
 
