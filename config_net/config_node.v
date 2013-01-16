@@ -1,14 +1,9 @@
 module config_node
-  #(parameter
-    // Parameters must have same value for all nodes ==> to be local
-    id_width_p = -1,      // Number of bits to represent the ID of a node, should be able to keep the max ID in the whole chain
-    len_width_p = -1,     // Number of bits to represent #bits in the configuration packet, excluding the valid bit
-     // node specific parameters 
-    id_p = -1,            // Unique ID of this node
-    data_bits_p = -1,     // Number of bits of configurable register associated with this node
-    default_p = -1        // Default/Reset value of configurable register associated with this node
+  #(parameter             // node specific parameters 
+    id_p = -1,            // unique ID of this node
+    data_bits_p = -1,     // number of bits of configurable register associated with this node
+    default_p = -1        // default/reset value of configurable register associated with this node
    )
-
    (input clk_i,
     input bit_i,
     
@@ -17,27 +12,29 @@ module config_node
     output bit_o
    );
 
-
-  `define shift_width_c (data_bits_p + id_width_p + len_width_p + 1) //==> config-> data info->len
+  // local parameters same for all nodes in the configuration chain
+  `define len_width_c   4     // number of bits to represent #bits in the configuration packet, excluding the valid bit
+  `define id_width_c    8     // number of bits to represent the ID of a node, should be able to keep the max ID in the whole chain
+  `define shift_width_c (data_bits_p + `id_width_c + `len_width_c + 1) // shift register width of this node
 
 
   wire [`shift_width_c - 1 : 0] shift_n;
   reg  [`shift_width_c - 1 : 0] shift_r;
-  wire [id_width_p - 1 : 0]     node_id;
+  wire [`id_width_c - 1 : 0]    node_id;
   wire                          reset;
 
   wire                          valid;
   wire                          match;
   wire                          data_en;
 
-  wire [len_width_p - 1 : 0] packet_len;
-  wire [len_width_p - 1 : 0] count_n;
-  reg  [len_width_p - 1 : 0] count_r;
-  wire                       count_ld;
-  wire                       count_non_zero;
+  wire [`len_width_c - 1 : 0] packet_len;
+  wire [`len_width_c - 1 : 0] count_n;
+  reg  [`len_width_c - 1 : 0] count_r;
+  wire                        count_ld;
+  wire                        count_non_zero;
 
-  wire [data_bits_p - 1 : 0] data_n;
-  reg  [data_bits_p - 1 : 0] data_r;
+  wire [data_bits_p - 1 : 0]  data_n;
+  reg  [data_bits_p - 1 : 0]  data_r;
 
 
   always @ (reset) begin // async reset
@@ -60,9 +57,9 @@ module config_node
 
   assign reset = & shift_r;
   assign valid = (count_non_zero == 0) ? (~shift_r[0]) : 1'b0;
-  assign packet_len = shift_r[len_width_p + 1 - 1 : 1];
-  assign node_id = shift_r[id_width_p + len_width_p + 1 - 1 : len_width_p + 1];
-  assign data_n = (data_en == 1) ? shift_r[data_bits_p + id_width_p + len_width_p + 1 - 1 : id_width_p + len_width_p + 1] : data_r;
+  assign packet_len = shift_r[`len_width_c + 1 - 1 : 1];
+  assign node_id = shift_r[`id_width_c + `len_width_c + 1 - 1 : `len_width_c + 1];
+  assign data_n = (data_en == 1) ? shift_r[data_bits_p + `id_width_c + `len_width_c + 1 - 1 : `id_width_c + `len_width_c + 1] : data_r;
 
   assign match = (node_id == id_p) ? 1'b1 : 1'b0;
   assign data_en = valid & match;
