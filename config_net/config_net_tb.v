@@ -2,10 +2,10 @@
 
 module config_net_tb;
 
-  `define tb_id_width_c     4 //
-  `define tb_len_width_c    8 //
   `define tb_id_p           7
   `define tb_data_bits_p    4 //
+  `define tb_id_width_c     4 //
+  `define tb_len_width_c    8 //
   `define tb_default_p     10
   `define tb_shift_width_c (`tb_data_bits_p + `tb_id_width_p + `tb_len_width_p + 1)
 
@@ -34,13 +34,6 @@ module config_net_tb;
     input_vec = 0;
     #1 input_vec = `input_vec_init;
     #2 bit_i = input_vec[0];
-    //#151 bit_i = 0;
-    //#10 bit_i = 1;
-    //#30 bit_i = 0;
-    //#70 bit_i = 1;
-    //repeat(100) begin
-      //#10 bit_i = $random;
-    //end
   end
 
   always #5 begin
@@ -51,11 +44,6 @@ module config_net_tb;
     input_vec = {1'b0, input_vec[`input_vec_bits - 1 : 1]};
     bit_i = input_vec[0];
   end
-
-  //always #10 begin
-    //input_vec = {input_vec[`input_vec_bits - 2 : 0], 1'b0};
-    //bit_i = input_vec[`input_vec_bits - 1];
-  //end
 
   initial begin
     $dumpfile( "config_net_tb.vcd" );
