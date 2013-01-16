@@ -13,7 +13,7 @@ module config_node
    );
 
   // local parameters same for all nodes in the configuration chain
-  `define len_width_c   4     // number of bits to represent #bits in the configuration packet, excluding the valid bit
+  `define len_width_c   8     // number of bits to represent #bits in the configuration packet, excluding the valid bit
   `define id_width_c    8     // number of bits to represent the ID of a node, should be able to keep the max ID in the whole chain
   `define shift_width_c (data_bits_p + `id_width_c + `len_width_c + 1) // shift register width of this node
 

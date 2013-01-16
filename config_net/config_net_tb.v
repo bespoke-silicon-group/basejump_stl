@@ -4,14 +4,14 @@ module config_net_tb;
 
   `define tb_id_p           7
   `define tb_data_bits_p    4 //
-  `define tb_id_width_c     4 //
   `define tb_len_width_c    8 //
+  `define tb_id_width_c     8 //
   `define tb_default_p     10
   `define tb_shift_width_c (`tb_data_bits_p + `tb_id_width_p + `tb_len_width_p + 1)
 
-  `define input_vec_bits   36
-  `define input_vec_init   `input_vec_bits'b1_1000_00000111_1100_0_111111111111111110
-  //                                          data       id  len v             reset
+  `define input_vec_bits   44
+  `define input_vec_init   `input_vec_bits'b1_1000_00000111_00010100_0_1111111111111111111110
+  //                                          data       id      len v             reset
 
   reg                             tb_clk_i;
   reg  [`input_vec_bits - 1 : 0]  tb_input_vec;
@@ -51,7 +51,7 @@ module config_net_tb;
   end
 
   initial begin
-    #400 $finish; // simulation ends
+    #600 $finish; // simulation ends
   end
 
 endmodule
