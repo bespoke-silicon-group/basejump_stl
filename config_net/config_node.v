@@ -25,40 +25,38 @@ module config_node
   `define shift_width_c  (`data_packet_len_c + 1 + `id_width_c + 1 + `len_width_c + 1) // shift register width of this node
 
 
-  wire [`shift_width_c - 1 : 0] shift_n;
-  reg  [`shift_width_c - 1 : 0] shift_r;
-  wire [`id_width_c - 1 : 0]    node_id;
-  wire                          reset;
+  logic [`shift_width_c - 1 : 0] shift_n;
+  logic [`shift_width_c - 1 : 0] shift_r;
+  logic [`id_width_c - 1 : 0]    node_id;
+  logic                          reset;
 
-  wire                          valid;
-  wire                          match;
-  wire                          data_en;
+  logic                          valid;
+  logic                          match;
+  logic                          data_en;
 
-  wire [`len_width_c - 1 : 0] packet_len;
-  wire [`len_width_c - 1 : 0] count_n;
-  reg  [`len_width_c - 1 : 0] count_r;
-  wire                        count_non_zero;
+  logic [`len_width_c - 1 : 0] packet_len;
+  logic [`len_width_c - 1 : 0] count_n;
+  logic [`len_width_c - 1 : 0] count_r;
+  logic                        count_non_zero;
 
-  wire [`data_packet_len_c - 1 : 0] data_packet;
-  wire [data_bits_p - 1 : 0] data;
-  wire [data_bits_p - 1 : 0] data_n;
-  reg  [data_bits_p - 1 : 0] data_r;
-
-
-  always @ (reset) begin // async reset
-    if (reset == 1) begin
-      count_r <= 0;
-      data_r <= default_p;
-    end
-  end
+  logic [`data_packet_len_c - 1 : 0] data_packet;
+  logic [data_bits_p - 1 : 0] data_n;
+  logic [data_bits_p - 1 : 0] data_r;
 
 
   assign count_n = (valid == 1) ? packet_len : ((count_non_zero == 1) ? (count_r - 1) : count_r);
   assign shift_n = {bit_i, shift_r[`shift_width_c - 1 : 1]};
 
-  always @ (posedge clk_i) begin
-    count_r <= count_n;
-    data_r <= data_n;
+  always_ff @ (posedge clk_i) begin
+    if (reset) begin
+      count_r <= 0;
+      data_r <= default_p;
+    end else begin
+      count_r <= count_n;
+      if (data_en)
+        data_r <= data_n;
+    end
+
     shift_r <= shift_n;
   end
 
@@ -73,17 +71,16 @@ module config_node
   generate
     for(i = 0; i < `data_packet_len_c - 1; i++) begin // the end, or msb of a data_packet is always '0' which is discarded
       if((i + 1) % (`data_frame_len_c + 1)) begin
-        assign data[i - i / (`data_frame_len_c + 1)] = data_packet[i];
+        assign data_n[i - i / (`data_frame_len_c + 1)] = data_packet[i];
       end
     end
   endgenerate
-  assign data_n = (data_en == 1) ? data : data_r;
 
   assign match = (node_id == id_p) ? 1'b1 : 1'b0;
   assign data_en = valid & match;
   assign count_non_zero = | count_r;
 
-  assign data_o = count_r;
+  assign data_o = data_r;
   assign clk_o = clk_i;
   assign bit_o = shift_r[0];
 
