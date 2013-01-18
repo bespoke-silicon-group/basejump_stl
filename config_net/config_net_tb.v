@@ -15,12 +15,11 @@ module config_net_tb;
   //       match packet:                            f          f     data f       id f      len v
   //                                      f indicates framing bits, v indicates valid bits
 
-  reg                             tb_clk_i;
-  reg  [`input_vec_bits - 1 : 0]  tb_input_vec;
-  reg                             tb_bit_i;
-  wire                            tb_clk_o_0;
-  wire                            tb_bit_o_0;
-  wire [`tb_data_bits_p - 1 : 0]  tb_data_o;
+  logic                            tb_clk_i;
+  logic [`input_vec_bits - 1 : 0]  tb_input_vec;
+  logic                            tb_bit_i;
+  logic                            tb_bit_o_0;
+  logic [`tb_data_bits_p - 1 : 0]  tb_data_o;
 
   config_node     #(.id_p(`tb_id_p),
                     .data_bits_p(`tb_data_bits_p),
@@ -28,8 +27,7 @@ module config_net_tb;
     config_node_dut(.clk_i(tb_clk_i),
                     .bit_i(tb_bit_i),
                     .data_o(tb_data_o),
-                    .bit_o(tb_bit_o_0),
-                    .clk_o(tb_clk_o_0) );
+                    .bit_o(tb_bit_o_0) );
   initial begin
     tb_clk_i = 1;
     tb_bit_i = 1;

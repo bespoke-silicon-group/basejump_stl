@@ -8,7 +8,6 @@ module config_node
     input bit_i,
     
     output [data_bits_p - 1 : 0] data_o,
-    output clk_o,
     output bit_o
    );
 
@@ -25,8 +24,7 @@ module config_node
   `define shift_width_c  (`data_packet_len_c + 1 + `id_width_c + 1 + `len_width_c + 1) // shift register width of this node
 
 
-  logic [`shift_width_c - 1 : 0] shift_n;
-  logic [`shift_width_c - 1 : 0] shift_r;
+  logic [`shift_width_c - 1 : 0] shift_n, shift_r;
   logic [`id_width_c - 1 : 0]    node_id;
   logic                          reset;
 
@@ -35,13 +33,11 @@ module config_node
   logic                          data_en;
 
   logic [`len_width_c - 1 : 0] packet_len;
-  logic [`len_width_c - 1 : 0] count_n;
-  logic [`len_width_c - 1 : 0] count_r;
+  logic [`len_width_c - 1 : 0] count_n, count_r;
   logic                        count_non_zero;
 
   logic [`data_packet_len_c - 1 : 0] data_packet;
-  logic [data_bits_p - 1 : 0] data_n;
-  logic [data_bits_p - 1 : 0] data_r;
+  logic [data_bits_p - 1 : 0] data_n, data_r;
 
 
   assign count_n = (valid == 1) ? packet_len : ((count_non_zero == 1) ? (count_r - 1) : count_r);
@@ -81,7 +77,6 @@ module config_node
   assign count_non_zero = | count_r;
 
   assign data_o = data_r;
-  assign clk_o = clk_i;
   assign bit_o = shift_r[0];
 
 //synopsys translate_off
