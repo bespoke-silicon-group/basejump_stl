@@ -87,6 +87,7 @@ module config_node
   assign data_o = data_r;
   assign bit_o = shift_r[0];
 
+/*
 //synopsys translate_off
   initial begin
     $display("\t\tshift_width_lp = %d\n", shift_width_lp);
@@ -95,4 +96,5 @@ module config_node
              $time, clk_i, bit_i,  shift_r, bit_o,  reset,  valid,  packet_len, node_id, match, data_en, data_n, data_r, count_r);
   end
 //synopsys translate_on
+*/
 endmodule
