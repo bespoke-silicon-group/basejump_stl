@@ -25,15 +25,15 @@ module config_node
                                      // shift register width of this node
 
   typedef struct packed {
-    bit [data_rx_len_lp - 1 : 0]       rx;
-    bit                                f1;
-    bit [id_width_lp - 1 : 0]          id;
-    bit [frame_bit_size_lp - 1 : 0]    f0;
-    bit [len_width_lp - 1 : 0]        len;
-    bit                             valid;
-  } node_packet_t;
+    logic [data_rx_len_lp - 1 : 0]       rx;
+    logic                                f1;
+    logic [id_width_lp - 1 : 0]          id;
+    logic [frame_bit_size_lp - 1 : 0]    f0;
+    logic [len_width_lp - 1 : 0]        len;
+    logic                             valid;
+  } node_packet_s;
 
-  node_packet_t shift_n, shift_r;
+  node_packet_s shift_n, shift_r;
   logic [id_width_lp - 1 : 0]    node_id;
   logic                          reset;
   logic                          valid;
