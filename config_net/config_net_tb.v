@@ -1,48 +1,86 @@
-`define timescale 1ns/1ns
-
 module config_net_tb;
 
-  localparam tb_id_lp          =  7; 
-  localparam tb_data_bits_lp   = 21; //
-  localparam tb_len_width_lp   =  8; //
-  localparam tb_id_width_lp    =  8; //
-  localparam tb_default_lp     = 10; 
-  localparam tb_shift_width_lp = (tb_data_bits_lp + tb_id_width_lp + tb_len_width_lp + 1);
+  localparam len_width_lp      =  8; //
+  localparam id_width_lp       =  8; //
+  localparam frame_bit_size_lp =  1; // 
+  localparam data_frame_len_lp =  8; // bit '0' is inserted every data_frame_len_lp in data bits
 
-  `define input_vec_bits_lp   500  // should be long enought to keep input_vec_init_lp
-  `define input_vec_init_lp   `input_vec_bits_lp'b0_10001_0_01100011_0_10101000_0_00000111_0_00101010_0_0_0_11111111_0_11101101_0_00010001_0_00100101_0_1111111111111111111111111111111
-  //   non-match packet:                                                                          f f          f     data f       id f      len v                           reset
-  //       match packet:                            f          f     data f       id f      len v
-  //                                      f indicates framing bits, v indicates valid bits
+  localparam reset_len         = frame_bit_size_lp * 3 + id_width_lp + len_width_lp;
 
-  logic                              tb_clk_i;
-  logic [`input_vec_bits_lp - 1 : 0] tb_input_vec;
-  logic                              tb_bit_i;
-  logic                              tb_bit_o_0;
-  logic [tb_data_bits_lp - 1 : 0]    tb_data_o;
+  localparam id1_lp            =  5; 
+  localparam default1_lp       = 10; 
+  localparam data1_bits_lp     = 16; //
+  localparam data1_rx_len_lp   = (data1_bits_lp + (data1_bits_lp / data_frame_len_lp) + frame_bit_size_lp);
 
-  config_node     #(.id_p(tb_id_lp),
-                    .data_bits_p(tb_data_bits_lp),
-                    .default_p(tb_default_lp) )
-    config_node_dut(.clk_i(tb_clk_i),
-                    .bit_i(tb_bit_i),
-                    .data_o(tb_data_o),
-                    .bit_o(tb_bit_o_0) );
+  localparam id2_lp            =  7; 
+  localparam default2_lp       = 10; 
+  localparam data2_bits_lp     = 21; //
+  localparam data2_rx_len_lp   = (data2_bits_lp + (data2_bits_lp / data_frame_len_lp) + frame_bit_size_lp);
+
+  typedef struct packed {
+    logic [data1_rx_len_lp - 1 : 0]      rx;
+    logic                                f1;
+    logic [id_width_lp - 1 : 0]          id;
+    logic [frame_bit_size_lp - 1 : 0]    f0;
+    logic [len_width_lp - 1 : 0]        len;
+    logic                             valid;
+  } node1_packet_s;
+
+  typedef struct packed {
+    logic [data2_rx_len_lp - 1 : 0]      rx;
+    logic                                f1;
+    logic [id_width_lp - 1 : 0]          id;
+    logic [frame_bit_size_lp - 1 : 0]    f0;
+    logic [len_width_lp - 1 : 0]        len;
+    logic                             valid;
+  } node2_packet_s;
+
+  typedef struct packed {
+    node1_packet_s node1;
+    node2_packet_s node2;
+    logic [reset_len - 1 : 0] reset;
+  } config_packet_s;
+
+  config_packet_s config_packet;
+
+  logic                              clk_i;
+  logic                              bit_i;
+  logic                              bit1_o;
+  logic [data1_bits_lp - 1 : 0]      data1_o;
+  logic [data2_bits_lp - 1 : 0]      data2_o;
+
+  config_node      #(.id_p(id2_lp),
+                     .data_bits_p(data2_bits_lp),
+                     .default_p(default2_lp) )
+    config_node2_dut(.clk_i(clk_i),
+                     .bit_i(bit_i),
+                     .data_o(data2_o),
+                     .bit_o(bit1_o) );
   initial begin
-    tb_clk_i = 1;
-    tb_bit_i = 1;
-    tb_input_vec = 0;
-    #1 tb_input_vec = `input_vec_init_lp;
-    #2 tb_bit_i = tb_input_vec[0];
+    clk_i = 1;
+    config_packet.reset       = 19'b111_11111111_11111111;
+    config_packet.node1.valid = 1'b0;
+    config_packet.node1.len   = 8'd37;
+    config_packet.node1.f0    = 1'b0;
+    config_packet.node1.id    = 8'd5;
+    config_packet.node1.f1    = 1'b0;
+    config_packet.node1.rx    = 19'b0_0_11111111_0_11101101;
+    config_packet.node2.valid = 1'b0;
+    config_packet.node2.len   = 8'd42;
+    config_packet.node2.f0    = 1'b0;
+    config_packet.node2.id    = 8'd7;
+    config_packet.node2.f1    = 1'b0;
+    config_packet.node2.rx    = 24'b0_10001_0_01100011_0_10101000;
+    bit_i = config_packet[0];
   end
 
   always #5 begin
-    tb_clk_i = ~tb_clk_i; // flip clock every 5 ns, period 10 ns
+    clk_i = ~clk_i; // flip clock every 5 ns, period 10 ns
   end
 
-  always @ (posedge tb_clk_i) begin
-    tb_input_vec = {1'b0, tb_input_vec[`input_vec_bits_lp - 1 : 1]};
-    tb_bit_i = tb_input_vec[0];
+  always @ (posedge clk_i) begin
+    config_packet = {1'b0, config_packet[$bits(config_packet_s) - 1 : 1]};
+    bit_i = config_packet[0];
   end
 
   initial begin

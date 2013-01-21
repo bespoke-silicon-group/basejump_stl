@@ -65,7 +65,7 @@ module config_node
   end
 
 
-  assign reset = & shift_r[0 +: frame_bit_size_lp * 2 + data_frame_len_lp];
+  assign reset = & shift_r[0 +: frame_bit_size_lp * 3 + id_width_lp + len_width_lp];
   assign valid = (~count_non_zero) ? (~shift_r.valid) : 1'b0;
   assign packet_len  = shift_r.len;
   assign node_id     = shift_r.id;
