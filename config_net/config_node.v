@@ -12,17 +12,39 @@ module config_node
    );
 
   // local parameters same for all nodes in the configuration chain
-  localparam frame_bit_size_lp  = 1;  // 
+  localparam frame_bit_size_lp  = 1;
   localparam data_frame_len_lp  = 8;  // bit '0' is inserted every data_frame_len_lp in data bits
   localparam id_width_lp        = 8;  // number of bits to represent the ID of a node, should be able to keep the max ID in the whole chain
-  localparam len_width_lp       = 8;  // number of bits to represent #bits in the configuration packet, excluding the valid bit
+  localparam len_width_lp       = 8;  // number of bits to represent number of bits in the configuration packet
 
   localparam data_rx_len_lp     = (data_bits_p + (data_bits_p / data_frame_len_lp) + frame_bit_size_lp);
-                                     // + frame_bit_size_lp means the end, or msb of received data is always framing bits
-                                     // if data_bits_p is a multiple of data_frame_len_lp, "00" is expected at the end of received data
+                                      // + frame_bit_size_lp means the end, or msb of received data is always framing bits
+                                      // if data_bits_p is a multiple of data_frame_len_lp, "00" is expected at the end of received data
 
   localparam shift_width_lp     = (data_rx_len_lp + frame_bit_size_lp + id_width_lp + frame_bit_size_lp + len_width_lp + frame_bit_size_lp);
-                                     // shift register width of this node
+                                      // shift register width of this node
+
+  /* The communication packet is defined as follows:
+   * msb                                                                                 lsb
+   * |  data_rx  |  frame bits  |  node id  |  frame bits  |  packet length  |  valid bit  |
+   *             |<------------------------------ reset ---------------------------------->|
+   *
+   * valid bit is defined as '0'.
+   * packet length equals the number of bits in one complete packet, i.e. msb - lsb + 1.
+   * frame bits are certain patterns to separate packet content, defined as '0'.
+   * node id is an unique integer to identify current node.
+   * data_rx contains the data payload and framing bits inserted every data_frame_len_lp bits.
+   *
+   * Before use, reset the configuration node is mandatory by sending continuous '1's, and the
+   * minimum length of the reset sequence is (frame_bit_size_lp * 3 + id_width_lp + len_width_lp),
+   * or the indicated field above.
+   *
+   * Each node contains a shift register that represents the same structure of a complete packet,
+   * and the node begins interpret received packet once it sees a '0' in the lsb of the shift
+   * register. The node determines if it is the target according to the node id bits. If so, the 
+   * node captures received data, remove framing bits and write the data to its internal register.
+   * Otherwise, the node simply passes every bit to its subsequent node.
+   */
 
   typedef struct packed {
     logic [data_rx_len_lp - 1 : 0]       rx;
@@ -40,15 +62,14 @@ module config_node
   logic                          match;
   logic                          data_en;
 
-  logic [len_width_lp - 1 : 0] packet_len; // This packet length does NOT count the valid bit ==>
+  logic [len_width_lp - 1 : 0] packet_len;
   logic [len_width_lp - 1 : 0] count_n, count_r;
   logic                        count_non_zero;
 
   logic [data_rx_len_lp - 1 : 0] data_rx;
   logic [data_bits_p - 1 : 0] data_n, data_r;
 
-
-  assign count_n = (valid) ? packet_len : ((count_non_zero) ? (count_r - 1) : count_r);
+  assign count_n = (valid) ? (packet_len - 1) : ((count_non_zero) ? (count_r - 1) : count_r);
   assign shift_n = {bit_i, shift_r[1 +: shift_width_lp - 1]};
 
   always_ff @ (posedge clk_i) begin
@@ -64,12 +85,11 @@ module config_node
     shift_r <= shift_n;
   end
 
-
   assign reset = & shift_r[0 +: frame_bit_size_lp * 3 + id_width_lp + len_width_lp];
   assign valid = (~count_non_zero) ? (~shift_r.valid) : 1'b0;
-  assign packet_len  = shift_r.len;
-  assign node_id     = shift_r.id;
-  assign data_rx     = shift_r.rx;
+  assign packet_len = shift_r.len;
+  assign node_id    = shift_r.id;
+  assign data_rx    = shift_r.rx;
 
   genvar i;
   generate

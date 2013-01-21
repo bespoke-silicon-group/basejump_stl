@@ -3,7 +3,7 @@ module config_net_tb;
   localparam len_width_lp      =  8;
   localparam id_width_lp       =  8;
   localparam frame_bit_size_lp =  1;
-  localparam data_frame_len_lp =  8; // bit '0' is inserted every data_frame_len_lp in data bits
+  localparam data_frame_len_lp =  8;
 
   localparam reset_len         = frame_bit_size_lp * 3 + id_width_lp + len_width_lp;
 
@@ -98,21 +98,21 @@ module config_net_tb;
     config_packet.node3.f1    = 1'b0;
     config_packet.node3.id    = 8'd127;
     config_packet.node3.f0    = 1'b0;
-    config_packet.node3.len   = 8'd28;
+    config_packet.node3.len   = 8'd29;
     config_packet.node3.valid = 1'b0;
 
     config_packet.node2.rx    = 24'b0_10001_0_01100011_0_10101000;
     config_packet.node2.f1    = 1'b0;
     config_packet.node2.id    = 8'd7;
     config_packet.node2.f0    = 1'b0;
-    config_packet.node2.len   = 8'd42;
+    config_packet.node2.len   = 8'd43;
     config_packet.node2.valid = 1'b0;
 
     config_packet.node1.rx    = 19'b0_0_11111111_0_11101101;
     config_packet.node1.f1    = 1'b0;
     config_packet.node1.id    = 8'd5;
     config_packet.node1.f0    = 1'b0;
-    config_packet.node1.len   = 8'd37;
+    config_packet.node1.len   = 8'd38;
     config_packet.node1.valid = 1'b0;
 
     bit_i = config_packet[0];
