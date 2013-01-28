@@ -92,7 +92,7 @@ def write_inst_node(file, id, data_bits, default, clk_i, bit_i, data_o, bit_o):
   config_node          #(.id_p(" + id + "),\n\
                          .data_bits_p(" + data_bits + "),\n\
                          .default_p(" + default + ") )\n\
-    config_inst_" + \
+    node_id_" + \
             id + "_dut(  .clk_i(" + clk_i + "),\n\
                          .bit_i(" + bit_i + "),\n\
                          .data_o(" + data_o + "),\n\
@@ -162,7 +162,7 @@ write_localparam(tb_file, "reset_len_lp     ", str(reset_len_lp))
 tb_file.write(indent + "// double underscore __ separates test packet for each node\n")
 write_localparam(tb_file, "test_vector_lp   ", str(test_vector_bits) + "'b" + test_vector)
 
-tb_file.write("\n//\n")
+tb_file.write("\n" + indent + "//\n")
 write_logic(tb_file, global_clk);
 
 # declare output bits
@@ -179,6 +179,7 @@ for node_id in l_inst_id:
   write_logic_vec(tb_file, "data_o_" + str(node_id), str(l_inst_data_bits[index] - 1), '0');
 
 # declare test vector logic
+write_logic_vec(tb_file, "test_vector", str(test_vector_bits - 1), '0');
 
 # instantiate and connect configuration nodes
 for node_id in l_inst_id:
@@ -195,6 +196,20 @@ tb_file.write(indent + "initial begin\n" + \
               indent + "end\n" + \
               indent + "always #" + str(global_clk_period / 2) + " begin\n" + \
               indent + indent + global_clk + " = ~" + global_clk + ";\n" + \
+              indent + "end\n")
+
+# initialize test vector
+tb_file.write("\n")
+tb_file.write(indent + "// initialize test vector\n")
+tb_file.write(indent + "initial begin\n" + \
+              indent + indent + "test_vector = test_vector_lp;\n" + \
+              indent + indent + "bit_i = test_vector[0];\n" + \
+              indent + "end\n")
+# shift test vector to the right by 1 position
+tb_file.write(indent + "// right shift test vector\n")
+tb_file.write(indent + "always @ (posedge " + global_clk + ") begin\n" + \
+              indent + indent + "test_vector = {1'b0, test_vector[" + str(test_vector_bits) + " - 1 : 1]};\n" + \
+              indent + indent + "bit_i = test_vector[0];\n" + \
               indent + "end\n")
 
 # write simulation ending condition
