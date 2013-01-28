@@ -17,10 +17,10 @@ indent = "  " # indentation
 spec_file_name = "sc_spec.in"
 
 total_inst_nodes = 3 # scan chain nodes ==> to be determined by input file
-l_inst_name = [] # list of strings
 l_inst_id = [] # list of unique decimals
-l_inst_data_bits = [] # list of decimals
-l_inst_default = [] # list of binary strings
+d_inst_name = {} # dictionary of strings, indexed by inst id
+d_inst_data_bits = {} # dictionary of decimals, indexed by inst id
+d_inst_default = {} # dictionary of binary strings, indexed by inst id
 
 # scan chain test sequence ==> to be randomized or from file
 #l_test_id = [127, 5, 7]
@@ -83,17 +83,14 @@ def insert_frame_bits(data):
   framed_data = frame_bit + "_" + framed_data
   return framed_data
 
-def write_localparam(file, name, value):
-  file.write(indent + "localparam  " + name + " =   " + value + ";\n")
+def write_localparam(file, lhs, rhs):
+  file.write(indent + "localparam  " + lhs + " =   " + rhs + ";\n")
 
 def write_logic(file, name):
   file.write(indent + "logic  " + name + ";\n")
 
 def write_logic_vec(file, name, msb, lsb):
   file.write(indent + "logic  [" + msb + " : " + lsb + "]  " + name + ";\n")
-
-def write_inst_bit_i(file, name, index):
-  write_logic(file, "bit_i" + l_inst_id[index])
 
 def write_inst_node(file, id, data_bits, default, clk_i, bit_i, data_o, bit_o):
   file.write("\
@@ -114,19 +111,19 @@ for line in spec_file:
   if line != "": # if not an empty line
     l_words = line.split() # split a line into a list of words on white spaces
     if (line[0] != '#') and (line[0] != ' '): # ignore lines starting with '#' or spaces
-      l_inst_name.append(l_words.pop(0))
-      l_inst_id.append(int(l_words.pop(0)))
-      l_inst_data_bits.append(int(l_words.pop(0)))
-      l_inst_default.append(l_words.pop(0))
+      node_id = int(l_words[1])
+      l_inst_id.append(node_id)
+      d_inst_name[node_id] = l_words[0]
+      d_inst_data_bits[node_id] = int(l_words[2])
+      d_inst_default[node_id] = l_words[3]
 spec_file.close()
 
 # create test string and calculate total bits
 test_idx = 0
 test_vector_bits = 0
 for test_id in l_test_id:
-  inst_idx = l_inst_id.index(test_id)
   send_data = insert_frame_bits(l_test_data[test_idx])
-  data_bits = l_inst_data_bits[inst_idx]
+  data_bits = d_inst_data_bits[test_id]
   send_data_bits = data_bits + (data_bits / data_frame_len_lp) + frame_bit_size_lp
   packet_len = send_data_bits + frame_bit_size_lp + id_width_lp + frame_bit_size_lp + len_width_lp + frame_bit_size_lp
   test_vector_bits += packet_len
@@ -168,7 +165,8 @@ for packet in l_test_packet:
 
 # calculate the shift register width of the whole scan chain
 shift_chain_width = 0
-for data_bits in l_inst_data_bits:
+for key in d_inst_data_bits:
+  data_bits = d_inst_data_bits[key]
   send_data_bits = data_bits + (data_bits / data_frame_len_lp) + frame_bit_size_lp
   shift_chain_width += send_data_bits + frame_bit_size_lp +\
                        id_width_lp + frame_bit_size_lp +\
@@ -210,9 +208,8 @@ for node_id in l_inst_id:
 
 # declare output data
 for node_id in l_inst_id:
-  index = l_inst_id.index(node_id)
   l_inst_data_o.append("data_o_" + str(node_id))
-  write_logic_vec(tb_file, "data_o_" + str(node_id), str(l_inst_data_bits[index] - 1), '0')
+  write_logic_vec(tb_file, "data_o_" + str(node_id), str(d_inst_data_bits[node_id] - 1), '0')
 
 # declare test vector logic
 write_logic_vec(tb_file, "test_vector", str(test_vector_bits - 1), '0')
@@ -220,8 +217,8 @@ write_logic_vec(tb_file, "test_vector", str(test_vector_bits - 1), '0')
 # instantiate and connect configuration nodes
 for node_id in l_inst_id:
   index = l_inst_id.index(node_id)
-  tb_file.write("\n" + indent + "// " + l_inst_name[index] + "\n")
-  write_inst_node(tb_file, str(node_id), str(l_inst_data_bits[index]), l_inst_default[index],\
+  tb_file.write("\n" + indent + "// " + d_inst_name[node_id] + "\n")
+  write_inst_node(tb_file, str(node_id), str(d_inst_data_bits[node_id]), d_inst_default[node_id],\
                            clk_tb, l_inst_bit_i[index], l_inst_data_o[index], l_inst_bit_o[index])
 
 # write clock generator
