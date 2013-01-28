@@ -16,13 +16,13 @@ indent = "  " # indentation
 
 total_inst_nodes = 3 # scan chain nodes ==> to be determined by input file
 l_inst_name = ["Node1", "Node2", "Node3"]
-l_inst_id = [5, 12, 39] # id must be unique and can be represented in $id_width_lp bits
-l_inst_data_bits = [16, 8, 10]
-l_inst_default = [10, 0, 15]
+l_inst_id = [5, 7, 127] # id must be unique and can be represented in $id_width_lp bits
+l_inst_data_bits = [16, 21, 8]
+l_inst_default = [10, 10, 10]
 
 # scan chain test sequence ==> to be randomized or from file
-l_test_id = [5, 39, 5, 12]
-l_test_data = ["1111111011110000", "1110111000", "0000111100001111", "11111111"]
+l_test_id = [127, 5, 7]
+l_test_data = ["11111111", "1111111111101101", "100010110001110101000"]
 l_test_packet = []
 
 # scan chain communication protocol parameters, applying to all nodes
@@ -89,14 +89,14 @@ def write_inst_bit_i(file, name, index):
 
 def write_inst_node(file, id, data_bits, default, clk_i, bit_i, data_o, bit_o):
   file.write("\
-  config_node          #(.id_p(" + id + "),\n\
-                         .data_bits_p(" + data_bits + "),\n\
-                         .default_p(" + default + ") )\n\
+  config_node     #(.id_p(" + id + "),\n\
+                    .data_bits_p(" + data_bits + "),\n\
+                    .default_p(" + default + ") )\n\
     node_id_" + \
             id + "_dut(  .clk_i(" + clk_i + "),\n\
-                         .bit_i(" + bit_i + "),\n\
-                         .data_o(" + data_o + "),\n\
-                         .bit_o(" + bit_o + ") );\n ")
+                    .bit_i(" + bit_i + "),\n\
+                    .data_o(" + data_o + "),\n\
+                    .bit_o(" + bit_o + ") );\n ")
 
 # ========== ==========
 # create test string and calculate total bits
