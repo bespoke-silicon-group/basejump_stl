@@ -97,7 +97,7 @@ def write_inst_node(file, id, data_bits, default, clk_i, bit_i, data_o, bit_o):
   config_node        #(.id_p(" + id + "),\n\
                        .data_bits_p(" + data_bits + "),\n\
                        .default_p(" + data_bits + "'b" + default + ") )\n\
-    node_id_" + \
+    inst_id_" + \
           id + "_dut(  .clk_i(" + clk_i + "),\n\
                        .bit_i(" + bit_i + "),\n\
                        .data_o(" + data_o + "),\n\
@@ -111,11 +111,11 @@ for line in spec_file:
   if line != "": # if not an empty line
     l_words = line.split() # split a line into a list of words on white spaces
     if (line[0] != '#') and (line[0] != ' '): # ignore lines starting with '#' or spaces
-      node_id = int(l_words[1])
-      l_inst_id.append(node_id)
-      d_inst_name[node_id] = l_words[0]
-      d_inst_data_bits[node_id] = int(l_words[2])
-      d_inst_default[node_id] = l_words[3]
+      inst_id = int(l_words[1])
+      l_inst_id.append(inst_id)
+      d_inst_name[inst_id] = l_words[0]
+      d_inst_data_bits[inst_id] = int(l_words[2])
+      d_inst_default[inst_id] = l_words[3]
 spec_file.close()
 
 # create test string and calculate total bits
@@ -194,31 +194,45 @@ tb_file.write(indent + "// double underscore __ separates test packet for each n
 write_localparam(tb_file, "test_vector_lp   ", str(test_vector_bits) + "'b" + test_vector)
 
 # write reference output sequence as localparam
+tb_file.write("\n")
+for key in d_reference:
+  test_id = key
+  data_bits = d_inst_data_bits[test_id]
+  tests = len(d_reference[test_id])
+  data_ref = ""
+  for test in range(0, tests):
+    data_ref = data_ref + str(data_bits) + "'b" + d_reference[test_id][test]
+    if test != (tests - 1): data_ref = data_ref + ", "
+  data_ref = "'{" + data_ref + "}"
+  write_localparam(tb_file, "logic [" + str(data_bits - 1) + " : 0] data_o_" + \
+                                    str(test_id) + "_ref[" + str(tests) + "]", \
+                            data_ref)
+
 
 tb_file.write("\n" + indent + "//\n")
 write_logic(tb_file, clk_tb)
 write_logic(tb_file, reset_tb)
 
 # declare output bits
-for node_id in l_inst_id:
-  index = l_inst_id.index(node_id)
-  l_inst_bit_i.append("bit_o_" + str(node_id))
-  l_inst_bit_o.append("bit_o_" + str(node_id))
+for inst_id in l_inst_id:
+  index = l_inst_id.index(inst_id)
+  l_inst_bit_i.append("bit_o_" + str(inst_id))
+  l_inst_bit_o.append("bit_o_" + str(inst_id))
   write_logic(tb_file, str(l_inst_bit_i[index]))
 
 # declare output data
-for node_id in l_inst_id:
-  l_inst_data_o.append("data_o_" + str(node_id))
-  write_logic_vec(tb_file, "data_o_" + str(node_id), str(d_inst_data_bits[node_id] - 1), '0')
+for inst_id in l_inst_id:
+  l_inst_data_o.append("data_o_" + str(inst_id))
+  write_logic_vec(tb_file, "data_o_" + str(inst_id), str(d_inst_data_bits[inst_id] - 1), '0')
 
 # declare test vector logic
 write_logic_vec(tb_file, "test_vector", str(test_vector_bits - 1), '0')
 
 # instantiate and connect configuration nodes
-for node_id in l_inst_id:
-  index = l_inst_id.index(node_id)
-  tb_file.write("\n" + indent + "// " + d_inst_name[node_id] + "\n")
-  write_inst_node(tb_file, str(node_id), str(d_inst_data_bits[node_id]), d_inst_default[node_id],\
+for inst_id in l_inst_id:
+  index = l_inst_id.index(inst_id)
+  tb_file.write("\n" + indent + "// " + d_inst_name[inst_id] + "\n")
+  write_inst_node(tb_file, str(inst_id), str(d_inst_data_bits[inst_id]), d_inst_default[inst_id],\
                            clk_tb, l_inst_bit_i[index], l_inst_data_o[index], l_inst_bit_o[index])
 
 # write clock generator
