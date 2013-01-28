@@ -20,7 +20,7 @@ total_inst_nodes = 3 # scan chain nodes ==> to be determined by input file
 l_inst_name = [] # list of strings
 l_inst_id = [] # list of unique decimals
 l_inst_data_bits = [] # list of decimals
-l_inst_default = [] # list of decimals
+l_inst_default = [] # list of binary strings
 
 # scan chain test sequence ==> to be randomized or from file
 #l_test_id = [127, 5, 7]
@@ -99,7 +99,7 @@ def write_inst_node(file, id, data_bits, default, clk_i, bit_i, data_o, bit_o):
   file.write("\
   config_node        #(.id_p(" + id + "),\n\
                        .data_bits_p(" + data_bits + "),\n\
-                       .default_p(" + default + ") )\n\
+                       .default_p(" + data_bits + "'b" + default + ") )\n\
     node_id_" + \
           id + "_dut(  .clk_i(" + clk_i + "),\n\
                        .bit_i(" + bit_i + "),\n\
@@ -117,7 +117,7 @@ for line in spec_file:
       l_inst_name.append(l_words.pop(0))
       l_inst_id.append(int(l_words.pop(0)))
       l_inst_data_bits.append(int(l_words.pop(0)))
-      l_inst_default.append(int(l_words.pop(0)))
+      l_inst_default.append(l_words.pop(0))
 spec_file.close()
 
 # create test string and calculate total bits
@@ -195,6 +195,8 @@ write_localparam(tb_file, "reset_len_lp     ", str(reset_len_lp))
 tb_file.write(indent + "// double underscore __ separates test packet for each node\n")
 write_localparam(tb_file, "test_vector_lp   ", str(test_vector_bits) + "'b" + test_vector)
 
+# write reference output sequence as localparam
+
 tb_file.write("\n" + indent + "//\n")
 write_logic(tb_file, clk_tb)
 write_logic(tb_file, reset_tb)
@@ -219,7 +221,7 @@ write_logic_vec(tb_file, "test_vector", str(test_vector_bits - 1), '0')
 for node_id in l_inst_id:
   index = l_inst_id.index(node_id)
   tb_file.write("\n" + indent + "// " + l_inst_name[index] + "\n")
-  write_inst_node(tb_file, str(node_id), str(l_inst_data_bits[index]), str(l_inst_default[index]),\
+  write_inst_node(tb_file, str(node_id), str(l_inst_data_bits[index]), l_inst_default[index],\
                            clk_tb, l_inst_bit_i[index], l_inst_data_o[index], l_inst_bit_o[index])
 
 # write clock generator
