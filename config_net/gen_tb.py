@@ -23,9 +23,14 @@ l_inst_data_bits = [] # list of decimals
 l_inst_default = [] # list of decimals
 
 # scan chain test sequence ==> to be randomized or from file
-l_test_id = [127, 5, 7]
-l_test_data = ["11111111", "1111111111101101", "100010110001110101000"]
+#l_test_id = [127, 5, 7]
+#l_test_data = ["11111111", "1111111111101101", "100010110001110101000"]
+l_test_id = [127, 5, 7, 5, 127]
+l_test_data = ["11111111", "1111111111101101", "100010110001110101000", "0000000000000000", "00000000"]
 l_test_packet = []
+
+# dictionary of verification sequences
+d_reference = {}
 
 # scan chain communication protocol parameters, applying to all nodes
 valid_bit = '0' #
@@ -132,10 +137,22 @@ for test_id in l_test_id:
                 "_" + dec2bin(packet_len, len_width_lp) +\
                 "_" + valid_bit
   l_test_packet.append(test_packet)
-  test_idx += 1;
+  test_idx += 1
   print test_packet #==>
   print "test_vector_bits = " + str(test_vector_bits) #==>
   print "==>" #==>
+
+test_idx = 0
+# create a dictionary indexed by test id
+for test_id in l_test_id:
+  test_data = l_test_data[test_idx]
+  if d_reference.has_key(test_id):
+    d_reference[test_id].append(test_data)
+  else:
+    d_reference[test_id] = [test_data]
+  test_idx += 1
+print "dictionary:" # ==>
+print d_reference # ==>
 
 # create reset string
 reset_string = ""
@@ -179,8 +196,8 @@ tb_file.write(indent + "// double underscore __ separates test packet for each n
 write_localparam(tb_file, "test_vector_lp   ", str(test_vector_bits) + "'b" + test_vector)
 
 tb_file.write("\n" + indent + "//\n")
-write_logic(tb_file, clk_tb);
-write_logic(tb_file, reset_tb);
+write_logic(tb_file, clk_tb)
+write_logic(tb_file, reset_tb)
 
 # declare output bits
 for node_id in l_inst_id:
@@ -193,10 +210,10 @@ for node_id in l_inst_id:
 for node_id in l_inst_id:
   index = l_inst_id.index(node_id)
   l_inst_data_o.append("data_o_" + str(node_id))
-  write_logic_vec(tb_file, "data_o_" + str(node_id), str(l_inst_data_bits[index] - 1), '0');
+  write_logic_vec(tb_file, "data_o_" + str(node_id), str(l_inst_data_bits[index] - 1), '0')
 
 # declare test vector logic
-write_logic_vec(tb_file, "test_vector", str(test_vector_bits - 1), '0');
+write_logic_vec(tb_file, "test_vector", str(test_vector_bits - 1), '0')
 
 # instantiate and connect configuration nodes
 for node_id in l_inst_id:
