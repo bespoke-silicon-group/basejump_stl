@@ -14,11 +14,13 @@ import os.path
 tb_file_name = "py_config_tb.v"
 indent = "  " # indentation
 
+spec_file_name = "sc_spec.in"
+
 total_inst_nodes = 3 # scan chain nodes ==> to be determined by input file
-l_inst_name = ["Node1", "Node2", "Node3"]
-l_inst_id = [5, 7, 127] # id must be unique and can be represented in $id_width_lp bits
-l_inst_data_bits = [16, 21, 8]
-l_inst_default = [10, 10, 10]
+l_inst_name = [] # list of strings
+l_inst_id = [] # list of unique decimals
+l_inst_data_bits = [] # list of decimals
+l_inst_default = [] # list of decimals
 
 # scan chain test sequence ==> to be randomized or from file
 l_test_id = [127, 5, 7]
@@ -89,16 +91,29 @@ def write_inst_bit_i(file, name, index):
 
 def write_inst_node(file, id, data_bits, default, clk_i, bit_i, data_o, bit_o):
   file.write("\
-  config_node     #(.id_p(" + id + "),\n\
-                    .data_bits_p(" + data_bits + "),\n\
-                    .default_p(" + default + ") )\n\
+  config_node        #(.id_p(" + id + "),\n\
+                       .data_bits_p(" + data_bits + "),\n\
+                       .default_p(" + default + ") )\n\
     node_id_" + \
-            id + "_dut(  .clk_i(" + clk_i + "),\n\
-                    .bit_i(" + bit_i + "),\n\
-                    .data_o(" + data_o + "),\n\
-                    .bit_o(" + bit_o + ") );\n ")
+          id + "_dut(  .clk_i(" + clk_i + "),\n\
+                       .bit_i(" + bit_i + "),\n\
+                       .data_o(" + data_o + "),\n\
+                       .bit_o(" + bit_o + ") );\n ")
 
 # ========== ==========
+# read scan chain specification file and parse
+spec_file = open(spec_file_name, 'r')
+for line in spec_file:
+  line = line.rstrip('\n') # remove the newline character
+  if line != "": # if not an empty line
+    l_words = line.split() # split a line into a list of words on white spaces
+    if (line[0] != '#') and (line[0] != ' '): # ignore lines starting with '#' or spaces
+      l_inst_name.append(l_words.pop(0))
+      l_inst_id.append(int(l_words.pop(0)))
+      l_inst_data_bits.append(int(l_words.pop(0)))
+      l_inst_default.append(int(l_words.pop(0)))
+spec_file.close()
+
 # create test string and calculate total bits
 test_idx = 0
 test_vector_bits = 0

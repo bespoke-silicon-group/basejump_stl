@@ -1,0 +1,14 @@
+# Lines begin with '#', newline, or white spaces are ignored.
+
+# A valid line has this format:
+# <Name>  <id>  <data_bits>  <default>
+
+# <Name> is a string without spaces indicating the function of the associated configuration register in the scan chain.
+# <id> is a unique decimal number associated with a node. The value of <id> should fit in $id_width_lp bits.
+# <data_bits> is a decimal number specifying the number of bits of the configuration register.
+# <default> is a decimal number specifying the reset value of the configuration register. The value of <default> should fit in $data_bits bits.
+
+# The following are example inputs
+NodeA       5         16          10
+NodeB       7         21          10
+NodeC     127          8          10
