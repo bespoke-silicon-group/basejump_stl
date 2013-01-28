@@ -82,21 +82,21 @@ def write_logic(file, name):
   file.write(indent + "logic  " + name + ";\n")
 
 def write_logic_vec(file, name, msb, lsb):
-  file.write(indent + "logic  [" + msb + " - 1 : " + lsb + "]  " + name + ";\n")
+  file.write(indent + "logic  [" + msb + " : " + lsb + "]  " + name + ";\n")
 
 def write_inst_bit_i(file, name, index):
   write_logic(file, "bit_i" + l_inst_id[index])
 
-def write_cnode(file, id, data_bits, default, clk_i, bit_i, data_o, bit_o):
+def write_inst_node(file, id, data_bits, default, clk_i, bit_i, data_o, bit_o):
   file.write("\
-    config_node          #(.id_p(" + id + "),\n\
-                           .data_bits_p(" + data_bits + "),\n\
-                           .default_p(" + default + ") )\n\
-      config_inst_" + \
-              id + "_dut(  .clk_i(" + clk_i + "),\n\
-                           .bit_i(" + bit_i + "),\n\
-                           .data_o(" + data_o + "),\n\
-                           .bit_o(" + bit_o + ") );\n ")
+  config_node          #(.id_p(" + id + "),\n\
+                         .data_bits_p(" + data_bits + "),\n\
+                         .default_p(" + default + ") )\n\
+    config_inst_" + \
+            id + "_dut(  .clk_i(" + clk_i + "),\n\
+                         .bit_i(" + bit_i + "),\n\
+                         .data_o(" + data_o + "),\n\
+                         .bit_o(" + bit_o + ") );\n ")
 
 # ========== ==========
 # create test string and calculate total bits
@@ -160,27 +160,32 @@ write_localparam(tb_file, "frame_bit_size_lp", str(frame_bit_size_lp))
 write_localparam(tb_file, "data_frame_len_lp", str(data_frame_len_lp))
 write_localparam(tb_file, "reset_len_lp     ", str(reset_len_lp))
 tb_file.write(indent + "// double underscore __ separates test packet for each node\n")
-write_localparam(tb_file, "test_vector      ", str(test_vector_bits) + "'b" + test_vector)
+write_localparam(tb_file, "test_vector_lp   ", str(test_vector_bits) + "'b" + test_vector)
 
 tb_file.write("\n//\n")
 write_logic(tb_file, global_clk);
 
+# declare output bits
 for node_id in l_inst_id:
   index = l_inst_id.index(node_id)
   l_inst_bit_i.append("bit_o_" + str(node_id))
   l_inst_bit_o.append("bit_o_" + str(node_id))
   write_logic(tb_file, str(l_inst_bit_i[index]))
 
+# declare output data
 for node_id in l_inst_id:
   index = l_inst_id.index(node_id)
   l_inst_data_o.append("data_o_" + str(node_id))
-  write_logic_vec(tb_file, "data_o_" + str(node_id), str(l_inst_data_bits[index]), str(l_inst_default[index]));
+  write_logic_vec(tb_file, "data_o_" + str(node_id), str(l_inst_data_bits[index] - 1), '0');
 
+# declare test vector logic
+
+# instantiate and connect configuration nodes
 for node_id in l_inst_id:
   index = l_inst_id.index(node_id)
-  tb_file.write("\n" + indent + indent + "// " + l_inst_name[index] + "\n")
-  write_cnode(tb_file, str(node_id), str(l_inst_data_bits[index]), str(l_inst_default[index]),\
-                       "clk_i", l_inst_bit_i[index], l_inst_data_o[index], l_inst_bit_o[index])
+  tb_file.write("\n" + indent + "// " + l_inst_name[index] + "\n")
+  write_inst_node(tb_file, str(node_id), str(l_inst_data_bits[index]), str(l_inst_default[index]),\
+                           "clk_i", l_inst_bit_i[index], l_inst_data_o[index], l_inst_bit_o[index])
 
 # write clock generator
 tb_file.write("\n")
