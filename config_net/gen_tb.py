@@ -37,8 +37,9 @@ data_frame_len_lp = 8 # scan chain protocol data frame length in bits
 reset_len_lp = 10 # scan chain reset signal length in bits
 
 #
-global_clk = "clk_i"
-global_clk_period = 10 # time units
+reset_tb = "reset_tb"
+clk_tb = "clk_tb"
+clk_tb_period = 10 # time units
 sim_time = 500 # time units
 
 #
@@ -158,7 +159,7 @@ for data_bits in l_inst_data_bits:
   print "shift_chain_width = " + str(shift_chain_width) # ==>
 
 # revise simulation time to ensure all test bits walks through the whole scan chain
-sim_time += (test_vector_bits + shift_chain_width) * global_clk_period
+sim_time += (test_vector_bits + shift_chain_width) * clk_tb_period
 
 print "test_vector      = " + test_vector # ==>
 print "test_vector_bits = " + str(test_vector_bits) #==>
@@ -178,7 +179,8 @@ tb_file.write(indent + "// double underscore __ separates test packet for each n
 write_localparam(tb_file, "test_vector_lp   ", str(test_vector_bits) + "'b" + test_vector)
 
 tb_file.write("\n" + indent + "//\n")
-write_logic(tb_file, global_clk);
+write_logic(tb_file, clk_tb);
+write_logic(tb_file, reset_tb);
 
 # declare output bits
 for node_id in l_inst_id:
@@ -201,30 +203,32 @@ for node_id in l_inst_id:
   index = l_inst_id.index(node_id)
   tb_file.write("\n" + indent + "// " + l_inst_name[index] + "\n")
   write_inst_node(tb_file, str(node_id), str(l_inst_data_bits[index]), str(l_inst_default[index]),\
-                           "clk_i", l_inst_bit_i[index], l_inst_data_o[index], l_inst_bit_o[index])
+                           clk_tb, l_inst_bit_i[index], l_inst_data_o[index], l_inst_bit_o[index])
 
 # write clock generator
 tb_file.write("\n")
 tb_file.write(indent + "// clock generator\n")
 tb_file.write(indent + "initial begin\n" + \
-              indent + indent + global_clk + " = 1;\n" + \
+              indent + indent + clk_tb + " = 1;\n" + \
+              indent + indent + reset_tb + " = 1;\n" + \
+              indent + indent + "#15 " + reset_tb + " = 0;\n" + \
               indent + "end\n" + \
-              indent + "always #" + str(global_clk_period / 2) + " begin\n" + \
-              indent + indent + global_clk + " = ~" + global_clk + ";\n" + \
+              indent + "always #" + str(clk_tb_period / 2) + " begin\n" + \
+              indent + indent + clk_tb + " = ~" + clk_tb + ";\n" + \
               indent + "end\n")
 
 # initialize test vector
 tb_file.write("\n")
-tb_file.write(indent + "// initialize test vector\n")
-tb_file.write(indent + "initial begin\n" + \
-              indent + indent + "test_vector = test_vector_lp;\n" + \
-              indent + indent + "bit_i = test_vector[0];\n" + \
-              indent + "end\n")
 # shift test vector to the right by 1 position
-tb_file.write(indent + "// right shift test vector\n")
-tb_file.write(indent + "always @ (posedge " + global_clk + ") begin\n" + \
-              indent + indent + "test_vector = {1'b0, test_vector[" + str(test_vector_bits) + " - 1 : 1]};\n" + \
-              indent + indent + "bit_i = test_vector[0];\n" + \
+tb_file.write(indent + "// initialize and right shift test vector\n")
+tb_file.write(indent + "always_ff @ (posedge " + clk_tb + ") begin\n" + \
+              indent + indent + "if (" + reset_tb + ") begin\n" + \
+              indent + indent + indent + "test_vector = test_vector_lp;\n" + \
+              indent + indent + indent + "bit_i = test_vector[0];\n" + \
+              indent + indent + "end else begin\n" + \
+              indent + indent + indent + "test_vector = {1'b0, test_vector[" + str(test_vector_bits) + " - 1 : 1]};\n" + \
+              indent + indent + indent + "bit_i = test_vector[0];\n" + \
+              indent + indent + "end\n" + \
               indent + "end\n")
 
 # write simulation ending condition
