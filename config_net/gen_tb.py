@@ -77,13 +77,11 @@ def readme():
   print "    and creates testbench accordingly."
 
 def dec2bin(dec, n): # Only works on non-negative number
-  if dec == 0: bin = "0"
-  else:
-    bin = ""
-    while n > 0:
-      bin = str(dec % 2) + bin
-      dec >>= 1
-      n -= 1
+  bin = ""
+  while n > 0:
+    bin = str(dec % 2) + bin
+    dec >>= 1
+    n -= 1
   return bin
 
 def insert_frame_bits(data):
