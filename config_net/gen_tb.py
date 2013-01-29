@@ -18,13 +18,12 @@ indent = "  " # indentation
 spec_file_name = "sc_spec.in"
 test_file_name = "sc_test.in"
 
-total_inst_nodes = 3 # scan chain nodes ==> to be determined by input file
 l_inst_id = [] # list of unique decimals
 d_inst_name = {} # dictionary of strings, indexed by inst id
 d_inst_data_bits = {} # dictionary of decimals, indexed by inst id
 d_inst_default = {} # dictionary of binary strings, indexed by inst id
 
-# scan chain test sequence ==> to be randomized or from file
+# scan chain test sequence
 l_test_id = []
 l_test_data = []
 l_test_packet = []
@@ -77,7 +76,7 @@ def readme():
   print "    then use command ./gen_tb.py -r <testfile> to read the modified file,"
   print "    and creates testbench accordingly."
 
-def dec2bin(dec, n): # ==> Only works on non-negative number
+def dec2bin(dec, n): # Only works on non-negative number
   if dec == 0: bin = "0"
   else:
     bin = ""
@@ -198,9 +197,6 @@ for test_id in l_test_id:
                 "_" + valid_bit
   l_test_packet.append(test_packet)
   test_idx += 1
-  print test_packet #==>
-  print "test_vector_bits = " + str(test_vector_bits) #==>
-  print "==>" #==>
 
 test_idx = 0
 # create a dictionary indexed by test id
@@ -211,8 +207,6 @@ for test_id in l_test_id:
   else:
     d_reference[test_id] = [d_inst_default[test_id], test_data]
   test_idx += 1
-print "dictionary:" # ==>
-print d_reference # ==>
 
 # create reset string
 reset_string = ""
@@ -234,15 +228,9 @@ for key in d_inst_data_bits:
   shift_chain_width += send_data_bits + frame_bit_size_lp +\
                        id_width_lp + frame_bit_size_lp +\
                        len_width_lp + frame_bit_size_lp
-  print "shift_chain_width = " + str(shift_chain_width) # ==>
 
 # revise simulation time to ensure all test bits walks through the whole scan chain
 sim_time += (test_vector_bits + shift_chain_width) * clk_tb_period
-
-print "test_vector      = " + test_vector # ==>
-print "test_vector_bits = " + str(test_vector_bits) #==>
-print "shift_chain_width = " + str(shift_chain_width) # ==>
-print "sim time = " + str(sim_time) # ==>
 
 tb_file = open(tb_file_name, 'w')
 tb_file.write("module config_net_tb;\n\n")
