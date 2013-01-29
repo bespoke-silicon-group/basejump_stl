@@ -1,0 +1,8 @@
+*.log
+*.dump
+*.vcd
+config_net_tb.v
+testbench
+csrc
+testbench.daidir
+.vcsmx_rebuild
