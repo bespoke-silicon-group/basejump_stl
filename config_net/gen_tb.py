@@ -11,7 +11,7 @@ import os.path
 
 
 # ========== Global variables ==========
-tb_file_name = "py_config_tb.v"
+tb_file_name = "config_net_tb.v"
 indent = "  " # indentation
 
 spec_file_name = "sc_spec.in"

@@ -9,6 +9,9 @@ all: sim
 clean:
 	rm -rf testbench csrc testbench.daidir .vcsmx_rebuild *.log *.dump *.vcd
 
+config_net_tb.v:
+	./gen_tb.py
+
 testbench: $(HDL_SOURCE)
 	$(VCS) $(VCS_FLAGS) $(HDL_SOURCE) 2>&1 | tee $@.log
 
