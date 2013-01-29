@@ -137,8 +137,8 @@ if (len(sys.argv) > 2):
     test_file.write("# This is a generated file with random test id and data.\n" + \
                     "# You can extend this file to contain your specific test cases.\n" + \
                     "# Use command ./gen_tb.py -r <this file name> if you would like to use the modified file.\n" + \
-                    "# Use command ./gen_tb.py -w <this file name> <number of tests> will overwrite this file.\n" + \
-                    "# <test id>           <test data>\n")
+                    "# Use command ./gen_tb.py -w <this file name> <number of tests> will overwrite this file.\n\n" + \
+                    "# <test id> <test data>\n")
     for test in range(0, number_of_tests):
       test_file.write(str(l_test_id[test]) + "\t\t" + l_test_data[test] + "\n")
     test_file.close()
