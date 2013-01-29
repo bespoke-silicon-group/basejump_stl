@@ -53,12 +53,29 @@ l_inst_data_o = [] # list of outputs data_o for all nodes
 l_inst_bit_o = [] # list of outputs bit_o for all nodes
 
 # ========== Functions ==========
-def check_ptn(pattern, file): # ==> to go
-  exist = False
-  for line in file:
-    if (re.search(pattern, line) != None):
-      exist = True
-  return exist
+def readme():
+  print "  "
+  print "  Name:"
+  print "    gen_tb.py - python script to generate testbench for chained config_node instances"
+  print "  "
+  print "  Usage:"
+  print "    gen_tb.py options testfile [number of tests]"
+  print "  "
+  print "  Example:"
+  print "    gen_tb.py -w sc_test.in 10"
+  print "    gen_tb.py -r sc_test.in"
+  print "  "
+  print "  Description:"
+  print "    This script reads scan chain specifications from sc_spec.in file,"
+  print "    generates random test sequence and creates config_net_tb.v testbench."
+  print "  "
+  print "    Use command ./gen_tb.py -w <testfile> <number of tests> to"
+  print "    generate a new sequence of <number of tests> tests and writes the"
+  print "    sequence to <testfile>."
+  print "  "
+  print "    You can extend the generated testfile to contain your specific test cases;"
+  print "    then use command ./gen_tb.py -r <testfile> to read the modified file,"
+  print "    and creates testbench accordingly."
 
 def dec2bin(dec, n): # ==> Only works on non-negative number
   if dec == 0: bin = "0"
@@ -119,6 +136,14 @@ for line in spec_file:
 spec_file.close()
 
 # Argument list parsing
+if (len(sys.argv) == 1):
+  print "gen_tb.py expects at least 2 arguments."
+  readme()
+  sys.exit(1)
+elif ( (sys.argv[1] == "-h") or (sys.argv[1] == "--help") ):
+  readme()
+  sys.exit(0)
+
 if (len(sys.argv) > 2):
   test_file_name = sys.argv[2]
   if (sys.argv[1] == "-w"):
