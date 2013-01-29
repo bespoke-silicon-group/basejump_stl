@@ -4,10 +4,10 @@ VCS_FLAGS = -o $@ +v2k +vc -sverilog -timescale=1ns/1ps +vcs+lic+wait +multisour
 
 HDL_SOURCE = config_node.v config_driver.v config_net_tb.v
 
-all: sim
+all: testfile testbench simulator sim
 
 clean:
-	rm -rf simulator csrc simulator.daidir .vcsmx_rebuild *.log *.dump *.vcd
+	rm -rf simulator csrc simulator.daidir .vcsmx_rebuild sc_test.in config_net_tb.v *.log *.dump *.vcd
 
 testfile:
 	./gen_tb.py -w sc_test.in 10

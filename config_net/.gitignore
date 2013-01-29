@@ -1,9 +1,9 @@
 *.log
 *.dump
 *.vcd
-config_net_tb.v
 simulator
 csrc
 simulator.daidir
-sc_test.in
 .vcsmx_rebuild
+sc_test.in
+config_net_tb.v

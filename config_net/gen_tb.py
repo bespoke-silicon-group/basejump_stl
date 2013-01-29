@@ -47,7 +47,7 @@ clk_tb_period = 10 # time units
 sim_time = 500 # time units
 
 #
-l_inst_bit_i = ["bit_i"] # list of inputs bit_i for all nodes; the first one is "bit_i".
+l_inst_bit_i = ["config_bit"] # list of inputs config_bit for all nodes; the first one is "config_bit" from config_driver
 l_inst_data_o = [] # list of outputs data_o for all nodes
 l_inst_bit_o = [] # list of outputs bit_o for all nodes
 
@@ -167,7 +167,9 @@ if (len(sys.argv) > 2):
       test_file.write(str(l_test_id[test]) + "\t\t" + l_test_data[test] + "\n")
     test_file.close()
     os.system("cat " + test_file_name)
+    print "  "
     print str(number_of_tests) + " sets of random test id and data are generated and written into " + test_file_name
+    sys.exit(0) # exit after making the test file
   elif (sys.argv[1] == "-r"):
     # read scan chain test file and parse
     test_file = open(test_file_name, 'r')
@@ -213,11 +215,12 @@ reset_string = ""
 for bit in range(0, reset_len_lp): # 0, 1, ..., reset_len_lp - 1
   reset_string += '1'
 
-test_vector_bits += reset_len_lp
 # the whole test vector begins with reset string
+test_vector_bits += reset_len_lp
 test_vector = reset_string
 # the first test packet in l_test_packet is fed into the configuration network first
 for packet in l_test_packet:
+  # double underscore __ separates test packet for each node
   test_vector = packet + "__" + test_vector
 
 # calculate the shift register width of the whole scan chain
@@ -236,13 +239,15 @@ tb_file = open(tb_file_name, 'w')
 tb_file.write("module config_net_tb;\n\n")
 
 # write localparam
-write_localparam(tb_file, "len_width_lp     ", str(len_width_lp))
-write_localparam(tb_file, "id_width_lp      ", str(id_width_lp))
-write_localparam(tb_file, "frame_bit_size_lp", str(frame_bit_size_lp))
-write_localparam(tb_file, "data_frame_len_lp", str(data_frame_len_lp))
-write_localparam(tb_file, "reset_len_lp     ", str(reset_len_lp))
+write_localparam(tb_file, "len_width_lp       ", str(len_width_lp))
+write_localparam(tb_file, "id_width_lp        ", str(id_width_lp))
+write_localparam(tb_file, "frame_bit_size_lp  ", str(frame_bit_size_lp))
+write_localparam(tb_file, "data_frame_len_lp  ", str(data_frame_len_lp))
+write_localparam(tb_file, "reset_len_lp       ", str(reset_len_lp))
+
 tb_file.write(indent + "// double underscore __ separates test packet for each node\n")
-write_localparam(tb_file, "test_vector_lp   ", str(test_vector_bits) + "'b" + test_vector)
+write_localparam(tb_file, "test_vector_bits_lp", str(test_vector_bits))
+write_localparam(tb_file, "test_vector_lp     ", str(test_vector_bits) + "'b" + test_vector)
 
 # write reference output sequence as localparams
 tb_file.write("\n")
@@ -296,18 +301,14 @@ tb_file.write(indent + "initial begin\n" + \
               indent + indent + clk_tb + " = ~" + clk_tb + ";\n" + \
               indent + "end\n")
 
-# initialize and shift test vector to the right by 1 position
+# instantiate config_driver to deliver configuration bits
 tb_file.write("\n")
-tb_file.write(indent + "// initialize and right shift test vector\n")
-tb_file.write(indent + "always_ff @ (posedge " + clk_tb + ") begin\n" + \
-              indent + indent + "if (" + reset_tb + ") begin\n" + \
-              indent + indent + indent + "test_vector = test_vector_lp;\n" + \
-              indent + indent + indent + "bit_i = test_vector[0];\n" + \
-              indent + indent + "end else begin\n" + \
-              indent + indent + indent + "test_vector = {1'b0, test_vector[" + str(test_vector_bits) + " - 1 : 1]};\n" + \
-              indent + indent + indent + "bit_i = test_vector[0];\n" + \
-              indent + indent + "end\n" + \
-              indent + "end\n")
+tb_file.write(indent + "// instantiate config_driver to deliver configuration bits\n")
+tb_file.write(indent + "config_driver #(.test_vector_p(test_vector_lp),\n" + \
+              indent + "                .test_vector_bits_p(test_vector_bits_lp) )\n" + \
+              indent + "    inst_driver(.clk_i(" + clk_tb + "),\n" + \
+              indent + "                .reset_i(" + reset_tb + "),\n" + \
+              indent + "                .bit_o(config_bit) );\n")
 
 # write reference output sequence as localparams
 tb_file.write("\n")
