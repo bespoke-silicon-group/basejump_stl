@@ -29,8 +29,6 @@ l_test_id = []
 l_test_data = []
 l_test_packet = []
 
-number_of_tests = 5
-
 # dictionary of verification sequences
 d_reference = {}
 
@@ -120,27 +118,43 @@ for line in spec_file:
       d_inst_default[inst_id] = l_words[3]
 spec_file.close()
 
-# randomly generate test id and test data
-for test in range(0, number_of_tests):
-  rand_idx = random.randint(0, len(l_inst_id) - 1)
-  test_id = l_inst_id[rand_idx]
-  l_test_id.append(test_id)
-  test_data_bits = d_inst_data_bits[test_id]
-  randbits = random.getrandbits(test_data_bits)
-  test_data = dec2bin(randbits, test_data_bits)
-  l_test_data.append(test_data)
-
-# ==>
-print "Random test id and data are generated and written into " + test_file_name
-
-# read scan chain test file and parse
-test_file = open(test_file_name, 'w')
-test_file.write("# This is a generated file with random test id and data\n" + \
-                "# <test id>           <test data>\n")
-for test in range(0, number_of_tests):
-  test_file.write(str(l_test_id[test]) + "\t\t" + l_test_data[test] + "\n")
-test_file.close()
-os.system("cat " + test_file_name)
+# Argument list parsing
+if (len(sys.argv) > 2):
+  test_file_name = sys.argv[2]
+  if (sys.argv[1] == "-w"):
+    number_of_tests = int(sys.argv[3])
+    # randomly generate test id and test data
+    for test in range(0, number_of_tests):
+      rand_idx = random.randint(0, len(l_inst_id) - 1)
+      test_id = l_inst_id[rand_idx]
+      l_test_id.append(test_id)
+      test_data_bits = d_inst_data_bits[test_id]
+      randbits = random.getrandbits(test_data_bits)
+      test_data = dec2bin(randbits, test_data_bits)
+      l_test_data.append(test_data)
+    # write random test cases to scan chain test file
+    test_file = open(test_file_name, 'w')
+    test_file.write("# This is a generated file with random test id and data.\n" + \
+                    "# You can extend this file to contain your specific test cases.\n" + \
+                    "# Use command ./gen_tb.py -r <this file name> if you would like to use the modified file.\n" + \
+                    "# Use command ./gen_tb.py -w <this file name> <number of tests> will overwrite this file.\n" + \
+                    "# <test id>           <test data>\n")
+    for test in range(0, number_of_tests):
+      test_file.write(str(l_test_id[test]) + "\t\t" + l_test_data[test] + "\n")
+    test_file.close()
+    os.system("cat " + test_file_name)
+    print str(number_of_tests) + " sets of random test id and data are generated and written into " + test_file_name
+  elif (sys.argv[1] == "-r"):
+    # read scan chain test file and parse
+    test_file = open(test_file_name, 'r')
+    for line in test_file:
+      line = line.rstrip('\n') # remove the newline character
+      if line != "": # if not an empty line
+        l_words = line.split() # split a line into a list of words on white spaces
+        if (line[0] != '#') and (line[0] != ' '): # ignore lines starting with '#' or spaces
+          l_test_id.append(int(l_words[0]))
+          l_test_data.append(l_words[1])
+    test_file.close()
 
 # create test string and calculate total bits
 test_idx = 0
