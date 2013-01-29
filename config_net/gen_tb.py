@@ -7,9 +7,7 @@ import os
 import re
 import sys
 import random
-
 import os.path
-
 
 # ========== Global variables ==========
 tb_file_name = "config_net_tb.v"
