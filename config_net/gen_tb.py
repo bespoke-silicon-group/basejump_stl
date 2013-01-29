@@ -19,9 +19,9 @@ spec_file_name = "sc_spec.in"
 test_file_name = "sc_test.in"
 
 l_inst_id = [] # list of unique decimals
-d_inst_name = {} # dictionary of strings, indexed by inst id
-d_inst_data_bits = {} # dictionary of decimals, indexed by inst id
-d_inst_default = {} # dictionary of binary strings, indexed by inst id
+d_inst_name = {} # dictionary of strings indexed by inst id
+d_inst_data_bits = {} # dictionary of decimals indexed by inst id
+d_inst_default = {} # dictionary of binary strings indexed by inst id
 
 # scan chain test sequence
 l_test_id = []
@@ -198,14 +198,23 @@ for test_id in l_test_id:
   l_test_packet.append(test_packet)
   test_idx += 1
 
-test_idx = 0
 # create a dictionary indexed by test id
+# if a new data item for an id is the same as its previous one, the new data is not appended as a new reference;
+# because the verilog testbench is not able to detect signal change.
+test_idx = 0
 for test_id in l_test_id:
   test_data = l_test_data[test_idx]
   if d_reference.has_key(test_id):
-    d_reference[test_id].append(test_data)
+    last_index = len(d_reference[test_id]) - 1
+    # if a new data item for an id is the same as its previous one, the new data is not appended.
+    if(d_reference[test_id][last_index] != test_data):
+      d_reference[test_id].append(test_data)
   else:
-    d_reference[test_id] = [d_inst_default[test_id], test_data]
+    # if a new data item for an id is the same as its previous one, the new data is not appended.
+    if(d_inst_default[test_id] == test_data):
+      d_reference[test_id] = [d_inst_default[test_id]]
+    else:
+      d_reference[test_id] = [d_inst_default[test_id], test_data]
   test_idx += 1
 
 # create reset string

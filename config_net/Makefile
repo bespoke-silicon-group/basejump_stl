@@ -10,7 +10,7 @@ clean:
 	rm -rf simulator csrc simulator.daidir .vcsmx_rebuild sc_test.in config_net_tb.v *.log *.dump *.vcd
 
 testfile:
-	./gen_tb.py -w sc_test.in 10
+	./gen_tb.py -w sc_test.in 20
 
 testbench:
 	./gen_tb.py -r sc_test.in
