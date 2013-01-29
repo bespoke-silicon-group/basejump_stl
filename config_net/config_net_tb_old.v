@@ -5,7 +5,7 @@ module config_net_tb;
   localparam frame_bit_size_lp =  1;
   localparam data_frame_len_lp =  8;
 
-  localparam reset_len         = frame_bit_size_lp * 3 + id_width_lp + len_width_lp;
+  localparam reset_len         = frame_bit_size_lp * 3 + id_width_lp + len_width_lp; //==>
 
   localparam id1_lp            =  5; 
   localparam default1_lp       = 10; 
