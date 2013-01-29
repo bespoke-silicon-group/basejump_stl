@@ -84,13 +84,13 @@ def insert_frame_bits(data):
   return framed_data
 
 def write_localparam(file, lhs, rhs):
-  file.write(indent + "localparam  " + lhs + " =   " + rhs + ";\n")
+  file.write(indent + "localparam " + lhs + " = " + rhs + ";\n")
 
 def write_logic(file, name):
-  file.write(indent + "logic  " + name + ";\n")
+  file.write(indent + "logic " + name + ";\n")
 
 def write_logic_vec(file, name, msb, lsb):
-  file.write(indent + "logic  [" + msb + " : " + lsb + "]  " + name + ";\n")
+  file.write(indent + "logic [" + msb + " : " + lsb + "] " + name + ";\n")
 
 def write_inst_node(file, id, data_bits, default, clk_i, bit_i, data_o, bit_o):
   file.write("\
@@ -146,7 +146,7 @@ for test_id in l_test_id:
   if d_reference.has_key(test_id):
     d_reference[test_id].append(test_data)
   else:
-    d_reference[test_id] = [test_data]
+    d_reference[test_id] = [d_inst_default[test_id], test_data]
   test_idx += 1
 print "dictionary:" # ==>
 print d_reference # ==>
@@ -193,7 +193,7 @@ write_localparam(tb_file, "reset_len_lp     ", str(reset_len_lp))
 tb_file.write(indent + "// double underscore __ separates test packet for each node\n")
 write_localparam(tb_file, "test_vector_lp   ", str(test_vector_bits) + "'b" + test_vector)
 
-# write reference output sequence as localparam
+# write reference output sequence as localparams
 tb_file.write("\n")
 for key in d_reference:
   test_id = key
@@ -204,9 +204,7 @@ for key in d_reference:
     data_ref = data_ref + str(data_bits) + "'b" + d_reference[test_id][test]
     if test != (tests - 1): data_ref = data_ref + ", "
   data_ref = "'{" + data_ref + "}"
-  write_localparam(tb_file, "logic [" + str(data_bits - 1) + " : 0] data_o_" + \
-                                    str(test_id) + "_ref[" + str(tests) + "]", \
-                            data_ref)
+  write_localparam(tb_file, "logic [" + str(data_bits - 1) + " : 0] data_o_" + str(test_id) + "_ref[" + str(tests) + "]", data_ref)
 
 
 tb_file.write("\n" + indent + "//\n")
@@ -247,9 +245,8 @@ tb_file.write(indent + "initial begin\n" + \
               indent + indent + clk_tb + " = ~" + clk_tb + ";\n" + \
               indent + "end\n")
 
-# initialize test vector
+# initialize and shift test vector to the right by 1 position
 tb_file.write("\n")
-# shift test vector to the right by 1 position
 tb_file.write(indent + "// initialize and right shift test vector\n")
 tb_file.write(indent + "always_ff @ (posedge " + clk_tb + ") begin\n" + \
               indent + indent + "if (" + reset_tb + ") begin\n" + \
@@ -260,6 +257,22 @@ tb_file.write(indent + "always_ff @ (posedge " + clk_tb + ") begin\n" + \
               indent + indent + indent + "bit_i = test_vector[0];\n" + \
               indent + indent + "end\n" + \
               indent + "end\n")
+
+# write reference output sequence as localparams
+tb_file.write("\n")
+for key in d_reference:
+  test_id = key
+  tb_file.write(indent + "// scan chain node " + d_inst_name[test_id] + " verification\n" + \
+                indent + "int data_o_" + str(test_id) + "_idx = 0;\n" + \
+                indent + "always @ (data_o_" + str(test_id) + ") begin\n" + \
+                indent + indent + "$display(\"  @time %0d: \\t output data_o_" + str(test_id) + "\\t changed to %b\", $time, data_o_" + str(test_id) + ");\n" + \
+                indent + indent + "if (data_o_" + str(test_id) + " !== data_o_" + str(test_id) + "_ref[data_o_" + str(test_id) + "_idx]) begin\n" + \
+                indent + indent + indent + "$display(\"  @time %0d: \\t ERROR output data_o_" + str(test_id) + " = %b <-> expected = %b\", $time, " + \
+                                                                        "data_o_" + str(test_id) + ", " + \
+                                                                        "data_o_" + str(test_id) + "_ref[data_o_" + str(test_id) + "_idx]);\n" + \
+                indent + indent + "end\n" + \
+                indent + indent + "data_o_" + str(test_id) + "_idx += 1;\n" + \
+                indent + "end\n\n")
 
 # write simulation ending condition
 tb_file.write("\n")
