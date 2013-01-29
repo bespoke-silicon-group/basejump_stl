@@ -2,7 +2,8 @@
 *.dump
 *.vcd
 config_net_tb.v
-testbench
+simulator
 csrc
-testbench.daidir
+simulator.daidir
+sc_test.in
 .vcsmx_rebuild

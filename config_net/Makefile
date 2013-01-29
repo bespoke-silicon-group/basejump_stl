@@ -7,14 +7,17 @@ HDL_SOURCE = config_node.v config_net_tb.v
 all: sim
 
 clean:
-	rm -rf testbench csrc testbench.daidir .vcsmx_rebuild *.log *.dump *.vcd
+	rm -rf simulator csrc simulator.daidir .vcsmx_rebuild *.log *.dump *.vcd
 
-config_net_tb.v:
-	./gen_tb.py
+testfile:
+	./gen_tb.py -w sc_test.in 10
 
-testbench: $(HDL_SOURCE)
+testbench:
+	./gen_tb.py -r sc_test.in
+
+simulator: testbench
 	$(VCS) $(VCS_FLAGS) $(HDL_SOURCE) 2>&1 | tee $@.log
 
-sim: testbench
-	./testbench 2>&1 | tee $@.log
+sim: simulator
+	./simulator 2>&1 | tee $@.log
 
