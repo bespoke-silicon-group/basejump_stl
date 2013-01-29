@@ -72,7 +72,7 @@ def readme():
   print "  "
   print "    You can extend the generated testfile to contain your specific test cases;"
   print "    then use command ./gen_tb.py -r <testfile> to read the modified file,"
-  print "    and creates testbench accordingly."
+  print "    and create testbench accordingly."
 
 def dec2bin(dec, n): # Only works on non-negative number
   bin = ""
@@ -267,7 +267,7 @@ for key in d_reference:
   data_ref = "'{" + data_ref + "}"
   write_localparam(tb_file, "logic [" + str(data_bits - 1) + " : 0] data_o_" + str(test_id) + "_ref[" + str(tests) + "]", data_ref)
 
-
+# write clock and reset signals
 tb_file.write("\n" + indent + "//\n")
 write_logic(tb_file, clk_tb)
 write_logic(tb_file, reset_tb)
@@ -315,7 +315,7 @@ tb_file.write(indent + "config_driver #(.test_vector_p(test_vector_lp),\n" + \
               indent + "                .reset_i(" + reset_tb + "),\n" + \
               indent + "                .bit_o(config_bit) );\n")
 
-# write reference output sequence as localparams
+# write output verification processes
 tb_file.write("\n")
 for key in d_reference:
   test_id = key
