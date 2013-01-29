@@ -6,6 +6,7 @@ import time
 import os
 import re
 import sys
+import random
 
 import os.path
 
@@ -15,6 +16,7 @@ tb_file_name = "config_net_tb.v"
 indent = "  " # indentation
 
 spec_file_name = "sc_spec.in"
+test_file_name = "sc_test.in"
 
 total_inst_nodes = 3 # scan chain nodes ==> to be determined by input file
 l_inst_id = [] # list of unique decimals
@@ -23,11 +25,11 @@ d_inst_data_bits = {} # dictionary of decimals, indexed by inst id
 d_inst_default = {} # dictionary of binary strings, indexed by inst id
 
 # scan chain test sequence ==> to be randomized or from file
-#l_test_id = [127, 5, 7]
-#l_test_data = ["11111111", "1111111111101101", "100010110001110101000"]
-l_test_id = [127, 5, 7, 5, 127]
-l_test_data = ["11111111", "1111111111101101", "100010110001110101000", "0000000000000000", "00000000"]
+l_test_id = []
+l_test_data = []
 l_test_packet = []
+
+number_of_tests = 5
 
 # dictionary of verification sequences
 d_reference = {}
@@ -117,6 +119,28 @@ for line in spec_file:
       d_inst_data_bits[inst_id] = int(l_words[2])
       d_inst_default[inst_id] = l_words[3]
 spec_file.close()
+
+# randomly generate test id and test data
+for test in range(0, number_of_tests):
+  rand_idx = random.randint(0, len(l_inst_id) - 1)
+  test_id = l_inst_id[rand_idx]
+  l_test_id.append(test_id)
+  test_data_bits = d_inst_data_bits[test_id]
+  randbits = random.getrandbits(test_data_bits)
+  test_data = dec2bin(randbits, test_data_bits)
+  l_test_data.append(test_data)
+
+# ==>
+print "Random test id and data are generated and written into " + test_file_name
+
+# read scan chain test file and parse
+test_file = open(test_file_name, 'w')
+test_file.write("# This is a generated file with random test id and data\n" + \
+                "# <test id>           <test data>\n")
+for test in range(0, number_of_tests):
+  test_file.write(str(l_test_id[test]) + "\t\t" + l_test_data[test] + "\n")
+test_file.close()
+os.system("cat " + test_file_name)
 
 # create test string and calculate total bits
 test_idx = 0
