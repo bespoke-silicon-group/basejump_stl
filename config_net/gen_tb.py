@@ -45,7 +45,7 @@ clk_tb_period = 10 # time units
 sim_time = 500 # time units
 
 #
-l_inst_bit_i = ["config_bit"] # list of inputs config_bit for all nodes; the first one is "config_bit" from config_driver
+l_inst_config_in = [] # list of inputs struct config_in_s for all nodes
 l_inst_data_o = [] # list of outputs data_o for all nodes
 l_inst_bit_o = [] # list of outputs bit_o for all nodes
 
@@ -104,14 +104,19 @@ def write_logic(file, name):
 def write_logic_vec(file, name, msb, lsb):
   file.write(indent + "logic [" + msb + " : " + lsb + "] " + name + ";\n")
 
-def write_inst_node(file, id, data_bits, default, clk_i, bit_i, data_o, bit_o):
+def write_config_in_s(file, name):
+  file.write(indent + "config_in_s " + name + ";\n")
+
+def write_assign(file, lhs, rhs):
+  file.write(indent + "assign " + lhs + " = " + rhs + ";\n")
+
+def write_inst_node(file, id, data_bits, default, config_in, data_o, bit_o):
   file.write("\
   config_node        #(.id_p(" + id + "),\n\
                        .data_bits_p(" + data_bits + "),\n\
                        .default_p(" + data_bits + "'b" + default + ") )\n\
     inst_id_" + \
-          id + "_dut(  .clk_i(" + clk_i + "),\n\
-                       .bit_i(" + bit_i + "),\n\
+          id + "_dut(  .config_in(" + config_in + "),\n\
                        .data_o(" + data_o + "),\n\
                        .bit_o(" + bit_o + ") );\n ")
 
@@ -275,9 +280,10 @@ write_logic(tb_file, reset_tb)
 # declare output bits
 for inst_id in l_inst_id:
   index = l_inst_id.index(inst_id)
-  l_inst_bit_i.append("bit_o_" + str(inst_id))
-  l_inst_bit_o.append("bit_o_" + str(inst_id))
-  write_logic(tb_file, str(l_inst_bit_i[index]))
+  l_inst_config_in.append("config_in_" + str(inst_id))
+  if index != (len(l_inst_id) - 1): l_inst_bit_o.append("config_in_" + str(l_inst_id[index + 1]) + ".bit_i")
+  write_config_in_s(tb_file, str(l_inst_config_in[index]))
+l_inst_bit_o.append(" ") # the last bit_o is not connected
 
 # declare output data
 for inst_id in l_inst_id:
@@ -292,7 +298,12 @@ for inst_id in l_inst_id:
   index = l_inst_id.index(inst_id)
   tb_file.write("\n" + indent + "// " + d_inst_name[inst_id] + "\n")
   write_inst_node(tb_file, str(inst_id), str(d_inst_data_bits[inst_id]), d_inst_default[inst_id],\
-                           clk_tb, l_inst_bit_i[index], l_inst_data_o[index], l_inst_bit_o[index])
+                           l_inst_config_in[index], l_inst_data_o[index], l_inst_bit_o[index])
+
+# assign clocks
+tb_file.write("\n")
+for config_in in l_inst_config_in:
+  write_assign(tb_file, config_in + ".clk_i", clk_tb)
 
 # write clock generator
 tb_file.write("\n")
@@ -313,7 +324,7 @@ tb_file.write(indent + "config_driver #(.test_vector_p(test_vector_lp),\n" + \
               indent + "                .test_vector_bits_p(test_vector_bits_lp) )\n" + \
               indent + "    inst_driver(.clk_i(" + clk_tb + "),\n" + \
               indent + "                .reset_i(" + reset_tb + "),\n" + \
-              indent + "                .bit_o(config_bit) );\n")
+              indent + "                .bit_o(" + l_inst_config_in[0] + ".bit_i) );\n")
 
 # write output verification processes
 tb_file.write("\n")

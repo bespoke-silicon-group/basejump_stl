@@ -1,11 +1,12 @@
+`include "config_in_s.v"
+
 module config_node
   #(parameter             // node specific parameters 
     id_p = -1,            // unique ID of this node
     data_bits_p = -1,     // number of bits of configurable register associated with this node
     default_p = -1        // default/reset value of configurable register associated with this node
    )
-   (input clk_i,
-    input bit_i,
+   (input config_in_s config_in,
     
     output [data_bits_p - 1 : 0] data_o,
     output bit_o
@@ -90,9 +91,9 @@ module config_node
          // decrease its value while it's non-zero. The node does not care
          // about content in its shift register when the counter is not zero.
 
-  assign shift_n = {bit_i, shift_r[1 +: shift_width_lp - 1]};
+  assign shift_n = {config_in.bit_i, shift_r[1 +: shift_width_lp - 1]};
 
-  always_ff @ (posedge clk_i) begin
+  always_ff @ (posedge config_in.clk_i) begin
     if (reset) begin
       count_r <= 0;
       data_r <= default_p;
