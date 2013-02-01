@@ -246,7 +246,6 @@ for key in d_inst_data_bits:
 sim_time += (test_vector_bits + shift_chain_width) * clk_tb_period
 
 tb_file = open(tb_file_name, 'w')
-tb_file.write("`include \"bind_node.v\"\n\n")
 tb_file.write("module config_net_tb;\n\n")
 
 # write localparam
