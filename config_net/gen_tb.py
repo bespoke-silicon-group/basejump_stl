@@ -246,6 +246,7 @@ for key in d_inst_data_bits:
 sim_time += (test_vector_bits + shift_chain_width) * clk_tb_period
 
 tb_file = open(tb_file_name, 'w')
+tb_file.write("`include \"bind_node.v\"\n\n")
 tb_file.write("module config_net_tb;\n\n")
 
 # write localparam
@@ -330,17 +331,19 @@ tb_file.write(indent + "config_driver #(.test_vector_p(test_vector_lp),\n" + \
 tb_file.write("\n")
 for key in d_reference:
   test_id = key
-  tb_file.write(indent + "// scan chain node " + d_inst_name[test_id] + " verification\n" + \
-                indent + "int data_o_" + str(test_id) + "_idx = 0;\n" + \
-                indent + "always @ (data_o_" + str(test_id) + ") begin\n" + \
-                indent + indent + "$display(\"  @time %0d: \\t output data_o_" + str(test_id) + "\\t changed to %b\", $time, data_o_" + str(test_id) + ");\n" + \
-                indent + indent + "if (data_o_" + str(test_id) + " !== data_o_" + str(test_id) + "_ref[data_o_" + str(test_id) + "_idx]) begin\n" + \
-                indent + indent + indent + "$display(\"  @time %0d: \\t ERROR output data_o_" + str(test_id) + " = %b <-> expected = %b\", $time, " + \
-                                                                        "data_o_" + str(test_id) + ", " + \
-                                                                        "data_o_" + str(test_id) + "_ref[data_o_" + str(test_id) + "_idx]);\n" + \
-                indent + indent + "end\n" + \
-                indent + indent + "data_o_" + str(test_id) + "_idx += 1;\n" + \
-                indent + "end\n\n")
+  data_bits = d_inst_data_bits[test_id]
+  tests = len(d_reference[test_id])
+  data_ref = ""
+  for test in range(0, tests):
+    data_ref = data_ref + str(data_bits) + "'b" + d_reference[test_id][test]
+    if test != (tests - 1): data_ref = data_ref + ", "
+  data_ref = "'{" + data_ref + "}"
+  tb_file.write(indent + "// scan chain node " + d_inst_name[test_id] + " binding verification\n" + \
+                indent + "bind inst_id_" + str(test_id) + "_dut bind_node #(.id_p(" + str(test_id) + "),\n" + \
+                indent + "                                .data_bits_p(" + str(data_bits) + "),\n" + \
+                indent + "                                .data_ref_len_p(" + str(tests) + "),\n" + \
+                indent + "                                .data_ref_p(" + data_ref + ") )\n" + \
+                indent + "                inst_id_" + str(test_id) + "_bind (config_in, data_o, bit_o);\n\n")
 
 # write simulation ending condition
 tb_file.write("\n")
