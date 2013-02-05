@@ -9,8 +9,14 @@
 # <default> is a binary string specifying the reset value of the configuration register. The #digits of <default> should be equal to $data_bits.
 
 # The following are example inputs
+Relay       r
+Relay       r
 NodeA       5          4                      1001
+Relay       r
 NodeB       7         21     111111111111111111111
 NodeC     127          8                  00001001
 NodeD      96         12              000000001001
+Relay       r
+Relay       r
 NodeE      58          1                         0
+Relay       r

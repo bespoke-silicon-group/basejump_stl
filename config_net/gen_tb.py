@@ -120,19 +120,30 @@ def write_inst_node(file, id, data_bits, default, config_in, data_o, bit_o):
                        .data_o(" + data_o + "),\n\
                        .bit_o(" + bit_o + ") );\n ")
 
+def write_relay_node(file, id, config_in, bit_o):
+  file.write("\
+  relay_node\n\
+    relay_id_" + \
+          id + "_dut(  .config_in(" + config_in + "),\n\
+                       .bit_o(" + bit_o + ") );\n ")
 # ========== ==========
 # read scan chain specification file and parse
+relay_nodes = 0
 spec_file = open(spec_file_name, 'r')
 for line in spec_file:
   line = line.rstrip('\n') # remove the newline character
   if line != "": # if not an empty line
     l_words = line.split() # split a line into a list of words on white spaces
     if (line[0] != '#') and (line[0] != ' '): # ignore lines starting with '#' or spaces
-      inst_id = int(l_words[1])
-      l_inst_id.append(inst_id)
-      d_inst_name[inst_id] = l_words[0]
-      d_inst_data_bits[inst_id] = int(l_words[2])
-      d_inst_default[inst_id] = l_words[3]
+      if (l_words[1][0] == 'r'): # (id == 'r') indicates inserting a relay node
+        l_inst_id.append('r')
+        relay_nodes += 1
+      else:
+        inst_id = int(l_words[1])
+        l_inst_id.append(inst_id)
+        d_inst_name[inst_id] = l_words[0]
+        d_inst_data_bits[inst_id] = int(l_words[2])
+        d_inst_default[inst_id] = l_words[3]
 spec_file.close()
 
 # Argument list parsing
@@ -149,14 +160,17 @@ if (len(sys.argv) > 2):
   if (sys.argv[1] == "-w"):
     number_of_tests = int(sys.argv[3])
     # randomly generate test id and test data
-    for test in range(0, number_of_tests):
+    generated_tests = 0
+    while (generated_tests < number_of_tests):
       rand_idx = random.randint(0, len(l_inst_id) - 1)
       test_id = l_inst_id[rand_idx]
-      l_test_id.append(test_id)
-      test_data_bits = d_inst_data_bits[test_id]
-      randbits = random.getrandbits(test_data_bits)
-      test_data = dec2bin(randbits, test_data_bits)
-      l_test_data.append(test_data)
+      if (test_id != 'r'):
+        l_test_id.append(test_id)
+        test_data_bits = d_inst_data_bits[test_id]
+        randbits = random.getrandbits(test_data_bits)
+        test_data = dec2bin(randbits, test_data_bits)
+        l_test_data.append(test_data)
+        generated_tests += 1
     # write random test cases to scan chain test file
     test_file = open(test_file_name, 'w')
     test_file.write("# This is a generated file with random test id and data.\n" + \
@@ -243,7 +257,7 @@ for key in d_inst_data_bits:
                        len_width_lp + frame_bit_size_lp
 
 # revise simulation time to ensure all test bits walks through the whole scan chain
-sim_time += (test_vector_bits + shift_chain_width) * clk_tb_period
+sim_time += (test_vector_bits + shift_chain_width + relay_nodes) * clk_tb_period
 
 tb_file = open(tb_file_name, 'w')
 tb_file.write("module config_net_tb;\n\n")
@@ -277,28 +291,49 @@ tb_file.write("\n" + indent + "//\n")
 write_logic(tb_file, clk_tb)
 write_logic(tb_file, reset_tb)
 
-# declare output bits
+# input struct logic
+inst_index = 0
+relay_index = 0
 for inst_id in l_inst_id:
-  index = l_inst_id.index(inst_id)
-  l_inst_config_in.append("config_in_" + str(inst_id))
-  if index != (len(l_inst_id) - 1): l_inst_bit_o.append("config_in_" + str(l_inst_id[index + 1]) + ".bit_i")
-  write_config_in_s(tb_file, str(l_inst_config_in[index]))
+  if (inst_id == 'r'):
+    l_inst_config_in.append("relay_in_" + str(relay_index))
+    relay_index += 1
+  else:
+    l_inst_config_in.append("config_in_" + str(inst_id))
+  write_config_in_s(tb_file, str(l_inst_config_in[inst_index]))
+  inst_index += 1
+
+# output bits
+inst_index = 0
+for inst_id in l_inst_id:
+  if inst_index != (len(l_inst_id) - 1): l_inst_bit_o.append(l_inst_config_in[inst_index + 1] + ".bit_i")
+  inst_index += 1
 l_inst_bit_o.append(" ") # the last bit_o is not connected
 
 # declare output data
 for inst_id in l_inst_id:
-  l_inst_data_o.append("data_o_" + str(inst_id))
-  write_logic_vec(tb_file, "data_o_" + str(inst_id), str(d_inst_data_bits[inst_id] - 1), '0')
+  if (inst_id != 'r'):
+    l_inst_data_o.append("data_o_" + str(inst_id))
+    write_logic_vec(tb_file, "data_o_" + str(inst_id), str(d_inst_data_bits[inst_id] - 1), '0')
 
 # declare test vector logic
 write_logic_vec(tb_file, "test_vector", str(test_vector_bits - 1), '0')
 
 # instantiate and connect configuration nodes
+inst_index = 0
+relay_index = 0
 for inst_id in l_inst_id:
-  index = l_inst_id.index(inst_id)
-  tb_file.write("\n" + indent + "// " + d_inst_name[inst_id] + "\n")
-  write_inst_node(tb_file, str(inst_id), str(d_inst_data_bits[inst_id]), d_inst_default[inst_id],\
-                           l_inst_config_in[index], l_inst_data_o[index], l_inst_bit_o[index])
+  if (inst_id == 'r'):
+    tb_file.write("\n" + indent + "// " + "Relay node " + str(relay_index) + "\n")
+    write_relay_node(tb_file, str(relay_index), l_inst_config_in[inst_index], l_inst_bit_o[inst_index])
+    relay_index += 1
+  else:
+    tb_file.write("\n" + indent + "// " + d_inst_name[inst_id] + "\n")
+    write_inst_node(tb_file, str(inst_id), str(d_inst_data_bits[inst_id]), d_inst_default[inst_id],\
+                             l_inst_config_in[inst_index],\
+                             l_inst_data_o[inst_index - relay_index],\
+                             l_inst_bit_o[inst_index])
+  inst_index += 1
 
 # assign clocks
 tb_file.write("\n")
