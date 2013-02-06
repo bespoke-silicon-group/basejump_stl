@@ -5,7 +5,7 @@ module bind_node
     data_ref_len_p = -1,  // default/reset value of configurable register associated with this node
     logic [data_bits_p - 1 : 0] data_ref_p[data_ref_len_p] = 0  // data_o change reference array
    )
-   (input config_in_s config_in,
+   (input config_s config_i,
     
     input [data_bits_p - 1 : 0] data_o,
     input bit_o
@@ -14,7 +14,7 @@ module bind_node
    logic [data_bits_p - 1 : 0] data_o_r, data_o_n;
 
    assign data_o_n = data_o;
-   always @ (posedge config_in.clk_i) begin
+   always @ (posedge config_i.cfg_clk) begin
      data_o_r <= data_o_n;
    end
 
@@ -23,7 +23,7 @@ module bind_node
    // to data_o. This might guarantee simulation correct even at gate level,
    // when all flip-flops don't necessarily change at the same time.
    int data_ref_idx = 0;
-   always @ (negedge config_in.clk_i) begin
+   always @ (negedge config_i.cfg_clk) begin
      if(data_ref_idx == 0) begin
        if (data_o === data_ref_p[0]) begin
          $display("  @time %0d: \t output data_o_%0d\t reset   to %b", $time, id_p, data_o);

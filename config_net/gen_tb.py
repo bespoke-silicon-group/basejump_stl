@@ -45,7 +45,7 @@ clk_tb_period = 10 # time units
 sim_time = 500 # time units
 
 #
-l_inst_config_in = [] # list of inputs struct config_in_s for all nodes
+l_inst_config_i = [] # list of inputs struct config_s for all nodes
 l_inst_data_o = [] # list of outputs data_o for all nodes
 l_inst_bit_o = [] # list of outputs bit_o for all nodes
 
@@ -104,27 +104,27 @@ def write_logic(file, name):
 def write_logic_vec(file, name, msb, lsb):
   file.write(indent + "logic [" + msb + " : " + lsb + "] " + name + ";\n")
 
-def write_config_in_s(file, name):
-  file.write(indent + "config_in_s " + name + ";\n")
+def write_config_s(file, name):
+  file.write(indent + "config_s " + name + ";\n")
 
 def write_assign(file, lhs, rhs):
   file.write(indent + "assign " + lhs + " = " + rhs + ";\n")
 
-def write_inst_node(file, id, data_bits, default, config_in, data_o, bit_o):
+def write_inst_node(file, id, data_bits, default, config_i, data_o, bit_o):
   file.write("\
   config_node        #(.id_p(" + id + "),\n\
                        .data_bits_p(" + data_bits + "),\n\
                        .default_p(" + data_bits + "'b" + default + ") )\n\
     inst_id_" + \
-          id + "_dut(  .config_in(" + config_in + "),\n\
+          id + "_dut(  .config_i(" + config_i + "),\n\
                        .data_o(" + data_o + "),\n\
                        .bit_o(" + bit_o + ") );\n ")
 
-def write_relay_node(file, id, config_in, bit_o):
+def write_relay_node(file, id, config_i, bit_o):
   file.write("\
   relay_node\n\
     relay_id_" + \
-          id + "_dut(  .config_in(" + config_in + "),\n\
+          id + "_dut(  .config_i(" + config_i + "),\n\
                        .bit_o(" + bit_o + ") );\n ")
 # ========== ==========
 # read scan chain specification file and parse
@@ -296,17 +296,17 @@ inst_index = 0
 relay_index = 0
 for inst_id in l_inst_id:
   if (inst_id == 'r'):
-    l_inst_config_in.append("relay_in_" + str(relay_index))
+    l_inst_config_i.append("relay_in_" + str(relay_index))
     relay_index += 1
   else:
-    l_inst_config_in.append("config_in_" + str(inst_id))
-  write_config_in_s(tb_file, str(l_inst_config_in[inst_index]))
+    l_inst_config_i.append("config_i_" + str(inst_id))
+  write_config_s(tb_file, str(l_inst_config_i[inst_index]))
   inst_index += 1
 
 # output bits
 inst_index = 0
 for inst_id in l_inst_id:
-  if inst_index != (len(l_inst_id) - 1): l_inst_bit_o.append(l_inst_config_in[inst_index + 1] + ".bit_i")
+  if inst_index != (len(l_inst_id) - 1): l_inst_bit_o.append(l_inst_config_i[inst_index + 1] + ".cfg_bit")
   inst_index += 1
 l_inst_bit_o.append(" ") # the last bit_o is not connected
 
@@ -325,20 +325,20 @@ relay_index = 0
 for inst_id in l_inst_id:
   if (inst_id == 'r'):
     tb_file.write("\n" + indent + "// " + "Relay node " + str(relay_index) + "\n")
-    write_relay_node(tb_file, str(relay_index), l_inst_config_in[inst_index], l_inst_bit_o[inst_index])
+    write_relay_node(tb_file, str(relay_index), l_inst_config_i[inst_index], l_inst_bit_o[inst_index])
     relay_index += 1
   else:
     tb_file.write("\n" + indent + "// " + d_inst_name[inst_id] + "\n")
     write_inst_node(tb_file, str(inst_id), str(d_inst_data_bits[inst_id]), d_inst_default[inst_id],\
-                             l_inst_config_in[inst_index],\
+                             l_inst_config_i[inst_index],\
                              l_inst_data_o[inst_index - relay_index],\
                              l_inst_bit_o[inst_index])
   inst_index += 1
 
 # assign clocks
 tb_file.write("\n")
-for config_in in l_inst_config_in:
-  write_assign(tb_file, config_in + ".clk_i", clk_tb)
+for config_i in l_inst_config_i:
+  write_assign(tb_file, config_i + ".cfg_clk", clk_tb)
 
 # write clock generator
 tb_file.write("\n")
@@ -359,7 +359,7 @@ tb_file.write(indent + "config_driver #(.test_vector_p(test_vector_lp),\n" + \
               indent + "                .test_vector_bits_p(test_vector_bits_lp) )\n" + \
               indent + "    inst_driver(.clk_i(" + clk_tb + "),\n" + \
               indent + "                .reset_i(" + reset_tb + "),\n" + \
-              indent + "                .bit_o(" + l_inst_config_in[0] + ".bit_i) );\n")
+              indent + "                .bit_o(" + l_inst_config_i[0] + ".cfg_bit) );\n")
 
 # write output verification processes
 tb_file.write("\n")
@@ -377,7 +377,7 @@ for key in d_reference:
                 indent + "                                .data_bits_p(" + str(data_bits) + "),\n" + \
                 indent + "                                .data_ref_len_p(" + str(tests) + "),\n" + \
                 indent + "                                .data_ref_p(" + data_ref + ") )\n" + \
-                indent + "                inst_id_" + str(test_id) + "_bind (config_in, data_o, bit_o);\n\n")
+                indent + "                inst_id_" + str(test_id) + "_bind (config_i, data_o, bit_o);\n\n")
 
 # write simulation ending condition
 tb_file.write("\n")
