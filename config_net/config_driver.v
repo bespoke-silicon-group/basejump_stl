@@ -5,7 +5,7 @@ module config_driver
    )
    (input clk_i,
     input reset_i,
-    output bit_o
+    output config_s config_o
    );
 
   logic [test_vector_bits_p - 1 : 0] test_vector;
@@ -19,6 +19,7 @@ module config_driver
     end
   end
 
-  assign bit_o = test_vector[0];
+  assign config_o.cfg_clk = clk_i;
+  assign config_o.cfg_bit = test_vector[0];
 
 endmodule

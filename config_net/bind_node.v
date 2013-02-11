@@ -7,8 +7,7 @@ module bind_node
    )
    (input config_s config_i,
     
-    input [data_bits_p - 1 : 0] data_o,
-    input bit_o
+    input [data_bits_p - 1 : 0] data_o
    );
 
    logic [data_bits_p - 1 : 0] data_o_r, data_o_n;

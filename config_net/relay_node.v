@@ -1,6 +1,6 @@
 module relay_node
    (input config_s config_i,
-    output bit_o
+    output config_s config_o
    );
 
   /* ========================================================================== *
@@ -16,7 +16,7 @@ module relay_node
     bit_r <= bit_n;
   end
 
-  assign bit_o = bit_r;
-  //assign config_o.cfg_clk = config_i.cfg_clk;
+  assign config_o.cfg_clk = config_i.cfg_clk;
+  assign config_o.cfg_bit = bit_r;
 
 endmodule

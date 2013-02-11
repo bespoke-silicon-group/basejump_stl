@@ -6,8 +6,7 @@ module config_node
    )
    (input config_s config_i,
     
-    output [data_bits_p - 1 : 0] data_o,
-    output bit_o
+    output [data_bits_p - 1 : 0] data_o
    );
 
   /* ========================================================================== *
@@ -127,6 +126,5 @@ module config_node
 
   // Output signals
   assign data_o = data_r;
-  assign bit_o = shift_r[0];
 
 endmodule

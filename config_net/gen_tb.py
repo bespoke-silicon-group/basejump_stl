@@ -20,6 +20,7 @@ l_inst_id = [] # list of unique decimals
 d_inst_name = {} # dictionary of strings indexed by inst id
 d_inst_data_bits = {} # dictionary of decimals indexed by inst id
 d_inst_default = {} # dictionary of binary strings indexed by inst id
+d_inst_pos = {} # a dict specifying config_node position in the relay_tree
 
 # scan chain test sequence
 l_test_id = []
@@ -44,10 +45,12 @@ clk_tb = "clk_tb"
 clk_tb_period = 10 # time units
 sim_time = 500 # time units
 
+# ==>
+relay_nodes = 0 # number of relay nodes in the configuration network
+d_relay_tree = {} # a tree describing relay nodes interconnections
+
 #
-l_inst_config_i = [] # list of inputs struct config_s for all nodes
-l_inst_data_o = [] # list of outputs data_o for all nodes
-l_inst_bit_o = [] # list of outputs bit_o for all nodes
+l_inst_data_o = []   # list of outputs data_o for all nodes
 
 # ========== Functions ==========
 def readme():
@@ -110,43 +113,52 @@ def write_config_s(file, name):
 def write_assign(file, lhs, rhs):
   file.write(indent + "assign " + lhs + " = " + rhs + ";\n")
 
-def write_inst_node(file, id, data_bits, default, config_i, data_o, bit_o):
+def write_inst_node(file, id, data_bits, default, config_i, data_o):
   file.write("\
   config_node        #(.id_p(" + id + "),\n\
                        .data_bits_p(" + data_bits + "),\n\
                        .default_p(" + data_bits + "'b" + default + ") )\n\
     inst_id_" + \
           id + "_dut(  .config_i(" + config_i + "),\n\
-                       .data_o(" + data_o + "),\n\
-                       .bit_o(" + bit_o + ") );\n ")
+                       .data_o(" + data_o + ") );\n")
 
-def write_relay_node(file, id, config_i, bit_o):
+def write_relay_node(file, id, config_i, config_o):
   file.write("\
   relay_node\n\
     relay_id_" + \
           id + "_dut(  .config_i(" + config_i + "),\n\
-                       .bit_o(" + bit_o + ") );\n ")
+                       .config_o(" + config_o + ") );\n")
 # ========== ==========
 # read scan chain specification file and parse
-relay_nodes = 0
 spec_file = open(spec_file_name, 'r')
 for line in spec_file:
   line = line.rstrip('\n') # remove the newline character
   if line != "": # if not an empty line
     l_words = line.split() # split a line into a list of words on white spaces
     if (line[0] != '#') and (line[0] != ' '): # ignore lines starting with '#' or spaces
-      if (l_words[1][0] == 'r'): # (id == 'r') indicates inserting a relay node
-        l_inst_id.append('r')
-        relay_nodes += 1
-      else:
         inst_id = int(l_words[1])
         l_inst_id.append(inst_id)
         d_inst_name[inst_id] = l_words[0]
         d_inst_data_bits[inst_id] = int(l_words[2])
         d_inst_default[inst_id] = l_words[3]
 spec_file.close()
+relay_nodes = len(l_inst_id)
+print "relay_nodes = " + str(relay_nodes) # ==>
 
-# Argument list parsing
+# ==> initialize d_relay_tree
+for relay_id in range(0, relay_nodes): # relay_id 0 is the root
+  if relay_id != (relay_nodes - 1): d_relay_tree[relay_id] = [relay_id + 1] # a dict of list
+print d_relay_tree # ==>
+
+# ==> initialize d_ins_pos
+# ==> now just a linear tree and 1-1 connections
+relay_id = 0
+for inst_id in l_inst_id:
+  d_inst_pos[inst_id] = relay_id
+  relay_id += 1
+print d_inst_pos # ==>
+
+# argument list parsing
 if (len(sys.argv) == 1):
   print "gen_tb.py expects at least 2 arguments."
   readme()
@@ -164,7 +176,7 @@ if (len(sys.argv) > 2):
     while (generated_tests < number_of_tests):
       rand_idx = random.randint(0, len(l_inst_id) - 1)
       test_id = l_inst_id[rand_idx]
-      if (test_id != 'r'):
+      if (test_id != 'r'): # ==> no 'r' anymore
         l_test_id.append(test_id)
         test_data_bits = d_inst_data_bits[test_id]
         randbits = random.getrandbits(test_data_bits)
@@ -284,61 +296,44 @@ for key in d_reference:
     data_ref = data_ref + str(data_bits) + "'b" + d_reference[test_id][test]
     if test != (tests - 1): data_ref = data_ref + ", "
   data_ref = "'{" + data_ref + "}"
-  write_localparam(tb_file, "logic [" + str(data_bits - 1) + " : 0] data_o_" + str(test_id) + "_ref[" + str(tests) + "]", data_ref)
+  write_localparam(tb_file, "logic [" + str(data_bits - 1) + " : 0] data_" + str(test_id) + "_o_ref[" + str(tests) + "]", data_ref)
 
 # write clock and reset signals
 tb_file.write("\n" + indent + "//\n")
 write_logic(tb_file, clk_tb)
 write_logic(tb_file, reset_tb)
 
-# input struct logic
-inst_index = 0
-relay_index = 0
-for inst_id in l_inst_id:
-  if (inst_id == 'r'):
-    l_inst_config_i.append("relay_in_" + str(relay_index))
-    relay_index += 1
-  else:
-    l_inst_config_i.append("config_i_" + str(inst_id))
-  write_config_s(tb_file, str(l_inst_config_i[inst_index]))
-  inst_index += 1
-
-# output bits
-inst_index = 0
-for inst_id in l_inst_id:
-  if inst_index != (len(l_inst_id) - 1): l_inst_bit_o.append(l_inst_config_i[inst_index + 1] + ".cfg_bit")
-  inst_index += 1
-l_inst_bit_o.append(" ") # the last bit_o is not connected
+# declare relay node outputs struct
+write_config_s(tb_file, "relay_root_i") # relay_id 0 is the root
+for relay_id in range(0, relay_nodes):
+  write_config_s(tb_file, "relay_" + str(relay_id) + "_o")
 
 # declare output data
 for inst_id in l_inst_id:
   if (inst_id != 'r'):
-    l_inst_data_o.append("data_o_" + str(inst_id))
-    write_logic_vec(tb_file, "data_o_" + str(inst_id), str(d_inst_data_bits[inst_id] - 1), '0')
+    l_inst_data_o.append("data_" + str(inst_id) + "_o")
+    write_logic_vec(tb_file, "data_" + str(inst_id) + "_o", str(d_inst_data_bits[inst_id] - 1), '0')
 
 # declare test vector logic
 write_logic_vec(tb_file, "test_vector", str(test_vector_bits - 1), '0')
 
-# instantiate and connect configuration nodes
-inst_index = 0
-relay_index = 0
-for inst_id in l_inst_id:
-  if (inst_id == 'r'):
-    tb_file.write("\n" + indent + "// " + "Relay node " + str(relay_index) + "\n")
-    write_relay_node(tb_file, str(relay_index), l_inst_config_i[inst_index], l_inst_bit_o[inst_index])
-    relay_index += 1
-  else:
-    tb_file.write("\n" + indent + "// " + d_inst_name[inst_id] + "\n")
-    write_inst_node(tb_file, str(inst_id), str(d_inst_data_bits[inst_id]), d_inst_default[inst_id],\
-                             l_inst_config_i[inst_index],\
-                             l_inst_data_o[inst_index - relay_index],\
-                             l_inst_bit_o[inst_index])
-  inst_index += 1
+# ==> creat relay node tree
+tb_file.write("\n" + indent + "// " + "Relay node 0 (root) \n")
+write_relay_node(tb_file, "0", "relay_root_i", "relay_0_o")
+for key in d_relay_tree:
+  branch = key
+  for leaf in d_relay_tree[branch]:
+    tb_file.write("\n" + indent + "// " + "Relay node " + str(leaf) + "\n")
+    write_relay_node(tb_file, str(leaf), "relay_" + str(branch) + "_o", "relay_" + str(leaf) + "_o")
 
-# assign clocks
-tb_file.write("\n")
-for config_i in l_inst_config_i:
-  write_assign(tb_file, config_i + ".cfg_clk", clk_tb)
+# instantiate and connect configuration nodes
+for key in d_inst_pos:
+  inst_id = key
+  pos = d_inst_pos[key]
+  tb_file.write("\n" + indent + "// " + d_inst_name[inst_id] + "\n")
+  write_inst_node(tb_file, str(inst_id), str(d_inst_data_bits[inst_id]), d_inst_default[inst_id],\
+                           "relay_" + str(pos) + "_o",\
+                           "data_" + str(inst_id) + "_o")
 
 # write clock generator
 tb_file.write("\n")
@@ -359,7 +354,7 @@ tb_file.write(indent + "config_driver #(.test_vector_p(test_vector_lp),\n" + \
               indent + "                .test_vector_bits_p(test_vector_bits_lp) )\n" + \
               indent + "    inst_driver(.clk_i(" + clk_tb + "),\n" + \
               indent + "                .reset_i(" + reset_tb + "),\n" + \
-              indent + "                .bit_o(" + l_inst_config_i[0] + ".cfg_bit) );\n")
+              indent + "                .config_o(relay_root_i) );\n")
 
 # write output verification processes
 tb_file.write("\n")
@@ -377,7 +372,7 @@ for key in d_reference:
                 indent + "                                .data_bits_p(" + str(data_bits) + "),\n" + \
                 indent + "                                .data_ref_len_p(" + str(tests) + "),\n" + \
                 indent + "                                .data_ref_p(" + data_ref + ") )\n" + \
-                indent + "                inst_id_" + str(test_id) + "_bind (config_i, data_o, bit_o);\n\n")
+                indent + "                inst_id_" + str(test_id) + "_bind (config_i, data_o);\n\n")
 
 # write simulation ending condition
 tb_file.write("\n")
