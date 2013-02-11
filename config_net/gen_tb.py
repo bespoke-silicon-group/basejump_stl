@@ -146,20 +146,14 @@ for line in spec_file:
         d_inst_default[inst_id] = l_words[3]
 spec_file.close()
 relay_nodes = len(l_inst_id)
-print "relay_nodes = " + str(relay_nodes) # ==>
 
 # ==> initialize d_relay_tree
 for relay_id in range(0, relay_nodes): # relay_id 0 is the root
   if relay_id != (relay_nodes - 1): d_relay_tree[relay_id] = [relay_id + 1] # a dict of list
-print d_relay_tree # ==>
 
-# ==> initialize d_ins_pos
-# ==> now just a linear tree and 1-1 connections
-relay_id = 0
+# initialize d_ins_pos
 for inst_id in l_inst_id:
-  d_inst_pos[inst_id] = relay_id
-  relay_id += 1
-print d_inst_pos # ==>
+  d_inst_pos[inst_id] = random.randint(0, relay_nodes - 1) # inclusive of 0 and (relay_nodes - 1)
 
 # argument list parsing
 if (len(sys.argv) == 1):
