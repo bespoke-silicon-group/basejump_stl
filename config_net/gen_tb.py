@@ -54,28 +54,31 @@ l_inst_data_o = []   # list of outputs data_o for all nodes
 
 # ========== Functions ==========
 def readme():
-  print "  "
-  print "  Name:"
-  print "    gen_tb.py - python script to generate testbench for chained config_node instances"
-  print "  "
-  print "  Usage:"
-  print "    gen_tb.py options testfile [number of tests]"
-  print "  "
-  print "  Example:"
-  print "    gen_tb.py -w sc_test.in 10"
-  print "    gen_tb.py -r sc_test.in"
-  print "  "
-  print "  Description:"
-  print "    This script reads scan chain specifications from sc_spec.in file,"
-  print "    generates random test sequence and creates config_net_tb.v testbench."
-  print "  "
-  print "    Use command ./gen_tb.py -w <testfile> <number of tests> to"
-  print "    generate a new sequence of <number of tests> tests and writes the"
-  print "    sequence to <testfile>."
-  print "  "
-  print "    You can extend the generated testfile to contain your specific test cases;"
-  print "    then use command ./gen_tb.py -r <testfile> to read the modified file,"
-  print "    and create testbench accordingly."
+  print "  \n\
+    Name:\n\
+      gen_tb.py - python script to generate testbench for chained config_node instances\n\
+    \n\
+    Usage:\n\
+      gen_tb.py options testfile [number of tests]\n\
+    \n\
+    Example:\n\
+      gen_tb.py -w sc_test.in 10\n\
+      gen_tb.py -r sc_test.in\n\
+    \n\
+    Description:\n\
+      This script reads scan chain specifications from sc_spec.in file,\n\
+      generates a random configuraion network using relay_nodes, and\n\
+      attach config_nodes to a randomly chosen relay_node. It also\n\
+      generates random test sequence and creates config_net_tb.v\n\
+      testbench.\n\
+    \n\
+      Use command ./gen_tb.py -w <testfile> <number of tests> to\n\
+      generate a new sequence of <number of tests> tests and writes the\n\
+      sequence to <testfile>.\n\
+    \n\
+      You can extend the generated testfile to contain your specific test cases;\n\
+      then use command ./gen_tb.py -r <testfile> to read the modified file,\n\
+      and create testbench accordingly."
 
 def dec2bin(dec, n): # Only works on non-negative number
   bin = ""
