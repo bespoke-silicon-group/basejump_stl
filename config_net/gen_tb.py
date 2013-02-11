@@ -319,12 +319,16 @@ for inst_id in l_inst_id:
 # declare test vector logic
 write_logic_vec(tb_file, "test_vector", str(test_vector_bits - 1), '0')
 
+# write relay node tree structure to testbench file
+tb_file.write("\n")
+tb_file.write("\n" + indent + "// " + "The relay node tree is generated as follows:\n")
+for key in d_relay_tree:
+  tb_file.write(indent + "// branch node " + str(key) + ": " + str(d_relay_tree[key]) + "\n")
 # creat relay node tree
 tb_file.write("\n" + indent + "// " + "Relay node 0 (root) \n")
 write_relay_node(tb_file, "0", "relay_root_i", "relay_0_o")
 for key in d_relay_tree:
   branch = key
-  print "# relay branch node " + str(key) + ": " + str(d_relay_tree[key]) # ==>
   for leaf in d_relay_tree[branch]:
     tb_file.write("\n" + indent + "// " + "Relay node " + str(leaf) + "\n")
     write_relay_node(tb_file, str(leaf), "relay_" + str(branch) + "_o", "relay_" + str(leaf) + "_o")
