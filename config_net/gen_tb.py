@@ -46,7 +46,7 @@ clk_tb_period = 10 # time units
 sim_time = 500 # time units
 
 # ==>
-relay_nodes = 0 # number of relay nodes in the configuration network
+relay_nodes = 5 # number of relay nodes in the configuration network
 d_relay_tree = {} # a tree describing relay nodes interconnections
 
 #
@@ -145,11 +145,16 @@ for line in spec_file:
         d_inst_data_bits[inst_id] = int(l_words[2])
         d_inst_default[inst_id] = l_words[3]
 spec_file.close()
-relay_nodes = len(l_inst_id)
+relay_nodes += len(l_inst_id)
 
-# ==> initialize d_relay_tree
-for relay_id in range(0, relay_nodes): # relay_id 0 is the root
-  if relay_id != (relay_nodes - 1): d_relay_tree[relay_id] = [relay_id + 1] # a dict of list
+# initialize d_relay_tree
+for leaf_id in range(1, relay_nodes): # relay_id 0 is the root
+  # because relay node id are consecutive integers, randint(0, leaf_id - 1) makes all nodes are connected
+  branch_id = random.randint(0, leaf_id - 1) # to which the new leaf is connected
+  if d_relay_tree.has_key(branch_id):
+    d_relay_tree[branch_id].append(leaf_id)
+  else:
+    d_relay_tree[branch_id] = [leaf_id]
 
 # initialize d_ins_pos
 for inst_id in l_inst_id:
@@ -314,11 +319,12 @@ for inst_id in l_inst_id:
 # declare test vector logic
 write_logic_vec(tb_file, "test_vector", str(test_vector_bits - 1), '0')
 
-# ==> creat relay node tree
+# creat relay node tree
 tb_file.write("\n" + indent + "// " + "Relay node 0 (root) \n")
 write_relay_node(tb_file, "0", "relay_root_i", "relay_0_o")
 for key in d_relay_tree:
   branch = key
+  print "# relay branch node " + str(key) + ": " + str(d_relay_tree[key]) # ==>
   for leaf in d_relay_tree[branch]:
     tb_file.write("\n" + indent + "// " + "Relay node " + str(leaf) + "\n")
     write_relay_node(tb_file, str(leaf), "relay_" + str(branch) + "_o", "relay_" + str(leaf) + "_o")
