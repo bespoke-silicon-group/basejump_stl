@@ -45,12 +45,11 @@ clk_tb = "clk_tb"
 clk_tb_period = 10 # time units
 sim_time = 500 # time units
 
-# ==>
-relay_nodes = 5 # number of relay nodes in the configuration network
+#
 d_relay_tree = {} # a tree describing relay nodes interconnections
 
 #
-l_inst_data_o = []   # list of outputs data_o for all nodes
+l_inst_data_o = [] # list of outputs data_o for all nodes
 
 # ========== Functions ==========
 def readme():
@@ -132,33 +131,72 @@ def write_relay_node(file, id, config_i, config_o):
           id + "_dut(  .config_i(" + config_i + "),\n\
                        .config_o(" + config_o + ") );\n")
 # ========== ==========
-# read scan chain specification file and parse
+# read scan chain specification file, parse relay nodes
+spec_file = open(spec_file_name, 'r')
+relay_nodes = 0 # number of relay nodes in the configuration network
+for line in spec_file:
+  line = line.rstrip('\n') # remove the newline character
+  if line != "": # if not an empty line
+    l_words = line.split() # split a line into a list of words on white spaces
+    if (line[0] != '#') and (line[0] != ' '): # ignore lines starting with '#' or spaces
+      if (l_words[0] == 'r'): # type 'r' indicates a relay node
+        relay_id = int(l_words[1]) # l_words[1] must be consecutive integers starting from 0
+        if (relay_id != relay_nodes):
+          print "ERROR spec file format: relay_id must be consecutive integers starting from 0!"
+          print ">>> " + line
+          sys.exit(1)
+        else: # relay_nodes != 0
+          if (l_words[1] != '0'): # no need to process relay node 0
+            if (l_words[2] == 'x'): # position 'x' indicates a random branch
+              branch_id = random.randint(0, relay_nodes - 1) # to which the new relay node is connected
+            else:
+              branch_id = int(l_words[2]) # l_words[2] must be an integer if not an 'x'
+            if d_relay_tree.has_key(branch_id):
+              d_relay_tree[branch_id].append(relay_id)
+            else:
+              d_relay_tree[branch_id] = [relay_id]
+        relay_nodes += 1
+      elif (l_words[0] == 'c'): # type 'c' indicates a config node
+        inst_id = int(l_words[1])
+        l_inst_id.append(inst_id)
+        d_inst_name[inst_id] = l_words[3]
+        d_inst_data_bits[inst_id] = int(l_words[4])
+        d_inst_default[inst_id] = l_words[5]
+      else:
+        print "ERROR spec file format: type " + l_words[0] + " is not recognized!"
+        print ">>> " + line
+        sys.exit(1)
+spec_file.close()
+
+# randomize d_relay_tree if relay_nodes are not provided in spec file
+if (relay_nodes == 0):
+  relay_nodes = random.randint(1, 16) # generate random number [1..16] of relay nodes
+  for relay_id in range(1, relay_nodes): # relay_id 0 is the root
+    # because relay node id are consecutive integers, randint(0, relay_id - 1) makes all nodes are connected
+    branch_id = random.randint(0, relay_id - 1) # to which the new relay is connected
+    if d_relay_tree.has_key(branch_id):
+      d_relay_tree[branch_id].append(relay_id)
+    else:
+      d_relay_tree[branch_id] = [relay_id]
+
+# read scan chain specification file, attach config nodes
 spec_file = open(spec_file_name, 'r')
 for line in spec_file:
   line = line.rstrip('\n') # remove the newline character
   if line != "": # if not an empty line
     l_words = line.split() # split a line into a list of words on white spaces
     if (line[0] != '#') and (line[0] != ' '): # ignore lines starting with '#' or spaces
+      if (l_words[0] == 'c'): # type 'c' indicates a config node
         inst_id = int(l_words[1])
-        l_inst_id.append(inst_id)
-        d_inst_name[inst_id] = l_words[0]
-        d_inst_data_bits[inst_id] = int(l_words[2])
-        d_inst_default[inst_id] = l_words[3]
+        if (l_words[2] == 'x'): # position 'x' indicates a random branch
+          d_inst_pos[inst_id] = random.randint(0, relay_nodes - 1) # inclusive of 0 and (relay_nodes - 1)
+        elif (int(l_words[2]) >= relay_nodes): # l_words[2] must be an integer if not an 'x'
+          print "ERROR spec file format: config node branch id doesn't exist, " + l_words[2] + " >= number of relay nodes = " + str(relay_nodes) + "!"
+          print ">>> " + line
+          sys.exit(1)
+        else:
+          d_inst_pos[inst_id] = int(l_words[2])
 spec_file.close()
-relay_nodes += len(l_inst_id)
-
-# initialize d_relay_tree
-for leaf_id in range(1, relay_nodes): # relay_id 0 is the root
-  # because relay node id are consecutive integers, randint(0, leaf_id - 1) makes all nodes are connected
-  branch_id = random.randint(0, leaf_id - 1) # to which the new leaf is connected
-  if d_relay_tree.has_key(branch_id):
-    d_relay_tree[branch_id].append(leaf_id)
-  else:
-    d_relay_tree[branch_id] = [leaf_id]
-
-# initialize d_ins_pos
-for inst_id in l_inst_id:
-  d_inst_pos[inst_id] = random.randint(0, relay_nodes - 1) # inclusive of 0 and (relay_nodes - 1)
 
 # argument list parsing
 if (len(sys.argv) == 1):
@@ -178,13 +216,12 @@ if (len(sys.argv) > 2):
     while (generated_tests < number_of_tests):
       rand_idx = random.randint(0, len(l_inst_id) - 1)
       test_id = l_inst_id[rand_idx]
-      if (test_id != 'r'): # ==> no 'r' anymore
-        l_test_id.append(test_id)
-        test_data_bits = d_inst_data_bits[test_id]
-        randbits = random.getrandbits(test_data_bits)
-        test_data = dec2bin(randbits, test_data_bits)
-        l_test_data.append(test_data)
-        generated_tests += 1
+      l_test_id.append(test_id)
+      test_data_bits = d_inst_data_bits[test_id]
+      randbits = random.getrandbits(test_data_bits)
+      test_data = dec2bin(randbits, test_data_bits)
+      l_test_data.append(test_data)
+      generated_tests += 1
     # write random test cases to scan chain test file
     test_file = open(test_file_name, 'w')
     test_file.write("# This is a generated file with random test id and data.\n" + \
@@ -320,7 +357,6 @@ for inst_id in l_inst_id:
 write_logic_vec(tb_file, "test_vector", str(test_vector_bits - 1), '0')
 
 # write relay node tree structure to testbench file
-tb_file.write("\n")
 tb_file.write("\n" + indent + "// " + "The relay node tree is generated as follows:\n")
 for key in d_relay_tree:
   tb_file.write(indent + "// branch node " + str(key) + ": " + str(d_relay_tree[key]) + "\n")
