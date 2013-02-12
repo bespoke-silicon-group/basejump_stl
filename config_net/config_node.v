@@ -4,7 +4,9 @@ module config_node
     data_bits_p = -1,     // number of bits of configurable register associated with this node
     default_p = -1        // default/reset value of configurable register associated with this node
    )
-   (input config_s config_i,
+   (input config_s config_i, // from IO pads
+    input clk_dst_i, // destination side clock from pins
+    input reset_dst_i, // destination side reset from pins
     
     output [data_bits_p - 1 : 0] data_o
    );
@@ -75,6 +77,7 @@ module config_node
   logic                          valid; // begin of packet signal
   logic                          match; // node id match signal
   logic                          data_en; // data_r write enable
+  logic                          ready, ready_r; // handshaking signals from config to destination clock domain
 
   logic [len_width_lp - 1 : 0] packet_len;
   logic [len_width_lp - 1 : 0] count_n, count_r; // bypass counter
@@ -82,6 +85,7 @@ module config_node
 
   logic [data_rx_len_lp - 1 : 0] data_rx;
   logic [data_bits_p - 1 : 0] data_n, data_r; // data payload register
+  logic [data_bits_p - 1 : 0] data_dst; // destination side data payload register
 
   assign count_n = (valid) ? (packet_len - 1) : ((count_non_zero) ? (count_r - 1) : count_r);
          // Load packet length to counter at the beginning of a packet, and
@@ -96,11 +100,22 @@ module config_node
       data_r <= default_p;
     end else begin
       count_r <= count_n;
-      if (data_en)
-        data_r <= data_n;
+      if (data_en) data_r <= data_n;
     end
 
     shift_r <= shift_n;
+  end
+
+  always_ff @ (posedge clk_dst_i) begin
+    if (reset_dst_i) begin
+      ready <= 0;
+      ready_r <= 0;
+      data_dst <= default_p;
+    end else begin
+      ready <= data_en;
+      ready_r <= ready; // ready_r is asserted two clk_dst_i cycles after data_en, avoiding metastable issue between two clock domains
+      if (ready_r) data_dst <= data_r;
+    end
   end
 
   assign reset = & shift_r[0 +: reset_len_lp]; // reset sequence is an all '1' string of reset_len_lp length
@@ -125,6 +140,6 @@ module config_node
   assign count_non_zero = | count_r;
 
   // Output signals
-  assign data_o = data_r;
+  assign data_o = data_dst;
 
 endmodule
