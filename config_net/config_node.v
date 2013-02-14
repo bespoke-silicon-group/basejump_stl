@@ -77,7 +77,10 @@ module config_node
   logic                          valid; // begin of packet signal
   logic                          match; // node id match signal
   logic                          data_en; // data_r write enable
-  logic                          ready, ready_r; // handshaking signals from config to destination clock domain
+  logic                          ready_cfg_r;
+  logic                          ack_dst_r;
+  logic                          ready_dst_r, ready_dst_r2; // registered handshaking signals in destination clock domain
+  logic                          ack_cfg_r, ack_cfg_r2; // registered handshaking signals in config clock domain
 
   logic [len_width_lp - 1 : 0] packet_len;
   logic [len_width_lp - 1 : 0] count_n, count_r; // bypass counter
@@ -85,7 +88,7 @@ module config_node
 
   logic [data_rx_len_lp - 1 : 0] data_rx;
   logic [data_bits_p - 1 : 0] data_n, data_r; // data payload register
-  logic [data_bits_p - 1 : 0] data_dst; // destination side data payload register
+  logic [data_bits_p - 1 : 0] data_dst_r; // destination side data payload register
 
   assign count_n = (valid) ? (packet_len - 1) : ((count_non_zero) ? (count_r - 1) : count_r);
          // Load packet length to counter at the beginning of a packet, and
@@ -98,9 +101,18 @@ module config_node
     if (reset) begin
       count_r <= 0;
       data_r <= default_p;
+      ready_cfg_r <= 0;
+      ack_cfg_r <= 0;
+      ack_cfg_r2 <= 0;
     end else begin
       count_r <= count_n;
-      if (data_en) data_r <= data_n;
+      ack_cfg_r <= ack_dst_r;
+      ack_cfg_r2 <= ack_cfg_r;
+      if (data_en) begin
+        data_r <= data_n;
+        ready_cfg_r <= 1;
+      end
+      if (ack_cfg_r2) ready_cfg_r <= 0;
     end
 
     shift_r <= shift_n;
@@ -108,13 +120,19 @@ module config_node
 
   always_ff @ (posedge clk_dst_i) begin
     if (reset_dst_i) begin
-      ready <= 0;
-      ready_r <= 0;
-      data_dst <= default_p;
+      ready_dst_r <= 0;
+      ready_dst_r2 <= 0;
+      ack_dst_r <= 0;
+      data_dst_r <= default_p;
     end else begin
-      ready <= data_en;
-      ready_r <= ready; // ready_r is asserted two clk_dst_i cycles after data_en, avoiding metastable issue between two clock domains
-      if (ready_r) data_dst <= data_r;
+      ready_dst_r <= ready_cfg_r;
+      ready_dst_r2 <= ready_dst_r;
+      if (ready_dst_r2) begin
+        data_dst_r <= data_r;
+        ack_dst_r <= 1;
+      end else begin
+        ack_dst_r <= 0;
+      end
     end
   end
 
@@ -140,6 +158,6 @@ module config_node
   assign count_non_zero = | count_r;
 
   // Output signals
-  assign data_o = data_dst;
+  assign data_o = data_dst_r;
 
 endmodule

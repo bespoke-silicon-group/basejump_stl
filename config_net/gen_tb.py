@@ -49,7 +49,7 @@ reset_dst = "reset_dst" # destination (logic to be configured) side reset
 clk_cfg = "clk_cfg" # configuration network clock
 clk_cfg_period = 10 # time units
 clk_dst = "clk_dst" # destination (logic to be configured) side clock
-clk_dst_period = 2 # time units
+clk_dst_period = 30 # time units
 sim_time = 500 # time units
 
 # ========== Functions ==========
