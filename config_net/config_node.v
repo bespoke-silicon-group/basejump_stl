@@ -1,20 +1,20 @@
 module config_node
-  #(parameter             // node specific parameters 
+  #(parameter             // node specific parameters
     id_p = -1,            // unique ID of this node
     data_bits_p = -1,     // number of bits of configurable register associated with this node
     default_p = -1        // default/reset value of configurable register associated with this node
    )
-   (input config_s config_i, // from IO pads
-    input clk_dst_i, // destination side clock from pins
-    input reset_dst_i, // destination side reset from pins
-    
+   (input clk, // destination side clock from pins
+    input reset, // destination side reset from pins
+    input config_s config_i, // from IO pads
+
     output [data_bits_p - 1 : 0] data_o
    );
 
   /* ========================================================================== *
    * WARNING: Please do not modify the following hard-coded localparams unless
    *          you are clear about the possible consequences.
-   *    
+   *
    *   frame_bit_size_lp is set to 1 and the current framing bit is defined as
    *   a single '0'.
    *
@@ -40,10 +40,13 @@ module config_node
   localparam shift_width_lp     = (data_rx_len_lp + frame_bit_size_lp + id_width_lp + frame_bit_size_lp + len_width_lp + frame_bit_size_lp);
                                       // shift register width of this node
 
+  localparam sync_len_lp        = 3;  // This has to be no less than 3 because both bit0 and bit1 are used for edge detection,
+                                      // and the msb output is very likely to go metastable.
+
   /* The communication packet is defined as follows:
    * msb                                                                                 lsb
    * |  data_rx  |  frame bits  |  node id  |  frame bits  |  packet length  |  valid bit  |
-   *                                        |<------------------ reset ------------------->|
+   *                                        |<---------------- reset_cfg ----------------->|
    *
    * valid bit is defined as '0'.
    * packet length equals the number of bits in one complete packet, i.e. msb - lsb + 1.
@@ -57,7 +60,7 @@ module config_node
    *
    * Each node contains a shift register that represents the same structure of a complete packet,
    * and the node begins interpret received packet once it sees a '0' in the lsb of the shift
-   * register. The node determines if it is the target according to the node id bits. If so, the 
+   * register. The node determines if it is the target according to the node id bits. If so, the
    * node captures received data, remove framing bits and write the data to its internal register.
    * Otherwise, the node simply passes every bit to its subsequent node.
    */
@@ -72,12 +75,14 @@ module config_node
   } node_packet_s;
 
   node_packet_s shift_n, shift_r; // shift register
-  logic [id_width_lp - 1 : 0]    node_id;
-  logic                          reset;
-  logic                          valid; // begin of packet signal
-  logic                          match; // node id match signal
-  logic                          data_en; // data_r write enable
-  logic                          ready, ready_r; // handshaking signals from config to destination clock domain
+  logic [id_width_lp - 1 : 0] node_id;
+  logic                       cfg_reset; // configuration network reset signal
+  logic                       valid; // begin of packet signal
+  logic                       match; // node id match signal
+  logic                       data_en; // data_r write enable
+  logic                       ready_n, ready_r; // data_r ready and corresponding registered value for clock domain crossing
+                                                // no combinational logic between ready_r and its destination side receiver,
+                                                // to reduce the change to go metastable
 
   logic [len_width_lp - 1 : 0] packet_len;
   logic [len_width_lp - 1 : 0] count_n, count_r; // bypass counter
@@ -85,6 +90,24 @@ module config_node
 
   logic [data_rx_len_lp - 1 : 0] data_rx;
   logic [data_bits_p - 1 : 0] data_n, data_r; // data payload register
+
+  logic [sync_len_lp - 1 : 0] sync_n, sync_r; // clock domain crossing syncronization registers
+
+  // The following two signals are used to detect the reset posedge.
+  // Suppose that apart from this configuration network the remaining part of
+  // the chip resets on 1 of the reset_input, now if the configuration
+  // registers are made to reset on posedge of the reset_input, it is possible
+  // to configure those registers while the rest of chip is being reset,
+  // reducing the chance for the chip to go metastable. The reset_input is
+  // pulled down when it's safe to believe all configuration registers are
+  // properly loaded and stable.
+  // Here it is not necessary to reset configuration registers strictly on the
+  // posedge of reset_input, therefore the following two signals are used to
+  // detect a delayed posedge of reset_input.
+  logic                       reset_r; // registered reset, to be used with reset input to detect posedge of reset
+  logic                       reset_posedge; // derived reset in destination clock domain
+
+  logic                       data_dst_en; // data_r write enable
   logic [data_bits_p - 1 : 0] data_dst; // destination side data payload register
 
   assign count_n = (valid) ? (packet_len - 1) : ((count_non_zero) ? (count_r - 1) : count_r);
@@ -95,30 +118,50 @@ module config_node
   assign shift_n = {config_i.cfg_bit, shift_r[1 +: shift_width_lp - 1]};
 
   always_ff @ (posedge config_i.cfg_clk) begin
-    if (reset) begin
+    if (cfg_reset) begin
       count_r <= 0;
       data_r <= default_p;
+      ready_r <= 0;
     end else begin
       count_r <= count_n;
-      if (data_en) data_r <= data_n;
+      if (data_en) begin
+        data_r <= data_n;
+        ready_r <= ready_n;
+      end
     end
 
     shift_r <= shift_n;
   end
 
-  always_ff @ (posedge clk_dst_i) begin
-    if (reset_dst_i) begin
-      ready <= 0;
-      ready_r <= 0;
+  assign ready_n = ready_r ^ data_en; // xor, invert ready signal when data_en is 1
+
+  assign sync_n = {ready_r, sync_r[1 +: sync_len_lp - 1]}; // clock domain crossing synchronization line
+
+  assign reset_posedge = (reset & 1) & ( ~(reset_r | 0) ); // (reset === 1) & (reset_r === 0)
+
+  always_ff @ (posedge clk) begin
+    if (reset) begin
+      reset_r <= 1;
+    end else begin
+      reset_r <= 0;
+    end
+
+    if (reset_posedge) begin
       data_dst <= default_p;
     end else begin
-      ready <= data_en;
-      ready_r <= ready; // ready_r is asserted two clk_dst_i cycles after data_en, avoiding metastable issue between two clock domains
-      if (ready_r) data_dst <= data_r;
+      if (data_dst_en) data_dst <= data_r;
     end
+
+    sync_r <= sync_n;
   end
 
-  assign reset = & shift_r[0 +: reset_len_lp]; // reset sequence is an all '1' string of reset_len_lp length
+  // An inverted ready_r from config domain indicates a valid data_r word is ready to be captured.
+  // If an edge occurs in ready_r, sooner or later the sync line detects it by having different bits in the least significant 2 positions.
+  // This implementation depends on that the least significant 2 bits in sync line are *NOT* metastable. When they also go metastable,
+  // the circuit may fail. Extend the length of sync_len_lp could increase mean time between failures.
+  assign data_dst_en = sync_r[0] ^ sync_r[1];
+
+  assign cfg_reset = & shift_r[0 +: reset_len_lp]; // reset sequence is an all '1' string of reset_len_lp length
   assign valid = (~count_non_zero) ? (~shift_r.valid) : 1'b0; // shift_r.valid == '0' means valid
   assign packet_len = shift_r.len;
   assign node_id    = shift_r.id;

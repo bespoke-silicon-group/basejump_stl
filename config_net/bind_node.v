@@ -5,8 +5,8 @@ module bind_node
     data_ref_len_p = -1,  // default/reset value of configurable register associated with this node
     logic [data_bits_p - 1 : 0] data_ref_p[data_ref_len_p] = 0  // data_o change reference array
    )
-   (input config_s config_i,
-    input clk_dst_i,
+   (input clk_dst_i,
+    input config_s config_i,
     
     input [data_bits_p - 1 : 0] data_o
    );

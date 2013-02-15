@@ -44,12 +44,12 @@ data_frame_len_lp = 8 # scan chain protocol data frame length in bits
 reset_len_lp = 10 # scan chain reset signal length in bits
 
 # reset, clock and simulation time
-reset_cfg = "reset_cfg" # configuration driver reset
-reset_dst = "reset_dst" # destination (logic to be configured) side reset
+rst_cfg = "rst_cfg" # configuration driver reset
+rst_dst = "rst_dst" # destination (logic to be configured) side reset
 clk_cfg = "clk_cfg" # configuration network clock
-clk_cfg_period = 10 # time units
-clk_dst = "clk_dst" # destination (logic to be configured) side clock
-clk_dst_period = 2 # time units
+clk_cfg_period = 30 # time units
+clk_dst = "clk" # destination (logic to be configured) side clock
+clk_dst_period = 10 # time units
 sim_time = 500 # time units
 
 # ========== Functions ==========
@@ -122,9 +122,9 @@ def write_inst_node(file, id, data_bits, default, config_i, data_o):
                        .data_bits_p(" + data_bits + "),\n\
                        .default_p(" + data_bits + "'b" + default + ") )\n\
     inst_id_" + \
-          id + "_dut(  .config_i(" + config_i + "),\n\
-                       .clk_dst_i(" + clk_dst + "),\n\
-                       .reset_dst_i(" + reset_dst + "),\n\
+          id + "_dut(  .clk(" + clk_dst + "),\n\
+                       .reset(" + rst_dst + "),\n\
+                       .config_i(" + config_i + "),\n\
                        .data_o(" + data_o + ") );\n")
 
 def write_relay_node(file, id, config_i, config_o):
@@ -343,9 +343,9 @@ for key in d_reference:
 # write clock and reset signals
 tb_file.write("\n" + indent + "//\n")
 write_logic(tb_file, clk_cfg)
-write_logic(tb_file, reset_cfg)
+write_logic(tb_file, rst_cfg)
 write_logic(tb_file, clk_dst)
-write_logic(tb_file, reset_dst)
+write_logic(tb_file, rst_dst)
 
 # declare relay node outputs struct
 write_config_s(tb_file, "relay_root_i") # relay_id 0 is the root
@@ -388,11 +388,13 @@ tb_file.write("\n")
 tb_file.write(indent + "// clock generator\n")
 tb_file.write(indent + "initial begin\n" + \
               indent + indent + clk_cfg + " = 1;\n" + \
-              indent + indent + reset_cfg + " = 1;\n" + \
+              indent + indent + rst_cfg + " = 1;\n" + \
               indent + indent + clk_dst + " = 1;\n" + \
-              indent + indent + reset_dst + " = 1;\n" + \
-              indent + indent + "#15 " + reset_cfg + " = 0;\n" + \
-              indent + indent + "#3  " + reset_dst + " = 0;\n" + \
+              indent + indent + rst_dst + " = 1;\n" + \
+              indent + indent + "#" + str(clk_cfg_period / 2) + " " + rst_cfg + " = 0;\n" + \
+              indent + indent + "#" + str(clk_dst_period)     + " " + rst_dst + " = 0;\n" + \
+              indent + indent + "#" + str(clk_dst_period)     + " " + rst_dst + " = 1;\n" + \
+              indent + indent + "#" + str(clk_dst_period)     + " " + rst_dst + " = 0;\n" + \
               indent + "end\n" + \
               indent + "always #" + str(clk_cfg_period / 2) + " begin\n" + \
               indent + indent + clk_cfg + " = ~" + clk_cfg + ";\n" + \
@@ -407,7 +409,7 @@ tb_file.write(indent + "// instantiate config_driver to deliver configuration bi
 tb_file.write(indent + "config_driver #(.test_vector_p(test_vector_lp),\n" + \
               indent + "                .test_vector_bits_p(test_vector_bits_lp) )\n" + \
               indent + "    inst_driver(.clk_i(" + clk_cfg + "),\n" + \
-              indent + "                .reset_i(" + reset_cfg + "),\n" + \
+              indent + "                .reset_i(" + rst_cfg + "),\n" + \
               indent + "                .config_o(relay_root_i) );\n")
 
 # write output verification processes
@@ -426,7 +428,7 @@ for key in d_reference:
                 indent + "                                .data_bits_p(" + str(data_bits) + "),\n" + \
                 indent + "                                .data_ref_len_p(" + str(tests) + "),\n" + \
                 indent + "                                .data_ref_p(" + data_ref + ") )\n" + \
-                indent + "                inst_id_" + str(test_id) + "_bind (config_i, clk_dst_i, data_o);\n\n")
+                indent + "                inst_id_" + str(test_id) + "_bind (clk, config_i, data_o);\n\n")
 
 # write simulation ending condition
 tb_file.write("\n")
