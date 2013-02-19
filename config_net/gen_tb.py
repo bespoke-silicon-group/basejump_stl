@@ -437,6 +437,13 @@ tb_file.write(indent + "initial begin\n" + \
               indent + indent + "#" + str(sim_time) + " $finish;\n" + \
               indent + "end\n")
 
+# write "final" block
+tb_file.write("\n")
+tb_file.write(indent + "// simulation statistics\n")
+tb_file.write(indent + "final begin\n" + \
+              indent + indent + "$display(\"\\n  - - - Simulation Statistics - - -\\n\");\n" + \
+              indent + "end\n")
+
 tb_file.write("\n//\n")
 tb_file.write("endmodule\n\n")
 

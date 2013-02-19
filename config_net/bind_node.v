@@ -23,6 +23,7 @@ module bind_node
    // to data_o. This might guarantee simulation correct even at gate level,
    // when all flip-flops don't necessarily change at the same time.
    int data_ref_idx = 0;
+   int errors = 0;
    always @ (negedge clk_dst_i) begin
      if(data_ref_idx == 0) begin
        if (data_o === data_ref_p[0]) begin
@@ -34,8 +35,21 @@ module bind_node
          $display("  @time %0d: \t output data_o_%0d\t changed to %b", $time, id_p, data_o);
          if (data_o !== data_ref_p[data_ref_idx]) begin
            $display("  @time %0d: \t ERROR output data_o_%0d = %b <-> expected = %b", $time, id_p, data_o, data_ref_p[data_ref_idx]);
+           errors += 1;
          end
          data_ref_idx += 1;
+       end
+     end
+   end
+
+   final begin
+     if(data_ref_idx == 0) begin
+       $display(" !FAIL: Config node %5d has not reset properly!", id_p);
+     end else begin
+       if (errors != 0) begin
+         $display(" !FAIL: Config node %5d has received %0d wrong packet(s)!", id_p, errors);
+       end else begin
+         $display("  PASS: Config node %5d is probably working properly.", id_p);
        end
      end
    end
