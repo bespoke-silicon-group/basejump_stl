@@ -80,9 +80,9 @@ module config_node
   logic                       valid; // begin of packet signal
   logic                       match; // node id match signal
   logic                       data_en; // data_r write enable
-  logic                       ready_n, ready_r; // data_r ready and corresponding registered value for clock domain crossing
-                                                // no combinational logic between ready_r and its destination side receiver,
-                                                // to reduce the change to go metastable
+  logic                       ready_n, ready_r, ready_r2; // data_r ready and corresponding registers for clock domain crossing
+                                                          // no combinational logic between ready_r2 and its destination side receiver,
+                                                          // to reduce the change to go metastable
 
   logic [len_width_lp - 1 : 0] packet_len;
   logic [len_width_lp - 1 : 0] count_n, count_r; // bypass counter
@@ -122,12 +122,14 @@ module config_node
       count_r <= 0;
       data_r <= default_p;
       ready_r <= 0;
+      ready_r2 <= 0;
     end else begin
       count_r <= count_n;
       if (data_en) begin
         data_r <= data_n;
         ready_r <= ready_n;
       end
+      ready_r2 <= ready_r;
     end
 
     shift_r <= shift_n;
