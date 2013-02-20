@@ -47,7 +47,7 @@ module bind_node
        $display(" !FAIL: Config node %5d has not reset properly!", id_p);
      end else begin
        if (errors != 0) begin
-         $display(" !FAIL: Config node %5d has received %0d wrong packet(s)!", id_p, errors);
+         $display(" !FAIL: Config node %5d has received at least %0d wrong packet(s)!", id_p, errors);
        end else begin
          $display("  PASS: Config node %5d is probably working properly.", id_p);
        end

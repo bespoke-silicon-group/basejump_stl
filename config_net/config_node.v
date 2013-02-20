@@ -107,8 +107,8 @@ module config_node
   logic                       reset_r; // registered reset, to be used with reset input to detect posedge of reset
   logic                       reset_posedge; // derived reset in destination clock domain
 
-  logic                       data_dst_en; // data_r write enable
-  logic [data_bits_p - 1 : 0] data_dst; // destination side data payload register
+  logic                       data_dst_en; // data_dst_r write enable
+  logic [data_bits_p - 1 : 0] data_dst, data_dst_r; // destination side data payload register
 
   assign count_n = (valid) ? (packet_len - 1) : ((count_non_zero) ? (count_r - 1) : count_r);
          // Load packet length to counter at the beginning of a packet, and
@@ -141,6 +141,19 @@ module config_node
 
   assign reset_posedge = (reset & 1) & ( ~(reset_r | 0) ); // (reset === 1) & (reset_r === 0)
 
+  // The NAND gate array is used as filters to clear cross clock domain data's
+  // metastability when entering a new clock domain. Ths idea is based on the
+  // assumption that a normal 4-transistor NAND gate (A, B -> A nand B) is
+  // safe to block signal A when signal B is 0. When signal B is 1, its output
+  // may hover when signal A is transitioning, and the unstable output may
+  // violate the receiver register's setup time constraints.
+  // In this config node context, signal data_r is from a different clock
+  // domain than data_dst_en and data_dst.
+  rNandMeta #(.width_p(data_bits_p))
+    data_dst_filter (.data_a_i(data_r),
+                     .data_b_i({data_bits_p {data_dst_en}}),
+                     .nand_o(data_dst) );
+
   always_ff @ (posedge clk) begin
     if (reset) begin
       reset_r <= 1;
@@ -149,9 +162,9 @@ module config_node
     end
 
     if (reset_posedge) begin
-      data_dst <= default_p;
+      data_dst_r <= ~default_p; // data_dst_r will be inverted in the end
     end else begin
-      if (data_dst_en) data_dst <= data_r;
+      if (data_dst_en) data_dst_r <= data_dst; // data_dst is the inverted receiving data
     end
 
     sync_r <= sync_n;
@@ -185,6 +198,6 @@ module config_node
   assign count_non_zero = | count_r;
 
   // Output signals
-  assign data_o = data_dst;
+  assign data_o = ~data_dst_r; // data_dst_r is the inverted data_r
 
 endmodule
