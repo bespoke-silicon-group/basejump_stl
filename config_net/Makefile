@@ -1,9 +1,14 @@
 include Makefile.cadenv
 
-VCS_FLAGS = -o $@ +v2k +vc -sverilog -timescale=1ns/1ps +vcs+lic+wait +multisource_int_delays +neg_tchk +libext+.v+.vlib+.vh 
+SYNOPSYS = /gro/cad/synopsys/
+
+GTECH_DIR = $(SYNOPSYS)/icc/F-2011.09-SP5/packages/gtech/src_ver
+GTECH_SIM_LIB = $(SYNOPSYS)/icc/F-2011.09-SP5/packages/gtech/src_ver/gtech_lib.v
+
+VCS_FLAGS = -o $@ +v2k +vc -sverilog -timescale=1ns/1ps +vcs+lic+wait +multisource_int_delays +neg_tchk +libext+.v+.vlib+.vh
 
 TESTBENCH = config_net_tb.v
-HDL_SOURCE = config_s.v utils.v rNandMeta.v config_node.v relay_node.v config_driver.v bind_node.v tile.v $(TESTBENCH)
+HDL_SOURCE = $(GTECH_DIR)/GTECH_NAND2.v config_s.v utils.v rNandMeta.v config_node.v relay_node.v config_driver.v bind_node.v tile.v $(TESTBENCH)
 
 all: testfile testbench simulator sim
 

@@ -7,6 +7,11 @@ module rNandMeta
     output [width_p - 1 : 0] nand_o
    );
 
-   assign nand_o = ~ (data_a_i & data_b_i);
+  genvar i;
+  generate
+    for(i = 0; i < width_p; i++) begin
+      GTECH_NAND2 rNandMeta_U (.A(data_a_i[i]), .B(data_b_i[i]), .Z(nand_o[i]));
+    end
+  endgenerate
 
 endmodule
