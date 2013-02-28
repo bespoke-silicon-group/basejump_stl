@@ -35,10 +35,11 @@ l_test_packet = []
 d_reference = {}
 
 # scan chain communication protocol parameters, applying to all nodes
-valid_bit = '0' #
+valid_bits = "10" #
 frame_bit = '0' #
 len_width_lp = 8 # lenth field width in the scan chain
 id_width_lp = 8 # id field width in the scan chain
+valid_bit_size_lp = 2 # scan chain protocol valid bits size
 frame_bit_size_lp = 1 # scan chain protocol frame bits size
 data_frame_len_lp = 8 # scan chain protocol data frame length in bits
 reset_len_lp = 10 # scan chain reset signal length in bits
@@ -258,14 +259,18 @@ for test_id in l_test_id:
   send_data = insert_frame_bits(l_test_data[test_idx])
   data_bits = d_inst_data_bits[test_id]
   send_data_bits = data_bits + (data_bits / data_frame_len_lp) + frame_bit_size_lp
-  packet_len = send_data_bits + frame_bit_size_lp + id_width_lp + frame_bit_size_lp + len_width_lp + frame_bit_size_lp
+  packet_len = send_data_bits + frame_bit_size_lp + \
+               id_width_lp + frame_bit_size_lp + \
+               len_width_lp + frame_bit_size_lp + \
+               valid_bit_size_lp
   test_vector_bits += packet_len
   test_packet = send_data +\
                 "_" + frame_bit +\
                 "_" + dec2bin(test_id, id_width_lp) +\
                 "_" + frame_bit +\
                 "_" + dec2bin(packet_len, len_width_lp) +\
-                "_" + valid_bit
+                "_" + frame_bit +\
+                "_" + valid_bits
   l_test_packet.append(test_packet)
   test_idx += 1
 
@@ -308,7 +313,8 @@ for key in d_inst_data_bits:
   send_data_bits = data_bits + (data_bits / data_frame_len_lp) + frame_bit_size_lp
   shift_chain_width += send_data_bits + frame_bit_size_lp +\
                        id_width_lp + frame_bit_size_lp +\
-                       len_width_lp + frame_bit_size_lp
+                       len_width_lp + frame_bit_size_lp +\
+                       valid_bit_size_lp
 
 # revise simulation time to ensure all test bits walks through the whole scan chain
 sim_time += (test_vector_bits + shift_chain_width + relay_nodes) * clk_cfg_period
@@ -319,6 +325,7 @@ tb_file.write("module config_net_tb;\n\n")
 # write localparam
 write_localparam(tb_file, "len_width_lp       ", str(len_width_lp))
 write_localparam(tb_file, "id_width_lp        ", str(id_width_lp))
+write_localparam(tb_file, "valid_bit_size_lp  ", str(valid_bit_size_lp))
 write_localparam(tb_file, "frame_bit_size_lp  ", str(frame_bit_size_lp))
 write_localparam(tb_file, "data_frame_len_lp  ", str(data_frame_len_lp))
 write_localparam(tb_file, "reset_len_lp       ", str(reset_len_lp))

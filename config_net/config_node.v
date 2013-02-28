@@ -26,6 +26,7 @@ module config_node
    *   id_width_lp and len_width_lp also should be less than reset_len_lp.
    * ========================================================================== */
   // local parameters same for all nodes in the configuration chain
+  localparam valid_bit_size_lp  =  2;
   localparam frame_bit_size_lp  =  1;
   localparam data_frame_len_lp  =  8;  // bit '0' is inserted every data_frame_len_lp in data bits
   localparam id_width_lp        =  8;  // number of bits to represent the ID of a node, should be able to keep the max ID in the whole chain
@@ -37,18 +38,22 @@ module config_node
                                       // + frame_bit_size_lp means the end, or msb of received data is always framing bits
                                       // if data_bits_p is a multiple of data_frame_len_lp, "00" is expected at the end of received data
 
-  localparam shift_width_lp     = (data_rx_len_lp + frame_bit_size_lp + id_width_lp + frame_bit_size_lp + len_width_lp + frame_bit_size_lp);
-                                      // shift register width of this node
+  localparam shift_width_lp     = (data_rx_len_lp + frame_bit_size_lp +
+                                   id_width_lp + frame_bit_size_lp +
+                                   len_width_lp + frame_bit_size_lp +
+                                   valid_bit_size_lp);
+                                  // shift register width of this node
 
+  // ==> make sync_len_lp an interface parameter?
+  // ==> min length 4?
   localparam sync_len_lp        = 3;  // This has to be no less than 3 because both bit0 and bit1 are used for edge detection,
                                       // and the msb output is very likely to go metastable.
 
   /* The communication packet is defined as follows:
-   * msb                                                                                 lsb
-   * |  data_rx  |  frame bits  |  node id  |  frame bits  |  packet length  |  valid bit  |
-   *                                        |<---------------- reset_cfg ----------------->|
+   * msb                                                                                                  lsb
+   * |  data_rx  |  frame bits  |  node id  |  frame bits  |  packet length  |   frame bits  |  valid bits  |
    *
-   * valid bit is defined as '0'.
+   * valid bit is defined as "10".
    * packet length equals the number of bits in one complete packet, i.e. msb - lsb + 1.
    * frame bits are certain patterns to separate packet content, defined as '0'.
    * node id is an unique integer to identify current node.
@@ -67,11 +72,12 @@ module config_node
 
   typedef struct packed {
     logic [data_rx_len_lp - 1 : 0]       rx; // data_rx
-    logic                                f1; // frame bit 1
+    logic                                f2; // frame bit 2
     logic [id_width_lp - 1 : 0]          id; // node id
-    logic [frame_bit_size_lp - 1 : 0]    f0; // frame bit 0
+    logic [frame_bit_size_lp - 1 : 0]    f1; // frame bit 1
     logic [len_width_lp - 1 : 0]        len; // packet length
-    logic                             valid; // valid bit
+    logic [frame_bit_size_lp - 1 : 0]    f0; // frame bit 0
+    logic [valid_bit_size_lp - 1 : 0] valid; // valid bits
   } node_packet_s;
 
   node_packet_s shift_n, shift_r; // shift register
@@ -105,12 +111,12 @@ module config_node
   // posedge of reset_input, therefore the following two signals are used to
   // detect a delayed posedge of reset_input.
   logic                       reset_r; // registered reset, to be used with reset input to detect posedge of reset
-  logic                       reset_posedge; // derived reset in destination clock domain
+  logic                       default_en; // derived reset-to-default in destination clock domain
 
   logic                       data_dst_en; // data_dst_r write enable
   logic [data_bits_p - 1 : 0] data_dst, data_dst_r; // destination side data payload register
 
-  assign count_n = (valid) ? (packet_len - 1) : ((count_non_zero) ? (count_r - 1) : count_r);
+  assign count_n = (valid) ? (packet_len - valid_bit_size_lp) : ((count_non_zero) ? (count_r - 1) : count_r);
          // Load packet length to counter at the beginning of a packet, and
          // decrease its value while it's non-zero. The node does not care
          // about content in its shift register when the counter is not zero.
@@ -139,7 +145,7 @@ module config_node
 
   assign sync_n = {ready_r, sync_r[1 +: sync_len_lp - 1]}; // clock domain crossing synchronization line
 
-  assign reset_posedge = (reset & 1) & ( ~(reset_r | 0) ); // (reset === 1) & (reset_r === 0)
+  assign default_en = (reset & 1) & ( ~(reset_r | 0) ); // (reset === 1) & (reset_r === 0)
 
   // The NAND gate array is used as filters to clear cross clock domain data's
   // metastability when entering a new clock domain. Ths idea is based on the
@@ -156,12 +162,12 @@ module config_node
 
   always_ff @ (posedge clk) begin
     if (reset) begin
-      reset_r <= 1;
+      reset_r <= 1; //==> rename
     end else begin
       reset_r <= 0;
     end
 
-    if (reset_posedge) begin
+    if (default_en) begin
       data_dst_r <= ~default_p; // data_dst_r will be inverted in the end
     end else begin
       if (data_dst_en) data_dst_r <= data_dst; // data_dst is the inverted receiving data
@@ -177,7 +183,7 @@ module config_node
   assign data_dst_en = sync_r[0] ^ sync_r[1];
 
   assign cfg_reset = & shift_r[0 +: reset_len_lp]; // reset sequence is an all '1' string of reset_len_lp length
-  assign valid = (~count_non_zero) ? (~shift_r.valid) : 1'b0; // shift_r.valid == '0' means valid
+  assign valid = (~count_non_zero) ? (shift_r.valid === 2'b10) : 1'b0; // shift_r.valid === "10" means valid
   assign packet_len = shift_r.len;
   assign node_id    = shift_r.id;
   assign data_rx    = shift_r.rx;
@@ -193,7 +199,7 @@ module config_node
     end
   endgenerate
 
-  assign match = node_id == id_p;
+  assign match = node_id === id_p;
   assign data_en = valid & match;
   assign count_non_zero = | count_r;
 
