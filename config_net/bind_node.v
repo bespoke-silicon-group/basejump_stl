@@ -48,6 +48,10 @@ module bind_node
      end else begin
        if (errors != 0) begin
          $display(" !FAIL: Config node %5d has received at least %0d wrong packet(s)!", id_p, errors);
+       end else if (data_ref_idx < data_ref_len_p) begin
+         $display(" !FAIL: Config node %5d has missed at least %0d packet(s)!", id_p, data_ref_len_p - data_ref_idx);
+       end else if (data_ref_idx > data_ref_len_p) begin
+         $display(" !FAIL: Config node %5d has received at least %0d more packet(s)!", id_p, data_ref_idx - data_ref_len_p);
        end else begin
          $display("  PASS: Config node %5d is probably working properly.", id_p);
        end
