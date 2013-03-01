@@ -96,7 +96,7 @@ module config_node
   logic [data_rx_len_lp - 1 : 0] data_rx;
   logic [data_bits_p - 1 : 0] data_n, data_r; // data payload register
 
-  logic [sync_shift_len_lp - 1 : 0] sync_n, sync_r; // clock domain crossing syncronization registers + edge detection registers
+  logic [sync_shift_len_lp - 1 : 0] sync_shift_n, sync_shift_r; // clock domain crossing syncronization registers + edge detection registers
 
   // The following two signals are used to detect the reset posedge.
   // Suppose that apart from this configuration network the remaining part of
@@ -142,7 +142,7 @@ module config_node
 
   assign ready_n = ready_r ^ data_en; // xor, invert ready signal when data_en is 1
 
-  assign sync_n = {ready_r, sync_r[1 +: sync_shift_len_lp - 1]}; // clock domain crossing synchronization line
+  assign sync_shift_n = {ready_r, sync_shift_r[1 +: sync_shift_len_lp - 1]}; // clock domain crossing synchronization line
 
   assign default_en = reset & recovered; // (reset === 1) & (recovered === 1)
 
@@ -172,14 +172,14 @@ module config_node
       if (data_dst_en) data_dst_r <= data_dst; // data_dst is the inverted receiving data
     end
 
-    sync_r <= sync_n;
+    sync_shift_r <= sync_shift_n;
   end
 
   // An inverted ready_r from config domain indicates a valid data_r word is ready to be captured.
   // If an edge occurs in ready_r, sooner or later the sync line detects it by having different bits in the least significant 2 positions.
   // This implementation depends on that the least significant 2 bits in sync line are *NOT* metastable. When they also go metastable,
   // the circuit may fail. Extend the length of sync_len_lp could increase mean time between failures.
-  assign data_dst_en = sync_r[0] ^ sync_r[1];
+  assign data_dst_en = sync_shift_r[0] ^ sync_shift_r[1];
 
   assign cfg_reset = & shift_r[0 +: reset_len_lp]; // reset sequence is an all '1' string of reset_len_lp length
   assign valid = (~count_non_zero) ? (shift_r.valid === 2'b10) : 1'b0; // shift_r.valid === "10" means a valid packet arrives
