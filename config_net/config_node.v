@@ -44,10 +44,9 @@ module config_node
                                    valid_bit_size_lp);
                                   // shift register width of this node
 
-  // ==> make sync_len_lp an interface parameter?
-  // ==> min length 4?
-  localparam sync_len_lp        = 3;  // This has to be no less than 3 because both bit0 and bit1 are used for edge detection,
-                                      // and the msb output is very likely to go metastable.
+  localparam sync_len_lp        = 2;  // This has to be no less than 2 to provide reasonable MTBF
+
+  localparam sync_shift_len_lp  = sync_len_lp + 2;  // + 2 is to integrate the two edge detecting flip-flops
 
   /* The communication packet is defined as follows:
    * msb                                                                                                  lsb
@@ -97,7 +96,7 @@ module config_node
   logic [data_rx_len_lp - 1 : 0] data_rx;
   logic [data_bits_p - 1 : 0] data_n, data_r; // data payload register
 
-  logic [sync_len_lp - 1 : 0] sync_n, sync_r; // clock domain crossing syncronization registers
+  logic [sync_shift_len_lp - 1 : 0] sync_n, sync_r; // clock domain crossing syncronization registers + edge detection registers
 
   // The following two signals are used to detect the reset posedge.
   // Suppose that apart from this configuration network the remaining part of
@@ -143,7 +142,7 @@ module config_node
 
   assign ready_n = ready_r ^ data_en; // xor, invert ready signal when data_en is 1
 
-  assign sync_n = {ready_r, sync_r[1 +: sync_len_lp - 1]}; // clock domain crossing synchronization line
+  assign sync_n = {ready_r, sync_r[1 +: sync_shift_len_lp - 1]}; // clock domain crossing synchronization line
 
   assign default_en = (reset & 1) & ( ~(reset_r | 0) ); // (reset === 1) & (reset_r === 0)
 
@@ -183,7 +182,7 @@ module config_node
   assign data_dst_en = sync_r[0] ^ sync_r[1];
 
   assign cfg_reset = & shift_r[0 +: reset_len_lp]; // reset sequence is an all '1' string of reset_len_lp length
-  assign valid = (~count_non_zero) ? (shift_r.valid === 2'b10) : 1'b0; // shift_r.valid === "10" means valid
+  assign valid = (~count_non_zero) ? (shift_r.valid === 2'b10) : 1'b0; // shift_r.valid === "10" means a valid packet arrives
   assign packet_len = shift_r.len;
   assign node_id    = shift_r.id;
   assign data_rx    = shift_r.rx;
