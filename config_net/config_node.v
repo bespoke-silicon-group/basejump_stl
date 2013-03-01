@@ -109,7 +109,7 @@ module config_node
   // Here it is not necessary to reset configuration registers strictly on the
   // posedge of reset_input, therefore the following two signals are used to
   // detect a delayed posedge of reset_input.
-  logic                       reset_r; // registered reset, to be used with reset input to detect posedge of reset
+  logic                       recovered; // registered reset, to be used with reset input to detect posedge of reset
   logic                       default_en; // derived reset-to-default in destination clock domain
 
   logic                       data_dst_en; // data_dst_r write enable
@@ -144,7 +144,7 @@ module config_node
 
   assign sync_n = {ready_r, sync_r[1 +: sync_shift_len_lp - 1]}; // clock domain crossing synchronization line
 
-  assign default_en = (reset & 1) & ( ~(reset_r | 0) ); // (reset === 1) & (reset_r === 0)
+  assign default_en = reset & recovered; // (reset === 1) & (recovered === 1)
 
   // The NAND gate array is used as filters to clear cross clock domain data's
   // metastability when entering a new clock domain. Ths idea is based on the
@@ -161,9 +161,9 @@ module config_node
 
   always_ff @ (posedge clk) begin
     if (reset) begin
-      reset_r <= 1; //==> rename
+      recovered <= 0;
     end else begin
-      reset_r <= 0;
+      recovered <= 1;
     end
 
     if (default_en) begin
