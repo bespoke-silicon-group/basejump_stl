@@ -144,7 +144,7 @@ module config_node
 
   assign sync_shift_n = {ready_r, sync_shift_r[1 +: sync_shift_len_lp - 1]}; // clock domain crossing synchronization line
 
-  assign default_en = reset & recovered; // (reset === 1) & (recovered === 1)
+  assign default_en = reset & recovered; // (reset == 1) & (recovered == 1)
 
   // The NAND gate array is used as filters to clear cross clock domain data's
   // metastability when entering a new clock domain. Ths idea is based on the
@@ -182,7 +182,7 @@ module config_node
   assign data_dst_en = sync_shift_r[0] ^ sync_shift_r[1];
 
   assign cfg_reset = & shift_r[0 +: reset_len_lp]; // reset sequence is an all '1' string of reset_len_lp length
-  assign valid = (~count_non_zero) ? (shift_r.valid === 2'b10) : 1'b0; // shift_r.valid === "10" means a valid packet arrives
+  assign valid = (~count_non_zero) ? (shift_r.valid == 2'b10) : 1'b0; // shift_r.valid == "10" means a valid packet arrives
   assign packet_len = shift_r.len;
   assign node_id    = shift_r.id;
   assign data_rx    = shift_r.rx;
@@ -198,7 +198,7 @@ module config_node
     end
   endgenerate
 
-  assign match = node_id === id_p;
+  assign match = node_id == id_p;
   assign data_en = valid & match;
   assign count_non_zero = | count_r;
 
