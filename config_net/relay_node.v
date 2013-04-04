@@ -1,3 +1,5 @@
+`include "config_s.v"
+
 module relay_node
    (input config_s config_i,
     output config_s config_o

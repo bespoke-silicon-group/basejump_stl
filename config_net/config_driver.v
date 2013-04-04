@@ -1,3 +1,5 @@
+`include "config_s.v"
+
 module config_driver
   #(parameter
     test_vector_p = -1,

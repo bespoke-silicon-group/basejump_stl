@@ -1,3 +1,5 @@
+`include "config_s.v"
+
 module config_node
   #(parameter             // node specific parameters
     id_p = -1,            // unique ID of this node
