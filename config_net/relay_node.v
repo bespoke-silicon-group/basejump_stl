@@ -1,4 +1,4 @@
-`include "config_s.v"
+`include "config_defs.v"
 
 module relay_node
    (input config_s config_i,

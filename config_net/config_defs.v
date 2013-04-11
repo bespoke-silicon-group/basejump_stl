@@ -1,6 +1,6 @@
-`ifndef TYPE_CONFIG_S
+`ifndef CONFIG_DEFS_V
 
-`define TYPE_CONFIG_S
+`define CONFIG_DEFS_V
 
 typedef struct packed {
   logic cfg_clk;

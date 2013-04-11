@@ -1,4 +1,4 @@
-`include "config_s.v"
+`include "config_defs.v"
 
 module config_driver
   #(parameter

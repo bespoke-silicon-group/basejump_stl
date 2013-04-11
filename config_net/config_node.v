@@ -1,4 +1,4 @@
-`include "config_s.v"
+`include "config_defs.v"
 
 module config_node
   #(parameter             // node specific parameters
@@ -34,7 +34,7 @@ module config_node
   localparam id_width_lp        =  8;  // number of bits to represent the ID of a node, should be able to keep the max ID in the whole chain
   localparam len_width_lp       =  8;  // number of bits to represent number of bits in the configuration packet
   localparam reset_len_lp       = 10;  // reset sequence length
-
+  localparam sync_len_lp        =  2;  // This has to be no less than 2 to provide reasonable MTBF
 
   localparam data_rx_len_lp     = (data_bits_p + (data_bits_p / data_frame_len_lp) + frame_bit_size_lp);
                                       // + frame_bit_size_lp means the end, or msb of received data is always framing bits
@@ -46,7 +46,6 @@ module config_node
                                    valid_bit_size_lp);
                                   // shift register width of this node
 
-  localparam sync_len_lp        = 2;  // This has to be no less than 2 to provide reasonable MTBF
 
   localparam sync_shift_len_lp  = sync_len_lp + 2;  // + 2 is to integrate the two edge detecting flip-flops
 
