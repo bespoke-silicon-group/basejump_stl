@@ -4,6 +4,9 @@
 
 `include "config_defs.v"
 
+`define TILE_MAX_X 1 //==>
+`define TILE_MAX_Y 1
+
 // WARNING: All items here are created specially for the GreenDroid chip.
 // When the config_node design is used in other projects, they must be revised.
 
@@ -26,11 +29,6 @@ typedef enum {tGF28_RAM_PINS} eConfigTypes;
 localparam tile_x_bits_lp  = (`TILE_MAX_X < 2) ? 1 : $clog2(`TILE_MAX_X);
 localparam tile_y_bits_lp  = (`TILE_MAX_Y < 2) ? 1 : $clog2(`TILE_MAX_Y);
 localparam id_type_bits_lp = id_width_lp - tile_x_bits_lp - tile_y_bits_lp;
-typedef struct packed {
-  logic [id_type_bits_lp - 1 : 0] id_type;
-  logic [tile_y_bits_lp - 1 : 0]  tile_y;
-  logic [tile_x_bits_lp - 1 : 0]  tile_x;
-} config_id_s;
 
 // Tasks and functions without the optional keyword `automatic` are static,
 // with all declared items being statically allocated. These items shall be
@@ -45,19 +43,18 @@ typedef struct packed {
 // Function for calculating unique ID parameters for config_nodes
 function automatic integer config_id_gen;
   input integer xpos, ypos;
-  input eConfigTypes ctype;
+  // Data type 'enum of type int' is not supported in constant function.
+  // However, 'enum of type int' can still be passed to this function as a parameter and enum will be converted into int.
+  input integer ctype;
 
-  config_id_s  config_id;
+  // Assertions are not supported in constant functions; need for a way to throw exception here.
+  //assert (xpos  < `TILE_MAX_X)              else $error("Error: xpos (%0d) is not less than TILE_MAX_X (%0d)!",  xpos,  `TILE_MAX_X);
+  //assert (ypos  < `TILE_MAX_Y)              else $error("Error: ypos (%0d) is not less than TILE_MAX_Y (%0d)!",  ypos,  `TILE_MAX_Y);
+  //assert (ctype < $pow(2, id_type_bits_lp)) else $error("Error: ctype (%0d) does not fit in id_type_bits (%0d)!", ctype, id_type_bits_lp);
 
-  // Attention: SystemVerilog assertions only work in simulations but not during elaboration and synthesis.
-  // ==> Need for a way to throw exception here during synthesis.
-  assert (xpos  < `TILE_MAX_X)              else $error("Error: xpos (%0d) is not less than TILE_MAX_X (%0d)!",  xpos,  `TILE_MAX_X);
-  assert (ypos  < `TILE_MAX_Y)              else $error("Error: ypos (%0d) is not less than TILE_MAX_Y (%0d)!",  ypos,  `TILE_MAX_Y);
-  assert (ctype < $pow(2, id_type_bits_lp)) else $error("Error: ctype (%0d) does not fit in id_type_bits (%0d)!", ctype, id_type_bits_lp);
-
-  config_id = '{ctype, ypos, xpos};
-
-  config_id_gen = config_id; // config_id_gen is casted into 32-bit integer
+  config_id_gen = (ctype << (tile_y_bits_lp + tile_x_bits_lp))
+                | ( ypos << (tile_y_bits_lp + tile_x_bits_lp))
+                | ( xpos );
 
 endfunction
 
