@@ -1,6 +1,6 @@
 `include "config_defs.v"
 
-module bind_node
+module config_bind
   #(parameter             // node specific parameters 
     id_p = -1,            // unique ID of this node
     data_bits_p = -1,     // number of bits of configurable register associated with this node
