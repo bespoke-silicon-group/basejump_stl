@@ -5,7 +5,7 @@ module config_bind
     id_p = -1,            // unique ID of this node
     data_bits_p = -1,     // number of bits of configurable register associated with this node
     data_ref_len_p = -1,  // default/reset value of configurable register associated with this node
-    logic [data_bits_p - 1 : 0] data_ref_p[data_ref_len_p] = 0  // data_o change reference array
+    logic [data_bits_p - 1 : 0] data_ref_p[data_ref_len_p] = '{default:'b0}  // data_o change reference array
    )
    (input clk_dst_i,
     input config_s config_i,

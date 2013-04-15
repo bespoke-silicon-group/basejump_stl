@@ -2,11 +2,11 @@
 export SYNOPSYS=/gro/cad/synopsys
 export LM_LICENSE_FILE=27000@bbfs-00.calit2.net
 export SNPSLMD_LICENSE_FILE=27000@bbfs-00.calit2.net
-export VCS_RELEASE=vcs/C-2009.06
-export DC_RELEASE=syn/C-2009.06-SP2
-export MW_RELEASE=mw
-export ICC_RELEASE=$(DC_RELEASE)
-export PTS_RELEASE=pts/C-2009.06-SP2
+export VCS_RELEASE=vcs/F-2011.12
+export DC_RELEASE=syn/F-2011.09-SP5
+export MW_RELEASE=mw/F-2011.09-SP5
+export ICC_RELEASE=icc/F-2011.09-SP5
+export PTS_RELEASE=pts/F-2011.12-SP3
 
 export VCS_BIN=$(SYNOPSYS)/$(VCS_RELEASE)/bin
 export DC_BIN=$(SYNOPSYS)/$(DC_RELEASE)/bin
