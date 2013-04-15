@@ -448,7 +448,7 @@ tb_file.write(indent + "initial begin\n" + \
 tb_file.write("\n")
 tb_file.write(indent + "// simulation statistics\n")
 tb_file.write(indent + "final begin\n" + \
-              indent + indent + "$display(\"\\n  - - - Simulation Statistics - - -\\n\");\n" + \
+              indent + indent + "$display(\"\\n  - - - Configuration Network Simulation Statistics - - -\\n\");\n" + \
               indent + "end\n")
 
 tb_file.write("\n//\n")

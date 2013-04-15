@@ -46,16 +46,16 @@ module config_bind
 
    final begin
      if(data_ref_idx == 0) begin
-       $display(" !FAIL: Config node %5d has not reset properly!", id_p);
+       $display("!!! FAILED: Config node %5d has not reset properly!\n", id_p);
      end else begin
        if (errors != 0) begin
-         $display(" !FAIL: Config node %5d has received at least %0d wrong packet(s)!", id_p, errors);
+         $display("!!! FAILED: Config node %5d has received at least %0d wrong packet(s)!\n", id_p, errors);
        end else if (data_ref_idx < data_ref_len_p) begin
-         $display(" !FAIL: Config node %5d has missed at least %0d packet(s)!", id_p, data_ref_len_p - data_ref_idx);
+         $display("!!! FAILED: Config node %5d has missed at least %0d packet(s)!\n", id_p, data_ref_len_p - data_ref_idx);
        end else if (data_ref_idx > data_ref_len_p) begin
-         $display(" !FAIL: Config node %5d has received at least %0d more packet(s)!", id_p, data_ref_idx - data_ref_len_p);
+         $display("!!! FAILED: Config node %5d has received at least %0d more packet(s)!\n", id_p, data_ref_idx - data_ref_len_p);
        end else begin
-         $display("  PASS: Config node %5d is probably working properly.", id_p);
+         $display("### PASSED: Config node %5d is probably working properly.\n", id_p);
        end
      end
    end
