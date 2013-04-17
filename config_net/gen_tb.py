@@ -431,7 +431,7 @@ for key in d_reference:
     if test != (tests - 1): data_ref = data_ref + ", "
   data_ref = "'{" + data_ref + "}"
   tb_file.write(indent + "// scan chain node " + d_inst_name[test_id] + " binding verification\n" + \
-                indent + "bind inst_id_" + str(test_id) + "_dut config_bind #(.id_p(" + str(test_id) + "),\n" + \
+                indent + "bind inst_id_" + str(test_id) + "_dut config_node_bind #(.id_p(" + str(test_id) + "),\n" + \
                 indent + "                                .data_bits_p(" + str(data_bits) + "),\n" + \
                 indent + "                                .data_ref_len_p(" + str(tests) + "),\n" + \
                 indent + "                                .data_ref_p(" + data_ref + ") )\n" + \
