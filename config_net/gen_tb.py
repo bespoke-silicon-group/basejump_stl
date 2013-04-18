@@ -13,8 +13,9 @@ import os.path
 tb_file_name = "config_net_tb.v"
 indent = "  " # indentation
 
-spec_file_name = "sc_spec.in"
-test_file_name = "sc_test.in"
+spec_file_name  = "sc_spec.in"
+test_file_name  = "sc_test.in"
+probe_file_name = "sc_probe.in"
 
 l_inst_id = [] # list of unique decimals
 d_inst_name = {} # dictionary of strings indexed by inst id
@@ -306,18 +307,40 @@ for packet in l_test_packet:
   # double underscore __ separates test packet for each node
   test_vector = packet + "__" + test_vector
 
-# calculate the shift register width of the whole scan chain
-shift_chain_width = 0
+# calculate the shift register length of the whole scan chain
+shift_chain_length = 0
 for key in d_inst_data_bits:
   data_bits = d_inst_data_bits[key]
   send_data_bits = data_bits + (data_bits / data_frame_len_lp) + frame_bit_size_lp
-  shift_chain_width += send_data_bits + frame_bit_size_lp +\
+  shift_chain_length += send_data_bits + frame_bit_size_lp +\
                        id_width_lp + frame_bit_size_lp +\
                        len_width_lp + frame_bit_size_lp +\
                        valid_bit_size_lp
 
 # revise simulation time to ensure all test bits walks through the whole scan chain
-sim_time += (test_vector_bits + shift_chain_width + relay_nodes) * clk_cfg_period
+sim_time += (test_vector_bits + shift_chain_length + relay_nodes) * clk_cfg_period
+
+# open and write expected change sequences to probe file
+probe_file = open(probe_file_name, 'w')
+probe_file.write("# This is a file with all config_node IDs and their expect output sequences in testbench.\n" + \
+                 "# The ID value of each config_node is given in decimal after \"id: \".\n" + \
+                 "# The number of test sets for a config_node is given in decimal after \"test sets: \".\n" + \
+                 "# Below the ID line come expected configuration value change sequences in binary after \"reference: \".\n" + \
+                 "# Each line is an expected output string and the first reference is the reset value of that config_node.\n" + \
+                 "# Binary values of two adjacent reference lines are not allowed to be identical.\n" + \
+                 "# \n" + \
+                 "# The instance of config_node_bind module reads this file and test simulation outputs using this file's outputs as reference.\n" + \
+                 "# Parsing of this file in VCS simulation is based on the first letter of each line.\n" + \
+                 "# If this file becomes more complex in syntax, the parser should also be extended.")
+for key in d_reference:
+  test_id = key
+  probe_file.write("\n\nid: " + str(test_id))
+  tests = len(d_reference[test_id])
+  probe_file.write("\ntest sets: " + str(tests))
+  for test in range(0, tests):
+    probe_file.write("\nreference: " + d_reference[test_id][test])
+probe_file.close()
+
 
 tb_file = open(tb_file_name, 'w')
 tb_file.write("module config_net_tb;\n\n")
@@ -333,19 +356,6 @@ write_localparam(tb_file, "reset_len_lp       ", str(reset_len_lp))
 tb_file.write(indent + "// double underscore __ separates test packet for each node\n")
 write_localparam(tb_file, "test_vector_bits_lp", str(test_vector_bits))
 write_localparam(tb_file, "test_vector_lp     ", str(test_vector_bits) + "'b" + test_vector)
-
-# write reference output sequence as localparams
-tb_file.write("\n")
-for key in d_reference:
-  test_id = key
-  data_bits = d_inst_data_bits[test_id]
-  tests = len(d_reference[test_id])
-  data_ref = ""
-  for test in range(0, tests):
-    data_ref = data_ref + str(data_bits) + "'b" + d_reference[test_id][test]
-    if test != (tests - 1): data_ref = data_ref + ", "
-  data_ref = "'{" + data_ref + "}"
-  write_localparam(tb_file, "logic [" + str(data_bits - 1) + " : 0] data_" + str(test_id) + "_o_ref[" + str(tests) + "]", data_ref)
 
 # write clock and reset signals
 tb_file.write("\n" + indent + "//\n")
@@ -419,23 +429,12 @@ tb_file.write(indent + "config_driver #(.test_vector_p(test_vector_lp),\n" + \
               indent + "                .reset_i(" + rst_cfg + "),\n" + \
               indent + "                .config_o(relay_root_i) );\n")
 
-# write output verification processes
+# create config_node_bind instance
 tb_file.write("\n")
-for key in d_reference:
-  test_id = key
-  data_bits = d_inst_data_bits[test_id]
-  tests = len(d_reference[test_id])
-  data_ref = ""
-  for test in range(0, tests):
-    data_ref = data_ref + str(data_bits) + "'b" + d_reference[test_id][test]
-    if test != (tests - 1): data_ref = data_ref + ", "
-  data_ref = "'{" + data_ref + "}"
-  tb_file.write(indent + "// scan chain node " + d_inst_name[test_id] + " binding verification\n" + \
-                indent + "bind inst_id_" + str(test_id) + "_dut config_node_bind #(.id_p(" + str(test_id) + "),\n" + \
-                indent + "                                .data_bits_p(" + str(data_bits) + "),\n" + \
-                indent + "                                .data_ref_len_p(" + str(tests) + "),\n" + \
-                indent + "                                .data_ref_p(" + data_ref + ") )\n" + \
-                indent + "                inst_id_" + str(test_id) + "_bind (clk, config_i, data_o);\n\n")
+tb_file.write(indent + "// configuration node binding verification module\n" + \
+              indent + "bind config_node config_node_bind #(.id_p(id_p),\n" + \
+              indent + "                                    .data_bits_p(data_bits_p))\n" + \
+              indent + "             inst_config_node_bind (clk, config_i, data_o);\n\n")
 
 # write simulation ending condition
 tb_file.write("\n")
@@ -448,7 +447,7 @@ tb_file.write(indent + "initial begin\n" + \
 tb_file.write("\n")
 tb_file.write(indent + "// simulation statistics\n")
 tb_file.write(indent + "final begin\n" + \
-              indent + indent + "$display(\"\\n  - - - Configuration Network Simulation Statistics - - -\\n\");\n" + \
+#             indent + indent + "$display(\"\\n  - - - Configuration Network Simulation Statistics - - -\\n\");\n" + \
               indent + "end\n")
 
 tb_file.write("\n//\n")
