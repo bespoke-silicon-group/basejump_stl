@@ -17,13 +17,13 @@ install:
 	cp ${HDL_INSTALL} ${DIR_INSTALL} 
 
 clean:
-	rm -rf simulator csrc simulator.daidir .vcsmx_rebuild sc_spec.out sc_test.in sc_probe.in $(TESTBENCH) *.log *.dump *.vcd
+	rm -rf simulator csrc simulator.daidir .vcsmx_rebuild config_spec.out config_test.in config_probe.in $(TESTBENCH) *.log *.dump *.vcd
 
 testfile:
-	./gen_tb.py -w sc_test.in 20
+	./gen_tb.py -w config_test.in 20
 
 testbench:
-	./gen_tb.py -r sc_test.in
+	./gen_tb.py -r config_test.in
 
 simulator: $(HDL_SOURCE)
 	$(VCS) $(VCS_FLAGS) $(HDL_SOURCE) 2>&1 | tee $@.log

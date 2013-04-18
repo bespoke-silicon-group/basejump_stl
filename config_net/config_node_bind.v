@@ -22,7 +22,7 @@ module config_node_bind
   integer errors = 0;
 
   initial begin
-    probe_file = $fopen("sc_probe.in", "r"); // open sc_probe.in file to read
+    probe_file = $fopen("config_probe.in", "r"); // open config_probe.in file to read
 
     ch = $fgetc(probe_file);
     while(ch != -1) begin // end of file
@@ -57,15 +57,15 @@ module config_node_bind
   always @ (negedge clk) begin
     if(test_idx == 0) begin
       if (data_o === data_o_ref) begin
-        $display("  @time %0d: \t output data_o_%0d\t reset   to %b", $time, id_p, data_o);
+        $display("\n  @time %0d: \t output data_o_%0d\t reset   to %b", $time, id_p, data_o);
         rt = $fscanf(probe_file, "reference: %b\n", data_o_ref); // read next reference value
         test_idx += 1;
       end
     end else begin
       if (data_o !== data_o_r) begin
-        $display("  @time %0d: \t output data_o_%0d\t changed to %b", $time, id_p, data_o);
+        $display("\n  @time %0d: \t output data_o_%0d\t changed to %b", $time, id_p, data_o);
         if (data_o !== data_o_ref) begin
-          $display("  @time %0d: \t ERROR output data_o_%0d = %b <-> expected = %b", $time, id_p, data_o, data_o_ref);
+          $display("\n  @time %0d: \t ERROR output data_o_%0d = %b <-> expected = %b", $time, id_p, data_o, data_o_ref);
           errors += 1;
         end
         rt = $fscanf(probe_file, "reference: %b\n", data_o_ref); // read next reference value

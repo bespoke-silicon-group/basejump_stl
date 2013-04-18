@@ -13,9 +13,9 @@ import os.path
 tb_file_name = "config_net_tb.v"
 indent = "  " # indentation
 
-spec_file_name  = "sc_spec.in"
-test_file_name  = "sc_test.in"
-probe_file_name = "sc_probe.in"
+spec_file_name  = "config_spec.in"
+test_file_name  = "config_test.in"
+probe_file_name = "config_probe.in"
 
 l_inst_id = [] # list of unique decimals
 d_inst_name = {} # dictionary of strings indexed by inst id
@@ -27,7 +27,7 @@ l_inst_data_o = [] # list of outputs data_o for all nodes
 #
 d_relay_tree = {} # a tree describing relay nodes interconnections
 
-# scan chain test sequence
+# configuration network test sequence
 l_test_id = []
 l_test_data = []
 l_test_packet = []
@@ -35,15 +35,15 @@ l_test_packet = []
 # dictionary of verification sequences
 d_reference = {}
 
-# scan chain communication protocol parameters, applying to all nodes
+# configuration network communication protocol parameters, applying to all nodes
 valid_bits = "10" #
 frame_bit = '0' #
-len_width_lp = 8 # lenth field width in the scan chain
-id_width_lp = 8 # id field width in the scan chain
-valid_bit_size_lp = 2 # scan chain protocol valid bits size
-frame_bit_size_lp = 1 # scan chain protocol frame bits size
-data_frame_len_lp = 8 # scan chain protocol data frame length in bits
-reset_len_lp = 10 # scan chain reset signal length in bits
+len_width_lp = 8 # lenth field width in a config_node
+id_width_lp = 8 # id field width in a config_ndoe
+valid_bit_size_lp = 2 # communication packet valid bits size
+frame_bit_size_lp = 1 # communication packet frame bits size
+data_frame_len_lp = 8 # communication packet data frame length in bits
+reset_len_lp = 10 # communication packet reset signal length in bits
 
 # reset, clock and simulation time
 rst_cfg = "rst_cfg" # configuration driver reset
@@ -64,11 +64,11 @@ def readme():
       gen_tb.py options testfile [number of tests]\n\
     \n\
     Example:\n\
-      gen_tb.py -w sc_test.in 10\n\
-      gen_tb.py -r sc_test.in\n\
+      gen_tb.py -w config_test.in 10\n\
+      gen_tb.py -r config_test.in\n\
     \n\
     Description:\n\
-      This script reads scan chain specifications from sc_spec.in file,\n\
+      This script reads config network specifications from config_spec.in file,\n\
       generates a random configuraion network using relay_nodes, and\n\
       attach config_nodes to a randomly chosen relay_node. It also\n\
       generates random test sequence and creates config_net_tb.v\n\
@@ -136,7 +136,7 @@ def write_relay_node(file, id, config_i, config_o):
           id + "_dut(  .config_i(" + config_i + "),\n\
                        .config_o(" + config_o + ") );\n")
 # ========== ==========
-# read scan chain specification file, parse relay nodes
+# read specification file, parse relay nodes
 spec_file = open(spec_file_name, 'r')
 relay_nodes = 0 # number of relay nodes in the configuration network
 for line in spec_file:
@@ -184,7 +184,7 @@ if (relay_nodes == 0):
     else:
       d_relay_tree[branch_id] = [relay_id]
 
-# read scan chain specification file, attach config nodes
+# read specification file, attach config nodes
 spec_file = open(spec_file_name, 'r')
 for line in spec_file:
   line = line.rstrip('\n') # remove the newline character
@@ -227,7 +227,7 @@ if (len(sys.argv) > 2):
       test_data = dec2bin(randbits, test_data_bits)
       l_test_data.append(test_data)
       generated_tests += 1
-    # write random test cases to scan chain test file
+    # write random test cases to test file
     test_file = open(test_file_name, 'w')
     test_file.write("# This is a generated file with random test id and data.\n" + \
                     "# You can extend this file to contain your specific test cases.\n" + \
@@ -242,7 +242,7 @@ if (len(sys.argv) > 2):
     print str(number_of_tests) + " sets of random test id and data are generated and written into " + test_file_name
     sys.exit(0) # exit after making the test file
   elif (sys.argv[1] == "-r"):
-    # read scan chain test file and parse
+    # read test file and parse
     test_file = open(test_file_name, 'r')
     for line in test_file:
       line = line.rstrip('\n') # remove the newline character
@@ -307,7 +307,7 @@ for packet in l_test_packet:
   # double underscore __ separates test packet for each node
   test_vector = packet + "__" + test_vector
 
-# calculate the shift register length of the whole scan chain
+# calculate the shift register length of the whole configuration network
 shift_chain_length = 0
 for key in d_inst_data_bits:
   data_bits = d_inst_data_bits[key]
@@ -317,7 +317,7 @@ for key in d_inst_data_bits:
                        len_width_lp + frame_bit_size_lp +\
                        valid_bit_size_lp
 
-# revise simulation time to ensure all test bits walks through the whole scan chain
+# revise simulation time to ensure all test bits walks through the whole configuration network
 sim_time += (test_vector_bits + shift_chain_length + relay_nodes) * clk_cfg_period
 
 # open and write expected change sequences to probe file
