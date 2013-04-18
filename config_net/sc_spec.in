@@ -23,7 +23,7 @@
 # <branch> is a relay node id indicating to which relay node this new config node is connected to.
 #          its value should not be greater than or equal to the total number of relay nodes.
 #          if 'x' is put in this position, a random relay node is seleted as a branch.
-# <name> is a string *WITHOUT* spaces indicating the function of the associated configuration register in the scan chain.
+# <name> is a string *WITHOUT* spaces indicating the function of the associated configuration register in the configuration net.
 # <data_bits> is a decimal integer specifying the number of bits of the configuration register.
 # <default> is a binary string specifying the reset value of the configuration register. The #digits of <default> should be equal to $data_bits.
 
