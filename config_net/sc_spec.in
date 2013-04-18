@@ -39,5 +39,6 @@ r      4       x
 c      5       0       NodeA        4                        1001
 c      7       x       NodeB       21       111111111111111111111
 c      1       1       InstMem      8                    00000001
-c     96       4       NodeD       12                000000001001
+c     96       4       NodeC       12                000000001001
 c      0       3       DataMem      8                    00100001
+c    151       3       NodeD        1                           1

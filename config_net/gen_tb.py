@@ -323,7 +323,7 @@ sim_time += (test_vector_bits + shift_chain_length + relay_nodes) * clk_cfg_peri
 # open and write expected change sequences to probe file
 probe_file = open(probe_file_name, 'w')
 probe_file.write("# This is a file with all config_node IDs and their expect output sequences in testbench.\n" + \
-                 "# The ID value of each config_node is given in decimal after \"id: \".\n" + \
+                 "# The ID value of each config_node is given in decimal after \"config id: \".\n" + \
                  "# The number of test sets for a config_node is given in decimal after \"test sets: \".\n" + \
                  "# Below the ID line come expected configuration value change sequences in binary after \"reference: \".\n" + \
                  "# Each line is an expected output string and the first reference is the reset value of that config_node.\n" + \
@@ -334,7 +334,7 @@ probe_file.write("# This is a file with all config_node IDs and their expect out
                  "# If this file becomes more complex in syntax, the parser should also be extended.")
 for key in d_reference:
   test_id = key
-  probe_file.write("\n\nid: " + str(test_id))
+  probe_file.write("\n\nconfig id: " + str(test_id))
   tests = len(d_reference[test_id])
   probe_file.write("\ntest sets: " + str(tests))
   for test in range(0, tests):
