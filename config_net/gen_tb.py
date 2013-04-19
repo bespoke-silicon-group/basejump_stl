@@ -13,9 +13,10 @@ import os.path
 tb_file_name = "config_net_tb.v"
 indent = "  " # indentation
 
-spec_file_name  = "config_spec.in"
-test_file_name  = "config_test.in"
-probe_file_name = "config_probe.in"
+spec_file_name = "config_spec.in"      # describe the configuration network topology
+test_file_name = "config_test.in"      # describe individual testing config values
+vector_file_name = "config_vector.in"  # contain a single binary vector formed by concatenating and framing config values specified in test_file_name
+probe_file_name = "config_probe.in"    # contain expected output sequences for each config_node based on the test vector input
 
 l_inst_id = [] # list of unique decimals
 d_inst_name = {} # dictionary of strings indexed by inst id
@@ -306,6 +307,11 @@ test_vector = reset_string
 for packet in l_test_packet:
   # double underscore __ separates test packet for each node
   test_vector = packet + "__" + test_vector
+
+# write test vector to file
+vector_file = open(vector_file_name, 'w')
+vector_file.write(test_vector)
+vector_file.close()
 
 # calculate the shift register length of the whole configuration network
 shift_chain_length = 0
