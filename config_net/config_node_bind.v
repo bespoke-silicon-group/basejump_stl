@@ -14,7 +14,6 @@ module config_node_bind
 
   integer probe_file;
   integer rt, ch;
-  integer dump;
   integer test_idx = 0;
   integer node_id = -1;
   integer test_sets = -1;
@@ -28,7 +27,9 @@ module config_node_bind
     while(ch != -1) begin // end of file
       if (ch == "#") begin // comments
         rt = $ungetc(ch, probe_file);
-        rt = $fscanf(probe_file, "#%s\n", dump);
+        while (ch != "\n") begin // dump chars until the end of this line
+          ch = $fgetc(probe_file);
+        end
       end else if (ch == "c") begin // a line giving config_node id
         rt = $ungetc(ch, probe_file);
         rt = $fscanf(probe_file, "config id: %d\n", node_id);
@@ -36,8 +37,10 @@ module config_node_bind
           rt = $fscanf(probe_file, "test sets: %d\n", test_sets); // a line giving number of test sets for a config_node with that id
           rt = $fscanf(probe_file, "reference: %b\n", data_o_ref); // a line giving a reference configuration string in binary
           break; // bookmark the probe_file position
-        end else begin
-          rt = $fscanf(probe_file, "#%s\n", dump);
+        end else begin // invalid patterns
+          while (ch != "\n") begin // dump chars until the end of this line
+            ch = $fgetc(probe_file);
+          end
         end
       end
       ch = $fgetc(probe_file);

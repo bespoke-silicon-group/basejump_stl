@@ -310,7 +310,12 @@ for packet in l_test_packet:
 
 # write test vector to file
 vector_file = open(vector_file_name, 'w')
-vector_file.write(test_vector)
+vector_file.write("# This is a file giving test input bit vector.\n" + \
+                  "# The left-most bit is the first bit feeding into the configuration network first.\n" + \
+                  "# You can modify this file to contain some specific testing pattern.\n" + \
+                  "# Be sure you know how to modulate data and add headers, and change the vector bits value accordingly.\n")
+vector_file.write("vector bits: " + str(test_vector_bits) + "\n\n")
+vector_file.write(test_vector[::-1]) # the reversed string, for easy parsing in "config_vector.v".
 vector_file.close()
 
 # calculate the shift register length of the whole configuration network
@@ -426,14 +431,29 @@ tb_file.write(indent + "initial begin\n" + \
               indent + indent + clk_dst + " = ~" + clk_dst + ";\n" + \
               indent + "end\n")
 
+# module config_driver and config_vector are used for the same purpose: reading
+# test vectors from some source and serialized each bit to the module's output
+# in each clock cycle. config_driver reads from a parameter, and this module is
+# synthesizable; config_vector is not synthesizable and it reads from a
+# formated file "config_vector.in". config_vector can be used with other
+# components in this design to randomize test patterns for config_node network
+# in simulation testbench.
+
 # instantiate config_driver to deliver configuration bits
 tb_file.write("\n")
-tb_file.write(indent + "// instantiate config_driver to deliver configuration bits\n")
+tb_file.write(indent + "// instantiate config_driver to read configuration bits from localparams\n")
 tb_file.write(indent + "config_driver #(.test_vector_p(test_vector_lp),\n" + \
               indent + "                .test_vector_bits_p(test_vector_bits_lp) )\n" + \
               indent + "    inst_driver(.clk_i(" + clk_cfg + "),\n" + \
               indent + "                .reset_i(" + rst_cfg + "),\n" + \
-              indent + "                .config_o(relay_root_i) );\n")
+              indent + "                .config_o() ); // not connected in simulation testbench\n")
+
+# instantiate config_vector to deliver configuration bits
+tb_file.write("\n")
+tb_file.write(indent + "// instantiate config_vector to read configuration bits from config_vector.in file\n")
+tb_file.write(indent + "config_vector inst_config_vector(.clk_i(" + clk_cfg + "),\n" + \
+              indent + "                                 .reset_i(" + rst_cfg + "),\n" + \
+              indent + "                                 .config_o(relay_root_i) );\n")
 
 # create config_node_bind instance
 tb_file.write("\n")
