@@ -39,7 +39,7 @@ module config_vector
       end
       rt = $ungetc(ch, vector_file); // not comments any more.
       rt = $fscanf(vector_file, "vector bits: %d\n\n", vector_bits);
-      $display("\nFeed the configuration network with %d coded configuration network bits.", vector_bits);
+      $display("\nFeed the configuration network with %d-bit coded configuration vector.", vector_bits);
 
       // SystemVerilog thinks the string, for example 5'b10, as a single pattern matching %d.
       //rt = $fscanf(vector_file, "%d'b", vector_bits); // This line doesn't work.

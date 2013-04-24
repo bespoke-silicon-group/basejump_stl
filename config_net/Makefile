@@ -17,7 +17,7 @@ install:
 	cp ${HDL_INSTALL} ${DIR_INSTALL} 
 
 clean:
-	rm -rf simulator csrc simulator.daidir .vcsmx_rebuild config_spec.out config_test.in config_vector.in config_probe.in $(TESTBENCH) *.log *.dump *.vcd
+	rm -rf simulator csrc simulator.daidir .vcsmx_rebuild config_spec.out config_test.in config_vector.in config_probe.in $(TESTBENCH) *.log *.dump *.vcd ucli.key
 
 testfile:
 	./gen_tb.py -w config_test.in 20
