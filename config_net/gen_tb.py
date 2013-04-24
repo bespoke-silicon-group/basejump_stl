@@ -276,23 +276,20 @@ for test_id in l_test_id:
   l_test_packet.append(test_packet)
   test_idx += 1
 
-# create a dictionary indexed by test id
+# create a dictionary indexed by inst_id
+# each node must be reset before random testing
+for inst_id in l_inst_id: # initialize dictionary with config_node default values
+  d_reference[inst_id] = [d_inst_default[inst_id]]
 # if a new data item for an id is the same as its previous one, the new data is not appended as a new reference;
 # because the verilog testbench is not able to detect signal change.
 test_idx = 0
 for test_id in l_test_id:
   test_data = l_test_data[test_idx]
-  if d_reference.has_key(test_id):
+  if d_reference.has_key(test_id): # extend an existing test sequence for a node having test_id
     last_index = len(d_reference[test_id]) - 1
     # if a new data item for an id is the same as its previous one, the new data is not appended.
     if(d_reference[test_id][last_index] != test_data):
       d_reference[test_id].append(test_data)
-  else:
-    # if a new data item for an id is the same as its previous one, the new data is not appended.
-    if(d_inst_default[test_id] == test_data):
-      d_reference[test_id] = [d_inst_default[test_id]]
-    else:
-      d_reference[test_id] = [d_inst_default[test_id], test_data]
   test_idx += 1
 
 # create reset string
