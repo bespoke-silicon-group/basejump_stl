@@ -5,12 +5,12 @@ module config_node_bind
     id_p = -1,            // unique ID of this node
     data_bits_p = -1)     // number of bits of configurable register associated with this node
    (input clk, // this reflects the destiniation domain clock
-    input config_s config_i,
 
     input [data_bits_p - 1 : 0] data_o);
 
-`ifdef CONFIG_PROBES
   logic [data_bits_p - 1 : 0] data_o_r, data_o_n;
+
+`ifdef CONFIG_PROBES
   logic [data_bits_p - 1 : 0] data_o_ref;
 
   integer probe_file;
@@ -50,11 +50,6 @@ module config_node_bind
       end
       ch = $fgetc(probe_file);
     end
-  end
-
-  assign data_o_n = data_o;
-  always @ (posedge clk) begin
-    data_o_r <= data_o_n;
   end
 
   // Since the design is synchronized to posedge of clk, using negedge clk
@@ -109,5 +104,10 @@ module config_node_bind
     end
   end
 `endif
+
+  assign data_o_n = data_o;
+  always @ (posedge clk) begin
+    data_o_r <= data_o_n;
+  end
 
 endmodule

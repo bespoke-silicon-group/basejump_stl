@@ -443,7 +443,7 @@ tb_file.write("\n")
 tb_file.write(indent + "// configuration node binding verification module\n" + \
               indent + "bind config_node config_node_bind #(.id_p(id_p),\n" + \
               indent + "                                    .data_bits_p(data_bits_p))\n" + \
-              indent + "             inst_config_node_bind (clk, config_i, data_o);\n\n")
+              indent + "             inst_config_node_bind (clk, data_o);\n\n")
 
 # write simulation ending condition
 tb_file.write("\n")
