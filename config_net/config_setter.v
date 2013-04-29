@@ -18,8 +18,8 @@
 
 module config_setter
   #(parameter // parameters only matter without CONFIG_SETTER_BY_FILE defined
-    setter_vector_p = 1'b1,
-    setter_vector_bits_p = 1
+    setter_vector_p = 2'b11,
+    setter_vector_bits_p = 2
    )
   (input clk_i,
    input reset_i,
