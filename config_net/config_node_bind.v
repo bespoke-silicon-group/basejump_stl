@@ -9,6 +9,7 @@ module config_node_bind
 
     input [data_bits_p - 1 : 0] data_o);
 
+`ifdef CONFIG_PROBES
   logic [data_bits_p - 1 : 0] data_o_r, data_o_n;
   logic [data_bits_p - 1 : 0] data_o_ref;
 
@@ -20,8 +21,12 @@ module config_node_bind
 
   integer errors = 0;
 
-  initial begin
+  initial
+  begin: initial_open_file
     probe_file = $fopen("config_probe.in", "r"); // open config_probe.in file to read
+    if (!probe_file) begin
+      disable initial_open_file;
+    end
 
     ch = $fgetc(probe_file);
     while(ch != -1) begin // end of file
@@ -57,42 +62,52 @@ module config_node_bind
   // to data_o. This might guarantee simulation correct even at gate level,
   // when all flip-flops don't necessarily change at the same time.
 
-  always @ (negedge clk) begin
-    if(test_idx == 0) begin
-      if (data_o === data_o_ref) begin
-        $display("\n  @time %0d: \t output data_o_%0d\t reset   to %b", $time, id_p, data_o);
-        rt = $fscanf(probe_file, "reference: %b\n", data_o_ref); // read next reference value
-        test_idx += 1;
-      end
-    end else begin
-      if (data_o !== data_o_r) begin
-        $display("\n  @time %0d: \t output data_o_%0d\t changed to %b", $time, id_p, data_o);
-        if (data_o !== data_o_ref) begin
-          $display("\n  @time %0d: \t ERROR output data_o_%0d = %b <-> expected = %b", $time, id_p, data_o, data_o_ref);
-          errors += 1;
+  always @ (negedge clk)
+  begin: always_check_change
+    if (probe_file) begin
+      if(test_idx == 0) begin
+        if (data_o === data_o_ref) begin
+          $display("\n  @time %0d: \t output data_o_%0d\t reset   to %b", $time, id_p, data_o);
+          rt = $fscanf(probe_file, "reference: %b\n", data_o_ref); // read next reference value
+          test_idx += 1;
         end
-        rt = $fscanf(probe_file, "reference: %b\n", data_o_ref); // read next reference value
-        test_idx += 1;
-      end
-    end
-  end
-
-  final begin
-    if(test_idx == 0) begin
-      $display("!!! FAILED: Config node %5d has not reset properly!\n", id_p);
-    end else begin
-      if (errors != 0) begin
-        $display("!!! FAILED: Config node %5d has received at least %0d wrong packet(s)!\n", id_p, errors);
-      end else if (test_idx < test_sets) begin
-        $display("!!! FAILED: Config node %5d has missed at least %0d packet(s)!\n", id_p, test_sets - test_idx);
-      end else if (test_idx > test_sets) begin
-        $display("!!! FAILED: Config node %5d has received at least %0d more packet(s)!\n", id_p, test_idx - test_sets);
       end else begin
-        $display("### PASSED: Config node %5d is probably working properly.\n", id_p);
+        if (data_o !== data_o_r) begin
+          $display("\n  @time %0d: \t output data_o_%0d\t changed to %b", $time, id_p, data_o);
+          if (data_o !== data_o_ref) begin
+            $display("\n  @time %0d: \t ERROR output data_o_%0d = %b <-> expected = %b", $time, id_p, data_o, data_o_ref);
+            errors += 1;
+          end
+          rt = $fscanf(probe_file, "reference: %b\n", data_o_ref); // read next reference value
+          test_idx += 1;
+        end
       end
+    end else begin
+      disable always_check_change;
     end
-
-    $fclose(probe_file);
   end
+
+  final
+  begin: final_statistics
+    if (probe_file) begin
+      if(test_idx == 0) begin
+        $display("!!! FAILED: Config node %5d has not reset properly!\n", id_p);
+      end else begin
+        if (errors != 0) begin
+          $display("!!! FAILED: Config node %5d has received at least %0d wrong packet(s)!\n", id_p, errors);
+        end else if (test_idx < test_sets) begin
+          $display("!!! FAILED: Config node %5d has missed at least %0d packet(s)!\n", id_p, test_sets - test_idx);
+        end else if (test_idx > test_sets) begin
+          $display("!!! FAILED: Config node %5d has received at least %0d more packet(s)!\n", id_p, test_idx - test_sets);
+        end else begin
+          $display("### PASSED: Config node %5d is probably working properly.\n", id_p);
+        end
+      end
+      $fclose(probe_file);
+    end else begin
+      disable final_statistics;
+    end
+  end
+`endif
 
 endmodule

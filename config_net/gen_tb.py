@@ -436,21 +436,23 @@ tb_file.write(indent + "initial begin\n" + \
 # components in this design to randomize test patterns for config_node network
 # in simulation testbench.
 
-# instantiate config_driver to deliver configuration bits
-tb_file.write("\n")
-tb_file.write(indent + "// instantiate config_driver to read configuration bits from localparams\n")
-tb_file.write(indent + "config_driver #(.test_vector_p(test_vector_lp),\n" + \
-              indent + "                .test_vector_bits_p(test_vector_bits_lp) )\n" + \
-              indent + "    inst_driver(.clk_i(" + clk_cfg + "),\n" + \
-              indent + "                .reset_i(" + rst_cfg + "),\n" + \
-              indent + "                .config_o() ); // not connected in simulation testbench\n")
+# instantiate config_driver to deliver configuration bits ==> to be discarded
+#tb_file.write("\n")
+#tb_file.write(indent + "// instantiate config_driver to read configuration bits from localparams\n")
+#tb_file.write(indent + "config_driver #(.test_vector_p(test_vector_lp),\n" + \
+              #indent + "                .test_vector_bits_p(test_vector_bits_lp) )\n" + \
+              #indent + "    inst_driver(.clk_i(" + clk_cfg + "),\n" + \
+              #indent + "                .reset_i(" + rst_cfg + "),\n" + \
+              #indent + "                .config_o() ); // not connected in simulation testbench\n")
 
 # instantiate config_vector to deliver configuration bits
 tb_file.write("\n")
-tb_file.write(indent + "// instantiate config_vector to read configuration bits from config_vector.in file\n")
-tb_file.write(indent + "config_vector inst_config_vector(.clk_i(" + clk_cfg + "),\n" + \
-              indent + "                                 .reset_i(" + rst_cfg + "),\n" + \
-              indent + "                                 .config_o(relay_root_i) );\n")
+tb_file.write(indent + "// instantiate config_setter to set configuration bits.\n")
+tb_file.write(indent + "config_vector      #(.test_vector_p(test_vector_lp),\n" + \
+              indent + "                     .test_vector_bits_p(test_vector_bits_lp) )\n" + \
+              indent + "  inst_config_vector(.clk_i(" + clk_cfg + "),\n" + \
+              indent + "                     .reset_i(" + rst_cfg + "),\n" + \
+              indent + "                     .config_o(relay_root_i) );\n")
 
 # create config_node_bind instance
 tb_file.write("\n")
