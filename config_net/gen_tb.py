@@ -13,10 +13,10 @@ import os.path
 tb_file_name = "config_net_tb.v"
 indent = "  " # indentation
 
-spec_file_name = "config_spec.in"      # describe the configuration network topology
-test_file_name = "config_test.in"      # describe individual testing config values
-setter_file_name = "config_setter.in"  # contain a single binary vector formed by concatenating and framing config values specified in test_file_name
-probe_file_name = "config_probe.in"    # contain expected output sequences for each config_node based on the test vector input
+spec_file_name = "config_spec.in"           # describe the configuration network topology
+test_file_name = "config_test.in"           # describe individual testing config values
+setter_file_name = "config_file_setter.in"  # contain a single binary vector formed by concatenating and framing config values specified in test_file_name
+probe_file_name = "config_probe.in"         # contain expected output sequences for each config_node based on the test vector input
 
 l_inst_id = [] # list of unique decimals
 d_inst_name = {} # dictionary of strings indexed by inst id
@@ -312,7 +312,7 @@ setter_file.write("# This is a file giving test input bit vector.\n" + \
                   "# You can modify this file to contain some specific testing pattern.\n" + \
                   "# Be sure you know how to modulate data and add headers, and change the vector bits value accordingly.\n")
 setter_file.write("vector bits: " + str(test_vector_bits) + "\n\n")
-setter_file.write(test_vector[::-1]) # the reversed string, for easy parsing in "config_setter.v".
+setter_file.write(test_vector[::-1]) # the reversed string, for easy parsing in "config_file_setter.v".
 setter_file.close()
 
 # calculate the shift register length of the whole configuration network
@@ -428,15 +428,15 @@ tb_file.write(indent + "initial begin\n" + \
               indent + indent + clk_dst + " = ~" + clk_dst + ";\n" + \
               indent + "end\n")
 
-# module config_setter is used for feeding setter vector bits to the configuration network.
-# instantiate config_setter to deliver configuration bits
+# module config_file_setter is used for feeding setter vector bits to the configuration network.
+# instantiate config_file_setter to deliver configuration bits
 tb_file.write("\n")
-tb_file.write(indent + "// instantiate config_setter to set configuration bits.\n")
-tb_file.write(indent + "config_setter      #(.setter_vector_p(test_vector_lp),\n" + \
-              indent + "                     .setter_vector_bits_p(test_vector_bits_lp) )\n" + \
-              indent + "  inst_config_setter(.clk_i(" + clk_cfg + "),\n" + \
-              indent + "                     .reset_i(" + rst_cfg + "),\n" + \
-              indent + "                     .config_o(relay_root_i) );\n")
+tb_file.write(indent + "// instantiate config_file_setter to set configuration bits.\n")
+tb_file.write(indent + "config_file_setter      #(.setter_vector_p(test_vector_lp),\n" + \
+              indent + "                          .setter_vector_bits_p(test_vector_bits_lp) )\n" + \
+              indent + "  inst_config_file_setter(.clk_i(" + clk_cfg + "),\n" + \
+              indent + "                          .reset_i(" + rst_cfg + "),\n" + \
+              indent + "                          .config_o(relay_root_i) );\n")
 
 # create config_node_bind instance
 tb_file.write("\n")

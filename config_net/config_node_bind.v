@@ -10,7 +10,6 @@ module config_node_bind
 
   logic [data_bits_p - 1 : 0] data_o_r, data_o_n;
 
-`ifdef CONFIG_PROBES
   logic [data_bits_p - 1 : 0] data_o_ref;
 
   integer probe_file;
@@ -23,7 +22,12 @@ module config_node_bind
 
   initial
   begin: initial_open_file
-    probe_file = $fopen("config_probe.in", "r"); // open config_probe.in file to read
+
+    if ($test$plusargs("config-node-bind")) begin
+      probe_file = $fopen("config_probe.in", "r"); // open config_probe.in file to read
+    end else begin
+      probe_file = 0;
+    end
     if (!probe_file) begin
       disable initial_open_file;
     end
@@ -50,6 +54,11 @@ module config_node_bind
       end
       ch = $fgetc(probe_file);
     end
+  end
+
+  assign data_o_n = data_o;
+  always @ (posedge clk) begin
+    data_o_r <= data_o_n;
   end
 
   // Since the design is synchronized to posedge of clk, using negedge clk
@@ -102,12 +111,6 @@ module config_node_bind
     end else begin
       disable final_statistics;
     end
-  end
-`endif
-
-  assign data_o_n = data_o;
-  always @ (posedge clk) begin
-    data_o_r <= data_o_n;
   end
 
 endmodule

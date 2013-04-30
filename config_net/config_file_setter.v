@@ -1,22 +1,14 @@
 `include "config_defs.v"
 
-// This module has two implementations targeting for
-// 1. Random regression testing, or
-// 2. Synthesis
-// which is controlled by the preprocessor CONFIG_SETTER_BY_FILE.
-
-// The non-synthesizable part reads a stream of {0, 1}* bits from a file
-// "config_setter.in", and feeds a single bit to its output port every clock
-// cycle. The setter vector in file "config_setter.in" has varying length, and
-// the author doesn't figure out a way to use dynamic-sized arrays in
-// SystemVerilog. Therefore the module is designed to parse only a few
+// This module reads a stream of {0, 1}* bits from a file
+// "config_file_setter.in", and feeds a single bit to its output port every
+// clock cycle. The setter vector in file "config_file_setter.in" has varying
+// length, and the author doesn't figure out a way to use dynamic-sized arrays
+// in SystemVerilog.  Therefore the module is designed to parse only a few
 // characters according to the patterns in each clock cycle, instead of
 // reading all bits into an array in the very beginning.
 
-// The synthesizable part determines setter vector length and content by
-// parameters given at instantiation time.
-
-module config_setter
+module config_file_setter
   #(parameter // parameters only matter without CONFIG_SETTER_BY_FILE defined
     setter_vector_p = 2'b11,
     setter_vector_bits_p = 2
@@ -28,7 +20,6 @@ module config_setter
 
   logic config_bit;
 
-`ifdef CONFIG_SETTER_BY_FILE // for VCS random regression test; not synthesizable
   integer setter_file;
   integer vector_bits;
   integer rt, ch, count;
@@ -40,8 +31,13 @@ module config_setter
       config_bit = 1'b1;
       count = 0;
 
+      if ($test$plusargs("config-file-setter")) begin
+        setter_file = $fopen("config_file_setter.in", "r");
+      end else begin
+        setter_file = 0;
+      end
+
       // simple header processing
-      setter_file = $fopen("config_setter.in", "r");
       if (!setter_file) begin
         disable always_feed_bit; // disable the always_ff block if file doesn't exist
       end
@@ -73,20 +69,6 @@ module config_setter
       end
     end
   end
-`else // synthesizable part; config nodes set by parameters
-  logic [setter_vector_bits_p - 1 : 0] setter_vector;
-
-  // initialize and right shift setter vector
-  always_ff @ (posedge clk_i) begin
-    if (reset_i) begin
-      setter_vector = setter_vector_p;
-    end else begin
-      setter_vector = {1'b0, setter_vector[setter_vector_bits_p - 1 : 1]};
-    end
-  end
-
-  assign config_bit = setter_vector[0];
-`endif
 
   assign config_o.cfg_clk = clk_i;
   assign config_o.cfg_bit = config_bit;
