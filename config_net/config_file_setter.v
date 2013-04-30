@@ -4,15 +4,11 @@
 // "config_file_setter.in", and feeds a single bit to its output port every
 // clock cycle. The setter vector in file "config_file_setter.in" has varying
 // length, and the author doesn't figure out a way to use dynamic-sized arrays
-// in SystemVerilog.  Therefore the module is designed to parse only a few
+// in SystemVerilog. Therefore the module is designed to parse only a few
 // characters according to the patterns in each clock cycle, instead of
 // reading all bits into an array in the very beginning.
 
 module config_file_setter
-  #(parameter // parameters only matter without CONFIG_SETTER_BY_FILE defined
-    setter_vector_p = 2'b11,
-    setter_vector_bits_p = 2
-   )
   (input clk_i,
    input reset_i,
    output config_s config_o
