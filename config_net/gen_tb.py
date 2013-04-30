@@ -47,7 +47,7 @@ data_frame_len_lp = 8 # communication packet data frame length in bits
 reset_len_lp = 10 # communication packet reset signal length in bits
 
 # reset, clock and simulation time
-rst_cfg = "rst_cfg" # configuration driver reset
+rst_cfg = "rst_cfg" # configuration setter reset
 rst_dst = "rst_dst" # destination (logic to be configured) side reset
 clk_cfg = "clk_cfg" # configuration network clock
 clk_cfg_period = 30 # time units
@@ -428,15 +428,32 @@ tb_file.write(indent + "initial begin\n" + \
               indent + indent + clk_dst + " = ~" + clk_dst + ";\n" + \
               indent + "end\n")
 
-# module config_file_setter is used for feeding setter vector bits to the configuration network.
-# instantiate config_file_setter to deliver configuration bits
+# module config_setter and config_file_setter are used for the same purpose:
+# reading test vectors from some source and serialized each bit to the module's
+# output in each clock cycle. config_setter reads from a parameter, and this
+# module is synthesizable; config_file_setter is not synthesizable and it reads
+# from a formated file "config_file_setter.in". config_setter can be used with
+# other components in this design to randomize test patterns for config_node
+# network in simulation testbench.
+
+# instantiate config_setter to deliver configuration bits
 tb_file.write("\n")
-tb_file.write(indent + "// instantiate config_file_setter to set configuration bits.\n")
-tb_file.write(indent + "config_file_setter      #(.setter_vector_p(test_vector_lp),\n" + \
-              indent + "                          .setter_vector_bits_p(test_vector_bits_lp) )\n" + \
-              indent + "  inst_config_file_setter(.clk_i(" + clk_cfg + "),\n" + \
-              indent + "                          .reset_i(" + rst_cfg + "),\n" + \
-              indent + "                          .config_o(relay_root_i) );\n")
+tb_file.write(indent + "// instantiate config_setter to read configuration bits from localparams\n")
+tb_file.write(indent + "config_setter #(.setter_vector_p(test_vector_lp),\n" + \
+              indent + "                .setter_vector_bits_p(test_vector_bits_lp) )\n" + \
+              indent + "  inst_setter  (.clk_i(" + clk_cfg + "),\n" + \
+              indent + "                .reset_i(" + rst_cfg + "),\n" + \
+              indent + "                .config_o() ); // not connected in simulation testbench\n")
+
+# instantiate config_file_setter to deliver configuration bits
+# module config_file_setter is used for reading setter vector bits from file
+# and feed them to the configuration network.
+tb_file.write("\n")
+tb_file.write(indent + "// instantiate config_file_setter to read configuration bits from file\n")
+tb_file.write(indent + "config_file_setter\n" + \
+              indent + "  inst_file_setter(.clk_i(" + clk_cfg + "),\n" + \
+              indent + "                   .reset_i(" + rst_cfg + "),\n" + \
+              indent + "                   .config_o(relay_root_i) );\n")
 
 # create config_node_bind instance
 tb_file.write("\n")
