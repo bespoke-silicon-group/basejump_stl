@@ -10,7 +10,7 @@
 // An element of this enum type will be used as the config_id_gen function's
 // `idtype` parapeter. Types should be defined so that each of them can be used
 // to calculate a unique id by config_id_gen macro.
-typedef enum {tCFG_DMEM, tCFG_IMEM} eConfigIDTypes;
+typedef enum {tCFG_DMEM, tCFG_IMEM, tCFG_TMEM} eConfigIDTypes;
 
 // An idtype is to distinguish config_nodes in the same (tile_x, tile_y) tile.
 // This struct can be extended to provide more fields of identification.
