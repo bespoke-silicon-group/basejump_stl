@@ -10,13 +10,16 @@ import random
 import os.path
 
 # ========== Global variables ==========
-tb_file_name = "config_net_tb.v"
 indent = "  " # indentation
 
+tb_file_name = "config_net_tb.v"            # default testbench file name
 spec_file_name = "config_spec.in"           # describe the configuration network topology
 test_file_name = "config_test.in"           # describe individual testing config values
 setter_file_name = "config_file_setter.in"  # contain a single binary vector formed by concatenating and framing config values specified in test_file_name
 probe_file_name = "config_probe.in"         # contain expected output sequences for each config_node based on the test vector input
+
+gen_tb = True                               # False = only generate *.in files; True = also generate testbench file.
+                                            # False is needed when the config_nodes are instantiated in other testbenches.
 
 l_inst_id = [] # list of unique decimals
 d_inst_name = {} # dictionary of strings indexed by inst id
@@ -62,11 +65,11 @@ def readme():
       gen_tb.py - python script to generate testbench for chained config_node instances\n\
     \n\
     Usage:\n\
-      gen_tb.py options testfile [number of tests]\n\
+      gen_tb.py {-w <testfile> <number of tests> | -r <testfile> -o <tb file name>}\n\
     \n\
     Example:\n\
       gen_tb.py -w config_test.in 10\n\
-      gen_tb.py -r config_test.in\n\
+      gen_tb.py -r config_test.in -o config_net_tb.v\n\
     \n\
     Description:\n\
       This script reads config network specifications from config_spec.in file,\n\
@@ -80,8 +83,8 @@ def readme():
       sequence to <testfile>.\n\
     \n\
       You can extend the generated testfile to contain your specific test cases;\n\
-      then use command ./gen_tb.py -r <testfile> to read the modified file,\n\
-      and create testbench accordingly."
+      then use command ./gen_tb.py -r <testfile> -o <tb file name> to read the\n\
+      modified file, and create testbench accordingly."
 
 def dec2bin(dec, n): # Only works on non-negative number
   bin = ""
@@ -232,8 +235,8 @@ if (len(sys.argv) > 2):
     test_file = open(test_file_name, 'w')
     test_file.write("# This is a generated file with random test id and data.\n" + \
                     "# You can extend this file to contain your specific test cases.\n" + \
-                    "# Use command ./gen_tb.py -r <this file name> if you would like to use the modified file.\n" + \
-                    "# Use command ./gen_tb.py -w <this file name> <number of tests> will overwrite this file.\n\n" + \
+                    "# Use command `./gen_tb.py -r <this file name> -o <tb file name>` if you would like to use the modified file.\n" + \
+                    "# Use command `./gen_tb.py -w <this file name> <number of tests>` will overwrite this file.\n\n" + \
                     "# <test id> <test data>\n")
     for test in range(0, number_of_tests):
       test_file.write(str(l_test_id[test]) + "\t\t" + l_test_data[test] + "\n")
@@ -243,6 +246,15 @@ if (len(sys.argv) > 2):
     print str(number_of_tests) + " sets of random test id and data are generated and written into " + test_file_name
     sys.exit(0) # exit after making the test file
   elif (sys.argv[1] == "-r"):
+    test_file_name = sys.argv[2]
+    if (len(sys.argv) == 5):
+      if (sys.argv[3] == "-o"):
+        tb_file_name = sys.argv[4];
+      else:
+        print "wrong commond line syntax."
+        sys.exit(1)
+    else:
+      gen_tb = False
     # read test file and parse
     test_file = open(test_file_name, 'r')
     for line in test_file:
@@ -253,6 +265,12 @@ if (len(sys.argv) > 2):
           l_test_id.append(int(l_words[0]))
           l_test_data.append(l_words[1])
     test_file.close()
+  else:
+    print "command line argument " + sys.argv[1] + " can not be recognized."
+    sys.exit(1)
+else:
+  print "wrong commond line syntax."
+  sys.exit(1)
 
 # create test string and calculate total bits
 test_idx = 0
@@ -349,6 +367,7 @@ for key in d_reference:
     probe_file.write("\nreference: " + d_reference[test_id][test])
 probe_file.close()
 
+if (not gen_tb): sys.exit(0) # Do not generate testbench file
 
 tb_file = open(tb_file_name, 'w')
 tb_file.write("module config_net_tb;\n\n")

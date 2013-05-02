@@ -26,7 +26,7 @@ testfile:
 	./gen_tb.py -w config_test.in 20
 
 testbench:
-	./gen_tb.py -r config_test.in
+	./gen_tb.py -r config_test.in -o config_net_tb.v
 
 simulator: $(HDL_SOURCE)
 	$(VCS) $(VCS_FLAGS) $(HDL_SOURCE) 2>&1 | tee $@.log
