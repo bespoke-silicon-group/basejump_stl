@@ -9,12 +9,15 @@ TESTBENCH = config_net_tb.v
 HDL_SOURCE = $(GTECH_DIR)/GTECH_NAND2.v rNandMeta.v config_node.v relay_node.v config_setter.v config_file_setter.v config_node_bind.v $(TESTBENCH)
 
 HDL_INSTALL = config_defs.v config_utils.v rNandMeta.v config_node.v relay_node.v config_node_bind.v config_setter.v config_file_setter.v
-DIR_INSTALL = /homes/luzh/raw/crudo/src/parts/verilog/config_net
+HDL_INSTALL_DIR = /homes/luzh/raw/crudo/src/parts/verilog/config_net
+
+PY_INSTALL_DIR = /homes/luzh/raw/greenlight/module_tests/config_node/common
 
 all: testfile testbench simulator sim
 
 install:
-	cp ${HDL_INSTALL} ${DIR_INSTALL} 
+	cp ${HDL_INSTALL} ${HDL_INSTALL_DIR} 
+	cp gen_tb.py ${PY_INSTALL_DIR} 
 
 clean:
 	rm -rf simulator csrc simulator.daidir .vcsmx_rebuild config_spec.out config_test.in config_file_setter.in config_probe.in $(TESTBENCH) *.log *.dump *.vcd ucli.key
