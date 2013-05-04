@@ -26,6 +26,7 @@ module config_file_setter
     if (reset_i) begin
       config_bit = 1'b1;
       count = 0;
+      vector_bits = '0;
 
       if ($test$plusargs("config-file-setter")) begin
         setter_file = $fopen("config_file_setter.in", "r");

@@ -71,10 +71,13 @@ module config_node
   logic [len_width_lp - 1 : 0] count_n, count_r; // bypass counter
   logic                        count_non_zero; // bypass counter is zero signal
 
+  logic [$bits(integer) - 1 : 0] count_int_val;
+
   logic [data_rx_len_lp - 1 : 0] data_rx;
   logic [data_bits_p - 1 : 0] data_n, data_r; // data payload register
 
   logic [sync_shift_len_lp - 1 : 0] sync_shift_n, sync_shift_r; // clock domain crossing syncronization registers + edge detection registers
+
 
   // The following two signals are used to detect the reset posedge.
   // Suppose that apart from this configuration network the remaining part of
@@ -93,7 +96,8 @@ module config_node
   logic                       data_dst_en; // data_dst_r write enable
   logic [data_bits_p - 1 : 0] data_dst, data_dst_r; // destination side data payload register
 
-  assign count_n = (valid) ? (packet_len - valid_bit_size_lp) : ((count_non_zero) ? (count_r - 1) : count_r);
+  assign count_int_val =  (valid) ? (packet_len - valid_bit_size_lp) : ((count_non_zero) ? (count_r - 1) : count_r);
+  assign count_n = count_int_val[0 +: len_width_lp];
          // Load packet length to counter at the beginning of a packet, and
          // decrease its value while it's non-zero. The node does not care
          // about content in its shift register when the counter is not zero.

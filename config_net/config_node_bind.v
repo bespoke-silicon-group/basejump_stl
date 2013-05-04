@@ -32,6 +32,8 @@ module config_node_bind
       disable initial_open_file;
     end
 
+    data_o_ref = '0; // just to get rid of Lint warning about never assigning to this variable
+
     ch = $fgetc(probe_file);
     while(ch != -1) begin // end of file
       if (ch == "#") begin // comments
