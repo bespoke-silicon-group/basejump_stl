@@ -17,6 +17,7 @@ module config_node_bind
   integer test_idx = 0;
   integer node_id = -1;
   integer test_sets = -1;
+  integer node_id_found = 0;
 
   integer errors = 0;
 
@@ -45,13 +46,18 @@ module config_node_bind
         rt = $ungetc(ch, probe_file);
         rt = $fscanf(probe_file, "config id: %d\n", node_id);
         if (node_id == id_p) begin // found relevant reference data
+          node_id_found = 1;
           rt = $fscanf(probe_file, "test sets: %d\n", test_sets); // a line giving number of test sets for a config_node with that id
           rt = $fscanf(probe_file, "reference: %b\n", data_o_ref); // a line giving a reference configuration string in binary
           break; // bookmark the probe_file position
         end else begin // invalid patterns
-          while (ch != "\n") begin // dump chars until the end of this line
+          while ( (ch != "\n") && (ch != -1) ) begin // dump chars until the end of this line
             ch = $fgetc(probe_file);
           end
+        end
+      end else begin
+        while ( (ch != "\n") && (ch != -1) ) begin // dump chars until the end of this line
+          ch = $fgetc(probe_file);
         end
       end
       ch = $fgetc(probe_file);
@@ -70,7 +76,7 @@ module config_node_bind
 
   always @ (negedge clk)
   begin: always_check_change
-    if (probe_file) begin
+    if (probe_file && (node_id_found == 1)) begin
       if(test_idx == 0) begin
         if (data_o === data_o_ref) begin
           $display("\n  @time %0d: \t output data_o_%0d\t reset   to %b", $time, id_p, data_o);
@@ -88,7 +94,7 @@ module config_node_bind
           test_idx += 1;
         end
       end
-    end else begin
+    end else begin // probe_file doesn't exist
       disable always_check_change;
     end
   end
@@ -96,18 +102,22 @@ module config_node_bind
   final
   begin: final_statistics
     if (probe_file) begin
-      if(test_idx == 0) begin
-        $display("!!! FAILED: Config node %5d has not reset properly!\n", id_p);
-      end else begin
-        if (errors != 0) begin
-          $display("!!! FAILED: Config node %5d has received at least %0d wrong packet(s)!\n", id_p, errors);
-        end else if (test_idx < test_sets) begin
-          $display("!!! FAILED: Config node %5d has missed at least %0d packet(s)!\n", id_p, test_sets - test_idx);
-        end else if (test_idx > test_sets) begin
-          $display("!!! FAILED: Config node %5d has received at least %0d more packet(s)!\n", id_p, test_idx - test_sets);
+      if (node_id_found == 1) begin
+        if(test_idx == 0) begin
+          $display("### FAILED:  Config node %5d has not reset properly!\n", id_p);
         end else begin
-          $display("### PASSED: Config node %5d is probably working properly.\n", id_p);
+          if (errors != 0) begin
+            $display("### FAILED:  Config node %5d has received at least %0d wrong packet(s)!\n", id_p, errors);
+          end else if (test_idx < test_sets) begin
+            $display("### FAILED:  Config node %5d has missed at least %0d packet(s)!\n", id_p, test_sets - test_idx);
+          end else if (test_idx > test_sets) begin
+            $display("### FAILED:  Config node %5d has received at least %0d more packet(s)!\n", id_p, test_idx - test_sets);
+          end else begin
+            $display("### PASSED:  Config node %5d is probably working properly.\n", id_p);
+          end
         end
+      end else begin // config_node having id_p is instantiated but not listed in the probe_file
+        $display("### WARNING: Config node %5d is detected in design but not listed in the probe file.\n", id_p);
       end
       $fclose(probe_file);
     end else begin
