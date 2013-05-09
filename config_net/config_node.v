@@ -96,7 +96,7 @@ module config_node
   logic                       data_dst_en; // data_dst_r write enable
   logic [data_bits_p - 1 : 0] data_dst, data_dst_r; // destination side data payload register
 
-  assign count_int_val =  (valid) ? (packet_len - valid_bit_size_lp) : ((count_non_zero) ? (count_r - 1) : count_r);
+  assign count_int_val = (valid) ? (packet_len - 1) : ((count_non_zero) ? (count_r - 1) : count_r);
   assign count_n = count_int_val[0 +: len_width_lp];
          // Load packet length to counter at the beginning of a packet, and
          // decrease its value while it's non-zero. The node does not care
