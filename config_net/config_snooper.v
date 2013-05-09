@@ -56,6 +56,7 @@ module config_snooper
 
   node_packet_s shift_n, shift_r; // shift register
   logic [id_width_lp - 1 : 0] node_id, node_id_r;
+  logic [id_tag_bits_lp - 1 : 0] id_tag, id_tag_r; // lfsr to generate pseudo-random tags
   logic                       cfg_reset; // configuration network reset signal
   logic                       valid; // begin of packet signal
   logic                       data_en; // data_r write enable
@@ -75,7 +76,6 @@ module config_snooper
 
   logic [sync_shift_len_lp - 1 : 0] sync_shift_n, sync_shift_r; // clock domain crossing syncronization registers + edge detection registers
 
-
   // The following two signals are used to detect the reset posedge.
   // Suppose that apart from this configuration network the remaining part of
   // the chip resets on 1 of the reset_input, now if the configuration
@@ -92,6 +92,8 @@ module config_snooper
 
   logic                       data_dst_en; // data_dst_r write enable
   logic [data_max_bits_lp - 1 : 0] data_dst, data_dst_r; // destination side data payload register
+  logic [id_width_lp - 1 : 0] node_id_dst, node_id_dst_r;
+  logic [id_tag_bits_lp - 1 : 0] id_tag_dst, id_tag_dst_r;
 
   assign count_n_int = (valid) ? (packet_len - 1) : ((count_non_zero) ? (count_r - 1) : count_r);
   assign count_n = count_n_int[0 +: len_width_lp];
@@ -101,16 +103,20 @@ module config_snooper
 
   assign shift_n = {config_i.cfg_bit, shift_r[1 +: shift_width_lp - 1]};
 
+  assign id_tag = '0;
+
   always_ff @ (posedge config_i.cfg_clk) begin
     if (cfg_reset) begin
       count_r <= 0;
       node_id_r <= '0;
+      id_tag_r <= '0;
       data_r <= '0;
       ready_r <= 0;
       ready_r2 <= 0;
     end else begin
       count_r <= count_n;
       if (data_en) begin
+        id_tag_r <= id_tag;
         node_id_r <= node_id;
         data_r <= data_n;
         ready_r <= ready_n;
@@ -140,6 +146,16 @@ module config_snooper
                      .data_b_i({data_max_bits_lp {data_dst_en}}),
                      .nand_o(data_dst) );
 
+  rNandMeta #(.width_p(id_width_lp))
+    node_id_dst_filter (.data_a_i(node_id_r),
+                        .data_b_i({id_width_lp {data_dst_en}}),
+                        .nand_o(node_id_dst) );
+
+  rNandMeta #(.width_p(id_tag_bits_lp))
+    id_tag_dst_filter (.data_a_i(id_tag_r),
+                       .data_b_i({id_tag_bits_lp {data_dst_en}}),
+                       .nand_o(id_tag_dst) );
+
   always_ff @ (posedge clk) begin
     if (reset) begin
       r_e_s_e_t_r <= 1;
@@ -148,9 +164,15 @@ module config_snooper
     end
 
     if (default_en) begin
-      data_dst_r <= '1;
+      data_dst_r <= '0;
+      node_id_dst_r <= '0;
+      id_tag_dst_r <= '0;
     end else begin
-      if (data_dst_en) data_dst_r <= data_dst; // data_dst is the inverted receiving data
+      if (data_dst_en) begin
+        data_dst_r <= ~data_dst; // data_dst is the inverted receiving data
+        node_id_dst_r <= ~node_id_dst; // node_id_dst is the inverted node_id_r
+        id_tag_dst_r <= ~id_tag_dst; // id_tag_dst is the inverted id_tag_r
+      end
     end
 
     sync_shift_r <= sync_shift_n;
@@ -206,7 +228,7 @@ module config_snooper
   assign count_non_zero = | count_r;
 
   // Output signals
-  assign id_o = node_id_r;
-  assign data_o = ~data_dst_r; // data_dst_r is the inverted data_r
+  assign id_o = { {(data_max_bits_lp - id_width_lp - id_tag_bits_lp) {0'b0}}, id_tag_dst_r, node_id_dst_r };
+  assign data_o = data_dst_r; // data_dst_r is the inverted data_r
 
 endmodule
