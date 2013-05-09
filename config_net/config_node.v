@@ -149,9 +149,9 @@ module config_node
     end
 
     if (default_en) begin
-      data_dst_r <= ~default_p; // data_dst_r will be inverted in the end
+      data_dst_r <= default_p;
     end else begin
-      if (data_dst_en) data_dst_r <= data_dst; // data_dst is the inverted receiving data
+      if (data_dst_en) data_dst_r <= ~data_dst; // data_dst is the inverted receiving data
     end
 
     sync_shift_r <= sync_shift_n;
@@ -185,6 +185,6 @@ module config_node
   assign count_non_zero = | count_r;
 
   // Output signals
-  assign data_o = ~data_dst_r; // data_dst_r is the inverted data_r
+  assign data_o = data_dst_r; // data_dst_r is the inverted data_r
 
 endmodule
