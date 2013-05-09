@@ -6,7 +6,7 @@ GTECH_SIM_LIB = $(SYNOPSYS)/icc/F-2011.09-SP5/packages/gtech/src_ver/gtech_lib.v
 VCS_FLAGS = -o $@ +v2k +vc -sverilog -full64 -timescale=1ns/1ps +vcs+lic+wait +multisource_int_delays +neg_tchk +libext+.v+.vlib+.vh
 
 TESTBENCH = config_net_tb.v
-HDL_SOURCE = $(GTECH_DIR)/GTECH_NAND2.v rNandMeta.v config_node.v relay_node.v config_setter.v config_file_setter.v config_node_bind.v $(TESTBENCH)
+HDL_SOURCE = $(GTECH_DIR)/GTECH_NAND2.v rNandMeta.v config_node.v relay_node.v config_snooper.v config_setter.v config_file_setter.v config_node_bind.v $(TESTBENCH)
 
 HDL_INSTALL = config_defs.v config_utils.v rNandMeta.v config_node.v relay_node.v config_node_bind.v config_setter.v config_file_setter.v
 HDL_INSTALL_DIR = /homes/luzh/raw/crudo/src/parts/verilog/config_net

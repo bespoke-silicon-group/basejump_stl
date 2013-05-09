@@ -26,8 +26,14 @@ localparam valid_bit_size_lp  =  2;
 localparam frame_bit_size_lp  =  1;
 localparam data_frame_len_lp  =  8;  // bit '0' is inserted every data_frame_len_lp in data bits
 localparam id_width_lp        =  8;  // number of bits to represent the ID of a node, should be able to keep the max ID in the whole chain
-localparam len_width_lp       =  8;  // number of bits to represent number of bits in the configuration packet
+localparam len_width_lp       =  8;  // number of bits to represent number of bits in the configuration packet ==> this can be reduced to $clog2(data_max_bits_lp)
 localparam reset_len_lp       = 10;  // reset sequence length
+
 localparam sync_len_lp        =  2;  // This has to be no less than 2 to provide reasonable MTBF
+
+localparam data_max_bits_lp   = 32;  // maximum number of allowed configurable bits in a single config_node
+                                     // the value should match the main processor's data width for efficient communication
+
+localparam id_tag_bits_lp     =  8;  // a pseudo random tag for the snooper node
 
 `endif
