@@ -68,10 +68,10 @@ module config_node
                                                           // to reduce the change to go metastable
 
   logic [len_width_lp - 1 : 0] packet_len;
+  logic [$bits(integer) - 1 : 0] count_n_int; // to avoid type casting warnings from Lint
   logic [len_width_lp - 1 : 0] count_n, count_r; // bypass counter
   logic                        count_non_zero; // bypass counter is zero signal
 
-  logic [$bits(integer) - 1 : 0] count_int_val;
 
   logic [data_rx_len_lp - 1 : 0] data_rx;
   logic [data_bits_p - 1 : 0] data_n, data_r; // data payload register
@@ -96,8 +96,8 @@ module config_node
   logic                       data_dst_en; // data_dst_r write enable
   logic [data_bits_p - 1 : 0] data_dst, data_dst_r; // destination side data payload register
 
-  assign count_int_val = (valid) ? (packet_len - 1) : ((count_non_zero) ? (count_r - 1) : count_r);
-  assign count_n = count_int_val[0 +: len_width_lp];
+  assign count_n_int = (valid) ? (packet_len - 1) : ((count_non_zero) ? (count_r - 1) : count_r);
+  assign count_n = count_n_int[0 +: len_width_lp];
          // Load packet length to counter at the beginning of a packet, and
          // decrease its value while it's non-zero. The node does not care
          // about content in its shift register when the counter is not zero.
