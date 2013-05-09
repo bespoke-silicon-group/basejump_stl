@@ -48,6 +48,7 @@ valid_bit_size_lp = 2 # communication packet valid bits size
 frame_bit_size_lp = 1 # communication packet frame bits size
 data_frame_len_lp = 8 # communication packet data frame length in bits
 reset_len_lp = 10 # communication packet reset signal length in bits
+data_max_bits_lp = 32 # maximum number of allowed configurable bits in a single config_node
 
 # reset, clock and simulation time
 rst_cfg = "rst_cfg" # configuration setter reset
@@ -379,6 +380,7 @@ write_localparam(tb_file, "valid_bit_size_lp  ", str(valid_bit_size_lp))
 write_localparam(tb_file, "frame_bit_size_lp  ", str(frame_bit_size_lp))
 write_localparam(tb_file, "data_frame_len_lp  ", str(data_frame_len_lp))
 write_localparam(tb_file, "reset_len_lp       ", str(reset_len_lp))
+write_localparam(tb_file, "data_max_bits_lp   ", str(data_max_bits_lp))
 
 tb_file.write(indent + "// double underscore __ separates test packet for each node\n")
 write_localparam(tb_file, "test_vector_bits_lp", str(test_vector_bits))
@@ -391,8 +393,11 @@ write_logic(tb_file, rst_cfg)
 write_logic(tb_file, clk_dst)
 write_logic(tb_file, rst_dst)
 
+# write config_s signals
+write_config_s(tb_file, "config_root_i")
+write_config_s(tb_file, "config_snooper_o")
+
 # declare relay node outputs struct
-write_config_s(tb_file, "relay_root_i") # relay_id 0 is the root
 for relay_id in range(0, relay_nodes):
   write_config_s(tb_file, "relay_" + str(relay_id) + "_o")
 
@@ -405,13 +410,17 @@ for inst_id in l_inst_id:
 # declare test vector logic
 write_logic_vec(tb_file, "test_vector", str(test_vector_bits - 1), '0')
 
+# declare snooper output logic
+write_logic_vec(tb_file, "config_snooped_id", str(data_max_bits_lp - 1), '0')
+write_logic_vec(tb_file, "config_snooped_data", str(data_max_bits_lp - 1), '0')
+
 # write relay node tree structure to testbench file
 tb_file.write("\n" + indent + "// " + "The relay node tree is generated as follows:\n")
 for key in d_relay_tree:
   tb_file.write(indent + "// branch node " + str(key) + ": " + str(d_relay_tree[key]) + "\n")
 # creat relay node tree
 tb_file.write("\n" + indent + "// " + "Relay node 0 (root) \n")
-write_relay_node(tb_file, "0", "relay_root_i", "relay_0_o")
+write_relay_node(tb_file, "0", "config_root_i", "relay_0_o")
 for key in d_relay_tree:
   branch = key
   for leaf in d_relay_tree[branch]:
@@ -472,7 +481,17 @@ tb_file.write(indent + "// instantiate config_file_setter to read configuration 
 tb_file.write(indent + "config_file_setter\n" + \
               indent + "  inst_file_setter(.clk_i(" + clk_cfg + "),\n" + \
               indent + "                   .reset_i(" + rst_cfg + "),\n" + \
-              indent + "                   .config_o(relay_root_i) );\n")
+              indent + "                   .config_o(config_root_i) );\n")
+
+# insert snooper node
+tb_file.write("\n")
+tb_file.write(indent + "// insert snooper node\n")
+tb_file.write(indent + "config_snooper\n" + \
+              indent + "  inst_config_snooper(.clk(" + clk_dst + "),\n" + \
+              indent + "                      .reset(" + rst_dst + "),\n" + \
+              indent + "                      .config_i(config_root_i),\n" + \
+              indent + "                      .id_o(config_snooped_id),\n" + \
+              indent + "                      .data_o(config_snooped_data) );\n")
 
 # create config_node_bind instance
 tb_file.write("\n")
