@@ -35,5 +35,6 @@ localparam data_max_bits_lp   = 32;  // maximum number of allowed configurable b
                                      // the value should match the main processor's data width for efficient communication
 
 localparam id_tag_bits_lp     =  8;  // a pseudo random tag for the snooper node
+                                     // feedback formula config_snooper needs change if this length changed
 
 `endif

@@ -56,6 +56,7 @@ module config_snooper
 
   node_packet_s shift_n, shift_r; // shift register
   logic [id_width_lp - 1 : 0] node_id, node_id_r;
+  logic                          feedback; // lfsr feedback bit for id_tag
   logic [id_tag_bits_lp - 1 : 0] id_tag, id_tag_r; // lfsr to generate pseudo-random tags
   logic                       cfg_reset; // configuration network reset signal
   logic                       valid; // begin of packet signal
@@ -103,13 +104,14 @@ module config_snooper
 
   assign shift_n = {config_i.cfg_bit, shift_r[1 +: shift_width_lp - 1]};
 
-  assign id_tag = '0;
+  assign feedback = id_tag_r[7] ^ id_tag_r[5] ^ id_tag_r[4] ^ id_tag_r[3]; // 8-bit max-period lfsr formula: x ** 8 + x ** 6 + x ** 5 + x ** 4 + 1
+  assign id_tag = {id_tag_r[0 +: id_tag_bits_lp - 1], feedback};
 
   always_ff @ (posedge config_i.cfg_clk) begin
     if (cfg_reset) begin
       count_r <= 0;
       node_id_r <= '0;
-      id_tag_r <= '0;
+      id_tag_r <= '1; // has to be non-zero initial value
       data_r <= '0;
       ready_r <= 0;
       ready_r2 <= 0;
