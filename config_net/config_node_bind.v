@@ -39,7 +39,7 @@ module config_node_bind
     while(ch != -1) begin // end of file
       if (ch == "#") begin // comments
         rt = $ungetc(ch, probe_file);
-        while (ch != "\n") begin // dump chars until the end of this line
+        while ( (ch != "\n") && (ch != -1) ) begin // dump chars until the end of this line
           ch = $fgetc(probe_file);
         end
       end else if (ch == "c") begin // a line giving config_node id
