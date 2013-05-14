@@ -500,6 +500,12 @@ tb_file.write(indent + "// configuration node binding verification module\n" + \
               indent + "                                    .data_bits_p(data_bits_p))\n" + \
               indent + "             inst_config_node_bind (clk, data_o);\n\n")
 
+# create config_snooper_bind instance
+tb_file.write("\n")
+tb_file.write(indent + "// configuration snooper binding verification module\n" + \
+              indent + "bind inst_config_snooper config_snooper_bind\n" + \
+              indent + "          inst_config_snooper_bind (clk, id_o, data_o);\n\n")
+
 # write simulation ending condition
 tb_file.write("\n")
 tb_file.write(indent + "// simulation end\n")
