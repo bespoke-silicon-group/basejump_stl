@@ -230,7 +230,7 @@ module config_snooper
   assign count_non_zero = | count_r;
 
   // Output signals
-  assign id_o = { {(data_max_bits_lp - id_width_lp - id_tag_bits_lp) {0'b0}}, id_tag_dst_r, node_id_dst_r };
+  assign id_o = { {(data_max_bits_lp - id_width_lp - id_tag_bits_lp) {1'b0}}, id_tag_dst_r, node_id_dst_r };
   assign data_o = data_dst_r; // data_dst_r is the inverted data_r
 
 endmodule
