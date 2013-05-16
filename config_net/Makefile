@@ -58,10 +58,16 @@ clean:
          $(TESTBENCH)
 
 testfile:
-	./gen_tb.py -w config_test.in 20
+	./gen_tb.py --spec config_spec.in \
+              --generate-tests config_test.in \
+              --number-of-tests 20
 
 testbench:
-	./gen_tb.py -r config_test.in -o config_net_tb.v
+	./gen_tb.py --spec config_spec.in \
+              --read-tests config_test.in \
+              --testbench config_net_tb.v \
+              --create-setter-file config_file_setter.in \
+              --create-probe-file config_probe.in
 
 simulator: $(HDL_SOURCE)
 	$(VCS) $(VCS_FLAGS) $(HDL_SOURCE) 2>&1 | tee $@.log

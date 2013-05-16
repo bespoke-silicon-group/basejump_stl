@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/nbu_async/luzh/install/bin/python
 
 import optparse
 import subprocess
@@ -8,18 +8,10 @@ import re
 import sys
 import random
 import os.path
+import argparse
 
 # ========== Global variables ==========
 indent = "  " # indentation
-
-tb_file_name = "config_net_tb.v"            # default testbench file name
-spec_file_name = "config_spec.in"           # describe the configuration network topology
-test_file_name = "config_test.in"           # describe individual testing config values
-setter_file_name = "config_file_setter.in"  # contain a single binary vector formed by concatenating and framing config values specified in test_file_name
-probe_file_name = "config_probe.in"         # contain expected output sequences for each config_node based on the test vector input
-
-gen_tb = True                               # False = only generate *.in files; True = also generate testbench file.
-                                            # False is needed when the config_nodes are instantiated in other testbenches.
 
 l_inst_id = [] # list of unique decimals
 d_inst_name = {} # dictionary of strings indexed by inst id
@@ -141,8 +133,65 @@ def write_relay_node(file, id, config_i, config_o):
           id + "_dut(  .config_i(" + config_i + "),\n\
                        .config_o(" + config_o + ") );\n")
 # ========== ==========
+argparser = argparse.ArgumentParser()
+argparser.add_argument("--spec",
+                       type=argparse.FileType('r'),
+                       metavar='Filename',
+                       dest="spec_file",
+                       required=True,
+                       help="read configuration network specification file")
+
+arg_tests_rw = argparser.add_mutually_exclusive_group()
+arg_tests_rw.add_argument("--generate-tests",
+                          type=argparse.FileType('w'),
+                          metavar='Filename',
+                          dest="generate_tests",
+                          required=False,
+                          help="write randomly generated test sequence to file")
+arg_tests_rw.add_argument("--read-tests",
+                          type=argparse.FileType('r'),
+                          metavar='Filename',
+                          dest="read_tests",
+                          required=False,
+                          help="read existing test sequence file")
+
+argparser.add_argument("--number-of-tests",
+                       type=int,
+                       metavar='Integer',
+                       default=10,
+                       dest="number_of_tests",
+                       required=False,
+                       help="number of tests to be created with --generate-tests")
+
+argparser.add_argument("--testbench",
+                       type=argparse.FileType('w'),
+                       metavar='Filename',
+                       dest="testbench",
+                       required=False,
+                       help="generate configuration network SystemVerilog testbench file")
+
+argparser.add_argument("--create-setter-file",
+                       type=argparse.FileType('w'),
+                       metavar='Filename',
+                       dest="create_setter_file",
+                       required=False,
+                       help="generate configuration network setter vector according to --read-tests and write the vector to file")
+
+argparser.add_argument("--create-probe-file",
+                       type=argparse.FileType('w'),
+                       metavar='Filename',
+                       dest="create_probe_file",
+                       required=False,
+                       help="generate verification probes for each config_node according to --read-tests and write the probes to file")
+
+try:
+  args = argparser.parse_args()
+except IOError, msg:
+  argparser.error(str(msg))
+
+# ========== ==========
 # read specification file, parse relay nodes
-spec_file = open(spec_file_name, 'r')
+spec_file = args.spec_file
 relay_nodes = 0 # number of relay nodes in the configuration network
 for line in spec_file:
   line = line.rstrip('\n') # remove the newline character
@@ -176,7 +225,6 @@ for line in spec_file:
         print "ERROR spec file format: type " + l_words[0] + " is not recognized!"
         print ">>> " + line
         sys.exit(1)
-spec_file.close()
 
 # randomize d_relay_tree if relay_nodes are not provided in spec file
 if (relay_nodes == 0):
@@ -189,8 +237,8 @@ if (relay_nodes == 0):
     else:
       d_relay_tree[branch_id] = [relay_id]
 
+spec_file.seek(0) # rewind to read from the beginning of spec file
 # read specification file, attach config nodes
-spec_file = open(spec_file_name, 'r')
 for line in spec_file:
   line = line.rstrip('\n') # remove the newline character
   if line != "": # if not an empty line
@@ -208,70 +256,45 @@ for line in spec_file:
           d_inst_pos[inst_id] = int(l_words[2])
 spec_file.close()
 
-# argument list parsing
-if (len(sys.argv) == 1):
-  print "gen_tb.py expects at least 2 arguments."
-  readme()
-  sys.exit(1)
-elif ( (sys.argv[1] == "-h") or (sys.argv[1] == "--help") ):
-  readme()
-  sys.exit(0)
-
-if (len(sys.argv) > 2):
-  test_file_name = sys.argv[2]
-  if (sys.argv[1] == "-w"):
-    number_of_tests = int(sys.argv[3])
-    # randomly generate test id and test data
-    generated_tests = 0
-    while (generated_tests < number_of_tests):
-      rand_idx = random.randint(0, len(l_inst_id) - 1)
-      test_id = l_inst_id[rand_idx]
-      l_test_id.append(test_id)
-      test_data_bits = d_inst_data_bits[test_id]
-      randbits = random.getrandbits(test_data_bits)
-      test_data = dec2bin(randbits, test_data_bits)
-      l_test_data.append(test_data)
-      generated_tests += 1
-    # write random test cases to test file
-    test_file = open(test_file_name, 'w')
-    test_file.write("# This is a generated file with random test id and data.\n" + \
-                    "# You can extend this file to contain your specific test cases.\n" + \
-                    "# Use command `./gen_tb.py -r <this file name> -o <tb file name>` if you would like to use the modified file.\n" + \
-                    "# Use command `./gen_tb.py -w <this file name> <number of tests>` will overwrite this file.\n\n" + \
-                    "# <test id> <test data>\n")
-    for test in range(0, number_of_tests):
-      test_file.write(str(l_test_id[test]) + "\t\t" + l_test_data[test] + "\n")
-    test_file.close()
-    os.system("cat " + test_file_name)
-    print "  "
-    print str(number_of_tests) + " sets of random test id and data are generated and written into " + test_file_name
-    sys.exit(0) # exit after making the test file
-  elif (sys.argv[1] == "-r"):
-    test_file_name = sys.argv[2]
-    if (len(sys.argv) == 5):
-      if (sys.argv[3] == "-o"):
-        tb_file_name = sys.argv[4];
-      else:
-        print "wrong commond line syntax."
-        sys.exit(1)
-    else:
-      gen_tb = False
-    # read test file and parse
-    test_file = open(test_file_name, 'r')
-    for line in test_file:
-      line = line.rstrip('\n') # remove the newline character
-      if line != "": # if not an empty line
-        l_words = line.split() # split a line into a list of words on white spaces
-        if (line[0] != '#') and (line[0] != ' '): # ignore lines starting with '#' or spaces
-          l_test_id.append(int(l_words[0]))
-          l_test_data.append(l_words[1])
-    test_file.close()
-  else:
-    print "command line argument " + sys.argv[1] + " can not be recognized."
-    sys.exit(1)
-else:
-  print "wrong commond line syntax."
-  sys.exit(1)
+# randomly generate test file or read an existing one
+if (args.generate_tests != None):
+  # randomly generate test id and test data
+  test_file = args.generate_tests
+  number_of_tests = args.number_of_tests
+  generated_tests = 0
+  while (generated_tests < number_of_tests):
+    rand_idx = random.randint(0, len(l_inst_id) - 1)
+    test_id = l_inst_id[rand_idx]
+    l_test_id.append(test_id)
+    test_data_bits = d_inst_data_bits[test_id]
+    randbits = random.getrandbits(test_data_bits)
+    test_data = dec2bin(randbits, test_data_bits)
+    l_test_data.append(test_data)
+    generated_tests += 1
+  # write random test cases to test file
+  test_file.write("# This is a generated file with random test id and data.\n" + \
+                  "# You can extend this file to contain your specific test cases.\n" + \
+                  "# Use command `./gen_tb.py -r <this file name> -o <tb file name>` if you would like to use the modified file.\n" + \
+                  "# Use command `./gen_tb.py -w <this file name> <number of tests>` will overwrite this file.\n\n" + \
+                  "# <test id> <test data>\n")
+  for test in range(0, number_of_tests):
+    test_file.write(str(l_test_id[test]) + "\t\t" + l_test_data[test] + "\n")
+  test_file.close()
+  os.system("cat " + test_file.name)
+  print "  "
+  print str(number_of_tests) + " sets of random test id and data are generated and written into " + test_file.name
+  sys.exit(0) # exit after making the test file
+elif (args.read_tests != None):
+  # read existing test file and parse
+  test_file = args.read_tests
+  for line in test_file:
+    line = line.rstrip('\n') # remove the newline character
+    if line != "": # if not an empty line
+      l_words = line.split() # split a line into a list of words on white spaces
+      if (line[0] != '#') and (line[0] != ' '): # ignore lines starting with '#' or spaces
+        l_test_id.append(int(l_words[0]))
+        l_test_data.append(l_words[1])
+  test_file.close()
 
 # create test string and calculate total bits
 test_idx = 0
@@ -325,14 +348,15 @@ for packet in l_test_packet:
   test_vector = packet + "__" + test_vector
 
 # write test vector to file
-setter_file = open(setter_file_name, 'w')
-setter_file.write("# This is a file giving test input bit vector.\n" + \
-                  "# The left-most bit is the first bit feeding into the configuration network first.\n" + \
-                  "# You can modify this file to contain some specific testing pattern.\n" + \
-                  "# Be sure you know how to modulate data and add headers, and change the vector bits value accordingly.\n")
-setter_file.write("vector bits: " + str(test_vector_bits) + "\n\n")
-setter_file.write(test_vector[::-1]) # the reversed string, for easy parsing in "config_file_setter.v".
-setter_file.close()
+if (args.create_setter_file != None):
+  setter_file = args.create_setter_file
+  setter_file.write("# This is a file giving test input bit vector.\n" + \
+                    "# The left-most bit is the first bit feeding into the configuration network first.\n" + \
+                    "# You can modify this file to contain some specific testing pattern.\n" + \
+                    "# Be sure you know how to modulate data and add headers, and change the vector bits value accordingly.\n")
+  setter_file.write("vector bits: " + str(test_vector_bits) + "\n\n")
+  setter_file.write(test_vector[::-1]) # the reversed string, for easy parsing in SystemVerilog testbench file
+  setter_file.close()
 
 # calculate the shift register length of the whole configuration network
 shift_chain_length = 0
@@ -348,29 +372,31 @@ for key in d_inst_data_bits:
 sim_time += (test_vector_bits + shift_chain_length + relay_nodes) * clk_cfg_period
 
 # open and write expected change sequences to probe file
-probe_file = open(probe_file_name, 'w')
-probe_file.write("# This is a file with all config_node IDs and their expect output sequences in testbench.\n" + \
-                 "# The ID value of each config_node is given in decimal after \"config id: \".\n" + \
-                 "# The number of test sets for a config_node is given in decimal after \"test sets: \".\n" + \
-                 "# Below the ID line come expected configuration value change sequences in binary after \"reference: \".\n" + \
-                 "# Each line is an expected output string and the first reference is the reset value of that config_node.\n" + \
-                 "# Binary values of two adjacent reference lines are not allowed to be identical.\n" + \
-                 "# \n" + \
-                 "# The instance of config_node_bind module reads this file and test simulation outputs using this file's outputs as reference.\n" + \
-                 "# Parsing of this file in VCS simulation is based on the first letter of each line.\n" + \
-                 "# If this file becomes more complex in syntax, the parser should also be extended.")
-for key in d_reference:
-  test_id = key
-  probe_file.write("\n\nconfig id: " + str(test_id))
-  tests = len(d_reference[test_id])
-  probe_file.write("\ntest sets: " + str(tests))
-  for test in range(0, tests):
-    probe_file.write("\nreference: " + d_reference[test_id][test])
-probe_file.close()
+if (args.create_probe_file != None):
+  probe_file = args.create_probe_file
+  probe_file.write("# This is a file with all config_node IDs and their expect output sequences in testbench.\n" + \
+                   "# The ID value of each config_node is given in decimal after \"config id: \".\n" + \
+                   "# The number of test sets for a config_node is given in decimal after \"test sets: \".\n" + \
+                   "# Below the ID line come expected configuration value change sequences in binary after \"reference: \".\n" + \
+                   "# Each line is an expected output string and the first reference is the reset value of that config_node.\n" + \
+                   "# Binary values of two adjacent reference lines are not allowed to be identical.\n" + \
+                   "# \n" + \
+                   "# The instance of config_node_bind module reads this file and test simulation outputs using this file's outputs as reference.\n" + \
+                   "# Parsing of this file in VCS simulation is based on the first letter of each line.\n" + \
+                   "# If this file becomes more complex in syntax, the parser should also be extended.")
+  for key in d_reference:
+    test_id = key
+    probe_file.write("\n\nconfig id: " + str(test_id))
+    tests = len(d_reference[test_id])
+    probe_file.write("\ntest sets: " + str(tests))
+    for test in range(0, tests):
+      probe_file.write("\nreference: " + d_reference[test_id][test])
+  probe_file.close()
 
-if (not gen_tb): sys.exit(0) # Do not generate testbench file
+# generate testbench file
+if (args.testbench == None): sys.exit(0) # Do not generate testbench file
 
-tb_file = open(tb_file_name, 'w')
+tb_file = args.testbench
 tb_file.write("module config_net_tb;\n\n")
 
 # write localparam
