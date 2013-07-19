@@ -66,6 +66,7 @@ module config_snooper
                                                           // to reduce the change to go metastable
 
   logic [len_width_lp - 1 : 0] packet_len;
+  logic [$bits(integer) - 1 : 0] data_framed_bits_int; // to avoid type casting warnings from Lint
   logic [len_width_lp - 1 : 0] data_framed_bits, data_bits; // valid data bits in the packet
   logic [$bits(integer) - 1 : 0] count_n_int; // to avoid type casting warnings from Lint
   logic [len_width_lp - 1 : 0] count_n, count_r; // bypass counter
@@ -211,7 +212,8 @@ module config_snooper
 
   assign data_n = data_snoop & data_mask;
 
-  assign data_framed_bits = (packet_len - header_len_lp - 1); // minus 1 means to remove the msb framing bit
+  assign data_framed_bits_int = (packet_len - header_len_lp - 1); // minus 1 means to remove the msb framing bit
+  assign data_framed_bits = data_framed_bits_int[0 +: len_width_lp];
   always_comb begin: cal_data_bits // calculate valid data bits in packet ==> need a better decoding logic
     if ( (0 < data_framed_bits) && (data_framed_bits < 8) ) begin //==> fix the sign problem
       data_bits = data_framed_bits;
