@@ -75,3 +75,9 @@ simulator: $(HDL_SOURCE)
 sim: simulator
 	./simulator +config-file-setter +config-node-bind +config-snooper-bind 2>&1 | tee $@.log
 
+dve:
+	$(VCS_BIN)/dve -full64
+
+%.echo:
+	@echo '$*=$($*)'
+
