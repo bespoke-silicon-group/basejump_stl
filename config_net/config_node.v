@@ -63,9 +63,9 @@ module config_node
   logic                       valid; // begin of packet signal
   logic                       match; // node id match signal
   logic                       data_en; // data_r write enable
-  logic                       ready_n, ready_r, ready_r2; // data_r ready and corresponding registers for clock domain crossing
-                                                          // no combinational logic between ready_r2 and its destination side receiver,
-                                                          // to reduce the change to go metastable
+  logic                       ready_n, ready_r; // data_r ready and corresponding registers for clock domain crossing
+                                                // no combinational logic between ready_r and its destination side receiver,
+                                                // to reduce the change to go metastable
 
   logic [len_width_lp - 1 : 0] packet_len;
   logic [$bits(integer) - 1 : 0] count_n_int; // to avoid type casting warnings from Lint
@@ -109,14 +109,12 @@ module config_node
       count_r <= 0;
       data_r <= default_p;
       ready_r <= 0;
-      ready_r2 <= 0;
     end else begin
       count_r <= count_n;
       if (data_en) begin
         data_r <= data_n;
         ready_r <= ready_n;
       end
-      ready_r2 <= ready_r;
     end
 
     shift_r <= shift_n;
@@ -124,7 +122,7 @@ module config_node
 
   assign ready_n = ready_r ^ data_en; // xor, invert ready signal when data_en is 1
 
-  assign sync_shift_n = {ready_r, sync_shift_r[1 +: sync_shift_len_lp - 1]}; // clock domain crossing synchronization line
+  assign sync_shift_n = {(ready_r ^ cfg_reset), sync_shift_r[1 +: sync_shift_len_lp - 1]}; // clock domain crossing synchronization line
 
   assign default_en = reset & (~ r_e_s_e_t_r); // (reset == 1) & (r_e_s_e_t_r == 0)
 

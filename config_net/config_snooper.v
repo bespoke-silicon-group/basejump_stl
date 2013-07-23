@@ -61,9 +61,9 @@ module config_snooper
   logic                       cfg_reset; // configuration network reset signal
   logic                       valid; // begin of packet signal
   logic                       data_en; // data_r write enable
-  logic                       ready_n, ready_r, ready_r2; // data_r ready and corresponding registers for clock domain crossing
-                                                          // no combinational logic between ready_r2 and its destination side receiver,
-                                                          // to reduce the change to go metastable
+  logic                       ready_n, ready_r; // data_r ready and corresponding registers for clock domain crossing
+                                                // no combinational logic between ready_r and its destination side receiver,
+                                                // to reduce the change to go metastable
 
   logic [len_width_lp - 1 : 0] packet_len;
   logic [$bits(integer) - 1 : 0] data_framed_bits_int; // to avoid type casting warnings from Lint
@@ -115,7 +115,6 @@ module config_snooper
       id_tag_r <= '1; // has to be non-zero initial value
       data_r <= '0;
       ready_r <= 0;
-      ready_r2 <= 0;
     end else begin
       count_r <= count_n;
       if (data_en) begin
@@ -124,7 +123,6 @@ module config_snooper
         data_r <= data_n;
         ready_r <= ready_n;
       end
-      ready_r2 <= ready_r;
     end
 
     shift_r <= shift_n;
@@ -132,7 +130,7 @@ module config_snooper
 
   assign ready_n = ready_r ^ data_en; // xor, invert ready signal when data_en is 1
 
-  assign sync_shift_n = {ready_r, sync_shift_r[1 +: sync_shift_len_lp - 1]}; // clock domain crossing synchronization line
+  assign sync_shift_n = {(ready_r ^ cfg_reset), sync_shift_r[1 +: sync_shift_len_lp - 1]}; // clock domain crossing synchronization line
 
   assign default_en = reset & (~ r_e_s_e_t_r); // (reset == 1) & (r_e_s_e_t_r == 0)
 
@@ -169,7 +167,7 @@ module config_snooper
     if (default_en) begin
       data_dst_r <= '0;
       node_id_dst_r <= '0;
-      id_tag_dst_r <= '0;
+      id_tag_dst_r <= '1;
     end else begin
       if (data_dst_en) begin
         data_dst_r <= ~data_dst; // data_dst is the inverted receiving data
