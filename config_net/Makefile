@@ -73,7 +73,7 @@ simulator: $(HDL_SOURCE)
 	$(VCS) $(VCS_FLAGS) $(HDL_SOURCE) 2>&1 | tee $@.log
 
 sim: simulator
-	./simulator +config-file-setter +config-node-bind +config-snooper-bind 2>&1 | tee $@.log
+	./simulator +config-file-setter +config-node-bind +config-snooper-bind +cyclic-test 2>&1 | tee $@.log
 
 dve:
 	$(VCS_BIN)/dve -full64

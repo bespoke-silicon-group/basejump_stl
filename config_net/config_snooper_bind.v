@@ -18,6 +18,7 @@ module config_snooper_bind
   integer node_id = -1;
   integer test_sets = -1;
   integer node_id_found = 0;
+  integer restart_pos; // start position of valid references
 
   integer errors = 0;
 
@@ -48,8 +49,9 @@ module config_snooper_bind
         continue;
       end else begin
         rt = $ungetc(ch, test_file);
+        restart_pos = $ftell(test_file); // bookmark the test_file position
         rt = $fscanf(test_file, "%d\t\t%b\n", id_o_ref, data_o_ref);
-        break; // bookmark the test_file position
+        break; // to be continued from here
       end
       ch = $fgetc(test_file);
     end
@@ -86,7 +88,17 @@ module config_snooper_bind
             $display("\n  @time %0d: \t ERROR snooped id_o = %d <-> expected = %d", $time, id_o[0 +: id_width_lp], id_o_ref);
             errors += 1;
           end
-          rt = $fscanf(test_file, "%d\t\t%b\n", id_o_ref, data_o_ref);
+          ch = $fgetc(test_file);
+          if (ch == -1) begin // end of file
+            if ($test$plusargs("cyclic-test")) begin
+              rt = $fseek(test_file, restart_pos, 0); // circulate
+              rt = $fscanf(test_file, "%d\t\t%b\n", id_o_ref, data_o_ref);
+              has_reset = 0;
+            end
+          end else begin
+            rt = $ungetc(ch, test_file);
+            rt = $fscanf(test_file, "%d\t\t%b\n", id_o_ref, data_o_ref);
+          end
         end
       end
     end else begin

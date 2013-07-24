@@ -370,6 +370,8 @@ for key in d_inst_data_bits:
 
 # revise simulation time to ensure all test bits walks through the whole configuration network
 sim_time += (test_vector_bits + shift_chain_length + relay_nodes) * clk_cfg_period
+# double the simulation time just to exercise config nodes longer
+sim_time = sim_time * 2
 
 # open and write expected change sequences to probe file
 if (args.create_probe_file != None):

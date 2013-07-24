@@ -18,6 +18,7 @@ module config_node_bind
   integer node_id = -1;
   integer test_sets = -1;
   integer node_id_found = 0;
+  integer restart_pos; // start position of valid probe reference
 
   integer errors = 0;
 
@@ -48,8 +49,9 @@ module config_node_bind
         if (node_id == id_p) begin // found relevant reference data
           node_id_found = 1;
           rt = $fscanf(probe_file, "test sets: %d\n", test_sets); // a line giving number of test sets for a config_node with that id
+          restart_pos = $ftell(probe_file); // bookmark the probe_file position
           rt = $fscanf(probe_file, "reference: %b\n", data_o_ref); // a line giving a reference configuration string in binary
-          break; // bookmark the probe_file position
+          break; // to be continued from here
         end else begin // invalid patterns
           while ( (ch != "\n") && (ch != -1) ) begin // dump chars until the end of this line
             ch = $fgetc(probe_file);
@@ -80,8 +82,8 @@ module config_node_bind
       if(test_idx == 0) begin
         if (data_o === data_o_ref) begin
           $display("\n  @time %0d: \t output data_o_%0d\t reset   to %b", $time, id_p, data_o);
-          rt = $fscanf(probe_file, "reference: %b\n", data_o_ref); // read next reference value
           test_idx += 1;
+          rt = $fscanf(probe_file, "reference: %b\n", data_o_ref); // read next reference value
         end
       end else begin
         if (data_o !== data_o_r) begin
@@ -90,8 +92,16 @@ module config_node_bind
             $display("\n  @time %0d: \t ERROR output data_o_%0d = %b <-> expected = %b", $time, id_p, data_o, data_o_ref);
             errors += 1;
           end
-          rt = $fscanf(probe_file, "reference: %b\n", data_o_ref); // read next reference value
           test_idx += 1;
+          if (test_idx == test_sets) begin
+            if ($test$plusargs("cyclic-test")) begin
+              rt = $fseek(probe_file, restart_pos, 0); // circulate
+              rt = $fscanf(probe_file, "reference: %b\n", data_o_ref); // read next reference value
+              test_idx = 0;
+            end
+          end else begin
+            rt = $fscanf(probe_file, "reference: %b\n", data_o_ref); // read next reference value
+          end
         end
       end
     end else begin // probe_file doesn't exist
@@ -103,17 +113,19 @@ module config_node_bind
   begin: final_statistics
     if (probe_file) begin
       if (node_id_found == 1) begin
-        if(test_idx == 0) begin
-          $display("### FAILED:  Config node %5d has not reset properly!\n", id_p);
+        if (errors != 0) begin
+          $display("### FAILED:  Config node %5d has received at least %0d wrong packet(s)!\n", id_p, errors);
         end else begin
-          if (errors != 0) begin
-            $display("### FAILED:  Config node %5d has received at least %0d wrong packet(s)!\n", id_p, errors);
+          $display("### PASSED:  Config node %5d is probably working properly.\n", id_p);
+        end
+
+        if (!$test$plusargs("cyclic-test")) begin
+          if(test_idx == 0) begin
+            $display("### FAILED:  Config node %5d has not reset properly!\n", id_p);
           end else if (test_idx < test_sets) begin
             $display("### FAILED:  Config node %5d has missed at least %0d packet(s)!\n", id_p, test_sets - test_idx);
           end else if (test_idx > test_sets) begin
             $display("### FAILED:  Config node %5d has received at least %0d more packet(s)!\n", id_p, test_idx - test_sets);
-          end else begin
-            $display("### PASSED:  Config node %5d is probably working properly.\n", id_p);
           end
         end
       end else begin // config_node having id_p is instantiated but not listed in the probe_file
