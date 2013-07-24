@@ -29,16 +29,15 @@
 
 # The following are example inputs
 # r  <id>  <branch>
-r      0
-r      1       0
-r      2       0
-r      3       2
-r      4       x
+#r      0
+#r      1       0
+#r      2       0
+#r      3       2
+#r      4       x
 
-# c  <id>  <branch>   <name>   <data_bits>               <default>
-c      5       0       NodeA        4                        1001
-c      7       x       NodeB       21       111111111111111111111
-c      1       1       InstMem      8                    00000001
-c     96       4       NodeC       12                000000001001
-c      0       3       DataMem      8                    00100001
-c    151       3       NodeD        1                           1
+# c  <id>  <branch>   <name>       <data_bits>             <default>
+c      0       x      Data_Mem         8                    00100001
+c      1       x      Instr_Mem        8                    00100001
+c      2       x      Tag_Mem          8                    00100001
+c      3       x      Status_Mem       8                    00100001
+c      4       x      Main_IMem        8                    00100001
