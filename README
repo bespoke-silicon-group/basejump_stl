@@ -1,1 +1,18 @@
-System Building Blocks
+BSG IP Cores Repository
+=======================
+
+This repository contains IP cores targeting IC designs for various purposes.
+
+Contents
+--------
+* config_net
+
+This configuration network is composed of config\_nodes in a tree topology. The
+network can be used to deliver proper values to other IP instances that demands
+specific inputs for internal mode configurations. The network can uses a
+different clock than the targeting IP instances, and is designed to be reliable
+when cross clock domains.
+
+Contact
+-------
+Email to: taylor-bsg@googlegroups.com
