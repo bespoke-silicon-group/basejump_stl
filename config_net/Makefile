@@ -1,7 +1,7 @@
-include cadenv.mk
+include ./cad/common/mk/cadenv.mk
 
-GTECH_DIR = $(SYNOPSYS)/icc/F-2011.09-SP5/packages/gtech/src_ver
-GTECH_SIM_LIB = $(SYNOPSYS)/icc/F-2011.09-SP5/packages/gtech/src_ver/gtech_lib.v
+GTECH_DIR = $(SYNOPSYS)/$(ICC_RELEASE)/packages/gtech/src_ver
+GTECH_SIM_LIB = $(SYNOPSYS)/$(ICC_RELEASE)/packages/gtech/src_ver/gtech_lib.v
 
 VCS_FLAGS = -o $@ +v2k +vc -sverilog -full64 -timescale=1ns/1ns +vcs+lic+wait +multisource_int_delays +neg_tchk +libext+.v+.vlib+.vh
 
@@ -28,11 +28,11 @@ HDL_INSTALL = config_defs.v \
               config_snooper.v \
               config_snooper_bind.v
 
-HDL_INSTALL_DIR = /homes/luzh/raw/crudo/src/parts/verilog/config_net
+HDL_INSTALL_DIR = /homes/$(USER)/raw/crudo/src/parts/verilog/config_net
 
-PY_INSTALL_DIR = /homes/luzh/raw/greenlight/module_tests/config_node/common
+PY_INSTALL_DIR = /homes/$(USER)/raw/greenlight/module_tests/config_node/common
 
-all: testfile testbench simulator sim
+all: testfile testbench simv sim
 
 install:
 	cp ${HDL_INSTALL} ${HDL_INSTALL_DIR} 
@@ -43,9 +43,9 @@ uninstall:
 	rm -rf ${PY_INSTALL_DIR}/gen_tb.py
 
 clean:
-	rm -rf simulator \
+	rm -rf simv \
          csrc \
-         simulator.daidir \
+         simv.daidir \
          .vcsmx_rebuild \
          config_spec.out \
          config_test.in \
@@ -62,18 +62,18 @@ testfile:
               --generate-tests config_test.in \
               --number-of-tests 20
 
-testbench:
+testbench: testfile
 	./gen_tb.py --spec config_spec.in \
               --read-tests config_test.in \
               --testbench config_net_tb.v \
               --create-setter-file config_file_setter.in \
               --create-probe-file config_probe.in
 
-simulator: $(HDL_SOURCE)
+simv: testbench $(HDL_SOURCE)
 	$(VCS) $(VCS_FLAGS) $(HDL_SOURCE) 2>&1 | tee $@.log
 
-sim: simulator
-	./simulator +config-file-setter +config-node-bind +config-snooper-bind +cyclic-test 2>&1 | tee $@.log
+sim: simv
+	./simv +config-file-setter +config-node-bind +config-snooper-bind +cyclic-test 2>&1 | tee $@.log
 
 dve:
 	$(VCS_BIN)/dve -full64
