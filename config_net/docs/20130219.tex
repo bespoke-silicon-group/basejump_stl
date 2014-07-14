@@ -1,0 +1,573 @@
+\documentclass[12pt]{article}
+
+\usepackage{geometry}    % required to change the page size to A4
+\usepackage{graphicx}    % required for including pictures
+\usepackage{float}       % allows putting an [H] in \begin{figure} to specify the exact location of the figure
+\usepackage{wrapfig}     % allows in-line images such as the example fish picture
+\usepackage{listings}    % source code listings
+\usepackage{amsmath}     % AMS mathematical facilities for Latex
+\usepackage{pstricks}    % a collection of add-ons and bug fixes for PSTricks
+\usepackage{pst-circ}    % for drawing circuits
+\usepackage{pst-tree}    % for drawing trees
+\usepackage{pst-node}    % for drawing trees
+
+%\usepackage{siunitx}     % a comprehensive (SI) units package
+%\usepackage{tikz}
+%\usepackage{circuitikz}
+%\usepackage{hyperref}
+%\usepackage{epsfig}
+%\usepackage{fontspec}
+
+\newcommand{\reffig}[1]{Figure~\ref{#1}}
+\newcommand{\refeq}[1]{(Equation~\ref{#1})}
+\newcommand{\reftab}[1]{Table~\ref{#1}}
+\newcommand{\refchap}[1]{Chapter~\ref{#1}}
+\newcommand{\refsec}[1]{Section~\ref{#1}}
+\newcommand{\ie}{i.e.,~}
+\newcommand{\eg}{e.g.,~}
+
+\parskip 1em
+\parindent 0pt
+
+\geometry{a4paper}         % set the page size to be A4 as opposed to the default US Letter
+%\usetikzlibrary{trees, snakes, shapes, arrows}
+%\usetikzlibrary{calc,matrix,positioning}
+%\usetikzlibrary{circuits}
+
+%\defaultfontfeatures{Mapping=tex-text}
+%\setmainfont[SmallCapsFont = Fontin SmallCaps]{Fontin}
+%\graphicspath{{./figures}} % specifies the directory where pictures are stored
+
+%----------------------------------------------------------------------------------------
+% begin makebsgtitle command
+
+\newcommand*{\makebsgtitle} {
+\begingroup % create the command for including the title page in the document
+  \centering % center all text
+  \vspace*{\baselineskip} % white space at the top of the page
+
+  \rule{\textwidth}{1.6pt}\vspace*{-\baselineskip}\vspace*{2pt} % thick horizontal line
+  \rule{\textwidth}{0.4pt}\\[\baselineskip] % thin horizontal line
+
+  {\LARGE\bfseries GreenDroid Configuration Network \\with Clock Domain Crossing} \\[0.2\baselineskip] % title
+
+  \rule{\textwidth}{0.4pt}\vspace*{-\baselineskip}\vspace{3.2pt} % thin horizontal line
+  \rule{\textwidth}{1.6pt}\\[\baselineskip] % thick horizontal line
+
+  \scshape % small caps
+ %Subtitle or more descriptions \\ 
+  A Bespoke Silicon Group Technical Paper \\[\baselineskip] % further description
+
+  \vspace*{5\baselineskip} % whitespace
+
+  \includegraphics[width=0.3\textwidth]{figures/ucsd_ccores.png}
+
+  \vspace*{5\baselineskip} % whitespace
+ %Authored by \\[\baselineskip]
+ %{\Large Lu Zhang \\ Michael Taylor \par} % author list
+  {\Large Bespoke Silicon Group \par} % author list
+  {\scshape Department of Computer Science and Engineering \par} % year published
+  {\itshape University of California,  San Diego \par} % affiliation
+
+  \vfill % whitespace between editor names and publisher logo
+
+ %\bsglogo \\[0.3\baselineskip] % the logo
+  {\scshape February 25, 2013 - La Jolla} \\[0.3\baselineskip] % date and location
+ %{\large The Publisher} \par % the publisher
+\endgroup}
+
+% end makebsgtitle command
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+\begin{titlepage}
+\makebsgtitle % Make BSG title
+\end{titlepage}
+
+\begin{abstract}
+In this technical paper we introduce the design and implementation of the
+configuration network for GreenDroid chip. Rather than use a traditional scan
+chain for this purpose, we develop an innovative way to broadcast configuration
+data while the chip is still running and let only the target node capture data
+and apply to its associated configurable pins. Since the network is likely to
+operate in a different clock domain than the rest of the GreenDroid chip, we
+also spend effort working on an efficient and reliable clock domain crossing
+technique.
+\end{abstract}
+\newpage
+
+\tableofcontents % Include a table of contents
+\newpage
+
+\section{Introduction} \label{intro}
+The design of GreenDroid chip includes multiple instances of embedded IPs such
+as PLLs, RAM controllers, bus interfaces and communication cores. I/O pins of
+those IPs need to be connected properly, sometimes without the intervention of
+the main processor. For example some PLL macro supports dynamic full PLL
+configuration via its input pins, and it is better and safer to use an
+independent configuration approach instead of using the main processor itself,
+to prevent system from halting in case of configuration fault.
+
+Our design of the configuration network is to safely and easily program some
+embedded IP block pins of interest. Because configurations have to apply
+on-the-fly to programmable pins, some of which are critical (\eg PLL pins),
+this design has to be competent in the follows.
+\begin{itemize}
+\item Consume minimum number of chip I/O pads
+\item Operate independently of the rest part of the chip
+\item Apply vector configuration values atomically to pins
+\item Prevent metastability in case of clock domain crossing
+\end{itemize}
+
+Therefore our design is implemented with only two I/O pads, one for its own
+clock and the other for 1-bit serial input; they are fed by a configuration
+driver residing outside the GreenDroid chip. The configuration network is
+composed of multiple \textbf{config nodes} and \textbf{relay nodes}. Each
+config node is associated to several closely located programmable pins and it
+extracts configuration value from the input and apply it to those pins. A relay
+node simply forwards input bit streams to output, and is used to connect
+adjacent config nodes and span the configuration network. The serial input bits
+are broadcast to all nodes in the network, and each config node only captures
+and decodes these designated for it. A configuration value is applied to IP
+block pins only when the value is completely received and decoded to ensure
+atomicity. Also clock domain crossing and precautions of entering metastability
+state are implemented in each config node.
+
+The remainder of this paper is organized as follows: \refsec{design} describes
+the configuration network design, including the communication protocol
+(\refsec{protocol}), config node (\refsec{config-node}) and relay node
+(\refsec{relay-node}). \refsec{cdc} presents our enhanced design for
+clock domain crossing by using control path \textbf{synchronizer}
+(\refsec{control}) and data path \textbf{stabilizer} (\refsec{data}).
+
+\section{Design of the Configuration Network} \label{design}
+
+\begin{figure}[h]
+\centering
+\include{figures/config-net}
+\caption{Configuration Network for GreenDroid}{R indicates a relay node and C indicates a config node}
+\label{fig:config-net}
+\end{figure}
+
+\reffig{fig:config-net} illustrates an instance of the configuration network
+for GreenDroid. The normal structure of this network is a tree spanned by relay
+nodes, and one config node is connected as a leaf to a relay node which is
+geographically close to the pins to be configured. Compared to a traditional
+and linear scan chain, our design is more flexible in topology and able to
+follow the system hierarchy.
+
+The input to the root relay node of the tree is connected to the chip I/O pads.
+Thereafter input data bits are sent to all branch and leaf nodes.
+Multiple relay nodes could be used back-to-back to break critical path between
+geographically separated config nodes. Each config node is instantiated with a
+unique identifier and it only responds to the data designated for it. This
+allows a particular config node to be active without interfering other nodes
+even though all nodes receive the same inputs. The design therefore offers
+safer configuration than a traditional scan chain does where all nodes in the
+scan chain need to be configured at the same time.
+
+\subsection{Communication Protocol} \label{protocol}
+Our communication packet shown in \reftab{tab:protocol} for a config node is
+comprised of a \textit{header} and \textit{framed data}. Different fields in
+the header and frames in the data are separated by \textit{framing bits}, which
+in our implementation is a single \textbf{0} bit.
+\begin{table}[h]
+\centering
+  \begin{tabular}{ | c | c || c | c | c | c | c | c | }
+  \hline
+    \textit{f} & framed data & \textit{f} & node id & \textit{f} & packet length & \textit{f} & valid \\ \hline
+  \end{tabular}
+\caption{Communication Packet}{Letter \textit{f} denotes framing bits}
+\label{tab:protocol}
+\end{table}
+During communication period the \textit{valid} field is pushed into a config
+node first, followed by the remainder of header and data. In our design the
+\textit{valid} field is a two-bit vector ``10'' (`0' as the least significant
+bit) which indicates a valid packet has been received and that is the beginning
+of a valid packet. Next to the valid field is the \textit{packet length} and
+its value equals the number of bits in one complete packet (header + data,
+including framing bits). The \textit{node id} is an identifier to inform the
+recipient node to accept the packet. Following the header is the \textit{framed
+data} composed by inserting framing bits every 8 bits in the data payload. The
+length of header is the same for all config nodes, while the framed data varies
+depending on the number of configurable pins connected to a particular config
+node.
+
+Because there is no routing information in the communication protocol,
+configuration packets are broadcast to all config nodes in the network via the
+single serial communication line. Each config node checks the valid bits and
+node id in the header. If an arriving packet is valid and designated for
+itself, the config node will decode the framed data and apply the value to
+corresponding programmable pins; otherwise, the node simply ignores the amount
+of bits specified by the packet length in header.
+
+Bit `1' in the valid field is inserted deliberately to make an all `0' packet
+not meaningful to any node; therefore we can use consecutive `0's as an NOP for
+all nodes. NOPs are useful to flush the configuration network without impact on
+any configured value, or to slow down the configuration data changing speed to
+avoid packet loss in case the configuration network is driven by a faster clock
+than the rest of the chip (refer to \refsec{control}).
+
+\subsection{Config Node} \label{config-node}
+\reffig{fig:config-node} shows the top-level diagram of a config node block.
+Ports and parameters are explained in \reftab{tab:ports} and
+\reftab{tab:params} respectively.
+
+\begin{figure}[h]
+\centering
+\include{figures/config-node}
+\caption{Config Node}
+\label{fig:config-node}
+\end{figure}
+
+\begin{table}[h]
+\centering
+  \begin{tabular}{ | c | c | p{9cm} | }
+  \hline
+    Port & Direction & Note \\ \hline
+    clk & input & clock input for the destination clock domain \\ \hline
+    reset & input & reset input for the destination clock domain \\ \hline
+    config\_i & input & encapsulated configuration input \\ \hline
+    data\_o & output & configuration value to be connected to the programmable pins
+                       in the destination clock domain \\ \hline
+  \end{tabular}
+\caption{Config Node Ports}
+\label{tab:ports}
+\end{table}
+
+The encapsulated \textit{config\_i} input is a SystemVerilog packed struct
+shown below that is to ease signal assignments in Verilog coding.
+\begin{lstlisting}[language=Verilog, basicstyle=\footnotesize, numbers=left, frame=single, numberstyle=\tiny]
+typedef struct packed {
+  logic cfg_clk;
+  logic cfg_bit;
+} config_s;
+\end{lstlisting}
+
+\begin{table}[h]
+\centering
+  \begin{tabular}{ | c | c | p{9cm} | }
+  \hline
+    Parameter & Type & Note \\ \hline
+    id\_p & decimal & an unique identifier for each config node \\ \hline
+    data\_bits\_p & decimal & number of bits in data payload
+                            equal to data\_o width and the number of configurable pins \\ \hline
+    default\_p & binary & safe default configuration value for pins \\ \hline
+  \end{tabular}
+\caption{Config Node Parameters}
+\label{tab:params}
+\end{table}
+
+Apart from the parameters configurable when a config node is instantiated,
+there are several local parameters same for all config nodes, which are hidden
+but the user must also keep them in mind when using a config node or composing
+a communication packet. Those local parameters are shown in
+\reftab{tab:localparams}.
+\begin{table}[h]
+\centering
+  \begin{tabular}{ | c | c | p{8cm} | }
+  \hline
+    Local Parameter & Value & Note \\ \hline
+    valid bits & 2 & number of bits for the valid field in header \\ \hline
+    packet length bits & 8 & number of bits to hold a packet length value \\ \hline
+    node id bits & 8 & number of bits to hold a node id value \\ \hline
+    data frame bits & 8 & number of bits in a data frame \\ \hline
+    reset sequence bits & 10 & number of consecutive `1' bits to derive a configuration reset signal \\ \hline
+    synchronizer length & 2 & number of flip-flops in the clock domain crossing synchronizer \\ \hline
+  \end{tabular}
+\caption{Config Node Local Parameters}
+\label{tab:localparams}
+\end{table}
+Therefore when assigning a node id the integer value should not exceed the
+maximum unsigned value that \textit{node id bits} can represent. Similarly
+when composing a long packet its length value should fit in \textit{packet
+length bits}.
+
+Each config node contains a shift register used to buffer serial inputs from
+config\_i and the shift register has the same structure depicted in
+\reftab{tab:protocol}. Because the data payload width varies between different
+config nodes, shift registers also have variable lengths to store framed
+data. Every config node monitors its shift register and once it detects a valid
+signal and a matching node id, it extracts payload from the framed data and
+assigns corresponding bits to data\_o; if the packet is valid but the node id
+does not match, the config node loads the value of
+\textit{(packet length - valid bits)} into a counter and does not respond to
+the shift register again (except reset, see \refsec{reset}) until the counter
+decreases to zero.
+
+Once a new configuration value is obtained it is first stored in a register of
+the same clock domain as the shift register, and one cycle after the new value
+is registered the config node toggles a single bit \textit{ready} signal to
+inform the destination clock domain. Because the destination clock and the
+configuration clock may differ, delay for one cycle here is to provide extra
+time for all the data register outputs to become stable before they are read in
+the destination clock domain.
+
+By using the one-way ready signal's transition as a flag to transmit data
+crossing clock domain, we benefit from two ways. One is to ensure the value
+stored in the configuration clock domain registers is sampled exactly once when
+we believe it's stable, and the other is to eliminate the cost of a feedback
+acknowledge path, which by itself is another crossover signal and raises the
+chance of circuit going metastable (refer to \refsec{meta}).
+
+\subsection{Relay Node} \label{relay-node}
+A relay node block is illustrated in \reffig{fig:relay-node}.
+
+\begin{figure}[h]
+\centering
+\include{figures/relay-node}
+\caption{Relay Node}
+\label{fig:relay-node}
+\end{figure}
+
+A relay node does not perform any processing on the data packets and just
+delays the inputs by one cycle and forwards them losslessly from input to
+output. Relay nodes are used to construct a configuration network and break
+critical path between geographically separated config nodes.
+
+\subsection{Resets} \label{reset}
+In the configuration clock domain, registers for counters and payload data need
+reset at the beginning of use. However, because we only have two spare I/O pads
+on the GreenDroid package, there is no way to use an additional signal from the
+outside of the chip and thus the reset must be generated from the serial
+inputs. To resolve this we use a sequence of bits from the shift register to
+derive a reset, and those bits are defined as the least significant
+\textit{reset sequence bits} mentioned in \reftab{tab:localparams}. At any
+point in time, if a config node sees the reset sequence in the shift register,
+a reset signal is asserted and that is used to clear the counter and load
+\textit{default\_p} into the data payload register. Our reset sequence is
+defined as a vector of \textit{reset sequence bits} long comprised of all `1's.
+The framing bits of `0's we inserted deliberately therefore are crucial to
+prevent a reset sequence from appearing in a valid configuration packet.
+
+In the destination clock domain, a reset input is available from a port of a
+config node, which is supposed to be the same reset for the rest of GreenDroid
+chip. The reset for most of the GreenDroid chip is a synchronous level-sensitive
+signal, while in the destination domain of a config node the reset is specially
+designed to be synchronous but \textbf{edge-sensitive}. This distinction in
+reset is a failsafe design in case metastability (see \refsec{meta}) seriously
+impedes normal operating of GreenDroid. In this scenario we can assert the same
+reset for both config nodes and the rest of the chip, and perform pin
+configuration after the config node recovers and the rest circuit still remains
+in reset state.
+
+\section{Clock Domain Crossing} \label{cdc}
+The configuration network is designed to work in a possibly different clock
+domain than the rest of the GreenDroid chip. The clock domain crossing (CDC)
+signals pose a challenging issue for design verification because traditional
+functional simulation using tools like VCS is inadequate to prove crossing
+signals also work properly. Within one clock domain, proper static timing
+analysis (STA) can guarantee that input data changes do not violate clock setup
+and hold time constraints of the sampling registers; when signals cross from
+one clock domain to another unrelated clock domain, STA is not enough to rule
+out metastability since CDC signals can change at any time with reference to
+the destination clock edges. Therefore to avoid functional errors that can only
+be detected in late design cycles, additional effort is taken to raise the
+level of confidence in our design.
+
+\subsection{Metastability} \label{meta}
+The proper operation of a clocked flip-flop depends on the input signals being
+stable within its required setup and hold time window. If the timing
+requirements are met, the correct output signal appears after a maximum delay
+of $t_{co}$ (clock-to-output time). However, if the setup or hold time constraints
+are violated, the flip-flop output may take a much longer, or even infinite
+time to resolve to a stable state, and the state to which it resolves to is
+also non-deterministic. This unstable behavior of a flip-flop is referred to as
+\textbf{Metastability} as depicted in \reffig{fig:metastability}.
+Metastability events may cause wrong signals being latched in the destination
+flip-flops and propagate through the rest of the circuit and therefore fail
+the proper function of the chip.
+
+\begin{figure}[ht]
+\centering
+\include{figures/metastability}
+\caption{The Metastability Behavior}
+\label{fig:metastability}
+\end{figure}
+
+Designers often use the following synchronization techniques
+\cite{cadence2004tp} to reduce the chance of metastability.
+\begin{itemize}
+\item A chain of flip-flops for 1-bit crossover signal
+\item Gray-encoding for vector crossover signals
+\item Handshaking synchronizers for control signals and MUXes for data
+\item Dual-clock FIFO
+\end{itemize}
+
+Variations of these common techniques are used in different design scenarios.
+In our work, we use a combination of a flip-flip sequence and a data MUX, on
+top of that we develop a customized synchronizing protocol for the control path
+and clock domain crossing stabilizers along the data path. The RTL diagram of
+our design is depicted in \reffig{fig:our-cdc}.
+
+\begin{figure}
+\centering
+\include{figures/our-cdc}
+\caption{Our Clock-Domain Crossing Circuit}
+\label{fig:our-cdc}
+\end{figure}
+
+\subsection{Control Path Synchronizer} \label{control}
+As described in \refsec{design}, the source clock domain uses a single bit
+alternate \textit{ready} signal to indicate that a new configuration value is
+ready and stable to be sampled. In the destination clock domain, two flip-flops
+are XOR-ed to detect the edge of a transitioning ready signal. A
+parameterizable-length (at least two) sequence of flip-flops is inserted
+between the source ready and the first edge-detecting flip-flop to provide
+extra amount of time for the possible metastable value to resolve and lowers
+the probability that the design fails. %\cite{veendrick1980jssc}
+
+Successful operation of our design is based on the assumption that data in the
+source clock domain registers does not change before it gets sampled in the
+destination domain. Since there is no feedback loop in our design, we guarantee
+this by feeding the configuration network with properly designed input sequence
+to ensure data is stable during the communication period, which is the length
+of the synchronizer chain plus three flip-flops (one delay flip-flop in the
+source clock domain and the two edge-detecting flip-flops in the destination).
+
+Compared to a full handshaking communication, the one-way control signal design
+has the following advantages:
+\begin{itemize}
+\item Save logic to implement a feedback path.
+\item Reduce the chance of circuit metastability because the feedback path also
+      crosses clock domains.
+\item Respond faster and deliver higher throughputs in transferring data.
+\end{itemize}
+and the only disadvantage is that it cannot stall the source data pipeline and
+may lose packets if data from source clock domain is changing too frequent.
+In our design, we are able to lower the configuration data changing frequency
+by inserting NOPs from the input of the network; and therefore eliminate the
+chance of data loss, while taking advantage of the benefits from the one-way
+crossing.
+
+Although the use of synchronizers can not completely eliminate the chance of
+entering metastable state, the probabilistic function of Mean Time Between
+Failure (MTBF, refer to \refsec{mtbf}) qualifies the circuit to be continuously
+operating in acceptable duration of time. In RTL development stage of a chip,
+users of this design can increase the MTBF by extending the length of the
+synchronizer chain.
+
+\subsection{Data Path Multiplexer} \label{data}
+The control signal is typically considered to be safe by using the
+aforementioned synchronizers, and our design makes sure the asynchronous data
+path is through when a transition of ready is detected, \ie when the
+\textit{select} input to the data MUX is logic 1. Nevertheless, one commonly
+overlooked potential cause of metastability is the use of this asynchronous
+data MUX when its select input is logic 0. Ideally, the MUX should shut off the
+asynchronous data path completely when its select input is logic 0, but since
+the physical implementations of MUXes vary between different process design
+kits, we are not convinced that the MUX always works as we expected.  During
+normal operation of the circuit, toggling of ready does not happen
+frequently and this means the destination register at the crossing boundary
+spends most of its time pulling data from the MUX's data path selected by logic
+0. Although this data path is synchronous with respect to the destination
+clock, we need extra measures to make sure the stability of this data path is
+not interfered by the asynchronous data input. Interferences may also cause
+unstable signals reach the register's input within its setup-hold time window.
+Therefore we introduce the \textit{clock domain crossing stabilizers} right
+before the MUX's asynchronous data input to provide extra protection for the
+synchronous logic.
+
+\begin{figure}[h]
+\centering
+\include{figures/nand2}
+\caption{6-MOSFET NAND2 Gate}
+\label{fig:nand2}
+\end{figure}
+Our stabilizer is implemented by exactly one NAND2 gate, whose behavior is
+predictable, and implementation is simple enough to be done in typical six
+MOSFETs, as shown in \reffig{fig:nand2}. When one input, for example B, to this
+NAND2 gate is stable logic 0, obviously N-MOS N2 is shut off and no matter how
+input A varies, the NAND2 output is strongly charged by $V_{dd}$ and immune to
+changes of input A. By contrast, if B is stable logic 1, then N-MOS N2 is on,
+and now if input A voltage varies, the NAND2 output also changes accordingly
+until it resolves to a state determined by input A. Corresponding voltage
+divider models are presented in \reffig{fig:nand2-in0} and
+\reffig{fig:nand2-in1}, respectively. Same analysis also works if we choose A
+as the stable input.
+
+\begin{figure}[ht]
+\centering
+\include{figures/nand2-in0}
+\caption{NAND2 Gate with a Stable Logic 0 Input}
+\label{fig:nand2-in0}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\include{figures/nand2-in1}
+\caption{NAND2 Gate with a Stable Logic 1 Input}
+\label{fig:nand2-in1}
+\end{figure}
+
+Deliberately we connect one input of the stabilizer to the same select signal
+of the data MUX, and the other input to one asynchronous data line. By this
+means, we believe the asynchronous data fluctuations are well filtered by the
+stabilizers, and passed to the destination registers only when the crossover
+data is stable, which is signaled by a logic 1 on the select line.
+
+Noticeably valid configuration signals are inverted after NAND2 gates, and
+recovery inverters are inserted after the sampling registers. At the cost of a
+few more MOSFETs, we raise our confidence in this clock domain crossing design.
+Use of such stabilizers is \textbf{not} merely bound to our circuit and can
+also be applied to other clock domain crossing cases whenever crossover data
+needs to be blocked.
+
+\subsection{Mean Time Between Failure} \label{mtbf}
+Although the use of synchronizers can reduce the chance that
+metastable signals cause the circuit fail, the chance cannot be completely
+avoided in a clock domain crossing design. Typically the metric of MTBF
+is employed to evaluate the likelihood of a circuit fail.
+
+Entering a metastable state is a probabilistic function with reference to the
+destination clock frequency, the asynchronous signal transitioning frequency
+and constants that defines the window in which a transition can cause
+metastability. A typical formula \cite{altera2009wp} \cite{cadence2004tp}
+\cite{chen2010fpga} \cite{dike1999miller} to calculate the MTBF of a
+two-flip-flop synchronizer sampling asynchronous data is given in
+\refeq{eq:mtbf-2ff}.
+
+\begin{equation} \label{eq:mtbf-2ff}
+MTBF = \frac{e^{\frac{T_r}{C_2}}} {C_1 \times f_{dst} \times f_{data}}
+\end{equation}
+
+In \refeq{eq:mtbf-2ff}, $C_1$ and $C_2$ are constants that depend on the
+tape-out process and the operating conditions of the flip-flops; $T_r$ is
+the maximum allowed amount of time for the first flip-flop to resolve a metastable
+state; and $f_{dst}$ and $f_{data}$ are the frequencies of the destination
+clock and the asynchronous data input, respectively \cite{cadence2004tp}. If the
+actual resolution time of the first flip-flip exceeds $T_r$, the
+metastable state will propagate to the second one and probably cause functional
+failures of the downstream circuit. The $T_r$ for an N-flip-flop
+synchronizer is the sum of $T_r$ for each flip-flop in this chain, or that
+expressed in \refeq{eq:mtbf-nff}.
+
+\begin{equation} \label{eq:mtbf-nff}
+MTBF = \frac{e^{\frac{\sum_{0}^{N - 1} T_{r,i}}{C_2}}} {C_1 \times f_{dst} \times f_{data}}
+\end{equation}
+
+Constants $C_1$ (sometimes referred to as $\tau$) and $C_2$ (sometimes referred
+to as $T_0$ or $T_w$) need to be obtained by contacting the chip foundry, or
+extracted through experiments \cite{baghini2002impact} \cite{chen2010fpga}.
+Apparently one straightforward way to improve the MTBF is to extend the number
+of stages in the synchronizer chain, because the accumulated $T_{r,i}$ will
+lead to greater MTBF value. Designers can also use special metastable hardened
+flops for increasing the MTBF \cite{cadence2004tp}, by varying the $C_1$
+and/or $C_2$ constants. Once the design is taped out, we can also manipulate
+$f_{dst}$ or more effectively $f_{data}$ to improve MTBF.
+
+\section{Conclusions and Future Work} \label{conclusions}
+This technical paper has presented the configuration network design for our
+GreenDroid chip. We believe this design is better and safer than a traditional
+scan chain for the same purpose. We have also taken strong measures in our
+design trying to reduce the chance of metastability caused by clock domain
+crossing. The design will be evaluated by FPGA simulation and eventually
+validated by testing the GreenDroid chip. At this point in time, this
+configuration network is write-only, which means data can only be pushed into
+configurable targets. Adding support for reading output status of IPs is also
+useful for system status monitoring.
+
+\bibliographystyle{abbrv}
+\bibliography{20130219}
+
+\end{document}
