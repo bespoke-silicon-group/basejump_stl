@@ -55,14 +55,14 @@ sim_time = 500 # time units
 def readme():
   print "  \n\
     Name:\n\
-      gen_tb.py - python script to generate testbench for chained config_node instances\n\
+      generate_tb.py - python script to generate testbench for chained config_node instances\n\
     \n\
     Usage:\n\
-      gen_tb.py {-w <testfile> <number of tests> | -r <testfile> -o <tb file name>}\n\
+      generate_tb.py {-w <testfile> <number of tests> | -r <testfile> -o <tb file name>}\n\
     \n\
     Example:\n\
-      gen_tb.py -w config_test.in 10\n\
-      gen_tb.py -r config_test.in -o config_net_tb.v\n\
+      generate_tb.py -w config_test.in 10\n\
+      generate_tb.py -r config_test.in -o config_net_tb.v\n\
     \n\
     Description:\n\
       This script reads config network specifications from config_spec.in file,\n\
@@ -71,12 +71,12 @@ def readme():
       generates random test sequence and creates config_net_tb.v\n\
       testbench.\n\
     \n\
-      Use command ./gen_tb.py -w <testfile> <number of tests> to\n\
+      Use command ./generate_tb.py -w <testfile> <number of tests> to\n\
       generate a new sequence of <number of tests> tests and writes the\n\
       sequence to <testfile>.\n\
     \n\
       You can extend the generated testfile to contain your specific test cases;\n\
-      then use command ./gen_tb.py -r <testfile> -o <tb file name> to read the\n\
+      then use command ./generate_tb.py -r <testfile> -o <tb file name> to read the\n\
       modified file, and create testbench accordingly."
 
 def dec2bin(dec, n): # Only works on non-negative number
@@ -274,8 +274,8 @@ if (args.generate_tests != None):
   # write random test cases to test file
   test_file.write("# This is a generated file with random test id and data.\n" + \
                   "# You can extend this file to contain your specific test cases.\n" + \
-                  "# Use command `./gen_tb.py -r <this file name> -o <tb file name>` if you would like to use the modified file.\n" + \
-                  "# Use command `./gen_tb.py -w <this file name> <number of tests>` will overwrite this file.\n\n" + \
+                  "# Use command `./generate_tb.py -r <this file name> -o <tb file name>` if you would like to use the modified file.\n" + \
+                  "# Use command `./generate_tb.py -w <this file name> <number of tests>` will overwrite this file.\n\n" + \
                   "# <test id> <test data>\n")
   for test in range(0, number_of_tests):
     test_file.write(str(l_test_id[test]) + "\t\t" + l_test_data[test] + "\n")
