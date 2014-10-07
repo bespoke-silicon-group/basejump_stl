@@ -1,0 +1,2 @@
+These are former tests that test various parts of the bsg_comm_link. Those modules have evolved, but these
+testbenches could be potentially resuscitated for unit testing.
