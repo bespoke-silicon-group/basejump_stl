@@ -2,16 +2,46 @@ BSG IP Cores Repository
 =======================
 
 This repository contains IP cores targeting IC designs for various purposes.
+Generally components should be prefixed with "bsg_" to indicate their origin.
 
 Contents
 --------
-* config_net
+* config_net (also known as bsg_lutag)
 
 This configuration network is composed of config\_nodes in a tree topology. The
 network can be used to deliver proper values to other IP instances that demands
 specific inputs for internal mode configurations. The network can uses a
 different clock than the targeting IP instances, and is designed to be reliable
 when cross clock domains.
+
+* bsg_guts
+
+sample bsg node integrating comm_link, and bunch of bsg_test_nodes
+
+* bsg_async
+
+This is for asynchronous building blocks, like the bsg_async_fifo, synchronizers, and credit counters.
+
+* bsg_misc
+
+Small, miscellaneous building blocks, like counters, reset timers, gray to binary coders, etc.
+
+* bsg_fsb
+
+Bsg front side bus modules; also murn interfacing code.
+
+* bsg_comm_link
+
+Source synchronous communication interface.
+ 
+* bsg_dataflow
+
+For standalone modules involved in data plumbing. E.g. two-element fifos, fifo-to-fifo transfer engines,
+sbox units, compare_and_swap, and array pack/unpack.
+
+* bsg_test
+
+Data, clock, and reset generator for test benches.
 
 Contact
 -------
