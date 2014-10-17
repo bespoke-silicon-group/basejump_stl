@@ -33,7 +33,7 @@ MURN_INCLUDE_DIR = $(HOME)/raw/murn/code/include
 DESIGNWARE_DIR = $(SYNOPSYS_DIR)/$(DC_RELEASE)/dw/sim_ver
 DESIGNWARE_FLAGS = -y $(DESIGNWARE_DIR) +incdir+$(DESIGNWARE_DIR) +incdir+$(MURN_INCLUDE_DIR) +incdir+../bsg_test +libext+.v
 
-BSG_MISC_FILES      = bsg_gray_to_binary.v bsg_cycle_counter.v bsg_wait_cycles.v bsg_wait_after_reset.v bsg_defines.v
+BSG_MISC_FILES      = bsg_gray_to_binary.v bsg_scan_xor.v bsg_cycle_counter.v bsg_wait_cycles.v bsg_wait_after_reset.v bsg_defines.v
 BSG_ASYNC_FILES     = bsg_async_credit_counter.v bsg_async_fifo.v bsg_async_ptr_gray.v  bsg_launch_sync_sync.v bsg_sync_sync.v
 BSG_COMM_LINK_FILES = bsg_source_sync_input.v bsg_source_sync_output.v   bsg_comm_link.v  bsg_assembler_in.v bsg_assembler_out.v   bsg_source_sync_channel_control_slave.v bsg_source_sync_channel_control_master.v bsg_source_sync_channel_control_master_master.v   test_bsg_comm_link_checker.v
 BSG_DATAFLOW_FILES  = bsg_scatter_gather.v bsg_two_fifo.v   bsg_sbox.v  bsg_round_robin_fifo_to_fifo.v bsg_make_2D_array.v bsg_flatten_2D_array.v
