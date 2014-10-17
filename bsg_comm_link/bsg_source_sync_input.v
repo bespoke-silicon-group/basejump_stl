@@ -256,9 +256,9 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
    wire core_twofer_ready;
 
    // Oct 17, 2014
-   // we insert a fifo here for two purposes; 
+   // we insert a minimal fifo here for two purposes; 
    // first, this reduces critical
-   // paths causes by excessive access times of the fifo.
+   // paths causes by excessive access times of the async fifo.
    //
    // second, it ensures that asynchronous paths end inside of this module
    // and do not propogate out to other modules that may be attached, complicating
