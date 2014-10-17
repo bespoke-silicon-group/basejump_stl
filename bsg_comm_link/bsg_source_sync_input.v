@@ -213,7 +213,6 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
 
    wire   core_actual_deque;
    wire   core_valid_o_tmp;
-   assign core_valid_o = core_valid_o_tmp; // remove inout warning from lint
 
 
    bsg_async_fifo #(.lg_size_p(lg_fifo_depth_p)  // 32 elements
@@ -245,8 +244,44 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
 
    logic  core_sent_0_want_to_send_1_r;
 
-   // a word was transferred to core if ...
-   wire   core_transfer_success = core_valid_o_tmp & core_yumi_i;
+      
+   // send 1 if we already sent 0; or if there is no 0.
+   wire [channel_width_p-1:0] core_data_o_pre_twofer 
+			      = (core_sent_0_want_to_send_1_r | ~core_valid_0)
+                              ? core_data_1
+                              : core_data_0;
+
+   wire core_valid_o_pre_twofer = core_valid_o_tmp; // remove inout warning from lint
+
+   wire core_twofer_ready;
+
+   // Oct 17, 2014
+   // we insert a fifo here for two purposes; 
+   // first, this reduces critical
+   // paths causes by excessive access times of the fifo.
+   //
+   // second, it ensures that asynchronous paths end inside of this module
+   // and do not propogate out to other modules that may be attached, complicating
+   // timing assertions.
+   //
+   
+   bsg_two_fifo #(.width_p(channel_width_p)) twofer
+     (.clk_i(core_clk_i)
+      ,.reset_i(core_reset_i)
+
+      // we feed this into the local yumi, but only if it is valid
+      ,.ready_o(core_twofer_ready)
+      ,.data_i(core_data_o_pre_twofer)
+      ,.v_i(core_valid_o_pre_twofer)
+
+      ,.v_o(core_valid_o)
+      ,.data_o(core_data_o)
+      ,.yumi_i(core_yumi_i)
+      );
+
+   
+   // a word was transferred to the two input fifo if ...
+   wire core_transfer_success = core_valid_o_tmp & core_twofer_ready;
 
                                // deque if there was an actual transfer, AND (
    assign   core_actual_deque  = core_transfer_success
@@ -271,12 +306,6 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
                                            ? ~core_actual_deque
                                            : core_sent_0_want_to_send_1_r;
      end
-
-   // send 1 if we already sent 0; or if there is no 0.
-   assign core_data_o = (core_sent_0_want_to_send_1_r | ~core_valid_0)
-                        ? core_data_1
-                        : core_data_0 ;
-
 
 // **********************************************
 // credit return
