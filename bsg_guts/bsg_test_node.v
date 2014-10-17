@@ -11,6 +11,9 @@ module  bsg_test_node
   (input clk_i
    , input reset_i
 
+   // control
+   , input en_i
+
    // input channel
    , input  v_i
    , input [ring_width_p-1:0] data_i
@@ -21,8 +24,6 @@ module  bsg_test_node
    , output [ring_width_p-1:0] data_o
    , input yumi_i   // late
 
-   // control
-   , input en_i
    );
 
    // the default interface gives all design
