@@ -25,10 +25,15 @@ module bsg_async_ptr_gray #(parameter lg_size_p = -1
     , output [lg_size_p-1:0] w_ptr_gray_r_rsync_o // value after  synchronizers
     );
 
-   logic [lg_size_p-1:0] w_ptr_r, w_ptr_n, w_ptr_gray_n, w_ptr_gray_r, w_ptr_gray_r_rsync;
+   logic [lg_size_p-1:0] w_ptr_r_p1, w_ptr_r, w_ptr_n, w_ptr_gray_n, w_ptr_gray_r, w_ptr_gray_r_rsync;
 
-   assign w_ptr_n      = w_ptr_r + w_inc_i;
-   assign w_ptr_gray_n = (w_ptr_n >> 1) ^ w_ptr_n;
+// cycle time optimization
+//   assign w_ptr_n      = w_ptr_r + w_inc_i;
+//   assign w_ptr_gray_n = (w_ptr_n >> 1) ^ w_ptr_n;
+
+   assign w_ptr_r_p1 = w_ptr_r + 1'b1;
+   assign w_ptr_n    = w_inc_i ? w_ptr_r_p1 : w_ptr_r;
+   assign w_ptr_gray_n = w_inc_i ? ((w_ptr_r_p1 >> 1) ^ w_ptr_r_p1) : w_ptr_gray_r;
 
    // pointer, in binary
    // feature wish: pass in negedge or posedge as parameter!
