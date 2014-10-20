@@ -244,10 +244,10 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
 
    logic  core_sent_0_want_to_send_1_r;
 
-      
+
    // send 1 if we already sent 0; or if there is no 0.
-   wire [channel_width_p-1:0] core_data_o_pre_twofer 
-			      = (core_sent_0_want_to_send_1_r | ~core_valid_0)
+   wire [channel_width_p-1:0] core_data_o_pre_twofer
+                              = (core_sent_0_want_to_send_1_r | ~core_valid_0)
                               ? core_data_1
                               : core_data_0;
 
@@ -256,7 +256,7 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
    wire core_twofer_ready;
 
    // Oct 17, 2014
-   // we insert a minimal fifo here for two purposes; 
+   // we insert a minimal fifo here for two purposes;
    // first, this reduces critical
    // paths causes by excessive access times of the async fifo.
    //
@@ -264,7 +264,7 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
    // and do not propogate out to other modules that may be attached, complicating
    // timing assertions.
    //
-   
+
    bsg_two_fifo #(.width_p(channel_width_p)) twofer
      (.clk_i(core_clk_i)
       ,.reset_i(core_reset_i)
@@ -279,7 +279,7 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
       ,.yumi_i(core_yumi_i)
       );
 
-   
+
    // a word was transferred to the two input fifo if ...
    wire core_transfer_success = core_valid_o_tmp & core_twofer_ready;
 
@@ -316,7 +316,8 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
 
    logic [lg_fifo_depth_p+1-1:0] core_credits_gray_r_iosync
                                  , core_credits_binary_r_iosync
-                                 , io_credits_sent_r, io_credits_sent_r_p1;
+                                 , io_credits_sent_r, io_credits_sent_r_gray
+                                 , io_credits_sent_r_p1, io_credits_sent_r_p2;
 
    bsg_async_ptr_gray #(.lg_size_p(lg_fifo_depth_p+1)) bapg
    (.w_clk_i   (core_clk_i)
@@ -338,10 +339,7 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
    // to do correct wrap around.
 
    always_comb io_credits_sent_r_p1 = io_credits_sent_r+1;
-
-   wire io_credit_avail  = (core_credits_binary_r_iosync != io_credits_sent_r);
-   wire io_credit_avail2 = io_credit_avail
-                           && (core_credits_binary_r_iosync != io_credits_sent_r_p1);
+   always_comb io_credits_sent_r_p2 = io_credits_sent_r+2;
 
    // which bit of the io_credits_sent_r counter we use determines
    // the value of the token line in credits
@@ -370,6 +368,11 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
    // since generally we cannot control the timing of these reset signals when
    // they cross asynchronous boundaries
 
+   assign io_credits_sent_r_gray = (io_credits_sent_r >> 1) ^ io_credits_sent_r;
+
+   wire empty_1 = (core_credits_binary_r_iosync != io_credits_sent_r_p1);
+   wire empty_0 = (core_credits_gray_r_iosync != io_credits_sent_r_gray);
+
    always @(posedge io_clk_i)
      begin
         if (io_token_bypass_i)
@@ -378,10 +381,11 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
         else
           // we absorb up to two credits per cycles, since we receive at DDR,
           // we need this to rate match the incoming data
-          if (core_credits_binary_r_iosync != io_credits_sent_r)
-            io_credits_sent_r <= io_credits_sent_r
-                                 + { io_credit_avail2,
-                                     io_credit_avail2 ^ io_credit_avail };
+
+	  // code is written like this because empty_1 is late relative to empty_0
+          io_credits_sent_r <= (empty_1
+                                ? (empty_0 ? io_credits_sent_r_p2 : io_credits_sent_r)
+                                : (empty_0 ? io_credits_sent_r_p1 : io_credits_sent_r));
      end
 
 endmodule // bsg_source_sync_input
