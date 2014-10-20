@@ -96,6 +96,29 @@ module bsg_source_sync_output
     , input                         token_reset_i    // token fifo reset
    );
 
+   // MBT: we insert a two-element fifo here to
+   // decouple the async fifo logic which can be on the critical
+   // path in some cases. possibly this is being overly conservative
+   // and may introduce too much latency. but certainly in the
+   // case of the bsg_comm_link code, it is necessary.
+   // fixme: possibly make it a parameter as to whether we instantiate
+   // this fifo
+
+   wire core_twofer_valid, core_twofer_yumi;
+   wire [channel_width_p-1:0] core_twofer_data;
+
+   bsg_two_fifo #(.width_p(channel_width_p)) twofer
+     (.clk_i(core_clk_i)
+      ,.reset_i(core_reset_i)
+      ,.ready_o(core_ready_o)
+      ,.data_i (core_data_i)
+      ,.v_i    (core_valid_i)
+
+      ,.v_o   (core_twofer_valid)
+      ,.data_o(core_twofer_data)
+      ,.yumi_i(core_twofer_yumi)
+      );
+
    logic                            io_data_avail;
 
    // ******************************************
@@ -166,9 +189,9 @@ module bsg_source_sync_output
    assign io_override_is_posedge_o = ~io_clk_r_pos;
 
    wire core_fifo_full;
+   assign core_twofer_yumi = core_twofer_valid & ~core_fifo_full;
 
-   wire   core_ready_o_tmp = ~core_fifo_full;
-   assign core_ready_o     =  core_ready_o_tmp;
+
 
 
    // ******************************************
@@ -208,8 +231,8 @@ module bsg_source_sync_output
     ,.w_reset_i(core_reset_i)
 
     // if the fifo is not full, and we have valid data coming in, we grab it
-    ,.w_enq_i(core_valid_i & core_ready_o_tmp)
-    ,.w_data_i(core_data_i)
+    ,.w_enq_i(core_twofer_yumi)
+    ,.w_data_i(core_twofer_data)
     ,.w_full_o(core_fifo_full)
 
     ,.r_clk_i(io_master_clk_i)
