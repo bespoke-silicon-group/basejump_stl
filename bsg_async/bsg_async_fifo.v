@@ -12,7 +12,12 @@
 //
 
 module bsg_async_fifo #(parameter   lg_size_p = "inv"
-			, parameter   width_p = "inv")
+                        , parameter   width_p = "inv"
+			// we allow the control bits to be separated from
+			// the data bits to allow for better control optimization.
+                        // control_width_p is how many of the width_p bits are control bits;
+                        // these bits should be at the top of the array
+                        , parameter   control_width_p = 0)
    (
     input    w_clk_i
     , input  w_reset_i
@@ -37,18 +42,32 @@ module bsg_async_fifo #(parameter   lg_size_p = "inv"
    logic [lg_size_p:0] w_ptr_gray_r;
    logic [lg_size_p:0] w_ptr_gray_r_rsync, r_ptr_gray_r_wsync, r_ptr_binary_r, w_ptr_binary_r;
 
-   logic [width_p-1:0] bsg_sync_mem_clock_cross [0:size_lp-1];
+   logic [(width_p - control_width_p) - 1:0] bsg_sync_mem_clock_cross [0:size_lp-1];
 
-   wire 	      r_valid_o_tmp; // remove inout warning from Lint
+   logic [control_width_p - 1:0] 	   bsg_sync_mem_ctrl_clock_cross [0:size_lp-1];
+
+   wire               r_valid_o_tmp; // remove inout warning from Lint
    assign r_valid_o = r_valid_o_tmp;
-
-   // omitting top bit
-   assign r_data_o = bsg_sync_mem_clock_cross[r_ptr_binary_r[0+:lg_size_p]];
 
    // instantiate ram
    always @(posedge w_clk_i)
      if (w_enq_i)
-       bsg_sync_mem_clock_cross[w_ptr_binary_r[0+:lg_size_p]] <= w_data_i;
+	  bsg_sync_mem_clock_cross[w_ptr_binary_r[0+:lg_size_p]]      <= w_data_i[width_p - control_width_p - 1:0];
+
+   if (control_width_p > 0)
+     begin
+	always @(posedge w_clk_i)
+	  if (w_enq_i)
+	    bsg_sync_mem_ctrl_clock_cross[w_ptr_binary_r[0+:lg_size_p]] <= w_data_i[(width_p-1)-:control_width_p];
+
+        // omitting top bit of pointer
+        assign r_data_o = {   bsg_sync_mem_ctrl_clock_cross[r_ptr_binary_r[0+:lg_size_p]]
+	                     , bsg_sync_mem_clock_cross     [r_ptr_binary_r[0+:lg_size_p]] };
+     end
+       else
+	 begin
+            assign r_data_o = { bsg_sync_mem_clock_cross     [r_ptr_binary_r[0+:lg_size_p]] };
+	 end
 
    // pointer from writer to reader (input to output of FIFO)
    bsg_async_ptr_gray #(.lg_size_p(lg_size_p+1)) bapg_1
@@ -74,7 +93,7 @@ module bsg_async_fifo #(parameter   lg_size_p = "inv"
     ,.w_ptr_gray_r_rsync_o(r_ptr_gray_r_wsync) // after sync flops
     );
 
-   // data is available if the two pointers are equal
+   // data is available if the two pointers are not equal
    assign r_valid_o_tmp = (r_ptr_gray_r != w_ptr_gray_r_rsync);
 
    // compare two gray code values whose binaries values differ
