@@ -218,6 +218,7 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
    bsg_async_fifo #(.lg_size_p(lg_fifo_depth_p)  // 32 elements
                     ,.width_p( (channel_width_p+1)*2 ) // room for both credits and
                                                        //  for both data words
+		    ,.control_width_p(2)
                     ) baf
    (
     .w_clk_i(io_clk_i)
@@ -283,15 +284,17 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
    // a word was transferred to the two input fifo if ...
    wire core_transfer_success = core_valid_o_tmp & core_twofer_ready;
 
+/*   
                                // deque if there was an actual transfer, AND (
    assign   core_actual_deque  = core_transfer_success
                                // we sent the 0th word already,
                                // and just sent the 1st word, OR
                                & ((core_sent_0_want_to_send_1_r & core_valid_1)
                                   // we sent the 0th word and there is no 1st word OR
-                                  | (core_valid_0 & ~core_valid_1)
-                                  // we sent the 1st word, and there is no 0th word )
-                                  | (core_valid_1 & ~core_valid_0));
+                                  // we sent the 1st word, and there is no 0th word
+                                  | (core_valid_0 ^ core_valid_1));
+*/
+   assign core_actual_deque = core_transfer_success & ~(~core_sent_0_want_to_send_1_r & core_valid_1 & core_valid_0);
 
    always @(posedge core_clk_i)
      begin
