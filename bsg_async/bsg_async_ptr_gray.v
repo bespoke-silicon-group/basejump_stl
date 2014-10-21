@@ -25,15 +25,19 @@ module bsg_async_ptr_gray #(parameter lg_size_p = -1
     , output [lg_size_p-1:0] w_ptr_gray_r_rsync_o // value after  synchronizers
     );
 
-   logic [lg_size_p-1:0] w_ptr_r_p1, w_ptr_r, w_ptr_n, w_ptr_gray_n, w_ptr_gray_r, w_ptr_gray_r_rsync;
+   logic [lg_size_p-1:0] w_ptr_r,      w_ptr_n;
+   logic [lg_size_p-1:0] w_ptr_p1_r,   w_ptr_p1_n, w_ptr_p2;
+   logic [lg_size_p-1:0] w_ptr_gray_n, w_ptr_gray_r, w_ptr_gray_r_rsync;
 
 // cycle time optimization
 //   assign w_ptr_n      = w_ptr_r + w_inc_i;
 //   assign w_ptr_gray_n = (w_ptr_n >> 1) ^ w_ptr_n;
 
-   assign w_ptr_r_p1 = w_ptr_r + 1'b1;
-   assign w_ptr_n    = w_inc_i ? w_ptr_r_p1 : w_ptr_r;
-   assign w_ptr_gray_n = w_inc_i ? ((w_ptr_r_p1 >> 1) ^ w_ptr_r_p1) : w_ptr_gray_r;
+   assign w_ptr_p2     = w_ptr_p1_r + 1'b1;
+   assign w_ptr_n      = w_inc_i ? w_ptr_p1_r : w_ptr_r;
+   assign w_ptr_p1_n   = w_inc_i ? w_ptr_p2   : w_ptr_p1_r;
+
+   assign w_ptr_gray_n = w_inc_i ? ((w_ptr_p1_r >> 1) ^ w_ptr_p1_r) : w_ptr_gray_r;
 
    // pointer, in binary
    // feature wish: pass in negedge or posedge as parameter!
@@ -42,17 +46,29 @@ generate
      begin
         always @(negedge w_clk_i)
           if (w_reset_i)
-            w_ptr_r <= 0;
+            begin
+               w_ptr_r    <= 0;
+               w_ptr_p1_r <= 1;
+            end
           else
-            w_ptr_r <= w_ptr_n;
+            begin
+               w_ptr_r    <= w_ptr_n;
+               w_ptr_p1_r <= w_ptr_p1_n;
+            end
      end
    else
      begin
         always @(posedge w_clk_i)
           if (w_reset_i)
-            w_ptr_r <= 0;
+            begin
+               w_ptr_r    <= 0;
+               w_ptr_p1_r <= 1;
+            end
           else
-            w_ptr_r <= w_ptr_n;
+            begin
+               w_ptr_r    <= w_ptr_n;
+               w_ptr_p1_r <= w_ptr_p1_n;
+            end
      end
 endgenerate
 
