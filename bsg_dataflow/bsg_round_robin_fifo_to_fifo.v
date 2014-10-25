@@ -25,9 +25,12 @@
 // to facilitate dequeing from those original input channels.
 //
 
+//`include "bsg_defines.v"
+
 module bsg_rr_f2f_input #(parameter   width_p      = "inv"
                           , parameter num_in_p     = 1
                           , parameter max_in_out_p = 1
+			  , parameter min_in_out_p = -1
                           )
    (input clk, input  reset
 
@@ -41,6 +44,7 @@ module bsg_rr_f2f_input #(parameter   width_p      = "inv"
 
     // from intermediate module
     , input  [max_in_out_p-1:0] go_channels_i
+    , input  [$clog2(min_in_out_p+1)-1:0] go_cnt_i
 
     // final output
     , output [num_in_p-1:0] yumi_o
@@ -74,18 +78,15 @@ module bsg_rr_f2f_input #(parameter   width_p      = "inv"
 
    assign yumi_o             = yumi_intermediate[num_in_p +:num_in_p];
 
-
-
    // increment round robin pointers
    always @(posedge clk)
      if (reset) iptr_r <= 0;
      else       iptr_r <= iptr_n;
 
-   wire [iptr_width_lp-1:0]  go_cnt;
-
    always_comb
      begin
-        iptr_n = iptr_r + DWF_dp_count_ones(go_channels_i);
+        iptr_n = iptr_r + go_cnt_i;
+
         if (iptr_n >= num_in_p)
           iptr_n =  iptr_n - num_in_p;
      end
@@ -95,8 +96,6 @@ module bsg_rr_f2f_input #(parameter   width_p      = "inv"
    // we put this at the end of the module to avoid
    // scope contamination via width signal
 
-   localparam width = num_in_p;
-`include "DW_dp_count_ones_function.inc"
 
 
 endmodule // bsg_rr_f2f_input
@@ -118,7 +117,8 @@ endmodule // bsg_rr_f2f_input
 
 module bsg_rr_f2f_output #(parameter width_p="inv"
                            ,parameter num_out_p=0
-                           ,parameter max_in_out_p="inv")
+                           ,parameter max_in_out_p="inv"
+			   ,parameter min_in_out_p="inv")
    (input clk, input reset
 
     // primary input
@@ -129,6 +129,7 @@ module bsg_rr_f2f_output #(parameter width_p="inv"
 
     // in from intermediate module
     , input [max_in_out_p-1:0] go_channels_i
+    , input [$clog2(min_in_out_p+1)-1:0] go_cnt_i
     , input [width_p-1:0]      data_head_i[max_in_out_p-1:0]
 
     // final output
@@ -150,12 +151,10 @@ module bsg_rr_f2f_output #(parameter width_p="inv"
 
    for (i = 0; i < num_out_p; i=i+1)
      begin
-        assign data_head_double[i]             = data_head_i[i];
+        assign data_head_double[i]            = data_head_i[i];
         assign data_head_double[i+num_out_p]  = data_head_i[i];
         assign data_o[i] = data_head_double[(i+num_out_p)-optr_r];
      end
-
-   wire [optr_width_lp-1:0]  go_cnt;
 
    always @(posedge clk)
      if (reset) optr_r <= 0;
@@ -163,16 +162,12 @@ module bsg_rr_f2f_output #(parameter width_p="inv"
 
    always_comb
      begin
-        optr_n = optr_r + DWF_dp_count_ones(go_channels_i);
+        optr_n = optr_r + go_cnt_i;
+
         if (optr_n >= num_out_p)
           optr_n =  optr_n - num_out_p;
      end
 
-   // too bad $countones in SV is not synthesizable as of 2012.
-   // fixme: should create a module for this
-
-   localparam width = num_out_p;
-`include "DW_dp_count_ones_function.inc"
 
 endmodule
 
@@ -188,10 +183,12 @@ module bsg_rr_f2f_middle #(parameter width_p="inv"
                            , parameter num_in_p=1
                            , parameter num_out_p=1
                            , parameter max_in_out_lp=`BSG_MAX(num_in_p,num_out_p)
+			   , parameter min_in_out_lp=`BSG_MIN(num_in_p,num_out_p)
                            )
    (input [num_in_p-1:0]     valid_head_i
     , input [num_out_p-1:0]    ready_head_i
     , output [max_in_out_lp-1:0]  go_channels_o
+    , output [$clog2(min_in_out_lp+1)-1:0]  go_cnt_o
     );
 
    wire [max_in_out_lp-1:0] valid_head_pad  = { { max_in_out_lp - num_in_p  { 1'b0 } },  valid_head_i     };
@@ -208,8 +205,12 @@ module bsg_rr_f2f_middle #(parameter width_p="inv"
    // note we need an extra bit of precision on the input for this to work
    // for "all 1s" case.
 
+   wire [max_in_out_lp-1:0] go_channels_int = max_in_out_lp' (((happy_channels+1'b1)^happy_channels) >> 1);
+
    assign
-     go_channels_o = max_in_out_lp' (((happy_channels+1'b1)^happy_channels) >> 1);
+     go_channels_o = go_channels_int;
+
+   bsg_popcount #(.width_p(min_in_out_lp)) popcount (.i(go_channels_int[min_in_out_lp-1:0]), .o(go_cnt_o));
 
 endmodule
 
@@ -283,6 +284,10 @@ module bsg_round_robin_fifo_to_fifo
    wire [width_p*num_out_p-1:0] data_o_flat = data_int_o[out_top_channel_i];
    bsg_round_robin_fifo_to_fifo_t zero_flat;
 
+   localparam min_in_out_lp=`BSG_MIN(num_in_p,num_out_p);
+
+   wire [$clog2(min_in_out_lp+1)-1:0] 	go_cnt;
+
    assign zero_flat = bsg_round_robin_fifo_to_fifo_t ' (0);
 
    // 2D array format converters
@@ -295,9 +300,9 @@ module bsg_round_robin_fifo_to_fifo
    // we generate separate input side logic to handle
    // different numbers of input channels
    for (i = 0; i < num_in_p; i++)
-     begin : inch
+     begin: ic
         if (in_channel_count_mask_p[i])
-          begin
+          begin : in_chan
              wire [width_p-1:0] data_head_tmp [i:0];
 
              bsg_flatten_2D_array #(.width_p(width_p), .items_p(i+1))
@@ -307,6 +312,7 @@ module bsg_round_robin_fifo_to_fifo
              bsg_rr_f2f_input #(.width_p(width_p)
                                 ,.num_in_p(i+1)
                                 ,.max_in_out_p(`BSG_MAX(i+1,num_out_p))
+				,.min_in_out_p(`BSG_MIN(i+1,num_out_p))
                                 ) bsg_rr_ff_in
                (.clk(clk), .reset(reset)
                 , .valid_i(valid_i[i:0])               // inputs
@@ -316,7 +322,7 @@ module bsg_round_robin_fifo_to_fifo
                 ,. valid_head_o(valid_head[i][i:0])
 
                 , .go_channels_i(go_channels)     // back to them
-
+		, .go_cnt_i(go_cnt[$clog2(`BSG_MIN(i+1,num_out_p)+1)-1:0])
                 , .yumi_o(yumi_int_o[i][i:0])                 // final output
                 );
 
@@ -331,8 +337,8 @@ module bsg_round_robin_fifo_to_fifo
                  = zero_flat[0+: (width_p*(num_in_p-(i+1)))];
 
           end // if (in_channel_count_mask_p[i])
-     end
-
+     end // block: c
+   
    // MIDDLE (ties INPUT to OUTPUT)
 
    bsg_rr_f2f_middle #(.width_p(width_p)
@@ -342,14 +348,15 @@ module bsg_round_robin_fifo_to_fifo
    (.valid_head_i(valid_head[in_top_channel_i])
     , .ready_head_i(ready_head[out_top_channel_i])
     , .go_channels_o(go_channels)
+    , .go_cnt_o(go_cnt)
     );
 
    // OUTPUT SIDE
 
    for (i = 0; i < num_out_p; i++)
-     begin : outch
+     begin: oc
         if (out_channel_count_mask_p[i])
-              begin
+              begin: out_chan
                  wire [width_p-1:0] data_head_array [`BSG_MAX(i+1,num_in_p)-1:0];
                  wire [width_p-1:0] data_o_array [i:0];
 
@@ -373,12 +380,14 @@ module bsg_round_robin_fifo_to_fifo
                  bsg_rr_f2f_output #(.width_p(width_p)
                                      ,.num_out_p(i+1)
                                      ,.max_in_out_p(`BSG_MAX(i+1,num_in_p))
+                                     ,.min_in_out_p(`BSG_MIN(i+1,num_in_p))
                                      ) bsg_rr_ff_out
                    (.clk(clk), .reset(reset)
                     , .ready_i(ready_i[i:0])
                     , .ready_head_o(ready_head[i][i:0])   // back to us
 
                     , .go_channels_i(go_channels) // back to them
+		    , .go_cnt_i(go_cnt[$clog2(`BSG_MIN(i+1,num_in_p)+1)-1:0])
                     , .data_head_i(data_head_array)
 
                     , .valid_o(valid_int_o[i][i:0])           // final outputs
@@ -394,7 +403,8 @@ module bsg_round_robin_fifo_to_fifo
                    assign data_int_o[i][width_p*num_out_p-1:width_p*(i+1)]
                      = zero_flat[0+: (width_p*(num_out_p-(i+1)))];
               end // block: iff
-     end // block: outch
+     end // block: c
+   
 
 endmodule // bsg_assembler_out
 
