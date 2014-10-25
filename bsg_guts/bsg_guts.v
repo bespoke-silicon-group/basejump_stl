@@ -7,6 +7,7 @@ module bsg_guts #(parameter num_channels_p=4
                   ,parameter master_to_slave_speedup_p=100
                   ,parameter master_bypass_test_p=5'b00000
                   ,parameter nodes_p=1
+		  ,parameter uniqueness_p=0
                   )
    (
     input core_clk_i
@@ -58,7 +59,7 @@ module bsg_guts #(parameter num_channels_p=4
    genvar                           i;
 
    for (i = 0; i < nodes_p; i=i+1)
-     begin
+     begin : n
         bsg_test_node
             #(.ring_width_p(ring_width_lp)
               ,.master_p(master_p)
