@@ -5,10 +5,10 @@ module test_bsg_guts;
 
 `include "test_bsg_clock_params.v"
 
-initial begin
-   $vcdpluson;
-   $vcdplusmemon;
-end
+//initial begin
+//   $vcdpluson;
+//   $vcdplusmemon;
+//end
 
    localparam num_channels_lp          = `NUM_CHANNELS;
 
