@@ -94,7 +94,7 @@ module bsg_async_credit_counter #(parameter max_tokens_p = "inv"
       ,.binary_o(w_counter_binary_r_rsync)
       );
 
-   wire [r_counter_width_lp-1:0]  w_counter_binary_r_rsync_padded = { w_counter_binary_r_rsync, { {lg_credit_to_token_decimation_p} {1'b0 } }};
+   wire [r_counter_width_lp-1:0]  w_counter_binary_r_rsync_padded = { w_counter_binary_r_rsync, { lg_credit_to_token_decimation_p {1'b0 } }};
 
    assign r_credits_avail_o = r_infinite_credits_i | ~(w_counter_binary_r_rsync_padded == r_counter_r);
 
