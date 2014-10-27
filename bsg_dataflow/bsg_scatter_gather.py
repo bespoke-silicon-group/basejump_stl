@@ -20,8 +20,11 @@ import math;
 #
 #
 
+
+max_channel = 12;
+
 # input
-channels = [x for x in range(1,9)];
+channels = [x for x in range(1,max_channel)];
 
 # converts from an integer to a list of bit integers
 def int_to_bit_list(a,pad) :
@@ -188,10 +191,10 @@ print """
 
 module bsg_scatter_gather #(parameter vec_size_lp="inv")
        (input [vec_size_lp-1:0] vec_i
-       ,output reg [vec_size_lp*$clog2(vec_size_lp)-1:0] fwd_o
-       ,output reg [vec_size_lp*$clog2(vec_size_lp)-1:0] fwd_datapath_o
-       ,output reg [vec_size_lp*$clog2(vec_size_lp)-1:0] bk_o
-       ,output reg [vec_size_lp*$clog2(vec_size_lp)-1:0] bk_datapath_o       
+       ,output reg [vec_size_lp*`BSG_SAFE_CLOG2(vec_size_lp)-1:0] fwd_o
+       ,output reg [vec_size_lp*`BSG_SAFE_CLOG2(vec_size_lp)-1:0] fwd_datapath_o
+       ,output reg [vec_size_lp*`BSG_SAFE_CLOG2(vec_size_lp)-1:0] bk_o
+       ,output reg [vec_size_lp*`BSG_SAFE_CLOG2(vec_size_lp)-1:0] bk_datapath_o       
        );
 """
 
@@ -199,6 +202,9 @@ module bsg_scatter_gather #(parameter vec_size_lp="inv")
 for x in channels :
     generate_code_for_channel(x)
 
+print "// synopsys translate_off";
+print "initial assert (vec_size_lp < ",max_channel,") else $error(\"bsg_scatter_gather: vec_size_lp too large %d\", vec_size_lp);";
+print "// synopsys translate_on";
 
 print "endmodule";
 
