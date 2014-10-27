@@ -1,0 +1,85 @@
+// MBT 10-26-2014
+//
+// bsg_encode_one_hot
+//
+// encodes a one hot signal into an address
+// 0001     --> 0, v=1
+// 0010     --> 1, v=1
+// 0100     --> 2, v=1
+// 1000     --> 3, v=1
+// 0000     --> 0, v=0
+// O*1O*1O* --> undefined
+
+// we implement at this as a parallel prefix computation
+// it is basically a big, clever tree of OR's with a
+// certain structure.
+//
+
+module bsg_encode_one_hot #(parameter width_p=8)
+   (input    [width_p-1:0]         i
+    , output [`BSG_SAFE_CLOG2(width_p)-1:0] addr_o  // feed 32 bits in, requires spots 32 to encode (0..31)
+    , output v_o                           // whether any bit was found
+    );
+
+   localparam half_width_lp    = width_p >> 1;
+   localparam aligned_width_lp = 1 << $clog2(width_p);
+
+   if (width_p == 1)
+     begin : base
+        assign v_o = i;
+
+	// should be ignored
+        assign addr_o = 1'bX;
+     end
+   else
+     // align at the top; this should be more efficient
+     // than aligning at intermediate nodes
+     // e.g. 4 != (1 << 2)
+     if (width_p != aligned_width_lp)
+       begin : unaligned
+	  wire [$clog2(aligned_width_lp)-1:0] aligned_addr;
+
+          bsg_encode_one_hot #(.width_p(aligned_width_lp))
+          align(.i      ({ { (aligned_width_lp-width_p)  {1'b0} }, i})
+                ,.addr_o(aligned_addr                            )
+                ,.v_o   (v_o                                     )
+                );
+
+	  assign addr_o = aligned_addr[$clog2(width_p)-1:0];
+       end
+     else
+       begin: aligned
+          wire [1:0] [`BSG_SAFE_CLOG2(half_width_lp)-1:0] addrs;
+          wire [1:0]                     vs;
+
+          bsg_encode_one_hot #(.width_p(half_width_lp)) left
+            (.i      (i    [0+:half_width_lp])
+             ,.addr_o(addrs[0]               )
+             ,.v_o   (vs   [0]               )
+             );
+
+          bsg_encode_one_hot #(.width_p(half_width_lp)) right
+            (.i      (i[half_width_lp+:half_width_lp])
+             ,.addr_o(addrs[1]                       )
+             ,.v_o   (vs   [1]                       )
+             );
+
+          assign v_o     = | vs;
+	  if (width_p == 2)
+	    assign addr_o = vs[1];
+	  else
+            assign addr_o = { vs[1], (addrs[0] | addrs[1]) };
+       end // block: aligned
+
+
+   // synopsys translate_off
+   always @(addr_o)
+     begin
+//        $display("bsg_encode_one_hot %b -> add_o(%b), v_o(%b)",i,addr_o, v_o);
+
+        assert ($countones(i) <= 1) else $error("bsg_encode_one_hot: invalid input %b",i);
+     end
+   // synopsys translate_on
+
+endmodule // bsg_encode_one_hot
+
