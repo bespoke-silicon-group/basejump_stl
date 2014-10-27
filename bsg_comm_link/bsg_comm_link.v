@@ -162,6 +162,13 @@ module bsg_comm_link
     // *
     // *
 
+    // enable this if comm_link appears on the critical path
+    // adds one core cycle of latency in or out
+    // and two channel_width_p*link_channels fifos.
+
+    , parameter sbox_pipeline_in_p  = 1'b1
+    , parameter sbox_pipeline_out_p = 1'b1
+
     // made this node see all packets (typ. 0 for ASIC and FPGA)
     , parameter snoop_vec_p               = ({ (nodes_p) {1'b0 } })
 
@@ -289,18 +296,18 @@ module bsg_comm_link
    wire [channel_width_p-1:0]  core_asm_to_sso_data [link_channels_p-1:0];
    wire [link_channels_p-1:0]  core_asm_to_sso_ready;
 
-   wire [link_channels_p-1:0]  core_sso_to_asm_valid;
-   wire [channel_width_p-1:0]  core_sso_to_asm_data [link_channels_p-1:0];
-   wire [link_channels_p-1:0]  core_sso_to_asm_yumi;
+   wire [link_channels_p-1:0]  core_ssi_to_asm_valid;
+   wire [channel_width_p-1:0]  core_ssi_to_asm_data [link_channels_p-1:0];
+   wire [link_channels_p-1:0]  core_ssi_to_asm_yumi;
 
    wire [link_channels_p-1:0]  core_asm_to_sso_valid_sbox
-                               , core_sso_to_asm_valid_sbox;
+                               , core_ssi_to_asm_valid_sbox;
 
    wire [channel_width_p-1:0]  core_asm_to_sso_data_sbox [link_channels_p-1:0];
-   wire [channel_width_p-1:0]  core_sso_to_asm_data_sbox [link_channels_p-1:0];
+   wire [channel_width_p-1:0]  core_ssi_to_asm_data_sbox [link_channels_p-1:0];
 
    wire [link_channels_p-1:0]  core_asm_to_sso_ready_sbox
-                               , core_sso_to_asm_yumi_sbox;
+                               , core_ssi_to_asm_yumi_sbox;
 
    // synchronous to im clock
    wire [link_channels_p-1:0]   im_override_en;
@@ -317,13 +324,13 @@ module bsg_comm_link
 
    // computed from channel_active signals
    logic [`BSG_MAX(0,$clog2(link_channels_p)-1):0] core_top_active_channel_r;
+   logic [`BSG_MAX(0,$clog2(link_channels_p+1)-1):0] active_channel_count;
 
-   localparam width = link_channels_p;
-`include "DW_dp_count_ones_function.inc"
+   bsg_popcount #(.width_p(link_channels_p)) pop (.i(core_channel_active),.o(active_channel_count));
 
    // how many channels are alive?
    always @(posedge core_clk_i)
-      core_top_active_channel_r <= DWF_dp_count_ones(core_channel_active) - 1;
+      core_top_active_channel_r <= (| core_channel_active) ? (active_channel_count - 1) : '0;
 
    localparam tests_p = 5;
 
@@ -568,9 +575,9 @@ module bsg_comm_link
              ,.core_reset_i(core_channel_reset)
 
              ,.core_data_i (core_loopback_en[i]
-                            ? core_sso_to_asm_data   [i] : core_asm_to_sso_data_sbox  [i])
+                            ? core_ssi_to_asm_data   [i] : core_asm_to_sso_data_sbox  [i])
              ,.core_valid_i(core_loopback_en[i]
-                            ? core_sso_to_asm_valid  [i] : core_asm_to_sso_valid_sbox [i])
+                            ? core_ssi_to_asm_valid  [i] : core_asm_to_sso_valid_sbox [i])
 
              // fixme: any special treatment required for loopback?
              ,.core_ready_o(core_asm_to_sso_ready [i])
@@ -648,11 +655,11 @@ module bsg_comm_link
            ,.core_reset_i(core_channel_reset)
 
            // core 1 side logical signals
-           ,.core_data_o (core_sso_to_asm_data  [i] )
-           ,.core_valid_o(core_sso_to_asm_valid [i] )
+           ,.core_data_o (core_ssi_to_asm_data  [i] )
+           ,.core_valid_o(core_ssi_to_asm_valid [i] )
            ,.core_yumi_i (core_loopback_en[i]
-                          ? (core_asm_to_sso_ready[i] & core_sso_to_asm_valid[i])
-                          : core_sso_to_asm_yumi_sbox[i])
+                          ? (core_asm_to_sso_ready[i] & core_ssi_to_asm_valid[i])
+                          : core_ssi_to_asm_yumi_sbox[i])
            );
      end // block: channel
 
@@ -668,17 +675,21 @@ module bsg_comm_link
 
    bsg_sbox #(.num_channels_p(link_channels_p)
               ,.channel_width_p(channel_width_p)
+	      ,.pipeline_indir_p(sbox_pipeline_in_p)
+	      ,.pipeline_outdir_p(sbox_pipeline_out_p)
               ) sbox
      (.clk_i(core_clk_i)
+      ,.reset_i(core_reset_i)
+      ,.calibration_done_i(core_calib_done_r)
       ,.channel_active_i(core_channel_active)
 
-      ,.in_v_i   (core_sso_to_asm_valid     )
-      ,.in_data_i(core_sso_to_asm_data      )
-      ,.in_yumi_o(core_sso_to_asm_yumi_sbox )
+      ,.in_v_i   (core_ssi_to_asm_valid)
+      ,.in_data_i(core_ssi_to_asm_data      )
+      ,.in_yumi_o(core_ssi_to_asm_yumi_sbox )
 
-      ,.in_v_o   (core_sso_to_asm_valid_sbox )
-      ,.in_data_o(core_sso_to_asm_data_sbox  )
-      ,.in_yumi_i(core_sso_to_asm_yumi       )
+      ,.in_v_o   (core_ssi_to_asm_valid_sbox )
+      ,.in_data_o(core_ssi_to_asm_data_sbox  )
+      ,.in_yumi_i(core_ssi_to_asm_yumi       )
 
       ,.out_me_v_i    (core_asm_to_sso_valid      )
       ,.out_me_data_i (core_asm_to_sso_data       )
@@ -740,9 +751,9 @@ module bsg_comm_link
    (.clk     (core_clk_i  )
     ,.reset              (core_channel_reset)
     ,.calibration_done_i (core_calib_done_r )
-    ,.valid_i(core_sso_to_asm_valid_sbox)
-    ,.data_i (core_sso_to_asm_data_sbox )
-    ,.yumi_o (core_sso_to_asm_yumi      )
+    ,.valid_i(core_ssi_to_asm_valid_sbox)
+    ,.data_i (core_ssi_to_asm_data_sbox )
+    ,.yumi_o (core_ssi_to_asm_yumi      )
 
     ,.in_top_channel_i(core_top_active_channel_r)
 
