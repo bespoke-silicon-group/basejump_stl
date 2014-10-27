@@ -4,9 +4,9 @@
 # Change these variables to determine what tests are run.
 #
 
-CHANNEL_WIDTH           = 6
+CHANNEL_WIDTH           = 3
 RING_BYTES              = 10# 1
-NUM_CHANNELS            = 4 # 1 3 2
+NUM_CHANNELS            =  4# 1 2 3 4 5 6 7 8 9 10 11 # 12 13 14 15
 
 ifeq (0,1)
 CORE_0_PERIOD      =   2  6 20 200
@@ -33,7 +33,7 @@ MURN_INCLUDE_DIR = $(HOME)/raw/murn/code/include
 DESIGNWARE_DIR = $(SYNOPSYS_DIR)/$(DC_RELEASE)/dw/sim_ver
 DESIGNWARE_FLAGS = -y $(DESIGNWARE_DIR) +incdir+$(DESIGNWARE_DIR) +incdir+$(MURN_INCLUDE_DIR) +incdir+../bsg_test +libext+.v
 
-BSG_MISC_FILES      = bsg_defines.v bsg_popcount.v bsg_gray_to_binary.v bsg_scan_xor.v bsg_cycle_counter.v bsg_wait_cycles.v bsg_wait_after_reset.v 
+BSG_MISC_FILES      = bsg_defines.v bsg_circular_ptr.v bsg_popcount.v bsg_thermometer_count.v bsg_encode_one_hot.v bsg_gray_to_binary.v bsg_scan.v bsg_cycle_counter.v bsg_wait_cycles.v bsg_wait_after_reset.v 
 BSG_ASYNC_FILES     = bsg_async_credit_counter.v bsg_async_fifo.v bsg_async_ptr_gray.v  bsg_launch_sync_sync.v bsg_sync_sync.v
 BSG_COMM_LINK_FILES = bsg_source_sync_input.v bsg_source_sync_output.v   bsg_comm_link.v  bsg_assembler_in.v bsg_assembler_out.v   bsg_source_sync_channel_control_slave.v bsg_source_sync_channel_control_master.v bsg_source_sync_channel_control_master_master.v   test_bsg_comm_link_checker.v
 BSG_DATAFLOW_FILES  = bsg_scatter_gather.v bsg_two_fifo.v   bsg_sbox.v  bsg_round_robin_fifo_to_fifo.v bsg_make_2D_array.v bsg_flatten_2D_array.v
