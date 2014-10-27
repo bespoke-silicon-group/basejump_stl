@@ -20,7 +20,7 @@ module test_bsg_guts;
 
    localparam iterations_lp            = `ITERATIONS;
 
-   localparam verbose_lp  = 0;
+   localparam verbose_lp  = 1;
 
    // *************************************************
    // independent clocks and reset
@@ -68,8 +68,20 @@ module test_bsg_guts;
    wire [cycle_counter_width_lp-1:0] io_ctr  [1:0];
    wire [1:0]                        core_calib_reset;
 
+
+   logic [channel_width_lp-1:0] io_data_tline_delay [1:0] [num_channels_lp-1:0];
+   logic [num_channels_lp-1:0]  io_clk_tline_delay  [1:0], io_valid_tline_delay [1:0];
+
+   for (i = 0; i < 2; i++)
+     for (j = 0; j < num_channels_lp; j++)
+       begin
+	  assign #(0) io_data_tline_delay[i][j]  = io_data_tline [i][j];
+	  assign #(0) io_valid_tline_delay[i][j] = io_valid_tline[i][j];
+	  assign #(0) io_clk_tline_delay[i][j]   = io_clk_tline  [i][j];
+       end
+
    // how many nodes on each chip
-   localparam nodes_lp = 4;
+   localparam nodes_lp = 1;
 
    for (i = 0; i < 2; i++)
      begin: core
@@ -95,9 +107,9 @@ module test_bsg_guts;
              ,.io_master_clk_i(io_master_clk[i])
 
              // input from i/o
-             ,.io_valid_tline_i    (io_valid_tline    [!i])
-             ,.io_data_tline_i     (io_data_tline     [!i])
-             ,.io_clk_tline_i      (io_clk_tline      [!i])
+             ,.io_valid_tline_i    (io_valid_tline_delay    [!i])
+             ,.io_data_tline_i     (io_data_tline_delay     [!i])
+             ,.io_clk_tline_i      (io_clk_tline_delay      [!i])
              ,.io_token_clk_tline_o(io_token_clk_tline[i]) // clk
 
              // out to i/o
