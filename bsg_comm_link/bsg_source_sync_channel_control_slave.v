@@ -173,7 +173,7 @@ module  bsg_source_sync_channel_control_slave #( parameter width_p  = -1
      begin
         out_reset_r <= out_reset_i;
 
-        // initialize the outclock if we are entering the Inactive state from the begin state
+        // initialize the outclock if we are entering the sResetClock state from the begin state
         // if we want to avoid upsetting the PLL, the master scan skip this state
 
         out_clk_init_r_o        <=    ~out_reset_i
