@@ -10,6 +10,10 @@ module bsg_popcount #(parameter width_p="inv")
     , output [$clog2(width_p+1)-1:0] o
     );
 
+   // for items that are 5..7 bits wide, we make sure to
+   // split into a 4 and a 1/2/3; since the four is relatively optimized.
+   //
+
    localparam first_half_lp  = `BSG_MAX(4,width_p - (width_p >> 1));
    localparam second_half_lp = width_p - first_half_lp;
 
