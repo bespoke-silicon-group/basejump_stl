@@ -12,5 +12,5 @@
 `endif
 
 `ifndef ITERATIONS
-`define ITERATIONS 16
+`define ITERATIONS 4
 `endif
