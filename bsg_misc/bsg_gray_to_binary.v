@@ -29,6 +29,8 @@ module bsg_gray_to_binary #(parameter width_p = -1)
 
    // logarithmic depth of the above
 
-   bsg_scan_xor #(.width_p(width_p)) scan_xor(.i(gray_i),.o(binary_o));
+   bsg_scan #(.width_p(width_p)
+	      ,.xor_p(1)
+	      ) scan_xor (.i(gray_i),.o(binary_o));
 
 endmodule
