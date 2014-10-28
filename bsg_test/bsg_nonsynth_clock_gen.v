@@ -1,4 +1,4 @@
-module test_bsg_clock_gen #(parameter cycle_time_p="inv")
+module bsg_nonsynth_clock_gen #(parameter cycle_time_p="inv")
    (output logic o);
 
    initial o = 0;
@@ -10,7 +10,7 @@ module test_bsg_clock_gen #(parameter cycle_time_p="inv")
      assert(cycle_time_p >= 2)
        else $error("cannot simulate cycle time less than 2");
 
-   always #(cycle_time_p/2)
+   always #(cycle_time_p/2.0)
      o = ~o;
 
 endmodule
