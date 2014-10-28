@@ -1,5 +1,7 @@
 `include "test_assembler_defines.v"
 
+
+
 module test_bsg_guts;
 
 
@@ -30,15 +32,15 @@ module test_bsg_guts;
    logic [1:0] core_clk;
    logic [1:0] io_master_clk;
 
-   test_bsg_clock_gen #(.cycle_time_p(core_0_period_lp))  c0_clk    (.o(     core_clk[0]));
-   test_bsg_clock_gen #(.cycle_time_p(core_1_period_lp))  c1_clk    (.o(     core_clk[1]));
+   bsg_nonsynth_clock_gen #(.cycle_time_p(core_0_period_lp))  c0_clk    (.o(     core_clk[0]));
+   bsg_nonsynth_clock_gen #(.cycle_time_p(core_1_period_lp))  c1_clk    (.o(     core_clk[1]));
 
    initial
      $display("%m creating clocks",core_0_period_lp, core_1_period_lp,
               io_master_0_period_lp, io_master_1_period_lp);
 
-   test_bsg_clock_gen #(.cycle_time_p(io_master_0_period_lp)) i0_clk (.o(io_master_clk[0]));
-   test_bsg_clock_gen #(.cycle_time_p(io_master_1_period_lp)) i1_clk (.o(io_master_clk[1]));
+   bsg_nonsynth_clock_gen #(.cycle_time_p(io_master_0_period_lp)) i0_clk (.o(io_master_clk[0]));
+   bsg_nonsynth_clock_gen #(.cycle_time_p(io_master_1_period_lp)) i1_clk (.o(io_master_clk[1]));
 
    logic       async_reset;
 
@@ -75,9 +77,14 @@ module test_bsg_guts;
    for (i = 0; i < 2; i++)
      for (j = 0; j < num_channels_lp; j++)
        begin
-	  assign #(0) io_data_tline_delay[i][j]  = io_data_tline [i][j];
-	  assign #(0) io_valid_tline_delay[i][j] = io_valid_tline[i][j];
-	  assign #(0) io_clk_tline_delay[i][j]   = io_clk_tline  [i][j];
+	  bsg_nonsynth_delay_line #(.width_p(channel_width_lp), .delay_p(20*j+1)) dl0
+	  (.o(io_data_tline_delay[i][j]) ,.i(io_data_tline [i][j]));
+
+	  bsg_nonsynth_delay_line #(.width_p(1), .delay_p(20*j+1)) dl1
+	  (.o(io_valid_tline_delay[i][j]) ,.i(io_valid_tline [i][j]));
+ 
+	  bsg_nonsynth_delay_line #(.width_p(1), .delay_p(20*j+1)) dl2
+	  (.o(io_clk_tline_delay[i][j]) ,.i(io_clk_tline [i][j]));
        end
 
    // how many nodes on each chip
