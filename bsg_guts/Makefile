@@ -4,7 +4,7 @@
 # Change these variables to determine what tests are run.
 #
 
-CHANNEL_WIDTH           = 3
+CHANNEL_WIDTH           = 8
 RING_BYTES              = 10# 1
 NUM_CHANNELS            =  4# 1 2 3 4 5 6 7 8 9 10 11 # 12 13 14 15
 
@@ -14,9 +14,9 @@ IO_MASTER_0_PERIOD =    2 6 20 200
 IO_MASTER_1_PERIOD =    2 6 20 200
 CORE_1_PERIOD      =    2 6 20 200
 else
-CORE_0_PERIOD      =  2
-IO_MASTER_0_PERIOD =   6
-IO_MASTER_1_PERIOD =   2
+CORE_0_PERIOD      =  20
+IO_MASTER_0_PERIOD =   60
+IO_MASTER_1_PERIOD =   20
 CORE_1_PERIOD      =   10
 endif
 
@@ -40,7 +40,7 @@ BSG_DATAFLOW_FILES  = bsg_scatter_gather.v bsg_two_fifo.v   bsg_sbox.v  bsg_roun
 BSG_FSB_FILES       = bsg_fsb.v bsg_front_side_bus_hop_in.v bsg_front_side_bus_hop_out.v bsg_fsb_murn_gateway.v
 BSG_GUTS_FILES      = bsg_guts.v  bsg_test_node.v
 
-BSG_TEST_FILES =  test_bsg_data_gen.v test_bsg_clock_gen.v test_bsg_reset_gen.v
+BSG_TEST_FILES =  bsg_nonsynth_delay_line.v test_bsg_data_gen.v bsg_nonsynth_clock_gen.v test_bsg_reset_gen.v
 
 #TEST_FILES = test_assembler.v
 #TEST_MAIN = test_bsg_comm_link.v
@@ -72,7 +72,7 @@ all: $(ALL_ALL_ALL_ALL)
 log@%: $(ALL_FILES)
 	@echo $*
 	- rm -rf simv csrc simv.daidir
-	$(VCS_BIN)/vcs $(DESIGNWARE_FLAGS) -PP -notice -full64 +lint=all,noVCDE +v2k -sverilog -timescale=1ns/10ps $(filter-out small-clean,$^) $(subst @, ,$*) +vcs+loopreport +define+BSG_IP_CORES_UNIT_TEST
+	$(VCS_BIN)/vcs $(DESIGNWARE_FLAGS) -PP -notice -full64 +lint=all,noVCDE +v2k -sverilog -timescale=100ps/10ps $(filter-out small-clean,$^) $(subst @, ,$*) +vcs+loopreport +define+BSG_IP_CORES_UNIT_TEST
 	./simv # | tee $@
 
 log@%: small_clean
