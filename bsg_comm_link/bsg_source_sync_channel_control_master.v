@@ -19,6 +19,7 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
                                                  , parameter lg_out_prepare_hold_cycles_p = 6
                                                  // bit vector
                                                  , parameter bypass_test_p = 5'b0
+                                                 , parameter words_per_cal_round_p = 16
                                                  , parameter tests_lp = 5
                                                  , parameter verbose_lp = 1
                                                  )
@@ -62,6 +63,10 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
     // at the credit counters
     , output                 in_infinite_credits_o
 
+    // This signal is routed out to the testbench in order
+    // to test the bit slip functionality of the phase1 checker
+    // module
+    , output logic [width_p-1:0] bit_slip_vector_to_tb_o
     );
 
    // 24 is 16M cycles
@@ -146,12 +151,50 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
 
    logic out_finish_prepare_r, out_finish_prepare_n;
 
+   /*************************************************************************
+   /*
+   /* Phase 3 and Phase 4 Logic
+   /*
+   /*************************************************************************/
+   typedef enum {
+                 sIdle, sDone, sError
+                 , sPhase3Trigger, sPhase3Delay1, sPhase3Delay2, sPhase3Delay3, sPhase3Send, sPhase3Recv, sPhase3Delay4
+                 , sPhase4Trigger, sPhase4Delay1, sPhase4Delay2, sPhase4Delay3, sPhase4Send, sPhase4Recv, sPhase4Delay4
+                } trigger_mode_state;
+
+   trigger_mode_state tm_state_n, tm_state_r;
+   logic [4:0] tm_counter_r, tm_counter_n;
+   logic fs_pattern_gen_en;
+   logic [width_p-1:0] pattern_o;
+   logic checker_success, checker_timed_out;
+   logic trigger_n, trigger_r;
+   logic in_all_packets_received, out_all_packets_received;
+
+   always_ff @(posedge out_clk_i) begin:trigger_mode_output_counter
+       if (out_reset_i) tm_counter_r <= 0;
+       else tm_counter_r <= tm_counter_n;
+   end:trigger_mode_output_counter
+
+   fs_pattern_gen #(.width_p(width_p), .counter_bits_p(counter_bits_lp))
+      fspg (.clk(out_clk_i)
+           , .reset(out_reset_i || tm_state_r == sIdle)
+           , .enable(fs_pattern_gen_en)
+           , .pattern_o);
+
    always_ff @(posedge out_clk_i)
      begin
 
         out_calib_prepare_i_r <= out_calib_prepare_i;
         out_test_pass_r       <= out_test_pass_n;
         out_finish_prepare_r  <= out_finish_prepare_n;
+
+        if (out_reset_i) begin
+            tm_state_r        <= sIdle;
+            trigger_r         <= 0;
+        end else begin
+            tm_state_r        <= tm_state_n;
+            trigger_r         <= trigger_n;
+        end
 
         // zero the counter on prepare assertion and deassertion
         if (out_calib_prepare_i  ^ out_calib_prepare_i_r)
@@ -183,6 +226,11 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
 
         out_override_en_n         = 1'b0;
         out_override_valid_data_n = { 1'b0, (width_p) ' (0) };
+
+        tm_state_n = sIdle;
+        tm_counter_n = 0;
+        trigger_n =0;
+        fs_pattern_gen_en = 0;
 
         // transmit calibration code to slave
         // general, if we are in prepare mode, we will
@@ -239,18 +287,154 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
              out_test_pass_n[out_calibration_state_i]
                = out_phase_X_good[out_calibration_state_i];
              unique case (out_calibration_state_i)
-            2:
-              begin
-                 // RICH FIXME: statemachine to launch values (from this clk domain)
-                 // (and set bit slip and ODELAY)
-                 // out_override_en = 1'b1;
-              end
             3:
               begin
-                 // RICH FIXME: state machine to launch values (from this clk domain)
-                 // out_override_en = 1'b1;
+                unique case (tm_state_r)
+                sIdle: tm_state_n = sPhase3Trigger;
+                sPhase3Trigger: begin
+                    if (~out_override_is_posedge_i) begin
+                        trigger_n = ~trigger_r;
+                        out_override_en_n = 1;
+                        out_override_valid_data_n = {~trigger_r, {width_p {1'b0}}};
+                        tm_state_n = sPhase3Delay1;
+                    end else begin
+                        trigger_n = trigger_r;
+                        out_override_en_n = 1;
+                        out_override_valid_data_n = {trigger_r, {width_p {1'b0}}};
+                        tm_state_n = sPhase3Trigger;
+                    end
+                end
+                // 4 cycle delay is required for the trigger bit 
+                // to propagate through the input channel synchronizer
+                // TODO: refactor to one state and counter
+                sPhase3Delay1: begin
+                    trigger_n = trigger_r;
+                    out_override_en_n = 1;
+                    out_override_valid_data_n = {trigger_r, {width_p {1'b0}}};
+                    tm_state_n = sPhase3Delay2;
+                end
+                sPhase3Delay2: begin
+                    trigger_n = trigger_r;
+                    out_override_en_n = 1;
+                    out_override_valid_data_n = {trigger_r, {width_p {1'b0}}};
+                    tm_state_n = sPhase3Delay3;
+                end
+                sPhase3Delay3: begin
+                    trigger_n = trigger_r;
+                    out_override_en_n = 1;
+                    out_override_valid_data_n = {trigger_r, {width_p {1'b0}}};
+                    tm_state_n = sPhase3Delay4;
+                end
+                sPhase3Delay4: begin
+                    trigger_n = trigger_r;
+                    out_override_en_n = 1;
+                    out_override_valid_data_n = {trigger_r, {width_p {1'b0}}};
+                    tm_state_n = sPhase3Send;
+                end
+                sPhase3Send: begin
+                    fs_pattern_gen_en = 1;
+                    out_override_en_n = 1;
+                    trigger_n = trigger_r;
+                    out_override_valid_data_n = {trigger_r, pattern_o};
+                    tm_counter_n = tm_counter_r + 1;
 
-                 // (and set bit slip and ODELAY)
+                    if (tm_counter_n == words_per_cal_round_p) begin
+                        tm_counter_n = 0;
+                        tm_state_n = sPhase3Recv;
+                    end else begin 
+                        tm_state_n = sPhase3Send;
+                    end
+                end
+                sPhase3Recv: begin
+                    tm_counter_n = tm_counter_r + 1;
+                    trigger_n = trigger_r;
+                    out_override_en_n = 1;
+                    out_override_valid_data_n = {trigger_r, {width_p {1'b0}}};
+
+                    if (out_all_packets_received)
+                        tm_state_n = sPhase3Trigger;
+                    else 
+                        tm_state_n = sPhase3Recv;
+                end
+                default:
+                begin
+                end
+                endcase
+              end
+            4:
+              begin
+                unique case (tm_state_r)
+                sIdle: tm_state_n = sPhase4Trigger;
+                sPhase4Trigger: begin
+                    if (~out_override_is_posedge_i) begin
+                        trigger_n = ~trigger_r;
+                        out_override_en_n = 1;
+                        // In Phase 3 the high data bit is the trigger
+                        out_override_valid_data_n = {2'b0, ~trigger_r, {width_p-1 {1'b0}}};
+                        tm_state_n = sPhase4Delay1;
+                    end else begin
+                        trigger_n = trigger_r;
+                        out_override_en_n = 1;
+                        out_override_valid_data_n = {2'b0, trigger_r, {width_p-1 {1'b0}}};
+                        tm_state_n = sPhase4Trigger;
+                    end
+                end
+                // 4 cycle delay is required for the trigger bit 
+                // to propagate through the input channel synchronizer
+                // TODO: refactor to one state and counter
+                sPhase4Delay1: begin
+                    trigger_n = trigger_r;
+                    out_override_en_n = 1;
+                    out_override_valid_data_n = {2'b0, trigger_r, {width_p-1 {1'b0}}};
+                    tm_state_n = sPhase4Delay2;
+                end
+                sPhase4Delay2: begin
+                    trigger_n = trigger_r;
+                    out_override_en_n = 1;
+                    out_override_valid_data_n = {2'b0, trigger_r, {width_p-1 {1'b0}}};
+                    tm_state_n = sPhase4Delay3;
+                end
+                sPhase4Delay3: begin
+                    trigger_n = trigger_r;
+                    out_override_en_n = 1;
+                    out_override_valid_data_n = {2'b0, trigger_r, {width_p-1 {1'b0}}};
+                    tm_state_n = sPhase4Delay4;
+                end
+                sPhase4Delay4: begin
+                    trigger_n = trigger_r;
+                    out_override_en_n = 1;
+                    out_override_valid_data_n = {2'b0, trigger_r, {width_p-1 {1'b0}}};
+                    tm_state_n = sPhase4Send;
+                end
+                sPhase4Send: begin
+                    fs_pattern_gen_en = 1;
+                    out_override_en_n = 1;
+                    trigger_n = trigger_r;
+                    out_override_valid_data_n = {pattern_o[width_p-1], trigger_r, pattern_o[width_p-2:0]};
+                    tm_counter_n = tm_counter_r + 1;
+
+                    if (tm_counter_n == words_per_cal_round_p) begin
+                        tm_counter_n = 0;
+                        tm_state_n = sPhase4Recv;
+                    end else begin 
+                        tm_state_n = sPhase4Send;
+                    end
+                end
+                sPhase4Recv: begin
+                    tm_counter_n = tm_counter_r + 1;
+                    trigger_n = trigger_r;
+                    out_override_en_n = 1;
+                    out_override_valid_data_n = {2'b0, trigger_r, {width_p-1 {1'b0}}};
+
+                    if (out_all_packets_received)
+                        tm_state_n = sPhase4Trigger;
+                    else 
+                        tm_state_n = sPhase4Recv;
+                end
+                default:
+                begin
+                end
+                endcase
               end
 
             default:
@@ -304,7 +488,7 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
       ,.oclk_data_o({ in_test_enables  })
       );
 
-   // START PHASE 1 CHECK
+   // START PHASE 2 CHECK 
 
    logic [width_p+1-1:0]    in_last_pos_r, in_last_neg_r, in_last_last_pos_r;
 
@@ -393,12 +577,78 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
            end
      end
 
+  /***************************************************
+   * 
+   * Phase 1: Bit Alignment
+   *
+   ***************************************************/
+  logic phase1_cal_done, phase1_timed_out;
+  logic [width_p-1:0] bit_slip_vector, bit_slip_vector_r;
+  logic in_test_enable_one_r;
+  assign bit_slip_vector_to_tb_o = bit_slip_vector_r;
+
+  always_ff @ (posedge in_clk_i)
+  begin
+      in_test_enable_one_r <= in_test_enables[1];
+
+      if (in_reset_i)
+          bit_slip_vector_r <= '0;
+
+      if (in_test_enables[1])
+         bit_slip_vector_r <= bit_slip_vector; 
+  end
+
+  phase1_checker #(.width_p(width_p))
+    p1c (.clk(in_clk_i)
+        ,.reset(in_reset_i)
+        ,.enable(in_test_enables[1])
+        ,.neg_valid_data_i(in_snoop_valid_data_neg_i[0+:width_p+1])
+        ,.pos_valid_data_i(in_snoop_valid_data_pos_i[0+:width_p+1])
+        ,.bit_slip_vector_o(bit_slip_vector)
+        ,.cal_done_o(phase1_cal_done)
+        ,.timed_out_o(phase1_timed_out)
+        );
+
+  /***************************************************
+   * 
+   * Phase 3, and Phase 4:  Input Channel Calibration
+   *
+   ***************************************************/
+
+   bsg_launch_sync_sync #(.width_p(1'b1)
+                         ,.words_per_cal_round_p(words_per_cal_round_p))
+      blss_checker (.iclk_i(in_clk_i)
+                   ,.iclk_reset_i(in_reset_i)
+                   ,.oclk_i(out_clk_i)
+                   ,.iclk_data_i(in_all_packets_received)
+                   ,.iclk_data_o()
+                   ,.oclk_data_o(out_all_packets_received)
+                   );
+
+   fs_pattern_checker #( .width_p(width_p))
+      fspc (.clk(in_clk_i)
+           ,.reset(in_reset_i)
+           ,.enable(tm_state_r == sPhase3Send || 
+                    tm_state_r == sPhase3Recv || 
+                    tm_state_r == sPhase4Send || 
+                    tm_state_r == sPhase4Recv) 
+                    
+           ,.neg_valid_data_i(in_snoop_valid_data_neg_i)
+           ,.pos_valid_data_i(in_snoop_valid_data_pos_i)
+
+           // Lets the state machine know that it can flip the trigger and send
+           // another round of calibration words
+           ,.all_packets_received_o(in_all_packets_received)
+           ,.checker_success_o(checker_success)
+
+           ,.checker_timed_out_o(checker_timed_out)
+       );
 
    // clock initialize
    assign in_phase_X_good[0]            = 1'b1;
 
    // FIXME PHASE 1 CHECK
-   assign in_phase_X_good[1]            = bypass_test_p[1];
+   assign in_phase_X_good[1]            = phase1_cal_done | bypass_test_p[1];
 
    // PHASE 2 (test 2) CHECK
    assign in_phase_X_good[2] =   (&in_consec_neg_pos_match_r)
@@ -406,7 +656,8 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
                                | bypass_test_p[2];
 
    // PHASE 3 and PHASE 4 CHECK
-   assign in_phase_X_good[tests_lp-1:3] = bypass_test_p[tests_lp-1:3];
+   assign in_phase_X_good[3] = (in_test_enables[3] & checker_success) | bypass_test_p[3];
+   assign in_phase_X_good[4] = (in_test_enables[4] & checker_success) | bypass_test_p[4];
 
    // DONE
    assign in_phase_X_good[tests_lp] = 1'b1;
