@@ -14,24 +14,31 @@ module bsg_source_sync_channel_control_master_master
   #(parameter  link_channels_p  = "inv"
     , parameter tests_p          = "inv"
     , parameter prepare_cycles_p = "inv"
-    , parameter timeout_cycles_p = "inv")
+    , parameter timeout_cycles_p = "inv"
+    , parameter channel_width_p = "inv")
   (input clk_i
    , input reset_i
    , input start_i
+   , input [channel_width_p-1:0] bit_slip_vector_i [link_channels_p-1:0]
    , input [link_channels_p-1:0]    test_scoreboard_i [tests_p+1-1:0]
    , output [$clog2(tests_p+1)-1:0] test_index_r_o
+   , output [channel_width_p-1:0] bit_slip_vector_o [link_channels_p-1:0]
    , output prepare_o
    , output done_o
    );
 
    logic [$clog2(tests_p+1)-1:0] test_index_n, test_index_r;
    logic [link_channels_p-1:0]   test_scoreboard_r [tests_p+1-1:0];
+   
+   logic [channel_width_p-1:0] bit_slip_vector_r [link_channels_p-1:0];
 
    wire prep_done,     timeout_wait_done;
    logic prep_actiwait, timeout_actiwait;
 
    assign test_index_r_o = test_index_r;
    assign prepare_o      = ~prep_done;
+
+   assign bit_slip_vector_o = bit_slip_vector_r;
 
    logic done_r, done_n;
 
@@ -65,6 +72,14 @@ module bsg_source_sync_channel_control_master_master
       ,.activate_i(test_scoreboard_i[test_index_r] != test_scoreboard_r[test_index_r])
       ,.ready_r_o( timeout_wait_done)
       );
+
+   always_ff @ (posedge clk_i) begin
+       if (reset_i) begin
+       end else begin
+           if (test_index_r == 1)
+               bit_slip_vector_r <= bit_slip_vector_i;
+       end
+   end
 
    always_ff @(posedge clk_i)
      begin

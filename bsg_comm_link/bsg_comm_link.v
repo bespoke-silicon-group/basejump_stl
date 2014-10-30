@@ -253,6 +253,11 @@ module bsg_comm_link
     // as it occurs before the channels come up
     // safest thing is to not connect it
     , output core_async_reset_danger_o
+
+    // This signal is routed out to the testbench in order
+    // to test the bit slip functionality of the phase1 checker
+    // module
+    , output [channel_width_p-1:0] bit_slip_vector_to_tb_o [link_channels_p-1:0]
     );
 
    // across all frequency combinations, we need a little over 20 fifo slots
@@ -272,6 +277,10 @@ module bsg_comm_link
    wire                        im_slave_reset_tline_n;
 
    wire                        core_reset_i;
+
+   logic [channel_width_p-1:0] bit_slip_vector [link_channels_p-1:0];
+   logic [channel_width_p-1:0] bit_slip_vector_from_master [link_channels_p-1:0];
+   logic [channel_width_p-1:0] bit_slip_vector_from_master_master [link_channels_p-1:0];
 
    assign core_async_reset_danger_o = core_reset_i;
 
@@ -348,12 +357,113 @@ module bsg_comm_link
       ,.oclk_data_o(core_calib_done_r)
       );
 
+       //************************************************************
+       //
+       // Artificial Delay Logic (used to test the bit slip module)
+       //
+       //************************************************************
+       
+       // tline indexes
+       localparam asic_p = 0;
+       localparam fpga_p = 1;
+       localparam delay_pattern_p = 6'b111110;
+
+       logic [link_channels_p-1:0] io_valid_tline;
+       logic [link_channels_p-1:0] io_valid_tline_r;
+       logic [link_channels_p-1:0] io_valid_tline_final;
+       logic [channel_width_p-1:0] io_data_tline_r [link_channels_p-1:0];
+       logic [channel_width_p-1:0] io_data_tline_r_r [link_channels_p-1:0];
+       logic [channel_width_p-1:0] io_data_tline_delay [link_channels_p-1:0];
+       logic [channel_width_p-1:0] io_data_tline_neg_r [link_channels_p-1:0];
+       logic [channel_width_p-1:0] io_data_tline_neg_r_r [link_channels_p-1:0];
+       logic [channel_width_p-1:0] io_data_tline_neg_delay [link_channels_p-1:0];
+       logic [channel_width_p-1:0] io_data_tline_corrected [link_channels_p-1:0];
+       logic [channel_width_p-1:0] io_data_tline_neg_corrected [link_channels_p-1:0];
+       logic [channel_width_p-1:0] io_data_tline_final [link_channels_p-1:0];
+       logic [channel_width_p-1:0] io_data_tline  [link_channels_p-1:0];
+       logic [channel_width_p-1:0] io_data_tline_debug;
+       logic [channel_width_p-1:0] io_data_tline_delaydebug;
+       logic [channel_width_p-1:0] io_data_tline_correcteddebug;
+       logic [channel_width_p-1:0] io_data_tline_finaldebug;
+       logic [channel_width_p-1:0] io_data_tline_neg_delaydebug;
+       logic [channel_width_p-1:0] io_data_tline_neg_correcteddebug;
+       logic [channel_width_p-1:0] io_data_tline_neg_finaldebug;
+       logic [channel_width_p-1:0] delay_pattern;
+       
+       assign delay_pattern = delay_pattern_p;
+       assign io_data_tline = io_data_tline_i;
+       assign io_valid_tline = io_valid_tline_i;
+       assign io_data_tline_debug = io_data_tline_i[0];
+       assign io_data_tline_delaydebug = io_data_tline_delay[0];
+       assign io_data_tline_correcteddebug = io_data_tline_corrected[0];
+       assign io_data_tline_finaldebug = io_data_tline_final[0];
+       assign io_data_tline_neg_delaydebug = io_data_tline_neg_delay[0];
+       assign io_data_tline_neg_correcteddebug = io_data_tline_neg_corrected[0];
+       assign io_data_tline_neg_finaldebug = io_data_tline_final[0];
+
+       genvar chan, bitline;
+
+       generate
+       for (chan = 0; chan < link_channels_p; chan++) begin
+           for (bitline = 0; bitline < channel_width_p; bitline++) begin
+               assign io_data_tline_delay[chan][bitline] = (delay_pattern[bitline]) ? 
+                                                                   io_data_tline_r[chan][bitline] 
+                                                                   : io_data_tline_i[chan][bitline];
+               assign io_data_tline_corrected[chan][bitline] = (bit_slip_vector[chan][bitline] && ~delay_pattern[bitline]) ? io_data_tline_r[chan][bitline] : 
+                                                               (bit_slip_vector[chan][bitline] && delay_pattern[bitline])  ? io_data_tline_r_r[chan][bitline] :
+                                                               io_data_tline_delay[chan][bitline];
+
+               //assign io_data_tline_neg_delay[chan][bitline] = (delay_pattern[bitline]) ? 
+               //                                                    io_data_tline_neg_r[chan][bitline] 
+               //                                                    : io_data_tline_i[chan][bitline];
+               //assign io_data_tline_neg_corrected[chan][bitline] = (bit_slip_vector[chan][bitline] && ~delay_pattern[bitline]) ? io_data_tline_neg_r[chan][bitline] : 
+               //                                                    (bit_slip_vector[chan][bitline] && delay_pattern[bitline])  ? io_data_tline_r_r[chan][bitline] :
+               //                                                    io_data_tline_neg_delay[chan][bitline];
+           end
+       end
+       endgenerate
+
+       
+       always_ff @ (posedge core_clk_i) 
+       begin
+           io_data_tline_r <= io_data_tline;
+           io_data_tline_r_r <= io_data_tline_delay;
+       end
+       always_ff @ (posedge core_clk_i) begin
+           io_valid_tline_r <= io_valid_tline_i;
+       end
+       //always_ff @ (posedge io_clk_tline_i[0]) 
+       //begin
+       //    io_data_tline_r <= io_data_tline;
+       //    io_data_tline_r_r <= io_data_tline_delay;
+       //end
+       //always_ff @ (negedge io_clk_tline_i[0]) 
+       //begin
+       //    io_data_tline_neg_r <= io_data_tline;
+       //    io_data_tline_neg_r_r <= io_data_tline_neg_delay;
+       //end
+
+
+       assign io_data_tline_final = io_data_tline_corrected;
+       //assign io_data_tline_final = io_clk_tline_i[0] ? io_data_tline_corrected : io_data_tline_neg_corrected;
+       //always_ff @ (posedge core_clk_i) begin
+       //     io_valid_tline_r <= io_valid_tline;
+       //     io_data_tline_final <= io_clk_tline_i[0] ? io_data_tline_corrected : io_data_tline_neg_corrected;
+       //end
+       /************  END ARTIFICIAL DELAY ************************/
+       
+       
    if (master_p)
      begin : mstr
         // counter intuitive; organized by tests then by channel
         wire [link_channels_p-1:0]      im_test_scoreboard [tests_p+1-1:0];
         wire [$clog2(tests_p+1)-1:0]    im_test_index;  // + 1; for the "final test"
         wire                            im_prepare;
+
+       assign bit_slip_vector = (im_test_index == 1) ? bit_slip_vector_from_master : bit_slip_vector_from_master_master;
+       assign bit_slip_vector_to_tb_o = bit_slip_vector;
+
+
 
         // assert the tline
         assign im_slave_reset_tline_n = im_prepare;
@@ -377,13 +487,16 @@ module bsg_comm_link
             ,.tests_p(tests_p)
             ,.prepare_cycles_p(master_calib_prepare_cycles_p)
             ,.timeout_cycles_p(master_calib_timeout_cycles_p)
+            ,.channel_width_p(channel_width_p)
             ) master_master
 
             (.clk_i(io_master_clk_i)
              ,.reset_i          (im_reset)
              ,.start_i         (~im_start_calibration_r & im_start_calibration_n )
+             ,.bit_slip_vector_i(bit_slip_vector)
              ,.test_scoreboard_i(im_test_scoreboard)
              ,.test_index_r_o   (im_test_index     )
+             ,.bit_slip_vector_o(bit_slip_vector_from_master_master)
              ,.prepare_o        (im_prepare        )
              ,.done_o           (im_calib_done     )
              );
@@ -469,6 +582,7 @@ module bsg_comm_link
               ,.in_infinite_credits_o    (io_infinite_credits_en  [i])
 
               ,.out_test_pass_r_o        ( im_tests_gather )
+              ,.bit_slip_vector_to_tb_o(bit_slip_vector_from_master[i])
               );
 
              assign im_channel_reset = mstr.im_prepare;
@@ -617,8 +731,8 @@ module bsg_comm_link
             ) ssi
             // starts on reset lo->hi xition
           (.io_clk_i     (io_clk_tline_i       [i])
-           ,.io_data_i   (io_data_tline_i      [i])
-           ,.io_valid_i  (io_valid_tline_i     [i])
+           ,.io_data_i   (master_p ? io_data_tline_final[i] : io_data_tline_i      [i])
+           ,.io_valid_i  (master_p ? io_valid_tline_r [i] : io_valid_tline_i    [i])
            ,.io_token_r_o(io_token_clk_tline_o [i])
 
            // note a small quirk: for the master, we tie reset of the
