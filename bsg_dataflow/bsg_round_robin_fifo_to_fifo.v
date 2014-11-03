@@ -216,7 +216,7 @@ module bsg_rr_f2f_middle #(parameter width_p="inv"
 
    assign go_channels_o = go_channels_int;
 
-   // this hack helps the critical path but net impact is fairly
+   // speedfix: this hack helps the critical path but net impact is fairly
    // small (.04 ns in tsmc 250)
    // it implements a priority encoder based on
    // both the original pattern and the scan.
