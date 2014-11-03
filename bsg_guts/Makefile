@@ -40,7 +40,7 @@ BSG_DATAFLOW_FILES  = bsg_scatter_gather.v bsg_two_fifo.v   bsg_sbox.v  bsg_roun
 BSG_FSB_FILES       = bsg_fsb.v bsg_front_side_bus_hop_in.v bsg_front_side_bus_hop_out.v bsg_fsb_murn_gateway.v
 BSG_GUTS_FILES      = bsg_guts.v  bsg_test_node.v
 
-BSG_TEST_FILES =  bsg_nonsynth_delay_line.v test_bsg_data_gen.v bsg_nonsynth_clock_gen.v test_bsg_reset_gen.v
+BSG_TEST_FILES =  bsg_nonsynth_delay_line.v test_bsg_data_gen.v bsg_nonsynth_clock_gen.v bsg_nonsynth_reset_gen.v
 
 #TEST_FILES = test_assembler.v
 #TEST_MAIN = test_bsg_comm_link.v

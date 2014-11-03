@@ -47,7 +47,7 @@ module test_bsg_guts;
    localparam core_reset_cycles_hi_lp = 256;
    localparam core_reset_cycles_lo_lp = 16;
 
-   test_bsg_reset_gen
+   bsg_nonsynth_reset_gen
      #(.num_clocks_p(4)
        ,.reset_cycles_lo_p(core_reset_cycles_lo_lp)
        ,.reset_cycles_hi_p(core_reset_cycles_hi_lp)
