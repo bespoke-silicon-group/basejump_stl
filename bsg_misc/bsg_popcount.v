@@ -10,6 +10,13 @@ module bsg_popcount #(parameter width_p="inv")
     , output [$clog2(width_p+1)-1:0] o
     );
 
+   // perf fixme: better to round up to nearest power of two and then
+   // recurse with side full and one side minimal
+   //
+   // e.g-> 80 -> 128/2 = 64 --> (64,16)
+   //
+   // possibly slightly better is to use 2^N-1:
+   // 
    // for items that are 5..7 bits wide, we make sure to
    // split into a 4 and a 1/2/3; since the four is relatively optimized.
    //
