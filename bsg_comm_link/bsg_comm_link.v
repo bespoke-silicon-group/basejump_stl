@@ -357,101 +357,6 @@ module bsg_comm_link
       ,.oclk_data_o(core_calib_done_r)
       );
 
-       //************************************************************
-       //
-       // Artificial Delay Logic (used to test the bit slip module)
-       //
-       //************************************************************
-       
-       // tline indexes
-       localparam asic_p = 0;
-       localparam fpga_p = 1;
-       localparam delay_pattern_p = 6'b111110;
-
-       logic [link_channels_p-1:0] io_valid_tline;
-       logic [link_channels_p-1:0] io_valid_tline_r;
-       logic [link_channels_p-1:0] io_valid_tline_final;
-       logic [channel_width_p-1:0] io_data_tline_r [link_channels_p-1:0];
-       logic [channel_width_p-1:0] io_data_tline_r_r [link_channels_p-1:0];
-       logic [channel_width_p-1:0] io_data_tline_delay [link_channels_p-1:0];
-       logic [channel_width_p-1:0] io_data_tline_neg_r [link_channels_p-1:0];
-       logic [channel_width_p-1:0] io_data_tline_neg_r_r [link_channels_p-1:0];
-       logic [channel_width_p-1:0] io_data_tline_neg_delay [link_channels_p-1:0];
-       logic [channel_width_p-1:0] io_data_tline_corrected [link_channels_p-1:0];
-       logic [channel_width_p-1:0] io_data_tline_neg_corrected [link_channels_p-1:0];
-       logic [channel_width_p-1:0] io_data_tline_final [link_channels_p-1:0];
-       logic [channel_width_p-1:0] io_data_tline  [link_channels_p-1:0];
-       logic [channel_width_p-1:0] io_data_tline_debug;
-       logic [channel_width_p-1:0] io_data_tline_delaydebug;
-       logic [channel_width_p-1:0] io_data_tline_correcteddebug;
-       logic [channel_width_p-1:0] io_data_tline_finaldebug;
-       logic [channel_width_p-1:0] io_data_tline_neg_delaydebug;
-       logic [channel_width_p-1:0] io_data_tline_neg_correcteddebug;
-       logic [channel_width_p-1:0] io_data_tline_neg_finaldebug;
-       logic [channel_width_p-1:0] delay_pattern;
-       
-       assign delay_pattern = delay_pattern_p;
-       assign io_data_tline = io_data_tline_i;
-       assign io_valid_tline = io_valid_tline_i;
-       assign io_data_tline_debug = io_data_tline_i[0];
-       assign io_data_tline_delaydebug = io_data_tline_delay[0];
-       assign io_data_tline_correcteddebug = io_data_tline_corrected[0];
-       assign io_data_tline_finaldebug = io_data_tline_final[0];
-       assign io_data_tline_neg_delaydebug = io_data_tline_neg_delay[0];
-       assign io_data_tline_neg_correcteddebug = io_data_tline_neg_corrected[0];
-       assign io_data_tline_neg_finaldebug = io_data_tline_final[0];
-
-       genvar chan, bitline;
-
-       generate
-       for (chan = 0; chan < link_channels_p; chan++) begin
-           for (bitline = 0; bitline < channel_width_p; bitline++) begin
-               assign io_data_tline_delay[chan][bitline] = (delay_pattern[bitline]) ? 
-                                                                   io_data_tline_r[chan][bitline] 
-                                                                   : io_data_tline_i[chan][bitline];
-               assign io_data_tline_corrected[chan][bitline] = (bit_slip_vector[chan][bitline] && ~delay_pattern[bitline]) ? io_data_tline_r[chan][bitline] : 
-                                                               (bit_slip_vector[chan][bitline] && delay_pattern[bitline])  ? io_data_tline_r_r[chan][bitline] :
-                                                               io_data_tline_delay[chan][bitline];
-
-               //assign io_data_tline_neg_delay[chan][bitline] = (delay_pattern[bitline]) ? 
-               //                                                    io_data_tline_neg_r[chan][bitline] 
-               //                                                    : io_data_tline_i[chan][bitline];
-               //assign io_data_tline_neg_corrected[chan][bitline] = (bit_slip_vector[chan][bitline] && ~delay_pattern[bitline]) ? io_data_tline_neg_r[chan][bitline] : 
-               //                                                    (bit_slip_vector[chan][bitline] && delay_pattern[bitline])  ? io_data_tline_r_r[chan][bitline] :
-               //                                                    io_data_tline_neg_delay[chan][bitline];
-           end
-       end
-       endgenerate
-
-       
-       always_ff @ (posedge core_clk_i) 
-       begin
-           io_data_tline_r <= io_data_tline;
-           io_data_tline_r_r <= io_data_tline_delay;
-       end
-       always_ff @ (posedge core_clk_i) begin
-           io_valid_tline_r <= io_valid_tline_i;
-       end
-       //always_ff @ (posedge io_clk_tline_i[0]) 
-       //begin
-       //    io_data_tline_r <= io_data_tline;
-       //    io_data_tline_r_r <= io_data_tline_delay;
-       //end
-       //always_ff @ (negedge io_clk_tline_i[0]) 
-       //begin
-       //    io_data_tline_neg_r <= io_data_tline;
-       //    io_data_tline_neg_r_r <= io_data_tline_neg_delay;
-       //end
-
-
-       assign io_data_tline_final = io_data_tline_corrected;
-       //assign io_data_tline_final = io_clk_tline_i[0] ? io_data_tline_corrected : io_data_tline_neg_corrected;
-       //always_ff @ (posedge core_clk_i) begin
-       //     io_valid_tline_r <= io_valid_tline;
-       //     io_data_tline_final <= io_clk_tline_i[0] ? io_data_tline_corrected : io_data_tline_neg_corrected;
-       //end
-       /************  END ARTIFICIAL DELAY ************************/
-       
        
    if (master_p)
      begin : mstr
@@ -731,8 +636,8 @@ module bsg_comm_link
             ) ssi
             // starts on reset lo->hi xition
           (.io_clk_i     (io_clk_tline_i       [i])
-           ,.io_data_i   (master_p ? io_data_tline_final[i] : io_data_tline_i      [i])
-           ,.io_valid_i  (master_p ? io_valid_tline_r [i] : io_valid_tline_i    [i])
+           ,.io_data_i   (io_data_tline_i      [i])
+           ,.io_valid_i  (io_valid_tline_i    [i])
            ,.io_token_r_o(io_token_clk_tline_o [i])
 
            // note a small quirk: for the master, we tie reset of the
