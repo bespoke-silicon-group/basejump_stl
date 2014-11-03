@@ -74,16 +74,18 @@ module test_bsg_guts;
    logic [channel_width_lp-1:0] io_data_tline_delay [1:0] [num_channels_lp-1:0];
    logic [num_channels_lp-1:0]  io_clk_tline_delay  [1:0], io_valid_tline_delay [1:0];
 
+   localparam delay_multiplier_lp=5;
+      
    for (i = 0; i < 2; i++)
      for (j = 0; j < num_channels_lp; j++)
        begin
-	  bsg_nonsynth_delay_line #(.width_p(channel_width_lp), .delay_p(20*j+1)) dl0
+	  bsg_nonsynth_delay_line #(.width_p(channel_width_lp), .delay_p(delay_multiplier_lp*j+1)) dl0
 	  (.o(io_data_tline_delay[i][j]) ,.i(io_data_tline [i][j]));
 
-	  bsg_nonsynth_delay_line #(.width_p(1), .delay_p(20*j+1)) dl1
+	  bsg_nonsynth_delay_line #(.width_p(1), .delay_p(delay_multiplier_lp*j+1)) dl1
 	  (.o(io_valid_tline_delay[i][j]) ,.i(io_valid_tline [i][j]));
  
-	  bsg_nonsynth_delay_line #(.width_p(1), .delay_p(20*j+1)) dl2
+	  bsg_nonsynth_delay_line #(.width_p(1), .delay_p(delay_multiplier_lp*j+1)) dl2
 	  (.o(io_clk_tline_delay[i][j]) ,.i(io_clk_tline [i][j]));
        end
 

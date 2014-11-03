@@ -6,7 +6,7 @@
 
 CHANNEL_WIDTH           = 8
 RING_BYTES              = 10# 1
-NUM_CHANNELS            =  4# 1 2 3 4 5 6 7 8 9 10 11 # 12 13 14 15
+NUM_CHANNELS            =   1 2 3 4 5 6 7 8 9 10 11 # 12 13 14 15
 
 ifeq (0,1)
 CORE_0_PERIOD      =   2  6 20 200
@@ -14,10 +14,10 @@ IO_MASTER_0_PERIOD =    2 6 20 200
 IO_MASTER_1_PERIOD =    2 6 20 200
 CORE_1_PERIOD      =    2 6 20 200
 else
-CORE_0_PERIOD      =  20
-IO_MASTER_0_PERIOD =   60
-IO_MASTER_1_PERIOD =   20
-CORE_1_PERIOD      =   10
+CORE_0_PERIOD      =  2
+IO_MASTER_0_PERIOD =   6
+IO_MASTER_1_PERIOD =   2
+CORE_1_PERIOD      =   1
 endif
 
 
