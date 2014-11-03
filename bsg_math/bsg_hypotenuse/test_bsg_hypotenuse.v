@@ -47,6 +47,12 @@ module test_bsg_hypotenuse;
 
    wire bsg_v;
 
+   // we use this to pass meta data in parallel
+   // to the values being computed. this
+   // might be a return packet header if we were
+   // using this inside a bsg_test_node
+   //
+   
    bsg_shift_reg #(.width_p(width_lp*2)
                    ,.stages_p(width_lp+4)
                    ) bsr
