@@ -50,11 +50,11 @@ assign almost_full = (count_r>=ALMOST_COUNT);
 assign empty       = (count_r==0);
 assign valid       = !empty;
 
-assign dout = storage[rptr_r[LG_DEPTH-1:0]];
+assign dout = storage[rptr_r];
 
 always @(posedge clk)
  if (enque)
-	storage[wptr_r[LG_DEPTH-1:0]] <= din;
+	storage[wptr_r] <= din;
 
 // keeping track of number of entries and updating read and 
 // write poniteres, and displaying errors in case of overflow
