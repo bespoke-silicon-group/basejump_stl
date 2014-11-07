@@ -152,10 +152,10 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
    logic out_finish_prepare_r, out_finish_prepare_n;
 
    /*************************************************************************
-   /*
-   /* Phase 3 and Phase 4 Logic
-   /*
-   /*************************************************************************/
+   *
+   * Phase 3 and Phase 4 Logic
+   *
+   *************************************************************************/
    typedef enum {
                  sIdle, sDone, sError
                  , sPhase3Trigger, sPhase3Delay1, sPhase3Delay2, sPhase3Delay3, sPhase3Send, sPhase3Recv, sPhase3Delay4
@@ -615,8 +615,7 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
    *
    ***************************************************/
 
-   bsg_launch_sync_sync #(.width_p(1'b1)
-                         ,.words_per_cal_round_p(words_per_cal_round_p))
+   bsg_launch_sync_sync #(.width_p(1'b1))
       blss_checker (.iclk_i(in_clk_i)
                    ,.iclk_reset_i(in_reset_i)
                    ,.oclk_i(out_clk_i)

@@ -6,35 +6,6 @@ module test_bsg_comm_link;
 `include "test_bsg_clock_params.v"
 
 
-  // three separate clocks: I/O, and the two cores communicating with each other
-   localparam core_0_period_lp      = `CORE_0_PERIOD;
-   localparam core_1_period_lp      = `CORE_1_PERIOD;
-
-   localparam io_master_0_period_lp =  `IO_MASTER_0_PERIOD;  // 1
-   localparam io_master_1_period_lp =  `IO_MASTER_1_PERIOD;  // 1000;
-
-
-   localparam slowest_period_lp
-     = (core_1_period_lp > core_0_period_lp)
-       ? ((io_master_1_period_lp > core_1_period_lp)
-          ?  io_master_1_period_lp
-          :  core_1_period_lp
-          )
-       : ((io_master_1_period_lp > core_0_period_lp)
-          ?  io_master_1_period_lp
-          :  core_0_period_lp
-          );
-
-   localparam io_master_1_to_0_cycles_lp
-     =  (slowest_period_lp + io_master_0_period_lp - 1)
-       / io_master_0_period_lp;
-
- initial begin
-      $vcdpluson;
-      $vcdplusmemon;
-      end
-
-
    // number of bits width of a channel
    // must be >= 3; with channel_width = 3
    // calibration will be limited
@@ -47,6 +18,8 @@ module test_bsg_comm_link;
 
    localparam iterations_lp            = `ITERATIONS;
 
+   localparam verbose_lp  = 1;
+
    // most flexible configuration for assembler
    // any subset of channels (4,3,2,1) may be used
    localparam channel_mask_lp          = (1 << num_channels_lp) - 1;
@@ -54,14 +27,13 @@ module test_bsg_comm_link;
    genvar                      i,j;
 
    // *************************************************
-   // independent clocks
+   // independent clocks and reset
    //
    //
 
    logic [1:0] core_clk;
    logic [1:0] io_master_clk;
 
-   
    test_bsg_clock_gen #(.cycle_time_p(core_0_period_lp))  c0_clk    (.o(     core_clk[0]));
    test_bsg_clock_gen #(.cycle_time_p(core_1_period_lp))  c1_clk    (.o(     core_clk[1]));
 
@@ -70,20 +42,6 @@ module test_bsg_comm_link;
 
    test_bsg_clock_gen #(.cycle_time_p(io_master_0_period_lp)) i0_clk (.o(io_master_clk[0]));
    test_bsg_clock_gen #(.cycle_time_p(io_master_1_period_lp)) i1_clk (.o(io_master_clk[1]));
-
-   wire [1:0]                                core_valid_out;
-   wire [ring_bytes_lp*channel_width_lp-1:0] core_data_out [1:0];
-   wire [1:0]                                core_yumi_out;
-
-
-   wire [1:0]                                core_valid_in;
-   wire [ring_bytes_lp*channel_width_lp-1:0] core_data_in  [1:0];
-   wire [1:0]                                core_ready_in;
-
-   wire [1:0]                                core_reset_in;
-
-   wire [1:0]                                core_calib_reset;
-
 
 
    logic async_reset;
@@ -100,8 +58,18 @@ module test_bsg_comm_link;
     ,.async_reset_o(async_reset)
     );
 
+   // Defines for Core Zero and One
 
-   logic  [1:0]                  core_async_reset, core_async_reset_r;
+   wire [1:0]                                core_reset_in;
+   wire [1:0]                                core_calib_reset;
+
+   wire [1:0]                                core_valid_out;
+   wire [ring_bytes_lp*channel_width_lp-1:0] core_data_out [1:0];
+   wire [1:0]                                core_yumi_out;
+
+   wire [1:0]                                core_valid_in;
+   wire [ring_bytes_lp*channel_width_lp-1:0] core_data_in  [1:0];
+   wire [1:0]                                core_ready_in;
 
   //**********************************************************************
    //  CORE 0 (sender)
@@ -136,6 +104,50 @@ module test_bsg_comm_link;
 
    // always eat the data
    assign core_ready_in[0] = 1'b1;
+
+
+   //************************************************************
+   //  CORE 1 (input side)
+   //   ______ _____  ______  _______     _____  ______  _______
+   //  / _____) ___ \(_____ \(_______)   / ___ \|  ___ \(_______)
+   // | /    | |   | |_____) )_____     | |   | | |   | |_____
+   // | |    | |   | (_____ (|  ___)    | |   | | |   | |  ___)
+   // | \____| |___| |     | | |_____   | |___| | |   | | |_____
+   //  \______)_____/      |_|_______)   \_____/|_|   |_|_______)
+   //
+   //************************************************************
+
+
+   logic  [1:0]                  core_async_reset, core_async_reset_r;
+
+   bsg_two_fifo #( .width_p(channel_width_lp*ring_bytes_lp)) core_one_fifo
+     (.clk_i(core_clk[1])
+
+      ,.reset_i(core_reset_in[1])
+
+      ,.ready_o(core_ready_in[1])
+      ,.v_i    (core_valid_in[1])
+      ,.data_i (core_data_in [1])
+
+      ,.v_o   (core_valid_out[1])
+      ,.data_o(core_data_out [1])
+      ,.yumi_i(core_yumi_out [1])
+      );
+
+   always @(posedge io_master_clk[1])
+     begin
+        core_async_reset_r[1] <= core_async_reset[1];
+        if (~core_async_reset[1] & core_async_reset_r[1])
+          begin
+             $display("            _                                       ");
+             $display("           (_)                                  _   ");
+             $display(" _____  ___ _  ____     ____ _____  ___ _____ _| |_ ");
+             $display("(____ |/___) |/ ___)   / ___) ___ |/___) ___ (_   _)");
+             $display("/ ___ |___ | ( (___   | |   | ____|___ | ____| | |_ ");
+             $display("\\_____(___/|_|\\____)  |_|   |_____|___/|_____)  \\__)");
+             $display("                                                    ");
+          end
+     end
 
 
    //************************************************************
@@ -189,8 +201,7 @@ module test_bsg_comm_link;
        //
        //************************************************************
        
-       // tline indexes
-       localparam delay_pattern_p = 6'b010010;
+       localparam delay_pattern_p = 6'b110101;
 
        logic [channel_width_lp-1:0] bit_slip_vector [1:0] [num_channels_lp-1:0];
        logic [num_channels_lp-1:0] io_valid_tline_r;
@@ -212,10 +223,11 @@ module test_bsg_comm_link;
                assign io_data_tline_delay[chan][bitline] = (delay_pattern[bitline]) ? 
                                                                    io_data_tline_r[chan][bitline] 
                                                                    : io_data_tline[1][chan][bitline];
-               assign io_data_tline_corrected[chan][bitline] = (bit_slip_vector[0][chan][bitline] && ~delay_pattern[bitline]) ? io_data_tline_r[chan][bitline] : 
-                                                               (bit_slip_vector[0][chan][bitline] && delay_pattern[bitline])  ? io_data_tline_r_r[chan][bitline] :
-                                                               io_data_tline_delay[chan][bitline];
-
+               assign io_data_tline_corrected[chan][bitline] = (bit_slip_vector[0][chan][bitline] && ~delay_pattern[bitline]) ? 
+                                                                   io_data_tline_r[chan][bitline] : 
+                                                                   (bit_slip_vector[0][chan][bitline] && delay_pattern[bitline])  ? 
+                                                                   io_data_tline_r_r[chan][bitline] :
+                                                                   io_data_tline_delay[chan][bitline];
            end
        end
        endgenerate
@@ -251,7 +263,7 @@ module test_bsg_comm_link;
                         , .nodes_p(1)
                         , .channel_mask_p(channel_mask_lp)
                         , .master_p(!i)
-                        , .master_to_slave_speedup_p(io_master_1_to_0_cycles_lp)
+                        , .master_to_slave_speedup_p(master_to_slave_speedup_lp)
                         , .snoop_vec_p(1'b1)           // ignore packet formats
                         , .enabled_at_start_vec_p(1'b1) // enable at start
                         , .master_bypass_test_p(5'b0_0_0_0_1)
@@ -296,180 +308,58 @@ module test_bsg_comm_link;
            );
      end
 
-   //************************************************************
-   //  CORE 1 (input side)
-   //   ______ _____  ______  _______     _____  ______  _______
-   //  / _____) ___ \(_____ \(_______)   / ___ \|  ___ \(_______)
-   // | /    | |   | |_____) )_____     | |   | | |   | |_____
-   // | |    | |   | (_____ (|  ___)    | |   | | |   | |  ___)
-   // | \____| |___| |     | | |_____   | |___| | |   | | |_____
-   //  \______)_____/      |_|_______)   \_____/|_|   |_|_______)
-   //
-   //************************************************************
-
-
-   bsg_two_fifo #( .width_p(channel_width_lp*ring_bytes_lp)) core_one_fifo
-     (.clk_i(core_clk[1])
-
-      ,.reset_i(core_reset_in[1])
-
-      ,.ready_o(core_ready_in[1])
-      ,.v_i    (core_valid_in[1])
-      ,.data_i (core_data_in [1])
-
-      ,.v_o   (core_valid_out[1])
-      ,.data_o(core_data_out [1])
-      ,.yumi_i(core_yumi_out [1])
-      );
-
-   always @(posedge io_master_clk[1])
-     begin
-        core_async_reset_r[1] <= core_async_reset[1];
-        if (~core_async_reset[1] & core_async_reset_r[1])
-          begin
-             $display("            _                                       ");
-             $display("           (_)                                  _   ");
-             $display(" _____  ___ _  ____     ____ _____  ___ _____ _| |_ ");
-             $display("(____ |/___) |/ ___)   / ___) ___ |/___) ___ (_   _)");
-             $display("/ ___ |___ | ( (___   | |   | ____|___ | ____| | |_ ");
-             $display("\\_____(___/|_|\\____)  |_|   |_____|___/|_____)  \\__)");
-             $display("                                                    ");
-          end
-     end
-
-   //************************************************************
-   //  CHECKS
-   //    ______ _     _ _______ ______ _    _    _
-   //   / _____) |   | (_______) _____) |  / )  | |
-   //  | /     | |__ | |_____ | /     | | / /    \ \
-   //  | |     |  __)| |  ___)| |     | |< <      \ \
-   //  | \_____| |   | | |____| \_____| | \ \ _____) )
-   //   \______)_|   |_|_______)______)_|  \_|______/
-   //
-   //
-   // Logging.
-   //
-   // Allow you to see, in time, when values are transmitted and received.
-   //
-   //
-   // For this test, the number of cycles on the slowest clock should match the
-   // number of words transmitted plus a small constant.
-   //
-
-   integer   verbose_lp = 0;
    localparam cycle_counter_width_lp=32;
-
-   // non-synthesizeable; testing only
-   logic [5:0] top_bits = 0;
 
    // create some counters to track the four clocks in the system
    logic [cycle_counter_width_lp-1:0] core_ctr[1:0];
-   logic [cycle_counter_width_lp-1:0] io_ctr[1:0];
+   logic [cycle_counter_width_lp-1:0] io_ctr  [1:0];
 
-   logic [31:0]                       core_words_received_r [1:0];
-   wire [ring_bytes_lp*channel_width_lp-1:0] core_data_in_check[1:0];
+   // valid only in testbench code: reset violation
 
-   // for both cores, instantiate counters, and data checkers
+   wire [1:0] 		     done_signals;
+
    for (i = 0; i < 2; i=i+1)
      begin
-        // valid only in testbench code: reset violation
+	bsg_cycle_counter #(.width_p(cycle_counter_width_lp))
+	my_core_ctr (.clk(core_clk[i]), .reset_i(core_calib_reset[i]), .ctr_r_o(core_ctr[i]));
 
-        bsg_cycle_counter #(.width_p(cycle_counter_width_lp))
-        my_core_ctr (.clk(core_clk[i]), .reset_i(core_calib_reset[i]), .ctr_r_o(core_ctr[i]));
+	bsg_cycle_counter #(.width_p(cycle_counter_width_lp))
+	my_io_ctr   (.clk(io_master_clk[i]), .reset_i(core_calib_reset[i]), .ctr_r_o(io_ctr[i]));
 
-        bsg_cycle_counter #(.width_p(cycle_counter_width_lp))
-        my_io_ctr   (.clk(io_master_clk[i]), .reset_i(core_calib_reset[i]), .ctr_r_o(io_ctr[i]));
+        test_bsg_comm_link_checker
+            #(.channel_width_p(channel_width_lp)
+              ,.num_channels_p(num_channels_lp)
+              ,.ring_bytes_p  (ring_bytes_lp)
+              // TODO determine correct parameter override for check_bytes_p
+              ,.check_bytes_p (ring_bytes_lp)
+              ,.verbose_p     (verbose_lp)
+              ,.iterations_p  (iterations_lp)
+              ,.core_0_period_p(core_0_period_lp)
+              ,.core_1_period_p(core_1_period_lp)
+              ,.io_master_0_period_p(io_master_0_period_lp)
+              ,.io_master_1_period_p(io_master_1_period_lp)
+              ,.cycle_counter_width_p(cycle_counter_width_lp)
+	      ,.node_num_p(i)
+              ) checker
+            (.clk           (core_clk[i])
+             ,.valid_in(core_valid_in[i])
+             ,.ready_in(core_ready_in[i])
+             ,.data_in (core_data_in[i] )
+             ,.data_out(core_data_out[i])
+             ,.yumi_out(core_yumi_out[i])
+             ,.async_reset(core_async_reset[i])
+             ,.slave_reset_tline(slave_reset_tline[i])
+             ,.io_valid_tline(io_valid_tline[i])
+             ,.io_data_tline (io_data_tline[i])
+	     ,.core_ctr(core_ctr)
+	     ,.io_ctr(io_ctr)
+         ,.done_o(done_signals[i])
+             );
 
-        always_ff @(negedge core_clk[i])
-          if (core_async_reset[i])
-            core_words_received_r[i] <= 0;
-          else
-            core_words_received_r[i] <= core_words_received_r[i] + (core_valid_in[i] & core_ready_in[i]);
+        always @(negedge core_clk[i])
+          if ((& done_signals) == 1'b1)
+            $finish("##");
+     end
 
-
-        test_bsg_data_gen #(.channel_width_p(channel_width_lp)
-                            ,.num_channels_p(ring_bytes_lp)
-                            ) tbdg_receive
-          (.clk_i(core_clk[i]            )
-           ,.reset_i(core_async_reset   [i]     )
-           ,.yumi_i (core_ready_in[i] & core_valid_in[i])
-           ,.o      (core_data_in_check[i])
-           );
-
-
-          always_ff @(negedge core_clk[i])
-            begin
-               if (core_valid_in[i] & core_ready_in[i])
-                 begin
-                    if (verbose_lp)
-                      $display("## SR=%1d", slave_reset_tline[0]
-                               , core_ctr[0], io_ctr[0], core_ctr[1], io_ctr[1]
-                               , " ## core %1d recv %d, %x"
-                               , i, core_words_received_r[i], core_data_in[i]);
-
-                    assert (core_data_in_check[i] == core_data_in[i])
-                      else
-                        begin
-                           $error("## transmission error %x, %x"
-                                  , core_data_in_check[i], core_data_in[i]);
-                           // $finish();
-                        end
-
-                    // we only terminate when core 0 has received all the words
-                    if (core_words_received_r[0]
-                        >=
-                        (iterations_lp << (channel_width_lp-$clog2(num_channels_lp)))
-                        )
-                      begin
-                         $display("## DONE words = %-d CHANNEL_BITWIDTH = %-d",core_words_received_r[0],channel_width_lp
-                                  ," RING_BYTES = %-d;",ring_bytes_lp
-                                  ," NUM_CHAN = %-d;",num_channels_lp
-                                  ," C0 = %-d;",core_0_period_lp
-                                  ," I0 = %-d; I1 = %-d;",io_master_0_period_lp
-                                                         ,io_master_1_period_lp
-                                  ," C1 = %-d;",core_1_period_lp,
-                                  ," (Cycles Per Word) "
-                                  , real'(core_ctr[0])
-                                    / real'(core_words_received_r[0])
-                                  ," ", real'(io_ctr  [0])
-                                    / real'(core_words_received_r[0])
-                                  ," ", real'(io_ctr  [1])
-                                    / real'(core_words_received_r[0])
-                                  ," ", real'(core_ctr[1])
-                                    / real'(core_words_received_r[0])
-                                  );
-                         $finish("##");
-                      end
-                 end
-
-               if (core_yumi_out[i])
-                 if (verbose_lp)
-                   $display("## SR=%1d", slave_reset_tline[0]
-                            , core_ctr[0], io_ctr[0], core_ctr[1], io_ctr[1]
-                            , " ## core %1d sent %x",i, core_data_out[i]);
-
-            end // always_ff @
-
-       for (j = 0; j < num_channels_lp; j=j+1)
-         begin
-            always @(slave_reset_tline or io_valid_tline[i][j] or io_data_tline[i][j]
-                     or core[i].comm_link.channel[j].sso.pos_credit_ctr.r_free_credits_r
-                     or core[i].comm_link.channel[j].sso.neg_credit_ctr.r_free_credits_r
-                    )
-              if (verbose_lp)
-                begin
-                   //if (io_valid_tline[i][j])
-                     $display("## SR=%1d", slave_reset_tline[0]
-                              , core_ctr[0], io_ctr[0], core_ctr[1], io_ctr[1],
-                              " ## core %1d channel %1d", i, j, " (p,n)=(%2d %2d)"
-                              ,core[i].comm_link.channel[j].sso.pos_credit_ctr.r_free_credits_r
-                              ,core[i].comm_link.channel[j].sso.neg_credit_ctr.r_free_credits_r
-                              ," ## io     xmit %1d,%x"
-                              , io_valid_tline[i][j],io_data_tline[i][j]
-                              );
-                   end
-      end // for (j = 0; j < num_channels_lp; j=j+1)
-
-    end // for (i = 0; i < 2; i=i+1)
-endmodule
+ endmodule
 
