@@ -21,7 +21,7 @@
 module test_bsg_comm_link_checker #(parameter channel_width_p="inv"
                                     , parameter num_channels_p="inv"
                                     , parameter ring_bytes_p="inv"
-				    , parameter check_bytes_p="inv"
+                                    , parameter check_bytes_p="inv"
                                     , parameter verbose_p="inv"
                                     , parameter iterations_p="inv"
                                     , parameter core_0_period_p="inv"
@@ -149,8 +149,8 @@ module test_bsg_comm_link_checker #(parameter channel_width_p="inv"
         // in parent
 
         always @(slave_reset_tline or io_valid_tline[j] or io_data_tline[j]
-                 or `TEST_BSG_COMM_LINK_CHECKER_PREFIX guts.comm_link.channel[j].sso.pos_credit_ctr.r_free_credits_r
-                 or `TEST_BSG_COMM_LINK_CHECKER_PREFIX guts.comm_link.channel[j].sso.neg_credit_ctr.r_free_credits_r
+                // or `TEST_BSG_COMM_LINK_CHECKER_PREFIX guts.comm_link.channel[j].sso.pos_credit_ctr.r_free_credits_r
+                // or `TEST_BSG_COMM_LINK_CHECKER_PREFIX guts.comm_link.channel[j].sso.neg_credit_ctr.r_free_credits_r
                  )
           if (verbose_p)
             begin
@@ -158,8 +158,8 @@ module test_bsg_comm_link_checker #(parameter channel_width_p="inv"
                $display("## SR=%1d", slave_reset_tline
                         , core_ctr[0], io_ctr[0], core_ctr[1], io_ctr[1],
                         " ## chip %1d channel %1d", chip_num_p, j, " (p,n)=(%2d %2d)"
-                        , `TEST_BSG_COMM_LINK_CHECKER_PREFIX guts.comm_link.channel[j].sso.pos_credit_ctr.r_free_credits_r
-                        , `TEST_BSG_COMM_LINK_CHECKER_PREFIX guts.comm_link.channel[j].sso.neg_credit_ctr.r_free_credits_r
+                        //, `TEST_BSG_COMM_LINK_CHECKER_PREFIX guts.comm_link.channel[j].sso.pos_credit_ctr.r_free_credits_r
+                        //, `TEST_BSG_COMM_LINK_CHECKER_PREFIX guts.comm_link.channel[j].sso.neg_credit_ctr.r_free_credits_r
                         , " ## io     xmit %1d,%x"
                         , io_valid_tline[j],io_data_tline[j]
                         );
