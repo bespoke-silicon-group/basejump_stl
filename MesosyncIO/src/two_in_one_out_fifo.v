@@ -17,14 +17,14 @@
 //  DEPTH: lg (number of elements+1)
 //  ALMOST_DIST: number of enteries for almost full
 
-module mbt_fifo_vl #(parameter I_WIDTH=17, A_WIDTH=10, LG_DEPTH=3, ALMOST_DIST=1)
+module two_in_one_out_fifo #(LG_DEPTH=6, ALMOST_DIST=1)
 (
 	input clk,
-	input [I_WIDTH + A_WIDTH - 1:0] din,
+	input [1:0] din,
 	input enque, 
 	input deque,	
 	input clear,
-	output [I_WIDTH + A_WIDTH - 1:0] dout,
+	output dout,
 	output empty,
 	output full,
   output almost_full,
@@ -34,14 +34,15 @@ module mbt_fifo_vl #(parameter I_WIDTH=17, A_WIDTH=10, LG_DEPTH=3, ALMOST_DIST=1
 localparam ALMOST_COUNT = 2**LG_DEPTH-ALMOST_DIST;
 
 // some storage
-reg [I_WIDTH + A_WIDTH - 1:0] storage [(2**LG_DEPTH)-1:0];
+reg [1:0] storage [(2**(LG_DEPTH-1))-1:0];
 
 // Counter of number of available values, which needs to
 // be 1 bit more in width
 reg [LG_DEPTH:0]   count_r;
 // one read pointer, one write pointer;
 // There is no use for another msb, since it overflows
-reg [LG_DEPTH-1:0] rptr_r, wptr_r;
+reg [LG_DEPTH-2:0] wptr_r;
+reg [LG_DEPTH-1:0] rptr_r;
 
 reg error_r; // lights up if the fifo was used incorrectly
 
@@ -50,7 +51,7 @@ assign almost_full = (count_r>=ALMOST_COUNT);
 assign empty       = (count_r==0);
 assign valid       = !empty;
 
-assign dout = storage[rptr_r];
+assign dout = storage[rptr_r[LG_DEPTH-1:1]][rptr_r[0]];
 
 always @(posedge clk)
  if (enque)
@@ -72,7 +73,7 @@ always @(posedge clk)
 		begin
 			rptr_r  <= rptr_r  + deque;
 			wptr_r  <= wptr_r  + enque;
-      count_r <= count_r + enque - deque;
+      count_r <= count_r + (enque<<1) - deque;
 
 			//synopsys translate_off
 			if (full & enque)
