@@ -34,7 +34,13 @@ module bsg_circular_ptr #(parameter slots_p     = -1
      end
    else
      if (`BSG_IS_POW2(slots_p))
-       assign  ptr_n = ptr_width_lp ' (ptr_r + add_i);
+       begin
+	  // reduce critical path on add_i signal
+	  if (max_add_p == 1)
+	    assign  ptr_n = add_i ? (ptr_width_lp ' (ptr_r + 1'b1)) : ptr_r;
+	  else
+	    assign  ptr_n = ptr_width_lp ' (ptr_r + add_i);
+       end
      else
        begin: notpow2
           always_comb
@@ -56,5 +62,5 @@ module bsg_circular_ptr #(parameter slots_p     = -1
                  else $error("bsg_circular_ptr counter overflow (ptr_r=%b/add_i=%b/ptr_wrap=%b/ptr_n=%b)",ptr_r,add_i,ptr_wrap,ptr_n, slots_p);
 	       // synopsys translate_on
             end
-        end
+end
 endmodule // bsg_circular_ptr
