@@ -16,6 +16,9 @@
 // check is unnecessary. We use ready_THEN_valid_p
 // to remove the check if it is unnecessary.
 //
+//
+// note: ~v_o == fifo is empty.
+//
 
 module bsg_two_fifo #(parameter width_p="inv"
                       , parameter ready_THEN_valid_p=0)
