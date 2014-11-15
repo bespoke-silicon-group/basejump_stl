@@ -29,9 +29,10 @@ export VCS_BIN = $(VCS_HOME)/bin
 export DVE_BIN = $(VCS_HOME)/bin
 export DC_RELEASE    = syn/G-2012.06-SP5-4
 
+TOP = ../../..
 MURN_INCLUDE_DIR = $(HOME)/raw/murn/code/include
 DESIGNWARE_DIR = $(SYNOPSYS_DIR)/$(DC_RELEASE)/dw/sim_ver
-DESIGNWARE_FLAGS = -y $(DESIGNWARE_DIR) +incdir+$(DESIGNWARE_DIR) +incdir+$(MURN_INCLUDE_DIR) +incdir+../../bsg_test +libext+.v
+DESIGNWARE_FLAGS = -y $(DESIGNWARE_DIR) +incdir+$(DESIGNWARE_DIR) +incdir+$(MURN_INCLUDE_DIR) +incdir+$(TOP)/bsg_test +libext+.v
 
 BSG_MISC_FILES      = bsg_defines.v bsg_circular_ptr.v bsg_popcount.v bsg_thermometer_count.v bsg_encode_one_hot.v bsg_gray_to_binary.v bsg_scan.v bsg_cycle_counter.v bsg_wait_cycles.v bsg_wait_after_reset.v 
 BSG_ASYNC_FILES     = bsg_async_credit_counter.v bsg_async_fifo.v bsg_async_ptr_gray.v bsg_launch_sync_sync.v bsg_sync_sync.v
@@ -42,12 +43,9 @@ BSG_GUTS_FILES      = #bsg_guts.v bsg_test_node.v
 
 BSG_TEST_FILES = bsg_nonsynth_delay_line.v test_bsg_data_gen.v bsg_nonsynth_clock_gen.v test_bsg_reset_gen.v test_bsg_clock_gen.v
 
-#TEST_FILES = test_assembler.v
-#TEST_MAIN = test_bsg_comm_link.v
+TEST_MAIN = ./test_bsg_comm_link_with_delay.v 
 
-TEST_MAIN = ./test_bsg_comm_link/test_bsg_comm_link_with_delay.v 
-
-ALL_FILES = $(MURN_INCLUDE_DIR)/rnet_common.v  $(foreach x,$(BSG_MISC_FILES),../../bsg_misc/$(x)) $(foreach x,$(BSG_ASYNC_FILES),../../bsg_async/$(x)) $(foreach x,$(BSG_FSB_FILES),../../bsg_fsb/$(x)) $(foreach x,$(BSG_GUTS_FILES),../../bsg_guts/$(x)) $(foreach x,$(BSG_COMM_LINK_FILES),../../bsg_comm_link/$(x)) $(foreach x,$(BSG_DATAFLOW_FILES),../../bsg_dataflow/$(x)) $(foreach x,$(BSG_TEST_FILES),../../bsg_test/$(x)) $(TEST_MAIN)
+ALL_FILES = $(MURN_INCLUDE_DIR)/rnet_common.v  $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x)) $(foreach x,$(BSG_ASYNC_FILES),$(TOP)/bsg_async/$(x)) $(foreach x,$(BSG_FSB_FILES),$(TOP)/bsg_fsb/$(x)) $(foreach x,$(BSG_GUTS_FILES),$(TOP)/bsg_guts/$(x)) $(foreach x,$(BSG_COMM_LINK_FILES),$(TOP)/bsg_comm_link/$(x)) $(foreach x,$(BSG_DATAFLOW_FILES),$(TOP)/bsg_dataflow/$(x)) $(foreach x,$(BSG_TEST_FILES),$(TOP)/bsg_test/$(x)) $(TEST_MAIN)
 
 
 # example CHANNEL_WIDTH = 3 4 >===replicate_defines==> +define+CHANNEL_WIDTH=3 +define+CHANNEL_WIDTH=4
