@@ -1,10 +1,12 @@
-include ./../../../common/cadenv.mk
+CAD_PATH        = ../../../cad/
+
+include $(CAD_PATH)/common/mk/cadenv.mk
 
 DW_LIB = /gro/cad/synopsys/pkg/pkg_2004-2007/dw/Z-2007.03/dw/sim_ver
 VCS_OPTIONS += +incdir+$(CURDIR)/src
 VPD = 1
 
-include ./../../../common/vcs.mk
+include $(CAD_PATH)/flow/vcs/setup/vcs.mk
 export DESIGN_NAME=mesosyncIO
 
 dc:

@@ -51,7 +51,9 @@ assign almost_full = (count_r>=ALMOST_COUNT);
 assign empty       = (count_r==0);
 assign valid       = !empty;
 
-assign dout = storage[rptr_r[LG_DEPTH-1:1]][rptr_r[0]];
+// First MSB is sent out, then the LSB, to keep input order
+// hence the first bit of read pointer is reversed
+assign dout = storage[rptr_r[LG_DEPTH-1:1]][~(rptr_r[0])];
 
 always @(posedge clk)
  if (enque)
