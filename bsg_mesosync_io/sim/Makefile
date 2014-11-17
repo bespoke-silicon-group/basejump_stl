@@ -16,7 +16,7 @@ ifeq ($(BUILD_GATE_LEVEL),1)
 	HDL_SOURCE = ./../synth/results/core_flattened.mapped.v
 else
   HDL_SOURCE  = $(SRC_PATH)/two_in_one_out_fifo.v \
-	  						$(SRC_PATH)/mesosyncIO.v 
+	  						$(SRC_PATH)/mesosync_IO_channel.v 
 endif
 
 HDL_SOURCE += $(CAD_PATH)/flow/vcs/setup/vcsdumper.v $(TESTBENCH) 

@@ -1,25 +1,27 @@
 `include "definitions.v"
 
-module mesosyncIO #(parameter bit_num_p = 5,
-                    parameter log_LA_fifo_depth_p = 9
+module mesosync_IO_channel 
+                  #(parameter bit_num_p = 5
+                    , parameter log_LA_fifo_depth_p = 9
                    )
-                   (input clk,
-                    input reset,
+                   (  input clk
+                    , input reset
                     
-                    input clk_divider_s clk_divider_i,
-                    input mode_cfg_s mode_cfg_i,
-                    input [$clog2(bit_num_p)-1:0] input_bit_selector_i,
-                    input [$clog2(bit_num_p)-1:0] output_bit_selector_i,
-                    input bit_cfg_s [bit_num_p-1:0] bit_cfg_i,
+                    , input clk_divider_s clk_divider_i
+                    , input mode_cfg_s mode_cfg_i
+                    , input [$clog2(bit_num_p)-1:0] input_bit_selector_i
+                    , input [$clog2(bit_num_p)-1:0] output_bit_selector_i
+                    , input bit_cfg_s [bit_num_p-1:0] bit_cfg_i
 
-                    input  [bit_num_p-1:0] IO_i,
-                    output logic [bit_num_p-1:0] IO_o,
+                    , input  [bit_num_p-1:0] IO_i
+                    , output logic [bit_num_p-1:0] IO_o
 
-                    input  [bit_num_p-1:0] chip_i,
-                    output logic [bit_num_p-1:0] chip_o,
-                    output valid_o,
-                    output data_sent_o
-                   );
+                    , input  [bit_num_p-1:0] chip_i
+                    , output data_sent_o
+                    
+                    , output logic [bit_num_p-1:0] chip_o
+                    , output valid_o
+                    );
 
 //------------------------------------------------
 //------------- CLOCK DIVIDERS --------------------
@@ -64,33 +66,41 @@ always_ff @ (negedge clk)
 //------------------------------------------------
 //------------- INPUT MODULE ---------------------
 //------------------------------------------------
-integer i;
-logic [bit_num_p-1:0] valid_r;
-logic yumi;
 // in normal mode, for each bit a clock edge and a clk cycle based on 
-// required phase delay is selected, and this data is sent out
-// when each line reaches its phase based on the input clk counter,
+// required phase delay is selected, and this data is latched
+integer i;
+
+always_ff @ (posedge clk) 
+  if (reset) 
+    chip_o  <= 0;
+  else if (mode_cfg_i.input_mode) 
+    for (i = 0; i < bit_num_p; i = i + 1) begin      
+      if (input_counter_r == bit_cfg_i[i].phase)
+        if (bit_cfg_i[i].clk_edge_selector)
+          chip_o[i] <= posedge_value[i];
+        else
+          chip_o[i] <= negedge_value[i];
+    end
+
+// When each line reaches its phase based on the input clk counter,
 // its valid register would be set to 1, and it emains 1 until the 
 // yumi signal becomes 1, which means the data were send out. It remains
 // zero until it reaches desired phase again. In case of clk divider of 
 // 0, which means no division, valid bit would always be one, since counter
 // is always zero and all the phases must be zero.
+integer j;
+logic [bit_num_p-1:0] valid_r;
+logic yumi;
+
 always_ff @ (posedge clk) 
-  if (reset) begin
-    chip_o  <= 0;
+  if (reset) 
     valid_r <= 0;
-  end
   else if (mode_cfg_i.input_mode) 
-    for (i=0; i<bit_num_p; i=i+1) begin
-      if (input_counter_r == bit_cfg_i[i].phase)begin
-        valid_r[i] <= 1'b1;
-        if (bit_cfg_i[i].clk_edge_selector)
-          chip_o[i] <= posedge_value [i];
-        else
-          chip_o[i] <= negedge_value [i];
-      end
+    for (j = 0; j < bit_num_p; j = j + 1) begin
+      if (input_counter_r == bit_cfg_i[j].phase)
+        valid_r[j] <= 1'b1;
       else 
-        valid_r[i] <= valid_r[i] & (~yumi);
+        valid_r[j] <= valid_r[j] & ~yumi;
     end
   // Valid is always zero when module is in calibration mode
   else 
@@ -110,8 +120,8 @@ assign valid_o = yumi;
 // Select one bit of input signal for Logic Analyzer
 // LSB is posedge and MSB is negedge
 logic [1:0] LA_selected_bit;
-assign LA_selected_bit[0] = posedge_value [input_bit_selector_i];
-assign LA_selected_bit[1] = negedge_value [input_bit_selector_i];
+assign LA_selected_bit[0] = posedge_value[input_bit_selector_i];
+assign LA_selected_bit[1] = negedge_value[input_bit_selector_i];
 
 // Synchronizer for samples from both edges
 logic [1:0] synchronizer_out;
@@ -125,25 +135,23 @@ assign LA_fifo_data = mode_cfg_i.LA_input_selector ?
                       synchronizer_out : mode_cfg_i.LA_input_data; 
 
 // Logic Analyzer FIFO
-logic LA_enque, LA_deque, LA_fifo_empty, LA_fifo_full,
-      LA_fifo_almost_full, LA_fifo_valid;
+logic LA_enque, LA_deque,  LA_fifo_empty, LA_fifo_full,
+      LA_fifo_almost_full, LA_fifo_valid, LA_fifo_out;
 
-logic LA_fifo_out;
-
-two_in_one_out_fifo #(.LG_DEPTH(log_LA_fifo_depth_p), .ALMOST_DIST(2))
-LA_fifo
-(
-	.clk(clk),
-	.din(LA_fifo_data),
-	.enque(LA_enque), 
-	.deque(LA_deque),	
-	.clear(reset),
-	.dout(LA_fifo_out),
-	.empty(LA_fifo_empty),
-	.full(LA_fifo_full),
-  .almost_full(LA_fifo_almost_full),
-	.valid(LA_fifo_valid)
-);
+two_in_one_out_fifo #(.LG_DEPTH(log_LA_fifo_depth_p)
+                      ,.ALMOST_DIST(2)
+                      ) LA_fifo
+  (.clk(clk)
+   ,.din(LA_fifo_data)
+   ,.enque(LA_enque)
+   ,.deque(LA_deque)	
+   ,.clear(reset)
+   ,.dout(LA_fifo_out)
+   ,.empty(LA_fifo_empty)
+   ,.full(LA_fifo_full)
+   ,.almost_full(LA_fifo_almost_full)
+   ,.valid(LA_fifo_valid)
+   );
 
 // Toglle of enque bit is used for inserting data to Logic Analyzer from
 // configtag, hence a history bit is kept
@@ -157,16 +165,18 @@ always_ff @ (posedge clk)
 // In calibration mode, Logic Analyzer FIFO is enqueued. in ONCE mode, data
 // comes from config tag and enque bit of config tag is checked to be toggled.
 // in AUTO mode, each cycle two samples are inserted to FIFO until it is full.
-assign LA_enque = (~reset)&(mode_cfg_i.input_mode == 0)&
-                  (~(LA_fifo_almost_full|LA_fifo_full))&
-    (((mode_cfg_i.LA_enque_mode == ONCE)&(mode_cfg_i.LA_enque != cfg_LA_enque_r))
-    |((mode_cfg_i.LA_enque_mode == AUTO)&(mode_cfg_i.LA_enque == 1'b1)));
+assign LA_enque = ~reset & (mode_cfg_i.input_mode == 0) &
+                  ~(LA_fifo_almost_full | LA_fifo_full) &
+  (((mode_cfg_i.LA_enque_mode == ONCE) & (mode_cfg_i.LA_enque != cfg_LA_enque_r)) |
+   ((mode_cfg_i.LA_enque_mode == AUTO) & (mode_cfg_i.LA_enque == 1'b1))
+   );
 
 // when data is sent from Logic Analyzer FIFO to output, fifo will be dequed 
 // until it gets empty. data sent signal shows that one bit is sent out.
 // Due to data_sent_o signal which is reset dependent, this singal does not
 // assert during reset.
-assign LA_deque = (mode_cfg_i.output_mode == CALIB) & data_sent_o & (~LA_fifo_empty);
+assign LA_deque = (mode_cfg_i.output_mode == CALIB) & 
+                  data_sent_o & ~LA_fifo_empty;
 
 //------------------------------------------------
 //------------- OUTPUT SELECTOR ------------------
@@ -188,16 +198,18 @@ assign output_data = (mode_cfg_i.output_mode == NORM) ? chip_i : output_demux;
 
 // If output mode is sending data, each time output counter overflows
 // a data has been sent out
-assign data_sent_o = (output_counter_r ==0) & (~reset) & 
-                     (((mode_cfg_i.output_mode == CALIB) & (~LA_fifo_empty)) 
-                      |(mode_cfg_i.output_mode == NORM));
+assign data_sent_o = ~reset & (output_counter_r ==0) & 
+                     (((mode_cfg_i.output_mode == CALIB) & ~LA_fifo_empty) |
+                       (mode_cfg_i.output_mode == NORM)
+                      );
 
 // each time outputcounter is about to over flow on clock edge, data 
 // would be sent out on the clock edge as well
 always_ff @ (posedge clk)
 if (reset)
   IO_o <= 0;
-else if ((mode_cfg_i.output_mode != STOP)&(output_counter_r == clk_divider_i.output_clk_divider))
+else if ((mode_cfg_i.output_mode != STOP) & 
+         (output_counter_r == clk_divider_i.output_clk_divider))
   IO_o <= output_data;
 
 endmodule

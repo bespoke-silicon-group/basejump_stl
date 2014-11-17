@@ -11,25 +11,24 @@
 // Updated almost_full to have parameter, by Moein Khazraee, Apr. 23, 2014
 // Updated to use all elements and keep track of number of entries, by Moein Khazraee, May 27, 2014
 //
+// Upgraded the FIFO, to have two input bits and one output bit, by Moein Khazraee, Nov. 2014
+//
 // parameters:
-// 	I_WIDTH: instruction width
-// 	A_WIDTH: SRAM address width
-//  DEPTH: lg (number of elements+1)
+//  LG_DEPTH: lg (number of elements+1)
 //  ALMOST_DIST: number of enteries for almost full
 
 module two_in_one_out_fifo #(LG_DEPTH=6, ALMOST_DIST=1)
-(
-	input clk,
-	input [1:0] din,
-	input enque, 
-	input deque,	
-	input clear,
-	output dout,
-	output empty,
-	output full,
-  output almost_full,
-	output valid
-);
+  (input clk
+ 	 ,input [1:0] din
+ 	 ,input enque 
+ 	 ,input deque	
+ 	 ,input clear
+ 	 ,output dout
+ 	 ,output empty
+ 	 ,output full
+   ,output almost_full
+ 	 ,output valid
+   );
 
 localparam ALMOST_COUNT = 2**LG_DEPTH-ALMOST_DIST;
 
@@ -46,9 +45,9 @@ reg [LG_DEPTH-1:0] rptr_r;
 
 reg error_r; // lights up if the fifo was used incorrectly
 
-assign full        = (count_r=={1'b1,{LG_DEPTH{1'b0}}});
-assign almost_full = (count_r>=ALMOST_COUNT);
-assign empty       = (count_r==0);
+assign full        = (count_r == {1'b1,{LG_DEPTH{1'b0}}});
+assign almost_full = (count_r >= ALMOST_COUNT);
+assign empty       = (count_r == 0);
 assign valid       = !empty;
 
 // First MSB is sent out, then the LSB, to keep input order
@@ -75,7 +74,7 @@ always @(posedge clk)
 		begin
 			rptr_r  <= rptr_r  + deque;
 			wptr_r  <= wptr_r  + enque;
-      count_r <= count_r + (enque<<1) - deque;
+      count_r <= count_r + (enque << 1) - deque;
 
 			//synopsys translate_off
 			if (full & enque)

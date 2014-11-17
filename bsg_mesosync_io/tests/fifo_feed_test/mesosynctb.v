@@ -14,7 +14,8 @@ logic [$clog2(bit_num_p)-1:0] output_bit_selector;
 bit_cfg_s [bit_num_p-1:0] bit_cfg;
 
 
-mesosyncIO #(.bit_num_p(bit_num_p),
+mesosync_IO_channel 
+           #(.bit_num_p(bit_num_p),
              .log_LA_fifo_depth_p(9)
             ) dut
             (.clk(clk),
