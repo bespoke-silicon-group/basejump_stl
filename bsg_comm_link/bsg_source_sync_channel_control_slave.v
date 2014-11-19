@@ -184,6 +184,7 @@ module  bsg_source_sync_channel_control_slave #( parameter width_p  = -1
 
         // zero the counter on both reset assertion and deassertion
 
+        // synopsys sync_set_reset "out_reset_i, out_reset_r"
         if (out_reset_i ^ out_reset_r)
           begin
              out_ctr_r                 <= counter_bits_lp ' (0);
