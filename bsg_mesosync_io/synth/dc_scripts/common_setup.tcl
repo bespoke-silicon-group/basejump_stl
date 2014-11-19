@@ -28,6 +28,9 @@ set ADDITIONAL_SEARCH_PATH        [join "/gro/cad/mosis/pdk/tsmc/cl025g/std_cell
                                          ./dc_scripts
                                          ../"]
 
+# Setting common cad path
+set COMMON_PATH                 "../../../common"
+
 # Target technology logical libraries
 # set TARGET_LIBRARY_FILES          [join "fast.db
 set TARGET_LIBRARY_FILES  [join "typical.db"] 
@@ -40,8 +43,8 @@ set ADDITIONAL_LINK_LIB_FILES    ""
 set MIN_LIBRARY_FILES            ""
 
 # Milkyway reference libraries (include IC Compiler ILMs here)
-set MW_REFERENCE_LIB_DIRS        [join "../../common/milkyway/std_cells
-                                        ../../common/milkyway/io_pads"]
+set MW_REFERENCE_LIB_DIRS        [join "${COMMON_PATH}/milkyway/std_cells
+                                        ${COMMON_PATH}/milkyway/io_pads"]
 
 # Reference Control file to define the MW ref libs
 set MW_REFERENCE_CONTROL_FILE    ""
@@ -50,11 +53,11 @@ set MW_REFERENCE_CONTROL_FILE    ""
 set TECH_FILE                    " /gro/cad/mosis/pdk/tsmc/cl025g/std_cells/Rev_2004q2v1/aci/sc/apollo/tf/tsmc25_5lm.tf"
                                  #  /gro/cad/mosis/pdk/std_cells/Rev_2004q2v1/aci/sc/apollo/tf/tsmc25_5lm.tf"
 # Mapping file for TLUplus
-set MAP_FILE                     "../../common/tluplus/t25.map"
+set MAP_FILE                     "${COMMON_PATH}/tluplus/t25.map"
 # Max TLUplus file
-set TLUPLUS_MAX_FILE             "../../common/tluplus/t025s5ml.tluplus"
+set TLUPLUS_MAX_FILE             "${COMMON_PATH}/tluplus/t025s5ml.tluplus"
 # Min TLUplus file
-set TLUPLUS_MIN_FILE             "../../common/tluplus/t025s5ml.tluplus"
+set TLUPLUS_MIN_FILE             "${COMMON_PATH}/tluplus/t025s5ml.tluplus"
 
 set MW_POWER_NET                 "VDD"
 set MW_POWER_PORT                "VDD"
