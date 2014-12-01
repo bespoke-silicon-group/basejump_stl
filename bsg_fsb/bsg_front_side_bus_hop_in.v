@@ -6,7 +6,7 @@
 // input side. In normal use, nodes
 // must always keep their ready_i lines
 // high and admit any data that arrives.
-// Otherwise deadline is certain, especially
+// Otherwise deadlock is likely, especially
 // if multiple nodes are in use at once.
 //
 // This means in practice that every node
