@@ -52,9 +52,17 @@ module bsg_nonsynth_node_trace_replay
         data_file = $fopen(`FILENAME,"r");
         if (data_file == 0)
           begin
-             $display("failed to open file %s", `FILENAME);
+	     $display("############################################################################");
+             $display("### Failed to open file %s", `FILENAME);
+	     $display("############################################################################");
              $finish;
           end
+	else
+	  begin
+	     $display("############################################################################");
+             $display("### OPENED FILE %s", `FILENAME);
+	     $display("############################################################################");
+	  end
         next_line_r = 1;
         eof = 0;
         op_r = 0;
