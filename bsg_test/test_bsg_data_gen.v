@@ -20,8 +20,8 @@ module test_bsg_data_gen #(parameter   channel_width_p ="inv"
 
    localparam lg_ring_bytes_lp = $clog2(num_channels_p);
 
-   wire [$max(lg_ring_bytes_lp-1,0):0]       ring_bytes
-                                       = $max(lg_ring_bytes_lp,1) ' (num_channels_p);
+   localparam ring_width = `BSG_MAX(lg_ring_bytes_lp-1,0);
+   wire [ring_width:0] ring_bytes = ring_width ' (num_channels_p);
 
    genvar                              i;
 
