@@ -31,6 +31,7 @@ module test_bsg_comm_link_checker #(parameter channel_width_p="inv"
                                     , parameter chip_num_p=0
                                     , parameter node_num_p=0
                                     , parameter cycle_counter_width_p="inv"
+				    , parameter skip_checks_p=0
                                     )
 (input  clk
  , input  valid_in
@@ -90,6 +91,7 @@ module test_bsg_comm_link_checker #(parameter channel_width_p="inv"
                         , " ## chip %1d node %1d recv %-d, %x"
                         , chip_num_p, node_num_p, words_received_r, data_in);
 
+	     if (!skip_checks_p)
              assert (data_in_check == data_in[check_bytes_p*channel_width_p-1:0])
                else
                  begin

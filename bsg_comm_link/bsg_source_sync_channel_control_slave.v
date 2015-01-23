@@ -70,7 +70,7 @@ module  bsg_source_sync_channel_control_slave #( parameter width_p  = -1
              ^ in_snoop_valid_data_i[width_p+1-$bits(out_snoop_valid_data)-1:0]
              );
 
-   typedef enum [3:0] { sBegin
+   typedef enum logic [3:0] { sBegin
                         , sPhase1
                         , sPhase2
                         , sPhase3
@@ -184,6 +184,7 @@ module  bsg_source_sync_channel_control_slave #( parameter width_p  = -1
 
         // zero the counter on both reset assertion and deassertion
 
+        // synopsys sync_set_reset "out_reset_i, out_reset_r"
         if (out_reset_i ^ out_reset_r)
           begin
              out_ctr_r                 <= counter_bits_lp ' (0);
