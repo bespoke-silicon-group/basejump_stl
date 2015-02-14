@@ -68,7 +68,7 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
 
    // 24 is 16M cycles
    localparam counter_min_bits_lp = 24;
-   localparam     counter_bits_lp = $max(counter_min_bits_lp,(width_p+1)*2+1);
+   localparam     counter_bits_lp = `BSG_MAX(counter_min_bits_lp,(width_p+1)*2+1);
 
    logic [counter_bits_lp-1:0] out_ctr_r,   out_ctr_n;
    logic [width_p+1-1:0]       out_override_valid_data_r, out_override_valid_data_n;

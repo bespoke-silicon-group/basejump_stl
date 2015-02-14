@@ -72,7 +72,7 @@ module  bsg_source_sync_channel_control_slave #( parameter width_p  = -1
              ^ in_snoop_valid_data_i[width_p+1-$bits(out_snoop_valid_data)-1:0]
              );
 
-   typedef enum [3:0] { sBegin
+   typedef enum logic [3:0] { sBegin
                         , sPhase1
                         , sPhase2
                         , sPhase3

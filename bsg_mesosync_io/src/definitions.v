@@ -1,17 +1,20 @@
 parameter maxDivisionWidth  = 4;
 
-// modes of Logic Analyzer Enqueue
-typedef enum logic [1:0] {
-    IDLE = 2'b00,
-    ONCE = 2'b01,    
-    AUTO = 2'b11
-} LA_enque_mode_e;
+// Input modes for BSG Mesosync IO
+typedef enum logic {
+    LA_STOP = 1'b0,
+    NORMAL  = 1'b1
+} input_mode_e;
+
 
 // Output modes for BSG Mesosync IO
-typedef enum logic [1:0] {
-    STOP  = 2'b00,
-    CALIB = 2'b01,    
-    NORM  = 2'b11
+typedef enum logic [2:0] {
+    STOP  = 3'b000,
+    PAT   = 3'b001,
+    SYNC1 = 3'b010,    
+    SYNC2 = 3'b011,    
+    LA    = 3'b100,
+    NORM  = 3'b101
 } output_mode_e;
 
 // values for clk dividers
@@ -31,10 +34,7 @@ typedef struct packed
 // configuration bits from config-tag
 typedef struct packed
 {
-    logic                        input_mode;
+    input_mode_e                 input_mode;
     logic                        LA_enque;
-    LA_enque_mode_e              LA_enque_mode;
-    logic                        LA_input_selector;
-    logic [1:0]                  LA_input_data;
     output_mode_e                output_mode;
 } mode_cfg_s;
