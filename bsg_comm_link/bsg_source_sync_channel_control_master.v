@@ -58,6 +58,8 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
     // positive edge snoop
     , input  [width_p+1-1:0] in_snoop_valid_data_pos_i
 
+
+    // AWC: fixme should be out_infinite_credits_o
     // basically disable the output module from looking
     // at the credit counters
     , output                 in_infinite_credits_o
@@ -338,6 +340,10 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
             == ({ in_snoop_valid_data_neg_i,      in_last_pos_r }        );
 
 
+
+   // AWC fixme: this should actually be out_infinite_credits_o
+   // and needs to be done in the correct clock domain.
+   
    // we allow for infinite credits if any of the loopback-style tests
    // are enabled.
 
