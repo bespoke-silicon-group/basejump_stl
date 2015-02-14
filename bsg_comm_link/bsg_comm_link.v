@@ -466,6 +466,9 @@ module bsg_comm_link
               ,.in_reset_i               (io_reset                [i])
               ,.in_snoop_valid_data_neg_i(io_snoop_valid_data_neg [i])
               ,.in_snoop_valid_data_pos_i(io_snoop_valid_data_pos [i])
+
+	      // AWC fixme: incorrect name should be output clocked, not in clocked
+	      // i.e., should be:  ,.out_infinite_credits_o (im_infinite_credits_en[i]) 
               ,.in_infinite_credits_o    (io_infinite_credits_en  [i])
 
               ,.out_test_pass_r_o        ( im_tests_gather )
@@ -541,6 +544,9 @@ module bsg_comm_link
               ,.in_snoop_valid_data_i        (io_snoop_valid_data_pos    [i])
               ,.in_trigger_mode_en_o         (io_trigger_mode_en         [i])
               ,.in_trigger_mode_alt_en_o     (io_trigger_mode_alt_en     [i])
+
+	      // AWC fixme: incorrect name should be output clocked, not in clocked
+	      // i.e., should be:  ,.out_infinite_credits_o (im_infinite_credits_en[i]) 
               ,.in_infinite_credits_o        (io_infinite_credits_en     [i])
 
               // for core control
@@ -594,7 +600,8 @@ module bsg_comm_link
              ,.io_data_r_o( im_data_tline_o    [i])
              ,.io_valid_r_o(im_valid_tline_o   [i])
 
-
+	      // AWC fixme: incorrect name should be output clocked, not in clocked
+	      // i.e., should be:  ,.io_infinite_credits_o (im_infinite_credits_en[i]) 
              ,.io_infinite_credits_i (io_infinite_credits_en[i])
 
              ,.token_clk_i  (token_clk_tline_i [i])
@@ -661,8 +668,14 @@ module bsg_comm_link
                           ? (core_asm_to_sso_ready[i] & core_ssi_to_asm_valid[i])
                           : core_ssi_to_asm_yumi_sbox[i])
            );
+
+	// only used by master; ignore for slave
+	// wire 	  ignore = | io_snoop_valid_data_neg[i];
      end // block: channel
 
+
+
+   
    //***************************************************
    //
    // SBOX, ASSEMBLER AND FRONT SIDE BUS
