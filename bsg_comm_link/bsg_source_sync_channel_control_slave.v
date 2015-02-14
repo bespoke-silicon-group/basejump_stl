@@ -33,6 +33,8 @@ module  bsg_source_sync_channel_control_slave #( parameter width_p  = -1
 
     , output in_trigger_mode_en_o
     , output in_trigger_mode_alt_en_o
+
+    // AWC fixme: should be out_infinite_credits_o
     , output in_infinite_credits_o
 
     , input core_clk_i     // for synchronizers
@@ -160,6 +162,7 @@ module  bsg_source_sync_channel_control_slave #( parameter width_p  = -1
    logic [width_p+1-1:0]       out_override_valid_data_r, out_override_valid_data_n;
    logic                       out_override_en_r,         out_override_en_n;
 
+   // AWC fixme, add registered value
    logic                       out_infinite_credits;
 
 
@@ -234,6 +237,12 @@ module  bsg_source_sync_channel_control_slave #( parameter width_p  = -1
       ,.oclk_data_o({ core_loopback_en_o})
       );
 
+
+   // AWC fixme
+   // instead of running out_infinite_credits
+   // through the synchronizer to create in_infinite_credits_o, we should
+   // just register it and send it out as out_infinite_credits_o
+   
    bsg_launch_sync_sync #(.width_p(3)) out_to_in_lss
      (.iclk_i       (out_clk_i  )
       ,.iclk_reset_i(1'b0)
