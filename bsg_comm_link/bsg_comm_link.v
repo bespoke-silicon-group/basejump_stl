@@ -54,7 +54,8 @@ FPGA:
       im_start_calibration_n goes high
       master_lg_wait_after_reset_p M0 cycles after im_reset goes lo <bsg_comm_link>,
       causing start_i is asserted on master_master.
-      1 M0 cycle later, prepare_o goes high in master_master -> im_channel_reset -> token_reset
+      1 M0 cycle later, prepare_o goes high in master_master
+             -> im_channel_reset -> token_reset
            (prepare_o goes low after master_calib_prepare_cycles_p)
        1 M0 cycle later
          a. im_slave_reset_tline_r_o goes high ----> ASIC async_reset_i (slave)
@@ -91,41 +92,42 @@ ASIC:
      A few cycles later, the fifos in the core are reset.
 
  Race condition tests:
-        (BB) master token bypass must go high after ASIC token_reset
-            when prepare signal goes high:
-              master: prepare->M0->ASIC reset_hi->M1->M1->token_reset
-                      prepare->M0->I0n->I0n->token_bypass
-              since IOn = M1/2 (DDR); we know we are always safe.
-       (QQ) token_bypass must enabled before token bit goes hi from FPGA
-          if we do not do this, we could fail to properly reset
-          the token signal.
-            --> Since I1n = 2 M0, this case is easy; basically around 6 M0
-                i.e. 2^master_lg_token_width_p > 6. A bigger constraint
-                is we want to slow things down by the token decimation factor.
-                :: simple solution; make sure master_lg_token_width_p >= 5
-       (ZZ) token act must have time to go hi and then lo before token_bypass goes low
-       before async_reset_i goes low. This means lg_token_width_p is too
-       long relative to prepare_cycles.
-                :: Make sure prepare_cycles >> 2**(master_lg_token_width_p+1)
+     (BB) master token bypass must go high after ASIC token_reset
+          when prepare signal goes high:
+            master: prepare->M0->ASIC reset_hi->M1->M1->token_reset
+                    prepare->M0->I0n->I0n->token_bypass
+            since IOn = M1/2 (DDR); we know we are always safe.
+     (QQ) token_bypass must enabled before token bit goes hi from FPGA
+        if we do not do this, we could fail to properly reset
+        the token signal.
+          --> Since I1n = 2 M0, this case is easy; basically around 6 M0
+              i.e. 2^master_lg_token_width_p > 6. A bigger constraint
+              is we want to slow things down by the token decimation factor.
+              :: simple solution; make sure master_lg_token_width_p >= 5
+     (ZZ) token act must have time to go hi and then lo before token_bypass goes low
+     before async_reset_i goes low. This means lg_token_width_p is too
+     long relative to prepare_cycles.
+              :: Make sure prepare_cycles >> 2**(master_lg_token_width_p+1)
 
-       (XX) ASIC token_activation must go high after FPGA token_reset hi
-           --> currently token_reset goes high before ASIC_reset is even asserted
-               so this is always satisfied.
-               :: keep slave_lg_token_width_p = 5 (or at least the decimation factor)
-       (YY) ASIC token_activation must complete before FPGA token_reset goes lo
-           --> master_calib_prepare_cycles_p x M0 > (3+2^slave_lg_token_width_p) x M1 cycles
-           --> master_calib_prepare_cycles_p > (3+2^slave_lg_token_width_p) x (M1 / M0)
+     (XX) ASIC token_activation must go high after FPGA token_reset hi
+       --> currently token_reset goes high before ASIC_reset is even asserted
+           so this is always satisfied.
+           :: keep slave_lg_token_width_p = 5 (or at least the decimation factor)
+     (YY) ASIC token_activation must complete before FPGA token_reset goes lo
+       --> master_calib_prepare_cycles_p x M0 > (3+2^slave_lg_token_width_p) x M1 
+       --> master_calib_prepare_cycles_p > (3+2^slave_lg_token_width_p) x (M1 / M0)
 
-       (SS) prepare_hold_cycles. we need to make sure that somehow the changed data does not
-            get to wherever before the reset gets to where it needs to go.
-            going out of the FPGA, these should be pretty evenly matched in M0 cycles.
-            the reset has to go through two M1 latches that the data does not have to.
-            so, to be safe 10 + 5*(M1/M0) should be more than adequate.
-       (CC) prepare_hold_cycles. we need to make sure that enough cycles have passed
-            for the core to reset so that the inputs to the source synchronous
-            channels are valid.
-            --> master_calib_prepare_cycles >  ~5 * C1/M0
-           */
+     (SS) prepare_hold_cycles. we need to make sure that somehow the changed data
+          does not get to wherever before the reset gets to where it needs to go.
+          going out of the FPGA, these should be pretty evenly matched in M0 cycles.
+          the reset has to go through two M1 latches that the data does not have to.
+          so, to be safe 10 + 5*(M1/M0) should be more than adequate.
+     (CC) prepare_hold_cycles. we need to make sure that enough cycles have passed
+          for the core to reset so that the inputs to the source synchronous
+          channels are valid.
+          --> master_calib_prepare_cycles >  ~5 * C1/M0
+
+*/
 
 module bsg_comm_link
   #(parameter channel_width_p   = "inv"
@@ -317,7 +319,8 @@ module bsg_comm_link
    // synchronous to io clocks
    wire [channel_width_p+1-1:0] io_snoop_valid_data_pos [link_channels_p-1:0];
    wire [channel_width_p+1-1:0] io_snoop_valid_data_neg [link_channels_p-1:0];
-   wire [link_channels_p-1:0]   io_trigger_mode_en, io_trigger_mode_alt_en, io_infinite_credits_en;
+   wire [link_channels_p-1:0]   io_trigger_mode_en, io_trigger_mode_alt_en
+                                , io_infinite_credits_en;
 
    wire [link_channels_p-1:0]   core_loopback_en;
    wire [link_channels_p-1:0]   core_channel_active, im_channel_active;
@@ -326,11 +329,13 @@ module bsg_comm_link
    logic [`BSG_MAX(0,$clog2(link_channels_p)-1):0] core_top_active_channel_r;
    logic [`BSG_MAX(0,$clog2(link_channels_p+1)-1):0] active_channel_count;
 
-   bsg_popcount #(.width_p(link_channels_p)) pop (.i(core_channel_active),.o(active_channel_count));
+   bsg_popcount #(.width_p(link_channels_p)) pop (.i(core_channel_active)
+                                                  ,.o(active_channel_count) );
 
    // how many channels are alive?
    always @(posedge core_clk_i)
-      core_top_active_channel_r <= (| core_channel_active) ? (active_channel_count - 1) : '0;
+      core_top_active_channel_r <= (| core_channel_active)
+                                   ? (active_channel_count - 1) : '0;
 
    localparam tests_p = 5;
 
@@ -390,7 +395,7 @@ module bsg_comm_link
 
         always_ff @(negedge io_master_clk_i)
           if (im_calib_done & ~im_calib_done_r)
-            $display("####### Master calibration COMPLETED with active channels: (%b). "
+            $display("###### Master calibration COMPLETED with active channels: (%b)."
                      , im_channel_active);
       end // block: mstr
    else // slave
@@ -414,8 +419,8 @@ module bsg_comm_link
 
    if (master_p)
      begin
-	always @(posedge io_master_clk_i)
-	  im_reset_r <= im_reset;
+        always @(posedge io_master_clk_i)
+          im_reset_r <= im_reset;
      end
 
   // create all of the input and output channels
@@ -436,9 +441,9 @@ module bsg_comm_link
              wire [tests_p+1-1:0] im_tests_gather;
 
              for (j = 0; j < tests_p+1; j=j+1)
-	       begin
-		  assign mstr.im_test_scoreboard[j][i] = im_tests_gather[j];
-	       end
+               begin
+                  assign mstr.im_test_scoreboard[j][i] = im_tests_gather[j];
+               end
 
              bsg_source_sync_channel_control_master
                #(.width_p(channel_width_p)
@@ -467,8 +472,8 @@ module bsg_comm_link
               ,.in_snoop_valid_data_neg_i(io_snoop_valid_data_neg [i])
               ,.in_snoop_valid_data_pos_i(io_snoop_valid_data_pos [i])
 
-	      // AWC fixme: incorrect name should be output clocked, not in clocked
-	      // i.e., should be:  ,.out_infinite_credits_o (im_infinite_credits_en[i]) 
+              // AWC fixme: incorrect name should be output clocked, not in clocked
+              // i.e. should be: ,.out_infinite_credits_o (im_infinite_credits_en[i])
               ,.in_infinite_credits_o    (io_infinite_credits_en  [i])
 
               ,.out_test_pass_r_o        ( im_tests_gather )
@@ -545,8 +550,8 @@ module bsg_comm_link
               ,.in_trigger_mode_en_o         (io_trigger_mode_en         [i])
               ,.in_trigger_mode_alt_en_o     (io_trigger_mode_alt_en     [i])
 
-	      // AWC fixme: incorrect name should be output clocked, not in clocked
-	      // i.e., should be:  ,.out_infinite_credits_o (im_infinite_credits_en[i]) 
+              // AWC fixme: incorrect name should be output clocked, not in clocked
+              // i.e. should be:  ,.out_infinite_credits_o (im_infinite_credits_en[i])
               ,.in_infinite_credits_o        (io_infinite_credits_en     [i])
 
               // for core control
@@ -581,9 +586,11 @@ module bsg_comm_link
              ,.core_reset_i(core_channel_reset)
 
              ,.core_data_i (core_loopback_en[i]
-                            ? core_ssi_to_asm_data   [i] : core_asm_to_sso_data_sbox  [i])
+                            ? core_ssi_to_asm_data [i] 
+			    : core_asm_to_sso_data_sbox [i])
              ,.core_valid_i(core_loopback_en[i]
-                            ? core_ssi_to_asm_valid  [i] : core_asm_to_sso_valid_sbox [i])
+                            ? core_ssi_to_asm_valid[i] 
+			    : core_asm_to_sso_valid_sbox[i])
 
              // fixme: any special treatment required for loopback?
              ,.core_ready_o(core_asm_to_sso_ready [i])
@@ -600,8 +607,8 @@ module bsg_comm_link
              ,.io_data_r_o( im_data_tline_o    [i])
              ,.io_valid_r_o(im_valid_tline_o   [i])
 
-	      // AWC fixme: incorrect name should be output clocked, not in clocked
-	      // i.e., should be:  ,.io_infinite_credits_o (im_infinite_credits_en[i]) 
+              // AWC fixme: incorrect name should be output clocked, not in clocked
+              // i.e. should be:  ,.io_infinite_credits_o (im_infinite_credits_en[i])
              ,.io_infinite_credits_i (io_infinite_credits_en[i])
 
              ,.token_clk_i  (token_clk_tline_i [i])
@@ -669,13 +676,13 @@ module bsg_comm_link
                           : core_ssi_to_asm_yumi_sbox[i])
            );
 
-	// only used by master; ignore for slave
-	// wire 	  ignore = | io_snoop_valid_data_neg[i];
+        // only used by master; ignore for slave
+        // wire           ignore = | io_snoop_valid_data_neg[i];
      end // block: channel
 
 
 
-   
+
    //***************************************************
    //
    // SBOX, ASSEMBLER AND FRONT SIDE BUS
@@ -688,8 +695,8 @@ module bsg_comm_link
 
    bsg_sbox #(.num_channels_p(link_channels_p)
               ,.channel_width_p(channel_width_p)
-	      ,.pipeline_indir_p(sbox_pipeline_in_p)
-	      ,.pipeline_outdir_p(sbox_pipeline_out_p)
+              ,.pipeline_indir_p(sbox_pipeline_in_p)
+              ,.pipeline_outdir_p(sbox_pipeline_out_p)
               ) sbox
      (.clk_i(core_clk_i)
       ,.reset_i(core_reset_i)
@@ -740,8 +747,8 @@ module bsg_comm_link
 
       // typesafe equivalent to core_channels_p-1
       ,.in_top_channel_i( (bsg_comm_link_active_vec_t ' (core_channels_p))
-			  - 1'b1
-			  )
+                          - 1'b1
+                          )
       ,.out_top_channel_i(core_top_active_channel_r)
 
       ,.valid_o(core_asm_to_sso_valid)
