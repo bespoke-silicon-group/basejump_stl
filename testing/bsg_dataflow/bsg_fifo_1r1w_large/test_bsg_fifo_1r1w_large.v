@@ -145,6 +145,7 @@ module testbench;
         // elements actually stored.
 
         if (~test_ready_out & test_valid_in)
+	  // mbt: seems like this should be "<" -- so this fifo actually stores N+1 elements?
           if (fifo.num_elements_debug <= els_lp)
             begin
                $display("### %x FAIL BAD FULL %x (1rw r=%x w=%x f=%x e=%x) pattern=%b storage=%d"
