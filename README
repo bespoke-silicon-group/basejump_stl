@@ -43,6 +43,10 @@ sbox units, compare_and_swap, and array pack/unpack.
 
 Data, clock, and reset generator for test benches.
 
+* testing
+
+Mirrors the other directories, with tests.
+
 Contact
 -------
 Email to: taylor-bsg@googlegroups.com
