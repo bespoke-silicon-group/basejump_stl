@@ -118,7 +118,7 @@ module bsg_fsb #(parameter  width_p = "inv"
              ,.data_i ((i==0) ? asm_data_i   : in_hop_data  [(i==0) ? i: i-1])
 
              ,.v_o    ({node_v_int      , in_hop_v    [i]})
-             ,.data_o ({node_data_o_int , in_hop_data [i]})
+             ,.data_o ({node_data_o_int , in_hop_data [i]}) // 1=local node, 0 is next node
              // note: the node does valid->ready
              // but should be located nearby so it's okay
              ,.ready_i({node_ready_int, in_hop_ready[i]})
