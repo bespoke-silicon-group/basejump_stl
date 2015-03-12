@@ -44,7 +44,7 @@ BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  =  bsg_fifo_1r1w_large.v bsg_fifo_1rw_large.v bsg_round_robin_2_to_2.v bsg_two_fifo.v bsg_round_robin_n_to_1.v bsg_serial_in_parallel_out.v
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
-BSG_MEM_FILES       = bsg_mem_1srw.v
+BSG_MEM_FILES       = bsg_mem_1rw_sync.v
 
 BSG_TEST_FILES =  bsg_nonsynth_reset_gen.v bsg_nonsynth_clock_gen.v
 
