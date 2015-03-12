@@ -1,0 +1,2 @@
+HSOPT_OBJS=rmapats_mop.o  \
+    rmapats.o 

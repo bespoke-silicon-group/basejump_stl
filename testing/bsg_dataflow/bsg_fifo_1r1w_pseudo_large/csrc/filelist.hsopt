@@ -1,0 +1,13 @@
+rmapats_mop.o: rmapats.m
+	@/gro/cad/synopsys/vcs/G-2012.09-SP1/amd64/bin/cgmop1 -pic -gen_obj rmapats.m rmapats_mop.o
+
+rmapats.o: rmapats.c
+	@$(CC) $(CFLAGS) -c  -o rmapats.o rmapats.c
+rmapats%.o: rmapats%.c
+	@$(CC) $(CFLAGS) -c  -o $@ $<
+rmar.o: rmar.c
+	@$(CC) $(CFLAGS) -c  -o rmar.o rmar.c
+rmar%.o: rmar%.c
+	@$(CC) $(CFLAGS) -c  -o $@ $<
+
+include filelist.hsopt.objs
