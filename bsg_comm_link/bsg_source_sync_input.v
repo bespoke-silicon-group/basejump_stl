@@ -39,6 +39,13 @@
 // clock line, allowing it be reset.
 //
 
+//
+// perf fixme: data can come in at 64 bits per cycle, but it is serialized
+// to 32-bits per cycle output. so for full performance, the core freq. currently has
+// to be >= 2x the incoming i/o frequency. fixing this so that no such ratio is necessary
+// has implications at the bsg assembler level.
+//
+
 module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
                                , parameter lg_credit_to_token_decimation_p=3
                                , parameter channel_width_p=8
@@ -145,6 +152,8 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
    // so we have the risk of metastability, so we must synchronize
    // both possible trigger bits.
 
+   // fixme: do these need launch flops?
+   
    bsg_sync_sync #(.width_p(1)) bssv
    (.oclk_i(io_clk_i)
     ,.iclk_data_i(io_valid_1_r)
@@ -332,11 +341,6 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
     ,.w_ptr_gray_r_rsync_o(core_credits_gray_r_iosync)
     );
 
-   bsg_gray_to_binary #(.width_p(lg_fifo_depth_p+1)) bsg_g2b
-     (.gray_i(core_credits_gray_r_iosync)
-      ,.binary_o(core_credits_binary_r_iosync)
-      );
-
    // this logic allows us to return two credits at a time
    // note: generally relies on power-of-twoness of io_credits_sent_r
    // to do correct wrap around.
@@ -371,9 +375,22 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
    // since generally we cannot control the timing of these reset signals when
    // they cross asynchronous boundaries
 
+   // this is an optimized token increment system
+   // we actually gray code two options and compare against
+   // the incoming greycoded pointer. this is because it's cheaper
+   // to grey code than to de-gray code. moreover, we theorize it's cheaper
+   // to compute an incremented gray code than to add one to a pointer.
+   
    assign io_credits_sent_r_gray = (io_credits_sent_r >> 1) ^ io_credits_sent_r;
 
-   wire empty_1 = (core_credits_binary_r_iosync != io_credits_sent_r_p1);
+   logic [lg_fifo_depth_p+1-1:0] io_credits_sent_p1_r_gray;
+   
+   bsg_binary_plus_one_to_gray #(.width_p(lg_fifo_depth_p+1)) bsg_bp1_2g
+     (.binary_i(io_credits_sent_r)
+      ,.gray_o(io_credits_sent_p1_r_gray)
+      );
+   
+   wire empty_1 = (core_credits_gray_r_iosync != io_credits_sent_p1_r_gray);
    wire empty_0 = (core_credits_gray_r_iosync != io_credits_sent_r_gray);
 
    always @(posedge io_clk_i)
