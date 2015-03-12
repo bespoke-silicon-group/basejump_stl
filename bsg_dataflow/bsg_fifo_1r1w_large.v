@@ -6,7 +6,39 @@
 // This implementation is specifically
 // intended for processes where 1RW rams
 // are much cheaper than 1R1W rams, like
-// most ASIC processes.
+// most ASIC processes, or where 1R1W rams
+// are not available.
+//
+// The idea is that a 1R1W ram is often 1.7X
+// or more of the size of a 1RW, so we can
+// save area.
+//
+// There are two possible implementations
+// of a FIFO using 1RW rams. One is to
+// use two rams of half size, and the round
+// robin odd/even elements. We can favor the
+// writer, and then use a two-element fifo
+// with bypass after each 1RW, and select between
+// the two. Net cost is 4 elements plus 2 1RW of size 1/2.
+// A draft of this code is at the end of this file. Caveat emptor.
+//
+// The alternative is to use a single 1RW of double width
+// and write two elements at a time, as described in this module.
+// The cost is 7 DFF elements plus 1 RW of double width and half words.
+// A single 1RW versus two 1RW's can be a win, but not always. The RAM
+// is larger, so there is potential for there is to be more amortization of
+// overhead. But on the other hand, # of sense amps is the same, so some of the
+// overheads are the same.
+//
+// The 7 elements overhead coud potentially be significant,
+// since they are implemented with ordinary flops, probably 4X per bit versus the
+// So we have an equation,  area improvement = 1.7 W / (W + 4*7);
+//
+//       64 --> 20% (probably less than this)
+//      128 --> 40%
+//      256 --> 53%
+//      512 --> 62%
+
 //
 // Rather than use two 1RW and alternate
 // between them, we use one 1RW of double
@@ -255,7 +287,9 @@ endmodule
 // most ASIC processes.
 //
 // The FIFO is implemented by instantiating
-// two banks. Each bank has a large 1-port
+// two banks. 
+
+// Each bank has a large 1-port
 // fifo and a small 2-element fifo.
 //
 // Data is inserted directly into the 2-element fifo until
@@ -310,114 +344,7 @@ endmodule
 // to enque two elements in a row.
 //
 
-module bsg_fifo_two_port_large_bank #(parameter width_p = -1
-                                    , parameter els_p = -1)
-   (input   clk_i
-    , input reset_i
-
-    , input [width_p-1:0] data_i
-    , input v_i
-    , output ready_o
-
-    , output v_o
-    , output [width_p-1:0] data_o
-    , input  yumi_i
-    );
-
-   wire big_full_lo, big_empty_lo;
-   wire [width_p-1:0] big_data_lo, little_data;
-
-   wire               big_enq, big_deq, big_deq_r;
-
-   wire               little_ready_lo;
-
-   // whether we dequed something on the last cycle
-
-   always_ff @(posedge clk)
-     big_deq_r <= big_deq;
-
-   // if the big fifo is not full, then we can take more data
-   wire ready_o_int = ~big_full_lo;
-   assign ready_o   = ready_o_int;
-
-   always_comb
-     begin
-        little_valid = 1'b0;
-
-        // if we fetch an element last cycle, we need to enque
-        // it into the little fifo
-        if (big_deq_r)
-          begin
-             // we dequed last cycle, so there must be room
-             // in both big and little fifos
-             little_valid = 1'b1;
-             big_enq      = v_i;
-
-             // if there is data in big fifo
-             // and we are not enqueing to the big fifo
-             // and the little fifo is empty
-             // we can grab another word
-             big_deq      = (~big_empty_lo & ~big_enq & ~v_o);
-          end
-        else
-          begin
-             // clean through bypass mode; skip
-             // big fifo and go to little fifo
-             if (big_empty_lo)
-               begin
-                  little_valid = v_i  & little_ready_lo;
-                  big_enq      = v_i  & ~little_ready_lo;
-                  big_deq      = ~v_i & little_ready_lo;
-               end
-             else
-               // there is data in the big fifo
-               // but we did not fetch from it
-               // last cycle.
-               // we cannot enque anything into
-               // the little fifo this cycle.
-               begin
-                  big_enq = v_i  & ~big_full_lo;
-                  big_deq = ~big_enq & little_ready_lo;
-               end
-          end // else: !if(big_deq_r)
-
-        big_valid    = big_enq | big_deq;
-     end
-
-   // if we dequed from the big queue last cycle
-   // then we enque it into the little fifo
-
-   wire [width_p-1:0] little_data = big_deq_r ? big_data_lo : data_i;
-
-   bsg_fifo_one_port #(.width_p(width_p)
-                       ,.els_p(els_p)
-                       ) big1p
-     (.clk_i         (clk_i       )
-      ,.reset_i      (reset_i     )
-      ,.data_i       (data_i      )
-
-      ,.v_i          (big_valid)
-      ,.enq_not_deq_i(big_enq)
-
-      ,.full_o   (big_full_lo )
-      ,.empty_o  (big_empty_lo)
-      ,.data_o   (big_data_lo )
-      );
-
-   bsg_two_fifo #(.width_p(width_p)) little2p
-     (.clk_i   (clk_i)
-      ,.reset_i(reset_i)
-      ,.ready_o(little_ready_lo)
-      ,.data_i (little_data)
-      ,.v_i    (little_valid)
-
-      ,.v_o    (v_o)
-      ,.data_o (data_o)
-      ,.yumi_i (yumi_i)
-      );
-
-endmodule
-
+// mbt: note code moved to bsg_fifo_1r1w_pseudo_large
 
 
 module bsg_fifo_two_port_banked #(parameter width_p         = -1
@@ -460,6 +387,7 @@ module bsg_fifo_two_port_banked #(parameter width_p         = -1
 
    for (i = 0; i < 2; i++)
      begin
+	// fixme replace with bsg_fifo_1r1w_pseudo_large
         bsg_fifo_two_port_bank #(.width(width_p)
                                    ,.els_p(els_p >> 1)
                                    ) bank
