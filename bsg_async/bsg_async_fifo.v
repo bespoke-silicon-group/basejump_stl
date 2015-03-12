@@ -70,7 +70,7 @@ module bsg_async_fifo #(parameter   lg_size_p = "inv"
 	 end
 
    // pointer from writer to reader (input to output of FIFO)
-   bsg_async_ptr_gray #(.lg_size_p(lg_size_p+1)) bapg_1
+   bsg_async_ptr_gray #(.lg_size_p(lg_size_p+1)) bapg_wr
    (.w_clk_i(w_clk_i)
     ,.w_reset_i(w_reset_i)
     ,.w_inc_i(w_enq_i)
@@ -83,7 +83,7 @@ module bsg_async_fifo #(parameter   lg_size_p = "inv"
    // pointer from reader to writer (output to input of FIFO)
    // note this pointer travels backwards so the order is reverse
 
-   bsg_async_ptr_gray #(.lg_size_p(lg_size_p+1)) bapg_2
+   bsg_async_ptr_gray #(.lg_size_p(lg_size_p+1)) bapg_rd
    (.w_clk_i(r_clk_i)
     ,.w_reset_i(r_reset_i)
     ,.w_inc_i(r_deq_i)

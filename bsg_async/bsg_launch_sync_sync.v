@@ -22,9 +22,9 @@ module bsg_launch_sync_sync #(parameter width_p="inv"
     , output [width_p-1:0] oclk_data_o // after sync flops
     );
 
-   logic [width_p-1:0] bsg_launch_flop_r;
+   logic [width_p-1:0] bsg_SYNC_launch_flop_r;
 
-   assign iclk_data_o = bsg_launch_flop_r;
+   assign iclk_data_o = bsg_SYNC_launch_flop_r;
 
    // fixme can we factor this better?
 generate
@@ -32,23 +32,23 @@ generate
      always @(negedge iclk_i)
        begin
 	  if (iclk_reset_i)
-	    bsg_launch_flop_r <= { width_p {1'b0} };
+	    bsg_SYNC_launch_flop_r <= { width_p {1'b0} };
 	  else
-	    bsg_launch_flop_r <= iclk_data_i;
+	    bsg_SYNC_launch_flop_r <= iclk_data_i;
        end
    else
      always @(posedge iclk_i)
        begin
 	  if (iclk_reset_i)
-	    bsg_launch_flop_r <= { width_p {1'b0} };
+	    bsg_SYNC_launch_flop_r <= { width_p {1'b0} };
 	  else
-	    bsg_launch_flop_r <= iclk_data_i;
+	    bsg_SYNC_launch_flop_r <= iclk_data_i;
        end
 endgenerate
 
    bsg_sync_sync #(.width_p(width_p)) bss
      (.oclk_i(oclk_i)
-      ,.iclk_data_i(bsg_launch_flop_r)
+      ,.iclk_data_i(bsg_SYNC_launch_flop_r)
       ,.oclk_data_o(oclk_data_o)
       );
 

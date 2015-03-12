@@ -12,10 +12,10 @@ module bsg_sync_sync #(parameter width_p = "inv")
     , output [width_p-1:0] oclk_data_o // after sync flops
     );
 
-   logic [width_p-1:0] bsg_sync1_flop_r;
-   logic [width_p-1:0] bsg_sync2_flop_r;
+   logic [width_p-1:0] bsg_SYNC_1_flop_r;
+   logic [width_p-1:0] bsg_SYNC_2_flop_r;
 
-   assign oclk_data_o = bsg_sync2_flop_r;
+   assign oclk_data_o = bsg_SYNC_2_flop_r;
 
    // mbt fixme, for GF28, we should be instantiating the meta-hardened flop
    // mbt fixme; might want to put an explicit buffer on output iclk_data_o
@@ -23,8 +23,8 @@ module bsg_sync_sync #(parameter width_p = "inv")
 
    always @(posedge oclk_i)
      begin
-        bsg_sync1_flop_r <= iclk_data_i;
-        bsg_sync2_flop_r <= bsg_sync1_flop_r;
+        bsg_SYNC_1_flop_r <= iclk_data_i;
+        bsg_SYNC_2_flop_r <= bsg_SYNC_1_flop_r;
      end
 
 endmodule

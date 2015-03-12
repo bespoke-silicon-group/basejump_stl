@@ -1,6 +1,8 @@
 
 module testbench;
 
+   localparam test_early_yumi_lp = 1;
+   
 
 `include "test_bsg_clock_params.v"
 
@@ -82,18 +84,23 @@ module testbench;
    // end generate data
    // *******************************************************
    localparam verbose_lp=0;
+   localparam fifo_verbose_lp=0;
 
    always @(posedge clk)
      begin
         if (test_valid_in & test_ready_out & verbose_lp)
-          $display("### %x sent     %x   bypass_mode=%x",ctr, test_data_in,fifo.bypass_mode);
+          $display("### %x sent     %x (1rw r=%x w=%x f=%x e=%x) bypass_mode=%x storage=%d",ctr, test_data_in
+		   , fifo.big1p.rd_ptr, fifo.big1p.wr_ptr, fifo.big1p.fifo_full, fifo.big1p.fifo_empty
+		   , fifo.bypass_mode, fifo.num_elements_debug);
      end
 
    wire test_yumi_in = test_ready_in & test_valid_out;
 
-   bsg_fifo_1r1w_large #(.width_p(width_lp)
-                         ,.els_p(els_lp)
-                         ) fifo
+   bsg_fifo_1r1w_pseudo_large #(.width_p(width_lp)
+				,.els_p(els_lp)
+				,.early_yumi(test_early_yumi_lp)
+				,.verbose_p(fifo_verbose_lp)
+				) fifo
      (.clk_i(clk)
       ,.reset_i(reset      )
 
@@ -128,25 +135,25 @@ module testbench;
         assert (reset | ((test_yumi_in !== 1'b1) | (test_data_check == test_data_out)))
           else
             begin
-               $error("### mismatched value v=%x y=%x ch=%x da=%x reset=%x",test_valid_out, test_yumi_in, test_data_check, test_data_out, reset);
+               $error("### %x mismatched value v=%x y=%x ch=%x da=%x reset=%x",ctr,test_valid_out, test_yumi_in, test_data_check, test_data_out, reset);
                $finish;
             end
         if (~reset & test_yumi_in === 1'b1)
           if (verbose_lp | ((test_data_out & 16'hffff) == 0))
             $display("### %x received %x (1rw r=%x w=%x f=%x e=%x) pattern=%b storage=%d"
-                     , ctr, test_data_out, fifo.big1p.rd_ptr, fifo.big1p.wr_ptr
-                     , fifo.big1p.fifo_full, fifo.big1p.fifo_empty, test_pattern, fifo.num_elements_debug);
+                     , ctr, test_data_out
+		     , fifo.big1p.rd_ptr, fifo.big1p.wr_ptr, fifo.big1p.fifo_full, fifo.big1p.fifo_empty
+		     , test_pattern, fifo.num_elements_debug);
 
         if (verbose_lp | 1)
-          if (fifo.num_elements_debug > els_lp+6)
-            $display("### storing %d els!\n", fifo.num_elements_debug);
+          if (fifo.num_elements_debug > els_lp+2)
+            $display("### storing > %d els!\n", fifo.num_elements_debug);
 
         // IMPORTANT TEST: test that the fifo will never register full with less than els_lp
         // elements actually stored.
 
         if (~test_ready_out & test_valid_in)
-	  // mbt: seems like this should be "<" -- so this fifo actually stores N+1 elements?
-          if (fifo.num_elements_debug <= els_lp)
+          if (fifo.num_elements_debug < els_lp)
             begin
                $display("### %x FAIL BAD FULL %x (1rw r=%x w=%x f=%x e=%x) pattern=%b storage=%d"
                         , ctr, test_data_out, fifo.big1p.rd_ptr, fifo.big1p.wr_ptr
@@ -157,6 +164,7 @@ module testbench;
         // IMPORTANT TEST: test that the fifo will never register empty if there are actually
         // elements stored.
         //
+	if (0) // mbt fixme; this check is from the non-pseudo version, what is the equivalent check for pseudo large?
         if (~test_valid_out & (fifo.num_elements_debug != 0))
           begin
              $display("### %x FAIL BAD empty %x (1rw r=%x w=%x f=%x e=%x) pattern=%b storage=%d"

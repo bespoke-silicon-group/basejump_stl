@@ -9,6 +9,7 @@
 
 module bsg_fifo_1rw_large #(parameter width_p         = -1
                           , parameter els_p           = -1
+			  , parameter verbose_p       = 0
                           )
    (input                  clk_i
     , input                reset_i
@@ -65,16 +66,14 @@ module bsg_fifo_1rw_large #(parameter width_p         = -1
              | ((fifo_empty & mem_re) !== 1)
              ) else $error("deque on empty fifo %x %x", fifo_empty, mem_re, v_i, enq_not_deq_i);
 
-   localparam verbose_lp=0;
-
    always_ff @(posedge clk_i)
-     if (verbose_lp)
+     if (verbose_p)
        if (v_i)
          begin
             if (enq_not_deq_i)
-              $display("### enq %x onto fifo (r=%x w=%x)",data_i,rd_ptr,wr_ptr);
+              $display("### %m enq %x onto fifo (r=%x w=%x)",data_i,rd_ptr,wr_ptr);
             else
-              $display("### deq fifo (r=%x w=%x)",rd_ptr,wr_ptr);
+              $display("### %m deq fifo (r=%x w=%x)",rd_ptr,wr_ptr);
          end
 
 
@@ -106,9 +105,9 @@ module bsg_fifo_1rw_large #(parameter width_p         = -1
       , .o      (wr_ptr )
       );
 
-   bsg_mem_1srw #(.width_p(width_p)
-                  ,.els_p(els_p)
-                  )
+   bsg_mem_1rw_sync #(.width_p(width_p)
+                      ,.els_p(els_p)
+                      )
    mem_1srw (.clk_i
              ,.reset_i
              ,.data_i (data_i                   )

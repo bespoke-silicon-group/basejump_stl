@@ -38,17 +38,17 @@ DESIGNWARE_FLAGS = -y $(DESIGNWARE_DIR) +incdir+$(DESIGNWARE_DIR) +incdir+$(MURN
 
 
 BSG_HYPOT_FILES     = 
-BSG_MISC_FILES      =   bsg_defines.v bsg_circular_ptr.v bsg_cycle_counter.v bsg_thermometer_count.v
+BSG_MISC_FILES      =   bsg_defines.v bsg_circular_ptr.v bsg_cycle_counter.v bsg_encode_one_hot.v
 BSG_ASYNC_FILES     = 
 BSG_COMM_LINK_FILES =
-BSG_DATAFLOW_FILES  =  bsg_fifo_1r1w_large.v bsg_fifo_1rw_large.v bsg_round_robin_2_to_2.v bsg_two_fifo.v bsg_round_robin_n_to_1.v bsg_serial_in_parallel_out.v
+BSG_DATAFLOW_FILES  =  bsg_fifo_1r1w_pseudo_large.v bsg_fifo_1rw_large.v bsg_two_fifo.v bsg_round_robin_n_to_1.v 
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
 BSG_MEM_FILES       = bsg_mem_1rw_sync.v
 
 BSG_TEST_FILES =  bsg_nonsynth_reset_gen.v bsg_nonsynth_clock_gen.v
 
-TEST_MAIN=test_bsg_fifo_1r1w_large.v
+TEST_MAIN=test_bsg_fifo_1r1w_pseudo_large.v
 
 
 ALL_FILES = $(MURN_INCLUDE_DIR)/rnet_common.v  $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x)) $(foreach x,$(BSG_ASYNC_FILES),$(TOP)/bsg_async/$(x)) $(foreach x,$(BSG_FSB_FILES),$(TOP)/bsg_fsb/$(x)) $(foreach x,$(BSG_GUTS_FILES),$(TOP)/bsg_guts/$(x)) $(foreach x,$(BSG_COMM_LINK_FILES),$(TOP)/bsg_comm_link/$(x)) $(foreach x,$(BSG_DATAFLOW_FILES),$(TOP)/bsg_dataflow/$(x)) $(foreach x,$(BSG_TEST_FILES),$(TOP)/bsg_test/$(x)) $(foreach x,$(BSG_MEM_FILES),$(TOP)/bsg_mem/$(x)) $(BSG_HYPOT_FILES) $(TEST_MAIN)

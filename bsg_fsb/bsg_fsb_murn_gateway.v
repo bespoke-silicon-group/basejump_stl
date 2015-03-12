@@ -35,7 +35,8 @@ module bsg_fsb_murn_gateway #(parameter width_p="inv"
     , input  reset_i
     , input  v_i
     , input  [width_p-1:0] data_i
-    , output ready_o
+    , output ready_o // note this inspects v_i, so technically is v_i->ready_o
+                     // but the underlying bsg_test_node is true v_i / ready_o
 
     // from node
     , output v_o

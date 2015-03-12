@@ -20,8 +20,10 @@ module bsg_nonsynth_ascii_writer
 
    always @(posedge reset_i)
      if (file == -1)
-       file = $fopen(filename_p,"w");
-
+       begin
+	  file = $fopen(filename_p,"w");
+       end
+   
    logic [width_p*values_p-1:0] capture_data_r;
    logic                        capture_valid_r;
 
@@ -36,7 +38,7 @@ module bsg_nonsynth_ascii_writer
 
    // format does not work as parameter
    always @(negedge clk)
-     if (capture_valid_r)
+     if (capture_valid_r && file != -1)
        begin
           for (i = 0; i < values_p; i++)
 	    begin

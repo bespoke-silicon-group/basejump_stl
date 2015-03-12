@@ -21,7 +21,8 @@
 //
 
 module bsg_two_fifo #(parameter width_p="inv"
-                      , parameter ready_THEN_valid_p=0)
+                      , parameter ready_THEN_valid_p=0
+		      , parameter verbose_p=0)
    (input clk_i
     , input reset_i
 
@@ -97,7 +98,20 @@ module bsg_two_fifo #(parameter width_p="inv"
                else $error ("fifo full and empty at same time ", full_r, empty_r);
           end // if (~reset_i)
      end // always_ff @
-
+   
+   always_ff @(posedge clk_i)
+     if (verbose_p)
+       begin
+          if (v_i)
+	    $display("### %m enq %x onto fifo",data_i);
+	  
+	  if (deq_i)
+	    $display("### %m deq %x from fifo",data_o);
+       end
+   
+   // for debugging
+   wire [31:0] num_elements_debug = full_r + (empty_r==0);
+   
    // synopsys translate_on
 
 endmodule

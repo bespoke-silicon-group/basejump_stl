@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module test_bsg_data_gen #(parameter   channel_width_p ="inv"
                            , parameter num_channels_p  = -1
                            )

@@ -29,6 +29,11 @@ module bsg_async_ptr_gray #(parameter lg_size_p = -1
    logic [lg_size_p-1:0] w_ptr_p1_r,   w_ptr_p1_n, w_ptr_p2;
    logic [lg_size_p-1:0] w_ptr_gray_n, w_ptr_gray_r, w_ptr_gray_r_rsync;
 
+   // minor fixme: this could possibly be done more efficiently or at least more elegantly
+   // with a bsg_binary_plus_one_to_gray module. something like
+   // assign w_ptr_n = w_inc_i ? w_ptr_r+1 : w_ptr_r;
+   // assign w_ptr_gray_n = w_inc_i ? (bsg_binary_plus_one_to_gray(w_ptr_r) : (wptr_r >> 1) ^ wptr_r;
+       
 // cycle time optimization
 //   assign w_ptr_n      = w_ptr_r + w_inc_i;
 //   assign w_ptr_gray_n = (w_ptr_n >> 1) ^ w_ptr_n;
