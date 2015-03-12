@@ -22,7 +22,8 @@ module bsg_shift_reg #(parameter width_p = "inv"
        shift_r <= '0;
      else
        begin
-	  shift_r[stages_p-1:1] <= shift_r[stages_p-2:0];
+	  // maxes and mins are for handling stages_p=1
+	  shift_r[stages_p-1:`BSG_MIN(stages_p-1,1)] <= shift_r[`BSG_MAX(stages_p-2,0):0];
 	  shift_r[0] <= { valid_i, data_i };
        end
    assign { valid_o, data_o } = shift_r[stages_p-1];
