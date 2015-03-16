@@ -1,21 +1,19 @@
-// Mesosynchronous IO that includes the config_tag converter and
-// mesosynchronous channel. This IO module receives configuration
-// in config tag protocol, and has the same handshake protocol on 
-// IO and chip side as mesosynchronous channel: No handshake on the
-// IO side, valid from channel to chip (to know when to sample) and
-// ready from chip to channel (to know when to send data).
-//
-// Most important feature of this IO is least latency.
+// This the mesosynchronous IO module with the loopback included 
+// and ca perform all steps of calibration for mesosynchronous IO. 
+// Used to verify the mesosynchronous IO.
 
 //`ifndef DEFINITIONS_V
 //`include "definitions.v"
 //`endif
 
-module bsg_mesosync_io
-                  #(  parameter ch1_width_p = -1
-                    , parameter ch2_width_p = -1
-                    , parameter log_LA_fifo_depth_p = -1
+module bsg_mesosync_io_w_loopback
+                  #(  parameter ch1_width_p       = -1
+                    , parameter ch2_width_p       = -1
+                    , parameter LA_els_p          = -1
                     , parameter cfg_tag_base_id_p = -1
+                    , parameter loopback_els_p    = -1
+                    , parameter credit_initial_p  = -1
+                    , parameter credit_max_val_p  = -1
                     
                     , parameter width_lp = ch1_width_p + ch2_width_p
                    )
@@ -26,16 +24,7 @@ module bsg_mesosync_io
 
                     // Sinals with their acknowledge
                     , input  [width_lp-1:0]          IO_i
-
-                    , output logic [width_lp-1:0]    chip_o
-                    , output                         valid_o
-                    
-                    , input  [width_lp-1:0]          chip_i
-                    , output                         ready_o
-
-                    , output [width_lp-1:0]          IO_o
-
-                    , output logic                   loop_back_o
+                    , output logic [width_lp-1:0]    IO_o
                     );
 
 // internal singals
@@ -46,13 +35,15 @@ logic [$clog2(width_lp)-1:0] input_bit_selector_ch1;
 logic [$clog2(width_lp)-1:0] output_bit_selector_ch1;
 logic [$clog2(width_lp)-1:0] input_bit_selector_ch2;
 logic [$clog2(width_lp)-1:0] output_bit_selector_ch2;
-logic                        loop_back;
+logic                        en_loop_back;
 logic                        channel_reset;
 logic                        ready, valid;
-logic [width_lp-1:0]         to_IO, to_chip;
+logic [width_lp-1:0]         to_IO;
+logic [width_lp-1:0]         to_loopback;
+logic [width_lp-1:0]         from_loopback;
  
-// config tag extractor module that extracts the configurations from
-// config tag serial input and gives them to mesosynchronous channel
+// Config tag extractor that extracts channel configurations from 
+// congif tag serial input
 bsg_mesosync_config_tag_extractor
            #(  .ch1_width_p(ch1_width_p)
              , .ch2_width_p(ch2_width_p)
@@ -71,14 +62,14 @@ bsg_mesosync_config_tag_extractor
              , .output_bit_selector_ch1_o(output_bit_selector_ch1)
              , .input_bit_selector_ch2_o(input_bit_selector_ch2)
              , .output_bit_selector_ch2_o(output_bit_selector_ch2)
-             , .loop_back_o(loop_back)
+             , .loop_back_o(en_loop_back)
              , .channel_reset_o(channel_reset)
              );
  
 // Mesosynchronous channel
 bsg_mesosync_channel 
            #(  .width_p(width_lp)
-             , .log_LA_fifo_depth_p(log_LA_fifo_depth_p)
+             , .LA_els_p(LA_els_p)
              ) mesosync_channel
             (  .clk(clk)
              , .reset(channel_reset)
@@ -96,30 +87,47 @@ bsg_mesosync_channel
              // Sinals with their acknowledge
              , .IO_i(IO_i)
 
-             , .chip_o(to_chip)
+             , .chip_o(to_loopback)
              , .valid_o(valid)
              
-             , .chip_i(chip_i)
+             , .chip_i(from_loopback)
              , .ready_o(ready)
 
              , .IO_o(to_IO)
 
              );
 
+// loop back module with enable and ready inputs, and credit protocol
+// on both directions
+bsg_loopback_credit_protocol #( .width_p(width_lp-2)
+                              , .els_p(loopback_els_p)
+                              , .credit_initial_p(credit_initial_p)
+                              , .credit_max_val_p(credit_max_val_p)
+                              ) loopback
+    ( .clk_i(clk)
+    , .reset_i(reset)
+    , .enable_i(en_loop_back)
+    , .ready_i(ready)
+
+    , .data_i(to_loopback[width_lp-1:2])
+    , .v_i(valid & to_loopback[0])
+    , .credit_o(from_loopback[1])
+
+    , .v_o(from_loopback[0])
+    , .data_o(from_loopback[width_lp-1:2])
+    , .credit_i(valid & to_loopback[1])
+
+    );
+
+
 // mesosync channel uses the channel reset from config_tag
 // hence during reset output of module must be made zero on 
 // this top module
 always_comb
   if (reset) begin
-    IO_o        = 0;
-    ready_o     = 0;
-    chip_o      = 0;
-    valid_o     = 0;
+    IO_o = 0;
   end else begin 
-    IO_o        = to_IO;
-    ready_o     = ready; 
-    chip_o      = to_chip;
-    valid_o     = valid;
+    IO_o = to_IO;
   end
 
  endmodule
