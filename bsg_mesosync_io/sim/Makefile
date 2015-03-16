@@ -31,7 +31,7 @@ else
   HDL_SOURCE +=	$(CFG_TAG_PATH)/config_node.v 
   HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_fifo_1r1w_small.v 
   HDL_SOURCE +=	$(MISC_PATH)/bsg_counter_up_down.v 
-  HDL_SOURCE +=	$(FIFO_PATH)/bsg_output_selector.v 
+  HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_channel_narrow.v 
   HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_fifo_1r1w_small_credit_on_input.v 
   HDL_SOURCE +=	$(FIFO_PATH)/bsg_ready_credit_flow_converter.v 
   HDL_SOURCE +=	$(FIFO_PATH)/bsg_loopback_credit_protocol.v 

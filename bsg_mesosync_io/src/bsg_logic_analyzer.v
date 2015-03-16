@@ -70,10 +70,10 @@ module bsg_logic_analyzer
   */
 
   // selecting from two FIFO outputs and sending one out at a time
-  bsg_output_selector #( .width_in_p(2)
-                       , .width_out_p(1)
-                       , .lsb_to_msb_p(1)
-                       ) LA_out_bit_selector
+  bsg_channel_narrow #( .width_in_p(2)
+                      , .width_out_p(1)
+                      , .lsb_to_msb_p(1)
+                      ) LA_out_bit_selector
        ( .clk(clk)
        , .reset(reset)
   
