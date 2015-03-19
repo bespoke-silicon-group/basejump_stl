@@ -1,12 +1,12 @@
 // bsg_fifo with 1 read and 1 write, using register file
 // dedicated for smaller fifos
-// input handshake protocol is valid-ready and output protocol 
-// is valid-yumi 
+// input handshake protocol is valid-and-ready or 
+// ready-then-valid (based on ready_THEN_valid_p parameter)
+// and output protocol is valid-yumi 
 module bsg_fifo_1r1w_small #( parameter width_p      = -1
                             , parameter els_p        = -1
-                            //localpara
-                            , parameter ptr_width_lp = 
-                                `BSG_SAFE_CLOG2(els_p)
+
+                            , parameter ready_THEN_valid_p = 0
                             )                           
                             
     ( input                clk_i
@@ -22,6 +22,8 @@ module bsg_fifo_1r1w_small #( parameter width_p      = -1
 
     );
 
+localparam ptr_width_lp = `BSG_SAFE_CLOG2(els_p);
+
 // register for storage
 logic [width_p-1:0] storage [els_p];
 
@@ -34,12 +36,16 @@ logic enque_r, deque_r;
 // internal signals
 logic empty, full, equal_cnt, enque;
 
-// If FIFO is full it cannot accept new data
+// If FIFO is full it cannot accept new data correctly
 // (In valid-ready protocol both ends assert their signal at the 
 // beginning of the cycle, and if the sender end finds that receiver
 // was not ready it would send it again. So in the receiver side
 // valid means enque if it could accept it)
-assign enque = v_i & ready_o;
+if (ready_THEN_valid_p) begin: gen_blk_protocol_select
+  assign enque = v_i;
+end else begin: gen_blk_protocol_select
+  assign enque = v_i & ready_o;
+end
 
 // Using circular pointers for raed and write pointers.
 // read pointer goes up by receiving yumi signal from output side
@@ -106,8 +112,8 @@ assign data_o = storage[rptr_r];
 //synopsys translate_off		
 always_ff @ (posedge clk_i)    
   begin  
-		if (full  & v_i    & ~reset_i)
-				$display("%m enque request dropped due to full fifo at time %t", $time);
+		if (ready_THEN_valid_p & full  & v_i    & ~reset_i)
+				$display("%m error: enque full fifo at time %t", $time);
 		if (empty & yumi_i & ~reset_i)
 				$display("%m error: deque empty fifo at time %t", $time);			
   end

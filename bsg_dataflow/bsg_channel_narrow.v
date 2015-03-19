@@ -49,11 +49,11 @@ module bsg_channel_narrow #( parameter width_in_p   = -1
   generate
     // in case of input being smaller than or equal to output 
     // there would be only one data which may require padding
-    if (divisions_lp == 1)
+    if (divisions_lp == 1) begin: gen_blk_0
       assign data[0] = {{padding_p{1'b0}},data_i};
   
     // Range selection based on lsb_to_msb_p and if required, padding
-    else if (lsb_to_msb_p) begin
+    end else if (lsb_to_msb_p) begin: gen_blk_0
       for (i = 0; i < divisions_lp - 1; i = i + 1) begin: gen_block 
         assign data[i] = data_i[width_out_p * i + width_out_p - 1: 
                                 width_out_p * i];
@@ -62,7 +62,7 @@ module bsg_channel_narrow #( parameter width_in_p   = -1
           {{padding_p {1'b0}},
           data_i[width_in_p - 1: width_out_p * (divisions_lp - 1)]};
     
-    end else begin
+    end else begin: gen_blk_0
     
       for (i = 0; i < divisions_lp - 1; i = i + 1) begin: gen_block 
         assign data[divisions_lp-1-i] = 
@@ -75,7 +75,7 @@ module bsg_channel_narrow #( parameter width_in_p   = -1
     end
   endgenerate
   
-  if (divisions_lp != 1) begin  
+  if (divisions_lp != 1) begin: gen_blk_1
     // counter for selecting which part to send
     always_comb begin
       count_n = count_r + deque_i;
@@ -99,7 +99,7 @@ module bsg_channel_narrow #( parameter width_in_p   = -1
   
   // in case of input being smaller than or equal to output, 
   // this module would be just forwarding the signals
-  end else begin
+  end else begin: gen_blk_1
     assign data_o  = data[0];
     assign deque_o = deque_i;
   end
