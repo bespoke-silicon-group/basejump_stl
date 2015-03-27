@@ -1,88 +1,58 @@
-// Logic analyzer is a 2bit in 1bit out FIFO that latches the inputs
-// beforehand, since two inputs are actually sampled on different clock
-// edges. It takes "number of elements in FIFO" to be filled and twice
-// to be emptied. 
+// This module is a logic analyzer with sampling frequency of
+// 2 times clk. It receives synchronized samples from 
+// bsg_ddr_sampler module and also chosses between the input lines
+// to determine which line to store the sampled values. 
+//
+// It uses a 2 in 1 out FIFO, since during sampling each clock 2 
+// values are read but the signal would be send out 1 by 1. 
 
-module bsg_logic_analyzer 
-                  #(parameter LA_els_p = -1
-                   )
-                   (  input clk
-                    , input reset
-                   
-                    , input enque_i
-                    
-                    , input [1:0] data_i
-                    , input deque_i
+module bsg_logic_analyzer #( parameter line_width_p = -1
+                           , parameter LA_els_p     = -1 
+                           )
+              ( input clk
+              , input reset
 
-                    , output data_o
-                    , output valid_o
-                    );
+              , input [line_width_p-1:0]         posedge_value_i
+              , input [line_width_p-1:0]         negedge_value_i
+              , input [$clog2(line_width_p)-1:0] input_bit_selector_i
+              
+              , input                            enque_i
+              , output                           ready_o
+              
+              , output                           logic_analyzer_data_o
+              , output                           v_o
+              , input                            deque_i
 
-  // Synchronizer for samples from both edges
-  logic [1:0] synchronizer_out;
-  always_ff @  (posedge clk)
-    synchronizer_out <= data_i;
-  
-  // Internal signals
-  logic LA_enque, ready, deque;
-  logic [1:0] data;
-
-  // If enque is enabled, it will enque until its full
-  assign LA_enque = ~reset & enque_i & ready;
-
-  bsg_fifo_1r1w_small #(.width_p(2)
-                       ,.els_p(LA_els_p) 
-                       ) LA_fifo
-    
-    ( .clk_i(clk)
-    , .reset_i(reset)
-
-    , .data_i(synchronizer_out)
-    , .v_i(LA_enque)
-    , .ready_o(ready)
-
-    , .v_o(valid_o)
-    , .data_o(data)
-    , .yumi_i(deque)
-    );
+              );
 
 
-  /*
-  // for testing with the count of free slots
-  logic [$clog2(LA_els_p):0] count;
-  bsg_fifo_1r1w_small_free_counter #(.width_p(2)
-                                    ,.els_p(LA_els_p) 
-                                    ) LA_fifo
-    
-    ( .clk_i(clk)
-    , .reset_i(reset)
 
-    , .data_i(synchronizer_out)
-    , .v_i(LA_enque)
-    , .ready_o(ready)
+// Select one bit of input signal for Logic Analyzer
+// LSB is posedge and MSB is negedge
+logic [1:0] LA_selected_line;
+assign LA_selected_line[0] = posedge_value_i[input_bit_selector_i];
+assign LA_selected_line[1] = negedge_value_i[input_bit_selector_i];
 
-    , .v_o(valid_o)
-    , .data_o(data)
-    , .yumi_i(deque)
+bsg_fifo_1r1w_narrowed 
+            #( .width_p(2)
+             , .els_p(LA_els_p)
+             , .width_out_p(1)
 
-    , .count_o(count)
-    );
-  */
+             , .lsb_to_msb_p(1)     
+             , .ready_THEN_valid_p(0)
+             ) narrowed_fifo
 
-  // selecting from two FIFO outputs and sending one out at a time
-  bsg_channel_narrow #( .width_in_p(2)
-                      , .width_out_p(1)
-                      , .lsb_to_msb_p(1)
-                      ) LA_out_bit_selector
-       ( .clk(clk)
-       , .reset(reset)
-  
-       , .data_i(data)
-       , .deque_o(deque)
-  
-       , .data_o(data_o)
-       , .deque_i(deque_i)
-       
-       );
-  
+             ( .clk_i(clk)
+             , .reset_i(reset)
+         
+             , .data_i(LA_selected_line)
+             , .v_i(enque_i)
+             , .ready_o(ready_o)
+         
+             , .v_o(v_o)
+             , .data_o(logic_analyzer_data_o)
+             , .yumi_i(deque_i)
+         
+             );
+
 endmodule

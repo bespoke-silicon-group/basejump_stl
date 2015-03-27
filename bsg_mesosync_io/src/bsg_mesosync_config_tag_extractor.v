@@ -28,6 +28,7 @@ module bsg_mesosync_config_tag_extractor
                     , output [$clog2(width_lp)-1:0]   output_bit_selector_ch1_o
                     , output [$clog2(width_lp)-1:0]   input_bit_selector_ch2_o
                     , output [$clog2(width_lp)-1:0]   output_bit_selector_ch2_o
+                    , output logic                    fifo_en_o
                     , output logic                    loop_back_o
                     , output logic                    channel_reset_o
                     );
@@ -39,7 +40,7 @@ logic [1:0] cfg_reset, cfg_reset_r;
 parameter divider_node_data_width_p     = $bits(clk_divider_o) + 2;
 parameter ch1_bit_cfg_node_data_width_p = $bits(bit_cfg_o[ch1_width_p-1:0]);
 parameter ch2_bit_cfg_node_data_width_p = $bits(bit_cfg_o[width_lp-1:ch1_width_p]);
-parameter cfg_node_data_width_p         = $bits(mode_cfg_o) + 4*$clog2(width_lp)+1;
+parameter cfg_node_data_width_p         = $bits(mode_cfg_o) + 4*$clog2(width_lp)+2;
 
 //------------------------------------------------
 //--------------- CFGTAG NODES -------------------
@@ -78,7 +79,7 @@ config_node#(.id_p(cfg_tag_base_id_p+1)
             (.clk(clk)
             ,.reset(reset) 
             ,.config_i(relay_out[1])
-            ,.data_o({loop_back_o,mode_cfg_o,
+            ,.data_o({fifo_en_o,loop_back_o,mode_cfg_o,
                       input_bit_selector_ch1_o,output_bit_selector_ch1_o,
                       input_bit_selector_ch2_o,output_bit_selector_ch2_o})
             );

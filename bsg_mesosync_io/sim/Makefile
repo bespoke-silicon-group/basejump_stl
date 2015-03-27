@@ -2,7 +2,6 @@ CAD_PATH        = ../../../cad/
 SRC_PATH        = ../src
 CFG_TAG_PATH    = ../../config_net/src
 DEFINES_PATH    = ../../bsg_misc
-FIFO_PATH       = ../../../FIFO/src
 DATA_FLOW_PATH  = ../../bsg_dataflow
 MISC_PATH       = ../../bsg_misc
 TESTBENCH_PATH  = ../tests/mesosync_io_w_loopback_test
@@ -34,14 +33,17 @@ else
   HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_channel_narrow.v 
   HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_fifo_1r1w_small_credit_on_input.v 
   HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_ready_to_credit_flow_converter.v 
-  HDL_SOURCE +=	$(FIFO_PATH)/bsg_loopback_credit_protocol.v 
+  HDL_SOURCE +=	$(SRC_PATH)/bsg_credit_resolver_w_loopback.v 
+  HDL_SOURCE +=	$(MISC_PATH)/bsg_counter_w_overflow.v 
+  HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_fifo_1r1w_narrowed.v 
+  HDL_SOURCE +=	$(SRC_PATH)/bsg_ddr_sampler.v 
   HDL_SOURCE +=	$(SRC_PATH)/bsg_logic_analyzer.v 
-  HDL_SOURCE += $(SRC_PATH)/bsg_mesosync_channel.v 
+  HDL_SOURCE += $(SRC_PATH)/bsg_mesosync_link_barebones.v 
+  HDL_SOURCE += $(SRC_PATH)/bsg_mesosync_input.v 
+  HDL_SOURCE += $(SRC_PATH)/bsg_mesosync_output.v 
   HDL_SOURCE +=	$(SRC_PATH)/bsg_mesosync_config_tag_extractor.v 
-  HDL_SOURCE +=	$(SRC_PATH)/bsg_mesosync_io_w_loopback.v
+  HDL_SOURCE +=	$(SRC_PATH)/bsg_mesosync_link.v
 	
-  #HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_fifo_1r1w_small_free_counter.v 
-
 endif
 
 HDL_SOURCE += $(CAD_PATH)/flow/vcs/setup/vcsdumper.v $(TESTBENCH) 
