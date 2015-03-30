@@ -3,10 +3,6 @@
 // the data
 module bsg_fifo_1r1w_small_credit_on_input #( parameter width_p      = -1
                                             , parameter els_p        = -1
-                                      
-                                            //localpara
-                                            , parameter ptr_width_lp = 
-                                                `BSG_SAFE_CLOG2(els_p)+1
                                             )                           
                             
     ( input                clk_i
@@ -37,8 +33,12 @@ always_ff @ (posedge clk_i)
 // system not to send extra inputs and every input must be 
 // stored
 // FIFO used to keep the data values
+// credit protocol must take care of not enquing while fifo 
+// is full, and assert an error otherwise, so it is like a
+// fifo with ready_then_valid protocol
 bsg_fifo_1r1w_small #( .width_p(width_p)
                      , .els_p(els_p) 
+                     , .ready_THEN_valid_p(1)
                      ) fifo
 
                      ( .clk_i(clk_i)
@@ -53,20 +53,5 @@ bsg_fifo_1r1w_small #( .width_p(width_p)
                      , .yumi_i(yumi_i)
 
                      );
-
-    
-// Displaying errors in case of overflow or underflow
-//synopsys translate_off		
-always_ff @ (posedge clk_i)    
-  begin  
-		if (v_i  & ~ready & ~reset_i)
-				$display("%m error: fifo-with-credit was not ready to \
-          accept new data at time %t", $time);
-		if (~v_o & yumi_i & ~reset_i)
-				$display("%m error: fifo-with-credit did not send out \
-          any data but received yumi at time %t", $time);			
-  end
-//synopsys translate_on								
-
-
+ 
 endmodule 

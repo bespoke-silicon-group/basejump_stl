@@ -19,7 +19,7 @@ bit_cfg_s [bit_num_p-1:0] bit_cfg;
 
 bsg_mesosync_channel 
            #(  .width_p(bit_num_p)
-             , .log_LA_fifo_depth_p(5)
+             , .LA_els_p(5)
              ) DUT
             (  .clk(clk)
              , .reset(reset_r)
@@ -51,24 +51,25 @@ always_ff@(posedge clk)
   reset_r <= reset;
 
 assign from_IO   = {1'b0,1'b0,toggle_bit,1'b1,1'b1};
-assign clk_divider.output_clk_divider = 4'b1111;
-assign clk_divider.input_clk_divider = 4'b1111;
+assign from_chip = '0;
+assign clk_divider.output_clk_divider = 4'b0011;
+assign clk_divider.input_clk_divider = 4'b0011;
 
 int i;
 
 initial begin
 
-  $display("clk\t reset\t from_IO to_IO\t valid\t sent\t");
-  $monitor("%b\t %b\t %b\t %b\t %b\t %b",clk,reset,from_IO,to_IO,valid,data_sent);
-
+  $display("clk\t reset\t from_IO to_IO\t valid\t sent");
+  $monitor("%b\t %b\t %b\t %b\t %b\t %b",clk,reset,from_IO,to_IO,valid,DUT.data_sent);
+  
   for (i=0 ; i<bit_num_p; i= i+1)
-  bit_cfg[i]='{clk_edge_selector:1'b0, phase: 4'b0000};
+    bit_cfg[i]='{clk_edge_selector:1'b0, phase: 4'b0000};
+  
   input_bit_selector_ch1  = 3'b010;
   output_bit_selector_ch1 = 3'b011;
   input_bit_selector_ch2  = 3'b001;
   output_bit_selector_ch2 = 3'b100;
   mode_cfg = create_cfg (LA_STOP,1'b0,STOP);
-  from_chip = 5'b0;
   
   reset = 1'b1;
   @ (negedge clk)
@@ -77,18 +78,9 @@ initial begin
   @ (posedge clk)
   $display("module has been reset");
  
-  @ (negedge clk)
-  @ (negedge clk)
  
-  mode_cfg = create_cfg (LA_STOP,1'b0,NORM);
-  from_chip = 5'b10101;
-
-  #1000
-
-  @(negedge clk)
-  from_chip = 5'b01010;
-  
-  #1000
+  mode_cfg = create_cfg (LA_STOP,1'b0,SYNC2);
+  #10000
 
   $stop;
 end

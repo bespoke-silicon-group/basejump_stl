@@ -1,10 +1,10 @@
 // Bitwise extension for mux operation
 
 module bsg_mux_bitwise #(parameter width_p = -1)
-                        ( input  [width_p-1:0] select
-                        , input  [width_p-1:0] A
-                        , input  [width_p-1:0] B
-                        , output [width_p-1:0] out
+                        ( input        [width_p-1:0] select
+                        , input        [width_p-1:0] A
+                        , input        [width_p-1:0] B
+                        , output logic [width_p-1:0] out
                         );
 
 integer i;
