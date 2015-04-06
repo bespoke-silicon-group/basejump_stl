@@ -85,7 +85,8 @@ module bsg_fifo_1r1w_pseudo_large #(parameter width_p = -1
 				      // be parameterized with the value n, so that it could
 				      // be adapted to deal with bursts,
 				      // or if yumi is not early.
-				      , parameter early_yumi_p = 0
+				      // if yumi is on critical path; increase fifo size to 3. 
+				      , parameter early_yumi_p = 1
 				      , parameter verbose_p = 0
 				      )
    (input   clk_i
@@ -205,7 +206,8 @@ module bsg_fifo_1r1w_pseudo_large #(parameter width_p = -1
       );
 
    bsg_two_fifo #(.width_p(width_p)
-		  ,. verbose_p(verbose_p)) little2p
+		  ,. verbose_p(verbose_p)
+		  ,. allow_enq_deq_on_full_p(early_yumi_p)) little2p
      (.clk_i   (clk_i)
       ,.reset_i(reset_i)
       ,.ready_o(little_ready_lo)
