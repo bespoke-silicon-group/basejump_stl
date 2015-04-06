@@ -7,7 +7,9 @@
 
 module bsg_mem_1r1w #(parameter width_p=-1
                       , parameter els_p=-1
-                      , parameter addr_width_lp=$clog2(els_p))
+                      , parameter read_write_same_addr_p=0
+                      , parameter addr_width_lp=$clog2(els_p)
+                      )
    (input   w_clk_i
     , input w_reset_i
 
@@ -24,6 +26,7 @@ module bsg_mem_1r1w #(parameter width_p=-1
 
    logic [width_p-1:0]    mem [els_p-1:0];
 
+   // this implementation ignores the r_v_i
    assign r_data_o = mem[r_addr_i];
 
    always_ff @(posedge w_clk_i)
@@ -31,6 +34,9 @@ module bsg_mem_1r1w #(parameter width_p=-1
        begin
           assert (w_addr_i < els_p)
             else $error("Invalid address %x to %m of size %x\n", w_addr_i, els_p);
+
+          assert (~(r_addr_i == w_addr_i && w_v_i && r_v_i && !read_write_same_addr_p))
+            else $error("%m: Attempt to read and write same address");
 
           mem[w_addr_i] <= w_data_i;
        end
