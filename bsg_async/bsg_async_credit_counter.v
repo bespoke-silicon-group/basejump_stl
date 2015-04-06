@@ -89,6 +89,27 @@ module bsg_async_credit_counter #(parameter max_tokens_p = "inv"
     ,.w_ptr_gray_r_rsync_o(w_counter_gray_r_rsync) // synchronized with r clock domain
     );
 
+/*
+    previously, we converted w_counter to binary, appended lg_credit_to_token_decimation 1'b0's and compared them
+    but instead, we convert the other way now.
+    assign r_credits_avail_o = r_infinite_credits_i | ~(w_counter_binary_r_rsync_padded == r_counter_r);
+*/
+
+   wire [w_counter_width_lp-1:0] r_counter_r_hi_bits         =   r_counter_r[lg_credit_to_token_decimation_p+:w_counter_width_lp];
+   wire                          r_counter_r_lo_bits_nonzero = | r_counter_r[0+:lg_credit_to_token_decimation_p];
+   wire [w_counter_width_lp-1:0] r_counter_r_hi_bits_gray    = (r_counter_r_hi_bits >> 1) ^ r_counter_r_hi_bits;
+
+   assign r_credits_avail_o = r_infinite_credits_i | r_counter_r_lo_bits_nonzero | (r_counter_r_hi_bits_gray != w_counter_gray_r_rsync);
+
+
+   // ***************************************
+   //  for debug
+   //
+   //
+
+
+   // synopsys translate_off
+
    bsg_gray_to_binary #(.width_p(w_counter_width_lp)) bsg_g2b
      (.gray_i(w_counter_gray_r_rsync)
       ,.binary_o(w_counter_binary_r_rsync)
@@ -96,16 +117,7 @@ module bsg_async_credit_counter #(parameter max_tokens_p = "inv"
 
    wire [r_counter_width_lp-1:0]  w_counter_binary_r_rsync_padded = { w_counter_binary_r_rsync, { lg_credit_to_token_decimation_p {1'b0 } }};
 
-   assign r_credits_avail_o = r_infinite_credits_i | ~(w_counter_binary_r_rsync_padded == r_counter_r);
-
-   // ***************************************
-   //  for debug
-   //
-   //
-
    wire  [r_counter_width_lp-1:0] r_free_credits =  w_counter_binary_r_rsync_padded - r_counter_r;
-
-   // synopsys translate_off
 
    logic [r_counter_width_lp-1:0] r_free_credits_r;
 
