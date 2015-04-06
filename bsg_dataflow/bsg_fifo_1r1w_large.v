@@ -344,7 +344,7 @@ endmodule
 // to enque two elements in a row.
 //
 
-// mbt: note code moved to bsg_fifo_1r1w_pseudo_large
+// mbt: note bsg_fifo_two_port_bank code moved to bsg_fifo_1r1w_pseudo_large
 
 
 module bsg_fifo_two_port_banked #(parameter width_p         = -1
