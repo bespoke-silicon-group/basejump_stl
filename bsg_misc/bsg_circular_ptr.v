@@ -1,3 +1,4 @@
+`include "bsg_defines.v"
 // MBT
 //
 // 10/27/14
@@ -10,7 +11,8 @@
 module bsg_circular_ptr #(parameter slots_p     = -1
                           , parameter max_add_p = -1
                           // local param
-                          , parameter ptr_width_lp = `BSG_SAFE_CLOG2(slots_p))
+                          , parameter ptr_width_lp = `BSG_SAFE_CLOG2(slots_p)
+			  )
    (input clk
     , input reset_i
     , input  [$clog2(max_add_p+1)-1:0] add_i
@@ -37,7 +39,10 @@ module bsg_circular_ptr #(parameter slots_p     = -1
        begin
 	  // reduce critical path on add_i signal
 	  if (max_add_p == 1)
-	    assign  ptr_n = add_i ? (ptr_width_lp ' (ptr_r + 1'b1)) : ptr_r;
+	    begin
+	       wire [ptr_width_lp-1:0] ptr_r_p1 = ptr_r + 1'b1;
+	       assign  ptr_n = add_i ? ptr_r_p1 : ptr_r;
+	    end
 	  else
 	    assign  ptr_n = ptr_width_lp ' (ptr_r + add_i);
        end
