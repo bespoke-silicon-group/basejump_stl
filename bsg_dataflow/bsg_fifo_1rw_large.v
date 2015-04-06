@@ -1,3 +1,4 @@
+`include "bsg_defines.v"
 // MBT
 // 11/9/14
 //
@@ -38,7 +39,7 @@ module bsg_fifo_1rw_large #(parameter width_p         = -1
 
    always_ff @(posedge clk_i)
      if (reset_i)
-       last_op_is_read_r = 1;
+       last_op_is_read_r <= 1;
      else
        if (v_i)
          last_op_is_read_r <= mem_re;
