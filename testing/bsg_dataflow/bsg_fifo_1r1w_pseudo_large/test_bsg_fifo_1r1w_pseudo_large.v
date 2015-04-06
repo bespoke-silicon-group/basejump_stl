@@ -1,6 +1,7 @@
 
 module testbench;
 
+//   localparam test_early_yumi_lp = 1;
    localparam test_early_yumi_lp = 1;
    
 
@@ -17,7 +18,7 @@ module testbench;
    bsg_nonsynth_clock_gen #(.cycle_time_p(cycle_time_lp)) clock_gen
    (.o(clk));
 
-   bsg_nonsynth_reset_gen #(.reset_cycles_lo_p(5)
+  bsg_nonsynth_reset_gen #(.reset_cycles_lo_p(5)
                            ,.reset_cycles_hi_p(5)
                            ) reset_gen
      (.clk_i(clk)
@@ -96,10 +97,10 @@ module testbench;
 
    wire test_yumi_in = test_ready_in & test_valid_out;
 
-   bsg_fifo_1r1w_pseudo_large #(.width_p(width_lp)
-				,.els_p(els_lp)
-				,.early_yumi(test_early_yumi_lp)
-				,.verbose_p(fifo_verbose_lp)
+   bsg_fifo_1r1w_pseudo_large #(.width_p      (width_lp          )
+				,.els_p       (els_lp            )
+				,.early_yumi_p(test_early_yumi_lp)
+				,.verbose_p   (fifo_verbose_lp   )
 				) fifo
      (.clk_i(clk)
       ,.reset_i(reset      )
@@ -130,7 +131,7 @@ module testbench;
           $finish();
      end
 
-   always @(posedge clk)
+   always @(negedge clk)
      begin
         assert (reset | ((test_yumi_in !== 1'b1) | (test_data_check == test_data_out)))
           else
@@ -140,10 +141,12 @@ module testbench;
             end
         if (~reset & test_yumi_in === 1'b1)
           if (verbose_lp | ((test_data_out & 16'hffff) == 0))
-            $display("### %x received %x (1rw r=%x w=%x f=%x e=%x) pattern=%b storage=%d"
-                     , ctr, test_data_out
-		     , fifo.big1p.rd_ptr, fifo.big1p.wr_ptr, fifo.big1p.fifo_full, fifo.big1p.fifo_empty
-		     , test_pattern, fifo.num_elements_debug);
+	    begin
+               $display("### %x received %x (1rw r=%x w=%x f=%x e=%x) pattern=%b storage=%d"
+			, ctr, test_data_out
+			, fifo.big1p.rd_ptr, fifo.big1p.wr_ptr, fifo.big1p.fifo_full, fifo.big1p.fifo_empty
+			, test_pattern, fifo.num_elements_debug);
+	    end
 
         if (verbose_lp | 1)
           if (fifo.num_elements_debug > els_lp+2)
