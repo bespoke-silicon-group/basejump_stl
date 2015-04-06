@@ -13,8 +13,8 @@
 
 module bsg_async_fifo #(parameter   lg_size_p = "inv"
                         , parameter   width_p = "inv"
-			// we allow the control bits to be separated from
-			// the data bits to allow for better control optimization.
+                        // we allow the control bits to be separated from
+                        // the data bits to allow for better control optimization.
                         // control_width_p is how many of the width_p bits are control bits;
                         // these bits should be at the top of the array
                         , parameter   control_width_p = 0)
@@ -42,32 +42,43 @@ module bsg_async_fifo #(parameter   lg_size_p = "inv"
    logic [lg_size_p:0] w_ptr_gray_r;
    logic [lg_size_p:0] w_ptr_gray_r_rsync, r_ptr_gray_r_wsync, r_ptr_binary_r, w_ptr_binary_r;
 
-   logic [(width_p - control_width_p) - 1:0] bsg_sync_mem_clock_cross [0:size_lp-1];
-
-   logic [control_width_p - 1:0] 	   bsg_sync_mem_ctrl_clock_cross [0:size_lp-1];
-
    wire               r_valid_o_tmp; // remove inout warning from Lint
    assign r_valid_o = r_valid_o_tmp;
 
-   // instantiate ram
-   always @(posedge w_clk_i)
-     if (w_enq_i)
-	  bsg_sync_mem_clock_cross[w_ptr_binary_r[0+:lg_size_p]]      <= w_data_i[width_p - control_width_p - 1:0];
+   bsg_mem_1r1w #(.width_p(width_p-control_width_p)
+                  ,.els_p(size_lp)
+		  ,.read_write_same_addr_p(1)
+                  ) MSYNC_1r1w
+     (.w_clk_i    (w_clk_i  )
+      ,.w_reset_i (w_reset_i)
+
+      ,.w_v_i   (w_enq_i                                  )
+      ,.w_addr_i(w_ptr_binary_r[0+:lg_size_p]             )
+      ,.w_data_i(w_data_i[0+:(width_p - control_width_p)] )
+
+      ,.r_v_i   (1'b1                                     )
+      ,.r_addr_i(r_ptr_binary_r[0+:lg_size_p]             )
+      ,.r_data_o(r_data_o[0+:(width_p - control_width_p)] )
+      );
 
    if (control_width_p > 0)
-     begin
-	always @(posedge w_clk_i)
-	  if (w_enq_i)
-	    bsg_sync_mem_ctrl_clock_cross[w_ptr_binary_r[0+:lg_size_p]] <= w_data_i[(width_p-1)-:control_width_p];
+     begin : ctrl
+        bsg_mem_1r1w #(.width_p(control_width_p)
+                       ,.els_p(size_lp)
+		       ,.read_write_same_addr_p(1)
+                       ) MSYNC_1r1w
+          (.w_clk_i   (w_clk_i  )
+           ,.w_reset_i(w_reset_i)
 
-        // omitting top bit of pointer
-        assign r_data_o = {   bsg_sync_mem_ctrl_clock_cross[r_ptr_binary_r[0+:lg_size_p]]
-	                     , bsg_sync_mem_clock_cross     [r_ptr_binary_r[0+:lg_size_p]] };
+           ,.w_v_i    (w_enq_i                           )
+           ,.w_addr_i (w_ptr_binary_r[0+:lg_size_p]      )
+           ,.w_data_i (w_data_i[(width_p-1)-:control_width_p])
+
+           ,.r_v_i    (1'b1                              )
+           ,.r_addr_i (r_ptr_binary_r[0+:lg_size_p]      )
+           ,.r_data_o (r_data_o[(width_p-1)-:control_width_p])
+           );
      end
-       else
-	 begin
-            assign r_data_o = { bsg_sync_mem_clock_cross     [r_ptr_binary_r[0+:lg_size_p]] };
-	 end
 
    // pointer from writer to reader (input to output of FIFO)
    bsg_async_ptr_gray #(.lg_size_p(lg_size_p+1)) bapg_wr
