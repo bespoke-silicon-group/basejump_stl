@@ -58,12 +58,12 @@ module bsg_rr_f2f_input #(parameter   width_p              = "inv"
 
    logic [`BSG_SAFE_CLOG2(num_in_p)-1:0] iptr_r;
 
-   wire [width_p*num_in_p-1:0]      data_i_flat;
+   wire [width_p*num_in_p-1:0]      data_i_flat = ({ >> {data_i} });
    wire [width_p*middle_meet_p-1:0] data_head_o_flat;
 
    // 2D array format converters
-   bsg_flatten_2D_array #(.width_p(width_p), .items_p(num_in_p))
-   bf2Da (.i(data_i),           .o(data_i_flat));
+   //bsg_flatten_2D_array #(.width_p(width_p), .items_p(num_in_p))
+   //bf2Da (.i(data_i),           .o(data_i_flat));
 
    bsg_make_2D_array    #(.width_p(width_p), .items_p(middle_meet_p))
    bm2Da (.i(data_head_o_flat), .o(data_head_o));
@@ -330,8 +330,10 @@ module bsg_round_robin_fifo_to_fifo
           begin : in_chan
              wire [width_p-1:0] data_head_tmp [middle_meet_lp-1:0];
 
-             bsg_flatten_2D_array #(.width_p(width_p), .items_p(middle_meet_lp))
-             bf2Da (.i(data_head_tmp),.o(data_head[i]));
+             //bsg_flatten_2D_array #(.width_p(width_p), .items_p(middle_meet_lp))
+             //bf2Da (.i(data_head_tmp),.o(data_head[i]));
+
+	     assign data_head[i] = { >> {data_head_tmp} };
 
              // INPUT SIDE (input: valid_i, data_i; middle input; go_channels)
              bsg_rr_f2f_input #(.width_p(width_p)
@@ -387,8 +389,10 @@ module bsg_round_robin_fifo_to_fifo
                  bm2Da (.i( data_head[in_top_channel_i][0+:`BSG_MIN(i+1,middle_meet_lp)*width_p])
                         ,.o(data_head_array));
 
-                 bsg_flatten_2D_array #(.width_p(width_p), .items_p(i+1))
-                 bf2Da (.i(data_o_array), .o(data_int_o[i][width_p*(i+1)-1:0]));
+                 //bsg_flatten_2D_array #(.width_p(width_p), .items_p(i+1))
+                 //bf2Da (.i(data_o_array), .o(data_int_o[i][width_p*(i+1)-1:0]));
+
+		 assign data_int_o[i][width_p*(i+1)-1:0] = { >> {data_o_array}};
 
                  bsg_rr_f2f_output #(.width_p(width_p)
                                      ,.num_out_p(i+1)
