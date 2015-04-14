@@ -33,15 +33,15 @@ module bsg_mesosync_output
                    , output logic [width_p-1:0]     pins_o
                    
                    // Logic analyzer signals for mesosync_input module
-                   , input [1:0]                    logic_analyzer_data_i
+                   , input                          logic_analyzer_data_i
                    , input                          LA_valid_i
                    , output                         ready_to_LA_o
 
                    // Configuration inputs
                    , input  [maxDivisionWidth-1:0]  output_clk_divider_i
                    , input  output_mode_e           output_mode_i
-                   , input  [$clog2(width_p)-1:0]   output_bit_selector_ch1_i
-                   , input  [$clog2(width_p)-1:0]   output_bit_selector_ch2_i
+                   , input  [$clog2(width_p)-1:0]   la_output_bit_selector_i
+                   , input  [$clog2(width_p)-1:0]   v_output_bit_selector_i
 
                    );
 
@@ -104,12 +104,10 @@ wire [counter_bits_lp-1:0] out_ctr_r_p1 = out_ctr_r + 1'b1;
 wire [(((width_p+1)>>1)<<1)-1:0] inactive_pattern
                                  = { ((width_p+1) >> 1) { (2'b10) } };
 
-// Demux that merges 1 bit outputs of Logic Analyzers 
+// Demux that merges 1 bit outputs of Logic Analyzer and its valid signal
 logic [width_p-1:0] output_demux;
-assign output_demux = (LA_valid_i) ? 
-                      ((logic_analyzer_data_i[1] << output_bit_selector_ch2_i)
-                      |(logic_analyzer_data_i[0] << output_bit_selector_ch1_i))
-                      : 0;
+assign output_demux = (LA_valid_i << v_output_bit_selector_i)
+                     |(logic_analyzer_data_i << la_output_bit_selector_i);
 
 // determning output based on output mode configuration
 always_comb

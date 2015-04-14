@@ -62,10 +62,9 @@ module bsg_mesosync_link
 clk_divider_s                clk_divider;
 bit_cfg_s [width_lp-1:0]     bit_cfg;
 mode_cfg_s                   mode_cfg;
-logic [$clog2(width_lp)-1:0] input_bit_selector_ch1;
-logic [$clog2(width_lp)-1:0] output_bit_selector_ch1;
-logic [$clog2(width_lp)-1:0] input_bit_selector_ch2;
-logic [$clog2(width_lp)-1:0] output_bit_selector_ch2;
+logic [$clog2(width_lp)-1:0] la_intput_bit_selector;
+logic [$clog2(width_lp)-1:0] la_output_bit_selector;
+logic [$clog2(width_lp)-1:0] v_output_bit_selector;
 logic                        en_loop_back,fifo_en;
 logic                        channel_reset;
 logic                        ready, valid;
@@ -89,10 +88,9 @@ bsg_mesosync_config_tag_extractor
              , .clk_divider_o(clk_divider)
              , .bit_cfg_o(bit_cfg)
              , .mode_cfg_o(mode_cfg)
-             , .input_bit_selector_ch1_o(input_bit_selector_ch1)
-             , .output_bit_selector_ch1_o(output_bit_selector_ch1)
-             , .input_bit_selector_ch2_o(input_bit_selector_ch2)
-             , .output_bit_selector_ch2_o(output_bit_selector_ch2)
+             , .la_input_bit_selector_o(la_intput_bit_selector)
+             , .la_output_bit_selector_o(la_output_bit_selector)
+             , .v_output_bit_selector_o(v_output_bit_selector)
              , .fifo_en_o(fifo_en)
              , .loop_back_o(en_loop_back)
              , .channel_reset_o(channel_reset)
@@ -110,10 +108,9 @@ bsg_mesosync_link_barebones
              , .clk_divider_i(clk_divider)
              , .bit_cfg_i(bit_cfg)
              , .mode_cfg_i(mode_cfg)
-             , .input_bit_selector_ch1_i(input_bit_selector_ch1)
-             , .output_bit_selector_ch1_i(output_bit_selector_ch1)
-             , .input_bit_selector_ch2_i(input_bit_selector_ch2)
-             , .output_bit_selector_ch2_i(output_bit_selector_ch2)
+             , .la_input_bit_selector_i(la_intput_bit_selector)
+             , .la_output_bit_selector_i(la_output_bit_selector)
+             , .v_output_bit_selector_i(v_output_bit_selector)
 
         
              // Sinals with their acknowledge

@@ -1,6 +1,19 @@
 //`include "definitions.v"
 `define half_period 16
 parameter bit_num_p = 3;
+  
+// 5 type of messages that would be send to config_tag for configuration
+`define reset_config_tag  send_config_tag(cfg_clk,1'b1,config_data);
+`define send_clk_reset(R) send_config_tag(cfg_clk,1'b0,config_data, \
+                            {R,clk_divider},8'd10,2+$bits(clk_divider));
+`define send_link_config  send_config_tag(cfg_clk,1'b0,config_data, \
+                            {fifo_en,en_lb,mode_cfg,ch_bit_selector}, \
+                            8'd11,$bits(mode_cfg)+$bits(ch_bit_selector)+2);
+  
+`define send_ch1_bit_cnfg send_config_tag(cfg_clk,1'b0,config_data, \
+                            bit_cfg_ch1,8'd12,$bits(bit_cfg_ch1));
+`define send_ch2_bit_cnfg send_config_tag(cfg_clk,1'b0,config_data, \
+                            bit_cfg_ch2,8'd13,$bits(bit_cfg_ch2));
 
 module mesosynctb();
 
@@ -21,9 +34,7 @@ logic [1:0] out_selector;
 logic valid_to_meso,credit_to_meso;
 logic [3:0] count;
 logic [bit_num_p*2-1:0] pat_out, lp_data;
-logic [7:0] pattern_1, pattern_2;
-
-assign conf = '{cfg_clk: cfg_clk, cfg_bit: config_data};
+logic [7:0] pattern;
 
 bsg_mesosync_link
            #(  .ch1_width_p(bit_num_p)    
@@ -54,6 +65,8 @@ bsg_mesosync_link
      
             );
 
+assign conf = '{cfg_clk: cfg_clk, cfg_bit: config_data};
+
 // Generating delays on input and output lines and the fixed delay
 // line from the channel
 genvar ii;
@@ -68,24 +81,25 @@ endgenerate
 // configuration signals
 clk_divider_s clk_divider;
 mode_cfg_s mode_cfg;
-logic [$clog2(2*bit_num_p)-1:0] input_bit_selector_ch1;
-logic [$clog2(2*bit_num_p)-1:0] output_bit_selector_ch1;
-logic [$clog2(2*bit_num_p)-1:0] input_bit_selector_ch2;
-logic [$clog2(2*bit_num_p)-1:0] output_bit_selector_ch2;
-logic [$clog2(2*bit_num_p)*4-1:0] ch_bit_selector;
+logic [$clog2(2*bit_num_p)-1:0] la_input_bit_selector;
+logic [$clog2(2*bit_num_p)-1:0] la_output_bit_selector;
+logic [$clog2(2*bit_num_p)-1:0] v_output_bit_selector;
+logic [$clog2(2*bit_num_p)*3-1:0] ch_bit_selector;
 bit_cfg_s [2*bit_num_p-1:0] bit_cfg;
 bit_cfg_s [bit_num_p-1:0] bit_cfg_ch1;
 bit_cfg_s [bit_num_p-1:0] bit_cfg_ch2;
 logic en_lb, fifo_en;
 
-assign ch_bit_selector =  {input_bit_selector_ch1,output_bit_selector_ch1,
-                           input_bit_selector_ch2,output_bit_selector_ch2};
+assign ch_bit_selector =  {la_input_bit_selector,
+                           la_output_bit_selector,
+                           v_output_bit_selector
+                           };
+
 assign bit_cfg_ch1 = bit_cfg [bit_num_p-1:0];
 assign bit_cfg_ch2 = bit_cfg [bit_num_p*2-1:bit_num_p];
 
 // pattern for sending to channel
-assign pat_out = (pattern_1[0] << output_bit_selector_ch1)| 
-                 (pattern_2[0] << output_bit_selector_ch2);
+assign pat_out = (pattern[0] << la_output_bit_selector);
 
 assign to_meso = (out_selector == 2) ? lp_data : 
                 ((out_selector == 1) ? pat_out : 0);
@@ -103,10 +117,9 @@ initial begin
   clk_divider.input_clk_divider  = 4'b0111;
   for (i=0 ; i<2*bit_num_p; i= i+1)
     bit_cfg[i]='{clk_edge_selector:1'b0, phase: 4'b0000};
-  input_bit_selector_ch1  = 3'b000;
-  output_bit_selector_ch1 = 3'b000;
-  input_bit_selector_ch2  = 3'b001;
-  output_bit_selector_ch2 = 3'b001;
+  la_input_bit_selector  = 3'b000;
+  la_output_bit_selector = 3'b000;
+  v_output_bit_selector = 3'b001;
   mode_cfg = create_cfg (LA_STOP,1'b0,PAT);
   en_lb = 0;
   fifo_en = 0;
@@ -121,34 +134,31 @@ initial begin
   reset = 1'b0;
   @ (posedge clk)
   $display("module has been reset");
-  send_config_tag(cfg_clk,1'b1,config_data);
+  `reset_config_tag
   $display("config tag has been reset");
   $display("\n*****************************");
   $display("sending initial configuration");
   $display("*****************************\n");
 
   // initialize clk divider, disable loop back, ready to be reset
-  send_config_tag(cfg_clk,1'b0,config_data,
-                  {2'b01,clk_divider},8'd10,2+$bits(clk_divider));
+  `send_clk_reset(2'b01)
   
   // set mode configuration and select input and output bits 
   // for each channel logic analyzer
-  send_config_tag(cfg_clk,1'b0,config_data,{fifo_en,en_lb,mode_cfg,ch_bit_selector},
-                          8'd11,$bits(mode_cfg)+$bits(ch_bit_selector)+2);
+  `send_link_config
   
   // set bit configuration for channel 1 
-  send_config_tag(cfg_clk,1'b0,config_data,bit_cfg_ch1,8'd12,$bits(bit_cfg_ch1));
+  `send_ch1_bit_cnfg
   
   // set bit configuration for channel 2
-  send_config_tag(cfg_clk,1'b0,config_data,bit_cfg_ch2,8'd13,$bits(bit_cfg_ch2));
+  `send_ch2_bit_cnfg
   
   $display("\n*****************************");
   $display("     reseting the channel");
   $display("*****************************\n");
 
   // reset the mesosync 
-  send_config_tag(cfg_clk,1'b0,config_data,
-                  {2'b10,clk_divider},8'd10,2+$bits(clk_divider));
+  `send_clk_reset(2'b10)
   $display("mesosync IO has been reset");
   
   #500
@@ -159,12 +169,12 @@ initial begin
   
   // change mode to Sync1
   mode_cfg = create_cfg (LA_STOP,1'b0,SYNC1);
-  send_config_tag(cfg_clk,1'b0,config_data,{fifo_en,en_lb,mode_cfg,ch_bit_selector},
-                          8'd11,$bits(mode_cfg)+$bits(ch_bit_selector)+2);
+  `send_link_config
   #1500
   $display("\n*****************************");
   $display("bit line allignment performed");
   $display("*****************************\n");
+  $display("\n\ncycle\t to_meso  from_meso");
   $monitor("@%g\t %b\t %b",cycle_counter,to_meso,from_meso_fixed);
 
   #500
@@ -175,11 +185,8 @@ initial begin
   
   // change mode to Sync2
   mode_cfg = create_cfg (LA_STOP,1'b0,SYNC2);
-  send_config_tag(cfg_clk,1'b0,config_data,{fifo_en,en_lb,mode_cfg,ch_bit_selector},
-                          8'd11,$bits(mode_cfg)+$bits(ch_bit_selector)+2);
+  `send_link_config
   #1500
-  $monitor("@%g %b\t %b",cycle_counter,to_meso,from_meso_fixed);
-  //$monitor("@%g(s) %b\t %b",cycle_counter_slow,to_meso,from_meso_fixed);
   #1000
   $display("monitor is off");
   $monitoroff;
@@ -191,23 +198,27 @@ initial begin
   $display("    output sync finished      ");
   $display("*****************************\n");
   $display("\n");
+
   $display("\n*****************************");
   $display("sending patterns to Logic analyzers");
-  $display("  line zero is the reference line  ");
+  $display("  line zero is the valid line  ");
   $display("*****************************\n");
-  $monitor("@%g(s)\t %b\t %b\t %b\t %b",cycle_counter_slow,to_meso,
-           from_meso_fixed,DUT.mesosync_channel.mesosync_input.LA_valid,
-           DUT.mesosync_channel.mesosync_input.logic_analyzer_1.ready_o);
+  $monitor("@%g(s) %b\t %b",cycle_counter_slow,to_meso,from_meso_fixed);
   
+  // For checking LA saving all the data
   // 72 values are saved in the LA fifo using fifo with free counter, during
   // sending data out each 2 cycles one data is removed, so 142 cycles are 
   // between free and full
+  //$monitor("@%g(s)\t %b\t %b\t %b\t %b",cycle_counter_slow,to_meso,
+  //         from_meso_fixed,DUT.mesosync_channel.mesosync_input.LA_valid_o,
+  //         DUT.mesosync_channel.mesosync_input.logic_analyzer.ready_o);
+  
   
   // sending patterns out
   out_selector = 1;
+  v_output_bit_selector = 0;
   
   // reading Logic analyzer data from each line
-  // line 0 is the reference line
   for (i=1 ; i<2*bit_num_p; i= i+1) begin
 
     $display("\n*****************************");
@@ -215,28 +226,48 @@ initial begin
     $display("*****************************\n");
     
     // stoping the channel and selecting line to be tested
-    input_bit_selector_ch2  = i;
-    output_bit_selector_ch2 = i;
+    la_output_bit_selector = i;
     mode_cfg = create_cfg (LA_STOP,1'b0,STOP);
-    send_config_tag(cfg_clk,1'b0,config_data,{fifo_en,en_lb,mode_cfg,ch_bit_selector},
-                            8'd11,$bits(mode_cfg)+$bits(ch_bit_selector)+2);
+    `send_link_config
     
     // starting logic analyzer without any output
     mode_cfg = create_cfg (LA_STOP,1'b1,STOP);
-    send_config_tag(cfg_clk,1'b0,config_data,{fifo_en,en_lb,mode_cfg,ch_bit_selector},
-                            8'd11,$bits(mode_cfg)+$bits(ch_bit_selector)+2);
+    `send_link_config
     #1000
     // stopping logic anlyzer (which has stopped by itself, just not to gather 
     // data after data is sent out) and starting sending its data out
     mode_cfg = create_cfg (LA_STOP,1'b0,LA);
-    send_config_tag(cfg_clk,1'b0,config_data,{fifo_en,en_lb,mode_cfg,ch_bit_selector},
-                           8'd11,$bits(mode_cfg)+$bits(ch_bit_selector)+2);
+    `send_link_config
     
     #45000
-    $display("\nin_reg_1 = %h",in_reg_1);
-    $display("in_reg_2 = %h\n",in_reg_2);
+    $display("\nvalues: %h",in_reg_1);
+    $display("valid : %h\n",in_reg_2);
   end
-  
+ 
+ 
+    $display("\n*****************************");
+    $display("        testing line %d        ",0);
+    $display("*****************************\n");
+    
+    // stoping the channel and selecting line to be tested
+    v_output_bit_selector = 1;
+    la_output_bit_selector = 0;
+    mode_cfg = create_cfg (LA_STOP,1'b0,STOP);
+    `send_link_config
+    
+    // starting logic analyzer without any output
+    mode_cfg = create_cfg (LA_STOP,1'b1,STOP);
+    `send_link_config
+    #1000
+    // stopping logic anlyzer (which has stopped by itself, just not to gather 
+    // data after data is sent out) and starting sending its data out
+    mode_cfg = create_cfg (LA_STOP,1'b0,LA);
+    `send_link_config
+    
+    #45000
+    $display("\nvalues: %h",in_reg_1);
+    $display("valid : %h\n",in_reg_2);
+ 
   $display("\n*****************************");
   $display("update phases based on the logic analyzer data");
   $display("*****************************\n");
@@ -247,31 +278,30 @@ initial begin
   
   @ (negedge clk)
   // set bit configuration for channel 1 
-  send_config_tag(cfg_clk,1'b0,config_data,bit_cfg_ch1,8'd12,$bits(bit_cfg_ch1));
+  `send_ch1_bit_cnfg
   
   // set bit configuration for channel 2
-  send_config_tag(cfg_clk,1'b0,config_data,bit_cfg_ch2,8'd13,$bits(bit_cfg_ch2));
+  `send_ch2_bit_cnfg
   
   $display("\n*****************************");
   $display("active loopback_mode");
-  $display("*****************************\n");
-  $monitor("@%g\t %b\t %b\t %b\t %b\t %b\t %b\t %b\t %d",cycle_counter,to_meso
-           ,from_meso_fixed,DUT.valid,DUT.to_loopback,DUT.from_loopback,DUT.ready, 
-           DUT.loopback.valid, DUT.loopback.output_credit_counter.credit_cnt);
+  $display("*****************************\n\n");
+  $display("cycle\t to_meso  from_meso to_lpbk,v   from_lpbk,rdy crdt_counter");
+  $monitor("@%g\t %b\t  %b    %b, %b\t %b, %b\t %d",cycle_counter,to_meso
+        ,from_meso_fixed,DUT.to_loopback,DUT.valid,DUT.from_loopback,DUT.ready,
+        DUT.loopback.output_credit_counter.credit_cnt);
   
   // sending loop back data 
   out_selector = 2;
   
   // making input channel active to send data to loopback module
   mode_cfg = create_cfg (NORMAL,1'b0,STOP);
-  send_config_tag(cfg_clk,1'b0,config_data,{fifo_en,en_lb,mode_cfg,ch_bit_selector},
-                         8'd11,$bits(mode_cfg)+$bits(ch_bit_selector)+2);
+  `send_link_config
   
   // enabling loopback module 
   en_lb = 1;
   fifo_en = 1;
-  send_config_tag(cfg_clk,1'b0,config_data,{fifo_en,en_lb,mode_cfg,ch_bit_selector},
-                         8'd11,$bits(mode_cfg)+$bits(ch_bit_selector)+2);
+  `send_link_config
   
   // based on valid-credit protocol, sending some data which are valid
   valid_to_meso = 1'b1;
@@ -280,8 +310,7 @@ initial begin
   // activing the output, after some time to make sure some valid data is 
   // stored in the loop back module
   mode_cfg = create_cfg (NORMAL,1'b0,NORM);
-  send_config_tag(cfg_clk,1'b0,config_data,{fifo_en,en_lb,mode_cfg,ch_bit_selector},
-                         8'd11,$bits(mode_cfg)+$bits(ch_bit_selector)+2);
+  `send_link_config
   #200
   // no more data to be sent, not exceeding size of FIFO (credit protocol
   // would take care of this)
@@ -344,17 +373,15 @@ end
 
 always_ff @ (posedge io_clk or posedge reset) begin
   if (reset) begin
-    pattern_1 <= 8'b10000000;
-    pattern_2 <= 8'b10100101;
-    in_reg_1  <= 0;
-    in_reg_2  <= 0;
-    count     <= 0;
+    pattern  <= 8'b10100101;
+    in_reg_1 <= 0;
+    in_reg_2 <= 0;
+    count    <= 0;
   end else begin
-    pattern_1 <= {pattern_1[6:0],pattern_1[7]};
-    pattern_2 <= {pattern_2[6:0],pattern_2[7]};
-    in_reg_1  <= {in_reg_1[254:0],from_meso_fixed[output_bit_selector_ch1]};
-    in_reg_2  <= {in_reg_2[254:0],from_meso_fixed[output_bit_selector_ch2]};
-    count     <= count + 4'd1;
+    pattern  <= {pattern[6:0],pattern[7]};
+    in_reg_1 <= {in_reg_1[254:0],from_meso_fixed[la_output_bit_selector]};
+    in_reg_2 <= {in_reg_2[254:0],from_meso_fixed[v_output_bit_selector]};
+    count    <= count + 4'd1;
   end
 end
 
@@ -364,7 +391,7 @@ end
 function mode_cfg_s create_cfg(input input_mode_e in_mode,
                                input LA_enque, output_mode_e out_mode);
     create_cfg = 
-           '{input_mode:   in_mode
+           '{input_mode:  in_mode
             ,LA_enque:    LA_enque
             ,output_mode: out_mode
             };
