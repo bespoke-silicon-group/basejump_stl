@@ -425,7 +425,7 @@ module bsg_comm_link
 
   // create all of the input and output channels
    for (i = 0; i < link_channels_p; i=i+1)
-     begin: channel
+     begin: ch
 
              bsg_launch_sync_sync #(.width_p(1)) blss_channel_active
                (.iclk_i      (io_master_clk_i)
@@ -437,7 +437,7 @@ module bsg_comm_link
                 );
 
         if (master_p)
-          begin :master
+          begin :m
              wire [tests_p+1-1:0] im_tests_gather;
 
              for (j = 0; j < tests_p+1; j=j+1)
@@ -512,7 +512,7 @@ module bsg_comm_link
 
           end
         else
-          begin : slave
+          begin : s
 
              // no launch flop necessary here
              // and we synchronize directly from
