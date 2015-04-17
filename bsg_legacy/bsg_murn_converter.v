@@ -78,7 +78,7 @@ module bsg_murn_converter
    genvar i;
 
    for (i = 0; i < nodes_p; i++)
-     begin
+     begin : n
         bsg_two_fifo #(.width_p(ring_width_p))
         twofer (.clk_i(clk_i)
                 ,.reset_i(reset_i[i])
