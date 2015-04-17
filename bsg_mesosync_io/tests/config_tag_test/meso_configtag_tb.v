@@ -2,9 +2,10 @@
 `define half_period 16
 parameter bit_num_p = 5;
 
-module mesosynctb();
+module meso_configtag_tb();
 
-logic clk, clk2, reset, reset_r, loop_back, channel_reset, out, toggle_bit; 
+logic clk, clk2, reset, reset_r;
+logic loop_back, fifo_en, channel_reset, out, toggle_bit; 
 
 config_s conf;
 
@@ -12,10 +13,9 @@ assign conf = '{cfg_clk: clk2, cfg_bit: out};
 
 clk_divider_s clk_divider;
 mode_cfg_s mode_cfg;
-logic [$clog2(2*bit_num_p)-1:0] input_bit_selector_ch1;
-logic [$clog2(2*bit_num_p)-1:0] output_bit_selector_ch1;
-logic [$clog2(2*bit_num_p)-1:0] input_bit_selector_ch2;
-logic [$clog2(2*bit_num_p)-1:0] output_bit_selector_ch2;
+logic [$clog2(2*bit_num_p)-1:0] la_input_bit_selector;
+logic [$clog2(2*bit_num_p)-1:0] la_output_bit_selector;
+logic [$clog2(2*bit_num_p)-1:0] v_output_bit_selector;
 bit_cfg_s [bit_num_p*2-1:0] bit_cfg;
 
 bsg_mesosync_config_tag_extractor
@@ -32,11 +32,10 @@ bsg_mesosync_config_tag_extractor
              , .clk_divider_o(clk_divider)
              , .bit_cfg_o(bit_cfg)
              , .mode_cfg_o(mode_cfg)
-             , .input_bit_selector_ch1_o(input_bit_selector_ch1)
-             , .output_bit_selector_ch1_o(output_bit_selector_ch1)
-             , .input_bit_selector_ch2_o(input_bit_selector_ch2)
-             , .output_bit_selector_ch2_o(output_bit_selector_ch2)
-
+             , .la_input_bit_selector_o(la_input_bit_selector)
+             , .la_output_bit_selector_o(la_output_bit_selector)
+             , .v_output_bit_selector_o(v_output_bit_selector)
+             , .fifo_en_o(fifo_en)
              , .loop_back_o(loop_back)
              , .channel_reset_o(channel_reset)
              );
@@ -44,9 +43,13 @@ int i;
 
 initial begin
 
-  $display("clk\t reset\t out\t clk_div\t ch_reset lpbk\t inp_ch1 inp_ch2 out_ch1 out_ch2 mode_cfg bit_cfg");
-  $monitor("%b\t %b\t %b\t %h\t %b\t %b\t %d\t %d\t %d\t %d\t %b\t %b",clk,reset,out, clk_divider,channel_reset,loop_back, 
-            input_bit_selector_ch1,input_bit_selector_ch2, output_bit_selector_ch1, output_bit_selector_ch2, mode_cfg, bit_cfg);
+  $display({"clk\t reset\t out\t clk_div\t ch_reset lpbk\t fifo\t"
+            ,"la_inp la_out v_out mode_cfg bit_cfg"});
+
+  $monitor("%b\t %b\t %b\t %h\t %b\t %b\t %b\t %d\t %d\t %d\t %b\t %b",
+           clk,reset,out, clk_divider,channel_reset,loop_back,fifo_en, 
+           la_input_bit_selector, la_output_bit_selector, 
+           v_output_bit_selector, mode_cfg, bit_cfg);
 
   out = 0;
 

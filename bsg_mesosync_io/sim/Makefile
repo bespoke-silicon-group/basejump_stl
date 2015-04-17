@@ -2,6 +2,7 @@ CAD_PATH        = ../../../cad/
 SRC_PATH        = ../src
 CFG_TAG_PATH    = ../../config_net/src
 DEFINES_PATH    = ../../bsg_misc
+ASYNC_PATH      = ../../bsg_async
 DATA_FLOW_PATH  = ../../bsg_dataflow
 MISC_PATH       = ../../bsg_misc
 TESTBENCH_PATH  = ../tests/mesosync_io_w_loopback_test
@@ -36,6 +37,8 @@ else
   HDL_SOURCE +=	$(SRC_PATH)/bsg_credit_resolver_w_loopback.v 
   HDL_SOURCE +=	$(MISC_PATH)/bsg_counter_w_overflow.v 
   HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_fifo_1r1w_narrowed.v 
+  HDL_SOURCE += $(ASYNC_PATH)/bsg_sync_sync.v
+  HDL_SOURCE += $(ASYNC_PATH)/bsg_launch_sync_sync.v
   HDL_SOURCE +=	$(SRC_PATH)/bsg_ddr_sampler.v 
   HDL_SOURCE +=	$(SRC_PATH)/bsg_logic_analyzer.v 
   HDL_SOURCE += $(SRC_PATH)/bsg_mesosync_link_barebones.v 

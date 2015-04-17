@@ -29,15 +29,13 @@ module bsg_mesosync_link_barebones
                     , input  clk_divider_s           clk_divider_i
                     , input  bit_cfg_s [width_p-1:0] bit_cfg_i
                     , input  mode_cfg_s              mode_cfg_i
-                    , input  [$clog2(width_p)-1:0]   input_bit_selector_ch1_i
-                    , input  [$clog2(width_p)-1:0]   output_bit_selector_ch1_i
-                    , input  [$clog2(width_p)-1:0]   input_bit_selector_ch2_i
-                    , input  [$clog2(width_p)-1:0]   output_bit_selector_ch2_i
+                    , input  [$clog2(width_p)-1:0]   la_input_bit_selector_i
+                    , input  [$clog2(width_p)-1:0]   la_output_bit_selector_i
+                    , input  [$clog2(width_p)-1:0]   v_output_bit_selector_i
                     );
                    
 // internal signals
-logic [1:0] logic_analyzer_data;
-logic ready_to_LA, LA_valid;
+logic logic_analyzer_data, ready_to_LA, LA_valid;
 
 bsg_mesosync_input
            #( .width_p(width_p)
@@ -63,8 +61,7 @@ bsg_mesosync_input
             , .bit_cfg_i(bit_cfg_i)
             , .input_mode_i(mode_cfg_i.input_mode)
             , .LA_enque_i(mode_cfg_i.LA_enque)
-            , .input_bit_selector_ch1_i(input_bit_selector_ch1_i)
-            , .input_bit_selector_ch2_i(input_bit_selector_ch2_i)
+            , .la_input_bit_selector_i(la_input_bit_selector_i)
 
             );
 
@@ -90,8 +87,8 @@ bsg_mesosync_output
             // Configuration inputs
             , .output_clk_divider_i(clk_divider_i.output_clk_divider)
             , .output_mode_i(mode_cfg_i.output_mode)
-            , .output_bit_selector_ch1_i(output_bit_selector_ch1_i)
-            , .output_bit_selector_ch2_i(output_bit_selector_ch2_i)
+            , .la_output_bit_selector_i(la_output_bit_selector_i)
+            , .v_output_bit_selector_i(v_output_bit_selector_i)
 
             );
 

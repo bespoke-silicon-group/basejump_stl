@@ -37,7 +37,7 @@ module bsg_mesosync_input
                    , output logic                   valid_o
                    
                    // Logic analyzer signals for mesosync_output module
-                   , output [1:0]                   logic_analyzer_data_o
+                   , output                         logic_analyzer_data_o
                    , output                         LA_valid_o
                    , input                          ready_to_LA_i
 
@@ -46,8 +46,7 @@ module bsg_mesosync_input
                    , input  bit_cfg_s [width_p-1:0] bit_cfg_i
                    , input  input_mode_e            input_mode_i
                    , input                          LA_enque_i
-                   , input  [$clog2(width_p)-1:0]   input_bit_selector_ch1_i
-                   , input  [$clog2(width_p)-1:0]   input_bit_selector_ch2_i
+                   , input  [$clog2(width_p)-1:0]   la_input_bit_selector_i
 
                    );
 
@@ -173,56 +172,39 @@ assign valid_o = yumi_n;
 //------------- LOGIC ANAYZER --------------------
 //------------------------------------------------
 
-// Select one bit of input signal for Logic Analyzer
-// LSB is posedge and MSB is negedge
-logic [1:0] LA_valid;
-logic       LA_enque, LA_deque;
+// Logic Analyzer signals
+logic LA_trigger, LA_deque;
 
-assign LA_enque = (input_mode_i == LA_STOP) & LA_enque_i;
+// When logic analyzer is configured to sample, it has to start sampling 
+// from the sample that correspinds to time when input_clock_counter is zero,
+// beginning of IO clock. However, due to synchronizer in ddr module that
+// gives the input to logic anlzer, it has 2 cycle delay and input_clk_counter
+// is comapred with value 2.
+assign LA_trigger = (input_mode_i == LA_STOP) & LA_enque_i 
+                  & (input_counter_r == {{(maxDivisionWidth-2){1'b0}},2'b10});
 
 // when data is ready to send from Logic Analyzer FIFO to output, fifo will 
 // be dequed until it gets empty. 
 // Due to output_ready signal which is reset dependent, this singal does not
 // assert during reset.
-assign LA_valid_o = &LA_valid;
 assign LA_deque   = ready_to_LA_i & LA_valid_o;
 
 bsg_logic_analyzer #( .line_width_p(width_p)
                     , .LA_els_p(LA_els_p)
-                    ) logic_analyzer_1
+                    ) logic_analyzer
        ( .clk(clk)
        , .reset(reset)
 
        , .posedge_value_i(posedge_synchronized)
        , .negedge_value_i(negedge_synchronized)
-       , .input_bit_selector_i(input_bit_selector_ch1_i)
+       , .input_bit_selector_i(la_input_bit_selector_i)
        
-       , .enque_i(LA_enque)
+       , .start_i(LA_trigger)
        , .ready_o()
        
-       , .logic_analyzer_data_o(logic_analyzer_data_o[0])
-       , .v_o(LA_valid[0])
+       , .logic_analyzer_data_o(logic_analyzer_data_o)
+       , .v_o(LA_valid_o)
        , .deque_i(LA_deque)
 
        );
-
-bsg_logic_analyzer #( .line_width_p(width_p)
-                    , .LA_els_p(LA_els_p)
-                    ) logic_analyzer_2
-       ( .clk(clk)
-       , .reset(reset)
-
-       , .posedge_value_i(posedge_synchronized)
-       , .negedge_value_i(negedge_synchronized)
-       , .input_bit_selector_i(input_bit_selector_ch2_i)
-       
-       , .enque_i(LA_enque)
-       , .ready_o()
-       
-       , .logic_analyzer_data_o(logic_analyzer_data_o[1])
-       , .v_o(LA_valid[1])
-       , .deque_i(LA_deque)
-
-       );
-
 endmodule
