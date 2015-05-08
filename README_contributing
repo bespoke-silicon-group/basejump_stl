@@ -1,0 +1,60 @@
+* Goals * 
+
+The goal of the project is to build an 
+open-source equivalent of the Standard 
+Template Library (in C++) for hardware design. 
+
+This way, instead of rewriting and redebugging the 
+same code over and over, we can reuse a bunch of 
+well-designed hardware components. Because of this,
+good, clean style is important. You should focus on
+mimicking the style currently in use 
+(naming, spacing, etc), and should try never
+to write the same code twice -- factor similar
+code into modules with clean, easy-to-explain
+interfaces and reuse them.
+
+* Repo structure * 
+
+The basic structure of the repository is that
+different modules that people may want to use
+are organized by type into directory. 
+
+In the top-level "testing" directory, we plan to mirror
+the directory structure of the top-level of the
+repo, so that ideally each file has a test. 
+
+So for instance, the directory   
+bsg_ip_cores/testing/bsg_misc/bsg_binary_plus_one_to_gray
+is intended to test the file 
+bsg_ip_cores/bsg_misc/bsg_binary_plus_one_to_gray.v.  
+You can use that test as an example. 
+
+* Contributing * 
+
+If you would like to contribute, you can start
+by writing tests for modules that do not yet have tests.
+
+For writing tests, we have a lot of helpful modules that
+already exist in the bsg_ip_cores source base, that you
+should use. This way we can use our own philosophy of
+reuse even in testing! As you develop tests, you will
+come up with your own ideas about what helper modules
+we should use, and we can add those to the repo as well. 
+
+After you have written tests and have a sense of our 
+hardware design philosophy, then you can contribute
+synthesizeable code to the repository as well. Some of your
+code is likely to end up in a chip that we design in the near future!
+
+To run your tests, you can download the demonstration
+version of Altera Quartus and Modelsim from the Altera
+website. If the code is a testbench, it does not need
+to be compiled with Quartus, but it definitely should simulate with modelsim.
+Alternatively, you may also use VCS and/or Design Compiler if you have access.
+
+* Terms *
+
+Note that by contributing code to this repository, you are
+agreeing to allow others to use the code freely under
+the terms of the open-source license(s) selected by Michael Taylor.
