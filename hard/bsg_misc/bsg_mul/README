@@ -2,7 +2,7 @@ Multiplier generator scripts.
 
 MBT June 2015
 
-The python scrypts are used to generate replicated sub blocks in the hardened bsg_multiplier. 
+The python scrypts are used to generate replicated sub blocks in the hardened bsg_mul.
 
 Synopsys rp_groups are used to arrange standard cells together.
 
