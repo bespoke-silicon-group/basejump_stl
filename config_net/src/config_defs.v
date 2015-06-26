@@ -29,8 +29,6 @@ localparam id_width_lp        =  8;  // number of bits to represent the ID of a 
 localparam len_width_lp       =  8;  // number of bits to represent number of bits in the configuration packet ==> this can be reduced to $clog2(data_max_bits_lp)
 localparam reset_len_lp       = 10;  // reset sequence length
 
-localparam sync_len_lp        =  2;  // This has to be no less than 2 to provide reasonable MTBF
-
 localparam data_max_bits_lp   = 32;  // maximum number of allowed configurable bits in a single config_node
                                      // the value should match the main processor's data width for efficient communication
 
