@@ -4,7 +4,7 @@
 // width and width_out_p is the output width. els_p is the number
 // of elements in fifo and lsb_to_msb_p determined the directions
 // of sending the data. ready_THEN_valid_p determined input
-// handshake protocol (1 means ready and valid).
+// handshake protocol.
 
 module bsg_fifo_1r1w_narrowed 
                    #( parameter width_p            = -1
@@ -35,6 +35,7 @@ module bsg_fifo_1r1w_narrowed
   // FIFO of els_p elements of width width_p
   bsg_fifo_1r1w_small #(.width_p(width_p)
                        ,.els_p(els_p) 
+                       ,.ready_THEN_valid_p(ready_THEN_valid_p)
                        ) main_fifo
     
     ( .clk_i(clk_i)
