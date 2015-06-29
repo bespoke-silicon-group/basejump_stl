@@ -34,7 +34,7 @@ module bsg_fifo_1r1w_small #( parameter width_p      = -1
    logic 		    enque_r, deque_r;
 
    // internal signals
-   logic 		    empty, full, equal_cnt, enque;
+   logic 		    empty, full, equal_ptrs, enque;
 
    bsg_mem_1r1w #(.width_p (width_p)
 		  ,.els_p  (els_p  )

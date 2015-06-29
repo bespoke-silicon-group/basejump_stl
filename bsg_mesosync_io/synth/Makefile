@@ -7,7 +7,7 @@ VCS_OPTIONS += +incdir+$(CURDIR)/src
 VPD = 1
 
 include $(CAD_PATH)/flow/vcs/setup/vcs.mk
-export DESIGN_NAME=mesosyncIO
+export DESIGN_NAME=bsg_mesosync_link
 
 dc:
 	dc_shell -f dc_scripts/dc_setup.tcl

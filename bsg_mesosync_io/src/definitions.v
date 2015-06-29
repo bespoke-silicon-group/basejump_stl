@@ -1,4 +1,4 @@
-parameter maxDivisionWidth  = 4;
+parameter maxDivisionWidth_p  = 4;
 
 // Input modes for BSG Mesosync IO
 typedef enum logic {
@@ -17,18 +17,11 @@ typedef enum logic [2:0] {
     NORM  = 3'b101
 } output_mode_e;
 
-// values for clk dividers
-typedef struct packed
-{
-    logic [maxDivisionWidth-1:0] output_clk_divider;
-    logic [maxDivisionWidth-1:0] input_clk_divider;
-} clk_divider_s;
-
 // configuration for each bit for the input side
 typedef struct packed
 {   
     logic clk_edge_selector;
-    logic [maxDivisionWidth-1:0] phase;
+    logic [maxDivisionWidth_p-1:0] phase;
 } bit_cfg_s;
 
 // configuration bits from config-tag

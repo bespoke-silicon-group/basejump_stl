@@ -24,8 +24,6 @@ module config_node
                                   // shift register width of this node
 
 
-  localparam sync_shift_len_lp  = sync_len_lp + 2;  // + 2 is to integrate the two edge detecting flip-flops
-
   /* The communication packet is defined as follows:
    * msb                                                                                                  lsb
    * |  data_rx  |  frame bits  |  node id  |  frame bits  |  packet length  |   frame bits  |  valid bits  |
@@ -66,6 +64,8 @@ module config_node
   logic                       ready_n, ready_r; // data_r ready and corresponding registers for clock domain crossing
                                                 // no combinational logic between ready_r and its destination side receiver,
                                                 // to reduce the change to go metastable
+  logic                       ready_synced;     // ready signal which is passed through the bsg_launch_sync_sync to 
+                                                // cross clock domains
 
   logic [len_width_lp - 1 : 0] packet_len;
   logic [$bits(integer) - 1 : 0] count_n_int; // to avoid type casting warnings from Lint
@@ -76,7 +76,7 @@ module config_node
   logic [data_rx_len_lp - 1 : 0] data_rx;
   logic [data_bits_p - 1 : 0] data_n, data_r; // data payload register
 
-  logic [sync_shift_len_lp - 1 : 0] sync_shift_n, sync_shift_r; // clock domain crossing syncronization registers + edge detection registers
+  logic [1 : 0] sync_shift_n, sync_shift_r;   // edge detection registers
 
 
   // The following two signals are used to detect the reset posedge.
@@ -122,9 +122,24 @@ module config_node
 
   assign ready_n = ready_r ^ data_en; // xor, invert ready signal when data_en is 1
 
-  assign sync_shift_n = {(ready_r ^ cfg_reset), sync_shift_r[1 +: sync_shift_len_lp - 1]}; // clock domain crossing synchronization line
-
   assign default_en = reset & (~ r_e_s_e_t_r); // (reset == 1) & (r_e_s_e_t_r == 0)
+ 
+  // This bsg_launch_sync_sync module is used to cross the clock domains for
+  // the ready signal 
+  bsg_launch_sync_sync #( .width_p(1)
+			                 , .use_negedge_for_launch_p(0)
+                       ) synchronizer
+
+    ( .iclk_i(config_i.cfg_clk)
+    , .iclk_reset_i(reset)
+    , .oclk_i(clk)
+    , .iclk_data_i(ready_r ^ cfg_reset)
+    , .iclk_data_o()
+    , .oclk_data_o(ready_synced) 
+    );
+
+  // Register for edge detection
+  assign sync_shift_n = {ready_synced, sync_shift_r[1]};
 
   // The NAND gate array is used as filters to clear cross clock domain data's
   // metastability when entering a new clock domain. Ths idea is based on the

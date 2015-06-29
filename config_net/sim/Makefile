@@ -7,7 +7,8 @@ VCS_FLAGS = -o $@ +v2k +vc -sverilog -full64 -timescale=1ns/1ns +vcs+lic+wait +m
 
 TESTBENCH = config_net_tb.v
 HDL_SOURCE = $(GTECH_DIR)/GTECH_NAND2.v \
-             ../src/rNandMeta.v \
+             ../../bsg_async/bsg_launch_sync_sync.v \
+						 ../src/rNandMeta.v \
              ../src/config_node.v \
              ../src/relay_node.v \
              ../src/config_snooper.v \
@@ -15,10 +16,11 @@ HDL_SOURCE = $(GTECH_DIR)/GTECH_NAND2.v \
              ./config_file_setter.v \
              ./config_node_bind.v \
              ./config_snooper_bind.v \
-             ./$(TESTBENCH)
+						 ./$(TESTBENCH)
 
 HDL_INSTALL = ../src/config_defs.v \
               ../src/config_utils.v \
+              ../../bsg_async/bsg_launch_sync_sync.v \
               ../src/rNandMeta.v \
               ../src/config_node.v \
               ../src/relay_node.v \
