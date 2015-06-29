@@ -65,6 +65,13 @@ logic [width_lp-1:0]           to_pins;
 logic [width_lp-1:0]           to_loopback;
 logic [width_lp-1:0]           from_loopback;
 logic                          logic_analyzer_data, ready_to_LA, LA_valid;
+
+// relay nodes
+config_s relay_out;
+
+relay_node input_relay_1(.config_i(config_i),
+                         .config_o(relay_out));
+
  
 // Mesosynchronous channel
 bsg_mesosync_input
@@ -75,7 +82,7 @@ bsg_mesosync_input
             ) mesosync_input
             ( .clk(clk)
             , .reset(reset)
-            , .config_i(config_i)
+            , .config_i(relay_out)
             
             // Sinals with their acknowledge
             , .pins_i(pins_i)
@@ -102,7 +109,7 @@ bsg_mesosync_output
             ) mesosync_output
             ( .clk(clk)
             , .reset(reset)
-            , .config_i(config_i)
+            , .config_i(relay_out)
                          
             // Sinals with their acknowledge
             , .core_i(from_loopback)
