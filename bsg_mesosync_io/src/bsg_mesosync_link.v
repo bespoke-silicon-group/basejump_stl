@@ -1,5 +1,5 @@
 // bsg_mesosync_channel is the designed IO in bsg group that devides
-// the chip's clock to a slower clock for IO based on the configuration 
+// the core's clock to a slower clock for IO based on the configuration 
 // it receives. For each input data line it can choose between the clock
 // edge and which cycle in the divided clock to take the sameple, based on
 // the bit_cfg_i configuration. 
@@ -16,115 +16,106 @@
 // of each line and find the proper line configurations. Finally, a loopback
 // mode is enabled and it sends out the input data to its output. 
 //
-// There is no handshake protocl on the pins side, but from channel to chip 
+// There is no handshake protocl on the pins side, but from channel to core 
 // there is valid handshake to tell the FIFO which data is valid to be
-// sampled. On the chip to channel connection, it has ready protocol, to let 
-// the chip know when it can send data. 
+// sampled. On the core to channel connection, it has ready protocol, to let 
+// the core know when it can send data. 
 //
 // Most important feature of this IO is least latency.
 
-//`ifndef DEFINITIONS_V
-//`include "definitions.v"
-//`endif
+`ifndef DEFINITIONS_V
+`include "definitions.v"
+`endif
 
 module bsg_mesosync_link
-                  #(  parameter ch1_width_p       = -1
-                    , parameter ch2_width_p       = -1
-                    , parameter LA_els_p          = -1
-                    , parameter cfg_tag_base_id_p = -1
-                    , parameter loopback_els_p    = -1
-                    , parameter credit_initial_p  = -1
-                    , parameter credit_max_val_p  = -1
+                  #(  parameter ch1_width_p       = "inv" //3  
+                    , parameter ch2_width_p       = "inv" //3  
+                    , parameter LA_els_p          = "inv" //64 
+                    , parameter cfg_tag_base_id_p = "inv" //10 
+                    , parameter loopback_els_p    = "inv" //16 
+                    , parameter credit_initial_p  = "inv" //8  
+                    , parameter credit_max_val_p  = "inv" //12 
                     
                     , parameter width_lp = ch1_width_p + ch2_width_p
                    )
-                   (  input                          clk
-                    , input                          reset
-                    
-                    , input  config_s                config_i
+                   (  input                       clk
+                    , input                       reset
+                    , input  config_s             config_i
 
                     // Signals with their acknowledge
-                    , input  [width_lp-1:0]          pins_i
-                    , output logic [width_lp-1:0]    pins_o
+                    , input  [width_lp-1:0]       pins_i
+                    , output logic [width_lp-1:0] pins_o
                     
-                    // connection to chip, 2 bits are used for handshake
-                    , input  [width_lp-3:0]          chip_data_i
-                    , input                          chip_v_i
-                    , output logic                   chip_ready_o
+                    // connection to core, 2 bits are used for handshake
+                    , input  [width_lp-3:0]       core_data_i
+                    , input                       core_v_i
+                    , output logic                core_ready_o
 
-                    , output                         chip_v_o
-                    , output [width_lp-3:0]          chip_data_o
-                    , input                          chip_yumi_i
+                    , output                      core_v_o
+                    , output [width_lp-3:0]       core_data_o
+                    , input                       core_ready_i
      
                     );
 
 // internal singals
-clk_divider_s                clk_divider;
-bit_cfg_s [width_lp-1:0]     bit_cfg;
-mode_cfg_s                   mode_cfg;
-logic [$clog2(width_lp)-1:0] la_intput_bit_selector;
-logic [$clog2(width_lp)-1:0] la_output_bit_selector;
-logic [$clog2(width_lp)-1:0] v_output_bit_selector;
-logic                        en_loop_back,fifo_en;
-logic                        channel_reset;
-logic                        ready, valid;
-logic [width_lp-1:0]         to_IO;
-logic [width_lp-1:0]         to_loopback;
-logic [width_lp-1:0]         from_loopback;
- 
-// Config tag extractor that extracts channel configurations from 
-// congif tag serial input
-bsg_mesosync_config_tag_extractor
-           #(  .ch1_width_p(ch1_width_p)
-             , .ch2_width_p(ch2_width_p)
-             , .cfg_tag_base_id_p(cfg_tag_base_id_p)
-            ) cnfg_tag_extractor
-            (  .clk(clk)
-             , .reset(reset)
-             
-             , .config_i(config_i)
-
-             // Configuration output
-             , .clk_divider_o(clk_divider)
-             , .bit_cfg_o(bit_cfg)
-             , .mode_cfg_o(mode_cfg)
-             , .la_input_bit_selector_o(la_intput_bit_selector)
-             , .la_output_bit_selector_o(la_output_bit_selector)
-             , .v_output_bit_selector_o(v_output_bit_selector)
-             , .fifo_en_o(fifo_en)
-             , .loop_back_o(en_loop_back)
-             , .channel_reset_o(channel_reset)
-             );
+logic                          loopback_en,fifo_en;
+logic                          channel_reset;
+logic                          ready, valid;
+logic [width_lp-1:0]           to_pins;
+logic [width_lp-1:0]           to_loopback;
+logic [width_lp-1:0]           from_loopback;
+logic                          logic_analyzer_data, ready_to_LA, LA_valid;
  
 // Mesosynchronous channel
-bsg_mesosync_link_barebones
-           #(  .width_p(width_lp)
-             , .LA_els_p(LA_els_p)
-             ) mesosync_channel
-            (  .clk(clk)
-             , .reset(channel_reset)
-             
-             // Configuration inputs
-             , .clk_divider_i(clk_divider)
-             , .bit_cfg_i(bit_cfg)
-             , .mode_cfg_i(mode_cfg)
-             , .la_input_bit_selector_i(la_intput_bit_selector)
-             , .la_output_bit_selector_i(la_output_bit_selector)
-             , .v_output_bit_selector_i(v_output_bit_selector)
+bsg_mesosync_input
+           #( .ch1_width_p(ch1_width_p)
+            , .ch2_width_p(ch2_width_p)
+            , .LA_els_p(LA_els_p)
+            , .cfg_tag_base_id_p(cfg_tag_base_id_p)
+            ) mesosync_input
+            ( .clk(clk)
+            , .reset(reset)
+            , .config_i(config_i)
+            
+            // Sinals with their acknowledge
+            , .pins_i(pins_i)
 
-        
-             // Sinals with their acknowledge
-             , .pins_i(pins_i)
+            , .core_o(to_loopback)
+            , .valid_o(valid)
+            
+            // Logic analyzer signals for mesosync_output module
+            , .logic_analyzer_data_o(logic_analyzer_data)
+            , .LA_valid_o(LA_valid)
+            , .ready_to_LA_i(ready_to_LA)
+                   
+            // loopback signals
+            , .fifo_en_o(fifo_en)
+            , .loopback_en_o(loopback_en)
+            , .channel_reset_o(channel_reset)
 
-             , .chip_o(to_loopback)
-             , .valid_o(valid)
-             
-             , .chip_i(from_loopback)
-             , .ready_o(ready)
+            );
 
-             , .pins_o(to_IO)
 
-             );
+bsg_mesosync_output
+           #( .width_p(width_lp)
+            , .cfg_tag_base_id_p(cfg_tag_base_id_p)
+            ) mesosync_output
+            ( .clk(clk)
+            , .reset(reset)
+            , .config_i(config_i)
+                         
+            // Sinals with their acknowledge
+            , .core_i(from_loopback)
+            , .ready_o(ready)
+
+            , .pins_o(to_pins)
+            
+            // Logic analyzer signals for mesosync_input module
+            , .logic_analyzer_data_i(logic_analyzer_data)
+            , .LA_valid_i(LA_valid)
+            , .ready_to_LA_o(ready_to_LA)
+            
+            );
 
 // loop back module with enable and ready inputs, and credit protocol
 // on both directions
@@ -136,7 +127,7 @@ bsg_credit_resolver_w_loopback #( .width_p(width_lp-2)
     ( .clk_i(clk)
     , .reset_i(reset)
     , .enable_i(fifo_en & ~channel_reset)
-    , .loopback_en_i(en_loop_back)
+    , .loopback_en_i(loopback_en)
     , .line_ready_i(ready)
 
     // Connection to mesosync_link
@@ -148,17 +139,16 @@ bsg_credit_resolver_w_loopback #( .width_p(width_lp-2)
     , .pins_data_o(from_loopback[width_lp-1:2])
     , .pins_credit_i(valid & to_loopback[1])
     
-    // connection to chip
-    , .chip_data_i(chip_data_i)
-    , .chip_v_i(chip_v_i)
-    , .chip_ready_o(chip_ready_o)
+    // connection to core
+    , .core_data_i(core_data_i)
+    , .core_v_i(core_v_i)
+    , .core_ready_o(core_ready_o)
 
-    , .chip_v_o(chip_v_o)
-    , .chip_data_o(chip_data_o)
-    , .chip_yumi_i(chip_yumi_i)
+    , .core_v_o(core_v_o)
+    , .core_data_o(core_data_o)
+    , .core_ready_i(core_ready_i)
   
     );
-
 
 // mesosync channel uses the channel reset from config_tag
 // hence during reset output of module must be made zero on 
@@ -167,7 +157,7 @@ always_comb
   if (reset) begin
     pins_o = 0;
   end else begin 
-    pins_o = to_IO;
+    pins_o = to_pins;
   end
 
 endmodule

@@ -4,16 +4,21 @@ parameter bit_num_p = 3;
   
 // 5 type of messages that would be send to config_tag for configuration
 `define reset_config_tag  send_config_tag(cfg_clk,1'b1,config_data);
-`define send_clk_reset(R) send_config_tag(cfg_clk,1'b0,config_data, \
-                            {R,clk_divider},8'd10,2+$bits(clk_divider));
+`define send_input(R) send_config_tag(cfg_clk,1'b0,config_data, \
+                            {R,input_clk_divider,la_input_bit_selector}, \
+                            8'd11,2+maxDivisionWidth_p+`BSG_SAFE_CLOG2(2*bit_num_p));
+
+`define send_output(R) send_config_tag(cfg_clk,1'b0,config_data, \
+                {R,output_clk_divider,la_output_bit_selector,v_output_bit_selector}, \
+                8'd12,2+maxDivisionWidth_p+2*`BSG_SAFE_CLOG2(2*bit_num_p));
+
 `define send_link_config  send_config_tag(cfg_clk,1'b0,config_data, \
-                            {fifo_en,en_lb,mode_cfg,ch_bit_selector}, \
-                            8'd11,$bits(mode_cfg)+$bits(ch_bit_selector)+2);
+                            {mode_cfg,fifo_en,en_lb}, 8'd10,$bits(mode_cfg)+2);
   
 `define send_ch1_bit_cnfg send_config_tag(cfg_clk,1'b0,config_data, \
-                            bit_cfg_ch1,8'd12,$bits(bit_cfg_ch1));
+                            bit_cfg_ch1,8'd13,$bits(bit_cfg_ch1));
 `define send_ch2_bit_cnfg send_config_tag(cfg_clk,1'b0,config_data, \
-                            bit_cfg_ch2,8'd13,$bits(bit_cfg_ch2));
+                            bit_cfg_ch2,8'd14,$bits(bit_cfg_ch2));
 
 module mesosynctb();
 
@@ -54,16 +59,35 @@ bsg_mesosync_link
              , .pins_i(to_meso_delayed)
              , .pins_o(from_meso)
              
-             // connection to chip, 2 bits are used for handshake
-             , .chip_data_i()
-             , .chip_v_i(1'b0)
-             , .chip_ready_o()
+             // connection to core, 2 bits are used for handshake
+             , .core_data_i()
+             , .core_v_i(1'b0)
+             , .core_ready_o()
 
-             , .chip_v_o()
-             , .chip_data_o()
-             , .chip_yumi_i(1'b0)
+             , .core_v_o()
+             , .core_data_o()
+             , .core_ready_i(1'b0)
      
             );
+
+logic [7:0] LA_count;
+
+bsg_flow_counter #(.els_p(72)           
+                 , .count_free_p(0)     
+                 , .ready_THEN_valid_p(0)
+                 
+                  ) cnt      
+    
+    ( .clk_i(clk)
+    , .reset_i(reset_r)
+
+    , .v_i(DUT.mesosync_input.logic_analyzer.narrowed_fifo.v_i)
+    , .ready_i(DUT.mesosync_input.logic_analyzer.narrowed_fifo.ready_o)
+    , .yumi_i(DUT.mesosync_input.logic_analyzer.narrowed_fifo.yumi)
+
+    , .count_o(LA_count)
+    );
+
 
 assign conf = '{cfg_clk: cfg_clk, cfg_bit: config_data};
 
@@ -79,21 +103,16 @@ generate
 endgenerate
 
 // configuration signals
-clk_divider_s clk_divider;
+logic [maxDivisionWidth_p-1:0] input_clk_divider;
+logic [maxDivisionWidth_p-1:0] output_clk_divider;
 mode_cfg_s mode_cfg;
 logic [$clog2(2*bit_num_p)-1:0] la_input_bit_selector;
 logic [$clog2(2*bit_num_p)-1:0] la_output_bit_selector;
 logic [$clog2(2*bit_num_p)-1:0] v_output_bit_selector;
-logic [$clog2(2*bit_num_p)*3-1:0] ch_bit_selector;
 bit_cfg_s [2*bit_num_p-1:0] bit_cfg;
 bit_cfg_s [bit_num_p-1:0] bit_cfg_ch1;
 bit_cfg_s [bit_num_p-1:0] bit_cfg_ch2;
 logic en_lb, fifo_en;
-
-assign ch_bit_selector =  {la_input_bit_selector,
-                           la_output_bit_selector,
-                           v_output_bit_selector
-                           };
 
 assign bit_cfg_ch1 = bit_cfg [bit_num_p-1:0];
 assign bit_cfg_ch2 = bit_cfg [bit_num_p*2-1:bit_num_p];
@@ -110,11 +129,12 @@ initial begin
   $display("cycle\t to_meso  from_meso mode  clk_div");
   $monitor("@%g\t %b\t %b\t %b\t %h",
             cycle_counter,to_meso,from_meso_delayed,
-            DUT.mode_cfg,DUT.clk_divider);
+            DUT.mesosync_input.mode_cfg,DUT.mesosync_input.input_clk_divider,
+            DUT.mesosync_output.output_clk_divider);
   
   // initial values
-  clk_divider.output_clk_divider = 4'b0111;
-  clk_divider.input_clk_divider  = 4'b0111;
+  output_clk_divider = 4'b0111;
+  input_clk_divider  = 4'b0111;
   for (i=0 ; i<2*bit_num_p; i= i+1)
     bit_cfg[i]='{clk_edge_selector:1'b0, phase: 4'b0000};
   la_input_bit_selector  = 3'b000;
@@ -141,7 +161,8 @@ initial begin
   $display("*****************************\n");
 
   // initialize clk divider, disable loop back, ready to be reset
-  `send_clk_reset(2'b01)
+  `send_input(2'b01)
+  `send_output(2'b01)
   
   // set mode configuration and select input and output bits 
   // for each channel logic analyzer
@@ -158,7 +179,8 @@ initial begin
   $display("*****************************\n");
 
   // reset the mesosync 
-  `send_clk_reset(2'b10)
+  `send_input(2'b10)
+  `send_output(2'b10)
   $display("mesosync IO has been reset");
   
   #500
@@ -210,8 +232,8 @@ initial begin
   // sending data out each 2 cycles one data is removed, so 142 cycles are 
   // between free and full
   //$monitor("@%g(s)\t %b\t %b\t %b\t %b",cycle_counter_slow,to_meso,
-  //         from_meso_fixed,DUT.mesosync_channel.mesosync_input.LA_valid_o,
-  //         DUT.mesosync_channel.mesosync_input.logic_analyzer.ready_o);
+  //         from_meso_fixed,DUT.mesosync_input.LA_valid_o,
+  //         DUT.mesosync_input.logic_analyzer.ready_o);
   
   
   // sending patterns out
@@ -226,8 +248,11 @@ initial begin
     $display("*****************************\n");
     
     // stoping the channel and selecting line to be tested
+    la_input_bit_selector = i;
     la_output_bit_selector = i;
     mode_cfg = create_cfg (LA_STOP,1'b0,STOP);
+    `send_input(2'b10)
+    `send_output(2'b10)
     `send_link_config
     
     // starting logic analyzer without any output
@@ -248,11 +273,18 @@ initial begin
     $display("\n*****************************");
     $display("        testing line %d        ",0);
     $display("*****************************\n");
+  
+    $monitor("@%g(s)\t %b\t %b\t %b\t %b\t %d",cycle_counter_slow,to_meso,
+             from_meso_fixed,DUT.mesosync_output.LA_valid,
+             DUT.mesosync_output.ready_to_LA,LA_count);
     
     // stoping the channel and selecting line to be tested
     v_output_bit_selector = 1;
+    la_input_bit_selector = 0;
     la_output_bit_selector = 0;
     mode_cfg = create_cfg (LA_STOP,1'b0,STOP);
+    `send_input(2'b10)
+    `send_output(2'b10)
     `send_link_config
     
     // starting logic analyzer without any output
@@ -305,13 +337,13 @@ initial begin
   
   // based on valid-credit protocol, sending some data which are valid
   valid_to_meso = 1'b1;
-  #100 
+  #500 
 
   // activing the output, after some time to make sure some valid data is 
   // stored in the loop back module
   mode_cfg = create_cfg (NORMAL,1'b0,NORM);
   `send_link_config
-  #200
+  #300
   // no more data to be sent, not exceeding size of FIFO (credit protocol
   // would take care of this)
   valid_to_meso = 1'b0;

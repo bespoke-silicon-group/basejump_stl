@@ -11,8 +11,8 @@
 // 2 logic analzers from the input side. 
 //
 // It receives the read values of logic_analyzers from the bsg_mesosync_input
-// module. On the chip to channel connection, it has ready protocol, to let 
-// the chip know when it can send data. For the output to pins there is 
+// module. On the core to channel connection, it has ready protocol, to let 
+// the core know when it can send data. For the output to pins there is 
 // no handshake protocol
 //
 //`ifndef DEFINITIONS_V
@@ -20,48 +20,133 @@
 //`endif
 
 module bsg_mesosync_output
-                  #( parameter width_p  = -1
+                  #( parameter width_p           = "inv"
+                   , parameter cfg_tag_base_id_p = "inv"
                    )
-                   ( input                          clk
-                   , input                          reset
+                   ( input                      clk
+                   , input                      reset
+                   , input  config_s            config_i
                     
-                                
                    // Sinals with their acknowledge
-                   , input  [width_p-1:0]           chip_i
-                   , output logic                   ready_o
+                   , input  [width_p-1:0]       core_i
+                   , output logic               ready_o
 
-                   , output logic [width_p-1:0]     pins_o
+                   , output logic [width_p-1:0] pins_o
                    
                    // Logic analyzer signals for mesosync_input module
-                   , input                          logic_analyzer_data_i
-                   , input                          LA_valid_i
-                   , output                         ready_to_LA_o
-
-                   // Configuration inputs
-                   , input  [maxDivisionWidth-1:0]  output_clk_divider_i
-                   , input  output_mode_e           output_mode_i
-                   , input  [$clog2(width_p)-1:0]   la_output_bit_selector_i
-                   , input  [$clog2(width_p)-1:0]   v_output_bit_selector_i
+                   , input                      logic_analyzer_data_i
+                   , input                      LA_valid_i
+                   , output                     ready_to_LA_o
 
                    );
 
-// internal output_ready signals based on the output mode 
-logic output_ready, ready_to_sync1, ready_to_sync2;
+//------------------------------------------------
+//------------ CONFIG TAG NODEs ------------------
+//------------------------------------------------
+
+// Configuratons
+logic [1:0]                    cfg_reset, cfg_reset_r;
+logic                          channel_reset;
+logic                          fifo_en,loopback_en; // not used
+mode_cfg_s                     mode_cfg;
+logic [maxDivisionWidth_p-1:0] output_clk_divider;
+logic [$clog2(width_p)-1:0]   la_output_bit_selector;
+logic [$clog2(width_p)-1:0]   v_output_bit_selector;
+
+
+// Calcuating data width of each configuration node
+
+// For $clog2, width_lp is a number 
+localparam width_lp = width_p + 0;
+
+// reset (2 bits), clock divider for output digital clock, 
+// logic analyzer data and valid line selector
+localparam output_node_data_width_p = 2 + maxDivisionWidth_p 
+                                        + 2*($clog2(width_lp));
+// mode_cfg, fifo_en and loopback_en
+localparam common_node_data_width_p = $bits(mode_cfg) + 1 + 1;
+
+// relay nodes
+config_s relay_out;
+
+relay_node input_relay_1(.config_i(config_i),
+                         .config_o(relay_out));
+
+// Config nodes 
+config_node#(.id_p(cfg_tag_base_id_p)     
+            ,.data_bits_p(common_node_data_width_p)
+            ,.default_p('d0) 
+            ) common_node
+
+            (.clk(clk)
+            ,.reset(reset) 
+            ,.config_i(relay_out)
+            ,.data_o({mode_cfg,fifo_en,loopback_en})
+            );
+
+config_node#(.id_p(cfg_tag_base_id_p+2)     
+            ,.data_bits_p(output_node_data_width_p)
+            ,.default_p('d0) 
+            ) output_node
+
+            (.clk(clk)
+            ,.reset(reset) 
+            ,.config_i(relay_out)
+            ,.data_o({cfg_reset,output_clk_divider,la_output_bit_selector,
+                      v_output_bit_selector})
+            );
+
+//------------------------------------------------
+//--------------- RESET LOGIC --------------------
+//------------------------------------------------
+
+always_ff @(posedge clk)
+  cfg_reset_r <= cfg_reset;
+
+// reset is kept high until it is reset by the cfg node
+// by changing reset value from 2'b01 to 2'b10, then
+// it would remain low (unless another value is recieved)
+always_ff @(posedge clk)
+  if ((cfg_reset == 2'b10) & 
+            ((cfg_reset_r == 2'b01)|(channel_reset == 1'b0)))
+    channel_reset <= 1'b0;
+  else
+    channel_reset <= 1'b1;
+
+//------------------------------------------------
+//--------- RELAY FIFO FOR LA DATA ---------------
+//------------------------------------------------
+
+// Using a bsg_relay_fifo to abosrb any latency on the line
+logic LA_valid, ready_to_LA, LA_data;
+
+bsg_relay_fifo #(.width_p(1)) LA_relay
+    (.clk_i(clk)
+    ,.reset_i(channel_reset)
+
+    ,.ready_o(ready_to_LA_o)
+    ,.data_i(logic_analyzer_data_i)
+    ,.v_i(LA_valid_i)
+
+    ,.v_o(LA_valid)
+    ,.data_o(LA_data)
+    ,.ready_i(ready_to_LA)
+    );
 
 //------------------------------------------------
 //------------- CLOCK DIVIDERS --------------------
 //------------------------------------------------
 
-logic [maxDivisionWidth-1:0] input_counter_r, output_counter_r;
+logic [maxDivisionWidth_p-1:0] input_counter_r, output_counter_r;
 
 // clk is divided by the configured outpt_clk_divider_i plus one. So 0 
 // means no clk division and 15 means clk division by factor of 16.
-counter_w_overflow #(.width_p(maxDivisionWidth)) output_counter
+counter_w_overflow #(.width_p(maxDivisionWidth_p)) output_counter
 
             ( .clk(clk)
-            , .reset(reset)
+            , .reset(channel_reset)
 
-            , .overflow_i(output_clk_divider_i)
+            , .overflow_i(output_clk_divider)
             , .counter_o(output_counter_r)
             );
 
@@ -74,6 +159,9 @@ localparam counter_bits_lp = (width_p+1)*2+1;
 // internal signal for channel output
 logic [width_p-1:0] output_data;
 
+// internal output_ready signals based on the output mode 
+logic output_ready, ready_to_sync1, ready_to_sync2;
+
 // counter for sync2 output mode
 logic [counter_bits_lp-1:0] out_ctr_r, out_ctr_n;
 
@@ -83,7 +171,7 @@ logic [7:0]          out_rot_r,   out_rot_n;
 // Counter and shift register
 always_ff @(posedge clk)
   begin
-    if (reset)
+    if (channel_reset)
       begin
         out_ctr_r <= counter_bits_lp ' (0);
         out_rot_r <= 8'b1010_0101;   // bit alignment sequence
@@ -99,15 +187,15 @@ always_ff @(posedge clk)
 
 wire [counter_bits_lp-1:0] out_ctr_r_p1 = out_ctr_r + 1'b1;
 
-// fill pattern with at least as many 10's to fill out_cntr_width_lp bits
+// fill pattern with at least as many 10's to fill out_cntr_width_p bits
 // having defaults be 10101 reduces electromigration on pads
 wire [(((width_p+1)>>1)<<1)-1:0] inactive_pattern
                                  = { ((width_p+1) >> 1) { (2'b10) } };
 
 // Demux that merges 1 bit outputs of Logic Analyzer and its valid signal
 logic [width_p-1:0] output_demux;
-assign output_demux = (LA_valid_i << v_output_bit_selector_i)
-                     |(logic_analyzer_data_i << la_output_bit_selector_i);
+assign output_demux = (LA_valid << v_output_bit_selector)
+                     |(LA_data  << la_output_bit_selector);
 
 // determning output based on output mode configuration
 always_comb
@@ -116,7 +204,7 @@ always_comb
      out_rot_n = out_rot_r;
      output_data = 0;
 
-     unique case (output_mode_i)
+     unique case (mode_cfg.output_mode)
        STOP:
          begin
          end
@@ -144,7 +232,7 @@ always_comb
          end
        NORM:
          begin
-           output_data = chip_i;
+           output_data = core_i;
          end
 
        default:
@@ -156,22 +244,22 @@ always_comb
 // each time outputcounter is about to over flow on clock edge, data 
 // would be sent out on the clock edge as well
 always_ff @ (posedge clk)
-  if (reset) begin
+  if (channel_reset) begin
     pins_o <= 0;
-  end else if (output_counter_r == output_clk_divider_i) begin
+  end else if (output_counter_r == output_clk_divider) begin
     pins_o <= output_data;
   end else begin
     // pins_o keeps its value
     pins_o <= pins_o; 
   end
   
-assign output_ready = (output_counter_r == output_clk_divider_i) & ~reset ;
+assign output_ready = (output_counter_r == output_clk_divider) & ~channel_reset ;
 
 // ready signals based on the output mode 
 // There is no need for awknowledge of ready in STOP and PATTERN modes
-assign ready_o        = output_ready & (output_mode_i == NORM);
-assign ready_to_LA_o  = output_ready & (output_mode_i == LA);
-assign ready_to_sync1 = output_ready & (output_mode_i == SYNC1);
-assign ready_to_sync2 = output_ready & (output_mode_i == SYNC2);
+assign ready_o        = output_ready & (mode_cfg.output_mode == NORM);
+assign ready_to_LA    = output_ready & (mode_cfg.output_mode == LA);
+assign ready_to_sync1 = output_ready & (mode_cfg.output_mode == SYNC1);
+assign ready_to_sync2 = output_ready & (mode_cfg.output_mode == SYNC2);
 
 endmodule

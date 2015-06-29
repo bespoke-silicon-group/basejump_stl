@@ -10,11 +10,12 @@
 // It uses a 2 in 1 out FIFO, since during sampling each clock 2 
 // values are read but the signal would be send out 1 by 1. 
 
-module bsg_logic_analyzer #( parameter line_width_p = -1
-                           , parameter LA_els_p     = -1 
+module bsg_logic_analyzer #( parameter line_width_p = "inv"
+                           , parameter LA_els_p     = "inv"
                            )
               ( input clk
               , input reset
+              , input valid_en_i
 
               , input [line_width_p-1:0]         posedge_value_i
               , input [line_width_p-1:0]         negedge_value_i
@@ -45,7 +46,7 @@ always_ff @ (posedge clk)
 // valid_and_read protocol, in case of fifo becoming full it would stop
 // enqueing until deque is asserted, and as stated there would be no 
 // more enquing on that time.
-assign enque = (start_i | enque_r) & ~deque_i;
+assign enque = (start_i | enque_r) & ready_o; 
 
 // Select one bit of input signal for Logic Analyzer
 // LSB is posedge and MSB is negedge
@@ -53,13 +54,20 @@ logic [1:0] LA_selected_line;
 assign LA_selected_line[0] = posedge_value_i[input_bit_selector_i];
 assign LA_selected_line[1] = negedge_value_i[input_bit_selector_i];
 
+
+// Masking the valid bit
+logic valid;
+assign v_o = valid & valid_en_i;
+
+// The protocol is ready_THEN_valid since we are checking the ready_o
+// signal for generating the enque signal.
 bsg_fifo_1r1w_narrowed 
             #( .width_p(2)
              , .els_p(LA_els_p)
              , .width_out_p(1)
 
              , .lsb_to_msb_p(1)     
-             , .ready_THEN_valid_p(0)
+             , .ready_THEN_valid_p(1)
              ) narrowed_fifo
 
              ( .clk_i(clk)
@@ -69,7 +77,7 @@ bsg_fifo_1r1w_narrowed
              , .v_i(enque)
              , .ready_o(ready_o)
          
-             , .v_o(v_o)
+             , .v_o(valid)
              , .data_o(logic_analyzer_data_o)
              , .yumi_i(deque_i)
          

@@ -28,11 +28,11 @@ module bsg_channel_narrow #( parameter width_in_p   = -1
             );
   
   // Calculating parameters
-  parameter divisions_lp =  (width_in_p % width_out_p == 0) 
+  localparam divisions_lp =  (width_in_p % width_out_p == 0) 
                           ?  width_in_p / width_out_p 
                           : (width_in_p / width_out_p) + 1; 
   
-  parameter padding_p    = width_in_p % width_out_p;
+  localparam padding_p    = width_in_p % width_out_p;
   
   //synopsys translate_off
   always_comb
@@ -95,7 +95,7 @@ module bsg_channel_narrow #( parameter width_in_p   = -1
     // After all data is read, same cycle as last deque the output
     // deque is asserted
     // count_n cannot be used since it could be at 0 and no deque_i
-    assign deque_o = deque_i & (count_r == divisions_lp - 1);
+    assign deque_o = deque_i & (count_r == $unsigned(divisions_lp - 1));
   
   // in case of input being smaller than or equal to output, 
   // this module would be just forwarding the signals
