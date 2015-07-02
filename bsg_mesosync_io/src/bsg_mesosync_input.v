@@ -1,21 +1,20 @@
-// bsg_mesosync_channel is the designed IO in bsg group that devides
-// the chip's clock to a slower clock for IO based on the configuration 
-// it receives. In the input side, for each input data line it can 
-// choose between the clock edge and which cycle in the divided clock 
-// to take the sameple, based on the bit_cfg configuration. 
+// bsg_mesosync_link devides the chip's clock to a slower clock for IO 
+// based on the configuration it receives. In the input side, for each 
+// input data line it can choose between the clock edge and which cycle 
+// in the divided clock to take the sameple, based on the bit_cfg configuration. 
 //
-// To find out the proper values for bit configuration, it has 2 logic
+// To find out the proper values for bit configuration, it has a logic
 // analzers which would sample input singal on both positive and negative
-// edges of the clock. Master chooses two lines at a time and sends known
-// patterns to them and read the logic analyzer's data to find out the delays
+// edges of the clock. Master chooses a line at a time and sends known
+// patterns to it and reads the logic analyzer's data to find out the delays
 // of each line and find the proper line configurations. 
-//
-// It also provides Logic_analyzer outputs which are used in the
-// bsg_mesosync_output module to send out the read values.
+// bsg_mesosync_input provides logic_analyzer data to be used in the
+// bsg_mesosync_output module to send out these read values.
 //
 // There is no handshake protocl on the pin side, but from channel to core
-// there is valid handshake to tell the FIFO which data is valid to be
-// sampled. 
+// there is valid-only handshake to tell the FIFO which data is valid to be
+// used. Moreover, it has a fifo-relay for both data and logic-analyzer data,
+// so it can be connected to modules in distance on a chip.
 //
 
 //`ifndef DEFINITIONS_V
@@ -38,19 +37,34 @@ module bsg_mesosync_input
                    // Sinals with their acknowledge
                    , input  [width_lp-1:0]       pins_i
  
-                   , output logic [width_lp-1:0] core_o
+                   , output logic [width_lp-1:0] data_o
                    , output logic                valid_o
-                   
+
                    // Logic analyzer signals for mesosync_output module
-                   , output                      logic_analyzer_data_o
+                   , output                      LA_data_o
                    , output                      LA_valid_o
                    , input                       ready_to_LA_i
-
-                   // loopback signals
-                   , output logic                fifo_en_o
-                   , output logic                loopback_en_o
-                   , output logic                channel_reset_o
                    );
+                   
+
+// Using a relay_fifo for enabling sending data through long distances in chip
+logic [width_lp-1:0] data_o_r;
+logic                valid_o_r;
+
+// since the output portocol is actually valid only, ready_o signal is not used
+// and ready_i is always set to pass any valid value
+bsg_relay_fifo #(.width_p(width_lp)) relay
+    (.clk_i(clk)
+    ,.reset_i(reset)
+
+    ,.v_i(valid_o_r)
+    ,.data_i(data_o_r)
+    ,.ready_o()
+
+    ,.v_o(valid_o)
+    ,.data_o(data_o)
+    ,.ready_i(1'b1)
+    );
 
 //------------------------------------------------
 //------------ CONFIG TAG NODEs ------------------
@@ -58,12 +72,14 @@ module bsg_mesosync_input
 
 // Configuratons
 logic [1:0]                    cfg_reset, cfg_reset_r;
+logic                          channel_reset;
+logic                          enable;
+logic                          loopback_en; // not used
 logic [maxDivisionWidth_p-1:0] input_clk_divider;
 bit_cfg_s [width_lp-1:0]       bit_cfg;
 mode_cfg_s                     mode_cfg;
 logic [$clog2(width_lp)-1:0]   la_input_bit_selector;
 logic                          output_mode_is_LA;
-
 
 // Calcuating data width of each configuration node
 // reset (2 bits), clock divider for input digital clock, logic analyzer line selector
@@ -95,7 +111,7 @@ config_node#(.id_p(cfg_tag_base_id_p)
             (.clk(clk)
             ,.reset(reset) 
             ,.config_i(relay_out[0])
-            ,.data_o({mode_cfg,fifo_en_o,loopback_en_o})
+            ,.data_o({mode_cfg,enable,loopback_en})
             );
 
 config_node#(.id_p(cfg_tag_base_id_p+1)     
@@ -144,10 +160,10 @@ always_ff @(posedge clk)
 // it would remain low (unless another value is recieved)
 always_ff @(posedge clk)
   if ((cfg_reset == 2'b10) & 
-            ((cfg_reset_r == 2'b01)|(channel_reset_o == 1'b0)))
-    channel_reset_o <= 1'b0;
+            ((cfg_reset_r == 2'b01)|(channel_reset == 1'b0)))
+    channel_reset <= 1'b0;
   else
-    channel_reset_o <= 1'b1;
+    channel_reset <= 1'b1;
 
 //------------------------------------------------
 //------------- CLOCK DIVIDER --------------------
@@ -161,7 +177,7 @@ logic [maxDivisionWidth_p-1:0] input_counter_r;
 counter_w_overflow #(.width_p(maxDivisionWidth_p)) input_counter
 
             ( .clk(clk)
-            , .reset(channel_reset_o)
+            , .reset(channel_reset)
 
             , .overflow_i(input_clk_divider)
             , .counter_o(input_counter_r)
@@ -179,7 +195,7 @@ logic [width_lp-1:0] posedge_value, negedge_value,
 
 bsg_ddr_sampler #(.width_p(width_lp)) ddr_sampler
     ( .clk(clk)
-    , .reset(channel_reset_o)
+    , .reset(channel_reset)
     , .to_be_sampled_i(pins_i)
     
     , .pos_edge_value_o(posedge_value)
@@ -218,7 +234,7 @@ always_comb
 // Latching the value of line on the phase match cycle
 // to be used in rest of the input period
 always_ff @ (posedge clk) 
-  if (channel_reset_o) 
+  if (channel_reset) 
     sampled_r  <= 0;
   else if (mode_cfg.input_mode == NORMAL) 
     for (i3 = 0; i3 < width_lp; i3 = i3 + 1) 
@@ -237,12 +253,12 @@ logic yumi_n,yumi_r;
 // valid_n becomes 1 in case of phase match, otherwise it keeps valid_r 
 // value unless it recives the registered yumi signal, 
 // so it becomes zero the cycle after data is valid
-assign valid_n = {width_lp{~channel_reset_o & (mode_cfg.input_mode == NORMAL)}}
+assign valid_n = {width_lp{~channel_reset & (mode_cfg.input_mode == NORMAL)}}
                  & ((valid_r & ~{width_lp{yumi_r}}) | phase_match);
 
 // Registering values
 always_ff @ (posedge clk) 
-  if (channel_reset_o) begin
+  if (channel_reset) begin
     valid_r <= 0;
     yumi_r  <= 0;
   end 
@@ -256,15 +272,15 @@ always_ff @ (posedge clk)
 always_comb 
   for (i4 = 0; i4 < width_lp; i4 = i4 + 1)
     if (phase_match[i4] & yumi_n)
-        core_o[i4] = selected_edge[i4];
+        data_o_r[i4] = selected_edge[i4];
       else 
-        core_o[i4] = sampled_r[i4];
+        data_o_r[i4] = sampled_r[i4];
 
 // when all the bits are valid, it means the data is ready
 // yumi_r is sent back to each bit, so from next cycle valid bits 
 // become zero and yumi_n goes to zero as well.
-assign yumi_n  = &valid_n;
-assign valid_o = yumi_n;
+assign yumi_n    = &valid_n;
+assign valid_o_r = yumi_n & enable;
 
 
 //------------------------------------------------
@@ -276,14 +292,14 @@ logic LA_valid, ready_to_LA, LA_data;
 
 bsg_relay_fifo #(.width_p(1)) LA_relay
     (.clk_i(clk)
-    ,.reset_i(channel_reset_o)
+    ,.reset_i(channel_reset)
 
     ,.ready_o(ready_to_LA)
     ,.data_i(LA_data)
     ,.v_i(LA_valid)
 
     ,.v_o(LA_valid_o)
-    ,.data_o(logic_analyzer_data_o)
+    ,.data_o(LA_data_o)
     ,.ready_i(ready_to_LA_i)
     );
 
@@ -313,7 +329,7 @@ bsg_logic_analyzer #( .line_width_p(width_lp)
                     , .LA_els_p(LA_els_p)
                     ) logic_analyzer
        ( .clk(clk)
-       , .reset(channel_reset_o)
+       , .reset(channel_reset)
        , .valid_en_i(output_mode_is_LA)
        , .posedge_value_i(posedge_synchronized)
        , .negedge_value_i(negedge_synchronized)
@@ -327,4 +343,5 @@ bsg_logic_analyzer #( .line_width_p(width_lp)
        , .deque_i(LA_deque)
 
        );
+
 endmodule
