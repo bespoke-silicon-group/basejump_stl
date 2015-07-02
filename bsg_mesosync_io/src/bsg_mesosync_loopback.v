@@ -78,20 +78,18 @@ logic valid_to_credit_counter, credit_counter_ready;
 logic [width_p-1:0] fifo_data;
 
 // Muxes for mode selection, between loopback or normal mode
-assign valid          = loopback_en_i ? fifo_valid : v_i_r;
-assign ready_to_fifo  = loopback_en_i ? ready      : ready_i_r;
-assign meso_data_o    = loopback_en_i ? fifo_data  : data_i_r;
+assign valid          = loopback_en_i ? fifo_valid           : v_i_r;
+assign ready          = loopback_en_i ? credit_counter_ready : ready_i_r;
+assign meso_data_o    = loopback_en_i ? fifo_data            : data_i_r;
 
-assign v_o_r          = loopback_en_i ? 0          : fifo_valid;
-assign data_o_r       = loopback_en_i ? 0          : fifo_data;
-assign ready_o_r      = loopback_en_i ? 0          : ready;
+assign v_o_r          = loopback_en_i ? 0 : fifo_valid & line_ready_i;
+assign data_o_r       = loopback_en_i ? 0 : fifo_data;
+assign ready_o_r      = loopback_en_i ? 0 : credit_counter_ready & line_ready_i;
 
 // Adding ready signal from bsg_mesosync_output module, line_ready_i
 assign valid_to_credit_counter = line_ready_i & valid;
-assign ready                   = line_ready_i & credit_counter_ready;
-
-// converting from raedy to yumi protocol
-assign yumi_to_fifo = ready_to_fifo & fifo_valid;
+// also converting from yumi protocol to ready protocol
+assign yumi_to_fifo            = ready & line_ready_i & fifo_valid;
 
 // Using a fifo with credit input protocol for input side
 bsg_fifo_1r1w_small_credit_on_input #( .width_p(width_p)
