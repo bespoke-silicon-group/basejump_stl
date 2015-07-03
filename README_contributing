@@ -55,6 +55,12 @@ Make sure that you have SystemVerilog enabled in those tools
 and that you are using the latest versions (e.g. > 15.0 for Modelsim).
 Alternatively, you may also use VCS and/or Design Compiler if you have access.
 
+To test different combinations of parameters, you will use a Makefile that
+runs your test repeatedly with different arguments. See http://www.gnu.org/software/make/
+for the entire manual in one page so that it is easily searchable. We have
+some helpful lines of code for make that will test all combinations of a variety
+of input parameters. 
+
 Each test should have a header comment that describes the testing rationale;
 i.e. explain the design of your test. You should explicitly identify the 
 state space (inputs and internal state) that should be tested, and also
@@ -67,11 +73,7 @@ are not true, then the module's behavior is undefined. However, it would be
 good to have asserts that give a warning if input invariants are incorrect.
 
 Each test should be self checking, and assert $error if an answer is incorrect.
-To test different combinations of parameters, you will use a Makefile that
-runs your test repeatedly with different arguments. See http://www.gnu.org/software/make/
-for the entire manual in one page so that it is easily searchable. We have
-some helpful lines of code for make that will test all combinations of a variety
-of input parameters. For the test, we ignore all output before the reset line goes line
+For the test, we ignore all output before the reset line goes line
 (which is prominently indicated when you use our reset_gen module).
 
 Be sure to immitate the style that is used in the other tests! Seperate your
