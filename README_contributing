@@ -30,7 +30,7 @@ is intended to test the file
 bsg_ip_cores/bsg_misc/bsg_binary_plus_one_to_gray.v.  
 You can use that test as an example. 
 
-* Contributing * 
+* Contributing through Testing * 
 
 If you would like to contribute, you can start
 by writing tests for modules that do not yet have tests.
