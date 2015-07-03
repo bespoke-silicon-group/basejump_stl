@@ -65,7 +65,7 @@ module bsg_guts #(parameter num_channels_p=4
               ,.master_p(master_p)
               ,.master_id_p(i)
               ,.slave_id_p(i)
-              ) node
+              ) ode
             (.clk_i   (core_clk_i                )
              ,.reset_i(core_node_reset_lo [i])
 
