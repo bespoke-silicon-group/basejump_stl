@@ -56,7 +56,8 @@ module test_bsg;
      #(.width_p(width_lp)
        ,.values_p(3)
        ,.filename_p("output.log")
-       ,.format_p("w")
+       ,.fopen_param_p("w")
+       ,.format_p("%x  ")
        ) ascii_writer
    (.clk     (clk)
     ,.reset_i(reset)
