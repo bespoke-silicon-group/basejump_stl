@@ -133,9 +133,10 @@ def generate_and_csa_block ( rows ) :
 
         emit_gate_instance(addf
                            , [ ident_name_word_bit("csa", pos, 0)
+                               # fastest input first
+                               , ident_name_bit("and_int",pos)
                                , access_bit("x_i", pos)
                                , access_bit("y_i", pos)
-                               , ident_name_bit("and_int",pos)
                                , access_bit("s_o", pos)
                                , access_bit("c_o", pos)
                                ]);

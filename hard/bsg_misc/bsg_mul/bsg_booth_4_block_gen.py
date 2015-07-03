@@ -95,10 +95,13 @@ def emit_rp_fill (params):
     print "// synopsys rp_fill (" + params +")"
 
 
-
 # NOTE: for symmetric pins, assume that earlier ones are always faster.
 # For example, for AOI22  A's are faster than B's and A0 is faster than A1.
-#
+# fixme: the code currently assumes that the A input of ADDFHX's are the slowest
+# input, which is true in TSMC. We should fix the code so that we swizzle
+# the order in the below string, rather than in the code base, which is
+# just confusing.
+
 
 fab = "tsmc_250"
 

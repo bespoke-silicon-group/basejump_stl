@@ -100,6 +100,15 @@ def emit_rp_fill (params):
 # For example, for AOI22  A's are faster than B's and A0 is faster than A1.
 #
 
+
+# NOTE: for symmetric pins, assume that earlier ones are always faster.
+# For example, for AOI22  A's are faster than B's and A0 is faster than A1.
+# fixme: the code currently assumes that the A input of ADDFHX's are the slowest
+# input, which is true in TSMC. We should fix the code so that we swizzle
+# the order in the below string, rather than in the code base, which is
+# just confusing.
+
+
 fab = "tsmc_250"
 
 aoi22 = "AOI22X1 #0 (.A0(#1), .A1(#2), .B0(#3), .B1(#4), .Y(#5)  );"
