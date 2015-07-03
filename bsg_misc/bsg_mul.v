@@ -50,19 +50,52 @@ function automatic [0:0] bsg_mul_booth_dot([2:0] sdn, y0, ym1);
   return ((sdn[2] & y0) | (sdn[1] & ym1)) ^ sdn[0];
 endfunction
 
+
+module bsg_mul #(parameter width_p="inv"
+                 ,harden_p=1
+                 )
+   (input    [width_p-1:0]   x_i
+    , input  [width_p-1:0]   y_i
+    , input signed_i
+    , output [width_p*2-1:0] z_o
+    );
+
+   bsg_mul_pipelined #(.width_p    (width_p )
+                       ,.pipeline_p(0       )
+                       ,.harden_p  (harden_p)
+                       ) bmp
+   (.x_i
+    ,.y_i
+    ,.signed_i
+    ,.z_o
+    ,.clock_i(1'b0)
+    ,.en_i(1'b0)
+    );
+
+
+endmodule
+
+
 // The parameter harden_p is whether you want to invoke
 // the foundry_specific routines.
 
-module bsg_mul #(parameter width_p="inv", parameter harden_p=0)
+// pass in 0 if you want unpipelined.
+
+module bsg_mul_pipelined #(parameter width_p="inv"
+                           , parameter pipeline_p=1
+                           , parameter harden_p  =1
+                           )
    (input   [width_p-1:0] x_i
     , input [width_p-1:0] y_i
     , input signed_i   // signed multiply
+    , input clock_i
+    , input en_i
     , output [width_p*2-1:0] z_o
     );
 
    if (width_p == 32)
      begin: fi32
-        bsg_mul_32_32 #(.harden_p(harden_p)) m32 (.*);
+        bsg_mul_32_32 #(.harden_p(harden_p), .pipeline_p(pipeline_p)) m32 (.*);
      end
    else if (width_p == 16)
      begin: fi16
@@ -72,10 +105,12 @@ module bsg_mul #(parameter width_p="inv", parameter harden_p=0)
 
 endmodule // bsg_mul
 
-module bsg_mul_32_32 #(parameter harden_p=0)
+module bsg_mul_32_32 #(parameter harden_p=0, pipeline_p=0)
    (input   [31:0] x_i
     , input [31:0] y_i
     , input signed_i   // signed multiply
+    , input clock_i
+    , input en_i
     , output [63:0] z_o
     );
 
@@ -104,7 +139,9 @@ module bsg_mul_32_32 #(parameter harden_p=0)
    wire [3:0][3:0] cl;
 
    // hint: you read these strings right off of the "dot diagram"
-   // the infrastructure does the rest!
+   // the infrastructure (plus tweaking the 4:2 tree) does the rest!
+
+   // handle first four rows of partial products
 
    bsg_mul_B4B_rep_rep
      #(.blocks_p      (6)
@@ -122,14 +159,32 @@ module bsg_mul_32_32 #(parameter harden_p=0)
        ) brr0
        (.SDN_i({SDN[3:0],3'b000}), .y_i, .cr_i(1'b0), .cl_o(), .c_o(c30 [40 :0]), .s_o(s30[40:0]), .signed_i);
 
-   // handle first four rows of partial products
+
+   wire [7+8+8+11-1:0] gb_c, gb_s, gb_dot; // 34 bits
+
+   // a little bit out of order with respect to the diagram;
+   bsg_mul_green_booth_dots #(.width_p(32)
+                              ,.blocks_p(5)
+                              //   7   8    8   6   5
+                              //34  27   19  11   5   0
+                              //22  1B   13  0B  05  00
+                              ,.group_vec_p(48'h22_1B_13_0B_05_00)
+                              ,.harden_p(harden_p)
+                              ) gbd
+     (.SDN_i (SDN[16:15])
+      ,.y_i  (y_i       )
+      ,.dot_o(gb_dot    )
+      );
+
+
 
    // 43, 35, 29, 24, 16, 8, 0
    bsg_mul_comp42_rep_rep #(.blocks_p(6), .group_vec_p(56'h2b_23_1D_18_10_08_00),. width_p(43)) crr01
      (.i({   {c74[41:0], 1'b0} // note: gotta track c74[42]
            ,  s74[42:0]
            , {7'b0, c30[40:5]}
-           , {8'b0, s30[40:6]}
+//           , {8'b0, s30[40:6]} -- incorporate gb early to reduce # of pipeline registers
+           , {gb_dot[18:11], s30[40:6]}
            }
          )
       ,.cr_i(1'b0)
@@ -137,6 +192,9 @@ module bsg_mul_32_32 #(parameter harden_p=0)
       ,.c_o(c42_01c[42:0])
       ,.s_o(c42_01s[42:0])
       );
+
+
+// handle second four rows of partial products
 
    bsg_mul_B4B_rep_rep
      #(.blocks_p      (6)
@@ -155,8 +213,6 @@ module bsg_mul_32_32 #(parameter harden_p=0)
        ) brr1
        (.SDN_i(SDN[7:3]), .y_i, .cr_i(1'b0), .cl_o(), .c_o(c74 [42 :0]), .s_o(s74[42:0]), .signed_i);
 
-   // handle second four rows of partial products
-
    // this is the big one
    // block sizes:     7,  8,  8,  11,  8,  8
    // block sizes:     7,  8,  8,  6   5,  8,  8
@@ -166,8 +222,12 @@ module bsg_mul_32_32 #(parameter harden_p=0)
    bsg_mul_comp42_rep_rep #(.blocks_p(7), .group_vec_p(64'h32_2b_23_1b_15_10_08_00),. width_p(50)) crr03
      (.i({   {c42_23c   [40:0], 1'b0, cB8[6:0], 1'b0}
              , {c42_23s[41:0],    sB8[7:0]      }
-             , {14'b0, c42_01c[42:7]} //fixme do we need all of these zeros?
-             , {15'b0, c42_01s[42:8]}
+             , {14'b0, c42_01c[42:7]}
+//             , {15'b0, c42_01s[42:8]}
+// we add gb_dot in here because there is space
+// and when we pipeline we will need fewer registers this way
+
+             , {gb_dot[33:19], c42_01s[42:8]}
              }
          )
       ,.cr_i(1'b0)
@@ -175,6 +235,43 @@ module bsg_mul_32_32 #(parameter harden_p=0)
       ,.c_o(c42_03c[49:0])
       ,.s_o(c42_03s[49:0])
       );
+
+   logic [49:0]                c42_03c_r, c42_03s_r;
+
+   if (pipeline_p)
+     begin : pipe
+        logic [49:0][1:0] c42_03_trans, c42_03_trans_r;
+
+        // we transpose the bits (basically zippering them)
+        // so that carry bits and sum bits are stored near each other
+        // in a vertical column that pitch-matches the 4:2 compressor stack
+        bsg_transpose #(.width_p(50),.els_p(2)) bt (.i({c42_03c, c42_03s}), .o(c42_03_trans) );
+
+        bsg_dff_en_rep_rep #(.blocks_p(7)
+                             ,.width_p(50*2)
+                             // mirrors crr03 comp42_rep_rep above
+                             // everything is twice as wide because of the zippering
+
+                             ,.group_vec_p((64'h32_2b_23_1b_15_10_08_00 << 1))
+                             ,.harden_p(harden_p)
+                     )
+        dffe_c42_03_r (.clock_i
+                       ,.en_i
+                       ,.data_i(c42_03_trans)
+                       ,.data_o(c42_03_trans_r)
+                       );
+
+        bsg_transpose #(.width_p(2),.els_p(50))
+	bt2 (  .i(c42_03_trans_r ) ,.o({c42_03c_r      , c42_03s_r}) );
+
+     end
+   else
+     begin: unpipe
+        assign c42_03c_r = c42_03c;
+        assign c42_03s_r = c42_03s;
+     end
+
+   // handle third four rows of partial products; this is mostly the same as the second row, but with two sub blocks flipped
 
    bsg_mul_B4B_rep_rep
      #(.blocks_p      (6)
@@ -193,7 +290,7 @@ module bsg_mul_32_32 #(parameter harden_p=0)
        ) brr2
        (.SDN_i(SDN[11:7]), .y_i, .cr_i(1'b0), .cl_o(), .c_o(cB8 [42 :0]), .s_o(sB8[42:0]), .signed_i);
 
-   // handle third four rows of partial products; this is mostly the same as the second row, but with two sub blocks flipped
+
 
    // 42, 35, 27, 19, 8, 0
    // 42, 35, 27, 19, 13, 8, 0
@@ -209,6 +306,9 @@ module bsg_mul_32_32 #(parameter harden_p=0)
       ,.c_o(c42_23c[41:0])
       ,.s_o(c42_23s[41:0])
       );
+
+   // handle fourth four rows of partial products; this is mostly the same as the third row, but with two sub blocks flipped, and the last
+   // subblock is shortened because it does not need a final "1".
 
    bsg_mul_B4B_rep_rep
      #(.blocks_p      (6)
@@ -227,30 +327,90 @@ module bsg_mul_32_32 #(parameter harden_p=0)
        ) brr3
        (.SDN_i(SDN[15:11]), .y_i, .cr_i(1'b0), .cl_o(), .c_o(cFC [41 :0]), .s_o(sFC[41:0]), .signed_i);
 
-   // handle fourth four rows of partial products; this is mostly the same as the third row, but with two sub blocks flipped, and the last
-   // subblock is shortened because it does not need a final "1".
 
-   wire [7+8+8+11-1:0] gb_c, gb_s; // 34 bits
+   wire [10:0] gb_dot_r;
+   wire [7:0]  c42_01s_r;
+   wire [6:0]  c42_01c_r;
+   wire [5:0]  s30_r;
+   wire [4:0]  c30_r;
 
-   bsg_mul_green_block #(.width_p(32)
-                         ,.blocks_p(5)
-                         //   7   8    8   6   5
-                         //34  27   19  11   5   0
-                         //22  1B   13  0B  05  00
-                         ,.group_vec_p(48'h22_1B_13_0B_05_00)
-                         ,.harden_p(harden_p)
-                         ) gb
+   if (pipeline_p)
+     begin: pipe0
+        bsg_dff_en #(.width_p(11)
+                     ,.harden_p(harden_p)
+                     )
+        dffe_gb_dot_r (.clock_i
+                       ,.en_i
+                       ,.data_i(gb_dot[10:0])
+                       ,.data_o(gb_dot_r)
+                       );
+
+        bsg_dff_en #(.width_p(8)
+                     ,.harden_p(harden_p)
+                     )
+        dffe_c42_01s_r (.clock_i
+                        ,.en_i
+                        ,.data_i(c42_01s[7:0])
+                        ,.data_o(c42_01s_r)
+                        );
+
+        bsg_dff_en #(.width_p(7)
+                     ,.harden_p(harden_p)
+                     )
+        dffe_c42_01c_r (.clock_i
+                        ,.en_i
+                        ,.data_i(c42_01c[6:0])
+                        ,.data_o(c42_01c_r)
+                        );
+
+        bsg_dff_en #(.width_p(6)
+                     ,.harden_p(harden_p)
+                     )
+        dffe_s30_r (.clock_i
+                    ,.en_i
+                    ,.data_i(s30[5:0])
+                    ,.data_o(s30_r)
+                    );
+
+        bsg_dff_en #(.width_p(5)
+                     ,.harden_p(harden_p)
+                     )
+        dffe_c30_r (.clock_i
+                    ,.en_i
+                    ,.data_i(c30[4:0])
+                    ,.data_o(c30_r)
+                    );
+     end
+   else
+     begin: unpipe0
+        assign gb_dot_r = gb_dot[10:0];
+        assign c42_01s_r = c42_01s[7:0];
+        assign c42_01c_r = c42_01c[6:0];
+        assign s30_r = s30[5:0];
+        assign c30_r = c30[4:0];
+     end
+
+   bsg_mul_csa_rep #(.width_p(34)
+                     ,.blocks_p(5)
+                     //   7   8    8   6   5
+                     //34  27   19  11   5   0
+                     //22  1B   13  0B  05  00
+                     ,.group_vec_p(48'h22_1B_13_0B_05_00)
+                     ,.harden_p(harden_p)
+                     ) gb
      (
-      .SDN_i(SDN[16:15])
-      ,.y_i (y_i)
-      ,.s_i (c42_03s[49:16])
-      ,.s2_i(c42_03c[48:15])
-      ,.c_o (gb_c)
-      ,.s_o (gb_s)
+//      .a_i (gb_dot)  -- fold in earlier so that
+//                     -- we don't have to register these vals
+//        .a_i({15'b0, gb_dot[18:0]})
+        .a_i({23'b0, gb_dot_r[10:0]})
+        ,.b_i (c42_03s_r[49:16])
+        ,.c_i( c42_03c_r[48:15])
+        ,.c_o (gb_c)
+        ,.s_o (gb_s)
       );
 
-   wire [63:0]        sum_a = {      gb_s[33:0],       c42_03s[15:0],       c42_01s[7:0],       s30[5:0]};
-   wire [63:0]        sum_b = {gb_c[32:0], 1'b0, c42_03c[14:0], 1'b0, c42_01c[6:0], 1'b0, c30[4:0], 1'b0};
+   wire [63:0]        sum_a = {      gb_s[33:0],       c42_03s_r[15:0],       c42_01s_r[7:0],       s30_r[5:0]};
+   wire [63:0]        sum_b = {gb_c[32:0], 1'b0, c42_03c_r[14:0], 1'b0, c42_01c_r[6:0], 1'b0, c30_r[4:0], 1'b0};
 
    // complete adder with propagation
    assign z_o = sum_a + sum_b;
@@ -411,10 +571,43 @@ module bsg_mul_csa
 
 endmodule
 
+
+module bsg_dff_en_rep_rep #(parameter blocks_p=0
+                            , width_p=0
+                            , group_vec_p=0
+                            , harden_p=1
+                            )
+   (input clock_i
+    , input en_i
+    , input  [width_p-1:0] data_i
+    , output [width_p-1:0] data_o
+    );
+
+   genvar j;
+
+  for (j = 0; j < blocks_p;j=j+1)
+     begin: rof
+        localparam group_end_lp   = (group_vec_p >> ((j+1) << 3 )) & 8'hFF;
+        localparam group_start_lp = (group_vec_p >> ((j  ) << 3 )) & 8'hFF;
+        localparam [31:0] blocks_lp  = group_end_lp-group_start_lp;
+
+        bsg_dff_en #(.width_p(blocks_lp), .harden_p(harden_p)) bde
+        (.clock_i
+         ,.en_i
+         ,.data_i(data_i[group_end_lp-1:group_start_lp])
+         ,.data_o(data_o[group_end_lp-1:group_start_lp])
+         );
+     end
+
+endmodule
+
 //
 // this generates blocks of 4:2 compressors, groups
 // according to the group vector, which is a set of bytes
 //
+
+// i[0] is the fastest input, i[1] next fastest, i[2] next fastest, i[3] slowest.
+// so arrange the inputs so that the slowest arriving signal is first, etc.
 
 module bsg_mul_comp42_rep_rep #(parameter blocks_p=0
                                 , width_p=0
@@ -448,6 +641,7 @@ module bsg_mul_comp42_rep_rep #(parameter blocks_p=0
 
         if (harden_p)
           begin: fi
+
              bsg_mul_comp42_block_hard #(.blocks_p(group_end_lp-group_start_lp)) cr
                (.i(t)
                 ,.cr_i(carries[j]  )
@@ -516,7 +710,7 @@ module bsg_mul_comp42
 
 endmodule
 
-module bsg_mul_B4B_rep_rep 
+module bsg_mul_B4B_rep_rep
   #(parameter blocks_p      =  1
     , parameter width_p     =  0
     , parameter group_vec_p =  0
@@ -718,21 +912,18 @@ module bsg_mul_booth_4_block #(
 endmodule // bsg_mul_booth_4_block
 
 
-module bsg_mul_green_block #(parameter width_p=16
-                     , blocks_p="inv"
-                     , group_vec_p="inv"
-                     , harden_p=0)
-              ( input [1:0][2:0] SDN_i
-                , input  [width_p-1  :0]  y_i
-                , input  [width_p+2-1:0]  s_i
-                , input  [width_p+2-1:0] s2_i
-                , output [width_p+2-1:0]  c_o
-                , output [width_p+2-1:0]  s_o
-                );
+module bsg_mul_csa_rep #(parameter width_p="inv"
+                         , blocks_p="inv"
+                         , group_vec_p="inv"
+                         , harden_p=0)
+   ( input  [width_p-1  :0] a_i
+     , input  [width_p-1:0] b_i
+     , input  [width_p-1:0] c_i
+     , output [width_p-1:0] c_o
+     , output [width_p-1:0] s_o
+     );
 
    genvar i,j;
-
-   wire [width_p+2-1:0] booth_dots;
 
    for (j = 0; j < blocks_p; j=j+1)
      begin: rof
@@ -740,47 +931,71 @@ module bsg_mul_green_block #(parameter width_p=16
         localparam group_start_lp    = (group_vec_p >> ((j  ) << 3 )) & 8'hFF;
         localparam [31:0] blocks_lp  = group_end_lp-group_start_lp;
 
+        for (i = 0; i < blocks_lp; i++)
+          begin: rof
+             bsg_mul_csa csa (.x_i(a_i[group_start_lp+i]), .y_i(b_i[group_start_lp+i]), .z_i(c_i[group_start_lp+i]), .c_o(c_o[group_start_lp+i]), .s_o(s_o[group_start_lp+i]));
+          end
+     end
+
+endmodule // bsg_mul_green_block
+
+module bsg_mul_green_booth_dots #(parameter width_p="inv"
+                                  , harden_p=0
+                                  , blocks_p="inv"
+                                  , group_vec_p="inv"
+                                 )
+   ( input    [1:0][2:0]      SDN_i
+     , input  [width_p-1:0]   y_i
+     , output [width_p+2-1:0] dot_o
+     );
+
+   wire [width_p+2-1:0] y_pad = { y_i, 2'b00 };
+
+   genvar               i,j;
+
+   for (j = 0; j < blocks_p; j=j+1)
+     begin: blk
+        localparam group_end_lp      = (group_vec_p >> ((j+1) << 3 )) & 8'hFF;
+        localparam group_start_lp    = (group_vec_p >> ((j  ) << 3 )) & 8'hFF;
+        localparam [31:0] blocks_lp  = group_end_lp-group_start_lp;
+
+        // y_i does not need to be signed extended
+        // this is the last row, after all
+        // which should not exist for signed version.
+
         if (j != 0 && harden_p)
           begin: macro
-             bsg_mul_and_csa_block_hard #(.blocks_p(blocks_lp)) bach
-             (.x_i     (s_i [group_start_lp +:blocks_lp])
-              ,.y_i     (s2_i[group_start_lp +:blocks_lp])
-              ,.z_and1_i({ blocks_lp { SDN_i[1][2] } })    // these two values are ANDed to provide 3rd input to CSA
-              ,.z_and2_i(y_i[group_start_lp-2+:blocks_lp])
-              ,.c_o     (c_o[group_start_lp  +:blocks_lp])
-              ,.s_o     (s_o[group_start_lp  +:blocks_lp])
+             bsg_and #(.width_p(blocks_lp)
+                       ,.harden_p(harden_p)
+                       ) ba
+             (.a_i  ({blocks_lp { SDN_i[1][2] } }    )
+              ,.b_i (y_pad[group_start_lp+:blocks_lp])
+              ,.o   (dot_o[group_start_lp+:blocks_lp])
               );
           end
         else
-          begin : notmacro
-
-             // y_i does not need to be signed extended
-             // this is the last row, after all
-             // which should not exist for signed version.
-
-             //      for (i = 0; i < width_p+2; i++)
+          begin: notmacro
              for (i = 0; i < blocks_lp; i++)
-               begin: rof
+               begin: b
+
                   if (j == 0 && i == 0)
                     begin :fi
-                       assign booth_dots[0] = SDN_i[0][0];
+                       assign dot_o[0] = SDN_i[0][0];
                     end
                   else
                     if (j == 0 && i == 1)
                       begin : fi
-                         assign booth_dots[1] = 1'b0;
+                         assign dot_o[1] = 1'b0;
                       end
                     else
                       begin: fi
-                         // assign booth_dots[i] = bsg_booth_dot(SDN_i[1], y_pad[i-1], y_pad[i-2]);
+                         // assign dot_o[i] = bsg_booth_dot(SDN_i[1], y_pad[i-1], y_pad[i-2]);
                          // note: we do not need a dot here; as only S value may be set; an AND is sufficient.
                          // fixme: update the diagram.
-                         assign booth_dots[group_start_lp+i] = SDN_i[1][2] & y_i[group_start_lp+i-2];
+                         assign dot_o[group_start_lp+i] = SDN_i[1][2] & y_pad[group_start_lp+i];
                       end
-                  bsg_mul_csa csa_1 (.x_i(s_i[group_start_lp+i]), .y_i(s2_i[group_start_lp+i]), .z_i(booth_dots[group_start_lp+i]), .c_o(c_o[group_start_lp+i]), .s_o(s_o[group_start_lp+i]));
                end // block: rof
           end // block: notmacro
-     end
-
-endmodule // bsg_mul_green_block
+     end // block: rof
+endmodule
 

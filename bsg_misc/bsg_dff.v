@@ -1,5 +1,8 @@
 
-module bsg_dff #(width_p=-1)
+module bsg_dff #(width_p=-1
+		 ,harden_p=0
+		 ,strength_p=1   // set drive strength
+		 )
    (input   clock_i
     ,input  [width_p-1:0] data_i
     ,output [width_p-1:0] data_o
