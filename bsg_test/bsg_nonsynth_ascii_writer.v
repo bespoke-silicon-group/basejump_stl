@@ -6,7 +6,8 @@ module bsg_nonsynth_ascii_writer
   #(parameter width_p      = "inv"
     , parameter values_p   = "inv"
     , parameter filename_p = -1
-    , parameter format_p   = "%h ")
+    , parameter fopen_param_p = "w"
+    , parameter format_p   = "%x ")
    (input clk
     , input reset_i
     , input valid_i
@@ -21,7 +22,7 @@ module bsg_nonsynth_ascii_writer
    always @(posedge reset_i)
      if (file == -1)
        begin
-	  file = $fopen(filename_p,"w");
+	  file = $fopen(filename_p,fopen_param_p);
        end
    
    logic [width_p*values_p-1:0] capture_data_r;
@@ -42,7 +43,7 @@ module bsg_nonsynth_ascii_writer
        begin
           for (i = 0; i < values_p; i++)
 	    begin
-               $fwrite(file,"%x ",capture_data_r[i*width_p+:width_p]);
+               $fwrite(file,format_p,capture_data_r[i*width_p+:width_p]);
 	    end
           $fwrite(file,"\n");
        end
