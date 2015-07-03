@@ -60,13 +60,13 @@ bsg_mesosync_link
              , .pins_o(from_meso)
              
              // connection to core, 2 bits are used for handshake
-             , .core_data_i()
-             , .core_v_i(1'b0)
-             , .core_ready_o()
+             , .data_i()
+             , .v_i(1'b0)
+             , .ready_o()
 
-             , .core_v_o()
-             , .core_data_o()
-             , .core_ready_i(1'b0)
+             , .v_o()
+             , .data_o()
+             , .ready_i(1'b0)
      
             );
 

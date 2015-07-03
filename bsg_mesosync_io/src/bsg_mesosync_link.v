@@ -1,4 +1,4 @@
-// bsg_mesosync_channel is the designed IO in bsg group that devides
+// bsg_mesosync_link is the designed IO in bsg group that devides
 // the core's clock to a slower clock for IO based on the configuration 
 // it receives. For each input data line it can choose between the clock
 // edge and which cycle in the divided clock to take the sameple, based on
@@ -9,17 +9,25 @@
 // it would send all possible transitions of data using two counters to make 
 // sure the output channel is reliable.
 //
-// To find out the proper values for bit configuration, it has 2 logic
+// To find out the proper values for bit configuration, it has a logic
 // analzers which would sample input singal on both positive and negative
-// edges of the clock. Master chooses two lines at a time and sends known
-// patterns to them and read the logic analyzer's data to find out the delays
+// edges of the clock. Master chooses a line at a time and sends known
+// patterns to it and read the logic analyzer's data to find out the delays
 // of each line and find the proper line configurations. Finally, a loopback
-// mode is enabled and it sends out the input data to its output. 
+// mode is enabled and it sends out the input data to its output for final check. 
 //
 // There is no handshake protocl on the pins side, but from channel to core 
-// there is valid handshake to tell the FIFO which data is valid to be
-// sampled. On the core to channel connection, it has ready protocol, to let 
-// the core know when it can send data. 
+// there is valid-and-ready handshake protocol. It must be connected to a 
+// valid-and-credit protocol based module on the connected chip. It uses 
+// a FIFO and credit counter to convert from valid-only to valid-and-credit
+// and to valid-and-ready in next step. 
+// 
+// It includes 3 main modules, bsg_mesosync_input must be close to input pins,
+// bsg_mesosync_output must be close to output pins and bsg_mesosync_loopback
+// must be close and next to bsg_mesosync_output. Connection between input
+// and output module and input and loopback module are distance safe, using 
+// bsg_fifo_relay. Moreover, connection between core and loopback module is
+// distance safe as well.
 //
 // Most important feature of this IO is least latency.
 
@@ -47,21 +55,19 @@ module bsg_mesosync_link
                     , output logic [width_lp-1:0] pins_o
                     
                     // connection to core, 2 bits are used for handshake
-                    , input  [width_lp-3:0]       core_data_i
-                    , input                       core_v_i
-                    , output logic                core_ready_o
+                    , input  [width_lp-3:0]       data_i
+                    , input                       v_i
+                    , output logic                ready_o
 
-                    , output                      core_v_o
-                    , output [width_lp-3:0]       core_data_o
-                    , input                       core_ready_i
+                    , output                      v_o
+                    , output [width_lp-3:0]       data_o
+                    , input                       ready_i
      
                     );
 
 // internal singals
-logic                          loopback_en,fifo_en;
-logic                          channel_reset;
+logic                          loopback_en;
 logic                          ready, valid;
-logic [width_lp-1:0]           to_pins;
 logic [width_lp-1:0]           to_loopback;
 logic [width_lp-1:0]           from_loopback;
 logic                          logic_analyzer_data, ready_to_LA, LA_valid;
@@ -87,21 +93,15 @@ bsg_mesosync_input
             // Sinals with their acknowledge
             , .pins_i(pins_i)
 
-            , .core_o(to_loopback)
+            , .data_o(to_loopback)
             , .valid_o(valid)
-            
+
             // Logic analyzer signals for mesosync_output module
-            , .logic_analyzer_data_o(logic_analyzer_data)
+            , .LA_data_o(logic_analyzer_data)
             , .LA_valid_o(LA_valid)
             , .ready_to_LA_i(ready_to_LA)
                    
-            // loopback signals
-            , .fifo_en_o(fifo_en)
-            , .loopback_en_o(loopback_en)
-            , .channel_reset_o(channel_reset)
-
             );
-
 
 bsg_mesosync_output
            #( .width_p(width_lp)
@@ -112,59 +112,51 @@ bsg_mesosync_output
             , .config_i(relay_out)
                          
             // Sinals with their acknowledge
-            , .core_i(from_loopback)
+            , .data_i(from_loopback)
             , .ready_o(ready)
 
-            , .pins_o(to_pins)
+            , .pins_o(pins_o)
             
             // Logic analyzer signals for mesosync_input module
-            , .logic_analyzer_data_i(logic_analyzer_data)
+            , .LA_data_i(logic_analyzer_data)
             , .LA_valid_i(LA_valid)
             , .ready_to_LA_o(ready_to_LA)
             
+            // loopback signals
+            , .loopback_en_o(loopback_en)
             );
 
-// loop back module with enable and ready inputs, and credit protocol
-// on both directions
-bsg_credit_resolver_w_loopback #( .width_p(width_lp-2)
-                                , .els_p(loopback_els_p)
-                                , .credit_initial_p(credit_initial_p)
-                                , .credit_max_val_p(credit_max_val_p)
-                                ) loopback
+// loop back module with mode and line_ready inputs, and valid-and-credit 
+// protocol on both directions to meso-channel , and valid-and-ready protocol
+// on both directions to core
+bsg_mesosync_loopback #( .width_p(width_lp-2)
+                       , .els_p(loopback_els_p)
+                       , .credit_initial_p(credit_initial_p)
+                       , .credit_max_val_p(credit_max_val_p)
+                       ) loopback
     ( .clk_i(clk)
     , .reset_i(reset)
-    , .enable_i(fifo_en & ~channel_reset)
     , .loopback_en_i(loopback_en)
     , .line_ready_i(ready)
 
     // Connection to mesosync_link
-    , .pins_data_i(to_loopback[width_lp-1:2])
-    , .pins_v_i(valid & to_loopback[0])
-    , .pins_credit_o(from_loopback[1])
+    , .meso_data_i(to_loopback[width_lp-1:2])
+    , .meso_v_i(valid & to_loopback[0])
+    , .meso_credit_o(from_loopback[1])
 
-    , .pins_v_o(from_loopback[0])
-    , .pins_data_o(from_loopback[width_lp-1:2])
-    , .pins_credit_i(valid & to_loopback[1])
+    , .meso_v_o(from_loopback[0])
+    , .meso_data_o(from_loopback[width_lp-1:2])
+    , .meso_credit_i(valid & to_loopback[1])
     
     // connection to core
-    , .core_data_i(core_data_i)
-    , .core_v_i(core_v_i)
-    , .core_ready_o(core_ready_o)
+    , .data_i(data_i)
+    , .v_i(v_i)
+    , .ready_o(ready_o)
 
-    , .core_v_o(core_v_o)
-    , .core_data_o(core_data_o)
-    , .core_ready_i(core_ready_i)
+    , .v_o(v_o)
+    , .data_o(data_o)
+    , .ready_i(ready_i)
   
     );
-
-// mesosync channel uses the channel reset from config_tag
-// hence during reset output of module must be made zero on 
-// this top module
-always_comb
-  if (reset) begin
-    pins_o = 0;
-  end else begin 
-    pins_o = to_pins;
-  end
 
 endmodule

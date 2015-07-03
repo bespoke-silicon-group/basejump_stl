@@ -53,6 +53,17 @@ website. If the code is a testbench, it does not need
 to be compiled with Quartus, but it definitely should simulate with modelsim.
 Alternatively, you may also use VCS and/or Design Compiler if you have access.
 
+Each test should have a header comment that describes the testing rationale;
+i.e. explain the design of your test. You should explicitly identify the 
+state space (inputs and internal state) that should be tested, and also
+the parameter space (i.e. different input configuration parameters.) You
+should explain particular cases that need to be tested based on inspection
+of the code (does the code handle different cases with different code?). 
+Where possible, brute force testing of the whole state space is a desireable
+approach. Note that modules have invariants on their inputs; if these invariants
+are not true, then the module's behavior is undefined. However, it would be
+good to have asserts that give a warning if input invariants are incorrect.
+
 * Terms *
 
 Note that by contributing code to this repository, you are

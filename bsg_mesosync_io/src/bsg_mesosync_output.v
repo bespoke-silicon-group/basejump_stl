@@ -1,20 +1,22 @@
-// bsg_mesosync_channel is the designed IO in bsg group that devides
-// the chip's clock to a slower clock for IO based on the configuration 
-// it receives. 
+// bsg_mesosync_link devides the chip's clock to a slower clock for IO 
+// based on the configuration it receives. 
 //
-// output_module has three phases to be calibrated. After reset, it would 
-// send out a known pattern so the other side (master) can bit-allign its 
-// input. Next it would send all possible transitions of data using two 
+// bsg_mesosync_output module has three phases to be calibrated. After reset, 
+// it would send out a known pattern so the other side (master) can bit-allign 
+// its input. Next it would send all possible transitions of data using two 
 // counters to make sure the output channel is reliable.
 //
 // To find out the proper values for bit configuration, it sends outputs of 
-// 2 logic analzers from the input side. 
+// the logic analzer received from the bsg_mesosync_input module. 
 //
-// It receives the read values of logic_analyzers from the bsg_mesosync_input
-// module. On the core to channel connection, it has ready protocol, to let 
-// the core know when it can send data. For the output to pins there is 
-// no handshake protocol
+// On the pins side there is no handshake protocol and on the other side, 
+// to rest of bsg_mesosync_link, it has ready-only protocol, which declares
+// when it has sent a data. 
 //
+// It also provides the loopback mode, received from config_tag, since the 
+// loopback module must be placed very close to it.
+//
+
 //`ifndef DEFINITIONS_V
 //`include "definitions.v"
 //`endif
@@ -28,16 +30,18 @@ module bsg_mesosync_output
                    , input  config_s            config_i
                     
                    // Sinals with their acknowledge
-                   , input  [width_p-1:0]       core_i
+                   , input  [width_p-1:0]       data_i
                    , output logic               ready_o
 
                    , output logic [width_p-1:0] pins_o
                    
                    // Logic analyzer signals for mesosync_input module
-                   , input                      logic_analyzer_data_i
+                   , input                      LA_data_i
                    , input                      LA_valid_i
                    , output                     ready_to_LA_o
-
+                   
+                   // loopback mode signal for loopback module
+                   , output logic               loopback_en_o
                    );
 
 //------------------------------------------------
@@ -47,12 +51,11 @@ module bsg_mesosync_output
 // Configuratons
 logic [1:0]                    cfg_reset, cfg_reset_r;
 logic                          channel_reset;
-logic                          fifo_en,loopback_en; // not used
+logic                          input_enable; // not used
 mode_cfg_s                     mode_cfg;
 logic [maxDivisionWidth_p-1:0] output_clk_divider;
-logic [$clog2(width_p)-1:0]   la_output_bit_selector;
-logic [$clog2(width_p)-1:0]   v_output_bit_selector;
-
+logic [$clog2(width_p)-1:0]    la_output_bit_selector;
+logic [$clog2(width_p)-1:0]    v_output_bit_selector;
 
 // Calcuating data width of each configuration node
 
@@ -63,7 +66,7 @@ localparam width_lp = width_p + 0;
 // logic analyzer data and valid line selector
 localparam output_node_data_width_p = 2 + maxDivisionWidth_p 
                                         + 2*($clog2(width_lp));
-// mode_cfg, fifo_en and loopback_en
+// mode_cfg, input_enable and loopback_en
 localparam common_node_data_width_p = $bits(mode_cfg) + 1 + 1;
 
 // relay nodes
@@ -81,7 +84,7 @@ config_node#(.id_p(cfg_tag_base_id_p)
             (.clk(clk)
             ,.reset(reset) 
             ,.config_i(relay_out)
-            ,.data_o({mode_cfg,fifo_en,loopback_en})
+            ,.data_o({mode_cfg,input_enable,loopback_en_o})
             );
 
 config_node#(.id_p(cfg_tag_base_id_p+2)     
@@ -125,7 +128,7 @@ bsg_relay_fifo #(.width_p(1)) LA_relay
     ,.reset_i(channel_reset)
 
     ,.ready_o(ready_to_LA_o)
-    ,.data_i(logic_analyzer_data_i)
+    ,.data_i(LA_data_i)
     ,.v_i(LA_valid_i)
 
     ,.v_o(LA_valid)
@@ -232,7 +235,7 @@ always_comb
          end
        NORM:
          begin
-           output_data = core_i;
+           output_data = data_i; 
          end
 
        default:
@@ -253,7 +256,7 @@ always_ff @ (posedge clk)
     pins_o <= pins_o; 
   end
   
-assign output_ready = (output_counter_r == output_clk_divider) & ~channel_reset ;
+assign output_ready = (output_counter_r == output_clk_divider) & ~channel_reset;
 
 // ready signals based on the output mode 
 // There is no need for awknowledge of ready in STOP and PATTERN modes

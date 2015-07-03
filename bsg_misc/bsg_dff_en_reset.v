@@ -13,7 +13,7 @@ module bsg_dff_en_reset #(width_p=-1)
    always @(posedge clock_i)
      begin
 	if (reset_i)
-	  data_r <= width_p ' 0;
+	  data_r <= width_p'(0);
 	else
 	  if (en_i)
 	    data_r <= data_i;

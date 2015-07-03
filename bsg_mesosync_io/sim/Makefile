@@ -6,7 +6,7 @@ ASYNC_PATH      = ../../bsg_async
 DATA_FLOW_PATH  = ../../bsg_dataflow
 MISC_PATH       = ../../bsg_misc
 MEM_PATH        = ../../bsg_mem
-TESTBENCH_PATH  = ../tests/mesosync_io_w_loopback_test
+TESTBENCH_PATH  = ../tests
 TESTBENCH			  = $(TESTBENCH_PATH)/mesosynctb.v \
 									$(CFG_TAG_PATH)/../sim/send_config_tag.v
 
@@ -40,7 +40,7 @@ else
   HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_two_fifo.v 
   HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_relay_fifo.v 
   HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_flow_counter.v 
-  HDL_SOURCE +=	$(SRC_PATH)/bsg_credit_resolver_w_loopback.v 
+  HDL_SOURCE +=	$(SRC_PATH)/bsg_mesosync_loopback.v 
   HDL_SOURCE +=	$(MISC_PATH)/bsg_counter_w_overflow.v 
   HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_fifo_1r1w_narrowed.v 
   HDL_SOURCE += $(ASYNC_PATH)/bsg_launch_sync_sync.v
