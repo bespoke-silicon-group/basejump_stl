@@ -59,7 +59,7 @@ To test different combinations of parameters, you will use a Makefile that
 runs your test repeatedly with different arguments. See http://www.gnu.org/software/make/
 for the entire manual in one page so that it is easily searchable. We have
 some helpful lines of code for make that will test all combinations of a variety
-of input parameters. 
+of input parameters (the bsg_param_scan make function). 
 
 Each test should have a header comment that describes the testing rationale;
 i.e. explain the design of your test. You should explicitly identify the 
