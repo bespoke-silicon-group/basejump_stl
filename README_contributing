@@ -30,7 +30,7 @@ is intended to test the file
 bsg_ip_cores/bsg_misc/bsg_binary_plus_one_to_gray.v.  
 You can use that test as an example. 
 
-* Contributing * 
+* Contributing through Testing * 
 
 If you would like to contribute, you can start
 by writing tests for modules that do not yet have tests.
@@ -51,7 +51,15 @@ To run your tests, you can download the demonstration
 version of Altera Quartus and Modelsim from the Altera
 website. If the code is a testbench, it does not need
 to be compiled with Quartus, but it definitely should simulate with modelsim.
+Make sure that you have SystemVerilog enabled in those tools
+and that you are using the latest versions (e.g. > 15.0 for Modelsim).
 Alternatively, you may also use VCS and/or Design Compiler if you have access.
+
+To test different combinations of parameters, you will use a Makefile that
+runs your test repeatedly with different arguments. See http://www.gnu.org/software/make/
+for the entire manual in one page so that it is easily searchable. We have
+some helpful lines of code for make that will test all combinations of a variety
+of input parameters (the bsg_param_scan make function). 
 
 Each test should have a header comment that describes the testing rationale;
 i.e. explain the design of your test. You should explicitly identify the 
@@ -63,6 +71,13 @@ Where possible, brute force testing of the whole state space is a desireable
 approach. Note that modules have invariants on their inputs; if these invariants
 are not true, then the module's behavior is undefined. However, it would be
 good to have asserts that give a warning if input invariants are incorrect.
+
+Each test should be self checking, and assert $error if an answer is incorrect.
+For the test, we ignore all output before the reset line goes line
+(which is prominently indicated when you use our reset_gen module).
+
+Be sure to immitate the style that is used in the other tests! Seperate your
+synthesizeable and non-synthesizeable verilog into seperate always blocks.
 
 * Terms *
 
