@@ -17,10 +17,13 @@ DESIGNWARE_FLAGS = -y $(DESIGNWARE_DIR) +incdir+$(DESIGNWARE_DIR) +incdir+$(MURN
 
 BSG_TESTME_FILES    = bsg_mul.v
 BSG_TESTME_DIR      = $(TOP)/bsg_misc
-BSG_MISC_FILES      =   bsg_cycle_counter.v bsg_defines.v bsg_lfsr.v
-BSG_HARD_FILES      = bsg_mul_comp42_block_hard.v bsg_mul_booth_4_block_hard.v bsg_mul_and_csa_block_hard.v
-BSG_HARD_DIR        = ~/raw/chip/bsg_one_loopback/sources/sverilog/bsg_chip
-BSG_HARD_IP_DIR = ~/raw/chip/bsg_one_loopback/sources/ip/bsg/mul
+BSG_MISC_FILES      =   bsg_cycle_counter.v bsg_defines.v bsg_lfsr.v bsg_and.v bsg_dff_en.v bsg_transpose.v
+BSG_HARD_MISC_MUL_FILES      = bsg_mul_comp42_block_hard.v bsg_mul_booth_4_block_hard.v
+BSG_HARD_MISC_MUL_DIR        = ~/raw/bsg_ip_cores/hard/bsg_misc/bsg_mul
+BSG_HARD_MISC_FILES =
+BSG_HARD_MISC_DIR   = ~/raw/bsg_ip_cores/hard/bsg_misc/
+BSG_HARD_IP_DIR = ~/raw/chip/bsg_one_1x1/sources/ip/bsg/mul/
+
 BSG_HARD_IP_FILES = bsg_rp_tsmc_250_comp42_block_hard_b8.v bsg_rp_tsmc_250_comp42_block_hard_b7.v bsg_rp_tsmc_250_comp42_block_hard_b5.v bsg_rp_tsmc_250_comp42_block_hard_b6.v bsg_rp_tsmc_250_booth_4_block_hard_b5.v bsg_rp_tsmc_250_booth_4_block_hard_b6.v bsg_rp_tsmc_250_booth_4_block_hard_b8.v bsg_rp_tsmc_250_and_csa_block_hard_b7.v bsg_rp_tsmc_250_and_csa_block_hard_b6.v bsg_rp_tsmc_250_and_csa_block_hard_b8.v bsg_rp_tsmc_250_booth_4_block_cornice_end_hard_b7.v bsg_rp_tsmc_250_booth_4_block_cornice_end_hard_b8.v bsg_rp_tsmc_250_booth_4_block_cornice_hard_b8.v bsg_rp_tsmc_250_booth_4_block_cornice_hard_b6.v
 BSG_HARD_LIB =  -v /gro/cad/mosis/pdk/tsmc/cl025g/std_cells/Rev_2004q2v1/aci/sc/verilog/tsmc25.v
 
@@ -30,7 +33,7 @@ BSG_TEST_FILES =  bsg_nonsynth_reset_gen.v bsg_nonsynth_clock_gen.v # bsg_nonsyn
 TEST_MAIN=test_bsg.v
 
 
-ALL_FILES =   $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x)) $(foreach x,$(BSG_TEST_FILES),$(TOP)/bsg_test/$(x)) $(foreach x,$(BSG_TESTME_FILES),$(BSG_TESTME_DIR)/$(x)) $(TEST_MAIN) $(foreach x,$(BSG_HARD_FILES),$(BSG_HARD_DIR)/$(x)) $(foreach x,$(BSG_HARD_IP_FILES),$(BSG_HARD_IP_DIR)/$(x))
+ALL_FILES =   $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x)) $(foreach x,$(BSG_TEST_FILES),$(TOP)/bsg_test/$(x)) $(foreach x,$(BSG_TESTME_FILES),$(BSG_TESTME_DIR)/$(x)) $(TEST_MAIN) $(foreach x,$(BSG_HARD_MISC_MUL_FILES),$(BSG_HARD_MISC_MUL_DIR)/$(x))  $(foreach x,$(BSG_HARD_MISC_FILES),$(BSG_HARD_MISC_DIR)/$(x)) $(foreach x,$(BSG_HARD_IP_FILES),$(BSG_HARD_IP_DIR)/$(x))
 
 modulo_val_p = 1 2 3 4 5 6 7 8 9
 #modulo_val_p = 10 11 12 13 14 15 0
