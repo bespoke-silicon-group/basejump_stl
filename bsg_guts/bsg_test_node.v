@@ -160,7 +160,13 @@ module  bsg_test_node
         // slave: a loopback device
         always_comb
           begin
-             out_fifo_data        = in_fifo_data;
+             // out_fifo_data        = in_fifo_data;
+	     // we explicitly list the fields here since it is an example
+	     out_fifo_data.cmd    = in_fifo_data.cmd;
+	     out_fifo_data.opcode = in_fifo_data.opcode;
+	     out_fifo_data.data   = in_fifo_data.data;
+
+	     // swap source and dest
              out_fifo_data.srcid  = in_fifo_data.destid;
              out_fifo_data.destid = in_fifo_data.srcid;
           end
