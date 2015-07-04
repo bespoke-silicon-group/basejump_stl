@@ -1,5 +1,6 @@
 module bsg_mux #(parameter width_p="inv"
 		 , els_p=1
+		 , harden_p = 0
 		 , lg_els_lp=`BSG_SAFE_CLOG2(els_p)
 		 )
    (

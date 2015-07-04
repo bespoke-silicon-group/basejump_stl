@@ -1,4 +1,4 @@
-module bsg_dff_en_reset #(width_p=-1)
+module bsg_dff_en_reset #(width_p=-1, harden_p=0)
    (input   clock_i
     ,input  [width_p-1:0] data_i
     ,input  en_i
