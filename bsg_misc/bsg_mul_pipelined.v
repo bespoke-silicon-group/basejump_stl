@@ -1,4 +1,4 @@
-// bsg_mul
+// bsg_mul_pipelined
 //
 //
 // 5-24-15 MBT
@@ -50,36 +50,10 @@ function automatic [0:0] bsg_mul_booth_dot([2:0] sdn, y0, ym1);
   return ((sdn[2] & y0) | (sdn[1] & ym1)) ^ sdn[0];
 endfunction
 
-
-module bsg_mul #(parameter width_p="inv"
-                 ,harden_p=1
-                 )
-   (input    [width_p-1:0]   x_i
-    , input  [width_p-1:0]   y_i
-    , input signed_i
-    , output [width_p*2-1:0] z_o
-    );
-
-   bsg_mul_pipelined #(.width_p    (width_p )
-                       ,.pipeline_p(0       )
-                       ,.harden_p  (harden_p)
-                       ) bmp
-   (.x_i
-    ,.y_i
-    ,.signed_i
-    ,.z_o
-    ,.clock_i(1'b0)
-    ,.en_i(1'b0)
-    );
-
-
-endmodule
-
-
 // The parameter harden_p is whether you want to invoke
 // the foundry_specific routines.
 
-// pass in 0 if you want unpipelined.
+// pass in 0 for pipeline_ if you want unpipelined.
 
 module bsg_mul_pipelined #(parameter width_p="inv"
                            , parameter pipeline_p=1
