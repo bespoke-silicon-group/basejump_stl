@@ -5,7 +5,7 @@ if (   blocks == blocks_p )                                                     
   end
 
 
-module bsg_mul_comp42_block_hard #(parameter blocks_p="inv")
+module bsg_mul_comp42_rep #(parameter blocks_p="inv")
    (input [3:0][blocks_p-1:0] i
     ,input cr_i
     ,output cl_o
