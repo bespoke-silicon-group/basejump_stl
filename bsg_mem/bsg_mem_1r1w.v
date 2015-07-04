@@ -27,6 +27,8 @@ module bsg_mem_1r1w #(parameter width_p=-1
 
    logic [width_p-1:0]    mem [els_p-1:0];
 
+   wire 		  unused = w_reset_i;
+
    // this implementation ignores the r_v_i
    assign r_data_o = mem[r_addr_i];
 
