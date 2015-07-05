@@ -32,7 +32,7 @@ proc bsg_place_mul_32_32 { prefix rp_group_name } {
 
     set col 8
     foreach row [list  0 1 2 3 4 ] {
-	set group [get_attribute [get_cell ${prefix}${sep}fi32_m32${sep}brr0${sep}rof_${row}__br${sep}h_bb4bh${sep}macro_b4b/add42_w4_b0] rp_group_name]
+	set group [get_attribute [get_cell ${prefix}${sep}fi32_m32${sep}brr0${sep}rof_${row}__br${sep}bb4bh${sep}macro_b4b/add42_w4_b0] rp_group_name]
 	set_rp_group_options $group -placement_type compression
 	if {$row == 0} {
 	    set_rp_group_options $group -group_orient FN
@@ -42,13 +42,13 @@ proc bsg_place_mul_32_32 { prefix rp_group_name } {
 
     set col 7
     foreach row [list  0 1 2 3 4 5 ] {
-	set group [get_attribute [get_cell ${prefix}${sep}fi32_m32${sep}crr01${sep}rof_${row}__fi_cr${sep}macro_c42/add42_w3_b1]  rp_group_name]
+	set group [get_attribute [get_cell ${prefix}${sep}fi32_m32${sep}crr01${sep}rof_${row}__cr${sep}macro_c42/add42_w3_b1]  rp_group_name]
 	add_to_rp_group bsg_chip::$rp_group_name -hier $group -column $col -row [expr $row+1]
     }
 
     set col 6
     foreach row [list 0 1 2 3 4 5 ] {
-	set group [get_attribute [get_cell ${prefix}${sep}fi32_m32${sep}brr1${sep}rof_${row}__br${sep}h_bb4bh${sep}macro_b4b/add42_w4_b0]   rp_group_name]
+	set group [get_attribute [get_cell ${prefix}${sep}fi32_m32${sep}brr1${sep}rof_${row}__br${sep}bb4bh${sep}macro_b4b/add42_w4_b0]   rp_group_name]
 	set_rp_group_options $group -placement_type compression
 
 	if {$row == 0} {
@@ -60,7 +60,7 @@ proc bsg_place_mul_32_32 { prefix rp_group_name } {
 
     set col 5
     foreach row [list  0 1 2 3 4 5 6 ] {
-	add_to_rp_group bsg_chip::$rp_group_name -hier [get_attribute [get_cell ${prefix}${sep}fi32_m32${sep}crr03${sep}rof_${row}__fi_cr${sep}macro_c42/add42_w3_b1]  rp_group_name] -column $col -row [expr $row+2]
+	add_to_rp_group bsg_chip::$rp_group_name -hier [get_attribute [get_cell ${prefix}${sep}fi32_m32${sep}crr03${sep}rof_${row}__cr${sep}macro_c42/add42_w3_b1]  rp_group_name] -column $col -row [expr $row+2]
     }
 
     set col 4
@@ -71,7 +71,7 @@ proc bsg_place_mul_32_32 { prefix rp_group_name } {
 
     set col 3
     foreach row [list  0 1 2 3 4 5] {
-	set group  [get_attribute [get_cell ${prefix}${sep}fi32_m32${sep}brr2${sep}rof_${row}__br${sep}h_bb4bh${sep}macro_b4b/add42_w4_b0]   rp_group_name]
+	set group  [get_attribute [get_cell ${prefix}${sep}fi32_m32${sep}brr2${sep}rof_${row}__br${sep}bb4bh${sep}macro_b4b/add42_w4_b0]   rp_group_name]
 	set_rp_group_options $group -placement_type compression
 
 	if {$row == 0} {
@@ -83,13 +83,13 @@ proc bsg_place_mul_32_32 { prefix rp_group_name } {
 
     set col 2
     foreach row [list  0 1 2 3 4 5 ] {
-	add_to_rp_group bsg_chip::$rp_group_name -hier [get_attribute [get_cell ${prefix}${sep}fi32_m32${sep}crr23${sep}rof_${row}__fi_cr${sep}macro_c42/add42_w3_b1]  rp_group_name] -column $col -row [expr $row+3]
+	add_to_rp_group bsg_chip::$rp_group_name -hier [get_attribute [get_cell ${prefix}${sep}fi32_m32${sep}crr23${sep}rof_${row}__cr${sep}macro_c42/add42_w3_b1]  rp_group_name] -column $col -row [expr $row+3]
     }
 
 
     set col 1
     foreach row [list 0 1 2 3 4 5] {
-	set group  [get_attribute [get_cell ${prefix}${sep}fi32_m32${sep}brr3${sep}rof_${row}__br${sep}h_bb4bh${sep}macro_b4b/add42_w4_b0] rp_group_name]
+	set group  [get_attribute [get_cell ${prefix}${sep}fi32_m32${sep}brr3${sep}rof_${row}__br${sep}bb4bh${sep}macro_b4b/add42_w4_b0] rp_group_name]
 	set_rp_group_options $group -placement_type compression
 
 	if {$row == 0} {
