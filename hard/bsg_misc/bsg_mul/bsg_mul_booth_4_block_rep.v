@@ -5,7 +5,7 @@ if (   blocks == blocks_p      && S_above == S_above_vec_p                      
      name``_b``blocks b4b (.*);                             \
   end
 
-module bsg_mul_booth_4_block_hard #(parameter [31:0] blocks_p=1
+module bsg_mul_booth_4_block_rep  #(parameter [31:0] blocks_p=1
                                     ,parameter S_above_vec_p=0
                                     ,parameter dot_bar_vec_p=0
                                     ,parameter B_vec_p=0
