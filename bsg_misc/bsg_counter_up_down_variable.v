@@ -1,20 +1,25 @@
 // This is an up-down counter with initial and max values. 
 // Moreover, it has an parameter for extra bits to be used 
-// for counter, in case of using for credit counters.
-module bsg_counter_up_down #(parameter max_val_p    = -1
-                         ,parameter init_val_p   = -1
+// for counter, in case of using for credit counters. Also
+// up and down values could be variable, having max threshold
+// of max_step_p.
+module bsg_counter_up_down_variable #( parameter max_val_p    = -1
+                                     , parameter init_val_p   = -1
+                                     , parameter max_step_p   = -1
 
-                          //localpara
-                         ,parameter ptr_width_lp = 
-                            `BSG_WIDTH(max_val_p)
-                         )                           
-    ( input                           clk_i
-    , input                           reset_i
+                                     //localpara
+                                     , parameter step_width_lp = 
+                                        `BSG_WIDTH(max_step_p)
+                                     , parameter ptr_width_lp = 
+                                        `BSG_WIDTH(max_val_p)
+                                     )                           
+    ( input                            clk_i
+    , input                            reset_i
 
-    , input                           up_i
-    , input                           down_i
+    , input        [step_width_lp-1:0] up_i
+    , input        [step_width_lp-1:0] down_i
 
-    , output logic [ptr_width_lp-1:0] count_o
+    , output logic [ptr_width_lp-1:0]  count_o
     );
 
 // keeping track of number of entries and updating read and 

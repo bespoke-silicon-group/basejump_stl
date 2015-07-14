@@ -17,16 +17,16 @@ module bsg_logic_analyzer #( parameter line_width_p = "inv"
               , input reset
               , input valid_en_i
 
-              , input [line_width_p-1:0]         posedge_value_i
-              , input [line_width_p-1:0]         negedge_value_i
-              , input [$clog2(line_width_p)-1:0] input_bit_selector_i
+              , input [line_width_p-1:0]                  posedge_value_i
+              , input [line_width_p-1:0]                  negedge_value_i
+              , input [`BSG_SAFE_CLOG2(line_width_p)-1:0] input_bit_selector_i
               
-              , input                            start_i
-              , output                           ready_o
+              , input                                     start_i
+              , output                                    ready_o
               
-              , output                           logic_analyzer_data_o
-              , output                           v_o
-              , input                            deque_i
+              , output                                    logic_analyzer_data_o
+              , output                                    v_o
+              , input                                     deque_i
 
               );
 

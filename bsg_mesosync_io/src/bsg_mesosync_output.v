@@ -42,6 +42,7 @@ module bsg_mesosync_output
                    
                    // loopback mode signal for loopback module
                    , output logic               loopback_en_o
+                   , output logic               channel_reset_o
                    );
 
 //------------------------------------------------
@@ -49,13 +50,12 @@ module bsg_mesosync_output
 //------------------------------------------------
 
 // Configuratons
-logic [1:0]                    cfg_reset, cfg_reset_r;
-logic                          channel_reset;
-logic                          input_enable; // not used
-mode_cfg_s                     mode_cfg;
-logic [maxDivisionWidth_p-1:0] output_clk_divider;
-logic [$clog2(width_p)-1:0]    la_output_bit_selector;
-logic [$clog2(width_p)-1:0]    v_output_bit_selector;
+logic [1:0]                          cfg_reset, cfg_reset_r;
+logic                                input_enable; // not used
+mode_cfg_s                           mode_cfg;
+logic [maxDivisionWidth_p-1:0]       output_clk_divider;
+logic [`BSG_SAFE_CLOG2(width_p)-1:0] la_output_bit_selector;
+logic [`BSG_SAFE_CLOG2(width_p)-1:0] v_output_bit_selector;
 
 // Calcuating data width of each configuration node
 
@@ -65,7 +65,7 @@ localparam width_lp = width_p + 0;
 // reset (2 bits), clock divider for output digital clock, 
 // logic analyzer data and valid line selector
 localparam output_node_data_width_p = 2 + maxDivisionWidth_p 
-                                        + 2*($clog2(width_lp));
+                                        + 2*(`BSG_SAFE_CLOG2(width_lp));
 // mode_cfg, input_enable and loopback_en
 localparam common_node_data_width_p = $bits(mode_cfg) + 1 + 1;
 
@@ -111,10 +111,10 @@ always_ff @(posedge clk)
 // it would remain low (unless another value is recieved)
 always_ff @(posedge clk)
   if ((cfg_reset == 2'b10) & 
-            ((cfg_reset_r == 2'b01)|(channel_reset == 1'b0)))
-    channel_reset <= 1'b0;
+            ((cfg_reset_r == 2'b01)|(channel_reset_o == 1'b0)))
+    channel_reset_o <= 1'b0;
   else
-    channel_reset <= 1'b1;
+    channel_reset_o <= 1'b1;
 
 //------------------------------------------------
 //--------- RELAY FIFO FOR LA DATA ---------------
@@ -125,7 +125,7 @@ logic LA_valid, ready_to_LA, LA_data;
 
 bsg_relay_fifo #(.width_p(1)) LA_relay
     (.clk_i(clk)
-    ,.reset_i(channel_reset)
+    ,.reset_i(channel_reset_o)
 
     ,.ready_o(ready_to_LA_o)
     ,.data_i(LA_data_i)
@@ -147,7 +147,7 @@ logic [maxDivisionWidth_p-1:0] input_counter_r, output_counter_r;
 counter_w_overflow #(.width_p(maxDivisionWidth_p)) output_counter
 
             ( .clk(clk)
-            , .reset(channel_reset)
+            , .reset(channel_reset_o)
 
             , .overflow_i(output_clk_divider)
             , .counter_o(output_counter_r)
@@ -174,7 +174,7 @@ logic [7:0]          out_rot_r,   out_rot_n;
 // Counter and shift register
 always_ff @(posedge clk)
   begin
-    if (channel_reset)
+    if (channel_reset_o)
       begin
         out_ctr_r <= counter_bits_lp ' (0);
         out_rot_r <= 8'b1010_0101;   // bit alignment sequence
@@ -192,8 +192,7 @@ wire [counter_bits_lp-1:0] out_ctr_r_p1 = out_ctr_r + 1'b1;
 
 // fill pattern with at least as many 10's to fill out_cntr_width_p bits
 // having defaults be 10101 reduces electromigration on pads
-wire [(((width_p+1)>>1)<<1)-1:0] inactive_pattern
-                                 = { ((width_p+1) >> 1) { (2'b10) } };
+localparam inactive_pattern_p = {((width_p+1)>>1) {2'b01}};
 
 // Demux that merges 1 bit outputs of Logic Analyzer and its valid signal
 logic [width_p-1:0] output_demux;
@@ -214,7 +213,7 @@ always_comb
 
        PAT:
          begin
-            output_data = {inactive_pattern[0+:width_p] };
+            output_data = {inactive_pattern_p[0+:width_p] };
          end
        SYNC1:
          begin
@@ -235,7 +234,11 @@ always_comb
          end
        NORM:
          begin
-           output_data = data_i; 
+           // Sending inactive pattern as data for non valid data
+           output_data[0] = data_i[0]; // valid
+           output_data[1] = data_i[1]; // token
+           output_data[width_p-1:2] = data_i[0] ? data_i [width_p-1:2] 
+                                                : inactive_pattern_p[0+:width_p-2];
          end
 
        default:
@@ -247,7 +250,7 @@ always_comb
 // each time outputcounter is about to over flow on clock edge, data 
 // would be sent out on the clock edge as well
 always_ff @ (posedge clk)
-  if (channel_reset) begin
+  if (channel_reset_o) begin
     pins_o <= 0;
   end else if (output_counter_r == output_clk_divider) begin
     pins_o <= output_data;
@@ -256,7 +259,7 @@ always_ff @ (posedge clk)
     pins_o <= pins_o; 
   end
   
-assign output_ready = (output_counter_r == output_clk_divider) & ~channel_reset;
+assign output_ready = (output_counter_r == output_clk_divider) & ~channel_reset_o;
 
 // ready signals based on the output mode 
 // There is no need for awknowledge of ready in STOP and PATTERN modes

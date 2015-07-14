@@ -48,7 +48,7 @@ task send_config_tag ( const ref clk
     // it could be problemtaic use, that user did not send values and
     // default values are used
     if (data_len == 0)
-      $display("message length is zero!");
+      $display("\nmessage length is zero!\n");
 
     // a normal packet
     else begin
@@ -82,14 +82,14 @@ task send_config_tag ( const ref clk
       message = (message <<valid_bit_size_lp) + valid;
 
       // sending the packet cycle by cycle on negative edge of clk
-      $display ("message to be sent: %h (%d bits)", message,full_length);
+      $display ("==========> message to be sent: %h (%d bits)", message,full_length);
       for (ii =0; ii< full_length; ii=ii+1) begin
         @(negedge clk)
         out = message[0];
         message = message >>1;
       end
       // message transmission finished
-      $display ("message to %d sent", id);
+      $display ("message to %d sent<========\n", id);
     end
   // reset packet
   end else begin
@@ -98,7 +98,7 @@ task send_config_tag ( const ref clk
       @(negedge clk)
       out = 1'b1;
     end
-    $display("config tag reset message sent");
+    $display("\nconfig tag reset message sent\n");
     // reset packet is finished, so the line is lowered
     @(negedge clk)
     out = 1'b0;

@@ -42,7 +42,7 @@ module bsg_channel_narrow #( parameter width_in_p   = -1
   
   logic [width_out_p - 1: 0] data [divisions_lp - 1: 0];
   // in case of 2 divisions, it would be only 1 bit counter
-  logic [$clog2(divisions_lp) - 1: 0] count_r, count_n;
+  logic [`BSG_SAFE_CLOG2(divisions_lp) - 1: 0] count_r, count_n;
   genvar i;
   
   // generating ranges for data, and padding if required
