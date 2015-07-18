@@ -8,7 +8,9 @@
 
 //`include "definitions.v"
 `define half_period 16
-parameter bit_num_p = 3;
+parameter bit_num_p = 6;
+parameter send_division_lp    = 6;
+parameter receive_division_lp = 16;
 
 // -------------------------------------------------------------//
 // ------------------------ Config tag messages ----------------//
@@ -18,11 +20,11 @@ parameter bit_num_p = 3;
 `define reset_config_tag  send_config_tag(cfg_clk,1'b1,config_data);
 `define send_input(R) send_config_tag(cfg_clk,1'b0,config_data, \
                 {R,input_clk_divider,la_input_bit_selector}, \
-                8'd11,2+maxDivisionWidth_p+`BSG_SAFE_CLOG2(2*bit_num_p));
+                8'd11,2+maxDivisionWidth_p+`BSG_SAFE_CLOG2(bit_num_p));
 
 `define send_output(R) send_config_tag(cfg_clk,1'b0,config_data, \
                 {R,output_clk_divider,la_output_bit_selector,v_output_bit_selector}, \
-                8'd12,2+maxDivisionWidth_p+2*`BSG_SAFE_CLOG2(2*bit_num_p));
+                8'd12,2+maxDivisionWidth_p+2*`BSG_SAFE_CLOG2(bit_num_p));
 
 `define send_link_config  send_config_tag(cfg_clk,1'b0,config_data, \
                 {mode_cfg,fifo_en,loopback_en}, 8'd10,$bits(mode_cfg)+2);
@@ -36,8 +38,8 @@ parameter bit_num_p = 3;
 module mesosynctb();
 
 // internal signals
-logic clk, cfg_clk, io_clk, reset, reset_r, config_data;
-logic [bit_num_p*2-1:0] from_meso, to_meso, 
+logic clk, cfg_clk, send_clk, receive_clk, reset, reset_r, config_data;
+logic [bit_num_p-1:0] from_meso, to_meso, 
                         to_meso_delayed, from_meso_delayed,
                         from_meso_fixed;
 config_s conf;
@@ -51,37 +53,41 @@ logic [255:0] in_reg_1, in_reg_2;
 logic [1:0] out_selector;
 logic valid_to_meso,credit_to_meso;
 logic [3:0] count;
-logic [bit_num_p*2-1:0] pat_out, loopback_data;
+logic [bit_num_p-1:0] pat_out, loopback_data;
 logic [7:0] pattern;
+logic [2:0] credit_count;
+logic token_flag, token_sent_flag;
 
 // configuration signals
 logic [maxDivisionWidth_p-1:0] input_clk_divider;
 logic [maxDivisionWidth_p-1:0] output_clk_divider;
 mode_cfg_s mode_cfg;
-logic [$clog2(2*bit_num_p)-1:0] la_input_bit_selector;
-logic [$clog2(2*bit_num_p)-1:0] la_output_bit_selector;
-logic [$clog2(2*bit_num_p)-1:0] v_output_bit_selector;
-bit_cfg_s [2*bit_num_p-1:0] bit_cfg;
-bit_cfg_s [bit_num_p-1:0] bit_cfg_ch1;
-bit_cfg_s [bit_num_p-1:0] bit_cfg_ch2;
+logic [$clog2(bit_num_p)-1:0] la_input_bit_selector;
+logic [$clog2(bit_num_p)-1:0] la_output_bit_selector;
+logic [$clog2(bit_num_p)-1:0] v_output_bit_selector;
+bit_cfg_s [bit_num_p-1:0] bit_cfg;
+bit_cfg_s [(bit_num_p/2)-1:0] bit_cfg_ch1;
+bit_cfg_s [(bit_num_p/2)-1:0] bit_cfg_ch2;
 logic loopback_en, fifo_en;
 
 // bundling
 assign conf = '{cfg_clk: cfg_clk, cfg_bit: config_data};
-assign bit_cfg_ch1 = bit_cfg [bit_num_p-1:0];
-assign bit_cfg_ch2 = bit_cfg [bit_num_p*2-1:bit_num_p];
+assign bit_cfg_ch1 = bit_cfg [(bit_num_p/2)-1:0];
+assign bit_cfg_ch2 = bit_cfg [bit_num_p-1:(bit_num_p/2)];
 
 // external loopback
-logic valid, ready;
-logic [(2*bit_num_p)-3:0] data;
+logic valid_to_core, ready_to_core;
+logic valid_from_core, ready_from_core;
+logic [bit_num_p-3:0] data_to_core, data_from_core;
+logic [bit_num_p-3:0] example_data;
 
 // -------------------------------------------------------------//
 // ------------------- Module instantiation --------------------//
 // -------------------------------------------------------------//
 
 bsg_mesosync_link
-           #(  .ch1_width_p(bit_num_p)    
-             , .ch2_width_p(bit_num_p)     
+           #(  .ch1_width_p(bit_num_p/2)    
+             , .ch2_width_p(bit_num_p/2)     
              , .LA_els_p(72)         
              , .cfg_tag_base_id_p(10) 
              , .loopback_els_p(16)  
@@ -99,13 +105,13 @@ bsg_mesosync_link
              , .pins_o(from_meso)
              
              // connection to core, 2 bits are used for handshake
-             , .data_i(data)
-             , .v_i(valid)
-             , .ready_o(ready)
+             , .data_i(data_from_core)
+             , .v_i(valid_from_core)
+             , .ready_o(ready_to_core)
 
-             , .v_o(valid)
-             , .data_o(data)
-             , .ready_i(ready)
+             , .v_o(valid_to_core)
+             , .data_o(data_to_core)
+             , .ready_i(ready_from_core)
      
             );
 
@@ -126,6 +132,19 @@ bsg_flow_counter #(.els_p(72)
     , .count_o(LA_count)
     );
 
+// Simulating a core that receives all data and sends an incrementing
+// value each time IO is ready
+always_ff @ (posedge clk or posedge reset) begin
+  if (reset)
+    example_data <= 0;
+  else if (ready_to_core)
+    example_data <= example_data + 1;
+end
+
+assign valid_from_core = 1;
+assign ready_from_core = 1;
+assign data_from_core  = example_data;
+
 // -------------------------------------------------------------//
 // ---------------------------- MAIN TEST ----------------------//
 // -------------------------------------------------------------//
@@ -142,17 +161,16 @@ initial begin
   loopback_en                  = 0;
   fifo_en                = 0;
   out_selector           = 0;
-  credit_to_meso         = 0;
   valid_to_meso          = 0;
-  output_clk_divider     = 4'b0111;
-  input_clk_divider      = 4'b0111;
+  output_clk_divider     = 4'(receive_division_lp-1);
+  input_clk_divider      = 4'(send_division_lp-1);
   la_input_bit_selector  = 3'b000;
   la_output_bit_selector = 3'b000;
   v_output_bit_selector  = 3'b001;
   
 
   mode_cfg = create_cfg (LA_STOP,1'b0,PAT);
-  for (i=0 ; i<2*bit_num_p; i= i+1)
+  for (i=0 ; i<bit_num_p; i= i+1)
     bit_cfg[i]='{clk_edge_selector:1'b0, phase: 4'b0000};
 
   // reseting the modules and config tag and channel
@@ -241,16 +259,20 @@ initial begin
   
   // sending patterns out
   out_selector = 1;
-  v_output_bit_selector = 0;
   
   // reading Logic analyzer data from each line
-  for (i=1 ; i<2*bit_num_p; i= i+1) begin
+  for (i=0 ; i<bit_num_p; i= i+1) begin
 
     $display("\n*****************************");
     $display("        testing line %d        ",i);
     $display("*****************************\n");
     
     // stoping the channel and selecting line to be tested
+    if (i==0)
+      v_output_bit_selector = 1;
+    else
+      v_output_bit_selector = 0;
+      
     la_input_bit_selector = i;
     la_output_bit_selector = i;
     mode_cfg = create_cfg (LA_STOP,1'b0,STOP);
@@ -267,38 +289,12 @@ initial begin
     mode_cfg = create_cfg (LA_STOP,1'b0,LA);
     `send_link_config
     
-    #45000
+    // time required to receive the data
+    #(10000+72*2*receive_division_lp*2*`half_period)
     $display("\nvalues: %h",in_reg_1);
     $display("valid : %h\n",in_reg_2);
   end
- 
-    // we have to change the valid line from 0 for testing line 0 itself
-    $display("\n*****************************");
-    $display("        testing line  0        ");
-    $display("*****************************\n");
-  
-    // stoping the channel and selecting line to be tested
-    v_output_bit_selector = 1;
-    la_input_bit_selector = 0;
-    la_output_bit_selector = 0;
-    mode_cfg = create_cfg (LA_STOP,1'b0,STOP);
-    `send_input(2'b10)
-    `send_output(2'b10)
-    `send_link_config
-    
-    // starting logic analyzer without any output
-    mode_cfg = create_cfg (LA_STOP,1'b1,STOP);
-    `send_link_config
-    #1000
-    // stopping logic anlyzer (which has stopped by itself, just not to gather 
-    // data after data is sent out) and starting sending its data out
-    mode_cfg = create_cfg (LA_STOP,1'b0,LA);
-    `send_link_config
-    
-    #45000
-    $display("\nvalues: %h",in_reg_1);
-    $display("valid : %h\n",in_reg_2);
- 
+
   $monitoron;
  
   $display("\n*****************************");
@@ -306,8 +302,8 @@ initial begin
   $display("*****************************\n");
  
   // select cycle and edge to read the data based on the logic analyzers' data
-  for (i=0 ; i<2*bit_num_p; i= i+1)
-    bit_cfg[i]='{clk_edge_selector:1'b0, phase: 4'b0100};
+  for (i=0 ; i<bit_num_p; i= i+1)
+    bit_cfg[i]='{clk_edge_selector:1'b0, phase: 4'(send_division_lp-2)};
   
   
   @ (negedge clk)
@@ -320,41 +316,30 @@ initial begin
   $display("\n*****************************");
   $display("active loopback_mode");
   $display("*****************************\n\n");
-  $display("cycle\t to_chip\t  from_chip from_meso,v   to_meso,rdy crdt_counter");
-  $monitor("@%t %b\t  %b    %b, %b\t %b, %b\t %d",$time,to_meso
+  $display("cycle\t to_chip\t  from_chip from_meso,v   to_meso,rdy crdt_counter elem_in_fifo");
+  $monitor("@%t %b\t  %b    %b, %b\t %b, %b\t %d\t %d",$time,to_meso
         ,from_meso_fixed,DUT.from_meso_input,DUT.valid,DUT.to_meso_output,DUT.ready,
-        DUT.mesosync_core.output_credit_counter.credit_cnt);
+        DUT.mesosync_core.output_credit_counter.credit_cnt,
+        DUT.mesosync_core.input_fifo.fifo.wptr_r-DUT.mesosync_core.input_fifo.fifo.rptr_r);
   
   // sending loop back data 
   out_selector = 2;
   
+  // enabling loopback and disabling data transmission
   // making input channel active to send data to loopback module
-  mode_cfg = create_cfg (NORMAL,1'b0,STOP);
-  `send_link_config
-  
-  // enabling loopback module 
+  mode_cfg = create_cfg (LA_STOP,1'b0,STOP);
   loopback_en = 1;
   fifo_en = 1;
   `send_link_config
   
-  // based on valid-credit protocol, sending some data which are valid
-  valid_to_meso = 1'b1;
-  #500 
-
-  // activing the output, after some time to make sure some valid data is 
-  // stored in the loop back module
+  // activating transmission
   mode_cfg = create_cfg (NORMAL,1'b0,NORM);
   `send_link_config
-  #300
-  // no more data to be sent, not exceeding size of FIFO (credit protocol
-  // would take care of this)
-  valid_to_meso  = 1'b0;
-  #200
-
-  credit_to_meso = 1'b1;
-  // sending some credits so it would send more data
-  #500
-  credit_to_meso = 1'b0;
+  
+  // based on valid-credit protocol, sending some data which are valid
+  valid_to_meso = 1'b1;
+  #2000 
+  valid_to_meso = 1'b0;
 
   // some time for the internal loopback simulation to finish
   #5000
@@ -362,27 +347,24 @@ initial begin
   $display("\n*****************************");
   $display("Normal I/O mode");
   $display("*****************************\n\n");
-  // Outer loop simulation same as internal one, with loopback disabled
-  mode_cfg = create_cfg (NORMAL,1'b0,STOP);
-  `send_link_config
+  $display("cycle\t to_chip\t  from_chip crdt_counter elem_in_fifo to_core,v,r from_core,v,r");
+  $monitor("@%t %b\t  %b\t %d\t %d\t\t %b,%b,%b  %b,%b,%b",$time,to_meso
+        ,from_meso_fixed, DUT.mesosync_core.output_credit_counter.credit_cnt,
+        DUT.mesosync_core.input_fifo.fifo.wptr_r-DUT.mesosync_core.input_fifo.fifo.rptr_r,
+        data_to_core,valid_to_core,ready_from_core,data_from_core,valid_from_core,ready_to_core);
   
+   // Outer loop simulation same as internal one, with loopback disabled
+  mode_cfg = create_cfg (LA_STOP,1'b0,STOP);
   loopback_en = 0;
   `send_link_config
   
-  valid_to_meso = 1'b1;
-  #500 
-  
+  // activating transmission
   mode_cfg = create_cfg (NORMAL,1'b0,NORM);
   `send_link_config
-  #300
-
-  valid_to_meso  = 1'b0;
-  #200
-
-  credit_to_meso = 1'b1;
-  // sending some credits so it would send more data
-  #500
-  credit_to_meso = 1'b0;
+  
+  valid_to_meso = 1'b1;
+  #2000 
+  valid_to_meso = 1'b0;
 
   // some time for the internal loopback simulation to finish
   #5000
@@ -406,8 +388,13 @@ always begin
 end
 
 always begin
-  #(8*`half_period) io_clk = 1'b0;
-  #(8*`half_period) io_clk = 1'b1;
+  #(send_division_lp*`half_period) send_clk = 1'b0;
+  #(send_division_lp*`half_period) send_clk = 1'b1;
+end
+
+always begin
+  #(receive_division_lp*`half_period) receive_clk = 1'b0;
+  #(receive_division_lp*`half_period) receive_clk = 1'b1;
 end
 
 // -------------------------------------------------------------//
@@ -418,7 +405,7 @@ end
 // line from the channel
 genvar ii;
 generate
-  for (ii=0; ii< 2*bit_num_p; ii = ii + 1) begin: delay_block
+  for (ii=0; ii< bit_num_p; ii = ii + 1) begin: delay_block
     assign #(ii*18+20) to_meso_delayed[ii]   = to_meso[ii];
     assign #(8-ii)     from_meso_delayed[ii] = from_meso[ii];
     assign #(24+ii)    from_meso_fixed[ii]   = from_meso_delayed[ii];
@@ -440,20 +427,72 @@ assign to_meso = (out_selector == 2) ? loopback_data :
 //-- generating output pattern and collecting input data using io clock --//
 //------------------------------------------------------------------------//
 
-always_ff @ (posedge io_clk or posedge reset) begin
+always_ff @ (posedge send_clk or posedge reset) begin
   if (reset) begin
     pattern  <= 8'b10100101;
-    in_reg_1 <= 0;
-    in_reg_2 <= 0;
     count    <= 0;
   end else begin
     pattern  <= {pattern[6:0],pattern[7]};
-    in_reg_1 <= {in_reg_1[254:0],from_meso_fixed[la_output_bit_selector]};
-    in_reg_2 <= {in_reg_2[254:0],from_meso_fixed[v_output_bit_selector]};
     count    <= count + 4'd1;
   end
 end
 
+always_ff @ (posedge receive_clk or posedge reset) begin
+  if (reset) begin
+    in_reg_1 <= 0;
+    in_reg_2 <= 0;
+  end else begin
+    in_reg_1 <= {in_reg_1[254:0],from_meso_fixed[la_output_bit_selector]};
+    in_reg_2 <= {in_reg_2[254:0],from_meso_fixed[v_output_bit_selector]};
+  end
+end
+
+//------------------------------------------------------------------------//
+//----- creidt counter for sending token after receiving enoug data ------//
+//------------------------------------------------------------------------//
+//credit count is based on output clock, but token send is based on input clock
+// so we need a flag to do it
+
+// Credit counter, it would set a flag for sending a token
+always_ff @ (posedge receive_clk or posedge reset) begin
+  if (reset) begin
+    credit_count <= 0;
+    token_flag  <= 0;
+  end else begin
+    //if valid data received and we are in normal mode 
+    // (during sending command to change from normal to stop mode, we would still receive
+    // data which is valid, so if there was valid data and stop mode it counts)
+    if (from_meso_fixed[0] & ((mode_cfg.output_mode==NORM)|(mode_cfg.output_mode==STOP))) 
+      if (credit_count == 3) begin
+        credit_count <= 0;
+        token_flag  <= 1;
+      end else begin
+        credit_count <= credit_count + 1;
+        token_flag  <= 0;
+      end
+    else
+      token_flag  <= 0;
+  end
+end
+
+// sending the token after the flag is set, only for a cycle
+always_ff @ (posedge send_clk or posedge reset) begin
+  if (reset) begin
+    credit_to_meso <= 0;
+    token_sent_flag <= 0;
+  end else begin
+
+    if (token_flag & ~token_sent_flag)
+      credit_to_meso <= 1;
+    else
+      credit_to_meso <= 0;
+
+    if (token_flag & ~token_sent_flag)
+      token_sent_flag <= 1;
+    else if (~token_flag)
+      token_sent_flag <= 0;
+  end     
+end 
 //-----------------------------------------//
 //-- function for generating config data --//
 //-----------------------------------------//

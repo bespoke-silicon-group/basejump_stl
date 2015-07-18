@@ -36,14 +36,14 @@
 `endif
 
 module bsg_mesosync_link
-                  #(  parameter ch1_width_p       = 3  
-                    , parameter ch2_width_p       = 3  
-                    , parameter LA_els_p          = 64 
-                    , parameter cfg_tag_base_id_p = 10 
-                    , parameter loopback_els_p    = 16 
-                    , parameter credit_initial_p  = 8  
-                    , parameter credit_max_val_p  = 12 
-                    , parameter decimation_p      = 4
+                  #(  parameter ch1_width_p       = "inv" //3  
+                    , parameter ch2_width_p       = "inv" //3  
+                    , parameter LA_els_p          = "inv" //64 
+                    , parameter cfg_tag_base_id_p = "inv" //10 
+                    , parameter loopback_els_p    = "inv" //16 
+                    , parameter credit_initial_p  = "inv" //8  
+                    , parameter credit_max_val_p  = "inv" //12 
+                    , parameter decimation_p      = "inv" //4
 
                     , parameter width_lp = ch1_width_p + ch2_width_p
                    )
