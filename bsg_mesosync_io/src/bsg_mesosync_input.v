@@ -46,40 +46,20 @@ module bsg_mesosync_input
                    , input                       ready_to_LA_i
                    );
                    
-
-// Using a relay_fifo for enabling sending data through long distances in chip
-logic [width_lp-1:0] data_o_r;
-logic                valid_o_r;
-
-// since the output portocol is actually valid only, ready_o signal is not used
-// and ready_i is always set to pass any valid value
-bsg_relay_fifo #(.width_p(width_lp)) relay
-    (.clk_i(clk)
-    ,.reset_i(reset)
-
-    ,.v_i(valid_o_r)
-    ,.data_i(data_o_r)
-    ,.ready_o()
-
-    ,.v_o(valid_o)
-    ,.data_o(data_o)
-    ,.ready_i(1'b1)
-    );
-
 //------------------------------------------------
 //------------ CONFIG TAG NODEs ------------------
 //------------------------------------------------
 
 // Configuratons
-logic [1:0]                    cfg_reset, cfg_reset_r;
-logic                          channel_reset;
-logic                          enable;
-logic                          loopback_en; // not used
-logic [maxDivisionWidth_p-1:0] input_clk_divider;
-bit_cfg_s [width_lp-1:0]       bit_cfg;
-mode_cfg_s                     mode_cfg;
-logic [$clog2(width_lp)-1:0]   la_input_bit_selector;
-logic                          output_mode_is_LA;
+logic [1:0]                             cfg_reset, cfg_reset_r;
+logic                                   channel_reset;
+logic                                   enable;
+logic                                   loopback_en; // not used
+logic [maxDivisionWidth_p-1:0]          input_clk_divider;
+bit_cfg_s [width_lp-1:0]                bit_cfg;
+mode_cfg_s                              mode_cfg;
+logic [`BSG_SAFE_CLOG2(width_lp)-1:0]   la_input_bit_selector;
+logic                                   output_mode_is_LA;
 
 // Calcuating data width of each configuration node
 // reset (2 bits), clock divider for input digital clock, logic analyzer line selector
@@ -164,6 +144,28 @@ always_ff @(posedge clk)
     channel_reset <= 1'b0;
   else
     channel_reset <= 1'b1;
+
+// Using a relay_fifo for enabling sending data through long distances in chip
+logic [width_lp-1:0] data_o_r;
+logic                valid_o_r;
+
+//------------------------------------------------
+//------------- OUTPUT RELAY FIFO ----------------
+//------------------------------------------------
+// since the output portocol is actually valid only, ready_o signal is not used
+// and ready_i is always set to pass any valid value
+bsg_relay_fifo #(.width_p(width_lp)) out_relay
+    (.clk_i(clk)
+    ,.reset_i(channel_reset)
+
+    ,.v_i(valid_o_r)
+    ,.data_i(data_o_r)
+    ,.ready_o()
+
+    ,.v_o(valid_o)
+    ,.data_o(data_o)
+    ,.ready_i(1'b1)
+    );
 
 //------------------------------------------------
 //------------- CLOCK DIVIDER --------------------
@@ -304,16 +306,21 @@ bsg_relay_fifo #(.width_p(1)) LA_relay
     );
 
 // Logic Analyzer signals
-logic LA_trigger, LA_deque;
+logic LA_trigger, LA_deque, delayed_input_clk_edge;  
 
 // When logic analyzer is configured to sample, it has to start sampling 
 // from the sample that correspinds to time when input_clock_counter is zero,
-// beginning of IO clock. However, due to synchronizer in ddr module that
-// gives the input to logic anlzer, it has 2 cycle delay and input_clk_counter
-// is comapred with value 2.
+// beginning of IO clock. 
 assign LA_trigger = (mode_cfg.input_mode == LA_STOP) & mode_cfg.LA_enque 
-                  & (input_counter_r == {{(maxDivisionWidth_p-2){1'b0}},2'b10});
+                  & delayed_input_clk_edge;  
 
+// Synchronizer in ddr module that gives the input to logic anlzer has 2 cycle 
+// delay and input_clk_counter is comapred with value 2 to get the actual edge. 
+// If input_clk_divider is 0 every edge is correct, and if input_clk_divider is 1,
+// when input_counter_r is zero is the actual edge. 
+assign delayed_input_clk_edge =  (input_clk_divider<maxDivisionWidth_p'(2))  ? 
+                                 (input_counter_r == maxDivisionWidth_p'(0)) :
+                                 (input_counter_r == maxDivisionWidth_p'(2)) ;
 
 // when data is ready to send from Logic Analyzer FIFO to output, fifo will 
 // be dequed until it gets empty. 

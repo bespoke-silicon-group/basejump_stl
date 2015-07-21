@@ -11,7 +11,7 @@ module bsg_flow_counter #(parameter els_p              = -1
                         
                         //localpara
                         , parameter ptr_width_lp = 
-                          `BSG_SAFE_CLOG2(els_p)+1
+                          `BSG_WIDTH(els_p)
                          )                           
     
     ( input                     clk_i

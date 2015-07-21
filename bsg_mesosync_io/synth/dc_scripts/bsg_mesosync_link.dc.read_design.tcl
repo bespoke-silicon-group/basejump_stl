@@ -26,16 +26,18 @@ set rtl_files [list $DEFINES_PATH/bsg_defines.v \
                     $CFG_TAG_PATH/config_node.v \
                     $DATA_FLOW_PATH/bsg_fifo_1r1w_small.v \
                     $MISC_PATH/bsg_counter_up_down.v \
+                    $MISC_PATH/bsg_counter_up_down_variable.v \
+                    $MISC_PATH/bsg_counter_w_overflow.v \
                     $MEM_PATH/bsg_mem_1r1w.v \
                     $DATA_FLOW_PATH/bsg_channel_narrow.v \
                     $DATA_FLOW_PATH/bsg_fifo_1r1w_small_credit_on_input.v \
                     $DATA_FLOW_PATH/bsg_ready_to_credit_flow_converter.v \
                     $DATA_FLOW_PATH/bsg_two_fifo.v \
                     $DATA_FLOW_PATH/bsg_relay_fifo.v \
-                    $SRC_PATH/bsg_credit_resolver_w_loopback.v \
-                    $MISC_PATH/bsg_counter_w_overflow.v \
+                    $DATA_FLOW_PATH/bsg_credit_to_token.v \
                     $DATA_FLOW_PATH/bsg_fifo_1r1w_narrowed.v \
                     $ASYNC_PATH/bsg_launch_sync_sync.v \
+                    $SRC_PATH/bsg_mesosync_core.v \
                     $SRC_PATH/bsg_ddr_sampler.v \
                     $SRC_PATH/bsg_logic_analyzer.v \
                     $SRC_PATH/bsg_mesosync_link.v \
