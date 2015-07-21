@@ -9,7 +9,7 @@
 //`include "definitions.v"
 `define half_period 16
 parameter bit_num_p = 6;
-parameter send_division_lp    = 6;
+parameter send_division_lp    = 1;
 parameter receive_division_lp = 16;
 
 // -------------------------------------------------------------//
@@ -92,7 +92,7 @@ bsg_mesosync_link
              , .cfg_tag_base_id_p(10) 
              , .loopback_els_p(16)  
              , .credit_initial_p(8)
-             , .credit_max_val_p(10)
+             , .credit_max_val_p(15)
              , .decimation_p(4)
             ) DUT
             (  .clk(clk)
@@ -303,7 +303,7 @@ initial begin
  
   // select cycle and edge to read the data based on the logic analyzers' data
   for (i=0 ; i<bit_num_p; i= i+1)
-    bit_cfg[i]='{clk_edge_selector:1'b0, phase: 4'(send_division_lp-2)};
+    bit_cfg[i]='{clk_edge_selector:1'b0, phase: 4'd0};
   
   
   @ (negedge clk)
@@ -316,11 +316,12 @@ initial begin
   $display("\n*****************************");
   $display("active loopback_mode");
   $display("*****************************\n\n");
-  $display("cycle\t to_chip\t  from_chip from_meso,v   to_meso,rdy crdt_counter elem_in_fifo");
+  $display({"cycle\t to_chip\t from_chip from_meso,v\t to_meso,",
+            "rdy crdt_counter elem_in_fifo"});
   $monitor("@%t %b\t  %b    %b, %b\t %b, %b\t %d\t %d",$time,to_meso
-        ,from_meso_fixed,DUT.from_meso_input,DUT.valid,DUT.to_meso_output,DUT.ready,
-        DUT.mesosync_core.output_credit_counter.credit_cnt,
-        DUT.mesosync_core.input_fifo.fifo.wptr_r-DUT.mesosync_core.input_fifo.fifo.rptr_r);
+      ,from_meso_fixed,DUT.from_meso_input,DUT.valid,DUT.to_meso_output,DUT.ready,
+      DUT.mesosync_core.output_credit_counter.credit_cnt,
+      DUT.mesosync_core.input_fifo.fifo.wptr_r-DUT.mesosync_core.input_fifo.fifo.rptr_r);
   
   // sending loop back data 
   out_selector = 2;
@@ -336,22 +337,25 @@ initial begin
   mode_cfg = create_cfg (NORMAL,1'b0,NORM);
   `send_link_config
   
-  // based on valid-credit protocol, sending some data which are valid
+  // based on valid-credit protocol, sending 16 data values
   valid_to_meso = 1'b1;
-  #2000 
+  #(500+16*send_division_lp*2*`half_period)
   valid_to_meso = 1'b0;
 
   // some time for the internal loopback simulation to finish
-  #5000
+  #10000
   
   $display("\n*****************************");
   $display("Normal I/O mode");
   $display("*****************************\n\n");
-  $display("cycle\t to_chip\t  from_chip crdt_counter elem_in_fifo to_core,v,r from_core,v,r");
+  $display({"cycle\t to_chip\t  from_chip crdt_counter elem_in_fifo",
+            "to_core,v,r from_core,v,r"});
+  
   $monitor("@%t %b\t  %b\t %d\t %d\t\t %b,%b,%b  %b,%b,%b",$time,to_meso
-        ,from_meso_fixed, DUT.mesosync_core.output_credit_counter.credit_cnt,
-        DUT.mesosync_core.input_fifo.fifo.wptr_r-DUT.mesosync_core.input_fifo.fifo.rptr_r,
-        data_to_core,valid_to_core,ready_from_core,data_from_core,valid_from_core,ready_to_core);
+      ,from_meso_fixed, DUT.mesosync_core.output_credit_counter.credit_cnt,
+      DUT.mesosync_core.input_fifo.fifo.wptr_r-DUT.mesosync_core.input_fifo.fifo.rptr_r,
+      data_to_core,valid_to_core,ready_from_core,
+      data_from_core,valid_from_core,ready_to_core);
   
    // Outer loop simulation same as internal one, with loopback disabled
   mode_cfg = create_cfg (LA_STOP,1'b0,STOP);
@@ -363,11 +367,11 @@ initial begin
   `send_link_config
   
   valid_to_meso = 1'b1;
-  #2000 
+  #(500+16*send_division_lp*2*`half_period)
   valid_to_meso = 1'b0;
 
   // some time for the internal loopback simulation to finish
-  #5000
+  #10000
   
   $finish;
 end
@@ -406,7 +410,7 @@ end
 genvar ii;
 generate
   for (ii=0; ii< bit_num_p; ii = ii + 1) begin: delay_block
-    assign #(ii*18+20) to_meso_delayed[ii]   = to_meso[ii];
+    assign #(ii*1+2) to_meso_delayed[ii]   = to_meso[ii];
     assign #(8-ii)     from_meso_delayed[ii] = from_meso[ii];
     assign #(24+ii)    from_meso_fixed[ii]   = from_meso_delayed[ii];
   end

@@ -306,16 +306,21 @@ bsg_relay_fifo #(.width_p(1)) LA_relay
     );
 
 // Logic Analyzer signals
-logic LA_trigger, LA_deque;
+logic LA_trigger, LA_deque, delayed_input_clk_edge;  
 
 // When logic analyzer is configured to sample, it has to start sampling 
 // from the sample that correspinds to time when input_clock_counter is zero,
-// beginning of IO clock. However, due to synchronizer in ddr module that
-// gives the input to logic anlzer, it has 2 cycle delay and input_clk_counter
-// is comapred with value 2.
+// beginning of IO clock. 
 assign LA_trigger = (mode_cfg.input_mode == LA_STOP) & mode_cfg.LA_enque 
-                  & (input_counter_r == {{(maxDivisionWidth_p-2){1'b0}},2'b10});
+                  & delayed_input_clk_edge;  
 
+// Synchronizer in ddr module that gives the input to logic anlzer has 2 cycle 
+// delay and input_clk_counter is comapred with value 2 to get the actual edge. 
+// If input_clk_divider is 0 every edge is correct, and if input_clk_divider is 1,
+// when input_counter_r is zero is the actual edge. 
+assign delayed_input_clk_edge =  (input_clk_divider<maxDivisionWidth_p'(2))  ? 
+                                 (input_counter_r == maxDivisionWidth_p'(0)) :
+                                 (input_counter_r == maxDivisionWidth_p'(2)) ;
 
 // when data is ready to send from Logic Analyzer FIFO to output, fifo will 
 // be dequed until it gets empty. 
