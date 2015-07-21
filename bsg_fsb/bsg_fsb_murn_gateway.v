@@ -8,9 +8,6 @@
 //
 // Omitted: Power Enable/Disable
 //
-// Added: in master mode, the node resets off of
-// the master reset and is enabled right away.
-// This should only used for the FPGA.
 //
 
 //`include "rnet_common.v"
@@ -21,7 +18,8 @@ import rnet_common::*;
 
 module bsg_fsb_murn_gateway #(parameter width_p="inv"
                               , parameter id_p="inv"
-                              , parameter bypass_reset_p=0
+                              // resets with core reset
+                              // rather than by a command.
                               , parameter enabled_at_start_p=0
                               // once the node is enabled
                               // look at all packets;

@@ -15,6 +15,14 @@
 // full duplex channels instead of a ring
 // for performance reasons.
 //
+// The parameter nodes_p indicates how
+// many items are to be chained on the fsb.
+//
+// bsg_fsb itself does not limit the maximum number
+// of nodes; however the bsg_fsb_murn_gateway uses
+// the RingPacketType data structure, which currently
+// limits us to 4 bits of id's, or 16 nodes.
+//
 
 module bsg_fsb #(parameter  width_p = "inv"
                  ,parameter nodes_p = "inv"
@@ -169,11 +177,28 @@ module bsg_fsb #(parameter  width_p = "inv"
         assign node_data_o[i] = node_data_o_int;
         assign node_en_r_o[i] = node_en_r_int;
 
-	// synopsys translate_off
+        // synopsys translate_off
         always @(negedge node_reset_r_o[i])
-          $display("## reset low on FSB in module %m, node %-d",i);
+          begin
+             $display("   __         _                                    _");
+             $display("  / _|       | |                                  | |  ");
+             $display(" | |_   ___  | |__      _ __    ___   ___    ___  | |_ ");
+             $display(" |  _| / __| | '_ \\    | '__|  / _ \\ / __|  / _ \\ | __|");
+             $display(" | |   \\__ \\ | |_) |   | |    |  __/ \\__ \\ |  __/ | |_ ");
+             $display(" |_|   |___/ |_.__/    |_|     \\___| |___/  \\___|  \\__|");
+             $display("## reset low on FSB in module %m, node %-d",i);
+          end
+        always @(posedge node_en_r_o[i])
+          begin
+             $display("   __         _                                _       _          ");
+             $display("  / _|       | |                              | |     | |         ");
+             $display(" | |_   ___  | |__       ___   _ __     __ _  | |__   | |   ___   ");
+             $display(" |  _| / __| | '_ \\     / _ \\ | '_ \\   / _` | | '_ \\  | |  / _ \\  ");
+             $display(" | |   \\__ \\ | |_) |   |  __/ | | | | | (_| | | |_) | | | |  __/  ");
+             $display(" |_|   |___/ |_.__/     \\___| |_| |_|  \\__,_| |_.__/  |_|  \\___|  ");
+             $display("## enable high on FSB in module %m, node %-d",i);
+          end
         // synopsys translate_on
-
      end
 
 endmodule

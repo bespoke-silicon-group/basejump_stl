@@ -14,7 +14,7 @@
 //
 
 module bsg_murn_converter
-  #(parameter nodes_p=1
+  #(parameter nodes_p="inv"
     , parameter ring_width_p="inv"
     )
    (
