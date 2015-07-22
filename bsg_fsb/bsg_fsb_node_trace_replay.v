@@ -28,11 +28,11 @@ module bsg_fsb_node_trace_replay
     // input channel
     , input v_i
     , input [ring_width_p-1:0] data_i
-    , output ready_o
+    , output logic ready_o
 
     // output channel
-    , output v_o
-    , output [ring_width_p-1:0] data_o
+    , output logic v_o
+    , output logic [ring_width_p-1:0] data_o
     , input yumi_i
 
     // connection to rom
@@ -42,8 +42,8 @@ module bsg_fsb_node_trace_replay
     , input  [ring_width_p+4-1:0]   rom_data_i
 
     // true outputs
-    , output reg done_o
-    , output reg error_o
+    , output logic done_o
+    , output logic error_o
     );
 
    logic [rom_addr_width_p-1:0] addr_r, addr_n;
@@ -51,7 +51,7 @@ module bsg_fsb_node_trace_replay
    logic                        error_r, error_n;
 
    assign rom_addr_o = addr_r;
-   assign data_o     = rom_data_i[0+:ring_width_lp];
+   assign data_o     = rom_data_i[0+:ring_width_p];
    assign done_o     = done_r;
    assign error_o    = error_r;
 
@@ -73,10 +73,9 @@ module bsg_fsb_node_trace_replay
 
    wire [3:0] op = rom_data_i[ring_width_p+:4];
 
-   wire       addr_p1 = addr + 1;
    logic      instr_completed;
 
-   assign addr_next =  instr_completed ? (addr_r+1) : addr_r;
+   assign addr_n =  instr_completed ? (addr_r+1'b1) : addr_r;
 
    // handle outputs
    always_comb
@@ -122,6 +121,8 @@ module bsg_fsb_node_trace_replay
                          error_n = data_i != data_o;
                       end
                  end
+	       3: instr_completed = 1'b1;
+	       4: instr_completed = 1'b1;
                default:
                  begin
                  end
@@ -135,7 +136,7 @@ module bsg_fsb_node_trace_replay
         if (instr_completed & ~reset_i & ~done_r)
           begin
              case(op)
-               1: $display("### trace %s sent %h", filename_p, data_o);
+               1: $display("### trace %m sent %h", data_o);
                2:
                  begin
                     if (data_i != data_o)
@@ -150,19 +151,19 @@ module bsg_fsb_node_trace_replay
                       end
                     else
                       begin
-                         $display("### %m trace %s matched %h", filename_p, data_o);
+                         $display("### %m trace matched %h", data_o);
                       end // else: !if(data_i != data_o)
                  end
                3:
                  begin
                     $display("############################################################################");
-                    $display("###### done_o=1 (trace %s finished) (%m)", filename_p);
+                    $display("###### done_o=1 (trace finished) (%m)");
                     $display("############################################################################");
                  end
                4:
                  begin
                     $display("############################################################################");
-                    $display("###### DONE (trace %s finished; CALLING $finish) (%m)", filename_p);
+                    $display("###### DONE (trace finished; CALLING $finish) (%m)");
                     $display("############################################################################");
                     $finish;
                  end
