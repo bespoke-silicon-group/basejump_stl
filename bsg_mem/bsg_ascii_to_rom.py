@@ -1,4 +1,16 @@
 #!/usr/bin/python
+
+#
+# input format:
+#  lines of verilog binary strings, e.g.
+#    1001_10101_10011_1101
+#  comments beginning with # sign
+#  lines with just whitespace
+#
+# output format:
+#  a module that implements a rom
+#
+ 
 import sys;
 import os;
 
