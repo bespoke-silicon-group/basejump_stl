@@ -27,7 +27,7 @@ module bsg_nonsynth_reset_gen #(parameter num_clocks_p=1
    wire 				   in_phase_2 = & phase_hi_r;
 
    for (i = 0; i < num_clocks_p; i=i+1)
-     begin
+     begin : rof
 	initial ctr_lo_r[i] = 0;
         initial ctr_hi_r[i] = 0;
 
