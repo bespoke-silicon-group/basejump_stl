@@ -166,7 +166,7 @@ module bsg_nonsynth_fsb_node_trace_replay
                     end
                   else
                     begin
-                       result_code = $sscanf(read_line, "%d %b\n", op_r, data_r);
+                       result_code = $sscanf(read_line, "%b\n", {op_r, data_r});
                        if (result_code == 0)
                          begin
                             $display("### error reading file %s:\n", read_line);
