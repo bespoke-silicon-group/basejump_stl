@@ -10,11 +10,6 @@
 //
 //
 
-//`include "rnet_common.v"
-
-import rnet_common::*;
-
-
 
 module bsg_fsb_murn_gateway #(parameter width_p="inv"
                               , parameter id_p="inv"
@@ -42,6 +37,8 @@ module bsg_fsb_murn_gateway #(parameter width_p="inv"
     , output node_en_r_o
     , output node_reset_r_o
     );
+
+   import rnet_common::*;
 
    // if we are in snoop mode and don't need a wakeup
    // packet, we keep it simple and avoid having
