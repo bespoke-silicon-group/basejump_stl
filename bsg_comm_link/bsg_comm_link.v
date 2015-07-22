@@ -418,7 +418,7 @@ module bsg_comm_link
    logic  im_reset_r;
 
    if (master_p)
-     begin
+     begin : rreg
         always @(posedge io_master_clk_i)
           im_reset_r <= im_reset;
      end
@@ -441,7 +441,7 @@ module bsg_comm_link
              wire [tests_p+1-1:0] im_tests_gather;
 
              for (j = 0; j < tests_p+1; j=j+1)
-               begin
+               begin : mpa
                   assign mstr.im_test_scoreboard[j][i] = im_tests_gather[j];
                end
 
