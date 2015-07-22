@@ -85,7 +85,7 @@ module bsg_sbox
      begin : sbox
 
         if (one_hot_p)
-          begin
+          begin : fi1hot
              logic [num_channels_p-1:0][num_channels_p-1:0] fwd_sel_one_hot_r;
 
              always @(posedge clk_i)
@@ -121,7 +121,7 @@ module bsg_sbox
         wire [channel_width_p-1:0] backward [i+1-1:0];
 
         for (j = 0; j <= i; j++)
-          begin
+          begin : rofj
              assign backward[j] = out_me_data_i_int[j];
           end
 
