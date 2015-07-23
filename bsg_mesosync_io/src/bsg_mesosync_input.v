@@ -150,22 +150,18 @@ logic [width_lp-1:0] data_o_r;
 logic                valid_o_r;
 
 //------------------------------------------------
-//------------- OUTPUT RELAY FIFO ----------------
+//---------------- OUTPUT RELAY ------------------
 //------------------------------------------------
-// since the output portocol is actually valid only, ready_o signal is not used
-// and ready_i is always set to pass any valid value
-bsg_relay_fifo #(.width_p(width_lp)) out_relay
-    (.clk_i(clk)
-    ,.reset_i(channel_reset)
-
-    ,.v_i(valid_o_r)
-    ,.data_i(data_o_r)
-    ,.ready_o()
-
-    ,.v_o(valid_o)
-    ,.data_o(data_o)
-    ,.ready_i(1'b1)
-    );
+// For connecting to far parts on the die, we need to 
+// put a register before output 
+always_ff @ (posedge clk)
+  if (channel_reset) begin
+    valid_o <= 0;
+    data_o  <= 0;
+  end else begin
+    valid_o <= valid_o_r;
+    data_o  <= data_o_r;
+  end
 
 //------------------------------------------------
 //------------- CLOCK DIVIDER --------------------

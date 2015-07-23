@@ -6,7 +6,7 @@
 // on config tag, delays of values not multiple of clock cycles
 // are selected.
 
-//`include "definitions.v"
+`include "../src/definitions.v"
 `define half_period 16
 parameter bit_num_p = 6;
 parameter send_division_lp    = 1;
@@ -85,20 +85,12 @@ logic [bit_num_p-3:0] example_data;
 // ------------------- Module instantiation --------------------//
 // -------------------------------------------------------------//
 
-bsg_mesosync_link
-           #(  .ch1_width_p(bit_num_p/2)    
-             , .ch2_width_p(bit_num_p/2)     
-             , .LA_els_p(72)         
-             , .cfg_tag_base_id_p(10) 
-             , .loopback_els_p(16)  
-             , .credit_initial_p(8)
-             , .credit_max_val_p(15)
-             , .decimation_p(4)
-            ) DUT
+bsg_mesosync_link DUT
             (  .clk(clk)
              , .reset(reset_r)
              
-             , .config_i(conf)
+             , .config_i_cfg_clk_(conf.cfg_clk)
+             , .config_i_cfg_bit_(conf.cfg_bit)
 
              // Sinals with their acknowledge
              , .pins_i(to_meso_delayed)

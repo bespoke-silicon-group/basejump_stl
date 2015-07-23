@@ -7,30 +7,42 @@ DATA_FLOW_PATH  = ../../bsg_dataflow
 MISC_PATH       = ../../bsg_misc
 MEM_PATH        = ../../bsg_mem
 TESTBENCH_PATH  = ../tests
-TESTBENCH			  = $(TESTBENCH_PATH)/mesosynctb.v \
+TESTBENCH			  = $(TESTBENCH_PATH)/mesosynctb_gate_level.v \
 									$(CFG_TAG_PATH)/../sim/send_config_tag.v
 
 include $(CAD_PATH)/common/mk/cadenv.mk
 
+TSMC_LIB =  /gro/cad/mosis/pdk/tsmc/cl025g/std_cells/Rev_2004q2v1/aci/sc/verilog/tsmc25.v
 DW_LIB = /gro/cad/synopsys/pkg/pkg_2004-2007/dw/Z-2007.03/dw/sim_ver
+GTECH_DIR = /gro/cad/synopsys/icc/J-2014.09-SP4/packages/gtech/src_ver
+
 VCS_OPTIONS += +incdir+$(CURDIR)/$(SRC_PATH)
 VCS_OPTIONS += +incdir+$(CURDIR)/$(CFG_TAG_PATH)
 VCS_OPTIONS += +incdir+$(CURDIR)/$(TESTBENCH_PATH)
 VCS_OPTIONS += +incdir+$(CURDIR)/$(DEFINES_PATH) 
+VCS_OPTIONS += +incdir+$(GTECH_DIR)
+VCS_OPTIONS += +incdir+$(GTECH_SIM_LIB)
 VCS_OPTIONS += +notimingcheck
 
-BUILD_GATE_LEVEL ?= 0
-VPD								= 0
+
+BUILD_GATE_LEVEL ?= 1
+VPD								= 1
 
 ifeq ($(BUILD_GATE_LEVEL),1)
-	HDL_SOURCE  = ./../synth/results/core_flattened.mapped.v
+  HDL_SOURCE  = $(DEFINES_PATH)/bsg_defines.v 
+  HDL_SOURCE +=	$(SRC_PATH)/config_defs.v 
+  HDL_SOURCE += $(TSMC_LIB)
+  HDL_SOURCE +=	$(MISC_PATH)/bsg_counter_up_down.v 
+  HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_flow_counter.v 
+  HDL_SOURCE += ./../synth/results/bsg_mesosync_link.mapped.v
 else
   HDL_SOURCE  = $(DEFINES_PATH)/bsg_defines.v 
-  HDL_SOURCE +=	$(DEFINES_PATH)/bsg_circular_ptr.v 
-  HDL_SOURCE +=	$(SRC_PATH)/rNandMeta.v 
+  HDL_SOURCE +=	$(DEFINES_PATH)/bsg_circular_ptr.v
+  HDL_SOURCE += $(GTECH_DIR)/GTECH_NAND2.v
   HDL_SOURCE +=	$(SRC_PATH)/config_defs.v 
   HDL_SOURCE +=	$(CFG_TAG_PATH)/relay_node.v 
   HDL_SOURCE +=	$(CFG_TAG_PATH)/config_node.v 
+  HDL_SOURCE +=	$(CFG_TAG_PATH)/rNandMeta.v 
   HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_fifo_1r1w_small.v 
   HDL_SOURCE +=	$(MISC_PATH)/bsg_counter_up_down.v 
   HDL_SOURCE +=	$(MISC_PATH)/bsg_counter_up_down_variable.v 

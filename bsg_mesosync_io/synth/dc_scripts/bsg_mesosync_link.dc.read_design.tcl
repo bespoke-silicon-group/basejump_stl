@@ -17,11 +17,13 @@ set ASYNC_PATH      ../../bsg_async
 set DATA_FLOW_PATH  ../../bsg_dataflow
 set MISC_PATH       ../../bsg_misc
 set MEM_PATH        ../../bsg_mem
+set GTECH_DIR       /gro/cad/synopsys/icc/J-2014.09-SP4/packages/gtech/src_ver
 
 set rtl_files [list $DEFINES_PATH/bsg_defines.v \
                     $DEFINES_PATH/bsg_circular_ptr.v \
-                    $SRC_PATH/rNandMeta.v \
                     $SRC_PATH/config_defs.v \
+                    $GTECH_DIR/GTECH_NAND2.v \
+                    $CFG_TAG_PATH/rNandMeta.v \
                     $CFG_TAG_PATH/relay_node.v \
                     $CFG_TAG_PATH/config_node.v \
                     $DATA_FLOW_PATH/bsg_fifo_1r1w_small.v \
