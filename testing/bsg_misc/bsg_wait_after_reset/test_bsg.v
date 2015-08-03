@@ -4,12 +4,12 @@
 
 1. STATE SPACE
 
-	WIDTH_P is the width of the number of wait cycles needed. So each test
+  WIDTH_P is the width of the number of wait cycles needed. So each test
   monitors the output for 2**WIDTH_P cycles.   
 
 2. PARAMETERIZATION
 
-	The parameter WIDTH_P has little influence on the way DUT synthesizes. So
+  The parameter WIDTH_P has little influence on the way DUT synthesizes. So
   a minimum set of tests might be WIDTH_P = 1,2,3,4. Tests with large 
   WIDTH_P may take long to finish because the number of cycles the test runs
   grows exponentially with it.

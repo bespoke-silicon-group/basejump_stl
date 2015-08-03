@@ -4,7 +4,7 @@
 
 1. STATE SPACE
 
-	The number of possible inputs for each WIDTH_P is very large and moreover,
+  The number of possible inputs for each WIDTH_P is very large and moreover,
   the implementation of the DUT itself is independent of the value of input.
   So thermometer codes are used as test inputs, thus limiting the
   number of test inputs to WIDTH_P+1. This module also tests enable and reset
@@ -12,7 +12,7 @@
 
 2. PARAMETERIZATION
 
-	DUT synthesizes a similar logic irrespective of the width. Hence an arbitrary
+  DUT synthesizes a similar logic irrespective of the width. Hence an arbitrary
   set of tests including edge might be sufficient. So a minimum set of tests
   might be WIDTH_P = 1,2,3,4.
 

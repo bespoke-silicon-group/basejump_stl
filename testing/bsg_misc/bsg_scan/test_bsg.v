@@ -5,13 +5,13 @@
 
 1. STATE SPACE
 
-	This module tests hi_to_lo and lo_to_hi simultaneously by instantiating 
+  This module tests hi_to_lo and lo_to_hi simultaneously by instantiating 
   two DUTs, DUT_hilo and DUT_lohi. Each unit is tested for entire state
   space of a binary number of WIDTH_P.
 
 2. PARAMETERIZATION
 
-	DUT's implementation is not much influenced by WIDTH_P. CASE_P can have 
+  DUT's implementation is not much influenced by WIDTH_P. CASE_P can have 
   only one of the three values 100, 010 and 001. So a minimum set of test
   might be WIDTH_P = 1,2,3,4 and CASE_P = 100,010,001. Tests with a large
   WIDTH_P take long to finish because the number of test inputs grow 
@@ -20,13 +20,13 @@
 ***************************************************************************/
 
 module test_bsg;
-	
-	localparam cycle_time_lp = 20;
+  
+  localparam cycle_time_lp = 20;
   localparam width_lp      = `WIDTH_P; // width of test input
   localparam xor_lp        = (`CASE_P==1);
-	localparam and_lp        = (`CASE_P==2);
-	localparam or_lp         = (`CASE_P==3);
-	
+  localparam and_lp        = (`CASE_P==2);
+  localparam or_lp         = (`CASE_P==3);
+  
   wire clk;
   wire reset;
   
@@ -42,7 +42,7 @@ module test_bsg;
                           (  .clk_i        (clk) 
                            , .async_reset_o(reset)
                           );
-																				
+                                        
   initial
   begin
     $display("\n\n\n");
@@ -51,7 +51,7 @@ module test_bsg;
     $display("WIDTH_P: %d", `WIDTH_P);
     $display("CASE_P : %d\n", `CASE_P);
   end 
-	
+  
   logic [width_lp-1:0] test_input, test_output_hilo, test_output_lohi;
   logic [width_lp-1:0] ref_test_output_hilo, ref_test_output_lohi;
   logic finish_r;
@@ -98,20 +98,20 @@ module test_bsg;
           ref_test_output_lohi[i] = ref_test_output_lohi[i-1] | test_input[i];
       end
   end
-	
+  
   always_ff @(posedge clk)
-	begin
-		if(reset)
-			begin 
+  begin
+    if(reset)
+      begin 
         test_input <= 0;
         finish_r   <= 1'b0;
       end
-		else
-			test_input <= test_input+1;
+    else
+      test_input <= test_input+1;
       
     if(&test_input)
       finish_r <= 1'b1;
-	end
+  end
 
   always_ff @(posedge clk)
   begin
@@ -131,27 +131,27 @@ module test_bsg;
         $display("==============================================================\n");
         $finish;
       end
-	end
+  end
 
-	bsg_scan #(  .width_p   (width_lp)
-						 , .xor_p     (xor_lp)
-						 , .and_p     (and_lp)
-						 , .or_p      (or_lp)
+  bsg_scan #(  .width_p   (width_lp)
+             , .xor_p     (xor_lp)
+             , .and_p     (and_lp)
+             , .or_p      (or_lp)
              , .lo_to_hi_p(0)
-						)	 DUT_hilo
+            )  DUT_hilo
             (  .i(test_input)
-						 , .o(test_output_hilo)
-						);
+             , .o(test_output_hilo)
+            );
             
   bsg_scan #(  .width_p   (width_lp)
-						 , .xor_p     (xor_lp)
-						 , .and_p     (and_lp)
-						 , .or_p      (or_lp)
+             , .xor_p     (xor_lp)
+             , .and_p     (and_lp)
+             , .or_p      (or_lp)
              , .lo_to_hi_p(1)
-						)	 DUT_lohi
+            )  DUT_lohi
             (  .i(test_input)
-						 , .o(test_output_lohi)
-						);
+             , .o(test_output_lohi)
+            );
             
   /*logic [(5*width_lp)-1:0] log;
   assign log = {test_output_lohi, test_output_hilo, ref_test_output_lohi
@@ -167,4 +167,4 @@ module test_bsg;
                                              , .data_i (log)
                                             );*/
 endmodule
-																				
+                                        

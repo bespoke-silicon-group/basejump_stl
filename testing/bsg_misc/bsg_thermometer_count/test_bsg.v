@@ -4,7 +4,7 @@
 
 1. STATE SPACE
 
-	Number of possible values for a thermometer code input of WIDTH_P is 
+  Number of possible values for a thermometer code input of WIDTH_P is 
   WIDTH_P+1. Hence it is feasible to exhaustively test the DUT. This test 
   module generates thermometer codes as input to the DUT starting with 
   00...0. After every cycle this input is multiplied by 2 and incremented 
@@ -15,7 +15,7 @@
 
 2. PARAMETERIZATION
 
-	The parameter WIDTH_P determines the behavior of the function in a 
+  The parameter WIDTH_P determines the behavior of the function in a 
   significant way, because each of WIDTH_P = 1, 2, 3, 4 and WIDTH_P>4 are 
   handled differently. So a minimal set of tests might be WIDTH_P=1,2,3,4,5. 
   However, since there are relatively few cases for each WIDTH_P, an 

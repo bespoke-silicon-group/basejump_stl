@@ -6,12 +6,12 @@
 
 1. STATE SPACE
 
-	The timing of 'activate' and the number of wait cycles are determined by
+  The timing of 'activate' and the number of wait cycles are determined by
   the two parameters, WAIT_AFTER_RESET_P and CYCLES_P respectively. 
 
 2. PARAMETERIZATION
 
-	The implementation of DUT is independent of the parameter values. So a
+  The implementation of DUT is independent of the parameter values. So a
   minimum set of tests might be CYCLES_P = 0,1,2,3 and WAIT_AFTER_RESET_P = 
   0,1,2,3. Since each test runs for relatively a few clock cycles, an
   alternate approach would be to test for CYCLES_P = 0...32 and
@@ -101,7 +101,7 @@ module test_bsg;
   always_ff @(posedge clk)
   begin
     /*$display("ref_test_output: %b, test_output: %b"
-             , ref_test_output, test_output);*/
+               , ref_test_output, test_output);*/
 
     assert(ref_test_output == test_output)
       else $error("mismatch at time %d", $time);
