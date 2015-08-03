@@ -22,8 +22,7 @@ BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
 
 BSG_TEST_FILES =  bsg_nonsynth_reset_gen.v \
-                  bsg_nonsynth_clock_gen.v \
-                  bsg_nonsynth_ascii_writer.v
+                  bsg_nonsynth_clock_gen.v
 
 TEST_MAIN   = test_bsg.v
 TEST_MODULE = test_bsg
@@ -35,7 +34,7 @@ scan_params = WIDTH_P ELS_P
 # note; if you leave out values for a variable, then the product of the
 # sets is null, and nothing will run.
 WIDTH_P = 1 2 3 4
-ELS_P   = 2 3 4 8 16
+ELS_P   = 2 3 4 5 
 ############################################################################
 
 ############################# SIMULATOR COMMANDS ###########################

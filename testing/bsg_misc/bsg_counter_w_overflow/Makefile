@@ -14,7 +14,7 @@ TOP = ../../..
 # place the parameters you want to scan here.
 BSG_TESTME_FILES    =   bsg_counter_w_overflow.v
 BSG_TESTME_DIR      =   $(TOP)/bsg_misc
-BSG_MISC_FILES      =   bsg_defines.v
+BSG_MISC_FILES      =   bsg_circular_ptr.v bsg_defines.v
 BSG_ASYNC_FILES     = 
 BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  = 
