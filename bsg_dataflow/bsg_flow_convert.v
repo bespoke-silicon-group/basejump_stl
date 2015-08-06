@@ -10,7 +10,7 @@
 //
 // USAGE:
 //
-// 1. You need exactly one send_ parameter set and one receive_ parameter set.  
+// 1. You need exactly one send_ parameter set and one recv parameter set.  
 // 2. A parameter x_then_y says that the signal y is combinationally dependent on x.
 // 3. A parameter x_and_y says that the signal x and y are not combinationally dependent.
 
