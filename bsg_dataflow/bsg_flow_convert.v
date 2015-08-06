@@ -15,7 +15,8 @@
 // 3. A parameter x_and_y says that the signal x and y are not combinationally dependent.
 
 // So for example, yumi by definition is combinationally dependent on v, 
-///   since the downstream module looks at the v signal and then decides to assert yumi.  
+//   since the downstream module looks at the v signal and then decides to assert yumi.  
+//   Hence, v_then_yumi is appropriate.
 //
 // Similarly, if you have a module that asserts v, but only if the downstream
 //    module indicates that it is ready, then, you would have ready_then_v. 
