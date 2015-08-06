@@ -4,9 +4,24 @@
 // this module converts between the various link-level flow-control
 // protocols.
 //
+// fixme: many of the cases have not been tested. naming convention might
+// be better. more asserts would be good. send_v_and_ready_p does not seem to
+// be implemented.
 //
-// fixme: many of the cases have not been tested
+// USAGE:
 //
+// 1. You need exactly one send_ parameter set and one receive_ parameter set.  
+// 2. A parameter x_then_y says that the signal y is combinationally dependent on x.
+// 3. A parameter x_and_y says that the signal x and y are not combinationally dependent.
+
+// So for example, yumi by definition is combinationally dependent on v, 
+///   since the downstream module looks at the v signal and then decides to assert yumi.  
+//
+// Similarly, if you have a module that asserts v, but only if the downstream
+//    module indicates that it is ready, then, you would have ready_then_v. 
+//
+// On the other hand, if both upsteam and downstream module are supposed to
+//    assert their signals in parallel, then it would be v_and_ready.
 //
 
 module bsg_flow_convert
