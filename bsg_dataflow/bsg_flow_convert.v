@@ -24,6 +24,18 @@
 // On the other hand, if both upsteam and downstream module are supposed to
 //    assert their signals in parallel, then it would be v_and_ready.
 //
+//   bsg_flow_convert #(.width_p(nodes_p)
+//                      ,.send_v_and_ready_p(1)
+//                      ,.recv_v_and_retry_p(1)
+//                      ) s2b
+//   (.v_i  (v_i)
+//    ,.fc_o(ready_o)
+//
+//    ,.v_o(switch_2_blockValid)
+//    ,.fc_i(switch_2_blockRetry)
+//    );
+//
+
 
 module bsg_flow_convert
   #(parameter send_v_and_ready_p    = 0
