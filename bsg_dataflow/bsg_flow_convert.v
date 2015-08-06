@@ -6,7 +6,7 @@
 //
 // fixme: many of the cases have not been tested. naming convention might
 // be better. more asserts would be good. send_v_and_ready_p does not seem to
-// be implemented.
+// be implemented.  clocked versions should be handled by separate module.
 //
 // USAGE:
 //
