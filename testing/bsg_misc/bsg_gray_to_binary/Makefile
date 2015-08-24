@@ -10,6 +10,7 @@
 
 TOP = ../../..
 
+##########################################################################
 # place the parameters you want to scan here.
 BSG_TESTME_FILES    =   bsg_gray_to_binary.v
 BSG_TESTME_DIR      =   $(TOP)/bsg_misc
@@ -37,7 +38,7 @@ scan_params = WIDTH_P OTHER_P
 
 WIDTH_P = 1 2 3 4 5 6 7 8
 OTHER_P = 1
-
+############################################################################
 
 ############################# SIMULATOR COMMANDS ###########################
 BSG_IP_CORES_COMP = vlog -sv -mfcu -work $(TOP)/work \

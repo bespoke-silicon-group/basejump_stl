@@ -41,7 +41,7 @@ OTHER_P = 1
 BSG_IP_CORES_COMP = vlog -sv -mfcu -work $(TOP)/work \
                       +incdir+$(TOP)/bsg_test \
                       +incdir+$(TOP)/bsg_misc $(ALL_FILES) -quiet
-BSG_IP_CORES_SIM  = vsim -c -lib $(TOP)/work $(TEST_MODULE) \
+BSG_IP_CORES_SIM  = vsim -batch -lib $(TOP)/work $(TEST_MODULE) \
                       -do "run -all; quit -f"
 ############################################################################
 

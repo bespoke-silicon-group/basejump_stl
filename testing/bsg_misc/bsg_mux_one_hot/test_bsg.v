@@ -72,13 +72,14 @@ module test_bsg;
             $display("=============================================================\n");
             $finish;
           end
+        
+        assert (test_output==width_lp'(addr))
+          else $error("mismatch on input %x", test_input_sel);
       end
     
     /*$display("test_input_sel: %b, test_output: %b\n"
              , test_input_sel, test_output);*/
     
-    assert (test_output==width_lp'(addr))
-      else $error("mismatch on input %x", test_input_sel);
     
   end
   

@@ -30,7 +30,7 @@ module test_bsg;
                           );
     
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(5)
+                           , .reset_cycles_lo_p(1)
                            , .reset_cycles_hi_p(5)
                           )  reset_gen
                           (  .clk_i        (clk) 

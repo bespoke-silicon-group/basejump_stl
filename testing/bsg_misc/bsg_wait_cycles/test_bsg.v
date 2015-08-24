@@ -33,7 +33,7 @@ module test_bsg;
                           );
     
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(5)
+                           , .reset_cycles_lo_p(1)
                            , .reset_cycles_hi_p(5)
                           )  reset_gen
                           (  .clk_i        (clk) 
@@ -103,8 +103,9 @@ module test_bsg;
     /*$display("ref_test_output: %b, test_output: %b"
                , ref_test_output, test_output);*/
 
-    assert(ref_test_output == test_output)
-      else $error("mismatch at time %d", $time);
+    if(!reset)  
+      assert(ref_test_output == test_output)
+        else $error("mismatch at time %d", $time);
   end
 
   bsg_wait_cycles #(  .cycles_p(cycles_lp)

@@ -32,7 +32,7 @@ module test_bsg;
                           );
     
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(5)
+                           , .reset_cycles_lo_p(1)
                            , .reset_cycles_hi_p(5)
                           )  reset_gen
                           (  .clk_i        (clk) 
@@ -57,7 +57,7 @@ module test_bsg;
   if(width_lp > 1)
     bsg_binary_plus_one_to_gray #(  .width_p(width_lp)
                                  )  binary_pone_gray
-                                 (  .binary_i(count-1)
+                                 (  .binary_i(width_lp'(count-1))
                                   , .gray_o  (test_input_n)
                                  );
   else
@@ -87,9 +87,11 @@ module test_bsg;
     /*$display("\ncount: %b, test_input: %b, test_output: %b"
              , count, test_input, test_output);*/
 
-    assert(test_output == popcount)
-      else $error("mismatch on input %b, expected output: %b, test_output:%b"
-                  , test_input, popcount, test_output);
+    if(!reset)  
+      assert(test_output == popcount)
+        else $error("mismatch on input %b, expected output: %b, test_output:%b"
+                    , test_input, popcount, test_output);
+    
     if(&count)
       finish_r <= 1'b1;
     if(finish_r)

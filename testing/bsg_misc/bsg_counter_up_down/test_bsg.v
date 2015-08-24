@@ -35,7 +35,7 @@ module test_bsg;
                           );
     
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(5)
+                           , .reset_cycles_lo_p(1)
                            , .reset_cycles_hi_p(5)
                           )  reset_gen
                           (  .clk_i        (clk) 
@@ -93,9 +93,6 @@ module test_bsg;
 
   always_ff @(posedge clk)
   begin 
-    assert(count == test_output)
-      else $error("mismatch on time %d\n", $time);
-    
     if(reset)
       begin
         count      <= init_val_lp;
@@ -103,7 +100,10 @@ module test_bsg;
       end
     else
       begin
-        //$display("count: %d, test_output: %d @  time: %d\n", count, test_output, $time); /////////////////
+        //$display("count: %d, test_output: %d @  time: %d\n", count, test_output, $time);
+        assert(count == test_output)
+          else $error("mismatch on time %d\n", $time);
+        
         count      <= count + test_input_up - test_input_down;
         prev_count <= count;
       end

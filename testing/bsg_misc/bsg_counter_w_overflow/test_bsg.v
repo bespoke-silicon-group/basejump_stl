@@ -37,7 +37,7 @@ module test_bsg;
                           );
     
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(5)
+                           , .reset_cycles_lo_p(1)
                            , .reset_cycles_hi_p(5)
                           )  reset_gen
                           (  .clk_i        (clk)
@@ -85,8 +85,9 @@ module test_bsg;
     prev_count <= count;
 
     //$display("count: %d, test_output: %d\n", count, test_output); ///////////////////////////
-    assert (count == test_output)
-      else $error("error on count %x", count);
+    if(!reset)
+      assert (count == test_output)
+        else $error("error on count %x", count);
     
     if(~(|count) & (prev_count == overflow_lp))
       finish_r <= 1;

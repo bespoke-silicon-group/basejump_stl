@@ -10,6 +10,7 @@
 
 TOP = ../../..
 
+######################## SIMULATION PARAMETERS ################################
 # place the parameters you want to scan here.
 BSG_TESTME_FILES    =   bsg_mux_bitwise.v
 BSG_TESTME_DIR      =   $(TOP)/bsg_misc
@@ -38,13 +39,13 @@ scan_params = WIDTH_P OTHER_P
 # sets is null, and nothing will run.
 WIDTH_P = 1 2 3 4
 OTHER_P = 1
-
+############################################################################
 
 ############################# SIMULATOR COMMANDS ###########################
 BSG_IP_CORES_COMP = vlog -sv -mfcu -work $(TOP)/work \
                       +incdir+$(TOP)/bsg_test \
                       +incdir+$(TOP)/bsg_misc $(ALL_FILES) -quiet ###
-BSG_IP_CORES_SIM  = vsim -c -lib $(TOP)/work $(TEST_MODULE) \
+BSG_IP_CORES_SIM  = vsim -batch -lib $(TOP)/work $(TEST_MODULE) \
                       -do "run -all; quit -f"
 ############################################################################
 

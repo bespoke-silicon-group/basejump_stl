@@ -83,6 +83,10 @@ module test_bsg;
             $display("===========================================================\n");
             $finish;
           end
+        
+        if(width_lp != 1)
+          assert((test_output_addr == count) & (v == test_output_v))
+            else $error("mismatch on input %x", test_input);
       end
     
     test_input   <= test_input_n;
@@ -93,8 +97,6 @@ module test_bsg;
     /*$display("\ntest_input: %b, count: %b, test_output: %b"
              , test_input, count, test_output_addr);*/
 
-    assert((test_output_addr == count) & (v == test_output_v))
-      else $error("mismatch on input %x", test_input);
   end
   
   bsg_encode_one_hot #(  .width_p(width_lp)

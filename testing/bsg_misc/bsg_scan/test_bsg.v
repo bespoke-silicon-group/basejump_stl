@@ -36,7 +36,7 @@ module test_bsg;
                           );
     
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(5)
+                           , .reset_cycles_lo_p(1)
                            , .reset_cycles_hi_p(5)
                           )  reset_gen
                           (  .clk_i        (clk) 
@@ -117,15 +117,17 @@ module test_bsg;
   begin
     /*$display("test_input: %b, test_output_hilo: %b, test_output_lohi: %b"
              , test_input, test_output_hilo, test_output_lohi);*/
+    if(!reset)
+      begin
+        assert (ref_test_output_hilo == test_output_hilo)
+          else $error("hi_to_lo_scan: mismatch on input %x; expected output: %x; "
+                      , test_input, ref_test_output_hilo, "test output: %x", test_output_hilo);
+                        
+        assert (ref_test_output_lohi == test_output_lohi)
+          else $error("lo_to_hi_scan: mismatch on input %x; expected output: %x; "
+                      , test_input, ref_test_output_lohi, "test output: %x", test_output_lohi);
+      end
 
-    assert (ref_test_output_hilo == test_output_hilo)
-      else $error("hi_to_lo_scan: mismatch on input %x; expected output: %x; "
-                  , test_input, ref_test_output_hilo, "test output: %x", test_output_hilo);
-                    
-    assert (ref_test_output_lohi == test_output_lohi)
-      else $error("lo_to_hi_scan: mismatch on input %x; expected output: %x; "
-                  , test_input, ref_test_output_lohi, "test output: %x", test_output_lohi);
-    
     if(finish_r)
       begin
         $display("==============================================================\n");

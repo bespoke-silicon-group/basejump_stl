@@ -30,7 +30,7 @@ module test_bsg;
                           );
     
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(5)
+                           , .reset_cycles_lo_p(1)
                            , .reset_cycles_hi_p(5)
                           )  reset_gen
                           (  .clk_i        (clk) 
@@ -57,13 +57,14 @@ module test_bsg;
         finish_r     <= 1'b0;
       end
     else
-      test_input <= (test_input<<1)+1;
+      begin  
+        test_input <= (test_input<<1)+1;
+        assert(p_test_input == test_output)
+          else $error("mismatch on input %x", test_input);
+      end
     
     p_test_input <= test_input;
-    
-    assert(p_test_input == test_output)
-      else $error("mismatch on input %x", test_input);
-      
+          
     if(&p_test_input)
       finish_r <= 1'b1;
     if(finish_r)

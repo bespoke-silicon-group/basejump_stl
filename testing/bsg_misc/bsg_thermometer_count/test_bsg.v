@@ -38,7 +38,7 @@ module test_bsg;
                           );
     
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(5)
+                           , .reset_cycles_lo_p(1)
                            , .reset_cycles_hi_p(5)
                           )  reset_gen
                           (  .clk_i        (clk) 
@@ -96,10 +96,10 @@ module test_bsg;
   begin
     /*$display("test_input: %b, count: %b, test_output: %b"
              , test_input, count, test_output);*/
-
-    assert(count == test_output)
-        else $error("mismatch on input %x;, expected output: %x;, test_output: %x"
-                      , test_input, count, test_output);
+    if(!reset)
+      assert(count == test_output)
+          else $error("mismatch on input %x;, expected output: %x;, test_output: %x"
+                        , test_input, count, test_output);
   end
   
   bsg_thermometer_count #(  .width_p(width_lp)
