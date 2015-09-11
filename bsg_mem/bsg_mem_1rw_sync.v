@@ -6,7 +6,7 @@
 
 module bsg_mem_1rw_sync #(parameter width_p=-1
 			  , parameter els_p=-1
-			  , parameter addr_width_lp=$clog2(els_p))
+			  , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p))
    (input   clk_i
     , input reset_i
     , input [width_p-1:0] data_i
@@ -23,8 +23,10 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
    always_ff @(posedge clk_i)
      if (v_i)
        begin
+          // synopsys translate off
           assert (addr_i < els_p)
             else $error("Invalid address %x to %m of size %x\n", addr_i, els_p);
+          // synopsys translate on
           if (w_i)
             mem[addr_i] <= data_i;
           else
