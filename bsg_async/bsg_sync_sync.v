@@ -8,6 +8,14 @@
 // Fixme: move this into asic-specific components.
 //
 
+`ifndef rp_group
+ `define rp_group(x)
+ `define rp_place(x)
+ `define rp_endgroup(x)
+ `define rp_fill(x)
+ `define rp_array_dir(up)
+`endif
+
 `define bsg_sync_sync_unit(width_p)                             \
                                                                 \
 module bsg_sync_sync_``width_p``_unit                           \
