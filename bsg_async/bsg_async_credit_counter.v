@@ -25,7 +25,10 @@
 // TOKENS vs. CREDITS. We support a feature here, which is the idea of a token.
 // A token is worth multiple credits. We pass tokens through the fifo (so that
 // the gray-coded values are still consecutive). The number of credits must
-// be a power-of-two multiple of the number of tokens.
+// be a power-of-two multiple of the number of tokens. The log of this value is set 
+// by lg_credit_to_token_decimation_p. Using tokens can be used to reduce
+// the toggle rate of the w_clk_i signal, for example, if it is being run
+// over a pin exterior to the chip.
 //
 // RESET: both resets must be asserted and w_ clock most be posedge (negedge) toggled
 // at least once; and the r_ clock posedge toggled at least four times after that.
@@ -40,7 +43,9 @@
 // increasing the amount of margin the upstream module thinks it have. Of course, you
 // need to have the flexibility of being able to change the downstream's buffer space
 // to take advantage of this feature, but this is the case if the downstream module
-// is an FPGA.
+// is an FPGA. The parameter extra_margin_p is the number of additional bits in the
+// credit counter that should be added to accomodate this behaviour. So for example,
+// extra_margin_p of 2 increases the credit capacity by 2X.
 
 // The parameter count_negedge_p determines whether we count
 // on negedge edge or positive edge of the clock.
