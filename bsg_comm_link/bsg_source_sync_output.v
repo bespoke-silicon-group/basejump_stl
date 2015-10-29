@@ -309,9 +309,11 @@ module bsg_source_sync_output
        ,.count_negedge_p(1'b0)
        // we enable extra margin in case downstream module wants more tokens
        ,.extra_margin_p(2)
+       ,.start_full_p(1)
        ) pos_credit_ctr
        (
         .w_clk_i   (token_clk_i  )
+	,.w_inc_token_i(1'b1)
         ,.w_reset_i(token_reset_i)
 
         // the I/O clock domain is responsible for tabulating tokens
@@ -329,9 +331,11 @@ module bsg_source_sync_output
        ,.count_negedge_p(1'b1)
        // we enable extra margin in case downstream module wants more tokens
        ,.extra_margin_p(2)
+       ,.start_full_p(1)
        ) neg_credit_ctr
        (
         .w_clk_i   (token_clk_i)
+	,.w_inc_token_i(1'b1)
         ,.w_reset_i(token_reset_i)
 
         // the I/O clock domain is responsible for tabulating tokens
