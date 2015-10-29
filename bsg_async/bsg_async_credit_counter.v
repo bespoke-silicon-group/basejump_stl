@@ -54,9 +54,11 @@ module bsg_async_credit_counter #(parameter max_tokens_p = "inv"
                                   , parameter lg_credit_to_token_decimation_p = "inv"
                                   , parameter count_negedge_p = 0
                                   , parameter extra_margin_p = 0
-                                  , parameter check_excess_credits_p = 1)
-   (
-    input w_clk_i // this actually increments the credit counter
+                                  , parameter check_excess_credits_p = 1
+				  , parameter start_full_p = 1)
+    (
+      input w_clk_i
+    , input w_inc_token_i
     , input w_reset_i
     , input r_clk_i
     , input r_reset_i
@@ -77,7 +79,7 @@ module bsg_async_credit_counter #(parameter max_tokens_p = "inv"
    always @(posedge r_clk_i)
      if (r_reset_i)
        // fixme? not sure this constant will always do as expected
-       r_counter_r       <= { -max_tokens_p, { lg_credit_to_token_decimation_p  {1'b0} } };
+       r_counter_r       <= { -max_tokens_p * start_full_p, { lg_credit_to_token_decimation_p  {1'b0} } };
      else
        r_counter_r       <= r_counter_r + r_dec_credit_i;
 
@@ -87,7 +89,7 @@ module bsg_async_credit_counter #(parameter max_tokens_p = "inv"
                         ,.use_negedge_for_launch_p(count_negedge_p)) bapg
    (.w_clk_i(w_clk_i)
     ,.w_reset_i(w_reset_i)
-    ,.w_inc_i(1'b1)
+    ,.w_inc_i(w_inc_token_i)
     ,.r_clk_i(r_clk_i)
     ,.w_ptr_binary_r_o() // we don't care about the binary version of the ptr on w side
     ,.w_ptr_gray_r_o(w_counter_gray_r)             // synchronized with w clock domain
