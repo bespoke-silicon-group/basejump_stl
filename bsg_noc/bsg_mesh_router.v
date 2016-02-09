@@ -1,3 +1,12 @@
+// import enum Dirs for directions
+import bsg_noc_pkg::Dirs
+       , bsg_noc_pkg::P  // proc (processor core)
+       , bsg_noc_pkg::W  // west
+       , bsg_noc_pkg::E  // east
+       , bsg_noc_pkg::N  // north
+       , bsg_noc_pkg::S; // south
+
+
 // Dimensioned ordered routing decoder
 // based on X then Y routing, it outputs a set of grant signals
 
@@ -16,12 +25,10 @@ module bsg_mesh_router_dor_decoder #( parameter lg_node_x_p = -1
   ,output [dirs_p-1:0][dirs_p-1:0] req_o
  );
 
-  typedef enum {P, W, E, N, S} Dirs;
-
-  wire x_eq[dirs_p-1:0];
-  wire y_eq[dirs_p-1:0];
-  wire x_gt[dirs_p-1:0];
-  wire y_gt[dirs_p-1:0];
+  wire [dirs_p-1:0] x_eq;
+  wire [dirs_p-1:0] y_eq;
+  wire [dirs_p-1:0] x_gt;
+  wire [dirs_p-1:0] y_gt;
 
   // this is the routing function;
   genvar i;
@@ -88,8 +95,6 @@ module bsg_mesh_router #( parameter dirs_p=5
   ,input   [lg_node_x_p-1:0] my_x_i           // node's x and y coord
   ,input   [lg_node_y_p-1:0] my_y_i
  );
-
-  typedef enum {P, W, E, N, S} Dirs;
 
   wire [dirs_p-1:0][lg_node_x_p-1:0] x_dirs;
   wire [dirs_p-1:0][lg_node_y_p-1:0] y_dirs;

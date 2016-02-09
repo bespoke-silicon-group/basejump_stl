@@ -19,7 +19,7 @@ BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  = bsg_fifo_1r1w_small.v
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
-BSG_NOC_FILES       =
+BSG_NOC_FILES       = bsg_noc_pkg.v
 BSG_MEM_FILES       = bsg_mem_1r1w.v
 
 BSG_TEST_FILES =  bsg_nonsynth_reset_gen.v \
@@ -58,10 +58,10 @@ ALL_FILES = $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x)) \
               $(foreach x,$(BSG_GUTS_FILES),$(TOP)/bsg_guts/$(x)) \
               $(foreach x,$(BSG_COMM_LINK_FILES),$(TOP)/bsg_comm_link/$(x)) \
               $(foreach x,$(BSG_DATAFLOW_FILES),$(TOP)/bsg_dataflow/$(x)) \
-              $(foreach x,$(BSG_TEST_FILES),$(TOP)/bsg_test/$(x)) \
-              $(foreach x,$(BSG_TESTME_FILES),$(BSG_TESTME_DIR)/$(x)) \
               $(foreach x,$(BSG_NOC_FILES),$(TOP)/bsg_noc/$(x)) \
               $(foreach x,$(BSG_MEM_FILES),$(TOP)/bsg_mem/$(x)) \
+              $(foreach x,$(BSG_TEST_FILES),$(TOP)/bsg_test/$(x)) \
+              $(foreach x,$(BSG_TESTME_FILES),$(BSG_TESTME_DIR)/$(x)) \
               $(TEST_MAIN)
 
 # function that generates a string for each combination of the parameters;

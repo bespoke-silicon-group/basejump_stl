@@ -17,6 +17,14 @@
 *   be MESH_EDGE_P = 0 1 2 with sufficient DATA_WIDTH_P.
 * **************************************************************************/
 
+// import enum Dirs for directions
+import bsg_noc_pkg::Dirs
+       , bsg_noc_pkg::P  // proc (processor core)
+       , bsg_noc_pkg::W  // west
+       , bsg_noc_pkg::E  // east
+       , bsg_noc_pkg::N  // north
+       , bsg_noc_pkg::S; // south
+
 
 module test_bsg;
   
@@ -47,7 +55,6 @@ module test_bsg;
   localparam width_lp = (`DATA_WIDTH_P) + lg_node_x_lp + lg_node_y_lp;
   
   localparam dirs_lp = 5;
-  typedef enum {P, W, E, N, S} Dirs;
   
   initial
   begin
