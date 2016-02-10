@@ -15,6 +15,9 @@
 
  */
 
+package bsg_nasti_pkg;
+   
+
 typedef struct packed {
    // read address channel
    // or write address channel
@@ -45,3 +48,5 @@ typedef struct packed {
    logic [1:0] resp;
    logic [4:0] id;
 } bsg_nasti_write_response_channel_s;
+
+endpackage
