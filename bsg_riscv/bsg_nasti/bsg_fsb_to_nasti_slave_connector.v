@@ -71,19 +71,21 @@ import bsg_nasti_pkg::bsg_nasti_write_response_channel_s;
         nasti_read_addr_ch_o.v     = 1'b0;
         nasti_read_addr_ch_o.addr  = ring_data_in.data[31:0];
         nasti_read_addr_ch_o.id    = ring_data_in.data[32+:5];
-        nasti_read_addr_ch_o.size  = 3'b111; // fixme; hardcode this to correct val
-        nasti_read_addr_ch_o.len   = 8'b0;   // fixme; hardcode this to correct val
+        nasti_read_addr_ch_o.size  = 3'b11; // fixme; hardcode this to correct val
+        nasti_read_addr_ch_o.len   = 8'b111;   // fixme; hardcode this to correct val
 
         nasti_write_addr_ch_o.v    = 1'b0;
         nasti_write_addr_ch_o.addr = ring_data_in.data[31:0];
         nasti_write_addr_ch_o.id   = ring_data_in.data[32+:5];
-        nasti_write_addr_ch_o.size = 3'b111; // fixme; hardcode this to correct val
-        nasti_write_addr_ch_o.len  = 8'b0;   // fixme; hardcode this to correct val
+        nasti_write_addr_ch_o.size = 3'b11; // fixme; hardcode this to correct val
+        nasti_write_addr_ch_o.len  = 8'b111;   // fixme; hardcode this to correct val
 
         nasti_write_data_ch_o.v    = 1'b0;
         nasti_write_data_ch_o.data = ring_data_in.data[63:0];
         nasti_write_data_ch_o.strb = 8'b1111_1111; // fixme; hardcode this to correct val
         nasti_write_data_ch_o.last = 1'b0;
+
+        in_fifo_yumi = 1'b0;
 
         if (in_fifo_v & ~ring_data_in.cmd)
           begin
@@ -173,6 +175,7 @@ import bsg_nasti_pkg::bsg_nasti_write_response_channel_s;
              ring_data_out.opcode=7'b0001000;
              nasti_write_resp_ch_ready_o = out_fifo_ready;
              ring_data_out.data[4:0] = nasti_write_resp_ch_i.id;
+             ring_data_out.data[6:5] = nasti_write_resp_ch_i.resp;
              // fixme: where does the ID go?
           end
 

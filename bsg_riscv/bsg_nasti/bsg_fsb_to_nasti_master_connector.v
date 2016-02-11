@@ -26,14 +26,14 @@ import bsg_nasti_pkg::bsg_nasti_write_response_channel_s;
  , input                                           nasti_write_resp_ch_ready_i
 
  // from fsb
- , output fsb_v_i
- , output [ring_width_p-1:0] fsb_data_i
- , input fsb_ready_o
+ , input fsb_v_i
+ , input [ring_width_p-1:0] fsb_data_i
+ , output logic fsb_ready_o
 
  // to fsb
- , input fsb_v_o
- , input [ring_width_p-1:0] fsb_data_o
- , output fsb_yumi_i
+ , output fsb_v_o
+ , output [ring_width_p-1:0] fsb_data_o
+ , input fsb_yumi_i
 );
 
    import bsg_fsb_pkg::RingPacketType;
@@ -140,9 +140,9 @@ import bsg_nasti_pkg::bsg_nasti_write_response_channel_s;
         nasti_read_data_ch_o.resp = 2'b0; // fixme is this the right value?
         nasti_read_data_ch_o.last = 1'b0;
 
-        nasti_write_resp_ch_o.v   = 1'b0;
-        nasti_write_resp_ch_o.id  = ring_data_in.data[4:0];
-        nasti_read_data_ch_o.resp = 2'b0; // fixme is this the right value?
+        nasti_write_resp_ch_o.v    = 1'b0;
+        nasti_write_resp_ch_o.id   = ring_data_in.data[4:0];
+	nasti_write_resp_ch_o.resp = ring_data_in.data[6:5];
 
         in_fifo_yumi = 1'b0;
 
