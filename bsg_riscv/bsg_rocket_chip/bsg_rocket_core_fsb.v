@@ -126,10 +126,10 @@ module bsg_rocket_core_fsb
       ,.io_mem_0_r_bits_last ( r.last  )
       ,.io_mem_0_r_bits_user ( 1'b0    )
 
-      ,.io_mem_0_b_valid     ( b.v     )
-      ,.io_mem_0_b_ready     ( b_ready )
-      ,.io_mem_0_b_bits_resp ( b.resp  )
-      ,.io_mem_0_b_bits_id   ( b.id    )
+      ,.io_mem_0_b_valid     ( wr.v     )
+      ,.io_mem_0_b_ready     ( wr_ready )
+      ,.io_mem_0_b_bits_resp ( wr.resp  )
+      ,.io_mem_0_b_bits_id   ( wr.id    )
       ,.io_mem_0_b_bits_user ( 1'b0    )
 
       // we follow the "FPGA plan", because Berkeley "chip plan" currently broken

@@ -1,3 +1,4 @@
+// mbt 2-12-16
 module bsg_rocket_chip #(
                          parameter num_channels_p              = 4
                          , parameter channel_width_p           = 8
