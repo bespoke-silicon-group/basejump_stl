@@ -57,7 +57,9 @@ module bsg_rocket_core_fsb
    wire [htif_width_p-1:0] htif_in_data;
    wire [htif_width_p-1:0] htif_out_data;
 
-   bsg_fsb_to_htif_master_connector #(.destid_p(htif_destid_p))
+   bsg_fsb_to_htif_connector #(.destid_p(htif_destid_p)
+                               ,.htif_width_p(htif_width_p)
+                               )
    (.clk_i   ( clk_i     )
     ,.reset_i( reset_i   )
 
@@ -140,7 +142,7 @@ module bsg_rocket_core_fsb
       ,.io_mem_backup_ctrl_en         (1'b0)
       ,.io_mem_backup_ctrl_in_valid   (1'b0)
       ,.io_mem_backup_ctrl_out_ready  (1'b0)
-      ,.io_mem_backup_ctrl_out_valid  (),
+      ,.io_mem_backup_ctrl_out_valid  ()
       // end "FPGA plan"
 
       // this is the hostif; we need to attach it to the FSB as well
