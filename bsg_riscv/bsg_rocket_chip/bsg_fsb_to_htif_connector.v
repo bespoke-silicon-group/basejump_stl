@@ -1,4 +1,4 @@
-module bsg_fsb_to_htif_master_connector
+module bsg_fsb_to_htif_connector
   import bsg_fsb_pkg::RingPacketType;
 
    #(parameter htif_width_p
@@ -38,9 +38,6 @@ module bsg_fsb_to_htif_master_connector
    assign htif_data_o = pkt_in.data[htif_width_p-1:0];
    assign fsb_ready_o = htif_ready_i;
 
-
-
-   
    bsg_two_fifo #(.width_p(htif_width_lp)
                   )
    (.clk_i    (clk_i  )
