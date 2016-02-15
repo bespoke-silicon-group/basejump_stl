@@ -58,7 +58,7 @@ XC6VLX240T |   241,152    |  150,720  | 301,440|    3,650 Kb  |  768    | 14976 
 XC7A200T   |   215,360    |  134,600  | 269,200|              |  740    | 13140   | 365x36kb | Video Artix  ($290)
 XC7K325T   |   326,000    |  203,800  | 407,600|              |  840    | 16020   |          | NetFPGA      ($399)
 XC7K325T   |   326,000    |  203,800  | 407,600|              |  840    | 16020   |          | Genesys 2    ($600)
-XC7K325T   |   326,000    |  203,800  | 407,600|              |  840    | 16020   | 890x18kb | KC705       ($1700)
+XC7K325T   |   326,000    |  203,800  | 407,600|              |  840    | 16020   | 445x36kb | KC705       ($1700)
 XC7Z045    |   350,000    |  218,600  | 437,200|              |  900    | 17440   | 545x36kb | ZC706       ($2500)
 XC7Z100    |   444,000    |  277,400  | 554,800|              | 2020    | 24060   | 755x36kb | MiniITX Kit ($2195)
 KCU040     |   530,250    |  242,400  | 484,800|              | 1920    | 19440   | 540x36kb | KCU105      ($2995)
@@ -72,7 +72,7 @@ The Genesys 2 has 2x the resources of the GW FPGA, and 4X the RAM. But no ARM co
 
 DDR3 Controller: 15389 LUTs, 12258 FLOPS, 1 BRAM
 NASTI XBAR:      2254  LUTS, 288 registers
-Rocket chip:     35421 LUTS, 17343 register, 57 BRAM, 24 DSP
+Rocket chip:     35421 LUTS, 17343 register, 57 BRAM, 24 DSP (27%, 8%, 17%, 3%)
  \___\
      / core:      4228 LUTS,  1598 register, 0 BRAM,   4 DSP
         FPU:     12626 LUTS,  4150 register, 0 BRAM,  20 DSP
