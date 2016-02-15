@@ -1,10 +1,7 @@
 // README
 
-For our FSB bridge, the basic architecture should look like this:
 
-
-
-Zedboard FPGA
+Rocket ASIC hosted by DoubleTrouble/RealTrouble connected via FMC to Zedboard FPGA
 -------------
   ______________________________         ______________________________
  /                              \ NASTI /                              \
@@ -33,7 +30,7 @@ Zedboard FPGA
                                         /|\
                                          |
                                          | comm_link
-    ASIC FPGA                            | 
+    ASIC FPGA (or ASIC)                  | 
     ---------                           \|/
                              /---------------\
  --------------------------->|               |
@@ -42,12 +39,12 @@ Zedboard FPGA
     |                   |    \---------------/
     |                   |
  /--------------\    /-----------------------------------\
- | fsb_to_hostio|    |   fsb_to_nasti_master_connector   | 
+ | fsb_to_hostio|    |   fsb_to_nasti_master_connector   |
  |              |    |                                   |
  \--------------/    \-----------------------------------/
     |                   |
  /-------------------------------------------------------\
- | RISC-V Rocket                                         | 
+ | RISC-V Rocket                                         |
  |                                                       |
  \-------------------------------------------------------/
 

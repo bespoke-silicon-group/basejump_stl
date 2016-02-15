@@ -45,6 +45,8 @@ module bsg_nonsynth_chipset_rocket
    wire [nodes_lp-1:0] core_node_en_r_lo;
    wire [nodes_lp-1:0] core_node_reset_r_lo;
 
+   wire                         trace_done;
+
    // into nodes (fsb interface)
    wire [nodes_lp-1:0]       core_node_v_A;
    wire [ring_width_lp-1:0]  core_node_data_A     [nodes_lp-1:0];
@@ -98,7 +100,7 @@ module bsg_nonsynth_chipset_rocket
 
    always @(posedge clk_i)
      begin
-        if (reset_i)
+        if (~trace_done)
           begin
              ra_ready <= 1'b0;
              wa_ready <= 1'b0;
@@ -154,7 +156,7 @@ module bsg_nonsynth_chipset_rocket
    // callout through PLI
    always @(posedge clk_i)
      begin
-        if (reset_i)
+        if (~trace_done)
           begin
              htif_v_li     <= 0;
              htif_ready_lo <= 0;
@@ -172,7 +174,7 @@ module bsg_nonsynth_chipset_rocket
    // NODE #2: TRACE REPLAY
    // add a trace replay node; this is used for booting the ASIC
 
-   wire                         trace_done;
+
    wire [lg_rom_addr_lp-1:0]    rom_addr_lo;
    wire [rom_data_width_lp-1:0] rom_data_lo;
 
