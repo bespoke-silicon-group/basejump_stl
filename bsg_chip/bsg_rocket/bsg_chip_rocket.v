@@ -1,4 +1,9 @@
 // mbt 2-12-16
+//
+// this goes in silicon
+// 
+//
+
 module bsg_chip_rocket #(
                          parameter num_channels_p              = 4
                          , parameter channel_width_p           = 8
