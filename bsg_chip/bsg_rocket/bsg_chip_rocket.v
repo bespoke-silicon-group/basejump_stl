@@ -6,7 +6,7 @@ module bsg_chip_rocket #(
                          , parameter master_p                  = 0
                          , parameter master_to_slave_speedup_p = 100
                          , parameter master_bypass_test_p      = 5'b00000
-                         , parameter nodes_lp                  = 1
+                         , parameter nodes_lp                  = 2
                          , parameter uniqueness_p              = 0
                          )
    (
@@ -51,18 +51,26 @@ module bsg_chip_rocket #(
 
    wire [nodes_lp-1:0]       core_node_reset_lo;
 
-   bsg_rocket_core_fsb core
-     (.clk_i    (core_clk_i          )
-      ,.reset_i (core_node_en_r_lo   )
-      ,.enable_i(core_node_reset_r_lo)
+   bsg_rocket_core_fsb #(.nasti_destid_p(1)
+                         .htif_destid_p(0)
+                         ) core
+     (.clk_i    (core_clk_i            )
 
-      ,.v_i    (core_node_v_A    [0])
-      ,.data_i (core_node_data_A [0])
-      ,.ready_o(core_node_ready_A[0])
+      // the rocket core uses two ports on the FSB
+      // we say, it is in reset if either port is in
+      // reset; and that it is in enable only if both ports
+      // are in enable.
 
-      ,.v_o    (core_node_v_B    [0])
-      ..data_o (core_node_data_B [0])
-      ,.yumi_i (core_node_yumi_B [0])
+      ,.reset_i (|core_node_en_r_lo    )
+      ,.enable_i(&core_node_reset_r_lo )
+
+      ,.v_i    (core_node_v_A    )
+      ,.data_i (core_node_data_A )
+      ,.ready_o(core_node_ready_A)
+
+      ,.v_o    (core_node_v_B    )
+      ..data_o (core_node_data_B )
+      ,.yumi_i (core_node_yumi_B )
 
       );
 
