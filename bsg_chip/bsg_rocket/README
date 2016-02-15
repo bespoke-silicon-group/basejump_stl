@@ -65,7 +65,7 @@ KCU040     |   530,250    |  242,400  | 484,800|              | 1920    | 19440 
            -------------------------------------------------------------------------------------------------------
 
 So, the GW FPGA has ~2x the resources of the Zedboard, but only 1x the ram.
-ASIC FPGA is about .6x the resources of the ML-605, but 3x the ram.
+ASIC FPGA is about .6x the resources of the ML-605, but .33x the ram.
 The Genesys 2 has 2x the resources of the GW FPGA, and 4X the RAM. But no ARM cores.
 
 (KC705)
