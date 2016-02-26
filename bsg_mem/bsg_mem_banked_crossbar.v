@@ -1,0 +1,260 @@
+/******************************
+* bsg_crossbar_o_by_i
+*******************************/
+
+module bsg_crossbar_o_by_i #( parameter i_els_p = -1
+                             ,parameter o_els_p = -1
+                             ,parameter width_p = -1
+                            )
+  ( input  [i_els_p-1:0][width_p-1:0] i
+   ,input  [o_els_p-1:0][i_els_p-1:0] sel_oi_one_hot_i
+   ,output [o_els_p-1:0][width_p-1:0] o
+  );
+
+  genvar lineout;
+
+  for(lineout=0; lineout<o_els_p; lineout++)
+  begin
+    bsg_mux_one_hot #( .width_p(width_p)
+                      ,.els_p  (i_els_p)
+                     ) mux_one_hot
+                     ( .data_i        (i)
+                      ,.sel_one_hot_i (sel_oi_one_hot_i[lineout])
+                      ,.data_o        (o[lineout])
+                     );
+  end
+
+endmodule // bsg_crossbar_o_by_i
+
+
+
+/*********************************
+* bsg_crossbar_control_rr_o_by_i
+**********************************/
+
+module bsg_crossbar_control_rr_o_by_i #( parameter i_els_p = -1
+                                        ,parameter o_els_p = -1
+                                        ,parameter lg_o_els_lp = `BSG_SAFE_CLOG2(o_els_p)
+                                       )
+  ( input                                clk_i
+   ,input                                reset_i
+   
+   // crossbar inputs
+   ,input [i_els_p-1:0]                  valid_i
+   ,input [i_els_p-1:0][lg_o_els_lp-1:0] sel_io_i
+   ,output [i_els_p-1:0]                 yumi_o
+
+   // crossbar outputs
+   ,input [o_els_p-1:0]                  ready_i
+   ,output [o_els_p-1:0]                 valid_o
+   ,output [o_els_p-1:0][i_els_p-1:0]    grants_oi_one_hot_o
+  );
+
+  logic [i_els_p-1:0][o_els_p-1:0] sel_io_one_hot, grants_io_one_hot;
+  logic [o_els_p-1:0][i_els_p-1:0] sel_oi_one_hot;
+
+  genvar i;
+  
+  for(i=0; i<i_els_p; i=i+1)
+    assign sel_io_one_hot[i] = (valid_i[i]) << (sel_io_i[i]);
+
+  bsg_transpose #( .width_p(o_els_p)
+                  ,.els_p  (i_els_p)
+                 ) transpose0
+                 ( .i(sel_io_one_hot)
+                  ,.o(sel_oi_one_hot) // requets for each output
+                 );
+  
+  for(i=0; i<o_els_p; i=i+1)
+    bsg_round_robin_arb #( .inputs_p(i_els_p)
+                         ) round_robin_arb
+                         ( .clk_i   (clk_i)
+                          ,.reset_i (reset_i)
+                          ,.ready_i (ready_i[i])
+                          ,.reqs_i  (sel_oi_one_hot[i])
+                          ,.grants_o(grants_oi_one_hot_o[i])
+                         );
+
+  bsg_transpose #( .width_p(i_els_p)
+                  ,.els_p  (o_els_p)
+                 ) transpose1
+                 ( .i(grants_oi_one_hot_o)
+                  ,.o(grants_io_one_hot)
+                 );
+
+  for(i=0; i<o_els_p; i=i+1)
+    assign valid_o[i] = | grants_oi_one_hot_o[i];
+
+  for(i=0; i<i_els_p; i=i+1)
+    assign yumi_o[i] = | grants_io_one_hot[i];
+
+endmodule // bsg_crossbar_control_rr_o_by_i
+
+
+
+/*****************************************
+* banked memory crossbar
+******************************************/
+
+module bsg_mem_banked_crossbar # 
+  ( parameter els_p        = -1 
+   ,parameter num_ports_p  = -1
+   ,parameter num_banks_p  = -1
+   ,parameter data_width_p = -1
+
+   // 1 => hash MSBs of addr_i; 0 => hash LSBs
+   ,parameter hash_hi_bits_not_lo_p = 1 
+
+   ,parameter mask_width_lp      = data_width_p >> 3
+   ,parameter lg_num_banks_lp    = `BSG_SAFE_CLOG2(num_banks_p) // 0 if num_banks_p = 1
+   ,parameter bank_addr_width_lp = `BSG_SAFE_CLOG2((els_p/num_banks_p)
+                                                   + (els_p%num_banks_p != 0))
+   ,parameter addr_width_lp      = ((num_banks_p == 1)? 0 : lg_num_banks_lp) 
+                                   + bank_addr_width_lp
+  )
+  ( input                                       clk_i
+   ,input                                       reset_i
+
+   ,input [num_ports_p-1:0]                     v_i
+   ,input [num_ports_p-1:0]                     w_i
+   ,input [num_ports_p-1:0][addr_width_lp-1:0]  addr_i
+   ,input [num_ports_p-1:0][data_width_p-1:0]   data_i
+   ,input [num_ports_p-1:0][mask_width_lp-1:0]  mask_i
+
+   ,output [num_ports_p-1:0]                    yumi_o
+   ,output [num_ports_p-1:0]                    v_o
+   ,output [num_ports_p-1:0][data_width_p-1:0]  data_o
+  );
+
+
+  logic [num_ports_p-1:0][lg_num_banks_lp-1:0] bank_reqs;
+
+  genvar i;
+
+  if(num_banks_p > 1)
+    for(i=0; i<num_ports_p; i=i+1)
+      assign bank_reqs[i] = hash_hi_bits_not_lo_p ?
+                            addr_i[i][bank_addr_width_lp+:lg_num_banks_lp]
+                            : addr_i[i][0+:lg_num_banks_lp];
+  else
+    assign bank_reqs = 1'b0;
+
+  logic [num_banks_p-1:0][num_ports_p-1:0] bank_port_grants_one_hot
+                                           , bank_port_grants_one_hot_r;
+  logic [num_banks_p-1:0] bank_v, bank_v_r;
+  bsg_crossbar_control_rr_o_by_i #( .i_els_p(num_ports_p)
+                                   ,.o_els_p(num_banks_p)
+                                  ) crossbar_control
+                                  ( .clk_i              (clk_i)
+                                   ,.reset_i            (reset_i)
+
+                                   // ports
+                                   ,.valid_i            (v_i)
+                                   ,.sel_io_i           (bank_reqs)
+                                   ,.yumi_o             (yumi_o)
+                                   
+                                   // banks
+                                   ,.ready_i            ({num_banks_p{1'b1}})
+                                   ,.valid_o            (bank_v)
+                                   ,.grants_oi_one_hot_o(bank_port_grants_one_hot)
+                                  );
+
+  logic [num_banks_p-1:0][data_width_p-1:0] bank_data, bank_data_out;
+  bsg_crossbar_o_by_i #( .i_els_p(num_ports_p)
+                        ,.o_els_p(num_banks_p)
+                        ,.width_p(data_width_p)
+                       ) port_bank_data_crossbar
+                       ( .i               (data_i)
+                        ,.sel_oi_one_hot_i(bank_port_grants_one_hot)
+                        ,.o               (bank_data)
+                       );
+  
+  logic [num_ports_p-1:0][bank_addr_width_lp-1:0] addr_hash;
+  for(i=0; i<num_ports_p; i=i+1)
+    assign addr_hash[i] = hash_hi_bits_not_lo_p ?
+                          addr_i[i][0+:bank_addr_width_lp]
+                          : addr_i[i][(addr_width_lp-1)-:bank_addr_width_lp];
+  
+  logic [num_banks_p-1:0][bank_addr_width_lp-1:0] bank_addr;
+  bsg_crossbar_o_by_i #( .i_els_p(num_ports_p)
+                        ,.o_els_p(num_banks_p)
+                        ,.width_p(bank_addr_width_lp)
+                       ) port_bank_addr_crossbar
+                       ( .i               (addr_hash)
+                        ,.sel_oi_one_hot_i(bank_port_grants_one_hot)
+                        ,.o               (bank_addr)
+                       );
+
+  logic [num_banks_p-1:0] bank_w, bank_w_r;
+  bsg_crossbar_o_by_i #( .i_els_p(num_ports_p)
+                        ,.o_els_p(num_banks_p)
+                        ,.width_p(1)
+                       ) port_bank_w_crossbar
+                       ( .i               (w_i)
+                        ,.sel_oi_one_hot_i(bank_port_grants_one_hot)
+                        ,.o               (bank_w)
+                       );
+
+  logic [num_banks_p-1:0][mask_width_lp-1:0] bank_mask;
+  bsg_crossbar_o_by_i #( .i_els_p(num_ports_p)
+                        ,.o_els_p(num_banks_p)
+                        ,.width_p(mask_width_lp)
+                       ) port_bank_mask_crossbar
+                       ( .i               (mask_i)
+                        ,.sel_oi_one_hot_i(bank_port_grants_one_hot)
+                        ,.o               (bank_mask)
+                       );
+
+  for(i=0; i<num_banks_p; i=i+1)
+    // to be replaced with bsg_mem_1rw_sync_byte_masked
+    bsg_mem_1rw_sync_mask_write_byte #( .data_width_p (data_width_p)
+                                       ,.els_p        ((i < els_p%num_banks_p) ?
+                                                       ((els_p / num_banks_p) + 1)
+                                                       : (els_p / num_banks_p)
+                                                      )
+                                       ,.addr_width_lp(bank_addr_width_lp)
+                                      ) mem_1rw_sync
+                                      ( .clk_i        (clk_i)
+                                       ,.reset_i      (reset_i)
+                                       ,.data_i       (bank_data[i])
+                                       ,.addr_i       (bank_addr[i])
+                                       ,.v_i          (bank_v[i])
+                                       ,.w_i          (bank_w[i])
+                                       ,.write_mask_i (bank_mask[i])
+                                       ,.data_o       (bank_data_out[i])
+                                      );
+
+  always_ff @(posedge clk_i)
+  begin
+    bank_port_grants_one_hot_r <= bank_port_grants_one_hot;
+    bank_w_r                   <= bank_w;
+    bank_v_r                   <= bank_v;
+  end
+
+  logic [num_ports_p-1:0][num_banks_p-1:0] port_bank_grants_one_hot;
+  bsg_transpose #( .width_p(num_ports_p)
+                  ,.els_p  (num_banks_p)
+                 ) grants_transpose
+                 ( .i(bank_port_grants_one_hot_r)
+                  ,.o(port_bank_grants_one_hot)
+                 );
+
+  bsg_crossbar_o_by_i #( .i_els_p(num_banks_p)
+                        ,.o_els_p(num_ports_p)
+                        ,.width_p(data_width_p)
+                       ) bank_port_data_crossbar
+                       ( .i               (bank_data_out)
+                        ,.sel_oi_one_hot_i(port_bank_grants_one_hot)
+                        ,.o               (data_o)
+                       );
+
+  bsg_crossbar_o_by_i #( .i_els_p(num_banks_p)
+                        ,.o_els_p(num_ports_p)
+                        ,.width_p(1)
+                       ) bank_port_v_crossbar
+                       ( .i               (bank_v_r & ~bank_w_r)
+                        ,.sel_oi_one_hot_i(port_bank_grants_one_hot)
+                        ,.o               (v_o)
+                       );
+
+endmodule // bsg_mem_banked_crossbar
