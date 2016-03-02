@@ -206,6 +206,7 @@ module bsg_mem_banked_crossbar #
                        );
 
   for(i=0; i<num_banks_p; i=i+1)
+  begin: mem_gen
     // to be replaced with bsg_mem_1rw_sync_byte_masked
     bsg_mem_1rw_sync_mask_write_byte #( .data_width_p (data_width_p)
                                        ,.els_p        ((i < els_p%num_banks_p) ?
@@ -213,7 +214,7 @@ module bsg_mem_banked_crossbar #
                                                        : (els_p / num_banks_p)
                                                       )
                                        ,.addr_width_lp(bank_addr_width_lp)
-                                      ) mem_1rw_sync
+                                      ) mem_1rw_sync_mask
                                       ( .clk_i        (clk_i)
                                        ,.reset_i      (reset_i)
                                        ,.data_i       (bank_data[i])
@@ -223,6 +224,7 @@ module bsg_mem_banked_crossbar #
                                        ,.write_mask_i (bank_mask[i])
                                        ,.data_o       (bank_data_out[i])
                                       );
+  end
 
   always_ff @(posedge clk_i)
   begin

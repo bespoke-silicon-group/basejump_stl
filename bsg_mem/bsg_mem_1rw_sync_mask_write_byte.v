@@ -26,6 +26,7 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
   genvar i;
   
   for(i=0; i<write_mask_width_lp; i=i+1)
+  begin: mem_gen
     bsg_mem_1rw_sync #( .width_p      (8)
                        ,.els_p        (els_p)
                        ,.addr_width_lp(addr_width_lp)
@@ -38,5 +39,6 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
                        ,.w_i    (w_i & ~write_mask_i[i])
                        ,.data_o (data_o[(i*8)+:8])
                       );
+  end
 
 endmodule
