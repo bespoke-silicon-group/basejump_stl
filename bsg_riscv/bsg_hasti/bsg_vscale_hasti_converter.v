@@ -57,7 +57,7 @@ module bsg_vscale_hasti_converter #
   logic [1:0][haddr_width_p-1:0]  addr_r;
   logic [1:0]                     w_r;
   logic [1:0]                     rvalid_r;
-  logic [1:0]                     notrans_r;
+  logic [1:0]                     trans_r;
   logic [1:0][hdata_nbytes_p-1:0] wmask;
 
   genvar i;
@@ -80,26 +80,28 @@ module bsg_vscale_hasti_converter #
           wsize_r[i]   <= 0;
           w_r[i]       <= 0;
           rvalid_r[i]  <= 1'b0;
-          notrans_r[i] <= 1'b1;
+          trans_r[i]   <= 1'b0;
         end
       else
         begin
           rvalid_r[i] <= ~w_r[i] & ~m_yumi_i[i];
 
-          if(notrans_r[i] | (w_r[i] & m_yumi_i[i]) | (~w_r[i] & m_v_i[i]))
+          if(~trans_r[i] | (w_r[i] & m_yumi_i[i]) | (~w_r[i] & m_v_i[i]))
             begin
               addr_r[i]    <= haddr_i[i];
               wsize_r[i]   <= hsize_i[i];
               w_r[i]       <= hwrite_i[i];
               rvalid_r[i]  <= ~hwrite_i[i];
-              notrans_r[i] <= ~(htrans_i[i] == htrans_nonseq_p);
+              trans_r[i]   <= (htrans_i[i] == htrans_nonseq_p) & ~(m_v_o[i] & ~m_w_o[i] & m_yumi_i[i]);
             end
         end
     end
 
-    assign m_v_o[i]    = (~reset_i) & (~notrans_r[i]) & (w_r[i] | rvalid_r[i]);
+    assign m_v_o[i]    = (~reset_i) & ((trans_r[i] & (w_r[i] | rvalid_r[i]))
+                                       | (~trans_r[i] & ~hwrite_i[i] & (htrans_i[i] == htrans_nonseq_p))
+                                      );
     assign m_w_o[i]    = w_r[i];
-    assign m_addr_o[i] = addr_r[i];
+    assign m_addr_o[i] = trans_r[i] ? addr_r[i] : haddr_i[i];
     assign m_data_o[i] = hwdata_i[i];
     assign m_mask_o[i] = ~wmask[i];
 
