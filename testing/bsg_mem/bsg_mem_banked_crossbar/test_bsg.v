@@ -1,8 +1,7 @@
 `define PORTS_P        3
 `define BANKS_P        3
-`define ELS_P          4096
+`define BANK_SIZE_P    1024
 `define DATA_WIDTH_P   32   // multiple of 8
-`define HASH_HI_NOT_LO 1
 
 /*************************** TEST RATIONALE **********************************
   
@@ -17,15 +16,13 @@
 module test_bsg;
 
   localparam data_width_lp      = `DATA_WIDTH_P;
-  localparam els_lp             = `ELS_P;
+  localparam bank_size_lp       = `BANK_SIZE_P;
   localparam ports_lp           = `PORTS_P;
   localparam banks_lp           = `BANKS_P;
   localparam lg_banks_lp        = `BSG_SAFE_CLOG2(banks_lp);
-  localparam bank_addr_width_lp = `BSG_SAFE_CLOG2((els_lp/banks_lp)
-                                                  + (els_lp%banks_lp != 0));
+  localparam bank_addr_width_lp = `BSG_SAFE_CLOG2(bank_size_lp);
   localparam addr_width_lp      = ((banks_lp == 1) ? 0 : lg_banks_lp)
                                   + bank_addr_width_lp;
-  localparam hash_hi_lp         = `HASH_HI_NOT_LO;
   
   localparam cycle_time_lp = 20;
  
@@ -75,12 +72,12 @@ module test_bsg;
   begin
     $display("\n");
     $display("===========================================================");
-    $display("testing bsg_mem_1rw_sync with ...");
-    $display("DATA_WIDTH: %0d", data_width_lp);
-    $display("ADDR_WIDTH: %0d", addr_width_lp);
-    $display("BANKS     : %0d", banks_lp);
-    $display("PORTS_P   : %0d", ports_lp);
-    $display("ELS_P     : %0d\n", els_lp);
+    $display("testing bsg_mem_banked_crossbar with ...");
+    $display("DATA_WIDTH  : %0d", data_width_lp);
+    $display("ADDR_WIDTH  : %0d", addr_width_lp);
+    $display("BANKS       : %0d", banks_lp);
+    $display("PORTS       : %0d", ports_lp);
+    $display("BANK_SIZE   : %0d\n", bank_size_lp);
   end
    
 
@@ -89,7 +86,7 @@ module test_bsg;
   
   logic [ports_lp-1:0] finish_main_r, finish_mask_r; 
 
-  logic [ports_lp-1:0][lg_banks_lp-1:0] bank_num, bank_num_r;
+  logic [ports_lp-1:0][lg_banks_lp-1:0]        bank_num, bank_num_r;
   logic [ports_lp-1:0][bank_addr_width_lp-1:0] bank_addr;
   
   genvar i;
@@ -97,10 +94,9 @@ module test_bsg;
   for(i=0; i<ports_lp; i=i+1)
   begin
     // address and control 
-    assign test_input_addr[i] = (banks_lp == 1)? 
-                                  bank_addr[i]
-                                  : (hash_hi_lp? {bank_num[i], bank_addr[i]} 
-                                     : {bank_addr[i], bank_num[i]});
+    assign test_input_addr[i] = (banks_lp == 1) ? 
+                                 bank_addr[i]
+                                 : {bank_num[i], bank_addr[i]}; 
 
     always_ff @(posedge clk)
     begin
@@ -116,7 +112,7 @@ module test_bsg;
         begin
           if(test_output_yumi[i])
             begin
-              if((bank_addr[i]+ports_lp) <= ((els_lp/banks_lp)-(els_lp%banks_lp <= bank_num[i])))
+              if((bank_addr[i]+ports_lp) < bank_size_lp)
                 bank_addr[i] <= bank_addr[i] + ports_lp;
               else
                 begin
@@ -124,7 +120,7 @@ module test_bsg;
                   bank_num[i]  <= bank_num[i] + 1;
                 end
 
-              if((bank_num[i]==banks_lp-1) & (bank_addr[i]+ports_lp > els_lp/banks_lp-1))
+              if((bank_num[i]==banks_lp-1) & (bank_addr[i]+ports_lp >= bank_size_lp))
                 begin
                   test_input_v[i] <= test_input_w[i];
                   test_input_w[i] <= 1'b0;
@@ -152,11 +148,10 @@ module test_bsg;
 
   /* UUT */
 
-  bsg_mem_banked_crossbar #( .els_p                 (els_lp)
-                            ,.num_ports_p           (ports_lp)
-                            ,.num_banks_p           (banks_lp)
-                            ,.data_width_p          (data_width_lp)
-                            ,.hash_hi_bits_not_lo_p (hash_hi_lp)
+  bsg_mem_banked_crossbar #( .bank_size_p  (bank_size_lp)
+                            ,.num_ports_p  (ports_lp)
+                            ,.num_banks_p  (banks_lp)
+                            ,.data_width_p (data_width_lp)
                            ) UUT
                            ( .clk_i   (clk)
                             ,.reset_i (reset)

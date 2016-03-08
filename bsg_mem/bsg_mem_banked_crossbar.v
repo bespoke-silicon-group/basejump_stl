@@ -32,8 +32,8 @@ endmodule // bsg_crossbar_o_by_i
 * bsg_crossbar_control_rr_o_by_i
 **********************************/
 
-module bsg_crossbar_control_rr_o_by_i #( parameter i_els_p = -1
-                                        ,parameter o_els_p = -1
+module bsg_crossbar_control_rr_o_by_i #( parameter i_els_p     = -1
+                                        ,parameter o_els_p     = -1
                                         ,parameter lg_o_els_lp = `BSG_SAFE_CLOG2(o_els_p)
                                        )
   ( input                                clk_i
@@ -97,20 +97,18 @@ endmodule // bsg_crossbar_control_rr_o_by_i
 ******************************************/
 
 module bsg_mem_banked_crossbar # 
-  ( parameter els_p        = -1 
-   ,parameter num_ports_p  = -1
+  ( parameter num_ports_p  = -1
    ,parameter num_banks_p  = -1
-   ,parameter data_width_p = -1
+   
+   ,parameter bank_size_p        = -1 // power of 2
+   ,parameter addr_hash_width_lp = `BSG_SAFE_CLOG2(num_banks_p)
+   ,parameter bank_addr_width_lp = `BSG_SAFE_CLOG2(bank_size_p)
+   ,parameter addr_width_lp      = (num_banks_p == 1)?
+                                    bank_addr_width_lp
+                                    : addr_hash_width_lp + bank_addr_width_lp 
 
-   // 1 => hash MSBs of addr_i; 0 => hash LSBs
-   ,parameter hash_hi_bits_not_lo_p = 1 
-
-   ,parameter mask_width_lp      = data_width_p >> 3
-   ,parameter lg_num_banks_lp    = `BSG_SAFE_CLOG2(num_banks_p) // 0 if num_banks_p = 1
-   ,parameter bank_addr_width_lp = `BSG_SAFE_CLOG2((els_p/num_banks_p)
-                                                   + (els_p%num_banks_p != 0))
-   ,parameter addr_width_lp      = ((num_banks_p == 1)? 0 : lg_num_banks_lp) 
-                                   + bank_addr_width_lp
+   ,parameter data_width_p  = -1
+   ,parameter mask_width_lp = data_width_p >> 3
   )
   ( input                                       clk_i
    ,input                                       reset_i
@@ -126,22 +124,28 @@ module bsg_mem_banked_crossbar #
    ,output [num_ports_p-1:0][data_width_p-1:0]  data_o
   );
 
+  // synopsys translate off
+  always_comb
+    assert((bank_size_p & bank_size_p-1) == 0)
+      else $error("bank_size_p must be a power of 2");
+  // synopsys translate on
 
-  logic [num_ports_p-1:0][lg_num_banks_lp-1:0] bank_reqs;
+
+  logic [num_ports_p-1:0][addr_hash_width_lp-1:0] bank_reqs;
 
   genvar i;
 
   if(num_banks_p > 1)
     for(i=0; i<num_ports_p; i=i+1)
-      assign bank_reqs[i] = hash_hi_bits_not_lo_p ?
-                            addr_i[i][bank_addr_width_lp+:lg_num_banks_lp]
-                            : addr_i[i][0+:lg_num_banks_lp];
+      assign bank_reqs[i] = addr_i[i][bank_addr_width_lp+:addr_hash_width_lp];
   else
     assign bank_reqs = 1'b0;
 
+
   logic [num_banks_p-1:0][num_ports_p-1:0] bank_port_grants_one_hot
                                            , bank_port_grants_one_hot_r;
-  logic [num_banks_p-1:0] bank_v, bank_v_r;
+  logic [num_banks_p-1:0]                  bank_v, bank_v_r;
+
   bsg_crossbar_control_rr_o_by_i #( .i_els_p(num_ports_p)
                                    ,.o_els_p(num_banks_p)
                                   ) crossbar_control
@@ -159,7 +163,9 @@ module bsg_mem_banked_crossbar #
                                    ,.grants_oi_one_hot_o(bank_port_grants_one_hot)
                                   );
 
+
   logic [num_banks_p-1:0][data_width_p-1:0] bank_data, bank_data_out;
+
   bsg_crossbar_o_by_i #( .i_els_p(num_ports_p)
                         ,.o_els_p(num_banks_p)
                         ,.width_p(data_width_p)
@@ -168,24 +174,28 @@ module bsg_mem_banked_crossbar #
                         ,.sel_oi_one_hot_i(bank_port_grants_one_hot)
                         ,.o               (bank_data)
                        );
-  
-  logic [num_ports_p-1:0][bank_addr_width_lp-1:0] addr_hash;
+
+
+  logic [num_ports_p-1:0][bank_addr_width_lp-1:0] bank_req_addr;
+
   for(i=0; i<num_ports_p; i=i+1)
-    assign addr_hash[i] = hash_hi_bits_not_lo_p ?
-                          addr_i[i][0+:bank_addr_width_lp]
-                          : addr_i[i][(addr_width_lp-1)-:bank_addr_width_lp];
-  
+    assign bank_req_addr[i] = addr_i[i][0+:bank_addr_width_lp];
+
+
   logic [num_banks_p-1:0][bank_addr_width_lp-1:0] bank_addr;
+
   bsg_crossbar_o_by_i #( .i_els_p(num_ports_p)
                         ,.o_els_p(num_banks_p)
                         ,.width_p(bank_addr_width_lp)
                        ) port_bank_addr_crossbar
-                       ( .i               (addr_hash)
+                       ( .i               (bank_req_addr)
                         ,.sel_oi_one_hot_i(bank_port_grants_one_hot)
                         ,.o               (bank_addr)
                        );
 
+
   logic [num_banks_p-1:0] bank_w, bank_w_r;
+
   bsg_crossbar_o_by_i #( .i_els_p(num_ports_p)
                         ,.o_els_p(num_banks_p)
                         ,.width_p(1)
@@ -195,7 +205,9 @@ module bsg_mem_banked_crossbar #
                         ,.o               (bank_w)
                        );
 
+
   logic [num_banks_p-1:0][mask_width_lp-1:0] bank_mask;
+
   bsg_crossbar_o_by_i #( .i_els_p(num_ports_p)
                         ,.o_els_p(num_banks_p)
                         ,.width_p(mask_width_lp)
@@ -205,15 +217,12 @@ module bsg_mem_banked_crossbar #
                         ,.o               (bank_mask)
                        );
 
+
   for(i=0; i<num_banks_p; i=i+1)
   begin: mem_gen
     // to be replaced with bsg_mem_1rw_sync_byte_masked
     bsg_mem_1rw_sync_mask_write_byte #( .data_width_p (data_width_p)
-                                       ,.els_p        ((i < els_p%num_banks_p) ?
-                                                       ((els_p / num_banks_p) + 1)
-                                                       : (els_p / num_banks_p)
-                                                      )
-                                       ,.addr_width_lp(bank_addr_width_lp)
+                                       ,.els_p        (bank_size_p)
                                       ) mem_1rw_sync_mask
                                       ( .clk_i        (clk_i)
                                        ,.reset_i      (reset_i)
@@ -226,6 +235,7 @@ module bsg_mem_banked_crossbar #
                                       );
   end
 
+
   always_ff @(posedge clk_i)
   begin
     bank_port_grants_one_hot_r <= bank_port_grants_one_hot;
@@ -233,7 +243,9 @@ module bsg_mem_banked_crossbar #
     bank_v_r                   <= bank_v;
   end
 
+
   logic [num_ports_p-1:0][num_banks_p-1:0] port_bank_grants_one_hot;
+
   bsg_transpose #( .width_p(num_ports_p)
                   ,.els_p  (num_banks_p)
                  ) grants_transpose
