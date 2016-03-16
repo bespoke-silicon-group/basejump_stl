@@ -26,6 +26,8 @@ module  bsg_test_node
 
    );
 
+   import rnet_common::*;
+
    // the default interface gives all design
    // control to the switch: you have to say
    // ahead of time if you can receive data
