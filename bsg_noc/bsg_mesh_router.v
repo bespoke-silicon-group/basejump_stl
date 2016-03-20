@@ -84,12 +84,12 @@ module bsg_mesh_router #( parameter dirs_p=5
    // dirs: NESWP (P=0, W=1, E=2, N=3, S=4) 
 
   ,input   [dirs_p-1:0] [width_p-1:0] data_i  // from input twofer
-  ,input   [dirs_p-1:0] valid_i               // from input twofer
-  ,output  logic [dirs_p-1:0] yumi_o          // to input twofer
+  ,input   [dirs_p-1:0]               valid_i // from input twofer
+  ,output  logic [dirs_p-1:0]         yumi_o  // to input twofer
 
-  ,input   [dirs_p-1:0] ready_i               // from output twofer
+  ,input   [dirs_p-1:0]               ready_i // from output twofer
   ,output  [dirs_p-1:0] [width_p-1:0] data_o  // to output twofer
-  ,output  logic [dirs_p-1:0] valid_o         // to output twofer
+  ,output  logic [dirs_p-1:0]         valid_o // to output twofer
 
 
   ,input   [lg_node_x_p-1:0] my_x_i           // node's x and y coord
