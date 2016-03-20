@@ -56,7 +56,7 @@ module bsg_crossbar_control_rr_o_by_i #( parameter i_els_p     = -1
   genvar i;
   
   for(i=0; i<i_els_p; i=i+1)
-    assign sel_io_one_hot[i] = (valid_i[i]) << (sel_io_i[i]);
+    assign sel_io_one_hot[i] = valid_i[i] ? 1<<(sel_io_i[i]) : o_els_p'(0);
 
   bsg_transpose #( .width_p(o_els_p)
                   ,.els_p  (i_els_p)
@@ -86,7 +86,7 @@ module bsg_crossbar_control_rr_o_by_i #( parameter i_els_p     = -1
     assign valid_o[i] = | grants_oi_one_hot_o[i];
 
   for(i=0; i<i_els_p; i=i+1)
-    assign yumi_o[i] = | grants_io_one_hot[i];
+    assign yumi_o[i] = valid_i[i] & (| grants_io_one_hot[i]);
 
 endmodule // bsg_crossbar_control_rr_o_by_i
 
