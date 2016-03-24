@@ -14,13 +14,13 @@ TOP = ../../..
 # place the parameters you want to scan here.
 BSG_TESTME_FILES    =   bsg_mem_banked_crossbar.v
 BSG_TESTME_DIR      =   $(TOP)/bsg_mem
-BSG_MISC_FILES      =   bsg_defines.v bsg_transpose.v bsg_cycle_counter.v bsg_encode_one_hot.v bsg_mux_one_hot.v bsg_round_robin_arb.v
+BSG_MISC_FILES      =   bsg_defines.v bsg_crossbar_o_by_i.v bsg_transpose.v bsg_cycle_counter.v bsg_encode_one_hot.v bsg_mux_one_hot.v bsg_round_robin_arb.v
 BSG_ASYNC_FILES     = 
 BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  = 
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
-BSG_MEM_FILES       =   bsg_mem_1rw_sync_mask_write_byte.v
+BSG_MEM_FILES       =   bsg_mem_1rw_sync.v bsg_mem_1rw_sync_mask_write_byte.v
 
 BSG_TEST_FILES      =  bsg_nonsynth_reset_gen.v \
                        bsg_nonsynth_clock_gen.v \
