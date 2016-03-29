@@ -8,7 +8,7 @@
 *   with fifos bridging them. Test data,(tile no.) ^ 0 1 2 .... (total no. 
 *   of tiles) is continuously fed through proc fifos of each router.
 *   Effectively, proc of every router sends data to proc of every other router
-*   in the network at the same time making the network very congested.
+*   in the network making the network very congested.
 * 
 * 2. PARAMETERIZATION
 *
@@ -110,14 +110,14 @@ module test_bsg;
   begin
     if(i/medge_lp == 0)
       begin
-        assign test_input_valid[i][S] = 1'b0;
-        assign test_input_ready[i][S] = 1'b0;
+        assign test_input_valid[i][N] = 1'b0;
+        assign test_input_ready[i][N] = 1'b0;
       end
 
     if(i/medge_lp == medge_lp-1) 
       begin
-        assign test_input_valid[i][N] = 1'b0;
-        assign test_input_ready[i][N] = 1'b0;
+        assign test_input_valid[i][S] = 1'b0;
+        assign test_input_ready[i][S] = 1'b0;
       end
 
     if(i%medge_lp == 0) 
@@ -145,33 +145,33 @@ module test_bsg;
     bsg_fifo_1r1w_small #( .width_p(width_lp)
                           ,.els_p  (msize_lp)
                           ,.ready_THEN_valid_p(0)
-                         ) fifo_up // south to north data flow
+                         ) fifo_up // north to south data flow
                          ( .clk_i  (clk)
                           ,.reset_i(reset)
                           
-                          ,.data_i (test_output_data[i][N])
-                          ,.v_i    (test_output_valid[i][N])
-                          ,.ready_o(test_input_ready[i][N])
+                          ,.data_i (test_output_data[i][S])
+                          ,.v_i    (test_output_valid[i][S])
+                          ,.ready_o(test_input_ready[i][S])
 
-                          ,.data_o(test_input_data[i+medge_lp][S])
-                          ,.v_o   (test_input_valid[i+medge_lp][S])
-                          ,.yumi_i(test_output_yumi[i+medge_lp][S])
+                          ,.data_o(test_input_data[i+medge_lp][N])
+                          ,.v_o   (test_input_valid[i+medge_lp][N])
+                          ,.yumi_i(test_output_yumi[i+medge_lp][N])
                          );
 
     bsg_fifo_1r1w_small #( .width_p(width_lp)
                           ,.els_p  (msize_lp)
                           ,.ready_THEN_valid_p(0)
-                         ) fifo_down // north to south data flow
+                         ) fifo_down // south to north data flow
                          ( .clk_i  (clk)
                           ,.reset_i(reset)
                           
-                          ,.data_i (test_output_data[i+medge_lp][S])
-                          ,.v_i    (test_output_valid[i+medge_lp][S])
-                          ,.ready_o(test_input_ready[i+medge_lp][S])
+                          ,.data_i (test_output_data[i+medge_lp][N])
+                          ,.v_i    (test_output_valid[i+medge_lp][N])
+                          ,.ready_o(test_input_ready[i+medge_lp][N])
 
-                          ,.data_o(test_input_data[i][N])
-                          ,.v_o   (test_input_valid[i][N])
-                          ,.yumi_i(test_output_yumi[i][N])
+                          ,.data_o(test_input_data[i][S])
+                          ,.v_o   (test_input_valid[i][S])
+                          ,.yumi_i(test_output_yumi[i][S])
                          );
   end
 

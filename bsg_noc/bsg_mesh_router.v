@@ -7,7 +7,7 @@ import bsg_noc_pkg::Dirs
        , bsg_noc_pkg::S; // south
 
 
-// Dimensioned ordered routing decoder
+// Dimension ordered routing decoder
 // based on X then Y routing, it outputs a set of grant signals
 
 module bsg_mesh_router_dor_decoder #( parameter lg_node_x_p = -1
@@ -48,8 +48,8 @@ module bsg_mesh_router_dor_decoder #( parameter lg_node_x_p = -1
   begin: WE_req
     assign req_o[i][(i==W) ? E : W] = valid_i[i] &  ~x_eq[i];
     assign req_o[i][P] = valid_i[i] & x_eq[i] & y_eq[i];
-    assign req_o[i][N] = valid_i[i] & x_eq[i] & y_gt[i];
-    assign req_o[i][S] = valid_i[i] & x_eq[i] & ~y_gt[i] & ~y_eq[i];
+    assign req_o[i][S] = valid_i[i] & x_eq[i] & y_gt[i];
+    assign req_o[i][N] = valid_i[i] & x_eq[i] & ~y_gt[i] & ~y_eq[i];
     assign req_o[i][(i==W) ? W:E] = 1'b0;
   end
 
@@ -64,8 +64,8 @@ module bsg_mesh_router_dor_decoder #( parameter lg_node_x_p = -1
 
   assign req_o[P][E]  =  valid_i[P] & x_gt [P];
   assign req_o[P][W]  =  valid_i[P] & !(x_eq[P] | x_gt[P]);
-  assign req_o[P][N]  =  valid_i[P] & x_eq[P] & y_gt  [P];
-  assign req_o[P][S]  =  valid_i[P] & x_eq[P] & ~y_gt[P] & ~y_eq[P];
+  assign req_o[P][S]  =  valid_i[P] & x_eq[P] & y_gt  [P];
+  assign req_o[P][N]  =  valid_i[P] & x_eq[P] & ~y_gt[P] & ~y_eq[P];
   assign req_o[P][P]  =  valid_i[P] & x_eq[P] & y_eq [P];
  
 endmodule
