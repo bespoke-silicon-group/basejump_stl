@@ -20,7 +20,7 @@ module bsg_mesh_router_dor_decoder #( parameter lg_node_x_p = -1
   ,input [dirs_p-1:0][lg_node_y_p-1:0] y_dirs_i
 
   ,input [lg_node_x_p-1:0] my_x_i
-  ,input [lg_node_x_p-1:0] my_y_i
+  ,input [lg_node_y_p-1:0] my_y_i
 
   ,output [dirs_p-1:0][dirs_p-1:0] req_o
  );
