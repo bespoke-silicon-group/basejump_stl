@@ -81,9 +81,10 @@ begin
                     , "grants ="\
                     , "%d'b"%reqs_w + req[1] + ";"
 
-    print """  endcase
+    print """    default: grants = {%d{1'bx}};
+  endcase
 end
-end: inputs_%d""" % reqs_w 
+end: inputs_%d""" % (reqs_w, reqs_w) 
 
 print """
 if(inputs_p == 1)

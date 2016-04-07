@@ -54,11 +54,11 @@ module test_bsg;
   // test input generation
   always_ff @(posedge clk)
   begin
-    $display("count: %d", count
+    /*$display("count: %d", count
              , " | ready: %b", test_input_ready
              , " | test_reqs: %b", test_input_reqs
              , " | grant_count: %p", grant_count
-             , " | reqs_popcount: %d", reqs_popcount);
+             , " | reqs_popcount: %d", reqs_popcount);*/
     if(reset)
       begin
         test_input_reqs  <= (inputs_lp)'(0);

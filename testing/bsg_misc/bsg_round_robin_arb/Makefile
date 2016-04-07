@@ -43,7 +43,7 @@ OTHER_P  = 1
 
 
 ############################# SIMULATOR COMMANDS ###########################
-BSG_IP_CORES_COMP = vlog -sv -mfcu -work $(TOP)/work $(ALL_FILES) -quiet
+BSG_IP_CORES_COMP = vlog -sv -mfcu -work $(TOP)/work -suppress 2583 $(ALL_FILES) -quiet
 BSG_IP_CORES_SIM  = vsim -batch -lib $(TOP)/work $(TEST_MODULE) -do "run -all; quit -f"
 ############################################################################
 

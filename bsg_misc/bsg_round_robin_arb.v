@@ -24,6 +24,7 @@ begin
     3'b0_?_?: grants = 1'b0;
     3'b1_?_0: grants = 1'b0;
     3'b1_0_1: grants = 1'b1;
+    default: grants = {1{1'bx}};
   endcase
 end
 end: inputs_1
@@ -39,6 +40,7 @@ begin
     4'b1_0_01: grants = 2'b01;
     4'b1_1_?1: grants = 2'b01;
     4'b1_1_10: grants = 2'b10;
+    default: grants = {2{1'bx}};
   endcase
 end
 end: inputs_2
@@ -59,6 +61,7 @@ begin
     6'b1_10_??1: grants = 3'b001;
     6'b1_10_?10: grants = 3'b010;
     6'b1_10_100: grants = 3'b100;
+    default: grants = {3{1'bx}};
   endcase
 end
 end: inputs_3
@@ -86,6 +89,7 @@ begin
     7'b1_11_??10: grants = 4'b0010;
     7'b1_11_?100: grants = 4'b0100;
     7'b1_11_1000: grants = 4'b1000;
+    default: grants = {4{1'bx}};
   endcase
 end
 end: inputs_4
@@ -122,6 +126,7 @@ begin
     9'b1_100_??100: grants = 5'b00100;
     9'b1_100_?1000: grants = 5'b01000;
     9'b1_100_10000: grants = 5'b10000;
+    default: grants = {5{1'bx}};
   endcase
 end
 end: inputs_5
@@ -169,6 +174,7 @@ begin
     10'b1_101_??1000: grants = 6'b001000;
     10'b1_101_?10000: grants = 6'b010000;
     10'b1_101_100000: grants = 6'b100000;
+    default: grants = {6{1'bx}};
   endcase
 end
 end: inputs_6
@@ -229,6 +235,7 @@ begin
     11'b1_110_??10000: grants = 7'b0010000;
     11'b1_110_?100000: grants = 7'b0100000;
     11'b1_110_1000000: grants = 7'b1000000;
+    default: grants = {7{1'bx}};
   endcase
 end
 end: inputs_7
@@ -304,6 +311,7 @@ begin
     12'b1_111_??100000: grants = 8'b00100000;
     12'b1_111_?1000000: grants = 8'b01000000;
     12'b1_111_10000000: grants = 8'b10000000;
+    default: grants = {8{1'bx}};
   endcase
 end
 end: inputs_8
@@ -396,6 +404,7 @@ begin
     14'b1_1000_??1000000: grants = 9'b001000000;
     14'b1_1000_?10000000: grants = 9'b010000000;
     14'b1_1000_100000000: grants = 9'b100000000;
+    default: grants = {9{1'bx}};
   endcase
 end
 end: inputs_9
@@ -507,6 +516,7 @@ begin
     15'b1_1001_??10000000: grants = 10'b0010000000;
     15'b1_1001_?100000000: grants = 10'b0100000000;
     15'b1_1001_1000000000: grants = 10'b1000000000;
+    default: grants = {10{1'bx}};
   endcase
 end
 end: inputs_10
