@@ -83,4 +83,4 @@ synthesizeable and non-synthesizeable verilog into seperate always blocks.
 
 Note that by contributing code to this repository, you are
 agreeing to allow others to use the code freely under
-the terms of the open-source license(s) selected by Michael Taylor.
+the terms of the BSD-style open-source license(s) selected by Michael Taylor.
