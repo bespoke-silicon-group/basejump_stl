@@ -30,10 +30,12 @@ module bsg_serial_in_parallel_out #(parameter   width_p   = -1
     , input  [$clog2(out_els_p+1)-1:0]        yumi_cnt_i
     );
 
+   localparam double_els_lp = els_p * 2;
+
    logic [els_p-1:0][width_p-1:0] data_r, data_nn;
    logic [2*els_p-1:0  ][width_p-1:0] data_n;
    logic [els_p-1:0] 		  valid_r, valid_nn;
-   logic [2*els_p-1:0] 		  valid_n;
+   logic [double_els_lp-1:0] 	  valid_n;
 
    logic [$clog2(els_p+1)-1:0]    num_els_r, num_els_n;
 
@@ -67,7 +69,7 @@ module bsg_serial_in_parallel_out #(parameter   width_p   = -1
    always_comb
      begin
         data_n  = data_r;
-        valid_n = (els_p*2) ' (valid_r);
+        valid_n = (double_els_lp) ' (valid_r);
 
 	data_n[els_p+:els_p] = 0;
 
