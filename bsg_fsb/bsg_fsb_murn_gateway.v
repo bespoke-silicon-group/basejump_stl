@@ -11,17 +11,19 @@
 //
 
 
-module bsg_fsb_murn_gateway #(parameter width_p="inv"
-                              , parameter id_p="inv"
-                              // resets with core reset
-                              // rather than by a command.
-                              , parameter enabled_at_start_p=0
-                              // once the node is enabled
-                              // look at all packets;
-                              // useful if we would like to
-                              // test and ignore packet formats
-                              , parameter snoop_p=0
-                              )
+module bsg_fsb_murn_gateway
+   import bsg_fsb_pkg::*;
+   #(parameter width_p="inv"
+   , parameter id_p="inv"
+   // resets with core reset
+   // rather than by a command.
+   , parameter enabled_at_start_p=0
+   // once the node is enabled
+   // look at all packets;
+   // useful if we would like to
+   // test and ignore packet formats
+   , parameter snoop_p=0
+   )
    (input    clk_i
 
     // from/to switch
@@ -37,8 +39,6 @@ module bsg_fsb_murn_gateway #(parameter width_p="inv"
     , output node_en_r_o
     , output node_reset_r_o
     );
-
-   import rnet_common::*;
 
    // if we are in snoop mode and don't need a wakeup
    // packet, we keep it simple and avoid having
@@ -63,8 +63,8 @@ module bsg_fsb_murn_gateway #(parameter width_p="inv"
         assign node_reset_r_o = node_reset_r;
 
 
-        RingPacketType data_RPT;
-        assign data_RPT = RingPacketType ' (data_i);
+        bsg_fsb_pkt_s data_RPT;
+        assign data_RPT = bsg_fsb_pkt_s ' (data_i);
 
         wire  id_match      = data_RPT.destid == id_p;
         wire  for_this_node = v_i & (id_match | snoop_p) ;

@@ -29,16 +29,16 @@ export VCS_BIN = $(VCS_HOME)/bin
 export DVE_BIN = $(VCS_HOME)/bin
 export DC_RELEASE    = syn/G-2012.06-SP5-4
 
-MURN_INCLUDE_DIR = $(HOME)/raw/murn/code/include
 DESIGNWARE_DIR = $(SYNOPSYS_DIR)/$(DC_RELEASE)/dw/sim_ver
-DESIGNWARE_FLAGS = -y $(DESIGNWARE_DIR) +incdir+$(DESIGNWARE_DIR) +incdir+$(MURN_INCLUDE_DIR) +incdir+../bsg_test +libext+.v
+DESIGNWARE_FLAGS = -y $(DESIGNWARE_DIR) +incdir+$(DESIGNWARE_DIR) +incdir+../bsg_misc +incdir+../bsg_test +libext+.v
 
-BSG_MISC_FILES      = bsg_defines.v bsg_circular_ptr.v bsg_popcount.v bsg_thermometer_count.v bsg_encode_one_hot.v bsg_gray_to_binary.v bsg_scan.v bsg_cycle_counter.v bsg_wait_cycles.v bsg_wait_after_reset.v 
+BSG_MISC_FILES      = bsg_defines.v bsg_circular_ptr.v bsg_popcount.v bsg_thermometer_count.v bsg_encode_one_hot.v bsg_gray_to_binary.v bsg_scan.v bsg_cycle_counter.v bsg_wait_cycles.v bsg_wait_after_reset.v bsg_binary_plus_one_to_gray.v
 BSG_ASYNC_FILES     = bsg_async_credit_counter.v bsg_async_fifo.v bsg_async_ptr_gray.v  bsg_launch_sync_sync.v bsg_sync_sync.v
 BSG_COMM_LINK_FILES = bsg_source_sync_input.v bsg_source_sync_output.v   bsg_comm_link.v  bsg_assembler_in.v bsg_assembler_out.v   bsg_source_sync_channel_control_slave.v bsg_source_sync_channel_control_master.v bsg_source_sync_channel_control_master_master.v   test_bsg_comm_link_checker.v
 BSG_DATAFLOW_FILES  = bsg_scatter_gather.v bsg_two_fifo.v   bsg_sbox.v  bsg_round_robin_fifo_to_fifo.v bsg_make_2D_array.v bsg_flatten_2D_array.v
-BSG_FSB_FILES       = bsg_fsb.v bsg_front_side_bus_hop_in.v bsg_front_side_bus_hop_out.v bsg_fsb_murn_gateway.v
+BSG_FSB_FILES       = bsg_fsb_pkg.v bsg_fsb.v bsg_front_side_bus_hop_in.v bsg_front_side_bus_hop_out.v bsg_fsb_murn_gateway.v
 BSG_GUTS_FILES      = bsg_guts.v  bsg_test_node.v
+BSG_MEM_FILES       = bsg_mem_1r1w.v bsg_mem_1rw_sync.v
 
 BSG_TEST_FILES =  bsg_nonsynth_delay_line.v test_bsg_data_gen.v bsg_nonsynth_clock_gen.v bsg_nonsynth_reset_gen.v
 
@@ -47,7 +47,7 @@ BSG_TEST_FILES =  bsg_nonsynth_delay_line.v test_bsg_data_gen.v bsg_nonsynth_clo
 
 TEST_MAIN=test_bsg_guts.v
 
-ALL_FILES = $(MURN_INCLUDE_DIR)/rnet_common.v  $(foreach x,$(BSG_MISC_FILES),../bsg_misc/$(x)) $(foreach x,$(BSG_ASYNC_FILES),../bsg_async/$(x)) $(foreach x,$(BSG_FSB_FILES),../bsg_fsb/$(x)) $(foreach x,$(BSG_GUTS_FILES),../bsg_guts/$(x)) $(foreach x,$(BSG_COMM_LINK_FILES),../bsg_comm_link/$(x)) $(foreach x,$(BSG_DATAFLOW_FILES),../bsg_dataflow/$(x)) $(foreach x,$(BSG_TEST_FILES),../bsg_test/$(x)) $(TEST_MAIN)
+ALL_FILES = $(foreach x,$(BSG_MISC_FILES),../bsg_misc/$(x)) $(foreach x,$(BSG_ASYNC_FILES),../bsg_async/$(x)) $(foreach x,$(BSG_FSB_FILES),../bsg_fsb/$(x)) $(foreach x,$(BSG_GUTS_FILES),../bsg_guts/$(x)) $(foreach x,$(BSG_COMM_LINK_FILES),../bsg_comm_link/$(x)) $(foreach x,$(BSG_DATAFLOW_FILES),../bsg_dataflow/$(x)) $(foreach x,$(BSG_TEST_FILES),../bsg_test/$(x)) $(TEST_MAIN) $(foreach x,$(BSG_MEM_FILES),../bsg_mem/$(x))
 
 
 # example CHANNEL_WIDTH = 3 4 >===replicate_defines==> +define+CHANNEL_WIDTH=3 +define+CHANNEL_WIDTH=4

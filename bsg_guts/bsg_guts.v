@@ -1,4 +1,3 @@
-import rnet_common::*;
 
 module bsg_guts #(parameter num_channels_p=4
                   ,parameter channel_width_p=8

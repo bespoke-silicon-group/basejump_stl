@@ -11,9 +11,8 @@ VCS_FLAGS =  $(DESIGNWARE_FLAGS) -PP -notice -full64 +lint=all,noVCDE +v2k -sver
 
 TOP = ../../..
 
-MURN_INCLUDE_DIR = $(HOME)/raw/murn/code/include
 DESIGNWARE_DIR = $(SYNOPSYS_DIR)/$(DC_RELEASE)/dw/sim_ver
-DESIGNWARE_FLAGS = -y $(DESIGNWARE_DIR) +incdir+$(DESIGNWARE_DIR) +incdir+$(MURN_INCLUDE_DIR) +incdir+$(TOP)/bsg_test +incdir+$(TOP)/bsg_misc +libext+.v
+DESIGNWARE_FLAGS = -y $(DESIGNWARE_DIR) +incdir+$(DESIGNWARE_DIR) +incdir+$(TOP)/bsg_test +incdir+$(TOP)/bsg_misc +libext+.v
 
 BSG_TESTME_FILES    = bsg_mul.v
 BSG_TESTME_DIR      = $(TOP)/bsg_misc

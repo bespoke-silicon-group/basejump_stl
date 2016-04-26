@@ -2,6 +2,7 @@
 
 
 module  bsg_test_node
+   import bsg_fsb_pkg::*;
   #(parameter ring_width_p="inv"
     , parameter master_p="inv"
     , parameter master_id_p="inv"
@@ -26,8 +27,6 @@ module  bsg_test_node
 
    );
 
-   import rnet_common::*;
-
    // the default interface gives all design
    // control to the switch: you have to say
    // ahead of time if you can receive data
@@ -41,11 +40,11 @@ module  bsg_test_node
    // area and latency.
 
    wire                    in_fifo_v;
-   RingPacketType          in_fifo_data;
+   bsg_fsb_pkt_s           in_fifo_data;
    wire                    in_fifo_yumi;
 
    wire                    out_fifo_ready;
-   RingPacketType          out_fifo_data;
+   bsg_fsb_pkt_s           out_fifo_data;
    wire                    out_fifo_v;
 
    bsg_two_fifo #( .width_p(ring_width_p)) fifo_in
