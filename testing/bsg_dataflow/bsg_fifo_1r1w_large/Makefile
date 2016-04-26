@@ -33,7 +33,7 @@ TOP = ../../..
 
 MURN_INCLUDE_DIR = $(HOME)/raw/murn/code/include
 DESIGNWARE_DIR = $(SYNOPSYS_DIR)/$(DC_RELEASE)/dw/sim_ver
-DESIGNWARE_FLAGS = -y $(DESIGNWARE_DIR) +incdir+$(DESIGNWARE_DIR) +incdir+$(MURN_INCLUDE_DIR) +incdir+$(TOP)/bsg_test +libext+.v
+DESIGNWARE_FLAGS = -y $(DESIGNWARE_DIR) +incdir+$(DESIGNWARE_DIR) +incdir+$(MURN_INCLUDE_DIR) +incdir+$(TOP)/bsg_test +incdir+$(TOP)/bsg_misc +libext+.v
 
 
 
@@ -44,7 +44,7 @@ BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  =  bsg_fifo_1r1w_large.v bsg_fifo_1rw_large.v bsg_round_robin_2_to_2.v bsg_two_fifo.v bsg_round_robin_n_to_1.v bsg_serial_in_parallel_out.v
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
-BSG_MEM_FILES       = bsg_mem_1rw_sync.v
+BSG_MEM_FILES       = bsg_mem_1r1w.v bsg_mem_1rw_sync.v
 
 BSG_TEST_FILES =  bsg_nonsynth_reset_gen.v bsg_nonsynth_clock_gen.v
 
