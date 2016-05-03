@@ -78,6 +78,7 @@ module bsg_mem_banked_crossbar #
                                     : addr_hash_width_lp + bank_addr_width_lp 
 
    ,parameter data_width_p  = -1
+   ,parameter debug_p = 0
    ,parameter mask_width_lp = data_width_p >> 3
   )
   ( input                                       clk_i
@@ -98,6 +99,7 @@ module bsg_mem_banked_crossbar #
   initial
     assert((bank_size_p & bank_size_p-1) == 0)
       else $error("bank_size_p must be a power of 2");
+    
   // synopsys translate on
 
 
@@ -105,6 +107,23 @@ module bsg_mem_banked_crossbar #
 
   genvar i;
 
+  // synopsys translate off
+   for (i=0; i<num_ports_p; i=i+1)
+     if (debug_p)
+       always_comb
+	 begin
+	    if (v_i[i] & yumi_o[i])
+	      begin
+		 if (w_i[i])
+		   $display("%m port %d [%x]=%x", i,addr_i[i],data_i[i]);
+		 else
+		   $display("%m port %d     =[%x]",i,addr_i[i]);
+	      end
+	    if (v_o[i])
+	      $display("%m port %d  %x =", i,data_o[i],addr_i[i]);
+	 end
+  // synopsys translate on
+   
   if(num_banks_p > 1)
     for(i=0; i<num_ports_p; i=i+1)
       assign bank_reqs[i] = addr_i[i][bank_addr_width_lp+:addr_hash_width_lp];
