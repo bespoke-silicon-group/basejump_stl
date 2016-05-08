@@ -16,4 +16,3 @@ package bsg_fsb_pkg;
   } bsg_fsb_pkt_s;
 
 endpackage
-
