@@ -8,7 +8,7 @@ module bsg_crossbar_control_rr_o_by_i #( parameter i_els_p     = -1
                                        )
   ( input                                clk_i
    ,input                                reset_i
-   
+
    // crossbar inputs
    ,input [i_els_p-1:0]                  valid_i
    ,input [i_els_p-1:0][lg_o_els_lp-1:0] sel_io_i
@@ -24,7 +24,7 @@ module bsg_crossbar_control_rr_o_by_i #( parameter i_els_p     = -1
   logic [o_els_p-1:0][i_els_p-1:0] sel_oi_one_hot;
 
   genvar i;
-  
+
   for(i=0; i<i_els_p; i=i+1)
     assign sel_io_one_hot[i] = valid_i[i] ? 1<<(sel_io_i[i]) : o_els_p'(0);
 
@@ -34,7 +34,7 @@ module bsg_crossbar_control_rr_o_by_i #( parameter i_els_p     = -1
                  ( .i(sel_io_one_hot)
                   ,.o(sel_oi_one_hot) // requets for each output
                  );
-  
+
   for(i=0; i<o_els_p; i=i+1)
     bsg_round_robin_arb #( .inputs_p(i_els_p)
                          ) round_robin_arb
@@ -66,16 +66,16 @@ endmodule // bsg_crossbar_control_rr_o_by_i
 * banked memory crossbar
 ******************************************/
 
-module bsg_mem_banked_crossbar # 
+module bsg_mem_banked_crossbar #
   ( parameter num_ports_p  = -1
    ,parameter num_banks_p  = -1
-   
+
    ,parameter bank_size_p        = -1 // power of 2
    ,parameter addr_hash_width_lp = `BSG_SAFE_CLOG2(num_banks_p)
    ,parameter bank_addr_width_lp = `BSG_SAFE_CLOG2(bank_size_p)
    ,parameter addr_width_lp      = (num_banks_p == 1)?
                                     bank_addr_width_lp
-                                    : addr_hash_width_lp + bank_addr_width_lp 
+                                    : addr_hash_width_lp + bank_addr_width_lp
 
    ,parameter data_width_p  = -1
    ,parameter debug_p = 0
@@ -99,7 +99,7 @@ module bsg_mem_banked_crossbar #
   initial
     assert((bank_size_p & bank_size_p-1) == 0)
       else $error("bank_size_p must be a power of 2");
-    
+
   // synopsys translate on
 
 
@@ -108,22 +108,27 @@ module bsg_mem_banked_crossbar #
   genvar i;
 
   // synopsys translate off
+   logic [num_ports_p-1:0][addr_width_lp-1:0] addr_r;
+
+   always_ff @(posedge clk_i)
+     addr_r <= addr_i;
+
    for (i=0; i<num_ports_p; i=i+1)
-     if (debug_p)
-       always_comb
-	 begin
-	    if (v_i[i] & yumi_o[i])
-	      begin
-		 if (w_i[i])
-		   $display("%m port %d [%x]=%x", i,addr_i[i],data_i[i]);
-		 else
-		   $display("%m port %d     =[%x]",i,addr_i[i]);
-	      end
-	    if (v_o[i])
-	      $display("%m port %d  %x =", i,data_o[i],addr_i[i]);
-	 end
+     if (debug_p > 1)
+       always_ff @(negedge clk_i)
+         begin
+            if (v_i[i] & yumi_o[i])
+              begin
+                 if (w_i[i])
+                   $display("%m port %d [%x]=%x", i,addr_i[i]*debug_p,data_i[i]);
+                 else
+                   $display("%m port %d           = [%x]",i,addr_i[i]*debug_p);
+              end
+            if (v_o[i])
+              $display("%m port %d  %x = [%x]", i,data_o[i],addr_r[i]*debug_p);
+         end
   // synopsys translate on
-   
+
   if(num_banks_p > 1)
     for(i=0; i<num_ports_p; i=i+1)
       assign bank_reqs[i] = addr_i[i][bank_addr_width_lp+:addr_hash_width_lp];
@@ -145,7 +150,7 @@ module bsg_mem_banked_crossbar #
                                    ,.valid_i            (v_i)
                                    ,.sel_io_i           (bank_reqs)
                                    ,.yumi_o             (yumi_o)
-                                   
+
                                    // banks
                                    ,.ready_i            ({num_banks_p{1'b1}})
                                    ,.valid_o            (bank_v)
