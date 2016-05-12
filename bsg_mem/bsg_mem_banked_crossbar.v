@@ -79,6 +79,7 @@ module bsg_mem_banked_crossbar #
 
    ,parameter data_width_p  = -1
    ,parameter debug_p = 0
+   ,parameter debug_reads_p = debug_p
    ,parameter mask_width_lp = data_width_p >> 3
   )
   ( input                                       clk_i
@@ -121,10 +122,10 @@ module bsg_mem_banked_crossbar #
               begin
                  if (w_i[i])
                    $display("%m port %d [%x]=%x", i,addr_i[i]*debug_p,data_i[i]);
-                 else
+                 else if (debug_reads_p)
                    $display("%m port %d           = [%x]",i,addr_i[i]*debug_p);
               end
-            if (v_o[i])
+            if (v_o[i] & debug_reads_p)
               $display("%m port %d  %x = [%x]", i,data_o[i],addr_r[i]*debug_p);
          end
   // synopsys translate on
