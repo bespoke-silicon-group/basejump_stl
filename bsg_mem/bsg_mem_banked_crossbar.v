@@ -89,13 +89,18 @@ module bsg_mem_banked_crossbar #
    ,input [num_ports_p-1:0]                     w_i
    ,input [num_ports_p-1:0][addr_width_lp-1:0]  addr_i
    ,input [num_ports_p-1:0][data_width_p-1:0]   data_i
-   ,input [num_ports_p-1:0][mask_width_lp-1:0]  mask_i
+   ,input [num_ports_p-1:0][mask_width_lp-1:0]  mask_i  // 1 = write byte
 
    ,output [num_ports_p-1:0]                    yumi_o
    ,output [num_ports_p-1:0]                    v_o
    ,output [num_ports_p-1:0][data_width_p-1:0]  data_o
   );
 
+   localparam debug_lp = debug_p;
+//   localparam debug_lp = 4;
+   localparam debug_reads_lp = debug_reads_p;
+//   localparam debug_reads_lp = 1;
+   
   // synopsys translate off
   initial
     assert((bank_size_p & bank_size_p-1) == 0)
@@ -115,18 +120,19 @@ module bsg_mem_banked_crossbar #
      addr_r <= addr_i;
 
    for (i=0; i<num_ports_p; i=i+1)
-     if (debug_p > 1)
+     if (debug_lp > 1)
        always_ff @(negedge clk_i)
+//	 if ((addr_i[i] == ('h310 >> 2) || (addr_r[i] == ('h310 >> 2))))
          begin
             if (v_i[i] & yumi_o[i])
               begin
                  if (w_i[i])
-                   $display("%m port %d [%x]=%x", i,addr_i[i]*debug_p,data_i[i]);
-                 else if (debug_reads_p)
-                   $display("%m port %d           = [%x]",i,addr_i[i]*debug_p);
+                   $display("%m port %d [%x]=%x (mask_i=%b)", i,addr_i[i]*debug_lp,data_i[i],mask_i[i]);
+                 else if (debug_reads_lp)
+                   $display("%m port %d           = [%x]",i,addr_i[i]*debug_lp);
               end
-            if (v_o[i] & debug_reads_p)
-              $display("%m port %d  %x = [%x]", i,data_o[i],addr_r[i]*debug_p);
+            if (v_o[i] && debug_reads_lp)
+              $display("%m port %d  %x = [%x]", i,data_o[i],addr_r[i]*debug_lp);
          end
   // synopsys translate on
 
