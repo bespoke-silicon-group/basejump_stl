@@ -12,11 +12,12 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
 
    ,input [addr_width_lp-1:0]       addr_i
    ,input [data_width_p-1:0]        data_i
+    // for each bit set in the mask, a byte is written
    ,input [write_mask_width_lp-1:0] write_mask_i
-    
+
    ,output [data_width_p-1:0] data_o
   );
-  
+
   // synopsys translate off
   always_comb
     assert (data_width_p % 8 == 0)
@@ -36,7 +37,7 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
                        ,.data_i (data_i[(i*8)+:8])
                        ,.addr_i (addr_i)
                        ,.v_i    (v_i)
-                       ,.w_i    (w_i & ~write_mask_i[i])
+                       ,.w_i    (w_i & write_mask_i[i])
                        ,.data_o (data_o[(i*8)+:8])
                       );
   end
