@@ -15,7 +15,7 @@
 // certain structure.
 //
 
-module bsg_encode_one_hot #(parameter width_p=8)
+module bsg_encode_one_hot #(parameter width_p=8, parameter lo_to_hi_p=1)
    (input    [width_p-1:0]         i
     , output [`BSG_SAFE_CLOG2(width_p)-1:0] addr_o  // feed 32 bits in, requires spots 32 to encode (0..31)
     , output v_o                           // whether any bit was found
@@ -38,11 +38,13 @@ module bsg_encode_one_hot #(parameter width_p=8)
      if (width_p != aligned_width_lp)
        begin : unaligned
 	  wire [$clog2(aligned_width_lp)-1:0] aligned_addr;
-
+	  wire [aligned_width_lp-width_p-1:0] zero_pad = { (aligned_width_lp-width_p) {1'b0} };
+	  wire [aligned_width_lp-1:0] 	      padded = lo_to_hi_p ? { zero_pad, i } : { i, zero_pad };
+	  
           bsg_encode_one_hot #(.width_p(aligned_width_lp))
-          align(.i      ({ { (aligned_width_lp-width_p)  {1'b0} }, i})
-                ,.addr_o(aligned_addr                            )
-                ,.v_o   (v_o                                     )
+          align(.i      (padded      )
+                ,.addr_o(aligned_addr)
+                ,.v_o   (v_o         )
                 );
 
 	  assign addr_o = aligned_addr[$clog2(width_p)-1:0];
@@ -66,9 +68,9 @@ module bsg_encode_one_hot #(parameter width_p=8)
 
           assign v_o     = | vs;
 	  if (width_p == 2)
-	    assign addr_o = vs[1];
+	    assign addr_o = vs[lo_to_hi_p];
 	  else
-            assign addr_o = { vs[1], (addrs[0] | addrs[1]) };
+            assign addr_o = { vs[lo_to_hi_p], (addrs[0] | addrs[1]) };
        end // block: aligned
 
 
