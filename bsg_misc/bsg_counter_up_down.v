@@ -1,13 +1,13 @@
 // This is an up-down counter with initial and max values. 
 // Moreover, it has an parameter for extra bits to be used 
 // for counter, in case of using for credit counters.
-module bsg_counter_up_down #(parameter max_val_p    = -1
-                         ,parameter init_val_p   = -1
+module bsg_counter_up_down #(parameter max_val_p   = -1
+                             ,parameter init_val_p = -1
 
                           //localpara
                          ,parameter ptr_width_lp = 
                             `BSG_WIDTH(max_val_p)
-                         )                           
+                         )
     ( input                           clk_i
     , input                           reset_i
 
@@ -33,7 +33,7 @@ always_ff @(posedge clk_i)
   end
 		
 //synopsys translate_off
-  always_ff @ (posedge clk_i) begin
+  always_ff @ (negedge clk_i) begin
     if ((count_o==max_val_p) & up_i   & ~reset_i)
 		  $display("%m error: counter overflow at time %t", $time);
 	  if ((count_o==0)         & down_i & ~reset_i)
