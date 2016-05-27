@@ -4,6 +4,7 @@ module bsg_mesh_router_buffered #(width_p        = -1
                                   ,debug_p       = 0
                                   ,dirs_lp       = 5
                                   ,stub_p        = { dirs_lp {1'b0}}  // SNEWP
+				  ,allow_S_to_EW_p = 0
                                   )
    (
     input clk_i
@@ -70,6 +71,7 @@ module bsg_mesh_router_buffered #(width_p        = -1
                      ,.y_cord_width_p(y_cord_width_p)
                      ,.debug_p      (debug_p      )
                      ,.stub_p       (stub_p       )
+		     ,.allow_S_to_EW_p(allow_S_to_EW_p)
                      ) bmr
    (.clk_i
     ,.reset_i
