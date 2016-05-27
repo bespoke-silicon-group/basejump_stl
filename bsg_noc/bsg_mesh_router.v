@@ -6,16 +6,24 @@ import bsg_noc_pkg::Dirs
        , bsg_noc_pkg::N  // north
        , bsg_noc_pkg::S; // south
 
-
+//
 // Dimension ordered routing decoder
 // based on X then Y routing, it outputs a set of grant signals
+//
+// stub_p facilitates removal of logic that is not used on edge tiles
+// allow_S_to_EW_p is used to allow I/O devices to be placed on the
+// south edge of the mesh. The south edge is the only edge that has
+// non-negative coordinates, and is routable on-mesh with XY routing.
+//
 
 module bsg_mesh_router_dor_decoder #( parameter x_cord_width_p  = -1
                                       ,parameter y_cord_width_p = -1
                                       ,parameter dirs_lp       = 5
                                       ,parameter stub_p        = { dirs_lp {1'b0} }  // SNEWP
+                                      ,parameter allow_S_to_EW_p = 0
                                     )
- ( input [dirs_lp-1:0] v_i
+ (input clk_i   // debug only
+  ,input [dirs_lp-1:0] v_i
 
   ,input [dirs_lp-1:0][x_cord_width_p-1:0] x_dirs_i
   ,input [dirs_lp-1:0][y_cord_width_p-1:0] y_dirs_i
@@ -44,6 +52,30 @@ module bsg_mesh_router_dor_decoder #( parameter x_cord_width_p  = -1
         assign y_gt[i] = (y_dirs_i[i] > my_y_i);
      end
 
+   // synopsys translate off
+
+   always @(negedge clk_i)
+     begin
+	if ((v_i[N] & ~x_eq[N]) | (~allow_S_to_EW_p & v_i[S] & ~x_eq[S]))
+	  begin
+             $error("%m horizontal route needed from N/S port");
+             $finish();
+	  end
+   
+	if ((v_i[E] & x_gt[E]) | (v_i[W] & ~x_eq[W] & ~x_gt[W]))
+          begin
+             $error("%m doubleback route on E/W port");
+             $finish();
+          end
+
+	if ((v_i[N] & y_gt[N]) | (v_i[S] & ~y_eq[S] & ~x_gt[S]))
+          begin
+             $error("%m doubleback route on N/S port N:YX=%d,%d S:YX=%d,%d at Tile %d,%d",y_dirs_i[N],x_dirs_i[N],y_dirs_i[S],x_dirs_i[S],my_y_i,my_x_i);
+             $finish();
+          end
+     end
+   // synopsys translate on
+
   // request signals: format req[<input dir>][<output dir>]
   wire [dirs_lp-1:0][dirs_lp-1:0] req;
 
@@ -56,14 +88,15 @@ module bsg_mesh_router_dor_decoder #( parameter x_cord_width_p  = -1
     assign req_o[i][(i==W) ? W:E] = 1'b0;
   end
 
-  for (i = N; i <=S; i=i+1)
-  begin: NS_req
-    assign req_o[i][(i==N) ? S : N] =  v_i_stub[i] & ~y_eq[i];
-    assign req_o[i][P] =  v_i_stub[i] & y_eq[i];
-    assign req_o[i][E] = 1'b0;
-    assign req_o[i][W] = 1'b0;
-    assign req_o[i][(i==N) ? N : S] = 1'b0;
-  end
+   for (i = N; i <=S; i=i+1)
+     begin: NS_req
+        wire weird_route = ~x_eq[i] & allow_S_to_EW_p & (i==S);
+        assign req_o[i][(i==N) ? S : N] =  v_i_stub[i] & ~y_eq[i] & ~weird_route;
+        assign req_o[i][P] =  v_i_stub[i] & y_eq[i] & ~weird_route;
+        assign req_o[i][W] = v_i_stub[i] & weird_route & ~x_gt[i];
+        assign req_o[i][E] = v_i_stub[i] & weird_route &  x_gt[i];
+        assign req_o[i][(i==N) ? N : S] = 1'b0;
+     end
 
   assign req_o[P][E]  =  v_i_stub[P] & x_gt [P];
   assign req_o[P][W]  =  v_i_stub[P] & !(x_eq[P] | x_gt[P]);
@@ -81,6 +114,7 @@ module bsg_mesh_router #(
                          ,parameter debug_p       = 0
                          ,parameter dirs_lp       = 5
                          ,parameter stub_p        = { dirs_lp {1'b0} }  // SNEWP
+                         ,parameter allow_S_to_EW_p = 0
                          )
    ( input clk_i
      ,input reset_i
@@ -117,11 +151,13 @@ module bsg_mesh_router #(
 
    wire [dirs_lp-1:0][dirs_lp-1:0] req;
 
-   bsg_mesh_router_dor_decoder  #( .x_cord_width_p(x_cord_width_p)
-                                   ,.y_cord_width_p(y_cord_width_p)
-                                   ,.dirs_lp     (dirs_lp)
+   bsg_mesh_router_dor_decoder  #( .x_cord_width_p  (x_cord_width_p)
+                                   ,.y_cord_width_p (y_cord_width_p)
+                                   ,.dirs_lp        (dirs_lp)
+                                   ,.allow_S_to_EW_p(allow_S_to_EW_p)
                                    ) dor_decoder
-     ( .v_i(v_i_stub)
+     ( .clk_i(clk_i)   // debug only
+       ,.v_i(v_i_stub)
        ,.my_x_i, .my_y_i
        ,.x_dirs_i(x_dirs), .y_dirs_i(y_dirs)
        ,.req_o(req)
@@ -129,8 +165,8 @@ module bsg_mesh_router #(
 
    // valid out signals; we get these out quickly before we determine whose data we actually send
 
-   assign v_o[W] = ready_i_stub[W] & (req[P][W] | req[E][W]);
-   assign v_o[E] = ready_i_stub[E] & (req[P][E] | req[W][E]);
+   assign v_o[W] = ready_i_stub[W] & (req[P][W] | req[E][W] | (allow_S_to_EW_p & req[S][W]));
+   assign v_o[E] = ready_i_stub[E] & (req[P][E] | req[W][E] | (allow_S_to_EW_p & req[S][E]));
 
    assign v_o[P] = ready_i_stub[P] & (req[P][P] | req[N][P] | req[E][P] | req[S][P] | req[W][P]);
    assign v_o[N] = ready_i_stub[N] & (req[P][N] | req[W][N] | req[E][N] | req[S][N]);
@@ -156,29 +192,56 @@ module bsg_mesh_router #(
 
    // grant signals: format <output dir>_gnt_<input dir>
    // these determine whose data we actually send
-   wire W_gnt_e, W_gnt_p;
-   wire E_gnt_w, E_gnt_p;
+   wire W_gnt_e, W_gnt_p, W_gnt_s;
+   wire E_gnt_w, E_gnt_p, E_gnt_s;
    wire N_gnt_s, N_gnt_e, N_gnt_w, N_gnt_p;
    wire S_gnt_n, S_gnt_w, S_gnt_e, S_gnt_p;
    wire P_gnt_p, P_gnt_e, P_gnt_s, P_gnt_n, P_gnt_w;
 
-   bsg_round_robin_arb #(.inputs_p(2)
-                         ) west_rr_arb
-     (.clk_i
-      ,.reset_i
-      ,.ready_i(ready_i_stub[W])
-      ,.reqs_i({req[E][W], req[P][W]})
-      ,.grants_o({W_gnt_e, W_gnt_p})
+
+   if (allow_S_to_EW_p)
+     begin : fi
+        bsg_round_robin_arb #(.inputs_p(3)
+                              ) west_rr_arb
+          (.clk_i
+           ,.reset_i
+           ,.ready_i(ready_i_stub[W])
+           ,.reqs_i({req[E][W], req[P][W], req[S][W]})
+           ,.grants_o({W_gnt_e, W_gnt_p, W_gnt_s})
       );
 
-   bsg_round_robin_arb #(.inputs_p(2)
-                         ) east_rr_arb
-     (.clk_i
-      ,.reset_i
-      ,.ready_i(ready_i_stub[E])
-      ,.reqs_i({req[W][E], req[P][E]})
-      ,.grants_o({E_gnt_w, E_gnt_p})
-      );
+        bsg_round_robin_arb #(.inputs_p(3)
+                              ) east_rr_arb
+          (.clk_i
+           ,.reset_i
+           ,.ready_i(ready_i_stub[E])
+           ,.reqs_i({req[W][E], req[P][E], req[S][E]})
+           ,.grants_o({E_gnt_w, E_gnt_p, E_gnt_s})
+           );
+     end
+   else
+     begin
+	assign W_gnt_s = 1'b0;
+	assign E_gnt_s = 1'b0;
+
+        bsg_round_robin_arb #(.inputs_p(2)
+                              ) west_rr_arb
+          (.clk_i
+           ,.reset_i
+           ,.ready_i(ready_i_stub[W])
+           ,.reqs_i({req[E][W], req[P][W]})
+           ,.grants_o({W_gnt_e, W_gnt_p})
+	   );
+
+        bsg_round_robin_arb #(.inputs_p(2)
+                              ) east_rr_arb
+          (.clk_i
+           ,.reset_i
+           ,.ready_i(ready_i_stub[E])
+           ,.reqs_i({req[W][E], req[P][E]})
+           ,.grants_o({E_gnt_w, E_gnt_p})
+           );
+     end
 
    bsg_round_robin_arb #(.inputs_p(4)
                          ) north_rr_arb
@@ -209,21 +272,42 @@ module bsg_mesh_router #(
 
    // data out signals; this is a big crossbar that actually routes the data
 
-   bsg_mux_one_hot #(.width_p(width_p)
-                     ,.els_p(2)
-                     ) mux_data_west
-     (.data_i        ({data_i[P], data_i[E]})
-      ,.sel_one_hot_i({W_gnt_p  , W_gnt_e  })
-      ,.data_o       (data_o[W])
-      );
+   if (allow_S_to_EW_p)
+     begin
+	bsg_mux_one_hot #(.width_p(width_p)
+			  ,.els_p(3)
+			  ) mux_data_west
+	  (.data_i        ({data_i[P], data_i[E], data_i[S]})
+	   ,.sel_one_hot_i({W_gnt_p  , W_gnt_e, W_gnt_s  })
+	   ,.data_o       (data_o[W])
+	   );
 
-   bsg_mux_one_hot #(.width_p(width_p)
-                     ,.els_p(2)
-                     ) mux_data_east
-     (.data_i        ({data_i[P], data_i[W]})
-      ,.sel_one_hot_i({E_gnt_p  , E_gnt_w  })
-      ,.data_o       (data_o[E])
-      );
+	bsg_mux_one_hot #(.width_p(width_p)
+			  ,.els_p(3)
+			  ) mux_data_east
+	   (.data_i        ({data_i[P], data_i[W], data_i[S]})
+	    ,.sel_one_hot_i({E_gnt_p  , E_gnt_w, E_gnt_s  })
+	    ,.data_o       (data_o[E])
+	    );
+     end
+   else
+     begin
+	bsg_mux_one_hot #(.width_p(width_p)
+			  ,.els_p(2)
+			  ) mux_data_west
+	  (.data_i        ({data_i[P], data_i[E]})
+	   ,.sel_one_hot_i({W_gnt_p  , W_gnt_e  })
+	   ,.data_o       (data_o[W])
+	   );
+
+	bsg_mux_one_hot #(.width_p(width_p)
+			  ,.els_p(2)
+			  ) mux_data_east
+	  (.data_i        ({data_i[P], data_i[W]})
+	   ,.sel_one_hot_i({E_gnt_p  , E_gnt_w  })
+	   ,.data_o       (data_o[E])
+	   );
+     end
 
    bsg_mux_one_hot #(.width_p(width_p)
                      ,.els_p(5)
@@ -255,6 +339,6 @@ module bsg_mesh_router #(
    assign yumi_o[E] = W_gnt_e | N_gnt_e | S_gnt_e | P_gnt_e;
    assign yumi_o[P] = E_gnt_p | N_gnt_p | S_gnt_p | P_gnt_p | W_gnt_p;
    assign yumi_o[N] = S_gnt_n | P_gnt_n;
-   assign yumi_o[S] = N_gnt_s | P_gnt_s;
+   assign yumi_o[S] = N_gnt_s | P_gnt_s | W_gnt_s | E_gnt_s;
 
 endmodule
