@@ -12,6 +12,9 @@
 // pipeline_indir_p and pipeline_outdir_p add
 // pipelining (two element fifos) in each direction
 //
+// NB: An implementation based on Benes networks could potentially
+// use less area, at the cost of complexity and wire congestion.
+//
 
 module bsg_sbox
   #(parameter   num_channels_p    = "inv"
