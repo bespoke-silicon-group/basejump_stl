@@ -24,9 +24,6 @@ module bsg_fifo_1r1w_small #( parameter width_p      = -1
 
    localparam ptr_width_lp = `BSG_SAFE_CLOG2(els_p);
 
-   // register for storage
-   logic [width_p-1:0] storage [els_p-1:0];
-
    // one read pointer, one write pointer;
    logic [ptr_width_lp-1:0] rptr_r, wptr_r;
 
