@@ -34,10 +34,8 @@ module bsg_mesh_router_dor_decoder #( parameter x_cord_width_p  = -1
   ,output [dirs_lp-1:0][dirs_lp-1:0] req_o
  );
 
-   wire [dirs_lp-1:0] x_eq;
-   wire [dirs_lp-1:0] y_eq;
-   wire [dirs_lp-1:0] x_gt;
-   wire [dirs_lp-1:0] y_gt;
+   wire [dirs_lp-1:0] x_eq, x_gt, x_lt;
+   wire [dirs_lp-1:0] y_eq, y_gt, y_lt;
 
    wire [dirs_lp-1:0] v_i_stub = v_i & ~stub_p;
 
@@ -50,25 +48,27 @@ module bsg_mesh_router_dor_decoder #( parameter x_cord_width_p  = -1
         assign y_eq[i] = (y_dirs_i[i] == my_y_i);
         assign x_gt[i] = (x_dirs_i[i] > my_x_i);
         assign y_gt[i] = (y_dirs_i[i] > my_y_i);
+        assign x_lt[i] = ~x_gt[i] & ~x_eq[i];
+        assign y_lt[i] = ~y_gt[i] & ~y_eq[i];
      end
 
    // synopsys translate off
 
    always @(negedge clk_i)
      begin
-	if ((v_i[N] & ~x_eq[N]) | (~allow_S_to_EW_p & v_i[S] & ~x_eq[S]))
-	  begin
+        if ((v_i[N] & ~x_eq[N]) | (~allow_S_to_EW_p & v_i[S] & ~x_eq[S]))
+          begin
              $error("%m horizontal route needed from N/S port");
              $finish();
-	  end
-   
-	if ((v_i[E] & x_gt[E]) | (v_i[W] & ~x_eq[W] & ~x_gt[W]))
+          end
+
+        if ((v_i[E] & x_gt[E]) | (v_i[W] & x_lt[W]))
           begin
              $error("%m doubleback route on E/W port");
              $finish();
           end
 
-	if ((v_i[N] & y_gt[N]) | (v_i[S] & ~y_eq[S] & ~x_gt[S]))
+        if ((v_i[N] & y_lt[N]) | (v_i[S] & y_gt[S]))
           begin
              $error("%m doubleback route on N/S port N:YX=%d,%d S:YX=%d,%d at Tile %d,%d",y_dirs_i[N],x_dirs_i[N],y_dirs_i[S],x_dirs_i[S],my_y_i,my_x_i);
              $finish();
@@ -84,7 +84,7 @@ module bsg_mesh_router_dor_decoder #( parameter x_cord_width_p  = -1
     assign req_o[i][(i==W) ? E : W] = v_i_stub[i] &  ~x_eq[i];
     assign req_o[i][P] = v_i_stub[i] & x_eq[i] & y_eq[i];
     assign req_o[i][S] = v_i_stub[i] & x_eq[i] & y_gt[i];
-    assign req_o[i][N] = v_i_stub[i] & x_eq[i] & ~y_gt[i] & ~y_eq[i];
+    assign req_o[i][N] = v_i_stub[i] & x_eq[i] & y_lt[i];
     assign req_o[i][(i==W) ? W:E] = 1'b0;
   end
 
@@ -99,9 +99,9 @@ module bsg_mesh_router_dor_decoder #( parameter x_cord_width_p  = -1
      end
 
   assign req_o[P][E]  =  v_i_stub[P] & x_gt [P];
-  assign req_o[P][W]  =  v_i_stub[P] & !(x_eq[P] | x_gt[P]);
-  assign req_o[P][S]  =  v_i_stub[P] & x_eq[P] & y_gt  [P];
-  assign req_o[P][N]  =  v_i_stub[P] & x_eq[P] & ~y_gt[P] & ~y_eq[P];
+  assign req_o[P][W]  =  v_i_stub[P] & x_lt [P];
+  assign req_o[P][S]  =  v_i_stub[P] & x_eq[P] & y_gt [P];
+  assign req_o[P][N]  =  v_i_stub[P] & x_eq[P] & y_lt [P];
   assign req_o[P][P]  =  v_i_stub[P] & x_eq[P] & y_eq [P];
 
 endmodule
@@ -221,8 +221,8 @@ module bsg_mesh_router #(
      end
    else
      begin
-	assign W_gnt_s = 1'b0;
-	assign E_gnt_s = 1'b0;
+        assign W_gnt_s = 1'b0;
+        assign E_gnt_s = 1'b0;
 
         bsg_round_robin_arb #(.inputs_p(2)
                               ) west_rr_arb
@@ -231,7 +231,7 @@ module bsg_mesh_router #(
            ,.ready_i(ready_i_stub[W])
            ,.reqs_i({req[E][W], req[P][W]})
            ,.grants_o({W_gnt_e, W_gnt_p})
-	   );
+           );
 
         bsg_round_robin_arb #(.inputs_p(2)
                               ) east_rr_arb
@@ -274,39 +274,39 @@ module bsg_mesh_router #(
 
    if (allow_S_to_EW_p)
      begin
-	bsg_mux_one_hot #(.width_p(width_p)
-			  ,.els_p(3)
-			  ) mux_data_west
-	  (.data_i        ({data_i[P], data_i[E], data_i[S]})
-	   ,.sel_one_hot_i({W_gnt_p  , W_gnt_e, W_gnt_s  })
-	   ,.data_o       (data_o[W])
-	   );
+        bsg_mux_one_hot #(.width_p(width_p)
+                          ,.els_p(3)
+                          ) mux_data_west
+          (.data_i        ({data_i[P], data_i[E], data_i[S]})
+           ,.sel_one_hot_i({W_gnt_p  , W_gnt_e, W_gnt_s  })
+           ,.data_o       (data_o[W])
+           );
 
-	bsg_mux_one_hot #(.width_p(width_p)
-			  ,.els_p(3)
-			  ) mux_data_east
-	   (.data_i        ({data_i[P], data_i[W], data_i[S]})
-	    ,.sel_one_hot_i({E_gnt_p  , E_gnt_w, E_gnt_s  })
-	    ,.data_o       (data_o[E])
-	    );
+        bsg_mux_one_hot #(.width_p(width_p)
+                          ,.els_p(3)
+                          ) mux_data_east
+           (.data_i        ({data_i[P], data_i[W], data_i[S]})
+            ,.sel_one_hot_i({E_gnt_p  , E_gnt_w, E_gnt_s  })
+            ,.data_o       (data_o[E])
+            );
      end
    else
      begin
-	bsg_mux_one_hot #(.width_p(width_p)
-			  ,.els_p(2)
-			  ) mux_data_west
-	  (.data_i        ({data_i[P], data_i[E]})
-	   ,.sel_one_hot_i({W_gnt_p  , W_gnt_e  })
-	   ,.data_o       (data_o[W])
-	   );
+        bsg_mux_one_hot #(.width_p(width_p)
+                          ,.els_p(2)
+                          ) mux_data_west
+          (.data_i        ({data_i[P], data_i[E]})
+           ,.sel_one_hot_i({W_gnt_p  , W_gnt_e  })
+           ,.data_o       (data_o[W])
+           );
 
-	bsg_mux_one_hot #(.width_p(width_p)
-			  ,.els_p(2)
-			  ) mux_data_east
-	  (.data_i        ({data_i[P], data_i[W]})
-	   ,.sel_one_hot_i({E_gnt_p  , E_gnt_w  })
-	   ,.data_o       (data_o[E])
-	   );
+        bsg_mux_one_hot #(.width_p(width_p)
+                          ,.els_p(2)
+                          ) mux_data_east
+          (.data_i        ({data_i[P], data_i[W]})
+           ,.sel_one_hot_i({E_gnt_p  , E_gnt_w  })
+           ,.data_o       (data_o[E])
+           );
      end
 
    bsg_mux_one_hot #(.width_p(width_p)
