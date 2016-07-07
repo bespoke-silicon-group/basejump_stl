@@ -34,8 +34,10 @@ module bsg_mesh_router_dor_decoder #( parameter x_cord_width_p  = -1
   ,output [dirs_lp-1:0][dirs_lp-1:0] req_o
  );
 
-   wire [dirs_lp-1:0] x_eq, x_gt, x_lt;
-   wire [dirs_lp-1:0] y_eq, y_gt, y_lt;
+   wire [dirs_lp-1:0] x_eq;
+   wire [dirs_lp-1:0] y_eq;
+   wire [dirs_lp-1:0] x_gt;
+   wire [dirs_lp-1:0] y_gt;
 
    wire [dirs_lp-1:0] v_i_stub = v_i & ~stub_p;
 
@@ -48,8 +50,6 @@ module bsg_mesh_router_dor_decoder #( parameter x_cord_width_p  = -1
         assign y_eq[i] = (y_dirs_i[i] == my_y_i);
         assign x_gt[i] = (x_dirs_i[i] > my_x_i);
         assign y_gt[i] = (y_dirs_i[i] > my_y_i);
-        assign x_lt[i] = ~x_gt[i] & ~x_eq[i];
-        assign y_lt[i] = ~y_gt[i] & ~y_eq[i];
      end
 
    // synopsys translate off
@@ -62,13 +62,13 @@ module bsg_mesh_router_dor_decoder #( parameter x_cord_width_p  = -1
              $finish();
           end
 
-        if ((v_i[E] & x_gt[E]) | (v_i[W] & x_lt[W]))
+        if ((v_i[E] & x_gt[E]) | (v_i[W] & ~x_eq[W] & ~x_gt[W]))
           begin
              $error("%m doubleback route on E/W port");
              $finish();
           end
 
-        if ((v_i[N] & y_lt[N]) | (v_i[S] & y_gt[S]))
+        if ((v_i[N] & y_gt[N]) | (v_i[S] & ~y_eq[S] & ~x_gt[S]))
           begin
              $error("%m doubleback route on N/S port N:YX=%d,%d S:YX=%d,%d at Tile %d,%d",y_dirs_i[N],x_dirs_i[N],y_dirs_i[S],x_dirs_i[S],my_y_i,my_x_i);
              $finish();
@@ -84,7 +84,7 @@ module bsg_mesh_router_dor_decoder #( parameter x_cord_width_p  = -1
     assign req_o[i][(i==W) ? E : W] = v_i_stub[i] &  ~x_eq[i];
     assign req_o[i][P] = v_i_stub[i] & x_eq[i] & y_eq[i];
     assign req_o[i][S] = v_i_stub[i] & x_eq[i] & y_gt[i];
-    assign req_o[i][N] = v_i_stub[i] & x_eq[i] & y_lt[i];
+    assign req_o[i][N] = v_i_stub[i] & x_eq[i] & ~y_gt[i] & ~y_eq[i];
     assign req_o[i][(i==W) ? W:E] = 1'b0;
   end
 
@@ -99,9 +99,9 @@ module bsg_mesh_router_dor_decoder #( parameter x_cord_width_p  = -1
      end
 
   assign req_o[P][E]  =  v_i_stub[P] & x_gt [P];
-  assign req_o[P][W]  =  v_i_stub[P] & x_lt [P];
-  assign req_o[P][S]  =  v_i_stub[P] & x_eq[P] & y_gt [P];
-  assign req_o[P][N]  =  v_i_stub[P] & x_eq[P] & y_lt [P];
+  assign req_o[P][W]  =  v_i_stub[P] & !(x_eq[P] | x_gt[P]);
+  assign req_o[P][S]  =  v_i_stub[P] & x_eq[P] & y_gt  [P];
+  assign req_o[P][N]  =  v_i_stub[P] & x_eq[P] & ~y_gt[P] & ~y_eq[P];
   assign req_o[P][P]  =  v_i_stub[P] & x_eq[P] & y_eq [P];
 
 endmodule
@@ -163,15 +163,6 @@ module bsg_mesh_router #(
        ,.req_o(req)
        );
 
-   // valid out signals; we get these out quickly before we determine whose data we actually send
-
-   assign v_o[W] = ready_i_stub[W] & (req[P][W] | req[E][W] | (allow_S_to_EW_p & req[S][W]));
-   assign v_o[E] = ready_i_stub[E] & (req[P][E] | req[W][E] | (allow_S_to_EW_p & req[S][E]));
-
-   assign v_o[P] = ready_i_stub[P] & (req[P][P] | req[N][P] | req[E][P] | req[S][P] | req[W][P]);
-   assign v_o[N] = ready_i_stub[N] & (req[P][N] | req[W][N] | req[E][N] | req[S][N]);
-   assign v_o[S] = ready_i_stub[S] & (req[P][S] | req[W][S] | req[E][S] | req[N][S]);
-
    // synopsys translate off
    if (debug_p)
      for (i = P; i <= S; i=i+1)
@@ -205,41 +196,60 @@ module bsg_mesh_router #(
                               ) west_rr_arb
           (.clk_i
            ,.reset_i
-           ,.ready_i(ready_i_stub[W])
-           ,.reqs_i({req[E][W], req[P][W], req[S][W]})
+           ,.grants_en_i(ready_i_stub[W])
+
+           ,.reqs_i  ({req[E][W], req[P][W], req[S][W]})
            ,.grants_o({W_gnt_e, W_gnt_p, W_gnt_s})
+
+           ,.v_o      (v_o[W])
+           ,.tag_o    ()
+           ,.yumi_i   (v_o[W])
       );
 
         bsg_round_robin_arb #(.inputs_p(3)
                               ) east_rr_arb
           (.clk_i
            ,.reset_i
-           ,.ready_i(ready_i_stub[E])
+           ,.grants_en_i(ready_i_stub[E])
+
            ,.reqs_i({req[W][E], req[P][E], req[S][E]})
            ,.grants_o({E_gnt_w, E_gnt_p, E_gnt_s})
+
+           ,.v_o   (v_o[E])
+           ,.tag_o ()
+           ,.yumi_i(v_o[E])
            );
      end
    else
      begin
         assign W_gnt_s = 1'b0;
         assign E_gnt_s = 1'b0;
-
         bsg_round_robin_arb #(.inputs_p(2)
                               ) west_rr_arb
           (.clk_i
            ,.reset_i
-           ,.ready_i(ready_i_stub[W])
+           ,.grants_en_i(ready_i_stub[W])
+
            ,.reqs_i({req[E][W], req[P][W]})
            ,.grants_o({W_gnt_e, W_gnt_p})
+
+           ,.v_o    (v_o[W])
+           ,.tag_o  ()
+           ,.yumi_i (v_o[W])
            );
 
         bsg_round_robin_arb #(.inputs_p(2)
                               ) east_rr_arb
           (.clk_i
            ,.reset_i
-           ,.ready_i(ready_i_stub[E])
+           ,.grants_en_i(ready_i_stub[E])
+
            ,.reqs_i({req[W][E], req[P][E]})
            ,.grants_o({E_gnt_w, E_gnt_p})
+
+           ,.v_o   (v_o[E])
+           ,.tag_o ()
+           ,.yumi_i(v_o[E])
            );
      end
 
@@ -247,27 +257,46 @@ module bsg_mesh_router #(
                          ) north_rr_arb
      (.clk_i
       ,.reset_i
-      ,.ready_i(ready_i_stub[N])
+      ,.grants_en_i(ready_i_stub[N])
+
       ,.reqs_i({req[S][N], req[E][N], req[W][N], req[P][N]})
       ,.grants_o({ N_gnt_s, N_gnt_e, N_gnt_w, N_gnt_p })
+
+      ,.v_o   (v_o[N])
+      ,.tag_o ()
+      ,.yumi_i(v_o[N])
+
       );
 
    bsg_round_robin_arb #(.inputs_p(4)
                          ) south_rr_arb
      (.clk_i
       ,.reset_i
-      ,.ready_i(ready_i_stub[S])
+
+      ,.grants_en_i(ready_i_stub[S])
+
       ,.reqs_i({req[N][S], req[E][S], req[W][S], req[P][S]})
       ,.grants_o({ S_gnt_n, S_gnt_e, S_gnt_w, S_gnt_p })
+
+      ,.v_o   (v_o[S])
+      ,.tag_o ()
+      ,.yumi_i(v_o[S])
+
       );
 
    bsg_round_robin_arb #(.inputs_p(5)
                          ) proc_rr_arb
      (.clk_i
       ,.reset_i
-      ,.ready_i(ready_i_stub[P])
+      ,.grants_en_i(ready_i_stub[P])
+
       ,.reqs_i({req[S][P], req[N][P], req[E][P], req[W][P], req[P][P]})
       ,.grants_o({ P_gnt_s, P_gnt_n, P_gnt_e, P_gnt_w, P_gnt_p })
+
+      ,.v_o   (v_o[P])
+      ,.tag_o ()
+      ,.yumi_i(v_o[P])
+
       );
 
    // data out signals; this is a big crossbar that actually routes the data

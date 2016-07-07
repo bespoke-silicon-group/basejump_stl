@@ -40,19 +40,28 @@ print """// Round robin arbitration unit
 // DO NOT MODIFY
 """
 
-print "module bsg_round_robin_arb #(parameter inputs_p = %s)" % '''"not assigned"'''
+print "module bsg_round_robin_arb #(parameter inputs_p = %s, lg_inputs_p=`BSG_SAFE_CLOG2(inputs_p))" % '''"not assigned"'''
 
 print """    (input clk_i
     , input reset_i
-    , input yumi_i
-    , input [inputs_p-1:0] reqs_i
-    , output [inputs_p-1:0] grants_o
+    , input grants_en_i // whether to suppress grants_o
+
+    // these are "third-party" inputs/outputs
+    // that are part of the "data plane"
+
+    , input  [inputs_p-1:0] reqs_i
+    , output logic [inputs_p-1:0] grants_o
+
+    // end third-party inputs/outputs
+
+    , output v_o                           // whether any grants were given
+    , output logic [lg_inputs_p-1:0] tag_o // to which input the grant was given
+    , input yumi_i                         // yes, go ahead with whatever grants_o proposed
     );
 
-logic [inputs_p-1:0] grants;
-logic [`BSG_SAFE_CLOG2(inputs_p)-1:0] last, last_n, last_r;
+logic [lg_inputs_p-1:0] last, last_n, last_r;
 
-assign grants_o = grants;"""
+"""
 
 for reqs_w in range(1, max_reqs+1):
     print """
@@ -60,15 +69,15 @@ if(inputs_p == %d)
 begin: inputs_%d
 always_comb
 begin
-  unique casez({ready_i, last_r, reqs_i})""" % (reqs_w, reqs_w)
+  unique casez({grants_en_i, last_r, reqs_i})""" % (reqs_w, reqs_w)
 
     last_w = int(math.ceil(math.log(reqs_w)/math.log(2))) if (reqs_w!=1) else 1
     print "    %d'b"%(1+last_w+reqs_w) + "0" + "_" + "?"*last_w + "_" + "?"*reqs_w + ":"\
-            , "grants ="\
-            , "%d'b"%reqs_w + "0"*reqs_w + ";"
+            , "begin grants_o ="\
+            , "%d'b"%reqs_w + "0"*reqs_w + "; tag_o = (lg_inputs_p) ' (0); end // X"
     print "    %d'b"%(1+last_w+reqs_w) + "1" + "_" + "?"*last_w + "_" + "0"*reqs_w + ":"\
-            , "grants ="\
-            , "%d'b"%reqs_w + "0"*reqs_w + ";"
+            , "begin grants_o ="\
+            , "%d'b"%reqs_w + "0"*reqs_w + "; tag_o = (lg_inputs_p) ' (0); end // X"
     
     grants = {}
     for i in range(reqs_w):
@@ -78,33 +87,27 @@ begin
         for req in grants[key]:
             print "    %d'b"%(1+last_w+reqs_w) + "1" + "_" + bin(key)[2:].zfill(last_w)\
                     + "_" + req[0] + ":"\
-                    , "grants ="\
-                    , "%d'b"%reqs_w + req[1] + ";"
+                    , "begin grants_o ="\
+                    , "%d'b"%reqs_w + req[1] + "; tag_o = (lg_inputs_p) ' ("+str(req[1][::-1].index('1'))+"); end"
 
-    print """    default: grants = {%d{1'bx}};
+    print """    default: begin grants_o = {%d{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X
   endcase
 end
 end: inputs_%d""" % (reqs_w, reqs_w) 
 
 print """
-// fix me: this should a direct output of the rr arb rather than 
-// manual encoding; we should also make this a direct output.
+
+assign v_o = (|reqs_i & grants_en_i);
 
 if(inputs_p == 1)
   assign last_r = 1'b0;
 else
   begin
-    bsg_encode_one_hot #(.width_p(inputs_p)
-                        ) encoder( .i     (grants)
-                                  ,.addr_o(last)
-                                  ,.v_o   ()
-                                 );
-
     always_comb
-      last_n = (yumi_i & (|reqs_i))? last:last_r;
-    
+      last_n = (yumi_i ? tag_o:last_r);
+
     always_ff @(posedge clk_i)
-      last_r <= (reset_i)? `BSG_SAFE_CLOG2(inputs_p)'(0):last_n;
+      last_r <= (reset_i) ? (lg_inputs_p)'(0):last_n;
   end
 
 endmodule"""
