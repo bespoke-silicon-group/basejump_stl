@@ -1,6 +1,22 @@
+//
 // This is an up-down counter with initial and max values. 
-// Moreover, it has an parameter for extra bits to be used 
-// for counter, in case of using for credit counters.
+// Even for counters that start at max value, it can be useful
+// to specify an even greater max. This is useful in case where you want to
+// be able to change the max value after hardware design time,
+// for example for credit counters between chips. The
+// hardware can return the extra credits right after reset.
+//
+// PO: a bsg_counter_up_down_blind only says whether the count is
+// zero, and does not show the actual value. the blind version 
+// can latch the up_i and down_i signals, for zero input latency.
+// it can also precompute a table whether the next value is zero based 
+// on all expected combinations of up_i and down_i, and then use
+// a four input mux to output the zero value. Then input delay is 
+// zero and output delay is a 2-bit 4-input mux. Possibly the
+// output logic can be even less than this.
+//
+
+
 module bsg_counter_up_down #(parameter max_val_p   = -1
                              ,parameter init_val_p = -1
 
@@ -18,8 +34,9 @@ module bsg_counter_up_down #(parameter max_val_p   = -1
     );
 
 // keeping track of number of entries and updating read and 
-// write poniteres, and displaying errors in case of overflow
+// write pointers, and displaying errors in case of overflow
 // or underflow
+
 always_ff @(posedge clk_i)
   begin
     if (reset_i)
