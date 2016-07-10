@@ -9,11 +9,15 @@
 // PO: a bsg_counter_up_down_blind only says whether the count is
 // zero, and does not show the actual value. the blind version 
 // can latch the up_i and down_i signals, for zero input latency.
-// it can also precompute a table whether the next value is zero based 
-// on all expected combinations of up_i and down_i, and then use
-// a four input mux to output the zero value. Then input delay is 
-// zero and output delay is a 2-bit 4-input mux. Possibly the
-// output logic can be even less than this.
+// It can also precompute whether the high bits are all 0. 
+// then it can use two simple expressions,
+// wire [1:0] same_dec = { up_r ^ down_r, down_r & ~up_r };
+// wire [1:0] one_zero     = { ctr[0] & high_bits_zero_r, ~ctr[0] & high_bits_zero_r };
+//
+// wire zero_o = (one_zero[0] & same_dec[1]) | (one_zero[1] & same_dec[0]);
+//
+// alternatively, using four bits, we could output a 2-in, 1-out truth table that
+// is indexed by up_r and down_r.
 //
 
 
