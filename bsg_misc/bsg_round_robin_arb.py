@@ -44,7 +44,7 @@ print "module bsg_round_robin_arb #(parameter inputs_p = %s)" % '''"not assigned
 
 print """    (input clk_i
     , input reset_i
-    , input ready_i
+    , input yumi_i
     , input [inputs_p-1:0] reqs_i
     , output [inputs_p-1:0] grants_o
     );
@@ -87,6 +87,9 @@ end
 end: inputs_%d""" % (reqs_w, reqs_w) 
 
 print """
+// fix me: this should a direct output of the rr arb rather than 
+// manual encoding; we should also make this a direct output.
+
 if(inputs_p == 1)
   assign last_r = 1'b0;
 else
@@ -98,7 +101,7 @@ else
                                  );
 
     always_comb
-      last_n = (ready_i & (|reqs_i))? last:last_r;
+      last_n = (yumi_i & (|reqs_i))? last:last_r;
     
     always_ff @(posedge clk_i)
       last_r <= (reset_i)? `BSG_SAFE_CLOG2(inputs_p)'(0):last_n;
