@@ -35,7 +35,14 @@ module bsg_circular_ptr #(parameter slots_p     = -1
 	wire ignore = |add_i;
      end
    else
-     if (`BSG_IS_POW2(slots_p))
+   
+     // fixme performance optimization:
+     // we should handle add-by-1 and non-power-of-two
+     // in the same way as power-of-two and add-by-1
+     // with a compare of ptr_r to slots_p-1 to check for
+     // zeroing the ptr_r_p1 value.
+     
+    if (`BSG_IS_POW2(slots_p))
        begin
 	  // reduce critical path on add_i signal
 	  if (max_add_p == 1)
