@@ -47,11 +47,16 @@ module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
           begin: rr
             bsg_round_robin_arb #( .inputs_p(i_els_p)
                                    ) round_robin_arb
-              ( .clk_i   (clk_i)
-                ,.reset_i (reset_i)
-                ,.ready_i (ready_i[i])
+              ( .clk_i
+                ,.reset_i
+                ,.grants_en_i (ready_i[i])
+
                 ,.reqs_i  (sel_oi_one_hot[i])
                 ,.grants_o(grants_oi_one_hot_o[i])
+
+                ,.v_o   (valid_o[i])
+                ,.tag_o ()
+                ,.yumi_i(valid_o[i])
                 );
           end
         else
@@ -63,6 +68,8 @@ module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
                ,.reqs_i  (sel_oi_one_hot[i])
                ,.grants_o(grants_oi_one_hot_o[i])
                );
+
+             assign valid_o[i] = | grants_oi_one_hot_o[i];
           end
      end // block: arb
 
@@ -72,9 +79,6 @@ module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
                  ( .i(grants_oi_one_hot_o)
                   ,.o(grants_io_one_hot)
                  );
-
-  for(i=0; i<o_els_p; i=i+1)
-    assign valid_o[i] = | grants_oi_one_hot_o[i];
 
   for(i=0; i<i_els_p; i=i+1)
     assign yumi_o[i] = valid_i[i] & (| grants_io_one_hot[i]);
