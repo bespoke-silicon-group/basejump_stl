@@ -13,22 +13,48 @@
 // or more of the size of a 1RW, so we can
 // save area.
 //
-// There are two possible implementations
-// of a FIFO using 1RW rams. One is to
-// use two rams of half size, and the round
-// robin odd/even elements. We can favor the
-// writer, and then use a two-element fifo
-// with bypass after each 1RW, and select between
-// the two. Net cost is 4 elements plus 2 1RW of size 1/2.
-// A draft of this code is at the end of this file. Caveat emptor.
+// There are five+ possible implementations
+// of a FIFO using 1RW rams:
 //
-// The alternative is to use a single 1RW of double width
-// and write two elements at a time, as described in this module.
-// The cost is 7 DFF elements plus 1 RW of double width and half words.
-// A single 1RW versus two 1RW's can be a win, but not always. The RAM
-// is larger, so there is potential for there is to be more amortization of
-// overhead. But on the other hand, # of sense amps is the same, so some of the
-// overheads are the same.
+// a. (bsg_fifo_1r1w_small) synthesize 1R1W RF from DFFs. Area per bit
+//    of storage is often 10x larger than 1RW SRAM. But the SRAM
+//    needs a sense-amp for every bit that is accessed per cycle, which is
+//    about the size of 7 DFF-bits. So, for instance, if you need
+//    to access 64 bits per cycle, then that incurs ~450 DFF bits of overhead,
+//    so the DFF-RF will be cheaper up until to 512 bits. If you only need
+//    to access 32 bits in parallel, then the breakeven would be closer to 256 bits.
+//
+// b. Use a true 1R1W ram; about 2X larger than 1RW SRAM. Maybe available for FPGA
+//    but often not available, or not a good deal for ASIC.
+//
+// c. (not implemented) To get more ports, use two rams of half size, and then round
+//    robin odd/even elements. We can favor the
+//    writer, and then use a two-element fifo
+//    with bypass after each 1RW, and select between
+//    the two. Net cost is 4 words of DFF plus two 1RW SRAMs of size 1/2 but same width.
+//    A draft of this code is at the end of this file, but it is incomplete/untested Caveat emptor.
+//
+// d. (bsg_fifo_1r1w_large) To get "more ports", use a single 1RW of double width
+//    and read/write two elements at a time, as described in this module.
+//    The cost is 7 DFF elements for staging plus 1 RW of double width and half words. So for
+//    a 64-bit wide ram, the overhead is almost 3*450 = 1400 DFF bits; slightly more than
+//    case c), but since there is only one RAM there are savings.
+//
+//    A single 1RW versus two 1RW's can be a win, but not always. The RAM
+//    is larger, so there is potential for there is to be more amortization of
+//    overhead. But on the other hand, # of sense amps is the same, so some of the
+//    overheads are the same. One problem with this design for smaller RAMs is 
+//    that it doubles the number of sense amps in a single ram, which can make
+//    the aspect ratio undesirable or even impossible.
+//
+// e. (bsg_fifo_1r1w_pseudo_large) Use a pseudo 1RW fifo, where it looks like it is 1r1w, but actually
+//    it is a 1RW that favors writes. Unlike "large", it has the same bandwidth, so we save space
+//    on sense amps. This only applies when you know data is coming in at 1/2 rate or slower.
+//
+// Generally speaking, an SRAM's area is proportional to the number of bits, the number of
+// sense amps, and the amount of decoder. If we take a wide ram and break it into two rams
+// of half the width, but the same total bits, we have the same number of total bits and
+// the same number of sense amps, but more decoder area, so there is a slight increase. 
 //
 // The 7 elements overhead coud potentially be significant,
 // since they are implemented with ordinary flops, probably 4X per bit versus the
@@ -274,152 +300,3 @@ module bsg_fifo_1r1w_large #(parameter width_p           = -1
 
 endmodule
 
-
-`ifdef _SKIP_THIS_CODE
-
-// bsg_fifo_two_port_large_banked
-//
-//  1R1W large fifo implementation
-//
-// This implementation is specifically
-// intended for processes where 1RW rams
-// are much cheaper than 1R1W rams, like
-// most ASIC processes.
-//
-// The FIFO is implemented by instantiating
-// two banks. 
-
-// Each bank has a large 1-port
-// fifo and a small 2-element fifo.
-//
-// Data is inserted directly into the 2-element fifo until
-// that fifo is full. Then it is stored in
-// the 1 port ram. When data is not enqued into the big fifo,
-// and there is sufficient space in the small fifo
-// then data is transferred from the big fifo to the small fifo.
-//
-// Banks are read and written in round robin fashion.
-// This means that every other cycle, there is a slot
-// to transfer from the big fifo to the little fifo
-// if there is sufficient space in the little fifo.
-
-//
-//                     __________
-//                 ___/ 1RW FIFO \___|\    _______
-//                /   \__________/ __| |__/ 2 fifo\   ___
-//  /---------\ _/________________/  |/   \_______/ \| N \
-// |  1-to-N   |__________________                   | to |___
-//  \---------/  \     __________ \__|\    _______   | 1  |
-//                \___/ 1RW FIFO \___| |__/ 2 fifo\_/|___/
-//                    \__________/   | |  \_______/
-//                                   |/
-//
-
-// We can prove that one element small
-// fifo is insufficient.
-//
-// suppose that the small fifo #0,#1 is full.
-//        and that big fifo #0 is non-empty
-// cycle one: no deque from small fifo
-//
-// cycle two: data is dequed from small fifo #0
-//            big fifo is deq because small fifo deq is too late
-
-// cycle three:  data is enqued into big fifo #0
-//               no deq from big fifo #0 is possible
-//               small fifo #0 is empty
-//               data deque from small fifo #1
-//
-// cycle four:  no data avail in small fifo #0
-//
-
-// bsg_fifo_two_port_bank
-//
-// this module is responsible for handling one bank
-// of the FIFO.
-//
-// it is made of a big 1p fifo and a little 2p fifo
-//
-// the assumption is that the system will never try
-// to enque two elements in a row.
-//
-
-// mbt: note bsg_fifo_two_port_bank code moved to bsg_fifo_1r1w_pseudo_large
-
-
-module bsg_fifo_two_port_banked #(parameter width_p         = -1
-                               , parameter els_p           = -1
-                                )
-   (input                  clk_i
-    , input                reset_i
-    , input [width_p-1:0]  data_i
-    , input                v_i
-    , output               ready_o
-
-    , output               v_o
-    , output [width_p-1:0] data_o
-    , input                yumi_i
-    );
-
-   initial assert ((els_p & 1) == 0) else
-     $error("odd number of elements for two port fifo not handled.");
-
-   genvar i;
-
-   wire [1:0]               v_i_demux, ready_o_mux;
-
-   bsg_round_robin_1_to_n #(.width_p(width_p)
-                            ,.num_out_p(2)
-                            )
-   (.clk_i   (clk_i      )
-    ,.reset_i(reset_i    )
-
-    ,.valid_i(v_i        )
-    ,.ready_o(ready_o    )
-
-    ,.valid_o(v_i_demux  )
-    ,.ready_i(ready_o_mux)
-    );
-
-
-   wire [1:0]               v_int, yumi_int;
-   wire [width_p-1:0] [1:0] data_int;
-
-   for (i = 0; i < 2; i++)
-     begin
-	// fixme replace with bsg_fifo_1r1w_pseudo_large
-        bsg_fifo_two_port_bank #(.width(width_p)
-                                   ,.els_p(els_p >> 1)
-                                   ) bank
-            (.clk_i   (clk_i)
-             ,.reset_i(reset_i)
-
-             ,.valid_i(v_i_demux  [i])
-             ,.data_i (data_i        )
-             ,.ready_o(ready_o_mux[i])
-
-             ,.v_o    (v_int   [i])
-             ,.data_o (data_int[i])
-             ,.yumi_i (yumi_int[i])
-             );
-     end
-
-   bsg_round_robin_n_to_1 #(.width(width_p)
-                            ,.num_in_p(2)
-                            ) round_robin_n_to_1
-     (.clk_i   (clk_i     )
-      ,.reset_i(reset_i   )
-
-      ,.data_i (data_int )
-      ,.valid_i(valid_int)
-      ,.yumi_o (yumi_int )
-
-      ,.data_o (data_o    )
-      ,.valid_o(valid_o   )
-      ,.yumi_i (yumi_i    )
-      );
-
-
-endmodule // bsg_fifo_two_port_banked
-
-`endif // _SKIP_THIS_CODE
