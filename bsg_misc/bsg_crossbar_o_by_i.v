@@ -1,3 +1,6 @@
+// NB: for larger sizes, may make sense to have a benes network implementation option
+// since it is assymptotically better than a full crossbar for datapath.
+
 module bsg_crossbar_o_by_i #( parameter i_els_p = -1
                              ,parameter o_els_p = -1
                              ,parameter width_p = -1
