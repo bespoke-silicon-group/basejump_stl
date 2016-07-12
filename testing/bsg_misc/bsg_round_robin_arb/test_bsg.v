@@ -85,13 +85,21 @@ module test_bsg;
       end
   end
 
+   wire v;
+   
   bsg_round_robin_arb #(.inputs_p(inputs_lp)
                        ) UUT
                        ( .clk_i   (clk)
                         ,.reset_i (reset)
-                        ,.ready_i (test_input_ready)
+
+                        ,.grants_en_i (test_input_ready)
+
                         ,.reqs_i  (test_input_reqs)
                         ,.grants_o(test_output_grants)
+
+		        ,.v_o   (v)
+			,.tag_o ( )
+		        ,.yumi_i(v)
                        );
 
   // calculates the no. of requests
