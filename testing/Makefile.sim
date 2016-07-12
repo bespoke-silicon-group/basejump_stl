@@ -1,0 +1,51 @@
+##########
+# settings for Xilinx Vivado
+BSG_IP_CORES_COMP = xvlog --sv
+BSG_IP_CORES_ELAB = xelab -debug typical -s top_sim
+BSG_IP_CORES_SIM  = xsim --runall top_sim
+BSG_IP_CORES_SIM_DEFINE_PARAM =-d@
+BSG_IP_CORES_SIM_INCLUDE_DIRS = -i $(TOP)/bsg_test -i $(TOP)/bsg_misc -i $(TOP)/bsg_dataflow
+BSG_IP_CORES_SIM_CLEAN_FILES = xvlog* xelab* webtalk* xsim* *.wdb
+#
+##########
+
+ALL_FILES = $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x))     \
+              $(foreach x,$(BSG_ASYNC_FILES),$(TOP)/bsg_async/$(x)) \
+              $(foreach x,$(BSG_FSB_FILES),$(TOP)/bsg_fsb/$(x))     \
+              $(foreach x,$(BSG_MEM_FILES),$(TOP)/bsg_mem/$(x))     \
+              $(foreach x,$(BSG_GUTS_FILES),$(TOP)/bsg_guts/$(x))   \
+              $(foreach x,$(BSG_COMM_LINK_FILES),$(TOP)/bsg_comm_link/$(x)) \
+              $(foreach x,$(BSG_DATAFLOW_FILES),$(TOP)/bsg_dataflow/$(x))   \
+              $(foreach x,$(BSG_TEST_FILES),$(TOP)/bsg_test/$(x))           \
+              $(foreach x,$(BSG_TESTME_FILES),$(BSG_TESTME_DIR)/$(x))       \
+              $(TEST_MAIN)
+
+# function that generates a string for each combination of the parameters;
+# spaces separated by "@" signs.
+bsg_param_scan = $(if $(1),$(foreach v__,$($(firstword $(1))),\
+                    $(call bsg_param_scan,$(filter-out $(firstword $(1)),\
+                    $(1)),$(2),$(3),$(4)@$(2)$(firstword $(1))$(3)$(v__))),\
+                    $(4))
+
+# this takes the parameters and creates a set of make targets, one for every
+# combination of the parameters
+commands = $(call bsg_param_scan,$(scan_params),$(BSG_IP_CORES_SIM_DEFINE_PARAM),=)
+
+$(warning bsg_param_scan: $(commands))
+
+# default rule: run all of the targets.
+all: clean $(foreach x,$(commands),run.$(x))
+
+# this runs an individual target
+# we replace the @ with a space so that the parameters are used as
+# command line options
+
+run.%:
+	$(BSG_IP_CORES_COMP) $(subst @, ,$*) $(BSG_IP_CORES_SIM_INCLUDE_DIRS) $(ALL_FILES)
+	$(BSG_IP_CORES_ELAB) $(TEST_MODULE)
+	$(BSG_IP_CORES_SIM) | /usr/bin/tee outfile
+  
+clean:
+	@echo removing outfile
+	rm -f outfile
+	rm -rf $(BSG_IP_CORES_SIM_CLEAN_FILES)

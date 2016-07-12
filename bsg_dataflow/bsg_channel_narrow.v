@@ -35,9 +35,9 @@ module bsg_channel_narrow #( parameter width_in_p   = -1
   localparam padding_p    = width_in_p % width_out_p;
   
   //synopsys translate_off
-  always_comb
+   initial
     assert (width_in_p % width_out_p == 0)
-      else $display ("zero is padded to the left");
+      else $display ("zero is padded to the left (in=%d) vs (out=%d)", width_in_p, width_out_p);
   //synopsys translate_on
   
   logic [width_out_p - 1: 0] data [divisions_lp - 1: 0];

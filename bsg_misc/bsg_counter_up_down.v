@@ -21,18 +21,16 @@
 //
 
 
-module bsg_counter_up_down #(parameter max_val_p   = -1
-                             ,parameter init_val_p = -1
+module bsg_counter_up_down #(parameter max_val_p   = "inv"
+                             ,parameter init_val_p = "inv"
 
-                          //localpara
-                         ,parameter ptr_width_lp = 
-                            `BSG_WIDTH(max_val_p)
-                         )
-    ( input                           clk_i
-    , input                           reset_i
+                             ,parameter ptr_width_lp = $clog2(max_val_p+1)
+                             )
+   ( input  clk_i
+    , input reset_i
 
-    , input                           up_i
-    , input                           down_i
+    , input up_i
+    , input down_i
 
     , output logic [ptr_width_lp-1:0] count_o
     );

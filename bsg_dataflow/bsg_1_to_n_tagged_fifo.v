@@ -34,8 +34,7 @@ module bsg_1_to_n_tagged_fifo   #(parameter width_p              = "inv"
    wire [num_out_p-1:0]               valid_lo;
    wire [num_out_p-1:0]               ready_li;
 
-   bsg_1_to_n_tagged #(.width_p      (width_p     )
-                       ,.num_out_p   (num_out_p   )
+   bsg_1_to_n_tagged #(.num_out_p   (num_out_p   )
                        ) _1_to_n
      (.clk_i
       ,.reset_i
@@ -59,7 +58,7 @@ module bsg_1_to_n_tagged_fifo   #(parameter width_p              = "inv"
              assign ready_li[i] = 1'b1;
           end
         else
-          begin: buf
+          begin: buff
              bsg_fifo_1r1w_small #(.width_p(width_p)
                                    ,.els_p (els_p  )
                                    ) fifo

@@ -34,19 +34,12 @@ module bsg_1_to_n_tagged #(
    if (num_out_p == 1)
      begin : one
         assign v_o = v_i;
-        assign data_o  =  data_i;
         assign yumi_o  = ready_i & v_i;
      end
    else
      begin: many
 
         genvar                  i;
-
-        // we could, i suppose, gate the non-used wires
-        for (i = 0; i < num_out_p; i=i+1)
-          begin: rof
-             assign data_o[i]  = data_i;
-          end
 
         bsg_decode_with_v #(.num_out_p(num_out_p)) bdv
           (.i(tag_i)
