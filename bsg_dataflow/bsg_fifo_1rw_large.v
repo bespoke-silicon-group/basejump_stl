@@ -3,7 +3,7 @@
 // 11/9/14
 //
 // a fifo with only one read or write port,
-// using a 1RW synchronous ram.
+// using a 1RW *synchronous read* ram.
 //
 // NOTE: read results appear on next cycle
 //
