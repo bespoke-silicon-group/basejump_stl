@@ -33,13 +33,13 @@ module bsg_channel_tunnel_in #(parameter width_p = -1
     , input  [num_in_p-1:0]              yumi_i
 
     // to bsg_channel_tunnel_out; returning credits to them; they always accept
-    , output [num_in_p-1:0][lg_remote_credits_lp-1:0] credit_local_return_data_o;
+    , output [num_in_p-1:0][lg_remote_credits_lp-1:0] credit_local_return_data_o
     , output credit_local_return_v_o
 
     // to bsg_channel_tunnel_out; return credits to remote side
     // always valid
 
-    , output [num_in_p-1:0][lg_remote_credits_lp-1:0] credit_remote_return_data_o;
+    , output [num_in_p-1:0][lg_remote_credits_lp-1:0] credit_remote_return_data_o
 
     // bsg_channel_tunnel sent all of the pending credits out
     , input credit_remote_return_yumi_i
@@ -50,8 +50,8 @@ module bsg_channel_tunnel_in #(parameter width_p = -1
    logic [width_p-1:0] credit_data_lo;
 
    // demultiplex the packets.
-   bsg_1_to_n_tagged_fifo #(.out_width_p        (width_p         )
-                            ,.num_out_p         (num_in_p+1      )
+   bsg_1_to_n_tagged_fifo #(.width_p            (width_p)
+                            ,.num_out_p          (num_in_p+1      )
                             ,.els_p             (remote_credits_p)
                             // credit fifo is unbuffered
                             ,.unbuffered_mask_p (1 << num_in_p   )
@@ -60,13 +60,13 @@ module bsg_channel_tunnel_in #(parameter width_p = -1
      (.clk_i
       ,.reset_i
 
-      ,.valid_i
-      ,.tag_i
-      ,.data_i
+      ,.v_i   (valid_i)
+      ,.tag_i (data_i[width_p+:tag_width_lp])
+      ,.data_i(data_i[0+:width_p])
       ,.yumi_o
 
       // v / ready
-      ,.valid_o ( {credit_valid_lo, valid_o}  )
+      ,.v_o     ( {credit_valid_lo, valid_o}  )
       ,.data_o  ( {credit_data_lo , data_o  } )
 
       // credit fifo is unbuffered, so no yumi signal
@@ -79,6 +79,8 @@ module bsg_channel_tunnel_in #(parameter width_p = -1
 
    // compute remote credit arithmetic
    wire [num_in_p-1:0] sent = valid_o & yumi_i;
+
+   genvar 	       i;
 
    // keep track of how many credits need to be send back
    for (i = 0; i < num_in_p; i=i+1)

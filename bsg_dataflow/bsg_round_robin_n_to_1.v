@@ -16,7 +16,7 @@
 module bsg_round_robin_n_to_1 #(parameter width_p = -1
                                 ,parameter num_in_p = "inv"
                                 ,parameter strict_p = "inv"
-                                ,parameter tag_width_lp = `BSG_SAFE_CLOG2(num_in_p);
+                                ,parameter tag_width_lp = `BSG_SAFE_CLOG2(num_in_p)
                                 )
    (input  clk_i
     , input  reset_i
@@ -28,7 +28,7 @@ module bsg_round_robin_n_to_1 #(parameter width_p = -1
 
     // to downstream
     , output v_o
-    , output [width_lp-1:0]    data_o
+    , output [width_p-1:0]     data_o
     , output [tag_width_lp-1:0] tag_o
     , input  yumi_i
     );

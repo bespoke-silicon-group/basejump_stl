@@ -39,10 +39,11 @@
 module bsg_channel_tunnel #(parameter width_p        = 1
                             , num_in_p               = "inv"
                             , remote_credits_p       = "inv"
-                            , lg_credit_decimation_p = 4
+                            , lg_remote_credits_lp   = $clog2(remote_credits_p+1)
+                            , lg_credit_decimation_p = `BSG_MIN(lg_remote_credits_lp,4)
                             , tag_width_lp           = $clog2(num_in_p+1)
                             , tagged_width_lp        = tag_width_lp + width_p
-                            , lg_remote_credits_lp   = $clog2(remote_credits_p+1)
+
                             )
    (input clk_i
     ,input reset_i
@@ -68,6 +69,23 @@ module bsg_channel_tunnel #(parameter width_p        = 1
     , input  [num_in_p-1:0]              yumi_i
     );
 
+   initial
+     assert(lg_credit_decimation_p <= lg_remote_credits_lp)
+       else
+         begin
+            $error("%m bad params; insufficient remote credits 2^%d to allow for decimation factor 2^%d"
+                   ,lg_remote_credits_lp,lg_credit_decimation_p);
+            $finish;
+         end
+   initial
+     assert(width_p >= num_in_p*lg_remote_credits_lp)
+       else
+         begin
+            $error("%m bad params; channel width (%d) must be at least wide enough to route back credits (%d)"
+                   ,width_p
+                   ,num_in_p*lg_remote_credits_lp);
+            $finish;
+         end
 
    wire [num_in_p-1:0][lg_remote_credits_lp-1:0] credit_local_return_data_oi;
    wire                                          credit_local_return_v_oi;
@@ -78,7 +96,7 @@ module bsg_channel_tunnel #(parameter width_p        = 1
 
    bsg_channel_tunnel_out #(.width_p                (width_p)
                             ,.num_in_p              (num_in_p)
-                            ,.remote_credits_p      (credits_p)
+                            ,.remote_credits_p      (remote_credits_p)
                             ,.lg_credit_decimation_p(lg_credit_decimation_p)
                             ) bcto
      (.clk_i
@@ -100,7 +118,7 @@ module bsg_channel_tunnel #(parameter width_p        = 1
 
    bsg_channel_tunnel_in #(.width_p                (width_p  )
                            ,.num_in_p              (num_in_p )
-                           ,.remote_credits_p      (credits_p)
+                           ,.remote_credits_p      (remote_credits_p)
                            ,.lg_credit_decimation_p(lg_credit_decimation_p)
                            ) bcti
      (.clk_i
