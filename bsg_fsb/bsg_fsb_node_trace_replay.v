@@ -13,6 +13,10 @@
 // in theory, we could add branching, etc.
 // before we know it, we have a processor =)
 //
+// note: this trace replay module essentially
+// could be used to replay communication over
+// any latency insensitive channel. later, it
+// may make sense to rename it.
 //
 
 module bsg_fsb_node_trace_replay
