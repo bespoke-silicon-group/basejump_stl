@@ -20,6 +20,7 @@ module test_bsg;
    localparam num_in_lp               = `NUM_IN_P;
    localparam remote_credits_lp       = `REMOTE_CREDITS_P;
    localparam lg_credit_decimation_lp = `LG_CREDIT_DECIMATION_P;
+   localparam asymmetric_lp           = `ASYMMETRIC_P;
 
    localparam cycle_time_lp = 20;
 
@@ -53,9 +54,11 @@ module test_bsg;
         $display("NUM_IN_LP:               %d", num_in_lp);
         $display("REMOTE_CREDITS_LP:       %d", remote_credits_lp);
         $display("LG_CREDIT_DECIMATION_LP: %d", lg_credit_decimation_lp);
+        $display("ASYMMETRIC_LP: %d", asymmetric_lp);
      end
 
-   localparam tagged_width_lp = $clog2(num_in_lp+1)+width_lp;
+   localparam tag_width_lp = $clog2(num_in_lp+1);
+   localparam tagged_width_lp = tag_width_lp+width_lp;
 
    wire [1:0][tagged_width_lp-1:0] multi_data;
    wire [1:0]                      multi_valid;
@@ -106,21 +109,61 @@ module test_bsg;
    //    A B  i/o  channel
    wire [1:0][1:0][num_in_lp-1:0] ctr_incr;
    //    A B  i/o  channel
-   wire [1:0][1:0][num_in_lp-1:0] [27:0] ctr_lo;
+   wire [1:0][1:0][num_in_lp-1:0] [width_lp-1:0] ctr_lo;
 
    genvar                      j,k;
 
    int                         a,b,c;
 
+   wire [31:0] cycle, words_received, credits;
+
+   bsg_counter_clear_up #(.max_val_p({ 1'b0, { 32 { 1'b1 }}})
+                          ,.init_val_p(0)
+                          ) bccu
+     (.clk_i(clk)
+      ,.reset_i(reset)
+      ,.clear_i(1'b0)
+      ,.up_i(multi_yumi[0])
+      ,.count_o(words_received)
+      );
+
+   wire        cred_send = multi_valid[0] & multi_data[0][width_lp+:tag_width_lp] == (tag_width_lp ' (num_in_lp));
+
+   bsg_counter_clear_up #(.max_val_p({ 1'b0, { 32 { 1'b1 }}})
+                          ,.init_val_p(0)
+                          ) bccu2
+     (.clk_i(clk)
+      ,.reset_i(reset)
+      ,.clear_i(1'b0)
+      ,.up_i(multi_valid[0] & (cred_send))
+      ,.count_o(credits)
+      );
+
+   localparam show_values_lp=0;
+   localparam print_skip_lp=1000;
+
    always @(negedge clk)
      begin
+	if (show_values_lp)
         for (a = 0; a < num_in_lp; a=a+1)
           for (b = 0; b < 2; b=b+1)
             for (c = 0; c < 2; c=c+1)
               $display("channel %d, %s %x ",a, (b ? (c ? "*<-" : "<-*") : (c ? "->*" : "*->"))
-		       ,ctr_lo[b][c][a]);
-        $display("--------------");
+                       ,ctr_lo[b][c][a]);
+	if ((cycle % print_skip_lp) == 0)
+          $display("* cycle %d (words %d, credits %d (%f)"
+                   ,cycle
+                   ,words_received
+                   ,credits
+                   ,(real'(credits)) / (real ' (words_received)));
      end
+
+   bsg_cycle_counter #(.width_p(32),.init_val_p(0)
+                       ) bcc
+     (.clk(clk)
+      ,.reset_i(reset)
+      ,.ctr_r_o(cycle)
+      );
 
    // generate some data
    for (i = 0; i < num_in_lp; i++)
@@ -132,7 +175,7 @@ module test_bsg;
              for (k = 0; k < 2; k++)
                begin: rof4
                   bsg_counter_up_down
-                      #(.max_val_p(32'hFFF_FFFF)
+                      #(.max_val_p({ 1'b0, { width_lp {1'b1} }} )
                        ,.init_val_p( (i<<16)+i)
                        ) ctr
                       (.clk_i(clk)
@@ -143,14 +186,16 @@ module test_bsg;
                        );
                end
 
-             // * wire counter to input
+             // * wire counter to input; this is always ready to send
              assign data [j][0][i]    = ctr_lo[j][0][i];
              assign valid[j][0][i]    = 1'b1;
-             assign ctr_incr[j][0][i] = yumi[j][0][i];
+             assign ctr_incr[j][0][i]  = yumi[j][0][i];
 
-             // * wire paired counter to output
-             assign ctr_incr[!j][1][i] = valid[!j][1][i];
-             assign yumi[!j][1][i]     = valid[!j][1][i];
+             // * wire paired counter to output; we receive at different
+             // rates based on channel number.
+
+             assign yumi[!j][1][i]     = valid[!j][1][i] & (~asymmetric_lp | (cycle[i:0]==0));
+             assign ctr_incr[!j][1][i] = yumi[!j][1][i];
 
              // check data on receiving end of channel
              always_ff @(negedge clk)
