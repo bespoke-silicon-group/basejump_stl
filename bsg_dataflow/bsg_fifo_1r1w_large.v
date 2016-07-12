@@ -273,6 +273,7 @@ module bsg_fifo_1r1w_large #(parameter width_p           = -1
 
   bsg_round_robin_n_to_1 #(.width_p(width_p)
                             ,.num_in_p(2)
+			    ,.strict_p(1)
                             ) round_robin_n_to_1
      (.clk_i   (clk_i     )
       ,.reset_i(reset_i   )
@@ -283,6 +284,7 @@ module bsg_fifo_1r1w_large #(parameter width_p           = -1
 
       ,.data_o (data_o    )
       ,.valid_o(v_o       )
+      ,.tag_o  ()
       ,.yumi_i (yumi_i    )
       );
 
