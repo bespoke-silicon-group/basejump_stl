@@ -10,7 +10,7 @@
 // we omit the data part as it is just duplication.
 //
 
-module bsg_round_robin_1_to_n #(parameter width_p = -1
+module bsg_round_robin_1_to_n #(parameter width_p = "inv"
                                 ,parameter num_out_p = 2)
    (input  clk_i
     , input  reset_i
@@ -18,10 +18,10 @@ module bsg_round_robin_1_to_n #(parameter width_p = -1
     // from one fifo
     , input               valid_i
     , output              ready_o
-
+    
     // to many
-    , output  [num_out_p-1:0]                  valid_o
-    , input   [num_out_p-1:0]                  ready_i
+    , output  [num_out_p-1:0]  valid_o
+    , input   [num_out_p-1:0]  ready_i
 
     // to downstream
     );

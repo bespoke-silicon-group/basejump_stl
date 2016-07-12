@@ -1,6 +1,12 @@
 // MBT 11/26/2014
 //
-// bsg_node_trace_replay
+// bsg_nonsynth_fsb_node_trace_replay
+//
+// note: generally it is better to use
+//       bsg_fsb_node_trace_replay
+//       than this module, because 1)
+//       it is synthesizeable, and 2)
+//       it may have races (see fixme)
 //
 // trace format
 //
@@ -90,6 +96,10 @@ module bsg_nonsynth_fsb_node_trace_replay
    // we absorb data if we are receiving or if we are done.
    assign ready_o = receive_op | done_o;
 
+   // mbt fixme: I suspect this should actually
+   // be done on the negative edge of the clock
+   // to avoid races.
+   
    always @(posedge clk_i)
      begin
         if (!done_o)
