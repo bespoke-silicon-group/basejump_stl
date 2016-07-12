@@ -163,15 +163,6 @@ module bsg_mesh_router #(
        ,.req_o(req)
        );
 
-   // valid out signals; we get these out quickly before we determine whose data we actually send
-
-   assign v_o[W] = ready_i_stub[W] & (req[P][W] | req[E][W] | (allow_S_to_EW_p & req[S][W]));
-   assign v_o[E] = ready_i_stub[E] & (req[P][E] | req[W][E] | (allow_S_to_EW_p & req[S][E]));
-
-   assign v_o[P] = ready_i_stub[P] & (req[P][P] | req[N][P] | req[E][P] | req[S][P] | req[W][P]);
-   assign v_o[N] = ready_i_stub[N] & (req[P][N] | req[W][N] | req[E][N] | req[S][N]);
-   assign v_o[S] = ready_i_stub[S] & (req[P][S] | req[W][S] | req[E][S] | req[N][S]);
-
    // synopsys translate off
    if (debug_p)
      for (i = P; i <= S; i=i+1)
@@ -205,18 +196,28 @@ module bsg_mesh_router #(
                               ) west_rr_arb
           (.clk_i
            ,.reset_i
-           ,.ready_i(ready_i_stub[W])
-           ,.reqs_i({req[E][W], req[P][W], req[S][W]})
+           ,.grants_en_i(ready_i_stub[W])
+
+           ,.reqs_i  ({req[E][W], req[P][W], req[S][W]})
            ,.grants_o({W_gnt_e, W_gnt_p, W_gnt_s})
-      );
+
+           ,.v_o      (v_o[W])
+           ,.tag_o    ()
+           ,.yumi_i   (v_o[W])
+           );
 
         bsg_round_robin_arb #(.inputs_p(3)
                               ) east_rr_arb
           (.clk_i
            ,.reset_i
-           ,.ready_i(ready_i_stub[E])
+           ,.grants_en_i(ready_i_stub[E])
+
            ,.reqs_i({req[W][E], req[P][E], req[S][E]})
            ,.grants_o({E_gnt_w, E_gnt_p, E_gnt_s})
+
+           ,.v_o   (v_o[E])
+           ,.tag_o ()
+           ,.yumi_i(v_o[E])
            );
      end
    else
@@ -224,22 +225,32 @@ module bsg_mesh_router #(
         assign W_gnt_s = 1'b0;
         assign E_gnt_s = 1'b0;
 
-        bsg_round_robin_arb #(.inputs_p(2)
+	bsg_round_robin_arb #(.inputs_p(2)
                               ) west_rr_arb
           (.clk_i
            ,.reset_i
-           ,.ready_i(ready_i_stub[W])
+           ,.grants_en_i(ready_i_stub[W])
+
            ,.reqs_i({req[E][W], req[P][W]})
            ,.grants_o({W_gnt_e, W_gnt_p})
+
+           ,.v_o    (v_o[W])
+           ,.tag_o  ()
+           ,.yumi_i (v_o[W])
            );
 
         bsg_round_robin_arb #(.inputs_p(2)
                               ) east_rr_arb
           (.clk_i
            ,.reset_i
-           ,.ready_i(ready_i_stub[E])
+           ,.grants_en_i(ready_i_stub[E])
+
            ,.reqs_i({req[W][E], req[P][E]})
            ,.grants_o({E_gnt_w, E_gnt_p})
+
+           ,.v_o   (v_o[E])
+           ,.tag_o ()
+           ,.yumi_i(v_o[E])
            );
      end
 
@@ -247,27 +258,43 @@ module bsg_mesh_router #(
                          ) north_rr_arb
      (.clk_i
       ,.reset_i
-      ,.ready_i(ready_i_stub[N])
+      ,.grants_en_i(ready_i_stub[N])
+
       ,.reqs_i({req[S][N], req[E][N], req[W][N], req[P][N]})
       ,.grants_o({ N_gnt_s, N_gnt_e, N_gnt_w, N_gnt_p })
+
+      ,.v_o   (v_o[N])
+      ,.tag_o ()
+      ,.yumi_i(v_o[N])
       );
 
    bsg_round_robin_arb #(.inputs_p(4)
                          ) south_rr_arb
      (.clk_i
       ,.reset_i
-      ,.ready_i(ready_i_stub[S])
+
+      ,.grants_en_i(ready_i_stub[S])
+
       ,.reqs_i({req[N][S], req[E][S], req[W][S], req[P][S]})
       ,.grants_o({ S_gnt_n, S_gnt_e, S_gnt_w, S_gnt_p })
+
+      ,.v_o   (v_o[S])
+      ,.tag_o ()
+      ,.yumi_i(v_o[S])
       );
 
    bsg_round_robin_arb #(.inputs_p(5)
                          ) proc_rr_arb
      (.clk_i
       ,.reset_i
-      ,.ready_i(ready_i_stub[P])
+      ,.grants_en_i(ready_i_stub[P])
+
       ,.reqs_i({req[S][P], req[N][P], req[E][P], req[W][P], req[P][P]})
       ,.grants_o({ P_gnt_s, P_gnt_n, P_gnt_e, P_gnt_w, P_gnt_p })
+
+      ,.v_o   (v_o[P])
+      ,.tag_o ()
+      ,.yumi_i(v_o[P])
       );
 
    // data out signals; this is a big crossbar that actually routes the data
