@@ -26,17 +26,17 @@ module bsg_fifo_tracker #(parameter els_p           = -1
    assign rptr_r_o = rptr_r;
 
    // Used to latch last operation, to determine fifo full or empty
-   logic                    enque_r, deque_r;
+   logic                    enq_r, deq_r;
 
    // internal signals
-   logic                    empty, full, equal_ptrs, enque;
+   logic                    empty, full, equal_ptrs;
 
    bsg_circular_ptr #(.slots_p   (els_p)
                       ,.max_add_p(1    )
                       ) rptr
      ( .clk      (clk_i  )
        , .reset_i(reset_i)
-       , .add_i  (yumi_i )
+       , .add_i  (deq_i )
        , .o      (rptr_r )
        );
 
@@ -45,7 +45,7 @@ module bsg_fifo_tracker #(parameter els_p           = -1
                       ) wptr
      ( .clk      (clk_i  )
        , .reset_i(reset_i)
-       , .add_i  (enque  )
+       , .add_i  (enq_i  )
        , .o      (wptr_r )
        );
 
@@ -56,8 +56,8 @@ module bsg_fifo_tracker #(parameter els_p           = -1
    always_ff @(posedge clk_i)
      if (reset_i)
        begin
-          enque_r <= 1'b0;
-          deque_r <= 1'b1;
+          enq_r <= 1'b0;
+          deq_r <= 1'b1;
        end
      else
        begin
@@ -65,8 +65,8 @@ module bsg_fifo_tracker #(parameter els_p           = -1
           // either enque or dequing
           if (enq_i | deq_i)
             begin
-               enque_r <= enq_i;
-               deque_r <= deq_i;
+               enq_r <= enq_i;
+               deq_r <= deq_i;
             end
        end // else: !if(reset_i)
 
@@ -82,7 +82,7 @@ module bsg_fifo_tracker #(parameter els_p           = -1
    // enque signals would not make the counters equal
 
    assign equal_ptrs = (rptr_r == wptr_r);
-   assign empty_o    = equal_ptrs & deque_r;
-   assign full_o     = equal_ptrs & enque_r;
+   assign empty_o    = equal_ptrs & deq_r;
+   assign full_o     = equal_ptrs & enq_r;
 
 endmodule // bsg_fifo_tracker
