@@ -28,8 +28,8 @@ module bsg_fsb #(parameter  width_p = "inv"
                  ,parameter nodes_p = "inv"
 
                  // bit vector of master nodes
-                 , parameter enabled_at_start_vec_p = { (nodes_p) { 1'b0 } }
-                 , parameter snoop_vec_p            = { (nodes_p) { 1'b0 } }
+                 , parameter enabled_at_start_vec_p = (nodes_p) ' (0)
+                 , parameter snoop_vec_p            = (nodes_p) ' (0)
                  )
    (input clk_i
     , input reset_i

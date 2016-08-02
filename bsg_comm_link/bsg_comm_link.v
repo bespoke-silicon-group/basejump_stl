@@ -156,7 +156,7 @@ module bsg_comm_link
     , parameter master_to_slave_speedup_p = 100
 
     // have this node enabled at startup (typ. 0 for ASIC; 1 for FPGA)
-    , parameter enabled_at_start_vec_p     = ({ (nodes_p) {1'b0 } })
+    , parameter enabled_at_start_vec_p     = (nodes_p) ' (0)
 
     // * PARAMETERS
     // * below here mostly can be left alone
@@ -172,7 +172,7 @@ module bsg_comm_link
     , parameter sbox_pipeline_out_p = 1'b1
 
     // made this node see all packets (typ. 0 for ASIC and FPGA)
-    , parameter snoop_vec_p               = ({ (nodes_p) {1'b0 } })
+    , parameter snoop_vec_p               = (nodes_p) ' (0)
 
     // in testing, use this to disable tests
     , parameter master_bypass_test_p = 5'b00000
