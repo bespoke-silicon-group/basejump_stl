@@ -279,11 +279,11 @@ module bsg_fifo_1r1w_large #(parameter width_p           = -1
       ,.reset_i(reset_i   )
 
       ,.data_i (data_int )
-      ,.valid_i(valid_int)
+      ,.v_i(valid_int)
       ,.yumi_o (yumi_int )
 
       ,.data_o (data_o    )
-      ,.valid_o(v_o       )
+      ,.v_o(v_o       )
       ,.tag_o  ()
       ,.yumi_i (yumi_i    )
       );
