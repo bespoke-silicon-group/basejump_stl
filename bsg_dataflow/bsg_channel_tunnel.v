@@ -1,9 +1,32 @@
 // MBT  7/7/16
 //
-// This implements channel tunneling. Effectively, it is like virtual channels
-// except that it includes credits as part of the channels, and it does not
-// require the virtual channels to demultiplex at every step. Finally, especially
-// when crossing chip boundaries, we can aggregrate the FIFO space into a single
+// bsg_channel_tunnel
+//
+// This module allows you to multiplex multiple streams over a shared
+// interconnect without having deadlock occur because of stream interleaving.
+//
+// There are three models for interleaving streams:
+//
+// a. Your stream is guaranteed to be sunk by the remote node without
+//    dependence on external factors, and does not rely upon back pressure.
+//    In this case you avoid deadlock but may have fairness issues. Here, you
+//    attach directly to the shared interconnect (e.g. bsg_fsb).
+//
+// b. Your streams rely upon back pressure from the remote node. Here, you
+//    can use multiple bsg_channel_tunnel modules, one for each stream.
+//    This ensures that you do not deadlock, but it does not address unfairness
+//    in the interconnect that may lead to starvation.
+//
+// c. Your stream rely upon back pressure from the remote node. In this
+//    scenario, you use one bsg_channel_tunnel across multiple streams.
+//    Within this group of streams, you will have round-robin fairness.
+//
+// Channel tunneling is like virtual channels except that it includes
+// credits as part of the channels, and it does not
+// require the virtual channels to demultiplex at every step.
+//
+// Finally, especially when crossing chip boundaries (and using case c),
+// we can aggregrate the FIFO space into a single
 // large FIFO which is more efficient per bit than many smaller FIFOs.
 //
 // 1. remote_credits_p typical set to 2X bandwidth delay product of link

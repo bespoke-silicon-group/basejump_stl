@@ -1,3 +1,9 @@
+// bsg_mesh_router
+//
+// this router requires that the X coordinates be located
+// at lowest bits in the packet, and the Y coordinates at the next lowest position
+//
+
 // import enum Dirs for directions
 import bsg_noc_pkg::Dirs
        , bsg_noc_pkg::P  // proc (processor core)

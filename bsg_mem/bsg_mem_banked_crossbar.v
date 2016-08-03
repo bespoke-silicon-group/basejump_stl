@@ -100,6 +100,7 @@ module bsg_mem_banked_crossbar #
    ,parameter rr_lo_hi_p         = "inv"
    ,parameter addr_hash_width_lp = `BSG_SAFE_CLOG2(num_banks_p)
    ,parameter bank_addr_width_lp = `BSG_SAFE_CLOG2(bank_size_p)
+    // fixme: this is a little weird as an interface.
    ,parameter addr_width_lp      = (num_banks_p == 1)?
                                     bank_addr_width_lp
                                     : addr_hash_width_lp + bank_addr_width_lp
