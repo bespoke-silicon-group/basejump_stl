@@ -9,8 +9,9 @@ module bsg_counter_clock_downsample #(parameter width_p = "inv")
     ,output logic         clk_r_o
     );
 
-logic [width_p-1:0] ctr_n, ctr_r;   // counter logic
-logic               is_ctr_zero;    // set if the counter is 0
+// Counter register
+//
+logic [width_p-1:0] ctr_r;
 
 // Determine if the counter is 0
 //
