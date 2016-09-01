@@ -1,8 +1,8 @@
 #!/usr/bin/python
 #
-# bsg_shift_gen_tsmc_250
+# bsg_mux_gen_tsmc_250
 #
-# This script generates shift registers with deterministic naming, and placement directives.
+# This script generates one hot muxes.
 #
 # data_i:   input data
 # data_o:   output data
