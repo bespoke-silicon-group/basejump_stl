@@ -14,31 +14,25 @@ export DC_RELEASE    = syn/G-2012.06-SP5-4
 # trying out variations of a product of different command line parameters.
 #
 # MBT 5/12/2015
-#
-# Edited to test bsg_counter_clock_downsample.v
-# Scott Davidson (stdavids@eng.ucsd.edu) 8/21/2016
 
-HARDEN = 1
+HARDEN = 0
 
-TOP = ../..
+TOP = ../../..
 
 ########################### SIMULATION PARAMETERS ###########################
 # place the parameters you want to scan here.
-BSG_DEFINES_FILES   = $(TOP)/bsg_misc/bsg_defines.v
-BSG_TESTME_FILES    = bsg_clk_gen.v
-BSG_TESTME_DIR      = $(TOP)/bsg_clk_gen
-BSG_MISC_FILES      = bsg_counter_clock_downsample.v bsg_counter_clear_up.v bsg_mux.v bsg_strobe.v
-BSG_ASYNC_FILES     = bsg_launch_sync_sync.v
-BSG_TAG_FILES       = bsg_tag_pkg.v bsg_tag_client.v bsg_tag_master.v
+BSG_TESTME_FILES    = 
+BSG_TESTME_DIR      = 
+BSG_MISC_FILES      =  bsg_defines.v bsg_strobe.v
+BSG_ASYNC_FILES     = 
 BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  =
 BSG_FSB_FILES       =
+BSG_TAG_FILES       = 
 BSG_GUTS_FILES      =
-BSG_CONFIG_NET_FILES= config_node.v rNandMeta.v
 BSG_TEST_FILES      = bsg_nonsynth_clock_gen.v
 
-BSG_CLK_GEN_FILES   = bsg_clk_gen_osc.v bsg_rp_clk_gen_fine_delay_tuner.v  bsg_rp_clk_gen_adg.v
-BSG_CLK_GEN_GENERATED_FILES =  ./bsg_rp_clk_gen_coarse_delay_element_8_6_4_2.v ./bsg_rp_clk_gen_coarse_delay_element_6_4_2_0.v ./bsg_rp_tsmc_250_MX2X1.v ./bsg_rp_tsmc_250_DFFNRX4.v
+BSG_CLK_GEN_FILES   =
 ifeq ($(HARDEN),0)
 BSG_CLK_GEN_DIR     = $(TOP)/bsg_clk_gen
 BSG_HARD_LIB        =
@@ -63,22 +57,20 @@ WIDTH_P    = 8
 ############################# SIMULATOR COMMANDS ###########################
 
 VCS_FLAGS  = -PP -notice -full64 +lint=all,noVCDE,noNS +v2k -sverilog -timescale=100ps/10ps  +vcs+loopreport +notimingchecks
-VCS_FLAGS += +incdir+$(TOP)/bsg_tag +incdir+$(TOP)/bsg_clk_gen
+VCS_FLAGS += +incdir+$(TOP)/bsg_tag/
 
 ############################################################################
 
 
-ALL_FILES =   $(BSG_DEFINES_FILES) $(foreach x,$(BSG_TAG_FILES),$(TOP)/bsg_tag/$(x)) \
-              $(foreach x,$(BSG_TESTME_FILES),$(BSG_TESTME_DIR)/$(x)) \
-              $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x)) \
-              $(BSG_CLK_GEN_GENERATED_FILES) \
+ALL_FILES = $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x)) \
+            $(foreach x,$(BSG_TESTME_FILES),$(BSG_TESTME_DIR)/$(x)) \
               $(foreach x,$(BSG_ASYNC_FILES),$(TOP)/bsg_async/$(x)) \
               $(foreach x,$(BSG_COMM_LINK_FILES),$(TOP)/bsg_comm_link/$(x)) \
               $(foreach x,$(BSG_DATAFLOW_FILES),$(TOP)/bsg_dataflow/$(x)) \
               $(foreach x,$(BSG_FSB_FILES),$(TOP)/bsg_fsb/$(x)) \
+              $(foreach x,$(BSG_TAG_FILES),$(TOP)/bsg_tag/$(x)) \
               $(foreach x,$(BSG_GUTS_FILES),$(TOP)/bsg_guts/$(x)) \
               $(foreach x,$(BSG_TEST_FILES),$(TOP)/bsg_test/$(x)) \
-              $(foreach x,$(BSG_CLK_GEN_FILES),$(BSG_CLK_GEN_DIR)/$(x)) \
               $(SYNOPSYS_DIR)/$(ICC_RELEASE)/packages/gtech/src_ver/GTECH_NAND2.v \
               $(TEST_MAIN)
 
@@ -95,22 +87,17 @@ commands = $(call bsg_param_scan,$(scan_params),+define+,=)
 
 $(warning bsg_param_scan: $(commands))
 
+
 # default rule: run all of the targets.
 all: $(foreach x,$(commands),run.$(x))
-
-gen_verilog:
-	sed -e s/\<0\>/8/g -e s/\<1\>/6/g -e s/\<2\>/4/g -e s/\<3\>/2/g $(TOP)/hard/bsg_clk_gen/bsg_rp_clk_gen_coarse_delay_element.v > bsg_rp_clk_gen_coarse_delay_element_8_6_4_2.v
-	sed -e s/\<0\>/6/g -e s/\<1\>/4/g -e s/\<2\>/2/g -e s/\<3\>/0/g $(TOP)/hard/bsg_clk_gen/bsg_rp_clk_gen_coarse_delay_element.v > bsg_rp_clk_gen_coarse_delay_element_6_4_2_0.v
-	$(TOP)/hard/bsg_misc/bsg_gate_stack_gen.py MX2X1      32 "#0 (.A (#1), .B(#2), .S0(#3), .Y(#4));" > bsg_rp_tsmc_250_MX2X1.v
-	$(TOP)/hard/bsg_misc/bsg_gate_stack_gen.py DFFNRX4 32 "#0 (.D (#1), .CKN(#2), .RN(#3), .Q(#4), .QN());" > bsg_rp_tsmc_250_DFFNRX4.v
 
 # this runs an individual target
 # we replace the @ with a space so that the parameters are used as 
 # command line options
 
-run.%: $(ALL_FILES)  gen_verilog
+run.%: $(ALL_FILES)
 	-rm -rf simv csrc simv.daidir
-	$(VCS_BIN)/vcs $(VCS_FLAGS) $(filter-out small-clean,$(ALL_FILES)) $(subst @, ,$*) -o simv $(BSG_HARD_LIB)
+	$(VCS_BIN)/vcs $(VCS_FLAGS) $(filter-out small-clean,$^) $(subst @, ,$*) -o simv $(BSG_HARD_LIB)
 	./simv $(subst @, ,$*) | tee $@.log
 
 dve:

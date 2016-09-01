@@ -10,19 +10,29 @@ module bsg_dff #(width_p=-1, harden_p=1, strength_p=1)
     ,output [width_p-1:0] data_o
     );
 
-   `bsg_dff_macro(32,1)
+   `bsg_dff_macro(40,1)
     else
-   `bsg_dff_macro(32,2)
-    else  
+   `bsg_dff_macro(39,1)
+    else
+   `bsg_dff_macro(38,1)
+    else
+   `bsg_dff_macro(37,1)
+    else
+    `bsg_dff_macro(33,1)
+    else
+    `bsg_dff_macro(32,1)
+    else
+    `bsg_dff_macro(30,1)
+    else
+    `bsg_dff_macro(8,1)
+    else
+    `bsg_dff_macro(32,2)
+    else
    `bsg_dff_macro(32,4)
     else
    `bsg_dff_macro(32,8)
-   else
-     `bsg_dff_macro(26,1)
-   else
-     `bsg_dff_macro(30,1)
-   else
-  `bsg_dff_macro(33,1)
+    else
+    `bsg_dff_macro(26,1)
      else
      begin: notmacro
         reg [width_p-1:0] data_r;

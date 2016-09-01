@@ -18,7 +18,12 @@ module bsg_dff_en #(width_p="inv"
     ,output [width_p-1:0] data_o
     );
 
-   `bsg_dff_en_macro(16)
+   `bsg_dff_en_macro(40)
+   else `bsg_dff_en_macro(39)
+   else `bsg_dff_en_macro(38)
+   else `bsg_dff_en_macro(37)
+   else `bsg_dff_en_macro(16)
+   else `bsg_dff_en_macro(15)
    else `bsg_dff_en_macro(14)
    else `bsg_dff_en_macro(12)
    else `bsg_dff_en_macro(11)
@@ -27,6 +32,7 @@ module bsg_dff_en #(width_p="inv"
    else `bsg_dff_en_macro(7)
    else `bsg_dff_en_macro(6)
    else `bsg_dff_en_macro(5)
+   else `bsg_dff_en_macro(4)
    else
    begin : notmacro
       reg [width_p-1:0] data_r;
