@@ -2,6 +2,10 @@
 // hits 0, the output clk_r_o will invert. The number of bits wide
 // the counter is can be set with the width_p parameter.
 //
+// Random ideas: could have a variant of this that takes two inputs
+// one for the high duty cycle and one for the low duty cycle.
+//
+
 module bsg_counter_clock_downsample #(parameter width_p = "inv")
     (input                clk_i
     ,input                reset_i
@@ -9,32 +13,23 @@ module bsg_counter_clock_downsample #(parameter width_p = "inv")
     ,output logic         clk_r_o
     );
 
-// Counter register
-//
-logic [width_p-1:0] ctr_r;
+   wire strobe_r;
 
-// Determine if the counter is 0
-//
-wire is_ctr_zero = ~(|ctr_r);
+   // asserts a "1" every val_i cycles
+   bsg_strobe #(.width_p(width_p)) strobe
+   (.clk_i
+    ,.reset_r_i(reset_i)
+    ,.init_val_r_i(val_i)
+    ,.strobe_r_o(strobe_r)
+    );
 
-// Counter register
-//
-always_ff @(posedge clk_i)
-  begin
-    if (reset_i | is_ctr_zero)
-      ctr_r <= val_i;
-    else
-      ctr_r <= ctr_r - 1'b1;
-  end
-
-// Clock output register
-//
-always_ff @(posedge clk_i)
-  begin
-    if (reset_i)
-      clk_r_o <= 1'b0;
-    else if (is_ctr_zero)
-      clk_r_o <= ~clk_r_o;
-  end
+   // Clock output register
+   always_ff @(posedge clk_i)
+     begin
+        if (reset_i)
+          clk_r_o <= 1'b0;
+        else if (strobe_r)
+          clk_r_o <= ~clk_r_o;
+     end
 
 endmodule

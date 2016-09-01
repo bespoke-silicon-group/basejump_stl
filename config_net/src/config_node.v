@@ -1,17 +1,28 @@
 `include "config_defs.v"
 
+// fixme: label all signals with clock prefix, and use bsg_ip_cores macros to hardplace CDC regions
+// and rNandMeta
+
 module config_node
   #(parameter             // node specific parameters
     id_p = -1,            // unique ID of this node
     data_bits_p = -1,     // number of bits of configurable register associated with this node
     default_p = -1        // default/reset value of configurable register associated with this node
    )
-   (input clk, // destination side clock from pins
-    input reset, // destination side reset from pins
+   (
+    // this includes the config clock and a single config data line
     input config_s config_i, // from IO pads
 
-    output [data_bits_p - 1 : 0] data_o
+    // all of these signals are relative to the destination clock domain
+    input clk, // destination side clock from pins
+    input reset, // destination side reset from pins
+
+    // whether data_o is new
+    output logic data_new_r_o,
+    output [data_bits_p - 1 : 0] data_r_o
    );
+
+   localparam debug_lp = 0;
 
   localparam data_rx_len_lp     = (data_bits_p + (data_bits_p / data_frame_len_lp) + frame_bit_size_lp);
                                       // + frame_bit_size_lp means the end, or msb of received data is always framing bits
@@ -64,7 +75,7 @@ module config_node
   logic                       ready_n, ready_r; // data_r ready and corresponding registers for clock domain crossing
                                                 // no combinational logic between ready_r and its destination side receiver,
                                                 // to reduce the change to go metastable
-  logic                       ready_synced;     // ready signal which is passed through the bsg_launch_sync_sync to 
+  logic                       ready_synced;     // ready signal which is passed through the bsg_launch_sync_sync to
                                                 // cross clock domains
 
   logic [len_width_lp - 1 : 0] packet_len;
@@ -94,7 +105,7 @@ module config_node
   logic                       default_en; // derived reset-to-default in destination clock domain
 
   logic                       data_dst_en; // data_dst_r write enable
-  logic [data_bits_p - 1 : 0] data_dst, data_dst_r; // destination side data payload register
+  logic [data_bits_p - 1 : 0] data_dst_n, data_dst_r; // destination side data payload register
 
   assign count_n_int = (valid) ? (packet_len - 1) : ((count_non_zero) ? (count_r - 1) : count_r);
   assign count_n = count_n_int[0 +: len_width_lp];
@@ -104,55 +115,157 @@ module config_node
 
   assign shift_n = {config_i.cfg_bit, shift_r[1 +: shift_width_lp - 1]};
 
+
+  // synopsys translate_off
+
+   // non-synthesizeable helper message
+  always @(negedge config_i.cfg_clk)
+    begin
+       if (cfg_reset)
+         $display("## I: CONFIG NODE (id=%-d,default=%-d'b%-b,packet_size=%-d) received reset packet (%m)",id_p,data_bits_p,default_p,$bits(node_packet_s));
+    end
+
+  // synopsys translate_on
+
+   // we break up the config register into three parts because it is too tall
+
+   // receive register for config net's data portion
+   // this is separated out so because it aligns with the data synchronization registers
+   bsg_dff_gatestack #(.width_p(data_rx_len_lp)
+                       ,.harden_p(1)
+                       ) shift_reg_data
+     (
+      .i0 (shift_n.rx)        // D
+      ,.i1({ data_rx_len_lp {config_i.cfg_clk}})  // CLK
+      ,.o (shift_r.rx)        // Q
+      );
+
+   // receive register for config net's len portion
+   // this is separated out so because it aligns with the data synchronization registers
+   bsg_dff_gatestack #(.width_p(len_width_lp)
+                       ,.harden_p(1)
+                       ) shift_reg_len
+     (
+      .i0 (shift_n.len     )
+      ,.i1({ len_width_lp  {config_i.cfg_clk}})
+      ,.o (shift_r.len)
+      );
+
+   bsg_dff_gatestack #(.width_p(id_width_lp)
+                       ,.harden_p(1)
+                       ) shift_reg_id
+     (
+      .i0 (shift_n.id     )
+      ,.i1({ id_width_lp  {config_i.cfg_clk}})
+      ,.o (shift_r.id)
+      );
+
+   initial assert (data_rx_len_lp+1+id_width_lp+frame_bit_size_lp+len_width_lp+frame_bit_size_lp+valid_bit_size_lp == $bits(node_packet_s))
+     else
+       $error("%m likely missing component in config_node flops");
+
+   localparam remainder_lp = $bits(node_packet_s)-id_width_lp-data_rx_len_lp-len_width_lp;
+
+   // receive register for config net
+   bsg_dff_gatestack #(.width_p(remainder_lp)
+             ,.harden_p(1)
+             ) shift_reg_remain
+     (
+      .i0 ({shift_n.f2, shift_n.f1, shift_n.f0, shift_n.valid})
+      ,.i1({ remainder_lp {config_i.cfg_clk}})
+      ,.o ({shift_r.f2, shift_r.f1, shift_r.f0, shift_r.valid})
+      );
+
+   bsg_dff_reset #(.width_p(len_width_lp)
+                   ,.harden_p(1)
+                   ) count_reg
+     (.clock_i(config_i.cfg_clk)
+      ,.data_i(count_n)
+      ,.data_o(count_r)
+      ,.reset_i(cfg_reset)
+      );
+
   always_ff @ (posedge config_i.cfg_clk) begin
     if (cfg_reset) begin
-      count_r <= 0;
-      data_r <= default_p;
       ready_r <= 0;
     end else begin
-      count_r <= count_n;
       if (data_en) begin
-        data_r <= data_n;
         ready_r <= ready_n;
       end
     end
-
-    shift_r <= shift_n;
   end
 
   assign ready_n = ready_r ^ data_en; // xor, invert ready signal when data_en is 1
 
   assign default_en = reset & (~ r_e_s_e_t_r); // (reset == 1) & (r_e_s_e_t_r == 0)
- 
+
   // This bsg_launch_sync_sync module is used to cross the clock domains for
-  // the ready signal 
+  // the ready signal
   bsg_launch_sync_sync #( .width_p(1)
-			                 , .use_negedge_for_launch_p(0)
+                                         , .use_negedge_for_launch_p(0)
                        ) synchronizer
 
     ( .iclk_i(config_i.cfg_clk)
-    , .iclk_reset_i(reset)
+    , .iclk_reset_i(1'b0)  // mbt: was incorrectly set to reset; which is wrong clock domain
     , .oclk_i(clk)
     , .iclk_data_i(ready_r ^ cfg_reset)
     , .iclk_data_o()
-    , .oclk_data_o(ready_synced) 
+    , .oclk_data_o(ready_synced)
     );
+
+   if (default_p==0)
+     begin: def
+        bsg_dff_reset_en #(.width_p(data_bits_p),.harden_p(1'b1))
+        data_r_reg
+          (.clock_i(config_i.cfg_clk)
+           ,.reset_i(cfg_reset)
+           ,.en_i(data_en)
+           ,.data_i(data_n)
+           ,.data_o(data_r)
+           );
+
+        bsg_dff_reset_en #(.width_p(data_bits_p),.harden_p(1'b1))
+        data_dst_reg
+          (.clock_i(clk)
+           ,.data_i(data_r)
+           ,.en_i(data_dst_en)
+           ,.reset_i(default_en)
+           ,.data_o(data_dst_r)
+           );
+     end
+   else
+     begin: def
+        // source register for crossing clock domains
+        bsg_dff_en #(.width_p(data_bits_p),.harden_p(1'b1))
+        data_r_reg
+          (.clock_i(config_i.cfg_clk)
+           ,.en_i(cfg_reset | data_en)
+           ,.data_i(cfg_reset ? default_p : data_n)
+           ,.data_o(data_r)
+           );
+
+        bsg_mux #(.width_p(data_bits_p)
+                  ,.harden_p(1)
+                  ,.els_p(2)
+                  ) data_dst_mux
+          (
+           .sel_i(default_en)
+           ,.data_i( { data_bits_p '(default_p), data_r})
+           ,.data_o(data_dst_n)
+           );
+
+        bsg_dff_en #(.width_p(data_bits_p)
+                     ,.harden_p(1)
+                     ) data_dst_reg
+          (.clock_i(clk)
+           ,.data_i(data_dst_n)
+           ,.en_i(default_en | data_dst_en)
+           ,.data_o(data_dst_r)
+           );
+     end
 
   // Register for edge detection
   assign sync_shift_n = {ready_synced, sync_shift_r[1]};
-
-  // The NAND gate array is used as filters to clear cross clock domain data's
-  // metastability when entering a new clock domain. Ths idea is based on the
-  // assumption that a normal 4-transistor NAND gate (A, B -> A nand B) is
-  // safe to block signal A when signal B is 0. When signal B is 1, its output
-  // may hover when signal A is transitioning, and the unstable output may
-  // violate the receiver register's setup time constraints.
-  // In this config node context, signal data_r is from a different clock
-  // domain than data_dst_en and data_dst.
-  rNandMeta #(.width_p(data_bits_p))
-    data_dst_filter (.data_a_i(data_r),
-                     .data_b_i({data_bits_p {data_dst_en}}),
-                     .nand_o(data_dst) );
 
   always_ff @ (posedge clk) begin
     if (reset) begin
@@ -161,14 +274,18 @@ module config_node
       r_e_s_e_t_r <= 0;
     end
 
-    if (default_en) begin
-      data_dst_r <= default_p;
-    end else begin
-      if (data_dst_en) data_dst_r <= ~data_dst; // data_dst is the inverted receiving data
-    end
-
+    data_new_r_o <= data_dst_en | default_en;
     sync_shift_r <= sync_shift_n;
   end
+
+   if (debug_lp)
+   always @(negedge clk)
+     begin
+        if (default_en)
+          $display("## I: CONFIG NODE (id=%-d) dest_clk setting default: %x (%m)",id_p, default_p);
+        if (data_new_r_o)
+          $display("## I: CONFIG NODE (id=%-d) dest_clk received data: %x (%m)",id_p, data_dst_r);
+     end
 
   // An inverted ready_r from config domain indicates a valid data_r word is ready to be captured.
   // If an edge occurs in ready_r, sooner or later the sync line detects it by having different bits in the least significant 2 positions.
@@ -198,6 +315,6 @@ module config_node
   assign count_non_zero = | count_r;
 
   // Output signals
-  assign data_o = data_dst_r; // data_dst_r is the inverted data_r
+  assign data_r_o = data_dst_r; // data_dst_r is the inverted data_r
 
 endmodule
