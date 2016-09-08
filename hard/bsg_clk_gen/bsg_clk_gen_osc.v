@@ -1,15 +1,50 @@
 // bsg_clk_gen_osc
 //
-// the parameters adg_i, cdt_i, and fdt_i
-// are latched shortly after their input goes from 1->0
-// if we_i is set. typically, we would setup the inputs
-// a few cycles a head of time, and then assert the enable.
+// new settings are delivered via bsg_tag_i
 //
-// the clocking of enable is tricky.
+// the clock is designed to be atomically updated
+// between any of its values without glitching.
 //
-// note: quality of circuit depends on how
-//       edge-and-delay balanced the MXI4 is.
+// the order of components is:
 //
+// ADG0, ADG1, CDT, FDT  --> feedback (and buffer to outside world)
+//
+// The CDT inverts its output, causing the oscillator.
+//
+// All of the modules have delay circuits the clock their config
+// flops right after the signal has passed through. The question
+// is whether the negative edge or positive edge is used:
+//
+// Although these modules are interchangeable, to accomplish
+// atomic update, the order matters -- ADGs must come first,
+// and putting the CDT before FDT balances transition directions
+// better than the other way around.
+//
+// ADG settings changes must be accomplished
+// while the ADG input signal is 0 in order to prevent glitching
+// through a deconstructed mux. Configuration
+// state is changed on the positive edge of the config flop, with happens
+// in parallel with a positive edge entering the ADG0. If we update
+// state of the ADG0 after seeing this positive edge pass through the ADG we
+// have a close race. So instead, we trigger updates when a negative
+// edge passes through, maximizing the margin on either side.
+//
+// The CDG and FDT employ a MUXI4 which potentially could also glitch.
+// Inspection of the 250-nm spice netlist shows that these are implemented with T-gates
+// and at least in 250-nm, cannot glitch.
+//
+// The CDG's inputs are also zero's much like the ADG, and it
+// is only on exiting that it is inverted. For the FDT, the signal is inverted
+// again before entering the MUXI4, so the inputs are once again zeros. However
+// if a hypothetical AND-OR MUXI4 first inverts the input, then the assumption that zeros
+// inputs to the MUXI4 leads to glitch-freedom would be incorrect.
+//
+// We have verified this in TSMC 250 by running with sdf annotations and viewing all of the adg_int
+// signals to ensure there are no glitches, and also viewing all CLK signals
+// to state configuration registers to make sure that they are suitable far enough.
+//
+//
+
 
 `include "bsg_clk_gen.vh"
 
@@ -23,7 +58,7 @@ module bsg_clk_gen_osc
    ,output                 clk_o
    );
 
-   wire       fb_clk;     // internal clock
+   wire       fb_clk, fb_btc_clk;     // internal clock
    wire       async_reset_neg = ~async_reset_i;
 
    `declare_bsg_clk_gen_osc_tag_payload_s(num_adgs_p)
@@ -35,10 +70,11 @@ module bsg_clk_gen_osc
    // for configuration state to pass through here
 
    bsg_tag_client #(.width_p($bits(bsg_clk_gen_osc_tag_payload_s))
+                    ,.harden_p(1)
                     ,.default_p(0)
                     ) btc
      (.bsg_tag_i     (bsg_tag_i)
-      ,.recv_clk_i   (fb_clk)
+      ,.recv_clk_i   (fb_btc_clk)
       ,.recv_reset_i (1'b0)     // no default value is loaded;
       ,.recv_new_r_o (fb_we_r)  // default is already in OSC flops
       ,.recv_data_r_o(fb_tag_r)
@@ -46,24 +82,11 @@ module bsg_clk_gen_osc
 
    wire [num_adgs_p-1+1:0] adg_int;
 
-   // instantatiate CDT (coarse delay tuner)
-   // this one inverts the output
-
-   bsg_clk_gen_coarse_delay_tuner cdt
-   (.i                 (fb_clk)
-    ,.we_i             (fb_we_r         )
-    ,.async_reset_neg_i(async_reset_neg )
-    ,.sel_i            (fb_tag_r.cdt    )
-
-    // goes on to ADG
-    ,.o                (adg_int[0]      )
-
-    );
-
+   assign adg_int[0] = fb_clk;
    genvar      i,j;
 
    // instantatiate ADG's (atomic delay gadgets)
-   // non-inverting
+   // non-inverting; capture state on negative edge of clock
 
    for (i = 0; i < num_adgs_p; i=i+1)
      begin : adg_gen
@@ -103,16 +126,35 @@ module bsg_clk_gen_osc
         assign slow_li = net_slow[1<<i];
      end
 
+   wire fdt_li;
+
+   // instantatiate CDT (coarse delay tuner)
+   // this one inverts the output
+   // captures config state on negative edge of input clock
+
+   bsg_clk_gen_coarse_delay_tuner cdt
+   (.i                 (adg_int[num_adgs_p])
+    ,.we_i             (fb_we_r         )
+    ,.async_reset_neg_i(async_reset_neg )
+    ,.sel_i            (fb_tag_r.cdt    )
+
+    // goes on to ADG
+    ,.o                (fdt_li      )
+
+    );
+
    // instantiate FDT (fine delay tuner)
+   // captures config state on positive edge of (inverted) input clk
    // non-inverting
 
    bsg_rp_clk_gen_fine_delay_tuner fdt
-     (.i                 (adg_int[num_adgs_p])
+     (.i                 (fdt_li)
       ,.we_i             (fb_we_r        )
       ,.async_reset_neg_i(async_reset_neg)
       ,.sel_i            (fb_tag_r.fdt   )
-      ,.o                (fb_clk)
-      ,.buf_o            (clk_o)
+      ,.o                (fb_clk)     // in the actual critical loop
+      ,.buf_btc_o        (fb_btc_clk) // inside this module; to the
+      ,.buf_o            (clk_o)     // outside this module
       );
 
    //always @(*)
@@ -159,7 +201,7 @@ module bsg_clk_gen_coarse_delay_tuner
    bsg_rp_clk_gen_coarse_delay_element_6_4_2_0 cde // #(.start_tap_p(0))
    (.i     (i    )
     ,.sel_i(sel_r)
-    ,.o    (o) // inverted
+    ,.o    (o) // inverted, because muxi4 is inverting
     ,.worst_o(worst_lo)
     );
 

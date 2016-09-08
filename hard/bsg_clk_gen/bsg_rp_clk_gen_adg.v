@@ -35,7 +35,7 @@ module bsg_rp_clk_gen_adg
    // "and gates" is 0.
 
    MX2X1   MX1 (.A(sel_r),  .B  (sel_i)     , .S0(we_i), .Y (mux_lo   ));
-   DFFNRX4 DFF1 (.D(mux_lo), .CKN(clk_int_inv), .RN(async_reset_neg_i), .Q(sel_r), .QN(sel_r_inv));
+   DFFRX4 DFF1 (.D(mux_lo), .CK(clk_int_inv), .RN(async_reset_neg_i), .Q(sel_r), .QN(sel_r_inv));
 
    // demultiplex signal into two paths: fast and slow
 

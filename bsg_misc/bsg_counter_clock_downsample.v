@@ -6,7 +6,7 @@
 // one for the high duty cycle and one for the low duty cycle.
 //
 
-module bsg_counter_clock_downsample #(parameter width_p = "inv")
+module bsg_counter_clock_downsample #(parameter width_p = "inv", parameter harden_p=0)
     (input                clk_i
     ,input                reset_i
     ,input  [width_p-1:0] val_i
@@ -16,7 +16,7 @@ module bsg_counter_clock_downsample #(parameter width_p = "inv")
    wire strobe_r;
 
    // asserts a "1" every val_i cycles
-   bsg_strobe #(.width_p(width_p)) strobe
+   bsg_strobe #(.width_p(width_p), .harden_p(harden_p)) strobe
    (.clk_i
     ,.reset_r_i(reset_i)
     ,.init_val_r_i(val_i)

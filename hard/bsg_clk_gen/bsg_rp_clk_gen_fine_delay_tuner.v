@@ -12,6 +12,7 @@ module bsg_rp_clk_gen_fine_delay_tuner
    , input [1:0] sel_i
    , output o
    , output buf_o
+   , output buf_btc_o
    );
 
    wire [1:0] sel_r;
@@ -62,7 +63,7 @@ module bsg_rp_clk_gen_fine_delay_tuner
 
    // synopsys rp_fill (3 2 UX)
 
-   CLKBUFX8 ICLK (.A(o),        .Y(buf_o)                     );
+   CLKBUFX8 ICLK (.A(o),        .Y(buf_o) );
 
    // MBT FIXME: in reset condition, tune_lo will be a 1 and
    // the async reset signal will be a 0.
@@ -76,6 +77,7 @@ module bsg_rp_clk_gen_fine_delay_tuner
 
    AND2X4 A1      (.A(tune_lo),  .B(async_reset_neg_i), .Y(o)  );
 
+   CLKBUFX8 BTCCLK (.A(o),       .Y(buf_btc_o) );
    // synopsys rp_endgroup(bsg_clk_gen_fdt)
 
 endmodule
