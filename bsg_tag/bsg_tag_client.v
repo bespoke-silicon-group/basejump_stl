@@ -47,7 +47,7 @@
 
 module bsg_tag_client
    import bsg_tag_pkg::bsg_tag_s;
- #(width_p="inv", default_p="inv")
+ #(width_p="inv", default_p="inv", harden_p=1)
    (
     input bsg_tag_s bsg_tag_i
 
@@ -66,7 +66,7 @@ module bsg_tag_client
     );
 
    localparam debug_level_lp = 0;
-   
+
    logic   op_r, op_r_r, param_r;
 
    always_ff @(posedge bsg_tag_i.clk)
@@ -82,15 +82,18 @@ module bsg_tag_client
 
    wire send_now = op_r_r & no_op;
 
-   logic [width_p-1:0] tag_data_r, recv_data_r;
+   logic [width_p-1:0] tag_data_r, recv_data_r, tag_data_n;
    logic               tag_toggle_r;
 
    // shift in new state
-   always @(posedge bsg_tag_i.clk)
-     begin
-        if (shift_op)
-          tag_data_r   <= { param_r, tag_data_r[width_p-1:1] };
-     end
+   assign tag_data_n = { param_r, tag_data_r[width_p-1:1] };
+   bsg_dff_en #(.width_p(width_p),.harden_p(harden_p),.strength_p(2)) tag_data_reg
+
+   (.clock_i(bsg_tag_i.clk)
+    ,.data_i(tag_data_n)
+    ,.en_i(shift_op)
+    ,.data_o(tag_data_r)
+    );
 
    if (debug_level_lp > 1)
    always @(negedge bsg_tag_i.clk)
@@ -121,34 +124,54 @@ module bsg_tag_client
 
    wire  recv_new = (recv_toggle_r ^ recv_toggle_n) & bsg_tag_i.en;
 
-   logic recv_new_r;
+   // we had to add recv_new_r_r to pipeline the receive logic
+   // and the fanout to the recv_data_r register at the maximum
+   // frequency on the chip (i.e. the clock generator)
+
+   logic recv_new_r, recv_new_r_r;
 
    always_ff @(posedge recv_clk_i)
      begin
         recv_toggle_r <= recv_toggle_n;
 
-        if (recv_reset_i)
-          begin
-             recv_data_r   <= width_p ' (default_p);
-             if (debug_level_lp > 1) $display("## bsg_tag_client (recv) RESET (%m)");
-          end
-        else
-          // CDC (fixme use RPG groups)
-          if (recv_new)
-            begin
-               recv_data_r <= tag_data_r;
-               if (debug_level_lp > 1) $display("## bsg_tag_client (recv) RECEIVING %b (%m)",tag_data_r);
-            end
-
+        recv_new_r    <= recv_new;
         // goes high for one cycle after reset (en is high)
-
-        recv_new_r    <= recv_new | recv_reset_i;
+        recv_new_r_r  <= recv_new_r | recv_reset_i;
      end
+
+   if (default_p == 0)
+     begin: z
+        bsg_dff_reset_en #(.width_p(width_p),.harden_p(harden_p)) recv
+        (.clock_i(recv_clk_i)
+         ,.reset_i(recv_reset_i)
+         ,.en_i(recv_new_r)
+         ,.data_i(tag_data_r)
+         ,.data_o(recv_data_r)
+         );
+     end
+   else
+     begin: z
+        always_ff @(posedge recv_clk_i)
+          begin
+             if (recv_reset_i)
+               begin
+                  recv_data_r   <= width_p ' (default_p);
+                  if (debug_level_lp > 1) $display("## bsg_tag_client (recv) RESET (%m)");
+               end
+             else
+               // CDC (fixme use RPG groups)
+               if (recv_new_r)
+                 begin
+                    recv_data_r <= tag_data_r;
+                    if (debug_level_lp > 1) $display("## bsg_tag_client (recv) RECEIVING %b (%m)",tag_data_r);
+                 end
+          end
+      end // block: z
 
    // the recv_en_i signal has to come after the flop
    // so this works even when the clock is not working
 
-   assign recv_new_r_o  = recv_new_r & bsg_tag_i.en;
-   assign recv_data_r_o = recv_data_r;
+   assign recv_new_r_o    = recv_new_r_r & bsg_tag_i.en;
+   assign recv_data_r_o   = recv_data_r;
 
 endmodule

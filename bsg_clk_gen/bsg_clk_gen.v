@@ -102,7 +102,10 @@ module bsg_clk_gen
 
    // fixme: maybe wire up a default and deal with reset issue?
    // downsampler bsg_tag interface
-   bsg_tag_client #(.width_p($bits(bsg_clk_gen_ds_tag_payload_s)),.default_p(0)) btc_ds
+   bsg_tag_client #(.width_p($bits(bsg_clk_gen_ds_tag_payload_s))
+                    ,.default_p(0)
+                    ,.harden_p(1)
+                    ) btc_ds
      (.bsg_tag_i(bsg_ds_tag_i)
 
       ,.recv_clk_i   (osc_clk_out)
@@ -122,7 +125,7 @@ module bsg_clk_gen
   // we can turn it off by holding reset high to save power.
   //
 
-  bsg_counter_clock_downsample #(.width_p(downsample_width_p)) clk_gen_ds_inst
+  bsg_counter_clock_downsample #(.width_p(downsample_width_p),. harden_p(1)) clk_gen_ds_inst
     (.clk_i(osc_clk_out)
     ,.reset_i(ds_tag_payload_r.reset)
     ,.val_i  (ds_tag_payload_r.val  )

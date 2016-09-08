@@ -1,3 +1,4 @@
+
 package bsg_fsb_pkg;
 
   typedef enum logic [6:0] {RNDISABLE_CMD       = 'd1
@@ -22,3 +23,4 @@ package bsg_fsb_pkg;
   } bsg_fsb_pkt_s;
 
 endpackage
+
