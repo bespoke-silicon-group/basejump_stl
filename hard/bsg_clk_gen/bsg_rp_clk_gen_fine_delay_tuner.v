@@ -25,39 +25,43 @@ module bsg_rp_clk_gen_fine_delay_tuner
    // synopsys rp_fill (0 0 UX)
 
    wire [3:0] ft;
+   wire       i_inv;
 
    // synopsys rp_fill (0 0 UX)
 
    // synopsys rp_orient ({N FS} I2_1)
-   CLKINVX12 I2_1 (.A(ft[1]),.Y());                                   // Cap= 1 * 0.0098 pF
+   CLKINVX3 I2_1 (.A(ft[1]),.Y());
    // synopsys rp_orient ({N FS} I3_1)
-   CLKINVX12 I3_1 (.A(ft[2]),.Y());
+   CLKINVX3 I3_1 (.A(ft[2]),.Y());
    // synopsys rp_orient ({N FS} I3_2)
-   CLKINVX12 I3_2 (.A(ft[2]),.Y());                                   // Cap= 2 * 0.0098 pF
+   CLKINVX4 I3_2 (.A(ft[2]),.Y());
    // synopsys rp_orient ({N FS} I4_1)
-   CLKINVX12 I4_1 (.A(ft[3]),.Y());
+   CLKINVX3 I4_1 (.A(ft[3]),.Y());
    // synopsys rp_orient ({N FS} I4_2)
-   CLKINVX12 I4_2 (.A(ft[3]),.Y());
+   CLKINVX4 I4_2 (.A(ft[3]),.Y());
    // synopsys rp_orient ({N FS} I4_3)
-   CLKINVX12 I4_3 (.A(ft[3]),.Y()); // Cap= 3 * 0.0098 pF
+   CLKINVX4 I4_3 (.A(ft[3]),.Y());
 
    // same driver with different caps and thus different transition times
    // synopsys rp_fill (1 0 UX)
-   CLKINVX2 I1 (.A(i), .Y(ft[0]));
-   CLKINVX2 I2 (.A(i), .Y(ft[1]));
-   CLKINVX2 I3 (.A(i), .Y(ft[2]));
-   CLKINVX2 I4 (.A(i), .Y(ft[3]));
+   CLKINVX4 I0 (.A(i), .Y(i_inv));     // decouple load of FDT from previous stage; also makes this inverting
+   CLKINVX2 I1 (.A(i_inv), .Y(ft[0]));
+   CLKINVX2 I2 (.A(i_inv), .Y(ft[1]));
+   CLKINVX2 I3 (.A(i_inv), .Y(ft[2]));
+   CLKINVX2 I4 (.A(i_inv), .Y(ft[3]));
+
+   // flops catch on positive edge of inverted clock
 
    // synopsys rp_fill (2 0 UX)
    MX2X1   MX1    (.A(sel_r [0]),.B  (sel_i[0]), .S0(we_i)    ,.Y(mux_lo[0]         ));
    DFFRX4 DFFR1 (.D(mux_lo[0]),.CK(o), .Q (sel_r[0]), .QN(), .RN(async_reset_neg_i));
 
-   wire       tune_lo;
    MXI4X4 M2 (.A(ft[3]), .B(ft[2]), .C(ft[1]), .D(ft[0])
               ,.S0(sel_r[0]), .S1(sel_r[1])
-              ,.Y(tune_lo)
+              ,.Y(o)
               );
 
+   // capture on positive edge
    DFFRX4 DFFR2 (.D(mux_lo[1]),.CK(o), .Q (sel_r[1]), .QN(), .RN(async_reset_neg_i));
    MX2X1   MX2    (.A(sel_r [1]),.B  (sel_i[1]), .S0(we_i)    ,.Y(mux_lo[1]         ));
 
@@ -65,19 +69,13 @@ module bsg_rp_clk_gen_fine_delay_tuner
 
    CLKBUFX8 ICLK (.A(o),        .Y(buf_o) );
 
-   // MBT FIXME: in reset condition, tune_lo will be a 1 and
-   // the async reset signal will be a 0.
+   // to clock the btc client, we use the pre-FDT clock
+   // our goal is to have the btc_client send on the positive edge
+   // of the clock, and the ADT/FDT/CDT capture on the negative edge
+   // of the clock. However the delay through the BTC is much more
+   // significant, so we get a headstart on sending that clock out.
 
-   // when the async reset signal goes low, then the output
-   // will be a posedge of the clk. async resets must not
-   // change in a narrow window around the clk edge.
-   // for a balanced reset tree, this would not be a problem
-   // but a safer approach would be to hold this signal high
-   // rather than low during reset
-
-   AND2X4 A1      (.A(tune_lo),  .B(async_reset_neg_i), .Y(o)  );
-
-   CLKBUFX8 BTCCLK (.A(o),       .Y(buf_btc_o) );
+   CLKBUFX8 BTCCLK (.A(i_inv),       .Y(buf_btc_o) );
    // synopsys rp_endgroup(bsg_clk_gen_fdt)
 
 endmodule
