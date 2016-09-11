@@ -6,7 +6,7 @@ module test_bsg;
 
    import bsg_tag_pkg::bsg_tag_s;
 
-   localparam bsg_num_adgs_lp  = 2;
+   localparam bsg_num_adgs_lp  = 1;
    localparam bsg_ds_width_lp  = 8;
    localparam bsg_tag_els_lp  = 2;
 
@@ -25,7 +25,7 @@ module test_bsg;
    wire       bsg_clk_gen_async_reset_o;
    wire       bsg_clk_gen_i;
    wire       ext_clk_i;
-   
+
    bsg_nonsynth_clock_gen #(5ns) cfg_clk_gen (ext_clk_i);
 
    bsg_nonsynth_clk_gen_tester #(.num_adgs_p(bsg_num_adgs_lp)

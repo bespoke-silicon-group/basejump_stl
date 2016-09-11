@@ -284,7 +284,7 @@ module bsg_nonsynth_clk_gen_tester
        // let the data percolate through synchronizers etc
        // before attaching lutag
 
-       for (integer i = 0; i < 3; i++)
+       for (integer i = 0; i < 4; i++)
          begin
             @(posedge bsg_clk_gen_i);
             @(posedge bsg_tag_clk_o);
@@ -353,7 +353,7 @@ module bsg_nonsynth_clk_gen_tester
           //
           for (integer j = 0; j < 4; j++)
               @(posedge bsg_tag_clk_o);
-          for (integer j = 0; j < 4; j++)
+          for (integer j = 0; j < 10; j++)
               @(posedge bsg_clk_gen_i);
 
           // Measure the clock period
