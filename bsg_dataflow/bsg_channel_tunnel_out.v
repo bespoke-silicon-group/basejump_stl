@@ -24,12 +24,12 @@ module bsg_channel_tunnel_out #(
 
     // to fifos
     , input  [num_in_p-1:0][width_p-1:0] data_i
-    , input  [num_in_p-1:0] valid_i
+    , input  [num_in_p-1:0] v_i
     , output [num_in_p-1:0] yumi_o
 
     // to downstream
     , output [tagged_width_lp-1:0] data_o
-    , output valid_o
+    , output v_o
     , input  yumi_i
 
     // from bsg_channel_tunnel_in; returning credits to us; we always accept
@@ -37,7 +37,7 @@ module bsg_channel_tunnel_out #(
     , input credit_local_return_v_i
 
     // from bsg_channel_tunnel_in; return credits to remote side
-    // always valid
+    // always v
 
     , input [num_in_p-1:0][lg_remote_credits_lp-1:0] credit_remote_return_data_i
 
@@ -83,7 +83,7 @@ module bsg_channel_tunnel_out #(
                = | (credit_remote_return_data_i[i][lg_remote_credits_lp-1:lg_credit_decimation_p]);
      end
 
-   wire credit_valid_li = | remote_credits_avail;
+   wire credit_v_li = | remote_credits_avail;
 
    // we are going to round-robin choose between incoming channels,
    // adding a tag to the hi bits
@@ -97,13 +97,13 @@ module bsg_channel_tunnel_out #(
       ,.reset_i
       ,.data_i ({  width_p ' (credit_remote_return_data_i),  data_i  })
 
-      // we present as valid only if there are credits available to send
-      ,.v_i    ({  credit_valid_li,              valid_i & local_credits_avail })
+      // we present as v only if there are credits available to send
+      ,.v_i    ({  credit_v_li,              v_i & local_credits_avail })
       ,.yumi_o ({  credit_remote_return_yumi_o,  yumi_o                        })
 
       ,.data_o (data_o[0+:width_p] )
       ,.tag_o  (data_o[width_p+:tag_width_lp])
-      ,.v_o    (valid_o)
+      ,.v_o    (v_o)
       ,.yumi_i (yumi_i )
       );
 
