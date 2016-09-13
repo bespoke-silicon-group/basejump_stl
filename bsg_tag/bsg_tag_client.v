@@ -80,20 +80,30 @@ module bsg_tag_client
    wire shift_op = op_r;
    wire no_op    = ~op_r & ~param_r;
 
+   // when this is high, tag_data_r is already transmitting data
+   // this control has another cycle of latency in this clock domain
+   // before passing into the next, which is important.
    wire send_now = op_r_r & no_op;
 
-   logic [width_p-1:0] tag_data_r, recv_data_r, tag_data_n;
+   logic [width_p-1:0] tag_data_r, recv_data_r, tag_data_n, tag_data_shift;
    logic               tag_toggle_r;
 
    // shift in new state
-   assign tag_data_n = { param_r, tag_data_r[width_p-1:1] };
-   bsg_dff_en #(.width_p(width_p),.harden_p(harden_p),.strength_p(2)) tag_data_reg
+   assign tag_data_shift = { param_r, tag_data_r[width_p-1:1] };
 
-   (.clock_i(bsg_tag_i.clk)
-    ,.data_i(tag_data_n)
-    ,.en_i(shift_op)
-    ,.data_o(tag_data_r)
-    );
+   bsg_mux2_gatestack #(.width_p(width_p),.harden_p(harden_p)) tag_data_mux
+     (.i0 (tag_data_r            ) // sel=0
+      ,.i1(tag_data_shift        ) // sel=1
+      ,.i2({ width_p {shift_op} }) // sel var
+      ,.o (tag_data_n)
+      );
+
+   bsg_dff_gatestack #(.width_p(width_p),.harden_p(harden_p)) tag_data_reg
+     (
+      .i0 (tag_data_n                    )
+      ,.i1( { width_p { bsg_tag_i.clk } })
+      ,.o (tag_data_r                    )
+      );
 
    if (debug_level_lp > 1)
    always @(negedge bsg_tag_i.clk)
