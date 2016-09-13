@@ -24,12 +24,12 @@ module bsg_channel_tunnel_in #(parameter width_p = -1
 
     // to downstream
     , input  [tagged_width_lp-1:0] data_i
-    , input  valid_i
+    , input  v_i
     , output yumi_o
 
     // to outgoing channels (v/r)
     , output [num_in_p-1:0][width_p-1:0] data_o
-    , output [num_in_p-1:0]             valid_o
+    , output [num_in_p-1:0]             v_o
     , input  [num_in_p-1:0]              yumi_i
 
     // to bsg_channel_tunnel_out; returning credits to them; they always accept
@@ -37,7 +37,7 @@ module bsg_channel_tunnel_in #(parameter width_p = -1
     , output credit_local_return_v_o
 
     // to bsg_channel_tunnel_out; return credits to remote side
-    // always valid
+    // always v
 
     , output [num_in_p-1:0][lg_remote_credits_lp-1:0] credit_remote_return_data_o
 
@@ -46,7 +46,7 @@ module bsg_channel_tunnel_in #(parameter width_p = -1
     );
 
    // always ready to deque credit_ready
-   logic credit_valid_lo;
+   logic credit_v_lo;
    logic [width_p-1:0] credit_data_lo;
 
    // demultiplex the packets.
@@ -60,13 +60,13 @@ module bsg_channel_tunnel_in #(parameter width_p = -1
      (.clk_i
       ,.reset_i
 
-      ,.v_i   (valid_i)
+      ,.v_i   (v_i)
       ,.tag_i (data_i[width_p+:tag_width_lp])
       ,.data_i(data_i[0+:width_p])
       ,.yumi_o
 
       // v / ready
-      ,.v_o     ( {credit_valid_lo, valid_o}  )
+      ,.v_o     ( {credit_v_lo, v_o}  )
       ,.data_o  ( {credit_data_lo , data_o  } )
 
       // credit fifo is unbuffered, so no yumi signal
@@ -75,10 +75,10 @@ module bsg_channel_tunnel_in #(parameter width_p = -1
 
    // route local credit return to bsg_channel_tunnel_out module
    assign credit_local_return_data_o = credit_data_lo[0+:num_in_p*lg_remote_credits_lp];
-   assign credit_local_return_v_o    = credit_valid_lo;
+   assign credit_local_return_v_o    = credit_v_lo;
 
    // compute remote credit arithmetic
-   wire [num_in_p-1:0] sent = valid_o & yumi_i;
+   wire [num_in_p-1:0] sent = v_o & yumi_i;
 
    genvar 	       i;
 
