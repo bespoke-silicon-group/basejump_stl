@@ -21,8 +21,6 @@
 
 module bsg_fsb_node_trace_replay
   #(parameter   ring_width_p=80
-    , parameter master_id_p ="inv"
-    , parameter slave_id_p  ="inv"
     , parameter rom_addr_width_p=6
     )
    (input clk_i
