@@ -100,13 +100,13 @@ module test_bsg;
     endcase
   end
       
-  bsg_dff_en_reset #(  .width_p(width_lp)
-                    )  DUT
-                    (  .clock_i(clk)
-                     , .data_i (test_input_data)
-                     , .en_i   (test_input_en)
-                     , .reset_i(test_input_reset)
-                     , .data_o (test_output)
-                    );
+  bsg_dff_reset_en #(  .width_p(width_lp)
+                       )  DUT
+    (  .clock_i(clk)
+       , .data_i (test_input_data)
+       , .en_i   (test_input_en)
+       , .reset_i(test_input_reset)
+       , .data_o (test_output)
+       );
                     
 endmodule

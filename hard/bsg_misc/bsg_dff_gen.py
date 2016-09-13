@@ -35,7 +35,7 @@ def queue_gate_instance (out_dict, gate_str, arg_list, order) :
 def gate_instance (gate_str, arg_list ) :
     for i in range(0,len(arg_list)) :
         gate_str = gate_str.replace("#"+str(i),arg_list[i]);
-    return gate_str;
+    return "// synopsys rp_orient ({N FS} " + arg_list[0] + ")\n" + gate_str;
 
 def access_bit (name, bit) :
     return name + "[" + str(bit) + "]";
@@ -76,7 +76,9 @@ def emit_rp_fill (params):
 
 fab = "tsmc_250"
 
-dffer1 = "EDFFTRX1 #0 (.D(#1), .E(#2), .CK(#3), .Q(#4),.QN(), .RN(#5));"
+dffr1 = "DFFTRX1 #0 (.D(#1), .CK(#3), .Q(#4),.QN(), .RN(#5));"
+dffre1 = "EDFFTRX1 #0 (.D(#1), .E(#2), .CK(#3), .Q(#4),.QN(), .RN(#5));"
+dffre2 = "EDFFTRX2 #0 (.D(#1), .E(#2), .CK(#3), .Q(#4),.QN(), .RN(#5));"
 dff1 = "DFFX1 #0 (.D(#1), .CK(#3), .Q(#4), .QN());"
 dff2 = "DFFX2 #0 (.D(#1), .CK(#3), .Q(#4), .QN());"
 dff4 = "DFFX4 #0 (.D(#1), .CK(#3), .Q(#4), .QN());"
@@ -84,7 +86,9 @@ dff8 = "wire tmp_bsg_dff8_#0;\n DFFX1 #0 (.D(#1), .CK(#3), .Q(tmp_bsg_dff8_#0), 
 dffe1 = "EDFFX1 #0 (.D(#1), .E(#2), .CK(#3), .Q(#4),.QN());"
 
 string_to_cell = {};
-string_to_cell["dffer1"] = dffer1;
+string_to_cell["dffre1"] = dffre1;
+string_to_cell["dffre2"] = dffre2;
+string_to_cell["dffr1"] = dffr1;
 string_to_cell["dff1"] = dff1;
 string_to_cell["dff2"] = dff2;
 string_to_cell["dff4"] = dff4;
@@ -92,7 +96,9 @@ string_to_cell["dff8"] = dff8;
 string_to_cell["dffe1"] = dffe1;
 
 string_to_suffix = {};
-string_to_suffix["dffer1"] = "dff_en_nreset_s1";
+string_to_suffix["dffre1"] = "dff_nreset_en_s1";
+string_to_suffix["dffre2"] = "dff_nreset_en_s2";
+string_to_suffix["dffr1"] = "dff_nreset_s1";
 string_to_suffix["dffe1"]  = "dff_en_s1";
 string_to_suffix["dff1"] = "dff_s1";
 string_to_suffix["dff2"] = "dff_s2";
@@ -100,14 +106,16 @@ string_to_suffix["dff4"] = "dff_s4";
 string_to_suffix["dff8"] = "dff_s8";
 
 string_to_param_list = {};
-string_to_param_list["dffer1"] = ["en_i", "nreset_i"];
+string_to_param_list["dffre2"] = ["nreset_i","en_i"];
+string_to_param_list["dffre1"] = ["nreset_i","en_i"];
 string_to_param_list["dffe1"]  = ["en_i"];
+string_to_param_list["dffr1"]  = ["nreset_i"];
 string_to_param_list["dff1"] = [];
 string_to_param_list["dff2"] = [];
 string_to_param_list["dff4"] = [];
 string_to_param_list["dff8"] = [];
 
-def generate_dff_en_nreset ( basecell, bits, strength ) :
+def generate_dff_nreset_en ( basecell, bits, strength ) :
     basecell = basecell+str(strength);
     module_name = ident_name_bit("bsg_rp_"+fab+"_"+string_to_suffix[basecell],bits);
 
@@ -139,7 +147,7 @@ def generate_dff_en_nreset ( basecell, bits, strength ) :
 
 if len(sys.argv) == 4 :
     # suffix, basecell;  e.g. dff, dff
-    generate_dff_en_nreset( sys.argv[1], int(sys.argv[2]), int(sys.argv[3]) );
+    generate_dff_nreset_en( sys.argv[1], int(sys.argv[2]), int(sys.argv[3]) );
 else :
     print "Usage: " + sys.argv[0] + " type " + " bits " + " strength";
 
