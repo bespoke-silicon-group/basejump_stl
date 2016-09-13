@@ -6,7 +6,7 @@
 module bsg_counter_clear_up #(parameter max_val_p     = -1
                              ,parameter init_val_p   = -1
                              ,parameter ptr_width_lp =
-                             `BSG_WIDTH(max_val_p)
+                             `BSG_SAFE_CLOG2(max_val_p+1)
                              )
    (input  clk_i
     , input reset_i

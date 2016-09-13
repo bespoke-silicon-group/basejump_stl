@@ -1,8 +1,8 @@
 #!/usr/bin/python
 #
-# bsg_shift_gen_tsmc_250
+# bsg_mux_gen_tsmc_250
 #
-# This script generates shift registers with deterministic naming, and placement directives.
+# This script generates one hot muxes.
 #
 # data_i:   input data
 # data_o:   output data
@@ -52,7 +52,7 @@ def queue_gate_instance (out_dict, gate_str, arg_list, order) :
 def gate_instance (gate_str, arg_list ) :
     for i in range(0,len(arg_list)) :
         gate_str = gate_str.replace("#"+str(i),arg_list[i]);
-    return gate_str;
+    return "// synopsys rp_orient ({N FS} " + arg_list[0] + ")\n" + gate_str;
 
 def access_bit (name, bit) :
     return name + "[" + str(bit) + "]";
