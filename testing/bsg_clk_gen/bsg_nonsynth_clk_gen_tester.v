@@ -339,6 +339,7 @@ module bsg_nonsynth_clk_gen_tester
       // go through each clock speed setting
       for (integer i = 0; i < 1 << $bits(bsg_clk_gen_osc_tag_payload_s); i++)
         begin
+	   $display("## bsg_taging payload %b",i[0+:$bits(bsg_clk_gen_osc_tag_payload_s)]);
            osc_tag_header.data_not_reset = 1;
            osc_tag_payload = i;
 
@@ -440,8 +441,6 @@ module bsg_nonsynth_clk_gen_tester
        $display("## PASS 14: Switching to Downsampled clock (bsg_clk_gen_sel_o=%b)",bsg_clk_gen_sel_o);
 
       bsg_clk_gen_sel_o = 2'b01;      // look at the downsampled clock
-
-
 
       // go through each downsample amount
       for (integer i = 0; i < (1 << ds_width_p) ; i++)
