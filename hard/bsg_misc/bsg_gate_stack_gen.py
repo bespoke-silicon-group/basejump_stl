@@ -117,7 +117,7 @@ def generate_gate_stack ( gatename, rows,signature ) :
         input_params = [access_bit("i"+str(x),pos) for x in range(0,num_inputs)]
         output_params = [ access_bit("o",pos) ]
         emit_gate_instance(gatename + " " + signature # " #0 (.A (#1), .B (#2), .Y (#3));"
-                           , [ident_name_bit(gatename, pos)] +
+                           , [ident_name_bit("stack", pos)] +
                                input_params +
                                output_params
                              );

@@ -12,11 +12,11 @@ module bsg_dff_reset_en #(width_p=-1, harden_p=0)
 
    always @(posedge clock_i)
      begin
-	if (reset_i)
-	  data_r <= width_p'(0);
-	else
-	  if (en_i)
-	    data_r <= data_i;
+        if (reset_i)
+          data_r <= width_p'(0);
+        else
+          if (en_i)
+            data_r <= data_i;
      end
 
 
