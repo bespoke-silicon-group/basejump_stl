@@ -21,8 +21,8 @@ module bsg_tag_master
    (
     // from pins
     input clk_i
-    ,input data_i
     ,input en_i
+    ,input data_i
     , output bsg_tag_s [els_p-1:0] clients_r_o
     );
 
@@ -38,10 +38,6 @@ module bsg_tag_master
    if (debug_level_lp > 2)
      always @(negedge clk_i)
        $display("## bsg_tag_master %m %b",clients_r_o);
-
-   initial
-        $display("## %m instantiating bsg_tag_master with els_p=%-d and lg_width_p=%-d and max_packet_len_lp=%-d"
-                 ,els_p,lg_width_p,max_packet_len_lp);
 
    logic  data_i_r;
 
@@ -78,7 +74,7 @@ module bsg_tag_master
         $display("## %m instantiating bsg_tag_master with els_p=%-d and lg_width_p=%-d, max_packet_len_lp=%-d, reset_zero_len=%-d"
                  ,els_p,lg_width_p,max_packet_len_lp,(1<<(ctr_width_lp)));
 
-   
+
    //
    // END RESET LOGIC
    // ***************************
@@ -100,16 +96,19 @@ module bsg_tag_master
      if (tag_reset_req & ~data_i_r)
        begin
           if (debug_level_lp > 1) $display("## bsg_tag_master RESET (%m)");
-          state_r <= eStart;
+          state_r   <= eStart;
+
+          // we put this here because DC did not currently infer "reset" logic
+          hdr_ptr_r <= 0;
        end
      else
-       state_r <= state_n;
+       begin
+          state_r   <= state_n;
+          hdr_ptr_r <= hdr_ptr_n;
+       end
 
    always_ff @(posedge clk_i)
-     begin
-        hdr_ptr_r <= hdr_ptr_n;
         hdr_r <= hdr_n;
-     end
 
    always_ff @(negedge clk_i)
      if (state_n != state_r)
@@ -134,6 +133,7 @@ module bsg_tag_master
                     state_n = eHeader;
 
                   hdr_ptr_n = 0;
+                  hdr_n     = 0;
                end
           eHeader:
                begin

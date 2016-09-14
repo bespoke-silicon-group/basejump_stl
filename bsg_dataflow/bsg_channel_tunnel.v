@@ -73,22 +73,22 @@ module bsg_channel_tunnel #(parameter width_p        = 1
 
     // incoming multiplexed data
     ,input  [tagged_width_lp-1:0]  multi_data_i
-    ,input  multi_valid_i
+    ,input  multi_v_i
     ,output multi_yumi_o
 
     // outgoing multiplexed data
     , output [tagged_width_lp-1:0] multi_data_o
-    , output multi_valid_o
+    , output multi_v_o
     , input  multi_yumi_i
 
     // incoming demultiplexed data
     , input  [num_in_p-1:0][width_p-1:0] data_i
-    , input  [num_in_p-1:0] valid_i
+    , input  [num_in_p-1:0] v_i
     , output [num_in_p-1:0] yumi_o
 
     // outgoing demultiplexed data
     , output [num_in_p-1:0][width_p-1:0] data_o
-    , output [num_in_p-1:0]             valid_o
+    , output [num_in_p-1:0]             v_o
     , input  [num_in_p-1:0]              yumi_i
     );
 
@@ -126,11 +126,11 @@ module bsg_channel_tunnel #(parameter width_p        = 1
       ,.reset_i
 
       ,.data_i
-      ,.valid_i
+      ,.v_i
       ,.yumi_o
 
       ,.data_o (multi_data_o )
-      ,.valid_o(multi_valid_o)
+      ,.v_o(multi_v_o)
       ,.yumi_i (multi_yumi_i )
 
       ,.credit_local_return_data_i (credit_local_return_data_oi )
@@ -148,11 +148,11 @@ module bsg_channel_tunnel #(parameter width_p        = 1
       ,.reset_i
 
       ,.data_i (multi_data_i )
-      ,.valid_i(multi_valid_i)
+      ,.v_i    (multi_v_i)
       ,.yumi_o (multi_yumi_o )
 
       ,.data_o
-      ,.valid_o
+      ,.v_o
       ,.yumi_i
 
       ,.credit_local_return_data_o (credit_local_return_data_oi )
