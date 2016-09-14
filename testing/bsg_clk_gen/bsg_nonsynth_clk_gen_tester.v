@@ -49,7 +49,8 @@
  */
 
 module bsg_nonsynth_clk_gen_tester
-  #(parameter num_adgs_p="inv"
+  #(parameter fast_sim_p="inv"
+    , num_adgs_p="inv"
     , ds_width_p="inv"
     , tag_els_p="inv"
     )
@@ -63,6 +64,8 @@ module bsg_nonsynth_clk_gen_tester
 
     , input bsg_clk_gen_i
     );
+
+   longint sim_iteration;
 
    `declare_bsg_clk_gen_osc_tag_payload_s(num_adgs_p)
    `declare_bsg_clk_gen_ds_tag_payload_s(ds_width_p)
@@ -442,8 +445,14 @@ module bsg_nonsynth_clk_gen_tester
 
       bsg_clk_gen_sel_o = 2'b01;      // look at the downsampled clock
 
+      // simulation iterations
+      if (fast_sim_p)
+        sim_iteration = 4;
+      else
+        sim_iteration = (1 << ds_width_p);
+
       // go through each downsample amount
-      for (integer i = 0; i < (1 << ds_width_p) ; i++)
+      for (integer i = 0; i < sim_iteration; i++)
         begin
            if (i[5:0] == 0)
              output_string = { output_string, "\nDwnsmpl: "};
