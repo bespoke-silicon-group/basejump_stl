@@ -23,10 +23,10 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
    always_ff @(posedge clk_i)
      if (v_i)
        begin
-          // synopsys translate off
+          // synopsys translate_off
           assert (addr_i < els_p)
             else $error("Invalid address %x to %m of size %x\n", addr_i, els_p);
-          // synopsys translate on
+          // synopsys translate_on
           if (w_i)
             mem[addr_i] <= data_i;
           else

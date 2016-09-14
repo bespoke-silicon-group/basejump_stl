@@ -33,6 +33,7 @@ module bsg_mesh_router_buffered #(width_p        = -1
 
    genvar                           i;
 
+   //synopsys translate_off
    if (debug_p)
      for (i = 0; i < dirs_lp;i=i+1)
        begin
@@ -41,6 +42,7 @@ module bsg_mesh_router_buffered #(width_p        = -1
                      ,my_x_i,my_y_i,i,link_i_cast[i].v,link_o_cast[i].ready_and_rev,
                      link_o_cast[i].v,link_i_cast[i].ready_and_rev,link_i[i]);
        end
+   //synopsys translate_on
 
    for (i = 0; i < dirs_lp; i=i+1)
      begin: rof
@@ -52,11 +54,11 @@ module bsg_mesh_router_buffered #(width_p        = -1
              // accept no data from outside of stubbed port
              assign link_o_cast[i].ready_and_rev = 1'b0;
 
-             // synopsys translate off
+             // synopsys translate_off
              always @(negedge clk_i)
                if (link_o_cast[i].v)
                  $display("## warning %m: stubbed port %x received word %x",i,link_i_cast[i].data);
-             // synopsys translate on
+             // synopsys translate_on
           end
         else
           begin: fi
