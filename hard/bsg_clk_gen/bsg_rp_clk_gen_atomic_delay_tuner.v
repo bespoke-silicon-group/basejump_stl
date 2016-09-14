@@ -52,9 +52,12 @@ module bsg_rp_clk_gen_atomic_delay_tuner
 
    // synopsys rp_fill (0 1 RX)
 
+   wire       zero_bit;
+
+
    MXI4X4 M1 ( .A(signal[8])
               ,.B(signal[6])
-              ,.C(1'b0)
+              ,.C(zero_bit)
               ,.D(signal[0])
 
               ,.S0(sel_r[0])
@@ -68,6 +71,7 @@ module bsg_rp_clk_gen_atomic_delay_tuner
 
    // this gate picks input 01 when async reset is low, initializing the oscillator
    NAND2BX2 NB        (.AN(sel_r[0]), .B(async_reset_neg_i), .Y(sel_r[1]));
+   TIELO  ZB (.Y(zero_bit));
 
    DFFRX4 sel_r_reg_0 (.D(mux_lo[0]), .CK(o)      ,.RN(async_reset_neg_i), .Q(sel_r[0]), .QN());
 
