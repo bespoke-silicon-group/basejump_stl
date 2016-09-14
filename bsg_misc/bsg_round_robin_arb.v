@@ -3,7 +3,7 @@
 // Automatically generated using bsg_round_robin_arb.py
 // DO NOT MODIFY
 
-module bsg_round_robin_arb #(parameter inputs_p = "not assigned", lg_inputs_p=`BSG_SAFE_CLOG2(inputs_p))
+module bsg_round_robin_arb #(parameter inputs_p = -1, lg_inputs_p=`BSG_SAFE_CLOG2(inputs_p))
     (input clk_i
     , input reset_i
     , input grants_en_i // whether to suppress grants_o
