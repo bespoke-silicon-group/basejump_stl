@@ -55,6 +55,17 @@ module bsg_mux #(parameter width_p="inv"
     else `bsg_mux_gen_macro(2,14)
     else `bsg_mux_gen_macro(2,13)
     else `bsg_mux_gen_macro(2,12)
+    else `bsg_mux_gen_macro(2,11)
+    else `bsg_mux_gen_macro(2,10)
+    else `bsg_mux_gen_macro(2,9)
+    else `bsg_mux_gen_macro(2,8)
+    else `bsg_mux_gen_macro(2,7)
+    else `bsg_mux_gen_macro(2,6)
+    else `bsg_mux_gen_macro(2,5)
+    else `bsg_mux_gen_macro(2,4)
+    else `bsg_mux_gen_macro(2,3)
+    else `bsg_mux_gen_macro(2,2)
+    else `bsg_mux_gen_macro(2,1)
     else `bsg_mux_gen_macro(4,32)
     else
       begin: notmacro
