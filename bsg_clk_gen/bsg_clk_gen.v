@@ -140,6 +140,9 @@ module bsg_clk_gen
             ,.harden_p(1)
             ) mux_inst
 
+    // mux pins are A B D C
+    // probably wise to locate ds_clk_out and osc_clk_out
+    // apart from each other
     (.data_i ({  1'b0, ext_clk_i, ds_clk_out, osc_clk_out })
      ,.sel_i (select_i)
      ,.data_o(clk_o)
