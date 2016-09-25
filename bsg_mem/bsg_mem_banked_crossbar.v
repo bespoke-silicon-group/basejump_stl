@@ -129,19 +129,19 @@ module bsg_mem_banked_crossbar #
    localparam debug_reads_lp = debug_reads_p;
 //   localparam debug_reads_lp = 1;
 
-  // synopsys translate off
+  // synopsys translate_off
   initial
     assert((bank_size_p & bank_size_p-1) == 0)
       else $error("bank_size_p must be a power of 2");
 
-  // synopsys translate on
+  // synopsys translate_on
 
 
   logic [num_ports_p-1:0][addr_hash_width_lp-1:0] bank_reqs;
 
   genvar i;
 
-  // synopsys translate off
+  // synopsys translate_off
    logic [num_ports_p-1:0][addr_width_lp-1:0] addr_r;
 
    always_ff @(posedge clk_i)
@@ -162,7 +162,7 @@ module bsg_mem_banked_crossbar #
             if (v_o[i] && debug_reads_lp)
               $display("%m port %d  %x = [%x]", i,data_o[i],addr_r[i]*debug_lp);
          end
-  // synopsys translate on
+  // synopsys translate_on
 
   if(num_banks_p > 1)
     for(i=0; i<num_ports_p; i=i+1)

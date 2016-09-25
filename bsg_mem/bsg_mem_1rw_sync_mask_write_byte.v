@@ -18,11 +18,11 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
    ,output [data_width_p-1:0] data_o
   );
 
-  // synopsys translate off
+  // synopsys translate_off
   always_comb
     assert (data_width_p % 8 == 0)
       else $error("data width should be a multiple of 8 for byte masking");
-  // synopsys translate on
+  // synopsys translate_on
 
   genvar i;
   
