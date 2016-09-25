@@ -58,7 +58,7 @@ module bsg_mesh_router_dor_decoder #( parameter x_cord_width_p  = -1
         assign y_lt[i] = ~y_gt[i] & ~y_eq[i];
      end
 
-   // synopsys translate off
+   // synopsys translate_off
 
    always @(negedge clk_i)
      begin
@@ -80,7 +80,7 @@ module bsg_mesh_router_dor_decoder #( parameter x_cord_width_p  = -1
              $finish();
           end
      end
-   // synopsys translate on
+   // synopsys translate_on
 
   // request signals: format req[<input dir>][<output dir>]
   wire [dirs_lp-1:0][dirs_lp-1:0] req;
@@ -169,7 +169,7 @@ module bsg_mesh_router #(
        ,.req_o(req)
        );
 
-   // synopsys translate off
+   // synopsys translate_off
    if (debug_p)
      for (i = P; i <= S; i=i+1)
        begin: rof
@@ -185,7 +185,7 @@ module bsg_mesh_router #(
             end
        end
 
-   // synopsys translate on
+   // synopsys translate_on
 
    // grant signals: format <output dir>_gnt_<input dir>
    // these determine whose data we actually send

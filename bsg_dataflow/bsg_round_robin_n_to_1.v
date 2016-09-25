@@ -14,8 +14,8 @@
 //
 
 module bsg_round_robin_n_to_1 #(parameter width_p = -1
-                                ,parameter num_in_p = "inv"
-                                ,parameter strict_p = "inv"
+                                ,parameter num_in_p = -1
+                                ,parameter strict_p = "inv" 
                                 ,parameter tag_width_lp = `BSG_SAFE_CLOG2(num_in_p)
                                 )
    (input  clk_i
@@ -64,7 +64,7 @@ module bsg_round_robin_n_to_1 #(parameter width_p = -1
         // we do not need the arb to determine this
         // the signal yumi_i is computed from this
 
-        assign v_o = | v_i;
+        // assign v_o = | v_i;
 
         bsg_round_robin_arb #(.inputs_p(num_in_p))
         rr_arb_ctrl
@@ -76,7 +76,7 @@ module bsg_round_robin_n_to_1 #(parameter width_p = -1
            ,.reqs_i   (v_i  ) // from each of the nodes
            ,.grants_o (grants_lo)
 
-           ,.v_o     (v_o  )
+           ,.v_o     ( v_o  )
            ,.tag_o   (tag_o    )
            ,.yumi_i  (yumi_i   )  // based on v_o, downstream
                                   // node decides if it will accept
