@@ -15,7 +15,7 @@
 //
 
 module bsg_1_to_n_tagged #(
-                           parameter num_out_p    = "inv"
+                           parameter num_out_p    = -1
                            ,parameter tag_width_lp = `BSG_SAFE_CLOG2(num_out_p)
                            )
    (input  clk_i
