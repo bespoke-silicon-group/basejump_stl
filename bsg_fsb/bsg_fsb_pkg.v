@@ -22,12 +22,14 @@ package bsg_fsb_pkg;
     logic [63:0]     data;   // 64 bits
   } bsg_fsb_pkt_s;
 
+   typedef logic [74:0] bsg_fsb_pkt_client_data_t;
+
    // for client nodes; note destid and cmd must line up with bsg_fsb_pkt_s above
   typedef struct packed {
     // these bits are reserved and needed for this network
     logic [3:0]      destid; // 4 bits
     logic [0:0]      cmd;    // == 0
-    logic [74:0]     data;    // this is the payload
+    bsg_fsb_pkt_client_data_t data;    // this is the payload
   } bsg_fsb_pkt_client_s;
 
 endpackage

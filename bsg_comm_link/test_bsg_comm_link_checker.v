@@ -95,8 +95,8 @@ module test_bsg_comm_link_checker #(parameter channel_width_p="inv"
              assert (data_in_check == data_in[check_bytes_p*channel_width_p-1:0])
                else
                  begin
-                    $error("## transmission error %x, %x"
-                           , data_in_check, data_in);
+                    $error("## transmission error %x, %x, difference = %x"
+                           , data_in_check, data_in, data_in_check ^ data_in);
                     // $finish();
                  end
 
