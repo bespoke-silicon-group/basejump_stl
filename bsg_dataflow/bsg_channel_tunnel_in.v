@@ -80,7 +80,7 @@ module bsg_channel_tunnel_in #(parameter width_p = -1
    // compute remote credit arithmetic
    wire [num_in_p-1:0] sent = v_o & yumi_i;
 
-   genvar 	       i;
+   genvar              i;
 
    // keep track of how many credits need to be send back
    for (i = 0; i < num_in_p; i=i+1)

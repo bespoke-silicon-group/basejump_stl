@@ -45,6 +45,14 @@ module bsg_channel_tunnel_out #(
     , output credit_remote_return_yumi_o
     );
 
+   // synopsys translate_off
+   initial
+     begin
+        assert(remote_credits_p >= (1 << lg_credit_decimation_p))
+          else $error("%m remote_credits_p is smaller than credit decimation factor!");
+     end
+   // synopsys translate_on
+
    genvar i;
 
    logic [num_in_p-1:0][lg_remote_credits_lp-1:0] local_credits;
@@ -54,9 +62,11 @@ module bsg_channel_tunnel_out #(
    // that transmit sections of the remote credits
    // but we'll wait until we run into that problem before we build it out
 
+   // synopsys translate_off
    initial
       assert (width_p >= num_in_p*lg_remote_credits_lp)
         else $error("%m not enough room in packet to transmit all credit counters");
+   // synopsys translate_on
 
    for (i = 0; i < num_in_p; i=i+1)
      begin: rof
