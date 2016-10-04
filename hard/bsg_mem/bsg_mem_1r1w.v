@@ -6,7 +6,6 @@
 //
 
 
-
 `define bsg_mem_1r1w_macro(words,bits)                                  \
      if (els_p == words && width_p == bits)                             \
        begin: macro                                                     \
@@ -21,7 +20,6 @@
               ,.data_o(r_data_o)                                        \
               );                                                        \
        end
-
 
 module bsg_mem_1r1w #(parameter width_p=-1
                       , parameter els_p=-1
@@ -43,6 +41,11 @@ module bsg_mem_1r1w #(parameter width_p=-1
 
    `bsg_mem_1r1w_macro(32,16)
      else `bsg_mem_1r1w_macro(32,2)
+     else `bsg_mem_1r1w_macro(32,8)
+     else `bsg_mem_1r1w_macro(16,62)
+     else `bsg_mem_1r1w_macro(4,62)
+     else `bsg_mem_1r1w_macro(2,62)
+     else `bsg_mem_1r1w_macro(2,64)
      else `bsg_mem_1r1w_macro(8,8)
            else `bsg_mem_1r1w_macro(2,8)
            else `bsg_mem_1r1w_macro(2,66)

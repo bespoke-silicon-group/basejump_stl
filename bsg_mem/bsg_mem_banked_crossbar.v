@@ -249,11 +249,11 @@ module bsg_mem_banked_crossbar #
 
 
   for(i=0; i<num_banks_p; i=i+1)
-  begin: mem_gen
+  begin: z
     // to be replaced with bsg_mem_1rw_sync_byte_masked
     bsg_mem_1rw_sync_mask_write_byte #( .data_width_p (data_width_p)
                                        ,.els_p        (bank_size_p)
-                                      ) mem_1rw_sync_mask
+                                      ) m1rw_mask
                                       ( .clk_i        (clk_i)
                                        ,.reset_i      (reset_i)
                                        ,.data_i       (bank_data[i])
