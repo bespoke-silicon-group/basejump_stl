@@ -239,7 +239,7 @@ def generate_Nr1w_array ( words, bits, readports) :
 
     # this one has words going vertically and bits horizontally
 
-    assert (words == 32 or words == 8), "only words == 32 and == 8 is currently handled";
+    assert (words == 32 or words == 16 or words == 8), "only words == 32,16, and 8 is currently handled";
 
     # get the maximum width of a cell that is not the dffe
     # mux_width = max([v for k,v in width.iteritems() if k not in ('dffe')])
@@ -319,7 +319,7 @@ def generate_Nr1w_array ( words, bits, readports) :
                                     ,w+3
                                     );
 
-            if (words == 32) :
+            if (words >= 16) :
                 # NOR2 each group of 8
                 for w in range (0,words,16) :
                     emit_wire_definition_nocr(ident_name_word_bit_port("nor2",w,b,p));
@@ -338,10 +338,14 @@ def generate_Nr1w_array ( words, bits, readports) :
                     queue_gate_instance(gate_dict, nand2
                                         , [ ident_name_word_bit_port("bsg_nand2",w,b,p)
                                             , ident_name_word_bit_port("nor2",w,b,p)
-                                            , ident_name_word_bit_port("nor2",w+16,b,p)
+# the 16 if (words > 16) else 0 hack allows 16 word RF's to be generated
+# (fixme; it would be more efficient to run through an inverter rather than a nand2 gate for 16 word RF's!)
+#
+                                            , ident_name_word_bit_port("nor2",w+(16 if (words>16) else 0),b,p)
                                             , ident_name_word_bit_port("nand2",w,b,p)
                                             ]
-                                        , w+15
+# tweak placement to position 13 for words == 16
+                                        , w+(15 if (words > 16) else 13)
                                         );
 
                 print "\n";
@@ -350,7 +354,7 @@ def generate_Nr1w_array ( words, bits, readports) :
                 # we may potentially pay in delay, but we get
                 # a lot in isolation and usability, with no area cost.
 
-            if (words == 32) :
+            if (words >= 16) :
                 my_nand = "nand2";
             else :
                 my_nand = "nand";

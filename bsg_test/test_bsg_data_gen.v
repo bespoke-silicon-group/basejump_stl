@@ -2,6 +2,7 @@
 
 module test_bsg_data_gen #(parameter   channel_width_p ="inv"
                            , parameter num_channels_p  = -1
+                           , parameter debug_p = 0
                            )
    (input clk_i
     , input reset_i
@@ -32,16 +33,21 @@ module test_bsg_data_gen #(parameter   channel_width_p ="inv"
        begin
           wire [lg_ring_bytes_lp-1:0] my_id = i[lg_ring_bytes_lp-1:0];
 
-	  if (lg_ring_bytes_lp < channel_width_p)
+          if (lg_ring_bytes_lp < channel_width_p)
             assign send_data[i*channel_width_p+:channel_width_p]
               = { my_id, data_r[0+:channel_width_p-lg_ring_bytes_lp]};
-	  else
-	    assign send_data[i*channel_width_p+:channel_width_p]
-	      = { data_r[0+:channel_width_p]};
+          else
+            assign send_data[i*channel_width_p+:channel_width_p]
+              = { data_r[0+:channel_width_p]};
        end
    else
      assign send_data[0+:channel_width_p] = data_r;
 
    assign o = send_data;
+
+   if (debug_p)
+   always @(negedge clk_i)
+     if (yumi_i)
+       $display("## test_bsg_data_gen sent %x",o);
 
 endmodule // test_bsg_data_gen

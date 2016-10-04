@@ -1,3 +1,6 @@
+`ifndef BSG_PKG_V
+
+`define BSG_PKG_V
 
 package bsg_fsb_pkg;
 
@@ -34,3 +37,4 @@ package bsg_fsb_pkg;
 
 endpackage
 
+`endif
