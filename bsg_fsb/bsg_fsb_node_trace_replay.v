@@ -9,7 +9,8 @@
 // 2: receive data
 // 3: assert done_o; test complete.
 // 4: end test; call $finish
-//
+// 5: decrement cycle counter; wait for cycle_counter == 0
+// 6: initialized cycle counter with 16 bits
 // in theory, we could add branching, etc.
 // before we know it, we have a processor =)
 //
@@ -48,6 +49,8 @@ module bsg_fsb_node_trace_replay
     , output logic error_o
     );
 
+   logic [15:0] cycle_ctr_r, cycle_ctr_n;
+
    logic [rom_addr_width_p-1:0] addr_r, addr_n;
    logic                        done_r, done_n;
    logic                        error_r, error_n;
@@ -61,15 +64,17 @@ module bsg_fsb_node_trace_replay
      begin
         if (reset_i)
           begin
-             addr_r  <= 0;
-             done_r  <= 0;
-             error_r <= 0;
+             addr_r      <= 0;
+             done_r      <= 0;
+             error_r     <= 0;
+             cycle_ctr_r <= 16'b1;
           end
         else
           begin
-             addr_r  <= addr_n;
-             done_r  <= done_n;
-             error_r <= error_n;
+             addr_r      <= addr_n;
+             done_r      <= done_n;
+             error_r     <= error_n;
+             cycle_ctr_r <= cycle_ctr_n;
           end
      end // always_ff @
 
@@ -105,6 +110,7 @@ module bsg_fsb_node_trace_replay
      begin
         instr_completed = 1'b0;
         error_n = error_r;
+        cycle_ctr_n = cycle_ctr_r;
 
         if (!done_r & en_i & ~reset_i)
           begin
@@ -123,8 +129,18 @@ module bsg_fsb_node_trace_replay
                          error_n = data_i != data_o;
                       end
                  end
-	       3: instr_completed = 1'b1;
-	       4: instr_completed = 1'b1;
+               3: instr_completed = 1'b1;
+               4: instr_completed = 1'b1;
+               5:
+                 begin
+                    cycle_ctr_n = cycle_ctr_r - 1'b1;
+                    instr_completed = ~(|cycle_ctr_r);
+                 end
+               6:
+                 begin
+                    cycle_ctr_n = rom_data_i[15:0];
+                    instr_completed = 1;
+                 end
                default:
                  begin
                  end
@@ -138,7 +154,7 @@ module bsg_fsb_node_trace_replay
         if (instr_completed & ~reset_i & ~done_r)
           begin
              case(op)
-               1: $display("### trace %m sent %h", data_o);
+               1: $display("### trace sent %h (%m)", data_o);
                2:
                  begin
                     if (data_i != data_o)
@@ -153,13 +169,13 @@ module bsg_fsb_node_trace_replay
                       end
                     else
                       begin
-                         $display("### %m trace matched %h", data_o);
+                         $display("### trace matched %h (%m)", data_o);
                       end // else: !if(data_i != data_o)
                  end
                3:
                  begin
                     $display("############################################################################");
-                    $display("###### done_o=1 (trace finished) (%m)");
+                    $display("###### done_o=1 (trace finished addr=%x) (%m)",rom_addr_o);
                     $display("############################################################################");
                  end
                4:
@@ -169,16 +185,24 @@ module bsg_fsb_node_trace_replay
                     $display("############################################################################");
                     $finish;
                  end
+               5:
+                 begin
+                    $display("### trace cycle_ctr_r = %x (%m)",cycle_ctr_r);
+                 end
+               6:
+                 begin
+                    $display("### trace cycle_ctr_r = %x (%m)",cycle_ctr_n);
+                 end
                default:
                  begin
 
                  end
              endcase // case (op)
              case (op)
-               0,1,2,3,4:
+               0,1,2,3,4,5,6:
                  begin
                  end
-               default: $display("%m unknown op %x\n", op);
+               default: $display("### trace unknown op %x (%m)\n", op);
              endcase // case (op)
           end // if (instr_completed & ~reset_i & ~done_r)
      end // always @ (negedge clk_i)

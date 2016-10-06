@@ -19,6 +19,7 @@
  
 import sys;
 import os;
+import binascii;
 
 zero = 0;
 
@@ -44,7 +45,12 @@ for line in myFile.readlines() :
     if (len(line)!=0):
         if (line[0] != "#") :
             if (not zero or not (set(line) <= all_zero)) :
-                print str(i).rjust(10)+": data_o = width_p ' (" + str(len(filter(lambda m:m.isdigit(), str(line))))+ "'b"+line+");";
+                digits_only = filter(lambda m:m.isdigit(), str(line));
+
+                # http://stackoverflow.com/questions/2072351/python-conversion-from-binary-string-to-hexadecimal
+                hstr = '%0*X' % ((len(digits_only) + 3) // 4, int(digits_only, 2))
+
+                print str(i).rjust(10)+": data_o = width_p ' (" + str(len(digits_only))+ "'b"+line+");"+" // 0x"+hstr;
             i = i + 1;
         else :
             print "                                 // " + line;
