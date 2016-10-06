@@ -6,7 +6,12 @@
 //
 // This module should be replaced by the hardened version
 // when being synthesized.
-// 
+//
+//
+// mbt: this file is out of date and probably not consistent
+//      with the real implementations in the hard directory
+//
+
 module bsg_clk_gen_osc
   (input        rst
   ,input  [1:0] adg_ctrl
