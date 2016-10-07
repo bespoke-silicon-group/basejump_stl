@@ -48,6 +48,7 @@
     -to clk_gen_core_inst/clk_gen_osc_inst/fdt/A1/Y
  */
 
+
 module bsg_nonsynth_clk_gen_tester
   #(parameter fast_sim_p="inv"
     , num_adgs_p="inv"
@@ -75,6 +76,12 @@ module bsg_nonsynth_clk_gen_tester
 
    `declare_bsg_tag_header_s(tag_els_p,lg_max_payload_length_lp)
 
+`define BSG_CLK_WATCH bsg_double_trouble_pcb.asic.ASIC.sdi_tkn_ex_o_int_3_
+
+`ifndef BSG_CLK_WATCH
+`define BSG_CLK_WATCH  bsg_clk_gen_i
+`endif
+
    bsg_nonsynth_clock_gen #(10000) cfg_clk_gen (bsg_tag_clk_o);
 
      // Used to count ticks between clock edges
@@ -85,10 +92,7 @@ module bsg_nonsynth_clk_gen_tester
   longint     per_new   = 0;
   longint     min_per   = 0;
 
-  // Count the number of timescale ticks that occur throughout simulation
-  //
-//  always #10ps ticks = ticks + 1'b1;
-
+   bsg_nonsynth_clk_watcher wtch (.clk_i(`BSG_CLK_WATCH));
 
    bsg_tag_header_s ds_tag_header;
    bsg_tag_header_s osc_tag_header;
@@ -102,46 +106,6 @@ module bsg_nonsynth_clk_gen_tester
    wire [ds_pkt_size_lp-1:0]  ds_pkt  = { 1'b0, ds_tag_payload, ds_tag_header,1'b1 };
 
    localparam check_times_lp = 0;
-
-   longint                    my_ticks_posedge = 0;
-   longint                    my_ticks_negedge = 0;
-   longint                    last_posedge = -1;
-   longint                    last_negedge = -1;
-   longint                    cycles_posedge = -1;
-   longint                    cycles_negedge = -1;
-
-   always @(posedge bsg_clk_gen_i)
-     begin
-        if ($time-my_ticks_negedge != last_posedge)
-          begin
-             if (cycles_posedge != -1)
-               $write("## clock_watcher {                                                                                POSEDGE offset (after %-8d cycles) %-7d ps (n/p phase ratio=%2.3f)}\n"
-                      ,cycles_posedge, $time-my_ticks_negedge, ( real ' (last_negedge))/(real ' ($time-my_ticks_negedge)));
-             cycles_posedge = 0;
-             last_posedge = $time-my_ticks_negedge;
-          end
-        else
-          cycles_posedge = cycles_posedge+1;
-
-        my_ticks_posedge = $time;
-
-     end // always @ (posedge bsg_clk_gen_i)
-
-   always @(negedge bsg_clk_gen_i)
-     begin
-        if ($time-my_ticks_posedge != last_negedge)
-          begin
-             if (cycles_negedge != -1)
-               $write("## clock_watcher { NEGEDGE offset (after %-7d cycles) %-7d ps (p/n phase ratio=%2.3f)}\n"
-                      ,cycles_negedge, $time-my_ticks_posedge, ( real ' (last_posedge))/(real ' ($time-my_ticks_posedge)));
-             cycles_negedge = 0;
-             last_negedge = $time-my_ticks_posedge;
-          end
-        else
-          cycles_negedge = cycles_negedge+1;
-
-        my_ticks_negedge = $time;
-     end
 
 
    string output_string = "";
@@ -183,7 +147,7 @@ module bsg_nonsynth_clk_gen_tester
       //
        bsg_clk_gen_sel_o = 2'b00;
        for (integer i = 0; i < 10; i++)
-         @(posedge bsg_clk_gen_i);
+         @(posedge `BSG_CLK_WATCH);
 
        $display("## PASS 0: Counted 10 clock positive edges (bsg_clk_gen_sel_o=0)");
 
@@ -222,7 +186,7 @@ module bsg_nonsynth_clk_gen_tester
 
        for (integer i = 0; i < 3; i++)
          begin
-            @(posedge bsg_clk_gen_i);
+            @(posedge `BSG_CLK_WATCH);
             @(posedge bsg_tag_clk_o);
          end
 
@@ -238,7 +202,7 @@ module bsg_nonsynth_clk_gen_tester
       //
        bsg_clk_gen_sel_o = 2'b00;
        for (integer i = 0; i < 10; i++)
-         @(posedge bsg_clk_gen_i);
+         @(posedge `BSG_CLK_WATCH);
 
        $display("## PASS 1: Counted 10 clock positive edges (bsg_clk_gen_sel_o=0)");
 
@@ -272,7 +236,7 @@ module bsg_nonsynth_clk_gen_tester
        // domain to allow the data to percolate through the synchronizers
        for (integer i = 0; i < 3; i++)
          begin
-            @(posedge bsg_clk_gen_i);
+            @(posedge `BSG_CLK_WATCH);
             @(posedge bsg_tag_clk_o);
          end
 
@@ -289,7 +253,7 @@ module bsg_nonsynth_clk_gen_tester
 
        for (integer i = 0; i < 4; i++)
          begin
-            @(posedge bsg_clk_gen_i);
+            @(posedge `BSG_CLK_WATCH);
             @(posedge bsg_tag_clk_o);
          end
 
@@ -301,7 +265,7 @@ module bsg_nonsynth_clk_gen_tester
       //
       bsg_clk_gen_sel_o = 2'b01;
       for (integer i = 0; i < 10; i++)
-          @(posedge bsg_clk_gen_i);
+          @(posedge `BSG_CLK_WATCH);
 
       $display("## PASS 9:  downsampler appears to generate a clock (bsg_clk_gen_sel_o=01)");
 
@@ -312,8 +276,8 @@ module bsg_nonsynth_clk_gen_tester
       bsg_clk_gen_sel_o = 2'b10;
       for (integer i = 0; i < 10; i++)
         begin
-          @(posedge bsg_clk_gen_i);
-          assert(bsg_clk_gen_i == ext_clk_i);
+          @(posedge `BSG_CLK_WATCH);
+          assert(`BSG_CLK_WATCH == ext_clk_i);
         end
 
       $display("## PASS 10: external clock appears to work (bsg_clk_gen_sel_o=01)");
@@ -358,16 +322,15 @@ module bsg_nonsynth_clk_gen_tester
           for (integer j = 0; j < 4; j++)
               @(posedge bsg_tag_clk_o);
           for (integer j = 0; j < 10; j++)
-              @(posedge bsg_clk_gen_i);
+              @(posedge `BSG_CLK_WATCH);
 
           // Measure the clock period
           //
-          @(posedge bsg_clk_gen_i);
+          @(posedge `BSG_CLK_WATCH);
            t1 = $time;
- //ticks;
-          @(posedge bsg_clk_gen_i);
+
+          @(posedge `BSG_CLK_WATCH);
            per_new = $time -t1;
-// ticks - t1;
 
           // Make sure the period is now less than it was.
           //
@@ -413,7 +376,7 @@ module bsg_nonsynth_clk_gen_tester
        for (integer j = 0; j < 4; j++)
          @(posedge bsg_tag_clk_o);
        for (integer j = 0; j < 4; j++)
-         @(posedge bsg_clk_gen_i);
+         @(posedge `BSG_CLK_WATCH);
 
        $display("## PASS 12e: END JAM clock from fastest to slowest");
 
@@ -431,7 +394,7 @@ module bsg_nonsynth_clk_gen_tester
        for (integer j = 0; j < 10; j++)
          @(posedge bsg_tag_clk_o);
        for (integer j = 0; j < 10; j++)
-         @(posedge bsg_clk_gen_i);
+         @(posedge `BSG_CLK_WATCH);
 
        $display("## PASS 13e: END JAM clock from slowest to fastest");
 
@@ -472,16 +435,15 @@ module bsg_nonsynth_clk_gen_tester
           for (integer j = 0; j < 4; j++)
               @(posedge bsg_tag_clk_o);
           for (integer j = 0; j < 3; j++)
-              @(posedge bsg_clk_gen_i);
+              @(posedge `BSG_CLK_WATCH);
 
           // Measure the clock period
           //
-          @(posedge bsg_clk_gen_i);
+          @(posedge `BSG_CLK_WATCH);
            t1 = $time;
- // ticks;
-          @(posedge bsg_clk_gen_i);
+
+          @(posedge `BSG_CLK_WATCH);
            per_new = $time - t1 ;
-//ticks - t1;
 
           // Make sure the period is now the correct downsampled factor of the
           // original clock period

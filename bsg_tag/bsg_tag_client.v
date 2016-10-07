@@ -105,6 +105,7 @@ module bsg_tag_client
       ,.o (tag_data_r                    )
       );
 
+   // synopsys translate_off
    if (debug_level_lp > 1)
    always @(negedge bsg_tag_i.clk)
      begin
@@ -115,6 +116,7 @@ module bsg_tag_client
         if (send_now)
           $display("## bsg_tag_client (send) SENDING   %b (%m)",tag_data_r);
      end
+   // synopsys translate_on
 
    logic recv_toggle_r, recv_toggle_n;
 
@@ -166,14 +168,18 @@ module bsg_tag_client
              if (recv_reset_i)
                begin
                   recv_data_r   <= width_p ' (default_p);
+                    // synopsys translate_off
                   if (debug_level_lp > 1) $display("## bsg_tag_client (recv) RESET (%m)");
+                    // synopsys translate_on
                end
              else
                // CDC (fixme use RPG groups)
                if (recv_new_r)
                  begin
                     recv_data_r <= tag_data_r;
+                    // synopsys translate_off
                     if (debug_level_lp > 1) $display("## bsg_tag_client (recv) RECEIVING %b (%m)",tag_data_r);
+                    // synopsys translate_on
                  end
           end
       end // block: z
