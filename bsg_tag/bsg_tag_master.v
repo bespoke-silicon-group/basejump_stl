@@ -35,9 +35,11 @@ module bsg_tag_master
    // counts 0..max_packet_len_lp
    localparam lg_max_packet_len_lp = `BSG_SAFE_CLOG2(max_packet_len_lp+1);
 
+   // synopsys translate_off
    if (debug_level_lp > 2)
      always @(negedge clk_i)
        $display("## bsg_tag_master %m %b",clients_r_o);
+   // synopsys translate_on
 
    logic  data_i_r;
 
@@ -50,6 +52,7 @@ module bsg_tag_master
 
    localparam ctr_width_lp = lg_max_packet_len_lp+1;
    logic [ctr_width_lp-1:0] zeros_ctr_r;
+
 
    wire tag_reset_req = zeros_ctr_r[ctr_width_lp-1];
 
@@ -69,11 +72,11 @@ module bsg_tag_master
     ,.count_o(zeros_ctr_r)
     );
 
-
+   // synopsys translate_off
    initial
         $display("## %m instantiating bsg_tag_master with els_p=%-d and lg_width_p=%-d, max_packet_len_lp=%-d, reset_zero_len=%-d"
                  ,els_p,lg_width_p,max_packet_len_lp,(1<<(ctr_width_lp)));
-
+   // synopsys translate_on
 
    //
    // END RESET LOGIC
@@ -91,11 +94,15 @@ module bsg_tag_master
 
    state_e state_r, state_n;
 
+   // synopsys sync_set_reset "tag_reset_req, data_i_r"
+
    always_ff @(posedge clk_i)
      // if we hit the counter AND (subtle bug) there is no valid incoming data that would get lost
      if (tag_reset_req & ~data_i_r)
        begin
+          // synopsys translate_off
           if (debug_level_lp > 1) $display("## bsg_tag_master RESET (%m)");
+          // synopsys translate_on
           state_r   <= eStart;
 
           // we put this here because DC did not currently infer "reset" logic
@@ -110,9 +117,11 @@ module bsg_tag_master
    always_ff @(posedge clk_i)
         hdr_r <= hdr_n;
 
+   // synopsys translate_off
    always_ff @(negedge clk_i)
      if (state_n != state_r)
        if (debug_level_lp > 1) $display("## bsg_tag_master STATE CHANGE  # %s --> %s #",state_r,state_n);
+   // synopsys translate_on
 
    always_comb
      begin
@@ -137,8 +146,11 @@ module bsg_tag_master
                end
           eHeader:
                begin
+                  // synopsys translate_off
                   if (debug_level_lp > 1)
                     $display("## bsg_tag_master RECEIVING HEADER (%m) (%d)",hdr_ptr_r);
+                  // synopsys translate_on
+
                   hdr_n     = { data_i_r, hdr_r[1+:($bits(bsg_tag_header_s)-1)] };
                   hdr_ptr_n = hdr_ptr_r + 1'b1;
                   // if we are at the next to last value
@@ -147,11 +159,19 @@ module bsg_tag_master
                        if (hdr_n.len == 0)
                          begin
                             state_n = eStart;
+                            // synopsys translate_off
                             $display("## %m (NULL PACKET)");
+                            // synopsys translate_on
                          end
                        else
                          begin
-                            if (debug_level_lp > 1) $display("## bsg_tag_master PACKET HEADER RECEIVED (length=%b,data_not_reset=%b,nodeID=%b) (%m) ",hdr_n.len,hdr_n.data_not_reset,hdr_n.nodeID);
+
+                            // synopsys translate_off
+                            if (debug_level_lp > 1)
+                              $display("## bsg_tag_master PACKET HEADER RECEIVED (length=%b,data_not_reset=%b,nodeID=%b) (%m) "
+                                       ,hdr_n.len,hdr_n.data_not_reset,hdr_n.nodeID);
+                            // synopsys translate_on
+
                             // if we have data to transfer go to transfer state
                             state_n = eTransfer;
                          end
@@ -168,14 +188,20 @@ module bsg_tag_master
                   bsg_tag_n.op    = hdr_r.data_not_reset;
                   bsg_tag_n.param = data_i_r;
 
+                  // synopsys translate_off
                   if (debug_level_lp > 2)
                     $display("## %m PACKET TRANSFER op,param=<%b,%b>", bsg_tag_n.op, bsg_tag_n.param);
+                  // synopsys translate_on
 
                   // finishing words
                   if (hdr_r.len== lg_width_p ' (1))
                     begin
                        state_n = eStart;
+
+                       // synopsys translate_off
                        if (debug_level_lp > 1) $display("## %m PACKET END");
+                       // synopsys translate_on
+
                     end
                   hdr_n.len = hdr_r.len - 1;
                end
@@ -185,7 +211,11 @@ module bsg_tag_master
             default:
               begin
                  state_n = eStuck;
+
+                 // synopsys translate_off
                  $display("## bsg_tag_master transitioning to error state; be sure to run gate-level netlist to avoid sim/synth mismatch (%m)");
+                 // synopsys translate_on
+
               end
         endcase // case (state_r)
 
