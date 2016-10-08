@@ -1,6 +1,6 @@
 include ../../../../cad/common/mk/cadenv.mk
 
-PROCESS_NODE=250
+PROCESS_NODE=180
 ifeq ($(SPICE_EXPLORER),)
 $(error SPICE_EXPLORER must be defined)
 endif
