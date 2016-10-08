@@ -16,7 +16,7 @@ module bsg_clkbuf #(parameter width_p=1
    `bsg_clkbuf_macro(1,16) else
    `bsg_clkbuf_macro(1,12) else
    `bsg_clkbuf_macro(1,8) else
-   `bsg_clkbuf_macro(1,4) else               
+   `bsg_clkbuf_macro(1,4) else
    `bsg_clkbuf_macro(1,3) else
    `bsg_clkbuf_macro(1,2) else
    `bsg_clkbuf_macro(1,1) else

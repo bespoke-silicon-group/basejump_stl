@@ -352,10 +352,14 @@ module bsg_round_robin_fifo_to_fifo
                 , .yumi_o(yumi_int_o[i][i:0])                 // final output
                 );
 
+	     // MBT: this is redundant with the cast inside bsg_rr_f2f_input
+	     // and results in a synthesis warning
+	     /*
              for (j = i+1; j < middle_meet_lp; j=j+1)
 	       begin
                   assign valid_head[i][j] = 1'b0;
 	       end
+	      */
 
              for (j = i+1; j < num_in_p; j=j+1)
 	       begin
