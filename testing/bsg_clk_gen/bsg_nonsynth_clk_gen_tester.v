@@ -54,9 +54,10 @@ module bsg_nonsynth_clk_gen_tester
     , num_adgs_p="inv"
     , ds_width_p="inv"
     , tag_els_p="inv"
+    , tag_node_base_p=0
     )
    (input ext_clk_i
-    , output logic bsg_tag_clk_o
+    , input bsg_tag_clk_i
     , output logic bsg_tag_en_o
     , output logic bsg_tag_data_o
 
@@ -64,6 +65,10 @@ module bsg_nonsynth_clk_gen_tester
     , output logic bsg_clk_gen_async_reset_o      // async reset (to clock geneartor)
 
     , input bsg_clk_gen_i
+
+    // starts on posedge of this signal
+    , input start_i
+    , output logic done_o
     );
 
    longint sim_iteration;
@@ -76,13 +81,7 @@ module bsg_nonsynth_clk_gen_tester
 
    `declare_bsg_tag_header_s(tag_els_p,lg_max_payload_length_lp)
 
-`define BSG_CLK_WATCH bsg_double_trouble_pcb.asic.ASIC.sdi_tkn_ex_o_int_3_
 
-`ifndef BSG_CLK_WATCH
-`define BSG_CLK_WATCH  bsg_clk_gen_i
-`endif
-
-   bsg_nonsynth_clock_gen #(10000) cfg_clk_gen (bsg_tag_clk_o);
 
      // Used to count ticks between clock edges
   //
@@ -92,7 +91,7 @@ module bsg_nonsynth_clk_gen_tester
   longint     per_new   = 0;
   longint     min_per   = 0;
 
-   bsg_nonsynth_clk_watcher wtch (.clk_i(`BSG_CLK_WATCH));
+   bsg_nonsynth_clk_watcher #(.tolerance_p(1)) wtch (.clk_i(bsg_clk_gen_i));
 
    bsg_tag_header_s ds_tag_header;
    bsg_tag_header_s osc_tag_header;
@@ -115,17 +114,26 @@ module bsg_nonsynth_clk_gen_tester
   //
   initial
     begin
-
-       $display("                                                           ");
-       $display("***********************************************************");
-       $display("*                                                         *");
-       $display("*                  SIMULATION BEGIN                       *");
-       $display("*                                                         *");
-       $display("***********************************************************");
-       $display("                                                           ");
-
-       $display("## INFO 0: detaching bsg_tag chain receive sides");
+       $display("## INFO 0: detaching bsg_tag chain receive side (%m)");
        bsg_tag_en_o = 0;
+       bsg_tag_data_o = 0;
+
+       @(posedge bsg_tag_clk_i);
+       @(posedge bsg_tag_clk_i);
+       done_o = 1'b0;
+       #10
+         while (start_i==0)
+           begin
+              @(posedge bsg_tag_clk_i);
+           end
+
+       $display("*%m");
+       $display("***********************************************************");
+       $display("*                                                         *");
+       $display("*         bsg_nonsynth_clk_gen_tester BEGIN               *");
+       $display("*                                                         *");
+       $display("***********************************************************");
+       $display("                                                           ");
 
        /*******************************************************************/
        /*                                                                 */
@@ -147,28 +155,28 @@ module bsg_nonsynth_clk_gen_tester
       //
        bsg_clk_gen_sel_o = 2'b00;
        for (integer i = 0; i < 10; i++)
-         @(posedge `BSG_CLK_WATCH);
+         @(posedge bsg_clk_gen_i);
 
        $display("## PASS 0: Counted 10 clock positive edges (bsg_clk_gen_sel_o=0)");
 
        $display("## INFO 3b: beginning bsg_tag master reset transmit ");
 
        // reset zero's counter
-       @(negedge bsg_tag_clk_o);
+       @(negedge bsg_tag_clk_i);
        bsg_tag_data_o = 1'b1;
 
        // transmit lots of zeros
-       @(negedge bsg_tag_clk_o);
+       @(negedge bsg_tag_clk_i);
        bsg_tag_data_o = 1'b0;
 
        for (integer i = 0; i < `bsg_tag_reset_len(bsg_tag_els_lp,lg_max_payload_length_lp); i=i+1)
-         @(negedge bsg_tag_clk_o);
+         @(negedge bsg_tag_clk_i);
 
        $display("## INFO 3e: end bsg_tag master reset transmit");
 
        $display("## INFO 4b: begin bsg_tag_client reset transmit for oscillator");
 
-       osc_tag_header.nodeID         = 0;
+       osc_tag_header.nodeID         = tag_node_base_p;
        osc_tag_header.data_not_reset = 0;
        osc_tag_header.len            = $size(osc_tag_payload);
 
@@ -177,7 +185,7 @@ module bsg_nonsynth_clk_gen_tester
 
        for (integer i = 0; i < osc_pkt_size_lp; i=i+1)
          begin
-            @(negedge bsg_tag_clk_o);
+            @(negedge bsg_tag_clk_i);
             bsg_tag_data_o = osc_pkt[i];
          end
 
@@ -186,8 +194,8 @@ module bsg_nonsynth_clk_gen_tester
 
        for (integer i = 0; i < 3; i++)
          begin
-            @(posedge `BSG_CLK_WATCH);
-            @(posedge bsg_tag_clk_o);
+            @(posedge bsg_clk_gen_i);
+            @(posedge bsg_tag_clk_i);
          end
 
        $display("## INFO 4e: end bsg_tag_client reset transmit for oscillator ");
@@ -202,20 +210,20 @@ module bsg_nonsynth_clk_gen_tester
       //
        bsg_clk_gen_sel_o = 2'b00;
        for (integer i = 0; i < 10; i++)
-         @(posedge `BSG_CLK_WATCH);
+         @(posedge bsg_clk_gen_i);
 
        $display("## PASS 1: Counted 10 clock positive edges (bsg_clk_gen_sel_o=0)");
 
        $display("## INFO 7b: begin bsg_tag_client reset transmit for downsampler");
 
-       ds_tag_header.nodeID  = 1;
+       ds_tag_header.nodeID  = tag_node_base_p+1;
        ds_tag_header.data_not_reset  = 0;
        ds_tag_header.len   = $bits(ds_tag_payload);
        ds_tag_payload      = { $bits(ds_tag_payload) {1'b1} };
 
        for (integer i = 0; i < ds_pkt_size_lp; i=i+1)
          begin
-            @(negedge bsg_tag_clk_o);
+            @(negedge bsg_tag_clk_i);
             bsg_tag_data_o = ds_pkt[i];
          end
 
@@ -228,7 +236,7 @@ module bsg_nonsynth_clk_gen_tester
 
        for (integer i = 0; i < ds_pkt_size_lp; i=i+1)
          begin
-            @(negedge bsg_tag_clk_o);
+            @(negedge bsg_tag_clk_i);
             bsg_tag_data_o = ds_pkt[i];
          end
 
@@ -236,15 +244,15 @@ module bsg_nonsynth_clk_gen_tester
        // domain to allow the data to percolate through the synchronizers
        for (integer i = 0; i < 3; i++)
          begin
-            @(posedge `BSG_CLK_WATCH);
-            @(posedge bsg_tag_clk_o);
+            @(posedge bsg_clk_gen_i);
+            @(posedge bsg_tag_clk_i);
          end
 
        ds_tag_payload.reset = 0;
 
        for (integer i = 0; i < ds_pkt_size_lp; i=i+1)
          begin
-            @(negedge bsg_tag_clk_o);
+            @(negedge bsg_tag_clk_i);
             bsg_tag_data_o = ds_pkt[i];
          end
 
@@ -253,8 +261,8 @@ module bsg_nonsynth_clk_gen_tester
 
        for (integer i = 0; i < 4; i++)
          begin
-            @(posedge `BSG_CLK_WATCH);
-            @(posedge bsg_tag_clk_o);
+            @(posedge bsg_clk_gen_i);
+            @(posedge bsg_tag_clk_i);
          end
 
        $display("## INFO 8e: end resetting downsampler and using val=0");
@@ -265,7 +273,7 @@ module bsg_nonsynth_clk_gen_tester
       //
       bsg_clk_gen_sel_o = 2'b01;
       for (integer i = 0; i < 10; i++)
-          @(posedge `BSG_CLK_WATCH);
+          @(posedge bsg_clk_gen_i);
 
       $display("## PASS 9:  downsampler appears to generate a clock (bsg_clk_gen_sel_o=01)");
 
@@ -276,8 +284,8 @@ module bsg_nonsynth_clk_gen_tester
       bsg_clk_gen_sel_o = 2'b10;
       for (integer i = 0; i < 10; i++)
         begin
-          @(posedge `BSG_CLK_WATCH);
-          assert(`BSG_CLK_WATCH == ext_clk_i);
+          @(posedge bsg_clk_gen_i);
+          assert(bsg_clk_gen_i == ext_clk_i);
         end
 
       $display("## PASS 10: external clock appears to work (bsg_clk_gen_sel_o=01)");
@@ -306,13 +314,13 @@ module bsg_nonsynth_clk_gen_tester
       // go through each clock speed setting
       for (integer i = 0; i < 1 << $bits(bsg_clk_gen_osc_tag_payload_s); i++)
         begin
-	   $display("## bsg_taging payload %b",i[0+:$bits(bsg_clk_gen_osc_tag_payload_s)]);
+           $display("## bsg_taging payload %b",i[0+:$bits(bsg_clk_gen_osc_tag_payload_s)]);
            osc_tag_header.data_not_reset = 1;
            osc_tag_payload = i;
 
            for (integer j = 0; j < osc_pkt_size_lp; j=j+1)
              begin
-                @(negedge bsg_tag_clk_o);
+                @(negedge bsg_tag_clk_i);
                 bsg_tag_data_o = osc_pkt[j];
              end
 
@@ -320,16 +328,16 @@ module bsg_nonsynth_clk_gen_tester
           // and the syncronizer registers have been passed
           //
           for (integer j = 0; j < 4; j++)
-              @(posedge bsg_tag_clk_o);
+              @(posedge bsg_tag_clk_i);
           for (integer j = 0; j < 10; j++)
-              @(posedge `BSG_CLK_WATCH);
+              @(posedge bsg_clk_gen_i);
 
           // Measure the clock period
           //
-          @(posedge `BSG_CLK_WATCH);
+          @(posedge bsg_clk_gen_i);
            t1 = $time;
 
-          @(posedge `BSG_CLK_WATCH);
+          @(posedge bsg_clk_gen_i);
            per_new = $time -t1;
 
           // Make sure the period is now less than it was.
@@ -369,14 +377,14 @@ module bsg_nonsynth_clk_gen_tester
 
        for (integer j = 0; j < osc_pkt_size_lp; j=j+1)
          begin
-            @(negedge bsg_tag_clk_o);
+            @(negedge bsg_tag_clk_i);
             bsg_tag_data_o = osc_pkt[j];
          end
 
        for (integer j = 0; j < 4; j++)
-         @(posedge bsg_tag_clk_o);
+         @(posedge bsg_tag_clk_i);
        for (integer j = 0; j < 4; j++)
-         @(posedge `BSG_CLK_WATCH);
+         @(posedge bsg_clk_gen_i);
 
        $display("## PASS 12e: END JAM clock from fastest to slowest");
 
@@ -387,14 +395,14 @@ module bsg_nonsynth_clk_gen_tester
 
        for (integer j = 0; j < osc_pkt_size_lp; j=j+1)
          begin
-            @(negedge bsg_tag_clk_o);
+            @(negedge bsg_tag_clk_i);
             bsg_tag_data_o = osc_pkt[j];
          end
 
        for (integer j = 0; j < 10; j++)
-         @(posedge bsg_tag_clk_o);
+         @(posedge bsg_tag_clk_i);
        for (integer j = 0; j < 10; j++)
-         @(posedge `BSG_CLK_WATCH);
+         @(posedge bsg_clk_gen_i);
 
        $display("## PASS 13e: END JAM clock from slowest to fastest");
 
@@ -425,7 +433,7 @@ module bsg_nonsynth_clk_gen_tester
 
            for (integer j = 0; j < ds_pkt_size_lp; j=j+1)
              begin
-                @(negedge bsg_tag_clk_o);
+                @(negedge bsg_tag_clk_i);
                 bsg_tag_data_o = ds_pkt[j];
              end
 
@@ -433,16 +441,16 @@ module bsg_nonsynth_clk_gen_tester
           // through synchronizers
 
           for (integer j = 0; j < 4; j++)
-              @(posedge bsg_tag_clk_o);
+              @(posedge bsg_tag_clk_i);
           for (integer j = 0; j < 3; j++)
-              @(posedge `BSG_CLK_WATCH);
+              @(posedge bsg_clk_gen_i);
 
           // Measure the clock period
           //
-          @(posedge `BSG_CLK_WATCH);
+          @(posedge bsg_clk_gen_i);
            t1 = $time;
 
-          @(posedge `BSG_CLK_WATCH);
+          @(posedge bsg_clk_gen_i);
            per_new = $time - t1 ;
 
           // Make sure the period is now the correct downsampled factor of the
@@ -468,15 +476,21 @@ module bsg_nonsynth_clk_gen_tester
 
        $display(output_string);
 
-       $display("                                                           ");
+       $display("* %m ");
        $display("***********************************************************");
        $display("*                                                         *");
-       $display("*                 SIMULATION FINISHED                     *");
+       $display("*                 CLOCK GEN TESTER FINISHED               *");
        $display("*                                                         *");
        $display("***********************************************************");
        $display("                                                           ");
-       $finish;
 
+       // end by wiring things to the external clock, for now
+       bsg_clk_gen_sel_o = 2'b10;
+
+       // end by disabling jtag tag so it may be used in a wired-or config
+       bsg_tag_en_o   = 1'b0;
+       bsg_tag_data_o = 1'b0;
+       done_o=1'b1;
 
     end // initial begin
 
