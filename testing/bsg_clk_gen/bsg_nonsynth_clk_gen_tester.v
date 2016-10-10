@@ -55,6 +55,7 @@ module bsg_nonsynth_clk_gen_tester
     , ds_width_p="inv"
     , tag_els_p="inv"
     , tag_node_base_p=0
+    , osc_final_val_p=0
     )
    (input ext_clk_i
     , input bsg_tag_clk_i
@@ -484,8 +485,26 @@ module bsg_nonsynth_clk_gen_tester
        $display("***********************************************************");
        $display("                                                           ");
 
-       // end by wiring things to the external clock, for now
-       bsg_clk_gen_sel_o = 2'b10;
+       osc_tag_header.data_not_reset = 1;
+       osc_tag_payload = osc_final_val_p;
+
+       $display("## Setting final osc value: %b (%m)",osc_final_val_p);
+
+       for (integer j = 0; j < osc_pkt_size_lp; j=j+1)
+         begin
+            @(negedge bsg_tag_clk_i);
+            bsg_tag_data_o = osc_pkt[j];
+         end
+
+       for (integer j = 0; j < 10; j++)
+         @(posedge bsg_tag_clk_i);
+       for (integer j = 0; j < 10; j++)
+         @(posedge bsg_clk_gen_i);
+
+       $display("## Setting switching to direct oscillator pass through (%m).");
+
+       // end by wiring things to the oscillator
+       bsg_clk_gen_sel_o = 2'b00;
 
        // end by disabling jtag tag so it may be used in a wired-or config
        bsg_tag_en_o   = 1'b0;
