@@ -73,9 +73,14 @@ module bsg_rp_clk_gen_atomic_delay_tuner
    NAND2BX2 NB        (.AN(sel_r[0]), .B(async_reset_neg_i), .Y(sel_r[1]));
    TIELO  ZB (.Y(zero_bit));
 
-   DFFRX4 sel_r_reg_0 (.D(mux_lo[0]), .CK(o)      ,.RN(async_reset_neg_i), .Q(sel_r[0]), .QN());
+   wire       sel_r_0_inv, sel_i_inv;
 
-   MX2X1 MX1          (.A(sel_r[0]) , .B(sel_i)   ,.S0(we_i), .Y(mux_lo[0]));
+   DFFRX4 sel_r_reg_0 (.D(mux_lo[0]), .CK(o)      ,.RN(async_reset_neg_i), .Q(sel_r[0]), .QN(sel_r_0_inv));
+
+   CLKINVX2 I_MX      (.A(sel_i), .Y(sel_i_inv));
+
+   // we invert both inputs of this mux to optimize the select-to-output path by 40 ps
+   MXI2X1 MX1         (.A(sel_r_0_inv) , .B(sel_i_inv)   ,.S0(we_i), .Y(mux_lo[0]));
 
    // synopsys rp_endgroup (bsg_clk_gen_cde)
 
