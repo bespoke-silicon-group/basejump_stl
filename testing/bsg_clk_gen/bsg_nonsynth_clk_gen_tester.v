@@ -56,6 +56,8 @@ module bsg_nonsynth_clk_gen_tester
     , tag_els_p="inv"
     , tag_node_base_p=0
     , osc_final_val_p=0
+    , ds_final_val_p=0
+    , clk_mux_final_val_p=2'b00
     )
    (input ext_clk_i
     , input bsg_tag_clk_i
@@ -485,6 +487,10 @@ module bsg_nonsynth_clk_gen_tester
        $display("***********************************************************");
        $display("                                                           ");
 
+       $display("## Setting osc mux (%m).");
+       // end by wiring things to the oscillator
+       bsg_clk_gen_sel_o = clk_mux_final_val_p;
+
        osc_tag_header.data_not_reset = 1;
        osc_tag_payload = osc_final_val_p;
 
@@ -501,10 +507,26 @@ module bsg_nonsynth_clk_gen_tester
        for (integer j = 0; j < 10; j++)
          @(posedge bsg_clk_gen_i);
 
-       $display("## Setting switching to direct oscillator pass through (%m).");
+       ds_tag_payload.val = ds_final_val_p;
 
-       // end by wiring things to the oscillator
-       bsg_clk_gen_sel_o = 2'b00;
+       $display("## Setting downsampler (%m).");
+
+       for (integer j = 0; j < ds_pkt_size_lp; j=j+1)
+         begin
+            @(negedge bsg_tag_clk_i);
+            bsg_tag_data_o = ds_pkt[j];
+         end
+
+       // wait a few clock cycles to make sure the packet propagates
+       // through synchronizers
+
+       for (integer j = 0; j < 4; j++)
+         @(posedge bsg_tag_clk_i);
+       for (integer j = 0; j < 3; j++)
+         @(posedge bsg_clk_gen_i);
+
+
+
 
        // end by disabling jtag tag so it may be used in a wired-or config
        bsg_tag_en_o   = 1'b0;
