@@ -48,6 +48,6 @@ module test_bsg_data_gen #(parameter   channel_width_p ="inv"
    if (debug_p)
    always @(negedge clk_i)
      if (yumi_i)
-       $display("## test_bsg_data_gen sent %x",o);
+       $display("## test_bsg_data_gen %m %x",o);
 
 endmodule // test_bsg_data_gen
