@@ -40,10 +40,10 @@
 //
 
 //
-// perf fixme: data can come in at 64 bits per cycle, but it is serialized
-// to 32-bits per cycle output. so for full performance, the core freq. currently has
-// to be >= 2x the incoming i/o frequency. fixing this so that no such ratio is necessary
-// has implications at the bsg assembler level.
+// perf fixme: data comes in at 64 bits per core cycle, but it is serialized
+// to 32-bits per cycle in the core domain. thus in theory some assembler-like changes could
+// allow for the in  I/O data rate to be twice the core frequency. but the assembler
+// may be on the core critical path.
 //
 
 module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
@@ -225,7 +225,7 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
 
 
    bsg_async_fifo #(.lg_size_p(lg_fifo_depth_p)  // 32 elements
-                    ,.width_p( (channel_width_p+1)*2 ) // room for both credits and
+                    ,.width_p( (channel_width_p+1)*2 ) // room for both valids and
                                                        //  for both data words
 		    ,.control_width_p(2)
                     ) baf

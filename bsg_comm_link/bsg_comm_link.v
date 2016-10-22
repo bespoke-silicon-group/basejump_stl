@@ -257,6 +257,15 @@ module bsg_comm_link
     , output core_async_reset_danger_o
     );
 
+   // if we have more than 2X the number of core channels than link channels
+   // we should use a channel narrow gadget to simplify the circuit
+   // higher multiples are possible but TBD.
+
+   localparam bao_narrow_lp = (
+			       ((core_channels_p / 2) >= link_channels_p)
+			       & (core_channels_p % 2) == 0
+			       ) ? 2 : 1;
+   
    // across all frequency combinations, we need a little over 20 fifo slots
    // so we round up to 32, to allow for delay in the FPGA
 
@@ -681,8 +690,6 @@ module bsg_comm_link
      end // block: channel
 
 
-
-
    //***************************************************
    //
    // SBOX, ASSEMBLER AND FRONT SIDE BUS
@@ -720,21 +727,27 @@ module bsg_comm_link
       ,.out_me_ready_i(core_asm_to_sso_ready      )
       );
 
-    // in from core
-   wire           core_asm_valid_li;
-   wire [core_channels_p*channel_width_p-1:0] core_asm_data_li;
-   wire                                       core_asm_ready_lo;
+    // outgoing from fsb to nrw
+   wire                                       core_nrw_valid_li;
+   wire [core_channels_p*channel_width_p-1:0] core_nrw_data_li;
+   wire                                       core_nrw_ready_lo;
 
+   // outgoing from nrw to asm
+   wire                                         core_asm_valid_li;
+   wire [core_channels_p*channel_width_p/bao_narrow_lp-1:0] core_asm_data_li;
+   wire                                         core_asm_ready_lo;
+   
    // out to core
    wire                                       core_asm_valid_lo;
    wire [core_channels_p*channel_width_p-1:0] core_asm_data_lo;
    wire                                       core_asm_yumi_li;
 
-   typedef logic [`BSG_MAX($clog2(core_channels_p),1)-1:0] bsg_comm_link_active_vec_t;
+   typedef logic [`BSG_MAX($clog2(core_channels_p/bao_narrow_lp),1)-1:0] bsg_comm_link_active_out_vec_t;
+   typedef logic [`BSG_MAX($clog2(core_channels_p),1)-1:0] 		 bsg_comm_link_active_in_vec_t;
 
    // de-bond channel into multiple individual channels
    bsg_assembler_out #(.width_p(channel_width_p)
-                       ,.num_in_p(core_channels_p)
+                       ,.num_in_p(core_channels_p/bao_narrow_lp)
                        ,.num_out_p(link_channels_p)
                        ,.out_channel_count_mask_p(channel_mask_p)
                        ) bao
@@ -746,7 +759,7 @@ module bsg_comm_link
       ,.ready_o(core_asm_ready_lo)
 
       // typesafe equivalent to core_channels_p-1
-      ,.in_top_channel_i( (bsg_comm_link_active_vec_t ' (core_channels_p))
+      ,.in_top_channel_i( (bsg_comm_link_active_out_vec_t ' (core_channels_p/bao_narrow_lp))
                           - 1'b1
                           )
       ,.out_top_channel_i(core_top_active_channel_r)
@@ -778,13 +791,40 @@ module bsg_comm_link
     ,.in_top_channel_i(core_top_active_channel_r)
 
     // typesafe equivalent to core_channels_p-1
-    ,.out_top_channel_i((bsg_comm_link_active_vec_t ' (core_channels_p)) - 1'b1)
+    ,.out_top_channel_i((bsg_comm_link_active_in_vec_t ' (core_channels_p)) - 1'b1)
 
     ,.valid_o(core_valid_tmp)
     ,.data_o (core_asm_data_lo   )
     ,.yumi_i (core_asm_yumi_li   )
     );
 
+   if (bao_narrow_lp == 2)
+     begin: nrw
+	bsg_fifo_1r1w_narrowed #(.width_p(channel_width_p*core_channels_p)
+				 ,.els_p(2)
+				 ,.width_out_p(channel_width_p*core_channels_p/bao_narrow_lp)
+				 ) nrw
+	  (.clk_i(core_clk_i)
+	   ,.reset_i(~core_calib_done_r)
+	   
+	   // from FSB
+	   ,.v_i    (core_nrw_valid_li)
+	   ,.data_i (core_nrw_data_li )
+	   ,.ready_o(core_nrw_ready_lo)
+
+	   // to assembler
+	   ,.v_o   (core_asm_valid_li)
+	   ,.data_o(core_asm_data_li)
+	   ,.yumi_i(core_asm_ready_lo & core_asm_valid_li)
+	   );
+     end // block: nrw
+		  else
+		  begin : not_nrw
+		  assign core_asm_valid_li = core_nrw_valid_li;
+		  assign core_asm_data_li  = core_nrw_data_li;
+	assign core_nrw_ready_lo = core_asm_ready_lo;
+     end
+   
    bsg_fsb #(.width_p(channel_width_p*core_channels_p)
              ,.nodes_p(nodes_p)
              ,.enabled_at_start_vec_p(enabled_at_start_vec_p)
@@ -799,9 +839,9 @@ module bsg_comm_link
       ,.asm_yumi_o(core_asm_yumi_li )
 
       // to assembler
-      ,.asm_v_o    (core_asm_valid_li)
-      ,.asm_data_o (core_asm_data_li )
-      ,.asm_ready_i(core_asm_ready_lo)
+      ,.asm_v_o    (core_nrw_valid_li)
+      ,.asm_data_o (core_nrw_data_li )
+      ,.asm_ready_i(core_nrw_ready_lo)
 
       // into nodes
       ,.node_v_o      (core_node_v_o      )
