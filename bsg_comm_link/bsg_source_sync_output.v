@@ -157,25 +157,39 @@ module bsg_source_sync_output
    // this is helpful because on the other side, there is no clock edge
    // available to do this alignment.
 
+   // for simulation, we need to reset the clock waveform to
+   // a known value. this is not necessary for the real chip.
+   // unfortunately, this has a 50 percent probability of causing
+   // a 180 degree phase shift, which would cause most PLLs to lose lock,
+   // such as the ones controlling the SERDES in the FPGA.
+   //
+   // to get around this problem, for the slave, we have a special phase
+   // (sResetClock) in calibration that causes this to be done; this phase
+   //  can be skipped by the master in the real system.
+
+   // we explicitly instantiate this register so that we can eliminate
+   // the clock uncertainty in the constraints file
+   
    always @(negedge io_master_clk_i)
      begin
-        // for simulation, we need to reset the clock waveform to
-        // a known value. this is not necessary for the real chip.
-        // unfortunately, this has a 50 percent probability of causing
-        // a 180 degree phase shift, which would cause most PLLs to lose lock,
-        // such as the ones controlling the SERDES in the FPGA.
-        //
-        // to get around this problem, for the slave, we have a special phase
-        // (sResetClock) in calibration that causes this to be done; this phase
-        //  can be skipped by the master in the real system.
-
         io_clk_r_o  <= io_clk_init_i ? 1'b0 : io_clk_n;
-
-        // synopsys translate_off
-        if (io_clk_init_i)
-          $display("## %m Reset DDR clock");
-        // synopsys translate_on
      end
+
+   /*   bsg_dff_negedge_reset #(.width_p(1)) io_clk_r_o_reg
+    (.clock_i(io_master_clk_i)
+    ,.data_i(io_clk_n)
+    ,.reset_i(io_clk_init_i)
+    ,.data_o(io_clk_r_o)
+    );
+    */
+   
+   // synopsys translate_off
+   always @(posedge io_master_clk_i)
+   begin
+      if (io_clk_init_i)
+	$display("## %m Reset DDR clock");
+   end
+   // synopsys translate_on
 
    assign io_clk_n = ~io_clk_r_o;
 
