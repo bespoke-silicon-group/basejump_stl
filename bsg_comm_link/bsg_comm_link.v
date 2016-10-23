@@ -206,8 +206,10 @@ module bsg_comm_link
     , parameter master_lg_out_prepare_hold_cycles_p
          = $clog2(5*master_to_slave_speedup_p+10)
 
-    // fixme: derive value better
-    , parameter master_calib_timeout_cycles_p = master_to_slave_speedup_p * 5000
+    // fixme: derive value better (we reduced this to 25 from 5000 for simulation)
+    // 25 might actually be okay
+				  
+    , parameter master_calib_timeout_cycles_p = master_to_slave_speedup_p * 25
 
     )
    (input core_clk_i
@@ -513,9 +515,9 @@ module bsg_comm_link
              assign io_trigger_mode_alt_en [i]     = 1'b0;
              assign core_loopback_en       [i]     = 1'b0;
 
-
              // activate the channel if all of the "real" tests passed
-             assign im_channel_active[i] = & im_tests_gather[tests_p-1:0];
+	     // MBT: we use triple equals because this handles the X case in simulation
+             assign im_channel_active[i] = (im_tests_gather[tests_p-1:0] === { tests_p {1'b1} });
 
              assign im_clk_init            [i]      = im_reset & ~im_reset_r;
 
