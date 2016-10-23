@@ -487,8 +487,7 @@ module bsg_nonsynth_clk_gen_tester
        $display("***********************************************************");
        $display("                                                           ");
 
-       $display("## Setting osc mux (%m).");
-       // end by wiring things to the oscillator
+       $display("## Setting clk mux final value: %b (%m).",clk_mux_final_val_p);
        bsg_clk_gen_sel_o = clk_mux_final_val_p;
 
        osc_tag_header.data_not_reset = 1;
@@ -509,7 +508,7 @@ module bsg_nonsynth_clk_gen_tester
 
        ds_tag_payload.val = ds_final_val_p;
 
-       $display("## Setting downsampler (%m).");
+       $display("## Setting final downsampler to %b (%m)",ds_final_val_p);
 
        for (integer j = 0; j < ds_pkt_size_lp; j=j+1)
          begin
@@ -520,9 +519,9 @@ module bsg_nonsynth_clk_gen_tester
        // wait a few clock cycles to make sure the packet propagates
        // through synchronizers
 
-       for (integer j = 0; j < 4; j++)
+       for (integer j = 0; j < 8; j++)
          @(posedge bsg_tag_clk_i);
-       for (integer j = 0; j < 3; j++)
+       for (integer j = 0; j < 8; j++)
          @(posedge bsg_clk_gen_i);
 
 
