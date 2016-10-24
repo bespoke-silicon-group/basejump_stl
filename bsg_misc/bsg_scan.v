@@ -56,27 +56,47 @@ module bsg_scan #(parameter width_p = -1
    else
      assign t[0] = i;
 
-   for (j = 0; j < $clog2(width_p); j = j + 1)
-     begin : row
-        wire [width_p-1:0] shifted = width_p ' ({fill, t[j]} >> (1 << j));
+   // we optimize for the common case of small and-scans
+   // used in round_robin_fifo_to_fifo
+   // we could generalize for OR/XORs as well.
+   // fixme style: use a loop instead
 
-        if (xor_p)
-          begin
-             assign fill = { width_p {1'b0} };
-             assign t[j+1] = t[j] ^ shifted;
-          end
-        else if (and_p)
-          begin
-             assign fill = { width_p {1'b1} };
-             assign t[j+1] = t[j] & shifted;
-          end
-        else if (or_p)
-          begin
-             assign fill = { width_p {1'b0} };
-             assign t[j+1] = t[j] | shifted;
-          end
+   if ((width_p == 4) & and_p)
+     begin : scand4
+	assign t[$clog2(width_p)] = { t[0][3], &t[0][3:2], &t[0][3:1], &t[0][3:0] };
      end
+   else if ((width_p == 3) & and_p)
+     begin: scand3
+	assign t[$clog2(width_p)] = { t[0][2], &t[0][2:1], &t[0][2:0] };
+     end
+   else if ((width_p == 2) & and_p)
+     begin: scand3
+	assign t[$clog2(width_p)] = { t[0][1], &t[0][1:0] };
+     end
+   else
+     begin : scanN
+	for (j = 0; j < $clog2(width_p); j = j + 1)
+	  begin : row
+             wire [width_p-1:0] shifted = width_p ' ({fill, t[j]} >> (1 << j));
 
+             if (xor_p)
+               begin
+		  assign fill = { width_p {1'b0} };
+		  assign t[j+1] = t[j] ^ shifted;
+               end
+             else if (and_p)
+               begin
+		  assign fill = { width_p {1'b1} };
+		  assign t[j+1] = t[j] & shifted;
+               end
+             else if (or_p)
+               begin
+		  assign fill = { width_p {1'b0} };
+		  assign t[j+1] = t[j] | shifted;
+               end
+	  end
+     end // block: scanN
+   
    // reverse bits
    if (lo_to_hi_p)
      assign o = {<< {t[$clog2(width_p)]}};
