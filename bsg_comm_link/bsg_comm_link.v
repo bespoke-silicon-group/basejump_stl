@@ -337,23 +337,40 @@ module bsg_comm_link
    wire [link_channels_p-1:0]   core_channel_active, im_channel_active;
 
    // computed from channel_active signals
-   logic [`BSG_MAX(0,$clog2(link_channels_p)-1):0] core_top_active_channel_r;
+   logic [`BSG_MAX(0,$clog2(link_channels_p)-1):0] core_top_active_channel_bao_r, core_top_active_channel_bai_r, core_top_active_channel_n;
    logic [`BSG_MAX(0,$clog2(link_channels_p+1)-1):0] active_channel_count;
 
    bsg_popcount #(.width_p(link_channels_p)) pop (.i(core_channel_active)
                                                   ,.o(active_channel_count) );
 
+
    // how many channels are alive?
-   always @(posedge core_clk_i)
-      core_top_active_channel_r <= (| core_channel_active)
-                                   ? (active_channel_count - 1) : '0;
+   assign core_top_active_channel_n = (| core_channel_active) ? (active_channel_count - 1) : '0;
+
+   // clone this register to keep it off critical paths
+   
+   bsg_dff #(.harden_p(1)
+	     ,.strength_p(4)
+	     ,.width_p(`BSG_MAX(1,$clog2(link_channels_p)))
+	    ) core_top_active_channel_bai_r_reg
+     (.clock_i(core_clk_i)
+      ,.data_i(core_top_active_channel_n)
+      ,.data_o(core_top_active_channel_bai_r)
+      );
+
+   bsg_dff #(.harden_p(1)
+	     ,.strength_p(4)
+	     ,.width_p(`BSG_MAX(1,$clog2(link_channels_p)))
+	    ) core_top_active_channel_bao_r_reg
+     (.clock_i(core_clk_i)
+      ,.data_i(core_top_active_channel_n)
+      ,.data_o(core_top_active_channel_bao_r)
+      );
 
    localparam tests_p = 5;
 
    wire im_calib_done, im_calib_done_r;
-   wire              core_calib_done_r;
-
-   assign core_calib_reset_r_o = ~core_calib_done_r;
+   wire core_calib_done_prefanout_r;
 
    bsg_launch_sync_sync #(.width_p(1)) out_to_core_sync_calib_done
      (.iclk_i(io_master_clk_i)
@@ -361,9 +378,29 @@ module bsg_comm_link
       ,.oclk_i(core_clk_i)
       ,.iclk_data_i(im_calib_done)
       ,.iclk_data_o(im_calib_done_r)
-      ,.oclk_data_o(core_calib_done_r)
+//      ,.oclk_data_o(core_calib_done_r)
+      ,.oclk_data_o(core_calib_done_prefanout_r)
       );
 
+   // generate pipelined reset tree
+   wire [5:0]              core_calib_done_vec_r;
+   assign core_calib_reset_r_o = ~core_calib_done_vec_r[0];
+
+   genvar 		   k;
+
+   for (k = 0; k < 6; k=k+1)
+     begin: cr
+	bsg_dff #(.harden_p(1)
+		  ,.strength_p(4)
+		  ,.width_p(1)
+		  ) core_calib_reset_fanout_reg
+	  (.clock_i(core_clk_i)
+	   ,.data_i(core_calib_done_prefanout_r)
+	   ,.data_o(core_calib_done_vec_r[k])
+	   );
+     end
+
+   
    if (master_p)
      begin : mstr
         // counter intuitive; organized by tests then by channel
@@ -515,10 +552,14 @@ module bsg_comm_link
              assign io_trigger_mode_alt_en [i]     = 1'b0;
              assign core_loopback_en       [i]     = 1'b0;
 
+`ifndef SYNTHESIS	     
              // activate the channel if all of the "real" tests passed
 	     // MBT: we use triple equals because this handles the X case in simulation
+	     //      DC of course does not like ===
              assign im_channel_active[i] = (im_tests_gather[tests_p-1:0] === { tests_p {1'b1} });
-
+`else
+             assign im_channel_active[i] = (im_tests_gather[tests_p-1:0] == { tests_p {1'b1} });	     
+`endif
              assign im_clk_init            [i]      = im_reset & ~im_reset_r;
 
           end
@@ -709,7 +750,7 @@ module bsg_comm_link
               ) sbox
      (.clk_i(core_clk_i)
       ,.reset_i(core_reset_i)
-      ,.calibration_done_i(core_calib_done_r)
+      ,.calibration_done_i(core_calib_done_vec_r[1])
       ,.channel_active_i(core_channel_active)
 
       ,.in_v_i   (core_ssi_to_asm_valid)
@@ -755,7 +796,7 @@ module bsg_comm_link
                        ) bao
      (.clk     (core_clk_i  )
       ,.reset  (core_channel_reset)
-      ,.calibration_done_i(core_calib_done_r)
+      ,.calibration_done_i(core_calib_done_vec_r[2])
       ,.valid_i(core_asm_valid_li)
       ,.data_i (core_asm_data_li )
       ,.ready_o(core_asm_ready_lo)
@@ -764,7 +805,7 @@ module bsg_comm_link
       ,.in_top_channel_i( (bsg_comm_link_active_out_vec_t ' (core_channels_p/bao_narrow_lp))
                           - 1'b1
                           )
-      ,.out_top_channel_i(core_top_active_channel_r)
+      ,.out_top_channel_i(core_top_active_channel_bao_r)
 
       ,.valid_o(core_asm_to_sso_valid)
       ,.data_o( core_asm_to_sso_data )
@@ -775,7 +816,7 @@ module bsg_comm_link
    // calibration is done; keeps interface clean.
 
    wire                  core_valid_tmp;
-   assign core_asm_valid_lo = core_valid_tmp & core_calib_done_r;
+   assign core_asm_valid_lo = core_valid_tmp & core_calib_done_vec_r[2];
 
   // merge them into one bonded channel
    bsg_assembler_in #(.width_p(channel_width_p)
@@ -785,12 +826,12 @@ module bsg_comm_link
                        ) bai
    (.clk     (core_clk_i  )
     ,.reset              (core_channel_reset)
-    ,.calibration_done_i (core_calib_done_r )
+    ,.calibration_done_i (core_calib_done_vec_r[3] )
     ,.valid_i(core_ssi_to_asm_valid_sbox)
     ,.data_i (core_ssi_to_asm_data_sbox )
     ,.yumi_o (core_ssi_to_asm_yumi      )
 
-    ,.in_top_channel_i(core_top_active_channel_r)
+    ,.in_top_channel_i(core_top_active_channel_bai_r)
 
     // typesafe equivalent to core_channels_p-1
     ,.out_top_channel_i((bsg_comm_link_active_in_vec_t ' (core_channels_p)) - 1'b1)
@@ -807,7 +848,7 @@ module bsg_comm_link
 				 ,.width_out_p(channel_width_p*core_channels_p/bao_narrow_lp)
 				 ) nrw
 	  (.clk_i(core_clk_i)
-	   ,.reset_i(~core_calib_done_r)
+	   ,.reset_i(~core_calib_done_vec_r[4])
 	   
 	   // from FSB
 	   ,.v_i    (core_nrw_valid_li)
@@ -833,7 +874,7 @@ module bsg_comm_link
              ,.snoop_vec_p(snoop_vec_p)
              ) fsb
      (.clk_i   (core_clk_i)
-      ,.reset_i(~core_calib_done_r)
+      ,.reset_i(~core_calib_done_vec_r[5])
 
       // from assembler
       ,.asm_v_i   (core_asm_valid_lo)
