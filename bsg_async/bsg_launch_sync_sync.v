@@ -45,8 +45,8 @@ module bsg_launch_sync_sync_``EDGE``_``bits``_unit                      \
  `rp_place    (hier blss_2   2 0)                                       \
  `rp_endgroup (blss_bank)                                               \
                                                                         \
-   logic [bits-1:0] bsg_SYNC_LNCH_r;                                  \
-   assign iclk_data_o = bsg_SYNC_LNCH_r;                              \
+   logic [bits-1:0] bsg_SYNC_LNCH_r;                                    \
+   assign iclk_data_o = bsg_SYNC_LNCH_r;                                \
                                                                         \
    always_ff @(EDGE iclk_i)                                             \
      begin                                                              \
@@ -56,9 +56,9 @@ module bsg_launch_sync_sync_``EDGE``_``bits``_unit                      \
         `rp_endgroup(blss_launch_1)                                     \
                                                                         \
         if (iclk_reset_i)                                               \
-          bsg_SYNC_LNCH_r <= bits``'b0;                               \
+          bsg_SYNC_LNCH_r <= {bits{1'b0}};                              \
         else                                                            \
-          bsg_SYNC_LNCH_r <= iclk_data_i;                             \
+          bsg_SYNC_LNCH_r <= iclk_data_i;                               \
      end                                                                \
                                                                         \
    logic [bits-1:0] bsg_SYNC_1_r;                                       \
@@ -72,7 +72,7 @@ module bsg_launch_sync_sync_``EDGE``_``bits``_unit                      \
         `rp_fill(0 0 UX)                                                \
         `rp_array_dir(up)                                               \
         `rp_endgroup(blss_1)                                            \
-        bsg_SYNC_1_r <= bsg_SYNC_LNCH_r;                              \
+        bsg_SYNC_1_r <= bsg_SYNC_LNCH_r;                                \
      end                                                                \
                                                                         \
    always_ff @(posedge oclk_i)                                          \
