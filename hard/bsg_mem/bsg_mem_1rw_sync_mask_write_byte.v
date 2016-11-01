@@ -33,7 +33,7 @@ module bsg_mem_1rw_sync_mask_write_byte
 
   // TSMC 180 1024x32 Byte Mask
   if ((els_p == 1024) & (data_width_p == 32))
-    begin
+    begin : macro
       wire [3:0] wen = {~(w_i & write_mask_i[3])
                        ,~(w_i & write_mask_i[2])
                        ,~(w_i & write_mask_i[1])
@@ -45,13 +45,14 @@ module bsg_mem_1rw_sync_mask_write_byte
       ,.WEN (wen)
       ,.A   (addr_i)
       ,.D   (data_i)
-      ,.OEN (~v_i)
+       // 1=tristate output
+      ,.OEN (1'b0)
       );
     end
   
   // no hardened version found
   else
-    begin
+    begin  : notmacro
       bsg_mem_1rw_sync_mask_write_byte
        #(.els_p        (els_p)
         ,.data_width_p (data_width_p)

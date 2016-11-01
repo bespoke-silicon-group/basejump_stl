@@ -11,10 +11,11 @@
 // for these channels; they are assumed to always be ready.
 //
 
-module bsg_1_to_n_tagged_fifo   #(parameter width_p              = "inv"
-                                  ,parameter num_out_p           = -1
-                                  ,parameter els_p               = "inv" // these are elements per channel
-                                  ,parameter unbuffered_mask_p   = 0
+module bsg_1_to_n_tagged_fifo   #(parameter width_p                   = "inv"
+                                  ,parameter num_out_p                = -1
+                                  ,parameter els_p                    = "inv" // these are elements per channel
+                                  ,parameter unbuffered_mask_p        = 0
+                                  ,parameter use_pseudo_large_fifo_p  = 0
                                   ,parameter tag_width_lp        = `BSG_SAFE_CLOG2(num_out_p)
                                   )
    (input  clk_i
@@ -56,6 +57,23 @@ module bsg_1_to_n_tagged_fifo   #(parameter width_p              = "inv"
              assign v_o     [i] = valid_lo[i];
              assign data_o  [i] = data_i;
              assign ready_li[i] = 1'b1;
+          end
+        else if (use_pseudo_large_fifo_p)
+          begin : psdlrg
+             bsg_fifo_1r1w_pseudo_large #(.width_p(width_p)
+                                          ,.els_p(els_p)
+                                          ) fifo
+               (.clk_i
+                ,.reset_i
+
+                ,.v_i    (valid_lo[i])
+                ,.data_i
+                ,.ready_o(ready_li[i])
+
+                ,.v_o   (v_o   [i])
+                ,.data_o(data_o[i])
+                ,.yumi_i(yumi_i[i])
+                );
           end
         else
           begin: buff
