@@ -18,15 +18,17 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
     , output logic [width_p-1:0]  data_o
     );
 
-   if ((width_p == 66) & (els_p==128))
+   if ((width_p == 32) & (els_p==2048))
      begin : z
-        rGenSRAM_128x66 smem_128x66
-          (.CLK(clk_i)
-           ,.Q(data_o) // out
-           ,.CEN(~v_i) // lo true
-           ,.WEN(~w_i) // lo true
-           ,.A(addr_i) // in
-           ,.D(data_i) // in
+        bsg_tsmc_180_mem_1rw_lgEls_11_width_32_mux_8_mask_all mem
+          (.Q(data_o)
+           ,.CLK(clk_i)
+           ,.CEN(~v_i)
+           ,.WEN(~w_i)
+           ,.A(addr_i)
+           ,.D(data_i)
+	   // 1=tristate
+           ,.OEN(1'b0)
            );
      end
    else
@@ -73,5 +75,5 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
                  end
           end // block: nonsubst
      end // block: z
-   
+
 endmodule
