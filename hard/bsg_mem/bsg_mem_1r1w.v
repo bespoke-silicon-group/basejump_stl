@@ -62,11 +62,16 @@ module bsg_mem_1r1w #(parameter width_p=-1
                 always_ff @(posedge w_clk_i)
                   if (w_v_i)
                     begin
+
+                       // synopsys translate_off
+
                        assert (w_addr_i < els_p)
                          else $error("Invalid address %x to %m of size %x\n", w_addr_i, els_p);
 
                        assert (~(r_addr_i == w_addr_i && w_v_i && r_v_i && !read_write_same_addr_p))
                          else $error("%m: Attempt to read and write same address");
+
+                       // synopsys translate_on
 
                        mem[w_addr_i] <= w_data_i;
                     end

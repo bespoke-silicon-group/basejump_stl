@@ -19,7 +19,7 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
     );
 
    if ((width_p == 32) & (els_p==2048))
-     begin : z
+     begin : macro
         bsg_tsmc_180_mem_1rw_lgEls_11_width_32_mux_8_mask_all mem
           (.Q(data_o)
            ,.CLK(clk_i)
@@ -30,7 +30,20 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
 	   // 1=tristate
            ,.OEN(1'b0)
            );
-     end
+     end // block: z
+   else
+   if ((width_p == 62) & (els_p==128))
+       begin :macro
+	  bsg_tsmc_180_mem_1rf_lgEls_7_width_62_mux_2_mask_all mem
+	    (
+	     .Q(data_o)
+	     ,.CLK(clk_i)
+	     ,.CEN(~v_i)
+	     ,.WEN(~w_i)
+	     ,.A(addr_i)
+	     ,.D(data_i)
+	     );
+       end
    else
      begin : z
         // we substitute a 1r1w macro
@@ -59,15 +72,21 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
                data_o <= data_lo;
          end // block: subst
         else
-          begin: nonsubst
+          begin: notmacro
              logic [width_p-1:0]    mem [els_p-1:0];
 
              always_ff @(posedge clk_i)
                if (v_i)
                  begin
+
+                    // synopsys translate_off
+
                     assert (addr_i < els_p)
                       else $error("Invalid address %x to %m of size %x\n"
                                   , addr_i, els_p);
+
+                    // synopsys translate_on
+
                     if (w_i)
                       mem[addr_i] <= data_i;
                     else

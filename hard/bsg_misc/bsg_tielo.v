@@ -45,9 +45,13 @@ module bsg_tielo #(parameter width_p="inv"
    `bsg_tielo_macro(2) else
    `bsg_tielo_macro(1) else
        begin :notmacro
+          assign o = { width_p {1'b0} };
+
+          // synopsys translate_off
+
           initial assert(harden_p==0) else $error("## %m wanted to harden but no macro");
 
-            assign o = { width_p {1'b0} };
+          // synopsys translate_on
 
       end
 endmodule

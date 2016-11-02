@@ -21,8 +21,14 @@ module bsg_clkbuf #(parameter width_p=1
    `bsg_clkbuf_macro(1,2) else
    `bsg_clkbuf_macro(1,1) else
        begin :notmacro
-          initial assert(harden_p==0) else $error("## %m wanted to harden but no macro");
 
-             assign o = i;
+        assign o = i;
+
+        // synopsys translate_off
+
+        initial assert(harden_p==0) else $error("## %m wanted to harden but no macro");
+
+        // synopsys translate_on
+
       end
 endmodule
