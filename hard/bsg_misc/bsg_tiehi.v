@@ -45,9 +45,11 @@ module bsg_tiehi #(parameter width_p="inv"
    `bsg_tiehi_macro(2) else
    `bsg_tiehi_macro(1) else
        begin :notmacro
-          initial assert(harden_p==0) else $error("## %m wanted to harden but no macro");
+          assign o = { width_p {1'b1} };
 
-            assign o = { width_p {1'b1} };
+          // synopsys translate_off
+          initial assert(harden_p==0) else $error("## %m wanted to harden but no macro");
+          // synopsys translate_on
 
       end
 endmodule
