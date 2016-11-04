@@ -37,17 +37,19 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
 
    wire                   unused = reset_i;
 
-   // this implementation ignores the r_v_i
-   // assign r_data_o = mem[r_addr_i];
-
+   //the read logic, register the input
+   logic [addr_width_lp-1:0]  r0_addr_r, r1_addr_r;
    always_ff @(posedge clk_i)
-     if (r0_v_i)
-       r0_data_o <= mem[r0_addr_i];
-
+     if (r0_v_i) r0_addr_r <= r0_addr_i;
+   
    always_ff @(posedge clk_i)
-     if (r1_v_i)
-       r1_data_o <= mem[r1_addr_i];
+     if (r1_v_i) r1_addr_r <= r1_addr_i;
+   
+   assign r0_data_o = mem[ r0_addr_r ];
+   assign r1_data_o = mem[ r1_addr_r ];
+    
 
+   //the write logic, the memory is treated as dff array
    always_ff @(posedge clk_i)
      if (w_v_i)
        mem[w_addr_i] <= w_data_i;
