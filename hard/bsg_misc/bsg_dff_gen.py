@@ -149,5 +149,10 @@ if len(sys.argv) == 4 :
     # suffix, basecell;  e.g. dff, dff
     generate_dff_nreset_en( sys.argv[1], int(sys.argv[2]), int(sys.argv[3]) );
 else :
-    print "Usage: " + sys.argv[0] + " type " + " bits " + " strength";
+    if ((len(sys.argv) == 5) and (sys.argv[4]=="SWEEP")) :
+        for b in range (1,int(sys.argv[2])+1) :
+            generate_dff_nreset_en( sys.argv[1], b, sys.argv[3] );
+    else:
+        print "Usage: " + sys.argv[0] + " type " + " bits " + " strength";
+        print "Usage: " + sys.argv[0] + " type " + " bits " + " strength " + "SWEEP (to go from 1..bits)";
 
