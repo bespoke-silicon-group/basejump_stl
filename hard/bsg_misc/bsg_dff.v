@@ -10,6 +10,46 @@ module bsg_dff #(width_p=-1, harden_p=1, strength_p=1)
     ,output [width_p-1:0] data_o
     );
 
+   `bsg_dff_macro(80,1) else
+   `bsg_dff_macro(79,1) else
+   `bsg_dff_macro(78,1) else
+   `bsg_dff_macro(77,1) else
+   `bsg_dff_macro(76,1) else
+   `bsg_dff_macro(75,1) else
+   `bsg_dff_macro(74,1) else
+   `bsg_dff_macro(73,1) else
+   `bsg_dff_macro(72,1) else
+   `bsg_dff_macro(71,1) else
+   `bsg_dff_macro(70,1) else
+   `bsg_dff_macro(69,1) else
+   `bsg_dff_macro(68,1) else
+   `bsg_dff_macro(67,1) else
+   `bsg_dff_macro(66,1) else
+   `bsg_dff_macro(65,1) else
+   `bsg_dff_macro(64,1) else
+   `bsg_dff_macro(63,1) else
+   `bsg_dff_macro(62,1) else
+   `bsg_dff_macro(61,1) else
+   `bsg_dff_macro(60,1) else
+   `bsg_dff_macro(59,1) else
+   `bsg_dff_macro(58,1) else
+   `bsg_dff_macro(57,1) else
+   `bsg_dff_macro(56,1) else
+   `bsg_dff_macro(55,1) else
+   `bsg_dff_macro(54,1) else
+   `bsg_dff_macro(53,1) else
+   `bsg_dff_macro(52,1) else
+   `bsg_dff_macro(51,1) else
+   `bsg_dff_macro(50,1) else
+   `bsg_dff_macro(49,1) else
+   `bsg_dff_macro(48,1) else
+   `bsg_dff_macro(47,1) else
+   `bsg_dff_macro(46,1) else
+   `bsg_dff_macro(45,1) else
+   `bsg_dff_macro(44,1) else
+   `bsg_dff_macro(43,1) else
+   `bsg_dff_macro(42,1) else
+   `bsg_dff_macro(41,1) else      
    `bsg_dff_macro(40,1) else
    `bsg_dff_macro(39,1) else
    `bsg_dff_macro(38,1) else
