@@ -54,7 +54,7 @@ module test_bsg;
 
     ,.v_o      ( v_o   )//result is valid
     ,.result_o ( result_o )
-    ,.ready_i  ( 1'b1   )
+    ,.yumi_i  ( v_o   )
     );
 
    initial clk = 0;
@@ -81,7 +81,7 @@ module test_bsg;
                 `endif
              signed_opA = 1'b1;
              signed_opB = 1'b1;
-
+            
              v_i    = 1;
              wait (ready_o == 0);
              v_i    = 0;

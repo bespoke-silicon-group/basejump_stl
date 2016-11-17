@@ -60,7 +60,7 @@ module bsg_imul_iterative  #( width_p = 32)
 
 	,output                 v_o      //result is valid
 	,output [width_p-1: 0]  result_o
-    ,input                  ready_i
+    ,input                  yumi_i
     );
 
     localparam lg_width_lp = `BSG_SAFE_CLOG2( width_p + 1);
@@ -103,8 +103,8 @@ module bsg_imul_iterative  #( width_p = 32)
             NEG_R:         next_state = DONE;
 
             DONE: begin
-                if( ready_i ) next_state = IDLE;
-                else          next_state = DONE;
+                if( yumi_i ) next_state = IDLE;
+                else         next_state = DONE;
             end
 
             default: next_state = IDLE;

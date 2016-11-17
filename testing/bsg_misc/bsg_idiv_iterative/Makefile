@@ -2,8 +2,9 @@
 include /homes/shx089/cad/common/mk/cadenv.mk
 
 PLI_OPTS = -P mypli.tab get_stim.c +acc
+VCS_OP     +=  +vcs+vcdpluson -debug_access+all
 vcs:
-	$(VCS) -full64 -sverilog  -Mupdate -f divide.files $(LIB_OPTS) $(PLI_OPTS)
+	$(VCS) -full64 -sverilog $(VCS_OP)  -Mupdate -f divide.files $(LIB_OPTS) $(PLI_OPTS)
 	#./simv +vcs+stop+232100
 	./simv
 
