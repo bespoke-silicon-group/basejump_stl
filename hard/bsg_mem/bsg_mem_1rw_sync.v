@@ -20,7 +20,7 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
 
    if ((width_p == 32) & (els_p==2048))
      begin : macro
-        bsg_tsmc_180_mem_1rw_lgEls_11_width_32_mux_8_mask_all mem
+        tsmc180_1rw_lg11_w32_m8_all mem
           (.Q(data_o)
            ,.CLK(clk_i)
            ,.CEN(~v_i)
@@ -34,7 +34,7 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
    else
    if ((width_p == 62) & (els_p==128))
        begin :macro
-	  bsg_tsmc_180_mem_1rf_lgEls_7_width_62_mux_2_mask_all mem
+	  tsmc180_1rf_lg7_w62_m2_all mem
 	    (
 	     .Q(data_o)
 	     ,.CLK(clk_i)
