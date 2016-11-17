@@ -33,7 +33,7 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
    if ((width_p == 32) && (els_p == 32))
      begin: macro
 	// use two 1R1W rams to create
-        bsg_tsmc_180_mem_2rf_lgEls_5_width_32_mux_1_mask_all mem0
+        tsmc180_2rf_lg5_w32_m1_all mem0
           (
            // read port
            .CLKA (clk_i)
@@ -50,7 +50,7 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
            ,.CENB(~w_v_i)
            );
 
-        bsg_tsmc_180_mem_2rf_lgEls_5_width_32_mux_1_mask_all mem1
+        tsmc180_2rf_lg5_w32_m1_all mem1
           (
            // read port
            .CLKA (clk_i)
