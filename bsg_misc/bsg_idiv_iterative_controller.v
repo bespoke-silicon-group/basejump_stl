@@ -12,7 +12,6 @@ module bsg_idiv_iterative_controller (
 
 	  ,input               v_i
       ,output              ready_o
-	  ,output logic        yumi_o
 
 	  ,input               signed_div_r_i
 	  ,input               adder_result_is_neg_i
@@ -36,6 +35,7 @@ module bsg_idiv_iterative_controller (
 	  ,output logic        adder_cin_o
 
 	  ,output logic        v_o
+      ,input               yumi_i
       );
 
    reg last;
@@ -50,7 +50,7 @@ module bsg_idiv_iterative_controller (
             CALC11, CALC12, CALC13, CALC14, CALC15, CALC16, CALC17, CALC18,
             CALC19, CALC20, CALC21, CALC22, CALC23, CALC24, CALC25, CALC26,
             CALC27, CALC28, CALC29, CALC30, CALC31, CALC32, REPAIR, REMAIN, 
-            QUOT } idiv_ctrl_stat;
+            QUOT,DONE } idiv_ctrl_stat;
    idiv_ctrl_stat state, next_state;
 
    always @(posedge clk_i) begin
@@ -84,7 +84,7 @@ module bsg_idiv_iterative_controller (
       opC_ld_o       = 1'b1;
       adder_cin_o    = !add_neg_last;
       neg_ld         = 1'b0;
-      yumi_o         = 1'b0;
+      //yumi_o         = 1'b0;
       last           = 1'b0;
       latch_inputs_o = 1'b0;
       next_state    = WAIT;
@@ -111,9 +111,9 @@ module bsg_idiv_iterative_controller (
 	   opB_clr_l_o  = 1'b0;
 	   opB_sel_o    = 3'b100;
 	   opC_ld_o     = 1'b0;
-	   neg_ld     = 1'b1;
-	   adder_cin_o    = 1'b1;
-	   yumi_o    = 1'b1;
+	   neg_ld       = 1'b1;
+	   adder_cin_o  = 1'b1;
+	  // yumi_o    = 1'b1;
 	   opA_ld_o     = opA_is_neg_i & signed_div_r_i;
 	end
 
@@ -192,15 +192,26 @@ module bsg_idiv_iterative_controller (
 	end	
 
 	QUOT: begin
-	   next_state = WAIT;
+       if( yumi_i ) next_state = WAIT;
+       else         next_state = DONE;
 	   opA_clr_l_o  = 1'b0;
 	   opB_inv_o    = 1'b1;
 	   opB_ld_o     = 1'b0;
 	   opC_sel_o    = 3'b010;
-	   adder_cin_o    = 1'b1;
-	   last       = 1'b1;
+	   adder_cin_o  = 1'b1;
+	   last         = 1'b1;
 	   opC_ld_o     = q_neg;
 	end
+    
+    DONE:begin
+        if( yumi_i ) next_state = WAIT;
+        else         next_state = DONE;
+
+        last        = 1'b1;
+        opA_ld_o    = 1'b0;
+        opB_ld_o    = 1'b0;
+        opC_ld_o    = 1'b0;
+    end
 	     
     endcase
    end

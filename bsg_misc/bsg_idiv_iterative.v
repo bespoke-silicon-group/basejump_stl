@@ -28,7 +28,7 @@ module bsg_idiv_iterative (
 	,input           clk_i
 
 	,input           v_i      //there is a request
-	,output          yumi_o   //idiv has accept the request
+//	,output          yumi_o   //idiv has accept the request
     ,output          ready_o  //idiv is idle 
 
     ,input [31: 0]   dividend_i
@@ -38,6 +38,7 @@ module bsg_idiv_iterative (
 	,output          v_o      //result is valid
 	,output [31: 0]  quotient_o
 	,output [31: 0]  remainder_o
+    ,input           yumi_i
     );
 
 
@@ -185,7 +186,6 @@ module bsg_idiv_iterative (
       ,.clk_i                    (clk_i)
 
       ,.v_i                      (v_i)
-      ,.yumi_o                   (yumi_o)
       ,.ready_o                  (ready_o)
 
       ,.signed_div_r_i           (signed_div_r)
@@ -210,5 +210,6 @@ module bsg_idiv_iterative (
       ,.adder_cin_o              (adder_cin)
 
       ,.v_o(v_o)
+      ,.yumi_i(yumi_i)
      );
 endmodule // divide

@@ -14,7 +14,7 @@ module test_bsg;
    reg div_req;
    reg signed_div;
    
-   wire div_ack;
+   wire ready_o;
    wire done;
    
    reg reset;
@@ -44,9 +44,10 @@ module test_bsg;
 	       .signed_div_i(signed_div),
 	       .quotient_o(quotient),
 	       .remainder_o(remainder),
-	       .yumi_o(div_ack),
-           .ready_o(),
+	       //.yumi_o(div_ack),
+           .ready_o( ready_o ),
 	       .v_o(done),
+           .yumi_i( done  ),
 	       .reset_i(reset),
 	       .clk_i(clk));
 
@@ -68,8 +69,9 @@ module test_bsg;
 
 	 signed_div = 1;
 	 
+	 wait (ready_o == 1);
 	 div_req = 1; 
-	 wait (div_ack == 1);
+	 wait (ready_o == 0);
 	 div_req = 0;
 	 wait (done == 1);
 
@@ -96,8 +98,9 @@ module test_bsg;
 
 	 signed_div = 0;
 
+	 wait (ready_o == 1);
 	 div_req = 1;
-	 wait (div_ack == 1);
+	 wait (ready_o == 0);
 	 div_req = 0;
 	 wait (done == 1);
 	 
