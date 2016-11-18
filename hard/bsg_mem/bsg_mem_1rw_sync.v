@@ -32,6 +32,73 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
            );
      end // block: z
    else
+   if ((width_p == 32) & (els_p==1024))
+     begin : macro
+        tsmc180_1rw_lg10_w32_m8_all mem
+          (.Q(data_o)
+           ,.CLK(clk_i)
+           ,.CEN(~v_i)
+           ,.WEN(~w_i)
+           ,.A(addr_i)
+           ,.D(data_i)
+	   // 1=tristate
+           ,.OEN(1'b0)
+           );
+     end // block: z
+   else
+   if ((width_p == 70) & (els_p==128))
+       begin :macro
+	  tsmc180_1rf_lg7_w70_m2_all mem
+	    (
+	     .Q(data_o)
+	     ,.CLK(clk_i)
+	     ,.CEN(~v_i)
+	     ,.WEN(~w_i)
+	     ,.A(addr_i)
+	     ,.D(data_i)
+	     );
+       end
+   else
+   if ((width_p == 68) & (els_p==128))
+       begin :macro
+	  tsmc180_1rf_lg7_w68_m2_all mem
+	    (
+	     .Q(data_o)
+	     ,.CLK(clk_i)
+	     ,.CEN(~v_i)
+	     ,.WEN(~w_i)
+	     ,.A(addr_i)
+	     ,.D(data_i)
+	     );
+       end
+   else
+   if ((width_p == 66) & (els_p==128))
+       begin :macro
+	  tsmc180_1rf_lg7_w66_m2_all mem
+	    (
+	     .Q(data_o)
+	     ,.CLK(clk_i)
+	     ,.CEN(~v_i)
+	     ,.WEN(~w_i)
+	     ,.A(addr_i)
+	     ,.D(data_i)
+	     );
+       end
+
+   else
+   if ((width_p == 64) & (els_p==128))
+       begin :macro
+	  tsmc180_1rf_lg7_w64_m2_all mem
+	    (
+	     .Q(data_o)
+	     ,.CLK(clk_i)
+	     ,.CEN(~v_i)
+	     ,.WEN(~w_i)
+	     ,.A(addr_i)
+	     ,.D(data_i)
+	     );
+       end
+   else
    if ((width_p == 62) & (els_p==128))
        begin :macro
 	  tsmc180_1rf_lg7_w62_m2_all mem
@@ -44,6 +111,7 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
 	     ,.D(data_i)
 	     );
        end
+
    else
      begin : z
         // we substitute a 1r1w macro
