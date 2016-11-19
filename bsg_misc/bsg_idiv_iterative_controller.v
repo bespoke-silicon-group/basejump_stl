@@ -66,6 +66,7 @@ module bsg_idiv_iterative_controller (
       end 
    end
 
+// synopsys sync_set_reset  "reset_i"
    always @(posedge clk_i) begin
       if (reset_i)  state <= WAIT;
       else          state <= next_state;

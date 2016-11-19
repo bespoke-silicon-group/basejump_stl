@@ -210,6 +210,7 @@ module bsg_imul_iterative  #( width_p = 32)
 
 ///////////////////////////////////////////////////////////////////////////////
 //  update the result register
+// synopsys sync_set_reset  "reset_i, latch_input"
   always_ff@(posedge clk_i) begin
     if( reset_i )                   result_r <= 'b0;
     else if( latch_input )          result_r <= 'b0;
