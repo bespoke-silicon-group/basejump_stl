@@ -4,6 +4,11 @@
 Round robin arbitration unit generator
 
 Bandhav Veluri 01/29/2016
+
+Added the Hold logic by Shaolin Xie(shawnless.xie@gmail.com), 12/09/2016
+==> When there is only 1 request and the request is with the highest priority,
+    don't update the grant register, so the master with most request would get
+    more priorities.
 """
 
 import sys, math
@@ -26,6 +31,45 @@ def calculate_grants(last, reqs_w):
         curr = (curr+1) % reqs_w
     return result
 
+
+def get_single_request_str(last_r, reqs_w):
+    """ 
+    Returns the string that represens the request which would trigger the hold 
+    on condition
+    """
+    req_string = ["0"]*reqs_w
+    req_string[ (last_r + 1) % reqs_w ] = "1"
+    
+    return "".join(req_string)
+
+def print_hold_on_logic(last_w, reqs_w):
+    """
+    Print the logic of the hold on logic 
+    """
+    print """
+if ( hold_on_sr_p ) begin """
+    print """   
+    always_comb begin
+        unique casez( last_r )"""           
+    for last_r in range(reqs_w ):
+        last_r_str = bin(last_r)[2:].zfill(last_w);
+        req_str    = get_single_request_str(last_r, reqs_w)
+        #Full cases
+        if( (last_r == ( (1<< last_w) -1 ) ) & (last_r == (reqs_w-1) ) ):
+            print """           default: hold_on_sr = ( reqs_i == %d'b%s );"""%( reqs_w, req_str)
+        #Not Full cases
+        else : 
+            print """           %d'b%s : hold_on_sr = ( reqs_i == %d'b%s );"""%( last_w, last_r_str, reqs_w, req_str)
+
+    #Not full cases
+    if( (1<< last_w ) != reqs_w ):
+        print """           default : hold_on_sr = 1'b0;"""
+
+    print """       endcase
+    end //end of alwasy_comb
+
+end //end of hold_on_sr_p """ 
+
 max_reqs = 0 # no. of inputs
 try:
     assert len(sys.argv) == 2
@@ -40,7 +84,9 @@ print """// Round robin arbitration unit
 // DO NOT MODIFY
 """
 
-print "module bsg_round_robin_arb #(parameter inputs_p = %s, lg_inputs_p=`BSG_SAFE_CLOG2(inputs_p))" % '''"not assigned"'''
+print """module bsg_round_robin_arb #(inputs_p      = %s 
+                                     ,lg_inputs_p   =`BSG_SAFE_CLOG2(inputs_p)
+                                     ,hold_on_sr_p  =1'b0 )""" % '''"not assigned"'''
 
 print """    (input clk_i
     , input reset_i
@@ -60,6 +106,8 @@ print """    (input clk_i
     );
 
 logic [lg_inputs_p-1:0] last, last_n, last_r;
+logic hold_on_sr;
+
 
 """
 
@@ -90,10 +138,15 @@ begin
                     , "begin grants_o ="\
                     , "%d'b"%reqs_w + req[1] + "; tag_o = (lg_inputs_p) ' ("+str(req[1][::-1].index('1'))+"); end"
 
-    print """    default: begin grants_o = {%d{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X
+    print """    default: begin grants_o = {%d{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X 
   endcase
-end
-end: inputs_%d""" % (reqs_w, reqs_w) 
+end """% (reqs_w) 
+
+    print_hold_on_logic(last_w, reqs_w)
+
+
+    print """
+end: inputs_%d""" % (reqs_w) 
 
 print """
 
@@ -104,7 +157,11 @@ if(inputs_p == 1)
 else
   begin
     always_comb
-      last_n = (yumi_i ? tag_o:last_r);
+      if( hold_on_sr_p ) begin: last_n_gen
+        last_n = hold_on_sr ? last_r :
+               ( yumi_i     ? tag_o  : last_r );  
+      end else
+        last_n = (yumi_i ? tag_o:last_r);
 
     always_ff @(posedge clk_i)
       last_r <= (reset_i) ? (lg_inputs_p)'(0):last_n;
