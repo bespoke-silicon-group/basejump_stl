@@ -8,7 +8,7 @@
 
 module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
                                       ,parameter o_els_p     = -1
-                                      // 0=fixed hi, 1 = fixed lo, 2 = round robin
+                                      // 0=fixed hi, 1 = fixed lo, 2 = round robin, 3 round robin hold
                                       ,parameter rr_lo_hi_p  = "inv"
                                       ,parameter lg_o_els_lp = `BSG_SAFE_CLOG2(o_els_p)
                                       )
@@ -43,9 +43,10 @@ module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
 
    for(i=0; i<o_els_p; i=i+1)
      begin: arb
-        if (rr_lo_hi_p == 2)
+        if (rr_lo_hi_p == 2 || rr_lo_hi_p == 3)
           begin: rr
-            bsg_round_robin_arb #( .inputs_p(i_els_p)
+            bsg_round_robin_arb #( .inputs_p    (i_els_p)
+                                  ,.hold_on_sr_p(rr_lo_hi_p == 3)
                                    ) round_robin_arb
               ( .clk_i
                 ,.reset_i

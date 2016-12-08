@@ -3,7 +3,9 @@
 // Automatically generated using bsg_round_robin_arb.py
 // DO NOT MODIFY
 
-module bsg_round_robin_arb #(parameter inputs_p = -1, lg_inputs_p=`BSG_SAFE_CLOG2(inputs_p))
+module bsg_round_robin_arb #(inputs_p      = "not assigned" 
+                                     ,lg_inputs_p   =`BSG_SAFE_CLOG2(inputs_p)
+                                     ,hold_on_sr_p  =1'b0 )
     (input clk_i
     , input reset_i
     , input grants_en_i // whether to suppress grants_o
@@ -22,6 +24,8 @@ module bsg_round_robin_arb #(parameter inputs_p = -1, lg_inputs_p=`BSG_SAFE_CLOG
     );
 
 logic [lg_inputs_p-1:0] last, last_n, last_r;
+logic hold_on_sr;
+
 
 
 
@@ -33,9 +37,21 @@ begin
     3'b0_?_?: begin grants_o = 1'b0; tag_o = (lg_inputs_p) ' (0); end // X
     3'b1_?_0: begin grants_o = 1'b0; tag_o = (lg_inputs_p) ' (0); end // X
     3'b1_0_1: begin grants_o = 1'b1; tag_o = (lg_inputs_p) ' (0); end
-    default: begin grants_o = {1{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X
+    default: begin grants_o = {1{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X 
   endcase
-end
+end 
+
+if ( hold_on_sr_p ) begin 
+   
+    always_comb begin
+        unique casez( last_r )
+           1'b0 : hold_on_sr = ( reqs_i == 1'b1 );
+           default : hold_on_sr = 1'b0;
+       endcase
+    end //end of alwasy_comb
+
+end //end of hold_on_sr_p 
+
 end: inputs_1
 
 if(inputs_p == 2)
@@ -49,9 +65,21 @@ begin
     4'b1_0_01: begin grants_o = 2'b01; tag_o = (lg_inputs_p) ' (0); end
     4'b1_1_?1: begin grants_o = 2'b01; tag_o = (lg_inputs_p) ' (0); end
     4'b1_1_10: begin grants_o = 2'b10; tag_o = (lg_inputs_p) ' (1); end
-    default: begin grants_o = {2{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X
+    default: begin grants_o = {2{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X 
   endcase
-end
+end 
+
+if ( hold_on_sr_p ) begin 
+   
+    always_comb begin
+        unique casez( last_r )
+           1'b0 : hold_on_sr = ( reqs_i == 2'b01 );
+           default: hold_on_sr = ( reqs_i == 2'b10 );
+       endcase
+    end //end of alwasy_comb
+
+end //end of hold_on_sr_p 
+
 end: inputs_2
 
 if(inputs_p == 3)
@@ -70,9 +98,23 @@ begin
     6'b1_10_??1: begin grants_o = 3'b001; tag_o = (lg_inputs_p) ' (0); end
     6'b1_10_?10: begin grants_o = 3'b010; tag_o = (lg_inputs_p) ' (1); end
     6'b1_10_100: begin grants_o = 3'b100; tag_o = (lg_inputs_p) ' (2); end
-    default: begin grants_o = {3{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X
+    default: begin grants_o = {3{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X 
   endcase
-end
+end 
+
+if ( hold_on_sr_p ) begin 
+   
+    always_comb begin
+        unique casez( last_r )
+           2'b00 : hold_on_sr = ( reqs_i == 3'b010 );
+           2'b01 : hold_on_sr = ( reqs_i == 3'b001 );
+           2'b10 : hold_on_sr = ( reqs_i == 3'b100 );
+           default : hold_on_sr = 1'b0;
+       endcase
+    end //end of alwasy_comb
+
+end //end of hold_on_sr_p 
+
 end: inputs_3
 
 if(inputs_p == 4)
@@ -98,9 +140,23 @@ begin
     7'b1_11_??10: begin grants_o = 4'b0010; tag_o = (lg_inputs_p) ' (1); end
     7'b1_11_?100: begin grants_o = 4'b0100; tag_o = (lg_inputs_p) ' (2); end
     7'b1_11_1000: begin grants_o = 4'b1000; tag_o = (lg_inputs_p) ' (3); end
-    default: begin grants_o = {4{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X
+    default: begin grants_o = {4{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X 
   endcase
-end
+end 
+
+if ( hold_on_sr_p ) begin 
+   
+    always_comb begin
+        unique casez( last_r )
+           2'b00 : hold_on_sr = ( reqs_i == 4'b0100 );
+           2'b01 : hold_on_sr = ( reqs_i == 4'b0010 );
+           2'b10 : hold_on_sr = ( reqs_i == 4'b0001 );
+           default: hold_on_sr = ( reqs_i == 4'b1000 );
+       endcase
+    end //end of alwasy_comb
+
+end //end of hold_on_sr_p 
+
 end: inputs_4
 
 if(inputs_p == 5)
@@ -135,9 +191,25 @@ begin
     9'b1_100_??100: begin grants_o = 5'b00100; tag_o = (lg_inputs_p) ' (2); end
     9'b1_100_?1000: begin grants_o = 5'b01000; tag_o = (lg_inputs_p) ' (3); end
     9'b1_100_10000: begin grants_o = 5'b10000; tag_o = (lg_inputs_p) ' (4); end
-    default: begin grants_o = {5{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X
+    default: begin grants_o = {5{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X 
   endcase
-end
+end 
+
+if ( hold_on_sr_p ) begin 
+   
+    always_comb begin
+        unique casez( last_r )
+           3'b000 : hold_on_sr = ( reqs_i == 5'b01000 );
+           3'b001 : hold_on_sr = ( reqs_i == 5'b00100 );
+           3'b010 : hold_on_sr = ( reqs_i == 5'b00010 );
+           3'b011 : hold_on_sr = ( reqs_i == 5'b00001 );
+           3'b100 : hold_on_sr = ( reqs_i == 5'b10000 );
+           default : hold_on_sr = 1'b0;
+       endcase
+    end //end of alwasy_comb
+
+end //end of hold_on_sr_p 
+
 end: inputs_5
 
 if(inputs_p == 6)
@@ -183,9 +255,26 @@ begin
     10'b1_101_??1000: begin grants_o = 6'b001000; tag_o = (lg_inputs_p) ' (3); end
     10'b1_101_?10000: begin grants_o = 6'b010000; tag_o = (lg_inputs_p) ' (4); end
     10'b1_101_100000: begin grants_o = 6'b100000; tag_o = (lg_inputs_p) ' (5); end
-    default: begin grants_o = {6{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X
+    default: begin grants_o = {6{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X 
   endcase
-end
+end 
+
+if ( hold_on_sr_p ) begin 
+   
+    always_comb begin
+        unique casez( last_r )
+           3'b000 : hold_on_sr = ( reqs_i == 6'b010000 );
+           3'b001 : hold_on_sr = ( reqs_i == 6'b001000 );
+           3'b010 : hold_on_sr = ( reqs_i == 6'b000100 );
+           3'b011 : hold_on_sr = ( reqs_i == 6'b000010 );
+           3'b100 : hold_on_sr = ( reqs_i == 6'b000001 );
+           3'b101 : hold_on_sr = ( reqs_i == 6'b100000 );
+           default : hold_on_sr = 1'b0;
+       endcase
+    end //end of alwasy_comb
+
+end //end of hold_on_sr_p 
+
 end: inputs_6
 
 if(inputs_p == 7)
@@ -244,9 +333,27 @@ begin
     11'b1_110_??10000: begin grants_o = 7'b0010000; tag_o = (lg_inputs_p) ' (4); end
     11'b1_110_?100000: begin grants_o = 7'b0100000; tag_o = (lg_inputs_p) ' (5); end
     11'b1_110_1000000: begin grants_o = 7'b1000000; tag_o = (lg_inputs_p) ' (6); end
-    default: begin grants_o = {7{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X
+    default: begin grants_o = {7{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X 
   endcase
-end
+end 
+
+if ( hold_on_sr_p ) begin 
+   
+    always_comb begin
+        unique casez( last_r )
+           3'b000 : hold_on_sr = ( reqs_i == 7'b0100000 );
+           3'b001 : hold_on_sr = ( reqs_i == 7'b0010000 );
+           3'b010 : hold_on_sr = ( reqs_i == 7'b0001000 );
+           3'b011 : hold_on_sr = ( reqs_i == 7'b0000100 );
+           3'b100 : hold_on_sr = ( reqs_i == 7'b0000010 );
+           3'b101 : hold_on_sr = ( reqs_i == 7'b0000001 );
+           3'b110 : hold_on_sr = ( reqs_i == 7'b1000000 );
+           default : hold_on_sr = 1'b0;
+       endcase
+    end //end of alwasy_comb
+
+end //end of hold_on_sr_p 
+
 end: inputs_7
 
 if(inputs_p == 8)
@@ -320,9 +427,27 @@ begin
     12'b1_111_??100000: begin grants_o = 8'b00100000; tag_o = (lg_inputs_p) ' (5); end
     12'b1_111_?1000000: begin grants_o = 8'b01000000; tag_o = (lg_inputs_p) ' (6); end
     12'b1_111_10000000: begin grants_o = 8'b10000000; tag_o = (lg_inputs_p) ' (7); end
-    default: begin grants_o = {8{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X
+    default: begin grants_o = {8{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X 
   endcase
-end
+end 
+
+if ( hold_on_sr_p ) begin 
+   
+    always_comb begin
+        unique casez( last_r )
+           3'b000 : hold_on_sr = ( reqs_i == 8'b01000000 );
+           3'b001 : hold_on_sr = ( reqs_i == 8'b00100000 );
+           3'b010 : hold_on_sr = ( reqs_i == 8'b00010000 );
+           3'b011 : hold_on_sr = ( reqs_i == 8'b00001000 );
+           3'b100 : hold_on_sr = ( reqs_i == 8'b00000100 );
+           3'b101 : hold_on_sr = ( reqs_i == 8'b00000010 );
+           3'b110 : hold_on_sr = ( reqs_i == 8'b00000001 );
+           default: hold_on_sr = ( reqs_i == 8'b10000000 );
+       endcase
+    end //end of alwasy_comb
+
+end //end of hold_on_sr_p 
+
 end: inputs_8
 
 if(inputs_p == 9)
@@ -413,9 +538,29 @@ begin
     14'b1_1000_??1000000: begin grants_o = 9'b001000000; tag_o = (lg_inputs_p) ' (6); end
     14'b1_1000_?10000000: begin grants_o = 9'b010000000; tag_o = (lg_inputs_p) ' (7); end
     14'b1_1000_100000000: begin grants_o = 9'b100000000; tag_o = (lg_inputs_p) ' (8); end
-    default: begin grants_o = {9{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X
+    default: begin grants_o = {9{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X 
   endcase
-end
+end 
+
+if ( hold_on_sr_p ) begin 
+   
+    always_comb begin
+        unique casez( last_r )
+           4'b0000 : hold_on_sr = ( reqs_i == 9'b010000000 );
+           4'b0001 : hold_on_sr = ( reqs_i == 9'b001000000 );
+           4'b0010 : hold_on_sr = ( reqs_i == 9'b000100000 );
+           4'b0011 : hold_on_sr = ( reqs_i == 9'b000010000 );
+           4'b0100 : hold_on_sr = ( reqs_i == 9'b000001000 );
+           4'b0101 : hold_on_sr = ( reqs_i == 9'b000000100 );
+           4'b0110 : hold_on_sr = ( reqs_i == 9'b000000010 );
+           4'b0111 : hold_on_sr = ( reqs_i == 9'b000000001 );
+           4'b1000 : hold_on_sr = ( reqs_i == 9'b100000000 );
+           default : hold_on_sr = 1'b0;
+       endcase
+    end //end of alwasy_comb
+
+end //end of hold_on_sr_p 
+
 end: inputs_9
 
 if(inputs_p == 10)
@@ -525,9 +670,30 @@ begin
     15'b1_1001_??10000000: begin grants_o = 10'b0010000000; tag_o = (lg_inputs_p) ' (7); end
     15'b1_1001_?100000000: begin grants_o = 10'b0100000000; tag_o = (lg_inputs_p) ' (8); end
     15'b1_1001_1000000000: begin grants_o = 10'b1000000000; tag_o = (lg_inputs_p) ' (9); end
-    default: begin grants_o = {10{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X
+    default: begin grants_o = {10{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X 
   endcase
-end
+end 
+
+if ( hold_on_sr_p ) begin 
+   
+    always_comb begin
+        unique casez( last_r )
+           4'b0000 : hold_on_sr = ( reqs_i == 10'b0100000000 );
+           4'b0001 : hold_on_sr = ( reqs_i == 10'b0010000000 );
+           4'b0010 : hold_on_sr = ( reqs_i == 10'b0001000000 );
+           4'b0011 : hold_on_sr = ( reqs_i == 10'b0000100000 );
+           4'b0100 : hold_on_sr = ( reqs_i == 10'b0000010000 );
+           4'b0101 : hold_on_sr = ( reqs_i == 10'b0000001000 );
+           4'b0110 : hold_on_sr = ( reqs_i == 10'b0000000100 );
+           4'b0111 : hold_on_sr = ( reqs_i == 10'b0000000010 );
+           4'b1000 : hold_on_sr = ( reqs_i == 10'b0000000001 );
+           4'b1001 : hold_on_sr = ( reqs_i == 10'b1000000000 );
+           default : hold_on_sr = 1'b0;
+       endcase
+    end //end of alwasy_comb
+
+end //end of hold_on_sr_p 
+
 end: inputs_10
 
 
@@ -538,7 +704,11 @@ if(inputs_p == 1)
 else
   begin
     always_comb
-      last_n = (yumi_i ? tag_o:last_r);
+      if( hold_on_sr_p ) begin: last_n_gen
+        last_n = hold_on_sr ? last_r :
+               ( yumi_i     ? tag_o  : last_r );  
+      end else
+        last_n = (yumi_i ? tag_o:last_r);
 
     always_ff @(posedge clk_i)
       last_r <= (reset_i) ? (lg_inputs_p)'(0):last_n;
