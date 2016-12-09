@@ -5,7 +5,8 @@
 
 module bsg_round_robin_arb #(inputs_p      = "not assigned" 
                                      ,lg_inputs_p   =`BSG_SAFE_CLOG2(inputs_p)
-                                     ,hold_on_sr_p  =1'b0 )
+                                     ,reset_on_sr_p = 1'b0
+                                     ,hold_on_sr_p  = 1'b0 )
     (input clk_i
     , input reset_i
     , input grants_en_i // whether to suppress grants_o
@@ -24,8 +25,7 @@ module bsg_round_robin_arb #(inputs_p      = "not assigned"
     );
 
 logic [lg_inputs_p-1:0] last, last_n, last_r;
-logic hold_on_sr;
-
+logic hold_on_sr, reset_on_sr;
 
 
 
@@ -51,6 +51,12 @@ if ( hold_on_sr_p ) begin
     end //end of alwasy_comb
 
 end //end of hold_on_sr_p 
+
+if ( reset_on_sr_p ) begin:reset_on_1 
+    assign reset_on_sr = ( reqs_i == 1'b1 ) 
+                       ;
+
+end //end of reset_on_sr_p 
 
 end: inputs_1
 
@@ -79,6 +85,13 @@ if ( hold_on_sr_p ) begin
     end //end of alwasy_comb
 
 end //end of hold_on_sr_p 
+
+if ( reset_on_sr_p ) begin:reset_on_2 
+    assign reset_on_sr = ( reqs_i == 2'b01 ) 
+                       | ( reqs_i == 2'b10 ) 
+                       ;
+
+end //end of reset_on_sr_p 
 
 end: inputs_2
 
@@ -114,6 +127,14 @@ if ( hold_on_sr_p ) begin
     end //end of alwasy_comb
 
 end //end of hold_on_sr_p 
+
+if ( reset_on_sr_p ) begin:reset_on_3 
+    assign reset_on_sr = ( reqs_i == 3'b010 ) 
+                       | ( reqs_i == 3'b001 ) 
+                       | ( reqs_i == 3'b100 ) 
+                       ;
+
+end //end of reset_on_sr_p 
 
 end: inputs_3
 
@@ -156,6 +177,15 @@ if ( hold_on_sr_p ) begin
     end //end of alwasy_comb
 
 end //end of hold_on_sr_p 
+
+if ( reset_on_sr_p ) begin:reset_on_4 
+    assign reset_on_sr = ( reqs_i == 4'b0100 ) 
+                       | ( reqs_i == 4'b0010 ) 
+                       | ( reqs_i == 4'b0001 ) 
+                       | ( reqs_i == 4'b1000 ) 
+                       ;
+
+end //end of reset_on_sr_p 
 
 end: inputs_4
 
@@ -209,6 +239,16 @@ if ( hold_on_sr_p ) begin
     end //end of alwasy_comb
 
 end //end of hold_on_sr_p 
+
+if ( reset_on_sr_p ) begin:reset_on_5 
+    assign reset_on_sr = ( reqs_i == 5'b01000 ) 
+                       | ( reqs_i == 5'b00100 ) 
+                       | ( reqs_i == 5'b00010 ) 
+                       | ( reqs_i == 5'b00001 ) 
+                       | ( reqs_i == 5'b10000 ) 
+                       ;
+
+end //end of reset_on_sr_p 
 
 end: inputs_5
 
@@ -274,6 +314,17 @@ if ( hold_on_sr_p ) begin
     end //end of alwasy_comb
 
 end //end of hold_on_sr_p 
+
+if ( reset_on_sr_p ) begin:reset_on_6 
+    assign reset_on_sr = ( reqs_i == 6'b010000 ) 
+                       | ( reqs_i == 6'b001000 ) 
+                       | ( reqs_i == 6'b000100 ) 
+                       | ( reqs_i == 6'b000010 ) 
+                       | ( reqs_i == 6'b000001 ) 
+                       | ( reqs_i == 6'b100000 ) 
+                       ;
+
+end //end of reset_on_sr_p 
 
 end: inputs_6
 
@@ -353,6 +404,18 @@ if ( hold_on_sr_p ) begin
     end //end of alwasy_comb
 
 end //end of hold_on_sr_p 
+
+if ( reset_on_sr_p ) begin:reset_on_7 
+    assign reset_on_sr = ( reqs_i == 7'b0100000 ) 
+                       | ( reqs_i == 7'b0010000 ) 
+                       | ( reqs_i == 7'b0001000 ) 
+                       | ( reqs_i == 7'b0000100 ) 
+                       | ( reqs_i == 7'b0000010 ) 
+                       | ( reqs_i == 7'b0000001 ) 
+                       | ( reqs_i == 7'b1000000 ) 
+                       ;
+
+end //end of reset_on_sr_p 
 
 end: inputs_7
 
@@ -447,6 +510,19 @@ if ( hold_on_sr_p ) begin
     end //end of alwasy_comb
 
 end //end of hold_on_sr_p 
+
+if ( reset_on_sr_p ) begin:reset_on_8 
+    assign reset_on_sr = ( reqs_i == 8'b01000000 ) 
+                       | ( reqs_i == 8'b00100000 ) 
+                       | ( reqs_i == 8'b00010000 ) 
+                       | ( reqs_i == 8'b00001000 ) 
+                       | ( reqs_i == 8'b00000100 ) 
+                       | ( reqs_i == 8'b00000010 ) 
+                       | ( reqs_i == 8'b00000001 ) 
+                       | ( reqs_i == 8'b10000000 ) 
+                       ;
+
+end //end of reset_on_sr_p 
 
 end: inputs_8
 
@@ -560,6 +636,20 @@ if ( hold_on_sr_p ) begin
     end //end of alwasy_comb
 
 end //end of hold_on_sr_p 
+
+if ( reset_on_sr_p ) begin:reset_on_9 
+    assign reset_on_sr = ( reqs_i == 9'b010000000 ) 
+                       | ( reqs_i == 9'b001000000 ) 
+                       | ( reqs_i == 9'b000100000 ) 
+                       | ( reqs_i == 9'b000010000 ) 
+                       | ( reqs_i == 9'b000001000 ) 
+                       | ( reqs_i == 9'b000000100 ) 
+                       | ( reqs_i == 9'b000000010 ) 
+                       | ( reqs_i == 9'b000000001 ) 
+                       | ( reqs_i == 9'b100000000 ) 
+                       ;
+
+end //end of reset_on_sr_p 
 
 end: inputs_9
 
@@ -694,6 +784,21 @@ if ( hold_on_sr_p ) begin
 
 end //end of hold_on_sr_p 
 
+if ( reset_on_sr_p ) begin:reset_on_10 
+    assign reset_on_sr = ( reqs_i == 10'b0100000000 ) 
+                       | ( reqs_i == 10'b0010000000 ) 
+                       | ( reqs_i == 10'b0001000000 ) 
+                       | ( reqs_i == 10'b0000100000 ) 
+                       | ( reqs_i == 10'b0000010000 ) 
+                       | ( reqs_i == 10'b0000001000 ) 
+                       | ( reqs_i == 10'b0000000100 ) 
+                       | ( reqs_i == 10'b0000000010 ) 
+                       | ( reqs_i == 10'b0000000001 ) 
+                       | ( reqs_i == 10'b1000000000 ) 
+                       ;
+
+end //end of reset_on_sr_p 
+
 end: inputs_10
 
 
@@ -707,6 +812,9 @@ else
       if( hold_on_sr_p ) begin: last_n_gen
         last_n = hold_on_sr ? last_r :
                ( yumi_i     ? tag_o  : last_r );  
+      end else if( reset_on_sr_p ) begin: reset_on_last_n_gen
+        last_n = reset_on_sr? (inputs_p-2) :
+               ( yumi_i     ?tag_o : last_r );  
       end else
         last_n = (yumi_i ? tag_o:last_r);
 

@@ -70,6 +70,28 @@ if ( hold_on_sr_p ) begin """
 
 end //end of hold_on_sr_p """ 
 
+################################################################################
+#    Logic for priority reset logic
+################################################################################
+
+def print_reset_on_logic(reqs_w):
+    """
+    Print the logic of the logic of reset on signle request 
+    """
+
+    req_str= get_single_request_str(0, reqs_w)
+
+    print """
+if ( reset_on_sr_p ) begin:reset_on_%d 
+    assign reset_on_sr = ( reqs_i == %d'b%s ) """%( reqs_w,reqs_w, req_str)
+
+    for curr_r in range(1, reqs_w):
+        req_str= get_single_request_str(curr_r, reqs_w)
+        print """                       | ( reqs_i == %d'b%s ) """ %(reqs_w, req_str )
+    
+    print "                       ;"
+    print """
+end //end of reset_on_sr_p """ 
 max_reqs = 0 # no. of inputs
 try:
     assert len(sys.argv) == 2
@@ -86,7 +108,8 @@ print """// Round robin arbitration unit
 
 print """module bsg_round_robin_arb #(inputs_p      = %s 
                                      ,lg_inputs_p   =`BSG_SAFE_CLOG2(inputs_p)
-                                     ,hold_on_sr_p  =1'b0 )""" % '''"not assigned"'''
+                                     ,reset_on_sr_p = 1'b0
+                                     ,hold_on_sr_p  = 1'b0 )""" % '''"not assigned"'''
 
 print """    (input clk_i
     , input reset_i
@@ -106,8 +129,7 @@ print """    (input clk_i
     );
 
 logic [lg_inputs_p-1:0] last, last_n, last_r;
-logic hold_on_sr;
-
+logic hold_on_sr, reset_on_sr;
 
 """
 
@@ -144,6 +166,8 @@ end """% (reqs_w)
 
     print_hold_on_logic(last_w, reqs_w)
 
+    print_reset_on_logic(reqs_w)
+
 
     print """
 end: inputs_%d""" % (reqs_w) 
@@ -160,6 +184,9 @@ else
       if( hold_on_sr_p ) begin: last_n_gen
         last_n = hold_on_sr ? last_r :
                ( yumi_i     ? tag_o  : last_r );  
+      end else if( reset_on_sr_p ) begin: reset_on_last_n_gen
+        last_n = reset_on_sr? (inputs_p-2) :
+               ( yumi_i     ?tag_o : last_r );  
       end else
         last_n = (yumi_i ? tag_o:last_r);
 
