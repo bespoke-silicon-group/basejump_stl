@@ -3,7 +3,7 @@
 // Automatically generated using bsg_round_robin_arb.py
 // DO NOT MODIFY
 
-module bsg_round_robin_arb #(inputs_p      = "not assigned" 
+module bsg_round_robin_arb #(inputs_p      = -1
                                      ,lg_inputs_p   =`BSG_SAFE_CLOG2(inputs_p)
                                      ,reset_on_sr_p = 1'b0
                                      ,hold_on_sr_p  = 1'b0 )
