@@ -106,10 +106,10 @@ print """// Round robin arbitration unit
 // DO NOT MODIFY
 """
 
-print """module bsg_round_robin_arb #(inputs_p      = %s 
+print """module bsg_round_robin_arb #(inputs_p      = %s
                                      ,lg_inputs_p   =`BSG_SAFE_CLOG2(inputs_p)
                                      ,reset_on_sr_p = 1'b0
-                                     ,hold_on_sr_p  = 1'b0 )""" % '''"not assigned"'''
+                                     ,hold_on_sr_p  = 1'b0 )""" % '''-1'''
 
 print """    (input clk_i
     , input reset_i
