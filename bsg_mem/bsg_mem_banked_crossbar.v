@@ -11,12 +11,15 @@ module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
                                       // 0 = fixed hi,    1 = fixed lo,
                                       // 2 = round robin, 3 = round robin hold
                                       // 4 = round robin reset
+                                      // 5 = dynamic change on FIFO status
                                       ,parameter rr_lo_hi_p  = "inv"
                                       ,parameter lg_o_els_lp = `BSG_SAFE_CLOG2(o_els_p)
                                       )
   ( input                                clk_i
    ,input                                reset_i
 
+   //the reverse the priority for the dynamic scheme
+   ,input                                reverse_pr_i
    // crossbar inputs
    ,input [i_els_p-1:0]                  valid_i
    ,input [i_els_p-1:0][lg_o_els_lp-1:0] sel_io_i
@@ -45,7 +48,7 @@ module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
 
    for(i=0; i<o_els_p; i=i+1)
      begin: arb
-        if (rr_lo_hi_p > 1 )
+        if (rr_lo_hi_p == 3 || rr_lo_hi_p == 4 )
           begin: rr
             bsg_round_robin_arb #( .inputs_p    (i_els_p)
                                   ,.hold_on_sr_p(rr_lo_hi_p == 3)
@@ -63,7 +66,31 @@ module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
                 ,.yumi_i(valid_o[i])
                 );
           end
-        else
+       else if (rr_lo_hi_p == 5) begin: dynamic
+            wire [2][i_els_p-1:0]   grants_oi_one_hot;
+
+             bsg_arb_fixed #(.inputs_p(i_els_p)
+                             ,.lo_to_hi_p( 1'b0 )
+                             ) fixed_arb_low
+              (.ready_i (ready_i[i])
+               ,.reqs_i  (sel_oi_one_hot[i])
+               ,.grants_o( grants_oi_one_hot[0] )
+               );
+
+             bsg_arb_fixed #(.inputs_p(i_els_p)
+                             ,.lo_to_hi_p( 1'b1 )
+                             ) fixed_arb_high
+              (.ready_i (ready_i[i])
+               ,.reqs_i  (sel_oi_one_hot[i])
+               ,.grants_o( grants_oi_one_hot[1] )
+               );
+
+            assign grants_oi_one_hot_o[i] = reverse_pr_i
+                        ? grants_oi_one_hot[1]
+                        : grants_oi_one_hot[0];
+
+            assign valid_o[i] = | grants_oi_one_hot_o[i];
+       end else
           begin : fixed
              bsg_arb_fixed #(.inputs_p(i_els_p)
                              ,.lo_to_hi_p(rr_lo_hi_p&1'b1)
@@ -116,6 +143,8 @@ module bsg_mem_banked_crossbar #
   )
   ( input                                       clk_i
    ,input                                       reset_i
+   //the reverse the priority for the dynamic scheme
+   ,input                                reverse_pr_i
 
    ,input [num_ports_p-1:0]                     v_i
    ,input [num_ports_p-1:0]                     w_i
@@ -185,7 +214,7 @@ module bsg_mem_banked_crossbar #
                                   ) crossbar_control
      ( .clk_i              (clk_i)
        ,.reset_i            (reset_i)
-
+       ,.reverse_pr_i       (reverse_pr_i)
        // ports
        ,.valid_i            (v_i)
        ,.sel_io_i           (bank_reqs)
