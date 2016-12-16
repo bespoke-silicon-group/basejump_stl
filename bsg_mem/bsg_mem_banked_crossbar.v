@@ -67,7 +67,7 @@ module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
                 );
           end
        else if (rr_lo_hi_p == 5) begin: dynamic
-            wire [2][i_els_p-1:0]   grants_oi_one_hot;
+            wire [1:0][i_els_p-1:0]   grants_oi_one_hot;
 
              bsg_arb_fixed #(.inputs_p(i_els_p)
                              ,.lo_to_hi_p( 1'b0 )
