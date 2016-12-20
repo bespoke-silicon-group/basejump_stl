@@ -6,46 +6,49 @@
 //
 // This module should be replaced by the hardened version
 // when being synthesized.
-//
-//
-// mbt: this file is out of date and probably not consistent
-//      with the real implementations in the hard directory
-//
+
+`include "bsg_clk_gen.vh"
 
 module bsg_clk_gen_osc
-  (input        rst
-  ,input  [1:0] adg_ctrl
-  ,input  [1:0] cdt
-  ,input  [1:0] fdt
-  ,input        pwr_off
-  ,output logic clk
-  );
+  import bsg_tag_pkg::bsg_tag_s;
+   
+    #(parameter num_adgs_p=1)
+  (
+   input bsg_tag_s bsg_tag_i
+   ,input async_reset_i
+   ,output logic clk_o
+   );
 
-  wire [5:0] ctrl = {adg_ctrl, cdt, fdt};
+   `declare_bsg_clk_gen_osc_tag_payload_s(num_adgs_p)
 
-  logic [5:0] ctrl_r, ctrl_rr, ctrl_rrr;
+   bsg_clk_gen_osc_tag_payload_s fb_tag_r;
+   wire  fb_we_r;
 
-  always @(posedge clk or posedge rst)
-    begin
-      if (rst)
-        begin
-          ctrl_r   <= 6'b000000;
-          ctrl_rr  <= 6'b000000;
-          ctrl_rrr <= 6'b000000;
-        end
-      else
-        begin
-          ctrl_r   <= ctrl;
-          ctrl_rr  <= ctrl_r;
-          ctrl_rrr <= ctrl_rr;
-        end
-    end
+   // note: oscillator has to be already working in order
+   // for configuration state to pass through here
+
+   bsg_tag_client #(.width_p($bits(bsg_clk_gen_osc_tag_payload_s))
+                    ,.harden_p(1)
+                    ,.default_p(0)
+                    ) btc
+     (.bsg_tag_i     (bsg_tag_i)
+      ,.recv_clk_i   (clk_o)
+      ,.recv_reset_i (1'b0)     // no default value is loaded;
+      ,.recv_new_r_o (fb_we_r)  // default is already in OSC flops
+      ,.recv_data_r_o(fb_tag_r)
+      );
+
+   wire [1:0] cdt = fb_tag_r.cdt;
+   wire [1:0] fdt = fb_tag_r.fdt;
+   wire [num_adgs_p-1:0] adg_ctrl = fb_tag_r.adg;
+
+  wire [4+num_adgs_p-1:0] ctrl_rrr = {adg_ctrl, cdt, fdt};
 
   always
     begin
 
       if ($isunknown(ctrl_rrr))
-        #1 clk = 1'bx;
+        #1 clk_o = 1'bx;
       else
         begin
 
@@ -116,8 +119,8 @@ module bsg_clk_gen_osc
           else if (ctrl_rrr == 6'd62) delay = 12;
           else if (ctrl_rrr == 6'd63) delay = 10;
       
-          #delay clk = 1'b0 & ~rst;
-          #delay clk = 1'b1 & ~rst;
+          #delay clk_o = 1'b0 & ~async_reset_i;
+          #delay clk_o = 1'b1 & ~async_reset_i;
 
         end
     end
