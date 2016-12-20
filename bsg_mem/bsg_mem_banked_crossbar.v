@@ -281,8 +281,21 @@ module bsg_mem_banked_crossbar #
                        );
 
 
+
+
   for(i=0; i<num_banks_p; i=i+1)
   begin: z
+
+   if (debug_lp > 1)
+     always @(negedge clk_i)
+       begin
+          if (bank_v[i])
+            if (bank_w[i])
+              $display("%m [%x] <= %d", bank_addr[i]*debug_p, bank_data[i]);
+            else
+              $display("%m <= [%x]", bank_addr[i]*debug_p);
+       end
+
     // to be replaced with bsg_mem_1rw_sync_byte_masked
     bsg_mem_1rw_sync_mask_write_byte #( .data_width_p (data_width_p)
                                        ,.els_p        (bank_size_p)
