@@ -1,6 +1,6 @@
-`define bsg_buf_macro(bits)                     \
-if (harden_p && (width_p==bits))                \
-  begin: macro                                  \
+`define bsg_buf_macro(bits)                                 \
+if (harden_p && (width_p==bits))                            \
+  begin: macro                                              \
      bsg_rp_tsmc_250_BUFX8_b``bits buf_gate (.i0(i),.o);    \
   end
 

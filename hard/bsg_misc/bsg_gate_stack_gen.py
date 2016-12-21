@@ -95,8 +95,12 @@ def emit_rp_group_end (name) :
 def emit_rp_fill (params):
     print "// synopsys rp_fill (" + params +")"
 
-def generate_gate_stack ( gatename, rows,signature ) :
-    module_name = ident_name_bit("bsg_rp_"+fab+"_"+gatename,rows);
+def generate_gate_stack ( gatename, rows,signature, vert) :
+    if (vert) :
+        module_name = ident_name_bit("bsg_rp_"+fab+"_"+gatename,rows);
+    else :
+        module_name = ident_name_bit("bsg_rp_"+fab+"_"+gatename+"_horiz",rows);
+
     num_inputs = signature.count('#') - 2;
     input_params = [param_bits_all("i"+str(x),rows) for x in range(0,num_inputs)]
     emit_module_header (module_name
@@ -109,7 +113,10 @@ def generate_gate_stack ( gatename, rows,signature ) :
 
     for pos in range (0,rows) :
 
-        emit_rp_fill("0 " + str(pos) + " UX");
+        if (vert) :
+            emit_rp_fill("0 " + str(pos) + " UX");
+        else :
+            emit_rp_fill(str(pos) +" 0 UX");
 
         # NOTE: for symmetric pins, assume that earlier ones are always faster.
         # For example, for AOI22  A's are faster than B's and A0 is faster than A1.
@@ -129,7 +136,12 @@ if len(sys.argv) == 4 :
     if sys.argv[2].isdigit() :
         for x in range(1,int(sys.argv[2])+1) :
             print "\n// ****************************************************** \n"
-            generate_gate_stack(sys.argv[1],x,sys.argv[3]);
+            generate_gate_stack(sys.argv[1],x,sys.argv[3],1);
+    elif (sys.argv[2][0]=="-") :
+        for x in range(1,-(int(sys.argv[2]))+1) :
+            print "\n// ****************************************************** \n"
+            generate_gate_stack(sys.argv[1],x,sys.argv[3],0);
+
 elif len(sys.argv) == 5 :
     signature=sys.argv[3]
     num_inputs = signature.count('#') - 2;
