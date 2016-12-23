@@ -8,6 +8,8 @@ module bsg_mesh_router_buffered #(width_p        = -1
                                   ,stub_p        = { dirs_lp {1'b0}}  // SNEWP
                                   ,allow_S_to_EW_p = 0
                                   ,bsg_ready_and_link_sif_width_lp=`bsg_ready_and_link_sif_width(width_p)
+                                  // select whether to buffer the output
+                                  ,buffer_output_p = { dirs_lp {1'b0}}  // SNEWP
                                   )
    (
     input clk_i
@@ -91,17 +93,39 @@ module bsg_mesh_router_buffered #(width_p        = -1
    for (i = 0; i < dirs_lp; i=i+1)
      begin: rof2
         assign link_o_cast[i].v    = valid_lo[i];
-        assign link_o_cast[i].data = data_lo [i];
+
+        if (buffer_output_p[i] & ~stub_p[i])
+          begin : macro
+	     wire [width_p-1:0] tmp;
+
+            initial
+               begin
+                  $display("%m with buffers on %d",i);
+               end
+             bsg_inv #(.width_p(width_p),.vertical_p(i < 3)) data_lo_inv
+               (.i (data_lo[i]         )
+                ,.o(tmp)
+                );
+
+             bsg_inv #(.width_p(width_p),.vertical_p(i < 3)) data_lo_rep
+               (.i (tmp)
+                ,.o(link_o_cast[i].data)
+                );
+
+          end
+        else
+          assign link_o_cast[i].data = data_lo [i];
+
         assign ready_li[i] = link_i_cast[i].ready_and_rev;
      end
 
    bsg_mesh_router #( .width_p      (width_p      )
-                     ,.x_cord_width_p(x_cord_width_p)
-                     ,.y_cord_width_p(y_cord_width_p)
-                     ,.debug_p      (debug_p      )
-                     ,.stub_p       (stub_p       )
-                     ,.allow_S_to_EW_p(allow_S_to_EW_p)
-                     ) bmr
+                      ,.x_cord_width_p(x_cord_width_p)
+                      ,.y_cord_width_p(y_cord_width_p)
+                      ,.debug_p      (debug_p      )
+                      ,.stub_p       (stub_p       )
+                      ,.allow_S_to_EW_p(allow_S_to_EW_p)
+                      ) bmr
    (.clk_i
     ,.reset_i
     ,.v_i    (fifo_valid)
