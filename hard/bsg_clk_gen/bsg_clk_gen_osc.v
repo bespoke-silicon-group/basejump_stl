@@ -81,8 +81,14 @@ module bsg_clk_gen_osc
 
    wire adt_lo, cdt_lo;
 
+   wire fb_clk_del;
+
+   // this adds some delay in the loop for RLT simulation
+   // should be ignored in synthesis
+   assign #4000 fb_clk_del = fb_clk;
+
    bsg_rp_clk_gen_atomic_delay_tuner  adt
-     (.i(fb_clk)
+     (.i(fb_clk_del)
       ,.we_i(fb_we_r)
       ,.async_reset_neg_i(async_reset_neg)
       ,.sel_i(fb_tag_r.adg[0])
