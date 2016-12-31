@@ -26,11 +26,6 @@ module bsg_mem_1rw_sync_mask_write_bit_synth #(parameter width_p=-1
    always_ff @(posedge clk_i)
      if (v_i)
        begin
-          // synopsys translate_off
-          assert (addr_i < els_p)
-            else $error("Invalid address %x to %m of size %x\n", addr_i, els_p);
-          // synopsys translate_on
-
           if (w_i)
             begin
               for (i = 0; i < els_p; i=i+1)
@@ -44,15 +39,6 @@ module bsg_mem_1rw_sync_mask_write_bit_synth #(parameter width_p=-1
        end
 
    assign data_o = mem[addr_r];
-
-  // synopsys translate_off
-
-   initial
-     begin
-        $display("## %L: instantiating width_p=%d, els_p=%d (%m)",width_p,els_p);
-     end
-
-  // synopsys translate_on
 
 
 endmodule

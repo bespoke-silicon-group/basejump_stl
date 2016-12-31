@@ -22,4 +22,20 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
        ) synth
        (.*);
 
+
+   // synopsys translate_off
+
+   always_ff @(posedge clk_i)
+     if (v_i)
+       assert (addr_i < els_p)
+         else $error("Invalid address %x to %m of size %x\n", addr_i, els_p);
+
+   initial
+     begin
+        $display("## %L: instantiating width_p=%d, els_p=%d (%m)",width_p,els_p);
+     end
+
+  // synopsys translate_on
+
+   
 endmodule
