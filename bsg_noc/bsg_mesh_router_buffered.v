@@ -9,7 +9,7 @@ module bsg_mesh_router_buffered #(width_p        = -1
                                   ,allow_S_to_EW_p = 0
                                   ,bsg_ready_and_link_sif_width_lp=`bsg_ready_and_link_sif_width(width_p)
                                   // select whether to buffer the output
-                                  ,buffer_output_p = { dirs_lp {1'b0}}  // SNEWP
+                                  ,repeater_output_p = { dirs_lp {1'b0}}  // SNEWP
                                   )
    (
     input clk_i
@@ -94,7 +94,7 @@ module bsg_mesh_router_buffered #(width_p        = -1
      begin: rof2
         assign link_o_cast[i].v    = valid_lo[i];
 
-        if (buffer_output_p[i] & ~stub_p[i])
+        if (repeater_output_p[i] & ~stub_p[i])
           begin : macro
 	     wire [width_p-1:0] tmp;
 
