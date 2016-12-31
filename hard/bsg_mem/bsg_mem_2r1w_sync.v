@@ -32,7 +32,19 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
 
    if ((width_p == 32) && (els_p == 32))
      begin: macro
-	// use two 1R1W rams to create
+        // synopsys translate_off
+        initial
+          begin
+             assert(read_write_same_addr_p==0)
+               else
+                 begin
+                    $error("%L: this configuration does not permit simultaneous read and writes! (%m)");
+                    $finish();
+                 end
+          end
+        // synopsys translate_on
+
+        // use two 1R1W rams to create
         tsmc180_2rf_lg5_w32_m1_all mem0
           (
            // read port
@@ -71,25 +83,18 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
    else
      begin: notmacro
 
-        logic [width_p-1:0]    mem [els_p-1:0];
-
-        // this implementation ignores the r_v_i
-        // assign r_data_o = mem[r_addr_i];
-
-        always_ff @(posedge clk_i)
-          if (r0_v_i)
-            r0_data_o <= mem[r0_addr_i];
-
-        always_ff @(posedge clk_i)
-          if (r1_v_i)
-            r1_data_o <= mem[r1_addr_i];
-
-        always_ff @(posedge clk_i)
-          if (w_v_i)
-            mem[w_addr_i] <= w_data_i;
+	bsg_mem_2r1w_sync_synth
+	  #(.width_p(width_p)
+	    ,.els_p(els_p)
+	    ,.read_write_same_addr_p(read_write_same_addr_p)
+	    ,.harden_p(harden_p)
+	    ) synth
+	    (.*);
      end
 
+
 //synopsys translate_off
+
    always_ff @(posedge clk_i)
      if (w_v_i)
        begin
@@ -102,6 +107,15 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
           assert (~(r1_addr_i == w_addr_i && w_v_i && r1_v_i && !read_write_same_addr_p))
             else $error("%m: port 1 Attempt to read and write same address");
        end
+
+   initial
+     begin
+        $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d, harden_p=%d (%m)"
+		 ,width_p,els_p,read_write_same_addr_p,harden_p);
+     end
+
 //synopsys translate_on
+
+   
 
 endmodule

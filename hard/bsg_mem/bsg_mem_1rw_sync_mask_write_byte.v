@@ -25,12 +25,6 @@ module bsg_mem_1rw_sync_mask_write_byte
   ,output [data_width_p-1:0] data_o
   );
 
-  // synopsys translate_off
-  always_comb
-    assert (data_width_p % 8 == 0)
-      else $error("data width should be a multiple of 8 for byte masking");
-  // synopsys translate_on
-
   // TSMC 180 1024x32 Byte Mask
   if ((els_p == 1024) & (data_width_p == 32))
     begin : macro
@@ -53,20 +47,25 @@ module bsg_mem_1rw_sync_mask_write_byte
   // no hardened version found
   else
     begin  : notmacro
-      bsg_mem_1rw_sync_mask_write_byte
-       #(.els_p        (els_p)
-        ,.data_width_p (data_width_p)
-        )
-      mem
-        (.clk_i        (clk_i)
-        ,.reset_i      (reset_i)
-        ,.v_i          (v_i)
-        ,.w_i          (w_i)
-        ,.addr_i       (addr_i)
-        ,.data_i       (data_i)
-        ,.write_mask_i (write_mask_i)
-        ,.data_o       (data_o)
-        );
+
+       bsg_mem_1rw_sync_mask_write_byte_synth
+	 #(.els_p(els_p), .data_width_p(data_width_p))
+       synth (.*);
+
     end
 
+
+  // synopsys translate_off
+
+  always_comb
+    assert (data_width_p % 8 == 0)
+      else $error("data width should be a multiple of 8 for byte masking");
+
+   initial
+     begin
+        $display("## bsg_mem_1rw_sync_mask_write_byte: instantiating data_width_p=%d, els_p=%d (%m)",data_width_p,els_p);
+     end
+
+  // synopsys translate_on
+   
 endmodule

@@ -4,6 +4,39 @@
 // Only one read or one write may be done per cycle.
 //
 
+`define bsg_mem_1rw_sync_macro(words,bits,lgEls,newBits,mux)    \
+if (els_p == words && width_p == bits)                          \
+  begin: macro                                                  \
+     tsmc180_1rw_lg``lgEls``_w``newBits``_m``mux``_all mem      \
+          (.Q(data_o)                                           \
+           ,.CLK(clk_i)                                         \
+           ,.CEN(~v_i)                                          \
+           ,.WEN(~w_i)                                          \
+           ,.A(addr_i)                                          \
+           ,.D(data_i)                                          \
+           // 1=tristate                                        \
+           ,.OEN(1'b0)                                          \
+           );                                                   \
+  end
+
+`define bsg_mem_1rw_sync_macro_rf(words,bits,lgEls,newBits,mux) \
+if (els_p == words && width_p == bits)                          \
+  begin: macro                                                  \
+          wire [newBits-1:0] tmp_lo,tmp_li;                     \
+          assign data_o = tmp_lo[bits-1:0];                     \
+          assign tmp_li = newBits ' (data_i);                   \
+                                                                \
+          tsmc180_1rf_lg``lgEls``_w``newBits``_m``mux``_all mem \
+            (                                                   \
+             .Q(tmp_lo)                                         \
+             ,.CLK(clk_i)                                       \
+             ,.CEN(~v_i)                                        \
+             ,.WEN(~w_i)                                        \
+             ,.A(addr_i)                                        \
+             ,.D(tmp_li)                                        \
+             );                                                 \
+  end
+
 module bsg_mem_1rw_sync #(parameter width_p=-1
                           , parameter els_p=-1
                           , parameter addr_width_lp=$clog2(els_p)
@@ -18,101 +51,24 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
     , output logic [width_p-1:0]  data_o
     );
 
-   if ((width_p == 32) & (els_p==2048))
-     begin : macro
-        tsmc180_1rw_lg11_w32_m8_all mem
-          (.Q(data_o)
-           ,.CLK(clk_i)
-           ,.CEN(~v_i)
-           ,.WEN(~w_i)
-           ,.A(addr_i)
-           ,.D(data_i)
-	   // 1=tristate
-           ,.OEN(1'b0)
-           );
-     end // block: z
-   else
-   if ((width_p == 32) & (els_p==1024))
-     begin : macro
-        tsmc180_1rw_lg10_w32_m8_all mem
-          (.Q(data_o)
-           ,.CLK(clk_i)
-           ,.CEN(~v_i)
-           ,.WEN(~w_i)
-           ,.A(addr_i)
-           ,.D(data_i)
-	   // 1=tristate
-           ,.OEN(1'b0)
-           );
-     end // block: z
-   else
-   if ((width_p == 70) & (els_p==128))
-       begin :macro
-	  tsmc180_1rf_lg7_w70_m2_all mem
-	    (
-	     .Q(data_o)
-	     ,.CLK(clk_i)
-	     ,.CEN(~v_i)
-	     ,.WEN(~w_i)
-	     ,.A(addr_i)
-	     ,.D(data_i)
-	     );
-       end
-   else
-   if ((width_p == 68) & (els_p==128))
-       begin :macro
-	  tsmc180_1rf_lg7_w68_m2_all mem
-	    (
-	     .Q(data_o)
-	     ,.CLK(clk_i)
-	     ,.CEN(~v_i)
-	     ,.WEN(~w_i)
-	     ,.A(addr_i)
-	     ,.D(data_i)
-	     );
-       end
-   else
-   if ((width_p == 66) & (els_p==128))
-       begin :macro
-	  tsmc180_1rf_lg7_w66_m2_all mem
-	    (
-	     .Q(data_o)
-	     ,.CLK(clk_i)
-	     ,.CEN(~v_i)
-	     ,.WEN(~w_i)
-	     ,.A(addr_i)
-	     ,.D(data_i)
-	     );
-       end
+   `bsg_mem_1rw_sync_macro(2048,32,11,32,8) else
+   `bsg_mem_1rw_sync_macro(1024,32,10,32,8) else
+   `bsg_mem_1rw_sync_macro(256,128,8,128,4) else
+     `bsg_mem_1rw_sync_macro_rf(128,74,7,74,2) else
+     `bsg_mem_1rw_sync_macro_rf(128,73,7,74,2) else
+     `bsg_mem_1rw_sync_macro_rf(128,72,7,72,2) else
+     `bsg_mem_1rw_sync_macro_rf(128,71,7,72,2) else
+     `bsg_mem_1rw_sync_macro_rf(128,70,7,70,2) else
+     `bsg_mem_1rw_sync_macro_rf(128,69,7,70,2) else
+     `bsg_mem_1rw_sync_macro_rf(128,68,7,68,2) else
+     `bsg_mem_1rw_sync_macro_rf(128,67,7,68,2) else
+     `bsg_mem_1rw_sync_macro_rf(128,66,7,66,2) else
+     `bsg_mem_1rw_sync_macro_rf(128,65,7,66,2) else
+     `bsg_mem_1rw_sync_macro_rf(128,64,7,64,2) else
+     `bsg_mem_1rw_sync_macro_rf(128,63,7,64,2) else
+     `bsg_mem_1rw_sync_macro_rf(128,62,7,62,2) else
+     `bsg_mem_1rw_sync_macro_rf(128,61,7,62,2) else
 
-   else
-   if ((width_p == 64) & (els_p==128))
-       begin :macro
-	  tsmc180_1rf_lg7_w64_m2_all mem
-	    (
-	     .Q(data_o)
-	     ,.CLK(clk_i)
-	     ,.CEN(~v_i)
-	     ,.WEN(~w_i)
-	     ,.A(addr_i)
-	     ,.D(data_i)
-	     );
-       end
-   else
-   if ((width_p == 62) & (els_p==128))
-       begin :macro
-	  tsmc180_1rf_lg7_w62_m2_all mem
-	    (
-	     .Q(data_o)
-	     ,.CLK(clk_i)
-	     ,.CEN(~v_i)
-	     ,.WEN(~w_i)
-	     ,.A(addr_i)
-	     ,.D(data_i)
-	     );
-       end
-
-   else
      begin : z
         // we substitute a 1r1w macro
         // fixme: theoretically there may be
@@ -141,26 +97,23 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
          end // block: subst
         else
           begin: notmacro
-             logic [width_p-1:0]    mem [els_p-1:0];
 
-             always_ff @(posedge clk_i)
-               if (v_i)
-                 begin
+             bsg_mem_1rw_sync_synth
+               # (.width_p(width_p)
+                ,.els_p(els_p)
+                ) synth
+                 (.*);
 
-                    // synopsys translate_off
-
-                    assert (addr_i < els_p)
-                      else $error("Invalid address %x to %m of size %x\n"
-                                  , addr_i, els_p);
-
-                    // synopsys translate_on
-
-                    if (w_i)
-                      mem[addr_i] <= data_i;
-                    else
-                      data_o      <= mem[addr_i];
-                 end
-          end // block: nonsubst
+          end // block: notmacro
      end // block: z
+
+
+   // synopsys translate_off
+   initial
+     begin
+        $display("## %L: instantiating width_p=%d, els_p=%d, substitute_1r1w_p=%d (%m)",width_p,els_p,substitute_1r1w_p);
+     end
+
+   // synopsys translate_on
 
 endmodule
