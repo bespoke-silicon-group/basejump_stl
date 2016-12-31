@@ -83,7 +83,7 @@ module bsg_clk_gen_osc
 
    wire fb_clk_del;
 
-   // this adds some delay in the loop for RLT simulation
+   // this adds some delay in the loop for RTL simulation
    // should be ignored in synthesis
    assign #4000 fb_clk_del = fb_clk;
 

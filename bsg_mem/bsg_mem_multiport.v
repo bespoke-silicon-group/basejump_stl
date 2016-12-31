@@ -73,4 +73,13 @@ module bsg_mem_multiport #(parameter width_p=-1
           end
      end
 
+
+   // synopsys translate_off
+   initial
+     begin
+        $display("## bsg_mem_multiport: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d, write_write_same_addr_p=%d harden_p=%d (%m,%L)"
+                 ,width_p,els_p,read_write_same_addr_p, write_write_same_addr_p,harden_p);
+     end
+   // synopsys translate_on
+
 endmodule
