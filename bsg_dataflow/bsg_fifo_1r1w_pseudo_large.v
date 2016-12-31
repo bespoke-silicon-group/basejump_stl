@@ -9,6 +9,12 @@
 // conflict. This FIFO is useful for cases where reads and writes
 // each individually have a duty cycle of 50% or less.
 //
+// In 180 nm, the area of a 128x70 1R1W is about 1.75 the equivalent 1RW.
+// The 2-element little fifo is about 0.25 the above 1RW. So the net
+// savings is 1.25 versus 1.75; but that assumes the 1R1W has no overhead
+// when in reality, it would probably have a 2-el fifo as well (e.g. 2.00).
+// So this module does actually save area.
+//
 // For example, an element is written into the
 // FIFO every other cycle, and an element is read from the FIFO
 // every other cycle.
@@ -147,6 +153,7 @@ module bsg_fifo_1r1w_pseudo_large #(parameter width_p = -1
    wire ready_o_int = ~big_full_lo;
    assign ready_o   = ready_o_int;
 
+   // ***** DEBUG ******
    // for debugging; whether we are bypassing the big fifo
    // synopsys translate_off
 
@@ -155,8 +162,22 @@ module bsg_fifo_1r1w_pseudo_large #(parameter width_p = -1
    // sum up all of the storage in this fifo
    wire [31:0] num_elements_debug = big1p.num_elements_debug + big_deq_r + little2p.num_elements_debug;
 
+   logic big_enq_r;
+
+   always_ff @(posedge clk_i)
+     if (reset_i)
+       big_enq_r <= 0;
+     else
+       big_enq_r <= big_enq_r | big_enq;
+
+   always_ff @(negedge clk_i)
+     if (~big_enq_r & big_enq)
+       $display("## %L: overflowing into big fifo for the first time (%m)");
 
    // synopsys translate_on
+
+   //
+   // ***** END DEBUG ******
 
    always_comb
      begin
