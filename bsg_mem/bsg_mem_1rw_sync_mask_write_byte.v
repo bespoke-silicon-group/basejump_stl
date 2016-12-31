@@ -18,28 +18,22 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
    ,output [data_width_p-1:0] data_o
   );
 
+   bsg_mem_1rw_sync_mask_write_byte_synth
+     #(.els_p(els_p), .data_width_p(data_width_p))
+   synth (.*);
+
   // synopsys translate_off
+
   always_comb
     assert (data_width_p % 8 == 0)
       else $error("data width should be a multiple of 8 for byte masking");
+
+   initial
+     begin
+        $display("## %L: instantiating data_width_p=%d, els_p=%d (%m)",data_width_p,els_p);
+     end
+
   // synopsys translate_on
 
-  genvar i;
-  
-  for(i=0; i<write_mask_width_lp; i=i+1)
-  begin: bk
-    bsg_mem_1rw_sync #( .width_p      (8)
-                       ,.els_p        (els_p)
-                       ,.addr_width_lp(addr_width_lp)
-                      ) mem_1rw_sync
-                      ( .clk_i  (clk_i)
-                       ,.reset_i(reset_i)
-                       ,.data_i (data_i[(i*8)+:8])
-                       ,.addr_i (addr_i)
-                       ,.v_i    (v_i)
-                       ,.w_i    (w_i & write_mask_i[i])
-                       ,.data_o (data_o[(i*8)+:8])
-                      );
-  end
-
+   
 endmodule

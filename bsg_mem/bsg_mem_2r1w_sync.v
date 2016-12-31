@@ -33,33 +33,17 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
     , output logic [width_p-1:0] r1_data_o
     );
 
-   logic [width_p-1:0]    mem [els_p-1:0];
+   bsg_mem_2r1w_sync_synth
+     #(.width_p(width_p)
+       ,.els_p(els_p)
+       ,.read_write_same_addr_p(read_write_same_addr_p)
+       ,.harden_p(harden_p)
+       ) synth
+       (.*);
 
-   wire                   unused = reset_i;
-
-   //the read logic, register the input
-   logic [addr_width_lp-1:0]  r0_addr_r, r1_addr_r;
-   always_ff @(posedge clk_i)
-     if (r0_v_i)
-       r0_addr_r <= r0_addr_i;
-     else
-       r0_addr_r <= 'X;
-
-   always_ff @(posedge clk_i)
-     if (r1_v_i)
-       r1_addr_r <= r1_addr_i;
-     else
-       r1_addr_r <= 'X;
-
-   assign r0_data_o = mem[ r0_addr_r ];
-   assign r1_data_o = mem[ r1_addr_r ];
-
-   //the write logic, the memory is treated as dff array
-   always_ff @(posedge clk_i)
-     if (w_v_i)
-       mem[w_addr_i] <= w_data_i;
 
 //synopsys translate_off
+
    always_ff @(posedge clk_i)
      if (w_v_i)
        begin
@@ -72,6 +56,13 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
           assert (~(r1_addr_i == w_addr_i && w_v_i && r1_v_i && !read_write_same_addr_p))
             else $error("%m: port 1 Attempt to read and write same address");
        end
-//synopsys translate_on
 
+   initial
+     begin
+        $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d, harden_p=%d (%m)"
+		 ,width_p,els_p,read_write_same_addr_p,harden_p);
+     end
+
+//synopsys translate_on
+   
 endmodule

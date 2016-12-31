@@ -16,33 +16,10 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
     , output [width_p-1:0]  data_o
     );
 
-   wire unused = reset_i;
-
-   logic [addr_width_lp-1:0] addr_r;
-   logic [els_p-1:0][width_p-1:0] mem;
-
-   int i;
-
-   always_ff @(posedge clk_i)
-     if (v_i)
-       begin
-          // synopsys translate_off
-          assert (addr_i < els_p)
-            else $error("Invalid address %x to %m of size %x\n", addr_i, els_p);
-          // synopsys translate_on
-
-          if (w_i)
-            begin
-              for (i = 0; i < els_p; i=i+1)
-                if (w_mask_i[i])
-                  mem[addr_i][i] <= data_i[i];
-            end
-          else
-            begin
-              addr_r <= addr_i;
-            end
-       end
-
-   assign data_o = mem[addr_r];
+   bsg_mem_1rw_sync_mask_write_bit_synth
+     #(.width_p(width_p)
+       ,.els_p(els_p)
+       ) synth
+       (.*);
 
 endmodule
