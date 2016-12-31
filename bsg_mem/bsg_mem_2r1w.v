@@ -27,18 +27,18 @@ module bsg_mem_2r1w #(parameter width_p=-1
 
     );
 
-   logic [width_p-1:0]    mem [els_p-1:0];
+   bsg_mem_2r1w_synth
+     #(.width_p(width_p)
+       ,.els_p(els_p)
+       ,.read_write_same_addr_p(read_write_same_addr_p)
+       ) synth
+       (.*);
 
-   // this implementation ignores the r_v_i
-   assign r1_data_o = mem[r1_addr_i];
-   assign r0_data_o = mem[r0_addr_i];
-
-   wire                   unused = w_reset_i;
+// synopsys translate_off
 
    always_ff @(posedge w_clk_i)
      if (w_v_i)
        begin
-//synopsys translate_off
           assert (w_addr_i < els_p)
             else $error("Invalid address %x to %m of size %x\n", w_addr_i, els_p);
 
@@ -47,9 +47,13 @@ module bsg_mem_2r1w #(parameter width_p=-1
 
           assert (~(r1_addr_i == w_addr_i && w_v_i && r1_v_i && !read_write_same_addr_p))
             else $error("%m: Attempt to read and write same address");
-
-//synopsys translate_on
-          mem[w_addr_i] <= w_data_i;
        end
+
+   initial
+     begin
+        $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d (%m)",width_p,els_p,read_write_same_addr_p);
+     end
+
+// synopsys translate_on
 
 endmodule

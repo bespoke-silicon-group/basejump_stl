@@ -30,22 +30,20 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
     , output logic [width_p-1:0] r_data_o
     );
 
-   logic [width_p-1:0]    mem [els_p-1:0];
+   bsg_mem_1r1w_sync_synth
+     #(.width_p(width_p)
+       ,.els_p(els_p)
+       ,.read_write_same_addr_p(read_write_same_addr_p)
+       ,.harden_p(harden_p)
+       ) synth
+       (.*);
 
-   wire                   unused = reset_i;
+   //synopsys translate_off
+   initial
+     begin
+        $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d, harden_p=%d (%m)",width_p,els_p,read_write_same_addr_p,harden_p);
+     end
 
-   // this implementation ignores the r_v_i
-   assign r_data_o = mem[r_addr_i];
-
-   always_ff @(posedge clk_i)
-     if (r_v_i)
-       r_data_o <= mem[r_addr_i];
-
-   always_ff @(posedge rw_clk_i)
-     if (w_v_i)
-       mem[w_addr_i] <= w_data_i;
-
-//synopsys translate_off
    always_ff @(posedge clk_i)
      if (w_v_i)
        begin
@@ -53,8 +51,12 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
             else $error("Invalid address %x to %m of size %x\n", w_addr_i, els_p);
 
           assert (~(r_addr_i == w_addr_i && w_v_i && r_v_i && !read_write_same_addr_p))
-            else $error("%m: Attempt to read and write same address");
+            else
+              begin
+                 $error("%L: Attempt to read and write same address (%m)");
+                 $finish();
+              end
        end
-//synopsys translate_on
+   //synopsys translate_on
 
 endmodule
