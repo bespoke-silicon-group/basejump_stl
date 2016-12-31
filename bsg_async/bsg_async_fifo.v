@@ -47,7 +47,7 @@ module bsg_async_fifo #(parameter   lg_size_p = "inv"
 
    bsg_mem_1r1w #(.width_p(width_p-control_width_p)
                   ,.els_p(size_lp)
-		  ,.read_write_same_addr_p(1)
+		  ,.read_write_same_addr_p(0)
                   ) MSYNC_1r1w
      (.w_clk_i    (w_clk_i  )
       ,.w_reset_i (w_reset_i)
@@ -56,7 +56,7 @@ module bsg_async_fifo #(parameter   lg_size_p = "inv"
       ,.w_addr_i(w_ptr_binary_r[0+:lg_size_p]             )
       ,.w_data_i(w_data_i[0+:(width_p - control_width_p)] )
 
-      ,.r_v_i   (1'b1                                     )
+      ,.r_v_i   (r_valid_o_tmp                            )
       ,.r_addr_i(r_ptr_binary_r[0+:lg_size_p]             )
       ,.r_data_o(r_data_o[0+:(width_p - control_width_p)] )
       );
@@ -65,7 +65,7 @@ module bsg_async_fifo #(parameter   lg_size_p = "inv"
      begin : ctrl
         bsg_mem_1r1w #(.width_p(control_width_p)
                        ,.els_p(size_lp)
-		       ,.read_write_same_addr_p(1)
+		       ,.read_write_same_addr_p(0)
                        ) MSYNC_1r1w
           (.w_clk_i   (w_clk_i  )
            ,.w_reset_i(w_reset_i)
@@ -74,7 +74,7 @@ module bsg_async_fifo #(parameter   lg_size_p = "inv"
            ,.w_addr_i (w_ptr_binary_r[0+:lg_size_p]      )
            ,.w_data_i (w_data_i[(width_p-1)-:control_width_p])
 
-           ,.r_v_i    (1'b1                              )
+           ,.r_v_i    (r_valid_o_tmp                     )
            ,.r_addr_i (r_ptr_binary_r[0+:lg_size_p]      )
            ,.r_data_o (r_data_o[(width_p-1)-:control_width_p])
            );
