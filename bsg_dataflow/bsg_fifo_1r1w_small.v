@@ -31,6 +31,9 @@ module bsg_fifo_1r1w_small #( parameter width_p      = -1
     );
 
    wire deque = yumi_i;
+   wire v_o_tmp;
+
+   assign v_o = v_o_tmp;
 
    // vivado bug prohibits declaring wire inside of generate block
    wire enque;
@@ -65,14 +68,15 @@ module bsg_fifo_1r1w_small #( parameter width_p      = -1
    // async read
    bsg_mem_1r1w #(.width_p (width_p)
                   ,.els_p  (els_p  )
-                  ,.read_write_same_addr_p(1)
+		  // MBT: this should be zero
+                  ,.read_write_same_addr_p(0)
                   ) mem_1r1w
      (.w_clk_i   (clk_i  )
       ,.w_reset_i(reset_i)
       ,.w_v_i    (enque  )
       ,.w_addr_i (wptr_r )
       ,.w_data_i (data_i )
-      ,.r_v_i    (1'b1   )
+      ,.r_v_i    (v_o_tmp)
       ,.r_addr_i (rptr_r )
       ,.r_data_o (data_o )
       );
@@ -81,7 +85,7 @@ module bsg_fifo_1r1w_small #( parameter width_p      = -1
    // even though fifo is empty
 
    assign ready_o = ~full & ~reset_i;
-   assign v_o     = ~empty;
+   assign v_o_tmp = ~empty;
 
    //synopsys translate_off
    always_ff @ (posedge clk_i)
