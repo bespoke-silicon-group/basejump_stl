@@ -27,6 +27,7 @@ module bsg_round_robin_1_to_n #(parameter width_p = "inv"
     );
 
    wire [$clog2(num_out_p+1)-1:0] ptr_r;
+   wire yumi_i = valid_i & ready_o;
 
    bsg_circular_ptr #(.slots_p(num_out_p)
                       ,.max_add_p(1)
