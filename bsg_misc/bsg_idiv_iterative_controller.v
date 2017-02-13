@@ -38,7 +38,6 @@ module bsg_idiv_iterative_controller (
       ,input               yumi_i
       );
 
-   reg last;
    reg q_neg;
    reg r_neg;
    reg neg_ld;
@@ -55,7 +54,6 @@ module bsg_idiv_iterative_controller (
 
    always @(posedge clk_i) begin
       add_neg_last <= adder_result_is_neg_i;
-      v_o <= last;
 
       if (neg_ld) begin
 	    // the quotient is negated if the signs of the operands differ
@@ -86,7 +84,6 @@ module bsg_idiv_iterative_controller (
       adder_cin_o    = !add_neg_last;
       neg_ld         = 1'b0;
       //yumi_o         = 1'b0;
-      last           = 1'b0;
       latch_inputs_o = 1'b0;
       next_state    = WAIT;
 
@@ -200,7 +197,6 @@ module bsg_idiv_iterative_controller (
 	   opB_ld_o     = 1'b0;
 	   opC_sel_o    = 3'b010;
 	   adder_cin_o  = 1'b1;
-	   last         = 1'b1;
 	   opC_ld_o     = q_neg;
 	end
     
@@ -208,7 +204,6 @@ module bsg_idiv_iterative_controller (
         if( yumi_i ) next_state = WAIT;
         else         next_state = DONE;
 
-        last        = 1'b1;
         opA_ld_o    = 1'b0;
         opB_ld_o    = 1'b0;
         opC_ld_o    = 1'b0;
@@ -218,5 +213,6 @@ module bsg_idiv_iterative_controller (
    end
 
   assign ready_o  =  ( state == WAIT );
+  assign v_o      =  ( state == DONE );
 
 endmodule // divide_control 
