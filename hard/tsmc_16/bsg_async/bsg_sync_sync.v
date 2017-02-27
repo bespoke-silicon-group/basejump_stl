@@ -8,76 +8,41 @@
 // Fixme: move this into asic-specific components.
 //
 
-`ifndef rp_group
- `define rp_group(x)
- `define rp_place(x)
- `define rp_endgroup(x)
- `define rp_fill(x)
- `define rp_array_dir(up)
-`endif
+`define bsg_sync_sync_unit_hard(width_p)                                \
+                                                                        \
+module bsg_sync_sync_``width_p``_unit                                   \
+  (input                oclk_i                                          \
+  ,input  [width_p-1:0] iclk_data_i                                     \
+  ,output [width_p-1:0] oclk_data_o // after sync flops                 \
+  );                                                                    \
+                                                                        \
+  genvar i;                                                             \
+                                                                        \
+  logic [width_p-1:0] bsg_SYNC_2_r;                                     \
+                                                                        \
+  assign oclk_data_o = bsg_SYNC_2_r;                                    \
+                                                                        \
+  for (i = 0; i < width_p; i = i + 1)                                   \
+    begin : bss_unit                                                    \
+      SDFFYQ2D_X2N_A7P5PP96PTS_C16 hard_sync_int                        \
+        (.D  (iclk_data_i[i])                                           \
+        ,.CK (oclk_i)                                                   \
+        ,.SI (1'b0)                                                     \
+        ,.SE (1'b0)                                                     \
+        ,.Q  (bsg_SYNC_2_r[i])                                          \
+        );                                                              \
+    end                                                                 \
+                                                                        \
+endmodule
 
-`define bsg_sync_sync_unit(width_p)                             \
-                                                                \
-module bsg_sync_sync_``width_p``_unit                           \
-  (                                                             \
-   input oclk_i                                                 \
-   , input  [width_p-1:0] iclk_data_i                           \
-   , output [width_p-1:0] oclk_data_o // after sync flops       \
-   );                                                           \
-                                                                \
-                                                                \
-   `rp_group (bss_bank)                                         \
-   `rp_place (hier bss_1 0 0)                                   \
-   `rp_place (hier bss_2 1 0)                                   \
-   `rp_endgroup (bss_bank)                                      \
-                                                                \
-   logic [width_p-1:0] bsg_SYNC_1_r;                            \
-   logic [width_p-1:0] bsg_SYNC_2_r;                            \
-                                                                \
-   assign oclk_data_o = bsg_SYNC_2_r;                           \
-                                                                           \
-   genvar BITS_GEN;                                                        \
-   generate for ( BITS_GEN=0; BITS_GEN < width_p; BITS_GEN = BITS_GEN + 1) \
-     begin: labelhere                                                      \
-	SDFFYQ2D_X2N_A7P5PP96PTS_C16 sff_inst_BITS_GEN(                    \
-			   .D(iclk_data_i[BITS_GEN]),                      \
-			   .CK(oclk_i),                                    \
-			   .SI(1'b0),                                      \
-			   .SE(1'b0),                                      \
-			   .Q(bsg_SYNC_2_r[BITS_GEN]));                    \
-       end                                                                 \
-   endgenerate                                                             \
-endmodule                                                               
-
-//  Code from BSG without the explicit instantiation of the SFF
-//   always_ff @(posedge oclk_i)                                  \
-//     begin                                                      \
-//        `rp_group(bss_1)                                        \
-//        `rp_fill(0 0 UX)                                        \
-//        `rp_array_dir(up)                                       \
-//        `rp_endgroup(bss_1)                                     \
-//        bsg_SYNC_1_r <= iclk_data_i;                            \
-//     end                                                        \
-//                                                                \
-//   always_ff @(posedge oclk_i)                                  \
-//     begin                                                      \
-//        `rp_group(bss_2)                                        \
-//        `rp_fill(0 0 UX)                                        \
-//        `rp_array_dir(up)                                       \
-//        `rp_endgroup(bss_2)                                     \
-//        bsg_SYNC_2_r <= bsg_SYNC_1_r;                           \
-//     end                                                        \
-//                                                                \
-//endmodule
-
-`bsg_sync_sync_unit(1)
-`bsg_sync_sync_unit(2)
-`bsg_sync_sync_unit(3)
-`bsg_sync_sync_unit(4)
-`bsg_sync_sync_unit(5)
-`bsg_sync_sync_unit(6)
-`bsg_sync_sync_unit(7)
-`bsg_sync_sync_unit(8)
+`bsg_sync_sync_unit_hard(1)
+`bsg_sync_sync_unit_hard(2)
+`bsg_sync_sync_unit_hard(3)
+`bsg_sync_sync_unit_hard(4)
+`bsg_sync_sync_unit_hard(5)
+`bsg_sync_sync_unit_hard(6)
+`bsg_sync_sync_unit_hard(7)
+`bsg_sync_sync_unit_hard(8)
 
 // warning: if you make this != 8, you need to modify other
 // parts of this code.
