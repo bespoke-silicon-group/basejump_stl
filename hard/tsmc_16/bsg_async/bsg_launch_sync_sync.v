@@ -20,104 +20,66 @@
 // have two different clocks.
 //
 
-`ifndef rp_group
- `define rp_group(x)
- `define rp_place(x)
- `define rp_endgroup(x)
- `define rp_fill(x)
- `define rp_array_dir(up)
-`endif
-
-`define bsg_launch_sync_sync_unit(EDGE,bits)                            \
+`define bsg_launch_sync_sync_unit_hard(EDGE,bits)                       \
                                                                         \
 module bsg_launch_sync_sync_``EDGE``_``bits``_unit                      \
-  (input iclk_i                                                         \
-   , input iclk_reset_i                                                 \
-   , input oclk_i                                                       \
-   , input  [bits-1:0] iclk_data_i                                      \
-   , output [bits-1:0] iclk_data_o                                      \
-   , output [bits-1:0] oclk_data_o                                      \
-   );                                                                   \
+  (input             iclk_i                                             \
+  ,input             iclk_reset_i                                       \
+  ,input             oclk_i                                             \
+  ,input  [bits-1:0] iclk_data_i                                        \
+  ,output [bits-1:0] iclk_data_o                                        \
+  ,output [bits-1:0] oclk_data_o                                        \
+  );                                                                    \
                                                                         \
- `rp_group    (blss_bank)                                               \
- `rp_place    (hier blss_launch_1 0 0)                                  \
- `rp_place    (hier blss_1   1 0)                                       \
- `rp_place    (hier blss_2   2 0)                                       \
- `rp_endgroup (blss_bank)                                               \
+  genvar i;                                                             \
                                                                         \
-   logic [bits-1:0] bsg_SYNC_LNCH_r;                                    \
-   assign iclk_data_o = bsg_SYNC_LNCH_r;                                \
+  logic [bits-1:0] bsg_SYNC_LNCH_r;                                     \
+  logic [bits-1:0] bsg_SYNC_2_r;                                        \
                                                                         \
-   always_ff @(EDGE iclk_i)                                             \
-     begin                                                              \
-        `rp_group(blss_launch_1)                                        \
-        `rp_fill(0 0 UX)                                                \
-        `rp_array_dir(up)                                               \
-        `rp_endgroup(blss_launch_1)                                     \
+  assign iclk_data_o = bsg_SYNC_LNCH_r;                                 \
+  assign oclk_data_o = bsg_SYNC_2_r;                                    \
                                                                         \
-        if (iclk_reset_i)                                               \
-          bsg_SYNC_LNCH_r <= {bits{1'b0}};                              \
-        else                                                            \
-          bsg_SYNC_LNCH_r <= iclk_data_i;                               \
-     end                                                                \
+  always_ff @(EDGE iclk_i)                                              \
+    begin                                                               \
+      if (iclk_reset_i)                                                 \
+        bsg_SYNC_LNCH_r <= {bits{1'b0}};                                \
+      else                                                              \
+        bsg_SYNC_LNCH_r <= iclk_data_i;                                 \
+    end                                                                 \
                                                                         \
-   wire [bits-1:0] bsg_SYNC_2_r;                                        \
+  for (i = 0; i < bits; i = i + 1)                                      \
+    begin : blss_unit                                                   \
+      SDFFYQ2D_X2N_A7P5PP96PTS_C16 hard_sync_int                        \
+        (.D  (bsg_SYNC_LNCH_r[i])                                       \
+        ,.CK (oclk_i)                                                   \
+        ,.SI (1'b0)                                                     \
+        ,.SE (1'b0)                                                     \
+        ,.Q  (bsg_SYNC_2_r[i])                                          \
+        );                                                              \
+    end                                                                 \
                                                                         \
-   assign oclk_data_o = bsg_SYNC_2_r;                                   \
-                                                                        \
-   genvar BITS_GEN;                                                     \
-   generate for ( BITS_GEN=0; BITS_GEN < bits; BITS_GEN = BITS_GEN + 1) \
-     begin: labelhere                                                   \
-	SDFFYQ2D_X2N_A7P5PP96PTS_C16 sff_inst_BITS_GEN(                 \
-			   .D(bsg_SYNC_LNCH_r[BITS_GEN]),               \
-			   .CK(oclk_i),                                 \
-			   .SI(1'b0),                                   \
-			   .SE(1'b0),                                   \
-			   .Q(bsg_SYNC_2_r[BITS_GEN]));                 \
-       end                                                              \
-   endgenerate                                                          \
-endmodule                                                               
-
-//  Code from BSG without the explicit instantiation of the SFF 
-//   always_ff @(posedge oclk_i)                                          \
-//     begin                                                              \
-//        `rp_group(blss_1)                                               \
-//        `rp_fill(0 0 UX)                                                \
-//        `rp_array_dir(up)                                               \
-//        `rp_endgroup(blss_1)                                            \
-//        bsg_SYNC_1_r <= bsg_SYNC_LNCH_r;                                \
-//     end                                                                \
-//                                                                        \
-//   always_ff @(posedge oclk_i)                                          \
-//     begin                                                              \
-//        `rp_group(blss_2)                                               \
-//        `rp_fill(0 0 UX)                                                \
-//        `rp_array_dir(up)                                               \
-//        `rp_endgroup(blss_2)                                            \
-//        bsg_SYNC_2_r <= bsg_SYNC_1_r;                                   \
-//     end                                                                \
-//endmodule
+endmodule
 
 
 // bsg_launch_sync_sync_posedge_1_unit
-`bsg_launch_sync_sync_unit(posedge,1)
-`bsg_launch_sync_sync_unit(posedge,2)
-`bsg_launch_sync_sync_unit(posedge,3)
-`bsg_launch_sync_sync_unit(posedge,4)
-`bsg_launch_sync_sync_unit(posedge,5)
-`bsg_launch_sync_sync_unit(posedge,6)
-`bsg_launch_sync_sync_unit(posedge,7)
-`bsg_launch_sync_sync_unit(posedge,8)
+`bsg_launch_sync_sync_unit_hard(posedge,1)
+`bsg_launch_sync_sync_unit_hard(posedge,2)
+`bsg_launch_sync_sync_unit_hard(posedge,3)
+`bsg_launch_sync_sync_unit_hard(posedge,4)
+`bsg_launch_sync_sync_unit_hard(posedge,5)
+`bsg_launch_sync_sync_unit_hard(posedge,6)
+`bsg_launch_sync_sync_unit_hard(posedge,7)
+`bsg_launch_sync_sync_unit_hard(posedge,8)
 
 // bsg_launch_sync_sync_negedge_1_unit
-`bsg_launch_sync_sync_unit(negedge,1)
-`bsg_launch_sync_sync_unit(negedge,2)
-`bsg_launch_sync_sync_unit(negedge,3)
-`bsg_launch_sync_sync_unit(negedge,4)
-`bsg_launch_sync_sync_unit(negedge,5)
-`bsg_launch_sync_sync_unit(negedge,6)
-`bsg_launch_sync_sync_unit(negedge,7)
-`bsg_launch_sync_sync_unit(negedge,8)
+`bsg_launch_sync_sync_unit_hard(negedge,1)
+`bsg_launch_sync_sync_unit_hard(negedge,2)
+`bsg_launch_sync_sync_unit_hard(negedge,3)
+`bsg_launch_sync_sync_unit_hard(negedge,4)
+`bsg_launch_sync_sync_unit_hard(negedge,5)
+`bsg_launch_sync_sync_unit_hard(negedge,6)
+`bsg_launch_sync_sync_unit_hard(negedge,7)
+`bsg_launch_sync_sync_unit_hard(negedge,8)
 
 // warning: if you make this != 8, you need
 // to modify other parts of this code
