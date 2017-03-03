@@ -52,7 +52,7 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
            ,.STOV (1'd0  ) // Self-timing Override - disabled
            ,.EMAA (3'd3  ) // Extra Margin Adjustment - default value
            ,.EMAB (3'd3  ) // Extra Margin Adjustment - default value
-           ,.EMASA(1'd0  ) // Extra Margin Adjustment Sense Amp. - default value
+           ,.EMASA(1'd1  ) // Extra Margin Adjustment Sense Amp. - default value
            ,.RET1N(1'b1  ) // Retention Mode (active low) - disabled
            );
 
@@ -74,7 +74,7 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
            ,.STOV (1'd0  ) // Self-timing Override - disabled
            ,.EMAA (3'd3  ) // Extra Margin Adjustment - default value
            ,.EMAB (3'd3  ) // Extra Margin Adjustment - default value
-           ,.EMASA(1'd0  ) // Extra Margin Adjustment Sense Amp. - default value
+           ,.EMASA(1'd1  ) // Extra Margin Adjustment Sense Amp. - default value
            ,.RET1N(1'b1  ) // Retention Mode (active low) - disabled
            );
 
