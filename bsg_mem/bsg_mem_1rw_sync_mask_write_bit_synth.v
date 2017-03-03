@@ -28,7 +28,7 @@ module bsg_mem_1rw_sync_mask_write_bit_synth #(parameter width_p=-1
        begin
           if (w_i)
             begin
-              for (i = 0; i < els_p; i=i+1)
+              for (i = 0; i < width_p; i=i+1)
                 if (w_mask_i[i])
                   mem[addr_i][i] <= data_i[i];
             end
