@@ -34,7 +34,7 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter els_p = -1
         ,.D     (data_i) // in
         ,.STOV  (1'd0  ) // Self-timing Override - disabled
         ,.EMA   (3'd3  ) // Extra Margin Adjustment - default value
-        ,.EMAW  (2'd0  ) // Extra Margin Adjustment Write - default value
+        ,.EMAW  (2'd1  ) // Extra Margin Adjustment Write - default value
         ,.EMAS  (1'd0  ) // Extra Margin Adjustment Sense Amp. - default value
         ,.RET1N (1'b1  ) // Retention Mode (active low) - disabled
         );
