@@ -9,6 +9,7 @@ module bsg_mem_1r1w_sync_mask_write_bit_synth #(parameter width_p=-1
 						, parameter read_write_same_addr_p=0
 						, parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
 						, parameter harden_p=0
+                                                , parameter disable_collision_warning_p=1
                                         )
    (input   clk_i
     , input reset_i
@@ -63,7 +64,10 @@ module bsg_mem_1r1w_sync_mask_write_bit_synth #(parameter width_p=-1
 
         if (r_addr_i == w_addr_i && w_v_i && r_v_i && !read_write_same_addr_p)
           begin
-             $error("X'ing matched read address %x (%m)",r_addr_i);
+             if (!disable_collision_warning_p)
+               begin
+                 $error("X'ing matched read address %x (%m)",r_addr_i);
+               end
              r_addr_r <= 'X;
           end
         // synopsys translate_on
