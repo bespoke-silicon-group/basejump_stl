@@ -17,7 +17,7 @@ if (els_p == words && width_p == bits)                          \
                                                                 \
              ,.CLKB(clk_i )	                                \
              ,.CENB(~(w_i&v_i))                                 \
-             ,.WENB(w_mask_i)                                   \
+             ,.WENB(~w_mask_i)                                   \
              ,.AB  (addr_i)                                     \
              ,.DB  (data_i)                                     \
              );                                                 \

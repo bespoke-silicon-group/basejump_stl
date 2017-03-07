@@ -17,7 +17,7 @@ if (els_p == words && width_p == bits)                          \
                                                                 \
              ,.CLKB(clk_i )	                                \
              ,.CENB(~w_v_i)                                     \
-             ,.WENB(w_mask_i)                                   \
+             ,.WENB(~w_mask_i)                                   \
              ,.AB  (w_addr_i)                                   \
              ,.DB  (w_data_i)                                   \
              );                                                 \
@@ -74,7 +74,7 @@ module bsg_mem_1r1w_sync_mask_write_bit #(parameter width_p=-1
           assert (~(r_addr_i == w_addr_i && w_v_i && r_v_i && !read_write_same_addr_p))
             else
               begin
-                 $error("%m: Attempt to read and write same address (reset_i %b, %x <= %x (mask %x) old_val %x",reset_i, w_addr_i,w_data_i,w_mask_i,mem[r_addr_i]);
+                 $error("%m: Attempt to read and write same address (reset_i %b, %x <= %x (mask %x)",reset_i, w_addr_i,w_data_i,w_mask_i);
                  //$finish();
               end
        end
