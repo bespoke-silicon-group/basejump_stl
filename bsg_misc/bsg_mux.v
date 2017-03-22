@@ -12,9 +12,11 @@ module bsg_mux #(parameter width_p="inv"
 
    assign data_o = data_i[sel_i];
 
+   // synopsys translate_off
    initial
      assert(balanced_p == 0)
        else $error("%m warning: synthesizable implementation of bsg_mux does not support balanced_p");
+   // synopsys translate_on
 
 endmodule
 
