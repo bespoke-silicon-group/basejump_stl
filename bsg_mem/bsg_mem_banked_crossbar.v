@@ -286,6 +286,7 @@ module bsg_mem_banked_crossbar #
   for(i=0; i<num_banks_p; i=i+1)
   begin: z
 
+   // synopsys translate_off
    if (debug_lp > 1)
      always @(negedge clk_i)
        begin
@@ -295,6 +296,7 @@ module bsg_mem_banked_crossbar #
             else
               $display("%m <= [%x]", bank_addr[i]*debug_p);
        end
+   // synopsys translate_on
 
     // to be replaced with bsg_mem_1rw_sync_byte_masked
     bsg_mem_1rw_sync_mask_write_byte #( .data_width_p (data_width_p)

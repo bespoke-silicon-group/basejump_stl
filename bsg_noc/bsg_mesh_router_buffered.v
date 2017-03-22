@@ -98,10 +98,12 @@ module bsg_mesh_router_buffered #(width_p        = -1
           begin : macro
 	     wire [width_p-1:0] tmp;
 
+            // synopsys translate_off
             initial
                begin
                   $display("%m with buffers on %d",i);
                end
+            // synopsys translate_on
              bsg_inv #(.width_p(width_p),.vertical_p(i < 3)) data_lo_inv
                (.i (data_lo[i]         )
                 ,.o(tmp)
