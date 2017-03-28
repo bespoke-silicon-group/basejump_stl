@@ -186,7 +186,7 @@ module bsg_source_sync_output
    // synopsys translate_off
    always @(posedge io_master_clk_i)
    begin
-      if (io_clk_init_i)
+      if (io_clk_init_i === 1)
 	$display("## %m Reset DDR clock");
    end
    // synopsys translate_on

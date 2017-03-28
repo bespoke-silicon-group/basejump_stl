@@ -18,17 +18,17 @@ module bsg_source_sync_channel_control_master_master
   (input clk_i
    , input reset_i
    , input start_i
-   , input [link_channels_p-1:0]    test_scoreboard_i [tests_p+1-1:0]
+   , input  [tests_p+1-1:0][link_channels_p-1:0]    test_scoreboard_i
    , output [$clog2(tests_p+1)-1:0] test_index_r_o
    , output prepare_o
    , output done_o
    );
 
    logic [$clog2(tests_p+1)-1:0] test_index_n, test_index_r;
-   logic [link_channels_p-1:0]   test_scoreboard_r [tests_p+1-1:0];
+   logic [tests_p+1-1:0][link_channels_p-1:0] test_scoreboard_r;
 
    wire prep_done,     timeout_wait_done;
-   logic prep_actiwait, timeout_actiwait;
+   logic prep_actiwait;
 
    assign test_index_r_o = test_index_r;
    assign prepare_o      = ~prep_done;
@@ -68,8 +68,15 @@ module bsg_source_sync_channel_control_master_master
 
    always_ff @(posedge clk_i)
      begin
-        test_index_r       <= test_index_n;
-        test_scoreboard_r  <= test_scoreboard_i;
+        if (reset_i)
+          test_index_r       <= { ($clog2(tests_p+1)) { 1'b0 } };
+        else
+          test_index_r       <= test_index_n;
+
+        if (reset_i)
+          test_scoreboard_r <= { link_channels_p*(tests_p+1) {  1'b0 } };
+        else
+          test_scoreboard_r <= test_scoreboard_i;
 
         if (reset_i)
              done_r     <= 1'b0;
@@ -93,8 +100,8 @@ module bsg_source_sync_channel_control_master_master
           if (prep_done & ~done_r) // if we're done preparing for the tests,
             begin                  // or haven't finished them all...
                if ( (& test_scoreboard_r[test_index_r]) // all chanls passed the test
-                    || ( (| test_scoreboard_r[test_index_r]) // or if at least one has
-                         && timeout_wait_done                // and we have timed out
+                    | ( (| test_scoreboard_r[test_index_r]) // or if at least one has
+                         & timeout_wait_done                // and we have timed out
                          )
                     )
                  begin

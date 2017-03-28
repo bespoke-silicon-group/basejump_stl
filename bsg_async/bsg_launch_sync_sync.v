@@ -132,6 +132,17 @@ module bsg_launch_sync_sync #(parameter width_p="inv"
     , output [width_p-1:0] oclk_data_o // after sync flops
     );
 
+// synopsys translate_off
+
+   initial assert (iclk_reset_i !== 'z)
+     else
+       begin
+          $error("%m iclk_reset should be connected");
+          $finish();
+       end
+
+// synopsys translate_on
+
    genvar i;
 
    if (use_negedge_for_launch_p)

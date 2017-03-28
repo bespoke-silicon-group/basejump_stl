@@ -39,10 +39,10 @@ always_ff @(posedge clk_i)
 		
 //synopsys translate_off
   always_ff @ (posedge clk_i) begin
-    if ((count_o==max_val_p) & up_i   & ~reset_i)
-		  $display("%m error: counter overflow at time %t", $time);
-	  if ((count_o==0)         & down_i & ~reset_i)
-		  $display("%m error: counter underflow at time %t", $time);			
+     if ((count_o==max_val_p) & up_i   & (reset_i===0))
+       $display("%m error: counter overflow at time %t", $time);
+     if ((count_o==0)         & down_i & (reset_i===0))
+       $display("%m error: counter underflow at time %t", $time);			
   end
 //synopsys translate_on				
 

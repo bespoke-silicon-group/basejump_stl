@@ -32,7 +32,7 @@ module bsg_counter_clear_up #(parameter max_val_p     = -1
 //synopsys translate_off
 
    always_ff @ (negedge clk_i) begin
-      if ((count_o==max_val_p) & up_i   & ~reset_i)
+      if ((count_o==max_val_p) & up_i   & (reset_i===0))
         $display("%m error: counter overflow at time %t", $time);
    end
 
