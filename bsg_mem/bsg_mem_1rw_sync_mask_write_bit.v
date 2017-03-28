@@ -26,9 +26,9 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
    // synopsys translate_off
 
    always_ff @(posedge clk_i)
-     if (v_i)
-       assert (addr_i < els_p)
-         else $error("Invalid address %x to %m of size %x\n", addr_i, els_p);
+     if (v_i === 1)
+       assert ((reset_i === 'X) || (reset_i === 1'b1) || (addr_i < els_p))
+         else $error("Invalid address %x to %m of size %x (reset_i = %b, v_i = %b, clk_i=%b)\n", addr_i, els_p, reset_i, v_i, clk_i);
 
    initial
      begin

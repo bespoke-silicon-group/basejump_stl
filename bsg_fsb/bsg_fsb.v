@@ -186,7 +186,7 @@ module bsg_fsb #(parameter  width_p = "inv"
              $display(" |  _| / __| | '_ \\    | '__|  / _ \\ / __|  / _ \\ | __|");
              $display(" | |   \\__ \\ | |_) |   | |    |  __/ \\__ \\ |  __/ | |_ ");
              $display(" |_|   |___/ |_.__/    |_|     \\___| |___/  \\___|  \\__|");
-             $display("## reset low on FSB in module %m, node %2d",i);
+             $display("## reset low on FSB in module %m, node %2d, time = ",i,$stime);
           end
         always @(posedge node_en_r_o[i])
           begin
@@ -196,7 +196,7 @@ module bsg_fsb #(parameter  width_p = "inv"
              $display(" |  _| / __| | '_ \\     / _ \\ | '_ \\   / _` | | '_ \\  | |  / _ \\  ");
              $display(" | |   \\__ \\ | |_) |   |  __/ | | | | | (_| | | |_) | | | |  __/  ");
              $display(" |_|   |___/ |_.__/     \\___| |_| |_|  \\__,_| |_.__/  |_|  \\___|  ");
-             $display("## enable high on FSB in module %m, node %2d",i);
+             $display("## enable high on FSB in module %m, node %2d, time = ",i, $stime);
           end
         // synopsys translate_on
      end

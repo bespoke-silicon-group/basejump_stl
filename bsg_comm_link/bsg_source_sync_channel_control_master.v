@@ -152,7 +152,12 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
      begin
 
         out_calib_prepare_i_r <= out_calib_prepare_i;
-        out_test_pass_r       <= out_test_pass_n;
+
+        if (out_reset_i)
+          out_test_pass_r <= 0;
+        else
+          out_test_pass_r <= out_test_pass_n;
+
         out_finish_prepare_r  <= out_finish_prepare_n;
 
         // zero the counter on prepare assertion and deassertion
@@ -165,10 +170,12 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
         out_override_en_r           <= out_override_en_n;
 
         if (verbose_lp)
-        if (out_calib_prepare_i ^ out_calib_prepare_i_r)
-          $display("## Master %m:  %s prepare part for Phase %1d"
+        if ((out_reset_i === 0) & (out_calib_prepare_i !== 'X) & (out_calib_prepare_i ^ out_calib_prepare_i_r))
+          $display("## Master %m:  %s prepare part for Phase %1d (out_calib_prepare_i = %b, out_calib_prepare_i_r = %b)"
                    , out_calib_prepare_i ? "entering" : "exiting"
                    , out_calibration_state_i
+                   , out_calib_prepare_i
+                   , out_calib_prepare_i_r
                    );
 
      end
@@ -181,7 +188,7 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
      begin
         out_finish_prepare_n = out_reset_i ? 0: out_finish_prepare_r;
         out_ctr_n            = out_reset_i ? 0: out_ctr_r;
-        out_test_pass_n      = out_reset_i ? 0: out_test_pass_r;
+        out_test_pass_n      = out_test_pass_r;
 
         out_override_en_n         = 1'b0;
         out_override_valid_data_n = { 1'b0, (width_p) ' (0) };
@@ -240,6 +247,13 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
           begin
              out_test_pass_n[out_calibration_state_i]
                = out_phase_X_good[out_calibration_state_i];
+
+             // the first state is clock initialiation, which will spread bad X's
+             // if we don't zero it on this side
+
+             if (~(|out_calibration_state_i))
+                 out_test_pass_n[0] = 1'b1;
+
              unique case (out_calibration_state_i)
             2:
               begin
@@ -281,7 +295,7 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
    // cross clock domain
    bsg_launch_sync_sync #(.width_p(tests_lp+1)) in_to_out
      (.iclk_i       (in_clk_i)
-      ,.iclk_reset_i()
+      ,.iclk_reset_i(1'b0)
       ,.oclk_i      (out_clk_i)
       ,.iclk_data_i({ in_phase_X_good  })
       ,.iclk_data_o()
@@ -299,7 +313,7 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
    // send test enables from out clock domain to in clock domain
    bsg_launch_sync_sync #(.width_p(tests_lp)) out_to_in
      (.iclk_i       (out_clk_i)
-      ,.iclk_reset_i()
+      ,.iclk_reset_i(1'b0 )
       ,.oclk_i      (in_clk_i)
       ,.iclk_data_i({ out_test_enables })
       ,.iclk_data_o()
@@ -343,7 +357,7 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
 
    // AWC fixme: this should actually be out_infinite_credits_o
    // and needs to be done in the correct clock domain.
-   
+
    // we allow for infinite credits if any of the loopback-style tests
    // are enabled.
 
@@ -352,6 +366,16 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
 
    always_ff @(posedge in_clk_i)
      begin
+        // probably not strictly necessary, but cleans things up for X prop mode
+        if (in_reset_i)
+          begin
+             in_last_pos_r      <= in_snoop_valid_data_pos_i;
+             in_last_neg_r      <= in_snoop_valid_data_neg_i;
+
+             in_consec_neg_pos_match_r <= 0;
+             in_consec_pos_neg_match_r <= 0;
+          end
+
         if (in_test_enables[2])
           begin
              in_last_pos_r      <= in_snoop_valid_data_pos_i;
@@ -371,32 +395,38 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
                                              : in_consec_neg_pos_match_r+1'b1
                                              )
                                             : 0;
-             if ((in_consec_pos_neg_match_r > 100) & !in_pos_neg_match)
-               $display("## Phase 1 Mismatch(P) %x %x %x %x"
-                        , in_last_pos_r, in_last_neg_r
-                        , in_snoop_valid_data_pos_i, in_snoop_valid_data_neg_i);
 
-             if ((in_consec_neg_pos_match_r > 100) & !in_neg_pos_match)
-               $display("## Phase 1 Mismatch(N) %x %x %x %x"
-                        , in_last_neg_r, in_last_last_pos_r
-                        , in_snoop_valid_data_neg_i, in_last_pos_r);
-             if (&in_consec_pos_neg_match_r && ~in_pos_neg_match)
-               $display("## Phase 1 Pos Lock");
-
-             if (&in_consec_neg_pos_match_r  && ~in_neg_pos_match)
-               $display("## Phase 1 Neg Lock");
-
-             if (verbose_lp)
+             // avoid spurious warnings in X prop simulation mode
+             if (in_test_enables[2] !== 'X)
                begin
-                  if ((in_consec_pos_neg_match_r & 12'hfff) == 12'hffe)
-                    $display("## Posmatch %x; negmatch %x"
-                             ,in_consec_pos_neg_match_r,in_consec_neg_pos_match_r);
+                  if ((in_consec_pos_neg_match_r > 100) & !in_pos_neg_match)
+                    $display("## Phase 1 Mismatch(P) %x %x %x %x"
+                             , in_last_pos_r, in_last_neg_r
+                             , in_snoop_valid_data_pos_i, in_snoop_valid_data_neg_i);
 
-                  if ((in_consec_neg_pos_match_r & 12'hfff) == 12'hffe)
-                    $display("## Posmatch %x; negmatch %x"
-                             ,in_consec_pos_neg_match_r,in_consec_neg_pos_match_r);
-              end
-           end
+                  if ((in_consec_neg_pos_match_r > 100) & !in_neg_pos_match)
+                    $display("## Phase 1 Mismatch(N) %x %x %x %x"
+                             , in_last_neg_r, in_last_last_pos_r
+                             , in_snoop_valid_data_neg_i, in_last_pos_r);
+                  if (&in_consec_pos_neg_match_r && ~in_pos_neg_match)
+                    $display("## Phase 1 Pos Lock");
+
+                  if (&in_consec_neg_pos_match_r  && ~in_neg_pos_match)
+                    $display("## Phase 1 Neg Lock");
+
+                  if (verbose_lp)
+                    begin
+                       if ((in_consec_pos_neg_match_r & 12'hfff) == 12'hffe)
+                         $display("## Posmatch %x; negmatch %x"
+                                  ,in_consec_pos_neg_match_r,in_consec_neg_pos_match_r);
+
+                       if ((in_consec_neg_pos_match_r & 12'hfff) == 12'hffe)
+                         $display("## Posmatch %x; negmatch %x"
+                                  ,in_consec_pos_neg_match_r,in_consec_neg_pos_match_r);
+                    end
+               end
+          end // if (in_test_enables[2])
+
      end
 
 

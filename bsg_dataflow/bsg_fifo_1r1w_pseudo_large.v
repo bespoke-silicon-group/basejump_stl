@@ -171,7 +171,7 @@ module bsg_fifo_1r1w_pseudo_large #(parameter width_p = -1
        big_enq_r <= big_enq_r | big_enq;
 
    always_ff @(negedge clk_i)
-     if (~big_enq_r & big_enq)
+     if ((reset_i === 0) & (~big_enq_r & big_enq))
        $display("## %L: overflowing into big fifo for the first time (%m)");
 
    // synopsys translate_on

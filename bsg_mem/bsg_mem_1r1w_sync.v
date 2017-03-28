@@ -47,10 +47,10 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
    always_ff @(posedge clk_i)
      if (w_v_i)
        begin
-          assert (w_addr_i < els_p)
+          assert ((reset_i === 'X) || (reset_i === 1'b1) || (w_addr_i < els_p))
             else $error("Invalid address %x to %m of size %x\n", w_addr_i, els_p);
 
-          assert (~(r_addr_i == w_addr_i && w_v_i && r_v_i && !read_write_same_addr_p))
+          assert ((reset_i === 'X) || (reset_i === 1'b1) || ~(r_addr_i == w_addr_i && w_v_i && r_v_i && !read_write_same_addr_p))
             else
               begin
                  $error("%L: Attempt to read and write same address (%m)");

@@ -1,7 +1,8 @@
-module bsg_nonsynth_clock_gen #(parameter cycle_time_p="inv")
-   (output logic o);
+// we use bit for the output so that it starts at 0
+// this helps with x prop mode in VCS
 
-   initial o = 0;
+module bsg_nonsynth_clock_gen #(parameter cycle_time_p="inv")
+   (output bit o);
 
    initial
      $display("%m with cycle_time_p ",cycle_time_p);

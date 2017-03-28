@@ -24,8 +24,8 @@ module bsg_mem_1rw_sync_synth #(parameter width_p=-1
      if (v_i)
        begin
           // synopsys translate_off
-          assert (addr_i < els_p)
-            else $error("Invalid address %x to %m of size %x\n", addr_i, els_p);
+          assert ( (v_i !== 1'b1) || (reset_i === 'X) || (reset_i === 1'b1) || (addr_i < els_p))
+            else $error("Invalid address %x to %m of size %x (reset_i = %b, v_i = %b, clk_i = %b)\n", addr_i, els_p, reset_i, v_i, clk_i);
           // synopsys translate_on
           if (w_i)
             mem[addr_i] <= data_i;
