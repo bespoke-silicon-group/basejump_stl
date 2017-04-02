@@ -404,9 +404,9 @@ module bsg_comm_link
    if (master_p)
      begin : mstr
         // counter intuitive; organized by tests then by channel
-        wire [link_channels_p-1:0]      im_test_scoreboard [tests_p+1-1:0];
-        wire [$clog2(tests_p+1)-1:0]    im_test_index;  // + 1; for the "final test"
-        wire                            im_prepare;
+        wire [tests_p+1-1:0][link_channels_p-1:0] im_test_scoreboard;
+        wire [$clog2(tests_p+1)-1:0]              im_test_index;  // + 1; for the "final test"
+        wire                                      im_prepare;
 
         // assert the tline
         assign im_slave_reset_tline_n = im_prepare;
