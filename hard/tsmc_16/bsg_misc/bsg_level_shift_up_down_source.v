@@ -20,7 +20,7 @@ for (i = 0; i < width_p; i++)
 
     LVLUO level_shift_source (
       .A(A[i]),
-      .Y(Y[i]
+      .Y(Y[i])
     );
 
   end : n

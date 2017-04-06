@@ -20,7 +20,7 @@ for (i = 0; i < width_p; i++)
 
     LVLU level_shift_sink (
       .A(A[i]),
-      .Y(Y[i]
+      .Y(Y[i])
     );
 
   end : n
