@@ -62,7 +62,8 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
     // AWC: fixme should be out_infinite_credits_o
     // basically disable the output module from looking
     // at the credit counters
-    , output                 in_infinite_credits_o
+    //, output                 in_infinite_credits_o
+    , output                 out_infinite_credits_o
 
     );
 
@@ -361,7 +362,8 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
    // we allow for infinite credits if any of the loopback-style tests
    // are enabled.
 
-   assign in_infinite_credits_o = in_test_enables[3] | in_test_enables[4];
+   // assign in_infinite_credits_o = in_test_enables[3] | in_test_enables[4];
+   assign out_infinite_credits_o = out_test_enables[3] | out_test_enables[4];
 
 
    always_ff @(posedge in_clk_i)

@@ -35,7 +35,8 @@ module  bsg_source_sync_channel_control_slave #( parameter width_p  = -1
     , output in_trigger_mode_alt_en_o
 
     // AWC fixme: should be out_infinite_credits_o
-    , output in_infinite_credits_o
+    //, output in_infinite_credits_o
+    , output logic out_infinite_credits_o
 
     , input core_clk_i     // for synchronizers
     // used for loopback mode (calibration modes 2 and 3)
@@ -163,7 +164,7 @@ module  bsg_source_sync_channel_control_slave #( parameter width_p  = -1
    logic                       out_override_en_r,         out_override_en_n;
 
    // AWC fixme, add registered value
-   logic                       out_infinite_credits;
+   //logic                       out_infinite_credits;
 
 
    assign out_override_valid_data_o = out_override_valid_data_r;
@@ -242,14 +243,16 @@ module  bsg_source_sync_channel_control_slave #( parameter width_p  = -1
    // instead of running out_infinite_credits
    // through the synchronizer to create in_infinite_credits_o, we should
    // just register it and send it out as out_infinite_credits_o
-   
+
+   wire  AWC_ignore;
+
    bsg_launch_sync_sync #(.width_p(3)) out_to_in_lss
      (.iclk_i       (out_clk_i  )
       ,.iclk_reset_i(1'b0)
       ,.oclk_i      (in_clk_i   )
-      ,.iclk_data_i({ out_loopback_en     ,   out_trigger_mode_alt_en, out_infinite_credits    })
+      ,.iclk_data_i({ out_loopback_en     ,   out_trigger_mode_alt_en, out_infinite_credits_o    })
       ,.iclk_data_o()
-      ,.oclk_data_o({ in_trigger_mode_en_o,    in_trigger_mode_alt_en_o, in_infinite_credits_o})
+      ,.oclk_data_o({ in_trigger_mode_en_o,    in_trigger_mode_alt_en_o, AWC_ignore})
       );
 
    wire [counter_bits_lp-1:0] out_ctr_r_p1 = out_ctr_r + 1'b1;
@@ -261,7 +264,7 @@ module  bsg_source_sync_channel_control_slave #( parameter width_p  = -1
 
    always_comb
      begin
-        out_infinite_credits = 1'b0;
+        out_infinite_credits_o = 1'b0;
 
         out_ctr_n = out_ctr_r;
         out_rot_n = out_rot_r;
@@ -321,10 +324,10 @@ module  bsg_source_sync_channel_control_slave #( parameter width_p  = -1
             end
 
           sPhase3:
-            out_infinite_credits = 1'b1;
+            out_infinite_credits_o = 1'b1;
 
           sPhase4:
-            out_infinite_credits = 1'b1;
+            out_infinite_credits_o = 1'b1;
 
 
           default:
