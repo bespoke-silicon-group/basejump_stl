@@ -87,12 +87,21 @@ module bsg_sync_sync #(parameter width_p = "inv")
 
    genvar   i;
 
-   for (i = 0; i < (width_p/`bss_max_block)*`bss_max_block; i = i + 1)
+   // synopsys translate_off
+ /*
+   initial
+     begin
+        $display("%m: instantiating bss of size %d",width_p);
+     end
+  */
+   // synopsys translate_on
+
+   for (i = 0; i < (width_p/`bss_max_block); i = i + 1)
      begin : maxb
         bsg_sync_sync_8_unit bss8
             (.oclk_i
-             ,.iclk_data_i(iclk_data_i[i*`bss_max_block+:width_p])
-             ,.oclk_data_o(oclk_data_o[i*`bss_max_block+:width_p])
+             ,.iclk_data_i(iclk_data_i[i*`bss_max_block+:`bss_max_block])
+             ,.oclk_data_o(oclk_data_o[i*`bss_max_block+:`bss_max_block])
              );
      end
 
