@@ -109,17 +109,24 @@ module bsg_launch_sync_sync #(parameter width_p="inv"
 
    genvar i;
 
+   initial assert (iclk_reset_i !== 'z)
+     else
+       begin
+          $error("%m iclk_reset should be connected");
+          $finish();
+       end
+
    if (use_negedge_for_launch_p)
      begin: n
-        for (i = 0; i < (width_p/`blss_max_block)*`blss_max_block; i = i + 1)
+        for (i = 0; i < (width_p/`blss_max_block); i = i + 1)
           begin : maxb
              bsg_launch_sync_sync_negedge_8_unit blss
                  (.iclk_i
                   ,.iclk_reset_i
                   ,.oclk_i
-                  ,.iclk_data_i(iclk_data_i[i*`blss_max_block+:width_p])
-                  ,.iclk_data_o(oclk_data_o[i*`blss_max_block+:width_p])
-                  ,.oclk_data_o(oclk_data_o[i*`blss_max_block+:width_p])
+                  ,.iclk_data_i(iclk_data_i[i*`blss_max_block+:`blss_max_block])
+                  ,.iclk_data_o(iclk_data_o[i*`blss_max_block+:`blss_max_block])
+                  ,.oclk_data_o(oclk_data_o[i*`blss_max_block+:`blss_max_block])
                   );
           end
 
@@ -133,15 +140,15 @@ module bsg_launch_sync_sync #(parameter width_p="inv"
      end
    else
      begin: p
-        for (i = 0; i < (width_p/`blss_max_block)*`blss_max_block; i = i + 1)
+        for (i = 0; i < (width_p/`blss_max_block); i = i + 1)
           begin : maxb
              bsg_launch_sync_sync_posedge_8_unit blss
                  (.iclk_i
                   ,.iclk_reset_i
                   ,.oclk_i
-                  ,.iclk_data_i(iclk_data_i[i*`blss_max_block+:width_p])
-                  ,.iclk_data_o(oclk_data_o[i*`blss_max_block+:width_p])
-                  ,.oclk_data_o(oclk_data_o[i*`blss_max_block+:width_p])
+                  ,.iclk_data_i(iclk_data_i[i*`blss_max_block+:`blss_max_block])
+                  ,.iclk_data_o(iclk_data_o[i*`blss_max_block+:`blss_max_block])
+                  ,.oclk_data_o(oclk_data_o[i*`blss_max_block+:`blss_max_block])
                   );
           end
 
