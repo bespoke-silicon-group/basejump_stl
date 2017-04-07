@@ -114,7 +114,7 @@ ASIC:
            so this is always satisfied.
            :: keep slave_lg_token_width_p = 5 (or at least the decimation factor)
      (YY) ASIC token_activation must complete before FPGA token_reset goes lo
-       --> master_calib_prepare_cycles_p x M0 > (3+2^slave_lg_token_width_p) x M1 
+       --> master_calib_prepare_cycles_p x M0 > (3+2^slave_lg_token_width_p) x M1
        --> master_calib_prepare_cycles_p > (3+2^slave_lg_token_width_p) x (M1 / M0)
 
      (SS) prepare_hold_cycles. we need to make sure that somehow the changed data
@@ -208,7 +208,7 @@ module bsg_comm_link
 
     // fixme: derive value better (we reduced this to 25 from 5000 for simulation)
     // 25 might actually be okay
-				  
+
     , parameter master_calib_timeout_cycles_p = master_to_slave_speedup_p * 25
 
     )
@@ -264,10 +264,10 @@ module bsg_comm_link
    // higher multiples are possible but TBD.
 
    localparam bao_narrow_lp = (
-			       ((core_channels_p / 2) >= link_channels_p)
-			       & (core_channels_p % 2) == 0
-			       ) ? 2 : 1;
-   
+                               ((core_channels_p / 2) >= link_channels_p)
+                               & (core_channels_p % 2) == 0
+                               ) ? 2 : 1;
+
    // across all frequency combinations, we need a little over 20 fifo slots
    // so we round up to 32, to allow for delay in the FPGA
 
@@ -325,13 +325,12 @@ module bsg_comm_link
    // synchronous to im clock
    wire [link_channels_p-1:0]   im_override_en;
    wire [channel_width_p+1-1:0] im_override_valid_data [link_channels_p-1:0];
-   wire [link_channels_p-1:0]   im_override_is_posedge;
+   wire [link_channels_p-1:0]   im_override_is_posedge, im_infinite_credits_en;
 
    // synchronous to io clocks
    wire [channel_width_p+1-1:0] io_snoop_valid_data_pos [link_channels_p-1:0];
    wire [channel_width_p+1-1:0] io_snoop_valid_data_neg [link_channels_p-1:0];
-   wire [link_channels_p-1:0]   io_trigger_mode_en, io_trigger_mode_alt_en
-                                , io_infinite_credits_en;
+   wire [link_channels_p-1:0] 	io_trigger_mode_en, io_trigger_mode_alt_en;
 
    wire [link_channels_p-1:0]   core_loopback_en;
    wire [link_channels_p-1:0]   core_channel_active, im_channel_active;
@@ -348,20 +347,20 @@ module bsg_comm_link
    assign core_top_active_channel_n = (| core_channel_active) ? (active_channel_count - 1) : '0;
 
    // clone this register to keep it off critical paths
-   
+
    bsg_dff #(.harden_p(1)
-	     ,.strength_p(4)
-	     ,.width_p(`BSG_MAX(1,$clog2(link_channels_p)))
-	    ) core_top_active_channel_bai_r_reg
+             ,.strength_p(4)
+             ,.width_p(`BSG_MAX(1,$clog2(link_channels_p)))
+            ) core_top_active_channel_bai_r_reg
      (.clock_i(core_clk_i)
       ,.data_i(core_top_active_channel_n)
       ,.data_o(core_top_active_channel_bai_r)
       );
 
    bsg_dff #(.harden_p(1)
-	     ,.strength_p(4)
-	     ,.width_p(`BSG_MAX(1,$clog2(link_channels_p)))
-	    ) core_top_active_channel_bao_r_reg
+             ,.strength_p(4)
+             ,.width_p(`BSG_MAX(1,$clog2(link_channels_p)))
+            ) core_top_active_channel_bao_r_reg
      (.clock_i(core_clk_i)
       ,.data_i(core_top_active_channel_n)
       ,.data_o(core_top_active_channel_bao_r)
@@ -386,21 +385,21 @@ module bsg_comm_link
    wire [5:0]              core_calib_done_vec_r;
    assign core_calib_reset_r_o = ~core_calib_done_vec_r[0];
 
-   genvar 		   k;
+   genvar                  k;
 
    for (k = 0; k < 6; k=k+1)
      begin: cr
-	bsg_dff #(.harden_p(1)
-		  ,.strength_p(4)
-		  ,.width_p(1)
-		  ) core_calib_reset_fanout_reg
-	  (.clock_i(core_clk_i)
-	   ,.data_i(core_calib_done_prefanout_r)
-	   ,.data_o(core_calib_done_vec_r[k])
-	   );
+        bsg_dff #(.harden_p(1)
+                  ,.strength_p(4)
+                  ,.width_p(1)
+                  ) core_calib_reset_fanout_reg
+          (.clock_i(core_clk_i)
+           ,.data_i(core_calib_done_prefanout_r)
+           ,.data_o(core_calib_done_vec_r[k])
+           );
      end
 
-   
+
    if (master_p)
      begin : mstr
         // counter intuitive; organized by tests then by channel
@@ -521,8 +520,9 @@ module bsg_comm_link
               ,.in_snoop_valid_data_pos_i(io_snoop_valid_data_pos [i])
 
               // AWC fixme: incorrect name should be output clocked, not in clocked
-              // i.e. should be: ,.out_infinite_credits_o (im_infinite_credits_en[i])
-              ,.in_infinite_credits_o    (io_infinite_credits_en  [i])
+              // i.e. should be:
+              ,.out_infinite_credits_o (im_infinite_credits_en[i])
+              //,.in_infinite_credits_o    (io_infinite_credits_en  [i])
 
               ,.out_test_pass_r_o        ( im_tests_gather )
               );
@@ -552,13 +552,13 @@ module bsg_comm_link
              assign io_trigger_mode_alt_en [i]     = 1'b0;
              assign core_loopback_en       [i]     = 1'b0;
 
-`ifndef SYNTHESIS	     
+`ifndef SYNTHESIS
              // activate the channel if all of the "real" tests passed
-	     // MBT: we use triple equals because this handles the X case in simulation
-	     //      DC of course does not like ===
+             // MBT: we use triple equals because this handles the X case in simulation
+             //      DC of course does not like ===
              assign im_channel_active[i] = (im_tests_gather[tests_p-1:0] === { tests_p {1'b1} });
 `else
-             assign im_channel_active[i] = (im_tests_gather[tests_p-1:0] == { tests_p {1'b1} });	     
+             assign im_channel_active[i] = (im_tests_gather[tests_p-1:0] == { tests_p {1'b1} });
 `endif
              assign im_clk_init            [i]      = im_reset & ~im_reset_r;
 
@@ -603,8 +603,10 @@ module bsg_comm_link
               ,.in_trigger_mode_alt_en_o     (io_trigger_mode_alt_en     [i])
 
               // AWC fixme: incorrect name should be output clocked, not in clocked
-              // i.e. should be:  ,.out_infinite_credits_o (im_infinite_credits_en[i])
-              ,.in_infinite_credits_o        (io_infinite_credits_en     [i])
+              // i.e. should be:
+
+              ,.out_infinite_credits_o (im_infinite_credits_en[i])
+              //,.in_infinite_credits_o        (io_infinite_credits_en     [i])
 
               // for core control
               ,.core_clk_i                   (core_clk_i                    )
@@ -638,11 +640,11 @@ module bsg_comm_link
              ,.core_reset_i(core_channel_reset)
 
              ,.core_data_i (core_loopback_en[i]
-                            ? core_ssi_to_asm_data [i] 
-			    : core_asm_to_sso_data_sbox [i])
+                            ? core_ssi_to_asm_data [i]
+                            : core_asm_to_sso_data_sbox [i])
              ,.core_valid_i(core_loopback_en[i]
-                            ? core_ssi_to_asm_valid[i] 
-			    : core_asm_to_sso_valid_sbox[i])
+                            ? core_ssi_to_asm_valid[i]
+                            : core_asm_to_sso_valid_sbox[i])
 
              // fixme: any special treatment required for loopback?
              ,.core_ready_o(core_asm_to_sso_ready [i])
@@ -660,8 +662,9 @@ module bsg_comm_link
              ,.io_valid_r_o(im_valid_tline_o   [i])
 
               // AWC fixme: incorrect name should be output clocked, not in clocked
-              // i.e. should be:  ,.io_infinite_credits_o (im_infinite_credits_en[i])
-             ,.io_infinite_credits_i (io_infinite_credits_en[i])
+              // i.e. should be:
+	     ,.io_infinite_credits_i (im_infinite_credits_en[i])
+             //,.io_infinite_credits_i (io_infinite_credits_en[i])
 
              ,.token_clk_i  (token_clk_tline_i [i])
              ,.token_reset_i(token_reset    )
@@ -779,14 +782,14 @@ module bsg_comm_link
    wire                                         core_asm_valid_li;
    wire [core_channels_p*channel_width_p/bao_narrow_lp-1:0] core_asm_data_li;
    wire                                         core_asm_ready_lo;
-   
+
    // out to core
    wire                                       core_asm_valid_lo;
    wire [core_channels_p*channel_width_p-1:0] core_asm_data_lo;
    wire                                       core_asm_yumi_li;
 
    typedef logic [`BSG_MAX($clog2(core_channels_p/bao_narrow_lp),1)-1:0] bsg_comm_link_active_out_vec_t;
-   typedef logic [`BSG_MAX($clog2(core_channels_p),1)-1:0] 		 bsg_comm_link_active_in_vec_t;
+   typedef logic [`BSG_MAX($clog2(core_channels_p),1)-1:0]               bsg_comm_link_active_in_vec_t;
 
    // de-bond channel into multiple individual channels
    bsg_assembler_out #(.width_p(channel_width_p)
@@ -843,31 +846,31 @@ module bsg_comm_link
 
    if (bao_narrow_lp == 2)
      begin: nrw
-	bsg_fifo_1r1w_narrowed #(.width_p(channel_width_p*core_channels_p)
-				 ,.els_p(2)
-				 ,.width_out_p(channel_width_p*core_channels_p/bao_narrow_lp)
-				 ) nrw
-	  (.clk_i(core_clk_i)
-	   ,.reset_i(~core_calib_done_vec_r[4])
-	   
-	   // from FSB
-	   ,.v_i    (core_nrw_valid_li)
-	   ,.data_i (core_nrw_data_li )
-	   ,.ready_o(core_nrw_ready_lo)
+        bsg_fifo_1r1w_narrowed #(.width_p(channel_width_p*core_channels_p)
+                                 ,.els_p(2)
+                                 ,.width_out_p(channel_width_p*core_channels_p/bao_narrow_lp)
+                                 ) nrw
+          (.clk_i(core_clk_i)
+           ,.reset_i(~core_calib_done_vec_r[4])
 
-	   // to assembler
-	   ,.v_o   (core_asm_valid_li)
-	   ,.data_o(core_asm_data_li)
-	   ,.yumi_i(core_asm_ready_lo & core_asm_valid_li)
-	   );
+           // from FSB
+           ,.v_i    (core_nrw_valid_li)
+           ,.data_i (core_nrw_data_li )
+           ,.ready_o(core_nrw_ready_lo)
+
+           // to assembler
+           ,.v_o   (core_asm_valid_li)
+           ,.data_o(core_asm_data_li)
+           ,.yumi_i(core_asm_ready_lo & core_asm_valid_li)
+           );
      end // block: nrw
-		  else
-		  begin : not_nrw
-		  assign core_asm_valid_li = core_nrw_valid_li;
-		  assign core_asm_data_li  = core_nrw_data_li;
-	assign core_nrw_ready_lo = core_asm_ready_lo;
+                  else
+                  begin : not_nrw
+                  assign core_asm_valid_li = core_nrw_valid_li;
+                  assign core_asm_data_li  = core_nrw_data_li;
+        assign core_nrw_ready_lo = core_asm_ready_lo;
      end
-   
+
    bsg_fsb #(.width_p(channel_width_p*core_channels_p)
              ,.nodes_p(nodes_p)
              ,.enabled_at_start_vec_p(enabled_at_start_vec_p)

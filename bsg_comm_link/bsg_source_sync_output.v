@@ -333,9 +333,9 @@ module bsg_source_sync_output
         // the I/O clock domain is responsible for tabulating tokens
         ,.r_clk_i  (io_master_clk_i)
         ,.r_reset_i(io_reset_i     )
-        ,.r_dec_credit_i   (io_posedge_credits_deque)
+        ,.r_dec_credit_i      (io_posedge_credits_deque)
         ,.r_infinite_credits_i(io_infinite_credits_i)
-        ,.r_credits_avail_o(io_posedge_credits_avail)
+        ,.r_credits_avail_o   (io_posedge_credits_avail)
         );
 
    bsg_async_credit_counter
