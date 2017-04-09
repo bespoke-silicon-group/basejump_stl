@@ -18,7 +18,7 @@ genvar i;
 for (i = 0; i < width_p; i++)
   begin : n
 
-    LVLUO level_shift_source (
+    LVLUO_X2N_A7P5PP96PTS_C18 level_shift_source (
       .A(A[i]),
       .Y(Y[i])
     );
