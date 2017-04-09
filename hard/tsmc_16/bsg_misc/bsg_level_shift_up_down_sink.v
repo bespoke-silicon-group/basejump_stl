@@ -18,7 +18,7 @@ genvar i;
 for (i = 0; i < width_p; i++)
   begin : n
 
-    LVLU level_shift_sink (
+    LVLU_X2N_A7P5PP96PTS_C18 level_shift_sink (
       .A(A[i]),
       .Y(Y[i])
     );
