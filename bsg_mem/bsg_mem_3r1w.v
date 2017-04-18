@@ -62,7 +62,7 @@ module bsg_mem_3r1w #(parameter width_p=-1
 
    initial
      begin
-        $display("## bsg_mem_3r1w: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d (%m)",width_p,els_p);
+        $display("## bsg_mem_3r1w: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d (%m)",width_p,els_p,read_write_same_addr_p);
      end
 
 
