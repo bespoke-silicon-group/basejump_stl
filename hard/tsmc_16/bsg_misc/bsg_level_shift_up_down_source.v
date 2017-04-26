@@ -9,6 +9,7 @@
 //
 module bsg_level_shift_up_down_source #(parameter width_p = "inv")
 (
+  input                      EN,
   input        [width_p-1:0] A,
   output logic [width_p-1:0] Y
 );
@@ -18,7 +19,8 @@ genvar i;
 for (i = 0; i < width_p; i++)
   begin : n
 
-    LVLUO_X2N_A7P5PP96PTS_C18 level_shift_source (
+    A2LVLUO_X2N_A7P5PP96PTS_C18 level_shift_source (
+      .EN(EN),
       .A(A[i]),
       .Y(Y[i])
     );
