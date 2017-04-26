@@ -13,6 +13,7 @@
 //
 module bsg_level_shift_up_down_source #(parameter width_p = "inv")
 (
+  input                      EN,
   input        [width_p-1:0] A,
   output logic [width_p-1:0] Y
 );
@@ -21,6 +22,6 @@ module bsg_level_shift_up_down_source #(parameter width_p = "inv")
     $display("%m - warning: using non-hard up/down source-side level shifter");
 
   // No logic for level shifter in RTL
-  assign Y = A;
+  assign Y = A & EN;
 
 endmodule

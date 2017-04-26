@@ -24,6 +24,8 @@
 //
 module bsg_fsb_node_level_shift_node_domain #(parameter ring_width_p = "inv")
 (
+  input  en_ls_i,
+
   input  clk_i,
   input  reset_i,
 
@@ -52,6 +54,7 @@ module bsg_fsb_node_level_shift_node_domain #(parameter ring_width_p = "inv")
 // Level Shift Clock
 bsg_level_shift_up_down_sink #(.width_p(1)) clk_ls_inst
 (
+  .EN(en_ls_i),
   .A(clk_i),
   .Y(clk_o)
 );
@@ -59,6 +62,7 @@ bsg_level_shift_up_down_sink #(.width_p(1)) clk_ls_inst
 // Level Shift Reset
 bsg_level_shift_up_down_sink #(.width_p(1)) reset_ls_inst
 (
+  .EN(en_ls_i),
   .A(reset_i),
   .Y(reset_o)
 );
@@ -66,6 +70,7 @@ bsg_level_shift_up_down_sink #(.width_p(1)) reset_ls_inst
 // NODE v_o --> FSB v_i
 bsg_level_shift_up_down_source #(.width_p(1)) n2f_v_ls_inst
 (
+  .EN(en_ls_i),
   .A(node_v_o_i),
   .Y(fsb_v_i_o)
 );
@@ -73,6 +78,7 @@ bsg_level_shift_up_down_source #(.width_p(1)) n2f_v_ls_inst
 // NODE data_o --> FSB data_i
 bsg_level_shift_up_down_source #(.width_p(ring_width_p)) n2f_data_ls_inst
 (
+  .EN(en_ls_i),
   .A(node_data_o_i),
   .Y(fsb_data_i_o)
 );
@@ -80,6 +86,7 @@ bsg_level_shift_up_down_source #(.width_p(ring_width_p)) n2f_data_ls_inst
 // FSB yumi_o --> NODE yumi_i
 bsg_level_shift_up_down_sink #(.width_p(1)) f2n_yumi_ls_inst
 (
+  .EN(en_ls_i),
   .A(fsb_yumi_o_i),
   .Y(node_yumi_i_o)
 );
@@ -87,6 +94,7 @@ bsg_level_shift_up_down_sink #(.width_p(1)) f2n_yumi_ls_inst
 // FSB v_o --> NODE v_i
 bsg_level_shift_up_down_sink #(.width_p(1)) f2n_v_ls_inst
 (
+  .EN(en_ls_i),
   .A(fsb_v_o_i),
   .Y(node_v_i_o)
 );
@@ -94,6 +102,7 @@ bsg_level_shift_up_down_sink #(.width_p(1)) f2n_v_ls_inst
 // FSB data_o --> NODE data_i
 bsg_level_shift_up_down_sink #(.width_p(ring_width_p)) f2n_data_ls_inst
 (
+  .EN(en_ls_i),
   .A(fsb_data_o_i),
   .Y(node_data_i_o)
 );
@@ -101,6 +110,7 @@ bsg_level_shift_up_down_sink #(.width_p(ring_width_p)) f2n_data_ls_inst
 // NODE ready_o --> FSB ready_i
 bsg_level_shift_up_down_source #(.width_p(1)) n2f_ready_ls_inst
 (
+  .EN(en_ls_i),
   .A(node_ready_o_i),
   .Y(fsb_ready_i_o)
 );
