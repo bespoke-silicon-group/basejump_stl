@@ -9,7 +9,7 @@
 //
 module bsg_level_shift_up_down_source #(parameter width_p = "inv")
 (
-  input                      EN,
+  input                      EN,    // active high
   input        [width_p-1:0] A,
   output logic [width_p-1:0] Y
 );
