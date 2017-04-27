@@ -22,6 +22,6 @@ module bsg_level_shift_up_down_sink #(parameter width_p = "inv")
     $display("%m - warning: using non-hard up/down sink-side level shifter");
 
   // No logic for level shifter in RTL
-  assign Y = A;
+  assign Y = A & {width_p{EN}};
 
 endmodule
