@@ -22,7 +22,7 @@ for (i = 0; i < width_p; i++)
     A2LVLUO_X2N_A7P5PP96PTS_C18 level_shift_source (
       .EN(v0_en_i),     // active high
       .A(v0_data_i[i]),
-      .Y(v1_data_0[i])
+      .Y(v1_data_o[i])
     );
 
   end : n
