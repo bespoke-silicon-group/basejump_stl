@@ -54,7 +54,7 @@ module bsg_fsb_node_level_shift_fsb_domain #(parameter ring_width_p = "inv")
 // Level Shift Clock
 bsg_level_shift_up_down_source #(.width_p(1)) clk_ls_inst
 (
-  .EN(en_ls_i),
+  .EN(1'b1),
   .A(clk_i),
   .Y(clk_o)
 );
@@ -62,7 +62,7 @@ bsg_level_shift_up_down_source #(.width_p(1)) clk_ls_inst
 // Level Shift Reset
 bsg_level_shift_up_down_source #(.width_p(1)) reset_ls_inst
 (
-  .EN(en_ls_i),
+  .EN(1'b1),
   .A(reset_i),
   .Y(reset_o)
 );
