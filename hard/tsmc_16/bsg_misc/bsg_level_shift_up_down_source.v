@@ -9,9 +9,9 @@
 //
 module bsg_level_shift_up_down_source #(parameter width_p = "inv")
 (
-  input                      EN,    // active high
-  input        [width_p-1:0] A,
-  output logic [width_p-1:0] Y
+  input                      v0_en_i,
+  input        [width_p-1:0] v0_data_i,
+  output logic [width_p-1:0] v1_data_o
 );
 
 genvar i;
@@ -20,9 +20,9 @@ for (i = 0; i < width_p; i++)
   begin : n
 
     A2LVLUO_X2N_A7P5PP96PTS_C18 level_shift_source (
-      .EN(EN),
-      .A(A[i]),
-      .Y(Y[i])
+      .EN(v0_en_i),     // active high
+      .A(v0_data_i[i]),
+      .Y(v1_data_0[i])
     );
 
   end : n
