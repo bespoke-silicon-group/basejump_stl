@@ -9,9 +9,9 @@
 //
 module bsg_level_shift_up_down_sink #(parameter width_p = "inv")
 (
-  input                      EN,    // active high
-  input        [width_p-1:0] A,
-  output logic [width_p-1:0] Y
+  input        [width_p-1:0] v0_data_i,
+  input                      v1_en_i,
+  output logic [width_p-1:0] v1_data_o
 );
 
 genvar i;
@@ -20,9 +20,9 @@ for (i = 0; i < width_p; i++)
   begin : n
 
     A2LVLU_X2N_A7P5PP96PTS_C18 level_shift_sink (
-      .EN(EN),
-      .A(A[i]),
-      .Y(Y[i])
+      .EN(v1_en_i),    // active high
+      .A(v0_data_i[i]),
+      .Y(v1_data_o[i])
     );
 
   end : n
