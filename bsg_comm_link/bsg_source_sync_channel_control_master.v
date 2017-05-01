@@ -155,7 +155,7 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
         out_calib_prepare_i_r <= out_calib_prepare_i;
 
         if (out_reset_i)
-          out_test_pass_r <= 0;
+          out_test_pass_r <= bypass_test_p; // 5/1/17 mbt:temporary fix to accelerate simulation
         else
           out_test_pass_r <= out_test_pass_n;
 

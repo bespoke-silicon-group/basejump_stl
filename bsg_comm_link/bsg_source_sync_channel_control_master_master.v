@@ -109,7 +109,13 @@ module bsg_source_sync_channel_control_master_master
                       done_n = 1'b1;
                     else
                       begin
-                         test_index_n = test_index_r + 1'b1;
+                         // if we've already passed all tests
+                         // then go directly to the last test.
+			 // "temporary fix" for accelerating simulation 5/1/17 mbt
+                         if (&test_scoreboard_r[tests_p-1:0])
+                           test_index_n = tests_p;
+			 else
+                           test_index_n = test_index_r + 1'b1;
                          prep_actiwait = 1'b1;
                       end
                  end
