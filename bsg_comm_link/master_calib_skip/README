@@ -1,0 +1,2 @@
+This contains a version of the master that skips calibration.
+It is implemented via a trace file, so can be easily reconfigured to replay other sequences.
