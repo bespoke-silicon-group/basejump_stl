@@ -15,6 +15,7 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
                            , parameter read_write_same_addr_p=0
                            , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                            , parameter harden_p=0
+                           , parameter disable_collision_warning_p=1
                            )
    (input   clk_i
     , input reset_i
@@ -50,11 +51,10 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
           assert ((reset_i === 'X) || (reset_i === 1'b1) || (w_addr_i < els_p))
             else $error("Invalid address %x to %m of size %x\n", w_addr_i, els_p);
 
-          assert ((reset_i === 'X) || (reset_i === 1'b1) || ~(r_addr_i == w_addr_i && w_v_i && r_v_i && !read_write_same_addr_p))
+          assert ((reset_i === 'X) || (reset_i === 1'b1) || ~(r_addr_i == w_addr_i && w_v_i && r_v_i && !read_write_same_addr_p && !disable_collision_warning_p))
             else
               begin
-                 $error("%L: Attempt to read and write same address (%m)");
-                 $finish();
+                 $error("X'ing matched read address %x (%m)",r_addr_i);
               end
        end
    //synopsys translate_on
