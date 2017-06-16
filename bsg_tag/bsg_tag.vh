@@ -34,6 +34,10 @@
 // when using bsg_tag to program the clock generators, the enable signal must be low
 // initially because the clock generators must already be running in order to absorb data
 // from the bsg_tag and be programmed. =)
+//
+// the bsg_tag clock should be asserted 180 degrees out of phase with the data/en signals, to
+// avoid setup/hold time violations. i.e. use negedge clock.
+//
 
 `ifndef BSG_TAG_VH
 `define BSG_TAG_VH
