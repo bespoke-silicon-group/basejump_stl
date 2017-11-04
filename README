@@ -32,7 +32,7 @@ Bsg front side bus modules; also murn interfacing code.
 
 * bsg_comm_link
 
-Source synchronous communication interface.
+Source synchronous communication interface. (Also used as FPGA bridge).
  
 * bsg_dataflow
 
