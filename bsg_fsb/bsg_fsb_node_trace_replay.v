@@ -157,7 +157,7 @@ module bsg_fsb_node_trace_replay
                1: $display("### trace sent %h (%m)", data_o);
                2:
                  begin
-                    if (data_i != data_o)
+                    if (data_i !== data_o)
                       begin
                          $display("############################################################################");
                          $display("### %m ");
