@@ -23,6 +23,7 @@
 module bsg_fsb_node_trace_replay
   #(parameter   ring_width_p=80
     , parameter rom_addr_width_p=6
+    , parameter counter_width_p=`BSG_MIN(ring_width_p,16)
     )
    (input clk_i
     , input reset_i
@@ -49,7 +50,7 @@ module bsg_fsb_node_trace_replay
     , output logic error_o
     );
 
-   logic [15:0] cycle_ctr_r, cycle_ctr_n;
+   logic [counter_width_p-1:0] cycle_ctr_r, cycle_ctr_n;
 
    logic [rom_addr_width_p-1:0] addr_r, addr_n;
    logic                        done_r, done_n;
@@ -138,7 +139,7 @@ module bsg_fsb_node_trace_replay
                  end
                6:
                  begin
-                    cycle_ctr_n = rom_data_i[15:0];
+                    cycle_ctr_n = rom_data_i[counter_width_p-1:0];
                     instr_completed = 1;
                  end
                default:
