@@ -3,6 +3,34 @@
 // removes the output data to match what bsg_tag is expecting, and
 // finally it serializes the trace data down to a single bit.
 //
+// Each trace should be in the following format:
+//
+// N = clog2( #_of_tag_clients ) )
+// D = max( client_1_width, client_2_width, ..., client_n_width )
+// L = clog2( D + 1 ) )
+//
+// |<    4-bits    >|< N-bits >|<     1-bit    >|< L-bits >|< D-bits >|
+// +----------------+----------+----------------+----------+----------+
+// | replay command |  nodeID  | data_not_reset |  length  |   data   |
+// +----------------+----------+----------------+----------+----------+
+//
+//  Replay Commands
+//    0 = 0000 = Wait a cycle
+//    1 = 0001 = Send data
+//    2 = 0010 = Receive data
+//    3 = 0011 = Assert done_o ouput signal
+//    4 = 0100 = End test (calls $finish)
+//    5 = 0101 = Wait for cycle_counter == 0
+//    6 = 0110 = Initialize cycle_counter with a 16 bit number
+//
+// To reset the bsg_tag_master, we just need to send a bunch of 0's,
+// so we can send a trace of all 0's and just wait for many cycles. This
+// will continuously send 0's down bsg_tag thus reseting the master.
+//
+// To reset a client, set the nodeID, data_not_reset=0, and length
+// fields correctly, then set the data to all 1's.
+//
+
 module bsg_tag_trace_replay
 
     import bsg_chip_pkg::*;
