@@ -127,7 +127,8 @@ module bsg_fsb_node_trace_replay
                     if (v_i)
                       begin
                          instr_completed = 1'b1;
-                         error_n = data_i != data_o;
+						 if (error_r == 0)
+							error_n = data_i != data_o;
                       end
                  end
                3: instr_completed = 1'b1;
