@@ -79,6 +79,11 @@ For the test, we ignore all output before the reset line goes line
 Be sure to immitate the style that is used in the other tests! Seperate your
 synthesizeable and non-synthesizeable verilog into seperate always blocks.
 
+* Coding Style Guidelines *
+
+See this document for BSG coding guidelines.
+https://docs.google.com/document/d/1xA5XUzBtz_D6aSyIBQUwFk_kSUdckrfxa2uzGjMgmCU/edit#
+
 * Terms *
 
 Note that by contributing code to this repository, you are
