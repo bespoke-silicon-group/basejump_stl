@@ -9,6 +9,7 @@ module bsg_mem_1r1w_sync_mask_write_bit #(parameter width_p=-1
                                         // semantics of "1" are write occurs, then read
                                         // the other semantics cannot be simulated on a hardened, non-simultaneous
                                         // 1r1w SRAM without changing timing.
+                                        // fixme: change to write_then_read_same_addr_p
                                         , parameter read_write_same_addr_p=0
                                         , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                                         , parameter harden_p=0
