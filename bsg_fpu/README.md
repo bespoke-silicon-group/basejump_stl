@@ -37,3 +37,6 @@ Here is the description of output behavior.
 - If the product results in denormal, then output is set to zero, and underflow exception is raised.
 - If the result underflows, then output is set to zero, and underflow exception is raised.
 - If the result overflows, the output is set to infinitiy, and overflow exception is raised.
+
+### Testing
+Testing was originally done with trace files. C source code to generate trace patterns is under the directory named "/testing/bsg_fpu".
