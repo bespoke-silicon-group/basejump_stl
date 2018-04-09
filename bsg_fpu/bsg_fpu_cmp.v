@@ -7,7 +7,7 @@
 module bsg_fpu_cmp #(parameter width_p="inv")
   ( input [width_p-1:0] a_i
     , input [width_p-1:0] b_i
-    , input [2:0] subop_i
+    , input [1:0] subop_i
     , output logic o
     , output logic invalid_o
     );
