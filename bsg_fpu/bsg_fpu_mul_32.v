@@ -106,13 +106,13 @@ module bsg_fpu_mul_32
   // 24-bit pipelined array multiplier
   // pipeline in this array multiplier is a part of the first pipeline stage.
   logic [47:0] man_prod;
-  bsg_mul_array_24 mul_array (
+  bsg_mul_array #(.width_p(24), .pipeline_p(23'b1_0000_0000_0000)) mul_array (
     .clk_i(clk_i)
     ,.rst_i(rst_i)
     ,.v_i(ready_o)
     ,.a_i(man_a_norm)
     ,.b_i(man_b_norm)
-    ,.z_o(man_prod)	
+    ,.o(man_prod)	
     );
 
   always_ff @ (posedge clk_i) begin
