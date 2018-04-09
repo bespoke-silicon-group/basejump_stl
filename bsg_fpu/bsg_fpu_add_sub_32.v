@@ -364,12 +364,20 @@ module bsg_fpu_add_sub_32
 
   // count leading zero
   logic [4:0] num_zero;
+  logic reduce_o;
   logic all_zero;
+
   bsg_counting_leading_zeros #(.width_p(28)) clz
     (.a_i(adder_output_2_r)
     ,.num_zero_o(num_zero)
-    ,.all_zero_o(all_zero)
     );
+
+  bsg_reduce  #(.width_p(28), .or_p(1)) reduce0 ( 
+    .i(adder_output_2_r)
+    ,.o(reduce_o)
+    ); 
+
+  assign all_zero = ~reduce_o;
 
   // shift adder output
   logic [27:0] shifted_adder_output;
