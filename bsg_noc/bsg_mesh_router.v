@@ -4,14 +4,6 @@
 // at lowest bits in the packet, and the Y coordinates at the next lowest position
 //
 
-// import enum Dirs for directions
-import bsg_noc_pkg::Dirs
-       , bsg_noc_pkg::P  // proc (processor core)
-       , bsg_noc_pkg::W  // west
-       , bsg_noc_pkg::E  // east
-       , bsg_noc_pkg::N  // north
-       , bsg_noc_pkg::S; // south
-
 //
 // Dimension ordered routing decoder
 // based on X then Y routing, it outputs a set of grant signals
@@ -22,12 +14,21 @@ import bsg_noc_pkg::Dirs
 // non-negative coordinates, and is routable on-mesh with XY routing.
 //
 
-module bsg_mesh_router_dor_decoder #( parameter x_cord_width_p  = -1
-                                      ,parameter y_cord_width_p = -1
-                                      ,parameter dirs_lp       = 5
-                                      ,parameter stub_p        = { dirs_lp {1'b0} }  // SNEWP
-                                      ,parameter allow_S_to_EW_p = 0
-                                    )
+module bsg_mesh_router_dor_decoder
+
+// import enum Dirs for directions
+import bsg_noc_pkg::Dirs
+       , bsg_noc_pkg::P  // proc (processor core)
+       , bsg_noc_pkg::W  // west
+       , bsg_noc_pkg::E  // east
+       , bsg_noc_pkg::N  // north
+       , bsg_noc_pkg::S; // south
+ #( parameter x_cord_width_p  = -1
+   ,parameter y_cord_width_p = -1
+   ,parameter dirs_lp       = 5
+   ,parameter stub_p        = { dirs_lp {1'b0} }  // SNEWP
+   ,parameter allow_S_to_EW_p = 0
+ )
  (input clk_i   // debug only
   ,input [dirs_lp-1:0] v_i
 
@@ -113,15 +114,22 @@ module bsg_mesh_router_dor_decoder #( parameter x_cord_width_p  = -1
 endmodule
 
 
-module bsg_mesh_router #(
-                         parameter width_p        = -1
-                         ,parameter x_cord_width_p = -1
-                         ,parameter y_cord_width_p = -1
-                         ,parameter debug_p       = 0
-                         ,parameter dirs_lp       = 5
-                         ,parameter stub_p        = { dirs_lp {1'b0} }  // SNEWP
-                         ,parameter allow_S_to_EW_p = 0
-                         )
+module bsg_mesh_router
+import bsg_noc_pkg::Dirs
+       , bsg_noc_pkg::P  // proc (processor core)
+       , bsg_noc_pkg::W  // west
+       , bsg_noc_pkg::E  // east
+       , bsg_noc_pkg::N  // north
+       , bsg_noc_pkg::S; // south
+    #(
+         parameter width_p        = -1
+        ,parameter x_cord_width_p = -1
+        ,parameter y_cord_width_p = -1
+        ,parameter debug_p       = 0
+        ,parameter dirs_lp       = 5
+        ,parameter stub_p        = { dirs_lp {1'b0} }  // SNEWP
+        ,parameter allow_S_to_EW_p = 0
+        )
    ( input clk_i
      ,input reset_i
 
