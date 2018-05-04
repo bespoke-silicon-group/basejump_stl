@@ -244,10 +244,10 @@ module dmc_controller #
     col_addr  = ((1 << col_width) - 1) & cmd_afifo_rdata[UI_ADDR_WIDTH-1:0];
     if(row_bank_col) begin
       bank_addr = ((1 << bank_width) - 1) & (cmd_afifo_rdata[UI_ADDR_WIDTH-1:0] >> col_width);
-      row_addr  = ((1 << row_width) - 1) & (cmd_afifo_rdata[UI_ADDR_WIDTH-1:0] >> (col_width + bank_width));
+      row_addr  = ((1 << row_width) - 1) & (cmd_afifo_rdata[UI_ADDR_WIDTH-1:0] >> ({1'b0,col_width} + {1'b0,bank_width}));
     end
     else begin
-      bank_addr = ((1 << bank_width) - 1) & (cmd_afifo_rdata[UI_ADDR_WIDTH-1:0] >> (col_width + row_width));
+      bank_addr = ((1 << bank_width) - 1) & (cmd_afifo_rdata[UI_ADDR_WIDTH-1:0] >> ( {1'b0,col_width} + {1'b0,row_width}));
       row_addr  = ((1 << row_width) - 1) & (cmd_afifo_rdata[UI_ADDR_WIDTH-1:0] >> col_width);
     end
   end
@@ -423,7 +423,7 @@ module dmc_controller #
             else                                   nstate = cstate;
       INIT: if(init_tick == 0 && push_init_cmd)    nstate = IDLE;
             else                                   nstate = cstate;
-      REFR: if(refr_tick == 0 && push_refr_cmd)    nstate = IDLE; 
+      REFR: if(refr_tick == 0 && push_refr_cmd)    nstate = IDLE;
             else                                   nstate = cstate;
       LDST: if(ldst_tick == 0 && push_ldst_cmd)    nstate = IDLE;
             else                                   nstate = cstate;
