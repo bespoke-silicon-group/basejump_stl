@@ -274,6 +274,7 @@ module dmc #
     ,.app_sr_active     ( app_sr_active     )
     // DDR PHY interface clock and reset
     ,.dfi_clk           ( dfi_clk           )
+    ,.dfi_clk_2x        ( dfi_clk_2x        )
     ,.dfi_clk_sync_rst  ( dfi_reset         )
     // DDR PHY interface signals
     ,.dfi_bank          ( dfi_bank          )

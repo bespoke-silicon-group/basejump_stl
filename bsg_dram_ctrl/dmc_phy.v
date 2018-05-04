@@ -184,11 +184,14 @@ module rx_byte_slice
 );
 
   wire           clk_180;
+/*
 `ifdef XILINX
   (* KEEP = "TRUE" *) reg dqs_select;
 `else
   reg            dqs_select;
 `endif
+*/
+  wire           dqs_select;
   wire           dqs_p, dqs_n;
 
   reg      [1:0] write_pointer, read_pointer;
@@ -197,11 +200,14 @@ module rx_byte_slice
 
   assign clk_180 = ~clk;
 
+/*
   always @(posedge clk_180)
     if(reset)
       dqs_select <= 1'b0;
     else
       dqs_select <= rddata_en;
+*/
+  assign dqs_select = rddata_en;
 
   assign dqs_p = dqs_select? dqs_p_i: 1'b0;
   assign dqs_n = dqs_select? dqs_n_i: 1'b1;
