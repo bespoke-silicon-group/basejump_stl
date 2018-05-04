@@ -141,7 +141,7 @@ module dmc #
   localparam slv_reg12 = 1023;
   localparam slv_reg13 = 1;
   localparam slv_reg14 = 5;
-  localparam slv_reg15 = 'h2eb;
+  localparam slv_reg15 = 'h2ea;
   //end
 
 /*
