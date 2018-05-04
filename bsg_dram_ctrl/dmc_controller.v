@@ -30,6 +30,7 @@ module dmc_controller #
   ,output reg                           init_calib_complete
   // DDR PHY interface clock and reset
   ,input                                dfi_clk
+  ,input                                dfi_clk_2x
   ,input                                dfi_clk_sync_rst
   // DDR PHY interface signals
   ,output reg                     [2:0] dfi_bank
@@ -44,8 +45,8 @@ module dmc_controller #
   ,output reg                           dfi_wrdata_en
   ,output reg      [DFI_DATA_WIDTH-1:0] dfi_wrdata
   ,output reg [(DFI_DATA_WIDTH>>3)-1:0] dfi_wrdata_mask
-  //,output reg                           dfi_rddata_en
-  ,output                               dfi_rddata_en
+  ,output reg                           dfi_rddata_en
+  //,output                               dfi_rddata_en
   ,input           [DFI_DATA_WIDTH-1:0] dfi_rddata
   ,input                                dfi_rddata_valid
   // Control and Status Registers
@@ -126,6 +127,7 @@ module dmc_controller #
   reg   [7:0] cas_tick;
   reg         rburst_valid;
   reg   [7:0] rburst_tick;
+  reg         rburst_valid_90, rburst_valid_180, rburst_valid_270;
 
   reg   [3:0] cstate, nstate;
 
@@ -166,6 +168,7 @@ module dmc_controller #
 
   wire  [2:0] DDR_TYPE;
   wire  [3:0] INIT_CMD_CNT;
+  wire  [1:0] RDDATA_VALID_CALIB;
 
   assign TMRD  = slv_reg1;
   assign TRFC  = slv_reg2;
@@ -182,6 +185,7 @@ module dmc_controller #
 
   assign DDR_TYPE = slv_reg13[2:0];
   assign INIT_CMD_CNT = slv_reg14[3:0];
+  assign RDDATA_VALID_CALIB = slv_reg14[3:0];
 
   wire [3:0] col_width, row_width;
   wire [1:0] bank_width;
@@ -673,7 +677,23 @@ module dmc_controller #
     else
       dfi_rddata_en <= rburst_valid;
 */
-  assign dfi_rddata_en = rburst_valid;
+  //assign dfi_rddata_en = rburst_valid;
+  always @(posedge dfi_clk_2x)
+    rburst_valid_180 <= rburst_valid;
+
+  always @(negedge dfi_clk_2x) begin
+    rburst_valid_90 <= rburst_valid;
+    rburst_valid_270 <= rburst_valid_90;
+  end
+
+  always @(*)
+    case(RDDATA_VALID_CALIB)
+      2'b00:   dfi_rddata_en = rburst_valid;
+      2'b01:   dfi_rddata_en = rburst_valid_90;
+      2'b10:   dfi_rddata_en = rburst_valid_180;
+      2'b11:   dfi_rddata_en = rburst_valid_270;
+      default: dfi_rddata_en = rburst_valid;
+    endcase
 
   assign rddata_afifo_wclk   = dfi_clk;
   assign rddata_afifo_wrst_n = ~dfi_clk_sync_rst;
