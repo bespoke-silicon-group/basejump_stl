@@ -93,9 +93,9 @@ fab = "tsmc_250"
 #nand2 = "NAND2X2 #0 (.A (#1), .B (#2), .Y (#3)                   );"
 #nand3 = "NAND3X2 #0 (.A (#1), .B (#2), .C(#3), .Y (#4)           );"
 #nand4 = "NAND4X2 #0 (.A (#1), .B (#2), .C(#3), .D(#4), .Y (#5)   );"
-nand2 = "ND2D2BWP #0 (.A (#1), .B (#2), .ZN(#3)                   );"
-nand3 = "ND3D2BWP #0 (.A (#1), .B (#2), .C (#3), .ZN(#4)          );"
-nand4 = "ND4D2BWP #0 (.A (#1), .B (#2), .C (#3), .D (#4), .ZN(#5) );"
+nand2 = "ND2D2BWP #0 (.A1 (#1), .A2 (#2), .ZN(#3)                    );"
+nand3 = "ND3D2BWP #0 (.A1 (#1), .A2 (#2), .A3 (#3), .ZN(#4)          );"
+nand4 = "ND4D2BWP #0 (.A1 (#1), .A2 (#2), .A3 (#3), .A4 (#4), .ZN(#5));"
 
 # this has bits going vertically and words going horizontally
 def generate_mux_shift ( inputs, bits):
