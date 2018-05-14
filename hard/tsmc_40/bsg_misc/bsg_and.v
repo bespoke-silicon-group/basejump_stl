@@ -1,7 +1,7 @@
 `define bsg_and_macro(bits)                     \
 if (harden_p && (width_p==bits))                \
   begin: macro                                  \
-     bsg_rp_tsmc_250_AND2X1_b``bits and_gate (.i0(a_i),.i1(b_i),.o);    \
+     bsg_rp_tsmc_40_AND2X1_b``bits and_gate (.i0(a_i),.i1(b_i),.o);    \
   end
 
 module bsg_and #(parameter width_p="inv"

@@ -1,12 +1,12 @@
 `define bsg_buf_macro(bits)                                   \
 if (harden_p && (width_p==bits) && vertical_p)                \
   begin: macro                                                \
-     bsg_rp_tsmc_250_BUFFD8BWP_b``bits buf_gate (.i0(i),.o);      \
+     bsg_rp_tsmc_40_BUFFD8BWP_b``bits buf_gate (.i0(i),.o);      \
   end                                                         \
 else                                                          \
 if (harden_p && (width_p==bits) && ~vertical_p)               \
   begin: macro                                                \
-     bsg_rp_tsmc_250_BUFFD8BWP_horiz_b``bits buf_gate (.i0(i),.o);\
+     bsg_rp_tsmc_40_BUFFD8BWP_horiz_b``bits buf_gate (.i0(i),.o);\
    end
 
 module bsg_buf #(parameter width_p="inv"

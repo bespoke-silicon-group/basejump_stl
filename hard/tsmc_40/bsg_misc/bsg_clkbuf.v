@@ -1,7 +1,7 @@
 `define bsg_clkbuf_macro(bits,strength)                        \
 if (harden_p && (width_p==bits) && (strength==strength_p))     \
   begin: macro                                                 \
-     bsg_rp_tsmc_250_CLKBUFX``strength``_b``bits clkbuf_gate (.i0(i),.o); \
+     bsg_rp_tsmc_40_CLKBUFX``strength``_b``bits clkbuf_gate (.i0(i),.o); \
   end
 
 module bsg_clkbuf #(parameter width_p=1

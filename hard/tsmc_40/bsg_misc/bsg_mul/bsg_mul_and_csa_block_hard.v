@@ -1,7 +1,7 @@
 `define bsg_mul_and_csa_gen_macro(blocks)                                              \
 if (   blocks == blocks_p )             \
   begin : macro                                                                    \
-     bsg_rp_tsmc_250_and_csa_block_b``blocks b4b (.*);                             \
+     bsg_rp_tsmc_40_and_csa_block_b``blocks b4b (.*);                             \
   end
 
 module bsg_mul_and_csa_block_hard #(parameter [31:0] blocks_p=1
