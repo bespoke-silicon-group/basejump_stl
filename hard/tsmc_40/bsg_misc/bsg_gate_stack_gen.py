@@ -13,7 +13,7 @@
 
 import sys;
 
-fab = "tsmc_250"
+fab = "tsmc_40"
 
 def emit_module_header (name, input_args, output_args) :
     print "module " + name + " (",
@@ -157,7 +157,7 @@ module bsg_'''+sys.argv[4],'''#(width_p="inv",harden_p=1)
     for x in range(1,int(sys.argv[2])+1) :
         print ''' if (harden_p && (width_p=='''+str(x)+'''))
     begin:macro
-      bsg_rp_tsmc_250_'''+sys.argv[1]+'''_b'''+str(x)+''' gate(.*);
+      bsg_rp_tsmc_40_'''+sys.argv[1]+'''_b'''+str(x)+''' gate(.*);
     end
  else ''';
     print '''

@@ -1,7 +1,7 @@
 `define bsg_mul_comp42_gen_macro(blocks) \
 if (   blocks == blocks_p )                                                       \
   begin : macro                                                                   \
-     bsg_rp_tsmc_250_comp42_block_b``blocks c42 (.*);                             \
+     bsg_rp_tsmc_40_comp42_block_b``blocks c42 (.*);                             \
   end
 
 

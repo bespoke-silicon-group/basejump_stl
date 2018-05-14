@@ -1,7 +1,7 @@
 `define bsg_dff_en_macro(bits,womp)                                          \
 if (harden_p && width_p==bits && (strength_p==womp))                         \
   begin: macro                                                               \
-     bsg_rp_tsmc_250_EDFD``womp``BWP_b``bits dff(.i0(data_i)                   \
+     bsg_rp_tsmc_40_EDFD``womp``BWP_b``bits dff(.i0(data_i)                   \
                                                  ,.i1({ width_p { en_i }  }) \
                                                  ,.i2({ width_p {clock_i} }) \
                                                  ,.o(data_o)                 \

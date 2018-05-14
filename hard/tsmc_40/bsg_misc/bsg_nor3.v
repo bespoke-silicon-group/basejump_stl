@@ -1,7 +1,7 @@
 `define bsg_nor3_macro(bits)                     \
 if (harden_p && (width_p==bits))                \
   begin: macro                                  \
-     bsg_rp_tsmc_250_NR3D1BWP_b``bits nor3_gate (.i0(a_i),.i1(b_i),.i2(c_i),.o);    \
+     bsg_rp_tsmc_40_NR3D1BWP_b``bits nor3_gate (.i0(a_i),.i1(b_i),.i2(c_i),.o);    \
   end
 
 module bsg_nor3 #(parameter width_p="inv"

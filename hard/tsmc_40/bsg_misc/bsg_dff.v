@@ -1,7 +1,7 @@
 `define bsg_dff_macro(bits,strength)                      \
 if (harden_p && (width_p==bits) && (strength_p==strength)) \
   begin: macro                                            \
-     bsg_rp_tsmc_250_dff_s``strength``_b``bits dff(.*);   \
+     bsg_rp_tsmc_40_dff_s``strength``_b``bits dff(.*);   \
   end
 
 module bsg_dff #(width_p=-1, harden_p=1, strength_p=1)

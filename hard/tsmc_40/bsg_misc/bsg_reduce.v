@@ -7,7 +7,7 @@
 if (harden_p && (width_p<=bits))                             \
   begin: macro                                               \
      wire [bits-1:0] widen = bits ' (i);                     \
-     bsg_rp_tsmc_250_reduce_and_b``bits andr(.i(widen),.o);  \
+     bsg_rp_tsmc_40_reduce_and_b``bits andr(.i(widen),.o);  \
   end
 
 module bsg_reduce #(parameter width_p = -1

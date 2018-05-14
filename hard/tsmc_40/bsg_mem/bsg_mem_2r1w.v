@@ -13,7 +13,7 @@
           wire [els_p-1:0] ra_one_hot0 = (r0_v_i << r0_addr_i);         \
           wire [els_p-1:0] ra_one_hot1 = (r1_v_i << r1_addr_i);         \
                                                                         \
-          bsg_rp_tsmc_250_rf_w``words``_b``bits``_2r1w w``words``_b``bits \
+          bsg_rp_tsmc_40_rf_w``words``_b``bits``_2r1w w``words``_b``bits \
             ( .clock_i(w_clk_i)                                         \
               ,.data_i(w_data_i)                                        \
               ,.write_sel_one_hot_i(wa_one_hot)                         \

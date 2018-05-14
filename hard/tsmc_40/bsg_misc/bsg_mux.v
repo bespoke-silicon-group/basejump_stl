@@ -3,7 +3,7 @@ if (harden_p && els_p == words && width_p == bits)              \
 begin: macro                                                    \
    wire [els_p-1:0] sel_onehot = els_p ' (1'b1 << sel_i);       \
                                                                 \
-   bsg_rp_tsmc_250_mux_w``words``_b``bits w``words``_b``bits    \
+   bsg_rp_tsmc_40_mux_w``words``_b``bits w``words``_b``bits    \
     (.*                                                         \
       , .sel_one_hot_i(sel_onehot)                              \
       );                                                        \
@@ -15,7 +15,7 @@ end
         wire [width_p-1:0] lo;                                                \
                                                                               \
         /* A B C D S0 S1 Y                                                S1 S0   */  \
-        bsg_rp_tsmc_250_MUX4ND4BWP_b``BITS b``BITS``_m (.i0 (data_i[0])     /* 0  0 A  */ \
+        bsg_rp_tsmc_40_MUX4ND4BWP_b``BITS b``BITS``_m (.i0 (data_i[0])     /* 0  0 A  */ \
                                                     ,.i1(data_i[1])     /* 0  1 B  */ \
                                                     ,.i2(data_i[2])     /* 1  0 C  */ \
                                                     ,.i3(data_i[3])     /* 1  1 D  */ \
@@ -23,7 +23,7 @@ end
                                                     ,.i5(sel_i[1] )     /*      S1 */ \
                                                     ,.o (lo       )                   \
                                                     );                                \
-        bsg_rp_tsmc_250_CKND16BWP_b``BITS b``BITS``_i(.i0(lo)                         \
+        bsg_rp_tsmc_40_CKND16BWP_b``BITS b``BITS``_i(.i0(lo)                         \
                                                     ,.o(data_o)                       \
                                                     );                                \
      end

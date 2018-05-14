@@ -1,7 +1,7 @@
 `define bsg_tiehi_macro(bits)                       \
 if (harden_p && (width_p==bits))                    \
   begin: macro                                      \
-     bsg_rp_tsmc_250_TIEHBWP_b``bits tiehi (.o);      \
+     bsg_rp_tsmc_40_TIEHBWP_b``bits tiehi (.o);      \
   end
 
 module bsg_tiehi #(parameter width_p="inv"
