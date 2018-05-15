@@ -1,0 +1,47 @@
+Multiplier generator scripts.
+
+MBT June 2015
+
+The python scrypts are used to generate replicated sub blocks in the hardened bsg_mul.
+
+Synopsys rp_groups are used to arrange standard cells together.
+
+* Portability
+
+Although this version is designed for TSMC 250, the scripts should be
+very portable; requiring only a change of the names of the standard
+cells.
+
+It probably makes sense to examine the timing of the gates from each
+input to output, and to rearrange the ordering to match the relative
+ordering in the TSMC library.
+
+* Sizes 
+
+Currently, we only generate 32x32 multipliers, but it would be
+relatively easy to generate 56-bit or 64-bit multipliers in say a day
+or two. it should not require the creation of any new replicated
+blocks, although possibly, it maybe necessary to run the python
+scripts with different numbers of bits as input parameters. See the
+Computer Arithmetic Google Doc.
+
+* Running the scripts
+
+For a 32-bit multiplier, you need to generate the following hard blocks
+
+    	bsg_booth_4_block_gen.py 5 > sources/ip/bsg/mul/bsg_rp_tsmc_250_booth_4_block_hard_b5.v
+	bsg_booth_4_block_gen.py 6 > sources/ip/bsg/mul/bsg_rp_tsmc_250_booth_4_block_hard_b6.v
+	bsg_booth_4_block_gen.py 8 > sources/ip/bsg/mul/bsg_rp_tsmc_250_booth_4_block_hard_b8.v
+	bsg_booth_4_block_gen_cornice.py 8 > sources/ip/bsg/mul/bsg_rp_tsmc_250_booth_4_block_cornice_hard_b8.v
+	bsg_booth_4_block_gen_cornice.py 6 > sources/ip/bsg/mul/bsg_rp_tsmc_250_booth_4_block_cornice_hard_b6.v
+	bsg_booth_4_block_gen_end_cornice.py 7 > sources/ip/bsg/mul/bsg_rp_tsmc_250_booth_4_block_cornice_end_hard_b7.v
+	bsg_booth_4_block_gen_end_cornice.py 8 > sources/ip/bsg/mul/bsg_rp_tsmc_250_booth_4_block_cornice_end_hard_b8.v
+	bsg_comp42_gen.py 5 > sources/ip/bsg/mul/bsg_rp_tsmc_250_comp42_block_hard_b5.v
+	bsg_comp42_gen.py 6 > sources/ip/bsg/mul/bsg_rp_tsmc_250_comp42_block_hard_b6.v
+	bsg_comp42_gen.py 7 > sources/ip/bsg/mul/bsg_rp_tsmc_250_comp42_block_hard_b7.v
+	bsg_comp42_gen.py 8 > sources/ip/bsg/mul/bsg_rp_tsmc_250_comp42_block_hard_b8.v
+	bsg_and_csa_gen.py 5 > sources/ip/bsg/mul/bsg_rp_tsmc_250_and_csa_block_hard_b5.v
+	bsg_and_csa_gen.py 6 > sources/ip/bsg/mul/bsg_rp_tsmc_250_and_csa_block_hard_b6.v
+	bsg_and_csa_gen.py 7 > sources/ip/bsg/mul/bsg_rp_tsmc_250_and_csa_block_hard_b7.v
+	bsg_and_csa_gen.py 8 > sources/ip/bsg/mul/bsg_rp_tsmc_250_and_csa_block_hard_b8.v
+

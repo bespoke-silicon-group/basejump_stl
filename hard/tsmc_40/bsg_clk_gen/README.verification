@@ -1,0 +1,24 @@
+This clock generator is intended to be able to change the frequency as the chip operates without glitches or short pulses.
+
+* Verification using SDF and gate-level simulation
+
+After the system has gone through place-and-route, it's important to check the timing corners in the circuit. The default tester tests the worst-case transition, which
+occurs when transitioning from the fastest frequency to the closest frequency.
+
+In gate-level simulation, this can be view by looking at clk_gen_osc_inst/adt/sel_r_reg_0, and finding the part in the test where the clock goes from fastest to slowest.
+Measure the distance between the D input and the CK signal. Typically D will fall shortly before CK rises, indicating a setup time condition that needs to be verified.
+This time can be compared against the negedge setup time for the same gate in the .SDF file.
+
+The other potential race is in the mux4i of the adt. The select lines should transition in a way that the output does not glitch. Currently the select lines transition
+from 3 (D)->2 (C)->0(A) after the D is already zero, C is hardwired to 0, and then A has just transitioned to 0.
+
+In practice, if the chip exhibits this race in the real world, it can be avoid by transitioning to an intermediate frequency before going to the slowest frequency.
+
+* Verification using Spice
+
+True transistor-level extraction-based spice is the best way to verify the circuit, although it takes a long time.  The simulation-based model in the spice directory
+can be used to eyeball frequency ranges.
+
+
+
+

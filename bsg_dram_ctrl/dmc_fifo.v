@@ -49,6 +49,7 @@ module rptr_empty #(parameter ADDRSIZE = 4)
    input                     rinc, rclk, rrst_n);
   reg  [ADDRSIZE:0] rbin;
   wire [ADDRSIZE:0] rgraynext, rbinnext;
+  wire              rempty_val;
   //-------------------
   // GRAYSTYLE2 pointer
   //-------------------
@@ -76,6 +77,7 @@ module wptr_full  #(parameter ADDRSIZE = 4)
    input                     winc, wclk, wrst_n);
   reg  [ADDRSIZE:0] wbin;
   wire [ADDRSIZE:0] wgraynext, wbinnext;
+  wire              wfull_val;
   // GRAYSTYLE2 pointer
   always @(posedge wclk or negedge wrst_n)
     if (!wrst_n) {wbin, wptr} <= 0;
