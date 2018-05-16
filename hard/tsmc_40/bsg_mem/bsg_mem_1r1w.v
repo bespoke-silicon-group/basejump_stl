@@ -12,7 +12,7 @@
           wire [els_p-1:0] wa_one_hot = (w_v_i << w_addr_i);            \
           wire [els_p-1:0] ra_one_hot = (r_v_i << r_addr_i);            \
                                                                         \
-          bsg_rp_tsmc_40_rf_w``words``_b``bits``_1r1w w``words``_b``bits \
+          bsg_rp_tsmc_250_rf_w``words``_b``bits``_1r1w w``words``_b``bits \
             ( .clock_i(w_clk_i)                                         \
               ,.data_i(w_data_i)                                        \
               ,.write_sel_one_hot_i(wa_one_hot)                         \
@@ -41,8 +41,6 @@ module bsg_mem_1r1w #(parameter width_p=-1
     );
 
    `bsg_mem_1r1w_macro(32,16)
-     else `bsg_mem_1r1w_macro(128,48)
-     else `bsg_mem_1r1w_macro(256,16)
      else `bsg_mem_1r1w_macro(32,2)
      else `bsg_mem_1r1w_macro(32,8)
      else `bsg_mem_1r1w_macro(16,62)
