@@ -2,39 +2,30 @@
 //
 // Synchronous 2-port ram.
 // read and write can happen in the same cycle.
-//
-
-`define bsg_mem_1r1w_sync_macro(words,bits,lgEls,newBits,mux)    \
-if (els_p == words && width_p == bits)                          \
-  begin: macro                                                  \
-     tsmc40_2rw_lg``lgEls``_w``newBits``_m``mux``_all mem      \
-          (.Q(r_data_o)                                           \
-           ,.CLK(clk_i)                                         \
-           ,.CEN(~w_v_i)                                          \
-           ,.WEN(~w_v_i)                                          \
-           ,.A(w_addr_i)                                          \
-           ,.D(w_data_i)                                          \
-           // 1=tristate                                        \
-           ,.OEN(1'b0)                                          \
-           );                                                   \
-  end
 
 `define bsg_mem_1r1w_sync_macro_rf(words,bits,lgEls,newBits,mux) \
 if (els_p == words && width_p == bits)                          \
   begin: macro                                                  \
           wire [newBits-1:0] tmp_lo,tmp_li;                     \
-          assign r_data_o = tmp_lo[bits-1:0];                     \
-          assign tmp_li = newBits ' (w_data_i);                   \
+          assign r_data_o = tmp_lo[bits-1:0];                    \
+          assign tmp_li = newBits ' (w_data_i);                  \
                                                                 \
-          tsmc40_2rf_lg``lgEls``_w``newBits``_m``mux``_all mem \
+          tsmc40_2rf_lg``lgEls``_w``bits``_m``mux``_all mem    \
             (                                                   \
-             .Q(tmp_lo)                                         \
-             ,.CLK(clk_i)                                       \
-             ,.CEN(~w_v_i)                                        \
-             ,.WEN(~w_v_i)                                        \
-             ,.A(w_addr_i)                                        \
-             ,.D(tmp_li)                                        \
-             );                                                 \
+              .AA       ( w_addr_i      )                       \
+             ,.D        ( tmp_li        )                       \
+             ,.BWEB     ( {``newBits``{1'b0}}     )             \
+             ,.WEB      ( ~w_v_i        )                       \
+             ,.CLKW     ( clk_i         )                       \
+                                                                \
+             ,.AB       ( r_addr_i      )                       \
+             ,.REB      ( ~r_v_i        )                       \
+             ,.CLKR     ( clk_i         )                       \
+             ,.Q        ( tmp_lo        )                       \
+                                                                \
+             ,.RDELAY   ( 2'b00         )                       \
+             ,.WDELAY   ( 2'b00         )                       \
+            );                                                  \
   end
 
 module bsg_mem_1r1w_sync #(parameter width_p=-1
@@ -54,10 +45,6 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
     , output logic [width_p-1:0] r_data_o
     );
 
-   `bsg_mem_1r1w_sync_macro(4096,48,12,48,4) else
-   `bsg_mem_1r1w_sync_macro(2048,32,11,32,8) else
-   `bsg_mem_1r1w_sync_macro(1024,32,10,32,8) else
-   `bsg_mem_1r1w_sync_macro(256,128,8,128,4) else
      `bsg_mem_1r1w_sync_macro_rf(128,74,7,74,2) else
      `bsg_mem_1r1w_sync_macro_rf(128,73,7,74,2) else
      `bsg_mem_1r1w_sync_macro_rf(128,72,7,72,2) else
@@ -73,7 +60,7 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
      `bsg_mem_1r1w_sync_macro_rf(128,62,7,62,2) else
      `bsg_mem_1r1w_sync_macro_rf(128,61,7,62,2) else
      `bsg_mem_1r1w_sync_macro_rf(128,16,7,16,4) else
-     `bsg_mem_1r1w_sync_macro_rf(64,48,6,48,4) else
+     `bsg_mem_1r1w_sync_macro_rf(64 ,48,6,48,4) else
 
      begin : z
         // we substitute a 1r1w macro
