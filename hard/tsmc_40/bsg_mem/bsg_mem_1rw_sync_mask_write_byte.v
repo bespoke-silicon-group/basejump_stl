@@ -28,19 +28,21 @@ module bsg_mem_1rw_sync_mask_write_byte
   // TSMC 180 1024x32 Byte Mask
   if ((els_p == 1024) & (data_width_p == 32))
     begin : macro
-      wire [3:0] wen = {~(w_i & write_mask_i[3])
-                       ,~(w_i & write_mask_i[2])
-                       ,~(w_i & write_mask_i[1])
-                       ,~(w_i & write_mask_i[0])};
-      tsmc180_1rw_lg10_w32_m8_byte mem
-      (.Q   (data_o)
-      ,.CLK (clk_i)
-      ,.CEN (~v_i)
-      ,.WEN (wen)
-      ,.A   (addr_i)
-      ,.D   (data_i)
-       // 1=tristate output
-      ,.OEN (1'b0)
+      wire [31:0] wen = { {8{write_mask_i[3]}} 
+                        , {8{write_mask_i[2]}} 
+                        , {8{write_mask_i[1]}} 
+                        , {8{write_mask_i[0]}} };
+      tsmc40_1rw_lg10_w32_m4_byte mem
+      (
+         .A     (addr_i )
+        ,.D     (data_i )                
+        ,.BWEB  (~wen   )             
+        ,.WEB   (~w_i   )                     
+        ,.CEB   (~v_i   )                    
+        ,.CLK   (clk_i  )                   
+        ,.Q     (data_o )         
+        ,.DELAY (2'b0   )             
+        ,.TEST  (2'b0   )             
       );
     end
   
