@@ -75,7 +75,7 @@ import bsg_noc_pkg::Dirs
              $finish();
           end
 
-        if ((v_i[N] & y_lt[N]) | (v_i[S] & y_gt[S]))
+        if ((v_i[N] & y_lt[N]) | (v_i[S] & y_gt[S] & x_eq[S]) )
           begin
              $error("%m doubleback route on N/S port N:YX=%d,%d S:YX=%d,%d at Tile %d,%d",y_dirs_i[N],x_dirs_i[N],y_dirs_i[S],x_dirs_i[S],my_y_i,my_x_i);
              $finish();
