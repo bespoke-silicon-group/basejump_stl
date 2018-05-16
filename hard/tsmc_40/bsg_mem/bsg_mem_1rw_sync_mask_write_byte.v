@@ -32,7 +32,7 @@ module bsg_mem_1rw_sync_mask_write_byte
                        ,~(w_i & write_mask_i[2])
                        ,~(w_i & write_mask_i[1])
                        ,~(w_i & write_mask_i[0])};
-      tsmc180_1rw_lg10_w32_m8_byte mem
+      tsmc40_1rw_lg10_w32_m4_byte mem
       (.Q   (data_o)
       ,.CLK (clk_i)
       ,.CEN (~v_i)
