@@ -45,7 +45,7 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
         // synopsys translate_on
 
         // use two 1R1W rams to create
-        tsmc180_2rf_lg5_w32_m1_all mem0
+        tsmc40_2rf_lg5_w32_m4_all mem0
           (
            // read port
            .CLKA (clk_i)
@@ -62,7 +62,7 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
            ,.CENB(~w_v_i)
            );
 
-        tsmc180_2rf_lg5_w32_m1_all mem1
+        tsmc40_2rf_lg5_w32_m4_all mem1
           (
            // read port
            .CLKA (clk_i)
