@@ -45,7 +45,7 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
         // synopsys translate_on
 
         // use two 1R1W rams to create
-         tsmc40_2rf_lg5_w32_m4_all mem0    
+         tsmc40_2rf_lg5_w32_m2_all mem0    
             (                                                   
              //write port
               .AA       ( w_addr_i      )
@@ -63,7 +63,7 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
              ,.WDELAY   ( 2'b00         )
             );                                                  
 
-         tsmc40_2rf_lg5_w32_m4_all mem1    
+         tsmc40_2rf_lg5_w32_m2_all mem1    
             (                                                   
              //write port
               .AA       ( w_addr_i      )

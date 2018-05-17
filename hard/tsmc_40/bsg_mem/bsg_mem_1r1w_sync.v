@@ -66,8 +66,8 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
      `bsg_mem_1r1w_sync_macro_rf(128,63,7,64,2) else
      `bsg_mem_1r1w_sync_macro_rf(128,62,7,62,2) else
      `bsg_mem_1r1w_sync_macro_rf(128,61,7,62,2) else
-     `bsg_mem_1r1w_sync_macro_rf(128,16,7,16,4) else
-     `bsg_mem_1r1w_sync_macro_rf(64 ,48,6,48,4) else
+     `bsg_mem_1r1w_sync_macro_rf(128,16,7,16,2) else
+     `bsg_mem_1r1w_sync_macro_rf(64 ,48,6,48,2) else
 
      begin : z
         // we substitute a 1r1w macro
