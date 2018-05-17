@@ -1,8 +1,43 @@
 // MBT 11/9/2014
 //
 // Synchronous 2-port ram.
-// read and write can happen in the same cycle.
-
+// read and write can happen in the same cycle but **NOT ALLOWED**
+//
+//  /gro/cad/pdk/tsmc40/tsn45gs2prf/TSMCHOME/sram/Documentation/documents/  \
+//  tsn45gs2prf_20071100_120a/DB_TSN45GS2PRF_20071100_120a.pdf 
+//
+//  -------------------------
+//  "TSN45GS2PRF: TSMC 45nm (=N40G) General Purpose Superb Two-Port Register
+//  File Compiler Databook"
+//  ------------------------
+//
+// 1. Address Contention in General
+//
+// Since CLKW and CLKR are independent clocks whose edges may not be related
+// to each other, address contentions between ports A and B are not resolved.
+// Address contention is defined as the same address being latched during
+// a write and read operation where insufficient clock separation occurs
+// ( twrcc). If an address contention occurs, indeterminate results are read
+// from the array. Timing specification twrcc relate the minimum time required
+// between CLKW and CLKR in order for same address operations to occur without
+// indeterminate results. If the same external signal drives CLKW and CLKR,
+// indeterminate results will occur if the addresses match during
+// a simultaneous write and read operation.
+//
+// 2. Address Contention with Write Operation Followed by Read Operation
+//
+// twrcc (measured from both clocks rising) is the minimum separation time
+// required for a write to complete before a successful read of the same
+// address can occur. This guarantees that the data is written to the array
+// before the data is accessed for a read operation. If twrcc is violated
+// during a write followed by read operation, then the read output is
+// indeterminate.
+// 
+// 3. Address Contention with Read Operation Followed by Write Operation
+//
+// Violation of twrcc will cause the unknown data appears in the read port
+// output.
+//
 `define bsg_mem_1r1w_sync_macro_rf(words,bits,lgEls,newBits,mux) \
 if (els_p == words && width_p == bits)                          \
   begin: macro                                                  \
