@@ -56,6 +56,8 @@ module bsg_clk_gen_osc
    ,input                  async_reset_i
    ,output                 clk_o
    );
+   timeunit 1ps;
+   timeprecision 1ps;
 
    wire       fb_clk, fb_btc_clk;     // internal clock
    wire       async_reset_neg = ~async_reset_i;
