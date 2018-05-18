@@ -55,6 +55,7 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
     , output logic [width_p-1:0]  data_o
     );
 
+   `bsg_mem_1rw_sync_macro(4096,48,12,48,8) else
    `bsg_mem_1rw_sync_macro(2048,32,11,32,8) else
    `bsg_mem_1rw_sync_macro(1024,32,10,32,4) else
    `bsg_mem_1rw_sync_macro(256,128,8,128,4) else
