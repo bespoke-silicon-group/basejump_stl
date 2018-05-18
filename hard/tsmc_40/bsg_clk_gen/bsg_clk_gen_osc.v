@@ -87,7 +87,7 @@ module bsg_clk_gen_osc
 
    // this adds some delay in the loop for RTL simulation
    // should be ignored in synthesis
-   assign #4000 fb_clk_del = fb_clk;
+   assign #4200 fb_clk_del = fb_clk;
 
    bsg_rp_clk_gen_atomic_delay_tuner  adt
      (.i(fb_clk_del)
@@ -112,7 +112,16 @@ module bsg_clk_gen_osc
    // instantiate FDT (fine delay tuner)
    // captures config state on positive edge of (inverted) input clk
    // non-inverting
-
+   
+   //=================== 
+   //SHX: need a delay at the output to break the ZERO-GLITCH of the clock!
+   //     otherwise there will be a negetive GLITCH at the posedge of the clock 
+   //     causing simulation problem. 
+   //     
+   //     This maybe a bug of the tested VCS version:L-2016.06-SP2-15_Full64
+   wire clk_tmp;
+   assign #1 clk_o = clk_tmp; 
+   //=================
    bsg_rp_clk_gen_fine_delay_tuner fdt
      (.i                 (cdt_lo)
       ,.we_i             (fb_we_r        )
@@ -120,8 +129,9 @@ module bsg_clk_gen_osc
       ,.sel_i            (fb_tag_r.fdt   )
       ,.o                (fb_clk)     // in the actual critical loop
       ,.buf_btc_o        (fb_btc_clk) // inside this module; to the btc
-      ,.buf_o            (clk_o)     // outside this module
+      ,.buf_o            (clk_tmp)     // outside this module
       );
+
 
    //always @(*)
    //  $display("%m async_reset_neg=%b fb_clk=%b adg_int=%b fb_tag_r=%b fb_we_r=%b",
