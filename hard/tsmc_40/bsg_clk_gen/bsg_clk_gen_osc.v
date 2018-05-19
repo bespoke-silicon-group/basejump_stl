@@ -120,7 +120,7 @@ module bsg_clk_gen_osc
    //     
    //     This maybe a bug of the tested VCS version:L-2016.06-SP2-15_Full64
    wire clk_tmp;
-   assign #1 clk_o = clk_tmp; 
+   assign #1 clk_o = clk_tmp;   //The delay is only used for rtl_hard simulation
    //=================
    bsg_rp_clk_gen_fine_delay_tuner fdt
      (.i                 (cdt_lo)
