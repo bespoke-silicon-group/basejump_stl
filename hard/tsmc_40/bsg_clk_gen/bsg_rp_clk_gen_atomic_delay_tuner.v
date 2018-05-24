@@ -80,7 +80,7 @@ module bsg_rp_clk_gen_atomic_delay_tuner
    CKND2BWP I_MX      (.I(sel_i), .ZN(sel_i_inv));
 
    // we invert both inputs of this mux to optimize the select-to-output path by 40 ps
-   MUX2D1BWP MX1         (.I0(sel_r_0_inv) , .I1(sel_i_inv)   ,.S(we_i), .Z(mux_lo[0]));
+   MUX2ND1BWP MX1         (.I0(sel_r_0_inv) , .I1(sel_i_inv)   ,.S(we_i), .Z(mux_lo[0]));
 
    // synopsys rp_endgroup (bsg_clk_gen_cde)
 
