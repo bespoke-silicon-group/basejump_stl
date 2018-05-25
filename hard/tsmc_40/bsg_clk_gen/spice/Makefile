@@ -1,9 +1,8 @@
-include ../../../../cad/common/mk/cadenv.mk
+include ../../../../../cad/common/mk/cadenv.mk
 
-#SPICE_FILE=osc.sp
-SPICE_FILE=io.sp
+SPICE_FILE=osc.sp
 
-PROCESS_NODE=180
+PROCESS_NODE=40
 ifeq ($(SPICE_EXPLORER),)
 $(error SPICE_EXPLORER must be defined)
 endif
@@ -18,7 +17,7 @@ endif
 # 2 cores (3.4 Ghz) 4m28 1.22X
 # 1 core  (3.6 Ghz) 5m29 1.00X
 
-NUM_CORES=3
+NUM_CORES=14
 
 all: run.tmp.ic0
 
