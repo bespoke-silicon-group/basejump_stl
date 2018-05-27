@@ -1,6 +1,7 @@
 include ../../../../../cad/common/mk/cadenv.mk
 
-SPICE_FILE=osc.sp
+#SPICE_FILE=osc.sp
+SPICE_FILE=fo4.sp
 
 PROCESS_NODE=40
 ifeq ($(SPICE_EXPLORER),)

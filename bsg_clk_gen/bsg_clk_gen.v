@@ -24,6 +24,10 @@
 //
 // all 0's is the slowest setting, and delay decreases as you increment the counter
 //
+// 3. oscillator trigger (VERSION 2 only)
+//  0: =1 allow oscillator control value into configuration registers of oscillator
+//     =0 block oscillator control value into configuration registers of oscillators
+//
 // PREFERRED BOOTUP SEQUENCE (assuming the bypass external clock is not used)
 //
 // 1. reset the bsg_tag_master
@@ -36,14 +40,16 @@
 // 2. foreach bsg_clk_gen
 //    a. program the oscillator
 //
-//      1. reset the oscillator's bsg_tag_client
+//      1. (version 1) reset the oscillator's bsg_tag_client
 //           - send a reset packet (data_not_reset) to the oscillator's bsg_tag_client using bsg_tag
+//      1. (version 2) send a trigger packet with value 0 to the oscillator trigger's client bsg_tag
 //      2. reset the oscillator's internal registers
 //           - assert the async_osc_reset_i to force the oscillator's internal registers to its lowest frequency setting
 //           - deassert the async_osc_reset_i, which will cause the oscillator to start oscillating
 //      3. program the oscillator using bsg_tag
-//           - send a data_not_reset packet to the client via bsg_tag
-//
+//           - send a data_not_reset packet with clock value to the oscillator client via bsg_tag
+//           - (version 2) send a trigger packet with value 1 to the oscillator trigger client via bsg_tag
+//           - (version 2) send a trigger packet with value 0 to the oscillator trigger client via bsg_tag
 //    b. program the downsampler (should be done after step 2)
 //
 //      1. reset the downsampler's bsg_tag_client
@@ -70,8 +76,10 @@ module bsg_clk_gen
   import bsg_tag_pkg::bsg_tag_s;
  #(parameter downsample_width_p = "inv"
   ,          num_adgs_p         = 2
+  ,          version_p          = 1  // alternative, use version_p = 2
   )
   (input  bsg_tag_s         bsg_osc_tag_i
+  ,input  bsg_tag_s         bsg_osc_trigger_tag_i // used only by version_p = 2
   ,input  bsg_tag_s         bsg_ds_tag_i
   ,input                    async_osc_reset_i
 
@@ -87,12 +95,30 @@ module bsg_clk_gen
 
   // Clock Generator (CG) Instance
   //
-  bsg_clk_gen_osc #(.num_adgs_p(num_adgs_p))  clk_gen_osc_inst
-    (
-     .bsg_tag_i          (bsg_osc_tag_i    )
-     ,.async_reset_i     (async_osc_reset_i)
-     ,.clk_o             (osc_clk_out      )
-    );
+
+// if statement is nice but messes up naming in bsg_clk_gen_timing.tcl .. fix later
+// maybe by adding unused input to bsg_clk_gen_osc
+/*
+  if (version_p == 1)
+    begin: v1
+       bsg_clk_gen_osc #(.num_adgs_p(num_adgs_p))  clk_gen_osc_inst
+         (
+          .bsg_tag_i          (bsg_osc_tag_i    )
+          ,.async_reset_i     (async_osc_reset_i)
+          ,.clk_o             (osc_clk_out      )
+          );
+    end
+  else
+    begin: v2
+ */
+       bsg_clk_gen_osc #(.num_adgs_p(num_adgs_p))  clk_gen_osc_inst
+         (
+          .bsg_tag_i          (bsg_osc_tag_i        )
+          ,.bsg_tag_trigger_i  (bsg_osc_trigger_tag_i)
+          ,.async_reset_i     (async_osc_reset_i    )
+          ,.clk_o             (osc_clk_out          )
+          );
+/*    end */
 
    `declare_bsg_clk_gen_ds_tag_payload_s(downsample_width_p)
 
