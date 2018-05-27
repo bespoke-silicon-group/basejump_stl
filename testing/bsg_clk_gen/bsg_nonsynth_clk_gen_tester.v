@@ -58,6 +58,7 @@ module bsg_nonsynth_clk_gen_tester
     , osc_final_val_p=0
     , ds_final_val_p=0
     , clk_mux_final_val_p=2'b00
+    , version_p = 1
     )
    (input ext_clk_i
     , input bsg_tag_clk_i
@@ -98,14 +99,23 @@ module bsg_nonsynth_clk_gen_tester
 
    bsg_tag_header_s ds_tag_header;
    bsg_tag_header_s osc_tag_header;
+
+   // used for V2 of bsg_clk_gen
+   bsg_tag_header_s osc_trigger_tag_header;
+
    bsg_clk_gen_osc_tag_payload_s osc_tag_payload;
-   bsg_clk_gen_ds_tag_payload_s ds_tag_payload;
+   logic                         osc_trigger_tag_payload;
+   bsg_clk_gen_ds_tag_payload_s  ds_tag_payload;
 
    localparam osc_pkt_size_lp = $bits(bsg_tag_header_s)+$bits(bsg_clk_gen_osc_tag_payload_s)+1+1;
    wire [osc_pkt_size_lp-1:0] osc_pkt = { 1'b0, osc_tag_payload, osc_tag_header,1'b1 };
 
    localparam ds_pkt_size_lp  = $bits(bsg_tag_header_s)+$bits(bsg_clk_gen_ds_tag_payload_s)+1+1;
    wire [ds_pkt_size_lp-1:0]  ds_pkt  = { 1'b0, ds_tag_payload, ds_tag_header,1'b1 };
+
+   localparam osc_trigger_pkt_size_lp  = $bits(bsg_tag_header_s)+1+1+1;
+   wire [osc_trigger_pkt_size_lp-1:0] osc_trigger_pkt
+                                      = { 1'b0, osc_trigger_tag_payload, osc_trigger_tag_header, 1'b1};
 
    localparam check_times_lp = 0;
 
@@ -183,19 +193,37 @@ module bsg_nonsynth_clk_gen_tester
        osc_tag_header.data_not_reset = 0;
        osc_tag_header.len            = $size(osc_tag_payload);
 
+       osc_trigger_tag_header.nodeID = tag_node_base_p+2;
+       osc_trigger_tag_header.data_not_reset = 1;
+       osc_trigger_tag_header.len            = 1;
+       osc_trigger_tag_payload               = 1'b0; // == block transmitted data
+
        // stream of ones will reset bsg_tag_client node
        osc_tag_payload     = { $bits(osc_tag_payload) {1'b1} };
 
-       for (integer i = 0; i < osc_pkt_size_lp; i=i+1)
+       if (version_p == 1)
          begin
-            @(negedge bsg_tag_clk_i);
-            bsg_tag_data_o = osc_pkt[i];
+            for (integer i = 0; i < osc_pkt_size_lp; i=i+1)
+              begin
+                 @(negedge bsg_tag_clk_i);
+                 bsg_tag_data_o = osc_pkt[i];
+              end
+         end
+       else
+         // for version 2, we don't need to reset the client node
+         // but we need to clear the trigger register
+         begin
+            for (integer i = 0; i < osc_trigger_pkt_size_lp; i=i+1)
+              begin
+                 @(negedge bsg_tag_clk_i);
+                 bsg_tag_data_o = osc_trigger_pkt[i];
+              end
          end
 
        // let the data percolate through synchronizers etc
-       // before attaching lutag
+       // before attaching bsg_tag
 
-       for (integer i = 0; i < 3; i++)
+       for (integer i = 0; i < 5; i++)
          begin
             @(posedge bsg_clk_gen_i);
             @(posedge bsg_tag_clk_i);
@@ -260,7 +288,7 @@ module bsg_nonsynth_clk_gen_tester
          end
 
        // let the data percolate through synchronizers etc
-       // before attaching lutag
+       // before attaching bsg_tag
 
        for (integer i = 0; i < 4; i++)
          begin
@@ -327,6 +355,23 @@ module bsg_nonsynth_clk_gen_tester
                 bsg_tag_data_o = osc_pkt[j];
              end
 
+           if (version_p == 2)
+             begin
+                osc_trigger_tag_payload               = 1'b1; // == pass transmitted data
+                for (integer i = 0; i < osc_trigger_pkt_size_lp; i=i+1)
+                  begin
+                     @(negedge bsg_tag_clk_i);
+                     bsg_tag_data_o = osc_trigger_pkt[i];
+                  end
+
+                osc_trigger_tag_payload               = 1'b0; // == block transmitted data
+                for (integer i = 0; i < osc_trigger_pkt_size_lp; i=i+1)
+                  begin
+                     @(negedge bsg_tag_clk_i);
+                     bsg_tag_data_o = osc_trigger_pkt[i];
+                  end
+             end
+
           // wait a few clock cycles to make sure the packet propagates
           // and the syncronizer registers have been passed
           //
@@ -384,6 +429,23 @@ module bsg_nonsynth_clk_gen_tester
             bsg_tag_data_o = osc_pkt[j];
          end
 
+       if (version_p == 2)
+         begin
+            osc_trigger_tag_payload               = 1'b1; // == pass transmitted data
+            for (integer i = 0; i < osc_trigger_pkt_size_lp; i=i+1)
+              begin
+                 @(negedge bsg_tag_clk_i);
+                 bsg_tag_data_o = osc_trigger_pkt[i];
+              end
+
+            osc_trigger_tag_payload               = 1'b0; // == block transmitted data
+            for (integer i = 0; i < osc_trigger_pkt_size_lp; i=i+1)
+              begin
+                 @(negedge bsg_tag_clk_i);
+                 bsg_tag_data_o = osc_trigger_pkt[i];
+              end
+         end
+
        for (integer j = 0; j < 4; j++)
          @(posedge bsg_tag_clk_i);
        for (integer j = 0; j < 4; j++)
@@ -400,6 +462,23 @@ module bsg_nonsynth_clk_gen_tester
          begin
             @(negedge bsg_tag_clk_i);
             bsg_tag_data_o = osc_pkt[j];
+         end
+
+       if (version_p == 2)
+         begin
+            osc_trigger_tag_payload               = 1'b1; // == pass transmitted data
+            for (integer i = 0; i < osc_trigger_pkt_size_lp; i=i+1)
+              begin
+                 @(negedge bsg_tag_clk_i);
+                 bsg_tag_data_o = osc_trigger_pkt[i];
+              end
+
+            osc_trigger_tag_payload               = 1'b0; // == block transmitted data
+            for (integer i = 0; i < osc_trigger_pkt_size_lp; i=i+1)
+              begin
+                 @(negedge bsg_tag_clk_i);
+                 bsg_tag_data_o = osc_trigger_pkt[i];
+              end
          end
 
        for (integer j = 0; j < 10; j++)
@@ -499,6 +578,23 @@ module bsg_nonsynth_clk_gen_tester
          begin
             @(negedge bsg_tag_clk_i);
             bsg_tag_data_o = osc_pkt[j];
+         end
+
+       if (version_p == 2)
+         begin
+            osc_trigger_tag_payload               = 1'b1; // == pass transmitted data
+            for (integer i = 0; i < osc_trigger_pkt_size_lp; i=i+1)
+              begin
+                 @(negedge bsg_tag_clk_i);
+                 bsg_tag_data_o = osc_trigger_pkt[i];
+              end
+
+            osc_trigger_tag_payload               = 1'b0; // == block transmitted data
+            for (integer i = 0; i < osc_trigger_pkt_size_lp; i=i+1)
+              begin
+                 @(negedge bsg_tag_clk_i);
+                 bsg_tag_data_o = osc_trigger_pkt[i];
+              end
          end
 
        for (integer j = 0; j < 10; j++)
