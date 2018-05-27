@@ -17,15 +17,43 @@
 // of the ADT, but of course since the signal is inverted at each stage
 // ADT and FDT do it on posege and CDT does it on negedge.
 //
-// We employ a MUXI4 that is part of the TSMC 250 standard cell library
-// that has balanced paths and is glitch-free, because it is based on a
-// t-gate design. If the MUXI4 were made out of AND-OR circuits, care
+// We employ a MUXI4 that is part of the standard cell library
+// that we verify to be glitch-free using spice simulation (presumably because it is based on a
+// t-gate design). If the MUXI4 were made out of AND-OR circuits, care
 // would have to be taken to make sure that the transitions occur when
 // either all inputs are 0 or 1 to the MUXI4, depending on the implementation.
 // For example, if the mux is AOI, triggered on negedge edge of input clock would
 // be okay. Fortunately, we don't have to worry about this (and confirmed by spice.)
 //
-// We have verified this in TSMC 250 by running with sdf annotations.
+// We have verified this in TSMC 40 by running with sdf annotations.
+//
+
+// Gen 2 specific info (starting with 40nm)  MBT 5-26-2018
+//
+// This Gen 2 clock generator has been slight redesigned in order to address the races
+// in the gen 1 design that prevented automation.
+//
+// We use the bsg_tag_client_unsync implementation in order to reduce the load on
+// the internally generated clock. Additionally, we separate out the we_r trigger
+// signal so that it is explicitly set. This means that to set the frequency
+// on average, three packets will need to be sent. First, a packet will be sent
+// to set clock configuration bits. Then a packet will be sent to enable the we_r
+// signal. Finally a packet will be sent to clear the we_r signal.
+// This applies only for the oscillator programming.
+//
+// The trigger is synchronized inside the ADT; and then the synchronized signal
+// is buffered and passed on to the CDT and then to the FDT, mirroring the
+// flow of the clock signal through the units.
+//
+// The goal of this approach is to ensure that a new value is latched into the
+// oscillator's configuration registers atomically, and during the first negative
+// clock phase after a positive edge.
+//
+//
+// The downsampler uses the normal interface.
+//
+//
+// Gen 1 specific info (for reference)
 //
 // There is an implicit race between the bsg_tag's output fb_we_r (clocked on
 // positive edge of FDT output) and these config flops that cannot be addressed
@@ -44,6 +72,11 @@
 // the FDT as opposed to at the end. This gives more time for propagate
 // through the ICC-generate clock tree for the BTC.
 //
+//
+//
+//
+
+`timescale 1ps/1ps
 
 `include "bsg_clk_gen.vh"
 
@@ -52,34 +85,40 @@ module bsg_clk_gen_osc
  #(parameter num_adgs_p=1)
   (
    input bsg_tag_s bsg_tag_i
+   ,input bsg_tag_s bsg_tag_trigger_i
 
-   ,input                  async_reset_i
-   ,output                 clk_o
+   ,input async_reset_i
+   ,output clk_o
    );
-   timeunit 1ps;
-   timeprecision 1ps;
 
-   wire       fb_clk, fb_btc_clk;     // internal clock
+   wire  fb_clk;
    wire       async_reset_neg = ~async_reset_i;
 
    `declare_bsg_clk_gen_osc_tag_payload_s(num_adgs_p)
 
-   bsg_clk_gen_osc_tag_payload_s fb_tag_r;
-   wire       fb_we_r;
+   bsg_clk_gen_osc_tag_payload_s tag_r_async;
+   wire       tag_trigger_r_async;
+   wire       adt_to_cdt_trigger_lo, cdt_to_fdt_trigger_lo;
 
-   // note: oscillator has to be already working in order
-   // for configuration state to pass through here
+   // this is a raw interface; and wires will toggle
+   // as the bits shift in. the wires are also
+   // unsynchronized with respect to the target domain.
 
-   bsg_tag_client #(.width_p($bits(bsg_clk_gen_osc_tag_payload_s))
-                    ,.harden_p(1)
-                    ,.default_p(0)
-                    ) btc
-     (.bsg_tag_i     (bsg_tag_i)
-      ,.recv_clk_i   (fb_btc_clk)
-      ,.recv_reset_i (1'b0)     // no default value is loaded;
-      ,.recv_new_r_o (fb_we_r)  // default is already in OSC flops
-      ,.recv_data_r_o(fb_tag_r)
-      );
+   bsg_tag_client_unsync
+     #(.width_p($bits(bsg_clk_gen_osc_tag_payload_s))
+       ,.harden_p(1)
+       ) btc
+       (.bsg_tag_i(bsg_tag_i)
+        ,.data_async_r_o(tag_r_async)
+        );
+
+   bsg_tag_client_unsync
+     #(.width_p(1)
+       ,.harden_p(1)
+       ) btc_trigger
+       (.bsg_tag_i(bsg_tag_trigger_i)
+        ,.data_async_r_o(tag_trigger_r_async)
+        );
 
    wire adt_lo, cdt_lo;
 
@@ -87,14 +126,16 @@ module bsg_clk_gen_osc
 
    // this adds some delay in the loop for RTL simulation
    // should be ignored in synthesis
-   assign #4200 fb_clk_del = fb_clk;
+   assign #4000 fb_clk_del = fb_clk;
 
    bsg_rp_clk_gen_atomic_delay_tuner  adt
      (.i(fb_clk_del)
-      ,.we_i(fb_we_r)
-      ,.async_reset_neg_i(async_reset_neg)
-      ,.sel_i(fb_tag_r.adg[0])
-      ,.o(adt_lo)
+      ,.we_async_i (tag_trigger_r_async   )
+      ,.we_inited_i(bsg_tag_trigger_i.en  )
+      ,.async_reset_neg_i(async_reset_neg )
+      ,.sel_i(tag_r_async.adg[0]          )
+      ,.we_o(adt_to_cdt_trigger_lo        )
+      ,.o(adt_lo                          )
       );
 
    // instantatiate CDT (coarse delay tuner)
@@ -103,35 +144,25 @@ module bsg_clk_gen_osc
 
    bsg_rp_clk_gen_coarse_delay_tuner cdt
      (.i                 (adt_lo)
-      ,.we_i             (fb_we_r         )
-      ,.async_reset_neg_i(async_reset_neg )
-      ,.sel_i            (fb_tag_r.cdt    )
-      ,.o                (cdt_lo          )
+      ,.we_i             (adt_to_cdt_trigger_lo)
+      ,.async_reset_neg_i(async_reset_neg      )
+      ,.sel_i            (tag_r_async.cdt      )
+      ,.we_o             (cdt_to_fdt_trigger_lo)
+      ,.o                (cdt_lo)
       );
 
    // instantiate FDT (fine delay tuner)
    // captures config state on positive edge of (inverted) input clk
    // non-inverting
-   
-   //=================== 
-   //SHX: need a delay at the output to break the ZERO-GLITCH of the clock!
-   //     otherwise there will be a negetive GLITCH at the posedge of the clock 
-   //     causing simulation problem. 
-   //     
-   //     This maybe a bug of the tested VCS version:L-2016.06-SP2-15_Full64
-   wire clk_tmp;
-   assign #1 clk_o = clk_tmp;   //The delay is only used for rtl_hard simulation
-   //=================
+
    bsg_rp_clk_gen_fine_delay_tuner fdt
      (.i                 (cdt_lo)
-      ,.we_i             (fb_we_r        )
+      ,.we_i             (cdt_to_fdt_trigger_lo)
       ,.async_reset_neg_i(async_reset_neg)
-      ,.sel_i            (fb_tag_r.fdt   )
+      ,.sel_i            (tag_r_async.fdt)
       ,.o                (fb_clk)     // in the actual critical loop
-      ,.buf_btc_o        (fb_btc_clk) // inside this module; to the btc
-      ,.buf_o            (clk_tmp)     // outside this module
+      ,.buf_o            (clk_o)     // outside this module
       );
-
 
    //always @(*)
    //  $display("%m async_reset_neg=%b fb_clk=%b adg_int=%b fb_tag_r=%b fb_we_r=%b",

@@ -20,6 +20,7 @@ module bsg_rp_clk_gen_coarse_delay_tuner
    , input  we_i
    , input async_reset_neg_i
    , output       o
+   , output we_o
    );
 
    wire [1:0] sel_r;
@@ -68,6 +69,9 @@ module bsg_rp_clk_gen_coarse_delay_tuner
 
    DFNCND4BWP sel_r_reg_1 (.D(mux_lo[1]), .CPN(o), .CDN(async_reset_neg_i), .Q(sel_r[1]), .QN());
    MUX2D1BWP MX2 (.I0(sel_r[1]),.I1(sel_i[1]),.S(we_i), .Z(mux_lo[1]));
+
+   // synopsys rp_fill (0 4 RX)
+   BUFFD4BWP we_o_buf (.I(we_i), .Z(we_o));
 
    // synopsys rp_endgroup (bsg_clk_gen_cde)
 
