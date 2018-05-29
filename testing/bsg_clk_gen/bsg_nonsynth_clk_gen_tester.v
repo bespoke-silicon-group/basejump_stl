@@ -4,7 +4,7 @@
 `timescale 1ps/1ps
 
 /*
-
+note: doesn't seem to work with current settings
   In IC compiler (or possibly Primetime), here is a different way to time these paths instead
   of running with SDF annotation.
 
@@ -46,7 +46,14 @@
     -through clk_gen_core_inst/clk_gen_osc_inst/fdt/M2/D (fastest)
 
     -to clk_gen_core_inst/clk_gen_osc_inst/fdt/A1/Y
- */
+
+ 
+ 40nm:
+ 
+report_timing -from clk_gen_core_inst/clk_gen_osc_inst/adt/I1/I -through clk_gen_core_inst/clk_gen_osc_inst/adt/M1/I3 -through clk_gen_core_inst/clk_gen_osc_inst/cdt/M1/I3 -through clk_gen_core_inst/clk_gen_osc_inst/fdt/M2/I3 -to clk_gen_core_inst/clk_gen_osc_inst/fdt/M2/ZN
+ 
+ 
+  */
 
 
 module bsg_nonsynth_clk_gen_tester
@@ -552,7 +559,7 @@ module bsg_nonsynth_clk_gen_tester
                 if (per_new >= 999.9*1000.0)
                   output_string = { output_string, $sformatf   ("%5.0f ", real ' (per_new) / 1000.0) };
                 else
-                  output_string = { output_string, $sformatf   ("%5.1f ", real ' (per_new) / 1000.0) };
+                  output_string = { output_string, $sformatf   ("%5.2f ", real ' (per_new) / 1000.0) };
              end
         end // for (integer i = 0; i < (1 << ds_width_p) ; i++)
 
