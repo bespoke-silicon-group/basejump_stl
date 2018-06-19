@@ -1,83 +1,93 @@
--# bsg_fpu
+# bsg_fpu
 
--
 
--### bsg_fpu_cmp
 
--This is a floating-point comparator. It can calculate >, <, ==, !=, >=, <=, depending on subop code you provide as an input.
+### bsg_fpu_cmp
 
--There is no pipeline stage for this module.
+This is a floating-point comparator. It can calculate >, <, ==, !=, >=, <=, depending on subop code you provide as an input.
 
--
+There is no pipeline stage for this module.
 
--### bsg_fpu_add_sub
 
--This is a floating-point adder/subtractor. There are 3 pipeline stages.
 
--Input-side has ready-valid handshake interface.
+### bsg_fpu_add_sub
 
--Output-side has yumi-valid handshake interface.
+This is a floating-point adder/subtractor. There are 3 pipeline stages.
 
--It's rounding mode is "round to nearest even".
+Input-side has ready-valid handshake interface.
 
--Here is the description of output behavior.
+Output-side has yumi-valid handshake interface.
 
--
+Its rounding mode is "round to nearest even".
 
--- If either input is signaling NaN, output is set to signaling NaN (0x7fbfffff), and invalid exception is raised.
+Here is the description of output behavior.
 
--- If either input is quiet NaN, output is set to quiet NaN (0x7fffffff).
 
--- If both inputs are infinite, output is set to either infinite or quiet NaN, depending on sub_i and signs of inputs. For example, positive infinity plus positive infinity results in positive infinite, whereas positive infinity minus positive infinity results in quiet NaN.
 
--
+- If either input is signaling NaN, output is set to signaling NaN (0x7fbfffff), and invalid exception is raised.
 
--- If either input is denormal, then output is set to quiet NaN, and unimplemented exception is raised.
+- If either input is quiet NaN, output is set to quiet NaN (0x7fffffff).
 
--- If the sum or difference results in denormal, then output is set to zero, and underflow exception is raised.
+- If both inputs are infinite, output is set to either infinite or quiet NaN, depending on sub_i and signs of inputs. For example, positive infinity plus positive infinity results in positive infinite, whereas positive infinity minus positive infinity results in quiet NaN.
 
--- If the result underflows, then output is set to zero, and underflow exception is raised.
 
--- If the result overflows, the output is set to infinitiy, and overflow exception is raised.
 
--
+- If either input is denormal, then output is set to quiet NaN, and unimplemented exception is raised.
 
--### bsg_fpu_mul
+- If the sum or difference results in denormal, then output is set to zero, and underflow exception is raised.
 
--This is a floating-point multiplier. There are 3 pipeline stages.
+- If the result underflows, then output is set to zero, and underflow exception is raised.
 
--Input-side has ready-valid handshake interface.
+- If the result overflows, the output is set to infinitiy, and overflow exception is raised.
 
--Output-side has yumi-valid handshake interface.
 
--It's rounding mode is "round to nearest even".
 
--Here is the description of output behavior.
+### bsg_fpu_mul
 
--
+This is a floating-point multiplier. There are 3 pipeline stages.
 
--- If either input is signaling NaN, output is set to signaling NaN (0x7fbfffff), and invalid exception is raised.
+Input-side has ready-valid handshake interface.
 
--- If either input is quiet NaN, output is set to quiet NaN (0x7fffffff).
+Output-side has yumi-valid handshake interface.
 
--- If one input is infinite and the other is non-zero, then output is set to infinity.
+Its rounding mode is "round to nearest even".
 
--- If one input is infinite and the other is zero, then output is set to quiet NaN, and invalid exception is raised.
+Here is the description of output behavior.
 
--- If one input zero and the other is non-zero, then output is set to zero.
+- If either input is signaling NaN, output is set to signaling NaN (0x7fbfffff), and invalid exception is raised.
 
--- If both inputs are denormal, then output is set to zero, and underflow exception is raised.
+- If either input is quiet NaN, output is set to quiet NaN (0x7fffffff).
 
--- If one input is denormal, and the other is not denormal, then output is set to quiet NaN, and unimplemented exception is raised.
+- If one input is infinite and the other is non-zero, then output is set to infinity.
 
--- If the product results in denormal, then output is set to zero, and underflow exception is raised.
+- If one input is infinite and the other is zero, then output is set to quiet NaN, and invalid exception is raised.
 
--- If the result underflows, then output is set to zero, and underflow exception is raised.
+- If one input zero and the other is non-zero, then output is set to zero.
 
--- If the result overflows, the output is set to infinitiy, and overflow exception is raised.
+- If both inputs are denormal, then output is set to zero, and underflow exception is raised.
 
--
+- If one input is denormal, and the other is not denormal, then output is set to quiet NaN, and unimplemented exception is raised.
 
--### Testing
+- If the product results in denormal, then output is set to zero, and underflow exception is raised.
 
--Testing was originally done with trace files. C source code to generate trace patterns is under the directory named "/testing/bsg_fpu".
+- If the result underflows, then output is set to zero, and underflow exception is raised.
+
+- If the result overflows, the output is set to infinitiy, and overflow exception is raised.
+
+#### bsg_fpu_i2f
+
+This module converts from signed integer to float.
+
+
+
+### Testing
+
+Testing was originally done with trace files. C source code to generate trace patterns is under the directory named "/testing/bsg_fpu".
+
+### Change Log
+
+- 2018-06-19 - added bsg_fpu_i2f_32.
+
+
+
+
