@@ -27,6 +27,14 @@ void print_float_in_binary(float a)
     }
 }
 
+void print_int_in_binary(int a)
+{
+  for (int i = 0; i < 32; i++)
+  {
+    printf("%d", (a >> (31-i)) & 0x1);
+  }
+}
+
 /**
  *  print reset trace.
  */
@@ -114,3 +122,5 @@ void linspace(float *buf, float min, float max, int n)
         buf[i] = min + i*step;
     }
 }
+
+
