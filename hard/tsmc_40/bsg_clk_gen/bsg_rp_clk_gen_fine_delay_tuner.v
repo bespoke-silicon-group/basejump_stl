@@ -12,7 +12,6 @@ module bsg_rp_clk_gen_fine_delay_tuner
    , input [1:0] sel_i
    , output o
    , output buf_o
-   , output buf_btc_o
    );
 
    wire [1:0] sel_r;
@@ -69,13 +68,6 @@ module bsg_rp_clk_gen_fine_delay_tuner
 
    CKBD8BWP ICLK (.I(o),        .Z(buf_o) );
 
-   // to clock the btc client, we use the pre-FDT clock
-   // our goal is to have the btc_client send on the positive edge
-   // of the clock, and the ADT/FDT/CDT capture on the negative edge
-   // of the clock. However the delay through the BTC is much more
-   // significant, so we get a headstart on sending that clock out.
-
-   CKBD8BWP BTCCLK (.I(i_inv),       .Z(buf_btc_o) );
    // synopsys rp_endgroup(bsg_clk_gen_fdt)
 
 endmodule

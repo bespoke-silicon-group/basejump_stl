@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# bsg_mux_gen_tsmc_250
+# bsg_mux_gen_tsmc_40
 #
 # This script generates one hot muxes.
 #
@@ -88,7 +88,7 @@ def emit_rp_fill (params):
 # For example, for AOI22  A's are faster than B's and A0 is faster than A1.
 #
 
-fab = "tsmc_250"
+fab = "tsmc_40"
 
 #nand2 = "NAND2X2 #0 (.A (#1), .B (#2), .Y (#3)                   );"
 #nand3 = "NAND3X2 #0 (.A (#1), .B (#2), .C(#3), .Y (#4)           );"

@@ -1,7 +1,7 @@
 `define bsg_mux_one_hot_gen_macro(words,bits)                   \
 if (harden_p && els_p == words && width_p == bits)              \
 begin: macro                                                    \
-   bsg_rp_tsmc_250_mux_w``words``_b``bits w``words``_b``bits    \
+   bsg_rp_tsmc_40_mux_w``words``_b``bits w``words``_b``bits    \
      (.*                                                        \
       );                                                        \
 end

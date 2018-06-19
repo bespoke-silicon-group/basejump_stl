@@ -7,17 +7,19 @@
 `define bsg_mem_1rw_sync_macro(words,bits,lgEls,newBits,mux)    \
 if (els_p == words && width_p == bits)                          \
   begin: macro                                                  \
-     tsmc180_1rw_lg``lgEls``_w``newBits``_m``mux``_all mem      \
-          (.Q(data_o)                                           \
-           ,.CLK(clk_i)                                         \
-           ,.CEN(~v_i)                                          \
-           ,.WEN(~w_i)                                          \
-           ,.A(addr_i)                                          \
-           ,.D(data_i)                                          \
-           // 1=tristate                                        \
-           ,.OEN(1'b0)                                          \
-           );                                                   \
-  end
+     tsmc40_1rw_lg``lgEls``_w``newBits``_m``mux``_all mem      \
+      (                                                         \
+         .A     (addr_i )                                       \
+        ,.D     (data_i )                                       \
+        ,.BWEB  ( {``bits``{1'b0}}   )                          \
+        ,.WEB   (~w_i   )                                       \
+        ,.CEB   (~v_i   )                                       \
+        ,.CLK   (clk_i  )                                       \
+        ,.Q     (data_o )                                       \
+        ,.DELAY (2'b0   )                                       \
+        ,.TEST  (2'b0   )                                       \
+      );                                                        \
+   end
 
 `define bsg_mem_1rw_sync_macro_rf(words,bits,lgEls,newBits,mux) \
 if (els_p == words && width_p == bits)                          \
@@ -26,15 +28,17 @@ if (els_p == words && width_p == bits)                          \
           assign data_o = tmp_lo[bits-1:0];                     \
           assign tmp_li = newBits ' (data_i);                   \
                                                                 \
-          tsmc180_1rf_lg``lgEls``_w``newBits``_m``mux``_all mem \
-            (                                                   \
-             .Q(tmp_lo)                                         \
-             ,.CLK(clk_i)                                       \
-             ,.CEN(~v_i)                                        \
-             ,.WEN(~w_i)                                        \
-             ,.A(addr_i)                                        \
-             ,.D(tmp_li)                                        \
-             );                                                 \
+          tsmc40_1rf_lg``lgEls``_w``newBits``_m``mux``_all mem \
+        (                                                        \
+           .A     (addr_i )                                       \
+          ,.D     (tmp_li )                                       \
+          ,.BWEB  ( {``bits``{1'b0}}   )                          \
+          ,.WEB   (~w_i   )                                       \
+          ,.CEB   (~v_i   )                                       \
+          ,.CLK   (clk_i  )                                       \
+          ,.Q     (tmp_lo )                                       \
+          ,.DELAY (2'b0   )                                       \
+        );                                                        \
   end
 
 module bsg_mem_1rw_sync #(parameter width_p=-1
@@ -51,8 +55,9 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
     , output logic [width_p-1:0]  data_o
     );
 
+   `bsg_mem_1rw_sync_macro(4096,48,12,48,8) else
    `bsg_mem_1rw_sync_macro(2048,32,11,32,8) else
-   `bsg_mem_1rw_sync_macro(1024,32,10,32,8) else
+   `bsg_mem_1rw_sync_macro(1024,32,10,32,4) else
    `bsg_mem_1rw_sync_macro(256,128,8,128,4) else
      `bsg_mem_1rw_sync_macro_rf(128,74,7,74,2) else
      `bsg_mem_1rw_sync_macro_rf(128,73,7,74,2) else

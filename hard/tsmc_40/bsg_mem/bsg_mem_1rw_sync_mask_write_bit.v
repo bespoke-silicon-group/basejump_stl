@@ -8,18 +8,21 @@
 `define bsg_mem_1rw_sync_macro_2rf(words,bits,lgEls,mux)        \
 if (els_p == words && width_p == bits)                          \
   begin: macro                                                  \
-          tsmc180_2rf_lg``lgEls``_w``bits``_m``mux``_bit mem    \
+          tsmc40_2rf_lg``lgEls``_w``bits``_m``mux``_bit mem     \
             (                                                   \
-             .CLKA (clk_i   )                                   \
-             ,.AA  (addr_i)                                     \
-             ,.CENA(~(~w_i&v_i))                                \
-             ,.QA  (data_o)                                     \
+              .AA       (   addr_i      )                       \
+             ,.D        (   data_i      )                       \
+             ,.BWEB     ( ~w_mask_i     )                       \
+             ,.WEB      ( ~(w_v_i &v_i  )                       \
+             ,.CLKW     ( clk_i         )                       \
                                                                 \
-             ,.CLKB(clk_i )	                                \
-             ,.CENB(~(w_i&v_i))                                 \
-             ,.WENB(~w_mask_i)                                   \
-             ,.AB  (addr_i)                                     \
-             ,.DB  (data_i)                                     \
+             ,.AB       (   addr_i      )                       \
+             ,.REB      ( ~ (~w_i&v_i   )                       \
+             ,.CLKR     ( clk_i         )                       \
+             ,.Q        (   data_o      )                       \
+                                                                \
+             ,.RDELAY   ( 2'b00         )                       \
+             ,.WDELAY   ( 2'b00         )                       \
              );                                                 \
   end
 
