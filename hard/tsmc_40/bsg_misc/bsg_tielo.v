@@ -1,7 +1,7 @@
 `define bsg_tielo_macro(bits)                       \
 if (harden_p && (width_p==bits))                    \
   begin: macro                                      \
-     bsg_rp_tsmc_250_TIELBWP_b``bits tielo (.o);      \
+     bsg_rp_tsmc_40_TIELBWP_b``bits tielo (.o);      \
   end
 
 module bsg_tielo #(parameter width_p="inv"

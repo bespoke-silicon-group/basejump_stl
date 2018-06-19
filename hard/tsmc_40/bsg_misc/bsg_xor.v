@@ -1,7 +1,7 @@
 `define bsg_xor_macro(bits)                     \
 if (harden_p && (width_p==bits))                \
   begin: macro                                  \
-     bsg_rp_tsmc_250_XOR2D1BWP_b``bits xor_gate (.i0(a_i),.i1(b_i),.o);    \
+     bsg_rp_tsmc_40_XOR2D1BWP_b``bits xor_gate (.i0(a_i),.i1(b_i),.o);    \
   end
 
 module bsg_xor #(parameter width_p="inv"

@@ -1,14 +1,6 @@
 // bsg_rp_clk_gen_coarse_delay_element
 //
-// (o       is inverting on even start_tap_p
-//  worst_o is non-inverting)
-//
 // o       contains controllably delayed signal
-// worst_o contains worst-case   delayed signal (for delay matching)
-//
-//
-// we use sed to substitute parameters because the netlist reader
-// does not like them, and we need the netlist reader for rp_groups
 //
 // module bsg_clk_gen_coarse_delay_element #(parameter start_tap_p="inv")
 //
@@ -17,13 +9,18 @@ module bsg_rp_clk_gen_atomic_delay_tuner
   (input i
 
    , input  sel_i
-   , input  we_i
+   , input  we_async_i
+   , input  we_inited_i  // basically says we_async_i should have successfully passed through
+                         // the generated clock's synchronizers; i.e. the generated clock is
+                         // running and the bsg_tag_slave and client have been initialized
    , input async_reset_neg_i
-   , output       o
+   , output we_o
+   , output o
    );
 
    wire [1:0] sel_r;
    wire [8:0] signal;
+   wire       we_o_pre_buf;
 
    assign signal[0] = i;
 
@@ -66,21 +63,31 @@ module bsg_rp_clk_gen_atomic_delay_tuner
                    );
 
    wire [1:0] mux_lo;
+   wire       we_i_sync, we_i_sync_sync, we_i_sync_sync_nand;
 
    // synopsys rp_fill (0 0 RX)
 
    // this gate picks input 01 when async reset is low, initializing the oscillator
-   IND2D2BWP NB        (.A1(sel_r[0]), .B1(async_reset_neg_i), .ZN(sel_r[1]));
-   TIELBWP  ZB (.ZN(zero_bit));
+   IND2D2BWP NB (.A1(sel_r[0]), .B1(async_reset_neg_i), .ZN(sel_r[1]));
+   TIELBWP   ZB (.ZN(zero_bit));
 
-   wire       sel_r_0_inv, sel_i_inv;
+   DFCND4BWP sel_r_reg_0 (.D(mux_lo[0]), .CP(o)      ,.CDN(async_reset_neg_i), .Q(sel_r[0]), .QN());
 
-   DFCND4BWP sel_r_reg_0 (.D(mux_lo[0]), .CP(o)      ,.CDN(async_reset_neg_i), .Q(sel_r[0]), .QN(sel_r_0_inv));
+   // 40nm: non-inverting mux 32.5ps + load S->Z
+   // 40nm: inverting     mux 43ps + load  S->ZN
+   // inputs are reversed because select is inverted
+   // we_i&we_inited_i=1 -> new value  (I0)
+   // we_i&we_inited-i=0 -> use value in register (I1)
+   MUX2D1BWP MX1          ( .I0(sel_i), .I1(sel_r[0]), .S(we_i_sync_sync_nand), .Z(mux_lo[0]));
 
-   CKND2BWP I_MX      (.I(sel_i), .ZN(sel_i_inv));
-
-   // we invert both inputs of this mux to optimize the select-to-output path by 40 ps
-   MUX2D1BWP MX1         (.I0(sel_r_0_inv) , .I1(sel_i_inv)   ,.S(we_i), .Z(mux_lo[0]));
+   // nand 10ps versus 22ps
+   ND2D1BWP bsg_we_nand   (.A1(we_i_sync_sync), .A2(we_inited_i), .ZN(we_i_sync_sync_nand));
+   // synchronizer flops; negative edge triggered
+   DFND1BWP bsg_SYNC_2_r  (.D(we_i_sync), .CPN(o), .Q(we_i_sync_sync), .QN());
+   DFND1BWP bsg_SYNC_1_r  (.D(we_async_i),     .CPN(o), .Q(we_i_sync),      .QN());
+   // drive we signal to next CDT; minimize capacitive load on critical we_i path
+   INVD0BWP we_o_pre      (.I(we_i_sync_sync_nand), .ZN(we_o_pre_buf));
+   BUFFD4BWP we_o_buf     (.I(we_o_pre_buf),. Z(we_o));
 
    // synopsys rp_endgroup (bsg_clk_gen_cde)
 

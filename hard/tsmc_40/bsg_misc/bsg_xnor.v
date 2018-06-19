@@ -1,7 +1,7 @@
 `define bsg_xnor_macro(bits)                     \
 if (harden_p && (width_p==bits))                \
   begin: macro                                  \
-     bsg_rp_tsmc_250_XNR2D1BWP_b``bits xnor_gate (.i0(a_i),.i1(b_i),.o);    \
+     bsg_rp_tsmc_40_XNR2D1BWP_b``bits xnor_gate (.i0(a_i),.i1(b_i),.o);    \
   end
 
 module bsg_xnor #(parameter width_p="inv"

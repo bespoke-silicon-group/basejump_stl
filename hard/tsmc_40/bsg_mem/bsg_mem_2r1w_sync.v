@@ -45,40 +45,41 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
         // synopsys translate_on
 
         // use two 1R1W rams to create
-        tsmc180_2rf_lg5_w32_m1_all mem0
-          (
-           // read port
-           .CLKA (clk_i)
-           ,.AA  (r0_addr_i)
-           ,.CENA(~r0_v_i)
+         tsmc40_2rf_lg5_w32_m2_all mem0    
+            (                                                   
+             //write port
+              .AA       ( w_addr_i      )
+             ,.D        ( w_data_i      )
+             ,.BWEB     ( 32'b0         )
+             ,.WEB      ( ~w_v_i        )
+             ,.CLKW     ( clk_i         )
+             //read port                                                   
+             ,.AB       ( r0_addr_i     )
+             ,.REB      ( ~r0_v_i       )
+             ,.CLKR     ( clk_i         )
+             ,.Q        ( r0_data_o     )
+                                                                
+             ,.RDELAY   ( 2'b00         )
+             ,.WDELAY   ( 2'b00         )
+            );                                                  
 
-           // output
-           ,.QA  (r0_data_o)
-
-           // write port
-           ,.CLKB(clk_i)
-           ,.AB  (w_addr_i)
-           ,.DB  (w_data_i)
-           ,.CENB(~w_v_i)
-           );
-
-        tsmc180_2rf_lg5_w32_m1_all mem1
-          (
-           // read port
-           .CLKA (clk_i)
-           ,.AA  (r1_addr_i)
-           ,.CENA(~r1_v_i)
-
-           // output
-           ,.QA  (r1_data_o)
-
-           // write port
-           ,.CLKB(clk_i)
-           ,.AB  (w_addr_i)
-           ,.DB  (w_data_i)
-           ,.CENB(~w_v_i)
-           );
-
+         tsmc40_2rf_lg5_w32_m2_all mem1    
+            (                                                   
+             //write port
+              .AA       ( w_addr_i      )
+             ,.D        ( w_data_i      )
+             ,.BWEB     ( 32'b0         )
+             ,.WEB      ( ~w_v_i        )
+             ,.CLKW     ( clk_i         )
+             //read port                                                   
+             ,.AB       ( r1_addr_i     )
+             ,.REB      ( ~r1_v_i       )
+             ,.CLKR     ( clk_i         )
+             ,.Q        ( r1_data_o     )
+                                                                
+             ,.RDELAY   ( 2'b00         )
+             ,.WDELAY   ( 2'b00         )
+            );                                                  
      end // block: macro
    else
      begin: notmacro

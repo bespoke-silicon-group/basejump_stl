@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# bsg_rf_gen_tsmc_250
+# bsg_rf_gen_tsmc_40
 #
 # This script generates register files with deterministic naming, and placement directives.
 #
@@ -82,7 +82,7 @@ def emit_rp_fill (params):
 # For example, for AOI22  A's are faster than B's and A0 is faster than A1.
 #
 
-fab = "tsmc_250"
+fab = "tsmc_40"
 
 #dffe  = "EDFFX1  #0 (.D (#1), .E (#2), .CK(#3), .Q (#4), .QN()         );"
 #aoi22 = "AOI22X1 #0 (.A0(#1), .A1(#2), .B0(#3), .B1(#4), .Y(#5) );"

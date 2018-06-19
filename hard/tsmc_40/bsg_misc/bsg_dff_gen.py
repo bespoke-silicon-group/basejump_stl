@@ -74,7 +74,7 @@ def emit_rp_fill (params):
 # For example, for AOI22  A's are faster than B's and A0 is faster than A1.
 #
 
-fab = "tsmc_250"
+fab = "tsmc_40"
 
 #dffr1 = "DFFTRX1 #0 (.D(#1), .CK(#3), .Q(#4),.QN(), .RN(#5));"
 #dffre1 = "EDFFTRX1 #0 (.D(#1), .E(#2), .CK(#3), .Q(#4),.QN(), .RN(#5));"

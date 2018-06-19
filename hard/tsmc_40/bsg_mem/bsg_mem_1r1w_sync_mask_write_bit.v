@@ -2,26 +2,34 @@
 //
 // 1 read-port, 1 write-port ram
 //
-// reads are synchronous
-
+// When read and write with the same address, the behavior depends on which
+// clock arrives first, and the read/write clock MUST be separated at least
+// twrcc, otherwise will incur indeterminate result. 
+//
+// See "TSN45GS2PRF: TSMC 45nm (=N40G) General Purpose Superb Two-Port
+// Register File Compiler Databook"
+//
 
 `define bsg_mem_1r1w_sync_macro_rf(words,bits,lgEls,mux)        \
 if (els_p == words && width_p == bits)                          \
   begin: macro                                                  \
-          tsmc180_2rf_lg``lgEls``_w``bits``_m``mux``_bit mem    \
+          tsmc40_2rf_lg``lgEls``_w``bits``_m``mux``_bit mem    \
             (                                                   \
-             .CLKA (clk_i   )                                   \
-             ,.AA  (r_addr_i)                                   \
-             ,.CENA(~r_v_i  )                                   \
-             ,.QA  (r_data_o)                                   \
+              .AA       ( w_addr_i      )                       \
+             ,.D        ( w_data_i      )                       \
+             ,.BWEB     ( ~w_mask_i     )                       \
+             ,.WEB      ( ~w_v_i        )                       \
+             ,.CLKW     ( clk_i         )                       \
                                                                 \
-             ,.CLKB(clk_i )	                                \
-             ,.CENB(~w_v_i)                                     \
-             ,.WENB(~w_mask_i)                                   \
-             ,.AB  (w_addr_i)                                   \
-             ,.DB  (w_data_i)                                   \
-             );                                                 \
-  end
+             ,.AB       ( r_addr_i      )                       \
+             ,.REB      ( ~r_v_i        )                       \
+             ,.CLKR     ( clk_i         )                       \
+             ,.Q        ( r_data_o      )                       \
+                                                                \
+             ,.RDELAY   ( 2'b00         )                       \
+             ,.WDELAY   ( 2'b00         )                       \
+            );                                                  \
+  end                                   
 
 
 module bsg_mem_1r1w_sync_mask_write_bit #(parameter width_p=-1
@@ -30,7 +38,7 @@ module bsg_mem_1r1w_sync_mask_write_bit #(parameter width_p=-1
                                         , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                                         , parameter harden_p=1
                                         )
-   (input   clk_i
+   (  input clk_i
     , input reset_i
 
     , input                     w_v_i
@@ -82,6 +90,9 @@ module bsg_mem_1r1w_sync_mask_write_bit #(parameter width_p=-1
    initial
      begin
         $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d harden_p=%d (%m)",width_p,els_p,read_write_same_addr_p, harden_p);
+        assert ( read_write_same_addr_p == 0) else begin
+                $error("## The hard memory do not support read write the same address. (%m)");
+                $finish;
      end
 
    //synopsys translate_on

@@ -100,7 +100,7 @@ def emit_rp_fill (params):
 # For example, for AOI22  A's are faster than B's and A0 is faster than A1.
 #
 
-fab = "tsmc_250"
+fab = "tsmc_40"
 
 and2 = "AND2X1 #0 (.A (#1), .B (#2), .Y (#3));"
 addf  = "ADDFHX1 #0 (.A (#1), .B (#2), .CI (#3), .S(#4), .CO(#5) );"
