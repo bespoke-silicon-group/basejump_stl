@@ -98,11 +98,11 @@ module test_bsg;
       end
   end
                                         
-  counter_w_overflow #(  .width_p(width_lp)
+  bsg_counter_dynamic_limit #(  .width_p(width_lp)
                       )  DUT
-                      (  .clk       (clk)
-                       , .reset     (reset)
-                       , .overflow_i(test_input)
+                      (  .clk_i       (clk)
+                       , .reset_i     (reset)
+                       , .limit_i(test_input)
                        , .counter_o (test_output)
                       );
                                                  

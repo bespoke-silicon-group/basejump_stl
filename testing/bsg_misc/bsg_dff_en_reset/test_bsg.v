@@ -55,7 +55,7 @@ module test_bsg;
   
   bsg_cycle_counter #(  .width_p(width_lp+2)
                      )  bcc
-                     (  .clk    (clk)
+                     (  .clk_i    (clk)
                       , .reset_i(reset)
                       , .ctr_r_o(count)
                      );
@@ -102,7 +102,7 @@ module test_bsg;
       
   bsg_dff_reset_en #(  .width_p(width_lp)
                        )  DUT
-    (  .clock_i(clk)
+    (  .clk_i(clk)
        , .data_i (test_input_data)
        , .en_i   (test_input_en)
        , .reset_i(test_input_reset)

@@ -1,5 +1,5 @@
 module bsg_dff_reset_en #(width_p=-1, harden_p=0)
-   (input   clock_i
+   (input   clk_i
     ,input  reset_i
     ,input  en_i
     ,input  [width_p-1:0] data_i
@@ -10,7 +10,7 @@ module bsg_dff_reset_en #(width_p=-1, harden_p=0)
 
    assign data_o = data_r;
 
-   always @(posedge clock_i)
+   always @(posedge clk_i)
      begin
         if (reset_i)
           data_r <= width_p'(0);

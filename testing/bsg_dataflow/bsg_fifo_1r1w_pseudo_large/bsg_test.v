@@ -28,7 +28,7 @@ module testbench;
 
    logic [31:0] ctr;
 
-   bsg_cycle_counter counter (.clk(clk)
+   bsg_cycle_counter counter (.clk_i(clk)
                               ,.reset_i(reset)
                               ,.ctr_r_o(ctr)
                               );

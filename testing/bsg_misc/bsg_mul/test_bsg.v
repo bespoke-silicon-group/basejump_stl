@@ -239,7 +239,7 @@ module test_bsg;
      end
 /*
    bsg_cycle_counter #(.width_p(in_width_lp*num_inputs_lp-modulo_bits_p)) bcc
-     (.clk(clk)
+     (.clk_i(clk)
       ,.reset_i(reset)
       ,.ctr_r_o(test_inputs_raw[modulo_bits_p+:in_width_lp*num_inputs_lp-modulo_bits_p])
       );

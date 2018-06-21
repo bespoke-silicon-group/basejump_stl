@@ -160,7 +160,7 @@ module test_bsg;
 
    bsg_cycle_counter #(.width_p(32),.init_val_p(0)
                        ) bcc
-     (.clk(clk)
+     (.clk_i(clk)
       ,.reset_i(reset)
       ,.ctr_r_o(cycle)
       );
