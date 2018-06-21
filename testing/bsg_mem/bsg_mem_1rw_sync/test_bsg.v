@@ -73,7 +73,7 @@ module test_bsg;
   bsg_cycle_counter #(  .width_p   (`BSG_SAFE_CLOG2(3*els_lp)+1)
                       , .init_val_p()
                      )  cycle_counter
-                     (  .clk    (clk)
+                     (  .clk_i    (clk)
                       , .reset_i(reset)
                       , .ctr_r_o(count)
                      );

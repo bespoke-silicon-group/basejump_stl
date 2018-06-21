@@ -172,12 +172,12 @@ logic [maxDivisionWidth_p-1:0] input_counter_r;
 // clk is divided by the configured clk_divider_i plus one. So 0 
 // means no clk division and 15 means clk division by factor of 16.
 
-counter_w_overflow #(.width_p(maxDivisionWidth_p)) input_counter
+bsg_counter_dynamic_limit #(.width_p(maxDivisionWidth_p)) input_counter
 
-            ( .clk(clk)
-            , .reset(channel_reset)
+            ( .clk_i(clk)
+            , .reset_i(channel_reset)
 
-            , .overflow_i(input_clk_divider)
+            , .limit_i(input_clk_divider)
             , .counter_o(input_counter_r)
             );
 

@@ -44,7 +44,7 @@ module test_bsg;
 
   bsg_cycle_counter #(  .width_p(count_width_lp)
                      )  cycle_counter
-                     (  .clk    (clk)
+                     (  .clk_i    (clk)
                       , .reset_i(reset)
                       , .ctr_r_o(count)
                      );

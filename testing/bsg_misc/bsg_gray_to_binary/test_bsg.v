@@ -51,7 +51,7 @@ module test_bsg;
   logic [width_lp-1:0] count, count_r;
   bsg_cycle_counter #(  .width_p(width_lp)
                      )  bcc
-                     (  .clk    (clk)
+                     (  .clk_i    (clk)
                       , .reset_i(reset)
                       , .ctr_r_o(count)
                      );

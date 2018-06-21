@@ -46,7 +46,7 @@ else
   HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_fifo_1r1w_small.v 
   HDL_SOURCE +=	$(MISC_PATH)/bsg_counter_up_down.v 
   HDL_SOURCE +=	$(MISC_PATH)/bsg_counter_up_down_variable.v 
-  HDL_SOURCE +=	$(MISC_PATH)/bsg_counter_w_overflow.v 
+  HDL_SOURCE +=	$(MISC_PATH)/bsg_counter_dynamic_limit.v 
   HDL_SOURCE +=	$(MEM_PATH)/bsg_mem_1r1w.v
   HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_channel_narrow.v 
   HDL_SOURCE +=	$(DATA_FLOW_PATH)/bsg_fifo_1r1w_small_credit_on_input.v 

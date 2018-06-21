@@ -75,7 +75,7 @@ module test_bsg;
   
   bsg_cycle_counter #(  .width_p(width_lp)
                      )  DUT
-                     (  .clk    (clk)
+                     (  .clk_i    (clk)
                       , .reset_i(reset)
                       , .ctr_r_o(test_output)
                      );

@@ -179,7 +179,7 @@ module config_node
    bsg_dff_reset #(.width_p(len_width_lp)
                    ,.harden_p(1)
                    ) count_reg
-     (.clock_i(config_i.cfg_clk)
+     (.clk_i(config_i.cfg_clk)
       ,.data_i(count_n)
       ,.data_o(count_r)
       ,.reset_i(cfg_reset)
@@ -217,7 +217,7 @@ module config_node
      begin: def
         bsg_dff_reset_en #(.width_p(data_bits_p),.harden_p(1'b1))
         data_r_reg
-          (.clock_i(config_i.cfg_clk)
+          (.clk_i(config_i.cfg_clk)
            ,.reset_i(cfg_reset)
            ,.en_i(data_en)
            ,.data_i(data_n)
@@ -226,7 +226,7 @@ module config_node
 
         bsg_dff_reset_en #(.width_p(data_bits_p),.harden_p(1'b1))
         data_dst_reg
-          (.clock_i(clk)
+          (.clk_i(clk)
            ,.data_i(data_r)
            ,.en_i(data_dst_en)
            ,.reset_i(default_en)
