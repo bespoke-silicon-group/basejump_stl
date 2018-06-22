@@ -70,15 +70,20 @@ module bsg_fpu_f2i_32 (
   logic [31:0] post_round;
   assign post_round = inverted + (do_round ^ sign);
 
-  logic exp_out_of_range;
-  assign exp_out_of_range = exp > 8'd157;
+  logic exp_too_big;
+  logic exp_too_small;
+  assign exp_too_big = exp > 8'd157;
+  assign exp_too_small = exp < 8'd125; 
 
   always_comb begin
     if (zero) begin
       o = 32'b0;
     end
-    else if (exp_out_of_range) begin
+    else if (exp_too_big) begin
       o = 32'h8000_0000;
+    end
+    else if (exp_too_small) begin
+      o = 32'b0;
     end
     else begin
       o = post_round;

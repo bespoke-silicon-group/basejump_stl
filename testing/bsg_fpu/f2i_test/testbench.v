@@ -1,12 +1,15 @@
 module testbench();
 
-  parameter rom_size_p = 14;
+  parameter rom_size_p = 100;
   logic [`BSG_SAFE_CLOG2(rom_size_p)-1:0] rom_addr_i;
   logic [31:0] f2i_i;
   logic [31:0] actual;
   logic [2:0] rm;
   logic [31:0] expected;
+  logic passed;
 
+  assign passed = actual == expected;
+  
   data_rom #(
     .word_width_p(32+3)
     ,.word_count_p(rom_size_p)

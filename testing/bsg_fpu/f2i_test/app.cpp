@@ -1,5 +1,6 @@
 #pragma STDC FENV_ACCESS_ON
 
+#include <cstdlib>
 #include <math.h>
 #include <iostream>
 #include <fstream>
@@ -13,9 +14,12 @@ ofstream outputROM;
 
 int main()
 {
+  srand(time(0));
+
   inputROM.open("f2i_32_input.rom");
   outputROM.open("f2i_32_output.rom");
 
+/*
   test(1, 0);
   test(1, 1.49);
   test(1, 1.5);
@@ -30,6 +34,11 @@ int main()
   test(1, -0.5);
   test(1, 0.005);
   test(1, -0.005);
+*/
+  for (int i = 0; i < 100; i++)
+  {
+    test(1, FPUTestUtil::randf());
+  }
 
   inputROM.close();
   outputROM.close();
