@@ -7,7 +7,7 @@
 module bsg_fpu_f2i #( parameter width_p="inv" )
 (
   input [width_p-1:0] a_i
-  ,input rm_i
+  ,input [2:0] rm_i
   ,output logic [width_p-1:0] o 
 ); 
 

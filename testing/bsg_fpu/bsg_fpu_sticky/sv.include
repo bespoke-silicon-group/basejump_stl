@@ -1,0 +1,4 @@
+../../../bsg_misc/bsg_defines.v
+../../../bsg_misc/bsg_scan.v
+../../../bsg_fpu/bsg_fpu_sticky.v
+testbench.v

@@ -35,6 +35,19 @@ void print_int_in_binary(int a)
   }
 }
 
+void write_float_in_binary(FILE *fp, float a)
+{
+  char fs[32];
+  
+  for (int i = 0; i < 32; i++) 
+  {
+    
+  }
+  
+  fputs(, fp);
+}
+
+
 /**
  *  print reset trace.
  */

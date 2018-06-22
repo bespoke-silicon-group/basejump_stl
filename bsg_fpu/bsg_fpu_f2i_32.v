@@ -8,7 +8,7 @@
 
 module bsg_fpu_f2i_32 (
   input [31:0] a_i          // input float
-  ,input rm_i               // rounding mode
+  ,input [2:0] rm_i         // rounding mode
   ,output logic [31:0] o    // output int
 );
 
@@ -41,8 +41,8 @@ module bsg_fpu_f2i_32 (
   assign shifted = preshift >> shamt[5:0];
 
   logic sticky_bit;
-  bsg_sticky #(.width_p(33)) sticky0 (
-    .a_i(shifted)
+  bsg_fpu_sticky #(.width_p(33)) sticky0 (
+    .i(preshift)
     ,.shamt_i(shamt[5:0])
     ,.sticky_o(sticky_bit)
   );
@@ -54,8 +54,16 @@ module bsg_fpu_f2i_32 (
   assign round_bit = shifted[0];
  
   logic do_round;
-  assign do_round = rm_i & guard_bit & (shifted[2] | round_bit | sticky_bit); 
-
+  bsg_fpu_round round0 (
+    .sign_i(sign)
+    ,.lsb_i(shifted[2])
+    ,.guard_i(guard_bit)
+    ,.round_i(round_bit)
+    ,.sticky_i(sticky_bit)
+    ,.rm_i(rm_i)
+    ,.do_round_o(do_round)
+  );
+  
   logic [31:0] inverted;
   assign inverted = {32{sign}} ^ {1'b0, shifted[32:2]};
 
@@ -63,7 +71,7 @@ module bsg_fpu_f2i_32 (
   assign post_round = inverted + (do_round ^ sign);
 
   logic exp_out_of_range;
-  assign exp_out_of_range = shamt > 8'd30;
+  assign exp_out_of_range = exp > 8'd157;
 
   always_comb begin
     if (zero) begin
