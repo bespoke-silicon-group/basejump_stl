@@ -20,6 +20,8 @@
 float randf();
 void print_float_in_binary(float a);
 void print_int_in_binary(int a);
+void write_float_in_binary(float a);
+void write_int_in_binary(int a);
 void print_done();
 void print_reset();
 bool is_denormal(float a);
