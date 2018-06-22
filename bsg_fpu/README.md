@@ -1,14 +1,10 @@
 # bsg_fpu
 
-
-
 ### bsg_fpu_cmp
 
 This is a floating-point comparator. It can calculate >, <, ==, !=, >=, <=, depending on subop code you provide as an input.
 
 There is no pipeline stage for this module.
-
-
 
 ### bsg_fpu_add_sub
 
@@ -22,15 +18,11 @@ Its rounding mode is "round to nearest even".
 
 Here is the description of output behavior.
 
-
-
 - If either input is signaling NaN, output is set to signaling NaN (0x7fbfffff), and invalid exception is raised.
 
 - If either input is quiet NaN, output is set to quiet NaN (0x7fffffff).
 
 - If both inputs are infinite, output is set to either infinite or quiet NaN, depending on sub_i and signs of inputs. For example, positive infinity plus positive infinity results in positive infinite, whereas positive infinity minus positive infinity results in quiet NaN.
-
-
 
 - If either input is denormal, then output is set to quiet NaN, and unimplemented exception is raised.
 
@@ -39,8 +31,6 @@ Here is the description of output behavior.
 - If the result underflows, then output is set to zero, and underflow exception is raised.
 
 - If the result overflows, the output is set to infinitiy, and overflow exception is raised.
-
-
 
 ### bsg_fpu_mul
 
@@ -74,11 +64,19 @@ Here is the description of output behavior.
 
 - If the result overflows, the output is set to infinitiy, and overflow exception is raised.
 
-#### bsg_fpu_i2f
+### bsg_fpu_i2f
 
 This module converts from signed integer to float.
 
+### bsg_fpu_f2i
 
+This module converts from float to signed integer.
+
+There are two rounding modes that are implemented.
+
+- truncate: this is what happens when you cast float to int in C/C++.
+
+- round-to-nearest-even
 
 ### Testing
 
@@ -88,6 +86,6 @@ Testing was originally done with trace files. C source code to generate trace pa
 
 - 2018-06-19 - added bsg_fpu_i2f_32.
 
-
+- 2018-06-21 - added bsg_fpu_f2i_32.
 
 

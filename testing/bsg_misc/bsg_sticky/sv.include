@@ -1,0 +1,3 @@
+../../../bsg_misc/bsg_defines.v
+../../../bsg_misc/bsg_sticky.v
+testbench.v

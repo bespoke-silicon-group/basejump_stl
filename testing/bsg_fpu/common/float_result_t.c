@@ -4,7 +4,6 @@
  *  @author Tommy Jung
  */
 
-
 #include <stdio.h>
 #include "util.h"
 #include "float_result_t.h"
