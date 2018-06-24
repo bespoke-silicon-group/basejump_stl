@@ -1,45 +1,51 @@
-#include <stdint.h>
-#include <float.h>
-#include <math.h>
-#include <stdio.h>
-#include <fenv.h>
-#include <stdlib.h>
-#include <time.h>
-#include "util.h"
-#include "float_result_t.h"
-
 #pragma STDC FENV_ACCESS ON
 
+#include <cstdint>
+#include <float.h>
+#include <math.h>
+#include <iostream>
+#include <fstream>
+#include <cfenv>
+#include <cstdlib>
+#include "FloatResult.hpp"
+#include "FPUTestUtil.hpp"
+using namespace std;
+
+#define NUM_TEST 1000
+
 void arrange(float a, float b, int sub_i);
-void act(float a, float b, int sub_i, float_result_t *fres);
-void assert(float_result_t *fres); 
+void act(float a, float b, int sub_i, FloatResult* fres);
+void assert(FloatResult *fres); 
 uint32_t calculate_sign(float a, float b, int sub_i);
 void test(float a, float b, int sub_i);
 
+ofstream inputROM;
+ofstream outputROM;
+
 int main()
 {
-    srand(time(0)); // set random seed
-    print_reset();  // print reset trace
-
+  srand(time(0)); // set random seed
+  
+  inputROM.open("add_sub_32_input.rom");
+  outputROM.open("add_sub_32_output.rom");  
     
-    for (int i = 0; i < 1000; i++)
-    {
-        float a = randf();
-        float b = randf();
-        int sub_i = rand() % 2;
-        test(a, b, sub_i);
-    } 
+  for (int i = 0; i < NUM_TEST; i++)
+  {
+    float a = FPUTestUtil::randf();
+    float b = FPUTestUtil::randf();
+    int sub_i = rand() % 2;
+    test(a, b, sub_i);
+  }
 
-    test(itof(0x7fa21dff), itof(0x66f2c522), 1);
-    test(itof(0x01a2ec9a), itof(0x01b60418), 1);
-    test(itof(0x34561fff), itof(0x34560f00), 0);
-    print_done();
-    return 0;
+  inputROM.close();
+  outputROM.close(); 
+
+  return 0;
 }
 
 void test(float a, float b, int sub_i)
 {
-    float_result_t fres;
+    FloatResult fres;
     arrange(a, b, sub_i);
     act(a, b, sub_i, &fres);
     assert(&fres);
@@ -47,36 +53,30 @@ void test(float a, float b, int sub_i)
 
 void arrange(float a, float b, int sub_i)
 {
-    // header
-    printf("00010_");
-
-    // padding = 75 - 64 - 1 = 10
-    printf("0000000000_");
-
-    //sub_i
-    printf("%d_", sub_i);
-    // print a
-    print_float_in_binary(a);
-    printf("_");
-
-    // print b
-    print_float_in_binary(b);
-    printf("\n");
+    inputROM << sub_i << "_";
+    inputROM << FPUTestUtil::ConvertToBinaryString(a) << "_";
+    inputROM << FPUTestUtil::ConvertToBinaryString(b) << endl;
 }
 
 
-void act(float a, float b, int sub_i, float_result_t *fres)
+void act(float a, float b, int sub_i, FloatResult *fres)
 {
     int sign = calculate_sign(a, b, sub_i);
-    int sub_mag = (ftoi(a) & 0x80000000) ^ (ftoi(a) & 0x80000000) ^ (sub_i << 31);
+    int hex_a = FPUTestUtil::ConvertFloatToInt(a);
+    int hex_b = FPUTestUtil::ConvertFloatToInt(b);
+    int sub_mag = (hex_a & 0x80000000) ^ (hex_b & 0x80000000) ^ (sub_i << 31);
+    bool a_infty = FPUTestUtil::IsInfty(a);
+    bool b_infty = FPUTestUtil::IsInfty(b);
+    bool a_denormal = FPUTestUtil::IsDenormal(a);
+    bool b_denormal = FPUTestUtil::IsDenormal(b);
 
-    if (is_sig_nan(a) || is_sig_nan(b))
+    if (FPUTestUtil::IsSigNaN(a) || FPUTestUtil::IsSigNaN(b))
     {
         fres->unimplemented = 0; 
         fres->invalid = 1; 
         fres->overflow = 0;
         fres->underflow = 0;
-        fres->z = itof(sign | 0x7fbfffff); // signan
+        fres->z = FPUTestUtil::ConvertIntToFloat(sign | 0x7fbfffff); // signan
     }
     else if (isnan(a) || isnan(b))
     {
@@ -84,49 +84,48 @@ void act(float a, float b, int sub_i, float_result_t *fres)
         fres->invalid = 0; 
         fres->overflow = 0;
         fres->underflow = 0;
-        fres->z = itof(sign | 0x7fffffff); // quiet nan
+        fres->z = FPUTestUtil::ConvertIntToFloat(sign | 0x7fffffff); // quiet nan
     }
-    else if (is_infty(a) && is_infty(b))
+    else if (a_infty && b_infty)
     {
         fres->unimplemented = 0; 
         fres->invalid = 0; 
         fres->overflow = 0;
         fres->underflow = 0;
         fres->z = (sub_mag == 0)
-            ? itof(sign | 0x7f800000)  // infinite
-            : itof(sign | 0x7fffffff); // quiet NaN
+            ? FPUTestUtil::ConvertIntToFloat(sign | 0x7f800000)  // infinite
+            : FPUTestUtil::ConvertIntToFloat(sign | 0x7fffffff); // quiet NaN
     }
-    else if (is_infty(a) && !is_infty(b))
+    else if (a_infty && !b_infty)
     {
         fres->unimplemented = 0; 
         fres->invalid = 0; 
         fres->overflow = 0;
         fres->underflow = 0;
-        fres->z = itof(sign | 0x7f800000);
+        fres->z = FPUTestUtil::ConvertIntToFloat(sign | 0x7f800000);
     }
-    else if (!is_infty(a) && is_infty(b))
+    else if (!a_infty && b_infty)
     {
         fres->unimplemented = 0; 
         fres->invalid = 0; 
         fres->overflow = 0;
         fres->underflow = 0;
-        fres->z = itof(sign | 0x7f800000);
+        fres->z = FPUTestUtil::ConvertIntToFloat(sign | 0x7f800000);
     }
-    else if (is_denormal(a) || is_denormal(b))
+    else if (a_denormal || b_denormal)
     {
-        
         fres->unimplemented = 1; 
         fres->invalid = 0; 
         fres->overflow = 0;
         fres->underflow = 0;
-        fres->z = itof(sign | 0x7fffffff);
+        fres->z = FPUTestUtil::ConvertIntToFloat(sign | 0x7fffffff);
     }
     else
     {
         // clear exception flags. 
         if (feclearexcept(FE_ALL_EXCEPT) != 0)
         {
-            printf("failed to clear floating point exception.\n");
+            cout << "failed to clear floating point exception." << endl;
         }
 
         float z = (sub_i == 1)
@@ -138,17 +137,17 @@ void act(float a, float b, int sub_i, float_result_t *fres)
         int underflow = 0;
 
         // grab exception flags
-        checkError(fegetexceptflag((fexcept_t *) &invalid, FE_INVALID));
-        checkError(fegetexceptflag((fexcept_t *) &overflow, FE_OVERFLOW));
-        checkError(fegetexceptflag((fexcept_t *) &underflow, FE_UNDERFLOW));
+        FPUTestUtil::CheckError(fegetexceptflag((fexcept_t *) &invalid, FE_INVALID));
+        FPUTestUtil::CheckError(fegetexceptflag((fexcept_t *) &overflow, FE_OVERFLOW));
+        FPUTestUtil::CheckError(fegetexceptflag((fexcept_t *) &underflow, FE_UNDERFLOW));
        
-        if (is_denormal(z)) 
+        if (FPUTestUtil::IsDenormal(z)) 
         {
             fres->unimplemented = 0;
             fres->invalid = 0; 
             fres->overflow = 0;
             fres->underflow = 1;
-            fres->z = itof(sign | 0);
+            fres->z = FPUTestUtil::ConvertIntToFloat(sign | 0);
         }
         else if (underflow != 0)
         {
@@ -156,7 +155,7 @@ void act(float a, float b, int sub_i, float_result_t *fres)
             fres->invalid = 0; 
             fres->overflow = 0;
             fres->underflow = 1;
-            fres->z = itof(sign | 0);
+            fres->z = FPUTestUtil::ConvertIntToFloat(sign | 0);
         }
         else if (overflow != 0)
         {
@@ -164,7 +163,7 @@ void act(float a, float b, int sub_i, float_result_t *fres)
             fres->invalid = 0; 
             fres->overflow = 1;
             fres->underflow = 0;
-            fres->z = itof(sign | 0x7f800000);
+            fres->z = FPUTestUtil::ConvertIntToFloat(sign | 0x7f800000);
         }
         else
         {
@@ -177,11 +176,14 @@ void act(float a, float b, int sub_i, float_result_t *fres)
     }
 }
 
+void assert(FloatResult *fres)
+{
+  outputROM << fres->ToString() << endl;
+}
 
 
 uint32_t calculate_sign(float a, float b, int sub_i)
 {
-    // calculate sign
     uint32_t sign = 0;
     uint32_t hex_a = hex(a);
     uint32_t hex_b = hex(b);

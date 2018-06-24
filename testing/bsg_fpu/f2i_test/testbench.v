@@ -44,7 +44,6 @@ module testbench();
       rom_addr_i++;
     end 
     #(1);
-    #(1);
   end
 
 

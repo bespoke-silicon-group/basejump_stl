@@ -2,9 +2,9 @@ testgen:
 	g++ -o app ./app.cpp ../common/*.cpp \
 		-I../common/ -lm -std=c++11
 	./app
-	echo "input file"
+	echo "==== input ROM ===="
 	cat f2i_32_input.rom
-	echo "output file"
+	echo "==== output ROM ===="
 	cat f2i_32_output.rom
 	
 
