@@ -72,11 +72,17 @@ This module converts from signed integer to float.
 
 This module converts from float to signed integer.
 
-There are two rounding modes that are implemented.
+Rounding modes for RISC-V ISA are implemented.
 
-- truncate: this is what happens when you cast float to int in C/C++.
+- RNE : round-to-nearest, ties to even (default) 
 
-- round-to-nearest-even
+- RTZ : round-towards-zero (truncate)
+
+- RDN : round-down (floor)
+
+- RUP : round-up (ceil)
+
+- RMM : round-to-nearest, ties to max magnitude (what we learned in grade school).
 
 ### Testing
 
