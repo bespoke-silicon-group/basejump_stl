@@ -3,13 +3,15 @@ testgen:
 		-I../common/ -lm -std=c++11
 	./app
 	echo "input file"
-	more f2i_32_input.rom
+	cat f2i_32_input.rom
 	echo "output file"
-	more f2i_32_output.rom
+	cat f2i_32_output.rom
+	
 
 sim:
 	vcs -f sv.include +v2k -R +lint=all -sverilog -full64 \
-		-debug_pp -timescale=1ns/10ps -l sim.log
+		-debug_pp -timescale=1ns/10ps -l sim.log \
+		+define+LINE_COUNT=$(shell wc -l < f2i_32_input.rom)
 
 dve:
 	dve -full64 -vpd vcdplus.vpd &
