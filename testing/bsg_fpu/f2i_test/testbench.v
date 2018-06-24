@@ -1,6 +1,6 @@
 module testbench();
 
-  parameter rom_size_p = 100;
+  parameter rom_size_p = 1000;
   logic [`BSG_SAFE_CLOG2(rom_size_p)-1:0] rom_addr_i;
   logic [31:0] f2i_i;
   logic [31:0] actual;
@@ -43,6 +43,8 @@ module testbench();
       assert(actual == expected);
       rom_addr_i++;
     end 
+    #(1);
+    #(1);
   end
 
 

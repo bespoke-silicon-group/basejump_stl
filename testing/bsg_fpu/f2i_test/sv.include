@@ -1,5 +1,6 @@
 ../../../bsg_misc/bsg_defines.v
 ../../../bsg_misc/bsg_scan.v
+../../../bsg_fpu/bsg_fpu_rm_pkg.v
 ../../../bsg_fpu/bsg_fpu_f2i.v
 ../../../bsg_fpu/bsg_fpu_f2i_32.v
 ../../../bsg_fpu/bsg_fpu_preprocess.v

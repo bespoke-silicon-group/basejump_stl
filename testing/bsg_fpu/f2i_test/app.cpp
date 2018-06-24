@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <math.h>
+#include <cfenv>
 #include <iostream>
 #include <fstream>
 #include "FPUTestUtil.hpp"
@@ -19,26 +20,15 @@ int main()
   inputROM.open("f2i_32_input.rom");
   outputROM.open("f2i_32_output.rom");
 
-/*
-  test(1, 0);
-  test(1, 1.49);
-  test(1, 1.5);
-  test(1, 2.49);
-  test(1, -1.49);
-  test(1, -2.49);
-  test(1, -12.49);
-  test(1, 2423.49);
-  test(1, -2.49);
-  test(1, 9234.5003);
-  test(1, 0.5);
-  test(1, -0.5);
-  test(1, 0.005);
-  test(1, -0.005);
-*/
-  for (int i = 0; i < 100; i++)
+  for (int i = 0; i < 998; i++)
   {
-    test(1, FPUTestUtil::randf());
+    test(0, FPUTestUtil::randf());
   }
+
+  int n = 0xbe000000;
+  test(2, flt(n));
+  n = 0x3e000000;
+  test(3, flt(n));
 
   inputROM.close();
   outputROM.close();
@@ -55,11 +45,22 @@ void test(int rm, float f)
   int output;
   switch (rm) 
   {
-    case 0: output = (int) roundf(f / 2) * 2; break;
-    case 1: output = (int) truncf(f); break;
-    case 2: output = (int) floorf(f); break;
-    case 3: output = (int) ceilf(f); break;
-    case 4: output = (int) roundf(f); break;
+    case 0:
+      fesetround(FE_TONEAREST);
+      output = (int) nearbyint(f);
+      break;
+    case 1:
+      output = (int) truncf(f);
+      break;
+    case 2:
+      output = (int) floorf(f);
+      break;
+    case 3:
+      output = (int) ceilf(f);
+      break;
+    case 4:
+      output = (int) roundf(f);
+      break;
   }
 
   outputROM << FPUTestUtil::ConvertToBinaryString(output, 32) << endl;

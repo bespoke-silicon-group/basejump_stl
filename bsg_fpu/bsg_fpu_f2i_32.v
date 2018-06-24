@@ -6,6 +6,8 @@
  *  @author Tommy Jung
  */
 
+import bsg_fpu_rm_pkg::*;
+
 module bsg_fpu_f2i_32 (
   input [31:0] a_i          // input float
   ,input [2:0] rm_i         // rounding mode
@@ -31,8 +33,15 @@ module bsg_fpu_f2i_32 (
     ,.man_o(mantissa)
   );
 
+  logic exp_too_big;
+  logic exp_too_small;
+  assign exp_too_big = exp > 8'd157;
+  assign exp_too_small = exp < 8'd125; 
+
   logic [7:0] shamt;
-  assign shamt = 8'd157 - exp;
+  assign shamt = exp_too_small
+    ? 8'd157 - 8'd124
+    : 8'd157 - exp;
 
   logic [32:0] preshift;
   assign preshift = {1'b1, mantissa, 9'b0};
@@ -70,10 +79,6 @@ module bsg_fpu_f2i_32 (
   logic [31:0] post_round;
   assign post_round = inverted + (do_round ^ sign);
 
-  logic exp_too_big;
-  logic exp_too_small;
-  assign exp_too_big = exp > 8'd157;
-  assign exp_too_small = exp < 8'd125; 
 
   always_comb begin
     if (zero) begin
@@ -83,7 +88,18 @@ module bsg_fpu_f2i_32 (
       o = 32'h8000_0000;
     end
     else if (exp_too_small) begin
-      o = 32'b0;
+      if (rm_i == RTZ) begin
+        o = 32'b0;
+      end
+      else if (rm_i == RDN) begin
+        o = do_round ? 32'hffff_ffff : 32'h0;  
+      end
+      else if (rm_i == RUP) begin
+        o = do_round ? 32'h0000_0001 : 32'h0;
+      end
+      else begin
+        o = 32'b0;
+      end
     end
     else begin
       o = post_round;

@@ -23,6 +23,8 @@ module bsg_fpu_sticky #(parameter width_p="inv") (
   assign answer = {scan_out, 1'b0};
 
   // final output
-  assign sticky_o = answer[shamt_i];
+  assign sticky_o = shamt_i > width_p
+    ? answer[width_p]
+    : answer[shamt_i];
 
 endmodule
