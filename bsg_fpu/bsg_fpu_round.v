@@ -7,6 +7,9 @@
  */
 
 // lsb | g r s
+
+import bsg_fpu_rm_pkg::*;
+
 module bsg_fpu_round (
   input sign_i
   ,input lsb_i
@@ -20,15 +23,15 @@ module bsg_fpu_round (
   // if do_round_o == 1, that means we want to increment the 'magnitude'.
   always_comb begin
     case (rm_i)
-      3'b000: // RNE: round to nearest, ties to even (default)
+      RNE: 
         do_round_o = guard_i & (lsb_i | round_i | sticky_i);     
-      3'b001: // RTZ: round towards zero (truncate)
+      RTZ: 
         do_round_o = 1'b0;
-      3'b010: // RDN: round down (floor)
-        do_round_o = sign_i;
-      3'b011: // RUP: round up (ceil)
-        do_round_o = ~sign_i;
-      3'b100: // RMM: round to nearest, ties to max magnitude (what we learned in grammar school).
+      RDN: 
+        do_round_o = sign_i & (guard_i | round_i | sticky_i);
+      RUP: 
+        do_round_o = ~sign_i & (guard_i | round_i | sticky_i);
+      RMM: 
         do_round_o = guard_i;
       default:
         do_round_o = 1'b0;

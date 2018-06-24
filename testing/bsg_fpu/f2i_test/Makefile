@@ -1,6 +1,6 @@
 testgen:
 	g++ -o app ./app.cpp ../common/*.cpp \
-		-I../common/ -lm
+		-I../common/ -lm -std=c++11
 	./app
 	echo "input file"
 	more f2i_32_input.rom
