@@ -360,7 +360,7 @@ module bsg_fpu_add_sub_n #( parameter e_p="inv"
   // subtract from the larger exp by the amount the mantissa was shifted (number of leading zeros). 
   logic [e_p-1:0] adjusted_exp;
   logic adjusted_exp_cout;
-  assign {adjusted_exp_cout, adjusted_exp} = larger_exp_2_r + ~{3'b000, num_zero} + 1'b1; 
+  assign {adjusted_exp_cout, adjusted_exp} = larger_exp_2_r - num_zero; 
 
   // pre_roundup
   logic [e_p+m_p-1:0] pre_roundup;
@@ -491,7 +491,7 @@ module bsg_fpu_add_sub_n #( parameter e_p="inv"
       invalid_o = 1;
       overflow_o = 0;
       underflow_o = 0;
-      z_o = `SIGNAN(sgn,e_p,m_p); // sig nan
+      z_o = `SIGNAN(sgn,e_p,m_p);
     end
     else if (a_nan_3_r | b_nan_3_r) begin
       unimplemented_o = 0;
