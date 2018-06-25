@@ -31,6 +31,8 @@ module bsg_gray_to_binary #(parameter width_p = -1)
 
    bsg_scan #(.width_p(width_p)
 	      ,.xor_p(1)
-	      ) scan_xor (.i(gray_i),.o(binary_o));
+	      ) scan_xor
+        (.i(gray_i)
+        ,.o(binary_o));
 
 endmodule
