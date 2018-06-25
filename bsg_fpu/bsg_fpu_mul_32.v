@@ -37,8 +37,8 @@ module bsg_fpu_mul_32
   logic [7:0] exp_a, exp_b;
   logic [22:0] man_a, man_b;
 
-  bsg_fpu_preprocess #(.exp_width_p(8)
-                      ,.mantissa_width_p(23))
+  bsg_fpu_preprocess #(.e_p(8)
+                      ,.m_p(23))
     a_preprocess (.a_i(a_i)
                   ,.zero_o(a_zero)
                   ,.nan_o(a_nan)
@@ -52,8 +52,8 @@ module bsg_fpu_mul_32
                   ,.man_o(man_a)
                   );
 
-  bsg_fpu_preprocess #(.exp_width_p(8)
-                      ,.mantissa_width_p(23))
+  bsg_fpu_preprocess #(.e_p(8)
+                      ,.m_p(23))
     b_preprocess (.a_i(b_i)
                   ,.zero_o(b_zero)
                   ,.nan_o(b_nan)

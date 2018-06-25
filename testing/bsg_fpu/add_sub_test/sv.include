@@ -6,8 +6,10 @@
 ../../../bsg_misc/bsg_scan.v
 ../../../bsg_misc/bsg_less_than.v
 ../../../bsg_misc/bsg_reduce.v
+../../../bsg_fpu/bsg_fpu_defines.v
+../../../bsg_fpu/bsg_fpu_sticky.v
 ../../../bsg_fpu/bsg_fpu_preprocess.v
-../../../bsg_fpu/bsg_fpu_add_sub_32.v
+../../../bsg_fpu/bsg_fpu_add_sub_n.v
 ../../../bsg_fpu/bsg_fpu_add_sub.v
 ../common/data_rom.v
 ../common/rv_tester.v
