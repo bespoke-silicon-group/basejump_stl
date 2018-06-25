@@ -1,9 +1,9 @@
 32_INPUT_ROM = add_sub_32_input.rom
 32_OUTPUT_ROM= add_sub_32_output.rom
 
+all: app testgen sim
+
 testgen:
-	g++ -o app ./app.cpp ../common/*.cpp \
-		-I../common/ -lm -std=c++11
 	./app
 	echo "==== input ROM ===="
 	cat $(32_INPUT_ROM)
@@ -14,6 +14,11 @@ sim:
 	vcs -f sv.include +v2k -R +lint=all -sverilog -full64 \
 		-debug_pp -timescale=1ns/10ps -l sim.log \
 		+define+ROM_SIZE=$(shell wc -l < $(32_INPUT_ROM))
+
+app:
+	g++ -o app ./app.cpp ../common/*.cpp \
+		-I../common/ -lm -std=c++11
+	
 
 dve:
 	dve -full64 -vpd vcdplus.vpd &

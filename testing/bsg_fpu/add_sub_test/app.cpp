@@ -11,7 +11,7 @@
 #include "FPUTestUtil.hpp"
 using namespace std;
 
-#define NUM_TEST 1000
+#define NUM_TEST 10000
 
 void arrange(float a, float b, int sub_i);
 void act(float a, float b, int sub_i, FloatResult* fres);
