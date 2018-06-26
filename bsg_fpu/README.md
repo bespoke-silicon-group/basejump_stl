@@ -94,4 +94,4 @@ Testing was originally done with trace files. C source code to generate trace pa
 
 - 2018-06-21 - added bsg_fpu_f2i_32.
 
-
+- 2018-06-25 - parameterized bsg_fpu_add_sub to support 32/64-bit.
