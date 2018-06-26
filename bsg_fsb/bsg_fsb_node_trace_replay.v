@@ -6,7 +6,7 @@
 //
 // 0: wait one cycle
 // 1: send data
-// 2: receive data
+// 2: receive data (and check its value)
 // 3: assert done_o; test complete.
 // 4: end test; call $finish
 // 5: decrement cycle counter; wait for cycle_counter == 0
