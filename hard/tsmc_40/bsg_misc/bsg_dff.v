@@ -5,7 +5,7 @@ if (harden_p && (width_p==bits) && (strength_p==strength)) \
   end
 
 module bsg_dff #(width_p=-1, harden_p=1, strength_p=1)
-   (input   clock_i
+   (input   clk_i
     ,input  [width_p-1:0] data_i
     ,output [width_p-1:0] data_o
     );
@@ -179,7 +179,7 @@ module bsg_dff #(width_p=-1, harden_p=1, strength_p=1)
 
         assign data_o = data_r;
 
-        always @(posedge clock_i)
+        always @(posedge clk_i)
           data_r <= data_i;
      end
 endmodule

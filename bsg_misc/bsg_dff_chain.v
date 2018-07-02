@@ -36,7 +36,7 @@ module bsg_dff_chain #(
                 for(i=1; i<= num_stages_p; i++) begin
                         bsg_dff #( .width_p ( width_p ) )
                                 ch_reg (
-                                        .clock_i        ( clk_i                 )
+                                        .clk_i        ( clk_i                 )
                                        ,.data_i         ( data_delayed[ i-1 ]   )
                                        ,.data_o         ( data_delayed[ i   ]   )
                                 );
