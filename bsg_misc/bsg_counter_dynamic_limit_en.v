@@ -1,12 +1,13 @@
 //====================================================================
-// bsg_counter_w_enable.v
+// bsg_counter_dynamic_limit_en.v
 // 02/16/2016, shawnless.xie@gmail.com
 //====================================================================
 // This module implements simple counter with enable signal and dynamic
 // overflow limit.
 //
 // The counter outputs 0 ~ (limit-1) value
-module bsg_counter_en_overflow #(parameter width_p = -1)
+//module renamed from bsg_counter_en_overflow
+module bsg_counter_dynamic_limit_en #(parameter width_p = -1)
 
             ( input                      clk_i
             , input                      reset_i

@@ -1,4 +1,4 @@
-
+`define WIDTH_P 12
 
 
 module test_bsg;
@@ -9,7 +9,7 @@ module test_bsg;
 
    wire clk;
    wire reset;
-   localparam width_lp = 12;
+   localparam width_lp = `WIDTH_P;
 
    bsg_nonsynth_clock_gen #(.cycle_time_p(cycle_time_lp)) clock_gen
    (.o(clk));
@@ -25,12 +25,12 @@ module test_bsg;
    wire [width_lp-1:0]     test_output;
 
    wire [width_lp-1:0] 	   tip1 = (test_inputs + 1'b1);
-   
+
    always_ff @(posedge clk)
      begin
 	assert (test_output == (tip1>>1)^tip1)
 	  else $error("mismatch on input %x",test_inputs);
-	
+
         test_inputs_r <= test_inputs;
 
         if (~(|test_inputs) & (&test_inputs_r))
@@ -38,7 +38,7 @@ module test_bsg;
      end
 
    bsg_cycle_counter #(.width_p(width_lp)) bcc
-     (.clk(clk)
+     (.clk_i(clk)
       ,.reset_i(reset)
       ,.ctr_r_o(test_inputs)
       );
@@ -50,8 +50,8 @@ module test_bsg;
       );
 
 
-   
-   
+
+
    bsg_nonsynth_ascii_writer
      #(.width_p(width_lp)
        ,.values_p(3)
@@ -70,4 +70,3 @@ module test_bsg;
     );
 
 endmodule
-

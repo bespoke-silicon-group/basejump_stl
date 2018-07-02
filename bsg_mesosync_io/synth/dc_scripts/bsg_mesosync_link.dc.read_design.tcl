@@ -29,7 +29,7 @@ set rtl_files [list $DEFINES_PATH/bsg_defines.v \
                     $DATA_FLOW_PATH/bsg_fifo_1r1w_small.v \
                     $MISC_PATH/bsg_counter_up_down.v \
                     $MISC_PATH/bsg_counter_up_down_variable.v \
-                    $MISC_PATH/bsg_counter_w_overflow.v \
+                    $MISC_PATH/bsg_counter_dynamic_limit.v \
                     $MEM_PATH/bsg_mem_1r1w.v \
                     $DATA_FLOW_PATH/bsg_channel_narrow.v \
                     $DATA_FLOW_PATH/bsg_fifo_1r1w_small_credit_on_input.v \

@@ -74,7 +74,7 @@ module test_bsg;
   bsg_cycle_counter #(  .width_p   (addr_width_lp+1)
                       , .init_val_p(0)
                      )  counter
-                     (  .clk    (clk)
+                     (  .clk_i    (clk)
                       , .reset_i(reset)
                       , .ctr_r_o(count)
                      );

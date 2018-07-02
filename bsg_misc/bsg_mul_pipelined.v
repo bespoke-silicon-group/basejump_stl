@@ -62,11 +62,11 @@ module bsg_mul_pipelined #(parameter width_p="inv"
                            , parameter pipeline_p=1
                            , parameter harden_p  =1
                            )
-   (input   [width_p-1:0] x_i
+   (  input clock_i
+    , input en_i
+    , input   [width_p-1:0] x_i
     , input [width_p-1:0] y_i
     , input signed_i   // signed multiply
-    , input clock_i
-    , input en_i
     , output [width_p*2-1:0] z_o
     );
 
@@ -83,11 +83,11 @@ module bsg_mul_pipelined #(parameter width_p="inv"
 endmodule // bsg_mul
 
 module bsg_mul_32_32 #(parameter harden_p=0, pipeline_p=0)
-   (input   [31:0] x_i
+   (  input clock_i
+    , input en_i
+    , input   [31:0] x_i
     , input [31:0] y_i
     , input signed_i   // signed multiply
-    , input clock_i
-    , input en_i
     , output [63:0] z_o
     );
 
@@ -467,7 +467,7 @@ module bsg_mul_16_16 #(parameter harden_p=0)
    wire [1:0][3:0] cl;
 
    wire [2:0] 	   verify_zero;
-   
+
 
    // handle first four rows of partial products
 
@@ -870,4 +870,3 @@ module bsg_mul_green_booth_dots #(parameter width_p="inv"
           end // block: notmacro
      end // block: rof
 endmodule
-
