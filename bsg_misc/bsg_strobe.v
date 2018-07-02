@@ -48,7 +48,7 @@ module bsg_strobe #(width_p="inv"
              ,.harden_p(harden_p)
              ,.strength_p(2)
              ) C_reg
-     (.clock_i (clk_i)
+     (.clk_i (clk_i)
       ,.data_i (C_n  )
       ,.data_o (C_r  )
       );
@@ -73,7 +73,7 @@ module bsg_strobe #(width_p="inv"
              ,.harden_p(harden_p)
              ,.strength_p(4) // need some additional power on this one
              ) S_reg
-     (.clock_i(clk_i)
+     (.clk_i(clk_i)
       ,.data_i(S_n_n)
       ,.data_o(S_r)
       );

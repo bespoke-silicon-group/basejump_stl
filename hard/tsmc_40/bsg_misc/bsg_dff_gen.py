@@ -128,7 +128,7 @@ def generate_dff_nreset_en ( basecell, bits, strength ) :
     module_name = ident_name_bit("bsg_rp_"+fab+"_"+string_to_suffix[basecell],bits);
 
     emit_module_header (module_name
-                        , [ "clock_i"
+                        , [ "clk_i"
                             , param_bits_all("data_i",bits)
                             ] + string_to_param_list[basecell]
         , [ param_bits_all("data_o",bits)]
@@ -144,7 +144,7 @@ def generate_dff_nreset_en ( basecell, bits, strength ) :
                            ,[ ident_name_bit("reg",b)
                               , access_bit("data_i",b)
                               , "en_i"
-                              , "clock_i"
+                              , "clk_i"
                               , access_bit("data_o",b)
                               , "nreset_i"]
                            );

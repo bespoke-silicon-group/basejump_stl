@@ -3,7 +3,7 @@
 `define bsg_dff_reset_en_macro(bits)                                    \
 if (harden_p && width_p==bits)                                          \
   begin: macro                                                          \
-     bsg_rp_tsmc_40_dff_nreset_en_s2_b``bits dff(.clock_i              \
+     bsg_rp_tsmc_40_dff_nreset_en_s2_b``bits dff(.clk_i              \
                                                ,.data_i                 \
                                                ,.en_i                   \
                                                ,.nreset_i(~reset_i)     \
