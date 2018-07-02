@@ -268,10 +268,10 @@ module test_bsg_comm_link;
    for (i = 0; i < 2; i=i+1)
      begin
 	bsg_cycle_counter #(.width_p(cycle_counter_width_lp))
-	my_core_ctr (.clk(core_clk[i]), .reset_i(core_calib_reset[i]), .ctr_r_o(core_ctr[i]));
+	my_core_ctr (.clk_i(core_clk[i]), .reset_i(core_calib_reset[i]), .ctr_r_o(core_ctr[i]));
 
 	bsg_cycle_counter #(.width_p(cycle_counter_width_lp))
-	my_io_ctr   (.clk(io_master_clk[i]), .reset_i(core_calib_reset[i]), .ctr_r_o(io_ctr[i]));
+	my_io_ctr   (.clk_i(io_master_clk[i]), .reset_i(core_calib_reset[i]), .ctr_r_o(io_ctr[i]));
 
         test_bsg_comm_link_checker
             #(.channel_width_p(channel_width_lp)

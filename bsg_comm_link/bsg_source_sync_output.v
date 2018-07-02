@@ -176,7 +176,7 @@ module bsg_source_sync_output
      end
 
    /*   bsg_dff_negedge_reset #(.width_p(1)) io_clk_r_o_reg
-    (.clock_i(io_master_clk_i)
+    (.clk_i(io_master_clk_i)
     ,.data_i(io_clk_n)
     ,.reset_i(io_clk_init_i)
     ,.data_o(io_clk_r_o)

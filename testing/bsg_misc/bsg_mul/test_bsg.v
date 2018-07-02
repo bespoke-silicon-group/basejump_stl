@@ -1,5 +1,6 @@
 `define DUT dut.fi32.m32
-
+`define IN_WIDTH_P 32
+`define PIPELINE_P 1
 
 module test_bsg;
 
@@ -15,10 +16,10 @@ module test_bsg;
 //   localparam num_inputs_lp   = 2;
 //   localparam output_width_lp = 32;
 
-   localparam in_width_lp     = 32;
+   localparam in_width_lp     = `IN_WIDTH_P;
    localparam num_inputs_lp   = 2;
    localparam output_width_lp = 64;
-   localparam pipeline_lp = 1;
+   localparam pipeline_lp = `PIPELINE_P;
 
 
 
@@ -137,7 +138,7 @@ module test_bsg;
 `else // !`ifdef mul16x16
 	       if (pipeline_lp)
 		 $display("Warning: pipelining is enabled, and these will be one cycle too late.");
-	       
+
                // mul32x32
                $display("                       %b", `DUT.c30);
                $display("                        %b", `DUT.s30);
@@ -239,7 +240,7 @@ module test_bsg;
      end
 /*
    bsg_cycle_counter #(.width_p(in_width_lp*num_inputs_lp-modulo_bits_p)) bcc
-     (.clk(clk)
+     (.clk_i(clk)
       ,.reset_i(reset)
       ,.ctr_r_o(test_inputs_raw[modulo_bits_p+:in_width_lp*num_inputs_lp-modulo_bits_p])
       );
@@ -262,11 +263,11 @@ module test_bsg;
                        ,.harden_p(1'b1)
                        ,.pipeline_p(pipeline_lp)
                        ) dut
-     (  .x_i(test_inputs[          0+:in_width_lp])
+     ( .clock_i(clk)
+       ,.en_i(1'b1)
+       ,.x_i(test_inputs[          0+:in_width_lp])
        ,.y_i(test_inputs[in_width_lp+:in_width_lp])
        ,.signed_i(signed_p)
-       ,.clock_i (clk        )
-       ,.en_i    (1'b1       )
        ,.z_o     (test_output)
        );
 /*
@@ -288,4 +289,3 @@ module test_bsg;
     );
 */
 endmodule
-

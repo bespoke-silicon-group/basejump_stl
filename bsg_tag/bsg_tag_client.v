@@ -154,7 +154,7 @@ module bsg_tag_client
    if (default_p == 0)
      begin: z
         bsg_dff_reset_en #(.width_p(width_p),.harden_p(harden_p)) recv
-        (.clock_i(recv_clk_i)
+        (.clk_i(recv_clk_i)
          ,.reset_i(recv_reset_i)
          ,.en_i(recv_new_r)
          ,.data_i(tag_data_r)

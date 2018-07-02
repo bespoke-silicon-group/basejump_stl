@@ -36,20 +36,20 @@
 //                b = b >> 1
 //            return result
 // 3. for negtive high part output, we have to check if the low part of the
-// abs(result) are all zeros. If it is all zero, we have to add 1 to the 
+// abs(result) are all zeros. If it is all zero, we have to add 1 to the
 // neg high part, otherwise we onely have to neg the high part
 //  -(4'b10_00) = ~(4'b10 00) + 1 = 4'b01_11 + 1= 4'b10_00
 //  -(4'b10_10) = ~(4'b10_10) + 1 = 4'b01_01 + 1= 4'b01_10
-//  
+//
 // We add a one bit register to track whether the shifted out LSB of the result
 // are all zeros
 //
 module bsg_imul_iterative  #( width_p = 32)
-    (input                  reset_i
-	,input                  clk_i
+    (input                  clk_i
+	,input                  reset_i
 
 	,input                  v_i      //there is a request
-    ,output                 ready_o  //idiv is idle 
+    ,output                 ready_o  //idiv is idle
 
     ,input [width_p-1: 0]   opA_i
 	,input                  signed_opA_i
@@ -66,11 +66,11 @@ module bsg_imul_iterative  #( width_p = 32)
     localparam lg_width_lp = `BSG_SAFE_CLOG2( width_p + 1);
 
 ///////////////////////////////////////////////////////////////////////////////
-//   counter for the shift operation 
+//   counter for the shift operation
    logic[lg_width_lp-1:0]  shift_counter_r;
    logic                   gets_high_part_r;
 
-   wire shift_counter_full = gets_high_part_r 
+   wire shift_counter_full = gets_high_part_r
             ? ( shift_counter_r == (width_p-1) )
             : ( shift_counter_r ==  width_p    );
 ///////////////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ module bsg_imul_iterative  #( width_p = 32)
                 if( v_i )  next_state = NEG_A;
                 else       next_state = IDLE;
             end
-            
+
             NEG_A:         next_state = NEG_B;
             NEG_B:         next_state = CALC ;
 
@@ -110,11 +110,11 @@ module bsg_imul_iterative  #( width_p = 32)
             default: next_state = IDLE;
         endcase
    end
-       
+
 ///////////////////////////////////////////////////////////////////////////////
 //   update the shift_counter_r
    always_ff@( posedge clk_i )  begin
-        if ( reset_i ) shift_counter_r <= 'b0;   //reset 
+        if ( reset_i ) shift_counter_r <= 'b0;   //reset
         else if( curr_state_r != CALC  && next_state == CALC )
                        shift_counter_r <= 'b0;   //new request
         else if( curr_state_r == CALC)
@@ -124,19 +124,19 @@ module bsg_imul_iterative  #( width_p = 32)
 ///////////////////////////////////////////////////////////////////////////////
 //   the computation logic
   logic [width_p-1:0]  opA_r, opB_r, result_r;
-  logic [width_p-1:0]  adder_a, adder_b; 
+  logic [width_p-1:0]  adder_a, adder_b;
   logic [width_p  :0]  adder_result,shifted_adder_result;
 
   // -opA_r = ~opA_r + 1, reunsing the adder here
-  assign adder_a = (curr_state_r == NEG_A) ? ~opA_r  :  
+  assign adder_a = (curr_state_r == NEG_A) ? ~opA_r  :
                    (curr_state_r == NEG_B) ? ~opB_r  :
                    (curr_state_r == NEG_R) ? ~result_r : result_r;
 
-  wire adder_neg_op = (curr_state_r == NEG_A 
-                    || curr_state_r == NEG_B 
-                    || curr_state_r == NEG_R); 
+  wire adder_neg_op = (curr_state_r == NEG_A
+                    || curr_state_r == NEG_B
+                    || curr_state_r == NEG_R);
 
-  assign adder_b = adder_neg_op  ? { {(width_p-1){1'b0}}, 1'b1} 
+  assign adder_b = adder_neg_op  ? { {(width_p-1){1'b0}}, 1'b1}
                                  :  opA_r   ;
 
   assign adder_result = {1'b0, adder_a} + {1'b0, adder_b};
@@ -146,7 +146,7 @@ module bsg_imul_iterative  #( width_p = 32)
 ///////////////////////////////////////////////////////////////////////////////
 // control register  update logic
 
-  wire latch_input = v_i & ready_o; 
+  wire latch_input = v_i & ready_o;
   logic signed_opA_r, signed_opB_r, need_neg_result_r;
 
   wire  signed_opA = signed_opA_i & opA_i[width_p-1];
@@ -154,17 +154,17 @@ module bsg_imul_iterative  #( width_p = 32)
 
   always_ff@(posedge clk_i ) begin
     if( reset_i )                  signed_opA_r <= 1'b0;
-    else if( latch_input )         signed_opA_r <= signed_opA; 
+    else if( latch_input )         signed_opA_r <= signed_opA;
   end
-   
+
   always_ff@(posedge clk_i ) begin
     if( reset_i )                  signed_opB_r <= 1'b0;
-    else if( latch_input )         signed_opB_r <= signed_opB; 
+    else if( latch_input )         signed_opB_r <= signed_opB;
   end
 
   always_ff@(posedge clk_i ) begin
     if( reset_i )                  need_neg_result_r <= 1'b0;
-    else if( latch_input )         need_neg_result_r <= signed_opA ^ signed_opB ; 
+    else if( latch_input )         need_neg_result_r <= signed_opA ^ signed_opB ;
   end
 
   always_ff@(posedge clk_i ) begin
@@ -179,21 +179,21 @@ module bsg_imul_iterative  #( width_p = 32)
     else if( latch_input )          opA_r <= opA_i;
 
     //opA only shifts when we want low part result
-    else if(curr_state_r == CALC  && (!gets_high_part_r ) )   
-                                    opA_r <= opA_r << 1 ; 
+    else if(curr_state_r == CALC  && (!gets_high_part_r ) )
+                                    opA_r <= opA_r << 1 ;
 
     else if(curr_state_r == NEG_A && signed_opA_r)  //get the abs(opA)
-                                    opA_r <= adder_result[width_p-1:0]; 
-  end 
+                                    opA_r <= adder_result[width_p-1:0];
+  end
 
   always_ff@(posedge clk_i) begin
     if( reset_i )                   opB_r <= 'b0;
     else if( latch_input )          opB_r <= opB_i;
-    else if(curr_state_r == CALC)   opB_r <= opB_r >> 1 ; 
+    else if(curr_state_r == CALC)   opB_r <= opB_r >> 1 ;
 
-    else if(curr_state_r == NEG_B && signed_opB_r)  //get the abs(opB)  
-                                    opB_r <= adder_result[width_p-1:0]; 
-  end 
+    else if(curr_state_r == NEG_B && signed_opB_r)  //get the abs(opB)
+                                    opB_r <= adder_result[width_p-1:0];
+  end
 
 ///////////////////////////////////////////////////////////////////////////////
 //  track the LSB of the result which is shifted out for high part  computation
@@ -215,23 +215,23 @@ module bsg_imul_iterative  #( width_p = 32)
     if( reset_i )                   result_r <= 'b0;
     else if( latch_input )          result_r <= 'b0;
 
-    else if(curr_state_r == NEG_R && need_neg_result_r) //get the signed result 
+    else if(curr_state_r == NEG_R && need_neg_result_r) //get the signed result
         //1. High part Neg in case Low part are not all zeros
         if( gets_high_part_r && !all_sh_lsb_zero_r )   //No cin, just reverse
-                                    result_r <= ~result_r; 
+                                    result_r <= ~result_r;
         //1. Low part Neg
         //2. High part Neg in case Low part are all zeros, ~(result_r) +1
         else
-                                    result_r <= adder_result[width_p-1:0]; 
+                                    result_r <= adder_result[width_p-1:0];
 
-    else if(curr_state_r == CALC && opB_r[0]) begin     //get the accumulated result 
+    else if(curr_state_r == CALC && opB_r[0]) begin     //get the accumulated result
         if( gets_high_part_r )      result_r <= shifted_adder_result[width_p-1:0];
         else                        result_r <= adder_result        [width_p-1:0];
     end
-    else if(curr_state_r == CALC && !opB_r[0])begin    //No addition 
+    else if(curr_state_r == CALC && !opB_r[0])begin    //No addition
         if( gets_high_part_r )      result_r <= result_r >>1 ;
     end
-  end 
+  end
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -239,6 +239,5 @@ module bsg_imul_iterative  #( width_p = 32)
 
   assign ready_o    =  ( curr_state_r == IDLE );
   assign result_o   =    result_r;
-  assign v_o        =  ( curr_state_r == DONE ); 
-endmodule 
-
+  assign v_o        =  ( curr_state_r == DONE );
+endmodule

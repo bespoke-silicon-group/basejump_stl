@@ -12,15 +12,13 @@ module bsg_mul #(parameter width_p="inv"
                        ,.pipeline_p(0       )
                        ,.harden_p  (harden_p)
                        ) bmp
-   (.x_i
+   (.clock_i(1'b0)
+    ,.en_i(1'b0)
+    ,.x_i
     ,.y_i
     ,.signed_i
     ,.z_o
-    ,.clock_i(1'b0)
-    ,.en_i(1'b0)
     );
 
 
 endmodule
-
-

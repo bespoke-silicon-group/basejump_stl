@@ -1,5 +1,5 @@
 # Example parameter scan makefile
-# 
+#
 # This makefile is a skeleton that simulates a module many times
 # trying out variations of a product of different command line parameters.
 #
@@ -15,9 +15,9 @@ TOP = ../../..
 BSG_TESTME_FILES    =   bsg_counter_up_down.v
 BSG_TESTME_DIR      =   $(TOP)/bsg_misc
 BSG_MISC_FILES      =   bsg_defines.v
-BSG_ASYNC_FILES     = 
+BSG_ASYNC_FILES     =
 BSG_COMM_LINK_FILES =
-BSG_DATAFLOW_FILES  = 
+BSG_DATAFLOW_FILES  =
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
 
@@ -33,9 +33,10 @@ TEST_MODULE = test_bsg
 # sets is null, and nothing will run.
 MAX_VAL_P  = 1 2 3 4
 INIT_VAL_P = 0 1 2 3
+MAX_STEP_P = 2 3 4 8
 
 # this is a list of all variables you want to vary for the simulation
-scan_params = MAX_VAL_P INIT_VAL_P
+scan_params = MAX_VAL_P INIT_VAL_P MAX_STEP_P
 ############################################################################
 
 
@@ -67,7 +68,7 @@ bsg_param_scan = $(if $(1),$(foreach v__,$($(firstword $(1))),\
                     $(1)),$(2),$(3),$(4)@$(2)$(firstword $(1))$(3)$(v__))),\
                     $(4))
 
-# this takes the parameters and creates a set of make targets, one for every 
+# this takes the parameters and creates a set of make targets, one for every
 # combination of the parameters
 commands = $(call bsg_param_scan,$(scan_params),+define+,=)
 
@@ -78,13 +79,13 @@ $(warning bsg_param_scan: $(commands))
 all: initial $(foreach x,$(commands),run.$(x))
 
 # this runs an individual target
-# we replace the @ with a space so that the parameters are used as 
+# we replace the @ with a space so that the parameters are used as
 # command line options
 
 run.%:
 	$(BSG_IP_CORES_COMP) $(subst @, ,$*)
 	$(BSG_IP_CORES_SIM) >> outfile
-  
+
 initial:
 	@echo removing outfile
 	rm -f outfile
