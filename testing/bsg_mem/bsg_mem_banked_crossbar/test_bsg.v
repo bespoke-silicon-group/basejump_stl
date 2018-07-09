@@ -4,10 +4,10 @@
 `define DATA_WIDTH_P   32   // multiple of 8
 
 /*************************** TEST RATIONALE **********************************
-  
+
   The instantiated multi-port banked memory is completely written by data in the
-  format {<data_width/8>{<src port number>, <dest bank number>}. The written data 
-  is read and tallied. Then this module tries to fill the memory completely with 1s 
+  format {<data_width/8>{<src port number>, <dest bank number>}. The written data
+  is read and tallied. Then this module tries to fill the memory completely with 1s
   by setting mask_i to 111...1 to test the masking capability of UUT.
 
 ******************************************************************************/
@@ -23,25 +23,25 @@ module test_bsg;
   localparam bank_addr_width_lp = `BSG_SAFE_CLOG2(bank_size_lp);
   localparam addr_width_lp      = ((banks_lp == 1) ? 0 : lg_banks_lp)
                                   + bank_addr_width_lp;
-  
+
   localparam cycle_time_lp = 20;
- 
+
 
 
   // clock and reset generation
   wire clk;
   wire reset;
-  
+
   bsg_nonsynth_clock_gen #( .cycle_time_p(cycle_time_lp)
                           ) clock_gen
                           ( .o(clk)
                           );
-    
+
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(1)
                            , .reset_cycles_hi_p(5)
                           )  reset_gen
-                          (  .clk_i        (clk) 
+                          (  .clk_i        (clk)
                            , .async_reset_o(reset)
                           );
 
@@ -79,24 +79,24 @@ module test_bsg;
     $display("PORTS       : %0d", ports_lp);
     $display("BANK_SIZE   : %0d\n", bank_size_lp);
   end
-   
+
 
 
   /* TEST STIMULI */
-  
-  logic [ports_lp-1:0] finish_main_r, finish_mask_r; 
+
+  logic [ports_lp-1:0] finish_main_r, finish_mask_r;
 
   logic [ports_lp-1:0][lg_banks_lp-1:0]        bank_num, bank_num_r;
   logic [ports_lp-1:0][bank_addr_width_lp-1:0] bank_addr;
-  
+
   genvar i;
 
   for(i=0; i<ports_lp; i=i+1)
   begin
-    // address and control 
-    assign test_input_addr[i] = (banks_lp == 1) ? 
+    // address and control
+    assign test_input_addr[i] = (banks_lp == 1) ?
                                  bank_addr[i]
-                                 : {bank_num[i], bank_addr[i]}; 
+                                 : {bank_num[i], bank_addr[i]};
 
     always_ff @(posedge clk)
     begin
@@ -139,12 +139,12 @@ module test_bsg;
     end
 
     // data
-    assign test_input_data[i] = (test_input_mask[i])? 
+    assign test_input_data[i] = (test_input_mask[i])?
                                 {data_width_lp{1'b1}}
                                 :{(data_width_lp/8){4'(i), 4'(bank_num[i])}};
   end
 
- 
+
 
   /* UUT */
 
