@@ -27,7 +27,7 @@ module bsg_rp_clk_gen_coarse_delay_tuner
 
    assign signal[0] = i;
 
-   // synopsys rp_group (bsg_clk_gen_cde)
+   // synopsys rp_group (bsg_clk_gen_cdt)
    // synopsys rp_fill (0 0 RX)
 
    CLKINVX2 I1  (.A(signal[0]), .Y(signal[1]) );
@@ -69,6 +69,6 @@ module bsg_rp_clk_gen_coarse_delay_tuner
    DFFNRX4 sel_r_reg_1 (.D(mux_lo[1]), .CKN(o), .RN(async_reset_neg_i), .Q(sel_r[1]), .QN());
    MX2X1 MX2 (.A(sel_r[1]),.B(sel_i[1]),.S0(we_i), .Y(mux_lo[1]));
 
-   // synopsys rp_endgroup (bsg_clk_gen_cde)
+   // synopsys rp_endgroup (bsg_clk_gen_cdt)
 
 endmodule

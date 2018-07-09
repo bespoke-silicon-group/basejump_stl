@@ -27,7 +27,7 @@ module bsg_rp_clk_gen_atomic_delay_tuner
 
    assign signal[0] = i;
 
-   // synopsys rp_group (bsg_clk_gen_cde)
+   // synopsys rp_group (bsg_clk_gen_adt)
    // synopsys rp_fill (13 2 LX)
 
    CLKINVX2 I1  (.A(signal[0]), .Y(signal[1]) );
@@ -82,6 +82,6 @@ module bsg_rp_clk_gen_atomic_delay_tuner
    // we invert both inputs of this mux to optimize the select-to-output path by 40 ps
    MXI2X1 MX1         (.A(sel_r_0_inv) , .B(sel_i_inv)   ,.S0(we_i), .Y(mux_lo[0]));
 
-   // synopsys rp_endgroup (bsg_clk_gen_cde)
+   // synopsys rp_endgroup (bsg_clk_gen_adt)
 
 endmodule
