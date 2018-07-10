@@ -146,8 +146,8 @@ module test_bsg;
                        , .width_out_p (width_out_lp)
                        , .lsb_to_msb_p(0)
                       )  DUT0
-                      (  .clk    (clk)
-                       , .reset  (reset)
+                      (  .clk_i    (clk)
+                       , .reset_i  (reset)
                        , .data_i (test_input_data)
                        , .deque_o(test_output_deque_0)
                        , .data_o (test_output_data_0)
@@ -158,8 +158,8 @@ module test_bsg;
                        , .width_out_p (width_out_lp)
                        , .lsb_to_msb_p(1)
                       )  DUT1
-                      (  .clk    (clk)
-                       , .reset  (reset)
+                      (  .clk_i    (clk)
+                       , .reset_i  (reset)
                        , .data_i (test_input_data)
                        , .deque_o(test_output_deque_1)
                        , .data_o (test_output_data_1)

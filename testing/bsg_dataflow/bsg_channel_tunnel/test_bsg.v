@@ -21,6 +21,7 @@ module test_bsg;
    localparam remote_credits_lp       = `REMOTE_CREDITS_P;
    localparam lg_credit_decimation_lp = `LG_CREDIT_DECIMATION_P;
    localparam asymmetric_lp           = `ASYMMETRIC_P;
+   localparam use_pseudo_large_fifo_lp = `USE_PSEUDO_LARGE_FIFO_P;
 
    localparam cycle_time_lp = 20;
 
@@ -55,6 +56,7 @@ module test_bsg;
         $display("REMOTE_CREDITS_LP:       %d", remote_credits_lp);
         $display("LG_CREDIT_DECIMATION_LP: %d", lg_credit_decimation_lp);
         $display("ASYMMETRIC_LP: %d", asymmetric_lp);
+        $display("USE_PSEUDO_LARGE_FIFO_LP: %d", use_pseudo_large_fifo_lp);
      end
 
    localparam tag_width_lp = $clog2(num_in_lp+1);
@@ -81,6 +83,7 @@ module test_bsg;
                              ,.num_in_p(num_in_lp)
                              ,.remote_credits_p(remote_credits_lp)
                              ,.lg_credit_decimation_p(lg_credit_decimation_lp)
+                             ,.use_pseudo_large_fifo_p(use_pseudo_large_fifo_lp)
                              ) dut
             (.clk_i   (clk)
              ,.reset_i(reset)
