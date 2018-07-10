@@ -29,19 +29,20 @@ BSG_TEST_FILES      =  bsg_nonsynth_reset_gen.v \
 TEST_MAIN   = test_bsg.v
 TEST_MODULE = test_bsg
 
-# this is a list of all variables you want to vary for the simulation
-scan_params = WIDTH_P NUM_IN_P REMOTE_CREDITS_P LG_CREDIT_DECIMATION_P ASYMMETRIC_P
-
 # this is a list of all values for each variable in the scan_params list
 # note; if you leave out values for a variable, then the product of the
 # sets is null, and nothing will run.
-WIDTH_P  = 64
-NUM_IN_P = 8
-REMOTE_CREDITS_P = 16
+WIDTH_P  = 1 32 33 64
+NUM_IN_P = 1 2 3 4
+REMOTE_CREDITS_P = 1 2 3 4 5 6 16
 # 2^dec must be <= remote_credits =)
-LG_CREDIT_DECIMATION_P = 2
+LG_CREDIT_DECIMATION_P = 0 1 2 3
+USE_PSEUDO_LARGE_FIFO_P = 0 1
 # whether to have receive rates; or 2^n declining receive rates on each channel
 ASYMMETRIC_P = 0
 ############################################################################
+
+# this is a list of all variables you want to vary for the simulation
+scan_params = WIDTH_P NUM_IN_P REMOTE_CREDITS_P LG_CREDIT_DECIMATION_P ASYMMETRIC_P USE_PSEUDO_LARGE_FIFO_P
 
 include ../../Makefile.sim

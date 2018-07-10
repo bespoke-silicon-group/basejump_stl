@@ -84,10 +84,11 @@ module bsg_clk_gen_osc
    import bsg_tag_pkg::bsg_tag_s;
  #(parameter num_adgs_p=1)
   (
-   input bsg_tag_s bsg_tag_i
-   ,input bsg_tag_s bsg_tag_trigger_i
-
-   ,input async_reset_i
+    input async_reset_i   
+   ,input bsg_tag_s
+   ,input bsg_tag_i
+   ,input bsg_tag_s
+   ,input bsg_tag_trigger_i   
    ,output clk_o
    );
 
