@@ -28,7 +28,7 @@ module bsg_rp_clk_gen_coarse_delay_tuner
 
    assign signal[0] = i;
 
-   // synopsys rp_group (bsg_clk_gen_cde)
+   // synopsys rp_group (bsg_clk_gen_cdt)
    // synopsys rp_fill (0 0 RX)
 
    CKND2BWP I1  (.I(signal[0]), .ZN(signal[1]) );
@@ -73,6 +73,6 @@ module bsg_rp_clk_gen_coarse_delay_tuner
    // synopsys rp_fill (0 4 RX)
    BUFFD4BWP we_o_buf (.I(we_i), .Z(we_o));
 
-   // synopsys rp_endgroup (bsg_clk_gen_cde)
+   // synopsys rp_endgroup (bsg_clk_gen_cdt)
 
 endmodule

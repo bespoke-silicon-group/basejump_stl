@@ -24,7 +24,7 @@ module bsg_rp_clk_gen_atomic_delay_tuner
 
    assign signal[0] = i;
 
-   // synopsys rp_group (bsg_clk_gen_cde)
+   // synopsys rp_group (bsg_clk_gen_adt)
    // synopsys rp_fill (13 2 LX)
 
    CKND2BWP I1  (.I(signal[0]), .ZN(signal[1]) );
@@ -89,6 +89,6 @@ module bsg_rp_clk_gen_atomic_delay_tuner
    INVD0BWP we_o_pre      (.I(we_i_sync_sync_nand), .ZN(we_o_pre_buf));
    BUFFD4BWP we_o_buf     (.I(we_o_pre_buf),. Z(we_o));
 
-   // synopsys rp_endgroup (bsg_clk_gen_cde)
+   // synopsys rp_endgroup (bsg_clk_gen_adt)
 
 endmodule
