@@ -1,4 +1,5 @@
-`define WIDTH_P ?   // unused for now...
+`define WIDTH_P 8   // unused for now...
+`define NUM_ADGS_P 1
 
 `include "bsg_tag.vh"
 
@@ -6,8 +7,8 @@ module test_bsg;
 
    import bsg_tag_pkg::bsg_tag_s;
 
-   localparam bsg_num_adgs_lp  = 1;
-   localparam bsg_ds_width_lp  = 8;
+   localparam bsg_num_adgs_lp  = `NUM_ADGS_P;
+   localparam bsg_ds_width_lp  = `WIDTH_P;
    localparam bsg_tag_els_lp  = 2;
 
    `declare_bsg_clk_gen_osc_tag_payload_s(bsg_num_adgs_lp)

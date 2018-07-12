@@ -56,8 +56,8 @@ module bsg_fifo_1r1w_narrowed
                       , .width_out_p(width_out_p)
                       , .lsb_to_msb_p(lsb_to_msb_p)
                       ) output_narrower
-       ( .clk(clk_i)
-       , .reset(reset_i)
+       ( .clk_i(clk_i)
+       , .reset_i(reset_i)
   
        , .data_i(data)
        , .deque_o(yumi)

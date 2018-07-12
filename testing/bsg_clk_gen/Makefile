@@ -9,7 +9,7 @@ export DVE_BIN = $(VCS_HOME)/bin
 export DC_RELEASE    = syn/G-2012.06-SP5-4
 
 # Example parameter scan makefile
-# 
+#
 # This makefile is a skeleton that simulates a module many times
 # trying out variations of a product of different command line parameters.
 #
@@ -53,12 +53,13 @@ TEST_MAIN   = test_bsg.v bsg_nonsynth_clk_gen_tester.v
 TEST_MODULE = test_bsg
 
 # this is a list of all variables you want to vary for the simulation
-scan_params = WIDTH_P
+scan_params = WIDTH_P NUM_ADGS_P
 
 # this is a list of all values for each variable in the scan_params list
 # note; if you leave out values for a variable, then the product of the
 # sets is null, and nothing will run.
-WIDTH_P    = 8
+WIDTH_P    = 1 2 3 4 8
+NUM_ADGS_P = 1 2 4
 ############################################################################
 
 
@@ -93,7 +94,7 @@ bsg_param_scan = $(if $(1),$(foreach v__,$($(firstword $(1))),\
                     $(4))
 
 
-# this takes the parameters and creates a set of make targets, one for every 
+# this takes the parameters and creates a set of make targets, one for every
 # combination of the parameters
 commands = $(call bsg_param_scan,$(scan_params),+define+,=)
 
@@ -136,7 +137,7 @@ gen_verilog:
 	$(TOP)/hard/bsg_misc/bsg_gate_stack_gen.py CLKINVX16   32 "#0 (.A (#1), .Y(#2));" >  generated/bsg_rp_tsmc_250_CLKINVX16.v
 
 # this runs an individual target
-# we replace the @ with a space so that the parameters are used as 
+# we replace the @ with a space so that the parameters are used as
 # command line options
 
 run.%: $(ALL_FILES)  gen_verilog
@@ -151,5 +152,3 @@ dve:
 
 clean:
 	- rm -rf simv csrc simv.daidir DVEfiles vcdplus.vpd ucli.key simv.log run.*.log generated
-
-
