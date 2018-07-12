@@ -1,5 +1,5 @@
 # Example parameter scan makefile
-# 
+#
 # This makefile is a skeleton that simulates a module many times
 # trying out variations of a product of different command line parameters.
 #
@@ -34,8 +34,8 @@ scan_params = WIDTH_IN_P WIDTH_OUT_P
 # this is a list of all values for each variable in the scan_params list
 # note; if you leave out values for a variable, then the product of the
 # sets is null, and nothing will run.
-WIDTH_IN_P  = 1 2 3 4 5
-WIDTH_OUT_P = 1 2 3 4 5
+WIDTH_IN_P  = 1 2 3 4 5 8
+WIDTH_OUT_P = 1 2 3 4 5 8
 ############################################################################
 
 include ../../Makefile.sim
