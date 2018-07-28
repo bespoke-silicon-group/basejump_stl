@@ -61,8 +61,8 @@ module bsg_replacement(
   bsg_mem_1rw_sync_mask_write_bit #(.width_p(3), .els_p(512)) status_mem (
     .clk_i(clk_i)
     ,.reset_i(rst_i)
-    ,.v_i(~rst_i & status_mem_re_i & replacement_we)
-    ,.w_i(replacement_we & ~rst_i)
+    ,.v_i(~rst_i & (status_mem_re_i | replacement_we))
+    ,.w_i(~rst_i & replacement_we)
     ,.w_mask_i(replacement_mask)
     ,.addr_i(line_final)
     ,.data_i(replacement_data_in)

@@ -27,7 +27,6 @@ module bsg_data_cache (
   ,input v_i
   ,output logic ready_o
 
-
   ,output logic [31:0] data_o
   ,output logic v_o
   ,input yumi_i
@@ -66,8 +65,6 @@ module bsg_data_cache (
   logic just_recovered_r;
   logic miss_tl;  
 
-  logic is_partner_address_v_r;
-  
   logic instr_reads_tags_a;
   logic instr_reads_tags_tl_r;
 
@@ -160,7 +157,6 @@ module bsg_data_cache (
   
   logic [31:0] mdn_evict_header_v;
   logic [31:0] mdn_fill_header_v;
-  //logic [31:0] evict_addr;
  
   logic [3:0] storebuf_hit_v;
   logic [31:0] storebuf_bypass_data_v;
@@ -210,9 +206,10 @@ module bsg_data_cache (
     
   // handshaking
   //
-
-  assign ready_o = (v_tl_r & ~miss_v_r)
-    | (~v_tl_r & (~miss_v_r | (~invalidate_op_i & miss_v_r)));
+  //assign ready_o = (v_tl_r & ~miss_v_r)
+  //  | (~v_tl_r & (~miss_v_r | (~invalidate_op_i & miss_v_r)));
+  assign ready_o = (v_tl_r & v_v_we)
+    | (~v_tl_r & (v_v_we | (~invalidate_op_i & miss_v_r)));
 
   assign v_o = (instr_returns_val_v & v_v_r & ~miss_v_r);
 
@@ -417,12 +414,12 @@ module bsg_data_cache (
   
   bsg_mux_one_hot #(.width_p(32), .els_p(3)) MUX_byte_half_word (
     .data_i({data_out_lalv_swlw_v, data_out_vp_half_extended, data_out_vp_byte_extended})
-    ,.sel_one_hot_i({word_op_v_r, half_op_v_r, byte_op_v_r})
+    ,.sel_one_hot_i({(word_op_v_r | valid_op_v_r | lnaddr_op_v_r), half_op_v_r, byte_op_v_r})
     ,.data_o(data_o)
   );
 
   assign v_v_we = (~miss_v_r)
-    & (~v_v_r
+    & ((~v_v_r)
       | (v_v_r & instr_returns_val_v & yumi_i)
       | (v_v_r & ~instr_returns_val_v));
 
@@ -538,7 +535,6 @@ module bsg_data_cache (
     ,.final_recover_o(final_recover)
     ,.tag_we_force_o(tag_we_force)
     ,.chosen_set_o(evict_and_fill_set)
-    //,.evict_address_o(evict_addr)
     ,.mc_reading_dmem_o(mc_reading_dmem_for_dma)
     ,.status_mem_re_o(status_mem_re)
   );
@@ -583,7 +579,6 @@ module bsg_data_cache (
       v_v_r <= 1'b0;
     end
     else begin
-      
       miss_v_r <= miss_v_r
         ? ~final_recover
         : (v_tl_r ? miss_tl : 1'b0);
@@ -595,7 +590,6 @@ module bsg_data_cache (
       if (v_v_we) begin
         v_v_r <= v_tl_r;
       end
-      
     end
   
     if (rst_i) begin
