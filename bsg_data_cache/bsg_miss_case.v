@@ -11,7 +11,7 @@ module bsg_miss_case (
   ,input miss_v_i
   ,input ld_op_v_i
   ,input st_op_v_i
-  ,input flush_op_v_i
+  ,input tagfl_op_v_i
   ,input afl_op_v_i
   ,input aflinv_op_v_i
   ,input ainv_op_v_i
@@ -159,7 +159,7 @@ module bsg_miss_case (
         chosen_set_is_valid_r <= 1'b0;
         chosen_set_r <= 1'b0;
         evict_address_r <= 32'b0;
-        miss_state_r <= (v_v_r_i & miss_v_i & (flush_op_v_i | ainv_op_v_i | afl_op_v_i | aflinv_op_v_i))
+        miss_state_r <= (v_v_r_i & miss_v_i & (tagfl_op_v_i | ainv_op_v_i | afl_op_v_i | aflinv_op_v_i))
           ? FLUSH_INSTR 
           : ((v_v_r_i & miss_v_i & (ld_op_v_i | st_op_v_i))
             ? FILL_REQUEST_SEND_HDR
@@ -218,7 +218,7 @@ module bsg_miss_case (
     
       EVICT_REQUEST_SEND_DATA: begin
         miss_state_r <= dma_finished_i
-          ? ((flush_op_v_i | aflinv_op_v_i | afl_op_v_i) ? FINAL_RECOVER : FILL_REQUEST_GET_DATA)
+          ? ((tagfl_op_v_i | aflinv_op_v_i | afl_op_v_i) ? FINAL_RECOVER : FILL_REQUEST_GET_DATA)
           : EVICT_REQUEST_SEND_DATA;
       end
   

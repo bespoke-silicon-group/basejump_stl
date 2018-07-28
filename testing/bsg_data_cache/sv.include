@@ -2,7 +2,6 @@ $BSG_IP_CORES_ROOT/bsg_misc/bsg_defines.v
 $BSG_IP_CORES_ROOT/bsg_misc/bsg_dff.v
 $BSG_IP_CORES_ROOT/bsg_misc/bsg_buf_ctrl.v
 $BSG_IP_CORES_ROOT/bsg_misc/bsg_mux.v
-$BSG_IP_CORES_ROOT/bsg_misc/bsg_mux_one_hot.v
 $BSG_IP_CORES_ROOT/bsg_mem/bsg_mem_1r1w_synth.v
 $BSG_IP_CORES_ROOT/bsg_mem/bsg_mem_1r1w.v
 $BSG_IP_CORES_ROOT/bsg_dataflow/bsg_two_fifo.v
