@@ -12,6 +12,9 @@ module testbench();
   logic tr_v_o;
   logic [79:0] tr_data_o;
   logic tr_yumi_i;
+
+  logic done_lo;
+  logic error_lo;
  
   bsg_fsb_node_trace_replay #(
     .ring_width_p(76)
@@ -32,8 +35,8 @@ module testbench();
     ,.rom_addr_o(trace_rom_addr)
     ,.rom_data_i(trace_rom_data)
 
-    ,.done_o()
-    ,.error_o()
+    ,.done_o(done_lo)
+    ,.error_o(error_lo)
   );
 
   assign tr_data_o[79:76] = 4'b0;

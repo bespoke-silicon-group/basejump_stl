@@ -5,23 +5,32 @@
  *  @modified tommy
  */
 
+// size_op_i
+// ---------
+// 2'b0 = byte
+// 2'b1 = half
+// 2'b2 = word
+
+// instr_op_i
+// ---------------
+// 0000 = LD (load)
+// 0001 = ST (store)
+// 0010 = TAGST (tag store)
+// 0011 = TAGFL (tag flush)
+// 0100 = TAGLV (tag load valid)
+// 0101 = TAGLA (tag load addr)
+// 0110 = AFL (address flush)
+// 0111 = AFLINV (address flush & invalidate)
+// 1000 = AINV (address invalidate)
+
+
 module bsg_data_cache (
   input clk_i
   ,input rst_i
 
-  ,input sign_extend_i
-  ,input word_op_i
-  ,input half_op_i
-  ,input byte_op_i
-  ,input ld_op_i
-  ,input st_op_i
-  ,input invalidate_op_i
-  ,input flush_op_i
-  ,input valid_op_i
-  ,input lnaddr_op_i
-  ,input afl_op_i
-  ,input aflinv_op_i
-  ,input ainv_op_i
+  ,input sigext_op_i
+  ,input [1:0] size_op_i
+  ,input [3:0] instr_op_i
   ,input [31:0] addr_i
   ,input [31:0] data_i
   ,input v_i
@@ -42,19 +51,19 @@ module bsg_data_cache (
 
   // logic declaration
   logic v_tl_r, v_v_r;
-  logic sign_extend_tl_r, sign_extend_v_r;
-  logic word_op_tl_r, word_op_v_r;
-  logic half_op_tl_r, half_op_v_r;
-  logic byte_op_tl_r, byte_op_v_r;
-  logic ld_op_tl_r, ld_op_v_r;
-  logic st_op_tl_r, st_op_v_r;
-  logic invalidate_op_tl_r, invalidate_op_v_r;
-  logic flush_op_tl_r, flush_op_v_r;
-  logic valid_op_tl_r, valid_op_v_r;
-  logic lnaddr_op_tl_r, lnaddr_op_v_r;
-  logic afl_op_tl_r, afl_op_v_r;
-  logic aflinv_op_tl_r, aflinv_op_v_r;
-  logic ainv_op_tl_r, ainv_op_v_r;
+  logic sigext_op_tl_r, sigext_op_v_r;
+  logic word_op, word_op_tl_r, word_op_v_r;
+  logic half_op, half_op_tl_r, half_op_v_r;
+  logic byte_op, byte_op_tl_r, byte_op_v_r;
+  logic ld_op, ld_op_tl_r, ld_op_v_r;
+  logic st_op, st_op_tl_r, st_op_v_r;
+  logic tagst_op, tagst_op_tl_r, tagst_op_v_r;
+  logic tagfl_op, tagfl_op_tl_r, tagfl_op_v_r;
+  logic taglv_op, taglv_op_tl_r, taglv_op_v_r;
+  logic tagla_op, tagla_op_tl_r, tagla_op_v_r;
+  logic afl_op, afl_op_tl_r, afl_op_v_r;
+  logic aflinv_op, aflinv_op_tl_r, aflinv_op_v_r;
+  logic ainv_op, ainv_op_tl_r, ainv_op_v_r;
 
   logic miss_v_r;
   logic override;
@@ -182,6 +191,7 @@ module bsg_data_cache (
   logic [31:0] data_out_vp_byte_extended;
 
   logic [31:0] data_out_lalv_swlw_v;
+  logic [31:0] data_out_half_or_byte;
 
   logic miss_case_wipe_request_v;
   logic dirty0;
@@ -202,28 +212,36 @@ module bsg_data_cache (
   logic v_v_we;
 
 
-
-    
   // handshaking
   //
-  //assign ready_o = (v_tl_r & ~miss_v_r)
-  //  | (~v_tl_r & (~miss_v_r | (~invalidate_op_i & miss_v_r)));
   assign ready_o = (v_tl_r & v_v_we)
-    | (~v_tl_r & (v_v_we | (~invalidate_op_i & miss_v_r)));
+    | (~v_tl_r & (v_v_we | (~tagst_op & miss_v_r)));
 
   assign v_o = (instr_returns_val_v & v_v_r & ~miss_v_r);
 
 
-
-
   // datapath
   //
-  assign override = miss_v_r;
-  assign store_slot_avail_a = ~ld_op_i | miss_v_r;
+  assign byte_op = (size_op_i == 2'b00);  
+  assign half_op = (size_op_i == 2'b01);  
+  assign word_op = (size_op_i == 2'b10);  
 
-  assign instr_returns_val_v = (ld_op_v_r | valid_op_v_r | lnaddr_op_v_r);
-  assign instr_cannot_miss_tl = invalidate_op_tl_r | lnaddr_op_tl_r | valid_op_tl_r;
-  assign instr_must_miss_tl = flush_op_tl_r;
+  assign ld_op = (instr_op_i == 4'b0000);
+  assign st_op = (instr_op_i == 4'b0001);
+  assign tagst_op = (instr_op_i == 4'b0010);
+  assign tagfl_op = (instr_op_i == 4'b0011);
+  assign taglv_op = (instr_op_i == 4'b0100);
+  assign tagla_op = (instr_op_i == 4'b0101);
+  assign afl_op = (instr_op_i == 4'b0110);
+  assign aflinv_op = (instr_op_i == 4'b0111);
+  assign ainv_op = (instr_op_i == 4'b1000);
+
+  assign override = miss_v_r;
+  assign store_slot_avail_a = ~ld_op | miss_v_r;
+
+  assign instr_returns_val_v = (ld_op_v_r | taglv_op_v_r | tagla_op_v_r);
+  assign instr_cannot_miss_tl = tagst_op_tl_r | tagla_op_tl_r | taglv_op_tl_r;
+  assign instr_must_miss_tl = tagfl_op_tl_r;
 
   assign tag_check_me_tl = {instr_must_miss_tl, 1'b1, addr_tl_r[31:14]};
   assign explicit_set_bit_a = addr_i[14];
@@ -262,10 +280,10 @@ module bsg_data_cache (
     ? tag_data_in_force
     : tag_data_in_inval;
 
-  assign tag_we_final = override ? tag_we_force : (invalidate_op_i & v_i);
+  assign tag_we_final = override ? tag_we_force : (tagst_op & v_i);
 
-  assign instr_reads_tags_a = ld_op_i | st_op_i | flush_op_i | valid_op_i
-    | lnaddr_op_i | afl_op_i | aflinv_op_i | ainv_op_i; 
+  assign instr_reads_tags_a = ld_op | st_op | tagfl_op | taglv_op
+    | tagla_op | afl_op | aflinv_op | ainv_op; 
 
   assign in_middle_of_miss = miss_v_r & ~final_recover;
 
@@ -279,7 +297,7 @@ module bsg_data_cache (
 
   assign data_we_final = (data_we_force | data_we_storebuf);
 
-  assign data_mem_en = (~rst_i) & ((v_i & ld_op_i & ~miss_v_r)
+  assign data_mem_en = (~rst_i) & ((v_i & ld_op & ~miss_v_r)
     | (v_tl_r & final_recover & ld_op_tl_r)
     | mc_reading_dmem_for_dma
     | data_we_final);
@@ -327,10 +345,10 @@ module bsg_data_cache (
  
   assign tag_data_explicit_addr_tl = {tag_data_explicit_tl[17:0], addr_tl_r[13:5]};
 
-  assign tag_data_explicit_addr_anded_tl = tag_data_explicit_addr_tl & {27{lnaddr_op_tl_r}};
+  assign tag_data_explicit_addr_anded_tl = tag_data_explicit_addr_tl & {27{tagla_op_tl_r}};
 
   assign taglalv_val_tl = {tag_data_explicit_addr_anded_tl, 4'b0000,
-    valid_op_tl_r & tag_data_explicit_valid_tl}; 
+    taglv_op_tl_r & tag_data_explicit_valid_tl}; 
 
   assign tag_hit_0_tl = (tag_check_me_tl == {1'b0, tag_data_0_tl});
   assign tag_hit_1_tl = (tag_check_me_tl == {1'b0, tag_data_1_tl});
@@ -393,7 +411,7 @@ module bsg_data_cache (
     ,.data_o(data_out_vp_half)
   );
 
-  assign data_out_vp_half_extend = sign_extend_v_r & data_out_vp_half[15];
+  assign data_out_vp_half_extend = sigext_op_v_r & data_out_vp_half[15];
 
   bsg_mux #(.width_p(8), .els_p(4)) MUX_byte (
     .data_i({data_out_vp_readj_b3, data_out_vp_readj_b2, data_out_vp_readj_b1, data_out_vp_readj_b0})
@@ -401,20 +419,25 @@ module bsg_data_cache (
     ,.data_o(data_out_vp_byte)
   );
 
-  assign data_out_vp_byte_extend = sign_extend_v_r & data_out_vp_byte[7];
+  assign data_out_vp_byte_extend = sigext_op_v_r & data_out_vp_byte[7];
   
   assign data_out_vp_half_extended = {{16{data_out_vp_half_extend}}, data_out_vp_half};
   assign data_out_vp_byte_extended = {{24{data_out_vp_byte_extend}}, data_out_vp_byte};
 
   bsg_mux #(.width_p(32), .els_p(2)) MUX_merge_taglalv (
     .data_i({taglalv_val_v_r, data_out_vp_readjust})
-    ,.sel_i(valid_op_v_r | lnaddr_op_v_r)
+    ,.sel_i(taglv_op_v_r | tagla_op_v_r)
     ,.data_o(data_out_lalv_swlw_v)
   );
-  
-  bsg_mux_one_hot #(.width_p(32), .els_p(3)) MUX_byte_half_word (
-    .data_i({data_out_lalv_swlw_v, data_out_vp_half_extended, data_out_vp_byte_extended})
-    ,.sel_one_hot_i({(word_op_v_r | valid_op_v_r | lnaddr_op_v_r), half_op_v_r, byte_op_v_r})
+ 
+  bsg_mux #(.width_p(32), .els_p(2)) MUX_half_or_byte_data_out (
+    .data_i({data_out_vp_half_extended, data_out_vp_byte_extended})
+    ,.sel_i(half_op_v_r)
+    ,.data_o(data_out_half_or_byte)
+  );
+  bsg_mux #(.width_p(32), .els_p(2)) MUX_word_or_other_data_out (
+    .data_i({data_out_lalv_swlw_v, data_out_half_or_byte})
+    ,.sel_i(word_op_v_r | taglv_op_v_r | tagla_op_v_r)
     ,.data_o(data_o)
   );
 
@@ -422,8 +445,6 @@ module bsg_data_cache (
     & ((~v_v_r)
       | (v_v_r & instr_returns_val_v & yumi_i)
       | (v_v_r & ~instr_returns_val_v));
-
-
 
 
   // tag_mem
@@ -492,10 +513,10 @@ module bsg_data_cache (
     ,.miss_minus_recover_v_i(in_middle_of_miss)
     ,.tagged_access_v_i(addr_v_r[0] & word_op_v_r)
     ,.ld_st_set_v_i(just_recovered_r ? evict_and_fill_set : tag_hit_1_v_r)
-    ,.wipe_set_v_i(invalidate_op_v_r ? explicit_set_bit_v : evict_and_fill_set)
+    ,.wipe_set_v_i(tagst_op_v_r ? explicit_set_bit_v : evict_and_fill_set)
     ,.ld_op_v_i(~miss_v_r & ld_op_v_r)
     ,.st_op_v_i(~miss_v_r & st_op_v_r)
-    ,.wipe_v_i(invalidate_op_v_r | miss_case_wipe_request_v)
+    ,.wipe_v_i(tagst_op_v_r | miss_case_wipe_request_v)
     ,.dirty0_o(dirty0)
     ,.dirty1_o(dirty1)
     ,.mru_o(mru)
@@ -512,7 +533,7 @@ module bsg_data_cache (
     ,.miss_v_i(miss_v_r)
     ,.ld_op_v_i(ld_op_v_r)
     ,.st_op_v_i(st_op_v_r)
-    ,.flush_op_v_i(flush_op_v_r)
+    ,.tagfl_op_v_i(tagfl_op_v_r)
     ,.afl_op_v_i(afl_op_v_r)
     ,.aflinv_op_v_i(aflinv_op_v_r)
     ,.ainv_op_v_i(ainv_op_v_r)
@@ -597,14 +618,14 @@ module bsg_data_cache (
       ld_op_v_r <= 1'b0;
       st_op_tl_r <= 1'b0;
       st_op_v_r <= 1'b0;
-      invalidate_op_tl_r <= 1'b0;
-      invalidate_op_v_r <= 1'b0;
-      flush_op_tl_r <= 1'b0;
-      flush_op_v_r <= 1'b0;
-      valid_op_tl_r <= 1'b0;
-      valid_op_v_r <= 1'b0;
-      lnaddr_op_tl_r <= 1'b0;
-      lnaddr_op_v_r <= 1'b0;
+      tagst_op_tl_r <= 1'b0;
+      tagst_op_v_r <= 1'b0;
+      tagfl_op_tl_r <= 1'b0;
+      tagfl_op_v_r <= 1'b0;
+      taglv_op_tl_r <= 1'b0;
+      taglv_op_v_r <= 1'b0;
+      tagla_op_tl_r <= 1'b0;
+      tagla_op_v_r <= 1'b0;
       afl_op_tl_r <= 1'b0;
       afl_op_v_r <= 1'b0;
       aflinv_op_tl_r <= 1'b0;
@@ -617,8 +638,8 @@ module bsg_data_cache (
       half_op_v_r <= 1'b0;
       byte_op_tl_r <= 1'b0;
       byte_op_v_r <= 1'b0;
-      sign_extend_tl_r <= 1'b0;
-      sign_extend_v_r <= 1'b0;
+      sigext_op_tl_r <= 1'b0;
+      sigext_op_v_r <= 1'b0;
       just_recovered_r <= 1'b0;
       instr_reads_tags_tl_r <= 1'b0;
     end
@@ -630,19 +651,19 @@ module bsg_data_cache (
       if (ready_o) begin
         v_tl_r <= v_i;
         if (v_i) begin
-          ld_op_tl_r <= ld_op_i;
-          st_op_tl_r <= st_op_i;
-          invalidate_op_tl_r <= invalidate_op_i;
-          flush_op_tl_r <= flush_op_i;
-          valid_op_tl_r <= valid_op_i;
-          lnaddr_op_tl_r <= lnaddr_op_i;
-          afl_op_tl_r <= afl_op_i;
-          aflinv_op_tl_r <= aflinv_op_i;
-          ainv_op_tl_r <= ainv_op_i;
-          word_op_tl_r <= word_op_i;
-          half_op_tl_r <= half_op_i;
-          byte_op_tl_r <= byte_op_i;
-          sign_extend_tl_r <= sign_extend_i;
+          ld_op_tl_r <= ld_op;
+          st_op_tl_r <= st_op;
+          tagst_op_tl_r <= tagst_op;
+          tagfl_op_tl_r <= tagfl_op;
+          taglv_op_tl_r <= taglv_op;
+          tagla_op_tl_r <= tagla_op;
+          afl_op_tl_r <= afl_op;
+          aflinv_op_tl_r <= aflinv_op;
+          ainv_op_tl_r <= ainv_op;
+          word_op_tl_r <= word_op;
+          half_op_tl_r <= half_op;
+          byte_op_tl_r <= byte_op;
+          sigext_op_tl_r <= sigext_op_i;
           instr_reads_tags_tl_r <= instr_reads_tags_a;
           addr_tl_r <= addr_i;
           data_i_tl_r <= data_i;
@@ -657,17 +678,17 @@ module bsg_data_cache (
           tag_hit_1_v_r <= tag_hit_1_tl;
           ld_op_v_r <= ld_op_tl_r;
           st_op_v_r <= st_op_tl_r;
-          invalidate_op_v_r <= invalidate_op_tl_r;
-          flush_op_v_r <= flush_op_tl_r;
-          valid_op_v_r <= valid_op_tl_r;
-          lnaddr_op_v_r <= lnaddr_op_tl_r;
+          tagst_op_v_r <= tagst_op_tl_r;
+          tagfl_op_v_r <= tagfl_op_tl_r;
+          taglv_op_v_r <= taglv_op_tl_r;
+          tagla_op_v_r <= tagla_op_tl_r;
           afl_op_v_r <= afl_op_tl_r;
           aflinv_op_v_r <= aflinv_op_tl_r;
           ainv_op_v_r <= ainv_op_tl_r;
           word_op_v_r <= word_op_tl_r;
           half_op_v_r <= half_op_tl_r;
           byte_op_v_r <= byte_op_tl_r;
-          sign_extend_v_r <= sign_extend_tl_r;
+          sigext_op_v_r <= sigext_op_tl_r;
           addr_v_r <= addr_tl_r;
           data_i_v_r <= data_i_tl_r;
           tag_data_out_v_r <= tag_data_out_tl;
@@ -678,5 +699,5 @@ module bsg_data_cache (
       end
     end
   end 
-   
+
 endmodule
