@@ -1,94 +1,201 @@
+/**
+ *  bsg_dma_engine.v
+ */
+
 module bsg_dma_engine (
   input clk_i
   ,input rst_i
   
-  ,input mem_to_network_req_i
-  ,input network_to_mem_req_i
-  ,input pass_to_network_req_i
-  
-  ,input [8:0] start_addr_i
+  // from miss_case
+  ,input mc_send_fill_req_i
+  ,input mc_send_evict_req_i
+  ,input mc_fill_line_i
+  ,input mc_evict_line_i
+  ,input [31:0] mc_pass_data_i
   ,input start_set_i
-  ,input [2:0] snoop_word_i
-  ,output logic [31:0] snoop_data_o
-  
-  ,input [31:0] pass_data_i
-  
-  ,input [31:0] cmni_data_i
-  ,input cmni_valid_i
-  ,output logic cmni_thanks_o
-  
-  ,output logic cmno_send_req_o
-  ,input cmno_send_committed_i
-  ,output logic [31:0] cmno_data_o
 
+  // to miss_case
+  ,output logic finished_o
+
+  ,input [8:0] start_addr_i
+  ,input [2:0] snoop_word_offset_i
+  ,output logic [31:0] snoop_word_o
+  
+  // DMA request channel
+  ,output logic dma_rd_wr_o         // rd = 0, wr = 1;
+  ,output logic [31:0] dma_addr_o
+  ,output logic dma_req_v_o
+  ,input dma_req_yumi_i
+
+  // DMA read channel
+  ,input [31:0] dma_rdata_i
+  ,input dma_rvalid_i
+  ,output logic dma_rready_o
+
+  // DMA write channel
+  ,output logic [31:0] dma_wdata_o
+  ,output logic dma_wvalid_o
+  ,input dma_wready_i
+
+  // data_mem
+  ,output logic data_re_force_o
   ,output logic data_we_force_o
   ,output logic [7:0] data_mask_force_o
   ,output logic [11:0] data_addr_force_o
   ,output logic [63:0] data_in_force_o
   ,input [63:0] raw_data_i
-  ,output logic finished_o
 );
 
-  localparam line_size_lp = 8'h8;
+  localparam block_size_lp = 8'h8;
+  
+  typedef enum logic [2:0] {
+    IDLE = 3'd0,
+    REQ_SEND_FILL = 3'd1,
+    REQ_SEND_EVICT = 3'd2,
+    FILL_LINE = 3'd3,
+    EVICT_LINE = 3'd4,
+    FINISHED = 3'd5
+  } dma_state_e;
+  
+  // incoming fill fifo
+  // for fill, dequeue data from fifo.
+  // each time data is dequeued, increment the counter.
+  logic [31:0] dma_rdata;
+  logic fill_fifo_v_lo;
+  logic fill_fifo_yumi_li;
+  bsg_two_fifo #(.width_p(32)) dma_fill_fifo (
+    .clk_i(clk_i)
+    ,.reset_i(rst_i)
 
-  logic sent_word;
-  logic [4:0] word_num_n;
-  logic [4:0] word_num_r;
+    ,.ready_o(dma_rready_o)
+    ,.data_i(dma_rdata_i)
+    ,.v_i(dma_rvalid_i)
+
+    ,.v_o(fill_fifo_v_lo)
+    ,.data_o(dma_rdata)
+    ,.yumi_i(fill_fifo_yumi_li)
+  );
   
-  logic [2:0] word_offset;
-  logic processed_word;
-  
+  // outgoing evict fifo
+  // for evict/flush, queue data read from data_meme to fifo.
+  // each time data is queued, increment the counter. 
+  logic [31:0] dma_wdata;
+  logic evict_fifo_ready_lo;
+  logic evict_fifo_v_li;
+  assign dma_wdata = start_set_i
+    ? raw_data_i[63:32]
+    : raw_data_i[31:0];
+
+  bsg_two_fifo #(.width_p(32)) dma_evict_fifo (
+    .clk_i(clk_i)
+    ,.reset_i(rst_i)
+
+    ,.ready_o(evict_fifo_ready_lo)
+    ,.data_i(dma_wdata)
+    ,.v_i(evict_fifo_v_li)
+
+    ,.v_o(dma_wvalid_o)
+    ,.data_o(dma_wdata_o)
+    ,.yumi_i(dma_wready_i)
+  );
+
+  logic [2:0] dma_state_r;
+  logic [2:0] dma_state_n;
+
+  logic [3:0] counter_r;
+  logic [3:0] counter_n;
+
   always_ff @ (posedge clk_i) begin
-
-    if (cmni_valid_i & (snoop_word_i == word_num_r) & network_to_mem_req_i) begin
-      snoop_data_o <= cmni_data_i;
-    end
-    
     if (rst_i) begin
-      word_num_r <= 0;
+      dma_state_r <= IDLE;
+      counter_r <= 0;
     end
     else begin
-      word_num_r <= finished_o ? 0 : word_num_n;
+      dma_state_r <= dma_state_n;
+      counter_r <= counter_n;
     end
   end
 
-  logic [31:0] raw_data_set;
-  assign raw_data_set = start_set_i ? raw_data_i[63:32] : raw_data_i[31:0];
-  
-  assign cmno_data_o = pass_to_network_req_i 
-    ? pass_data_i
-    : raw_data_set; 
+  assign dma_addr_o = mc_pass_data_i;
+  assign data_mask_force_o = start_set_i
+    ? {4'b1111, 4'b0000}
+    : {4'b0000, 4'b1111};
+
+  assign data_addr_force_o = {start_addr_i, counter_r[2:0]};
+  assign data_in_force_o = {2{dma_rdata}};
+
 
   always_comb begin
-    cmno_send_req_o = (mem_to_network_req_i | pass_to_network_req_i) & ~rst_i;
+    finished_o = 1'b0;
+    dma_req_v_o = 1'b0;
+    counter_n = counter_r;
+    dma_rd_wr_o = 1'b0;
+    data_we_force_o = 1'b0;
+    data_re_force_o = 1'b0;
+    fill_fifo_yumi_li = 1'b0;
+    evict_fifo_v_li = 1'b0;
     
-    sent_word = (mem_to_network_req_i & cmno_send_committed_i) & ~rst_i;
-    
-    data_we_force_o = cmni_valid_i & network_to_mem_req_i;
-    cmni_thanks_o = data_we_force_o;
-    
-    data_mask_force_o = start_set_i ? {4'b1111, 4'b0000} : {4'b0000, 4'b1111};
-
-    word_offset = word_num_r[2:0] + sent_word;
-
-    data_addr_force_o = {start_addr_i, word_offset[2:0]};
-    data_in_force_o = {cmni_data_i, cmni_data_i};
-
-    processed_word = data_we_force_o | sent_word;
-    word_num_n = processed_word ? (word_num_r + 1) : word_num_r;
-   
-    if (rst_i) begin
-      finished_o = 0;
-    end
-    else begin
-      if (pass_to_network_req_i) begin
-        finished_o = cmno_send_committed_i;
+    case (dma_state_r)
+      IDLE: begin
+        dma_state_n = mc_send_fill_req_i ? REQ_SEND_FILL
+          : (mc_send_evict_req_i ? REQ_SEND_EVICT
+          : (mc_fill_line_i ? FILL_LINE
+          : (mc_evict_line_i ? EVICT_LINE
+          : IDLE)));
+        counter_n = mc_fill_line_i ? 4'b0
+          : (mc_evict_line_i ? 4'b1
+          : counter_r);
+        data_re_force_o = mc_evict_line_i;
       end
-      else begin
-        finished_o = ((line_size_lp-1) == word_num_r) & processed_word;
+      
+      REQ_SEND_FILL: begin
+        dma_state_n = dma_req_yumi_i
+          ? FINISHED
+          : REQ_SEND_FILL;
+        dma_req_v_o = 1'b1;
+        dma_rd_wr_o = 1'b0;
       end
-    end
+
+      REQ_SEND_EVICT: begin
+        dma_state_n = dma_req_yumi_i
+          ? FINISHED
+          : REQ_SEND_EVICT;
+        dma_req_v_o = 1'b1;
+        dma_rd_wr_o = 1'b1;
+      end
+      
+      FILL_LINE: begin
+        dma_state_n = (counter_r == (block_size_lp - 1)) & fill_fifo_v_lo
+          ? FINISHED
+          : FILL_LINE;
+        data_we_force_o = fill_fifo_v_lo;
+        fill_fifo_yumi_li = fill_fifo_v_lo;
+        counter_n = fill_fifo_v_lo
+          ? counter_r + 1
+          : counter_r;
+        
+        if (snoop_word_offset_i == counter_r & fill_fifo_v_lo) begin
+          snoop_word_o <= dma_rdata;
+        end
+      end
+
+      EVICT_LINE: begin
+        dma_state_n = (counter_r == block_size_lp) & evict_fifo_ready_lo
+          ? FINISHED
+          : EVICT_LINE;
+        counter_n = evict_fifo_ready_lo 
+          ? counter_r + 1
+          : counter_r;
+        evict_fifo_v_li = 1'b1;
+        data_re_force_o = evict_fifo_ready_lo & (counter_r != block_size_lp);
+      end
+
+      FINISHED: begin
+        finished_o = 1'b1;
+        dma_state_n = IDLE;
+        counter_n = 4'b0;
+      end
+    endcase
   end
-
 
 endmodule 

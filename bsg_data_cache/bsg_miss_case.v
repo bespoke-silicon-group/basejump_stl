@@ -15,230 +15,198 @@ module bsg_miss_case (
   ,input afl_op_v_i
   ,input aflinv_op_v_i
   ,input ainv_op_v_i
+  ,input [31:0] addr_v_i
 
-  ,input [31:0] miss_addr_v_i
-  ,input [18:0] tag_data0_v_i
-  ,input [18:0] tag_data1_v_i
+  ,input [17:0] tag0_v_i
+  ,input [17:0] tag1_v_i
+  ,input valid0_v_i
+  ,input valid1_v_i
   ,input tag_hit1_v_i
+
+  // from write_buffer
   ,input writebuf_empty_i
 
-  ,input [31:0] mdn_fill_header_v_i
-  ,input [31:0] mdn_evict_header_v_i
-  
-  ,output logic mem_to_network_req_o
-  ,output logic network_to_mem_req_o
-  ,output logic pass_to_network_req_o
-
-  ,output logic [31:0] pass_data_o
+  // to dma_engine
+  ,output logic mc_send_fill_req_o
+  ,output logic mc_send_evict_req_o
+  ,output logic mc_fill_line_o
+  ,output logic mc_evict_line_o
+  ,output logic [31:0] mc_pass_data_o
     
+  // from dma_engine
   ,input dma_finished_i
   
+  // to replacement
   ,output logic wipe_v_o
   
+  // from replacement 
   ,input query_dirty0_i
   ,input query_dirty1_i
   ,input query_mru_i
 
-  ,output logic final_recover_o
-  ,output logic tag_we_force_o
+  // to replacement
+  ,output logic status_mem_re_o
 
-  ,output logic chosen_set_o // the set we have decied to replace or flush
-  
-  //,output [31:0] evict_address_o
-  
-  ,output logic mc_reading_dmem_o
-  
-  ,output logic status_mem_re_o   // status_mem read enable
+  ,output logic chosen_set_o
+  ,output logic tag_we_force_o
+  ,output logic final_recover_o
 );
 
   typedef enum logic [3:0] {
-    START = 4'b0000
-    ,FLUSH_INSTR = 4'b0001
-    ,FLUSH_INSTR_2 = 4'b0011  
-    ,FILL_REQUEST_SEND_HDR = 4'b1000
-    ,FILL_REQUEST_SEND_ADDR = 4'b1010
-    ,EVICT_REQUEST_SEND_HDR = 4'b0010
-    ,EVICT_REQUEST_SEND_ADDR = 4'b0110
-    ,EVICT_REQUEST_SEND_DATA = 4'b0100
-    ,FILL_REQUEST_GET_DATA = 4'b0101
+    START = 4'd0
+    ,FLUSH_INSTR = 4'd1
+    ,FLUSH_INSTR_2 = 4'd3 
+    ,FILL_REQUEST_SEND_HDR = 4'd8
+    ,FILL_REQUEST_SEND_ADDR = 4'd10
+    ,EVICT_REQUEST_SEND_ADDR = 4'd6
+    ,EVICT_REQUEST_SEND_DATA = 4'd4
+    ,FILL_REQUEST_GET_DATA = 4'd5
     ,FINAL_RECOVER = 4'b1101
   } miss_state_e;
 
   logic [3:0] miss_state_r;
-  logic chosen_set_n;
+  logic [3:0] miss_state_n;
   logic chosen_set_r;
+  logic chosen_set_n;
   logic chosen_set_is_dirty_r;
+  logic chosen_set_is_dirty_n;
   logic chosen_set_is_valid_r;
+  logic chosen_set_is_valid_n;
+  logic [31:0] evict_address_r;
+  logic [31:0] evict_address_n;
   
   logic [8:0] miss_index_v;
-  logic miss_set_bit_v;
-  logic valid0_v, valid1_v;
-  
-  assign miss_index_v = miss_addr_v_i[13:5];
-  assign miss_set_bit_v = miss_addr_v_i[14];
-  assign valid0_v = tag_data0_v_i[18];
-  assign valid1_v = tag_data1_v_i[18];
-  
+  logic tagfl_set_v;
+  logic flush_instr;
+  logic dirty_and_valid;
+
+  assign miss_index_v = addr_v_i[13:5];
+  assign tagfl_set_v = addr_v_i[14];
+  assign flush_instr = tagfl_op_v_i | ainv_op_v_i | afl_op_v_i | aflinv_op_v_i;
+  assign dirty_and_valid = chosen_set_is_dirty_r & chosen_set_is_valid_r;
+
   assign chosen_set_o = chosen_set_r;
 
-  logic [31:0] evict_address_r;
-  //assign evict_address_o = evict_address_r;
-
   always_comb begin
-    pass_data_o = 32'b0;
+    chosen_set_n = chosen_set_r;
+    // to dma_engine
+    mc_pass_data_o = 32'b0;
+    mc_send_fill_req_o = 1'b0;
+    mc_send_evict_req_o = 1'b0;
+    mc_fill_line_o = 1'b0;
+    mc_evict_line_o = 1'b0;
+    // to tag_mem  
     tag_we_force_o = 1'b0;
-    final_recover_o = 1'b0;
-    pass_to_network_req_o = 1'b0;
-    mem_to_network_req_o = 1'b0;
-    network_to_mem_req_o = 1'b0;
+    // to replacement
     wipe_v_o = 1'b0;
-    mc_reading_dmem_o = 1'b0;
     status_mem_re_o = 1'b0;
+    // to data_cache
+    final_recover_o = 1'b0;
+
 
     case (miss_state_r) 
-
+      
+      //  When miss happens, read dirty bits and MRU.
+      //  Depending on the instr_op, take either flush or fill path.
       START: begin
         status_mem_re_o = v_v_r_i & miss_v_i;
+        miss_state_n = (v_v_r_i & miss_v_i & flush_instr)
+          ? FLUSH_INSTR 
+          : ((v_v_r_i & miss_v_i & (ld_op_v_i | st_op_v_i))
+            ? FILL_REQUEST_SEND_HDR
+            : START);
       end
-
+      
+      // choose a set to fill.
+      // determine if the chosen set is valid/dirty.
       FILL_REQUEST_SEND_HDR: begin
-        pass_data_o = mdn_fill_header_v_i;
-        pass_to_network_req_o = 1'b1;
+        chosen_set_n = (valid0_v_i ? (valid1_v_i ? ~query_mru_i : 1'b1) : 1'b0);
+        chosen_set_is_dirty_n = chosen_set_n ? query_dirty1_i : query_dirty0_i;
+        chosen_set_is_valid_n = valid1_v_i & valid0_v_i;
+        miss_state_n = FILL_REQUEST_SEND_ADDR;
       end
-
+  
+      // tell dma_engine to send fill request and addr.
+      // calculate evict address.
       FILL_REQUEST_SEND_ADDR: begin
-        pass_data_o = miss_addr_v_i;
+        mc_send_fill_req_o = 1'b1;
+        mc_pass_data_o = addr_v_i;
         tag_we_force_o = dma_finished_i;
-        wipe_v_o = 1'b1;
-        pass_to_network_req_o = 1'b1;
+        wipe_v_o = dma_finished_i;
+        evict_address_n = { (chosen_set_r ? tag1_v_i : tag0_v_i), miss_index_v, 5'b0 };
+        
+        miss_state_n = dma_finished_i
+          ? (dirty_and_valid ? EVICT_REQUEST_SEND_ADDR : FILL_REQUEST_GET_DATA)
+          : FILL_REQUEST_SEND_ADDR;
       end
 
+      //  Determine which set to flush and whether it's dirty/valid.
+      FLUSH_INSTR: begin
+        chosen_set_n = tagfl_op_v_i ? tagfl_set_v : tag_hit1_v_i;
+        chosen_set_is_dirty_n = chosen_set_n ? query_dirty1_i : query_dirty0_i;
+        chosen_set_is_valid_n = chosen_set_n ? valid1_v_i : valid0_v_i;
+        miss_state_n = FLUSH_INSTR_2;
+      end
+
+      //  Calculate evict_address.
+      //  If AINV or AFLINV, set valid bit to zero in tag_mem.
+      //  We also set dirty bit of the chosen set to zero, and set MRU to the other set.
       FLUSH_INSTR_2: begin
         tag_we_force_o = ainv_op_v_i | aflinv_op_v_i;
         wipe_v_o = 1'b1;
+        evict_address_n = { (chosen_set_r ? tag1_v_i : tag0_v_i), miss_index_v, 5'b0 };
+        miss_state_n = (~ainv_op_v_i & dirty_and_valid)
+          ? EVICT_REQUEST_SEND_ADDR
+          : FINAL_RECOVER;
       end
 
-      EVICT_REQUEST_SEND_HDR: begin
-        pass_data_o = mdn_evict_header_v_i;
-        pass_to_network_req_o = 1'b1;
-      end
-
+      // tell dma_engine to send evict request and addr.
       EVICT_REQUEST_SEND_ADDR: begin
-        pass_data_o = evict_address_r;
-        pass_to_network_req_o = 1'b1;
-        mc_reading_dmem_o = 1'b1;
+        mc_send_evict_req_o = 1'b1;
+        mc_pass_data_o = evict_address_r;
+        miss_state_n = dma_finished_i
+          ? EVICT_REQUEST_SEND_DATA
+          : EVICT_REQUEST_SEND_ADDR;
       end
-
+      
+      // tell dma_engine to send evict line, as soon as write_buffer is empty.
       EVICT_REQUEST_SEND_DATA: begin
-        mem_to_network_req_o = writebuf_empty_i;
-        mc_reading_dmem_o = 1'b1;
+        mc_evict_line_o = writebuf_empty_i;
+        miss_state_n = dma_finished_i
+          ? ((tagfl_op_v_i | aflinv_op_v_i | afl_op_v_i) ? FINAL_RECOVER : FILL_REQUEST_GET_DATA)
+          : EVICT_REQUEST_SEND_DATA;
       end
-
+  
+      // tell dma_engine to start filling the cache, as soon as write_buffer is empty.
       FILL_REQUEST_GET_DATA: begin
-        network_to_mem_req_o = writebuf_empty_i;
+        mc_fill_line_o = writebuf_empty_i;
+        miss_state_n = dma_finished_i ? FINAL_RECOVER : FILL_REQUEST_GET_DATA;
       end
 
+    
       FINAL_RECOVER: begin
         final_recover_o = 1'b1;
+        miss_state_n = START;
       end
 
     endcase
   end
 
   always_ff @ (posedge clk_i) begin
-    chosen_set_n = 0;
-    chosen_set_r <= chosen_set_r;
-    chosen_set_is_dirty_r <= chosen_set_is_dirty_r;
-    chosen_set_is_valid_r <= chosen_set_is_valid_r;
-    evict_address_r <= evict_address_r;
-
-    case (miss_state_r)
-
-      START: begin
-        chosen_set_is_dirty_r <= 1'b0;
-        chosen_set_is_valid_r <= 1'b0;
-        chosen_set_r <= 1'b0;
-        evict_address_r <= 32'b0;
-        miss_state_r <= (v_v_r_i & miss_v_i & (tagfl_op_v_i | ainv_op_v_i | afl_op_v_i | aflinv_op_v_i))
-          ? FLUSH_INSTR 
-          : ((v_v_r_i & miss_v_i & (ld_op_v_i | st_op_v_i))
-            ? FILL_REQUEST_SEND_HDR
-            : START);
-      end
-
-      FLUSH_INSTR: begin
-        chosen_set_n = (afl_op_v_i | aflinv_op_v_i | ainv_op_v_i) ? tag_hit1_v_i : miss_set_bit_v;
-        chosen_set_r <= chosen_set_n;
-
-        chosen_set_is_dirty_r <= chosen_set_n ? query_dirty1_i : query_dirty0_i;
-        chosen_set_is_valid_r <= chosen_set_n ? valid1_v : valid0_v;
-        miss_state_r <= FLUSH_INSTR_2;
-      end      
-
-      FLUSH_INSTR_2: begin
-        evict_address_r <= {
-          (chosen_set_r ? tag_data1_v_i[17:0] : tag_data0_v_i[17:0]),
-          miss_index_v,
-          5'b0
-        };
-        miss_state_r <= (~ainv_op_v_i & chosen_set_is_dirty_r & chosen_set_is_valid_r)
-          ? EVICT_REQUEST_SEND_HDR
-          : FINAL_RECOVER;
-      end
-
-      FILL_REQUEST_SEND_HDR: begin
-        chosen_set_n = (valid0_v ? (valid1_v ? ~query_mru_i : 1'b1) : 1'b0);
-        chosen_set_r <= chosen_set_n;
-        chosen_set_is_dirty_r <= chosen_set_n ? query_dirty1_i : query_dirty0_i;
-        chosen_set_is_valid_r <= valid1_v & valid0_v;
-
-        miss_state_r <= dma_finished_i ? FILL_REQUEST_SEND_ADDR : FILL_REQUEST_SEND_HDR;
-      end
-
-      FILL_REQUEST_SEND_ADDR: begin
-        evict_address_r <= {
-          (chosen_set_r ? tag_data1_v_i[17:0] : tag_data0_v_i[17:0]),
-          miss_index_v,
-          5'b0
-        };
-        
-        miss_state_r <= dma_finished_i
-          ? ((chosen_set_is_dirty_r & chosen_set_is_valid_r) ? EVICT_REQUEST_SEND_HDR : FILL_REQUEST_GET_DATA)
-          : FILL_REQUEST_SEND_ADDR;
-        
-      end
-
-      EVICT_REQUEST_SEND_HDR: begin
-        miss_state_r <= dma_finished_i ? EVICT_REQUEST_SEND_ADDR : EVICT_REQUEST_SEND_HDR;
-      end
-
-      EVICT_REQUEST_SEND_ADDR: begin
-        miss_state_r <= dma_finished_i ? EVICT_REQUEST_SEND_DATA : EVICT_REQUEST_SEND_ADDR;
-      end
-    
-      EVICT_REQUEST_SEND_DATA: begin
-        miss_state_r <= dma_finished_i
-          ? ((tagfl_op_v_i | aflinv_op_v_i | afl_op_v_i) ? FINAL_RECOVER : FILL_REQUEST_GET_DATA)
-          : EVICT_REQUEST_SEND_DATA;
-      end
-  
-      FILL_REQUEST_GET_DATA: begin
-        miss_state_r <= dma_finished_i ? FINAL_RECOVER : FILL_REQUEST_GET_DATA;
-      end
-
-      FINAL_RECOVER: begin
-        miss_state_r <= START;
-      end
-
-      default: begin
-        miss_state_r <= START;
-      end
-    endcase
-
     if (rst_i) begin
       miss_state_r <= START;
+      chosen_set_r <= 1'b0;
+      chosen_set_is_valid_r <= 1'b0;
+      chosen_set_is_dirty_r <= 1'b0;
+      evict_address_r <= 32'b0;
+    end 
+    else begin
+      miss_state_r <= miss_state_n;
+      chosen_set_r <= chosen_set_n;
+      chosen_set_is_valid_r <= chosen_set_is_valid_n;
+      chosen_set_is_dirty_r <= chosen_set_is_dirty_n;
+      evict_address_r <= evict_address_n;
     end
   end
-
 
 endmodule
