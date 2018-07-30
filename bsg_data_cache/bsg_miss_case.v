@@ -3,7 +3,10 @@
  */
 
 
-module bsg_miss_case (
+module bsg_miss_case #(parameter tag_width_lp="inv"
+                      ,parameter lg_block_size_lp="inv"
+                      ,parameter lg_els_lp="inv")
+(
   input clk_i
   ,input rst_i
 
@@ -17,8 +20,8 @@ module bsg_miss_case (
   ,input ainv_op_v_i
   ,input [31:0] addr_v_i
 
-  ,input [17:0] tag0_v_i
-  ,input [17:0] tag1_v_i
+  ,input [tag_width_lp-1:0] tag0_v_i
+  ,input [tag_width_lp-1:0] tag1_v_i
   ,input valid0_v_i
   ,input valid1_v_i
   ,input tag_hit1_v_i
@@ -75,17 +78,22 @@ module bsg_miss_case (
   logic [31:0] evict_address_r;
   logic [31:0] evict_address_n;
   
-  logic [8:0] miss_index_v;
+  logic [lg_els_lp-1:0] miss_index_v;
   logic tagfl_set_v;
   logic flush_instr;
   logic dirty_and_valid;
 
-  assign miss_index_v = addr_v_i[13:5];
-  assign tagfl_set_v = addr_v_i[14];
+  assign miss_index_v = addr_v_i[2+lg_block_size_lp-1+:lg_els_lp]; // 13:5
+  assign tagfl_set_v = addr_v_i[lg_els_lp+lg_block_size_lp+2];
   assign flush_instr = tagfl_op_v_i | ainv_op_v_i | afl_op_v_i | aflinv_op_v_i;
   assign dirty_and_valid = chosen_set_is_dirty_r & chosen_set_is_valid_r;
 
   assign chosen_set_o = chosen_set_r;
+  assign evict_address_n = {
+    (chosen_set_r ? tag1_v_i : tag0_v_i),
+    miss_index_v,
+    (2+lg_block_size_lp)'(1'b0)
+  };
 
   always_comb begin
     chosen_set_n = chosen_set_r;
@@ -133,7 +141,6 @@ module bsg_miss_case (
         mc_pass_data_o = addr_v_i;
         tag_we_force_o = dma_finished_i;
         wipe_v_o = dma_finished_i;
-        evict_address_n = { (chosen_set_r ? tag1_v_i : tag0_v_i), miss_index_v, 5'b0 };
         
         miss_state_n = dma_finished_i
           ? (dirty_and_valid ? EVICT_REQUEST_SEND_ADDR : FILL_REQUEST_GET_DATA)
@@ -154,7 +161,6 @@ module bsg_miss_case (
       FLUSH_INSTR_2: begin
         tag_we_force_o = ainv_op_v_i | aflinv_op_v_i;
         wipe_v_o = 1'b1;
-        evict_address_n = { (chosen_set_r ? tag1_v_i : tag0_v_i), miss_index_v, 5'b0 };
         miss_state_n = (~ainv_op_v_i & dirty_and_valid)
           ? EVICT_REQUEST_SEND_ADDR
           : FINAL_RECOVER;

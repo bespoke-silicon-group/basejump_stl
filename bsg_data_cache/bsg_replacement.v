@@ -2,13 +2,15 @@
  *  bsg_replacement.v
  */
 
-module bsg_replacement(
+module bsg_replacement #(parameter lg_els_lp="inv"
+                        ,parameter els_p="inv")
+(
   input clk_i
   ,input rst_i
   
-  ,input [8:0] line_v_i // line and set in question
+  ,input [lg_els_lp-1:0] line_v_i // line and set in question
 
-  ,input [8:0] line_tl_i  // write-onto-read
+  ,input [lg_els_lp-1:0] line_tl_i  // write-onto-read
   ,input miss_minus_recover_v_i
   ,input tagged_access_v_i
 
@@ -32,7 +34,7 @@ module bsg_replacement(
   logic [2:0] replacement_data_in;
   logic [2:0] replacement_mask;
   
-  logic [8:0] line_final;
+  logic [lg_els_lp-1:0] line_final;
   logic read_dirty_r; 
 
   assign replacement_data_in = wipe_v_i
@@ -58,7 +60,7 @@ module bsg_replacement(
     (wipe_v_i | st_op_v_i | ld_op_v_i)
   };
 
-  bsg_mem_1rw_sync_mask_write_bit #(.width_p(3), .els_p(512)) status_mem (
+  bsg_mem_1rw_sync_mask_write_bit #(.width_p(3), .els_p(els_p)) status_mem (
     .clk_i(clk_i)
     ,.reset_i(rst_i)
     ,.v_i(~rst_i & (status_mem_re_i | replacement_we))

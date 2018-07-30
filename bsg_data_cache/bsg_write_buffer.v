@@ -2,12 +2,12 @@
  *  bsg_write_buffer.v
  */
 
-module bsg_write_buffer (
+module bsg_write_buffer #(parameter lg_els_lp="inv"
+                          ,parameter lg_block_size_lp="inv") (
   input clk_i
   ,input rst_i
 
   ,input [3:0] write_mask_v_i
-  ,input [11:0] write_index_v_i
   ,input [31:0] write_addr_v_i
   ,input [31:0] write_data_v_i 
   ,input write_set_v_i
@@ -33,12 +33,14 @@ module bsg_write_buffer (
   logic [31:0] el0_data, el1_data;
   logic [3:0] el0_mask, el1_mask;
   logic [1:0] num_els_r, num_els_n;
+  logic [31:0] writebuf_addr;
 
   logic el0_valid, el1_valid;
   logic mux1_sel, mux0_sel;
   logic writebuf_we_local;
 
   assign writebuf_we_o = writebuf_we_local;
+  assign writebuf_index_o = writebuf_addr[2+:lg_els_lp+lg_block_size_lp]; // 13:2
   
   assign el0_valid = (num_els_r == 2);
   assign el1_valid = (num_els_r >= 1);
@@ -91,19 +93,7 @@ module bsg_write_buffer (
     ,.mux1_sel_i(mux1_sel)
     ,.el0_snoop_o(el0_addr)
     ,.el1_snoop_o(el1_addr)
-    ,.final_o()
-  );
-
-  bsg_write_buffer_queue #(.width_p(12)) wbq_index (
-    .clk_i(clk_i)
-    ,.data_i(write_index_v_i)
-    ,.el0_en_i(el0_enable)
-    ,.el1_en_i(el1_enable)
-    ,.mux0_sel_i(mux0_sel)
-    ,.mux1_sel_i(mux1_sel)
-    ,.el0_snoop_o()
-    ,.el1_snoop_o()
-    ,.final_o(writebuf_index_o)
+    ,.final_o(writebuf_addr)
   );
 
   bsg_write_buffer_queue #(.width_p(1)) wbq_set (

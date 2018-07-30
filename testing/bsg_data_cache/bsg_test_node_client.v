@@ -58,7 +58,10 @@ else begin : dcache
   assign dc_data_i = data_i[31:0];
   assign data_o = {48'b0, dc_data_o};
 
-  bsg_data_cache dcache0 (
+  bsg_data_cache #(
+    .block_size_p(8)
+    ,.els_p(512)
+  ) dcache0 (
     .clk_i(clk_i)
     ,.rst_i(rst_i)
 

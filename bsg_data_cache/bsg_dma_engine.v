@@ -2,7 +2,9 @@
  *  bsg_dma_engine.v
  */
 
-module bsg_dma_engine (
+module bsg_dma_engine #(parameter block_size_p="inv"
+                        ,parameter lg_els_lp="inv")
+(
   input clk_i
   ,input rst_i
   
@@ -17,7 +19,7 @@ module bsg_dma_engine (
   // to miss_case
   ,output logic finished_o
 
-  ,input [8:0] start_addr_i
+  ,input [lg_els_lp-1:0] start_addr_i
   ,input [2:0] snoop_word_offset_i
   ,output logic [31:0] snoop_word_o
   
@@ -46,8 +48,6 @@ module bsg_dma_engine (
   ,input [63:0] raw_data_i
 );
 
-  localparam block_size_lp = 8'h8;
-  
   typedef enum logic [2:0] {
     IDLE = 3'd0,
     REQ_SEND_FILL = 3'd1,
@@ -165,7 +165,7 @@ module bsg_dma_engine (
       end
       
       FILL_LINE: begin
-        dma_state_n = (counter_r == (block_size_lp - 1)) & fill_fifo_v_lo
+        dma_state_n = (counter_r == (block_size_p - 1)) & fill_fifo_v_lo
           ? FINISHED
           : FILL_LINE;
         data_we_force_o = fill_fifo_v_lo;
@@ -180,14 +180,14 @@ module bsg_dma_engine (
       end
 
       EVICT_LINE: begin
-        dma_state_n = (counter_r == block_size_lp) & evict_fifo_ready_lo
+        dma_state_n = (counter_r == block_size_p) & evict_fifo_ready_lo
           ? FINISHED
           : EVICT_LINE;
         counter_n = evict_fifo_ready_lo 
           ? counter_r + 1
           : counter_r;
         evict_fifo_v_li = 1'b1;
-        data_re_force_o = evict_fifo_ready_lo & (counter_r != block_size_lp);
+        data_re_force_o = evict_fifo_ready_lo & (counter_r != block_size_p);
       end
 
       FINISHED: begin
