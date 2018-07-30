@@ -24,7 +24,8 @@
 // 1000 = AINV (address invalidate)
 
 
-module bsg_data_cache (
+module bsg_data_cache
+(
   input clk_i
   ,input rst_i
 
@@ -40,13 +41,21 @@ module bsg_data_cache (
   ,output logic v_o
   ,input yumi_i
 
-  ,input [31:0] cmni_data_i
-  ,input cmni_valid_i
-  ,output logic cmni_thanks_o
+  // DMA request channel
+  ,output logic dma_rd_wr_o         // rd = 0, wr = 1;
+  ,output logic [31:0] dma_addr_o
+  ,output logic dma_req_v_o
+  ,input dma_req_yumi_i
 
-  ,output logic cmno_send_req_o
-  ,input cmno_send_committed_i
-  ,output logic [31:0] cmno_data_o
+  // DMA read channel
+  ,input [31:0] dma_rdata_i
+  ,input dma_rvalid_i
+  ,output logic dma_rready_o
+
+  // DMA write channel
+  ,output logic [31:0] dma_wdata_o
+  ,output logic dma_wvalid_o
+  ,input dma_wready_i
 );
 
   // logic declaration
@@ -138,6 +147,7 @@ module bsg_data_cache (
   logic data_mem_en;
   logic data_we_storebuf;
   logic data_we_force;
+  logic data_re_force;
   logic data_we_final;
 
   logic [7:0] data_mask_force;
@@ -154,7 +164,6 @@ module bsg_data_cache (
   logic [31:0] data_out_vp_readjust;
  
   logic [18:0] tag_data_0_tl, tag_data_1_tl;
-  logic [18:0] tag_data_0_v, tag_data_1_v;
   logic [18:0] tag_data_explicit_tl;
   logic tag_data_explicit_valid_tl;
   logic [26:0] tag_data_explicit_addr_tl;
@@ -164,9 +173,6 @@ module bsg_data_cache (
 
   logic miss_sense_tl;
   
-  logic [31:0] mdn_evict_header_v;
-  logic [31:0] mdn_fill_header_v;
- 
   logic [3:0] storebuf_hit_v;
   logic [31:0] storebuf_bypass_data_v;
 
@@ -177,7 +183,7 @@ module bsg_data_cache (
   logic [3:0] writebuf_in_mask;
   logic writebuf_empty;
 
-  logic [31:0] snooped_data;
+  logic [31:0] snoop_word;
  
   logic [15:0] data_out_vp_readj_lo, data_out_vp_readj_hi;
   logic [7:0] data_out_vp_readj_b0, data_out_vp_readj_b1,
@@ -193,7 +199,7 @@ module bsg_data_cache (
   logic [31:0] data_out_lalv_swlw_v;
   logic [31:0] data_out_half_or_byte;
 
-  logic miss_case_wipe_request_v;
+  logic mc_wipe_request_v;
   logic dirty0;
   logic dirty1;
   logic write_over_read_v;
@@ -201,11 +207,13 @@ module bsg_data_cache (
 
   logic [31:0] pass_data;
   logic dma_finished;
-  logic mem_to_network_req;
-  logic network_to_mem_req;
-  logic pass_to_network_req;
 
-  logic mc_reading_dmem_for_dma;
+  logic mc_send_fill_req;
+  logic mc_send_evict_req;
+  logic mc_fill_line;
+  logic mc_evict_line;
+  logic [31:0] mc_pass_data;
+   
   logic instr_returns_val_v;
 
   logic status_mem_re;
@@ -280,7 +288,7 @@ module bsg_data_cache (
     ? tag_data_in_force
     : tag_data_in_inval;
 
-  assign tag_we_final = override ? tag_we_force : (tagst_op & v_i);
+  assign tag_we_final = override ? tag_we_force : (tagst_op & v_i & ready_o);
 
   assign instr_reads_tags_a = ld_op | st_op | tagfl_op | taglv_op
     | tagla_op | afl_op | aflinv_op | ainv_op; 
@@ -299,7 +307,7 @@ module bsg_data_cache (
 
   assign data_mem_en = (~rst_i) & ((v_i & ld_op & ~miss_v_r)
     | (v_tl_r & final_recover & ld_op_tl_r)
-    | mc_reading_dmem_for_dma
+    | data_re_force 
     | data_we_final);
 
   assign data_in_final = data_we_force 
@@ -334,9 +342,6 @@ module bsg_data_cache (
   assign tag_data_0_tl = tag_data_out_tl[18:0];
   assign tag_data_1_tl = tag_data_out_tl[37:19];
 
-  assign tag_data_0_v = tag_data_out_v_r[18:0];
-  assign tag_data_1_v = tag_data_out_v_r[37:19];
-
   assign tag_data_explicit_tl = explicit_set_bit_tl
     ? tag_data_1_tl
     : tag_data_0_tl;
@@ -357,9 +362,6 @@ module bsg_data_cache (
 
   assign miss_tl = miss_sense_tl ^ (instr_cannot_miss_tl | tag_hit_0_tl | tag_hit_1_tl);
 
-  assign mdn_evict_header_v = {16'b0, 3'b0, 5'd9, 4'b0100, 4'b0};
-  assign mdn_fill_header_v = {16'b0, 3'b0, 5'd1, 4'b0000, 4'b0};
-  
   assign writebuf_in_mask = word_op_v_r
     ? 4'b1111
     : (half_op_v_r
@@ -394,7 +396,7 @@ module bsg_data_cache (
     : data_out_0_vp;
 
   assign data_out_vp_readjust = just_recovered_r
-    ? snooped_data
+    ? snoop_word
     : data_out_vp_set_picked;
 
   assign data_out_vp_readj_lo = data_out_vp_readjust[15:0];
@@ -516,7 +518,7 @@ module bsg_data_cache (
     ,.wipe_set_v_i(tagst_op_v_r ? explicit_set_bit_v : evict_and_fill_set)
     ,.ld_op_v_i(~miss_v_r & ld_op_v_r)
     ,.st_op_v_i(~miss_v_r & st_op_v_r)
-    ,.wipe_v_i(tagst_op_v_r | miss_case_wipe_request_v)
+    ,.wipe_v_i(tagst_op_v_r | mc_wipe_request_v)
     ,.dirty0_o(dirty0)
     ,.dirty1_o(dirty1)
     ,.mru_o(mru)
@@ -524,11 +526,13 @@ module bsg_data_cache (
     ,.status_mem_re_i(status_mem_re)
   );
 
+
   // miss_case
   //
   bsg_miss_case mc (
     .clk_i(clk_i)
     ,.rst_i(rst_i)
+
     ,.v_v_r_i(v_v_r)
     ,.miss_v_i(miss_v_r)
     ,.ld_op_v_i(ld_op_v_r)
@@ -537,26 +541,38 @@ module bsg_data_cache (
     ,.afl_op_v_i(afl_op_v_r)
     ,.aflinv_op_v_i(aflinv_op_v_r)
     ,.ainv_op_v_i(ainv_op_v_r)
-    ,.miss_addr_v_i(addr_v_r)
-    ,.tag_data0_v_i(tag_data_0_v)
-    ,.tag_data1_v_i(tag_data_1_v)
+    ,.addr_v_i(addr_v_r)
+
+    ,.tag0_v_i(tag_data_out_v_r[17:0])
+    ,.tag1_v_i(tag_data_out_v_r[36:19])
+    ,.valid0_v_i(tag_data_out_v_r[18])
+    ,.valid1_v_i(tag_data_out_v_r[37])
     ,.tag_hit1_v_i(tag_hit_1_v_r)
+
+    // from write buffer
     ,.writebuf_empty_i(writebuf_empty)
-    ,.mdn_fill_header_v_i(mdn_fill_header_v)
-    ,.mdn_evict_header_v_i(mdn_evict_header_v)
-    ,.mem_to_network_req_o(mem_to_network_req)
-    ,.network_to_mem_req_o(network_to_mem_req)
-    ,.pass_to_network_req_o(pass_to_network_req)
-    ,.pass_data_o(pass_data)
+    
+    // to dma_engine
+    ,.mc_send_fill_req_o(mc_send_fill_req)
+    ,.mc_send_evict_req_o(mc_send_evict_req)
+    ,.mc_fill_line_o(mc_fill_line)
+    ,.mc_evict_line_o(mc_evict_line)
+    ,.mc_pass_data_o(mc_pass_data)
+
+    // from dma_engine
     ,.dma_finished_i(dma_finished)
-    ,.wipe_v_o(miss_case_wipe_request_v)
+
+    // to replacement
+    ,.wipe_v_o(mc_wipe_request_v)
+
+    // from replacement
     ,.query_dirty0_i(dirty0)
     ,.query_dirty1_i(dirty1)
     ,.query_mru_i(mru)
+
     ,.final_recover_o(final_recover)
     ,.tag_we_force_o(tag_we_force)
     ,.chosen_set_o(evict_and_fill_set)
-    ,.mc_reading_dmem_o(mc_reading_dmem_for_dma)
     ,.status_mem_re_o(status_mem_re)
   );
 
@@ -565,20 +581,36 @@ module bsg_data_cache (
   bsg_dma_engine de (
     .clk_i(clk_i)
     ,.rst_i(rst_i)
-    ,.mem_to_network_req_i(mem_to_network_req)
-    ,.network_to_mem_req_i(network_to_mem_req)
-    ,.pass_to_network_req_i(pass_to_network_req)
-    ,.start_addr_i(addr_v_r[13:5])
+
+    // from miss_case
+    ,.mc_send_fill_req_i(mc_send_fill_req)
+    ,.mc_send_evict_req_i(mc_send_evict_req)
+    ,.mc_fill_line_i(mc_fill_line)
+    ,.mc_evict_line_i(mc_evict_line)
+    ,.mc_pass_data_i(mc_pass_data)
     ,.start_set_i(evict_and_fill_set)
-    ,.snoop_word_i(addr_v_r[4:2])
-    ,.snoop_data_o(snooped_data)
-    ,.pass_data_i(pass_data)
-    ,.cmni_data_i(cmni_data_i)
-    ,.cmni_valid_i(cmni_valid_i)
-    ,.cmni_thanks_o(cmni_thanks_o)
-    ,.cmno_send_req_o(cmno_send_req_o)
-    ,.cmno_send_committed_i(cmno_send_committed_i)
-    ,.cmno_data_o(cmno_data_o)
+
+    ,.start_addr_i(addr_v_r[13:5])
+    ,.snoop_word_offset_i(addr_v_r[4:2])
+    ,.snoop_word_o(snoop_word)
+
+    // dma req channel
+    ,.dma_rd_wr_o(dma_rd_wr_o)
+    ,.dma_addr_o(dma_addr_o)
+    ,.dma_req_v_o(dma_req_v_o)
+    ,.dma_req_yumi_i(dma_req_yumi_i)
+    
+    // dma read channel
+    ,.dma_rdata_i(dma_rdata_i)
+    ,.dma_rvalid_i(dma_rvalid_i)
+    ,.dma_rready_o(dma_rready_o)
+  
+    // dma write channel
+    ,.dma_wdata_o(dma_wdata_o)
+    ,.dma_wready_i(dma_wready_i)
+    ,.dma_wvalid_o(dma_wvalid_o)
+
+    ,.data_re_force_o(data_re_force)
     ,.data_we_force_o(data_we_force)
     ,.data_mask_force_o(data_mask_force)
     ,.data_addr_force_o(data_addr_force)
@@ -645,7 +677,9 @@ module bsg_data_cache (
     end
     else begin
 
-      just_recovered_r <= final_recover;
+      just_recovered_r <= just_recovered_r
+        ? (instr_returns_val_v ? ~yumi_i : final_recover)
+        : final_recover;
 
       // tl <= i
       if (ready_o) begin
