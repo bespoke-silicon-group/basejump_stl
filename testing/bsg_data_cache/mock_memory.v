@@ -64,7 +64,7 @@ module mock_memory (
   end
 
   assign dma_req_yumi_o = dma_req_v_i
-    & (((recv_state_r == WAIT) & ~dma_rd_wr_i) | ((send_state_r == WAIT) & dma_rd_wr_i));
+    & (((send_state_r == WAIT) & ~dma_rd_wr_i) | ((recv_state_r == WAIT) & dma_rd_wr_i));
   
   assign dma_rdata_o = mem[{send_block_addr_r, send_counter_r}];
 
