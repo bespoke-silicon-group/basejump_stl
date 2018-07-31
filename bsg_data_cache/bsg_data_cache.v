@@ -27,7 +27,7 @@
 module bsg_data_cache #(parameter block_size_p="inv" // 8
                         ,parameter els_p="inv"      // 512, number of sets
                         ,parameter lg_els_lp=`BSG_SAFE_CLOG2(els_p) // 9
-                        ,parameter lg_block_size_lp=`BSG_SAFE_CLOG2(block_size_p) // 3)
+                        ,parameter lg_block_size_lp=`BSG_SAFE_CLOG2(block_size_p) // 3
                         ,parameter tag_width_lp=32-2-lg_els_lp-lg_block_size_lp)
 (
   input clk_i
@@ -202,6 +202,7 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
 
   logic [31:0] data_out_lalv_swlw_v;
   logic [31:0] data_out_half_or_byte;
+  logic [31:0] data_final;
 
   logic mc_wipe_request_v;
   logic dirty0;
@@ -218,19 +219,19 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
   logic mc_evict_line;
   logic [31:0] mc_pass_data;
    
-  logic instr_returns_val_v;
-
   logic status_mem_re;
   logic v_v_we;
 
+  logic instr_returns_val_v;
 
   // handshaking
   //
   assign ready_o = (v_tl_r & v_v_we)
     | (~v_tl_r & (v_v_we | (~tagst_op & miss_v_r)));
 
-  assign v_o = (instr_returns_val_v & v_v_r & ~miss_v_r);
+  assign v_o = v_v_r & (~miss_v_r);
 
+  assign v_v_we = (~miss_v_r) & ((v_v_r & yumi_i) | (~v_v_r));
 
   // datapath
   //
@@ -251,9 +252,10 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
   assign override = miss_v_r;
   assign store_slot_avail_a = ~ld_op | miss_v_r;
 
-  assign instr_returns_val_v = (ld_op_v_r | taglv_op_v_r | tagla_op_v_r);
   assign instr_cannot_miss_tl = tagst_op_tl_r | tagla_op_tl_r | taglv_op_tl_r;
   assign instr_must_miss_tl = tagfl_op_tl_r;
+
+  assign instr_returns_val_v = ld_op_v_r | taglv_op_v_r | tagla_op_v_r;
 
   assign tag_check_me_tl = {instr_must_miss_tl, 1'b1,
     addr_tl_r[2+lg_block_size_lp+lg_els_lp+:tag_width_lp]};
@@ -457,13 +459,11 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
   bsg_mux #(.width_p(32), .els_p(2)) MUX_word_or_other_data_out (
     .data_i({data_out_lalv_swlw_v, data_out_half_or_byte})
     ,.sel_i(word_op_v_r | taglv_op_v_r | tagla_op_v_r)
-    ,.data_o(data_o)
+    ,.data_o(data_final)
   );
 
-  assign v_v_we = (~miss_v_r)
-    & ((~v_v_r)
-      | (v_v_r & instr_returns_val_v & yumi_i)
-      | (v_v_r & ~instr_returns_val_v));
+  assign data_o = data_final & {32{instr_returns_val_v}};
+
 
 
   // tag_mem
@@ -609,6 +609,7 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
     .lg_els_lp(lg_els_lp)
     ,.block_size_p(block_size_p)
   ) de (
+
     .clk_i(clk_i)
     ,.rst_i(rst_i)
 
@@ -666,13 +667,6 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
         ? ~final_recover
         : (v_tl_r ? miss_tl : 1'b0);
 
-      if (ready_o) begin
-        v_tl_r <= v_i;
-      end   
-
-      if (v_v_we) begin
-        v_v_r <= v_tl_r;
-      end
     end
   
     if (rst_i) begin
@@ -708,7 +702,7 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
     else begin
 
       just_recovered_r <= just_recovered_r
-        ? (instr_returns_val_v ? ~yumi_i : final_recover)
+        ? ~(v_o & yumi_i)
         : final_recover;
 
       // tl <= i
