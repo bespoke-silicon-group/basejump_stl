@@ -259,7 +259,7 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
 
   assign tag_check_me_tl = {instr_must_miss_tl, 1'b1,
     addr_tl_r[2+lg_block_size_lp+lg_els_lp+:tag_width_lp]};
-  assign explicit_set_bit_a = addr_i[2+lg_block_size_lp+lg_els_lp];
+  assign explicit_set_bit_a = addr_i[2+lg_block_size_lp+lg_els_lp]; // 2+3+9=14
   assign explicit_set_bit_tl = addr_tl_r[2+lg_block_size_lp+lg_els_lp];
   assign explicit_set_bit_v = addr_v_r[2+lg_block_size_lp+lg_els_lp];
 
