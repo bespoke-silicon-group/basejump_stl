@@ -10,16 +10,22 @@ $(TRACE_ROM).v: $(TRACE_FILE)
 sim: $(TRACE_ROM).v
 	vcs -f sv.include +v2k -R +lint=all -sverilog -full64 \
 		-debug_pp -timescale=1ps/1ps \
-    +notimingcheck
+    +notimingcheck -cm line+cond+fsm+tgl+path+branch+assert \
+		-cm_line contassign	-lca \
+		-cm_name code_cov
 
 dve:
 	dve -full64 -vpd vcdplus.vpd &
+
+cov:
+	dve -full64 -covdir simv.vdb/ &
+
 
 clean:
 	rm -rf DVEfiles
 	rm -rf csrc
 	rm -f $(TRACE_ROM).v
-	rm -rf simv.daidir
-	rm -f ucli.key vcdplus.vpd simv
+	rm -rf simv.daidir simv.vdb
+	rm -f ucli.key vcdplus.vpd simv cm.log
 
 .PHONY: dve sim all clean
