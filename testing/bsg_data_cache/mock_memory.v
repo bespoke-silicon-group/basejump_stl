@@ -3,21 +3,24 @@
  */
 
 module mock_memory (
-  input clk_i
-  ,input rst_i
+  input clock_i
+  ,input reset_i
   
-  ,input dma_rd_wr_i
-  ,input [31:0] dma_addr_i
-  ,input dma_req_v_i
-  ,output logic dma_req_yumi_o
+  // request channel
+  ,input dma_req_ch_write_not_read_i
+  ,input [31:0] dma_req_ch_addr_i
+  ,input dma_req_ch_v_i
+  ,output logic dma_req_ch_yumi_o
 
-  ,output logic [31:0] dma_rdata_o
-  ,output logic dma_rvalid_o
-  ,input dma_rready_i
+  // read channel
+  ,output logic [31:0] dma_read_ch_data_o
+  ,output logic dma_read_ch_v_o
+  ,input dma_read_ch_ready_i
 
-  ,input [31:0] dma_wdata_i
-  ,input dma_wvalid_i
-  ,output logic dma_wready_o
+  // write channel
+  ,input [31:0] dma_write_ch_data_i
+  ,input dma_write_ch_v_i
+  ,output logic dma_write_ch_yumi_o
 );
 
   localparam mem_size_lp = 2**14;
@@ -37,8 +40,8 @@ module mock_memory (
   logic [10:0] send_block_addr_r, send_block_addr_n;
   logic [2:0] send_counter_r, send_counter_n;
 
-  always_ff @ (posedge clk_i) begin
-    if (rst_i) begin
+  always_ff @ (posedge clock_i) begin
+    if (reset_i) begin
       recv_state_r <= WAIT;
       recv_block_addr_r <= 0;
       recv_counter_r <= 0;
@@ -57,28 +60,29 @@ module mock_memory (
       send_block_addr_r <= send_block_addr_n;
       send_counter_r <= send_counter_n;
 
-      if ((recv_state_r == BUSY) & dma_wvalid_i) begin
-        mem[{recv_block_addr_r, recv_counter_r}] <= dma_wdata_i;
+      if ((recv_state_r == BUSY) & dma_write_ch_v_i) begin
+        mem[{recv_block_addr_r, recv_counter_r}] <= dma_write_ch_data_i;
       end
     end
   end
 
-  assign dma_req_yumi_o = dma_req_v_i
-    & (((send_state_r == WAIT) & ~dma_rd_wr_i) | ((recv_state_r == WAIT) & dma_rd_wr_i));
+  assign dma_req_ch_yumi_o = dma_req_ch_v_i
+    & (((send_state_r == WAIT) & ~dma_req_ch_write_not_read_i)
+        | ((recv_state_r == WAIT) & dma_req_ch_write_not_read_i));
   
-  assign dma_rdata_o = mem[{send_block_addr_r, send_counter_r}];
+  assign dma_read_ch_data_o = mem[{send_block_addr_r, send_counter_r}];
 
   always_comb begin
     recv_block_addr_n = recv_block_addr_r;
     send_block_addr_n = send_block_addr_r;
-    dma_wready_o = 1'b0;
-    dma_rvalid_o = 1'b0;
+    dma_write_ch_yumi_o = 1'b0;
+    dma_read_ch_v_o = 1'b0;
 
     case (recv_state_r)
       WAIT: begin
-        recv_state_n = dma_req_v_i & dma_rd_wr_i;
+        recv_state_n = dma_req_ch_v_i & dma_req_ch_write_not_read_i;
         recv_block_addr_n = recv_state_n
-          ? dma_addr_i[15:5]
+          ? dma_req_ch_addr_i[15:5]
           : recv_block_addr_r;
         recv_counter_n = recv_state_n
           ? 0
@@ -86,35 +90,35 @@ module mock_memory (
       end
       
       BUSY: begin
-        recv_state_n = (recv_counter_r == 3'b111) & dma_wvalid_i
+        recv_state_n = (recv_counter_r == 3'b111) & dma_write_ch_v_i
           ? WAIT
           : BUSY;
-        recv_counter_n = dma_wvalid_i
+        recv_counter_n = dma_write_ch_v_i
           ? recv_counter_r + 1
           : recv_counter_r;
-        dma_wready_o = dma_wvalid_i;
+        dma_write_ch_yumi_o = dma_write_ch_v_i;
       end
     endcase
 
     case (send_state_r)
       WAIT: begin
-        send_state_n = dma_req_v_i & (~dma_rd_wr_i);
+        send_state_n = dma_req_ch_v_i & (~dma_req_ch_write_not_read_i);
         send_block_addr_n = send_state_n
-          ? dma_addr_i[15:5]
-          : send_block_addr_n;
+          ? dma_req_ch_addr_i[15:5]
+          : send_block_addr_r;
         send_counter_n = send_state_n
           ? 0
           : send_counter_r;
       end
       
       BUSY: begin
-        send_state_n = (send_counter_r == 3'b111) & dma_rready_i
+        send_state_n = (send_counter_r == 3'b111) & dma_read_ch_ready_i
           ? WAIT
           : BUSY;
-        send_counter_n = dma_rready_i
+        send_counter_n = dma_read_ch_ready_i
           ? send_counter_r + 1
           : send_counter_r;
-        dma_rvalid_o = 1'b1;
+        dma_read_ch_v_o = 1'b1;
       end
     endcase
   end

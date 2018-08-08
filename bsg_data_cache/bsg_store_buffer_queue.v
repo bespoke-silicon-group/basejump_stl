@@ -1,6 +1,6 @@
-module bsg_write_buffer_queue #(parameter width_p="inv")
+module bsg_store_buffer_queue #(parameter width_p="inv")
 (
-  input clk_i
+  input clock_i
   ,input [width_p-1:0] data_i
   ,input el0_en_i
   ,input el1_en_i
@@ -13,7 +13,7 @@ module bsg_write_buffer_queue #(parameter width_p="inv")
 
   logic [width_p-1:0] el0_r, el1_r;
 
-  always_ff @ (posedge clk_i) begin
+  always_ff @ (posedge clock_i) begin
     if (el0_en_i) begin
       el0_r <= data_i;
     end

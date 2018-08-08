@@ -1,7 +1,7 @@
-module bsg_test_node_client #(parameter incr_p="inv")
+module bsg_test_node_client
 (
-  input clk_i
-  ,input rst_i
+  input clock_i
+  ,input reset_i
   ,input en_i
 
   ,input v_i
@@ -13,23 +13,6 @@ module bsg_test_node_client #(parameter incr_p="inv")
   ,input yumi_i
 );
 
-if (incr_p == 1) begin : incr
-  bsg_incrementer incr0 (
-    .clk_i(clk_i)
-    ,.rst_i(rst_i)
-    ,.en_i(en_i)
-    
-    ,.v_i(v_i)
-    ,.data_i(data_i)
-    ,.ready_o(ready_o)
-    
-    ,.v_o(v_o)
-    ,.data_o(data_o)
-    ,.yumi_i(yumi_i)
-  );
-end
-else begin : dcache
-
   wire unused = en_i;
   logic sigext_op;
   logic [1:0] size_op;
@@ -38,18 +21,18 @@ else begin : dcache
   logic [31:0] dc_addr_i;
   logic [31:0] dc_data_o;
 
-  logic dma_rd_wr;
-  logic [31:0] dma_addr;
-  logic dma_req_v_lo;
-  logic dma_req_yumi_li;
+  logic dma_req_ch_write_not_read;
+  logic [31:0] dma_req_ch_addr;
+  logic dma_req_ch_v_lo;
+  logic dma_req_ch_yumi_li;
   
-  logic [31:0] dma_rdata;
-  logic dma_rvalid_li;
-  logic dma_rready_lo;
+  logic [31:0] dma_read_ch_data;
+  logic dma_read_ch_v_li;
+  logic dma_read_ch_ready_lo;
 
-  logic [31:0] dma_wdata;
-  logic dma_wvalid_lo;
-  logic dma_wready_li;
+  logic [31:0] dma_write_ch_data;
+  logic dma_write_ch_v_lo;
+  logic dma_write_ch_yumi_li;
 
   assign sigext_op = data_i[70];
   assign size_op = data_i[69:68];
@@ -62,8 +45,8 @@ else begin : dcache
     .block_size_p(8)
     ,.els_p(512)
   ) dcache0 (
-    .clk_i(clk_i)
-    ,.rst_i(rst_i)
+    .clock_i(clock_i)
+    ,.reset_i(reset_i)
 
     ,.sigext_op_i(sigext_op)
     ,.size_op_i(size_op)
@@ -77,38 +60,36 @@ else begin : dcache
     ,.yumi_i(yumi_i)
     ,.data_o(dc_data_o)
 
-    ,.dma_rd_wr_o(dma_rd_wr)
-    ,.dma_addr_o(dma_addr)
-    ,.dma_req_v_o(dma_req_v_lo)
-    ,.dma_req_yumi_i(dma_req_yumi_li)
+    ,.dma_req_ch_write_not_read_o(dma_req_ch_write_not_read)
+    ,.dma_req_ch_addr_o(dma_req_ch_addr)
+    ,.dma_req_ch_v_o(dma_req_ch_v_lo)
+    ,.dma_req_ch_yumi_i(dma_req_ch_yumi_li)
     
-    ,.dma_rdata_i(dma_rdata)
-    ,.dma_rvalid_i(dma_rvalid_li)
-    ,.dma_rready_o(dma_rready_lo)
+    ,.dma_read_ch_data_i(dma_read_ch_data)
+    ,.dma_read_ch_v_i(dma_read_ch_v_li)
+    ,.dma_read_ch_ready_o(dma_read_ch_ready_lo)
   
-    ,.dma_wdata_o(dma_wdata)
-    ,.dma_wvalid_o(dma_wvalid_lo)
-    ,.dma_wready_i(dma_wready_li)
+    ,.dma_write_ch_data_o(dma_write_ch_data)
+    ,.dma_write_ch_v_o(dma_write_ch_v_lo)
+    ,.dma_write_ch_yumi_i(dma_write_ch_yumi_li)
   );
 
   mock_memory mm (
-    .clk_i(clk_i)
-    ,.rst_i(rst_i)
+    .clock_i(clock_i)
+    ,.reset_i(reset_i)
   
-    ,.dma_rd_wr_i(dma_rd_wr)
-    ,.dma_addr_i(dma_addr)
-    ,.dma_req_v_i(dma_req_v_lo)
-    ,.dma_req_yumi_o(dma_req_yumi_li)
+    ,.dma_req_ch_write_not_read_i(dma_req_ch_write_not_read)
+    ,.dma_req_ch_addr_i(dma_req_ch_addr)
+    ,.dma_req_ch_v_i(dma_req_ch_v_lo)
+    ,.dma_req_ch_yumi_o(dma_req_ch_yumi_li)
 
-    ,.dma_rdata_o(dma_rdata)
-    ,.dma_rvalid_o(dma_rvalid_li)
-    ,.dma_rready_i(dma_rready_lo)
+    ,.dma_read_ch_data_o(dma_read_ch_data)
+    ,.dma_read_ch_v_o(dma_read_ch_v_li)
+    ,.dma_read_ch_ready_i(dma_read_ch_ready_lo)
 
-    ,.dma_wdata_i(dma_wdata)
-    ,.dma_wvalid_i(dma_wvalid_lo)
-    ,.dma_wready_o(dma_wready_li)
+    ,.dma_write_ch_data_i(dma_write_ch_data)
+    ,.dma_write_ch_v_i(dma_write_ch_v_lo)
+    ,.dma_write_ch_yumi_o(dma_write_ch_yumi_li)
   );
-
-end
 
 endmodule

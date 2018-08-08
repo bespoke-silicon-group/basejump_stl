@@ -5,8 +5,8 @@
 module bsg_replacement #(parameter lg_els_lp="inv"
                         ,parameter els_p="inv")
 (
-  input clk_i
-  ,input rst_i
+  input clock_i
+  ,input reset_i
   
   ,input [lg_els_lp-1:0] line_v_i // line and set in question
 
@@ -47,7 +47,7 @@ module bsg_replacement #(parameter lg_els_lp="inv"
     ? line_v_i
     : line_tl_i;
   
-  always_ff @ (posedge clk_i) begin
+  always_ff @ (posedge clock_i) begin
     read_dirty_r <= ~(replacement_we | miss_minus_recover_v_i);
   end
 
@@ -61,10 +61,10 @@ module bsg_replacement #(parameter lg_els_lp="inv"
   };
 
   bsg_mem_1rw_sync_mask_write_bit #(.width_p(3), .els_p(els_p)) status_mem (
-    .clk_i(clk_i)
-    ,.reset_i(rst_i)
-    ,.v_i(~rst_i & (status_mem_re_i | replacement_we))
-    ,.w_i(~rst_i & replacement_we)
+    .clk_i(clock_i)
+    ,.reset_i(reset_i)
+    ,.v_i(~reset_i & (status_mem_re_i | replacement_we))
+    ,.w_i(~reset_i & replacement_we)
     ,.w_mask_i(replacement_mask)
     ,.addr_i(line_final)
     ,.data_i(replacement_data_in)
