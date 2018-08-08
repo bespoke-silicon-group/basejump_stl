@@ -21,11 +21,10 @@ $BSG_IP_CORES_ROOT/bsg_data_cache/bsg_dma_engine.v
 $BSG_IP_CORES_ROOT/bsg_data_cache/bsg_miss_case.v
 $BSG_IP_CORES_ROOT/bsg_data_cache/bsg_replacement.v
 $BSG_IP_CORES_ROOT/bsg_data_cache/bsg_mux_4way.v
-$BSG_IP_CORES_ROOT/bsg_data_cache/bsg_write_buffer.v
-$BSG_IP_CORES_ROOT/bsg_data_cache/bsg_write_buffer_queue.v
+$BSG_IP_CORES_ROOT/bsg_data_cache/bsg_store_buffer.v
+$BSG_IP_CORES_ROOT/bsg_data_cache/bsg_store_buffer_queue.v
 $BSG_IP_CORES_ROOT/bsg_data_cache/bsg_data_cache.v
 bsg_trace_master_rom.v
-bsg_incrementer.v
 bsg_test_node_client.v
 mock_memory.v
 testbench.v

@@ -5,8 +5,8 @@
 module bsg_dma_engine #(parameter block_size_p="inv"
                         ,parameter lg_els_lp="inv")
 (
-  input clk_i
-  ,input rst_i
+  input clock_i
+  ,input reset_i
   
   // from miss_case
   ,input mc_send_fill_req_i
@@ -24,20 +24,20 @@ module bsg_dma_engine #(parameter block_size_p="inv"
   ,output logic [31:0] snoop_word_o
   
   // DMA request channel
-  ,output logic dma_rd_wr_o         // rd = 0, wr = 1;
-  ,output logic [31:0] dma_addr_o
-  ,output logic dma_req_v_o
-  ,input dma_req_yumi_i
+  ,output logic dma_req_ch_write_not_read_o         // rd = 0, wr = 1;
+  ,output logic [31:0] dma_req_ch_addr_o
+  ,output logic dma_req_ch_v_o
+  ,input dma_req_ch_yumi_i
 
   // DMA read channel
-  ,input [31:0] dma_rdata_i
-  ,input dma_rvalid_i
-  ,output logic dma_rready_o
+  ,input [31:0] dma_read_ch_data_i
+  ,input dma_read_ch_v_i
+  ,output logic dma_read_ch_ready_o
 
   // DMA write channel
-  ,output logic [31:0] dma_wdata_o
-  ,output logic dma_wvalid_o
-  ,input dma_wready_i
+  ,output logic [31:0] dma_write_ch_data_o
+  ,output logic dma_write_ch_v_o
+  ,input dma_write_ch_yumi_i
 
   // data_mem
   ,output logic data_re_force_o
@@ -64,12 +64,12 @@ module bsg_dma_engine #(parameter block_size_p="inv"
   logic fill_fifo_v_lo;
   logic fill_fifo_yumi_li;
   bsg_two_fifo #(.width_p(32)) dma_fill_fifo (
-    .clk_i(clk_i)
-    ,.reset_i(rst_i)
+    .clk_i(clock_i)
+    ,.reset_i(reset_i)
 
-    ,.ready_o(dma_rready_o)
-    ,.data_i(dma_rdata_i)
-    ,.v_i(dma_rvalid_i)
+    ,.ready_o(dma_read_ch_ready_o)
+    ,.data_i(dma_read_ch_data_i)
+    ,.v_i(dma_read_ch_v_i)
 
     ,.v_o(fill_fifo_v_lo)
     ,.data_o(dma_rdata)
@@ -87,16 +87,16 @@ module bsg_dma_engine #(parameter block_size_p="inv"
     : raw_data_i[31:0];
 
   bsg_two_fifo #(.width_p(32)) dma_evict_fifo (
-    .clk_i(clk_i)
-    ,.reset_i(rst_i)
+    .clk_i(clock_i)
+    ,.reset_i(reset_i)
 
     ,.ready_o(evict_fifo_ready_lo)
     ,.data_i(dma_wdata)
     ,.v_i(evict_fifo_v_li)
 
-    ,.v_o(dma_wvalid_o)
-    ,.data_o(dma_wdata_o)
-    ,.yumi_i(dma_wready_i)
+    ,.v_o(dma_write_ch_v_o)
+    ,.data_o(dma_write_ch_data_o)
+    ,.yumi_i(dma_write_ch_yumi_i)
   );
 
   logic [2:0] dma_state_r;
@@ -105,8 +105,8 @@ module bsg_dma_engine #(parameter block_size_p="inv"
   logic [3:0] counter_r;
   logic [3:0] counter_n;
 
-  always_ff @ (posedge clk_i) begin
-    if (rst_i) begin
+  always_ff @ (posedge clock_i) begin
+    if (reset_i) begin
       dma_state_r <= IDLE;
       counter_r <= 0;
     end
@@ -116,7 +116,7 @@ module bsg_dma_engine #(parameter block_size_p="inv"
     end
   end
 
-  assign dma_addr_o = mc_pass_data_i;
+  assign dma_req_ch_addr_o = mc_pass_data_i;
   assign data_mask_force_o = start_set_i
     ? {4'b1111, 4'b0000}
     : {4'b0000, 4'b1111};
@@ -127,9 +127,9 @@ module bsg_dma_engine #(parameter block_size_p="inv"
 
   always_comb begin
     finished_o = 1'b0;
-    dma_req_v_o = 1'b0;
+    dma_req_ch_v_o = 1'b0;
     counter_n = counter_r;
-    dma_rd_wr_o = 1'b0;
+    dma_req_ch_write_not_read_o = 1'b0;
     data_we_force_o = 1'b0;
     data_re_force_o = 1'b0;
     fill_fifo_yumi_li = 1'b0;
@@ -149,19 +149,19 @@ module bsg_dma_engine #(parameter block_size_p="inv"
       end
       
       REQ_SEND_FILL: begin
-        dma_state_n = dma_req_yumi_i
+        dma_state_n = dma_req_ch_yumi_i
           ? FINISHED
           : REQ_SEND_FILL;
-        dma_req_v_o = 1'b1;
-        dma_rd_wr_o = 1'b0;
+        dma_req_ch_v_o = 1'b1;
+        dma_req_ch_write_not_read_o = 1'b0;
       end
 
       REQ_SEND_EVICT: begin
-        dma_state_n = dma_req_yumi_i
+        dma_state_n = dma_req_ch_yumi_i
           ? FINISHED
           : REQ_SEND_EVICT;
-        dma_req_v_o = 1'b1;
-        dma_rd_wr_o = 1'b1;
+        dma_req_ch_v_o = 1'b1;
+        dma_req_ch_write_not_read_o = 1'b1;
       end
       
       FILL_LINE: begin

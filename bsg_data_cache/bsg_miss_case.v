@@ -7,8 +7,8 @@ module bsg_miss_case #(parameter tag_width_lp="inv"
                       ,parameter lg_block_size_lp="inv"
                       ,parameter lg_els_lp="inv")
 (
-  input clk_i
-  ,input rst_i
+  input clock_i
+  ,input reset_i
 
   ,input v_v_r_i
   ,input miss_v_i
@@ -26,8 +26,8 @@ module bsg_miss_case #(parameter tag_width_lp="inv"
   ,input valid1_v_i
   ,input tag_hit1_v_i
 
-  // from write_buffer
-  ,input writebuf_empty_i
+  // from store_buffer
+  ,input storebuf_empty_i
 
   // to dma_engine
   ,output logic mc_send_fill_req_o
@@ -177,7 +177,7 @@ module bsg_miss_case #(parameter tag_width_lp="inv"
       
       // tell dma_engine to send evict line, as soon as write_buffer is empty.
       EVICT_REQUEST_SEND_DATA: begin
-        mc_evict_line_o = writebuf_empty_i;
+        mc_evict_line_o = storebuf_empty_i;
         miss_state_n = dma_finished_i
           ? ((tagfl_op_v_i | aflinv_op_v_i | afl_op_v_i) ? FINAL_RECOVER : FILL_REQUEST_GET_DATA)
           : EVICT_REQUEST_SEND_DATA;
@@ -185,7 +185,7 @@ module bsg_miss_case #(parameter tag_width_lp="inv"
   
       // tell dma_engine to start filling the cache, as soon as write_buffer is empty.
       FILL_REQUEST_GET_DATA: begin
-        mc_fill_line_o = writebuf_empty_i;
+        mc_fill_line_o = storebuf_empty_i;
         miss_state_n = dma_finished_i ? FINAL_RECOVER : FILL_REQUEST_GET_DATA;
       end
 
@@ -198,8 +198,8 @@ module bsg_miss_case #(parameter tag_width_lp="inv"
     endcase
   end
 
-  always_ff @ (posedge clk_i) begin
-    if (rst_i) begin
+  always_ff @ (posedge clock_i) begin
+    if (reset_i) begin
       miss_state_r <= START;
       chosen_set_r <= 1'b0;
       chosen_set_is_valid_r <= 1'b0;

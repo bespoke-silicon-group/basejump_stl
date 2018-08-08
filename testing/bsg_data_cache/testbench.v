@@ -86,9 +86,9 @@ module testbench();
     ,.node_yumi_o(node_yumi_o)
   );
 
-  bsg_test_node_client #(.incr_p(0)) tnc (
-    .clk_i(clk)
-    ,.rst_i(node_rst)
+  bsg_test_node_client tnc (
+    .clock_i(clk)
+    ,.reset_i(node_rst)
     ,.en_i(node_en)
 
     ,.v_i(node_v_o)
