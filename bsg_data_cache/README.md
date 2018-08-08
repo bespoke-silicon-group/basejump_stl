@@ -60,9 +60,9 @@ sigext_op
 ![miss_case_fsm](img/miss_case_fsm.png)
 
 
-#   bsg_dma_engine.v
+#   bsg_evict_fill_machine.v
 
-bsg_dma_engine receives various DMA requests from bsg_miss_case, and let it know that DMA request has been finished by dma_finished signal. bsg_dma_engine is interfaced with DMA interface with main memory, which consists of three independent channels.
+bsg_evict_fill_machine receives various DMA requests from bsg_miss_case, and let it know that DMA request has been finished by dma_finished signal. bsg_evict_fill_machine is interfaced with DMA interface with main memory, which consists of three independent channels.
 
 DMA Request Channel
 

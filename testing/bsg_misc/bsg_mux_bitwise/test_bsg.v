@@ -82,28 +82,14 @@ module test_bsg;
       end
   end
   
-  bsg_mux_bitwise #(  .width_p(width_lp)
-                   )  DUT
-                   (  .select(test_input_sel)
-                    , .A     (test_input_A)
-                    , .B     (test_input_B)
-                    , .out   (test_output)
-                   );
+  bsg_mux_bitwise #(
+    .width_p(width_lp)
+  )  DUT (
+    .data0_i(test_input_A)
+    ,.data1_i(test_input_B)
+    ,.sel_i(test_input_sel)
+    ,.data_o(test_output)
+  );
                                   
-  /*bsg_nonsynth_ascii_writer #(  .width_p      (width_lp),
-                              , .values_p     (4),
-                              , .filename_p   ("output.log"),
-                              , .fopen_param_p("a+"),
-                              , .format_p     ("w")
-                             )  ascii_writer
-                             (  .clk    (clk),
-                              , .reset_i(reset),
-                              , .valid_i(1'b1),
-                              , .data_i ({test_output,
-                                          test_input_sel,
-                                          test_input_B,
-                                          test_input_A}
-                                        )
-                             );*/
   
 endmodule

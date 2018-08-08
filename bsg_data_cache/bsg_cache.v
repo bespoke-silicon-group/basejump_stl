@@ -1,5 +1,5 @@
 /**
- *  bsg_data_cache.v
+ *  bsg_cache.v
  *
  *  @author mbt
  *  @modified tommy
@@ -24,11 +24,11 @@
 // 1000 = AINV (address invalidate)
 
 
-module bsg_data_cache #(parameter block_size_p="inv" // 8
-                        ,parameter els_p="inv"      // 512, number of sets
-                        ,parameter lg_els_lp=`BSG_SAFE_CLOG2(els_p) // 9
-                        ,parameter lg_block_size_lp=`BSG_SAFE_CLOG2(block_size_p) // 3
-                        ,parameter tag_width_lp=32-2-lg_els_lp-lg_block_size_lp)
+module bsg_cache #(parameter block_size_in_words_p="inv" // 8
+                        ,parameter sets_p="inv" // 512, number of sets
+                        ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p) // 9
+                        ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p) // 3
+                        ,parameter tag_width_lp=32-2-lg_sets_lp-lg_block_size_in_words_lp)
 (
   input clock_i
   ,input reset_i
@@ -94,7 +94,7 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
   logic instr_must_miss_tl;
 
   logic [7:0] data_mask_storebuf;
-  logic [lg_els_lp+lg_block_size_lp-1:0] data_addr_storebuf;
+  logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_addr_storebuf;
   logic [63:0] data_in_storebuf;
   
   logic [31:0] addr_tl_r;
@@ -105,11 +105,11 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
 
   logic [tag_width_lp+1:0] tag_check_me_tl;
 
-  logic [lg_els_lp-1:0] tag_addr;
-  logic [lg_els_lp-1:0] tag_addr_force;
-  logic [lg_els_lp-1:0] tag_addr_recover;
-  logic [lg_els_lp-1:0] tag_addr_force_or_recover;
-  logic [lg_els_lp-1:0] tag_addr_final;
+  logic [lg_sets_lp-1:0] tag_addr;
+  logic [lg_sets_lp-1:0] tag_addr_force;
+  logic [lg_sets_lp-1:0] tag_addr_recover;
+  logic [lg_sets_lp-1:0] tag_addr_force_or_recover;
+  logic [lg_sets_lp-1:0] tag_addr_final;
   
   logic tag_we_force;
   logic tag_we_final;
@@ -140,13 +140,13 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
   logic tag_re_final;
   logic tag_en;
 
-  logic [lg_els_lp+lg_block_size_lp-1:0] data_addr;
-  logic [lg_els_lp+lg_block_size_lp-1:0] data_addr_force;
-  logic [lg_els_lp+lg_block_size_lp-1:0] data_addr_recover;
-  logic [lg_els_lp+lg_block_size_lp-1:0] data_addr_force_or_recover;
+  logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_addr;
+  logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_addr_force;
+  logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_addr_recover;
+  logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_addr_force_or_recover;
     
-  logic [lg_els_lp+lg_block_size_lp-1:0] data_addr_force_or_write;
-  logic [lg_els_lp+lg_block_size_lp-1:0] data_addr_final;
+  logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_addr_force_or_write;
+  logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_addr_final;
   
   logic data_mem_en;
   logic data_we_storebuf;
@@ -170,8 +170,8 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
   logic [tag_width_lp:0] tag_data_0_tl, tag_data_1_tl;
   logic [tag_width_lp:0] tag_data_explicit_tl;
   logic tag_data_explicit_valid_tl;
-  logic [32-2-lg_block_size_lp-1:0] tag_data_explicit_addr_tl;
-  logic [32-2-lg_block_size_lp-1:0] tag_data_explicit_addr_anded_tl;
+  logic [32-2-lg_block_size_in_words_lp-1:0] tag_data_explicit_addr_tl;
+  logic [32-2-lg_block_size_in_words_lp-1:0] tag_data_explicit_addr_anded_tl;
   
   logic [31:0] taglalv_val_tl, taglalv_val_v_r;
 
@@ -258,10 +258,10 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
   assign instr_returns_val_v = ld_op_v_r | taglv_op_v_r | tagla_op_v_r;
 
   assign tag_check_me_tl = {instr_must_miss_tl, 1'b1,
-    addr_tl_r[2+lg_block_size_lp+lg_els_lp+:tag_width_lp]};
-  assign explicit_set_bit_a = addr_i[2+lg_block_size_lp+lg_els_lp]; // 2+3+9=14
-  assign explicit_set_bit_tl = addr_tl_r[2+lg_block_size_lp+lg_els_lp];
-  assign explicit_set_bit_v = addr_v_r[2+lg_block_size_lp+lg_els_lp];
+    addr_tl_r[2+lg_block_size_in_words_lp+lg_sets_lp+:tag_width_lp]};
+  assign explicit_set_bit_a = addr_i[2+lg_block_size_in_words_lp+lg_sets_lp]; // 2+3+9=14
+  assign explicit_set_bit_tl = addr_tl_r[2+lg_block_size_in_words_lp+lg_sets_lp];
+  assign explicit_set_bit_v = addr_v_r[2+lg_block_size_in_words_lp+lg_sets_lp];
 
   assign tag_mask_inval = explicit_set_bit_a;
   assign tag_mask_force = evict_and_fill_set;
@@ -284,12 +284,12 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
   assign ainv_or_aflinv_op_v = ainv_op_v_r | aflinv_op_v_r;
   
   assign tag_data_in_force = {
-    2{~ainv_or_aflinv_op_v, addr_v_r[lg_els_lp+lg_block_size_lp+2+:tag_width_lp]}
+    2{~ainv_or_aflinv_op_v, addr_v_r[lg_sets_lp+lg_block_size_in_words_lp+2+:tag_width_lp]}
   };
 
-  assign tag_addr = addr_i[lg_block_size_lp+2+:lg_els_lp]; // 13:5
-  assign tag_addr_force = addr_v_r[lg_block_size_lp+2+:lg_els_lp];
-  assign tag_addr_recover = addr_tl_r[lg_block_size_lp+2+:lg_els_lp];
+  assign tag_addr = addr_i[lg_block_size_in_words_lp+2+:lg_sets_lp]; // 13:5
+  assign tag_addr_force = addr_v_r[lg_block_size_in_words_lp+2+:lg_sets_lp];
+  assign tag_addr_recover = addr_tl_r[lg_block_size_in_words_lp+2+:lg_sets_lp];
 
   assign tag_addr_force_or_recover = final_recover
     ? tag_addr_recover
@@ -315,8 +315,8 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
 
   assign tag_en = (~reset_i) & (tag_re_final | tag_we_final);
 
-  assign data_addr = addr_i[2+:lg_els_lp+lg_block_size_lp]; // 13:2
-  assign data_addr_recover = addr_tl_r[2+:lg_els_lp+lg_block_size_lp];
+  assign data_addr = addr_i[2+:lg_sets_lp+lg_block_size_in_words_lp]; // 13:2
+  assign data_addr_recover = addr_tl_r[2+:lg_sets_lp+lg_block_size_in_words_lp];
 
   assign data_we_final = (data_we_force | data_we_storebuf);
 
@@ -365,11 +365,11 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
  
   assign tag_data_explicit_addr_tl = {
     tag_data_explicit_tl[tag_width_lp-1:0],
-    addr_tl_r[lg_block_size_lp+2+:lg_els_lp]
+    addr_tl_r[lg_block_size_in_words_lp+2+:lg_sets_lp]
   }; // 13:5
 
   assign tag_data_explicit_addr_anded_tl = tag_data_explicit_addr_tl
-    & {(tag_width_lp+lg_els_lp){tagla_op_tl_r}};
+    & {(tag_width_lp+lg_sets_lp){tagla_op_tl_r}};
 
   assign taglalv_val_tl = {tag_data_explicit_addr_anded_tl, 4'b0000,
     taglv_op_tl_r & tag_data_explicit_valid_tl}; 
@@ -396,18 +396,24 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
       ? {data_i_v_r[15:0], data_i_v_r[15:0]}
       : {data_i_v_r[7:0], data_i_v_r[7:0], data_i_v_r[7:0], data_i_v_r[7:0]});
 
-  bsg_mux_4way MUX_storebuf_bypass0 (
-    .el0_i(data_out_0_v_r)
-    ,.el1_i(storebuf_bypass_data_v)
+  bsg_mux_segmented #(
+    .segments_p(4)
+    ,.segment_width_p(8) 
+  ) MUX_storebuf_bypass0 (
+    .data0_i(data_out_0_v_r)
+    ,.data1_i(storebuf_bypass_data_v)
     ,.sel_i(storebuf_hit_v)
-    ,.o(data_out_0_vp)
+    ,.data_o(data_out_0_vp)
   );
 
-  bsg_mux_4way MUX_storebuf_bypass1 (
-    .el0_i(data_out_1_v_r)
-    ,.el1_i(storebuf_bypass_data_v)
+  bsg_mux_segmented #(
+    .segments_p(4)
+    ,.segment_width_p(8) 
+  ) MUX_storebuf_bypass1 (
+    .data0_i(data_out_1_v_r)
+    ,.data1_i(storebuf_bypass_data_v)
     ,.sel_i(storebuf_hit_v)
-    ,.o(data_out_1_vp)
+    ,.data_o(data_out_1_vp)
   );
 
   assign data_out_vp_set_picked = tag_hit_1_v_r
@@ -470,7 +476,7 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
   //
   bsg_mem_1rw_sync_mask_write_bit #(
     .width_p((tag_width_lp+1)*2)
-    ,.els_p(els_p)
+    ,.els_p(sets_p)
   ) tag_mem (
     .clk_i(clock_i)
     ,.reset_i(reset_i)
@@ -486,7 +492,7 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
   //
   bsg_mem_1rw_sync_mask_write_byte #(
     .data_width_p(64)
-    ,.els_p(block_size_p*els_p) // 4096
+    ,.els_p(block_size_in_words_p*sets_p) // 4096
   ) data_mem (
     .clk_i(clock_i)
     ,.reset_i(reset_i)
@@ -501,8 +507,8 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
   // store_buffer
   //
   bsg_store_buffer #(
-    .lg_els_lp(lg_els_lp)
-    ,.lg_block_size_lp(lg_block_size_lp)
+    .lg_sets_lp(lg_sets_lp)
+    ,.lg_block_size_in_words_lp(lg_block_size_in_words_lp)
   ) wb (
     .clock_i(clock_i)
     ,.reset_i(reset_i)
@@ -524,16 +530,16 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
     ,.storebuf_empty_o(storebuf_empty)
   );
 
-  // replacement
+  // repl
   //
-  bsg_replacement #(
-    .els_p(els_p)
-    ,.lg_els_lp(lg_els_lp)
+  bsg_repl #(
+    .sets_p(sets_p)
+    ,.lg_sets_lp(lg_sets_lp)
   ) repl (
     .clock_i(clock_i)
     ,.reset_i(reset_i)
-    ,.line_v_i(addr_v_r[2+lg_block_size_lp+:lg_els_lp]) // 13:5
-    ,.line_tl_i(addr_tl_r[2+lg_block_size_lp+:lg_els_lp])
+    ,.line_v_i(addr_v_r[2+lg_block_size_in_words_lp+:lg_sets_lp]) // 13:5
+    ,.line_tl_i(addr_tl_r[2+lg_block_size_in_words_lp+:lg_sets_lp])
     ,.miss_minus_recover_v_i(in_middle_of_miss)
     ,.tagged_access_v_i(addr_v_r[0] & word_op_v_r)
     ,.ld_st_set_v_i(just_recovered_r ? evict_and_fill_set : tag_hit_1_v_r)
@@ -553,8 +559,8 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
   //
   bsg_miss_case #(
     .tag_width_lp(tag_width_lp)
-    ,.lg_els_lp(lg_els_lp)
-    ,.lg_block_size_lp(lg_block_size_lp)
+    ,.lg_sets_lp(lg_sets_lp)
+    ,.lg_block_size_in_words_lp(lg_block_size_in_words_lp)
   ) mc (
     .clock_i(clock_i)
     ,.reset_i(reset_i)
@@ -578,14 +584,14 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
     // from store_buffer
     ,.storebuf_empty_i(storebuf_empty)
     
-    // to dma_engine
+    // to evict_fill_machine
     ,.mc_send_fill_req_o(mc_send_fill_req)
     ,.mc_send_evict_req_o(mc_send_evict_req)
     ,.mc_fill_line_o(mc_fill_line)
     ,.mc_evict_line_o(mc_evict_line)
     ,.mc_pass_data_o(mc_pass_data)
 
-    // from dma_engine
+    // from evict_fill_machine
     ,.dma_finished_i(dma_finished)
 
     // to replacement
@@ -602,11 +608,11 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
     ,.status_mem_re_o(status_mem_re)
   );
 
-  // dma_engine
+  // evict_fill_machine
   //
-  bsg_dma_engine #(
-    .lg_els_lp(lg_els_lp)
-    ,.block_size_p(block_size_p)
+  bsg_evict_fill_machine #(
+    .lg_sets_lp(lg_sets_lp)
+    ,.block_size_in_words_p(block_size_in_words_p)
   ) de (
 
     .clock_i(clock_i)
@@ -620,8 +626,8 @@ module bsg_data_cache #(parameter block_size_p="inv" // 8
     ,.mc_pass_data_i(mc_pass_data)
     ,.start_set_i(evict_and_fill_set)
 
-    ,.start_addr_i(addr_v_r[2+lg_block_size_lp+:lg_els_lp]) // 13:5
-    ,.snoop_word_offset_i(addr_v_r[2+:lg_block_size_lp]) // 4:2
+    ,.start_addr_i(addr_v_r[2+lg_block_size_in_words_lp+:lg_sets_lp]) // 13:5
+    ,.snoop_word_offset_i(addr_v_r[2+:lg_block_size_in_words_lp]) // 4:2
     ,.snoop_word_o(snoop_word)
 
     // dma req channel

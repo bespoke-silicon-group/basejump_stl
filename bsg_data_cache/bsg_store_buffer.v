@@ -2,8 +2,8 @@
  *  bsg_store_buffer.v
  */
 
-module bsg_store_buffer #(parameter lg_els_lp="inv"
-                          ,parameter lg_block_size_lp="inv") (
+module bsg_store_buffer #(parameter lg_sets_lp="inv"
+                          ,parameter lg_block_size_in_words_lp="inv") (
   input clock_i
   ,input reset_i
 
@@ -40,7 +40,7 @@ module bsg_store_buffer #(parameter lg_els_lp="inv"
   logic storebuf_we_local;
 
   assign storebuf_we_o = storebuf_we_local;
-  assign storebuf_index_o = storebuf_addr[2+:lg_els_lp+lg_block_size_lp]; // 13:2
+  assign storebuf_index_o = storebuf_addr[2+:lg_sets_lp+lg_block_size_in_words_lp]; // 13:2
   
   assign el0_valid = (num_els_r == 2);
   assign el1_valid = (num_els_r >= 1);
@@ -137,18 +137,24 @@ module bsg_store_buffer #(parameter lg_els_lp="inv"
       |(tag_hit1x4 & el1_mask)
       |(tag_hit2x4 & write_mask_v_i));
 
-  bsg_mux_4way SIMD_MUX_storebuf_merge0 (
-    .el0_i(el1_data)
-    ,.el1_i(el0_data)
+  bsg_mux_segmented #(
+    .segments_p(4)
+    ,.segment_width_p(8) 
+  ) SIMD_MUX_storebuf_merge0 (
+    .data0_i(el1_data)
+    ,.data1_i(el0_data)
     ,.sel_i(tag_hit0x4 & el0_mask)
-    ,.o(el0or1_data)
+    ,.data_o(el0or1_data)
   );
 
-  bsg_mux_4way SIMD_MUX_storebuf_merge1 (
-    .el0_i(el0or1_data)
-    ,.el1_i(write_data_v_i)
+  bsg_mux_segmented #(
+    .segments_p(4)
+    ,.segment_width_p(8) 
+  ) SIMD_MUX_storebuf_merge1 (
+    .data0_i(el0or1_data)
+    ,.data1_i(write_data_v_i)
     ,.sel_i(tag_hit2x4 & write_mask_v_i)
-    ,.o(storebuf_bypass_data_n)
+    ,.data_o(storebuf_bypass_data_n)
   );
 
   bsg_dff #(.width_p(32)) REG_storebuf_bypass_data (
