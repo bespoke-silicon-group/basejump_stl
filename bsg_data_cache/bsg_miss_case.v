@@ -4,8 +4,8 @@
 
 
 module bsg_miss_case #(parameter tag_width_lp="inv"
-                      ,parameter lg_block_size_lp="inv"
-                      ,parameter lg_els_lp="inv")
+                      ,parameter lg_block_size_in_words_lp="inv"
+                      ,parameter lg_sets_lp="inv")
 (
   input clock_i
   ,input reset_i
@@ -78,13 +78,13 @@ module bsg_miss_case #(parameter tag_width_lp="inv"
   logic [31:0] evict_address_r;
   logic [31:0] evict_address_n;
   
-  logic [lg_els_lp-1:0] miss_index_v;
+  logic [lg_sets_lp-1:0] miss_index_v;
   logic tagfl_set_v;
   logic flush_instr;
   logic dirty_and_valid;
 
-  assign miss_index_v = addr_v_i[2+lg_block_size_lp-1+:lg_els_lp]; // 13:5
-  assign tagfl_set_v = addr_v_i[lg_els_lp+lg_block_size_lp+2];
+  assign miss_index_v = addr_v_i[2+lg_block_size_in_words_lp-1+:lg_sets_lp]; // 13:5
+  assign tagfl_set_v = addr_v_i[lg_sets_lp+lg_block_size_in_words_lp+2];
   assign flush_instr = tagfl_op_v_i | ainv_op_v_i | afl_op_v_i | aflinv_op_v_i;
   assign dirty_and_valid = chosen_set_is_dirty_r & chosen_set_is_valid_r;
 
@@ -92,7 +92,7 @@ module bsg_miss_case #(parameter tag_width_lp="inv"
   assign evict_address_n = {
     (chosen_set_r ? tag1_v_i : tag0_v_i),
     miss_index_v,
-    (2+lg_block_size_lp)'(1'b0)
+    (2+lg_block_size_in_words_lp)'(1'b0)
   };
 
   always_comb begin

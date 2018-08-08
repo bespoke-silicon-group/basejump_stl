@@ -1,9 +1,9 @@
 /**
- *  bsg_dma_engine.v
+ *  bsg_evict_fill_machine.v
  */
 
-module bsg_dma_engine #(parameter block_size_p="inv"
-                        ,parameter lg_els_lp="inv")
+module bsg_evict_fill_machine #(parameter block_size_in_words_p="inv"
+                               ,parameter lg_sets_lp="inv")
 (
   input clock_i
   ,input reset_i
@@ -19,7 +19,7 @@ module bsg_dma_engine #(parameter block_size_p="inv"
   // to miss_case
   ,output logic finished_o
 
-  ,input [lg_els_lp-1:0] start_addr_i
+  ,input [lg_sets_lp-1:0] start_addr_i
   ,input [2:0] snoop_word_offset_i
   ,output logic [31:0] snoop_word_o
   
@@ -165,7 +165,7 @@ module bsg_dma_engine #(parameter block_size_p="inv"
       end
       
       FILL_LINE: begin
-        dma_state_n = (counter_r == (block_size_p - 1)) & fill_fifo_v_lo
+        dma_state_n = (counter_r == (block_size_in_words_p - 1)) & fill_fifo_v_lo
           ? FINISHED
           : FILL_LINE;
         data_we_force_o = fill_fifo_v_lo;
@@ -180,14 +180,14 @@ module bsg_dma_engine #(parameter block_size_p="inv"
       end
 
       EVICT_LINE: begin
-        dma_state_n = (counter_r == block_size_p) & evict_fifo_ready_lo
+        dma_state_n = (counter_r == block_size_in_words_p) & evict_fifo_ready_lo
           ? FINISHED
           : EVICT_LINE;
         counter_n = evict_fifo_ready_lo 
           ? counter_r + 1
           : counter_r;
         evict_fifo_v_li = 1'b1;
-        data_re_force_o = evict_fifo_ready_lo & (counter_r != block_size_p);
+        data_re_force_o = evict_fifo_ready_lo & (counter_r != block_size_in_words_p);
       end
 
       FINISHED: begin
