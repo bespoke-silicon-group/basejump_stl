@@ -5,39 +5,24 @@
  *  @modified tommy
  */
 
-// size_op_i
-// ---------
-// 2'b0 = byte
-// 2'b1 = half
-// 2'b2 = word
+import bsg_cache_pkg::*;
 
-// instr_op_i
-// ---------------
-// 0000 = LD (load)
-// 0001 = ST (store)
-// 0010 = TAGST (tag store)
-// 0011 = TAGFL (tag flush)
-// 0100 = TAGLV (tag load valid)
-// 0101 = TAGLA (tag load addr)
-// 0110 = AFL (address flush)
-// 0111 = AFLINV (address flush & invalidate)
-// 1000 = AINV (address invalidate)
-
-
-module bsg_cache #(parameter block_size_in_words_p="inv" // 8
-                        ,parameter sets_p="inv" // 512, number of sets
-                        ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p) // 9
-                        ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p) // 3
-                        ,parameter tag_width_lp=32-2-lg_sets_lp-lg_block_size_in_words_lp)
+module bsg_cache #(parameter block_size_in_words_p="inv"
+                  ,parameter sets_p="inv"
+                  ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+                  ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
+                  ,parameter tag_width_lp=32-2-lg_sets_lp-lg_block_size_in_words_lp
+)
 (
   input clock_i
   ,input reset_i
 
-  ,input sigext_op_i
-  ,input [1:0] size_op_i
-  ,input [3:0] instr_op_i
-  ,input [31:0] addr_i
-  ,input [31:0] data_i
+  ,input bsg_cache_pkt_s packet_i
+  //,input [1:0] size_op_i
+  //,input [3:0] instr_op_i
+  //,input [31:0] addr_i
+  //,input [31:0] data_i
+
   ,input v_i
   ,output logic ready_o
 
@@ -726,7 +711,7 @@ module bsg_cache #(parameter block_size_in_words_p="inv" // 8
           word_op_tl_r <= word_op;
           half_op_tl_r <= half_op;
           byte_op_tl_r <= byte_op;
-          sigext_op_tl_r <= sigext_op_i;
+          sigext_op_tl_r <= packet_i.sigext;
           instr_reads_tags_tl_r <= instr_reads_tags_a;
           addr_tl_r <= addr_i;
           data_i_tl_r <= data_i;
