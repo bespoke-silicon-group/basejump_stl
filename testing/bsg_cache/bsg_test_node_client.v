@@ -1,3 +1,9 @@
+/**
+ * bsg_test_node_client.v
+ */
+
+import bsg_cache_pkg::*;
+
 module bsg_test_node_client
 (
   input clock_i
@@ -14,11 +20,9 @@ module bsg_test_node_client
 );
 
   wire unused = en_i;
-  logic sigext_op;
-  logic [1:0] size_op;
-  logic [3:0] instr_op;
-  logic [31:0] dc_data_i;
-  logic [31:0] dc_addr_i;
+  
+  bsg_cache_pkt_s packet;
+  assign packet = data_i[73:0]; 
   logic [31:0] dc_data_o;
 
   logic dma_req_ch_write_not_read;
@@ -34,11 +38,6 @@ module bsg_test_node_client
   logic dma_write_ch_v_lo;
   logic dma_write_ch_yumi_li;
 
-  assign sigext_op = data_i[70];
-  assign size_op = data_i[69:68];
-  assign instr_op = data_i[67:64];
-  assign dc_addr_i = data_i[63:32];
-  assign dc_data_i = data_i[31:0];
   assign data_o = {48'b0, dc_data_o};
 
   bsg_cache #(
@@ -48,11 +47,7 @@ module bsg_test_node_client
     .clock_i(clock_i)
     ,.reset_i(reset_i)
 
-    ,.sigext_op_i(sigext_op)
-    ,.size_op_i(size_op)
-    ,.instr_op_i(instr_op)
-    ,.addr_i(dc_addr_i)
-    ,.data_i(dc_data_i)
+    ,.packet_i(packet)
     ,.v_i(v_i)
     ,.ready_o(ready_o)
 

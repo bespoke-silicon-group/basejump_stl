@@ -8,9 +8,9 @@ module bsg_repl #(parameter lg_sets_lp="inv"
   input clock_i
   ,input reset_i
   
-  ,input [lg_sets_lp-1:0] line_v_i // line and set in question
+  ,input [lg_sets_lp-1:0] index_v_i
 
-  ,input [lg_sets_lp-1:0] line_tl_i  // write-onto-read
+  ,input [lg_sets_lp-1:0] index_tl_i
   ,input miss_minus_recover_v_i
   ,input tagged_access_v_i
 
@@ -44,8 +44,8 @@ module bsg_repl #(parameter lg_sets_lp="inv"
   assign replacement_we = wipe_v_i | st_op_v_i | ld_op_v_i;
 
   assign line_final = (replacement_we | miss_minus_recover_v_i)
-    ? line_v_i
-    : line_tl_i;
+    ? index_v_i
+    : index_tl_i;
   
   always_ff @ (posedge clock_i) begin
     read_dirty_r <= ~(replacement_we | miss_minus_recover_v_i);

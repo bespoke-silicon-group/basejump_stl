@@ -3,7 +3,8 @@
  */
 
 module bsg_store_buffer #(parameter lg_sets_lp="inv"
-                          ,parameter lg_block_size_in_words_lp="inv") (
+                          ,parameter lg_block_size_in_words_lp="inv")
+(
   input clock_i
   ,input reset_i
 
@@ -15,6 +16,8 @@ module bsg_store_buffer #(parameter lg_sets_lp="inv"
 
   ,input data_mem_free_i
 
+  ,input v_v_we_i
+  ,input ld_op_tl_i
   ,input [31:0] read_addr_tl_i
   ,input is_read_tl_i
 
@@ -157,14 +160,18 @@ module bsg_store_buffer #(parameter lg_sets_lp="inv"
     ,.data_o(storebuf_bypass_data_n)
   );
 
-  bsg_dff #(.width_p(32)) REG_storebuf_bypass_data (
+  logic bypass_en;
+  assign bypass_en = v_v_we_i & ld_op_tl_i;
+  bsg_dff_en #(.width_p(32)) REG_storebuf_bypass_data (
     .clock_i(clock_i)
+    ,.en_i(bypass_en)
     ,.data_i(storebuf_bypass_data_n)
     ,.data_o(storebuf_bypass_data_o)
   );
 
-  bsg_dff #(.width_p(4)) REG_storebuf_bypass_valid (
+  bsg_dff_en #(.width_p(4)) REG_storebuf_bypass_valid (
     .clock_i(clock_i)
+    ,.en_i(bypass_en)
     ,.data_i(storebuf_bypass_valid_n)
     ,.data_o(storebuf_bypass_valid_o)
   );
