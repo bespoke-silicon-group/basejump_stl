@@ -7,27 +7,29 @@
 
 package bsg_cache_pkg;
 
-  typedef enum logic [3:0] {
-    LB = 4'd0
-    ,LH = 4'd1
-    ,LW = 4'd2
-    ,LM = 4'd3
-    ,SB = 4'd4
-    ,SH = 4'd5
-    ,SW = 4'd6
-    ,SM = 4'd7
-    ,TAGST = 4'd8
-    ,TAGFL = 4'd9
-    ,TAGLV = 4'd10
-    ,TAGLA = 4'd11
-    ,AFL = 4'd12
-    ,AFLINV = 4'd13
-    ,AINV = 4'd14 
+  typedef enum logic [4:0] {
+    LB = 5'b00000         // load byte
+    ,LH = 5'b00001        // load half
+    ,LW = 5'b00010        // load word
+    ,LD = 5'b00011        // load double (reserved)
+    ,LM = 5'b00100        // load mask
+    ,SB = 5'b01000        // store byte
+    ,SH = 5'b01001        // store half
+    ,SW = 5'b01010        // store word
+    ,SD = 5'b01011        // store double (reserved)
+    ,SM = 5'b01100        // store mask
+    ,TAGST = 5'b10000     // tag store
+    ,TAGFL = 5'b10001     // tag flush
+    ,TAGLV = 5'b10010     // tag load valid
+    ,TAGLA = 5'b10011     // tag load address
+    ,AFL = 5'b11000       // address flush
+    ,AFLINV = 5'b11001    // address flush invalidate
+    ,AINV = 5'b11010      // address invalidate
   } bsg_cache_opcode_e;
 
   typedef struct packed {
     logic sigext;
-    logic [3:0] wmask;
+    logic [3:0] mask;
     bsg_cache_opcode_e opcode;
     logic [31:0] addr;
     logic [31:0] data;

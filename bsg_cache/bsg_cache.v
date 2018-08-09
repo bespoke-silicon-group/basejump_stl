@@ -11,27 +11,23 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
                   ,parameter sets_p="inv"
                   ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
                   ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-                  ,parameter tag_width_lp=32-2-lg_sets_lp-lg_block_size_in_words_lp
-)
+                  ,parameter tag_width_lp=32-2-lg_sets_lp-lg_block_size_in_words_lp)
 (
   input clock_i
   ,input reset_i
 
+  // input
   ,input bsg_cache_pkt_s packet_i
-  //,input [1:0] size_op_i
-  //,input [3:0] instr_op_i
-  //,input [31:0] addr_i
-  //,input [31:0] data_i
-
   ,input v_i
   ,output logic ready_o
 
+  // output
   ,output logic [31:0] data_o
   ,output logic v_o
   ,input yumi_i
 
   // DMA request channel
-  ,output logic dma_req_ch_write_not_read_o         // read = 0, write = 1;
+  ,output logic dma_req_ch_write_not_read_o
   ,output logic [31:0] dma_req_ch_addr_o
   ,output logic dma_req_ch_v_o
   ,input dma_req_ch_yumi_i
@@ -53,6 +49,8 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
   logic word_op, word_op_tl_r, word_op_v_r;
   logic half_op, half_op_tl_r, half_op_v_r;
   logic byte_op, byte_op_tl_r, byte_op_v_r;
+  logic mask_op, mask_op_tl_r, mask_op_v_r;
+  logic [3:0] byte_mask, byte_mask_tl_r, byte_mask_v_r;
   logic ld_op, ld_op_tl_r, ld_op_v_r;
   logic st_op, st_op_tl_r, st_op_v_r;
   logic tagst_op, tagst_op_tl_r, tagst_op_v_r;
@@ -65,7 +63,7 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
 
   logic miss_v_r;
   logic override;
-  logic store_slot_avail_a;
+  logic data_mem_free;
   logic tag_hit_0_tl, tag_hit_1_tl;
   logic tag_hit_0_v_r, tag_hit_1_v_r;
   logic final_recover;
@@ -184,6 +182,8 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
   logic data_out_vp_byte_extend;
   logic [31:0] data_out_vp_half_extended;
   logic [31:0] data_out_vp_byte_extended;
+  logic [31:0] data_out_vp_readjust_masked;
+  logic [31:0] data_out_vp_readjust_masked_or_not;
 
   logic [31:0] data_out_lalv_swlw_v;
   logic [31:0] data_out_half_or_byte;
@@ -220,22 +220,25 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
 
   // datapath
   //
-  assign byte_op = (size_op_i == 2'b00);  
-  assign half_op = (size_op_i == 2'b01);  
-  assign word_op = (size_op_i == 2'b10);  
+  assign byte_op = (packet_i.opcode[2:0] == 3'b000);  
+  assign half_op = (packet_i.opcode[2:0] == 3'b001);  
+  assign word_op = (packet_i.opcode[2:0] == 3'b010);  
+  assign mask_op = (packet_i.opcode[2:0] == 3'b100);
 
-  assign ld_op = (instr_op_i == 4'b0000);
-  assign st_op = (instr_op_i == 4'b0001);
-  assign tagst_op = (instr_op_i == 4'b0010);
-  assign tagfl_op = (instr_op_i == 4'b0011);
-  assign taglv_op = (instr_op_i == 4'b0100);
-  assign tagla_op = (instr_op_i == 4'b0101);
-  assign afl_op = (instr_op_i == 4'b0110);
-  assign aflinv_op = (instr_op_i == 4'b0111);
-  assign ainv_op = (instr_op_i == 4'b1000);
+  assign ld_op = (packet_i.opcode[4:3] == 2'b00);
+  assign st_op = (packet_i.opcode[4:3] == 2'b01);
+  assign tagst_op = (packet_i.opcode == 5'b10000);
+  assign tagfl_op = (packet_i.opcode == 5'b10001);
+  assign taglv_op = (packet_i.opcode == 5'b10010);
+  assign tagla_op = (packet_i.opcode == 5'b10011);
+  assign afl_op = (packet_i.opcode == 5'b11000);
+  assign aflinv_op = (packet_i.opcode == 5'b11001);
+  assign ainv_op = (packet_i.opcode == 5'b11010);
+
+  assign byte_mask = packet_i.mask;
 
   assign override = miss_v_r;
-  assign store_slot_avail_a = ~ld_op | miss_v_r;
+  assign data_mem_free = ~ld_op | miss_v_r;
 
   assign instr_cannot_miss_tl = tagst_op_tl_r | tagla_op_tl_r | taglv_op_tl_r;
   assign instr_must_miss_tl = tagfl_op_tl_r;
@@ -244,7 +247,7 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
 
   assign tag_check_me_tl = {instr_must_miss_tl, 1'b1,
     addr_tl_r[2+lg_block_size_in_words_lp+lg_sets_lp+:tag_width_lp]};
-  assign explicit_set_bit_a = addr_i[2+lg_block_size_in_words_lp+lg_sets_lp]; // 2+3+9=14
+  assign explicit_set_bit_a = packet_i.addr[2+lg_block_size_in_words_lp+lg_sets_lp]; // 2+3+9=14
   assign explicit_set_bit_tl = addr_tl_r[2+lg_block_size_in_words_lp+lg_sets_lp];
   assign explicit_set_bit_v = addr_v_r[2+lg_block_size_in_words_lp+lg_sets_lp];
 
@@ -264,7 +267,7 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
 
   assign tag_mask_final = {tag_mask_foi_buf, tag_mask_foi_n_buf};
 
-  assign tag_data_in_inval = {2{data_i[31], data_i[tag_width_lp-1:0]}};
+  assign tag_data_in_inval = {2{packet_i.data[31], packet_i.data[tag_width_lp-1:0]}};
 
   assign ainv_or_aflinv_op_v = ainv_op_v_r | aflinv_op_v_r;
   
@@ -272,7 +275,7 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
     2{~ainv_or_aflinv_op_v, addr_v_r[lg_sets_lp+lg_block_size_in_words_lp+2+:tag_width_lp]}
   };
 
-  assign tag_addr = addr_i[lg_block_size_in_words_lp+2+:lg_sets_lp]; // 13:5
+  assign tag_addr = packet_i.addr[lg_block_size_in_words_lp+2+:lg_sets_lp]; // 13:5
   assign tag_addr_force = addr_v_r[lg_block_size_in_words_lp+2+:lg_sets_lp];
   assign tag_addr_recover = addr_tl_r[lg_block_size_in_words_lp+2+:lg_sets_lp];
 
@@ -300,7 +303,7 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
 
   assign tag_en = (~reset_i) & (tag_re_final | tag_we_final);
 
-  assign data_addr = addr_i[2+:lg_sets_lp+lg_block_size_in_words_lp]; // 13:2
+  assign data_addr = packet_i.addr[2+:lg_sets_lp+lg_block_size_in_words_lp]; // 13:2
   assign data_addr_recover = addr_tl_r[2+:lg_sets_lp+lg_block_size_in_words_lp];
 
   assign data_we_final = (data_we_force | data_we_storebuf);
@@ -351,7 +354,7 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
   assign tag_data_explicit_addr_tl = {
     tag_data_explicit_tl[tag_width_lp-1:0],
     addr_tl_r[lg_block_size_in_words_lp+2+:lg_sets_lp]
-  }; // 13:5
+  };
 
   assign tag_data_explicit_addr_anded_tl = tag_data_explicit_addr_tl
     & {(tag_width_lp+lg_sets_lp){tagla_op_tl_r}};
@@ -366,16 +369,18 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
 
   assign miss_tl = miss_sense_tl ^ (instr_cannot_miss_tl | tag_hit_0_tl | tag_hit_1_tl);
 
-  assign storebuf_in_mask = word_op_v_r
-    ? 4'b1111
-    : (half_op_v_r
-      ? {addr_v_r[1], addr_v_r[1], ~addr_v_r[1], ~addr_v_r[1]}
-      : {(addr_v_r[1] & addr_v_r[0]),
-         (addr_v_r[1] & ~addr_v_r[0]),
-         (~addr_v_r[1] & addr_v_r[0]),
-         (~addr_v_r[1] & ~addr_v_r[0])});
+  assign storebuf_in_mask = mask_op_v_r
+    ? byte_mask_v_r
+    : (word_op_v_r 
+        ? 4'b1111
+        : (half_op_v_r
+          ? {addr_v_r[1], addr_v_r[1], ~addr_v_r[1], ~addr_v_r[1]}
+          : {(addr_v_r[1] & addr_v_r[0]),
+            (addr_v_r[1] & ~addr_v_r[0]),
+            (~addr_v_r[1] & addr_v_r[0]),
+            (~addr_v_r[1] & ~addr_v_r[0])}));
 
-  assign storebuf_in_data = word_op_v_r
+  assign storebuf_in_data = (word_op_v_r | mask_op_v_r)
     ? data_i_v_r
     : (half_op_v_r
       ? {data_i_v_r[15:0], data_i_v_r[15:0]}
@@ -408,6 +413,22 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
   assign data_out_vp_readjust = just_recovered_r
     ? snoop_word
     : data_out_vp_set_picked;
+  
+  bsg_mux_segmented #(
+    .segments_p(4)
+    ,.segment_width_p(8)
+  ) MUX_segmented_vp_readjust_masked (
+    .data0_i(32'b0)
+    ,.data1_i(data_out_vp_readjust)
+    ,.sel_i(byte_mask_v_r)
+    ,.data_o(data_out_vp_readjust_masked)
+  );
+
+  bsg_mux #(.width_p(32), .els_p(2)) MUX_masked (
+    .data_i({data_out_vp_readjust_masked, data_out_vp_readjust})
+    ,.sel_i(mask_op_v_r)
+    ,.data_o(data_out_vp_readjust_masked_or_not)
+  );
 
   assign data_out_vp_readj_lo = data_out_vp_readjust[15:0];
   assign data_out_vp_readj_hi = data_out_vp_readjust[31:16];
@@ -423,21 +444,20 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
     ,.data_o(data_out_vp_half)
   );
 
-  assign data_out_vp_half_extend = sigext_op_v_r & data_out_vp_half[15];
-
   bsg_mux #(.width_p(8), .els_p(4)) MUX_byte (
     .data_i({data_out_vp_readj_b3, data_out_vp_readj_b2, data_out_vp_readj_b1, data_out_vp_readj_b0})
     ,.sel_i(addr_v_r[1:0])
     ,.data_o(data_out_vp_byte)
   );
 
+  assign data_out_vp_half_extend = sigext_op_v_r & data_out_vp_half[15];
   assign data_out_vp_byte_extend = sigext_op_v_r & data_out_vp_byte[7];
   
   assign data_out_vp_half_extended = {{16{data_out_vp_half_extend}}, data_out_vp_half};
   assign data_out_vp_byte_extended = {{24{data_out_vp_byte_extend}}, data_out_vp_byte};
 
   bsg_mux #(.width_p(32), .els_p(2)) MUX_merge_taglalv (
-    .data_i({taglalv_val_v_r, data_out_vp_readjust})
+    .data_i({taglalv_val_v_r, data_out_vp_readjust_masked_or_not})
     ,.sel_i(taglv_op_v_r | tagla_op_v_r)
     ,.data_o(data_out_lalv_swlw_v)
   );
@@ -447,14 +467,14 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
     ,.sel_i(half_op_v_r)
     ,.data_o(data_out_half_or_byte)
   );
+
   bsg_mux #(.width_p(32), .els_p(2)) MUX_word_or_other_data_out (
     .data_i({data_out_lalv_swlw_v, data_out_half_or_byte})
-    ,.sel_i(word_op_v_r | taglv_op_v_r | tagla_op_v_r)
+    ,.sel_i(mask_op_v_r | word_op_v_r | taglv_op_v_r | tagla_op_v_r)
     ,.data_o(data_final)
   );
 
   assign data_o = data_final & {32{instr_returns_val_v}};
-
 
 
   // tag_mem
@@ -477,7 +497,7 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
   //
   bsg_mem_1rw_sync_mask_write_byte #(
     .data_width_p(64)
-    ,.els_p(block_size_in_words_p*sets_p) // 4096
+    ,.els_p(block_size_in_words_p*sets_p)
   ) data_mem (
     .clk_i(clock_i)
     ,.reset_i(reset_i)
@@ -502,7 +522,9 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
     ,.write_data_v_i(storebuf_in_data)
     ,.write_set_v_i(just_recovered_r ? evict_and_fill_set : tag_hit_1_v_r)
     ,.write_valid_v_i(~miss_v_r & st_op_v_r & v_v_r)
-    ,.data_mem_free_i(store_slot_avail_a)
+    ,.data_mem_free_i(data_mem_free)
+    ,.v_v_we_i(v_v_we)
+    ,.ld_op_tl_i(ld_op_tl_r)
     ,.read_addr_tl_i({addr_tl_r[31:2], 2'b00})
     ,.is_read_tl_i(ld_op_tl_r & v_tl_r)
     ,.storebuf_bypass_data_o(storebuf_bypass_data_v)
@@ -523,8 +545,8 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
   ) repl (
     .clock_i(clock_i)
     ,.reset_i(reset_i)
-    ,.line_v_i(addr_v_r[2+lg_block_size_in_words_lp+:lg_sets_lp]) // 13:5
-    ,.line_tl_i(addr_tl_r[2+lg_block_size_in_words_lp+:lg_sets_lp])
+    ,.index_v_i(addr_v_r[2+lg_block_size_in_words_lp+:lg_sets_lp])
+    ,.index_tl_i(addr_tl_r[2+lg_block_size_in_words_lp+:lg_sets_lp])
     ,.miss_minus_recover_v_i(in_middle_of_miss)
     ,.tagged_access_v_i(addr_v_r[0] & word_op_v_r)
     ,.ld_st_set_v_i(just_recovered_r ? evict_and_fill_set : tag_hit_1_v_r)
@@ -579,10 +601,10 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
     // from evict_fill_machine
     ,.dma_finished_i(dma_finished)
 
-    // to replacement
+    // to repl
     ,.wipe_v_o(mc_wipe_request_v)
 
-    // from replacement
+    // from repl
     ,.query_dirty0_i(dirty0)
     ,.query_dirty1_i(dirty1)
     ,.query_mru_i(mru)
@@ -686,6 +708,10 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
       byte_op_v_r <= 1'b0;
       sigext_op_tl_r <= 1'b0;
       sigext_op_v_r <= 1'b0;
+      mask_op_tl_r <= 1'b0;
+      mask_op_v_r <= 1'b0;
+      byte_mask_tl_r <= 4'b0;
+      byte_mask_v_r <= 4'b0;
       just_recovered_r <= 1'b0;
       instr_reads_tags_tl_r <= 1'b0;
     end
@@ -711,10 +737,12 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
           word_op_tl_r <= word_op;
           half_op_tl_r <= half_op;
           byte_op_tl_r <= byte_op;
+          mask_op_tl_r <= mask_op;
+          byte_mask_tl_r <= byte_mask;
           sigext_op_tl_r <= packet_i.sigext;
           instr_reads_tags_tl_r <= instr_reads_tags_a;
-          addr_tl_r <= addr_i;
-          data_i_tl_r <= data_i;
+          addr_tl_r <= packet_i.addr;
+          data_i_tl_r <= packet_i.data;
         end
       end 
 
@@ -736,6 +764,8 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
           word_op_v_r <= word_op_tl_r;
           half_op_v_r <= half_op_tl_r;
           byte_op_v_r <= byte_op_tl_r;
+          mask_op_v_r <= mask_op_tl_r;
+          byte_mask_v_r <= byte_mask_tl_r;
           sigext_op_v_r <= sigext_op_tl_r;
           addr_v_r <= addr_tl_r;
           data_i_v_r <= data_i_tl_r;

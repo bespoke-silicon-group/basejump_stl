@@ -1,19 +1,26 @@
-module bsg_dff_en #(width_p="inv"
-                    , harden_p=1   // mbt fixme: maybe this should not be a default
-                    , strength_p=1
-                    )
-   (input   clock_i
-    ,input  [width_p-1:0] data_i
-    ,input  en_i
-    ,output [width_p-1:0] data_o
-    );
+/**
+ *  bsg_dff_en.v
+ *  @param width_p data width
+ */
 
-   reg [width_p-1:0] data_r;
+module bsg_dff_en #(parameter width_p="inv"
+                   ,parameter harden_p=1   // mbt fixme: maybe this should not be a default
+                   ,parameter strength_p=1)
+(
+  input clock_i
+  ,input [width_p-1:0] data_i
+  ,input en_i
+  ,output logic [width_p-1:0] data_o
+);
 
-   assign data_o = data_r;
+  logic [width_p-1:0] data_r;
 
-   always @(posedge clock_i)
-     if (en_i)
-       data_r <= data_i;
+  assign data_o = data_r;
+
+  always_ff @ (posedge clock_i) begin
+    if (en_i) begin
+      data_r <= data_i;
+    end
+  end
 
 endmodule
