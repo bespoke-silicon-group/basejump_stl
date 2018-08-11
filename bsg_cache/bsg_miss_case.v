@@ -3,9 +3,11 @@
  */
 
 
-module bsg_miss_case #(parameter tag_width_lp="inv"
-                      ,parameter lg_block_size_in_words_lp="inv"
-                      ,parameter lg_sets_lp="inv")
+module bsg_miss_case
+  #(parameter addr_width_p="inv"
+    ,parameter tag_width_lp="inv"
+    ,parameter lg_block_size_in_words_lp="inv"
+    ,parameter lg_sets_lp="inv")
 (
   input clock_i
   ,input reset_i
@@ -18,7 +20,7 @@ module bsg_miss_case #(parameter tag_width_lp="inv"
   ,input afl_op_v_i
   ,input aflinv_op_v_i
   ,input ainv_op_v_i
-  ,input [31:0] addr_v_i
+  ,input [addr_width_p-1:0] addr_v_i
 
   ,input [tag_width_lp-1:0] tag0_v_i
   ,input [tag_width_lp-1:0] tag1_v_i
@@ -34,7 +36,7 @@ module bsg_miss_case #(parameter tag_width_lp="inv"
   ,output logic mc_send_evict_req_o
   ,output logic mc_fill_line_o
   ,output logic mc_evict_line_o
-  ,output logic [31:0] mc_pass_data_o
+  ,output logic [addr_width_p-1:0] mc_pass_addr_o
     
   // from dma_engine
   ,input dma_finished_i
@@ -75,8 +77,8 @@ module bsg_miss_case #(parameter tag_width_lp="inv"
   logic chosen_set_is_dirty_n;
   logic chosen_set_is_valid_r;
   logic chosen_set_is_valid_n;
-  logic [31:0] evict_address_r;
-  logic [31:0] evict_address_n;
+  logic [addr_width_p-1:0] evict_address_r;
+  logic [addr_width_p-1:0] evict_address_n;
   
   logic [lg_sets_lp-1:0] miss_index_v;
   logic tagfl_set_v;
@@ -98,7 +100,7 @@ module bsg_miss_case #(parameter tag_width_lp="inv"
   always_comb begin
     chosen_set_n = chosen_set_r;
     // to dma_engine
-    mc_pass_data_o = 32'b0;
+    mc_pass_addr_o = '0;
     mc_send_fill_req_o = 1'b0;
     mc_send_evict_req_o = 1'b0;
     mc_fill_line_o = 1'b0;
@@ -138,7 +140,7 @@ module bsg_miss_case #(parameter tag_width_lp="inv"
       // calculate evict address.
       FILL_REQUEST_SEND_ADDR: begin
         mc_send_fill_req_o = 1'b1;
-        mc_pass_data_o = addr_v_i;
+        mc_pass_addr_o = addr_v_i;
         tag_we_force_o = dma_finished_i;
         wipe_v_o = dma_finished_i;
         
@@ -169,7 +171,7 @@ module bsg_miss_case #(parameter tag_width_lp="inv"
       // tell dma_engine to send evict request and addr.
       EVICT_REQUEST_SEND_ADDR: begin
         mc_send_evict_req_o = 1'b1;
-        mc_pass_data_o = evict_address_r;
+        mc_pass_addr_o = evict_address_r;
         miss_state_n = dma_finished_i
           ? EVICT_REQUEST_SEND_DATA
           : EVICT_REQUEST_SEND_ADDR;
@@ -204,7 +206,7 @@ module bsg_miss_case #(parameter tag_width_lp="inv"
       chosen_set_r <= 1'b0;
       chosen_set_is_valid_r <= 1'b0;
       chosen_set_is_dirty_r <= 1'b0;
-      evict_address_r <= 32'b0;
+      evict_address_r <= '0;
     end 
     else begin
       miss_state_r <= miss_state_n;
