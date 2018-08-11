@@ -2,8 +2,9 @@
  *  bsg_evict_fill_machine.v
  */
 
-module bsg_evict_fill_machine #(parameter block_size_in_words_p="inv"
-                               ,parameter lg_sets_lp="inv")
+module bsg_evict_fill_machine
+  #(parameter block_size_in_words_p="inv"
+   ,parameter lg_sets_lp="inv")
 (
   input clock_i
   ,input reset_i
@@ -13,7 +14,7 @@ module bsg_evict_fill_machine #(parameter block_size_in_words_p="inv"
   ,input mc_send_evict_req_i
   ,input mc_fill_line_i
   ,input mc_evict_line_i
-  ,input [31:0] mc_pass_data_i
+  ,input [31:0] mc_pass_addr_i
   ,input start_set_i
 
   // to miss_case
@@ -116,7 +117,7 @@ module bsg_evict_fill_machine #(parameter block_size_in_words_p="inv"
     end
   end
 
-  assign dma_req_ch_addr_o = mc_pass_data_i;
+  assign dma_req_ch_addr_o = mc_pass_addr_i;
   assign data_mask_force_o = start_set_i
     ? {4'b1111, 4'b0000}
     : {4'b0000, 4'b1111};

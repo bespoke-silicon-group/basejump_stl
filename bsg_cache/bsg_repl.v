@@ -2,8 +2,9 @@
  *  bsg_repl.v
  */
 
-module bsg_repl #(parameter lg_sets_lp="inv"
-                        ,parameter sets_p="inv")
+module bsg_repl
+  #(parameter lg_sets_lp="inv"
+    ,parameter sets_p="inv")
 (
   input clock_i
   ,input reset_i

@@ -2,14 +2,16 @@
  *  bsg_store_buffer.v
  */
 
-module bsg_store_buffer #(parameter lg_sets_lp="inv"
-                          ,parameter lg_block_size_in_words_lp="inv")
+module bsg_store_buffer
+  #(parameter addr_width_p="inv"
+   ,parameter lg_sets_lp="inv"
+   ,parameter lg_block_size_in_words_lp="inv")
 (
   input clock_i
   ,input reset_i
 
   ,input [3:0] write_mask_v_i
-  ,input [31:0] write_addr_v_i
+  ,input [addr_width_p-1:0] write_addr_v_i
   ,input [31:0] write_data_v_i 
   ,input write_set_v_i
   ,input write_valid_v_i
@@ -18,7 +20,7 @@ module bsg_store_buffer #(parameter lg_sets_lp="inv"
 
   ,input v_v_we_i
   ,input ld_op_tl_i
-  ,input [31:0] read_addr_tl_i
+  ,input [addr_width_p-1:0] read_addr_tl_i
   ,input is_read_tl_i
 
   ,output logic [31:0] storebuf_bypass_data_o
@@ -32,11 +34,11 @@ module bsg_store_buffer #(parameter lg_sets_lp="inv"
   ,output logic storebuf_empty_o
 );
 
-  logic [31:0] el0_addr, el1_addr;
-  logic [31:0] el0_data, el1_data;
+  logic [addr_width_p-1:0] el0_addr, el1_addr;
+  logic [addr_width_p-1:0] el0_data, el1_data;
   logic [3:0] el0_mask, el1_mask;
   logic [1:0] num_els_r, num_els_n;
-  logic [31:0] storebuf_addr;
+  logic [addr_width_p-1:0] storebuf_addr;
 
   logic el0_valid, el1_valid;
   logic mux1_sel, mux0_sel;
@@ -87,7 +89,7 @@ module bsg_store_buffer #(parameter lg_sets_lp="inv"
     ,.final_o(storebuf_data_o)
   );
 
-  bsg_store_buffer_queue #(.width_p(32)) wbq_addr (
+  bsg_store_buffer_queue #(.width_p(addr_width_p)) wbq_addr (
     .clock_i(clock_i)
     ,.data_i(write_addr_v_i)
     ,.el0_en_i(el0_enable)

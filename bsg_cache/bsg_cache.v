@@ -7,11 +7,13 @@
 
 import bsg_cache_pkg::*;
 
-module bsg_cache #(parameter block_size_in_words_p="inv"
-                  ,parameter sets_p="inv"
-                  ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
-                  ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-                  ,parameter tag_width_lp=32-2-lg_sets_lp-lg_block_size_in_words_lp)
+module bsg_cache
+  #(parameter addr_width_p="inv"
+    ,parameter block_size_in_words_p="inv"
+    ,parameter sets_p="inv"
+    ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
+    ,parameter tag_width_lp=addr_width_p-2-lg_sets_lp-lg_block_size_in_words_lp)
 (
   input clock_i
   ,input reset_i
@@ -28,7 +30,7 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
 
   // DMA request channel
   ,output logic dma_req_ch_write_not_read_o
-  ,output logic [31:0] dma_req_ch_addr_o
+  ,output logic [addr_width_p-1:0] dma_req_ch_addr_o
   ,output logic dma_req_ch_v_o
   ,input dma_req_ch_yumi_i
 
@@ -80,8 +82,8 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
   logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_addr_storebuf;
   logic [63:0] data_in_storebuf;
   
-  logic [31:0] addr_tl_r;
-  logic [31:0] addr_v_r;
+  logic [addr_width_p-1:0] addr_tl_r;
+  logic [addr_width_p-1:0] addr_v_r;
 
   logic [31:0] data_i_tl_r;
   logic [31:0] data_i_v_r;
@@ -195,14 +197,13 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
   logic write_over_read_v;
   logic mru;
 
-  logic [31:0] pass_data;
   logic dma_finished;
 
   logic mc_send_fill_req;
   logic mc_send_evict_req;
   logic mc_fill_line;
   logic mc_evict_line;
-  logic [31:0] mc_pass_data;
+  logic [addr_width_p-1:0] mc_pass_addr;
    
   logic status_mem_re;
   logic v_v_we;
@@ -227,13 +228,13 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
 
   assign ld_op = (packet_i.opcode[4:3] == 2'b00);
   assign st_op = (packet_i.opcode[4:3] == 2'b01);
-  assign tagst_op = (packet_i.opcode == 5'b10000);
-  assign tagfl_op = (packet_i.opcode == 5'b10001);
-  assign taglv_op = (packet_i.opcode == 5'b10010);
-  assign tagla_op = (packet_i.opcode == 5'b10011);
-  assign afl_op = (packet_i.opcode == 5'b11000);
-  assign aflinv_op = (packet_i.opcode == 5'b11001);
-  assign ainv_op = (packet_i.opcode == 5'b11010);
+  assign tagst_op = (packet_i.opcode == TAGST);
+  assign tagfl_op = (packet_i.opcode == TAGFL);
+  assign taglv_op = (packet_i.opcode == TAGLV);
+  assign tagla_op = (packet_i.opcode == TAGLA);
+  assign afl_op = (packet_i.opcode == AFL);
+  assign aflinv_op = (packet_i.opcode == AFLINV);
+  assign ainv_op = (packet_i.opcode == AINV);
 
   assign byte_mask = packet_i.mask;
 
@@ -512,20 +513,21 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
   // store_buffer
   //
   bsg_store_buffer #(
-    .lg_sets_lp(lg_sets_lp)
+    .addr_width_p(addr_width_p)
+    ,.lg_sets_lp(lg_sets_lp)
     ,.lg_block_size_in_words_lp(lg_block_size_in_words_lp)
   ) wb (
     .clock_i(clock_i)
     ,.reset_i(reset_i)
     ,.write_mask_v_i(storebuf_in_mask)
-    ,.write_addr_v_i({addr_v_r[31:2], 2'b00})
+    ,.write_addr_v_i({addr_v_r[addr_width_p-1:2], 2'b00})
     ,.write_data_v_i(storebuf_in_data)
     ,.write_set_v_i(just_recovered_r ? evict_and_fill_set : tag_hit_1_v_r)
     ,.write_valid_v_i(~miss_v_r & st_op_v_r & v_v_r)
     ,.data_mem_free_i(data_mem_free)
     ,.v_v_we_i(v_v_we)
     ,.ld_op_tl_i(ld_op_tl_r)
-    ,.read_addr_tl_i({addr_tl_r[31:2], 2'b00})
+    ,.read_addr_tl_i({addr_tl_r[addr_width_p-1:2], 2'b00})
     ,.is_read_tl_i(ld_op_tl_r & v_tl_r)
     ,.storebuf_bypass_data_o(storebuf_bypass_data_v)
     ,.storebuf_bypass_valid_o(storebuf_hit_v)
@@ -565,7 +567,8 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
   // miss_case
   //
   bsg_miss_case #(
-    .tag_width_lp(tag_width_lp)
+    .addr_width_p(addr_width_p)
+    ,.tag_width_lp(tag_width_lp)
     ,.lg_sets_lp(lg_sets_lp)
     ,.lg_block_size_in_words_lp(lg_block_size_in_words_lp)
   ) mc (
@@ -596,7 +599,7 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
     ,.mc_send_evict_req_o(mc_send_evict_req)
     ,.mc_fill_line_o(mc_fill_line)
     ,.mc_evict_line_o(mc_evict_line)
-    ,.mc_pass_data_o(mc_pass_data)
+    ,.mc_pass_addr_o(mc_pass_addr)
 
     // from evict_fill_machine
     ,.dma_finished_i(dma_finished)
@@ -630,7 +633,7 @@ module bsg_cache #(parameter block_size_in_words_p="inv"
     ,.mc_send_evict_req_i(mc_send_evict_req)
     ,.mc_fill_line_i(mc_fill_line)
     ,.mc_evict_line_i(mc_evict_line)
-    ,.mc_pass_data_i(mc_pass_data)
+    ,.mc_pass_addr_i(mc_pass_addr)
     ,.start_set_i(evict_and_fill_set)
 
     ,.start_addr_i(addr_v_r[2+lg_block_size_in_words_lp+:lg_sets_lp]) // 13:5

@@ -41,7 +41,8 @@ module bsg_test_node_client
   assign data_o = {48'b0, dc_data_o};
 
   bsg_cache #(
-    .block_size_in_words_p(8)
+    .addr_width_p(32)
+    ,.block_size_in_words_p(8)
     ,.sets_p(512)
   ) dcache0 (
     .clock_i(clock_i)
