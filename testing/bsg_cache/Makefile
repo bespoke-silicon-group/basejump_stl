@@ -1,5 +1,7 @@
 TRACE_FILE = trace_master_0.tr
 TRACE_ROM = bsg_trace_master_rom
+INCDIR = +incdir+$(abspath $(BSG_IP_CORES_ROOT))/bsg_misc/
+
 
 all: sim
 
@@ -8,7 +10,7 @@ $(TRACE_ROM).v: $(TRACE_FILE)
 	> $(TRACE_ROM).v
 
 sim: $(TRACE_ROM).v
-	vcs -f sv.include +v2k -R +lint=all -sverilog -full64 \
+	vcs +v2k -R +lint=all -sverilog -full64 -f sv.include $(INCDIR)\
 		-debug_pp -timescale=1ps/1ps \
     +notimingcheck -cm line+cond+fsm+tgl+path+branch+assert \
 		-cm_line contassign	-lca \
