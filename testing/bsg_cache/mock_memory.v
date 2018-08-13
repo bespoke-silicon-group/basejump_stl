@@ -30,7 +30,7 @@ module mock_memory (
   typedef enum logic {
     WAIT = 1'b0,
     BUSY = 1'b1
-  } chan_state_e;
+  } ch_state_e;
 
   logic recv_state_r, recv_state_n;
   logic [10:0] recv_block_addr_r, recv_block_addr_n;

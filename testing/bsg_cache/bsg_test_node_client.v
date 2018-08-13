@@ -2,9 +2,11 @@
  * bsg_test_node_client.v
  */
 
-import bsg_cache_pkg::*;
 
-module bsg_test_node_client
+module bsg_test_node_client 
+  import bsg_cache_pkg::*;
+  import bsg_dram_ctrl_pkg::*;
+  #(parameter id_p="inv")
 (
   input clock_i
   ,input reset_i
@@ -19,8 +21,8 @@ module bsg_test_node_client
   ,input yumi_i
 );
 
+
   wire unused = en_i;
-  
   bsg_cache_pkt_s packet;
   assign packet = data_i[73:0]; 
   logic [31:0] dc_data_o;
@@ -70,11 +72,12 @@ module bsg_test_node_client
     ,.dma_write_ch_yumi_i(dma_write_ch_yumi_li)
   );
 
+if (id_p == 0) begin : mm
+
   mock_memory mm (
     .clock_i(clock_i)
     ,.reset_i(reset_i)
   
-    ,.dma_req_ch_write_not_read_i(dma_req_ch_write_not_read)
     ,.dma_req_ch_addr_i(dma_req_ch_addr)
     ,.dma_req_ch_v_i(dma_req_ch_v_lo)
     ,.dma_req_ch_yumi_o(dma_req_ch_yumi_li)
@@ -87,5 +90,53 @@ module bsg_test_node_client
     ,.dma_write_ch_v_i(dma_write_ch_v_lo)
     ,.dma_write_ch_yumi_o(dma_write_ch_yumi_li)
   );
+end
+else if (id_p == 1) begin : cache_to_dram_ctrl
+  
+  bsg_dram_ctrl_if #(
+    .addr_width_p(32)
+    ,.data_width_p(128)
+  ) dram_if (
+    .clk_i(clock_i)
+  );
+
+  bsg_cache_to_dram_ctrl #(
+    .addr_width_p(32)
+    ,.block_size_in_words_p(8)
+    ,.cache_word_width_p(32)
+    ,.burst_len_p(1)
+    ,.burst_width_p(128)
+  ) cache_to_dram_ctrl (
+    .clock_i(clock_i)
+    ,.reset_i(reset_i)
+    
+    ,.dma_req_ch_write_not_read_i(dma_req_ch_write_not_read)
+    ,.dma_req_ch_addr_i(dma_req_ch_addr)
+    ,.dma_req_ch_v_i(dma_req_ch_v_lo)
+    ,.dma_req_ch_yumi_o(dma_req_ch_yumi_li)
+
+    ,.dma_read_ch_data_o(dma_read_ch_data)
+    ,.dma_read_ch_v_o(dma_read_ch_v_li)
+    ,.dma_read_ch_ready_i(dma_read_ch_ready_lo)
+
+    ,.dma_write_ch_data_i(dma_write_ch_data)
+    ,.dma_write_ch_v_i(dma_write_ch_v_lo)
+    ,.dma_write_ch_yumi_o(dma_write_ch_yumi_li)
+
+    ,.dram_ctrl_if(dram_if)
+  );  
+
+  mock_dram_ctrl #(
+    .addr_width_p(32)
+    ,.data_width_p(128)
+    ,.burst_len_p(1)
+    ,.mem_size_p(4096)
+  ) dram_ctrl (
+    .clock_i(clock_i)
+    ,.reset_i(reset_i)
+    ,.dram_ctrl_if(dram_if)
+  );
+
+end
 
 endmodule
