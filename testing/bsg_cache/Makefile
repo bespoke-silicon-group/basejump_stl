@@ -1,6 +1,7 @@
 TRACE_FILE = trace_master_0.tr
 TRACE_ROM = bsg_trace_master_rom
 INCDIR = +incdir+$(abspath $(BSG_IP_CORES_ROOT))/bsg_misc/
+INCDIR += +incdir+$(abspath $(BSG_IP_CORES_ROOT))/bsg_cache/
 
 
 all: sim
