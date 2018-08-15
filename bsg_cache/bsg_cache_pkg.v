@@ -27,14 +27,6 @@ package bsg_cache_pkg;
     ,AINV = 5'b11010      // address invalidate
   } bsg_cache_opcode_e;
 
-  typedef struct packed {
-    logic sigext;
-    logic [3:0] mask;
-    bsg_cache_opcode_e opcode;
-    logic [31:0] addr;
-    logic [31:0] data;
-  } bsg_cache_pkt_s;
-
 endpackage
 
 `endif

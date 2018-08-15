@@ -1,25 +1,28 @@
 /**
  *  bsg_cache.v
  *
- *  @author mbt
- *  @modified tommy
+ *  @param addr_width_p address bit-width.
+ *  @param block_size_in_words_p number of words in cache block. should be power of 2.
+ *  @param sets_p number of sets in cache.
  */
 
-import bsg_cache_pkg::*;
+`include "bsg_cache_pkt.vh"
 
 module bsg_cache
+  import bsg_cache_pkg::*;
   #(parameter addr_width_p="inv"
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    ,parameter tag_width_lp=addr_width_p-2-lg_sets_lp-lg_block_size_in_words_lp)
+    ,parameter tag_width_lp=addr_width_p-2-lg_sets_lp-lg_block_size_in_words_lp
+    ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,32))
 (
   input clock_i
   ,input reset_i
 
   // input
-  ,input bsg_cache_pkt_s packet_i
+  ,input [bsg_cache_pkt_width_lp-1:0] packet_i
   ,input v_i
   ,output logic ready_o
 
@@ -72,8 +75,8 @@ module bsg_cache
   logic just_recovered_r;
   logic miss_tl;  
 
-  logic instr_reads_tags_a;
-  logic instr_reads_tags_tl_r;
+  logic tag_read_op_a;
+  logic tag_read_op_tl_r;
 
   logic instr_cannot_miss_tl;
   logic instr_must_miss_tl;
@@ -221,22 +224,25 @@ module bsg_cache
 
   // datapath
   //
-  assign byte_op = (packet_i.opcode[2:0] == 3'b000);  
-  assign half_op = (packet_i.opcode[2:0] == 3'b001);  
-  assign word_op = (packet_i.opcode[2:0] == 3'b010);  
-  assign mask_op = (packet_i.opcode[2:0] == 3'b100);
+  `declare_bsg_cache_pkt_s(addr_width_p, 32);
+  bsg_cache_pkt_s packet;
+  assign packet = packet_i;
+  assign byte_op = (packet.opcode[2:0] == 3'b000);  
+  assign half_op = (packet.opcode[2:0] == 3'b001);  
+  assign word_op = (packet.opcode[2:0] == 3'b010);  
+  assign mask_op = (packet.opcode[2:0] == 3'b100);
 
-  assign ld_op = (packet_i.opcode[4:3] == 2'b00);
-  assign st_op = (packet_i.opcode[4:3] == 2'b01);
-  assign tagst_op = (packet_i.opcode == TAGST);
-  assign tagfl_op = (packet_i.opcode == TAGFL);
-  assign taglv_op = (packet_i.opcode == TAGLV);
-  assign tagla_op = (packet_i.opcode == TAGLA);
-  assign afl_op = (packet_i.opcode == AFL);
-  assign aflinv_op = (packet_i.opcode == AFLINV);
-  assign ainv_op = (packet_i.opcode == AINV);
+  assign ld_op = (packet.opcode[4:3] == 2'b00);
+  assign st_op = (packet.opcode[4:3] == 2'b01);
+  assign tagst_op = (packet.opcode == TAGST);
+  assign tagfl_op = (packet.opcode == TAGFL);
+  assign taglv_op = (packet.opcode == TAGLV);
+  assign tagla_op = (packet.opcode == TAGLA);
+  assign afl_op = (packet.opcode == AFL);
+  assign aflinv_op = (packet.opcode == AFLINV);
+  assign ainv_op = (packet.opcode == AINV);
 
-  assign byte_mask = packet_i.mask;
+  assign byte_mask = packet.mask;
 
   assign override = miss_v_r;
   assign data_mem_free = ~ld_op | miss_v_r;
@@ -248,7 +254,7 @@ module bsg_cache
 
   assign tag_check_me_tl = {instr_must_miss_tl, 1'b1,
     addr_tl_r[2+lg_block_size_in_words_lp+lg_sets_lp+:tag_width_lp]};
-  assign explicit_set_bit_a = packet_i.addr[2+lg_block_size_in_words_lp+lg_sets_lp]; // 2+3+9=14
+  assign explicit_set_bit_a = packet.addr[2+lg_block_size_in_words_lp+lg_sets_lp]; // 2+3+9=14
   assign explicit_set_bit_tl = addr_tl_r[2+lg_block_size_in_words_lp+lg_sets_lp];
   assign explicit_set_bit_v = addr_v_r[2+lg_block_size_in_words_lp+lg_sets_lp];
 
@@ -268,7 +274,7 @@ module bsg_cache
 
   assign tag_mask_final = {tag_mask_foi_buf, tag_mask_foi_n_buf};
 
-  assign tag_data_in_inval = {2{packet_i.data[31], packet_i.data[tag_width_lp-1:0]}};
+  assign tag_data_in_inval = {2{packet.data[31], packet.data[tag_width_lp-1:0]}};
 
   assign ainv_or_aflinv_op_v = ainv_op_v_r | aflinv_op_v_r;
   
@@ -276,7 +282,7 @@ module bsg_cache
     2{~ainv_or_aflinv_op_v, addr_v_r[lg_sets_lp+lg_block_size_in_words_lp+2+:tag_width_lp]}
   };
 
-  assign tag_addr = packet_i.addr[lg_block_size_in_words_lp+2+:lg_sets_lp]; // 13:5
+  assign tag_addr = packet.addr[lg_block_size_in_words_lp+2+:lg_sets_lp]; // 13:5
   assign tag_addr_force = addr_v_r[lg_block_size_in_words_lp+2+:lg_sets_lp];
   assign tag_addr_recover = addr_tl_r[lg_block_size_in_words_lp+2+:lg_sets_lp];
 
@@ -294,17 +300,17 @@ module bsg_cache
 
   assign tag_we_final = override ? tag_we_force : (tagst_op & v_i & ready_o);
 
-  assign instr_reads_tags_a = ld_op | st_op | tagfl_op | taglv_op
+  assign tag_read_op_a = ld_op | st_op | tagfl_op | taglv_op
     | tagla_op | afl_op | aflinv_op | ainv_op; 
 
   assign in_middle_of_miss = miss_v_r & ~final_recover;
 
-  assign tag_re_final = (instr_reads_tags_a & ~in_middle_of_miss & v_i) 
-    | (final_recover & instr_reads_tags_tl_r & v_tl_r);
+  assign tag_re_final = (tag_read_op_a & ~in_middle_of_miss & v_i) 
+    | (final_recover & tag_read_op_tl_r & v_tl_r);
 
   assign tag_en = (~reset_i) & (tag_re_final | tag_we_final);
 
-  assign data_addr = packet_i.addr[2+:lg_sets_lp+lg_block_size_in_words_lp]; // 13:2
+  assign data_addr = packet.addr[2+:lg_sets_lp+lg_block_size_in_words_lp]; // 13:2
   assign data_addr_recover = addr_tl_r[2+:lg_sets_lp+lg_block_size_in_words_lp];
 
   assign data_we_final = (data_we_force | data_we_storebuf);
@@ -716,7 +722,7 @@ module bsg_cache
       byte_mask_tl_r <= 4'b0;
       byte_mask_v_r <= 4'b0;
       just_recovered_r <= 1'b0;
-      instr_reads_tags_tl_r <= 1'b0;
+      tag_read_op_tl_r <= 1'b0;
     end
     else begin
 
@@ -742,10 +748,10 @@ module bsg_cache
           byte_op_tl_r <= byte_op;
           mask_op_tl_r <= mask_op;
           byte_mask_tl_r <= byte_mask;
-          sigext_op_tl_r <= packet_i.sigext;
-          instr_reads_tags_tl_r <= instr_reads_tags_a;
-          addr_tl_r <= packet_i.addr;
-          data_i_tl_r <= packet_i.data;
+          sigext_op_tl_r <= packet.sigext;
+          tag_read_op_tl_r <= tag_read_op_a;
+          addr_tl_r <= packet.addr;
+          data_i_tl_r <= packet.data;
         end
       end 
 

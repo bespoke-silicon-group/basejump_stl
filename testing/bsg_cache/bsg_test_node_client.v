@@ -2,6 +2,7 @@
  * bsg_test_node_client.v
  */
 
+`include "bsg_cache_pkt.vh"
 
 module bsg_test_node_client 
   import bsg_cache_pkg::*;
@@ -21,6 +22,7 @@ module bsg_test_node_client
   ,input yumi_i
 );
 
+  `declare_bsg_cache_pkt_s(32, 32);
 
   wire unused = en_i;
   bsg_cache_pkt_s packet;
@@ -136,7 +138,6 @@ else if (id_p == 1) begin : cache_to_dram_ctrl
     ,.reset_i(reset_i)
     ,.dram_ctrl_if(dram_if)
   );
-
 end
 
 endmodule

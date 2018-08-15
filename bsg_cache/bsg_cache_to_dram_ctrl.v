@@ -54,18 +54,18 @@ module bsg_cache_to_dram_ctrl
     ,RD_REQ_SEND = 1'b1
   } rd_ch_state_e;
 
-  logic rd_req_valid;
-  logic [1:0] rd_ch_state_r, rd_ch_state_n;
-  logic [addr_width_p-1:0] rd_addr_r, rd_addr_n;
-  logic [`BSG_SAFE_CLOG2(num_req_lp)-1:0] rd_ch_req_cnt_r, rd_ch_req_cnt_n;
-  logic [`BSG_SAFE_CLOG2(burst_len_p)-1:0] rd_ch_burst_cnt_r, rd_ch_burst_cnt_n;
-
   // write channel
   //
   typedef enum logic {
     WR_REQ_IDLE = 1'b0
     ,WR_REQ_SEND = 1'b1
-  } wr_req_ch_state_e;
+  } wr_req_state_e;
+
+  logic rd_req_valid;
+  logic [1:0] rd_ch_state_r, rd_ch_state_n;
+  logic [addr_width_p-1:0] rd_addr_r, rd_addr_n;
+  logic [`BSG_SAFE_CLOG2(num_req_lp)-1:0] rd_ch_req_cnt_r, rd_ch_req_cnt_n;
+  logic [`BSG_SAFE_CLOG2(burst_len_p)-1:0] rd_ch_burst_cnt_r, rd_ch_burst_cnt_n;
 
   logic wr_req_valid;
   logic wr_ch_state_r, wr_ch_state_n;
@@ -73,14 +73,30 @@ module bsg_cache_to_dram_ctrl
   logic [`BSG_SAFE_CLOG2(num_req_lp)-1:0] wr_ch_req_cnt_r, wr_ch_req_cnt_n;
   logic [`BSG_SAFE_CLOG2(burst_len_p)-1:0] wr_ch_burst_cnt_r, wr_ch_burst_cnt_n;
 
-  // request channel round robin
-  //
   logic [1:0] req_ch_rr_v_li;
   logic [1:0] req_ch_rr_yumi_lo;
   logic req_ch_rr_v_lo;
   logic [addr_width_p-1:0] req_ch_rr_data_lo;
   logic req_ch_rr_tag_lo;
   logic req_ch_rr_yumi_li;
+  logic [addr_width_p-1:0] dma_req_ch_block_addr;
+
+  logic wr_sipo_ready_lo;
+  logic [data_width_ratio_lp-1:0] wr_sipo_valid_lo;
+  logic [burst_width_p-1:0] wr_sipo_data_lo;
+  logic [`BSG_SAFE_CLOG2(data_width_ratio_lp+1)-1:0] wr_sipo_yumi_cnt_li;
+  logic dram_wren;
+
+  logic rd_fifo_v_lo;
+  logic [burst_width_p-1:0] rd_fifo_data_lo;
+  logic rd_fifo_yumi_li;
+
+  logic rd_piso_ready_lo;
+  logic rd_piso_yumi_li;
+  logic rd_piso_valid_lo;
+
+  // request channel round robin
+  //
   bsg_round_robin_n_to_1 #(
     .width_p(addr_width_p)
     ,.num_in_p(2)
@@ -97,16 +113,11 @@ module bsg_cache_to_dram_ctrl
     ,.yumi_i(req_ch_rr_yumi_li)
   );
 
-  logic dram_wren;
-
   assign req_ch_rr_yumi_li = req_ch_rr_v_lo & dram_ctrl_if.app_rdy;
+
 
   // write data serial_in_parallel_out
   //
-  logic wr_sipo_ready_lo;
-  logic [data_width_ratio_lp-1:0] wr_sipo_valid_lo;
-  logic [burst_width_p-1:0] wr_sipo_data_lo;
-  logic [`BSG_SAFE_CLOG2(data_width_ratio_lp+1)-1:0] wr_sipo_yumi_cnt_li;
   bsg_serial_in_parallel_out #(
     .width_p(cache_word_width_p)
     ,.els_p(data_width_ratio_lp)
@@ -125,15 +136,12 @@ module bsg_cache_to_dram_ctrl
     ? (`BSG_SAFE_CLOG2(data_width_ratio_lp+1))'(data_width_ratio_lp)
     : '0;
 
+
   //  read data fifo
   //  we have a fifo with depth of burst length, since rd channel does not have ready signal,
   //  and it must be able to sink data when it's valid.
   //  otherwise, data is lost.
   //
-  logic rd_fifo_v_lo;
-  logic [burst_width_p-1:0] rd_fifo_data_lo;
-  logic rd_fifo_yumi_li;
-  logic rd_piso_ready_lo;
   bsg_fifo_1r1w_large #(
     .width_p(burst_width_p)
     ,.els_p(burst_len_p == 1 ? 2 : burst_len_p)
@@ -153,8 +161,6 @@ module bsg_cache_to_dram_ctrl
 
   //  read data parallel_in_serial_out
   //
-  logic rd_piso_yumi_li;
-  logic rd_piso_valid_lo;
   bsg_parallel_in_serial_out #(
     .width_p(cache_word_width_p)
     ,.els_p(data_width_ratio_lp)
@@ -170,6 +176,7 @@ module bsg_cache_to_dram_ctrl
   );
   
   assign rd_piso_yumi_li = rd_piso_valid_lo & dma_read_ch_ready_i;
+
 
   // dram_ctrl_if request
   //
@@ -202,11 +209,13 @@ module bsg_cache_to_dram_ctrl
   assign rd_req_valid = ~dma_req_ch_write_not_read_i & dma_req_ch_v_i; 
   assign wr_req_valid = dma_req_ch_write_not_read_i & dma_req_ch_v_i;
 
-  logic [addr_width_p-1:0] dma_req_ch_block_addr;
   assign dma_req_ch_block_addr = {
     dma_req_ch_addr_i[addr_width_p-1:block_offset_width_lp], (block_offset_width_lp)'(0)
   };
 
+
+  // next state logic
+  //
   always_comb begin
     case (wr_ch_state_r)
       WR_REQ_IDLE: begin
@@ -272,6 +281,7 @@ module bsg_cache_to_dram_ctrl
 
 
   // sequential
+  //
   always_ff @ (posedge clock_i) begin
     if (reset_i) begin
       rd_ch_state_r <= RD_REQ_IDLE;
