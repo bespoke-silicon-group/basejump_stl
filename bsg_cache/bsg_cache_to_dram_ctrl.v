@@ -65,7 +65,6 @@ module bsg_cache_to_dram_ctrl
   logic [1:0] rd_ch_state_r, rd_ch_state_n;
   logic [addr_width_p-1:0] rd_addr_r, rd_addr_n;
   logic [`BSG_SAFE_CLOG2(num_req_lp)-1:0] rd_ch_req_cnt_r, rd_ch_req_cnt_n;
-  logic [`BSG_SAFE_CLOG2(burst_len_p)-1:0] rd_ch_burst_cnt_r, rd_ch_burst_cnt_n;
 
   logic wr_req_valid;
   logic wr_ch_state_r, wr_ch_state_n;

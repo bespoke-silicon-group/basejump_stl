@@ -1,7 +1,15 @@
 /**
  *  bsg_manycore_links_to_cache.v
  *
+ *  the last link_sif maps to tag memory, where you can call TAGST, TAGLA.
+ * 
  *  @author Tommy Jung
+ *
+ *  @param addr_width_p address bit-width of global (remote) address.
+ *  @param data_width_p data bit-width. (32-bit)
+ *  @param x_cord_width_p x-coord bit-width.
+ *  @param y_cord_width_p y-coord bit_width.
+ *  @param num_links_p the number of link_sif that connects to this converter.
  */
 
 `include "bsg_manycore_packet.vh"
@@ -17,8 +25,9 @@ module bsg_manycore_links_to_cache
     ,parameter fifo_els_p = 4
     ,parameter max_out_credits_lp = 16
     ,parameter link_sif_width_lp=`bsg_manycore_link_sif_width(addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p)
-    ,parameter cache_addr_width_p=addr_width_lp+`BSG_SAFE_CLOG2(data_width_p>>8)
-    ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(cache_addr_width_p,data_width_p))
+    ,parameter cache_addr_width_lp=`BSG_SAFE_CLOG2(num_links_p-1)+addr_width_p+`BSG_SAFE_CLOG2(data_width_p>>3)
+    ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(cache_addr_width_lp,data_width_p)
+    ,parameter packet_width_lp=`bsg_manycore_packet_width(addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p))
 (
   input clock_i
   ,input reset_i
@@ -37,6 +46,8 @@ module bsg_manycore_links_to_cache
   ,input [data_width_p-1:0] data_i
   ,input v_i
   ,output logic yumi_o
+
+  ,input v_v_we_i
 );
 
   logic [num_links_p-1:0] endpoint_v_lo;
@@ -45,9 +56,11 @@ module bsg_manycore_links_to_cache
   logic [num_links_p-1:0][(data_width_p>>3)-1:0] endpoint_mask_lo;
   logic [num_links_p-1:0][addr_width_p-1:0] endpoint_addr_lo;
   logic [num_links_p-1:0] endpoint_we_lo;
-  logic [num_links_p-1:0][data_width_p-1:0]  endpoint_returning_data_li;
   logic [num_links_p-1:0] endpoint_returning_v_li;
 
+  // instantiate endpoint_standards.
+  // last one maps to tag_mem.
+  //
   genvar i;
   for (i = 0; i < num_links_p; i++) begin
     bsg_manycore_endpoint_standard #(
@@ -78,8 +91,8 @@ module bsg_manycore_links_to_cache
       ,.returned_data_r_o()
       ,.returned_v_r_o()
 
-      ,.returning_data_i(endpoint_returning_data_li[i])
-      ,.returning_data_v_i(endpoint_returning_v_li[i])
+      ,.returning_data_i(data_i)
+      ,.returning_v_i(endpoint_returning_v_li[i])
 
       ,.out_credits_o()
       ,.freeze_r_o()
@@ -90,6 +103,8 @@ module bsg_manycore_links_to_cache
     );
   end
 
+  // data that goes into round robin is packed into an array of struct.
+  //
   typedef struct packed {
     logic [data_width_p-1:0] data;
     logic [(data_width_p>>3)-1:0] mask;
@@ -97,26 +112,23 @@ module bsg_manycore_links_to_cache
     logic we;
   } rr_data_t;
 
-
-  rr_data_t [num_links_p-1:0] rr_data_li;
+  rr_data_t [num_links_p-1:0]  rr_data_li ;
   for (i = 0; i < num_links_p; i++) begin
-    rr_data_li[i].data = endpoint_data_lo[i];
-    rr_data_li[i].mask = endpoint_mask_lo[i];
-    rr_data_li[i].addr = endpoint_addr_lo[i];
-    rr_data_li[i].we = endpoint_we_lo[i]; 
+    assign rr_data_li[i].data = endpoint_data_lo[i];
+    assign rr_data_li[i].mask = endpoint_mask_lo[i];
+    assign rr_data_li[i].addr = endpoint_addr_lo[i];
+    assign rr_data_li[i].we = endpoint_we_lo[i]; 
   end
+
+  rr_data_t rr_data_lo_cast;
 
   logic rr_v_lo;
   logic [$bits(rr_data_t)-1:0] rr_data_lo;
   logic [`BSG_SAFE_CLOG2(num_links_p)-1:0] rr_tag_lo;
   logic rr_yumi_li;
-
-  rr_data_t rr_data_lo_cast;
-
-  logic tag_fifo_ready_lo
-  logic [`BSG_SAFE_CLOG2(num_links_p)-1:0] tag_fifo_data_lo;
-  logic tag_fifo_v_lo;
-
+  
+  // round robin on incoming packets.
+  //
   bsg_round_robin_n_to_1 #(
     .width_p($bits(rr_data_t))
     ,.num_in_p(num_links_p)
@@ -134,46 +146,62 @@ module bsg_manycore_links_to_cache
     ,.tag_o(rr_tag_lo)
     ,.yumi_i(rr_yumi_li)
   );
-  
-  bsg_two_fifo #(
-    .width_p(`BSG_SAFE_CLOG2(num_links_p))
-  ) two_fifo_tag (
-    .clk_i(clock_i)
-    ,.reset_i(reset_i)
-    
-    ,.ready_o(tag_fifo_ready_lo)
-    ,.data_i(rr_tag_lo)
-    ,.v_i(rr_v_lo & rr_yumi_li)
-    
-    ,.v_o(tag_fifo_v_lo)
-    ,.data_o(tag_fifo_data_lo)
-    ,.yumi_i(tag_fifo_v_lo & v_i)
-  );
-  
-  assign rr_yumi_li = ready_i & rr_v_lo & tag_fifo_ready_lo;
+
+  assign rr_yumi_li = ready_i & rr_v_lo;
   assign rr_data_lo_cast = rr_data_lo;
 
+  // tracking round-robin tag and write enable.
+  // we track these so that we know which links to return packet,
+  // and whether the operation was store or load
+  //
+  logic [`BSG_SAFE_CLOG2(num_links_p)-1:0] tag_tl_r, tag_v_r;
+  logic we_tl_r, we_v_r;
+  
+  always_ff @ (posedge clock_i) begin
+    if (reset_i) begin
+      tag_tl_r <= '0;
+      tag_v_r <= '0;
+      we_tl_r <= '0;
+      we_v_r <= '0;
+    end
+    else begin
+      if (v_v_we_i) begin
+        tag_v_r <= tag_tl_r;
+        we_v_r <= we_tl_r;
+      end
+      
+      if (rr_v_lo & ready_i) begin
+        tag_tl_r <= rr_tag_lo; 
+        we_tl_r <= rr_data_lo_cast.we;
+      end
+    end
+  end
+
   // to cache
-  assign packet_o.sigext = 1'b0;
-  assign packet_o.mask = rr_data_lo_cast.mask;
-  assign packet_o.opcode = (rr_tag_lo == num_links_p-1)
+  //
+  `declare_bsg_cache_pkt_s(cache_addr_width_lp, data_width_p);
+  bsg_cache_pkt_s packet_cast;
+  assign packet_o = packet_cast;
+  assign packet_cast.sigext = 1'b0;
+  assign packet_cast.mask = rr_data_lo_cast.mask;
+  assign packet_cast.opcode = (rr_tag_lo == num_links_p-1)
     ? (rr_data_lo_cast.we ? TAGST : TAGLA)
     : (rr_data_lo_cast.we ? SM : LM);
-  assign packet_o.addr = {rr_data_lo_cast.addr, (data_width_p>>3)'(0)};
-  assign packet_o.data = rr_data_lo_cast.data;
+  assign packet_cast.addr = {
+    rr_tag_lo == (num_links_p-1) ? (`BSG_SAFE_CLOG2(num_links_p)'(0)) : rr_tag_lo, 
+    rr_data_lo_cast.addr,
+    (`BSG_SAFE_CLOG2(data_width_p>>3))'(0)};
+  assign packet_cast.data = rr_data_lo_cast.data;
   assign v_o = rr_v_lo;
   assign yumi_o = v_i;
  
   // from cache
-  for (i = 0; i < num_links_p; i++) begin
-    assign endpoint_returning_data_li[i] = data_i;
-  end
-  
+  //
   bsg_decode_with_v #(
     .num_out_p(num_links_p)
   ) decode_with_v (
-    .i(tag_fifo_data_lo)
-    ,.v_i(tag_fifo_v_lo & v_i)
+    .i(tag_v_r)
+    ,.v_i(v_i & ~we_v_r)
     ,.o(endpoint_returning_v_li)
   );
 

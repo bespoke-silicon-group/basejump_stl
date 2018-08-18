@@ -27,7 +27,7 @@ module bsg_store_buffer
   ,output logic [3:0] storebuf_bypass_valid_o
 
   ,output logic [3:0] storebuf_mask_o
-  ,output logic [11:0] storebuf_index_o
+  ,output logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] storebuf_index_o
   ,output logic [31:0] storebuf_data_o
   ,output logic storebuf_set_o
   ,output logic storebuf_we_o
@@ -35,7 +35,7 @@ module bsg_store_buffer
 );
 
   logic [addr_width_p-1:0] el0_addr, el1_addr;
-  logic [addr_width_p-1:0] el0_data, el1_data;
+  logic [31:0] el0_data, el1_data;
   logic [3:0] el0_mask, el1_mask;
   logic [1:0] num_els_r, num_els_n;
   logic [addr_width_p-1:0] storebuf_addr;

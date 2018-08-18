@@ -60,17 +60,17 @@ module bsg_miss_case
   typedef enum logic [3:0] {
     START = 4'd0
     ,FLUSH_INSTR = 4'd1
-    ,FLUSH_INSTR_2 = 4'd3 
-    ,FILL_REQUEST_SEND_HDR = 4'd8
-    ,FILL_REQUEST_SEND_ADDR = 4'd10
-    ,EVICT_REQUEST_SEND_ADDR = 4'd6
-    ,EVICT_REQUEST_SEND_DATA = 4'd4
-    ,FILL_REQUEST_GET_DATA = 4'd5
-    ,FINAL_RECOVER = 4'b1101
+    ,FLUSH_INSTR_2 = 4'd2
+    ,FILL_REQUEST_SEND_HDR = 4'd3
+    ,FILL_REQUEST_SEND_ADDR = 4'd4
+    ,EVICT_REQUEST_SEND_ADDR = 4'd5
+    ,EVICT_REQUEST_SEND_DATA = 4'd6
+    ,FILL_REQUEST_GET_DATA = 4'd7
+    ,FINAL_RECOVER = 4'd8
   } miss_state_e;
 
-  logic [3:0] miss_state_r;
-  logic [3:0] miss_state_n;
+  miss_state_e miss_state_r;
+  miss_state_e miss_state_n;
   logic chosen_set_r;
   logic chosen_set_n;
   logic chosen_set_is_dirty_r;
@@ -85,7 +85,7 @@ module bsg_miss_case
   logic flush_instr;
   logic dirty_and_valid;
 
-  assign miss_index_v = addr_v_i[2+lg_block_size_in_words_lp-1+:lg_sets_lp]; // 13:5
+  assign miss_index_v = addr_v_i[2+lg_block_size_in_words_lp+:lg_sets_lp]; // 13:5
   assign tagfl_set_v = addr_v_i[lg_sets_lp+lg_block_size_in_words_lp+2];
   assign flush_instr = tagfl_op_v_i | ainv_op_v_i | afl_op_v_i | aflinv_op_v_i;
   assign dirty_and_valid = chosen_set_is_dirty_r & chosen_set_is_valid_r;
@@ -94,7 +94,7 @@ module bsg_miss_case
   assign evict_address_n = {
     (chosen_set_r ? tag1_v_i : tag0_v_i),
     miss_index_v,
-    (2+lg_block_size_in_words_lp)'(1'b0)
+    (2+lg_block_size_in_words_lp)'(0)
   };
 
   always_comb begin

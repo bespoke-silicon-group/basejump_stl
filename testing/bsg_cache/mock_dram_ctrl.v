@@ -1,3 +1,7 @@
+/**
+ *  mock_dram_ctrl.v
+ */
+
 module mock_dram_ctrl
   import bsg_dram_ctrl_pkg::*;
   #(parameter addr_width_p="inv"
@@ -6,7 +10,7 @@ module mock_dram_ctrl
     ,parameter mem_size_p="inv"
     ,parameter lg_mem_size_lp=`BSG_SAFE_CLOG2(mem_size_p)
     ,parameter lg_burst_len_lp=`BSG_SAFE_CLOG2(burst_len_p)
-    ,parameter mask_width_lp=data_width_p/8)
+    ,parameter mask_width_lp=data_width_p>>3)
 (
   input clock_i
   ,input reset_i

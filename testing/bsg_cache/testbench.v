@@ -1,7 +1,30 @@
+/**
+ *  testbench.v
+ */
+
 module testbench();
   
   logic clk, rst;
-  
+
+  bsg_nonsynth_clock_gen #(
+    .cycle_time_p(2)
+  ) clock_gen (
+    .o(clk)
+  );
+
+  bsg_nonsynth_reset_gen #(
+    .num_clocks_p(1)
+    ,.reset_cycles_lo_p(1)
+    ,.reset_cycles_hi_p(50)
+  ) reset_gen (
+    .clk_i(clk)
+    ,.async_reset_o(rst)
+  );
+ 
+  localparam test_mode_lp = 1;
+
+if (test_mode_lp == 0) begin // FSB testing
+ 
   logic [31:0] trace_rom_addr;
   logic [79:0] trace_rom_data;
 
@@ -100,19 +123,29 @@ module testbench();
     ,.yumi_i(node_yumi_o)  
   );
 
+end
+else if (test_mode_lp == 1) begin // manycore end-to-end testing
+  logic finish_lo;
+  mesh_top_cache #(
+    .x_cord_width_p(2)
+    ,.y_cord_width_p(2)
+    ,.sets_p(2**8)
+    ,.data_width_p(32)
+    ,.dram_data_width_p(128)
+    ,.mem_size_p(2**15) // in words
+  ) mtop_cache (
+    .clock_i(clk)
+    ,.reset_i(rst)
+    ,.finish_o(finish_lo)
+  ); 
+
   initial begin
-    $vcdpluson;
-    clk = 0;
-    rst = 0;
-    #(4);
-    rst = 1;
-    #(4);
-    rst= 0;
-  
+    wait(finish_lo);
+    #(10);
+    $display("********* FINISHED *********");
+    $finish;
   end
 
-  always begin
-    #(1) clk <= ~clk;
-  end
- 
+end
+
 endmodule

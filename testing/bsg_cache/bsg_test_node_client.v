@@ -60,6 +60,8 @@ module bsg_test_node_client
     ,.yumi_i(yumi_i)
     ,.data_o(dc_data_o)
 
+    ,.v_v_we_o()
+
     ,.dma_req_ch_write_not_read_o(dma_req_ch_write_not_read)
     ,.dma_req_ch_addr_o(dma_req_ch_addr)
     ,.dma_req_ch_v_o(dma_req_ch_v_lo)
@@ -80,6 +82,7 @@ if (id_p == 0) begin : mm
     .clock_i(clock_i)
     ,.reset_i(reset_i)
   
+    ,.dma_req_ch_write_not_read_i(dma_req_ch_write_not_read)
     ,.dma_req_ch_addr_i(dma_req_ch_addr)
     ,.dma_req_ch_v_i(dma_req_ch_v_lo)
     ,.dma_req_ch_yumi_o(dma_req_ch_yumi_li)
