@@ -3,7 +3,9 @@
  */
 
 module bsg_evict_fill_machine
-  #(parameter block_size_in_words_p="inv"
+  #(parameter addr_width_p="inv"
+   ,parameter block_size_in_words_p="inv"
+   ,parameter lg_block_size_in_words_lp="inv"
    ,parameter lg_sets_lp="inv")
 (
   input clock_i
@@ -14,19 +16,19 @@ module bsg_evict_fill_machine
   ,input mc_send_evict_req_i
   ,input mc_fill_line_i
   ,input mc_evict_line_i
-  ,input [31:0] mc_pass_addr_i
+  ,input [addr_width_p-1:0] mc_pass_addr_i
   ,input start_set_i
 
   // to miss_case
   ,output logic finished_o
 
   ,input [lg_sets_lp-1:0] start_addr_i
-  ,input [2:0] snoop_word_offset_i
+  ,input [lg_block_size_in_words_lp-1:0] snoop_word_offset_i
   ,output logic [31:0] snoop_word_o
   
   // DMA request channel
   ,output logic dma_req_ch_write_not_read_o         // rd = 0, wr = 1;
-  ,output logic [31:0] dma_req_ch_addr_o
+  ,output logic [addr_width_p-1:0] dma_req_ch_addr_o
   ,output logic dma_req_ch_v_o
   ,input dma_req_ch_yumi_i
 
@@ -44,7 +46,7 @@ module bsg_evict_fill_machine
   ,output logic data_re_force_o
   ,output logic data_we_force_o
   ,output logic [7:0] data_mask_force_o
-  ,output logic [11:0] data_addr_force_o
+  ,output logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_addr_force_o
   ,output logic [63:0] data_in_force_o
   ,input [63:0] raw_data_i
 );
@@ -100,16 +102,16 @@ module bsg_evict_fill_machine
     ,.yumi_i(dma_write_ch_yumi_i)
   );
 
-  logic [2:0] dma_state_r;
-  logic [2:0] dma_state_n;
+  dma_state_e dma_state_r;
+  dma_state_e dma_state_n;
 
-  logic [3:0] counter_r;
-  logic [3:0] counter_n;
+  logic [lg_block_size_in_words_lp:0] counter_r;
+  logic [lg_block_size_in_words_lp:0] counter_n;
 
   always_ff @ (posedge clock_i) begin
     if (reset_i) begin
       dma_state_r <= IDLE;
-      counter_r <= 0;
+      counter_r <= '0;
     end
     else begin
       dma_state_r <= dma_state_n;
@@ -122,7 +124,7 @@ module bsg_evict_fill_machine
     ? {4'b1111, 4'b0000}
     : {4'b0000, 4'b1111};
 
-  assign data_addr_force_o = {start_addr_i, counter_r[2:0]};
+  assign data_addr_force_o = {start_addr_i, counter_r[lg_block_size_in_words_lp-1:0]};
   assign data_in_force_o = {2{dma_rdata}};
 
 
@@ -143,8 +145,8 @@ module bsg_evict_fill_machine
           : (mc_fill_line_i ? FILL_LINE
           : (mc_evict_line_i ? EVICT_LINE
           : IDLE)));
-        counter_n = mc_fill_line_i ? 4'b0
-          : (mc_evict_line_i ? 4'b1
+        counter_n = mc_fill_line_i ? (lg_block_size_in_words_lp+1)'(0)
+          : (mc_evict_line_i ? (lg_block_size_in_words_lp+1)'(1)
           : counter_r);
         data_re_force_o = mc_evict_line_i;
       end
@@ -175,7 +177,8 @@ module bsg_evict_fill_machine
           ? counter_r + 1
           : counter_r;
         
-        if (snoop_word_offset_i == counter_r & fill_fifo_v_lo) begin
+        if (snoop_word_offset_i == counter_r[lg_block_size_in_words_lp-1:0]
+          & fill_fifo_v_lo) begin
           snoop_word_o <= dma_rdata;
         end
       end
@@ -194,7 +197,7 @@ module bsg_evict_fill_machine
       FINISHED: begin
         finished_o = 1'b1;
         dma_state_n = IDLE;
-        counter_n = 4'b0;
+        counter_n = (lg_block_size_in_words_lp)'(0);
       end
     endcase
   end

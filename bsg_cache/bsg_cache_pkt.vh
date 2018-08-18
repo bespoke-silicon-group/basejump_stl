@@ -5,8 +5,6 @@
 `ifndef BSG_CACHE_PKT_VH
 `define BSG_CACHE_PKT_VH
 
-  
-
 `define declare_bsg_cache_pkt_s(addr_width_p, data_width_p)   \
   typedef struct packed {                                     \
     logic sigext;                                             \
@@ -18,9 +16,5 @@
 
 `define bsg_cache_pkt_width(addr_width_p, data_width_p) \
   (1+(data_width_p>>3)+5+addr_width_p+data_width_p)
-
-
-
-
 
 `endif

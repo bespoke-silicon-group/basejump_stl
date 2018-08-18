@@ -46,6 +46,9 @@ module bsg_cache
   ,output logic [31:0] dma_write_ch_data_o
   ,output logic dma_write_ch_v_o
   ,input dma_write_ch_yumi_i
+
+  // for pipeline tracking
+  ,output logic v_v_we_o
 );
 
   // logic declaration
@@ -158,8 +161,8 @@ module bsg_cache
   logic [tag_width_lp:0] tag_data_0_tl, tag_data_1_tl;
   logic [tag_width_lp:0] tag_data_explicit_tl;
   logic tag_data_explicit_valid_tl;
-  logic [32-2-lg_block_size_in_words_lp-1:0] tag_data_explicit_addr_tl;
-  logic [32-2-lg_block_size_in_words_lp-1:0] tag_data_explicit_addr_anded_tl;
+  logic [addr_width_p-2-lg_block_size_in_words_lp-1:0] tag_data_explicit_addr_tl;
+  logic [addr_width_p-2-lg_block_size_in_words_lp-1:0] tag_data_explicit_addr_anded_tl;
   
   logic [31:0] taglalv_val_tl, taglalv_val_v_r;
 
@@ -197,7 +200,7 @@ module bsg_cache
   logic mc_wipe_request_v;
   logic dirty0;
   logic dirty1;
-  logic write_over_read_v;
+  //logic write_over_read_v;
   logic mru;
 
   logic dma_finished;
@@ -221,6 +224,7 @@ module bsg_cache
   assign v_o = v_v_r & (~miss_v_r);
 
   assign v_v_we = (~miss_v_r) & ((v_v_r & yumi_i) | (~v_v_r));
+  assign v_v_we_o = v_v_we;
 
   // datapath
   //
@@ -366,7 +370,7 @@ module bsg_cache
   assign tag_data_explicit_addr_anded_tl = tag_data_explicit_addr_tl
     & {(tag_width_lp+lg_sets_lp){tagla_op_tl_r}};
 
-  assign taglalv_val_tl = {tag_data_explicit_addr_anded_tl, 4'b0000,
+  assign taglalv_val_tl = {tag_data_explicit_addr_anded_tl, (lg_block_size_in_words_lp+2-1)'(0),
     taglv_op_tl_r & tag_data_explicit_valid_tl}; 
 
   assign tag_hit_0_tl = (tag_check_me_tl == {1'b0, tag_data_0_tl});
@@ -556,7 +560,7 @@ module bsg_cache
     ,.index_v_i(addr_v_r[2+lg_block_size_in_words_lp+:lg_sets_lp])
     ,.index_tl_i(addr_tl_r[2+lg_block_size_in_words_lp+:lg_sets_lp])
     ,.miss_minus_recover_v_i(in_middle_of_miss)
-    ,.tagged_access_v_i(addr_v_r[0] & word_op_v_r)
+    //,.tagged_access_v_i(addr_v_r[0] & word_op_v_r)
     ,.ld_st_set_v_i(just_recovered_r ? evict_and_fill_set : tag_hit_1_v_r)
     ,.wipe_set_v_i(tagst_op_v_r ? explicit_set_bit_v : evict_and_fill_set)
     ,.ld_op_v_i(~miss_v_r & ld_op_v_r)
@@ -565,7 +569,6 @@ module bsg_cache
     ,.dirty0_o(dirty0)
     ,.dirty1_o(dirty1)
     ,.mru_o(mru)
-    ,.write_over_read_v_o(write_over_read_v)
     ,.status_mem_re_i(status_mem_re)
   );
 
@@ -627,8 +630,10 @@ module bsg_cache
   // evict_fill_machine
   //
   bsg_evict_fill_machine #(
-    .lg_sets_lp(lg_sets_lp)
+    .addr_width_p(addr_width_p)
+    ,.lg_sets_lp(lg_sets_lp)
     ,.block_size_in_words_p(block_size_in_words_p)
+    ,.lg_block_size_in_words_lp(lg_block_size_in_words_lp)
   ) de (
 
     .clock_i(clock_i)
@@ -670,9 +675,6 @@ module bsg_cache
     ,.raw_data_i(raw_data_out)
     ,.finished_o(dma_finished)
   );
-
-
-
 
   // sequential 
   //

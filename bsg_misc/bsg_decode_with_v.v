@@ -18,6 +18,6 @@ module bsg_decode_with_v #(parameter num_out_p="inv")
     ,.o(lo)
   );
 
-  assign o = {(num_out_p){v}} & lo;
+  assign o = {(num_out_p){v_i}} & lo;
 
 endmodule
