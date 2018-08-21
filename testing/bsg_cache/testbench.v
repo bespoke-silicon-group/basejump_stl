@@ -7,7 +7,7 @@ module testbench();
   logic clk, rst;
 
   bsg_nonsynth_clock_gen #(
-    .cycle_time_p(2)
+    .cycle_time_p(10000)
   ) clock_gen (
     .o(clk)
   );
@@ -15,7 +15,7 @@ module testbench();
   bsg_nonsynth_reset_gen #(
     .num_clocks_p(1)
     ,.reset_cycles_lo_p(1)
-    ,.reset_cycles_hi_p(50)
+    ,.reset_cycles_hi_p(100000)
   ) reset_gen (
     .clk_i(clk)
     ,.async_reset_o(rst)
@@ -129,7 +129,7 @@ else if (test_mode_lp == 1) begin // manycore end-to-end testing
   logic dfi_clk_2x;
   logic dfi_clk;
   bsg_nonsynth_clock_gen #(
-    .cycle_time_p(10)
+    .cycle_time_p(5000)
   ) clk_gen_dfi_2x_inst (
     .o(dfi_clk_2x)
   );
@@ -271,7 +271,7 @@ else if (test_mode_lp == 1) begin // manycore end-to-end testing
 
   initial begin
     wait(finish_lo);
-    #(10);
+    #(100000);
     $display("********* FINISHED *********");
     $finish;
   end
