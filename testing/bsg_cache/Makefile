@@ -1,9 +1,9 @@
 TRACE_FILE = trace_master_0.tr
 TRACE_ROM = bsg_trace_master_rom
-INCDIR = +incdir+$(abspath $(BSG_IP_CORES_ROOT))/bsg_misc/
-INCDIR += +incdir+$(abspath $(BSG_IP_CORES_ROOT))/bsg_cache/
-INCDIR += +incdir+$(abspath $(BSG_IP_CORES_ROOT))/bsg_noc/
-INCDIR += +incdir+$(abspath $(BSG_MANYCORE_ROOT))/v/
+INCDIR = +incdir+$(abspath $(BSG_IP_CORES_DIR))/bsg_misc/
+INCDIR += +incdir+$(abspath $(BSG_IP_CORES_DIR))/bsg_cache/
+INCDIR += +incdir+$(abspath $(BSG_IP_CORES_DIR))/bsg_noc/
+INCDIR += +incdir+$(abspath $(BSG_MANYCORE_DIR))/v/
 
 HIGHLIGHT = grep --color -E '^|Error|Warning|Implicit wire is used|Too few instance port connections|Port connection width mismatch|Width mismatch'
 
@@ -11,7 +11,7 @@ HIGHLIGHT = grep --color -E '^|Error|Warning|Implicit wire is used|Too few insta
 all: sim
 
 $(TRACE_ROM).v: $(TRACE_FILE)
-	python $(BSG_IP_CORES_ROOT)/bsg_mem/bsg_ascii_to_rom.py trace_master_0.tr $(TRACE_ROM) \
+	python $(BSG_IP_CORES_DIR)/bsg_mem/bsg_ascii_to_rom.py trace_master_0.tr $(TRACE_ROM) \
 	> $(TRACE_ROM).v
 
 sim: $(TRACE_ROM).v
