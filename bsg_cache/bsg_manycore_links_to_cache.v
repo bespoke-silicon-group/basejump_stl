@@ -201,7 +201,7 @@ module bsg_manycore_links_to_cache
     .num_out_p(num_links_p)
   ) decode_with_v (
     .i(tag_v_r)
-    ,.v_i(v_i & ~we_v_r)
+    ,.v(v_i & ~we_v_r)
     ,.o(endpoint_returning_v_li)
   );
 

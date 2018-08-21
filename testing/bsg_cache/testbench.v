@@ -125,19 +125,149 @@ if (test_mode_lp == 0) begin // FSB testing
 
 end
 else if (test_mode_lp == 1) begin // manycore end-to-end testing
+
+  logic dfi_clk_2x;
+  logic dfi_clk;
+  bsg_nonsynth_clock_gen #(
+    .cycle_time_p(10)
+  ) clk_gen_dfi_2x_inst (
+    .o(dfi_clk_2x)
+  );
+  
+  bsg_counter_clock_downsample #(
+    .width_p(2)
+  ) dfi_clk_ds (
+    .clk_i(dfi_clk_2x)
+    ,.reset_i(rst)
+    ,.val_i(2'b0)
+    ,.clk_r_o(dfi_clk)
+  ); 
+
+
   logic finish_lo;
+  bsg_dram_ctrl_if #(
+    .addr_width_p(30)
+    ,.data_width_p(128)
+  ) dram_ctrl_if (
+    .clk_i(clk)
+  );
+
   mesh_top_cache #(
     .x_cord_width_p(2)
     ,.y_cord_width_p(2)
     ,.sets_p(2**8)
     ,.data_width_p(32)
     ,.dram_data_width_p(128)
-    ,.mem_size_p(2**15) // in words
+    ,.mem_size_p(2**12) // in words
   ) mtop_cache (
     .clock_i(clk)
     ,.reset_i(rst)
+    ,.dram_ctrl_if(dram_ctrl_if)
     ,.finish_o(finish_lo)
-  ); 
+  );
+
+  localparam dfi_data_width_lp = 32;
+
+  logic ddr_ck_p;
+  logic ddr_ck_n;
+  logic ddr_cke;
+  logic [2:0] ddr_ba;
+  logic [15:0] ddr_addr;
+  logic ddr_cs_n;
+  logic ddr_ras_n;
+  logic ddr_cas_n;
+  logic ddr_we_n;
+  logic ddr_reset_n;
+  logic ddr_odt;
+
+  logic [(dfi_data_width_lp>>4)-1:0] dm_oe_n;
+  logic [(dfi_data_width_lp>>4)-1:0] dm_o;
+  logic [(dfi_data_width_lp>>4)-1:0] dqs_p_oe_n;
+  logic [(dfi_data_width_lp>>4)-1:0] dqs_p_o;
+  wire [(dfi_data_width_lp>>4)-1:0] dqs_p_i;
+  logic [(dfi_data_width_lp>>4)-1:0] dqs_n_oe_n;
+  logic [(dfi_data_width_lp>>4)-1:0] dqs_n_o;
+  logic [(dfi_data_width_lp>>4)-1:0] dqs_n_i;
+  logic [(dfi_data_width_lp>>1)-1:0] dq_oe_n;
+  wire [(dfi_data_width_lp>>1)-1:0] dq_o;
+  logic [(dfi_data_width_lp>>1)-1:0] dq_i;
+
+  dmc #(
+    .UI_ADDR_WIDTH(30)
+    ,.UI_DATA_WIDTH(128)
+    ,.DFI_DATA_WIDTH(dfi_data_width_lp)
+  ) lpddr1_ctrl (
+
+    .sys_rst(~rst) // active low!!!
+
+    // user interface
+    ,.app_addr(dram_ctrl_if.app_addr>>1) // short address!!!
+    ,.app_cmd(dram_ctrl_if.app_cmd) 
+    ,.app_en(dram_ctrl_if.app_en)
+    ,.app_rdy(dram_ctrl_if.app_rdy)
+    ,.app_wdf_wren(dram_ctrl_if.app_wdf_wren)
+    ,.app_wdf_data(dram_ctrl_if.app_wdf_data)
+    ,.app_wdf_mask(dram_ctrl_if.app_wdf_mask)
+    ,.app_wdf_end(dram_ctrl_if.app_wdf_end)
+    ,.app_wdf_rdy(dram_ctrl_if.app_wdf_rdy)
+    ,.app_rd_data_valid(dram_ctrl_if.app_rd_data_valid)
+    ,.app_rd_data(dram_ctrl_if.app_rd_data)
+    ,.app_rd_data_end(dram_ctrl_if.app_rd_data_end)
+    ,.app_ref_req(dram_ctrl_if.app_ref_req)
+    ,.app_ref_ack(dram_ctrl_if.app_ref_ack)
+    ,.app_zq_req(dram_ctrl_if.app_zq_req)
+    ,.app_zq_ack(dram_ctrl_if.app_zq_ack)
+    ,.app_sr_req(dram_ctrl_if.app_sr_req)
+    ,.app_sr_active(dram_ctrl_if.app_sr_ack)
+    ,.init_calib_complete(dram_ctrl_if.init_calib_complete)
+
+    // DDR interface
+    ,.ddr_ck_p(ddr_ck_p)
+    ,.ddr_ck_n(ddr_ck_n)
+    ,.ddr_cke(ddr_cke)
+    ,.ddr_ba(ddr_ba)
+    ,.ddr_addr(ddr_addr)
+    ,.ddr_cs_n(ddr_cs_n)
+    ,.ddr_ras_n(ddr_ras_n)
+    ,.ddr_cas_n(ddr_cas_n)
+    ,.ddr_we_n(ddr_we_n)
+    ,.ddr_reset_n(ddr_reset_n)
+    ,.ddr_odt(ddr_odt)
+  
+    ,.dm_oe_n(dm_oe_n)
+    ,.dm_o(dm_o)
+    ,.dqs_p_oe_n(dqs_p_oe_n)
+    ,.dqs_p_o(dqs_p_o)
+    ,.dqs_p_i(dqs_p_i)
+    ,.dqs_n_oe_n(dqs_n_oe_n)
+    ,.dqs_n_o(dqs_n_o)
+    ,.dqs_n_i(dqs_n_i)
+    ,.dq_oe_n(dq_oe_n)
+    ,.dq_o(dq_o)
+    ,.dq_i(dq_i)
+
+    ,.ui_clk(clk)
+    ,.ui_clk_sync_rst()
+    ,.dfi_clk(dfi_clk)
+    ,.dfi_clk_2x(dfi_clk_2x)
+    ,.device_temp()
+  );
+
+  mobile_ddr nonsynth_1024Mb_dram_model (
+    .Clk(ddr_ck_p)
+    ,.Clk_n(ddr_ck_n)
+    ,.Cke(ddr_cke)
+    ,.We_n(ddr_we_n)
+    ,.Cs_n(ddr_cs_n)
+    ,.Ras_n(ddr_ras_n)
+    ,.Cas_n(ddr_cas_n)
+    ,.Addr(ddr_addr[13:0])
+    ,.Ba(ddr_ba[1:0])
+    ,.Dq(dq_o)
+    ,.Dqs(dqs_p_i)
+    ,.Dm(dm_o)
+  );
+  
 
   initial begin
     wait(finish_lo);

@@ -21,7 +21,10 @@ module mesh_top_cache
 (
   input clock_i
   ,input reset_i
-  ,output finish_o
+
+  ,bsg_dram_ctrl_if.master dram_ctrl_if
+
+  ,output logic finish_o
 );
 
   localparam nodes_lp = 2;
@@ -158,13 +161,6 @@ module mesh_top_cache
   logic dma_write_ch_v;
   logic dma_write_ch_yumi;
 
-  bsg_dram_ctrl_if #(
-    .addr_width_p(cache_addr_width_lp)
-    ,.data_width_p(dram_data_width_p)
-  ) dram_ctrl_if (
-    .clk_i(clock_i)
-  );
-
   // links_to_cache
   //
   bsg_manycore_links_to_cache #(
@@ -256,6 +252,7 @@ module mesh_top_cache
   );
 
 
+  /*
   // dram_ctrl
   //
   mock_dram_ctrl #(
@@ -268,5 +265,6 @@ module mesh_top_cache
     ,.reset_i(reset_i)
     ,.dram_ctrl_if(dram_ctrl_if)
   );
+  */
   
 endmodule
