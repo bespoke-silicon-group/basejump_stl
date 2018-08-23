@@ -77,4 +77,5 @@ bsg_test_node_client.v
 mesh_master_cache.v
 mesh_top_cache.v
 mock_memory.v
+mock_dram_ctrl.v
 testbench.v

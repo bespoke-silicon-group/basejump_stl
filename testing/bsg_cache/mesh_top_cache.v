@@ -250,21 +250,5 @@ module mesh_top_cache
 
     ,.dram_ctrl_if(dram_ctrl_if)
   );
-
-
-  /*
-  // dram_ctrl
-  //
-  mock_dram_ctrl #(
-    .addr_width_p(cache_addr_width_lp)
-    ,.data_width_p(dram_data_width_p)
-    ,.burst_len_p(1)
-    ,.mem_size_p(mem_size_p/(dram_data_width_p/data_width_p))
-  ) dram_ctrl (
-    .clock_i(clock_i)
-    ,.reset_i(reset_i)
-    ,.dram_ctrl_if(dram_ctrl_if)
-  );
-  */
   
 endmodule

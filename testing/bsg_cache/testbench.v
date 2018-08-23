@@ -4,7 +4,7 @@
 
 module testbench();
   
-  logic clk, rst;
+  logic clk, rst, dmc_rst;
 
   bsg_nonsynth_clock_gen #(
     .cycle_time_p(10000)
@@ -15,12 +15,21 @@ module testbench();
   bsg_nonsynth_reset_gen #(
     .num_clocks_p(1)
     ,.reset_cycles_lo_p(1)
-    ,.reset_cycles_hi_p(100000)
+    ,.reset_cycles_hi_p(100)
   ) reset_gen (
     .clk_i(clk)
     ,.async_reset_o(rst)
   );
  
+  bsg_nonsynth_reset_gen #(
+    .num_clocks_p(1)
+    ,.reset_cycles_lo_p(1)
+    ,.reset_cycles_hi_p(100)
+  ) dmc_reset_gen (
+    .clk_i(clk)
+    ,.async_reset_o(dmc_rst)
+  );
+
   localparam test_mode_lp = 1;
 
 if (test_mode_lp == 0) begin // FSB testing
@@ -155,7 +164,7 @@ else if (test_mode_lp == 1) begin // manycore end-to-end testing
   mesh_top_cache #(
     .x_cord_width_p(2)
     ,.y_cord_width_p(2)
-    ,.sets_p(2**8)
+    ,.sets_p(2**5)
     ,.data_width_p(32)
     ,.dram_data_width_p(128)
     ,.mem_size_p(2**12) // in words
@@ -166,6 +175,8 @@ else if (test_mode_lp == 1) begin // manycore end-to-end testing
     ,.finish_o(finish_lo)
   );
 
+localparam dmc = 1;
+if (dmc == 1) begin
   localparam dfi_data_width_lp = 32;
 
   logic ddr_ck_p;
@@ -198,7 +209,7 @@ else if (test_mode_lp == 1) begin // manycore end-to-end testing
     ,.DFI_DATA_WIDTH(dfi_data_width_lp)
   ) lpddr1_ctrl (
 
-    .sys_rst(~rst) // active low!!!
+    .sys_rst(~dmc_rst) // active low!!!
 
     // user interface
     ,.app_addr(dram_ctrl_if.app_addr>>1) // short address!!!
@@ -253,6 +264,22 @@ else if (test_mode_lp == 1) begin // manycore end-to-end testing
     ,.device_temp()
   );
 
+  wire [15:0] dq_int;
+  wire [1:0] dqs_int;
+  
+  genvar j; 
+  for (j = 0; j < 16; j++) begin
+    assign dq_int[j] = dq_oe_n[j] ? 1'bz : dq_o[j];
+  end 
+
+  assign dq_i = dq_int;
+
+  for (j = 0; j < 2; j++) begin
+    assign dqs_int[j] = dqs_p_oe_n[j] ? 1'bz : dqs_p_o[j];
+  end
+
+  assign dqs_p_i = dqs_int;
+  
   mobile_ddr nonsynth_1024Mb_dram_model (
     .Clk(ddr_ck_p)
     ,.Clk_n(ddr_ck_n)
@@ -263,10 +290,24 @@ else if (test_mode_lp == 1) begin // manycore end-to-end testing
     ,.Cas_n(ddr_cas_n)
     ,.Addr(ddr_addr[13:0])
     ,.Ba(ddr_ba[1:0])
-    ,.Dq(dq_o)
-    ,.Dqs(dqs_p_i)
+    ,.Dq(dq_int)
+    ,.Dqs(dqs_int)
     ,.Dm(dm_o)
   );
+end 
+else begin
+
+  mock_dram_ctrl #(
+    .addr_width_p(30)
+    ,.data_width_p(128)
+    ,.burst_len_p(1)
+    ,.mem_size_p(2**14)
+  ) mdc (
+    .clock_i(clk)
+    ,.reset_i(rst)
+    ,.dram_ctrl_if(dram_ctrl_if)
+  );
+end
   
 
   initial begin
