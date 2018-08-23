@@ -43,7 +43,7 @@ module bsg_1_to_n_tagged #(
 
         bsg_decode_with_v #(.num_out_p(num_out_p)) bdv
           (.i(tag_i)
-           ,.v(v_i)
+           ,.v_i(v_i)
            ,.o(v_o)
            );
 

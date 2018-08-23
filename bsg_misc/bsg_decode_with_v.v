@@ -2,7 +2,7 @@ module bsg_decode_with_v #(num_out_p=-1)
    (
 
     input [`BSG_SAFE_CLOG2(num_out_p)-1:0] i
-    ,input v
+    ,input v_i
     ,output [num_out_p-1:0] o
     );
 
@@ -14,6 +14,6 @@ module bsg_decode_with_v #(num_out_p=-1)
       ,.o(lo)
       );
 
-   assign o = { (num_out_p) { v } } & lo;
+   assign o = { (num_out_p) { v_i } } & lo;
 
 endmodule
