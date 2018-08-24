@@ -654,6 +654,10 @@ module dmc_controller #
       if(shoot && cmd_sfifo_rdata[23:20] == WRITE) begin
         circular_buffer_wrdata <= wrdata_afifo_rdata[UI_DATA_WIDTH-1:0];
         circular_buffer_wrmask <= wrdata_afifo_rdata[UI_DATA_WIDTH+(UI_DATA_WIDTH>>3)-1:UI_DATA_WIDTH];
+        if(wburst_valid) begin
+          dfi_wrdata <= circular_buffer_wrdata[DFI_DATA_WIDTH-1:0];
+          dfi_wrdata_mask <= circular_buffer_wrmask[(DFI_DATA_WIDTH>>3)-1:0];
+        end
       end
       else if(wburst_valid) begin
         {circular_buffer_wrdata[UI_DATA_WIDTH-DFI_DATA_WIDTH-1:0], dfi_wrdata} <= circular_buffer_wrdata;
