@@ -3,6 +3,7 @@
  */
 
 `include "bsg_manycore_packet.vh"
+`include "bsg_cache_dma_pkt.vh"
 
 module mesh_top_cache
   import bsg_cache_pkg::*;
@@ -148,18 +149,7 @@ module mesh_top_cache
   logic cache_v_lo;
   logic cache_v_v_we_lo;
 
-  logic dma_req_ch_write_not_read;
-  logic [cache_addr_width_lp-1:0] dma_req_ch_addr;
-  logic dma_req_ch_v;
-  logic dma_req_ch_yumi;
 
-  logic dma_read_ch_ready;
-  logic [data_width_p-1:0] dma_read_ch_data;
-  logic dma_read_ch_v;
-  
-  logic [data_width_p-1:0] dma_write_ch_data;
-  logic dma_write_ch_v;
-  logic dma_write_ch_yumi;
 
   // links_to_cache
   //
@@ -190,8 +180,22 @@ module mesh_top_cache
   
   // cache
   //
+  `declare_bsg_cache_dma_pkt_s(cache_addr_width_lp);
+  bsg_cache_dma_pkt_s dma_pkt;
+  logic dma_pkt_v_lo;
+  logic dma_pkt_yumi_li;
+
+  logic dma_data_ready_lo;
+  logic [data_width_p-1:0] dma_data_li;
+  logic dma_data_v_li;
+  
+  logic [data_width_p-1:0] dma_data_lo;
+  logic dma_data_v_lo;
+  logic dma_data_yumi_li;
+
   bsg_cache #(
-    .addr_width_p(cache_addr_width_lp)
+    .data_width_p(32)
+    ,.addr_width_p(cache_addr_width_lp)
     ,.block_size_in_words_p(8)
     ,.sets_p(sets_p)
   ) cache (
@@ -208,18 +212,17 @@ module mesh_top_cache
 
     ,.v_v_we_o(cache_v_v_we_lo)
 
-    ,.dma_req_ch_write_not_read_o(dma_req_ch_write_not_read)
-    ,.dma_req_ch_addr_o(dma_req_ch_addr)
-    ,.dma_req_ch_v_o(dma_req_ch_v)
-    ,.dma_req_ch_yumi_i(dma_req_ch_yumi)
+    ,.dma_pkt_o(dma_pkt)
+    ,.dma_pkt_v_o(dma_pkt_v_lo)
+    ,.dma_pkt_yumi_i(dma_pkt_yumi_li)
 
-    ,.dma_read_ch_data_i(dma_read_ch_data)
-    ,.dma_read_ch_v_i(dma_read_ch_v)
-    ,.dma_read_ch_ready_o(dma_read_ch_ready)
+    ,.dma_data_i(dma_data_li)
+    ,.dma_data_v_i(dma_data_v_li)
+    ,.dma_data_ready_o(dma_data_ready_lo)
 
-    ,.dma_write_ch_data_o(dma_write_ch_data)
-    ,.dma_write_ch_v_o(dma_write_ch_v)
-    ,.dma_write_ch_yumi_i(dma_write_ch_yumi)
+    ,.dma_data_o(dma_data_lo)
+    ,.dma_data_v_o(dma_data_v_lo)
+    ,.dma_data_yumi_i(dma_data_yumi_li)
   );
   
 
@@ -235,18 +238,17 @@ module mesh_top_cache
     .clock_i(clock_i)
     ,.reset_i(reset_i)
 
-    ,.dma_req_ch_write_not_read_i(dma_req_ch_write_not_read)
-    ,.dma_req_ch_addr_i(dma_req_ch_addr)
-    ,.dma_req_ch_v_i(dma_req_ch_v)
-    ,.dma_req_ch_yumi_o(dma_req_ch_yumi)
+    ,.dma_pkt_i(dma_pkt)
+    ,.dma_pkt_v_i(dma_pkt_v_lo)
+    ,.dma_pkt_yumi_o(dma_pkt_yumi_li)
 
-    ,.dma_read_ch_data_o(dma_read_ch_data)
-    ,.dma_read_ch_v_o(dma_read_ch_v)
-    ,.dma_read_ch_ready_i(dma_read_ch_ready)
+    ,.dma_data_o(dma_data_li)
+    ,.dma_data_v_o(dma_data_v_li)
+    ,.dma_data_ready_i(dma_data_ready_lo)
 
-    ,.dma_write_ch_data_i(dma_write_ch_data)
-    ,.dma_write_ch_v_i(dma_write_ch_v)
-    ,.dma_write_ch_yumi_o(dma_write_ch_yumi)
+    ,.dma_data_i(dma_data_lo)
+    ,.dma_data_v_i(dma_data_v_lo)
+    ,.dma_data_yumi_o(dma_data_yumi_li)
 
     ,.dram_ctrl_if(dram_ctrl_if)
   );

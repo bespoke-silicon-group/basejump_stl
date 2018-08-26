@@ -9,3 +9,4 @@ DVEfiles
 *.vcd
 ucli.key
 *.swp
+.nfs*

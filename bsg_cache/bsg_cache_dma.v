@@ -1,12 +1,16 @@
 /**
- *  bsg_evict_fill_machine.v
+ *  bsg_cache_dma.v
  */
 
-module bsg_evict_fill_machine
+`include "bsg_cache_pkt.vh"
+
+module bsg_cache_dma
   #(parameter addr_width_p="inv"
+   ,parameter data_width_p="inv"
    ,parameter block_size_in_words_p="inv"
    ,parameter lg_block_size_in_words_lp="inv"
-   ,parameter lg_sets_lp="inv")
+   ,parameter lg_sets_lp="inv"
+   ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p))
 (
   input clock_i
   ,input reset_i
@@ -24,31 +28,30 @@ module bsg_evict_fill_machine
 
   ,input [lg_sets_lp-1:0] start_addr_i
   ,input [lg_block_size_in_words_lp-1:0] snoop_word_offset_i
-  ,output logic [31:0] snoop_word_o
+  ,output logic [data_width_p-1:0] snoop_word_o
   
   // DMA request channel
-  ,output logic dma_req_ch_write_not_read_o         // rd = 0, wr = 1;
-  ,output logic [addr_width_p-1:0] dma_req_ch_addr_o
-  ,output logic dma_req_ch_v_o
-  ,input dma_req_ch_yumi_i
+  ,output logic [bsg_cache_dma_pkt_width_lp-1:0] dma_pkt_o
+  ,output logic dma_pkt_v_o
+  ,input dma_pkt_yumi_i
 
   // DMA read channel
-  ,input [31:0] dma_read_ch_data_i
-  ,input dma_read_ch_v_i
-  ,output logic dma_read_ch_ready_o
+  ,input [data_width_p-1:0] dma_data_i
+  ,input dma_data_v_i
+  ,output logic dma_data_ready_o
 
   // DMA write channel
-  ,output logic [31:0] dma_write_ch_data_o
-  ,output logic dma_write_ch_v_o
-  ,input dma_write_ch_yumi_i
+  ,output logic [data_width_p-1:0] dma_data_o
+  ,output logic dma_data_v_o
+  ,input dma_data_yumi_i
 
   // data_mem
   ,output logic data_re_force_o
   ,output logic data_we_force_o
   ,output logic [7:0] data_mask_force_o
   ,output logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_addr_force_o
-  ,output logic [63:0] data_in_force_o
-  ,input [63:0] raw_data_i
+  ,output logic [(2*data_width_p)-1:0] data_in_force_o
+  ,input [(2*data_width_p)-1:0] raw_data_i
 );
 
   typedef enum logic [2:0] {
@@ -63,16 +66,16 @@ module bsg_evict_fill_machine
   // incoming fill fifo
   // for fill, dequeue data from fifo.
   // each time data is dequeued, increment the counter.
-  logic [31:0] dma_rdata;
+  logic [data_width_p-1:0] dma_rdata;
   logic fill_fifo_v_lo;
   logic fill_fifo_yumi_li;
-  bsg_two_fifo #(.width_p(32)) dma_fill_fifo (
+  bsg_two_fifo #(.width_p(data_width_p)) dma_fill_fifo (
     .clk_i(clock_i)
     ,.reset_i(reset_i)
 
-    ,.ready_o(dma_read_ch_ready_o)
-    ,.data_i(dma_read_ch_data_i)
-    ,.v_i(dma_read_ch_v_i)
+    ,.ready_o(dma_data_ready_o)
+    ,.data_i(dma_data_i)
+    ,.v_i(dma_data_v_i)
 
     ,.v_o(fill_fifo_v_lo)
     ,.data_o(dma_rdata)
@@ -97,9 +100,9 @@ module bsg_evict_fill_machine
     ,.data_i(dma_wdata)
     ,.v_i(evict_fifo_v_li)
 
-    ,.v_o(dma_write_ch_v_o)
-    ,.data_o(dma_write_ch_data_o)
-    ,.yumi_i(dma_write_ch_yumi_i)
+    ,.v_o(dma_data_v_o)
+    ,.data_o(dma_data_o)
+    ,.yumi_i(dma_data_yumi_i)
   );
 
   dma_state_e dma_state_r;
@@ -119,7 +122,12 @@ module bsg_evict_fill_machine
     end
   end
 
-  assign dma_req_ch_addr_o = mc_pass_addr_i;
+  `declare_bsg_cache_dma_pkt_s(addr_width_p);
+
+  bsg_cache_dma_pkt_s dma_pkt_cast;
+  assign dma_pkt_o = dma_pkt_cast;
+
+  assign dma_pkt_cast.addr = mc_pass_addr_i;
   assign data_mask_force_o = start_set_i
     ? {4'b1111, 4'b0000}
     : {4'b0000, 4'b1111};
@@ -130,9 +138,9 @@ module bsg_evict_fill_machine
 
   always_comb begin
     finished_o = 1'b0;
-    dma_req_ch_v_o = 1'b0;
+    dma_pkt_v_o = 1'b0;
     counter_n = counter_r;
-    dma_req_ch_write_not_read_o = 1'b0;
+    dma_pkt_cast.write_not_read = 1'b0;
     data_we_force_o = 1'b0;
     data_re_force_o = 1'b0;
     fill_fifo_yumi_li = 1'b0;
@@ -152,19 +160,19 @@ module bsg_evict_fill_machine
       end
       
       REQ_SEND_FILL: begin
-        dma_state_n = dma_req_ch_yumi_i
+        dma_state_n = dma_pkt_yumi_i
           ? FINISHED
           : REQ_SEND_FILL;
-        dma_req_ch_v_o = 1'b1;
-        dma_req_ch_write_not_read_o = 1'b0;
+        dma_pkt_v_o = 1'b1;
+        dma_pkt_cast.write_not_read = 1'b0;
       end
 
       REQ_SEND_EVICT: begin
-        dma_state_n = dma_req_ch_yumi_i
+        dma_state_n = dma_pkt_yumi_i
           ? FINISHED
           : REQ_SEND_EVICT;
-        dma_req_ch_v_o = 1'b1;
-        dma_req_ch_write_not_read_o = 1'b1;
+        dma_pkt_v_o = 1'b1;
+        dma_pkt_cast.write_not_read = 1'b1;
       end
       
       FILL_LINE: begin
