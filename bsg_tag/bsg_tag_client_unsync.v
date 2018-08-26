@@ -25,14 +25,12 @@
 
 module bsg_tag_client_unsync
   import bsg_tag_pkg::bsg_tag_s;
-   #(width_p="inv", harden_p=1)
+   #(parameter width_p="inv", harden_p=1, debug_level_lp=0)
    (
     input 		 bsg_tag_s bsg_tag_i
 
     ,output [width_p-1:0] data_async_r_o
     );
-
-   localparam debug_level_lp = 0;
 
    logic   op_r, param_r;
 
@@ -64,19 +62,41 @@ module bsg_tag_client_unsync
       ,.o (tag_data_n)
       );
 
+
+   // Veri lator did not like bsg_dff_gatestack with the replicated clock signal
+   // hopefully this replacement does not cause inordinate problems =)
+   
+   bsg_dff #(.width_p(width_p), .harden_p(harden_p)) tag_data_reg
+	     (.clk_i(bsg_tag_i.clk)
+	      ,.data_i(tag_data_n)
+	      ,.data_o(tag_data_r)
+	      );
+	     
+/*	     
    bsg_dff_gatestack #(.width_p(width_p),.harden_p(harden_p)) tag_data_reg
      (
       .i0 (tag_data_n                    )
       ,.i1( { width_p { bsg_tag_i.clk } })
       ,.o (tag_data_r                    )
       );
+  */ 
+   
 
    // synopsys translate_off
    if (debug_level_lp > 1)
-   always @(negedge bsg_tag_i.clk)
-     begin
-        if (shift_op)
-          $display("## bsg_tag_client_unsync (update)   %b (%m)",tag_data_r);
+     begin: debug
+	wire reset_op = ~op_r & param_r;
+	always @(negedge bsg_tag_i.clk)
+	  begin
+	     //if (reset_op)
+	     //  $display("## bsg_tag_client RESET HI (%m)");
+             if (reset_op & ~(~bsg_tag_i.op & bsg_tag_i.param))
+               $display("## bsg_tag_client RESET DEASSERTED time %t (%m)",$time);
+             if (~reset_op & (~bsg_tag_i.op & bsg_tag_i.param))
+               $display("## bsg_tag_client RESET ASSERTED time   %t  (%m)",$time);
+             if (shift_op)
+               $display("## bsg_tag_client (send) SHIFTING  %b (%m)",tag_data_r);
+	  end
      end
    // synopsys translate_on
 
