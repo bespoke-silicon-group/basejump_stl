@@ -26,13 +26,13 @@ module bsg_counter_clear_up #(parameter max_val_p     = -1
         if (reset_i)
           count_o <= init_val_p;
         else
-	  count_o <= clear_i ? (ptr_width_lp ' (up_i) ) : (count_o+up_i);
+	  count_o <= clear_i ? (ptr_width_lp ' (up_i) ) : (count_o+(ptr_width_lp ' (up_i)));
      end
 
 //synopsys translate_off
 
    always_ff @ (negedge clk_i) begin
-      if ((count_o==max_val_p) & up_i   & (reset_i===0))
+      if ((count_o==ptr_width_lp '(max_val_p)) & up_i   & (reset_i===0))
         $display("%m error: counter overflow at time %t", $time);
    end
 
