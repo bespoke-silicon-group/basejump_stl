@@ -10,6 +10,7 @@
  *  @param burst_width_p bit-width of burst data.
  */
 
+`include "bsg_cache_dma_pkt.vh"
 
 module bsg_cache_to_dram_ctrl
   import bsg_dram_ctrl_pkg::*;
@@ -22,26 +23,26 @@ module bsg_cache_to_dram_ctrl
     ,parameter data_width_ratio_lp=burst_width_p/cache_word_width_p
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter num_req_lp=(cache_word_width_p*block_size_in_words_p)/(burst_width_p*burst_len_p)
-    ,parameter block_offset_width_lp=`BSG_SAFE_CLOG2(cache_word_width_p*block_size_in_words_p/8))
+    ,parameter block_offset_width_lp=`BSG_SAFE_CLOG2(cache_word_width_p*block_size_in_words_p/8)
+    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p))
 (
   input clock_i
   ,input reset_i
 
   // DMA request channel
-  ,input dma_req_ch_write_not_read_i
-  ,input [addr_width_p-1:0] dma_req_ch_addr_i
-  ,input dma_req_ch_v_i
-  ,output logic dma_req_ch_yumi_o
+  ,input [bsg_cache_dma_pkt_width_lp-1:0] dma_pkt_i
+  ,input dma_pkt_v_i
+  ,output logic dma_pkt_yumi_o
 
   // DMA read channel (fill)
-  ,output logic  [cache_word_width_p-1:0] dma_read_ch_data_o
-  ,output logic dma_read_ch_v_o
-  ,input dma_read_ch_ready_i
+  ,output logic  [cache_word_width_p-1:0] dma_data_o
+  ,output logic dma_data_v_o
+  ,input dma_data_ready_i
 
   // DMA write channel (evict)
-  ,input [cache_word_width_p-1:0] dma_write_ch_data_i
-  ,input dma_write_ch_v_i
-  ,output logic dma_write_ch_yumi_o
+  ,input [cache_word_width_p-1:0] dma_data_i
+  ,input dma_data_v_i
+  ,output logic dma_data_yumi_o
 
   // interface with DRAM ctrl
   ,bsg_dram_ctrl_if.master dram_ctrl_if
@@ -60,6 +61,10 @@ module bsg_cache_to_dram_ctrl
     WR_REQ_IDLE = 1'b0
     ,WR_REQ_SEND = 1'b1
   } wr_req_state_e;
+
+  `declare_bsg_cache_dma_pkt_s(addr_width_p);
+  bsg_cache_dma_pkt_s dma_pkt_cast;
+  assign dma_pkt_cast = dma_pkt_i;
 
   logic rd_req_valid;
   logic [1:0] rd_ch_state_r, rd_ch_state_n;
@@ -123,8 +128,8 @@ module bsg_cache_to_dram_ctrl
   ) wr_data_sipo (
     .clk_i(clock_i)
     ,.reset_i(reset_i)
-    ,.valid_i(dma_write_ch_v_i)
-    ,.data_i(dma_write_ch_data_i)
+    ,.valid_i(dma_data_v_i)
+    ,.data_i(dma_data_i)
     ,.ready_o(wr_sipo_ready_lo)
     ,.valid_o(wr_sipo_valid_lo)
     ,.data_o(wr_sipo_data_lo)
@@ -170,11 +175,11 @@ module bsg_cache_to_dram_ctrl
     ,.data_i(rd_fifo_data_lo)
     ,.ready_o(rd_piso_ready_lo)
     ,.valid_o(rd_piso_valid_lo)
-    ,.data_o(dma_read_ch_data_o)
+    ,.data_o(dma_data_o)
     ,.yumi_i(rd_piso_yumi_li)
   );
   
-  assign rd_piso_yumi_li = rd_piso_valid_lo & dma_read_ch_ready_i;
+  assign rd_piso_yumi_li = rd_piso_valid_lo & dma_data_ready_i;
 
 
   // dram_ctrl_if request
@@ -198,18 +203,18 @@ module bsg_cache_to_dram_ctrl
   assign dram_ctrl_if.app_zq_req = 1'b0; 
   assign dram_ctrl_if.app_sr_req = 1'b0; 
 
-  assign dma_req_ch_yumi_o = dma_req_ch_v_i &
-    ((dma_req_ch_write_not_read_i & (wr_ch_state_r == WR_REQ_IDLE))
-      | (~dma_req_ch_write_not_read_i & (rd_ch_state_r == RD_REQ_IDLE)));
+  assign dma_pkt_yumi_o = dma_pkt_v_i &
+    ((dma_pkt_cast.write_not_read & (wr_ch_state_r == WR_REQ_IDLE))
+      | (~dma_pkt_cast.write_not_read & (rd_ch_state_r == RD_REQ_IDLE)));
 
-  assign dma_read_ch_v_o = rd_piso_valid_lo;
-  assign dma_write_ch_yumi_o = dma_write_ch_v_i & wr_sipo_ready_lo;
+  assign dma_data_v_o = rd_piso_valid_lo;
+  assign dma_data_yumi_o = dma_data_v_i & wr_sipo_ready_lo;
 
-  assign rd_req_valid = ~dma_req_ch_write_not_read_i & dma_req_ch_v_i; 
-  assign wr_req_valid = dma_req_ch_write_not_read_i & dma_req_ch_v_i;
+  assign rd_req_valid = ~dma_pkt_cast.write_not_read & dma_pkt_v_i; 
+  assign wr_req_valid = dma_pkt_cast.write_not_read & dma_pkt_v_i;
 
   assign dma_req_ch_block_addr = {
-    dma_req_ch_addr_i[addr_width_p-1:block_offset_width_lp], (block_offset_width_lp)'(0)
+    dma_pkt_cast.addr[addr_width_p-1:block_offset_width_lp], (block_offset_width_lp)'(0)
   };
 
 
@@ -247,7 +252,6 @@ module bsg_cache_to_dram_ctrl
     wr_ch_burst_cnt_n = dram_ctrl_if.app_wdf_rdy & dram_ctrl_if.app_wdf_wren
       ? (wr_ch_burst_cnt_r == (burst_len_p-1) ? '0 : wr_ch_burst_cnt_r + 1)
       : wr_ch_burst_cnt_r;
-
     
     case (rd_ch_state_r)
       RD_REQ_IDLE: begin

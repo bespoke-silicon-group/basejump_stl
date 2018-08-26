@@ -11,12 +11,14 @@
 module bsg_cache
   import bsg_cache_pkg::*;
   #(parameter addr_width_p="inv"
+    ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter tag_width_lp=addr_width_p-2-lg_sets_lp-lg_block_size_in_words_lp
-    ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,32))
+    ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,32)
+    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p))
 (
   input clock_i
   ,input reset_i
@@ -27,25 +29,28 @@ module bsg_cache
   ,output logic ready_o
 
   // output
-  ,output logic [31:0] data_o
+  ,output logic [data_width_p-1:0] data_o
   ,output logic v_o
   ,input yumi_i
 
   // DMA request channel
-  ,output logic dma_req_ch_write_not_read_o
-  ,output logic [addr_width_p-1:0] dma_req_ch_addr_o
-  ,output logic dma_req_ch_v_o
-  ,input dma_req_ch_yumi_i
+  ,output logic [bsg_cache_dma_pkt_width_lp-1:0] dma_pkt_o
+  //,output logic dma_req_ch_write_not_read_o
+  //,output logic [addr_width_p-1:0] dma_req_ch_addr_o
+  ,output logic dma_pkt_v_o
+  ,input dma_pkt_yumi_i
+  //,output logic dma_req_ch_v_o
+  //,input dma_req_ch_yumi_i
 
   // DMA read channel
-  ,input [31:0] dma_read_ch_data_i
-  ,input dma_read_ch_v_i
-  ,output logic dma_read_ch_ready_o
+  ,input [data_width_p-1:0] dma_data_i
+  ,input dma_data_v_i
+  ,output logic dma_data_ready_o
 
   // DMA write channel
-  ,output logic [31:0] dma_write_ch_data_o
-  ,output logic dma_write_ch_v_o
-  ,input dma_write_ch_yumi_i
+  ,output logic [data_width_p-1:0] dma_data_o
+  ,output logic dma_data_v_o
+  ,input dma_data_yumi_i
 
   // for pipeline tracking
   ,output logic v_v_we_o
@@ -58,7 +63,7 @@ module bsg_cache
   logic half_op, half_op_tl_r, half_op_v_r;
   logic byte_op, byte_op_tl_r, byte_op_v_r;
   logic mask_op, mask_op_tl_r, mask_op_v_r;
-  logic [3:0] byte_mask, byte_mask_tl_r, byte_mask_v_r;
+  logic [(data_width_p>>3)-1:0] byte_mask, byte_mask_tl_r, byte_mask_v_r;
   logic ld_op, ld_op_tl_r, ld_op_v_r;
   logic st_op, st_op_tl_r, st_op_v_r;
   logic tagst_op, tagst_op_tl_r, tagst_op_v_r;
@@ -84,15 +89,15 @@ module bsg_cache
   logic instr_cannot_miss_tl;
   logic instr_must_miss_tl;
 
-  logic [7:0] data_mask_storebuf;
+  logic [((data_width_p>>3)*2)-1:0] data_mask_storebuf;
   logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_addr_storebuf;
-  logic [63:0] data_in_storebuf;
+  logic [(2*data_width_p)-1:0] data_in_storebuf;
   
   logic [addr_width_p-1:0] addr_tl_r;
   logic [addr_width_p-1:0] addr_v_r;
 
-  logic [31:0] data_i_tl_r;
-  logic [31:0] data_i_v_r;
+  logic [data_width_p-1:0] data_i_tl_r;
+  logic [data_width_p-1:0] data_i_v_r;
 
   logic [tag_width_lp+1:0] tag_check_me_tl;
 
@@ -627,14 +632,15 @@ module bsg_cache
     ,.status_mem_re_o(status_mem_re)
   );
 
-  // evict_fill_machine
+  // bsg_cache_dma
   //
-  bsg_evict_fill_machine #(
+  bsg_cache_dma #(
     .addr_width_p(addr_width_p)
+    ,.data_width_p(data_width_p)
     ,.lg_sets_lp(lg_sets_lp)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.lg_block_size_in_words_lp(lg_block_size_in_words_lp)
-  ) de (
+  ) dma (
 
     .clock_i(clock_i)
     ,.reset_i(reset_i)
@@ -651,21 +657,20 @@ module bsg_cache
     ,.snoop_word_offset_i(addr_v_r[2+:lg_block_size_in_words_lp]) // 4:2
     ,.snoop_word_o(snoop_word)
 
-    // dma req channel
-    ,.dma_req_ch_write_not_read_o(dma_req_ch_write_not_read_o)
-    ,.dma_req_ch_addr_o(dma_req_ch_addr_o)
-    ,.dma_req_ch_v_o(dma_req_ch_v_o)
-    ,.dma_req_ch_yumi_i(dma_req_ch_yumi_i)
+    // dma pkt channel
+    ,.dma_pkt_o(dma_pkt_o)
+    ,.dma_pkt_v_o(dma_pkt_v_o)
+    ,.dma_pkt_yumi_i(dma_pkt_yumi_i)
     
     // dma read channel
-    ,.dma_read_ch_data_i(dma_read_ch_data_i)
-    ,.dma_read_ch_v_i(dma_read_ch_v_i)
-    ,.dma_read_ch_ready_o(dma_read_ch_ready_o)
+    ,.dma_data_i(dma_data_i)
+    ,.dma_data_v_i(dma_data_v_i)
+    ,.dma_data_ready_o(dma_data_ready_o)
   
     // dma write channel
-    ,.dma_write_ch_data_o(dma_write_ch_data_o)
-    ,.dma_write_ch_yumi_i(dma_write_ch_yumi_i)
-    ,.dma_write_ch_v_o(dma_write_ch_v_o)
+    ,.dma_data_o(dma_data_o)
+    ,.dma_data_yumi_i(dma_data_yumi_i)
+    ,.dma_data_v_o(dma_data_v_o)
 
     ,.data_re_force_o(data_re_force)
     ,.data_we_force_o(data_we_force)
