@@ -98,13 +98,24 @@ module bsg_tag_client
       ,.o (tag_data_n)
       );
 
-   bsg_dff_gatestack #(.width_p(width_p),.harden_p(harden_p)) tag_data_reg
+  // Veri lator did not like bsg_dff_gatestack with the replicated clock signal
+   // hopefully this replacement does not cause inordinate problems =)
+   
+   bsg_dff #(.width_p(width_p), .harden_p(harden_p)) tag_data_reg
+	     (.clk_i(bsg_tag_i.clk)
+	      ,.data_i(tag_data_n)
+	      ,.data_o(tag_data_r)
+	      );
+   
+/*
+    bsg_dff_gatestack #(.width_p(width_p),.harden_p(harden_p)) tag_data_reg
      (
       .i0 (tag_data_n                    )
       ,.i1( { width_p { bsg_tag_i.clk } })
       ,.o (tag_data_r                    )
       );
-
+*/
+   
    // synopsys translate_off
    if (debug_level_lp > 1)
    always @(negedge bsg_tag_i.clk)
