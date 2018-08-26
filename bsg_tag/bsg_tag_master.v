@@ -14,10 +14,15 @@
 
 `include "bsg_tag.vh"
 
+// will not build in verilator without this
+// possibly resulting incorrect behavior :(
+
+// verilator lint_off BLKANDNBLK
+
 module bsg_tag_master
   import bsg_tag_pkg::bsg_tag_s;
 
-   #(els_p="inv", lg_width_p="inv")
+   #(els_p="inv", lg_width_p="inv", debug_level_lp=0)
    (
     // from pins
     input clk_i
@@ -28,17 +33,17 @@ module bsg_tag_master
 
    `declare_bsg_tag_header_s(els_p,lg_width_p)
 
-   localparam debug_level_lp = 0;
-
    localparam max_packet_len_lp    = `bsg_tag_max_packet_len(els_p,lg_width_p);
 
+   localparam reset_len_lp = `bsg_tag_reset_len(els_p,lg_width_p);
+   
    // counts 0..max_packet_len_lp
    localparam lg_max_packet_len_lp = `BSG_SAFE_CLOG2(max_packet_len_lp+1);
 
    // synopsys translate_off
    if (debug_level_lp > 2)
      always @(negedge clk_i)
-       $display("## bsg_tag_master %m %b",clients_r_o);
+       $display("## bsg_tag_master clients=%b (%m)",clients_r_o);
    // synopsys translate_on
 
    logic  data_i_r;
@@ -56,7 +61,7 @@ module bsg_tag_master
 
    wire tag_reset_req = zeros_ctr_r[ctr_width_lp-1];
 
-   // this saturating counter detects a certain number
+   // this self-clearing counter detects a certain number
    // of consecutive 0's
    // indicating a tag_master reset condition
    //
@@ -72,10 +77,11 @@ module bsg_tag_master
     ,.count_o(zeros_ctr_r)
     );
 
+   // veri lator doesn't support -d
    // synopsys translate_off
    initial
-        $display("## %m instantiating bsg_tag_master with els_p=%-d and lg_width_p=%-d, max_packet_len_lp=%-d, reset_zero_len=%-d"
-                 ,els_p,lg_width_p,max_packet_len_lp,(1<<(ctr_width_lp)));
+        $display("## %m instantiating bsg_tag_master with els_p=%d, lg_width_p=%d, max_packet_len_lp=%d, reset_zero_len=%d"
+                 ,els_p,lg_width_p,max_packet_len_lp,reset_len_lp);
    // synopsys translate_on
 
    //
@@ -101,7 +107,7 @@ module bsg_tag_master
      if (tag_reset_req & ~data_i_r)
        begin
           // synopsys translate_off
-          if (debug_level_lp > 1) $display("## bsg_tag_master RESET (%m)");
+          if (debug_level_lp > 1) $display("## bsg_tag_master RESET time %t (%m)",$time);
           // synopsys translate_on
           state_r   <= eStart;
 
@@ -120,7 +126,7 @@ module bsg_tag_master
    // synopsys translate_off
    always_ff @(negedge clk_i)
      if (state_n != state_r)
-       if (debug_level_lp > 1) $display("## bsg_tag_master STATE CHANGE  # %s --> %s #",state_r,state_n);
+       if (debug_level_lp > 1) $display("## bsg_tag_master STATE CHANGE  # %s --> %s #",state_r.name(),state_n.name());
    // synopsys translate_on
 
    always_comb
@@ -148,19 +154,19 @@ module bsg_tag_master
                begin
                   // synopsys translate_off
                   if (debug_level_lp > 1)
-                    $display("## bsg_tag_master RECEIVING HEADER (%m) (%d)",hdr_ptr_r);
+                    $display("## bsg_tag_master RECEIVING HEADER (%m) (%d) = %b",hdr_ptr_r,data_i_r);
                   // synopsys translate_on
 
                   hdr_n     = { data_i_r, hdr_r[1+:($bits(bsg_tag_header_s)-1)] };
                   hdr_ptr_n = hdr_ptr_r + 1'b1;
                   // if we are at the next to last value
-                  if (hdr_ptr_r == ($bits(bsg_tag_header_s)-1))
+                  if (hdr_ptr_r == lg_max_packet_len_lp'($bits(bsg_tag_header_s)-1))
                     begin
                        if (hdr_n.len == 0)
                          begin
                             state_n = eStart;
                             // synopsys translate_off
-                            $display("## %m (NULL PACKET)");
+                            $display("## bsg_tag_master NULL PACKET, len=0 (%m)");
                             // synopsys translate_on
                          end
                        else
@@ -190,7 +196,7 @@ module bsg_tag_master
 
                   // synopsys translate_off
                   if (debug_level_lp > 2)
-                    $display("## %m PACKET TRANSFER op,param=<%b,%b>", bsg_tag_n.op, bsg_tag_n.param);
+                    $display("## bsg_tag_master PACKET TRANSFER op,param=<%b,%b> (%m)", bsg_tag_n.op, bsg_tag_n.param);
                   // synopsys translate_on
 
                   // finishing words
@@ -199,7 +205,7 @@ module bsg_tag_master
                        state_n = eStart;
 
                        // synopsys translate_off
-                       if (debug_level_lp > 1) $display("## %m PACKET END");
+                       if (debug_level_lp > 1) $display("## bsg_tag_master PACKET END (%m)");
                        // synopsys translate_on
 
                     end
@@ -227,6 +233,7 @@ module bsg_tag_master
 
    wire [els_p-1:0] clients_decode = (v_n << hdr_r.nodeID);
 
+
    for (i = 0; i < els_p; i=i+1)
      begin: rof
         always_ff @(posedge clk_i)
@@ -235,8 +242,12 @@ module bsg_tag_master
              clients_r_o[i].param <= clients_decode[i] & bsg_tag_n.param;
           end
 
+
         assign clients_r_o[i].clk = clk_i;
         assign clients_r_o[i].en  = en_i;
      end
 
-endmodule
+   
+endmodule // bsg_tag_master
+
+// verilator lint_on BLKANDNBLK
