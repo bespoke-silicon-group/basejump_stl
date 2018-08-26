@@ -30,10 +30,11 @@ module bsg_parallel_in_serial_out #( parameter width_p = -1
     // state to the transmission state.
     typedef enum logic [0:0] {eRX, eTX} state_e;
 
-
+   localparam clog2els_lp = $clog2(els_p);
+   
     state_e                        state_r, state_n;
     logic [els_p-1:0][width_p-1:0] data_r;
-    logic [$clog2(els_p)-1:0]      shift_ctr_r, shift_ctr_n;
+    logic [clog2els_lp-1:0]      shift_ctr_r, shift_ctr_n;
     logic                          done_tx_n;
     
 
@@ -46,7 +47,7 @@ module bsg_parallel_in_serial_out #( parameter width_p = -1
      * signal indicates that we should return to the eRX state or we should
      * accept the next data and continue transmission.
      */
-    assign done_tx_n = (state_r == eTX) && (shift_ctr_r == (els_p-1)) && yumi_i;
+    assign done_tx_n = (state_r == eTX) && (shift_ctr_r == clog2els_lp ' (els_p-1)) && yumi_i;
 
 
     /**
