@@ -22,7 +22,16 @@ $(TRACE_ROM).v: $(TRACE_FILE)
 sim: $(TRACE_ROM).v
 	vcs +v2k -R +lint=all -sverilog -full64 -f sv.include $(INCDIR)\
 		-debug_pp -timescale=1ps/1ps +vcs+vcdpluson $(VCS_DEFINES)\
+		+define+TEST_MODE=1\
 		| $(HIGHLIGHT)
+
+regression: $(TRACE_ROM).v
+	vcs +v2k -R +lint=all -sverilog -full64 -f sv.include $(INCDIR)\
+		-debug_pp -timescale=1ps/1ps +vcs+vcdpluson $(VCS_DEFINES)\
+		+define+TEST_MODE=0\
+		| $(HIGHLIGHT)
+	
+
 dve:
 	dve -full64 -vpd vcdplus.vpd &
 

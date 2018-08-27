@@ -1,9 +1,9 @@
 /**
- * bsg_cache_pkg.v
+ * bsg_cache_pkg.vh
  */
 
-`ifndef BSG_CACHE_PKG_V
-`define BSG_CACHE_PKG_V
+`ifndef BSG_CACHE_PKG_VH
+`define BSG_CACHE_PKG_VH
 
 package bsg_cache_pkg;
 

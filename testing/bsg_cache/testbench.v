@@ -30,7 +30,7 @@ module testbench();
     ,.async_reset_o(dmc_rst)
   );
 
-  localparam test_mode_lp = 1;
+  localparam test_mode_lp = `TEST_MODE;
 
 if (test_mode_lp == 0) begin // FSB testing
  
@@ -118,7 +118,7 @@ if (test_mode_lp == 0) begin // FSB testing
     ,.node_yumi_o(node_yumi_o)
   );
 
-  bsg_test_node_client #(.id_p(1)) tnc (
+  bsg_test_node_client tnc (
     .clock_i(clk)
     ,.reset_i(node_rst)
     ,.en_i(node_en)
