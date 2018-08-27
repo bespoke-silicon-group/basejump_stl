@@ -3,6 +3,7 @@
  */
 
 `include "bsg_cache_pkt.vh"
+`include "bsg_cache_dma_pkt.vh"
 
 module bsg_test_node_client 
   import bsg_cache_pkg::*;
@@ -29,23 +30,24 @@ module bsg_test_node_client
   assign packet = data_i[73:0]; 
   logic [31:0] dc_data_o;
 
-  logic dma_req_ch_write_not_read;
-  logic [31:0] dma_req_ch_addr;
-  logic dma_req_ch_v_lo;
-  logic dma_req_ch_yumi_li;
+  `declare_bsg_cache_dma_pkt_s(32);
+  bsg_cache_dma_pkt_s dma_pkt;
+  logic dma_pkt_v_lo;
+  logic dma_pkt_yumi_li;
   
-  logic [31:0] dma_read_ch_data;
-  logic dma_read_ch_v_li;
-  logic dma_read_ch_ready_lo;
+  logic [31:0] dma_data_li;
+  logic dma_data_v_li;
+  logic dma_data_ready_lo;
 
-  logic [31:0] dma_write_ch_data;
-  logic dma_write_ch_v_lo;
-  logic dma_write_ch_yumi_li;
+  logic [31:0] dma_data_lo;
+  logic dma_data_v_lo;
+  logic dma_data_yumi_li;
 
   assign data_o = {48'b0, dc_data_o};
 
   bsg_cache #(
     .addr_width_p(32)
+    ,.data_width_p(32)
     ,.block_size_in_words_p(8)
     ,.sets_p(512)
   ) dcache0 (
@@ -62,42 +64,19 @@ module bsg_test_node_client
 
     ,.v_v_we_o()
 
-    ,.dma_req_ch_write_not_read_o(dma_req_ch_write_not_read)
-    ,.dma_req_ch_addr_o(dma_req_ch_addr)
-    ,.dma_req_ch_v_o(dma_req_ch_v_lo)
-    ,.dma_req_ch_yumi_i(dma_req_ch_yumi_li)
-    
-    ,.dma_read_ch_data_i(dma_read_ch_data)
-    ,.dma_read_ch_v_i(dma_read_ch_v_li)
-    ,.dma_read_ch_ready_o(dma_read_ch_ready_lo)
-  
-    ,.dma_write_ch_data_o(dma_write_ch_data)
-    ,.dma_write_ch_v_o(dma_write_ch_v_lo)
-    ,.dma_write_ch_yumi_i(dma_write_ch_yumi_li)
+    ,.dma_pkt_o(dma_pkt)
+    ,.dma_pkt_v_o(dma_pkt_v_lo)
+    ,.dma_pkt_yumi_i(dma_pkt_yumi_li)
+
+    ,.dma_data_i(dma_data_li)
+    ,.dma_data_v_i(dma_data_v_li)
+    ,.dma_data_ready_o(dma_data_ready_lo)
+
+    ,.dma_data_o(dma_data_lo)
+    ,.dma_data_v_o(dma_data_v_lo)
+    ,.dma_data_yumi_i(dma_data_yumi_li)
   );
 
-if (id_p == 0) begin : mm
-
-  mock_memory mm (
-    .clock_i(clock_i)
-    ,.reset_i(reset_i)
-  
-    ,.dma_req_ch_write_not_read_i(dma_req_ch_write_not_read)
-    ,.dma_req_ch_addr_i(dma_req_ch_addr)
-    ,.dma_req_ch_v_i(dma_req_ch_v_lo)
-    ,.dma_req_ch_yumi_o(dma_req_ch_yumi_li)
-
-    ,.dma_read_ch_data_o(dma_read_ch_data)
-    ,.dma_read_ch_v_o(dma_read_ch_v_li)
-    ,.dma_read_ch_ready_i(dma_read_ch_ready_lo)
-
-    ,.dma_write_ch_data_i(dma_write_ch_data)
-    ,.dma_write_ch_v_i(dma_write_ch_v_lo)
-    ,.dma_write_ch_yumi_o(dma_write_ch_yumi_li)
-  );
-end
-else if (id_p == 1) begin : cache_to_dram_ctrl
-  
   bsg_dram_ctrl_if #(
     .addr_width_p(32)
     ,.data_width_p(128)
@@ -114,20 +93,19 @@ else if (id_p == 1) begin : cache_to_dram_ctrl
   ) cache_to_dram_ctrl (
     .clock_i(clock_i)
     ,.reset_i(reset_i)
-    
-    ,.dma_req_ch_write_not_read_i(dma_req_ch_write_not_read)
-    ,.dma_req_ch_addr_i(dma_req_ch_addr)
-    ,.dma_req_ch_v_i(dma_req_ch_v_lo)
-    ,.dma_req_ch_yumi_o(dma_req_ch_yumi_li)
+   
+    ,.dma_pkt_i(dma_pkt)
+    ,.dma_pkt_v_i(dma_pkt_v_lo)
+    ,.dma_pkt_yumi_o(dma_pkt_yumi_li)
 
-    ,.dma_read_ch_data_o(dma_read_ch_data)
-    ,.dma_read_ch_v_o(dma_read_ch_v_li)
-    ,.dma_read_ch_ready_i(dma_read_ch_ready_lo)
+    ,.dma_data_o(dma_data_li)
+    ,.dma_data_v_o(dma_data_v_li)
+    ,.dma_data_ready_i(dma_data_ready_lo)
 
-    ,.dma_write_ch_data_i(dma_write_ch_data)
-    ,.dma_write_ch_v_i(dma_write_ch_v_lo)
-    ,.dma_write_ch_yumi_o(dma_write_ch_yumi_li)
-
+    ,.dma_data_i(dma_data_lo)
+    ,.dma_data_v_i(dma_data_v_lo)
+    ,.dma_data_yumi_o(dma_data_yumi_li)
+ 
     ,.dram_ctrl_if(dram_if)
   );  
 
@@ -141,6 +119,5 @@ else if (id_p == 1) begin : cache_to_dram_ctrl
     ,.reset_i(reset_i)
     ,.dram_ctrl_if(dram_if)
   );
-end
 
 endmodule
