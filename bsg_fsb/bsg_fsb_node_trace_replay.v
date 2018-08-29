@@ -51,7 +51,15 @@ module bsg_fsb_node_trace_replay
    // in theory, we could add branching, etc.
    // before we know it, we have a processor =)
    
-   typedef enum [3:0] { eNop=4'd0, eSend=4'd1, eReceive=4'd2, eDone=4'd3, eFinish=4'd4, eCycleDec=4'd5, eCycleInit=4'd6 } eOp;
+   typedef enum logic [3:0] {
+      eNop=4'd0,
+      eSend=4'd1,
+      eReceive=4'd2,
+      eDone=4'd3,
+      eFinish=4'd4,
+      eCycleDec=4'd5,
+      eCycleInit=4'd6
+   } eOp;
  
    
    logic [counter_width_p-1:0] cycle_ctr_r, cycle_ctr_n;
@@ -83,7 +91,8 @@ module bsg_fsb_node_trace_replay
           end
      end // always_ff @
 
-   eOp op = rom_data_i[ring_width_p+:4];
+   logic [3:0] op;
+   assign op = rom_data_i[ring_width_p+:4];
 
    logic      instr_completed;
 
