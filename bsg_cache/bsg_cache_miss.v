@@ -1,9 +1,9 @@
 /**
- *  bsg_miss_case.v
+ *  bsg_cache_miss.v
  */
 
 
-module bsg_miss_case
+module bsg_cache_miss
   #(parameter addr_width_p="inv"
     ,parameter tag_width_lp="inv"
     ,parameter lg_block_size_in_words_lp="inv"
@@ -45,9 +45,8 @@ module bsg_miss_case
   ,output logic wipe_v_o
   
   // from replacement 
-  ,input query_dirty0_i
-  ,input query_dirty1_i
-  ,input query_mru_i
+  ,input [1:0] dirty_i
+  ,input mru_i
 
   // to replacement
   ,output logic status_mem_re_o
@@ -57,16 +56,14 @@ module bsg_miss_case
   ,output logic final_recover_o
 );
 
-  typedef enum logic [3:0] {
-    START = 4'd0
-    ,FLUSH_INSTR = 4'd1
-    ,FLUSH_INSTR_2 = 4'd2
-    ,FILL_REQUEST_SEND_HDR = 4'd3
-    ,FILL_REQUEST_SEND_ADDR = 4'd4
-    ,EVICT_REQUEST_SEND_ADDR = 4'd5
-    ,EVICT_REQUEST_SEND_DATA = 4'd6
-    ,FILL_REQUEST_GET_DATA = 4'd7
-    ,FINAL_RECOVER = 4'd8
+  typedef enum logic [2:0] {
+    START
+    ,FLUSH_INSTR
+    ,FILL_REQUEST_SEND_ADDR
+    ,EVICT_REQUEST_SEND_ADDR
+    ,EVICT_REQUEST_SEND_DATA
+    ,FILL_REQUEST_GET_DATA
+    ,FINAL_RECOVER
   } miss_state_e;
 
   miss_state_e miss_state_r;
@@ -90,7 +87,6 @@ module bsg_miss_case
   assign flush_instr = tagfl_op_v_i | ainv_op_v_i | afl_op_v_i | aflinv_op_v_i;
   assign dirty_and_valid = chosen_set_is_dirty_r & chosen_set_is_valid_r;
 
-  assign chosen_set_o = chosen_set_r;
   assign evict_address_n = {
     (chosen_set_r ? tag1_v_i : tag0_v_i),
     miss_index_v,
@@ -112,6 +108,7 @@ module bsg_miss_case
     status_mem_re_o = 1'b0;
     // to data_cache
     final_recover_o = 1'b0;
+    chosen_set_o = chosen_set_r;
 
 
     case (miss_state_r) 
@@ -123,47 +120,38 @@ module bsg_miss_case
         miss_state_n = (v_v_r_i & miss_v_i & flush_instr)
           ? FLUSH_INSTR 
           : ((v_v_r_i & miss_v_i & (ld_op_v_i | st_op_v_i))
-            ? FILL_REQUEST_SEND_HDR
+            ? FILL_REQUEST_SEND_ADDR
             : START);
       end
       
-      // choose a set to fill.
-      // determine if the chosen set is valid/dirty.
-      FILL_REQUEST_SEND_HDR: begin
-        chosen_set_n = (valid0_v_i ? (valid1_v_i ? ~query_mru_i : 1'b1) : 1'b0);
-        chosen_set_is_dirty_n = chosen_set_n ? query_dirty1_i : query_dirty0_i;
-        chosen_set_is_valid_n = valid1_v_i & valid0_v_i;
-        miss_state_n = FILL_REQUEST_SEND_ADDR;
-      end
-  
       // tell dma_engine to send fill request and addr.
       // calculate evict address.
       FILL_REQUEST_SEND_ADDR: begin
+        chosen_set_n = (valid0_v_i ? (valid1_v_i ? ~mru_i : 1'b1) : 1'b0);
+        chosen_set_is_dirty_n = chosen_set_n ? dirty_i[1] : dirty_i[0];
+        chosen_set_is_valid_n = valid1_v_i & valid0_v_i;
+        chosen_set_o = chosen_set_n;
         mc_send_fill_req_o = 1'b1;
         mc_pass_addr_o = addr_v_i;
         tag_we_force_o = dma_finished_i;
         wipe_v_o = dma_finished_i;
         
         miss_state_n = dma_finished_i
-          ? (dirty_and_valid ? EVICT_REQUEST_SEND_ADDR : FILL_REQUEST_GET_DATA)
+          ? ((chosen_set_is_dirty_n & chosen_set_is_valid_n) ? EVICT_REQUEST_SEND_ADDR : FILL_REQUEST_GET_DATA)
           : FILL_REQUEST_SEND_ADDR;
-      end
-
-      //  Determine which set to flush and whether it's dirty/valid.
-      FLUSH_INSTR: begin
-        chosen_set_n = tagfl_op_v_i ? tagfl_set_v : tag_hit1_v_i;
-        chosen_set_is_dirty_n = chosen_set_n ? query_dirty1_i : query_dirty0_i;
-        chosen_set_is_valid_n = chosen_set_n ? valid1_v_i : valid0_v_i;
-        miss_state_n = FLUSH_INSTR_2;
       end
 
       //  Calculate evict_address.
       //  If AINV or AFLINV, set valid bit to zero in tag_mem.
       //  We also set dirty bit of the chosen set to zero, and set MRU to the other set.
-      FLUSH_INSTR_2: begin
+      FLUSH_INSTR: begin
+        chosen_set_n = tagfl_op_v_i ? tagfl_set_v : tag_hit1_v_i;
+        chosen_set_is_dirty_n = chosen_set_n ? dirty_i[1] : dirty_i[0];
+        chosen_set_is_valid_n = chosen_set_n ? valid1_v_i : valid0_v_i;
+        chosen_set_o = chosen_set_n;
         tag_we_force_o = ainv_op_v_i | aflinv_op_v_i;
         wipe_v_o = 1'b1;
-        miss_state_n = (~ainv_op_v_i & dirty_and_valid)
+        miss_state_n = (~ainv_op_v_i & (chosen_set_is_dirty_n & chosen_set_is_valid_n))
           ? EVICT_REQUEST_SEND_ADDR
           : FINAL_RECOVER;
       end
