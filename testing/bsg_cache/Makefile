@@ -16,7 +16,7 @@ HIGHLIGHT = grep --color -E '^|Error|Warning|Implicit wire is used|Too few insta
 all: sim
 
 $(TRACE_ROM).v: $(TRACE_FILE)
-	python $(BSG_IP_CORES_DIR)/bsg_mem/bsg_ascii_to_rom.py trace_master_0.tr $(TRACE_ROM) \
+	python $(BSG_IP_CORES_DIR)/bsg_mem/bsg_ascii_to_rom.py $(TRACE_FILE) $(TRACE_ROM) \
 	> $(TRACE_ROM).v
 
 sim: $(TRACE_ROM).v

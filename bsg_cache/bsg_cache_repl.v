@@ -11,8 +11,6 @@ module bsg_cache_repl
   
   ,input [lg_sets_lp-1:0] index_v_i
 
-  ,input miss_minus_recover_v_i
-
   ,input ld_st_set_v_i  // used for load or store
   ,input wipe_set_v_i   // for flush or invalidate
 

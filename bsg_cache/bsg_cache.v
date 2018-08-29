@@ -75,7 +75,6 @@ module bsg_cache
   logic ainv_op, ainv_op_tl_r, ainv_op_v_r;
 
   logic miss_v_r;
-  logic override;
   logic data_mem_free;
   logic tag_hit_0_tl, tag_hit_1_tl;
   logic tag_hit_0_v_r, tag_hit_1_v_r;
@@ -252,7 +251,6 @@ module bsg_cache
 
   assign byte_mask = packet.mask;
 
-  assign override = miss_v_r;
   assign data_mem_free = ~ld_op | miss_v_r;
 
   assign instr_cannot_miss_tl = tagst_op_tl_r | tagla_op_tl_r | taglv_op_tl_r;
@@ -268,7 +266,7 @@ module bsg_cache
 
   assign tag_mask_inval = explicit_set_bit_a;
   assign tag_mask_force = evict_and_fill_set;
-  assign tag_mask_force_or_inval = override ? tag_mask_force : tag_mask_inval;
+  assign tag_mask_force_or_inval = miss_v_r ? tag_mask_force : tag_mask_inval;
   assign tag_mask_force_or_inval_n = ~tag_mask_force_or_inval;
 
   bsg_buf_ctrl #(.width_p(tag_width_lp+1)) tag_mask_buf (
@@ -298,15 +296,15 @@ module bsg_cache
     ? tag_addr_recover
     : tag_addr_force;
 
-  assign tag_addr_final = override 
+  assign tag_addr_final = miss_v_r
     ? tag_addr_force_or_recover
     : tag_addr;
 
-  assign tag_data_in_final = override
+  assign tag_data_in_final = miss_v_r
     ? tag_data_in_force
     : tag_data_in_inval;
 
-  assign tag_we_final = override ? tag_we_force : (tagst_op & v_i & ready_o);
+  assign tag_we_final = miss_v_r ? tag_we_force : (tagst_op & v_i & ready_o);
 
   assign tag_read_op_a = ld_op | st_op | tagfl_op | taglv_op
     | tagla_op | afl_op | aflinv_op | ainv_op; 
@@ -342,7 +340,7 @@ module bsg_cache
     ? data_addr_storebuf
     : data_addr_force_or_recover;
 
-  assign data_addr_final = (override | data_we_storebuf) 
+  assign data_addr_final = (miss_v_r | data_we_storebuf) 
     ? data_addr_force_or_write
     : data_addr;
 
@@ -562,9 +560,6 @@ module bsg_cache
     .clock_i(clock_i)
     ,.reset_i(reset_i)
     ,.index_v_i(addr_v_r[2+lg_block_size_in_words_lp+:lg_sets_lp])
-    //,.index_tl_i(addr_tl_r[2+lg_block_size_in_words_lp+:lg_sets_lp])
-    ,.miss_minus_recover_v_i(in_middle_of_miss)
-    //,.tagged_access_v_i(addr_v_r[0] & word_op_v_r)
     ,.ld_st_set_v_i(just_recovered_r ? evict_and_fill_set : tag_hit_1_v_r)
     ,.wipe_set_v_i(tagst_op_v_r ? explicit_set_bit_v : evict_and_fill_set)
     ,.ld_op_v_i(~miss_v_r & ld_op_v_r)
