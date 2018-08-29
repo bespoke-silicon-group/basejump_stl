@@ -59,10 +59,10 @@ module bsg_cache_miss
   typedef enum logic [2:0] {
     START
     ,FLUSH_INSTR
-    ,FILL_REQUEST_SEND_ADDR
-    ,EVICT_REQUEST_SEND_ADDR
-    ,EVICT_REQUEST_SEND_DATA
-    ,FILL_REQUEST_GET_DATA
+    ,FILL_SEND_ADDR
+    ,EVICT_SEND_ADDR
+    ,EVICT_SEND_DATA
+    ,FILL_GET_DATA
     ,FINAL_RECOVER
   } miss_state_e;
 
@@ -120,13 +120,13 @@ module bsg_cache_miss
         miss_state_n = (v_v_r_i & miss_v_i & flush_instr)
           ? FLUSH_INSTR 
           : ((v_v_r_i & miss_v_i & (ld_op_v_i | st_op_v_i))
-            ? FILL_REQUEST_SEND_ADDR
+            ? FILL_SEND_ADDR
             : START);
       end
       
       // tell dma_engine to send fill request and addr.
       // calculate evict address.
-      FILL_REQUEST_SEND_ADDR: begin
+      FILL_SEND_ADDR: begin
         chosen_set_n = (valid0_v_i ? (valid1_v_i ? ~mru_i : 1'b1) : 1'b0);
         chosen_set_is_dirty_n = chosen_set_n ? dirty_i[1] : dirty_i[0];
         chosen_set_is_valid_n = valid1_v_i & valid0_v_i;
@@ -137,8 +137,8 @@ module bsg_cache_miss
         wipe_v_o = dma_finished_i;
         
         miss_state_n = dma_finished_i
-          ? ((chosen_set_is_dirty_n & chosen_set_is_valid_n) ? EVICT_REQUEST_SEND_ADDR : FILL_REQUEST_GET_DATA)
-          : FILL_REQUEST_SEND_ADDR;
+          ? ((chosen_set_is_dirty_n & chosen_set_is_valid_n) ? EVICT_SEND_ADDR : FILL_GET_DATA)
+          : FILL_SEND_ADDR;
       end
 
       //  Calculate evict_address.
@@ -152,31 +152,31 @@ module bsg_cache_miss
         tag_we_force_o = ainv_op_v_i | aflinv_op_v_i;
         wipe_v_o = 1'b1;
         miss_state_n = (~ainv_op_v_i & (chosen_set_is_dirty_n & chosen_set_is_valid_n))
-          ? EVICT_REQUEST_SEND_ADDR
+          ? EVICT_SEND_ADDR
           : FINAL_RECOVER;
       end
 
       // tell dma_engine to send evict request and addr.
-      EVICT_REQUEST_SEND_ADDR: begin
+      EVICT_SEND_ADDR: begin
         mc_send_evict_req_o = 1'b1;
         mc_pass_addr_o = evict_address_r;
         miss_state_n = dma_finished_i
-          ? EVICT_REQUEST_SEND_DATA
-          : EVICT_REQUEST_SEND_ADDR;
+          ? EVICT_SEND_DATA
+          : EVICT_SEND_ADDR;
       end
       
       // tell dma_engine to send evict line, as soon as write_buffer is empty.
-      EVICT_REQUEST_SEND_DATA: begin
+      EVICT_SEND_DATA: begin
         mc_evict_line_o = storebuf_empty_i;
         miss_state_n = dma_finished_i
-          ? ((tagfl_op_v_i | aflinv_op_v_i | afl_op_v_i) ? FINAL_RECOVER : FILL_REQUEST_GET_DATA)
-          : EVICT_REQUEST_SEND_DATA;
+          ? ((tagfl_op_v_i | aflinv_op_v_i | afl_op_v_i) ? FINAL_RECOVER : FILL_GET_DATA)
+          : EVICT_SEND_DATA;
       end
   
       // tell dma_engine to start filling the cache, as soon as write_buffer is empty.
-      FILL_REQUEST_GET_DATA: begin
+      FILL_GET_DATA: begin
         mc_fill_line_o = storebuf_empty_i;
-        miss_state_n = dma_finished_i ? FINAL_RECOVER : FILL_REQUEST_GET_DATA;
+        miss_state_n = dma_finished_i ? FINAL_RECOVER : FILL_GET_DATA;
       end
 
     

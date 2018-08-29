@@ -59,8 +59,7 @@ module bsg_cache_dma
     REQ_SEND_FILL = 3'd1,
     REQ_SEND_EVICT = 3'd2,
     FILL_LINE = 3'd3,
-    EVICT_LINE = 3'd4,
-    FINISHED = 3'd5
+    EVICT_LINE = 3'd4
   } dma_state_e;
   
   // incoming fill fifo
@@ -161,23 +160,25 @@ module bsg_cache_dma
       
       REQ_SEND_FILL: begin
         dma_state_n = dma_pkt_yumi_i
-          ? FINISHED
+          ? IDLE
           : REQ_SEND_FILL;
         dma_pkt_v_o = 1'b1;
         dma_pkt_cast.write_not_read = 1'b0;
+        finished_o = dma_pkt_yumi_i;
       end
 
       REQ_SEND_EVICT: begin
         dma_state_n = dma_pkt_yumi_i
-          ? FINISHED
+          ? IDLE
           : REQ_SEND_EVICT;
         dma_pkt_v_o = 1'b1;
         dma_pkt_cast.write_not_read = 1'b1;
+        finished_o = dma_pkt_yumi_i;
       end
       
       FILL_LINE: begin
         dma_state_n = (counter_r == (block_size_in_words_p - 1)) & fill_fifo_v_lo
-          ? FINISHED
+          ? IDLE
           : FILL_LINE;
         data_we_force_o = fill_fifo_v_lo;
         fill_fifo_yumi_li = fill_fifo_v_lo;
@@ -185,6 +186,8 @@ module bsg_cache_dma
           ? counter_r + 1
           : counter_r;
         
+        finished_o = (counter_r == (block_size_in_words_p - 1)) & fill_fifo_v_lo;
+
         if (snoop_word_offset_i == counter_r[lg_block_size_in_words_lp-1:0]
           & fill_fifo_v_lo) begin
           snoop_word_o <= dma_rdata;
@@ -193,19 +196,15 @@ module bsg_cache_dma
 
       EVICT_LINE: begin
         dma_state_n = (counter_r == block_size_in_words_p) & evict_fifo_ready_lo
-          ? FINISHED
+          ? IDLE
           : EVICT_LINE;
         counter_n = evict_fifo_ready_lo 
           ? counter_r + 1
           : counter_r;
         evict_fifo_v_li = 1'b1;
         data_re_force_o = evict_fifo_ready_lo & (counter_r != block_size_in_words_p);
-      end
 
-      FINISHED: begin
-        finished_o = 1'b1;
-        dma_state_n = IDLE;
-        counter_n = (lg_block_size_in_words_lp)'(0);
+        finished_o = (counter_r == block_size_in_words_p) & evict_fifo_ready_lo;
       end
     endcase
   end

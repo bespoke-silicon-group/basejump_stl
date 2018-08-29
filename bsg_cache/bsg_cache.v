@@ -131,7 +131,6 @@ module bsg_cache
 
   logic ainv_or_aflinv_op_v;
 
-  logic in_middle_of_miss;
   logic tag_re_final;
   logic tag_en;
 
@@ -219,16 +218,6 @@ module bsg_cache
 
   logic instr_returns_val_v;
 
-  // handshaking
-  //
-  assign ready_o = (v_tl_r & v_v_we)
-    | (~v_tl_r & (v_v_we | (~tagst_op & miss_v_r)));
-
-  assign v_o = v_v_r & (~miss_v_r);
-
-  assign v_v_we = (~miss_v_r) & ((v_v_r & yumi_i) | (~v_v_r));
-  assign v_v_we_o = v_v_we;
-
   // datapath
   //
   `declare_bsg_cache_pkt_s(addr_width_p, 32);
@@ -309,9 +298,7 @@ module bsg_cache
   assign tag_read_op_a = ld_op | st_op | tagfl_op | taglv_op
     | tagla_op | afl_op | aflinv_op | ainv_op; 
 
-  assign in_middle_of_miss = miss_v_r & ~final_recover;
-
-  assign tag_re_final = (tag_read_op_a & ~in_middle_of_miss & v_i) 
+  assign tag_re_final = (tag_read_op_a & ready_o & v_i) 
     | (final_recover & tag_read_op_tl_r & v_tl_r);
 
   assign tag_en = (~reset_i) & (tag_re_final | tag_we_final);
@@ -672,6 +659,16 @@ module bsg_cache
     ,.raw_data_i(raw_data_out)
     ,.finished_o(dma_finished)
   );
+
+  // handshaking
+  //
+  assign ready_o = (v_tl_r & v_v_we)
+    | (~v_tl_r & (v_v_we | (~tagst_op & miss_v_r)));
+
+  assign v_o = v_v_r & (~miss_v_r);
+
+  assign v_v_we = (~miss_v_r) & ((v_v_r & yumi_i) | (~v_v_r));
+  assign v_v_we_o = v_v_we;
 
   // sequential 
   //
