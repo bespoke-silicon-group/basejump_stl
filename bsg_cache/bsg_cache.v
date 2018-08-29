@@ -203,8 +203,7 @@ module bsg_cache
   logic [31:0] data_final;
 
   logic mc_wipe_request_v;
-  logic dirty0;
-  logic dirty1;
+  logic [1:0] dirty;
   //logic write_over_read_v;
   logic mru;
 
@@ -556,14 +555,14 @@ module bsg_cache
 
   // repl
   //
-  bsg_repl #(
+  bsg_cache_repl #(
     .sets_p(sets_p)
     ,.lg_sets_lp(lg_sets_lp)
   ) repl (
     .clock_i(clock_i)
     ,.reset_i(reset_i)
     ,.index_v_i(addr_v_r[2+lg_block_size_in_words_lp+:lg_sets_lp])
-    ,.index_tl_i(addr_tl_r[2+lg_block_size_in_words_lp+:lg_sets_lp])
+    //,.index_tl_i(addr_tl_r[2+lg_block_size_in_words_lp+:lg_sets_lp])
     ,.miss_minus_recover_v_i(in_middle_of_miss)
     //,.tagged_access_v_i(addr_v_r[0] & word_op_v_r)
     ,.ld_st_set_v_i(just_recovered_r ? evict_and_fill_set : tag_hit_1_v_r)
@@ -571,16 +570,15 @@ module bsg_cache
     ,.ld_op_v_i(~miss_v_r & ld_op_v_r)
     ,.st_op_v_i(~miss_v_r & st_op_v_r)
     ,.wipe_v_i(tagst_op_v_r | mc_wipe_request_v)
-    ,.dirty0_o(dirty0)
-    ,.dirty1_o(dirty1)
+    ,.dirty_o(dirty)
     ,.mru_o(mru)
     ,.status_mem_re_i(status_mem_re)
   );
 
 
-  // miss_case
+  // miss handler
   //
-  bsg_miss_case #(
+  bsg_cache_miss #(
     .addr_width_p(addr_width_p)
     ,.tag_width_lp(tag_width_lp)
     ,.lg_sets_lp(lg_sets_lp)
@@ -622,9 +620,8 @@ module bsg_cache
     ,.wipe_v_o(mc_wipe_request_v)
 
     // from repl
-    ,.query_dirty0_i(dirty0)
-    ,.query_dirty1_i(dirty1)
-    ,.query_mru_i(mru)
+    ,.dirty_i(dirty)
+    ,.mru_i(mru)
 
     ,.final_recover_o(final_recover)
     ,.tag_we_force_o(tag_we_force)

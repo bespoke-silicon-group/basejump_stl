@@ -1,8 +1,8 @@
 /**
- *  bsg_repl.v
+ *  bsg_cache_repl.v
  */
 
-module bsg_repl
+module bsg_cache_repl
   #(parameter lg_sets_lp="inv"
     ,parameter sets_p="inv")
 (
@@ -11,7 +11,6 @@ module bsg_repl
   
   ,input [lg_sets_lp-1:0] index_v_i
 
-  ,input [lg_sets_lp-1:0] index_tl_i
   ,input miss_minus_recover_v_i
 
   ,input ld_st_set_v_i  // used for load or store
@@ -24,8 +23,7 @@ module bsg_repl
   ,input status_mem_re_i
 
   // outputs
-  ,output logic dirty0_o
-  ,output logic dirty1_o
+  ,output logic [1:0] dirty_o
   ,output logic mru_o
 );
 
@@ -41,9 +39,7 @@ module bsg_repl
 
   assign replacement_we = wipe_v_i | st_op_v_i | ld_op_v_i;
 
-  assign line_final = (replacement_we | miss_minus_recover_v_i)
-    ? index_v_i
-    : index_tl_i;
+  assign line_final = index_v_i;
 
   assign replacement_mask = {
     (wipe_v_i ? ~wipe_set_v_i : (st_op_v_i ? ~ld_st_set_v_i : 1'b0)),
@@ -62,7 +58,7 @@ module bsg_repl
     ,.w_mask_i(replacement_mask)
     ,.addr_i(line_final)
     ,.data_i(replacement_data_in)
-    ,.data_o({dirty0_o, dirty1_o, mru_o})
+    ,.data_o({dirty_o[0], dirty_o[1], mru_o})
   );
 
 endmodule

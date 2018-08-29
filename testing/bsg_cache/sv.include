@@ -67,8 +67,8 @@ $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_pkg.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_manycore_links_to_cache.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_to_dram_ctrl.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_dma.v
-$BSG_IP_CORES_DIR/bsg_cache/bsg_miss_case.v
-$BSG_IP_CORES_DIR/bsg_cache/bsg_repl.v
+$BSG_IP_CORES_DIR/bsg_cache/bsg_cache_miss.v
+$BSG_IP_CORES_DIR/bsg_cache/bsg_cache_repl.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_store_buffer.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_store_buffer_queue.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache.v
