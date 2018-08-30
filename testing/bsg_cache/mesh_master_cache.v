@@ -78,17 +78,17 @@ module mesh_master_cache
   );
 
   typedef enum logic [2:0] {
-    STORE_TAG = 3'd0
-    ,LOAD_TAG = 3'd1
-    ,STORE_DATA = 3'd2
-    ,LOAD_DATA = 3'd3
-    ,SEND_DONE = 3'd4
+    STORE_TAG
+    ,LOAD_TAG
+    ,STORE_DATA
+    ,LOAD_DATA
+    ,SEND_DONE
   } send_state_e;
 
   typedef enum logic [2:0] {
-    RECV_TAG = 3'd0
-    ,RECV_DATA = 3'd1
-    ,RECV_DONE = 3'd2
+    RECV_TAG
+    ,RECV_DATA
+    ,RECV_DONE
   } recv_state_e;
 
   send_state_e send_state_r, send_state_n;
@@ -114,7 +114,7 @@ module mesh_master_cache
         out_packet_li.y_cord = (y_cord_width_p)'(1);
         out_packet_li.x_cord = (x_cord_width_p)'(0);
         out_packet_li.data = '0;
-        out_packet_li.addr = ((addr_width_p)'(send_tag_cnt_r << 3) + (addr_width_p)'(2**25));
+        out_packet_li.addr = (addr_width_p)'(send_tag_cnt_r << 3) + (addr_width_p)'(2**25);
         out_v_li = ~reset_i;
         send_tag_cnt_n = out_ready_lo
           ? ((send_tag_cnt_r == (sets_p*ways_p-1)) ? '0 : send_tag_cnt_r + 1)
@@ -178,7 +178,7 @@ module mesh_master_cache
     endcase
 
     case (recv_state_r) 
-  
+ 
       RECV_TAG: begin
         recv_state_n = (recv_tag_cnt_r == (sets_p*ways_p-1)) & returned_v_r_lo
           ? RECV_DATA
@@ -243,29 +243,6 @@ module mesh_master_cache
         end
       endcase
     end
-
-    /*
-    if (~reset_i & out_v_li & out_ready_lo) begin
-      case (send_state_r)
-        STORE_TAG: begin
-          $display("[%d] store tag", send_tag_cnt_r);
-        end
-        
-        LOAD_TAG: begin
-          $display("[%d] load tag", send_tag_cnt_r);
-        end
-
-        STORE_DATA: begin
-          $display("[%d] store data", send_mem_cnt_r);
-        end
-
-        LOAD_DATA: begin
-          $display("[%d] load data", send_mem_cnt_r);
-        end
-
-      endcase
-    end
-    */
   end
   // synopsys translate_on 
 
