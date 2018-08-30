@@ -31,8 +31,6 @@ $BSG_IP_CORES_DIR/bsg_misc/bsg_circular_ptr.v
 $BSG_IP_CORES_DIR/bsg_misc/bsg_round_robin_arb.v
 $BSG_IP_CORES_DIR/bsg_misc/bsg_crossbar_o_by_i.v
 $BSG_IP_CORES_DIR/bsg_misc/bsg_mux_one_hot.v
-$BSG_IP_CORES_DIR/bsg_misc/bsg_decode_with_v.v
-$BSG_IP_CORES_DIR/bsg_misc/bsg_decode.v
 $BSG_IP_CORES_DIR/bsg_misc/bsg_counter_up_down.v
 $BSG_IP_CORES_DIR/bsg_misc/bsg_counter_clock_downsample.v
 $BSG_IP_CORES_DIR/bsg_misc/bsg_strobe.v
@@ -64,7 +62,7 @@ $BSG_IP_CORES_DIR/bsg_dram_ctrl/dmc_phy.v
 $BSG_IP_CORES_DIR/bsg_dram_ctrl/dmc_controller.v
 $BSG_IP_CORES_DIR/bsg_dram_ctrl/dmc.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_pkg.v
-$BSG_IP_CORES_DIR/bsg_cache/bsg_manycore_links_to_cache.v
+$BSG_IP_CORES_DIR/bsg_cache/bsg_manycore_link_to_cache.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_to_dram_ctrl.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_dma.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_miss.v
