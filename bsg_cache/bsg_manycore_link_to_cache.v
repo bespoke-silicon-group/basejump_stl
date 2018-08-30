@@ -1,14 +1,13 @@
 /**
  *  bsg_manycore_link_to_cache.v
  *
- *  the last link_sif maps to tag memory, where you can call TAGST, TAGLA.
- * 
  *  @author Tommy Jung
  *
  *  @param addr_width_p address bit-width of global (remote) address.
  *  @param data_width_p data bit-width. (32-bit)
  *  @param x_cord_width_p x-coord bit-width.
  *  @param y_cord_width_p y-coord bit_width.
+ *  @param tag_mem_boundary_p address greater or equal to this maps to TAGST, TAGLA.
  */
 
 `include "bsg_manycore_packet.vh"
@@ -57,6 +56,9 @@ module bsg_manycore_link_to_cache
   logic endpoint_we_lo;
   logic endpoint_returning_v_li;
 
+  logic we_tl_r;
+  logic we_v_r;
+
   // instantiate endpoint_standards.
   // last one maps to tag_mem.
   //
@@ -99,6 +101,7 @@ module bsg_manycore_link_to_cache
     ,.my_y_i(my_y_i)
   );
 
+
   `declare_bsg_cache_pkt_s(cache_addr_width_lp, data_width_p);
   bsg_cache_pkt_s packet_cast;
   assign packet_o = packet_cast;
@@ -118,6 +121,24 @@ module bsg_manycore_link_to_cache
   assign endpoint_yumi_li = endpoint_v_lo & ready_i;
 
   assign yumi_o = v_i;
-  assign endpoint_returning_v_li = v_i; 
+  assign endpoint_returning_v_li = v_i & ~we_v_r; 
+
+
+  always_ff @ (posedge clock_i) begin
+    if (reset_i) begin
+      we_tl_r <= 1'b0;
+      we_v_r <= 1'b0;
+    end
+    else begin
+      if (v_v_we_i) begin
+        we_v_r <= we_tl_r;
+      end
+
+      if (endpoint_v_lo & ready_i) begin
+        we_tl_r <= endpoint_we_lo;
+      end
+    end
+  end
+
 
 endmodule
