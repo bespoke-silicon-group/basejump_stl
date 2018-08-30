@@ -112,9 +112,9 @@ module mesh_master_cache
           : STORE_TAG;
         out_packet_li.op = 2'b01;
         out_packet_li.y_cord = (y_cord_width_p)'(1);
-        out_packet_li.x_cord = (x_cord_width_p)'(1);
+        out_packet_li.x_cord = (x_cord_width_p)'(0);
         out_packet_li.data = '0;
-        out_packet_li.addr = (addr_width_p)'(send_tag_cnt_r << 3);
+        out_packet_li.addr = ((addr_width_p)'(send_tag_cnt_r << 3) + (addr_width_p)'(2**25));
         out_v_li = ~reset_i;
         send_tag_cnt_n = out_ready_lo
           ? ((send_tag_cnt_r == (sets_p*ways_p-1)) ? '0 : send_tag_cnt_r + 1)
@@ -127,9 +127,9 @@ module mesh_master_cache
           : LOAD_TAG;
         out_packet_li.op = 2'b00;
         out_packet_li.y_cord = (y_cord_width_p)'(1);
-        out_packet_li.x_cord = (x_cord_width_p)'(1);
+        out_packet_li.x_cord = (x_cord_width_p)'(0);
         out_packet_li.data = '0;
-        out_packet_li.addr = (addr_width_p)'(send_tag_cnt_r << 3);
+        out_packet_li.addr = (addr_width_p)'(send_tag_cnt_r << 3) + (addr_width_p)'(2**25);
         out_v_li = ~reset_i;
         send_tag_cnt_n = out_ready_lo
           ? ((send_tag_cnt_r == (sets_p*ways_p-1)) ? '0 : send_tag_cnt_r + 1)
