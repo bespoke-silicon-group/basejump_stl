@@ -29,6 +29,8 @@ module bsg_cache_miss
     ,input [1:0] valid_v_i
     ,input [1:0] tag_hit_v_i
 
+    ,input sbuf_empty_i
+
     ,output logic dma_send_fill_addr_o
     ,output logic dma_send_evict_addr_o
     ,output logic dma_get_fill_data_o
@@ -158,7 +160,7 @@ module bsg_cache_miss
         tag_mem_v_o = 1'b1;
         tag_mem_w_o = 1'b1;
         tag_mem_addr_o = addr_index_v;
-        tag_mem_data_o = {2{1'b0,(tag_width_lp)'(0)}};
+        tag_mem_data_o = {2{~(ainv_op_v_i | aflinv_op_v_i),(tag_width_lp)'(0)}};
         tag_mem_w_mask_o = {
           chosen_set_n, (tag_width_lp)'(0)
           ~chosen_set_n, (tag_width_lp)'(0)
@@ -184,7 +186,7 @@ module bsg_cache_miss
       end
 
       SEND_EVICT_DATA: begin
-        dma_send_evict_data_o = 1'b1;
+        dma_send_evict_data_o = sbuf_empty_i;
         dma_set_o = chosen_set_r;
         dma_addr_o = {
           tag_i[chosen_set_r],
@@ -199,7 +201,7 @@ module bsg_cache_miss
       end
       
       GET_FILL_DATA: begin
-        dma_get_fill_data_o = 1'b1;
+        dma_get_fill_data_o = sbuf_empty_i;
         dma_set_o = chosen_set_r;
         dma_addr_o = {
           addr_tag_v,
