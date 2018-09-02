@@ -102,7 +102,7 @@ module bsg_cache_dma
   };
 
   assign data_mem_addr_o = {
-    dma_addr_i[`BSG_SAFE_CLOG2(data_width_p>>3)+lg_block_size_in_words_lp+:lg_sets_lp]
+    dma_addr_i[`BSG_SAFE_CLOG2(data_width_p>>3)+lg_block_size_in_words_lp+:lg_sets_lp],
     counter_r[lg_block_size_in_words_lp-1:0]
   };
   
@@ -110,7 +110,7 @@ module bsg_cache_dma
 
   assign dma_data_o = dma_set_i
     ? data_mem_data_i[data_width_p+:data_width_p]
-    : data_mem_data_i[0+:data_width_p]
+    : data_mem_data_i[0+:data_width_p];
 
 
   // snoop_word offset
@@ -188,6 +188,11 @@ module bsg_cache_dma
 
   // sequential
   //
+  logic snoop_word_we;
+  assign snoop_word_we = (dma_state_r == GET_FILL_DATA)
+    & (snoop_word_offset == counter_r[lg_block_size_in_words_lp-1:0])
+    & in_fifo_v_lo;
+  
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       dma_state_r <= IDLE;
@@ -197,9 +202,7 @@ module bsg_cache_dma
       dma_state_r <= dma_state_n;
       counter_r <= counter_n;
 
-      if (dma_state_r == GET_FILL_DATA
-          & snoop_word_offset == counter_r[lg_block_size_in_words_lp-1:0]
-          & in_fifo_v_lo) begin
+      if (snoop_word_we) begin
         snoop_word_o <= in_fifo_data_lo;
       end 
     end
