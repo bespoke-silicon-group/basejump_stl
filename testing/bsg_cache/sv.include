@@ -62,11 +62,11 @@ $BSG_IP_CORES_DIR/bsg_dram_ctrl/dmc.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_pkg.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_manycore_link_to_cache.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_to_dram_ctrl.v
-$BSG_IP_CORES_DIR/bsg_cache2/bsg_cache_dma.v
-$BSG_IP_CORES_DIR/bsg_cache2/bsg_cache_miss.v
-$BSG_IP_CORES_DIR/bsg_cache2/bsg_cache_sbuf.v
-$BSG_IP_CORES_DIR/bsg_cache2/bsg_cache_sbuf_queue.v
-$BSG_IP_CORES_DIR/bsg_cache2/bsg_cache.v
+$BSG_IP_CORES_DIR/bsg_cache/bsg_cache_dma.v
+$BSG_IP_CORES_DIR/bsg_cache/bsg_cache_miss.v
+$BSG_IP_CORES_DIR/bsg_cache/bsg_cache_sbuf.v
+$BSG_IP_CORES_DIR/bsg_cache/bsg_cache_sbuf_queue.v
+$BSG_IP_CORES_DIR/bsg_cache/bsg_cache.v
 bsg_trace_master_rom.v
 bsg_test_node_client.v
 mesh_master_cache.v
