@@ -10,12 +10,12 @@ module bsg_cache_miss
     ,parameter tag_width_lp="inv"
     ,parameter lg_block_size_in_words_lp="inv"
     ,parameter lg_sets_lp="inv"
+    ,parameter lg_data_mask_width_lp="inv"
   )
   (
     input clk_i
     ,input reset_i
 
-    ,input v_v_i
     ,input miss_v_i
     ,input ld_op_v_i
     ,input st_op_v_i
@@ -44,7 +44,7 @@ module bsg_cache_miss
   
     ,output logic stat_mem_v_o
     ,output logic stat_mem_w_o
-    ,output logic [2:0] stat_mem_addr_o
+    ,output logic [lg_sets_lp-1:0] stat_mem_addr_o
     ,output logic [2:0] stat_mem_data_o
     ,output logic [2:0] stat_mem_w_mask_o
 
@@ -56,6 +56,8 @@ module bsg_cache_miss
  
     ,output logic recover_o
     ,output logic done_o
+  
+    ,output logic chosen_set_o
 
     ,input ack_i
   );
@@ -83,36 +85,40 @@ module bsg_cache_miss
   logic [lg_block_size_in_words_lp-1:0] addr_block_offset_v;
 
   assign flush_op = tagfl_op_v_i | ainv_op_v_i | afl_op_v_i | aflinv_op_v_i;
-  assign addr_index_v = addr_v_i[`BSG_SAFE_CLOG2(data_width_p>>3)+lg_block_size_in_words_lp+:tag_width_lp];
-  assign addr_tag_v = addr_v_i[addr_width_p-1:`BSG_SAFE_CLOG2(data_width_p>>3)+lg_block_size_in_words_lp+tag_width_lp];
-  assign addr_set_v = addr_v_i[lg_sets_lp+lg_block_size_in_words_lp+`BSG_SAFE_CLOG2(data_width_p>>3)];
-  assign addr_block_offset_v = addr_v_i[`BSG_SAFE_CLOG2(data_width_p>>3)+:lg_block_size_in_words_lp];
+  assign addr_index_v
+    = addr_v_i[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
+  assign addr_tag_v
+    = addr_v_i[lg_data_mask_width_lp+lg_block_size_in_words_lp+lg_sets_lp+:tag_width_lp];
+  assign addr_set_v = addr_v_i[lg_sets_lp+lg_block_size_in_words_lp+lg_data_mask_width_lp];
+  assign addr_block_offset_v = addr_v_i[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
+
+  assign chosen_set_o = chosen_set_r;
 
   always_comb begin
+    dma_send_fill_addr_o = 1'b0;
+    dma_send_evict_addr_o = 1'b0;
+    dma_get_fill_data_o = 1'b0;
+    dma_send_evict_data_o = 1'b0;
+    dma_set_o = 1'b0;
+    stat_mem_v_o = 1'b0;
+    stat_mem_w_o = 1'b0;
+    stat_mem_addr_o = '0;
+    stat_mem_data_o = '0;
+    stat_mem_w_mask_o = '0;
+    tag_mem_v_o = 1'b0;
+    tag_mem_w_o = 1'b0;
+    tag_mem_addr_o = '0;
+    tag_mem_data_o = '0;
+    tag_mem_w_mask_o = '0;
+    chosen_set_n = chosen_set_r;
+    recover_o = '0;
+    done_o = '0;
 
     case (miss_state_r)
-      dma_send_fill_addr_o = 1'b0;
-      dma_send_evict_addr_o = 1'b0;
-      dma_get_fill_data_o = 1'b0;
-      dma_send_evict_data_o = 1'b0;
-      dma_set_o = 1'b0;
-      stat_mem_v_o = 1'b0;
-      stat_mem_w_o = 1'b0;
-      stat_mem_addr_o = '0;
-      stat_mem_data_o = '0;
-      stat_mem_w_mask_o = '0;
-      tag_mem_v_o = 1'b0;
-      tag_mem_w_o = 1'b0;
-      tag_mem_addr_o = '0;
-      tag_mem_data_o = '0;
-      tag_mem_mask_o = '0;
-      chosen_set_n = chosen_set_r;
-      recover_o = '0;
-      done_o = '0;
 
       START: begin
         stat_mem_v_o = 1'b1;
-        miss_state_n = (v_v_i & miss_v_i & flush_op)
+        miss_state_n = miss_v_i
           ? (flush_op ? FLUSH_OP : SEND_FILL_ADDR)
           : START;
       end
@@ -125,7 +131,7 @@ module bsg_cache_miss
        
         dma_addr_o = {
           addr_tag_v, addr_index_v,
-          (`BSG_SAFE_CLOG2(data_width_p>>3)+lg_block_size_in_words_lp)'(0)
+          (lg_data_mask_width_lp+lg_block_size_in_words_lp)'(0)
         };
 
         stat_mem_v_o = dma_done_i;
@@ -162,11 +168,11 @@ module bsg_cache_miss
         tag_mem_addr_o = addr_index_v;
         tag_mem_data_o = {2{~(ainv_op_v_i | aflinv_op_v_i),(tag_width_lp)'(0)}};
         tag_mem_w_mask_o = {
-          chosen_set_n, (tag_width_lp)'(0)
+          chosen_set_n, (tag_width_lp)'(0),
           ~chosen_set_n, (tag_width_lp)'(0)
         };
        
-        miss_state_n = (~ainv_op_i & dirty_i[chosen_set_n] & valid_v_i[chosen_set_n])
+        miss_state_n = (~ainv_op_v_i & dirty_i[chosen_set_n] & valid_v_i[chosen_set_n])
           ? SEND_EVICT_ADDR
           : RECOVER;
       end
@@ -174,7 +180,7 @@ module bsg_cache_miss
       SEND_EVICT_ADDR: begin
         dma_send_evict_addr_o = 1'b1;
         dma_addr_o = {
-          tag_i[chosen_set_r],
+          tag_v_i[chosen_set_r],
           addr_index_v,
           (`BSG_SAFE_CLOG2(addr_width_p>>3)+lg_block_size_in_words_lp)'(0)
         };
@@ -189,7 +195,7 @@ module bsg_cache_miss
         dma_send_evict_data_o = sbuf_empty_i;
         dma_set_o = chosen_set_r;
         dma_addr_o = {
-          tag_i[chosen_set_r],
+          tag_v_i[chosen_set_r],
           addr_index_v,
           (`BSG_SAFE_CLOG2(addr_width_p>>3)+lg_block_size_in_words_lp)'(0)
         };
@@ -207,7 +213,7 @@ module bsg_cache_miss
           addr_tag_v,
           addr_index_v,
           addr_block_offset_v,
-          (`BSG_SAFE_CLOG2(addr_width_p>>3)'(0)
+          (`BSG_SAFE_CLOG2(addr_width_p>>3))'(0)
         };
 
         miss_state_n = dma_done_i

@@ -50,11 +50,11 @@ module bsg_test_node_client
     ,.data_width_p(32)
     ,.block_size_in_words_p(8)
     ,.sets_p(512)
-  ) dcache0 (
-    .clock_i(clock_i)
+  ) cache (
+    .clk_i(clock_i)
     ,.reset_i(reset_i)
 
-    ,.packet_i(packet)
+    ,.cache_pkt_i(packet)
     ,.v_i(v_i)
     ,.ready_o(ready_o)
 
@@ -62,7 +62,7 @@ module bsg_test_node_client
     ,.yumi_i(yumi_i)
     ,.data_o(dc_data_o)
 
-    ,.v_v_we_o()
+    ,.v_we_o()
 
     ,.dma_pkt_o(dma_pkt)
     ,.dma_pkt_v_o(dma_pkt_v_lo)

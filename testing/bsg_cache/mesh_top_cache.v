@@ -153,13 +153,13 @@ module mesh_top_cache
   // cache-side signals
   //
   `declare_bsg_cache_pkt_s(cache_addr_width_lp, data_width_p);
-  bsg_cache_pkt_s cache_packet;
+  bsg_cache_pkt_s cache_pkt;
   logic link_to_cache_v_lo;
   logic link_to_cache_yumi_lo;
   logic cache_ready_lo;
   logic [data_width_p-1:0] cache_data_lo;
   logic cache_v_lo;
-  logic cache_v_v_we_lo;
+  logic cache_v_we_lo;
 
   // link_to_cache
   //
@@ -177,7 +177,7 @@ module mesh_top_cache
     ,.link_sif_i(router_link_sif_lo[0][bsg_noc_pkg::S])
     ,.link_sif_o(router_link_sif_li[0][bsg_noc_pkg::S])
 
-    ,.packet_o(cache_packet)
+    ,.packet_o(cache_pkt)
     ,.v_o(link_to_cache_v_lo)
     ,.ready_i(cache_ready_lo)
 
@@ -185,7 +185,7 @@ module mesh_top_cache
     ,.v_i(cache_v_lo)
     ,.yumi_o(link_to_cache_yumi_lo)
 
-    ,.v_v_we_i(cache_v_v_we_lo)
+    ,.v_v_we_i(cache_v_we_lo)
   ); 
   
   // cache
@@ -209,10 +209,10 @@ module mesh_top_cache
     ,.block_size_in_words_p(8)
     ,.sets_p(sets_p)
   ) cache (
-    .clock_i(clock_i)
+    .clk_i(clock_i)
     ,.reset_i(reset_i)
 
-    ,.packet_i(cache_packet)
+    ,.cache_pkt_i(cache_pkt)
     ,.v_i(link_to_cache_v_lo)
     ,.ready_o(cache_ready_lo)
 
@@ -220,7 +220,7 @@ module mesh_top_cache
     ,.v_o(cache_v_lo)
     ,.yumi_i(link_to_cache_yumi_lo)
 
-    ,.v_v_we_o(cache_v_v_we_lo)
+    ,.v_we_o(cache_v_we_lo)
 
     ,.dma_pkt_o(dma_pkt)
     ,.dma_pkt_v_o(dma_pkt_v_lo)
