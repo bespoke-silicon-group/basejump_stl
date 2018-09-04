@@ -119,7 +119,7 @@ if (test_mode_lp == 0) begin // FSB testing
   );
 
   bsg_test_node_client tnc (
-    .clock_i(clk)
+    .clk_i(clk)
     ,.reset_i(node_rst)
     ,.en_i(node_en)
 
@@ -169,13 +169,13 @@ else if (test_mode_lp == 1) begin // manycore end-to-end testing
     ,.dram_data_width_p(128)
     ,.mem_size_p(2**12) // in words
   ) mtop_cache (
-    .clock_i(clk)
+    .clk_i(clk)
     ,.reset_i(rst)
     ,.dram_ctrl_if(dram_ctrl_if)
     ,.finish_o(finish_lo)
   );
 
-localparam dmc = 1;
+localparam dmc = 0;
 if (dmc == 1) begin
   localparam dfi_data_width_lp = 32;
 
@@ -303,7 +303,7 @@ else begin
     ,.burst_len_p(1)
     ,.mem_size_p(2**14)
   ) mdc (
-    .clock_i(clk)
+    .clk_i(clk)
     ,.reset_i(rst)
     ,.dram_ctrl_if(dram_ctrl_if)
   );

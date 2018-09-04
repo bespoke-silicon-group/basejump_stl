@@ -12,9 +12,10 @@ module mesh_master_cache
     ,parameter sets_p="inv"
     ,parameter ways_p="inv"
     ,parameter mem_size_p="inv"
+    ,parameter id_p="inv"
     ,parameter link_sif_width_lp=`bsg_manycore_link_sif_width(addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p))
 (
-  input clock_i
+  input clk_i
   ,input reset_i
 
   ,input [link_sif_width_lp-1:0] link_sif_i
@@ -22,6 +23,9 @@ module mesh_master_cache
 
   ,input [x_cord_width_p-1:0] my_x_i
   ,input [y_cord_width_p-1:0] my_y_i
+
+  ,input [x_cord_width_p-1:0] dest_x_i
+  ,input [y_cord_width_p-1:0] dest_y_i
   
   ,output logic finish_o
 );
@@ -46,7 +50,7 @@ module mesh_master_cache
     ,.addr_width_p(addr_width_p)
     ,.max_out_credits_p(16)
   ) dram_endpoint_standard (
-    .clk_i(clock_i)
+    .clk_i(clk_i)
     ,.reset_i(reset_i)
     
     ,.link_sif_i(link_sif_i)
@@ -99,6 +103,10 @@ module mesh_master_cache
   logic [31:0] recv_tag_cnt_r, recv_tag_cnt_n;
   logic [31:0] recv_mem_cnt_r, recv_mem_cnt_n;
 
+
+  assign out_packet_li.y_cord = (y_cord_width_p)'(dest_y_i);
+  assign out_packet_li.x_cord = (x_cord_width_p)'(dest_x_i);
+
   always_comb begin
     send_tag_cnt_n = send_tag_cnt_r;
     send_mem_cnt_n = send_mem_cnt_r;
@@ -111,8 +119,6 @@ module mesh_master_cache
           ? LOAD_TAG
           : STORE_TAG;
         out_packet_li.op = 2'b01;
-        out_packet_li.y_cord = (y_cord_width_p)'(1);
-        out_packet_li.x_cord = (x_cord_width_p)'(0);
         out_packet_li.data = '0;
         out_packet_li.addr = (addr_width_p)'(send_tag_cnt_r << 3) + (addr_width_p)'(2**25);
         out_v_li = ~reset_i;
@@ -126,8 +132,6 @@ module mesh_master_cache
           ? STORE_DATA
           : LOAD_TAG;
         out_packet_li.op = 2'b00;
-        out_packet_li.y_cord = (y_cord_width_p)'(1);
-        out_packet_li.x_cord = (x_cord_width_p)'(0);
         out_packet_li.data = '0;
         out_packet_li.addr = (addr_width_p)'(send_tag_cnt_r << 3) + (addr_width_p)'(2**25);
         out_v_li = ~reset_i;
@@ -141,8 +145,6 @@ module mesh_master_cache
           ? LOAD_DATA
           : STORE_DATA;
         out_packet_li.op = 2'b01;
-        out_packet_li.y_cord = (y_cord_width_p)'(1);
-        out_packet_li.x_cord = (x_cord_width_p)'(0);
         out_packet_li.data = send_mem_cnt_r;
         out_packet_li.addr = (addr_width_p)'(send_mem_cnt_r);
         out_v_li = ~reset_i;
@@ -156,8 +158,6 @@ module mesh_master_cache
           ? SEND_DONE
           : LOAD_DATA;
         out_packet_li.op = 2'b00;
-        out_packet_li.y_cord = (y_cord_width_p)'(1);
-        out_packet_li.x_cord = (x_cord_width_p)'(0);
         out_packet_li.data = '0;
         out_packet_li.addr = (addr_width_p)'(send_mem_cnt_r);
         out_v_li = ~reset_i;
@@ -169,8 +169,6 @@ module mesh_master_cache
       SEND_DONE: begin
         send_state_n = SEND_DONE;
         out_packet_li.op = 2'b00;
-        out_packet_li.y_cord = (y_cord_width_p)'(0);
-        out_packet_li.x_cord = (x_cord_width_p)'(0);
         out_packet_li.data = '0;
         out_packet_li.addr = '0;
         out_v_li = 0;
@@ -207,7 +205,7 @@ module mesh_master_cache
 
   assign finish_o = (send_state_r == SEND_DONE) & (recv_state_r == RECV_DONE);
 
-  always_ff @ (posedge clock_i) begin
+  always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       send_state_r <= STORE_TAG;
       send_tag_cnt_r <= '0;
@@ -231,15 +229,17 @@ module mesh_master_cache
 
   // monitor incoming and outgoing packets. 
   // synopsys translate_off
-  always_ff @ (negedge clock_i) begin
+  always_ff @ (negedge clk_i) begin
     if (~reset_i & returned_v_r_lo) begin
       case (recv_state_r)
         RECV_TAG: begin
-          $display("[%d] recv_tag: %d", recv_tag_cnt_r, returned_data_r_lo[2+3+:`BSG_SAFE_CLOG2(sets_p)]);
+          $display("[%d] id: %d, recv_tag: %d",
+            id_p, recv_tag_cnt_r, returned_data_r_lo[2+3+:`BSG_SAFE_CLOG2(sets_p)]);
         end
 
         RECV_DATA: begin
-          $display("[%d] recv_mem: %d", recv_mem_cnt_r, returned_data_r_lo);
+          $display("[%d] id: %d, recv_mem: %d",
+            id_p, recv_mem_cnt_r, returned_data_r_lo);
         end
       endcase
     end

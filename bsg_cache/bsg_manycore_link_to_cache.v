@@ -27,7 +27,7 @@ module bsg_manycore_link_to_cache
     ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(cache_addr_width_lp,data_width_p)
     ,parameter packet_width_lp=`bsg_manycore_packet_width(addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p))
 (
-  input clock_i
+  input clk_i
   ,input reset_i
 
   // manycore-side
@@ -45,7 +45,7 @@ module bsg_manycore_link_to_cache
   ,input v_i
   ,output logic yumi_o
 
-  ,input v_v_we_i
+  ,input v_we_i
 );
 
   logic endpoint_v_lo;
@@ -70,7 +70,7 @@ module bsg_manycore_link_to_cache
     ,.addr_width_p(addr_width_p)
     ,.max_out_credits_p(max_out_credits_lp)
   ) dram_endpoint_standard (
-    .clk_i(clock_i)
+    .clk_i(clk_i)
     ,.reset_i(reset_i)
      
     ,.link_sif_i(link_sif_i)
@@ -124,13 +124,13 @@ module bsg_manycore_link_to_cache
   assign endpoint_returning_v_li = v_i & ~we_v_r; 
 
 
-  always_ff @ (posedge clock_i) begin
+  always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       we_tl_r <= 1'b0;
       we_v_r <= 1'b0;
     end
     else begin
-      if (v_v_we_i) begin
+      if (v_we_i) begin
         we_v_r <= we_tl_r;
       end
 
