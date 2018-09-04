@@ -205,6 +205,7 @@ module bsg_cache_dma
       if (snoop_word_we) begin
         snoop_word_o <= in_fifo_data_lo;
       end 
+      //$display("state: %d, counter: %d", dma_state_r, counter_r);
     end
   end
 

@@ -399,7 +399,6 @@ module bsg_cache
     ,.reset_i(reset_i)
     
     ,.miss_v_i(miss_v)
-    ,.ld_op_v_i(ld_op_v_r)
     ,.st_op_v_i(st_op_v_r)
     ,.tagfl_op_v_i(tagfl_op_v_r)
     ,.afl_op_v_i(afl_op_v_r)

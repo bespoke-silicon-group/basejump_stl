@@ -17,7 +17,6 @@ module bsg_cache_miss
     ,input reset_i
 
     ,input miss_v_i
-    ,input ld_op_v_i
     ,input st_op_v_i
     ,input tagfl_op_v_i
     ,input afl_op_v_i

@@ -12,7 +12,7 @@ module mock_dram_ctrl
     ,parameter lg_burst_len_lp=`BSG_SAFE_CLOG2(burst_len_p)
     ,parameter mask_width_lp=data_width_p>>3)
 (
-  input clock_i
+  input clk_i
   ,input reset_i
   ,bsg_dram_ctrl_if.slave dram_ctrl_if
 );
@@ -95,7 +95,7 @@ module mock_dram_ctrl
     endcase
   end
 
-  always_ff @ (posedge clock_i) begin
+  always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       wr_state_r <= IDLE;
       wr_addr_r <= '0;

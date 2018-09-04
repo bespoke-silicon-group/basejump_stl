@@ -10,7 +10,7 @@ module bsg_test_node_client
   import bsg_dram_ctrl_pkg::*;
   #(parameter id_p="inv")
 (
-  input clock_i
+  input clk_i
   ,input reset_i
   ,input en_i
 
@@ -51,7 +51,7 @@ module bsg_test_node_client
     ,.block_size_in_words_p(8)
     ,.sets_p(512)
   ) cache (
-    .clk_i(clock_i)
+    .clk_i(clk_i)
     ,.reset_i(reset_i)
 
     ,.cache_pkt_i(packet)
@@ -81,17 +81,19 @@ module bsg_test_node_client
     .addr_width_p(32)
     ,.data_width_p(128)
   ) dram_if (
-    .clk_i(clock_i)
+    .clk_i(clk_i)
   );
 
   bsg_cache_to_dram_ctrl #(
     .addr_width_p(32)
     ,.block_size_in_words_p(8)
-    ,.cache_word_width_p(32)
+    ,.data_width_p(32)
     ,.burst_len_p(1)
     ,.burst_width_p(128)
+    ,.num_cache_p(1)
+    ,.dram_boundary_p(2**27)
   ) cache_to_dram_ctrl (
-    .clock_i(clock_i)
+    .clk_i(clk_i)
     ,.reset_i(reset_i)
    
     ,.dma_pkt_i(dma_pkt)
@@ -115,7 +117,7 @@ module bsg_test_node_client
     ,.burst_len_p(1)
     ,.mem_size_p(4096)
   ) dram_ctrl (
-    .clock_i(clock_i)
+    .clk_i(clk_i)
     ,.reset_i(reset_i)
     ,.dram_ctrl_if(dram_if)
   );
