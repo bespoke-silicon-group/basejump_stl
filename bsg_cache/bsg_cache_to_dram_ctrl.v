@@ -178,7 +178,7 @@ module bsg_cache_to_dram_ctrl
     endcase
   end
 
-  assign dram_ctrl_if.app_addr = {rr_tag_lo, addr_r[0+:lg_dram_boundary_lp]};
+  assign dram_ctrl_if.app_addr = {tag_r, addr_r[0+:lg_dram_boundary_lp]};
 
   assign dram_ctrl_if.app_hi_pri = 1'b1;
   assign dram_ctrl_if.app_ref_req = 1'b0;

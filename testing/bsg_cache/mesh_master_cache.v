@@ -120,7 +120,7 @@ module mesh_master_cache
           : STORE_TAG;
         out_packet_li.op = 2'b01;
         out_packet_li.data = '0;
-        out_packet_li.addr = (addr_width_p)'(send_tag_cnt_r << 3) + (addr_width_p)'(2**25);
+        out_packet_li.addr = (addr_width_p)'(send_tag_cnt_r << 3) + (addr_width_p)'(2**24);
         out_v_li = ~reset_i;
         send_tag_cnt_n = out_ready_lo
           ? ((send_tag_cnt_r == (sets_p*ways_p-1)) ? '0 : send_tag_cnt_r + 1)
@@ -133,7 +133,7 @@ module mesh_master_cache
           : LOAD_TAG;
         out_packet_li.op = 2'b00;
         out_packet_li.data = '0;
-        out_packet_li.addr = (addr_width_p)'(send_tag_cnt_r << 3) + (addr_width_p)'(2**25);
+        out_packet_li.addr = (addr_width_p)'(send_tag_cnt_r << 3) + (addr_width_p)'(2**24);
         out_v_li = ~reset_i;
         send_tag_cnt_n = out_ready_lo
           ? ((send_tag_cnt_r == (sets_p*ways_p-1)) ? '0 : send_tag_cnt_r + 1)
@@ -145,7 +145,7 @@ module mesh_master_cache
           ? LOAD_DATA
           : STORE_DATA;
         out_packet_li.op = 2'b01;
-        out_packet_li.data = send_mem_cnt_r;
+        out_packet_li.data = send_mem_cnt_r + (((32)'(id_p)) << `BSG_SAFE_CLOG2(mem_size_p));
         out_packet_li.addr = (addr_width_p)'(send_mem_cnt_r);
         out_v_li = ~reset_i;
         send_mem_cnt_n = out_ready_lo

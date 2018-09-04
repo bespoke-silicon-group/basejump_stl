@@ -28,7 +28,7 @@ module mesh_top_cache
   ,output logic finish_o
 );
 
-  localparam nodes_lp = 2;
+  localparam nodes_lp = 4;
 
   logic [nodes_lp-1:0][bsg_noc_pkg::S:bsg_noc_pkg::W][link_sif_width_lp-1:0] router_link_sif_li, router_link_sif_lo;
   logic [nodes_lp-1:0][link_sif_width_lp-1:0] proc_link_sif_li, proc_link_sif_lo;
@@ -51,10 +51,14 @@ module mesh_top_cache
       ,.my_x_i(x_cord_width_p'(i))
       ,.my_y_i(y_cord_width_p'(0))
     );
+    if (i != nodes_lp-1) begin
+      assign router_link_sif_li[i][bsg_noc_pkg::E] = router_link_sif_lo[i+1][bsg_noc_pkg::W];
+    end
+    if (i != 0) begin
+      assign router_link_sif_li[i][bsg_noc_pkg::W] = router_link_sif_lo[i-1][bsg_noc_pkg::E];
+    end
   end 
 
-  assign router_link_sif_li[0][bsg_noc_pkg::E] = router_link_sif_lo[1][bsg_noc_pkg::W];
-  assign router_link_sif_li[1][bsg_noc_pkg::W] = router_link_sif_lo[0][bsg_noc_pkg::E];
  
   logic [nodes_lp-1:0] master_finish; 
   for (i = 0; i < nodes_lp; i++) begin
@@ -87,53 +91,48 @@ module mesh_top_cache
   assign finish_o = &master_finish;
 
   // tieoff
-  bsg_manycore_link_sif_tieoff #(
-    .addr_width_p(link_addr_width_lp)
-    ,.data_width_p(data_width_p)
-    ,.x_cord_width_p(x_cord_width_p)
-    ,.y_cord_width_p(y_cord_width_p)
-  ) node00_w_tieoff (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.link_sif_i(router_link_sif_lo[0][bsg_noc_pkg::W])
-    ,.link_sif_o(router_link_sif_li[0][bsg_noc_pkg::W])
-  );
+  for (i = 0; i < nodes_lp; i++) begin
+    if (i == 0) begin
+      bsg_manycore_link_sif_tieoff #(
+        .addr_width_p(link_addr_width_lp)
+        ,.data_width_p(data_width_p)
+        ,.x_cord_width_p(x_cord_width_p)
+        ,.y_cord_width_p(y_cord_width_p)
+      ) node_w_tieoff (
+        .clk_i(clk_i)
+        ,.reset_i(reset_i)
+        ,.link_sif_i(router_link_sif_lo[0][bsg_noc_pkg::W])
+        ,.link_sif_o(router_link_sif_li[0][bsg_noc_pkg::W])
+      );
+    end
 
-  bsg_manycore_link_sif_tieoff #(
-    .addr_width_p(link_addr_width_lp)
-    ,.data_width_p(data_width_p)
-    ,.x_cord_width_p(x_cord_width_p)
-    ,.y_cord_width_p(y_cord_width_p)
-  ) node00_n_tieoff (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.link_sif_i(router_link_sif_lo[0][bsg_noc_pkg::N])
-    ,.link_sif_o(router_link_sif_li[0][bsg_noc_pkg::N])
-  );
+    bsg_manycore_link_sif_tieoff #(
+      .addr_width_p(link_addr_width_lp)
+      ,.data_width_p(data_width_p)
+      ,.x_cord_width_p(x_cord_width_p)
+      ,.y_cord_width_p(y_cord_width_p)
+    ) node_n_tieoff (
+      .clk_i(clk_i)
+      ,.reset_i(reset_i)
+      ,.link_sif_i(router_link_sif_lo[i][bsg_noc_pkg::N])
+      ,.link_sif_o(router_link_sif_li[i][bsg_noc_pkg::N])
+    );
+  
+    if (i == nodes_lp-1) begin
+      bsg_manycore_link_sif_tieoff #(
+        .addr_width_p(link_addr_width_lp)
+        ,.data_width_p(data_width_p)
+        ,.x_cord_width_p(x_cord_width_p)
+        ,.y_cord_width_p(y_cord_width_p)
+      ) node_e_tieoff (
+        .clk_i(clk_i)
+        ,.reset_i(reset_i)
+        ,.link_sif_i(router_link_sif_lo[i][bsg_noc_pkg::E])
+        ,.link_sif_o(router_link_sif_li[i][bsg_noc_pkg::E])
+      );
+    end
 
-  bsg_manycore_link_sif_tieoff #(
-    .addr_width_p(link_addr_width_lp)
-    ,.data_width_p(data_width_p)
-    ,.x_cord_width_p(x_cord_width_p)
-    ,.y_cord_width_p(y_cord_width_p)
-  ) node11_n_tieoff (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.link_sif_i(router_link_sif_lo[1][bsg_noc_pkg::N])
-    ,.link_sif_o(router_link_sif_li[1][bsg_noc_pkg::N])
-  );
-
-  bsg_manycore_link_sif_tieoff #(
-    .addr_width_p(link_addr_width_lp)
-    ,.data_width_p(data_width_p)
-    ,.x_cord_width_p(x_cord_width_p)
-    ,.y_cord_width_p(y_cord_width_p)
-  ) node11_e_tieoff (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.link_sif_i(router_link_sif_lo[1][bsg_noc_pkg::E])
-    ,.link_sif_o(router_link_sif_li[1][bsg_noc_pkg::E])
-  );
+  end
 
   // cache-side signals
   //
@@ -154,7 +153,7 @@ module mesh_top_cache
       ,.data_width_p(data_width_p)
       ,.x_cord_width_p(x_cord_width_p)
       ,.y_cord_width_p(y_cord_width_p)
-      ,.tag_mem_boundary_p(2**24)
+      ,.tag_mem_boundary_p(2**9)
     ) link_to_cache (
       .clk_i(clk_i)
       ,.reset_i(reset_i)
@@ -234,7 +233,7 @@ module mesh_top_cache
     ,.burst_len_p(1)
     ,.burst_width_p(dram_data_width_p)
     ,.num_cache_p(nodes_lp)
-    ,.dram_boundary_p(2**25)
+    ,.dram_boundary_p(2**11)
   ) cache_to_dram_ctrl (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
