@@ -736,6 +736,7 @@ module bsg_cache
 
 
   // store buffer
+  //
   assign sbuf_v_li = st_op_v_r & v_o & yumi_i;
   assign sbuf_set_li = miss_v ? chosen_set_lo : tag_hit_v[1];
   assign sbuf_yumi_li = sbuf_v_lo & (~(ld_op & v_i) | (miss_v & ~miss_done_lo & ~recover_lo)); 

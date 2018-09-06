@@ -153,7 +153,7 @@ module mesh_top_cache
       ,.data_width_p(data_width_p)
       ,.x_cord_width_p(x_cord_width_p)
       ,.y_cord_width_p(y_cord_width_p)
-      ,.tag_mem_boundary_p(2**9)
+      ,.tag_mem_boundary_p(2**14)
     ) link_to_cache (
       .clk_i(clk_i)
       ,.reset_i(reset_i)
@@ -162,7 +162,7 @@ module mesh_top_cache
       ,.link_sif_i(router_link_sif_lo[i][bsg_noc_pkg::S])
       ,.link_sif_o(router_link_sif_li[i][bsg_noc_pkg::S])
 
-      ,.packet_o(cache_pkt[i])
+      ,.cache_pkt_o(cache_pkt[i])
       ,.v_o(link_to_cache_v_lo[i])
       ,.ready_i(cache_ready_lo[i])
 
@@ -233,7 +233,7 @@ module mesh_top_cache
     ,.burst_len_p(1)
     ,.burst_width_p(dram_data_width_p)
     ,.num_cache_p(nodes_lp)
-    ,.dram_boundary_p(2**11)
+    ,.dram_boundary_p(2**16)
   ) cache_to_dram_ctrl (
     .clk_i(clk_i)
     ,.reset_i(reset_i)

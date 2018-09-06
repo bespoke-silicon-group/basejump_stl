@@ -37,7 +37,7 @@ module bsg_manycore_link_to_cache
   ,output logic [link_sif_width_lp-1:0] link_sif_o
 
   // cache-side
-  ,output [bsg_cache_pkt_width_lp-1:0] packet_o
+  ,output [bsg_cache_pkt_width_lp-1:0] cache_pkt_o
   ,output logic v_o
   ,input ready_i
 
@@ -104,7 +104,7 @@ module bsg_manycore_link_to_cache
 
   `declare_bsg_cache_pkt_s(cache_addr_width_lp, data_width_p);
   bsg_cache_pkt_s packet_cast;
-  assign packet_o = packet_cast;
+  assign cache_pkt_o = packet_cast;
   assign packet_cast.sigext = 1'b0;
   assign packet_cast.mask = endpoint_mask_lo;
   assign packet_cast.opcode = (endpoint_addr_lo >= (addr_width_p)'(tag_mem_boundary_p))

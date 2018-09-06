@@ -167,7 +167,7 @@ else if (test_mode_lp == 1) begin // manycore end-to-end testing
     ,.sets_p(2**5)
     ,.data_width_p(32)
     ,.dram_data_width_p(128)
-    ,.mem_size_p(512) // in words
+    ,.mem_size_p(2**10) // in words
   ) mtop_cache (
     .clk_i(clk)
     ,.reset_i(rst)
