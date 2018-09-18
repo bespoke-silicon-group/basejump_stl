@@ -50,6 +50,7 @@ module bsg_mem_1r1w #(parameter width_p=-1
      else `bsg_mem_1r1w_macro(4,64)
      else `bsg_mem_1r1w_macro(4,66)
      else `bsg_mem_1r1w_macro(4,68)
+     else `bsg_mem_1r1w_macro(4,80)
      else `bsg_mem_1r1w_macro(2,1)
      else `bsg_mem_1r1w_macro(2,2)
      else `bsg_mem_1r1w_macro(2,3)
