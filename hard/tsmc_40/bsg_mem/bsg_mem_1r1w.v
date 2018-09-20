@@ -24,7 +24,7 @@
 module bsg_mem_1r1w #(parameter width_p=-1
                       , parameter els_p=-1
                       , parameter read_write_same_addr_p=0
-                      , parameter addr_width_lp=$clog2(els_p)
+                      , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
 		      , parameter harden_p=1)
    (input   w_clk_i
     , input w_reset_i
