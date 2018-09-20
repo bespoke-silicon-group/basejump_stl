@@ -159,5 +159,18 @@ module bsg_dram_clk_gen #
     ,.val_i    ( ds_tag_payload_r.val   )
     ,.clk_r_o  ( div_clk_o              ));
 
+  generate
+    for(i=0;i<num_lines_p;i=i+1) begin:dly_line
+      bsg_dly_line #
+        (.num_adgs_p        ( num_adgs_p            ))
+      dly_line_inst
+        (.bsg_tag_i         ( bsg_osc_tag_i         )
+        ,.bsg_tag_trigger_i ( bsg_osc_trigger_tag_i )
+        ,.async_reset_i     ( async_osc_reset_i     )
+        ,.clk_i             ( dly_clk_i[i]          )
+        ,.clk_o             ( dly_clk_o[i]          ));
+    end
+  endgenerate
+
 endmodule
 
