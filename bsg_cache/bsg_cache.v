@@ -10,6 +10,7 @@
  */
 
 `include "bsg_cache_pkt.vh"
+`include "bsg_cache_dma_pkt.vh"
 
 module bsg_cache
   #(parameter addr_width_p="inv"
