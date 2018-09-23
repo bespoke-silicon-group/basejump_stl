@@ -664,9 +664,6 @@ module bsg_cache
     ? (v_o & yumi_i)
     : 1'b1;
 
-  //assign ready_o = v_tl_r
-  //  ? (v_we & (miss_v ? ~tagst_op : 1'b1))
-  //  : (miss_v ? ~tagst_op : 1'b1);
   logic tl_ready;
   assign tl_ready = miss_v
     ? (~tagst_op & ~miss_tag_mem_v_lo & ~dma_data_mem_v_lo)
@@ -683,7 +680,6 @@ module bsg_cache
 
   assign tag_mem_addr_li = miss_v
     ? (recover_lo ? addr_set_tl : (miss_tag_mem_v_lo ? miss_tag_mem_addr_lo : addr_index))
-    //? (recover_lo ? addr_set_tl : miss_tag_mem_addr_lo)
     : addr_index;
 
   assign tag_mem_w_mask_li = miss_v
