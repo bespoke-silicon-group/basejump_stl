@@ -28,7 +28,6 @@ module bsg_test_node_client
   wire unused = en_i;
   bsg_cache_pkt_s packet;
   assign packet = data_i[73:0]; 
-  logic [31:0] dc_data_o;
 
   `declare_bsg_cache_dma_pkt_s(32);
   bsg_cache_dma_pkt_s dma_pkt;
@@ -43,8 +42,11 @@ module bsg_test_node_client
   logic dma_data_v_lo;
   logic dma_data_yumi_li;
 
-  assign data_o = {48'b0, dc_data_o};
+ 
 
+  logic cache_v_lo;
+  logic cache_yumi_li;
+  logic [31:0] cache_data_lo;
   bsg_cache #(
     .addr_width_p(32)
     ,.data_width_p(32)
@@ -58,9 +60,9 @@ module bsg_test_node_client
     ,.v_i(v_i)
     ,.ready_o(ready_o)
 
-    ,.v_o(v_o)
-    ,.yumi_i(yumi_i)
-    ,.data_o(dc_data_o)
+    ,.v_o(cache_v_lo)
+    ,.yumi_i(cache_yumi_li)
+    ,.data_o(cache_data_lo)
 
     ,.v_we_o()
 
@@ -76,6 +78,31 @@ module bsg_test_node_client
     ,.dma_data_v_o(dma_data_v_lo)
     ,.dma_data_yumi_i(dma_data_yumi_li)
   );
+
+  // put a big fifo at the output.
+  //
+  logic fifo_ready_lo;
+  logic [31:0] fifo_data_lo;
+
+  bsg_fifo_1r1w_large #(
+    .width_p(32)
+    ,.els_p(2**12)
+  ) output_fifo (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    
+    ,.data_i(cache_data_lo)
+    ,.v_i(cache_v_lo)
+    ,.ready_o(fifo_ready_lo)
+    
+    ,.v_o(v_o)
+    ,.data_o(fifo_data_lo)
+    ,.yumi_i(yumi_i)
+  );
+
+  assign cache_yumi_li = cache_v_lo & fifo_ready_lo;
+
+  assign data_o = {48'b0, fifo_data_lo};
 
   bsg_dram_ctrl_if #(
     .addr_width_p(32)
