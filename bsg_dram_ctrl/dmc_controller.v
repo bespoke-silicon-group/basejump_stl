@@ -479,7 +479,7 @@ module dmc_controller #
                endcase
         READ:  case(n_cmd)
                  PRE:     shoot = cmd_tick >= TRTP;
-                 WRITE,
+                 WRITE:   shoot = cmd_tick >= TBL+TCAS-1;
                  READ:    shoot = cmd_tick >= TBL;
 	         default: shoot = 1'b1;
                endcase
