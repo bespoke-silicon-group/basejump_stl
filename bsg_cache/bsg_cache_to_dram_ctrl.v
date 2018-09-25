@@ -24,6 +24,7 @@ module bsg_cache_to_dram_ctrl
     ,parameter burst_width_p="inv"
     ,parameter num_cache_p="inv"
     ,parameter dram_boundary_p="inv"
+    ,parameter dram_addr_width_p="inv"
     ,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
     ,parameter lg_dram_boundary_lp=`BSG_SAFE_CLOG2(dram_boundary_p)
     ,parameter data_width_ratio_lp=burst_width_p/data_width_p
@@ -48,7 +49,31 @@ module bsg_cache_to_dram_ctrl
     ,input [num_cache_p-1:0] dma_data_v_i
     ,output logic [num_cache_p-1:0] dma_data_yumi_o
 
-    ,bsg_dram_ctrl_if.master dram_ctrl_if
+    ,output logic app_en_o
+    ,input app_rdy_i
+    ,output logic app_hi_pri_o
+    ,output eAppCmd app_cmd_o
+    ,output logic [dram_addr_width_p-1:0] app_addr_o
+
+    ,output logic app_wdf_wren_o
+    ,input app_wdf_rdy_i
+    ,output logic [burst_width_p-1:0] app_wdf_data_o
+    ,output logic [(burst_width_p>>3)-1:0] app_wdf_mask_o
+    ,output logic app_wdf_end_o
+
+    ,input app_rd_data_valid_i
+    ,input [burst_width_p-1:0] app_rd_data_i
+    ,input app_rd_data_end_i
+
+    ,output logic app_ref_req_o
+    ,input app_ref_ack_i
+
+    ,output logic app_zq_req_o
+    ,input app_zq_ack_i
+    ,input init_calib_complete_i
+
+    ,output logic app_sr_req_o
+    ,input app_sr_ack_i
   );
 
   // round robin for dma pkts
@@ -97,7 +122,9 @@ module bsg_cache_to_dram_ctrl
     ,.dma_data_o(dma_data_o)
     ,.dma_data_v_o(dma_data_v_o)
     ,.dma_data_ready_i(dma_data_ready_i)
-    ,.dram_ctrl_if(dram_ctrl_if)
+    ,.app_rd_data_valid_i(app_rd_data_valid_i)
+    ,.app_rd_data_i(app_rd_data_i)
+    ,.app_rd_data_end_i(app_rd_data_end_i)
   );
 
   // tx module
@@ -118,7 +145,11 @@ module bsg_cache_to_dram_ctrl
     ,.dma_data_i(dma_data_i)
     ,.dma_data_v_i(dma_data_v_i)
     ,.dma_data_yumi_o(dma_data_yumi_o)
-    ,.dram_ctrl_if(dram_ctrl_if)
+    ,.app_wdf_wren_o(app_wdf_wren_o)
+    ,.app_wdf_rdy_i(app_wdf_rdy_i)
+    ,.app_wdf_data_o(app_wdf_data_o)
+    ,.app_wdf_mask_o(app_wdf_mask_o)
+    ,.app_wdf_end_o(app_wdf_end_o)
   );
 
   // dma request
@@ -134,8 +165,8 @@ module bsg_cache_to_dram_ctrl
   logic [`BSG_SAFE_CLOG2(num_req_lp)-1:0] req_cnt_r, req_cnt_n;
 
   always_comb begin
-    dram_ctrl_if.app_en = 1'b0;
-    dram_ctrl_if.app_cmd = eAppRead;
+    app_en_o = 1'b0;
+    app_cmd_o = eAppRead;
     rr_yumi_li = 1'b0;
     tag_n = tag_r;
     write_not_read_n = write_not_read_r;
@@ -155,35 +186,35 @@ module bsg_cache_to_dram_ctrl
       end
 
       SEND_REQ: begin
-        dram_ctrl_if.app_en = (write_not_read_r
+        app_en_o = (write_not_read_r
           ? tx_ready_lo
           : rx_ready_lo);
-        dram_ctrl_if.app_cmd = write_not_read_r
+        app_cmd_o = write_not_read_r
           ? eAppWrite
           : eAppRead;
 
-        rx_v_li = ~write_not_read_r & rx_ready_lo & dram_ctrl_if.app_rdy;
-        tx_v_li = write_not_read_r & tx_ready_lo & dram_ctrl_if.app_rdy;
+        rx_v_li = ~write_not_read_r & rx_ready_lo & app_rdy_i;
+        tx_v_li = write_not_read_r & tx_ready_lo & app_rdy_i;
 
-        addr_n = (dram_ctrl_if.app_rdy & dram_ctrl_if.app_en)
+        addr_n = (app_rdy_i & app_en_o)
           ? addr_r + (1 << `BSG_SAFE_CLOG2(burst_width_p*burst_len_p/8))
           : addr_r;
-        req_cnt_n = (dram_ctrl_if.app_rdy & dram_ctrl_if.app_en)
+        req_cnt_n = (app_rdy_i & app_en_o)
           ? req_cnt_r + 1
           : req_cnt_r;
-        req_state_n = dram_ctrl_if.app_rdy & dram_ctrl_if.app_en & (req_cnt_r == num_req_lp-1)
+        req_state_n = app_rdy_i & app_en_o & (req_cnt_r == num_req_lp-1)
           ? WAIT
           : SEND_REQ;
       end
     endcase
   end
 
-  assign dram_ctrl_if.app_addr = {tag_r, addr_r[0+:lg_dram_boundary_lp]};
+  assign app_addr_o = {tag_r, addr_r[0+:lg_dram_boundary_lp]};
 
-  assign dram_ctrl_if.app_hi_pri = 1'b1;
-  assign dram_ctrl_if.app_ref_req = 1'b0;
-  assign dram_ctrl_if.app_zq_req = 1'b0;
-  assign dram_ctrl_if.app_sr_req = 1'b0;
+  assign app_hi_pri_o = 1'b1;
+  assign app_ref_req_o = 1'b0;
+  assign app_zq_req_o = 1'b0;
+  assign app_sr_req_o = 1'b0;
 
 
   // sequential

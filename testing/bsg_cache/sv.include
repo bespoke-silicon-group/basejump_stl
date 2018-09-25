@@ -2,7 +2,6 @@ $BSG_IP_CORES_DIR/bsg_noc/bsg_noc_pkg.v
 $BSG_MANYCORE_DIR/v/bsg_manycore_packet.vh
 $BSG_IP_CORES_DIR/bsg_misc/bsg_defines.v
 $BSG_MANYCORE_DIR/v/lpddr1/bsg_dram_ctrl_pkg.v
-$BSG_MANYCORE_DIR/v/lpddr1/bsg_dram_ctrl_if.v
 $BSG_MANYCORE_DIR/v/bsg_manycore_endpoint.v
 $BSG_MANYCORE_DIR/v/bsg_manycore_endpoint_standard.v
 $BSG_MANYCORE_DIR/v/bsg_manycore_link_sif_tieoff.v
