@@ -7,6 +7,7 @@
 
 module mesh_top_cache
   import bsg_cache_pkg::*;
+  import bsg_dram_ctrl_pkg::*;
   #(parameter x_cord_width_p="inv"
     ,parameter y_cord_width_p="inv"
     ,parameter data_width_p="inv"
@@ -23,9 +24,33 @@ module mesh_top_cache
   input clk_i
   ,input reset_i
 
-  ,bsg_dram_ctrl_if.master dram_ctrl_if
-
   ,output logic finish_o
+
+  ,output logic app_en_o
+  ,input app_rdy_i
+  ,output logic app_hi_pri_o
+  ,output eAppCmd app_cmd_o
+  ,output logic [29:0] app_addr_o
+
+  ,output logic app_wdf_wren_o
+  ,input app_wdf_rdy_i
+  ,output logic [dram_data_width_p-1:0] app_wdf_data_o
+  ,output logic [(dram_data_width_p>>3)-1:0] app_wdf_mask_o
+  ,output logic app_wdf_end_o
+
+  ,input app_rd_data_valid_i
+  ,input [dram_data_width_p-1:0] app_rd_data_i
+  ,input app_rd_data_end_i
+
+  ,output logic app_ref_req_o
+  ,input app_ref_ack_i
+
+  ,output logic app_zq_req_o
+  ,input app_zq_ack_i
+  ,input init_calib_complete_i
+
+  ,output logic app_sr_req_o
+  ,input app_sr_ack_i
 );
 
   localparam nodes_lp = 4;
@@ -234,6 +259,7 @@ module mesh_top_cache
     ,.burst_width_p(dram_data_width_p)
     ,.num_cache_p(nodes_lp)
     ,.dram_boundary_p(2**16)
+    ,.dram_addr_width_p(30)
   ) cache_to_dram_ctrl (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -250,7 +276,31 @@ module mesh_top_cache
     ,.dma_data_v_i(dma_data_v_lo)
     ,.dma_data_yumi_o(dma_data_yumi_li)
 
-    ,.dram_ctrl_if(dram_ctrl_if)
+    ,.app_en_o(app_en_o)
+    ,.app_rdy_i(app_rdy_i)
+    ,.app_hi_pri_o(app_hi_pri_o)
+    ,.app_cmd_o(app_cmd_o)
+    ,.app_addr_o(app_addr_o)
+
+    ,.app_wdf_wren_o(app_wdf_wren_o)
+    ,.app_wdf_rdy_i(app_wdf_rdy_i)
+    ,.app_wdf_data_o(app_wdf_data_o)
+    ,.app_wdf_mask_o(app_wdf_mask_o)
+    ,.app_wdf_end_o(app_wdf_end_o)
+
+    ,.app_rd_data_valid_i(app_rd_data_valid_i)
+    ,.app_rd_data_i(app_rd_data_i)
+    ,.app_rd_data_end_i(app_rd_data_end_i)
+
+    ,.app_ref_req_o(app_ref_req_o)
+    ,.app_ref_ack_i(app_ref_ack_i)
+
+    ,.app_zq_req_o(app_zq_req_o)
+    ,.app_zq_ack_i(app_zq_ack_i)
+    ,.init_calib_complete_i(init_calib_complete_i)
+
+    ,.app_sr_req_o(app_sr_req_o)
+    ,.app_sr_ack_i(app_sr_ack_i)
   );
   
 endmodule

@@ -3,7 +3,7 @@
  */
 
 module testbench();
-  
+  import bsg_dram_ctrl_pkg::*; 
   logic clk, rst, dmc_rst;
 
   bsg_nonsynth_clock_gen #(
@@ -152,15 +152,30 @@ else if (test_mode_lp == 1) begin // manycore end-to-end testing
     ,.clk_r_o(dfi_clk)
   ); 
 
-
   logic finish_lo;
-  bsg_dram_ctrl_if #(
-    .addr_width_p(30)
-    ,.data_width_p(128)
-  ) dram_ctrl_if (
-    .clk_i(clk)
-  );
 
+  logic app_en;
+  logic app_rdy;
+  logic app_hi_pri;
+  eAppCmd app_cmd;
+  logic [29:0] app_addr;
+  logic app_wdf_wren;
+  logic app_wdf_rdy;
+  logic [127:0] app_wdf_data;
+  logic [15:0] app_wdf_mask;
+  logic app_wdf_end;
+  logic app_rd_data_valid;
+  logic [127:0] app_rd_data;
+  logic app_rd_data_end;
+  logic app_ref_req;
+  logic app_ref_ack;
+  logic app_zq_req;
+  logic app_zq_ack;
+  logic init_calib_complete;
+  logic app_sr_req;
+  logic app_sr_ack;
+  
+  
   mesh_top_cache #(
     .x_cord_width_p(2)
     ,.y_cord_width_p(2)
@@ -171,8 +186,34 @@ else if (test_mode_lp == 1) begin // manycore end-to-end testing
   ) mtop_cache (
     .clk_i(clk)
     ,.reset_i(rst)
-    ,.dram_ctrl_if(dram_ctrl_if)
+
     ,.finish_o(finish_lo)
+
+    ,.app_en_o(app_en)
+    ,.app_rdy_i(app_rdy)
+    ,.app_hi_pri_o(app_hi_pri)
+    ,.app_cmd_o(app_cmd)
+    ,.app_addr_o(app_addr)
+
+    ,.app_wdf_wren_o(app_wdf_wren)
+    ,.app_wdf_rdy_i(app_wdf_rdy)
+    ,.app_wdf_data_o(app_wdf_data)
+    ,.app_wdf_mask_o(app_wdf_mask)
+    ,.app_wdf_end_o(app_wdf_end)
+
+    ,.app_rd_data_valid_i(app_rd_data_valid)
+    ,.app_rd_data_i(app_rd_data)
+    ,.app_rd_data_end_i(app_rd_data_end)
+
+    ,.app_ref_req_o(app_ref_req)
+    ,.app_ref_ack_i(app_ref_ack)
+
+    ,.app_zq_req_o(app_zq_req)
+    ,.app_zq_ack_i(app_zq_ack)
+    ,.init_calib_complete_i(init_calib_complete)
+
+    ,.app_sr_req_o(app_sr_req)
+    ,.app_sr_ack_i(app_sr_ack)
   );
 
 localparam dmc = 1;
@@ -212,25 +253,25 @@ if (dmc == 1) begin
     .sys_rst(~dmc_rst) // active low!!!
 
     // user interface
-    ,.app_addr(dram_ctrl_if.app_addr>>1) // short address!!!
-    ,.app_cmd(dram_ctrl_if.app_cmd) 
-    ,.app_en(dram_ctrl_if.app_en)
-    ,.app_rdy(dram_ctrl_if.app_rdy)
-    ,.app_wdf_wren(dram_ctrl_if.app_wdf_wren)
-    ,.app_wdf_data(dram_ctrl_if.app_wdf_data)
-    ,.app_wdf_mask(dram_ctrl_if.app_wdf_mask)
-    ,.app_wdf_end(dram_ctrl_if.app_wdf_end)
-    ,.app_wdf_rdy(dram_ctrl_if.app_wdf_rdy)
-    ,.app_rd_data_valid(dram_ctrl_if.app_rd_data_valid)
-    ,.app_rd_data(dram_ctrl_if.app_rd_data)
-    ,.app_rd_data_end(dram_ctrl_if.app_rd_data_end)
-    ,.app_ref_req(dram_ctrl_if.app_ref_req)
-    ,.app_ref_ack(dram_ctrl_if.app_ref_ack)
-    ,.app_zq_req(dram_ctrl_if.app_zq_req)
-    ,.app_zq_ack(dram_ctrl_if.app_zq_ack)
-    ,.app_sr_req(dram_ctrl_if.app_sr_req)
-    ,.app_sr_active(dram_ctrl_if.app_sr_ack)
-    ,.init_calib_complete(dram_ctrl_if.init_calib_complete)
+    ,.app_addr(app_addr>>1) // short address!!!
+    ,.app_cmd(app_cmd) 
+    ,.app_en(app_en)
+    ,.app_rdy(app_rdy)
+    ,.app_wdf_wren(app_wdf_wren)
+    ,.app_wdf_data(app_wdf_data)
+    ,.app_wdf_mask(app_wdf_mask)
+    ,.app_wdf_end(app_wdf_end)
+    ,.app_wdf_rdy(app_wdf_rdy)
+    ,.app_rd_data_valid(app_rd_data_valid)
+    ,.app_rd_data(app_rd_data)
+    ,.app_rd_data_end(app_rd_data_end)
+    ,.app_ref_req(app_ref_req)
+    ,.app_ref_ack(app_ref_ack)
+    ,.app_zq_req(app_zq_req)
+    ,.app_zq_ack(app_zq_ack)
+    ,.app_sr_req(app_sr_req)
+    ,.app_sr_active(app_sr_ack)
+    ,.init_calib_complete(init_calib_complete)
 
     // DDR interface
     ,.ddr_ck_p(ddr_ck_p)
@@ -305,7 +346,30 @@ else begin
   ) mdc (
     .clk_i(clk)
     ,.reset_i(rst)
-    ,.dram_ctrl_if(dram_ctrl_if)
+
+    ,.app_addr_i(app_addr) // short address!!!
+    ,.app_cmd_i(app_cmd) 
+    ,.app_hi_pri_i(app_hi_pri)
+    ,.app_en_i(app_en)
+    ,.app_rdy_o(app_rdy)
+
+    ,.app_wdf_wren_i(app_wdf_wren)
+    ,.app_wdf_data_i(app_wdf_data)
+    ,.app_wdf_mask_i(app_wdf_mask)
+    ,.app_wdf_end_i(app_wdf_end)
+    ,.app_wdf_rdy_o(app_wdf_rdy)
+
+    ,.app_rd_data_valid_o(app_rd_data_valid)
+    ,.app_rd_data_o(app_rd_data)
+    ,.app_rd_data_end_o(app_rd_data_end)
+
+    ,.app_ref_req_i(app_ref_req)
+    ,.app_ref_ack_o(app_ref_ack)
+    ,.app_zq_req_i(app_zq_req)
+    ,.app_zq_ack_o(app_zq_ack)
+    ,.app_sr_req_i(app_sr_req)
+    ,.app_sr_ack_o(app_sr_ack)
+    ,.init_calib_complete_o(init_calib_complete)
   );
 end
   

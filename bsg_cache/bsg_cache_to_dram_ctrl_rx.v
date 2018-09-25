@@ -25,7 +25,9 @@ module bsg_cache_to_dram_ctrl_rx
     ,output logic [num_cache_p-1:0] dma_data_v_o
     ,input [num_cache_p-1:0] dma_data_ready_i
 
-    ,bsg_dram_ctrl_if.master dram_ctrl_if
+    ,input app_rd_data_valid_i
+    ,input [burst_width_p-1:0] app_rd_data_i
+    ,input app_rd_data_end_i
   );
 
   localparam fifo_els_lp = (burst_len_p == 1) ? 2 : burst_len_p;
@@ -43,8 +45,8 @@ module bsg_cache_to_dram_ctrl_rx
     .clk_i(clk_i)
     ,.reset_i(reset_i)
 
-    ,.v_i(dram_ctrl_if.app_rd_data_valid)
-    ,.data_i(dram_ctrl_if.app_rd_data)
+    ,.v_i(app_rd_data_valid_i)
+    ,.data_i(app_rd_data_i)
     ,.ready_o()
 
     ,.v_o(fifo_v_lo)

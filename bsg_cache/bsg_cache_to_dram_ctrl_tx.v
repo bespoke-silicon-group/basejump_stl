@@ -25,7 +25,11 @@ module bsg_cache_to_dram_ctrl_tx
     ,input [num_cache_p-1:0] dma_data_v_i
     ,output logic [num_cache_p-1:0] dma_data_yumi_o
 
-    ,bsg_dram_ctrl_if.master dram_ctrl_if
+    ,output logic app_wdf_wren_o
+    ,input app_wdf_rdy_i
+    ,output logic [burst_width_p-1:0] app_wdf_data_o
+    ,output logic [(burst_width_p>>3)-1:0] app_wdf_mask_o
+    ,output logic app_wdf_end_o
   );
 
   // tag FIFO
@@ -117,7 +121,7 @@ module bsg_cache_to_dram_ctrl_tx
     ,.ready_o(sipo_ready_lo) 
 
     ,.valid_o(sipo_v_lo)
-    ,.data_o(dram_ctrl_if.app_wdf_data)
+    ,.data_o(app_wdf_data_o)
     ,.yumi_cnt_i(sipo_yumi_cnt_li)
   );
 
@@ -144,25 +148,25 @@ module bsg_cache_to_dram_ctrl_tx
   logic dram_wren;
   assign dram_wren = &sipo_v_lo;
 
-  assign sipo_yumi_cnt_li = dram_ctrl_if.app_wdf_rdy & dram_wren
+  assign sipo_yumi_cnt_li = app_wdf_rdy_i & dram_wren
     ? ($clog2(data_width_ratio_lp+1))'(data_width_ratio_lp)
     : '0;
-  assign dram_ctrl_if.app_wdf_wren = dram_wren;
+  assign app_wdf_wren_o = dram_wren;
 
   always_comb begin
     if (burst_count_lo == burst_len_p-1) begin
-      burst_clear_li = dram_wren & dram_ctrl_if.app_wdf_rdy;
+      burst_clear_li = dram_wren & app_wdf_rdy_i;
       burst_up_li = 1'b0;
-      dram_ctrl_if.app_wdf_end = dram_wren;
+      app_wdf_end_o = dram_wren;
     end
     else begin
       burst_clear_li = 1'b0;
-      burst_up_li = dram_wren & dram_ctrl_if.app_wdf_rdy;
-      dram_ctrl_if.app_wdf_end = 1'b0;
+      burst_up_li = dram_wren & app_wdf_rdy_i;
+      app_wdf_end_o = 1'b0;
     end
   end
 
 
-  assign dram_ctrl_if.app_wdf_mask = '0;
+  assign app_wdf_mask_o = '0;
 
 endmodule
