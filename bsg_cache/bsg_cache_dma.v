@@ -128,6 +128,7 @@ module bsg_cache_dma
     data_mem_w_o = 1'b0;
     dma_data_v_o = 1'b0;
     in_fifo_yumi_li = 1'b0;
+    dma_state_n = IDLE;
 
     case (dma_state_r)
       IDLE: begin
@@ -136,7 +137,7 @@ module bsg_cache_dma
           : (dma_get_fill_data_i ? GET_FILL_DATA
           : (dma_send_evict_data_i ? SEND_EVICT_DATA
           : IDLE)));
-        counter_n = dma_get_fill_data_i ? (lg_block_size_in_words_lp+1)'(0)
+        counter_n = dma_get_fill_data_i ? {(lg_block_size_in_words_lp+1){1'b0}}
           : (dma_send_evict_data_i ? (lg_block_size_in_words_lp+1)'(1)
           : counter_r);
         data_mem_v_o = dma_send_evict_data_i;
@@ -206,7 +207,6 @@ module bsg_cache_dma
       if (snoop_word_we) begin
         snoop_word_o <= in_fifo_data_lo;
       end 
-      //$display("state: %d, counter: %d", dma_state_r, counter_r);
     end
   end
 

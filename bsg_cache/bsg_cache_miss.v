@@ -112,6 +112,7 @@ module bsg_cache_miss
     chosen_set_n = chosen_set_r;
     recover_o = '0;
     done_o = '0;
+    dma_addr_o = '0;
 
     case (miss_state_r)
 
@@ -130,7 +131,7 @@ module bsg_cache_miss
        
         dma_addr_o = {
           addr_tag_v, addr_index_v,
-          (lg_data_mask_width_lp+lg_block_size_in_words_lp)'(0)
+          {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
         };
 
         stat_mem_v_o = dma_done_i;
@@ -165,10 +166,10 @@ module bsg_cache_miss
         tag_mem_v_o = 1'b1;
         tag_mem_w_o = 1'b1;
         tag_mem_addr_o = addr_index_v;
-        tag_mem_data_o = {2{~(ainv_op_v_i | aflinv_op_v_i),(tag_width_lp)'(0)}};
+        tag_mem_data_o = {2{~(ainv_op_v_i | aflinv_op_v_i), {tag_width_lp{1'b0}}}};
         tag_mem_w_mask_o = {
-          chosen_set_n, (tag_width_lp)'(0),
-          ~chosen_set_n, (tag_width_lp)'(0)
+          chosen_set_n, {tag_width_lp{1'b0}},
+          ~chosen_set_n, {tag_width_lp{1'b0}}
         };
        
         miss_state_n = (~ainv_op_v_i & dirty_i[chosen_set_n] & valid_v_i[chosen_set_n])
@@ -181,7 +182,7 @@ module bsg_cache_miss
         dma_addr_o = {
           tag_v_i[chosen_set_r],
           addr_index_v,
-          (`BSG_SAFE_CLOG2(addr_width_p>>3)+lg_block_size_in_words_lp)'(0)
+          {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
         };
 
         miss_state_n = dma_done_i
@@ -196,7 +197,7 @@ module bsg_cache_miss
         dma_addr_o = {
           tag_v_i[chosen_set_r],
           addr_index_v,
-          (`BSG_SAFE_CLOG2(addr_width_p>>3)+lg_block_size_in_words_lp)'(0)
+          {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
         };
         
         miss_state_n = dma_done_i
@@ -212,7 +213,7 @@ module bsg_cache_miss
           addr_tag_v,
           addr_index_v,
           addr_block_offset_v,
-          (`BSG_SAFE_CLOG2(addr_width_p>>3))'(0)
+          {(lg_data_mask_width_lp){1'b0}}
         };
 
         miss_state_n = dma_done_i

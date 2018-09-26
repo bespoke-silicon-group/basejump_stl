@@ -84,7 +84,7 @@ module bsg_manycore_link_to_cache
     ,.in_we_o(endpoint_we_lo)
 
     ,.out_v_i(1'b0)
-    ,.out_packet_i((packet_width_lp'(0)))
+    ,.out_packet_i({(packet_width_lp){1'b0}})
     ,.out_ready_o()
   
     ,.returned_data_r_o()
@@ -113,7 +113,7 @@ module bsg_manycore_link_to_cache
 
   assign packet_cast.addr = {
     endpoint_addr_lo,
-    (`BSG_SAFE_CLOG2(data_width_p>>3))'(0)
+    {(`BSG_SAFE_CLOG2(data_width_p>>3)){1'b0}}
   };
 
   assign packet_cast.data = endpoint_data_lo;
