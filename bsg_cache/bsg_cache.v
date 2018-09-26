@@ -107,7 +107,7 @@ module bsg_cache
   logic half_op_tl_r;
   logic byte_op_tl_r;
   logic mask_op_tl_r;
-  logic [(data_width_p>>3)-1:0] mask_tl_r;
+  logic [data_mask_width_lp-1:0] mask_tl_r;
   logic ld_op_tl_r;
   logic st_op_tl_r;
   logic tagst_op_tl_r;
@@ -215,10 +215,10 @@ module bsg_cache
 
   // data_mem
   //
-  logic [data_width_p*2-1:0] data_mem_data_li;
+  logic [(data_width_p*2)-1:0] data_mem_data_li;
   logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_mem_addr_li;
   logic data_mem_v_li;
-  logic [((data_width_p*2)>>3)-1:0] data_mem_w_mask_li;
+  logic [(data_mask_width_lp*2)-1:0] data_mem_w_mask_li;
   logic data_mem_w_li;
   logic [data_width_p*2-1:0] data_mem_data_lo;
 
@@ -245,7 +245,7 @@ module bsg_cache
   logic half_op_v_r;
   logic byte_op_v_r;
   logic mask_op_v_r;
-  logic [(data_width_p>>3)-1:0] mask_v_r;
+  logic [data_mask_width_lp-1:0] mask_v_r;
   logic ld_op_v_r;
   logic st_op_v_r;
   logic tagst_op_v_r;
@@ -450,7 +450,7 @@ module bsg_cache
   logic dma_data_mem_v_lo;
   logic dma_data_mem_w_lo;
   logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] dma_data_mem_addr_lo;
-  logic [2*(data_width_p>>3)-1:0] dma_data_mem_w_mask_lo;
+  logic [2*(data_mask_width_lp)-1:0] dma_data_mem_w_mask_lo;
   logic [2*data_width_p-1:0] dma_data_mem_data_lo;
 
   bsg_cache_dma #(
@@ -548,8 +548,8 @@ module bsg_cache
   assign sbuf_data_mem_data = {2{sbuf_data_lo}};
 
   assign sbuf_data_mem_w_mask = sbuf_set_lo
-    ? {sbuf_mask_lo, (data_mask_width_lp)'(0)}
-    : {(data_mask_width_lp)'(0), sbuf_mask_lo};
+    ? {sbuf_mask_lo, {(data_mask_width_lp){1'b0}}}
+    : {{(data_mask_width_lp){1'b0}}, sbuf_mask_lo};
 
   // for 32-bit data width
   if (data_width_p == 32) begin
@@ -585,7 +585,7 @@ module bsg_cache
     : ld_data_v_r[0+:data_width_p];
 
   bsg_mux_segmented #(
-    .segments_p(data_width_p>>3)
+    .segments_p(data_mask_width_lp)
     ,.segment_width_p(8)
   ) bypass_mux_segmented (
     .data0_i(ld_data_set_picked)
@@ -632,7 +632,7 @@ module bsg_cache
         end
         else if (tagla_op_v_r) begin
           data_o = {tag_v_r[addr_set_v], addr_index_v,
-            (lg_block_size_in_words_lp+2)'(0)
+            {(lg_block_size_in_words_lp+2){1'b0}}
           };
         end
         else if (mask_op_v_r) begin
@@ -646,6 +646,9 @@ module bsg_cache
         end
         else if (byte_op_v_r) begin
           data_o = {{24{byte_sigext}}, data_byte_selected};
+        end
+        else begin
+          data_o = '0;
         end
       end
       else begin

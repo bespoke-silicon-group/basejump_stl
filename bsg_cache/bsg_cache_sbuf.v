@@ -89,6 +89,16 @@ module bsg_cache_sbuf
         mux0_sel = 1;
         mux1_sel = 1;
       end
+      default: begin
+        v_o = 0;
+        empty_o = 0;
+        el0_valid = 0;
+        el1_valid = 0;
+        el0_enable = 0;
+        el1_enable = 0;
+        mux0_sel = 0;
+        mux1_sel = 0;
+      end
     endcase
 
   end
