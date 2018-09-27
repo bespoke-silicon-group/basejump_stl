@@ -54,6 +54,7 @@ module mesh_top_cache
 );
 
   localparam nodes_lp = 4;
+  localparam block_size_in_words_lp = 8;
 
   logic [nodes_lp-1:0][bsg_noc_pkg::S:bsg_noc_pkg::W][link_sif_width_lp-1:0] router_link_sif_li, router_link_sif_lo;
   logic [nodes_lp-1:0][link_sif_width_lp-1:0] proc_link_sif_li, proc_link_sif_lo;
@@ -93,9 +94,9 @@ module mesh_top_cache
       ,.data_width_p(data_width_p)
       ,.addr_width_p(link_addr_width_lp)
       ,.sets_p(sets_p)
-      ,.ways_p(2)
       ,.mem_size_p(mem_size_p)
       ,.id_p(i)
+      ,.block_size_in_words_p(block_size_in_words_lp)
     ) master (
       .clk_i(clk_i)
       ,.reset_i(reset_i)
@@ -178,7 +179,8 @@ module mesh_top_cache
       ,.data_width_p(data_width_p)
       ,.x_cord_width_p(x_cord_width_p)
       ,.y_cord_width_p(y_cord_width_p)
-      ,.tag_mem_boundary_p(2**14)
+      ,.sets_p(sets_p)
+      ,.block_size_in_words_p(block_size_in_words_lp)
     ) link_to_cache (
       .clk_i(clk_i)
       ,.reset_i(reset_i)
@@ -218,7 +220,7 @@ module mesh_top_cache
     bsg_cache #(
       .data_width_p(32)
       ,.addr_width_p(cache_addr_width_lp)
-      ,.block_size_in_words_p(8)
+      ,.block_size_in_words_p(block_size_in_words_lp)
       ,.sets_p(sets_p)
     ) cache (
       .clk_i(clk_i)
