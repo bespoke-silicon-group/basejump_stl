@@ -10,9 +10,13 @@ module mesh_master_cache
     ,parameter x_cord_width_p="inv"
     ,parameter y_cord_width_p="inv"
     ,parameter sets_p="inv"
-    ,parameter ways_p="inv"
+    ,parameter ways_p=2
     ,parameter mem_size_p="inv"
     ,parameter id_p="inv"
+    ,parameter block_size_in_words_p=8
+    ,parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
+    ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter link_sif_width_lp=`bsg_manycore_link_sif_width(addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p))
 (
   input clk_i
@@ -103,7 +107,6 @@ module mesh_master_cache
   logic [31:0] recv_tag_cnt_r, recv_tag_cnt_n;
   logic [31:0] recv_mem_cnt_r, recv_mem_cnt_n;
 
-
   assign out_packet_li.y_cord = (y_cord_width_p)'(dest_y_i);
   assign out_packet_li.x_cord = (x_cord_width_p)'(dest_x_i);
 
@@ -120,7 +123,9 @@ module mesh_master_cache
           : STORE_TAG;
         out_packet_li.op = 2'b01;
         out_packet_li.data = '0;
-        out_packet_li.addr = (addr_width_p)'(send_tag_cnt_r << 3) + (addr_width_p)'(2**24);
+        out_packet_li.addr = (addr_width_p)'(send_tag_cnt_r << 3)
+          + ({(addr_width_p-1-lg_sets_lp-lg_block_size_in_words_lp-lg_ways_lp){1'b1}} 
+              << lg_sets_lp+lg_block_size_in_words_lp+lg_ways_lp);
         out_v_li = ~reset_i;
         send_tag_cnt_n = out_ready_lo
           ? ((send_tag_cnt_r == (sets_p*ways_p-1)) ? '0 : send_tag_cnt_r + 1)
@@ -133,7 +138,9 @@ module mesh_master_cache
           : LOAD_TAG;
         out_packet_li.op = 2'b00;
         out_packet_li.data = '0;
-        out_packet_li.addr = (addr_width_p)'(send_tag_cnt_r << 3) + (addr_width_p)'(2**24);
+        out_packet_li.addr = (addr_width_p)'(send_tag_cnt_r << 3)
+          + ({(addr_width_p-1-lg_sets_lp-lg_block_size_in_words_lp-lg_ways_lp){1'b1}} 
+              << lg_sets_lp+lg_block_size_in_words_lp+lg_ways_lp);
         out_v_li = ~reset_i;
         send_tag_cnt_n = out_ready_lo
           ? ((send_tag_cnt_r == (sets_p*ways_p-1)) ? '0 : send_tag_cnt_r + 1)

@@ -1,13 +1,14 @@
 /**
  *  bsg_manycore_link_to_cache.v
  *
- *  @author Tommy Jung
+ *  @author tommy
  *
  *  @param addr_width_p address bit-width of global (remote) address.
  *  @param data_width_p data bit-width. (32-bit)
  *  @param x_cord_width_p x-coord bit-width.
  *  @param y_cord_width_p y-coord bit_width.
- *  @param tag_mem_boundary_p address greater or equal to this maps to TAGST, TAGLA.
+ *  @param dram_addr_width_p number of bits allocated for DRAM address space
+ *  from LSB.
  */
 
 `include "bsg_manycore_packet.vh"
@@ -19,9 +20,14 @@ module bsg_manycore_link_to_cache
     ,parameter data_width_p="inv"
     ,parameter x_cord_width_p="inv"
     ,parameter y_cord_width_p="inv"
-    ,parameter tag_mem_boundary_p="inv"
     ,parameter fifo_els_p = 4
     ,parameter max_out_credits_lp = 16
+    ,parameter sets_p="inv"
+    ,parameter ways_p=2
+    ,parameter block_size_in_words_p="inv"
+    ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
+    ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter link_sif_width_lp=`bsg_manycore_link_sif_width(addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p)
     ,parameter cache_addr_width_lp=addr_width_p+`BSG_SAFE_CLOG2(data_width_p>>3)
     ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(cache_addr_width_lp,data_width_p)
@@ -107,7 +113,7 @@ module bsg_manycore_link_to_cache
   assign cache_pkt_o = packet_cast;
   assign packet_cast.sigext = 1'b0;
   assign packet_cast.mask = endpoint_mask_lo;
-  assign packet_cast.opcode = (endpoint_addr_lo >= (addr_width_p)'(tag_mem_boundary_p))
+  assign packet_cast.opcode = (&endpoint_addr_lo[addr_width_p-2:lg_ways_lp+lg_sets_lp+lg_block_size_in_words_lp])
     ? (endpoint_we_lo ? TAGST : TAGLA)
     : (endpoint_we_lo ? SM : LM);
 
