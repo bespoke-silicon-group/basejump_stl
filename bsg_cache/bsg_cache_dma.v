@@ -94,7 +94,7 @@ module bsg_cache_dma
   assign dma_pkt_o = dma_pkt;
   assign dma_pkt.addr = {
     dma_addr_i[addr_width_p-1:`BSG_SAFE_CLOG2(data_width_p>>3)+lg_block_size_in_words_lp],
-    (`BSG_SAFE_CLOG2(data_width_p>>3)+lg_block_size_in_words_lp)'(0)
+    {(`BSG_SAFE_CLOG2(data_width_p>>3)+lg_block_size_in_words_lp){1'b0}}
   };
 
   assign data_mem_w_mask_o = {
