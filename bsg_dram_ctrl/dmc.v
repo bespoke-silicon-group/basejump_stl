@@ -50,9 +50,11 @@ module dmc #
   ,output [(DFI_DATA_WIDTH>>4)-1:0] dm_oe_n
   ,output [(DFI_DATA_WIDTH>>4)-1:0] dm_o
   ,output [(DFI_DATA_WIDTH>>4)-1:0] dqs_p_oe_n
+  ,output [(DFI_DATA_WIDTH>>4)-1:0] dqs_p_ie_n
   ,output [(DFI_DATA_WIDTH>>4)-1:0] dqs_p_o
   ,input  [(DFI_DATA_WIDTH>>4)-1:0] dqs_p_i
   ,output [(DFI_DATA_WIDTH>>4)-1:0] dqs_n_oe_n
+  ,output [(DFI_DATA_WIDTH>>4)-1:0] dqs_n_ie_n
   ,output [(DFI_DATA_WIDTH>>4)-1:0] dqs_n_o
   ,input  [(DFI_DATA_WIDTH>>4)-1:0] dqs_n_i
   ,output [(DFI_DATA_WIDTH>>1)-1:0] dq_oe_n
@@ -351,9 +353,11 @@ module dmc #
     ,.dm_oe_n           ( dm_oe_n           )
     ,.dm_o              ( dm_o              )
     ,.dqs_p_oe_n        ( dqs_p_oe_n        )
+    ,.dqs_p_ie_n        ( dqs_p_ie_n        )
     ,.dqs_p_o           ( dqs_p_o           )
     ,.dqs_p_i           ( dqs_90            )
     ,.dqs_n_oe_n        ( dqs_n_oe_n        )
+    ,.dqs_n_ie_n        ( dqs_n_ie_n        )
     ,.dqs_n_o           ( dqs_n_o           )
     ,.dqs_n_i           ( dqs_270           )
     ,.dq_oe_n           ( dq_oe_n           )
