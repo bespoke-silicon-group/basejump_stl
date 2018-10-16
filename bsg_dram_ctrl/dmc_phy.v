@@ -331,9 +331,11 @@ module dmc_phy(
   output    [`DQ_GROUP-1:0] dm_oe_n,
   output    [`DQ_GROUP-1:0] dm_o,
   output    [`DQ_GROUP-1:0] dqs_p_oe_n,
+  output    [`DQ_GROUP-1:0] dqs_p_ie_n,
   output    [`DQ_GROUP-1:0] dqs_p_o,
   input     [`DQ_GROUP-1:0] dqs_p_i,
   output    [`DQ_GROUP-1:0] dqs_n_oe_n,
+  output    [`DQ_GROUP-1:0] dqs_n_ie_n,
   output    [`DQ_GROUP-1:0] dqs_n_o,
   input     [`DQ_GROUP-1:0] dqs_n_i,
   output  [8*`DQ_GROUP-1:0] dq_oe_n,
@@ -393,6 +395,9 @@ module dmc_phy(
 
   assign ck_p  = clk_0;
   assign ck_n  = clk_180;
+
+  assign dqs_p_ie_n = ~{`DQ_GROUP{dfi_rddata_en}};
+  assign dqs_n_ie_n = ~{`DQ_GROUP{dfi_rddata_en}};
 
   generate
     for(i=0;i<`DQ_GROUP;i=i+1) begin: one_byte
