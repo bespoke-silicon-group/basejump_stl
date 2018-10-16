@@ -13,11 +13,11 @@ if (els_p == words && width_p == bits)                          \
               .AA       (   addr_i      )                       \
              ,.D        (   data_i      )                       \
              ,.BWEB     ( ~w_mask_i     )                       \
-             ,.WEB      ( ~(w_v_i &v_i  )                       \
+             ,.WEB      ( ~(w_i &v_i  ))                       \
              ,.CLKW     ( clk_i         )                       \
                                                                 \
              ,.AB       (   addr_i      )                       \
-             ,.REB      ( ~ (~w_i&v_i   )                       \
+             ,.REB      ( ~ (~w_i&v_i   ))                       \
              ,.CLKR     ( clk_i         )                       \
              ,.Q        (   data_o      )                       \
                                                                 \

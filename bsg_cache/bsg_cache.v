@@ -339,15 +339,15 @@ module bsg_cache
 
   // stat_mem
   //
-  logic [2:0] stat_mem_data_li;
+  logic [3:0] stat_mem_data_li;
   logic [lg_sets_lp-1:0] stat_mem_addr_li;
   logic stat_mem_v_li;
-  logic [2:0] stat_mem_w_mask_li;
+  logic [3:0] stat_mem_w_mask_li;
   logic stat_mem_w_li;
-  logic [2:0] stat_mem_data_lo;
+  logic [3:0] stat_mem_data_lo;
 
   bsg_mem_1rw_sync_mask_write_bit #(
-    .width_p(3)
+    .width_p(4)
     ,.els_p(sets_p)
   ) stat_mem (
     .clk_i(clk_i)
@@ -724,13 +724,15 @@ module bsg_cache
 
   // stat_mem
   //
-  assign stat_mem_data_li = miss_v
+  assign stat_mem_data_li[3] = 1'b0;
+  assign stat_mem_data_li[2:0] = miss_v
     ? miss_stat_mem_data_lo
     : {st_op_v_r, st_op_v_r, tag_hit_v[1]};
 
   assign stat_mem_addr_li = addr_index_v;
     
-  assign stat_mem_w_mask_li = miss_v
+  assign stat_mem_w_mask_li[3] = 1'b0;
+  assign stat_mem_w_mask_li[2:0] = miss_v
     ? miss_stat_mem_w_mask_lo
     : {tag_hit_v[1] & st_op_v_r, tag_hit_v[0] & st_op_v_r, st_op_v_r | ld_op_v_r};
   
