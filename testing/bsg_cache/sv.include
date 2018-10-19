@@ -7,7 +7,6 @@ $BSG_MANYCORE_DIR/v/bsg_manycore_endpoint_standard.v
 $BSG_MANYCORE_DIR/v/bsg_manycore_link_sif_tieoff.v
 $BSG_MANYCORE_DIR/v/bsg_manycore_mesh_node.v
 $BSG_MANYCORE_DIR/v/bsg_manycore_swap_ctrl.v
-$BSG_MANYCORE_DIR/v/bsg_manycore_pkt_decode.v
 $BSG_MANYCORE_DIR/v/bsg_1hold.v
 $BSG_DESIGNS_DIR/toplevels/bsg_dram_manycore_async_drlp_async_outspace_stub_async_fsb/testing/dram_model/mobile_ddr.v
 $BSG_IP_CORES_DIR/bsg_test/bsg_nonsynth_clock_gen.v

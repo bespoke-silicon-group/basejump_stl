@@ -298,6 +298,9 @@ if (dmc == 1) begin
     ,.dq_o(dq_o)
     ,.dq_i(dq_i)
 
+    ,.dqs_p_ie_n()
+    ,.dqs_n_ie_n()
+
     ,.ui_clk(clk)
     ,.ui_clk_sync_rst()
     ,.dfi_clk(dfi_clk)
