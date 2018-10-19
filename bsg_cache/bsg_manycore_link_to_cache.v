@@ -100,14 +100,14 @@ module bsg_manycore_link_to_cache
     ,.returning_v_i(endpoint_returning_v_li)
 
     ,.out_credits_o()
-    ,.freeze_r_o()
-    ,.reverse_arb_pr_o()
 
     ,.my_x_i(my_x_i)
     ,.my_y_i(my_y_i)
   );
 
 
+  // to cache
+  //
   `declare_bsg_cache_pkt_s(cache_addr_width_lp, data_width_p);
   bsg_cache_pkt_s packet_cast;
   assign cache_pkt_o = packet_cast;
@@ -126,25 +126,9 @@ module bsg_manycore_link_to_cache
   assign v_o = endpoint_v_lo;
   assign endpoint_yumi_li = endpoint_v_lo & ready_i;
 
+  // from cache
+  //
   assign yumi_o = v_i;
-  assign endpoint_returning_v_li = v_i & ~we_v_r; 
-
-
-  always_ff @ (posedge clk_i) begin
-    if (reset_i) begin
-      we_tl_r <= 1'b0;
-      we_v_r <= 1'b0;
-    end
-    else begin
-      if (v_we_i) begin
-        we_v_r <= we_tl_r;
-      end
-
-      if (endpoint_v_lo & ready_i) begin
-        we_tl_r <= endpoint_we_lo;
-      end
-    end
-  end
-
+  assign endpoint_returning_v_li = v_i; 
 
 endmodule

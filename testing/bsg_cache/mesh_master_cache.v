@@ -78,8 +78,6 @@ module mesh_master_cache
     ,.returning_v_i(1'b0)
 
     ,.out_credits_o(out_credits_lo)
-    ,.freeze_r_o()
-    ,.reverse_arb_pr_o()
 
     ,.my_x_i(my_x_i)
     ,.my_y_i(my_y_i)
