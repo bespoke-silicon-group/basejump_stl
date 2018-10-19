@@ -10,7 +10,7 @@
  *  @param burst_len_p number of bursts per request.
  *  @param burst_width_p bit-width of burst data.
  *  @param num_cache_p number of cache attached to this module.
- *  @param dram_mem_boundary_p upper bound for dram memory regions (exclusive)
+ *  @param dram_addr_width_p number of dram offset width.
  */
 
 `include "bsg_cache_dma_pkt.vh"
@@ -23,10 +23,8 @@ module bsg_cache_to_dram_ctrl
     ,parameter burst_len_p="inv"
     ,parameter burst_width_p="inv"
     ,parameter num_cache_p="inv"
-    ,parameter dram_boundary_p="inv"
     ,parameter dram_addr_width_p="inv"
     ,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
-    ,parameter lg_dram_boundary_lp=`BSG_SAFE_CLOG2(dram_boundary_p)
     ,parameter data_width_ratio_lp=burst_width_p/data_width_p
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter num_req_lp=(data_width_p*block_size_in_words_p)/(burst_width_p*burst_len_p)
@@ -209,7 +207,7 @@ module bsg_cache_to_dram_ctrl
     endcase
   end
 
-  assign app_addr_o = {tag_r, addr_r[0+:lg_dram_boundary_lp]};
+  assign app_addr_o = {tag_r, addr_r[0+:dram_addr_width_p]};
 
   assign app_hi_pri_o = 1'b1;
   assign app_ref_req_o = 1'b0;
