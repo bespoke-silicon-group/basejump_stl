@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 // MBT 11/26/2014
 //
 // bsg_fsb_node_trace_replay
