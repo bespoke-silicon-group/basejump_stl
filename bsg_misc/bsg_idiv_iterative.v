@@ -59,21 +59,21 @@ module bsg_idiv_iterative (
        (.data_i (signed_div_i)
        ,.data_o (signed_div_r)
        ,.en_i   (latch_inputs)
-       ,.clock_i(clk_i)
+       ,.clk_i(clk_i)
         );
 
    bsg_dff_en#(.width_p(32))dividend_reg
        (.data_i (dividend_i)
        ,.data_o (dividend_r)
        ,.en_i   (latch_inputs)
-       ,.clock_i(clk_i)
+       ,.clk_i(clk_i)
        );
 
    bsg_dff_en#(.width_p(32))divisor_reg
        (.data_i (divisor_i)
        ,.data_o (divisor_r)
        ,.en_i   (latch_inputs)
-       ,.clock_i(clk_i)
+       ,.clk_i(clk_i)
        );
 
    wire         opA_sel;
@@ -106,7 +106,7 @@ module bsg_idiv_iterative (
        (.data_i (opA_mux)
        ,.data_o (opA    )
        ,.en_i   (opA_ld )
-       ,.clock_i(clk_i)
+       ,.clk_i(clk_i)
        );
  
    wire         opB_ld;
@@ -115,7 +115,7 @@ module bsg_idiv_iterative (
        (.data_i (opB_mux)
        ,.data_o (opB    )
        ,.en_i   (opB_ld )
-       ,.clock_i(clk_i)
+       ,.clk_i(clk_i)
        );
 
    wire opC_ld;
@@ -123,7 +123,7 @@ module bsg_idiv_iterative (
        (.data_i (opC_mux)
        ,.data_o (opC    )
        ,.en_i   (opC_ld )
-       ,.clock_i(clk_i)
+       ,.clk_i(clk_i)
        );
    // this logic is sandwiched between bitstacks -- MBT
    //   assign add_in0 = (opA ^ {33{opA_inv}}) & {33{opA_clr_l}};
