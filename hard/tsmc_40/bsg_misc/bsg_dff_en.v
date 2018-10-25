@@ -3,7 +3,7 @@ if (harden_p && width_p==bits && (strength_p==womp))                         \
   begin: macro                                                               \
      bsg_rp_tsmc_40_EDFD``womp``BWP_b``bits dff(.i0(data_i)                   \
                                                  ,.i1({ width_p { en_i }  }) \
-                                                 ,.i2({ width_p {clock_i} }) \
+                                                 ,.i2({ width_p {clk_i} }) \
                                                  ,.o(data_o)                 \
                                                );                            \
   end
@@ -13,7 +13,7 @@ module bsg_dff_en #(width_p="inv"
                     , harden_p=1
                     , strength_p=1
                     )
-   (input   clock_i
+   (input   clk_i
     ,input  [width_p-1:0] data_i
     ,input  en_i
     ,output [width_p-1:0] data_o
@@ -145,7 +145,7 @@ module bsg_dff_en #(width_p="inv"
 
       assign data_o = data_r;
 
-      always @(posedge clock_i)
+      always @(posedge clk_i)
         if (en_i)
           data_r <= data_i;
    end
