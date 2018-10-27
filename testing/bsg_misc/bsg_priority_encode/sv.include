@@ -1,0 +1,9 @@
+$BSG_IP_CORES_DIR/bsg_misc/bsg_defines.v
+$BSG_IP_CORES_DIR/bsg_misc/bsg_priority_encode.v
+$BSG_IP_CORES_DIR/bsg_misc/bsg_priority_encode_one_hot_out.v
+$BSG_IP_CORES_DIR/bsg_misc/bsg_encode_one_hot.v
+$BSG_IP_CORES_DIR/bsg_misc/bsg_scan.v
+testbench.v
+
+
+
