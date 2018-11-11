@@ -53,7 +53,7 @@ module bsg_cam_1r1w
       //w_set_not_clear_i=1 sets the valid bit and
       //w_set_not_clear_i=0 makes the corresponding  entry invalid
       valid[w_addr_i] <= w_set_not_clear_i;
-      mem[w_addr_i] <= w_data_i;
+      mem  [w_addr_i] <= w_data_i;
     end
   end
 
