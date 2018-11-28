@@ -97,7 +97,7 @@ import bsg_noc_pkg::Dirs
 
    for (i = N; i <=S; i=i+1)
      begin: NS_req
-        wire weird_route = ~x_eq[i] & allow_S_to_EW_p & (i==S);
+        wire weird_route = ~x_eq[i] & (allow_S_to_EW_p == 1) & (i==S);
         assign req_o[i][(i==N) ? S : N] =  v_i_stub[i] & ~y_eq[i] & ~weird_route;
         assign req_o[i][P] =  v_i_stub[i] & y_eq[i] & ~weird_route;
         assign req_o[i][W] = v_i_stub[i] & weird_route & ~x_gt[i];
