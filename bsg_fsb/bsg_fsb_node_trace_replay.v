@@ -181,6 +181,7 @@ module bsg_fsb_node_trace_replay
                          $display("###    ");
                          $display("### FAIL (trace mismatch) = %h", data_i);
                          $display("###              expected = %h\n", data_o);
+                         $display("###              diff     = %h\n", data_o ^ data_i);
                          $display("############################################################################");
                          $finish();
                       end
