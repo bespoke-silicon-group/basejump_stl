@@ -1,3 +1,4 @@
+`include "bsg_defines.v"
 module bsg_mux #(parameter width_p="inv"
                  , els_p=1
                  , harden_p = 0
