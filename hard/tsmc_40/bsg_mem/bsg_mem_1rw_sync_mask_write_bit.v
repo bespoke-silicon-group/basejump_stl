@@ -3,29 +3,34 @@
 // Synchronous 1-port ram.
 // Only one read or one write may be done per cycle.
 
-
-
-`define bsg_mem_1rw_sync_macro_2rf(words,bits,lgEls,mux)        \
-if (els_p == words && width_p == bits)                          \
-  begin: macro                                                  \
-          tsmc40_2rf_lg``lgEls``_w``bits``_m``mux``_bit mem     \
-            (                                                   \
-              .AA       (   addr_i      )                       \
-             ,.D        (   data_i      )                       \
-             ,.BWEB     ( ~w_mask_i     )                       \
-             ,.WEB      ( ~(w_i &v_i  ))                       \
-             ,.CLKW     ( clk_i         )                       \
-                                                                \
-             ,.AB       (   addr_i      )                       \
-             ,.REB      ( ~ (~w_i&v_i   ))                       \
-             ,.CLKR     ( clk_i         )                       \
-             ,.Q        (   data_o      )                       \
-                                                                \
-             ,.RDELAY   ( 2'b00         )                       \
-             ,.WDELAY   ( 2'b00         )                       \
-             );                                                 \
+`define bsg_mem_1rw_sync_macro_bit(words,bits,lgEls,mux) \
+if (els_p == words && width_p == bits)                   \
+  begin: macro                                           \
+    tsmc40_1rw_lg``lgEls``_w``bits``_m``mux mem          \
+      (.A     ( addr_i    )                              \
+      ,.D     ( data_i    )                              \
+      ,.BWEB  ( ~w_mask_i )                              \
+      ,.WEB   ( ~w_i      )                              \
+      ,.CEB   ( ~v_i      )                              \
+      ,.CLK   ( clk_i     )                              \
+      ,.Q     ( data_o    )                              \
+      ,.DELAY ( 2'b0      )                              \
+      ,.TEST  ( 2'b0      ));                            \
   end
 
+`define bsg_mem_1rf_sync_macro_bit(words,bits,lgEls,mux) \
+if (els_p == words && width_p == bits)                   \
+  begin: macro                                           \
+    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem          \
+      (.A     ( addr_i    )                              \
+      ,.D     ( data_i    )                              \
+      ,.BWEB  ( ~w_mask_i )                              \
+      ,.WEB   ( ~w_i      )                              \
+      ,.CEB   ( ~v_i      )                              \
+      ,.CLK   ( clk_i     )                              \
+      ,.Q     ( data_o    )                              \
+      ,.DELAY ( 2'b0      ));                            \
+  end
 
 module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
 			               , parameter els_p=-1
@@ -43,7 +48,9 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
    // we use a 2 port RF because the 1 port RF
    // does not support bit-level masking for 80-bit width
    // alternatively we could instantiate 2 40-bit 1rw RF's 								
-   `bsg_mem_1rw_sync_macro_2rf(64,80,6,1) else
+   `bsg_mem_1rf_sync_macro_bit(256,4,8,2) else
+   `bsg_mem_1rf_sync_macro_bit(256,32,8,2) else
+   `bsg_mem_1rw_sync_macro_bit(64,80,6,1)  else
    bsg_mem_1rw_sync_mask_write_bit_synth
      #(.width_p(width_p)
        ,.els_p(els_p)
