@@ -4,41 +4,33 @@
 // Only one read or one write may be done per cycle.
 //
 
-`define bsg_mem_1rw_sync_macro(words,bits,lgEls,newBits,mux)    \
-if (els_p == words && width_p == bits)                          \
-  begin: macro                                                  \
-     tsmc40_1rw_lg``lgEls``_w``newBits``_m``mux``_all mem      \
-      (                                                         \
-         .A     (addr_i )                                       \
-        ,.D     (data_i )                                       \
-        ,.BWEB  ( {``bits``{1'b0}}   )                          \
-        ,.WEB   (~w_i   )                                       \
-        ,.CEB   (~v_i   )                                       \
-        ,.CLK   (clk_i  )                                       \
-        ,.Q     (data_o )                                       \
-        ,.DELAY (2'b0   )                                       \
-        ,.TEST  (2'b0   )                                       \
-      );                                                        \
-   end
+`define bsg_mem_1rw_sync_macro(words,bits,lgEls,mux) \
+if (els_p == words && width_p == bits)               \
+  begin: macro                                       \
+    tsmc40_1rw_lg``lgEls``_w``bits``_m``mux mem      \
+      (.A     ( addr_i           )                   \
+      ,.D     ( data_i           )                   \
+      ,.BWEB  ( {``bits``{1'b0}} )                   \
+      ,.WEB   ( ~w_i             )                   \
+      ,.CEB   ( ~v_i             )                   \
+      ,.CLK   ( clk_i            )                   \
+      ,.Q     ( data_o           )                   \
+      ,.DELAY ( 2'b0             )                   \
+      ,.TEST  ( 2'b0             ));                 \
+  end
 
-`define bsg_mem_1rw_sync_macro_rf(words,bits,lgEls,newBits,mux) \
-if (els_p == words && width_p == bits)                          \
-  begin: macro                                                  \
-          wire [newBits-1:0] tmp_lo,tmp_li;                     \
-          assign data_o = tmp_lo[bits-1:0];                     \
-          assign tmp_li = newBits ' (data_i);                   \
-                                                                \
-          tsmc40_1rf_lg``lgEls``_w``newBits``_m``mux``_all mem \
-        (                                                        \
-           .A     (addr_i )                                       \
-          ,.D     (tmp_li )                                       \
-          ,.BWEB  ( {``bits``{1'b0}}   )                          \
-          ,.WEB   (~w_i   )                                       \
-          ,.CEB   (~v_i   )                                       \
-          ,.CLK   (clk_i  )                                       \
-          ,.Q     (tmp_lo )                                       \
-          ,.DELAY (2'b0   )                                       \
-        );                                                        \
+`define bsg_mem_1rf_sync_macro(words,bits,lgEls,mux) \
+if (els_p == words && width_p == bits)               \
+  begin: macro                                       \
+    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem      \
+      (.A     ( addr_i           )                   \
+      ,.D     ( data_i           )                   \
+      ,.BWEB  ( {``bits``{1'b0}} )                   \
+      ,.WEB   ( ~w_i             )                   \
+      ,.CEB   ( ~v_i             )                   \
+      ,.CLK   ( clk_i            )                   \
+      ,.Q     ( data_o           )                   \
+      ,.DELAY ( 2'b0             ));                 \
   end
 
 module bsg_mem_1rw_sync #(parameter width_p=-1
@@ -56,24 +48,26 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
     , output logic [width_p-1:0]  data_o
     );
 
-   `bsg_mem_1rw_sync_macro(4096,48,12,48,8) else
-   `bsg_mem_1rw_sync_macro(2048,32,11,32,8) else
-   `bsg_mem_1rw_sync_macro(1024,32,10,32,8) else
-   `bsg_mem_1rw_sync_macro(256,128,8,128,4) else
-     `bsg_mem_1rw_sync_macro_rf(128,74,7,74,2) else
-     `bsg_mem_1rw_sync_macro_rf(128,73,7,74,2) else
-     `bsg_mem_1rw_sync_macro_rf(128,72,7,72,2) else
-     `bsg_mem_1rw_sync_macro_rf(128,71,7,72,2) else
-     `bsg_mem_1rw_sync_macro_rf(128,70,7,70,2) else
-     `bsg_mem_1rw_sync_macro_rf(128,69,7,70,2) else
-     `bsg_mem_1rw_sync_macro_rf(128,68,7,68,2) else
-     `bsg_mem_1rw_sync_macro_rf(128,67,7,68,2) else
-     `bsg_mem_1rw_sync_macro_rf(128,66,7,66,2) else
-     `bsg_mem_1rw_sync_macro_rf(128,65,7,66,2) else
-     `bsg_mem_1rw_sync_macro_rf(128,64,7,64,2) else
-     `bsg_mem_1rw_sync_macro_rf(128,63,7,64,2) else
-     `bsg_mem_1rw_sync_macro_rf(128,62,7,62,2) else
-     `bsg_mem_1rw_sync_macro_rf(128,61,7,62,2) else
+   `bsg_mem_1rw_sync_macro(4096,48,12,8) else
+   `bsg_mem_1rw_sync_macro(2048,32,11,8) else
+   `bsg_mem_1rw_sync_macro(1024,32,10,4) else
+   `bsg_mem_1rw_sync_macro(1024,46,10,4) else
+   `bsg_mem_1rw_sync_macro(256,128,8,4)  else
+   `bsg_mem_1rf_sync_macro(128,76,7,2)   else
+   `bsg_mem_1rf_sync_macro(128,74,7,2)   else
+   `bsg_mem_1rf_sync_macro(128,73,7,2)   else
+   `bsg_mem_1rf_sync_macro(128,72,7,2)   else
+   `bsg_mem_1rf_sync_macro(128,71,7,2)   else
+   `bsg_mem_1rf_sync_macro(128,70,7,2)   else
+   `bsg_mem_1rf_sync_macro(128,69,7,2)   else
+   `bsg_mem_1rf_sync_macro(128,68,7,2)   else
+   `bsg_mem_1rf_sync_macro(128,67,7,2)   else
+   `bsg_mem_1rf_sync_macro(128,66,7,2)   else
+   `bsg_mem_1rf_sync_macro(128,65,7,2)   else
+   `bsg_mem_1rf_sync_macro(128,64,7,2)   else
+   `bsg_mem_1rf_sync_macro(128,63,7,2)   else
+   `bsg_mem_1rf_sync_macro(128,62,7,2)   else
+   `bsg_mem_1rf_sync_macro(128,61,7,2)   else
 
      begin : z
         // we substitute a 1r1w macro

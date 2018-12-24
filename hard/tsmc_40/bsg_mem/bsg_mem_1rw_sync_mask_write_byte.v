@@ -3,6 +3,44 @@
 // Synchronous 1-port ram with byte masking
 // Only one read or one write may be done per cycle.
 //
+
+`define bsg_mem_1rw_sync_macro_byte(words,bits,lgEls,mux) \
+if (els_p == words && data_width_p == bits)               \
+  begin: macro                                            \
+    wire [data_width_p-1:0] wen;                          \
+    genvar i;                                             \
+    for(i=0;i<write_mask_width_lp;i++)                    \
+      assign wen[8*i+:8] = {8{write_mask_i[i]}};          \
+    tsmc40_1rw_lg``lgEls``_w``bits``_m``mux mem           \
+      (.A     ( addr_i )                                  \
+      ,.D     ( data_i )                                  \
+      ,.BWEB  ( ~wen   )                                  \
+      ,.WEB   ( ~w_i   )                                  \
+      ,.CEB   ( ~v_i   )                                  \
+      ,.CLK   ( clk_i  )                                  \
+      ,.Q     ( data_o )                                  \
+      ,.DELAY ( 2'b0   )                                  \
+      ,.TEST  ( 2'b0   ));                                \
+  end
+
+`define bsg_mem_1rf_sync_macro_byte(words,bits,lgEls,mux) \
+if (els_p == words && data_width_p == bits)               \
+  begin: macro                                            \
+    wire [data_width_p-1:0] wen;                          \
+    genvar i;                                             \
+    for(i=0;i<write_mask_width_lp;i++)                    \
+      assign wen[8*i+:8] = {8{write_mask_i[i]}};          \
+    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem           \
+      (.A     ( addr_i )                                  \
+      ,.D     ( data_i )                                  \
+      ,.BWEB  ( ~wen   )                                  \
+      ,.WEB   ( ~w_i   )                                  \
+      ,.CEB   ( ~v_i   )                                  \
+      ,.CLK   ( clk_i  )                                  \
+      ,.Q     ( data_o )                                  \
+      ,.DELAY ( 2'b0   ));                                \
+  end
+
 module bsg_mem_1rw_sync_mask_write_byte
 
  #(parameter els_p = -1
@@ -25,29 +63,10 @@ module bsg_mem_1rw_sync_mask_write_byte
   ,output [data_width_p-1:0] data_o
   );
 
-  // TSMC 180 1024x32 Byte Mask
-  if ((els_p == 1024) & (data_width_p == 32))
-    begin : macro
-      wire [31:0] wen = { {8{write_mask_i[3]}} 
-                        , {8{write_mask_i[2]}} 
-                        , {8{write_mask_i[1]}} 
-                        , {8{write_mask_i[0]}} };
-      tsmc40_1rw_lg10_w32_m8_byte mem
-      (
-         .A     (addr_i )
-        ,.D     (data_i )                
-        ,.BWEB  (~wen   )             
-        ,.WEB   (~w_i   )                     
-        ,.CEB   (~v_i   )                    
-        ,.CLK   (clk_i  )                   
-        ,.Q     (data_o )         
-        ,.DELAY (2'b0   )             
-        ,.TEST  (2'b0   )             
-      );
-    end
-  
+  `bsg_mem_1rw_sync_macro_byte(4096,64,12,8) else
+  `bsg_mem_1rw_sync_macro_byte(2048,64,11,4) else
+  `bsg_mem_1rw_sync_macro_byte(1024,32,10,4) else
   // no hardened version found
-  else
     begin  : notmacro
 
        bsg_mem_1rw_sync_mask_write_byte_synth
