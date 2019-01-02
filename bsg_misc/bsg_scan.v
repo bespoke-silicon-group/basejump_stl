@@ -11,7 +11,7 @@ module bsg_scan #(parameter width_p = -1
                   , parameter lo_to_hi_p = 0
                   )
    (input    [width_p-1:0] i
-    , output [width_p-1:0] o
+    , output logic [width_p-1:0] o
     );
 
    // derivation of the scan code (xor case):
