@@ -99,7 +99,11 @@ module bsg_scan #(parameter width_p = -1
    
    // reverse bits
    if (lo_to_hi_p)
-     assign o = {<< {t[$clog2(width_p)]}};
+     //assign o = {<< {t[$clog2(width_p)]}};
+for (genvar j = 0; j < width_p; j++) begin
+      assign o[j] = t[$clog2(width_p)][width_p-1-j];
+    end
+
    else
      assign o = t[$clog2(width_p)];
 
