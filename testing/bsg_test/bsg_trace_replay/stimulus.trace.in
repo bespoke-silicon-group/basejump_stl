@@ -1,0 +1,15 @@
+# cmd[3:0] + 32 bits paylod 
+# cmd formats refer to bsg_ip_cores/bsg_test/bsg_trace_replay.v comments.
+#
+
+# record 0, send out data 
+0001____0000_0000_0000_0000_____0000_0000_0000_0001
+# record 1, send out data 
+0001____0000_0000_0000_0000_____0000_0000_0000_0010
+# record 2, NOP (wait 1 cycle)
+0000____0000_0000_0000_0000_____0000_0000_0000_0000
+# record 3, send out data
+0001____0000_0000_0000_0000_____0000_0000_0000_0011
+# record 4, done
+0011____0000_0000_0000_0000_____0000_0000_0000_0000
+

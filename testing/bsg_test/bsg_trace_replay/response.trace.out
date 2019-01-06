@@ -1,0 +1,14 @@
+# cmd[3:0] + 32 bits paylod 
+# cmd formats refer to bsg_ip_cores/bsg_test/bsg_trace_replay.v comments.
+# In this example, the response is supposed to be the reversed stimulus.
+
+# record 0, recieve data 
+0010____1111_1111_1111_1111_____1111_1111_1111_1110
+# record 1, recieve data 
+0010____1111_1111_1111_1111_____1111_1111_1111_1101
+# record 2, recieve data
+0010____1111_1111_1111_1111_____1111_1111_1111_1100
+# record 3, done, pull up done_o signal
+0011____0000_0000_0000_0000_____0000_0000_0000_0000
+
+
