@@ -18,7 +18,7 @@ module bsg_mem_1rw_sync_synth #(parameter width_p=-1
 
    wire unused = reset_i;
 
-   logic [els_p-1:0][width_p-1:0]    mem;
+   logic [width_p-1:0]    mem [els_p-1:0];
 
    always_ff @(posedge clk_i)
      if (v_i)
