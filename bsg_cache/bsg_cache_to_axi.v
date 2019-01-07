@@ -17,14 +17,15 @@
 
 module bsg_cache_to_axi
   import bsg_dram_ctrl_pkg::*;
-  #(parameter addr_width_p="inv"
+  #(
+     parameter addr_width_p="inv"
     ,parameter block_size_in_words_p="inv"
     ,parameter data_width_p="inv"
     ,parameter burst_len_p="inv"
     ,parameter burst_width_p="inv"
     ,parameter num_cache_p="inv"
     ,parameter dram_addr_width_p="inv"
-    ,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
+    //,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
     ,parameter data_width_ratio_lp=burst_width_p/data_width_p
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter num_req_lp=(data_width_p*block_size_in_words_p)/(burst_width_p*burst_len_p)
@@ -32,46 +33,78 @@ module bsg_cache_to_axi
     ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
   )
   (
-    input clk_i
+     input clk_i
     ,input reset_i
 
-    ,input [num_cache_p-1:0][dma_pkt_width_lp-1:0] dma_pkt_i
-    ,input [num_cache_p-1:0] dma_pkt_v_i
-    ,output logic [num_cache_p-1:0] dma_pkt_yumi_o
+    ,input          [num_cache_p-1:0][dma_pkt_width_lp-1:0]   dma_pkt_i
+    ,input          [num_cache_p-1:0]                         dma_pkt_v_i
+    ,output logic   [num_cache_p-1:0]                         dma_pkt_yumi_o
 
-    ,output logic [num_cache_p-1:0][data_width_p-1:0] dma_data_o
-    ,output logic [num_cache_p-1:0] dma_data_v_o
-    ,input [num_cache_p-1:0] dma_data_ready_i
+    ,output logic   [num_cache_p-1:0][data_width_p-1:0]       dma_data_o
+    ,output logic   [num_cache_p-1:0]                         dma_data_v_o
+    ,input          [num_cache_p-1:0]                         dma_data_ready_i
 
-    ,input [num_cache_p-1:0][data_width_p-1:0] dma_data_i
-    ,input [num_cache_p-1:0] dma_data_v_i
-    ,output logic [num_cache_p-1:0] dma_data_yumi_o
+    ,input          [num_cache_p-1:0][data_width_p-1:0]       dma_data_i
+    ,input          [num_cache_p-1:0]                         dma_data_v_i
+    ,output logic   [num_cache_p-1:0]                         dma_data_yumi_o
 
     // AXI write address channel signals
-    ,output logic           axi_awid_o
-    ,output logic   [32:0]  axi_awaddr_o
-    ,output logic   [ 7:0]  axi_awlen_o
-    ,output logic   [ 2:0]  axi_awsize_o
-    ,output logic   [ 1:0]  axi_awburst_o
-    ,output logic           axi_awvalid_o
-    ,input                  axi_awready_i
+    ,output logic   [  5:0]     axi_awid_o
+    ,output logic   [ 32:0]     axi_awaddr_o
+    ,output logic   [  7:0]     axi_awlen_o
+    ,output logic   [  2:0]     axi_awsize_o
+    ,output logic   [  1:0]     axi_awburst_o
+    ,output logic   [  3:0]     axi_awcache_o
+    ,output logic               axi_awvalid_o
+    ,input                      axi_awready_i
 
     // AXI write data channel signals
-    ,output logic           axi_wid_o
-    ,output logic   [31:0]  axi_wdata_o
-    ,output logic   [ 3:0]  axi_wstrb_o
-    ,output logic           axi_wlast_o
-    ,output logic           axi_wvalid_o
-    ,input                  axi_wready_o
+    ,output logic   [255:0]     axi_wdata_o
+    ,output logic   [ 31:0]     axi_wstrb_o
+    ,output logic               axi_wlast_o
+    ,output logic               axi_wvalid_o
+    ,input                      axi_wready_o
+
+    // AXI write response channel signals
+    ,input          [  5:0]     axi_bid_i
+    ,input          [  1:0]     axi_bresp_i
+    ,input                      axi_bvalid_i
+    ,output logic               axi_bready_o
+
+    // AXI read address channel signals
+    ,output logic   [  5:0]     axi_arid_o
+    ,output logic   [ 32:0]     axi_araddr_o
+    ,output logic   [  7:0]     axi_arlen_o
+    ,output logic   [  2:0]     axi_arsize_o
+    ,output logic   [  1:0]     axi_arburst_o
+    ,output logic   [  3:0]     axi_arcache_o
+    ,output logic               axi_arvalid_o
+    ,input                      axi_arready_i
+
+    // AXI read data channel signals
+    ,input                      axi_rid_o
+    ,input          [255:0]     axi_rdata_o
+    ,input          [  1:0]     axi_rresp_o
+    ,input                      axi_rlast_o
+    ,input                      axi_rvalid_o
+    ,output logic               axi_rready_o
   );
 
   // round robin for dma pkts
-  //
+  /*
   logic rr_v_lo;
-  logic [dma_pkt_width_lp-1:0] rr_data_lo;
-  logic [lg_num_cache_lp-1:0] rr_tag_lo;
+  logic [dma_pkt_width_lp-1:0]  rr_data_lo;
+  logic [lg_num_cache_lp-1:0]   rr_tag_lo;
   logic rr_yumi_li;
+  */
 
+  // dma pkts
+  logic                         v_lo;
+  logic [dma_pkt_width_lp-1:0]  data_lo;
+  logic                         tag_lo;
+  logic                         yumi_li;
+
+  /*
   bsg_round_robin_n_to_1 #(
     .width_p(dma_pkt_width_lp)
     ,.num_in_p(num_cache_p)
@@ -87,17 +120,20 @@ module bsg_cache_to_axi
     ,.tag_o(rr_tag_lo)
     ,.yumi_i(rr_yumi_li)
   );
+  */
 
   `declare_bsg_cache_dma_pkt_s(addr_width_p);
   bsg_cache_dma_pkt_s dma_pkt;
-  assign dma_pkt = rr_data_lo;
+  assign dma_pkt = data_lo;
 
-  logic [lg_num_cache_lp-1:0] tag_r, tag_n;
+  //logic [lg_num_cache_lp-1:0] tag_r, tag_n;
+
   // rx module
   //
+  /*
   logic rx_v_li;
   logic rx_ready_lo;
-  bsg_cache_to_dram_ctrl_rx #(
+  bsg_cache_to_axi_rx #(
     .num_cache_p(num_cache_p)
     ,.data_width_p(data_width_p)
     ,.burst_width_p(burst_width_p)
@@ -115,12 +151,14 @@ module bsg_cache_to_axi
     ,.app_rd_data_i(app_rd_data_i)
     ,.app_rd_data_end_i(app_rd_data_end_i)
   );
+  */
 
   // tx module
   //
+  /*
   logic tx_v_li;
   logic tx_ready_lo;
-  bsg_cache_to_dram_ctrl_tx #(
+  bsg_cache_to_axi_tx #(
     .num_cache_p(num_cache_p)
     ,.data_width_p(data_width_p)
     ,.burst_width_p(burst_width_p)
@@ -140,6 +178,7 @@ module bsg_cache_to_axi
     ,.app_wdf_mask_o(app_wdf_mask_o)
     ,.app_wdf_end_o(app_wdf_end_o)
   );
+  */
 
   // dma request
   //
@@ -148,10 +187,10 @@ module bsg_cache_to_axi
     SEND_REQ
   } req_state_e;
 
-  req_state_e req_state_r, req_state_n;
-  logic [addr_width_p-1:0] addr_r, addr_n;
-  logic write_not_read_r, write_not_read_n;
-  logic [`BSG_SAFE_CLOG2(num_req_lp)-1:0] req_cnt_r, req_cnt_n;
+  req_state_e   req_state_r, req_state_n;
+  logic         write_not_read_r, write_not_read_n;
+  logic [addr_width_p-1:0]                  addr_r, addr_n;
+  logic [`BSG_SAFE_CLOG2(num_req_lp)-1:0]   req_cnt_r, req_cnt_n;
 
   always_comb begin
     app_en_o = 1'b0;
