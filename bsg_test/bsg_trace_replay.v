@@ -1,5 +1,8 @@
 `include "bsg_defines.v"
-
+// Documents:
+//
+// https://docs.google.com/document/d/1qD4yXlzdv5hcxGghiBJBFA6ClHLz1nUjCpMD2eP7CgM/edit?usp=sharing
+//
 // MBT 11/26/2014,      bsg_fsb_node_trace_replay
 // Shaolin 01/06/2018,  generalized from the bsg_trace_replay
 // trace format (see enum below)
