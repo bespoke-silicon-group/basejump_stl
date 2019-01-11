@@ -18,91 +18,86 @@
 module bsg_cache_to_axi
   import bsg_dram_ctrl_pkg::*;
   #(
-     parameter addr_width_p="inv"
-    ,parameter block_size_in_words_p="inv"
-    ,parameter data_width_p="inv"
-    ,parameter burst_len_p="inv"
-    ,parameter burst_width_p="inv"
-    ,parameter num_cache_p="inv"
-    ,parameter dram_addr_width_p="inv"
-    //,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
-    ,parameter data_width_ratio_lp=burst_width_p/data_width_p
-    ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    ,parameter num_req_lp=(data_width_p*block_size_in_words_p)/(burst_width_p*burst_len_p)
-    ,parameter block_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p*block_size_in_words_p/8)
-    ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
-  )
+    parameter addr_width_p="inv"
+   ,parameter block_size_in_words_p="inv"
+   ,parameter data_width_p="inv"
+   ,parameter burst_len_p="inv"
+   ,parameter burst_width_p="inv"
+   ,parameter num_cache_p="inv"
+   ,parameter dram_addr_width_p="inv"
+   ,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
+   ,parameter data_width_ratio_lp=burst_width_p/data_width_p
+   ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
+   ,parameter num_req_lp=(data_width_p*block_size_in_words_p)/(burst_width_p*burst_len_p)
+   ,parameter block_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p*block_size_in_words_p/8)
+   ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+   )
   (
-     input clk_i
-    ,input reset_i
+   input clk_i
+  ,input reset_i
 
-    ,input          [num_cache_p-1:0][dma_pkt_width_lp-1:0]   dma_pkt_i
-    ,input          [num_cache_p-1:0]                         dma_pkt_v_i
-    ,output logic   [num_cache_p-1:0]                         dma_pkt_yumi_o
+  ,input          [dma_pkt_width_lp-1:0]   dma_pkt_i
+  ,input                                   dma_pkt_v_i
+  ,output logic                            dma_pkt_yumi_o
 
-    ,output logic   [num_cache_p-1:0][data_width_p-1:0]       dma_data_o
-    ,output logic   [num_cache_p-1:0]                         dma_data_v_o
-    ,input          [num_cache_p-1:0]                         dma_data_ready_i
+  ,output logic   [data_width_p-1:0]       dma_data_o
+  ,output logic                            dma_data_v_o
+  ,input                                   dma_data_ready_i
 
-    ,input          [num_cache_p-1:0][data_width_p-1:0]       dma_data_i
-    ,input          [num_cache_p-1:0]                         dma_data_v_i
-    ,output logic   [num_cache_p-1:0]                         dma_data_yumi_o
+  ,input          [data_width_p-1:0]       dma_data_i
+  ,input                                   dma_data_v_i
+  ,output logic                            dma_data_yumi_o
 
-    // AXI write address channel signals
-    ,output logic   [  5:0]     axi_awid_o
-    ,output logic   [ 32:0]     axi_awaddr_o
-    ,output logic   [  7:0]     axi_awlen_o
-    ,output logic   [  2:0]     axi_awsize_o
-    ,output logic   [  1:0]     axi_awburst_o
-    ,output logic   [  3:0]     axi_awcache_o
-    ,output logic               axi_awvalid_o
-    ,input                      axi_awready_i
+  // AXI write address channel signals
+  ,output logic   [  5:0]     axi_awid_o
+  ,output logic   [ 32:0]     axi_awaddr_o
+  ,output logic   [  7:0]     axi_awlen_o
+  ,output logic   [  2:0]     axi_awsize_o
+  ,output logic   [  1:0]     axi_awburst_o
+  ,output logic   [  3:0]     axi_awcache_o
+  ,output logic   [  2:0]     axi_awprot_o
+  ,output logic               axi_awvalid_o
+  ,input                      axi_awready_i
 
-    // AXI write data channel signals
-    ,output logic   [255:0]     axi_wdata_o
-    ,output logic   [ 31:0]     axi_wstrb_o
-    ,output logic               axi_wlast_o
-    ,output logic               axi_wvalid_o
-    ,input                      axi_wready_o
+  // AXI write data channel signals
+  ,output logic   [255:0]     axi_wdata_o
+  ,output logic   [ 31:0]     axi_wstrb_o
+  ,output logic               axi_wlast_o
+  ,output logic               axi_wvalid_o
+  ,input                      axi_wready_o
 
-    // AXI write response channel signals
-    ,input          [  5:0]     axi_bid_i
-    ,input          [  1:0]     axi_bresp_i
-    ,input                      axi_bvalid_i
-    ,output logic               axi_bready_o
+  // AXI write response channel signals
+  ,input          [  5:0]     axi_bid_i
+  ,input          [  1:0]     axi_bresp_i
+  ,input                      axi_bvalid_i
+  ,output logic               axi_bready_o
 
-    // AXI read address channel signals
-    ,output logic   [  5:0]     axi_arid_o
-    ,output logic   [ 32:0]     axi_araddr_o
-    ,output logic   [  7:0]     axi_arlen_o
-    ,output logic   [  2:0]     axi_arsize_o
-    ,output logic   [  1:0]     axi_arburst_o
-    ,output logic   [  3:0]     axi_arcache_o
-    ,output logic               axi_arvalid_o
-    ,input                      axi_arready_i
+  // AXI read address channel signals
+  ,output logic   [  5:0]     axi_arid_o
+  ,output logic   [ 32:0]     axi_araddr_o
+  ,output logic   [  7:0]     axi_arlen_o
+  ,output logic   [  2:0]     axi_arsize_o
+  ,output logic   [  1:0]     axi_arburst_o
+  ,output logic   [  3:0]     axi_arcache_o
+  ,output logic               axi_arvalid_o
+  ,input                      axi_arready_i
 
-    // AXI read data channel signals
-    ,input                      axi_rid_o
-    ,input          [255:0]     axi_rdata_o
-    ,input          [  1:0]     axi_rresp_o
-    ,input                      axi_rlast_o
-    ,input                      axi_rvalid_o
-    ,output logic               axi_rready_o
+  // AXI read data channel signals
+  ,input                      axi_rid_o
+  ,input          [255:0]     axi_rdata_o
+  ,input          [  1:0]     axi_rresp_o
+  ,input                      axi_rlast_o
+  ,input                      axi_rvalid_o
+  ,output logic               axi_rready_o
   );
 
   // round robin for dma pkts
   /*
-  logic rr_v_lo;
-  logic [dma_pkt_width_lp-1:0]  rr_data_lo;
+  logic rr_v_lo; // resp to dma_pkt_v_i
+  logic [dma_pkt_width_lp-1:0]  rr_data_lo; // resp to dma_pkt_i
   logic [lg_num_cache_lp-1:0]   rr_tag_lo;
   logic rr_yumi_li;
   */
-
-  // dma pkts
-  logic                         v_lo;
-  logic [dma_pkt_width_lp-1:0]  data_lo;
-  logic                         tag_lo;
-  logic                         yumi_li;
 
   /*
   bsg_round_robin_n_to_1 #(
@@ -128,69 +123,87 @@ module bsg_cache_to_axi
 
   //logic [lg_num_cache_lp-1:0] tag_r, tag_n;
 
-  // rx module
-  //
-  /*
-  logic rx_v_li;
-  logic rx_ready_lo;
-  bsg_cache_to_axi_rx #(
-    .num_cache_p(num_cache_p)
-    ,.data_width_p(data_width_p)
-    ,.burst_width_p(burst_width_p)
-    ,.burst_len_p(burst_len_p)
-  ) rx (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.v_i(rx_v_li)
-    ,.tag_i(tag_r)
-    ,.ready_o(rx_ready_lo)
-    ,.dma_data_o(dma_data_o)
-    ,.dma_data_v_o(dma_data_v_o)
-    ,.dma_data_ready_i(dma_data_ready_i)
-    ,.app_rd_data_valid_i(app_rd_data_valid_i)
-    ,.app_rd_data_i(app_rd_data_i)
-    ,.app_rd_data_end_i(app_rd_data_end_i)
-  );
-  */
-
-  // tx module
-  //
-  /*
-  logic tx_v_li;
-  logic tx_ready_lo;
-  bsg_cache_to_axi_tx #(
-    .num_cache_p(num_cache_p)
-    ,.data_width_p(data_width_p)
-    ,.burst_width_p(burst_width_p)
-    ,.burst_len_p(burst_len_p)
-  ) tx (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.v_i(tx_v_li)
-    ,.tag_i(tag_r)
-    ,.ready_o(tx_ready_lo)
-    ,.dma_data_i(dma_data_i)
-    ,.dma_data_v_i(dma_data_v_i)
-    ,.dma_data_yumi_o(dma_data_yumi_o)
-    ,.app_wdf_wren_o(app_wdf_wren_o)
-    ,.app_wdf_rdy_i(app_wdf_rdy_i)
-    ,.app_wdf_data_o(app_wdf_data_o)
-    ,.app_wdf_mask_o(app_wdf_mask_o)
-    ,.app_wdf_end_o(app_wdf_end_o)
-  );
-  */
-
   // dma request
   //
   typedef enum logic {
     WAIT,
-    SEND_REQ
+    SEND_REQ,
+    FINISH_REQ
   } req_state_e;
 
-  req_state_e   req_state_r, req_state_n;
-  logic         write_not_read_r, write_not_read_n;
-  logic [addr_width_p-1:0]                  addr_r, addr_n;
-  logic [`BSG_SAFE_CLOG2(num_req_lp)-1:0]   req_cnt_r, req_cnt_n;
+  req_state_e req_state_r, req_state_n;
+  logic write_not_read_r, write_not_read_n;
+  logic [addr_width_p-1:0] addr_r, addr_n;
+  logic [`BSG_SAFE_CLOG2(num_req_lp)-1:0] req_cnt_r, req_cnt_n;
+
+  assign axi_arburst_o = 2'b01;  // set to incrementing mode
+  assign axi_arcache_o = 3'b000; // set to non-bufferable
+
+  assign axi_awburst_o = 2'b01;  // set to incrementing mode
+  assign axi_awcache_o = 3'b000; // set to non-bufferable
+  assign axi_awprot_o  = 2'b00;  // set to unprivileged access
+
+  // handle the read/write address channels
+  always_comb begin
+    //initializations here
+    axi_arvalid_o = 1'b0;
+    axi_awvalid_o = 1'b0;
+
+    case (req_state_r)
+      WAIT: begin
+        dma_pkt_yumi_o   = dma_pkt_v_i ;
+        addr_n           = dma_pkt_v_i ? dma_pkt.addr           : addr_r;
+        write_not_read_n = dma_pkt_v_i ? dma_pkt.write_not_read : write_not_read_r;
+        req_cnt_n        = dma_pkt_v_i ? '0                     : req_cnt_r;
+        req_state_n      = dma_pkt_v_i ? SEND_REQ               : WAIT;
+      end
+      SEND_REQ: begin
+        case (write_not_read_r) // may need to use seperate module?
+          1'b0: begin // reading request
+            axi_arvalid_o = 1'b1;
+            axi_araddr_o  = addr_r;
+            axi_arlen_o   = num_req_lp;
+            axi_arsize_o  = 3'(`BSG_SAFE_CLOG2(burst_width_p/8));
+            req_state_n   = axi_arready_i ? FINISH_REQ : SEND_REQ;
+          end
+          1'b1: begin // writing request
+            axi_awvalid_o = 1'b1;
+            axi_awaddr_o  = addr_r;
+            axi_awaddr_o  = num_req_lp;
+            axi_awsize_o  = 3'(`BSG_SAFE_CLOG2(burst_width_p/8));
+            req_state_n   = axi_awready_i ? FINISH_REQ : SEND_REQ;
+          end
+        endcase
+      end
+      FINISH_REQ: begin
+        case (write_not_read_r)
+          1'b0: // reading request
+            axi_arvalid_o = 1'b0;
+          1'b1: // writing request
+            axi_awvalid_o = 1'b0;
+          end
+        endcase
+        req_state_n = WAIT;
+      end
+    endcase
+  end
+
+  // sequential
+  //
+  always_ff @ (posedge clk_i) begin
+    if (reset_i) begin
+      addr_r      <= '0;
+      req_state_r <= WAIT;
+      write_not_read_r <= 1'b0;
+      //req_cnt_r <= '0;
+    end
+    else begin
+      addr_r      <= addr_n;
+      req_state_r <= req_state_n;
+      write_not_read_r <= write_not_read_n;
+      //req_cnt_r <= req_cnt_n;
+    end
+  end
 
   always_comb begin
     app_en_o = 1'b0;
