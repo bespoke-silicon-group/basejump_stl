@@ -62,11 +62,10 @@ module bsg_cache_to_axi_tx
 
   // tag fifo
   //
-  logic tag_fifo_ready_lo;
   logic tag_fifo_v_li;
   logic tag_fifo_v_lo;
   logic tag_fifo_yumi_li;
-  logic [num_cache_p-1:0] tag_lo;
+  logic [lg_num_cache_lp-1:0] tag_lo;
 
   bsg_fifo_1r1w_small #(
     .width_p(lg_num_cache_lp)
@@ -75,8 +74,8 @@ module bsg_cache_to_axi_tx
     .clk_i(clk_i)
     ,.reset_i(reset_i)
 
-    ,.v_i(yumi_o)
-    ,.ready_o(tag_fifo_ready_lo)
+    ,.v_i(tag_fifo_v_li)
+    ,.ready_o()
     ,.data_i(tag_i)
 
     ,.v_o(tag_fifo_v_lo)
@@ -84,7 +83,8 @@ module bsg_cache_to_axi_tx
     ,.yumi_i(tag_fifo_yumi_li)
   );
 
-  assign yumi_o = v_i & tag_fifo_ready_lo & axi_awready_i;
+  assign yumi_o = v_i & axi_awready_i;
+  assign tag_fifo_v_li = yumi_o;
 
   // axi write address channel
   //
@@ -96,7 +96,7 @@ module bsg_cache_to_axi_tx
   assign axi_awcache_o = 4'b0000; // non-bufferable
   assign axi_awprot_o = 2'b00;    // unprivileged
   assign axi_awlock_o = 2'b00;    // normal access
-  assign axi_awvalid_o = yumi_o;
+  assign axi_awvalid_o = v_i;
 
   // axi write data channel
   //
