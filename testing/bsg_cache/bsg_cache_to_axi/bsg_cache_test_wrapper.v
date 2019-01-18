@@ -89,6 +89,7 @@ module bsg_cache_test_wrapper
       ,.data_width_p(data_width_p)
       ,.addr_width_p(addr_width_p)
       ,.lo_addr_width_p(lo_addr_width_p)
+      ,.block_size_in_words_p(block_size_in_words_p)
     ) master (
       .clk_i(clk_i)
       ,.reset_i(reset_i)
