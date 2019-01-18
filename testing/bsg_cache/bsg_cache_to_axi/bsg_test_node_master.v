@@ -10,11 +10,13 @@ module bsg_test_node_master
     ,parameter sets_p="inv"
     ,parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
+    ,parameter lo_addr_width_p="inv"
 
     ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,data_width_p)
     ,parameter data_mask_width_lp=(data_width_p>>3)
     ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,parameter num_req_lp=(2**(lo_addr_width_p-lg_data_mask_width_lp))
   )
   (
     input clk_i
@@ -49,6 +51,7 @@ module bsg_test_node_master
 
   state_e state_r, state_n;
   logic [`BSG_SAFE_CLOG2(sets_p*2)-1:0] tagst_count_r, tagst_count_n;
+  logic [lo_addr_width_p-lg_data_mask_width_lp-1:0] word_count_r, word_count_n;
 
   // fifo
   //
@@ -84,6 +87,7 @@ module bsg_test_node_master
     cache_pkt.addr = '0;
     cache_pkt.data = '0;
     tagst_count_n = tagst_count_r;
+    word_count_n = word_count_r;
     state_n = state_r;
     done_o = 1'b0;
       
@@ -107,31 +111,78 @@ module bsg_test_node_master
       end
 
       RECV_TAGST: begin
-        if (~reset_i & fifo_v_lo) begin
-          $display("[%d] tagst %d", id_p, tagst_count_r);
+        if (fifo_v_lo) begin
+          $display("[%d] tagst received: %d", id_p, tagst_count_r);
         end
+        fifo_yumi_li = fifo_v_lo;
         tagst_count_n = fifo_v_lo
           ? tagst_count_r + 1
           : tagst_count_r;
-        state_n = (tagst_count_r == (sets_p*2-1)) & ready_i
-          ? DONE
+        state_n = (tagst_count_r == (sets_p*2-1)) & fifo_v_lo
+          ? SEND_STORE
           : RECV_TAGST;
       end
 
       SEND_STORE: begin
-
+        v_o = 1;
+        cache_pkt.opcode = SW;
+        cache_pkt.addr = {
+          {(addr_width_p-lo_addr_width_p){1'b0}},
+          word_count_r,
+          2'b00
+        };
+        cache_pkt.data = {
+          (data_width_p+lg_data_mask_width_lp-lo_addr_width_p)'(id_p),
+          word_count_r
+        };
+        word_count_n = ready_i
+          ? word_count_r + 1
+          : word_count_r;
+        state_n = ready_i & (word_count_r == num_req_lp-1)
+          ? RECV_STORE
+          : SEND_STORE;
       end
 
       RECV_STORE: begin
-
+        if (fifo_v_lo) begin
+          $display("[%d] store received: %d", id_p, word_count_r);
+        end
+        fifo_yumi_li = fifo_v_lo;
+        word_count_n = fifo_v_lo
+          ? word_count_r + 1
+          : word_count_r;
+        state_n = (word_count_r == num_req_lp-1)
+          ? SEND_LOAD
+          : RECV_STORE;
       end
 
       SEND_LOAD: begin
-
+        v_o = 1;
+        cache_pkt.opcode = LW;
+        cache_pkt.addr = {
+          {(addr_width_p-lo_addr_width_p){1'b0}},
+          word_count_r,
+          2'b00
+        };
+        word_count_n = ready_i
+          ? word_count_r + 1
+          : word_count_r;
+        state_n = ready_i & (word_count_r == num_req_lp-1)
+          ? RECV_LOAD
+          : SEND_LOAD;
       end
 
       RECV_LOAD: begin
-
+        if (fifo_v_lo) begin
+          $display("[%d] load received: %d", id_p, fifo_data_lo);
+        end
+        fifo_yumi_li = fifo_v_lo;
+        word_count_n = fifo_v_lo
+          ? word_count_r + 1
+          : word_count_r;
+        state_n = (word_count_r == num_req_lp-1)
+          ? DONE
+          : RECV_LOAD;
       end
 
       DONE: begin
@@ -146,10 +197,12 @@ module bsg_test_node_master
     if (reset_i) begin
       state_r <= SEND_TAGST;
       tagst_count_r <= '0;
+      word_count_r <= '0;
     end
     else begin
       state_r <= state_n;
       tagst_count_r <= tagst_count_n;
+      word_count_r <= word_count_n;
     end
   end
 

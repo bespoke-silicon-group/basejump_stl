@@ -133,7 +133,7 @@ module bsg_cache_to_axi
   logic write_rr_yumi_li;
 
   for (genvar i = 0; i < num_cache_p; i++) begin
-    assign write_rr_v_li = dma_pkt_v_i[i] & dma_pkt[i].write_not_read;
+    assign write_rr_v_li[i] = dma_pkt_v_i[i] & dma_pkt[i].write_not_read;
   end
 
   bsg_round_robin_n_to_1 #(
