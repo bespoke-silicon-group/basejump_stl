@@ -156,11 +156,19 @@ module bsg_cache_to_axi
 
   // address translation
   //
-  logic [axi_addr_width_p-1:0] axi_addr;
-  assign axi_addr = {
+  logic [axi_addr_width_p-1:0] rx_axi_addr;
+  logic [axi_addr_width_p-1:0] tx_axi_addr;
+
+  assign rx_axi_addr = {
     {(axi_addr_width_p-lg_num_cache_lp-lo_addr_width_p){1'b0}}
     ,read_rr_tag_lo
     ,read_rr_dma_pkt.addr[0+:lo_addr_width_p]
+  };  
+
+  assign tx_axi_addr = {
+    {(axi_addr_width_p-lg_num_cache_lp-lo_addr_width_p){1'b0}}
+    ,write_rr_tag_lo
+    ,write_rr_dma_pkt.addr[0+:lo_addr_width_p]
   };  
 
   // dma_pkt handshake
@@ -188,7 +196,7 @@ module bsg_cache_to_axi
     ,.v_i(read_rr_v_lo)
     ,.yumi_o(read_rr_yumi_li)
     ,.tag_i(read_rr_tag_lo)
-    ,.axi_addr_i(axi_addr)
+    ,.axi_addr_i(rx_axi_addr)
 
     ,.dma_data_o(dma_data_o)
     ,.dma_data_v_o(dma_data_v_o)
@@ -230,7 +238,7 @@ module bsg_cache_to_axi
     ,.v_i(write_rr_v_lo)
     ,.yumi_o(write_rr_yumi_li)
     ,.tag_i(write_rr_tag_lo)
-    ,.axi_addr_i(axi_addr)
+    ,.axi_addr_i(tx_axi_addr)
 
     ,.dma_data_i(dma_data_i)
     ,.dma_data_v_i(dma_data_v_i)

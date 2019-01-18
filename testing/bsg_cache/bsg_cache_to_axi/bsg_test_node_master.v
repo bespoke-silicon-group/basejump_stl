@@ -11,12 +11,15 @@ module bsg_test_node_master
     ,parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter lo_addr_width_p="inv"
+    ,parameter block_size_in_words_p="inv"
 
     ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,data_width_p)
     ,parameter data_mask_width_lp=(data_width_p>>3)
     ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter num_req_lp=(2**(lo_addr_width_p-lg_data_mask_width_lp))
+    
   )
   (
     input clk_i
@@ -99,7 +102,7 @@ module bsg_test_node_master
         cache_pkt.addr = {
           {(addr_width_p-lg_sets_lp*2-1-lg_data_mask_width_lp){1'b0}},
           tagst_count_r,
-          {(lg_data_mask_width_lp+lg_sets_lp){1'b0}}
+          {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
         };
         cache_pkt.data = '0;
         tagst_count_n = ready_i
