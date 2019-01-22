@@ -45,8 +45,6 @@ module bsg_manycore_link_to_cache
   ,input [data_width_p-1:0] data_i
   ,input v_i
   ,output logic yumi_o
-
-  ,input v_we_i
 );
 
   logic endpoint_v_lo;

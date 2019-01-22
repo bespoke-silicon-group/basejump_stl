@@ -1,40 +1,34 @@
 /**
- *  mesh_master_cache.v
+ *  bsg_test_node_master.v
  */
 
 `include "bsg_manycore_packet.vh"
 
-module mesh_master_cache 
-  #(parameter addr_width_p="inv"
+module bsg_test_node_master
+  #(parameter id_p="inv"
+    ,parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter x_cord_width_p="inv"
     ,parameter y_cord_width_p="inv"
     ,parameter sets_p="inv"
-    ,parameter ways_p=2
-    ,parameter mem_size_p="inv"
-    ,parameter id_p="inv"
-    ,parameter block_size_in_words_p=8
+    ,parameter block_size_in_words_p="inv"
+    ,parameter load_id_width_p="inv"
     ,parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    ,parameter link_sif_width_lp=`bsg_manycore_link_sif_width(addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p))
-(
-  input clk_i
-  ,input reset_i
+    ,parameter link_sif_width_lp=`bsg_manycore_link_sif_width(addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,)
+  )
+  (
+    input clk_i
+    ,input reset_i
 
-  ,input [link_sif_width_lp-1:0] link_sif_i
-  ,output logic [link_sif_width_lp-1:0] link_sif_o
+    ,input [link_sif_width_lp-1:0] link_sif_i
+    ,output logic [link_sif_width_lp-1:0] link_sif_o
 
-  ,input [x_cord_width_p-1:0] my_x_i
-  ,input [y_cord_width_p-1:0] my_y_i
+    ,output logic finish_o
+  );
 
-  ,input [x_cord_width_p-1:0] dest_x_i
-  ,input [y_cord_width_p-1:0] dest_y_i
-  
-  ,output logic finish_o
-);
-
-  `declare_bsg_manycore_packet_s(addr_width_p, data_width_p, x_cord_width_p, y_cord_width_p);
+  `declare_bsg_manycore_packet_s(addr_width_p, data_width_p, x_cord_width_p, y_cord_width_p, load_id_width_p);
 
   bsg_manycore_packet_s out_packet_li;
   logic out_v_li;
@@ -49,10 +43,11 @@ module mesh_master_cache
   bsg_manycore_endpoint_standard #(
     .x_cord_width_p(x_cord_width_p)
     ,.y_cord_width_p(y_cord_width_p)
-    ,.fifo_els_p(4)
     ,.data_width_p(data_width_p)
     ,.addr_width_p(addr_width_p)
+    ,.fifo_els_p(4)
     ,.max_out_credits_p(16)
+    ,.load_id_width_p(load_id_width_p)
   ) dram_endpoint_standard (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -66,16 +61,22 @@ module mesh_master_cache
     ,.in_mask_o()
     ,.in_addr_o()
     ,.in_we_o()
+    ,.in_src_x_cord_o()
+    ,.in_src_y_cord_o()
+
+    ,.returning_data_i('0)
+    ,.returning_v_i(1'b0)
 
     ,.out_v_i(out_v_li)
     ,.out_packet_i(out_packet_li)
     ,.out_ready_o(out_ready_lo)
   
     ,.returned_data_r_o(returned_data_r_lo)
+    ,.returned_load_id_r_o()
     ,.returned_v_r_o(returned_v_r_lo)
+    ,.returned_fifo_full_o()
+    ,.returned_yumi_i()
 
-    ,.returning_data_i(data_width_p'(0))
-    ,.returning_v_i(1'b0)
 
     ,.out_credits_o(out_credits_lo)
 
