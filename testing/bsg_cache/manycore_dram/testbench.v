@@ -21,6 +21,7 @@ module testbench();
   parameter dram_ctrl_burst_len_p = 1;
   parameter dram_ctrl_addr_width_p=32;
   parameter dram_ctrl_data_width_p=128;
+  parameter dram_ctrl_lo_addr_width_p = 26;
 
   parameter dfi_data_width_p = 32;
   
@@ -30,7 +31,7 @@ module testbench();
 
   parameter link_addr_width_lp = addr_width_p-`BSG_SAFE_CLOG2(data_width_p>>3);
   parameter link_lo_addr_width_lp = lo_addr_width_p-`BSG_SAFE_CLOG2(data_width_p>>3);
-  parameter link_sif_width_lp = `bsg_manycore_link_sif_width(addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p);
+  parameter link_sif_width_lp = `bsg_manycore_link_sif_width(link_addr_width_lp,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p);
 
   // clock and reset
   //
@@ -44,7 +45,7 @@ module testbench();
 
   bsg_nonsynth_reset_gen #(
     .num_clocks_p(1)
-    ,.reset_cycles_lo_p(4)
+    ,.reset_cycles_lo_p(0)
     ,.reset_cycles_hi_p(4)
   ) reset_gen (
     .clk_i(clk)
@@ -153,7 +154,8 @@ module testbench();
   for (genvar i = 0; i < num_cache_p; i++) begin
     bsg_test_node_master #(
       .id_p(i)
-      ,.addr_width_p(addr_width_p)
+      ,.link_addr_width_p(link_addr_width_lp)
+      ,.link_lo_addr_width_p(link_lo_addr_width_lp)
       ,.data_width_p(data_width_p)
       ,.x_cord_width_p(x_cord_width_p)
       ,.y_cord_width_p(y_cord_width_p)
@@ -285,6 +287,7 @@ module testbench();
     ,.dram_ctrl_data_width_p(dram_ctrl_data_width_p)
     ,.dram_ctrl_burst_len_p(dram_ctrl_burst_len_p)
     ,.dram_ctrl_addr_width_p(dram_ctrl_addr_width_p)
+    ,.dram_ctrl_lo_addr_width_p(dram_ctrl_lo_addr_width_p)
   ) cache_to_dram_ctrl (
     .clk_i(clk)
     ,.reset_i(reset)

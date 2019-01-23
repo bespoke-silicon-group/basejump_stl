@@ -7,7 +7,7 @@ INCDIR = +incdir+$(BSG_IP_CORES_DIR)/bsg_misc/
 INCDIR += +incdir+$(BSG_IP_CORES_DIR)/bsg_cache/
 INCDIR += +incdir+$(BSG_IP_CORES_DIR)/bsg_noc/
 INCDIR += +incdir+$(BSG_MANYCORE_DIR)/v/
-INCDIR += +incdir+$(BSG_DESIGNS_DIR)/sim_models/mobile_ddr
+INCDIR += +incdir+$(BSG_IP_CORES_DIR)/testing/bsg_dram_ctrl/lpddr_dram_model
 
 # DRAM settings
 VCS_DEFINES += +define+den2048Mb
@@ -23,7 +23,7 @@ all: sim
 
 sim:
 	vcs +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -sverilog -full64 -f sv.include $(INCDIR) \
-		-debug_pp -timescale=1ps/1ps +vcs+vcdpluson $(VCS_DEFINES) \
+		-debug_pp -timescale=1ps/1ps +vcs+vcdpluson $(VCS_DEFINES) -l vcs.log\
 		| $(HIGHLIGHT)
 
 dve:

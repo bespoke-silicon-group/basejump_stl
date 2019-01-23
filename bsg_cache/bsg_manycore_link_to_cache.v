@@ -55,9 +55,6 @@ module bsg_manycore_link_to_cache
   logic endpoint_we_lo;
   logic endpoint_returning_v_li;
 
-  logic we_tl_r;
-  logic we_v_r;
-
   // instantiate endpoint_standards.
   // last one maps to tag_mem.
   //
@@ -68,6 +65,7 @@ module bsg_manycore_link_to_cache
     ,.addr_width_p(link_addr_width_p)
     ,.fifo_els_p(fifo_els_p)
     ,.max_out_credits_p(max_out_credits_p)
+    ,.load_id_width_p(load_id_width_p)
   ) dram_endpoint_standard (
     .clk_i(clk_i)
     ,.reset_i(reset_i)

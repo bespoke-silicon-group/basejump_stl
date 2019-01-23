@@ -6,7 +6,8 @@
 
 module bsg_test_node_master
   #(parameter id_p="inv"
-    ,parameter addr_width_p="inv"
+    ,parameter link_addr_width_p="inv"
+    ,parameter link_lo_addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter x_cord_width_p="inv"
     ,parameter y_cord_width_p="inv"
@@ -23,7 +24,7 @@ module bsg_test_node_master
     ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
     ,parameter lg_num_test_word_lp=`BSG_SAFE_CLOG2(num_test_word_p)
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    ,parameter link_sif_width_lp=`bsg_manycore_link_sif_width(addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p)
+    ,parameter link_sif_width_lp=`bsg_manycore_link_sif_width(link_addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p)
   )
   (
     input clk_i
@@ -35,19 +36,20 @@ module bsg_test_node_master
     ,output logic done_o
   );
 
-  `declare_bsg_manycore_packet_s(addr_width_p, data_width_p, x_cord_width_p, y_cord_width_p, load_id_width_p);
+  `declare_bsg_manycore_packet_s(link_addr_width_p, data_width_p, x_cord_width_p, y_cord_width_p, load_id_width_p);
   bsg_manycore_packet_s out_packet_li;
   logic out_v_li;
   logic out_ready_lo;
 
   logic [data_width_p-1:0] returned_data_r_lo;
   logic returned_v_r_lo;
+  logic returned_yumi_li;
   
   bsg_manycore_endpoint_standard #(
     .x_cord_width_p(x_cord_width_p)
     ,.y_cord_width_p(y_cord_width_p)
     ,.data_width_p(data_width_p)
-    ,.addr_width_p(addr_width_p)
+    ,.addr_width_p(link_addr_width_p)
     ,.fifo_els_p(4)
     ,.max_out_credits_p(16)
     ,.load_id_width_p(load_id_width_p)
@@ -78,7 +80,7 @@ module bsg_test_node_master
     ,.returned_load_id_r_o()
     ,.returned_v_r_o(returned_v_r_lo)
     ,.returned_fifo_full_o()
-    ,.returned_yumi_i()
+    ,.returned_yumi_i(returned_yumi_li)
 
     ,.out_credits_o()
 
@@ -117,8 +119,6 @@ module bsg_test_node_master
   always_comb begin
     send_tag_cnt_n = send_tag_cnt_r;
     send_mem_cnt_n = send_mem_cnt_r;
-    recv_tag_cnt_n = recv_tag_cnt_r;
-    recv_mem_cnt_n = recv_mem_cnt_r;
     out_packet_li.addr = '0;
   
     case (send_state_r) 
@@ -129,7 +129,7 @@ module bsg_test_node_master
         out_packet_li.op = 2'b01;
         out_packet_li.payload = '0;
         out_packet_li.addr[lg_block_size_in_words_lp+:lg_sets_lp+lg_ways_lp] = send_tag_cnt_r;
-        out_packet_li.addr[lg_block_size_in_words_lp+lg_sets_lp+lg_ways_lp] = 1'b1;
+        out_packet_li.addr[link_lo_addr_width_p] = 1'b1;
         
         out_v_li = ~reset_i;
         send_tag_cnt_n = out_ready_lo
@@ -144,7 +144,7 @@ module bsg_test_node_master
         out_packet_li.op = 2'b00;
         out_packet_li.payload = '0;
         out_packet_li.addr[lg_block_size_in_words_lp+:lg_sets_lp+lg_ways_lp] = send_tag_cnt_r;
-        out_packet_li.addr[lg_block_size_in_words_lp+lg_sets_lp+lg_ways_lp] = 1'b1;
+        out_packet_li.addr[link_lo_addr_width_p] = 1'b1;
 
         out_v_li = ~reset_i;
         send_tag_cnt_n = out_ready_lo
@@ -158,7 +158,7 @@ module bsg_test_node_master
           : STORE_DATA;
         out_packet_li.op = 2'b01;
         out_packet_li.payload = send_mem_cnt_r + (id_p << lg_num_test_word_lp);
-        out_packet_li.addr = (addr_width_p)'(send_mem_cnt_r);
+        out_packet_li.addr = (link_addr_width_p)'(send_mem_cnt_r);
         out_v_li = ~reset_i;
         send_mem_cnt_n = out_ready_lo
           ? ((send_mem_cnt_r == (num_test_word_p-1)) ? '0 : send_mem_cnt_r + 1)
@@ -171,7 +171,7 @@ module bsg_test_node_master
           : LOAD_DATA;
         out_packet_li.op = 2'b00;
         out_packet_li.payload = '0;
-        out_packet_li.addr = (addr_width_p)'(send_mem_cnt_r);
+        out_packet_li.addr = (link_addr_width_p)'(send_mem_cnt_r);
         out_v_li = ~reset_i;
         send_mem_cnt_n = out_ready_lo
           ? ((send_mem_cnt_r == (num_test_word_p-1)) ? '0 : send_mem_cnt_r + 1)
@@ -192,6 +192,10 @@ module bsg_test_node_master
   // receiver
   //
   always_comb begin
+    recv_tag_cnt_n = recv_tag_cnt_r;
+    recv_mem_cnt_n = recv_mem_cnt_r;
+    returned_yumi_li = 1'b0;
+
     case (recv_state_r) 
       RECV_TAG: begin
         recv_state_n = (recv_tag_cnt_r == (sets_p*ways_p-1)) & returned_v_r_lo
@@ -200,6 +204,7 @@ module bsg_test_node_master
         recv_tag_cnt_n = returned_v_r_lo
           ? recv_tag_cnt_r + 1
           : recv_tag_cnt_r;
+        returned_yumi_li = returned_v_r_lo;
       end
       RECV_DATA: begin
         recv_state_n = (recv_mem_cnt_r == (num_test_word_p-1)) & returned_v_r_lo
@@ -208,6 +213,7 @@ module bsg_test_node_master
         recv_mem_cnt_n = returned_v_r_lo
           ? recv_mem_cnt_r + 1
           : recv_mem_cnt_r;
+        returned_yumi_li = returned_v_r_lo;
       end
       RECV_DONE: begin
         recv_state_n = RECV_DONE;
