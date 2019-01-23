@@ -25,6 +25,7 @@
 //
 //  MBT 8/31/16
 //
+// FIXME (bug found by Yichao Wu): does not handle case of width_p=1
 //
 
 module bsg_strobe #(width_p="inv"
