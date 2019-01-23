@@ -1,5 +1,4 @@
 $BSG_IP_CORES_DIR/bsg_noc/bsg_noc_pkg.v
-$BSG_MANYCORE_DIR/v/bsg_manycore_packet.vh
 $BSG_IP_CORES_DIR/bsg_misc/bsg_defines.v
 $BSG_MANYCORE_DIR/v/lpddr1/bsg_dram_ctrl_pkg.v
 $BSG_MANYCORE_DIR/v/bsg_manycore_endpoint.v
@@ -63,5 +62,6 @@ $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_miss.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_sbuf.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_sbuf_queue.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache.v
+$BSG_IP_CORES_DIR/testing/bsg_dram_ctrl/lpddr_dram_model/mobile_ddr.v
 bsg_test_node_master.v
 testbench.v
