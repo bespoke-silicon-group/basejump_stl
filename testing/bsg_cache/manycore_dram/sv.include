@@ -8,7 +8,6 @@ $BSG_MANYCORE_DIR/v/bsg_manycore_link_sif_tieoff.v
 $BSG_MANYCORE_DIR/v/bsg_manycore_mesh_node.v
 $BSG_MANYCORE_DIR/v/bsg_manycore_swap_ctrl.v
 $BSG_MANYCORE_DIR/v/bsg_1hold.v
-$BSG_DESIGNS_DIR/toplevels/bsg_dram_manycore_async_drlp_async_outspace_stub_async_fsb/testing/dram_model/mobile_ddr.v
 $BSG_IP_CORES_DIR/bsg_test/bsg_nonsynth_clock_gen.v
 $BSG_IP_CORES_DIR/bsg_test/bsg_nonsynth_reset_gen.v
 $BSG_IP_CORES_DIR/bsg_noc/bsg_mesh_router_buffered.v
@@ -35,12 +34,6 @@ $BSG_IP_CORES_DIR/bsg_misc/bsg_decode.v
 $BSG_IP_CORES_DIR/bsg_misc/bsg_decode_with_v.v
 $BSG_IP_CORES_DIR/bsg_mem/bsg_mem_1r1w_synth.v
 $BSG_IP_CORES_DIR/bsg_mem/bsg_mem_1r1w.v
-$BSG_IP_CORES_DIR/bsg_fsb/bsg_fsb_pkg.v
-$BSG_IP_CORES_DIR/bsg_fsb/bsg_fsb_node_trace_replay.v
-$BSG_IP_CORES_DIR/bsg_fsb/bsg_fsb.v
-$BSG_IP_CORES_DIR/bsg_fsb/bsg_front_side_bus_hop_in.v
-$BSG_IP_CORES_DIR/bsg_fsb/bsg_front_side_bus_hop_out.v
-$BSG_IP_CORES_DIR/bsg_fsb/bsg_fsb_murn_gateway.v
 $BSG_IP_CORES_DIR/bsg_mem/bsg_mem_1rw_sync.v
 $BSG_IP_CORES_DIR/bsg_mem/bsg_mem_1rw_sync_synth.v
 $BSG_IP_CORES_DIR/bsg_mem/bsg_mem_1rw_sync_mask_write_bit_synth.v
@@ -70,9 +63,5 @@ $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_miss.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_sbuf.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_sbuf_queue.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache.v
-bsg_trace_master_rom.v
-bsg_test_node_client.v
-mesh_master_cache.v
-mesh_top_cache.v
-mock_dram_ctrl.v
+bsg_test_node_master.v
 testbench.v
