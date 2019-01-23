@@ -2,13 +2,6 @@
  *  bsg_manycore_link_to_cache.v
  *
  *  @author tommy
- *
- *  @param addr_width_p address bit-width of global (remote) address.
- *  @param data_width_p data bit-width. (32-bit)
- *  @param x_cord_width_p x-coord bit-width.
- *  @param y_cord_width_p y-coord bit_width.
- *  @param dram_addr_width_p number of bits allocated for DRAM address space
- *  from LSB. (in words)
  */
 
 `include "bsg_manycore_packet.vh"
@@ -16,42 +9,49 @@
 
 module bsg_manycore_link_to_cache
   import bsg_cache_pkg::*;
-  #(parameter addr_width_p="inv"
+  #(parameter link_addr_width_p="inv"
+    ,parameter link_lo_addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter x_cord_width_p="inv"
     ,parameter y_cord_width_p="inv"
-    ,parameter dram_addr_width_p="inv"
-    ,parameter fifo_els_p = 4
-    ,parameter max_out_credits_lp = 16
-    ,parameter link_sif_width_lp=`bsg_manycore_link_sif_width(addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p)
-    ,parameter cache_addr_width_lp=addr_width_p+`BSG_SAFE_CLOG2(data_width_p>>3)
+    ,parameter load_id_width_p="inv"
+
+    ,parameter fifo_els_p=4
+    ,parameter max_out_credits_p = 16
+
+    ,parameter data_mask_width_lp=(data_width_p>>3)
+    ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
+  
+    ,parameter link_sif_width_lp=`bsg_manycore_link_sif_width(link_addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p)
+    ,parameter cache_addr_width_lp=(link_addr_width_p+lg_data_mask_width_lp)
     ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(cache_addr_width_lp,data_width_p)
-    ,parameter packet_width_lp=`bsg_manycore_packet_width(addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p))
-(
-  input clk_i
-  ,input reset_i
+    ,parameter manycore_packet_width_lp=`bsg_manycore_packet_width(link_addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p)
+  )
+  (
+    input clk_i
+    ,input reset_i
 
-  // manycore-side
-  ,input [x_cord_width_p-1:0] my_x_i
-  ,input [y_cord_width_p-1:0] my_y_i
-  ,input [link_sif_width_lp-1:0] link_sif_i
-  ,output logic [link_sif_width_lp-1:0] link_sif_o
+    // manycore-side
+    ,input [x_cord_width_p-1:0] my_x_i
+    ,input [y_cord_width_p-1:0] my_y_i
+    ,input [link_sif_width_lp-1:0] link_sif_i
+    ,output logic [link_sif_width_lp-1:0] link_sif_o
 
-  // cache-side
-  ,output [bsg_cache_pkt_width_lp-1:0] cache_pkt_o
-  ,output logic v_o
-  ,input ready_i
+    // cache-side
+    ,output [bsg_cache_pkt_width_lp-1:0] cache_pkt_o
+    ,output logic v_o
+    ,input ready_i
 
-  ,input [data_width_p-1:0] data_i
-  ,input v_i
-  ,output logic yumi_o
-);
+    ,input [data_width_p-1:0] data_i
+    ,input v_i
+    ,output logic yumi_o
+  );
 
   logic endpoint_v_lo;
   logic endpoint_yumi_li;
   logic [data_width_p-1:0] endpoint_data_lo;
   logic [(data_width_p>>3)-1:0] endpoint_mask_lo;
-  logic [addr_width_p-1:0] endpoint_addr_lo;
+  logic [link_addr_width_p-1:0] endpoint_addr_lo;
   logic endpoint_we_lo;
   logic endpoint_returning_v_li;
 
@@ -64,10 +64,10 @@ module bsg_manycore_link_to_cache
   bsg_manycore_endpoint_standard #(
     .x_cord_width_p(x_cord_width_p)
     ,.y_cord_width_p(y_cord_width_p)
-    ,.fifo_els_p(fifo_els_p)
     ,.data_width_p(data_width_p)
-    ,.addr_width_p(addr_width_p)
-    ,.max_out_credits_p(max_out_credits_lp)
+    ,.addr_width_p(link_addr_width_p)
+    ,.fifo_els_p(fifo_els_p)
+    ,.max_out_credits_p(max_out_credits_p)
   ) dram_endpoint_standard (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -81,13 +81,18 @@ module bsg_manycore_link_to_cache
     ,.in_mask_o(endpoint_mask_lo)
     ,.in_addr_o(endpoint_addr_lo)
     ,.in_we_o(endpoint_we_lo)
+    ,.in_src_x_cord_o()
+    ,.in_src_y_cord_o()
 
     ,.out_v_i(1'b0)
-    ,.out_packet_i({(packet_width_lp){1'b0}})
+    ,.out_packet_i({(manycore_packet_width_lp){1'b0}})
     ,.out_ready_o()
   
     ,.returned_data_r_o()
+    ,.returned_load_id_r_o()
     ,.returned_v_r_o()
+    ,.returned_fifo_full_o()
+    ,.returned_yumi_i(1'b0)
 
     ,.returning_data_i(data_i)
     ,.returning_v_i(endpoint_returning_v_li)
@@ -102,20 +107,21 @@ module bsg_manycore_link_to_cache
   // to cache
   //
   `declare_bsg_cache_pkt_s(cache_addr_width_lp, data_width_p);
-  bsg_cache_pkt_s packet_cast;
-  assign cache_pkt_o = packet_cast;
-  assign packet_cast.sigext = 1'b0;
-  assign packet_cast.mask = endpoint_mask_lo;
-  assign packet_cast.opcode = endpoint_addr_lo[dram_addr_width_p]
+  bsg_cache_pkt_s cache_pkt;
+  assign cache_pkt_o = cache_pkt;
+  assign cache_pkt.sigext = 1'b0;
+  assign cache_pkt.mask = endpoint_mask_lo;
+  assign cache_pkt.opcode = endpoint_addr_lo[link_lo_addr_width_p]
     ? (endpoint_we_lo ? TAGST : TAGLA)
     : (endpoint_we_lo ? SM : LM);
 
-  assign packet_cast.addr = {
-    endpoint_addr_lo[dram_addr_width_p-1:0],
-    {(`BSG_SAFE_CLOG2(data_width_p>>3)){1'b0}}
+  assign cache_pkt.addr = {
+    {(cache_addr_width_lp-link_lo_addr_width_p-lg_data_mask_width_lp){1'b0}},
+    endpoint_addr_lo[link_lo_addr_width_p-1:0],
+    {lg_data_mask_width_lp{1'b0}}
   };
 
-  assign packet_cast.data = endpoint_data_lo;
+  assign cache_pkt.data = endpoint_data_lo;
   assign v_o = endpoint_v_lo;
   assign endpoint_yumi_li = endpoint_v_lo & ready_i;
 

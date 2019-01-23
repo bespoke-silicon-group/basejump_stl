@@ -8,10 +8,14 @@
 module bsg_cache_to_dram_ctrl_tx
   #(parameter num_cache_p="inv"
     ,parameter data_width_p="inv"
+    ,parameter block_size_in_words_p="inv"
+    ,parameter dram_ctrl_data_width_p="inv"
+    ,parameter dram_ctrl_burst_len_p="inv"
+
+    ,parameter num_req_lp=(data_width_p*block_size_in_words_p)/(dram_ctrl_data_width_p*dram_ctrl_burst_len_p)
     ,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
-    ,parameter burst_width_p="inv"
-    ,parameter burst_len_p="inv"
-    ,parameter data_width_ratio_lp=burst_width_p/data_width_p
+    ,parameter data_width_ratio_lp=(dram_ctrl_data_width_p/data_width_p)
+    ,parameter lg_data_width_ratio_lp=`BSG_SAFE_CLOG2(data_width_ratio_lp)
   )
   (
     input clk_i
@@ -27,8 +31,8 @@ module bsg_cache_to_dram_ctrl_tx
 
     ,output logic app_wdf_wren_o
     ,input app_wdf_rdy_i
-    ,output logic [burst_width_p-1:0] app_wdf_data_o
-    ,output logic [(burst_width_p>>3)-1:0] app_wdf_mask_o
+    ,output logic [dram_ctrl_data_width_p-1:0] app_wdf_data_o
+    ,output logic [(dram_ctrl_data_width_p>>3)-1:0] app_wdf_mask_o
     ,output logic app_wdf_end_o
   );
 
@@ -37,9 +41,10 @@ module bsg_cache_to_dram_ctrl_tx
   logic [lg_num_cache_lp-1:0] tag_fifo_data_lo;
   logic tag_fifo_v_lo;
   logic tag_fifo_yumi_li;
+
   bsg_fifo_1r1w_small #(
     .width_p(lg_num_cache_lp)
-    ,.els_p(num_cache_p*2)
+    ,.els_p(num_cache_p*num_req_lp)
   ) fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -67,9 +72,11 @@ module bsg_cache_to_dram_ctrl_tx
   
   // word_counter
   //
-  logic [`BSG_SAFE_CLOG2(data_width_ratio_lp)-1:0] word_count_lo;
+  logic [lg_data_width_ratio_lp-1:0] word_count_lo;
   logic word_up_li;
   logic word_clear_li;
+  logic take_word;
+
   bsg_counter_clear_up #(
     .max_val_p(data_width_ratio_lp-1)
     ,.init_val_p(0)
@@ -81,18 +88,18 @@ module bsg_cache_to_dram_ctrl_tx
     ,.count_o(word_count_lo)
   );
 
+  assign take_word = dma_data_v_i[tag_fifo_data_lo]
+    & dma_data_yumi_o[tag_fifo_data_lo] & tag_fifo_v_lo;
+
   always_comb begin
     if (word_count_lo == data_width_ratio_lp-1) begin
       word_up_li = 1'b0;
-      word_clear_li = dma_data_v_i[tag_fifo_data_lo]
-        & dma_data_yumi_o[tag_fifo_data_lo] & tag_fifo_v_lo;
-      tag_fifo_yumi_li = dma_data_v_i[tag_fifo_data_lo]
-        & dma_data_yumi_o[tag_fifo_data_lo] & tag_fifo_v_lo;
+      word_clear_li = take_word;
+      tag_fifo_yumi_li = take_word;
     end
     else begin
+      word_up_li = take_word;
       word_clear_li = 1'b0;
-      word_up_li = dma_data_v_i[tag_fifo_data_lo]
-        & dma_data_yumi_o[tag_fifo_data_lo] & tag_fifo_v_lo;
       tag_fifo_yumi_li = 1'b0;
     end
   end
@@ -129,12 +136,12 @@ module bsg_cache_to_dram_ctrl_tx
 
   // burst counter
   //
-  logic [`BSG_SAFE_CLOG2(burst_len_p)-1:0] burst_count_lo;
+  logic [`BSG_SAFE_CLOG2(dram_ctrl_burst_len_p)-1:0] burst_count_lo;
   logic burst_up_li;
   logic burst_clear_li;
 
   bsg_counter_clear_up #(
-    .max_val_p(burst_len_p-1)
+    .max_val_p(dram_ctrl_burst_len_p-1)
     ,.init_val_p(0)
   ) burst_counter (
     .clk_i(clk_i)
@@ -143,7 +150,6 @@ module bsg_cache_to_dram_ctrl_tx
     ,.up_i(burst_up_li)
     ,.count_o(burst_count_lo)
   );
-
 
   logic dram_wren;
   assign dram_wren = &sipo_v_lo;
@@ -154,7 +160,7 @@ module bsg_cache_to_dram_ctrl_tx
   assign app_wdf_wren_o = dram_wren;
 
   always_comb begin
-    if (burst_count_lo == burst_len_p-1) begin
+    if (burst_count_lo == dram_ctrl_burst_len_p-1) begin
       burst_clear_li = dram_wren & app_wdf_rdy_i;
       burst_up_li = 1'b0;
       app_wdf_end_o = dram_wren;
@@ -165,7 +171,6 @@ module bsg_cache_to_dram_ctrl_tx
       app_wdf_end_o = 1'b0;
     end
   end
-
 
   assign app_wdf_mask_o = '0;
 

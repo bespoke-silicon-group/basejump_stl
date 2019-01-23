@@ -2,33 +2,26 @@
  *  bsg_cache_to_dram_ctrl.v
  *
  *  @author tommy
- *
- *  @param data_width_p data width.
- *  @param addr_width_p address width. (byte addressing)
- *  @param block_size_in_words_p number of words in cache block.
- *  @param data_width_p bit-width of words in cache.
- *  @param burst_len_p number of bursts per request.
- *  @param burst_width_p bit-width of burst data.
- *  @param num_cache_p number of cache attached to this module.
- *  @param dram_addr_width_p number of dram offset width.
  */
 
 `include "bsg_cache_dma_pkt.vh"
 
 module bsg_cache_to_dram_ctrl
   import bsg_dram_ctrl_pkg::*;
-  #(parameter addr_width_p="inv"
-    ,parameter block_size_in_words_p="inv"
+  #(parameter num_cache_p="inv"
+    ,parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
-    ,parameter burst_len_p="inv"
-    ,parameter burst_width_p="inv"
-    ,parameter num_cache_p="inv"
-    ,parameter dram_addr_width_p="inv"
+    ,parameter block_size_in_words_p="inv"
+
+    ,parameter dram_ctrl_burst_len_p="inv"
+    ,parameter dram_ctrl_data_width_p="inv"
+    ,parameter dram_ctrl_addr_width_p="inv"
+    ,parameter dram_ctrl_lo_addr_width_p="inv"
+
     ,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
-    ,parameter data_width_ratio_lp=burst_width_p/data_width_p
+    ,parameter data_width_ratio_lp=(dram_ctrl_data_width_p/data_width_p)
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    ,parameter num_req_lp=(data_width_p*block_size_in_words_p)/(burst_width_p*burst_len_p)
-    ,parameter block_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p*block_size_in_words_p/8)
+    ,parameter num_req_lp=(data_width_p*block_size_in_words_p)/(dram_ctrl_data_width_p*dram_ctrl_burst_len_p)
     ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
   )
   (
@@ -49,35 +42,25 @@ module bsg_cache_to_dram_ctrl
 
     ,output logic app_en_o
     ,input app_rdy_i
-    ,output logic app_hi_pri_o
     ,output eAppCmd app_cmd_o
-    ,output logic [dram_addr_width_p-1:0] app_addr_o
+    ,output logic [dram_ctrl_addr_width_p-1:0] app_addr_o
 
     ,output logic app_wdf_wren_o
     ,input app_wdf_rdy_i
-    ,output logic [burst_width_p-1:0] app_wdf_data_o
-    ,output logic [(burst_width_p>>3)-1:0] app_wdf_mask_o
+    ,output logic [dram_ctrl_data_width_p-1:0] app_wdf_data_o
+    ,output logic [(dram_ctrl_data_width_p>>3)-1:0] app_wdf_mask_o
     ,output logic app_wdf_end_o
 
     ,input app_rd_data_valid_i
-    ,input [burst_width_p-1:0] app_rd_data_i
+    ,input [dram_ctrl_data_width_p-1:0] app_rd_data_i
     ,input app_rd_data_end_i
-
-    ,output logic app_ref_req_o
-    ,input app_ref_ack_i
-
-    ,output logic app_zq_req_o
-    ,input app_zq_ack_i
-    ,input init_calib_complete_i
-
-    ,output logic app_sr_req_o
-    ,input app_sr_ack_i
   );
 
   // round robin for dma pkts
   //
+  `declare_bsg_cache_dma_pkt_s(addr_width_p);
+  bsg_cache_dma_pkt_s dma_pkt;
   logic rr_v_lo;
-  logic [dma_pkt_width_lp-1:0] rr_data_lo;
   logic [lg_num_cache_lp-1:0] rr_tag_lo;
   logic rr_yumi_li;
 
@@ -92,34 +75,36 @@ module bsg_cache_to_dram_ctrl
     ,.v_i(dma_pkt_v_i)
     ,.yumi_o(dma_pkt_yumi_o)
     ,.v_o(rr_v_lo)
-    ,.data_o(rr_data_lo)
+    ,.data_o(dma_pkt)
     ,.tag_o(rr_tag_lo)
     ,.yumi_i(rr_yumi_li)
   );
 
-  `declare_bsg_cache_dma_pkt_s(addr_width_p);
-  bsg_cache_dma_pkt_s dma_pkt;
-  assign dma_pkt = rr_data_lo;
-
   logic [lg_num_cache_lp-1:0] tag_r, tag_n;
+
   // rx module
   //
   logic rx_v_li;
   logic rx_ready_lo;
+
   bsg_cache_to_dram_ctrl_rx #(
     .num_cache_p(num_cache_p)
     ,.data_width_p(data_width_p)
-    ,.burst_width_p(burst_width_p)
-    ,.burst_len_p(burst_len_p)
+    ,.block_size_in_words_p(block_size_in_words_p)
+    ,.dram_ctrl_data_width_p(dram_ctrl_data_width_p)
+    ,.dram_ctrl_burst_len_p(dram_ctrl_burst_len_p)
   ) rx (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
+
     ,.v_i(rx_v_li)
     ,.tag_i(tag_r)
     ,.ready_o(rx_ready_lo)
+
     ,.dma_data_o(dma_data_o)
     ,.dma_data_v_o(dma_data_v_o)
     ,.dma_data_ready_i(dma_data_ready_i)
+
     ,.app_rd_data_valid_i(app_rd_data_valid_i)
     ,.app_rd_data_i(app_rd_data_i)
     ,.app_rd_data_end_i(app_rd_data_end_i)
@@ -129,11 +114,13 @@ module bsg_cache_to_dram_ctrl
   //
   logic tx_v_li;
   logic tx_ready_lo;
+
   bsg_cache_to_dram_ctrl_tx #(
     .num_cache_p(num_cache_p)
     ,.data_width_p(data_width_p)
-    ,.burst_width_p(burst_width_p)
-    ,.burst_len_p(burst_len_p)
+    ,.block_size_in_words_p(block_size_in_words_p)
+    ,.dram_ctrl_data_width_p(dram_ctrl_data_width_p)
+    ,.dram_ctrl_burst_len_p(dram_ctrl_burst_len_p)
   ) tx (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -195,7 +182,7 @@ module bsg_cache_to_dram_ctrl
         tx_v_li = write_not_read_r & tx_ready_lo & app_rdy_i;
 
         addr_n = (app_rdy_i & app_en_o)
-          ? addr_r + (1 << `BSG_SAFE_CLOG2(burst_width_p*burst_len_p/8))
+          ? addr_r + (1 << `BSG_SAFE_CLOG2(dram_ctrl_burst_len_p*dram_ctrl_data_width_p/8))
           : addr_r;
         req_cnt_n = (app_rdy_i & app_en_o)
           ? req_cnt_r + 1
@@ -207,13 +194,11 @@ module bsg_cache_to_dram_ctrl
     endcase
   end
 
-  assign app_addr_o = {tag_r, addr_r[0+:dram_addr_width_p]};
-
-  assign app_hi_pri_o = 1'b1;
-  assign app_ref_req_o = 1'b0;
-  assign app_zq_req_o = 1'b0;
-  assign app_sr_req_o = 1'b0;
-
+  assign app_addr_o = {
+    {(dram_ctrl_addr_width_p-lg_num_cache_lp-dram_ctrl_lo_addr_width_p){1'b0}},
+    tag_r,
+    addr_r[0+:dram_ctrl_lo_addr_width_p]
+  };
 
   // sequential
   //

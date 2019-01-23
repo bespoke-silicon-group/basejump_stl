@@ -8,10 +8,14 @@
 module bsg_cache_to_dram_ctrl_rx
   #(parameter num_cache_p="inv"
     ,parameter data_width_p="inv"
+    ,parameter block_size_in_words_p="inv"
+    ,parameter dram_ctrl_data_width_p="inv"
+    ,parameter dram_ctrl_burst_len_p="inv"
+    
+    ,parameter num_req_lp=(data_width_p*block_size_in_words_p)/(dram_ctrl_data_width_p*dram_ctrl_burst_len_p)
     ,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
-    ,parameter burst_width_p="inv"
-    ,parameter burst_len_p="inv"
-    ,parameter data_width_ratio_lp=burst_width_p/data_width_p
+    ,parameter data_width_ratio_lp=(dram_ctrl_data_width_p/data_width_p)
+    ,parameter lg_data_width_ratio_lp=`BSG_SAFE_CLOG2(data_width_ratio_lp)
   )
   (
     input clk_i
@@ -26,21 +30,19 @@ module bsg_cache_to_dram_ctrl_rx
     ,input [num_cache_p-1:0] dma_data_ready_i
 
     ,input app_rd_data_valid_i
-    ,input [burst_width_p-1:0] app_rd_data_i
+    ,input [dram_ctrl_data_width_p-1:0] app_rd_data_i
     ,input app_rd_data_end_i
   );
-
-  localparam fifo_els_lp = (burst_len_p == 1) ? 2 : burst_len_p;
 
   // FIFO to sink incoming data
   //
   logic fifo_v_lo;
-  logic [burst_width_p-1:0] fifo_data_lo;
   logic fifo_yumi_li;
+  logic [dram_ctrl_data_width_p-1:0] fifo_data_lo;
 
   bsg_fifo_1r1w_large #(
-    .width_p(burst_width_p)
-    ,.els_p(fifo_els_lp)
+    .width_p(dram_ctrl_data_width_p)
+    ,.els_p(num_cache_p*dram_ctrl_burst_len_p*num_req_lp)
   ) fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -60,9 +62,10 @@ module bsg_cache_to_dram_ctrl_rx
   logic piso_v_lo;
   logic [data_width_p-1:0] piso_data_lo;
   logic piso_yumi_li;
+
   bsg_parallel_in_serial_out #(
     .width_p(data_width_p)
-    ,.els_p(burst_width_p/data_width_p)
+    ,.els_p(data_width_ratio_lp)
   ) piso (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -81,11 +84,12 @@ module bsg_cache_to_dram_ctrl_rx
   // tag_fifo
   //
   logic tag_fifo_v_lo;
-  logic [lg_num_cache_lp-1:0] tag_fifo_data_lo;
   logic tag_fifo_yumi_li;
+  logic [lg_num_cache_lp-1:0] tag_fifo_data_lo;
+
   bsg_fifo_1r1w_small #(
     .width_p(lg_num_cache_lp)
-    ,.els_p(fifo_els_lp/burst_len_p)
+    ,.els_p(num_cache_p*num_req_lp)
   ) tag_fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -119,9 +123,10 @@ module bsg_cache_to_dram_ctrl_rx
 
   // counter
   //
-  logic [`BSG_SAFE_CLOG2(data_width_ratio_lp)-1:0] count_lo;
+  logic [lg_data_width_ratio_lp-1:0] count_lo;
   logic counter_up_li;
   logic counter_clear_li;
+
   bsg_counter_clear_up #(
     .max_val_p(data_width_ratio_lp-1)
     ,.init_val_p(0)
