@@ -251,19 +251,25 @@ module bsg_test_node_master
     if (~reset_i & returned_v_r_lo) begin
       case (recv_state_r)
         RECV_TAG: begin
-          $display("[%0d] id: %d, recv_tag: %d",
+          $display("[%0d] recv_tag: %d",
             id_p,
-            recv_tag_cnt_r,
             returned_data_r_lo[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp]
           );
         end
 
         RECV_DATA: begin
-          $display("[%0d] id: %d, recv_mem: %d",
-            id_p,
-            recv_mem_cnt_r,
-            returned_data_r_lo
-          );
+          if ((32)'(recv_mem_cnt_r) + (id_p << lg_num_test_word_lp) == returned_data_r_lo) begin
+            $display("[%0d] recv_mem. expected: %d, actual: %d",
+              id_p,
+              (32)'(recv_mem_cnt_r) + (id_p << lg_num_test_word_lp),
+              returned_data_r_lo);
+          end
+          else begin
+            $display("[%0d] recv_mem. expected: %d, actual: %d (NOT MATCHED)",
+              id_p,
+              (32)'(recv_mem_cnt_r) + (id_p << lg_num_test_word_lp),
+              returned_data_r_lo);
+          end
         end
       endcase
     end

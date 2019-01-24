@@ -11,6 +11,8 @@ module testbench();
 
   // parameters
   //
+  parameter num_test_word_p = 2**14;
+
   parameter num_cache_p = 4;
   parameter data_width_p = 32;
   parameter addr_width_p = 32;
@@ -162,7 +164,7 @@ module testbench();
       ,.sets_p(sets_p)
       ,.block_size_in_words_p(block_size_in_words_p)
       ,.load_id_width_p(load_id_width_p)
-      ,.num_test_word_p(1024)
+      ,.num_test_word_p(num_test_word_p)
     ) master (
       .clk_i(clk)
       ,.reset_i(reset)
@@ -441,6 +443,9 @@ module testbench();
 
   initial begin
     wait(&done_lo);
+    for (integer i = 0; i < 100; i++) begin
+      @(posedge clk);
+    end
     $display("************ FINISHED *************");
     $finish;
   end
