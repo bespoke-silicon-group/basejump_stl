@@ -39,7 +39,7 @@ module bsg_cache_to_axi_rx
     ,output logic [1:0] axi_arburst_o
     ,output logic [3:0] axi_arcache_o
     ,output logic [2:0] axi_arprot_o
-    ,output logic [1:0] axi_arlock_o
+    ,output logic axi_arlock_o
     ,output logic axi_arvalid_o
     ,input axi_arready_i
 
@@ -87,7 +87,7 @@ module bsg_cache_to_axi_rx
   assign axi_arburst_o = 2'b01;   // incr
   assign axi_arcache_o = 4'b0000; // non-bufferable
   assign axi_arprot_o = 2'b00;    // unprevileged
-  assign axi_arlock_o = 2'b00;    // normal access
+  assign axi_arlock_o = 1'b0;    // normal access
   assign axi_arvalid_o = v_i;
 
  
