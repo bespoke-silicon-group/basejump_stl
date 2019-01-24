@@ -42,7 +42,7 @@ module bsg_cache_to_axi_tx
     ,output logic [1:0] axi_awburst_o
     ,output logic [3:0] axi_awcache_o
     ,output logic [2:0] axi_awprot_o
-    ,output logic [1:0] axi_awlock_o
+    ,output logic axi_awlock_o
     ,output logic axi_awvalid_o
     ,input axi_awready_i
 
@@ -95,7 +95,7 @@ module bsg_cache_to_axi_tx
   assign axi_awburst_o = 2'b01;   // incr
   assign axi_awcache_o = 4'b0000; // non-bufferable
   assign axi_awprot_o = 2'b00;    // unprivileged
-  assign axi_awlock_o = 2'b00;    // normal access
+  assign axi_awlock_o = 1'b0;    // normal access
   assign axi_awvalid_o = v_i;
 
   // axi write data channel

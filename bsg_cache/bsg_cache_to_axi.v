@@ -48,7 +48,7 @@ module bsg_cache_to_axi
     ,output logic [1:0] axi_awburst_o
     ,output logic [3:0] axi_awcache_o
     ,output logic [2:0] axi_awprot_o
-    ,output logic [1:0] axi_awlock_o
+    ,output logic axi_awlock_o
     ,output logic axi_awvalid_o
     ,input axi_awready_i
 
@@ -73,7 +73,7 @@ module bsg_cache_to_axi
     ,output logic [1:0] axi_arburst_o
     ,output logic [3:0] axi_arcache_o
     ,output logic [2:0] axi_arprot_o
-    ,output logic [1:0] axi_arlock_o
+    ,output logic axi_arlock_o
     ,output logic axi_arvalid_o
     ,input axi_arready_i
 
