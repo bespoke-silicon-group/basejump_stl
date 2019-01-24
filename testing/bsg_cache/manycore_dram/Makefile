@@ -33,5 +33,5 @@ clean:
 	rm -rf DVEfiles
 	rm -rf csrc
 	rm -rf simv.daidir simv.vdb
-	rm -f ucli.key vcdplus.vpd simv *.tar.gz
+	rm -f ucli.key vcdplus.vpd simv *.tar.gz vcs.log
 
