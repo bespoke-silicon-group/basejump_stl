@@ -185,7 +185,7 @@ module dmc_controller #
 
   assign DDR_TYPE = slv_reg13[2:0];
   assign INIT_CMD_CNT = slv_reg14[3:0];
-  assign RDDATA_VALID_CALIB = slv_reg14[3:0];
+  assign RDDATA_VALID_CALIB = slv_reg14[5:4];
 
   wire [3:0] col_width, row_width;
   wire [1:0] bank_width;
@@ -467,7 +467,6 @@ module dmc_controller #
                  PRE:     shoot = cmd_tick >= TRAS;
                  ACT:     shoot = cmd_tick >= TRRD;
                  WRITE:   shoot = (cmd_tick >= TRCD) & (cmd_rd_tick >= TCAS+TBL);
-                 //WRITE,
                  READ:    shoot = (cmd_tick >= TRCD) & (cmd_wr_tick >= TWTR);
 	         default: shoot = 1'b1;
                endcase
@@ -479,7 +478,7 @@ module dmc_controller #
                endcase
         READ:  case(n_cmd)
                  PRE:     shoot = cmd_tick >= TRTP;
-                 WRITE:   shoot = cmd_tick >= TBL+TCAS-1;
+                 WRITE:   shoot = cmd_tick >= TBL+TCAS;
                  READ:    shoot = cmd_tick >= TBL;
 	         default: shoot = 1'b1;
                endcase
@@ -672,7 +671,7 @@ module dmc_controller #
     end
     else if(dfi_rddata_valid) begin
       circular_buffer_rddata <= {dfi_rddata, circular_buffer_rddata[UI_DATA_WIDTH-1:DFI_DATA_WIDTH]};
-      burst_cnt <= burst_cnt + 1;
+      burst_cnt <= rddata_afifo_winc? 0: burst_cnt + 1;
     end
 /*
   always @(posedge dfi_clk)
@@ -701,7 +700,8 @@ module dmc_controller #
 
   assign rddata_afifo_wclk   = dfi_clk;
   assign rddata_afifo_wrst_n = ~dfi_clk_sync_rst;
-  assign rddata_afifo_winc   = burst_cnt == 3;
+  //assign rddata_afifo_winc   = burst_cnt == 3;
+  assign rddata_afifo_winc   = burst_cnt == ((1<<TBL)>>1) - 1;
   assign rddata_afifo_wdata  = {dfi_rddata, circular_buffer_rddata[UI_DATA_WIDTH-1:DFI_DATA_WIDTH]};
 
   assign rddata_afifo_rclk   = ui_clk;
