@@ -11,7 +11,7 @@ module testbench();
 
   // parameters
   //
-  parameter num_test_word_p = 2**14;
+  parameter num_test_word_p = 2**18;
 
   parameter num_cache_p = 4;
   parameter data_width_p = 32;
