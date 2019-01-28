@@ -23,6 +23,8 @@ module bsg_cache_test_wrapper
     input clk_i
     ,input reset_i
 
+    ,output logic done_o
+
     // axi write address channel
     ,output logic [axi_id_width_p-1:0] axi_awid_o
     ,output logic [axi_addr_width_p-1:0] axi_awaddr_o
@@ -105,6 +107,8 @@ module bsg_cache_test_wrapper
       ,.done_o(done_lo[i])
     );
   end
+
+  assign done_o = &done_lo;
 
   // bsg_cache
   //
