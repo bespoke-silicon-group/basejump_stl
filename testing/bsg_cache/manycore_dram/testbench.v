@@ -11,19 +11,19 @@ module testbench();
 
   // parameters
   //
-  parameter num_test_word_p = 2**18;
+  parameter num_test_word_p = 2**14;
 
   parameter num_cache_p = 4;
   parameter data_width_p = 32;
-  parameter addr_width_p = 32;
+  parameter addr_width_p = 26;
   parameter sets_p = 512;
   parameter block_size_in_words_p = 8;
   parameter lo_addr_width_p=26;
 
   parameter dram_ctrl_burst_len_p = 1;
-  parameter dram_ctrl_addr_width_p=32;
-  parameter dram_ctrl_data_width_p=128;
-  parameter dram_ctrl_lo_addr_width_p = 26;
+  parameter dram_ctrl_addr_width_p = 27;
+  parameter dram_ctrl_data_width_p = 128;
+  parameter dram_ctrl_lo_addr_width_p = 25;
 
   parameter dfi_data_width_p = 32;
   
@@ -31,7 +31,7 @@ module testbench();
   parameter y_cord_width_p = 1;
   parameter load_id_width_p = 4;
 
-  parameter link_addr_width_lp = addr_width_p-`BSG_SAFE_CLOG2(data_width_p>>3);
+  parameter link_addr_width_lp = 30;
   parameter link_lo_addr_width_lp = lo_addr_width_p-`BSG_SAFE_CLOG2(data_width_p>>3);
   parameter link_sif_width_lp = `bsg_manycore_link_sif_width(link_addr_width_lp,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p);
 
@@ -190,6 +190,7 @@ module testbench();
     bsg_manycore_link_to_cache #(
       .link_addr_width_p(link_addr_width_lp)
       ,.link_lo_addr_width_p(link_lo_addr_width_lp)
+      ,.cache_addr_width_p(addr_width_p)
       ,.data_width_p(data_width_p)
       ,.x_cord_width_p(x_cord_width_p)
       ,.y_cord_width_p(y_cord_width_p)

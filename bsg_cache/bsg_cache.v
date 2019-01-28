@@ -18,12 +18,12 @@ module bsg_cache
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,parameter data_mask_width_lp=(data_width_p>>3)
+    ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    ,parameter tag_width_lp=addr_width_p-2-lg_sets_lp-lg_block_size_in_words_lp
+    ,parameter tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp)
     ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,data_width_p)
     ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
-    ,parameter data_mask_width_lp=data_width_p>>3
-    ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
   )
   (
     input clk_i

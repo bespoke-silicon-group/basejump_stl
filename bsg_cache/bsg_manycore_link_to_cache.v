@@ -11,6 +11,7 @@ module bsg_manycore_link_to_cache
   import bsg_cache_pkg::*;
   #(parameter link_addr_width_p="inv"
     ,parameter link_lo_addr_width_p="inv"
+    ,parameter cache_addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter x_cord_width_p="inv"
     ,parameter y_cord_width_p="inv"
@@ -23,8 +24,7 @@ module bsg_manycore_link_to_cache
     ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
   
     ,parameter link_sif_width_lp=`bsg_manycore_link_sif_width(link_addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p)
-    ,parameter cache_addr_width_lp=(link_addr_width_p+lg_data_mask_width_lp)
-    ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(cache_addr_width_lp,data_width_p)
+    ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(cache_addr_width_p,data_width_p)
     ,parameter manycore_packet_width_lp=`bsg_manycore_packet_width(link_addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p)
   )
   (
@@ -47,17 +47,16 @@ module bsg_manycore_link_to_cache
     ,output logic yumi_o
   );
 
+  // instantiate endpoint_standard
+  //
   logic endpoint_v_lo;
   logic endpoint_yumi_li;
   logic [data_width_p-1:0] endpoint_data_lo;
-  logic [(data_width_p>>3)-1:0] endpoint_mask_lo;
+  logic [data_mask_width_lp-1:0] endpoint_mask_lo;
   logic [link_addr_width_p-1:0] endpoint_addr_lo;
   logic endpoint_we_lo;
   logic endpoint_returning_v_li;
 
-  // instantiate endpoint_standards.
-  // last one maps to tag_mem.
-  //
   bsg_manycore_endpoint_standard #(
     .x_cord_width_p(x_cord_width_p)
     ,.y_cord_width_p(y_cord_width_p)
@@ -104,7 +103,7 @@ module bsg_manycore_link_to_cache
 
   // to cache
   //
-  `declare_bsg_cache_pkt_s(cache_addr_width_lp, data_width_p);
+  `declare_bsg_cache_pkt_s(cache_addr_width_p, data_width_p);
   bsg_cache_pkt_s cache_pkt;
   assign cache_pkt_o = cache_pkt;
   assign cache_pkt.sigext = 1'b0;
@@ -114,7 +113,7 @@ module bsg_manycore_link_to_cache
     : (endpoint_we_lo ? SM : LM);
 
   assign cache_pkt.addr = {
-    {(cache_addr_width_lp-link_lo_addr_width_p-lg_data_mask_width_lp){1'b0}},
+    {(cache_addr_width_p-link_lo_addr_width_p-lg_data_mask_width_lp){1'b0}},
     endpoint_addr_lo[link_lo_addr_width_p-1:0],
     {lg_data_mask_width_lp{1'b0}}
   };
