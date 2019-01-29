@@ -3,6 +3,10 @@
 // 1 read-port, 1 write-port ram
 //
 // reads are synchronous
+//
+// NOTE: Users of BaseJump STL should not instantiate this module directly
+// they should use bsg_mem_1r1w_sync_mask_write_bit.
+
 
 module bsg_mem_1r1w_sync_mask_write_bit_synth #(parameter width_p=-1
 						, parameter els_p=-1
