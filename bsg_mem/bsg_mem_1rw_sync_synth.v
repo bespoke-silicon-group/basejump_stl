@@ -3,6 +3,8 @@
 // Synchronous 1-port ram.
 // Only one read or one write may be done per cycle.
 //
+// NOTE: Users of BaseJump STL should not instantiate this module directly
+// they should use bsg_mem_1rw_sync.
 
 module bsg_mem_1rw_sync_synth #(parameter width_p=-1
 				, parameter els_p=-1
