@@ -9,6 +9,8 @@
 // it's typically a very big change to the instantiating code
 // to move to/from sync/async, and we want to reflect this.
 //
+// NOTE: Users of BaseJump STL should not instantiate this module directly
+// they should use bsg_mem_2r1w_sync.
 
 module bsg_mem_2r1w_sync_synth #(parameter width_p=-1
 				 , parameter els_p=-1
