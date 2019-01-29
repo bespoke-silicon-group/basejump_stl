@@ -1,3 +1,6 @@
+// NOTE: Users of BaseJump STL should not instantiate this module directly
+// they should use bsg_mem_1r1w_sync_mask_write_byte.
+
 module bsg_mem_1rw_sync_mask_write_byte_synth #( parameter els_p = -1
 						 ,parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
 
