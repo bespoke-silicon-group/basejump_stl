@@ -21,11 +21,14 @@
               );                                                        \
        end
 
-module bsg_mem_1r1w #(parameter width_p=-1
-                      , parameter els_p=-1
-                      , parameter read_write_same_addr_p=0
-                      , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
-		      , parameter harden_p=1)
+module bsg_mem_1r1w
+  #(parameter width_p="inv"
+    , parameter els_p="inv"
+    , parameter read_write_same_addr_p=0
+    , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+		, parameter harden_p=1
+    , parameter debug_p=0
+  )
    (input   w_clk_i
     , input w_reset_i
 
@@ -39,6 +42,8 @@ module bsg_mem_1r1w #(parameter width_p=-1
 
     , output logic [width_p-1:0] r_data_o
     );
+
+  wire unused = w_reset_i;
 
    `bsg_mem_1r1w_macro(32,16)
      else `bsg_mem_1r1w_macro(32,2)
@@ -158,12 +163,13 @@ module bsg_mem_1r1w #(parameter width_p=-1
 
    // synopsys translate_off
 
-   initial
-     begin
-        if (width_p*els_p >= 64)
-        $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d (%m), harden_p=%d"
-                 ,width_p,els_p,read_write_same_addr_p,harden_p);
+   initial begin
+     if (debug_p) begin
+       if (width_p*els_p >= 64)
+         $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d (%m), harden_p=%d"
+            ,width_p,els_p,read_write_same_addr_p,harden_p);
      end
+   end
 
    always_ff @(posedge w_clk_i)
      if (w_v_i)

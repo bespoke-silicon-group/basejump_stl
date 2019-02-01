@@ -44,6 +44,8 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
     , input w_i
     , output [width_p-1:0]  data_o
     );
+  
+  wire unused = reset_i;
 
    // we use a 2 port RF because the 1 port RF
    // does not support bit-level masking for 80-bit width

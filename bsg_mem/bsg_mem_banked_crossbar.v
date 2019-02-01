@@ -54,8 +54,8 @@ module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
                                   ,.hold_on_sr_p(rr_lo_hi_p == 3)
                                   ,.reset_on_sr_p(rr_lo_hi_p == 4)
                                    ) round_robin_arb
-              ( .clk_i
-                ,.reset_i
+              ( .clk_i(clk_i)
+                ,.reset_i(reset_i)
                 ,.grants_en_i (ready_i[i])
 
                 ,.reqs_i  (sel_oi_one_hot[i])

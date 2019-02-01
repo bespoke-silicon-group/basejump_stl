@@ -34,6 +34,8 @@ module bsg_cache_to_dram_ctrl_rx
     ,input app_rd_data_end_i
   );
 
+  wire unsed = app_rd_data_end_i;
+
   // FIFO to sink incoming data
   //
   logic fifo_v_lo;

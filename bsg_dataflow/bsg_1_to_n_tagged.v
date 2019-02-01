@@ -31,6 +31,9 @@ module bsg_1_to_n_tagged #(
     // to downstream
     );
 
+  wire unused0 = clk_i;
+  wire unused1 = reset_i;
+
    if (num_out_p == 1)
      begin : one
         assign v_o = v_i;

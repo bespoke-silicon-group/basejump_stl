@@ -63,6 +63,8 @@ module bsg_mem_1rw_sync_mask_write_byte
   ,output [data_width_p-1:0] data_o
   );
 
+  wire unused = reset_i;
+
   `bsg_mem_1rw_sync_macro_byte(4096,64,12,8) else
   `bsg_mem_1rw_sync_macro_byte(2048,64,11,4) else
   `bsg_mem_1rw_sync_macro_byte(1024,32,10,4) else
