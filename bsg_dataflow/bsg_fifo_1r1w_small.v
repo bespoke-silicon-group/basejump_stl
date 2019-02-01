@@ -37,6 +37,7 @@ module bsg_fifo_1r1w_small #( parameter width_p      = -1
 
    // vivado bug prohibits declaring wire inside of generate block
    wire enque;
+   logic ready_lo;
 
    if (ready_THEN_valid_p)
      begin: rtv
@@ -44,7 +45,7 @@ module bsg_fifo_1r1w_small #( parameter width_p      = -1
      end
    else
      begin: rav
-        assign enque = v_i & ready_o;
+        assign enque = v_i & ready_lo;
      end
 
    localparam ptr_width_lp = `BSG_SAFE_CLOG2(els_p);
@@ -84,7 +85,8 @@ module bsg_fifo_1r1w_small #( parameter width_p      = -1
    // during reset, we keep ready low
    // even though fifo is empty
 
-   assign ready_o = ~full & ~reset_i;
+   assign ready_lo = ~full & ~reset_i;
+   assign ready_o = ready_lo;
    assign v_o_tmp = ~empty;
 
    //synopsys translate_off
