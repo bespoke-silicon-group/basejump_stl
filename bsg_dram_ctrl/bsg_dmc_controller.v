@@ -1,6 +1,4 @@
-//`include "fifo.v"
-
-module dmc_controller #
+module bsg_dmc_controller #
   (parameter UI_ADDR_WIDTH  = 28
   ,parameter UI_DATA_WIDTH  = 128
   ,parameter DFI_DATA_WIDTH = 32)

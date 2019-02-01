@@ -1,6 +1,3 @@
-`define DQ_GROUP 2
-//`define XILINX
-
 module tx_bit_slice(
   input  reset,
   input  clk_0,
@@ -295,53 +292,52 @@ module byte_slice(
 
 endmodule
 
-module dmc_phy(
+module bsg_dmc_phy #(parameter DQ_GROUP = 2)
   // dfi interface signals
-  input                     dfi_clk,
-  input                     dfi_clk_2x,
-  input                     dfi_rst,
-  input               [2:0] dfi_bank,
-  input              [15:0] dfi_address,
-  input                     dfi_cke,
-  input                     dfi_cs_n,
-  input                     dfi_ras_n,
-  input                     dfi_cas_n,
-  input                     dfi_we_n,
-  input                     dfi_reset_n,
-  input                     dfi_odt,
-  input                     dfi_wrdata_en,
-  input  [16*`DQ_GROUP-1:0] dfi_wrdata,
-  input   [2*`DQ_GROUP-1:0] dfi_wrdata_mask,
-  input                     dfi_rddata_en,
-  output [16*`DQ_GROUP-1:0] dfi_rddata,
-  output reg                dfi_rddata_valid,
-  output                    locked,
+  (input                     dfi_clk
+  ,input                     dfi_clk_2x
+  ,input                     dfi_rst
+  ,input               [2:0] dfi_bank
+  ,input              [15:0] dfi_address
+  ,input                     dfi_cke
+  ,input                     dfi_cs_n
+  ,input                     dfi_ras_n
+  ,input                     dfi_cas_n
+  ,input                     dfi_we_n
+  ,input                     dfi_reset_n
+  ,input                     dfi_odt
+  ,input                     dfi_wrdata_en
+  ,input   [16*DQ_GROUP-1:0] dfi_wrdata
+  ,input    [2*DQ_GROUP-1:0] dfi_wrdata_mask
+  ,input                     dfi_rddata_en
+  ,output  [16*DQ_GROUP-1:0] dfi_rddata
+  ,output reg                dfi_rddata_valid
+  ,output                    locked
   // dram interface signals
-  output                    ck_p,
-  output                    ck_n,
-  output reg                cke,
-  output reg          [2:0] ba,
-  output reg         [15:0] a,
-  output reg                cs_n,
-  output reg                ras_n,
-  output reg                cas_n,
-  output reg                we_n,
-  output reg                reset,
-  output reg                odt,
-  output    [`DQ_GROUP-1:0] dm_oe_n,
-  output    [`DQ_GROUP-1:0] dm_o,
-  output    [`DQ_GROUP-1:0] dqs_p_oe_n,
-  output    [`DQ_GROUP-1:0] dqs_p_ie_n,
-  output    [`DQ_GROUP-1:0] dqs_p_o,
-  input     [`DQ_GROUP-1:0] dqs_p_i,
-  output    [`DQ_GROUP-1:0] dqs_n_oe_n,
-  output    [`DQ_GROUP-1:0] dqs_n_ie_n,
-  output    [`DQ_GROUP-1:0] dqs_n_o,
-  input     [`DQ_GROUP-1:0] dqs_n_i,
-  output  [8*`DQ_GROUP-1:0] dq_oe_n,
-  output  [8*`DQ_GROUP-1:0] dq_o,
-  input   [8*`DQ_GROUP-1:0] dq_i
-);
+  ,output                    ck_p
+  ,output                    ck_n
+  ,output reg                cke
+  ,output reg          [2:0] ba
+  ,output reg         [15:0] a
+  ,output reg                cs_n
+  ,output reg                ras_n
+  ,output reg                cas_n
+  ,output reg                we_n
+  ,output reg                reset
+  ,output reg                odt
+  ,output     [DQ_GROUP-1:0] dm_oe_n
+  ,output     [DQ_GROUP-1:0] dm_o
+  ,output     [DQ_GROUP-1:0] dqs_p_oe_n
+  ,output     [DQ_GROUP-1:0] dqs_p_ie_n
+  ,output     [DQ_GROUP-1:0] dqs_p_o
+  ,input      [DQ_GROUP-1:0] dqs_p_i
+  ,output     [DQ_GROUP-1:0] dqs_n_oe_n
+  ,output     [DQ_GROUP-1:0] dqs_n_ie_n
+  ,output     [DQ_GROUP-1:0] dqs_n_o
+  ,input      [DQ_GROUP-1:0] dqs_n_i
+  ,output   [8*DQ_GROUP-1:0] dq_oe_n
+  ,output   [8*DQ_GROUP-1:0] dq_o
+  ,input    [8*DQ_GROUP-1:0] dq_i);
 
   reg                       rddata_en_180, rddata_en_360;
 
@@ -396,18 +392,18 @@ module dmc_phy(
   assign ck_p  = clk_0;
   assign ck_n  = clk_180;
 
-  assign dqs_p_ie_n = ~{`DQ_GROUP{dfi_rddata_en}};
-  assign dqs_n_ie_n = ~{`DQ_GROUP{dfi_rddata_en}};
+  assign dqs_p_ie_n = ~{DQ_GROUP{dfi_rddata_en}};
+  assign dqs_n_ie_n = ~{DQ_GROUP{dfi_rddata_en}};
 
   generate
-    for(i=0;i<`DQ_GROUP;i=i+1) begin: one_byte
+    for(i=0;i<DQ_GROUP;i=i+1) begin: one_byte
       byte_slice byte_slice(
         .reset        ( dfi_rst            ),
         .clk          ( dfi_clk            ),
         .clk_2x       ( dfi_clk_2x         ),
         .wrdata_en    ( dfi_wrdata_en      ),
-        .wrdata       ( {dfi_wrdata[8*`DQ_GROUP+8*i+7:8*`DQ_GROUP+8*i], dfi_wrdata[8*i+7:8*i]} ),
-        .wrdata_mask  ( {dfi_wrdata_mask[`DQ_GROUP+i], dfi_wrdata_mask[i]} ),
+        .wrdata       ( {dfi_wrdata[8*DQ_GROUP+8*i+7:8*DQ_GROUP+8*i], dfi_wrdata[8*i+7:8*i]} ),
+        .wrdata_mask  ( {dfi_wrdata_mask[DQ_GROUP+i], dfi_wrdata_mask[i]} ),
         .dm_oe_n      ( dm_oe_n[i]         ),
         .dm_o         ( dm_o[i]            ),
         .dq_oe_n      ( dq_oe_n[8*i+7:8*i] ),
@@ -418,7 +414,7 @@ module dmc_phy(
         .dqs_n_o      ( dqs_n_o[i]         ),
         .rddata_en    ( dfi_rddata_en      ),
         .rp_inc       ( rddata_en_360      ),
-        .rddata       ( {dfi_rddata[8*`DQ_GROUP+8*i+7:8*`DQ_GROUP+8*i], dfi_rddata[8*i+7:8*i]} ),
+        .rddata       ( {dfi_rddata[8*DQ_GROUP+8*i+7:8*DQ_GROUP+8*i], dfi_rddata[8*i+7:8*i]} ),
         .dq_i         ( dq_i[8*i+7:8*i]    ),
         .dqs_p_i      ( dqs_p_i[i]         ),
         .dqs_n_i      ( dqs_n_i[i]         )
