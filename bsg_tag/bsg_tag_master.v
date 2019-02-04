@@ -22,6 +22,9 @@
 module bsg_tag_master
   import bsg_tag_pkg::bsg_tag_s;
 
+   // els_p is the number of clients to attach
+   // lg_width_p is the number of bits used to describe the payload size
+   
    #(els_p="inv", lg_width_p="inv", debug_level_lp=0)
    (
     // from pins
