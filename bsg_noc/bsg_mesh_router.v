@@ -217,7 +217,7 @@ import bsg_noc_pkg::Dirs
 
            ,.v_o      (v_o[W])
            ,.tag_o    ()
-           ,.yumi_i   (v_o[W])
+           ,.yumi_i   (v_o[W] & ready_i_stub[W] )
            );
 
         bsg_round_robin_arb #(.inputs_p(3)
@@ -231,7 +231,7 @@ import bsg_noc_pkg::Dirs
 
            ,.v_o   (v_o[E])
            ,.tag_o ()
-           ,.yumi_i(v_o[E])
+           ,.yumi_i(v_o[E] & ready_i_stub[E] )
            );
      end
    else
@@ -250,7 +250,7 @@ import bsg_noc_pkg::Dirs
 
            ,.v_o    (v_o[W])
            ,.tag_o  ()
-           ,.yumi_i (v_o[W])
+           ,.yumi_i (v_o[W] & ready_i_stub[W])
            );
 
         bsg_round_robin_arb #(.inputs_p(2)
@@ -264,7 +264,7 @@ import bsg_noc_pkg::Dirs
 
            ,.v_o   (v_o[E])
            ,.tag_o ()
-           ,.yumi_i(v_o[E])
+           ,.yumi_i(v_o[E] & ready_i_stub[E])
            );
      end
 
@@ -279,7 +279,7 @@ import bsg_noc_pkg::Dirs
 
       ,.v_o   (v_o[N])
       ,.tag_o ()
-      ,.yumi_i(v_o[N])
+      ,.yumi_i(v_o[N] & ready_i_stub[N])
       );
 
    bsg_round_robin_arb #(.inputs_p(4)
@@ -294,7 +294,7 @@ import bsg_noc_pkg::Dirs
 
       ,.v_o   (v_o[S])
       ,.tag_o ()
-      ,.yumi_i(v_o[S])
+      ,.yumi_i(v_o[S] & ready_i_stub[S] )
       );
 
    bsg_round_robin_arb #(.inputs_p(5)
@@ -308,7 +308,7 @@ import bsg_noc_pkg::Dirs
 
       ,.v_o   (v_o[P])
       ,.tag_o ()
-      ,.yumi_i(v_o[P])
+      ,.yumi_i(v_o[P] & ready_i_stub[P])
       );
 
    // data out signals; this is a big crossbar that actually routes the data

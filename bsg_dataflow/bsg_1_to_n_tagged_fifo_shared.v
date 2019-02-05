@@ -147,7 +147,7 @@ module bsg_1_to_n_tagged_fifo_shared   #(parameter width_p              = "inv"
 
     ,.v_o     (read_req       )
     ,.tag_o   (read_req_tag   )
-    ,.yumi_i  (big_ram_re     )
+    ,.yumi_i  (big_ram_re & read_req  )
     );
 
    // these are the pointers to the big ram that we are selecting

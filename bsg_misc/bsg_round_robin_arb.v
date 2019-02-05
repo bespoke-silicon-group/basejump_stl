@@ -3,6 +3,14 @@
 // Automatically generated using bsg_round_robin_arb.py
 // DO NOT MODIFY
 
+// this arbiter has a few usage scenarios which explains the somewhat complicated interface.
+// Informal description of the interface:
+// grants_en_i  -whether to suppress grant_o signals and tag_o, which are computed based on reqs_i
+// v_o          -whether any reqs_i signals were valid. computed without grants_en_i. 
+// yumi_i       -whether to advance "least priority" pointer to the selected item
+//               in some typical use cases, grants_en_i comes from a downstream consumer to indicate readiness;
+//               this can be used with v_o to implement ready/valid protocol at both producer (fed into yumi_i) and consumer
+
 module bsg_round_robin_arb #(inputs_p      = -1
                                      ,lg_inputs_p   =`BSG_SAFE_CLOG2(inputs_p)
                                      ,reset_on_sr_p = 1'b0
@@ -19,7 +27,7 @@ module bsg_round_robin_arb #(inputs_p      = -1
 
     // end third-party inputs/outputs
 
-    , output v_o                           // whether any grants were given
+    , output v_o                           // if grants_en_i (i.e. ready_i) were set, would a grant signal be asserted? 
     , output logic [lg_inputs_p-1:0] tag_o // to which input the grant was given
     , input yumi_i                         // yes, go ahead with whatever grants_o proposed
     );
@@ -802,7 +810,7 @@ end //end of reset_on_sr_p
 end: inputs_10
 
 
-assign v_o = (|reqs_i & grants_en_i);
+assign v_o = | reqs_i ;
 
 if(inputs_p == 1)
   assign last_r = 1'b0;
