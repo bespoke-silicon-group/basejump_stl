@@ -63,7 +63,7 @@ module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
 
                 ,.v_o   (valid_o[i])
                 ,.tag_o ()
-                ,.yumi_i(valid_o[i])
+                ,.yumi_i(valid_o[i] & ready_i[i] )
                 );
           end
        else if (rr_lo_hi_p == 5) begin: dynamic

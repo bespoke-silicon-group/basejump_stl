@@ -78,7 +78,7 @@ module bsg_round_robin_n_to_1 #(parameter width_p = -1
 
            ,.v_o     ( v_o  )
            ,.tag_o   (tag_o    )
-           ,.yumi_i  (yumi_i   )  // based on v_o, downstream
+           ,.yumi_i  (yumi_i & v_o )  // based on v_o, downstream
                                   // node decides if it will accept
            );
 
