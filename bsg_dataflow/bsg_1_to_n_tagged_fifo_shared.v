@@ -144,6 +144,7 @@ module bsg_1_to_n_tagged_fifo_shared   #(parameter width_p              = "inv"
 
     ,.reqs_i  (credits_avail & ~empty)
     ,.grants_o(selected_reader_vec   )
+    ,.sel_one_hot_o()
 
     ,.v_o     (read_req       )
     ,.tag_o   (read_req_tag   )

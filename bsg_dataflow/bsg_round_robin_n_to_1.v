@@ -75,6 +75,7 @@ module bsg_round_robin_n_to_1 #(parameter width_p = -1
 	   // "data plane"
            ,.reqs_i   (v_i  ) // from each of the nodes
            ,.grants_o (grants_lo)
+           ,.sel_one_hot_o()
 
            ,.v_o     ( v_o  )
            ,.tag_o   (tag_o    )
