@@ -203,6 +203,12 @@ import bsg_noc_pkg::Dirs
    wire S_gnt_n, S_gnt_w, S_gnt_e, S_gnt_p;
    wire P_gnt_p, P_gnt_e, P_gnt_s, P_gnt_n, P_gnt_w;
 
+   // selection signals
+   wire W_sel_e, W_sel_p, W_sel_s;
+   wire E_sel_w, E_sel_p, E_sel_s;
+   wire N_sel_s, N_sel_e, N_sel_w, N_sel_p;
+   wire S_sel_n, S_sel_w, S_sel_e, S_sel_p;
+   wire P_sel_p, P_sel_e, P_sel_s, P_sel_n, P_sel_w;
 
    if (allow_S_to_EW_p)
      begin : fi
@@ -214,6 +220,7 @@ import bsg_noc_pkg::Dirs
 
            ,.reqs_i  ({req[E][W], req[P][W], req[S][W]})
            ,.grants_o({W_gnt_e, W_gnt_p, W_gnt_s})
+           ,.sel_one_hot_o({W_sel_e, W_sel_p, W_sel_s})
 
            ,.v_o      (v_o[W])
            ,.tag_o    ()
@@ -228,6 +235,7 @@ import bsg_noc_pkg::Dirs
 
            ,.reqs_i({req[W][E], req[P][E], req[S][E]})
            ,.grants_o({E_gnt_w, E_gnt_p, E_gnt_s})
+           ,.sel_one_hot_o({E_sel_w, E_sel_p, E_sel_s})
 
            ,.v_o   (v_o[E])
            ,.tag_o ()
@@ -247,6 +255,7 @@ import bsg_noc_pkg::Dirs
 
            ,.reqs_i({req[E][W], req[P][W]})
            ,.grants_o({W_gnt_e, W_gnt_p})
+           ,.sel_one_hot_o({W_sel_e, W_sel_p})
 
            ,.v_o    (v_o[W])
            ,.tag_o  ()
@@ -261,6 +270,7 @@ import bsg_noc_pkg::Dirs
 
            ,.reqs_i({req[W][E], req[P][E]})
            ,.grants_o({E_gnt_w, E_gnt_p})
+           ,.sel_one_hot_o({E_sel_w, E_sel_p})
 
            ,.v_o   (v_o[E])
            ,.tag_o ()
@@ -276,6 +286,7 @@ import bsg_noc_pkg::Dirs
 
       ,.reqs_i({req[S][N], req[E][N], req[W][N], req[P][N]})
       ,.grants_o({ N_gnt_s, N_gnt_e, N_gnt_w, N_gnt_p })
+      ,.sel_one_hot_o({ N_sel_s, N_sel_e, N_sel_w, N_sel_p })
 
       ,.v_o   (v_o[N])
       ,.tag_o ()
@@ -291,6 +302,7 @@ import bsg_noc_pkg::Dirs
 
       ,.reqs_i({req[N][S], req[E][S], req[W][S], req[P][S]})
       ,.grants_o({ S_gnt_n, S_gnt_e, S_gnt_w, S_gnt_p })
+      ,.sel_one_hot_o({ S_sel_n, S_sel_e, S_sel_w, S_sel_p })
 
       ,.v_o   (v_o[S])
       ,.tag_o ()
@@ -305,6 +317,7 @@ import bsg_noc_pkg::Dirs
 
       ,.reqs_i({req[S][P], req[N][P], req[E][P], req[W][P], req[P][P]})
       ,.grants_o({ P_gnt_s, P_gnt_n, P_gnt_e, P_gnt_w, P_gnt_p })
+      ,.sel_one_hot_o({ P_sel_s, P_sel_n, P_sel_e, P_sel_w, P_sel_p })
 
       ,.v_o   (v_o[P])
       ,.tag_o ()
@@ -319,7 +332,7 @@ import bsg_noc_pkg::Dirs
                           ,.els_p(3)
                           ) mux_data_west
           (.data_i        ({data_i[P], data_i[E], data_i[S]})
-           ,.sel_one_hot_i({W_gnt_p  , W_gnt_e, W_gnt_s  })
+           ,.sel_one_hot_i({W_sel_p  , W_sel_e, W_sel_s  })
            ,.data_o       (data_o[W])
            );
 
@@ -327,7 +340,7 @@ import bsg_noc_pkg::Dirs
                           ,.els_p(3)
                           ) mux_data_east
            (.data_i        ({data_i[P], data_i[W], data_i[S]})
-            ,.sel_one_hot_i({E_gnt_p  , E_gnt_w, E_gnt_s  })
+            ,.sel_one_hot_i({E_sel_p  , E_sel_w, E_sel_s  })
             ,.data_o       (data_o[E])
             );
      end
@@ -337,7 +350,7 @@ import bsg_noc_pkg::Dirs
                           ,.els_p(2)
                           ) mux_data_west
           (.data_i        ({data_i[P], data_i[E]})
-           ,.sel_one_hot_i({W_gnt_p  , W_gnt_e  })
+           ,.sel_one_hot_i({W_sel_p  , W_sel_e  })
            ,.data_o       (data_o[W])
            );
 
@@ -345,7 +358,7 @@ import bsg_noc_pkg::Dirs
                           ,.els_p(2)
                           ) mux_data_east
           (.data_i        ({data_i[P], data_i[W]})
-           ,.sel_one_hot_i({E_gnt_p  , E_gnt_w  })
+           ,.sel_one_hot_i({E_sel_p  , E_sel_w  })
            ,.data_o       (data_o[E])
            );
      end
@@ -354,7 +367,7 @@ import bsg_noc_pkg::Dirs
                      ,.els_p(5)
                      ) mux_data_proc
      (.data_i        ({data_i[P], data_i[E], data_i[S], data_i[W], data_i[N]})
-      ,.sel_one_hot_i({P_gnt_p  , P_gnt_e  , P_gnt_s  , P_gnt_w  , P_gnt_n  })
+      ,.sel_one_hot_i({P_sel_p  , P_sel_e  , P_sel_s  , P_sel_w  , P_sel_n  })
       ,.data_o       (data_o[P])
       );
 
@@ -362,7 +375,7 @@ import bsg_noc_pkg::Dirs
                      ,.els_p(4)
                      ) mux_data_north
      (.data_i        ({data_i[P], data_i[E], data_i[S], data_i[W]})
-      ,.sel_one_hot_i({N_gnt_p  , N_gnt_e  , N_gnt_s  , N_gnt_w  })
+      ,.sel_one_hot_i({N_sel_p  , N_sel_e  , N_sel_s  , N_sel_w  })
       ,.data_o       (data_o[N])
       );
 
@@ -370,7 +383,7 @@ import bsg_noc_pkg::Dirs
                      ,.els_p(4)
                      ) mux_data_south
      (.data_i        ({data_i[P], data_i[E], data_i[N], data_i[W]})
-      ,.sel_one_hot_i({S_gnt_p  , S_gnt_e  , S_gnt_n  , S_gnt_w  })
+      ,.sel_one_hot_i({S_sel_p  , S_sel_e  , S_sel_n  , S_sel_w  })
       ,.data_o       (data_o[S])
       );
 

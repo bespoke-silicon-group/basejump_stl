@@ -60,6 +60,7 @@ module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
 
                 ,.reqs_i  (sel_oi_one_hot[i])
                 ,.grants_o(grants_oi_one_hot_o[i])
+                ,.sel_one_hot_o()
 
                 ,.v_o   (valid_o[i])
                 ,.tag_o ()

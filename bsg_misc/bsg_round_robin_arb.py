@@ -107,11 +107,13 @@ print """// Round robin arbitration unit
 
 // this arbiter has a few usage scenarios which explains the somewhat complicated interface.
 // Informal description of the interface:
-// grants_en_i  -whether to suppress grant_o signals and tag_o, which are computed based on reqs_i
-// v_o          -whether any reqs_i signals were valid. computed without grants_en_i. 
-// yumi_i       -whether to advance "least priority" pointer to the selected item
-//               in some typical use cases, grants_en_i comes from a downstream consumer to indicate readiness;
-//               this can be used with v_o to implement ready/valid protocol at both producer (fed into yumi_i) and consumer
+// grants_en_i  - Whether to suppress grant_o signals and tag_o, which are computed based on reqs_i
+// sel_one_hot_o- The selection signal after the arbitration.
+// grant_o      - The grant signals that taking grant_en_i into consideration.
+// v_o          - Whether any reqs_i signals were valid. computed without grants_en_i. 
+// yumi_i       - Whether to advance "least priority" pointer to the selected item
+//                in some typical use cases, grants_en_i comes from a downstream consumer to indicate readiness;
+//                this can be used with v_o to implement ready/valid protocol at both producer (fed into yumi_i) and consumer
 """
 
 print """module bsg_round_robin_arb #(inputs_p      = %s
@@ -128,6 +130,7 @@ print """    (input clk_i
 
     , input  [inputs_p-1:0] reqs_i
     , output logic [inputs_p-1:0] grants_o
+    , output logic [inputs_p-1:0] sel_one_hot_o
 
     // end third-party inputs/outputs
 
@@ -145,16 +148,19 @@ for reqs_w in range(1, max_reqs+1):
     print """
 if(inputs_p == %d)
 begin: inputs_%d
+
+logic [%d-1: 0 ] sel_one_hot_n;
+
 always_comb
 begin
-  unique casez({grants_en_i, last_r, reqs_i})""" % (reqs_w, reqs_w)
+  unique casez({last_r, reqs_i})""" % (reqs_w, reqs_w, reqs_w)
 
     last_w = int(math.ceil(math.log(reqs_w)/math.log(2))) if (reqs_w!=1) else 1
-    print "    %d'b"%(1+last_w+reqs_w) + "0" + "_" + "?"*last_w + "_" + "?"*reqs_w + ":"\
-            , "begin grants_o ="\
-            , "%d'b"%reqs_w + "0"*reqs_w + "; tag_o = (lg_inputs_p) ' (0); end // X"
-    print "    %d'b"%(1+last_w+reqs_w) + "1" + "_" + "?"*last_w + "_" + "0"*reqs_w + ":"\
-            , "begin grants_o ="\
+#    print "    %d'b"%(1+last_w+reqs_w) + "0" + "_" + "?"*last_w + "_" + "?"*reqs_w + ":"\
+#            , "begin sel_one_hot_n="\
+#            , "%d'b"%reqs_w + "0"*reqs_w + "; tag_o = (lg_inputs_p) ' (0); end // X"
+    print "    %d'b"%(last_w+reqs_w) + "?"*last_w + "_" + "0"*reqs_w + ":"\
+            , "begin sel_one_hot_n ="\
             , "%d'b"%reqs_w + "0"*reqs_w + "; tag_o = (lg_inputs_p) ' (0); end // X"
     
     grants = {}
@@ -163,14 +169,19 @@ begin
 
     for key in grants:
         for req in grants[key]:
-            print "    %d'b"%(1+last_w+reqs_w) + "1" + "_" + bin(key)[2:].zfill(last_w)\
+            print "    %d'b"%(last_w+reqs_w) + bin(key)[2:].zfill(last_w)\
                     + "_" + req[0] + ":"\
-                    , "begin grants_o ="\
+                    , "begin sel_one_hot_n="\
                     , "%d'b"%reqs_w + req[1] + "; tag_o = (lg_inputs_p) ' ("+str(req[1][::-1].index('1'))+"); end"
 
-    print """    default: begin grants_o = {%d{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X 
+    print """    default: begin sel_one_hot_n= {%d{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X 
   endcase
 end """% (reqs_w) 
+    
+    print """
+assign sel_one_hot_o = sel_one_hot_n;
+assign grants_o      = sel_one_hot_n & {%d{grants_en_i}} ;   
+    """% (reqs_w)
 
     print_hold_on_logic(last_w, reqs_w)
 
