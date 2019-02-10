@@ -12,28 +12,25 @@ module testbench();
   // parameters
   //
   parameter num_test_word_p = 2**14;
+  parameter link_addr_width_p = 24; 
 
   parameter num_cache_p = 4;
   parameter data_width_p = 32;
-  parameter addr_width_p = 26;
   parameter sets_p = 512;
+  parameter ways_p = 2;
   parameter block_size_in_words_p = 8;
-  parameter lo_addr_width_p=26;
 
   parameter dram_ctrl_burst_len_p = 1;
-  parameter dram_ctrl_addr_width_p = 27;
   parameter dram_ctrl_data_width_p = 128;
-  parameter dram_ctrl_lo_addr_width_p = 25;
 
   parameter dfi_data_width_p = 32;
   
-  parameter x_cord_width_p = 2;
+  parameter x_cord_width_p = `BSG_SAFE_CLOG2(num_cache_p);
   parameter y_cord_width_p = 1;
-  parameter load_id_width_p = 4;
+  parameter load_id_width_p = 11;
 
-  parameter link_addr_width_lp = 30;
-  parameter link_lo_addr_width_lp = lo_addr_width_p-`BSG_SAFE_CLOG2(data_width_p>>3);
-  parameter link_sif_width_lp = `bsg_manycore_link_sif_width(link_addr_width_lp,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p);
+  parameter link_sif_width_lp =
+    `bsg_manycore_link_sif_width(link_addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p);
 
   // clock and reset
   //
@@ -80,7 +77,7 @@ module testbench();
       .x_cord_width_p(x_cord_width_p)
       ,.y_cord_width_p(y_cord_width_p)
       ,.data_width_p(data_width_p)
-      ,.addr_width_p(link_addr_width_lp)
+      ,.addr_width_p(link_addr_width_p)
       ,.load_id_width_p(load_id_width_p)
     ) mesh_node (
       .clk_i(clk)
@@ -104,7 +101,7 @@ module testbench();
     // tieoff
     if (i == 0) begin
       bsg_manycore_link_sif_tieoff #(
-        .addr_width_p(link_addr_width_lp)
+        .addr_width_p(link_addr_width_p)
         ,.data_width_p(data_width_p)
         ,.load_id_width_p(load_id_width_p)
         ,.x_cord_width_p(x_cord_width_p)
@@ -119,7 +116,7 @@ module testbench();
     end
 
     bsg_manycore_link_sif_tieoff #(
-      .addr_width_p(link_addr_width_lp)
+      .addr_width_p(link_addr_width_p)
       ,.data_width_p(data_width_p)
       ,.load_id_width_p(load_id_width_p)
       ,.x_cord_width_p(x_cord_width_p)
@@ -134,7 +131,7 @@ module testbench();
 
     if (i == num_cache_p-1) begin
       bsg_manycore_link_sif_tieoff #(
-        .addr_width_p(link_addr_width_lp)
+        .addr_width_p(link_addr_width_p)
         ,.data_width_p(data_width_p)
         ,.load_id_width_p(load_id_width_p)
         ,.x_cord_width_p(x_cord_width_p)
@@ -156,8 +153,7 @@ module testbench();
   for (genvar i = 0; i < num_cache_p; i++) begin
     bsg_test_node_master #(
       .id_p(i)
-      ,.link_addr_width_p(link_addr_width_lp)
-      ,.link_lo_addr_width_p(link_lo_addr_width_lp)
+      ,.link_addr_width_p(link_addr_width_p)
       ,.data_width_p(data_width_p)
       ,.x_cord_width_p(x_cord_width_p)
       ,.y_cord_width_p(y_cord_width_p)
@@ -178,7 +174,7 @@ module testbench();
 
   // manycore link to cache
   //
-  `declare_bsg_cache_pkt_s(addr_width_p, data_width_p);
+  `declare_bsg_cache_pkt_s(link_addr_width_p+2, data_width_p);
   bsg_cache_pkt_s [num_cache_p-1:0] cache_pkt;
   logic [num_cache_p-1:0] link_to_cache_v_lo;
   logic [num_cache_p-1:0] link_to_cache_ready_li;
@@ -188,13 +184,14 @@ module testbench();
 
   for (genvar i = 0; i < num_cache_p; i++) begin
     bsg_manycore_link_to_cache #(
-      .link_addr_width_p(link_addr_width_lp)
-      ,.link_lo_addr_width_p(link_lo_addr_width_lp)
-      ,.cache_addr_width_p(addr_width_p)
+      .link_addr_width_p(link_addr_width_p)
       ,.data_width_p(data_width_p)
       ,.x_cord_width_p(x_cord_width_p)
       ,.y_cord_width_p(y_cord_width_p)
       ,.load_id_width_p(load_id_width_p)
+      ,.sets_p(sets_p)
+      ,.ways_p(ways_p)
+      ,.block_size_in_words_p(block_size_in_words_p)
     ) manycore_link_to_cache (
       .clk_i(clk)
       ,.reset_i(reset)
@@ -217,7 +214,7 @@ module testbench();
 
   // cache
   //
-  `declare_bsg_cache_dma_pkt_s(addr_width_p);
+  `declare_bsg_cache_dma_pkt_s(link_addr_width_p+2);
   bsg_cache_dma_pkt_s [num_cache_p-1:0] dma_pkt;
   logic [num_cache_p-1:0] dma_pkt_v_lo;
   logic [num_cache_p-1:0] dma_pkt_yumi_li;
@@ -232,7 +229,7 @@ module testbench();
 
   for (genvar i = 0; i < num_cache_p; i++) begin
     bsg_cache #(
-      .addr_width_p(addr_width_p)
+      .addr_width_p(link_addr_width_p+2)
       ,.data_width_p(data_width_p)
       ,.block_size_in_words_p(block_size_in_words_p)
       ,.sets_p(sets_p)
@@ -267,7 +264,7 @@ module testbench();
   // cache_to_dram_ctrl
   //
   eAppCmd app_cmd;
-  logic [dram_ctrl_addr_width_p-1:0] app_addr;
+  logic [link_addr_width_p+4-1:0] app_addr;
   logic app_en;
   logic app_rdy;
 
@@ -283,14 +280,12 @@ module testbench();
 
   bsg_cache_to_dram_ctrl #(
     .num_cache_p(num_cache_p)
-    ,.addr_width_p(addr_width_p)
+    ,.addr_width_p(link_addr_width_p+2)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
   
     ,.dram_ctrl_data_width_p(dram_ctrl_data_width_p)
     ,.dram_ctrl_burst_len_p(dram_ctrl_burst_len_p)
-    ,.dram_ctrl_addr_width_p(dram_ctrl_addr_width_p)
-    ,.dram_ctrl_lo_addr_width_p(dram_ctrl_lo_addr_width_p)
   ) cache_to_dram_ctrl (
     .clk_i(clk)
     ,.reset_i(reset)
@@ -345,7 +340,7 @@ module testbench();
   logic [(dfi_data_width_p>>1)-1:0] dq_i;
 
   bsg_dmc #(
-    .UI_ADDR_WIDTH(dram_ctrl_addr_width_p)
+    .UI_ADDR_WIDTH(link_addr_width_p+4)
     ,.UI_DATA_WIDTH(dram_ctrl_data_width_p)
     ,.DFI_DATA_WIDTH(dfi_data_width_p)
   ) dram_ctrl (

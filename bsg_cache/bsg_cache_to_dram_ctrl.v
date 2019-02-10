@@ -15,12 +15,11 @@ module bsg_cache_to_dram_ctrl
 
     ,parameter dram_ctrl_burst_len_p="inv"
     ,parameter dram_ctrl_data_width_p="inv"
-    ,parameter dram_ctrl_addr_width_p="inv"
-    ,parameter dram_ctrl_lo_addr_width_p="inv"
 
     ,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
     ,parameter data_width_ratio_lp=(dram_ctrl_data_width_p/data_width_p)
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
+    ,parameter dram_ctrl_addr_width_lp=(addr_width_p+lg_num_cache_lp)
     ,parameter num_req_lp=(data_width_p*block_size_in_words_p)/(dram_ctrl_data_width_p*dram_ctrl_burst_len_p)
     ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
   )
@@ -43,7 +42,7 @@ module bsg_cache_to_dram_ctrl
     ,output logic app_en_o
     ,input app_rdy_i
     ,output eAppCmd app_cmd_o
-    ,output logic [dram_ctrl_addr_width_p-1:0] app_addr_o
+    ,output logic [dram_ctrl_addr_width_lp-1:0] app_addr_o
 
     ,output logic app_wdf_wren_o
     ,input app_wdf_rdy_i
@@ -195,9 +194,8 @@ module bsg_cache_to_dram_ctrl
   end
 
   assign app_addr_o = {
-    {(dram_ctrl_addr_width_p-lg_num_cache_lp-dram_ctrl_lo_addr_width_p){1'b0}},
     tag_r,
-    addr_r[0+:dram_ctrl_lo_addr_width_p]
+    addr_r
   };
 
   // sequential
