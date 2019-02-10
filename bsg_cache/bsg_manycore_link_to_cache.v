@@ -10,42 +10,53 @@
 module bsg_manycore_link_to_cache
   import bsg_cache_pkg::*;
   #(parameter link_addr_width_p="inv"
-    ,parameter link_lo_addr_width_p="inv"
-    ,parameter cache_addr_width_p="inv"
-    ,parameter data_width_p="inv"
-    ,parameter x_cord_width_p="inv"
-    ,parameter y_cord_width_p="inv"
-    ,parameter load_id_width_p="inv"
+    , parameter data_width_p="inv"
+    , parameter x_cord_width_p="inv"
+    , parameter y_cord_width_p="inv"
+    , parameter load_id_width_p="inv"
 
-    ,parameter fifo_els_p=4
-    ,parameter max_out_credits_p = 16
+    , parameter sets_p="inv"
+    , parameter ways_p="inv"
+    , parameter block_size_in_words_p="inv"
 
-    ,parameter data_mask_width_lp=(data_width_p>>3)
-    ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
+    , parameter fifo_els_p=4
+    , parameter max_out_credits_p = 16
+
+    , parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    , parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
+    , parameter word_offset_width_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
+    , parameter data_mask_width_lp=(data_width_p>>3)
+    , parameter byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
+    , parameter cache_addr_width_lp=(link_addr_width_p+byte_offset_width_lp)
   
-    ,parameter link_sif_width_lp=`bsg_manycore_link_sif_width(link_addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p)
-    ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(cache_addr_width_p,data_width_p)
-    ,parameter manycore_packet_width_lp=`bsg_manycore_packet_width(link_addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p)
+    , parameter link_sif_width_lp=
+      `bsg_manycore_link_sif_width(link_addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p)
+    , parameter bsg_cache_pkt_width_lp=
+      `bsg_cache_pkt_width(cache_addr_width_lp,data_width_p)
+    , parameter manycore_packet_width_lp=
+      `bsg_manycore_packet_width(link_addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p)
   )
   (
     input clk_i
-    ,input reset_i
+    , input reset_i
 
     // manycore-side
-    ,input [x_cord_width_p-1:0] my_x_i
-    ,input [y_cord_width_p-1:0] my_y_i
-    ,input [link_sif_width_lp-1:0] link_sif_i
-    ,output logic [link_sif_width_lp-1:0] link_sif_o
+    , input [x_cord_width_p-1:0] my_x_i
+    , input [y_cord_width_p-1:0] my_y_i
+
+    , input [link_sif_width_lp-1:0] link_sif_i
+    , output logic [link_sif_width_lp-1:0] link_sif_o
 
     // cache-side
-    ,output [bsg_cache_pkt_width_lp-1:0] cache_pkt_o
-    ,output logic v_o
-    ,input ready_i
+    , output [bsg_cache_pkt_width_lp-1:0] cache_pkt_o
+    , output logic v_o
+    , input ready_i
 
-    ,input [data_width_p-1:0] data_i
-    ,input v_i
-    ,output logic yumi_o
+    , input [data_width_p-1:0] data_i
+    , input v_i
+    , output logic yumi_o
   );
+
 
   // instantiate endpoint_standard
   //
@@ -100,31 +111,86 @@ module bsg_manycore_link_to_cache
     ,.my_y_i(my_y_i)
   );
 
-
-  // to cache
-  //
-  `declare_bsg_cache_pkt_s(cache_addr_width_p, data_width_p);
+  // at the reset, this module intializes all the tags and valid bits to zero.
+  // After all the tags are completedly initialized, this module starts
+  // accepting packets from manycore network.
+  `declare_bsg_cache_pkt_s(cache_addr_width_lp, data_width_p);
   bsg_cache_pkt_s cache_pkt;
   assign cache_pkt_o = cache_pkt;
-  assign cache_pkt.sigext = 1'b0;
-  assign cache_pkt.mask = endpoint_mask_lo;
-  assign cache_pkt.opcode = endpoint_addr_lo[link_lo_addr_width_p]
-    ? (endpoint_we_lo ? TAGST : TAGLA)
-    : (endpoint_we_lo ? SM : LM);
 
-  assign cache_pkt.addr = {
-    {(cache_addr_width_p-link_lo_addr_width_p-lg_data_mask_width_lp){1'b0}},
-    endpoint_addr_lo[link_lo_addr_width_p-1:0],
-    {lg_data_mask_width_lp{1'b0}}
-  };
+  typedef enum logic {
+    CLEAR_TAG
+    ,READY
+  } state_e;
 
-  assign cache_pkt.data = endpoint_data_lo;
-  assign v_o = endpoint_v_lo;
-  assign endpoint_yumi_li = endpoint_v_lo & ready_i;
+  state_e state_r, state_n;
+  logic [lg_sets_lp+lg_ways_lp:0] tagst_sent_r, tagst_sent_n;
+  logic [lg_sets_lp+lg_ways_lp:0] tagst_received_r, tagst_received_n;
 
-  // from cache
-  //
-  assign yumi_o = v_i;
-  assign endpoint_returning_v_li = v_i; 
+  always_comb begin
+    cache_pkt.sigext = 1'b0;
+    cache_pkt.mask = endpoint_mask_lo;
+    tagst_sent_n = tagst_sent_r;
+    tagst_received_n = tagst_received_r;
+
+    case (state_r)
+      CLEAR_TAG: begin
+        v_o = tagst_sent_r != (ways_p*sets_p);
+        
+        cache_pkt.opcode = TAGST;
+        cache_pkt.data = '0;
+        cache_pkt.addr = {
+          {(cache_addr_width_lp-lg_sets_lp-lg_ways_lp-byte_offset_width_lp-word_offset_width_lp){1'b0}},
+          tagst_sent_r[0+:lg_sets_lp+lg_ways_lp],
+          {(byte_offset_width_lp+word_offset_width_lp){1'b0}}
+        };
+
+        endpoint_yumi_li = 1'b0;
+
+        tagst_sent_n = (v_o & ready_i)
+          ? tagst_sent_r + 1
+          : tagst_sent_r;
+        tagst_received_n = v_i
+          ? tagst_received_r + 1
+          : tagst_received_r;
+
+        yumi_o = v_i;
+        endpoint_returning_v_li = 1'b0; 
+
+        state_n = (tagst_sent_r == ways_p*sets_p) & (tagst_received_r == ways_p*sets_p)
+          ? READY
+          : CLEAR_TAG;
+      end
+
+      READY: begin
+        v_o = endpoint_v_lo;
+        endpoint_yumi_li = endpoint_v_lo & ready_i;
+        cache_pkt.opcode = endpoint_we_lo ? SM : LM;
+        cache_pkt.data = endpoint_data_lo;
+        cache_pkt.addr = {
+          endpoint_addr_lo,
+          {byte_offset_width_lp{1'b0}} 
+        };
+
+        yumi_o = v_i;
+        endpoint_returning_v_li = v_i;
+
+        state_n = READY;
+      end
+    endcase
+  end
+  
+  always_ff @ (posedge clk_i) begin
+    if (reset_i) begin
+      state_r <= CLEAR_TAG;
+      tagst_sent_r <= '0;
+      tagst_received_r <= '0;
+    end
+    else begin
+      state_r <= state_n;
+      tagst_sent_r <= tagst_sent_n;
+      tagst_received_r <= tagst_received_n;
+    end
+  end
 
 endmodule

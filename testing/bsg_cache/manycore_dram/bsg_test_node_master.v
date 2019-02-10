@@ -7,7 +7,6 @@
 module bsg_test_node_master
   #(parameter id_p="inv"
     ,parameter link_addr_width_p="inv"
-    ,parameter link_lo_addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter x_cord_width_p="inv"
     ,parameter y_cord_width_p="inv"
@@ -24,7 +23,8 @@ module bsg_test_node_master
     ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
     ,parameter lg_num_test_word_lp=`BSG_SAFE_CLOG2(num_test_word_p)
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    ,parameter link_sif_width_lp=`bsg_manycore_link_sif_width(link_addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p)
+    ,parameter link_sif_width_lp=
+    `bsg_manycore_link_sif_width(link_addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p)
   )
   (
     input clk_i
@@ -95,63 +95,27 @@ module bsg_test_node_master
   assign out_packet_li.op_ex = 4'b1111; // store mask
 
   typedef enum logic [2:0] {
-    STORE_TAG
-    ,LOAD_TAG
-    ,STORE_DATA
+    STORE_DATA
     ,LOAD_DATA
     ,SEND_DONE
   } send_state_e;
 
   typedef enum logic [2:0] {
-    RECV_TAG
-    ,RECV_DATA
+    RECV_DATA
     ,RECV_DONE
   } recv_state_e;
 
   send_state_e send_state_r, send_state_n;
-  logic [lg_sets_lp+lg_ways_lp-1:0] send_tag_cnt_r, send_tag_cnt_n;
   logic [lg_num_test_word_lp-1:0] send_mem_cnt_r, send_mem_cnt_n;
 
   recv_state_e recv_state_r, recv_state_n;
-  logic [lg_sets_lp+lg_ways_lp-1:0] recv_tag_cnt_r, recv_tag_cnt_n;
   logic [lg_num_test_word_lp-1:0] recv_mem_cnt_r, recv_mem_cnt_n;
 
   always_comb begin
-    send_tag_cnt_n = send_tag_cnt_r;
     send_mem_cnt_n = send_mem_cnt_r;
     out_packet_li.addr = '0;
   
     case (send_state_r) 
-      STORE_TAG: begin
-        send_state_n = (send_tag_cnt_r == ((sets_p*ways_p)-1)) & out_ready_lo
-          ? LOAD_TAG
-          : STORE_TAG;
-        out_packet_li.op = 2'b01;
-        out_packet_li.payload = '0;
-        out_packet_li.addr[lg_block_size_in_words_lp+:lg_sets_lp+lg_ways_lp] = send_tag_cnt_r;
-        out_packet_li.addr[link_lo_addr_width_p] = 1'b1;
-        
-        out_v_li = ~reset_i;
-        send_tag_cnt_n = out_ready_lo
-          ? ((send_tag_cnt_r == (sets_p*ways_p-1)) ? '0 : send_tag_cnt_r + 1)
-          : send_tag_cnt_r;
-      end
-
-      LOAD_TAG: begin
-        send_state_n = (send_tag_cnt_r == ((sets_p*ways_p)-1)) & out_ready_lo
-          ? STORE_DATA
-          : LOAD_TAG;
-        out_packet_li.op = 2'b00;
-        out_packet_li.payload = '0;
-        out_packet_li.addr[lg_block_size_in_words_lp+:lg_sets_lp+lg_ways_lp] = send_tag_cnt_r;
-        out_packet_li.addr[link_lo_addr_width_p] = 1'b1;
-
-        out_v_li = ~reset_i;
-        send_tag_cnt_n = out_ready_lo
-          ? ((send_tag_cnt_r == (sets_p*ways_p-1)) ? '0 : send_tag_cnt_r + 1)
-          : send_tag_cnt_r;
-      end
-
       STORE_DATA: begin
         send_state_n = (send_mem_cnt_r == num_test_word_p-1) & out_ready_lo
           ? LOAD_DATA
@@ -192,20 +156,10 @@ module bsg_test_node_master
   // receiver
   //
   always_comb begin
-    recv_tag_cnt_n = recv_tag_cnt_r;
     recv_mem_cnt_n = recv_mem_cnt_r;
     returned_yumi_li = 1'b0;
 
     case (recv_state_r) 
-      RECV_TAG: begin
-        recv_state_n = (recv_tag_cnt_r == (sets_p*ways_p-1)) & returned_v_r_lo
-          ? RECV_DATA
-          : RECV_TAG;
-        recv_tag_cnt_n = returned_v_r_lo
-          ? recv_tag_cnt_r + 1
-          : recv_tag_cnt_r;
-        returned_yumi_li = returned_v_r_lo;
-      end
       RECV_DATA: begin
         recv_state_n = (recv_mem_cnt_r == (num_test_word_p-1)) & returned_v_r_lo
           ? RECV_DONE
@@ -225,21 +179,17 @@ module bsg_test_node_master
   //
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      send_state_r <= STORE_TAG;
-      send_tag_cnt_r <= '0;
+      send_state_r <= STORE_DATA;
       send_mem_cnt_r <= '0;
     
-      recv_state_r <= RECV_TAG;
-      recv_tag_cnt_r <= '0;
+      recv_state_r <= RECV_DATA;
       recv_mem_cnt_r <= '0;
     end
     else begin
       send_state_r <= send_state_n;
-      send_tag_cnt_r <= send_tag_cnt_n;
       send_mem_cnt_r <= send_mem_cnt_n;
 
       recv_state_r <= recv_state_n;
-      recv_tag_cnt_r <= recv_tag_cnt_n;
       recv_mem_cnt_r <= recv_mem_cnt_n;
     end
   end
@@ -250,13 +200,6 @@ module bsg_test_node_master
   always_ff @ (negedge clk_i) begin
     if (~reset_i & returned_v_r_lo) begin
       case (recv_state_r)
-        RECV_TAG: begin
-          $display("[%0d] recv_tag: %d",
-            id_p,
-            returned_data_r_lo[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp]
-          );
-        end
-
         RECV_DATA: begin
           if ((32)'(recv_mem_cnt_r) + (id_p << lg_num_test_word_lp) == returned_data_r_lo) begin
             $display("[%0d] recv_mem. expected: %d, actual: %d",
