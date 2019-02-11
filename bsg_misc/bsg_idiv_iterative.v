@@ -76,6 +76,9 @@ module bsg_idiv_iterative (
        ,.clk_i(clk_i)
        );
 
+   //if the divisor is zero
+   wire         zero_divisor_li   =  ~(| divisor_r);
+
    wire         opA_sel;
    wire [32:0]  opA_mux;
    wire [32:0]  add_out;
@@ -188,6 +191,7 @@ module bsg_idiv_iterative (
       ,.v_i                      (v_i)
       ,.ready_o                  (ready_o)
 
+      ,.zero_divisor_i           (zero_divisor_li)
       ,.signed_div_r_i           (signed_div_r)
       ,.adder_result_is_neg_i    (add_out[32])
       ,.opA_is_neg_i             (opA[32])

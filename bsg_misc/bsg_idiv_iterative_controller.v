@@ -13,6 +13,7 @@ module bsg_idiv_iterative_controller (
 	  ,input               v_i
       ,output              ready_o
 
+          ,input               zero_divisor_i
 	  ,input               signed_div_r_i
 	  ,input               adder_result_is_neg_i
 	  ,input               opA_is_neg_i
@@ -180,7 +181,7 @@ module bsg_idiv_iterative_controller (
 	end
 	
 	REMAIN: begin
-	   next_state = QUOT;
+	   next_state = zero_divisor_i ? DONE: QUOT;
 	   opA_ld_o     = 1'b1;
 	   opA_clr_l_o  = 1'b0;
 	   opB_sel_o    = 3'b100;
