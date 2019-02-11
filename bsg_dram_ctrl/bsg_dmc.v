@@ -135,7 +135,7 @@ module bsg_dmc #
   localparam slv_reg12 = 1023;
   localparam slv_reg13 = 1;
   localparam slv_reg14 = 'h25;
-  localparam slv_reg15 = 'h2ea;
+  localparam slv_reg15 = 'h2eb;
   //end
 
 /*
