@@ -11,7 +11,6 @@ module bsg_cache_to_axi
     ,parameter block_size_in_words_p="inv"
     ,parameter data_width_p="inv"
     ,parameter num_cache_p="inv"
-    ,parameter lo_addr_width_p="inv"  // low-order address width
 
     ,parameter axi_id_width_p="inv" // 6
     ,parameter axi_addr_width_p="inv"
@@ -36,7 +35,7 @@ module bsg_cache_to_axi
     ,output logic [num_cache_p-1:0] dma_data_v_o
     ,input [num_cache_p-1:0] dma_data_ready_i
 
-    ,input  [num_cache_p-1:0][data_width_p-1:0] dma_data_i
+    ,input [num_cache_p-1:0][data_width_p-1:0] dma_data_i
     ,input [num_cache_p-1:0] dma_data_v_i
     ,output logic [num_cache_p-1:0] dma_data_yumi_o
 
@@ -160,15 +159,15 @@ module bsg_cache_to_axi
   logic [axi_addr_width_p-1:0] tx_axi_addr;
 
   assign rx_axi_addr = {
-    {(axi_addr_width_p-lg_num_cache_lp-lo_addr_width_p){1'b0}}
+    {(axi_addr_width_p-lg_num_cache_lp-addr_width_p){1'b0}}
     ,read_rr_tag_lo
-    ,read_rr_dma_pkt.addr[0+:lo_addr_width_p]
+    ,read_rr_dma_pkt.addr
   };  
 
   assign tx_axi_addr = {
-    {(axi_addr_width_p-lg_num_cache_lp-lo_addr_width_p){1'b0}}
+    {(axi_addr_width_p-lg_num_cache_lp-addr_width_p){1'b0}}
     ,write_rr_tag_lo
-    ,write_rr_dma_pkt.addr[0+:lo_addr_width_p]
+    ,write_rr_dma_pkt.addr
   };  
 
   // dma_pkt handshake
