@@ -154,7 +154,7 @@ module bsg_manycore_link_to_cache
           ? tagst_received_r + 1
           : tagst_received_r;
 
-        yumi_o = tagst_received_r != (ways_p*sets_p);
+        yumi_o = v_i;
         endpoint_returning_v_li = 1'b0; 
 
         state_n = (tagst_sent_r == ways_p*sets_p) & (tagst_received_r == ways_p*sets_p)
