@@ -90,8 +90,8 @@ module bsg_cache_to_axi_tx
   //
   assign axi_awid_o = {axi_id_width_p{1'b0}};
   assign axi_awaddr_o = axi_addr_i;
-  assign axi_awlen_o = axi_burst_len_p - 1; // burst len
-  assign axi_awsize_o = `BSG_SAFE_CLOG2(axi_data_width_p>>3);
+  assign axi_awlen_o = (8)'(axi_burst_len_p-1); // burst len
+  assign axi_awsize_o = (3)'(`BSG_SAFE_CLOG2(axi_data_width_p>>3));
   assign axi_awburst_o = 2'b01;   // incr
   assign axi_awcache_o = 4'b0000; // non-bufferable
   assign axi_awprot_o = 2'b00;    // unprivileged

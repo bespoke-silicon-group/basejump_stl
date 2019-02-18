@@ -82,8 +82,8 @@ module bsg_cache_to_axi_rx
   //
   assign axi_arid_o = {axi_id_width_p{1'b0}};
   assign axi_araddr_o = axi_addr_i;
-  assign axi_arlen_o = axi_burst_len_p - 1; // burst length
-  assign axi_arsize_o = `BSG_SAFE_CLOG2(axi_data_width_p>>3);
+  assign axi_arlen_o = (8)'(axi_burst_len_p-1); // burst length
+  assign axi_arsize_o = (3)'(`BSG_SAFE_CLOG2(axi_data_width_p>>3));
   assign axi_arburst_o = 2'b01;   // incr
   assign axi_arcache_o = 4'b0000; // non-bufferable
   assign axi_arprot_o = 2'b00;    // unprevileged
