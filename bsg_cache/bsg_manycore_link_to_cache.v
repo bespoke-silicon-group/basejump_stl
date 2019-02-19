@@ -27,7 +27,7 @@ module bsg_manycore_link_to_cache
     , parameter word_offset_width_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     , parameter data_mask_width_lp=(data_width_p>>3)
     , parameter byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
-    , parameter cache_addr_width_lp=(link_addr_width_p+byte_offset_width_lp)
+    , parameter cache_addr_width_lp=(link_addr_width_p-1+byte_offset_width_lp) 
   
     , parameter link_sif_width_lp=
       `bsg_manycore_link_sif_width(link_addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p)
@@ -118,8 +118,9 @@ module bsg_manycore_link_to_cache
   bsg_cache_pkt_s cache_pkt;
   assign cache_pkt_o = cache_pkt;
 
-  typedef enum logic {
-    CLEAR_TAG
+  typedef enum logic [1:0] {
+    RESET
+    ,CLEAR_TAG
     ,READY
   } state_e;
 
@@ -134,6 +135,11 @@ module bsg_manycore_link_to_cache
     tagst_received_n = tagst_received_r;
 
     case (state_r)
+      RESET: begin
+        v_o = 1'b0;
+        yumi_o = 1'b0;
+        state_n = CLEAR_TAG;
+      end
       CLEAR_TAG: begin
         v_o = tagst_sent_r != (ways_p*sets_p);
         
@@ -165,10 +171,17 @@ module bsg_manycore_link_to_cache
       READY: begin
         v_o = endpoint_v_lo;
         endpoint_yumi_li = endpoint_v_lo & ready_i;
-        cache_pkt.opcode = endpoint_we_lo ? SM : LM;
+    
+        // if MSB of addr is one, then it maps to tag_mem
+        // otherwise it's regular access to data_mem.
+        // we want to expose read/write access to tag_mem on NPA
+        // for extra debugging capability.
+        cache_pkt.opcode = endpoint_addr_lo[link_addr_width_p-1]
+          ? (endpoint_we_lo ? TAGST : TAGLA)
+          : (endpoint_we_lo ? SM : LM);
         cache_pkt.data = endpoint_data_lo;
         cache_pkt.addr = {
-          endpoint_addr_lo,
+          endpoint_addr_lo[0+:link_addr_width_p-1],
           {byte_offset_width_lp{1'b0}} 
         };
 
@@ -182,7 +195,7 @@ module bsg_manycore_link_to_cache
   
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      state_r <= CLEAR_TAG;
+      state_r <= RESET;
       tagst_sent_r <= '0;
       tagst_received_r <= '0;
     end
