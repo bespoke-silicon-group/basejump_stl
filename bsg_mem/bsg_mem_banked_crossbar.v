@@ -36,8 +36,11 @@ module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
 
   genvar i;
 
-  for(i=0; i<i_els_p; i=i+1)
-    assign sel_io_one_hot[i] = valid_i[i] ? 1<<(sel_io_i[i]) : o_els_p'(0);
+  for (i = 0; i < i_els_p; i++) begin
+    assign sel_io_one_hot[i] = valid_i[i]
+      ? (o_els_p)'(1<<sel_io_i[i])
+      : (o_els_p)'(0);
+  end
 
    bsg_transpose #( .width_p(o_els_p)
                   ,.els_p  (i_els_p)
