@@ -28,6 +28,7 @@ module bsg_manycore_link_to_cache
     , parameter data_mask_width_lp=(data_width_p>>3)
     , parameter byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
     , parameter cache_addr_width_lp=(link_addr_width_p-1+byte_offset_width_lp) 
+    , parameter block_offset_width_lp=(word_offset_width_lp+byte_offset_width_lp)
   
     , parameter link_sif_width_lp=
       `bsg_manycore_link_sif_width(link_addr_width_p,data_width_p,x_cord_width_p,y_cord_width_p,load_id_width_p)
@@ -131,8 +132,15 @@ module bsg_manycore_link_to_cache
   always_comb begin
     cache_pkt.sigext = 1'b0;
     cache_pkt.mask = endpoint_mask_lo;
+    cache_pkt.data = '0;
+    cache_pkt.addr = '0;
     tagst_sent_n = tagst_sent_r;
     tagst_received_n = tagst_received_r;
+    v_o = 1'b0;
+    yumi_o = 1'b0;
+    endpoint_yumi_li = '0;
+    endpoint_returning_v_li = 1'b0;
+    state_n = state_r;
 
     case (state_r)
       RESET: begin
@@ -146,9 +154,9 @@ module bsg_manycore_link_to_cache
         cache_pkt.opcode = TAGST;
         cache_pkt.data = '0;
         cache_pkt.addr = {
-          {(cache_addr_width_lp-lg_sets_lp-lg_ways_lp-byte_offset_width_lp-word_offset_width_lp){1'b0}},
+          {(cache_addr_width_lp-lg_sets_lp-lg_ways_lp-block_offset_width_lp){1'b0}},
           tagst_sent_r[0+:lg_sets_lp+lg_ways_lp],
-          {(byte_offset_width_lp+word_offset_width_lp){1'b0}}
+          {(block_offset_width_lp){1'b0}}
         };
 
         endpoint_yumi_li = 1'b0;

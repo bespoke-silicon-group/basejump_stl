@@ -13,6 +13,7 @@ module testbench();
   //
   parameter num_test_word_p = 2**14;
   parameter link_addr_width_p = 24; 
+  parameter cache_addr_width_lp = link_addr_width_p+2-1;
 
   parameter num_cache_p = 4;
   parameter data_width_p = 32;
@@ -174,7 +175,7 @@ module testbench();
 
   // manycore link to cache
   //
-  `declare_bsg_cache_pkt_s(link_addr_width_p+2, data_width_p);
+  `declare_bsg_cache_pkt_s(cache_addr_width_lp, data_width_p);
   bsg_cache_pkt_s [num_cache_p-1:0] cache_pkt;
   logic [num_cache_p-1:0] link_to_cache_v_lo;
   logic [num_cache_p-1:0] link_to_cache_ready_li;
@@ -214,7 +215,7 @@ module testbench();
 
   // cache
   //
-  `declare_bsg_cache_dma_pkt_s(link_addr_width_p+2);
+  `declare_bsg_cache_dma_pkt_s(cache_addr_width_lp);
   bsg_cache_dma_pkt_s [num_cache_p-1:0] dma_pkt;
   logic [num_cache_p-1:0] dma_pkt_v_lo;
   logic [num_cache_p-1:0] dma_pkt_yumi_li;
@@ -229,7 +230,7 @@ module testbench();
 
   for (genvar i = 0; i < num_cache_p; i++) begin
     bsg_cache #(
-      .addr_width_p(link_addr_width_p+2)
+      .addr_width_p(cache_addr_width_lp)
       ,.data_width_p(data_width_p)
       ,.block_size_in_words_p(block_size_in_words_p)
       ,.sets_p(sets_p)
@@ -280,7 +281,7 @@ module testbench();
 
   bsg_cache_to_dram_ctrl #(
     .num_cache_p(num_cache_p)
-    ,.addr_width_p(link_addr_width_p+2)
+    ,.addr_width_p(cache_addr_width_lp)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
   
