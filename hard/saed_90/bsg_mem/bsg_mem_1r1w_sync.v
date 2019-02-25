@@ -39,7 +39,7 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
   );
 
   // TODO: ADD ANY NEW RAM CONFIGURATIONS HERE
-  `bsg_mem_1r1w_sync_macro    (72, 1024) else
+  `bsg_mem_1r1w_sync_macro    (64, 512) else
 
   begin: z
     // we substitute a 1r1w macro

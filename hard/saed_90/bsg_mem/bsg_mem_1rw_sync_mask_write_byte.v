@@ -35,7 +35,7 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter els_p = -1
   );
 
   // TODO: ADD ANY NEW RAM CONFIGURATIONS HERE
-  //`bsg_mem_1rw_sync_mask_write_byte_macro (128, 64) else
+  `bsg_mem_1rw_sync_mask_write_byte_macro (64, 512) else
   
   // no hardened version found
     begin: notmacro
