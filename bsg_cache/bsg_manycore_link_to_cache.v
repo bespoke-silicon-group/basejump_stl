@@ -134,6 +134,7 @@ module bsg_manycore_link_to_cache
     cache_pkt.mask = endpoint_mask_lo;
     cache_pkt.data = '0;
     cache_pkt.addr = '0;
+    cache_pkt.opcode = TAGST;
     tagst_sent_n = tagst_sent_r;
     tagst_received_n = tagst_received_r;
     v_o = 1'b0;
