@@ -65,7 +65,7 @@ module bsg_serial_in_parallel_out_full
   end
 
   always_ff @ (posedge clk_i) begin
-    if ((count_lo != els_p) & v_i & ready_o) begin
+    if (v_i & ready_o) begin
       data_r[count_lo[0+:lg_els_lp]] <= data_i;
     end
   end
