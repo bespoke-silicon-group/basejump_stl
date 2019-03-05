@@ -50,8 +50,11 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
    // we use a 2 port RF because the 1 port RF
    // does not support bit-level masking for 80-bit width
    // alternatively we could instantiate 2 40-bit 1rw RF's 								
-   `bsg_mem_1rf_sync_macro_bit(256,4,8,2) else
+   `bsg_mem_1rf_sync_macro_bit(256,4,8,4) else
+   `bsg_mem_1rf_sync_macro_bit(256,30,8,2) else
    `bsg_mem_1rf_sync_macro_bit(256,32,8,2) else
+   `bsg_mem_1rf_sync_macro_bit(256,34,8,2) else
+   `bsg_mem_1rf_sync_macro_bit(256,36,8,2) else
    `bsg_mem_1rw_sync_macro_bit(64,80,6,1)  else
    bsg_mem_1rw_sync_mask_write_bit_synth
      #(.width_p(width_p)
