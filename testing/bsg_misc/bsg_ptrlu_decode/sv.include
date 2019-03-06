@@ -1,0 +1,8 @@
+$BSG_IP_CORES_DIR/bsg_misc/bsg_defines.v
+$BSG_IP_CORES_DIR/bsg_misc/bsg_ptlru_decode.v
+$BSG_IP_CORES_DIR/bsg_test/bsg_nonsynth_clock_gen.v
+$BSG_IP_CORES_DIR/bsg_test/bsg_nonsynth_reset_gen.v
+testbench.v
+
+
+
