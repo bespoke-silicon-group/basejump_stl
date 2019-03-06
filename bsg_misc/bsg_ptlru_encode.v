@@ -3,7 +3,8 @@
  *    bsg_ptlru_encode.v
  *
  *  Description:
- *    Given the LRU bits, return the LRU way_id.
+ *    Pseudo-Tree-LRU decode unit.
+ *    Given the LRU bits, traverses the pseudo-LRU tree and returns the LRU way_id.
  */
 
 module bsg_ptlru_encode
@@ -21,33 +22,33 @@ module bsg_ptlru_encode
   
   
   genvar i;
-  generate begin
-    for(i=0; i<ways_p-1; i++) begin
-      if(i == 0) begin
+  generate begin: gen
+    for(i=0; i<ways_p-1; i++) begin: rof
+      if(i == 0) begin: fi
 	    assign mask[i] = 1'b1;
 	  end
-	  else if(i%2 == 1) begin
+	  else if(i%2 == 1) begin: fi
 	    assign mask[i] = mask[(i-1)/2] & ~lru_i[(i-1)/2];
 	  end
-	  else begin
+	  else begin: fi
 	    assign mask[i] = mask[(i-2)/2] & lru_i[(i-2)/2];
 	  end
     end
     
     
-    for(i=0; i<lg_ways_lp; i++) begin
+    for(i=0; i<lg_ways_lp; i++) begin: rof2
     
       assign way_id_o[lg_ways_lp-1-i] = lru_i[pe_o[i]];
     
-	  if(i == 0) begin
+	  if(i == 0) begin: fi2
 	    assign pe_i[i] = mask;
 	    assign pe_o[i] = '0;
 	  end
-	  else begin
+	  else begin: fi2
         assign pe_i[i] = pe_i[i-1] ^ ({{(ways_p-2){1'b0}}, 1'b1} << pe_o[i-1]);
 	  end
 	  
-      if(i != 0) begin
+      if(i != 0) begin: fi3
 	    bsg_priority_encode 
           #(.width_p(ways_p-1)
             ,.lo_to_hi_p(1'b1)
