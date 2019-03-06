@@ -2,7 +2,6 @@
 // This logic may be susceptible bug if en_i changes multiple times within a clk cyle
 
 module bsg_clkgate  (input  clk_i
-                    ,input  reset_i
                     ,input  en_i
                     ,output gated_clock_o
                     );
