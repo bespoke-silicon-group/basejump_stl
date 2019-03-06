@@ -1,0 +1,40 @@
+/**
+ *  Name:
+ *    bsg_ptlru_decode.v
+ *
+ *  Description:
+ *    LRU decode unit. Given input referred way_id, generate data and mask that updates
+ *    the pseudo-LRU tree. Data and mask is chosen so that referred way_id is
+ *    no longer the LRU way.
+ */
+
+module bsg_ptlru_decode
+  #(parameter ways_p        = "inv"
+    ,localparam lg_ways_lp = `BSG_SAFE_CLOG2(ways_p)
+  )
+  (input [lg_ways_lp-1:0]      way_id_i
+   , output logic [ways_p-2:0] data_o
+   , output logic [ways_p-2:0] mask_o
+  );
+
+  genvar i;
+  generate begin
+    for(i=0; i<ways_p-1; i++) begin
+      // Mask generation
+	  if(i == 0) begin
+	    assign mask_o[i] = 1'b1;
+	  end
+	  else if(i%2 == 1) begin
+	    assign mask_o[i] = mask_o[(i-1)/2] & ~way_id_i[lg_ways_lp-`BSG_SAFE_CLOG2(i+2)+1];
+	  end
+	  else begin
+	    assign mask_o[i] = mask_o[(i-2)/2] & way_id_i[lg_ways_lp-`BSG_SAFE_CLOG2(i+2)+1];
+	  end
+	  
+	  // Data generation
+	  assign data_o[i] = mask_o[i] & ~way_id_i[lg_ways_lp-`BSG_SAFE_CLOG2(i+2)];
+    end
+  end
+  endgenerate
+
+endmodule
