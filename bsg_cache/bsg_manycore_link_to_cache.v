@@ -201,7 +201,8 @@ module bsg_manycore_link_to_cache
       end
     endcase
   end
-  
+
+   // synopsys sync_set_reset "reset_i"
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       state_r <= RESET;

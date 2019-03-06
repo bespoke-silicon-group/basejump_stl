@@ -194,7 +194,8 @@ module bsg_cache_dma
   assign snoop_word_we = (dma_state_r == GET_FILL_DATA)
     & (snoop_word_offset == counter_r[lg_block_size_in_words_lp-1:0])
     & in_fifo_v_lo;
-  
+
+   // synopsys sync_set_reset "reset_i"
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       dma_state_r <= IDLE;

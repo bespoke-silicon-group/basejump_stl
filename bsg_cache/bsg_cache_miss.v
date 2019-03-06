@@ -233,7 +233,7 @@ module bsg_cache_miss
 
     endcase
   end
-
+   // synopsys sync_set_reset "reset_i"
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       miss_state_r <= START;
