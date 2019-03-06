@@ -15,7 +15,7 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
                            , parameter read_write_same_addr_p=0
                            , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                            , parameter harden_p=0
-                                        , parameter enable_clock_gating_p=0
+                           , parameter enable_clock_gating_p=1'b0
                            )
    (input   clk_i
     , input reset_i
@@ -38,8 +38,8 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
 
    bsg_clkgate_optional icg
      (.clk_i( clk_i )
-     ,.en_i( w_v_i | r_v_i )
-     ,.bypass_i( enable_clock_gating_p )
+     ,.en_i( w_v_i | r0_v_i | r1_v_i )
+     ,.bypass_i( ~enable_clock_gating_p )
      ,.gated_clock_o( clk_lo )
      );
 

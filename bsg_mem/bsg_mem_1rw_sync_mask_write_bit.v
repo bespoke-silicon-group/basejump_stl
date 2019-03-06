@@ -5,8 +5,9 @@
 
 module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
 			               , parameter els_p=-1
-                     , parameter enable_clock_gating_p=0
-			               , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p))
+                     , parameter enable_clock_gating_p=1'b0
+			               , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+                     )
    (input   clk_i
     , input reset_i
     , input [width_p-1:0] data_i
@@ -21,8 +22,8 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
 
    bsg_clkgate_optional icg
      (.clk_i( clk_i )
-     ,.en_i( w_v_i | r_v_i )
-     ,.bypass_i( enable_clock_gating_p )
+     ,.en_i( v_i )
+     ,.bypass_i( ~enable_clock_gating_p )
      ,.gated_clock_o( clk_lo )
      );
 

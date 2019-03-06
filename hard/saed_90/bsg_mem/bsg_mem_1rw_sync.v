@@ -8,7 +8,7 @@
   if (els_p == words && width_p == bits)    \
     begin: macro                            \
        saed90_``bits``x``words``_1P mem     \
-         (.CE1  (clk_i)                     \
+         (.CE1  (clk_lo)                     \
          ,.WEB1 (~w_i)                      \
          ,.OEB1 (1'b0)                      \
          ,.CSB1 (~v_i)                      \
@@ -22,7 +22,9 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
                          ,parameter els_p=-1
                          ,parameter addr_width_lp=$clog2(els_p)
                          // whether to substitute a 1r1w
-                         ,parameter substitute_1r1w_p=1)
+                         ,parameter substitute_1r1w_p=1
+                         ,parameter enable_clock_gating_p=1'b0
+                         )
   (input                      clk_i
   ,input                      reset_i
   ,input [width_p-1:0]        data_i
@@ -31,6 +33,16 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
   ,input                      w_i
   ,output logic [width_p-1:0] data_o
   );
+
+   wire clk_lo;
+
+   bsg_clkgate_optional icg
+     (.clk_i( clk_i )
+     ,.en_i( v_i )
+     ,.bypass_i( ~enable_clock_gating_p )
+     ,.gated_clock_o( clk_lo )
+     );
+
 
   // TODO: ADD ANY NEW RAM CONFIGURATIONS HERE
   `bsg_mem_1rw_sync_macro    (512,512) else
@@ -48,7 +60,7 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
                       ,.els_p(els_p)
                       ,.read_write_same_addr_p(0)
                       ) mem
-          (.w_clk_i   (clk_i     )
+          (.w_clk_i   (clk_lo     )
           ,.w_reset_i (reset_i   )
           ,.w_v_i     (v_i & w_i )
           ,.w_addr_i  (addr_i    )
@@ -59,7 +71,7 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
           );
 
         // register output data to convert sync to async
-        always_ff @(posedge clk_i)
+        always_ff @(posedge clk_lo)
           data_o <= data_lo;
 
       end // block: s1r1w
@@ -67,7 +79,16 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
       begin: notmacro
 
         // Instantiate a synthesizable 1rw sync ram
-        bsg_mem_1rw_sync_synth #(.width_p(width_p), .els_p(els_p)) synth (.*);
+        bsg_mem_1rw_sync_synth #(.width_p(width_p), .els_p(els_p)) synth
+          (.clk_i( clk_lo )
+          ,.reset_i
+          ,.data_i
+          ,.addr_i
+          ,.v_i
+          ,.w_i
+          ,.data_o
+          );
+          
 
       end // block: notmacro
   end // block: z
