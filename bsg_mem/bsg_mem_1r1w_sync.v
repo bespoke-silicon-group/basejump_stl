@@ -16,6 +16,7 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
                            , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                            , parameter harden_p=0
                            , parameter disable_collision_warning_p=1
+                           , parameter enable_clock_gating_p=0
                            )
    (input   clk_i
     , input reset_i
@@ -31,13 +32,30 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
     , output logic [width_p-1:0] r_data_o
     );
 
+   wire clk_lo;
+
+   bsg_clkgate_optional icg
+     (.clk_i( clk_i )
+     ,.en_i( w_v_i | r_v_i )
+     ,.bypass_i( enable_clock_gating_p )
+     ,.gated_clock_o( clk_lo )
+     );
+
    bsg_mem_1r1w_sync_synth
      #(.width_p(width_p)
        ,.els_p(els_p)
        ,.read_write_same_addr_p(read_write_same_addr_p)
        ,.harden_p(harden_p)
        ) synth
-       (.*);
+       (.clk_i( clk_lo )
+       ,.reset_i
+       ,.w_v_i
+       ,.w_addr_i
+       ,.w_data_i
+       ,.r_v_i
+       ,.r_addr_i
+       ,.r_data_o
+       );
 
    //synopsys translate_off
    initial
@@ -45,7 +63,7 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
         $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d, harden_p=%d (%m)",width_p,els_p,read_write_same_addr_p,harden_p);
      end
 
-   always_ff @(posedge clk_i)
+   always_ff @(posedge clk_lo)
      if (w_v_i)
        begin
           assert ((reset_i === 'X) || (reset_i === 1'b1) || (w_addr_i < els_p))
