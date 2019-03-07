@@ -97,21 +97,21 @@ module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
    , output [bits-1:0] oclk_data_o                                      \
    );                                                                   \
                                                                         \
- `rp_group    (blss_bank)                                               \
- `rp_place    (hier blss_launch_1 0 0)                                  \
- `rp_place    (hier blss_1   1 0)                                       \
- `rp_place    (hier blss_2   2 0)                                       \
- `rp_endgroup (blss_bank)                                               \
+ `rp_group    (blssar_bank)                                             \
+ `rp_place    (hier blssar_launch_1 0 0)                                \
+ `rp_place    (hier blssar_1   1 0)                                     \
+ `rp_place    (hier blssar_2   2 0)                                     \
+ `rp_endgroup (blssar_bank)                                             \
                                                                         \
    logic [bits-1:0] bsg_SYNC_LNCH_r;                                    \
    assign iclk_data_o = bsg_SYNC_LNCH_r;                                \
                                                                         \
    always_ff @(EDGE iclk_i or posedge iclk_reset_i)                     \
      begin                                                              \
-        `rp_group(blss_launch_1)                                        \
+        `rp_group(blssar_launch_1)                                      \
         `rp_fill(0 0 UX)                                                \
         `rp_array_dir(up)                                               \
-        `rp_endgroup(blss_launch_1)                                     \
+        `rp_endgroup(blssar_launch_1)                                   \
                                                                         \
         if (iclk_reset_i)                                               \
           bsg_SYNC_LNCH_r <= {bits{1'b0}};                              \
@@ -124,22 +124,28 @@ module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
                                                                         \
    assign oclk_data_o = bsg_SYNC_2_r;                                   \
                                                                         \
-   always_ff @(posedge oclk_i)                                          \
+   always_ff @(posedge oclk_i or posedge iclk_reset_i)                  \
      begin                                                              \
-        `rp_group(blss_1)                                               \
+        `rp_group(blssar_1)                                             \
         `rp_fill(0 0 UX)                                                \
         `rp_array_dir(up)                                               \
-        `rp_endgroup(blss_1)                                            \
-        bsg_SYNC_1_r <= bsg_SYNC_LNCH_r;                                \
+        `rp_endgroup(blssar_1)                                          \
+        if (iclk_reset_i)                                               \
+          bsg_SYNC_1_r <= {bits{1'b0}};                                 \
+        else                                                            \
+          bsg_SYNC_1_r <= bsg_SYNC_LNCH_r;                              \
      end                                                                \
                                                                         \
-   always_ff @(posedge oclk_i)                                          \
+   always_ff @(posedge oclk_i or posedge iclk_reset_i)                  \
      begin                                                              \
-        `rp_group(blss_2)                                               \
+        `rp_group(blssar_2)                                             \
         `rp_fill(0 0 UX)                                                \
         `rp_array_dir(up)                                               \
-        `rp_endgroup(blss_2)                                            \
-        bsg_SYNC_2_r <= bsg_SYNC_1_r;                                   \
+        `rp_endgroup(blssar_2)                                          \
+        if (iclk_reset_i)                                               \
+          bsg_SYNC_2_r <= {bits{1'b0}};                                 \
+        else                                                            \
+          bsg_SYNC_2_r <= bsg_SYNC_1_r;                                 \
      end                                                                \
 endmodule
 
@@ -212,7 +218,7 @@ endmodule
 
 module bsg_launch_sync_sync #(parameter width_p="inv"
                               , parameter use_negedge_for_launch_p = 0
-							  , parameter use_async_reset_p = 0)
+                              , parameter use_async_reset_p = 0)
    (input iclk_i
     , input iclk_reset_i
     , input oclk_i
@@ -285,10 +291,10 @@ module bsg_launch_sync_sync #(parameter width_p="inv"
                   `blss_if_clause(posedge,6) else
                     `blss_if_clause(posedge,7)
      end
-	 
+
    end 
    else begin: async
-	 
+
    if (use_negedge_for_launch_p)
      begin: n
         for (i = 0; i < (width_p/`blss_max_block); i = i + 1)
@@ -333,7 +339,7 @@ module bsg_launch_sync_sync #(parameter width_p="inv"
                   `blssar_if_clause(posedge,6) else
                     `blssar_if_clause(posedge,7)
      end
-	 
+
    end
 
 endmodule
