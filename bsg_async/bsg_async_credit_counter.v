@@ -35,6 +35,8 @@
 // This will be a sufficient number of clocks to pass through the synchronizers.
 // This will need to be done explicitly for the credit clock.
 //
+// ASYNC RESET: w_ clock cannot toggle during reset
+//
 
 // MARGIN: when credit counters are used to count outgoing packets, it is sometimes
 // helpful to include extra bits of precision in case the latency is longer than
@@ -55,7 +57,8 @@ module bsg_async_credit_counter #(parameter max_tokens_p = "inv"
                                   , parameter count_negedge_p = 0
                                   , parameter extra_margin_p = 0
                                   , parameter check_excess_credits_p = 1
-				  , parameter start_full_p = 1)
+				  , parameter start_full_p = 1
+				  , parameter use_async_w_reset_p = 0)
     (
       input w_clk_i
     , input w_inc_token_i
@@ -86,7 +89,8 @@ module bsg_async_credit_counter #(parameter max_tokens_p = "inv"
    // *********** this is basically an async_ptr: begin factor
 
    bsg_async_ptr_gray #(.lg_size_p(w_counter_width_lp)
-                        ,.use_negedge_for_launch_p(count_negedge_p)) bapg
+                        ,.use_negedge_for_launch_p(count_negedge_p)
+                        ,.use_async_reset_p(use_async_w_reset_p)) bapg
    (.w_clk_i(w_clk_i)
     ,.w_reset_i(w_reset_i)
     ,.w_inc_i(w_inc_token_i)

@@ -20,6 +20,8 @@
 // have two different clocks.
 //
 
+// ASYNC RESET: iclk cannot toggle at deassertion of reset
+
 `ifndef rp_group
  `define rp_group(x)
  `define rp_place(x)
@@ -97,21 +99,21 @@ module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
    , output [bits-1:0] oclk_data_o                                      \
    );                                                                   \
                                                                         \
- `rp_group    (blssar_bank)                                             \
- `rp_place    (hier blssar_launch_1 0 0)                                \
- `rp_place    (hier blssar_1   1 0)                                     \
- `rp_place    (hier blssar_2   2 0)                                     \
- `rp_endgroup (blssar_bank)                                             \
+ `rp_group    (blss_bank)                                               \
+ `rp_place    (hier blss_launch_1 0 0)                                  \
+ `rp_place    (hier blss_1   1 0)                                       \
+ `rp_place    (hier blss_2   2 0)                                       \
+ `rp_endgroup (blss_bank)                                               \
                                                                         \
    logic [bits-1:0] bsg_SYNC_LNCH_r;                                    \
    assign iclk_data_o = bsg_SYNC_LNCH_r;                                \
                                                                         \
    always_ff @(EDGE iclk_i or posedge iclk_reset_i)                     \
      begin                                                              \
-        `rp_group(blssar_launch_1)                                      \
+        `rp_group(blss_launch_1)                                        \
         `rp_fill(0 0 UX)                                                \
         `rp_array_dir(up)                                               \
-        `rp_endgroup(blssar_launch_1)                                   \
+        `rp_endgroup(blss_launch_1)                                     \
                                                                         \
         if (iclk_reset_i)                                               \
           bsg_SYNC_LNCH_r <= {bits{1'b0}};                              \
@@ -126,10 +128,10 @@ module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
                                                                         \
    always_ff @(posedge oclk_i or posedge iclk_reset_i)                  \
      begin                                                              \
-        `rp_group(blssar_1)                                             \
+        `rp_group(blss_1)                                               \
         `rp_fill(0 0 UX)                                                \
         `rp_array_dir(up)                                               \
-        `rp_endgroup(blssar_1)                                          \
+        `rp_endgroup(blss_1)                                            \
         if (iclk_reset_i)                                               \
           bsg_SYNC_1_r <= {bits{1'b0}};                                 \
         else                                                            \
@@ -138,10 +140,10 @@ module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
                                                                         \
    always_ff @(posedge oclk_i or posedge iclk_reset_i)                  \
      begin                                                              \
-        `rp_group(blssar_2)                                             \
+        `rp_group(blss_2)                                               \
         `rp_fill(0 0 UX)                                                \
         `rp_array_dir(up)                                               \
-        `rp_endgroup(blssar_2)                                          \
+        `rp_endgroup(blss_2)                                            \
         if (iclk_reset_i)                                               \
           bsg_SYNC_2_r <= {bits{1'b0}};                                 \
         else                                                            \
