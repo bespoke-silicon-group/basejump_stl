@@ -40,38 +40,106 @@ if (els_p == words && data_width_p == bits)               \
       ,.Q     ( data_o )                                  \
       ,.DELAY ( 2'b0   ));                                \
   end
-
-`define bsg_mem_1rf_sync_macro_byte_banks(words,bits,lgEls,mux) \
-if (els_p == 2*``words`` && data_width_p == bits)               \
-  begin: macro                                                  \
-    wire [data_width_p-1:0] wen;                                \
-    wire [data_width_p-1:0] bank_data [0:1];                    \
-    logic sel;                                                  \
-    always_ff @(posedge clk_i)                                  \
-      sel <= addr_i[0];                                         \
-    genvar i;                                                   \
-    for(i=0;i<write_mask_width_lp;i++)                          \
-      assign wen[8*i+:8] = {8{write_mask_i[i]}};                \
-    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem0                \
-      (.A     ( addr_i[addr_width_lp-1:1] )                     \
-      ,.D     ( data_i                    )                     \
-      ,.BWEB  ( ~wen                      )                     \
-      ,.WEB   ( ~w_i | addr_i[0]          )                     \
-      ,.CEB   ( ~v_i | addr_i[0]          )                     \
-      ,.CLK   ( clk_i                     )                     \
-      ,.Q     ( bank_data[0]              )                     \
-      ,.DELAY ( 2'b0   ));                                      \
-    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem1                \
-      (.A     ( addr_i[addr_width_lp-1:1] )                     \
-      ,.D     ( data_i                    )                     \
-      ,.BWEB  ( ~wen                      )                     \
-      ,.WEB   ( ~w_i | ~addr_i[0]         )                     \
-      ,.CEB   ( ~v_i | ~addr_i[0]         )                     \
-      ,.CLK   ( clk_i                     )                     \
-      ,.Q     ( bank_data[1]              )                     \
-      ,.DELAY ( 2'b0                      ));                   \
-    assign data_o = sel? bank_data[1]: bank_data[0];            \
+ 
+`define bsg_mem_1rw_sync_macro_byte_banked(banks,words,bits,lgEls,mux)  \
+if ((els_p == (banks * words)) && (data_width_p == bits))               \
+  begin: macro 	                                                        \
+    localparam lg_banks_lp  = `BSG_SAFE_CLOG2(banks);                   \
+    wire   [data_width_p-1:0]  wen;			                \
+    /* data outputs for each bank */                                    \
+    wire   [data_width_p-1:0] bank_data_lo [banks-1:0]; 		\
+    /* selects which bank drives data_o */                              \
+    logic  [lg_banks_lp-1:0]    data_sel_r;			        \
+    /* selects which bank to accesss from lsbs of address */            \
+    wire   [lg_banks_lp-1:0]    bank_sel_li  = addr_i[lg_banks_lp-1:0];	\
+    always_ff @(posedge clk_i)                                          \
+      data_sel_r <= bank_sel_li;                                        \
+    genvar i;                                                           \
+    for(i = 0; i < write_mask_width_lp; i++)                            \
+      assign wen[8*i+:8]  = {8{write_mask_i[i]}};                       \
+    genvar b;                                                           \
+    /* generate hard memories for each bank */                          \
+    for(b = 0; b < banks; b++)                                          \
+      begin                                                             \
+	tsmc40_1rw_lg``lgEls``_w``bits``_m``mux mem                     \
+	  (.A     ( addr_i[addr_width_lp-1:lg_banks_lp] )               \
+	   ,.D    ( data_i                              )               \
+	   /* BWEB, EB, and CEB are active low */                       \
+	   ,.BWEB ( ~wen                                )               \
+	   ,.WEB  ( ~v_i | ~(bank_sel_li == b)          )               \
+	   ,.CEB  ( ~v_i | ~(bank_sel_li == b)          )               \
+	   ,.CLK  ( clk_i                               )               \
+	   ,.Q    ( bank_data_lo[b]                     )               \
+	   ,.DELAY( 2'b0                                ));             \
+      end                                                               \
+    assign data_o = bank_data_lo[data_sel_r];                           \
   end
+
+`define bsg_mem_1rf_sync_macro_byte_banked(banks,words,bits,lgEls,mux)  \
+if ((els_p == (banks * words)) && (data_width_p == bits))               \
+  begin: macro 	                                                        \
+    localparam lg_banks_lp  = `BSG_SAFE_CLOG2(banks);                   \
+    wire   [data_width_p-1:0]  wen;			                \
+    /* data outputs for each bank */                                    \
+    wire   [data_width_p-1:0] bank_data_lo [banks-1:0]; 		\
+    /* selects which bank drives data_o */                              \
+    logic  [lg_banks_lp-1:0]    data_sel_r;			        \
+    /* selects which bank to accesss from lsbs of address */            \
+    wire   [lg_banks_lp-1:0]    bank_sel_li  = addr_i[lg_banks_lp-1:0];	\
+    always_ff @(posedge clk_i)                                          \
+      data_sel_r <= bank_sel_li;                                        \
+    genvar i;                                                           \
+    for(i = 0; i < write_mask_width_lp; i++)                            \
+      assign wen[8*i+:8]  = {8{write_mask_i[i]}};                       \
+    genvar b;                                                           \
+    /* generate hard memories for each bank */                          \
+    for(b = 0; b < banks; b++)                                          \
+      begin                                                             \
+	tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem                     \
+	  (.A     ( addr_i[addr_width_lp-1:lg_banks_lp] )               \
+	   ,.D    ( data_i                              )               \
+	   /* BWEB, EB, and CEB are active low */                       \
+	   ,.BWEB ( ~wen                                )               \
+	   ,.WEB  ( ~v_i | ~(bank_sel_li == b)          )               \
+	   ,.CEB  ( ~v_i | ~(bank_sel_li == b)          )               \
+	   ,.CLK  ( clk_i                               )               \
+	   ,.Q    ( bank_data_lo[b]                     )               \
+	   ,.DELAY( 2'b0                                ));             \
+      end                                                               \
+    assign data_o = bank_data_lo[data_sel_r];                           \
+  end // block: macro
+
+// `define bsg_mem_1rf_sync_macro_byte_banks(words,bits,lgEls,mux) \
+// if (els_p == 2*``words`` && data_width_p == bits)               \
+//   begin: macro                                                  \
+//     wire [data_width_p-1:0] wen;                                \
+//     wire [data_width_p-1:0] bank_data [0:1];                    \
+//     logic sel;                                                  \
+//     always_ff @(posedge clk_i)                                  \
+//       sel <= addr_i[0];                                         \
+//     genvar i;                                                   \
+//     for(i=0;i<write_mask_width_lp;i++)                          \
+//       assign wen[8*i+:8] = {8{write_mask_i[i]}};                \
+//     tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem0                \
+//       (.A     ( addr_i[addr_width_lp-1:1] )                     \
+//       ,.D     ( data_i                    )                     \
+//       ,.BWEB  ( ~wen                      )                     \
+//       ,.WEB   ( ~w_i | addr_i[0]          )                     \
+//       ,.CEB   ( ~v_i | addr_i[0]          )                     \
+//       ,.CLK   ( clk_i                     )                     \
+//       ,.Q     ( bank_data[0]              )                     \
+//       ,.DELAY ( 2'b0   ));                                      \
+//     tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem1                \
+//       (.A     ( addr_i[addr_width_lp-1:1] )                     \
+//       ,.D     ( data_i                    )                     \
+//       ,.BWEB  ( ~wen                      )                     \
+//       ,.WEB   ( ~w_i | ~addr_i[0]         )                     \
+//       ,.CEB   ( ~v_i | ~addr_i[0]         )                     \
+//       ,.CLK   ( clk_i                     )                     \
+//       ,.Q     ( bank_data[1]              )                     \
+//       ,.DELAY ( 2'b0                      ));                   \
+//     assign data_o = sel? bank_data[1]: bank_data[0];            \
+//   end
 
 module bsg_mem_1rw_sync_mask_write_byte
 
@@ -98,9 +166,11 @@ module bsg_mem_1rw_sync_mask_write_byte
   wire unused = reset_i;
 
   `bsg_mem_1rw_sync_macro_byte(4096,64,12,8) else
+  `bsg_mem_1rf_sync_macro_byte_banked(4,512,64,9,4) else // 4 banks
+  `bsg_mem_1rw_sync_macro_byte_banked(2,1024,64,10,4) else // 2 banks
+  `bsg_mem_1rw_sync_macro_byte(2048,64,11,4) else // 1 banks
   `bsg_mem_1rw_sync_macro_byte(2048,64,11,4) else
-  `bsg_mem_1rw_sync_macro_byte(2048,64,11,4) else
-  `bsg_mem_1rf_sync_macro_byte_banks(512,32,9,4) else
+  // `bsg_mem_1rf_sync_macro_byte_banks(512,32,9,4) else    
   `bsg_mem_1rf_sync_macro_byte(1024,32,10,8) else
   `bsg_mem_1rw_sync_macro_byte(1024,32,10,4) else
   // no hardened version found
