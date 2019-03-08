@@ -1,13 +1,13 @@
 /**
  *  Name:
- *    bsg_ptlru_encode.v
+ *    bsg_lru_pseudo_tree_encode.v
  *
  *  Description:
  *    Pseudo-Tree-LRU decode unit.
  *    Given the LRU bits, traverses the pseudo-LRU tree and returns the LRU way_id.
  */
 
-module bsg_ptlru_encode
+module bsg_lru_pseudo_tree_encode
   #(parameter ways_p       = "inv"
     ,localparam lg_ways_lp = `BSG_SAFE_CLOG2(ways_p)
   )

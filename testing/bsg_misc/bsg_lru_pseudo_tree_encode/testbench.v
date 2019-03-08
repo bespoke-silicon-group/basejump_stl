@@ -36,7 +36,7 @@ bsg_nonsynth_reset_gen #(.num_clocks_p(1)
                          ,.async_reset_o(reset)
                          );
 
-bsg_ptlru_encode
+bsg_lru_pseudo_tree_encode
   #(.ways_p(ways_p)
   )
   ptw
