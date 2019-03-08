@@ -13,8 +13,11 @@
 // at least once; and the r_ clock posedge toggled at least three times after that.
 // This will be a sufficient number of clocks to pass through the synchronizers.
 
+// ASYNC RESET: w_ clock cannot toggle during reset
+
 module bsg_async_ptr_gray #(parameter lg_size_p = -1
-                            ,parameter use_negedge_for_launch_p=0)
+                            ,parameter use_negedge_for_launch_p=0
+                            ,parameter use_async_reset_p = 0)
    (
     input w_clk_i
     , input w_reset_i
@@ -46,7 +49,9 @@ module bsg_async_ptr_gray #(parameter lg_size_p = -1
 
    // pointer, in binary
    // feature wish: pass in negedge or posedge as parameter!
-generate
+   
+   if (use_async_reset_p == 0) begin: sync
+   
    if (use_negedge_for_launch_p)
      begin
         always @(negedge w_clk_i)
@@ -75,7 +80,40 @@ generate
                w_ptr_p1_r <= w_ptr_p1_n;
             end
      end
-endgenerate
+
+   end 
+   else begin: async
+   
+   if (use_negedge_for_launch_p)
+     begin
+        always @(negedge w_clk_i or posedge w_reset_i)
+          if (w_reset_i)
+            begin
+               w_ptr_r    <= 0;
+               w_ptr_p1_r <= 1;
+            end
+          else
+            begin
+               w_ptr_r    <= w_ptr_n;
+               w_ptr_p1_r <= w_ptr_p1_n;
+            end
+     end
+   else
+     begin
+        always @(posedge w_clk_i or posedge w_reset_i)
+          if (w_reset_i)
+            begin
+               w_ptr_r    <= 0;
+               w_ptr_p1_r <= 1;
+            end
+          else
+            begin
+               w_ptr_r    <= w_ptr_n;
+               w_ptr_p1_r <= w_ptr_p1_n;
+            end
+     end
+   
+   end
 
    assign w_ptr_binary_r_o = w_ptr_r;
 
@@ -85,7 +123,8 @@ endgenerate
    // these should be abutted in physical design
 
    bsg_launch_sync_sync #(.width_p(lg_size_p)
-                          ,.use_negedge_for_launch_p(use_negedge_for_launch_p)) ptr_sync
+                          ,.use_negedge_for_launch_p(use_negedge_for_launch_p)
+                          ,.use_async_reset_p(use_async_reset_p)) ptr_sync
      (
       .iclk_i(w_clk_i)
       ,.iclk_reset_i(w_reset_i)
