@@ -33,8 +33,6 @@
 
 module bsg_tag_trace_replay
 
-    import bsg_chip_pkg::*;
-
    #( parameter rom_addr_width_p    = -1
     , parameter rom_data_width_p    = -1
     , parameter num_clients_p       = -1
