@@ -35,7 +35,12 @@
 // This will be a sufficient number of clocks to pass through the synchronizers.
 // This will need to be done explicitly for the credit clock.
 //
-// ASYNC RESET: w_ clock cannot toggle during reset
+// ASYNC RESET PROCEDURE:
+// Step 1: Assert r_ reset.
+// Step 2: w_ reset must be posedge/negedge toggled (0->1->0) at least once.
+//         w_ clock cannot toggle during this step.
+// Step 3: r_ clock posedge toggled at least four times after that.
+// Step 4: Deassert r_ reset.
 //
 
 // MARGIN: when credit counters are used to count outgoing packets, it is sometimes
