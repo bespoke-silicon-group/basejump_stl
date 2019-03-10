@@ -17,6 +17,7 @@ module bsg_cache
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
+    ,parameter banks_p=1
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
     ,parameter data_mask_width_lp=(data_width_p>>3)
     ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
@@ -222,19 +223,20 @@ module bsg_cache
   logic data_mem_w_li;
   logic [data_width_p*2-1:0] data_mem_data_lo;
 
-  bsg_mem_1rw_sync_mask_write_byte #(
-    .data_width_p(data_width_p*2)
-    ,.els_p(block_size_in_words_p*sets_p)
-  ) data_mem (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.data_i(data_mem_data_li)
-    ,.addr_i(data_mem_addr_li)
-    ,.v_i(data_mem_v_li)
-    ,.write_mask_i(data_mem_w_mask_li)
-    ,.w_i(data_mem_w_li)
-    ,.data_o(data_mem_data_lo)
-  );
+  bsg_mem_banked 
+    #(.data_width_p(data_width_p*2)
+      ,.els_p(block_size_in_words_p*sets_p)
+      ,.banks_p(banks_p)
+      ) data_mem 
+      (.clk_i(clk_i)
+       ,.reset_i(reset_i)
+       ,.data_i(data_mem_data_li)
+       ,.addr_i(data_mem_addr_li)
+       ,.v_i(data_mem_v_li)
+       ,.write_mask_i(data_mem_w_mask_li)
+       ,.w_i(data_mem_w_li)
+       ,.data_o(data_mem_data_lo)
+      );
 
   // v stage
   //

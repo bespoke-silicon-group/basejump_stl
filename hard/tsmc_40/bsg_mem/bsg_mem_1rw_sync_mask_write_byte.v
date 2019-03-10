@@ -66,7 +66,7 @@ if ((els_p == (banks * words)) && (data_width_p == bits))               \
 	   ,.D    ( data_i                              )               \
 	   /* BWEB, EB, and CEB are active low */                       \
 	   ,.BWEB ( ~wen                                )               \
-	   ,.WEB  ( ~v_i | ~(bank_sel_li == b)          )               \
+	   ,.WEB  ( ~w_i | ~(bank_sel_li == b)          )               \
 	   ,.CEB  ( ~v_i | ~(bank_sel_li == b)          )               \
 	   ,.CLK  ( clk_i                               )               \
 	   ,.Q    ( bank_data_lo[b]                     )               \
@@ -166,13 +166,13 @@ module bsg_mem_1rw_sync_mask_write_byte
   wire unused = reset_i;
 
   `bsg_mem_1rw_sync_macro_byte(4096,64,12,8) else
-  `bsg_mem_1rf_sync_macro_byte_banked(4,512,64,9,4) else // 4 banks
-  `bsg_mem_1rw_sync_macro_byte_banked(2,1024,64,10,4) else // 2 banks
-  `bsg_mem_1rw_sync_macro_byte(2048,64,11,4) else // 1 banks
+  `bsg_mem_1rw_sync_macro_byte(2048,64,11,4) else 
   `bsg_mem_1rw_sync_macro_byte(2048,64,11,4) else
-  // `bsg_mem_1rf_sync_macro_byte_banks(512,32,9,4) else    
+  // `bsg_mem_1rf_sync_macro_byte_banks(512,32,9,4) else
+  `bsg_mem_1rw_sync_macro_byte(1024,64,10,4) else  
   `bsg_mem_1rf_sync_macro_byte(1024,32,10,8) else
   `bsg_mem_1rw_sync_macro_byte(1024,32,10,4) else
+  `bsg_mem_1rf_sync_macro_byte(512,64,9,4) else
   // no hardened version found
     begin  : notmacro
 
