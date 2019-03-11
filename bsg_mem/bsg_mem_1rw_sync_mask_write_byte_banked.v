@@ -3,7 +3,7 @@
  * 
  * The bank is selected from the LSB.
  */
-module bsg_mem_banked
+module bsg_mem_1rw_sync_mask_write_byte_banked
   #(parameter  banks_p      =  "inv"
     ,parameter els_p        =  "inv"
     ,parameter data_width_p =  "inv"
@@ -39,7 +39,7 @@ module bsg_mem_banked
   	  ,.els_p               ( els_p )
   	  ,.addr_width_lp       ( addr_width_lp )
   	  ,.write_mask_width_lp ( write_mask_width_lp )
-  	  ) 
+  	  )
       mem_bank
   	(.*);      
     end

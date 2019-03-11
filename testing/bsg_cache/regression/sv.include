@@ -17,7 +17,7 @@ $BSG_IP_CORES_DIR/bsg_mem/bsg_mem_1rw_sync_mask_write_bit_synth.v
 $BSG_IP_CORES_DIR/bsg_mem/bsg_mem_1rw_sync_mask_write_byte_synth.v
 $BSG_IP_CORES_DIR/bsg_mem/bsg_mem_1rw_sync_mask_write_bit.v
 $BSG_IP_CORES_DIR/bsg_mem/bsg_mem_1rw_sync_mask_write_byte.v
-$BSG_IP_CORES_DIR/bsg_mem/bsg_mem_banked.v
+$BSG_IP_CORES_DIR/bsg_mem/bsg_mem_1rw_sync_mask_write_byte_banked.v
 $BSG_IP_CORES_DIR/bsg_dataflow/bsg_two_fifo.v
 $BSG_IP_CORES_DIR/bsg_dataflow/bsg_fifo_1rw_large.v
 $BSG_IP_CORES_DIR/bsg_dataflow/bsg_round_robin_n_to_1.v

@@ -223,7 +223,7 @@ module bsg_cache
   logic data_mem_w_li;
   logic [data_width_p*2-1:0] data_mem_data_lo;
 
-  bsg_mem_banked 
+  bsg_mem_1rw_sync_mask_write_byte_banked
     #(.data_width_p(data_width_p*2)
       ,.els_p(block_size_in_words_p*sets_p)
       ,.banks_p(banks_p)
