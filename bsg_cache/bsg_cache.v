@@ -17,6 +17,7 @@ module bsg_cache
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
+    ,parameter ways_p="inv" // TODO: Update dependencies
     ,parameter banks_p=1
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
     ,parameter data_mask_width_lp=(data_width_p>>3)
@@ -762,6 +763,13 @@ module bsg_cache
   initial begin
     assert(data_width_p == 32)
       else $error("only 32-bit for data_width_p supported now.");
+
+    // Check if ways_p is >=2 and a power of 2
+    assert((ways_p >= 2) && ((ways_p & (ways_p-1)) == 0))
+      else begin
+        $error("Error: ways_p = %0d must be a power of 2 and >=2", ways_p);
+        $finish;
+      end
   end
 
   // synopsys translate_on
