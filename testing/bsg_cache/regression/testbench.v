@@ -201,7 +201,8 @@ module testbench();
 
 
   initial begin
-    wait(done)
+    // wait(done)
+    for(int i=0; i<1000000; i++) @(negedge clk);
     $finish;
   end
 
