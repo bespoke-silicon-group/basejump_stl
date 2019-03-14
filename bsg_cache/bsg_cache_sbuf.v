@@ -10,6 +10,8 @@
 module bsg_cache_sbuf
   #(parameter data_width_p="inv"
     ,parameter addr_width_p="inv"
+    ,parameter ways_p="inv"
+    ,parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
     ,parameter data_mask_width_lp="inv"
     ,parameter lg_data_mask_width_lp="inv"
   )
@@ -20,13 +22,13 @@ module bsg_cache_sbuf
     ,input [addr_width_p-1:0] addr_i
     ,input [data_width_p-1:0] data_i 
     ,input [data_mask_width_lp-1:0] mask_i
-    ,input set_i
+    ,input [lg_ways_lp-1:0] set_i
     ,input v_i
   
     ,output logic [data_width_p-1:0] data_o
     ,output logic [addr_width_p-1:0] addr_o
     ,output logic [data_mask_width_lp-1:0] mask_o
-    ,output logic set_o
+    ,output logic [lg_ways_lp-1:0] set_o
     ,output logic v_o
     ,input logic yumi_i
 
@@ -150,7 +152,7 @@ module bsg_cache_sbuf
     ,.data_o(addr_o)
   );
 
-  bsg_cache_sbuf_queue #(.width_p(1)) wbq_set (
+  bsg_cache_sbuf_queue #(.width_p(lg_ways_lp)) wbq_set (
     .clk_i(clk_i)
     ,.data_i(set_i)
     ,.el0_en_i(el0_enable)
