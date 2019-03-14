@@ -519,6 +519,9 @@ module bsg_cache
   logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] dma_data_mem_addr_lo;
   logic [2*(data_mask_width_lp)-1:0] dma_data_mem_w_mask_lo;
   logic [2*data_width_p-1:0] dma_data_mem_data_lo;
+  logic [2*data_width_p-1:0] dma_data_mem_data_li;
+
+  assign dma_data_mem_data_li = data_mem_data_lo[chosen_way_lo>>1];
 
   bsg_cache_dma #(
     .addr_width_p(addr_width_p)
@@ -557,7 +560,7 @@ module bsg_cache
     ,.data_mem_addr_o(dma_data_mem_addr_lo)
     ,.data_mem_w_mask_o(dma_data_mem_w_mask_lo)
     ,.data_mem_data_o(dma_data_mem_data_lo)
-    ,.data_mem_data_i(data_mem_data_lo)
+    ,.data_mem_data_i(dma_data_mem_data_li)
   ); 
 
   // store buffer
@@ -784,7 +787,7 @@ module bsg_cache
     : sbuf_data_mem_w_mask;
 
   for(genvar i=0; i<(ways_p/2); i=i+1) begin
-    assign data_mem_v_li = (~reset_i) & ((v_i & ld_op & ready_o)
+    assign data_mem_v_li[i] = (~reset_i) & ((v_i & ld_op & ready_o)
       | (v_tl_r & recover_lo & ld_op_tl_r)
       | (dma_data_mem_v_lo & ((chosen_way_lo>>1) == i))
       | (sbuf_v_lo & sbuf_yumi_li & ((sbuf_set_lo>>1) == i))
@@ -805,7 +808,7 @@ module bsg_cache
   assign stat_mem_w_mask_li = miss_v
     ? miss_stat_mem_w_mask_lo
     : (tagst_op_v_r ? {stat_mem_width_lp{1'b1}}
-        : {((ways_p'(st_op_v_r)) << (tag_hit_way_v>>1))
+        : {((ways_p'(st_op_v_r)) << tag_hit_way_v)
             , (lru_mask_v & {(ways_p-1){(ld_op_v_r | st_op_v_r)}})
           }
       );
