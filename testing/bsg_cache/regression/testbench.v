@@ -5,6 +5,8 @@
 `include "bsg_cache_pkt.vh"
 `include "bsg_cache_dma_pkt.vh"
 
+`define WAYS_P ????
+
 module testbench();
 
   // parameters
@@ -16,7 +18,7 @@ module testbench();
   parameter data_width_p = 32;
   parameter block_size_in_words_p = 8;
   parameter sets_p = 512;
-  parameter ways_p = 2;
+  parameter ways_p = `WAYS_P;
 
   // clock and reset
   //

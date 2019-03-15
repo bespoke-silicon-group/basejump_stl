@@ -36,6 +36,5 @@ $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_miss.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_sbuf.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache_sbuf_queue.v
 $BSG_IP_CORES_DIR/bsg_cache/bsg_cache.v
-bsg_trace_master_rom.v
 mock_dma.v
 testbench.v
