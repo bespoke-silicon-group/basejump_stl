@@ -3,6 +3,7 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
 
                                           ,parameter data_width_p = -1
                                           ,parameter write_mask_width_lp = data_width_p>>3
+                                          ,parameter debug_p =0
                                          )
   ( input clk_i
    ,input reset_i
@@ -27,12 +28,13 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
   always_comb
     assert (data_width_p % 8 == 0)
       else $error("data width should be a multiple of 8 for byte masking");
-
+  
+  if( debug_p ) begin
    initial
      begin
         $display("## %L: instantiating data_width_p=%d, els_p=%d (%m)",data_width_p,els_p);
      end
-
+  end
   // synopsys translate_on
 
    

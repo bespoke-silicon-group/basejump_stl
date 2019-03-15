@@ -15,6 +15,7 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
                            , parameter read_write_same_addr_p=0
                            , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                            , parameter harden_p=0
+                           , parameter debug_p=0
                            )
    (input   clk_i
     , input reset_i
@@ -57,11 +58,13 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
             else $error("%m: port 1 Attempt to read and write same address");
        end
 
+   if( debug_p) begin
    initial
      begin
         $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d, harden_p=%d (%m)"
 		 ,width_p,els_p,read_write_same_addr_p,harden_p);
      end
+   end
 
 //synopsys translate_on
    

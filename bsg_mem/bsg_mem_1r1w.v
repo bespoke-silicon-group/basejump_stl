@@ -10,6 +10,7 @@ module bsg_mem_1r1w #(parameter width_p=-1
                       , parameter read_write_same_addr_p=0
                       , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                       , parameter harden_p=0
+                      , parameter debug_p =0
                       )
    (input   w_clk_i
     , input w_reset_i
@@ -36,11 +37,11 @@ module bsg_mem_1r1w #(parameter width_p=-1
    //synopsys translate_off
 
    initial
-     begin
-	if (read_write_same_addr_p || (width_p*els_p >= 64))
-          $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d, harden_p=%d (%m)"
+        if( debug_p ) begin
+	  if (read_write_same_addr_p || (width_p*els_p >= 64))
+                 $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d, harden_p=%d (%m)"
                    ,width_p,els_p,read_write_same_addr_p,harden_p);
-     end
+        end
 
    always_ff @(posedge w_clk_i)
      if (w_v_i===1'b1)
