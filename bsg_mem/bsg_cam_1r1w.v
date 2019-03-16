@@ -74,7 +74,7 @@ module bsg_cam_1r1w
   end
   
    
-  generate begin: gen
+  generate 
     if(multiple_entries_p) begin: fi3
       //If multiple_entries_p is 1, the match_array is sent to the
       //priority encoder to select the match_address
@@ -99,10 +99,9 @@ module bsg_cam_1r1w
          ,.v_o (matched)
         );
     end 
-  end
   endgenerate
   
-  generate begin: gen2
+  generate 
     if(find_empty_entry_p) begin: fi5
 	// If find_empty_entry_p is 1, finds the first empty entry in the cam,
     // and puts it on empty_addr_o and raises the empty_v_o
@@ -120,7 +119,6 @@ module bsg_cam_1r1w
 	  assign empty_v_o    = 1'b0;
 	  assign empty_addr_o = '0;
 	end
-  end
   endgenerate
   
   
