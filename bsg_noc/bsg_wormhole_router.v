@@ -23,6 +23,7 @@ module  bsg_wormhole_router
   ,parameter y_cord_width_p = "inv"
   ,parameter len_width_p = "inv"
   ,parameter enable_2d_routing_p = 1'b0
+  ,parameter enable_yx_routing_p = 1'b0
   ,localparam dirs_lp = (enable_2d_routing_p==0)? 3 : 5
   ,localparam x_cord_offset_lp = width_p-x_cord_width_p
   ,localparam y_cord_offset_lp = x_cord_offset_lp-y_cord_width_p
@@ -102,10 +103,7 @@ module  bsg_wormhole_router
   
   for (i = 0; i < dirs_lp; i++) begin
     for (j = 0; j < dirs_lp; j++) begin
-        if (i == j)
-            assign new_valid[i][j] = 1'b0;
-        else
-            assign new_valid[i][j] = fifo_valid_o[i] & dest_n[i][j];
+        assign new_valid[i][j] = fifo_valid_o[i] & dest_n[i][j];
     end
   end
   
@@ -113,10 +111,6 @@ module  bsg_wormhole_router
   // round robin arbiter wires
   
   logic [dirs_lp-1:0] arb_grants_o [dirs_lp-1:0];
-  
-  for (i = 0; i < dirs_lp; i++)
-    for (j = 0; j < dirs_lp; j++)
-        if (i == j) assign arb_grants_o[i][j] = 1'b0;
             
   
   // fifo yumi signals
@@ -167,12 +161,16 @@ module  bsg_wormhole_router
                    
                    
   // concatenated wires in mux_sel sequence
-  logic [dirs_lp-2:0] arb_valid_concatenated [dirs_lp-1:0];
-  logic [dirs_lp-2:0] arb_grants_concatenated [dirs_lp-1:0];
-  logic [dirs_lp-2:0] arb_sel_o [dirs_lp-1:0];
-  logic [dirs_lp-2:0][width_p-1:0] fifo_data_concatenated [dirs_lp-1:0];
+  logic [dirs_lp-1:0] arb_valid_concatenated [dirs_lp-1:0];
+  logic [dirs_lp-1:0] arb_grants_concatenated [dirs_lp-1:0];
+  logic [dirs_lp-1:0] arb_sel_o [dirs_lp-1:0];
+  logic [dirs_lp-1:0][width_p-1:0] fifo_data_concatenated [dirs_lp-1:0];
   
-  for (i = 0; i < dirs_lp; i++) begin
+  
+  // W, E, N and S do not support loopback
+
+  for (i = W; i < dirs_lp; i++) begin: out_side
+  
     for (j = 0; j < dirs_lp-1; j++) begin
     
         localparam ORIG_DIR = SEQ[(i*LEN*COL+j*LEN)+:LEN];
@@ -182,10 +180,6 @@ module  bsg_wormhole_router
         assign fifo_data_concatenated[i][j] = fifo_data_o[ORIG_DIR];
         
     end
-  end
-  
-
-  for (i = 0; i < dirs_lp; i++) begin: out_side
     
     // round robin arbiter
     bsg_round_robin_arb 
@@ -195,9 +189,9 @@ module  bsg_wormhole_router
     ,.reset_i(reset_i)
     ,.grants_en_i(ready_i[i])
 
-    ,.reqs_i(arb_valid_concatenated[i])
-    ,.grants_o(arb_grants_concatenated[i])
-    ,.sel_one_hot_o(arb_sel_o[i])
+    ,.reqs_i(arb_valid_concatenated[i][dirs_lp-2:0])
+    ,.grants_o(arb_grants_concatenated[i][dirs_lp-2:0])
+    ,.sel_one_hot_o(arb_sel_o[i][dirs_lp-2:0])
 
     ,.v_o(valid_o[i])
     ,.tag_o()
@@ -209,14 +203,50 @@ module  bsg_wormhole_router
     #(.width_p(width_p)
     ,.els_p(dirs_lp-1))
     mux
-    (.data_i(fifo_data_concatenated[i])
-    ,.sel_one_hot_i(arb_sel_o[i])
+    (.data_i(fifo_data_concatenated[i][dirs_lp-2:0])
+    ,.sel_one_hot_i(arb_sel_o[i][dirs_lp-2:0])
     ,.data_o(data_o[i]));
+    
+    // Do not support loopback
+    assign arb_grants_o[i][i] = 1'b0;
 
   end
   
   
-  // destination id wires
+  // Processor side support loopback
+  
+  for (j = 0; j < dirs_lp; j++) begin
+    assign arb_valid_concatenated[P][j] = arb_valid[j][P];
+    assign arb_grants_o[j][P] = arb_grants_concatenated[P][j];
+    assign fifo_data_concatenated[P][j] = fifo_data_o[j];
+  end
+    
+  bsg_round_robin_arb 
+  #(.inputs_p(dirs_lp))
+  rr_arb_proc
+  (.clk_i(clk_i)
+  ,.reset_i(reset_i)
+  ,.grants_en_i(ready_i[P])
+
+  ,.reqs_i(arb_valid_concatenated[P][dirs_lp-1:0])
+  ,.grants_o(arb_grants_concatenated[P][dirs_lp-1:0])
+  ,.sel_one_hot_o(arb_sel_o[P][dirs_lp-1:0])
+
+  ,.v_o(valid_o[P])
+  ,.tag_o()
+  ,.yumi_i(valid_o[P] & ready_i[P]));
+    
+  bsg_mux_one_hot  
+  #(.width_p(width_p)
+  ,.els_p(dirs_lp))
+  mux_proc
+  (.data_i(fifo_data_concatenated[P][dirs_lp-1:0])
+  ,.sel_one_hot_i(arb_sel_o[P][dirs_lp-1:0])
+  ,.data_o(data_o[P]));
+  
+  
+  
+  // destination id selection wires
   logic [x_cord_width_p-1:0] fifo_dest_x [dirs_lp-1:0];
   logic [y_cord_width_p-1:0] fifo_dest_y [dirs_lp-1:0];
   
@@ -226,137 +256,69 @@ module  bsg_wormhole_router
   end
   
   
+  // Destination Selection
   
-  if (enable_2d_routing_p) begin: route_2d
-  
-  
-  
-    // Destination Selection
-    
-    always_comb begin
-    
-        dest_n[P] = dest_r[P];
-        dest_n[W] = dest_r[W];
-        dest_n[E] = dest_r[E];
-        dest_n[N] = dest_r[N];
-        dest_n[S] = dest_r[S];
-        
-        if (count_r[P]==1) begin
-            dest_n[P] = {dirs_lp{1'b0}};
-            if (fifo_dest_x[P] == local_x_cord_i)
-                if (fifo_dest_y[P] < local_y_cord_i)
-                    dest_n[P][N] = 1'b1;
-                else
-                    dest_n[P][S] = 1'b1;
-            else
-                if (fifo_dest_x[P] < local_x_cord_i)
-                    dest_n[P][W] = 1'b1;
-                else
-                    dest_n[P][E] = 1'b1;
-        end
-        
-        if (count_r[W]==1) begin
-            dest_n[W] = {dirs_lp{1'b0}};
-            if (fifo_dest_x[W] == local_x_cord_i)
-                if (fifo_dest_y[W] == local_y_cord_i)
-                    dest_n[W][P] = 1'b1;
-                else
-                    if (fifo_dest_y[W] < local_y_cord_i)
-                        dest_n[W][N] = 1'b1;
-                    else
-                        dest_n[W][S] = 1'b1;
-            else
-                dest_n[W][E] = 1'b1;
-        end
-        
-        if (count_r[E]==1) begin
-            dest_n[E] = {dirs_lp{1'b0}};
-            if (fifo_dest_x[E] == local_x_cord_i)
-                if (fifo_dest_y[E] == local_y_cord_i)
-                    dest_n[E][P] = 1'b1;
-                else
-                    if (fifo_dest_y[E] < local_y_cord_i)
-                        dest_n[E][N] = 1'b1;
-                    else
-                        dest_n[E][S] = 1'b1;
-            else
-                dest_n[E][W] = 1'b1;
-        end
-        
-        if (count_r[N]==1) begin
-            dest_n[N] = {dirs_lp{1'b0}};
-            if (fifo_dest_x[N] == local_x_cord_i)
-                if (fifo_dest_y[N] == local_y_cord_i)
-                    dest_n[N][P] = 1'b1;
-                else
-                    dest_n[N][S] = 1'b1;
-            else
-                if (fifo_dest_x[N] < local_x_cord_i)
-                    dest_n[N][W] = 1'b1;
-                else
-                    dest_n[N][E] = 1'b1;
-        end
-        
-        if (count_r[S]==1) begin
-            dest_n[S] = {dirs_lp{1'b0}};
-            if (fifo_dest_x[S] == local_x_cord_i)
-                if (fifo_dest_y[S] == local_y_cord_i)
-                    dest_n[S][P] = 1'b1;
-                else
-                    dest_n[S][N] = 1'b1;
-            else
-                if (fifo_dest_x[S] < local_x_cord_i)
-                    dest_n[S][W] = 1'b1;
-                else
-                    dest_n[S][E] = 1'b1;
-        end
+  if (enable_2d_routing_p == 0) begin: route_1d
 
+    for (i = 0; i < dirs_lp; i++) begin
+        always_comb begin
+            dest_n[i] = dest_r[i];
+            if (count_r[i]==1) begin
+                dest_n[i] = {dirs_lp{1'b0}};
+                if (fifo_dest_x[i] == local_x_cord_i) dest_n[i][P] = 1'b1;
+                if (fifo_dest_x[i] < local_x_cord_i) dest_n[i][W] = 1'b1;
+                if (fifo_dest_x[i] > local_x_cord_i) dest_n[i][E] = 1'b1;
+            end
+        end
     end
-    
-    
-
-  end else begin: route_1d
-
-
-
-    // Destination Selection
-    
-    always_comb begin
-    
-        dest_n[P] = dest_r[P];
-        dest_n[W] = dest_r[W];
-        dest_n[E] = dest_r[E];
         
-        if (count_r[P]==1) begin
-            dest_n[P] = {dirs_lp{1'b0}};
-            if (fifo_dest_x[P] < local_x_cord_i)
-                dest_n[P][W] = 1'b1;
-            else
-                dest_n[P][E] = 1'b1;
+  end else begin: route_2d
+    if (enable_yx_routing_p == 0) begin: route_xy
+    
+        for (i = 0; i < dirs_lp; i++) begin
+            always_comb begin
+                dest_n[i] = dest_r[i];
+                if (count_r[i]==1) begin
+                    dest_n[i] = {dirs_lp{1'b0}};
+                    if (fifo_dest_x[i] == local_x_cord_i) begin
+                        if (fifo_dest_y[i] == local_y_cord_i) dest_n[i][P] = 1'b1;
+                        if (fifo_dest_y[i] < local_y_cord_i) dest_n[i][N] = 1'b1;
+                        if (fifo_dest_y[i] > local_y_cord_i) dest_n[i][S] = 1'b1;
+                    end
+                    if (fifo_dest_x[i] < local_x_cord_i) dest_n[i][W] = 1'b1;
+                    if (fifo_dest_x[i] > local_x_cord_i) dest_n[i][E] = 1'b1;
+                end
+            end
+        end
+    
+    end else begin: route_yx
+    
+        for (i = 0; i < dirs_lp; i++) begin
+            always_comb begin
+                dest_n[i] = dest_r[i];
+                if (count_r[i]==1) begin
+                    dest_n[i] = {dirs_lp{1'b0}};
+                    if (fifo_dest_y[i] == local_y_cord_i) begin
+                        if (fifo_dest_x[i] == local_x_cord_i) dest_n[i][P] = 1'b1;
+                        if (fifo_dest_x[i] < local_x_cord_i) dest_n[i][W] = 1'b1;
+                        if (fifo_dest_x[i] > local_x_cord_i) dest_n[i][E] = 1'b1;
+                    end
+                    if (fifo_dest_y[i] < local_y_cord_i) dest_n[i][N] = 1'b1;
+                    if (fifo_dest_y[i] > local_y_cord_i) dest_n[i][S] = 1'b1;
+                end
+            end
         end
         
-        if (count_r[W]==1) begin
-            dest_n[W] = {dirs_lp{1'b0}};
-            if (fifo_dest_x[W] == local_x_cord_i)
-                dest_n[W][P] = 1'b1;
-            else
-                dest_n[W][E] = 1'b1;
-        end
-        
-        if (count_r[E]==1) begin
-            dest_n[E] = {dirs_lp{1'b0}};
-            if (fifo_dest_x[E] == local_x_cord_i)
-                dest_n[E][P] = 1'b1;
-            else
-                dest_n[E][W] = 1'b1;
-        end
-
     end
-    
-    
-  
   end
+  
+  
+  
 endmodule
+
+
+
+
 
 
 
