@@ -1,8 +1,8 @@
 //
 // Paul Gao 03/2019
 //
-// West has small id, East has large id
-// North has small id, south has large id
+// West has small x_cord, East has large x_cord
+// North has small y_cord, south has large y_cord
 //
 // Direction index: P=0, W=1, E=2, N=3, S=4
 // For 1D routing, should use P, W, E
@@ -24,10 +24,14 @@ module  bsg_wormhole_router
   ,parameter len_width_p = "inv"
   ,parameter enable_2d_routing_p = 1'b0
   ,parameter enable_yx_routing_p = 1'b0
+  // Local parameters
   ,localparam dirs_lp = (enable_2d_routing_p==0)? 3 : 5
   ,localparam x_cord_offset_lp = width_p-x_cord_width_p
   ,localparam y_cord_offset_lp = x_cord_offset_lp-y_cord_width_p
-  ,localparam len_offset_lp = y_cord_offset_lp-len_width_p)
+  ,localparam len_offset_lp = y_cord_offset_lp-len_width_p
+  // Stub ports sequence: SNEWP
+  ,parameter stub_in_p = {dirs_lp{1'b0}}
+  ,parameter stub_out_p = {dirs_lp{1'b0}})
 
   (input clk_i
   ,input reset_i
@@ -55,6 +59,16 @@ module  bsg_wormhole_router
 
   logic [dirs_lp-1:0] fifo_valid_o, fifo_yumi_i;
   logic [width_p-1:0] fifo_data_o [dirs_lp-1:0];
+  
+  // stubbed ports accept all I/O and send none.
+  
+  logic [dirs_lp-1:0] ready_i_stub;
+  logic [dirs_lp-1:0] valid_i_stub; 
+  logic [dirs_lp-1:0] fifo_valid_o_stub;
+  
+  assign ready_i_stub = ready_i | stub_out_p;
+  assign valid_i_stub = valid_i & ~stub_in_p;
+  assign fifo_valid_o_stub = fifo_valid_o & ~stub_in_p;
 
   for (i = 0; i < dirs_lp; i++) begin: in_ff
     bsg_two_fifo 
@@ -65,7 +79,7 @@ module  bsg_wormhole_router
 
     ,.ready_o(ready_o[i])
     ,.data_i(data_i[i])
-    ,.v_i(valid_i[i])
+    ,.v_i(valid_i_stub[i])
 
     ,.v_o(fifo_valid_o[i])
     ,.data_o(fifo_data_o[i])
@@ -103,7 +117,7 @@ module  bsg_wormhole_router
   
   for (i = 0; i < dirs_lp; i++) begin
     for (j = 0; j < dirs_lp; j++) begin
-        assign new_valid[i][j] = fifo_valid_o[i] & dest_n[i][j];
+        assign new_valid[i][j] = fifo_valid_o_stub[i] & dest_n[i][j];
     end
   end
   
@@ -126,7 +140,7 @@ module  bsg_wormhole_router
   
   for (i = 0; i < dirs_lp; i++) begin: out_count
     always @(posedge clk_i) begin
-        out_count_r[i] <= (reset_i)? 1 : (valid_o[i] & ready_i[i])? 
+        out_count_r[i] <= (reset_i)? 1 : (valid_o[i] & ready_i_stub[i])? 
             ((out_count_r[i]==1)? data_o[i][len_offset_lp+:len_width_p] : out_count_r[i]-1) : out_count_r[i];
     end
   end
@@ -187,7 +201,7 @@ module  bsg_wormhole_router
     rr_arb
     (.clk_i(clk_i)
     ,.reset_i(reset_i)
-    ,.grants_en_i(ready_i[i])
+    ,.grants_en_i(ready_i_stub[i])
 
     ,.reqs_i(arb_valid_concatenated[i][dirs_lp-2:0])
     ,.grants_o(arb_grants_concatenated[i][dirs_lp-2:0])
@@ -195,7 +209,7 @@ module  bsg_wormhole_router
 
     ,.v_o(valid_o[i])
     ,.tag_o()
-    ,.yumi_i(valid_o[i] & ready_i[i]));
+    ,.yumi_i(valid_o[i] & ready_i_stub[i]));
     
     
     // mux for output data_i
@@ -226,7 +240,7 @@ module  bsg_wormhole_router
   rr_arb_proc
   (.clk_i(clk_i)
   ,.reset_i(reset_i)
-  ,.grants_en_i(ready_i[P])
+  ,.grants_en_i(ready_i_stub[P])
 
   ,.reqs_i(arb_valid_concatenated[P][dirs_lp-1:0])
   ,.grants_o(arb_grants_concatenated[P][dirs_lp-1:0])
@@ -234,7 +248,7 @@ module  bsg_wormhole_router
 
   ,.v_o(valid_o[P])
   ,.tag_o()
-  ,.yumi_i(valid_o[P] & ready_i[P]));
+  ,.yumi_i(valid_o[P] & ready_i_stub[P]));
     
   bsg_mux_one_hot  
   #(.width_p(width_p)
