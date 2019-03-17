@@ -20,7 +20,7 @@ module bsg_lru_pseudo_tree_decode
   );
 
   genvar i;
-  generate begin: gen
+  generate 
     for(i=0; i<ways_p-1; i++) begin: rof
       // Mask generation
 	  if(i == 0) begin: fi
@@ -36,7 +36,6 @@ module bsg_lru_pseudo_tree_decode
 	  // Data generation
 	  assign data_o[i] = mask_o[i] & ~way_id_i[lg_ways_lp-`BSG_SAFE_CLOG2(i+2)];
     end
-  end
   endgenerate
 
 endmodule
