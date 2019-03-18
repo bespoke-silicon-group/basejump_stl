@@ -11,7 +11,7 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
                            , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                            , parameter harden_p=0
                            // add a parameter to switch between implementations of hard and soft macro
-                           , parameter substitute_2r1w_p=0
+                           , parameter substitute_2r1w_p=1
                            )
    (input   clk_i
     , input reset_i

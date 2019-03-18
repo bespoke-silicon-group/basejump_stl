@@ -1,12 +1,12 @@
 `define bsg_inv_macro(bits)                                       \
 if (harden_p && (width_p==bits) && vertical_p)                    \
   begin: macro                                                    \
-     bsg_rp_tsmc_40_INVX8_b``bits inv_gate (.i0(i),.o);          \
+     bsg_rp_tsmc_40_INVD8BWP_b``bits inv_gate (.i0(i),.o);          \
   end                                                             \
 else                                                              \
 if (harden_p && (width_p==bits) && ~vertical_p)                   \
   begin: macro                                                    \
-     bsg_rp_tsmc_40_INVX8_horiz_b``bits inv_gate (.i0(i),.o);    \
+     bsg_rp_tsmc_40_INVD8BWP_horiz_b``bits inv_gate (.i0(i),.o);    \
   end
 
 module bsg_inv #(parameter width_p="inv"

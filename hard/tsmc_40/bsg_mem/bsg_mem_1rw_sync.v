@@ -33,6 +33,34 @@ if (els_p == words && width_p == bits)               \
       ,.DELAY ( 2'b0             ));                 \
   end
 
+`define bsg_mem_1rf_sync_macro_banks(words,bits,lgEls,mux) \
+if (els_p == 2*``words`` && width_p == bits)               \
+  begin: macro                                             \
+    wire [width_p-1:0] bank_data [0:1];                    \
+    logic sel;                                             \
+    always_ff @(posedge clk_i)                             \
+      sel <= addr_i[0];                                    \
+    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem0           \
+      (.A     ( addr_i[addr_width_lp-1:1] )                \
+      ,.D     ( data_i                    )                \
+      ,.BWEB  ( {``bits``{1'b0}}          )                \
+      ,.WEB   ( ~w_i | addr_i[0]          )                \
+      ,.CEB   ( ~v_i | addr_i[0]          )                \
+      ,.CLK   ( clk_i                     )                \
+      ,.Q     ( bank_data[0]              )                \
+      ,.DELAY ( 2'b0                      ));              \
+    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem1           \
+      (.A     ( addr_i[addr_width_lp-1:1] )                \
+      ,.D     ( data_i                    )                \
+      ,.BWEB  ( {``bits``{1'b0}}          )                \
+      ,.WEB   ( ~w_i | ~addr_i[0]         )                \
+      ,.CEB   ( ~v_i | ~addr_i[0]         )                \
+      ,.CLK   ( clk_i                     )                \
+      ,.Q     ( bank_data[1]              )                \
+      ,.DELAY ( 2'b0                      ));              \
+    assign data_o = sel? bank_data[1]: bank_data[0];       \
+  end
+
 module bsg_mem_1rw_sync #(parameter width_p=-1
                           , parameter els_p=-1
                           , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
@@ -51,9 +79,14 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
    `bsg_mem_1rw_sync_macro(4096,48,12,8) else
    `bsg_mem_1rw_sync_macro(2048,32,11,8) else
    `bsg_mem_1rw_sync_macro(1024,32,10,4) else
+   `bsg_mem_1rf_sync_macro_banks(512,46,9,4) else
    `bsg_mem_1rw_sync_macro(1024,46,10,4) else
+   `bsg_mem_1rw_sync_macro(512,64,9,4) else
    `bsg_mem_1rw_sync_macro(256,128,8,4)  else
+   `bsg_mem_1rf_sync_macro(256,95,8,2)  else
+   `bsg_mem_1rf_sync_macro(128,78,7,2)   else
    `bsg_mem_1rf_sync_macro(128,76,7,2)   else
+   `bsg_mem_1rf_sync_macro(128,75,7,2)   else
    `bsg_mem_1rf_sync_macro(128,74,7,2)   else
    `bsg_mem_1rf_sync_macro(128,73,7,2)   else
    `bsg_mem_1rf_sync_macro(128,72,7,2)   else
