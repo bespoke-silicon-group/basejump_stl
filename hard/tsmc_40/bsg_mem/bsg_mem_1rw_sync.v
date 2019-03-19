@@ -81,7 +81,7 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
    `bsg_mem_1rw_sync_macro(1024,32,10,4) else
    `bsg_mem_1rf_sync_macro_banks(512,46,9,4) else
    `bsg_mem_1rw_sync_macro(1024,46,10,4) else
-   `bsg_mem_1rw_sync_macro(512,64,9,4) else
+   `bsg_mem_1rf_sync_macro(512,64,9,4) else
    `bsg_mem_1rw_sync_macro(256,128,8,4)  else
    `bsg_mem_1rf_sync_macro(256,95,8,2)  else
    `bsg_mem_1rf_sync_macro(128,78,7,2)   else
