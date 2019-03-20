@@ -42,12 +42,12 @@ module  bsg_wormhole_router
   
   // Input Traffics
   ,input [dirs_lp-1:0] valid_i // early
-  ,input [width_p-1:0] data_i [dirs_lp-1:0]
+  ,input [dirs_lp-1:0][width_p-1:0] data_i 
   ,output [dirs_lp-1:0] ready_o // early
   
   // Output Traffics
   ,output [dirs_lp-1:0] valid_o // early
-  ,output [width_p-1:0] data_o [dirs_lp-1:0]
+  ,output [dirs_lp-1:0][width_p-1:0] data_o 
   ,input [dirs_lp-1:0] ready_i // early
   );
   
@@ -63,27 +63,33 @@ module  bsg_wormhole_router
   // stubbed ports accept all I/O and send none.
   
   logic [dirs_lp-1:0] ready_i_stub;
-  logic [dirs_lp-1:0] valid_i_stub; 
-  logic [dirs_lp-1:0] fifo_valid_o_stub;
-  
   assign ready_i_stub = ready_i | stub_out_p;
-  assign valid_i_stub = valid_i & ~stub_in_p;
-  assign fifo_valid_o_stub = fifo_valid_o & ~stub_in_p;
+  
 
   for (i = 0; i < dirs_lp; i++) begin: in_ff
-    bsg_two_fifo 
-    #(.width_p(width_p)) 
-    two_fifo
-    (.clk_i(clk_i)
-    ,.reset_i(reset_i)
+    if (stub_in_p[i] == 0) begin: no_stub
+    
+        bsg_two_fifo 
+        #(.width_p(width_p)) 
+        two_fifo
+        (.clk_i(clk_i)
+        ,.reset_i(reset_i)
 
-    ,.ready_o(ready_o[i])
-    ,.data_i(data_i[i])
-    ,.v_i(valid_i_stub[i])
+        ,.ready_o(ready_o[i])
+        ,.data_i(data_i[i])
+        ,.v_i(valid_i[i])
 
-    ,.v_o(fifo_valid_o[i])
-    ,.data_o(fifo_data_o[i])
-    ,.yumi_i(fifo_yumi_i[i]));
+        ,.v_o(fifo_valid_o[i])
+        ,.data_o(fifo_data_o[i])
+        ,.yumi_i(fifo_yumi_i[i]));
+        
+    end else begin: stub
+    
+        assign fifo_valid_o[i] = 1'b0;
+        assign fifo_data_o[i] = 0;
+        assign ready_o[i] = 1'b1;
+        
+    end
   end
   
   
@@ -117,7 +123,7 @@ module  bsg_wormhole_router
   
   for (i = 0; i < dirs_lp; i++) begin
     for (j = 0; j < dirs_lp; j++) begin
-        assign new_valid[i][j] = fifo_valid_o_stub[i] & dest_n[i][j];
+        assign new_valid[i][j] = fifo_valid_o[i] & dest_n[i][j];
     end
   end
   
