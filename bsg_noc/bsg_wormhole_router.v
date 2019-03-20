@@ -25,19 +25,22 @@ module  bsg_wormhole_router
   ,parameter x_cord_width_p = "inv"
   ,parameter y_cord_width_p = "inv"
   ,parameter len_width_p = "inv"
+  ,parameter reserved_width_p = 0
   ,parameter enable_2d_routing_p = 1'b0
   
   // When enable_yx_routing_p==0, route WE direction then NS
   // Otherwise, route NS first then WE
   ,parameter enable_yx_routing_p = 1'b0
   
-  // When header_on_lsb==0, first cycle is {x_cord, y_cord, length, payload}
-  // Otherwise, first cycle is {payload, length, y_cord, x_cord}
+  // When header_on_lsb==0, first cycle is {reserved, x_cord, y_cord, length, payload}
+  // Otherwise, first cycle is {payload, length, y_cord, x_cord, reserved}
   ,parameter header_on_lsb_p = 1'b0
   
   // Local parameters
   ,localparam dirs_lp = (enable_2d_routing_p==0)? 3 : 5
-  ,localparam x_cord_offset_lp = (header_on_lsb_p==0)? width_p-x_cord_width_p : 0
+  ,localparam reserved_offset_lp = (header_on_lsb_p==0)? width_p-reserved_width_p : 0
+  ,localparam x_cord_offset_lp = (header_on_lsb_p==0)? 
+                    reserved_offset_lp-x_cord_width_p : reserved_offset_lp+reserved_width_p
   ,localparam y_cord_offset_lp = (header_on_lsb_p==0)?
                     x_cord_offset_lp-y_cord_width_p : x_cord_offset_lp+x_cord_width_p
   ,localparam len_offset_lp = (header_on_lsb_p==0)?
