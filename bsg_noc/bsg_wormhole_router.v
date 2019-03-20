@@ -351,6 +351,13 @@ module  bsg_wormhole_router
   end
   
   
+  // synopsys translate_off
+  initial begin
+    assert(width_p >= x_cord_width_p+y_cord_width_p+len_width_p+reserved_width_p)
+    else $error("width_p must be wider than header width!");
+  end
+  // synopsys translate_on
+  
   
 endmodule
 
