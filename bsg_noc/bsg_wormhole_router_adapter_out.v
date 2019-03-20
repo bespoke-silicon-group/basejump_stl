@@ -88,6 +88,7 @@ module bsg_wormhole_router_adapter_out
         end
       end
 
+      // we should never enter this state, but if we do return to reset state.
       default: begin
         state_n = WAIT_HEADER;
       end
