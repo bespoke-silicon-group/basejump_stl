@@ -7,6 +7,9 @@
 // Direction index: P=0, W=1, E=2, N=3, S=4
 // For 1D routing, should use P, W, E
 //
+// Wormhole packet length does not include first cycle
+// If a wormhole packet takes n cycles to send, then length = (n-1)
+//
 
 module  bsg_wormhole_router
 
@@ -23,15 +26,27 @@ module  bsg_wormhole_router
   ,parameter y_cord_width_p = "inv"
   ,parameter len_width_p = "inv"
   ,parameter enable_2d_routing_p = 1'b0
+  
+  // When enable_yx_routing_p==0, route WE direction then NS
+  // Otherwise, route NS first then WE
   ,parameter enable_yx_routing_p = 1'b0
+  
+  // When header_on_lsb==0, first cycle is {x_cord, y_cord, length, payload}
+  // Otherwise, first cycle is {payload, length, y_cord, x_cord}
+  ,parameter header_on_lsb_p = 1'b0
+  
   // Local parameters
   ,localparam dirs_lp = (enable_2d_routing_p==0)? 3 : 5
-  ,localparam x_cord_offset_lp = width_p-x_cord_width_p
-  ,localparam y_cord_offset_lp = x_cord_offset_lp-y_cord_width_p
-  ,localparam len_offset_lp = y_cord_offset_lp-len_width_p
+  ,localparam x_cord_offset_lp = (header_on_lsb_p==0)? width_p-x_cord_width_p : 0
+  ,localparam y_cord_offset_lp = (header_on_lsb_p==0)?
+                    x_cord_offset_lp-y_cord_width_p : x_cord_offset_lp+x_cord_width_p
+  ,localparam len_offset_lp = (header_on_lsb_p==0)?
+                    y_cord_offset_lp-len_width_p : y_cord_offset_lp+y_cord_width_p
+
   // Stub ports sequence: SNEWP
   ,parameter stub_in_p = {dirs_lp{1'b0}}
   ,parameter stub_out_p = {dirs_lp{1'b0}})
+  
 
   (input clk_i
   ,input reset_i
@@ -99,8 +114,8 @@ module  bsg_wormhole_router
   
   for (i = 0; i < dirs_lp; i++) begin: count
     always @(posedge clk_i) begin
-        count_r[i] <= (reset_i)? 1 : (fifo_yumi_i[i])? 
-            ((count_r[i]==1)? fifo_data_o[i][len_offset_lp+:len_width_p] : count_r[i]-1) : count_r[i];
+        count_r[i] <= (reset_i)? 0 : (fifo_yumi_i[i])? 
+            ((count_r[i]==0)? fifo_data_o[i][len_offset_lp+:len_width_p] : count_r[i]-1) : count_r[i];
     end
   end
   
@@ -146,8 +161,8 @@ module  bsg_wormhole_router
   
   for (i = 0; i < dirs_lp; i++) begin: out_count
     always @(posedge clk_i) begin
-        out_count_r[i] <= (reset_i)? 1 : (valid_o[i] & ready_i_stub[i])? 
-            ((out_count_r[i]==1)? data_o[i][len_offset_lp+:len_width_p] : out_count_r[i]-1) : out_count_r[i];
+        out_count_r[i] <= (reset_i)? 0 : (valid_o[i] & ready_i_stub[i])? 
+            ((out_count_r[i]==0)? data_o[i][len_offset_lp+:len_width_p] : out_count_r[i]-1) : out_count_r[i];
     end
   end
   
@@ -161,10 +176,10 @@ module  bsg_wormhole_router
     for (j = 0; j < dirs_lp; j++) begin
     
         always @(posedge clk_i) begin
-            arb_grants_r[i][j] <= (out_count_r[j]==1)? arb_grants_o[i][j] : arb_grants_r[i][j];
+            arb_grants_r[i][j] <= (out_count_r[j]==0)? arb_grants_o[i][j] : arb_grants_r[i][j];
         end
         
-        assign arb_valid[i][j] = (out_count_r[j]==1)? new_valid[i][j] : new_valid[i][j] & arb_grants_r[i][j];
+        assign arb_valid[i][j] = (out_count_r[j]==0)? new_valid[i][j] : new_valid[i][j] & arb_grants_r[i][j];
     
     end
   end
@@ -283,7 +298,7 @@ module  bsg_wormhole_router
     for (i = 0; i < dirs_lp; i++) begin
         always_comb begin
             dest_n[i] = dest_r[i];
-            if (count_r[i]==1) begin
+            if (count_r[i]==0) begin
                 dest_n[i] = {dirs_lp{1'b0}};
                 if (fifo_dest_x[i] == local_x_cord_i) dest_n[i][P] = 1'b1;
                 if (fifo_dest_x[i] < local_x_cord_i) dest_n[i][W] = 1'b1;
@@ -298,7 +313,7 @@ module  bsg_wormhole_router
         for (i = 0; i < dirs_lp; i++) begin
             always_comb begin
                 dest_n[i] = dest_r[i];
-                if (count_r[i]==1) begin
+                if (count_r[i]==0) begin
                     dest_n[i] = {dirs_lp{1'b0}};
                     if (fifo_dest_x[i] == local_x_cord_i) begin
                         if (fifo_dest_y[i] == local_y_cord_i) dest_n[i][P] = 1'b1;
@@ -316,7 +331,7 @@ module  bsg_wormhole_router
         for (i = 0; i < dirs_lp; i++) begin
             always_comb begin
                 dest_n[i] = dest_r[i];
-                if (count_r[i]==1) begin
+                if (count_r[i]==0) begin
                     dest_n[i] = {dirs_lp{1'b0}};
                     if (fifo_dest_y[i] == local_y_cord_i) begin
                         if (fifo_dest_x[i] == local_x_cord_i) dest_n[i][P] = 1'b1;
