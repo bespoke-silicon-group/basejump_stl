@@ -64,7 +64,7 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
      end
    else
    if ((width_p == 32) && (els_p == 32))
-     begin: macro
+     begin: macro32
         // synopsys translate_off
         initial
           begin
@@ -102,6 +102,58 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
               .AA       ( w_addr_i      )
              ,.D        ( w_data_i      )
              ,.BWEB     ( 32'b0         )
+             ,.WEB      ( ~w_v_i        )
+             ,.CLKW     ( clk_i         )
+             //read port                                                   
+             ,.AB       ( r1_addr_i     )
+             ,.REB      ( ~r1_v_i       )
+             ,.CLKR     ( clk_i         )
+             ,.Q        ( r1_data_o     )
+                                                                
+             ,.RDELAY   ( 2'b00         )
+             ,.WDELAY   ( 2'b00         )
+            );                                                  
+     end // block: macro
+   else
+   if ((width_p == 64) && (els_p == 32))
+     begin: macro64
+        // synopsys translate_off
+        initial
+          begin
+             assert(read_write_same_addr_p==0)
+               else
+                 begin
+                    $error("%L: this configuration does not permit simultaneous read and writes! (%m)");
+                    $finish();
+                 end
+          end
+        // synopsys translate_on
+
+        // use two 1R1W rams to create
+         tsmc40_2rf_lg5_w64_m2 mem0    
+            (                                                   
+             //write port
+              .AA       ( w_addr_i      )
+             ,.D        ( w_data_i      )
+             ,.BWEB     ( 64'b0         )
+             ,.WEB      ( ~w_v_i        )
+             ,.CLKW     ( clk_i         )
+             //read port                                                   
+             ,.AB       ( r0_addr_i     )
+             ,.REB      ( ~r0_v_i       )
+             ,.CLKR     ( clk_i         )
+             ,.Q        ( r0_data_o     )
+                                                                
+             ,.RDELAY   ( 2'b00         )
+             ,.WDELAY   ( 2'b00         )
+            );                                                  
+
+         tsmc40_2rf_lg5_w64_m2 mem1    
+            (                                                   
+             //write port
+              .AA       ( w_addr_i      )
+             ,.D        ( w_data_i      )
+             ,.BWEB     ( 64'b0         )
              ,.WEB      ( ~w_v_i        )
              ,.CLKW     ( clk_i         )
              //read port                                                   
