@@ -21,8 +21,7 @@
 // it would be desirable to parameterize this accordingly.
 //
 // more-over the interface should be clarified:
-// case 1a) either helpful input, demanding output
-//      1b) or demanding input, helpful output
+// case 1) helpful input, demanding output
 // case 2) helpful on both sides
 // case 3) helpful on both sides
 
