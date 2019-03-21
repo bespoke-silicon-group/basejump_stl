@@ -44,6 +44,7 @@ module bsg_wormhole_router_adapter_out
   logic [len_width_lp-1:0] count_r, count_n;
   logic [max_num_flit_p-1:0][width_lp-1:0] data_r;
   logic we;
+  logic clear;
 
   logic [padded_packet_width_lp-1:0] data_1d;
   assign data_1d = data_r;
@@ -55,6 +56,7 @@ module bsg_wormhole_router_adapter_out
     ready_o = 1'b0;
     v_o = 1'b0;
     we = 1'b0;
+    clear = 1'b0;
 
     case (state_r) 
 
@@ -74,7 +76,7 @@ module bsg_wormhole_router_adapter_out
         if (v_i) begin
           we = 1'b1;
           count_n = count_r + 1;
-          state_n = (data_r[len_offset_lp+:len_width_lp] == count_r)
+          state_n = (data_1d[len_offset_lp+:len_width_lp] == count_r)
             ? VALID_OUT
             : WAIT_BODY;
         end
@@ -85,6 +87,8 @@ module bsg_wormhole_router_adapter_out
         if (ready_i) begin
           state_n = WAIT_HEADER;
           count_n = '0;
+          we = 1'b1;
+          clear = 1'b1;
         end
       end
 
@@ -105,7 +109,12 @@ module bsg_wormhole_router_adapter_out
       state_r <= state_n;
       count_r <= count_n;
       if (we) begin
-        data_r[count_r] <= data_i;
+        if (clear) begin
+          data_r <= '0;
+        end
+        else begin
+          data_r[count_r] <= data_i;
+        end
       end
     end
   end
@@ -115,14 +124,6 @@ module bsg_wormhole_router_adapter_out
     assert(max_num_flit_p*width_lp == padded_packet_width_lp);
     assert(width_lp > x_cord_width_p+y_cord_width_p+len_width_lp)
       else $error("width_lp has to be wider than header info width.");
-  end
-
-  always_ff @ (negedge clk_i) begin
-    if ((state_r == WAIT_BODY)) begin
-      assert(data_r[len_offset_lp+:len_width_lp] < max_num_flit_p)
-        else $error("Received a packet with length [%0d] that exceeds max_num_flit_p [%0d].",
-                    data_r[len_offset_lp+:len_width_lp], max_num_flit_p);
-    end
   end
   // synopsys translate_on
 
