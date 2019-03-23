@@ -81,7 +81,7 @@ module  bsg_wormhole_router
   // stubbed ports accept all I/O and send none.
   
   logic [dirs_lp-1:0] ready_i_stub;
-  assign ready_i_stub = ready_i | stub_out_p;
+  assign ready_i_stub = ready_i |((dirs_lp)'(stub_out_p));
   
 
   for (i = 0; i < dirs_lp; i++) begin: in_ff
