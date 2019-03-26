@@ -15,6 +15,7 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
                            , parameter read_write_same_addr_p=0
                            , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                            , parameter harden_p=0
+                           , parameter enable_clock_gating_p=1'b0
                            )
    (input   clk_i
     , input reset_i
@@ -33,18 +34,38 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
     , output logic [width_p-1:0] r1_data_o
     );
 
+   wire clk_lo;
+
+   bsg_clkgate_optional icg
+     (.clk_i( clk_i )
+     ,.en_i( w_v_i | r0_v_i | r1_v_i )
+     ,.bypass_i( ~enable_clock_gating_p )
+     ,.gated_clock_o( clk_lo )
+     );
+
    bsg_mem_2r1w_sync_synth
      #(.width_p(width_p)
        ,.els_p(els_p)
        ,.read_write_same_addr_p(read_write_same_addr_p)
        ,.harden_p(harden_p)
        ) synth
-       (.*);
+    (.clk_i( clk_lo )
+    ,.reset_i
+    ,.w_v_i
+    ,.w_addr_i
+    ,.w_data_i
+    ,.r0_v_i
+    ,.r0_addr_i
+    ,.r0_data_o
+    ,.r1_v_i
+    ,.r1_addr_i
+    ,.r1_data_o
+    );
 
 
 //synopsys translate_off
 
-   always_ff @(posedge clk_i)
+   always_ff @(posedge clk_lo)
      if (w_v_i)
        begin
           assert (w_addr_i < els_p)

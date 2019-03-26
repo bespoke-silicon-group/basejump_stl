@@ -6,7 +6,9 @@
 
 module bsg_mem_1rw_sync #(parameter width_p=-1
                           , parameter els_p=-1
-                          , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p))
+                          , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+                          , parameter enable_clock_gating_p=1'b0
+                          )
    (input   clk_i
     , input reset_i
     , input [width_p-1:0] data_i
@@ -16,10 +18,26 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
     , output logic [width_p-1:0]  data_o
     );
 
+   wire clk_lo;
+
+   bsg_clkgate_optional icg
+     (.clk_i( clk_i )
+     ,.en_i( v_i )
+     ,.bypass_i( ~enable_clock_gating_p )
+     ,.gated_clock_o( clk_lo )
+     );
+
    bsg_mem_1rw_sync_synth
      #(.width_p(width_p)
        ,.els_p(els_p)
        ) synth
-       (.*);
+    (.clk_i( clk_lo )
+    ,.reset_i
+    ,.data_i
+    ,.addr_i
+    ,.v_i
+    ,.w_i
+    ,.data_o
+    );
 
 endmodule
