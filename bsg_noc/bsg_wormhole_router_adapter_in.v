@@ -40,14 +40,13 @@ module bsg_wormhole_router_adapter_in
   } state_e;
 
   state_e state_r, state_n;
-  logic [max_packet_width_lp-1:0] data_r, data_n;
   logic [len_width_lp-1:0] count_r, count_n;
 
 
   logic [padded_packet_width_lp-1:0] padded_data;
   logic [len_width_lp-1:0] length;
   
-  assign padded_data = {{padding_width_lp{1'b0}}, data_r};
+  assign padded_data = {{padding_width_lp{1'b0}}, data_i};
   assign length = padded_data[len_offset_lp+:len_width_lp];
 
   bsg_mux #(
@@ -61,17 +60,14 @@ module bsg_wormhole_router_adapter_in
 
   always_comb begin
     state_n = state_r;
-    data_n = data_r;
     count_n = count_r;
     ready_o = 1'b0;
     v_o = 1'b0;
 
     case (state_r) 
       WAIT: begin
-        ready_o = 1'b1;
         if (v_i) begin
           state_n = SEND;
-          data_n = data_i; 
           count_n = '0;
         end
       end
@@ -80,6 +76,7 @@ module bsg_wormhole_router_adapter_in
         count_n = ready_i
           ? count_r + 1
           : count_r;
+        ready_o = ready_i & (count_r == length);
         state_n = ready_i & (count_r == length)
           ? WAIT
           : SEND;
@@ -95,7 +92,6 @@ module bsg_wormhole_router_adapter_in
     else begin
       state_r <= state_n;
       count_r <= count_n;
-      data_r <= data_n;
     end
   end
 
