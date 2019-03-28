@@ -3,7 +3,12 @@
  *
  *  @author tommy
  *
- *  example:
+ *  This module has stages of mux which interleaves input data.
+ *  Output data width is same as the input data width.
+ *  The unit of swapping increases in higher stage.
+ *  In the first stage, the swapping is done by LSB of sel_i.
+ *
+ *  example (els_p = 4):
  *  For input  =  {b3,b2,b1,b0}
  *  ---------------------------
  *  sel_i = 00 => {b3,b2,b1,b0}
