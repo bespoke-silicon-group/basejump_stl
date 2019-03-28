@@ -1,5 +1,5 @@
 /**
- *  bsg_mux_interleave.v
+ *  bsg_mux_butterfly.v
  *
  *  @author tommy
  *
@@ -11,10 +11,11 @@
  *  sel_i = 10 => {b1,b0,b3,b2}
  *  sel_i = 11 => {b0,b1,b2,b3}
  *  ---------------------------
+ *
  */
 
 
-module bsg_mux_interleave
+module bsg_mux_butterfly
   #(parameter width_p="inv"
     , parameter els_p="inv"
     , localparam lg_els_lp=`BSG_SAFE_CLOG2(els_p)
