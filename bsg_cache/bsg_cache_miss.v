@@ -50,8 +50,8 @@ module bsg_cache_miss
     ,output logic tag_mem_v_o
     ,output logic tag_mem_w_o
     ,output logic [lg_sets_lp-1:0] tag_mem_addr_o
-    ,output logic [2*(tag_width_lp+1)-1:0] tag_mem_data_o
-    ,output logic [2*(tag_width_lp+1)-1:0] tag_mem_w_mask_o
+    ,output logic [1:0][(tag_width_lp+1)-1:0] tag_mem_data_o
+    ,output logic [1:0][(tag_width_lp+1)-1:0] tag_mem_w_mask_o
  
     ,output logic recover_o
     ,output logic done_o
@@ -135,13 +135,13 @@ module bsg_cache_miss
         };
 
         stat_mem_v_o = dma_done_i;
-        stat_mem_w_o = 1'b1;
+        stat_mem_w_o = dma_done_i;
         stat_mem_addr_o = addr_index_v;
         stat_mem_data_o = {{2{st_op_v_i}}, chosen_set_n};
         stat_mem_w_mask_o = {chosen_set_n, ~chosen_set_n, 1'b1}; // dirty[1], dirty[0], mru
 
         tag_mem_v_o = dma_done_i;
-        tag_mem_w_o = 1'b1;
+        tag_mem_w_o = dma_done_i;
         tag_mem_addr_o = addr_index_v;
         tag_mem_data_o = {2{1'b1, addr_tag_v}};
         tag_mem_w_mask_o = {
