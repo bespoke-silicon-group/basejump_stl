@@ -6,6 +6,15 @@
  *  This module has stages of mux which interleaves input data.
  *  Output data width is same as the input data width.
  *  The unit of swapping increases in higher stage.
+ *
+ *  The lowest order bit swaps odd and even words
+ *  the highest order bit swaps the upper half of all
+ *  the words and the lower half of all the words. 
+ *  The second lowest order bit swaps odd and even pairs of words.
+ *  Etc.
+ *
+ *  The pattern mirrors that of a FFT butterfly network.
+ *
  *  In the first stage, the swapping is done by LSB of sel_i.
  *
  *  example (els_p = 4):
