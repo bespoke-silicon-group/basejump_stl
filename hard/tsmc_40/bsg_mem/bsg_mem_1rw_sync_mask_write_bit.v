@@ -18,28 +18,63 @@ if (els_p == words && width_p == bits)                   \
       ,.TEST  ( 2'b0      ));                            \
   end
 
-`define bsg_mem_1rf_sync_macro_bit_banks(words,bits,lgEls,mux) \
-if (els_p == words && width_p == 2*``bits``)             \
-  begin: macro                                           \
-    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem0         \
-      (.A     ( addr_i                         )         \
-      ,.D     ( data_i[width_p/2-1:0]          )         \
-      ,.BWEB  ( ~w_mask_i[width_p/2-1:0]       )         \
-      ,.WEB   ( ~w_i                           )         \
-      ,.CEB   ( ~v_i                           )         \
-      ,.CLK   ( clk_i                          )         \
-      ,.Q     ( data_o[width_p/2-1:0]          )         \
-      ,.DELAY ( 2'b0                           ));       \
-    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem1         \
-      (.A     ( addr_i                         )         \
-      ,.D     ( data_i[width_p-1:width_p/2]    )         \
-      ,.BWEB  ( ~w_mask_i[width_p-1:width_p/2] )         \
-      ,.WEB   ( ~w_i                           )         \
-      ,.CEB   ( ~v_i                           )         \
-      ,.CLK   ( clk_i                          )         \
-      ,.Q     ( data_o[width_p-1:width_p/2]    )         \
-      ,.DELAY ( 2'b0                           ));       \
+`define bsg_mem_1rf_sync_macro_bit_banked(banks,words,bits,lgEls,mux) \
+if (els_p == words && width_p == banks*bits)                          \
+  begin: macro                                                        \
+    genvar i;                                                         \
+    for(i=0;i<banks;i++) begin: bank                                  \
+      tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem                     \
+        (.A     ( addr_i                  )                           \
+        ,.D     ( data_i[i*bits+:bits]    )                           \
+        ,.BWEB  ( ~w_mask_i[i*bits+:bits] )                           \
+        ,.WEB   ( ~w_i                    )                           \
+        ,.CEB   ( ~v_i                    )                           \
+        ,.CLK   ( clk_i                   )                           \
+        ,.Q     ( data_o[i*bits+:bits]    )                           \
+        ,.DELAY ( 2'b0                    ));                         \
+    end                                                               \
   end
+
+//`define bsg_mem_1rf_sync_macro_bit_banks(words,bits,lgEls,mux) \
+//if (els_p == words && width_p == 4*``bits``)             \
+//  begin: macro                                           \
+//    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem0         \
+//      (.A     ( addr_i                         )         \
+//      ,.D     ( data_i[width_p/4-1:0]          )         \
+//      ,.BWEB  ( ~w_mask_i[width_p/4-1:0]       )         \
+//      ,.WEB   ( ~w_i                           )         \
+//      ,.CEB   ( ~v_i                           )         \
+//      ,.CLK   ( clk_i                          )         \
+//      ,.Q     ( data_o[width_p/4-1:0]          )         \
+//      ,.DELAY ( 2'b0                           ));       \
+//    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem1         \
+//      (.A     ( addr_i                         )         \
+//      ,.D     ( data_i[width_p/2-1:width_p/4]  )         \
+//      ,.BWEB  ( ~w_mask_i[width_p/2-1:width_p/4])         \
+//      ,.WEB   ( ~w_i                           )         \
+//      ,.CEB   ( ~v_i                           )         \
+//      ,.CLK   ( clk_i                          )         \
+//      ,.Q     ( data_o[width_p/2-1:width_p/4]  )         \
+//      ,.DELAY ( 2'b0                           ));       \
+//    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem2         \
+//      (.A     ( addr_i                         )         \
+//      ,.D     ( data_i[3*width_p/4-1:width/2]  )         \
+//      ,.BWEB  ( ~w_mask_i[3*width_p/4-1:width/2])         \
+//      ,.WEB   ( ~w_i                           )         \
+//      ,.CEB   ( ~v_i                           )         \
+//      ,.CLK   ( clk_i                          )         \
+//      ,.Q     ( data_o[3*width_p/4-1:width/2]  )         \
+//      ,.DELAY ( 2'b0                           ));       \
+//    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem3         \
+//      (.A     ( addr_i                         )         \
+//      ,.D     ( data_i[width_p-1:3*width_p/4]  )         \
+//      ,.BWEB  ( ~w_mask_i[width_p-1:3*width_p/4] )         \
+//      ,.WEB   ( ~w_i                           )         \
+//      ,.CEB   ( ~v_i                           )         \
+//      ,.CLK   ( clk_i                          )         \
+//      ,.Q     ( data_o[width_p-1:3*width_p/4]  )         \
+//      ,.DELAY ( 2'b0                           ));       \
+//  end
 
 `define bsg_mem_1rf_sync_macro_bit(words,bits,lgEls,mux) \
 if (els_p == words && width_p == bits)                   \
@@ -78,7 +113,8 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
    `bsg_mem_1rf_sync_macro_bit(256,32,8,2) else
    `bsg_mem_1rf_sync_macro_bit(256,34,8,2) else
    `bsg_mem_1rf_sync_macro_bit(256,36,8,2) else
-   `bsg_mem_1rf_sync_macro_bit_banks(64,96,6,2)  else
+   `bsg_mem_1rf_sync_macro_bit_banked(8,64,46,6,2) else
+   `bsg_mem_1rf_sync_macro_bit_banked(16,64,46,6,2) else
    `bsg_mem_1rf_sync_macro_bit(64,96,6,2)  else
    `bsg_mem_1rf_sync_macro_bit(64,15,6,2)  else
    `bsg_mem_1rf_sync_macro_bit(64,7,6,2)  else
