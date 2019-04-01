@@ -5,6 +5,8 @@
 `include "bsg_cache_pkt.vh"
 `include "bsg_cache_dma_pkt.vh"
 
+`define WAYS_P ????
+
 module testbench();
 
   // parameters
@@ -16,6 +18,7 @@ module testbench();
   parameter data_width_p = 32;
   parameter block_size_in_words_p = 8;
   parameter sets_p = 512;
+  parameter ways_p = `WAYS_P;
 
   // clock and reset
   //
@@ -67,6 +70,7 @@ module testbench();
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.sets_p(sets_p)
+    ,.ways_p(ways_p)
   ) cache (
     .clk_i(clk)
     ,.reset_i(reset)
@@ -199,7 +203,8 @@ module testbench();
 
 
   initial begin
-    wait(done)
+    // wait(done)
+    for(int i=0; i<1000000; i++) @(negedge clk);
     $finish;
   end
 
