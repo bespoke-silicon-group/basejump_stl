@@ -65,14 +65,18 @@ if ( hold_on_sr_p ) begin
            1'b0 : hold_on_sr = ( reqs_i == 1'b1 );
            default : hold_on_sr = 1'b0;
        endcase
-    end //end of alwasy_comb
+    end //end of always_comb
 
+end else begin:not_hold_on_sr_p
+    assign hold_on_sr = '0;
 end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_1 
     assign reset_on_sr = ( reqs_i == 1'b1 ) 
                        ;
 
+end else begin:not_reset_on_sr_p
+    assign reset_on_sr = '0;
 end //end of reset_on_sr_p 
 
 end: inputs_1
@@ -105,8 +109,10 @@ if ( hold_on_sr_p ) begin
            1'b0 : hold_on_sr = ( reqs_i == 2'b01 );
            default: hold_on_sr = ( reqs_i == 2'b10 );
        endcase
-    end //end of alwasy_comb
+    end //end of always_comb
 
+end else begin:not_hold_on_sr_p
+    assign hold_on_sr = '0;
 end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_2 
@@ -114,6 +120,8 @@ if ( reset_on_sr_p ) begin:reset_on_2
                        | ( reqs_i == 2'b10 ) 
                        ;
 
+end else begin:not_reset_on_sr_p
+    assign reset_on_sr = '0;
 end //end of reset_on_sr_p 
 
 end: inputs_2
@@ -153,8 +161,10 @@ if ( hold_on_sr_p ) begin
            2'b10 : hold_on_sr = ( reqs_i == 3'b100 );
            default : hold_on_sr = 1'b0;
        endcase
-    end //end of alwasy_comb
+    end //end of always_comb
 
+end else begin:not_hold_on_sr_p
+    assign hold_on_sr = '0;
 end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_3 
@@ -163,6 +173,8 @@ if ( reset_on_sr_p ) begin:reset_on_3
                        | ( reqs_i == 3'b100 ) 
                        ;
 
+end else begin:not_reset_on_sr_p
+    assign reset_on_sr = '0;
 end //end of reset_on_sr_p 
 
 end: inputs_3
@@ -209,8 +221,10 @@ if ( hold_on_sr_p ) begin
            2'b10 : hold_on_sr = ( reqs_i == 4'b0001 );
            default: hold_on_sr = ( reqs_i == 4'b1000 );
        endcase
-    end //end of alwasy_comb
+    end //end of always_comb
 
+end else begin:not_hold_on_sr_p
+    assign hold_on_sr = '0;
 end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_4 
@@ -220,6 +234,8 @@ if ( reset_on_sr_p ) begin:reset_on_4
                        | ( reqs_i == 4'b1000 ) 
                        ;
 
+end else begin:not_reset_on_sr_p
+    assign reset_on_sr = '0;
 end //end of reset_on_sr_p 
 
 end: inputs_4
@@ -277,8 +293,10 @@ if ( hold_on_sr_p ) begin
            3'b100 : hold_on_sr = ( reqs_i == 5'b10000 );
            default : hold_on_sr = 1'b0;
        endcase
-    end //end of alwasy_comb
+    end //end of always_comb
 
+end else begin:not_hold_on_sr_p
+    assign hold_on_sr = '0;
 end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_5 
@@ -289,6 +307,8 @@ if ( reset_on_sr_p ) begin:reset_on_5
                        | ( reqs_i == 5'b10000 ) 
                        ;
 
+end else begin:not_reset_on_sr_p
+    assign reset_on_sr = '0;
 end //end of reset_on_sr_p 
 
 end: inputs_5
@@ -358,8 +378,10 @@ if ( hold_on_sr_p ) begin
            3'b101 : hold_on_sr = ( reqs_i == 6'b100000 );
            default : hold_on_sr = 1'b0;
        endcase
-    end //end of alwasy_comb
+    end //end of always_comb
 
+end else begin:not_hold_on_sr_p
+    assign hold_on_sr = '0;
 end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_6 
@@ -371,6 +393,8 @@ if ( reset_on_sr_p ) begin:reset_on_6
                        | ( reqs_i == 6'b100000 ) 
                        ;
 
+end else begin:not_reset_on_sr_p
+    assign reset_on_sr = '0;
 end //end of reset_on_sr_p 
 
 end: inputs_6
@@ -454,8 +478,10 @@ if ( hold_on_sr_p ) begin
            3'b110 : hold_on_sr = ( reqs_i == 7'b1000000 );
            default : hold_on_sr = 1'b0;
        endcase
-    end //end of alwasy_comb
+    end //end of always_comb
 
+end else begin:not_hold_on_sr_p
+    assign hold_on_sr = '0;
 end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_7 
@@ -468,6 +494,8 @@ if ( reset_on_sr_p ) begin:reset_on_7
                        | ( reqs_i == 7'b1000000 ) 
                        ;
 
+end else begin:not_reset_on_sr_p
+    assign reset_on_sr = '0;
 end //end of reset_on_sr_p 
 
 end: inputs_7
@@ -566,8 +594,10 @@ if ( hold_on_sr_p ) begin
            3'b110 : hold_on_sr = ( reqs_i == 8'b00000001 );
            default: hold_on_sr = ( reqs_i == 8'b10000000 );
        endcase
-    end //end of alwasy_comb
+    end //end of always_comb
 
+end else begin:not_hold_on_sr_p
+    assign hold_on_sr = '0;
 end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_8 
@@ -581,6 +611,8 @@ if ( reset_on_sr_p ) begin:reset_on_8
                        | ( reqs_i == 8'b10000000 ) 
                        ;
 
+end else begin:not_reset_on_sr_p
+    assign reset_on_sr = '0;
 end //end of reset_on_sr_p 
 
 end: inputs_8
@@ -698,8 +730,10 @@ if ( hold_on_sr_p ) begin
            4'b1000 : hold_on_sr = ( reqs_i == 9'b100000000 );
            default : hold_on_sr = 1'b0;
        endcase
-    end //end of alwasy_comb
+    end //end of always_comb
 
+end else begin:not_hold_on_sr_p
+    assign hold_on_sr = '0;
 end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_9 
@@ -714,6 +748,8 @@ if ( reset_on_sr_p ) begin:reset_on_9
                        | ( reqs_i == 9'b100000000 ) 
                        ;
 
+end else begin:not_reset_on_sr_p
+    assign reset_on_sr = '0;
 end //end of reset_on_sr_p 
 
 end: inputs_9
@@ -851,8 +887,10 @@ if ( hold_on_sr_p ) begin
            4'b1001 : hold_on_sr = ( reqs_i == 10'b1000000000 );
            default : hold_on_sr = 1'b0;
        endcase
-    end //end of alwasy_comb
+    end //end of always_comb
 
+end else begin:not_hold_on_sr_p
+    assign hold_on_sr = '0;
 end //end of hold_on_sr_p 
 
 if ( reset_on_sr_p ) begin:reset_on_10 
@@ -868,6 +906,8 @@ if ( reset_on_sr_p ) begin:reset_on_10
                        | ( reqs_i == 10'b1000000000 ) 
                        ;
 
+end else begin:not_reset_on_sr_p
+    assign reset_on_sr = '0;
 end //end of reset_on_sr_p 
 
 end: inputs_10
