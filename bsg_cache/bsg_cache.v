@@ -24,6 +24,8 @@ module bsg_cache
     ,parameter tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp)
     ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,data_width_p)
     ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+
+    ,parameter debug_p=0
   )
   (
     input clk_i
@@ -459,6 +461,7 @@ module bsg_cache
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.lg_block_size_in_words_lp(lg_block_size_in_words_lp)
     ,.lg_sets_lp(lg_sets_lp)
+    ,.debug_p(debug_p)
   ) dma (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -760,6 +763,31 @@ module bsg_cache
   initial begin
     assert(data_width_p == 32)
       else $error("only 32-bit for data_width_p supported now.");
+  end
+
+  if (debug_p) begin
+    always_ff @ (posedge clk_i) begin
+      if (v_o & yumi_i) begin
+        if (ld_op_v_r) begin
+          $display("<VCACHE> M[%4h] == %8h // %8t", addr_v_r, data_o, $time);
+        end
+        
+        if (st_op_v_r) begin
+          $display("<VCACHE> M[%4h] := %8h // %8t", addr_v_r, sbuf_data_li, $time);
+        end
+
+      end
+      if (tag_mem_v_li & tag_mem_w_li) begin
+        $display("<VCACHE> tag_mem_write. addr=%8h data_1=%8h data_0=%8h mask_1=%8h mask_0=%8h // %8t",
+          tag_mem_addr_li,
+          tag_mem_data_li[1+tag_width_lp+:1+tag_width_lp],
+          tag_mem_data_li[0+:1+tag_width_lp],
+          tag_mem_w_mask_li[1+tag_width_lp+:1+tag_width_lp],
+          tag_mem_w_mask_li[0+:1+tag_width_lp],
+          $time
+        );
+      end
+    end
   end
 
   // synopsys translate_on
