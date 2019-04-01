@@ -7,7 +7,7 @@
   if (els_p == words && width_p == bits)    \
     begin: macro                            \
        saed90_``bits``x``words``_1P_bit mem \
-         (.CE1  (clk_i)                     \
+         (.CE1  (clk_lo)                     \
          ,.WEB1 (~w_i)                      \
          ,.OEB1 (1'b0)                      \
          ,.CSB1 (~v_i)                      \
@@ -20,7 +20,9 @@
 
 module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
 			               , parameter els_p=-1
-			               , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p))
+			               , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+                     , parameter enable_clock_gating_p=1'b0
+                     )
    (input   clk_i
     , input reset_i
     , input v_i
@@ -30,6 +32,16 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
     , input [width_p-1:0] w_mask_i
     , output [width_p-1:0]  data_o
     );
+
+   wire clk_lo;
+
+   bsg_clkgate_optional icg
+     (.clk_i( clk_i )
+     ,.en_i( v_i )
+     ,.bypass_i( ~enable_clock_gating_p )
+     ,.gated_clock_o( clk_lo )
+     );
+
 
   // TODO: ADD ANY NEW RAM CONFIGURATIONS HERE
   `bsg_mem_1rw_sync_mask_write_bit_macro (736, 64) else
@@ -41,7 +53,7 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
     begin: macro
        logic [7:0] data_lo;
        saed90_8x64_1P_bit mem
-         (.CE1  (clk_i)
+         (.CE1  (clk_lo)
          ,.WEB1 (~w_i)
          ,.OEB1 (1'b0)
          ,.CSB1 (~v_i)
@@ -61,17 +73,25 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
      #(.width_p(width_p)
        ,.els_p(els_p)
        ) synth
-       (.*);
+       (.clk_i (clk_lo)
+       ,.reset_i
+       ,.data_i
+       ,.addr_i
+       ,.v_i
+       ,.w_mask_i
+       ,.w_i
+       ,.data_o
+       );
 
     end // block: notmacro
 
 
    // synopsys translate_off
 
-   always_ff @(posedge clk_i)
+   always_ff @(posedge clk_lo)
      if (v_i === 1)
        assert ((reset_i === 'X) || (reset_i === 1'b1) || (addr_i < els_p))
-         else $error("Invalid address %x to %m of size %x (reset_i = %b, v_i = %b, clk_i=%b)\n", addr_i, els_p, reset_i, v_i, clk_i);
+         else $error("Invalid address %x to %m of size %x (reset_i = %b, v_i = %b, clk_lo=%b)\n", addr_i, els_p, reset_i, v_i, clk_lo);
 
    initial
      begin
