@@ -37,6 +37,7 @@ module bsg_mem_1rw_sync #( parameter width_p = -1
   // TODO: Define more hardened macro configs here
   `bsg_mem_1rw_sync_macro(512,64) else
   `bsg_mem_1rw_sync_macro(256,95) else
+  `bsg_mem_1rw_sync_macro(256,96) else
 
   // no hardened version found
     begin : z
