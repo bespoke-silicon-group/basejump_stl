@@ -1,11 +1,11 @@
 /**
- *  mock_dma.v
+ *  bsg_nonsynth_dma_model.v
  */
 
 
 `include "bsg_cache_dma_pkt.vh"
 
-module mock_dma
+module bsg_nonsynth_dma_model
   #(parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
