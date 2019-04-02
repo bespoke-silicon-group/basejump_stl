@@ -175,7 +175,7 @@ module testbench();
   
   // mock_dma
   //
-  mock_dma #(
+  bsg_nonsynth_dma_model #(
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
