@@ -171,10 +171,10 @@ module bsg_cache
     end
   end
 
-  logic [lg_sets_lp-1:0] addr_set_tl;
+  logic [lg_sets_lp-1:0] addr_index_tl;
   logic [lg_block_size_in_words_lp-1:0] addr_block_offset_tl;
 
-  assign addr_set_tl =
+  assign addr_index_tl =
     addr_tl_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
 
   assign addr_block_offset_tl =
@@ -686,7 +686,7 @@ module bsg_cache
     : {2{cache_pkt.data[data_width_p-1], cache_pkt.data[tag_width_lp-1:0]}};
 
   assign tag_mem_addr_li = miss_v
-    ? (recover_lo ? addr_set_tl : (miss_tag_mem_v_lo ? miss_tag_mem_addr_lo : addr_index))
+    ? (recover_lo ? addr_index_tl : (miss_tag_mem_v_lo ? miss_tag_mem_addr_lo : addr_index))
     : addr_index;
 
   assign tag_mem_w_mask_li = miss_v
@@ -708,7 +708,7 @@ module bsg_cache
     ? dma_data_mem_data_lo
     : sbuf_data_mem_data;
 
-  assign data_mem_addr_li = recover_lo ? {addr_set_tl, addr_block_offset_tl}
+  assign data_mem_addr_li = recover_lo ? {addr_index_tl, addr_block_offset_tl}
     : (dma_data_mem_v_lo ? dma_data_mem_addr_lo
     : ((ld_op & v_i & ready_o) ? {addr_index, addr_block_offset}
     : sbuf_addr_lo[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp]));
