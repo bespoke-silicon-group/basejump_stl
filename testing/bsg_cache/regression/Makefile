@@ -3,7 +3,6 @@
 #
 
 # export BSG_IP_CORES_DIR:=/path/to/bsg_ip_cores/
-export BSG_IP_CORES_DIR:=/home/mrutt/vlsi2-final-project/bsg_ip_cores/
 
 WAYS_P = 2 4 8
 
