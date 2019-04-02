@@ -26,6 +26,7 @@ module bsg_cache
     ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
 
     ,parameter debug_p=0
+    ,parameter axe_trace_p=0
   )
   (
     input clk_i
@@ -788,6 +789,22 @@ module bsg_cache
         );
       end
     end
+
+  end
+
+  if (axe_trace_p) begin
+    bsg_nonsynth_axe_tracer #(
+      .data_width_p(data_width_p)
+      ,.addr_width_p(addr_width_p)
+    ) axe_tracer (
+      .clk_i(clk_i)
+      ,.v_i(v_o & yumi_i)
+      ,.store_op_i(st_op_v_r)
+      ,.load_op_i(ld_op_v_r)
+      ,.addr_i(addr_v_r)
+      ,.store_data_i(sbuf_data_li)
+      ,.load_data_i(data_o)
+    );
   end
 
   // synopsys translate_on
