@@ -64,13 +64,14 @@ if __name__ == "__main__":
     load_not_store = random.randint(0,1)
     tag = random.randint(0,3) << 9
     word_offset = random.randint(0,7) << 2
-    addr = tag + word_offset
+    index = random.randint(0,3) << 5
+    addr = tag + index + word_offset
     if (load_not_store):
       tg.load_word(addr=addr)
     else:
       tg.store_word(addr=addr,data=store_data)
       store_data += 1
-    delay = random.randint(0,16)
+    delay = random.randint(0,5)
     if (delay == 0):
       continue
     elif (delay == 1):

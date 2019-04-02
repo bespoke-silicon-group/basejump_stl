@@ -673,11 +673,12 @@ module bsg_cache
 
   logic tl_ready;
   assign tl_ready = miss_v
-    ? (~tagst_op & ~miss_tag_mem_v_lo & ~dma_data_mem_v_lo)
+    ? (~tagst_op & ~miss_tag_mem_v_lo & ~dma_data_mem_v_lo & ~recover_lo)
     : 1'b1;
   assign ready_o = v_tl_r
     ? (v_we & tl_ready)
     : tl_ready;
+
 
   // tag_mem
   //
@@ -753,7 +754,8 @@ module bsg_cache
   //
   assign sbuf_v_li = st_op_v_r & v_o & yumi_i;
   assign sbuf_set_li = miss_v ? chosen_set_lo : tag_hit_v[1];
-  assign sbuf_yumi_li = sbuf_v_lo & (~(ld_op & v_i) | (miss_v & ~miss_done_lo & ~recover_lo)); 
+  //assign sbuf_yumi_li = sbuf_v_lo & (~(ld_op & v_i) | (miss_v & ~miss_done_lo & ~recover_lo)); 
+  assign sbuf_yumi_li = sbuf_v_lo & ~(ld_op & v_i & ready_o) & (~dma_data_mem_v_lo); 
 
   assign bypass_addr_li = addr_tl_r;
   assign bypass_v_li = ld_op_tl_r & v_tl_r & v_we;
