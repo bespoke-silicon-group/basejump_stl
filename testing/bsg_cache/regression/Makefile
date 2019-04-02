@@ -20,16 +20,6 @@ all: $(foreach ways,$(WAYS_P),run.$(ways))
 $(TRACE_ROM)_%way.v: trace_master_0_%way.tr
 	python $(BSG_IP_CORES_DIR)/bsg_mem/bsg_ascii_to_rom.py $< $(TRACE_ROM) > $@
 
-
-# # vcs options for hardened simulation
-# sim_hard: VCS_OPTIONS =  +v2k
-# sim_hard: VCS_OPTIONS += -R
-# sim_hard: VCS_OPTIONS += +lint=all,noSVA-UA,noSVA-NSVU,noVCDE,noNS
-# sim_hard: VCS_OPTIONS += +define+TSMC_UNIT_DELAY
-# sim_hard: VCS_OPTIONS += +define+TSCM_NO_WARNING
-# sim_hard: VCS_OPTIONS += -sverilog
-# sim_hard: VCS_OPTIONS += -full64
-
 run.%: $(TRACE_ROM)_%way.v
 	vcs +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -sverilog -full64 -f sv.include $< $(INCDIR)\
 		-debug_pp -timescale=1ps/1ps +vcs+vcdpluson $(VCS_DEFINES) +define+WAYS_P=$*\
