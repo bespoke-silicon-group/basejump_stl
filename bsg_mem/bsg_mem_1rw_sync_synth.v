@@ -20,21 +20,20 @@ module bsg_mem_1rw_sync_synth #(parameter width_p=-1
 
    wire unused = reset_i;
 
+   logic [addr_width_lp-1:0] addr_r;
    logic [width_p-1:0]    mem [els_p-1:0];
 
    always_ff @(posedge clk_i)
-     if (v_i)
-       begin
-          // synopsys translate_off
-          assert ( (v_i !== 1'b1) || (reset_i === 'X) || (reset_i === 1'b1) || (addr_i < els_p))
-            else $error("Invalid address %x to %m of size %x (reset_i = %b, v_i = %b, clk_i = %b)\n", addr_i, els_p, reset_i, v_i, clk_i);
-          // synopsys translate_on
-          if (w_i)
-            mem[addr_i] <= data_i;
-          else
-            data_o      <= mem[addr_i];
-       end
+     if (v_i & ~w_i)
+       addr_r <= addr_i;
+     else
+       addr_r <= 'X;
 
+   assign data_o = mem[addr_r];
+
+   always_ff @(posedge clk_i)
+     if (v_i & w_i)
+       mem[addr_i] <= data_i;
 
    // synopsys translate_off
    initial
@@ -42,6 +41,10 @@ module bsg_mem_1rw_sync_synth #(parameter width_p=-1
         $display("## %L: instantiating width_p=%d, els_p=%d (%m)",width_p,els_p);
      end
 
+   always_ff @(posedge clk_i)
+     if (v_i)
+       assert ( (v_i !== 1'b1) || (reset_i === 'X) || (reset_i === 1'b1) || (addr_i < els_p))
+         else $error("Invalid address %x to %m of size %x (reset_i = %b, v_i = %b, clk_i = %b)\n", addr_i, els_p, reset_i, v_i, clk_i);
    // synopsys translate_on
 
 endmodule
