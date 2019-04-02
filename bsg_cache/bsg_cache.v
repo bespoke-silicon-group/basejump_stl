@@ -693,7 +693,7 @@ module bsg_cache
     ? miss_tag_mem_w_mask_lo
     : {{(1+tag_width_lp){addr_set}}, {(1+tag_width_lp){~addr_set}}};
 
-  assign tag_mem_v_li = (~reset_i) & ((tag_read_op & ready_o & v_i)
+  assign tag_mem_v_li = ((tag_read_op & ready_o & v_i)
     | (recover_lo & tag_read_op_tl_r & v_tl_r)
     | miss_tag_mem_v_lo
     | (tagst_op & ready_o & v_i)); 
@@ -717,7 +717,7 @@ module bsg_cache
     ? dma_data_mem_w_mask_lo
     : sbuf_data_mem_w_mask;
 
-  assign data_mem_v_li = (~reset_i) & ((v_i & ld_op & ready_o)
+  assign data_mem_v_li = ((v_i & ld_op & ready_o)
     | (v_tl_r & recover_lo & ld_op_tl_r)
     | dma_data_mem_v_lo
     | (sbuf_v_lo & sbuf_yumi_li)
