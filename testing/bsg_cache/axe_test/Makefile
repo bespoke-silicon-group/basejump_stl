@@ -10,9 +10,9 @@ INCDIR += +incdir+$(BSG_IP_CORES_DIR)/bsg_cache
 VCS_LOG = vcs.log
 TRACE_AXE = trace.axe
 
-.PHONY: dve sim clean axe all shrink
+.PHONY: dve sim clean axe all
 
-NUM_INSTR_P ?= 20000
+NUM_INSTR_P ?= 100000
 SEED_P = $(shell shuf -i 0-4294967295 -n 1)
 DEFINE = +define+NUM_INSTR_P=$(NUM_INSTR_P)
 
