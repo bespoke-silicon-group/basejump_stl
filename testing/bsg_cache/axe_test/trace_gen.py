@@ -50,6 +50,7 @@ class TraceGen:
 if __name__ == "__main__":
   num_instr_p = int(sys.argv[1])  
   seed_p = int(sys.argv[2])
+  print("# seed_p = " + str(seed_p))
 
   random.seed(seed_p)
 
