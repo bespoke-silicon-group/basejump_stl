@@ -157,7 +157,7 @@ module testbench();
 
   assign cache_pkt.sigext = 1'b0;
   assign cache_pkt.mask = {mask_width_lp{1'b1}};
-  assign cache_pkt.opcode = tr_data_lo[data_width_p+addr_width_p+:5];
+  assign cache_pkt.opcode = bsg_cache_opcode_e'(tr_data_lo[data_width_p+addr_width_p+:5]);
   assign cache_pkt.addr = tr_data_lo[data_width_p+:addr_width_p];
   assign cache_pkt.data = tr_data_lo[0+:data_width_p];
 

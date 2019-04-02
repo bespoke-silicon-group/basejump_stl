@@ -1,10 +1,10 @@
 # Begin_DVE_Session_Save_Info
 # DVE view(Wave.1 ) session
-# Saved on Tue Apr 2 09:57:12 2019
+# Saved on Tue Apr 2 10:37:01 2019
 # Toplevel windows open: 2
 # 	TopLevel.1
 # 	TopLevel.2
-#   Wave.1: 13 signals
+#   Wave.1: 33 signals
 # End_DVE_Session_Save_Info
 
 # DVE version: L-2016.06-SP2-15_Full64
@@ -22,8 +22,8 @@ gui_set_time_units 1ps
 
 # Begin_DVE_Session_Save_Info (Wave.1)
 # DVE wave signals session
-# Saved on Tue Apr 2 09:57:12 2019
-# 13 signals
+# Saved on Tue Apr 2 10:37:01 2019
+# 33 signals
 # End_DVE_Session_Save_Info
 
 # DVE version: L-2016.06-SP2-15_Full64
@@ -31,48 +31,66 @@ gui_set_time_units 1ps
 
 
 #Add ncecessay scopes
+gui_load_child_values {testbench.cache.miss}
+gui_load_child_values {testbench.cache.data_mem}
 
 gui_set_time_units 1ps
 
-set _wave_session_group_1 input
-if {[gui_sg_is_group -name "$_wave_session_group_1"]} {
-    set _wave_session_group_1 [gui_sg_generate_new_name]
+set _wave_session_group_6 input
+if {[gui_sg_is_group -name "$_wave_session_group_6"]} {
+    set _wave_session_group_6 [gui_sg_generate_new_name]
 }
-set Group1 "$_wave_session_group_1"
+set Group1 "$_wave_session_group_6"
 
-gui_sg_addsignal -group "$_wave_session_group_1" { {V1:testbench.cache.clk_i} {V1:testbench.cache.reset_i} {V1:testbench.cache.v_i} {V1:testbench.cache.ready_o} {V1:testbench.cache.cache_pkt.opcode} {V1:testbench.cache.cache_pkt.addr} {V1:testbench.cache.cache_pkt.data} }
+gui_sg_addsignal -group "$_wave_session_group_6" { {V1:testbench.cache.clk_i} {V1:testbench.cache.reset_i} {V1:testbench.cache.v_i} {V1:testbench.cache.ready_o} {V1:testbench.cache.cache_pkt.opcode} {V1:testbench.cache.cache_pkt.addr} {V1:testbench.cache.cache_pkt.data} }
 
-set _wave_session_group_2 {tl stage}
-if {[gui_sg_is_group -name "$_wave_session_group_2"]} {
-    set _wave_session_group_2 [gui_sg_generate_new_name]
+set _wave_session_group_7 {tl stage}
+if {[gui_sg_is_group -name "$_wave_session_group_7"]} {
+    set _wave_session_group_7 [gui_sg_generate_new_name]
 }
-set Group2 "$_wave_session_group_2"
+set Group2 "$_wave_session_group_7"
 
-gui_sg_addsignal -group "$_wave_session_group_2" { {V1:testbench.cache.v_tl_r} }
+gui_sg_addsignal -group "$_wave_session_group_7" { {V1:testbench.cache.v_tl_r} {V1:testbench.cache.addr_tl_r} }
 
-set _wave_session_group_3 v_stage
-if {[gui_sg_is_group -name "$_wave_session_group_3"]} {
-    set _wave_session_group_3 [gui_sg_generate_new_name]
+set _wave_session_group_8 v_stage
+if {[gui_sg_is_group -name "$_wave_session_group_8"]} {
+    set _wave_session_group_8 [gui_sg_generate_new_name]
 }
-set Group3 "$_wave_session_group_3"
+set Group3 "$_wave_session_group_8"
 
-gui_sg_addsignal -group "$_wave_session_group_3" { {V1:testbench.cache.miss_v} }
+gui_sg_addsignal -group "$_wave_session_group_8" { {V1:testbench.cache.v_v_r} {V1:testbench.cache.miss_v} {V1:testbench.cache.addr_v_r} {V1:testbench.cache.ld_op_v_r} {V1:testbench.cache.st_op_v_r} {V1:testbench.cache.tag_hit_v} }
 
-set _wave_session_group_4 output
-if {[gui_sg_is_group -name "$_wave_session_group_4"]} {
-    set _wave_session_group_4 [gui_sg_generate_new_name]
+set _wave_session_group_9 output
+if {[gui_sg_is_group -name "$_wave_session_group_9"]} {
+    set _wave_session_group_9 [gui_sg_generate_new_name]
 }
-set Group4 "$_wave_session_group_4"
+set Group4 "$_wave_session_group_9"
 
-gui_sg_addsignal -group "$_wave_session_group_4" { {V1:testbench.cache.data_o} {V1:testbench.cache.v_o} {V1:testbench.cache.yumi_i} }
+gui_sg_addsignal -group "$_wave_session_group_9" { {V1:testbench.cache.data_o} {V1:testbench.cache.v_o} {V1:testbench.cache.yumi_i} }
 
-set _wave_session_group_5 miss
-if {[gui_sg_is_group -name "$_wave_session_group_5"]} {
-    set _wave_session_group_5 [gui_sg_generate_new_name]
+set _wave_session_group_10 miss
+if {[gui_sg_is_group -name "$_wave_session_group_10"]} {
+    set _wave_session_group_10 [gui_sg_generate_new_name]
 }
-set Group5 "$_wave_session_group_5"
+set Group5 "$_wave_session_group_10"
 
-gui_sg_addsignal -group "$_wave_session_group_5" { {V1:testbench.cache.miss.miss_state_r} }
+gui_sg_addsignal -group "$_wave_session_group_10" { {V1:testbench.cache.recover_lo} {V1:testbench.cache.miss.miss_state_r} {V1:testbench.cache.miss_tag_mem_v_lo} {V1:testbench.cache.miss_tag_mem_w_lo} }
+
+set _wave_session_group_11 data_mem
+if {[gui_sg_is_group -name "$_wave_session_group_11"]} {
+    set _wave_session_group_11 [gui_sg_generate_new_name]
+}
+set Group6 "$_wave_session_group_11"
+
+gui_sg_addsignal -group "$_wave_session_group_11" { {V1:testbench.cache.data_mem.v_i} {V1:testbench.cache.data_mem.w_i} {V1:testbench.cache.data_mem.addr_i} {V1:testbench.cache.data_mem.data_i} {V1:testbench.cache.data_mem.write_mask_i} {V1:testbench.cache.data_mem.data_o} }
+
+set _wave_session_group_12 tag_mem
+if {[gui_sg_is_group -name "$_wave_session_group_12"]} {
+    set _wave_session_group_12 [gui_sg_generate_new_name]
+}
+set Group7 "$_wave_session_group_12"
+
+gui_sg_addsignal -group "$_wave_session_group_12" { {V1:testbench.cache.tag_mem_addr_li} {V1:testbench.cache.tag_mem_data_li} {V1:testbench.cache.tag_mem_data_lo} {V1:testbench.cache.tag_mem_v_li} {V1:testbench.cache.tag_mem_w_li} }
 if {![info exists useOldWindow]} { 
 	set useOldWindow true
 }
@@ -93,12 +111,14 @@ gui_list_set_height -id Wave -height 25
 set origGroupCreationState [gui_list_create_group_when_add -wave]
 gui_list_create_group_when_add -wave -disable
 gui_marker_set_ref -id ${Wave.1}  C1
-gui_wv_zoom_timerange -id ${Wave.1} 8563 8846
+gui_wv_zoom_timerange -id ${Wave.1} 8677 8762
 gui_list_add_group -id ${Wave.1} -after {New Group} [list ${Group1}]
 gui_list_add_group -id ${Wave.1} -after {New Group} [list ${Group2}]
 gui_list_add_group -id ${Wave.1} -after {New Group} [list ${Group3}]
 gui_list_add_group -id ${Wave.1} -after {New Group} [list ${Group4}]
 gui_list_add_group -id ${Wave.1} -after {New Group} [list ${Group5}]
+gui_list_add_group -id ${Wave.1} -after {New Group} [list ${Group6}]
+gui_list_add_group -id ${Wave.1} -after {New Group} [list ${Group7}]
 gui_seek_criteria -id ${Wave.1} {Any Edge}
 
 
@@ -112,9 +132,9 @@ if { $groupExD } {
 }
 gui_list_set_filter -id ${Wave.1} -list { {Buffer 1} {Input 1} {Others 1} {Linkage 1} {Output 1} {Parameter 1} {All 1} {Aggregate 1} {LibBaseMember 1} {Event 1} {Assertion 1} {Constant 1} {Interface 1} {BaseMembers 1} {Signal 1} {$unit 1} {Inout 1} {Variable 1} }
 gui_list_set_filter -id ${Wave.1} -text {*}
-gui_list_set_insertion_bar  -id ${Wave.1} -group ${Group5}  -item {testbench.cache.miss.miss_state_r[2:0]} -position below
+gui_list_set_insertion_bar  -id ${Wave.1} -group ${Group7}  -item testbench.cache.tag_mem_w_li -position below
 
-gui_marker_move -id ${Wave.1} {C1} 8725
+gui_marker_move -id ${Wave.1} {C1} 8715
 gui_view_scroll -id ${Wave.1} -vertical -set 0
 gui_show_grid -id ${Wave.1} -enable false
 #</Session>

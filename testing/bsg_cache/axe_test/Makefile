@@ -12,11 +12,11 @@ TRACE_AXE = trace.axe
 
 .PHONY: dve sim clean axe all shrink
 
-NUM_INSTR_P ?= 100
-SEED_P ?= 0
+NUM_INSTR_P ?= 1000
+SEED_P = $(shell echo $$RANDOM)
 DEFINE = +define+NUM_INSTR_P=$(NUM_INSTR_P)
 
-all: sim
+all: clean sim
 
 bsg_trace_rom.tr:
 	python trace_gen.py $(NUM_INSTR_P) $(SEED_P) > $@
@@ -35,7 +35,6 @@ dve:
 	dve -full64 -vpd vcdplus.vpd &
 
 $(TRACE_AXE):
-	rm -f $(TRACE_AXE)
 	python axe_trace_filter.py vcs.log > $(TRACE_AXE)
 
 axe: $(TRACE_AXE)
