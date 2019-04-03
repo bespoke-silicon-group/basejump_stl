@@ -57,7 +57,6 @@ module bsg_cache_miss
     ,output logic [lg_sets_lp-1:0]         tag_mem_addr_o
     ,output logic [2*(tag_width_lp+1)-1:0] tag_mem_data_o
     ,output logic [2*(tag_width_lp+1)-1:0] tag_mem_w_mask_o
- 
     ,output logic recover_o
     ,output logic done_o
   
@@ -141,7 +140,7 @@ module bsg_cache_miss
         };
 
         stat_mem_v_o = dma_done_i;
-        stat_mem_w_o = 1'b1;
+        stat_mem_w_o = dma_done_i;
         stat_mem_addr_o = addr_index_v;
         stat_mem_data_o = {{ways_p{st_op_v_i}}, lru_decode};
         stat_mem_w_mask_o = {(ways_p'(1) << chosen_way_n), lru_mask};
@@ -152,7 +151,7 @@ module bsg_cache_miss
         // are assigned 0 by default.
         tag_mem_v_o[chosen_way_n>>1] = dma_done_i;
 
-        tag_mem_w_o = 1'b1;
+        tag_mem_w_o = dma_done_i;
         tag_mem_addr_o = addr_index_v;
         tag_mem_data_o = {2{1'b1, addr_tag_v}};
         tag_mem_w_mask_o = {

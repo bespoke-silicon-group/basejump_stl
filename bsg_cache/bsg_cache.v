@@ -28,6 +28,9 @@ module bsg_cache
     ,parameter tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp)
     ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,data_width_p)
     ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+
+    ,parameter debug_p=0
+    ,parameter axe_trace_p=0
   )
   (
     input clk_i
@@ -172,10 +175,10 @@ module bsg_cache
     end
   end
 
-  logic [lg_sets_lp-1:0] addr_set_tl;
+  logic [lg_sets_lp-1:0] addr_index_tl;
   logic [lg_block_size_in_words_lp-1:0] addr_block_offset_tl;
 
-  assign addr_set_tl =
+  assign addr_index_tl =
     addr_tl_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
 
   assign addr_block_offset_tl =
@@ -529,6 +532,7 @@ module bsg_cache
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.lg_block_size_in_words_lp(lg_block_size_in_words_lp)
     ,.lg_sets_lp(lg_sets_lp)
+    ,.debug_p(debug_p)
   ) dma (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -740,11 +744,12 @@ module bsg_cache
 
   logic tl_ready;
   assign tl_ready = miss_v
-    ? (~tagst_op & ~|miss_tag_mem_v_lo & ~|dma_data_mem_v_lo)
+    ? (~tagst_op & ~|miss_tag_mem_v_lo & ~|dma_data_mem_v_lo & ~recover_lo)
     : 1'b1;
   assign ready_o = v_tl_r
     ? (v_we & tl_ready)
     : tl_ready;
+
 
   // tag_mem
   //
@@ -753,7 +758,7 @@ module bsg_cache
     : {2{cache_pkt.data[data_width_p-1], cache_pkt.data[tag_width_lp-1:0]}};
 
   assign tag_mem_addr_li = miss_v
-    ? (recover_lo ? addr_set_tl : (miss_tag_mem_v_lo ? miss_tag_mem_addr_lo : addr_index))
+    ? (recover_lo ? addr_index_tl : (miss_tag_mem_v_lo ? miss_tag_mem_addr_lo : addr_index))
     : addr_index;
 
   assign tag_mem_w_mask_li = miss_v
@@ -761,7 +766,7 @@ module bsg_cache
     : {{(1+tag_width_lp){addr_way[0]}}, {(1+tag_width_lp){~addr_way[0]}}}; // for tagst op
 
   for(genvar i=0; i<(ways_p/2); i=i+1) begin
-    assign tag_mem_v_li[i] = (~reset_i) & ((tag_read_op & ready_o & v_i)
+    assign tag_mem_v_li[i] = ((tag_read_op & ready_o & v_i)
       | (recover_lo & tag_read_op_tl_r & v_tl_r)
       | miss_tag_mem_v_lo[i]
       | (tagst_op & ready_o & v_i & (i == (addr_way>>1)))); 
@@ -777,7 +782,7 @@ module bsg_cache
     ? dma_data_mem_data_lo
     : sbuf_data_mem_data;
 
-  assign data_mem_addr_li = recover_lo ? {addr_set_tl, addr_block_offset_tl}
+  assign data_mem_addr_li = recover_lo ? {addr_index_tl, addr_block_offset_tl}
     : (dma_data_mem_v_lo ? dma_data_mem_addr_lo
     : ((ld_op & v_i & ready_o) ? {addr_index, addr_block_offset}
     : sbuf_addr_lo[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp]));
@@ -787,7 +792,7 @@ module bsg_cache
     : sbuf_data_mem_w_mask;
 
   for(genvar i=0; i<(ways_p/2); i=i+1) begin
-    assign data_mem_v_li[i] = (~reset_i) & ((v_i & ld_op & ready_o)
+    assign data_mem_v_li[i] = ((v_i & ld_op & ready_o)
       | (v_tl_r & recover_lo & ld_op_tl_r)
       | (dma_data_mem_v_lo & ((chosen_way_lo>>1) == i))
       | (sbuf_v_lo & sbuf_yumi_li & ((sbuf_set_lo>>1) == i))
@@ -826,7 +831,8 @@ module bsg_cache
   //
   assign sbuf_v_li = st_op_v_r & v_o & yumi_i;
   assign sbuf_set_li = miss_v ? chosen_way_lo : tag_hit_way_v;
-  assign sbuf_yumi_li = sbuf_v_lo & (~(ld_op & v_i) | (miss_v & ~miss_done_lo & ~recover_lo)); 
+  //assign sbuf_yumi_li = sbuf_v_lo & (~(ld_op & v_i) | (miss_v & ~miss_done_lo & ~recover_lo)); 
+  assign sbuf_yumi_li = sbuf_v_lo & ~(ld_op & v_i & ready_o) & (~dma_data_mem_v_lo); 
 
   assign bypass_addr_li = addr_tl_r;
   assign bypass_v_li = ld_op_tl_r & v_tl_r & v_we;
@@ -846,13 +852,46 @@ module bsg_cache
       end
   end
 
+  if (debug_p) begin
+    always_ff @ (posedge clk_i) begin
+      if (v_o & yumi_i) begin
+        if (ld_op_v_r) begin
+          $display("<VCACHE> M[%4h] == %8h // %8t", addr_v_r, data_o, $time);
+        end
+        
+        if (st_op_v_r) begin
+          $display("<VCACHE> M[%4h] := %8h // %8t", addr_v_r, sbuf_data_li, $time);
+        end
 
-  localparam debug_lp = 1;
-
-  if(debug_lp == 1)
-    always_ff @(negedge clk_i)
-    begin
+      end
+      if (tag_mem_v_li & tag_mem_w_li) begin
+        $display("<VCACHE> tag_mem_write. addr=%8h data_1=%8h data_0=%8h mask_1=%8h mask_0=%8h // %8t",
+          tag_mem_addr_li,
+          tag_mem_data_li[1+tag_width_lp+:1+tag_width_lp],
+          tag_mem_data_li[0+:1+tag_width_lp],
+          tag_mem_w_mask_li[1+tag_width_lp+:1+tag_width_lp],
+          tag_mem_w_mask_li[0+:1+tag_width_lp],
+          $time
+        );
+      end
     end
+
+  end
+
+  if (axe_trace_p) begin
+    bsg_nonsynth_axe_tracer #(
+      .data_width_p(data_width_p)
+      ,.addr_width_p(addr_width_p)
+    ) axe_tracer (
+      .clk_i(clk_i)
+      ,.v_i(v_o & yumi_i)
+      ,.store_op_i(st_op_v_r)
+      ,.load_op_i(ld_op_v_r)
+      ,.addr_i(addr_v_r)
+      ,.store_data_i(sbuf_data_li)
+      ,.load_data_i(data_o)
+    );
+  end
 
   // synopsys translate_on
 

@@ -23,26 +23,22 @@ module bsg_mem_1rw_sync_mask_write_bit_synth #(parameter width_p=-1
    wire unused = reset_i;
 
    logic [addr_width_lp-1:0] addr_r;
-   logic [els_p-1:0][width_p-1:0] mem;
+   logic [width_p-1:0] mem [els_p-1:0];
 
    int i;
 
    always_ff @(posedge clk_i)
-     if (v_i)
-       begin
-          if (w_i)
-            begin
-              for (i = 0; i < width_p; i=i+1)
-                if (w_mask_i[i])
-                  mem[addr_i][i] <= data_i[i];
-            end
-          else
-            begin
-              addr_r <= addr_i;
-            end
-       end
+     if (v_i & ~w_i)
+       addr_r <= addr_i;
+     else
+       addr_r <= 'X;
 
    assign data_o = mem[addr_r];
 
+   always_ff @(posedge clk_i)
+     if (v_i & w_i)
+       for (i = 0; i < width_p; i=i+1)
+         if (w_mask_i[i])
+           mem[addr_i][i] <= data_i[i];
 
 endmodule

@@ -14,6 +14,8 @@ module bsg_cache_dma
     ,parameter lg_block_size_in_words_lp="inv"
     ,parameter lg_sets_lp="inv"
     ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+  
+    ,parameter debug_p=0
   )
   (
     input clk_i
@@ -210,5 +212,17 @@ module bsg_cache_dma
       end 
     end
   end
+
+  // synopsys translate_off
+  
+  always_ff @ (posedge clk_i) begin
+    if (debug_p) begin
+      if (dma_pkt_v_o & dma_pkt_yumi_i) begin
+        $display("<VCACHE> DMA_PKT we:%0d addr:%8h // %8t",
+          dma_pkt.write_not_read, dma_pkt.addr, $time);
+      end
+    end
+  end
+  // synopsys translate_on
 
 endmodule

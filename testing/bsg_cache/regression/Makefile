@@ -34,4 +34,5 @@ clean:
 	rm -f $(TRACE_ROM).v
 	rm -rf simv.daidir simv.vdb
 	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz
+	rm -rf stack.info.*
 

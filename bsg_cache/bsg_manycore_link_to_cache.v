@@ -131,7 +131,7 @@ module bsg_manycore_link_to_cache
 
   always_comb begin
     cache_pkt.sigext = 1'b0;
-    cache_pkt.mask = endpoint_mask_lo;
+    cache_pkt.mask = '0;
     cache_pkt.data = '0;
     cache_pkt.addr = '0;
     cache_pkt.opcode = TAGST;
@@ -193,6 +193,7 @@ module bsg_manycore_link_to_cache
           endpoint_addr_lo[0+:link_addr_width_p-1],
           {byte_offset_width_lp{1'b0}} 
         };
+        cache_pkt.mask = endpoint_mask_lo;
 
         yumi_o = v_i;
         endpoint_returning_v_li = v_i;
