@@ -8,7 +8,7 @@
   if (els_p == words && data_width_p == bits)    \
     begin: macro                            \
        saed90_``bits``x``words``_1P_BM mem  \
-         (.CE1  (clk_i)                     \
+         (.CE1  (clk_lo)                     \
          ,.WEB1 (~w_i)                      \
          ,.OEB1 (1'b0)                      \
          ,.CSB1 (~v_i)                      \
@@ -23,6 +23,7 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter els_p = -1
                                          ,parameter data_width_p = -1
                                          ,parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
                                          ,parameter write_mask_width_lp = data_width_p>>3
+                                         ,parameter enable_clock_gating_p=1'b0
                                          )
   (input                           clk_i
   ,input                           reset_i
@@ -34,6 +35,16 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter els_p = -1
   ,output [data_width_p-1:0]       data_o
   );
 
+   wire clk_lo;
+
+   bsg_clkgate_optional icg
+     (.clk_i( clk_i )
+     ,.en_i( v_i )
+     ,.bypass_i( ~enable_clock_gating_p )
+     ,.gated_clock_o( clk_lo )
+     );
+
+
   // TODO: ADD ANY NEW RAM CONFIGURATIONS HERE
   `bsg_mem_1rw_sync_mask_write_byte_macro (64, 512) else
   
@@ -41,7 +52,17 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter els_p = -1
     begin: notmacro
 
       // Instantiate a synthesizale 1rw sync mask write byte
-      bsg_mem_1rw_sync_mask_write_byte_synth #(.els_p(els_p), .data_width_p(data_width_p)) synth (.*);
+      bsg_mem_1rw_sync_mask_write_byte_synth #(.els_p(els_p), .data_width_p(data_width_p)) synth 
+       (.clk_i(clk_lo)
+       ,.reset_i
+       ,.v_i
+       ,.w_i
+       ,.addr_i
+       ,.data_i
+       ,.write_mask_i
+       ,.data_o
+       );
+
 
     end // block: notmacro
 

@@ -22,6 +22,7 @@ module bsg_lru_pseudo_tree_encode
   
   
   genvar i;
+  generate 
     for(i=0; i<ways_p-1; i++) begin: rof
       if(i == 0) begin: fi
 	    assign mask[i] = 1'b1;
@@ -58,5 +59,6 @@ module bsg_lru_pseudo_tree_encode
           );
 	  end
     end
+  endgenerate
   
 endmodule

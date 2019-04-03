@@ -2,6 +2,8 @@
 # Makefile
 #
 
+# export BSG_IP_CORES_DIR:=/path/to/bsg_ip_cores/
+
 WAYS_P = 2 4 8
 
 TRACE_ROM = bsg_trace_master_rom
@@ -10,7 +12,6 @@ INCDIR = +incdir+$(BSG_IP_CORES_DIR)/bsg_misc/
 INCDIR += +incdir+$(BSG_IP_CORES_DIR)/bsg_cache/
 
 HIGHLIGHT = grep --color -E '^|Error|Warning|Implicit wire is used|Too few instance port connections|Port connection width mismatch|Width mismatch'
-
 
 .PHONY: dve all clean
 

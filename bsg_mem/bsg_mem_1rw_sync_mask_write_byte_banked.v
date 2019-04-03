@@ -7,6 +7,7 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
   #(parameter  banks_p      =  "inv"
     ,parameter els_p        =  "inv"
     ,parameter data_width_p =  "inv"
+    ,parameter enable_clock_gating_p = 0
     ,parameter addr_width_lp        = `BSG_SAFE_CLOG2(els_p)    
     ,parameter write_mask_width_lp  = data_width_p>>3
     ,parameter lg_banks_lp 	    = `BSG_SAFE_CLOG2(banks_p) 
@@ -64,6 +65,7 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
   	       #(.data_width_p        ( data_width_p )
   		 ,.els_p               ( bank_els_lp )
   		 ,.write_mask_width_lp ( write_mask_width_lp )
+		 ,.enable_clock_gating_p ( enable_clock_gating_p )
   		 )
   	  mem_bank
   	       (.clk_i         (  clk_i  )

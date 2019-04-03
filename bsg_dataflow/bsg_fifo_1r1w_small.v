@@ -85,7 +85,8 @@ module bsg_fifo_1r1w_small #( parameter width_p      = -1
    // during reset, we keep ready low
    // even though fifo is empty
 
-   assign ready_lo = ~full & ~reset_i;
+   //assign ready_lo = ~full & ~reset_i;
+   assign ready_lo = ~full;
    assign ready_o = ready_lo;
    assign v_o_tmp = ~empty;
 

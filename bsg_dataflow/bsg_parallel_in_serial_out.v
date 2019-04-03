@@ -7,7 +7,23 @@
 // interface. This makes both channels "helpful" style
 // handshakes.
 //
+// FIXME: this module purports to be doubly helpful
+// but it waits for the output yumi signal to be asserted
+// before asserting the input ready signal, creating a dependence
+// from output to input. This avoids a bubble between successive parallel words. 
+// but is a little distasteful. Logically, it is helpful on both ends,
+// since for each interface, it does not require info ahead of time.
+// But timing wise, its input helpfulness is a late helpfulness.
 //
+// There are three design choices for this module:
+// 1) zero bubbles, dependence from output to input, 1 el buffering
+// 2) one bubble, no dependence, 1 element buffer
+// 3) zero bubbles, no dependence, 2 element buffer
+//
+// a potentially better design would be to eliminate the register
+// and make that something the user can specify outside the module.
+//
+// that version would be helpful on output and demanding on input.
 
 module bsg_parallel_in_serial_out #( parameter width_p = -1
                                    , parameter els_p   = -1

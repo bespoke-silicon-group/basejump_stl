@@ -1,0 +1,7 @@
+$BSG_IP_CORES_DIR/bsg_misc/bsg_defines.v
+$BSG_IP_CORES_DIR/bsg_test/bsg_nonsynth_clock_gen.v
+$BSG_IP_CORES_DIR/bsg_test/bsg_nonsynth_reset_gen.v
+$BSG_IP_CORES_DIR/bsg_noc/bsg_wormhole_router_adapter_out.v
+$BSG_IP_CORES_DIR/bsg_fsb/bsg_fsb_node_trace_replay.v
+bsg_trace_rom.v
+testbench.v
