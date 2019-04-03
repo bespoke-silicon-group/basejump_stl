@@ -139,7 +139,7 @@ module bsg_cache_miss
           {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
         };
 
-        stat_mem_v_o = dma_done_i;
+        stat_mem_v_o = 1'b1;
         stat_mem_w_o = dma_done_i;
         stat_mem_addr_o = addr_index_v;
         stat_mem_data_o = {{ways_p{st_op_v_i}}, lru_decode};
