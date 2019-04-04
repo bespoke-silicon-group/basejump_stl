@@ -50,6 +50,10 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
       wire [lg_banks_lp-1:0] bank_data_sel_lo;
       /* selects which bank to address */
       wire [lg_banks_lp-1:0]  bank_sel_li  = addr_i[lg_banks_lp-1:0];
+      /* select if bank input is valid  */
+      wire [banks_p-1:0]      bank_v_li;
+      /* select if bank write is enabled */
+      wire [banks_p-1:0]      bank_wen_li;
 
        bsg_dff_en
 	 #(.width_p(lg_banks_lp))
@@ -58,6 +62,22 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
 	   ,.data_i ( bank_sel_li )
 	   ,.en_i   ( (v_i == 1'b1) && (w_i == 1'b0) )
 	   ,.data_o ( bank_data_sel_lo ));
+
+       /* decode valid */
+       bsg_decode_with_v
+	 #(.num_out_p(banks_p))
+       decode_bank_v
+	 (.i   ( bank_sel_li )
+	 ,.v_i ( v_i )
+	 ,.o   ( bank_v_li ));
+
+       /* decode for write enable */
+       bsg_decode_with_v
+	 #(.num_out_p(banks_p))
+       decode_bank_wen
+	 (.i   ( bank_sel_li )
+	 ,.v_i ( w_i )
+	 ,.o   ( bank_wen_li ));
 
       /* generate memory for each bank */
       genvar b;
@@ -71,8 +91,8 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
   	  mem_bank
   	       (.clk_i         (  clk_i  )
   		,.reset_i      (  reset_i  )
-  		,.v_i          (  v_i  && (bank_sel_li == b)  )
-  		,.w_i          (  w_i  && (bank_sel_li == b)  )
+  		,.v_i          (  bank_v_li[b]  )
+  		,.w_i          (  bank_wen_li[b]  )
   		,.addr_i       (  addr_i[addr_width_lp-1:lg_banks_lp]  )
   		,.data_i       (  data_i  )
   		,.write_mask_i (  write_mask_i  )
