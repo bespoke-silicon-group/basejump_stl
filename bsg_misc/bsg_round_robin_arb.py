@@ -66,8 +66,10 @@ if ( hold_on_sr_p ) begin """
         print """           default : hold_on_sr = 1'b0;"""
 
     print """       endcase
-    end //end of alwasy_comb
+    end //end of always_comb
 
+end else begin:not_hold_on_sr_p
+    assign hold_on_sr = '0;
 end //end of hold_on_sr_p """ 
 
 ################################################################################
@@ -91,6 +93,8 @@ if ( reset_on_sr_p ) begin:reset_on_%d
     
     print "                       ;"
     print """
+end else begin:not_reset_on_sr_p
+    assign reset_on_sr = '0;
 end //end of reset_on_sr_p """ 
 max_reqs = 0 # no. of inputs
 try:

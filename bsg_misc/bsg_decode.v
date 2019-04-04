@@ -11,6 +11,8 @@ module bsg_decode #(parameter num_out_p="inv")
 );
 
   if (num_out_p == 1) begin
+    // suppress unused signal warning
+    wire unused = i;
     assign o = 1'b1;
   end
   else begin

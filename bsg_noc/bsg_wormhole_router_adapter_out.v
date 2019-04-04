@@ -121,7 +121,8 @@ module bsg_wormhole_router_adapter_out
 
   // synopsys translate_off
   initial begin
-    assert(max_num_flit_p*width_lp == padded_packet_width_lp);
+    assert(max_num_flit_p*width_lp == padded_packet_width_lp)
+      else $error("padding_packet_width_lp has to be equal to number of flits * flit width");
     assert(width_lp > x_cord_width_p+y_cord_width_p+len_width_lp)
       else $error("width_lp has to be wider than header info width.");
   end
