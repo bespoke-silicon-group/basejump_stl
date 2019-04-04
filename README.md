@@ -1,4 +1,4 @@
-# BSG IP Cores Repository
+# BaseJump Standard Template Library (STL) Repository
 
 This repository contains IP cores targeting IC designs for various purposes.
 Generally components should be prefixed with "bsg_" to indicate their origin.
