@@ -38,8 +38,6 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
       bsg_mem_1rw_sync_mask_write_byte
   	#(.data_width_p         ( data_width_p )
   	  ,.els_p               ( els_p )
-  	  ,.addr_width_lp       ( addr_width_lp )
-  	  ,.write_mask_width_lp ( write_mask_width_lp )
   	  )
       mem_bank
   	(.*);      
@@ -64,7 +62,6 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
   	  bsg_mem_1rw_sync_mask_write_byte 
   	       #(.data_width_p        ( data_width_p )
   		 ,.els_p               ( bank_els_lp )
-  		 ,.write_mask_width_lp ( write_mask_width_lp )
 		 ,.enable_clock_gating_p ( enable_clock_gating_p )
   		 )
   	  mem_bank
