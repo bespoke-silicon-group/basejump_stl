@@ -24,8 +24,7 @@ module bsg_mem_1rw_sync_mask_write_bit_synth #(parameter width_p=-1
 
    logic [addr_width_lp-1:0] addr_r;
    logic [width_p-1:0] mem [els_p-1:0];
-
-   int i;
+   logic [width_p-1:0] data_n;
 
    always_ff @(posedge clk_i)
      if (v_i & ~w_i)
@@ -35,10 +34,14 @@ module bsg_mem_1rw_sync_mask_write_bit_synth #(parameter width_p=-1
 
    assign data_o = mem[addr_r];
 
+   for (genvar i = 0; i < width_p; i++) 
+   begin : rof1
+     assign data_n[i] = w_mask_i[i] ? data_i[i] : mem[addr_i][i];
+   end // rof1
+
    always_ff @(posedge clk_i)
      if (v_i & w_i)
-       for (i = 0; i < width_p; i=i+1)
-         if (w_mask_i[i])
-           mem[addr_i][i] <= data_i[i];
+       mem[addr_i] <= data_n;
 
 endmodule
+
