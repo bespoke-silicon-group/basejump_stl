@@ -1,11 +1,10 @@
 # BSG IP Cores Repository
-=======================
 
 This repository contains IP cores targeting IC designs for various purposes.
 Generally components should be prefixed with "bsg_" to indicate their origin.
 
 ## Contents
------------
+
 - config_net (also known as bsg_lutag)
 
 This configuration network is composed of config\_nodes in a tree topology. The
@@ -48,5 +47,5 @@ Data, clock, and reset generator for test benches.
 Mirrors the other directories, with tests.
 
 ## Contact
--------
-Email to: taylor-bsg@googlegroups.com
+
+Email: taylor-bsg@googlegroups.com
