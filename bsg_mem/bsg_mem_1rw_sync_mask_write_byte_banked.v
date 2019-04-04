@@ -47,13 +47,17 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
       /* data outputs for each bank */
       wire [data_width_p-1:0] bank_data_lo [banks_p-1:0];
       /* selects which bank drives data_o */
-      logic [lg_banks_lp-1:0] bank_data_sel_r;
+      wire [lg_banks_lp-1:0] bank_data_sel_lo;
       /* selects which bank to address */
       wire [lg_banks_lp-1:0]  bank_sel_li  = addr_i[lg_banks_lp-1:0];
 
-      /* use bsg_dff and gate with reset? */
-      always_ff @(posedge clk_i)
-  	bank_data_sel_r <= bank_sel_li;
+       bsg_dff_en
+	 #(.width_p(lg_banks_lp))
+       bank_data_sel_r
+	 ( .clk_i   ( clk_i )
+	   ,.data_i ( bank_sel_li )
+	   ,.en_i   ( (v_i == 1'b1) && (w_i == 1'b0) )
+	   ,.data_o ( bank_data_sel_lo ));
 
       /* generate memory for each bank */
       genvar b;
@@ -75,7 +79,7 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
   		,.data_o       (  bank_data_lo[b]  ));
   	end // for (b = 0; b < banks_p; b++)
   
-      assign data_o  = bank_data_lo[bank_data_sel_r];
+      assign data_o  = bank_data_lo[bank_data_sel_lo];
   
   end // else: !if(banks_p == 1)
   //   
