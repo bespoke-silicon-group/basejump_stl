@@ -1,12 +1,11 @@
-BSG IP Cores Repository
-=======================
+# BaseJump Standard Template Library (STL) Repository
 
 This repository contains IP cores targeting IC designs for various purposes.
 Generally components should be prefixed with "bsg_" to indicate their origin.
 
-Contents
---------
-* config_net (also known as bsg_lutag)
+## Contents
+
+- config_net (also known as bsg_lutag)
 
 This configuration network is composed of config\_nodes in a tree topology. The
 network can be used to deliver proper values to other IP instances that demands
@@ -47,7 +46,6 @@ Data, clock, and reset generator for test benches.
 
 Mirrors the other directories, with tests.
 
+## Contact
 
-Contact
--------
-Email to: taylor-bsg@googlegroups.com
+Email: taylor-bsg@googlegroups.com
