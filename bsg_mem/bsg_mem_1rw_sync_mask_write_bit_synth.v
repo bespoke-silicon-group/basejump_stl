@@ -24,7 +24,6 @@ module bsg_mem_1rw_sync_mask_write_bit_synth #(parameter width_p=-1
 
    logic [addr_width_lp-1:0] addr_r;
    logic [width_p-1:0] mem [els_p-1:0];
-   logic [width_p-1:0] data_n;
 
    always_ff @(posedge clk_i)
      if (v_i & ~w_i)
@@ -34,14 +33,28 @@ module bsg_mem_1rw_sync_mask_write_bit_synth #(parameter width_p=-1
 
    assign data_o = mem[addr_r];
 
-   for (genvar i = 0; i < width_p; i++) 
-   begin : rof1
-     assign data_n[i] = w_mask_i[i] ? data_i[i] : mem[addr_i][i];
-   end // rof1
+// The Verilator and non-Verilator models are functionally equivalent. However, Verilator
+//   cannot handle an array of non-blocking assignments in a for loop. It would be nice to 
+//   see if these two models synthesize the same, because we can then reduce to the Verilator
+//   model and avoid double maintenence. One could also add this feature to Verilator...
+`ifdef VERILATOR
+   logic [width_p-1:0] data_n;
+
+   for (genvar i = 0; i < width_p; i++)
+     begin : rof1
+       assign data_n[i] = w_mask_i[i] ? data_i[i] : mem[addr_i][i];
+     end // rof1
 
    always_ff @(posedge clk_i)
      if (v_i & w_i)
        mem[addr_i] <= data_n;
 
-endmodule
+`else 
+   always_ff @(posedge clk_i)
+     if (v_i & w_i)
+       for (integer i = 0; i < width_p; i=i+1)
+         if (w_mask_i[i])
+           mem[addr_i][i] <= data_i[i];
+`endif
 
+endmodule
