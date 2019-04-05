@@ -1,21 +1,12 @@
 # BaseJump Standard Template Library (STL) Repository
 
-This repository contains IP cores targeting IC designs for various purposes.
-Generally components should be prefixed with "bsg_" to indicate their origin.
+This library is a comprehensive hardware library for SystemVerilog that seeks to
+contain all of the commonly used HW primitives. 
+
+See this paper http://cseweb.ucsd.edu/~mbtaylor/papers/Taylor_DAC_BaseJump_STL_2018.pdf
+which describes the design and usage.
 
 ## Contents
-
-- config_net (also known as bsg_lutag)
-
-This configuration network is composed of config\_nodes in a tree topology. The
-network can be used to deliver proper values to other IP instances that demands
-specific inputs for internal mode configurations. The network can uses a
-different clock than the targeting IP instances, and is designed to be reliable
-when cross clock domains.
-
-* bsg_guts
-
-sample bsg node integrating comm_link, and bunch of bsg_test_nodes
 
 * bsg_async
 
