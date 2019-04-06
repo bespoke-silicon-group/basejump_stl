@@ -37,6 +37,10 @@ Data, clock, and reset generator for test benches.
 
 Mirrors the other directories, with tests.
 
+* hard
+
+Mirrors other directories, contains replacement files for specific process technologies.
+
 ## Contact
 
 Email: taylor-bsg@googlegroups.com
