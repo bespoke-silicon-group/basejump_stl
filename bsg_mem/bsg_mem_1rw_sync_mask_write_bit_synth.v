@@ -37,6 +37,7 @@ module bsg_mem_1rw_sync_mask_write_bit_synth #(parameter width_p=-1
 //   cannot handle an array of non-blocking assignments in a for loop. It would be nice to 
 //   see if these two models synthesize the same, because we can then reduce to the Verilator
 //   model and avoid double maintenence. One could also add this feature to Verilator...
+//   (Identified in Verilator 4.011)
 `ifdef VERILATOR
    logic [width_p-1:0] data_n;
 
