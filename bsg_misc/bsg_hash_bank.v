@@ -36,7 +36,7 @@
 // TODO: evaluate PPA versus yosys and DC modulo operator
 //
 
-module bsg_hash_bank #(parameter banks_p=-1, width_p=-1,     
+module bsg_hash_bank #(parameter banks_p="inv", width_p="inv",     
                        index_width_lp=$clog2((2**width_p+banks_p-1)/banks_p), 
                        lg_banks_lp=`BSG_SAFE_CLOG2(banks_p), debug_lp=0)
   (/* input clk,*/
