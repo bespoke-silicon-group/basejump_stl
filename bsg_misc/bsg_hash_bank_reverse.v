@@ -110,5 +110,10 @@ module bsg_hash_bank_reverse #(parameter banks_p="inv", width_p="inv", index_wid
           assign o = transpose_lo[width_p-1:0];
         end
     end
+  else
+      initial 
+        begin 
+          assert(0) else $error("unhandled case, banks_p = ", banks_p); 
+        end	
   
 endmodule	
