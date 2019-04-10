@@ -199,10 +199,10 @@ module testbench();
 
 
   initial begin
-    //wait(done)
-    for (integer i = 0; i < 100000; i++) begin
-      @(posedge clk);
-    end
+    wait(done)
+    //for (integer i = 0; i < 100000; i++) begin
+    //  @(posedge clk);
+    //end
     $finish;
   end
 
