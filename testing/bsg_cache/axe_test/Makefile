@@ -12,7 +12,7 @@ TRACE_AXE = trace.axe
 
 .PHONY: dve sim clean axe all
 
-NUM_INSTR_P ?= 100000
+NUM_INSTR_P ?= 10000
 SEED_P = $(shell shuf -i 0-4294967295 -n 1)
 DEFINE = +define+NUM_INSTR_P=$(NUM_INSTR_P)
 
