@@ -93,6 +93,10 @@ module bsg_cache_miss
 
   assign chosen_set_o = chosen_set_r;
 
+  logic stat_flopped_r, stat_flopped_n;
+  logic [1:0] dirty_r, dirty_n;
+  logic mru_r, mru_n;
+
   always_comb begin
     dma_send_fill_addr_o = 1'b0;
     dma_send_evict_addr_o = 1'b0;
@@ -113,20 +117,31 @@ module bsg_cache_miss
     recover_o = '0;
     done_o = '0;
     dma_addr_o = '0;
+    stat_flopped_n = stat_flopped_r;
+    dirty_n = dirty_r;
+    mru_n = mru_r;
 
     case (miss_state_r)
 
       START: begin
-        stat_mem_v_o = 1'b1;
+        stat_mem_v_o = miss_v_i;
+        stat_flopped_n = 1'b0;
         miss_state_n = miss_v_i
           ? (flush_op ? FLUSH_OP : SEND_FILL_ADDR)
           : START;
       end
     
       SEND_FILL_ADDR: begin
+        stat_flopped_n = 1'b1;
+        mru_n = stat_flopped_r
+          ? mru_r
+          : mru_i;
+        dirty_n = stat_flopped_r
+          ? dirty_r
+          : dirty_i;
         dma_send_fill_addr_o = 1'b1;
         chosen_set_n = valid_v_i[0]
-          ? (valid_v_i[1] ? ~mru_i : 1'b1)
+          ? (valid_v_i[1] ? ~mru_n : 1'b1)
           : 1'b0;
        
         dma_addr_o = {
@@ -150,11 +165,16 @@ module bsg_cache_miss
         };
 
         miss_state_n = dma_done_i
-          ? ((dirty_i[chosen_set_n] & valid_v_i[chosen_set_n]) ? SEND_EVICT_ADDR : GET_FILL_DATA)
+          ? ((dirty_n[chosen_set_n] & valid_v_i[chosen_set_n]) ? SEND_EVICT_ADDR : GET_FILL_DATA)
           : SEND_FILL_ADDR;
       end
 
       FLUSH_OP: begin
+        stat_flopped_n = 1'b1;
+        dirty_n = stat_flopped_r
+          ? dirty_r
+          : dirty_i;
+
         chosen_set_n = tagfl_op_v_i ? addr_set_v : tag_hit_v_i[1];
         
         stat_mem_v_o = 1'b1;
@@ -172,7 +192,7 @@ module bsg_cache_miss
           ~chosen_set_n, {tag_width_lp{1'b0}}
         };
        
-        miss_state_n = (~ainv_op_v_i & dirty_i[chosen_set_n] & valid_v_i[chosen_set_n])
+        miss_state_n = (~ainv_op_v_i & dirty_n[chosen_set_n] & valid_v_i[chosen_set_n])
           ? SEND_EVICT_ADDR
           : RECOVER;
       end
@@ -238,10 +258,14 @@ module bsg_cache_miss
     if (reset_i) begin
       miss_state_r <= START;
       chosen_set_r <= 1'b0;
+      stat_flopped_r <= 1'b0;
     end
     else begin
       miss_state_r <= miss_state_n;
       chosen_set_r <= chosen_set_n;
+      stat_flopped_r <= stat_flopped_n;
+      dirty_r <= dirty_n;
+      mru_r <= mru_n;
     end
   end
 
