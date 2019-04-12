@@ -16,7 +16,7 @@ module bsg_reduce #(parameter width_p = "inv"
    // synopsys translate_off
    initial
       assert( $countones({xor_p & 1'b1, and_p & 1'b1, or_p & 1'b1}) == 1)
-        else $error("bsg_scan: only one function may be selected\n");
+        else $error("bsg_reduce: exactly one function may be selected\n");
    // synopsys translate_on
 
    if (xor_p)
@@ -25,7 +25,5 @@ module bsg_reduce #(parameter width_p = "inv"
      assign o = &i;
    else if (or_p)
      assign o = |i;
-   else
-     assert (0) else $error("at least one function must be selected.");
 
 endmodule
