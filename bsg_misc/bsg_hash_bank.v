@@ -35,6 +35,10 @@
 //
 // TODO: evaluate PPA versus yosys and DC modulo operator
 //
+// TODO: a pathway to support hash functions that are a factor of 2^n-1 seems possible but is only onlined in this code
+// see comments for how the math would work. This would support banking of 5,9 and maybe higher.
+//
+//
 
 module bsg_hash_bank #(parameter banks_p="inv", width_p="inv",     
                        index_width_lp=$clog2((2**width_p+banks_p-1)/banks_p), 
