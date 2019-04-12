@@ -23,13 +23,13 @@ module bsg_reduce_segmented #(parameter segments_p = "inv"
   for (j = 0; j < segments_p; j=j+1)
   begin: rof2
   if (xor_p)
-    assign o[j] = ^i[(j+1)*segment_width_p:j*segment_width_p];
+    assign o[j] = ^i[(j*segment_width_p)+:segment_width_p];
    else if (and_p)
-     assign o[j] = &i[(j+1)*segment_width_p:j*segment_width_p];
+     assign o[j] = &i[(j*segment_width_p)+:segment_width_p];
    else if (or_p)
-     assign o[j] = |i[(j+1)*segment_width_p:j*segment_width_p];
+     assign o[j] = |i[(j*segment_width_p)+:segment_width_p];
     else if (nor_p)
-      assign o[j] = ~|i[(j+1)*segment_width_p:j*segment_width_p];
+      assign o[j] = ~(|i[(j*segment_width_p)+:segment_width_p]);
   end
     
 endmodule
