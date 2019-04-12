@@ -3,7 +3,7 @@
 // note: this does a reduction
 //
 
-module bsg_reduce #(parameter width_p = -1
+module bsg_reduce #(parameter width_p = "inv"
                   , parameter xor_p = 0
                   , parameter and_p = 0
                   , parameter or_p = 0
@@ -25,5 +25,7 @@ module bsg_reduce #(parameter width_p = -1
      assign o = &i;
    else if (or_p)
      assign o = |i;
+   else
+     assert (0) else $error("at least one function must be selected.");
 
 endmodule
