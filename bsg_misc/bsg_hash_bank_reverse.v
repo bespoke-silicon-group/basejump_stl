@@ -24,17 +24,17 @@ module bsg_hash_bank_reverse #(parameter banks_p="inv", width_p="inv", index_wid
    if (~banks_p[0])
       begin: hashpow2
         assign o[width_p-1] = bank_i[0];
-        bsg_hash_bank_reverse #(.banks_p(banks_p >> 1),.width_p(width_p-1)) bhbr (.clk(clk),.index_i(index_i[index_width_lp-1:0]),.bank_i(bank_i[lg_banks_lp-1:1]),.o(o[width_p-2:0]));
+        bsg_hash_bank_reverse #(.banks_p(banks_p >> 1),.width_p(width_p-1)) bhbr (/* .clk(clk) , */ .index_i(index_i[index_width_lp-1:0]),.bank_i(bank_i[lg_banks_lp-1:1]),.o(o[width_p-2:0]));
       end
   else    
-    if (!(banks_p & (banks_p+1))) // test for (2^N)-1
+    if ((banks_p & (banks_p+1)) == 0) // test for (2^N)-1
     begin : hash3
       if (width_p % lg_banks_lp)
         begin : odd
           wire _unused;
         
           bsg_hash_bank_reverse #(.banks_p(banks_p),.width_p(width_p+1)) rhf
-          (.clk(clk), .index_i({index_i, 1'b0}), .bank_i(bank_i), .o({o[width_p-1:0], _unused}));
+          ( /* .clk(clk),*/ .index_i({index_i, 1'b0}), .bank_i(bank_i), .o({o[width_p-1:0], _unused}));
 
         end
       else        
@@ -96,13 +96,15 @@ module bsg_hash_bank_reverse #(parameter banks_p="inv", width_p="inv", index_wid
               assign bits[j] = (zero_pair_or_scan & ~first_one & unzippered[j]) | (first_one & { frac_width_lp { bank_i[j] }}) | ~zero_pair_or_scan;
             end
 
-          if (debug_lp)
+ /*         if (debug_lp)
+   begin
           always @(negedge clk)
             begin
               $display ("%b %b -> ZP(%b) ZPS(%b) FO(%b) TB(%b) BB(%b) %b ",
-                       index_i, bucket_i, zero_pair, zero_pair_or_scan, first_one, top_bits, bot_bits, o);
-            end	
-          
+                       index_i, bank_i, zero_pair, zero_pair_or_scan, first_one, top_bits, bot_bits, o);
+            end
+        end
+   */       
           wire [width_p-1:0] transpose_lo;
           bsg_transpose #(.els_p(lg_banks_lp), .width_p(frac_width_lp)) zip (.i({bits}),.o(transpose_lo));  
           

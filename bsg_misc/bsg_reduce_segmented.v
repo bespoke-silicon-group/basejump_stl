@@ -12,7 +12,7 @@ module bsg_reduce_segmented #(parameter segments_p = "inv"
 
    // synopsys translate_off
    initial
-     assert( $countones({xor_p & 1'b1, and_p & 1'b1, or_p & 1'b1, nor_p & 1'b1}) == 1)
+     assert( $countones({xor_p[0], and_p[0], or_p[0], nor_p[0]}) == 1)
        else $error("%m: exactly one function may be selected\n");
 
   // synopsys translate_on

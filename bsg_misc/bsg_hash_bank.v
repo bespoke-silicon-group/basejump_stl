@@ -67,17 +67,17 @@ module bsg_hash_bank #(parameter banks_p="inv", width_p="inv",
     if (~banks_p[0])
       begin: hashpow2
         assign bank_o [0] = i[width_p-1];
-        bsg_hash_bank #(.banks_p(banks_p >> 1),.width_p(width_p-1)) bhb (.clk(clk),.i(i[width_p-2:0]),.bank_o(bank_o[lg_banks_lp-1:1]),.index_o(index_o));
+        bsg_hash_bank #(.banks_p(banks_p >> 1),.width_p(width_p-1)) bhb (/* .clk(clk), */.i(i[width_p-2:0]),.bank_o(bank_o[lg_banks_lp-1:1]),.index_o(index_o));
       end
   else
-    if (!(banks_p & (banks_p+1))) // test for (2^N)-1
+    if ((banks_p & (banks_p+1))==0) // test for (2^N)-1
     begin : hash3
-      if (width_p % lg_banks_lp)
+      if ((width_p % lg_banks_lp)!=0)
         begin : odd
           wire _unused;
           
           bsg_hash_bank #(.banks_p(banks_p),.width_p(width_p+1))
-          hf (.clk, .i({i,1'b0}),.bank_o(bank_o),.index_o({index_o,_unused}));
+          hf (/* .clk,*/ .i({i,1'b0}),.bank_o(bank_o),.index_o({index_o,_unused}));
         end
       else 
         begin : even
@@ -272,13 +272,14 @@ module bsg_hash_bank #(parameter banks_p="inv", width_p="inv",
               assign bank_o[j] = | (border & unzippered[j]);
             end
 
-          if (debug_lp)
+/*          if (debug_lp)
 	          always @(negedge clk)
     	      begin
 	            $display ("%b -> %b %b %b %b %b %b %b %b %b %b",
 	                      i, one_one, one_one_and_scan, not_one_one_and_scan, shifty, border, unzippered[1], 
                         unzippered[0], bits[1], bits[0], index_o);
             end	
+ */
         end 	 
       end 
   else
