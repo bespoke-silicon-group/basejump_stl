@@ -69,10 +69,9 @@ module bsg_hash_bank_reverse #(parameter banks_p="inv", width_p="inv", index_wid
   
           // and tuplets of lg_bank_lp-1 consecutive 0 bits
           wire [frac_width_lp-1:0] zero_pair;
-          for (j = 0; j < frac_width_lp; j = j + 1)
-            begin: rof
-              assign zero_pair[j] =  ~(| index_i_ext[(j+1)*(lg_banks_lp)-1:j*(lg_banks_lp)]);              
-            end	
+
+          bsg_reduce_segmented #(.segments_p(frac_width_lp),.segment_width_p(lg_banks_lp),.nor_p(1)) brs
+          (.i(index_i_ext),.o(zero_pair));
           
           wire [frac_width_lp-1:0] zero_pair_or_scan;
  

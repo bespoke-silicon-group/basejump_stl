@@ -3,7 +3,7 @@
 // note: this does a reduction
 //
 
-module bsg_reduce #(parameter width_p = -1
+module bsg_reduce #(parameter width_p = "inv"
                   , parameter xor_p = 0
                   , parameter and_p = 0
                   , parameter or_p = 0
@@ -16,7 +16,7 @@ module bsg_reduce #(parameter width_p = -1
    // synopsys translate_off
    initial
       assert( $countones({xor_p & 1'b1, and_p & 1'b1, or_p & 1'b1}) == 1)
-        else $error("bsg_scan: only one function may be selected\n");
+        else $error("bsg_reduce: exactly one function may be selected\n");
    // synopsys translate_on
 
    if (xor_p)
