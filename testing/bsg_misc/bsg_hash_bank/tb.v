@@ -1,18 +1,18 @@
-module tb();
-  
-  wire clk;
-  localparam width_p = 4;
-  localparam banks_p = 1;
+`include "bsg_defines.v"
+module tb(input clk);
+
+  localparam width_p = 6;
+  localparam banks_p = 7;
   reg [width_p-1:0] lo;
   reg [width_p:0] in_r;
   wire [$clog2((2**width_p+banks_p-1)/banks_p)-1:0] index_lo;
   wire [`BSG_SAFE_CLOG2(banks_p)-1:0] bank_lo;
   
-  bsg_nonsynth_clock_gen #(.cycle_time_p(5)) clkgen (.o(clk));
+//  bsg_nonsynth_clock_gen #(.cycle_time_p(5)) clkgen (.o(clk));
   
    
   bsg_hash_bank #(.banks_p(banks_p), .width_p(width_p)) 
-             hashme (.clk,
+             hashme (/* .clk,*/
                      .i( in_r[width_p-1:0] ),
 					 
 //                     .i({in_r[1:0],in_r[5:2]}), 
@@ -22,7 +22,7 @@ module tb();
   
     
   bsg_hash_bank_reverse #(.banks_p(banks_p), .width_p(width_p)) 
-                          unhashme (.clk,
+                          unhashme (/* .clk,*/
                                     .o( lo ),
 					 
                                     //                     .i({in_r[1:0],in_r[5:2]}),  

@@ -40,7 +40,7 @@ module bsg_scan #(parameter width_p = -1
 
    // synopsys translate_off
    initial
-      assert( $countones({xor_p & 1'b1, and_p & 1'b1, or_p & 1'b1}) == 1)
+      assert( $countones({xor_p[0], and_p[0], or_p[0]}) == 1)
         else $error("bsg_scan: only one function may be selected\n");
    // synopsys translate_on
 
