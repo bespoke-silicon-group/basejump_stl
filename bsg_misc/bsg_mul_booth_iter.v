@@ -61,7 +61,7 @@ initial assert (width_p % iter_step_p != 0) else $error("iter_step_p should be a
 
 localparam int iteration_lp = width_p / iter_step_p;
 
-typedef enum [2:0] {eIDLE,eNEGOPB, eCAL, eSIG, eCPA, eDONE} state_e;
+typedef enum [2:0] {eIDLE, eCAL, eSIG, eCPA, eDONE} state_e;
 state_e current_state_r, current_state_n;
 wire reset_internal = reset_i | yumi_i & current_state_r == eDONE;
 
@@ -73,10 +73,9 @@ generate if(iter_step_p != width_p) begin
     
     unique case(current_state_r) 
       eIDLE: begin
-        if(v_i) current_state_n = eNEGOPB;
+        if(v_i) current_state_n = eCAL;
         else current_state_n = eIDLE;
       end
-      eNEGOPB: current_state_n = eCAL;
       eCAL: begin
         if(cal_counter_r == '1) current_state_n = eSIG;
         else current_state_n = eCAL;
@@ -100,10 +99,9 @@ else begin
   always_comb begin
     unique case(current_state_r) 
       eIDLE: begin
-        if(v_i) current_state_n = eNEGOPB;
+        if(v_i) current_state_n = eCAL;
         else current_state_n = eIDLE;
       end
-      eNEGOPB: current_state_n = eCAL;
       eCAL: current_state_n = eSIG;
       eSIG: current_state_n = eCPA;
       eCPA: current_state_n = eDONE;
@@ -135,6 +133,8 @@ wire [width_p+1:0] cpa_res = cpa_opA + cpa_opB + cpa_carry;
 
 localparam booth_reg_len_lp = iter_step_p / 2;
 wire [booth_reg_len_lp-1:0] [2:0] opB_booth_n;
+
+wire [width_p:0] opB_n = {opB_i[width_p-1] & signed_i, opB_i};
 always_ff @(posedge clk_i) begin
   if(reset_internal) begin
     opA_r <= '0;
@@ -147,11 +147,9 @@ always_ff @(posedge clk_i) begin
       if(v_i) begin
         opA_r <= {opA_i, 1'b0};
         opA_is_unsigned <= (~signed_i) & opA_i[width_p-1];
-        opB_r <= {opB_i[width_p-1] & signed_i, opB_i};
+        opB_r <= opB_n;
+        neg_opB_r <= cpa_res[width_p:0];
       end
-    end
-    eNEGOPB: begin
-      neg_opB_r <= cpa_res[width_p:0];
     end
     eCAL: begin
       opA_r <= opA_r >> iter_step_p;
@@ -286,8 +284,8 @@ always_ff @(posedge clk_i) begin
 end
 
 always_comb unique case(current_state_r)
-  eNEGOPB: begin
-    cpa_opA = ~opB_r;
+  eIDLE: begin
+    cpa_opA = ~opB_n;
     cpa_opB = width_p'(1);
     cpa_carry = lowbits_carry_r;
   end
