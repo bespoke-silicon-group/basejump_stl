@@ -673,7 +673,7 @@ module bsg_cache
 
   logic tl_ready;
   assign tl_ready = miss_v
-    ? (~tagst_op & ~miss_tag_mem_v_lo & ~dma_data_mem_v_lo & ~recover_lo)
+    ? (~(tagst_op & v_i) & ~miss_tag_mem_v_lo & ~dma_data_mem_v_lo & ~recover_lo)
     : 1'b1;
   assign ready_o = v_tl_r
     ? (v_we & tl_ready)
