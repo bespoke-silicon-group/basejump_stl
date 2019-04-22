@@ -4,13 +4,13 @@ bsg_adder_carry_save.v
 3/14/2019, sqlin16@fudan.edu.cn
 ==========================================================
 
-A full adder with configurable width.
-
+This is a carry-saved adder taking three operands and calculating the result in redundant (sum and carry) format. 
+Carry propagation is need to recover the sum.
 
 ***********************************************************/
 
 
-module bsg_adder_carry_save #(parameter width_p = "inv")(
+module bsg_adder_carry_save #(parameter integer width_p = "inv")(
    input [width_p-1:0] opA_i
   ,input [width_p-1:0] opB_i
   ,input [width_p-1:0] opC_i
@@ -18,11 +18,10 @@ module bsg_adder_carry_save #(parameter width_p = "inv")(
   ,output [width_p-1:0] res_o
   ,output [width_p-1:0] car_o
 );
-  generate
-    for(genvar i = 0; i < width_p; i++) begin : CSA_EACH
+  generate begin: GENERATE_CSA
+    for(genvar i = 0; i < width_p; i++) begin : EACH_CSA
       assign {car_o[i], res_o[i]} = opA_i[i] + opB_i[i] + opC_i[i];
     end
+  end // GENERATE_CSA
   endgenerate
 endmodule
-
-

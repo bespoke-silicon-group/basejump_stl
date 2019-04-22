@@ -1,3 +1,4 @@
+`timescale 1ps/1ps
 module bsg_test;
 
   localparam width_p = 32;
@@ -17,20 +18,20 @@ module bsg_test;
   wire [2*width_p-1:0] actual_result = signed_li ? opA_cal * opB_cal : opA_li * opB_li;
   logic v_lo;
 
-  bsg_mul_booth_iter #(
+  bsg_mul_iterative_booth #(
     .width_p(width_p)
     ,.iter_step_p(width_p)
   ) mul(
-    clk_li
-    ,reset_li
-    ,ready_lo
-    ,opA_li
-    ,opB_li
-    ,signed_li
-    ,v_li
-    ,result_lo
-    ,v_lo
-    ,yumi_li
+    .clk_i(clk_li)
+    ,.reset_i(reset_li)
+    ,.ready_o(ready_lo)
+    ,.opA_i(opA_li)
+    ,.opB_i(opB_li)
+    ,.signed_i(signed_li)
+    ,.v_i(v_li)
+    ,.result_o(result_lo)
+    ,.v_o(v_lo)
+    ,.yumi_i(yumi_li)
   );
 
   bsg_nonsynth_clock_gen #(
