@@ -381,3 +381,4 @@ module bsg_mul_iterative #(
   endgenerate
   
 endmodule
+
