@@ -4,24 +4,24 @@ bsg_mul_booth_iter.v
 4/5/2019 sqlin16@fudan.edu.cn
 ===============================
 
-This is an iterative booth encoded (radix-4) multiplier with configurable iteration number.
+This is an iterative booth encoded (radix-4) multiplier with configurable iteration stride.
 
 */
-// define the booth encode
+// define the booth encoder
 // sel[0]: whether the bits is not zero
 // sel[1]: how many left shifts are need to do
 // sel[2]: sign
 module bsg_booth_encoder #(
-  parameter width_p = -1
+  parameter integer width_p = "inv"
 )(
-  input [2:0] ipt_i
+  input [2:0] source_bits_i
   ,input [width_p-1:0] pos_op_i
   ,input [width_p-1:0] neg_op_i
   ,output [width_p:0] sel_op_o
 );
 logic [2:0] sel;
 always_comb begin
-  unique case(ipt_i)
+  unique case(source_bits_i)
     3'b000: sel = 3'b000;//eZERO
     3'b001: sel = 3'b001;//ePOS_1
     3'b010: sel = 3'b001;//ePOS_1
@@ -38,9 +38,9 @@ assign sel_op_o = {(width_p+1){sel[0]}} & o_t;
 
 endmodule
 
-module bsg_mul_booth_iter #(
-  parameter width_p = -1
-  ,parameter iter_step_p = -1
+module bsg_mul_iterative_booth #(
+  parameter integer width_p = "inv"
+  ,parameter integer iter_step_p = "inv"
 ) (
   input clk_i
   ,input reset_i
@@ -67,49 +67,48 @@ wire reset_internal = reset_i | yumi_i & current_state_r == eDONE;
 
 
 // FSM
-generate if(iter_step_p != width_p) begin
-  reg [`BSG_SAFE_CLOG2(iteration_lp)-1:0] cal_counter_r;
-  always_comb begin
-    
-    unique case(current_state_r) 
-      eIDLE: begin
-        if(v_i) current_state_n = eCAL;
-        else current_state_n = eIDLE;
-      end
-      eCAL: begin
-        if(cal_counter_r == '1) current_state_n = eSIG;
-        else current_state_n = eCAL;
-      end
-      eSIG: current_state_n = eCPA;
-      eCPA: current_state_n = eDONE;
-      eDONE: current_state_n = eDONE;
-      default: current_state_n = eIDLE;
-    endcase
+generate begin: FSM
+  if(iter_step_p != width_p) begin: ITER_FSM
+    reg [`BSG_SAFE_CLOG2(iteration_lp)-1:0] cal_counter_r;
+    always_comb begin
+      unique case(current_state_r) 
+        eIDLE: begin
+          if(v_i) current_state_n = eCAL;
+          else current_state_n = eIDLE;
+        end
+        eCAL: begin
+          if(cal_counter_r == '1) current_state_n = eSIG;
+          else current_state_n = eCAL;
+        end
+        eSIG: current_state_n = eCPA;
+        eCPA: current_state_n = eDONE;
+        eDONE: current_state_n = eDONE;
+        default: current_state_n = eIDLE;
+      endcase
+    end
+    always_ff @(posedge clk_i) begin
+      if(reset_internal)
+        cal_counter_r <= '0;
+      else if(current_state_r == eCAL) 
+        cal_counter_r <= cal_counter_r + 1;
+    end
   end
-
-  always_ff @(posedge clk_i) begin
-    if(reset_internal)
-      cal_counter_r <= '0;
-    else if(current_state_r == eCAL) 
-      cal_counter_r <= cal_counter_r + 1;
+  else begin
+    always_comb begin: ONE_CALCULATION_FSM
+      unique case(current_state_r) 
+        eIDLE: begin
+          if(v_i) current_state_n = eCAL;
+          else current_state_n = eIDLE;
+        end
+        eCAL: current_state_n = eSIG;
+        eSIG: current_state_n = eCPA;
+        eCPA: current_state_n = eDONE;
+        eDONE: current_state_n = eDONE;
+        default: current_state_n = eIDLE;
+      endcase
+    end
   end
-
-end
-else begin
-  always_comb begin
-    unique case(current_state_r) 
-      eIDLE: begin
-        if(v_i) current_state_n = eCAL;
-        else current_state_n = eIDLE;
-      end
-      eCAL: current_state_n = eSIG;
-      eSIG: current_state_n = eCPA;
-      eCPA: current_state_n = eDONE;
-      eDONE: current_state_n = eDONE;
-      default: current_state_n = eIDLE;
-    endcase
-  end
-end
+end // FSM
 endgenerate 
 
 always_ff @(posedge clk_i) begin
@@ -165,36 +164,26 @@ wire [booth_reg_len_lp-1:0] [width_p+1:0] sel_op_lo;
 localparam wallace_tree_width_lp = 2*width_p;
 wire [booth_reg_len_lp-1:0][wallace_tree_width_lp-1:0] wallace_input;
 
-generate
+generate begin: WALLACE_TREE_INPUT
   assign wallace_input[0] = {{(width_p - 2){sel_op_lo[0][width_p+1]}},sel_op_lo[0]};
   for(genvar i = 1; i < booth_reg_len_lp; ++i)
     assign wallace_input[i] = {{(width_p - 2*i - 2){sel_op_lo[i][width_p+1]}},sel_op_lo[i],(2*i)'(0)}; 
+end // WALLACE_TREE_INPUT
 endgenerate
 
-generate
+generate begin: GENERATE_BOOTH_ENCODER
   for(genvar i = 0; i <booth_reg_len_lp; ++i) begin: BOOTH_ENCODER
     bsg_booth_encoder #(
       .width_p(width_p+1)
     )enc(
-      .ipt_i(opA_r[2*i+:3])
+      .source_bits_i(opA_r[2*i+:3])
       ,.pos_op_i(opB_r)
       ,.neg_op_i(neg_opB_r)
       ,.sel_op_o(sel_op_lo[i])
     );
   end
+end //GENERATE_BOOTH_ENCODER
 endgenerate
-
-always_ff @(posedge clk_i) begin
-  $display("%s",current_state_r.name());
-  $display("opA_r:%b",opA_r);
-  $display("csa_acc_opA_r:\t\t%b",csa_acc_opA_r);
-  $display("csa_acc_opB_r:\t\t%b",csa_acc_opB_r);
-  $display("csa_opA:\t\t%b",csa_opA);
-  $display("csa_opB:\t\t%b",csa_opB);
-  $display("csa_optA:\t\t%b",csa_optA);
-  $display("csa_optB:\t\t%b",csa_optB);
-  $display("lowbits_carry_r:\t\t:%b",lowbits_carry_r);
-end
 
 wire [wallace_tree_width_lp-1:0] w_resA;
 wire [wallace_tree_width_lp-1:0] w_resB;
@@ -205,8 +194,8 @@ bsg_adder_wallace_tree #(
   ,.max_out_size_lp(wallace_tree_width_lp)
 ) wallace_tree(
   .op_i(wallace_input)
-  ,.res_A_o(w_resA)
-  ,.res_B_o(w_resB)
+  ,.resA_o(w_resA)
+  ,.resB_o(w_resB)
 );
 
 logic [wallace_tree_width_lp-1:0] csa_opA;
@@ -226,13 +215,16 @@ bsg_adder_carry_save_4_2 #(
   ,.opC_i(csa_acc_opA_r)
   ,.opD_i(csa_acc_opB_r)
 
-  ,.outA_o(csa_optA)
-  ,.outB_o(csa_optB)
+  ,.A_o(csa_optA)
+  ,.B_o(csa_optB)
 );
 
 always_comb begin
   unique case(current_state_r)
-    eSIG: begin
+    eSIG: begin 
+      // For unsigned number,the MSB of booth encoding could +1, so opB should be added to higher bits under this situation.
+      // For instance, opA is unsigned and opA = 8'b10000000, whose booth encoding is 1-2001. 
+      // If opA is signed and opA=8'b10000000, the booth encoding is -2001
       csa_opA = {width_p{opA_is_unsigned}} & opB_r;
       csa_opB = '0;
     end

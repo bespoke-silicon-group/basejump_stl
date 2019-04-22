@@ -1,4 +1,3 @@
-`timescale 1ps/1ps
 /**********************************************
 bsg_adder_carry_save_4_2.v
 3/16/2019 sqlin@fudan.edu.cn
@@ -11,8 +10,8 @@ module bsg_adder_carry_save_4_2 #(parameter integer width_p = "inv")
   ,input [width_p-1:0] opC_i
   ,input [width_p-1:0] opD_i
 
-  ,output [width_p:0] outA_o
-  ,output [width_p:0] outB_o
+  ,output [width_p:0] A_o
+  ,output [width_p:0] B_o
 );
   wire [width_p-1:0] fa1_res_lo;
   wire [width_p-1:0] fa1_car_lo;
@@ -32,8 +31,8 @@ module bsg_adder_carry_save_4_2 #(parameter integer width_p = "inv")
     .opA_i({1'b0,fa1_res_lo})
     ,.opB_i({fa1_car_lo,1'b0})
     ,.opC_i({1'b0,opD_i})
-    ,.res_o(outA_o[width_p:0])
-    ,.car_o(outB_o[width_p:1])
+    ,.res_o(A_o[width_p:0])
+    ,.car_o(B_o[width_p:1])
   );
-  assign outB_o[0] = 1'b0;
+  assign B_o[0] = 1'b0;
 endmodule
