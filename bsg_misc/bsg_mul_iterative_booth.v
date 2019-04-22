@@ -345,3 +345,4 @@ assign v_o = current_state_r == eDONE;
 assign result_o = {csa_acc_opA_r[width_p-1:0],result_low_r};
 
 endmodule
+
