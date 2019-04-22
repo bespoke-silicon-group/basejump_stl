@@ -1,16 +1,15 @@
-`timescale 1ps/1ps
 /*************************************************************
 ==================================================
 bsg_mul_iterative.v
 3/14/2019, sqlin16@fudan.edu.cn
 ===================================================
 
-An 32 bits integer interative multiplier, capable of singed & unsigned division,
-with configurable stide for each iteration.
+An 32 bits integer iterative multiplier, capable of signed & unsigned division,
+with configurable stride for each iteration.
 
 States:
 
-eIDNE:          Ready for input. 
+eIDLE:          Ready for input. 
 eCAL:           Add the partial products using CSA. CPA is also used to calculate the lower bits of the result.
 eADJ:           Adjust the high part by adding a -opA if opB is negative.
 eCPA:           Recover the result by CPA.
@@ -18,26 +17,26 @@ eDONE:          Output the result
 
 Parameters:
 
-width_p:        Length of opreands
+width_p:        Length of operands
 iter_step_p:    Stride of each iteration of adding.(How many partial products are added in one iteration)
-full_output_p:  Type of results. A 64bit result will be generated with full_output_p = 1.
-output_size_lp: Length of the results, which is defined as width_p*(full_output_p+1) by default.
+full_sized_p:  Type of results. A 64bit result will be generated with full_sized_p = 1.
+output_size_lp: Length of the results, which is defined as width_p*(full_sized_p+1) by default.
 
 TODO:
   1. Removing unnecessary state eADJ from the half version of multiplier.
-  2. Using booth recode to eliminate prefix 1 from sign extension
+  2. Using booth record to eliminate prefix 1 from sign extension
 
 ************************************************************/
 module bsg_mul_iterative #(
-  parameter width_p = -1
-  ,parameter iter_step_p = -1
-  ,parameter full_output_p = 1
-  ,parameter output_size_lp = width_p*(full_output_p+1)
+  parameter integer width_p = "inv"
+  ,parameter integer iter_step_p = "inv"
+  ,parameter integer full_sized_p = 1
+  ,localparam integer output_size_lp = full_sized_p ? 2 * width_p : width_p
 )
 (
   input clk_i
   ,input reset_i
-  // shakehand signal
+  // handshake signal
   ,input v_i
   ,output ready_o
   // operands
@@ -52,15 +51,16 @@ module bsg_mul_iterative #(
   
 );
 
-  localparam integer iter_count_lp = (width_p - 1)/iter_step_p + 1; // calculate how many iterations shoubd be done.
+  localparam integer iter_count_lp = (width_p - 1)/iter_step_p + 1; // calculate how many iterations should be done.
   localparam cal_state_length_lp = `BSG_SAFE_CLOG2(iter_count_lp);  // calculate the length of counter used for eCAL state.
 
   localparam actual_width_lp = iter_count_lp * iter_step_p;         // to align the width_p, which is equal to width_p providing width_p % iter_step_p == 0.
   
   initial assert(actual_width_lp == width_p) else $error("Alignment of stride is required for configurable iteration multiplier!");
+  initial assert(actual_width_lp == 8 || actual_width_lp == 16 || actual_width_lp == 32) else $warning("Warning, condition with width_p = %d is untested!", actual_width_lp);
 
-  typedef enum [2:0] {eIDNE, eCAL, eADJ, eCPA, eDONE} state_e; // FSM states.
-  state_e current_state_r, current_state_n; // curretn state and next state.
+  typedef enum [2:0] {eIDLE, eCAL, eADJ, eCPA, eDONE} state_e; // FSM states.
+  state_e current_state_r, current_state_n; // current state and next state.
 
   wire self_is_ready = ready_o & v_i; 
   // used for reset registers. combining the reset_i and yumi_i
@@ -74,15 +74,15 @@ module bsg_mul_iterative #(
   end
   
   // FSM. And the full output version and half output version contain different states.
-  generate 
+  generate begin: FSM
     if(iter_step_p != actual_width_lp)
       always_comb begin
         unique case(current_state_r)
-          eIDNE : begin
+          eIDLE : begin
             if(self_is_ready) 
                 current_state_n = eCAL; 
             else 
-              current_state_n = eIDNE;
+              current_state_n = eIDLE;
           end
           eCAL : begin
             if(cal_state_counter_r == '1)
@@ -97,17 +97,17 @@ module bsg_mul_iterative #(
             current_state_n = eDONE;
           end
           eDONE:  current_state_n = eDONE;
-          default : current_state_n = eIDNE;
+          default : current_state_n = eIDLE;
         endcase
       end
     else
       always_comb begin
         unique case(current_state_r)
-          eIDNE : begin
+          eIDLE : begin
             if(self_is_ready) 
                 current_state_n = eCAL; 
             else 
-              current_state_n = eIDNE;
+              current_state_n = eIDLE;
           end
           eCAL : begin
             current_state_n = eADJ;
@@ -119,16 +119,17 @@ module bsg_mul_iterative #(
             current_state_n = eDONE;
           end
           eDONE:  current_state_n = eDONE;
-          default : current_state_n = eIDNE;
+          default : current_state_n = eIDLE;
         endcase
       end
+  end //FSM
   endgenerate
 
-  assign ready_o = current_state_r == eIDNE;
-  // update curren state
+  assign ready_o = current_state_r == eIDLE;
+  // update current state
   always_ff @(posedge clk_i) begin
     if(reset_internal) begin
-      current_state_r <= eIDNE;
+      current_state_r <= eIDLE;
     end
     else begin
       current_state_r <= current_state_n;
@@ -155,7 +156,7 @@ module bsg_mul_iterative #(
     end
     else begin
       unique case(current_state_r)  // latch up!
-        eIDNE: begin
+        eIDLE: begin
           if(self_is_ready) begin
             opA_r <= opA_i;
             opB_r <= opB_i;
@@ -178,17 +179,17 @@ module bsg_mul_iterative #(
   logic [actual_width_lp-1:0] cpa_opB; // operand B of CPA
   assign cpa_opt = cpa_opA + cpa_opB;
 
-  localparam csa_outout_size_lp = actual_width_lp + full_output_p * iter_step_p;
+  localparam csa_output_size_lp = actual_width_lp + full_sized_p * iter_step_p;
 
   // CSA network output.
-  logic [csa_outout_size_lp:0] csa_sum;    // sum of last CSA
-  logic [csa_outout_size_lp:0] csa_carry;  // carry of last CSA
+  logic [csa_output_size_lp:0] csa_sum;    // sum of last CSA
+  logic [csa_output_size_lp:0] csa_carry;  // carry of last CSA
 
   // CPA result remnant in last addition, which should be added in next turn.
 
   // Bits of result which can be determined in this turn are sent to CPA.
-  reg [iter_step_p-1:0] csa_sum_lowpart; //= csa_sum[iter_step_p-1:0];
-  reg [iter_step_p-1:0] csa_carry_lowpart; //= {csa_carry[iter_step_p-1:1],carry_from_cpa_in_eCAL_stage_r};
+  reg [iter_step_p-1:0] csa_sum_lowpart;
+  reg [iter_step_p-1:0] csa_carry_lowpart; 
   always_ff @(posedge clk_i) begin
     if(reset_internal) begin
       csa_sum_lowpart <= '0;
@@ -206,15 +207,15 @@ module bsg_mul_iterative #(
   reg [actual_width_lp-1:0] result_remnant_carry_r;
 
   // Output of wallace tree, which will be passed to a 4-2 CSA where they are added with result_remnant.
-  wire [csa_outout_size_lp -1:0] wallace_tree_opt_1;
-  wire [csa_outout_size_lp -1:0] wallace_tree_opt_2;
+  wire [csa_output_size_lp -1:0] wallace_tree_opt_1;
+  wire [csa_output_size_lp -1:0] wallace_tree_opt_2;
 
   // Determine cpa operands.
   always_comb begin
     unique case(current_state_r) 
-      eIDNE: begin
+      eIDLE: begin
         cpa_opA = '0;
-        cpa_opB = '0;//opB_i & {actual_width_lp{opA_neg_n}};
+        cpa_opB = '0;
       end
       eCAL : begin 
         cpa_opA = cal_state_counter_r == '0 ? opA_r & ({actual_width_lp{opB_neg_r}}) : csa_sum_lowpart;
@@ -239,7 +240,7 @@ module bsg_mul_iterative #(
     if(iter_step_p == 1) begin: NO_CSA
       bsg_adder_carry_save #(.width_p(actual_width_lp))
       csa(
-        .opA_i(opA_r & {actual_width_lp{opB_r[0]}}) // sign extension to 64bit
+        .opA_i(opA_r & {actual_width_lp{opB_r[0]}})
         ,.opB_i(result_remnant_sum_r)
         ,.opC_i(result_remnant_carry_r)
 
@@ -251,22 +252,22 @@ module bsg_mul_iterative #(
       assign wallace_tree_opt_2 = '0;
     end
     else begin: WALLACE_TREE
-      wire [iter_step_p-1:0][csa_outout_size_lp-1:0] ops;
+      wire [iter_step_p-1:0][csa_output_size_lp-1:0] ops;
       for(genvar i = 0; i < iter_step_p; ++i)
-        assign ops[i] = {opA_r & {actual_width_lp{opB_r[i]}}} << i; // sign extension to 64bit
+        assign ops[i] = {opA_r & {actual_width_lp{opB_r[i]}}} << i;
       
-      wire [csa_outout_size_lp -1:0] res_A_li;
-      wire [csa_outout_size_lp -1:0] res_B_li;
+      wire [csa_output_size_lp -1:0] res_A_li;
+      wire [csa_output_size_lp -1:0] res_B_li;
       // A full-sized wallace tree.
       bsg_adder_wallace_tree #(
-        .width_p(csa_outout_size_lp)
+        .width_p(csa_output_size_lp)
         ,.iter_step_p(iter_step_p)
-        ,.max_out_size_lp(csa_outout_size_lp)
+        ,.max_out_size_lp(csa_output_size_lp)
       )
       tree(
         .op_i(ops)
-        ,.res_A_o(res_A_li)
-        ,.res_B_o(res_B_li)
+        ,.resA_o(res_A_li)
+        ,.resB_o(res_B_li)
       );
       assign wallace_tree_opt_1 = res_A_li;
       assign wallace_tree_opt_2 = res_B_li;
@@ -274,8 +275,8 @@ module bsg_mul_iterative #(
   end
   endgenerate
   // Input of the final 4-2 CSA
-  logic [csa_outout_size_lp -1:0] csa_opA;
-  logic [csa_outout_size_lp -1:0] csa_opB;
+  logic [csa_output_size_lp -1:0] csa_opA;
+  logic [csa_output_size_lp -1:0] csa_opB;
   always_comb begin
     unique case(current_state_r)
       eCAL: begin
@@ -296,19 +297,19 @@ module bsg_mul_iterative #(
   // 4-2 CSA
 
   bsg_adder_carry_save_4_2 #(
-    .width_p(csa_outout_size_lp)
+    .width_p(csa_output_size_lp)
   )
   fa4_2(
     .opA_i(csa_opA)
     ,.opB_i(csa_opB)
-    ,.opC_i(csa_outout_size_lp'(result_remnant_sum_r))
-    ,.opD_i(csa_outout_size_lp'(result_remnant_carry_r))
+    ,.opC_i(csa_output_size_lp'(result_remnant_sum_r))
+    ,.opD_i(csa_output_size_lp'(result_remnant_carry_r))
 
-    ,.outA_o(csa_sum)
-    ,.outB_o(csa_carry)
+    ,.A_o(csa_sum)
+    ,.B_o(csa_carry)
   );
-  // Update the result and remant result.
-  generate 
+  // Update the result and remnant result.
+  generate begin: RESULT_UPDATE
     if(actual_width_lp != iter_step_p) begin: FULL
       always_ff @(posedge clk_i) begin
         if(reset_internal) begin
@@ -320,8 +321,8 @@ module bsg_mul_iterative #(
             unique case(current_state_r) 
               eCAL: begin
                 result_low_r <= {cpa_opt[iter_step_p-1:0],result_low_r[actual_width_lp-1:iter_step_p]};
-                result_remnant_sum_r <= csa_sum[csa_outout_size_lp-1:iter_step_p];
-                result_remnant_carry_r <= csa_carry[csa_outout_size_lp-1:iter_step_p];
+                result_remnant_sum_r <= csa_sum[csa_output_size_lp-1:iter_step_p];
+                result_remnant_carry_r <= csa_carry[csa_output_size_lp-1:iter_step_p];
               end
               eADJ:begin
                 result_low_r <= {cpa_opt[iter_step_p-1:0],result_low_r[actual_width_lp-1:iter_step_p]};
@@ -348,8 +349,8 @@ module bsg_mul_iterative #(
         else begin
             unique case(current_state_r) 
               eCAL: begin
-                result_remnant_sum_r <= csa_sum[csa_outout_size_lp-1:iter_step_p];
-                result_remnant_carry_r <= csa_carry[csa_outout_size_lp-1:iter_step_p];
+                result_remnant_sum_r <= csa_sum[csa_output_size_lp-1:iter_step_p];
+                result_remnant_carry_r <= csa_carry[csa_output_size_lp-1:iter_step_p];
               end
               eADJ:begin
                 result_low_r <= cpa_opt[iter_step_p-1:0];
@@ -366,15 +367,17 @@ module bsg_mul_iterative #(
         end
       end
     end
+  end //RESULT_UPDATE
   endgenerate
   
   assign v_o = current_state_r == eDONE;
 
-  generate 
-    if(full_output_p)
+  generate begin: RESULT_O
+    if(full_sized_p)
       assign result_o = {result_remnant_sum_r[actual_width_lp-1:0], result_low_r};
     else
       assign result_o = result_low_r;
+  end //RESULT_O
   endgenerate
   
 endmodule

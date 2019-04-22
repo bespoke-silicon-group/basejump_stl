@@ -1,6 +1,4 @@
-`timescale 1ps/1ps
 `define WIDTH_P 8
-
 module test_bsg;
 
 logic clk_li;
