@@ -74,56 +74,30 @@ module bsg_mul_iterative #(
   end
   
   // FSM. And the full output version and half output version contain different states.
-  generate begin: FSM
-    if(iter_step_p != actual_width_lp)
-      always_comb begin
-        unique case(current_state_r)
-          eIDLE : begin
-            if(self_is_ready) 
-                current_state_n = eCAL; 
-            else 
-              current_state_n = eIDLE;
-          end
-          eCAL : begin
-            if(cal_state_counter_r == '1)
-                current_state_n = eADJ;
-            else
-                current_state_n = eCAL;
-          end
-          eADJ: begin
-            current_state_n = eCPA;
-          end
-          eCPA : begin
-            current_state_n = eDONE;
-          end
-          eDONE:  current_state_n = eDONE;
-          default : current_state_n = eIDLE;
-        endcase
+  always_comb begin
+    unique case(current_state_r)
+      eIDLE : begin
+        if(self_is_ready) 
+            current_state_n = eCAL; 
+        else 
+          current_state_n = eIDLE;
       end
-    else
-      always_comb begin
-        unique case(current_state_r)
-          eIDLE : begin
-            if(self_is_ready) 
-                current_state_n = eCAL; 
-            else 
-              current_state_n = eIDLE;
-          end
-          eCAL : begin
+      eCAL : begin
+        if(cal_state_counter_r == '1 | iter_step_p == actual_width_lp)
             current_state_n = eADJ;
-          end
-          eADJ: begin
-            current_state_n = eCPA;
-          end
-          eCPA : begin
-            current_state_n = eDONE;
-          end
-          eDONE:  current_state_n = eDONE;
-          default : current_state_n = eIDLE;
-        endcase
+        else
+            current_state_n = eCAL;
       end
-  end //FSM
-  endgenerate
+      eADJ: begin
+        current_state_n = eCPA;
+      end
+      eCPA : begin
+        current_state_n = eDONE;
+      end
+      eDONE:  current_state_n = eDONE;
+      default : current_state_n = eIDLE;
+    endcase
+  end
 
   assign ready_o = current_state_r == eIDLE;
   // update current state
