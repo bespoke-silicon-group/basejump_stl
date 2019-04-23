@@ -67,49 +67,31 @@ wire reset_internal = reset_i | yumi_i & current_state_r == eDONE;
 
 
 // FSM
-generate begin: FSM
-  if(iter_step_p != width_p) begin: ITER_FSM
-    reg [`BSG_SAFE_CLOG2(iteration_lp)-1:0] cal_counter_r;
-    always_comb begin
-      unique case(current_state_r) 
-        eIDLE: begin
-          if(v_i) current_state_n = eCAL;
-          else current_state_n = eIDLE;
-        end
-        eCAL: begin
-          if(cal_counter_r == '1) current_state_n = eSIG;
-          else current_state_n = eCAL;
-        end
-        eSIG: current_state_n = eCPA;
-        eCPA: current_state_n = eDONE;
-        eDONE: current_state_n = eDONE;
-        default: current_state_n = eIDLE;
-      endcase
+
+reg [`BSG_SAFE_CLOG2(iteration_lp)-1:0] cal_counter_r;
+always_comb begin
+  unique case(current_state_r) 
+    eIDLE: begin
+      if(v_i) current_state_n = eCAL;
+      else current_state_n = eIDLE;
     end
-    always_ff @(posedge clk_i) begin
-      if(reset_internal)
-        cal_counter_r <= '0;
-      else if(current_state_r == eCAL) 
-        cal_counter_r <= cal_counter_r + 1;
+    eCAL: begin
+      if(cal_counter_r == '1 | iter_step_p == width_p) current_state_n = eSIG;
+      else current_state_n = eCAL;
     end
-  end
-  else begin
-    always_comb begin: ONE_CALCULATION_FSM
-      unique case(current_state_r) 
-        eIDLE: begin
-          if(v_i) current_state_n = eCAL;
-          else current_state_n = eIDLE;
-        end
-        eCAL: current_state_n = eSIG;
-        eSIG: current_state_n = eCPA;
-        eCPA: current_state_n = eDONE;
-        eDONE: current_state_n = eDONE;
-        default: current_state_n = eIDLE;
-      endcase
-    end
-  end
-end // FSM
-endgenerate 
+    eSIG: current_state_n = eCPA;
+    eCPA: current_state_n = eDONE;
+    eDONE: current_state_n = eDONE;
+    default: current_state_n = eIDLE;
+  endcase
+end
+always_ff @(posedge clk_i) begin
+  if(reset_internal)
+    cal_counter_r <= '0;
+  else if(current_state_r == eCAL) 
+    cal_counter_r <= cal_counter_r + 1;
+end
+
 
 always_ff @(posedge clk_i) begin
   if(reset_internal)
