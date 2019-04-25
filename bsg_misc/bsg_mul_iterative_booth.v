@@ -146,14 +146,15 @@ wire [booth_reg_len_lp-1:0] [width_p+1:0] sel_op_lo;
 localparam wallace_tree_width_lp = 2*width_p;
 wire [booth_reg_len_lp-1:0][wallace_tree_width_lp-1:0] wallace_input;
 
-generate begin: WALLACE_TREE_INPUT
+generate begin
   assign wallace_input[0] = {{(width_p - 2){sel_op_lo[0][width_p+1]}},sel_op_lo[0]};
-  for(genvar i = 1; i < booth_reg_len_lp; ++i)
+  for(genvar i = 1; i < booth_reg_len_lp; ++i) begin: WALLACE_TREE_INPUT
     assign wallace_input[i] = {{(width_p - 2*i - 2){sel_op_lo[i][width_p+1]}},sel_op_lo[i],(2*i)'(0)}; 
-end // WALLACE_TREE_INPUT
+  end // WALLACE_TREE_INPUT
+end 
 endgenerate
 
-generate begin: GENERATE_BOOTH_ENCODER
+generate begin
   for(genvar i = 0; i <booth_reg_len_lp; ++i) begin: BOOTH_ENCODER
     bsg_booth_encoder #(
       .width_p(width_p+1)
@@ -163,8 +164,8 @@ generate begin: GENERATE_BOOTH_ENCODER
       ,.neg_op_i(neg_opB_r)
       ,.sel_op_o(sel_op_lo[i])
     );
-  end
-end //GENERATE_BOOTH_ENCODER
+  end // BOOTH_ENCODER
+end 
 endgenerate
 
 wire [wallace_tree_width_lp-1:0] w_resA;
