@@ -18,7 +18,6 @@ simv:
 	$(BSG_RTL_SRC_DIR)/bsg_mul_iterative.v \
 	./test_bsg.v 
 
-	./simv
 	
 
 test_bsg_for_synthesis.v:
