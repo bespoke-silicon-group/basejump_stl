@@ -18,10 +18,10 @@ module bsg_adder_carry_save #(parameter integer width_p = "inv")(
   ,output [width_p-1:0] res_o
   ,output [width_p-1:0] car_o
 );
-  generate begin: GENERATE_CSA
+  generate begin
     for(genvar i = 0; i < width_p; i++) begin : EACH_CSA
       assign {car_o[i], res_o[i]} = opA_i[i] + opB_i[i] + opC_i[i];
     end
-  end // GENERATE_CSA
+  end
   endgenerate
 endmodule
