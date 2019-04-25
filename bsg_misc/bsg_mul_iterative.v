@@ -210,7 +210,7 @@ module bsg_mul_iterative #(
     endcase
   end
 
-  generate begin: ADDER_TREE_BLOCK
+  generate begin
     if(iter_step_p == 1) begin: NO_CSA
       bsg_adder_carry_save #(.width_p(actual_width_lp))
       csa(
@@ -224,11 +224,12 @@ module bsg_mul_iterative #(
       assign csa_carry[0] = cpa_opt[iter_step_p];
       assign wallace_tree_opt_1 = '0;
       assign wallace_tree_opt_2 = '0;
-    end
+    end //NO_CSA
     else begin: WALLACE_TREE
       wire [iter_step_p-1:0][csa_output_size_lp-1:0] ops;
-      for(genvar i = 0; i < iter_step_p; ++i)
+      for(genvar i = 0; i < iter_step_p; ++i) begin: WT_INPUT
         assign ops[i] = {opA_r & {actual_width_lp{opB_r[i]}}} << i;
+      end // WT_INPUT
       
       wire [csa_output_size_lp -1:0] res_A_li;
       wire [csa_output_size_lp -1:0] res_B_li;
@@ -245,7 +246,7 @@ module bsg_mul_iterative #(
       );
       assign wallace_tree_opt_1 = res_A_li;
       assign wallace_tree_opt_2 = res_B_li;
-    end
+    end //WALLACE_TREE
   end
   endgenerate
   // Input of the final 4-2 CSA
@@ -283,8 +284,8 @@ module bsg_mul_iterative #(
     ,.B_o(csa_carry)
   );
   // Update the result and remnant result.
-  generate begin: RESULT_UPDATE
-    if(actual_width_lp != iter_step_p) begin: FULL
+  generate begin
+    if(actual_width_lp != iter_step_p) begin
       always_ff @(posedge clk_i) begin
         if(reset_internal) begin
           result_low_r <= '0;
@@ -341,17 +342,19 @@ module bsg_mul_iterative #(
         end
       end
     end
-  end //RESULT_UPDATE
+  end
   endgenerate
   
   assign v_o = current_state_r == eDONE;
 
-  generate begin: RESULT_O
-    if(full_sized_p)
+  generate begin
+    if(full_sized_p) begin: FULL_RESULT_O
       assign result_o = {result_remnant_sum_r[actual_width_lp-1:0], result_low_r};
-    else
+    end //FULL_RESULT_O
+    else begin: HALF_RESULT_O
       assign result_o = result_low_r;
-  end //RESULT_O
+    end //HALF_RESULT_O
+  end
   endgenerate
   
 endmodule
