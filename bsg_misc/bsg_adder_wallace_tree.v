@@ -34,7 +34,7 @@ module bsg_adder_wallace_tree #(
     assign resB_o = op_i[1];
   end //NO_WALLACE_TREE
   else begin: WALLACE_TREE_4_2 
-    wire [max_out_size_lp - 1:0] all_wire[actual_iter_step*2 - 2];
+    wire [actual_iter_step*2 - 3:0] [max_out_size_lp - 1:0] all_wire;
     assign resA_o = all_wire[0];
     assign resB_o = all_wire[1];
     for(genvar i = 0; i < actual_iter_step; ++i) begin: CONNECTING_INPUT
