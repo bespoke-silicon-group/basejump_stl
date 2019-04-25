@@ -24,52 +24,49 @@ module bsg_adder_wallace_tree #(
 );
   localparam actual_iter_step = 2**`BSG_SAFE_CLOG2(iter_step_p);
   localparam level_num_lp = `BSG_SAFE_CLOG2(actual_iter_step) - 1;
-  generate begin
-    if (actual_iter_step == 1) begin: CAN_NOT_GENERATE
-      initial $error("There is no need to use wallace_tree for iter_step_p=%d.",iter_step_p);
-      assign resA_o = '0;
-      assign resB_o = '0;
-    end //CAN_NOT_GENERATE
-    else if(actual_iter_step == 2) begin: NO_WALLACE_TREE
-      assign resA_o = op_i[0];
-      assign resB_o = op_i[1];
-    end //NO_WALLACE_TREE
-    else begin: WALLACE_TREE_4_2 
-      wire [max_out_size_lp - 1:0] all_wire[actual_iter_step*2 - 2];
-      assign resA_o = all_wire[0];
-      assign resB_o = all_wire[1];
-      for(genvar i = 0; i < actual_iter_step; ++i) begin: CONNECTING_INPUT
-        if(i < iter_step_p)
-          assign all_wire[actual_iter_step - 2 + i] = op_i[i];
-        else
-          assign all_wire[actual_iter_step - 2 + i] = '0;
-      end //CONNECTING_INPUT
-      for(genvar i = 0; i < actual_iter_step/2 - 1; ++i) begin: GENERATE_CSA
-        if (max_out_size_lp == `BSG_SAFE_CLOG2(actual_iter_step) + width_p - 1)
-          bsg_adder_carry_save_4_2 #(.width_p(max_out_size_lp - (`BSG_SAFE_CLOG2(i + 2) - 1)))
-          csa_4_2
-          (
-            .opA_i(all_wire[4*i + 5])
-            ,.opB_i(all_wire[4*i + 4])
-            ,.opC_i(all_wire[4*i + 3])
-            ,.opD_i(all_wire[4*i + 2])
-            ,.A_o(all_wire[2*i + 1])
-            ,.B_o(all_wire[2*i])
-          );
-        else 
-          bsg_adder_carry_save_4_2 #(.width_p(max_out_size_lp))
-          csa_4_2
-          (
-            .opA_i(all_wire[4*i + 5])
-            ,.opB_i(all_wire[4*i + 4])
-            ,.opC_i(all_wire[4*i + 3])
-            ,.opD_i(all_wire[4*i + 2])
-            ,.A_o(all_wire[2*i + 1])
-            ,.B_o(all_wire[2*i])
-          );
-      end //GENERATE_CSA
-    end //WALLACE_TREE_4_2
-  end
-  endgenerate
+  if (actual_iter_step == 1) begin: CAN_NOT_GENERATE
+    initial $error("There is no need to use wallace_tree for iter_step_p=%d.",iter_step_p);
+    assign resA_o = '0;
+    assign resB_o = '0;
+  end //CAN_NOT_GENERATE
+  else if(actual_iter_step == 2) begin: NO_WALLACE_TREE
+    assign resA_o = op_i[0];
+    assign resB_o = op_i[1];
+  end //NO_WALLACE_TREE
+  else begin: WALLACE_TREE_4_2 
+    wire [max_out_size_lp - 1:0] all_wire[actual_iter_step*2 - 2];
+    assign resA_o = all_wire[0];
+    assign resB_o = all_wire[1];
+    for(genvar i = 0; i < actual_iter_step; ++i) begin: CONNECTING_INPUT
+      if(i < iter_step_p)
+        assign all_wire[actual_iter_step - 2 + i] = op_i[i];
+      else
+        assign all_wire[actual_iter_step - 2 + i] = '0;
+    end //CONNECTING_INPUT
+    for(genvar i = 0; i < actual_iter_step/2 - 1; ++i) begin: GENERATE_CSA
+      if (max_out_size_lp == `BSG_SAFE_CLOG2(actual_iter_step) + width_p - 1)
+        bsg_adder_carry_save_4_2 #(.width_p(max_out_size_lp - (`BSG_SAFE_CLOG2(i + 2) - 1)))
+        csa_4_2
+        (
+          .opA_i(all_wire[4*i + 5])
+          ,.opB_i(all_wire[4*i + 4])
+          ,.opC_i(all_wire[4*i + 3])
+          ,.opD_i(all_wire[4*i + 2])
+          ,.A_o(all_wire[2*i + 1])
+          ,.B_o(all_wire[2*i])
+        );
+      else 
+        bsg_adder_carry_save_4_2 #(.width_p(max_out_size_lp))
+        csa_4_2
+        (
+          .opA_i(all_wire[4*i + 5])
+          ,.opB_i(all_wire[4*i + 4])
+          ,.opC_i(all_wire[4*i + 3])
+          ,.opD_i(all_wire[4*i + 2])
+          ,.A_o(all_wire[2*i + 1])
+          ,.B_o(all_wire[2*i])
+        );
+    end //GENERATE_CSA
+  end //WALLACE_TREE_4_2
 endmodule
 
