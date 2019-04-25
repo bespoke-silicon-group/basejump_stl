@@ -146,27 +146,21 @@ wire [booth_reg_len_lp-1:0] [width_p+1:0] sel_op_lo;
 localparam wallace_tree_width_lp = 2*width_p;
 wire [booth_reg_len_lp-1:0][wallace_tree_width_lp-1:0] wallace_input;
 
-generate begin
-  assign wallace_input[0] = {{(width_p - 2){sel_op_lo[0][width_p+1]}},sel_op_lo[0]};
-  for(genvar i = 1; i < booth_reg_len_lp; ++i) begin: WALLACE_TREE_INPUT
-    assign wallace_input[i] = {{(width_p - 2*i - 2){sel_op_lo[i][width_p+1]}},sel_op_lo[i],(2*i)'(0)}; 
-  end // WALLACE_TREE_INPUT
-end 
-endgenerate
+assign wallace_input[0] = {{(width_p - 2){sel_op_lo[0][width_p+1]}},sel_op_lo[0]};
+for(genvar i = 1; i < booth_reg_len_lp; ++i) begin: WALLACE_TREE_INPUT
+  assign wallace_input[i] = {{(width_p - 2*i - 2){sel_op_lo[i][width_p+1]}},sel_op_lo[i],(2*i)'(0)}; 
+end // WALLACE_TREE_INPUT
 
-generate begin
-  for(genvar i = 0; i <booth_reg_len_lp; ++i) begin: BOOTH_ENCODER
-    bsg_booth_encoder #(
-      .width_p(width_p+1)
-    )enc(
-      .source_bits_i(opA_r[2*i+:3])
-      ,.pos_op_i(opB_r)
-      ,.neg_op_i(neg_opB_r)
-      ,.sel_op_o(sel_op_lo[i])
-    );
-  end // BOOTH_ENCODER
-end 
-endgenerate
+for(genvar i = 0; i <booth_reg_len_lp; ++i) begin: BOOTH_ENCODER
+  bsg_booth_encoder #(
+    .width_p(width_p+1)
+  )enc(
+    .source_bits_i(opA_r[2*i+:3])
+    ,.pos_op_i(opB_r)
+    ,.neg_op_i(neg_opB_r)
+    ,.sel_op_o(sel_op_lo[i])
+  );
+end // BOOTH_ENCODER
 
 wire [wallace_tree_width_lp-1:0] w_resA;
 wire [wallace_tree_width_lp-1:0] w_resB;
@@ -287,7 +281,7 @@ always_comb unique case(current_state_r)
 endcase
 
 reg [width_p-1:0] result_low_r;
-generate if(iter_step_p != width_p)
+if(iter_step_p != width_p)
   always_ff @(posedge clk_i) begin
     if(reset_internal) begin
       result_low_r <= '0;
@@ -321,7 +315,6 @@ else
       end
     endcase
   end
-endgenerate
 assign ready_o = current_state_r == eIDLE;
 assign v_o = current_state_r == eDONE;
 
