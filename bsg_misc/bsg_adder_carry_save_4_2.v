@@ -10,8 +10,8 @@ module bsg_adder_carry_save_4_2 #(parameter integer width_p = "inv")
   ,input [width_p-1:0] opC_i
   ,input [width_p-1:0] opD_i
 
-  ,output [width_p:0] A_o
-  ,output [width_p:0] B_o
+  ,output [width_p-1:0] A_o
+  ,output [width_p-1:0] B_o
 );
   wire [width_p-1:0] fa1_res_lo;
   wire [width_p-1:0] fa1_car_lo;
@@ -24,15 +24,16 @@ module bsg_adder_carry_save_4_2 #(parameter integer width_p = "inv")
     ,.res_o(fa1_res_lo)
     ,.car_o(fa1_car_lo)
   );
-
-  bsg_adder_carry_save #(.width_p(width_p + 1))
+  wire [width_p-1:0] fa2_car_o;
+  bsg_adder_carry_save #(.width_p(width_p))
   fa2
   (
-    .opA_i({1'b0,fa1_res_lo})
-    ,.opB_i({fa1_car_lo,1'b0})
-    ,.opC_i({1'b0,opD_i})
-    ,.res_o(A_o[width_p:0])
-    ,.car_o(B_o[width_p:1])
+    .opA_i(fa1_res_lo)
+    ,.opB_i({fa1_car_lo[width_p-2:0],1'b0})
+    ,.opC_i(opD_i)
+    ,.res_o(A_o[width_p-1:0])
+    ,.car_o(fa2_car_o)
   );
+  assign B_o[width_p-1:1] = fa2_car_o[width_p-2:0];
   assign B_o[0] = 1'b0;
 endmodule

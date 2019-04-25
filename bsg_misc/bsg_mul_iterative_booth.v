@@ -189,8 +189,8 @@ bsg_adder_carry_save_4_2 #(
 ) csa_acc(
   .opA_i(csa_opA)
   ,.opB_i(csa_opB)
-  ,.opC_i(csa_acc_opA_r)
-  ,.opD_i(csa_acc_opB_r)
+  ,.opC_i({{iter_step_p{1'b0}},csa_acc_opA_r})
+  ,.opD_i({{iter_step_p{1'b0}},csa_acc_opB_r})
 
   ,.A_o(csa_optA)
   ,.B_o(csa_optB)

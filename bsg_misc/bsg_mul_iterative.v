@@ -277,8 +277,8 @@ module bsg_mul_iterative #(
     ,.opC_i(csa_output_size_lp'(result_remnant_sum_r))
     ,.opD_i(csa_output_size_lp'(result_remnant_carry_r))
 
-    ,.A_o(csa_sum)
-    ,.B_o(csa_carry)
+    ,.A_o(csa_sum[csa_output_size_lp-1:0])
+    ,.B_o(csa_carry[csa_output_size_lp-1:0])
   );
   // Update the result and remnant result.
   if(actual_width_lp != iter_step_p) begin
