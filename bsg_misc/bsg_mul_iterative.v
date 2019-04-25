@@ -210,45 +210,42 @@ module bsg_mul_iterative #(
     endcase
   end
 
-  generate begin
-    if(iter_step_p == 1) begin: NO_CSA
-      bsg_adder_carry_save #(.width_p(actual_width_lp))
-      csa(
-        .opA_i(opA_r & {actual_width_lp{opB_r[0]}})
-        ,.opB_i(result_remnant_sum_r)
-        ,.opC_i(result_remnant_carry_r)
+  if(iter_step_p == 1) begin: NO_CSA
+    bsg_adder_carry_save #(.width_p(actual_width_lp))
+    csa(
+      .opA_i(opA_r & {actual_width_lp{opB_r[0]}})
+      ,.opB_i(result_remnant_sum_r)
+      ,.opC_i(result_remnant_carry_r)
 
-        ,.res_o(csa_sum)
-        ,.car_o(csa_carry[actual_width_lp:1])
-      );
-      assign csa_carry[0] = cpa_opt[iter_step_p];
-      assign wallace_tree_opt_1 = '0;
-      assign wallace_tree_opt_2 = '0;
-    end //NO_CSA
-    else begin: WALLACE_TREE
-      wire [iter_step_p-1:0][csa_output_size_lp-1:0] ops;
-      for(genvar i = 0; i < iter_step_p; ++i) begin: WT_INPUT
-        assign ops[i] = {opA_r & {actual_width_lp{opB_r[i]}}} << i;
-      end // WT_INPUT
-      
-      wire [csa_output_size_lp -1:0] res_A_li;
-      wire [csa_output_size_lp -1:0] res_B_li;
-      // A full-sized wallace tree.
-      bsg_adder_wallace_tree #(
-        .width_p(csa_output_size_lp)
-        ,.iter_step_p(iter_step_p)
-        ,.max_out_size_lp(csa_output_size_lp)
-      )
-      tree(
-        .op_i(ops)
-        ,.resA_o(res_A_li)
-        ,.resB_o(res_B_li)
-      );
-      assign wallace_tree_opt_1 = res_A_li;
-      assign wallace_tree_opt_2 = res_B_li;
-    end //WALLACE_TREE
-  end
-  endgenerate
+      ,.res_o(csa_sum)
+      ,.car_o(csa_carry[actual_width_lp:1])
+    );
+    assign csa_carry[0] = cpa_opt[iter_step_p];
+    assign wallace_tree_opt_1 = '0;
+    assign wallace_tree_opt_2 = '0;
+  end //NO_CSA
+  else begin: WALLACE_TREE
+    wire [iter_step_p-1:0][csa_output_size_lp-1:0] ops;
+    for(genvar i = 0; i < iter_step_p; ++i) begin: WT_INPUT
+      assign ops[i] = {opA_r & {actual_width_lp{opB_r[i]}}} << i;
+    end // WT_INPUT
+    
+    wire [csa_output_size_lp -1:0] res_A_li;
+    wire [csa_output_size_lp -1:0] res_B_li;
+    // A full-sized wallace tree.
+    bsg_adder_wallace_tree #(
+      .width_p(csa_output_size_lp)
+      ,.iter_step_p(iter_step_p)
+      ,.max_out_size_lp(csa_output_size_lp)
+    )
+    tree(
+      .op_i(ops)
+      ,.resA_o(res_A_li)
+      ,.resB_o(res_B_li)
+    );
+    assign wallace_tree_opt_1 = res_A_li;
+    assign wallace_tree_opt_2 = res_B_li;
+  end //WALLACE_TREE
   // Input of the final 4-2 CSA
   logic [csa_output_size_lp -1:0] csa_opA;
   logic [csa_output_size_lp -1:0] csa_opB;
@@ -284,78 +281,72 @@ module bsg_mul_iterative #(
     ,.B_o(csa_carry)
   );
   // Update the result and remnant result.
-  generate begin
-    if(actual_width_lp != iter_step_p) begin
-      always_ff @(posedge clk_i) begin
-        if(reset_internal) begin
-          result_low_r <= '0;
-          result_remnant_carry_r <= '0;
-          result_remnant_sum_r <= '0;
-        end
-        else begin
-            unique case(current_state_r) 
-              eCAL: begin
-                result_low_r <= {cpa_opt[iter_step_p-1:0],result_low_r[actual_width_lp-1:iter_step_p]};
-                result_remnant_sum_r <= csa_sum[csa_output_size_lp-1:iter_step_p];
-                result_remnant_carry_r <= csa_carry[csa_output_size_lp-1:iter_step_p];
-              end
-              eADJ:begin
-                result_low_r <= {cpa_opt[iter_step_p-1:0],result_low_r[actual_width_lp-1:iter_step_p]};
-                result_remnant_sum_r <= csa_sum[actual_width_lp-1:0];
-                result_remnant_carry_r <= {csa_carry[actual_width_lp-1:1], cpa_opt[iter_step_p]};
-              end
-              eCPA: begin
-                result_remnant_sum_r <= cpa_opt;
-              end
-              default: begin
-
-              end
-            endcase
-        end
+  if(actual_width_lp != iter_step_p) begin
+    always_ff @(posedge clk_i) begin
+      if(reset_internal) begin
+        result_low_r <= '0;
+        result_remnant_carry_r <= '0;
+        result_remnant_sum_r <= '0;
       end
-    end
-    else begin
-      always_ff @(posedge clk_i) begin
-        if(reset_internal) begin
-          result_low_r <= '0;
-          result_remnant_carry_r <= '0;
-          result_remnant_sum_r <= '0;
-        end
-        else begin
-            unique case(current_state_r) 
-              eCAL: begin
-                result_remnant_sum_r <= csa_sum[csa_output_size_lp-1:iter_step_p];
-                result_remnant_carry_r <= csa_carry[csa_output_size_lp-1:iter_step_p];
-              end
-              eADJ:begin
-                result_low_r <= cpa_opt[iter_step_p-1:0];
-                result_remnant_sum_r <= csa_sum[actual_width_lp-1:0];
-                result_remnant_carry_r <= {csa_carry[actual_width_lp-1:1], cpa_opt[iter_step_p]};
-              end
-              eCPA: begin
-                result_remnant_sum_r <= cpa_opt;
-              end
-              default: begin
+      else begin
+          unique case(current_state_r) 
+            eCAL: begin
+              result_low_r <= {cpa_opt[iter_step_p-1:0],result_low_r[actual_width_lp-1:iter_step_p]};
+              result_remnant_sum_r <= csa_sum[csa_output_size_lp-1:iter_step_p];
+              result_remnant_carry_r <= csa_carry[csa_output_size_lp-1:iter_step_p];
+            end
+            eADJ:begin
+              result_low_r <= {cpa_opt[iter_step_p-1:0],result_low_r[actual_width_lp-1:iter_step_p]};
+              result_remnant_sum_r <= csa_sum[actual_width_lp-1:0];
+              result_remnant_carry_r <= {csa_carry[actual_width_lp-1:1], cpa_opt[iter_step_p]};
+            end
+            eCPA: begin
+              result_remnant_sum_r <= cpa_opt;
+            end
+            default: begin
 
-              end
-            endcase
-        end
+            end
+          endcase
       end
     end
   end
-  endgenerate
+  else begin
+    always_ff @(posedge clk_i) begin
+      if(reset_internal) begin
+        result_low_r <= '0;
+        result_remnant_carry_r <= '0;
+        result_remnant_sum_r <= '0;
+      end
+      else begin
+          unique case(current_state_r) 
+            eCAL: begin
+              result_remnant_sum_r <= csa_sum[csa_output_size_lp-1:iter_step_p];
+              result_remnant_carry_r <= csa_carry[csa_output_size_lp-1:iter_step_p];
+            end
+            eADJ:begin
+              result_low_r <= cpa_opt[iter_step_p-1:0];
+              result_remnant_sum_r <= csa_sum[actual_width_lp-1:0];
+              result_remnant_carry_r <= {csa_carry[actual_width_lp-1:1], cpa_opt[iter_step_p]};
+            end
+            eCPA: begin
+              result_remnant_sum_r <= cpa_opt;
+            end
+            default: begin
+
+            end
+          endcase
+      end
+    end
+  end
   
   assign v_o = current_state_r == eDONE;
 
-  generate begin
-    if(full_sized_p) begin: FULL_RESULT_O
-      assign result_o = {result_remnant_sum_r[actual_width_lp-1:0], result_low_r};
-    end //FULL_RESULT_O
-    else begin: HALF_RESULT_O
-      assign result_o = result_low_r;
-    end //HALF_RESULT_O
-  end
-  endgenerate
+  if(full_sized_p) begin: FULL_RESULT_O
+    assign result_o = {result_remnant_sum_r[actual_width_lp-1:0], result_low_r};
+  end //FULL_RESULT_O
+  else begin: HALF_RESULT_O
+    assign result_o = result_low_r;
+  end //HALF_RESULT_O
   
 endmodule
 
