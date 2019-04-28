@@ -62,8 +62,6 @@ bsg_fpu_add_sub #(
   ,.invalid_o(invalid)
   ,.overflow_o(overflow)
   ,.underflow_o(underflow)
-  ,.wr_en_2_o()
-  ,.wr_en_3_o()
 );
 
 logic [ring_width_p-1:0] tr_data_li;

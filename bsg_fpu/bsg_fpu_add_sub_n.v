@@ -28,12 +28,15 @@ module bsg_fpu_add_sub_n
     , output logic overflow_o
     , output logic underflow_o
     , input yumi_i
-
   );
 
   // pipeline states/signals
   logic v_1_r, v_2_r, v_3_r;
-  logic v_1_n, v_2_n, v_3_n;
+
+  logic stall;
+  assign stall = v_3_r & ~yumi_i;
+  assign v_o = v_3_r;
+  assign ready_o = ~stall;
 
   // preprocessors
   logic a_zero, a_nan, a_sig_nan, a_infty, exp_a_zero, a_denormal;
@@ -160,88 +163,32 @@ module bsg_fpu_add_sub_n
   logic a_infty_1_r, b_infty_1_r;
   logic a_denormal_1_r, b_denormal_1_r;
 
-  logic final_sign_1_n;
-  logic do_sub_1_n;
-  logic [e_p:0] larger_exp_1_n;
-  logic [m_p+3:0] smaller_exp_man_shifted_1_n;
-  logic [m_p+3:0] larger_exp_man_padded_1_n;
-  logic a_sig_nan_1_n, b_sig_nan_1_n;
-  logic a_nan_1_n, b_nan_1_n;
-  logic a_infty_1_n, b_infty_1_n;
-  logic a_denormal_1_n, b_denormal_1_n;
-
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      v_1_r <= 0;
-      final_sign_1_r <= 0;
-      do_sub_1_r <= 0;
-      larger_exp_1_r <= 0;
-      smaller_exp_man_shifted_1_r <= 0;
-      larger_exp_man_padded_1_r <= 0;
-      a_sig_nan_1_r <= 0;
-      b_sig_nan_1_r <= 0;
-      a_nan_1_r <= 0;
-      b_nan_1_r <= 0;
-      a_infty_1_r <= 0;
-      b_infty_1_r <= 0;
-      a_denormal_1_r <= 0;
-      b_denormal_1_r <= 0;
+      v_1_r <= 1'b0;
     end
     else begin
-      v_1_r <= v_1_n;
-      final_sign_1_r <= final_sign_1_n;
-      do_sub_1_r <= do_sub_1_n;
-      larger_exp_1_r <= larger_exp_1_n;
-      smaller_exp_man_shifted_1_r <= smaller_exp_man_shifted_1_n;
-      larger_exp_man_padded_1_r <= larger_exp_man_padded_1_n;
-      a_sig_nan_1_r <= a_sig_nan_1_n;
-      b_sig_nan_1_r <= b_sig_nan_1_n;
-      a_nan_1_r <= a_nan_1_n;
-      b_nan_1_r <= b_nan_1_n;
-      a_infty_1_r <= a_infty_1_n;
-      b_infty_1_r <= b_infty_1_n;
-      a_denormal_1_r <= a_denormal_1_n;
-      b_denormal_1_r <= b_denormal_1_n;
+      if (ready_o) begin
+        v_1_r <= v_i;
+        if (v_i) begin
+          final_sign_1_r <= final_sign;
+          do_sub_1_r <= do_sub;
+          larger_exp_1_r <= larger_exp;
+          smaller_exp_man_shifted_1_r <= smaller_exp_man_shifted;
+          larger_exp_man_padded_1_r <= larger_exp_man_padded;
+          a_sig_nan_1_r <= a_sig_nan;
+          b_sig_nan_1_r <= b_sig_nan;
+          a_nan_1_r <= a_nan;
+          b_nan_1_r <= b_nan;
+          a_infty_1_r <= a_infty;
+          b_infty_1_r <= b_infty;
+          a_denormal_1_r <= a_denormal;
+          b_denormal_1_r <= b_denormal;
+        end
+      end
     end
   end
 
-  always_comb begin
-    ready_o = ((v_1_r & wr_en_2_o) | (~v_1_r));
-    if (ready_o) begin
-      v_1_n = v_i;
-      final_sign_1_n = final_sign;
-      do_sub_1_n = do_sub;
-      larger_exp_1_n = larger_exp;
-      smaller_exp_man_shifted_1_n = smaller_exp_man_shifted;
-      larger_exp_man_padded_1_n = larger_exp_man_padded;
-      a_sig_nan_1_n = a_sig_nan;
-      b_sig_nan_1_n = b_sig_nan;
-      a_nan_1_n = a_nan;
-      b_nan_1_n = b_nan;
-      a_infty_1_n = a_infty;
-      b_infty_1_n = b_infty;
-      a_denormal_1_n = a_denormal;
-      b_denormal_1_n = b_denormal;
-    end
-    else begin
-      v_1_n = v_1_r;
-      final_sign_1_n = final_sign_1_r;
-      do_sub_1_n = do_sub_1_r;
-      larger_exp_1_n = larger_exp_1_r;
-      smaller_exp_man_shifted_1_n = smaller_exp_man_shifted_1_r;
-      larger_exp_man_padded_1_n = larger_exp_man_padded_1_r;
-      a_sig_nan_1_n = a_sig_nan_1_r;
-      b_sig_nan_1_n = b_sig_nan_1_r;
-      a_nan_1_n = a_nan_1_r;
-      b_nan_1_n = b_nan_1_r;
-      a_infty_1_n = a_infty_1_r;
-      b_infty_1_n = b_infty_1_r;
-      a_denormal_1_n = a_denormal_1_r;
-      b_denormal_1_n = b_denormal_1_r;
-    end
-  end
-
-  //////////////////////////////////////////////////
  
   // which mantissa has smaller magnitude?
   logic larger_exp_man_less;
@@ -282,83 +229,30 @@ module bsg_fpu_add_sub_n
   logic do_sub_2_r;
   logic a_denormal_2_r, b_denormal_2_r;
 
-  logic [e_p-1:0] larger_exp_2_n;
-  logic [m_p+4:0] adder_output_2_n;
-  logic final_sign_2_n;
-  logic a_sig_nan_2_n, b_sig_nan_2_n;
-  logic a_nan_2_n, b_nan_2_n;
-  logic a_infty_2_n, b_infty_2_n;
-  logic do_sub_2_n;
-  logic a_denormal_2_n, b_denormal_2_n;
-
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      v_2_r <= 0;
-      larger_exp_2_r <= 0;
-      adder_output_2_r <= 0;
-      final_sign_2_r <= 0;
-      do_sub_2_r <= 0;
-      a_sig_nan_2_r <= 0;
-      b_sig_nan_2_r <= 0;
-      a_nan_2_r <= 0;
-      b_nan_2_r <= 0;
-      a_infty_2_r <= 0;
-      b_infty_2_r <= 0;
-      a_denormal_2_r <= 0;
-      b_denormal_2_r <= 0;	
+      v_2_r <= 1'b0;
     end
     else begin
-      v_2_r <= v_2_n;
-      larger_exp_2_r <= larger_exp_2_n;
-      adder_output_2_r <= adder_output_2_n;
-      final_sign_2_r <= final_sign_2_n;
-      do_sub_2_r <= do_sub_2_n;
-      a_sig_nan_2_r <= a_sig_nan_2_n;
-      b_sig_nan_2_r <= b_sig_nan_2_n;
-      a_nan_2_r <= a_nan_2_n;
-      b_nan_2_r <= b_nan_2_n;
-      a_infty_2_r <= a_infty_2_n;
-      b_infty_2_r <= b_infty_2_n;
-      a_denormal_2_r <= a_denormal_2_n;
-      b_denormal_2_r <= b_denormal_2_n;
+      if (~stall) begin
+        v_2_r <= v_1_r;
+        if (v_1_r) begin
+          larger_exp_2_r <= larger_exp_1_r;
+          adder_output_2_r <= adder_output;
+          final_sign_2_r <= final_sign_1_r;
+          do_sub_2_r <= do_sub_1_r;
+          a_sig_nan_2_r <= a_sig_nan_1_r;
+          b_sig_nan_2_r <= b_sig_nan_1_r;
+          a_nan_2_r <= a_nan_1_r;
+          b_nan_2_r <= b_nan_1_r;
+          a_infty_2_r <= a_infty_1_r;
+          b_infty_2_r <= b_infty_1_r;
+          a_denormal_2_r <= a_denormal_1_r;
+          b_denormal_2_r <= b_denormal_1_r;
+        end
+      end
     end
   end
-
-  always_comb begin
-    wr_en_2_o = ((~v_2_r & v_1_r) | (v_2_r & wr_en_3_o)); 
-    if (wr_en_2_o) begin
-      v_2_n = v_1_r;
-      larger_exp_2_n = larger_exp_1_r;
-      adder_output_2_n = adder_output;
-      final_sign_2_n = final_sign_1_r;
-      do_sub_2_n = do_sub_1_r;
-      a_sig_nan_2_n = a_sig_nan_1_r;
-      b_sig_nan_2_n = b_sig_nan_1_r;
-      a_nan_2_n = a_nan_1_r;
-      b_nan_2_n = b_nan_1_r;
-      a_infty_2_n = a_infty_1_r;
-      b_infty_2_n = b_infty_1_r;
-      a_denormal_2_n = a_denormal_1_r;
-      b_denormal_2_n = b_denormal_1_r;
-    end
-    else begin
-      v_2_n = v_2_r;
-      larger_exp_2_n = larger_exp_2_r;
-      adder_output_2_n = adder_output_2_r;
-      final_sign_2_n = final_sign_2_r;
-      do_sub_2_n = do_sub_2_r;
-      a_sig_nan_2_n = a_sig_nan_2_r;
-      b_sig_nan_2_n = b_sig_nan_2_r;
-      a_nan_2_n = a_nan_2_r;
-      b_nan_2_n = b_nan_2_r;
-      a_infty_2_n = a_infty_2_r;
-      b_infty_2_n = b_infty_2_r;
-      a_denormal_2_n = a_denormal_2_r;
-      b_denormal_2_n = b_denormal_2_r;
-    end
-  end
-
-  ///////////////////////////////////////////////////
 
   // count leading zero
   logic [`BSG_SAFE_CLOG2(m_p+5)-1:0] num_zero;
@@ -427,81 +321,30 @@ module bsg_fpu_add_sub_n
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      v_3_r <= 0;
-      pre_roundup_3_r <= 0;
-      round_up_3_r <= 0;
-      all_zero_3_r <= 0;
-      a_sig_nan_3_r <= 0;
-      b_sig_nan_3_r <= 0;
-      a_nan_3_r <= 0;
-      b_nan_3_r <= 0;
-      a_infty_3_r <= 0;
-      b_infty_3_r <= 0;
-      do_sub_3_r <= 0;
-      a_denormal_3_r <= 0;
-      b_denormal_3_r <= 0;
-      adjusted_exp_cout_3_r <= 0;
-      final_sign_3_r <= 0;
+      v_3_r <= 1'b0;
     end
     else begin
-      v_3_r <= v_3_n;
-      pre_roundup_3_r <= pre_roundup_3_n;
-      round_up_3_r <= round_up_3_n;
-      all_zero_3_r <= all_zero_3_n;
-      a_sig_nan_3_r <= a_sig_nan_3_n;
-      b_sig_nan_3_r <= b_sig_nan_3_n;
-      a_nan_3_r <= a_nan_3_n;
-      b_nan_3_r <= b_nan_3_n;
-      a_infty_3_r <= a_infty_3_n;
-      b_infty_3_r <= b_infty_3_n;
-      do_sub_3_r <= do_sub_3_n;
-      a_denormal_3_r <= a_denormal_3_n;
-      b_denormal_3_r <= b_denormal_3_n;
-      adjusted_exp_cout_3_r <= adjusted_exp_cout_3_n;
-      final_sign_3_r <= final_sign_3_n;	
+      if (~stall) begin
+        v_3_r <= v_2_r;
+        if (v_2_r) begin
+          pre_roundup_3_r <= pre_roundup;
+          round_up_3_r <= round_up;
+          all_zero_3_r <= all_zero;
+          a_sig_nan_3_r <= a_sig_nan_2_r;
+          b_sig_nan_3_r <= b_sig_nan_2_r;
+          a_nan_3_r <= a_nan_2_r;
+          b_nan_3_r <= b_nan_2_r;
+          a_infty_3_r <= a_infty_2_r;
+          b_infty_3_r <= b_infty_2_r;
+          do_sub_3_r <= do_sub_2_r;
+          a_denormal_3_r <= a_denormal_2_r;
+          b_denormal_3_r <= b_denormal_2_r;
+          adjusted_exp_cout_3_r <= adjusted_exp_cout;
+          final_sign_3_r <= final_sign_2_r;	
+        end
+      end
     end
   end
-
-  always_comb begin
-    v_o = v_3_r;
-    wr_en_3_o = ((v_3_r & yumi_i) | (~v_3_r & ~yumi_i & v_2_r));
-    if (wr_en_3_o) begin // take from previous pipeline
-      v_3_n = v_2_r;
-      pre_roundup_3_n = pre_roundup;
-      round_up_3_n = round_up;
-      all_zero_3_n = all_zero;
-      a_sig_nan_3_n = a_sig_nan_2_r;
-      b_sig_nan_3_n = b_sig_nan_2_r;
-      a_nan_3_n = a_nan_2_r;
-      b_nan_3_n = b_nan_2_r;
-      a_infty_3_n = a_infty_2_r;
-      b_infty_3_n = b_infty_2_r;
-      do_sub_3_n = do_sub_2_r;
-      a_denormal_3_n = a_denormal_2_r;
-      b_denormal_3_n = b_denormal_2_r;
-      adjusted_exp_cout_3_n = adjusted_exp_cout;
-      final_sign_3_n = final_sign_2_r;
-    end
-    else begin // hold the pipeline
-      v_3_n = v_3_r;
-      pre_roundup_3_n = pre_roundup_3_r;
-      round_up_3_n = round_up_3_r;
-      all_zero_3_n = all_zero_3_r;
-      a_sig_nan_3_n = a_sig_nan_3_r;
-      b_sig_nan_3_n = b_sig_nan_3_r;
-      a_nan_3_n = a_nan_3_r;
-      b_nan_3_n = b_nan_3_r;
-      a_infty_3_n = a_infty_3_r;
-      b_infty_3_n = b_infty_3_r;
-      do_sub_3_n = do_sub_3_r;
-      a_denormal_3_n = a_denormal_3_r;
-      b_denormal_3_n = b_denormal_3_r;
-      adjusted_exp_cout_3_n = adjusted_exp_cout_3_r;
-      final_sign_3_n = final_sign_3_r;
-    end
-  end
-
-  //////////////////////////////////////////////////
 
   // carry going into exp when rounding up
   // (important for distinguishing between overflow and underflow)

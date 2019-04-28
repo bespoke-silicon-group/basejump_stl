@@ -23,9 +23,6 @@ module bsg_fpu_add_sub
     , output logic overflow_o
     , output logic underflow_o
     , input yumi_i
-
-    , output logic wr_en_2_o
-    , output logic wr_en_3_o
   );
 
   if (width_p == 32) begin
@@ -47,8 +44,6 @@ module bsg_fpu_add_sub
       ,.invalid_o(invalid_o)
       ,.overflow_o(overflow_o)
       ,.underflow_o(underflow_o)
-      ,.wr_en_2_o(wr_en_2_o)
-      ,.wr_en_3_o(wr_en_3_o)
     ); 
   end
   else if (width_p == 64) begin
@@ -70,8 +65,6 @@ module bsg_fpu_add_sub
       ,.invalid_o(invalid_o)
       ,.overflow_o(overflow_o)
       ,.underflow_o(underflow_o)
-      ,.wr_en_2_o(wr_en_2_o)
-      ,.wr_en_3_o(wr_en_3_o)
     ); 
   end
   else begin
