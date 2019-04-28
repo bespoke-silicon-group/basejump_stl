@@ -192,7 +192,7 @@ module bsg_fpu_mul_32
 
   bsg_mul_synth #(
     .width_p(24)
-  ) mul_array (
+  ) mul_synth (
     .a_i(man_a_norm_r)
     ,.b_i(man_b_norm_r)
     ,.o(man_prod)	
