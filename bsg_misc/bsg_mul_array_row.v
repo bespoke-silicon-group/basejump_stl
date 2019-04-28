@@ -82,8 +82,8 @@ module bsg_mul_array_row #(parameter width_p="inv"
         prod_accum_n = {ps[0], prod_accum_i};
       end
       else begin
-        a_n = a_n;
-        b_n = b_n;
+        a_n = a_r;
+        b_n = b_r;
         s_n = s_r;
         c_n = c_r;
         prod_accum_n = prod_accum_r;
