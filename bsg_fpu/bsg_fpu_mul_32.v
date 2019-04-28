@@ -93,6 +93,7 @@ module bsg_fpu_mul_32
   logic a_zero_1_r, b_zero_1_r;
   logic a_denormal_1_r, b_denormal_1_r;
   logic [8:0] exp_sum_1_r;
+  logic [23:0] man_a_norm_r, man_b_norm_r;
 
   logic final_sign_1_n;
   logic [7:0] exp_sum_unbiased_1_n;
@@ -102,18 +103,8 @@ module bsg_fpu_mul_32
   logic a_zero_1_n, b_zero_1_n;
   logic a_denormal_1_n, b_denormal_1_n;
   logic [8:0] exp_sum_1_n;
+  logic [23:0] man_a_norm_n, man_b_norm_n;
 
-  // 24-bit pipelined array multiplier
-  // pipeline in this array multiplier is a part of the first pipeline stage.
-  logic [47:0] man_prod;
-  bsg_mul_array #(.width_p(24), .pipeline_p(23'b1_0000_0000_0000)) mul_array (
-    .clk_i(clk_i)
-    ,.rst_i(rst_i)
-    ,.v_i(ready_o)
-    ,.a_i(man_a_norm)
-    ,.b_i(man_b_norm)
-    ,.o(man_prod)	
-    );
 
   always_ff @ (posedge clk_i) begin
     if (rst_i) begin
@@ -147,6 +138,8 @@ module bsg_fpu_mul_32
       a_denormal_1_r <= a_denormal_1_n;
       b_denormal_1_r <= b_denormal_1_n;
       exp_sum_1_r <= exp_sum_1_n;
+      man_a_norm_r <= man_a_norm_n;
+      man_b_norm_r <= man_b_norm_n;
     end
   end
 
@@ -167,6 +160,8 @@ module bsg_fpu_mul_32
       a_denormal_1_n = a_denormal;
       b_denormal_1_n = b_denormal;
       exp_sum_1_n = exp_sum;
+      man_a_norm_n = man_a_norm;
+      man_b_norm_n = man_b_norm;
     end
     else begin
       v_1_n = v_1_r;
@@ -183,6 +178,8 @@ module bsg_fpu_mul_32
       a_denormal_1_n = a_denormal_1_r;
       b_denormal_1_n = b_denormal_1_r;
       exp_sum_1_n = exp_sum_1_r;
+      man_a_norm_n = man_a_norm_r;
+      man_b_norm_n = man_b_norm_r;
     end
   end
 
@@ -190,6 +187,17 @@ module bsg_fpu_mul_32
 
 
   //////////// second pipeline stage ///////////////////////////////
+  // 24-bit multiplier
+  logic [47:0] man_prod;
+
+  bsg_mul_synth #(
+    .width_p(24)
+  ) mul_array (
+    .a_i(man_a_norm_r)
+    ,.b_i(man_b_norm_r)
+    ,.o(man_prod)	
+  );
+
   logic [47:0] man_prod_2_r;
   logic [7:0] exp_sum_unbiased_2_r;
   logic a_sig_nan_2_r, b_sig_nan_2_r;
