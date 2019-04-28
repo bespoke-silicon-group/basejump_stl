@@ -6,27 +6,30 @@
  *  @author Tommy Jung
  */
 
-module bsg_fpu_add_sub_n #( parameter e_p="inv"
-                            ,parameter m_p="inv")
-(
-  input clk_i
-  ,input rst_i
-  ,input en_i
-  ,input v_i
-  ,input yumi_i
-  ,input [e_p+m_p:0] a_i
-  ,input [e_p+m_p:0] b_i
-  ,input sub_i
-  ,output logic v_o
-  ,output logic ready_o
-  ,output logic [e_p+m_p:0] z_o
-  ,output logic unimplemented_o
-  ,output logic invalid_o
-  ,output logic overflow_o
-  ,output logic underflow_o
-  ,output logic wr_en_2_o
-  ,output logic wr_en_3_o
-);
+module bsg_fpu_add_sub_n
+  import bsg_fpu_pkg::*;
+  #(parameter e_p="inv"     // exponent width
+    , parameter m_p="inv"   // mantissa width
+  )
+  (
+    input clk_i
+    , input reset_i
+
+    , input v_i
+    , input [e_p+m_p:0] a_i
+    , input [e_p+m_p:0] b_i
+    , input sub_i
+    , output logic ready_o
+
+    , output logic v_o
+    , output logic [e_p+m_p:0] z_o
+    , output logic unimplemented_o
+    , output logic invalid_o
+    , output logic overflow_o
+    , output logic underflow_o
+    , input yumi_i
+
+  );
 
   // pipeline states/signals
   logic v_1_r, v_2_r, v_3_r;
@@ -39,7 +42,10 @@ module bsg_fpu_add_sub_n #( parameter e_p="inv"
   logic [e_p-1:0] exp_a, exp_b;
   logic [m_p-1:0] man_a, man_b;
 
-  bsg_fpu_preprocess #(.e_p(e_p), .m_p(m_p)) a_preprocess (
+  bsg_fpu_preprocess #(
+    .e_p(e_p)
+    ,.m_p(m_p)
+  ) a_preprocess (
     .a_i(a_i)
     ,.zero_o(a_zero)
     ,.nan_o(a_nan)
@@ -53,7 +59,10 @@ module bsg_fpu_add_sub_n #( parameter e_p="inv"
     ,.man_o(man_a)
   );
 
-  bsg_fpu_preprocess #(.e_p(e_p), .m_p(m_p)) b_preprocess (
+  bsg_fpu_preprocess #(
+    .e_p(e_p)
+    ,.m_p(m_p)
+  ) b_preprocess (
     .a_i(b_i)
     ,.zero_o(b_zero)
     ,.nan_o(b_nan)
@@ -71,7 +80,10 @@ module bsg_fpu_add_sub_n #( parameter e_p="inv"
   logic exp_a_less;
   logic [e_p-1:0] larger_exp;
   logic [e_p-1:0] exp_diff;
-  bsg_less_than #(.width_p(e_p)) lt_exp (
+
+  bsg_less_than #(
+    .width_p(e_p)
+  ) lt_exp (
     .a_i(exp_a)
     ,.b_i(exp_b)
     ,.o(exp_a_less)
@@ -91,12 +103,18 @@ module bsg_fpu_add_sub_n #( parameter e_p="inv"
 
   // which mantissa is the one of larger exp?
   logic [m_p:0] larger_exp_man, smaller_exp_man;
-  assign larger_exp_man = exp_a_less ? man_b_norm : man_a_norm;
-  assign smaller_exp_man = exp_a_less ? man_a_norm : man_b_norm;
+  assign larger_exp_man = exp_a_less
+    ? man_b_norm
+    : man_a_norm;
+  assign smaller_exp_man = exp_a_less
+    ? man_a_norm
+    : man_b_norm;
 
   // determine sticky bit
   logic sticky;
-  bsg_fpu_sticky #(.width_p(m_p+3)) sticky0 (
+  bsg_fpu_sticky #(
+    .width_p(m_p+3)
+  ) sticky0 (
     .i({smaller_exp_man[m_p:0], 2'b0})
     ,.shamt_i(exp_diff[`BSG_WIDTH(m_p+3)-1:0])
     ,.sticky_o(sticky)
@@ -105,7 +123,10 @@ module bsg_fpu_add_sub_n #( parameter e_p="inv"
   // determine final sign
   logic final_sign;
   logic mag_a_less;
-  bsg_less_than #(.width_p(e_p+m_p)) lt_mag (
+
+  bsg_less_than #(
+    .width_p(e_p+m_p)
+  ) lt_mag (
     .a_i(a_i[e_p+m_p-1:0])
     ,.b_i(b_i[e_p+m_p-1:0])
     ,.o(mag_a_less)
@@ -150,7 +171,7 @@ module bsg_fpu_add_sub_n #( parameter e_p="inv"
   logic a_denormal_1_n, b_denormal_1_n;
 
   always_ff @ (posedge clk_i) begin
-    if (rst_i) begin
+    if (reset_i) begin
       v_1_r <= 0;
       final_sign_1_r <= 0;
       do_sub_1_r <= 0;
@@ -185,7 +206,7 @@ module bsg_fpu_add_sub_n #( parameter e_p="inv"
   end
 
   always_comb begin
-    ready_o = ((v_1_r & wr_en_2_o) | (~v_1_r)) & en_i;
+    ready_o = ((v_1_r & wr_en_2_o) | (~v_1_r));
     if (ready_o) begin
       v_1_n = v_i;
       final_sign_1_n = final_sign;
@@ -224,16 +245,20 @@ module bsg_fpu_add_sub_n #( parameter e_p="inv"
  
   // which mantissa has smaller magnitude?
   logic larger_exp_man_less;
-  bsg_less_than #(.width_p(m_p+4)) lt_man_norm (
+  bsg_less_than #(
+    .width_p(m_p+4)
+  ) lt_man_norm (
     .a_i(larger_exp_man_padded_1_r)
     ,.b_i(smaller_exp_man_shifted_1_r)
     ,.o(larger_exp_man_less)
-    );
+  );
 
   logic [m_p+3:0] larger_mag_man, smaller_mag_man;
+
   assign larger_mag_man = larger_exp_man_less
     ? smaller_exp_man_shifted_1_r
     : larger_exp_man_padded_1_r;
+
   assign smaller_mag_man = larger_exp_man_less 
     ? larger_exp_man_padded_1_r 
     : smaller_exp_man_shifted_1_r;
@@ -241,6 +266,7 @@ module bsg_fpu_add_sub_n #( parameter e_p="inv"
 
   // add or sub two mantissas
   logic [m_p+4:0] adder_output;
+
   assign adder_output = {1'b0, larger_mag_man}
     + {do_sub_1_r, ({(m_p+4){do_sub_1_r}} ^ smaller_mag_man)}
     + do_sub_1_r;
@@ -266,7 +292,7 @@ module bsg_fpu_add_sub_n #( parameter e_p="inv"
   logic a_denormal_2_n, b_denormal_2_n;
 
   always_ff @ (posedge clk_i) begin
-    if (rst_i) begin
+    if (reset_i) begin
       v_2_r <= 0;
       larger_exp_2_r <= 0;
       adder_output_2_r <= 0;
@@ -299,7 +325,7 @@ module bsg_fpu_add_sub_n #( parameter e_p="inv"
   end
 
   always_comb begin
-    wr_en_2_o = ((~v_2_r & v_1_r) | (v_2_r & wr_en_3_o)) & en_i; 
+    wr_en_2_o = ((~v_2_r & v_1_r) | (v_2_r & wr_en_3_o)); 
     if (wr_en_2_o) begin
       v_2_n = v_1_r;
       larger_exp_2_n = larger_exp_1_r;
@@ -339,15 +365,20 @@ module bsg_fpu_add_sub_n #( parameter e_p="inv"
   logic reduce_o;
   logic all_zero;
 
-  bsg_counting_leading_zeros #(.width_p(m_p+5)) clz
-    (.a_i(adder_output_2_r)
+  bsg_counting_leading_zeros #(
+    .width_p(m_p+5)
+  ) clz (
+    .a_i(adder_output_2_r)
     ,.num_zero_o(num_zero)
-    );
+  );
 
-  bsg_reduce  #(.width_p(m_p+5), .or_p(1)) reduce0 ( 
+  bsg_reduce #(
+    .width_p(m_p+5)
+    ,.or_p(1)
+  ) reduce0 ( 
     .i(adder_output_2_r)
     ,.o(reduce_o)
-    ); 
+  ); 
 
   assign all_zero = ~reduce_o;
 
@@ -395,7 +426,7 @@ module bsg_fpu_add_sub_n #( parameter e_p="inv"
   logic final_sign_3_n;
 
   always_ff @ (posedge clk_i) begin
-    if (rst_i) begin
+    if (reset_i) begin
       v_3_r <= 0;
       pre_roundup_3_r <= 0;
       round_up_3_r <= 0;
@@ -432,8 +463,8 @@ module bsg_fpu_add_sub_n #( parameter e_p="inv"
   end
 
   always_comb begin
-    v_o = v_3_r & en_i;
-    wr_en_3_o = ((v_3_r & yumi_i) | (~v_3_r & ~yumi_i & v_2_r)) & en_i;
+    v_o = v_3_r;
+    wr_en_3_o = ((v_3_r & yumi_i) | (~v_3_r & ~yumi_i & v_2_r));
     if (wr_en_3_o) begin // take from previous pipeline
       v_3_n = v_2_r;
       pre_roundup_3_n = pre_roundup;

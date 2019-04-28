@@ -11,7 +11,7 @@ localparam ring_width_p = width_p*2 + 1;
 localparam rom_addr_width_p = 32;
 
 logic clk;
-logic reset;
+logic rst;
 
 bsg_nonsynth_clock_gen #(
   .cycle_time_p(10)
@@ -24,7 +24,7 @@ bsg_nonsynth_reset_gen #(
   ,.reset_cycles_hi_p(4)
 ) reset_gen (
   .clk_i(clk)
-  ,.async_reset_o(reset)
+  ,.async_reset_o(rst)
 );
 
 logic v_li;
@@ -46,7 +46,9 @@ bsg_fpu_add_sub #(
   .width_p(32)
 ) add_sub (
   .clk_i(clk)
-  ,.reset_i(reset)
+  ,.rst_i(rst)
+
+  ,.en_i(1'b1)
 
   ,.v_i(v_li)
   ,.a_i(a_li)
@@ -83,7 +85,7 @@ bsg_fsb_node_trace_replay #(
   ,.rom_addr_width_p(rom_addr_width_p)
 ) tr (
   .clk_i(clk)
-  ,.reset_i(reset)
+  ,.reset_i(rst)
   ,.en_i(1'b1)
 
   ,.v_i(v_lo)

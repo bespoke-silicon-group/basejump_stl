@@ -6,14 +6,20 @@
  *  @author Tommy Jung
  */
 
-module bsg_fpu_sticky #(parameter width_p="inv") (
-  input [width_p-1:0] i // input
-  ,input [`BSG_WIDTH(width_p)-1:0] shamt_i // shift amount
-  ,output logic sticky_o
+module bsg_fpu_sticky
+  #(parameter width_p="inv")
+  (
+    input [width_p-1:0] i // input
+    , input [`BSG_WIDTH(width_p)-1:0] shamt_i // shift amount
+    , output logic sticky_o
 );
 
   logic [width_p-1:0] scan_out;
-  bsg_scan #(.width_p(width_p), .or_p(1), .lo_to_hi_p(1)) scan0 (
+
+  bsg_scan #(
+    .width_p(width_p)
+    , .or_p(1)
+    , .lo_to_hi_p(1)) scan0 (
     .i(i)
     ,.o(scan_out)
   );
