@@ -12,19 +12,19 @@
 #
 # usage: bsg_ascii_to_rom.py <filename> <modulename>
 #
-# to compress out zero entries with a default 0 setting:
+# to set the default value of generated case statement:
 #
-# usage: bsg_ascii_to_rom.py <filename> <modulename> zero  
+# usage: bsg_ascii_to_rom.py <filename> <modulename> default_value  
 # 
  
 import sys;
 import os;
 import binascii;
 
-zero = 0;
+default_value = "X"
 
-if ((len(sys.argv)==4) and sys.argv[3]=="zero") :
-    zero = 1;
+if (len(sys.argv)==4) :
+    default_value = sys.argv[3]
 
 if ((len(sys.argv)!=3) and (len(sys.argv)!=4)) :
     print "Usage ascii_to_rom.py <filename> <modulename>";
@@ -44,7 +44,7 @@ for line in myFile.readlines() :
     line = line.strip();
     if (len(line)!=0):
         if (line[0] != "#") :
-            if (not zero or not (set(line) <= all_zero)) :
+            if (default_value == 'X' or not (set(line) <= all_zero)) :
                 digits_only = filter(lambda m:m.isdigit(), str(line));
 
                 # http://stackoverflow.com/questions/2072351/python-conversion-from-binary-string-to-hexadecimal
@@ -54,8 +54,8 @@ for line in myFile.readlines() :
             i = i + 1;
         else :
             print "                                 // " + line;
-if (zero) : 
-    print "default".rjust(10) + ": data_o = { width_p { 1'b0 } };"
+if (default_value != 'X') : 
+    print "default".rjust(10) + ": data_o = width_p ' (%s);" % default_value
 else :
     print "default".rjust(10) + ": data_o = 'X;"
 print "endcase"
