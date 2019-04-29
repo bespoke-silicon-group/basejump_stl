@@ -1,14 +1,14 @@
 /**
- *  bsg_fpu_f2i_32.v
+ *  bsg_fpu_f2i_n.v
  *
- *  float-to-int converter
+ *  parameterized float-to-int converter
  *
  *  @author Tommy Jung
  */
 
 import bsg_fpu_rm_pkg::*;
 
-module bsg_fpu_f2i_32 (
+module bsg_fpu_f2i_n (
   input [31:0] a_i          // input float
   ,input [2:0] rm_i         // rounding mode
   ,output logic [31:0] o    // output int
@@ -19,7 +19,10 @@ module bsg_fpu_f2i_32 (
   logic [22:0] mantissa;
   logic zero;
   
-  bsg_fpu_preprocess #(.exp_width_p(8), .mantissa_width_p(23)) preprocess (
+  bsg_fpu_preprocess #(
+    .exp_width_p(8)
+    ,.mantissa_width_p(23)
+  ) preprocess (
     .a_i(a_i)
     ,.zero_o(zero)
     ,.nan_o()

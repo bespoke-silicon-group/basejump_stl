@@ -286,7 +286,7 @@ module bsg_fpu_mul_n
       invalid_o = 1'b0;
       overflow_o = 1'b0;
       underflow_o = 1'b0;
-      z_o = `BSG_FPU_QUIETNAN(sgn,e_p,m_p); // quiet nan
+      z_o = `BSG_FPU_QUIETNAN(e_p,m_p); // quiet nan
     end
     else if (a_infty_3_r) begin
       if (b_zero_3_r) begin
@@ -294,7 +294,7 @@ module bsg_fpu_mul_n
         invalid_o = 1'b1;
         overflow_o = 1'b0;
         underflow_o = 1'b0;
-        z_o = `BSG_FPU_QUIETNAN(sgn,e_p,m_p); // quiet nan
+        z_o = `BSG_FPU_QUIETNAN(e_p,m_p); // quiet nan
       end
       else begin
         unimplemented_o = 1'b0;
@@ -310,7 +310,7 @@ module bsg_fpu_mul_n
         invalid_o = 1'b1;
         overflow_o = 1'b0;
         underflow_o = 1'b0;
-        z_o = `BSG_FPU_QUIETNAN(sgn,e_p,m_p); // quiet nan
+        z_o = `BSG_FPU_QUIETNAN(e_p,m_p); // quiet nan
       end
       else begin
         unimplemented_o = 1'b0;
@@ -339,7 +339,7 @@ module bsg_fpu_mul_n
       invalid_o = 1'b0;
       overflow_o = 1'b0;
       underflow_o = 1'b0;
-      z_o = `BSG_FPU_QUIETNAN(sgn,e_p,m_p); // quiet nan
+      z_o = `BSG_FPU_QUIETNAN(e_p,m_p); // quiet nan
     end
     else if (exp_sum_3_r[(e_p-1)+:2] == 2'b0) begin
       unimplemented_o = 1'b0;

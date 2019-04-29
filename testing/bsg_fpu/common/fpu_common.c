@@ -70,3 +70,16 @@ uint32_t f2i(float f)
   float temp = f;
   return hex(temp);
 }
+
+float snanf()
+{
+  uint32_t temp = 0x7fb00000;
+  return i2f(temp);
+}
+
+
+float infty()
+{
+  uint32_t temp = 0x7f800000;
+  return i2f(temp);
+}

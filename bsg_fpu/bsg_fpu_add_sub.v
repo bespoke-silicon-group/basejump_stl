@@ -10,8 +10,6 @@ module bsg_fpu_add_sub
     input clk_i
     , input reset_i
 
-    , input en_i
-
     , input v_i 
     , input [width_p-1:0] a_i
     , input [width_p-1:0] b_i
@@ -34,7 +32,7 @@ module bsg_fpu_add_sub
     ) add_sub_32 (
       .clk_i(clk_i)
       ,.reset_i(reset_i)
-      ,.en_i(en_i)
+      ,.en_i(1'b1)
 
       ,.v_i(v_i)
       ,.a_i(a_i)
@@ -58,7 +56,7 @@ module bsg_fpu_add_sub
     ) add_sub_64 (
       .clk_i(clk_i)
       ,.reset_i(reset_i)
-      ,.en_i(en_i)
+      ,.en_i(1'b1)
 
       ,.v_i(v_i)
       ,.a_i(a_i)

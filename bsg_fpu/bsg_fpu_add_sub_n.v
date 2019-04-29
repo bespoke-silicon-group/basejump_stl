@@ -373,7 +373,7 @@ module bsg_fpu_add_sub_n
       invalid_o = 1'b0;
       overflow_o = 1'b0;
       underflow_o = 1'b0;
-      z_o = `BSG_FPU_QUIETNAN(sgn,e_p,m_p);
+      z_o = `BSG_FPU_QUIETNAN(e_p,m_p);
     end
     else if (a_infty_3_r & b_infty_3_r) begin
       unimplemented_o = 1'b0;
@@ -381,7 +381,7 @@ module bsg_fpu_add_sub_n
       overflow_o = 1'b0;
       underflow_o = 1'b0;
       z_o = do_sub_3_r 
-        ? `BSG_FPU_QUIETNAN(sgn,e_p,m_p)
+        ? `BSG_FPU_QUIETNAN(e_p,m_p)
         : `BSG_FPU_INFTY(sgn,e_p,m_p);
     end
     else if (a_infty_3_r & ~b_infty_3_r) begin
@@ -403,7 +403,7 @@ module bsg_fpu_add_sub_n
       invalid_o = 1'b0;
       overflow_o = 1'b0;
       underflow_o = 1'b0;
-      z_o =`BSG_FPU_QUIETNAN(sgn,e_p,m_p);
+      z_o =`BSG_FPU_QUIETNAN(e_p,m_p);
     end
     else if(all_zero_3_r) begin
       unimplemented_o = 1'b0;

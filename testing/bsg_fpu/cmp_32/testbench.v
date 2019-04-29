@@ -7,11 +7,11 @@
 module testbench();
 
 localparam width_p = 32;
-localparam ring_width_p = width_p*2 + 1;
+localparam ring_width_p = width_p*2 + 3;
 localparam rom_addr_width_p = 32;
 
 logic clk;
-logic rst;
+logic reset;
 
 bsg_nonsynth_clock_gen #(
   .cycle_time_p(10)
@@ -24,48 +24,35 @@ bsg_nonsynth_reset_gen #(
   ,.reset_cycles_hi_p(4)
 ) reset_gen (
   .clk_i(clk)
-  ,.async_reset_o(rst)
+  ,.async_reset_o(reset)
 );
 
-logic v_li;
-logic [width_p-1:0] a_li;
-logic [width_p-1:0] b_li;
-logic sub_li;
-logic ready_lo;
+logic v_r;
+logic [width_p-1:0] a_r;
+logic [width_p-1:0] b_r;
 
-logic v_lo;
-logic yumi_li;
-logic [width_p-1:0] z_lo;
+logic eq_lo;
+logic lt_lo;
+logic le_lo;
+logic [width_p-1:0] min_lo;
+logic [width_p-1:0] max_lo;
 
-logic unimplemented;
-logic invalid;
-logic overflow;
-logic underflow;
 
-bsg_fpu_add_sub #(
-  .width_p(32)
-) add_sub (
-  .clk_i(clk)
-  ,.rst_i(rst)
+bsg_fpu_cmp #(
+  .width_p(width_p)
+) dut (
+  .a_i(a_r)
+  ,.b_i(b_r)
 
-  ,.en_i(1'b1)
+  ,.eq_o(eq_lo)
+  ,.lt_o(lt_lo)
+  ,.le_o(le_lo)
+  ,.lt_le_invalid_o()
+  ,.eq_invalid_o()
 
-  ,.v_i(v_li)
-  ,.a_i(a_li)
-  ,.b_i(b_li)
-  ,.sub_i(sub_li)
-  ,.ready_o(ready_lo)
-  
-  ,.v_o(v_lo)
-  ,.z_o(z_lo)
-  ,.yumi_i(yumi_li)
-
-  ,.unimplemented_o(unimplemented)
-  ,.invalid_o(invalid)
-  ,.overflow_o(overflow)
-  ,.underflow_o(underflow)
-  ,.wr_en_2_o()
-  ,.wr_en_3_o()
+  ,.min_o(min_lo)
+  ,.max_o(max_lo)
+  ,.min_max_invalid_o()
 );
 
 logic [ring_width_p-1:0] tr_data_li;
@@ -85,14 +72,14 @@ bsg_fsb_node_trace_replay #(
   ,.rom_addr_width_p(rom_addr_width_p)
 ) tr (
   .clk_i(clk)
-  ,.reset_i(rst)
+  ,.reset_i(reset)
   ,.en_i(1'b1)
 
-  ,.v_i(v_lo)
+  ,.v_i(v_r)
   ,.data_i(tr_data_li)
   ,.ready_o(tr_ready_lo)
 
-  ,.v_o(v_li)
+  ,.v_o(tr_v_lo)
   ,.data_o(tr_data_lo)
   ,.yumi_i(tr_yumi_li)
 
@@ -111,18 +98,46 @@ bsg_fpu_trace_rom #(
   ,.data_o(rom_data)
 );
 
-assign yumi_li = v_lo & tr_ready_lo;
-assign tr_yumi_li = v_li & ready_lo;
-
-assign {sub_li, a_li, b_li} = tr_data_lo;
 assign tr_data_li = {
-  {ring_width_p-width_p-4{1'b0}},
-  unimplemented,
-  invalid,
-  overflow,
-  underflow,
-  z_lo
+  eq_lo
+  , lt_lo
+  , le_lo
+  , min_lo
+  , max_lo
 };
+
+logic [width_p-1:0] a_n, b_n;
+logic v_n;
+
+always_comb begin
+  if (v_r == 1'b0) begin
+    tr_yumi_li = tr_v_lo;
+    v_n = tr_v_lo;
+    {a_n, b_n} = tr_v_lo 
+      ? tr_data_lo[0+:width_p*2]
+      : {a_r, b_r};
+  end
+  else begin
+    tr_yumi_li = 1'b0;
+    v_n = tr_ready_lo
+      ? 1'b0
+      : v_r;
+    {a_n, b_n} = {a_r, b_r};
+  end
+end
+
+always_ff @ (posedge clk) begin
+  if (reset) begin
+    v_r <= 1'b0;
+    a_r <= '0;
+    b_r <= '0;
+  end
+  else begin
+    v_r <= v_n;
+    a_r <= a_n;
+    b_r <= b_n;
+  end
+end
 
 initial begin
   wait(done_lo);

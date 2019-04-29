@@ -1,5 +1,7 @@
 /**
  *  testbench.v
+ *  
+ *  mul_32 test
  *
  */
 
@@ -43,10 +45,9 @@ logic underflow;
 
 bsg_fpu_mul #(
   .width_p(32)
-) mul_32 (
+) dut (
   .clk_i(clk)
   ,.reset_i(reset)
-  ,.en_i(1'b1)
 
   ,.v_i(v_li)
   ,.a_i(a_li)

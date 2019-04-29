@@ -2,8 +2,6 @@ INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 
 FPU_TRACE_ROM = bsg_fpu_trace_rom
 
-all: clean sim
-
 app:
 	gcc -o app ./mul_32.c ../common/fpu_common.c \
 		-I../common -lm -std=c99

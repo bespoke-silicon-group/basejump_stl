@@ -2,10 +2,8 @@ INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 
 FPU_TRACE_ROM = bsg_fpu_trace_rom
 
-all: clean sim
-
 app:
-	gcc -o app ./add_sub_32.c ../common/fpu_common.c \
+	gcc -o app ./cmp_32.c ../common/fpu_common.c \
 		-I../common -lm -std=c99
 
 $(FPU_TRACE_ROM).tr: app
@@ -14,13 +12,21 @@ $(FPU_TRACE_ROM).tr: app
 $(FPU_TRACE_ROM).v: $(FPU_TRACE_ROM).tr
 	python $(BASEJUMP_STL_DIR)/bsg_mem/bsg_ascii_to_rom.py $< $(FPU_TRACE_ROM) > $@
 
-sim: $(FPU_TRACE_ROM).v
+rtl_sim: $(FPU_TRACE_ROM).v
 	vcs +v2k -R -sverilog -full64 -debug_pp \
 		-timescale=1ps/1ps +vcs+vcdpluson \
-		-f sv.include $(INCDIR) -l vcs.log
+		-f rtl_sv.include $(INCDIR) -l vcs.log
+
+synth_sim: $(FPU_TRACE_ROM).v
+	vcs +v2k -R -sverilog -full64 -debug_pp \
+		-timescale=1ps/1ps +vcs+vcdpluson \
+		-f synth_sv.include $(INCDIR) -l vcs.log
+
+dve:
+	dve -full64 -vpd vcdplus.vpd &
 
 clean:
 	rm -f app
 	rm -f vcdplus.vpd vcs.log ucli.key simv
-	rm -rf csrc simv.daidir
+	rm -rf csrc simv.daidir DVEfiles
 	rm -f $(FPU_TRACE_ROM).tr $(FPU_TRACE_ROM).v

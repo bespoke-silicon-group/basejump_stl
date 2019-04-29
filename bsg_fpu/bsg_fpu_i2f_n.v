@@ -1,15 +1,22 @@
 /**
- *  bsg_fpu_i2f_32.v
- *
- *  integer to float converter. 
+ *  bsg_fpu_i2f_n.v
  *
  *  @author Tommy Jung
+ *
+ *  Parameterized int-to-float converter. 
+ *
+ *  It handles signed/unsigned integer.
+ *
  */
 
-module bsg_fpu_i2f_32
+module bsg_fpu_i2f_n
+  #(parameter e_p="inv"
+    , parameter m_p="inv"
+  )
 (
   input [31:0] a_i
-  ,output logic [31:0] o
+  , input signed_i
+  , output logic [31:0] o
 );
 
   // sign bit
@@ -18,7 +25,10 @@ module bsg_fpu_i2f_32
 
   // calculate absolute value
   logic [31:0] abs;
-  bsg_abs #(.width_p(32)) bsg_abs0 (
+
+  bsg_abs #(
+    .width_p(32)
+  ) bsg_abs0 (
     .a_i(a_i)
     ,.o(abs)
   );
@@ -27,7 +37,9 @@ module bsg_fpu_i2f_32
   logic [4:0] shamt;
   logic all_zero;
 
-  bsg_counting_leading_zeros #(.width_p(32)) clz (
+  bsg_counting_leading_zeros #(
+    .width_p(32)
+  ) clz (
     .a_i(abs)
     ,.num_zero_o(shamt)
   );
