@@ -11,7 +11,7 @@ localparam ring_width_p = width_p*2;
 localparam rom_addr_width_p = 32;
 
 logic clk;
-logic rst;
+logic reset;
 
 bsg_nonsynth_clock_gen #(
   .cycle_time_p(10)
@@ -24,7 +24,7 @@ bsg_nonsynth_reset_gen #(
   ,.reset_cycles_hi_p(4)
 ) reset_gen (
   .clk_i(clk)
-  ,.async_reset_o(rst)
+  ,.async_reset_o(reset)
 );
 
 logic v_li;
@@ -45,8 +45,7 @@ bsg_fpu_mul #(
   .width_p(32)
 ) mul_32 (
   .clk_i(clk)
-  ,.rst_i(rst)
-
+  ,.reset_i(reset)
   ,.en_i(1'b1)
 
   ,.v_i(v_li)
@@ -56,14 +55,11 @@ bsg_fpu_mul #(
   
   ,.v_o(v_lo)
   ,.z_o(z_lo)
-  ,.yumi_i(yumi_li)
-
   ,.unimplemented_o(unimplemented)
   ,.invalid_o(invalid)
   ,.overflow_o(overflow)
   ,.underflow_o(underflow)
-  ,.wr_en_2_o()
-  ,.wr_en_3_o()
+  ,.yumi_i(yumi_li)
 );
 
 logic [ring_width_p-1:0] tr_data_li;
@@ -83,7 +79,7 @@ bsg_fsb_node_trace_replay #(
   ,.rom_addr_width_p(rom_addr_width_p)
 ) tr (
   .clk_i(clk)
-  ,.reset_i(rst)
+  ,.reset_i(reset)
   ,.en_i(1'b1)
 
   ,.v_i(v_lo)

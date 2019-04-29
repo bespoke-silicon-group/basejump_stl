@@ -10,6 +10,8 @@ module bsg_fpu_add_sub
     input clk_i
     , input reset_i
 
+    , input en_i
+
     , input v_i 
     , input [width_p-1:0] a_i
     , input [width_p-1:0] b_i
@@ -25,49 +27,56 @@ module bsg_fpu_add_sub
     , input yumi_i
   );
 
-  if (width_p == 32) begin
+  if (width_p == 32) begin: add_sub_32
     bsg_fpu_add_sub_n #(
       .e_p(8)
       ,.m_p(23)
     ) add_sub_32 (
       .clk_i(clk_i)
       ,.reset_i(reset_i)
+      ,.en_i(en_i)
+
       ,.v_i(v_i)
-      ,.yumi_i(yumi_i)
       ,.a_i(a_i)
       ,.b_i(b_i)
       ,.sub_i(sub_i)
-      ,.v_o(v_o)
       ,.ready_o(ready_o)
+
+      ,.v_o(v_o)
       ,.z_o(z_o)
       ,.unimplemented_o(unimplemented_o)
       ,.invalid_o(invalid_o)
       ,.overflow_o(overflow_o)
       ,.underflow_o(underflow_o)
+      ,.yumi_i(yumi_i)
     ); 
   end
-  else if (width_p == 64) begin
+  else if (width_p == 64) begin: add_sub_64
     bsg_fpu_add_sub_n #(
       .e_p(11)
       ,.m_p(52)
     ) add_sub_64 (
       .clk_i(clk_i)
       ,.reset_i(reset_i)
+      ,.en_i(en_i)
+
       ,.v_i(v_i)
-      ,.yumi_i(yumi_i)
       ,.a_i(a_i)
       ,.b_i(b_i)
       ,.sub_i(sub_i)
-      ,.v_o(v_o)
       ,.ready_o(ready_o)
+
+      ,.v_o(v_o)
       ,.z_o(z_o)
       ,.unimplemented_o(unimplemented_o)
       ,.invalid_o(invalid_o)
       ,.overflow_o(overflow_o)
       ,.underflow_o(underflow_o)
+      ,.yumi_i(yumi_i)
     ); 
   end
   else begin
+    // not tested
     initial begin
       assert ("width" == "unhandled") else $error("unhandled case for %m");
     end

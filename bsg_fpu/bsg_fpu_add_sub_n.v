@@ -14,6 +14,7 @@ module bsg_fpu_add_sub_n
   (
     input clk_i
     , input reset_i
+    , input en_i  // enable
 
     , input v_i
     , input [e_p+m_p:0] a_i
@@ -27,16 +28,16 @@ module bsg_fpu_add_sub_n
     , output logic invalid_o
     , output logic overflow_o
     , output logic underflow_o
-    , input yumi_i
+    , input yumi_i // when yumi_i is high, en_i also has to be high
   );
 
   // pipeline states/signals
   logic v_1_r, v_2_r, v_3_r;
-
   logic stall;
+
   assign stall = v_3_r & ~yumi_i;
   assign v_o = v_3_r;
-  assign ready_o = ~stall;
+  assign ready_o = ~stall & en_i;
 
   // preprocessors
   logic a_zero, a_nan, a_sig_nan, a_infty, exp_a_zero, a_denormal;
@@ -168,7 +169,7 @@ module bsg_fpu_add_sub_n
       v_1_r <= 1'b0;
     end
     else begin
-      if (ready_o) begin
+      if (~stall & en_i) begin
         v_1_r <= v_i;
         if (v_i) begin
           final_sign_1_r <= final_sign;
@@ -234,7 +235,7 @@ module bsg_fpu_add_sub_n
       v_2_r <= 1'b0;
     end
     else begin
-      if (~stall) begin
+      if (~stall & en_i) begin
         v_2_r <= v_1_r;
         if (v_1_r) begin
           larger_exp_2_r <= larger_exp_1_r;
@@ -324,7 +325,7 @@ module bsg_fpu_add_sub_n
       v_3_r <= 1'b0;
     end
     else begin
-      if (~stall) begin
+      if (~stall & en_i) begin
         v_3_r <= v_2_r;
         if (v_2_r) begin
           pre_roundup_3_r <= pre_roundup;

@@ -48,6 +48,8 @@ bsg_fpu_add_sub #(
   .clk_i(clk)
   ,.reset_i(reset)
 
+  ,.en_i(1'b1)
+
   ,.v_i(v_li)
   ,.a_i(a_li)
   ,.b_i(b_li)

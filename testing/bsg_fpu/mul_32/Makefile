@@ -14,10 +14,15 @@ $(FPU_TRACE_ROM).tr: app
 $(FPU_TRACE_ROM).v: $(FPU_TRACE_ROM).tr
 	python $(BASEJUMP_STL_DIR)/bsg_mem/bsg_ascii_to_rom.py $< $(FPU_TRACE_ROM) > $@
 
-sim: $(FPU_TRACE_ROM).v
+rtl_sim: $(FPU_TRACE_ROM).v
 	vcs +v2k -R -sverilog -full64 -debug_pp \
 		-timescale=1ps/1ps +vcs+vcdpluson \
-		-f sv.include $(INCDIR) -l vcs.log
+		-f rtl_sv.include $(INCDIR) -l vcs.log
+
+synth_sim: $(FPU_TRACE_ROM).v
+	vcs +v2k -R -sverilog -full64 -debug_pp \
+		-timescale=1ps/1ps +vcs+vcdpluson \
+		-f synth_sv.include $(INCDIR) -l vcs.log
 
 clean:
 	rm -f app

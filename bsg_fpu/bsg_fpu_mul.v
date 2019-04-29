@@ -4,48 +4,82 @@
  *  @author Tommy Jung
  */
 
-module bsg_fpu_mul #(parameter width_p="inv")
-  ( input clk_i
-    , input rst_i
+module bsg_fpu_mul
+  #(parameter width_p="inv")
+  ( 
+    input clk_i
+    , input reset_i
     , input en_i
+
     , input v_i
-    , input yumi_i
     , input [width_p-1:0] a_i
     , input [width_p-1:0] b_i
     , output logic ready_o
+
     , output logic v_o
     , output logic [width_p-1:0] z_o
     , output logic unimplemented_o
     , output logic invalid_o
     , output logic overflow_o
     , output logic underflow_o
-    , output logic wr_en_2_o
-    , output logic wr_en_3_o
+    , input yumi_i
   );
 
-  if (width_p == 32)
-    begin
-      bsg_fpu_mul_32 mul32 (
+  if (width_p == 32) begin: mul32
+
+      bsg_fpu_mul_n #(
+        .e_p(8)
+        ,.m_p(23)
+      ) mul32 (
         .clk_i(clk_i)
-        ,.rst_i(rst_i)
+        ,.reset_i(reset_i)
         ,.en_i(en_i)
+
         ,.v_i(v_i)
-        ,.yumi_i(yumi_i)
         ,.a_i(a_i)
         ,.b_i(b_i)
         ,.ready_o(ready_o)
+
         ,.v_o(v_o)
         ,.z_o(z_o)
         ,.unimplemented_o(unimplemented_o)
         ,.invalid_o(invalid_o)
         ,.overflow_o(overflow_o)
         ,.underflow_o(underflow_o)
-        ,.wr_en_2_o(wr_en_2_o)
-        ,.wr_en_3_o(wr_en_3_o)
-        ); 
+        ,.yumi_i(yumi_i)
+      ); 
+
+  end
+  else if (width_p == 64) begin: mul64
+
+      bsg_fpu_mul_n #(
+        .e_p(11)
+        ,.m_p(52)
+      ) mul64 (
+        .clk_i(clk_i)
+        ,.reset_i(reset_i)
+        ,.en_i(en_i)
+
+        ,.v_i(v_i)
+        ,.a_i(a_i)
+        ,.b_i(b_i)
+        ,.ready_o(ready_o)
+
+        ,.v_o(v_o)
+        ,.z_o(z_o)
+        ,.unimplemented_o(unimplemented_o)
+        ,.invalid_o(invalid_o)
+        ,.overflow_o(overflow_o)
+        ,.underflow_o(underflow_o)
+        ,.yumi_i(yumi_i)
+      ); 
+
+  end
+  else begin
+    // not tested
+    initial begin
+      assert ("width" == "unhandled") else $error("unhandled case for %m");
     end
-  else initial assert ("width" == "unhandled") else $error("unhandled case for %m");
-
-
+  end
 
 endmodule
