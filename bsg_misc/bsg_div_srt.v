@@ -5,6 +5,8 @@ bsg_div_srt.v
 =====================
 A radix-4 SRT divider using carry save addition to store intermittent remainder.
 Design doc: https://docs.google.com/document/d/10YhNfc81pXje2fKQs5IgFZxHONHRqtQdeLGdTJkAAZU/edit?usp=sharing
+
+Cycle number = width_p/2 + 8
 */
 
 module bsg_div_srt #(
