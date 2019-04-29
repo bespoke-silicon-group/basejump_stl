@@ -123,6 +123,8 @@ module bsg_fpu_cmp_n
         // a and b are neither NaNs nor zeros.
         // compare sign and compare magnitude.
         eq_o = (a_i == b_i);
+        lt_le_invalid_o = 1'b0;
+        eq_invalid_o = 1'b0;
 
         case ({a_sign, b_sign})
           2'b00: begin
