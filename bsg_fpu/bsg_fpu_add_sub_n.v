@@ -260,10 +260,10 @@ module bsg_fpu_add_sub_n
   logic reduce_o;
   logic all_zero;
 
-  bsg_counting_leading_zeros #(
+  bsg_fpu_clz #(
     .width_p(m_p+5)
   ) clz (
-    .a_i(adder_output_2_r)
+    .i(adder_output_2_r)
     ,.num_zero_o(num_zero)
   );
 

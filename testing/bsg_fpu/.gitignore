@@ -1,4 +1,3 @@
 **/app
-**/*.rom
 bsg_fpu_trace_rom.tr
 bsg_fpu_trace_rom.v

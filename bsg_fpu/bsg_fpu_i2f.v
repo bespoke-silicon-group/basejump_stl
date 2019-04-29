@@ -9,7 +9,7 @@ module bsg_fpu_i2f
   (
     input [width_p-1:0] a_i
     , input signed_i
-    , output logic [width_p-1:0] o
+    , output logic [width_p-1:0] z_o
   );
 
   if (width_p == 32) begin: i2f_32
@@ -19,7 +19,8 @@ module bsg_fpu_i2f
       ,.m_p(23)
     ) i2f_32 (
       .a_i(a_i)
-      ,.o(o)
+      ,.signed_i(signed_i)
+      ,.z_o(z_o)
     );
 
   end
@@ -30,7 +31,8 @@ module bsg_fpu_i2f
       ,.m_p(52)
     ) i2f_64 (
       .a_i(a_i)
-      ,.o(o)
+      ,.signed_i(signed_i)
+      ,.z_o(z_o)
     );
 
   end

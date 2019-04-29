@@ -16,7 +16,7 @@ module bsg_fpu_i2f_n
 (
   input [31:0] a_i
   , input signed_i
-  , output logic [31:0] o
+  , output logic [31:0] z_o
 );
 
   // sign bit
@@ -75,7 +75,7 @@ module bsg_fpu_i2f_n
   assign rounded = {exp, mantissa} + round_up;
 
   // final result
-  assign o = all_zero
+  assign z_o = all_zero
     ? 32'b0
     : {sign, rounded};
 
