@@ -362,83 +362,83 @@ module bsg_fpu_add_sub_n
     sgn = final_sign_3_r;
 
     if (a_sig_nan_3_r | b_sig_nan_3_r) begin
-      unimplemented_o = 0;
-      invalid_o = 1;
-      overflow_o = 0;
-      underflow_o = 0;
+      unimplemented_o = 1'b0;
+      invalid_o = 1'b1;
+      overflow_o = 1'b0;
+      underflow_o = 1'b0;
       z_o = `BSG_FPU_SIGNAN(sgn,e_p,m_p);
     end
     else if (a_nan_3_r | b_nan_3_r) begin
-      unimplemented_o = 0;
-      invalid_o = 0;
-      overflow_o = 0;
-      underflow_o = 0;
+      unimplemented_o = 1'b0;
+      invalid_o = 1'b0;
+      overflow_o = 1'b0;
+      underflow_o = 1'b0;
       z_o = `BSG_FPU_QUIETNAN(sgn,e_p,m_p);
     end
     else if (a_infty_3_r & b_infty_3_r) begin
-      unimplemented_o = 0;
+      unimplemented_o = 1'b0;
       invalid_o = do_sub_3_r;
-      overflow_o = 0;
-      underflow_o = 0;
+      overflow_o = 1'b0;
+      underflow_o = 1'b0;
       z_o = do_sub_3_r 
         ? `BSG_FPU_QUIETNAN(sgn,e_p,m_p)
         : `BSG_FPU_INFTY(sgn,e_p,m_p);
     end
     else if (a_infty_3_r & ~b_infty_3_r) begin
-      unimplemented_o = 0;
-      invalid_o = 0;
-      overflow_o = 0;
-      underflow_o = 0;
+      unimplemented_o = 1'b0;
+      invalid_o = 1'b0;
+      overflow_o = 1'b0;
+      underflow_o = 1'b0;
       z_o = `BSG_FPU_INFTY(sgn,e_p,m_p);
     end
     else if (~a_infty_3_r & b_infty_3_r) begin
-      unimplemented_o = 0;
-      invalid_o = 0;
-      overflow_o = 0;
-      underflow_o = 0;
+      unimplemented_o = 1'b0;
+      invalid_o = 1'b0;
+      overflow_o = 1'b0;
+      underflow_o = 1'b0;
       z_o = `BSG_FPU_INFTY(sgn,e_p,m_p);
     end
     else if (a_denormal_3_r | b_denormal_3_r) begin
-      unimplemented_o = 1;
-      invalid_o = 0;
-      overflow_o = 0;
-      underflow_o = 0;
+      unimplemented_o = 1'b1;
+      invalid_o = 1'b0;
+      overflow_o = 1'b0;
+      underflow_o = 1'b0;
       z_o =`BSG_FPU_QUIETNAN(sgn,e_p,m_p);
     end
     else if(all_zero_3_r) begin
-      unimplemented_o = 0;
-      invalid_o = 0;
-      overflow_o = 0;
-      underflow_o = 0;
+      unimplemented_o = 1'b0;
+      invalid_o = 1'b0;
+      overflow_o = 1'b0;
+      underflow_o = 1'b0;
       z_o = `BSG_FPU_ZERO(sgn,e_p,m_p);
     end
     else if (adjusted_exp_cout_3_r) begin
-      unimplemented_o = 0;
-      invalid_o = 0;
-      overflow_o = 0;
-      underflow_o = 1;
+      unimplemented_o = 1'b0;
+      invalid_o = 1'b0;
+      overflow_o = 1'b0;
+      underflow_o = 1'b1;
       z_o = `BSG_FPU_ZERO(sgn,e_p,m_p);
     end
     else begin
       if (pre_roundup_3_r[m_p+:e_p] == {e_p{1'b1}} & (pre_roundup_3_r[m_p] | carry_into_exp)) begin
-        unimplemented_o = 0;
-        invalid_o = 0;
-        overflow_o = 1;
-        underflow_o = 0;
+        unimplemented_o = 1'b0;
+        invalid_o = 1'b0;
+        overflow_o = 1'b1;
+        underflow_o = 1'b0;
         z_o =`BSG_FPU_INFTY(sgn,e_p,m_p);
       end
       else if (pre_roundup_3_r[m_p+:e_p] == {e_p{1'b0}} & ~carry_into_exp) begin
-        unimplemented_o = 0;
-        invalid_o = 0;
-        overflow_o = 0;
-        underflow_o = 1;
+        unimplemented_o = 1'b0;
+        invalid_o = 1'b0;
+        overflow_o = 1'b0;
+        underflow_o = 1'b1;
         z_o = `BSG_FPU_ZERO(sgn,e_p,m_p);
       end 
       else begin
-        unimplemented_o = 0;
-        invalid_o = 0;
-        overflow_o = 0;
-        underflow_o = 0;
+        unimplemented_o = 1'b0;
+        invalid_o = 1'b0;
+        overflow_o = 1'b0;
+        underflow_o = 1'b0;
         z_o = {sgn, rounded}; // happy case
       end
     end

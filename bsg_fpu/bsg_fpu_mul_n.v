@@ -7,6 +7,7 @@
  */
 
 module bsg_fpu_mul_n
+  import bsg_fpu_pkg::*;
   #(parameter e_p="inv"   // exponent width
     , parameter m_p="inv" // mantissa width
   )
@@ -84,29 +85,29 @@ module bsg_fpu_mul_n
   assign final_sign = sign_a ^ sign_b; 
 
   // add exponents together
-  logic [8:0] exp_sum;
+  logic [e_p:0] exp_sum;
   assign exp_sum = {1'b0, exp_a} + {1'b0, exp_b} + 9'b1;
 
   // sum of exp with bias removed
-  logic [7:0] exp_sum_unbiased;
-  assign exp_sum_unbiased = {~exp_sum[7], exp_sum[6:0]};
+  logic [e_p-1:0] exp_sum_unbiased;
+  assign exp_sum_unbiased = {~exp_sum[e_p-1], exp_sum[e_p-2:0]};
 
   // normalized mantissa
-  logic [23:0] man_a_norm, man_b_norm;
+  logic [m_p:0] man_a_norm, man_b_norm;
   assign man_a_norm = {1'b1, man_a};
   assign man_b_norm = {1'b1, man_b};
 
   /////////////// first pipeline stage ///////////////////////////////
   //
   logic final_sign_1_r;
-  logic [7:0] exp_sum_unbiased_1_r;
+  logic [e_p-1:0] exp_sum_unbiased_1_r;
   logic a_sig_nan_1_r, b_sig_nan_1_r;
   logic a_nan_1_r, b_nan_1_r;
   logic a_infty_1_r, b_infty_1_r;
   logic a_zero_1_r, b_zero_1_r;
   logic a_denormal_1_r, b_denormal_1_r;
-  logic [8:0] exp_sum_1_r;
-  logic [23:0] man_a_norm_r, man_b_norm_r;
+  logic [e_p:0] exp_sum_1_r;
+  logic [m_p:0] man_a_norm_r, man_b_norm_r;
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
@@ -137,25 +138,26 @@ module bsg_fpu_mul_n
   end
 
   //////////// second pipeline stage ///////////////////////////////
-  // 24-bit multiplier
-  logic [47:0] man_prod;
+
+  // for single precision: 24-bit multiplier
+  logic [((m_p+1)*2)-1:0] man_prod;
 
   bsg_mul_synth #(
-    .width_p(24)
+    .width_p(m_p+1)
   ) mul_synth (
     .a_i(man_a_norm_r)
     ,.b_i(man_b_norm_r)
     ,.o(man_prod)	
   );
 
-  logic [47:0] man_prod_2_r;
-  logic [7:0] exp_sum_unbiased_2_r;
+  logic [((m_p+1)*2)-1:0] man_prod_2_r;
+  logic [e_p-1:0] exp_sum_unbiased_2_r;
   logic a_sig_nan_2_r, b_sig_nan_2_r;
   logic a_nan_2_r, b_nan_2_r;
   logic a_infty_2_r, b_infty_2_r;
   logic a_zero_2_r, b_zero_2_r;
   logic a_denormal_2_r, b_denormal_2_r;
-  logic [8:0] exp_sum_2_r;
+  logic [e_p:0] exp_sum_2_r;
   logic final_sign_2_r;
 
   always_ff @ (posedge clk_i) begin
@@ -187,37 +189,37 @@ module bsg_fpu_mul_n
 
   // lowers bits
   logic sticky, round, guard;
-  assign sticky = |man_prod_2_r[21:0];
-  assign round = man_prod_2_r[22];
-  assign guard = man_prod_2_r[23];
+  assign sticky = |man_prod_2_r[m_p-2:0];
+  assign round = man_prod_2_r[m_p-1];
+  assign guard = man_prod_2_r[m_p];
 
   // round condition
   logic round_up;
   assign round_up = sticky
-    ? (man_prod_2_r[47] ? guard : round)
-    : (guard & (round | (man_prod_2_r[47] & man_prod_2_r[24]))); 
+    ? (man_prod_2_r[(2*(m_p+1))-1] ? guard : round)
+    : (guard & (round | (man_prod_2_r[(2*(m_p+1))-1] & man_prod_2_r[m_p+1]))); 
 
 
   // exp with additional carry bit from the product of mantissa added.
-  logic [8:0] final_exp;
-  assign final_exp = {1'b0, exp_sum_unbiased_2_r} + {8'b0, man_prod_2_r[47]};
+  logic [e_p:0] final_exp;
+  assign final_exp = {1'b0, exp_sum_unbiased_2_r} + man_prod_2_r[(2*(m_p+1))-1];
 
   // mantissa also needs to be shifted if the product is larger than 2. 
-  logic [22:0] shifted_mantissa;
+  logic [m_p-1:0] shifted_mantissa;
 
-  assign shifted_mantissa = man_prod_2_r[47]
-    ? man_prod_2_r[46:24]
-    : man_prod_2_r[45:23];
+  assign shifted_mantissa = man_prod_2_r[(2*(m_p+1))-1]
+    ? man_prod_2_r[(m_p+1)+:m_p]
+    : man_prod_2_r[m_p+:m_p];
 
   // pre_roundup;
-  logic [30:0] pre_roundup;
+  logic [e_p+m_p-1:0] pre_roundup;
 
-  assign pre_roundup = {final_exp[7:0], shifted_mantissa};
+  assign pre_roundup = {final_exp[e_p-1:0], shifted_mantissa};
 
 
   //////////// third pipeline stage ///////////////////////////////
 
-  logic [30:0] pre_roundup_3_r;
+  logic [e_p+m_p-1:0] pre_roundup_3_r;
   logic round_up_3_r;
   logic final_sign_3_r;
   logic a_sig_nan_3_r, b_sig_nan_3_r;
@@ -225,8 +227,8 @@ module bsg_fpu_mul_n
   logic a_infty_3_r, b_infty_3_r;
   logic a_zero_3_r, b_zero_3_r;
   logic a_denormal_3_r, b_denormal_3_r;
-  logic [8:0] exp_sum_3_r;
-  logic [8:0] final_exp_3_r;
+  logic [e_p:0] exp_sum_3_r;
+  logic [e_p:0] final_exp_3_r;
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
@@ -259,118 +261,121 @@ module bsg_fpu_mul_n
   // carry going into exp when rounding up
   // (important for distinguishing between overflow and underflow)
   logic carry_into_exp;
-  assign carry_into_exp = &{round_up_3_r, pre_roundup_3_r[22:0]};
+  assign carry_into_exp = &{round_up_3_r, pre_roundup_3_r[m_p-1:0]};
 
   // round up for the final result. 
   logic round_overflow;
-  logic [30:0] rounded;
-  assign {round_overflow, rounded} = pre_roundup_3_r + {30'b0, round_up_3_r};
+  logic [e_p+m_p-1:0] rounded;
+  assign {round_overflow, rounded} = pre_roundup_3_r + round_up_3_r;
 
   // final output
+  logic sgn;
+
   always_comb begin
-    z_o[31] = final_sign_3_r;	
+    sgn = final_sign_3_r;
+
     if (a_sig_nan_3_r | b_sig_nan_3_r) begin
-      unimplemented_o = 0;
-      invalid_o = 1;
-      overflow_o = 0;
-      underflow_o = 0;
-      z_o[30:0] = {8'hff, 23'h3fffff}; // sig nan
+      unimplemented_o = 1'b0;
+      invalid_o = 1'b1;
+      overflow_o = 1'b0;
+      underflow_o = 1'b0;
+      z_o = `BSG_FPU_SIGNAN(sgn,e_p,m_p); // sig nan
     end
     else if (a_nan_3_r | b_nan_3_r) begin
-      unimplemented_o = 0;
-      invalid_o = 0;
-      overflow_o = 0;
-      underflow_o = 0;
-      z_o[30:0] = {8'hff, 23'h7fffff}; // quiet nan
+      unimplemented_o = 1'b0;
+      invalid_o = 1'b0;
+      overflow_o = 1'b0;
+      underflow_o = 1'b0;
+      z_o = `BSG_FPU_QUIETNAN(sgn,e_p,m_p); // quiet nan
     end
     else if (a_infty_3_r) begin
       if (b_zero_3_r) begin
-        unimplemented_o = 0;
-        invalid_o = 1;
-        overflow_o = 0;
-        underflow_o = 0;
-        z_o[30:0] = {8'hff, 23'h7fffff}; // quiet nan
+        unimplemented_o = 1'b0;
+        invalid_o = 1'b1;
+        overflow_o = 1'b0;
+        underflow_o = 1'b0;
+        z_o = `BSG_FPU_QUIETNAN(sgn,e_p,m_p); // quiet nan
       end
       else begin
-        unimplemented_o = 0;
-        invalid_o = 0;
-        overflow_o = 0;
-        underflow_o = 0;
-        z_o[30:0] = {8'hff, 23'h0}; // infty 
+        unimplemented_o = 1'b0;
+        invalid_o = 1'b0;
+        overflow_o = 1'b0;
+        underflow_o = 1'b0;
+        z_o = `BSG_FPU_INFTY(sgn,e_p,m_p); // infty 
       end
     end
     else if (b_infty_3_r) begin
       if (a_zero_3_r) begin
-        unimplemented_o = 0;
-        invalid_o = 1;
-        overflow_o = 0;
-        underflow_o = 0;
-        z_o[30:0] = {8'hff, 23'h7fffff}; // quiet nan
+        unimplemented_o = 1'b0;
+        invalid_o = 1'b1;
+        overflow_o = 1'b0;
+        underflow_o = 1'b0;
+        z_o = `BSG_FPU_QUIETNAN(sgn,e_p,m_p); // quiet nan
       end
       else begin
-        unimplemented_o = 0;
-        invalid_o = 0;
-        overflow_o = 0;
-        underflow_o = 0;
-        z_o[30:0] = {8'hff, 23'h0}; // infty 
+        unimplemented_o = 1'b0;
+        invalid_o = 1'b0;
+        overflow_o = 1'b0;
+        underflow_o = 1'b0;
+        z_o = `BSG_FPU_INFTY(sgn,e_p,m_p); // infty 
       end
     end
     else if (a_zero_3_r | b_zero_3_r) begin
-      unimplemented_o = 0;
-      invalid_o = 0;
-      overflow_o = 0;
-      underflow_o = 0;
-      z_o[30:0] = 31'b0; // zero
+      unimplemented_o = 1'b0;
+      invalid_o = 1'b0;
+      overflow_o = 1'b0;
+      underflow_o = 1'b0;
+      z_o = `BSG_FPU_ZERO(sgn,e_p,m_p); // zero
     end
     else if (a_denormal_3_r & b_denormal_3_r) begin
-      unimplemented_o = 0;
-      invalid_o = 0;
-      overflow_o = 0;
-      underflow_o = 1;
-      z_o[30:0] = 31'b0; // zero
+      unimplemented_o = 1'b0;
+      invalid_o = 1'b0;
+      overflow_o = 1'b0;
+      underflow_o = 1'b1;
+      z_o = `BSG_FPU_ZERO(sgn,e_p,m_p); // zero
     end
     else if (a_denormal_3_r | b_denormal_3_r) begin
-      unimplemented_o = 1;
-      invalid_o = 0;
-      overflow_o = 0;
-      underflow_o = 0;
-      z_o[30:0] = {8'hff, 23'h7fffff}; // quiet nan
+      unimplemented_o = 1'b1;
+      invalid_o = 1'b0;
+      overflow_o = 1'b0;
+      underflow_o = 1'b0;
+      z_o = `BSG_FPU_QUIETNAN(sgn,e_p,m_p); // quiet nan
     end
-    else if (exp_sum_3_r[8:7] == 2'b0) begin
-      unimplemented_o = 0;
-      invalid_o = 0;
-      overflow_o = 0;
-      underflow_o = 1;
-      z_o[30:0] = 31'b0; // zero
+    else if (exp_sum_3_r[(e_p-1)+:2] == 2'b0) begin
+      unimplemented_o = 1'b0;
+      invalid_o = 1'b0;
+      overflow_o = 1'b0;
+      underflow_o = 1'b1;
+      z_o = `BSG_FPU_ZERO(sgn,e_p,m_p); // zero
     end
-    else if (exp_sum_3_r[8:7] == 2'b11 | final_exp_3_r[8]) begin
-      unimplemented_o = 0;
-      invalid_o = 0;
-      overflow_o = 1;
-      underflow_o = 0;
-      z_o[30:0] = {8'hff, 23'h0}; // infty 
+    else if (exp_sum_3_r[(e_p-1)+:2] == 2'b11 | final_exp_3_r[e_p]) begin
+      unimplemented_o = 1'b0;
+      invalid_o = 1'b0;
+      overflow_o = 1'b1;
+      underflow_o = 1'b0;
+      z_o = `BSG_FPU_INFTY(sgn,e_p,m_p); // infty 
     end
     else begin 
-      if (pre_roundup_3_r[30:23] == 8'hff & (pre_roundup_3_r[23] | carry_into_exp)) begin
-        unimplemented_o = 0;
-        invalid_o = 0;
-        overflow_o = 1;
-        underflow_o = 0;
-        z_o[30:0] = {8'hff, 23'h0}; // infty 
+      if (pre_roundup_3_r[m_p+:e_p] == {e_p{1'b1}} & (pre_roundup_3_r[m_p] | carry_into_exp)) begin
+        unimplemented_o = 1'b0;
+        invalid_o = 1'b0;
+        overflow_o = 1'b1;
+        underflow_o = 1'b0;
+        z_o = `BSG_FPU_INFTY(sgn,e_p,m_p); // infty 
       end
-      else if (pre_roundup_3_r[30:23] == 8'b0 & ~carry_into_exp) begin
-        unimplemented_o = 0;
-        invalid_o = 0;
-        overflow_o = 0;
-        underflow_o = 1;
-        z_o[30:0] = 31'b0; // zero
+      else if (pre_roundup_3_r[m_p+:e_p] == {e_p{1'b0}} & ~carry_into_exp) begin
+        unimplemented_o = 1'b0;
+        invalid_o = 1'b0;
+        overflow_o = 1'b0;
+        underflow_o = 1'b1;
+        z_o = `BSG_FPU_ZERO(sgn,e_p,m_p); // zero
       end 
       else begin
-        unimplemented_o = 0;
-        invalid_o = 0;
-        overflow_o = 0;
-        underflow_o = 0;
-        z_o[30:0] = rounded; // happy case
+        unimplemented_o = 1'b0;
+        invalid_o = 1'b0;
+        overflow_o = 1'b0;
+        underflow_o = 1'b0;
+        z_o = {sgn, rounded}; // happy case
       end
     end
   end
