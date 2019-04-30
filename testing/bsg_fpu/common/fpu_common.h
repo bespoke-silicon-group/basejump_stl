@@ -17,6 +17,8 @@
 
 void print_done(int ring_width_p);
 void print_float_in_binary(float f);
+void print_int_in_binary(int i);
+void print_uint_in_binary(uint32_t i);
 bool is_sig_nan(float f);
 bool is_nan(float f);
 bool is_infty(float f);

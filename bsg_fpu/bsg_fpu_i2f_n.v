@@ -3,80 +3,157 @@
  *
  *  @author Tommy Jung
  *
- *  Parameterized int-to-float converter. 
  *
- *  It handles signed/unsigned integer.
+ *  Parameterized int-to-float converter.
+ *  It can handle signed/unsigned integer.
+ *  
  *
  */
 
 module bsg_fpu_i2f_n
   #(parameter e_p="inv"
     , parameter m_p="inv"
+    
+    , localparam width_lp = (e_p+m_p+1)
+    , localparam bias_lp = {1'b0, {(e_p-1){1'b1}}}
   )
-(
-  input [31:0] a_i
-  , input signed_i
-  , output logic [31:0] z_o
-);
+  (
+    input clk_i
+    , input reset_i
+    , input en_i
+
+    , input v_i
+    , input signed_i
+    , input [width_lp-1:0] a_i
+    , output logic ready_o
+
+    , output logic v_o
+    , output logic [width_lp-1:0] z_o
+    , input yumi_i
+  );
+  
+  // pipeline status / control
+  logic v_1_r, v_2_r;
+  logic stall;
+
+  assign v_o = v_2_r;
+  assign stall = v_2_r & ~yumi_i;
+  assign ready_o = ~stall & en_i;
 
   // sign bit
   logic sign;
-  assign sign = a_i[31];
+  assign sign = signed_i
+    ? a_i[width_lp-1]
+    : 1'b0;
 
   // calculate absolute value
-  logic [31:0] abs;
+  logic [width_lp-1:0] abs;
 
   bsg_abs #(
-    .width_p(32)
-  ) bsg_abs0 (
+    .width_p(width_lp-1+1)
+  ) abs0 (
     .a_i(a_i)
     ,.o(abs)
   );
 
+  logic [width_lp-1:0] chosen_abs;
+  assign chosen_abs = signed_i
+    ? abs
+    : a_i;
+
   // count the number of leading zeros
-  logic [4:0] shamt;
+  logic [`BSG_SAFE_CLOG2(width_lp)-1:0] shamt;
   logic all_zero;
 
-  bsg_counting_leading_zeros #(
-    .width_p(32)
+  bsg_fpu_clz #(
+    .width_p(width_lp)
   ) clz (
-    .a_i(abs)
+    .i(chosen_abs)
     ,.num_zero_o(shamt)
   );
 
-  assign all_zero = ~(|abs);
+  assign all_zero = ~(|chosen_abs);
+
+  /////////// first pipeline stage /////////////
+
+  logic [width_lp-1:0] chosen_abs_1_r;
+  logic [`BSG_SAFE_CLOG2(width_lp)-1:0] shamt_1_r;
+  logic sign_1_r;
+  logic all_zero_1_r;
+
+  always_ff @ (posedge clk_i) begin
+    if (reset_i) begin
+      v_1_r <= 1'b0;
+    end
+    else begin
+      if (~stall & en_i) begin
+        v_1_r <= v_i;
+        if (v_i) begin
+          chosen_abs_1_r <= chosen_abs;
+          shamt_1_r <= shamt;
+          sign_1_r <= sign;
+          all_zero_1_r <= all_zero;
+        end
+      end
+    end
+  end
+
+  //////////////////////////////////////////////
 
   // exponent 
-  logic [7:0] exp;
-  assign exp = 8'b1001_1110 - shamt;
+  logic [e_p-1:0] exp;
+  assign exp = (bias_lp+e_p+m_p) - shamt_1_r;
 
   // shifted
-  logic [31:0] shifted;
-  assign shifted = abs << shamt;
+  logic [width_lp-1:0] shifted;
+  assign shifted = chosen_abs_1_r << shamt_1_r;
 
   // sticky bit
   logic sticky;
-  assign sticky = |shifted[6:0];
+  assign sticky = |shifted[width_lp-3-m_p:0];
 
   // round bit
   logic round_bit;
-  assign round_bit = shifted[7];
+  assign round_bit = shifted[width_lp-2-m_p];
 
   // mantissa
-  logic [22:0] mantissa;
-  assign mantissa = shifted[30:8];
+  logic [m_p-1:0] mantissa;
+  assign mantissa = shifted[width_lp-2:width_lp-1-m_p];
 
   // round up condition
   logic round_up;
   assign round_up = round_bit & (mantissa[0] | sticky);
 
   // round up
-  logic [30:0] rounded;
+  logic [width_lp-2:0] rounded;
   assign rounded = {exp, mantissa} + round_up;
 
   // final result
-  assign z_o = all_zero
-    ? 32'b0
-    : {sign, rounded};
+  logic [width_lp-1:0] z;
+  assign z = all_zero_1_r
+    ? {width_lp{1'b0}}
+    : {sign_1_r, rounded};
+
+  ///////   second pipeline stage ///////////////////////
+
+  logic [width_lp-1:0] z_2_r;
+  
+  always_ff @ (posedge clk_i) begin
+    if (reset_i) begin
+      v_2_r <= 1'b0;
+    end
+    else begin
+      if (~stall & en_i) begin
+        v_2_r <= v_1_r;
+        if (v_1_r) begin
+          z_2_r <= z; 
+        end
+      end
+    end
+  end
+
+  assign z_o = z_2_r;
+
+  ///////////////////////////////////////////////////////
 
 endmodule

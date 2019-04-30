@@ -3,7 +3,7 @@ INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 FPU_TRACE_ROM = bsg_fpu_trace_rom
 
 app:
-	gcc -o app ./cmp_32.c ../common/fpu_common.c \
+	gcc -o app ./i2f_32.c ../common/fpu_common.c \
 		-I../common -lm -std=c99
 
 $(FPU_TRACE_ROM).tr: app

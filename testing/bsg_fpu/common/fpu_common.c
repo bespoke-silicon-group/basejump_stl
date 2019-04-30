@@ -29,6 +29,22 @@ void print_float_in_binary(float f)
   }
 }
 
+void print_int_in_binary(int i)
+{
+  for (int j = 0; j < 32; j++)
+  {
+    printf("%d", (i >> (31-j)) & 0x1);
+  }
+}
+
+void print_uint_in_binary(uint32_t i)
+{
+  for (int j = 0; j < 32; j++)
+  {
+    printf("%d", (i >> (31-j)) & 0x1);
+  }
+}
+
 bool is_sig_nan(float f)
 {
   uint32_t hex_f = hex(f);

@@ -7,7 +7,7 @@
 module testbench();
 
 localparam width_p = 32;
-localparam ring_width_p = width_p*2 + 3;
+localparam ring_width_p = width_p + 1;
 localparam rom_addr_width_p = 32;
 
 logic clk;
@@ -27,34 +27,32 @@ bsg_nonsynth_reset_gen #(
   ,.async_reset_o(reset)
 );
 
-logic v_r;
-logic [width_p-1:0] a_r;
-logic [width_p-1:0] b_r;
+logic v_li;
+logic [width_p-1:0] a_li;
+logic signed_li;
+logic ready_lo;
 
-logic eq_lo;
-logic lt_lo;
-logic le_lo;
-logic [width_p-1:0] min_lo;
-logic [width_p-1:0] max_lo;
+logic v_lo;
+logic [width_p-1:0] z_lo;
+logic yumi_li;
 
-
-bsg_fpu_cmp #(
+bsg_fpu_i2f #(
   .width_p(width_p)
 ) dut (
-  .a_i(a_r)
-  ,.b_i(b_r)
+  .clk_i(clk)
+  ,.reset_i(reset)
+  
+  ,.v_i(v_li)
+  ,.a_i(a_li)
+  ,.signed_i(signed_li)
+  ,.ready_o(ready_lo)
 
-  ,.eq_o(eq_lo)
-  ,.lt_o(lt_lo)
-  ,.le_o(le_lo)
-  ,.lt_le_invalid_o()
-  ,.eq_invalid_o()
-
-  ,.min_o(min_lo)
-  ,.max_o(max_lo)
-  ,.min_max_invalid_o()
+  ,.v_o(v_lo)
+  ,.z_o(z_lo)
+  ,.yumi_i(yumi_li)
 );
 
+logic tr_v_li;
 logic [ring_width_p-1:0] tr_data_li;
 logic tr_ready_lo;
 
@@ -75,7 +73,7 @@ bsg_fsb_node_trace_replay #(
   ,.reset_i(reset)
   ,.en_i(1'b1)
 
-  ,.v_i(v_r)
+  ,.v_i(tr_v_li)
   ,.data_i(tr_data_li)
   ,.ready_o(tr_ready_lo)
 
@@ -90,6 +88,8 @@ bsg_fsb_node_trace_replay #(
   ,.error_o()
 );
 
+assign {signed_li, a_li} = tr_data_lo;
+
 bsg_fpu_trace_rom #(
   .width_p(ring_width_p+4)
   ,.addr_width_p(rom_addr_width_p)
@@ -99,45 +99,15 @@ bsg_fpu_trace_rom #(
 );
 
 assign tr_data_li = {
-  eq_lo
-  , lt_lo
-  , le_lo
-  , min_lo
-  , max_lo
+  1'b0
+  , z_lo
 };
 
-logic [width_p-1:0] a_n, b_n;
-logic v_n;
+assign v_li = tr_v_lo;
+assign tr_yumi_li = tr_v_lo & ready_lo;
 
-always_comb begin
-  if (v_r == 1'b0) begin
-    tr_yumi_li = tr_v_lo;
-    v_n = tr_v_lo;
-    {a_n, b_n} = tr_v_lo 
-      ? tr_data_lo[0+:width_p*2]
-      : {a_r, b_r};
-  end
-  else begin
-    tr_yumi_li = 1'b0;
-    v_n = tr_ready_lo
-      ? 1'b0
-      : v_r;
-    {a_n, b_n} = {a_r, b_r};
-  end
-end
-
-always_ff @ (posedge clk) begin
-  if (reset) begin
-    v_r <= 1'b0;
-    a_r <= '0;
-    b_r <= '0;
-  end
-  else begin
-    v_r <= v_n;
-    a_r <= a_n;
-    b_r <= b_n;
-  end
-end
+assign tr_v_li = v_lo;
+assign yumi_li = v_lo & tr_ready_lo;
 
 initial begin
   wait(done_lo);
