@@ -7,8 +7,11 @@
 ██████╔╝███████║╚██████╔╝███████╗██║     ██║     ╚██████╔╝
 ╚═════╝ ╚══════╝ ╚═════╝ ╚══════╝╚═╝     ╚═╝      ╚═════╝ 
 
+
 BSG Floating-Point Arithmetic Core (bsg_fpu)
 
-Author: Tommy Jung (tommy.dc.jung@gmail.com)
+
+Author: Tommy Jung (tommy.dc.jung @ gmail.com)
+
 
 ```

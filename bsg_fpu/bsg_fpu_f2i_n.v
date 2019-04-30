@@ -1,18 +1,24 @@
 /**
  *  bsg_fpu_f2i_n.v
  *
- *  parameterized float-to-int converter
- *
  *  @author Tommy Jung
+ *
+ *  Parameterized float-to-int converter.
+ *
  */
 
-import bsg_fpu_rm_pkg::*;
+module bsg_fpu_f2i_n
+  #(parameter e_p="inv"
+    , parameter m_p="inv"
 
-module bsg_fpu_f2i_n (
-  input [31:0] a_i          // input float
-  ,input [2:0] rm_i         // rounding mode
-  ,output logic [31:0] o    // output int
-);
+    , localparam width_lp=(e_p+m+p+1)
+  )
+  (
+    input [width_lp-1:0] a_i           // input float
+    , input signed_i
+
+    , output logic [width_lp-1:0] z_o    // output int
+  );
 
   logic sign;
   logic [7:0] exp;
@@ -20,8 +26,8 @@ module bsg_fpu_f2i_n (
   logic zero;
   
   bsg_fpu_preprocess #(
-    .exp_width_p(8)
-    ,.mantissa_width_p(23)
+    .e_p(8)
+    ,.m_p(23)
   ) preprocess (
     .a_i(a_i)
     ,.zero_o(zero)

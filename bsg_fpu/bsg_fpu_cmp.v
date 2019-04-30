@@ -23,12 +23,12 @@ module bsg_fpu_cmp
     , output logic min_max_invalid_o
   );
 
-  if (width_p == 32) begin: cmp32
+  if (width_p == 32) begin: cmp_bin32
 
     bsg_fpu_cmp_n #(
       .e_p(8)
       ,.m_p(23)
-    ) cmp32 (
+    ) cmp_bin32 (
       .a_i(a_i)
       ,.b_i(b_i)
 
@@ -45,12 +45,34 @@ module bsg_fpu_cmp
     );
 
   end
-  else if (width_p == 64) begin: cmp64
+  else if (width_p == 64) begin: cmp_bin64
 
     bsg_fpu_cmp_n #(
       .e_p(11)
       ,.m_p(52)
-    ) cmp64 (
+    ) cmp_bin64 (
+      .a_i(a_i)
+      ,.b_i(b_i)
+
+      ,.eq_o(eq_o)
+      ,.lt_o(lt_o)
+      ,.le_o(le_o)
+
+      ,.lt_le_invalid_o(lt_le_invalid_o)
+      ,.eq_invalid_o(eq_invalid_o)
+
+      ,.min_o(min_o)
+      ,.max_o(max_o)
+      ,.min_max_invalid_o(min_max_invalid_o)
+    );
+
+  end
+  else if (width_p == 16) begin: cmp_bfloat16
+
+    bsg_fpu_cmp_n #(
+      .e_p(8)
+      ,.m_p(7)
+    ) cmp_bfloat16 (
       .a_i(a_i)
       ,.b_i(b_i)
 
