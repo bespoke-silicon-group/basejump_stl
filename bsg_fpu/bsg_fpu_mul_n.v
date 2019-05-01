@@ -279,7 +279,7 @@ module bsg_fpu_mul_n
       invalid_o = 1'b1;
       overflow_o = 1'b0;
       underflow_o = 1'b0;
-      z_o = `BSG_FPU_SIGNAN(sgn,e_p,m_p); // sig nan
+      z_o = `BSG_FPU_SIGNAN(e_p,m_p); // sig nan
     end
     else if (a_nan_3_r | b_nan_3_r) begin
       unimplemented_o = 1'b0;

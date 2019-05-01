@@ -23,6 +23,8 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <fenv.h>
 #include "fpu_common.h"
 
@@ -65,24 +67,24 @@ void test_mul_32(float a_i, float b_i)
   if (a_sig_nan || b_sig_nan)
   {
     invalid = 1;
-    z_o = i2f(sign | 0x7fbfffff);
+    z_o = i2f(0x7fbfffff);
   }
   else if (a_nan || b_nan)
   {
-    z_o = i2f(sign | 0x7fffffff);
+    z_o = i2f(0x7fc00000);
   }
   else if (a_infty)
   {
     invalid = b_zero ? 1 : 0;
     z_o = b_zero
-      ? i2f(sign | 0x7fffffff)
+      ? i2f(0x7fc00000)
       : i2f(sign | 0x7f800000);
   }
   else if (b_infty)
   {
     invalid = a_zero ? 1 : 0;
     z_o = a_zero
-      ? i2f(sign | 0x7fffffff)
+      ? i2f(0x7fc00000)
       : i2f(sign | 0x7f800000);
   }
   else if (a_zero || b_zero)
@@ -97,7 +99,7 @@ void test_mul_32(float a_i, float b_i)
   else if (a_denormal || b_denormal)
   {
     unimplemented = 1;
-    z_o = i2f(sign | 0x7fffffff);
+    z_o = i2f(0x7fc00000);
   }
   else
   {
@@ -149,11 +151,21 @@ void test_mul_32(float a_i, float b_i)
 
 int main()
 {
+  srand(time(NULL));
+
   test_mul_32(2.718281, 3.141592); // e + pi
   test_mul_32(2.718281, 3.141592); // e - pi
   test_mul_32(3.141592, 2.718281); // pi + e
   test_mul_32(3.141592, 2.718281); // pi - e
   test_mul_32(1.42341, 0.09842);
+
+  for (int i = 0; i < 5000; i++)
+  {
+    float a = randf();
+    float b = randf();
+    test_mul_32(a,b);
+  }
+
 
   print_done(RING_WIDTH_P);
 
