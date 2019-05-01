@@ -17,14 +17,14 @@
  *
  */
 
-#pragma STDC FENV_ACCESS_ON
-
 #define RING_WIDTH_P 67 // 32+32+3
 #define DATA_WIDTH_P 32
 
 #include <stdbool.h>
 #include <stdio.h>
 #include <fenv.h>
+#include <time.h>
+#include <stdlib.h>
 #include "fpu_common.h"
 
 
@@ -88,6 +88,7 @@ void test_cmp_32(float a_i, float b_i)
 
 int main()
 {
+  srand(time(NULL));
 
   test_cmp_32(2.718281, 3.141592); // e, pi
   test_cmp_32(2.718281, -3.141592); // e, -pi
@@ -115,7 +116,7 @@ int main()
 
   test_cmp_32(NAN, -1000.99999);
   test_cmp_32(-1000.99999, NAN);
-  test_cmp_32(NAN, NAN);
+  test_cmp_32(-NAN, -NAN);
 
   test_cmp_32(snanf(), 123.123);
   test_cmp_32(123.123, snanf());
@@ -166,6 +167,20 @@ int main()
 
   test_cmp_32(infty(), snanf());
   test_cmp_32(snanf(), infty());
+
+  for (int i = 0; i < 500; i++)
+  {
+    float a = randf();
+    test_cmp_32(a,a);
+  }
+
+
+  for (int i = 0; i < 5000; i++)
+  {
+    float a = randf();
+    float b = randf();
+    test_cmp_32(a,b);
+  }
 
   print_done(RING_WIDTH_P);
 
