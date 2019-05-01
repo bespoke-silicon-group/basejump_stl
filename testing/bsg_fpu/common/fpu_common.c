@@ -59,7 +59,7 @@ bool is_nan(float f)
 bool is_infty(float f)
 {
   uint32_t hex_f = hex(f);
-  return ((hex_f & 0x7f800000) == 0x7f800000) && (hex_f & 0x007fffff == 0);
+  return ((hex_f & 0x7f800000) == 0x7f800000) && ((hex_f & 0x007fffff) == 0);
 }
 
 bool is_denormal(float f)

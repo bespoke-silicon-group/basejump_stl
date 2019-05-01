@@ -73,6 +73,9 @@ int main()
     test_unsigned_i2f_32(-rand());
   }
 
+  test_unsigned_i2f_32(7<<29);
+  test_signed_i2f_32(7<<29);
+
   print_done(RING_WIDTH_P);
 
   return 0;

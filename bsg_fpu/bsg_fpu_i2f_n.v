@@ -3,10 +3,8 @@
  *
  *  @author Tommy Jung
  *
- *
  *  Parameterized int-to-float converter.
  *  It can handle signed/unsigned integer.
- *  
  *
  */
 
@@ -32,22 +30,27 @@ module bsg_fpu_i2f_n
     , input yumi_i
   );
   
+
   // pipeline status / control
-  logic v_1_r, v_2_r;
+  //
+  logic v_1_r;
   logic stall;
 
-  assign v_o = v_2_r;
-  assign stall = v_2_r & ~yumi_i;
+  assign v_o = v_1_r;
+  assign stall = v_1_r & ~yumi_i;
   assign ready_o = ~stall & en_i;
 
   // sign bit
+  //
   logic sign;
   assign sign = signed_i
     ? a_i[width_lp-1]
     : 1'b0;
 
   // calculate absolute value
+  //
   logic [width_lp-1:0] abs;
+  logic [width_lp-1:0] chosen_abs;
 
   bsg_abs #(
     .width_p(width_lp-1+1)
@@ -56,7 +59,6 @@ module bsg_fpu_i2f_n
     ,.o(abs)
   );
 
-  logic [width_lp-1:0] chosen_abs;
   assign chosen_abs = signed_i
     ? abs
     : a_i;
@@ -129,31 +131,9 @@ module bsg_fpu_i2f_n
   assign rounded = {exp, mantissa} + round_up;
 
   // final result
-  logic [width_lp-1:0] z;
-  assign z = all_zero_1_r
+  assign z_o = all_zero_1_r
     ? {width_lp{1'b0}}
     : {sign_1_r, rounded};
 
-  ///////   second pipeline stage ///////////////////////
-
-  logic [width_lp-1:0] z_2_r;
-  
-  always_ff @ (posedge clk_i) begin
-    if (reset_i) begin
-      v_2_r <= 1'b0;
-    end
-    else begin
-      if (~stall & en_i) begin
-        v_2_r <= v_1_r;
-        if (v_1_r) begin
-          z_2_r <= z; 
-        end
-      end
-    end
-  end
-
-  assign z_o = z_2_r;
-
-  ///////////////////////////////////////////////////////
 
 endmodule
