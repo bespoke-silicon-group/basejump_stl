@@ -59,20 +59,11 @@ int main()
 {
   srand(time(NULL));
 
-  for (int i = 0; i < 10000; i++)
+  for (int i = 0; i < 5000; i++)
   {
-    test_signed_i2f_32(rand());
-    test_signed_i2f_32(-rand());
-  }
-
-  for (int i = 0; i < 10000; i++)
-  {
+    test_signed_i2f_32(randf());
     test_unsigned_i2f_32(rand());
-    test_unsigned_i2f_32(-rand());
   }
-
-  test_unsigned_i2f_32(7<<29);
-  test_signed_i2f_32(7<<29);
 
   print_done(RING_WIDTH_P);
 
