@@ -80,61 +80,38 @@ module bsg_fpu_f2i_n
   logic exp_too_big;
   logic exp_too_small;
 
-  //assign exp_too_big = exp > (8'd157 + (~signed_i));
   assign exp_too_big = signed_i
-    ? (exp > 8'd157)
-    : (exp > 8'd158);
-  assign exp_too_small = exp < 8'd126; 
+    ? (exp > (bias_lp+width_lp-2))
+    : (exp > (bias_lp+width_lp-1));
+    //? (exp > 8'd157)
+    //: (exp > 8'd158);
+  assign exp_too_small = exp < bias_lp; 
 
   // determine shift amount
   //
-  logic [33:0] preshift;
-  logic [7:0] shamt;
-  logic [33:0] shifted;
+  logic [width_lp-1:0] preshift;
+  logic [e_p-1:0] shamt;
+  logic [width_lp-1:0] shifted;
 
   assign preshift = signed_i
-    ? {1'b0, 1'b1, mantissa, 7'b0, 2'b0}
-    : {1'b1, mantissa, 8'b0, 2'b0};
+    ? {1'b0, 1'b1, mantissa, {(width_lp-2-m_p){1'b0}}}
+    : {1'b1, mantissa, {(width_lp-1-m_p){1'b0}}};
 
   assign shamt = signed_i
-    ? 8'd157 - exp
-    : 8'd158 - exp;
-  //assign shamt = 8'd158 - signed_i - exp;
+    ? (bias_lp+width_lp-2) - exp
+    : (bias_lp+width_lp-1) - exp;
 
-  assign shifted = preshift >> shamt[5:0];
+  assign shifted = preshift >> shamt[`BSG_SAFE_CLOG2(width_lp):0];
 
-  // determine sticky bit
-  //
-  //logic sticky_bit;
-
-  //bsg_fpu_sticky #(
-  //  .width_p(34)
-  //) sticky0 (
-  //  .i(preshift)
-  //  ,.shamt_i(shamt[5:0])
-  //  ,.sticky_o(sticky_bit)
-  //);
-  
-  // determine whether to round or not
-  // lsb | g r s
-  //logic lsb;
-  //logic guard_bit;
-  //logic round_bit;
-  //logic do_round;
-
-  //assign lsb = shifted[2];
-  //assign guard_bit = shifted[1];
-  //assign round_bit = shifted[0];
-  //assign do_round = guard_bit & ((round_bit | sticky_bit) ? 1'b1 : lsb);
 
   // invert
   //
-  logic [31:0] inverted;
-  assign inverted = {32{signed_i & sign}} ^ {shifted[33:2]};
+  logic [width_lp-1:0] inverted;
+  assign inverted = {width_lp{signed_i & sign}} ^ {shifted};
 
   //// first pipeline stage ///////////////////////////
-  logic [31:0] inverted_1_r;
-  //logic do_round_1_r;
+
+  logic [width_lp-1:0] inverted_1_r;
   logic sign_1_r;
   logic signed_1_r;
   logic zero_1_r;
@@ -151,7 +128,6 @@ module bsg_fpu_f2i_n
         v_1_r <= v_i;
         if (v_i) begin
           inverted_1_r <= inverted;
-          //do_round_1_r <= do_round;
           sign_1_r <= sign;
           signed_1_r <= signed_i;
           zero_1_r <= zero;
@@ -165,7 +141,7 @@ module bsg_fpu_f2i_n
 
   /////////////////////////////////////////////////////
 
-  logic [31:0] post_round;
+  logic [width_lp-1:0] post_round;
   assign post_round = inverted_1_r + (sign_1_r);
 
   always_comb begin

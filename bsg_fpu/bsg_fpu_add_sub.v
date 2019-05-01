@@ -75,7 +75,7 @@ module bsg_fpu_add_sub
     ); 
 
   end
-  else if (width == 16) begin: add_sub_bfloat16
+  else if (width_p == 16) begin: add_sub_bfloat16
 
     bsg_fpu_add_sub_n #(
       .e_p(8)

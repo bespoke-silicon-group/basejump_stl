@@ -8,7 +8,7 @@
  *    - a_i
  *
  *  - output vector (0010)
- *    - filler 0
+ *    - invalid_o
  *    - z_o
  *
  */
