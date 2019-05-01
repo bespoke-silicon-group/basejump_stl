@@ -1,9 +1,10 @@
 /**
  *  bsg_fpu_sticky.v
  *
- *  calculate the sticky bit, for given input and shift amount.
- *
  *  @author Tommy Jung
+ *
+ *  It calculates the sticky bit for given input and shift amount.
+ *
  */
 
 module bsg_fpu_sticky
@@ -12,14 +13,15 @@ module bsg_fpu_sticky
     input [width_p-1:0] i // input
     , input [`BSG_WIDTH(width_p)-1:0] shamt_i // shift amount
     , output logic sticky_o
-);
+  );
 
   logic [width_p-1:0] scan_out;
 
   bsg_scan #(
     .width_p(width_p)
-    , .or_p(1)
-    , .lo_to_hi_p(1)) scan0 (
+    ,.or_p(1)
+    ,.lo_to_hi_p(1)
+  ) scan0 (
     .i(i)
     ,.o(scan_out)
   );

@@ -99,3 +99,9 @@ float infty()
   uint32_t temp = 0x7f800000;
   return i2f(temp);
 }
+
+float randf()
+{
+  uint32_t temp = ((rand() << 16) & 0xffff0000) | (rand() & 0x0000ffff);
+  return flt(temp);
+}

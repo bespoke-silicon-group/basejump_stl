@@ -12,7 +12,7 @@
  *  If the input float is too big (exp out of range), 
  *  then the output is set to zero, and invalid flag is raised. 
  *  
- *  Casting int to float should drop the fractional part, instead of 
+ *  Casting float to int should drop the fractional part, instead of 
  *  rounding up.
  *
  */

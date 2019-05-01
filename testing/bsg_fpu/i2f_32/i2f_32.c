@@ -13,8 +13,6 @@
  *
  */
 
-#pragma STDC FENV_ACCESS_ON
-
 #define RING_WIDTH_P 33 // 32+1
 #define DATA_WIDTH_P 32
 

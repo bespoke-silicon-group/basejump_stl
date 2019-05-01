@@ -17,13 +17,13 @@
  *
  */
 
-#pragma STDC FENV_ACCESS_ON
-
 #define RING_WIDTH_P 65 // 32+32+1
 #define DATA_WIDTH_P 32
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <fenv.h>
 #include "fpu_common.h"
 
@@ -104,16 +104,16 @@ void test_add_sub_32(uint32_t sub_i, float a_i, float b_i)
   if (a_sig_nan || b_sig_nan)
   {
     invalid = 1;
-    z_o = i2f(sign | 0x7fbfffff);
+    z_o = i2f(0x7fbfffff);
   }
   else if (a_nan || b_nan)
   {
-    z_o = i2f(sign | 0x7fffffff);
+    z_o = i2f(0x7fc00000);
   }
   else if (a_infty && b_infty)
   {
     z_o = (sub_mag == 0) 
-      ? i2f(sign | 0x7f800000)
+      ? i2f(0x7fc00000)
       : i2f(sign | 0x7fffffff);
   }
   else if (a_infty && !b_infty)
@@ -127,7 +127,7 @@ void test_add_sub_32(uint32_t sub_i, float a_i, float b_i)
   else if (a_denormal || b_denormal)
   {
     unimplemented = 1;
-    z_o = i2f(sign | 0x7fffffff);
+    z_o = i2f(0x7fc00000);
   }
   else
   {
@@ -181,11 +181,28 @@ void test_add_sub_32(uint32_t sub_i, float a_i, float b_i)
 
 int main()
 {
+  srand(time(NULL));
+  //srand(0);
+
   test_add_sub_32(0, 2.718281, 3.141592); // e + pi
   test_add_sub_32(1, 2.718281, 3.141592); // e - pi
   test_add_sub_32(0, 3.141592, 2.718281); // pi + e
   test_add_sub_32(1, 3.141592, 2.718281); // pi - e
-  test_add_sub_32(0, 1.42341, 0.09842);
+  test_add_sub_32(0, 17.4237741, 0.009842);
+  test_add_sub_32(0, 7777771.42341, 0.09842);
+  test_add_sub_32(0, 14444.42341, 0.00009842);
+  test_add_sub_32(0, 63751.42341, 1424.02359842);
+  test_add_sub_32(0, 134.13111111, 2222.0229842);
+  test_add_sub_32(0, 0.000042341, 505.0955842);
+
+  for (int i = 0; i < 2500; i++)
+  {
+    int add_or_sub = rand() % 2;
+    float a = randf();
+    float b = randf();
+    test_add_sub_32(add_or_sub, a, b); // e + pi
+    
+  }
 
   print_done(RING_WIDTH_P);
 

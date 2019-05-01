@@ -8,10 +8,11 @@
 ╚═════╝ ╚══════╝ ╚═════╝ ╚══════╝╚═╝     ╚═╝      ╚═════╝ 
 
 
-BSG Floating-Point Arithmetic Core (bsg_fpu)
+BSG Floating-Point Arithmetic Core
 
 
 Author: Tommy Jung (tommy.dc.jung @ gmail.com)
+
 
 
 ```

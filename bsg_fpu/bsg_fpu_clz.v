@@ -1,9 +1,10 @@
 /**
  *	bsg_fpu_clz.v
  *	
+ *	@author Tommy Jung
+ *
  *	It counts the number of leading zeros.
  *
- *	@author Tommy Jung
  */
 
 module bsg_fpu_clz
@@ -12,13 +13,13 @@ module bsg_fpu_clz
   )
   (
     input [width_p-1:0] i
-    ,output logic [lg_width_lp-1:0] num_zero_o
+    , output logic [lg_width_lp-1:0] num_zero_o
   );
  
 
   logic [width_p-1:0] reversed;
-  genvar j;
-  for (j = 0; j < width_p; j++) begin
+
+  for (genvar j = 0; j < width_p; j++) begin
     assign reversed[j] = i[width_p-1-j];
   end  
 

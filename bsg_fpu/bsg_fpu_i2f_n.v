@@ -53,7 +53,7 @@ module bsg_fpu_i2f_n
   logic [width_lp-1:0] chosen_abs;
 
   bsg_abs #(
-    .width_p(width_lp-1+1)
+    .width_p(width_lp)
   ) abs0 (
     .a_i(a_i)
     ,.o(abs)
