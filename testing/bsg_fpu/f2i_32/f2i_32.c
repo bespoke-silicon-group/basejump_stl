@@ -207,13 +207,10 @@ int main()
   test_unsigned_f2i_32(i2f(0x4f5079fa));
 
   srand(time(NULL));
-  for (int i = 0; i < 500; i++)
+  for (int i = 0; i < 5000; i++)
   {
-    float rf = i2f(rand());
-    test_signed_f2i_32(rf);
-    test_signed_f2i_32(-rf);
-    test_unsigned_f2i_32(rf);
-    test_unsigned_f2i_32(-rf);
+    test_signed_f2i_32(randf());
+    test_unsigned_f2i_32(randf());
   }
 
   print_done(RING_WIDTH_P);
