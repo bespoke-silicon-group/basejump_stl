@@ -1,9 +1,10 @@
 /**
  *  bsg_fpu_add_sub.v
  *
+ *  @author tommy
+ *
  *  parameterized floating-point adder/subtractor.
  *
- *  @author tommy
  *  
  */
 

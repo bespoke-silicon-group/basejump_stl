@@ -18,14 +18,14 @@ module bsg_fpu_mul
 
     , input v_i
     , input [e_p+m_p:0] a_i
-    ,	input [e_p+m_p:0] b_i
+    , input [e_p+m_p:0] b_i
     , output logic ready_o
 
-    ,	output logic v_o
+    , output logic v_o
     , output logic [e_p+m_p:0] z_o
     , output logic unimplemented_o
     , output logic invalid_o
-    ,	output logic overflow_o
+    , output logic overflow_o
     , output logic underflow_o
     , input yumi_i // when yumi_i is high, en_i also has to be high
   );

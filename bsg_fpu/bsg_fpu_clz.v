@@ -1,9 +1,21 @@
 /**
  *	bsg_fpu_clz.v
  *	
- *	@author Tommy Jung
+ *	@author tommy
  *
  *	It counts the number of leading zeros.
+ *  It does not detected if the input vector is all zero.
+ *
+ *  ------------------------
+ *	example (width_p=4)
+ *	------------------------
+ *	i             num_zero_o
+ *	------------------------
+ *	4'b1xxx       2'b0
+ *	4'b01xx       2'b1
+ *	4'b001x       2'b2
+ *	4'b0001       2'b3
+ *	4'b0000       invalid
  *
  */
 

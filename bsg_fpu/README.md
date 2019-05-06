@@ -8,10 +8,9 @@
 ╚═════╝ ╚══════╝ ╚═════╝ ╚══════╝╚═╝     ╚═╝      ╚═════╝ 
 
 
-BSG Floating-Point Arithmetic Core
+BaseJump Floating-Point Arithmetic Core
 
 
-Author: Tommy Jung (tommy.dc.jung @ gmail.com)
 
 
 

@@ -1,9 +1,15 @@
 /**
  *  bsg_fpu_sticky.v
  *
- *  @author Tommy Jung
+ *  @author tommy
  *
  *  It calculates the sticky bit for given input and shift amount.
+ *
+ *  Sometimes, the mantissa with lower exponent needs to be shifted right to
+ *  aligned with the other mantissa. Due to finite precision, the shifted
+ *  mantissa loses lower bits by the amount that was shifted. Sticky bit
+ *  captures if any one of the lower bits that was shifted out was 1, so that
+ *  this could be used for deciding whether to round up or not.
  *
  */
 
