@@ -169,7 +169,9 @@ module bsg_cache_miss
         };
 
         miss_state_n = dma_done_i
-          ? ((dirty_n[chosen_set_n] & valid_v_i[chosen_set_n]) ? SEND_EVICT_ADDR : GET_FILL_DATA)
+          ? (((chosen_set_n ? dirty_n[1] : dirty_n[0]) & valid_v_i[chosen_set_n])
+            ? SEND_EVICT_ADDR 
+            : GET_FILL_DATA)
           : SEND_FILL_ADDR;
       end
 
@@ -196,9 +198,10 @@ module bsg_cache_miss
           ~chosen_set_n, {tag_width_lp{1'b0}}
         };
        
-        miss_state_n = (~ainv_op_v_i & dirty_n[chosen_set_n] & valid_v_i[chosen_set_n])
-          ? SEND_EVICT_ADDR
-          : RECOVER;
+        miss_state_n = (~ainv_op_v_i & (chosen_set_n ? dirty_n[1] : dirty_n[0]) 
+          & valid_v_i[chosen_set_n])
+            ? SEND_EVICT_ADDR
+            : RECOVER;
       end
       
       SEND_EVICT_ADDR: begin

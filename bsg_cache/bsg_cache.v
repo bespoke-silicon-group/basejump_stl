@@ -18,6 +18,9 @@ module bsg_cache
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
 
+    ,parameter debug_p=0
+    ,parameter axe_trace_p=0
+
     ,localparam lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
     ,localparam data_mask_width_lp=(data_width_p>>3)
     ,localparam lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
@@ -26,9 +29,6 @@ module bsg_cache
 
     ,localparam bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,data_width_p)
     ,localparam bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
-
-    ,parameter debug_p=0
-    ,parameter axe_trace_p=0
   )
   (
     input clk_i
