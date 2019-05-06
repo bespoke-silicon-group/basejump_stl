@@ -17,13 +17,15 @@ module bsg_cache
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
-    ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
-    ,parameter data_mask_width_lp=(data_width_p>>3)
-    ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
-    ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    ,parameter tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp)
-    ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,data_width_p)
-    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+
+    ,localparam lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,localparam data_mask_width_lp=(data_width_p>>3)
+    ,localparam lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
+    ,localparam lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
+    ,localparam tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp)
+
+    ,localparam bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,data_width_p)
+    ,localparam bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
 
     ,parameter debug_p=0
     ,parameter axe_trace_p=0
@@ -394,10 +396,8 @@ module bsg_cache
   bsg_cache_miss #(
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
-    ,.tag_width_lp(tag_width_lp)
-    ,.lg_block_size_in_words_lp(lg_block_size_in_words_lp)
-    ,.lg_sets_lp(lg_sets_lp)
-    ,.lg_data_mask_width_lp(lg_data_mask_width_lp)
+    ,.sets_p(sets_p)
+    ,.block_size_in_words_p(block_size_in_words_p)
   ) miss (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -460,8 +460,7 @@ module bsg_cache
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
-    ,.lg_block_size_in_words_lp(lg_block_size_in_words_lp)
-    ,.lg_sets_lp(lg_sets_lp)
+    ,.sets_p(sets_p)
     ,.debug_p(debug_p)
   ) dma (
     .clk_i(clk_i)
@@ -520,8 +519,6 @@ module bsg_cache
   bsg_cache_sbuf #(
     .data_width_p(data_width_p)
     ,.addr_width_p(addr_width_p)
-    ,.data_mask_width_lp(data_mask_width_lp)
-    ,.lg_data_mask_width_lp(lg_data_mask_width_lp)
   ) sbuf (
     .clk_i(clk_i)
     ,.reset_i(reset_i)

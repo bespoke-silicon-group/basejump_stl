@@ -10,8 +10,8 @@
 module bsg_cache_sbuf
   #(parameter data_width_p="inv"
     ,parameter addr_width_p="inv"
-    ,parameter data_mask_width_lp="inv"
-    ,parameter lg_data_mask_width_lp="inv"
+    ,localparam data_mask_width_lp=(data_width_p>>3)
+    ,localparam lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
   )
   (
     input clk_i

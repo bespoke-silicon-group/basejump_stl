@@ -11,11 +11,14 @@ module bsg_cache_dma
   #(parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
-    ,parameter lg_block_size_in_words_lp="inv"
-    ,parameter lg_sets_lp="inv"
-    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
-  
+    ,parameter sets_p="inv"
+
     ,parameter debug_p=0
+
+    ,localparam lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
+    ,localparam lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,localparam bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+  
   )
   (
     input clk_i
