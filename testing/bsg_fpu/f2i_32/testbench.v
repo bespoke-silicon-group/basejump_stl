@@ -39,10 +39,12 @@ logic yumi_li;
 
 
 bsg_fpu_f2i #(
-  .width_p(width_p)
+  .e_p(8)
+  ,.m_p(23)
 ) dut (
   .clk_i(clk)
   ,.reset_i(reset)
+  ,.en_i(1'b1)
   
   ,.v_i(v_li)
   ,.a_i(a_li)

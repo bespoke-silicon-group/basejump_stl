@@ -7,7 +7,6 @@ $BASEJUMP_STL_DIR/bsg_misc/bsg_mul_synth.v
 
 $BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_pkg.v
 $BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_mul.v
-$BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_mul_n.v
 $BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_preprocess.v
 
 bsg_fpu_trace_rom.v

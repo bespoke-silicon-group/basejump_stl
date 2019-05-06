@@ -39,7 +39,8 @@ logic [width_p-1:0] max_lo;
 
 
 bsg_fpu_cmp #(
-  .width_p(width_p)
+  .e_p(8)
+  ,.m_p(23)
 ) dut (
   .a_i(a_r)
   ,.b_i(b_r)

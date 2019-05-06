@@ -13,7 +13,6 @@ $BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_pkg.v
 $BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_sticky.v
 $BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_clz.v
 $BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_preprocess.v
-$BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_add_sub_n.v
 $BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_add_sub.v
 bsg_fpu_trace_rom.v
 testbench.v

@@ -4,7 +4,6 @@ $BASEJUMP_STL_DIR/bsg_fsb/bsg_fsb_node_trace_replay.v
 
 $BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_pkg.v
 $BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_f2i.v
-$BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_f2i_n.v
 $BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_preprocess.v
 
 bsg_fpu_trace_rom.v
