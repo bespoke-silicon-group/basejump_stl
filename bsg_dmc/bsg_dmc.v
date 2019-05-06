@@ -89,23 +89,6 @@ module bsg_dmc
   wire   [dfi_data_width_lp-1:0] dfi_rddata;
   wire                           dfi_rddata_valid;
 
-  localparam slv_reg0  = 0;
-  localparam slv_reg1  = 1;
-  localparam slv_reg2  = 15;
-  localparam slv_reg3  = 2;
-  localparam slv_reg4  = 7;
-  localparam slv_reg5  = 1;
-  localparam slv_reg6  = 2;
-  localparam slv_reg7  = 7;
-  localparam slv_reg8  = 3;
-  localparam slv_reg9  = 7;
-  localparam slv_reg10 = 3;
-  localparam slv_reg11 = 3;
-  localparam slv_reg12 = 1023;
-  localparam slv_reg13 = 1;
-  localparam slv_reg14 = 'h15;
-  localparam slv_reg15 = 'h2eb;
-
   bsg_sync_sync #(.width_p(1)) ui_reset_inst
     (.oclk_i      ( ui_clk_i   )
     ,.iclk_data_i ( sys_rst_i )
@@ -172,8 +155,8 @@ module bsg_dmc
     ,.init_calib_complete_o ( init_calib_complete_o ));
 
   wire [3:0] dqs_90, dqs_270;
-  assign #1 dqs_90 = ddr_dqs_p_i;
-  assign #1 dqs_270 = ddr_dqs_n_i;
+  assign dqs_90 = ddr_dqs_p_i;
+  assign dqs_270 = ddr_dqs_n_i;
 
   bsg_dmc_phy #(.dq_data_width_p(dq_data_width_p)) dmc_phy
     // DDR PHY interface clock and reset
