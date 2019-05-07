@@ -5,7 +5,6 @@
  *
  *  parameterized floating-point adder/subtractor.
  *
- *  
  */
 
 module bsg_fpu_add_sub
