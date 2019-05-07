@@ -101,7 +101,10 @@ module bsg_cache_miss
   logic [1:0] dirty_r, dirty_n;
   logic mru_r, mru_n;
 
+  // FSM LOGIC
+  //
   always_comb begin
+
     dma_send_fill_addr_o = 1'b0;
     dma_send_evict_addr_o = 1'b0;
     dma_get_fill_data_o = 1'b0;
@@ -115,8 +118,10 @@ module bsg_cache_miss
     tag_mem_v_o = 1'b0;
     tag_mem_w_o = 1'b0;
     tag_mem_addr_o = '0;
-    tag_mem_data_o = '0;
-    tag_mem_w_mask_o = '0;
+    tag_mem_data_o[0] = '0;
+    tag_mem_data_o[1] = '0;
+    tag_mem_w_mask_o[0] = '0;
+    tag_mem_w_mask_o[1] = '0;
     chosen_set_n = chosen_set_r;
     recover_o = '0;
     done_o = '0;
@@ -162,11 +167,10 @@ module bsg_cache_miss
         tag_mem_v_o = dma_done_i;
         tag_mem_w_o = dma_done_i;
         tag_mem_addr_o = addr_index_v;
-        tag_mem_data_o = {2{1'b1, addr_tag_v}};
-        tag_mem_w_mask_o = {
-          {(1+tag_width_lp){chosen_set_n}},
-          {(1+tag_width_lp){~chosen_set_n}}
-        };
+        tag_mem_data_o[0] = {1'b1, addr_tag_v};
+        tag_mem_data_o[1] = {1'b1, addr_tag_v};
+        tag_mem_w_mask_o[0] = {(1+tag_width_lp){~chosen_set_n}};
+        tag_mem_w_mask_o[1] = {(1+tag_width_lp){chosen_set_n}};
 
         miss_state_n = dma_done_i
           ? (((chosen_set_n ? dirty_n[1] : dirty_n[0]) & valid_v_i[chosen_set_n])
@@ -192,11 +196,10 @@ module bsg_cache_miss
         tag_mem_v_o = 1'b1;
         tag_mem_w_o = 1'b1;
         tag_mem_addr_o = addr_index_v;
-        tag_mem_data_o = {2{~(ainv_op_v_i | aflinv_op_v_i), {tag_width_lp{1'b0}}}};
-        tag_mem_w_mask_o = {
-          chosen_set_n, {tag_width_lp{1'b0}},
-          ~chosen_set_n, {tag_width_lp{1'b0}}
-        };
+        tag_mem_data_o[0] = {1'b0, {tag_width_lp{1'b0}}};
+        tag_mem_data_o[1] = {1'b0, {tag_width_lp{1'b0}}};
+        tag_mem_w_mask_o[0] = {(ainv_op_v_i | aflinv_op_v_i) & ~chosen_set_n, {tag_width_lp{1'b0}}};
+        tag_mem_w_mask_o[1] = {(ainv_op_v_i | aflinv_op_v_i) & chosen_set_n, {tag_width_lp{1'b0}}};
        
         miss_state_n = (~ainv_op_v_i & (chosen_set_n ? dirty_n[1] : dirty_n[0]) 
           & valid_v_i[chosen_set_n])
