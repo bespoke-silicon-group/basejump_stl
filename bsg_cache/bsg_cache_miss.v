@@ -173,7 +173,7 @@ module bsg_cache_miss
         tag_mem_w_mask_o[1] = {(1+tag_width_lp){chosen_set_n}};
 
         miss_state_n = dma_done_i
-          ? (((chosen_set_n ? dirty_n[1] : dirty_n[0]) & valid_v_i[chosen_set_n])
+          ? ((dirty_n[chosen_set_n] & valid_v_i[chosen_set_n])
             ? SEND_EVICT_ADDR 
             : GET_FILL_DATA)
           : SEND_FILL_ADDR;
@@ -201,8 +201,7 @@ module bsg_cache_miss
         tag_mem_w_mask_o[0] = {(ainv_op_v_i | aflinv_op_v_i) & ~chosen_set_n, {tag_width_lp{1'b0}}};
         tag_mem_w_mask_o[1] = {(ainv_op_v_i | aflinv_op_v_i) & chosen_set_n, {tag_width_lp{1'b0}}};
        
-        miss_state_n = (~ainv_op_v_i & (chosen_set_n ? dirty_n[1] : dirty_n[0]) 
-          & valid_v_i[chosen_set_n])
+        miss_state_n = (~ainv_op_v_i & dirty_n[chosen_set_n] & valid_v_i[chosen_set_n])
             ? SEND_EVICT_ADDR
             : RECOVER;
       end
