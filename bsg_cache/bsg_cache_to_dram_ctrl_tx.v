@@ -2,39 +2,41 @@
  *  bsg_cache_to_dram_ctrl_tx.v
  *
  *  @author tommy
+ *
  */
 
 
 module bsg_cache_to_dram_ctrl_tx
   #(parameter num_cache_p="inv"
-    ,parameter data_width_p="inv"
-    ,parameter block_size_in_words_p="inv"
-    ,parameter dram_ctrl_data_width_p="inv"
-    ,parameter dram_ctrl_burst_len_p="inv"
+    , parameter data_width_p="inv"
+    , parameter block_size_in_words_p="inv"
 
-    ,parameter num_req_lp=(data_width_p*block_size_in_words_p)/(dram_ctrl_data_width_p*dram_ctrl_burst_len_p)
-    ,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
-    ,parameter data_width_ratio_lp=(dram_ctrl_data_width_p/data_width_p)
-    ,parameter lg_data_width_ratio_lp=`BSG_SAFE_CLOG2(data_width_ratio_lp)
+    , parameter dram_ctrl_burst_len_p="inv"
+
+    , localparam mask_width_lp=(data_width_p>>3)
+    , localparam num_req_lp=(block_size_in_words_p/dram_ctrl_burst_len_p)
+    , localparam lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
+    , localparam lg_dram_ctrl_burst_len_lp=`BSG_SAFE_CLOG2(dram_ctrl_burst_len_p)
   )
   (
     input clk_i
-    ,input reset_i
+    , input reset_i
 
-    ,input v_i
-    ,input [lg_num_cache_lp-1:0] tag_i
-    ,output logic ready_o
+    , input v_i
+    , input [lg_num_cache_lp-1:0] tag_i
+    , output logic ready_o
 
-    ,input [num_cache_p-1:0][data_width_p-1:0] dma_data_i
-    ,input [num_cache_p-1:0] dma_data_v_i
-    ,output logic [num_cache_p-1:0] dma_data_yumi_o
+    , input [num_cache_p-1:0][data_width_p-1:0] dma_data_i
+    , input [num_cache_p-1:0] dma_data_v_i
+    , output logic [num_cache_p-1:0] dma_data_yumi_o
 
-    ,output logic app_wdf_wren_o
-    ,input app_wdf_rdy_i
-    ,output logic [dram_ctrl_data_width_p-1:0] app_wdf_data_o
-    ,output logic [(dram_ctrl_data_width_p>>3)-1:0] app_wdf_mask_o
-    ,output logic app_wdf_end_o
+    , output logic app_wdf_wren_o
+    , output logic [data_width_p-1:0] app_wdf_data_o
+    , output logic [mask_width_lp-1:0] app_wdf_mask_o
+    , output logic app_wdf_end_o
+    , input app_wdf_rdy_i
   );
+
 
   // tag FIFO
   //
@@ -69,109 +71,49 @@ module bsg_cache_to_dram_ctrl_tx
     ,.v_i(tag_fifo_v_lo)
     ,.o(cache_sel)
   );
+
+  assign dma_data_yumi_o = cache_sel & dma_data_v_i & {num_cache_p{app_wdf_rdy_i}};
+  assign app_wdf_wren_o = tag_fifo_v_lo & dma_data_v_i[tag_fifo_data_lo];
   
-  // word_counter
-  //
-  logic [lg_data_width_ratio_lp-1:0] word_count_lo;
-  logic word_up_li;
-  logic word_clear_li;
-  logic take_word;
-
-  bsg_counter_clear_up #(
-    .max_val_p(data_width_ratio_lp-1)
-    ,.init_val_p(0)
-  ) tag_counter (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.clear_i(word_clear_li)
-    ,.up_i(word_up_li)
-    ,.count_o(word_count_lo)
-  );
-
-  assign take_word = dma_data_v_i[tag_fifo_data_lo]
-    & dma_data_yumi_o[tag_fifo_data_lo] & tag_fifo_v_lo;
-
-  always_comb begin
-    if (word_count_lo == data_width_ratio_lp-1) begin
-      word_up_li = 1'b0;
-      word_clear_li = take_word;
-      tag_fifo_yumi_li = take_word;
-    end
-    else begin
-      word_up_li = take_word;
-      word_clear_li = 1'b0;
-      tag_fifo_yumi_li = 1'b0;
-    end
-  end
-
-  // serial in parallel out
-  //
-  logic sipo_v_li;
-  logic sipo_ready_lo;
-  logic [data_width_p-1:0] sipo_data_li;
-  logic [$clog2(data_width_ratio_lp+1)-1:0] sipo_yumi_cnt_li;
-  logic [data_width_ratio_lp-1:0] sipo_v_lo;
-
-  assign sipo_data_li = dma_data_i[tag_fifo_data_lo];
-  assign dma_data_yumi_o = cache_sel & dma_data_v_i
-    & {num_cache_p{sipo_ready_lo}};
-
-  bsg_serial_in_parallel_out #(
-    .width_p(data_width_p)
-    ,.els_p(data_width_ratio_lp)
-  ) sipo (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i) 
-
-    ,.valid_i(sipo_v_li)
-    ,.data_i(sipo_data_li)
-    ,.ready_o(sipo_ready_lo) 
-
-    ,.valid_o(sipo_v_lo)
-    ,.data_o(app_wdf_data_o)
-    ,.yumi_cnt_i(sipo_yumi_cnt_li)
-  );
-
-  assign sipo_v_li = tag_fifo_v_lo & dma_data_v_i[tag_fifo_data_lo];
-
   // burst counter
   //
-  logic [`BSG_SAFE_CLOG2(dram_ctrl_burst_len_p)-1:0] burst_count_lo;
-  logic burst_up_li;
-  logic burst_clear_li;
+  logic [lg_dram_ctrl_burst_len_lp-1:0] count_lo;
+  logic up_li;
+  logic clear_li;
 
   bsg_counter_clear_up #(
     .max_val_p(dram_ctrl_burst_len_p-1)
     ,.init_val_p(0)
-  ) burst_counter (
+  ) word_counter (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
-    ,.clear_i(burst_clear_li)
-    ,.up_i(burst_up_li)
-    ,.count_o(burst_count_lo)
+
+    ,.clear_i(clear_li)
+    ,.up_i(up_li)
+
+    ,.count_o(count_lo)
   );
 
-  logic dram_wren;
-  assign dram_wren = &sipo_v_lo;
-
-  assign sipo_yumi_cnt_li = app_wdf_rdy_i & dram_wren
-    ? ($clog2(data_width_ratio_lp+1))'(data_width_ratio_lp)
-    : '0;
-  assign app_wdf_wren_o = dram_wren;
+  logic take_word;
+  assign take_word = app_wdf_wren_o & app_wdf_rdy_i;
 
   always_comb begin
-    if (burst_count_lo == dram_ctrl_burst_len_p-1) begin
-      burst_clear_li = dram_wren & app_wdf_rdy_i;
-      burst_up_li = 1'b0;
-      app_wdf_end_o = dram_wren;
+    if (count_lo == dram_ctrl_burst_len_p-1) begin
+      clear_li = take_word;
+      up_li = 1'b0;
+      app_wdf_end_o = take_word;
+      tag_fifo_yumi_li = take_word;
     end
     else begin
-      burst_clear_li = 1'b0;
-      burst_up_li = dram_wren & app_wdf_rdy_i;
+      clear_li = 1'b0;
+      up_li = take_word;
       app_wdf_end_o = 1'b0;
+      tag_fifo_yumi_li = 1'b0;
     end
   end
 
-  assign app_wdf_mask_o = '0;
+  assign app_wdf_data_o = dma_data_i[tag_fifo_data_lo];
+  assign app_wdf_mask_o = '0; // negative active! we always write the whole word.
+
 
 endmodule

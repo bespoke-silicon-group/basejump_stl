@@ -2,29 +2,30 @@
  *  bsg_cache_to_dram_ctrl.v
  *
  *  @author tommy
+ *
  */
 
 `include "bsg_cache_dma_pkt.vh"
 
 module bsg_cache_to_dram_ctrl
-  import bsg_dram_ctrl_pkg::*;
   #(parameter num_cache_p="inv"
     ,parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
 
     ,parameter dram_ctrl_burst_len_p="inv"
-    ,parameter dram_ctrl_data_width_p="inv"
 
-    ,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
-    ,parameter dram_ctrl_addr_width_lp=(addr_width_p+lg_num_cache_lp)
-    ,parameter num_req_lp=(data_width_p*block_size_in_words_p)/(dram_ctrl_data_width_p*dram_ctrl_burst_len_p)
-    ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    ,localparam mask_width_lp=(data_width_p>>3)
+    ,localparam lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
+    ,localparam dram_ctrl_addr_width_lp=(addr_width_p+lg_num_cache_lp)
+    ,localparam dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    ,localparam num_req_lp=(block_size_in_words_p/dram_ctrl_burst_len_p)
   )
   (
     input clk_i
     ,input reset_i
 
+    // cache side
     ,input [num_cache_p-1:0][dma_pkt_width_lp-1:0] dma_pkt_i
     ,input [num_cache_p-1:0] dma_pkt_v_i
     ,output logic [num_cache_p-1:0] dma_pkt_yumi_o
@@ -37,19 +38,20 @@ module bsg_cache_to_dram_ctrl
     ,input [num_cache_p-1:0] dma_data_v_i
     ,output logic [num_cache_p-1:0] dma_data_yumi_o
 
+    // dmc side
     ,output logic app_en_o
     ,input app_rdy_i
-    ,output eAppCmd app_cmd_o
+    ,output logic [2:0] app_cmd_o
     ,output logic [dram_ctrl_addr_width_lp-1:0] app_addr_o
 
     ,output logic app_wdf_wren_o
     ,input app_wdf_rdy_i
-    ,output logic [dram_ctrl_data_width_p-1:0] app_wdf_data_o
-    ,output logic [(dram_ctrl_data_width_p>>3)-1:0] app_wdf_mask_o
+    ,output logic [data_width_p-1:0] app_wdf_data_o
+    ,output logic [mask_width_lp-1:0] app_wdf_mask_o
     ,output logic app_wdf_end_o
 
     ,input app_rd_data_valid_i
-    ,input [dram_ctrl_data_width_p-1:0] app_rd_data_i
+    ,input [data_width_p-1:0] app_rd_data_i
     ,input app_rd_data_end_i
   );
 
@@ -88,7 +90,6 @@ module bsg_cache_to_dram_ctrl
     .num_cache_p(num_cache_p)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
-    ,.dram_ctrl_data_width_p(dram_ctrl_data_width_p)
     ,.dram_ctrl_burst_len_p(dram_ctrl_burst_len_p)
   ) rx (
     .clk_i(clk_i)
@@ -116,7 +117,6 @@ module bsg_cache_to_dram_ctrl
     .num_cache_p(num_cache_p)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
-    ,.dram_ctrl_data_width_p(dram_ctrl_data_width_p)
     ,.dram_ctrl_burst_len_p(dram_ctrl_burst_len_p)
   ) tx (
     .clk_i(clk_i)
@@ -148,23 +148,24 @@ module bsg_cache_to_dram_ctrl
 
   always_comb begin
     app_en_o = 1'b0;
-    app_cmd_o = eAppRead;
+    app_cmd_o = 3'b000;
     rr_yumi_li = 1'b0;
     tag_n = tag_r;
     write_not_read_n = write_not_read_r;
     rx_v_li = 1'b0;
     tx_v_li = 1'b0;
+    req_state_n = req_state_r;
     
     case (req_state_r)
       WAIT: begin
-        rr_yumi_li = rr_v_lo;
-        tag_n = rr_v_lo ? rr_tag_lo : tag_r;
-        addr_n = rr_v_lo ? dma_pkt.addr: addr_r;
-        write_not_read_n = dma_pkt.write_not_read;
-        req_cnt_n = rr_v_lo ? '0 : req_cnt_r;
-        req_state_n = rr_v_lo 
-          ? SEND_REQ
-          : WAIT;
+        if (rr_v_lo) begin
+          rr_yumi_li = 1'b1;
+          tag_n = rr_tag_lo;
+          addr_n = dma_pkt.addr;
+          write_not_read_n = dma_pkt.write_not_read;
+          req_cnt_n = '0;
+          req_state_n = SEND_REQ;
+        end
       end
 
       SEND_REQ: begin
@@ -172,14 +173,14 @@ module bsg_cache_to_dram_ctrl
           ? tx_ready_lo
           : rx_ready_lo);
         app_cmd_o = write_not_read_r
-          ? eAppWrite
-          : eAppRead;
+          ? 3'b000
+          : 3'b001;
 
         rx_v_li = ~write_not_read_r & rx_ready_lo & app_rdy_i;
         tx_v_li = write_not_read_r & tx_ready_lo & app_rdy_i;
 
         addr_n = (app_rdy_i & app_en_o)
-          ? addr_r + (1 << `BSG_SAFE_CLOG2(dram_ctrl_burst_len_p*dram_ctrl_data_width_p/8))
+          ? addr_r + (1 << `BSG_SAFE_CLOG2(dram_ctrl_burst_len_p*data_width_p/8))
           : addr_r;
         req_cnt_n = (app_rdy_i & app_en_o)
           ? req_cnt_r + 1
@@ -191,10 +192,7 @@ module bsg_cache_to_dram_ctrl
     endcase
   end
 
-  assign app_addr_o = {
-    tag_r,
-    addr_r
-  };
+  assign app_addr_o = { tag_r, addr_r };
 
   // sequential
   //
