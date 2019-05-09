@@ -24,7 +24,7 @@ import binascii;
 default_value = "X"
 
 if (len(sys.argv)==4) :
-    default_value = sys.argv[3]
+    default_value = sys.argv[3] if sys.argv[3] != "zero" else 0
 
 if ((len(sys.argv)!=3) and (len(sys.argv)!=4)) :
     print "Usage ascii_to_rom.py <filename> <modulename>";
