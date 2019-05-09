@@ -49,7 +49,7 @@ if __name__ == "__main__":
   sets_p = 512
   ways_p = 2
   id_p = int(sys.argv[1])
-  random.seed(time.time())
+  random.seed(id_p)
   
   mem_dict = {}
   store_val = id_p 
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     tg.send_tagst(addr=(i<<(3+2)), data=0)
     tg.recv_data(data=0)
 
-  for i in range(5):
+  for i in range(10000):
     addr = (random.randint(0, 2**14) << 5)
     if addr in mem_dict:
       load_not_store = random.randint(0,1)
@@ -67,7 +67,7 @@ if __name__ == "__main__":
         tg.send_lw(addr)
         tg.recv_data(mem_dict[addr])
       else:
-        tg.send_sw(addr)
+        tg.send_sw(addr, store_val)
         tg.recv_data(0)
         mem_dict[addr] = store_val
         store_val += 4

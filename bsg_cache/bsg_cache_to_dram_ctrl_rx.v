@@ -45,7 +45,7 @@ module bsg_cache_to_dram_ctrl_rx
 
   bsg_fifo_1r1w_large #(
     .width_p(data_width_p)
-    ,.els_p(num_cache_p*dram_ctrl_burst_len_p*num_req_lp)
+    ,.els_p(num_cache_p*dram_ctrl_burst_len_p)
   ) fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -68,7 +68,7 @@ module bsg_cache_to_dram_ctrl_rx
 
   bsg_fifo_1r1w_small #(
     .width_p(lg_num_cache_lp)
-    ,.els_p(num_cache_p*num_req_lp)
+    ,.els_p(num_cache_p)
   ) tag_fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
