@@ -14,6 +14,7 @@ module bsg_cache_to_dram_ctrl_rx
     
     , localparam lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
     , localparam lg_dram_ctrl_burst_len_lp=`BSG_SAFE_CLOG2(dram_ctrl_burst_len_p)
+    , localparam num_req_lp=(block_size_in_words_p/dram_ctrl_burst_len_p)
   )
   (
     input clk_i
@@ -44,7 +45,7 @@ module bsg_cache_to_dram_ctrl_rx
 
   bsg_fifo_1r1w_large #(
     .width_p(data_width_p)
-    ,.els_p(num_cache_p*dram_ctrl_burst_len_p)
+    ,.els_p(num_cache_p*dram_ctrl_burst_len_p*num_req_lp)
   ) fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -67,7 +68,7 @@ module bsg_cache_to_dram_ctrl_rx
 
   bsg_fifo_1r1w_small #(
     .width_p(lg_num_cache_lp)
-    ,.els_p(num_cache_p)
+    ,.els_p(num_cache_p*num_req_lp)
   ) tag_fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -97,7 +98,7 @@ module bsg_cache_to_dram_ctrl_rx
 
   for (genvar i = 0; i < num_cache_p; i++) begin
     assign dma_data_o[i] = fifo_data_lo;
-    assign dma_data_v_o[i] = cache_sel[i] & tag_fifo_v_lo;
+    assign dma_data_v_o[i] = cache_sel[i] & fifo_v_lo;
   end
 
   // counter

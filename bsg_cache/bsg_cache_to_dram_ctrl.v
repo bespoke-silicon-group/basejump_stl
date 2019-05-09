@@ -9,50 +9,50 @@
 
 module bsg_cache_to_dram_ctrl
   #(parameter num_cache_p="inv"
-    ,parameter addr_width_p="inv"
-    ,parameter data_width_p="inv"
-    ,parameter block_size_in_words_p="inv"
+    , parameter addr_width_p="inv"
+    , parameter data_width_p="inv"
+    , parameter block_size_in_words_p="inv"
 
-    ,parameter dram_ctrl_burst_len_p="inv"
+    , parameter dram_ctrl_burst_len_p="inv"
 
-    ,localparam mask_width_lp=(data_width_p>>3)
-    ,localparam lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
-    ,localparam dram_ctrl_addr_width_lp=(addr_width_p+lg_num_cache_lp)
-    ,localparam dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
-    ,localparam num_req_lp=(block_size_in_words_p/dram_ctrl_burst_len_p)
+    , localparam mask_width_lp=(data_width_p>>3)
+    , localparam lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
+    , localparam dram_ctrl_addr_width_lp=(addr_width_p+lg_num_cache_lp)
+    , localparam dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    , localparam num_req_lp=(block_size_in_words_p/dram_ctrl_burst_len_p)
   )
   (
     input clk_i
-    ,input reset_i
+    , input reset_i
 
     // cache side
-    ,input [num_cache_p-1:0][dma_pkt_width_lp-1:0] dma_pkt_i
-    ,input [num_cache_p-1:0] dma_pkt_v_i
-    ,output logic [num_cache_p-1:0] dma_pkt_yumi_o
+    , input [num_cache_p-1:0][dma_pkt_width_lp-1:0] dma_pkt_i
+    , input [num_cache_p-1:0] dma_pkt_v_i
+    , output logic [num_cache_p-1:0] dma_pkt_yumi_o
 
-    ,output logic [num_cache_p-1:0][data_width_p-1:0] dma_data_o
-    ,output logic [num_cache_p-1:0] dma_data_v_o
-    ,input [num_cache_p-1:0] dma_data_ready_i
+    , output logic [num_cache_p-1:0][data_width_p-1:0] dma_data_o
+    , output logic [num_cache_p-1:0] dma_data_v_o
+    , input [num_cache_p-1:0] dma_data_ready_i
 
-    ,input [num_cache_p-1:0][data_width_p-1:0] dma_data_i
-    ,input [num_cache_p-1:0] dma_data_v_i
-    ,output logic [num_cache_p-1:0] dma_data_yumi_o
+    , input [num_cache_p-1:0][data_width_p-1:0] dma_data_i
+    , input [num_cache_p-1:0] dma_data_v_i
+    , output logic [num_cache_p-1:0] dma_data_yumi_o
 
     // dmc side
-    ,output logic app_en_o
-    ,input app_rdy_i
-    ,output logic [2:0] app_cmd_o
-    ,output logic [dram_ctrl_addr_width_lp-1:0] app_addr_o
+    , output logic app_en_o
+    , input app_rdy_i
+    , output logic [2:0] app_cmd_o
+    , output logic [dram_ctrl_addr_width_lp-1:0] app_addr_o
 
-    ,output logic app_wdf_wren_o
-    ,input app_wdf_rdy_i
-    ,output logic [data_width_p-1:0] app_wdf_data_o
-    ,output logic [mask_width_lp-1:0] app_wdf_mask_o
-    ,output logic app_wdf_end_o
+    , output logic app_wdf_wren_o
+    , input app_wdf_rdy_i
+    , output logic [data_width_p-1:0] app_wdf_data_o
+    , output logic [mask_width_lp-1:0] app_wdf_mask_o
+    , output logic app_wdf_end_o
 
-    ,input app_rd_data_valid_i
-    ,input [data_width_p-1:0] app_rd_data_i
-    ,input app_rd_data_end_i
+    , input app_rd_data_valid_i
+    , input [data_width_p-1:0] app_rd_data_i
+    , input app_rd_data_end_i
   );
 
   // round robin for dma pkts
@@ -155,6 +155,7 @@ module bsg_cache_to_dram_ctrl
     rx_v_li = 1'b0;
     tx_v_li = 1'b0;
     req_state_n = req_state_r;
+    req_cnt_n = req_cnt_r;
     
     case (req_state_r)
       WAIT: begin

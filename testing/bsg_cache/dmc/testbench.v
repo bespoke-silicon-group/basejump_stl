@@ -44,7 +44,7 @@ bsg_nonsynth_clock_gen #(
 logic reset;
 bsg_nonsynth_reset_gen #(
   .reset_cycles_lo_p(8)
-  ,.reset_cycles_hi_p(8)  
+  ,.reset_cycles_hi_p(30)  
 ) reset_gen (
   .clk_i(clk)
   ,.async_reset_o(reset)
@@ -170,7 +170,8 @@ assign dmc_p.bank_width = 2'd2;
 assign dmc_p.dqs_sel_cal = 2'd1;
 assign dmc_p.init_cmd_cnt = 4'd5;
 
-wire ddr_ck_p, ddr_ck_n;
+wire ddr_ck_p;
+wire ddr_ck_n;
 wire ddr_cke;
 wire ddr_cs_n;
 wire ddr_ras_n;
@@ -300,10 +301,10 @@ for (genvar i = 0; i < 2; i++) begin
 end
 
 initial begin
-  //wait(done_lo);
-  for (integer i = 0; i < 1000000; i++) begin
-    @(posedge clk);
-  end
+  wait(done_lo);
+  //for (integer i = 0; i < 100000; i++) begin
+  //  @(posedge clk);
+  //end
   $finish;
 end
 
