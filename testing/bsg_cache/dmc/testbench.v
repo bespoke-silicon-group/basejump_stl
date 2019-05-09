@@ -262,7 +262,7 @@ bsg_dmc #(
 
   ,.ui_clk_i(clk)
 
-  ,.dfi_clk_2x_i(dfi_clk_2x)
+  ,.dfi_clk_2x_i(~dfi_clk_2x) 
   ,.dfi_clk_i(dfi_clk)
 
   ,.ui_clk_sync_rst_o()
