@@ -109,9 +109,7 @@ module bit_slice
 endmodule
 
 module tx_byte_slice
-  (input              reset
-  ,input              clk
-  ,input              clk_2x
+  (input              clk_2x
   ,input              clk_2x_n
   ,input              wrdata_en
   ,input       [15:0] wrdata
@@ -348,7 +346,6 @@ module bsg_dmc_phy #
   ,input                          dfi_rddata_en_i
   ,output [2*dq_data_width_p-1:0] dfi_rddata_o
   ,output reg                     dfi_rddata_valid_o
-  ,output                         locked_o
   // dram interface signals
   ,output                         ck_p_o
   ,output                         ck_n_o

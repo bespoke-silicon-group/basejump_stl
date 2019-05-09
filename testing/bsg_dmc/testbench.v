@@ -61,6 +61,9 @@ module testbench
   wire                       [2:0] ddr_ba;
   wire                      [15:0] ddr_addr;
 
+  wire                             ddr_reset_n;
+  wire                             ddr_odt;
+
   wire  [(dq_data_width_p>>3)-1:0] ddr_dm_oen_lo;
   wire  [(dq_data_width_p>>3)-1:0] ddr_dm_lo;
   wire  [(dq_data_width_p>>3)-1:0] ddr_dqs_p_oen_lo;
@@ -87,7 +90,7 @@ module testbench
 
   wire [ui_burst_length_p-1:0] sipo_valid_lo;
   wire [ui_burst_length_p-1:0][ui_data_width_p-1:0] sipo_data_lo;
-  wire [$clog2(ui_burst_length_p+1)-1:0] sipo_yumi_cnt_li;
+  wire [$clog2(ui_burst_length_p):0] sipo_yumi_cnt_li;
   wire [burst_data_width_lp-1:0] sipo_data;
 
   logic [ui_addr_width_p] rx_addr;
@@ -137,11 +140,11 @@ module testbench
     ,.app_rd_data_valid_o   ( app_rd_data_valid   )
     ,.app_rd_data_o         ( app_rd_data         )
     ,.app_rd_data_end_o     ( app_rd_data_end     )
-    ,.app_ref_req_i         ( app_ref_req         )
+    ,.app_ref_req_i         ( 1'b0                )
     ,.app_ref_ack_o         ( app_ref_ack         )
-    ,.app_zq_req_i          ( app_zq_req          )
+    ,.app_zq_req_i          ( 1'b0                )
     ,.app_zq_ack_o          ( app_zq_ack          )
-    ,.app_sr_req_i          ( app_sr_req          )
+    ,.app_sr_req_i          ( 1'b0                )
     ,.app_sr_active_o       ( app_sr_active       )
 
     ,.init_calib_complete_o ( init_calib_complete )
@@ -197,7 +200,7 @@ module testbench
       mobile_ddr mobile_ddr_inst
         (.Dq    (ddr_dq[16*i+15:16*i])
         ,.Dqs   (ddr_dqs_p[2*i+1:2*i])
-        ,.Addr  (ddr_addr)
+        ,.Addr  (ddr_addr[13:0])
         ,.Ba    (ddr_ba[1:0])
         ,.Clk   (ddr_ck_p)
         ,.Clk_n (ddr_ck_n)
@@ -269,7 +272,7 @@ module testbench
     ,.data_o     ( sipo_data_lo      )
     ,.yumi_cnt_i ( sipo_yumi_cnt_li  ));
 
-  assign sipo_yumi_cnt_li = &sipo_valid_lo? ui_burst_length_p: 0;
+  assign sipo_yumi_cnt_li = ($clog2(ui_burst_length_p)+1)'(&sipo_valid_lo? ui_burst_length_p: 0);
 
   always @(posedge ui_clk) begin
     if(&sipo_valid_lo) begin

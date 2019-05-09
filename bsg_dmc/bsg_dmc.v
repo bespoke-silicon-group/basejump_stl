@@ -89,6 +89,8 @@ module bsg_dmc
   wire   [dfi_data_width_lp-1:0] dfi_rddata;
   wire                           dfi_rddata_valid;
 
+  assign device_temp_o = 12'd0;
+
   bsg_sync_sync #(.width_p(1)) ui_reset_inst
     (.oclk_i      ( ui_clk_i   )
     ,.iclk_data_i ( sys_rst_i )
@@ -131,7 +133,6 @@ module bsg_dmc
     ,.app_sr_active_o       ( app_sr_active_o       )
     // DDR PHY interface clock and reset
     ,.dfi_clk_i             ( dfi_clk_i             )
-    ,.dfi_clk_2x_i          ( dfi_clk_2x_i          )
     ,.dfi_clk_sync_rst_i    ( dfi_reset             )
     // DDR PHY interface signals
     ,.dfi_bank_o            ( dfi_bank              )
@@ -163,7 +164,7 @@ module bsg_dmc
     (.dfi_clk_i           ( dfi_clk_i           )
     ,.dfi_clk_2x_i        ( dfi_clk_2x_i        )
     ,.dfi_rst_i           ( dfi_reset           )
-    //
+    // DFI interface signals
     ,.dfi_bank_i          ( dfi_bank            )
     ,.dfi_address_i       ( dfi_address         )
     ,.dfi_cke_i           ( dfi_cke             )
@@ -179,9 +180,7 @@ module bsg_dmc
     ,.dfi_rddata_en_i     ( dfi_rddata_en       )
     ,.dfi_rddata_o        ( dfi_rddata          )
     ,.dfi_rddata_valid_o  ( dfi_rddata_valid    )
-    //
-    ,.locked_o            (                     )
-    //
+    // DDR interface signals
     ,.ck_p_o              ( ddr_ck_p_o          )
     ,.ck_n_o              ( ddr_ck_n_o          )
     ,.cke_o               ( ddr_cke_o           )

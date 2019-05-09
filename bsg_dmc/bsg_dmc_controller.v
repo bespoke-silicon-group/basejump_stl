@@ -34,7 +34,6 @@ module bsg_dmc_controller
   ,output reg                         init_calib_complete_o
   // DDR PHY interface clock and reset
   ,input                              dfi_clk_i
-  ,input                              dfi_clk_2x_i
   ,input                              dfi_clk_sync_rst_i
   // DDR PHY interface signals
   ,output reg                   [2:0] dfi_bank_o
@@ -175,7 +174,11 @@ module bsg_dmc_controller
 
   logic  [3:0] tbl;
 
-  assign tbl   = $clog2(dfi_burst_length_lp << 1);
+  assign app_ref_ack_o = app_ref_req_i & ~app_wdf_end_i;
+  assign app_zq_ack_o = app_zq_req_i;
+  assign app_sr_active_o = app_sr_req_i;
+
+  assign tbl = 4'($clog2(dfi_burst_length_lp << 1));
 
   assign app_rdy_o = ~cmd_afifo_wfull;
 
@@ -230,7 +233,7 @@ module bsg_dmc_controller
 
   assign tx_sipo_valid_li = wrdata_afifo_rvalid;
   assign tx_sipo_data_li = wrdata_afifo_rdata;
-  assign tx_sipo_yumi_cnt_li = (shoot&&cmd_sfifo_rdata[23:20]==WRITE)? ui_burst_length_lp: 0;
+  assign tx_sipo_yumi_cnt_li = ($clog2(ui_burst_length_lp)+1)'((shoot&&cmd_sfifo_rdata[23:20]==WRITE)? ui_burst_length_lp: 0);
 
   bsg_serial_in_parallel_out #
     (.width_p    ( ui_data_width_p+ui_mask_width_lp )
@@ -245,9 +248,9 @@ module bsg_dmc_controller
     ,.data_o     ( tx_sipo_data_lo                  )
     ,.yumi_cnt_i ( tx_sipo_yumi_cnt_li              ));
 
-  assign col_addr  = ((1 << dmc_p_i.col_width) - 1) & cmd_afifo_rdata[ui_addr_width_p-1:0];
-  assign row_addr  = ((1 << dmc_p_i.row_width) - 1) & (cmd_afifo_rdata[ui_addr_width_p-1:0] >> dmc_p_i.col_width);
-  assign bank_addr = ((1 << dmc_p_i.bank_width) - 1) & (cmd_afifo_rdata[ui_addr_width_p-1:0] >> ( {1'b0,dmc_p_i.col_width} + {1'b0,dmc_p_i.row_width}));
+  assign col_addr  = 16'(((1 << dmc_p_i.col_width) - 1) & cmd_afifo_rdata[ui_addr_width_p-1:0]);
+  assign row_addr  = 16'(((1 << dmc_p_i.row_width) - 1) & (cmd_afifo_rdata[ui_addr_width_p-1:0] >> dmc_p_i.col_width));
+  assign bank_addr = 3'(((1 << dmc_p_i.bank_width) - 1) & (cmd_afifo_rdata[ui_addr_width_p-1:0] >> ( {1'b0,dmc_p_i.col_width} + {1'b0,dmc_p_i.row_width})));
 
   always @(posedge dfi_clk_i)
     if(dfi_clk_sync_rst_i)
@@ -427,7 +430,7 @@ module bsg_dmc_controller
       cstate <= nstate;
 
   assign cmd_sfifo_winc  = push_init_cmd | push_refr_cmd | push_ldst_cmd;
-  assign cmd_sfifo_wdata = push_init_cmd? init_cmd: (push_refr_cmd? refr_cmd: (push_ldst_cmd? ldst_cmd: 32'hx));
+  assign cmd_sfifo_wdata = push_init_cmd? init_cmd: (push_refr_cmd? refr_cmd: (push_ldst_cmd? ldst_cmd: 28'hx));
   assign cmd_sfifo_rinc  = shoot;
 
   bsg_fifo_1r1w_small #
@@ -693,7 +696,7 @@ module bsg_dmc_controller
 
   assign rx_sipo_valid_li = rddata_afifo_rvalid;
   assign rx_sipo_data_li = rddata_afifo_rdata;
-  assign rx_sipo_yumi_cnt_li = &rx_sipo_valid_lo? dfi_burst_length_lp: 0;
+  assign rx_sipo_yumi_cnt_li = ($clog2(dfi_burst_length_lp)+1)'(&rx_sipo_valid_lo? dfi_burst_length_lp: 0);
 
   bsg_serial_in_parallel_out #
     (.width_p    ( dfi_data_width_p    )
