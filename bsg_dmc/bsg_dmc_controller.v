@@ -137,6 +137,7 @@ module bsg_dmc_controller
   logic  [2:0] bank_addr;
 
   logic  [3:0] cmd_tick;
+  logic  [3:0] cmd_act_tick;
   logic  [3:0] cmd_wr_tick, cmd_rd_tick;
 
   logic        cwd_valid;
@@ -461,15 +462,17 @@ module bsg_dmc_controller
 	         default: shoot = 1'b1;
                endcase
         WRITE: case(n_cmd)
-                 PRE:     shoot = cmd_tick >= dmc_p_i.twr;
+                 PRE:     shoot = (cmd_tick >= dmc_p_i.twr) & (cmd_act_tick >= dmc_p_i.tras);
                  WRITE:   shoot = (cmd_tick >= tbl) & (&tx_sipo_valid_lo);
                  READ:    shoot = cmd_tick >= dmc_p_i.twtr;
+                 ACT:     shoot = cmd_act_tick >= dmc_p_i.trc;
 	         default: shoot = 1'b1;
                endcase
         READ:  case(n_cmd)
-                 PRE:     shoot = cmd_tick >= dmc_p_i.trtp;
+                 PRE:     shoot = (cmd_tick >= dmc_p_i.trtp) & (cmd_act_tick >= dmc_p_i.tras);
                  WRITE:   shoot = (cmd_tick >= tbl+dmc_p_i.tcas) & (&tx_sipo_valid_lo);
                  READ:    shoot = cmd_tick >= tbl;
+                 ACT:     shoot = cmd_act_tick >= dmc_p_i.trc;
 	         default: shoot = 1'b1;
                endcase
 	default: shoot = 1'b1;
@@ -485,6 +488,14 @@ module bsg_dmc_controller
       cmd_tick <= 0;
     else if(cmd_tick != 4'hf)
       cmd_tick <= cmd_tick + 1;
+
+  always @(posedge dfi_clk_i)
+    if(dfi_clk_sync_rst_i)
+      cmd_act_tick <= 0;
+    else if(shoot && n_cmd == ACT)
+      cmd_act_tick <= 0;
+    else if(cmd_tick != 4'hf)
+      cmd_act_tick <= cmd_act_tick + 1;
 
   always @(posedge dfi_clk_i)
     if(dfi_clk_sync_rst_i)
@@ -530,7 +541,8 @@ module bsg_dmc_controller
       wburst_tick <= 0;
       wburst_valid <= 0;
     end
-    else if((shoot && cmd_sfifo_rdata[23:20] == WRITE) || (cwd_valid && cwd_tick == 0)) begin
+    //else if((shoot && cmd_sfifo_rdata[23:20] == WRITE) || (cwd_valid && cwd_tick == 0)) begin
+    else if((shoot && cmd_sfifo_rdata[23:20] == WRITE) ) begin
       case(tbl)
         8'h01:   wburst_tick <= 0;
         8'h02:   wburst_tick <= 1;

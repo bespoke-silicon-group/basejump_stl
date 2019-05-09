@@ -104,6 +104,7 @@ module testbench
     dmc_p.trefi = 1023;
     dmc_p.tmrd = 1;
     dmc_p.trfc = 15;
+    dmc_p.trc = 10;
     dmc_p.trp = 2;
     dmc_p.tras = 7;
     dmc_p.trrd = 1;

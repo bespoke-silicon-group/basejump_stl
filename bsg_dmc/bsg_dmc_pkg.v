@@ -3,6 +3,7 @@ package bsg_dmc_pkg;
     logic [15:0] trefi;
     logic  [3:0] tmrd;
     logic  [3:0] trfc;
+    logic  [3:0] trc;
     logic  [3:0] trp;
     logic  [3:0] tras;
     logic  [3:0] trrd;
