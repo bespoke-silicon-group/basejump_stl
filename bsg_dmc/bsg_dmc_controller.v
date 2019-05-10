@@ -453,7 +453,7 @@ module bsg_dmc_controller
       case(p_cmd)
 	LMR:   shoot = cmd_tick >= dmc_p_i.tmrd;
 	REF:   shoot = cmd_tick >= dmc_p_i.trfc;
-	PRE:   shoot = cmd_tick >= dmc_p_i.trp;
+	PRE:   shoot = (n_cmd==ACT)? (cmd_tick >= dmc_p_i.trp && cmd_act_tick >= dmc_p_i.tras): cmd_tick >= dmc_p_i.trp;
 	ACT:   case(n_cmd)
                  PRE:     shoot = cmd_tick >= dmc_p_i.tras;
                  ACT:     shoot = cmd_tick >= dmc_p_i.trrd;
@@ -494,7 +494,7 @@ module bsg_dmc_controller
       cmd_act_tick <= 0;
     else if(shoot && n_cmd == ACT)
       cmd_act_tick <= 0;
-    else if(cmd_tick != 4'hf)
+    else if(cmd_act_tick != 4'hf)
       cmd_act_tick <= cmd_act_tick + 1;
 
   always @(posedge dfi_clk_i)
