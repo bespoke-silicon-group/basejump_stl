@@ -78,7 +78,7 @@ if __name__ == "__main__":
     tg.recv_data(data=0)
 
   for i in range(20000):
-    addr = (random.randint(0, 2**14) << 5)
+    addr = (random.randint(0, 2**22) << 5)
     delay = random.randint(0,100)
      
     if delay == 0:
@@ -104,5 +104,19 @@ if __name__ == "__main__":
       tg.recv_data(0)
       mem_dict[addr] = store_val
       store_val += 4
-  
+
+
+  # read back everything
+  for tu in mem_dict.items():
+    delay = random.randint(0,32)
+     
+    if delay == 0:
+      pass
+    elif delay == 1:
+      tg.nop()
+    else:
+      tg.wait(delay)
+
+    tg.send_lw(tu[0])
+    tg.recv_data(tu[1])  
   tg.test_done()
