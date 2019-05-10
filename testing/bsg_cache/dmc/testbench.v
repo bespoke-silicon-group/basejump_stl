@@ -301,10 +301,10 @@ for (genvar i = 0; i < 2; i++) begin
 end
 
 initial begin
-  wait(done_lo);
-  //for (integer i = 0; i < 100000; i++) begin
-  //  @(posedge clk);
-  //end
+  //wait(done_lo);
+  for (integer i = 0; i < 100000; i++) begin
+    @(posedge clk);
+  end
   $finish;
 end
 

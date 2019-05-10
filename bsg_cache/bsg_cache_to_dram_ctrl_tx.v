@@ -47,7 +47,7 @@ module bsg_cache_to_dram_ctrl_tx
   bsg_fifo_1r1w_small #(
     .width_p(lg_num_cache_lp)
     ,.els_p(num_cache_p*num_req_lp)
-  ) fifo (
+  ) tag_fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
     

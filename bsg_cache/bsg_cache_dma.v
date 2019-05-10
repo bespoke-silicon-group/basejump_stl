@@ -79,7 +79,7 @@ module bsg_cache_dma
   logic [data_width_p-1:0] in_fifo_data_lo;
   logic in_fifo_yumi_li;
 
-  bsg_fifo_1r1w_large #(
+  bsg_fifo_1r1w_small #(
     .width_p(data_width_p)
     ,.els_p(block_size_in_words_p)
   ) in_fifo (
@@ -91,6 +91,27 @@ module bsg_cache_dma
     ,.v_o(in_fifo_v_lo)
     ,.data_o(in_fifo_data_lo)
     ,.yumi_i(in_fifo_yumi_li)
+  );
+
+  // out fifo
+  //
+  logic out_fifo_v_r, out_fifo_v_n;
+  logic [data_width_p-1:0] out_fifo_data_li;
+  logic out_fifo_ready_lo;
+
+  bsg_two_fifo #(
+    .width_p(data_width_p)
+  ) out_fifo (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+
+    ,.v_i(out_fifo_v_r)
+    ,.data_i(out_fifo_data_li)
+    ,.ready_o(out_fifo_ready_lo)
+
+    ,.v_o(dma_data_v_o)
+    ,.data_o(dma_data_o)
+    ,.yumi_i(dma_data_yumi_i)
   );
 
   assign dma_pkt_o = dma_pkt;
@@ -111,7 +132,7 @@ module bsg_cache_dma
   
   assign data_mem_data_o = {2{in_fifo_data_lo}};
 
-  assign dma_data_o = dma_set_i
+  assign out_fifo_data_li = dma_set_i
     ? data_mem_data_i[data_width_p+:data_width_p]
     : data_mem_data_i[0+:data_width_p];
 
@@ -128,8 +149,8 @@ module bsg_cache_dma
     dma_pkt.write_not_read = 1'b0;
     data_mem_v_o = 1'b0;
     data_mem_w_o = 1'b0;
-    dma_data_v_o = 1'b0;
     in_fifo_yumi_li = 1'b0;
+    out_fifo_v_n = out_fifo_v_r;
     dma_state_n = IDLE;
 
     case (dma_state_r)
@@ -137,12 +158,15 @@ module bsg_cache_dma
         dma_state_n = dma_send_fill_addr_i ? SEND_FILL_ADDR
           : (dma_send_evict_addr_i ? SEND_EVICT_ADDR
           : (dma_get_fill_data_i ? GET_FILL_DATA
-          : (dma_send_evict_data_i ? SEND_EVICT_DATA
+          : (dma_send_evict_data_i & out_fifo_ready_lo ? SEND_EVICT_DATA
           : IDLE)));
-        counter_n = dma_get_fill_data_i ? {(lg_block_size_in_words_lp+1){1'b0}}
-          : (dma_send_evict_data_i ? (lg_block_size_in_words_lp+1)'(1)
-          : counter_r);
-        data_mem_v_o = dma_send_evict_data_i;
+        counter_n = dma_get_fill_data_i
+          ? {(lg_block_size_in_words_lp+1){1'b0}}
+          : (dma_send_evict_data_i & out_fifo_ready_lo
+            ? (lg_block_size_in_words_lp+1)'(1)
+            : counter_r);
+        data_mem_v_o = dma_send_evict_data_i & out_fifo_ready_lo;
+        out_fifo_v_n = dma_send_evict_data_i & out_fifo_ready_lo;
       end
 
       SEND_FILL_ADDR: begin
@@ -177,15 +201,15 @@ module bsg_cache_dma
       end
 
       SEND_EVICT_DATA: begin
-        dma_state_n = (counter_r == block_size_in_words_p) & dma_data_yumi_i
+        dma_state_n = (counter_r == block_size_in_words_p) & out_fifo_ready_lo
           ? IDLE
           : SEND_EVICT_DATA;
-        counter_n = dma_data_yumi_i
+        counter_n = out_fifo_ready_lo
           ? counter_r + 1
           : counter_r;
-        dma_data_v_o = 1'b1;
-        data_mem_v_o = dma_data_yumi_i & (counter_r != block_size_in_words_p);
-        done_o = (counter_r == block_size_in_words_p) & dma_data_yumi_i;
+        data_mem_v_o = out_fifo_ready_lo & (counter_r != block_size_in_words_p);
+        out_fifo_v_n = out_fifo_ready_lo & (counter_r != block_size_in_words_p);
+        done_o = (counter_r == block_size_in_words_p) & out_fifo_ready_lo;
       end
     endcase
   end
@@ -201,10 +225,12 @@ module bsg_cache_dma
     if (reset_i) begin
       dma_state_r <= IDLE;
       counter_r <= '0;
+      out_fifo_v_r <= 1'b0;
     end
     else begin
       dma_state_r <= dma_state_n;
       counter_r <= counter_n;
+      out_fifo_v_r <= out_fifo_v_n;
 
       if (snoop_word_we) begin
         snoop_word_o <= in_fifo_data_lo;

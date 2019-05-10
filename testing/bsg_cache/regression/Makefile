@@ -21,7 +21,7 @@ $(TRACE_ROM).v: $(TRACE_FILE)
 
 sim: $(TRACE_ROM).v
 	vcs +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -sverilog -full64 -f sv.include $(INCDIR)\
-		-debug_pp -timescale=1ps/1ps +vcs+vcdpluson $(VCS_DEFINES)\
+		-debug_pp -timescale=1ps/1ps +vcs+vcdpluson $(VCS_DEFINES) -l vcs.log\
 		| $(HIGHLIGHT)
 
 dve:
@@ -32,6 +32,6 @@ clean:
 	rm -rf csrc
 	rm -f $(TRACE_ROM).v
 	rm -rf simv.daidir simv.vdb
-	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz
+	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz vcs.log
 	rm -rf stack.info.*
 
