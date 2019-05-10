@@ -45,7 +45,7 @@ class TraceGen:
 
 
 if __name__ == "__main__":
-  tg = TraceGen(addr_width_p=28, data_width_p=32)
+  tg = TraceGen(addr_width_p=27, data_width_p=32)
   sets_p = 512
   ways_p = 2
   id_p = int(sys.argv[1])

@@ -5,12 +5,12 @@ module testbench
   ();
 
 parameter num_cache_p = 4;
-parameter addr_width_p = 28;
+parameter addr_width_p = 27;
 parameter data_width_p = 32;
 parameter block_size_in_words_p = 8;
 parameter sets_p = 512;
 
-parameter ui_addr_width_p = 28;
+parameter ui_addr_width_p = 27;
 parameter ui_data_width_p = 32;
 parameter ui_burst_length_p = 8;
 parameter dq_data_width_p = 32;
@@ -302,10 +302,10 @@ for (genvar i = 0; i < 2; i++) begin
 end
 
 initial begin
-  wait(done_lo);
-  //for (integer i = 0; i < 100000; i++) begin
-  //  @(posedge clk);
-  //end
+  //wait(done_lo);
+  for (integer i = 0; i < 5000000; i++) begin
+    @(posedge clk);
+  end
   $finish;
 end
 
