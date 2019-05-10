@@ -43,13 +43,31 @@ class TraceGen:
     trace += (self.data_width_p)*"0"
     print(trace)
 
+  def nop(self):
+    trace = "0000_"
+    trace += "00000_"
+    trace += (self.addr_width_p)*"0" + "_"
+    trace += (self.data_width_p)*"0"
+    print(trace)
+
+  def wait(self, num_cycle):
+    trace = "0110_"
+    trace += "00000_"
+    trace += (self.addr_width_p)*"0" + "_"
+    trace += format(num_cycle, "0"+str(self.data_width_p)+"b")
+    print(trace)
+    trace = "0101_"
+    trace += "00000_"
+    trace += (self.addr_width_p)*"0" + "_"
+    trace += (self.data_width_p)*"0"
+    print(trace)
 
 if __name__ == "__main__":
   tg = TraceGen(addr_width_p=27, data_width_p=32)
   sets_p = 512
   ways_p = 2
   id_p = int(sys.argv[1])
-  random.seed(id_p)
+  random.seed(time.time())
   
   mem_dict = {}
   store_val = id_p 
@@ -59,8 +77,18 @@ if __name__ == "__main__":
     tg.send_tagst(addr=(i<<(3+2)), data=0)
     tg.recv_data(data=0)
 
-  for i in range(10000):
+  for i in range(20000):
     addr = (random.randint(0, 2**14) << 5)
+    delay = random.randint(0,100)
+     
+    if delay == 0:
+      pass
+    elif delay == 1:
+      tg.nop()
+    else:
+      tg.wait(delay)
+
+
     if addr in mem_dict:
       load_not_store = random.randint(0,1)
       if load_not_store == 1:
