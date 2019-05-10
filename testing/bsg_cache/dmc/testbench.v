@@ -156,6 +156,7 @@ bsg_dmc_s dmc_p;
 assign dmc_p.trefi = 16'd1023;
 assign dmc_p.tmrd = 4'd1;
 assign dmc_p.trfc = 4'd15;
+assign dmc_p.trc = 4'd10;
 assign dmc_p.trp = 4'd2;
 assign dmc_p.tras = 4'd7;
 assign dmc_p.trrd = 4'd1;
@@ -301,10 +302,10 @@ for (genvar i = 0; i < 2; i++) begin
 end
 
 initial begin
-  //wait(done_lo);
-  for (integer i = 0; i < 100000; i++) begin
-    @(posedge clk);
-  end
+  wait(done_lo);
+  //for (integer i = 0; i < 100000; i++) begin
+  //  @(posedge clk);
+  //end
   $finish;
 end
 
