@@ -1,4 +1,4 @@
-# $ ./bsg_ascii_to_rom.py bsg_div_srt_sel_rom.txt bsg_div_srt_sel_rom 2'b11
+# You should modify the default value to 2'b11 in genereated .v file.
 # 000: eZERO
 # 001: ePOS_1
 # 011: ePOS_2
@@ -23,7 +23,7 @@
 00
 00
 #2
-00
+01
 00
 00
 00
