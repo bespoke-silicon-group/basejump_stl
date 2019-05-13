@@ -29,7 +29,7 @@ logic fp32_subnormal, fp32_invalid, fp32_overflow, fp32_underflow;
 bsg_fpu_div_n #(
   .e_p(8)
   ,.m_p(23)
-  ,.debug_p(1)
+  ,.debug_p(0)
 ) fp32_div (
   .clk_i(clk_i)
   ,.reset_i(reset_i)
@@ -63,7 +63,7 @@ bsg_nonsynth_reset_gen #(
   ,.async_reset_o(reset_i)
 );
 
-integer i = 3;
+integer i = 0;
 
 shortreal res_module;
 shortreal res_vcs;
@@ -122,8 +122,8 @@ always_ff @(posedge clk_i) begin
       fp32_divisor_i <= 32'b01111110100011100001101111001010;
     end
     else begin // Random Test
-      fp32_dividend_i <= float32Representation(-1109339520);
-      fp32_divisor_i <= float32Representation(1206023040);
+      fp32_dividend_i <= float32Representation($random);
+      fp32_divisor_i <= float32Representation($random);
     end
   end
   else begin
