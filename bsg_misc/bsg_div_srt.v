@@ -5,13 +5,13 @@ bsg_div_srt.v
 =====================
 A radix-4 SRT divider using carry save addition to store intermittent remainder.
 Design doc: https://docs.google.com/document/d/10YhNfc81pXje2fKQs5IgFZxHONHRqtQdeLGdTJkAAZU/edit?usp=sharing
-
-Cycle number = width_p/2 + 8
 */
 
 module bsg_div_srt #(
   parameter integer width_p = "inv"
-  ,parameter debug_p = 0
+  ,parameter for_floating_point_p = 0
+  ,parameter bit debug_p = 0
+  ,localparam quotient_size_lp = for_floating_point_p ? width_p + 1 : width_p
 )(
 
   input clk_i
@@ -25,7 +25,7 @@ module bsg_div_srt #(
   ,input [width_p-1:0] divisor_i
   ,input signed_i
 
-  ,output [width_p-1:0] quotient_o
+  ,output [quotient_size_lp-1:0] quotient_o
   ,output [width_p-1:0] remainder_o
 
   ,output v_o
@@ -63,15 +63,16 @@ reg [`BSG_SAFE_CLOG2(width_p/2):0] calc_counter_r;
 // Switching logic of FSM.
 always_comb unique case(current_state_r)
   eIDLE: current_state_n = v_i ? eNeg : eIDLE;
-  eNeg: current_state_n = divisor_r == '0 ? eERROR : eALIGN;
+  eNeg: current_state_n = divisor_r == '0 ? eERROR : 
+                          for_floating_point_p ? eCAL: eALIGN;
   eALIGN: current_state_n = eCAL;
   eCAL: begin
     if(is_overflow) current_state_n = eERROR;
-    else current_state_n = calc_counter_r[`BSG_SAFE_CLOG2(width_p/2)] ? eCPA : eCAL;
+    else current_state_n = (calc_counter_r == width_p/2) ? eCPA : eCAL;
   end
   eCPA: current_state_n = is_overflow ? eERROR : eADJREM;
   eADJREM: current_state_n = eADJQUO;
-  eADJQUO: current_state_n = eSHIFT;
+  eADJQUO: current_state_n = for_floating_point_p ? eDONE : eSHIFT;
   eSHIFT: current_state_n = eDONE;
   eDONE: current_state_n = eDONE;
   eERROR: current_state_n = eERROR;
@@ -179,15 +180,17 @@ if(primary_cpa_size >= 8)
 else // if operand width_ < 8, we have to align the output same with condition width_p >= 8.
   assign primary_cpa_out = (dividendA_r[2*width_p+2-:primary_cpa_size] + dividendB_r) << (8-primary_cpa_size);
 
+wire [7:0] neg_primary_cpa_out = -primary_cpa_out;
+
 // Overflow Judgement!
-assign is_overflow = (current_state_r == eCAL & primary_cpa_out[6] != primary_cpa_out[7])  // overflow when calculation
-                    | quotient_r[width_p+1] != quotient_r[width_p] // overflow when aggregating quotient
-                    | dividend_leading_zero_r < divisor_leading_zero_r; //overflow when aligning
+assign is_overflow = ( // overflow when calculation
+                    (quotient_r[width_p+1] != quotient_r[width_p]) & !for_floating_point_p // overflow when aggregating quotient
+                    | dividend_leading_zero_r < divisor_leading_zero_r); //overflow when aligning
 
 // selecting quotient from ROM, please check the design docs for detail.
 wire [1:0] rom_out;
 wire [7:0] rom_addr;
-assign rom_addr[7:3] = primary_cpa_out[7] ? -primary_cpa_out[6:2] : primary_cpa_out[6:2];
+assign rom_addr[7:3] = primary_cpa_out[7] ? neg_primary_cpa_out[6:2] : primary_cpa_out[6:2];
 assign rom_addr[2:0] = divisor_r[width_p] ? divisor_neg_r[width_p-2-:3] : divisor_r[width_p-2-:3];
 
 bsg_div_srt_sel_rom #(
@@ -295,14 +298,14 @@ always_ff @(posedge clk_i) begin
   end
 end
 
-assign quotient_o = quotient_r[width_p-1:0];
+assign quotient_o = quotient_r[quotient_size_lp-1:0];
 assign remainder_o = dividendA_r[2*width_p+1-:width_p];
 assign v_o = current_state_r == eDONE;
 
 // Debug information
 if(debug_p)
   always_ff @(posedge clk_i) begin
-    $display("===========================");
+    $display("============ BSG DIV SRT ===============");
     $display("current state:%s",current_state_r.name());
     $display("Divisor:%b",divisor_r);
     $display("Quotient:%b",quotient_r);
@@ -312,14 +315,18 @@ if(debug_p)
     $display("partial_product:%b",partial_product);
     $display("cpa_out:%b",cpa_out);
     $display("leading_zero:%b",leading_zero);
+
     $display("dividendA_r:%b",dividendA_r);
     $display("dividendB_r:%b",dividendB_r);
+    $display("current remainder:%b", dividendA_r + (dividendB_r <<  width_p));
+
     $display("divisor_leading_zero_r:%b",divisor_leading_zero_r);
     $display("dividend_leading_zero_r:%b",dividend_leading_zero_r);
     $display("clz_input:%b",clz_input);
     $display("leading_zero:%b",leading_zero);
     $display("leading_zero_a_li:%b",leading_zero_a_li);
     $display("sign_error:%b",{dividend_sign_r, dividendA_r[2*width_p+2]});
+    $display("Error Code: %b", error_type_o);
   end
 
 endmodule
