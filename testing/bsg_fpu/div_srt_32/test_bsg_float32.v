@@ -26,7 +26,7 @@ logic [31:0] fp32_result_o;
 logic fp32_v_o;
 logic fp32_subnormal, fp32_invalid, fp32_overflow, fp32_underflow;
 
-bsg_fpu_div_n #(
+bsg_fpu_div #(
   .e_p(8)
   ,.m_p(23)
   ,.debug_p(0)

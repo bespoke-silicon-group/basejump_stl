@@ -16,19 +16,19 @@ float32:
 	$(BSG_ROOT)/bsg_misc/bsg_div_srt.v \
 	$(BSG_ROOT)/bsg_fpu/bsg_fpu_pkg.v \
 	$(BSG_ROOT)/bsg_fpu/bsg_fpu_preprocess.v \
-	$(BSG_ROOT)/bsg_fpu/bsg_fpu_round_n.v \
-	$(BSG_ROOT)/bsg_fpu/bsg_fpu_div_n.v \
+	$(BSG_ROOT)/bsg_fpu/bsg_fpu_round.v \
+	$(BSG_ROOT)/bsg_fpu/bsg_fpu_div.v \
 	bsg_test_dpi.c \
 	test_bsg_float32.v 
 
 	./simv > rep.txt
 
 
-fpu_round_n:
+fpu_round:
 	make clean
 	vcs -full64 -sverilog -cc gcc-4.8 -cpp g++-4.8 \
 	$(BSG_ROOT)/bsg_fpu/bsg_fpu_pkg.v \
-	$(BSG_ROOT)/bsg_fpu/bsg_fpu_round_n.v \
+	$(BSG_ROOT)/bsg_fpu/bsg_fpu_round.v \
 	test_bsg_round.v
 	
 	./simv
