@@ -194,6 +194,7 @@ module bsg_cache
   logic tag_mem_v_li;
   logic [(tag_width_lp+1)*2-1:0] tag_mem_w_mask_li;
   logic tag_mem_w_li;
+  logic [(tag_width_lp+1)*2-1:0] tag_mem_data_lo_pre;
   logic [(tag_width_lp+1)*2-1:0] tag_mem_data_lo;
   
   bsg_mem_1rw_sync_mask_write_bit #(
@@ -207,6 +208,17 @@ module bsg_cache
     ,.v_i(tag_mem_v_li)
     ,.w_mask_i(tag_mem_w_mask_li)
     ,.w_i(tag_mem_w_li)
+    ,.data_o(tag_mem_data_lo_pre)
+  );
+
+  bsg_read_latch #(
+    .width_p((tag_width_lp+1)*2)
+  ) tag_mem_read_latch (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    
+    ,.v_i(tag_mem_v_li & ~tag_mem_w_li)
+    ,.data_i(tag_mem_data_lo_pre)
     ,.data_o(tag_mem_data_lo)
   );
 
@@ -229,6 +241,7 @@ module bsg_cache
   logic data_mem_v_li;
   logic [(data_mask_width_lp*2)-1:0] data_mem_w_mask_li;
   logic data_mem_w_li;
+  logic [data_width_p*2-1:0] data_mem_data_lo_pre;
   logic [data_width_p*2-1:0] data_mem_data_lo;
 
   bsg_mem_1rw_sync_mask_write_byte #(
@@ -242,6 +255,19 @@ module bsg_cache
     ,.v_i(data_mem_v_li)
     ,.write_mask_i(data_mem_w_mask_li)
     ,.w_i(data_mem_w_li)
+    ,.data_o(data_mem_data_lo_pre)
+  );
+
+
+  bsg_read_latch #(
+    .width_p(data_width_p*2)
+  ) data_mem_read_latch (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+  
+    ,.v_i(data_mem_v_li & ~data_mem_w_li)
+    ,.data_i(data_mem_data_lo_pre)
+    
     ,.data_o(data_mem_data_lo)
   );
 
@@ -755,7 +781,6 @@ module bsg_cache
   //
   assign sbuf_v_li = st_op_v_r & v_o & yumi_i;
   assign sbuf_set_li = miss_v ? chosen_set_lo : tag_hit_v[1];
-  //assign sbuf_yumi_li = sbuf_v_lo & (~(ld_op & v_i) | (miss_v & ~miss_done_lo & ~recover_lo)); 
   assign sbuf_yumi_li = sbuf_v_lo & ~(ld_op & v_i & ready_o) & (~dma_data_mem_v_lo); 
 
   assign bypass_addr_li = addr_tl_r;
