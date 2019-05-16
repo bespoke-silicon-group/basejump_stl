@@ -5,6 +5,10 @@ bsg_div_srt.v
 =====================
 A radix-4 SRT divider using carry save addition to store intermittent remainder.
 Design doc: https://docs.google.com/document/d/10YhNfc81pXje2fKQs5IgFZxHONHRqtQdeLGdTJkAAZU/edit?usp=sharing
+
+Latency = 8 + (width_p / 2) (cycle)
+Throughput = 1 / (9 + (width_p / 2)) (cycle^-1)
+
 */
 
 module bsg_div_srt #(
