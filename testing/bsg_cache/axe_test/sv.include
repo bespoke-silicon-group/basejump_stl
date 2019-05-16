@@ -6,6 +6,7 @@ $BASEJUMP_STL_DIR/bsg_misc/bsg_mux.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_mux_segmented.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_circular_ptr.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_encode_one_hot.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_read_latch.v
 $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1r1w_synth.v
 $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1r1w.v
 $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1rw_sync.v
