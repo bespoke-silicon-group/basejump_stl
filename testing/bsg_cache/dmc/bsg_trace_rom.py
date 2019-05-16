@@ -67,8 +67,9 @@ if __name__ == "__main__":
   sets_p = 512
   ways_p = 2
   id_p = int(sys.argv[1])
-  random.seed(id_p)
-  
+  #random.seed(id_p)
+  random.seed(time.time())
+
   mem_dict = {}
   store_val = id_p 
  
@@ -77,7 +78,7 @@ if __name__ == "__main__":
     tg.send_tagst(addr=(i<<(3+2)), data=0)
     tg.recv_data(data=0)
 
-  for i in range(1000):
+  for i in range(5000):
     addr = (random.randint(0, 2**22) <<2)
     delay = random.randint(0,100)
      
