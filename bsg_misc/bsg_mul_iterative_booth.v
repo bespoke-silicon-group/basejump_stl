@@ -6,6 +6,9 @@ bsg_mul_booth_iter.v
 
 This is an iterative booth encoded (radix-4) multiplier with configurable iteration stride.
 
+Latency = 4 + (width_p / iter_step_p) cycles.
+Throughput = 1/(5 + (width_p / iter_step_p)) (cycle^-1)
+
 */
 // define the booth encoder
 // sel[0]: whether the bits is not zero

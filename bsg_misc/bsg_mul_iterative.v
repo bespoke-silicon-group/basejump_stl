@@ -7,6 +7,11 @@ bsg_mul_iterative.v
 An 32 bits integer iterative multiplier, capable of signed & unsigned division,
 with configurable stride for each iteration.
 
+Latency = 4 + (width_p / iter_step_p) cycles.
+Throughput = 1/(5 + (width_p / iter_step_p)) (cycle^-1)
+
+Typical configuration is width_p = 32, iter_step_p = 8/16.
+
 States:
 
 eIDLE:          Ready for input. 
