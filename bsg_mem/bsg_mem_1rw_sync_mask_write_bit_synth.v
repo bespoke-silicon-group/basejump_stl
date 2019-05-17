@@ -7,31 +7,40 @@
 // they should use bsg_mem_1rw_sync_mask_write_bit.
 //
 
-module bsg_mem_1rw_sync_mask_write_bit_synth #(parameter width_p=-1
-					       , parameter els_p=-1
-					       , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p))
-   (input   clk_i
+module bsg_mem_1rw_sync_mask_write_bit_synth
+  #(parameter width_p="inv"
+	  , parameter els_p="inv"
+    , parameter latch_last_read_p=0
+
+		, localparam addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+  )
+  ( input clk_i
     , input reset_i
+
+    , input v_i
+    , input w_i
     , input [width_p-1:0] data_i
     , input [addr_width_lp-1:0] addr_i
-    , input v_i
     , input [width_p-1:0] w_mask_i
-    , input w_i
-    , output [width_p-1:0]  data_o
-    );
 
-   wire unused = reset_i;
+    , output logic [width_p-1:0]  data_o
+  );
 
-   logic [addr_width_lp-1:0] addr_r;
-   logic [width_p-1:0] mem [els_p-1:0];
+  wire unused = reset_i;
 
-   always_ff @(posedge clk_i)
-     if (v_i & ~w_i)
-       addr_r <= addr_i;
-     else
-       addr_r <= 'X;
+  logic [width_p-1:0] mem [els_p-1:0];
 
-   assign data_o = mem[addr_r];
+  always_ff @ (posedge clk_i) begin
+    if (v_i & ~w_i) begin
+      data_o <= mem[addr_i];
+    end
+    else begin
+      if (latch_last_read_p == 0) begin
+        data_o <= 'X;
+      end
+    end
+  end
+
 
 // The Verilator and non-Verilator models are functionally equivalent. However, Verilator
 //   cannot handle an array of non-blocking assignments in a for loop. It would be nice to 
