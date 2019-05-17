@@ -6,12 +6,10 @@ module bsg_dlatch #(parameter width_p="inv"
   ,output logic [width_p-1:0] data_o
   );
 
-  // Do not surround with translate off tags so that a warning is issued in DC
-  // if the user has not admitted that this is a bad idea.
-  if (i_know_this_is_a_bad_idea_p == 0)
-    begin
-      initial $warning("# WARNING (%m) using bsg_dlatch without admitting that this is a bad idea!");
-    end
+  // synopsys translate_off
+  initial assert (i_know_this_is_a_bad_idea_p == 1)
+    else $error("# Error (%m) using bsg_dlatch without admitting that this is a bad idea!");
+  // synopsys translate_on
 
   always_latch
     begin
