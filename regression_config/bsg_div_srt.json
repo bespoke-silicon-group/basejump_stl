@@ -1,0 +1,26 @@
+{ 
+  "design_name" : "bsg_div_srt", 
+
+  "run_config" : [
+    {
+      "name" : "bsg_div_srt_16bit_100MHz",
+      "description" : "A radix-4 SRT divider using carry save addition to store intermittent remainder",
+      "clone_path" : "https://github.com/Xusine1131/basejump_stl.git",
+      "parameters" : ["width_p = 8"],
+      "constraints" : {"clock_period" : "10", "input" : "0", "output" : "0", "uncertainty" : "0", "io_time_format" : "period"},
+      "commit" : "srt_div",
+      "filelist" : [ 
+        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_misc/bsg_div_srt.v", 
+        "basejump_stl/bsg_misc/bsg_counting_leading_zeros.v",
+        "basejump_stl/bsg_misc/bsg_priority_encode.v",
+        "basejump_stl/bsg_misc/bsg_priority_encode_one_hot_out.v",
+        "basejump_stl/bsg_misc/bsg_scan.v",
+        "basejump_stl/bsg_misc/bsg_encode_one_hot.v",
+        "basejump_stl/bsg_misc/bsg_div_srt_sel_rom.v",
+        "basejump_stl/bsg_misc/bsg_adder_carry_save.v"
+      ]
+    }
+  ]
+
+}
