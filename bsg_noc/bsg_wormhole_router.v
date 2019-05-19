@@ -11,6 +11,8 @@
 // If a wormhole packet takes n cycles to send, then length = (n-1)
 //
 
+`include "bsg_noc_links.vh"
+
 module  bsg_wormhole_router
 
   // import enum Dirs for directions
@@ -37,6 +39,7 @@ module  bsg_wormhole_router
   ,parameter header_on_lsb_p = 1'b0
   
   // Local parameters
+  ,localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(width_p)
   ,localparam dirs_lp = (enable_2d_routing_p==0)? 3 : 5
   ,localparam reserved_offset_lp = (header_on_lsb_p==0)? width_p-reserved_width_p : 0
   ,localparam x_cord_offset_lp = (header_on_lsb_p==0)? 
@@ -54,24 +57,51 @@ module  bsg_wormhole_router
   (input clk_i
   ,input reset_i
   
+  // Traffics
+  ,input [dirs_lp-1:0][bsg_ready_and_link_sif_width_lp-1:0] link_i
+  ,output [dirs_lp-1:0][bsg_ready_and_link_sif_width_lp-1:0] link_o
+  
   // Configuration
-  ,input [x_cord_width_p-1:0] local_x_cord_i
-  ,input [y_cord_width_p-1:0] local_y_cord_i
-  
-  // Input Traffics
-  ,input [dirs_lp-1:0] valid_i // early
-  ,input [dirs_lp-1:0][width_p-1:0] data_i 
-  ,output [dirs_lp-1:0] ready_o // early
-  
-  // Output Traffics
-  ,output [dirs_lp-1:0] valid_o // early
-  ,output [dirs_lp-1:0][width_p-1:0] data_o 
-  ,input [dirs_lp-1:0] ready_i // early
-  );
+  ,input [x_cord_width_p-1:0] my_x_i
+  ,input [y_cord_width_p-1:0] my_y_i);
   
   
   genvar i, j;
   
+  
+  // Interfacing bsg_noc links 
+  
+  logic [x_cord_width_p-1:0] local_x_cord_i;
+  logic [y_cord_width_p-1:0] local_y_cord_i;
+  
+  assign local_x_cord_i = my_x_i;
+  assign local_y_cord_i = my_y_i;
+
+  logic [dirs_lp-1:0] valid_o, ready_i;
+  logic [dirs_lp-1:0][width_p-1:0] data_o;
+  
+  logic [dirs_lp-1:0] valid_i, ready_o;
+  logic [dirs_lp-1:0][width_p-1:0] data_i;
+  
+  `declare_bsg_ready_and_link_sif_s(width_p,bsg_ready_and_link_sif_s);
+  
+  for (i = 0; i < dirs_lp; i++) begin
+  
+    bsg_ready_and_link_sif_s link_i_cast, link_o_cast;
+    
+    assign link_i_cast = link_i[i];
+    assign link_o[i] = link_o_cast;
+    
+    assign valid_i[i] = link_i_cast.v;
+    assign data_i[i] = link_i_cast.data;
+    assign link_o_cast.ready_and_rev = ready_o[i];
+    
+    assign link_o_cast.v = valid_o[i];
+    assign link_o_cast.data = data_o[i];
+    assign ready_i[i] = link_i_cast.ready_and_rev;
+  
+  end
+
   
   // Input Data fifos
 
