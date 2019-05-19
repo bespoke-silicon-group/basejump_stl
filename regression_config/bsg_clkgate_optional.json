@@ -7,7 +7,7 @@
       "description" : "integrated clock gating cell with positive latch ",
       "clone_path" : "https://github.com/bespoke-silicon-group/basejump_stl",
       "parameters" : [],
-      "constraints" : {"clock_period" : "0.2", "input" : "0.05", "output" : "0.1", "uncertainty" : "0", "io_time_format" : "period"},
+      "constraints" : {"clock_period" : "0.2", "clk_port_name" : "clk_i", "input" : "0.05", "output" : "0.1", "uncertainty" : "0", "io_time_format" : "period"},
       "commit" : "master",
       "filelist" : [ 
         "basejump_stl/bsg_misc/bsg_clkgate_optional.v",
