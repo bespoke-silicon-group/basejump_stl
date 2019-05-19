@@ -15,7 +15,6 @@ $BASEJUMP_STL_DIR/bsg_misc/bsg_thermometer_count.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_mux_one_hot.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_mux.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_mux_segmented.v
-$BASEJUMP_STL_DIR/bsg_misc/bsg_read_latch.v
 
 $BASEJUMP_STL_DIR/bsg_async/bsg_sync_sync.v
 $BASEJUMP_STL_DIR/bsg_async/bsg_launch_sync_sync.v
