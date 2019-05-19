@@ -29,6 +29,7 @@ module bsg_cache_miss
    
     ,input [1:0][tag_width_lp-1:0] tag_v_i 
     ,input [1:0] valid_v_i
+    ,input [1:0] lock_v_i
     ,input [1:0] tag_hit_v_i
 
     ,input sbuf_empty_i
@@ -53,8 +54,8 @@ module bsg_cache_miss
     ,output logic tag_mem_v_o
     ,output logic tag_mem_w_o
     ,output logic [lg_sets_lp-1:0] tag_mem_addr_o
-    ,output logic [1:0][(tag_width_lp+1)-1:0] tag_mem_data_o
-    ,output logic [1:0][(tag_width_lp+1)-1:0] tag_mem_w_mask_o
+    ,output logic [1:0][(tag_width_lp+2)-1:0] tag_mem_data_o
+    ,output logic [1:0][(tag_width_lp+2)-1:0] tag_mem_w_mask_o
  
     ,output logic recover_o
     ,output logic done_o
@@ -81,11 +82,13 @@ module bsg_cache_miss
   logic chosen_set_n;
 
   logic flush_op;
+  logic invalidate_op;
   logic [tag_width_lp-1:0] addr_tag_v;
   logic [lg_sets_lp-1:0] addr_index_v;
   logic addr_set_v;
   logic [lg_block_size_in_words_lp-1:0] addr_block_offset_v;
 
+  assign invalidate_op = ainv_op_v_i | aflinv_op_v_i;
   assign flush_op = tagfl_op_v_i | ainv_op_v_i | afl_op_v_i | aflinv_op_v_i;
   assign addr_index_v
     = addr_v_i[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
@@ -143,9 +146,16 @@ module bsg_cache_miss
           ? dirty_r
           : dirty_i;
         dma_send_fill_addr_o = 1'b1;
-        chosen_set_n = valid_v_i[0]
-          ? (valid_v_i[1] ? ~mru_n : 1'b1)
-          : 1'b0;
+        //chosen_set_n = valid_v_i[0]
+        //  ? (valid_v_i[1] ? ~mru_n : 1'b1)
+        //  : 1'b0;
+        chosen_set_n = lock_v_i[0]
+          ? 1'b1
+          : (lock_v_i[1]
+            ? 1'b0
+            : (valid_v_i[0]
+              ? (valid_v_i[1] ? ~mru_n : 1'b1)
+              : 1'b0));
        
         dma_addr_o = {
           addr_tag_v, addr_index_v,
@@ -161,11 +171,9 @@ module bsg_cache_miss
         tag_mem_v_o = dma_done_i;
         tag_mem_w_o = dma_done_i;
         tag_mem_addr_o = addr_index_v;
-        tag_mem_data_o = {2{1'b1, addr_tag_v}};
-        tag_mem_w_mask_o = {
-          {(1+tag_width_lp){chosen_set_n}},
-          {(1+tag_width_lp){~chosen_set_n}}
-        };
+        tag_mem_data_o = {2{1'b1, 1'b0, addr_tag_v}};
+        tag_mem_w_mask_o[1] = {chosen_set_n, 1'b0, {tag_width_lp{chosen_set_n}}};
+        tag_mem_w_mask_o[0] = {~chosen_set_n, 1'b0, {tag_width_lp{~chosen_set_n}}};
 
         miss_state_n = dma_done_i
           ? ((dirty_n[chosen_set_n] & valid_v_i[chosen_set_n]) ? SEND_EVICT_ADDR : GET_FILL_DATA)
@@ -189,11 +197,9 @@ module bsg_cache_miss
         tag_mem_v_o = 1'b1;
         tag_mem_w_o = 1'b1;
         tag_mem_addr_o = addr_index_v;
-        tag_mem_data_o = {2{~(ainv_op_v_i | aflinv_op_v_i), {tag_width_lp{1'b0}}}};
-        tag_mem_w_mask_o = {
-          chosen_set_n, {tag_width_lp{1'b0}},
-          ~chosen_set_n, {tag_width_lp{1'b0}}
-        };
+        tag_mem_data_o = {2{1'b0, 1'b0, {tag_width_lp{1'b0}}}};
+        tag_mem_w_mask_o[1] = {chosen_set_n & invalidate_op, 1'b0, {tag_width_lp{1'b0}}};
+        tag_mem_w_mask_o[0] = {~chosen_set_n & invalidate_op, 1'b0, {tag_width_lp{1'b0}}};
        
         miss_state_n = (~ainv_op_v_i & dirty_n[chosen_set_n] & valid_v_i[chosen_set_n])
           ? SEND_EVICT_ADDR
