@@ -1,7 +1,6 @@
-`include "bsg_cache_dma_pkt.vh"
-
 module testbench
   import bsg_dmc_pkg::*;
+  import bsg_cache_pkg::*;
   ();
 
 parameter num_cache_p = 4;

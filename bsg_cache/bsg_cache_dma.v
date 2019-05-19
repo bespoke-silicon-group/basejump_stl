@@ -4,10 +4,8 @@
  *  @author tommy
  */
 
-`include "bsg_cache_pkt.vh"
-`include "bsg_cache_dma_pkt.vh"
-
 module bsg_cache_dma
+  import bsg_cache_pkg::*;
   #(parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"

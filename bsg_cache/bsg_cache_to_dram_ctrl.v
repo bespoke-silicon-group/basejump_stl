@@ -5,9 +5,8 @@
  *
  */
 
-`include "bsg_cache_dma_pkt.vh"
-
 module bsg_cache_to_dram_ctrl
+  import bsg_cache_pkg::*;
   #(parameter num_cache_p="inv"
     , parameter addr_width_p="inv"
     , parameter data_width_p="inv"

@@ -11,10 +11,8 @@
  * See https://docs.google.com/document/d/15XJv3vH-08uvdUijjlAHJKznX4Wf42e19rZMyExlxGI/view for design doc
  */
 
-`include "bsg_cache_pkt.vh"
-`include "bsg_cache_dma_pkt.vh"
-
 module bsg_cache
+  import bsg_cache_pkg::*;
   #(parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
@@ -82,6 +80,7 @@ module bsg_cache
   bsg_cache_pkt_s cache_pkt;
 
   assign cache_pkt = cache_pkt_i;
+
   bsg_cache_pkt_decode #(
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
