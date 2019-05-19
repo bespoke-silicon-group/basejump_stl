@@ -1,0 +1,34 @@
+{
+  "design_name" : "bsg_mem_1r1w_sync", 
+
+  "run_config" : [
+    {
+      "name" : "async_sram_32x32_1GHz",
+      "description" : "asynchronous SRAM with 32 words and 32 bits/word",
+      "clone_path" : "https://github.com/bespoke-silicon-group/basejump_stl",
+      "parameters" : ["width_p = 32", "els_p = 32"],
+      "constraints" : {"clock_period" : "1", "input" : "0.05", "output" : "0.1", "uncertainty" : "0", "io_time_format" : "period"},
+      "commit" : "master",
+      "filelist" : [ 
+        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync.v",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync_synth.v"
+      ]
+    },
+
+    {
+      "name" : "async_sram_64x32_500MHz",
+      "description" : "asynchronous SRAM with 64 words and 32 bits/word",
+      "clone_path" : "https://github.com/bespoke-silicon-group/basejump_stl",
+      "parameters" : ["width_p = 32", "els_p = 64"],
+      "constraints" : {"clock_period" : "2", "input" : "0.05", "output" : "0.1", "uncertainty" : "0", "io_time_format" : "period"},
+      "commit" : "4fc91e7aa67a85e864ffd33b5766705ec50772a2",
+      "filelist" : [ 
+        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync.v",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync_synth.v"
+      ]
+    }
+  ]
+
+}
