@@ -146,16 +146,19 @@ module bsg_cache_miss
           ? dirty_r
           : dirty_i;
         dma_send_fill_addr_o = 1'b1;
-        //chosen_set_n = valid_v_i[0]
-        //  ? (valid_v_i[1] ? ~mru_n : 1'b1)
-        //  : 1'b0;
+       
+        // ----------------------------------------------------------- 
+        // lock[0]  lock[1] valid[1]  valid[0]  mru_n  |  chosen_set_n
+        // -----------------------------------------------------------
+        // 1        X       X         X         X      |  1
+        // 0        1       X         X         X      |  0
+        // 0        0       0         X         X      |  0
+        // 0        0       1         0         X      |  1
+        // 0        0       1         1         0      |  1
+        // 0        0       1         1         1      |  0
+        // -----------------------------------------------------------
         chosen_set_n = lock_v_i[0]
-          ? 1'b1
-          : (lock_v_i[1]
-            ? 1'b0
-            : (valid_v_i[0]
-              ? (valid_v_i[1] ? ~mru_n : 1'b1)
-              : 1'b0));
+          | (~lock_v_i[1] & valid_v_i[0] & (~valid_v_i[1] | ~mru_n));
        
         dma_addr_o = {
           addr_tag_v, addr_index_v,

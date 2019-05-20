@@ -346,6 +346,11 @@ module bsg_cache
   assign tag_hit_v[1] = (addr_tag_v == tag_v_r[1]) & valid_v_r[1];
   assign tag_hit_v[0] = (addr_tag_v == tag_v_r[0]) & valid_v_r[0];
 
+  // this is the signal that activates bsg_cache_miss. the conditions are:
+  // 1) it's load or store, and there is no tag hit
+  // 2) it's tagfl, and the set is valid and not locked.
+  // 3) it's afl, aflinv, or ainv, and the there is tag hit with set that is
+  // not locked.
   assign miss_v = v_v_r & (((ld_op_v_r | st_op_v_r) & ~(tag_hit_v[1] | tag_hit_v[0]))
     | (tagfl_op_v_r & valid_v_r[addr_set_v] & ~lock_v_r[addr_set_v])
     | ((afl_op_v_r | aflinv_op_v_r | ainv_op_v_r) & ((tag_hit_v[1] & ~lock_v_r[1]) | (tag_hit_v[0] | ~lock_v_r[0]))));
