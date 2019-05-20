@@ -7,9 +7,9 @@
 // they should use bsg_mem_1rw_sync.
 
 module bsg_mem_1rw_sync_synth #(parameter width_p=-1
-				, parameter els_p=-1
+        , parameter els_p=-1
         , parameter latch_last_read_p=0
-				, parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p))
+        , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p))
    (input   clk_i
 	 	, input v_i
 		, input reset_i
@@ -27,6 +27,8 @@ module bsg_mem_1rw_sync_synth #(parameter width_p=-1
      if (v_i)
        if (w_i)
          mem[addr_i] <= data_i;
+         if (latch_last_read_p==0)
+           data_o <= 'X;
        else 
          data_o <= mem[addr_i];
      else
