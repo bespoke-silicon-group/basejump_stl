@@ -67,8 +67,9 @@ if __name__ == "__main__":
   sets_p = 512
   ways_p = 2
   id_p = int(sys.argv[1])
+  #random.seed(id_p)
   random.seed(time.time())
-  
+
   mem_dict = {}
   store_val = id_p 
  
@@ -77,8 +78,16 @@ if __name__ == "__main__":
     tg.send_tagst(addr=(i<<(3+2)), data=0)
     tg.recv_data(data=0)
 
-  for i in range(20000):
-    addr = (random.randint(0, 2**22) << 5)
+  # lock two lines
+  #tg.send_tagst(addr=0, data=1<<30)
+  #tg.recv_data(data=0)
+  #tg.send_tagst(addr=1<<5, data=3<<30)
+  #tg.recv_data(data=0)
+
+
+  # do random load/store
+  for i in range(5000):
+    addr = (random.randint(0, 2**22) <<2)
     delay = random.randint(0,100)
      
     if delay == 0:
@@ -93,20 +102,23 @@ if __name__ == "__main__":
       load_not_store = random.randint(0,1)
       if load_not_store == 1:
         tg.send_lw(addr)
+        tg.wait(delay)
         tg.recv_data(mem_dict[addr])
       else:
         tg.send_sw(addr, store_val)
+        tg.wait(delay)
         tg.recv_data(0)
         mem_dict[addr] = store_val
         store_val += 4
     else:
       tg.send_sw(addr, store_val)
+      tg.wait(delay)
       tg.recv_data(0)
       mem_dict[addr] = store_val
       store_val += 4
 
 
-  # read back everything
+  # read back everything ever written
   for tu in mem_dict.items():
     delay = random.randint(0,32)
      

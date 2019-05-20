@@ -11,10 +11,8 @@
  * See https://docs.google.com/document/d/15XJv3vH-08uvdUijjlAHJKznX4Wf42e19rZMyExlxGI/view for design doc
  */
 
-`include "bsg_cache_pkt.vh"
-`include "bsg_cache_dma_pkt.vh"
-
 module bsg_cache
+  import bsg_cache_pkg::*;
   #(parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
@@ -82,6 +80,7 @@ module bsg_cache
   bsg_cache_pkt_s cache_pkt;
 
   assign cache_pkt = cache_pkt_i;
+
   bsg_cache_pkt_decode #(
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
@@ -190,17 +189,20 @@ module bsg_cache
 
 
   // tag_mem
+  // tag entry format = {valid, lock, tag}
+  // the user cannot lock both ways in a set. considered a programmer error.
   //
-  logic [(tag_width_lp+1)*2-1:0] tag_mem_data_li;
+  logic [(tag_width_lp+2)*2-1:0] tag_mem_data_li;
   logic [lg_sets_lp-1:0] tag_mem_addr_li;
   logic tag_mem_v_li;
-  logic [(tag_width_lp+1)*2-1:0] tag_mem_w_mask_li;
+  logic [(tag_width_lp+2)*2-1:0] tag_mem_w_mask_li;
   logic tag_mem_w_li;
-  logic [(tag_width_lp+1)*2-1:0] tag_mem_data_lo;
+  logic [(tag_width_lp+2)*2-1:0] tag_mem_data_lo;
   
   bsg_mem_1rw_sync_mask_write_bit #(
-    .width_p((tag_width_lp+1)*2)
+    .width_p((tag_width_lp+2)*2)
     ,.els_p(sets_p)
+    ,.latch_last_read_p(1)
   ) tag_mem (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -213,15 +215,11 @@ module bsg_cache
   );
 
   logic [1:0] valid_tl;
+  logic [1:0] lock_tl;
   logic [1:0][tag_width_lp-1:0] tag_tl;
-  assign valid_tl = {
-    tag_mem_data_lo[tag_width_lp*2+1],
-    tag_mem_data_lo[tag_width_lp]
-  };
-  assign tag_tl = {
-    tag_mem_data_lo[tag_width_lp+1+:tag_width_lp],
-    tag_mem_data_lo[0+:tag_width_lp]
-  };
+  for (genvar i = 0; i < 2; i++) begin
+    assign {valid_tl[i], lock_tl[i], tag_tl[i]} = tag_mem_data_lo[i*(tag_width_lp+2)+:(tag_width_lp+2)];
+  end
  
 
   // data_mem
@@ -236,6 +234,7 @@ module bsg_cache
   bsg_mem_1rw_sync_mask_write_byte #(
     .data_width_p(data_width_p*2)
     ,.els_p(block_size_in_words_p*sets_p)
+    ,.latch_last_read_p(1)
   ) data_mem (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -246,6 +245,7 @@ module bsg_cache
     ,.w_i(data_mem_w_li)
     ,.data_o(data_mem_data_lo)
   );
+
 
   // v stage
   //
@@ -269,6 +269,7 @@ module bsg_cache
   logic [addr_width_p-1:0] addr_v_r;
   logic [data_width_p-1:0] data_v_r;
   logic [1:0] valid_v_r;
+  logic [1:0] lock_v_r;
   logic [1:0][tag_width_lp-1:0] tag_v_r;
   logic [2*data_width_p-1:0] ld_data_v_r;
   logic retval_op_v;
@@ -294,6 +295,7 @@ module bsg_cache
       ,addr_v_r
       ,data_v_r
       ,valid_v_r
+      ,lock_v_r
       ,tag_v_r} <= '0;
     end
     else begin
@@ -318,6 +320,7 @@ module bsg_cache
           addr_v_r <= addr_tl_r;
           data_v_r <= data_tl_r;
           valid_v_r <= valid_tl;
+          lock_v_r <= lock_tl;
           tag_v_r <= tag_tl;
           ld_data_v_r <= data_mem_data_lo;
         end
@@ -342,9 +345,15 @@ module bsg_cache
 
   assign tag_hit_v[1] = (addr_tag_v == tag_v_r[1]) & valid_v_r[1];
   assign tag_hit_v[0] = (addr_tag_v == tag_v_r[0]) & valid_v_r[0];
+
+  // this is the signal that activates bsg_cache_miss. the conditions are:
+  // 1) it's load or store, and there is no tag hit
+  // 2) it's tagfl, and the set is valid and not locked.
+  // 3) it's afl, aflinv, or ainv, and the there is tag hit with set that is
+  // not locked.
   assign miss_v = v_v_r & (((ld_op_v_r | st_op_v_r) & ~(tag_hit_v[1] | tag_hit_v[0]))
-    | (tagfl_op_v_r & valid_v_r[addr_set_v])
-    | ((afl_op_v_r | aflinv_op_v_r | ainv_op_v_r) & (tag_hit_v[1] | tag_hit_v[0])));
+    | (tagfl_op_v_r & valid_v_r[addr_set_v] & ~lock_v_r[addr_set_v])
+    | ((afl_op_v_r | aflinv_op_v_r | ainv_op_v_r) & ((tag_hit_v[1] & ~lock_v_r[1]) | (tag_hit_v[0] | ~lock_v_r[0]))));
 
   assign retval_op_v = ld_op_v_r | taglv_op_v_r | tagla_op_v_r;
 
@@ -360,6 +369,7 @@ module bsg_cache
   bsg_mem_1rw_sync_mask_write_bit #(
     .width_p(4)
     ,.els_p(sets_p)
+    ,.latch_last_read_p(1)
   ) stat_mem (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -393,8 +403,8 @@ module bsg_cache
   logic miss_tag_mem_v_lo;
   logic miss_tag_mem_w_lo;
   logic [lg_sets_lp-1:0] miss_tag_mem_addr_lo;
-  logic [2*(tag_width_lp+1)-1:0] miss_tag_mem_data_lo;
-  logic [2*(tag_width_lp+1)-1:0] miss_tag_mem_w_mask_lo;
+  logic [2*(tag_width_lp+2)-1:0] miss_tag_mem_data_lo;
+  logic [2*(tag_width_lp+2)-1:0] miss_tag_mem_w_mask_lo;
 
   logic sbuf_empty_li;
   logic chosen_set_lo;
@@ -418,6 +428,7 @@ module bsg_cache
 
     ,.tag_v_i(tag_v_r)
     ,.valid_v_i(valid_v_r)
+    ,.lock_v_i(lock_v_r)
     ,.tag_hit_v_i(tag_hit_v)
 
     ,.sbuf_empty_i(sbuf_empty_li)
@@ -635,7 +646,9 @@ module bsg_cache
     always_comb begin
       if (retval_op_v) begin
         if (taglv_op_v_r) begin
-          data_o = (32)'(valid_v_r[addr_set_v]);
+          // data_o[1] = lock bit
+          // data_o[0] = valid bit
+          data_o = (32)'({lock_v_r[addr_set_v], valid_v_r[addr_set_v]});
         end
         else if (tagla_op_v_r) begin
           data_o = {tag_v_r[addr_set_v], addr_index_v,
@@ -685,9 +698,17 @@ module bsg_cache
 
   // tag_mem
   //
+
+  
+  // data[31] = valid
+  // data[30] = lock
+  // data[0+:tag_width_lp] = tag
+  logic [(tag_width_lp+2)-1:0] tagst_write_val;
+  assign tagst_write_val = {cache_pkt.data[data_width_p-1-:2], cache_pkt.data[0+:tag_width_lp]};
+
   assign tag_mem_data_li = miss_v
     ? miss_tag_mem_data_lo
-    : {2{cache_pkt.data[data_width_p-1], cache_pkt.data[tag_width_lp-1:0]}};
+    : {2{tagst_write_val}}; // for tagst
 
   assign tag_mem_addr_li = miss_v
     ? (recover_lo ? addr_index_tl : (miss_tag_mem_v_lo ? miss_tag_mem_addr_lo : addr_index))
@@ -695,7 +716,7 @@ module bsg_cache
 
   assign tag_mem_w_mask_li = miss_v
     ? miss_tag_mem_w_mask_lo
-    : {{(1+tag_width_lp){addr_set}}, {(1+tag_width_lp){~addr_set}}};
+    : {{(2+tag_width_lp){addr_set}}, {(2+tag_width_lp){~addr_set}}};
 
   assign tag_mem_v_li = ((tag_read_op & ready_o & v_i)
     | (recover_lo & tag_read_op_tl_r & v_tl_r)
@@ -757,7 +778,6 @@ module bsg_cache
   //
   assign sbuf_v_li = st_op_v_r & v_o & yumi_i;
   assign sbuf_set_li = miss_v ? chosen_set_lo : tag_hit_v[1];
-  //assign sbuf_yumi_li = sbuf_v_lo & (~(ld_op & v_i) | (miss_v & ~miss_done_lo & ~recover_lo)); 
   assign sbuf_yumi_li = sbuf_v_lo & ~(ld_op & v_i & ready_o) & (~dma_data_mem_v_lo); 
 
   assign bypass_addr_li = addr_tl_r;
