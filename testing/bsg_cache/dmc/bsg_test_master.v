@@ -1,7 +1,6 @@
-`include "bsg_cache_pkt.vh"
-`include "bsg_cache_dma_pkt.vh"
 
 module bsg_test_master
+  import bsg_cache_pkg::*;
   #(parameter num_cache_p="inv"
     , parameter data_width_p="inv"
     , parameter addr_width_p="inv"

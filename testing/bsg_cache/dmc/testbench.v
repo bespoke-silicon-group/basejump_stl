@@ -1,6 +1,6 @@
-`include "bsg_cache_dma_pkt.vh"
 
 module testbench
+  import bsg_cache_pkg::*;
   import bsg_dmc_pkg::*;
   ();
 
