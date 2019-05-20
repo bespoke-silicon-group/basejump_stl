@@ -48,7 +48,7 @@ module bsg_div_srt_core #(
 typedef enum logic [2:0] {eIdle, eCal, eCPA, eCor, eDone} state_e;
 
 initial assert(width_p % 2 == 0) else $error("For radix-4 divider, width_p can not be an odd number.");
-initial assert(width_p > 4) else $error("There is no need to implement Radix-4 divider with so small width_p.");
+initial assert(width_p > 7) else $error("There is no need to implement Radix-4 divider with so small width_p.");
 
 state_e state_r, state_n;
 reg [`BSG_SAFE_CLOG2(width_p):0] cal_cnt_r;
@@ -84,8 +84,9 @@ reg dividend_sign_r;
 reg [width_p+2:0] dividend_aux_csa_r;
 wire [width_p+2:0] dividend_aux_csa_n;
 
-reg [7:0] dividend_partial_r; // Store the Most 8 significant bits of dividend from partial carry propagation, which is use to select the quotient.
-wire [7:0] dividend_partial_n;
+localparam primary_csa_size_lp = 8;
+reg [primary_csa_size_lp-1:0] dividend_partial_r; // Store the Most 8 significant bits of dividend from partial carry propagation, which is use to select the quotient.
+wire [primary_csa_size_lp-1:0] dividend_partial_n;
 
 reg [width_p:0] divisor_r;
 
@@ -119,13 +120,13 @@ always_ff @(posedge clk_i) begin
     eIdle: if(v_i) begin
       if(signed_i) begin
         dividend_r <= {{2{dividend_sign_bit}}, dividend_i,1'b0};
-        dividend_partial_r <= {{2{dividend_sign_bit}}, dividend_i[2*width_p-1-:6]};
+        dividend_partial_r <= {{2{dividend_sign_bit}}, dividend_i[2*width_p-1-:primary_csa_size_lp-2]};
         divisor_r <= {divisor_i,1'b0};
       end
       else begin
         dividend_r <= {{3{dividend_sign_bit}}, dividend_i};
         divisor_r <= {divisor_sign_bit, divisor_i};
-        dividend_partial_r <= {{3{dividend_sign_bit}}, dividend_i[2*width_p-1-:5]}; // assert width_p > 4
+        dividend_partial_r <= {{3{dividend_sign_bit}}, dividend_i[2*width_p-1-:primary_csa_size_lp-3]}; // assert width_p > 4
       end
       dividend_aux_csa_r <= '0;
       dividend_sign_r <= dividend_sign_bit;
@@ -153,17 +154,17 @@ always_comb unique case(state_r)
     dividend_cpa_input = dividend_aux_csa_r;
     dividend_cpa_opcode = 1'b0;
   end
-  eCor: unique case ({dividend_r[2*width_p+2],dividend_sign_r})
+  eCor: unique case ({dividend_r[2*width_p+2],dividend_sign_r, dividend_r[2*width_p+2:width_p+2] != 0})
     default: begin
       dividend_cpa_input = '0;
       dividend_cpa_opcode = '0;
     end
-    2'b01: begin // dividend is negative while remainder is positive
-      dividend_cpa_input = {3'b0,divisor_r[width_p] ? divisor_r :~divisor_r};
+    3'b011: begin // dividend is negative while remainder is positive
+      dividend_cpa_input = divisor_r[width_p] ? {divisor_r, 2'b00} :{~divisor_r, 2'b11};
       dividend_cpa_opcode = ~divisor_r[width_p];
     end
-    2'b10: begin// dividend is positive while remainder is negative
-      dividend_cpa_input = {3'b1,divisor_r[width_p] ? divisor_r :~divisor_r};
+    3'b101: begin// dividend is positive while remainder is negative
+      dividend_cpa_input = divisor_r[width_p] ? {~divisor_r, 2'b11} : {divisor_r, 2'b0};
       dividend_cpa_opcode = divisor_r[width_p];
     end
   endcase
@@ -189,8 +190,8 @@ As for negative divisor, quotient is negated as well:
 ------------------------------------------------------- */
 
 // First, select approximate quotient based on dividend_partial_r. 
-wire q_sign = dividend_partial_r[7]; 
-wire q_diff = dividend_partial_r[6:4] != '1 & dividend_partial_r[6:4] != '0;
+wire q_sign = dividend_partial_r[primary_csa_size_lp-1]; 
+wire q_diff = dividend_partial_r[primary_csa_size_lp-2-:3] != '1 & dividend_partial_r[primary_csa_size_lp-2-:3] != '0;
 
 wire divisor_sign = divisor_r[width_p];
 
@@ -211,13 +212,13 @@ logic csa_opcode_1;
 always_comb unique case({divisor_sign, q_sign, q_diff})
   3'b000: begin // approximate quotient is 0
     quotient_times_divisor_0 = '0;
-    quotient_times_divisor_1 = ~divisor_r;
+    quotient_times_divisor_1 = {~divisor_sign, ~divisor_sign, ~divisor_r};
     csa_opcode_0 = 1'b0;
     csa_opcode_1 = 1'b1;
   end
   3'b001: begin // approximate quotient is 1
     quotient_times_divisor_0 = {~divisor_sign,~divisor_sign,~divisor_r};
-    quotient_times_divisor_1 = {~divisor_sign, ~divisor_r,1'b0};
+    quotient_times_divisor_1 = {~divisor_sign, ~divisor_r,1'b1};
     csa_opcode_0 = 1'b1;
     csa_opcode_1 = 1'b1;
   end
@@ -235,13 +236,13 @@ always_comb unique case({divisor_sign, q_sign, q_diff})
   end
   3'b100: begin // approximate quotient is 0.
     quotient_times_divisor_0 = '0;
-    quotient_times_divisor_1 = divisor_r;
+    quotient_times_divisor_1 = {2'b11, divisor_r};
     csa_opcode_0 = 1'b0;
     csa_opcode_1 = 1'b0;
   end
   3'b101: begin // approximate quotient is -1
-    quotient_times_divisor_0 = divisor_r;
-    quotient_times_divisor_1 = divisor_r << 1;
+    quotient_times_divisor_0 = {2'b11, divisor_r};
+    quotient_times_divisor_1 = {1'b1, divisor_r, 1'b0};
     csa_opcode_0 = 1'b0;
     csa_opcode_1 = 1'b0;
   end
@@ -252,7 +253,7 @@ always_comb unique case({divisor_sign, q_sign, q_diff})
     csa_opcode_1 = 1'b0;
   end
   3'b111: begin // approximate quotient is 2.
-    quotient_times_divisor_0 = {~divisor_sign, ~divisor_r,1'b0};
+    quotient_times_divisor_0 = {~divisor_sign, ~divisor_r,1'b1}; // -(a << 1) = ({~a, 1'b1})
     quotient_times_divisor_1 = {~divisor_sign,~divisor_sign,~divisor_r};
     csa_opcode_0 = 1'b1;
     csa_opcode_1 = 1'b1;
@@ -289,14 +290,28 @@ bsg_adder_carry_save #(
   ,.car_o(partial_remainder_1_car_vec)
 );
 
-// Two 8 bit CPA is needed for selecting quotient correction.
-wire [7:0] partial_remainder_pca_0 = partial_remainder_0_sum_vec[width_p+2-:8] + partial_remainder_0_car_vec[width_p+1-:8];
-wire [7:0] partial_remainder_pca_1 = partial_remainder_1_sum_vec[width_p+2-:8] + partial_remainder_1_car_vec[width_p+1-:8];
+// Two primary_csa_size_lp bit CPA is needed for selecting quotient correction.
+wire [primary_csa_size_lp-1:0] partial_remainder_pca_0 = partial_remainder_0_sum_vec[width_p+2-:primary_csa_size_lp] + partial_remainder_0_car_vec[width_p+1-:primary_csa_size_lp]; // assert width_p >= 7
+wire [primary_csa_size_lp-1:0] partial_remainder_pca_1 = partial_remainder_1_sum_vec[width_p+2-:primary_csa_size_lp] + partial_remainder_1_car_vec[width_p+1-:primary_csa_size_lp];
 
 // Now, select quotient correction.
 
-wire q_corr = (~partial_remainder_pca_0[7]) & (partial_remainder_pca_0[5] | partial_remainder_pca_0[4] | partial_remainder_pca_0[3] & (~divisor_r[width_p-2]));
-wire q_corr_neg = partial_remainder_pca_0[7] & ((~partial_remainder_pca_0[5]) | (~partial_remainder_pca_0[4]) | (~partial_remainder_pca_0[3]) & divisor_r[width_p-2]);
+wire [3:0] rom_addr_divisor_part = divisor_r[width_p-2-:4] ^ {4{divisor_r[width_p]}};
+
+
+wire [6:0] rom_addr = {partial_remainder_pca_0[primary_csa_size_lp-5-:3], rom_addr_divisor_part};
+wire rom_out;
+bsg_div_srt_sel_rom #(
+  .width_p(1)
+  ,.addr_width_p(7)
+) sel_rom (
+  .addr_i(rom_addr)
+  ,.data_o(rom_out)
+);
+
+//wire q_corr = (~partial_remainder_pca_0[primary_csa_size_lp-1]) & (partial_remainder_pca_0[primary_csa_size_lp-3] | partial_remainder_pca_0[primary_csa_size_lp-4] | partial_remainder_pca_0[primary_csa_size_lp-5] & (~divisor_r[width_p-2]));
+wire q_corr = (~partial_remainder_pca_0[primary_csa_size_lp-1]) & (partial_remainder_pca_0[primary_csa_size_lp-3] | partial_remainder_pca_0[primary_csa_size_lp-4] | rom_out);
+
 assign dividend_partial_n = q_corr ? partial_remainder_pca_1 : partial_remainder_pca_0;
 assign dividend_n[2*width_p + 2: width_p] = q_corr ? partial_remainder_1_sum_vec : partial_remainder_0_sum_vec;
 assign dividend_aux_csa_n = q_corr ? {partial_remainder_1_car_vec[width_p+1:0], csa_opcode_1} : {partial_remainder_0_car_vec[width_p+1:0], csa_opcode_0};
@@ -318,7 +333,7 @@ always_comb unique case({q_corr, q_sign, q_diff})
   default: quotient_increment_n_pos = '0;
 endcase
 
-always_comb unique case({q_corr_neg, q_sign, q_diff})
+always_comb unique case({q_corr, q_sign, q_diff})
   3'b000: quotient_increment_n_neg = '0;
   3'b001: quotient_increment_n_neg = '1;
   3'b010: quotient_increment_n_neg = 3'b001;
@@ -369,15 +384,15 @@ always_comb unique case(state_r)
   eCPA: begin
     quotient_cpa_input = quotient_increment_r;
   end
-  eCor: unique case ({dividend_r[2*width_p+2],dividend_sign_r})
+  eCor: unique case ({dividend_r[2*width_p+2],dividend_sign_r, dividend_r[2*width_p+2:width_p+2] != 0})
     default: begin
       quotient_cpa_input = '0;
     end
-    2'b01: begin // dividend is negative while remainder is positive
-      quotient_cpa_input = divisor_r[width_p] ? (width_p+2)'(1) :'1;
-    end
-    2'b10: begin// dividend is positive while remainder is negative
+    3'b011: begin // dividend is negative while remainder is positive
       quotient_cpa_input = divisor_r[width_p] ? '1 : (width_p+2)'(1);
+    end
+    3'b101: begin// dividend is positive while remainder is negative
+      quotient_cpa_input = divisor_r[width_p] ? (width_p+2)'(1) :'1;
     end
   endcase
   default: begin
@@ -393,12 +408,18 @@ if(debug_p) begin: DEBUG
     $display("state_r:%s",state_r.name());
     $display("dividend_r:%b",dividend_r);
     $display("dividend_aux_r:%b",dividend_aux_csa_r);
+    $display("dividend_partial_r:%b",dividend_partial_r);
     $display("actual dividend:%b", dividend_r + {dividend_aux_csa_r, (width_p)'(0)});
     $display("divisor_r:%b",divisor_r);
     $display("partial_remainder_pca_0:%b",partial_remainder_pca_0);
     $display("full version of p_pca_0:%b",partial_remainder_0_sum_vec + (partial_remainder_0_car_vec << 1));
-    $display("q selection:%b",{q_corr, q_sign, q_diff});
+    $display("q selection bits:%b",{q_corr, q_sign, q_diff});
+    $display("q selection:%d",quotient_increment_n);
+    $display("quotient_times_divider_0:%b",quotient_times_divisor_0);
+    $display("quotient_times_divider_1:%b",quotient_times_divisor_1);
+    $display("dividend_partial_n:%b",dividend_partial_n);
     $display("quotient:%b",quotient_r);
+    $display("dividend_cpa_input:%b",dividend_cpa_input);
     i = i + 1;
   end
 end
