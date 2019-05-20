@@ -18,7 +18,7 @@ module bsg_mem_1rw_sync_mask_write_bit_synth #(parameter width_p=-1
     , input v_i
     , input [width_p-1:0] w_mask_i
     , input w_i
-    , output [width_p-1:0]  data_o
+    , output logic [width_p-1:0]  data_o
     );
 
    wire unused = reset_i;
