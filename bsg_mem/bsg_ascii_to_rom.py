@@ -72,7 +72,8 @@ with open(sys.argv[1],"r") as my_file:
                     print("line {}: {} is not a valid systemverilog expression!".format(nu, line));
                     exit(-1)
             val = int(val, base_converter[base]);
-            print("    {:x}: data_o = width_p'({}); // 0x{:x}".format(addr, val, val))
+            print("    {}: data_o = width_p'({}); // 0x{:x}".format(addr, val, val))
+            addr = addr + 1;
     if default_value != "X":
         print("    default: data_o = width_p'({});".format(default_value));
     else:
