@@ -157,8 +157,10 @@ module bsg_cache_miss
         // 0        0       1         1         0      |  1
         // 0        0       1         1         1      |  0
         // -----------------------------------------------------------
-        chosen_set_n = lock_v_i[0]
-          | (~lock_v_i[1] & valid_v_i[0] & (~valid_v_i[1] | ~mru_n));
+        chosen_set_n = lock_v_i[0]  // choose way1 if way0 is locked
+          | (~lock_v_i[1]           // choose way0 if way1 is locked
+            & valid_v_i[0]          // otherwise choose way0 if it is invalid
+            & (~valid_v_i[1] | ~mru_n));  // otherwise choose way1 if it is invalid, or if it is LRU; otherwise choose 0
        
         dma_addr_o = {
           addr_tag_v, addr_index_v,
@@ -201,8 +203,8 @@ module bsg_cache_miss
         tag_mem_w_o = 1'b1;
         tag_mem_addr_o = addr_index_v;
         tag_mem_data_o = {2{1'b0, 1'b0, {tag_width_lp{1'b0}}}};
-        tag_mem_w_mask_o[1] = {chosen_set_n & invalidate_op, 1'b0, {tag_width_lp{1'b0}}};
-        tag_mem_w_mask_o[0] = {~chosen_set_n & invalidate_op, 1'b0, {tag_width_lp{1'b0}}};
+        tag_mem_w_mask_o[1] = {chosen_set_n & invalidate_op, chosen_set_n & invalidate_op, {tag_width_lp{1'b0}}};
+        tag_mem_w_mask_o[0] = {~chosen_set_n & invalidate_op, ~chosen_set_n & invalidate_op, {tag_width_lp{1'b0}}};
        
         miss_state_n = (~ainv_op_v_i & dirty_n[chosen_set_n] & valid_v_i[chosen_set_n])
           ? SEND_EVICT_ADDR
