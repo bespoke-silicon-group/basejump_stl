@@ -8,6 +8,7 @@
 
 module bsg_mem_1rw_sync_synth #(parameter width_p=-1
 				, parameter els_p=-1
+        , parameter latch_last_read_p=0
 				, parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p))
    (input   clk_i
 	 	, input v_i
@@ -20,20 +21,18 @@ module bsg_mem_1rw_sync_synth #(parameter width_p=-1
 
    wire unused = reset_i;
 
-   logic [addr_width_lp-1:0] addr_r;
    logic [width_p-1:0]    mem [els_p-1:0];
 
    always_ff @(posedge clk_i)
-     if (v_i & ~w_i)
-       addr_r <= addr_i;
+     if (v_i)
+       if (w_i)
+         mem[addr_i] <= data_i;
+       else 
+         data_o <= mem[addr_i];
      else
-       addr_r <= 'X;
+       if (latch_last_read_p==0)
+         data_o <= 'X;
 
-   assign data_o = mem[addr_r];
-
-   always_ff @(posedge clk_i)
-     if (v_i & w_i)
-       mem[addr_i] <= data_i;
 
    // synopsys translate_off
    initial
