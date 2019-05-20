@@ -26,9 +26,11 @@ module bsg_mem_1rw_sync_synth #(parameter width_p=-1
    always_ff @(posedge clk_i)
      if (v_i)
        if (w_i)
-         mem[addr_i] <= data_i;
-         if (latch_last_read_p==0)
-           data_o <= 'X;
+         begin
+           mem[addr_i] <= data_i;
+           if (latch_last_read_p==0)
+             data_o <= 'X;
+         end
        else 
          data_o <= mem[addr_i];
      else
