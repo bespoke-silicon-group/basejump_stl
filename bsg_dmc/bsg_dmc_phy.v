@@ -453,8 +453,8 @@ module bsg_dmc_phy #
   assign ck_p_o     = clk_1x_0;
   assign ck_n_o     = clk_1x_180;
 
-  assign dqs_p_ie_n_o = ~{dq_group_lp{rddata_en[0] | dqs_select}};
-  assign dqs_n_ie_n_o = ~{dq_group_lp{rddata_en[0] | dqs_select}};
+  assign dqs_p_ie_n_o = ~{dq_group_lp{rddata_en[0] | rddata_en[2]}};
+  assign dqs_n_ie_n_o = ~{dq_group_lp{rddata_en[0] | rddata_en[2]}};
 
   logic [7:0] dfi_wrdata_array [((dq_data_width_p>>3)<<1)-1:0];
   logic [7:0] dfi_rddata_array [((dq_data_width_p>>3)<<1)-1:0];
