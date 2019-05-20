@@ -168,7 +168,7 @@ assign dmc_p.tcas = 4'd3;
 assign dmc_p.col_width = 4'd11;
 assign dmc_p.row_width = 4'd14;
 assign dmc_p.bank_width = 2'd2;
-assign dmc_p.dqs_sel_cal = 2'd1;
+assign dmc_p.dqs_sel_cal = 2'd3;
 assign dmc_p.init_cmd_cnt = 4'd5;
 
 wire ddr_ck_p;
