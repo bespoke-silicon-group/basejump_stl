@@ -1,0 +1,36 @@
+{ 
+  "design_name" : "bsg_mult_synth", 
+
+  "run_config" : [
+    {
+      "name" : "bsg_mult_synth_32bit_150MHz",
+      "description" : "A 32-bit signed standard multiplier running at 150MHz",
+      "parameters" : ["width_p = 32"],
+      "constraints" : {"clock_period" : "6.67", "clk_port_name" : "virtual", "input" : "0", "output" : "0", "uncertainty" : "0", "io_time_format" : "period"},
+      "filelist" : [ 
+        "basejump_stl/bsg_misc/bsg_mult_synth.v"
+      ]
+    },
+
+    {
+      "name" : "bsg_mult_synth_32bit_250MHz",
+      "description" : "A 32-bit signed standard multiplier running at 250MHz",
+      "parameters" : ["width_p = 32"],
+      "constraints" : {"clock_period" : "4", "clk_port_name" : "virtual", "input" : "0", "output" : "0", "uncertainty" : "0", "io_time_format" : "period"},
+      "filelist" : [ 
+        "basejump_stl/bsg_misc/bsg_mult_synth.v"
+      ]
+    },
+
+    {
+      "name" : "bsg_mult_synth_32bit_350MHz",
+      "description" : "A 32-bit signed standard multiplier running at 350MHz",
+      "parameters" : ["width_p = 32"],
+      "constraints" : {"clock_period" : "2.86", "clk_port_name" : "virtual", "input" : "0", "output" : "0", "uncertainty" : "0", "io_time_format" : "period"},
+      "filelist" : [ 
+        "basejump_stl/bsg_misc/bsg_mult_synth.v"
+      ]
+    }
+  ]
+
+}
