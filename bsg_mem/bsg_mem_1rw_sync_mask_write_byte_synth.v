@@ -2,11 +2,12 @@
 // they should use bsg_mem_1r1w_sync_mask_write_byte.
 
 module bsg_mem_1rw_sync_mask_write_byte_synth #( parameter els_p = -1
-						 ,parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
+             ,parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
+             ,parameter latch_last_read_p=0
 
-						 ,parameter data_width_p = -1
-						 ,parameter write_mask_width_lp = data_width_p>>3
-						 )
+             ,parameter data_width_p = -1
+             ,parameter write_mask_width_lp = data_width_p>>3
+             )
   ( input clk_i
    ,input reset_i
 
@@ -26,8 +27,9 @@ module bsg_mem_1rw_sync_mask_write_byte_synth #( parameter els_p = -1
   for(i=0; i<write_mask_width_lp; i=i+1)
   begin: bk
     bsg_mem_1rw_sync #( .width_p      (8)
-                       ,.els_p        (els_p)
-                       ,.addr_width_lp(addr_width_lp)
+                        ,.els_p        (els_p)
+                        ,.addr_width_lp(addr_width_lp)
+                        ,.latch_last_read_p(latch_last_read_p)
                       ) mem_1rw_sync
                       ( .clk_i  (clk_i)
                        ,.reset_i(reset_i)
