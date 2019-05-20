@@ -78,6 +78,14 @@ if __name__ == "__main__":
     tg.send_tagst(addr=(i<<(3+2)), data=0)
     tg.recv_data(data=0)
 
+  # lock two lines
+  #tg.send_tagst(addr=0, data=1<<30)
+  #tg.recv_data(data=0)
+  #tg.send_tagst(addr=1<<5, data=3<<30)
+  #tg.recv_data(data=0)
+
+
+  # do random load/store
   for i in range(5000):
     addr = (random.randint(0, 2**22) <<2)
     delay = random.randint(0,100)
@@ -110,7 +118,7 @@ if __name__ == "__main__":
       store_val += 4
 
 
-  # read back everything
+  # read back everything ever written
   for tu in mem_dict.items():
     delay = random.randint(0,32)
      

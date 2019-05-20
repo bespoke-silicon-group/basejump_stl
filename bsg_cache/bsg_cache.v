@@ -646,6 +646,8 @@ module bsg_cache
     always_comb begin
       if (retval_op_v) begin
         if (taglv_op_v_r) begin
+          // data_o[1] = lock bit
+          // data_o[0] = valid bit
           data_o = (32)'({lock_v_r[addr_set_v], valid_v_r[addr_set_v]});
         end
         else if (tagla_op_v_r) begin
@@ -696,9 +698,17 @@ module bsg_cache
 
   // tag_mem
   //
+
+  
+  // data[31] = valid
+  // data[30] = lock
+  // data[0+:tag_width_lp] = tag
+  logic [(tag_width_lp+2)-1:0] tagst_write_val;
+  assign tagst_write_val = {cache_pkt.data[data_width_p-1-:2], cache_pkt.data[0+:tag_width_lp]};
+
   assign tag_mem_data_li = miss_v
     ? miss_tag_mem_data_lo
-    : {2{cache_pkt.data[data_width_p-1-:2], cache_pkt.data[tag_width_lp-1:0]}};
+    : {2{tagst_write_val}}; // for tagst
 
   assign tag_mem_addr_li = miss_v
     ? (recover_lo ? addr_index_tl : (miss_tag_mem_v_lo ? miss_tag_mem_addr_lo : addr_index))
