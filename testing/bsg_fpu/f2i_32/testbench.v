@@ -27,37 +27,25 @@ bsg_nonsynth_reset_gen #(
   ,.async_reset_o(reset)
 );
 
-logic v_li;
-logic [width_p-1:0] a_li;
-logic signed_li;
-logic ready_lo;
+logic [width_p-1:0] a_r;
+logic signed_r;
+logic v_r;
 
-logic v_lo;
 logic [width_p-1:0] z_lo;
 logic invalid_lo;
-logic yumi_li;
 
 
 bsg_fpu_f2i #(
   .e_p(8)
   ,.m_p(23)
 ) dut (
-  .clk_i(clk)
-  ,.reset_i(reset)
-  ,.en_i(1'b1)
-  
-  ,.v_i(v_li)
-  ,.a_i(a_li)
-  ,.signed_i(signed_li)
-  ,.ready_o(ready_lo)
+  .a_i(a_r)
+  ,.signed_i(signed_r)
 
-  ,.v_o(v_lo)
   ,.z_o(z_lo)
   ,.invalid_o(invalid_lo)
-  ,.yumi_i(yumi_li)
 );
 
-logic tr_v_li;
 logic [ring_width_p-1:0] tr_data_li;
 logic tr_ready_lo;
 
@@ -78,7 +66,7 @@ bsg_fsb_node_trace_replay #(
   ,.reset_i(reset)
   ,.en_i(1'b1)
 
-  ,.v_i(tr_v_li)
+  ,.v_i(v_r)
   ,.data_i(tr_data_li)
   ,.ready_o(tr_ready_lo)
 
@@ -108,11 +96,41 @@ assign tr_data_li = {
   ,z_lo
 };
 
-assign v_li = tr_v_lo;
-assign tr_yumi_li = tr_v_lo & ready_lo;
+logic [width_p-1:0] a_n;
+logic signed_n;
+logic v_n;
 
-assign tr_v_li = v_lo;
-assign yumi_li = v_lo & tr_ready_lo;
+always_comb begin
+  if (v_r == 1'b0) begin
+    tr_yumi_li = tr_v_lo;
+    v_n = tr_v_lo;
+    signed_n = tr_v_lo
+      ? tr_data_lo[width_p]
+      : signed_r;
+    a_n = tr_v_lo
+      ? tr_data_lo[0+:width_p]
+      : a_r;
+  end
+  else begin
+    tr_yumi_li = 1'b0;
+    v_n = ~tr_ready_lo;
+    a_n = a_r;
+  end
+end
+
+always_ff @ (posedge clk) begin
+  if (reset) begin
+    a_r <= '0;
+    v_r <= 1'b0;
+    signed_r <= 1'b0;
+  end
+  else begin
+    a_r <= a_n;
+    v_r <= v_n;
+    signed_r <= signed_n;
+  end
+end
+
 
 initial begin
   wait(done_lo);
