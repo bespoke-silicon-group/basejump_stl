@@ -27,11 +27,19 @@ module testbench();
     ,.async_reset_o(reset)
   );
 
+  `declare_bsg_ready_and_link_sif_s(flit_width_lp, bsg_ready_and_link_sif_s);
+  bsg_ready_and_link_sif_s link_lo, link_li;
+
   logic [max_packet_width_lp-1:0] data_li;
   logic v_li, ready_lo;
   logic [max_packet_width_lp-1:0] data_lo;
   logic v_lo, ready_li;
  
+  assign link_li.data = data_li[0+:flit_width_lp];
+  assign link_li.v    = v_li;
+  assign link_li.ready_and_rev = 1'b0;
+
+  assign ready_lo = link_lo.ready_and_rev;
 
   bsg_wormhole_router_adapter_out #(
     .max_num_flit_p(max_num_flit_p)
@@ -42,9 +50,8 @@ module testbench();
     .clk_i(clk)
     ,.reset_i(reset)
     
-    ,.data_i(data_li[0+:flit_width_lp])
-    ,.v_i(v_li)
-    ,.ready_o(ready_lo)
+    ,.link_i(link_li)
+    ,.link_o(link_lo)
 
     ,.data_o(data_lo)
     ,.v_o(v_lo)
