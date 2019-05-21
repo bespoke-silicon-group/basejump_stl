@@ -64,5 +64,6 @@ module bsg_fpu_classify
   assign class_o[8] = sig_nan;
   assign class_o[9] = nan & ~sig_nan;
 
+  assign class_o[out_width_lp-1:10] = '0;
 
 endmodule
