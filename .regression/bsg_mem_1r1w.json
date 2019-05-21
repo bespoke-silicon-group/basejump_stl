@@ -1,5 +1,5 @@
 {
-  "design_name" : "bsg_mem_1r1w_sync", 
+  "design_name" : "bsg_mem_1r1w_async", 
 
   "run_config" : [
     {
