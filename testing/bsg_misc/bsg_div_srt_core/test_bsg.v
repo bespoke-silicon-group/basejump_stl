@@ -11,10 +11,10 @@
 
 module test_bsg;
   localparam logic signed_test = 1;
-  localparam integer width_p = 8;
+  localparam integer width_p = 32;
   localparam once = 0;
-  localparam logic [2*width_p-1:0] dividend_given = 16'b1011111110010100;
-  localparam logic [width_p-1:0] divisor_given = 8'b10000100;
+  localparam logic [2*width_p-1:0] dividend_given = 64'b0000000000000000000000000000000001110110110101000101011111101101;
+  localparam logic [width_p-1:0] divisor_given = 32'b01000110001011011111011110001100;
 
   logic clk_i;
   logic reset_i;
@@ -61,8 +61,8 @@ module test_bsg;
     ,.reset_i(reset_i)
     ,.ready_o(ready_o)
     ,.v_i(v_i)
-    ,.dividend_i(dividend_i)
-    ,.divisor_i(divisor_i)
+    ,.dividend_i(dividend_i[2*width_p-1:0])
+    ,.divisor_i({divisor_i[width_p-2:0], 1'b0})
     ,.signed_i(signed_i)
 
     ,.quotient_o(quotient_o)

@@ -9,6 +9,9 @@ width_p = 32
 module test_bsg;
 
   localparam integer width_p = 32;
+  localparam once = 0;
+  localparam logic [2*width_p-1:0] dividend_specific = 64'b1111111111111111111111111111111111100010111101111000010011000101;
+  localparam logic [width_p-1:0] divisor_specific = 32'b11010101000100111101001010101010;
 
   logic clk_i;
   logic reset_i;
@@ -52,7 +55,7 @@ module test_bsg;
 
   bsg_div_srt #(
     .width_p(width_p)
-    ,.debug_p(0)
+    ,.debug_p(once)
   )div_srt(
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -71,15 +74,20 @@ module test_bsg;
     ,.error_type_o(error_type_o)
 
     ,.yumi_i(yumi_i)
-    ,.yumi_error_i(yumi_error_i)
   );
   integer i = 0;
   integer success = 0, overflow = 0;
   always_ff @(posedge clk_i) begin
     if(reset_i) begin
       v_i <= 1'b1;
-      dividend_i <= $random;
-      divisor_i <= $random;
+      if(once) begin
+        dividend_i <= dividend_specific;
+        divisor_i <= divisor_specific;
+      end
+      else begin
+        dividend_i <= $random;
+        divisor_i <= $random;
+      end
       signed_i <= 1'b1;
       yumi_i <= 1'b1;
       yumi_error_i <= 1'b1;
@@ -93,6 +101,7 @@ module test_bsg;
         dividend_i <= ($random);
         divisor_i <= $random;
         success = success + 1;
+        if(once) $finish;
       end
       else begin
         $display("Result Error!");
@@ -108,6 +117,7 @@ module test_bsg;
         $display("%b / %b\n sys_q:%b, sys_r:%b\n selfq:%b, selfr:%b",dividend_i,divisor_i,sys_quo,sys_rem,quotient_o,remainder_o);
         $display("overflow!");
         overflow = overflow + 1;
+        if (once) $finish;
         //$finish;
       end
       else begin
@@ -118,7 +128,7 @@ module test_bsg;
       dividend_i <= ($random);
       divisor_i <= $random;
     end
-    if(i == 1000) begin
+    if(i == 60000) begin
       $display("All passed!");
       $display("Success:%d, Overflow:%d",success,overflow);
       $finish;
