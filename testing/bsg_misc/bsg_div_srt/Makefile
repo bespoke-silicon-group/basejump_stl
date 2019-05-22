@@ -12,6 +12,7 @@ simv: clean
 	$(BSG_TEST_PATH)/bsg_nonsynth_reset_gen.v \
 	$(BSG_MISC_PATH)/bsg_adder_carry_save.v \
 	$(BSG_MISC_PATH)/bsg_div_srt_sel_rom.v \
+	$(BSG_MISC_PATH)/bsg_div_srt_core.v \
 	$(BSG_MISC_PATH)/bsg_scan.v \
 	$(BSG_MISC_PATH)/bsg_encode_one_hot.v \
 	$(BSG_MISC_PATH)/bsg_priority_encode_one_hot_out.v \
