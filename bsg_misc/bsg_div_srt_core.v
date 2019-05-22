@@ -6,11 +6,14 @@
 // This module performs SRT division, and currently only radix-4 division is supported.
 // For signed integer division, divisor must be adjusted to this format before sent into this module:
 //
-// positive: 0, 1, remnant
-// negative: 1, 0, remnant
+// positive: 1, divisor[width_p-2:0], 0
+// negative: 0, divisor[width_p-2:0], 0
 //
 // For unsigned number, divisor must be adjusted to:
-// 1, remnant
+// 1, divisor[width_p-1:0]
+//
+// There is no special requirement for dividend.
+//
 // Currently, Two CPA are used in the module. and the critical path is approximately a width_p + 1 CPA.
 //
 // Error conditions like overflow and zero divisor should be checked out of this module.
@@ -100,7 +103,7 @@ reg [width_p+1:0] quotient_increment_r;
 logic [2:0] quotient_increment_n;
 
 wire dividend_sign_bit = signed_i & dividend_i[2*width_p-1];
-wire divisor_sign_bit = signed_i & divisor_i[width_p-1];
+wire divisor_sign_bit = signed_i & ~divisor_i[width_p-1];
 
 logic [width_p+2:0] dividend_cpa_input;
 logic dividend_cpa_opcode;
@@ -118,14 +121,13 @@ always_ff @(posedge clk_i) begin
   end
   else unique case(state_r)
     eIdle: if(v_i) begin
+      divisor_r <= {divisor_sign_bit, divisor_i};
       if(signed_i) begin
         dividend_r <= {{2{dividend_sign_bit}}, dividend_i,1'b0};
         dividend_partial_r <= {{2{dividend_sign_bit}}, dividend_i[2*width_p-1-:primary_csa_size_lp-2]};
-        divisor_r <= {divisor_i,1'b0};
       end
       else begin
         dividend_r <= {{3{dividend_sign_bit}}, dividend_i};
-        divisor_r <= {divisor_sign_bit, divisor_i};
         dividend_partial_r <= {{3{dividend_sign_bit}}, dividend_i[2*width_p-1-:primary_csa_size_lp-3]}; // assert width_p > 4
       end
       dividend_aux_csa_r <= '0;
