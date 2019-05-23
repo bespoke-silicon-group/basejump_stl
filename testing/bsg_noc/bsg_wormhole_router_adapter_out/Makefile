@@ -1,4 +1,5 @@
 INCDIR = +incdir+$(BSG_IP_CORES_DIR)/bsg_misc
+INCDIR += +incdir+$(BSG_IP_CORES_DIR)/bsg_noc
 
 .PHONY: sim dve all
 

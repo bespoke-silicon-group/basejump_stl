@@ -4,6 +4,8 @@
  *  packet = {payload, length, y_cord, x_cord}
  */
 
+`include "bsg_noc_links.vh"
+
 module bsg_wormhole_router_adapter_in
   #(parameter max_num_flit_p="inv"
     , parameter max_payload_width_p="inv"
@@ -20,6 +22,8 @@ module bsg_wormhole_router_adapter_in
     , localparam padded_packet_width_lp=
       max_packet_width_lp+padding_width_lp
     , localparam len_offset_lp=(x_cord_width_p+y_cord_width_p)
+
+    , localparam bsg_ready_and_link_sif_width_lp=`bsg_ready_and_link_sif_width(width_lp)
   )
   (
     input clk_i
@@ -29,11 +33,28 @@ module bsg_wormhole_router_adapter_in
     , input v_i
     , output logic ready_o
 
-    , output logic [width_lp-1:0] data_o
-    , output logic v_o
-    , input ready_i
+    , output [bsg_ready_and_link_sif_width_lp-1:0] link_o
+    // Used for ready_i signal, the rest should be stubbed, since this an input adapter
+    , input [bsg_ready_and_link_sif_width_lp-1:0] link_i 
   );
 
+  // Casting ports
+  `declare_bsg_ready_and_link_sif_s(width_lp,bsg_ready_and_link_sif_s);
+  bsg_ready_and_link_sif_s link_cast_i, link_cast_o;
+
+  assign link_cast_i = link_i;
+  assign link_o = link_cast_o;
+
+  logic [width_lp-1:0] data_lo;
+  logic v_lo, ready_li;
+
+  assign link_cast_o.data = data_lo;
+  assign link_cast_o.v    = v_lo;
+  assign ready_li         = link_cast_i.ready_and_rev;
+
+  assign link_cast_o.ready_and_rev = 1'b0;
+
+  // Logic 
   typedef enum logic {
     WAIT,
     SEND
@@ -41,7 +62,6 @@ module bsg_wormhole_router_adapter_in
 
   state_e state_r, state_n;
   logic [len_width_lp-1:0] count_r, count_n;
-
 
   logic [padded_packet_width_lp-1:0] padded_data;
   logic [len_width_lp-1:0] length;
@@ -55,14 +75,14 @@ module bsg_wormhole_router_adapter_in
   ) mux (
     .data_i(padded_data)
     ,.sel_i(count_r)
-    ,.data_o(data_o)
+    ,.data_o(data_lo)
   );
 
   always_comb begin
     state_n = state_r;
     count_n = count_r;
     ready_o = 1'b0;
-    v_o = 1'b0;
+    v_lo = 1'b0;
 
     case (state_r) 
       WAIT: begin
@@ -72,12 +92,12 @@ module bsg_wormhole_router_adapter_in
         end
       end
       SEND: begin
-        v_o = 1'b1;
-        count_n = ready_i
+        v_lo = 1'b1;
+        count_n = ready_li
           ? count_r + 1
           : count_r;
-        ready_o = ready_i & (count_r == length);
-        state_n = ready_i & (count_r == length)
+        ready_o = ready_li & (count_r == length);
+        state_n = ready_li & (count_r == length)
           ? WAIT
           : SEND;
       end
