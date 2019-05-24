@@ -5,7 +5,7 @@ bsg_adder_carry_save.v
 ==========================================================
 
 This is a carry-saved adder taking three operands and calculating the result in redundant (sum and carry) format. 
-Carry propagation is need to recover the sum.
+Carry propagation is needed to recover the sum.
 
 ***********************************************************/
 
