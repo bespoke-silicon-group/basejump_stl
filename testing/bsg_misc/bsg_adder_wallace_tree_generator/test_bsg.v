@@ -7,8 +7,8 @@ bsg_adder_wallace_tree_32 #(
   .width_p(32)    
 )wt(
   .ops_i(ops_li)
-  ,.sum_o(sum_o)
-  ,.car_o(res_o)
+  ,.resA_o(sum_o)
+  ,.resB_o(res_o)
 );
 
 wire [38:0] res_wl = sum_o + res_o;

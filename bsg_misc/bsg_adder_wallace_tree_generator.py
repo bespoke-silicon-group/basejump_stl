@@ -6,14 +6,11 @@
 # where N is the number of operands to add
 # And script will generate a .sv file named bsg_adder_wallace_tree_<N>.v to meet the requirements.
 
-
-# Basic template to generate carry save adder.
-
 import sys
 from math import log2, ceil
 from queue import Queue
 
-
+# Basic template to generate carry save adder.
 
 csa_template = '''bsg_adder_carry_save#(
   .width_p({})
@@ -44,7 +41,7 @@ if N == 1 or N == 2:
 
 
 size_list = {} # record the wire size.
-
+# This function is for truncation and extension with unsigned number.
 def matchSize(name: str, output_size: int, left_shift:bool = False):
     if name in size_list:
         size = size_list[name];
@@ -64,20 +61,18 @@ with open("bsg_adder_wallace_tree_{}.v".format(N),"w") as f:
     puts("  parameter integer width_p = \"inv\"")
     puts(")(")
 
+    # I/O ports
     output_size_bias =  ceil(log2(N))
-
     puts("  input [{}:0][width_p-1:0] ops_i".format(N-1))
-    puts("  ,output [{}+width_p:0] sum_o".format(output_size_bias))
-    puts("  ,output [{}+width_p:0] car_o".format(output_size_bias))
+    puts("  ,output [{}+width_p:0] resA_o".format(output_size_bias))
+    puts("  ,output [{}+width_p:0] resB_o".format(output_size_bias))
     puts(");")
-
     
-
+    # operand pending
     reduce_queue = Queue()
     for i in range(N):
         reduce_queue.put("ops_i[{}]".format(i))
         size_list["ops_i[{}]".format(i)] = 0
-        
     
     layer_num = 0
     internal_wire_num = 0;
@@ -88,10 +83,11 @@ with open("bsg_adder_wallace_tree_{}.v".format(N),"w") as f:
         if csa_num == 0: break;
         for i in range(csa_num):
             (csa_str, csa_sum, csa_carry) = put_csa("width_p{:+}".format(csa_width),matchSize(reduce_queue.get(),csa_width),matchSize(reduce_queue.get(),csa_width),matchSize(reduce_queue.get(),csa_width),"csa_{}_{}".format(layer_num,i),f)
+            # record output wire of CSA.
             size_list[csa_sum] = csa_width
             size_list[csa_carry] = csa_width
-
-            puts_list.append(csa_str)
+            puts_list.append(csa_str) # put CSA instantation.
+            # generate wire for interconnection
             puts_list.append("wire [width_p{:+}:0] csa_internal_wire_{} = {};".format(csa_width,internal_wire_num,matchSize(csa_sum, csa_width + 1)))
             puts_list.append("wire [width_p{:+}:0] csa_internal_wire_{} = {};".format(csa_width, internal_wire_num+1,matchSize(csa_carry, csa_width + 1, True)))
             wire_list.append("wire [width_p{:+}:0] {};".format(csa_width-1,csa_sum))
@@ -107,14 +103,9 @@ with open("bsg_adder_wallace_tree_{}.v".format(N),"w") as f:
     puts("")
     puts("\n".join(puts_list))
     puts("")
-
-    puts("assign sum_o = {};".format(reduce_queue.get()))
-    puts("assign car_o = {};".format(reduce_queue.get()))
-
+    
+    puts("assign resA_o = {};".format(reduce_queue.get()))
+    puts("assign resB_o = {};".format(reduce_queue.get()))
+    # end of the module
     puts("endmodule")
     puts("")
-
-
-
-
-
