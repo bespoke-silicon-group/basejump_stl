@@ -82,8 +82,8 @@ module bsg_fpu_f2i
     : {1'b1, mantissa, {(width_lp-1-m_p){1'b0}}};
 
   assign shamt = signed_i
-    ? (bias_lp+width_lp-2) - exp
-    : (bias_lp+width_lp-1) - exp;
+    ? (e_p)'((bias_lp+width_lp-2) - exp)
+    : (e_p)'((bias_lp+width_lp-1) - exp);
 
   assign shifted = preshift >> shamt[`BSG_SAFE_CLOG2(width_lp):0];
 
