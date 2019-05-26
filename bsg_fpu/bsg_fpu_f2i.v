@@ -26,29 +26,13 @@ module bsg_fpu_f2i
     , localparam bias_lp={1'b0, {(e_p-1){1'b1}}}
   )
   (
-    input clk_i
-    , input reset_i
-    , input en_i
-
-    , input v_i
-    , input [width_lp-1:0] a_i // input float
+    input [width_lp-1:0] a_i // input float
     , input signed_i
-    , output logic ready_o
 
-    , output logic v_o
     , output logic [width_lp-1:0] z_o // output int
     , output logic invalid_o
-    , input yumi_i
   );
 
-  // pipeline status / ctrl
-  //
-  logic v_1_r;
-  logic stall;
-
-  assign v_o = v_1_r;
-  assign stall = v_1_r & ~yumi_i;
-  assign ready_o = en_i & ~stall;
 
   // preprocess
   //
@@ -98,8 +82,8 @@ module bsg_fpu_f2i
     : {1'b1, mantissa, {(width_lp-1-m_p){1'b0}}};
 
   assign shamt = signed_i
-    ? (bias_lp+width_lp-2) - exp
-    : (bias_lp+width_lp-1) - exp;
+    ? (e_p)'((bias_lp+width_lp-2) - exp)
+    : (e_p)'((bias_lp+width_lp-1) - exp);
 
   assign shifted = preshift >> shamt[`BSG_SAFE_CLOG2(width_lp):0];
 
@@ -107,61 +91,29 @@ module bsg_fpu_f2i
   // invert
   //
   logic [width_lp-1:0] inverted;
-  assign inverted = {width_lp{signed_i & sign}} ^ {shifted};
-
-  //// first pipeline stage ///////////////////////////
-
-  logic [width_lp-1:0] inverted_1_r;
-  logic sign_1_r;
-  logic signed_1_r;
-  logic zero_1_r;
-  logic nan_1_r;
-  logic exp_too_big_1_r;
-  logic exp_too_small_1_r;
-
-  always_ff @ (posedge clk_i) begin
-    if (reset_i) begin
-      v_1_r <= 1'b0;
-    end
-    else begin
-      if (ready_o) begin
-        v_1_r <= v_i;
-        if (v_i) begin
-          inverted_1_r <= inverted;
-          sign_1_r <= sign;
-          signed_1_r <= signed_i;
-          zero_1_r <= zero;
-          nan_1_r <= nan;
-          exp_too_big_1_r <= exp_too_big;
-          exp_too_small_1_r <= exp_too_small;
-        end
-      end
-    end
-  end
-
-  /////////////////////////////////////////////////////
-
   logic [width_lp-1:0] post_round;
-  assign post_round = inverted_1_r + (sign_1_r);
+
+  assign inverted = {width_lp{signed_i & sign}} ^ {shifted};
+  assign post_round = inverted + (sign);
 
   always_comb begin
-    if (~signed_1_r & sign_1_r) begin
+    if (~signed_i & sign) begin
       z_o = '0;
       invalid_o = 1'b1;
     end
-    else if (zero_1_r) begin
+    else if (zero) begin
       z_o = '0;
       invalid_o = 1'b0;
     end
-    else if (exp_too_big_1_r) begin
+    else if (exp_too_big) begin
       z_o = '0;
       invalid_o = 1'b1;
     end
-    else if (exp_too_small_1_r) begin
+    else if (exp_too_small) begin
       z_o = '0;
       invalid_o = 1'b0;
     end
-    else if (nan_1_r) begin
+    else if (nan) begin
       z_o = '0;
       invalid_o = 1'b1;
     end

@@ -14,8 +14,8 @@ BaseJump Floating-Point Arithmetic Core
 This library implements IEEE-754 floating-point arithmetic operators: add, sub, mul, cmp, i2f, f2i.
 These modules are parameterizable by exponent and mantissa bit-width (e_p, m_p), which the users
 can specify to pick the floating-point encoding of their choice.
-Typical values for these parameters are: 
 
+Typical values for these parameters are: 
 
 ----------------------------------------------
               exponent (e_p)    mantissa (m_p) 
@@ -78,7 +78,7 @@ bfloat16      8                 7
     - there is a port (signed_i) to decide whether the input integer is signed or unsigned.
 
 5.  bsg_fpu_f2i
-    - 1-stage pipeline
+    - No pipeline stage.
     - there is a port (signed_i) to decide whether the output integer is signed or unsigned.
     - If the input is negative float and the output is chosen to be unsigned,
       then the output is set to zero and invalid exception is raised.

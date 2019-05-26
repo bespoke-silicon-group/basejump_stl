@@ -104,7 +104,7 @@ module bsg_fpu_i2f
 
   // exponent 
   logic [e_p-1:0] exp;
-  assign exp = (bias_lp+e_p+m_p) - shamt_1_r;
+  assign exp = (e_p)'((bias_lp+e_p+m_p) - shamt_1_r);
 
   // shifted
   logic [width_lp-1:0] shifted;
