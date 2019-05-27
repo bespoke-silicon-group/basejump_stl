@@ -295,7 +295,7 @@ bsg_fpu_round #(
   .width_i_p(divider_width_lp+1)
   ,.width_o_p(m_p+1)
 ) rounder (
-  .type_i(bsg_fpu_pkg::eRtne)
+  .type_i(bsg_fpu_pkg::eRtna)
   ,.mantissa_i(result_mantissa_r)
   ,.sign_i(result_sign_r)
   ,.mantissa_o(round_out)
