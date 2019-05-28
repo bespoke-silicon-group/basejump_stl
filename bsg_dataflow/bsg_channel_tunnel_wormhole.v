@@ -2,6 +2,8 @@
 // Paul Gao 03/2019
 //
 
+`include "bsg_noc_links.vh"
+
 module  bsg_channel_tunnel_wormhole
 
  #(// Wormhole packet configurations
@@ -27,7 +29,8 @@ module  bsg_channel_tunnel_wormhole
   ,localparam tag_width_lp = $clog2(num_in_p+1)
   ,localparam raw_width_lp = width_p-tag_width_lp
   ,localparam len_offset_lp = width_p-reserved_width_p
-                    -x_cord_width_p-y_cord_width_p-len_width_p)
+                    -x_cord_width_p-y_cord_width_p-len_width_p
+  ,localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(width_p))
 
   (input clk_i
   ,input reset_i
@@ -42,15 +45,9 @@ module  bsg_channel_tunnel_wormhole
   ,output multi_v_o
   ,input multi_yumi_i
 
-  // incoming demultiplexed data
-  ,input [num_in_p-1:0][width_p-1:0] data_i
-  ,input [num_in_p-1:0] v_i
-  ,output [num_in_p-1:0] ready_o
-
-  // outgoing demultiplexed data
-  ,output [num_in_p-1:0][width_p-1:0] data_o
-  ,output [num_in_p-1:0] v_o
-  ,input [num_in_p-1:0] yumi_i);
+  // demultiplexed data
+  ,input [num_in_p-1:0][bsg_ready_and_link_sif_width_lp-1:0] link_i
+  ,output [num_in_p-1:0][bsg_ready_and_link_sif_width_lp-1:0] link_o);
   
   
   // Original Channel Tunnel
@@ -95,6 +92,33 @@ module  bsg_channel_tunnel_wormhole
   
   
   genvar i;
+  
+  
+  // Interfacing bsg_noc links 
+
+  logic [num_in_p-1:0] v_o, yumi_i;
+  logic [num_in_p-1:0][width_p-1:0] data_o;
+  
+  logic [num_in_p-1:0] v_i, ready_o;
+  logic [num_in_p-1:0][width_p-1:0] data_i;
+  
+  `declare_bsg_ready_and_link_sif_s(width_p,bsg_ready_and_link_sif_s);
+  bsg_ready_and_link_sif_s [num_in_p-1:0] link_i_cast, link_o_cast;
+  
+  for (i = 0; i < num_in_p; i++) begin
+  
+    assign link_i_cast[i] = link_i[i];
+    assign link_o[i] = link_o_cast[i];
+
+    assign v_i[i] = link_i_cast[i].v;
+    assign data_i[i] = link_i_cast[i].data;
+    assign link_o_cast[i].ready_and_rev = ready_o[i];
+
+    assign link_o_cast[i].v = v_o[i];
+    assign link_o_cast[i].data = data_o[i];
+    assign yumi_i[i] = v_o[i] & link_i_cast[i].ready_and_rev;
+  
+  end
   
   
   // Channel Tunnel Data Output
