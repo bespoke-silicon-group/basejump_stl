@@ -2,7 +2,7 @@
 TEST RATIONALE
 
 1. STATE SPACE
-1000 groups of random float32 numbers.
+60000 groups of random float32 numbers.
 Zero, Nan, Inf and Invalid statement
 
 2. PARAMETERIZATION
@@ -15,7 +15,7 @@ module test_bsg;
 import "DPI-C" function int float32Representation(input shortreal f);
 import "DPI-C" function shortreal float32Encode(input int x);
 
-localparam once = 0;
+localparam once = 1;
 localparam real dividend_given = 777537856.00000;
 localparam real divisor_given = -561108800.00000;
 

@@ -13,7 +13,7 @@ float32:
 	$(BSG_ROOT)/bsg_fpu/bsg_fpu_preprocess.v \
 	$(BSG_ROOT)/bsg_fpu/bsg_fpu_round.v \
 	$(BSG_ROOT)/bsg_fpu/bsg_fpu_div.v \
-	bsg_test_dpi.c \
+	bsg_test_dpi.cpp \
 	test_bsg_float32.v 
 
 	./simv
@@ -21,9 +21,8 @@ float32:
 
 float16_exhaustive:
 	make clean
-	verilator -Wno-fatal -sv \
-	--default-language 1800-2017 \
-	-cc $(BSG_ROOT)/bsg_misc/bsg_defines.v \
+	vcs -full64 -sverilog -cc gcc-4.8 -cpp g++-4.8 \
+	$(BSG_ROOT)/bsg_misc/bsg_defines.v \
 	$(BSG_ROOT)/bsg_test/bsg_nonsynth_clock_gen.v \
 	$(BSG_ROOT)/bsg_test/bsg_nonsynth_reset_gen.v \
 	$(BSG_ROOT)/bsg_misc/bsg_adder_carry_save.v \
@@ -33,14 +32,10 @@ float16_exhaustive:
 	$(BSG_ROOT)/bsg_fpu/bsg_fpu_preprocess.v \
 	$(BSG_ROOT)/bsg_fpu/bsg_fpu_round.v \
 	$(BSG_ROOT)/bsg_fpu/bsg_fpu_div.v \
-	./bsg_test_float16_wrapper.v \
-	--top-module bsg_fpu_div_half \
-	-CFLAGS "-g" \
-	--exe ./bsg_test_float16.cpp
+	bsg_test_dpi.cpp \
+	test_bsg_float16.v 
 
-	make -C obj_dir -f Vbsg_fpu_div_half.mk
-
-	./obj_dir/Vbsg_fpu_div_half
+	./simv
 
 fpu_round:
 	make clean
