@@ -31,4 +31,17 @@
       logic [in_data_width-1:0] data;                                     \
   } in_struct_name
 
+
+// bsg_noc_wormhole
+`define bsg_wormhole_packet_width(reserved_width_p, x_cord_width_p, y_cord_width_p, len_width_p, data_width_p) (reserved_width_p+x_cord_width_p+y_cord_width_p+len_width_p+data_width_p)
+  
+`define declare_bsg_wormhole_packet_s(width_p, reserved_width_p, x_cord_width_p, y_cord_width_p, len_width_p, in_struct_name) \
+  typedef struct packed {                                               \
+    logic [reserved_width_p-1:0] reserved;                              \
+    logic [x_cord_width_p-1:0] x_cord;                                  \
+    logic [y_cord_width_p-1:0] y_cord;                                  \
+    logic [len_width_p-1:0] len;                                        \
+    logic [width_p-reserved_width_p-x_cord_width_p-y_cord_width_p-len_width_p-1:0] data; \
+  } in_struct_name
+
  `endif // BSG_NOC_LINKS_VH
