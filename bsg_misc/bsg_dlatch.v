@@ -6,10 +6,8 @@ module bsg_dlatch #(parameter width_p="inv"
   ,output logic [width_p-1:0] data_o
   );
 
-  // synopsys translate_off
-  initial assert (i_know_this_is_a_bad_idea_p == 1)
-    else $error("# Error (%m) using bsg_dlatch without admitting that this is a bad idea!");
-  // synopsys translate_on
+  if (i_know_this_is_a_bad_idea_p == 0)
+    $fatal( 1, "Error: you must admit this is a bad idea before you are allowed to use the bsg_dlatch module!" );
 
   always_latch
     begin
