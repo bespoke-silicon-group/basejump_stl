@@ -83,6 +83,8 @@ extern "C" int performFloat16Division(short dividend, short divisor, short quoti
 
     if((quotient & 2048) == 0){
         quotient_exponent--;
+    } else {
+        quotient >>= 1;
     }
 
     // check overflow and underflow

@@ -18,9 +18,9 @@ import "DPI-C" function void pause();
 
 import "DPI-C" function shortint getDivisionResult(input shortint div_in, input shortint divisor_in);
 
-localparam bit once = 1;
-localparam logic [15:0] dividend_given = 1024;
-localparam logic [15:0] divisor_given = 33793;
+localparam bit once = 0;
+localparam logic [15:0] dividend_given = 1025;
+localparam logic [15:0] divisor_given = 1024;
 
 logic clk_i, reset_i, ready_o, v_i, v_o, unimplemented_o, invalid_o, overflow_o, underflow_o, divisor_is_zero_o;
 
