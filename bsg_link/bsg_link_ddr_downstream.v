@@ -51,7 +51,7 @@ module bsg_link_ddr_downstream
     
   end else begin: sipof
   
-    bsg_serial_in_parallel_out_full
+    bsg_serial_in_parallel_out_full_buffered
    #(.width_p(ddr_width_p*num_channel_p)
     ,.els_p(piso_ratio_p))
     in_sipof
