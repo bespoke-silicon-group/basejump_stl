@@ -10,11 +10,11 @@
 module bsg_serial_in_parallel_out_full
   #(parameter width_p="inv"
     , parameter els_p="inv"
-    , parameter msb_then_lsb_p = 0
+    , parameter msb_first_p = 0
     , localparam counter_width_lp=`BSG_SAFE_CLOG2(els_p+1)
     , localparam lg_els_lp=`BSG_SAFE_CLOG2(els_p)
-    , localparam terminate_cnt_lp = (msb_then_lsb_p == 0)? els_p : (1<<counter_width_lp)-1
-    , localparam init_cnt_lp = (msb_then_lsb_p == 0)? 0 : els_p-1
+    , localparam end_count_lp = (msb_first_p == 0)? els_p : (1<<counter_width_lp)-1
+    , localparam init_count_lp = (msb_first_p == 0)? 0 : els_p-1
   )
   (
     input clk_i
@@ -39,11 +39,11 @@ module bsg_serial_in_parallel_out_full
   logic clear_li;
   logic up_li;
 
-  if (msb_then_lsb_p == 0) begin: lsb_first
+  if (msb_first_p == 0) begin: lsb_first
 
   bsg_counter_clear_up #(
     .max_val_p(els_p)
-    ,.init_val_p(init_cnt_lp)
+    ,.init_val_p(init_count_lp)
   ) counter (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -58,14 +58,13 @@ module bsg_serial_in_parallel_out_full
   
   always_ff @(posedge clk_i)
     if (reset_i | clear_li) 
-        count_lo <= init_cnt_lp;
+        count_lo <= init_count_lp;
     else 
         count_lo <= count_lo - up_li;
-  
   end
 
   always_comb begin
-    if (count_lo == terminate_cnt_lp) begin
+    if (count_lo == end_count_lp) begin
       v_o = 1'b1;
       ready_o = 1'b0;
       clear_li = yumi_i;

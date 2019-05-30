@@ -9,13 +9,13 @@ module bsg_link_iddr_phy
   ,output [2*width_p-1:0] data_o);
   
   logic [2*width_p-1:0] data_r;
-  logic [width_p-1:0] data_p;
+  logic [width_p-1:0] data_p_r;
   assign data_o = data_r;
 
-  always @(posedge clk_i)
-    data_p <= data_i;
+  always_ff @(posedge clk_i)
+    data_p_r <= data_i;
   
-  always @(negedge clk_i)
-    data_r <= {data_i, data_p};
+  always_ff @(negedge clk_i)
+    data_r <= {data_i, data_p_r};
 
 endmodule

@@ -11,8 +11,10 @@ module bsg_serial_in_parallel_out_full_buffered
 
  #(parameter width_p="inv"
   ,parameter els_p="inv"
-  ,parameter msb_then_lsb_p = 0
-  ,localparam lg_els_lp=`BSG_SAFE_CLOG2(els_p))
+  ,parameter msb_first_p = 0
+  ,localparam lg_els_lp=`BSG_SAFE_CLOG2(els_p)
+  ,localparam end_count_lp = (msb_first_p == 0)? els_p-1 : 0
+  ,localparam init_count_lp = (msb_first_p == 0)? 0 : els_p-1)
   
   (input clk_i
   ,input reset_i
@@ -25,8 +27,6 @@ module bsg_serial_in_parallel_out_full_buffered
   ,output logic v_o
   ,input yumi_i);
   
-  localparam terminate_cnt_lp = (msb_then_lsb_p == 0)? els_p-1 : 0;
-  localparam init_cnt_lp = (msb_then_lsb_p == 0)? 0 : els_p-1;
   
   genvar i;
   
@@ -58,17 +58,20 @@ module bsg_serial_in_parallel_out_full_buffered
     
   end
   
-  always @(posedge clk_i) begin
-    counter_r <= (reset_i)? init_cnt_lp : counter_n;
+  always_ff @(posedge clk_i) begin
+    if (reset_i)
+        counter_r <= init_count_lp;
+    else
+        counter_r <= counter_n;
   end
   
   always_comb begin
     counter_n = counter_r;
     if (v_i & ready_o) begin
-        if (counter_r == terminate_cnt_lp) begin
-            counter_n = init_cnt_lp;
+        if (counter_r == end_count_lp) begin
+            counter_n = init_count_lp;
         end else begin
-            counter_n = (msb_then_lsb_p == 0)? counter_r+1 : counter_r-1;
+            counter_n = (msb_first_p == 0)? counter_r+1 : counter_r-1;
         end
     end
   end

@@ -49,7 +49,21 @@ module bsg_link_ddr
   ,.lg_fifo_depth_p(lg_fifo_depth_p)
   ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p))
   upstream
-  (.*);
+  (.clk_i
+  ,.clk_1x_i
+  ,.clk_2x_i
+  ,.reset_i
+  ,.chip_reset_i
+  ,.link_enable_i
+  
+  ,.data_i
+  ,.valid_i
+  ,.ready_o
+  
+  ,.io_clk_r_o
+  ,.io_data_r_o
+  ,.io_valid_r_o
+  ,.io_token_i);
   
   
   bsg_link_ddr_downstream
@@ -59,33 +73,19 @@ module bsg_link_ddr
   ,.lg_fifo_depth_p(lg_fifo_depth_p)
   ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p))
   downstream
-  (.*);
+  (.clk_i
+  ,.reset_i
+  ,.chip_reset_i
+  ,.link_enable_o
+  
+  ,.data_o
+  ,.valid_o
+  ,.yumi_i
+  
+  ,.io_clk_i
+  ,.io_data_i
+  ,.io_valid_i
+  ,.io_token_r_o);
   
 
 endmodule
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

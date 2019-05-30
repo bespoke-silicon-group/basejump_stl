@@ -131,11 +131,14 @@ module  bsg_channel_tunnel_wormhole
   
     // Header to CT
     logic [len_width_p-1:0] ocount_r, ocount_n;
-    assign ocount_n = (reset_i)? 0 : (v_i[i] & ready_o[i])? 
+    assign ocount_n = (v_i[i] & ready_o[i])? 
         (ocount_r==0)? data_i[i][len_offset_lp+:len_width_p] : ocount_r-1 : ocount_r;
     
-    always @(posedge clk_i) begin
-        ocount_r <= ocount_n;
+    always_ff @(posedge clk_i) begin
+        if (reset_i)
+            ocount_r <= 0;
+        else
+            ocount_r <= ocount_n;
     end
     
     // Data fifo
@@ -199,7 +202,7 @@ module  bsg_channel_tunnel_wormhole
   logic [tag_width_lp-1:0] mux_sel_r, mux_sel_n;
   logic [len_width_p-1:0] ostate_r, ostate_n;
   
-  always @(posedge clk_i) begin
+  always_ff @(posedge clk_i) begin
     if (reset_i) begin
         ostate_r <= 0;
         mux_sel_r <= num_in_p;
@@ -281,11 +284,14 @@ module  bsg_channel_tunnel_wormhole
     
     // dummy data out of CT
     logic [len_width_p-1:0] icount_r, icount_n;
-    assign icount_n = (reset_i)? 0 : (yumi_i[i])? 
+    assign icount_n = (yumi_i[i])? 
         (icount_r==0)? inside_data_o[i][len_offset_lp+:len_width_p] : icount_r-1 : icount_r;
     
-    always @(posedge clk_i) begin
-        icount_r <= icount_n;
+    always_ff @(posedge clk_i) begin
+        if (reset_i)
+            icount_r <= 0;
+        else
+            icount_r <= icount_n;
     end
     
     assign v_o[i] = (icount_r==0)? inside_valid_o[i] : ififo_valid_o;
@@ -318,7 +324,7 @@ module  bsg_channel_tunnel_wormhole
   logic [tag_width_lp-1:0] in_sel_r, in_sel_n;
   logic [len_width_p-1:0] istate_r, istate_n;
   
-  always @(posedge clk_i) begin
+  always_ff @(posedge clk_i) begin
     if (reset_i) begin
         istate_r <= 0;
         in_sel_r <= num_in_p;
@@ -380,11 +386,3 @@ module  bsg_channel_tunnel_wormhole
   
 
 endmodule
-
-
-
-
-
-
-
-

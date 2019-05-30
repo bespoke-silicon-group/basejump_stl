@@ -7,8 +7,8 @@ module bsg_link_ddr_downstream
   ,parameter num_channel_p = 1
   ,parameter lg_fifo_depth_p = 6
   ,parameter lg_credit_to_token_decimation_p = 3
-  ,localparam ddr_width_p = channel_width_p*2
-  ,localparam piso_ratio_p = width_p/(ddr_width_p*num_channel_p))
+  ,localparam ddr_width_lp = channel_width_p*2
+  ,localparam piso_ratio_lp = width_p/(ddr_width_lp*num_channel_p))
 
   (input clk_i
   ,input reset_i
@@ -26,7 +26,7 @@ module bsg_link_ddr_downstream
   
   
   logic in_ps_ready_o, in_ps_yumi_o;
-  logic [num_channel_p-1:0][ddr_width_p-1:0] in_ps_data_i;
+  logic [num_channel_p-1:0][ddr_width_lp-1:0] in_ps_data_i;
   
   // From different channels
   logic [num_channel_p-1:0] in_ps_valid_i;
@@ -35,7 +35,7 @@ module bsg_link_ddr_downstream
   
   // When piso is not needed
   
-  if (ddr_width_p*num_channel_p >= width_p) begin: fifo
+  if (ddr_width_lp*num_channel_p >= width_p) begin: fifo
   
     bsg_two_fifo
    #(.width_p(width_p))
@@ -52,8 +52,8 @@ module bsg_link_ddr_downstream
   end else begin: sipof
   
     bsg_serial_in_parallel_out_full_buffered
-   #(.width_p(ddr_width_p*num_channel_p)
-    ,.els_p(piso_ratio_p))
+   #(.width_p(ddr_width_lp*num_channel_p)
+    ,.els_p(piso_ratio_lp))
     in_sipof
     (.clk_i(clk_i)
     ,.reset_i(chip_reset_i)
@@ -74,10 +74,10 @@ module bsg_link_ddr_downstream
   for (i = 0; i < num_channel_p; i++) begin:ch
   
     logic [1:0] in_ddr_valid_i;
-    logic [ddr_width_p-1:0] in_ddr_data_i;
+    logic [ddr_width_lp-1:0] in_ddr_data_i;
 
     bsg_link_source_sync_downstream
-   #(.channel_width_p(ddr_width_p)
+   #(.channel_width_p(ddr_width_lp)
     ,.lg_fifo_depth_p(lg_fifo_depth_p)
     ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p))
     downstream
@@ -116,29 +116,3 @@ module bsg_link_ddr_downstream
   
 
 endmodule
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

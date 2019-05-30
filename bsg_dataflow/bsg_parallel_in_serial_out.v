@@ -27,7 +27,9 @@
 
 module bsg_parallel_in_serial_out #( parameter width_p = -1
                                    , parameter els_p   = -1
-                                   , parameter msb_then_lsb_p = 0
+                                   , parameter msb_first_p = 0
+                                   , localparam init_count_lp = (msb_first_p == 0)? 0 : els_p-1
+                                   , localparam end_count_lp = (msb_first_p == 0)? els_p-1 : 0
                                    )
     ( input clk_i
     , input reset_i
@@ -43,9 +45,6 @@ module bsg_parallel_in_serial_out #( parameter width_p = -1
     , input                yumi_i
     );
     
-    
-    localparam init_cnt_lp = (msb_then_lsb_p == 0)? 0 : els_p-1;
-    localparam end_cnt_lp = (msb_then_lsb_p == 0)? els_p-1 : 0;
 
     // A small statemachine is used to transition from the recieving
     // state to the transmission state.
@@ -68,7 +67,7 @@ module bsg_parallel_in_serial_out #( parameter width_p = -1
      * signal indicates that we should return to the eRX state or we should
      * accept the next data and continue transmission.
      */
-    assign done_tx_n = (state_r == eTX) && (shift_ctr_r == clog2els_lp ' (end_cnt_lp)) && yumi_i;
+    assign done_tx_n = (state_r == eTX) && (shift_ctr_r == clog2els_lp ' (end_count_lp)) && yumi_i;
 
 
     /**
@@ -138,14 +137,14 @@ module bsg_parallel_in_serial_out #( parameter width_p = -1
     always_ff @(posedge clk_i)
       begin
         if (reset_i || (ready_o & valid_i)) begin
-          shift_ctr_r <= init_cnt_lp;
+          shift_ctr_r <= init_count_lp;
         end else begin
           shift_ctr_r <= shift_ctr_n;
         end
       end
 
     assign shift_ctr_n = ((state_r == eTX) && yumi_i && ~done_tx_n)
-                           ? (msb_then_lsb_p == 0)? shift_ctr_r+1'b1 : shift_ctr_r-1'b1
+                           ? (msb_first_p == 0)? shift_ctr_r+1'b1 : shift_ctr_r-1'b1
                            : shift_ctr_r;
 
     /**
@@ -166,4 +165,3 @@ module bsg_parallel_in_serial_out #( parameter width_p = -1
 
 
 endmodule
-

@@ -120,7 +120,7 @@ module bsg_link_source_sync_downstream
 
    // synopsys translate_off
 
-   always @(negedge io_clk_i)
+   always_ff @(negedge io_clk_i)
      assert(!(io_async_fifo_full===1 && io_async_fifo_enq===1))
        else $error("attempt to enque on full async fifo");
 
@@ -201,8 +201,8 @@ module bsg_link_source_sync_downstream
    // note: generally relies on power-of-twoness of io_credits_sent_r
    // to do correct wrap around.
 
-   always_comb io_credits_sent_r_p1 = io_credits_sent_r+1;
-   always_comb io_credits_sent_r_p2 = io_credits_sent_r+2;
+   assign io_credits_sent_r_p1 = io_credits_sent_r+1;
+   assign io_credits_sent_r_p2 = io_credits_sent_r+2;
 
    // which bit of the io_credits_sent_r counter we use determines
    // the value of the token line in credits
@@ -249,7 +249,7 @@ module bsg_link_source_sync_downstream
    wire empty_1 = (core_credits_gray_r_iosync != io_credits_sent_p1_r_gray);
    wire empty_0 = (core_credits_gray_r_iosync != io_credits_sent_r_gray);
 
-   always @(posedge io_clk_i)
+   always_ff @(posedge io_clk_i)
      begin
         if (io_link_internal_reset_lo)
           io_credits_sent_r <= { lg_fifo_depth_p+1 { 1'b0 } };

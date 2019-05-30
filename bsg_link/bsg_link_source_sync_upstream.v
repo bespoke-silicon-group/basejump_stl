@@ -153,7 +153,7 @@ module bsg_link_source_sync_upstream
    // static timing rules
 
 
-   always @(posedge io_master_clk_i)
+   always_ff @(posedge io_master_clk_i)
      begin
         if (io_internal_reset_lo)
           {io_valid_r_o, io_data_r_o} <= {1'b0, reset_pattern_p[0+:channel_width_p]};
@@ -192,7 +192,7 @@ module bsg_link_source_sync_upstream
    // high bit indicates which counter we are grabbing from
    logic [lg_credit_to_token_decimation_p+1-1:0] token_alternator_r;
 
-   always @(posedge io_master_clk_i)
+   always_ff @(posedge io_master_clk_i)
      begin
         if (io_internal_reset_lo)
           // this will start us on the posedge token
