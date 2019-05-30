@@ -48,17 +48,17 @@ module bsg_link_source_sync_upstream
        //  pattern. We keep it simple.
 
        , parameter inactive_pattern_p = {channel_width_p { 2'b10 } }
-	   , parameter reset_pattern_p = {channel_width_p {1'b1} }
-	   
+       , parameter reset_pattern_p = {channel_width_p {1'b1} }
+       
        )
-	   
+       
    (// control signals  
       input                         core_clk_i
     , input                         core_reset_i
     , input                         io_master_clk_i
-	, input                         link_enable_i
+    , input                         link_enable_i
     , output                        io_reset_o
-	
+    
     // Input from chip core
     , input [channel_width_p-1:0]   core_data_i
     , input                         core_valid_i
@@ -175,9 +175,9 @@ module bsg_link_source_sync_upstream
     //    token_reset_lo is not actually synchronous to token_clk_i
     //    so it should be asserted well before token_clk_i is asserted
     //    and de-asserted well afterwards to avoid metastability
-	logic token_reset_lo;
-	assign token_reset_lo = ~io_reset_lo & ~io_enable_lo;
-	
+    logic token_reset_lo;
+    assign token_reset_lo = ~io_reset_lo & ~io_enable_lo;
+    
 
 
    // this can easily happen if the sending core clock

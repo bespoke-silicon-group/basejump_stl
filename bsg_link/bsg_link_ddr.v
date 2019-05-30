@@ -20,7 +20,7 @@ module bsg_link_ddr
   ,input chip_reset_i
   ,input link_enable_i
   ,output link_enable_o
-	
+    
   // core side
   ,input [width_p-1:0] data_i
   ,input valid_i
@@ -35,7 +35,7 @@ module bsg_link_ddr
   ,output logic [num_channel_p-1:0][channel_width_p-1:0] io_data_r_o
   ,output logic [num_channel_p-1:0] io_valid_r_o
   ,input [num_channel_p-1:0] io_token_i
-	
+    
   ,input [num_channel_p-1:0] io_clk_i
   ,input [num_channel_p-1:0][channel_width_p-1:0] io_data_i
   ,input [num_channel_p-1:0] io_valid_i

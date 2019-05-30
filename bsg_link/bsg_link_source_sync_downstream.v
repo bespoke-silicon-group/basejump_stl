@@ -59,9 +59,9 @@ module bsg_link_source_sync_downstream
   
    (// control signals
       input                        core_clk_i
-	, input                        core_reset_i
-	, output                       link_enable_o
-	
+    , input                        core_reset_i
+    , output                       link_enable_o
+    
     // source synchronous input channel; coming from chip edge
     , input                        io_clk_i     // sdi_sclk
     , input  [channel_width_p-1:0] io_data_i    // sdi_data
@@ -88,14 +88,14 @@ module bsg_link_source_sync_downstream
   ,.iclk_data_o()
   ,.oclk_data_o(io_reset_lo));
   
-	 
+     
   // internal reset signal
   logic core_link_internal_reset_lo;
   logic io_link_internal_reset_n, io_link_internal_reset_lo;
   
   assign link_enable_o = ~core_link_internal_reset_lo;
   assign io_link_internal_reset_n = (io_data_i==reset_pattern_p && ~io_valid_i);
-		
+        
   bsg_launch_sync_sync 
  #(.width_p(1))
   internal_reset_lss
@@ -105,7 +105,7 @@ module bsg_link_source_sync_downstream
   ,.iclk_data_i(io_link_internal_reset_n | io_reset_lo)
   ,.iclk_data_o(io_link_internal_reset_lo)
   ,.oclk_data_o(core_link_internal_reset_lo));
-								 
+                                 
 
    // ******************************************
    // clock-crossing async fifo (with DDR interface)
@@ -180,7 +180,7 @@ module bsg_link_source_sync_downstream
 // these are credits coming from the receive end of the async fifo in the core clk
 //  domain and passing to the io clk domain and out of the chip.
 //
-	
+    
 
    logic [lg_fifo_depth_p+1-1:0] core_credits_gray_r_iosync
                                  , core_credits_binary_r_iosync
@@ -257,7 +257,7 @@ module bsg_link_source_sync_downstream
           // we absorb up to two credits per cycles, since we receive at DDR,
           // we need this to rate match the incoming data
 
-	  // code is written like this because empty_1 is late relative to empty_0
+      // code is written like this because empty_1 is late relative to empty_0
           io_credits_sent_r <= (empty_1
                                 ? (empty_0 ? io_credits_sent_r_p2 : io_credits_sent_r)
                                 : (empty_0 ? io_credits_sent_r_p1 : io_credits_sent_r));

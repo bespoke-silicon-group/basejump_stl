@@ -16,7 +16,7 @@ module bsg_link_ddr_upstream
   ,input reset_i
   ,input chip_reset_i
   ,input link_enable_i
-	
+    
   ,input [width_p-1:0] data_i
   ,input valid_i
   ,output ready_o  

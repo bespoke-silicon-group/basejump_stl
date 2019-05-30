@@ -34,8 +34,8 @@ module bsg_serial_in_parallel_out #(parameter   width_p   = -1
 
    logic [els_p-1:0][width_p-1:0] data_r, data_nn;
    logic [2*els_p-1:0  ][width_p-1:0] data_n;
-   logic [els_p-1:0] 		  valid_r, valid_nn;
-   logic [double_els_lp-1:0] 	  valid_n;
+   logic [els_p-1:0]          valid_r, valid_nn;
+   logic [double_els_lp-1:0]      valid_n;
 
    logic [$clog2(els_p+1)-1:0]    num_els_r, num_els_n;
 
@@ -70,7 +70,7 @@ module bsg_serial_in_parallel_out #(parameter   width_p   = -1
     data_n  = data_r;
     valid_n = (double_els_lp) ' (valid_r);
 
-	  data_n[els_p+:els_p] = 0;
+      data_n[els_p+:els_p] = 0;
 
     // bypass in values
     data_n [num_els_r] = data_i;
@@ -81,11 +81,11 @@ module bsg_serial_in_parallel_out #(parameter   width_p   = -1
     valid_o = valid_n[out_els_p-1:0];
     data_o  = data_n [out_els_p-1:0];
 
-	  // now we calculate the update
-	  for (integer i = 0; i < els_p; i++) begin
-	    data_nn[i] = data_n[yumi_cnt_i+i];
+      // now we calculate the update
+      for (integer i = 0; i < els_p; i++) begin
+        data_nn[i] = data_n[yumi_cnt_i+i];
     end
-	  valid_nn = valid_n[yumi_cnt_i+:els_p];
+      valid_nn = valid_n[yumi_cnt_i+:els_p];
   end
 
 endmodule

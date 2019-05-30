@@ -129,45 +129,45 @@ module  bsg_channel_tunnel_wormhole
   
     logic ofifo_data_ready_o, ofifo_header_ready_o;
   
-	// Header to CT
-	logic [len_width_p-1:0] ocount_r, ocount_n;
-	assign ocount_n = (reset_i)? 0 : (v_i[i] & ready_o[i])? 
-		(ocount_r==0)? data_i[i][len_offset_lp+:len_width_p] : ocount_r-1 : ocount_r;
-	
-	always @(posedge clk_i) begin
+    // Header to CT
+    logic [len_width_p-1:0] ocount_r, ocount_n;
+    assign ocount_n = (reset_i)? 0 : (v_i[i] & ready_o[i])? 
+        (ocount_r==0)? data_i[i][len_offset_lp+:len_width_p] : ocount_r-1 : ocount_r;
+    
+    always @(posedge clk_i) begin
         ocount_r <= ocount_n;
-	end
-	
-	// Data fifo
-	bsg_fifo_1r1w_small 
+    end
+    
+    // Data fifo
+    bsg_fifo_1r1w_small 
    #(.width_p(width_p)
     ,.els_p(4)) 
     ofifo
-	(.clk_i(clk_i)
-	,.reset_i(reset_i)
+    (.clk_i(clk_i)
+    ,.reset_i(reset_i)
 
-	,.ready_o(ofifo_data_ready_o)
-	,.data_i(data_i[i])
-	,.v_i(~(ocount_r==0) & v_i[i])
+    ,.ready_o(ofifo_data_ready_o)
+    ,.data_i(data_i[i])
+    ,.v_i(~(ocount_r==0) & v_i[i])
 
-	,.v_o(ofifo_valid_o[i])
-	,.data_o(ofifo_data_o[i])
-	,.yumi_i(ofifo_yumi_i[i]));
-	
+    ,.v_o(ofifo_valid_o[i])
+    ,.data_o(ofifo_data_o[i])
+    ,.yumi_i(ofifo_yumi_i[i]));
+    
     // Header fifo
-	bsg_two_fifo
+    bsg_two_fifo
    #(.width_p(raw_width_lp))
     o_headerin
-	(.clk_i(clk_i)
-	,.reset_i(reset_i)
+    (.clk_i(clk_i)
+    ,.reset_i(reset_i)
 
-	,.ready_o(ofifo_header_ready_o)
-	,.data_i(data_i[i][raw_width_lp-1:0])
-	,.v_i((ocount_r==0) & v_i[i])
+    ,.ready_o(ofifo_header_ready_o)
+    ,.data_i(data_i[i][raw_width_lp-1:0])
+    ,.v_i((ocount_r==0) & v_i[i])
 
-	,.v_o(inside_valid_i[i])
-	,.data_o(inside_data_i[i])
-	,.yumi_i(inside_yumi_o[i]));
+    ,.v_o(inside_valid_i[i])
+    ,.data_o(inside_data_i[i])
+    ,.yumi_i(inside_yumi_o[i]));
     
     assign ready_o[i] = (ocount_r==0)? ofifo_header_ready_o : ofifo_data_ready_o;
 
@@ -200,13 +200,13 @@ module  bsg_channel_tunnel_wormhole
   logic [len_width_p-1:0] ostate_r, ostate_n;
   
   always @(posedge clk_i) begin
-	if (reset_i) begin
-		ostate_r <= 0;
-		mux_sel_r <= num_in_p;
-	end else begin
-		ostate_r <= ostate_n;
-		mux_sel_r <= mux_sel_n;
-	end
+    if (reset_i) begin
+        ostate_r <= 0;
+        mux_sel_r <= num_in_p;
+    end else begin
+        ostate_r <= ostate_n;
+        mux_sel_r <= mux_sel_n;
+    end
   end
   
   bsg_mux 
@@ -226,31 +226,31 @@ module  bsg_channel_tunnel_wormhole
   ,.data_o(multi_v_o));
   
   for (i = 0; i < num_in_p+1; i++) begin
-	assign ofifo_yumi_i[i] = (i==mux_sel_r)? multi_yumi_i : 0;
+    assign ofifo_yumi_i[i] = (i==mux_sel_r)? multi_yumi_i : 0;
   end
   
   always_comb begin
-	
-	ostate_n = ostate_r;
-	mux_sel_n = mux_sel_r;
-	
-	if (multi_yumi_i) begin
-		if (ostate_r == 1) begin
-			mux_sel_n = num_in_p;
-			ostate_n = ostate_r - 1;
-		end
-		else if (ostate_r == 0) begin
-			if (multi_data_o[raw_width_lp+:tag_width_lp] < num_in_p) begin
-				ostate_n = multi_data_o[len_offset_lp+:len_width_p];
+    
+    ostate_n = ostate_r;
+    mux_sel_n = mux_sel_r;
+    
+    if (multi_yumi_i) begin
+        if (ostate_r == 1) begin
+            mux_sel_n = num_in_p;
+            ostate_n = ostate_r - 1;
+        end
+        else if (ostate_r == 0) begin
+            if (multi_data_o[raw_width_lp+:tag_width_lp] < num_in_p) begin
+                ostate_n = multi_data_o[len_offset_lp+:len_width_p];
                 if (multi_data_o[len_offset_lp+:len_width_p] != 0) begin
                     mux_sel_n = multi_data_o[raw_width_lp+:tag_width_lp];
                 end
-			end
-		end
-		else begin
-			ostate_n = ostate_r - 1;
-		end
-	end
+            end
+        end
+        else begin
+            ostate_n = ostate_r - 1;
+        end
+    end
   
   end
   
@@ -263,31 +263,31 @@ module  bsg_channel_tunnel_wormhole
   
     logic ififo_valid_o, ififo_yumi_i;
     logic [width_p-1:0] ififo_data_o;
-	
-	bsg_fifo_1r1w_large 
+    
+    bsg_fifo_1r1w_large 
    #(.width_p(width_p)
     ,.els_p(remote_credits_p*max_len_p)) 
     ififo
-	(.clk_i(clk_i)
-	,.reset_i(reset_i)
+    (.clk_i(clk_i)
+    ,.reset_i(reset_i)
 
-	,.ready_o(ififo_ready_o[i])
-	,.data_i(multi_data_i)
-	,.v_i(ififo_valid_i[i])
+    ,.ready_o(ififo_ready_o[i])
+    ,.data_i(multi_data_i)
+    ,.v_i(ififo_valid_i[i])
 
-	,.v_o(ififo_valid_o)
-	,.data_o(ififo_data_o)
-	,.yumi_i(ififo_yumi_i));
-	
-	// dummy data out of CT
-	logic [len_width_p-1:0] icount_r, icount_n;
-	assign icount_n = (reset_i)? 0 : (yumi_i[i])? 
-		(icount_r==0)? inside_data_o[i][len_offset_lp+:len_width_p] : icount_r-1 : icount_r;
-	
-	always @(posedge clk_i) begin
-		icount_r <= icount_n;
-	end
-	
+    ,.v_o(ififo_valid_o)
+    ,.data_o(ififo_data_o)
+    ,.yumi_i(ififo_yumi_i));
+    
+    // dummy data out of CT
+    logic [len_width_p-1:0] icount_r, icount_n;
+    assign icount_n = (reset_i)? 0 : (yumi_i[i])? 
+        (icount_r==0)? inside_data_o[i][len_offset_lp+:len_width_p] : icount_r-1 : icount_r;
+    
+    always @(posedge clk_i) begin
+        icount_r <= icount_n;
+    end
+    
     assign v_o[i] = (icount_r==0)? inside_valid_o[i] : ififo_valid_o;
     assign data_o[i] = (icount_r==0)? inside_data_o[i] : ififo_data_o;
     assign ififo_yumi_i = (icount_r==0)? 0 : yumi_i[i];
@@ -319,13 +319,13 @@ module  bsg_channel_tunnel_wormhole
   logic [len_width_p-1:0] istate_r, istate_n;
   
   always @(posedge clk_i) begin
-	if (reset_i) begin
-		istate_r <= 0;
-		in_sel_r <= num_in_p;
-	end else begin
-		istate_r <= istate_n;
-		in_sel_r <= in_sel_n;
-	end
+    if (reset_i) begin
+        istate_r <= 0;
+        in_sel_r <= num_in_p;
+    end else begin
+        istate_r <= istate_n;
+        in_sel_r <= in_sel_n;
+    end
   end
   
   bsg_mux 
@@ -337,31 +337,31 @@ module  bsg_channel_tunnel_wormhole
   ,.data_o(multi_ready_o));
   
   for (i = 0; i < num_in_p+1; i++) begin
-	assign ififo_valid_i[i] = (i==in_sel_r)? multi_v_i : 0;
+    assign ififo_valid_i[i] = (i==in_sel_r)? multi_v_i : 0;
   end
   
   always_comb begin
-	
-	istate_n = istate_r;
-	in_sel_n = in_sel_r;
-	
-	if (multi_v_i & multi_ready_o) begin
-		if (istate_r == 1) begin
-			in_sel_n = num_in_p;
-			istate_n = istate_r - 1;
-		end
-		else if (istate_r == 0) begin
-			if (multi_data_i[raw_width_lp+:tag_width_lp] < num_in_p) begin
-				istate_n = multi_data_i[len_offset_lp+:len_width_p];
+    
+    istate_n = istate_r;
+    in_sel_n = in_sel_r;
+    
+    if (multi_v_i & multi_ready_o) begin
+        if (istate_r == 1) begin
+            in_sel_n = num_in_p;
+            istate_n = istate_r - 1;
+        end
+        else if (istate_r == 0) begin
+            if (multi_data_i[raw_width_lp+:tag_width_lp] < num_in_p) begin
+                istate_n = multi_data_i[len_offset_lp+:len_width_p];
                 if (multi_data_i[len_offset_lp+:len_width_p] != 0) begin
                     in_sel_n = multi_data_i[raw_width_lp+:tag_width_lp];
                 end
-			end
-		end
-		else begin
-			istate_n = istate_r - 1;
-		end
-	end
+            end
+        end
+        else begin
+            istate_n = istate_r - 1;
+        end
+    end
   
   end
   
