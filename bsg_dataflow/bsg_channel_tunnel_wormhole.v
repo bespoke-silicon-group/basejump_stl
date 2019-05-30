@@ -1,5 +1,14 @@
 //
 // Paul Gao 03/2019
+// 
+// This module is a special version bsg_channel_tunnel that accepts wormhole packet
+//
+// Typical usage: When there are n wormhole routers (n wormhole networks)
+// and need to merge them together to the IO channel (n >= 2)
+// All wormhole packet parameters should match corresponding wormhole network
+//
+// Refer to bsg_channel_tunnel for more information on flow control
+//
 //
 
 `include "bsg_noc_links.vh"
@@ -26,10 +35,10 @@ module  bsg_channel_tunnel_wormhole
   ,parameter lg_credit_decimation_p = "inv"
   
   // Local parameters
-  ,localparam tag_width_lp = $clog2(num_in_p+1)
+  ,localparam mux_num_in_lp = num_in_p+1
+  ,localparam tag_width_lp = $clog2(mux_num_in_lp)
   ,localparam raw_width_lp = width_p-tag_width_lp
-  ,localparam len_offset_lp = width_p-reserved_width_p
-                    -x_cord_width_p-y_cord_width_p-len_width_p
+  ,localparam len_offset_lp = width_p-reserved_width_p-x_cord_width_p-y_cord_width_p-len_width_p
   ,localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(width_p))
 
   (input clk_i
@@ -51,17 +60,17 @@ module  bsg_channel_tunnel_wormhole
   
   
   // Original Channel Tunnel
-  logic outside_valid_i, outside_yumi_o;
-  logic [width_p-1:0] outside_data_i;
+  logic outside_valid_li, outside_yumi_lo;
+  logic [width_p-1:0] outside_data_li;
   
-  logic outside_valid_o, outside_yumi_i;
-  logic [width_p-1:0] outside_data_o;
+  logic outside_valid_lo, outside_yumi_li;
+  logic [width_p-1:0] outside_data_lo;
   
-  logic [num_in_p-1:0] inside_valid_i, inside_yumi_o;
-  logic [num_in_p-1:0][raw_width_lp-1:0] inside_data_i;
+  logic [num_in_p-1:0] inside_valid_li, inside_yumi_lo;
+  logic [num_in_p-1:0][raw_width_lp-1:0] inside_data_li;
   
-  logic [num_in_p-1:0] inside_valid_o, inside_yumi_i;
-  logic [num_in_p-1:0][raw_width_lp-1:0] inside_data_o;
+  logic [num_in_p-1:0] inside_valid_lo, inside_yumi_li;
+  logic [num_in_p-1:0][raw_width_lp-1:0] inside_data_lo;
 
   
   bsg_channel_tunnel
@@ -74,21 +83,21 @@ module  bsg_channel_tunnel_wormhole
   (.clk_i(clk_i)
   ,.reset_i(reset_i)
   // outside
-  ,.multi_data_i(outside_data_i)
-  ,.multi_v_i(outside_valid_i)
-  ,.multi_yumi_o(outside_yumi_o)
+  ,.multi_data_i(outside_data_li)
+  ,.multi_v_i(outside_valid_li)
+  ,.multi_yumi_o(outside_yumi_lo)
 
-  ,.multi_data_o(outside_data_o)
-  ,.multi_v_o(outside_valid_o)
-  ,.multi_yumi_i(outside_yumi_i)
+  ,.multi_data_o(outside_data_lo)
+  ,.multi_v_o(outside_valid_lo)
+  ,.multi_yumi_i(outside_yumi_li)
   // inside
-  ,.data_i(inside_data_i)
-  ,.v_i(inside_valid_i)
-  ,.yumi_o(inside_yumi_o)
+  ,.data_i(inside_data_li)
+  ,.v_i(inside_valid_li)
+  ,.yumi_o(inside_yumi_lo)
 
-  ,.data_o(inside_data_o)
-  ,.v_o(inside_valid_o)
-  ,.yumi_i(inside_yumi_i));
+  ,.data_o(inside_data_lo)
+  ,.v_o(inside_valid_lo)
+  ,.yumi_i(inside_yumi_li));
   
   
   genvar i;
@@ -122,8 +131,8 @@ module  bsg_channel_tunnel_wormhole
   
   
   // Channel Tunnel Data Output
-  logic [num_in_p+1-1:0] ofifo_valid_o, ofifo_yumi_i;
-  logic [num_in_p+1-1:0][width_p-1:0] ofifo_data_o;
+  logic [mux_num_in_lp-1:0] ofifo_valid_o, ofifo_yumi_i;
+  logic [mux_num_in_lp-1:0][width_p-1:0] ofifo_data_o;
   
   for (i = 0; i < num_in_p; i++) begin
   
@@ -168,9 +177,9 @@ module  bsg_channel_tunnel_wormhole
     ,.data_i(data_i[i][raw_width_lp-1:0])
     ,.v_i((ocount_r==0) & v_i[i])
 
-    ,.v_o(inside_valid_i[i])
-    ,.data_o(inside_data_i[i])
-    ,.yumi_i(inside_yumi_o[i]));
+    ,.v_o(inside_valid_li[i])
+    ,.data_o(inside_data_li[i])
+    ,.yumi_i(inside_yumi_lo[i]));
     
     assign ready_o[i] = (ocount_r==0)? ofifo_header_ready_o : ofifo_data_ready_o;
 
@@ -181,7 +190,7 @@ module  bsg_channel_tunnel_wormhole
   // TODO: might be removed later to reduce latency
   
   logic headerout_ready_o;
-  assign outside_yumi_i = headerout_ready_o & outside_valid_o;
+  assign outside_yumi_li = headerout_ready_o & outside_valid_lo;
   
   bsg_two_fifo 
  #(.width_p(width_p)) 
@@ -190,8 +199,8 @@ module  bsg_channel_tunnel_wormhole
   ,.reset_i(reset_i)
 
   ,.ready_o(headerout_ready_o)
-  ,.data_i(outside_data_o)
-  ,.v_i(outside_valid_o)
+  ,.data_i(outside_data_lo)
+  ,.v_i(outside_valid_lo)
 
   ,.v_o(ofifo_valid_o[num_in_p])
   ,.data_o(ofifo_data_o[num_in_p])
@@ -214,7 +223,7 @@ module  bsg_channel_tunnel_wormhole
   
   bsg_mux 
  #(.width_p(width_p)
-  ,.els_p(num_in_p+1))
+  ,.els_p(mux_num_in_lp))
   out_data_mux
   (.data_i(ofifo_data_o)
   ,.sel_i(mux_sel_r)
@@ -222,13 +231,13 @@ module  bsg_channel_tunnel_wormhole
   
   bsg_mux 
  #(.width_p(1)
-  ,.els_p(num_in_p+1))
+  ,.els_p(mux_num_in_lp))
   out_v_mux
   (.data_i(ofifo_valid_o)
   ,.sel_i(mux_sel_r)
   ,.data_o(multi_v_o));
   
-  for (i = 0; i < num_in_p+1; i++) begin
+  for (i = 0; i < mux_num_in_lp; i++) begin
     assign ofifo_yumi_i[i] = (i==mux_sel_r)? multi_yumi_i : 0;
   end
   
@@ -260,7 +269,7 @@ module  bsg_channel_tunnel_wormhole
   
   
   // Channel Tunnel Data Input
-  logic [num_in_p+1-1:0] ififo_valid_i, ififo_ready_o;
+  logic [mux_num_in_lp-1:0] ififo_valid_i, ififo_ready_o;
   
   for (i = 0; i < num_in_p; i++) begin
   
@@ -285,7 +294,7 @@ module  bsg_channel_tunnel_wormhole
     // dummy data out of CT
     logic [len_width_p-1:0] icount_r, icount_n;
     assign icount_n = (yumi_i[i])? 
-        (icount_r==0)? inside_data_o[i][len_offset_lp+:len_width_p] : icount_r-1 : icount_r;
+        (icount_r==0)? inside_data_lo[i][len_offset_lp+:len_width_p] : icount_r-1 : icount_r;
     
     always_ff @(posedge clk_i) begin
         if (reset_i)
@@ -294,10 +303,10 @@ module  bsg_channel_tunnel_wormhole
             icount_r <= icount_n;
     end
     
-    assign v_o[i] = (icount_r==0)? inside_valid_o[i] : ififo_valid_o;
-    assign data_o[i] = (icount_r==0)? inside_data_o[i] : ififo_data_o;
+    assign v_o[i] = (icount_r==0)? inside_valid_lo[i] : ififo_valid_o;
+    assign data_o[i] = (icount_r==0)? inside_data_lo[i] : ififo_data_o;
     assign ififo_yumi_i = (icount_r==0)? 0 : yumi_i[i];
-    assign inside_yumi_i[i] = (icount_r==0)? yumi_i[i] : 0;
+    assign inside_yumi_li[i] = (icount_r==0)? yumi_i[i] : 0;
   
   end
   
@@ -315,9 +324,9 @@ module  bsg_channel_tunnel_wormhole
   ,.data_i(multi_data_i)
   ,.v_i(ififo_valid_i[num_in_p])
 
-  ,.v_o(outside_valid_i)
-  ,.data_o(outside_data_i)
-  ,.yumi_i(outside_yumi_o));
+  ,.v_o(outside_valid_li)
+  ,.data_o(outside_data_li)
+  ,.yumi_i(outside_yumi_lo));
   
   
   // Channel Tunnel Input Select
@@ -336,13 +345,13 @@ module  bsg_channel_tunnel_wormhole
   
   bsg_mux 
  #(.width_p(1)
-  ,.els_p(num_in_p+1))
+  ,.els_p(mux_num_in_lp))
   in_ready_mux
   (.data_i(ififo_ready_o)
   ,.sel_i(in_sel_r)
   ,.data_o(multi_ready_o));
   
-  for (i = 0; i < num_in_p+1; i++) begin
+  for (i = 0; i < mux_num_in_lp; i++) begin
     assign ififo_valid_i[i] = (i==in_sel_r)? multi_v_i : 0;
   end
   

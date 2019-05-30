@@ -1,4 +1,15 @@
 
+//
+// Paul Gao 03/2019
+//
+// This is an output DDR PHY
+// Input data must be synchronous to posedge of 1x clock (generated from 2x clock)
+// Output clock is center-aligned to output data
+//
+// Note that the output clock and data wires need length match
+// Need output delay constraint(s) to ensure clock and data delay are same
+//
+//
 
 module bsg_link_oddr_phy
 
@@ -13,12 +24,14 @@ module bsg_link_oddr_phy
   logic odd, clk;
   
   always_ff @(negedge clk_2x_i) begin
-    clk <= ~reset_i & ~clk;
+    if (reset_i) clk <= 0;
+    else clk <= ~clk;
     clk_r_o <= clk;
   end
     
   always_ff @(posedge clk_2x_i)
-    odd <= reset_i | ~odd;
+    if (reset_i) odd <= 1;
+    else odd <= ~odd;
 
   always_ff @(posedge clk_2x_i)
     if(odd) 

@@ -1,4 +1,11 @@
-
+//
+// Paul Gao 03/2019
+//
+// This is an output DDR PHY
+// Similar to bsg_link_ddr_phy, but has 180-degree phase delay on output clock and data
+// Refer to bsg_link_ddr_phy for more information
+//
+//
 
 module bsg_link_oddr_phy_180
 
@@ -17,12 +24,14 @@ module bsg_link_oddr_phy_180
     data_180 <= data_i;
 
   always_ff @(negedge clk_2x_i) begin
-    clk <= reset_i | ~clk;
+    if (reset_i) clk <= 1;
+    else clk <= ~clk;
     clk_r_o <= clk;
   end
     
   always_ff @(posedge clk_2x_i)
-    odd <= ~reset_i & ~odd;
+    if (reset_i) odd <= 0;
+    else odd <= ~odd;
 
   always_ff @(posedge clk_2x_i)
     if(odd) 

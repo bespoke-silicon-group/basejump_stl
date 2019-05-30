@@ -1,4 +1,19 @@
 
+//
+// Paul Gao 03/2019
+//
+// This is a source synchronous DDR transceiver
+// Number of IO channels and their width is adjustable 
+// Supports variable data bus width (width_p must be multiple of 2*channel_width_p)
+// 
+// Flow control is done by token clock edge counting
+// DDR PHY needs 1x clock and 2x clock (1x clock must be generated from 2x clock)
+// Data are sent out with center-aligned DDR clock
+//
+// Refer to bsg_link_source_sync_upstream and bsg_link_source_sync_downstream
+// for more information on flow control
+//
+//
 
 module bsg_link_ddr
 
@@ -16,9 +31,9 @@ module bsg_link_ddr
   ,input clk_2x_i
   
   // all control signals synchronous to clk_i
-  ,input reset_i
-  ,input chip_reset_i
-  ,input link_enable_i
+  ,input link_reset_i // DDR IO link reset
+  ,input chip_reset_i // Chip logic reset
+  ,input link_enable_i // DDR IO link enable
   ,output link_enable_o
     
   // core side
@@ -52,7 +67,7 @@ module bsg_link_ddr
   (.clk_i
   ,.clk_1x_i
   ,.clk_2x_i
-  ,.reset_i
+  ,.link_reset_i
   ,.chip_reset_i
   ,.link_enable_i
   
@@ -74,7 +89,7 @@ module bsg_link_ddr
   ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p))
   downstream
   (.clk_i
-  ,.reset_i
+  ,.link_reset_i
   ,.chip_reset_i
   ,.link_enable_o
   

@@ -1,4 +1,14 @@
-
+//
+// Paul Gao 03/2019
+//
+// This is a DDR transmitter
+// All data received go through parallel-in-serial-out to deassemble, 
+// then routed to source-sync-output module for flow control.
+// ODDR PHY sends out packets with center-aligned DDR clock
+// 
+// Refer to bsg_link_source_sync_upstream for more information on flow control
+//
+//
 
 module bsg_link_ddr_upstream
 
@@ -13,7 +23,7 @@ module bsg_link_ddr_upstream
   (input clk_i
   ,input clk_1x_i
   ,input clk_2x_i
-  ,input reset_i
+  ,input link_reset_i
   ,input chip_reset_i
   ,input link_enable_i
     
@@ -27,12 +37,12 @@ module bsg_link_ddr_upstream
   ,input [num_channel_p-1:0] io_token_i);
   
   
-  logic out_ps_valid_o, out_ps_yumi_i;
-  logic [num_channel_p-1:0][ddr_width_lp-1:0] out_ps_data_o;
+  logic out_ps_valid_lo, out_ps_yumi_li;
+  logic [num_channel_p-1:0][ddr_width_lp-1:0] out_ps_data_lo;
   
   // returned from different channels
-  logic [num_channel_p-1:0] out_ps_ready_i;
-  assign out_ps_yumi_i = (& out_ps_ready_i) & out_ps_valid_o;
+  logic [num_channel_p-1:0] out_ps_ready_li;
+  assign out_ps_yumi_li = (& out_ps_ready_li) & out_ps_valid_lo;
   
   
   // When piso is not needed
@@ -47,9 +57,9 @@ module bsg_link_ddr_upstream
     ,.ready_o(ready_o)
     ,.data_i(data_i)
     ,.v_i(valid_i)
-    ,.v_o(out_ps_valid_o)
-    ,.data_o(out_ps_data_o)
-    ,.yumi_i(out_ps_yumi_i));
+    ,.v_o(out_ps_valid_lo)
+    ,.data_o(out_ps_data_lo)
+    ,.yumi_i(out_ps_yumi_li));
   
   end else begin: piso
   
@@ -62,9 +72,9 @@ module bsg_link_ddr_upstream
     ,.valid_i(valid_i)
     ,.data_i(data_i)
     ,.ready_o(ready_o)
-    ,.valid_o(out_ps_valid_o)
-    ,.data_o(out_ps_data_o)
-    ,.yumi_i(out_ps_yumi_i));
+    ,.valid_o(out_ps_valid_lo)
+    ,.data_o(out_ps_data_lo)
+    ,.yumi_i(out_ps_yumi_li));
   
   end
   
@@ -86,15 +96,15 @@ module bsg_link_ddr_upstream
     sso
     (// control signals  
      .core_clk_i(clk_i)
-    ,.core_reset_i(reset_i)
+    ,.core_reset_i(link_reset_i)
     ,.io_master_clk_i(clk_1x_i)
     ,.link_enable_i(link_enable_i)
     ,.io_reset_o(io_reset_lo)
 
     // Input from chip core
-    ,.core_data_i(out_ps_data_o[i])
-    ,.core_valid_i(out_ps_yumi_i)
-    ,.core_ready_o(out_ps_ready_i[i])
+    ,.core_data_i(out_ps_data_lo[i])
+    ,.core_valid_i(out_ps_yumi_li)
+    ,.core_ready_o(out_ps_ready_li[i])
 
     // source synchronous output channel; going to chip edge
     ,.io_data_r_o(out_ddr_data_o)
