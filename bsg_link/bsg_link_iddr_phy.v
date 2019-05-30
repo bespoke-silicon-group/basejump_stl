@@ -20,13 +20,16 @@ module bsg_link_iddr_phy
   ,output [2*width_p-1:0] data_o);
   
   logic [2*width_p-1:0] data_r;
-  logic [width_p-1:0] data_p_r;
+  logic [width_p-1:0] data_n_r, data_p_r;
+  
   assign data_o = data_r;
 
-  always_ff @(posedge clk_i)
+  always_ff @(posedge clk_i) begin
     data_p_r <= data_i;
+    data_r <= {data_n_r, data_p_r};
+  end
   
   always_ff @(negedge clk_i)
-    data_r <= {data_i, data_p_r};
+    data_n_r <= data_i;
 
 endmodule
