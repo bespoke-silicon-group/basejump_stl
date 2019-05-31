@@ -55,7 +55,7 @@ extern "C" int performFloat16Division(short dividend, short divisor, short quoti
     short result_is_nan = (dividend & 0x7C00) == 0x7C00 && (dividend & 0x3FF) != 0 // dividend is NaN
                         || (divisor & 0x7C00) == 0x7C00 && (divisor & 0x3FF) != 0  // divisor is NaN
                         || (dividend & 0x7C00) == 0x7C00 && (dividend & 0x3FF) == 0 && (divisor & 0x7C00) == 0x7C00 && (divisor & 0x3FF) == 0 // inf/inf
-                        || dividend == 0 && divisor == 0; // 0/0
+                        || (dividend & 0x7FFF) == 0 && (divisor & 0x7FFF) == 0; // 0/0
     if(result_is_nan && (quotient_hw & 0x7C00) == 0x7C00 && (quotient_hw & 0x3FF) != 0) 
         return 1;
     
@@ -66,6 +66,10 @@ extern "C" int performFloat16Division(short dividend, short divisor, short quoti
 
     if(result_is_inf && (quotient_hw & 0x7C00) == 0x7C00 && (quotient_hw & 0x3FF) == 0) return 1;
     if((divisor & 0x7FFF) == 0 && divisor_is_zero) return 1;
+
+    // Zero 
+
+    if((dividend & 0x7FFF) == 0 && (divisor & 0x7FFF) != 0 && (quotient_hw & 0x7FFF) == 0) return 1;
 
     unsigned int dividend_mantissa = (dividend & 1023) + 1024;
     unsigned int divisor_mantissa = (divisor & 1023) + 1024;
