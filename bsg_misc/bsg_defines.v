@@ -9,6 +9,9 @@
 `define BSG_IS_POW2(x) ( (1 << $clog2(x)) == (x))
 `define BSG_WIDTH(x) ($clog2(x+1))
 
+// calculate ceil(x/y) 
+`define BSG_CDIV(x,y) (((x)+(y)-1)/(y))
+
 // nullify rpgroups
 `ifndef rpgroup
 `define rpgroup(x)
