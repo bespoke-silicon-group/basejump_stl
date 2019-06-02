@@ -10,7 +10,7 @@
 // negative: 0, divisor[width_p-2:0], 0
 //
 // For unsigned number, divisor must be adjusted to:
-// 1, divisor[width_p-1:0]
+// 1, divisor[width_p-2:0]
 //
 // There is no special requirement for dividend.
 //
