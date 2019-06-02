@@ -22,19 +22,30 @@ module  bsg_channel_tunnel_wormhole
   ,parameter len_width_p = "inv"
   ,parameter reserved_width_p = "inv"
   
-  // Total number of channels
+  // Total number of inputs multiplexed / demultiplexed within channel tunnel
+  // Typically this should match number of wormhole traffic streams being merged
   ,parameter num_in_p = "inv"
   
   // Max number of wormhole packets buffer can store
+  // This is independent of how many flits each wormhole packet has
   ,parameter remote_credits_p = "inv"
   
-  // Max possible number of wormhole packet flits
+  // Max possible "wormhole packet length" setting
+  // Note that the length of wormhole packet is represented by (num_flits - 1)
+  // If max possible number of flits is n, then max_len_p should be set to (n-1)
   ,parameter max_len_p = "inv"
   
-  // How often (every ? wormhole packets) does channel tunnel return credits
-  ,parameter lg_credit_decimation_p = "inv"
+  // How often does channel tunnel return credits to sender
+  // Channel tunnel return credits to sender every (2^lg_credit_decimation_p) packets
+  // This is independent of how many flits each wormhole packet has
+  ,parameter lg_credit_decimation_p = `BSG_MIN($clog2(remote_credits_p+1),4)
   
   // Local parameters
+  
+  // Initial value for wormhole flit counters
+  // Since wormhole length is (num_flits-1), counter should count from 0
+  ,localparam counter_min_value_lp = 0 
+  
   ,localparam mux_num_in_lp = num_in_p+1
   ,localparam tag_width_lp = $clog2(mux_num_in_lp)
   ,localparam raw_width_lp = width_p-tag_width_lp
@@ -131,8 +142,15 @@ module  bsg_channel_tunnel_wormhole
   
   
   // Channel Tunnel Data Output
+  
   logic [mux_num_in_lp-1:0] ofifo_valid_o, ofifo_yumi_i;
   logic [mux_num_in_lp-1:0][width_p-1:0] ofifo_data_o;
+  
+  // This generated block is for wormhole packet flits buffering.
+  // All wormhole packet headers are pushed into o_headerin fifo, then
+  // go into original bsg_channel_tunnel.
+  // Remaining data packet flits are buffered in ofifo.
+  // A counter is used to handle the wormhole packet flits
   
   for (i = 0; i < num_in_p; i++) begin
   
@@ -140,17 +158,28 @@ module  bsg_channel_tunnel_wormhole
   
     // Header to CT
     logic [len_width_p-1:0] ocount_r, ocount_n;
+    logic ocount_r_is_min;
+    assign ocount_r_is_min = (ocount_r == counter_min_value_lp);
+    
+    // Update counter only when packet flit is accepted into fifo
+    // Set counter value to "wormhole packet len" when current flit is header flit
     assign ocount_n = (v_i[i] & ready_o[i])? 
-        (ocount_r==0)? data_i[i][len_offset_lp+:len_width_p] : ocount_r-1 : ocount_r;
+        (ocount_r_is_min)? data_i[i][len_offset_lp+:len_width_p] : ocount_r-1 : ocount_r;
     
     always_ff @(posedge clk_i) begin
         if (reset_i)
-            ocount_r <= 0;
+            ocount_r <= counter_min_value_lp;
         else
             ocount_r <= ocount_n;
     end
     
     // Data fifo
+    
+    // ofifo size should be larger than 2 (default value is set to 4).
+    // This is because there are two-cycle delay for wormhole header flit to
+    // show up on the other side of channel tunnel.
+    // To keep sending without bubble, ofifo must be large enough.
+    
     bsg_fifo_1r1w_small 
    #(.width_p(width_p)
     ,.els_p(4)) 
@@ -160,13 +189,14 @@ module  bsg_channel_tunnel_wormhole
 
     ,.ready_o(ofifo_data_ready_o)
     ,.data_i(data_i[i])
-    ,.v_i(~(ocount_r==0) & v_i[i])
+    ,.v_i(~ocount_r_is_min & v_i[i])
 
     ,.v_o(ofifo_valid_o[i])
     ,.data_o(ofifo_data_o[i])
     ,.yumi_i(ofifo_yumi_i[i]));
     
     // Header fifo
+    
     bsg_two_fifo
    #(.width_p(raw_width_lp))
     o_headerin
@@ -175,18 +205,18 @@ module  bsg_channel_tunnel_wormhole
 
     ,.ready_o(ofifo_header_ready_o)
     ,.data_i(data_i[i][raw_width_lp-1:0])
-    ,.v_i((ocount_r==0) & v_i[i])
+    ,.v_i(ocount_r_is_min & v_i[i])
 
     ,.v_o(inside_valid_li[i])
     ,.data_o(inside_data_li[i])
     ,.yumi_i(inside_yumi_lo[i]));
     
-    assign ready_o[i] = (ocount_r==0)? ofifo_header_ready_o : ofifo_data_ready_o;
+    assign ready_o[i] = (ocount_r_is_min)? ofifo_header_ready_o : ofifo_data_ready_o;
 
   end
   
   
-  // Header out of CT
+  // Header out of channel tunnel are buffered in bsg_two_fifo
   // TODO: might be removed later to reduce latency
   
   logic headerout_ready_o;
@@ -208,12 +238,20 @@ module  bsg_channel_tunnel_wormhole
   
   
   // Channel Tunnel Output Select
+  
+  // Description of algorithm:
+  // This is the main part for n-stream traffic multiplexing.
+  // There are (n+1) streams of traffic: n ofifos and 1 channel tunnel.
+  // The wormhole header flit comes out from channel tunnel, which selects the traffic.
+  // Then data flits are poped out from selected ofifo, until the whole packet is sent.
+  // Credit returning packet also come out from channel tunnel, which is a 1-flit packet.
+  
   logic [tag_width_lp-1:0] mux_sel_r, mux_sel_n;
   logic [len_width_p-1:0] ostate_r, ostate_n;
   
   always_ff @(posedge clk_i) begin
     if (reset_i) begin
-        ostate_r <= 0;
+        ostate_r <= counter_min_value_lp;
         mux_sel_r <= num_in_p;
     end else begin
         ostate_r <= ostate_n;
@@ -251,7 +289,7 @@ module  bsg_channel_tunnel_wormhole
             mux_sel_n = num_in_p;
             ostate_n = ostate_r - 1;
         end
-        else if (ostate_r == 0) begin
+        else if (ostate_r == counter_min_value_lp) begin
             if (multi_data_o[raw_width_lp+:tag_width_lp] < num_in_p) begin
                 ostate_n = multi_data_o[len_offset_lp+:len_width_p];
                 if (multi_data_o[len_offset_lp+:len_width_p] != 0) begin
@@ -269,13 +307,23 @@ module  bsg_channel_tunnel_wormhole
   
   
   // Channel Tunnel Data Input
+  
   logic [mux_num_in_lp-1:0] ififo_valid_i, ififo_ready_o;
+  
+  // This generated block is for wormhole data flits buffering.
+  // All wormhole packet headers are stored in bsg_channel_tunnel.
+  // Remaining data packet flits are buffered in ififo.
+  // A counter is used to handle the wormhole packet flits
   
   for (i = 0; i < num_in_p; i++) begin
   
     logic ififo_valid_o, ififo_yumi_i;
     logic [width_p-1:0] ififo_data_o;
     
+    // This large fifo holds all data flits received from sender.
+    // All wormhole header flits are stored inside bsg_channel_tunnel, so
+    // the size of ififo should be ((max_num_flits-1) * remote_credits_p), which
+    // is exactly (max_len_p * remote_credits_p).
     bsg_fifo_1r1w_large 
    #(.width_p(width_p)
     ,.els_p(remote_credits_p*max_len_p)) 
@@ -293,25 +341,31 @@ module  bsg_channel_tunnel_wormhole
     
     // dummy data out of CT
     logic [len_width_p-1:0] icount_r, icount_n;
-    assign icount_n = (yumi_i[i])? 
-        (icount_r==0)? inside_data_lo[i][len_offset_lp+:len_width_p] : icount_r-1 : icount_r;
+    logic icount_r_is_min;
+    assign icount_r_is_min = (icount_r == counter_min_value_lp);
+    
+    // Update counter only when packet flit dequeues from fifo
+    // Set counter value to "wormhole packet len" when current flit is header flit
+    assign icount_n = (yumi_i[i])? (icount_r_is_min)? 
+                inside_data_lo[i][len_offset_lp+:len_width_p] : icount_r-1 : icount_r;
     
     always_ff @(posedge clk_i) begin
         if (reset_i)
-            icount_r <= 0;
+            icount_r <= counter_min_value_lp;
         else
             icount_r <= icount_n;
     end
     
-    assign v_o[i] = (icount_r==0)? inside_valid_lo[i] : ififo_valid_o;
-    assign data_o[i] = (icount_r==0)? inside_data_lo[i] : ififo_data_o;
-    assign ififo_yumi_i = (icount_r==0)? 0 : yumi_i[i];
-    assign inside_yumi_li[i] = (icount_r==0)? yumi_i[i] : 0;
+    // Decide whether to dequeue from channel tunnel or from ififo.
+    assign v_o[i]            = (icount_r_is_min)? inside_valid_lo[i] : ififo_valid_o;
+    assign data_o[i]         = (icount_r_is_min)? inside_data_lo[i] : ififo_data_o;
+    assign ififo_yumi_i      = (icount_r_is_min)? 0 : yumi_i[i];
+    assign inside_yumi_li[i] = (icount_r_is_min)? yumi_i[i] : 0;
   
   end
   
   
-  // Header into CT
+  // Header flits going into channel tunnel are buffered in fifo
   // TODO: might be removed later to reduce latency
   
   bsg_two_fifo 
@@ -330,12 +384,20 @@ module  bsg_channel_tunnel_wormhole
   
   
   // Channel Tunnel Input Select
+  
+  // Description of algorithm:
+  // This is the main part for n-stream traffic demultiplexing.
+  // Traffic coming in has (n+1) possible destinations: n ififos and 1 channel tunnel.
+  // Wormhole header flits and credit returning flit should go into channel tunnel.
+  // Data flits should go into corresponding ififos.
+  // Destination is selected by "reserved bits" generated by sender.
+  
   logic [tag_width_lp-1:0] in_sel_r, in_sel_n;
   logic [len_width_p-1:0] istate_r, istate_n;
   
   always_ff @(posedge clk_i) begin
     if (reset_i) begin
-        istate_r <= 0;
+        istate_r <= counter_min_value_lp;
         in_sel_r <= num_in_p;
     end else begin
         istate_r <= istate_n;
@@ -361,11 +423,11 @@ module  bsg_channel_tunnel_wormhole
     in_sel_n = in_sel_r;
     
     if (multi_v_i & multi_ready_o) begin
-        if (istate_r == 1) begin
+        if (istate_r == (counter_min_value_lp+1)) begin
             in_sel_n = num_in_p;
             istate_n = istate_r - 1;
         end
-        else if (istate_r == 0) begin
+        else if (istate_r == counter_min_value_lp) begin
             if (multi_data_i[raw_width_lp+:tag_width_lp] < num_in_p) begin
                 istate_n = multi_data_i[len_offset_lp+:len_width_p];
                 if (multi_data_i[len_offset_lp+:len_width_p] != 0) begin
