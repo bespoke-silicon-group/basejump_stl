@@ -16,6 +16,7 @@
 module  bsg_channel_tunnel_wormhole
 
  #(// Wormhole packet configurations
+   // These parameters are properties of wormhole network
    parameter width_p = "inv"
   ,parameter x_cord_width_p = "inv"
   ,parameter y_cord_width_p = "inv"
@@ -30,12 +31,13 @@ module  bsg_channel_tunnel_wormhole
   // This is independent of how many flits each wormhole packet has
   ,parameter remote_credits_p = "inv"
   
-  // Max possible "wormhole packet length" setting
-  // Note that the length of wormhole packet is represented by (num_flits - 1)
-  // If max possible number of flits is n, then max_len_p should be set to (n-1)
-  ,parameter max_len_p = "inv"
+  // Max possible "wormhole packet payload length" setting
+  // An n-flits wormhole packet has 1 header flit and (n-1) payload flits
+  // This parameter determines the size of payload-flits buffer
+  ,parameter max_payload_flits_p = "inv"
   
   // How often does channel tunnel return credits to sender
+  // Default value matches child module bsg_channel_tunnel
   // Channel tunnel return credits to sender every (2^lg_credit_decimation_p) packets
   // This is independent of how many flits each wormhole packet has
   ,parameter lg_credit_decimation_p = `BSG_MIN($clog2(remote_credits_p+1),4)
@@ -157,21 +159,23 @@ module  bsg_channel_tunnel_wormhole
     logic ofifo_data_ready_o, ofifo_header_ready_o;
   
     // Header to CT
-    logic [len_width_p-1:0] ocount_r, ocount_n;
-    logic ocount_r_is_min;
-    assign ocount_r_is_min = (ocount_r == counter_min_value_lp);
+    logic [len_width_p-1:0] ocount_r;
+    logic ocount_r_is_min, ocount_en;
     
     // Update counter only when packet flit is accepted into fifo
     // Set counter value to "wormhole packet len" when current flit is header flit
-    assign ocount_n = (v_i[i] & ready_o[i])? 
-        (ocount_r_is_min)? data_i[i][len_offset_lp+:len_width_p] : ocount_r-1 : ocount_r;
+    assign ocount_en = v_i[i] & ready_o[i]; 
     
-    always_ff @(posedge clk_i) begin
-        if (reset_i)
-            ocount_r <= counter_min_value_lp;
-        else
-            ocount_r <= ocount_n;
-    end
+    bsg_counter_dynamic_start_en_down
+   #(.width_p(len_width_p)
+    ,.last_val_p(counter_min_value_lp))
+    ocount
+    (.clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.en_i(ocount_en)
+    ,.start_i(data_i[i][len_offset_lp+:len_width_p])
+    ,.counter_o(ocount_r)
+    ,.is_last_val_o(ocount_r_is_min));
     
     // Data fifo
     
@@ -323,10 +327,10 @@ module  bsg_channel_tunnel_wormhole
     // This large fifo holds all data flits received from sender.
     // All wormhole header flits are stored inside bsg_channel_tunnel, so
     // the size of ififo should be ((max_num_flits-1) * remote_credits_p), which
-    // is exactly (max_len_p * remote_credits_p).
+    // is exactly (max_payload_flits_p * remote_credits_p).
     bsg_fifo_1r1w_large 
    #(.width_p(width_p)
-    ,.els_p(remote_credits_p*max_len_p)) 
+    ,.els_p(remote_credits_p*max_payload_flits_p)) 
     ififo
     (.clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -340,21 +344,23 @@ module  bsg_channel_tunnel_wormhole
     ,.yumi_i(ififo_yumi_i));
     
     // dummy data out of CT
-    logic [len_width_p-1:0] icount_r, icount_n;
-    logic icount_r_is_min;
-    assign icount_r_is_min = (icount_r == counter_min_value_lp);
+    logic [len_width_p-1:0] icount_r;
+    logic icount_r_is_min, icount_en;
     
     // Update counter only when packet flit dequeues from fifo
     // Set counter value to "wormhole packet len" when current flit is header flit
-    assign icount_n = (yumi_i[i])? (icount_r_is_min)? 
-                inside_data_lo[i][len_offset_lp+:len_width_p] : icount_r-1 : icount_r;
+    assign icount_en = yumi_i[i];
     
-    always_ff @(posedge clk_i) begin
-        if (reset_i)
-            icount_r <= counter_min_value_lp;
-        else
-            icount_r <= icount_n;
-    end
+    bsg_counter_dynamic_start_en_down
+   #(.width_p(len_width_p)
+    ,.last_val_p(counter_min_value_lp))
+    icount
+    (.clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.en_i(icount_en)
+    ,.start_i(inside_data_lo[i][len_offset_lp+:len_width_p])
+    ,.counter_o(icount_r)
+    ,.is_last_val_o(icount_r_is_min));
     
     // Decide whether to dequeue from channel tunnel or from ififo.
     assign v_o[i]            = (icount_r_is_min)? inside_valid_lo[i] : ififo_valid_o;
