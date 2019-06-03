@@ -127,7 +127,8 @@ module  bsg_channel_tunnel_wormhole
   `declare_bsg_ready_and_link_sif_s(width_p,bsg_ready_and_link_sif_s);
   bsg_ready_and_link_sif_s [num_in_p-1:0] link_i_cast, link_o_cast;
   
-  for (i = 0; i < num_in_p; i++) begin
+  for (i = 0; i < num_in_p; i++) 
+  begin
   
     assign link_i_cast[i] = link_i[i];
     assign link_o[i] = link_o_cast[i];
@@ -154,7 +155,8 @@ module  bsg_channel_tunnel_wormhole
   // Remaining data packet flits are buffered in ofifo.
   // A counter is used to handle the wormhole packet flits
   
-  for (i = 0; i < num_in_p; i++) begin
+  for (i = 0; i < num_in_p; i++) 
+  begin: ch_out
   
     logic ofifo_data_ready_o, ofifo_header_ready_o;
   
@@ -253,7 +255,8 @@ module  bsg_channel_tunnel_wormhole
   logic [tag_width_lp-1:0] mux_sel_r, mux_sel_n;
   logic [len_width_p-1:0] ostate_r, ostate_n;
   
-  always_ff @(posedge clk_i) begin
+  always_ff @(posedge clk_i) 
+  begin
     if (reset_i) begin
         ostate_r <= counter_min_value_lp;
         mux_sel_r <= num_in_p;
@@ -279,11 +282,13 @@ module  bsg_channel_tunnel_wormhole
   ,.sel_i(mux_sel_r)
   ,.data_o(multi_v_o));
   
-  for (i = 0; i < mux_num_in_lp; i++) begin
+  for (i = 0; i < mux_num_in_lp; i++) 
+  begin
     assign ofifo_yumi_i[i] = (i==mux_sel_r)? multi_yumi_i : 0;
   end
   
-  always_comb begin
+  always_comb 
+  begin
     
     ostate_n = ostate_r;
     mux_sel_n = mux_sel_r;
@@ -319,7 +324,8 @@ module  bsg_channel_tunnel_wormhole
   // Remaining data packet flits are buffered in ififo.
   // A counter is used to handle the wormhole packet flits
   
-  for (i = 0; i < num_in_p; i++) begin
+  for (i = 0; i < num_in_p; i++) 
+  begin: ch_in
   
     logic ififo_valid_o, ififo_yumi_i;
     logic [width_p-1:0] ififo_data_o;
@@ -401,7 +407,8 @@ module  bsg_channel_tunnel_wormhole
   logic [tag_width_lp-1:0] in_sel_r, in_sel_n;
   logic [len_width_p-1:0] istate_r, istate_n;
   
-  always_ff @(posedge clk_i) begin
+  always_ff @(posedge clk_i) 
+  begin
     if (reset_i) begin
         istate_r <= counter_min_value_lp;
         in_sel_r <= num_in_p;
@@ -419,11 +426,13 @@ module  bsg_channel_tunnel_wormhole
   ,.sel_i(in_sel_r)
   ,.data_o(multi_ready_o));
   
-  for (i = 0; i < mux_num_in_lp; i++) begin
+  for (i = 0; i < mux_num_in_lp; i++) 
+  begin
     assign ififo_valid_i[i] = (i==in_sel_r)? multi_v_i : 0;
   end
   
-  always_comb begin
+  always_comb 
+  begin
     
     istate_n = istate_r;
     in_sel_n = in_sel_r;
@@ -450,7 +459,8 @@ module  bsg_channel_tunnel_wormhole
   
   
   // synopsys translate_off
-  initial begin
+  initial 
+  begin
   
     assert (reserved_width_p >= tag_width_lp)
     else begin 

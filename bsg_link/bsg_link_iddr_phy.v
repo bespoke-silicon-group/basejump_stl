@@ -24,7 +24,8 @@ module bsg_link_iddr_phy
   
   assign data_o = data_r;
 
-  always_ff @(posedge clk_i) begin
+  always_ff @(posedge clk_i) 
+  begin
     // First buffer posedge data into data_p_r
     data_p_r <= data_i;
     // Finally output to the data_r flop

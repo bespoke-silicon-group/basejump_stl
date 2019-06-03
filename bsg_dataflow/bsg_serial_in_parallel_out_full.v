@@ -39,7 +39,8 @@ module bsg_serial_in_parallel_out_full
   logic clear_li;
   logic up_li;
 
-  if (msb_first_p == 0) begin: lsb_first
+  if (msb_first_p == 0) 
+  begin: lsb_first
 
   bsg_counter_clear_up #(
     .max_val_p(els_p)
@@ -54,7 +55,8 @@ module bsg_serial_in_parallel_out_full
     ,.count_o(count_lo)
   ); 
   
-  end else begin: msb_first
+  end else 
+  begin: msb_first
   
   always_ff @(posedge clk_i)
     if (reset_i | clear_li) 
@@ -63,7 +65,8 @@ module bsg_serial_in_parallel_out_full
         count_lo <= count_lo - up_li;
   end
 
-  always_comb begin
+  always_comb 
+  begin
     if (count_lo == end_count_lp) begin
       v_o = 1'b1;
       ready_o = 1'b0;
@@ -78,7 +81,8 @@ module bsg_serial_in_parallel_out_full
     end
   end
 
-  always_ff @ (posedge clk_i) begin
+  always_ff @ (posedge clk_i) 
+  begin
     if (v_i & ready_o) begin
       data_r[count_lo[0+:lg_els_lp]] <= data_i;
     end

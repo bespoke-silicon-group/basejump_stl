@@ -37,7 +37,8 @@ module bsg_serial_in_parallel_out_full_buffered
   assign ready_o = fifo_ready_lo[counter_r];
   assign v_o = & fifo_valid_lo;
   
-  for (i = 0; i < els_p; i++) begin: fifos
+  for (i = 0; i < els_p; i++) 
+  begin: fifos
     
     assign fifo_valid_li[i] = (i == counter_r) & v_i;
     assign fifo_yumi_li[i] = yumi_i;
@@ -60,7 +61,8 @@ module bsg_serial_in_parallel_out_full_buffered
   
   logic end_count_lo, count_up_lo, count_down_lo;
   
-  always_comb begin
+  always_comb 
+  begin
     end_count_lo = 0;
     count_up_lo = 0;
     count_down_lo = 0;

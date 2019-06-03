@@ -23,7 +23,8 @@ module bsg_link_oddr_phy
   
   logic odd_r, clk_r;
   
-  always_ff @(negedge clk_2x_i) begin
+  always_ff @(negedge clk_2x_i) 
+  begin
     if (reset_i) clk_r <= 1'b0;
     else clk_r <= ~clk_r;
     clk_r_o <= clk_r;

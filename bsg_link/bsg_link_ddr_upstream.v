@@ -60,7 +60,8 @@ module bsg_link_ddr_upstream
   
   // When piso is not needed
   
-  if (ddr_width_lp*num_channels_p >= width_p) begin: fifo
+  if (ddr_width_lp*num_channels_p >= width_p) 
+  begin: fifo
   
     bsg_two_fifo
    #(.width_p(width_p))
@@ -74,7 +75,8 @@ module bsg_link_ddr_upstream
     ,.data_o(out_ps_data_lo)
     ,.yumi_i(out_ps_yumi_li));
   
-  end else begin: piso
+  end else 
+  begin: piso
   
     bsg_parallel_in_serial_out 
    #(.width_p(ddr_width_lp*num_channels_p)
@@ -96,7 +98,8 @@ module bsg_link_ddr_upstream
   
   genvar i;
   
-  for (i = 0; i < num_channels_p; i++) begin: ch
+  for (i = 0; i < num_channels_p; i++) 
+  begin: ch
   
     logic io_reset_lo;
     logic out_ddr_valid_lo;
