@@ -29,6 +29,6 @@ module bsg_counter_dynamic_start_en_down
       counter_o <= last_val_p;
     else if (en_i)
       if (is_last_val_o) counter_o <= start_i;
-      else               counter_o <= counter_o - 1;
+      else               counter_o <= counter_o - width_p'(1);
 
 endmodule
