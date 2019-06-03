@@ -23,14 +23,45 @@ module bsg_mem_1rw_sync_mask_write_bit_synth #(parameter width_p=-1
 
    wire unused = reset_i;
 
+   logic [addr_width_lp-1:0] addr_r;
    logic [width_p-1:0] mem [els_p-1:0];
+   logic read_en;
+
+   assign read_en = v_i & ~w_i;
 
    always_ff @(posedge clk_i)
-     if (v_i & ~w_i)
-       data_o <= mem[addr_i];
+     if (read_en)
+       addr_r <= addr_i;
      else
-       if (latch_last_read_p == 0)
-         data_o <= 'X;
+       addr_r <= 'X;
+
+   logic [width_p-1:0] data_out;
+
+   assign data_out = mem[addr_r];
+
+   if (latch_last_read_p)
+     begin: llr
+      logic read_en_r; 
+
+      always_ff @ (posedge clk_i)
+        read_en_r <= read_en;
+
+      bsg_dff_en_bypass #(
+        .width_p(width_p)
+      ) dff_bypass (
+        .clk_i(clk_i)
+        ,.en_i(read_en_r)
+        ,.data_i(data_out)
+        ,.data_o(data_o)
+      );
+       
+     end
+   else
+     begin
+       assign data_o = data_out;
+     end
+
+
 
 // The Verilator and non-Verilator models are functionally equivalent. However, Verilator
 //   cannot handle an array of non-blocking assignments in a for loop. It would be nice to 
