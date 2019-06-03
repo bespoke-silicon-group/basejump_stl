@@ -41,10 +41,17 @@ module bsg_mem_1rw_sync_mask_write_bit_synth #(parameter width_p=-1
 
    if (latch_last_read_p)
      begin: llr
+
       logic read_en_r; 
 
-      always_ff @ (posedge clk_i)
-        read_en_r <= read_en;
+      bsg_dff_reset #(
+        .width_p(1)
+      ) read_en_dff (
+        .clk_i(clk_i)
+        ,.reset_i(reset_i)
+        ,.data_i(read_en)
+        ,.data_o(read_en_r)
+      );
 
       bsg_dff_en_bypass #(
         .width_p(width_p)

@@ -19,7 +19,6 @@ module bsg_mem_1rw_sync_synth #(parameter width_p=-1
     , output logic [width_p-1:0]  data_o
     );
 
-  wire unused = reset_i;
 
   logic [addr_width_lp-1:0] addr_r;
   logic [width_p-1:0]    mem [els_p-1:0];
@@ -40,8 +39,14 @@ module bsg_mem_1rw_sync_synth #(parameter width_p=-1
   
       logic read_en_r; 
 
-      always_ff @ (posedge clk_i)
-        read_en_r <= read_en;
+      bsg_dff_reset #(
+        .width_p(1)
+      ) read_en_dff (
+        .clk_i(clk_i)
+        ,.reset_i(reset_i)
+        ,.data_i(read_en)
+        ,.data_o(read_en_r)
+      );
 
       bsg_dff_en_bypass #(
         .width_p(width_p)
@@ -55,6 +60,7 @@ module bsg_mem_1rw_sync_synth #(parameter width_p=-1
     end
   else
     begin
+      wire unused = reset_i;
       assign data_o = data_out;
     end
 
