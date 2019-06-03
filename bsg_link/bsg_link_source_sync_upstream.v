@@ -25,7 +25,7 @@ module bsg_link_source_sync_upstream
 
        // we explicit set the "inactive pattern"
        // on data lines when valid bit is not set
-       //  to (01)+ = 0x5*
+       //  to (10)+ = 0xA*
        //
        // the inactive pattern should balance the current
        // across I/O V33 and VZZ pads, reducing
@@ -37,26 +37,23 @@ module bsg_link_source_sync_upstream
        // 4:1:1.
        //
 
-       // fixme: an alternative might be to tri-state
-       // the output, but further analysis is required
-       // as to whether this is a good idea.
-
-       // This has implications for calibration;
-       // specifically v=0,d=5* should not be used.
-       // an alternative to this inactive pattern is to
-       // invert alternating bits or to apply a scramble
-       //  pattern. We keep it simple.
-
        , parameter inactive_pattern_p = {channel_width_p { 2'b10 } }
+       
+       // Reset pattern is 0xF*
+       // This is a soft reset from link_upstream to link_downstream
+       // When channel data bits are in reset pattern, downstream link is on reset
+       // Note that this pattern must be the same for upstream and downstream links
+       
        , parameter reset_pattern_p = {channel_width_p {1'b1} }
        
        )
        
    (// control signals  
       input                         core_clk_i
-    , input                         core_reset_i
-    , input                         io_master_clk_i
+    , input                         link_reset_i
     , input                         link_enable_i
+    
+    , input                         io_master_clk_i
     , output                        io_reset_o
     
     // Input from chip core
@@ -72,8 +69,8 @@ module bsg_link_source_sync_upstream
 
    
   // reset signal
-  logic core_reset_lo, io_reset_lo;
-  logic core_enable_lo, io_enable_lo;
+  logic link_reset_lo, io_reset_lo;
+  logic link_enable_lo, io_enable_lo;
   assign io_reset_o = io_reset_lo;
    
   bsg_launch_sync_sync
@@ -82,8 +79,8 @@ module bsg_link_source_sync_upstream
   (.iclk_i(core_clk_i)
   ,.iclk_reset_i(1'b0)
   ,.oclk_i(io_master_clk_i)
-  ,.iclk_data_i(core_reset_i)
-  ,.iclk_data_o(core_reset_lo)
+  ,.iclk_data_i(link_reset_i)
+  ,.iclk_data_o(link_reset_lo)
   ,.oclk_data_o(io_reset_lo));
   
   bsg_launch_sync_sync
@@ -93,13 +90,13 @@ module bsg_link_source_sync_upstream
   ,.iclk_reset_i(1'b0)
   ,.oclk_i(io_master_clk_i)
   ,.iclk_data_i(link_enable_i)
-  ,.iclk_data_o(core_enable_lo)
+  ,.iclk_data_o(link_enable_lo)
   ,.oclk_data_o(io_enable_lo));
 
 
   // internal reset signal
   logic core_internal_reset_lo, io_internal_reset_lo;
-  assign core_internal_reset_lo = ~core_enable_lo | core_reset_lo;
+  assign core_internal_reset_lo = ~link_enable_lo | link_reset_lo;
   assign io_internal_reset_lo = ~io_enable_lo | io_reset_lo;
 
 

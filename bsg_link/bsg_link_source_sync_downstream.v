@@ -54,12 +54,17 @@ module bsg_link_source_sync_downstream
  #(parameter channel_width_p = 16
   ,parameter lg_fifo_depth_p = 6
   ,parameter lg_credit_to_token_decimation_p = 3
-  ,parameter inactive_pattern_p = {channel_width_p { 2'b10 } }
+  
+  // Reset pattern is 0xF*
+  // This is a soft reset from link_upstream to link_downstream
+  // When channel data bits are in reset pattern, downstream link is on reset
+  // Note that this pattern must be the same for upstream and downstream links
+  
   ,parameter reset_pattern_p = {channel_width_p {1'b1} })
   
    (// control signals
       input                        core_clk_i
-    , input                        core_reset_i
+    , input                        link_reset_i
     , output                       link_enable_o
     
     // source synchronous input channel; coming from chip edge
@@ -84,7 +89,7 @@ module bsg_link_source_sync_downstream
   (.iclk_i(core_clk_i)
   ,.iclk_reset_i(1'b0)
   ,.oclk_i(io_clk_i)
-  ,.iclk_data_i(core_reset_i)
+  ,.iclk_data_i(link_reset_i)
   ,.iclk_data_o()
   ,.oclk_data_o(io_reset_lo));
   

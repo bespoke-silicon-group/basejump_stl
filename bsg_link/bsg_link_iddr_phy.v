@@ -25,11 +25,15 @@ module bsg_link_iddr_phy
   assign data_o = data_r;
 
   always_ff @(posedge clk_i) begin
+    // First buffer posedge data into data_p_r
     data_p_r <= data_i;
+    // Finally output to the data_r flop
+    // data_p_r occurs logically earlier in time than data_n_r
     data_r <= {data_n_r, data_p_r};
   end
   
   always_ff @(negedge clk_i)
+    // Then buffer negedge data into data_n_r
     data_n_r <= data_i;
 
 endmodule
