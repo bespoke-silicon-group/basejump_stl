@@ -9,9 +9,6 @@
 //     - outgoing source-synchronous launch flops for token
 //     - center-aligned DDR source sync output clock
 //
-// io_    : signals synchronous to io_master_clk_i
-// token_ : signals synchronous to token_clk_i
-//
 //
 // Note, for token clock reset, there is a certain pattern that must be asserted
 // and deasserted during io reset.

@@ -7,7 +7,14 @@
 // and need to merge them together to the IO channel (n >= 2)
 // All wormhole packet parameters should match corresponding wormhole network
 //
-// Refer to bsg_channel_tunnel for more information on flow control
+// Packet interleaving algorithm:
+//
+// When multiple source channels are valid at the same time, channel tunnel will interleave
+// whole-packets in round-robin way. "whole-packet" means that flits of each wormhole 
+// packet are always sent out back-to-back. After sending out current packet, channel tunnel 
+// will decide whether to switch to another source channel.
+//
+// Refer to bsg_channel_tunnel for more information on credit-based flow control
 //
 //
 
@@ -133,16 +140,16 @@ module  bsg_channel_tunnel_wormhole
   for (i = 0; i < num_in_p; i++) 
   begin: noc_cast
   
-    assign link_i_cast[i] = link_i[i];
-    assign link_o[i] = link_o_cast[i];
+    assign link_i_cast[i]               = link_i[i];
+    assign link_o[i]                    = link_o_cast[i];
 
-    assign v_i[i] = link_i_cast[i].v;
-    assign data_i[i] = link_i_cast[i].data;
+    assign v_i[i]                       = link_i_cast[i].v;
+    assign data_i[i]                    = link_i_cast[i].data;
     assign link_o_cast[i].ready_and_rev = ready_o[i];
 
-    assign link_o_cast[i].v = v_o[i];
-    assign link_o_cast[i].data = data_o[i];
-    assign yumi_i[i] = v_o[i] & link_i_cast[i].ready_and_rev;
+    assign link_o_cast[i].v             = v_o[i];
+    assign link_o_cast[i].data          = data_o[i];
+    assign yumi_i[i]                    = v_o[i] & link_i_cast[i].ready_and_rev;
   
   end
   
@@ -253,7 +260,7 @@ module  bsg_channel_tunnel_wormhole
   // Channel Tunnel Output Select
   
   // Description of algorithm:
-  // This is the main part for n-stream traffic multiplexing.
+  // This is the main part for traffic multiplexing.
   // There are (n+1) streams of traffic: n ofifos and 1 channel tunnel.
   // The wormhole header flit comes out from channel tunnel, which selects the traffic.
   // Then data flits are poped out from selected ofifo, until the whole packet is sent.
@@ -276,6 +283,7 @@ module  bsg_channel_tunnel_wormhole
       end
   end
   
+  // data selection
   bsg_mux 
  #(.width_p(width_p)
   ,.els_p(mux_num_in_lp)
@@ -285,6 +293,7 @@ module  bsg_channel_tunnel_wormhole
   ,.data_o(multi_data_o)
   );
   
+  // valid selection
   bsg_mux 
  #(.width_p(1)
   ,.els_p(mux_num_in_lp)
@@ -294,11 +303,19 @@ module  bsg_channel_tunnel_wormhole
   ,.data_o(multi_v_o)
   );
   
+  // yumi selection (valid-then-ready)
   for (i = 0; i < mux_num_in_lp; i++) 
   begin: oyumi
     assign ofifo_yumi_i[i] = (i==mux_sel_r)? multi_yumi_i : 0;
   end
   
+  // State machine to handle valid-data-yumi selection
+  //
+  // Initial state (or default state) selection is bsg_channel_tunnel
+  // When a header flit come out from bsg_channel_tunnel, selection is updated based on
+  // the source of upcoming wormhole packet (from which data buffer). After the whole packet is
+  // sent, it returns to default state selection.
+  // When a credit returning flit comes out, selection is not updated (it is a 1-flit packet).
   always_comb 
   begin
     
@@ -306,20 +323,30 @@ module  bsg_channel_tunnel_wormhole
     mux_sel_n = mux_sel_r;
     
     if (multi_yumi_i) 
+        // When current wormhole packet finish sending
+        // Return to default state
         if (ostate_r == 1) 
           begin
             mux_sel_n = num_in_p;
             ostate_n = ostate_r - 1;
           end
+        // At default state
+        // Send out wormhole packet header flit
         else if (ostate_r == counter_min_value_lp)
           begin
+            // When upcoming packet is not for credit returning
+            // Update state
             if (multi_data_o[raw_width_lp+:tag_width_lp] < num_in_p) 
               begin
                 ostate_n = multi_data_o[len_offset_lp+:len_width_p];
+                // When packet length is non-zero (payload flits non-zero)
+                // Update ofifo selection
                 if (multi_data_o[len_offset_lp+:len_width_p] != 0) 
                     mux_sel_n = multi_data_o[raw_width_lp+:tag_width_lp];
               end
           end
+        // When sending out wormhole packet payload flits
+        // Update state
         else
           begin
             ostate_n = ostate_r - 1;
@@ -415,7 +442,7 @@ module  bsg_channel_tunnel_wormhole
   // Channel Tunnel Input Select
   
   // Description of algorithm:
-  // This is the main part for n-stream traffic demultiplexing.
+  // This is the main part for traffic demultiplexing.
   // Traffic coming in has (n+1) possible destinations: n ififos and 1 channel tunnel.
   // Wormhole header flits and credit returning flit should go into channel tunnel.
   // Data flits should go into corresponding ififos.
@@ -438,6 +465,7 @@ module  bsg_channel_tunnel_wormhole
       end
   end
   
+  // ready selection
   bsg_mux 
  #(.width_p(1)
   ,.els_p(mux_num_in_lp)
@@ -447,11 +475,20 @@ module  bsg_channel_tunnel_wormhole
   ,.data_o(multi_ready_o)
   );
   
+  // valid selection
   for (i = 0; i < mux_num_in_lp; i++) 
   begin: iv
     assign ififo_valid_i[i] = (i==in_sel_r)? multi_v_i : 0;
   end
   
+  
+  // State machine to handle valid-ready selection
+  //
+  // Initial state (or default state) selection is to bsg_channel_tunnel
+  // When a header flit come into bsg_channel_tunnel, selection is updated based on
+  // the source of received wormhole packet (to which data buffer). After the whole packet is
+  // received, it returns to default state selection.
+  // When a credit returning flit ccomes in, selection is not updated (it is a 1-flit packet).
   always_comb 
   begin
     
@@ -459,20 +496,30 @@ module  bsg_channel_tunnel_wormhole
     in_sel_n = in_sel_r;
     
     if (multi_v_i & multi_ready_o) 
+        // When current wormhole packet finish receiving
+        // Return to default state
         if (istate_r == (counter_min_value_lp+1)) 
           begin
             in_sel_n = num_in_p;
             istate_n = istate_r - 1;
           end
+        // At default state
+        // Receive wormhole packet header flit
         else if (istate_r == counter_min_value_lp) 
           begin
+            // When received packet is not for credit returning
+            // Update state
             if (multi_data_i[raw_width_lp+:tag_width_lp] < num_in_p) 
               begin
                 istate_n = multi_data_i[len_offset_lp+:len_width_p];
+                // When packet length is non-zero (payload flits non-zero)
+                // Update ififo selection
                 if (multi_data_i[len_offset_lp+:len_width_p] != 0)
                     in_sel_n = multi_data_i[raw_width_lp+:tag_width_lp];
               end
           end
+        // When receiving wormhole packet payload flits
+        // Update state
         else 
           begin
             istate_n = istate_r - 1;

@@ -9,7 +9,6 @@
 //     async fifo to go from source-synchronous domain to core domain
 //     outgoing token channel to go from core domain deque to out of chip
 //     outgoing source-synchronous launch flops for token
-//     programmable capture on either or both edges of the clock
 //
 // note, the default FIFO depth is set to 2^6
 // based on the following calculation:
@@ -34,19 +33,6 @@
 //
 // io_*: signals synchronous to io_clk_i
 // core_*: signals synchronous to core_clk_i
-//
-// During reset, the SS output channel needs to toggle its input toggle clock.
-// To do this, it must  assert the two trigger lines (0x180 on { valid , data })
-// and wait at least 2**(lg_credit_to_token_decimation_p+1) cycles and then deassert
-// it. This will be routed around by the SS input channel and toggle the trigger
-// clock line, allowing it be reset.
-//
-
-//
-// perf fixme: data comes in at 64 bits per core cycle, but it is serialized
-// to 32-bits per cycle in the core domain. thus in theory some assembler-like changes could
-// allow for the in  I/O data rate to be twice the core frequency. but the assembler
-// may be on the core critical path.
 //
 
 module bsg_link_source_sync_downstream 

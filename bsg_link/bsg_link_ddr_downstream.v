@@ -1,21 +1,39 @@
 //
 // Paul Gao 03/2019
 //
-// This is a DDR receiver
-// All data received by DDR PHY are routed to source-sync-input flow control unit
-// Then go through serial-in-parallel-out to assemble the output packet
+// This is the receiver part of bsg_link_ddr, a complete DDR communication 
+// endpoint over multiple source-synchronous channels.
+// ALWAYS use in pair with bsg_link_ddr_upstream
 // 
+// The purpose of bsg_link_ddr_downstream is to receive DDR data bits from 
+// physical IO pins, then reassemble to ready-valid interface in core clock domain.
+// Token-credit based flow control ensures efficiency and correctness.
+// IDDR_PHY assumes incoming clock is center-alighed to data bits.
+//
+// Typical usage: ASIC <-> ASIC communication and ASIC <-> FPGA communication.
+// Instantiate one bsg_link_ddr_upstream on sender side, one bsg_link_ddr_downstream on
+// receiver side to establish communication.
+//
 // Refer to bsg_link_source_sync_downstream for more information on flow control
 //
 //
 
 module bsg_link_ddr_downstream
 
- #(parameter width_p         = "inv"
+ #(// Core data width
+  // MUST be multiple of (2*channel_width_p*num_channels_p) 
+   parameter width_p         = "inv"
+  // Number of IO pins per physical IO channels
   ,parameter channel_width_p = 8
+  // Number of physical IO channels
   ,parameter num_channels_p  = 1
+  // Receive fifo depth 
+  // MUST MATCH paired bsg_link_ddr_upstream setting
+  // Default value comes from child module
+  // Refer to bsg_link_source_sync_downstream for more detail on this parameter
   ,parameter lg_fifo_depth_p = 6
-  // Token decimation must be identical for upstream and downstream links
+  // Token credit decimation
+  // MUST MATCH paired bsg_link_ddr_upstream setting
   // Default value comes from child module
   // Refer to bsg_link_source_sync_downstream for more detail on this parameter
   ,parameter lg_credit_to_token_decimation_p = 3
@@ -27,11 +45,11 @@ module bsg_link_ddr_downstream
    input  core_clk_i
   ,input  core_reset_i
   ,input  core_link_reset_i
-  
+  // Core side
   ,output [width_p-1:0] core_data_o
   ,output               core_valid_o
   ,input                core_yumi_i
-  
+  // Physical IO side
   ,input [num_channels_p-1:0]                      io_clk_i
   ,input [num_channels_p-1:0][channel_width_p-1:0] io_data_i
   ,input [num_channels_p-1:0]                      io_valid_i
@@ -97,8 +115,8 @@ module bsg_link_ddr_downstream
   end
   
   
-  // When piso is not needed
-  
+  // When core data width (width_p) is equal to or smaller than
+  // ddr_width_lp*num_channels_p, deserializer is not needed, use fifo.
   if (ddr_width_lp*num_channels_p >= width_p) 
   begin: fifo
   
@@ -116,6 +134,9 @@ module bsg_link_ddr_downstream
     );
     
   end 
+  // When core data width (width_p) is larger than ddr_width_lp*num_channels_p, 
+  // use serial_in_parallel_out to deserialize it.
+  // The buffered-version SIPO ensures no bubble cycle on receiving packets.
   else 
   begin: sipof
   
