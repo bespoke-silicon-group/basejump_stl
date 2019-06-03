@@ -15,9 +15,10 @@ module bsg_link_iddr_phy
 
  #(parameter width_p = "inv")
 
-  (input clk_i
-  ,input [width_p-1:0] data_i
-  ,output [2*width_p-1:0] data_o);
+  (input                  clk_i
+  ,input [width_p-1:0]    data_i
+  ,output [2*width_p-1:0] data_o
+  );
   
   logic [2*width_p-1:0] data_r;
   logic [width_p-1:0] data_n_r, data_p_r;

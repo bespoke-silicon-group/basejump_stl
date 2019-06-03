@@ -51,8 +51,8 @@
 
 module bsg_link_source_sync_downstream 
 
- #(parameter channel_width_p = 16
-  ,parameter lg_fifo_depth_p = 6
+ #(parameter channel_width_p                 = 16
+  ,parameter lg_fifo_depth_p                 = 6
   ,parameter lg_credit_to_token_decimation_p = 3
   
   // Reset pattern is 0xF*
@@ -60,56 +60,57 @@ module bsg_link_source_sync_downstream
   // When channel data bits are in reset pattern, downstream link is on reset
   // Note that this pattern must be the same for upstream and downstream links
   
-  ,parameter reset_pattern_p = {channel_width_p {1'b1} })
+  ,parameter reset_pattern_p = {channel_width_p {1'b1}}
+  )
   
-   (// control signals
-      input                        core_clk_i
-    , input                        link_reset_i
-    , output                       link_enable_o
-    
-    // source synchronous input channel; coming from chip edge
-    , input                        io_clk_i     // sdi_sclk
-    , input  [channel_width_p-1:0] io_data_i    // sdi_data
-    , input                        io_valid_i   // sdi_valid
-    , output                       io_token_r_o // sdi_token; output registered
+  (// control signals
+   input                        core_clk_i
+  ,input                        core_link_reset_i
 
-    // going into core; uses core clock
-    , output [channel_width_p-1:0] core_data_o
-    , output                       core_valid_o
-    , input                        core_yumi_i
-   );
+  // source synchronous input channel; coming from chip edge
+  ,input                        io_clk_i     // sdi_sclk
+  ,input  [channel_width_p-1:0] io_data_i    // sdi_data
+  ,input                        io_valid_i   // sdi_valid
+  ,output                       io_token_r_o // sdi_token; output registered
+
+  // going into core; uses core clock
+  ,output [channel_width_p-1:0] core_data_o
+  ,output                       core_valid_o
+  ,input                        core_yumi_i
+  );
   
   
   // local reset
   logic io_reset_lo;
   
   bsg_launch_sync_sync 
- #(.width_p(1))
-  local_reset_lss
-  (.iclk_i(core_clk_i)
+ #(.width_p(1)
+  ) local_reset_lss
+  (.iclk_i      (core_clk_i)
   ,.iclk_reset_i(1'b0)
-  ,.oclk_i(io_clk_i)
-  ,.iclk_data_i(link_reset_i)
-  ,.iclk_data_o()
-  ,.oclk_data_o(io_reset_lo));
+  ,.oclk_i      (io_clk_i)
+  ,.iclk_data_i (core_link_reset_i)
+  ,.iclk_data_o ()
+  ,.oclk_data_o (io_reset_lo)
+  );
   
      
   // internal reset signal
   logic core_link_internal_reset_lo;
   logic io_link_internal_reset_n, io_link_internal_reset_lo;
   
-  assign link_enable_o = ~core_link_internal_reset_lo;
   assign io_link_internal_reset_n = (io_data_i==reset_pattern_p && ~io_valid_i);
         
   bsg_launch_sync_sync 
- #(.width_p(1))
-  internal_reset_lss
-  (.iclk_i(io_clk_i)
+ #(.width_p(1)
+  ) internal_reset_lss
+  (.iclk_i      (io_clk_i)
   ,.iclk_reset_i(1'b0)
-  ,.oclk_i(core_clk_i)
-  ,.iclk_data_i(io_link_internal_reset_n | io_reset_lo)
-  ,.iclk_data_o(io_link_internal_reset_lo)
-  ,.oclk_data_o(core_link_internal_reset_lo));
+  ,.oclk_i      (core_clk_i)
+  ,.iclk_data_i (io_link_internal_reset_n | io_reset_lo)
+  ,.iclk_data_o (io_link_internal_reset_lo)
+  ,.oclk_data_o (core_link_internal_reset_lo)
+  );
                                  
 
    // ******************************************
@@ -138,20 +139,20 @@ module bsg_link_source_sync_downstream
 
   bsg_async_fifo 
  #(.lg_size_p(lg_fifo_depth_p)
-  ,.width_p(channel_width_p))
-  baf
-  (.w_clk_i(io_clk_i)
+  ,.width_p(channel_width_p)
+  ) baf
+  (.w_clk_i  (io_clk_i)
   ,.w_reset_i(io_link_internal_reset_lo)
   
-  ,.w_enq_i(io_async_fifo_enq)
-  ,.w_data_i(io_data_i)
-  ,.w_full_o(io_async_fifo_full)
+  ,.w_enq_i  (io_async_fifo_enq)
+  ,.w_data_i (io_data_i)
+  ,.w_full_o (io_async_fifo_full)
 
-  ,.r_clk_i(core_clk_i)
+  ,.r_clk_i  (core_clk_i)
   ,.r_reset_i(core_link_internal_reset_lo)
 
-  ,.r_deq_i(core_actual_deque)
-  ,.r_data_o(core_data_lo)
+  ,.r_deq_i  (core_actual_deque)
+  ,.r_data_o (core_data_lo)
   ,.r_valid_o(core_valid_o_tmp));
 
 
@@ -159,19 +160,21 @@ module bsg_link_source_sync_downstream
    wire core_twofer_ready;
 
 
-   bsg_two_fifo #(.width_p(channel_width_p)) twofer
-     (.clk_i(core_clk_i)
-      ,.reset_i(core_link_internal_reset_lo)
+  bsg_two_fifo 
+ #(.width_p(channel_width_p)
+  ) twofer
+  (.clk_i  (core_clk_i)
+  ,.reset_i(core_link_internal_reset_lo)
 
-      // we feed this into the local yumi, but only if it is valid
-      ,.ready_o(core_twofer_ready)
-      ,.data_i(core_data_lo)
-      ,.v_i(core_valid_o_pre_twofer)
+  // we feed this into the local yumi, but only if it is valid
+  ,.ready_o(core_twofer_ready)
+  ,.data_i (core_data_lo)
+  ,.v_i    (core_valid_o_pre_twofer)
 
-      ,.v_o(core_valid_o)
-      ,.data_o(core_data_o)
-      ,.yumi_i(core_yumi_i)
-      );
+  ,.v_o    (core_valid_o)
+  ,.data_o (core_data_o)
+  ,.yumi_i (core_yumi_i)
+  );
 
 
    // a word was transferred to the two input fifo if ...

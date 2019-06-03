@@ -50,8 +50,8 @@ module bsg_link_source_sync_upstream
        
    (// control signals  
       input                         core_clk_i
-    , input                         link_reset_i
-    , input                         link_enable_i
+    , input                         core_link_reset_i
+    , input                         core_link_enable_i
     
     , input                         io_master_clk_i
     , output                        io_reset_o
@@ -69,43 +69,46 @@ module bsg_link_source_sync_upstream
 
    
   // reset signal
-  logic link_reset_lo, io_reset_lo;
-  logic link_enable_lo, io_enable_lo;
+  logic core_link_reset_lo, io_reset_lo;
+  logic core_link_enable_lo, io_enable_lo;
   assign io_reset_o = io_reset_lo;
    
   bsg_launch_sync_sync
- #(.width_p(1))
-  reset_blss
-  (.iclk_i(core_clk_i)
+ #(.width_p(1)
+  ) reset_blss
+  (.iclk_i      (core_clk_i)
   ,.iclk_reset_i(1'b0)
-  ,.oclk_i(io_master_clk_i)
-  ,.iclk_data_i(link_reset_i)
-  ,.iclk_data_o(link_reset_lo)
-  ,.oclk_data_o(io_reset_lo));
+  ,.oclk_i      (io_master_clk_i)
+  ,.iclk_data_i (core_link_reset_i)
+  ,.iclk_data_o (core_link_reset_lo)
+  ,.oclk_data_o (io_reset_lo)
+  );
   
   bsg_launch_sync_sync
- #(.width_p(1))
-  enable_blss
-  (.iclk_i(core_clk_i)
+ #(.width_p(1)
+  ) enable_blss
+  (.iclk_i      (core_clk_i)
   ,.iclk_reset_i(1'b0)
-  ,.oclk_i(io_master_clk_i)
-  ,.iclk_data_i(link_enable_i)
-  ,.iclk_data_o(link_enable_lo)
-  ,.oclk_data_o(io_enable_lo));
+  ,.oclk_i      (io_master_clk_i)
+  ,.iclk_data_i (core_link_enable_i)
+  ,.iclk_data_o (core_link_enable_lo)
+  ,.oclk_data_o (io_enable_lo)
+  );
 
 
   // internal reset signal
   logic core_internal_reset_lo, io_internal_reset_lo;
-  assign core_internal_reset_lo = ~link_enable_lo | link_reset_lo;
-  assign io_internal_reset_lo = ~io_enable_lo | io_reset_lo;
+  
+  assign core_internal_reset_lo = ~core_link_enable_lo | core_link_reset_lo;
+  assign io_internal_reset_lo   = ~io_enable_lo   | io_reset_lo;
 
 
   logic core_fifo_valid, core_fifo_yumi;
   logic [channel_width_p-1:0] core_fifo_data;
 
   bsg_two_fifo
- #(.width_p(channel_width_p))
-  core_fifo
+ #(.width_p(channel_width_p)
+  ) core_fifo
   (.clk_i  (core_clk_i)
   ,.reset_i(core_internal_reset_lo)
   
@@ -115,7 +118,8 @@ module bsg_link_source_sync_upstream
 
   ,.v_o    (core_fifo_valid)
   ,.data_o (core_fifo_data)
-  ,.yumi_i (core_fifo_yumi));
+  ,.yumi_i (core_fifo_yumi)
+  );
   
   
   logic core_fifo_full;
@@ -126,21 +130,22 @@ module bsg_link_source_sync_upstream
   
   bsg_async_fifo
  #(.lg_size_p(3)
-  ,.width_p(channel_width_p))
-  async_fifo
-  (.w_clk_i(core_clk_i)
+  ,.width_p(channel_width_p)
+  ) async_fifo
+  (.w_clk_i  (core_clk_i)
   ,.w_reset_i(core_internal_reset_lo)
 
-  ,.w_enq_i(core_fifo_yumi)
-  ,.w_data_i(core_fifo_data)
-  ,.w_full_o(core_fifo_full)
+  ,.w_enq_i  (core_fifo_yumi)
+  ,.w_data_i (core_fifo_data)
+  ,.w_full_o (core_fifo_full)
 
-  ,.r_clk_i(io_master_clk_i)
+  ,.r_clk_i  (io_master_clk_i)
   ,.r_reset_i(io_internal_reset_lo)
 
-  ,.r_deq_i(io_fifo_yumi)
-  ,.r_data_o(io_fifo_data)
-  ,.r_valid_o(io_fifo_valid));
+  ,.r_deq_i  (io_fifo_yumi)
+  ,.r_data_o (io_fifo_data)
+  ,.r_valid_o(io_fifo_valid)
+  );
   
 
    // ******************************************
@@ -277,7 +282,7 @@ module bsg_link_source_sync_upstream
         ,.r_reset_i           (io_internal_reset_lo       )
         ,.r_dec_credit_i      (io_negedge_credits_deque)
         ,.r_infinite_credits_i(io_internal_reset_lo)
-        ,.r_credits_avail_o(io_negedge_credits_avail)
+        ,.r_credits_avail_o   (io_negedge_credits_avail)
         );
 
 

@@ -12,7 +12,8 @@
 module bsg_counter_dynamic_start_en_down
 
  #(parameter width_p = "inv"
-  ,parameter last_val_p = "inv")
+  ,parameter last_val_p = "inv"
+  )
 
   (input                      clk_i
   ,input                      reset_i
@@ -20,15 +21,18 @@ module bsg_counter_dynamic_start_en_down
   ,input                      en_i
   ,input        [width_p-1:0] start_i
   ,output logic [width_p-1:0] counter_o
-  ,output                     is_last_val_o);
+  ,output                     is_last_val_o
+  );
 
-  assign is_last_val_o = ( counter_o == last_val_p );
+  assign is_last_val_o = (counter_o == last_val_p);
   
   always_ff @ (posedge clk_i)
     if (reset_i)
-      counter_o <= last_val_p;
+        counter_o <= last_val_p;
     else if (en_i)
-      if (is_last_val_o) counter_o <= start_i;
-      else               counter_o <= counter_o - width_p'(1);
+        if (is_last_val_o) 
+            counter_o <= start_i;
+        else
+            counter_o <= counter_o - width_p'(1);
 
 endmodule

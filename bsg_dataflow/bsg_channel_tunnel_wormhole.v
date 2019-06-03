@@ -17,10 +17,10 @@ module  bsg_channel_tunnel_wormhole
 
  #(// Wormhole packet configurations
    // These parameters are properties of wormhole network
-   parameter width_p = "inv"
-  ,parameter x_cord_width_p = "inv"
-  ,parameter y_cord_width_p = "inv"
-  ,parameter len_width_p = "inv"
+   parameter width_p          = "inv"
+  ,parameter x_cord_width_p   = "inv"
+  ,parameter y_cord_width_p   = "inv"
+  ,parameter len_width_p      = "inv"
   ,parameter reserved_width_p = "inv"
   
   // Total number of inputs multiplexed / demultiplexed within channel tunnel
@@ -52,24 +52,26 @@ module  bsg_channel_tunnel_wormhole
   ,localparam tag_width_lp = $clog2(mux_num_in_lp)
   ,localparam raw_width_lp = width_p-tag_width_lp
   ,localparam len_offset_lp = width_p-reserved_width_p-x_cord_width_p-y_cord_width_p-len_width_p
-  ,localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(width_p))
+  ,localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(width_p)
+  )
 
   (input clk_i
   ,input reset_i
   
   // incoming multiplexed data
-  ,input [width_p-1:0] multi_data_i
-  ,input multi_v_i
-  ,output multi_ready_o
+  ,input  [width_p-1:0] multi_data_i
+  ,input                multi_v_i
+  ,output               multi_ready_o
 
   // outgoing multiplexed data
   ,output [width_p-1:0] multi_data_o
-  ,output multi_v_o
-  ,input multi_yumi_i
+  ,output               multi_v_o
+  ,input                multi_yumi_i
 
   // demultiplexed data
-  ,input [num_in_p-1:0][bsg_ready_and_link_sif_width_lp-1:0] link_i
-  ,output [num_in_p-1:0][bsg_ready_and_link_sif_width_lp-1:0] link_o);
+  ,input  [num_in_p-1:0][bsg_ready_and_link_sif_width_lp-1:0] link_i
+  ,output [num_in_p-1:0][bsg_ready_and_link_sif_width_lp-1:0] link_o
+  );
   
   
   // Original Channel Tunnel
@@ -91,26 +93,27 @@ module  bsg_channel_tunnel_wormhole
   ,.num_in_p(num_in_p)
   ,.remote_credits_p(remote_credits_p)
   ,.use_pseudo_large_fifo_p(1)
-  ,.lg_credit_decimation_p(lg_credit_decimation_p))
-  channel_tunnel
-  (.clk_i(clk_i)
+  ,.lg_credit_decimation_p(lg_credit_decimation_p)
+  ) channel_tunnel
+  (.clk_i  (clk_i)
   ,.reset_i(reset_i)
   // outside
   ,.multi_data_i(outside_data_li)
-  ,.multi_v_i(outside_valid_li)
+  ,.multi_v_i   (outside_valid_li)
   ,.multi_yumi_o(outside_yumi_lo)
 
   ,.multi_data_o(outside_data_lo)
-  ,.multi_v_o(outside_valid_lo)
+  ,.multi_v_o   (outside_valid_lo)
   ,.multi_yumi_i(outside_yumi_li)
   // inside
   ,.data_i(inside_data_li)
-  ,.v_i(inside_valid_li)
+  ,.v_i   (inside_valid_li)
   ,.yumi_o(inside_yumi_lo)
 
   ,.data_o(inside_data_lo)
-  ,.v_o(inside_valid_lo)
-  ,.yumi_i(inside_yumi_li));
+  ,.v_o   (inside_valid_lo)
+  ,.yumi_i(inside_yumi_li)
+  );
   
   
   genvar i;
@@ -128,7 +131,7 @@ module  bsg_channel_tunnel_wormhole
   bsg_ready_and_link_sif_s [num_in_p-1:0] link_i_cast, link_o_cast;
   
   for (i = 0; i < num_in_p; i++) 
-  begin
+  begin: noc_cast
   
     assign link_i_cast[i] = link_i[i];
     assign link_o[i] = link_o_cast[i];
@@ -170,14 +173,15 @@ module  bsg_channel_tunnel_wormhole
     
     bsg_counter_dynamic_start_en_down
    #(.width_p(len_width_p)
-    ,.last_val_p(counter_min_value_lp))
-    ocount
-    (.clk_i(clk_i)
+    ,.last_val_p(counter_min_value_lp)
+    ) ocount
+    (.clk_i  (clk_i)
     ,.reset_i(reset_i)
-    ,.en_i(ocount_en)
-    ,.start_i(data_i[i][len_offset_lp+:len_width_p])
-    ,.counter_o(ocount_r)
-    ,.is_last_val_o(ocount_r_is_min));
+    ,.en_i         (ocount_en)
+    ,.start_i      (data_i[i][len_offset_lp+:len_width_p])
+    ,.counter_o    (ocount_r)
+    ,.is_last_val_o(ocount_r_is_min)
+    );
     
     // Data fifo
     
@@ -188,34 +192,36 @@ module  bsg_channel_tunnel_wormhole
     
     bsg_fifo_1r1w_small 
    #(.width_p(width_p)
-    ,.els_p(4)) 
-    ofifo
-    (.clk_i(clk_i)
+    ,.els_p(4)
+    ) ofifo
+    (.clk_i  (clk_i)
     ,.reset_i(reset_i)
 
     ,.ready_o(ofifo_data_ready_o)
-    ,.data_i(data_i[i])
-    ,.v_i(~ocount_r_is_min & v_i[i])
+    ,.data_i (data_i[i])
+    ,.v_i    (~ocount_r_is_min & v_i[i])
 
-    ,.v_o(ofifo_valid_o[i])
-    ,.data_o(ofifo_data_o[i])
-    ,.yumi_i(ofifo_yumi_i[i]));
+    ,.v_o    (ofifo_valid_o[i])
+    ,.data_o (ofifo_data_o[i])
+    ,.yumi_i (ofifo_yumi_i[i])
+    );
     
     // Header fifo
     
     bsg_two_fifo
-   #(.width_p(raw_width_lp))
-    o_headerin
-    (.clk_i(clk_i)
+   #(.width_p(raw_width_lp)
+    ) o_headerin
+    (.clk_i  (clk_i)
     ,.reset_i(reset_i)
 
     ,.ready_o(ofifo_header_ready_o)
-    ,.data_i(data_i[i][raw_width_lp-1:0])
-    ,.v_i(ocount_r_is_min & v_i[i])
+    ,.data_i (data_i[i][raw_width_lp-1:0])
+    ,.v_i    (ocount_r_is_min & v_i[i])
 
-    ,.v_o(inside_valid_li[i])
-    ,.data_o(inside_data_li[i])
-    ,.yumi_i(inside_yumi_lo[i]));
+    ,.v_o    (inside_valid_li[i])
+    ,.data_o (inside_data_li[i])
+    ,.yumi_i (inside_yumi_lo[i])
+    );
     
     assign ready_o[i] = (ocount_r_is_min)? ofifo_header_ready_o : ofifo_data_ready_o;
 
@@ -229,18 +235,19 @@ module  bsg_channel_tunnel_wormhole
   assign outside_yumi_li = headerout_ready_o & outside_valid_lo;
   
   bsg_two_fifo 
- #(.width_p(width_p)) 
-  o_headerout
+ #(.width_p(width_p)
+  ) o_headerout
   (.clk_i(clk_i)
   ,.reset_i(reset_i)
 
   ,.ready_o(headerout_ready_o)
-  ,.data_i(outside_data_lo)
-  ,.v_i(outside_valid_lo)
+  ,.data_i (outside_data_lo)
+  ,.v_i    (outside_valid_lo)
 
-  ,.v_o(ofifo_valid_o[num_in_p])
-  ,.data_o(ofifo_data_o[num_in_p])
-  ,.yumi_i(ofifo_yumi_i[num_in_p]));
+  ,.v_o    (ofifo_valid_o[num_in_p])
+  ,.data_o (ofifo_data_o[num_in_p])
+  ,.yumi_i (ofifo_yumi_i[num_in_p])
+  );
   
   
   // Channel Tunnel Output Select
@@ -253,63 +260,70 @@ module  bsg_channel_tunnel_wormhole
   // Credit returning packet also come out from channel tunnel, which is a 1-flit packet.
   
   logic [tag_width_lp-1:0] mux_sel_r, mux_sel_n;
-  logic [len_width_p-1:0] ostate_r, ostate_n;
+  logic [len_width_p-1:0]  ostate_r, ostate_n;
   
   always_ff @(posedge clk_i) 
   begin
-    if (reset_i) begin
-        ostate_r <= counter_min_value_lp;
+    if (reset_i) 
+      begin
+        ostate_r  <= counter_min_value_lp;
         mux_sel_r <= num_in_p;
-    end else begin
-        ostate_r <= ostate_n;
+      end 
+    else 
+      begin
+        ostate_r  <= ostate_n;
         mux_sel_r <= mux_sel_n;
-    end
+      end
   end
   
   bsg_mux 
  #(.width_p(width_p)
-  ,.els_p(mux_num_in_lp))
-  out_data_mux
+  ,.els_p(mux_num_in_lp)
+  ) out_data_mux
   (.data_i(ofifo_data_o)
-  ,.sel_i(mux_sel_r)
-  ,.data_o(multi_data_o));
+  ,.sel_i (mux_sel_r)
+  ,.data_o(multi_data_o)
+  );
   
   bsg_mux 
  #(.width_p(1)
-  ,.els_p(mux_num_in_lp))
-  out_v_mux
+  ,.els_p(mux_num_in_lp)
+  ) out_v_mux
   (.data_i(ofifo_valid_o)
-  ,.sel_i(mux_sel_r)
-  ,.data_o(multi_v_o));
+  ,.sel_i (mux_sel_r)
+  ,.data_o(multi_v_o)
+  );
   
   for (i = 0; i < mux_num_in_lp; i++) 
-  begin
+  begin: oyumi
     assign ofifo_yumi_i[i] = (i==mux_sel_r)? multi_yumi_i : 0;
   end
   
   always_comb 
   begin
     
-    ostate_n = ostate_r;
+    ostate_n  = ostate_r;
     mux_sel_n = mux_sel_r;
     
-    if (multi_yumi_i) begin
-        if (ostate_r == 1) begin
+    if (multi_yumi_i) 
+        if (ostate_r == 1) 
+          begin
             mux_sel_n = num_in_p;
             ostate_n = ostate_r - 1;
-        end
-        else if (ostate_r == counter_min_value_lp) begin
-            if (multi_data_o[raw_width_lp+:tag_width_lp] < num_in_p) begin
+          end
+        else if (ostate_r == counter_min_value_lp)
+          begin
+            if (multi_data_o[raw_width_lp+:tag_width_lp] < num_in_p) 
+              begin
                 ostate_n = multi_data_o[len_offset_lp+:len_width_p];
-                if (multi_data_o[len_offset_lp+:len_width_p] != 0) begin
+                if (multi_data_o[len_offset_lp+:len_width_p] != 0) 
                     mux_sel_n = multi_data_o[raw_width_lp+:tag_width_lp];
-                end
-            end
-        end
-        else begin
+              end
+          end
+        else
+          begin
             ostate_n = ostate_r - 1;
-        end
-    end
+          end
   
   end
   
@@ -336,18 +350,19 @@ module  bsg_channel_tunnel_wormhole
     // is exactly (max_payload_flits_p * remote_credits_p).
     bsg_fifo_1r1w_large 
    #(.width_p(width_p)
-    ,.els_p(remote_credits_p*max_payload_flits_p)) 
-    ififo
-    (.clk_i(clk_i)
+    ,.els_p(remote_credits_p*max_payload_flits_p)
+    ) ififo
+    (.clk_i  (clk_i)
     ,.reset_i(reset_i)
 
     ,.ready_o(ififo_ready_o[i])
-    ,.data_i(multi_data_i)
-    ,.v_i(ififo_valid_i[i])
+    ,.data_i (multi_data_i)
+    ,.v_i    (ififo_valid_i[i])
 
-    ,.v_o(ififo_valid_o)
-    ,.data_o(ififo_data_o)
-    ,.yumi_i(ififo_yumi_i));
+    ,.v_o    (ififo_valid_o)
+    ,.data_o (ififo_data_o)
+    ,.yumi_i (ififo_yumi_i)
+    );
     
     // dummy data out of CT
     logic [len_width_p-1:0] icount_r;
@@ -359,14 +374,15 @@ module  bsg_channel_tunnel_wormhole
     
     bsg_counter_dynamic_start_en_down
    #(.width_p(len_width_p)
-    ,.last_val_p(counter_min_value_lp))
-    icount
-    (.clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.en_i(icount_en)
-    ,.start_i(inside_data_lo[i][len_offset_lp+:len_width_p])
-    ,.counter_o(icount_r)
-    ,.is_last_val_o(icount_r_is_min));
+    ,.last_val_p(counter_min_value_lp)
+    ) icount
+    (.clk_i        (clk_i)
+    ,.reset_i      (reset_i)
+    ,.en_i         (icount_en)
+    ,.start_i      (inside_data_lo[i][len_offset_lp+:len_width_p])
+    ,.counter_o    (icount_r)
+    ,.is_last_val_o(icount_r_is_min)
+    );
     
     // Decide whether to dequeue from channel tunnel or from ififo.
     assign v_o[i]            = (icount_r_is_min)? inside_valid_lo[i] : ififo_valid_o;
@@ -381,18 +397,19 @@ module  bsg_channel_tunnel_wormhole
   // TODO: might be removed later to reduce latency
   
   bsg_two_fifo 
- #(.width_p(width_p)) 
-  i_dummyin
-  (.clk_i(clk_i)
+ #(.width_p(width_p)
+  ) i_dummyin
+  (.clk_i  (clk_i)
   ,.reset_i(reset_i)
 
   ,.ready_o(ififo_ready_o[num_in_p])
-  ,.data_i(multi_data_i)
-  ,.v_i(ififo_valid_i[num_in_p])
+  ,.data_i (multi_data_i)
+  ,.v_i    (ififo_valid_i[num_in_p])
 
-  ,.v_o(outside_valid_li)
-  ,.data_o(outside_data_li)
-  ,.yumi_i(outside_yumi_lo));
+  ,.v_o    (outside_valid_li)
+  ,.data_o (outside_data_li)
+  ,.yumi_i (outside_yumi_lo)
+  );
   
   
   // Channel Tunnel Input Select
@@ -405,29 +422,33 @@ module  bsg_channel_tunnel_wormhole
   // Destination is selected by "reserved bits" generated by sender.
   
   logic [tag_width_lp-1:0] in_sel_r, in_sel_n;
-  logic [len_width_p-1:0] istate_r, istate_n;
+  logic [len_width_p-1:0]  istate_r, istate_n;
   
   always_ff @(posedge clk_i) 
   begin
-    if (reset_i) begin
+    if (reset_i) 
+      begin
         istate_r <= counter_min_value_lp;
         in_sel_r <= num_in_p;
-    end else begin
+      end 
+    else 
+      begin
         istate_r <= istate_n;
         in_sel_r <= in_sel_n;
-    end
+      end
   end
   
   bsg_mux 
  #(.width_p(1)
-  ,.els_p(mux_num_in_lp))
-  in_ready_mux
+  ,.els_p(mux_num_in_lp)
+  ) in_ready_mux
   (.data_i(ififo_ready_o)
-  ,.sel_i(in_sel_r)
-  ,.data_o(multi_ready_o));
+  ,.sel_i (in_sel_r)
+  ,.data_o(multi_ready_o)
+  );
   
   for (i = 0; i < mux_num_in_lp; i++) 
-  begin
+  begin: iv
     assign ififo_valid_i[i] = (i==in_sel_r)? multi_v_i : 0;
   end
   
@@ -437,23 +458,25 @@ module  bsg_channel_tunnel_wormhole
     istate_n = istate_r;
     in_sel_n = in_sel_r;
     
-    if (multi_v_i & multi_ready_o) begin
-        if (istate_r == (counter_min_value_lp+1)) begin
+    if (multi_v_i & multi_ready_o) 
+        if (istate_r == (counter_min_value_lp+1)) 
+          begin
             in_sel_n = num_in_p;
             istate_n = istate_r - 1;
-        end
-        else if (istate_r == counter_min_value_lp) begin
-            if (multi_data_i[raw_width_lp+:tag_width_lp] < num_in_p) begin
+          end
+        else if (istate_r == counter_min_value_lp) 
+          begin
+            if (multi_data_i[raw_width_lp+:tag_width_lp] < num_in_p) 
+              begin
                 istate_n = multi_data_i[len_offset_lp+:len_width_p];
-                if (multi_data_i[len_offset_lp+:len_width_p] != 0) begin
+                if (multi_data_i[len_offset_lp+:len_width_p] != 0)
                     in_sel_n = multi_data_i[raw_width_lp+:tag_width_lp];
-                end
-            end
-        end
-        else begin
+              end
+          end
+        else 
+          begin
             istate_n = istate_r - 1;
-        end
-    end
+          end
   
   end
   
@@ -463,10 +486,11 @@ module  bsg_channel_tunnel_wormhole
   begin
   
     assert (reserved_width_p >= tag_width_lp)
-    else begin 
+    else 
+      begin 
         $error("Wormhole packet reserved width %d is smaller than channel tunnel tag width %d. Please increase reserved width.", reserved_width_p, tag_width_lp);
         $finish;
-    end
+      end
 
   end
   // synopsys translate_on
