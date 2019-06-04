@@ -25,9 +25,9 @@
 //
 // that version would be helpful on output and demanding on input.
 
-module bsg_parallel_in_serial_out #( parameter width_p = -1
-                                   , parameter els_p   = -1
-                                   , parameter msb_first_p = 0
+module bsg_parallel_in_serial_out #( parameter width_p    = -1
+                                   , parameter els_p      = -1
+                                   , parameter hi_to_lo_p = 0
                                    )
     ( input clk_i
     , input reset_i
@@ -107,9 +107,17 @@ module bsg_parallel_in_serial_out #( parameter width_p = -1
       end
       
     
-    // If send msb word first, reverse the input data array
+    // If send hi_to_lo, reverse the input data array
     logic [els_p-1:0][width_p-1:0] data_i_rev, data_li;
-    assign data_li = (msb_first_p)? data_i_rev : data_i;
+    
+    if (hi_to_lo_p == 0)
+      begin: lo2hi
+        assign data_li = data_i;
+      end
+    else
+      begin: hi2lo
+        assign data_li = data_i_rev;
+      end
     
     bsg_array_reverse 
    #(.width_p(width_p)
