@@ -4,7 +4,9 @@
 //
 
 module bsg_counter_clear_up #(parameter max_val_p     = -1
-                             ,parameter init_val_p   = -1
+			      // this originally had an "invalid" default value of -1
+			      // which is a bad choice for a counter
+			     ,parameter init_val_p   = `BSG_UNDEFINED_IN_SIM('0)
                              ,parameter ptr_width_lp =
                              `BSG_SAFE_CLOG2(max_val_p+1)
                              )
