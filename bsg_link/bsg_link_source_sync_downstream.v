@@ -65,41 +65,46 @@ module bsg_link_source_sync_downstream
   ,input                        core_yumi_i
   );
   
+  //  
+  // remote reset signal coming from bsg_link_source_sync_upstream
+  // remote reset is asserted when source_sync_upstream in reset OR not enabled
+  //
+  logic io_remote_reset_lo, core_remote_reset_lo;
+  assign io_remote_reset_lo = (io_data_i==reset_pattern_p && ~io_valid_i);
   
-  // local reset from core clock to io clock
-  logic io_reset_lo;
-  
+  // remote reset signal from io clock to core clock
   bsg_launch_sync_sync 
  #(.width_p(1)
-  ) local_reset_lss
-  (.iclk_i      (core_clk_i)
-  ,.iclk_reset_i(1'b0)
-  ,.oclk_i      (io_clk_i)
-  ,.iclk_data_i (core_link_reset_i)
-  ,.iclk_data_o ()
-  ,.oclk_data_o (io_reset_lo)
-  );
-  
-     
-  // internal reset signal
-  logic core_link_internal_reset_lo;
-  logic io_link_internal_reset_n, io_link_internal_reset_lo;
-  
-  // Soft reset signal coming from bsg_link_source_sync_upstream
-  assign io_link_internal_reset_n = (io_data_i==reset_pattern_p && ~io_valid_i);
-  
-  // Actual reset = remote_soft_reset | local_core_link_reset
-  // This is very useful when a link channel is left unused or physical IO
-  // pins are left floating (remote reset not available in these cases)
-  bsg_launch_sync_sync 
- #(.width_p(1)
-  ) internal_reset_lss
+  ) remote_reset_lss
   (.iclk_i      (io_clk_i)
   ,.iclk_reset_i(1'b0)
   ,.oclk_i      (core_clk_i)
-  ,.iclk_data_i (io_link_internal_reset_n | io_reset_lo)
-  ,.iclk_data_o (io_link_internal_reset_lo)
-  ,.oclk_data_o (core_link_internal_reset_lo)
+  ,.iclk_data_i (io_remote_reset_lo)
+  ,.iclk_data_o ()
+  ,.oclk_data_o (core_remote_reset_lo)
+  );
+  
+  logic core_link_internal_reset_lo, io_link_internal_reset_lo;
+  
+  // Actual internal_reset = remote_reset | local_core_link_reset
+  //
+  // In normal operation mode, this signal can be attached to 1'b0
+  // It is very useful when a link channel is left unused or physical IO
+  // pins are left floating:
+  // 1. When remote_reset is not available, internal_reset can be asserted
+  // 2. When io_clk_i is not available, core_internal_reset can still be asserted
+  //
+  // This guarantees the two_fifo on core clock side can be in reset state
+  //
+  bsg_launch_sync_sync 
+ #(.width_p(1)
+  ) internal_reset_lss
+  (.iclk_i      (core_clk_i)
+  ,.iclk_reset_i(1'b0)
+  ,.oclk_i      (io_clk_i)
+  ,.iclk_data_i (core_remote_reset_lo | core_link_reset_i)
+  ,.iclk_data_o (core_link_internal_reset_lo)
+  ,.oclk_data_o (io_link_internal_reset_lo)
   );
                                  
 

@@ -37,7 +37,7 @@ module bsg_link_source_sync_upstream
        , parameter inactive_pattern_p = {channel_width_p { 2'b10 } }
        
        // Reset pattern is 0xF*
-       // This is a soft reset from link_upstream to link_downstream
+       // This is a remote reset from link_upstream to link_downstream
        // When channel data bits are in reset pattern, downstream link is on reset
        // Note that this pattern must be the same for upstream and downstream links
        
@@ -192,6 +192,8 @@ module bsg_link_source_sync_upstream
 
    always_ff @(posedge io_master_clk_i)
      begin
+        // remote reset signal going to bsg_link_source_sync_downstream
+        // This is asserted when core_link_reset_i=1 OR core_link_enable_i=0
         if (io_internal_reset_lo)
           {io_valid_r_o, io_data_r_o} <= {1'b0, reset_pattern_p[0+:channel_width_p]};
         else
@@ -219,6 +221,7 @@ module bsg_link_source_sync_upstream
     // **************************************************************
     // As shown above, token_reset_lo signal has a 0->1->0 pattern, where the
     // posedge (0->1) resets the token counter.
+    //
     
     logic token_reset_lo;
     assign token_reset_lo = ~io_reset_lo & ~io_enable_lo;
