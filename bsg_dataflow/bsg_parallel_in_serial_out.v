@@ -27,6 +27,7 @@
 
 module bsg_parallel_in_serial_out #( parameter width_p = -1
                                    , parameter els_p   = -1
+                                   , parameter msb_first_p = 0
                                    )
     ( input clk_i
     , input reset_i
@@ -104,11 +105,24 @@ module bsg_parallel_in_serial_out #( parameter width_p = -1
           state_n = state_r;
         end
       end
+      
+    
+    // If send msb word first, reverse the input data array
+    logic [els_p-1:0][width_p-1:0] data_i_rev, data_li;
+    assign data_li = (msb_first_p)? data_i_rev : data_i;
+    
+    bsg_array_reverse 
+   #(.width_p(width_p)
+    ,.els_p(els_p)
+    ) bar
+    (.i(data_i)
+    ,.o(data_i_rev)
+    );
 
     /**
      * Input Data Logic
      *
-     * Whenever we decide to accept new data we will take data_i and store
+     * Whenever we decide to accept new data we will take data_li and store
      * it in data_r.
      */
     always_ff @(posedge clk_i)
@@ -116,7 +130,7 @@ module bsg_parallel_in_serial_out #( parameter width_p = -1
         if (reset_i) begin
           data_r <= '0;
         end else if (ready_o & valid_i) begin
-          data_r <= data_i;
+          data_r <= data_li;
         end
       end
 
