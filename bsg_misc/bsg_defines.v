@@ -12,6 +12,12 @@
 // calculate ceil(x/y) 
 `define BSG_CDIV(x,y) (((x)+(y)-1)/(y))
 
+`ifdef SYNTHESIS
+`define BSG_UNDEFINED_IN_SIM(val) (val)
+`else
+`define BSG_UNDEFINED_IN_SIM(val) ('X)
+`endif
+
 // nullify rpgroups
 `ifndef rpgroup
 `define rpgroup(x)
