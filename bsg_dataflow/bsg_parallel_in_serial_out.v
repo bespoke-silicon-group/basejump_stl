@@ -108,7 +108,7 @@ module bsg_parallel_in_serial_out #( parameter width_p    = -1
       
     
     // If send hi_to_lo, reverse the input data array
-    logic [els_p-1:0][width_p-1:0] data_i_rev, data_li;
+    logic [els_p-1:0][width_p-1:0] data_li;
     
     if (hi_to_lo_p == 0)
       begin: lo2hi
@@ -116,16 +116,14 @@ module bsg_parallel_in_serial_out #( parameter width_p    = -1
       end
     else
       begin: hi2lo
-        assign data_li = data_i_rev;
+        bsg_array_reverse 
+       #(.width_p(width_p)
+        ,.els_p(els_p)
+        ) bar
+        (.i(data_i)
+        ,.o(data_li)
+        );
       end
-    
-    bsg_array_reverse 
-   #(.width_p(width_p)
-    ,.els_p(els_p)
-    ) bar
-    (.i(data_i)
-    ,.o(data_i_rev)
-    );
 
     /**
      * Input Data Logic
