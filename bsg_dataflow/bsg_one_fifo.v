@@ -30,7 +30,7 @@ module bsg_one_fifo #(parameter width_p="inv"
     , input               yumi_i  // late
     );
   
-	logic full_r;
+  logic             full_r;
   
   assign ready_o = ~full_r;
   assign v_o     =  full_r;
