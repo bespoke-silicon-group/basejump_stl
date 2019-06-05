@@ -2,16 +2,20 @@
  *  bsg_serial_in_parallel_out_full_buffered.v
  *
  *  This is a simpler version of bsg_serial_in_parallel_out.
- *  Output is only valid, when the output vector is fully assembled.
- *  This version has zero bubble.
+ *  Output is only valid, when the output array is fully assembled.
+ *
+ *  By default, this version has zero bubble.
+ *  Minimize hardware by setting use_minimal_buffering_p=1, which introduces
+ *  1-cycle bubble for every data array received.
  *
  */
 
 module bsg_serial_in_parallel_out_full_buffered
 
- #(parameter width_p     = "inv"
-  ,parameter els_p       = "inv"
-  ,parameter hi_to_lo_p  = 0
+ #(parameter width_p                 = "inv"
+  ,parameter els_p                   = "inv"
+  ,parameter hi_to_lo_p              = 0
+  ,parameter use_minimal_buffering_p = 0
   )
   
   (input clk_i
@@ -27,10 +31,7 @@ module bsg_serial_in_parallel_out_full_buffered
   );
   
   localparam lg_els_lp = `BSG_SAFE_CLOG2(els_p);
-  
-  genvar i;
-  
-  
+   
   // If send hi_to_lo, reverse the output data array
   logic [els_p-1:0][width_p-1:0] data_lo;
 
@@ -49,69 +50,68 @@ module bsg_serial_in_parallel_out_full_buffered
       );
     end
     
-    
-  logic [lg_els_lp-1:0] counter_r, counter_lo;
-  // fix bsg_decode evaluate to Z in simulation
-  assign counter_lo = counter_r;
-  
+
   logic [els_p-1:0] fifo_valid_li, fifo_ready_lo;
   logic [els_p-1:0] fifo_valid_lo;
+
+  // Full array is valid when all fifos have valid data
+  assign v_o = & fifo_valid_lo;
   
-  assign ready_o = fifo_ready_lo[counter_lo];
-  assign v_o     = & fifo_valid_lo;
-  
-  bsg_decode_with_v
- #(.num_out_p(els_p)
-  ) bd
-  (.i  (counter_lo)
-  ,.v_i(v_i)
-  ,.o  (fifo_valid_li)
+  // Push received data into fifos in round-robin way
+  bsg_round_robin_1_to_n 
+ #(.width_p(width_p)
+  ,.num_out_p(els_p)
+  ) brr
+  (.clk_i  (clk_i)
+  ,.reset_i(reset_i)
+  ,.valid_i(v_i)
+  ,.ready_o(ready_o)
+  ,.valid_o(fifo_valid_li)
+  ,.ready_i(fifo_ready_lo)
   );
-  
+
+  // Data fifos
+  genvar i;
   
   for (i = 0; i < els_p; i++) 
   begin: fifos
-  
-    bsg_two_fifo
-    #(.width_p(width_p)
-    ) fifo
-    (.clk_i  (clk_i)
-    ,.reset_i(reset_i)
+    // Lowest word fifo selection depends on use_minimal_buffering_p
+    if (i == 0 && use_minimal_buffering_p == 0)
+      begin: twofifo
+        // Use two element fifo to avoid bubble
+        bsg_two_fifo
+        #(.width_p(width_p)
+        ) fifo
+        (.clk_i  (clk_i)
+        ,.reset_i(reset_i)
 
-    ,.ready_o(fifo_ready_lo[i])
-    ,.data_i (data_i)
-    ,.v_i    (fifo_valid_li[i])
+        ,.ready_o(fifo_ready_lo[i])
+        ,.data_i (data_i)
+        ,.v_i    (fifo_valid_li[i])
 
-    ,.v_o    (fifo_valid_lo[i])
-    ,.data_o (data_lo[i])
-    ,.yumi_i (yumi_i)
-    );
-    
+        ,.v_o    (fifo_valid_lo[i])
+        ,.data_o (data_lo[i])
+        ,.yumi_i (yumi_i)
+        );
+      end
+    else
+      begin: onefifo
+        // Use one element fifo to minimize hardware
+        bsg_one_fifo
+        #(.width_p(width_p)
+        ) fifo
+        (.clk_i  (clk_i)
+        ,.reset_i(reset_i)
+
+        ,.ready_o(fifo_ready_lo[i])
+        ,.data_i (data_i)
+        ,.v_i    (fifo_valid_li[i])
+
+        ,.v_o    (fifo_valid_lo[i])
+        ,.data_o (data_lo[i])
+        ,.yumi_i (yumi_i)
+        );
+      end
   end
-  
-  
-  logic clear_lo, up_lo;
-  
-  always_comb 
-  begin
-    clear_lo  = 1'b0;
-    up_lo   = 1'b0;
-    if (v_i & ready_o)
-        if (counter_lo == els_p-1)
-            clear_lo = 1'b1;
-        else
-            up_lo = 1'b1;
-  end
-  
-  bsg_counter_clear_up 
- #(.max_val_p (els_p-1)
-  ,.init_val_p(0)
-  ) counter
-  (.clk_i  (clk_i)
-  ,.reset_i(reset_i)
-  ,.clear_i(clear_lo)
-  ,.up_i   (up_lo)
-  ,.count_o(counter_r)
-  );
 
 endmodule
