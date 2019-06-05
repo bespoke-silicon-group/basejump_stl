@@ -38,6 +38,8 @@ module bsg_round_robin_1_to_n #(parameter width_p = "inv"
       ,.o      (ptr_r  )
       );
 
+   // bsg_decode_with_v could potentially be used to optimize this critical path 
+   // at the cost of area
    assign valid_o = (valid_i << ptr_r);
 
    // binary to one hot
