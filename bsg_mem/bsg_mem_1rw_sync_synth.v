@@ -6,10 +6,12 @@
 // NOTE: Users of BaseJump STL should not instantiate this module directly
 // they should use bsg_mem_1rw_sync.
 
-module bsg_mem_1rw_sync_synth #(parameter width_p=-1
-        , parameter els_p=-1
-        , parameter latch_last_read_p=0
-        , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p))
+module bsg_mem_1rw_sync_synth
+  #(parameter width_p=-1
+    , parameter els_p=-1
+    , parameter latch_last_read_p=0
+    , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+   )
    (input   clk_i
 	 	, input v_i
 		, input reset_i
@@ -19,6 +21,7 @@ module bsg_mem_1rw_sync_synth #(parameter width_p=-1
     , output logic [width_p-1:0]  data_o
     );
 
+  wire unused = reset_i;
 
   logic [addr_width_lp-1:0] addr_r;
   logic [width_p-1:0]    mem [els_p-1:0];
@@ -36,14 +39,12 @@ module bsg_mem_1rw_sync_synth #(parameter width_p=-1
 
   if (latch_last_read_p)
     begin: llr
-  
       logic read_en_r; 
 
-      bsg_dff_reset #(
+      bsg_dff #(
         .width_p(1)
       ) read_en_dff (
         .clk_i(clk_i)
-        ,.reset_i(reset_i)
         ,.data_i(read_en)
         ,.data_o(read_en_r)
       );
@@ -56,11 +57,9 @@ module bsg_mem_1rw_sync_synth #(parameter width_p=-1
         ,.data_i(data_out)
         ,.data_o(data_o)
       );
-
     end
   else
-    begin
-      wire unused = reset_i;
+    begin: no_llr
       assign data_o = data_out;
     end
 

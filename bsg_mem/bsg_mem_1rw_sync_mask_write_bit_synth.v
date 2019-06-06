@@ -7,10 +7,12 @@
 // they should use bsg_mem_1rw_sync_mask_write_bit.
 //
 
-module bsg_mem_1rw_sync_mask_write_bit_synth #(parameter width_p=-1
-                 , parameter els_p=-1
-                 , parameter latch_last_read_p=0
-                 , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p))
+module bsg_mem_1rw_sync_mask_write_bit_synth
+  #(parameter width_p=-1
+    , parameter els_p=-1
+    , parameter latch_last_read_p=0
+    , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+   )
    (input   clk_i
     , input reset_i
     , input [width_p-1:0] data_i
@@ -41,14 +43,12 @@ module bsg_mem_1rw_sync_mask_write_bit_synth #(parameter width_p=-1
 
    if (latch_last_read_p)
      begin: llr
-
       logic read_en_r; 
 
-      bsg_dff_reset #(
+      bsg_dff #(
         .width_p(1)
       ) read_en_dff (
         .clk_i(clk_i)
-        ,.reset_i(reset_i)
         ,.data_i(read_en)
         ,.data_o(read_en_r)
       );
@@ -61,10 +61,9 @@ module bsg_mem_1rw_sync_mask_write_bit_synth #(parameter width_p=-1
         ,.data_i(data_out)
         ,.data_o(data_o)
       );
-       
      end
    else
-     begin
+     begin: no_llr
        assign data_o = data_out;
      end
 
