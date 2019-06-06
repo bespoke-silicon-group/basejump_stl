@@ -42,6 +42,7 @@ module bsg_mem_2r1w_sync #( parameter width_p = -1
                           , parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
                           , parameter harden_p = 1
                           , parameter substitute_2r1w_p = 0
+                          , parameter latch_last_read_p = 1
                           )
   ( input clk_i
   , input reset_i
@@ -63,7 +64,7 @@ module bsg_mem_2r1w_sync #( parameter width_p = -1
 
   // TODO: Define more hardened macro configs here
   `bsg_mem_2r1w_sync_macro(32,64,1) else
-  `bsg_mem_2r1w_sync_macro(32,32,2) else
+  //`bsg_mem_2r1w_sync_macro(32,32,2) else
 
   // no hardened version found
     begin : z

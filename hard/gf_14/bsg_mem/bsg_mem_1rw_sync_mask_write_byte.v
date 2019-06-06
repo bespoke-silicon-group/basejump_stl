@@ -29,6 +29,7 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
                                          , parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
                                          , parameter write_mask_width_lp = data_width_p>>3
                                          , parameter harden_p = 1
+                                         , parameter latch_last_read_p = 1
                                          )
 
   ( input                           clk_i
@@ -46,6 +47,7 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
   // TODO: Define more hardened macro configs here
   `bsg_mem_1rw_sync_mask_write_byte_macro(512,64,2) else
   `bsg_mem_1rw_sync_mask_write_byte_macro(1024,32,4) else
+  `bsg_mem_1rw_sync_mask_write_byte_macro(2048,64,4) else
 
   // no hardened version found
     begin : notmacro

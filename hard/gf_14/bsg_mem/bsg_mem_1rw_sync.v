@@ -25,6 +25,7 @@ module bsg_mem_1rw_sync #( parameter width_p = -1
                          // whether to substitute a 1r1w
                          , parameter substitute_1r1w_p = 1
                          , parameter harden_p = 1
+                         , parameter latch_last_read_p = 1
                          )
   ( input                     clk_i
   , input                     reset_i

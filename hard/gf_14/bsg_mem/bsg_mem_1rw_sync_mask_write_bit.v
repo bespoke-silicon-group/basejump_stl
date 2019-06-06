@@ -47,6 +47,7 @@ module bsg_mem_1rw_sync_mask_write_bit #( parameter width_p = -1
                                         , parameter els_p = -1
                                         , parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
                                         , parameter harden_p = 1
+                                        , parameter latch_last_read_p = 1
                                         )
   ( input                       clk_i
   , input                       reset_i
@@ -64,6 +65,9 @@ module bsg_mem_1rw_sync_mask_write_bit #( parameter width_p = -1
   `bsg_mem_1rw_sync_mask_write_bit_macro( 64,15,4) else
   `bsg_mem_1rw_sync_mask_write_bit_macro( 64, 7,4) else
   `bsg_mem_1rw_sync_mask_write_bit_macro(256,48,2) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro(256,30,2) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro(256,4,2) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro(256,34,2) else
 
   `bsg_mem_1rw_sync_mask_write_bit_macro_banks(64,116,2, 2) else
   
