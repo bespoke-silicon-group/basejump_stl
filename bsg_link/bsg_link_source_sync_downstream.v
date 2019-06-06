@@ -1,4 +1,7 @@
 // MBT 7/24/2014
+//
+// Updated by Paul Gao 02/2019
+//
 // DDR or center/edge-aligned SDR source synchronous input channel
 //
 // this implements:
@@ -6,10 +9,9 @@
 //     async fifo to go from source-synchronous domain to core domain
 //     outgoing token channel to go from core domain deque to out of chip
 //     outgoing source-synchronous launch flops for token
-//     programmable capture on either or both edges of the clock
 //
-// note, the default FIFO depth is set to 2^5
-// based on the following calculation:
+// note, the default FIFO depth is set to 2^6 based on experiments on FPGA
+// Below is a rough calculation:
 //
 // 2 clks for channel crossing
 // 3 clks for receive fifo crossing
@@ -22,7 +24,7 @@
 // -----------
 // 19 clks
 //
-// This leaves us with 13 elements of margin
+// This leaves us with 45 elements of margin
 // for FPGA inefficiency. Since the FPGA may run
 // at 4X slower, this is equivalent to 3 FPGA cycles.
 //
@@ -32,188 +34,96 @@
 // io_*: signals synchronous to io_clk_i
 // core_*: signals synchronous to core_clk_i
 //
-// During reset, the SS output channel needs to toggle its input toggle clock.
-// To do this, it must  assert the two trigger lines (0x180 on { valid , data })
-// and wait at least 2**(lg_credit_to_token_decimation_p+1) cycles and then deassert
-// it. This will be routed around by the SS input channel and toggle the trigger
-// clock line, allowing it be reset.
-//
 
-//
-// perf fixme: data comes in at 64 bits per core cycle, but it is serialized
-// to 32-bits per cycle in the core domain. thus in theory some assembler-like changes could
-// allow for the in  I/O data rate to be twice the core frequency. but the assembler
-// may be on the core critical path.
-//
+module bsg_link_source_sync_downstream 
 
-module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
-                               , parameter lg_credit_to_token_decimation_p=3
-                               , parameter channel_width_p=8
-)
-   (
-    // source synchronous input channel; coming from chip edge
-    input                         io_clk_i      // sdi_sclk
-    , input                        io_reset_i   // synchronous reset
-    , input                        io_token_bypass_i // {v,d[7]} controls token signal
-    , input  [channel_width_p-1:0] io_data_i    // sdi_data
-    , input                        io_valid_i   // sdi_valid
-    , input  [1:0]                 io_edge_i    // bit vector of which
+ #(parameter channel_width_p                 = 16
+  ,parameter lg_fifo_depth_p                 = 6
+  ,parameter lg_credit_to_token_decimation_p = 3
+  
+  // Reset pattern is 0xF*
+  // This is a soft reset from link_upstream to link_downstream
+  // When channel data bits are in reset pattern, downstream link is on reset
+  // Note that this pattern must be the same for upstream and downstream links
+  
+  ,parameter reset_pattern_p = {channel_width_p {1'b1}}
+  )
+  
+  (// control signals
+   input                        core_clk_i
+  ,input                        core_link_reset_i
 
-                                                // edges to capture <pos, neg edge>
-                                                //   11=DDR
-                                                //   10=edge-aligned SDR
-                                                //   01=center-aligned SDR
-                                                //
-    , output                       io_token_r_o // sdi_token; output registered
+  // source synchronous input channel; coming from chip edge
+  ,input                        io_clk_i     // sdi_sclk
+  ,input  [channel_width_p-1:0] io_data_i    // sdi_data
+  ,input                        io_valid_i   // sdi_valid
+  ,output                       io_token_r_o // sdi_token; output registered
 
-    // positive edge snoop
-    , output [channel_width_p:0]   io_snoop_pos_r_o     // { valid, data};
-
-    // negative edge snoop
-    , output [channel_width_p:0]   io_snoop_neg_r_o     // { valid, data};
-
-    // for calibration
-    , input                        io_trigger_mode_en_i      // in trigger mode
-    , input                        io_trigger_mode_alt_en_i  // use alternate trigger
-
-    // going into core; uses core clock
-    , input                        core_clk_i
-    , input                        core_reset_i  // synchronous reset
-    , output [channel_width_p-1:0] core_data_o
-    , output                       core_valid_o
-    , input                        core_yumi_i   // accept data if:
-                                                 //    core_valid_o high, and then
-                                                 //    core_yumi_i  high
-
-   );
-
-   // ******************************************
-   // DDR capture registers
-   //
-   // we capture data on both edges. the negedge comes before the
-   // positive edge logically and hence is labeled 0. we delay
-   // the negedge so we can consider both data words on the same cycle.
-   //
-   // set_dont_touch these and apply the
-   // static timing rules
-
-   logic [channel_width_p-1:0]   core_data_0,  core_data_1
-                                 , io_data_0_r,  io_data_1_r;
-
-   logic                         core_valid_0, core_valid_1
-                                 , io_valid_0_r, io_valid_1_r
-                                 , io_valid_negedge_r;
-
-   logic [channel_width_p-1:0] io_data_negedge_r;
-
-   // capture negedge data and valid
-   always @(negedge io_clk_i)
-     begin
-        io_data_negedge_r  <= io_data_i;
-        io_valid_negedge_r <= io_valid_i;
-     end
-
-   // then capture posedge data and valid
-   always @(posedge io_clk_i)
-     begin
-        io_data_0_r  <= io_data_negedge_r;    io_valid_0_r <= io_valid_negedge_r;
-        io_data_1_r  <= io_data_i;            io_valid_1_r <= io_valid_i;
-     end
-
-   assign io_snoop_pos_r_o = {io_valid_1_r, io_data_1_r};
-   assign io_snoop_neg_r_o = {io_valid_0_r, io_data_0_r};
-
-   // ******************************************
-   // trigger_mode
-   //
-   // Trigger mode is used for alignment. We sample the input in bursts of 8 pairs
-   // and then send through the FIFO.
-   //
-   // In alternate mode, we capture the valid bit instead of
-   // a data bit. Which data bit should we substitute out?
-   // We don't want the alternate trigger wire to be next to the valid/ncmd line.
-   // GF28: valid (ncmd) bit is between data_0 and sclk.
-   // UCSD_BGA: valid (ncmd) bit is between data_3 and sclk.
-   // So substituting in for the top bit of the data should be fine for both cases.
-   //
-   //
-
-   wire    [channel_width_p-1:0] io_data_0_r_swizzle = io_trigger_mode_alt_en_i
-                                 ? {io_valid_0_r, io_data_0_r[0+:channel_width_p-1] }
-                                 : io_data_0_r;
-
-   wire    [channel_width_p-1:0] io_data_1_r_swizzle = io_trigger_mode_alt_en_i
-                                 ? {io_valid_1_r, io_data_1_r[0+:channel_width_p-1] }
-                                 : io_data_1_r;
-
-   wire   io_trigger_mode_0, io_trigger_mode_1;
-
-   // when we are in trigger mode, we have not aligned bits yet
-   // so we have the risk of metastability, so we must synchronize
-   // both possible trigger bits.
-
-   // fixme: do these need launch flops?
-   
-   bsg_sync_sync #(.width_p(1)) bssv
-   (.oclk_i(io_clk_i)
-    ,.iclk_data_i(io_valid_1_r)
-    ,.oclk_data_o(io_trigger_mode_0)
-    );
-
-   // note if you change the location of the trigger bit
-   // then you need to potentially change the calibration codes
-   bsg_sync_sync #(.width_p(1)) bssd
-   (.oclk_i(io_clk_i)
-    ,.iclk_data_i(io_data_1_r[channel_width_p-1])
-    ,.oclk_data_o(io_trigger_mode_1)
-    );
-
-   localparam lg_io_trigger_words_lp = 3;
-   logic  io_trigger_line_r;
-   logic [lg_io_trigger_words_lp+1-1:0] io_trigger_count_r;
-
-   wire io_trigger_line = io_trigger_mode_alt_en_i
-                          ? io_trigger_mode_1
-                          : io_trigger_mode_0;
-
-   wire io_trigger_mode_active = (| io_trigger_count_r);
-
-   always @(posedge io_clk_i)
-     if (io_reset_i)
-       begin
-          io_trigger_line_r  <= 0;
-          io_trigger_count_r <= 0;
-       end
-     else
-       begin
-          // delay by one full clock cycle to detect transition
-          io_trigger_line_r <= io_trigger_line;
-          if (io_trigger_mode_active)
-            io_trigger_count_r <= io_trigger_count_r - 1;
-          else
-            // if trigger line switched over last cycle
-            // we go ahead and capture data
-            if (io_trigger_line ^ io_trigger_line_r)
-              io_trigger_count_r <= 2**(lg_io_trigger_words_lp);
-       end
-
+  // going into core; uses core clock
+  ,output [channel_width_p-1:0] core_data_o
+  ,output                       core_valid_o
+  ,input                        core_yumi_i
+  );
+  
+  //  
+  // remote reset signal coming from bsg_link_source_sync_upstream
+  // remote reset is asserted when source_sync_upstream in reset OR not enabled
+  //
+  logic io_remote_reset_lo, core_remote_reset_lo;
+  assign io_remote_reset_lo = (io_data_i==reset_pattern_p && ~io_valid_i);
+  
+  // remote reset signal from io clock to core clock
+  bsg_launch_sync_sync 
+ #(.width_p(1)
+  ) remote_reset_lss
+  (.iclk_i      (io_clk_i)
+  ,.iclk_reset_i(1'b0)
+  ,.oclk_i      (core_clk_i)
+  ,.iclk_data_i (io_remote_reset_lo)
+  ,.iclk_data_o ()
+  ,.oclk_data_o (core_remote_reset_lo)
+  );
+  
+  logic core_link_internal_reset_lo, io_link_internal_reset_lo;
+  
+  // Actual internal_reset = remote_reset | local_core_link_reset
+  //
+  // In normal operation mode, this signal can be attached to 1'b0
+  // It is very useful when a link channel is left unused or physical IO
+  // pins are left floating:
+  // 1. When remote_reset is not available, internal_reset can be asserted
+  // 2. When io_clk_i is not available, core_internal_reset can still be asserted
+  //
+  // This guarantees the two_fifo on core clock side can be in reset state
+  //
+  bsg_launch_sync_sync 
+ #(.width_p(1)
+  ) internal_reset_lss
+  (.iclk_i      (core_clk_i)
+  ,.iclk_reset_i(1'b0)
+  ,.oclk_i      (io_clk_i)
+  ,.iclk_data_i (core_remote_reset_lo | core_link_reset_i)
+  ,.iclk_data_o (core_link_internal_reset_lo)
+  ,.oclk_data_o (io_link_internal_reset_lo)
+  );
+                                 
 
    // ******************************************
    // clock-crossing async fifo (with DDR interface)
    //
-   // we enque both DDR words side-by-side, with valid bits
-   // if either one of them is valid. this us allows us
-   // to reconcile the ordering of negedge versus posedge clock
+   // Note that this async fifo also serves as receive buffer
+   // The buffer size depends on lg_fifo_depth_p (must match bsg_link_source_sync_upstream)
+   //
+   // With token based flow control, fifo should never overflow
+   // io_async_fifo_full signal is only for debugging purposes
    //
 
    wire   io_async_fifo_full;
-   wire   io_async_fifo_enq = io_trigger_mode_en_i
-               ? io_trigger_mode_active             // enque if we in trigger mode
-               : (io_valid_0_r | io_valid_1_r);     // enque if either valid bit set
+   wire   io_async_fifo_enq = io_valid_i; // enque if either valid bit set
 
    // synopsys translate_off
 
-   always @(negedge io_clk_i)
+   always_ff @(negedge io_clk_i)
      assert(!(io_async_fifo_full===1 && io_async_fifo_enq===1))
        else $error("attempt to enque on full async fifo");
 
@@ -222,102 +132,60 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
 
    wire   core_actual_deque;
    wire   core_valid_o_tmp;
+   logic [channel_width_p-1:0]   core_data_lo;
 
+  bsg_async_fifo 
+ #(.lg_size_p(lg_fifo_depth_p)
+  ,.width_p(channel_width_p)
+  ) baf
+  (.w_clk_i  (io_clk_i)
+  ,.w_reset_i(io_link_internal_reset_lo)
+  
+  ,.w_enq_i  (io_async_fifo_enq)
+  ,.w_data_i (io_data_i)
+  ,.w_full_o (io_async_fifo_full)
 
-   bsg_async_fifo #(.lg_size_p(lg_fifo_depth_p)  // 32 elements
-                    ,.width_p( (channel_width_p+1)*2 ) // room for both valids and
-                                                       //  for both data words
-		    ,.control_width_p(2)
-                    ) baf
-   (
-    .w_clk_i(io_clk_i)
-    ,.w_reset_i(io_reset_i)
-    ,.w_enq_i(io_async_fifo_enq)
-    ,.w_data_i(io_trigger_mode_en_i
-               ? { 1'b1                       , 1'b1
-                   , io_data_1_r_swizzle      , io_data_0_r_swizzle}
+  ,.r_clk_i  (core_clk_i)
+  ,.r_reset_i(core_link_internal_reset_lo)
 
-               : { io_valid_1_r & io_edge_i[1], io_valid_0_r & io_edge_i[0]
-                  , io_data_1_r               , io_data_0_r                })
+  ,.r_deq_i  (core_actual_deque)
+  ,.r_data_o (core_data_lo)
+  ,.r_valid_o(core_valid_o_tmp));
 
-    ,.w_full_o(io_async_fifo_full)
-
-    ,.r_clk_i(core_clk_i)
-    ,.r_reset_i(core_reset_i)
-
-    ,.r_deq_i(core_actual_deque)
-    ,.r_data_o({core_valid_1, core_valid_0, core_data_1, core_data_0})
-
-    // there is data in the FIFO
-    ,.r_valid_o(core_valid_o_tmp)
-    );
-
-   logic  core_sent_0_want_to_send_1_r;
-
-
-   // send 1 if we already sent 0; or if there is no 0.
-   wire [channel_width_p-1:0] core_data_o_pre_twofer
-                              = (core_sent_0_want_to_send_1_r | ~core_valid_0)
-                              ? core_data_1
-                              : core_data_0;
 
    wire core_valid_o_pre_twofer = core_valid_o_tmp; // remove inout warning from lint
-
    wire core_twofer_ready;
 
-   // Oct 17, 2014
-   // we insert a minimal fifo here for two purposes;
-   // first, this reduces critical
-   // paths causes by excessive access times of the async fifo.
-   //
-   // second, it ensures that asynchronous paths end inside of this module
-   // and do not propogate out to other modules that may be attached, complicating
-   // timing assertions.
-   //
+  // Oct 17, 2014
+  // we insert a minimal fifo here for two purposes;
+  // first, this reduces critical
+  // paths causes by excessive access times of the async fifo.
+  //
+  // second, it ensures that asynchronous paths end inside of this module
+  // and do not propogate out to other modules that may be attached, complicating
+  // timing assertions.
+  //
+  bsg_two_fifo 
+ #(.width_p(channel_width_p)
+  ) twofer
+  (.clk_i  (core_clk_i)
+  ,.reset_i(core_link_internal_reset_lo)
 
-   bsg_two_fifo #(.width_p(channel_width_p)) twofer
-     (.clk_i(core_clk_i)
-      ,.reset_i(core_reset_i)
+  // we feed this into the local yumi, but only if it is valid
+  ,.ready_o(core_twofer_ready)
+  ,.data_i (core_data_lo)
+  ,.v_i    (core_valid_o_pre_twofer)
 
-      // we feed this into the local yumi, but only if it is valid
-      ,.ready_o(core_twofer_ready)
-      ,.data_i(core_data_o_pre_twofer)
-      ,.v_i(core_valid_o_pre_twofer)
-
-      ,.v_o(core_valid_o)
-      ,.data_o(core_data_o)
-      ,.yumi_i(core_yumi_i)
-      );
+  ,.v_o    (core_valid_o)
+  ,.data_o (core_data_o)
+  ,.yumi_i (core_yumi_i)
+  );
 
 
    // a word was transferred to the two input fifo if ...
    wire core_transfer_success = core_valid_o_tmp & core_twofer_ready;
+   assign core_actual_deque = core_transfer_success;
 
-/*   
-                               // deque if there was an actual transfer, AND (
-   assign   core_actual_deque  = core_transfer_success
-                               // we sent the 0th word already,
-                               // and just sent the 1st word, OR
-                               & ((core_sent_0_want_to_send_1_r & core_valid_1)
-                                  // we sent the 0th word and there is no 1st word OR
-                                  // we sent the 1st word, and there is no 0th word
-                                  | (core_valid_0 ^ core_valid_1));
-*/
-   assign core_actual_deque = core_transfer_success & ~(~core_sent_0_want_to_send_1_r & core_valid_1 & core_valid_0);
-
-   always @(posedge core_clk_i)
-     begin
-        if (core_reset_i)
-          core_sent_0_want_to_send_1_r  <= 0;
-        else
-          // if we transferred data, but do not deque, we must have another word to
-          // transfer. mbt fixme: this was originally:
-          // core_transfer_success & ~core_actual_deque
-          // but had a bug. review further.
-          core_sent_0_want_to_send_1_r  <= core_transfer_success
-                                           ? ~core_actual_deque
-                                           : core_sent_0_want_to_send_1_r;
-     end
 
 // **********************************************
 // credit return
@@ -325,6 +193,7 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
 // these are credits coming from the receive end of the async fifo in the core clk
 //  domain and passing to the io clk domain and out of the chip.
 //
+    
 
    logic [lg_fifo_depth_p+1-1:0] core_credits_gray_r_iosync
                                  , core_credits_binary_r_iosync
@@ -333,7 +202,7 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
 
    bsg_async_ptr_gray #(.lg_size_p(lg_fifo_depth_p+1)) bapg
    (.w_clk_i   (core_clk_i)
-    ,.w_reset_i(core_reset_i)
+    ,.w_reset_i(core_link_internal_reset_lo)
     ,.w_inc_i  (core_transfer_success)
     ,.r_clk_i  (io_clk_i)
     ,.w_ptr_binary_r_o() // not needed
@@ -345,8 +214,8 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
    // note: generally relies on power-of-twoness of io_credits_sent_r
    // to do correct wrap around.
 
-   always_comb io_credits_sent_r_p1 = io_credits_sent_r+1;
-   always_comb io_credits_sent_r_p2 = io_credits_sent_r+2;
+   assign io_credits_sent_r_p1 = io_credits_sent_r + (lg_fifo_depth_p+1)'(1);
+   assign io_credits_sent_r_p2 = io_credits_sent_r + (lg_fifo_depth_p+1)'(2);
 
    // which bit of the io_credits_sent_r counter we use determines
    // the value of the token line in credits
@@ -393,16 +262,15 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
    wire empty_1 = (core_credits_gray_r_iosync != io_credits_sent_p1_r_gray);
    wire empty_0 = (core_credits_gray_r_iosync != io_credits_sent_r_gray);
 
-   always @(posedge io_clk_i)
+   always_ff @(posedge io_clk_i)
      begin
-        if (io_token_bypass_i)
-          io_credits_sent_r <= { lg_fifo_depth_p+1
-                                 { io_trigger_mode_1 & io_trigger_mode_0 } };
+        if (io_link_internal_reset_lo)
+          io_credits_sent_r <= { lg_fifo_depth_p+1 { 1'b0 } };
         else
           // we absorb up to two credits per cycles, since we receive at DDR,
           // we need this to rate match the incoming data
 
-	  // code is written like this because empty_1 is late relative to empty_0
+      // code is written like this because empty_1 is late relative to empty_0
           io_credits_sent_r <= (empty_1
                                 ? (empty_0 ? io_credits_sent_r_p2 : io_credits_sent_r)
                                 : (empty_0 ? io_credits_sent_r_p1 : io_credits_sent_r));
