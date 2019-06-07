@@ -1,4 +1,6 @@
-// MBT 7/24/2014
+//
+// Prof. Taylor   7/24/2014
+// <prof.taylor@gmail.com>
 //
 // Updated by Paul Gao 02/2019
 //
@@ -9,13 +11,29 @@
 //     - outgoing source-synchronous launch flops for token
 //     - center-aligned DDR source sync output clock
 //
+// General reset procedures:
 //
-// Note, for token clock reset, there is a certain pattern that must be asserted
-// and deasserted during io reset.
+// Step 1: Assert io_link_reset_i and core_link_reset_i.
+// Step 2: async_token_reset_i must be posedge/negedge toggled (0->1->0) 
+//         at least once. token_clk_i cannot toggle during this step.
+// Step 3: io_clk_i posedge toggled at least four times after that.
+// Step 4: Deassert io_link_reset_i. 
+// Step 5: Deassert core_link_reset_i. 
+//
+// *************************************************************************
+//              async_token_reset_i    io_link_reset_i    core_link_reset_i
+//  Step 1               0                    1                   1
+//  Step 2               1                    1                   1
+//  Step 3               0                    1                   1
+//  Step 4               0                    0                   1
+//  Step 5               0                    0                   0
+// *************************************************************************
+//
 //
 
 
 module bsg_link_source_sync_upstream
+
      #(  parameter channel_width_p                 = 16
        , parameter lg_fifo_depth_p                 = 6
        , parameter lg_credit_to_token_decimation_p = 3
@@ -33,73 +51,35 @@ module bsg_link_source_sync_upstream
        // and the ratio of signal to I/O V33 and VZZ is
        // 4:1:1.
        //
-
+       // fixme: an alternative might be to tri-state
+       // the output, but further analysis is required
+       // as to whether this is a good idea.
+       
+       // this default is only safe because we assume that only data bits are
+       // being specified in the channel and no control bits, and that these data bits
+       // are otherwise ignored by the receiver control logic if the output of this module 
+       // is indicated as invalid.
        , parameter inactive_pattern_p = {channel_width_p { 2'b10 } }
-       
-       // Reset pattern is 0xF*
-       // This is a remote reset from link_upstream to link_downstream
-       // When channel data bits are in reset pattern, downstream link is on reset
-       // Note that this pattern must be the same for upstream and downstream links
-       
-       , parameter reset_pattern_p = {channel_width_p {1'b1} }
-       
        )
        
    (// control signals  
       input                         core_clk_i
     , input                         core_link_reset_i
-    , input                         core_link_enable_i
-    
-    , input                         io_master_clk_i
-    , output                        io_reset_o
+    , input                         io_clk_i
+    , input                         io_link_reset_i
+    , input                         async_token_reset_i
     
     // Input from chip core
     , input [channel_width_p-1:0]   core_data_i
     , input                         core_valid_i
-    , output                        core_ready_o  
+    , output                        core_ready_o
 
-    // source synchronous output channel to chip edge
+    // output channel to ODDR_PHY
     , output logic  [channel_width_p-1:0] io_data_o    // output data
     , output logic                        io_valid_o   // output valid
     , input                               io_ready_i   // output PHY is ready
     , input                               token_clk_i  // input token clock
    );
-
-   
-  // reset signals
-  logic core_link_reset_lo, io_reset_lo;
-  logic core_link_enable_lo, io_enable_lo;
-  assign io_reset_o = io_reset_lo;
-   
-  bsg_launch_sync_sync
- #(.width_p(1)
-  ) reset_blss
-  (.iclk_i      (core_clk_i)
-  ,.iclk_reset_i(1'b0)
-  ,.oclk_i      (io_master_clk_i)
-  ,.iclk_data_i (core_link_reset_i)
-  ,.iclk_data_o (core_link_reset_lo)
-  ,.oclk_data_o (io_reset_lo)
-  );
-  
-  bsg_launch_sync_sync
- #(.width_p(1)
-  ) enable_blss
-  (.iclk_i      (core_clk_i)
-  ,.iclk_reset_i(1'b0)
-  ,.oclk_i      (io_master_clk_i)
-  ,.iclk_data_i (core_link_enable_i)
-  ,.iclk_data_o (core_link_enable_lo)
-  ,.oclk_data_o (io_enable_lo)
-  );
-
-
-  // internal reset signal
-  logic core_internal_reset_lo, io_internal_reset_lo;
-  
-  // Internal reset mode if reset asserted or link not enabled
-  assign core_internal_reset_lo = ~core_link_enable_lo | core_link_reset_lo;
-  assign io_internal_reset_lo   = ~io_enable_lo        | io_reset_lo;
 
 
   logic core_fifo_valid, core_fifo_yumi;
@@ -117,7 +97,7 @@ module bsg_link_source_sync_upstream
  #(.width_p(channel_width_p)
   ) core_fifo
   (.clk_i  (core_clk_i)
-  ,.reset_i(core_internal_reset_lo)
+  ,.reset_i(core_link_reset_i)
   
   ,.ready_o(core_ready_o)
   ,.data_i (core_data_i)
@@ -129,11 +109,11 @@ module bsg_link_source_sync_upstream
   );
   
   
-  logic core_fifo_full;
-  assign core_fifo_yumi = core_fifo_valid & ~core_fifo_full;
+  logic core_async_fifo_full;
+  assign core_fifo_yumi = core_fifo_valid & ~core_async_fifo_full;
   
-  logic io_fifo_valid, io_fifo_yumi;
-  logic [channel_width_p-1:0] io_fifo_data;
+  logic io_async_fifo_valid, io_async_fifo_yumi;
+  logic [channel_width_p-1:0] io_async_fifo_data;
   
   
   // ******************************************
@@ -164,24 +144,26 @@ module bsg_link_source_sync_upstream
   // but the two setup times, which are guaranteed to
   // be less than a cycle each. So we get 8 elements total.
   //
+  
+  // TODO: if we use 3-cycle synchronizers, then the async fifo would have to be larger.
    
   bsg_async_fifo
  #(.lg_size_p(3)
   ,.width_p(channel_width_p)
   ) async_fifo
   (.w_clk_i  (core_clk_i)
-  ,.w_reset_i(core_internal_reset_lo)
+  ,.w_reset_i(core_link_reset_i)
 
   ,.w_enq_i  (core_fifo_yumi)
   ,.w_data_i (core_fifo_data)
-  ,.w_full_o (core_fifo_full)
+  ,.w_full_o (core_async_fifo_full)
 
-  ,.r_clk_i  (io_master_clk_i)
-  ,.r_reset_i(io_internal_reset_lo)
+  ,.r_clk_i  (io_clk_i)
+  ,.r_reset_i(io_link_reset_i)
 
-  ,.r_deq_i  (io_fifo_yumi)
-  ,.r_data_o (io_fifo_data)
-  ,.r_valid_o(io_fifo_valid)
+  ,.r_deq_i  (io_async_fifo_yumi)
+  ,.r_data_o (io_async_fifo_data)
+  ,.r_valid_o(io_async_fifo_valid)
   );
   
 
@@ -190,79 +172,64 @@ module bsg_link_source_sync_upstream
    
    
    // when fifo has valid data and token credit is available
-   logic io_fifo_valid_credit_avail;
+   logic io_valid_n;
    
    always_comb
      begin
-        if (io_internal_reset_lo)
+        // By default, data output is inactive pattern
+        io_data_o = inactive_pattern_p[0+:channel_width_p];
+        if (io_link_reset_i)
           begin
              io_valid_o = 1'b0;
-             io_data_o  = reset_pattern_p[0+:channel_width_p];
           end
         else
           begin
-             io_valid_o = io_fifo_valid_credit_avail;
-             if (io_fifo_valid_credit_avail)
-               io_data_o = io_fifo_data;
-             else
-               io_data_o = inactive_pattern_p[0+:channel_width_p];
+             // subtle: we assert the real data rather than the inactive_pattern when we have 
+             // valid data and enough credit, even if the serdes is not ready to send, since 
+             // the data is ignored and it will reduce spurious switching.
+             io_valid_o = io_valid_n;
+             if (io_valid_n)
+               io_data_o = io_async_fifo_data;
           end
      end
-   
-   
-    //
-    // token async reset rules:
-    //
-    // Token counters use asynchronous reset signal, which means write clock 
-    // token_clk_i CANNOT oscillate during reset (constant 0).
-    // Token reset procedure:
-    // **************************************************************
-    //                   io_reset_lo   io_enable_lo   token_reset_lo
-    //    Initial value       1              0              0
-    //    Step 1              0              0              1
-    //    Step 2              0              1              0    
-    // **************************************************************
-    // As shown above, token_reset_lo signal has a 0->1->0 pattern, where the
-    // posedge (0->1) resets the token counter.
-    //
-    
-    logic token_reset_lo;
-    assign token_reset_lo = ~io_reset_lo & ~io_enable_lo;
-    
 
    // we need to track whether the credits are coming from
    // posedge or negedge tokens.
 
    // high bit indicates which counter we are grabbing from
-   logic [lg_credit_to_token_decimation_p+1-1:0] token_alternator_r;
-
-   always_ff @(posedge io_master_clk_i)
-     begin
-        if (io_internal_reset_lo)
-          // this will start us on the posedge token
-          token_alternator_r <= '0;
-        else
-          if (io_fifo_yumi)
-            token_alternator_r <= token_alternator_r + (lg_credit_to_token_decimation_p+1)'(1);
-     end
+   logic [lg_credit_to_token_decimation_p+1-1:0] io_token_alternator_r;
+   
+   // Increase token alternator when dequeue from async fifo
+   bsg_counter_clear_up 
+  #(.max_val_p({(lg_credit_to_token_decimation_p+1){1'b1}})
+   ,.init_val_p(0) // this will start us on the posedge token
+   ,.disable_overflow_warning_p(1) // Allow overflow for this counter
+   )
+   token_alt
+   (.clk_i  (io_clk_i)
+   ,.reset_i(io_link_reset_i)
+   ,.clear_i(1'b0)
+   ,.up_i   (io_async_fifo_yumi)
+   ,.count_o(io_token_alternator_r)
+   );
 
    // high bit set means we have exceeded number of posedge credits
    // and are doing negedge credits
-   wire on_negedge_token = token_alternator_r[lg_credit_to_token_decimation_p];
+   wire io_on_negedge_token = io_token_alternator_r[lg_credit_to_token_decimation_p];
 
    logic io_negedge_credits_avail, io_posedge_credits_avail;
 
-   wire io_credit_avail = on_negedge_token
+   wire io_credit_avail = io_on_negedge_token
         ? io_negedge_credits_avail
         : io_posedge_credits_avail;
 
    // we send if we have both data to send and credits to send with
-   assign io_fifo_valid_credit_avail = io_credit_avail & io_fifo_valid;
+   assign io_valid_n = io_credit_avail & io_async_fifo_valid;
    // dequeue from fifo when io_ready
-   assign io_fifo_yumi = io_fifo_valid_credit_avail & io_ready_i;
+   assign io_async_fifo_yumi = io_valid_n & io_ready_i;
 
-   wire io_negedge_credits_deque = io_fifo_yumi & on_negedge_token;
-   wire io_posedge_credits_deque = io_fifo_yumi & ~on_negedge_token;
+   wire io_negedge_credits_deque = io_async_fifo_yumi & io_on_negedge_token;
+   wire io_posedge_credits_deque = io_async_fifo_yumi & ~io_on_negedge_token;
 
    // **********************************************
    // token channel
@@ -296,13 +263,13 @@ module bsg_link_source_sync_upstream
        (
         .w_clk_i   (token_clk_i)
         ,.w_inc_token_i(1'b1)
-        ,.w_reset_i(token_reset_lo)
+        ,.w_reset_i(async_token_reset_i)
 
         // the I/O clock domain is responsible for tabulating tokens
-        ,.r_clk_i  (io_master_clk_i)
-        ,.r_reset_i(io_internal_reset_lo)
+        ,.r_clk_i             (io_clk_i                )
+        ,.r_reset_i           (io_link_reset_i         )
         ,.r_dec_credit_i      (io_posedge_credits_deque)
-        ,.r_infinite_credits_i(io_internal_reset_lo)
+        ,.r_infinite_credits_i(1'b0                    )
         ,.r_credits_avail_o   (io_posedge_credits_avail)
         );
 
@@ -319,13 +286,13 @@ module bsg_link_source_sync_upstream
        (
         .w_clk_i   (token_clk_i)
         ,.w_inc_token_i(1'b1)
-        ,.w_reset_i(token_reset_lo)
+        ,.w_reset_i(async_token_reset_i)
 
         // the I/O clock domain is responsible for tabulating tokens
-        ,.r_clk_i             (io_master_clk_i         )
-        ,.r_reset_i           (io_internal_reset_lo       )
+        ,.r_clk_i             (io_clk_i                )
+        ,.r_reset_i           (io_link_reset_i         )
         ,.r_dec_credit_i      (io_negedge_credits_deque)
-        ,.r_infinite_credits_i(io_internal_reset_lo)
+        ,.r_infinite_credits_i(1'b0                    )
         ,.r_credits_avail_o   (io_negedge_credits_avail)
         );
 
