@@ -9,6 +9,7 @@ module bsg_counter_clear_up #(parameter max_val_p     = -1
 			     ,parameter init_val_p   = `BSG_UNDEFINED_IN_SIM('0)
                              ,parameter ptr_width_lp =
                              `BSG_SAFE_CLOG2(max_val_p+1)
+			     ,parameter disable_overflow_warning_p = 0
                              )
    (input  clk_i
     , input reset_i
@@ -34,10 +35,11 @@ module bsg_counter_clear_up #(parameter max_val_p     = -1
 
 //synopsys translate_off
 
-   always_ff @ (negedge clk_i) begin
-      if ((count_o==ptr_width_lp '(max_val_p)) & up_i   & (reset_i===0))
-        $display("%m error: counter overflow at time %t", $time);
-   end
+   always_ff @ (negedge clk_i) 
+     begin
+       if ((count_o==ptr_width_lp '(max_val_p)) && up_i && (reset_i===0) && !disable_overflow_warning_p)
+         $display("%m error: counter overflow at time %t", $time);
+     end
 
 //synopsys translate_on
 
