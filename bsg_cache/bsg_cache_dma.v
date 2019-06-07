@@ -84,6 +84,11 @@ module bsg_cache_dma
     ,.count_o(counter_r)
   );
 
+  logic counter_fill_max;
+  logic counter_evict_max;
+  assign counter_fill_max = counter_r == (block_size_in_words_p-1);
+  assign counter_evict_max = counter_r == (block_size_in_words_p);
+
 
   // dma packet
   //
@@ -207,33 +212,33 @@ module bsg_cache_dma
       end
 
       GET_FILL_DATA: begin
-        dma_state_n = (counter_r == (block_size_in_words_p -1)) & in_fifo_v_lo
+        dma_state_n = counter_fill_max & in_fifo_v_lo
           ? IDLE
           : GET_FILL_DATA;
         data_mem_v_o = in_fifo_v_lo;
         data_mem_w_o = in_fifo_v_lo;
         in_fifo_yumi_li = in_fifo_v_lo;
 
-        counter_en = in_fifo_v_lo & (counter_r != (block_size_in_words_p-1));
-        counter_set = in_fifo_v_lo & (counter_r == (block_size_in_words_p-1));
+        counter_en = in_fifo_v_lo & ~counter_fill_max;
+        counter_set = in_fifo_v_lo & counter_fill_max;
         counter_val = '0;
 
-        done_o = (counter_r == (block_size_in_words_p - 1)) & in_fifo_v_lo;
+        done_o = counter_fill_max & in_fifo_v_lo;
       end
 
       SEND_EVICT_DATA: begin
-        dma_state_n = (counter_r == block_size_in_words_p) & out_fifo_ready_lo
+        dma_state_n = counter_evict_max & out_fifo_ready_lo
           ? IDLE
           : SEND_EVICT_DATA;
 
-        counter_en = out_fifo_ready_lo & (counter_r != block_size_in_words_p);
-        counter_set = out_fifo_ready_lo & (counter_r == block_size_in_words_p);
+        counter_en = out_fifo_ready_lo & ~counter_evict_max;
+        counter_set = out_fifo_ready_lo & counter_evict_max;
         counter_val = '0;
 
         out_fifo_v_li = 1'b1;
 
-        data_mem_v_o = out_fifo_ready_lo & (counter_r != block_size_in_words_p);
-        done_o = (counter_r == block_size_in_words_p) & out_fifo_ready_lo;
+        data_mem_v_o = out_fifo_ready_lo & ~counter_evict_max;
+        done_o = counter_evict_max & out_fifo_ready_lo;
       end
     endcase
   end

@@ -202,6 +202,7 @@ module bsg_cache_miss
         tag_mem_v_o = 1'b1;
         tag_mem_w_o = 1'b1;
         tag_mem_addr_o = addr_index_v;
+        // AINV, AFLINV invalidate and unlock the line.
         tag_mem_data_o = {2{1'b0, 1'b0, {tag_width_lp{1'b0}}}};
         tag_mem_w_mask_o[1] = {chosen_set_n & invalidate_op, chosen_set_n & invalidate_op, {tag_width_lp{1'b0}}};
         tag_mem_w_mask_o[0] = {~chosen_set_n & invalidate_op, ~chosen_set_n & invalidate_op, {tag_width_lp{1'b0}}};

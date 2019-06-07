@@ -18,13 +18,14 @@ module bsg_cache
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
 
-    ,localparam lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
-    ,localparam data_mask_width_lp=(data_width_p>>3)
-    ,localparam lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
-    ,localparam lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    ,localparam tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp)
-    ,localparam bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,data_width_p)
-    ,localparam bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    ,parameter stat_mem_width_p=4 // sometimes we cannot generate SRAM macro with 3-bit width, so we set it to some minimal value.
+    ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,parameter data_mask_width_lp=(data_width_p>>3)
+    ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
+    ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
+    ,parameter tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp)
+    ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,data_width_p)
+    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
 
     ,parameter debug_p=0
     ,parameter axe_trace_p=0
@@ -361,15 +362,15 @@ module bsg_cache
 
   // stat_mem
   //
-  logic [3:0] stat_mem_data_li;
-  logic [lg_sets_lp-1:0] stat_mem_addr_li;
   logic stat_mem_v_li;
-  logic [3:0] stat_mem_w_mask_li;
   logic stat_mem_w_li;
-  logic [3:0] stat_mem_data_lo;
+  logic [lg_sets_lp-1:0] stat_mem_addr_li;
+  logic [stat_mem_width_p-1:0] stat_mem_data_li;
+  logic [stat_mem_width_p-1:0] stat_mem_w_mask_li;
+  logic [stat_mem_width_p-1:0] stat_mem_data_lo;
 
   bsg_mem_1rw_sync_mask_write_bit #(
-    .width_p(4)
+    .width_p(stat_mem_width_p)
     ,.els_p(sets_p)
     ,.latch_last_read_p(1)
   ) stat_mem (
@@ -755,14 +756,14 @@ module bsg_cache
 
   // stat_mem
   //
-  assign stat_mem_data_li[3] = 1'b0;
+  assign stat_mem_data_li[stat_mem_width_p-1:3] = '0;
   assign stat_mem_data_li[2:0] = miss_v
     ? miss_stat_mem_data_lo
     : {st_op_v_r, st_op_v_r, tag_hit_v[1]};
 
   assign stat_mem_addr_li = addr_index_v;
     
-  assign stat_mem_w_mask_li[3] = 1'b0;
+  assign stat_mem_w_mask_li[stat_mem_width_p-1:3] = 1'b0;
   assign stat_mem_w_mask_li[2:0] = miss_v
     ? miss_stat_mem_w_mask_lo
     : {tag_hit_v[1] & st_op_v_r, tag_hit_v[0] & st_op_v_r, st_op_v_r | ld_op_v_r};
