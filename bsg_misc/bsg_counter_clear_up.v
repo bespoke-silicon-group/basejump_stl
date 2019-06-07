@@ -15,7 +15,8 @@ module bsg_counter_clear_up #(parameter max_val_p     = -1
 
     , input clear_i
     , input up_i
-
+    // fixme: count_o should be renamed to count_r_o since some modules
+    // depend on this being a register and we want to indicate this at the interface level
     , output logic [ptr_width_lp-1:0] count_o
     );
 
