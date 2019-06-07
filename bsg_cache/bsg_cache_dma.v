@@ -11,10 +11,11 @@ module bsg_cache_dma
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="int"
 
-    ,localparam lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    ,localparam lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
-    ,localparam bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
-    ,localparam byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
+    ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
+    ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    ,parameter byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
+    ,parameter counter_width_lp=`BSG_SAFE_CLOG2(block_size_in_words_p+1)
   
     ,parameter debug_p=0
   )
@@ -65,8 +66,23 @@ module bsg_cache_dma
   dma_state_e dma_state_n;
   dma_state_e dma_state_r;
 
-  logic [lg_block_size_in_words_lp:0] counter_r;
-  logic [lg_block_size_in_words_lp:0] counter_n; 
+  // counter
+  //
+  logic counter_en;
+  logic counter_set;
+  logic [counter_width_lp-1:0] counter_val;
+  logic [counter_width_lp-1:0] counter_r;
+
+  bsg_counter_set_en #(
+    .max_val_p(block_size_in_words_p)
+  ) dma_counter (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.en_i(counter_en)
+    ,.set_i(counter_set)
+    ,.val_i(counter_val)
+    ,.count_o(counter_r)
+  );
 
 
   // dma packet
@@ -146,13 +162,15 @@ module bsg_cache_dma
   always_comb begin
     done_o = 1'b0;
     dma_pkt_v_o = 1'b0;
-    counter_n = counter_r;
     dma_pkt.write_not_read = 1'b0;
     data_mem_v_o = 1'b0;
     data_mem_w_o = 1'b0;
     in_fifo_yumi_li = 1'b0;
     dma_state_n = IDLE;
     out_fifo_v_li = 1'b0;
+    counter_en = 1'b0;
+    counter_set = 1'b0;
+    counter_val = '0;
 
     case (dma_state_r)
       IDLE: begin
@@ -161,11 +179,12 @@ module bsg_cache_dma
           : (dma_get_fill_data_i ? GET_FILL_DATA
           : (dma_send_evict_data_i ? SEND_EVICT_DATA
           : IDLE)));
-        counter_n = dma_get_fill_data_i
-          ? {(lg_block_size_in_words_lp+1){1'b0}}
-          : (dma_send_evict_data_i
-            ? (lg_block_size_in_words_lp+1)'(1)
-            : counter_r);
+
+        counter_en = 1'b0;
+        counter_set = dma_get_fill_data_i | dma_send_evict_data_i;
+        counter_val = dma_get_fill_data_i
+          ? {counter_width_lp{1'b0}}
+          : (counter_width_lp)'(1);
         data_mem_v_o = dma_send_evict_data_i;
       end
 
@@ -194,9 +213,11 @@ module bsg_cache_dma
         data_mem_v_o = in_fifo_v_lo;
         data_mem_w_o = in_fifo_v_lo;
         in_fifo_yumi_li = in_fifo_v_lo;
-        counter_n = in_fifo_v_lo
-          ? ((counter_r == (block_size_in_words_p-1)) ? '0 : counter_r + 1)
-          : counter_r;
+
+        counter_en = in_fifo_v_lo & (counter_r != (block_size_in_words_p-1));
+        counter_set = in_fifo_v_lo & (counter_r == (block_size_in_words_p-1));
+        counter_val = '0;
+
         done_o = (counter_r == (block_size_in_words_p - 1)) & in_fifo_v_lo;
       end
 
@@ -205,9 +226,10 @@ module bsg_cache_dma
           ? IDLE
           : SEND_EVICT_DATA;
 
-        counter_n = out_fifo_ready_lo
-          ? (counter_r == block_size_in_words_p ? '0 : counter_r + 1)
-          : counter_r;
+        counter_en = out_fifo_ready_lo & (counter_r != block_size_in_words_p);
+        counter_set = out_fifo_ready_lo & (counter_r == block_size_in_words_p);
+        counter_val = '0;
+
         out_fifo_v_li = 1'b1;
 
         data_mem_v_o = out_fifo_ready_lo & (counter_r != block_size_in_words_p);
@@ -226,11 +248,9 @@ module bsg_cache_dma
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       dma_state_r <= IDLE;
-      counter_r <= '0;
     end
     else begin
       dma_state_r <= dma_state_n;
-      counter_r <= counter_n;
 
       if (snoop_word_we) begin
         snoop_word_o <= in_fifo_data_lo;

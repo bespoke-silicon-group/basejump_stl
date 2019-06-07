@@ -302,11 +302,11 @@ for (genvar i = 0; i < 2; i++) begin
 end
 
 initial begin
-  wait(done_lo);
-  $display("###### FINISH ######");
   //for (integer i = 0; i < 5000000; i++) begin
   //  @(posedge clk);
   //end
+  wait(done_lo);
+  $display("###### FINISH ######");
   $finish;
 end
 
