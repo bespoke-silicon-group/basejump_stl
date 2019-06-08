@@ -33,16 +33,25 @@
 
 
 // bsg_noc_wormhole
-`define bsg_wormhole_packet_width(reserved_width_p, x_cord_width_p, y_cord_width_p, len_width_p, data_width_p) \
-  (reserved_width_p+x_cord_width_p+y_cord_width_p+len_width_p+data_width_p)
+`define bsg_wormhole_packet_width(reserved_width, x_cord_width, y_cord_width, len_width, data_width) \
+  (reserved_width+x_cord_width+y_cord_width+len_width+data_width)
+ 
+`define declare_bsg_wormhole_packet_s(width, reserved_width, x_cord_width, y_cord_width, len_width, in_struct_name) \
+  typedef struct packed {                                                      \
+    logic [width-reserved_width-x_cord_width-y_cord_width-len_width-1:0] data; \
+    logic [reserved_width-1:0] reserved;                                       \
+    logic [len_width-1:0]      len;                                            \
+    logic [y_cord_width-1:0]   y_cord;                                         \
+    logic [x_cord_width-1:0]   x_cord;                                         \
+  } in_struct_name
   
-`define declare_bsg_wormhole_packet_s(width_p, reserved_width_p, x_cord_width_p, y_cord_width_p, len_width_p, in_struct_name) \
-  typedef struct packed {                                               \
-    logic [reserved_width_p-1:0] reserved;                              \
-    logic [x_cord_width_p-1:0] x_cord;                                  \
-    logic [y_cord_width_p-1:0] y_cord;                                  \
-    logic [len_width_p-1:0] len;                                        \
-    logic [width_p-reserved_width_p-x_cord_width_p-y_cord_width_p-len_width_p-1:0] data; \
+`define declare_bsg_channel_tunnel_wormhole_packet_s(width, reserved_width, x_cord_width, y_cord_width, len_width, in_struct_name) \
+  typedef struct packed {                                                      \
+    logic [reserved_width-1:0] reserved;                                       \
+    logic [width-reserved_width-x_cord_width-y_cord_width-len_width-1:0] data; \
+    logic [len_width-1:0]      len;                                            \
+    logic [y_cord_width-1:0]   y_cord;                                         \
+    logic [x_cord_width-1:0]   x_cord;                                         \
   } in_struct_name
 
  `endif // BSG_NOC_LINKS_VH
