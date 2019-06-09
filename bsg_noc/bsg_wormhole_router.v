@@ -23,10 +23,10 @@ module  bsg_wormhole_router
        , bsg_noc_pkg::N  // north
        , bsg_noc_pkg::S; // south
 
- #(parameter width_p = "inv"
+  #(parameter width_p       = "inv"
   ,parameter x_cord_width_p = "inv"
   ,parameter y_cord_width_p = "inv"
-  ,parameter len_width_p = "inv"
+  ,parameter len_width_p    = "inv"
  
   // MBT: reserved means that nobody should use it
   // MBT: this is more like extra header bits?
@@ -157,25 +157,31 @@ module  bsg_wormhole_router
     begin: count
       always @(posedge clk_i) 
       begin
-        count_r[i] <= (reset_i)? 0 : (fifo_yumi_i[i])? 
-            ((count_r[i]==0)? fifo_data_o[i][len_offset_lp+:len_width_p] : count_r[i]-1) : count_r[i];
-      end
+        if (reset_i)
+          count_r[i] <= '0;
+        else
+          if (fifo_yumi_i[i])
+            begin
+              if (count_r[i] == '0)
+                count_r[i] <= fifo_data_o[i][len_offset_lp+:len_width_p];
+              else
+                count_r[i] <= count_r[i] - 1;
+            end
+      end 
     end
   
   // destination registers
 
-  logic [dirs_lp-1:0] dest_r [dirs_lp-1:0];
-  logic [dirs_lp-1:0] dest_n [dirs_lp-1:0];
+  logic [dirs_lp-1:0][dirs_lp-1:0] dest_r;
+  logic [dirs_lp-1:0][dirs_lp-1:0] dest_n ;
   
-  for (i = 0; i < dirs_lp; i++) 
-    begin: rof
-      always @(posedge clk_i)
-        dest_r[i] <= dest_n[i];
-    end
+
+   always @(posedge clk_i)
+     dest_r[i] <= dest_n[i];
   
   // new valid signals on fifo side
   
-  logic [dirs_lp-1:0] new_valid [dirs_lp-1:0];
+  logic [dirs_lp-1:0][dirs_lp-1:0] new_valid;
   
   for (i = 0; i < dirs_lp; i++) 
     begin: rof2
@@ -187,7 +193,7 @@ module  bsg_wormhole_router
   
   // round robin arbiter wires
   
-  logic [dirs_lp-1:0] arb_grants_o [dirs_lp-1:0];
+  logic [dirs_lp-1:0][dirs_lp-1:0] arb_grants_o;
             
   // fifo yumi signals
   
@@ -211,17 +217,23 @@ module  bsg_wormhole_router
 
   // valid signals on arbiter side
   
-  logic [dirs_lp-1:0] arb_valid [dirs_lp-1:0];
-  logic [dirs_lp-1:0] arb_grants_r [dirs_lp-1:0];
+  logic [dirs_lp-1:0][dirs_lp-1:0] arb_valid ;
+  logic [dirs_lp-1:0][dirs_lp-1:0] arb_grants_r ;
   
   for (i = 0; i < dirs_lp; i++) 
     begin
       for (j = 0; j < dirs_lp; j++) 
         begin    
           always @(posedge clk_i) 
-            arb_grants_r[i][j] <= (out_count_r[j]==0)? arb_grants_o[i][j] : arb_grants_r[i][j];
+            if (out_count_r[0])
+              arb_grants_r[i][j] <= arb_grants_o[i][j];
+            else 
+              arb_grants_r[i][j];
           
-          assign arb_valid[i][j] = (out_count_r[j]==0)? new_valid[i][j] : new_valid[i][j] & arb_grants_r[i][j];  
+          assign arb_valid[i][j] = 
+            (out_count_r[j]==0)
+            ? new_valid[i][j] 
+            : new_valid[i][j] & arb_grants_r[i][j];  
         end
     end
   
@@ -261,9 +273,9 @@ module  bsg_wormhole_router
     ,.reset_i(reset_i)
     ,.grants_en_i(ready_i_stub[i])
 
-    ,.reqs_i(arb_valid_concatenated[i][dirs_lp-2:0])
+    ,.reqs_i( arb_valid_concatenated  [i][dirs_lp-2:0])
     ,.grants_o(arb_grants_concatenated[i][dirs_lp-2:0])
-    ,.sel_one_hot_o(arb_sel_o[i][dirs_lp-2:0])
+    ,.sel_one_hot_o(arb_sel_o         [i][dirs_lp-2:0])
 
     ,.v_o(valid_o[i])
     ,.tag_o()
@@ -276,8 +288,9 @@ module  bsg_wormhole_router
     ,.els_p(dirs_lp-1))
     mux
     (.data_i(fifo_data_concatenated[i][dirs_lp-2:0])
-    ,.sel_one_hot_i(arb_sel_o[i][dirs_lp-2:0])
-    ,.data_o(data_o[i]));
+     ,.sel_one_hot_i(arb_sel_o     [i][dirs_lp-2:0])
+     ,.data_o(data_o[i])
+    );
     
     // Do not support loopback
     assign arb_grants_o[i][i] = 1'b0;
@@ -288,9 +301,9 @@ module  bsg_wormhole_router
   
   for (j = 0; j < dirs_lp; j++) 
     begin
-      assign arb_valid_concatenated[P][j] = arb_valid[j][P];
+      assign arb_valid_concatenated[P][j] =     arb_valid[j][P];
       assign arb_grants_o[j][P] = arb_grants_concatenated[P][j];
-      assign fifo_data_concatenated[P][j] = fifo_data_o[j];
+      assign fifo_data_concatenated[P][j] =    fifo_data_o  [j];
     end
     
   bsg_round_robin_arb 
@@ -300,9 +313,9 @@ module  bsg_wormhole_router
   ,.reset_i(reset_i)
   ,.grants_en_i(ready_i_stub[P])
 
-  ,.reqs_i(arb_valid_concatenated[P][dirs_lp-1:0])
+  ,.reqs_i  (arb_valid_concatenated [P][dirs_lp-1:0])
   ,.grants_o(arb_grants_concatenated[P][dirs_lp-1:0])
-  ,.sel_one_hot_o(arb_sel_o[P][dirs_lp-1:0])
+  ,.sel_one_hot_o(arb_sel_o         [P][dirs_lp-1:0])
 
   ,.v_o(valid_o[P])
   ,.tag_o()
@@ -313,7 +326,7 @@ module  bsg_wormhole_router
   ,.els_p(dirs_lp))
   mux_proc
   (.data_i(fifo_data_concatenated[P][dirs_lp-1:0])
-  ,.sel_one_hot_i(arb_sel_o[P][dirs_lp-1:0])
+  ,.sel_one_hot_i(arb_sel_o      [P][dirs_lp-1:0])
   ,.data_o(data_o[P]));
   
   // destination id selection wires
