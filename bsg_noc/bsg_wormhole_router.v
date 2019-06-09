@@ -209,10 +209,14 @@ module  bsg_wormhole_router
   for (i = 0; i < dirs_lp; i++) 
     begin: out_count
       always @(posedge clk_i) 
-        begin
-          out_count_r[i] <= (reset_i)? 0 : (valid_o[i] & ready_i_stub[i])? 
-            ((out_count_r[i]==0)? data_o[i][len_offset_lp+:len_width_p] : out_count_r[i]-1) : out_count_r[i];
-        end
+        if (reset_i)
+          out_count_r[i] <= '0;
+        else
+          if (valid_o[i] & ready_i_stub[i])
+            if (out_count_r[i]==0)
+              out_count_r[i] <= data_o[i][len_offset_lp+:len_width_p];
+            else
+              out_count_r[i] <= out_count_r[i]-1;
     end
 
   // valid signals on arbiter side
@@ -225,10 +229,8 @@ module  bsg_wormhole_router
       for (j = 0; j < dirs_lp; j++) 
         begin    
           always @(posedge clk_i) 
-            if (out_count_r[0])
+            if (out_count_r[j]==0)
               arb_grants_r[i][j] <= arb_grants_o[i][j];
-            else 
-              arb_grants_r[i][j];
           
           assign arb_valid[i][j] = 
             (out_count_r[j]==0)
