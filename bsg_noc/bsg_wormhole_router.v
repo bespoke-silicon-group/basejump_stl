@@ -27,20 +27,32 @@ module  bsg_wormhole_router
   ,parameter x_cord_width_p = "inv"
   ,parameter y_cord_width_p = "inv"
   ,parameter len_width_p = "inv"
+ 
+  // MBT: reserved means that nobody should use it
+  // MBT: this is more like extra header bits?
   ,parameter reserved_width_p = 0
+   
+  // MBT: dimensions_p = 0
   ,parameter enable_2d_routing_p = 1'b0
   
   // When enable_yx_routing_p==0, route WE direction then NS
   // Otherwise, route NS first then WE
+  // MBT: use_yx_routing_p is more consistent with BaseJump STL style
   ,parameter enable_yx_routing_p = 1'b0
   
   // When header_on_lsb==0, first cycle is {reserved, x_cord, y_cord, length, payload}
   // Otherwise, first cycle is {payload, length, y_cord, x_cord, reserved}
+
+   // MBT we should remove this parameter
+   // who are you trying to be backward compatible with?
   ,parameter header_on_lsb_p = 1'b0
   
   // Local parameters
   ,localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(width_p)
   ,localparam dirs_lp = (enable_2d_routing_p==0)? 3 : 5
+
+  // MBT: remove this bug_pront interface. People should only use the struct fields, so that we 
+  // MBT: we can modify the struct and it will still work.
   ,localparam reserved_offset_lp = (header_on_lsb_p==0)? width_p-reserved_width_p : 0
   ,localparam x_cord_offset_lp = (header_on_lsb_p==0)? 
                     reserved_offset_lp-x_cord_width_p : reserved_offset_lp+reserved_width_p
@@ -53,7 +65,6 @@ module  bsg_wormhole_router
   ,parameter stub_in_p = {dirs_lp{1'b0}}
   ,parameter stub_out_p = {dirs_lp{1'b0}})
   
-
   (input clk_i
   ,input reset_i
   
@@ -65,9 +76,7 @@ module  bsg_wormhole_router
   ,input [x_cord_width_p-1:0] my_x_i
   ,input [y_cord_width_p-1:0] my_y_i);
   
-  
   genvar i, j;
-  
   
   // Interfacing bsg_noc links 
   
@@ -85,24 +94,26 @@ module  bsg_wormhole_router
   
   `declare_bsg_ready_and_link_sif_s(width_p,bsg_ready_and_link_sif_s);
   
-  for (i = 0; i < dirs_lp; i++) begin
-  
-    bsg_ready_and_link_sif_s link_i_cast, link_o_cast;
+  for (i = 0; i < dirs_lp; i++) 
+    begin
+      // MBT: let's factor this into a macro since it seems to be a very common case and we repeat a lot of code
+      // MBT `bsg_ready_and_link_sif_s_cast (link_i, link_o, link_i_cast, link_o_cast)
+      // MBT in this case, it should be (link_i[i], link_o[i], link_i_cast[i], link_o_cast[i])
+      // MBT where possible, you should use link_i_cast[i].valid and not have to pull things out into valid_i 
+      bsg_ready_and_link_sif_s link_i_cast, link_o_cast;
     
-    assign link_i_cast = link_i[i];
-    assign link_o[i] = link_o_cast;
+      assign link_i_cast = link_i[i];
+      assign link_o[i] = link_o_cast;
     
-    assign valid_i[i] = link_i_cast.v;
-    assign data_i[i] = link_i_cast.data;
-    assign link_o_cast.ready_and_rev = ready_o[i];
+      assign valid_i[i] = link_i_cast.v;
+      assign data_i[i] = link_i_cast.data;
+      assign link_o_cast.ready_and_rev = ready_o[i];
     
-    assign link_o_cast.v = valid_o[i];
-    assign link_o_cast.data = data_o[i];
-    assign ready_i[i] = link_i_cast.ready_and_rev;
-  
-  end
+      assign link_o_cast.v = valid_o[i];
+      assign link_o_cast.data = data_o[i];
+      assign ready_i[i] = link_i_cast.ready_and_rev;
+    end
 
-  
   // Input Data fifos
 
   logic [dirs_lp-1:0] fifo_valid_o, fifo_yumi_i;
@@ -113,10 +124,9 @@ module  bsg_wormhole_router
   logic [dirs_lp-1:0] ready_i_stub;
   assign ready_i_stub = ready_i |((dirs_lp)'(stub_out_p));
   
-
   for (i = 0; i < dirs_lp; i++) begin: in_ff
-    if (stub_in_p[i] == 0) begin: no_stub
-    
+    if (stub_in_p[i] == 0) 
+      begin: no_stub
         bsg_two_fifo 
         #(.width_p(width_p)) 
         two_fifo
@@ -129,94 +139,91 @@ module  bsg_wormhole_router
 
         ,.v_o(fifo_valid_o[i])
         ,.data_o(fifo_data_o[i])
-        ,.yumi_i(fifo_yumi_i[i]));
-        
-    end else begin: stub
-    
+        ,.yumi_i(fifo_yumi_i[i]));        
+      end 
+    else 
+      begin: stub
         assign fifo_valid_o[i] = 1'b0;
         assign fifo_data_o[i] = 0;
-        assign ready_o[i] = 1'b1;
-        
+        assign ready_o[i] = 1'b1;        
     end
   end
-  
   
   // input length counter
   
   logic [len_width_p-1:0] count_r [dirs_lp-1:0];
   
-  for (i = 0; i < dirs_lp; i++) begin: count
-    always @(posedge clk_i) begin
+  for (i = 0; i < dirs_lp; i++) 
+    begin: count
+      always @(posedge clk_i) 
+      begin
         count_r[i] <= (reset_i)? 0 : (fifo_yumi_i[i])? 
             ((count_r[i]==0)? fifo_data_o[i][len_offset_lp+:len_width_p] : count_r[i]-1) : count_r[i];
+      end
     end
-  end
-  
   
   // destination registers
 
   logic [dirs_lp-1:0] dest_r [dirs_lp-1:0];
   logic [dirs_lp-1:0] dest_n [dirs_lp-1:0];
   
-  for (i = 0; i < dirs_lp; i++) begin
-    always @(posedge clk_i) begin
+  for (i = 0; i < dirs_lp; i++) 
+    begin: rof
+      always @(posedge clk_i)
         dest_r[i] <= dest_n[i];
     end
-  end
-  
   
   // new valid signals on fifo side
   
   logic [dirs_lp-1:0] new_valid [dirs_lp-1:0];
   
-  for (i = 0; i < dirs_lp; i++) begin
-    for (j = 0; j < dirs_lp; j++) begin
-        assign new_valid[i][j] = fifo_valid_o[i] & dest_n[i][j];
+  for (i = 0; i < dirs_lp; i++) 
+    begin: rof2
+      for (j = 0; j < dirs_lp; j++) 
+        begin: rof3
+          assign new_valid[i][j] = fifo_valid_o[i] & dest_n[i][j];
+        end
     end
-  end
-  
   
   // round robin arbiter wires
   
   logic [dirs_lp-1:0] arb_grants_o [dirs_lp-1:0];
             
-  
   // fifo yumi signals
   
-  for (i = 0; i < dirs_lp; i++) begin
+  for (i = 0; i < dirs_lp; i++) 
+  begin: rof4
     assign fifo_yumi_i[i] = | (arb_grants_o[i]);
   end
-            
-            
+                      
   // output length counter
   
   logic [len_width_p-1:0] out_count_r [dirs_lp-1:0];
   
-  for (i = 0; i < dirs_lp; i++) begin: out_count
-    always @(posedge clk_i) begin
-        out_count_r[i] <= (reset_i)? 0 : (valid_o[i] & ready_i_stub[i])? 
+  for (i = 0; i < dirs_lp; i++) 
+    begin: out_count
+      always @(posedge clk_i) 
+        begin
+          out_count_r[i] <= (reset_i)? 0 : (valid_o[i] & ready_i_stub[i])? 
             ((out_count_r[i]==0)? data_o[i][len_offset_lp+:len_width_p] : out_count_r[i]-1) : out_count_r[i];
+        end
     end
-  end
-  
-  
+
   // valid signals on arbiter side
   
   logic [dirs_lp-1:0] arb_valid [dirs_lp-1:0];
   logic [dirs_lp-1:0] arb_grants_r [dirs_lp-1:0];
   
-  for (i = 0; i < dirs_lp; i++) begin
-    for (j = 0; j < dirs_lp; j++) begin
-    
-        always @(posedge clk_i) begin
+  for (i = 0; i < dirs_lp; i++) 
+    begin
+      for (j = 0; j < dirs_lp; j++) 
+        begin    
+          always @(posedge clk_i) 
             arb_grants_r[i][j] <= (out_count_r[j]==0)? arb_grants_o[i][j] : arb_grants_r[i][j];
+          
+          assign arb_valid[i][j] = (out_count_r[j]==0)? new_valid[i][j] : new_valid[i][j] & arb_grants_r[i][j];  
         end
-        
-        assign arb_valid[i][j] = (out_count_r[j]==0)? new_valid[i][j] : new_valid[i][j] & arb_grants_r[i][j];
-    
     end
-  end
-  
   
   // mux select sequence parameter
   localparam LEN = 3;
@@ -226,28 +233,25 @@ module  bsg_wormhole_router
                    ,LEN'(S), LEN'(N), LEN'(W), LEN'(P)
                    ,LEN'(S), LEN'(N), LEN'(E), LEN'(P)
                    ,LEN'(S), LEN'(N), LEN'(E), LEN'(W)};
-                   
-                   
+                                    
   // concatenated wires in mux_sel sequence
   logic [dirs_lp-1:0] arb_valid_concatenated [dirs_lp-1:0];
   logic [dirs_lp-1:0] arb_grants_concatenated [dirs_lp-1:0];
   logic [dirs_lp-1:0] arb_sel_o [dirs_lp-1:0];
   logic [dirs_lp-1:0][width_p-1:0] fifo_data_concatenated [dirs_lp-1:0];
   
-  
   // W, E, N and S do not support loopback
 
-  for (i = W; i < dirs_lp; i++) begin: out_side
-  
-    for (j = 0; j < dirs_lp-1; j++) begin
-    
-        localparam ORIG_DIR = SEQ[(i*LEN*COL+j*LEN)+:LEN];
+  for (i = W; i < dirs_lp; i++) 
+    begin: out_side
+      for (j = 0; j < dirs_lp-1; j++) 
+        begin
+          localparam ORIG_DIR = SEQ[(i*LEN*COL+j*LEN)+:LEN];
         
-        assign arb_valid_concatenated[i][j] = arb_valid[ORIG_DIR][i];
-        assign arb_grants_o[ORIG_DIR][i] = arb_grants_concatenated[i][j];
-        assign fifo_data_concatenated[i][j] = fifo_data_o[ORIG_DIR];
-        
-    end
+          assign arb_valid_concatenated[i][j] = arb_valid[ORIG_DIR]    [i];
+          assign arb_grants_o[ORIG_DIR][i]    = arb_grants_concatenated[i][j];
+          assign fifo_data_concatenated[i][j] = fifo_data_o[ORIG_DIR];
+        end
     
     // round robin arbiter
     bsg_round_robin_arb 
@@ -263,8 +267,8 @@ module  bsg_wormhole_router
 
     ,.v_o(valid_o[i])
     ,.tag_o()
-    ,.yumi_i(valid_o[i] & ready_i_stub[i]));
-    
+    ,.yumi_i(valid_o[i] & ready_i_stub[i])
+    );
     
     // mux for output data_i
     bsg_mux_one_hot  
@@ -277,17 +281,17 @@ module  bsg_wormhole_router
     
     // Do not support loopback
     assign arb_grants_o[i][i] = 1'b0;
-
   end
   
   
   // Processor side support loopback
   
-  for (j = 0; j < dirs_lp; j++) begin
-    assign arb_valid_concatenated[P][j] = arb_valid[j][P];
-    assign arb_grants_o[j][P] = arb_grants_concatenated[P][j];
-    assign fifo_data_concatenated[P][j] = fifo_data_o[j];
-  end
+  for (j = 0; j < dirs_lp; j++) 
+    begin
+      assign arb_valid_concatenated[P][j] = arb_valid[j][P];
+      assign arb_grants_o[j][P] = arb_grants_concatenated[P][j];
+      assign fifo_data_concatenated[P][j] = fifo_data_o[j];
+    end
     
   bsg_round_robin_arb 
   #(.inputs_p(dirs_lp))
@@ -312,74 +316,82 @@ module  bsg_wormhole_router
   ,.sel_one_hot_i(arb_sel_o[P][dirs_lp-1:0])
   ,.data_o(data_o[P]));
   
-  
-  
   // destination id selection wires
   logic [x_cord_width_p-1:0] fifo_dest_x [dirs_lp-1:0];
   logic [y_cord_width_p-1:0] fifo_dest_y [dirs_lp-1:0];
   
-  for (i = 0; i < dirs_lp; i++) begin
+  for (i = 0; i < dirs_lp; i++) 
+  begin
     assign fifo_dest_x[i] = fifo_data_o[i][x_cord_offset_lp+:x_cord_width_p];
     assign fifo_dest_y[i] = fifo_data_o[i][y_cord_offset_lp+:y_cord_width_p];
   end
-  
-  
+
   // Destination Selection
   
-  if (enable_2d_routing_p == 0) begin: route_1d
-
-    for (i = 0; i < dirs_lp; i++) begin
-        always_comb begin
-            dest_n[i] = dest_r[i];
-            if (count_r[i]==0) begin
-                dest_n[i] = {dirs_lp{1'b0}};
-                if (fifo_dest_x[i] == local_x_cord_i) dest_n[i][P] = 1'b1;
-                if (fifo_dest_x[i] < local_x_cord_i) dest_n[i][W] = 1'b1;
-                if (fifo_dest_x[i] > local_x_cord_i) dest_n[i][E] = 1'b1;
+  if (enable_2d_routing_p == 0) 
+    begin: route_1d
+      for (i = 0; i < dirs_lp; i++) 
+        begin
+          always_comb 
+            begin
+              dest_n[i] = dest_r[i];
+              if (count_r[i]==0) 
+                begin
+                  dest_n[i] = {dirs_lp{1'b0}};
+                  if (fifo_dest_x[i] == local_x_cord_i) dest_n[i][P] = 1'b1;
+                  if (fifo_dest_x[i] < local_x_cord_i)  dest_n[i][W] = 1'b1;
+                  if (fifo_dest_x[i] > local_x_cord_i)  dest_n[i][E] = 1'b1;
+              end
             end
-        end
-    end
-        
-  end else begin: route_2d
-    if (enable_yx_routing_p == 0) begin: route_xy
-    
-        for (i = 0; i < dirs_lp; i++) begin
-            always_comb begin
-                dest_n[i] = dest_r[i];
-                if (count_r[i]==0) begin
-                    dest_n[i] = {dirs_lp{1'b0}};
-                    if (fifo_dest_x[i] == local_x_cord_i) begin
-                        if (fifo_dest_y[i] == local_y_cord_i) dest_n[i][P] = 1'b1;
-                        if (fifo_dest_y[i] < local_y_cord_i) dest_n[i][N] = 1'b1;
-                        if (fifo_dest_y[i] > local_y_cord_i) dest_n[i][S] = 1'b1;
+        end       
+    end 
+  else 
+    begin: route_2d
+      if (enable_yx_routing_p == 0) 
+        begin: route_xy
+          for (i = 0; i < dirs_lp; i++) 
+            begin
+              always_comb 
+                begin
+                  dest_n[i] = dest_r[i];
+                  if (count_r[i]==0) 
+                    begin
+                      dest_n[i] = {dirs_lp{1'b0}};
+                      if (fifo_dest_x[i] == local_x_cord_i) 
+                        begin
+                          if (fifo_dest_y[i] == local_y_cord_i) dest_n[i][P] = 1'b1;
+                          if (fifo_dest_y[i] < local_y_cord_i) dest_n[i][N] = 1'b1;
+                          if (fifo_dest_y[i] > local_y_cord_i) dest_n[i][S] = 1'b1;
+                        end
+                      if (fifo_dest_x[i] < local_x_cord_i) dest_n[i][W] = 1'b1;
+                      if (fifo_dest_x[i] > local_x_cord_i) dest_n[i][E] = 1'b1;
                     end
-                    if (fifo_dest_x[i] < local_x_cord_i) dest_n[i][W] = 1'b1;
-                    if (fifo_dest_x[i] > local_x_cord_i) dest_n[i][E] = 1'b1;
                 end
             end
-        end
-    
-    end else begin: route_yx
-    
-        for (i = 0; i < dirs_lp; i++) begin
-            always_comb begin
-                dest_n[i] = dest_r[i];
-                if (count_r[i]==0) begin
-                    dest_n[i] = {dirs_lp{1'b0}};
-                    if (fifo_dest_y[i] == local_y_cord_i) begin
-                        if (fifo_dest_x[i] == local_x_cord_i) dest_n[i][P] = 1'b1;
-                        if (fifo_dest_x[i] < local_x_cord_i) dest_n[i][W] = 1'b1;
-                        if (fifo_dest_x[i] > local_x_cord_i) dest_n[i][E] = 1'b1;
+        end: route_xy 
+      else 
+        begin: route_yx
+          for (i = 0; i < dirs_lp; i++) 
+            begin
+              always_comb 
+                begin
+                  dest_n[i] = dest_r[i];
+                  if (count_r[i]==0) 
+                    begin
+                      dest_n[i] = {dirs_lp{1'b0}};
+                      if (fifo_dest_y[i] == local_y_cord_i) 
+                        begin
+                          if (fifo_dest_x[i] == local_x_cord_i) dest_n[i][P] = 1'b1;
+                          if (fifo_dest_x[i] < local_x_cord_i) dest_n[i][W] = 1'b1;
+                          if (fifo_dest_x[i] > local_x_cord_i) dest_n[i][E] = 1'b1;
+                        end
+                      if (fifo_dest_y[i] < local_y_cord_i) dest_n[i][N] = 1'b1;
+                      if (fifo_dest_y[i] > local_y_cord_i) dest_n[i][S] = 1'b1;
                     end
-                    if (fifo_dest_y[i] < local_y_cord_i) dest_n[i][N] = 1'b1;
-                    if (fifo_dest_y[i] > local_y_cord_i) dest_n[i][S] = 1'b1;
                 end
             end
-        end
-        
-    end
-  end
-  
+        end : route_yx
+    end : route_2d
   
   // synopsys translate_off
   initial begin
@@ -387,7 +399,6 @@ module  bsg_wormhole_router
     else $error("width_p must be wider than header width!");
   end
   // synopsys translate_on
-  
   
 endmodule
 
