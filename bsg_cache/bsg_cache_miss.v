@@ -148,7 +148,7 @@ module bsg_cache_miss
         dma_send_fill_addr_o = 1'b1;
        
         // ----------------------------------------------------------- 
-        // lock[0]  lock[1] valid[1]  valid[0]  mru_n  |  chosen_set_n
+        // lock[0]  lock[1] valid[0]  valid[1]  mru_n  |  chosen_set_n
         // -----------------------------------------------------------
         // 1        X       X         X         X      |  1
         // 0        1       X         X         X      |  0
@@ -157,11 +157,11 @@ module bsg_cache_miss
         // 0        0       1         1         0      |  1
         // 0        0       1         1         1      |  0
         // -----------------------------------------------------------
-        chosen_set_n = lock_v_i[0]  // choose way1 if way0 is locked
-          | (~lock_v_i[1]           // choose way0 if way1 is locked
-            & valid_v_i[0]          // otherwise choose way0 if it is invalid
-            & (~valid_v_i[1] | ~mru_n));  // otherwise choose way1 if it is invalid, or if it is LRU; otherwise choose 0
-       
+        chosen_set_n = lock_v_i[0] // if way0 is locked, pick way 1
+          | (~lock_v_i[1]           // if way1 is locked, pick way 0
+            & valid_v_i[0]          // if neither is locked, pick if 1, if way1 is neither valid nor mru.
+            & ~(valid_v_i[1] & mru_n));
+
         dma_addr_o = {
           addr_tag_v, addr_index_v,
           {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
@@ -202,7 +202,11 @@ module bsg_cache_miss
         tag_mem_v_o = 1'b1;
         tag_mem_w_o = 1'b1;
         tag_mem_addr_o = addr_index_v;
-        // AINV, AFLINV invalidate and unlock the line.
+
+        // AINV, AFLINV will never trigger bsg_cache_miss on an invalid block.
+        // If the block is valid and locked, AINV, AFLINV invalidate and unlock the line.
+        // TAGFL and AFL will flush the block, if it's dirty and valid, but it will
+        // not unlock the locked line.
         tag_mem_data_o = {2{1'b0, 1'b0, {tag_width_lp{1'b0}}}};
         tag_mem_w_mask_o[1] = {chosen_set_n & invalidate_op, chosen_set_n & invalidate_op, {tag_width_lp{1'b0}}};
         tag_mem_w_mask_o[0] = {~chosen_set_n & invalidate_op, ~chosen_set_n & invalidate_op, {tag_width_lp{1'b0}}};
