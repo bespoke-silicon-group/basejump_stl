@@ -34,20 +34,13 @@ module  bsg_wormhole_router
   // Otherwise, route NS first then WE
   ,parameter enable_yx_routing_p = 1'b0
   
-  // When header_on_lsb==0, first cycle is {reserved, x_cord, y_cord, length, payload}
-  // Otherwise, first cycle is {payload, length, y_cord, x_cord, reserved}
-  ,parameter header_on_lsb_p = 1'b0
+  // When header_on_lsb_p==0, first cycle is {x_cord, y_cord, length, reserved, payload}
+  // Otherwise, first cycle is {payload, reserved, length, y_cord, x_cord}
+  ,parameter header_on_lsb_p = 1'b1
   
   // Local parameters
   ,localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(width_p)
   ,localparam dirs_lp = (enable_2d_routing_p==0)? 3 : 5
-  ,localparam reserved_offset_lp = (header_on_lsb_p==0)? width_p-reserved_width_p : 0
-  ,localparam x_cord_offset_lp = (header_on_lsb_p==0)? 
-                    reserved_offset_lp-x_cord_width_p : reserved_offset_lp+reserved_width_p
-  ,localparam y_cord_offset_lp = (header_on_lsb_p==0)?
-                    x_cord_offset_lp-y_cord_width_p : x_cord_offset_lp+x_cord_width_p
-  ,localparam len_offset_lp = (header_on_lsb_p==0)?
-                    y_cord_offset_lp-len_width_p : y_cord_offset_lp+y_cord_width_p
 
   // Stub ports sequence: SNEWP
   ,parameter stub_in_p = {dirs_lp{1'b0}}
@@ -65,9 +58,20 @@ module  bsg_wormhole_router
   ,input [x_cord_width_p-1:0] my_x_i
   ,input [y_cord_width_p-1:0] my_y_i);
   
+  // Data structures for wormhole packet
+  `declare_bsg_header_flit_s(width_p, reserved_width_p, x_cord_width_p, y_cord_width_p, len_width_p, header_flit_s);
+  
+  initial 
+  begin
+    assert (header_on_lsb_p != 0)
+    else 
+      begin 
+        $error("header_on_lsb_p==0 no longer supported.");
+        $finish;
+      end
+  end
   
   genvar i, j;
-  
   
   // Interfacing bsg_noc links 
   
@@ -78,10 +82,10 @@ module  bsg_wormhole_router
   assign local_y_cord_i = my_y_i;
 
   logic [dirs_lp-1:0] valid_o, ready_i;
-  logic [dirs_lp-1:0][width_p-1:0] data_o;
+  header_flit_s [dirs_lp-1:0] data_o;
   
   logic [dirs_lp-1:0] valid_i, ready_o;
-  logic [dirs_lp-1:0][width_p-1:0] data_i;
+  header_flit_s [dirs_lp-1:0] data_i;
   
   `declare_bsg_ready_and_link_sif_s(width_p,bsg_ready_and_link_sif_s);
   
@@ -106,7 +110,7 @@ module  bsg_wormhole_router
   // Input Data fifos
 
   logic [dirs_lp-1:0] fifo_valid_o, fifo_yumi_i;
-  logic [width_p-1:0] fifo_data_o [dirs_lp-1:0];
+  header_flit_s [dirs_lp-1:0] fifo_data_o;
   
   // stubbed ports accept all I/O and send none.
   
@@ -148,7 +152,7 @@ module  bsg_wormhole_router
   for (i = 0; i < dirs_lp; i++) begin: count
     always @(posedge clk_i) begin
         count_r[i] <= (reset_i)? 0 : (fifo_yumi_i[i])? 
-            ((count_r[i]==0)? fifo_data_o[i][len_offset_lp+:len_width_p] : count_r[i]-1) : count_r[i];
+            ((count_r[i]==0)? fifo_data_o[i].len : count_r[i]-1) : count_r[i];
     end
   end
   
@@ -195,7 +199,7 @@ module  bsg_wormhole_router
   for (i = 0; i < dirs_lp; i++) begin: out_count
     always @(posedge clk_i) begin
         out_count_r[i] <= (reset_i)? 0 : (valid_o[i] & ready_i_stub[i])? 
-            ((out_count_r[i]==0)? data_o[i][len_offset_lp+:len_width_p] : out_count_r[i]-1) : out_count_r[i];
+            ((out_count_r[i]==0)? data_o[i].len : out_count_r[i]-1) : out_count_r[i];
     end
   end
   
@@ -319,8 +323,8 @@ module  bsg_wormhole_router
   logic [y_cord_width_p-1:0] fifo_dest_y [dirs_lp-1:0];
   
   for (i = 0; i < dirs_lp; i++) begin
-    assign fifo_dest_x[i] = fifo_data_o[i][x_cord_offset_lp+:x_cord_width_p];
-    assign fifo_dest_y[i] = fifo_data_o[i][y_cord_offset_lp+:y_cord_width_p];
+    assign fifo_dest_x[i] = fifo_data_o[i].x_cord;
+    assign fifo_dest_y[i] = fifo_data_o[i].y_cord;
   end
   
   
