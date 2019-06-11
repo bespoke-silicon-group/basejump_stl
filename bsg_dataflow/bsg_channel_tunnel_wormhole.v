@@ -372,7 +372,8 @@ module  bsg_channel_tunnel_wormhole
   
   // Update counter only when packet flit dequeue from fifo
   // and upcoming packet is not for credit returning
-  assign ostate_en_lo       = multi_yumi_i & ~multi_data_o_is_credit;
+  assign ostate_en_lo       = multi_yumi_i & (~ostate_r_is_min_lo | 
+                                              (ostate_r_is_min_lo & ~multi_data_o_is_credit));
   assign ostate_r_is_min_lo = (ostate_r == counter_min_value_lp);
   
   bsg_counter_generic
@@ -466,7 +467,8 @@ module  bsg_channel_tunnel_wormhole
   
   // Update counter only when packet flit accepted to fifo
   // and upcoming packet is not for credit returning
-  assign istate_en_lo       = multi_v_i & multi_ready_o & ~multi_data_i_is_credit;
+  assign istate_en_lo       = multi_v_i & multi_ready_o & (~istate_r_is_min_lo | 
+                                              (istate_r_is_min_lo & ~multi_data_i_is_credit));
   assign istate_r_is_min_lo = (istate_r == counter_min_value_lp);
   
   bsg_counter_generic
