@@ -25,17 +25,15 @@
 
 // This version of countones works in synthesis, but only up to 64 bits                                                                                                                                                                                                              
 // we do a funny thing where we propagate X's in simulation if it is more than 64 bits                                                                                                                                                                                               
-// and in synthesis, we go ahead and use the general function, knowing that it will 
-// likely error if still unsupported                                                                                                                                                                          
+// and in synthesis, go ahead and ignore the high bits                                                                                                                                                                      
 
-`define BSG_COUNTONES_SYNTH(x) ($bits(x) < 65 ? (`BSG_GET_BIT(x,0) +`BSG_GET_BIT(x,1) +`BSG_GET_BIT(x,2) +`BSG_GET_BIT(x,3) +`BSG_GET_BIT(x,4) +`BSG_GET_BIT(x,5) +`BSG_GET_BIT(x,6)+`BSG_GET_BIT(x,7) +`BSG_GET_BIT(x,18)+`BSG_GET_BIT(x,9)  \                                      
-                                                +`BSG_GET_BIT(x,10)+`BSG_GET_BIT(x,11)+`BSG_GET_BIT(x,12)+`BSG_GET_BIT(x,13)+`BSG_GET_BIT(x,14)+`BSG_GET_BIT(x,15)+`BSG_GET_BIT(x,16)+`BSG_GET_BIT(x,17)+`BSG_GET_BIT(x,18)+`BSG_GET_BIT(x,19) \                                     
-                                                +`BSG_GET_BIT(x,20)+`BSG_GET_BIT(x,21)+`BSG_GET_BIT(x,22)+`BSG_GET_BIT(x,23)+`BSG_GET_BIT(x,24)+`BSG_GET_BIT(x,25)+`BSG_GET_BIT(x,26)+`BSG_GET_BIT(x,27)+`BSG_GET_BIT(x,28)+`BSG_GET_BIT(x,29) \
-                                                +`BSG_GET_BIT(x,30)+`BSG_GET_BIT(x,31)+`BSG_GET_BIT(x,32)+`BSG_GET_BIT(x,33)+`BSG_GET_BIT(x,34)+`BSG_GET_BIT(x,35)+`BSG_GET_BIT(x,36)+`BSG_GET_BIT(x,37)+`BSG_GET_BIT(x,38)+`BSG_GET_BIT(x,39) \                                     
-                                                +`BSG_GET_BIT(x,40)+`BSG_GET_BIT(x,41)+`BSG_GET_BIT(x,42)+`BSG_GET_BIT(x,43)+`BSG_GET_BIT(x,44)+`BSG_GET_BIT(x,45)+`BSG_GET_BIT(x,46)+`BSG_GET_BIT(x,47)+`BSG_GET_BIT(x,48)+`BSG_GET_BIT(x,49) \                                     
-                                                +`BSG_GET_BIT(x,50)+`BSG_GET_BIT(x,51)+`BSG_GET_BIT(x,52)+`BSG_GET_BIT(x,53)+`BSG_GET_BIT(x,54)+`BSG_GET_BIT(x,55)+`BSG_GET_BIT(x,56)+`BSG_GET_BIT(x,57)+`BSG_GET_BIT(x,58)+`BSG_GET_BIT(x,59) \
-                                                +`BSG_GET_BIT(x,60)+`BSG_GET_BIT(x,61)+`BSG_GET_BIT(x,62)+`BSG_GET_BIT(x,63)) \                                                                                                                                                      
-                                              : `BSG_UNDEFINED_IN_SIM($countones(x))
+`define BSG_COUNTONES_SYNTH(y) (($bits(y) < 65) ? 1'b0 : `BSG_UNDEFINED_IN_SIM(1'b0)) + (`BSG_GET_BIT(y,0) +`BSG_GET_BIT(y,1) +`BSG_GET_BIT(y,2) +`BSG_GET_BIT(y,3) +`BSG_GET_BIT(y,4) +`BSG_GET_BIT(y,5) +`BSG_GET_BIT(y,6)+`BSG_GET_BIT(y,7) +`BSG_GET_BIT(y,18)+`BSG_GET_BIT(y,9) \                                   
+                                                +`BSG_GET_BIT(y,10)+`BSG_GET_BIT(y,11)+`BSG_GET_BIT(y,12)+`BSG_GET_BIT(y,13)+`BSG_GET_BIT(y,14)+`BSG_GET_BIT(y,15)+`BSG_GET_BIT(y,16)+`BSG_GET_BIT(y,17)+`BSG_GET_BIT(y,18)+`BSG_GET_BIT(y,19) \
+                                                +`BSG_GET_BIT(y,20)+`BSG_GET_BIT(y,21)+`BSG_GET_BIT(y,22)+`BSG_GET_BIT(y,23)+`BSG_GET_BIT(y,24)+`BSG_GET_BIT(y,25)+`BSG_GET_BIT(y,26)+`BSG_GET_BIT(y,27)+`BSG_GET_BIT(y,28)+`BSG_GET_BIT(y,29) \                                                                         
+                                                +`BSG_GET_BIT(y,30)+`BSG_GET_BIT(y,31)+`BSG_GET_BIT(y,32)+`BSG_GET_BIT(y,33)+`BSG_GET_BIT(y,34)+`BSG_GET_BIT(y,35)+`BSG_GET_BIT(y,36)+`BSG_GET_BIT(y,37)+`BSG_GET_BIT(y,38)+`BSG_GET_BIT(y,39) \                                                                         
+                                                +`BSG_GET_BIT(y,40)+`BSG_GET_BIT(y,41)+`BSG_GET_BIT(y,42)+`BSG_GET_BIT(y,43)+`BSG_GET_BIT(y,44)+`BSG_GET_BIT(y,45)+`BSG_GET_BIT(y,46)+`BSG_GET_BIT(y,47)+`BSG_GET_BIT(y,48)+`BSG_GET_BIT(y,49) \
+                                                +`BSG_GET_BIT(y,50)+`BSG_GET_BIT(y,51)+`BSG_GET_BIT(y,52)+`BSG_GET_BIT(y,53)+`BSG_GET_BIT(y,54)+`BSG_GET_BIT(y,55)+`BSG_GET_BIT(y,56)+`BSG_GET_BIT(y,57)+`BSG_GET_BIT(y,58)+`BSG_GET_BIT(y,59) \                                                                         
+                                                +`BSG_GET_BIT(y,60)+`BSG_GET_BIT(y,61)+`BSG_GET_BIT(y,62)+`BSG_GET_BIT(y,63))
 
 // nullify rpgroups
 `ifndef rpgroup
