@@ -31,6 +31,9 @@
       logic [in_data_width-1:0] data;                                     \
   } in_struct_name
 
+`define bsg_ready_and_link_sif_s_cast(link_i, link_o, link_i_cast, link_o_cast) \
+  assign link_i_cast = link_i;                                                  \
+  assign link_o = link_o_cast // no semicolon
 
 /******************* bsg wormhole packet definition ******************/
 
