@@ -48,6 +48,14 @@
 
 /******************* bsg wormhole header flit definition ******************/
 
+`define declare_bsg_header_flit_no_reserved_s(width, x_cord_width, y_cord_width, len_width, in_struct_name) \
+  typedef struct packed {                                                      \
+    logic [width-x_cord_width-y_cord_width-len_width-1:0] data_and_reserved;   \
+    logic [len_width-1:0]      len;                                            \
+    logic [y_cord_width-1:0]   y_cord;                                         \
+    logic [x_cord_width-1:0]   x_cord;                                         \
+  } in_struct_name
+
 `define declare_bsg_header_flit_s(width, reserved_width, x_cord_width, y_cord_width, len_width, in_struct_name) \
   typedef struct packed {                                                      \
     logic [width-reserved_width-x_cord_width-y_cord_width-len_width-1:0] data; \
