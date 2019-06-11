@@ -59,7 +59,7 @@ module  bsg_wormhole_router
   ,input [y_cord_width_p-1:0] my_y_i);
   
   // Data structures for wormhole packet
-  `declare_bsg_header_flit_s(width_p, reserved_width_p, x_cord_width_p, y_cord_width_p, len_width_p, header_flit_s);
+  `declare_bsg_header_flit_no_reserved_s(width_p, x_cord_width_p, y_cord_width_p, len_width_p, header_flit_s);
   
   initial 
   begin
