@@ -1,7 +1,9 @@
 // takes an input vector and spreads the elements according to a bit pattern
 // example width_p=3, pattern_els_p=5'b10101
-module bsg_unconcentrate_static #(parameter width_p="inv", pattern_els_p="inv")
-(input [width_p-1:0] i
+module bsg_unconcentrate_static #(pattern_els_p="inv"
+				  , width_lp=`BSG_COUNTONES_SYNTH(pattern_els_p)
+				 )
+(input [width_lp-1:0] i
  ,output [$bits(pattern_els_p)-1:0] o
  );
    genvar j;
