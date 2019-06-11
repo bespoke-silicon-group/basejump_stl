@@ -12,23 +12,26 @@ module bsg_counter_set_down #(parameter width_p=-1, parameter set_and_down_exclu
    , output [width_p-1:0] count_r_o
   );
   
-  wire [width_p-1:0] ctr_r, ctr_n;
+  logic [width_p-1:0] ctr_r, ctr_n;
   
   bsg_dff_reset #(.width_p(width_p)) ctr_reg (.clk_i, .reset_i, .data_i(ctr_n), .data_o(ctr_r));
     
   if (set_and_down_exclusive_p)
     begin: excl
-      ctr_n = ctr_r;
+       always_comb 
+	 begin
+	    ctr_n = ctr_r;
 
-      if (set_i)
-        ctr_n = val_i;
-      else
-        if (down_i)
-          ctr_n = ctr_n - 1;     
+	    if (set_i)
+              ctr_n = val_i;
+	    else
+              if (down_i)
+		ctr_n = ctr_n - 1;     
+	 end
     end
-  else
-    begin : non_excl
-	  always_comb
+     else
+    begin : non_excl 
+      always_comb
     	begin
           ctr_n = ctr_r;
 
@@ -42,6 +45,7 @@ module bsg_counter_set_down #(parameter width_p=-1, parameter set_and_down_exclu
   
   assign count_r_o = ctr_r;
   
+`ifndef SYNTHESIS
   always_ff @(negedge clk_i)
     begin
       if (!reset_i && down_i && (ctr_n == '1))
@@ -50,5 +54,6 @@ module bsg_counter_set_down #(parameter width_p=-1, parameter set_and_down_exclu
       if (~reset_i & set_and_down_exclusive_p & set_i & down_i)
         $display("%m error: counter underflow at time %t", $time);
     end
+`endif
       
 endmodule
