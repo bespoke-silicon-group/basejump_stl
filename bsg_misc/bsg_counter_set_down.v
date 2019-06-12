@@ -3,7 +3,7 @@
 // we do not output an overflow flag because there is no == that we would
 // want to amortize the cost of
 
-module bsg_counter_set_down #(parameter width_p=-1, parameter set_and_down_exclusive_p=0)
+module bsg_counter_set_down #(parameter width_p="inv", parameter init_val_p='0, parameter set_and_down_exclusive_p=0)
   (input clk_i
    , input reset_i
    , input set_i
@@ -13,9 +13,13 @@ module bsg_counter_set_down #(parameter width_p=-1, parameter set_and_down_exclu
   );
   
   logic [width_p-1:0] ctr_r, ctr_n;
-  
-  bsg_dff_reset #(.width_p(width_p)) ctr_reg (.clk_i, .reset_i, .data_i(ctr_n), .data_o(ctr_r));
-    
+ 
+  always_ff @(posedge clk_i)	    
+    if (reset_i)
+      ctr_r <= width_p ' (init_val_p);
+    else
+      ctr_r <= ctr_n;
+	
   if (set_and_down_exclusive_p)
     begin: excl
        always_comb 
