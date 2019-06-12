@@ -1,4 +1,6 @@
-// MBT 7/24/2014
+//
+// Prof. Taylor   7/24/2014
+// <prof.taylor@gmail.com>
 //
 // Updated by Paul Gao 02/2019
 //
@@ -11,6 +13,8 @@
 //     outgoing source-synchronous launch flops for token
 //
 // note, the default FIFO depth is set to 2^6 based on experiments on FPGA
+// FIXME: update these numbers based on clocks in each clock domain and from actual waveforms.
+//
 // Below is a rough calculation:
 //
 // 2 clks for channel crossing
@@ -40,73 +44,25 @@ module bsg_link_source_sync_downstream
  #(parameter channel_width_p                 = 16
   ,parameter lg_fifo_depth_p                 = 6
   ,parameter lg_credit_to_token_decimation_p = 3
-  
-  // Reset pattern is 0xF*
-  // This is a soft reset from link_upstream to link_downstream
-  // When channel data bits are in reset pattern, downstream link is on reset
-  // Note that this pattern must be the same for upstream and downstream links
-  
-  ,parameter reset_pattern_p = {channel_width_p {1'b1}}
   )
   
   (// control signals
    input                        core_clk_i
   ,input                        core_link_reset_i
+  ,input                        io_link_reset_i
 
-  // source synchronous input channel; coming from chip edge
-  ,input                        io_clk_i     // sdi_sclk
-  ,input  [channel_width_p-1:0] io_data_i    // sdi_data
-  ,input                        io_valid_i   // sdi_valid
-  ,output                       io_token_r_o // sdi_token; output registered
+  // coming from IDDR PHY near the physical I/O. valid_i and data_i signals are assumed to be
+  // registered, but may be traversing long wires on the top level to reach this module.
+  ,input                        io_clk_i       // sdi_sclk
+  ,input  [channel_width_p-1:0] io_data_i      // sdi_data
+  ,input                        io_valid_i     // sdi_valid
+  ,output                       core_token_r_o // sdi_token; output registered
 
   // going into core; uses core clock
   ,output [channel_width_p-1:0] core_data_o
   ,output                       core_valid_o
   ,input                        core_yumi_i
   );
-  
-  //  
-  // remote reset signal coming from bsg_link_source_sync_upstream
-  // remote reset is asserted when source_sync_upstream in reset OR not enabled
-  //
-  logic io_remote_reset_lo, core_remote_reset_lo;
-  assign io_remote_reset_lo = (io_data_i==reset_pattern_p && ~io_valid_i);
-  
-  // remote reset signal from io clock to core clock
-  bsg_launch_sync_sync 
- #(.width_p(1)
-  ) remote_reset_lss
-  (.iclk_i      (io_clk_i)
-  ,.iclk_reset_i(1'b0)
-  ,.oclk_i      (core_clk_i)
-  ,.iclk_data_i (io_remote_reset_lo)
-  ,.iclk_data_o ()
-  ,.oclk_data_o (core_remote_reset_lo)
-  );
-  
-  logic core_link_internal_reset_lo, io_link_internal_reset_lo;
-  
-  // Actual internal_reset = remote_reset | local_core_link_reset
-  //
-  // In normal operation mode, this signal can be attached to 1'b0
-  // It is very useful when a link channel is left unused or physical IO
-  // pins are left floating:
-  // 1. When remote_reset is not available, internal_reset can be asserted
-  // 2. When io_clk_i is not available, core_internal_reset can still be asserted
-  //
-  // This guarantees the two_fifo on core clock side can be in reset state
-  //
-  bsg_launch_sync_sync 
- #(.width_p(1)
-  ) internal_reset_lss
-  (.iclk_i      (core_clk_i)
-  ,.iclk_reset_i(1'b0)
-  ,.oclk_i      (io_clk_i)
-  ,.iclk_data_i (core_remote_reset_lo | core_link_reset_i)
-  ,.iclk_data_o (core_link_internal_reset_lo)
-  ,.oclk_data_o (io_link_internal_reset_lo)
-  );
-                                 
 
    // ******************************************
    // clock-crossing async fifo (with DDR interface)
@@ -119,42 +75,39 @@ module bsg_link_source_sync_downstream
    //
 
    wire   io_async_fifo_full;
-   wire   io_async_fifo_enq = io_valid_i; // enque if either valid bit set
 
    // synopsys translate_off
 
    always_ff @(negedge io_clk_i)
-     assert(!(io_async_fifo_full===1 && io_async_fifo_enq===1))
+     assert(!(io_async_fifo_full===1 && io_valid_i===1))
        else $error("attempt to enque on full async fifo");
 
    // synopsys translate_on
 
 
-   wire   core_actual_deque;
-   wire   core_valid_o_tmp;
-   logic [channel_width_p-1:0]   core_data_lo;
+   wire  core_async_fifo_deque, core_async_fifo_valid_lo;
+   logic [channel_width_p-1:0] core_async_fifo_data_lo;
 
   bsg_async_fifo 
  #(.lg_size_p(lg_fifo_depth_p)
   ,.width_p(channel_width_p)
   ) baf
   (.w_clk_i  (io_clk_i)
-  ,.w_reset_i(io_link_internal_reset_lo)
+  ,.w_reset_i(io_link_reset_i)
   
-  ,.w_enq_i  (io_async_fifo_enq)
+  ,.w_enq_i  (io_valid_i)
   ,.w_data_i (io_data_i)
   ,.w_full_o (io_async_fifo_full)
 
   ,.r_clk_i  (core_clk_i)
-  ,.r_reset_i(core_link_internal_reset_lo)
+  ,.r_reset_i(core_link_reset_i)
 
-  ,.r_deq_i  (core_actual_deque)
-  ,.r_data_o (core_data_lo)
-  ,.r_valid_o(core_valid_o_tmp));
+  ,.r_deq_i  (core_async_fifo_deque)
+  ,.r_data_o (core_async_fifo_data_lo)
+  ,.r_valid_o(core_async_fifo_valid_lo));
 
 
-   wire core_valid_o_pre_twofer = core_valid_o_tmp; // remove inout warning from lint
-   wire core_twofer_ready;
+   wire core_async_fifo_ready_li;
 
   // Oct 17, 2014
   // we insert a minimal fifo here for two purposes;
@@ -169,22 +122,20 @@ module bsg_link_source_sync_downstream
  #(.width_p(channel_width_p)
   ) twofer
   (.clk_i  (core_clk_i)
-  ,.reset_i(core_link_internal_reset_lo)
+  ,.reset_i(core_link_reset_i)
 
   // we feed this into the local yumi, but only if it is valid
-  ,.ready_o(core_twofer_ready)
-  ,.data_i (core_data_lo)
-  ,.v_i    (core_valid_o_pre_twofer)
+  ,.ready_o(core_async_fifo_ready_li)
+  ,.data_i (core_async_fifo_data_lo)
+  ,.v_i    (core_async_fifo_valid_lo)
 
   ,.v_o    (core_valid_o)
   ,.data_o (core_data_o)
   ,.yumi_i (core_yumi_i)
   );
 
-
-   // a word was transferred to the two input fifo if ...
-   wire core_transfer_success = core_valid_o_tmp & core_twofer_ready;
-   assign core_actual_deque = core_transfer_success;
+   // a word was transferred to fifo if ...
+   assign core_async_fifo_deque = core_async_fifo_valid_lo & core_async_fifo_ready_li;
 
 
 // **********************************************
@@ -193,87 +144,30 @@ module bsg_link_source_sync_downstream
 // these are credits coming from the receive end of the async fifo in the core clk
 //  domain and passing to the io clk domain and out of the chip.
 //
-    
 
-   logic [lg_fifo_depth_p+1-1:0] core_credits_gray_r_iosync
-                                 , core_credits_binary_r_iosync
-                                 , io_credits_sent_r, io_credits_sent_r_gray
-                                 , io_credits_sent_r_p1, io_credits_sent_r_p2;
-
-   bsg_async_ptr_gray #(.lg_size_p(lg_fifo_depth_p+1)) bapg
-   (.w_clk_i   (core_clk_i)
-    ,.w_reset_i(core_link_internal_reset_lo)
-    ,.w_inc_i  (core_transfer_success)
-    ,.r_clk_i  (io_clk_i)
-    ,.w_ptr_binary_r_o() // not needed
-    ,.w_ptr_gray_r_o()   // not needed
-    ,.w_ptr_gray_r_rsync_o(core_credits_gray_r_iosync)
-    );
-
-   // this logic allows us to return two credits at a time
-   // note: generally relies on power-of-twoness of io_credits_sent_r
-   // to do correct wrap around.
-
-   assign io_credits_sent_r_p1 = io_credits_sent_r + (lg_fifo_depth_p+1)'(1);
-   assign io_credits_sent_r_p2 = io_credits_sent_r + (lg_fifo_depth_p+1)'(2);
-
-   // which bit of the io_credits_sent_r counter we use determines
-   // the value of the token line in credits
-   //
-   //
-   // this signal's register should be placed right next to the I/O pad:
-   //   glitch sensitive.
-
-   assign io_token_r_o = io_credits_sent_r[lg_credit_to_token_decimation_p];
-
-   // we actually absorb credits one or two at a time rather as fast as we can.
-   // this because otherwise we would not be slowing transition rates on the token
-   // signal, which is the whole point of tokens! this is slightly suboptimal,
-   // because if enough cycles have passed from the last
-   // time we sent a token, we could actually acknowledge things faster if we
-   // absorbed more than one credit at a time.
-   // that's okay. we skip this optimization.
-
-   // during token bypass mode, we hardwire the credit signal to the trigger mode signals;
-   // this gives the output channel control over the credit signal which
-   // allows it to toggle and reset the credit logic.
-
-   // the use of this trigger signal means that we should avoid the use of these
-   // two signals for calibration codes, so that we do not mix calibration codes
-   // when reset goes low with token reset operation, which would be difficult to avoid
-   // since generally we cannot control the timing of these reset signals when
-   // they cross asynchronous boundaries
-
-   // this is an optimized token increment system
-   // we actually gray code two options and compare against
-   // the incoming greycoded pointer. this is because it's cheaper
-   // to grey code than to de-gray code. moreover, we theorize it's cheaper
-   // to compute an incremented gray code than to add one to a pointer.
-   
-   assign io_credits_sent_r_gray = (io_credits_sent_r >> 1) ^ io_credits_sent_r;
-
-   logic [lg_fifo_depth_p+1-1:0] io_credits_sent_p1_r_gray;
-   
-   bsg_binary_plus_one_to_gray #(.width_p(lg_fifo_depth_p+1)) bsg_bp1_2g
-     (.binary_i(io_credits_sent_r)
-      ,.gray_o(io_credits_sent_p1_r_gray)
-      );
-   
-   wire empty_1 = (core_credits_gray_r_iosync != io_credits_sent_p1_r_gray);
-   wire empty_0 = (core_credits_gray_r_iosync != io_credits_sent_r_gray);
-
-   always_ff @(posedge io_clk_i)
-     begin
-        if (io_link_internal_reset_lo)
-          io_credits_sent_r <= { lg_fifo_depth_p+1 { 1'b0 } };
-        else
-          // we absorb up to two credits per cycles, since we receive at DDR,
-          // we need this to rate match the incoming data
-
-      // code is written like this because empty_1 is late relative to empty_0
-          io_credits_sent_r <= (empty_1
-                                ? (empty_0 ? io_credits_sent_r_p2 : io_credits_sent_r)
-                                : (empty_0 ? io_credits_sent_r_p1 : io_credits_sent_r));
-     end
+  logic [lg_credit_to_token_decimation_p+1-1:0] core_credits_sent_r;
+  
+  // which bit of the core_credits_sent_r counter we use determines
+  // the value of the token line in credits
+  //
+  //
+  // this signal's register should be placed right next to the I/O pad:
+  //   glitch sensitive.
+  
+  assign core_token_r_o = core_credits_sent_r[lg_credit_to_token_decimation_p];
+  
+  // Increase token counter when dequeue from async fifo
+  bsg_counter_clear_up 
+ #(.max_val_p({(lg_credit_to_token_decimation_p+1){1'b1}})
+  ,.init_val_p(0)
+  ,.disable_overflow_warning_p(1) // Allow overflow for this counter
+  )
+  token_counter
+  (.clk_i  (core_clk_i)
+  ,.reset_i(core_link_reset_i)
+  ,.clear_i(1'b0)
+  ,.up_i   (core_async_fifo_deque)
+  ,.count_o(core_credits_sent_r)
+  );
 
 endmodule // bsg_source_sync_input
