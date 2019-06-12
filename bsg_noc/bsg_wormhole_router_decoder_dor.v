@@ -6,7 +6,7 @@
 //                                                                                                                                                       
 //       
 
-module bsg_wormhole_decoder_dor 
+module bsg_wormhole_router_decoder_dor 
 #(dims_p=2
   ,reverse_order_p=0 // e.g., 1->Y THEN X, 0->X THEN Y routing                                                                                           
   // pass in the markers that delineates storage of dimension fields                                                                                     
