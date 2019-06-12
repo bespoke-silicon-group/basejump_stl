@@ -255,27 +255,26 @@ module  bsg_channel_tunnel_wormhole
   
     // Counter for demultiplexed wormhole packet input
     logic [len_width_p-1:0] ocount_r;
-    logic ocount_r_is_min_lo, ocount_en_lo;
+    logic ocount_r_is_min_lo, ocount_set_lo, ocount_down_lo;
     
     // Update counter only when packet flit is accepted into fifo
     // Set counter value to "wormhole packet len" when current flit is header flit
-    assign ocount_en_lo       = v_li[i] & ready_lo[i]; 
+    assign ocount_set_lo      = v_li[i] & ready_lo[i] & ocount_r_is_min_lo; 
+    assign ocount_down_lo     = v_li[i] & ready_lo[i] & ~ocount_r_is_min_lo; 
     assign ocount_r_is_min_lo = (ocount_r == counter_min_value_lp);
     
-    bsg_counter_generic
-   #(.width_p    (len_width_p)
-    ,.max_step_p (1)
-    ,.init_val_p (counter_min_value_lp)
+    bsg_counter_set_down
+   #(.width_p   (len_width_p)
+    ,.init_val_p(counter_min_value_lp)
+    ,.set_and_down_exclusive_p(1)
     )
     ocount
-    (.clk_i      (clk_i)
-    ,.reset_i    (reset_i)
-    ,.en_i       (ocount_en_lo)
-    ,.set_i      (ocount_r_is_min_lo)
-    ,.up_i       (1'b0)
-    ,.down_i     (1'b1)
-    ,.set_val_i  (data_li[i].len)
-    ,.cur_val_r_o(ocount_r)
+    (.clk_i     (clk_i)
+    ,.reset_i   (reset_i)
+    ,.set_i     (ocount_set_lo)
+    ,.val_i     (data_li[i].len)
+    ,.down_i    (ocount_down_lo)
+    ,.count_r_o (ocount_r)
     );
     
     // Data flit fifo
@@ -368,28 +367,26 @@ module  bsg_channel_tunnel_wormhole
   
   // Counter for multiplexed output
   logic [len_width_p-1:0] ostate_r;
-  logic ostate_en_lo, ostate_r_is_min_lo;
+  logic ostate_r_is_min_lo, ostate_set_lo, ostate_down_lo;
   
   // Update counter only when packet flit dequeue from fifo
   // and upcoming packet is not for credit returning
-  assign ostate_en_lo       = multi_yumi_i & (~ostate_r_is_min_lo | 
-                                              (ostate_r_is_min_lo & ~multi_data_o_is_credit));
+  assign ostate_down_lo     = multi_yumi_i & ~ostate_r_is_min_lo;
+  assign ostate_set_lo      = multi_yumi_i & ostate_r_is_min_lo & ~multi_data_o_is_credit;
   assign ostate_r_is_min_lo = (ostate_r == counter_min_value_lp);
   
-  bsg_counter_generic
- #(.width_p    (len_width_p)
-  ,.max_step_p (1)
-  ,.init_val_p (counter_min_value_lp)
+  bsg_counter_set_down
+ #(.width_p   (len_width_p)
+  ,.init_val_p(counter_min_value_lp)
+  ,.set_and_down_exclusive_p(1)
   )
-  ostate_counter
-  (.clk_i      (clk_i)
-  ,.reset_i    (reset_i)
-  ,.en_i       (ostate_en_lo)
-  ,.set_i      (ostate_r_is_min_lo)
-  ,.up_i       (1'b0)
-  ,.down_i     (1'b1)
-  ,.set_val_i  (multi_data_o_len)
-  ,.cur_val_r_o(ostate_r)
+  ostate
+  (.clk_i    (clk_i)
+  ,.reset_i  (reset_i)
+  ,.set_i    (ostate_set_lo)
+  ,.val_i    (multi_data_o_len)
+  ,.down_i   (ostate_down_lo)
+  ,.count_r_o(ostate_r)
   );
   
   // Register fifo selection
@@ -402,7 +399,7 @@ module  bsg_channel_tunnel_wormhole
   (.clk_i      (clk_i)
   ,.reset_i    (reset_i)
   ,.data_i     (multi_data_o_tag)
-  ,.en_i       (ostate_en_lo & ostate_r_is_min_lo)
+  ,.en_i       (ostate_set_lo)
   ,.data_o     (ofifo_sel_r)
   );
   
@@ -463,28 +460,27 @@ module  bsg_channel_tunnel_wormhole
   
   // Counter for multiplexed input
   logic [len_width_p-1:0] istate_r;
-  logic istate_r_is_min_lo, istate_en_lo;
+  logic istate_r_is_min_lo, istate_set_lo, istate_down_lo;
   
   // Update counter only when packet flit accepted to fifo
   // and upcoming packet is not for credit returning
-  assign istate_en_lo       = multi_v_i & multi_ready_o & (~istate_r_is_min_lo | 
-                                              (istate_r_is_min_lo & ~multi_data_i_is_credit));
+  assign istate_down_lo     = multi_v_i & multi_ready_o & ~istate_r_is_min_lo;
+  assign istate_set_lo      = multi_v_i & multi_ready_o & istate_r_is_min_lo 
+                             & ~multi_data_i_is_credit;
   assign istate_r_is_min_lo = (istate_r == counter_min_value_lp);
   
-  bsg_counter_generic
- #(.width_p    (len_width_p)
-  ,.max_step_p (1)
-  ,.init_val_p (counter_min_value_lp)
+  bsg_counter_set_down
+ #(.width_p   (len_width_p)
+  ,.init_val_p(counter_min_value_lp)
+  ,.set_and_down_exclusive_p(1)
   )
-  istate_counter
-  (.clk_i      (clk_i)
-  ,.reset_i    (reset_i)
-  ,.en_i       (istate_en_lo)
-  ,.set_i      (istate_r_is_min_lo)
-  ,.up_i       (1'b0)
-  ,.down_i     (1'b1)
-  ,.set_val_i  (multi_data_i_len)
-  ,.cur_val_r_o(istate_r)
+  istate
+  (.clk_i    (clk_i)
+  ,.reset_i  (reset_i)
+  ,.set_i    (istate_set_lo)
+  ,.val_i    (multi_data_i_len)
+  ,.down_i   (istate_down_lo)
+  ,.count_r_o(istate_r)
   );
   
   // Register fifo selection
@@ -497,7 +493,7 @@ module  bsg_channel_tunnel_wormhole
   (.clk_i      (clk_i)
   ,.reset_i    (reset_i)
   ,.data_i     (multi_data_i_tag)
-  ,.en_i       (istate_en_lo & istate_r_is_min_lo)
+  ,.en_i       (istate_set_lo)
   ,.data_o     (ififo_sel_r)
   );
   
@@ -596,27 +592,26 @@ module  bsg_channel_tunnel_wormhole
       end
     
     logic [len_width_p-1:0] icount_r;
-    logic icount_r_is_min_lo, icount_en_lo;
+    logic icount_r_is_min_lo, icount_set_lo, icount_down_lo;
     
     // Update counter only when packet flit dequeues from fifo
     // Set counter value to "wormhole packet len" when current flit is header flit
-    assign icount_en_lo       = yumi_li[i];
+    assign icount_set_lo      = yumi_li[i] & icount_r_is_min_lo;
+    assign icount_down_lo     = yumi_li[i] & ~icount_r_is_min_lo;
     assign icount_r_is_min_lo = (icount_r == counter_min_value_lp);
     
-    bsg_counter_generic
-   #(.width_p    (len_width_p)
-    ,.max_step_p (1)
-    ,.init_val_p (counter_min_value_lp)
+    bsg_counter_set_down
+   #(.width_p   (len_width_p)
+    ,.init_val_p(counter_min_value_lp)
+    ,.set_and_down_exclusive_p(1)
     )
-    icounter
-    (.clk_i      (clk_i)
-    ,.reset_i    (reset_i)
-    ,.en_i       (icount_en_lo)
-    ,.set_i      (icount_r_is_min_lo)
-    ,.up_i       (1'b0)
-    ,.down_i     (1'b1)
-    ,.set_val_i  (inside_data_lo[i].len)
-    ,.cur_val_r_o(icount_r)
+    icount
+    (.clk_i    (clk_i)
+    ,.reset_i  (reset_i)
+    ,.set_i    (icount_set_lo)
+    ,.val_i    (inside_data_lo[i].len)
+    ,.down_i   (icount_down_lo)
+    ,.count_r_o(icount_r)
     );
     
     // Mux merging header flit and data flit
