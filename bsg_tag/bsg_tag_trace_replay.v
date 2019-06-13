@@ -5,14 +5,15 @@
 //
 // Each trace should be in the following format:
 //
+// M = number of masters
 // N = clog2( #_of_tag_clients ) )
 // D = max( client_1_width, client_2_width, ..., client_n_width )
 // L = clog2( D + 1 ) )
 //
-// |<    4-bits    >|< N-bits >|<     1-bit    >|< L-bits >|< D-bits >|
-// +----------------+----------+----------------+----------+----------+
-// | replay command |  nodeID  | data_not_reset |  length  |   data   |
-// +----------------+----------+----------------+----------+----------+
+// |<    4-bits    >|< M-bits >|< N-bits >|<     1-bit    >|< L-bits >|< D-bits >|
+// +----------------+----------+----------+----------------+----------+----------+
+// | replay command | masterEn |  nodeID  | data_not_reset |  length  |   data   |
+// +----------------+----------+----------+----------------+----------+----------+
 //
 //  Replay Commands
 //    0 = 0000 = Wait a cycle
@@ -35,6 +36,7 @@ module bsg_tag_trace_replay
 
    #( parameter rom_addr_width_p    = -1
     , parameter rom_data_width_p    = -1
+    , parameter num_masters_p       = -1
     , parameter num_clients_p       = -1
     , parameter max_payload_width_p = -1 )
 
@@ -49,9 +51,10 @@ module bsg_tag_trace_replay
     , input  [max_payload_width_p-1:0] data_i
     , output                           ready_o
 
-    , output valid_o
-    , output tag_data_o
-    , input  yumi_i
+    , output                     valid_o
+    , output [num_masters_p-1:0] en_r_o
+    , output                     tag_data_o
+    , input                      yumi_i
 
     , output done_o
     , output error_o
@@ -131,5 +134,14 @@ module bsg_tag_trace_replay
         ,.data_o  (tag_data_o)
         ,.yumi_i  (yumi_i)
         );
+
+  // Grab the enable vector bits
+  bsg_dff_en #( .width_p(num_masters_p) )
+    en_reg
+      (.clk_i  (clk_i)
+      ,.en_i   (tr_valid_lo & piso_ready_lo)
+      ,.data_i (tr_data_lo[(max_payload_width_p+bsg_tag_header_width_lp)+:num_masters_p])
+      ,.data_o (en_r_o)
+      );
 
 endmodule
