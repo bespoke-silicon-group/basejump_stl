@@ -12,9 +12,9 @@ module bsg_clkgate_optional  (input  clk_i
 
   wire latched_en_lo;
 
-  bsg_dlatch #(.width_p(1) )
+  bsg_dlatch #(.width_p(1), .i_know_this_is_a_bad_idea_p(1))
     en_latch
-      ( .en_i   ( ~clk_i )
+      ( .clk_i  ( ~clk_i )
       , .data_i ( en_i )
       , .data_o ( latched_en_lo  )
       );
