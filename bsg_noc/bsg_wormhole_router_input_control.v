@@ -19,8 +19,8 @@ module bsg_wormhole_router_input_control #(parameter output_dirs_p=-1, parameter
     );
 
    wire [payload_len_bits_p-1:0] payload_ctr_r;
-   wire 		      counter_expired    = (!payload_ctr_r);
-   wire 		      fifo_has_hdr = counter_expired & fifo_v_i;
+   wire                       counter_expired    = (!payload_ctr_r);
+   wire                       fifo_has_hdr = counter_expired & fifo_v_i;
 
    bsg_counter_set_down #(.width_p(payload_len_bits_p), .set_and_down_exclusive_p(1'b1)) ctr
    (.clk_i
