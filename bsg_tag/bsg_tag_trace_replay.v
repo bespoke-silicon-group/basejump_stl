@@ -36,7 +36,7 @@ module bsg_tag_trace_replay
 
    #( parameter rom_addr_width_p    = -1
     , parameter rom_data_width_p    = -1
-    , parameter num_masters_p       = -1
+    , parameter num_masters_p       = 0
     , parameter num_clients_p       = -1
     , parameter max_payload_width_p = -1 )
 
@@ -51,10 +51,10 @@ module bsg_tag_trace_replay
     , input  [max_payload_width_p-1:0] data_i
     , output                           ready_o
 
-    , output                     valid_o
-    , output [num_masters_p-1:0] en_r_o
-    , output                     tag_data_o
-    , input                      yumi_i
+    , output                                 valid_o
+    , output [`BSG_MAX(1,num_masters_p)-1:0] en_r_o
+    , output                                 tag_data_o
+    , input                                  yumi_i
 
     , output done_o
     , output error_o
@@ -135,13 +135,22 @@ module bsg_tag_trace_replay
         ,.yumi_i  (yumi_i)
         );
 
-  // Grab the enable vector bits
-  bsg_dff_en #( .width_p(num_masters_p) )
-    en_reg
-      (.clk_i  (clk_i)
-      ,.en_i   (tr_valid_lo & piso_ready_lo)
-      ,.data_i (tr_data_lo[(max_payload_width_p+bsg_tag_header_width_lp)+:num_masters_p])
-      ,.data_o (en_r_o)
-      );
+  // If there are "no masters" (or at least none required to drive the enables
+  // for) then we will disconnect en_r_o, otherwise we will instantiate a
+  // register to capture the enables.
+  if (num_masters_p == 0)
+    begin
+      assign en_r_o = 1'bz;
+    end
+  else
+    begin
+      bsg_dff_en #( .width_p(num_masters_p) )
+        en_reg
+          (.clk_i  (clk_i)
+          ,.en_i   (tr_valid_lo & piso_ready_lo)
+          ,.data_i (tr_data_lo[(max_payload_width_p+bsg_tag_header_width_lp)+:num_masters_p])
+          ,.data_o (en_r_o)
+          );
+    end
 
 endmodule
