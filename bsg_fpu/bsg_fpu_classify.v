@@ -54,12 +54,12 @@ module bsg_fpu_classify
 
 
   assign class_o[0] = sign & infty;
-  assign class_o[1] = sign & (~infty) & (~denormal) & (~nan);
+  assign class_o[1] = sign & (~infty) & (~denormal) & (~nan) & (~zero);
   assign class_o[2] = sign & denormal;
   assign class_o[3] = sign & zero;
   assign class_o[4] = ~sign & zero;
   assign class_o[5] = ~sign & denormal;
-  assign class_o[6] = ~sign & (~infty) & (~denormal) & (~nan);
+  assign class_o[6] = ~sign & (~infty) & (~denormal) & (~nan) & (~zero);
   assign class_o[7] = ~sign & infty;
   assign class_o[8] = sig_nan;
   assign class_o[9] = nan & ~sig_nan;

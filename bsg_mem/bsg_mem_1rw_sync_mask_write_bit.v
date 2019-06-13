@@ -5,6 +5,7 @@
 
 module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
 			               , parameter els_p=-1
+                     , parameter latch_last_read_p=0
                      , parameter enable_clock_gating_p=0
 			               , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                      )
@@ -37,6 +38,7 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
    bsg_mem_1rw_sync_mask_write_bit_synth
      #(.width_p(width_p)
        ,.els_p(els_p)
+       ,.latch_last_read_p(latch_last_read_p)
        ) synth
        (.clk_i (clk_lo)
        ,.reset_i
