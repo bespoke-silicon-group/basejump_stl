@@ -1,3 +1,9 @@
+// MBT: This module has a broken interface because it uses bypass_i as a live input, which could use glitching
+// MBT: This module should never be used in actual synthesized RTL; it must be hardened.
+// For this reason, I am guarding it with an ifndef SYNTHESIS and we can fix it later.
+
+`ifndef SYNTHESIS
+
 // This is an integrated clock cell using a negative latch and an AND gate
 // This logic may be susceptible bug if en_i changes multiple times within a clk cyle
 
@@ -23,3 +29,4 @@ module bsg_clkgate_optional  (input  clk_i
 
 endmodule
 
+`endif
