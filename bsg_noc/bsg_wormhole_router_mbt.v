@@ -1,25 +1,20 @@
 `include "bsg_defines.v"
 `include "bsg_noc_links.vh"
-
-// this is a partial packet header, which should always go at the bottom bits of a packet
-// move to bsg_wormhole_router.vh
-`define declare_bsg_wormhole_router_header_s(in_cord_width,in_len_width,in_struct_name) \
-typedef struct packed {                 \
-  logic [in_len_width-1:0]    len;      \
-  logic [in_cord_width-1:0 ]  cord;     \
-} in_struct_name
+`include "bsg_wormhole_router.vh"
 
 module bsg_wormhole_router
      import bsg_wormhole_router_pkg::StrictXY;
      import bsg_wormhole_router_pkg::StrictX;
   #(parameter flit_width_p        = 32 // "inv"
-   ,parameter dims_p                = 1 // 2
+   ,parameter dims_p                = 2 // 1
    ,parameter dirs_lp         = dims_p*2+1
-   ,parameter int cord_markers_pos_p[dims_p:0] = '{5,0} // '{ 5, 4, 0 }
-   ,parameter bit [1:0][dirs_lp-1:0][dirs_lp-1:0] routing_matrix_p = StrictX  /* 0 = [input][output], 1=[output][input] */
-   ,parameter reverse_order_p       = 0
-   ,parameter len_width_p     = 5 // = "inv"
 
+    // this list determines the range of bit values used to determine each dimension in the N-D router
+   ,parameter int cord_markers_pos_p[dims_p:0] =   '{ 5, 4, 0 }  // '{5,0} //
+   ,parameter bit [1:0][dirs_lp-1:0][dirs_lp-1:0] routing_matrix_p =  StrictXY // StrictX
+   ,parameter reverse_order_p       = 0
+   ,parameter len_width_p           = 5 // = "inv"
+   ,parameter debug_lp=1
    )
 
   (input clk_i
@@ -39,14 +34,12 @@ module bsg_wormhole_router
   // FIXME: move to bsg_wormhole_router.vh
   `declare_bsg_wormhole_router_header_s(cord_markers_pos_p[dims_p], len_width_p, bsg_wormhole_router_header_s);
 
-  bsg_wormhole_router_header_s hdr;
-
 `ifndef SYNTHESIS
-    localparam[dirs_lp-1:0][dirs_lp-1:0] matrix_out_in_transpose;
+    wire [dirs_lp-1:0][dirs_lp-1:0] matrix_out_in_transpose;
 
-    bsg_transpose #(.width_p(dirs_lp),.els_p(dirs_lp)) (.i(routing_matrix_p[0])
-                                                       ,.o(matrix_out_in_transpose)
-                                                       );
+    bsg_transpose #(.width_p(dirs_lp),.els_p(dirs_lp)) tr (.i(routing_matrix_p[0])
+                                                          ,.o(matrix_out_in_transpose)
+                                                          );
     initial
       begin
         #1000;
@@ -71,6 +64,9 @@ module bsg_wormhole_router
   `declare_bsg_ready_and_link_sif_s(flit_width_p,bsg_ready_and_link_sif_s);
   bsg_ready_and_link_sif_s [dirs_lp-1:0] link_i_cast, link_o_cast;
 
+  assign link_i_cast = link_i;
+  assign link_o = link_o_cast;
+
   genvar i,j;
 
   for (i = 0; i < input_dirs_lp; i=i+1)
@@ -79,7 +75,7 @@ module bsg_wormhole_router
 
       // live decoding of output dirs from header
 
-      wire [output_dirs_lp-1:0] decoded_dest_lo;
+      wire [output_dirs_lp-1:0]        decoded_dest_lo;
       wire [output_dirs_sparse_lp-1:0] decoded_dest_sparse_lo;
       wire [output_dirs_sparse_lp-1:0] reqs_lo, yumis_li;
 
@@ -105,6 +101,37 @@ module bsg_wormhole_router
 
       assign hdr = fifo_data_lo[i][$bits(bsg_wormhole_router_header_s)-1:0];
 
+`ifndef SYNTHESIS
+      if (debug_lp)
+        begin
+           logic release_r;
+
+           always_ff @(posedge clk_i)
+             release_r <= releases[i];
+
+           always_ff @(negedge clk_i)
+             begin
+                if (releases[i] & ~release_r)
+                  $display("%m in  ch%2d: packet finished last cycle",i);
+
+                if ((reset_i === 1'b0) && link_i_cast[i].v && !link_o_cast[i].ready_and_rev)
+                  $display("%m in  ch%2d: nacking   packet %h",i,link_i_cast[i].data);
+                else
+                  if ((reset_i === 1'b0) && link_i_cast[i].v && link_o_cast[i].ready_and_rev)
+                    $display("%m in  ch%2d: accepting packet %h",i,link_i_cast[i].data);
+                if ((reset_i === 1'b0) && any_yumi)
+                  begin
+                     assert (fifo_valid_lo[i]) else $error("Error dequeing when data not available");
+                     if (reqs_lo)
+                       $display("%m in  ch%2d: dequeing  header %h (outch=%b,len=%b,dest=%b)",i,fifo_data_lo[i],reqs_lo,hdr.len,hdr.cord);
+                     else
+                       $display ("%m in  ch%2d: dequeing  packet %h",i, fifo_data_lo[i]);
+                  end
+
+             end // always_ff @
+        end
+`endif
+
       bsg_wormhole_router_decoder_dor #(.dims_p(dims_p)
                                        ,.reverse_order_p(reverse_order_p)
                                        ,.cord_markers_pos_p(cord_markers_pos_p)
@@ -121,6 +148,8 @@ module bsg_wormhole_router
 
       // fixme: add assertions for stubbed out parameters
 
+      wire detected_header_lo;
+
       bsg_wormhole_router_input_control #(.output_dirs_p(output_dirs_sparse_lp), .payload_len_bits_p($bits(hdr.len))) wic
       (.clk_i
        ,.reset_i
@@ -130,13 +159,21 @@ module bsg_wormhole_router
        ,.fifo_payload_len_i (hdr.len)
        ,.reqs_o             (reqs_lo)
        ,.release_o          (releases[i]) // broadcast to all
+       ,.detected_header_o  (detected_header_lo)
       );
 
        // switch to dense matrix form
       bsg_unconcentrate_static #(.pattern_els_p(routing_matrix_p[0][i])) unc
-        (.i (reqs_lo)
+        (.i  (reqs_lo)
          ,.o (reqs[i]) // unicast
        );
+
+`ifndef SYNTHESIS
+      always_ff @(negedge clk_i)
+        assert (detected_header_lo!==1'b1 || !(decoded_dest_lo & ~ routing_matrix_p[0][i]))
+          else $error("%m input port %d request to route in direction not supported by router %b %b",i,decoded_dest_lo, routing_matrix_p[0][i]);
+`endif
+
     end
 
    // flip signal wires from input-indexed to output-indexed
@@ -165,8 +202,6 @@ module bsg_wormhole_router
       bsg_array_concentrate_static #(.width_p(flit_width_p), .pattern_els_p(routing_matrix_p[1][i])) conc4
       (.i(fifo_data_lo),.o(fifo_data_sparse_lo));
 
-      assign link_o_cast[i].v = |valids_li;
-
       bsg_wormhole_router_output_control #(.input_dirs_p(input_dirs_sparse_lp)) woc
       (.clk_i
       ,.reset_i
@@ -178,6 +213,18 @@ module bsg_wormhole_router
       ,.valid_o   (link_o_cast[i].v)
       ,.data_sel_o(data_sel_lo)
       );
+
+`ifndef SYNTHESIS
+       always_ff @(negedge clk_i)
+         begin
+            if ((reset_i === 1'b0) && link_o_cast[i].v)
+              begin
+                 // shouldn't really be an error condition; more of indicator that something is not tested enough!
+                 assert (link_i_cast[i].ready_and_rev) else $error("%m Sending when space not available");
+                 $display("%m out ch%2d: sending   packet %h",i,link_o_cast[i].data);
+              end
+         end
+`endif
 
       bsg_mux_one_hot #(.width_p(flit_width_p)
                        ,.els_p(input_dirs_sparse_lp)
