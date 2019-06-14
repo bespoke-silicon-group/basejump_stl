@@ -16,6 +16,8 @@ module bsg_wormhole_router_input_control #(parameter output_dirs_p=-1, parameter
 
     // we transferred all of the words on the previous cycle
     , output release_o
+
+    , output detected_header_o
     );
 
    wire [payload_len_bits_p-1:0] payload_ctr_r;
@@ -33,4 +35,6 @@ module bsg_wormhole_router_input_control #(parameter output_dirs_p=-1, parameter
 
    assign reqs_o    = fifo_has_hdr ? fifo_decoded_dest_i : '0;
    assign release_o = counter_expired;
+   assign detected_header_o = fifo_has_hdr;
+
 endmodule

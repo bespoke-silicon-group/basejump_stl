@@ -12,6 +12,19 @@ package bsg_wormhole_router_pkg;
                                 }
                               };
 
+  localparam  bit [1:0][2:0][2:0] X_AllowLoopBack  // for testing only; you should never build a machine like this 
+                             = {   // EWP (input)    // it will deadlock
+                                {  3'b100 // E
+                                  ,3'b010 // W
+                                  ,3'b000 // P (output)
+                                }
+                               ,   // EWP (output)
+                                {  3'b111 // E
+                                  ,3'b111 // W
+                                  ,3'b111 // P (input)
+                                }
+                              };
+
   localparam bit [1:0][4:0][4:0] StrictXY
                             = {
                                {//   SNEWP (input)

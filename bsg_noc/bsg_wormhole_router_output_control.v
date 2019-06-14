@@ -37,6 +37,7 @@ module bsg_wormhole_router_output_control
     ,.grants_o     (grants_lo)             // output grants, takes into account grants_en_i
     ,.sel_one_hot_o()                      // output grants, does not take into account grants_en_i
     ,.v_o          ()                      // some reqs_i was set
+    ,.tag_o        ()
     // make sure to only allocate the port if we succeeded in transmitting the header
     // otherwise the input will try to allocate again on the next cycle
     ,.yumi_i       (free_to_schedule & valid_o) // update round_robin

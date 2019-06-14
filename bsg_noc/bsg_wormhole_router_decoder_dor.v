@@ -68,7 +68,7 @@ module bsg_wormhole_router_decoder_dor
                       && bsg_noc_pkg::W == 1
                       && bsg_noc_pkg::E == 2
                       && bsg_noc_pkg::N == 3
-                      && bsg_noc_pkg::S == 4) else $fail("%m: bsg_noc_pkg dirs are inconsistent with this module");
+                      && bsg_noc_pkg::S == 4) else $error("%m: bsg_noc_pkg dirs are inconsistent with this module");
 `endif
 
 endmodule
