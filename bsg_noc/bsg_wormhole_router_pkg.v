@@ -1,6 +1,6 @@
 package bsg_wormhole_router_pkg;
   localparam  bit [1:0][2:0][2:0] StrictX
-                             = {    // EWP (input)
+                             = {   // EWP (input)
                                 {  3'b011 // E
                                   ,3'b101 // W
                                   ,3'b111 // P (output)
@@ -27,15 +27,15 @@ package bsg_wormhole_router_pkg;
 
   localparam bit [1:0][4:0][4:0] StrictXY
                             = {
-                               {//   SNEWP (input)
+                               {//  SNEWP (input)
                                  5'b01111  // S
-                                ,5'b00111  // N
+                                ,5'b10111  // N
                                 ,5'b00011  // E
                                 ,5'b00101  // W
                                 ,5'b11111  // P (output)
                                 }
                                ,
-                               {//   SNEWP (output)
+                               {//  SNEWP (output)
                                  5'b01001  // S
                                 ,5'b10001  // N
                                 ,5'b11011  // E
@@ -46,7 +46,7 @@ package bsg_wormhole_router_pkg;
 
   localparam bit [1:0][4:0][4:0] StrictYX
                             = {
-                               {//   SNEWP (input)
+                               {//  SNEWP (input)
                                  5'b01001  // S
                                 ,5'b10001  // N
                                 ,5'b11011  // E
@@ -54,7 +54,7 @@ package bsg_wormhole_router_pkg;
                                 ,5'b11111  // P (output)
                                 }
                                ,
-                               {//   SNEWP (output)
+                               {//  SNEWP (output)
                                  5'b01111  // S
                                 ,5'b10111  // N
                                 ,5'b00011  // E
@@ -73,7 +73,7 @@ package bsg_wormhole_router_pkg;
                                 ,5'b00000  // P (output)
                                 }
                                ,
-                               {//   SNEWP (output)
+                               {//  SNEWP (output)
                                  5'b00110  // S
                                 ,5'b00000  // N
                                 ,5'b00000  // E
