@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 // given a bunch of signals, and a bitvector parameter, gather/concentrate
 // those bits together into a more condensed vector
 //
