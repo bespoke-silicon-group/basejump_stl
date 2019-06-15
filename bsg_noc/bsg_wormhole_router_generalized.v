@@ -5,15 +5,15 @@
 module bsg_wormhole_router_generalized
      import bsg_wormhole_router_pkg::StrictXY;
      import bsg_wormhole_router_pkg::StrictX;
-  #(parameter flit_width_p        = 32 // "inv"
-   ,parameter dims_p                = 2 // 1
+  #(parameter flit_width_p        = "inv"
+   ,parameter dims_p              = 2 // 1
    ,parameter dirs_lp         = dims_p*2+1
 
     // this list determines the range of bit values used to determine each dimension in the N-D router
    ,parameter int cord_markers_pos_p[dims_p:0] =   '{ 5, 4, 0 }  // '{5,0} //
    ,parameter bit [1:0][dirs_lp-1:0][dirs_lp-1:0] routing_matrix_p =  StrictXY // StrictX
    ,parameter reverse_order_p       = 0
-   ,parameter len_width_p           = 5 // = "inv"
+   ,parameter len_width_p           = "inv"
    ,parameter debug_lp              = 0
    )
 
