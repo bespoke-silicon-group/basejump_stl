@@ -114,7 +114,7 @@ module bsg_wormhole_router_tester
     );
   end
 
-   bsg_wormhole_router_configurable
+   bsg_wormhole_router_generalized
      #(.flit_width_p(flit_width_p)
        ,.dims_p(dims_p)
        ,.cord_markers_pos_p(cord_markers_pos_p)
@@ -129,7 +129,7 @@ module bsg_wormhole_router_tester
 	,.link_o(fwd_link_lo)
 	);
 
-   bsg_wormhole_router_configurable
+   bsg_wormhole_router_generalized
      #(.flit_width_p(flit_width_p)
        ,.dims_p(dims_p)
        ,.cord_markers_pos_p(cord_markers_pos_p)

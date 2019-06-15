@@ -2,7 +2,7 @@
 `include "bsg_noc_links.vh"
 `include "bsg_wormhole_router.vh"
 
-module bsg_wormhole_router_configurable
+module bsg_wormhole_router_generalized
      import bsg_wormhole_router_pkg::StrictXY;
      import bsg_wormhole_router_pkg::StrictX;
   #(parameter flit_width_p        = 32 // "inv"
