@@ -94,6 +94,9 @@ module bsg_link_ddr_downstream
     //synopsys translate_off
     always_ff @ (negedge io_clk_i[i]) 
       begin
+      // Do not assert when either one evaluates to X, Z, or both evaluate to 0
+      // Also do not assert when reset signal evaluates to X or Z
+      if ((io_iddr_v_1 | io_iddr_v_0) & (io_link_reset_i[i] | ~io_link_reset_i[i]))
         assert ((io_iddr_v_1==io_iddr_v_0) | io_link_reset_i[i])
         else
           begin
