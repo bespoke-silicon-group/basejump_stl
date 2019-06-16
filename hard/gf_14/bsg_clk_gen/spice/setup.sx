@@ -1,0 +1,48 @@
+### Custom WaveView session file (version J-2014.09 build 0820) ###
+### saved at 09:48:07 on Sun Jun 16 2019 ###
+wdf 0 "/home/mbt/bsg14/basejump_stl/hard/gf_14/bsg_clk_gen/spice/run.tmp.tr0" load=used 
+scalar list
+waveview_begin 1  stack  offset=0 name_b=85 mntr_b=85 name_width=70 dm=duty:1488:697:1:0:0:0:0e+00:0e+00:5e+01:5:9.98892551006778e-09:1.06421606600292e-08:1.83797505500809e-01 dm=width:874:683:1:0:0:0:0e+00:0e+00:5e+01:5:5.48425666001215e-09:5.64836183887478e-09:3.94643549465765e-01 dm=width:938:684:1:0:0:0:0e+00:0e+00:5e+01:5:5.98342325681289e-09:6.22605910837758e-09:3.82055725945469e-01 dm=width:981:684:1:0:0:0:0e+00:0e+00:5e+01:5:6.37018535131825e-09:6.60431019798032e-09:3.82055725945469e-01 dm=width:1010:683:1:0:0:0:0e+00:0e+00:5e+01:5:6.60424298181028e-09:6.7465467204142e-09:3.85202681825543e-01 dm=width:1058:682:1:0:0:0:0e+00:0e+00:5e+01:5:6.98013083310963e-09:7.18139630391341e-09:3.88349637705617e-01 dm=width:1599:687:1:0:0:0:0e+00:0e+00:5e+01:5:1.09795084620414e-08:1.1343873926861e-08:3.30130953924249e-01 dm=width:1155:684:1:0:0:0:0e+00:0e+00:5e+01:5:7.76475025953469e-09:7.95856574625673e-09:3.75761814185321e-01 dm=width:1187:684:1:0:0:0:0e+00:0e+00:5e+01:5:7.95856574625673e-09:8.21113318854582e-09:3.75761814185321e-01 dm=width:1220:684:1:0:0:0:0e+00:0e+00:5e+01:5:8.21119719462639e-09:8.3844142080312e-09:3.72614858305247e-01 dm=width:1264:684:1:0:0:0:0e+00:0e+00:5e+01:5:8.3844142080312e-09:8.63115249054607e-09:3.72614858305247e-01 dm=width:1265:681:1:0:0:0:0e+00:0e+00:5e+01:5:8.63003025444618e-09:8.80390563231609e-09:4.26113108266505e-01 dm=width:1772:688:1:0:0:0:0e+00:0e+00:5e+01:5:1.2351649741358e-08:1.26947962440451e-08:3.17543130403953e-01 dm=width:1414:684:1:0:0:0:0e+00:0e+00:5e+01:5:9.65263385172576e-09:9.99284543868639e-09:3.82055725945469e-01 dm=width:1636:686:1:0:0:0:0e+00:0e+00:5e+01:5:1.1344348542198e-08:1.16410917984507e-08:3.5530660096484e-01 "name=waveview 1" 
+  panel_begin linear pidx=0 spath=name+file xlabel=TIME(sec) xmin=0e+00 xmax=1.41995619225489e-08 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(s0)" attr=0:0:1:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=1 spath=name+file xlabel=TIME(sec) xmin=0e+00 xmax=1.41995619225489e-08 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(s1)" attr=1:1:1:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=2 spath=name+file xlabel=TIME(sec) xmin=0e+00 xmax=1.41995619225489e-08 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(s2)" attr=2:2:1:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=3 spath=name+file xlabel=TIME(sec) xmin=0e+00 xmax=1.41995619225489e-08 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(s3)" attr=3:3:1:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=4 spath=name+file xlabel=TIME(sec) xmin=0e+00 xmax=1.41995619225489e-08 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(s4)" attr=4:4:1:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=5 spath=name+file xlabel=TIME(sec) xmin=0e+00 xmax=1.41995619225489e-08 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(n0)" attr=1:5:1:0 disp=show 
+  panel_end
+  panel_begin linear pidx=6 spath=name+file xlabel=TIME(sec) xmin=0e+00 xmax=1.41995619225489e-08 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(n1)" attr=6:6:1:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=7 spath=name+file xlabel=TIME(sec) xmin=0e+00 xmax=1.41995619225489e-08 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(n2)" attr=7:7:1:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=8 spath=name+file xlabel=TIME(sec) xmin=0e+00 xmax=1.41995619225489e-08 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(n3)" attr=0:0:1:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=9 spath=name+file xlabel=TIME(sec) xmin=0e+00 xmax=1.41995619225489e-08 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(n4)" attr=1:0:1:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=10 spath=name+file xlabel=TIME(sec) xmin=0e+00 xmax=1.41995619225489e-08 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(n5)" attr=2:1:1:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=11 spath=name+file xlabel=TIME(sec) xmin=0e+00 xmax=1.41995619225489e-08 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(n6)" attr=3:2:1:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=12 spath=name+file xlabel=TIME(sec) xmin=0e+00 xmax=1.41995619225489e-08 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(n7)" attr=4:3:1:0 autoset=true disp=show 
+  panel_end
+  panel_begin linear pidx=13 spath=name+file xlabel=TIME(sec) xmin=0e+00 xmax=1.41995619225489e-08 
+    line src=wdf lidx=0 fidx=0 "delim=." sigtype=1 "name=v(n8)" attr=5:4:1:0 autoset=true disp=show 
+  panel_end
+waveview_end
