@@ -28,8 +28,6 @@ module bsg_parallel_in_serial_out_dynamic
   ,input                               yumi_i
   );
 
-  genvar i;
-
   logic                              go_fifo_yumi_li;
   logic [lg_max_els_lp-1:0]          len_lo;
   logic [max_els_p-1:0][width_p-1:0] fifo_data_lo;
