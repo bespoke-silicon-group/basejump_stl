@@ -77,6 +77,7 @@ def emit_rp_fill (params):
 fab = "gf_14"
 
 #dffr1 = "DFKCND1BWP #0 (.D(#1), .CP(#3), .Q(#4),.QN(), .CN(#5));"
+# note: reset has priority over enable for these E-cells
 #dffre1 = "EDFKCND1BWP #0 (.D(#1), .E(#2), .CP(#3), .Q(#4),.QN(), .CN(#5));"
 #dffre2 = "EDFKCND2BWP #0 (.D(#1), .E(#2), .CP(#3), .Q(#4),.QN(), .CN(#5));"
 #dff1 = "DFD1BWP #0 (.D(#1), .CP(#3), .Q(#4), .QN());"
@@ -84,12 +85,16 @@ fab = "gf_14"
 #dff4 = "DFD4BWP #0 (.D(#1), .CP(#3), .Q(#4), .QN());"
 #dff8 = "wire tmp_bsg_dff8_#0;\n DFD1BWP #0 (.D(#1), .CP(#3), .Q(tmp_bsg_dff8_#0), .QN()); BUFFD8BWP #0_bsg_buf (.I(tmp_bsg_dff8_#0), .Z(#4));"
 #dffe1 = "EDFD1BWP #0 (.D(#1), .E(#2), .CP(#3), .Q(#4),.QN());"
+# FIXME (dffr1, dffre1, dffre2): This should be a synchronous reset_lo flop, but was specified here as asynchronous.
+# FIXME: Maybe have to use AND gate with reset signal on input
 dffr1 = "SC7P5T_DFFRQX1_SSC14L #0 (.D(#1), .CLK(#3), .Q(#4), .RESET(#5));"
 dffre1 = "wire tmp_bsg_dffre1_#0;\n SC7P5T_MUX2X1_SSC14SL #0_bsg_mux (.S(#2), .D0(#4), .D1(#1), .Z(tmp_bsg_dffre1_#0)); SC7P5T_DFFRQX1_SSC14L #0 (.D(tmp_bsg_dffre1_#0), .CLK(#3), .Q(#4), .RESET(#5));"
 dffre2 = "wire tmp_bsg_dffre2_#0;\n SC7P5T_MUX2X2_SSC14SL #0_bsg_mux (.S(#2), .D0(#4), .D1(#1), .Z(tmp_bsg_dffre1_#0)); SC7P5T_DFFRQX2_SSC14L #0 (.D(tmp_bsg_dffre1_#0), .CLK(#3), .Q(#4), .RESET(#5));"
 dff1 = "SC7P5T_DFFQX1_SSC14SL #0 (.D(#1), .CLK(#3) .Q(#4));"
 dff2 = "SC7P5T_DFFQX2_SSC14SL #0 (.D(#1), .CLK(#3) .Q(#4));"
 dff4 = "SC7P5T_DFFQX4_SSC14SL #0 (.D(#1), .CLK(#3) .Q(#4));"
+#FIXME: use DFF1 and BUF8 rather than DFF8 and BUF8, like in 40
+#FIXME: two missing commas, wire is misnamed when used.
 dff8 = "wire tmp_bsg_dff8_#0;\n SC7P5T_BUFX8_SSC14SL #0_bsg_buf (.A(tmp_bsg_dff8_#0), .Z(#4)); SC7P5T_DFFQX8_SSC14SL #0 (.D(#1), .CLK(#3) .Q(tmp_bsg_dff8_#0));"
 dffe1 = "wire tmp_bsg_dffe1_#0;\n SC7P5T_MUX2X1_SSC14SL #0_bsg_mux (.S(#2), .D0(#4), .D1(#1), .Z(tmp_bsg_dffre1_#0)); SC7P5T_DFFQX1_SSC14SL #0 (.D(tmp_bsg_dffre1_#0), .CLK(#3) .Q(#4));"
 
