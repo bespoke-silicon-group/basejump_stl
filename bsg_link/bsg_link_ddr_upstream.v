@@ -52,8 +52,7 @@ module bsg_link_ddr_upstream
   // Set use_extra_data_bit_p=1 to utilize this extra bit
   // MUST MATCH paired bsg_link_ddr_downstream setting
   ,parameter use_extra_data_bit_p = 0
-  ,localparam ddr_width_lp = (use_extra_data_bit_p==0)? channel_width_p*2 
-                                                      : channel_width_p*2+1
+  ,localparam ddr_width_lp  = channel_width_p*2 + use_extra_data_bit_p
   ,localparam piso_ratio_lp = width_p/(ddr_width_lp*num_channels_p)
   )
 
@@ -105,10 +104,10 @@ module bsg_link_ddr_upstream
   begin: ch
     
     logic io_oddr_valid_li, io_oddr_ready_lo;
-    // data_0 width is fixed
-    logic [channel_width_p-1:0] io_oddr_data_0;
-    // data_1 width is determined by use_extra_data_bit_p setting
-    logic [ddr_width_lp-1:channel_width_p] io_oddr_data_1;
+    // data_bottom width is fixed
+    logic [channel_width_p-1:0] io_oddr_data_bottom;
+    // data_top width is determined by use_extra_data_bit_p setting
+    logic [ddr_width_lp-1:channel_width_p] io_oddr_data_top;
 
     bsg_link_source_sync_upstream
    #(.channel_width_p(ddr_width_lp)
@@ -128,7 +127,7 @@ module bsg_link_ddr_upstream
     ,.core_ready_o          (core_piso_ready_li[i])
 
     // source synchronous output channel; going to chip edge
-    ,.io_data_o             ({io_oddr_data_1, io_oddr_data_0})
+    ,.io_data_o             ({io_oddr_data_top, io_oddr_data_bottom})
     ,.io_valid_o            (io_oddr_valid_li)
     ,.io_ready_i            (io_oddr_ready_lo)
     ,.token_clk_i           (token_clk_i[i])
@@ -140,15 +139,14 @@ module bsg_link_ddr_upstream
     ) oddr_phy
     (.reset_i (io_link_reset_i)
     ,.clk_i   (io_clk_i)
-    ,.data_i  ({{(channel_width_p+1)'(io_oddr_data_1)},
-                {io_oddr_valid_li, io_oddr_data_0}}) // valid signal is sent out in first cycle
+    ,.data_i  ({{(channel_width_p+1)'(io_oddr_data_top)},
+                {io_oddr_valid_li, io_oddr_data_bottom}}) // valid sent out in first cycle
     ,.ready_o (io_oddr_ready_lo)
     ,.data_r_o({io_valid_r_o[i], io_data_r_o[i]})
     ,.clk_r_o (io_clk_r_o[i])
     );
   
   end
-  
   
   // synopsys translate_off
   initial 

@@ -44,8 +44,7 @@ module bsg_link_ddr_downstream
   // Set use_extra_data_bit_p=1 to utilize this extra bit
   // MUST MATCH paired bsg_link_ddr_upstream setting
   ,parameter use_extra_data_bit_p = 0
-  ,localparam ddr_width_lp = (use_extra_data_bit_p==0)? channel_width_p*2 
-                                                      : channel_width_p*2+1
+  ,localparam ddr_width_lp  = channel_width_p*2 + use_extra_data_bit_p
   ,localparam sipo_ratio_lp = width_p/(ddr_width_lp*num_channels_p)
   )
 
@@ -83,10 +82,10 @@ module bsg_link_ddr_downstream
   begin:ch
     
     logic io_iddr_v_lo;
-    logic [channel_width_p-1:0] io_iddr_data_0;
-    // data_1 has channel_width_p+1 bits
+    logic [channel_width_p-1:0]   io_iddr_data_bottom;
+    // data_top has channel_width_p+1 bits
     // When use_extra_data_bit_p==0, the extra high bit get ignored 
-    logic [channel_width_p  :0] io_iddr_data_1;
+    logic [channel_width_p+1-1:0] io_iddr_data_top;
     
     // valid and data signals are received together
     bsg_link_iddr_phy
@@ -94,8 +93,8 @@ module bsg_link_ddr_downstream
     ) iddr_data
     (.clk_i   (io_clk_i[i])
     ,.data_i  ({io_valid_i[i], io_data_i[i]})
-    ,.data_r_o({{              io_iddr_data_1},
-                {io_iddr_v_lo, io_iddr_data_0}})
+    ,.data_r_o({{              io_iddr_data_top},
+                {io_iddr_v_lo, io_iddr_data_bottom}})
     );
 
     bsg_link_source_sync_downstream
@@ -109,7 +108,7 @@ module bsg_link_ddr_downstream
 
     // source synchronous input channel; coming from chip edge
     ,.io_clk_i         (io_clk_i[i])
-    ,.io_data_i        (ddr_width_lp'({io_iddr_data_1, io_iddr_data_0}))
+    ,.io_data_i        ({io_iddr_data_top[ddr_width_lp-channel_width_p-1:0],io_iddr_data_bottom})
     ,.io_valid_i       (io_iddr_v_lo)
     ,.core_token_r_o   (core_token_r_o[i])
 
