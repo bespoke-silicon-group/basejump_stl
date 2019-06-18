@@ -21,7 +21,8 @@
 module bsg_link_ddr_downstream
 
  #(// Core data width
-  // MUST be multiple of (2*channel_width_p*num_channels_p) 
+  // MUST be multiple of (2*channel_width_p*num_channels_p)
+  // When use_extra_data_bit_p=1, must be multiple of ((2*channel_width_p+1)*num_channels_p) 
    parameter width_p         = "inv"
   // Number of IO pins per physical IO channels
   ,parameter channel_width_p = 8
@@ -37,7 +38,14 @@ module bsg_link_ddr_downstream
   // Default value comes from child module
   // Refer to bsg_link_source_sync_downstream for more detail on this parameter
   ,parameter lg_credit_to_token_decimation_p = 3
-  ,localparam ddr_width_lp = channel_width_p*2
+  // There are (channel_width_p+1) physical wires available (1 wire for valid bit)
+  // With DDR clock, we can handle 2*channel_width_p+2 bits each cycle
+  // By default the link has 2*channel_width_p data bits and 1 valid bit, 1 bit is unused
+  // Set use_extra_data_bit_p=1 to utilize this extra bit
+  // MUST MATCH paired bsg_link_ddr_upstream setting
+  ,parameter use_extra_data_bit_p = 0
+  ,localparam ddr_width_lp = (use_extra_data_bit_p==0)? channel_width_p*2 
+                                                      : channel_width_p*2+1
   ,localparam sipo_ratio_lp = width_p/(ddr_width_lp*num_channels_p)
   )
 
@@ -74,37 +82,21 @@ module bsg_link_ddr_downstream
   for (i = 0; i < num_channels_p; i++) 
   begin:ch
     
-    logic io_iddr_v_0, io_iddr_v_1;
-    logic [channel_width_p-1:0] io_iddr_data_0, io_iddr_data_1;
+    logic io_iddr_v_lo;
+    logic [channel_width_p-1:0] io_iddr_data_0;
+    // data_1 has channel_width_p+1 bits
+    // When use_extra_data_bit_p==0, the extra high bit get ignored 
+    logic [channel_width_p  :0] io_iddr_data_1;
     
     // valid and data signals are received together
-    
     bsg_link_iddr_phy
    #(.width_p(channel_width_p+1)
     ) iddr_data
     (.clk_i   (io_clk_i[i])
     ,.data_i  ({io_valid_i[i], io_data_i[i]})
-    ,.data_r_o({{io_iddr_v_1, io_iddr_data_1},
-                {io_iddr_v_0, io_iddr_data_0}})
+    ,.data_r_o({{              io_iddr_data_1},
+                {io_iddr_v_lo, io_iddr_data_0}})
     );
-    
-    // Theoretically v0 and v1 should have same value
-    // It can go wrong when physical IO channel is unstable or there is a bug
-                              
-    //synopsys translate_off
-    always_ff @ (negedge io_clk_i[i]) 
-      begin
-      // Do not assert when either one evaluates to X, Z, or both evaluate to 0
-      // Also do not assert when reset signal evaluates to X or Z
-      if ((io_iddr_v_1 | io_iddr_v_0) & (io_link_reset_i[i] | ~io_link_reset_i[i]))
-        assert ((io_iddr_v_1==io_iddr_v_0) | io_link_reset_i[i])
-        else
-          begin
-            $error("BaseJump STL ERROR %m: Received v0=%d and v1=%d do not match.", 
-                    io_iddr_v_0, io_iddr_v_1);
-          end
-      end
-    //synopsys translate_on
 
     bsg_link_source_sync_downstream
    #(.channel_width_p(ddr_width_lp)
@@ -117,8 +109,8 @@ module bsg_link_ddr_downstream
 
     // source synchronous input channel; coming from chip edge
     ,.io_clk_i         (io_clk_i[i])
-    ,.io_data_i        ({io_iddr_data_1, io_iddr_data_0})
-    ,.io_valid_i       (io_iddr_v_1 & io_iddr_v_0) // valid when both v0 and v1 high
+    ,.io_data_i        (ddr_width_lp'({io_iddr_data_1, io_iddr_data_0}))
+    ,.io_valid_i       (io_iddr_v_lo)
     ,.core_token_r_o   (core_token_r_o[i])
 
     // going into core; uses core clock
@@ -150,14 +142,14 @@ module bsg_link_ddr_downstream
     assert (sipo_ratio_lp > 0)
     else 
       begin 
-        $error("BaseJump STL ERROR %m: width_p should be larger than or equal to (2*channel_width_p*num_channels_p)");
+        $error("BaseJump STL ERROR %m: width_p should be larger than or equal to (ddr_width_lp*num_channels_p)");
         $finish;
       end
       
     assert (sipo_ratio_lp*(ddr_width_lp*num_channels_p) == width_p)
     else 
       begin 
-        $error("BaseJump STL ERROR %m: width_p should be multiple of (2*channel_width_p*num_channels_p)");
+        $error("BaseJump STL ERROR %m: width_p should be multiple of (ddr_width_lp*num_channels_p)");
         $finish;
       end
   end
