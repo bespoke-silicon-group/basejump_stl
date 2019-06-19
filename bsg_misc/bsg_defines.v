@@ -19,9 +19,9 @@
 `endif
 
 `ifdef SYNTHESIS
-`define BSG_DISCONNECTED_IN_SIM 1'b0
+`define BSG_DISCONNECTED_IN_SIM(val) (val)
 `else
-`define BSG_DISCONNECTED_IN_SIM 1'bz
+`define BSG_DISCONNECTED_IN_SIM(val) ('z)
 `endif
 
 // using C-style shifts instead of a[i] allows the parameter of BSG_GET_BIT to be a parameter subrange                                                                                                                                                                               
