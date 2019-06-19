@@ -10,15 +10,19 @@ module bsg_unconcentrate_static #(pattern_els_p="inv"
 
    if (pattern_els_p[0])
      assign o[0] = i[0];
+   // synopsys translate_off
    else
      assign o[0] = 'z;
+   // synopsys translate_on
 
    for (j = 1; j < $bits(pattern_els_p); j=j+1)
      begin: rof
              if (pattern_els_p[j])
                assign o[j] = i[`BSG_COUNTONES_SYNTH(pattern_els_p[j-1:0])];
+             // synopsys translate_off
              else
                assign o[j] = 'z;
+             // synopsys translate_on
      end
 
 endmodule
