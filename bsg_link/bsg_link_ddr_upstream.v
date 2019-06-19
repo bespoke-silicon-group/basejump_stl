@@ -30,6 +30,7 @@ module bsg_link_ddr_upstream
 
  #(// Core data width
   // MUST be multiple of (2*channel_width_p*num_channels_p) 
+  // When use_extra_data_bit_p=1, must be multiple of ((2*channel_width_p+1)*num_channels_p) 
    parameter width_p         = "inv"
   // Number of IO pins per physical IO channels
   ,parameter channel_width_p = 8
@@ -45,7 +46,13 @@ module bsg_link_ddr_upstream
   // Default value comes from child module
   // Refer to bsg_link_source_sync_downstream for more detail on this parameter
   ,parameter lg_credit_to_token_decimation_p = 3
-  ,localparam ddr_width_lp = channel_width_p*2
+  // There are (channel_width_p+1) physical wires available (1 wire for valid bit)
+  // With DDR clock, we can handle 2*channel_width_p+2 bits each cycle
+  // By default the link has 2*channel_width_p data bits and 1 valid bit, 1 bit is unused
+  // Set use_extra_data_bit_p=1 to utilize this extra bit
+  // MUST MATCH paired bsg_link_ddr_downstream setting
+  ,parameter use_extra_data_bit_p = 0
+  ,localparam ddr_width_lp  = channel_width_p*2 + use_extra_data_bit_p
   ,localparam piso_ratio_lp = width_p/(ddr_width_lp*num_channels_p)
   )
 
@@ -97,7 +104,10 @@ module bsg_link_ddr_upstream
   begin: ch
     
     logic io_oddr_valid_li, io_oddr_ready_lo;
-    logic [channel_width_p-1:0] io_oddr_data_0, io_oddr_data_1;
+    // data_bottom width is fixed
+    logic [channel_width_p-1:0] io_oddr_data_bottom;
+    // data_top width is determined by use_extra_data_bit_p setting
+    logic [ddr_width_lp-1:channel_width_p] io_oddr_data_top;
 
     bsg_link_source_sync_upstream
    #(.channel_width_p(ddr_width_lp)
@@ -117,7 +127,7 @@ module bsg_link_ddr_upstream
     ,.core_ready_o          (core_piso_ready_li[i])
 
     // source synchronous output channel; going to chip edge
-    ,.io_data_o             ({io_oddr_data_1, io_oddr_data_0})
+    ,.io_data_o             ({io_oddr_data_top, io_oddr_data_bottom})
     ,.io_valid_o            (io_oddr_valid_li)
     ,.io_ready_i            (io_oddr_ready_lo)
     ,.token_clk_i           (token_clk_i[i])
@@ -129,8 +139,8 @@ module bsg_link_ddr_upstream
     ) oddr_phy
     (.reset_i (io_link_reset_i)
     ,.clk_i   (io_clk_i)
-    ,.data_i  ({{io_oddr_valid_li, io_oddr_data_1},
-                {io_oddr_valid_li, io_oddr_data_0}}) // copy the valid bit for both words
+    ,.data_i  ({{(channel_width_p+1)'(io_oddr_data_top)},
+                {io_oddr_valid_li, io_oddr_data_bottom}}) // valid sent out in first cycle
     ,.ready_o (io_oddr_ready_lo)
     ,.data_r_o({io_valid_r_o[i], io_data_r_o[i]})
     ,.clk_r_o (io_clk_r_o[i])
@@ -138,21 +148,20 @@ module bsg_link_ddr_upstream
   
   end
   
-  
   // synopsys translate_off
   initial 
   begin
     assert (piso_ratio_lp > 0)
     else 
       begin 
-        $error("BaseJump STL ERROR %m: width_p should be larger than or equal to (2*channel_width_p*num_channels_p)");
+        $error("BaseJump STL ERROR %m: width_p should be larger than or equal to (ddr_width_lp*num_channels_p)");
         $finish;
       end
       
     assert (piso_ratio_lp*(ddr_width_lp*num_channels_p) == width_p)
     else 
       begin 
-        $error("BaseJump STL ERROR %m: width_p should be multiple of (2*channel_width_p*num_channels_p)");
+        $error("BaseJump STL ERROR %m: width_p should be multiple of (ddr_width_lp*num_channels_p)");
         $finish;
       end
   end
