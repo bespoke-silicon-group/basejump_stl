@@ -27,7 +27,7 @@ module bsg_ready_and_link_async_to_wormhole
   ,parameter len_width_p                      = "inv"
   
   ,localparam ral_link_sif_width_lp = `bsg_ready_and_link_sif_width(ral_link_width_p)
-  ,localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(flit_width_p)
+  ,localparam wormhole_link_sif_width_lp = `bsg_ready_and_link_sif_width(flit_width_p)
   
   ,localparam cord_width_lp = cord_markers_pos_p[dims_p]
   )
@@ -47,8 +47,8 @@ module bsg_ready_and_link_async_to_wormhole
   ,input wh_clk_i
   ,input wh_reset_i
 
-  ,input  [bsg_ready_and_link_sif_width_lp-1:0] wh_link_i
-  ,output [bsg_ready_and_link_sif_width_lp-1:0] wh_link_o
+  ,input  [wormhole_link_sif_width_lp-1:0] wh_link_i
+  ,output [wormhole_link_sif_width_lp-1:0] wh_link_o
   );
 
   // 8 elements should be enough to handle roundtrip latency across async clock domain
@@ -100,8 +100,8 @@ module bsg_ready_and_link_async_to_wormhole
     ral_link_o_cast.data           = ral_sipof_data_lo_cast.data;
   end
   
-  `declare_bsg_ready_and_link_sif_s(flit_width_p, bsg_ready_and_link_sif_s);
-  bsg_ready_and_link_sif_s wh_link_i_cast, wh_link_o_cast;
+  `declare_bsg_ready_and_link_sif_s(flit_width_p, wormhole_link_sif_s);
+  wormhole_link_sif_s wh_link_i_cast, wh_link_o_cast;
   
   assign wh_link_i_cast = wh_link_i;
   assign wh_link_o      = wh_link_o_cast;
