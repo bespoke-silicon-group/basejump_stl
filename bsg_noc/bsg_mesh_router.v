@@ -89,18 +89,18 @@ if( XY_order_p == 1 ) begin:XY_dor
     //synopsys translate_off
     always@(negedge clk_i) begin
        //Y dim to X dim
-       if( (v_i[N]& ~x_eq[N]) | (v_i[S] & ~x_eq[S]) ) begin
+       assert( ~((v_i[N]& ~x_eq[N]) | (v_i[S] & ~x_eq[S])) ) else begin
                $error("%m:Y dim to X dim routing. XY_order_p = %b", XY_order_p);
                $finish();
        end  
        // the same X dim routings. For X/Y routing, we don't care Y dimesions.
-       if( (v_i[W] & x_lt[W]) | (v_i[E] & x_gt [E] ) ) begin
+       assert( ~((v_i[W] & x_lt[W]) | (v_i[E] & x_gt [E] )) ) else begin
                 $error("%m: X dim loopback routing", XY_order_p);
                 $finish();
        end
 
        // the same Y dim routings. For X/Y routing, X must be equal first.
-       if( (v_i[N] & x_eq[N] & y_lt[N]) | (v_i[S] & x_eq[S] & y_gt [S] ) ) begin
+       assert( ~((v_i[N] & x_eq[N] & y_lt[N]) | (v_i[S] & x_eq[S] & y_gt [S] )) ) else begin
                 $error("%m: Y dim loopback routing", XY_order_p);
                 $finish();
        end
@@ -146,18 +146,18 @@ end else begin:YX_dor
     //synopsys translate_off
     always@(negedge clk_i) begin
        //X dim to Y dim
-       if( (v_i[W] & ~y_eq[W]) | (v_i[E] & ~y_eq[E]) ) begin
+       assert( ~((v_i[W] & ~y_eq[W]) | (v_i[E] & ~y_eq[E])) ) else begin
                $error("%m:X dim to Y dim routing. XY_order_p = %b", XY_order_p);
                $finish();
        end  
        // the same X dim routings. For Y/X routing, Y must be equal first
-       if( (v_i[W] & y_eq[W] & x_lt[W]) | (v_i[E] & y_eq[E] & x_gt [E] ) ) begin
+       assert( ~((v_i[W] & y_eq[W] & x_lt[W]) | (v_i[E] & y_eq[E] & x_gt [E] )) ) else begin
                 $error("%m: X dim loopback routing", XY_order_p);
                 $finish();
        end
 
        // the same Y dim routings. For Y/X routing, ignore X cord
-       if( (v_i[N] & y_lt[N]) | (v_i[S] & y_gt [S] ) ) begin
+       assert( ~((v_i[N] & y_lt[N]) | (v_i[S] & y_gt [S] )) ) else begin
                 $error("%m: Y dim loopback routing", XY_order_p);
                 $finish();
        end
