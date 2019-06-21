@@ -56,7 +56,7 @@ module bsg_counter_set_down #(parameter width_p="inv", parameter init_val_p='0, 
         $display("%m error: counter underflow at time %t", $time);
 
       if (~reset_i & set_and_down_exclusive_p & set_i & down_i)
-        $display("%m error: counter underflow at time %t", $time);
+	      $display("%m error: set and down non-exclusive at time %t", $time);
     end
 `endif
       
