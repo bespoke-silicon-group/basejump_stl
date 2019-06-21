@@ -1,7 +1,0 @@
-{
-	"daily_design" : [
-			{"...":"<bsg_imul_iterative_8bit.json>"},
-			{"...":"<bsg_imul_iterative_16bit.json>"},
-			{"...":"<bsg_imul_iterative_32bit.json>"}
-	]
-} 
