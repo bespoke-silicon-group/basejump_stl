@@ -1,7 +1,7 @@
 // bsg_mesh_router
 //
 // Dimension ordered routing decoder
-// XY_order_p = 0 :  X then Y 
+// XY_order_p = 0 :  X then Y
 // XY_order_p = 1 :  Y then X
 
 module bsg_mesh_router_dor_decoder
@@ -21,6 +21,7 @@ import bsg_noc_pkg::Dirs
    ,parameter XY_order_p    = 1
  )
  ( input clk_i   // debug only
+  ,input reset_i // clock only
   ,input [dirs_lp-1:0] v_i
 
   ,input [dirs_lp-1:0][x_cord_width_p-1:0] x_dirs_i
@@ -51,7 +52,7 @@ import bsg_noc_pkg::Dirs
 
   //-------------------------------------------------------
   // request signals: format req[<input dir>][<output dir>]
-  
+
 if( XY_order_p == 1 ) begin:XY_dor
     for( i=W; i<=E; i++) begin:x2y // X dim to Y dim
         assign req_o[i][N] = v_i_stub[i] & x_eq[i] & y_lt[i];
@@ -78,7 +79,7 @@ if( XY_order_p == 1 ) begin:XY_dor
 
     assign req_o[P][P]  =  v_i_stub[P] & x_eq[P] & y_eq [P];
 
-    assign req_o[P][S]  =  v_i_stub[P] & x_eq[P] & y_gt [P]; // X must equal 
+    assign req_o[P][S]  =  v_i_stub[P] & x_eq[P] & y_gt [P]; // X must equal
     assign req_o[P][N]  =  v_i_stub[P] & x_eq[P] & y_lt [P]; // X must equal
     //The request to P
     for( i=W; i<=S; i++) begin
@@ -87,23 +88,43 @@ if( XY_order_p == 1 ) begin:XY_dor
     //--------------------------------------------------------------
     //  Checking
     //synopsys translate_off
-    always@(negedge clk_i) begin
-       //Y dim to X dim
-       assert( ~((v_i[N]& ~x_eq[N]) | (v_i[S] & ~x_eq[S])) ) else begin
-               $error("%m:Y dim to X dim routing. XY_order_p = %b", XY_order_p);
-               $finish();
-       end  
-       // the same X dim routings. For X/Y routing, we don't care Y dimesions.
-       assert( ~((v_i[W] & x_lt[W]) | (v_i[E] & x_gt [E] )) ) else begin
-                $error("%m: X dim loopback routing", XY_order_p);
-                $finish();
-       end
+    always@(negedge clk_i)
+      begin
+         //Y dim to X dim
+         assert( (reset_i !== 1'b0)
+                 |  ~(
+                      (v_i[N]& ~x_eq[N])
+                      | (v_i[S] & ~x_eq[S])
+                      )
+                 ) else
+           begin
+              $error("%m:Y dim to X dim routing. XY_order_p = %b", XY_order_p);
+              $finish();
+           end
+
+         // the same X dim routings. For X/Y routing, we don't care Y dimesions.
+         assert( (reset_i !== 1'b0)
+                 |  ~(
+                      (v_i[W] & x_lt[W])
+                      | (v_i[E] & x_gt [E] )
+                      )
+                 ) else
+           begin
+              $error("%m: X dim loopback routing", XY_order_p);
+              $finish();
+           end
 
        // the same Y dim routings. For X/Y routing, X must be equal first.
-       assert( ~((v_i[N] & x_eq[N] & y_lt[N]) | (v_i[S] & x_eq[S] & y_gt [S] )) ) else begin
-                $error("%m: Y dim loopback routing", XY_order_p);
-                $finish();
-       end
+       assert(  (reset_i !== 1'b0 )
+                |  ~(
+                     (v_i[N] & x_eq[N] & y_lt[N])
+                     | (v_i[S] & x_eq[S] & y_gt [S])
+                     )
+                ) else
+         begin
+            $error("%m: Y dim loopback routing", XY_order_p);
+            $finish();
+         end
     end
     //synopsys translate_on
 
@@ -111,7 +132,7 @@ if( XY_order_p == 1 ) begin:XY_dor
 end else begin:YX_dor
     for( i=W; i<=E; i++) begin:x2y // X dim to Y dim
         assign req_o[i][N] = 1'b0;
-        assign req_o[i][S] = 1'b0; 
+        assign req_o[i][S] = 1'b0;
     end
 
     for( i=N; i<=S; i++) begin:y2x // Y dim to X dim
@@ -144,26 +165,47 @@ end else begin:YX_dor
     //--------------------------------------------------------------
     //  Checking
     //synopsys translate_off
-    always@(negedge clk_i) begin
-       //X dim to Y dim
-       assert( ~((v_i[W] & ~y_eq[W]) | (v_i[E] & ~y_eq[E])) ) else begin
-               $error("%m:X dim to Y dim routing. XY_order_p = %b", XY_order_p);
-               $finish();
-       end  
-       // the same X dim routings. For Y/X routing, Y must be equal first
-       assert( ~((v_i[W] & y_eq[W] & x_lt[W]) | (v_i[E] & y_eq[E] & x_gt [E] )) ) else begin
-                $error("%m: X dim loopback routing", XY_order_p);
-                $finish();
-       end
+    always@(negedge clk_i)
+      begin
+         //X dim to Y dim
+         assert( (reset_i !== 1'b0)
+                 | ~(
+                     (v_i[W] & ~y_eq[W])
+                     | (v_i[E] & ~y_eq[E])
+                     )
+                 ) else
+           begin
+              $error("%m:X dim to Y dim routing. XY_order_p = %b", XY_order_p);
+              $finish();
+           end
 
-       // the same Y dim routings. For Y/X routing, ignore X cord
-       assert( ~((v_i[N] & y_lt[N]) | (v_i[S] & y_gt [S] )) ) else begin
+         // the same X dim routings. For Y/X routing, Y must be equal first
+         assert( (reset_i !== 1'b0)
+                 | ~(
+                     (v_i[W] & y_eq[W] & x_lt[W])
+                     | (v_i[E] & y_eq[E] & x_gt [E] )
+                     )
+                 ) else
+           begin
+              $error("%m: X dim loopback routing", XY_order_p);
+              $finish();
+           end
+
+         // the same Y dim routings. For Y/X routing, ignore X cord
+         assert( (reset_i !== 1'b0)
+                 | ~(
+                     (v_i  [N] & y_lt[N])
+                     | (v_i[S] & y_gt[S])
+                     )
+                 )
+           else
+             begin
                 $error("%m: Y dim loopback routing", XY_order_p);
                 $finish();
-       end
-    end
-    //synopsys translate_on
-    //--------------------------------------------------------------
+             end
+      end
+   //synopsys translate_on
+   //--------------------------------------------------------------
 end
 endmodule
 
@@ -224,7 +266,8 @@ import bsg_noc_pkg::Dirs
                                    ,.dirs_lp        (dirs_lp       )
                                    ,.XY_order_p     (XY_order_p    )
                                    ) dor_decoder
-     (  .clk_i(clk_i)   // debug only
+     (  .clk_i(clk_i)     // debug only
+       ,.reset_i(reset_i) // debug only
        ,.v_i            (v_i_stub)
        ,.my_x_i
        ,.my_y_i
