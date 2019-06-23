@@ -31,89 +31,99 @@ void performTesting(int bias){
     dut->yumi_i = 1;
     dut->eval();
 
-    for(size_t i = bias ; i < 0xFFFFFFFF; i += thread_number_p){
-        // extract dividend and divisor
-        short dividend = (i & 0xFFFF0000) >> 16;
-        short divisor = i & 0xFFFF;
+    for(int i = 0 ; i < 65536; ++i){
+        for(int j = bias; j < 65536; j += thread_number_p){
+            short dividend = i;
+            short divisor = j;
+            // Perform division
+            dut->dividend_i = dividend;
+            dut->divisor_i = divisor;
+            dut->v_i = 1;
+            dut->eval();
+            dut->clk_i = 1;
+            dut->eval();
+            dut->clk_i = 0;
+            dut->v_i = 0;
+            dut->eval();
+            while(!dut->v_o){
+                dut->clk_i = 1;
+                dut->eval();
+                dut->clk_i = 0;
+                dut->eval();
+            }
 
-        // Perform division
+            short quotient_hw = dut->result_o;
+            bool unimplemented_o = dut->unimplemented_o;
+            bool divisor_is_zero_o = dut->divisor_is_zero_o;
+            bool underflow_o = dut->underflow_o;
+            bool overflow_o = dut->overflow_o;
 
-        dut->dividend_i = dividend;
-        dut->divisor_i = divisor;
-        dut->v_i = 1;
-        dut->eval();
-        dut->clk_i = 1;
-        dut->eval();
-        dut->clk_i = 0;
-        dut->v_i = 0;
-        dut->eval();
-        while(!dut->v_o){
             dut->clk_i = 1;
             dut->eval();
             dut->clk_i = 0;
             dut->eval();
-        }
 
-        short s_deno = !(dividend & 0x7C00);
-        short d_deno = !(divisor & 0x7C00);
+            short s_deno = !(dividend & 0x7C00);
+            short d_deno = !(divisor & 0x7C00);
 
-        if((s_deno | d_deno) & dut->unimplemented_o) continue;
+            if((s_deno | d_deno) && unimplemented_o) continue;
 
-        // NaN
-        short result_is_nan = (dividend & 0x7C00) == 0x7C00 && (dividend & 0x3FF) != 0 // dividend is NaN
-                            || (divisor & 0x7C00) == 0x7C00 && (divisor & 0x3FF) != 0  // divisor is NaN
-                            || (dividend & 0x7C00) == 0x7C00 && (dividend & 0x3FF) == 0 && (divisor & 0x7C00) == 0x7C00 && (divisor & 0x3FF) == 0 // inf/inf
-                            || (dividend & 0x7FFF) == 0 && (divisor & 0x7FFF) == 0; // 0/0
-        if(result_is_nan && (dut->result_o & 0x7C00) == 0x7C00 && (dut->result_o & 0x3FF) != 0) 
-            continue;
-        
-        // Inf
-
-        short result_is_inf = (dividend & 0x7C00) == 0x7C00 && (dividend & 0x3FF) == 0 && (divisor & 0x7C00) != 0x7C00 | // inf / normal value
-                            ((dividend & 0x7FFF) != 0 && (divisor & 0x7FFF) == 0); // normal value / 0
-
-        if(result_is_inf && (dut->result_o & 0x7C00) == 0x7C00 && (dut->result_o & 0x3FF) == 0) continue;
-        if((divisor & 0x7FFF) == 0 && dut->divisor_is_zero_o) continue;
-
-        // Zero 
-
-        if((dividend & 0x7FFF) == 0 && (divisor & 0x7FFF) != 0 && (dut->result_o & 0x7FFF) == 0) continue;
-
-        unsigned int dividend_mantissa = (dividend & 1023) + 1024;
-        unsigned int divisor_mantissa = (divisor & 1023) + 1024;
-
-        dividend_mantissa <<= 11;
-        unsigned short dividend_exponent = (dividend & 0x7C00) >> 10;
-        unsigned short divisor_exponent = (divisor & 0x7C00) >> 10;
-
-        unsigned short quotient_sign = (dividend ^ divisor) & 0x8000;
-
-        short quotient_exponent = (dividend_exponent - divisor_exponent + 15);
-
-        unsigned int quotient = dividend_mantissa / divisor_mantissa;
-        int shifted = 0;
-
-        if((quotient & 2048) == 0){
-            quotient_exponent--;
-        } else {
-            quotient >>= 1;
-        }
-
-        // check overflow and underflow
-        if(((quotient_exponent & 0xFFE0) == 0xFFE0 || (quotient_exponent == 0)) && dut->underflow_o) continue;
-        if(((quotient_exponent & 0xFFE0) == 0x20 || (quotient_exponent == 0x1F)) && dut->overflow_o) continue;
-
-
-        short quotient_expected =  quotient_sign | (quotient_exponent << 10) | quotient & 1023;
-
-        if(quotient_expected == dut->result_o)
-            continue;
-        else{
-            std::printf("dividend: %d divisor: %d quotient:%d quotient_hw:%d \n", dividend, divisor, quotient, dut->result_o);
-            std::printf("%d: Error\n", bias);
-            return;
-        }
+            // NaN
+            short result_is_nan = (dividend & 0x7C00) == 0x7C00 && (dividend & 0x3FF) != 0 // dividend is NaN
+                                || (divisor & 0x7C00) == 0x7C00 && (divisor & 0x3FF) != 0  // divisor is NaN
+                                || (dividend & 0x7C00) == 0x7C00 && (dividend & 0x3FF) == 0 && (divisor & 0x7C00) == 0x7C00 && (divisor & 0x3FF) == 0 // inf/inf
+                                || (dividend & 0x7FFF) == 0 && (divisor & 0x7FFF) == 0; // 0/0
+            if(result_is_nan && (quotient_hw & 0x7C00) == 0x7C00 && (quotient_hw & 0x3FF) != 0) 
+                continue;
             
+            // Inf
+
+            short result_is_inf = (dividend & 0x7C00) == 0x7C00 && (dividend & 0x3FF) == 0 && (divisor & 0x7C00) != 0x7C00 | // inf / normal value
+                                ((dividend & 0x7FFF) != 0 && (divisor & 0x7FFF) == 0); // normal value / 0
+
+            if(result_is_inf && (quotient_hw & 0x7C00) == 0x7C00 && (quotient_hw & 0x3FF) == 0) continue;
+            if((divisor & 0x7FFF) == 0 && divisor_is_zero_o) continue;
+
+            // Zero 
+
+            if((dividend & 0x7FFF) == 0 && (divisor & 0x7FFF) != 0 && (quotient_hw & 0x7FFF) == 0) continue;
+
+            unsigned int dividend_mantissa = (dividend & 1023) + 1024;
+            unsigned int divisor_mantissa = (divisor & 1023) + 1024;
+
+            dividend_mantissa <<= 11;
+            unsigned short dividend_exponent = (dividend & 0x7C00) >> 10;
+            unsigned short divisor_exponent = (divisor & 0x7C00) >> 10;
+
+            unsigned short quotient_sign = (dividend ^ divisor) & 0x8000;
+
+            short quotient_exponent = (dividend_exponent - divisor_exponent + 15);
+
+            unsigned int quotient = dividend_mantissa / divisor_mantissa;
+            int shifted = 0;
+
+            if((quotient & 2048) == 0){
+                quotient_exponent--;
+            } else {
+                quotient >>= 1;
+            }
+
+            // check overflow and underflow
+            if(((quotient_exponent & 0xFFE0) == 0xFFE0 || (quotient_exponent == 0)) && underflow_o) continue;
+            if(((quotient_exponent & 0xFFE0) == 0x20 || (quotient_exponent == 0x1F)) && overflow_o) continue;
+
+
+            short quotient_expected =  quotient_sign | (quotient_exponent << 10) | quotient & 1023;
+
+            if(quotient_expected == quotient_hw)
+                continue;
+            else{
+                std::printf("dividend: %d divisor: %d quotient:%d quotient_hw:%d \n", dividend, divisor, quotient, quotient_hw);
+                std::printf("%d: Error\n", bias);
+                return;
+            }
+        }
+        std::printf("Thread %d: i = %d is tested.\n",bias, i);
     }
 }
 
@@ -135,6 +145,7 @@ int main(){
         delete container[i];
         delete cpp_thread[i];
     }
+
     
     return 0;
 }

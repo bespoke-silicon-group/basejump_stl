@@ -2,7 +2,7 @@ BSG_ROOT=../../..
 
 
 verilator_wrapper:
-	make clean
+	# make clean
 	verilator --Wno-fatal -sv --cc \
 	$(BSG_ROOT)/bsg_misc/bsg_defines.v \
 	$(BSG_ROOT)/bsg_misc/bsg_adder_carry_save.v \
@@ -13,12 +13,14 @@ verilator_wrapper:
 	$(BSG_ROOT)/bsg_fpu/bsg_fpu_round.v \
 	$(BSG_ROOT)/bsg_fpu/bsg_fpu_div.v \
 	./verilator/test_bsg_float16_wrapper.v \
-	--exe \ ./verilator/test_bsg_float16.cpp \
+	--exe ./verilator/test_bsg_float16.cpp \
 	--top-module bsg_fpu_div_float16 \
-	-CFLAGS "-g -O3" \
+	-CFLAGS "-g" \
 	-LDFLAGS "-lpthread"
 
 	make -C obj_dir -f Vbsg_fpu_div_float16.mk 
+
+	./obj_dir/Vbsg_fpu_div_float16
 
 float32:
 	make clean
