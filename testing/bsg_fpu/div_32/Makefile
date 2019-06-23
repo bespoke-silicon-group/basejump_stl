@@ -15,7 +15,7 @@ verilator_wrapper:
 	./verilator/test_bsg_float16_wrapper.v \
 	--exe ./verilator/test_bsg_float16.cpp \
 	--top-module bsg_fpu_div_float16 \
-	-CFLAGS "-g" \
+	-CFLAGS "-g -std=c++11" \
 	-LDFLAGS "-lpthread"
 
 	make -C obj_dir -f Vbsg_fpu_div_float16.mk 

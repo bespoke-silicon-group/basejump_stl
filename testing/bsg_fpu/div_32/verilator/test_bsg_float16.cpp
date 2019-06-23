@@ -31,8 +31,8 @@ void performTesting(int bias){
     dut->yumi_i = 1;
     dut->eval();
 
-    for(int i = 0 ; i < 65536; ++i){
-        for(int j = bias; j < 65536; j += thread_number_p){
+    for(int i = bias ; i < 65536; i+= thread_number_p){
+        for(int j = 0; j < 65536; ++j){
             short dividend = i;
             short divisor = j;
             // Perform division
