@@ -28,6 +28,7 @@ bsg_fpu_div #(
   .e_p(5)
   ,.m_p(10)
   ,.debug_p(0)
+  ,.rounding_p(bsg_fpu_pkg::eInward)
 ) divisor (.*);
 
 endmodule
