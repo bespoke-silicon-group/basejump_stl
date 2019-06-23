@@ -19,7 +19,7 @@ module bsg_fpu_div #(
   ,parameter integer m_p = "inv"
   ,localparam integer width_lp = e_p + m_p + 1
   ,parameter bit debug_p = 1
-  ,parameter bsg_fpu_pkg::bsg_fpu_rounding_type_e  rounding = bsg_fpu_pkg::eRtna
+  ,parameter bsg_fpu_pkg::bsg_fpu_rounding_type_e  rounding_p = bsg_fpu_pkg::eRtna
 )(
   input clk_i
   ,input reset_i
@@ -298,7 +298,7 @@ bsg_fpu_round #(
   .width_i_p(divider_width_lp+1)
   ,.width_o_p(m_p+1)
 ) rounder (
-  .type_i(rounding)
+  .type_i(rounding_p)
   ,.mantissa_i(result_mantissa_r)
   ,.sign_i(result_sign_r)
   ,.mantissa_o(round_out)

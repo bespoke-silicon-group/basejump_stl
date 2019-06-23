@@ -46,7 +46,7 @@ bsg_fpu_div #(
   .e_p(5)
   ,.m_p(10)
   ,.debug_p(once)
-  ,.rounding(bsg_fpu_pkg::eInward)
+  ,.rounding_p(bsg_fpu_pkg::eInward)
 ) fp32_div (
   .clk_i(clk_i)
   ,.reset_i(reset_i)

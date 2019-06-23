@@ -53,6 +53,7 @@ void performTesting(int bias){
             }
 
             short quotient_hw = dut->result_o;
+
             bool unimplemented_o = dut->unimplemented_o;
             bool divisor_is_zero_o = dut->divisor_is_zero_o;
             bool underflow_o = dut->underflow_o;
@@ -118,7 +119,8 @@ void performTesting(int bias){
             if(quotient_expected == quotient_hw)
                 continue;
             else{
-                std::printf("dividend: %d divisor: %d quotient:%d quotient_hw:%d \n", dividend, divisor, quotient, quotient_hw);
+                std::printf("dividend: %d divisor: %d quotient:%d quotient_hw:%d \n", dividend, divisor, quotient_expected, quotient_hw);
+                std::printf("Condition: unimplemented: %d, divisor_is_zero: %d, underflow_o: %d overflow_o: %d\n", underflow_o, divisor_is_zero_o, underflow_o, overflow_o);
                 std::printf("%d: Error\n", bias);
                 return;
             }
