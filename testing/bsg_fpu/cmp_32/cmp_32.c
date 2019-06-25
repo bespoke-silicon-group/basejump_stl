@@ -47,12 +47,7 @@ void test_cmp_32(float a_i, float b_i)
 
   float min_o;
   float max_o;
-  if (is_sig_nan(a_i) || is_sig_nan(b_i))
-  {
-    min_o = NAN;
-    max_o = NAN;
-  }
-  else if (is_nan(a_i) && is_nan(b_i))
+  if (is_nan(a_i) && is_nan(b_i))
   {
     min_o = NAN;
     max_o = NAN;

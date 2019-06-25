@@ -101,21 +101,23 @@ module bsg_fpu_f2i
       z_o = '0;
       invalid_o = 1'b1;
     end
+    else if (nan) begin
+      z_o = '0;
+      invalid_o = 1'b1;
+    end
     else if (zero) begin
       z_o = '0;
       invalid_o = 1'b0;
     end
     else if (exp_too_big) begin
-      z_o = '0;
+      z_o = sign
+        ? {1'b1, {(width_lp-1){1'b0}}}
+        : {1'b0, {(width_lp-1){1'b1}}};
       invalid_o = 1'b1;
     end
     else if (exp_too_small) begin
       z_o = '0;
       invalid_o = 1'b0;
-    end
-    else if (nan) begin
-      z_o = '0;
-      invalid_o = 1'b1;
     end
     else begin
       z_o = post_round;
