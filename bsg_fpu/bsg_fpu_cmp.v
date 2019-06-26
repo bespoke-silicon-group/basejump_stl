@@ -173,8 +173,8 @@ module bsg_fpu_cmp
       min_max_invalid_o = 1'b0;
 
       if (a_zero & b_zero) begin
-        min_o = `BSG_FPU_ZERO(1'b0, e_p, m_p);
-        max_o = `BSG_FPU_ZERO(1'b0, e_p, m_p);
+        min_o = `BSG_FPU_ZERO(a_sign | b_sign, e_p, m_p);
+        max_o = `BSG_FPU_ZERO(a_sign & b_sign, e_p, m_p);
       end
       else if (lt_o) begin
         min_o = a_i;

@@ -41,6 +41,7 @@ module bsg_fpu_f2i
   logic [m_p-1:0] mantissa;
   logic zero;
   logic nan;
+  logic infty;
   
   bsg_fpu_preprocess #(
     .e_p(e_p)
@@ -50,7 +51,7 @@ module bsg_fpu_f2i
     ,.zero_o(zero)
     ,.nan_o(nan)
     ,.sig_nan_o()
-    ,.infty_o()
+    ,.infty_o(infty)
     ,.exp_zero_o()
     ,.man_zero_o()
     ,.denormal_o()
@@ -97,11 +98,26 @@ module bsg_fpu_f2i
   assign post_round = inverted + (sign);
 
   always_comb begin
-    if (~signed_i & sign) begin
-      z_o = '0;
+
+    if (nan) begin
+      z_o = signed_i
+        ? {1'b0, {(width_lp-1){1'b1}}}
+        : {(width_lp){1'b1}};
       invalid_o = 1'b1;
     end
-    else if (nan) begin
+    else if (infty) begin
+      //  neg_infty 
+      //    signed   = 32'b80000000
+      //    unsigned = 32'b00000000
+      //  pos_infty
+      //    signed   = 32'b7fffffff
+      //    unsigned = 32'bffffffff
+      z_o = sign
+        ? {signed_i, {(width_lp-1){1'b0}}}
+        : {~signed_i, {(width_lp-1){1'b1}}};
+      invalid_o = 1'b1;
+    end
+    else if (~signed_i & sign) begin
       z_o = '0;
       invalid_o = 1'b1;
     end
