@@ -36,19 +36,19 @@ void test_signed_f2i_32(float a_i)
   int z_lo;
   int invalid;
 
-  if (is_infty(a_i))
+  if (is_nan(a_i))
   {
     z_lo = 0;
     invalid = 1;
   }
-  else if (is_nan(a_i))
+  else if (a_i > (float) INT_MAX)
   {
-    z_lo = 0;
+    z_lo = 0x7fffffff;
     invalid = 1;
   }
-  else if (a_i > (float) INT_MAX || a_i < (float) INT_MIN)
+  else if (a_i < (float) INT_MIN)
   {
-    z_lo = 0;
+    z_lo = 0x80000000;
     invalid = 1;
   }
   else
@@ -79,11 +79,6 @@ void test_unsigned_f2i_32(float a_i)
     z_lo = 0;
     invalid = 1;
   }
-  else if (is_infty(a_i))
-  {
-    z_lo = 0;
-    invalid = 1;
-  }
   else if (is_nan(a_i))
   {
     z_lo = 0;
@@ -91,7 +86,7 @@ void test_unsigned_f2i_32(float a_i)
   }
   else if (a_i > (float) UINT_MAX)
   {
-    z_lo = 0;
+    z_lo = 0x7fffffff;
     invalid = 1;
   }
   else

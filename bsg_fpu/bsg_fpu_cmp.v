@@ -154,32 +154,27 @@ module bsg_fpu_cmp
   // min-max
   //
   always_comb begin
-    if (a_sig_nan | b_sig_nan) begin
+    if (a_nan & b_nan) begin
       min_o = `BSG_FPU_QUIETNAN(e_p,m_p);
       max_o = `BSG_FPU_QUIETNAN(e_p,m_p);
-      min_max_invalid_o = 1'b1;
-    end
-    else if (a_nan & b_nan) begin
-      min_o = `BSG_FPU_QUIETNAN(e_p,m_p);
-      max_o = `BSG_FPU_QUIETNAN(e_p,m_p);
-      min_max_invalid_o = 1'b0;
+      min_max_invalid_o = a_sig_nan | b_sig_nan;
     end
     else if (a_nan & ~b_nan) begin
       min_o = b_i;
       max_o = b_i;
-      min_max_invalid_o = 1'b0;
+      min_max_invalid_o = a_sig_nan;
     end
     else if (~a_nan & b_nan) begin
       min_o = a_i;
       max_o = a_i;
-      min_max_invalid_o = 1'b0;
+      min_max_invalid_o = b_sig_nan;
     end
     else begin
       min_max_invalid_o = 1'b0;
 
       if (a_zero & b_zero) begin
-        min_o = `BSG_FPU_ZERO(1'b0, e_p, m_p);
-        max_o = `BSG_FPU_ZERO(1'b0, e_p, m_p);
+        min_o = `BSG_FPU_ZERO(a_sign | b_sign, e_p, m_p);
+        max_o = `BSG_FPU_ZERO(a_sign & b_sign, e_p, m_p);
       end
       else if (lt_o) begin
         min_o = a_i;
