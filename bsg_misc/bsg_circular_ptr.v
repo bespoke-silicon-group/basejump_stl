@@ -26,7 +26,7 @@ module bsg_circular_ptr #(parameter slots_p     = -1
 
    // increment round robin pointers
    always @(posedge clk)
-     if (reset_i) ptr_r <= 0;
+     if (reset_i) ptr_r <= '0;
      else       ptr_r <= ptr_n;
 
    if (slots_p == 1)
