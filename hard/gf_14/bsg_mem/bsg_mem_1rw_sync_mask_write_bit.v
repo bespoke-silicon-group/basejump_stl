@@ -13,8 +13,8 @@
           , .WEN   ( ~w_mask_i )                              \
           , .RET1N ( 1'b1      )                              \
           , .STOV  ( 1'b0      )                              \
-          , .EMA   ( 3'b010    )                              \
-          , .EMAW  ( 2'b00     )                              \
+          , .EMA   ( 3'b011    )                              \
+          , .EMAW  ( 2'b01     )                              \
           , .EMAS  ( 1'b0      )                              \
           );                                                  \
     end: macro
@@ -36,8 +36,8 @@
               , .WEN   ( ~w_mask_i[i*(width_p/banks)+:width_p/banks] )    \
               , .RET1N ( 1'b1                           )                 \
               , .STOV  ( 1'b0                           )                 \
-              , .EMA   ( 3'b010                         )                 \
-              , .EMAW  ( 2'b00                          )                 \
+              , .EMA   ( 3'b011                         )                 \
+              , .EMAW  ( 2'b01                          )                 \
               , .EMAS  ( 1'b0                           )                 \
               );                                                          \
         end: bank                                                         \

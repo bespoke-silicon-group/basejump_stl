@@ -12,8 +12,8 @@
           , .CENB  ( ~w_v_i    )                     \
           , .AB    ( w_addr_i  )                     \
           , .DB    ( w_data_i  )                     \
-          , .EMAA  ( 3'b010    )                     \
-          , .EMAB  ( 3'b010    )                     \
+          , .EMAA  ( 3'b011    )                     \
+          , .EMAB  ( 3'b011    )                     \
           , .EMASA ( 1'b0      )                     \
           , .STOV  ( 1'b0      )                     \
           , .RET1N ( 1'b1      )                     \
@@ -28,8 +28,8 @@
           , .CENB  ( ~w_v_i    )                     \
           , .AB    ( w_addr_i  )                     \
           , .DB    ( w_data_i  )                     \
-          , .EMAA  ( 3'b010    )                     \
-          , .EMAB  ( 3'b010    )                     \
+          , .EMAA  ( 3'b011    )                     \
+          , .EMAB  ( 3'b011    )                     \
           , .EMASA ( 1'b0      )                     \
           , .STOV  ( 1'b0      )                     \
           , .RET1N ( 1'b1      )                     \

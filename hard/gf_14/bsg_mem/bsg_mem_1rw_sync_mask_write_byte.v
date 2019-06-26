@@ -18,8 +18,8 @@
           , .WEN   ( ~wen   )                                  \
           , .RET1N ( 1'b1   )                                  \
           , .STOV  ( 1'b0   )                                  \
-          , .EMA   ( 3'b010 )                                  \
-          , .EMAW  ( 2'b00  )                                  \
+          , .EMA   ( 3'b011 )                                  \
+          , .EMAW  ( 2'b01  )                                  \
           , .EMAS  ( 1'b0   )                                  \
           );                                                   \
     end: macro
