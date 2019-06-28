@@ -62,7 +62,7 @@ with open("bsg_adder_wallace_tree_{}.v".format(N),"w") as f:
     puts(")(")
 
     # I/O ports
-    output_size_bias =  ceil(log2(N))
+    output_size_bias =  ceil(log2(N)) - 1
     puts("  input [{}:0][width_p-1:0] ops_i".format(N-1))
     puts("  ,output [{}+width_p:0] resA_o".format(output_size_bias))
     puts("  ,output [{}+width_p:0] resB_o".format(output_size_bias))
