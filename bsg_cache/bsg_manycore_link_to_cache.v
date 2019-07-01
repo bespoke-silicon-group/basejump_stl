@@ -202,16 +202,17 @@ module bsg_manycore_link_to_cache
       end
     endcase
   end
-  
+
+// synopsys sync_set_reset "reset_i"
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      state_r <= RESET;
-      tagst_sent_r <= '0;
+      state_r          <= RESET;
+      tagst_sent_r     <= '0;
       tagst_received_r <= '0;
     end
     else begin
-      state_r <= state_n;
-      tagst_sent_r <= tagst_sent_n;
+      state_r          <= state_n;
+      tagst_sent_r     <= tagst_sent_n;
       tagst_received_r <= tagst_received_n;
     end
   end
