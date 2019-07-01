@@ -54,6 +54,8 @@ module bsg_async_ptr_gray #(parameter lg_size_p = -1
    
    if (use_negedge_for_launch_p)
      begin
+
+	// synopsys sync_set_reset "w_reset_i"
         always @(negedge w_clk_i)
           if (w_reset_i)
             begin
@@ -68,6 +70,7 @@ module bsg_async_ptr_gray #(parameter lg_size_p = -1
      end
    else
      begin
+	// synopsys sync_set_reset "w_reset_i"
         always @(posedge w_clk_i)
           if (w_reset_i)
             begin
@@ -86,6 +89,7 @@ module bsg_async_ptr_gray #(parameter lg_size_p = -1
    
    if (use_negedge_for_launch_p)
      begin
+	// synopsys async_set_reset "w_reset_i"
         always @(negedge w_clk_i or posedge w_reset_i)
           if (w_reset_i)
             begin
@@ -100,6 +104,7 @@ module bsg_async_ptr_gray #(parameter lg_size_p = -1
      end
    else
      begin
+	// synopsys async_set_reset "w_reset_i"
         always @(posedge w_clk_i or posedge w_reset_i)
           if (w_reset_i)
             begin
