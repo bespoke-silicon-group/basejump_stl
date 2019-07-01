@@ -170,8 +170,7 @@ module bsg_parallel_in_serial_out #( parameter width_p    = -1
      * is going to accept our data (ie. yumi_i). If we are done transmitting
      * data, we should stall the counter on the last bit. 
      */
-
-   // synopsys sync_set_reset "reset_i"
+    //synopsys sync_set_reset "reset_i"
     always_ff @(posedge clk_i)
       begin
         if (reset_i)
