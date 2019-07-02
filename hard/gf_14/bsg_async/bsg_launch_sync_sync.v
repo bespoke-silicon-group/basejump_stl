@@ -107,7 +107,7 @@ module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
    assign iclk_data_o = bsg_SYNC_LNCH_r;                                \
                                                                         \
    always_ff @(EDGE iclk_i or posedge iclk_reset_i)                     \
-     begin                                                              \
+     begin : BSG_NO_CLOCK_GATE_1                                          \
         `rp_group(blss_launch_1)                                        \
         `rp_fill(0 0 UX)                                                \
         `rp_array_dir(up)                                               \
@@ -125,7 +125,7 @@ module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
    assign oclk_data_o = bsg_SYNC_2_r;                                   \
                                                                         \
    for (i = 0; i < bits; i++)                                           \
-     begin                                                              \
+     begin : BSG_NO_CLOCK_GATE_2                                          \
        `rp_group(blss_1)                                                \
        `rp_fill(0 0 UX)                                                 \
        `rp_array_dir(up)                                                \
