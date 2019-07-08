@@ -1,0 +1,30 @@
+{
+  "design_name" : "bsg_mem_1r1w_sync", 
+
+  "run_config" : [
+    {
+      "name" : "sync_sram_32x32_1GHz",
+      "description" : "synchronous SRAM with 32 words and 32 bits/word",
+      "parameters" : {"width_p" : ["16", "32", "64", "128"], "els_p" : ["16", "32", "64", "128"]},
+      "constraints" : {"clock_period" : "1", "clk_port_name" : "clk_i", "input" : "0.05", "output" : "0.1", "uncertainty" : "0", "io_time_format" : "period"},
+      "filelist" : [ 
+        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync.v",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync_synth.v"
+      ]
+    },
+
+    {
+      "name" : "sync_sram_64x32_500MHz",
+      "description" : "synchronous SRAM with 64 words and 32 bits/word",
+      "parameters" : {"width_p" : ["16", "32", "64", "128"], "els_p" : ["16", "32", "64", "128"]},
+      "constraints" : {"clock_period" : "2", "clk_port_name" : "clk_i", "input" : "0.05", "output" : "0.1", "uncertainty" : "0", "io_time_format" : "period"},
+      "filelist" : [ 
+        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync.v",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync_synth.v"
+      ]
+    }
+  ]
+
+}
