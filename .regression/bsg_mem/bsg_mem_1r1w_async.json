@@ -1,5 +1,5 @@
 {
-  "design_name" : "bsg_mem/bsg_mem_1r1w",
+  "design_name" : "bsg_mem_1r1w",
   
   "filelist" : [
         "basejump_stl/bsg_misc/bsg_defines.v",
