@@ -1,0 +1,72 @@
+{
+    "design_name": "bsg_and", 
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_and.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": {
+                "clk_port_name": "virtual", 
+                "clock_period": "9", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "an and module with size small at clock period=9", 
+            "design_size": "small", 
+            "name": "bsg_and_small_clkperiod_9", 
+            "parameters": [
+                "width_p=8"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "virtual", 
+                "clock_period": "9", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "an and module with size large at clock period=9", 
+            "design_size": "large", 
+            "name": "bsg_and_large_clkperiod_9", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "virtual", 
+                "clock_period": "9", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "an and module with size very_large at clock period=9", 
+            "design_size": "very_large", 
+            "name": "bsg_and_very_large_clkperiod_9", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "virtual", 
+                "clock_period": "9", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "an and module with size medium at clock period=9", 
+            "design_size": "medium", 
+            "name": "bsg_and_medium_clkperiod_9", 
+            "parameters": [
+                "width_p=16"
+            ]
+        }
+    ]
+}
