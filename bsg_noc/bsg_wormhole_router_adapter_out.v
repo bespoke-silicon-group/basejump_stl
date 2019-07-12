@@ -4,6 +4,8 @@
  *  packet = {payload, length, y_cord, x_cord}
  */
 
+`include "bsg_noc_links.vh"
+
 module bsg_wormhole_router_adapter_out
   #(parameter max_num_flit_p="inv"
     , parameter max_payload_width_p="inv"
@@ -20,20 +22,41 @@ module bsg_wormhole_router_adapter_out
     , localparam padded_packet_width_lp=
       max_packet_width_lp+padding_width_lp
     , localparam len_offset_lp=(x_cord_width_p+y_cord_width_p)
+
+    , localparam bsg_ready_and_link_sif_width_lp=`bsg_ready_and_link_sif_width(width_lp)
   )
   (
     input clk_i
     , input reset_i
 
-    , input [width_lp-1:0] data_i
-    , input v_i
-    , output logic ready_o
+    , input [bsg_ready_and_link_sif_width_lp-1:0] link_i 
+    // Used for ready_o signal, the rest should be stubbed, since this an output adapter
+    , output [bsg_ready_and_link_sif_width_lp-1:0] link_o
 
     , output logic [max_packet_width_lp-1:0] data_o
     , output logic v_o
     , input ready_i
   );
 
+  // Casting ports
+  `declare_bsg_ready_and_link_sif_s(width_lp,bsg_ready_and_link_sif_s);
+  bsg_ready_and_link_sif_s link_cast_i, link_cast_o;
+
+  assign link_cast_i = link_i;
+  assign link_o = link_cast_o;
+
+  logic [width_lp-1:0] data_li;
+  logic v_li, ready_lo;
+
+  assign data_li = link_cast_i.data;
+  assign v_li    = link_cast_i.v;
+
+  assign link_cast_o.ready_and_rev = ready_lo;
+  // Should be unused, stub
+  assign link_cast_o.data          = '0;
+  assign link_cast_o.v             = '0;
+
+  // Logic
   typedef enum logic [1:0] {
     WAIT_HEADER,
     WAIT_BODY,
@@ -53,7 +76,7 @@ module bsg_wormhole_router_adapter_out
   always_comb begin
     state_n = state_r;
     count_n = count_r;
-    ready_o = 1'b0;
+    ready_lo = 1'b0;
     v_o = 1'b0;
     we = 1'b0;
     clear = 1'b0;
@@ -61,19 +84,19 @@ module bsg_wormhole_router_adapter_out
     case (state_r) 
 
       WAIT_HEADER: begin
-        ready_o = 1'b1;
-        if (v_i) begin
+        ready_lo = 1'b1;
+        if (v_li) begin
           we = 1'b1;
           count_n = count_r + 1;
-          state_n = (data_i[len_offset_lp+:len_width_lp] == 0)
+          state_n = (data_li[len_offset_lp+:len_width_lp] == 0)
             ? VALID_OUT
             : WAIT_BODY;
         end
       end
 
       WAIT_BODY: begin
-        ready_o = 1'b1;
-        if (v_i) begin
+        ready_lo = 1'b1;
+        if (v_li) begin
           we = 1'b1;
           count_n = count_r + 1;
           state_n = (data_1d[len_offset_lp+:len_width_lp] == count_r)
@@ -113,7 +136,7 @@ module bsg_wormhole_router_adapter_out
           data_r <= '0;
         end
         else begin
-          data_r[count_r] <= data_i;
+          data_r[count_r] <= data_li;
         end
       end
     end

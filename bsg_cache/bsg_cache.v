@@ -7,6 +7,8 @@
  *  @param sets_p
  *
  *  @author tommy
+ * 
+ * See https://docs.google.com/document/d/1AIjhuwTbOYwyZHdu-Uc4dr9Fwxi6ZKscKSGTiUeQEYo/edit for design doc
  */
 
 `include "bsg_cache_pkt.vh"
@@ -17,13 +19,14 @@ module bsg_cache
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
-    ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
-    ,parameter data_mask_width_lp=(data_width_p>>3)
-    ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
-    ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    ,parameter tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp)
-    ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,data_width_p)
-    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+
+    ,localparam lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,localparam data_mask_width_lp=(data_width_p>>3)
+    ,localparam lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
+    ,localparam lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
+    ,localparam tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp)
+    ,localparam bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,data_width_p)
+    ,localparam bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
 
     ,parameter debug_p=0
     ,parameter axe_trace_p=0
@@ -79,22 +82,27 @@ module bsg_cache
   bsg_cache_pkt_s cache_pkt;
 
   assign cache_pkt = cache_pkt_i;
-  assign byte_op = (cache_pkt.opcode[2:0] == 3'b000);
-  assign half_op = (cache_pkt.opcode[2:0] == 3'b001);
-  assign word_op = (cache_pkt.opcode[2:0] == 3'b010);
-  assign mask_op = (cache_pkt.opcode[2:0] == 3'b100);
+  bsg_cache_pkt_decode #(
+    .addr_width_p(addr_width_p)
+    ,.data_width_p(data_width_p)
+  ) cache_pkt_decoder (
+    .cache_pkt_i(cache_pkt)
+    ,.word_op_o(word_op)
+    ,.half_op_o(half_op)
+    ,.byte_op_o(byte_op)
+    ,.mask_op_o(mask_op)
+    ,.ld_op_o(ld_op)
+    ,.st_op_o(st_op)
+    ,.tagst_op_o(tagst_op)
+    ,.tagfl_op_o(tagfl_op)
+    ,.taglv_op_o(taglv_op)
+    ,.tagla_op_o(tagla_op)
+    ,.afl_op_o(afl_op)
+    ,.aflinv_op_o(aflinv_op)
+    ,.ainv_op_o(ainv_op)
+    ,.tag_read_op_o(tag_read_op)
+  );
 
-  assign ld_op = (cache_pkt.opcode[4:3] == 2'b00);
-  assign st_op = (cache_pkt.opcode[4:3] == 2'b01);
-  assign tagst_op = (cache_pkt.opcode == TAGST);
-  assign tagfl_op = (cache_pkt.opcode == TAGFL);
-  assign taglv_op = (cache_pkt.opcode == TAGLV);
-  assign tagla_op = (cache_pkt.opcode == TAGLA);
-  assign afl_op = (cache_pkt.opcode == AFL);
-  assign aflinv_op = (cache_pkt.opcode == AFLINV);
-  assign ainv_op = (cache_pkt.opcode == AINV);
-  assign tag_read_op = ld_op | st_op | tagfl_op | taglv_op | tagla_op
-    | afl_op | aflinv_op | ainv_op;
   assign addr_set
     = cache_pkt.addr[lg_data_mask_width_lp+lg_block_size_in_words_lp+lg_sets_lp];
   assign addr_index
@@ -394,10 +402,8 @@ module bsg_cache
   bsg_cache_miss #(
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
-    ,.tag_width_lp(tag_width_lp)
-    ,.lg_block_size_in_words_lp(lg_block_size_in_words_lp)
-    ,.lg_sets_lp(lg_sets_lp)
-    ,.lg_data_mask_width_lp(lg_data_mask_width_lp)
+    ,.sets_p(sets_p)
+    ,.block_size_in_words_p(block_size_in_words_p)
   ) miss (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -460,8 +466,7 @@ module bsg_cache
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
-    ,.lg_block_size_in_words_lp(lg_block_size_in_words_lp)
-    ,.lg_sets_lp(lg_sets_lp)
+    ,.sets_p(sets_p)
     ,.debug_p(debug_p)
   ) dma (
     .clk_i(clk_i)
@@ -520,8 +525,6 @@ module bsg_cache
   bsg_cache_sbuf #(
     .data_width_p(data_width_p)
     ,.addr_width_p(addr_width_p)
-    ,.data_mask_width_lp(data_mask_width_lp)
-    ,.lg_data_mask_width_lp(lg_data_mask_width_lp)
   ) sbuf (
     .clk_i(clk_i)
     ,.reset_i(reset_i)

@@ -1,0 +1,7 @@
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_clock_gen.v
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_reset_gen.v
+$BASEJUMP_STL_DIR/bsg_fsb/bsg_fsb_node_trace_replay.v
+$TSMC40_STDCELL_VERILOG_DIR/tcbn45gsbwp.v
+$CHIP_DIR/bsg_asic_cloud/results/dc/bsg_fpu_cmp.mapped.v
+bsg_fpu_trace_rom.v
+testbench.v

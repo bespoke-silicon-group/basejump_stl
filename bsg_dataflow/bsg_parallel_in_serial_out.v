@@ -25,8 +25,9 @@
 //
 // that version would be helpful on output and demanding on input.
 
-module bsg_parallel_in_serial_out #( parameter width_p = -1
-                                   , parameter els_p   = -1
+module bsg_parallel_in_serial_out #( parameter width_p    = -1
+                                   , parameter els_p      = -1
+                                   , parameter hi_to_lo_p = 0
                                    )
     ( input clk_i
     , input reset_i
@@ -41,6 +42,26 @@ module bsg_parallel_in_serial_out #( parameter width_p = -1
     , output [width_p-1:0] data_o
     , input                yumi_i
     );
+    
+  // When els_p equals to 1, use fifo to minimize hardware.
+  if (els_p == 1) 
+  begin: fifo
+    bsg_two_fifo
+   #(.width_p(width_p)
+    ) two_fifo
+    (.clk_i  (clk_i)
+    ,.reset_i(reset_i)
+    ,.ready_o(ready_o)
+    ,.data_i (data_i)
+    ,.v_i    (valid_i)
+    ,.v_o    (valid_o)
+    ,.data_o (data_o)
+    ,.yumi_i (yumi_i)
+    );
+  end 
+  // When els_p is larger than 1, use the real PISO.
+  else 
+  begin: piso
 
     // A small statemachine is used to transition from the recieving
     // state to the transmission state.
@@ -104,11 +125,30 @@ module bsg_parallel_in_serial_out #( parameter width_p = -1
           state_n = state_r;
         end
       end
+      
+    
+    // If send hi_to_lo, reverse the input data array
+    logic [els_p-1:0][width_p-1:0] data_li;
+    
+    if (hi_to_lo_p == 0)
+      begin: lo2hi
+        assign data_li = data_i;
+      end
+    else
+      begin: hi2lo
+        bsg_array_reverse 
+       #(.width_p(width_p)
+        ,.els_p(els_p)
+        ) bar
+        (.i(data_i)
+        ,.o(data_li)
+        );
+      end
 
     /**
      * Input Data Logic
      *
-     * Whenever we decide to accept new data we will take data_i and store
+     * Whenever we decide to accept new data we will take data_li and store
      * it in data_r.
      */
     always_ff @(posedge clk_i)
@@ -116,7 +156,7 @@ module bsg_parallel_in_serial_out #( parameter width_p = -1
         if (reset_i) begin
           data_r <= '0;
         end else if (ready_o & valid_i) begin
-          data_r <= data_i;
+          data_r <= data_li;
         end
       end
 
@@ -159,6 +199,7 @@ module bsg_parallel_in_serial_out #( parameter width_p = -1
      */
     assign data_o = data_r[shift_ctr_r];
 
+  end
 
 endmodule
 

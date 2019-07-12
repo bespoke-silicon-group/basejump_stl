@@ -44,6 +44,7 @@ generate
     // the max value it can reach. 
     bsg_counter_up_down #( .max_val_p(els_p)  
                          , .init_val_p(els_p) 
+                         , .max_step_p(1)
                          ) counter
     
         ( .clk_i(clk_i)
@@ -57,6 +58,7 @@ generate
    end else begin: gen_blk_0
     bsg_counter_up_down #( .max_val_p(els_p)  
                          , .init_val_p(0) 
+                         , .max_step_p(1)
                          ) counter
     
         ( .clk_i(clk_i)

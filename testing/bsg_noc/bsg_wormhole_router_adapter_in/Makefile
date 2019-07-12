@@ -1,4 +1,5 @@
 INCDIR = +incdir+$(BSG_IP_CORES_DIR)/bsg_misc
+INCDIR += +incdir+$(BSG_IP_CORES_DIR)/bsg_noc
 
 .PHONY: sim dve all
 
@@ -9,7 +10,7 @@ bsg_trace_rom.v: trace.tr
 		> bsg_trace_rom.v
 
 sim: bsg_trace_rom.v
-	vcs +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -sverilog -full64 -f sv.include $(INCDIR) \
+	vcs -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -sverilog -full64 -f sv.include $(INCDIR) \
 		-debug_pp -timescale=1ps/1ps +vcs+vcdpluson
 
 dve:

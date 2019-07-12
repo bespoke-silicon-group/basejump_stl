@@ -7,10 +7,13 @@
 module bsg_cache_miss
   #(parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
-    ,parameter tag_width_lp="inv"
-    ,parameter lg_block_size_in_words_lp="inv"
-    ,parameter lg_sets_lp="inv"
-    ,parameter lg_data_mask_width_lp="inv"
+    ,parameter block_size_in_words_p="inv"
+    ,parameter sets_p="inv"
+
+    ,localparam lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
+    ,localparam lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,localparam lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
+    ,localparam tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp)
   )
   (
     input clk_i
