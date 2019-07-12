@@ -1,0 +1,72 @@
+{
+    "design_name": "bsg_adder_ripple_carry", 
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_adder_ripple_carry.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": {
+                "clk_port_name": "virtual", 
+                "clock_period": "8", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "a ripple carry adder with size small at clock period=8", 
+            "design_size": "small", 
+            "name": "bsg_adder_ripple_carry_small_clkperiod_8", 
+            "parameters": [
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "virtual", 
+                "clock_period": "8", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "a ripple carry adder with size large at clock period=8", 
+            "design_size": "large", 
+            "name": "bsg_adder_ripple_carry_large_clkperiod_8", 
+            "parameters": [
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "virtual", 
+                "clock_period": "8", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "a ripple carry adder with size very_large at clock period=8", 
+            "design_size": "very_large", 
+            "name": "bsg_adder_ripple_carry_very_large_clkperiod_8", 
+            "parameters": [
+                "width_p=512"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "virtual", 
+                "clock_period": "8", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "a ripple carry adder with size medium at clock period=8", 
+            "design_size": "medium", 
+            "name": "bsg_adder_ripple_carry_medium_clkperiod_8", 
+            "parameters": [
+                "width_p=64"
+            ]
+        }
+    ]
+}
