@@ -19,7 +19,7 @@
             "design_size": "small", 
             "name": "bsg_arb_fixed_small_clkperiod_10", 
             "parameters": [
-                "width_p=8", 
+                "inputs_p=8", 
                 "lo_to_hi_p=0"
             ]
         }, 
@@ -36,7 +36,7 @@
             "design_size": "large", 
             "name": "bsg_arb_fixed_large_clkperiod_10", 
             "parameters": [
-                "width_p=32", 
+                "inputs_p=32", 
                 "lo_to_hi_p=0"
             ]
         }, 
@@ -53,7 +53,7 @@
             "design_size": "very_large", 
             "name": "bsg_arb_fixed_very_large_clkperiod_10", 
             "parameters": [
-                "width_p=64", 
+                "inputs_p=64", 
                 "lo_to_hi_p=0"
             ]
         }, 
@@ -70,7 +70,7 @@
             "design_size": "medium", 
             "name": "bsg_arb_fixed_medium_clkperiod_10", 
             "parameters": [
-                "width_p=16", 
+                "inputs_p=16", 
                 "lo_to_hi_p=0"
             ]
         }
