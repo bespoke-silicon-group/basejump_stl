@@ -6,9 +6,12 @@
 // NOTE: Users of BaseJump STL should not instantiate this module directly
 // they should use bsg_mem_1rw_sync.
 
-module bsg_mem_1rw_sync_synth #(parameter width_p=-1
-				, parameter els_p=-1
-				, parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p))
+module bsg_mem_1rw_sync_synth
+  #(parameter width_p=-1
+    , parameter els_p=-1
+    , parameter latch_last_read_p=0
+    , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+   )
    (input   clk_i
 	 	, input v_i
 		, input reset_i
@@ -18,22 +21,53 @@ module bsg_mem_1rw_sync_synth #(parameter width_p=-1
     , output logic [width_p-1:0]  data_o
     );
 
-   wire unused = reset_i;
+  wire unused = reset_i;
 
-   logic [addr_width_lp-1:0] addr_r;
-   logic [width_p-1:0]    mem [els_p-1:0];
+  logic [addr_width_lp-1:0] addr_r;
+  logic [width_p-1:0]    mem [els_p-1:0];
+  logic read_en;
+  logic [width_p-1:0] data_out;
 
-   always_ff @(posedge clk_i)
-     if (v_i & ~w_i)
-       addr_r <= addr_i;
-     else
-       addr_r <= 'X;
+  assign read_en = v_i & ~w_i;
+  assign data_out = mem[addr_r];
 
-   assign data_o = mem[addr_r];
+  always_ff @ (posedge clk_i) 
+    if (read_en)
+      addr_r <= addr_i;
+    else
+      addr_r <= 'X;
 
-   always_ff @(posedge clk_i)
-     if (v_i & w_i)
-       mem[addr_i] <= data_i;
+  if (latch_last_read_p)
+    begin: llr
+      logic read_en_r; 
+
+      bsg_dff #(
+        .width_p(1)
+      ) read_en_dff (
+        .clk_i(clk_i)
+        ,.data_i(read_en)
+        ,.data_o(read_en_r)
+      );
+
+      bsg_dff_en_bypass #(
+        .width_p(width_p)
+      ) dff_bypass (
+        .clk_i(clk_i)
+        ,.en_i(read_en_r)
+        ,.data_i(data_out)
+        ,.data_o(data_o)
+      );
+    end
+  else
+    begin: no_llr
+      assign data_o = data_out;
+    end
+
+
+  always_ff @(posedge clk_i)
+    if (v_i & w_i) 
+      mem[addr_i] <= data_i;
+
 
    // synopsys translate_off
    initial

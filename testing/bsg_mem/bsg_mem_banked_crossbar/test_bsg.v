@@ -106,7 +106,7 @@ module test_bsg;
           bank_addr[i]       <= i;
           test_input_v[i]    <= 1'b1;
           test_input_w[i]    <= 1'b1;
-          test_input_mask[i] <= 0;
+          test_input_mask[i] <= {(data_width_lp>>3){1'b1}}; // MBT
         end
       else
         begin
@@ -133,15 +133,17 @@ module test_bsg;
             begin
               test_input_v[i]    <= 1'b1;
               test_input_w[i]    <= 1'b1;
-              test_input_mask[i] <= {(data_width_lp>>3){1'b1}};
+               test_input_mask[i] <= 0; // MBT
+
             end
         end
     end
 
     // data
     assign test_input_data[i] = (test_input_mask[i])?
-                                {data_width_lp{1'b1}}
-                                :{(data_width_lp/8){4'(i), 4'(bank_num[i])}};
+                                {(data_width_lp/8){4'(i), 4'(bank_num[i])}}
+                                :{data_width_lp{1'b1}};
+   
   end
 
 
@@ -155,6 +157,7 @@ module test_bsg;
                            ) UUT
                            ( .clk_i   (clk)
                             ,.reset_i (reset)
+                            ,.reverse_pr_i(1'b0)
                             ,.v_i     (test_input_v)
                             ,.w_i     (test_input_w)
                             ,.addr_i  (test_input_addr)
@@ -183,7 +186,7 @@ module test_bsg;
 
       if(test_output_v[i] & ~reset)
         assert(test_output_data[i] == {(data_width_lp/8){4'(i), 4'(bank_num_r[i])}})
-          else $error("Error while accessing %b from port: %0d", test_input_addr_r[i], i);
+          else $error("Error while accessing %b from port: %0d, data was %b", test_input_addr_r[i], i, test_output_data[i]);
     end
   end
 
