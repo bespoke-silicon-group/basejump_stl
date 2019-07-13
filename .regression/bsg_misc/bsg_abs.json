@@ -7,15 +7,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "0.5", 
+                "clock_period": "1", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size small at clock period=0.5", 
+            "description": "this module calculates the absolute value of signed integer with size small at clock period=1", 
             "design_size": "small", 
-            "name": "bsg_abs_small_clkperiod_0.5", 
+            "name": "bsg_abs_small_clkperiod_1", 
             "parameters": [
                 "width_p=32"
             ]
@@ -23,15 +23,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "1.0", 
+                "clock_period": "2", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size small at clock period=1.0", 
+            "description": "this module calculates the absolute value of signed integer with size small at clock period=2", 
             "design_size": "small", 
-            "name": "bsg_abs_small_clkperiod_1.0", 
+            "name": "bsg_abs_small_clkperiod_2", 
             "parameters": [
                 "width_p=32"
             ]
@@ -39,15 +39,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "1.5", 
+                "clock_period": "3", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size small at clock period=1.5", 
+            "description": "this module calculates the absolute value of signed integer with size small at clock period=3", 
             "design_size": "small", 
-            "name": "bsg_abs_small_clkperiod_1.5", 
+            "name": "bsg_abs_small_clkperiod_3", 
             "parameters": [
                 "width_p=32"
             ]
@@ -55,15 +55,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "2.0", 
+                "clock_period": "4", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size small at clock period=2.0", 
+            "description": "this module calculates the absolute value of signed integer with size small at clock period=4", 
             "design_size": "small", 
-            "name": "bsg_abs_small_clkperiod_2.0", 
+            "name": "bsg_abs_small_clkperiod_4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -71,15 +71,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "2.5", 
+                "clock_period": "5", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size small at clock period=2.5", 
+            "description": "this module calculates the absolute value of signed integer with size small at clock period=5", 
             "design_size": "small", 
-            "name": "bsg_abs_small_clkperiod_2.5", 
+            "name": "bsg_abs_small_clkperiod_5", 
             "parameters": [
                 "width_p=32"
             ]
@@ -87,15 +87,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "3.0", 
+                "clock_period": "6", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size small at clock period=3.0", 
+            "description": "this module calculates the absolute value of signed integer with size small at clock period=6", 
             "design_size": "small", 
-            "name": "bsg_abs_small_clkperiod_3.0", 
+            "name": "bsg_abs_small_clkperiod_6", 
             "parameters": [
                 "width_p=32"
             ]
@@ -103,15 +103,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "3.5", 
+                "clock_period": "7", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size small at clock period=3.5", 
+            "description": "this module calculates the absolute value of signed integer with size small at clock period=7", 
             "design_size": "small", 
-            "name": "bsg_abs_small_clkperiod_3.5", 
+            "name": "bsg_abs_small_clkperiod_7", 
             "parameters": [
                 "width_p=32"
             ]
@@ -119,15 +119,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "4.0", 
+                "clock_period": "8", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size small at clock period=4.0", 
+            "description": "this module calculates the absolute value of signed integer with size small at clock period=8", 
             "design_size": "small", 
-            "name": "bsg_abs_small_clkperiod_4.0", 
+            "name": "bsg_abs_small_clkperiod_8", 
             "parameters": [
                 "width_p=32"
             ]
@@ -135,15 +135,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "4.5", 
+                "clock_period": "9", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size small at clock period=4.5", 
+            "description": "this module calculates the absolute value of signed integer with size small at clock period=9", 
             "design_size": "small", 
-            "name": "bsg_abs_small_clkperiod_4.5", 
+            "name": "bsg_abs_small_clkperiod_9", 
             "parameters": [
                 "width_p=32"
             ]
@@ -151,15 +151,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "5.0", 
+                "clock_period": "10", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size small at clock period=5.0", 
+            "description": "this module calculates the absolute value of signed integer with size small at clock period=10", 
             "design_size": "small", 
-            "name": "bsg_abs_small_clkperiod_5.0", 
+            "name": "bsg_abs_small_clkperiod_10", 
             "parameters": [
                 "width_p=32"
             ]
@@ -167,15 +167,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "0.5", 
+                "clock_period": "1", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size large at clock period=0.5", 
+            "description": "this module calculates the absolute value of signed integer with size large at clock period=1", 
             "design_size": "large", 
-            "name": "bsg_abs_large_clkperiod_0.5", 
+            "name": "bsg_abs_large_clkperiod_1", 
             "parameters": [
                 "width_p=128"
             ]
@@ -183,15 +183,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "1.0", 
+                "clock_period": "2", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size large at clock period=1.0", 
+            "description": "this module calculates the absolute value of signed integer with size large at clock period=2", 
             "design_size": "large", 
-            "name": "bsg_abs_large_clkperiod_1.0", 
+            "name": "bsg_abs_large_clkperiod_2", 
             "parameters": [
                 "width_p=128"
             ]
@@ -199,15 +199,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "1.5", 
+                "clock_period": "3", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size large at clock period=1.5", 
+            "description": "this module calculates the absolute value of signed integer with size large at clock period=3", 
             "design_size": "large", 
-            "name": "bsg_abs_large_clkperiod_1.5", 
+            "name": "bsg_abs_large_clkperiod_3", 
             "parameters": [
                 "width_p=128"
             ]
@@ -215,15 +215,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "2.0", 
+                "clock_period": "4", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size large at clock period=2.0", 
+            "description": "this module calculates the absolute value of signed integer with size large at clock period=4", 
             "design_size": "large", 
-            "name": "bsg_abs_large_clkperiod_2.0", 
+            "name": "bsg_abs_large_clkperiod_4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -231,15 +231,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "2.5", 
+                "clock_period": "5", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size large at clock period=2.5", 
+            "description": "this module calculates the absolute value of signed integer with size large at clock period=5", 
             "design_size": "large", 
-            "name": "bsg_abs_large_clkperiod_2.5", 
+            "name": "bsg_abs_large_clkperiod_5", 
             "parameters": [
                 "width_p=128"
             ]
@@ -247,15 +247,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "3.0", 
+                "clock_period": "6", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size large at clock period=3.0", 
+            "description": "this module calculates the absolute value of signed integer with size large at clock period=6", 
             "design_size": "large", 
-            "name": "bsg_abs_large_clkperiod_3.0", 
+            "name": "bsg_abs_large_clkperiod_6", 
             "parameters": [
                 "width_p=128"
             ]
@@ -263,15 +263,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "3.5", 
+                "clock_period": "7", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size large at clock period=3.5", 
+            "description": "this module calculates the absolute value of signed integer with size large at clock period=7", 
             "design_size": "large", 
-            "name": "bsg_abs_large_clkperiod_3.5", 
+            "name": "bsg_abs_large_clkperiod_7", 
             "parameters": [
                 "width_p=128"
             ]
@@ -279,15 +279,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "4.0", 
+                "clock_period": "8", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size large at clock period=4.0", 
+            "description": "this module calculates the absolute value of signed integer with size large at clock period=8", 
             "design_size": "large", 
-            "name": "bsg_abs_large_clkperiod_4.0", 
+            "name": "bsg_abs_large_clkperiod_8", 
             "parameters": [
                 "width_p=128"
             ]
@@ -295,15 +295,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "4.5", 
+                "clock_period": "9", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size large at clock period=4.5", 
+            "description": "this module calculates the absolute value of signed integer with size large at clock period=9", 
             "design_size": "large", 
-            "name": "bsg_abs_large_clkperiod_4.5", 
+            "name": "bsg_abs_large_clkperiod_9", 
             "parameters": [
                 "width_p=128"
             ]
@@ -311,15 +311,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "5.0", 
+                "clock_period": "10", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size large at clock period=5.0", 
+            "description": "this module calculates the absolute value of signed integer with size large at clock period=10", 
             "design_size": "large", 
-            "name": "bsg_abs_large_clkperiod_5.0", 
+            "name": "bsg_abs_large_clkperiod_10", 
             "parameters": [
                 "width_p=128"
             ]
@@ -327,175 +327,175 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "0.5", 
+                "clock_period": "1", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size very_large at clock period=0.5", 
+            "description": "this module calculates the absolute value of signed integer with size very_large at clock period=1", 
             "design_size": "very_large", 
-            "name": "bsg_abs_very_large_clkperiod_0.5", 
+            "name": "bsg_abs_very_large_clkperiod_1", 
             "parameters": [
-                "width_p=512"
+                "width_p=256"
             ]
         }, 
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "1.0", 
+                "clock_period": "2", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size very_large at clock period=1.0", 
+            "description": "this module calculates the absolute value of signed integer with size very_large at clock period=2", 
             "design_size": "very_large", 
-            "name": "bsg_abs_very_large_clkperiod_1.0", 
+            "name": "bsg_abs_very_large_clkperiod_2", 
             "parameters": [
-                "width_p=512"
+                "width_p=256"
             ]
         }, 
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "1.5", 
+                "clock_period": "3", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size very_large at clock period=1.5", 
+            "description": "this module calculates the absolute value of signed integer with size very_large at clock period=3", 
             "design_size": "very_large", 
-            "name": "bsg_abs_very_large_clkperiod_1.5", 
+            "name": "bsg_abs_very_large_clkperiod_3", 
             "parameters": [
-                "width_p=512"
+                "width_p=256"
             ]
         }, 
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "2.0", 
+                "clock_period": "4", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size very_large at clock period=2.0", 
+            "description": "this module calculates the absolute value of signed integer with size very_large at clock period=4", 
             "design_size": "very_large", 
-            "name": "bsg_abs_very_large_clkperiod_2.0", 
+            "name": "bsg_abs_very_large_clkperiod_4", 
             "parameters": [
-                "width_p=512"
+                "width_p=256"
             ]
         }, 
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "2.5", 
+                "clock_period": "5", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size very_large at clock period=2.5", 
+            "description": "this module calculates the absolute value of signed integer with size very_large at clock period=5", 
             "design_size": "very_large", 
-            "name": "bsg_abs_very_large_clkperiod_2.5", 
+            "name": "bsg_abs_very_large_clkperiod_5", 
             "parameters": [
-                "width_p=512"
+                "width_p=256"
             ]
         }, 
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "3.0", 
+                "clock_period": "6", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size very_large at clock period=3.0", 
+            "description": "this module calculates the absolute value of signed integer with size very_large at clock period=6", 
             "design_size": "very_large", 
-            "name": "bsg_abs_very_large_clkperiod_3.0", 
+            "name": "bsg_abs_very_large_clkperiod_6", 
             "parameters": [
-                "width_p=512"
+                "width_p=256"
             ]
         }, 
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "3.5", 
+                "clock_period": "7", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size very_large at clock period=3.5", 
+            "description": "this module calculates the absolute value of signed integer with size very_large at clock period=7", 
             "design_size": "very_large", 
-            "name": "bsg_abs_very_large_clkperiod_3.5", 
+            "name": "bsg_abs_very_large_clkperiod_7", 
             "parameters": [
-                "width_p=512"
+                "width_p=256"
             ]
         }, 
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "4.0", 
+                "clock_period": "8", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size very_large at clock period=4.0", 
+            "description": "this module calculates the absolute value of signed integer with size very_large at clock period=8", 
             "design_size": "very_large", 
-            "name": "bsg_abs_very_large_clkperiod_4.0", 
+            "name": "bsg_abs_very_large_clkperiod_8", 
             "parameters": [
-                "width_p=512"
+                "width_p=256"
             ]
         }, 
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "4.5", 
+                "clock_period": "9", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size very_large at clock period=4.5", 
+            "description": "this module calculates the absolute value of signed integer with size very_large at clock period=9", 
             "design_size": "very_large", 
-            "name": "bsg_abs_very_large_clkperiod_4.5", 
+            "name": "bsg_abs_very_large_clkperiod_9", 
             "parameters": [
-                "width_p=512"
+                "width_p=256"
             ]
         }, 
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "5.0", 
+                "clock_period": "10", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size very_large at clock period=5.0", 
+            "description": "this module calculates the absolute value of signed integer with size very_large at clock period=10", 
             "design_size": "very_large", 
-            "name": "bsg_abs_very_large_clkperiod_5.0", 
+            "name": "bsg_abs_very_large_clkperiod_10", 
             "parameters": [
-                "width_p=512"
+                "width_p=256"
             ]
         }, 
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "0.5", 
+                "clock_period": "1", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size medium at clock period=0.5", 
+            "description": "this module calculates the absolute value of signed integer with size medium at clock period=1", 
             "design_size": "medium", 
-            "name": "bsg_abs_medium_clkperiod_0.5", 
+            "name": "bsg_abs_medium_clkperiod_1", 
             "parameters": [
                 "width_p=64"
             ]
@@ -503,15 +503,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "1.0", 
+                "clock_period": "2", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size medium at clock period=1.0", 
+            "description": "this module calculates the absolute value of signed integer with size medium at clock period=2", 
             "design_size": "medium", 
-            "name": "bsg_abs_medium_clkperiod_1.0", 
+            "name": "bsg_abs_medium_clkperiod_2", 
             "parameters": [
                 "width_p=64"
             ]
@@ -519,15 +519,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "1.5", 
+                "clock_period": "3", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size medium at clock period=1.5", 
+            "description": "this module calculates the absolute value of signed integer with size medium at clock period=3", 
             "design_size": "medium", 
-            "name": "bsg_abs_medium_clkperiod_1.5", 
+            "name": "bsg_abs_medium_clkperiod_3", 
             "parameters": [
                 "width_p=64"
             ]
@@ -535,15 +535,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "2.0", 
+                "clock_period": "4", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size medium at clock period=2.0", 
+            "description": "this module calculates the absolute value of signed integer with size medium at clock period=4", 
             "design_size": "medium", 
-            "name": "bsg_abs_medium_clkperiod_2.0", 
+            "name": "bsg_abs_medium_clkperiod_4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -551,15 +551,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "2.5", 
+                "clock_period": "5", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size medium at clock period=2.5", 
+            "description": "this module calculates the absolute value of signed integer with size medium at clock period=5", 
             "design_size": "medium", 
-            "name": "bsg_abs_medium_clkperiod_2.5", 
+            "name": "bsg_abs_medium_clkperiod_5", 
             "parameters": [
                 "width_p=64"
             ]
@@ -567,15 +567,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "3.0", 
+                "clock_period": "6", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size medium at clock period=3.0", 
+            "description": "this module calculates the absolute value of signed integer with size medium at clock period=6", 
             "design_size": "medium", 
-            "name": "bsg_abs_medium_clkperiod_3.0", 
+            "name": "bsg_abs_medium_clkperiod_6", 
             "parameters": [
                 "width_p=64"
             ]
@@ -583,15 +583,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "3.5", 
+                "clock_period": "7", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size medium at clock period=3.5", 
+            "description": "this module calculates the absolute value of signed integer with size medium at clock period=7", 
             "design_size": "medium", 
-            "name": "bsg_abs_medium_clkperiod_3.5", 
+            "name": "bsg_abs_medium_clkperiod_7", 
             "parameters": [
                 "width_p=64"
             ]
@@ -599,15 +599,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "4.0", 
+                "clock_period": "8", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size medium at clock period=4.0", 
+            "description": "this module calculates the absolute value of signed integer with size medium at clock period=8", 
             "design_size": "medium", 
-            "name": "bsg_abs_medium_clkperiod_4.0", 
+            "name": "bsg_abs_medium_clkperiod_8", 
             "parameters": [
                 "width_p=64"
             ]
@@ -615,15 +615,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "4.5", 
+                "clock_period": "9", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size medium at clock period=4.5", 
+            "description": "this module calculates the absolute value of signed integer with size medium at clock period=9", 
             "design_size": "medium", 
-            "name": "bsg_abs_medium_clkperiod_4.5", 
+            "name": "bsg_abs_medium_clkperiod_9", 
             "parameters": [
                 "width_p=64"
             ]
@@ -631,15 +631,15 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "5.0", 
+                "clock_period": "10", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "calculate absolute value of signed integer with size medium at clock period=5.0", 
+            "description": "this module calculates the absolute value of signed integer with size medium at clock period=10", 
             "design_size": "medium", 
-            "name": "bsg_abs_medium_clkperiod_5.0", 
+            "name": "bsg_abs_medium_clkperiod_10", 
             "parameters": [
                 "width_p=64"
             ]
