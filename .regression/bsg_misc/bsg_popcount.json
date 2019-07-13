@@ -14,7 +14,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size small at clock period=1", 
+            "description": "bit counting that determines the number of 1's in a given word with size small at clock period=1", 
             "design_size": "small", 
             "name": "bsg_popcount_small_clkperiod_1", 
             "parameters": [
@@ -30,7 +30,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size small at clock period=3", 
+            "description": "bit counting that determines the number of 1's in a given word with size small at clock period=3", 
             "design_size": "small", 
             "name": "bsg_popcount_small_clkperiod_3", 
             "parameters": [
@@ -46,7 +46,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size small at clock period=5", 
+            "description": "bit counting that determines the number of 1's in a given word with size small at clock period=5", 
             "design_size": "small", 
             "name": "bsg_popcount_small_clkperiod_5", 
             "parameters": [
@@ -62,7 +62,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size small at clock period=7", 
+            "description": "bit counting that determines the number of 1's in a given word with size small at clock period=7", 
             "design_size": "small", 
             "name": "bsg_popcount_small_clkperiod_7", 
             "parameters": [
@@ -78,7 +78,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size small at clock period=9", 
+            "description": "bit counting that determines the number of 1's in a given word with size small at clock period=9", 
             "design_size": "small", 
             "name": "bsg_popcount_small_clkperiod_9", 
             "parameters": [
@@ -94,7 +94,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size small at clock period=11", 
+            "description": "bit counting that determines the number of 1's in a given word with size small at clock period=11", 
             "design_size": "small", 
             "name": "bsg_popcount_small_clkperiod_11", 
             "parameters": [
@@ -110,7 +110,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size large at clock period=1", 
+            "description": "bit counting that determines the number of 1's in a given word with size large at clock period=1", 
             "design_size": "large", 
             "name": "bsg_popcount_large_clkperiod_1", 
             "parameters": [
@@ -126,7 +126,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size large at clock period=3", 
+            "description": "bit counting that determines the number of 1's in a given word with size large at clock period=3", 
             "design_size": "large", 
             "name": "bsg_popcount_large_clkperiod_3", 
             "parameters": [
@@ -142,7 +142,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size large at clock period=5", 
+            "description": "bit counting that determines the number of 1's in a given word with size large at clock period=5", 
             "design_size": "large", 
             "name": "bsg_popcount_large_clkperiod_5", 
             "parameters": [
@@ -158,7 +158,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size large at clock period=7", 
+            "description": "bit counting that determines the number of 1's in a given word with size large at clock period=7", 
             "design_size": "large", 
             "name": "bsg_popcount_large_clkperiod_7", 
             "parameters": [
@@ -174,7 +174,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size large at clock period=9", 
+            "description": "bit counting that determines the number of 1's in a given word with size large at clock period=9", 
             "design_size": "large", 
             "name": "bsg_popcount_large_clkperiod_9", 
             "parameters": [
@@ -190,7 +190,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size large at clock period=11", 
+            "description": "bit counting that determines the number of 1's in a given word with size large at clock period=11", 
             "design_size": "large", 
             "name": "bsg_popcount_large_clkperiod_11", 
             "parameters": [
@@ -206,7 +206,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size very_large at clock period=1", 
+            "description": "bit counting that determines the number of 1's in a given word with size very_large at clock period=1", 
             "design_size": "very_large", 
             "name": "bsg_popcount_very_large_clkperiod_1", 
             "parameters": [
@@ -222,7 +222,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size very_large at clock period=3", 
+            "description": "bit counting that determines the number of 1's in a given word with size very_large at clock period=3", 
             "design_size": "very_large", 
             "name": "bsg_popcount_very_large_clkperiod_3", 
             "parameters": [
@@ -238,7 +238,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size very_large at clock period=5", 
+            "description": "bit counting that determines the number of 1's in a given word with size very_large at clock period=5", 
             "design_size": "very_large", 
             "name": "bsg_popcount_very_large_clkperiod_5", 
             "parameters": [
@@ -254,7 +254,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size very_large at clock period=7", 
+            "description": "bit counting that determines the number of 1's in a given word with size very_large at clock period=7", 
             "design_size": "very_large", 
             "name": "bsg_popcount_very_large_clkperiod_7", 
             "parameters": [
@@ -270,7 +270,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size very_large at clock period=9", 
+            "description": "bit counting that determines the number of 1's in a given word with size very_large at clock period=9", 
             "design_size": "very_large", 
             "name": "bsg_popcount_very_large_clkperiod_9", 
             "parameters": [
@@ -286,7 +286,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size very_large at clock period=11", 
+            "description": "bit counting that determines the number of 1's in a given word with size very_large at clock period=11", 
             "design_size": "very_large", 
             "name": "bsg_popcount_very_large_clkperiod_11", 
             "parameters": [
@@ -302,7 +302,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size medium at clock period=1", 
+            "description": "bit counting that determines the number of 1's in a given word with size medium at clock period=1", 
             "design_size": "medium", 
             "name": "bsg_popcount_medium_clkperiod_1", 
             "parameters": [
@@ -318,7 +318,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size medium at clock period=3", 
+            "description": "bit counting that determines the number of 1's in a given word with size medium at clock period=3", 
             "design_size": "medium", 
             "name": "bsg_popcount_medium_clkperiod_3", 
             "parameters": [
@@ -334,7 +334,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size medium at clock period=5", 
+            "description": "bit counting that determines the number of 1's in a given word with size medium at clock period=5", 
             "design_size": "medium", 
             "name": "bsg_popcount_medium_clkperiod_5", 
             "parameters": [
@@ -350,7 +350,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size medium at clock period=7", 
+            "description": "bit counting that determines the number of 1's in a given word with size medium at clock period=7", 
             "design_size": "medium", 
             "name": "bsg_popcount_medium_clkperiod_7", 
             "parameters": [
@@ -366,7 +366,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size medium at clock period=9", 
+            "description": "bit counting that determines the number of 1's in a given word with size medium at clock period=9", 
             "design_size": "medium", 
             "name": "bsg_popcount_medium_clkperiod_9", 
             "parameters": [
@@ -382,7 +382,7 @@
                 "output": "0", 
                 "uncertainty": "0"
             }, 
-            "description": "synthesized 3-input nor gate with size medium at clock period=11", 
+            "description": "bit counting that determines the number of 1's in a given word with size medium at clock period=11", 
             "design_size": "medium", 
             "name": "bsg_popcount_medium_clkperiod_11", 
             "parameters": [
