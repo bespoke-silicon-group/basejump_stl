@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_counter_overflow_set_en", 
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_counter_overflow_set_en.v", 
-        "basejump_stl/bsg_misc/bsg_defines.v"
+        "basejump_stl/bsg_misc/bsg_defines.v", 
+        "basejump_stl/bsg_misc/bsg_counter_overflow_set_en.v"
     ], 
     "run_config": [
         {
@@ -18,7 +18,7 @@
             "design_size": "small", 
             "name": "bsg_counter_overflow_set_en_small_clkperiod_1", 
             "parameters": [
-                "max_value_p=10000000"
+                "max_val_p=10000000"
             ]
         }, 
         {
@@ -34,7 +34,7 @@
             "design_size": "small", 
             "name": "bsg_counter_overflow_set_en_small_clkperiod_3", 
             "parameters": [
-                "max_value_p=10000000"
+                "max_val_p=10000000"
             ]
         }, 
         {
@@ -50,7 +50,7 @@
             "design_size": "small", 
             "name": "bsg_counter_overflow_set_en_small_clkperiod_5", 
             "parameters": [
-                "max_value_p=10000000"
+                "max_val_p=10000000"
             ]
         }, 
         {
@@ -66,7 +66,7 @@
             "design_size": "small", 
             "name": "bsg_counter_overflow_set_en_small_clkperiod_7", 
             "parameters": [
-                "max_value_p=10000000"
+                "max_val_p=10000000"
             ]
         }, 
         {
@@ -82,7 +82,7 @@
             "design_size": "small", 
             "name": "bsg_counter_overflow_set_en_small_clkperiod_9", 
             "parameters": [
-                "max_value_p=10000000"
+                "max_val_p=10000000"
             ]
         }, 
         {
@@ -98,7 +98,7 @@
             "design_size": "small", 
             "name": "bsg_counter_overflow_set_en_small_clkperiod_11", 
             "parameters": [
-                "max_value_p=10000000"
+                "max_val_p=10000000"
             ]
         }, 
         {
@@ -114,7 +114,7 @@
             "design_size": "large", 
             "name": "bsg_counter_overflow_set_en_large_clkperiod_1", 
             "parameters": [
-                "max_value_p=1000000000000000"
+                "max_val_p=1000000000000000"
             ]
         }, 
         {
@@ -130,7 +130,7 @@
             "design_size": "large", 
             "name": "bsg_counter_overflow_set_en_large_clkperiod_3", 
             "parameters": [
-                "max_value_p=1000000000000000"
+                "max_val_p=1000000000000000"
             ]
         }, 
         {
@@ -146,7 +146,7 @@
             "design_size": "large", 
             "name": "bsg_counter_overflow_set_en_large_clkperiod_5", 
             "parameters": [
-                "max_value_p=1000000000000000"
+                "max_val_p=1000000000000000"
             ]
         }, 
         {
@@ -162,7 +162,7 @@
             "design_size": "large", 
             "name": "bsg_counter_overflow_set_en_large_clkperiod_7", 
             "parameters": [
-                "max_value_p=1000000000000000"
+                "max_val_p=1000000000000000"
             ]
         }, 
         {
@@ -178,7 +178,7 @@
             "design_size": "large", 
             "name": "bsg_counter_overflow_set_en_large_clkperiod_9", 
             "parameters": [
-                "max_value_p=1000000000000000"
+                "max_val_p=1000000000000000"
             ]
         }, 
         {
@@ -194,7 +194,7 @@
             "design_size": "large", 
             "name": "bsg_counter_overflow_set_en_large_clkperiod_11", 
             "parameters": [
-                "max_value_p=1000000000000000"
+                "max_val_p=1000000000000000"
             ]
         }, 
         {
@@ -210,7 +210,7 @@
             "design_size": "very_large", 
             "name": "bsg_counter_overflow_set_en_very_large_clkperiod_1", 
             "parameters": [
-                "max_value_p=10000000000000000000"
+                "max_val_p=10000000000000000000"
             ]
         }, 
         {
@@ -226,7 +226,7 @@
             "design_size": "very_large", 
             "name": "bsg_counter_overflow_set_en_very_large_clkperiod_3", 
             "parameters": [
-                "max_value_p=10000000000000000000"
+                "max_val_p=10000000000000000000"
             ]
         }, 
         {
@@ -242,7 +242,7 @@
             "design_size": "very_large", 
             "name": "bsg_counter_overflow_set_en_very_large_clkperiod_5", 
             "parameters": [
-                "max_value_p=10000000000000000000"
+                "max_val_p=10000000000000000000"
             ]
         }, 
         {
@@ -258,7 +258,7 @@
             "design_size": "very_large", 
             "name": "bsg_counter_overflow_set_en_very_large_clkperiod_7", 
             "parameters": [
-                "max_value_p=10000000000000000000"
+                "max_val_p=10000000000000000000"
             ]
         }, 
         {
@@ -274,7 +274,7 @@
             "design_size": "very_large", 
             "name": "bsg_counter_overflow_set_en_very_large_clkperiod_9", 
             "parameters": [
-                "max_value_p=10000000000000000000"
+                "max_val_p=10000000000000000000"
             ]
         }, 
         {
@@ -290,7 +290,7 @@
             "design_size": "very_large", 
             "name": "bsg_counter_overflow_set_en_very_large_clkperiod_11", 
             "parameters": [
-                "max_value_p=10000000000000000000"
+                "max_val_p=10000000000000000000"
             ]
         }, 
         {
@@ -306,7 +306,7 @@
             "design_size": "medium", 
             "name": "bsg_counter_overflow_set_en_medium_clkperiod_1", 
             "parameters": [
-                "max_value_p=100000000000"
+                "max_val_p=100000000000"
             ]
         }, 
         {
@@ -322,7 +322,7 @@
             "design_size": "medium", 
             "name": "bsg_counter_overflow_set_en_medium_clkperiod_3", 
             "parameters": [
-                "max_value_p=100000000000"
+                "max_val_p=100000000000"
             ]
         }, 
         {
@@ -338,7 +338,7 @@
             "design_size": "medium", 
             "name": "bsg_counter_overflow_set_en_medium_clkperiod_5", 
             "parameters": [
-                "max_value_p=100000000000"
+                "max_val_p=100000000000"
             ]
         }, 
         {
@@ -354,7 +354,7 @@
             "design_size": "medium", 
             "name": "bsg_counter_overflow_set_en_medium_clkperiod_7", 
             "parameters": [
-                "max_value_p=100000000000"
+                "max_val_p=100000000000"
             ]
         }, 
         {
@@ -370,7 +370,7 @@
             "design_size": "medium", 
             "name": "bsg_counter_overflow_set_en_medium_clkperiod_9", 
             "parameters": [
-                "max_value_p=100000000000"
+                "max_val_p=100000000000"
             ]
         }, 
         {
@@ -386,7 +386,7 @@
             "design_size": "medium", 
             "name": "bsg_counter_overflow_set_en_medium_clkperiod_11", 
             "parameters": [
-                "max_value_p=100000000000"
+                "max_val_p=100000000000"
             ]
         }
     ]
