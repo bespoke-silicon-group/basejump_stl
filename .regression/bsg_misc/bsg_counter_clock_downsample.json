@@ -8,7 +8,8 @@
         "basejump_stl/bsg_misc/bsg_muxi2_gatestack.v", 
         "basejump_stl/bsg_misc/bsg_nand.v", 
         "basejump_stl/bsg_misc/bsg_nor3.v", 
-        "basejump_stl/bsg_misc/bsg_reduce.v"
+        "basejump_stl/bsg_misc/bsg_reduce.v", 
+        "basejump_stl/bsg_misc/bsg_buf.v"
     ], 
     "run_config": [
         {
