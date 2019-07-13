@@ -7,7 +7,7 @@
     "run_config": [
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "1", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -24,7 +24,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "3", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -41,7 +41,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "5", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -58,7 +58,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "7", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -75,7 +75,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "9", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -92,7 +92,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "11", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -109,7 +109,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "1", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -126,7 +126,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "3", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -143,7 +143,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "5", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -160,7 +160,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "7", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -177,7 +177,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "9", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -194,7 +194,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "11", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -211,7 +211,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "1", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -228,7 +228,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "3", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -245,7 +245,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "5", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -262,7 +262,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "7", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -279,7 +279,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "9", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -296,7 +296,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "11", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -313,7 +313,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "1", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -330,7 +330,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "3", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -347,7 +347,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "5", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -364,7 +364,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "7", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -381,7 +381,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "9", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -398,7 +398,7 @@
         }, 
         {
             "constraints": {
-                "clk_port_name": "virtual", 
+                "clk_port_name": "clk", 
                 "clock_period": "11", 
                 "input": "0", 
                 "io_time_format": "period", 
