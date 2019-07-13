@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_counting_leading_zeros", 
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_counting_leading_zeros.v", 
         "basejump_stl/bsg_misc/bsg_defines.v", 
+        "basejump_stl/bsg_misc/bsg_counting_leading_zeros.v", 
         "basejump_stl/bsg_misc/bsg_priority_encode.v", 
         "basejump_stl/bsg_misc/bsg_priority_encode_one_hot_out.v", 
         "basejump_stl/bsg_misc/bsg_encode_one_hot.v", 
