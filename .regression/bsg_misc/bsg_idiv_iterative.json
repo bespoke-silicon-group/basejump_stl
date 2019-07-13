@@ -1,0 +1,74 @@
+{
+    "design_name": "bsg_idiv_iterative", 
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v", 
+        "basejump_stl/bsg_misc/bsg_idiv_iterative.v", 
+        "basejump_stl/bsg_misc/bsg_buf.v", 
+        "basejump_stl/bsg_misc/bsg_dff_en.v", 
+        "basejump_stl/bsg_misc/bsg_mux.v", 
+        "basejump_stl/bsg_misc/bsg_mux_one_hot.v", 
+        "basejump_stl/bsg_misc/bsg_buf_ctrl.v", 
+        "basejump_stl/bsg_misc/bsg_xnor.v", 
+        "basejump_stl/bsg_misc/bsg_nor2.v", 
+        "basejump_stl/bsg_misc/bsg_adder_cin.v", 
+        "basejump_stl/bsg_misc/bsg_idiv_iterative_controller.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "10", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "An 32bit integer iterative divider, capable of signed & unsigned division with size small at clock period=10", 
+            "design_size": "small", 
+            "name": "bsg_idiv_iterative_small_clkperiod_10", 
+            "parameters": []
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "10", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "An 32bit integer iterative divider, capable of signed & unsigned division with size large at clock period=10", 
+            "design_size": "large", 
+            "name": "bsg_idiv_iterative_large_clkperiod_10", 
+            "parameters": []
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "10", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "An 32bit integer iterative divider, capable of signed & unsigned division with size very_large at clock period=10", 
+            "design_size": "very_large", 
+            "name": "bsg_idiv_iterative_very_large_clkperiod_10", 
+            "parameters": []
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "10", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "An 32bit integer iterative divider, capable of signed & unsigned division with size medium at clock period=10", 
+            "design_size": "medium", 
+            "name": "bsg_idiv_iterative_medium_clkperiod_10", 
+            "parameters": []
+        }
+    ]
+}
