@@ -22,7 +22,7 @@
             "design_size": "small", 
             "name": "bsg_mul_small_clkperiod_10", 
             "parameters": [
-                "ways_p=8"
+                "width_p=8"
             ]
         }, 
         {
@@ -38,7 +38,7 @@
             "design_size": "large", 
             "name": "bsg_mul_large_clkperiod_10", 
             "parameters": [
-                "ways_p=8"
+                "width_p=8"
             ]
         }, 
         {
@@ -54,7 +54,7 @@
             "design_size": "very_large", 
             "name": "bsg_mul_very_large_clkperiod_10", 
             "parameters": [
-                "ways_p=8"
+                "width_p=8"
             ]
         }, 
         {
@@ -70,7 +70,7 @@
             "design_size": "medium", 
             "name": "bsg_mul_medium_clkperiod_10", 
             "parameters": [
-                "ways_p=8"
+                "width_p=8"
             ]
         }
     ]
