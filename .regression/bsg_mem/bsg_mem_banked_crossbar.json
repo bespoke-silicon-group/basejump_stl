@@ -1,0 +1,94 @@
+{
+    "design_name": "bsg_mem_banked_crossbar", 
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v", 
+        "basejump_stl/bsg_mem/bsg_mem_banked_crossbar.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_byte.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_byte_synth.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1rw_sync.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1rw_sync_synth.v", 
+        "basejump_stl/bsg_misc/bsg_clkgate_optional.v", 
+        "basejump_stl/bsg_misc/bsg_dff.v", 
+        "basejump_stl/bsg_misc/bsg_dff_en_bypass.v", 
+        "basejump_stl/bsg_misc/bsg_dff_en.v", 
+        "basejump_stl/bsg_misc/bsg_transpose.v", 
+        "basejump_stl/bsg_misc/bsg_arb_fixed.v", 
+        "basejump_stl/bsg_misc/bsg_priority_encode_one_hot_out.v", 
+        "basejump_stl/bsg_misc/bsg_scan.v", 
+        "basejump_stl/bsg_misc/bsg_round_robin_arb.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "10", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "bank mem banked crossbar with size small at clock period=10", 
+            "design_size": "small", 
+            "name": "bsg_mem_banked_crossbar_small_clkperiod_10", 
+            "parameters": [
+                "num_ports_p=2", 
+                "num_banks_p=2", 
+                "rr_lo_hi_p=0"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "10", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "bank mem banked crossbar with size large at clock period=10", 
+            "design_size": "large", 
+            "name": "bsg_mem_banked_crossbar_large_clkperiod_10", 
+            "parameters": [
+                "num_ports_p=2", 
+                "num_banks_p=2", 
+                "rr_lo_hi_p=2"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "10", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "bank mem banked crossbar with size very_large at clock period=10", 
+            "design_size": "very_large", 
+            "name": "bsg_mem_banked_crossbar_very_large_clkperiod_10", 
+            "parameters": [
+                "num_ports_p=2", 
+                "num_banks_p=2", 
+                "rr_lo_hi_p=0"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "10", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "bank mem banked crossbar with size medium at clock period=10", 
+            "design_size": "medium", 
+            "name": "bsg_mem_banked_crossbar_medium_clkperiod_10", 
+            "parameters": [
+                "num_ports_p=2", 
+                "num_banks_p=2", 
+                "rr_lo_hi_p=1"
+            ]
+        }
+    ]
+}
