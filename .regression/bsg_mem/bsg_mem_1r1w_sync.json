@@ -3,7 +3,7 @@
     "filelist": [
         "basejump_stl/bsg_misc/bsg_defines.v", 
         "basejump_stl/bsg_mem/bsg_mem_1r1w_sync.v", 
-        "basejump_stl/bsg_misc/bsg_clkgate_optional", 
+        "basejump_stl/bsg_misc/bsg_clkgate_optional.v", 
         "basejump_stl/bsg_mem/bsg_mem_1r1w_sync_synth.v"
     ], 
     "run_config": [
