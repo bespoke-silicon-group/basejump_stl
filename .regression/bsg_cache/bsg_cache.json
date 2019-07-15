@@ -36,8 +36,8 @@
             "parameters": [
                 "addr_width_p=8", 
                 "data_width_p=8", 
-                "block_size_in_words_p=1", 
-                "sets_p=1"
+                "block_size_in_words_p=2", 
+                "sets_p=2"
             ]
         }, 
         {
@@ -55,8 +55,8 @@
             "parameters": [
                 "addr_width_p=8", 
                 "data_width_p=8", 
-                "block_size_in_words_p=1", 
-                "sets_p=1"
+                "block_size_in_words_p=2", 
+                "sets_p=2"
             ]
         }, 
         {
@@ -74,8 +74,8 @@
             "parameters": [
                 "addr_width_p=8", 
                 "data_width_p=8", 
-                "block_size_in_words_p=1", 
-                "sets_p=1"
+                "block_size_in_words_p=2", 
+                "sets_p=2"
             ]
         }, 
         {
@@ -93,8 +93,8 @@
             "parameters": [
                 "addr_width_p=8", 
                 "data_width_p=8", 
-                "block_size_in_words_p=1", 
-                "sets_p=1"
+                "block_size_in_words_p=2", 
+                "sets_p=2"
             ]
         }
     ]
