@@ -15,6 +15,7 @@
         "basejump_stl/bsg_mem/bsg_mem_1rw_sync.v", 
         "basejump_stl/bsg_mem/bsg_mem_1r1w_sync_synth.v", 
         "basejump_stl/bsg_mem/bsg_mem_1r1w.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v", 
         "basejump_stl/bsg_mem/bsg_mem_1rw_sync_synth.v", 
         "basejump_stl/bsg_cache/bsg_cache_miss.v", 
         "basejump_stl/bsg_cache/bsg_cache_dma.v", 
