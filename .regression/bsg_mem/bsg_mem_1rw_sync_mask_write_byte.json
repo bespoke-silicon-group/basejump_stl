@@ -1,0 +1,84 @@
+{
+    "design_name": "bsg_mem_1rw_sync_mask_write_byte", 
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_byte.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_byte_synth.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1rw_sync.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1rw_sync_synth.v", 
+        "basejump_stl/bsg_misc/bsg_clkgate_optional.v", 
+        "basejump_stl/bsg_misc/bsg_dff.v", 
+        "basejump_stl/bsg_misc/bsg_dff_en_bypass.v", 
+        "basejump_stl/bsg_misc/bsg_dff_en.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "10", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle, can mask write bytes with size small at clock period=10", 
+            "design_size": "small", 
+            "name": "bsg_mem_1rw_sync_mask_write_byte_small_clkperiod_10", 
+            "parameters": [
+                "els_p=8", 
+                "data_width_p=8"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "10", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle, can mask write bytes with size large at clock period=10", 
+            "design_size": "large", 
+            "name": "bsg_mem_1rw_sync_mask_write_byte_large_clkperiod_10", 
+            "parameters": [
+                "els_p=8", 
+                "data_width_p=8"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "10", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle, can mask write bytes with size very_large at clock period=10", 
+            "design_size": "very_large", 
+            "name": "bsg_mem_1rw_sync_mask_write_byte_very_large_clkperiod_10", 
+            "parameters": [
+                "els_p=8", 
+                "data_width_p=8"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "10", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle, can mask write bytes with size medium at clock period=10", 
+            "design_size": "medium", 
+            "name": "bsg_mem_1rw_sync_mask_write_byte_medium_clkperiod_10", 
+            "parameters": [
+                "els_p=8", 
+                "data_width_p=8"
+            ]
+        }
+    ]
+}
