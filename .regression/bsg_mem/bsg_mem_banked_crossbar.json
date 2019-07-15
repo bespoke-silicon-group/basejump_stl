@@ -31,6 +31,7 @@
             "design_size": "small", 
             "name": "bsg_mem_banked_crossbar_small_clkperiod_10", 
             "parameters": [
+                "data_width_p=8", 
                 "num_ports_p=2", 
                 "num_banks_p=2", 
                 "rr_lo_hi_p=0"
@@ -49,6 +50,7 @@
             "design_size": "large", 
             "name": "bsg_mem_banked_crossbar_large_clkperiod_10", 
             "parameters": [
+                "data_width_p=8", 
                 "num_ports_p=2", 
                 "num_banks_p=2", 
                 "rr_lo_hi_p=2"
@@ -67,6 +69,7 @@
             "design_size": "very_large", 
             "name": "bsg_mem_banked_crossbar_very_large_clkperiod_10", 
             "parameters": [
+                "data_width_p=8", 
                 "num_ports_p=2", 
                 "num_banks_p=2", 
                 "rr_lo_hi_p=0"
@@ -85,6 +88,7 @@
             "design_size": "medium", 
             "name": "bsg_mem_banked_crossbar_medium_clkperiod_10", 
             "parameters": [
+                "data_width_p=8", 
                 "num_ports_p=2", 
                 "num_banks_p=2", 
                 "rr_lo_hi_p=1"
