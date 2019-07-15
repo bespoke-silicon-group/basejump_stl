@@ -1,0 +1,100 @@
+{
+    "design_name": "bsg_cache", 
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v", 
+        "basejump_stl/bsg_cache/bsg_cache_pkt.vh", 
+        "basejump_stl/bsg_cache/bsg_cache_dma_pkt.vh", 
+        "basejump_stl/bsg_cache/bsg_cache.v", 
+        "basejump_stl/bsg_cache/bsg_cache_pkt_decode.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_bit.v", 
+        "basejump_stl/bsg_misc/bsg_clkgate_optional.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_byte.v", 
+        "basejump_stl/bsg_cache/bsg_cache_miss.v", 
+        "basejump_stl/bsg_cache/bsg_cache_dma.v", 
+        "basejump_stl/bsg_dataflow/bsg_fifo_1r1w_small.v", 
+        "basejump_stl/bsg_dataflow/bsg_two_fifo.v", 
+        "basejump_stl/bsg_cache/bsg_cache_sbuf.v", 
+        "basejump_stl/bsg_cache/bsg_cache_sbuf_queue.v", 
+        "basejump_stl/bsg_misc/bsg_mux_segmented.v", 
+        "basejump_stl/bsg_misc/bsg_mux.v", 
+        "basejump_stl/bsg_cache/bsg_nonsynth_axe_tracer.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "10", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "a cache with size small at clock period=10", 
+            "design_size": "small", 
+            "name": "bsg_cache_small_clkperiod_10", 
+            "parameters": [
+                "addr_width_p=8", 
+                "data_width_p=8", 
+                "block_size_in_words_p=1", 
+                "sets_p=1"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "10", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "a cache with size large at clock period=10", 
+            "design_size": "large", 
+            "name": "bsg_cache_large_clkperiod_10", 
+            "parameters": [
+                "addr_width_p=8", 
+                "data_width_p=8", 
+                "block_size_in_words_p=1", 
+                "sets_p=1"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "10", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "a cache with size very_large at clock period=10", 
+            "design_size": "very_large", 
+            "name": "bsg_cache_very_large_clkperiod_10", 
+            "parameters": [
+                "addr_width_p=8", 
+                "data_width_p=8", 
+                "block_size_in_words_p=1", 
+                "sets_p=1"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "10", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "a cache with size medium at clock period=10", 
+            "design_size": "medium", 
+            "name": "bsg_cache_medium_clkperiod_10", 
+            "parameters": [
+                "addr_width_p=8", 
+                "data_width_p=8", 
+                "block_size_in_words_p=1", 
+                "sets_p=1"
+            ]
+        }
+    ]
+}
