@@ -18,7 +18,7 @@
             "name": "bsg_serial_in_parallel_out_small_clkperiod_1", 
             "parameters": [
                 "width_p=32", 
-                "else_p=128"
+                "els_p=128"
             ]
         }, 
         {
@@ -35,7 +35,7 @@
             "name": "bsg_serial_in_parallel_out_small_clkperiod_3", 
             "parameters": [
                 "width_p=32", 
-                "else_p=128"
+                "els_p=128"
             ]
         }, 
         {
@@ -52,7 +52,7 @@
             "name": "bsg_serial_in_parallel_out_small_clkperiod_5", 
             "parameters": [
                 "width_p=32", 
-                "else_p=128"
+                "els_p=128"
             ]
         }, 
         {
@@ -69,7 +69,7 @@
             "name": "bsg_serial_in_parallel_out_small_clkperiod_7", 
             "parameters": [
                 "width_p=32", 
-                "else_p=128"
+                "els_p=128"
             ]
         }, 
         {
@@ -86,7 +86,7 @@
             "name": "bsg_serial_in_parallel_out_small_clkperiod_9", 
             "parameters": [
                 "width_p=32", 
-                "else_p=128"
+                "els_p=128"
             ]
         }, 
         {
@@ -103,7 +103,7 @@
             "name": "bsg_serial_in_parallel_out_small_clkperiod_11", 
             "parameters": [
                 "width_p=32", 
-                "else_p=128"
+                "els_p=128"
             ]
         }, 
         {
@@ -120,7 +120,7 @@
             "name": "bsg_serial_in_parallel_out_large_clkperiod_1", 
             "parameters": [
                 "width_p=128", 
-                "else_p=512"
+                "els_p=512"
             ]
         }, 
         {
@@ -137,7 +137,7 @@
             "name": "bsg_serial_in_parallel_out_large_clkperiod_3", 
             "parameters": [
                 "width_p=128", 
-                "else_p=512"
+                "els_p=512"
             ]
         }, 
         {
@@ -154,7 +154,7 @@
             "name": "bsg_serial_in_parallel_out_large_clkperiod_5", 
             "parameters": [
                 "width_p=128", 
-                "else_p=512"
+                "els_p=512"
             ]
         }, 
         {
@@ -171,7 +171,7 @@
             "name": "bsg_serial_in_parallel_out_large_clkperiod_7", 
             "parameters": [
                 "width_p=128", 
-                "else_p=512"
+                "els_p=512"
             ]
         }, 
         {
@@ -188,7 +188,7 @@
             "name": "bsg_serial_in_parallel_out_large_clkperiod_9", 
             "parameters": [
                 "width_p=128", 
-                "else_p=512"
+                "els_p=512"
             ]
         }, 
         {
@@ -205,7 +205,7 @@
             "name": "bsg_serial_in_parallel_out_large_clkperiod_11", 
             "parameters": [
                 "width_p=128", 
-                "else_p=512"
+                "els_p=512"
             ]
         }, 
         {
@@ -222,7 +222,7 @@
             "name": "bsg_serial_in_parallel_out_very_large_clkperiod_1", 
             "parameters": [
                 "width_p=256", 
-                "else_p=1024"
+                "els_p=1024"
             ]
         }, 
         {
@@ -239,7 +239,7 @@
             "name": "bsg_serial_in_parallel_out_very_large_clkperiod_3", 
             "parameters": [
                 "width_p=256", 
-                "else_p=1024"
+                "els_p=1024"
             ]
         }, 
         {
@@ -256,7 +256,7 @@
             "name": "bsg_serial_in_parallel_out_very_large_clkperiod_5", 
             "parameters": [
                 "width_p=256", 
-                "else_p=1024"
+                "els_p=1024"
             ]
         }, 
         {
@@ -273,7 +273,7 @@
             "name": "bsg_serial_in_parallel_out_very_large_clkperiod_7", 
             "parameters": [
                 "width_p=256", 
-                "else_p=1024"
+                "els_p=1024"
             ]
         }, 
         {
@@ -290,7 +290,7 @@
             "name": "bsg_serial_in_parallel_out_very_large_clkperiod_9", 
             "parameters": [
                 "width_p=256", 
-                "else_p=1024"
+                "els_p=1024"
             ]
         }, 
         {
@@ -307,7 +307,7 @@
             "name": "bsg_serial_in_parallel_out_very_large_clkperiod_11", 
             "parameters": [
                 "width_p=256", 
-                "else_p=1024"
+                "els_p=1024"
             ]
         }, 
         {
@@ -324,7 +324,7 @@
             "name": "bsg_serial_in_parallel_out_medium_clkperiod_1", 
             "parameters": [
                 "width_p=64", 
-                "else_p=256"
+                "els_p=256"
             ]
         }, 
         {
@@ -341,7 +341,7 @@
             "name": "bsg_serial_in_parallel_out_medium_clkperiod_3", 
             "parameters": [
                 "width_p=64", 
-                "else_p=256"
+                "els_p=256"
             ]
         }, 
         {
@@ -358,7 +358,7 @@
             "name": "bsg_serial_in_parallel_out_medium_clkperiod_5", 
             "parameters": [
                 "width_p=64", 
-                "else_p=256"
+                "els_p=256"
             ]
         }, 
         {
@@ -375,7 +375,7 @@
             "name": "bsg_serial_in_parallel_out_medium_clkperiod_7", 
             "parameters": [
                 "width_p=64", 
-                "else_p=256"
+                "els_p=256"
             ]
         }, 
         {
@@ -392,7 +392,7 @@
             "name": "bsg_serial_in_parallel_out_medium_clkperiod_9", 
             "parameters": [
                 "width_p=64", 
-                "else_p=256"
+                "els_p=256"
             ]
         }, 
         {
@@ -409,7 +409,7 @@
             "name": "bsg_serial_in_parallel_out_medium_clkperiod_11", 
             "parameters": [
                 "width_p=64", 
-                "else_p=256"
+                "els_p=256"
             ]
         }
     ]
