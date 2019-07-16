@@ -1,0 +1,426 @@
+{
+    "design_name": "bsg_serial_in_parallel_out_full", 
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v", 
+        "basejump_stl/bsg_dataflow/bsg_serial_in_parallel_out_full.v", 
+        "basejump_stl/bsg_misc/bsg_array_reverse.v", 
+        "basejump_stl/bsg_dataflow/bsg_round_robin_1_to_n.v", 
+        "basejump_stl/bsg_misc/bsg_circular_ptr.v", 
+        "basejump_stl/bsg_dataflow/bsg_two_fifo.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v", 
+        "basejump_stl/bsg_dataflow/bsg_one_fifo.v", 
+        "basejump_stl/bsg_misc/bsg_dff_reset.v", 
+        "basejump_stl/bsg_misc/bsg_dff_en.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "1", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size small at clock period=1", 
+            "design_size": "small", 
+            "name": "bsg_serial_in_parallel_out_full_small_clkperiod_1", 
+            "parameters": [
+                "width_p=32", 
+                "els_p=128"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "3", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size small at clock period=3", 
+            "design_size": "small", 
+            "name": "bsg_serial_in_parallel_out_full_small_clkperiod_3", 
+            "parameters": [
+                "width_p=32", 
+                "els_p=128"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "5", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size small at clock period=5", 
+            "design_size": "small", 
+            "name": "bsg_serial_in_parallel_out_full_small_clkperiod_5", 
+            "parameters": [
+                "width_p=32", 
+                "els_p=128"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "7", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size small at clock period=7", 
+            "design_size": "small", 
+            "name": "bsg_serial_in_parallel_out_full_small_clkperiod_7", 
+            "parameters": [
+                "width_p=32", 
+                "els_p=128"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "9", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size small at clock period=9", 
+            "design_size": "small", 
+            "name": "bsg_serial_in_parallel_out_full_small_clkperiod_9", 
+            "parameters": [
+                "width_p=32", 
+                "els_p=128"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "11", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size small at clock period=11", 
+            "design_size": "small", 
+            "name": "bsg_serial_in_parallel_out_full_small_clkperiod_11", 
+            "parameters": [
+                "width_p=32", 
+                "els_p=128"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "1", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size large at clock period=1", 
+            "design_size": "large", 
+            "name": "bsg_serial_in_parallel_out_full_large_clkperiod_1", 
+            "parameters": [
+                "width_p=128", 
+                "els_p=512"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "3", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size large at clock period=3", 
+            "design_size": "large", 
+            "name": "bsg_serial_in_parallel_out_full_large_clkperiod_3", 
+            "parameters": [
+                "width_p=128", 
+                "els_p=512"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "5", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size large at clock period=5", 
+            "design_size": "large", 
+            "name": "bsg_serial_in_parallel_out_full_large_clkperiod_5", 
+            "parameters": [
+                "width_p=128", 
+                "els_p=512"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "7", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size large at clock period=7", 
+            "design_size": "large", 
+            "name": "bsg_serial_in_parallel_out_full_large_clkperiod_7", 
+            "parameters": [
+                "width_p=128", 
+                "els_p=512"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "9", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size large at clock period=9", 
+            "design_size": "large", 
+            "name": "bsg_serial_in_parallel_out_full_large_clkperiod_9", 
+            "parameters": [
+                "width_p=128", 
+                "els_p=512"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "11", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size large at clock period=11", 
+            "design_size": "large", 
+            "name": "bsg_serial_in_parallel_out_full_large_clkperiod_11", 
+            "parameters": [
+                "width_p=128", 
+                "els_p=512"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "1", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size very_large at clock period=1", 
+            "design_size": "very_large", 
+            "name": "bsg_serial_in_parallel_out_full_very_large_clkperiod_1", 
+            "parameters": [
+                "width_p=256", 
+                "els_p=1024"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "3", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size very_large at clock period=3", 
+            "design_size": "very_large", 
+            "name": "bsg_serial_in_parallel_out_full_very_large_clkperiod_3", 
+            "parameters": [
+                "width_p=256", 
+                "els_p=1024"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "5", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size very_large at clock period=5", 
+            "design_size": "very_large", 
+            "name": "bsg_serial_in_parallel_out_full_very_large_clkperiod_5", 
+            "parameters": [
+                "width_p=256", 
+                "els_p=1024"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "7", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size very_large at clock period=7", 
+            "design_size": "very_large", 
+            "name": "bsg_serial_in_parallel_out_full_very_large_clkperiod_7", 
+            "parameters": [
+                "width_p=256", 
+                "els_p=1024"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "9", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size very_large at clock period=9", 
+            "design_size": "very_large", 
+            "name": "bsg_serial_in_parallel_out_full_very_large_clkperiod_9", 
+            "parameters": [
+                "width_p=256", 
+                "els_p=1024"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "11", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size very_large at clock period=11", 
+            "design_size": "very_large", 
+            "name": "bsg_serial_in_parallel_out_full_very_large_clkperiod_11", 
+            "parameters": [
+                "width_p=256", 
+                "els_p=1024"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "1", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size medium at clock period=1", 
+            "design_size": "medium", 
+            "name": "bsg_serial_in_parallel_out_full_medium_clkperiod_1", 
+            "parameters": [
+                "width_p=64", 
+                "els_p=256"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "3", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size medium at clock period=3", 
+            "design_size": "medium", 
+            "name": "bsg_serial_in_parallel_out_full_medium_clkperiod_3", 
+            "parameters": [
+                "width_p=64", 
+                "els_p=256"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "5", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size medium at clock period=5", 
+            "design_size": "medium", 
+            "name": "bsg_serial_in_parallel_out_full_medium_clkperiod_5", 
+            "parameters": [
+                "width_p=64", 
+                "els_p=256"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "7", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size medium at clock period=7", 
+            "design_size": "medium", 
+            "name": "bsg_serial_in_parallel_out_full_medium_clkperiod_7", 
+            "parameters": [
+                "width_p=64", 
+                "els_p=256"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "9", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size medium at clock period=9", 
+            "design_size": "medium", 
+            "name": "bsg_serial_in_parallel_out_full_medium_clkperiod_9", 
+            "parameters": [
+                "width_p=64", 
+                "els_p=256"
+            ]
+        }, 
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "11", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": " This is a simpler version of bsg_serial_in_parallel_out with size medium at clock period=11", 
+            "design_size": "medium", 
+            "name": "bsg_serial_in_parallel_out_full_medium_clkperiod_11", 
+            "parameters": [
+                "width_p=64", 
+                "els_p=256"
+            ]
+        }
+    ]
+}
