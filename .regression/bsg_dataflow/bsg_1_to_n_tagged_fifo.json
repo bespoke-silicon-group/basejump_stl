@@ -11,7 +11,15 @@
         "basejump_stl/bsg_mem/bsg_mem_1r1w.v", 
         "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v", 
         "basejump_stl/bsg_misc/bsg_decode_with_v.v", 
-        "basejump_stl/bsg_misc/bsg_decode.v"
+        "basejump_stl/bsg_misc/bsg_decode.v", 
+        "basejump_stl/bsg_dataflow/bsg_two_fifo.v", 
+        "basejump_stl/bsg_dataflow/bsg_fifo_1rw_large.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1rw_sync.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1rw_sync_synth.v", 
+        "basejump_stl/bsg_misc/bsg_clkgate_optional.v", 
+        "basejump_stl/bsg_misc/bsg_dff.v", 
+        "basejump_stl/bsg_misc/bsg_dff_en_bypass.v", 
+        "basejump_stl/bsg_misc/bsg_dff_en.v"
     ], 
     "run_config": [
         {
