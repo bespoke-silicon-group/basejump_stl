@@ -1,13 +1,17 @@
 // -------------------------------------------------------
 // -- bsg_sqrt_core.v
+// sqlin16@fudan.edu.cn 07/10/2019
 // -------------------------------------------------------
-// 
+// This module performs square root for integer. 
+// Latency: width_p + 3 (cycles)
+
+// Input must be normalized to this format before put into this module like:
+// op_i: [XX].YYYYYYYY, where [XX] means the integer part of the input and cannot equal to zero.
+// Output format is [1].XXXX.
 // -------------------------------------------------------
-
-
 
 module bsg_sqrt_core #(
-  parameter integer width_p = 14
+  parameter integer width_p = "inv"
   ,parameter bit debug_p = 0
 )(
   input clk_i
@@ -32,7 +36,10 @@ always_ff @(posedge clk_i) begin
   if(reset_i) begin
     sfr_r[width_p-1:0] <= '0;
     sfr_r[width_p] <= 1'b1;
-    $display("Reset");
+  end
+  else if(state_r == eIdle && v_i) begin
+    sfr_r[width_p-1:0] <= '0;
+    sfr_r[width_p] <= 1'b1;
   end
   else if(state_r == eCal) begin
     if(sfr_r[0]) begin
@@ -67,7 +74,7 @@ wire [width_p+3:0] sqrt_to_subtract = {2'b0, sqrt_r, 1'b0} ^ {(width_p+4){select
 wire [width_p+3:0] sfr_to_subtract = {3'b0, sfr_r};
 
 bsg_adder_carry_save #(
-  .width_p(width_p+3)
+  .width_p(width_p+4)
 ) aggregator (
   .opA_i(ops_r)
   ,.opB_i(sqrt_to_subtract)
@@ -124,7 +131,8 @@ assign sqrt_o = sqrt_r;
 
 if(debug_p) begin
   always_ff @(posedge clk_i) begin
-    $display("=========================");
+    $display("============BSG SQRT CORE=============");
+    $display("state_r:%s", state_r.name());
     $display("sfr_r:%b",sfr_r);
     $display("ops_r:%b",ops_r);
     $display("sqrt_r:%b",sqrt_r);
