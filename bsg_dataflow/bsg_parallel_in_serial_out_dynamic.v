@@ -1,112 +1,86 @@
-/**
- *  bsg_parallel_in_serial_out_dynamic.v
- *
- *  Paul Gao        06/2019
- *
- */
+//
+// bsg_parallel_in_serial_out_dynamic.v
+//
+// Paul Gao        06/2019
+//
+// This is a 0-cycle delay parallel in serial out adapter 
+// It supports adjusting conversion ratio dynamically with len_i
+// 
+// Note that the input side has valid-yumi interface, which means yumi_o
+// will be asserted after v_i is asserted.
+//
+//
 
 module bsg_parallel_in_serial_out_dynamic
                                
- #(parameter width_p          = "inv"
-  ,parameter max_els_p        = "inv"
-  ,parameter lg_max_els_lp    = `BSG_SAFE_CLOG2(max_els_p)
+ #(parameter width_p                 = "inv"
+  ,parameter max_els_p               = "inv"
+  // By default, len_i should be set to (array_lenth-1)
+  // When length_not_last_index_p=1, len_i should be set to array_lenth
+  ,parameter length_not_last_index_p = 0
+  ,parameter lg_max_els_lp = `BSG_SAFE_CLOG2(max_els_p)
+  ,parameter len_width_p   = `BSG_SAFE_CLOG2(max_els_p+length_not_last_index_p)
   )
   
   (input clk_i
   ,input reset_i
   
-  // Input side
+  // Input side (valid->yumi)
   ,input                               v_i
-  ,input  [lg_max_els_lp-1:0]          len_i
+  // len_i must be asserted as long as v_i and data_i are asserted
+  ,input  [len_width_p-1:0]            len_i
   ,input  [max_els_p-1:0][width_p-1:0] data_i
-  ,output                              ready_o
+  ,output                              yumi_o // late
   
-  // Output side
+  // Output side (valid->yumi)
   ,output                              v_o
-  ,output                              len_v_o
   ,output [width_p-1:0]                data_o
-  ,input                               yumi_i
+  ,input                               yumi_i // late
   );
 
-  logic                              go_fifo_yumi_li;
-  logic [lg_max_els_lp-1:0]          len_lo;
-  logic [max_els_p-1:0][width_p-1:0] fifo_data_lo;
-  
-  // Go fifo and data fifo share the same control logic
-  // They always contain same number of elements in memory
-  
-  // Go fifo
-  bsg_two_fifo
- #(.width_p(lg_max_els_lp  )
-  ) go_fifo
-  (.clk_i  (clk_i          )
-  ,.reset_i(reset_i        )
-  
-  ,.ready_o(ready_o        )
-  ,.data_i (len_i          )
-  ,.v_i    (v_i            )
-  
-  ,.v_o    (v_o            )
-  ,.data_o (len_lo         )
-  ,.yumi_i (go_fifo_yumi_li)
-  );
-
-  // Data fifo
-  bsg_two_fifo
- #(.width_p(max_els_p*width_p)
-  ) data_fifo
-  (.clk_i  (clk_i            )
-  ,.reset_i(reset_i          )
-                             
-  ,.ready_o(                 )
-  ,.data_i (data_i           )
-  ,.v_i    (v_i              )
-                             
-  ,.v_o    (                 )
-  ,.data_o (fifo_data_lo     )
-  ,.yumi_i (go_fifo_yumi_li  )
-  );
-  
   logic [lg_max_els_lp-1:0] count_r, count_lo;
   logic clear_li, up_li;
   logic count_r_is_zero, count_r_is_last;
   
   // fix evaluate to Z problem in simulation
   assign count_lo = count_r;
-  
   assign count_r_is_zero = (count_lo == lg_max_els_lp'(0));
-  assign count_r_is_last = (count_lo == len_lo           );
   
-  // Indicate if output word is first word of packet
-  assign len_v_o = count_r_is_zero;
+  // Counter always count from 0 to length-1
+  // When length_not_last_index_p=1, len_i represents the array_length, in this case
+  // len_i compares with (count_lo+1).
+  assign count_r_is_last = ((len_width_p)'(count_lo+length_not_last_index_p) == len_i);
   
   // Count up if current word is not last word of packet.
   assign up_li = yumi_i & ~count_r_is_last;
   
   // Clear counter when whole packet finish sending
   assign clear_li = yumi_i & count_r_is_last;
-  assign go_fifo_yumi_li = clear_li;
+  assign yumi_o = clear_li;
+  
+  // Output is valid as long as v_i is asserted
+  assign v_o = v_i;
   
   // Length counter
   bsg_counter_clear_up
  #(.max_val_p (max_els_p-1)
-  ,.init_val_p(0)
+  ,.init_val_p(0          )
   ) ctr
-  (.clk_i     (clk_i   )
-  ,.reset_i   (reset_i )
-  ,.clear_i   (clear_li)
-  ,.up_i      (up_li   )
-  ,.count_o   (count_r )
+  (.clk_i     (clk_i      )
+  ,.reset_i   (reset_i    )
+  ,.clear_i   (clear_li   )
+  ,.up_i      (up_li      )
+  ,.count_o   (count_r    )
   );
   
   // Output mux
   bsg_mux
- #(.width_p(width_p     )
-  ,.els_p  (max_els_p   )
+ #(.width_p(width_p  )
+  ,.els_p  (max_els_p)
   ) data_mux
-  (.data_i (fifo_data_lo)
-  ,.sel_i  (count_lo    )
-  ,.data_o (data_o      )
+  (.data_i (data_i   )
+  ,.sel_i  (count_lo )
+  ,.data_o (data_o   )
   );
 
 endmodule
