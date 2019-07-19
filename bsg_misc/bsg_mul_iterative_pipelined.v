@@ -213,7 +213,7 @@ for(genvar i = 0; i < level_lp; ++i) begin: RESULT_HIGH_PART
   if(iter_step_p == width_p)
     assign high_result_n = high_result_partial;
   else if(i == 0)
-    assign high_result_n = {high_result_partial, {width_p-iter_step_p}'(0)};
+    assign high_result_n = {high_result_partial, (width_p-iter_step_p)'(0)};
   else
     assign high_result_n = {high_result_partial, high_result_r[i-1][width_p-1:iter_step_p]};
 
