@@ -40,7 +40,7 @@ module bsg_serial_in_parallel_out_dynamic
   assign yumi_lo = v_i & ready_o;
   
   logic [lg_max_els_lp-1:0] count_r, count_lo, len_r, len_lo;
-  logic clear_li, up_li, dff_en_li, go_fifo_v_li;
+  logic clear_li, up_li, len_w_en_li, go_fifo_v_li;
   logic count_r_is_zero, count_r_is_last;
   
   // fix evaluate to Z problem in simulation
@@ -60,7 +60,7 @@ module bsg_serial_in_parallel_out_dynamic
   assign go_fifo_v_li = clear_li;
   
   // Update length register when new packet comes in
-  assign dff_en_li = yumi_lo & count_r_is_zero;
+  assign len_w_en_li = yumi_lo & count_r_is_zero;
   
   // Length counter
   bsg_counter_clear_up
@@ -79,11 +79,11 @@ module bsg_serial_in_parallel_out_dynamic
  #(.width_p    (lg_max_els_lp)
   ,.reset_val_p(0)
   ) dff_len
-  (.clk_i      (clk_i    )
-  ,.reset_i    (reset_i  )
-  ,.en_i       (dff_en_li)
-  ,.data_i     (len_i    )
-  ,.data_o     (len_r    )
+  (.clk_i      (clk_i      )
+  ,.reset_i    (reset_i    )
+  ,.en_i       (len_w_en_li)
+  ,.data_i     (len_i      )
+  ,.data_o     (len_r      )
   );
   
   // Go fifo
