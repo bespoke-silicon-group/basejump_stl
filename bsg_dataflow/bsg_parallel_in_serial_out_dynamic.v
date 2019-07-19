@@ -40,11 +40,10 @@ module bsg_parallel_in_serial_out_dynamic
 
   logic [lg_max_els_lp-1:0] count_r, count_lo;
   logic clear_li, up_li;
-  logic count_r_is_zero, count_r_is_last;
+  logic count_r_is_last;
   
   // fix evaluate to Z problem in simulation
   assign count_lo = count_r;
-  assign count_r_is_zero = (count_lo == lg_max_els_lp'(0));
   
   // Counter always count from 0 to length-1
   // When length_not_last_index_p=1, len_i represents the array_length, in this case
