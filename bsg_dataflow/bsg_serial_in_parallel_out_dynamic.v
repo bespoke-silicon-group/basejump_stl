@@ -1,9 +1,16 @@
-/**
- *  bsg_serial_in_parallel_out_dynamic.v
- *
- *  Paul Gao        06/2019
- *
- */
+//
+// bsg_serial_in_parallel_out_dynamic.v
+//
+// Paul Gao        06/2019
+//
+// This is a 1-cycle delay serial in parallel out adapter 
+// It supports adjusting conversion ratio dynamically with len_i
+//
+// len_i must be asserted together with the first word (data_i) of array
+// By default len_i represents (array_length-1)
+// v_o will be asserted when all words of array are received
+//
+//
 
 module bsg_serial_in_parallel_out_dynamic
                                
@@ -20,7 +27,6 @@ module bsg_serial_in_parallel_out_dynamic
   ,input  [lg_max_els_lp-1:0]          len_i
   ,input  [width_p-1:0]                data_i
   ,output                              ready_o
-  ,output                              len_ready_o
   
   // Output side
   ,output                              v_o
@@ -45,10 +51,6 @@ module bsg_serial_in_parallel_out_dynamic
   
   assign count_r_is_zero = (count_lo == lg_max_els_lp'(0));
   assign count_r_is_last = (count_lo == len_lo           );
-  
-  // We accept new length when first word comes in
-  // At this time, counter is at initial value 0
-  assign len_ready_o = count_r_is_zero;
   
   // Count up if data word is not last word of current packet.
   assign up_li = yumi_lo & ~count_r_is_last;
