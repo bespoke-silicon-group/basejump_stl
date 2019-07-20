@@ -1,6 +1,8 @@
 `define WIDTH_P 8
 module test_bsg;
 
+localparam once = 0;
+
 logic clk_li;
 logic rst_li;
 logic reset_when_done_li;
@@ -23,6 +25,7 @@ wire [`WIDTH_P*2-1:0] right_result = {opA_li_ext,opA_li} * {opB_li_ext,opB_li};
 bsg_mul_iterative #(
   .width_p(`WIDTH_P)
   ,.iter_step_p(4)
+  ,.debug_p(once)
 )mul(
   .clk_i(clk_li)
   ,.reset_i(rst_li)
@@ -74,6 +77,7 @@ always_ff @(posedge clk_li) begin
       $error("Error!");
       $finish;
     end
+    if(once) $finish;
     opA_li++;
     if(opA_li == '0) begin
       opB_li++;

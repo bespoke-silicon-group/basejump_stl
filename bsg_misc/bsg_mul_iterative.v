@@ -36,6 +36,7 @@ module bsg_mul_iterative #(
   ,parameter integer iter_step_p = "inv"
   ,parameter integer full_sized_p = 1
   ,localparam integer output_size_lp = full_sized_p ? 2 * width_p : width_p
+  ,parameter bit debug_p = 0
 )
 (
   input clk_i
@@ -61,48 +62,47 @@ module bsg_mul_iterative #(
   initial assert(width_p == width_p) else $error("Alignment of stride is required for configurable iteration multiplier!");
   initial assert(width_p == 8 || width_p == 16 || width_p == 32) else $warning("Warning, condition with width_p = %d is untested!", width_p);
 
-  typedef enum [2:0] {eIDLE, eCAL, eCPA, eDONE} state_e; // FSM states.
-  state_e current_state_r, current_state_n; // current state and next state.
-
-  wire self_is_ready = ready_o & v_i; 
+  typedef enum logic [2:0] {eIDLE, eCAL, eCPA, eDONE} state_e; // FSM states.
+  state_e state_r, state_n; // current state and next state.
   // used for reset registers. combining the reset_i and yumi_i
-  wire reset_internal = reset_i | (yumi_i & current_state_r == eDONE); 
   // counter used for jumping out of eCAL
   logic [cal_state_length_lp-1:0] cal_state_counter_r;
   // counter update
   always_ff @(posedge clk_i) begin
-    if(reset_internal) cal_state_counter_r <= '0;
-    else cal_state_counter_r <= (current_state_r == eCAL) ? cal_state_counter_r + 1 : cal_state_counter_r;
+    if(reset_i) cal_state_counter_r <= '0;
+    else if(state_r == eIDLE) cal_state_counter_r <= '0;
+    else if(state_r == eCAL || state_r == eCPA) 
+      cal_state_counter_r <= (cal_state_counter_r != '1) ? cal_state_counter_r + 1 : '0;
   end
   
   // FSM. And the full output version and half output version contain different states.
   always_comb begin
-    unique case(current_state_r)
+    unique case(state_r)
       eIDLE : begin
-        if(self_is_ready) 
-            current_state_n = eCAL; 
+        if(v_i) 
+            state_n = eCAL; 
         else 
-          current_state_n = eIDLE;
+          state_n = eIDLE;
       end
       eCAL : begin
-        current_state_n = cal_state_counter_r == '1 ? eCPA : eCAL;
+        state_n = cal_state_counter_r == '1 ? eCPA : eCAL;
       end
       eCPA : begin
-        current_state_n = eDONE;
+        state_n = cal_state_counter_r == '1 ? eDONE : eCPA;
       end
-      eDONE:  current_state_n = eDONE;
-      default : current_state_n = eIDLE;
+      eDONE: if(yumi_i) state_n = eIDLE; else state_n = eDONE;
+      default : state_n = eIDLE;
     endcase
   end
 
-  assign ready_o = current_state_r == eIDLE;
+  assign ready_o = state_r == eIDLE;
   // update current state
   always_ff @(posedge clk_i) begin
-    if(reset_internal) begin
-      current_state_r <= eIDLE;
+    if(reset_i) begin
+      state_r <= eIDLE;
     end
     else begin
-      current_state_r <= current_state_n;
+      state_r <= state_n;
     end
   end
   // registers to store operands
@@ -111,31 +111,28 @@ module bsg_mul_iterative #(
   logic opA_neg_r; // used to record that opA is negative.
   logic opB_neg_r; // same with statement above
 
-  wire [width_p:0] cpa_opt;
-
-  reg [width_p - 1:0] sign_modification_r;
+  wire opA_signed_n = opA_i[width_p-1] & opA_is_signed_i;
+  wire opB_signed_n = opB_i[width_p-1] & opB_is_signed_i;
 
   // update input registers (opA, opB, opA_neg, opB_neg)
   always_ff @(posedge clk_i) begin
-    if(reset_internal) begin
+    if(reset_i) begin
       opA_r <= '0;
       opB_r <= '0;
       opA_neg_r <= 1'b0;
       opB_neg_r <= 1'b0;
-      sign_modification_r <= '0;
     end
     else begin
-      unique case(current_state_r)  // latch up!
+      unique case(state_r)  // latch up!
         eIDLE: begin
-          if(self_is_ready) begin
+          if(v_i) begin
             opA_r <= opA_i;
             opB_r <= opB_i;
-            opA_neg_r <= opA_i[width_p-1] & opA_is_signed_i;
-            opB_neg_r <= opB_i[width_p-1] & opB_is_signed_i;
+            opA_neg_r <= opA_signed_n;
+            opB_neg_r <= opB_signed_n;
           end
         end
         eCAL : begin
-          sign_modification_r <= cpa_opt;
           opB_r <= (opB_r >> iter_step_p);
         end
         default : begin
@@ -144,105 +141,96 @@ module bsg_mul_iterative #(
     end
   end
   // Setup carry propagate operation.
-  logic [width_p-1:0] cpa_opA; // operand A of CPA
-  logic [width_p-1:0] cpa_opB; // operand B of CPA
-  assign cpa_opt = cpa_opA + cpa_opB;
+  logic [iter_step_p-1:0] cpa_opA; // operand A of CPA
+  logic [iter_step_p-1:0] cpa_opB; // operand B of CPA
+  logic cpa_carry; // carry for CPA
+  wire  [iter_step_p:0] cpa_opt = {1'b0, cpa_opA} + {1'b0, cpa_opB} + cpa_carry;
 
   logic [iter_step_p-1:0] result_resolved_bits;
 
   // Registers for result
   reg [width_p-1:0] result_low_r;
-  reg [width_p-1:0] result_remnant_sum_r; 
+  reg [width_p:0] result_remnant_sum_r; 
   reg [width_p-1:0] result_remnant_carry_r;
 
-  // Determine cpa operands.
-  always_comb begin
-    unique case(current_state_r) 
-      eIDLE: begin
-        cpa_opA = '0;
-        cpa_opB = '0;
-      end
-      eCAL : begin 
-        cpa_opA = opA_r & ({width_p{opB_neg_r}});
-        cpa_opB = opB_r & ({width_p{opA_neg_r}});
-      end
-      eCPA: begin
-        cpa_opA = result_remnant_sum_r;
-        cpa_opB = result_remnant_carry_r;
-      end
-      default: begin
-        cpa_opA = '0;
-        cpa_opB = '0;
-      end
-    endcase
-  end
+  assign cpa_carry = result_remnant_sum_r[width_p];
+  assign cpa_opA = result_remnant_sum_r[iter_step_p-1:0];
+  assign cpa_opB = result_remnant_carry_r[iter_step_p-1:0];
 
   // Using a string of CSAs to generate result
-  wire [iter_step_p:0][width_p-1:0] cascade_csa_res;
+  wire [iter_step_p:0][width_p:0] cascade_csa_res;
   wire [iter_step_p:0][width_p-1:0] cascade_csa_car;
-  assign cascade_csa_res[0] = result_remnant_sum_r;
+  assign cascade_csa_res[0] = {result_remnant_sum_r[width_p-1:0],1'b0};
   assign cascade_csa_car[0] = result_remnant_carry_r;
   for(genvar i = 0; i < iter_step_p; ++i) begin: CSA_ARRAY
-    bsg_adder_carry_save #(
-      .width_p(width_p)
-    ) csa_adder (
-      .opA_i({1'b0, cascade_csa_res[i][width_p-1:1]})
-      ,.opB_i(cascade_csa_car[i])
-      ,.opC_i(opA_r & {width_p{opB_r[i]}})
-      ,.res_o(cascade_csa_res[i+1])
-      ,.car_o(cascade_csa_car[i+1])
-    );
-    assign result_resolved_bits[i] = cascade_csa_res[i+1][0];
+    if(i == iter_step_p - 1) begin
+      wire [width_p-1:0] partial_sum_last_csa = (cal_state_counter_r == '1) ? ((opA_r ^ {width_p{opB_neg_r}}) & {width_p{opB_r[i]}}) : (opA_r & {width_p{opB_r[i]}});
+      bsg_adder_carry_save #(
+        .width_p(width_p)
+      ) csa_adder (
+        .opA_i(cascade_csa_res[i][width_p:1])
+        ,.opB_i(cascade_csa_car[i])
+        ,.opC_i(partial_sum_last_csa)
+        ,.res_o(cascade_csa_res[i+1][width_p-1:0])
+        ,.car_o(cascade_csa_car[i+1])
+      );
+      assign result_resolved_bits[i] = cascade_csa_res[i+1][0];
+      assign cascade_csa_res[i+1][width_p] = ((~opB_r[i]) & opA_neg_r) ^ (opB_neg_r && cal_state_counter_r == '1);
+    end
+    else begin
+      bsg_adder_carry_save #(
+        .width_p(width_p)
+      ) csa_adder (
+        .opA_i(cascade_csa_res[i][width_p:1])
+        ,.opB_i(cascade_csa_car[i])
+        ,.opC_i(opA_r & {width_p{opB_r[i]}})
+        ,.res_o(cascade_csa_res[i+1][width_p-1:0])
+        ,.car_o(cascade_csa_car[i+1])
+      );
+      assign result_resolved_bits[i] = cascade_csa_res[i+1][0];
+      assign cascade_csa_res[i+1][width_p] = (~opB_r[i]) & opA_neg_r;
+    end
   end // CSA_ARRAY
 
   // Add update to final higher part of result
 
-  logic [width_p-1:0] final_csa_car;
-  logic [width_p-1:0] final_csa_res;
-
-  bsg_adder_carry_save #(
-    .width_p(width_p)
-  ) csa_adder_final (
-    .opA_i({1'b0, cascade_csa_res[iter_step_p][width_p-1:1]})
-    ,.opB_i(cascade_csa_car[iter_step_p])
-    ,.opC_i(~sign_modification_r)
-    ,.res_o(final_csa_res)
-    ,.car_o(final_csa_car)
-  );
-
   logic [width_p-1:0] result_low_n;
-  if (iter_step_p == width_p)
+  logic [width_p:0] result_remnant_sum_n;
+  if (iter_step_p == width_p) begin
     assign result_low_n = result_resolved_bits;
-  else
+    assign result_remnant_sum_n = cpa_opt[width_p-1:0];
+  end
+  else begin
     assign result_low_n = {result_resolved_bits[iter_step_p-1:0], result_low_r[width_p-1:iter_step_p]};
+    assign result_remnant_sum_n = {cpa_opt, result_remnant_sum_r[width_p-1:iter_step_p]};
+  end
 
   // Update the result and remnant result.
   always_ff @(posedge clk_i) begin
-    if(reset_internal) begin
+    if(reset_i) begin
       result_low_r <= '0;
       result_remnant_carry_r <= '0;
       result_remnant_sum_r <= '0;
     end
     else begin
-        if(current_state_r == eCAL) begin
-          result_low_r <= result_low_n;
-          if(cal_state_counter_r == '1) begin
-            // The last iteration
-            result_remnant_carry_r <= {final_csa_car[width_p-2:0],1'b1};
-            result_remnant_sum_r <= final_csa_res;
-          end
-          else begin
-            result_remnant_carry_r <= cascade_csa_car[iter_step_p];
-            result_remnant_sum_r <= cascade_csa_res[iter_step_p];
-          end
-        end
-        else if(current_state_r == eCPA) begin
-          result_remnant_sum_r <= cpa_opt;
-        end 
+      if(state_r == eIDLE && v_i) begin
+        result_low_r <= '0;
+        result_remnant_sum_r <= {opA_signed_n,(width_p)'(0)};
+        result_remnant_carry_r <= {opB_signed_n, (width_p-1)'(0)};
+      end
+      else if(state_r == eCAL) begin
+        result_low_r <= result_low_n;
+        result_remnant_carry_r <= cascade_csa_car[iter_step_p];
+        result_remnant_sum_r[width_p-1:0] <= cascade_csa_res[iter_step_p][width_p:1];
+      end
+      else if(state_r == eCPA) begin
+        result_remnant_sum_r <= result_remnant_sum_n;
+        result_remnant_carry_r <= result_remnant_carry_r >> iter_step_p;
+      end 
     end 
   end
   
-  assign v_o = current_state_r == eDONE;
+  assign v_o = state_r == eDONE;
 
   if(full_sized_p) begin: FULL_RESULT_O
     assign result_o = {result_remnant_sum_r[width_p-1:0], result_low_r};
@@ -250,6 +238,26 @@ module bsg_mul_iterative #(
   else begin: HALF_RESULT_O
     assign result_o = result_low_r;
   end //HALF_RESULT_O
+
+  if(debug_p) begin
+    always_ff @(posedge clk_i) begin
+      $display("======================================================");
+      $display("state_r:%s", state_r);
+      $display("cal_state_counter_r:%b",cal_state_counter_r);
+      $display("opA_r:%b", opA_r);
+      $display("opB_r:%b", opB_r);
+      $display("result_remnant_sum_r:%b", result_remnant_sum_r);
+      $display("result_remnant_carry_r:%b", result_remnant_carry_r);
+      $display("cpa_opt:%b", cpa_opt);
+      $display("result_resolved_bits:%b", result_resolved_bits);
+      $display("result_remnant_sum_n:%b", result_remnant_sum_n);
+      for(logic [31:0] i = 0; i <= iter_step_p; ++i)
+        $display("cascade_csa_res[%b]:%b",i, cascade_csa_res[i]);
+      for(logic [31:0] i = 0; i <= iter_step_p; ++i)
+        $display("cascade_csa_car[%b]:%b",i, cascade_csa_car[i]);
+      $display("result_remnant_carry_r:%b",result_remnant_carry_r);
+    end
+  end
   
 endmodule
 
