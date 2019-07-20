@@ -117,7 +117,7 @@ for(genvar i = 0; i < level_lp; ++i) begin: CSA
   wire [width_p-1:0] lower_bits_n;
 
   for(genvar j = 0; j < iter_step_p; ++j) begin: CSA_FLEX
-    if(j == (iter_step_p - 1) && i == (level_lp - 1)) begin
+    if(j == (iter_step_p - 1) && i == (level_lp - 1)) begin:CSA_FLEX_LAST
       bsg_adder_carry_save #(
         .width_p(width_p)
       ) csa_adder (
@@ -129,7 +129,7 @@ for(genvar i = 0; i < level_lp; ++i) begin: CSA
       );
       assign cascade_csa_res[j+1][width_p] = ((~opB_r[i][j]) & opA_sign_r[i]) ^ opB_sign_r[i]; // Sign extended of -opA
     end
-    else begin
+    else begin:CSA_FLEX_GENERAL
       bsg_adder_carry_save #(
         .width_p(width_p)
       ) csa_adder (
