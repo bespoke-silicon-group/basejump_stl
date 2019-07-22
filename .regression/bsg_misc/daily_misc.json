@@ -1,2 +1,3 @@
 include bsg_abs.json
 include bsg_and.json
+include bsg_counter_up_down_variable.json
