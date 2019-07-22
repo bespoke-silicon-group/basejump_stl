@@ -1,4 +1,5 @@
 include bsg_abs.json
+<<<<<<< HEAD
 include bsg_adder_cin.json
 include bsg_adder_ripple_carry.json
 include bsg_and.json
@@ -82,3 +83,7 @@ include bsg_wait_after_reset.json
 include bsg_wait_cycles.json
 include bsg_xnor.json
 include bsg_xor.json
+=======
+include bsg_and.json
+include bsg_counter_up_down_variable.json
+>>>>>>> 5cdbe78567a32cb1d7670e3b0a41dc0a0e262283
