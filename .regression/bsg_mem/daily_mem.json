@@ -1,0 +1,15 @@
+include bsg_cam_1r1w.json
+include bsg_mem_1r1w.json
+include bsg_mem_1r1w_async.json
+include bsg_mem_1r1w_sync.json
+include bsg_mem_1r1w_sync_mask_write_bit.json
+include bsg_mem_1r1w_sync_mask_write_var.json
+include bsg_mem_1rw_sync.json
+include bsg_mem_1rw_sync_mask_write_bit.json
+include bsg_mem_1rw_sync_mask_write_byte.json
+include bsg_mem_1rw_sync_mask_write_var.json
+include bsg_mem_2r1w.json
+include bsg_mem_2r1w_sync.json
+include bsg_mem_3r1w.json
+include bsg_mem_banked_crossbar.json
+include bsg_mem_multiport.json
