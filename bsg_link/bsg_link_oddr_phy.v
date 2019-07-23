@@ -104,6 +104,8 @@ module bsg_link_oddr_phy
   end
   
   // data launch flops
+  // odd_r is not a reset; should not need to put a reset in here
+
   always_ff @(posedge clk_i)
     if (odd_r) 
         data_r_o <= data_i_r[0];

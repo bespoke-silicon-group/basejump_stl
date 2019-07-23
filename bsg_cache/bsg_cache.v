@@ -342,7 +342,11 @@ module bsg_cache
 
   assign tag_hit_v[1] = (addr_tag_v == tag_v_r[1]) & valid_v_r[1];
   assign tag_hit_v[0] = (addr_tag_v == tag_v_r[0]) & valid_v_r[0];
-  assign miss_v = v_v_r & (((ld_op_v_r | st_op_v_r) & ~(tag_hit_v[1] | tag_hit_v[0]))
+
+  // MBT: the ~tagst_op_v_r is necessary at the top of this expression
+  //      to avoid X-pessimism post synthesis due to X's coming out of the tags
+
+  assign miss_v = (~tagst_op_v_r) & v_v_r & (((ld_op_v_r | st_op_v_r) & ~(tag_hit_v[1] | tag_hit_v[0]))
     | (tagfl_op_v_r & valid_v_r[addr_set_v])
     | ((afl_op_v_r | aflinv_op_v_r | ainv_op_v_r) & (tag_hit_v[1] | tag_hit_v[0])));
 
