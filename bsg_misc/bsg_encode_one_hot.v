@@ -75,11 +75,12 @@ module bsg_encode_one_hot #(parameter width_p=8, parameter lo_to_hi_p=1)
 
 
    // synopsys translate_off
-   always @(addr_o)
+   logic [width_p-1:0] i2;
+   always
      begin
 //        $display("bsg_encode_one_hot %b -> add_o(%b), v_o(%b)",i,addr_o, v_o);
-
-        assert ($countones(i) <= 1) else $error("bsg_encode_one_hot: invalid input %b",i);
+        i2 = #1 i;
+        assert ($countones(i) <= 1) else $error("bsg_encode_one_hot: invalid input %b",i2);
      end
    // synopsys translate_on
 
