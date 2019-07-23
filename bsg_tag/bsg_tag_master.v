@@ -25,7 +25,7 @@ module bsg_tag_master
    // els_p is the number of clients to attach
    // lg_width_p is the number of bits used to describe the payload size
    
-   #(els_p="inv", lg_width_p="inv", debug_level_lp=0)
+   #(els_p="inv", lg_width_p="inv", debug_level_lp=2)
    (
     // from pins
     input clk_i
@@ -110,7 +110,7 @@ module bsg_tag_master
      if (tag_reset_req & ~data_i_r)
        begin
           // synopsys translate_off
-          if (debug_level_lp > 1) $display("## bsg_tag_master RESET time %t (%m)",$time);
+          if (debug_level_lp > 2) $display("## bsg_tag_master RESET time %t (%m)",$time);
           // synopsys translate_on
           state_r   <= eStart;
 

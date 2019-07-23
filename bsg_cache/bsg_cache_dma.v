@@ -248,20 +248,22 @@ module bsg_cache_dma
   assign snoop_word_we = (dma_state_r == GET_FILL_DATA)
     & (snoop_word_offset == counter_r[lg_block_size_in_words_lp-1:0])
     & in_fifo_v_lo;
-  
+
+   // synopsys sync_set_reset "reset_i"
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      dma_state_r <= IDLE;
-      counter_r <= '0;
+      dma_state_r    <= IDLE;
+      counter_r      <= '0;
       data_flopped_r <= 1'b0;
-      data_mem_v_r <= 1'b0;
+      data_mem_v_r   <= 1'b0;
+       data_buf_r    <= '0;  // MBT being conservative
     end
     else begin
-      dma_state_r <= dma_state_n;
-      counter_r <= counter_n;
+      dma_state_r    <= dma_state_n;
+      counter_r      <= counter_n;
       data_flopped_r <= data_flopped_n;
-      data_mem_v_r <= data_mem_v_n;
-      data_buf_r <= data_buf_n;
+      data_mem_v_r   <= data_mem_v_n;
+      data_buf_r     <= data_buf_n;
 
       if (snoop_word_we) begin
         snoop_word_o <= in_fifo_data_lo;

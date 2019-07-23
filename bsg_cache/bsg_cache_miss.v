@@ -26,8 +26,8 @@ module bsg_cache_miss
     ,input aflinv_op_v_i
     ,input ainv_op_v_i
     ,input [addr_width_p-1:0] addr_v_i
-   
-    ,input [1:0][tag_width_lp-1:0] tag_v_i 
+
+    ,input [1:0][tag_width_lp-1:0] tag_v_i
     ,input [1:0] valid_v_i
     ,input [1:0] tag_hit_v_i
 
@@ -38,12 +38,12 @@ module bsg_cache_miss
     ,output logic dma_get_fill_data_o
     ,output logic dma_send_evict_data_o
     ,output logic dma_set_o
-    ,output logic [addr_width_p-1:0] dma_addr_o 
-    ,input dma_done_i 
-   
+    ,output logic [addr_width_p-1:0] dma_addr_o
+    ,input dma_done_i
+
     ,input [1:0] dirty_i
     ,input mru_i
-  
+
     ,output logic stat_mem_v_o
     ,output logic stat_mem_w_o
     ,output logic [lg_sets_lp-1:0] stat_mem_addr_o
@@ -55,10 +55,10 @@ module bsg_cache_miss
     ,output logic [lg_sets_lp-1:0] tag_mem_addr_o
     ,output logic [1:0][(tag_width_lp+1)-1:0] tag_mem_data_o
     ,output logic [1:0][(tag_width_lp+1)-1:0] tag_mem_w_mask_o
- 
+
     ,output logic recover_o
     ,output logic done_o
-  
+
     ,output logic chosen_set_o
 
     ,input ack_i
@@ -133,7 +133,7 @@ module bsg_cache_miss
           ? (flush_op ? FLUSH_OP : SEND_FILL_ADDR)
           : START;
       end
-    
+
       SEND_FILL_ADDR: begin
         stat_flopped_n = 1'b1;
         mru_n = stat_flopped_r
@@ -146,7 +146,7 @@ module bsg_cache_miss
         chosen_set_n = valid_v_i[0]
           ? (valid_v_i[1] ? ~mru_n : 1'b1)
           : 1'b0;
-       
+
         dma_addr_o = {
           addr_tag_v, addr_index_v,
           {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
@@ -179,13 +179,13 @@ module bsg_cache_miss
           : dirty_i;
 
         chosen_set_n = tagfl_op_v_i ? addr_set_v : tag_hit_v_i[1];
-        
+
         stat_mem_v_o = 1'b1;
         stat_mem_w_o = 1'b1;
         stat_mem_addr_o = addr_index_v;
         stat_mem_data_o = {2'b0, ~chosen_set_n};
         stat_mem_w_mask_o = {chosen_set_n, ~chosen_set_n, 1'b1};
-      
+
         tag_mem_v_o = 1'b1;
         tag_mem_w_o = 1'b1;
         tag_mem_addr_o = addr_index_v;
@@ -194,12 +194,12 @@ module bsg_cache_miss
           chosen_set_n, {tag_width_lp{1'b0}},
           ~chosen_set_n, {tag_width_lp{1'b0}}
         };
-       
+
         miss_state_n = (~ainv_op_v_i & dirty_n[chosen_set_n] & valid_v_i[chosen_set_n])
           ? SEND_EVICT_ADDR
           : RECOVER;
       end
-      
+
       SEND_EVICT_ADDR: begin
         dma_send_evict_addr_o = 1'b1;
         dma_addr_o = {
@@ -222,13 +222,13 @@ module bsg_cache_miss
           addr_index_v,
           {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
         };
-        
+
         miss_state_n = dma_done_i
           ? ((tagfl_op_v_i | aflinv_op_v_i | afl_op_v_i) ? RECOVER : GET_FILL_DATA)
           : SEND_EVICT_DATA;
 
       end
-      
+
       GET_FILL_DATA: begin
         dma_get_fill_data_o = sbuf_empty_i;
         dma_set_o = chosen_set_r;
@@ -243,7 +243,7 @@ module bsg_cache_miss
           ? RECOVER
           : GET_FILL_DATA;
       end
-    
+
       RECOVER: begin
         recover_o = 1'b1;
         miss_state_n = DONE;
@@ -257,6 +257,7 @@ module bsg_cache_miss
     endcase
   end
 
+  // synopsys sync_set_reset "reset_i"
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       miss_state_r <= START;
@@ -264,12 +265,26 @@ module bsg_cache_miss
       stat_flopped_r <= 1'b0;
     end
     else begin
-      miss_state_r <= miss_state_n;
-      chosen_set_r <= chosen_set_n;
+      miss_state_r   <= miss_state_n;
+      chosen_set_r   <= chosen_set_n;
       stat_flopped_r <= stat_flopped_n;
-      dirty_r <= dirty_n;
-      mru_r <= mru_n;
     end
   end
+
+   // added to be a little more X pessimism conservative
+   // synopsys sync_set_reset "reset_i"
+  always_ff @(posedge clk_i)
+    begin
+       if (reset_i)
+         begin
+            dirty_r <= '0;
+            mru_r   <= '0;
+         end
+       else
+         begin
+            dirty_r <= dirty_n;
+            mru_r   <= mru_n;
+         end
+    end
 
 endmodule
