@@ -75,7 +75,7 @@ module bsg_encode_one_hot #(parameter width_p=8, parameter lo_to_hi_p=1)
 
 
    // synopsys translate_off
-   always
+   always @ (i)
      begin
 //        $display("bsg_encode_one_hot %b -> add_o(%b), v_o(%b)",i,addr_o, v_o);
         #1;
