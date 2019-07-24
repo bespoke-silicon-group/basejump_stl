@@ -24,12 +24,14 @@ module bsg_encode_one_hot #(parameter width_p=8, parameter lo_to_hi_p=1)
    localparam half_width_lp    = width_p >> 1;
    localparam aligned_width_lp = 1 << $clog2(width_p);
 
+   logic [`BSG_SAFE_CLOG2(width_p)-1:0] addr_lo;
+
    if (width_p == 1)
      begin : base
         assign v_o = i;
 
 	// should be ignored
-        assign addr_o = 1'bX;
+        assign addr_lo = 1'bX;
      end
    else
      // align at the top; this should be more efficient
@@ -47,7 +49,7 @@ module bsg_encode_one_hot #(parameter width_p=8, parameter lo_to_hi_p=1)
                 ,.v_o   (v_o         )
                 );
 
-	  assign addr_o = aligned_addr[$clog2(width_p)-1:0];
+	  assign addr_lo = aligned_addr[$clog2(width_p)-1:0];
        end
      else
        begin: aligned
@@ -68,20 +70,19 @@ module bsg_encode_one_hot #(parameter width_p=8, parameter lo_to_hi_p=1)
 
           assign v_o     = | vs;
 	  if (width_p == 2)
-	    assign addr_o = vs[lo_to_hi_p];
+	    assign addr_lo = vs[lo_to_hi_p];
 	  else
-            assign addr_o = { vs[lo_to_hi_p], (addrs[0] | addrs[1]) };
+            assign addr_lo = { vs[lo_to_hi_p], (addrs[0] | addrs[1]) };
        end // block: aligned
 
+  `ifdef SYNTHESIS
+    assign addr_o = addr_lo;
+  `else
+    assign addr_o = (((i-1) & i) == '0)
+      ? addr_lo
+      : {`BSG_SAFE_CLOG2(width_p){1'bx}};
+  `endif
 
-   // synopsys translate_off
-   always @(addr_o)
-     begin
-//        $display("bsg_encode_one_hot %b -> add_o(%b), v_o(%b)",i,addr_o, v_o);
-
-        assert ($countones(i) <= 1) else $error("bsg_encode_one_hot: invalid input %b",i);
-     end
-   // synopsys translate_on
 
 endmodule // bsg_encode_one_hot
 
