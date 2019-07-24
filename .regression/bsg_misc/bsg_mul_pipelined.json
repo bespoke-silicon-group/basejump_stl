@@ -4,7 +4,11 @@
         "basejump_stl/bsg_misc/bsg_mul_pipelined.v", 
         "basejump_stl/bsg_misc/bsg_transpose.v", 
         "basejump_stl/bsg_misc/bsg_dff_en.v", 
-        "basejump_stl/bsg_misc/bsg_and.v"
+        "basejump_stl/bsg_misc/bsg_and.v",
+        "basejump_stl/bsg_misc/bsg_mul/bsg_mul_booth_4_block_rep.v",
+        "basejump_stl/bsg_misc/bsg_mul/bsg_mul_booth_4_block.v",
+        "basejump_stl/bsg_misc/bsg_mul/bsg_mul_comp42.v",
+        "basejump_stl/bsg_misc/bsg_mul/bsg_mul_comp42_rep.v"
     ], 
     "run_config": [
         {
