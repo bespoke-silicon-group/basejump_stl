@@ -80,7 +80,7 @@ module bsg_encode_one_hot #(parameter width_p=8, parameter lo_to_hi_p=1)
   `else
     assign addr_o = (((i-1) & i) == '0)
       ? addr_lo
-      : {width_p{1'bx}};
+      : {`BSG_SAFE_CLOG2(width_p){1'bx}};
   `endif
 
 
