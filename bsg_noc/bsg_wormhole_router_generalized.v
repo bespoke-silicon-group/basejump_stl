@@ -40,12 +40,9 @@ module bsg_wormhole_router_generalized
     bsg_transpose #(.width_p(dirs_lp),.els_p(dirs_lp)) tr (.i(routing_matrix_p[0])
                                                           ,.o(matrix_out_in_transpose)
                                                           );
-    initial
-      begin
-        #1000;
+    always @(negedge clk_i)
         assert (routing_matrix_p[1] == matrix_out_in_transpose)
           else $error("inconsistent matrixes");
-      end
 `endif
 
   // we collect the information for each FIFO here
