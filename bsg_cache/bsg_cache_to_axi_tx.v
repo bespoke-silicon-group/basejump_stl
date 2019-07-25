@@ -83,6 +83,15 @@ module bsg_cache_to_axi_tx
     ,.yumi_i(tag_fifo_yumi_li)
   );
 
+  // suppress unused
+  //
+  wire [axi_id_width_p-1:0] unused_bid = axi_bid_i;
+  wire [1:0] unused_bresp = axi_bresp_i;
+  wire unused_bvalid = axi_bvalid_i;
+  
+
+  // tag 
+  //
   assign yumi_o = v_i & axi_awready_i;
   assign tag_fifo_v_li = yumi_o;
 
