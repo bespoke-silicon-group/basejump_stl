@@ -1,7 +1,9 @@
 /**
  *  bsg_nonsynth_mem_1rw_sync_mask_write_byte_assoc.v
  *
- *  1rw_sync_mask_write_byte implementation using associative array.
+ *  bsg_mem_1rw_sync_mask_write_byte implementation using associative array.
+ *
+ *  This is for simulating arbitrarily large memories.
  *
  */
 

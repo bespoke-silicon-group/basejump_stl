@@ -1,6 +1,10 @@
 /**
  *  bsg_nonsynth_mem_1rw_sync_assoc.v
  *
+ *  bsg_mem_1rw_sync implementation using associative array.
+ *
+ *  This is for simulating arbitrarily large memories.
+ *
  */
 
 
