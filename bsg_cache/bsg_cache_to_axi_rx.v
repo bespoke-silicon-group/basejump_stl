@@ -52,6 +52,12 @@ module bsg_cache_to_axi_rx
     ,output logic axi_rready_o
   );
 
+  // suppress unused
+  //
+  wire [axi_id_width_p-1:0] unused_rid = axi_rid_i;
+  wire [1:0] unused_rresp = axi_rresp_i;
+  wire unused_rlast = axi_rlast_i;
+
   // tag fifo
   //
   logic tag_fifo_v_li;
