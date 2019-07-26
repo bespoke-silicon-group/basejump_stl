@@ -206,7 +206,9 @@ module bsg_cache_dma
         data_mem_w_o = in_fifo_v_lo;
         in_fifo_yumi_li = in_fifo_v_lo;
         counter_n = in_fifo_v_lo
-          ? counter_r + 1
+          ? (counter_r == (block_size_in_words_p-1)
+            ? '0
+            : counter_r + 1)
           : counter_r;
         done_o = (counter_r == (block_size_in_words_p - 1)) & in_fifo_v_lo;
       end
@@ -232,7 +234,9 @@ module bsg_cache_dma
           : data_way_selected;
  
         counter_n = out_fifo_ready_lo
-          ? counter_r + 1
+          ? (counter_r == block_size_in_words_p
+            ? '0
+            : counter_r + 1)
           : counter_r;
         dma_state_n = (counter_r == block_size_in_words_p) & out_fifo_ready_lo
           ? IDLE
