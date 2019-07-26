@@ -144,6 +144,7 @@ module bsg_cache
       ,ld_op_tl_r
       ,st_op_tl_r
       ,tagst_op_tl_r
+      ,tagfl_op_tl_r
       ,taglv_op_tl_r
       ,tagla_op_tl_r
       ,afl_op_tl_r
@@ -717,10 +718,13 @@ module bsg_cache
     ? dma_data_mem_data_lo
     : sbuf_data_mem_data;
 
-  assign data_mem_addr_li = recover_lo ? {addr_index_tl, addr_block_offset_tl}
-    : (dma_data_mem_v_lo ? dma_data_mem_addr_lo
-    : ((ld_op & v_i & ready_o) ? {addr_index, addr_block_offset}
-    : sbuf_addr_lo[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp]));
+  assign data_mem_addr_li = recover_lo
+    ? {addr_index_tl, addr_block_offset_tl}
+    : (dma_data_mem_v_lo
+      ? dma_data_mem_addr_lo
+      : ((ld_op & v_i & ready_o) 
+        ? {addr_index, addr_block_offset}
+        : sbuf_addr_lo[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp]));
 
   assign data_mem_w_mask_li = dma_data_mem_w_lo
     ? dma_data_mem_w_mask_lo
