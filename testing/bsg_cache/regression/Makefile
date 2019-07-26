@@ -1,7 +1,7 @@
 #
 # Makefile
 #
-
+include ../../../../bsg_cadenv/cadenv.mk
 TRACE_FILE = trace_master_0.tr
 TRACE_ROM = bsg_trace_master_rom
 

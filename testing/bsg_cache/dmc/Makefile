@@ -1,3 +1,5 @@
+include ../../../../bsg_cadenv/cadenv.mk
+
 NUM_CACHE_P = 4
 
 INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
