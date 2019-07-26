@@ -3,6 +3,7 @@
 #
 #
 
+include ../../../../bsg_cadenv/cadenv.mk
 
 INCDIR = +incdir+$(BSG_IP_CORES_DIR)/bsg_misc
 INCDIR += +incdir+$(BSG_IP_CORES_DIR)/bsg_cache

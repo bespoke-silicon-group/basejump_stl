@@ -166,6 +166,7 @@ module bsg_cache
           ld_op_tl_r <= ld_op;
           st_op_tl_r <= st_op;
           tagst_op_tl_r <= tagst_op;
+          tagfl_op_tl_r <= tagfl_op;
           taglv_op_tl_r <= taglv_op;
           tagla_op_tl_r <= tagla_op;
           afl_op_tl_r <= afl_op;
@@ -309,7 +310,7 @@ module bsg_cache
           ld_op_v_r <= ld_op_tl_r;
           st_op_v_r <= st_op_tl_r;
           tagst_op_v_r <= tagst_op_tl_r;
-          tagfl_op_v_r <= tagfl_op_v_r;
+          tagfl_op_v_r <= tagfl_op_tl_r;
           taglv_op_v_r <= taglv_op_tl_r;
           tagla_op_v_r <= tagla_op_tl_r;
           afl_op_v_r <= afl_op_tl_r;
