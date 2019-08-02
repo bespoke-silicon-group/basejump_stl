@@ -21,7 +21,7 @@
             "name": "bsg_mul_array_medium_clkperiod_1", 
             "parameters": [
                 "width_p=32", 
-                "pipeline_p=34952"
+                "pipeline_p=2155905152"
             ]
         }, 
         {
@@ -38,7 +38,7 @@
             "name": "bsg_mul_array_medium_clkperiod_3", 
             "parameters": [
                 "width_p=32", 
-                "pipeline_p=34952"
+                "pipeline_p=2155905152"
             ]
         }, 
         {
@@ -55,7 +55,7 @@
             "name": "bsg_mul_array_medium_clkperiod_5", 
             "parameters": [
                 "width_p=32", 
-                "pipeline_p=34952"
+                "pipeline_p=2155905152"
             ]
         }, 
         {
@@ -72,7 +72,7 @@
             "name": "bsg_mul_array_medium_clkperiod_7", 
             "parameters": [
                 "width_p=32", 
-                "pipeline_p=34952"
+                "pipeline_p=2155905152"
             ]
         }, 
         {
@@ -89,7 +89,7 @@
             "name": "bsg_mul_array_medium_clkperiod_9", 
             "parameters": [
                 "width_p=32", 
-                "pipeline_p=34952"
+                "pipeline_p=2155905152"
             ]
         }, 
         {
@@ -106,7 +106,7 @@
             "name": "bsg_mul_array_medium_clkperiod_11", 
             "parameters": [
                 "width_p=32", 
-                "pipeline_p=34952"
+                "pipeline_p=2155905152"
             ]
         }
     ]
