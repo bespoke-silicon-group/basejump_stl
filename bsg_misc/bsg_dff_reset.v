@@ -1,4 +1,4 @@
-module bsg_dff_reset #(width_p=-1, harden_p=0)
+module bsg_dff_reset #(width_p=-1, reset_val_p=0, harden_p=0)
    (input   clk_i
    ,input  reset_i
     ,input  [width_p-1:0] data_i
@@ -12,7 +12,7 @@ module bsg_dff_reset #(width_p=-1, harden_p=0)
    always @(posedge clk_i)
      begin
         if (reset_i)
-          data_r <= width_p'(0);
+          data_r <= width_p'(reset_val_p);
         else
           data_r <= data_i;
      end
