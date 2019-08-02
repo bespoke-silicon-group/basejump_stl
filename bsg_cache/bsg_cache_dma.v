@@ -57,10 +57,10 @@ module bsg_cache_dma
 
   // dma states
   //
-  typedef enum logic [2:0] {
+  typedef enum logic [1:0] {
     IDLE
-    ,SEND_FILL_ADDR
-    ,SEND_EVICT_ADDR
+    //,SEND_FILL_ADDR
+    //,SEND_EVICT_ADDR
     ,GET_FILL_DATA
     ,SEND_EVICT_DATA
   } dma_state_e;
@@ -182,36 +182,39 @@ module bsg_cache_dma
 
     case (dma_state_r)
       IDLE: begin
-        dma_state_n = dma_send_fill_addr_i ? SEND_FILL_ADDR
-          : (dma_send_evict_addr_i ? SEND_EVICT_ADDR
-          : (dma_get_fill_data_i ? GET_FILL_DATA
-          : (dma_send_evict_data_i ? SEND_EVICT_DATA
-          : IDLE)));
-
-        counter_en = 1'b0;
-        counter_set = dma_get_fill_data_i | dma_send_evict_data_i;
-        counter_val = dma_get_fill_data_i
-          ? {counter_width_lp{1'b0}}
-          : (counter_width_lp)'(1);
-        data_mem_v_o = dma_send_evict_data_i;
-      end
-
-      SEND_FILL_ADDR: begin
-        dma_state_n = dma_pkt_yumi_i
-          ? IDLE
-          : SEND_FILL_ADDR;
-        dma_pkt_v_o = 1'b1;
+        counter_set = 1'b0;
+        data_mem_v_o = 1'b0;
+        counter_val = {counter_width_lp{1'b0}};
+        dma_pkt_v_o = 1'b0;
         dma_pkt.write_not_read = 1'b0;
-        done_o = dma_pkt_yumi_i;
-      end
+        done_o = 1'b0;
 
-      SEND_EVICT_ADDR: begin
-        dma_state_n = dma_pkt_yumi_i
-          ? IDLE
-          : SEND_EVICT_ADDR;
-        dma_pkt_v_o = 1'b1;
-        dma_pkt.write_not_read = 1'b1;
-        done_o = dma_pkt_yumi_i;
+        if (dma_send_fill_addr_i) begin
+          dma_pkt_v_o = 1'b1;
+          dma_pkt.write_not_read = 1'b0;
+          done_o = dma_pkt_yumi_i;
+          dma_state_n = IDLE;
+        end
+        else if (dma_send_evict_addr_i) begin
+          dma_pkt_v_o = 1'b1;
+          dma_pkt.write_not_read = 1'b1;
+          done_o = dma_pkt_yumi_i;
+          dma_state_n = IDLE;
+        end
+        else if (dma_get_fill_data_i) begin
+          counter_set = 1'b1;
+          counter_val = '0;
+          dma_state_n = GET_FILL_DATA;
+        end
+        else if (dma_send_evict_data_i) begin
+          counter_set = 1'b1;
+          counter_val = (counter_width_lp)'(1);
+          data_mem_v_o = 1'b1;
+          dma_state_n = SEND_EVICT_DATA;
+        end
+        else begin
+          dma_state_n = IDLE;
+        end
       end
 
       GET_FILL_DATA: begin
@@ -244,6 +247,11 @@ module bsg_cache_dma
         data_mem_v_o = out_fifo_ready_lo & ~counter_evict_max;
 
         done_o = counter_evict_max & out_fifo_ready_lo;
+      end
+
+      default: begin
+        // this should never happen, but if it does then go back to IDLE.
+        dma_state_n = IDLE;
       end
     endcase
   end

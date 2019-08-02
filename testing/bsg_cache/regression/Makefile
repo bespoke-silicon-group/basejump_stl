@@ -21,7 +21,7 @@ $(TRACE_ROM).v: $(TRACE_FILE)
 
 sim: $(TRACE_ROM).v
 	vcs +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -sverilog -full64 -f sv.include $(INCDIR)\
-		-debug_pp -timescale=1ps/1ps +vcs+vcdpluson $(VCS_DEFINES) -l vcs.log\
+		-timescale=1ps/1ps +vcs+vcdpluson $(VCS_DEFINES) -l vcs.log\
 		| $(HIGHLIGHT)
 
 dve:

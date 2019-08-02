@@ -69,8 +69,8 @@ module bsg_nonsynth_dma_model
     case (read_state_r)
       WAIT: begin
         read_addr_n = start_read
-          ? read_addr_r
-          : dma_pkt.addr;
+          ? dma_pkt.addr
+          : read_addr_r;
         read_counter_n = start_read
           ? '0
           : read_counter_r;
