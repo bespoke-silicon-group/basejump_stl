@@ -203,6 +203,7 @@ module bsg_cache
   bsg_mem_1rw_sync_mask_write_bit #(
     .width_p((tag_width_lp+1)*2)
     ,.els_p(sets_p)
+    ,.latch_last_read_p(1)
   ) tag_mem (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -238,6 +239,7 @@ module bsg_cache
   bsg_mem_1rw_sync_mask_write_byte #(
     .data_width_p(data_width_p*2)
     ,.els_p(block_size_in_words_p*sets_p)
+    ,.latch_last_read_p(1)
   ) data_mem (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -366,6 +368,7 @@ module bsg_cache
   bsg_mem_1rw_sync_mask_write_bit #(
     .width_p(4)
     ,.els_p(sets_p)
+    ,.latch_last_read_p(1)
   ) stat_mem (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
