@@ -9,15 +9,15 @@
         {
             "constraints": {
                 "clk_port_name": "clk_i",
-                "clock_period": "1",
+                "clock_period": "4",
                 "input": "0",
                 "io_time_format": "period",
                 "output": "0",
                 "uncertainty": "0"
             },
-            "description": " with size small at clock period=1",
-            "design_size": "small",
-            "name": "bsg_mul_iterative_small_clkperiod_1",
+            "description": "",
+            "design_size": "",
+            "name": "bsg_mul_iterative_250MHz_8",
             "parameters": [
                 "width_p=32",
                 "iter_step_p=8"
@@ -26,15 +26,15 @@
         {
             "constraints": {
                 "clk_port_name": "clk_i",
-                "clock_period": "3",
+                "clock_period": "3.63",
                 "input": "0",
                 "io_time_format": "period",
                 "output": "0",
                 "uncertainty": "0"
             },
-            "description": " with size small at clock period=3",
-            "design_size": "small",
-            "name": "bsg_mul_iterative_small_clkperiod_3",
+            "description": "",
+            "design_size": "",
+            "name": "bsg_mul_iterative_275MHz_8",
             "parameters": [
                 "width_p=32",
                 "iter_step_p=8"
@@ -43,15 +43,15 @@
         {
             "constraints": {
                 "clk_port_name": "clk_i",
-                "clock_period": "5",
+                "clock_period": "3.33",
                 "input": "0",
                 "io_time_format": "period",
                 "output": "0",
                 "uncertainty": "0"
             },
-            "description": " with size small at clock period=5",
-            "design_size": "small",
-            "name": "bsg_mul_iterative_small_clkperiod_5",
+            "description": "",
+            "design_size": "",
+            "name": "bsg_mul_iterative_300MHz_8",
             "parameters": [
                 "width_p=32",
                 "iter_step_p=8"
@@ -60,15 +60,15 @@
         {
             "constraints": {
                 "clk_port_name": "clk_i",
-                "clock_period": "7",
+                "clock_period": "3.076",
                 "input": "0",
                 "io_time_format": "period",
                 "output": "0",
                 "uncertainty": "0"
             },
-            "description": " with size small at clock period=7",
-            "design_size": "small",
-            "name": "bsg_mul_iterative_small_clkperiod_7",
+            "description": "",
+            "design_size": "",
+            "name": "bsg_mul_iterative_325MHz_8",
             "parameters": [
                 "width_p=32",
                 "iter_step_p=8"
@@ -77,49 +77,15 @@
         {
             "constraints": {
                 "clk_port_name": "clk_i",
-                "clock_period": "9",
+                "clock_period": "6.66",
                 "input": "0",
                 "io_time_format": "period",
                 "output": "0",
                 "uncertainty": "0"
             },
-            "description": " with size small at clock period=9",
-            "design_size": "small",
-            "name": "bsg_mul_iterative_small_clkperiod_9",
-            "parameters": [
-                "width_p=32",
-                "iter_step_p=8"
-            ]
-        },
-        {
-            "constraints": {
-                "clk_port_name": "clk_i",
-                "clock_period": "11",
-                "input": "0",
-                "io_time_format": "period",
-                "output": "0",
-                "uncertainty": "0"
-            },
-            "description": " with size small at clock period=11",
-            "design_size": "small",
-            "name": "bsg_mul_iterative_small_clkperiod_11",
-            "parameters": [
-                "width_p=32",
-                "iter_step_p=8"
-            ]
-        },
-        {
-            "constraints": {
-                "clk_port_name": "clk_i",
-                "clock_period": "1",
-                "input": "0",
-                "io_time_format": "period",
-                "output": "0",
-                "uncertainty": "0"
-            },
-            "description": " with size medium at clock period=1",
-            "design_size": "medium",
-            "name": "bsg_mul_iterative_medium_clkperiod_1",
+            "description": "",
+            "design_size": "",
+            "name": "bsg_mul_iterative_150MHz_16",
             "parameters": [
                 "width_p=32",
                 "iter_step_p=16"
@@ -128,15 +94,15 @@
         {
             "constraints": {
                 "clk_port_name": "clk_i",
-                "clock_period": "3",
+                "clock_period": "5.71",
                 "input": "0",
                 "io_time_format": "period",
                 "output": "0",
                 "uncertainty": "0"
             },
-            "description": " with size medium at clock period=3",
-            "design_size": "medium",
-            "name": "bsg_mul_iterative_medium_clkperiod_3",
+            "description": "",
+            "design_size": "",
+            "name": "bsg_mul_iterative_175MHz_16",
             "parameters": [
                 "width_p=32",
                 "iter_step_p=16"
@@ -151,9 +117,9 @@
                 "output": "0",
                 "uncertainty": "0"
             },
-            "description": " with size medium at clock period=5",
-            "design_size": "medium",
-            "name": "bsg_mul_iterative_medium_clkperiod_5",
+            "description": "",
+            "design_size": "",
+            "name": "bsg_mul_iterative_200MHz_16",
             "parameters": [
                 "width_p=32",
                 "iter_step_p=16"
@@ -162,66 +128,15 @@
         {
             "constraints": {
                 "clk_port_name": "clk_i",
-                "clock_period": "7",
+                "clock_period": "10",
                 "input": "0",
                 "io_time_format": "period",
                 "output": "0",
                 "uncertainty": "0"
             },
-            "description": " with size medium at clock period=7",
-            "design_size": "medium",
-            "name": "bsg_mul_iterative_medium_clkperiod_7",
-            "parameters": [
-                "width_p=32",
-                "iter_step_p=16"
-            ]
-        },
-        {
-            "constraints": {
-                "clk_port_name": "clk_i",
-                "clock_period": "9",
-                "input": "0",
-                "io_time_format": "period",
-                "output": "0",
-                "uncertainty": "0"
-            },
-            "description": " with size medium at clock period=9",
-            "design_size": "medium",
-            "name": "bsg_mul_iterative_medium_clkperiod_9",
-            "parameters": [
-                "width_p=32",
-                "iter_step_p=16"
-            ]
-        },
-        {
-            "constraints": {
-                "clk_port_name": "clk_i",
-                "clock_period": "11",
-                "input": "0",
-                "io_time_format": "period",
-                "output": "0",
-                "uncertainty": "0"
-            },
-            "description": " with size medium at clock period=11",
-            "design_size": "medium",
-            "name": "bsg_mul_iterative_medium_clkperiod_11",
-            "parameters": [
-                "width_p=32",
-                "iter_step_p=16"
-            ]
-        },
-        {
-            "constraints": {
-                "clk_port_name": "clk_i",
-                "clock_period": "1",
-                "input": "0",
-                "io_time_format": "period",
-                "output": "0",
-                "uncertainty": "0"
-            },
-            "description": " with size large at clock period=1",
-            "design_size": "large",
-            "name": "bsg_mul_iterative_large_clkperiod_1",
+            "description": "",
+            "design_size": "",
+            "name": "bsg_mul_iterative_100MHz_32",
             "parameters": [
                 "width_p=32",
                 "iter_step_p=32"
@@ -230,15 +145,15 @@
         {
             "constraints": {
                 "clk_port_name": "clk_i",
-                "clock_period": "3",
+                "clock_period": "8",
                 "input": "0",
                 "io_time_format": "period",
                 "output": "0",
                 "uncertainty": "0"
             },
-            "description": " with size large at clock period=3",
-            "design_size": "large",
-            "name": "bsg_mul_iterative_large_clkperiod_3",
+            "description": "",
+            "design_size": "",
+            "name": "bsg_mul_iterative_125MHz_32",
             "parameters": [
                 "width_p=32",
                 "iter_step_p=32"
@@ -247,66 +162,15 @@
         {
             "constraints": {
                 "clk_port_name": "clk_i",
-                "clock_period": "5",
+                "clock_period": "6.67",
                 "input": "0",
                 "io_time_format": "period",
                 "output": "0",
                 "uncertainty": "0"
             },
-            "description": " with size large at clock period=5",
-            "design_size": "large",
-            "name": "bsg_mul_iterative_large_clkperiod_5",
-            "parameters": [
-                "width_p=32",
-                "iter_step_p=32"
-            ]
-        },
-        {
-            "constraints": {
-                "clk_port_name": "clk_i",
-                "clock_period": "7",
-                "input": "0",
-                "io_time_format": "period",
-                "output": "0",
-                "uncertainty": "0"
-            },
-            "description": " with size large at clock period=7",
-            "design_size": "large",
-            "name": "bsg_mul_iterative_large_clkperiod_7",
-            "parameters": [
-                "width_p=32",
-                "iter_step_p=32"
-            ]
-        },
-        {
-            "constraints": {
-                "clk_port_name": "clk_i",
-                "clock_period": "9",
-                "input": "0",
-                "io_time_format": "period",
-                "output": "0",
-                "uncertainty": "0"
-            },
-            "description": " with size large at clock period=9",
-            "design_size": "large",
-            "name": "bsg_mul_iterative_large_clkperiod_9",
-            "parameters": [
-                "width_p=32",
-                "iter_step_p=32"
-            ]
-        },
-        {
-            "constraints": {
-                "clk_port_name": "clk_i",
-                "clock_period": "11",
-                "input": "0",
-                "io_time_format": "period",
-                "output": "0",
-                "uncertainty": "0"
-            },
-            "description": " with size large at clock period=11",
-            "design_size": "large",
-            "name": "bsg_mul_iterative_large_clkperiod_11",
+            "description": "",
+            "design_size": "",
+            "name": "bsg_mul_iterative_150MHz_32",
             "parameters": [
                 "width_p=32",
                 "iter_step_p=32"
