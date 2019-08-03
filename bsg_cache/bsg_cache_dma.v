@@ -4,10 +4,8 @@
  *  @author tommy
  */
 
-`include "bsg_cache_pkt.vh"
-`include "bsg_cache_dma_pkt.vh"
-
 module bsg_cache_dma
+  import bsg_cache_pkg::*;
   #(parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
@@ -23,10 +21,7 @@ module bsg_cache_dma
     input clk_i
     ,input reset_i
 
-    ,input dma_send_fill_addr_i
-    ,input dma_send_evict_addr_i
-    ,input dma_get_fill_data_i
-    ,input dma_send_evict_data_i
+    ,input bsg_cache_dma_cmd_e dma_cmd_i
     ,input dma_set_i
     ,input [addr_width_p-1:0] dma_addr_i
     ,output logic done_o
@@ -62,8 +57,6 @@ module bsg_cache_dma
   //
   typedef enum logic [1:0] {
     IDLE
-    //,SEND_FILL_ADDR
-    //,SEND_EVICT_ADDR
     ,GET_FILL_DATA
     ,SEND_EVICT_DATA
   } dma_state_e;
@@ -143,10 +136,6 @@ module bsg_cache_dma
   );
 
   assign dma_pkt_o = dma_pkt;
-  assign dma_pkt.addr = {
-    dma_addr_i[addr_width_p-1:byte_offset_width_lp+lg_block_size_in_words_lp],
-    {(byte_offset_width_lp+lg_block_size_in_words_lp){1'b0}}
-  };
 
   assign data_mem_w_mask_o = {
     {(data_width_p>>3){dma_set_i}},
@@ -172,10 +161,17 @@ module bsg_cache_dma
 
   always_comb begin
     done_o = 1'b0;
+
     dma_pkt_v_o = 1'b0;
     dma_pkt.write_not_read = 1'b0;
+    dma_pkt.addr = {
+      dma_addr_i[addr_width_p-1:byte_offset_width_lp+lg_block_size_in_words_lp],
+      {(byte_offset_width_lp+lg_block_size_in_words_lp){1'b0}}
+    };
+
     data_mem_v_o = 1'b0;
     data_mem_w_o = 1'b0;
+
     in_fifo_yumi_li = 1'b0;
     dma_state_n = IDLE;
     out_fifo_v_li = 1'b0;
@@ -191,33 +187,47 @@ module bsg_cache_dma
         dma_pkt_v_o = 1'b0;
         dma_pkt.write_not_read = 1'b0;
         done_o = 1'b0;
+        dma_state_n = IDLE;
 
-        if (dma_send_fill_addr_i) begin
-          dma_pkt_v_o = 1'b1;
-          dma_pkt.write_not_read = 1'b0;
-          done_o = dma_pkt_yumi_i;
-          dma_state_n = IDLE;
-        end
-        else if (dma_send_evict_addr_i) begin
-          dma_pkt_v_o = 1'b1;
-          dma_pkt.write_not_read = 1'b1;
-          done_o = dma_pkt_yumi_i;
-          dma_state_n = IDLE;
-        end
-        else if (dma_get_fill_data_i) begin
-          counter_set = 1'b1;
-          counter_val = '0;
-          dma_state_n = GET_FILL_DATA;
-        end
-        else if (dma_send_evict_data_i) begin
-          counter_set = 1'b1;
-          counter_val = (counter_width_lp)'(1);
-          data_mem_v_o = 1'b1;
-          dma_state_n = SEND_EVICT_DATA;
-        end
-        else begin
-          dma_state_n = IDLE;
-        end
+        case (dma_cmd_i)
+          e_dma_send_fill_addr: begin
+            dma_pkt_v_o = 1'b1;
+            dma_pkt.write_not_read = 1'b0;
+            done_o = dma_pkt_yumi_i;
+            dma_state_n = IDLE;
+
+          end
+
+          e_dma_send_evict_addr: begin
+            dma_pkt_v_o = 1'b1;
+            dma_pkt.write_not_read = 1'b1;
+            done_o = dma_pkt_yumi_i;
+            dma_state_n = IDLE;
+
+          end
+
+          e_dma_get_fill_data: begin
+            counter_set = 1'b1;
+            counter_val = '0;
+            dma_state_n = GET_FILL_DATA;
+
+          end
+      
+          e_dma_send_evict_data: begin
+            counter_set = 1'b1;
+            counter_val = (counter_width_lp)'(1);
+            data_mem_v_o = 1'b1;
+            dma_state_n = SEND_EVICT_DATA;
+          end
+
+          e_dma_nop: begin
+            // nothing happens.
+          end
+
+          default: begin
+            // this should never happen.
+          end
+        endcase
       end
 
       GET_FILL_DATA: begin

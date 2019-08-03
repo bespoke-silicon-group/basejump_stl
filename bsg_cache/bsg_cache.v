@@ -11,10 +11,8 @@
  * See https://docs.google.com/document/d/1AIjhuwTbOYwyZHdu-Uc4dr9Fwxi6ZKscKSGTiUeQEYo/edit for design doc
  */
 
-`include "bsg_cache_pkt.vh"
-`include "bsg_cache_dma_pkt.vh"
-
 module bsg_cache
+  import bsg_cache_pkg::*;
   #(parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
@@ -385,10 +383,7 @@ module bsg_cache
  
   // miss handler
   //
-  logic dma_send_fill_addr_lo;
-  logic dma_send_evict_addr_lo;
-  logic dma_get_fill_data_lo;
-  logic dma_send_evict_data_lo;
+  bsg_cache_dma_cmd_e dma_cmd_lo;
   logic dma_set_lo;
   logic [addr_width_p-1:0] dma_addr_lo;
   logic dma_done_li;
@@ -433,11 +428,8 @@ module bsg_cache
     ,.tag_hit_v_i(tag_hit_v)
 
     ,.sbuf_empty_i(sbuf_empty_li)
-  
-    ,.dma_send_fill_addr_o(dma_send_fill_addr_lo)
-    ,.dma_send_evict_addr_o(dma_send_evict_addr_lo)
-    ,.dma_get_fill_data_o(dma_get_fill_data_lo)
-    ,.dma_send_evict_data_o(dma_send_evict_data_lo)
+ 
+    ,.dma_cmd_o(dma_cmd_lo) 
     ,.dma_set_o(dma_set_lo)
     ,.dma_addr_o(dma_addr_lo)
     ,.dma_done_i(dma_done_li)
@@ -484,10 +476,8 @@ module bsg_cache
     .clk_i(clk_i)
     ,.reset_i(reset_i)
    
-    ,.dma_send_fill_addr_i(dma_send_fill_addr_lo)
-    ,.dma_send_evict_addr_i(dma_send_evict_addr_lo)
-    ,.dma_get_fill_data_i(dma_get_fill_data_lo)
-    ,.dma_send_evict_data_i(dma_send_evict_data_lo)
+    ,.dma_cmd_i(dma_cmd_lo)
+
     ,.dma_set_i(dma_set_lo)
     ,.dma_addr_i(dma_addr_lo)
     ,.done_o(dma_done_li)

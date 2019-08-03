@@ -1,14 +1,13 @@
 /**
- *  bsg_cache_pkg.vh
+ *  bsg_cache_pkg.v
  *  
  *  @author tommy
  */
 
-`ifndef BSG_CACHE_PKG_VH
-`define BSG_CACHE_PKG_VH
-
 package bsg_cache_pkg;
 
+  // cache opcode
+  //
   typedef enum logic [4:0] {
     LB = 5'b00000         // load byte
     ,LH = 5'b00001        // load half
@@ -29,6 +28,40 @@ package bsg_cache_pkg;
     ,AINV = 5'b11010      // address invalidate
   } bsg_cache_opcode_e;
 
-endpackage
+  // bsg_cache_pkt_s
+  //
+  `define declare_bsg_cache_pkt_s(addr_width_mp, data_width_mp)   \
+    typedef struct packed {                                     \
+      logic sigext;                                             \
+      logic [(data_width_mp>>3)-1:0] mask;                       \
+      bsg_cache_opcode_e opcode;                                \
+      logic [addr_width_mp-1:0] addr;                            \
+      logic [data_width_mp-1:0] data;                            \
+    } bsg_cache_pkt_s
 
-`endif
+  `define bsg_cache_pkt_width(addr_width_mp, data_width_mp) \
+    (1+(data_width_mp>>3)+5+addr_width_mp+data_width_mp)
+
+  // bsg_cache_dma_pkt_s
+  //
+  `define declare_bsg_cache_dma_pkt_s(addr_width_mp) \
+    typedef struct packed {                         \
+      logic write_not_read;                         \
+      logic [addr_width_mp-1:0] addr;                \
+    } bsg_cache_dma_pkt_s
+
+  `define bsg_cache_dma_pkt_width(addr_width_mp)    \
+    (1+addr_width_mp)
+
+  // dma opcode (one-hot)
+  //
+  typedef enum logic [3:0] {
+    e_dma_nop               = 4'b0000
+    ,e_dma_send_fill_addr   = 4'b0001
+    ,e_dma_send_evict_addr  = 4'b0010
+    ,e_dma_get_fill_data    = 4'b0100
+    ,e_dma_send_evict_data  = 4'b1000
+  } bsg_cache_dma_cmd_e;
+
+
+endpackage

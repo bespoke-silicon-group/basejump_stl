@@ -3,9 +3,8 @@
  *
  */
 
-`include "bsg_cache_pkt.vh"
-
 module testbench();
+  import bsg_cache_pkg::*;
 
   parameter num_instr_p = `NUM_INSTR_P;
   parameter addr_width_p = 32;
