@@ -57,8 +57,8 @@ endmodule
 
 module bsg_mul_iterative_booth #(
   parameter integer width_p = 32
-  ,parameter integer stride_p = 16
-  ,parameter integer cpa_stride_p = width_p / 2
+  ,parameter integer stride_p = 32
+  ,parameter integer cpa_stride_p = 32
   ,parameter bit debug_p = 0
 ) (
   input clk_i
@@ -138,6 +138,17 @@ module bsg_mul_iterative_booth #(
     );
   end
 
+  wire [2:0][width_p-1:0] opB_update_n;
+
+  if(stride_p != width_p) begin
+    for(genvar i = 0; i < 3; ++i)
+      assign opB_update_n[i] = {booth_step_lp'(0),opB_r[i][width_p/2-1:booth_step_lp]};
+  end
+  else begin
+    for(genvar i = 0; i < 3; ++i)
+      assign opB_update_n[i] = booth_step_lp'(0);
+  end
+
   always_ff @(posedge clk_i) begin
     if(reset_i) begin
       opA_r <= '0;
@@ -152,9 +163,7 @@ module bsg_mul_iterative_booth #(
       partial_sign_correction_r <= opB_n[2][0];
     end
     else if(state_r == eCal) begin
-      opB_r[0] <= {booth_step_lp'(0),opB_r[0][width_p/2-1:booth_step_lp]};
-      opB_r[1] <= {booth_step_lp'(0),opB_r[1][width_p/2-1:booth_step_lp]};
-      opB_r[2] <= {booth_step_lp'(0),opB_r[2][width_p/2-1:booth_step_lp]};
+      opB_r <= opB_update_n;
       partial_sign_correction_r <= opB_r[2][booth_step_lp-1];
     end
   end
@@ -247,8 +256,8 @@ module bsg_mul_iterative_booth #(
     bsg_adder_carry_save_4_2 #(
       .width_p(csa_tree_width_lp)
     ) acc (
-      .opA_i(csa_opA_r[csa_tree_width_lp-1:stride_p])
-      ,.opB_i(csa_opB_r[csa_tree_width_lp-1:stride_p])
+      .opA_i({stride_p'(0) ,csa_opA_r[csa_tree_width_lp-1:stride_p]})
+      ,.opB_i({stride_p'(0) ,csa_opB_r[csa_tree_width_lp-1:stride_p]})
       ,.opC_i(tree_outA)
       ,.opD_i(tree_outB)
 
