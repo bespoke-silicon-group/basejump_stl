@@ -1,24 +1,18 @@
-BSG_MODULE_NAME=bsg_mul_iterative_booth
-BSG_STL_ROOT=./../../..
+verilator:
+	verilator --Wno-fatal -I../../../bsg_misc/ \
+	-sv --cc \
+	../../../bsg_misc/bsg_defines.v \
+	../../../bsg_misc/bsg_mul_iterative_booth.v \
+	-Gwidth_p=32 -Gstride_p=16 -Gcpa_stride_p=32 -Gdebug_p=0 \
+	--top-module bsg_mul_iterative_booth \
+	--clk clk_i \
+	--exe ./bsg_test.cpp \
+	-CFLAGS "-g -std=c++11" \
+	-LDFLAGS "-lpthread"
+	
+	make -C obj_dir -f Vbsg_mul_iterative_booth.mk
 
-main:simv
-	./simv
-
-simv:
-	vcs -full64 -cc gcc-4.8 -cpp g++-4.8 -sverilog \
-	$(BSG_STL_ROOT)/bsg_misc/bsg_defines.v \
-	$(BSG_STL_ROOT)/bsg_test/bsg_nonsynth_clock_gen.v \
-	$(BSG_STL_ROOT)/bsg_test/bsg_nonsynth_reset_gen.v \
-	$(BSG_STL_ROOT)/bsg_misc/bsg_adder_carry_save_4_2.v \
-	$(BSG_STL_ROOT)/bsg_misc/bsg_adder_carry_save.v \
-	$(BSG_STL_ROOT)/bsg_misc/bsg_adder_wallace_tree.v \
-	$(BSG_STL_ROOT)/bsg_misc/bsg_mul_iterative_booth.v \
-	./bsg_test.v
+	./obj_dir/Vbsg_mul_iterative_booth
 
 clean:
-	rm -rf simv*
-	rm -rf csrc
-	rm -f ucli.key
-
-	
-	
+	@rm -rf obj_dir
