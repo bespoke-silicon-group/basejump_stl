@@ -67,19 +67,17 @@ module bsg_cache_dma
 
   // dma counter
   //
-  logic counter_en;
-  logic counter_set;
-  logic [counter_width_lp-1:0] counter_val;
+  logic counter_clear;
+  logic counter_up;
   logic [counter_width_lp-1:0] counter_r;
 
-  bsg_counter_set_en #(
+  bsg_counter_clear_up #(
     .max_val_p(block_size_in_words_p)
   ) dma_counter (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
-    ,.en_i(counter_en)
-    ,.set_i(counter_set)
-    ,.val_i(counter_val)
+    ,.clear_i(counter_clear)
+    ,.up_i(counter_up)
     ,.count_o(counter_r)
   );
 
@@ -175,15 +173,18 @@ module bsg_cache_dma
     in_fifo_yumi_li = 1'b0;
     dma_state_n = IDLE;
     out_fifo_v_li = 1'b0;
-    counter_en = 1'b0;
-    counter_set = 1'b0;
-    counter_val = '0;
+    counter_clear = 1'b0;
+    counter_up = 1'b0;
 
     case (dma_state_r)
+
+      // wait for dma_cmd from bsg_cache_miss.
+      // when transitioning from GET_FILL_DATA or SEND_EVICT_DATA state,
+      // make sure that counter is cleared to zero.
       IDLE: begin
-        counter_set = 1'b0;
+        counter_clear = 1'b0;
+        counter_up = 1'b0;
         data_mem_v_o = 1'b0;
-        counter_val = {counter_width_lp{1'b0}};
         dma_pkt_v_o = 1'b0;
         dma_pkt.write_not_read = 1'b0;
         done_o = 1'b0;
@@ -195,7 +196,6 @@ module bsg_cache_dma
             dma_pkt.write_not_read = 1'b0;
             done_o = dma_pkt_yumi_i;
             dma_state_n = IDLE;
-
           end
 
           e_dma_send_evict_addr: begin
@@ -203,19 +203,18 @@ module bsg_cache_dma
             dma_pkt.write_not_read = 1'b1;
             done_o = dma_pkt_yumi_i;
             dma_state_n = IDLE;
-
           end
 
           e_dma_get_fill_data: begin
-            counter_set = 1'b1;
-            counter_val = '0;
+            counter_clear = 1'b1;
             dma_state_n = GET_FILL_DATA;
-
           end
       
           e_dma_send_evict_data: begin
-            counter_set = 1'b1;
-            counter_val = (counter_width_lp)'(1);
+            // we are reading the first word, as we are transitioning out.
+            // so the counter is incremented to 1.
+            counter_clear = 1'b1;
+            counter_up = 1'b1;
             data_mem_v_o = 1'b1;
             dma_state_n = SEND_EVICT_DATA;
           end
@@ -230,6 +229,8 @@ module bsg_cache_dma
         endcase
       end
 
+      // receive the block data from dma_data_i 
+      // and write into data_mem word by word.
       GET_FILL_DATA: begin
         dma_state_n = counter_fill_max & in_fifo_v_lo
           ? IDLE
@@ -238,12 +239,13 @@ module bsg_cache_dma
         data_mem_w_o = in_fifo_v_lo;
         in_fifo_yumi_li = in_fifo_v_lo;
 
-        counter_en = in_fifo_v_lo & ~counter_fill_max;
-        counter_set = in_fifo_v_lo & counter_fill_max;
-        counter_val = '0;
+        counter_up = in_fifo_v_lo & ~counter_fill_max;
+        counter_clear = in_fifo_v_lo & counter_fill_max;
         done_o = counter_fill_max & in_fifo_v_lo;
       end
 
+      // read the requested block from data_mem and send it out over
+      // dma_data_o word by word.
       SEND_EVICT_DATA: begin
         // counter_r in this context means the number of words read from
         // data_mem so far.
@@ -251,9 +253,8 @@ module bsg_cache_dma
           ? IDLE
           : SEND_EVICT_DATA;
         
-        counter_en = out_fifo_ready_lo & ~counter_evict_max;
-        counter_set = out_fifo_ready_lo & counter_evict_max;
-        counter_val = '0;
+        counter_up = out_fifo_ready_lo & ~counter_evict_max;
+        counter_clear = out_fifo_ready_lo & counter_evict_max;
 
         out_fifo_v_li = 1'b1;
 
@@ -263,7 +264,7 @@ module bsg_cache_dma
       end
 
       default: begin
-        // this should never happen, but if it does then go back to IDLE.
+        // this should never happen, but if it does, then go back to IDLE.
         dma_state_n = IDLE;
       end
     endcase
@@ -279,10 +280,10 @@ module bsg_cache_dma
    // synopsys sync_set_reset "reset_i"
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      dma_state_r    <= IDLE;
+      dma_state_r <= IDLE;
     end
     else begin
-      dma_state_r    <= dma_state_n;
+      dma_state_r <= dma_state_n;
 
       if (snoop_word_we) begin
         snoop_word_o <= in_fifo_data_lo;
