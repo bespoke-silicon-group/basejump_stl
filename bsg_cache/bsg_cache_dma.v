@@ -13,11 +13,9 @@ module bsg_cache_dma
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="int"
 
-    ,localparam lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    ,localparam lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
-    ,localparam counter_width_lp=`BSG_SAFE_CLOG2(block_size_in_words_p+1)
-    ,localparam bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
-    ,localparam byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
+    ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
+    ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
   
     ,parameter debug_p=0
   )
@@ -54,6 +52,11 @@ module bsg_cache_dma
     ,output logic [(2*data_width_p)-1:0] data_mem_data_o
     ,input [(2*data_width_p)-1:0] data_mem_data_i
   );
+
+  // localparam
+  //
+  localparam counter_width_lp=`BSG_SAFE_CLOG2(block_size_in_words_p+1);
+  localparam byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3);
 
   // dma states
   //
