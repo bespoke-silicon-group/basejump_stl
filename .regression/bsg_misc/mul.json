@@ -6,7 +6,7 @@
     "run_config": [
         {
             "constraints": {
-                "clk_port_name": "clk_i", 
+                "clk_port_name": "virtual", 
                 "clock_period": "40", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -20,7 +20,7 @@
         },
         {
             "constraints": {
-                "clk_port_name": "clk_i", 
+                "clk_port_name": "virtual", 
                 "clock_period": "20", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -34,7 +34,7 @@
         },
         {
             "constraints": {
-                "clk_port_name": "clk_i", 
+                "clk_port_name": "virtual", 
                 "clock_period": "13.3", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -48,7 +48,7 @@
         },
         {
             "constraints": {
-                "clk_port_name": "clk_i", 
+                "clk_port_name": "virtual", 
                 "clock_period": "10", 
                 "input": "0", 
                 "io_time_format": "period", 

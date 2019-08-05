@@ -1,13 +1,13 @@
 {
     "design_name": "bsg_mul_iterative_booth_optimized", 
     "filelist": [ 
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_adder_carry_save_4_2.v",  
         "basejump_stl/bsg_misc/bsg_adder_carry_save.v",  
         "basejump_stl/bsg_misc/bsg_wallace_tree/bsg_adder_wallace_tree_3_2.v",  
         "basejump_stl/bsg_misc/bsg_wallace_tree/bsg_adder_wallace_tree_6.v",  
         "basejump_stl/bsg_misc/bsg_wallace_tree/bsg_adder_wallace_tree_10.v", 
         "basejump_stl/bsg_misc/bsg_wallace_tree/bsg_adder_wallace_tree_18.v",   
-        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_mul_iterative_booth_optimized.v"
 
         ],  
