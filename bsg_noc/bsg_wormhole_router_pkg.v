@@ -63,6 +63,7 @@ package bsg_wormhole_router_pkg;
                                 }
                                };
 
+  // These are "OR-in" matrices, that are intended to be layered upon StrictYX or Strict XY.
  localparam bit [1:0][4:0][4:0] XY_Allow_S
                             = {
                                {//  SNEWP (input)
