@@ -13,6 +13,8 @@ module bsg_wormhole_router_adapter_in
     , parameter cord_width_p      = "inv"
     , parameter link_width_p      = "inv"
 
+    , parameter buffered_p = 0
+
     , localparam bsg_ready_and_link_sif_width_lp =
         `bsg_ready_and_link_sif_width(link_width_p)
     , localparam bsg_wormhole_packet_width_lp = 
@@ -26,25 +28,49 @@ module bsg_wormhole_router_adapter_in
     , output                                       ready_o
 
     , output [bsg_ready_and_link_sif_width_lp-1:0] link_o
-    // Used for ready_i signal, the rest should be stubbed, since this an input adapter
     , input [bsg_ready_and_link_sif_width_lp-1:0]  link_i 
-  );
+    );
 
   // Casting ports
   `declare_bsg_ready_and_link_sif_s(link_width_p, bsg_ready_and_link_sif_s);
   bsg_ready_and_link_sif_s link_cast_i, link_cast_o;
 
   `declare_bsg_wormhole_router_packet_s(cord_width_p, len_width_p, max_payload_width_p, bsg_wormhole_packet_s);
-  bsg_wormhole_packet_s packet_cast_i;
+  bsg_wormhole_packet_s packet_li;
+  logic ready_lo, v_li;
 
   localparam max_num_flits_lp = 2**len_width_p;
   wire [max_num_flits_lp*link_width_p-1:0] packet_padded_li = packet_i;
 
   assign link_cast_i   = link_i;
   assign link_o        = link_cast_o;
-  assign packet_cast_i = packet_i;
 
-  assign link_cast_o.ready_and_rev = 1'b0;
+  if (buffered_p)
+    begin : buffer
+      bsg_two_fifo
+       #(.width_p(bsg_wormhole_packet_width_lp)
+         ,.ready_THEN_valid_p(1)
+         )
+       buffer
+        (.clk_i(clk_i)
+         ,.reset_i(reset_i)
+
+         ,.data_i(packet_i)
+         ,.v_i(v_i)
+         ,.ready_o(ready_o)
+
+         ,.data_o(packet_li)
+         ,.v_o(v_li)
+         ,.yumi_i(ready_lo & v_li)
+         );
+    end
+  else
+    begin : no_buffer
+      assign packet_li = packet_i;
+      assign v_li      = v_i;
+      assign ready_o   = ready_lo;
+    end
+
   bsg_parallel_in_serial_out_dynamic
    #(.width_p(link_width_p)
      ,.max_els_p(max_num_flits_lp)
@@ -53,16 +79,19 @@ module bsg_wormhole_router_adapter_in
     (.clk_i(clk_i)
      ,.reset_i(reset_i)
 
-     ,.v_i(v_i)
-     ,.len_i(packet_cast_i.len)
+     ,.v_i(v_li)
+     ,.len_i(packet_li.len)
      ,.data_i(packet_padded_li)
-     ,.ready_o(ready_o)
+     ,.ready_o(ready_lo)
 
      ,.v_o(link_cast_o.v)
      ,.len_v_o(/* unused */)
      ,.data_o(link_cast_o.data)
      ,.yumi_i(link_cast_i.ready_and_rev & link_cast_o.v)
      );
+
+   // Stub the input ready, since this is an input adapter
+   assign link_cast_o.ready_and_rev = 1'b0;
 
 endmodule
 
