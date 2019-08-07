@@ -1,4 +1,4 @@
-# run_config json breakdown
+## run_config json breakdown
 1) Design_name: the name of your design, should be the same as the verilog file you’d like to run (ie. bsg_mem_1r1w_sync)
 2) Filelist: all the files necessary for your design to synthesize. (itself, submodules that it depends on, and defines if it needs any)
 3) Run_config:  a list of different configurations for your design
