@@ -1,7 +1,7 @@
 {
     "design_name": "bsg_imul_iterative", 
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines",
+        "basejump_stl/bsg_misc/bsg_defines.v",
 	"basejump_stl/bsg_misc/bsg_imul_iterative.v"
     ], 
     "run_config": [
