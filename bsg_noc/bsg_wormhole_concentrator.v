@@ -3,17 +3,21 @@
 // 
 // 08/2019
 //
+// This is an adapter between 1 concentrated wormhole link and N unconcentrated wormhole links.
+// Extra bits (cid) are used in wormhole header to indicate wormhole packet destination.
+//
+// From implementation perspective this is a simplified version bsg_wormhole_router_generalized.
+// Wormhole_router relies on 2D routing_matrix, while wormhole_concentrator has fixed 1-to-n 
+// and n-to-1 routing. This concentrator reuses most of the building blocks of wormhole_router, 
+// concentrator header struct is defined in bsg_wormhole_router.vh.
+//
+// This concentrator has 1-cycle delay from input wormhole link(s) to output wormhole link(s).
+//
 //
 
 `include "bsg_defines.v"
 `include "bsg_noc_links.vh"
 `include "bsg_wormhole_router.vh"
-
-`define declare_bsg_wormhole_concentrator_header_s(cid_width, header_struct_name, in_struct_name) \
-  typedef struct packed {                                                      \
-    logic [cid_width-1:0]      cid;                                            \
-    header_struct_name         hdr;                                            \
-  } in_struct_name
 
 module bsg_wormhole_concentrator
 
@@ -22,32 +26,32 @@ module bsg_wormhole_concentrator
    ,parameter dims_p              = 2
    ,parameter int cord_markers_pos_p[dims_p:0] = '{ 5, 4, 0 }
    ,parameter len_width_p         = "inv"
-   // concentration id (cid) width
-   ,parameter cid_width_p         = "inv"
+   // concentration id (cid) width, depends on num_in_p
+   ,parameter cid_width_lp        = `BSG_SAFE_CLOG2(num_in_p)
    ,parameter debug_lp            = 0
    )
 
   (input clk_i
   ,input reset_i
 
-  // unconcentrated side
-  ,input  [num_in_p-1:0][`bsg_ready_and_link_sif_width(flit_width_p)-1:0] link_i
-  ,output [num_in_p-1:0][`bsg_ready_and_link_sif_width(flit_width_p)-1:0] link_o
+  // unconcentrated multiple links
+  ,input  [num_in_p-1:0][`bsg_ready_and_link_sif_width(flit_width_p)-1:0] links_i
+  ,output [num_in_p-1:0][`bsg_ready_and_link_sif_width(flit_width_p)-1:0] links_o
 
-  // concentrated side
+  // concentrated single link
   ,input  [`bsg_ready_and_link_sif_width(flit_width_p)-1:0] concentrated_link_i
   ,output [`bsg_ready_and_link_sif_width(flit_width_p)-1:0] concentrated_link_o
   );
 
   `declare_bsg_ready_and_link_sif_s(flit_width_p,bsg_ready_and_link_sif_s);
   `declare_bsg_wormhole_router_header_s(cord_markers_pos_p[dims_p], len_width_p, bsg_wormhole_router_header_s);
-  `declare_bsg_wormhole_concentrator_header_s(cid_width_p, bsg_wormhole_router_header_s, bsg_wormhole_concentrator_header_s);
+  `declare_bsg_wormhole_concentrator_header_s(cid_width_lp, bsg_wormhole_router_header_s, bsg_wormhole_concentrator_header_s);
   
-  bsg_ready_and_link_sif_s [num_in_p-1:0] link_i_cast, link_o_cast;
+  bsg_ready_and_link_sif_s [num_in_p-1:0] links_i_cast, links_o_cast;
   bsg_ready_and_link_sif_s concentrated_link_i_cast, concentrated_link_o_cast;
   
-  assign link_i_cast = link_i;
-  assign link_o = link_o_cast;
+  assign links_i_cast = links_i;
+  assign links_o = links_o_cast;
   
   assign concentrated_link_i_cast = concentrated_link_i;
   assign concentrated_link_o = concentrated_link_o_cast;
@@ -74,9 +78,9 @@ module bsg_wormhole_concentrator
       bsg_two_fifo #(.width_p(flit_width_p)) twofer
         (.clk_i
         ,.reset_i
-        ,.ready_o(link_o_cast[i].ready_and_rev)
-        ,.data_i (link_i_cast[i].data)
-        ,.v_i    (link_i_cast[i].v)
+        ,.ready_o(links_o_cast[i].ready_and_rev)
+        ,.data_i (links_i_cast[i].data)
+        ,.v_i    (links_i_cast[i].v)
         ,.v_o    (fifo_valid_lo[i])
         ,.data_o (fifo_data_lo [i])
         ,.yumi_i (yumis[i])
@@ -180,12 +184,12 @@ module bsg_wormhole_concentrator
         ,.release_i (concentrated_releases)
         ,.valid_i   (concentrated_fifo_valid_lo)
         ,.yumi_o    (concentrated_yumis[i])
-        ,.ready_i   (link_i_cast[i].ready_and_rev)
-        ,.valid_o   (link_o_cast[i].v)
+        ,.ready_i   (links_i_cast[i].ready_and_rev)
+        ,.valid_o   (links_o_cast[i].v)
         ,.data_sel_o()
         );
       
-      assign link_o_cast[i].data = concentrated_fifo_data_lo;
+      assign links_o_cast[i].data = concentrated_fifo_data_lo;
       
     end
 

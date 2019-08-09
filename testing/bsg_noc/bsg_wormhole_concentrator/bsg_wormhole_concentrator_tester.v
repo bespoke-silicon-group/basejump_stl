@@ -32,10 +32,10 @@ module bsg_wormhole_concentrator_tester
   ,parameter flit_width_p = 32
   // Payload flit number
   ,parameter len_width_p  = 4
-  // concentration id width
-  ,parameter cid_width_p  = 2
   // number of traffice to be concentrated
   ,parameter num_in_p     = 3
+  // concentration id width, depends on num_in_p
+  ,parameter cid_width_p  = `BSG_SAFE_CLOG2(num_in_p)
   
   ,parameter dirs_p = dims_p*2+1
   ,parameter int cord_markers_pos_p[dims_p:0] = cord_markers_pos_full_p[dims_p:0]
@@ -127,14 +127,13 @@ module bsg_wormhole_concentrator_tester
    ,.dims_p (dims_p)
    ,.cord_markers_pos_p(cord_markers_pos_p)
    ,.len_width_p(len_width_p)
-   ,.cid_width_p(cid_width_p)
    ) master_concentrator
   (.clk_i(clk)
   ,.reset_i(reset)
 
   // unconcentrated side
-  ,.link_i(master_node_link_lo)
-  ,.link_o(master_node_link_li)
+  ,.links_i(master_node_link_lo)
+  ,.links_o(master_node_link_li)
 
   // concentrated side
   ,.concentrated_link_i(master_concentrated_link_li)
@@ -192,14 +191,13 @@ module bsg_wormhole_concentrator_tester
    ,.dims_p (dims_p)
    ,.cord_markers_pos_p(cord_markers_pos_p)
    ,.len_width_p(len_width_p)
-   ,.cid_width_p(cid_width_p)
    ) client_concentrator
   (.clk_i(clk)
   ,.reset_i(reset)
 
   // unconcentrated side
-  ,.link_i(client_node_link_lo)
-  ,.link_o(client_node_link_li)
+  ,.links_i(client_node_link_lo)
+  ,.links_o(client_node_link_li)
 
   // concentrated side
   ,.concentrated_link_i(client_concentrated_link_li)
