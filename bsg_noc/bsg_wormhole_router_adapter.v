@@ -1,7 +1,7 @@
 /**
  *  bsg_wormhole_router_adapter.v
  *
- *  This is a bidirectional link to wormhole
+ *  This is a full duplex link to wormhole
  *
  *  packet = {payload, length, cord}
  */
@@ -14,9 +14,6 @@ module bsg_wormhole_router_adapter
     , parameter len_width_p       = "inv"
     , parameter cord_width_p      = "inv"
     , parameter link_width_p      = "inv"
-
-    , parameter input_buffered_p  = 0
-    , parameter output_buffered_p = 0
 
     , localparam bsg_ready_and_link_sif_width_lp =
         `bsg_ready_and_link_sif_width(link_width_p)
@@ -61,7 +58,6 @@ module bsg_wormhole_router_adapter
      ,.len_width_p(len_width_p)
      ,.cord_width_p(cord_width_p)
      ,.link_width_p(link_width_p)
-     ,.buffered_p(output_buffered_p)
      )
    adapter_in
     (.clk_i(clk_i)
@@ -80,7 +76,6 @@ module bsg_wormhole_router_adapter
      ,.len_width_p(len_width_p)
      ,.cord_width_p(cord_width_p)
      ,.link_width_p(link_width_p)
-     ,.buffered_p(input_buffered_p)
      )
    adapter_out
     (.clk_i(clk_i)
