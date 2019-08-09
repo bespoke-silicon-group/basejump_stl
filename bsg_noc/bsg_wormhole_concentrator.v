@@ -12,6 +12,7 @@
 // concentrator header struct is defined in bsg_wormhole_router.vh.
 //
 // This concentrator has 1-cycle delay from input wormhole link(s) to output wormhole link(s).
+// It has zero bubble between wormhole packets.
 //
 //
 
