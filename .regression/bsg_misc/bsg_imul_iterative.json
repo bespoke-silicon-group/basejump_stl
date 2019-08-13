@@ -8,76 +8,6 @@
         {
             "constraints": {
                 "clk_port_name": "clk_i", 
-                "clock_period": "3.33", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "", 
-            "design_size": "", 
-            "name": "bsg_imul_iterative_300MHz", 
-            "parameters": []
-        },
-        {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "3.07", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "", 
-            "design_size": "", 
-            "name": "bsg_imul_iterative_325MHz", 
-            "parameters": []
-        },
-        {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "2.85", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "", 
-            "design_size": "", 
-            "name": "bsg_imul_iterative_350MHz", 
-            "parameters": []
-        },
-        {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "2.66", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "", 
-            "design_size": "", 
-            "name": "bsg_imul_iterative_375MHz", 
-            "parameters": []
-        },
-        {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "2.5", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "", 
-            "design_size": "", 
-            "name": "bsg_imul_iterative_400MHz", 
-            "parameters": []
-        },
-        {
-            "constraints": {
-                "clk_port_name": "clk_i", 
                 "clock_period": "2.35", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -87,6 +17,48 @@
             "description": "", 
             "design_size": "", 
             "name": "bsg_imul_iterative_425MHz", 
+            "parameters": []
+        },
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "2.22", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "", 
+            "design_size": "", 
+            "name": "bsg_imul_iterative_450MHz", 
+            "parameters": []
+        },
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "2.105", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "", 
+            "design_size": "", 
+            "name": "bsg_imul_iterative_475MHz", 
+            "parameters": []
+        },
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "2", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "", 
+            "design_size": "", 
+            "name": "bsg_imul_iterative_500MHz", 
             "parameters": []
         }
 

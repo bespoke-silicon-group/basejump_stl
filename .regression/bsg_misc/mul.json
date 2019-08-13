@@ -7,34 +7,6 @@
         {
             "constraints": {
                 "clk_port_name": "virtual", 
-                "clock_period": "40", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "", 
-            "design_size": "", 
-            "name": "mul_25MHz", 
-            "parameters": []
-        },
-        {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "20", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "", 
-            "design_size": "", 
-            "name": "mul_50MHz", 
-            "parameters": []
-        },
-        {
-            "constraints": {
-                "clk_port_name": "virtual", 
                 "clock_period": "13.3", 
                 "input": "0", 
                 "io_time_format": "period", 
@@ -43,13 +15,15 @@
             }, 
             "description": "", 
             "design_size": "", 
-            "name": "mul_75MHz", 
-            "parameters": []
+            "name": "mul_75MHz_0", 
+            "parameters": [
+                "reg_num_p=0"
+            ]
         },
         {
             "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "10", 
+                "clk_port_name": "clk_i", 
+                "clock_period": "6.65", 
                 "input": "0", 
                 "io_time_format": "period", 
                 "output": "0", 
@@ -57,8 +31,122 @@
             }, 
             "description": "", 
             "design_size": "", 
-            "name": "mul_100MHz", 
-            "parameters": []
+            "name": "mul_150MHz_2", 
+            "parameters": [
+                "reg_num_p=1"
+            ]
+        },
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "5.71", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "", 
+            "design_size": "", 
+            "name": "mul_175MHz_2", 
+            "parameters": [
+                "reg_num_p=1"
+            ]
+        },
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "5", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "", 
+            "design_size": "", 
+            "name": "mul_200MHz_2", 
+            "parameters": [
+                "reg_num_p=1"
+            ]
+        },
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "3.33", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "", 
+            "design_size": "", 
+            "name": "mul_300MHz_4", 
+            "parameters": [
+                "reg_num_p=3"
+            ]
+        },
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "2.857", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "", 
+            "design_size": "", 
+            "name": "mul_350MHz_4", 
+            "parameters": [
+                "reg_num_p=3"
+            ]
+        },
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "1.66", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "", 
+            "design_size": "", 
+            "name": "mul_600MHz_8", 
+            "parameters": [
+                "reg_num_p=7"
+            ]
+        },
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "1.53", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "", 
+            "design_size": "", 
+            "name": "mul_650MHz_8", 
+            "parameters": [
+                "reg_num_p=7"
+            ]
+        },
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
+                "clock_period": "1.428", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "", 
+            "design_size": "", 
+            "name": "mul_700MHz_8", 
+            "parameters": [
+                "reg_num_p=7"
+            ]
         }
     ]
 }
