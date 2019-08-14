@@ -127,6 +127,7 @@ module bsg_wormhole_concentrator_tester
    ,.dims_p (dims_p)
    ,.cord_markers_pos_p(cord_markers_pos_p)
    ,.len_width_p(len_width_p)
+   ,.cid_width_p(cid_width_p)
    ) master_concentrator
   (.clk_i(clk)
   ,.reset_i(reset)
@@ -191,6 +192,7 @@ module bsg_wormhole_concentrator_tester
    ,.dims_p (dims_p)
    ,.cord_markers_pos_p(cord_markers_pos_p)
    ,.len_width_p(len_width_p)
+   ,.cid_width_p(cid_width_p)
    ) client_concentrator
   (.clk_i(clk)
   ,.reset_i(reset)
