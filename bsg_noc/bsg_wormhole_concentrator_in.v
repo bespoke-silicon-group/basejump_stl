@@ -44,8 +44,7 @@ module bsg_wormhole_concentrator_in
   );
 
   `declare_bsg_ready_and_link_sif_s(flit_width_p,bsg_ready_and_link_sif_s);
-  `declare_bsg_wormhole_router_header_s(cord_markers_pos_p[dims_p], len_width_p, bsg_wormhole_router_header_s);
-  `declare_bsg_wormhole_concentrator_header_s(cord_markers_pos_p[dims_p], len_width_p,cid_width_p, bsg_wormhole_concentrator_header_s);
+  `declare_bsg_wormhole_concentrator_header_s(cord_markers_pos_p[dims_p], len_width_p, cid_width_p, bsg_wormhole_concentrator_header_s);
   
   bsg_ready_and_link_sif_s [num_in_p-1:0] links_i_cast, links_o_cast;
   bsg_ready_and_link_sif_s concentrated_link_i_cast, concentrated_link_o_cast;
@@ -58,13 +57,14 @@ module bsg_wormhole_concentrator_in
  
   genvar i,j;
 
-  // Stub output links
+  // Stub unused links
   for (i = 0; i < num_in_p; i++)
     begin : stub
       assign links_o_cast[i].v    = 1'b0;
       assign links_o_cast[i].data = 1'b0;
     end
-      assign concentrated_link_o_cast.ready_and_rev = 1'b0;
+    
+  assign concentrated_link_o_cast.ready_and_rev = 1'b0;
 
   /********** From unconcentrated side to concentrated side **********/
   
@@ -94,16 +94,16 @@ module bsg_wormhole_concentrator_in
         ,.yumi_i (yumis[i])
         );
 
-      bsg_wormhole_router_header_s hdr;
-      assign hdr = fifo_data_lo[i][$bits(bsg_wormhole_router_header_s)-1:0];
+      bsg_wormhole_concentrator_header_s concentrated_hdr;
+      assign concentrated_hdr = fifo_data_lo[i][$bits(bsg_wormhole_concentrator_header_s)-1:0];
 
-      bsg_wormhole_router_input_control #(.output_dirs_p(1), .payload_len_bits_p($bits(hdr.len))) wic
+      bsg_wormhole_router_input_control #(.output_dirs_p(1), .payload_len_bits_p($bits(concentrated_hdr.len))) wic
         (.clk_i
         ,.reset_i
         ,.fifo_v_i           (fifo_valid_lo[i])
         ,.fifo_yumi_i        (yumis[i])
         ,.fifo_decoded_dest_i(1'b1)
-        ,.fifo_payload_len_i (hdr.len)
+        ,.fifo_payload_len_i (concentrated_hdr.len)
         ,.reqs_o             (reqs[i])
         ,.release_o          (releases[i]) // broadcast to all
         ,.detected_header_o  ()

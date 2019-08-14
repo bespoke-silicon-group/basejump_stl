@@ -47,6 +47,7 @@ module bsg_wormhole_concentrator
   
   bsg_ready_and_link_sif_s [num_in_p-1:0] links_i_cast, links_o_cast;
   bsg_ready_and_link_sif_s [num_in_p-1:0] links_o_stubbed_v, links_o_stubbed_ready;
+  
   bsg_ready_and_link_sif_s concentrated_link_i_cast, concentrated_link_o_cast;
   bsg_ready_and_link_sif_s concentrated_link_o_stubbed_v, concentrated_link_o_stubbed_ready;
   
@@ -57,14 +58,15 @@ module bsg_wormhole_concentrator
   assign concentrated_link_o = concentrated_link_o_cast;
   
   for (genvar i = 0; i < num_in_p; i++)
-    begin : stub
+    begin : cast
       assign links_o_cast[i].data          = links_o_stubbed_ready[i].data;
       assign links_o_cast[i].v             = links_o_stubbed_ready[i].v;
       assign links_o_cast[i].ready_and_rev = links_o_stubbed_v[i].ready_and_rev;
     end
-      assign concentrated_link_o_cast.data          = concentrated_link_o_stubbed_ready.data;
-      assign concentrated_link_o_cast.v             = concentrated_link_o_stubbed_ready.v;
-      assign concentrated_link_o_cast.ready_and_rev = concentrated_link_o_stubbed_v.ready_and_rev;
+
+  assign concentrated_link_o_cast.data          = concentrated_link_o_stubbed_ready.data;
+  assign concentrated_link_o_cast.v             = concentrated_link_o_stubbed_ready.v;
+  assign concentrated_link_o_cast.ready_and_rev = concentrated_link_o_stubbed_v.ready_and_rev;
 
   bsg_wormhole_concentrator_in
    #(.flit_width_p(flit_width_p)
