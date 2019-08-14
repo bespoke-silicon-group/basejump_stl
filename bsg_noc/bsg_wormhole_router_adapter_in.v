@@ -11,10 +11,10 @@ module bsg_wormhole_router_adapter_in
   #(parameter max_payload_width_p = "inv"
     , parameter len_width_p       = "inv"
     , parameter cord_width_p      = "inv"
-    , parameter link_width_p      = "inv"
+    , parameter flit_width_p      = "inv"
 
     , localparam bsg_ready_and_link_sif_width_lp =
-        `bsg_ready_and_link_sif_width(link_width_p)
+        `bsg_ready_and_link_sif_width(flit_width_p)
     , localparam bsg_wormhole_packet_width_lp = 
         `bsg_wormhole_router_packet_width(cord_width_p, len_width_p, max_payload_width_p)
     )
@@ -30,22 +30,22 @@ module bsg_wormhole_router_adapter_in
     );
 
   // Casting ports
-  `declare_bsg_ready_and_link_sif_s(link_width_p, bsg_ready_and_link_sif_s);
+  `declare_bsg_ready_and_link_sif_s(flit_width_p, bsg_ready_and_link_sif_s);
   bsg_ready_and_link_sif_s link_cast_i, link_cast_o;
 
   `declare_bsg_wormhole_router_packet_s(cord_width_p, len_width_p, max_payload_width_p, bsg_wormhole_packet_s);
   bsg_wormhole_packet_s packet_cast_i;
   assign packet_cast_i = packet_i;
 
-  localparam max_num_flits_lp = `BSG_CDIV($bits(bsg_wormhole_packet_s), link_width_p);
+  localparam max_num_flits_lp = `BSG_CDIV($bits(bsg_wormhole_packet_s), flit_width_p);
   localparam protocol_len_lp  = `BSG_SAFE_CLOG2(max_num_flits_lp);
-  wire [max_num_flits_lp*link_width_p-1:0] packet_padded_li = packet_i;
+  wire [max_num_flits_lp*flit_width_p-1:0] packet_padded_li = packet_i;
 
   assign link_cast_i   = link_i;
   assign link_o        = link_cast_o;
 
   bsg_parallel_in_serial_out_dynamic
-   #(.width_p(link_width_p)
+   #(.width_p(flit_width_p)
      ,.max_els_p(max_num_flits_lp)
      )
    piso
