@@ -13,10 +13,10 @@ module bsg_wormhole_router_adapter
   #(parameter max_payload_width_p = "inv"
     , parameter len_width_p       = "inv"
     , parameter cord_width_p      = "inv"
-    , parameter link_width_p      = "inv"
+    , parameter flit_width_p      = "inv"
 
     , localparam bsg_ready_and_link_sif_width_lp =
-        `bsg_ready_and_link_sif_width(link_width_p)
+        `bsg_ready_and_link_sif_width(flit_width_p)
     , localparam bsg_wormhole_packet_width_lp =
         `bsg_wormhole_router_packet_width(cord_width_p, len_width_p, max_payload_width_p)
     )
@@ -38,7 +38,7 @@ module bsg_wormhole_router_adapter
     );
 
   // Casting ports
-  `declare_bsg_ready_and_link_sif_s(link_width_p, bsg_ready_and_link_sif_s);
+  `declare_bsg_ready_and_link_sif_s(flit_width_p, bsg_ready_and_link_sif_s);
   bsg_ready_and_link_sif_s link_cast_i, link_cast_o;
   bsg_ready_and_link_sif_s link_o_stubbed_v, link_o_stubbed_ready;
 
@@ -57,7 +57,7 @@ module bsg_wormhole_router_adapter
    #(.max_payload_width_p(max_payload_width_p)
      ,.len_width_p(len_width_p)
      ,.cord_width_p(cord_width_p)
-     ,.link_width_p(link_width_p)
+     ,.flit_width_p(flit_width_p)
      )
    adapter_in
     (.clk_i(clk_i)
@@ -75,7 +75,7 @@ module bsg_wormhole_router_adapter
    #(.max_payload_width_p(max_payload_width_p)
      ,.len_width_p(len_width_p)
      ,.cord_width_p(cord_width_p)
-     ,.link_width_p(link_width_p)
+     ,.flit_width_p(flit_width_p)
      )
    adapter_out
     (.clk_i(clk_i)

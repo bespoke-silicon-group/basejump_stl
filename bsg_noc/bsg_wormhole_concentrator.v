@@ -157,7 +157,7 @@ module bsg_wormhole_concentrator
   
   wire [num_in_p-1:0] concentrated_decoded_dest_lo;
   bsg_decode #(.num_out_p(num_in_p)) concentrated_decoder
-    (.i(concentrated_hdr.cid)
+    (.i(concentrated_hdr.cid[0+:`BSG_SAFE_CLOG2(num_in_p)])
     ,.o(concentrated_decoded_dest_lo)
     );
 
