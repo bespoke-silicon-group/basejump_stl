@@ -20,6 +20,8 @@
 
 `ifdef SYNTHESIS
 `define BSG_DISCONNECTED_IN_SIM(val) (val)
+`elsif VERILATOR
+`define BSG_DISCONNECTED_IN_SIM(val) (val)
 `else
 `define BSG_DISCONNECTED_IN_SIM(val) ('z)
 `endif

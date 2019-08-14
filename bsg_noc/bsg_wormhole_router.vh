@@ -4,8 +4,19 @@
 //         struct, then it will match bsg_wormhole_router
 //
 
-`define declare_bsg_wormhole_router_header_s(in_cord_width,in_len_width,in_struct_name) \
+`define declare_bsg_wormhole_router_header_s(cord_width_mp,len_width_mp,struct_name_mp) \
 typedef struct packed {                 \
-  logic [in_len_width-1:0]    len;      \
-  logic [in_cord_width-1:0 ]  cord;     \
-} in_struct_name
+  logic [len_width_mp-1:0]    len;      \
+  logic [cord_width_mp-1:0 ]  cord;     \
+} struct_name_mp
+
+`define declare_bsg_wormhole_router_packet_s(cord_width_mp,len_width_mp,payload_width_mp,struct_name_mp) \
+typedef struct packed {                 \
+  logic [payload_width_mp-1:0] payload; \
+  logic [len_width_mp-1:0]     len;     \
+  logic [cord_width_mp-1:0]    cord;    \
+} struct_name_mp
+
+`define bsg_wormhole_router_packet_width(cord_width_mp,len_width_mp,payload_width_mp) \
+  (cord_width_mp + len_width_mp + payload_width_mp)
+
