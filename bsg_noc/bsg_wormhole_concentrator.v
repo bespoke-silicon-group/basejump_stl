@@ -23,12 +23,11 @@
 module bsg_wormhole_concentrator
 
   #(parameter flit_width_p        = "inv"
+   ,parameter len_width_p         = "inv"
+   ,parameter cid_width_p         = "inv"
    ,parameter num_in_p            = 1
    ,parameter dims_p              = 2
    ,parameter int cord_markers_pos_p[dims_p:0] = '{ 5, 4, 0 }
-   ,parameter len_width_p         = "inv"
-   // concentration id (cid) width, depends on num_in_p
-   ,parameter cid_width_lp        = `BSG_SAFE_CLOG2(num_in_p)
    ,parameter debug_lp            = 0
    )
 
@@ -46,7 +45,7 @@ module bsg_wormhole_concentrator
 
   `declare_bsg_ready_and_link_sif_s(flit_width_p,bsg_ready_and_link_sif_s);
   `declare_bsg_wormhole_router_header_s(cord_markers_pos_p[dims_p], len_width_p, bsg_wormhole_router_header_s);
-  `declare_bsg_wormhole_concentrator_header_s(cid_width_lp, bsg_wormhole_router_header_s, bsg_wormhole_concentrator_header_s);
+  `declare_bsg_wormhole_concentrator_header_s(cord_markers_pos_p[dims_p], len_width_p,cid_width_p, bsg_wormhole_concentrator_header_s);
   
   bsg_ready_and_link_sif_s [num_in_p-1:0] links_i_cast, links_o_cast;
   bsg_ready_and_link_sif_s concentrated_link_i_cast, concentrated_link_o_cast;
@@ -162,13 +161,13 @@ module bsg_wormhole_concentrator
     ,.o(concentrated_decoded_dest_lo)
     );
 
-  bsg_wormhole_router_input_control #(.output_dirs_p(num_in_p), .payload_len_bits_p($bits(concentrated_hdr.hdr.len))) concentrated_wic
+  bsg_wormhole_router_input_control #(.output_dirs_p(num_in_p), .payload_len_bits_p($bits(concentrated_hdr.len))) concentrated_wic
     (.clk_i
     ,.reset_i
     ,.fifo_v_i           (concentrated_fifo_valid_lo)
     ,.fifo_yumi_i        (concentrated_any_yumi)
     ,.fifo_decoded_dest_i(concentrated_decoded_dest_lo)
-    ,.fifo_payload_len_i (concentrated_hdr.hdr.len)
+    ,.fifo_payload_len_i (concentrated_hdr.len)
     ,.reqs_o             (concentrated_reqs)
     ,.release_o          (concentrated_releases) // broadcast to all
     ,.detected_header_o  ()
