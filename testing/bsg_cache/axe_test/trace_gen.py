@@ -50,21 +50,23 @@ class TraceGen:
 if __name__ == "__main__":
   num_instr_p = int(sys.argv[1])  
   seed_p = int(sys.argv[2])
+  ways_p = int(sys.argv[3])
+  sets_p = 4
   print("# seed_p = " + str(seed_p))
 
   random.seed(seed_p)
 
   tg = TraceGen()
   tg.print_header()
-  for i in range(32):
-    tg.tagst(addr=(i <<5), data=0)
+  for i in range(sets_p*ways_p):
+    tg.tagst(addr=(i<<4), data=0)
 
   store_data = 1
   for i in range(num_instr_p):
     load_not_store = random.randint(0,1)
-    tag = random.randint(0,3) << 9
-    word_offset = random.randint(0,7) << 2
-    index = random.randint(0,7) << 5
+    tag = random.randint(0,15) << 6
+    word_offset = random.randint(0,3)<< 2
+    index = random.randint(0,3) << 4
     addr = tag + index + word_offset
     if (load_not_store):
       tg.load_word(addr=addr)

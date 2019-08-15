@@ -14,13 +14,15 @@ TRACE_AXE = trace.axe
 .PHONY: dve sim clean axe all
 
 NUM_INSTR_P ?= 50000
-SEED_P = $(shell shuf -i 0-4294967295 -n 1)
+WAYS_P ?= 2
+SEED_P ?= $(shell shuf -i 0-4294967295 -n 1)
 DEFINE = +define+NUM_INSTR_P=$(NUM_INSTR_P)
+DEFINE += +define+WAYS_P=$(WAYS_P)
 
 all: clean sim
 
 bsg_trace_rom.tr:
-	python trace_gen.py $(NUM_INSTR_P) $(SEED_P) > $@
+	python trace_gen.py $(NUM_INSTR_P) $(SEED_P) $(WAYS_P) > $@
 
 bsg_trace_rom.v: bsg_trace_rom.tr
 	python $(BSG_IP_CORES_DIR)/bsg_mem/bsg_ascii_to_rom.py \

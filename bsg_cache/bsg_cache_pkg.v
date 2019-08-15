@@ -63,5 +63,38 @@ package bsg_cache_pkg;
     ,e_dma_send_evict_data  = 4'b1000
   } bsg_cache_dma_cmd_e;
 
+  // tag info s
+  //
+  `define declare_bsg_cache_tag_info_s(tag_width_mp) \
+    typedef struct packed {                   \
+      logic valid;                            \
+      logic [tag_width_mp-1:0] tag;           \
+    } bsg_cache_tag_info_s
+
+  `define bsg_cache_tag_info_width(tag_width_mp) (tag_width_mp+1)
+
+  // stat info s
+  //
+  `define declare_bsg_cache_stat_info_s(ways_mp)    \
+    typedef struct packed {                         \
+      logic [ways_mp-1:0] dirty;                    \
+      logic [ways_mp-2:0] lru_bits;                 \
+    } bsg_cache_stat_info_s
+
+  `define bsg_cache_stat_info_width(ways_mp) \
+    (ways_mp+ways_mp-1)
+
+  // sbuf entry s
+  //
+  `define declare_bsg_cache_sbuf_entry_s(addr_width_mp, data_width_mp, ways_mp) \
+    typedef struct packed {                       \
+      logic [addr_width_mp-1:0] addr;             \
+      logic [data_width_mp-1:0] data;             \
+      logic [(data_width_mp>>3)-1:0] mask;        \
+      logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way_id;    \
+    } bsg_cache_sbuf_entry_s 
+
+  `define bsg_cache_sbuf_entry_width(addr_width_mp, data_width_mp, ways_mp) \
+    (addr_width_mp+data_width_mp+(data_width_mp>>3)+`BSG_SAFE_CLOG2(ways_mp))
 
 endpackage

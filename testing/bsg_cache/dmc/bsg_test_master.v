@@ -5,6 +5,7 @@ module bsg_test_master
     , parameter addr_width_p="inv"
     , parameter block_size_in_words_p="inv"
     , parameter sets_p="inv"
+    , parameter ways_p="inv"
   
     , localparam dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
     , localparam ring_width_lp=(addr_width_p+data_width_p+5)
@@ -106,6 +107,7 @@ module bsg_test_master
       ,.data_width_p(data_width_p)
       ,.block_size_in_words_p(block_size_in_words_p)
       ,.sets_p(sets_p)
+      ,.ways_p(ways_p)
     ) cache (
       .clk_i(clk_i)
       ,.reset_i(reset_i)

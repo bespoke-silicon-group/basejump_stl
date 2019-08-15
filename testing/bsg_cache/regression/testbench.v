@@ -66,7 +66,8 @@ module testbench();
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.sets_p(sets_p)
-  ) cache (
+    ,.ways_p(2)
+  ) DUT (
     .clk_i(clk)
     ,.reset_i(reset)
 

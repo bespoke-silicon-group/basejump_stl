@@ -65,7 +65,7 @@ class TraceGen:
 if __name__ == "__main__":
   tg = TraceGen(addr_width_p=27, data_width_p=32)
   sets_p = 512
-  ways_p = 2
+  ways_p = int(sys.argv[2])
   id_p = int(sys.argv[1])
   random.seed(time.time())
   
