@@ -5,15 +5,16 @@
  */
 
 module bsg_cache_miss
+  import bsg_cache_pkg::*;
   #(parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
 
-    ,localparam lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    ,localparam lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
-    ,localparam lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
-    ,localparam tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp)
+    ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
+    ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
+    ,parameter tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp)
   )
   (
     input clk_i
@@ -33,10 +34,7 @@ module bsg_cache_miss
 
     ,input sbuf_empty_i
 
-    ,output logic dma_send_fill_addr_o
-    ,output logic dma_send_evict_addr_o
-    ,output logic dma_get_fill_data_o
-    ,output logic dma_send_evict_data_o
+    ,output bsg_cache_dma_cmd_e dma_cmd_o
     ,output logic dma_set_o
     ,output logic [addr_width_p-1:0] dma_addr_o
     ,input dma_done_i
@@ -101,10 +99,6 @@ module bsg_cache_miss
   logic mru_r, mru_n;
 
   always_comb begin
-    dma_send_fill_addr_o = 1'b0;
-    dma_send_evict_addr_o = 1'b0;
-    dma_get_fill_data_o = 1'b0;
-    dma_send_evict_data_o = 1'b0;
     dma_set_o = 1'b0;
     stat_mem_v_o = 1'b0;
     stat_mem_w_o = 1'b0;
@@ -123,6 +117,7 @@ module bsg_cache_miss
     stat_flopped_n = stat_flopped_r;
     dirty_n = dirty_r;
     mru_n = mru_r;
+    dma_cmd_o = e_dma_nop;
 
     case (miss_state_r)
 
@@ -142,7 +137,7 @@ module bsg_cache_miss
         dirty_n = stat_flopped_r
           ? dirty_r
           : dirty_i;
-        dma_send_fill_addr_o = 1'b1;
+        dma_cmd_o = e_dma_send_fill_addr;
         chosen_set_n = valid_v_i[0]
           ? (valid_v_i[1] ? ~mru_n : 1'b1)
           : 1'b0;
@@ -201,7 +196,7 @@ module bsg_cache_miss
       end
 
       SEND_EVICT_ADDR: begin
-        dma_send_evict_addr_o = 1'b1;
+        dma_cmd_o = e_dma_send_evict_addr;
         dma_addr_o = {
           tag_v_i[chosen_set_r],
           addr_index_v,
@@ -215,7 +210,9 @@ module bsg_cache_miss
       end
 
       SEND_EVICT_DATA: begin
-        dma_send_evict_data_o = sbuf_empty_i;
+        dma_cmd_o = sbuf_empty_i
+          ? e_dma_send_evict_data
+          : e_dma_nop;
         dma_set_o = chosen_set_r;
         dma_addr_o = {
           tag_v_i[chosen_set_r],
@@ -230,7 +227,9 @@ module bsg_cache_miss
       end
 
       GET_FILL_DATA: begin
-        dma_get_fill_data_o = sbuf_empty_i;
+        dma_cmd_o = sbuf_empty_i
+          ? e_dma_get_fill_data
+          : e_dma_nop;
         dma_set_o = chosen_set_r;
         dma_addr_o = {
           addr_tag_v,

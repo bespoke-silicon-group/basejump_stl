@@ -4,9 +4,8 @@
  */
 
 
-`include "bsg_cache_pkt.vh"
-
 module bsg_cache_pkt_decode
+  import bsg_cache_pkg::*;
   #(parameter data_width_p="inv"
     , parameter addr_width_p="inv"
     

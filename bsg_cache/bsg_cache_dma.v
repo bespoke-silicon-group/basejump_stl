@@ -4,18 +4,16 @@
  *  @author tommy
  */
 
-`include "bsg_cache_pkt.vh"
-`include "bsg_cache_dma_pkt.vh"
-
 module bsg_cache_dma
+  import bsg_cache_pkg::*;
   #(parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="int"
 
-    ,localparam lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    ,localparam lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
-    ,localparam bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
+    ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
   
     ,parameter debug_p=0
   )
@@ -23,10 +21,7 @@ module bsg_cache_dma
     input clk_i
     ,input reset_i
 
-    ,input dma_send_fill_addr_i
-    ,input dma_send_evict_addr_i
-    ,input dma_get_fill_data_i
-    ,input dma_send_evict_data_i
+    ,input bsg_cache_dma_cmd_e dma_cmd_i
     ,input dma_set_i
     ,input [addr_width_p-1:0] dma_addr_i
     ,output logic done_o
@@ -53,12 +48,15 @@ module bsg_cache_dma
     ,input [(2*data_width_p)-1:0] data_mem_data_i
   );
 
+  // localparam
+  //
+  localparam counter_width_lp=`BSG_SAFE_CLOG2(block_size_in_words_p+1);
+  localparam byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3);
+
   // dma states
   //
-  typedef enum logic [2:0] {
+  typedef enum logic [1:0] {
     IDLE
-    ,SEND_FILL_ADDR
-    ,SEND_EVICT_ADDR
     ,GET_FILL_DATA
     ,SEND_EVICT_DATA
   } dma_state_e;
@@ -66,8 +64,27 @@ module bsg_cache_dma
   dma_state_e dma_state_n;
   dma_state_e dma_state_r;
 
-  logic [lg_block_size_in_words_lp:0] counter_r;
-  logic [lg_block_size_in_words_lp:0] counter_n; 
+
+  // dma counter
+  //
+  logic counter_clear;
+  logic counter_up;
+  logic [counter_width_lp-1:0] counter_r;
+
+  bsg_counter_clear_up #(
+    .max_val_p(block_size_in_words_p)
+  ) dma_counter (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.clear_i(counter_clear)
+    ,.up_i(counter_up)
+    ,.count_o(counter_r)
+  );
+
+  logic counter_fill_max;
+  logic counter_evict_max;
+  assign counter_fill_max = counter_r == (block_size_in_words_p-1);
+  assign counter_evict_max = counter_r == block_size_in_words_p;
 
 
   // dma packet
@@ -98,11 +115,8 @@ module bsg_cache_dma
   // out fifo
   //
   logic out_fifo_v_li;
-  logic [data_width_p-1:0] out_fifo_data_li;
   logic out_fifo_ready_lo;
-  logic data_flopped_r, data_flopped_n;
-  logic data_mem_v_r, data_mem_v_n;
-  logic [data_width_p-1:0] data_buf_r, data_buf_n;
+  logic [data_width_p-1:0] out_fifo_data_li;
 
   bsg_two_fifo #(
     .width_p(data_width_p)
@@ -120,10 +134,6 @@ module bsg_cache_dma
   );
 
   assign dma_pkt_o = dma_pkt;
-  assign dma_pkt.addr = {
-    dma_addr_i[addr_width_p-1:`BSG_SAFE_CLOG2(data_width_p>>3)+lg_block_size_in_words_lp],
-    {(`BSG_SAFE_CLOG2(data_width_p>>3)+lg_block_size_in_words_lp){1'b0}}
-  };
 
   assign data_mem_w_mask_o = {
     {(data_width_p>>3){dma_set_i}},
@@ -131,14 +141,13 @@ module bsg_cache_dma
   };
 
   assign data_mem_addr_o = {
-    dma_addr_i[`BSG_SAFE_CLOG2(data_width_p>>3)+lg_block_size_in_words_lp+:lg_sets_lp],
+    dma_addr_i[byte_offset_width_lp+lg_block_size_in_words_lp+:lg_sets_lp],
     counter_r[lg_block_size_in_words_lp-1:0]
   };
   
   assign data_mem_data_o = {2{in_fifo_data_lo}};
 
-  logic [data_width_p-1:0] data_way_selected;
-  assign data_way_selected = dma_set_i
+  assign out_fifo_data_li = dma_set_i
     ? data_mem_data_i[data_width_p+:data_width_p]
     : data_mem_data_i[0+:data_width_p];
 
@@ -146,98 +155,117 @@ module bsg_cache_dma
   // snoop_word offset
   //
   logic [lg_block_size_in_words_lp-1:0] snoop_word_offset;
-  assign snoop_word_offset = dma_addr_i[`BSG_SAFE_CLOG2(data_width_p>>3)+:lg_block_size_in_words_lp];
+  assign snoop_word_offset = dma_addr_i[byte_offset_width_lp+:lg_block_size_in_words_lp];
 
   always_comb begin
     done_o = 1'b0;
+
     dma_pkt_v_o = 1'b0;
-    counter_n = counter_r;
     dma_pkt.write_not_read = 1'b0;
+    dma_pkt.addr = {
+      dma_addr_i[addr_width_p-1:byte_offset_width_lp+lg_block_size_in_words_lp],
+      {(byte_offset_width_lp+lg_block_size_in_words_lp){1'b0}}
+    };
+
     data_mem_v_o = 1'b0;
     data_mem_w_o = 1'b0;
+
     in_fifo_yumi_li = 1'b0;
-    out_fifo_v_li = 1'b0;
-    data_flopped_n = data_flopped_r;
-    data_mem_v_n = data_mem_v_r;
-    data_buf_n = data_buf_r;
     dma_state_n = IDLE;
-    out_fifo_data_li = data_way_selected;
+    out_fifo_v_li = 1'b0;
+    counter_clear = 1'b0;
+    counter_up = 1'b0;
 
     case (dma_state_r)
+
+      // wait for dma_cmd from bsg_cache_miss.
+      // when transitioning from GET_FILL_DATA or SEND_EVICT_DATA state,
+      // make sure that counter is cleared to zero.
       IDLE: begin
-        dma_state_n = dma_send_fill_addr_i ? SEND_FILL_ADDR
-          : (dma_send_evict_addr_i ? SEND_EVICT_ADDR
-          : (dma_get_fill_data_i ? GET_FILL_DATA
-          : (dma_send_evict_data_i ? SEND_EVICT_DATA
-          : IDLE)));
-        counter_n = dma_get_fill_data_i
-          ? {(lg_block_size_in_words_lp+1){1'b0}}
-          : (dma_send_evict_data_i
-            ? (lg_block_size_in_words_lp+1)'(1)
-            : counter_r);
-        data_mem_v_o = dma_send_evict_data_i;
-        data_mem_v_n = dma_send_evict_data_i;
-        data_flopped_n = 1'b0;
-      end
-
-      SEND_FILL_ADDR: begin
-        dma_state_n = dma_pkt_yumi_i
-          ? IDLE
-          : SEND_FILL_ADDR;
-        dma_pkt_v_o = 1'b1;
+        counter_clear = 1'b0;
+        counter_up = 1'b0;
+        data_mem_v_o = 1'b0;
+        dma_pkt_v_o = 1'b0;
         dma_pkt.write_not_read = 1'b0;
-        done_o = dma_pkt_yumi_i;
+        done_o = 1'b0;
+        dma_state_n = IDLE;
+
+        case (dma_cmd_i)
+          e_dma_send_fill_addr: begin
+            dma_pkt_v_o = 1'b1;
+            dma_pkt.write_not_read = 1'b0;
+            done_o = dma_pkt_yumi_i;
+            dma_state_n = IDLE;
+          end
+
+          e_dma_send_evict_addr: begin
+            dma_pkt_v_o = 1'b1;
+            dma_pkt.write_not_read = 1'b1;
+            done_o = dma_pkt_yumi_i;
+            dma_state_n = IDLE;
+          end
+
+          e_dma_get_fill_data: begin
+            counter_clear = 1'b1;
+            dma_state_n = GET_FILL_DATA;
+          end
+      
+          e_dma_send_evict_data: begin
+            // we are reading the first word, as we are transitioning out.
+            // so the counter is incremented to 1.
+            counter_clear = 1'b1;
+            counter_up = 1'b1;
+            data_mem_v_o = 1'b1;
+            dma_state_n = SEND_EVICT_DATA;
+          end
+
+          e_dma_nop: begin
+            // nothing happens.
+          end
+
+          default: begin
+            // this should never happen.
+          end
+        endcase
       end
 
-      SEND_EVICT_ADDR: begin
-        dma_state_n = dma_pkt_yumi_i
-          ? IDLE
-          : SEND_EVICT_ADDR;
-        dma_pkt_v_o = 1'b1;
-        dma_pkt.write_not_read = 1'b1;
-        done_o = dma_pkt_yumi_i;
-      end
-
+      // receive the block data from dma_data_i 
+      // and write into data_mem word by word.
       GET_FILL_DATA: begin
-        dma_state_n = (counter_r == (block_size_in_words_p -1)) & in_fifo_v_lo
+        dma_state_n = counter_fill_max & in_fifo_v_lo
           ? IDLE
           : GET_FILL_DATA;
         data_mem_v_o = in_fifo_v_lo;
         data_mem_w_o = in_fifo_v_lo;
         in_fifo_yumi_li = in_fifo_v_lo;
-        counter_n = in_fifo_v_lo
-          ? counter_r + 1
-          : counter_r;
-        done_o = (counter_r == (block_size_in_words_p - 1)) & in_fifo_v_lo;
+
+        counter_up = in_fifo_v_lo & ~counter_fill_max;
+        counter_clear = in_fifo_v_lo & counter_fill_max;
+        done_o = counter_fill_max & in_fifo_v_lo;
       end
 
+      // read the requested block from data_mem and send it out over
+      // dma_data_o word by word.
       SEND_EVICT_DATA: begin
         // counter_r in this context means the number of words read from
         // data_mem so far.
-        out_fifo_v_li = 1'b1;
-       
-        data_mem_v_o = out_fifo_ready_lo & (counter_r != block_size_in_words_p);
-        data_mem_v_n = data_mem_v_o;
-
-        data_flopped_n = data_mem_v_r
-          ? ~out_fifo_ready_lo
-          : data_flopped_r;
-
-        data_buf_n = (data_mem_v_r & ~out_fifo_ready_lo)
-          ? data_way_selected
-          : data_buf_r;
-
-        out_fifo_data_li = data_flopped_r
-          ? data_buf_r
-          : data_way_selected;
- 
-        counter_n = out_fifo_ready_lo
-          ? counter_r + 1
-          : counter_r;
-        dma_state_n = (counter_r == block_size_in_words_p) & out_fifo_ready_lo
+        dma_state_n = counter_evict_max & out_fifo_ready_lo
           ? IDLE
           : SEND_EVICT_DATA;
-        done_o = (counter_r == block_size_in_words_p) & out_fifo_ready_lo;
+        
+        counter_up = out_fifo_ready_lo & ~counter_evict_max;
+        counter_clear = out_fifo_ready_lo & counter_evict_max;
+
+        out_fifo_v_li = 1'b1;
+
+        data_mem_v_o = out_fifo_ready_lo & ~counter_evict_max;
+
+        done_o = counter_evict_max & out_fifo_ready_lo;
+      end
+
+      default: begin
+        // this should never happen, but if it does, then go back to IDLE.
+        dma_state_n = IDLE;
       end
     endcase
   end
@@ -252,22 +280,15 @@ module bsg_cache_dma
    // synopsys sync_set_reset "reset_i"
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      dma_state_r    <= IDLE;
-      counter_r      <= '0;
-      data_flopped_r <= 1'b0;
-      data_mem_v_r   <= 1'b0;
-       data_buf_r    <= '0;  // MBT being conservative
+      dma_state_r <= IDLE;
     end
     else begin
-      dma_state_r    <= dma_state_n;
-      counter_r      <= counter_n;
-      data_flopped_r <= data_flopped_n;
-      data_mem_v_r   <= data_mem_v_n;
-      data_buf_r     <= data_buf_n;
+      dma_state_r <= dma_state_n;
 
       if (snoop_word_we) begin
         snoop_word_o <= in_fifo_data_lo;
       end 
+
     end
   end
 

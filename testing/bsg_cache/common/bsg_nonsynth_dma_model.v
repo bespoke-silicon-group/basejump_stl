@@ -3,9 +3,8 @@
  */
 
 
-`include "bsg_cache_dma_pkt.vh"
-
 module bsg_nonsynth_dma_model
+  import bsg_cache_pkg::*;
   #(parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
@@ -69,8 +68,8 @@ module bsg_nonsynth_dma_model
     case (read_state_r)
       WAIT: begin
         read_addr_n = start_read
-          ? read_addr_r
-          : dma_pkt.addr;
+          ? dma_pkt.addr
+          : read_addr_r;
         read_counter_n = start_read
           ? '0
           : read_counter_r;
