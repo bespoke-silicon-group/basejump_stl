@@ -1,6 +1,8 @@
 /**
  *  bsg_cache_sbuf_queue.v
  *
+ *  store (write) buffer queue.
+ *
  *  el1 is head of the queue.
  *  el0 is the tail.
  *

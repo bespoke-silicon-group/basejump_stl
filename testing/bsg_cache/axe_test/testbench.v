@@ -9,14 +9,14 @@ module testbench();
   parameter num_instr_p = `NUM_INSTR_P;
   parameter addr_width_p = 32;
   parameter data_width_p = 32;
-  parameter block_size_in_words_p = 8;
-  parameter sets_p = 16;
-  parameter ways_p = 2;
+  parameter block_size_in_words_p = 4;
+  parameter sets_p = 4;
+  parameter ways_p = `WAYS_P;
 
   parameter ring_width_p = addr_width_p + data_width_p + 5;
   parameter rom_addr_width_p = 32;
 
-  localparam mem_els_lp = 2*ways_p*sets_p*block_size_in_words_p;
+  localparam mem_els_lp = 2*8*sets_p*block_size_in_words_p;
   localparam mask_width_lp = (data_width_p>>3);
   localparam byte_offset_width_lp = `BSG_SAFE_CLOG2(data_width_p>>3);
   localparam word_offset_width_lp = `BSG_SAFE_CLOG2(block_size_in_words_p);
@@ -68,7 +68,8 @@ module testbench();
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.sets_p(sets_p) 
-  ) cache (
+    ,.ways_p(ways_p)
+  ) DUT (
     .clk_i(clk)
     ,.reset_i(reset)
     
@@ -100,6 +101,7 @@ module testbench();
   bind bsg_cache bsg_nonsynth_cache_axe_tracer #(
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
+    ,.ways_p(ways_p)
   ) axe_tracer (
     .*
   );
