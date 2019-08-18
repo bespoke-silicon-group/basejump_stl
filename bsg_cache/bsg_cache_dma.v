@@ -171,10 +171,6 @@ module bsg_cache_dma
   );
 
 
-  // snoop_word offset
-  //
-  logic [lg_block_size_in_words_lp-1:0] snoop_word_offset;
-  assign snoop_word_offset = dma_addr_i[byte_offset_width_lp+:lg_block_size_in_words_lp];
 
   always_comb begin
     done_o = 1'b0;
@@ -289,9 +285,14 @@ module bsg_cache_dma
     endcase
   end
 
-  // sequential
-  //
+  // snoop_word register
+  // As the fill data is coming in, grab the word that matches the block
+  // offset, so that we don't have to read the data_mem again to return the
+  // load data.
+  logic [lg_block_size_in_words_lp-1:0] snoop_word_offset;
   logic snoop_word_we;
+
+  assign snoop_word_offset = dma_addr_i[byte_offset_width_lp+:lg_block_size_in_words_lp];
   assign snoop_word_we = (dma_state_r == GET_FILL_DATA)
     & (snoop_word_offset == counter_r[lg_block_size_in_words_lp-1:0])
     & in_fifo_v_lo;
