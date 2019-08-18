@@ -216,11 +216,11 @@ module bsg_cache
   ) tag_mem (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
-    ,.data_i(tag_mem_data_li)
-    ,.addr_i(tag_mem_addr_li)
     ,.v_i(tag_mem_v_li)
-    ,.w_mask_i(tag_mem_w_mask_li)
     ,.w_i(tag_mem_w_li)
+    ,.addr_i(tag_mem_addr_li)
+    ,.data_i(tag_mem_data_li)
+    ,.w_mask_i(tag_mem_w_mask_li)
     ,.data_o(tag_mem_data_lo)
   );
 
@@ -249,11 +249,11 @@ module bsg_cache
   ) data_mem (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
-    ,.data_i(data_mem_data_li)
-    ,.addr_i(data_mem_addr_li)
     ,.v_i(data_mem_v_li)
-    ,.write_mask_i(data_mem_w_mask_li)
     ,.w_i(data_mem_w_li)
+    ,.addr_i(data_mem_addr_li)
+    ,.data_i(data_mem_data_li)
+    ,.write_mask_i(data_mem_w_mask_li)
     ,.data_o(data_mem_data_lo)
   );
 
