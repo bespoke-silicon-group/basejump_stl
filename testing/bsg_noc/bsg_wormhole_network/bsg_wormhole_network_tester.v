@@ -245,7 +245,7 @@ module bsg_wormhole_network_tester
   for (i = 0; i < ct_num_in_p; i++) 
   begin: r0
   
-    bsg_wormhole_router_generalized
+    bsg_wormhole_router
    #(.flit_width_p      (flit_width_p)
     ,.dims_p            (dims_p)
     ,.cord_markers_pos_p(cord_markers_pos_p)
@@ -445,7 +445,7 @@ module bsg_wormhole_network_tester
   for (i = 0; i < ct_num_in_p; i++) 
   begin: r1
   
-    bsg_wormhole_router_generalized
+    bsg_wormhole_router
    #(.flit_width_p      (flit_width_p)
     ,.dims_p            (dims_p)
     ,.cord_markers_pos_p(cord_markers_pos_p)
