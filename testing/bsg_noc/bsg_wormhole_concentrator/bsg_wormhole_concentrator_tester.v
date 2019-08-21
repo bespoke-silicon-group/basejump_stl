@@ -90,8 +90,7 @@ module bsg_wormhole_concentrator_tester
   begin: master
     bsg_wormhole_concentrator_test_node
    #(.flit_width_p(flit_width_p)
-    ,.dims_p(dims_p)
-    ,.cord_markers_pos_p(cord_markers_pos_p)
+    ,.cord_width_p(cord_markers_pos_p[dims_p])
     ,.len_width_p(len_width_p)
     ,.cid_width_p(cid_width_p)
     
@@ -124,8 +123,7 @@ module bsg_wormhole_concentrator_tester
   bsg_wormhole_concentrator
   #(.flit_width_p(flit_width_p)
    ,.num_in_p(num_in_p)
-   ,.dims_p (dims_p)
-   ,.cord_markers_pos_p(cord_markers_pos_p)
+   ,.cord_width_p(cord_markers_pos_p[dims_p])
    ,.len_width_p(len_width_p)
    ,.cid_width_p(cid_width_p)
    ) master_concentrator
@@ -189,8 +187,7 @@ module bsg_wormhole_concentrator_tester
   bsg_wormhole_concentrator
   #(.flit_width_p(flit_width_p)
    ,.num_in_p(num_in_p)
-   ,.dims_p (dims_p)
-   ,.cord_markers_pos_p(cord_markers_pos_p)
+   ,.cord_width_p(cord_markers_pos_p[dims_p])
    ,.len_width_p(len_width_p)
    ,.cid_width_p(cid_width_p)
    ) client_concentrator
@@ -210,8 +207,7 @@ module bsg_wormhole_concentrator_tester
   begin: client
     bsg_wormhole_concentrator_test_node
    #(.flit_width_p(flit_width_p)
-    ,.dims_p(dims_p)
-    ,.cord_markers_pos_p(cord_markers_pos_p)
+    ,.cord_width_p(cord_markers_pos_p[dims_p])
     ,.len_width_p(len_width_p)
     ,.cid_width_p(cid_width_p)
     

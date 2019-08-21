@@ -25,9 +25,8 @@ module bsg_wormhole_concentrator_out
   #(parameter flit_width_p        = "inv"
    ,parameter len_width_p         = "inv"
    ,parameter cid_width_p         = "inv"
+   ,parameter cord_width_p        = "inv"
    ,parameter num_in_p            = 1
-   ,parameter dims_p              = 2
-   ,parameter int cord_markers_pos_p[dims_p:0] = '{ 5, 4, 0 }
    ,parameter debug_lp            = 0
    )
 
@@ -44,7 +43,7 @@ module bsg_wormhole_concentrator_out
   );
 
   `declare_bsg_ready_and_link_sif_s(flit_width_p,bsg_ready_and_link_sif_s);
-  `declare_bsg_wormhole_concentrator_header_s(cord_markers_pos_p[dims_p], len_width_p, cid_width_p, bsg_wormhole_concentrator_header_s);
+  `declare_bsg_wormhole_concentrator_header_s(cord_width_p, len_width_p, cid_width_p, bsg_wormhole_concentrator_header_s);
   
   bsg_ready_and_link_sif_s [num_in_p-1:0] links_i_cast, links_o_cast;
   bsg_ready_and_link_sif_s concentrated_link_i_cast, concentrated_link_o_cast;
