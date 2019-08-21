@@ -6,7 +6,7 @@
 // This is an adapter between 1 concentrated wormhole link and N unconcentrated wormhole links.
 // Extra bits (cid) are used in wormhole header to indicate wormhole packet destination.
 //
-// From implementation perspective this is a simplified version bsg_wormhole_router_generalized.
+// From implementation perspective this is a simplified version bsg_wormhole_router.
 // Wormhole_router relies on 2D routing_matrix, while wormhole_concentrator has fixed 1-to-n 
 // and n-to-1 routing. This concentrator reuses most of the building blocks of wormhole_router, 
 // concentrator header struct is defined in bsg_wormhole_router.vh.

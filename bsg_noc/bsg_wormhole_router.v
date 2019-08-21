@@ -1,401 +1,256 @@
-//
-// Paul Gao 03/2019
-//
-// West has small x_cord, East has large x_cord
-// North has small y_cord, south has large y_cord
-//
-// Direction index: P=0, W=1, E=2, N=3, S=4
-// For 1D routing, should use P, W, E
-//
-// Wormhole packet length does not include first cycle
-// If a wormhole packet takes n cycles to send, then length = (n-1)
-//
-
+`include "bsg_defines.v"
 `include "bsg_noc_links.vh"
+`include "bsg_wormhole_router.vh"
 
-module  bsg_wormhole_router
+module bsg_wormhole_router
+     import bsg_wormhole_router_pkg::StrictXY;
+     import bsg_wormhole_router_pkg::StrictX;
+  #(parameter flit_width_p        = "inv"
+   ,parameter dims_p              = 2 // 1
+   ,parameter dirs_lp         = dims_p*2+1
 
-  // import enum Dirs for directions
-  import bsg_noc_pkg::Dirs
-       , bsg_noc_pkg::P  // proc (local node)
-       , bsg_noc_pkg::W  // west
-       , bsg_noc_pkg::E  // east
-       , bsg_noc_pkg::N  // north
-       , bsg_noc_pkg::S; // south
+    // this list determines the range of bit values used to determine each dimension in the N-D router
+    // cord_dims_p is normally the same as dims_p.  However, the override allows users to pass
+    // a larger cord array than necessary, useful for parameterizing between 1d/nd networks
+   ,parameter cord_dims_p = dims_p
+   ,parameter int cord_markers_pos_p[cord_dims_p:0] =   '{ 5, 4, 0 }  // '{5,0} //
+   ,parameter bit [1:0][dirs_lp-1:0][dirs_lp-1:0] routing_matrix_p =  StrictXY // StrictX
+   ,parameter reverse_order_p       = 0
+   ,parameter len_width_p           = "inv"
+   ,parameter debug_lp              = 0
+   )
 
- #(parameter width_p          = "inv"
-  ,parameter x_cord_width_p   = "inv"
-  ,parameter y_cord_width_p   = "inv"
-  ,parameter len_width_p      = "inv"
-  ,parameter reserved_width_p = 0
-   
-   // By default router only has Proc, West and East directions
-   // Set enable_2d_routing_p=1 to enable North and South directions
-  ,parameter enable_2d_routing_p = 1'b0
-  
-  // When enable_yx_routing_p==0, route WE direction then NS
-  // Otherwise, route NS first then WE
-  ,parameter enable_yx_routing_p = 1'b0
-  
-  // When header_on_lsb_p==1, header flit is {payload, reserved, length, y_cord, x_cord}
-  // header_on_lsb_p==0 no longer supported
-  // Leave this parameter here for backward compatibility
-  ,parameter header_on_lsb_p = 1'b1
-  
-  // Local parameters
-  ,localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(width_p)
-  ,localparam dirs_lp = (enable_2d_routing_p==0)? 3 : 5
-
-  // Stub ports sequence: SNEWP
-  ,parameter stub_in_p  = {dirs_lp{1'b0}}
-  ,parameter stub_out_p = {dirs_lp{1'b0}})
-  
   (input clk_i
   ,input reset_i
-  
-  // Wormhole links
-  ,input  [dirs_lp-1:0][bsg_ready_and_link_sif_width_lp-1:0] link_i
-  ,output [dirs_lp-1:0][bsg_ready_and_link_sif_width_lp-1:0] link_o
-  
-  // Configuration
-  ,input [x_cord_width_p-1:0] my_x_i
-  ,input [y_cord_width_p-1:0] my_y_i);
-  
-  // header_on_lsb_p==0 no longer supported
-  initial 
-  begin
-    assert (header_on_lsb_p != 0)
-    else 
-      begin 
-        $error("header_on_lsb_p==0 no longer supported.");
-        $finish;
+
+  // Traffics
+  ,input  [dirs_lp-1:0][`bsg_ready_and_link_sif_width(flit_width_p)-1:0] link_i
+  ,output [dirs_lp-1:0][`bsg_ready_and_link_sif_width(flit_width_p)-1:0] link_o
+
+  // My coordinate data
+   ,input [cord_markers_pos_p[dims_p]-1:0] my_cord_i
+  );
+
+  localparam input_dirs_lp  = dirs_lp;
+  localparam output_dirs_lp = dirs_lp;
+
+  // FIXME: move to bsg_wormhole_router.vh
+  `declare_bsg_wormhole_router_header_s(cord_markers_pos_p[dims_p], len_width_p, bsg_wormhole_router_header_s);
+
+`ifndef SYNTHESIS
+    wire [dirs_lp-1:0][dirs_lp-1:0] matrix_out_in_transpose;
+
+    bsg_transpose #(.width_p(dirs_lp),.els_p(dirs_lp)) tr (.i(routing_matrix_p[0])
+                                                          ,.o(matrix_out_in_transpose)
+                                                          );
+    always_ff @(negedge reset_i)
+      begin
+        assert (routing_matrix_p[1] == matrix_out_in_transpose)
+          else $error("inconsistent matrixes");
       end
-  end
-  
-  genvar i, j;
-  
-  // Data structures for wormhole header flit
-  `declare_bsg_header_flit_no_reserved_s(width_p, x_cord_width_p, y_cord_width_p, len_width_p, header_flit_s);
-  header_flit_s [dirs_lp-1:0] data_li, data_lo;
-  
-  // Interfacing bsg_noc links 
-  `declare_bsg_ready_and_link_sif_s(width_p,bsg_ready_and_link_sif_s);
-  bsg_ready_and_link_sif_s [dirs_lp-1:0] link_i_cast, link_o_cast;  
-  
-  for (i = 0; i < dirs_lp; i++)
-  begin: link_cast
-    `bsg_ready_and_link_sif_s_cast(link_i[i], link_o[i], link_i_cast[i], link_o_cast[i]);
-    assign data_li[i] = link_i_cast[i].data;
-    assign link_o_cast[i].data = data_lo[i];
-  end
+`endif
 
-  // Input Data fifos
-  logic [dirs_lp-1:0] fifo_valid_lo, fifo_yumi_li;
-  header_flit_s [dirs_lp-1:0] fifo_data_lo;
-  
-  // stubbed ports accept all I/O and send none.
-  logic [dirs_lp-1:0] ready_i_stub;
-  
-  for (i = 0; i < dirs_lp; i++)
-  begin: ready_stub
-    assign ready_i_stub[i] = link_i_cast[i].ready_and_rev | stub_out_p[i];
-  end
-  
-  for (i = 0; i < dirs_lp; i++) 
-  begin: in_fifo
-    if (stub_in_p[i] == 0) 
-      begin: no_stub
-        bsg_two_fifo 
-       #(.width_p(width_p)) 
-        fifo
-        (.clk_i  (clk_i)
-        ,.reset_i(reset_i)
+  // we collect the information for each FIFO here
+  wire [input_dirs_lp-1:0][flit_width_p-1:0] fifo_data_lo;
+  wire [input_dirs_lp-1:0]                     fifo_valid_lo;
 
-        ,.ready_o(link_o_cast  [i].ready_and_rev)
-        ,.data_i (data_li      [i])
-        ,.v_i    (link_i_cast  [i].v)
+  // one for each input channel; it broadcasts that it is finished to all of the outputs
+  wire [dirs_lp-1:0] releases;
 
+  // from each input to each output
+  wire [dirs_lp-1:0][dirs_lp-1:0] reqs,     reqs_transpose;
+
+  // from each output to each input
+  wire [dirs_lp-1:0][dirs_lp-1:0] yumis,    yumis_transpose;
+
+  `declare_bsg_ready_and_link_sif_s(flit_width_p,bsg_ready_and_link_sif_s);
+  bsg_ready_and_link_sif_s [dirs_lp-1:0] link_i_cast, link_o_cast;
+
+  assign link_i_cast = link_i;
+  assign link_o = link_o_cast;
+
+  genvar i,j;
+
+  for (i = 0; i < input_dirs_lp; i=i+1)
+    begin: in_ch
+      localparam output_dirs_sparse_lp = `BSG_COUNTONES_SYNTH(routing_matrix_p[0][i]);
+
+      // live decoding of output dirs from header
+
+      wire [output_dirs_lp-1:0]        decoded_dest_lo;
+      wire [output_dirs_sparse_lp-1:0] decoded_dest_sparse_lo;
+      wire [output_dirs_sparse_lp-1:0] reqs_lo, yumis_li;
+
+      bsg_concentrate_static #(.pattern_els_p(routing_matrix_p[0][i])) conc
+      (.i(yumis_transpose[i])
+       ,.o(yumis_li)
+      );
+
+      wire any_yumi = | yumis_li;
+
+      bsg_two_fifo #(.width_p(flit_width_p)) twofer
+        (.clk_i
+         ,.reset_i
+        ,.ready_o(link_o_cast[i].ready_and_rev)
+        ,.data_i (link_i_cast[i].data)
+        ,.v_i    (link_i_cast[i].v)
         ,.v_o    (fifo_valid_lo[i])
         ,.data_o (fifo_data_lo [i])
-        ,.yumi_i (fifo_yumi_li [i])
-        );        
-      end 
-    else
-      begin: stub
-        assign fifo_valid_lo[i]               = 1'b0;
-        assign fifo_data_lo [i]               = '0;
-        assign link_o_cast  [i].ready_and_rev = 1'b1;
-      end
-  end
-  
-  // input length counter
-  // TODO: replace with bsg generic counter
-  logic [dirs_lp-1:0][len_width_p-1:0] in_count_r;
-  
-  for (i = 0; i < dirs_lp; i++) 
-  begin: in_count
-    always @(posedge clk_i) 
-        if (reset_i)
-            in_count_r[i] <= len_width_p'(0);
-        else
-            if (fifo_yumi_li[i])
-                if (in_count_r[i] == len_width_p'(0))
-                    in_count_r[i] <= fifo_data_lo[i].len;
+        ,.yumi_i (any_yumi)
+         );
+
+      bsg_wormhole_router_header_s hdr;
+
+      assign hdr = fifo_data_lo[i][$bits(bsg_wormhole_router_header_s)-1:0];
+
+`ifndef SYNTHESIS
+      if (debug_lp)
+        begin
+           logic release_r;
+
+           always_ff @(posedge clk_i)
+             release_r <= releases[i];
+
+           always_ff @(negedge clk_i)
+             begin
+                if (releases[i] & ~release_r)
+                  $display("%m in  ch%2d: packet finished last cycle",i);
+
+                if ((reset_i === 1'b0) && link_i_cast[i].v && !link_o_cast[i].ready_and_rev)
+                  $display("%m in  ch%2d: nacking   packet %h",i,link_i_cast[i].data);
                 else
-                    in_count_r[i] <= in_count_r[i] - len_width_p'(1);
-  end
-  
-  // destination registers
-  logic [dirs_lp-1:0][dirs_lp-1:0] dest_r;
-  logic [dirs_lp-1:0][dirs_lp-1:0] dest_n ;
-  
-  for (i = 0; i < dirs_lp; i++) 
-  begin: dest
-    always @(posedge clk_i)
-        dest_r[i] <= dest_n[i];
-  end
-  
-  // new valid signals on input fifo side
-  logic [dirs_lp-1:0][dirs_lp-1:0] new_valid;
-  
-  for (i = 0; i < dirs_lp; i++) 
-  begin: rof1
-    for (j = 0; j < dirs_lp; j++) 
-      begin: rof2
-        assign new_valid[i][j] = fifo_valid_lo[i] & dest_n[i][j];
-      end
-  end
-  
-  // round robin arbiter wires
-  logic [dirs_lp-1:0][dirs_lp-1:0] arb_grants_o;
+                  if ((reset_i === 1'b0) && link_i_cast[i].v && link_o_cast[i].ready_and_rev)
+                    $display("%m in  ch%2d: accepting packet %h",i,link_i_cast[i].data);
+                if ((reset_i === 1'b0) && any_yumi)
+                  begin
+                     assert (fifo_valid_lo[i]) else $error("Error dequeing when data not available");
+                     if (reqs_lo)
+                       $display("%m in  ch%2d: dequeing  header %h (outch=%b,len=%b,dest=%b)",i,fifo_data_lo[i],reqs_lo,hdr.len,hdr.cord);
+                     else
+                       $display ("%m in  ch%2d: dequeing  packet %h",i, fifo_data_lo[i]);
+                  end
 
-  // fifo yumi signals
-  for (i = 0; i < dirs_lp; i++) 
-  begin: rof3
-    assign fifo_yumi_li[i] = | (arb_grants_o[i]);
-  end
+             end // always_ff @
+        end
+`endif
 
-  // output length counter
-  // TODO: replace with bsg generic counter
-  logic [dirs_lp-1:0][len_width_p-1:0] out_count_r;
-  
-  for (i = 0; i < dirs_lp; i++) 
-  begin: out_count
-    always @(posedge clk_i) 
-        if (reset_i)
-            out_count_r[i] <= len_width_p'(0);
-        else
-            if (link_o_cast[i].v & ready_i_stub[i])
-                if (out_count_r[i] == len_width_p'(0))
-                    out_count_r[i] <= data_lo[i].len;
-                else
-                    out_count_r[i] <= out_count_r[i] - len_width_p'(1);
-  end
+      bsg_wormhole_router_decoder_dor #(.dims_p(dims_p)
+                                       ,.reverse_order_p(reverse_order_p)
+                                       ,.cord_markers_pos_p(cord_markers_pos_p)
+                                       ) dor
+      (.target_cord_i(hdr.cord)
+       ,.my_cord_i
+       ,.req_o(decoded_dest_lo)
+      );
 
-  // valid signals on arbiter side
-  logic [dirs_lp-1:0][dirs_lp-1:0] arb_valid ;
-  logic [dirs_lp-1:0][dirs_lp-1:0] arb_grants_r ;
-  
-  for (i = 0; i < dirs_lp; i++) 
-  begin: rof4
-    for (j = 0; j < dirs_lp; j++) 
-      begin: rof5
-        always @(posedge clk_i) 
-            if (out_count_r[j] == len_width_p'(0))
-                arb_grants_r[i][j] <= arb_grants_o[i][j];
-          
-        assign arb_valid[i][j] = 
-            (out_count_r[j] == len_width_p'(0))
-            ? new_valid[i][j] 
-            : new_valid[i][j] & arb_grants_r[i][j];  
+      bsg_concentrate_static #(.pattern_els_p(routing_matrix_p[0][i])) conc_dec
+      (.i(decoded_dest_lo)
+       ,.o(decoded_dest_sparse_lo)
+      );
+
+      // fixme: add assertions for stubbed out parameters
+
+      wire detected_header_lo;
+
+      bsg_wormhole_router_input_control #(.output_dirs_p(output_dirs_sparse_lp), .payload_len_bits_p($bits(hdr.len))) wic
+      (.clk_i
+       ,.reset_i
+       ,.fifo_v_i           (fifo_valid_lo[i])
+       ,.fifo_yumi_i        (any_yumi)
+       ,.fifo_decoded_dest_i(decoded_dest_sparse_lo)
+       ,.fifo_payload_len_i (hdr.len)
+       ,.reqs_o             (reqs_lo)
+       ,.release_o          (releases[i]) // broadcast to all
+       ,.detected_header_o  (detected_header_lo)
+      );
+
+       // switch to dense matrix form
+      bsg_unconcentrate_static #(.pattern_els_p(routing_matrix_p[0][i])) unc
+        (.i  (reqs_lo)
+         ,.o (reqs[i]) // unicast
+       );
+
+`ifndef SYNTHESIS
+      always_ff @(negedge clk_i)
+        if (debug_lp)
+          assert (detected_header_lo!==1'b1 || !(decoded_dest_lo & ~ routing_matrix_p[0][i]))
+            else $error("%m input port %d request to route in direction not supported by router %b %b",i,decoded_dest_lo, routing_matrix_p[0][i]);
+`endif
+
     end
-  end
-  
-  // mux select sequence parameter
-  localparam LEN = 3;
-  localparam COL = 4;
-  localparam SEQ = {LEN'(N), LEN'(E), LEN'(W), LEN'(P)
-                   ,LEN'(S), LEN'(E), LEN'(W), LEN'(P)
-                   ,LEN'(S), LEN'(N), LEN'(W), LEN'(P)
-                   ,LEN'(S), LEN'(N), LEN'(E), LEN'(P)
-                   ,LEN'(S), LEN'(N), LEN'(E), LEN'(W)};
-                                    
-  // concatenated wires in mux_sel sequence
-  logic [dirs_lp-1:0][dirs_lp-1:0] arb_valid_concatenated;
-  logic [dirs_lp-1:0][dirs_lp-1:0] arb_grants_concatenated;
-  logic [dirs_lp-1:0][dirs_lp-1:0] arb_sel_o;
-  logic [dirs_lp-1:0][dirs_lp-1:0][width_p-1:0] fifo_data_concatenated;
-  
-  // W, E, N and S do not support loopback
-  for (i = W; i < dirs_lp; i++) 
-  begin: out_side
-    for (j = 0; j < dirs_lp-1; j++) 
-      begin: rof6
-        localparam ORIG_DIR = SEQ[(i*LEN*COL+j*LEN)+:LEN];
-        
-        assign arb_valid_concatenated[i][j] = arb_valid       [ORIG_DIR][i];
-        assign arb_grants_o   [ORIG_DIR][i] = arb_grants_concatenated[i][j];
-        assign fifo_data_concatenated[i][j] = fifo_data_lo       [ORIG_DIR];
-      end
-    
-    // round robin arbiter
-    bsg_round_robin_arb 
-   #(.inputs_p(dirs_lp-1))
-    rr_arb
-    (.clk_i      (clk_i)
-    ,.reset_i    (reset_i)
-    ,.grants_en_i(ready_i_stub[i])
 
-    ,.reqs_i       (arb_valid_concatenated [i][dirs_lp-2:0])
-    ,.grants_o     (arb_grants_concatenated[i][dirs_lp-2:0])
-    ,.sel_one_hot_o(arb_sel_o              [i][dirs_lp-2:0])
+   // flip signal wires from input-indexed to output-indexed
+   // this is swizzling the wires that connect input ports and output ports
+   bsg_transpose #(.width_p(dirs_lp),.els_p(dirs_lp)) reqs_trans
+   (.i(reqs)
+    ,.o(reqs_transpose)
+   );
 
-    ,.v_o   (link_o_cast[i].v)
-    ,.tag_o ()
-    ,.yumi_i(link_o_cast[i].v & ready_i_stub[i])
-    );
-    
-    // mux for output data
-    bsg_mux_one_hot  
-   #(.width_p(width_p)
-    ,.els_p  (dirs_lp-1))
-    mux
-    (.data_i       (fifo_data_concatenated[i][dirs_lp-2:0])
-    ,.sel_one_hot_i(arb_sel_o             [i][dirs_lp-2:0])
-    ,.data_o       (data_lo               [i])
-    );
-    
-    // Do not support loopback
-    assign arb_grants_o[i][i] = 1'b0;
-  end
-  
-  // Processor side support loopback
-  for (j = 0; j < dirs_lp; j++) 
-  begin: rof7
-    assign arb_valid_concatenated[P][j] = arb_valid              [j][P];
-    assign arb_grants_o          [j][P] = arb_grants_concatenated[P][j];
-    assign fifo_data_concatenated[P][j] = fifo_data_lo           [j];
-  end
-    
-  bsg_round_robin_arb 
- #(.inputs_p(dirs_lp))
-  rr_arb_proc
-  (.clk_i      (clk_i)
-  ,.reset_i    (reset_i)
-  ,.grants_en_i(ready_i_stub[P])
+  // iterate through each output channel
+  for (i = 0; i < output_dirs_lp; i=i+1)
+    begin: out_ch
+      localparam input_dirs_sparse_lp = `BSG_COUNTONES_SYNTH(routing_matrix_p[1][i]);
+      wire [input_dirs_sparse_lp-1:0] reqs_li, release_li, valids_li, yumis_lo, data_sel_lo;
+      wire [input_dirs_sparse_lp-1:0][flit_width_p-1:0] fifo_data_sparse_lo;
 
-  ,.reqs_i       (arb_valid_concatenated [P][dirs_lp-1:0])
-  ,.grants_o     (arb_grants_concatenated[P][dirs_lp-1:0])
-  ,.sel_one_hot_o(arb_sel_o              [P][dirs_lp-1:0])
+      bsg_concentrate_static #(.pattern_els_p(routing_matrix_p[1][i])) conc
+      (.i(reqs_transpose[i]),.o(reqs_li));
 
-  ,.v_o   (link_o_cast[P].v)
-  ,.tag_o ()
-  ,.yumi_i(link_o_cast[P].v & ready_i_stub[P])
-  );
-    
-  bsg_mux_one_hot  
- #(.width_p(width_p)
-  ,.els_p  (dirs_lp))
-  mux_proc
-  (.data_i       (fifo_data_concatenated[P][dirs_lp-1:0])
-  ,.sel_one_hot_i(arb_sel_o             [P][dirs_lp-1:0])
-  ,.data_o       (data_lo               [P])
-  );
-  
-  // destination id selection wires
-  logic [dirs_lp-1:0][x_cord_width_p-1:0] fifo_dest_x;
-  logic [dirs_lp-1:0][y_cord_width_p-1:0] fifo_dest_y;
-  
-  for (i = 0; i < dirs_lp; i++) 
-  begin: rof8
-    assign fifo_dest_x[i] = fifo_data_lo[i].x_cord;
-    assign fifo_dest_y[i] = fifo_data_lo[i].y_cord;
-  end
+      bsg_concentrate_static #(.pattern_els_p(routing_matrix_p[1][i])) conc2
+      (.i(releases),.o(release_li));
 
-  // Destination Selection
-  
-  if (enable_2d_routing_p == 0) 
-  begin: route_1d
-  
-    for (i = 0; i < dirs_lp; i++)
-      begin: dirs
-      
-        always_comb 
-          begin
-            dest_n[i] = dest_r[i];
-            if (in_count_r[i] == len_width_p'(0)) 
+      bsg_concentrate_static #(.pattern_els_p(routing_matrix_p[1][i])) conc3
+      (.i(fifo_valid_lo),.o(valids_li));
+
+      bsg_array_concentrate_static #(.width_p(flit_width_p), .pattern_els_p(routing_matrix_p[1][i])) conc4
+      (.i(fifo_data_lo),.o(fifo_data_sparse_lo));
+
+      bsg_wormhole_router_output_control #(.input_dirs_p(input_dirs_sparse_lp)) woc
+      (.clk_i
+      ,.reset_i
+      ,.reqs_i    (reqs_li   )
+      ,.release_i (release_li)
+      ,.valid_i   (valids_li )
+      ,.yumi_o    (yumis_lo  )
+      ,.ready_i   (link_i_cast[i].ready_and_rev)
+      ,.valid_o   (link_o_cast[i].v)
+      ,.data_sel_o(data_sel_lo)
+      );
+
+`ifndef SYNTHESIS
+       always_ff @(negedge clk_i)
+         begin
+            if (debug_lp)
               begin
-                dest_n[i] = {dirs_lp{1'b0}};
-                if (fifo_dest_x[i] == my_x_i) dest_n[i][P] = 1'b1;
-                if (fifo_dest_x[i] <  my_x_i) dest_n[i][W] = 1'b1;
-                if (fifo_dest_x[i] >  my_x_i) dest_n[i][E] = 1'b1;
-              end
-          end
-          
-      end: dirs
-      
-  end: route_1d
-  else 
-  begin: route_2d
-    if (enable_yx_routing_p == 0) 
-      begin: route_xy
-      
-        for (i = 0; i < dirs_lp; i++) 
-          begin: dirs
-          
-            always_comb 
-              begin
-                dest_n[i] = dest_r[i];
-                if (in_count_r[i] == len_width_p'(0)) 
+                if ((reset_i === 1'b0) && link_o_cast[i].v)
                   begin
-                    dest_n[i] = {dirs_lp{1'b0}};
-                    if (fifo_dest_x[i] == my_x_i) 
-                      begin
-                        if (fifo_dest_y[i] == my_y_i) dest_n[i][P] = 1'b1;
-                        if (fifo_dest_y[i] <  my_y_i) dest_n[i][N] = 1'b1;
-                        if (fifo_dest_y[i] >  my_y_i) dest_n[i][S] = 1'b1;
-                      end
-                    if (fifo_dest_x[i] < my_x_i) dest_n[i][W] = 1'b1;
-                    if (fifo_dest_x[i] > my_x_i) dest_n[i][E] = 1'b1;
+                     // shouldn't really be an error condition; more of indicator that something is not tested enough!
+                     assert (link_i_cast[i].ready_and_rev) else $error("%m Sending when space not available");
+                     $display("%m out ch%2d: sending   packet %h",i,link_o_cast[i].data);
                   end
               end
-              
-          end: dirs
-          
-      end: route_xy 
-    else 
-      begin: route_yx
-      
-        for (i = 0; i < dirs_lp; i++) 
-          begin: dirs
-          
-            always_comb
-              begin
-                dest_n[i] = dest_r[i];
-                if (in_count_r[i] == len_width_p'(0)) 
-                  begin
-                    dest_n[i] = {dirs_lp{1'b0}};
-                    if (fifo_dest_y[i] == my_y_i) 
-                      begin
-                        if (fifo_dest_x[i] == my_x_i) dest_n[i][P] = 1'b1;
-                        if (fifo_dest_x[i] <  my_x_i) dest_n[i][W] = 1'b1;
-                        if (fifo_dest_x[i] >  my_x_i) dest_n[i][E] = 1'b1;
-                      end
-                    if (fifo_dest_y[i] < my_y_i) dest_n[i][N] = 1'b1;
-                    if (fifo_dest_y[i] > my_y_i) dest_n[i][S] = 1'b1;
-                  end
-              end
-              
-          end: dirs
-          
-      end : route_yx
-  end : route_2d
-  
-  // synopsys translate_off
-  initial begin
-    assert(width_p >= x_cord_width_p+y_cord_width_p+len_width_p+reserved_width_p)
-    else $error("width_p must be wider than header width!");
-  end
-  // synopsys translate_on
-  
+         end
+`endif
+
+      bsg_mux_one_hot #(.width_p(flit_width_p)
+                       ,.els_p(input_dirs_sparse_lp)
+                       ) data_mux
+      (.data_i(fifo_data_sparse_lo)
+       ,.sel_one_hot_i(data_sel_lo)
+       ,.data_o(link_o_cast[i].data)
+      );
+
+      bsg_unconcentrate_static #(.pattern_els_p(routing_matrix_p[1][i])) unc1
+      (.i (yumis_lo)
+       ,.o (yumis[i])
+      );
+    end
+
+   // flip signal wires from output-indexed to input-indexed
+   // this is swizzling the wires that connect input ports and output ports
+   bsg_transpose #(.width_p(dirs_lp),.els_p(dirs_lp)) yumis_trans
+   (.i(yumis)
+    ,.o(yumis_transpose)
+   );
+
 endmodule
