@@ -25,9 +25,8 @@ module bsg_wormhole_concentrator
   #(parameter flit_width_p        = "inv"
    ,parameter len_width_p         = "inv"
    ,parameter cid_width_p         = "inv"
+   ,parameter cord_width_p        = "inv"
    ,parameter num_in_p            = 1
-   ,parameter dims_p              = 2
-   ,parameter int cord_markers_pos_p[dims_p:0] = '{ 5, 4, 0 }
    ,parameter debug_lp            = 0
    )
 
@@ -73,8 +72,7 @@ module bsg_wormhole_concentrator
      ,.len_width_p(len_width_p)
      ,.cid_width_p(cid_width_p)
      ,.num_in_p(num_in_p)
-     ,.dims_p(dims_p)
-     ,.cord_markers_pos_p(cord_markers_pos_p)
+     ,.cord_width_p(cord_width_p)
      ,.debug_lp(debug_lp)
      )
    concentrator_in
@@ -93,8 +91,7 @@ module bsg_wormhole_concentrator
      ,.len_width_p(len_width_p)
      ,.cid_width_p(cid_width_p)
      ,.num_in_p(num_in_p)
-     ,.dims_p(dims_p)
-     ,.cord_markers_pos_p(cord_markers_pos_p)
+     ,.cord_width_p(cord_width_p)
      ,.debug_lp(debug_lp)
      )
    concentrator_out
