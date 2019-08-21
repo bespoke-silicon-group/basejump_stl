@@ -139,7 +139,7 @@ module bsg_wormhole_concentrator_tester
   ,.concentrated_link_o(master_concentrated_link_lo)
   );
 
-   bsg_wormhole_router_generalized
+   bsg_wormhole_router
      #(.flit_width_p(flit_width_p)
        ,.dims_p(dims_p)
        ,.cord_markers_pos_p(cord_markers_pos_p)
@@ -169,7 +169,7 @@ module bsg_wormhole_concentrator_tester
         client_router_link_li[P] = client_concentrated_link_lo;
     end
 
-   bsg_wormhole_router_generalized
+   bsg_wormhole_router
      #(.flit_width_p(flit_width_p)
        ,.dims_p(dims_p)
        ,.cord_markers_pos_p(cord_markers_pos_p)
