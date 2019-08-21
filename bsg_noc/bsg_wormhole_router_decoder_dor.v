@@ -8,10 +8,13 @@
 
 module bsg_wormhole_router_decoder_dor
 #(dims_p=2
+  // cord_dims_p is normally the same as dims_p.  However, the override allows users to pass
+  // a larger cord array than necessary, useful for parameterizing between 1d/nd networks
+  ,cord_dims_p=dims_p
   ,reverse_order_p=0 // e.g., 1->Y THEN X, 0->X THEN Y routing
   // pass in the markers that delineates storage of dimension fields
   // so for example {5, 4, 0} means dim0=[4-1:0], dim1=[5-1:4]
-  , parameter int cord_markers_pos_p[dims_p:0] = '{ 5, 4, 0 }
+  , parameter int cord_markers_pos_p[cord_dims_p:0] = '{ 5, 4, 0 }
   , output_dirs_lp=2*dims_p+1
   )
    (input   [cord_markers_pos_p[dims_p]-1:0]    target_cord_i

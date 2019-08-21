@@ -14,7 +14,7 @@ module bsg_wormhole_router
     // a larger cord array than necessary, useful for parameterizing between 1d/nd networks
    ,parameter cord_dims_p = dims_p
    ,parameter int cord_markers_pos_p[cord_dims_p:0] =   '{ 5, 4, 0 }  // '{5,0} //
-   ,parameter bit [1:0][dirs_lp-1:0][dirs_lp-1:0] routing_matrix_p =  StrictXY // StrictX
+   ,parameter bit [1:0][dirs_lp-1:0][dirs_lp-1:0] routing_matrix_p =  (dims_p == 2) ? StrictXY : StrictX
    ,parameter reverse_order_p       = 0
    ,parameter len_width_p           = "inv"
    ,parameter debug_lp              = 0
@@ -135,6 +135,7 @@ module bsg_wormhole_router
 `endif
 
       bsg_wormhole_router_decoder_dor #(.dims_p(dims_p)
+                                       ,.cord_dims_p(cord_dims_p)
                                        ,.reverse_order_p(reverse_order_p)
                                        ,.cord_markers_pos_p(cord_markers_pos_p)
                                        ) dor
