@@ -7,15 +7,15 @@
 //
 
 module bsg_wormhole_router_decoder_dor
-#(dims_p=2
+#(parameter dims_p=2
   // cord_dims_p is normally the same as dims_p.  However, the override allows users to pass
   // a larger cord array than necessary, useful for parameterizing between 1d/nd networks
-  ,cord_dims_p=dims_p
-  ,reverse_order_p=0 // e.g., 1->Y THEN X, 0->X THEN Y routing
+  ,parameter cord_dims_p=dims_p
+  ,parameter reverse_order_p=0 // e.g., 1->Y THEN X, 0->X THEN Y routing
   // pass in the markers that delineates storage of dimension fields
   // so for example {5, 4, 0} means dim0=[4-1:0], dim1=[5-1:4]
   , parameter int cord_markers_pos_p[cord_dims_p:0] = '{ 5, 4, 0 }
-  , output_dirs_lp=2*dims_p+1
+  , parameter output_dirs_lp=2*dims_p+1
   )
    (input   [cord_markers_pos_p[dims_p]-1:0]    target_cord_i
     , input [cord_markers_pos_p[dims_p]-1:0]        my_cord_i
@@ -48,10 +48,13 @@ module bsg_wormhole_router_decoder_dor
         assign req_o[(dims_p-1)*2+1]   = lt[dims_p-1];
         assign req_o[(dims_p-1)*2+1+1] = gt[dims_p-1];
 
-        for (i = (dims_p-1)-1; i >= 0; i--)
-          begin: rof3
-             assign req_o[i*2+1]   = &eq[dims_p-1:i+1] & lt[i];
-             assign req_o[i*2+1+1] = &eq[dims_p-1:i+1] & gt[i];
+        if (dims_p > 1)
+          begin : fi1
+            for (i = (dims_p-1)-1; i >= 0; i--)
+              begin: rof3
+                 assign req_o[i*2+1]   = &eq[dims_p-1:i+1] & lt[i];
+                 assign req_o[i*2+1+1] = &eq[dims_p-1:i+1] & gt[i];
+              end
           end
      end // if (reverse_order_p)
    else
