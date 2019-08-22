@@ -87,6 +87,22 @@
         {
             "constraints": {
                 "clk_port_name": "clk_i", 
+                "clock_period": "4", 
+                "input": "0", 
+                "io_time_format": "period", 
+                "output": "0", 
+                "uncertainty": "0"
+            }, 
+            "description": "", 
+            "design_size": "", 
+            "name": "mul_250MHz_2", 
+            "parameters": [
+                "reg_num_p=1"
+            ]
+        },
+        {
+            "constraints": {
+                "clk_port_name": "clk_i", 
                 "clock_period": "3.33", 
                 "input": "0", 
                 "io_time_format": "period", 
