@@ -202,7 +202,7 @@ module bsg_cache_miss
 
   // backup LRU
   // A slightly crude implementation. read the design doc for the better possibility.
-  logic [lg_ways_p-1:0] backup_lru_way_id;
+  logic [lg_ways_lp-1:0] backup_lru_way_id;
   
   bsg_priority_encode #(
     .width_p(ways_p)
@@ -270,7 +270,7 @@ module bsg_cache_miss
         // least one unlocked way).
         chosen_way_n = invalid_exist
           ? invalid_way_id
-          : (locked_v_i[lru_way_id]
+          : (lock_v_i[lru_way_id]
             ? backup_lru_way_id
             : lru_way_id);
 
@@ -297,7 +297,7 @@ module bsg_cache_miss
 
         for (integer i = 0; i < ways_p; i++) begin
           tag_mem_data_out[i].tag = addr_tag_v;
-          tag_mem_data_out[i].lock = lock_op_v_i;
+          tag_mem_data_out[i].lock = alock_op_v_i;
           tag_mem_data_out[i].valid = 1'b1; 
           tag_mem_w_mask_out[i].tag = {tag_width_lp{chosen_way_decode[i]}};
           tag_mem_w_mask_out[i].lock = chosen_way_decode[i];
@@ -367,7 +367,7 @@ module bsg_cache_miss
           tag_mem_w_mask_out[i].tag = {tag_width_lp{1'b0}};
         end
 
-        miss_stat_n = RECOVER;
+        miss_state_n = RECOVER;
       end
 
       // Send out the block addr for eviction, before initiating the eviction.
