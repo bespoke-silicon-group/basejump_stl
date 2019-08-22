@@ -26,6 +26,8 @@ package bsg_cache_pkg;
     ,AFL = 5'b11000       // address flush
     ,AFLINV = 5'b11001    // address flush invalidate
     ,AINV = 5'b11010      // address invalidate
+    ,ALOCK = 5'b11011     // address lock
+    ,AUNLOCK = 5'b11100   // address unlock
   } bsg_cache_opcode_e;
 
   // bsg_cache_pkt_s
@@ -68,10 +70,11 @@ package bsg_cache_pkg;
   `define declare_bsg_cache_tag_info_s(tag_width_mp) \
     typedef struct packed {                   \
       logic valid;                            \
+      logic lock;                           \
       logic [tag_width_mp-1:0] tag;           \
     } bsg_cache_tag_info_s
 
-  `define bsg_cache_tag_info_width(tag_width_mp) (tag_width_mp+1)
+  `define bsg_cache_tag_info_width(tag_width_mp) (tag_width_mp+2)
 
   // stat info s
   //

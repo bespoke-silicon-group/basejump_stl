@@ -83,6 +83,8 @@ module bsg_cache
   logic afl_op;
   logic aflinv_op;
   logic ainv_op;
+  logic alock_op;
+  logic aunlock_op;
   logic tag_read_op;
   logic [lg_ways_lp-1:0] addr_way;
   logic [lg_sets_lp-1:0] addr_index;
@@ -110,6 +112,8 @@ module bsg_cache
     ,.afl_op_o(afl_op)
     ,.aflinv_op_o(aflinv_op)
     ,.ainv_op_o(ainv_op)
+    ,.alock_op_o(alock_op)
+    ,.aunlock_op_o(aunlock_op)
     ,.tag_read_op_o(tag_read_op)
   );
 
@@ -139,6 +143,8 @@ module bsg_cache
   logic afl_op_tl_r;
   logic aflinv_op_tl_r;
   logic ainv_op_tl_r;
+  logic alock_op_tl_r;
+  logic aunlock_op_tl_r;
   logic tag_read_op_tl_r;
   logic [addr_width_p-1:0] addr_tl_r;
   logic [data_width_p-1:0] data_tl_r;
@@ -161,6 +167,8 @@ module bsg_cache
       ,afl_op_tl_r
       ,aflinv_op_tl_r
       ,ainv_op_tl_r
+      ,alock_op_tl_r
+      ,aunlock_op_tl_r
       ,tag_read_op_tl_r
       ,addr_tl_r
       ,data_tl_r} <= '0;
@@ -184,6 +192,8 @@ module bsg_cache
           afl_op_tl_r <= afl_op;
           aflinv_op_tl_r <= aflinv_op;
           ainv_op_tl_r <= ainv_op;
+          alock_op_tl_r <= alock_op;
+          aunlock_op_tl_r <= aunlock_op;
           tag_read_op_tl_r <= tag_read_op;
           addr_tl_r <= cache_pkt.addr;
           data_tl_r <= cache_pkt.data;
@@ -230,10 +240,12 @@ module bsg_cache
 
   logic [ways_p-1:0] valid_tl;
   logic [ways_p-1:0][tag_width_lp-1:0] tag_tl;
+  logic [ways_p-1:0] lock_tl;
 
   for (genvar i = 0; i < ways_p; i++) begin
     assign valid_tl[i] = tag_mem_data_lo[i].valid;
     assign tag_tl[i] = tag_mem_data_lo[i].tag;
+    assign lock_tl[i] = tag_mem_data_lo[i].lock;
   end
  
 
@@ -280,9 +292,12 @@ module bsg_cache
   logic afl_op_v_r;
   logic aflinv_op_v_r;
   logic ainv_op_v_r;
+  logic alock_op_v_r;
+  logic aunlock_op_v_r;
   logic [addr_width_p-1:0] addr_v_r;
   logic [data_width_p-1:0] data_v_r;
   logic [ways_p-1:0] valid_v_r;
+  logic [ways_p-1:0] lock_v_r;
   logic [ways_p-1:0][tag_width_lp-1:0] tag_v_r;
   logic [ways_p-1:0][data_width_p-1:0] ld_data_v_r;
   logic retval_op_v;
@@ -305,9 +320,12 @@ module bsg_cache
       ,afl_op_v_r
       ,aflinv_op_v_r
       ,ainv_op_v_r
+      ,alock_op_v_r
+      ,aunlock_op_v_r
       ,addr_v_r
       ,data_v_r
       ,valid_v_r
+      ,lock_v_r
       ,tag_v_r} <= '0;
     end
     else begin
@@ -329,10 +347,13 @@ module bsg_cache
           afl_op_v_r <= afl_op_tl_r;
           aflinv_op_v_r <= aflinv_op_tl_r;
           ainv_op_v_r <= ainv_op_tl_r;
+          alock_op_v_r <= alock_op_tl_r;
+          aunlock_op_v_r <= aunlock_op_tl_r;
           addr_v_r <= addr_tl_r;
           data_v_r <= data_tl_r;
           valid_v_r <= valid_tl;
           tag_v_r <= tag_tl;
+          lock_v_r <= lock_tl;
           ld_data_v_r <= data_mem_data_lo;
         end
       end
@@ -373,15 +394,21 @@ module bsg_cache
   logic ld_st_miss;
   logic tagfl_hit;
   logic aflinv_hit;
+  logic alock_miss;  // either the line is miss, or the line is unlocked.
+  logic aunlock_hit; // the line is hit and locked.
 
   assign ld_st_miss = ~tag_hit_found & (ld_op_v_r | st_op_v_r);
   assign tagfl_hit = tagfl_op_v_r & valid_v_r[addr_way_v];
   assign aflinv_hit = (afl_op_v_r | aflinv_op_v_r | ainv_op_v_r) & tag_hit_found;
+  assign alock_miss = alock_op_v_r & (tag_hit_found ? ~lock_v_r[tag_hit_way_id] : 1'b1);
+  assign aunlock_hit = aunlock_op_v_r & (tag_hit_found ? lock_v_r[tag_hit_way_id] : 1'b0);
 
+  // miss_v signal activates the miss handling unit.
   // MBT: the ~tagst_op_v_r is necessary at the top of this expression
   //      to avoid X-pessimism post synthesis due to X's coming out of the tags
   logic miss_v;
-  assign miss_v = (~tagst_op_v_r) & v_v_r & (ld_st_miss | tagfl_hit | aflinv_hit);
+  assign miss_v = (~tagst_op_v_r) & v_v_r
+    & (ld_st_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit);
   
   // ops that return some value other than '0.
   assign retval_op_v = ld_op_v_r | taglv_op_v_r | tagla_op_v_r; 
@@ -453,11 +480,15 @@ module bsg_cache
     ,.afl_op_v_i(afl_op_v_r)
     ,.aflinv_op_v_i(aflinv_op_v_r)
     ,.ainv_op_v_i(ainv_op_v_r)
+    ,.alock_op_v_i(alock_op_v_r)
+    ,.aunlock_op_v_i(aunlock_op_v_r)
     ,.addr_v_i(addr_v_r)
 
     ,.tag_v_i(tag_v_r)
     ,.valid_v_i(valid_v_r)
+    ,.lock_v_i(lock_v_r)
     ,.tag_hit_way_id_i(tag_hit_way_id)
+    ,.tag_hit_found_i(tag_hit_found)
 
     ,.sbuf_empty_i(sbuf_empty_li)
  
@@ -676,7 +707,7 @@ module bsg_cache
     always_comb begin
       if (retval_op_v) begin
         if (taglv_op_v_r) begin
-          data_o = (32)'(valid_v_r[addr_way_v]);
+          data_o = {30'b0, lock_v_r[addr_way_v], valid_v_r[addr_way_v]};
         end
         else if (tagla_op_v_r) begin
           data_o = {tag_v_r[addr_way_v], addr_index_v,
@@ -733,10 +764,12 @@ module bsg_cache
   // values written by tagst command
  
   logic tagst_valid;
+  logic tagst_lock;
   logic [tag_width_lp-1:0] tagst_tag;
   logic tagst_write_en;
 
   assign tagst_valid = cache_pkt.data[data_width_p-1];
+  assign tagst_lock = cache_pkt.data[data_width_p-2];
   assign tagst_tag = cache_pkt.data[0+:tag_width_lp];
   assign tagst_write_en = tagst_op & ready_o & v_i;
 
@@ -769,7 +802,7 @@ module bsg_cache
       // for TAGST
       tag_mem_addr_li = addr_index;
       for (integer i = 0; i < ways_p; i++) begin
-        tag_mem_data_li[i] = {tagst_valid, tagst_tag};
+        tag_mem_data_li[i] = {tagst_valid, tagst_lock, tagst_tag};
         tag_mem_w_mask_li[i] = {tag_info_width_lp{addr_way_decode[i]}};
       end
     end
@@ -868,12 +901,15 @@ module bsg_cache
   end
 
   // check that there is no multiple hit.
-  //
+  // check that there is at least one unlocked way in a set.
   always_ff @ (negedge clk_i) begin
     if (~reset_i) begin
       if (v_v_r) begin
         assert($countones(tag_hit_v) <= 1)
-          else $error("[BSG_ERROR][BSG_CACHE] multiple cache hit detected. %m, T=%t", $time);
+          else $error("[BSG_ERROR][BSG_CACHE] Multiple cache hit detected. %m, T=%t", $time);
+
+        assert($countones(lock_v_r) < ways_p)
+          else $error("[BSG_ERROR][BSG_CACHE] There should be at least one unlocked way in a set. %m, T=%t", $time);
       end
     end
   end
@@ -902,7 +938,6 @@ module bsg_cache
         );
       end
     end
-
   end
 
   // synopsys translate_on

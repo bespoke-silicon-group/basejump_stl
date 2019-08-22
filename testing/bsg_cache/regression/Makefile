@@ -2,11 +2,17 @@
 # Makefile
 #
 include ../../../../bsg_cadenv/cadenv.mk
-TRACE_FILE = trace_master_0.tr
+
+WAYS_P ?= 2
+
+TRACE_FILE = trace_way$(WAYS_P).tr
 TRACE_ROM = bsg_trace_master_rom
+TRACE_ROM_V = bsg_trace_master_rom_way$(WAYS_P).v
 
 INCDIR = +incdir+$(BSG_IP_CORES_DIR)/bsg_misc/
 INCDIR += +incdir+$(BSG_IP_CORES_DIR)/bsg_cache/
+
+DEFINE += +define+WAYS_P=$(WAYS_P)
 
 HIGHLIGHT = grep --color -E '^|Error|Warning|Implicit wire is used|Too few instance port connections|Port connection width mismatch|Width mismatch'
 
@@ -15,13 +21,14 @@ HIGHLIGHT = grep --color -E '^|Error|Warning|Implicit wire is used|Too few insta
 
 all: sim
 
-$(TRACE_ROM).v: $(TRACE_FILE)
+$(TRACE_ROM_V): $(TRACE_FILE)
 	python $(BSG_IP_CORES_DIR)/bsg_mem/bsg_ascii_to_rom.py $(TRACE_FILE) $(TRACE_ROM) \
-	> $(TRACE_ROM).v
+	> $(TRACE_ROM_V)
 
-sim: $(TRACE_ROM).v
-	vcs +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -sverilog -full64 -f sv.include $(INCDIR)\
-		-timescale=1ps/1ps +vcs+vcdpluson $(VCS_DEFINES) -l vcs.log\
+sim: $(TRACE_ROM_V)
+	vcs +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
+		-sverilog -full64 -f sv.include $(INCDIR) $(TRACE_ROM_V)\
+		-timescale=1ps/1ps +vcs+vcdpluson $(DEFINE) -l vcs.log\
 		| $(HIGHLIGHT)
 
 dve:
@@ -30,7 +37,7 @@ dve:
 clean:
 	rm -rf DVEfiles
 	rm -rf csrc
-	rm -f $(TRACE_ROM).v
+	rm -f $(TRACE_ROM)*.v
 	rm -rf simv.daidir simv.vdb
 	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz vcs.log
 	rm -rf stack.info.*

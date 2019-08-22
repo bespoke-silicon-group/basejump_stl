@@ -34,10 +34,14 @@ module bsg_cache_miss
     ,input afl_op_v_i
     ,input aflinv_op_v_i
     ,input ainv_op_v_i
+    ,input alock_op_v_i
+    ,input aunlock_op_v_i
     ,input [addr_width_p-1:0] addr_v_i
     ,input [ways_p-1:0][tag_width_lp-1:0] tag_v_i
     ,input [ways_p-1:0] valid_v_i
+    ,input [ways_p-1:0] lock_v_i
     ,input [lg_ways_lp-1:0] tag_hit_way_id_i
+    ,input tag_hit_found_i
 
     // from store buffer
     ,input sbuf_empty_i
@@ -99,7 +103,7 @@ module bsg_cache_miss
     .width_p(ways_p)
     ,.lo_to_hi_p(1)
   ) invalid_way_pe (
-    .i(~valid_v_i)
+    .i(~valid_v_i & ~lock_v_i) // invalid and unlocked
     ,.addr_o(invalid_way_id)
     ,.v_o(invalid_exist)
   );
@@ -117,9 +121,10 @@ module bsg_cache_miss
 
   // miss handler FSM
   //
-  typedef enum logic [2:0] {
+  typedef enum logic [3:0] {
     START
     ,FLUSH_OP
+    ,LOCK_OP
     ,SEND_EVICT_ADDR
     ,SEND_FILL_ADDR
     ,SEND_EVICT_DATA
@@ -134,8 +139,13 @@ module bsg_cache_miss
   logic [lg_ways_lp-1:0] chosen_way_n;
 
 
-  logic flush_op;
-  assign flush_op = tagfl_op_v_i | ainv_op_v_i | afl_op_v_i | aflinv_op_v_i;
+  // for flush/inv ops, go to FLUSH_OP.
+  // for AUNLOCK, or ALOCK with tag hit, to go LOCK_OP.
+  logic goto_flush_op;
+  logic goto_lock_op;
+
+  assign goto_flush_op = tagfl_op_v_i | ainv_op_v_i | afl_op_v_i | aflinv_op_v_i;
+  assign goto_lock_op = aunlock_op_v_i | (alock_op_v_i & tag_hit_found_i);
 
   logic [tag_width_lp-1:0] addr_tag_v;
   logic [lg_sets_lp-1:0] addr_index_v;
@@ -152,6 +162,7 @@ module bsg_cache_miss
     = addr_v_i[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
 
   assign stat_mem_addr_o = addr_index_v;
+  assign tag_mem_addr_o = addr_index_v;
 
   assign chosen_way_o = chosen_way_n;
 
@@ -168,6 +179,19 @@ module bsg_cache_miss
     .way_id_i(chosen_way_n)
     ,.data_o(chosen_way_lru_data)
     ,.mask_o(chosen_way_lru_mask)
+  );
+
+  // backup LRU
+  // A slightly crude implementation. read the design doc for the better possibility.
+  logic [lg_ways_lp-1:0] backup_lru_way_id;
+  
+  bsg_priority_encode #(
+    .width_p(ways_p)
+    ,.lo_to_hi_p(1)
+  ) backup_lru_pe (
+    .i(~lock_v_i)
+    ,.addr_o(backup_lru_way_id)
+    ,.v_o() // backup LRU has to exist, otherwise we are screwed.
   );
 
   // chosen way demux
@@ -189,7 +213,6 @@ module bsg_cache_miss
 
     tag_mem_v_o = 1'b0;
     tag_mem_w_o = 1'b0;
-    tag_mem_addr_o = '0;
     tag_mem_data_out = '0;
     tag_mem_w_mask_out = '0;
 
@@ -208,7 +231,11 @@ module bsg_cache_miss
       START: begin
         stat_mem_v_o = miss_v_i;
         miss_state_n = miss_v_i
-          ? (flush_op ? FLUSH_OP : SEND_FILL_ADDR)
+          ? (goto_flush_op
+            ? FLUSH_OP 
+            : (goto_lock_op
+              ? LOCK_OP
+              : SEND_FILL_ADDR))
           : START;
       end
 
@@ -218,11 +245,15 @@ module bsg_cache_miss
       SEND_FILL_ADDR: begin
 
         // Replacement Policy:
-        // if invalid way exists, pick that.
-        // if not, pick the LRU way.
+        // if an invalid and unlocked way exists, pick that.
+        // if not, pick the LRU way. But if the LRU way is locked, then pick
+        // the backup LRU (anything that's unlocked, assuming that we have at
+        // least one unlocked way).
         chosen_way_n = invalid_exist
           ? invalid_way_id
-          : lru_way_id;
+          : (lock_v_i[lru_way_id]
+            ? backup_lru_way_id
+            : lru_way_id);
 
         dma_cmd_o = e_dma_send_fill_addr;
         dma_addr_o = {
@@ -247,12 +278,13 @@ module bsg_cache_miss
         // set the tag and the valid bit to 1'b1 for the chosen way.
         tag_mem_v_o = dma_done_i;
         tag_mem_w_o = dma_done_i;
-        tag_mem_addr_o = addr_index_v;
 
         for (integer i = 0; i < ways_p; i++) begin
           tag_mem_data_out[i].tag = addr_tag_v;
+          tag_mem_data_out[i].lock = alock_op_v_i;
           tag_mem_data_out[i].valid = 1'b1; 
           tag_mem_w_mask_out[i].tag = {tag_width_lp{chosen_way_decode[i]}};
+          tag_mem_w_mask_out[i].lock = chosen_way_decode[i];
           tag_mem_w_mask_out[i].valid = chosen_way_decode[i];
         end
 
@@ -286,12 +318,13 @@ module bsg_cache_miss
         // Otherwise, do not touch the valid bits.
         tag_mem_v_o = 1'b1;
         tag_mem_w_o = 1'b1;
-        tag_mem_addr_o = addr_index_v;
 
         for (integer i = 0; i < ways_p; i++) begin
           tag_mem_data_out[i].valid = 1'b0;
+          tag_mem_data_out[i].lock = 1'b0;
           tag_mem_data_out[i].tag = {tag_width_lp{1'b0}};
           tag_mem_w_mask_out[i].valid = (ainv_op_v_i | aflinv_op_v_i) & chosen_way_decode[i];
+          tag_mem_w_mask_out[i].lock = (ainv_op_v_i | aflinv_op_v_i) & chosen_way_decode[i];
           tag_mem_w_mask_out[i].tag =  {tag_width_lp{1'b0}};
         end
 
@@ -300,6 +333,25 @@ module bsg_cache_miss
         miss_state_n = (~ainv_op_v_i & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
           ? SEND_EVICT_ADDR
           : RECOVER;
+      end
+
+      // handling AUNLOCK, and ALOCK with line not missing.
+      LOCK_OP: begin
+        chosen_way_n = tag_hit_way_id_i;
+
+        tag_mem_v_o = 1'b1;
+        tag_mem_w_o = 1'b1;
+
+        for (integer i = 0; i < ways_p; i++) begin
+          tag_mem_data_out[i].valid = 1'b0;
+          tag_mem_data_out[i].lock = alock_op_v_i;
+          tag_mem_data_out[i].tag = {tag_width_lp{1'b0}};
+          tag_mem_w_mask_out[i].valid = 1'b0;
+          tag_mem_w_mask_out[i].lock = chosen_way_decode[i];
+          tag_mem_w_mask_out[i].tag = {tag_width_lp{1'b0}};
+        end
+
+        miss_state_n = RECOVER;
       end
 
       // Send out the block addr for eviction, before initiating the eviction.
@@ -364,6 +416,11 @@ module bsg_cache_miss
       DONE: begin
         done_o = 1'b1;
         miss_state_n = ack_i ? START : DONE;
+      end
+
+      // this should never happen, but if it does, go back to START;
+      default: begin
+        miss_state_n = START;
       end
 
     endcase

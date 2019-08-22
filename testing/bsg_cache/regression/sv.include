@@ -43,6 +43,5 @@ $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_miss.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_sbuf.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_sbuf_queue.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache.v
-bsg_trace_master_rom.v
 ../common/bsg_nonsynth_dma_model.v
 testbench.v

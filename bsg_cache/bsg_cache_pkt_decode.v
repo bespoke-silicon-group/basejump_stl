@@ -28,6 +28,8 @@ module bsg_cache_pkt_decode
     , output logic aflinv_op_o
     , output logic ainv_op_o
     , output logic tag_read_op_o
+    , output logic alock_op_o
+    , output logic aunlock_op_o
   );
 
 
@@ -58,9 +60,12 @@ module bsg_cache_pkt_decode
   assign afl_op_o = (cache_pkt.opcode == AFL);
   assign aflinv_op_o = (cache_pkt.opcode == AFLINV);
   assign ainv_op_o = (cache_pkt.opcode == AINV);
+  assign alock_op_o = (cache_pkt.opcode == ALOCK);
+  assign aunlock_op_o = (cache_pkt.opcode == AUNLOCK);
 
   assign tag_read_op_o = ld_op_o | st_op_o
     | tagfl_op_o | taglv_op_o | tagla_op_o
-    | afl_op_o | aflinv_op_o | ainv_op_o;
+    | afl_op_o | aflinv_op_o | ainv_op_o
+    | alock_op_o | aunlock_op_o;
 
 endmodule

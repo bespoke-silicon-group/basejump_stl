@@ -15,6 +15,7 @@ module testbench();
   parameter data_width_p = 32;
   parameter block_size_in_words_p = 8;
   parameter sets_p = 512;
+  parameter ways_p = `WAYS_P;
 
   // clock and reset
   //
@@ -66,7 +67,7 @@ module testbench();
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.sets_p(sets_p)
-    ,.ways_p(2)
+    ,.ways_p(ways_p)
   ) DUT (
     .clk_i(clk)
     ,.reset_i(reset)
@@ -179,7 +180,7 @@ module testbench();
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
-    ,.els_p(2**16)
+    ,.els_p(2**18)
   ) dma (
     .clk_i(clk)
     ,.reset_i(reset)
