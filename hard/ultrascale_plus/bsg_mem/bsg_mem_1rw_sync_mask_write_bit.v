@@ -17,6 +17,8 @@
 module bsg_mem_1rw_sync_mask_write_bit #(
   parameter width_p = "inv"
   , parameter els_p = "inv"
+  , parameter latch_last_read_p=0
+  , parameter enable_clock_gating_p=0
   , localparam addr_width_lp = `BSG_SAFE_CLOG2(els_p)
 ) (
   input                      clk_i
