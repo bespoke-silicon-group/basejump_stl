@@ -41,6 +41,7 @@ module bsg_cache_miss
     ,input [ways_p-1:0] valid_v_i
     ,input [ways_p-1:0] lock_v_i
     ,input [lg_ways_lp-1:0] tag_hit_way_id_i
+    ,input tag_hit_found_i
 
     // from store buffer
     ,input sbuf_empty_i
@@ -160,11 +161,13 @@ module bsg_cache_miss
   );
 
 
-  logic go_flush_op;
-  logic go_lock_op;
+  // for flush/inv ops, go to FLUSH_OP.
+  // for AUNLOCK, or ALOCK with tag hit, to go LOCK_OP.
+  logic goto_flush_op;
+  logic goto_lock_op;
 
-  assign go_flush_op = tagfl_op_v_i | ainv_op_v_i | afl_op_v_i | aflinv_op_v_i;
-  assign go_lock_op = aunlock_op_v_i | (alock_op_v_i & valid_v_i[tag_hit_way_id_i]);
+  assign goto_flush_op = tagfl_op_v_i | ainv_op_v_i | afl_op_v_i | aflinv_op_v_i;
+  assign goto_lock_op = aunlock_op_v_i | (alock_op_v_i & tag_hit_found_i);
 
   logic [tag_width_lp-1:0] addr_tag_v;
   logic [lg_sets_lp-1:0] addr_index_v;
@@ -250,9 +253,9 @@ module bsg_cache_miss
       START: begin
         stat_mem_v_o = miss_v_i;
         miss_state_n = miss_v_i
-          ? (go_flush_op
+          ? (goto_flush_op
             ? FLUSH_OP 
-            : (go_lock_op
+            : (goto_lock_op
               ? LOCK_OP
               : SEND_FILL_ADDR))
           : START;

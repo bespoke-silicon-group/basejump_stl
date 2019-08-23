@@ -484,6 +484,7 @@ module bsg_cache
     ,.valid_v_i(valid_v_r)
     ,.lock_v_i(lock_v_r)
     ,.tag_hit_way_id_i(tag_hit_way_id)
+    ,.tag_hit_found_i(tag_hit_found)
 
     ,.sbuf_empty_i(sbuf_empty_li)
  
@@ -896,12 +897,15 @@ module bsg_cache
   end
 
   // check that there is no multiple hit.
-  //
+  // check that there is at least one unlocked way in a set.
   always_ff @ (negedge clk_i) begin
     if (~reset_i) begin
       if (v_v_r) begin
         assert($countones(tag_hit_v) <= 1)
           else $error("[BSG_ERROR][BSG_CACHE] multiple cache hit detected. %m, T=%t", $time);
+
+        assert($countones(lock_v_r) < ways_p)
+          else $error("[BSG_ERROR][BSG_CACHE] every way is locked. %m, T=%t", $time);
       end
     end
   end

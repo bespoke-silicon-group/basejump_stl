@@ -65,6 +65,7 @@ module bsg_cache_pkt_decode
 
   assign tag_read_op_o = ld_op_o | st_op_o
     | tagfl_op_o | taglv_op_o | tagla_op_o
-    | afl_op_o | aflinv_op_o | ainv_op_o;
+    | afl_op_o | aflinv_op_o | ainv_op_o
+    | alock_op_o | aunlock_op_o;
 
 endmodule
