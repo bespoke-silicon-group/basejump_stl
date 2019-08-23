@@ -101,7 +101,7 @@ module bsg_fpu_add_sub
   // [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is
   // shared. To prevent sharing consider applying a KEEP on the output of the
   // operator [<path>/bsg_fpu_add_sub.v:104]. (Xilinx Vivado 2018.2)
-  /* keep = "true" */ logic [e_p-1:0] diff_ab, diff_ba;
+  (* keep = "true" *) logic [e_p-1:0] diff_ab, diff_ba;
 
   assign diff_ab = exp_a - exp_b;
   assign diff_ba = exp_b - exp_a;
