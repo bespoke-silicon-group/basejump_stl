@@ -343,7 +343,7 @@ module bsg_cache_miss
           tag_mem_data_out[i].lock = 1'b0;
           tag_mem_data_out[i].tag = {tag_width_lp{1'b0}};
           tag_mem_w_mask_out[i].valid = (ainv_op_v_i | aflinv_op_v_i) & chosen_way_decode[i];
-          tag_mem_w_mask_out[i].lock = 1'b0;
+          tag_mem_w_mask_out[i].lock = (ainv_op_v_i | aflinv_op_v_i) & chosen_way_decode[i];
           tag_mem_w_mask_out[i].tag =  {tag_width_lp{1'b0}};
         end
 
