@@ -48,6 +48,10 @@ module bsg_cache
     ,output logic dma_data_v_o
     ,input dma_data_yumi_i
 
+    // this signal tells the outside world that the instruction is moving from
+    // TL to TV stage. It can be used for some metadata outside the cache that
+    // needs to move together with the corresponding instruction. The usage of
+    // this signal is totally optional.
     ,output logic v_we_o
   );
 
