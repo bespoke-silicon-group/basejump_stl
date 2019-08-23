@@ -9,6 +9,8 @@
 // since side A and side B are symmetric, functionality will not be affected.
 //
 
+`include "bsg_noc_links.vh"
+
 module bsg_noc_repeater_node
 
 #(parameter width_p = -1
