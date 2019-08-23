@@ -33,7 +33,7 @@ module bsg_nonsynth_dma_model
     ,output logic dma_data_yumi_o
   );
 
-  logic [31:0] mem [els_p-1:0];
+  logic [data_width_p-1:0] mem [els_p-1:0];
   
   
   `declare_bsg_cache_dma_pkt_s(addr_width_p);

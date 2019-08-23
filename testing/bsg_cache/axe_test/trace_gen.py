@@ -10,6 +10,20 @@ class TraceGen:
     packet = "0001_"
     packet += "10000_"                      # tagst
     packet += format(addr, "032b") + "_"    # addr
+    packet += format(data, "032b")             # data
+    print(packet)
+
+  def alock(self, addr):
+    packet = "0001_"
+    packet += "11011_"                      # alock
+    packet += format(addr, "032b") + "_"    # addr
+    packet += format(0, "032b")             # data
+    print(packet)
+
+  def aunlock(self, addr):
+    packet = "0001_"
+    packet += "11100_"                      # aunlock
+    packet += format(addr, "032b") + "_"    # addr
     packet += format(0, "032b")             # data
     print(packet)
 
@@ -61,12 +75,17 @@ if __name__ == "__main__":
   for i in range(sets_p*ways_p):
     tg.tagst(addr=(i<<4), data=0)
 
+  # uncomment for lock test
+  # tg.alock(addr=0)
+  # tg.tagst(addr=(1<<4)+(1<<6), data=(1<<30)) # invalid and locked
+  #########################
+
   store_data = 1
   for i in range(num_instr_p):
     load_not_store = random.randint(0,1)
-    tag = random.randint(0,15) << 6
     word_offset = random.randint(0,3)<< 2
     index = random.randint(0,3) << 4
+    tag = random.randint(0,15) << 6
     addr = tag + index + word_offset
     if (load_not_store):
       tg.load_word(addr=addr)

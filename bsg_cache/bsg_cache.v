@@ -902,10 +902,10 @@ module bsg_cache
     if (~reset_i) begin
       if (v_v_r) begin
         assert($countones(tag_hit_v) <= 1)
-          else $error("[BSG_ERROR][BSG_CACHE] multiple cache hit detected. %m, T=%t", $time);
+          else $error("[BSG_ERROR][BSG_CACHE] Multiple cache hit detected. %m, T=%t", $time);
 
         assert($countones(lock_v_r) < ways_p)
-          else $error("[BSG_ERROR][BSG_CACHE] every way is locked. %m, T=%t", $time);
+          else $error("[BSG_ERROR][BSG_CACHE] There should be at least one unlocked way in a set. %m, T=%t", $time);
       end
     end
   end
@@ -934,7 +934,6 @@ module bsg_cache
         );
       end
     end
-
   end
 
   // synopsys translate_on
