@@ -78,6 +78,9 @@ module bsg_cache_miss
   `declare_bsg_cache_tag_info_s(tag_width_lp);
   `declare_bsg_cache_stat_info_s(ways_p);
 
+  bsg_cache_stat_info_s stat_info_in;
+  assign stat_info_in = stat_info_i;
+
   bsg_cache_tag_info_s [ways_p-1:0] tag_mem_data_out, tag_mem_w_mask_out;
   bsg_cache_stat_info_s stat_mem_data_out, stat_mem_w_mask_out;
   
@@ -108,7 +111,7 @@ module bsg_cache_miss
   bsg_lru_pseudo_tree_encode #(
     .ways_p(ways_p)
   ) lru_encode (
-    .lru_i(stat_info_r.lru_bits)
+    .lru_i(stat_info_in.lru_bits)
     ,.way_id_o(lru_way_id)
   );
 
@@ -129,31 +132,6 @@ module bsg_cache_miss
   miss_state_e miss_state_n;
   logic [lg_ways_lp-1:0] chosen_way_r;
   logic [lg_ways_lp-1:0] chosen_way_n;
-
-  // buffer the stat_info
-  // this is for extra safety. we want to make sure that once the stat_mem is
-  // read, the output does not change.
-  logic stat_mem_read_r;
-  bsg_cache_stat_info_s stat_info_r;
-  
-
-  bsg_dff_reset #(
-    .width_p(1)
-  ) stat_en_dff (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.data_i(stat_mem_v_o & ~stat_mem_w_o)
-    ,.data_o(stat_mem_read_r)
-  );
-
-  bsg_dff_en_bypass #(
-    .width_p(stat_info_width_lp)
-  ) stat_info_buffer (
-    .clk_i(clk_i)
-    ,.en_i(stat_mem_read_r)
-    ,.data_i(stat_info_i)
-    ,.data_o(stat_info_r)
-  );
 
 
   logic flush_op;
@@ -277,7 +255,7 @@ module bsg_cache_miss
 
         // if the chosen way is dirty and valid, then evict.
         miss_state_n = dma_done_i
-          ? ((stat_info_r.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
+          ? ((stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
             ? SEND_EVICT_ADDR
             : GET_FILL_DATA)
           : SEND_FILL_ADDR;
@@ -316,7 +294,7 @@ module bsg_cache_miss
 
         // If it's not AINV, and the chosen set is dirty and valid, evict the
         // block.
-        miss_state_n = (~ainv_op_v_i & stat_info_r.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
+        miss_state_n = (~ainv_op_v_i & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
           ? SEND_EVICT_ADDR
           : RECOVER;
       end
