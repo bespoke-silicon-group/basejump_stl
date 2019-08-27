@@ -234,10 +234,13 @@ module bsg_cache_miss
         // For store miss, set the dirty bit for the chosen way.
         // For load miss, clear the dirty bit for the chosen way.
         // Set the lru_bits, so that the chosen way is not the LRU.
+        // We are choosing a way to bring in a new block, which is technically
+        // the MRU. lru decode unit generates the next state LRU bits, so that
+        // the input way is "not" the LRU way.
         stat_mem_v_o = dma_done_i;
         stat_mem_w_o = dma_done_i;
         stat_mem_data_out.dirty = {ways_p{st_op_v_i}};
-        stat_mem_data_out.lru_bits = ~chosen_way_lru_data; // invert so that it's not LRU.
+        stat_mem_data_out.lru_bits = chosen_way_lru_data;
         stat_mem_w_mask_out.dirty = chosen_way_decode;
         stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
 
