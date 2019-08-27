@@ -19,15 +19,6 @@
  *  - num_depth_bank_p : Number of banks for the memory's depth. els_p has to
  *    be a multiple of this number.
  *
- *  - depth_bank_start_idx_p : this specifies the starting index of addr_i
- *    that is used for selecting the depth bank. The rest of the bits in addr_i
- *    are used for indexing into smaller SRAM banks.
- *
- *    To use LSB bits, set this to 0.
- *    To use MSB bits, set this to $clog2(els_p) - $clog2(num_depth_bank_p).
- *
- *    This parameter has no meaning if num_depth_bank_p is 1.
- *
  */
 
 
@@ -41,7 +32,6 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
     // bank parameters
     , parameter num_width_bank_p=1
     , parameter num_depth_bank_p=1
-    , parameter depth_bank_start_idx_p=0
 
     , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
     , parameter bank_depth_lp=(els_p/num_depth_bank_p)
@@ -91,26 +81,9 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
     logic [bank_addr_width_lp-1:0] bank_addr_li;
     logic [num_depth_bank_p-1:0][data_width_p-1:0] bank_data_lo;
    
-    assign depth_bank_idx_li = addr_i[depth_bank_start_idx_p+:depth_bank_idx_width_lp];
+    assign depth_bank_idx_li = addr_i[0+:depth_bank_idx_width_lp];
+    assign bank_addr_li = addr_i[depth_bank_idx_width_lp+:bank_addr_width_lp];
     
-    if (depth_bank_start_idx_p == 0) begin // LSB
-
-      assign bank_addr_li = addr_i[depth_bank_idx_width_lp+:bank_addr_width_lp];
-
-    end
-    else if (depth_bank_start_idx_p == (addr_width_lp-depth_bank_idx_width_lp)) begin // MSB
-
-      assign bank_addr_li = addr_i[0+:bank_addr_width_lp];
-
-    end
-    else begin // in the middle
-
-      assign bank_addr_li =
-        {addr_i[addr_width_lp-1:depth_bank_start_idx_p+depth_bank_idx_width_lp],
-         addr_i[depth_bank_start_idx_p-1:0]};
-
-    end
-
     bsg_decode_with_v #(
       .num_out_p(num_depth_bank_p)
     ) demux_v (
@@ -176,11 +149,6 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
 
     assert(data_width_p % num_width_bank_p == 0)
       else $error("[BSG_ERROR] num_width_bank_p does not divide even with width_p. %m");
-
-    // this assertion will not even fire,
-    // because the compilation will fail before simulation begins.
-    assert((depth_bank_start_idx_p>=0) & ((depth_bank_start_idx_p+depth_bank_idx_width_lp)<=addr_width_lp))
-      else $error("[BSG_ERROR] depth_bank_start_idx_p out of range. %m");
 
   end
   
