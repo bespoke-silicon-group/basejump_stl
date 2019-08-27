@@ -1,6 +1,33 @@
 /**
  *  bsg_mem_1rw_sync_mask_write_byte_banked.v
  *
+ *  This module has the same interface/functionality as
+ *  bsg_mem_1rw_sync_mask_write_byte.
+ *
+ *  This module can be used for breaking a big SRAM block into
+ *  smaller blocks. This might be useful, if the SRAM generator does not
+ *  support sizes of SRAM that are too wide or too deep.
+ *  It is also useful for power and delay perspective, since only one depth
+ *  bank is activated while reading or writing.
+ *
+ *
+ *  - width_p : width of the total memory
+ *  - els_p : depth of the total memory
+ *
+ *  - num_width_bank_p : Number of banks for the memory's width. width_p has
+ *    to be a multiple of this number.
+ *  - num_depth_bank_p : Number of banks for the memory's depth. els_p has to
+ *    be a multiple of this number.
+ *
+ *  - depth_bank_start_idx_p : this specifies the starting index of addr_i
+ *    that is used for selecting the depth bank. The rest of the bits in addr_i
+ *    are used for indexing into smaller SRAM banks.
+ *
+ *    To use LSB bits, set this to 0.
+ *    To use MSB bits, set this to $clog2(els_p) - $clog2(num_depth_bank_p).
+ *
+ *    This parameter has no meaning if num_depth_bank_p is 1.
+ *
  */
 
 
@@ -12,17 +39,14 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
     , parameter write_mask_width_lp=(data_width_p>>3)
 
     // bank parameters
-    , parameter num_width_bank_p=1    // number of width banks
-    , parameter num_depth_bank_p=1    // number of depth banks
+    , parameter num_width_bank_p=1
+    , parameter num_depth_bank_p=1
+    , parameter depth_bank_start_idx_p=0
 
     , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
-
     , parameter bank_depth_lp=(els_p/num_depth_bank_p)
     , parameter bank_addr_width_lp=`BSG_SAFE_CLOG2(bank_depth_lp)
-  
     , parameter depth_bank_idx_width_lp=`BSG_SAFE_CLOG2(num_depth_bank_p)
-    , parameter depth_bank_start_idx_p=0 // pick which portion of addr_i to select depth_bank. By default, LSB.
-
     , parameter bank_width_lp=(data_width_p/num_width_bank_p)
     , parameter bank_mask_width_lp=(bank_width_lp>>3)
   )
@@ -62,12 +86,12 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
   end
   else begin: dbn
 
-    logic [depth_bank_idx_width_lp-1:0] depth_bank_idx;
+    logic [depth_bank_idx_width_lp-1:0] depth_bank_idx_li;
     logic [num_depth_bank_p-1:0] bank_v_li;
     logic [bank_addr_width_lp-1:0] bank_addr_li;
     logic [num_depth_bank_p-1:0][data_width_p-1:0] bank_data_lo;
    
-    assign depth_bank_idx = addr_i[depth_bank_start_idx_p+:depth_bank_idx_width_lp];
+    assign depth_bank_idx_li = addr_i[depth_bank_start_idx_p+:depth_bank_idx_width_lp];
     
     if (depth_bank_start_idx_p == 0) begin // LSB
 
@@ -90,7 +114,7 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
     bsg_decode_with_v #(
       .num_out_p(num_depth_bank_p)
     ) demux_v (
-      .i(depth_bank_idx)
+      .i(depth_bank_idx_li)
       ,.v_i(v_i)
       ,.o(bank_v_li)
     );
@@ -118,13 +142,12 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
 
     logic [depth_bank_idx_width_lp-1:0] depth_bank_idx_r;
 
-    bsg_dff_reset_en #(
+    bsg_dff_en #(
       .width_p(depth_bank_idx_width_lp)
     ) depth_bank_idx_dff (
       .clk_i(clk_i)
-      ,.reset_i(reset_i)
       ,.en_i(v_i & ~w_i)
-      ,.data_i(depth_bank_idx)
+      ,.data_i(depth_bank_idx_li)
       ,.data_o(depth_bank_idx_r)
     );
 
