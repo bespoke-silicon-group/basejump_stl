@@ -1,0 +1,41 @@
+{
+    "design_name": "bsg_counter_up_down", 
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v", 
+        "basejump_stl/bsg_misc/bsg_counter_up_down.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": [
+                {"type":"clock", "name":"core_clk", "port":"clk_i", "period":"1.0", "uncertainty":"0"},
+                {"type":"input", "clock":"core_clk", "port":"all", "delay":"0"},
+            	{"type":"output", "clock":"core_clk", "port":"all", "delay":"0"}
+            ], 
+            "description": "This is an up-down counter with initial and max values with size small at clock period=1", 
+            "design_size": "small", 
+            "name": "bsg_counter_up_down_small_clkperiod_1", 
+            "parameters": [
+                "max_step_p=1", 
+                "init_val_p=0", 
+                "max_val_p=10"
+            ]
+        }, 
+        {
+            "constraints": [
+                {"type":"clock", "name":"core_clk", "port":"clk_i", "period":"3.0", "uncertainty":"0.5"},
+                {"type":"input", "clock":"core_clk", "port":"reset_i", "delay":"0.1"},
+                {"type":"input", "clock":"core_clk", "port":"up_i", "delay":"0.1"},
+                {"type":"input", "clock":"core_clk", "port":"down_i", "delay":"0.1"},
+            	{"type":"output", "clock":"core_clk", "port":"count_o", "delay":"0"}
+            ], 
+            "description": "This is an up-down counter with initial and max values with size small at clock period=3", 
+            "design_size": "small", 
+            "name": "bsg_counter_up_down_small_clkperiod_3", 
+            "parameters": [
+                "max_step_p=1", 
+                "init_val_p=0", 
+                "max_val_p=10"
+            ]
+        }
+    ]
+}
