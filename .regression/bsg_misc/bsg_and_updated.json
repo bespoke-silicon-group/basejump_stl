@@ -14,22 +14,22 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "1",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
-                    "delay": "0"
+                    "delay": "50"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
-                    "delay": "0"
+                    "delay": "50"
                 }
             ]
         },
@@ -43,22 +43,22 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "3",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
-                    "delay": "0"
+                    "delay": "20"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
-                    "delay": "0"
+                    "delay": "40"
                 }
             ]
         },
@@ -72,20 +72,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "5",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -101,20 +101,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "7",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -130,20 +130,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "9",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -159,20 +159,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "11",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -188,20 +188,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "1",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -217,20 +217,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "3",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -246,20 +246,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "5",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -275,20 +275,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "7",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -304,20 +304,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "9",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -333,20 +333,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "11",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -362,20 +362,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "1",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -391,20 +391,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "3",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -420,20 +420,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "5",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -449,20 +449,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "7",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -478,20 +478,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "9",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -507,20 +507,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "11",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -536,20 +536,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "1",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -565,20 +565,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "3",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -594,20 +594,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "5",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -623,20 +623,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "7",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -652,20 +652,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "9",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
@@ -681,20 +681,20 @@
             "constraints": [
                 {
                     "type": "clock",
-                    "name": "clk",
+                    "name": "vclk",
                     "port": "virtual",
                     "period": "11",
                     "uncertainty": "0"
                 },
                 {
                     "type": "input",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 },
                 {
                     "type": "output",
-                    "clock": "clk",
+                    "clock": "vclk",
                     "port": "all",
                     "delay": "0"
                 }
