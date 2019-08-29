@@ -1,348 +1,660 @@
 {
-    "design_name": "bsg_8b10b_shift_decoder", 
+    "design_name": "bsg_8b10b_shift_decoder",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v", 
-        "basejump_stl/bsg_dataflow/bsg_8b10b_shift_decoder.v", 
-        "basejump_stl/bsg_misc/bsg_counter_overflow_en.v", 
-        "basejump_stl/bsg_dataflow/bsg_8b10b_decode_comb.v", 
+        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_dataflow/bsg_8b10b_shift_decoder.v",
+        "basejump_stl/bsg_misc/bsg_counter_overflow_en.v",
+        "basejump_stl/bsg_dataflow/bsg_8b10b_decode_comb.v",
         "basejump_stl/bsg_misc/bsg_dff.v"
-    ], 
+    ],
     "run_config": [
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "1", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size small at clock period=1", 
-            "design_size": "small", 
-            "name": "bsg_8b10b_shift_decoder_small_clkperiod_1", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_small_clkperiod_1",
+            "description": "a 8b10b shift decoder with size small at clock period=1",
+            "design_size": "small",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "3", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size small at clock period=3", 
-            "design_size": "small", 
-            "name": "bsg_8b10b_shift_decoder_small_clkperiod_3", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_small_clkperiod_3",
+            "description": "a 8b10b shift decoder with size small at clock period=3",
+            "design_size": "small",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "5", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size small at clock period=5", 
-            "design_size": "small", 
-            "name": "bsg_8b10b_shift_decoder_small_clkperiod_5", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_small_clkperiod_5",
+            "description": "a 8b10b shift decoder with size small at clock period=5",
+            "design_size": "small",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "7", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size small at clock period=7", 
-            "design_size": "small", 
-            "name": "bsg_8b10b_shift_decoder_small_clkperiod_7", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_small_clkperiod_7",
+            "description": "a 8b10b shift decoder with size small at clock period=7",
+            "design_size": "small",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "9", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size small at clock period=9", 
-            "design_size": "small", 
-            "name": "bsg_8b10b_shift_decoder_small_clkperiod_9", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_small_clkperiod_9",
+            "description": "a 8b10b shift decoder with size small at clock period=9",
+            "design_size": "small",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "11", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size small at clock period=11", 
-            "design_size": "small", 
-            "name": "bsg_8b10b_shift_decoder_small_clkperiod_11", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_small_clkperiod_11",
+            "description": "a 8b10b shift decoder with size small at clock period=11",
+            "design_size": "small",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "1", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size large at clock period=1", 
-            "design_size": "large", 
-            "name": "bsg_8b10b_shift_decoder_large_clkperiod_1", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_large_clkperiod_1",
+            "description": "a 8b10b shift decoder with size large at clock period=1",
+            "design_size": "large",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "3", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size large at clock period=3", 
-            "design_size": "large", 
-            "name": "bsg_8b10b_shift_decoder_large_clkperiod_3", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_large_clkperiod_3",
+            "description": "a 8b10b shift decoder with size large at clock period=3",
+            "design_size": "large",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "5", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size large at clock period=5", 
-            "design_size": "large", 
-            "name": "bsg_8b10b_shift_decoder_large_clkperiod_5", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_large_clkperiod_5",
+            "description": "a 8b10b shift decoder with size large at clock period=5",
+            "design_size": "large",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "7", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size large at clock period=7", 
-            "design_size": "large", 
-            "name": "bsg_8b10b_shift_decoder_large_clkperiod_7", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_large_clkperiod_7",
+            "description": "a 8b10b shift decoder with size large at clock period=7",
+            "design_size": "large",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "9", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size large at clock period=9", 
-            "design_size": "large", 
-            "name": "bsg_8b10b_shift_decoder_large_clkperiod_9", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_large_clkperiod_9",
+            "description": "a 8b10b shift decoder with size large at clock period=9",
+            "design_size": "large",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "11", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size large at clock period=11", 
-            "design_size": "large", 
-            "name": "bsg_8b10b_shift_decoder_large_clkperiod_11", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_large_clkperiod_11",
+            "description": "a 8b10b shift decoder with size large at clock period=11",
+            "design_size": "large",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "1", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size very_large at clock period=1", 
-            "design_size": "very_large", 
-            "name": "bsg_8b10b_shift_decoder_very_large_clkperiod_1", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_very_large_clkperiod_1",
+            "description": "a 8b10b shift decoder with size very_large at clock period=1",
+            "design_size": "very_large",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "3", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size very_large at clock period=3", 
-            "design_size": "very_large", 
-            "name": "bsg_8b10b_shift_decoder_very_large_clkperiod_3", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_very_large_clkperiod_3",
+            "description": "a 8b10b shift decoder with size very_large at clock period=3",
+            "design_size": "very_large",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "5", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size very_large at clock period=5", 
-            "design_size": "very_large", 
-            "name": "bsg_8b10b_shift_decoder_very_large_clkperiod_5", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_very_large_clkperiod_5",
+            "description": "a 8b10b shift decoder with size very_large at clock period=5",
+            "design_size": "very_large",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "7", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size very_large at clock period=7", 
-            "design_size": "very_large", 
-            "name": "bsg_8b10b_shift_decoder_very_large_clkperiod_7", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_very_large_clkperiod_7",
+            "description": "a 8b10b shift decoder with size very_large at clock period=7",
+            "design_size": "very_large",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "9", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size very_large at clock period=9", 
-            "design_size": "very_large", 
-            "name": "bsg_8b10b_shift_decoder_very_large_clkperiod_9", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_very_large_clkperiod_9",
+            "description": "a 8b10b shift decoder with size very_large at clock period=9",
+            "design_size": "very_large",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "11", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size very_large at clock period=11", 
-            "design_size": "very_large", 
-            "name": "bsg_8b10b_shift_decoder_very_large_clkperiod_11", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_very_large_clkperiod_11",
+            "description": "a 8b10b shift decoder with size very_large at clock period=11",
+            "design_size": "very_large",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "1", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size medium at clock period=1", 
-            "design_size": "medium", 
-            "name": "bsg_8b10b_shift_decoder_medium_clkperiod_1", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_medium_clkperiod_1",
+            "description": "a 8b10b shift decoder with size medium at clock period=1",
+            "design_size": "medium",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "3", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size medium at clock period=3", 
-            "design_size": "medium", 
-            "name": "bsg_8b10b_shift_decoder_medium_clkperiod_3", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_medium_clkperiod_3",
+            "description": "a 8b10b shift decoder with size medium at clock period=3",
+            "design_size": "medium",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "5", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size medium at clock period=5", 
-            "design_size": "medium", 
-            "name": "bsg_8b10b_shift_decoder_medium_clkperiod_5", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_medium_clkperiod_5",
+            "description": "a 8b10b shift decoder with size medium at clock period=5",
+            "design_size": "medium",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "7", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size medium at clock period=7", 
-            "design_size": "medium", 
-            "name": "bsg_8b10b_shift_decoder_medium_clkperiod_7", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_medium_clkperiod_7",
+            "description": "a 8b10b shift decoder with size medium at clock period=7",
+            "design_size": "medium",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "9", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size medium at clock period=9", 
-            "design_size": "medium", 
-            "name": "bsg_8b10b_shift_decoder_medium_clkperiod_9", 
-            "parameters": []
-        }, 
+            "name": "bsg_8b10b_shift_decoder_medium_clkperiod_9",
+            "description": "a 8b10b shift decoder with size medium at clock period=9",
+            "design_size": "medium",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "11", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "a 8b10b shift decoder with size medium at clock period=11", 
-            "design_size": "medium", 
-            "name": "bsg_8b10b_shift_decoder_medium_clkperiod_11", 
-            "parameters": []
+            "name": "bsg_8b10b_shift_decoder_medium_clkperiod_11",
+            "description": "a 8b10b shift decoder with size medium at clock period=11",
+            "design_size": "medium",
+            "parameters": [],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
         }
     ]
 }
