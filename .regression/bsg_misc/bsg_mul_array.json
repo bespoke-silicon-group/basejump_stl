@@ -1,418 +1,730 @@
 {
-    "design_name": "bsg_mul_array", 
+    "design_name": "bsg_mul_array",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_mul_array.v", 
-        "basejump_stl/bsg_misc/bsg_mul_array_row.v", 
-        "basejump_stl/bsg_misc/bsg_and.v", 
+        "basejump_stl/bsg_misc/bsg_mul_array.v",
+        "basejump_stl/bsg_misc/bsg_mul_array_row.v",
+        "basejump_stl/bsg_misc/bsg_and.v",
         "basejump_stl/bsg_misc/bsg_adder_ripple_carry.v"
-    ], 
+    ],
     "run_config": [
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "10", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size small at clock period=10", 
-            "design_size": "small", 
-            "name": "bsg_mul_array_small_clkperiod_10", 
+            "name": "bsg_mul_array_small_clkperiod_10",
+            "description": "A pipelined unsigned array multiplier with size small at clock period=10",
+            "design_size": "small",
             "parameters": [
-                "width_p=16", 
+                "width_p=16",
                 "pipeline_p=34952"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "10",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "12", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size small at clock period=12", 
-            "design_size": "small", 
-            "name": "bsg_mul_array_small_clkperiod_12", 
+            "name": "bsg_mul_array_small_clkperiod_12",
+            "description": "A pipelined unsigned array multiplier with size small at clock period=12",
+            "design_size": "small",
             "parameters": [
-                "width_p=16", 
+                "width_p=16",
                 "pipeline_p=34952"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "12",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "14", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size small at clock period=14", 
-            "design_size": "small", 
-            "name": "bsg_mul_array_small_clkperiod_14", 
+            "name": "bsg_mul_array_small_clkperiod_14",
+            "description": "A pipelined unsigned array multiplier with size small at clock period=14",
+            "design_size": "small",
             "parameters": [
-                "width_p=16", 
+                "width_p=16",
                 "pipeline_p=34952"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "14",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "16", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size small at clock period=16", 
-            "design_size": "small", 
-            "name": "bsg_mul_array_small_clkperiod_16", 
+            "name": "bsg_mul_array_small_clkperiod_16",
+            "description": "A pipelined unsigned array multiplier with size small at clock period=16",
+            "design_size": "small",
             "parameters": [
-                "width_p=16", 
+                "width_p=16",
                 "pipeline_p=34952"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "16",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "18", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size small at clock period=18", 
-            "design_size": "small", 
-            "name": "bsg_mul_array_small_clkperiod_18", 
+            "name": "bsg_mul_array_small_clkperiod_18",
+            "description": "A pipelined unsigned array multiplier with size small at clock period=18",
+            "design_size": "small",
             "parameters": [
-                "width_p=16", 
+                "width_p=16",
                 "pipeline_p=34952"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "18",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "20", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size small at clock period=20", 
-            "design_size": "small", 
-            "name": "bsg_mul_array_small_clkperiod_20", 
+            "name": "bsg_mul_array_small_clkperiod_20",
+            "description": "A pipelined unsigned array multiplier with size small at clock period=20",
+            "design_size": "small",
             "parameters": [
-                "width_p=16", 
+                "width_p=16",
                 "pipeline_p=34952"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "20",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "10", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size large at clock period=10", 
-            "design_size": "large", 
-            "name": "bsg_mul_array_large_clkperiod_10", 
+            "name": "bsg_mul_array_large_clkperiod_10",
+            "description": "A pipelined unsigned array multiplier with size large at clock period=10",
+            "design_size": "large",
             "parameters": [
-                "width_p=64", 
+                "width_p=64",
                 "pipeline_p=9223512776490647552"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "10",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "12", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size large at clock period=12", 
-            "design_size": "large", 
-            "name": "bsg_mul_array_large_clkperiod_12", 
+            "name": "bsg_mul_array_large_clkperiod_12",
+            "description": "A pipelined unsigned array multiplier with size large at clock period=12",
+            "design_size": "large",
             "parameters": [
-                "width_p=64", 
+                "width_p=64",
                 "pipeline_p=9223512776490647552"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "12",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "14", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size large at clock period=14", 
-            "design_size": "large", 
-            "name": "bsg_mul_array_large_clkperiod_14", 
+            "name": "bsg_mul_array_large_clkperiod_14",
+            "description": "A pipelined unsigned array multiplier with size large at clock period=14",
+            "design_size": "large",
             "parameters": [
-                "width_p=64", 
+                "width_p=64",
                 "pipeline_p=9223512776490647552"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "14",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "16", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size large at clock period=16", 
-            "design_size": "large", 
-            "name": "bsg_mul_array_large_clkperiod_16", 
+            "name": "bsg_mul_array_large_clkperiod_16",
+            "description": "A pipelined unsigned array multiplier with size large at clock period=16",
+            "design_size": "large",
             "parameters": [
-                "width_p=64", 
+                "width_p=64",
                 "pipeline_p=9223512776490647552"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "16",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "18", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size large at clock period=18", 
-            "design_size": "large", 
-            "name": "bsg_mul_array_large_clkperiod_18", 
+            "name": "bsg_mul_array_large_clkperiod_18",
+            "description": "A pipelined unsigned array multiplier with size large at clock period=18",
+            "design_size": "large",
             "parameters": [
-                "width_p=64", 
+                "width_p=64",
                 "pipeline_p=9223512776490647552"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "18",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "20", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size large at clock period=20", 
-            "design_size": "large", 
-            "name": "bsg_mul_array_large_clkperiod_20", 
+            "name": "bsg_mul_array_large_clkperiod_20",
+            "description": "A pipelined unsigned array multiplier with size large at clock period=20",
+            "design_size": "large",
             "parameters": [
-                "width_p=64", 
+                "width_p=64",
                 "pipeline_p=9223512776490647552"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "20",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "10", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size very_large at clock period=10", 
-            "design_size": "very_large", 
-            "name": "bsg_mul_array_very_large_clkperiod_10", 
+            "name": "bsg_mul_array_very_large_clkperiod_10",
+            "description": "A pipelined unsigned array multiplier with size very_large at clock period=10",
+            "design_size": "very_large",
             "parameters": [
-                "width_p=128", 
+                "width_p=128",
                 "pipeline_p=170143779648513184874767057851898691584"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "10",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "12", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size very_large at clock period=12", 
-            "design_size": "very_large", 
-            "name": "bsg_mul_array_very_large_clkperiod_12", 
+            "name": "bsg_mul_array_very_large_clkperiod_12",
+            "description": "A pipelined unsigned array multiplier with size very_large at clock period=12",
+            "design_size": "very_large",
             "parameters": [
-                "width_p=128", 
+                "width_p=128",
                 "pipeline_p=170143779648513184874767057851898691584"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "12",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "14", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size very_large at clock period=14", 
-            "design_size": "very_large", 
-            "name": "bsg_mul_array_very_large_clkperiod_14", 
+            "name": "bsg_mul_array_very_large_clkperiod_14",
+            "description": "A pipelined unsigned array multiplier with size very_large at clock period=14",
+            "design_size": "very_large",
             "parameters": [
-                "width_p=128", 
+                "width_p=128",
                 "pipeline_p=170143779648513184874767057851898691584"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "14",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "16", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size very_large at clock period=16", 
-            "design_size": "very_large", 
-            "name": "bsg_mul_array_very_large_clkperiod_16", 
+            "name": "bsg_mul_array_very_large_clkperiod_16",
+            "description": "A pipelined unsigned array multiplier with size very_large at clock period=16",
+            "design_size": "very_large",
             "parameters": [
-                "width_p=128", 
+                "width_p=128",
                 "pipeline_p=170143779648513184874767057851898691584"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "16",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "18", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size very_large at clock period=18", 
-            "design_size": "very_large", 
-            "name": "bsg_mul_array_very_large_clkperiod_18", 
+            "name": "bsg_mul_array_very_large_clkperiod_18",
+            "description": "A pipelined unsigned array multiplier with size very_large at clock period=18",
+            "design_size": "very_large",
             "parameters": [
-                "width_p=128", 
+                "width_p=128",
                 "pipeline_p=170143779648513184874767057851898691584"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "18",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "20", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size very_large at clock period=20", 
-            "design_size": "very_large", 
-            "name": "bsg_mul_array_very_large_clkperiod_20", 
+            "name": "bsg_mul_array_very_large_clkperiod_20",
+            "description": "A pipelined unsigned array multiplier with size very_large at clock period=20",
+            "design_size": "very_large",
             "parameters": [
-                "width_p=128", 
+                "width_p=128",
                 "pipeline_p=170143779648513184874767057851898691584"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "20",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "10", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size medium at clock period=10", 
-            "design_size": "medium", 
-            "name": "bsg_mul_array_medium_clkperiod_10", 
+            "name": "bsg_mul_array_medium_clkperiod_10",
+            "description": "A pipelined unsigned array multiplier with size medium at clock period=10",
+            "design_size": "medium",
             "parameters": [
-                "width_p=32", 
+                "width_p=32",
                 "pipeline_p=2155905152"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "10",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "12", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size medium at clock period=12", 
-            "design_size": "medium", 
-            "name": "bsg_mul_array_medium_clkperiod_12", 
+            "name": "bsg_mul_array_medium_clkperiod_12",
+            "description": "A pipelined unsigned array multiplier with size medium at clock period=12",
+            "design_size": "medium",
             "parameters": [
-                "width_p=32", 
+                "width_p=32",
                 "pipeline_p=2155905152"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "12",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "14", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size medium at clock period=14", 
-            "design_size": "medium", 
-            "name": "bsg_mul_array_medium_clkperiod_14", 
+            "name": "bsg_mul_array_medium_clkperiod_14",
+            "description": "A pipelined unsigned array multiplier with size medium at clock period=14",
+            "design_size": "medium",
             "parameters": [
-                "width_p=32", 
+                "width_p=32",
                 "pipeline_p=2155905152"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "14",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "16", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size medium at clock period=16", 
-            "design_size": "medium", 
-            "name": "bsg_mul_array_medium_clkperiod_16", 
+            "name": "bsg_mul_array_medium_clkperiod_16",
+            "description": "A pipelined unsigned array multiplier with size medium at clock period=16",
+            "design_size": "medium",
             "parameters": [
-                "width_p=32", 
+                "width_p=32",
                 "pipeline_p=2155905152"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "16",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "18", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size medium at clock period=18", 
-            "design_size": "medium", 
-            "name": "bsg_mul_array_medium_clkperiod_18", 
+            "name": "bsg_mul_array_medium_clkperiod_18",
+            "description": "A pipelined unsigned array multiplier with size medium at clock period=18",
+            "design_size": "medium",
             "parameters": [
-                "width_p=32", 
+                "width_p=32",
                 "pipeline_p=2155905152"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "18",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "clk_i", 
-                "clock_period": "20", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "A pipelined unsigned array multiplier with size medium at clock period=20", 
-            "design_size": "medium", 
-            "name": "bsg_mul_array_medium_clkperiod_20", 
+            "name": "bsg_mul_array_medium_clkperiod_20",
+            "description": "A pipelined unsigned array multiplier with size medium at clock period=20",
+            "design_size": "medium",
             "parameters": [
-                "width_p=32", 
+                "width_p=32",
                 "pipeline_p=2155905152"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "20",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
         }
     ]

@@ -1,393 +1,705 @@
 {
-    "design_name": "bsg_thermometer_count", 
+    "design_name": "bsg_thermometer_count",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v", 
-        "basejump_stl/bsg_misc/bsg_thermometer_count.v", 
+        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_misc/bsg_thermometer_count.v",
         "basejump_stl/bsg_misc/bsg_encode_one_hot.v"
-    ], 
+    ],
     "run_config": [
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "1", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size small at clock period=1", 
-            "design_size": "small", 
-            "name": "bsg_thermometer_count_small_clkperiod_1", 
+            "name": "bsg_thermometer_count_small_clkperiod_1",
+            "description": "this module counts the number of set bits in a thermometer code with size small at clock period=1",
+            "design_size": "small",
             "parameters": [
                 "width_p=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "3", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size small at clock period=3", 
-            "design_size": "small", 
-            "name": "bsg_thermometer_count_small_clkperiod_3", 
+            "name": "bsg_thermometer_count_small_clkperiod_3",
+            "description": "this module counts the number of set bits in a thermometer code with size small at clock period=3",
+            "design_size": "small",
             "parameters": [
                 "width_p=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "5", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size small at clock period=5", 
-            "design_size": "small", 
-            "name": "bsg_thermometer_count_small_clkperiod_5", 
+            "name": "bsg_thermometer_count_small_clkperiod_5",
+            "description": "this module counts the number of set bits in a thermometer code with size small at clock period=5",
+            "design_size": "small",
             "parameters": [
                 "width_p=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "7", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size small at clock period=7", 
-            "design_size": "small", 
-            "name": "bsg_thermometer_count_small_clkperiod_7", 
+            "name": "bsg_thermometer_count_small_clkperiod_7",
+            "description": "this module counts the number of set bits in a thermometer code with size small at clock period=7",
+            "design_size": "small",
             "parameters": [
                 "width_p=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "9", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size small at clock period=9", 
-            "design_size": "small", 
-            "name": "bsg_thermometer_count_small_clkperiod_9", 
+            "name": "bsg_thermometer_count_small_clkperiod_9",
+            "description": "this module counts the number of set bits in a thermometer code with size small at clock period=9",
+            "design_size": "small",
             "parameters": [
                 "width_p=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "11", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size small at clock period=11", 
-            "design_size": "small", 
-            "name": "bsg_thermometer_count_small_clkperiod_11", 
+            "name": "bsg_thermometer_count_small_clkperiod_11",
+            "description": "this module counts the number of set bits in a thermometer code with size small at clock period=11",
+            "design_size": "small",
             "parameters": [
                 "width_p=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "1", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size large at clock period=1", 
-            "design_size": "large", 
-            "name": "bsg_thermometer_count_large_clkperiod_1", 
+            "name": "bsg_thermometer_count_large_clkperiod_1",
+            "description": "this module counts the number of set bits in a thermometer code with size large at clock period=1",
+            "design_size": "large",
             "parameters": [
                 "width_p=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "3", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size large at clock period=3", 
-            "design_size": "large", 
-            "name": "bsg_thermometer_count_large_clkperiod_3", 
+            "name": "bsg_thermometer_count_large_clkperiod_3",
+            "description": "this module counts the number of set bits in a thermometer code with size large at clock period=3",
+            "design_size": "large",
             "parameters": [
                 "width_p=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "5", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size large at clock period=5", 
-            "design_size": "large", 
-            "name": "bsg_thermometer_count_large_clkperiod_5", 
+            "name": "bsg_thermometer_count_large_clkperiod_5",
+            "description": "this module counts the number of set bits in a thermometer code with size large at clock period=5",
+            "design_size": "large",
             "parameters": [
                 "width_p=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "7", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size large at clock period=7", 
-            "design_size": "large", 
-            "name": "bsg_thermometer_count_large_clkperiod_7", 
+            "name": "bsg_thermometer_count_large_clkperiod_7",
+            "description": "this module counts the number of set bits in a thermometer code with size large at clock period=7",
+            "design_size": "large",
             "parameters": [
                 "width_p=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "9", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size large at clock period=9", 
-            "design_size": "large", 
-            "name": "bsg_thermometer_count_large_clkperiod_9", 
+            "name": "bsg_thermometer_count_large_clkperiod_9",
+            "description": "this module counts the number of set bits in a thermometer code with size large at clock period=9",
+            "design_size": "large",
             "parameters": [
                 "width_p=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "11", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size large at clock period=11", 
-            "design_size": "large", 
-            "name": "bsg_thermometer_count_large_clkperiod_11", 
+            "name": "bsg_thermometer_count_large_clkperiod_11",
+            "description": "this module counts the number of set bits in a thermometer code with size large at clock period=11",
+            "design_size": "large",
             "parameters": [
                 "width_p=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "1", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size very_large at clock period=1", 
-            "design_size": "very_large", 
-            "name": "bsg_thermometer_count_very_large_clkperiod_1", 
+            "name": "bsg_thermometer_count_very_large_clkperiod_1",
+            "description": "this module counts the number of set bits in a thermometer code with size very_large at clock period=1",
+            "design_size": "very_large",
             "parameters": [
                 "width_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "3", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size very_large at clock period=3", 
-            "design_size": "very_large", 
-            "name": "bsg_thermometer_count_very_large_clkperiod_3", 
+            "name": "bsg_thermometer_count_very_large_clkperiod_3",
+            "description": "this module counts the number of set bits in a thermometer code with size very_large at clock period=3",
+            "design_size": "very_large",
             "parameters": [
                 "width_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "5", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size very_large at clock period=5", 
-            "design_size": "very_large", 
-            "name": "bsg_thermometer_count_very_large_clkperiod_5", 
+            "name": "bsg_thermometer_count_very_large_clkperiod_5",
+            "description": "this module counts the number of set bits in a thermometer code with size very_large at clock period=5",
+            "design_size": "very_large",
             "parameters": [
                 "width_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "7", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size very_large at clock period=7", 
-            "design_size": "very_large", 
-            "name": "bsg_thermometer_count_very_large_clkperiod_7", 
+            "name": "bsg_thermometer_count_very_large_clkperiod_7",
+            "description": "this module counts the number of set bits in a thermometer code with size very_large at clock period=7",
+            "design_size": "very_large",
             "parameters": [
                 "width_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "9", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size very_large at clock period=9", 
-            "design_size": "very_large", 
-            "name": "bsg_thermometer_count_very_large_clkperiod_9", 
+            "name": "bsg_thermometer_count_very_large_clkperiod_9",
+            "description": "this module counts the number of set bits in a thermometer code with size very_large at clock period=9",
+            "design_size": "very_large",
             "parameters": [
                 "width_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "11", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size very_large at clock period=11", 
-            "design_size": "very_large", 
-            "name": "bsg_thermometer_count_very_large_clkperiod_11", 
+            "name": "bsg_thermometer_count_very_large_clkperiod_11",
+            "description": "this module counts the number of set bits in a thermometer code with size very_large at clock period=11",
+            "design_size": "very_large",
             "parameters": [
                 "width_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "1", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size medium at clock period=1", 
-            "design_size": "medium", 
-            "name": "bsg_thermometer_count_medium_clkperiod_1", 
+            "name": "bsg_thermometer_count_medium_clkperiod_1",
+            "description": "this module counts the number of set bits in a thermometer code with size medium at clock period=1",
+            "design_size": "medium",
             "parameters": [
                 "width_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "3", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size medium at clock period=3", 
-            "design_size": "medium", 
-            "name": "bsg_thermometer_count_medium_clkperiod_3", 
+            "name": "bsg_thermometer_count_medium_clkperiod_3",
+            "description": "this module counts the number of set bits in a thermometer code with size medium at clock period=3",
+            "design_size": "medium",
             "parameters": [
                 "width_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "5", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size medium at clock period=5", 
-            "design_size": "medium", 
-            "name": "bsg_thermometer_count_medium_clkperiod_5", 
+            "name": "bsg_thermometer_count_medium_clkperiod_5",
+            "description": "this module counts the number of set bits in a thermometer code with size medium at clock period=5",
+            "design_size": "medium",
             "parameters": [
                 "width_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "7", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size medium at clock period=7", 
-            "design_size": "medium", 
-            "name": "bsg_thermometer_count_medium_clkperiod_7", 
+            "name": "bsg_thermometer_count_medium_clkperiod_7",
+            "description": "this module counts the number of set bits in a thermometer code with size medium at clock period=7",
+            "design_size": "medium",
             "parameters": [
                 "width_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "9", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size medium at clock period=9", 
-            "design_size": "medium", 
-            "name": "bsg_thermometer_count_medium_clkperiod_9", 
+            "name": "bsg_thermometer_count_medium_clkperiod_9",
+            "description": "this module counts the number of set bits in a thermometer code with size medium at clock period=9",
+            "design_size": "medium",
             "parameters": [
                 "width_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
-        }, 
+        },
         {
-            "constraints": {
-                "clk_port_name": "virtual", 
-                "clock_period": "11", 
-                "input": "0", 
-                "io_time_format": "period", 
-                "output": "0", 
-                "uncertainty": "0"
-            }, 
-            "description": "this module counts the number of set bits in a thermometer code with size medium at clock period=11", 
-            "design_size": "medium", 
-            "name": "bsg_thermometer_count_medium_clkperiod_11", 
+            "name": "bsg_thermometer_count_medium_clkperiod_11",
+            "description": "this module counts the number of set bits in a thermometer code with size medium at clock period=11",
+            "design_size": "medium",
             "parameters": [
                 "width_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
             ]
         }
     ]
