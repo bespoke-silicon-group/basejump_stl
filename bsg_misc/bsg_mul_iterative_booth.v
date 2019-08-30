@@ -151,9 +151,8 @@ if (booth_step_lp == 1) begin: NO_WALLACE_TREE
   );
   assign A_o = csa_res_o;
   assign B_o = {csa_car_o[csa_tree_width_lp-2:0], 1'b0};
-
-  always_ff @(posedge clk_i) begin
-    $display("Partial Sum:%b",partial_product_lo);
+  if(debug_p) always_ff @(posedge clk_i) begin
+      $display("Partial Sum:%b",partial_product_lo);
   end
 end
 else begin: WALLACE_TREE
@@ -757,6 +756,7 @@ module bsg_mul_iterative_booth  #(
   ,parameter integer stride_p = 32
   ,parameter integer cpa_stride_p = 32
   ,parameter bit pipelined_p = 0
+  ,parameter bit csa_3_2_p = 1
   ,parameter bit debug_p = 0
 ) (
   input clk_i
@@ -780,6 +780,7 @@ if(pipelined_p) begin
     ,.stride_p(stride_p)
     ,.cpa_stride_p(cpa_stride_p)
     ,.debug_p(debug_p)
+    ,.csa_3_2_p(csa_3_2_p)
   ) mul_pipelined (.*);
   assign ready_o = 1'b1;
 end
@@ -789,6 +790,7 @@ else begin
     ,.stride_p(stride_p)
     ,.cpa_stride_p(cpa_stride_p)
     ,.debug_p(debug_p)
+    ,.csa_3_2_p(csa_3_2_p)
   ) mul_pipelined (.*);
 end
 
