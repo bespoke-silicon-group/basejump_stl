@@ -4,7 +4,7 @@ pipelined:
 	-sv --cc \
 	../../../bsg_misc/bsg_defines.v \
 	../../../bsg_misc/bsg_mul_iterative_booth.v \
-	-Gwidth_p=32 -Gstride_p=2 -Gcpa_stride_p=32 -Gdebug_p=0 -Gpipelined_p=1 -Gcsa_3_2_p=0 \
+	-Gwidth_p=32 -Gstride_p=2 -Gcpa_stride_p=8 -Gdebug_p=0 -Gpipelined_p=1 -Gcsa_3_2_p=0 \
 	--top-module bsg_mul_iterative_booth \
 	--clk clk_i \
 	--exe ./pipelined.cpp \

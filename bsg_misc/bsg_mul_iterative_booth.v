@@ -152,7 +152,7 @@ if (booth_step_lp == 1) begin: NO_WALLACE_TREE
   assign A_o = csa_res_o;
   assign B_o = {csa_car_o[csa_tree_width_lp-2:0], 1'b0};
   if(debug_p) always_ff @(posedge clk_i) begin
-      $display("Partial Sum:%b",partial_product_lo);
+      //$display("Partial Sum:%b",partial_product_lo);
   end
 end
 else begin: WALLACE_TREE
@@ -675,10 +675,13 @@ reg [cpa_level_lp-1:0][width_p:0] result_high_r;
 // We use a carry-selected adder in the first stage of CPA because hope to avoid an extra stage waiting for the carry from local CPA. 
 
 wire [cpa_stride_p:0] first_stage_cpa_zero = {1'b0,csa_opA_r[booth_level_lp][stride_p+:cpa_stride_p]} + {1'b0, csa_opB_r[booth_level_lp][stride_p+:cpa_stride_p]};
-wire [cpa_stride_p:0] first_stage_cpa_one = csa_opA_r[booth_level_lp][stride_p+:cpa_stride_p] + csa_opB_r[booth_level_lp][stride_p+:cpa_stride_p] + (cpa_stride_p+1)'(1);
+wire [cpa_stride_p:0] first_stage_cpa_one = {1'b0 , csa_opA_r[booth_level_lp][stride_p+:cpa_stride_p]} + {1'b0, csa_opB_r[booth_level_lp][stride_p+:cpa_stride_p]} + (cpa_stride_p+1)'(1);
 
 wire [cpa_level_lp-1:0][width_p:0] result_high_n;
-assign result_high_n[0] = local_cpa_out[booth_level_lp-1][stride_p] ? first_stage_cpa_one : first_stage_cpa_zero;
+if(cpa_stride_p == width_p)
+  assign result_high_n[0] = local_cpa_out[booth_level_lp-1][stride_p] ? first_stage_cpa_one : first_stage_cpa_zero;
+else
+  assign result_high_n[0] = local_cpa_out[booth_level_lp-1][stride_p] ? {first_stage_cpa_one, (width_p-cpa_stride_p)'(0)} : {first_stage_cpa_zero, (width_p-cpa_stride_p)'(0)};
 
 if(cpa_stride_p != width_p) begin: CPA_PIPELINE
   reg [cpa_level_lp-2:0][width_p-cpa_stride_p-1:0] remnant_opA_r;
@@ -703,13 +706,17 @@ if(cpa_stride_p != width_p) begin: CPA_PIPELINE
           remnant_opB_r[i] <= '0;
         end
         else begin
-          remnant_opA_r[i] <= remnant_opA_r >> cpa_stride_p;
-          remnant_opB_r[i] <= remnant_opA_r >> cpa_stride_p;
+          remnant_opA_r[i] <= remnant_opA_r[i-1] >> cpa_stride_p;
+          remnant_opB_r[i] <= remnant_opB_r[i-1] >> cpa_stride_p;
         end
       end
     end
-    wire [cpa_stride_p:0] cpa_output = remnant_opA_r[cpa_stride_p-1:0] + remnant_opB_r[cpa_stride_p-1:0] + result_high_r[i][width_p];
+    wire [cpa_stride_p:0] cpa_output = {1'b0, remnant_opA_r[i][cpa_stride_p-1:0]} + {1'b0, remnant_opB_r[i][cpa_stride_p-1:0]} + result_high_r[i][width_p];
     assign result_high_n[i+1] = {cpa_output,result_high_r[i][width_p-1:cpa_stride_p]};
+    if(debug_p) always_ff @(posedge clk_i) begin 
+        $display("remnant_opA_r[%d]:%b",i,remnant_opA_r[i]);
+        $display("remnant_opB_r[%d]:%b",i,remnant_opB_r[i]);
+    end
   end
 end
 
@@ -729,22 +736,9 @@ assign result_o = {result_high_r[cpa_level_lp-1][width_p-1:0],result_low_r[booth
 if(debug_p) begin
   always_ff @(posedge clk_i) begin
     $display("============================");
-    for(logic [10:0] i = 0; i < booth_level_lp; ++i) begin
-      $display("opA_r[%b]:%b", i, opA_r[i]);
-      $display("opB_r[0][%b]:%b", i, opB_r[0][i]);
-      $display("opB_r[1][%b]:%b", i, opB_r[1][i]);
-      $display("opB_r[2][%b]:%b", i, opB_r[2][i]);
+    for(int i = 0; i < cpa_level_lp; i++) begin
+      $display("result_high_n[%d]:%b", i, result_high_n[i]);
     end
-    for(logic [10:0] i = 0; i <= booth_level_lp; ++i) begin
-      $display("csa_opA_r[%b]:%b", i, csa_opA_r[i]);
-      $display("csa_opB_r[%b]:%b", i, csa_opB_r[i]);
-      $display("result_low_r[%b]:%b", i, result_low_r[i]);
-    end
-    $display("v_r:%b", v_r);
-    $display("v_r[booth_level_lp + cpa_level_lp]:%b", v_r[booth_level_lp +cpa_level_lp]);
-    $display("first_stage_cpa_zero:%b", first_stage_cpa_zero);
-    $display("first_stage_cpa_one:%b", first_stage_cpa_one);
-    $display("local_cpa_out[booth_level_lp-1]:%b", local_cpa_out[booth_level_lp-1]);
   end
 end
 
