@@ -66,13 +66,13 @@ module bsg_cache
   localparam tag_info_width_lp=`bsg_cache_tag_info_width(tag_width_lp);
   localparam lg_ways_lp=`BSG_SAFE_CLOG2(ways_p);
   localparam stat_info_width_lp = `bsg_cache_stat_info_width(ways_p);
+  localparam data_sel_mux_els_lp = `BSG_MIN(4,lg_data_mask_width_lp+1);
+  localparam lg_data_sel_mux_els_lp = `BSG_SAFE_CLOG2(data_sel_mux_els_lp);
 
 
   // instruction decoding
   //
-  logic word_op;
-  logic half_op;
-  logic byte_op;
+  logic [1:0] data_size_op;
   logic mask_op;
   logic ld_op;
   logic st_op;
@@ -99,9 +99,7 @@ module bsg_cache
     ,.data_width_p(data_width_p)
   ) cache_pkt_decoder (
     .cache_pkt_i(cache_pkt)
-    ,.word_op_o(word_op)
-    ,.half_op_o(half_op)
-    ,.byte_op_o(byte_op)
+    ,.data_size_op_o(data_size_op)
     ,.mask_op_o(mask_op)
     ,.ld_op_o(ld_op)
     ,.st_op_o(st_op)
@@ -129,9 +127,7 @@ module bsg_cache
   //
   logic v_tl_r;
   logic sigext_op_tl_r;
-  logic word_op_tl_r;
-  logic half_op_tl_r;
-  logic byte_op_tl_r;
+  logic [1:0] data_size_op_tl_r;
   logic mask_op_tl_r;
   logic [data_mask_width_lp-1:0] mask_tl_r;
   logic ld_op_tl_r;
@@ -153,9 +149,7 @@ module bsg_cache
     if (reset_i) begin
       v_tl_r <= 1'b0;
       {sigext_op_tl_r
-      ,word_op_tl_r
-      ,half_op_tl_r
-      ,byte_op_tl_r
+      ,data_size_op_tl_r
       ,mask_op_tl_r
       ,mask_tl_r
       ,ld_op_tl_r
@@ -178,9 +172,7 @@ module bsg_cache
         v_tl_r <= v_i;
         if (v_i) begin
           sigext_op_tl_r <= cache_pkt.sigext;
-          word_op_tl_r <= word_op;
-          half_op_tl_r <= half_op;
-          byte_op_tl_r <= byte_op;
+          data_size_op_tl_r <= data_size_op;
           mask_op_tl_r <= mask_op;
           mask_tl_r <= cache_pkt.mask;
           ld_op_tl_r <= ld_op;
@@ -278,9 +270,7 @@ module bsg_cache
   logic v_we;
   logic v_v_r;
   logic sigext_op_v_r;
-  logic word_op_v_r;
-  logic half_op_v_r;
-  logic byte_op_v_r;
+  logic [1:0] data_size_op_v_r;
   logic mask_op_v_r;
   logic [data_mask_width_lp-1:0] mask_v_r;
   logic ld_op_v_r;
@@ -306,9 +296,7 @@ module bsg_cache
     if (reset_i) begin
       v_v_r <= 1'b0;
       {sigext_op_v_r
-      ,word_op_v_r
-      ,half_op_v_r
-      ,byte_op_v_r
+      ,data_size_op_v_r
       ,mask_op_v_r
       ,mask_v_r
       ,ld_op_v_r
@@ -333,9 +321,7 @@ module bsg_cache
         v_v_r <= v_tl_r;
         if (v_tl_r) begin
           sigext_op_v_r <= sigext_op_tl_r;
-          word_op_v_r <= word_op_tl_r;
-          half_op_v_r <= half_op_tl_r;
-          byte_op_v_r <= byte_op_tl_r;
+          data_size_op_v_r <= data_size_op_tl_r;
           mask_op_v_r <= mask_op_tl_r;
           mask_v_r <= mask_tl_r;
           ld_op_v_r <= ld_op_tl_r;
@@ -624,8 +610,7 @@ module bsg_cache
     assign sbuf_data_mem_w_mask[i] = {data_mask_width_lp{sbuf_way_decode[i]}} & sbuf_entry_lo.mask;
   end
 
-  // for 32-bit data width
-  //
+/*
   if (data_width_p == 32) begin
 
     assign sbuf_entry_li.data = (word_op_v_r | mask_op_v_r)
@@ -645,11 +630,77 @@ module bsg_cache
             (~addr_v_r[1] & addr_v_r[0]),
             (~addr_v_r[1] & ~addr_v_r[0])}));
   end
+*/
+
+  // store buffer data/mask input
+  //
+  logic [data_sel_mux_els_lp-1:0][data_width_p-1:0] sbuf_data_in_mux_li;
+  logic [data_sel_mux_els_lp-1:0][data_mask_width_lp-1:0] sbuf_mask_in_mux_li;
+  logic [data_width_p-1:0] sbuf_data_in;
+  logic [data_mask_width_lp-1:0] sbuf_mask_in;
+
+  bsg_mux #(
+    .width_p(data_width_p)
+    ,.els_p(data_sel_mux_els_lp)
+  ) sbuf_data_in_mux (
+    .data_i(sbuf_data_in_mux_li)
+    ,.sel_i(data_size_op_v_r[0+:lg_data_sel_mux_els_lp])
+    ,.data_o(sbuf_data_in)
+  );
+
+  bsg_mux #(
+    .width_p(data_mask_width_lp)
+    ,.els_p(data_sel_mux_els_lp)
+  ) sbuf_mask_in_mux (
+    .data_i(sbuf_mask_in_mux_li)
+    ,.sel_i(data_size_op_v_r[0+:lg_data_sel_mux_els_lp])
+    ,.data_o(sbuf_mask_in)
+  );
+
+  for (genvar i = 0; i < data_sel_mux_els_lp; i++) begin: sbuf_in_sel
+
+    assign sbuf_data_in_mux_li[i] = {(data_width_p/(8*(2**i))){data_v_r[0+:(8*(2**i))]}};
+
+
+    if (i == data_sel_mux_els_lp-1) begin: max_size
+
+      assign sbuf_mask_in_mux_li[i] = {data_mask_width_lp{1'b1}};    
+
+    end 
+    else begin: non_max_size
+
+      logic [data_width_p/(8*(2**i))-1:0] decode_lo;
+
+      bsg_decode #(
+        .num_out_p(data_width_p/(8*(2**i)))
+      ) dec (
+        .i(addr_v_r[i+:`BSG_MAX(lg_data_mask_width_lp-i,1)])
+        ,.o(decode_lo)
+      );
+
+      bsg_expand #(
+        .in_width_p(data_width_p/(8*(2**i)))
+        ,.expand_p(2**i)
+      ) exp (
+        .i(decode_lo)
+        ,.o(sbuf_mask_in_mux_li[i])
+      );
+
+    end
+  end
+
+  assign sbuf_entry_li.data = mask_op_v_r
+    ? data_v_r
+    : sbuf_data_in;
+
+  assign sbuf_entry_li.mask = mask_op_v_r
+    ? mask_v_r
+    : sbuf_mask_in;
 
 
   // output stage
   //
-  logic [data_width_p-1:0] ld_data_set_picked;
+  logic [data_width_p-1:0] ld_data_way_picked;
   logic [data_width_p-1:0] bypass_data_masked;
   logic [data_width_p-1:0] snoop_or_ld_data;
   logic [data_width_p-1:0] ld_data_masked;
@@ -660,14 +711,14 @@ module bsg_cache
   ) ld_data_mux (
     .data_i(ld_data_v_r)
     ,.sel_i(tag_hit_way_id)
-    ,.data_o(ld_data_set_picked)
+    ,.data_o(ld_data_way_picked)
   );
 
   bsg_mux_segmented #(
     .segments_p(data_mask_width_lp)
     ,.segment_width_p(8)
   ) bypass_mux_segmented (
-    .data0_i(ld_data_set_picked)
+    .data0_i(ld_data_way_picked)
     ,.data1_i(bypass_data_lo)
     ,.sel_i(bypass_mask_lo)
     ,.data_o(bypass_data_masked)
@@ -682,59 +733,71 @@ module bsg_cache
     assign ld_data_masked[8*i+:8] = {8{mask_v_r[i]}} & snoop_or_ld_data[8*i+:8];
   end
 
-  if (data_width_p == 32) begin
 
-    logic [15:0] data_half_selected;
-    logic [7:0] data_byte_selected;
-    logic half_sigext;
-    logic byte_sigext;
-
-    bsg_mux #(.width_p(16), .els_p(2)) half_mux (
-      .data_i(snoop_or_ld_data)
-      ,.sel_i(addr_v_r[1])
-      ,.data_o(data_half_selected)
-    );
-
-    bsg_mux #(.width_p(8), .els_p(4)) byte_mux (
-      .data_i(snoop_or_ld_data)
-      ,.sel_i(addr_v_r[1:0])
-      ,.data_o(data_byte_selected)
-    );
-
-    assign half_sigext = sigext_op_v_r & data_half_selected[15];
-    assign byte_sigext = sigext_op_v_r & data_byte_selected[7];
+  // select double/word/half/byte load data
+  //
+  logic [data_sel_mux_els_lp-1:0][data_width_p-1:0] ld_data_final_li;
+  logic [data_width_p-1:0] ld_data_final_lo;
   
-    always_comb begin
-      if (retval_op_v) begin
-        if (taglv_op_v_r) begin
-          data_o = {30'b0, lock_v_r[addr_way_v], valid_v_r[addr_way_v]};
-        end
-        else if (tagla_op_v_r) begin
-          data_o = {tag_v_r[addr_way_v], addr_index_v,
-            {(lg_block_size_in_words_lp+2){1'b0}}
-          };
-        end
-        else if (mask_op_v_r) begin
-          data_o = ld_data_masked;
-        end
-        else if (word_op_v_r) begin
-          data_o = snoop_or_ld_data;
-        end
-        else if (half_op_v_r) begin
-          data_o = {{16{half_sigext}}, data_half_selected};
-        end
-        else if (byte_op_v_r) begin
-          data_o = {{24{byte_sigext}}, data_byte_selected};
-        end
-        else begin
-          data_o = '0;
-        end
+
+  for (genvar i = 0; i < data_sel_mux_els_lp; i++) begin: ld_data_sel
+
+    if (i == data_sel_mux_els_lp-1) begin: max_size
+
+      assign ld_data_final_li[i] = snoop_or_ld_data;
+
+    end
+    else begin: non_max_size
+
+      logic [(8*(2**i))-1:0] byte_sel;
+
+      bsg_mux #(
+        .width_p(8*(2**i))
+        ,.els_p(data_width_p/(8*(2**i)))
+      ) byte_mux (
+        .data_i(snoop_or_ld_data)
+        ,.sel_i(addr_v_r[i+:`BSG_MAX(lg_data_mask_width_lp-i,1)])
+        ,.data_o(byte_sel)
+      );
+
+      assign ld_data_final_li[i] = 
+        {{(data_width_p-(8*(2**i))){sigext_op_v_r & byte_sel[(8*(2**i))-1]}}, byte_sel};
+
+    end
+
+  end
+  
+  bsg_mux #(
+    .width_p(data_width_p)
+    ,.els_p(data_sel_mux_els_lp)
+  ) ld_data_size_mux (
+    .data_i(ld_data_final_li)
+    ,.sel_i(data_size_op_v_r[0+:lg_data_sel_mux_els_lp])
+    ,.data_o(ld_data_final_lo)
+  );
+
+  // final output mux
+  always_comb begin
+    if (retval_op_v) begin
+      if (taglv_op_v_r) begin
+        data_o = {{(data_width_p-2){1'b0}}, lock_v_r[addr_way_v], valid_v_r[addr_way_v]};
+      end
+      else if (tagla_op_v_r) begin
+        data_o = {tag_v_r[addr_way_v], addr_index_v,
+          {(lg_block_size_in_words_lp+lg_data_mask_width_lp){1'b0}}
+        };
+      end
+      else if (mask_op_v_r) begin
+        data_o = ld_data_masked;
       end
       else begin
-        data_o = '0;
-      end 
+        data_o = ld_data_final_lo;
+      end
+    end
+    else begin
+      data_o = '0;
     end 
-  end
+  end 
 
   // ctrl logic
   //
@@ -895,19 +958,14 @@ module bsg_cache
 
   // synopsys translate_off
 
-  initial begin
-    assert(data_width_p == 32)
-      else $error("only 32-bit for data_width_p supported now.");
-  end
-
-  // check that there is no multiple hit.
-  // check that there is at least one unlocked way in a set.
   always_ff @ (negedge clk_i) begin
     if (~reset_i) begin
       if (v_v_r) begin
+        // check that there is no multiple hit.
         assert($countones(tag_hit_v) <= 1)
           else $error("[BSG_ERROR][BSG_CACHE] Multiple cache hit detected. %m, T=%t", $time);
 
+        // check that there is at least one unlocked way in a set.
         assert($countones(lock_v_r) < ways_p)
           else $error("[BSG_ERROR][BSG_CACHE] There should be at least one unlocked way in a set. %m, T=%t", $time);
       end
