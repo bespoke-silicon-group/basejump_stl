@@ -8,7 +8,7 @@ module testbench();
 
   parameter num_instr_p = `NUM_INSTR_P;
   parameter addr_width_p = 32;
-  parameter data_width_p = 32;
+  parameter data_width_p = `DATA_WIDTH_P;
   parameter block_size_in_words_p = 4;
   parameter sets_p = 4;
   parameter ways_p = `WAYS_P;
