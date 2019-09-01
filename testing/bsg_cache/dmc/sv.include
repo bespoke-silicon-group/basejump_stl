@@ -24,6 +24,7 @@ $BASEJUMP_STL_DIR/bsg_misc/bsg_encode_one_hot.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_scan.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_lru_pseudo_tree_encode.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_lru_pseudo_tree_decode.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_expand.v
 
 
 $BASEJUMP_STL_DIR/bsg_async/bsg_sync_sync.v

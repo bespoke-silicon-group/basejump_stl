@@ -610,27 +610,6 @@ module bsg_cache
     assign sbuf_data_mem_w_mask[i] = {data_mask_width_lp{sbuf_way_decode[i]}} & sbuf_entry_lo.mask;
   end
 
-/*
-  if (data_width_p == 32) begin
-
-    assign sbuf_entry_li.data = (word_op_v_r | mask_op_v_r)
-      ? data_v_r
-      : (half_op_v_r 
-        ? {2{data_v_r[(data_width_p>>1)-1:0]}}
-        : {4{data_v_r[(data_width_p>>2)-1:0]}});
-  
-    assign sbuf_entry_li.mask = mask_op_v_r
-      ? mask_v_r
-      : (word_op_v_r 
-        ? 4'b1111
-        : (half_op_v_r
-          ? {addr_v_r[1], addr_v_r[1], ~addr_v_r[1], ~addr_v_r[1]}
-          : {(addr_v_r[1] & addr_v_r[0]),
-            (addr_v_r[1] & ~addr_v_r[0]),
-            (~addr_v_r[1] & addr_v_r[0]),
-            (~addr_v_r[1] & ~addr_v_r[0])}));
-  end
-*/
 
   // store buffer data/mask input
   //
