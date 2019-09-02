@@ -150,270 +150,6 @@
                     "type": "clock",
                     "name": "clk",
                     "port": "clk_i",
-                    "period": "2.5",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_pipelined_optimized_32_8_16_400MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=16",
-                "pipelined_p=1",
-                "csa_3_2_p=1"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.5",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_pipelined__32_8_16_400MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=16",
-                "pipelined_p=1",
-                "csa_3_2_p=0"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.5",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_unpipelined_optimized_32_8_16_400MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=16",
-                "pipelined_p=0",
-                "csa_3_2_p=1"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.5",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_unpipelined__32_8_16_400MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=16",
-                "pipelined_p=0",
-                "csa_3_2_p=0"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.5",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_pipelined_optimized_32_8_32_400MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=32",
-                "pipelined_p=1",
-                "csa_3_2_p=1"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.5",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_pipelined__32_8_32_400MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=32",
-                "pipelined_p=1",
-                "csa_3_2_p=0"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.5",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_unpipelined_optimized_32_8_32_400MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=32",
-                "pipelined_p=0",
-                "csa_3_2_p=1"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.5",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_unpipelined__32_8_32_400MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=32",
-                "pipelined_p=0",
-                "csa_3_2_p=0"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
                     "period": "2.3529411764705883",
                     "uncertainty": "0"
                 },
@@ -536,270 +272,6 @@
                 "width_p=32",
                 "stride_p=8",
                 "cpa_stride_p=8",
-                "pipelined_p=0",
-                "csa_3_2_p=0"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.3529411764705883",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_pipelined_optimized_32_8_16_425MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=16",
-                "pipelined_p=1",
-                "csa_3_2_p=1"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.3529411764705883",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_pipelined__32_8_16_425MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=16",
-                "pipelined_p=1",
-                "csa_3_2_p=0"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.3529411764705883",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_unpipelined_optimized_32_8_16_425MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=16",
-                "pipelined_p=0",
-                "csa_3_2_p=1"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.3529411764705883",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_unpipelined__32_8_16_425MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=16",
-                "pipelined_p=0",
-                "csa_3_2_p=0"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.3529411764705883",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_pipelined_optimized_32_8_32_425MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=32",
-                "pipelined_p=1",
-                "csa_3_2_p=1"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.3529411764705883",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_pipelined__32_8_32_425MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=32",
-                "pipelined_p=1",
-                "csa_3_2_p=0"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.3529411764705883",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_unpipelined_optimized_32_8_32_425MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=32",
-                "pipelined_p=0",
-                "csa_3_2_p=1"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.3529411764705883",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_unpipelined__32_8_32_425MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=32",
                 "pipelined_p=0",
                 "csa_3_2_p=0"
             ]
@@ -942,7 +414,7 @@
                     "type": "clock",
                     "name": "clk",
                     "port": "clk_i",
-                    "period": "2.2222222222222223",
+                    "period": "2.1052631578947367",
                     "uncertainty": "0"
                 },
                 {
@@ -960,11 +432,11 @@
             ],
             "description": "",
             "design_size": "",
-            "name": "bsg_mul_iterative_booth_pipelined_optimized_32_8_16_450MHz",
+            "name": "bsg_mul_iterative_booth_pipelined_optimized_32_8_8_475MHz",
             "parameters": [
                 "width_p=32",
                 "stride_p=8",
-                "cpa_stride_p=16",
+                "cpa_stride_p=8",
                 "pipelined_p=1",
                 "csa_3_2_p=1"
             ]
@@ -975,7 +447,7 @@
                     "type": "clock",
                     "name": "clk",
                     "port": "clk_i",
-                    "period": "2.2222222222222223",
+                    "period": "2.1052631578947367",
                     "uncertainty": "0"
                 },
                 {
@@ -993,143 +465,11 @@
             ],
             "description": "",
             "design_size": "",
-            "name": "bsg_mul_iterative_booth_pipelined__32_8_16_450MHz",
+            "name": "bsg_mul_iterative_booth_pipelined__32_8_8_475MHz",
             "parameters": [
                 "width_p=32",
                 "stride_p=8",
-                "cpa_stride_p=16",
-                "pipelined_p=1",
-                "csa_3_2_p=0"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.2222222222222223",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_unpipelined_optimized_32_8_16_450MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=16",
-                "pipelined_p=0",
-                "csa_3_2_p=1"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.2222222222222223",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_unpipelined__32_8_16_450MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=16",
-                "pipelined_p=0",
-                "csa_3_2_p=0"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.2222222222222223",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_pipelined_optimized_32_8_32_450MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=32",
-                "pipelined_p=1",
-                "csa_3_2_p=1"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "2.2222222222222223",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ],
-            "description": "",
-            "design_size": "",
-            "name": "bsg_mul_iterative_booth_pipelined__32_8_32_450MHz",
-            "parameters": [
-                "width_p=32",
-                "stride_p=8",
-                "cpa_stride_p=32",
+                "cpa_stride_p=8",
                 "pipelined_p=1",
                 "csa_3_2_p=0"
             ]
@@ -1140,7 +480,7 @@
                     "type": "clock",
                     "name": "clk",
                     "port": "clk_i",
-                    "period": "2.2222222222222223",
+                    "period": "2.1052631578947367",
                     "uncertainty": "0"
                 },
                 {
@@ -1158,11 +498,11 @@
             ],
             "description": "",
             "design_size": "",
-            "name": "bsg_mul_iterative_booth_unpipelined_optimized_32_8_32_450MHz",
+            "name": "bsg_mul_iterative_booth_unpipelined_optimized_32_8_8_475MHz",
             "parameters": [
                 "width_p=32",
                 "stride_p=8",
-                "cpa_stride_p=32",
+                "cpa_stride_p=8",
                 "pipelined_p=0",
                 "csa_3_2_p=1"
             ]
@@ -1173,7 +513,7 @@
                     "type": "clock",
                     "name": "clk",
                     "port": "clk_i",
-                    "period": "2.2222222222222223",
+                    "period": "2.1052631578947367",
                     "uncertainty": "0"
                 },
                 {
@@ -1191,11 +531,143 @@
             ],
             "description": "",
             "design_size": "",
-            "name": "bsg_mul_iterative_booth_unpipelined__32_8_32_450MHz",
+            "name": "bsg_mul_iterative_booth_unpipelined__32_8_8_475MHz",
             "parameters": [
                 "width_p=32",
                 "stride_p=8",
-                "cpa_stride_p=32",
+                "cpa_stride_p=8",
+                "pipelined_p=0",
+                "csa_3_2_p=0"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "2.0",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "bsg_mul_iterative_booth_pipelined_optimized_32_8_8_500MHz",
+            "parameters": [
+                "width_p=32",
+                "stride_p=8",
+                "cpa_stride_p=8",
+                "pipelined_p=1",
+                "csa_3_2_p=1"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "2.0",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "bsg_mul_iterative_booth_pipelined__32_8_8_500MHz",
+            "parameters": [
+                "width_p=32",
+                "stride_p=8",
+                "cpa_stride_p=8",
+                "pipelined_p=1",
+                "csa_3_2_p=0"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "2.0",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "bsg_mul_iterative_booth_unpipelined_optimized_32_8_8_500MHz",
+            "parameters": [
+                "width_p=32",
+                "stride_p=8",
+                "cpa_stride_p=8",
+                "pipelined_p=0",
+                "csa_3_2_p=1"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "2.0",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "bsg_mul_iterative_booth_unpipelined__32_8_8_500MHz",
+            "parameters": [
+                "width_p=32",
+                "stride_p=8",
+                "cpa_stride_p=8",
                 "pipelined_p=0",
                 "csa_3_2_p=0"
             ]
