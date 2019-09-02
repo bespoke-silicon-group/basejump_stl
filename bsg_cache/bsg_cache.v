@@ -72,20 +72,6 @@ module bsg_cache
 
   // instruction decoding
   //
-  logic [1:0] data_size_op;
-  logic mask_op;
-  logic ld_op;
-  logic st_op;
-  logic tagst_op;
-  logic tagfl_op;
-  logic taglv_op;
-  logic tagla_op;
-  logic afl_op;
-  logic aflinv_op;
-  logic ainv_op;
-  logic alock_op;
-  logic aunlock_op;
-  logic tag_read_op;
   logic [lg_ways_lp-1:0] addr_way;
   logic [lg_sets_lp-1:0] addr_index;
   logic [lg_block_size_in_words_lp-1:0] addr_block_offset;
@@ -94,25 +80,15 @@ module bsg_cache
   bsg_cache_pkt_s cache_pkt;
 
   assign cache_pkt = cache_pkt_i;
+
+  bsg_cache_pkt_decode_s decode;
+
   bsg_cache_pkt_decode #(
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
   ) cache_pkt_decoder (
     .cache_pkt_i(cache_pkt)
-    ,.data_size_op_o(data_size_op)
-    ,.mask_op_o(mask_op)
-    ,.ld_op_o(ld_op)
-    ,.st_op_o(st_op)
-    ,.tagst_op_o(tagst_op)
-    ,.tagfl_op_o(tagfl_op)
-    ,.taglv_op_o(taglv_op)
-    ,.tagla_op_o(tagla_op)
-    ,.afl_op_o(afl_op)
-    ,.aflinv_op_o(aflinv_op)
-    ,.ainv_op_o(ainv_op)
-    ,.alock_op_o(alock_op)
-    ,.aunlock_op_o(aunlock_op)
-    ,.tag_read_op_o(tag_read_op)
+    ,.decode_o(decode)
   );
 
   assign addr_way
@@ -127,21 +103,8 @@ module bsg_cache
   //
   logic v_tl_r;
   logic sigext_op_tl_r;
-  logic [1:0] data_size_op_tl_r;
-  logic mask_op_tl_r;
+  bsg_cache_pkt_decode_s decode_tl_r;
   logic [data_mask_width_lp-1:0] mask_tl_r;
-  logic ld_op_tl_r;
-  logic st_op_tl_r;
-  logic tagst_op_tl_r;
-  logic tagfl_op_tl_r;
-  logic taglv_op_tl_r;
-  logic tagla_op_tl_r;
-  logic afl_op_tl_r;
-  logic aflinv_op_tl_r;
-  logic ainv_op_tl_r;
-  logic alock_op_tl_r;
-  logic aunlock_op_tl_r;
-  logic tag_read_op_tl_r;
   logic [addr_width_p-1:0] addr_tl_r;
   logic [data_width_p-1:0] data_tl_r;
 
@@ -149,46 +112,20 @@ module bsg_cache
     if (reset_i) begin
       v_tl_r <= 1'b0;
       {sigext_op_tl_r
-      ,data_size_op_tl_r
-      ,mask_op_tl_r
       ,mask_tl_r
-      ,ld_op_tl_r
-      ,st_op_tl_r
-      ,tagst_op_tl_r
-      ,tagfl_op_tl_r
-      ,taglv_op_tl_r
-      ,tagla_op_tl_r
-      ,afl_op_tl_r
-      ,aflinv_op_tl_r
-      ,ainv_op_tl_r
-      ,alock_op_tl_r
-      ,aunlock_op_tl_r
-      ,tag_read_op_tl_r
       ,addr_tl_r
-      ,data_tl_r} <= '0;
+      ,data_tl_r
+      ,decode_tl_r} <= '0;
     end
     else begin
       if (ready_o) begin
         v_tl_r <= v_i;
         if (v_i) begin
           sigext_op_tl_r <= cache_pkt.sigext;
-          data_size_op_tl_r <= data_size_op;
-          mask_op_tl_r <= mask_op;
           mask_tl_r <= cache_pkt.mask;
-          ld_op_tl_r <= ld_op;
-          st_op_tl_r <= st_op;
-          tagst_op_tl_r <= tagst_op;
-          tagfl_op_tl_r <= tagfl_op;
-          taglv_op_tl_r <= taglv_op;
-          tagla_op_tl_r <= tagla_op;
-          afl_op_tl_r <= afl_op;
-          aflinv_op_tl_r <= aflinv_op;
-          ainv_op_tl_r <= ainv_op;
-          alock_op_tl_r <= alock_op;
-          aunlock_op_tl_r <= aunlock_op;
-          tag_read_op_tl_r <= tag_read_op;
           addr_tl_r <= cache_pkt.addr;
           data_tl_r <= cache_pkt.data;
+          decode_tl_r <= decode;
         end
       end
     end
@@ -269,21 +206,9 @@ module bsg_cache
   //
   logic v_we;
   logic v_v_r;
+  bsg_cache_pkt_decode_s decode_v_r;
   logic sigext_op_v_r;
-  logic [1:0] data_size_op_v_r;
-  logic mask_op_v_r;
   logic [data_mask_width_lp-1:0] mask_v_r;
-  logic ld_op_v_r;
-  logic st_op_v_r;
-  logic tagst_op_v_r;
-  logic tagfl_op_v_r;
-  logic taglv_op_v_r;
-  logic tagla_op_v_r;
-  logic afl_op_v_r;
-  logic aflinv_op_v_r;
-  logic ainv_op_v_r;
-  logic alock_op_v_r;
-  logic aunlock_op_v_r;
   logic [addr_width_p-1:0] addr_v_r;
   logic [data_width_p-1:0] data_v_r;
   logic [ways_p-1:0] valid_v_r;
@@ -296,20 +221,8 @@ module bsg_cache
     if (reset_i) begin
       v_v_r <= 1'b0;
       {sigext_op_v_r
-      ,data_size_op_v_r
-      ,mask_op_v_r
       ,mask_v_r
-      ,ld_op_v_r
-      ,st_op_v_r
-      ,tagst_op_v_r
-      ,tagfl_op_v_r
-      ,taglv_op_v_r
-      ,tagla_op_v_r
-      ,afl_op_v_r
-      ,aflinv_op_v_r
-      ,ainv_op_v_r
-      ,alock_op_v_r
-      ,aunlock_op_v_r
+      ,decode_v_r
       ,addr_v_r
       ,data_v_r
       ,valid_v_r
@@ -321,20 +234,8 @@ module bsg_cache
         v_v_r <= v_tl_r;
         if (v_tl_r) begin
           sigext_op_v_r <= sigext_op_tl_r;
-          data_size_op_v_r <= data_size_op_tl_r;
-          mask_op_v_r <= mask_op_tl_r;
           mask_v_r <= mask_tl_r;
-          ld_op_v_r <= ld_op_tl_r;
-          st_op_v_r <= st_op_tl_r;
-          tagst_op_v_r <= tagst_op_tl_r;
-          tagfl_op_v_r <= tagfl_op_tl_r;
-          taglv_op_v_r <= taglv_op_tl_r;
-          tagla_op_v_r <= tagla_op_tl_r;
-          afl_op_v_r <= afl_op_tl_r;
-          aflinv_op_v_r <= aflinv_op_tl_r;
-          ainv_op_v_r <= ainv_op_tl_r;
-          alock_op_v_r <= alock_op_tl_r;
-          aunlock_op_v_r <= aunlock_op_tl_r;
+          decode_v_r <= decode_tl_r;
           addr_v_r <= addr_tl_r;
           data_v_r <= data_tl_r;
           valid_v_r <= valid_tl;
@@ -383,21 +284,21 @@ module bsg_cache
   logic alock_miss;  // either the line is miss, or the line is unlocked.
   logic aunlock_hit; // the line is hit and locked.
 
-  assign ld_st_miss = ~tag_hit_found & (ld_op_v_r | st_op_v_r);
-  assign tagfl_hit = tagfl_op_v_r & valid_v_r[addr_way_v];
-  assign aflinv_hit = (afl_op_v_r | aflinv_op_v_r | ainv_op_v_r) & tag_hit_found;
-  assign alock_miss = alock_op_v_r & (tag_hit_found ? ~lock_v_r[tag_hit_way_id] : 1'b1);
-  assign aunlock_hit = aunlock_op_v_r & (tag_hit_found ? lock_v_r[tag_hit_way_id] : 1'b0);
+  assign ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op);
+  assign tagfl_hit = decode_v_r.tagfl_op& valid_v_r[addr_way_v];
+  assign aflinv_hit = (decode_v_r.afl_op| decode_v_r.aflinv_op| decode_v_r.ainv_op) & tag_hit_found;
+  assign alock_miss = decode_v_r.alock_op& (tag_hit_found ? ~lock_v_r[tag_hit_way_id] : 1'b1);
+  assign aunlock_hit = decode_v_r.aunlock_op& (tag_hit_found ? lock_v_r[tag_hit_way_id] : 1'b0);
 
   // miss_v signal activates the miss handling unit.
-  // MBT: the ~tagst_op_v_r is necessary at the top of this expression
+  // MBT: the ~decode_v_r.tagst_op is necessary at the top of this expression
   //      to avoid X-pessimism post synthesis due to X's coming out of the tags
   logic miss_v;
-  assign miss_v = (~tagst_op_v_r) & v_v_r
+  assign miss_v = (~decode_v_r.tagst_op) & v_v_r
     & (ld_st_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit);
   
   // ops that return some value other than '0.
-  assign retval_op_v = ld_op_v_r | taglv_op_v_r | tagla_op_v_r; 
+  assign retval_op_v = decode_v_r.ld_op | decode_v_r.taglv_op | decode_v_r.tagla_op; 
 
   // stat_mem
   //
@@ -461,13 +362,7 @@ module bsg_cache
     ,.reset_i(reset_i)
     
     ,.miss_v_i(miss_v)
-    ,.st_op_v_i(st_op_v_r)
-    ,.tagfl_op_v_i(tagfl_op_v_r)
-    ,.afl_op_v_i(afl_op_v_r)
-    ,.aflinv_op_v_i(aflinv_op_v_r)
-    ,.ainv_op_v_i(ainv_op_v_r)
-    ,.alock_op_v_i(alock_op_v_r)
-    ,.aunlock_op_v_i(aunlock_op_v_r)
+    ,.decode_v_i(decode_v_r)
     ,.addr_v_i(addr_v_r)
 
     ,.tag_v_i(tag_v_r)
@@ -623,7 +518,7 @@ module bsg_cache
     ,.els_p(data_sel_mux_els_lp)
   ) sbuf_data_in_mux (
     .data_i(sbuf_data_in_mux_li)
-    ,.sel_i(data_size_op_v_r[0+:lg_data_sel_mux_els_lp])
+    ,.sel_i(decode_v_r.data_size_op[0+:lg_data_sel_mux_els_lp])
     ,.data_o(sbuf_data_in)
   );
 
@@ -632,7 +527,7 @@ module bsg_cache
     ,.els_p(data_sel_mux_els_lp)
   ) sbuf_mask_in_mux (
     .data_i(sbuf_mask_in_mux_li)
-    ,.sel_i(data_size_op_v_r[0+:lg_data_sel_mux_els_lp])
+    ,.sel_i(decode_v_r.data_size_op[0+:lg_data_sel_mux_els_lp])
     ,.data_o(sbuf_mask_in)
   );
 
@@ -668,11 +563,11 @@ module bsg_cache
     end
   end
 
-  assign sbuf_entry_li.data = mask_op_v_r
+  assign sbuf_entry_li.data = decode_v_r.mask_op
     ? data_v_r
     : sbuf_data_in;
 
-  assign sbuf_entry_li.mask = mask_op_v_r
+  assign sbuf_entry_li.mask = decode_v_r.mask_op
     ? mask_v_r
     : sbuf_mask_in;
 
@@ -751,22 +646,22 @@ module bsg_cache
     ,.els_p(data_sel_mux_els_lp)
   ) ld_data_size_mux (
     .data_i(ld_data_final_li)
-    ,.sel_i(data_size_op_v_r[0+:lg_data_sel_mux_els_lp])
+    ,.sel_i(decode_v_r.data_size_op[0+:lg_data_sel_mux_els_lp])
     ,.data_o(ld_data_final_lo)
   );
 
   // final output mux
   always_comb begin
     if (retval_op_v) begin
-      if (taglv_op_v_r) begin
+      if (decode_v_r.taglv_op) begin
         data_o = {{(data_width_p-2){1'b0}}, lock_v_r[addr_way_v], valid_v_r[addr_way_v]};
       end
-      else if (tagla_op_v_r) begin
+      else if (decode_v_r.tagla_op) begin
         data_o = {tag_v_r[addr_way_v], addr_index_v,
           {(lg_block_size_in_words_lp+lg_data_mask_width_lp){1'b0}}
         };
       end
-      else if (mask_op_v_r) begin
+      else if (decode_v_r.mask_op) begin
         data_o = ld_data_masked;
       end
       else begin
@@ -795,7 +690,7 @@ module bsg_cache
   // 4) tl_stage is recovering from tag_miss
   logic tl_ready;
   assign tl_ready = miss_v
-    ? (~(tagst_op & v_i) & ~miss_tag_mem_v_lo & ~dma_data_mem_v_lo & ~recover_lo)
+    ? (~(decode.tagst_op & v_i) & ~miss_tag_mem_v_lo & ~dma_data_mem_v_lo & ~recover_lo)
     : 1'b1;
   assign ready_o = v_tl_r
     ? (v_we & tl_ready)
@@ -813,7 +708,7 @@ module bsg_cache
   assign tagst_valid = cache_pkt.data[data_width_p-1];
   assign tagst_lock = cache_pkt.data[data_width_p-2];
   assign tagst_tag = cache_pkt.data[0+:tag_width_lp];
-  assign tagst_write_en = tagst_op & ready_o & v_i;
+  assign tagst_write_en = decode.tagst_op & ready_o & v_i;
 
   logic [ways_p-1:0] addr_way_decode;
   bsg_decode #(
@@ -823,10 +718,10 @@ module bsg_cache
     ,.o(addr_way_decode)
   );
 
-  assign tag_mem_v_li = (tag_read_op & ready_o & v_i)
-    | (recover_lo & tag_read_op_tl_r & v_tl_r)
+  assign tag_mem_v_li = (decode.tag_read_op & ready_o & v_i)
+    | (recover_lo & decode_tl_r.tag_read_op & v_tl_r)
     | miss_tag_mem_v_lo
-    | (tagst_op & ready_o & v_i); 
+    | (decode.tagst_op & ready_o & v_i); 
   
   assign tag_mem_w_li = miss_v
     ? miss_tag_mem_w_lo
@@ -852,8 +747,8 @@ module bsg_cache
 
   // data_mem ctrl logic
   //
-  assign data_mem_v_li = ((v_i & ld_op & ready_o)
-    | (v_tl_r & recover_lo & ld_op_tl_r)
+  assign data_mem_v_li = ((v_i & decode.ld_op & ready_o)
+    | (v_tl_r & recover_lo & decode_tl_r.ld_op)
     | dma_data_mem_v_lo
     | (sbuf_v_lo & sbuf_yumi_li)
   );
@@ -868,7 +763,7 @@ module bsg_cache
     ? {addr_index_tl, addr_block_offset_tl}
     : (dma_data_mem_v_lo
       ? dma_data_mem_addr_lo
-      : ((ld_op & v_i & ready_o) 
+      : ((decode.ld_op & v_i & ready_o) 
         ? {addr_index, addr_block_offset}
         : sbuf_entry_lo.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp]));
 
@@ -902,11 +797,11 @@ module bsg_cache
       stat_mem_w_mask_li = miss_stat_mem_w_mask_lo;
     end
     else begin
-      stat_mem_v_li = ((st_op_v_r | ld_op_v_r | tagst_op_v_r) & v_o & yumi_i);
-      stat_mem_w_li = ((st_op_v_r | ld_op_v_r | tagst_op_v_r) & v_o & yumi_i);
+      stat_mem_v_li = ((decode_v_r.st_op| decode_v_r.ld_op| decode_v_r.tagst_op) & v_o & yumi_i);
+      stat_mem_w_li = ((decode_v_r.st_op| decode_v_r.ld_op| decode_v_r.tagst_op) & v_o & yumi_i);
       stat_mem_addr_li = addr_index_v;
 
-      if (tagst_op_v_r) begin
+      if (decode_v_r.tagst_op) begin
         // for TAGST
         stat_mem_data_li.dirty = {ways_p{1'b0}};
         stat_mem_data_li.lru_bits = {(ways_p-1){1'b0}};
@@ -915,9 +810,9 @@ module bsg_cache
       end
       else begin
         // for LD, ST
-        stat_mem_data_li.dirty = {ways_p{st_op_v_r}};
+        stat_mem_data_li.dirty = {ways_p{decode_v_r.st_op}};
         stat_mem_data_li.lru_bits = plru_decode_data_lo;
-        stat_mem_w_mask_li.dirty = {ways_p{st_op_v_r}} & tag_hit_v;
+        stat_mem_w_mask_li.dirty = {ways_p{decode_v_r.st_op}} & tag_hit_v;
         stat_mem_w_mask_li.lru_bits = plru_decode_mask_lo;
       end
     end
@@ -926,13 +821,13 @@ module bsg_cache
 
   // store buffer
   //
-  assign sbuf_v_li = st_op_v_r & v_o & yumi_i;
+  assign sbuf_v_li = decode_v_r.st_op & v_o & yumi_i;
   assign sbuf_entry_li.way_id = miss_v ? chosen_way_lo : tag_hit_way_id;
   assign sbuf_entry_li.addr = addr_v_r;
-  assign sbuf_yumi_li = sbuf_v_lo & ~(ld_op & v_i & ready_o) & (~dma_data_mem_v_lo); 
+  assign sbuf_yumi_li = sbuf_v_lo & ~(decode.ld_op & v_i & ready_o) & (~dma_data_mem_v_lo); 
 
   assign bypass_addr_li = addr_tl_r;
-  assign bypass_v_li = ld_op_tl_r & v_tl_r & v_we;
+  assign bypass_v_li = decode_tl_r.ld_op & v_tl_r & v_we;
 
 
   // synopsys translate_off
@@ -955,11 +850,11 @@ module bsg_cache
   if (debug_p) begin
     always_ff @ (posedge clk_i) begin
       if (v_o & yumi_i) begin
-        if (ld_op_v_r) begin
+        if (decode_v_r.ld_op) begin
           $display("<VCACHE> M[%4h] == %8h // %8t", addr_v_r, data_o, $time);
         end
         
-        if (st_op_v_r) begin
+        if (decode_v_r.st_op) begin
           $display("<VCACHE> M[%4h] := %8h // %8t", addr_v_r, sbuf_entry_li.data, $time);
         end
 

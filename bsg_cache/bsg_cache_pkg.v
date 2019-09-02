@@ -44,6 +44,27 @@ package bsg_cache_pkg;
   `define bsg_cache_pkt_width(addr_width_mp, data_width_mp) \
     (1+(data_width_mp>>3)+5+addr_width_mp+data_width_mp)
 
+
+  // cache pkt decode
+  //
+  typedef struct packed {
+    logic [1:0] data_size_op;
+    logic mask_op;
+    logic ld_op;
+    logic st_op;
+    logic tagst_op;
+    logic tagfl_op;
+    logic taglv_op;
+    logic tagla_op;
+    logic afl_op;
+    logic aflinv_op;
+    logic ainv_op;
+    logic alock_op;
+    logic aunlock_op;
+    logic tag_read_op;
+  } bsg_cache_pkt_decode_s;
+
+
   // bsg_cache_dma_pkt_s
   //
   `define declare_bsg_cache_dma_pkt_s(addr_width_mp) \

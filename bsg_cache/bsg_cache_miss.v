@@ -29,6 +29,7 @@ module bsg_cache_miss
 
     // from tv stage
     ,input miss_v_i
+    /*
     ,input st_op_v_i
     ,input tagfl_op_v_i
     ,input afl_op_v_i
@@ -36,6 +37,8 @@ module bsg_cache_miss
     ,input ainv_op_v_i
     ,input alock_op_v_i
     ,input aunlock_op_v_i
+    */
+    ,input bsg_cache_pkt_decode_s decode_v_i
     ,input [addr_width_p-1:0] addr_v_i
     ,input [ways_p-1:0][tag_width_lp-1:0] tag_v_i
     ,input [ways_p-1:0] valid_v_i
@@ -144,8 +147,8 @@ module bsg_cache_miss
   logic goto_flush_op;
   logic goto_lock_op;
 
-  assign goto_flush_op = tagfl_op_v_i | ainv_op_v_i | afl_op_v_i | aflinv_op_v_i;
-  assign goto_lock_op = aunlock_op_v_i | (alock_op_v_i & tag_hit_found_i);
+  assign goto_flush_op = decode_v_i.tagfl_op| decode_v_i.ainv_op| decode_v_i.afl_op| decode_v_i.aflinv_op;
+  assign goto_lock_op = decode_v_i.aunlock_op | (decode_v_i.alock_op & tag_hit_found_i);
 
   logic [tag_width_lp-1:0] addr_tag_v;
   logic [lg_sets_lp-1:0] addr_index_v;
@@ -270,7 +273,7 @@ module bsg_cache_miss
         // the input way is "not" the LRU way.
         stat_mem_v_o = dma_done_i;
         stat_mem_w_o = dma_done_i;
-        stat_mem_data_out.dirty = {ways_p{st_op_v_i}};
+        stat_mem_data_out.dirty = {ways_p{decode_v_i.st_op}};
         stat_mem_data_out.lru_bits = chosen_way_lru_data;
         stat_mem_w_mask_out.dirty = chosen_way_decode;
         stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
@@ -281,7 +284,7 @@ module bsg_cache_miss
 
         for (integer i = 0; i < ways_p; i++) begin
           tag_mem_data_out[i].tag = addr_tag_v;
-          tag_mem_data_out[i].lock = alock_op_v_i;
+          tag_mem_data_out[i].lock = decode_v_i.alock_op;
           tag_mem_data_out[i].valid = 1'b1; 
           tag_mem_w_mask_out[i].tag = {tag_width_lp{chosen_way_decode[i]}};
           tag_mem_w_mask_out[i].lock = chosen_way_decode[i];
@@ -301,7 +304,7 @@ module bsg_cache_miss
 
         // for TAGFL, pick whichever way set by the addr input.
         // Otherwise, pick the way with the tag hit.
-        chosen_way_n = tagfl_op_v_i
+        chosen_way_n = decode_v_i.tagfl_op
           ? addr_way_v 
           : tag_hit_way_id_i;
 
@@ -323,14 +326,14 @@ module bsg_cache_miss
           tag_mem_data_out[i].valid = 1'b0;
           tag_mem_data_out[i].lock = 1'b0;
           tag_mem_data_out[i].tag = {tag_width_lp{1'b0}};
-          tag_mem_w_mask_out[i].valid = (ainv_op_v_i | aflinv_op_v_i) & chosen_way_decode[i];
-          tag_mem_w_mask_out[i].lock = (ainv_op_v_i | aflinv_op_v_i) & chosen_way_decode[i];
+          tag_mem_w_mask_out[i].valid = (decode_v_i.ainv_op| decode_v_i.aflinv_op) & chosen_way_decode[i];
+          tag_mem_w_mask_out[i].lock = (decode_v_i.ainv_op| decode_v_i.aflinv_op) & chosen_way_decode[i];
           tag_mem_w_mask_out[i].tag =  {tag_width_lp{1'b0}};
         end
 
         // If it's not AINV, and the chosen set is dirty and valid, evict the
         // block.
-        miss_state_n = (~ainv_op_v_i & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
+        miss_state_n = (~decode_v_i.ainv_op & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
           ? SEND_EVICT_ADDR
           : RECOVER;
       end
@@ -344,7 +347,7 @@ module bsg_cache_miss
 
         for (integer i = 0; i < ways_p; i++) begin
           tag_mem_data_out[i].valid = 1'b0;
-          tag_mem_data_out[i].lock = alock_op_v_i;
+          tag_mem_data_out[i].lock = decode_v_i.alock_op;
           tag_mem_data_out[i].tag = {tag_width_lp{1'b0}};
           tag_mem_w_mask_out[i].valid = 1'b0;
           tag_mem_w_mask_out[i].lock = chosen_way_decode[i];
@@ -381,7 +384,7 @@ module bsg_cache_miss
         };
 
         miss_state_n = dma_done_i
-          ? ((tagfl_op_v_i | aflinv_op_v_i | afl_op_v_i) ? RECOVER : GET_FILL_DATA)
+          ? ((decode_v_i.tagfl_op| decode_v_i.aflinv_op| decode_v_i.afl_op) ? RECOVER : GET_FILL_DATA)
           : SEND_EVICT_DATA;
       end
 

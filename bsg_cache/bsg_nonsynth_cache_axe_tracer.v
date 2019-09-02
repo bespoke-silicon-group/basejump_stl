@@ -20,8 +20,7 @@ module bsg_nonsynth_cache_axe_tracer
     input clk_i
     , input v_o
     , input yumi_i
-    , input st_op_v_r
-    , input ld_op_v_r
+    , input bsg_cache_pkt_decode_s decode_v_r
     , input [addr_width_p-1:0] addr_v_r
     , input [sbuf_entry_width_lp-1:0] sbuf_entry_li
     , input [data_width_p-1:0] data_o
@@ -35,12 +34,12 @@ module bsg_nonsynth_cache_axe_tracer
   // synopsys translate_off
   always_ff @ (posedge clk_i) begin
     if (v_o & yumi_i) begin
-      if (st_op_v_r) begin
+      if (decode_v_r.st_op) begin
         $display("time: %0t", $time);
         $display("#AXE 0: M[%0d] := %0d", addr_v_r>>2, sbuf_entry.data);
       end
   
-      if (ld_op_v_r) begin
+      if (decode_v_r.ld_op) begin
         $display("time: %0t", $time);
         $display("#AXE 0: M[%0d] == %0d", addr_v_r>>2, data_o);
       end
