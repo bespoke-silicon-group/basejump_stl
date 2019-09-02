@@ -25,20 +25,29 @@ module bsg_cache_pkt_decode
 
   always_comb begin
     case (cache_pkt.opcode)
-      LD, SD: decode_o.data_size_op = 2'b11;
-      LW, SW: decode_o.data_size_op = 2'b10;
-      LH, SH: decode_o.data_size_op = 2'b01;
-      LB, SB: decode_o.data_size_op = 2'b00;
+      LD, SD, LDU: decode_o.data_size_op = 2'b11;
+      LW, SW, LWU: decode_o.data_size_op = 2'b10;
+      LH, SH, LHU: decode_o.data_size_op = 2'b01;
+      LB, SB, LBU: decode_o.data_size_op = 2'b00;
       default: decode_o.data_size_op = 2'b00;
     endcase    
   end
 
   assign decode_o.mask_op = (cache_pkt.opcode == LM) | (cache_pkt.opcode == SM);
 
+  assign decode_o.sigext_op = (cache_pkt.opcode == LB)
+    | (cache_pkt.opcode == LH)
+    | (cache_pkt.opcode == LW)
+    | (cache_pkt.opcode == LD);
+
   assign decode_o.ld_op = (cache_pkt.opcode == LB)
     | (cache_pkt.opcode == LH)
     | (cache_pkt.opcode == LW)
     | (cache_pkt.opcode == LD)
+    | (cache_pkt.opcode == LBU)
+    | (cache_pkt.opcode == LHU)
+    | (cache_pkt.opcode == LWU)
+    | (cache_pkt.opcode == LDU)
     | (cache_pkt.opcode == LM);
 
   assign decode_o.st_op = (cache_pkt.opcode == SB)

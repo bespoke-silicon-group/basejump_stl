@@ -5,6 +5,7 @@ include ../../../../bsg_cadenv/cadenv.mk
 
 WAYS_P ?= 2
 
+TRACE_GEN_PY = trace_way$(WAYS_P).py
 TRACE_FILE = trace_way$(WAYS_P).tr
 TRACE_ROM = bsg_trace_master_rom
 TRACE_ROM_V = bsg_trace_master_rom_way$(WAYS_P).v
@@ -20,6 +21,9 @@ HIGHLIGHT = grep --color -E '^|Error|Warning|Implicit wire is used|Too few insta
 .PHONY: dve sim all clean
 
 all: sim
+
+$(TRACE_FILE): $(TRACE_GEN_PY)
+	python $(TRACE_GEN_PY) > $(TRACE_FILE)
 
 $(TRACE_ROM_V): $(TRACE_FILE)
 	python $(BSG_IP_CORES_DIR)/bsg_mem/bsg_ascii_to_rom.py $(TRACE_FILE) $(TRACE_ROM) \
@@ -41,4 +45,5 @@ clean:
 	rm -rf simv.daidir simv.vdb
 	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz vcs.log
 	rm -rf stack.info.*
+	rm -f *.tr
 

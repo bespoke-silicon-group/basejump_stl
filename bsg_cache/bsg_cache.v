@@ -102,7 +102,6 @@ module bsg_cache
   // tl_stage
   //
   logic v_tl_r;
-  logic sigext_op_tl_r;
   bsg_cache_pkt_decode_s decode_tl_r;
   logic [data_mask_width_lp-1:0] mask_tl_r;
   logic [addr_width_p-1:0] addr_tl_r;
@@ -111,8 +110,7 @@ module bsg_cache
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       v_tl_r <= 1'b0;
-      {sigext_op_tl_r
-      ,mask_tl_r
+      {mask_tl_r
       ,addr_tl_r
       ,data_tl_r
       ,decode_tl_r} <= '0;
@@ -121,7 +119,6 @@ module bsg_cache
       if (ready_o) begin
         v_tl_r <= v_i;
         if (v_i) begin
-          sigext_op_tl_r <= cache_pkt.sigext;
           mask_tl_r <= cache_pkt.mask;
           addr_tl_r <= cache_pkt.addr;
           data_tl_r <= cache_pkt.data;
@@ -207,7 +204,6 @@ module bsg_cache
   logic v_we;
   logic v_v_r;
   bsg_cache_pkt_decode_s decode_v_r;
-  logic sigext_op_v_r;
   logic [data_mask_width_lp-1:0] mask_v_r;
   logic [addr_width_p-1:0] addr_v_r;
   logic [data_width_p-1:0] data_v_r;
@@ -220,8 +216,7 @@ module bsg_cache
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       v_v_r <= 1'b0;
-      {sigext_op_v_r
-      ,mask_v_r
+      {mask_v_r
       ,decode_v_r
       ,addr_v_r
       ,data_v_r
@@ -233,7 +228,6 @@ module bsg_cache
       if (v_we) begin
         v_v_r <= v_tl_r;
         if (v_tl_r) begin
-          sigext_op_v_r <= sigext_op_tl_r;
           mask_v_r <= mask_tl_r;
           decode_v_r <= decode_tl_r;
           addr_v_r <= addr_tl_r;
@@ -635,7 +629,7 @@ module bsg_cache
       );
 
       assign ld_data_final_li[i] = 
-        {{(data_width_p-(8*(2**i))){sigext_op_v_r & byte_sel[(8*(2**i))-1]}}, byte_sel};
+        {{(data_width_p-(8*(2**i))){decode_v_r.sigext_op & byte_sel[(8*(2**i))-1]}}, byte_sel};
 
     end
 

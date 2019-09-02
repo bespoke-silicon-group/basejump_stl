@@ -9,46 +9,56 @@ package bsg_cache_pkg;
   // cache opcode
   //
   typedef enum logic [4:0] {
-    LB = 5'b00000         // load byte
+    LB  = 5'b00000        // load byte
     ,LH = 5'b00001        // load half
     ,LW = 5'b00010        // load word
     ,LD = 5'b00011        // load double
-    ,LM = 5'b00100        // load mask
-    ,SB = 5'b01000        // store byte
-    ,SH = 5'b01001        // store half
-    ,SW = 5'b01010        // store word
-    ,SD = 5'b01011        // store double
-    ,SM = 5'b01100        // store mask
-    ,TAGST = 5'b10000     // tag store
-    ,TAGFL = 5'b10001     // tag flush
-    ,TAGLV = 5'b10010     // tag load valid
-    ,TAGLA = 5'b10011     // tag load address
-    ,AFL = 5'b11000       // address flush
-    ,AFLINV = 5'b11001    // address flush invalidate
-    ,AINV = 5'b11010      // address invalidate
-    ,ALOCK = 5'b11011     // address lock
+
+    ,LBU = 5'b00100       // load byte   (unsigned)
+    ,LHU = 5'b00101       // load half   (unsigned)
+    ,LWU = 5'b00110       // load word   (unsigned)
+    ,LDU = 5'b00111       // load double (unsigned)
+
+    ,SB  = 5'b01000       // store byte
+    ,SH  = 5'b01001       // store half
+    ,SW  = 5'b01010       // store word
+    ,SD  = 5'b01011       // store double
+
+    ,LM  = 5'b01100       // load mask
+    ,SM  = 5'b01101       // store mask
+
+    ,TAGST   = 5'b10000   // tag store
+    ,TAGFL   = 5'b10001   // tag flush
+    ,TAGLV   = 5'b10010   // tag load valid
+    ,TAGLA   = 5'b10011   // tag load address
+
+    ,AFL     = 5'b11000   // address flush
+    ,AFLINV  = 5'b11001   // address flush invalidate
+    ,AINV    = 5'b11010   // address invalidate
+
+    ,ALOCK   = 5'b11011   // address lock
     ,AUNLOCK = 5'b11100   // address unlock
   } bsg_cache_opcode_e;
 
   // bsg_cache_pkt_s
   //
-  `define declare_bsg_cache_pkt_s(addr_width_mp, data_width_mp)   \
+  `define declare_bsg_cache_pkt_s(addr_width_mp, data_width_mp) \
     typedef struct packed {                                     \
-      logic sigext;                                             \
-      logic [(data_width_mp>>3)-1:0] mask;                       \
       bsg_cache_opcode_e opcode;                                \
-      logic [addr_width_mp-1:0] addr;                            \
-      logic [data_width_mp-1:0] data;                            \
+      logic [addr_width_mp-1:0] addr;                           \
+      logic [data_width_mp-1:0] data;                           \
+      logic [(data_width_mp>>3)-1:0] mask;                      \
     } bsg_cache_pkt_s
 
   `define bsg_cache_pkt_width(addr_width_mp, data_width_mp) \
-    (1+(data_width_mp>>3)+5+addr_width_mp+data_width_mp)
+    (5+addr_width_mp+data_width_mp+(data_width_mp>>3))
 
 
   // cache pkt decode
   //
   typedef struct packed {
     logic [1:0] data_size_op;
+    logic sigext_op;
     logic mask_op;
     logic ld_op;
     logic st_op;
@@ -68,9 +78,9 @@ package bsg_cache_pkg;
   // bsg_cache_dma_pkt_s
   //
   `define declare_bsg_cache_dma_pkt_s(addr_width_mp) \
-    typedef struct packed {                         \
-      logic write_not_read;                         \
-      logic [addr_width_mp-1:0] addr;                \
+    typedef struct packed {               \
+      logic write_not_read;               \
+      logic [addr_width_mp-1:0] addr;     \
     } bsg_cache_dma_pkt_s
 
   `define bsg_cache_dma_pkt_width(addr_width_mp)    \
