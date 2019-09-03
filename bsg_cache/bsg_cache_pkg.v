@@ -57,6 +57,10 @@ package bsg_cache_pkg;
   // cache pkt decode
   //
   typedef struct packed {
+    // 00 - byte
+    // 01 - half
+    // 10 - word
+    // 11 - double
     logic [1:0] data_size_op;
     logic sigext_op;
     logic mask_op;
