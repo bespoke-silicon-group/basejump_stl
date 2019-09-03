@@ -4,13 +4,12 @@ dir = ../../../..
 
 export BSG_CADENV_DIR = $(dir)/bsg_cadenv
 export BASEJUMP_STL_DIR = ../../..
-export BSG_DESIGNS_DIR = $(dir)/bsg_designs
 
 # Environment
 include $(BSG_CADENV_DIR)/cadenv.mk
 
 run:
-	$(VCS_BIN)/vcs -full64 -sverilog -timescale=1ps/1ps -f ./filelist -debug_pp -R -top bsg_fifo_1r1w_small_hardened_tester +vcs+vcdpluson +define+FSB_LEGACY=1
+	$(VCS_BIN)/vcs -full64 -sverilog -timescale=1ps/1ps -f ./filelist -debug_pp -R -top bsg_fifo_1r1w_small_hardened_tester +vcs+vcdpluson
     
 view:
 	$(VCS_BIN)/dve -full64 -vpd vcdplus.vpd &

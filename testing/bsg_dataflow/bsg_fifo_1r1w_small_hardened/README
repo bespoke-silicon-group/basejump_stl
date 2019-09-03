@@ -1,6 +1,6 @@
-First time run of manycore loopback test
+First time run of test
 
-$ cd basejump_stl/testing/bsg_noc/bsg_wormhole_concentrator
+$ cd basejump_stl/testing/bsg_dataflow/bsg_fifo_1r1w_small_hardened
 $ git clone https://bitbucket.org/taylor-bsg/bsg_cadenv.git ../../../../bsg_cadenv
 $ make run
 $ make view

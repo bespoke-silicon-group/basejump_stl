@@ -38,7 +38,6 @@ $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1rw_sync.v
 $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1rw_sync_synth.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_tracker.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_tracker_sync.v
-$BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1r1w_small.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1r1w_small_hardened.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_one_fifo.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_two_fifo.v
@@ -69,9 +68,7 @@ $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router_generalized.v
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_concentrator.v
 $BASEJUMP_STL_DIR/bsg_fsb/bsg_fsb_pkg.v
 
-$BSG_DESIGNS_DIR/modules/bsg_guts/loopback/bsg_test_node_master.v
-$BSG_DESIGNS_DIR/modules/bsg_guts/loopback/bsg_test_node_client.v
-
 ./bsg_fifo_1r1w_small_hardened_tester.v
+./bsg_fifo_1r1w_small_hardened_test_node.v
 
 
