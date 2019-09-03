@@ -17,9 +17,9 @@
                 }, 
                 {
                     "delay": "0", 
-                    "type": "input", 
-                    "port": "oclk_i", 
-                    "clock": "oclk"
+                    "type": "output", 
+                    "port": "iclk_data_o", 
+                    "clock": "iclk"
                 }, 
                 {
                     "delay": "0", 
@@ -72,9 +72,9 @@
                 }, 
                 {
                     "delay": "0", 
-                    "type": "input", 
-                    "port": "oclk_i", 
-                    "clock": "oclk"
+                    "type": "output", 
+                    "port": "iclk_data_o", 
+                    "clock": "iclk"
                 }, 
                 {
                     "delay": "0", 
@@ -127,9 +127,9 @@
                 }, 
                 {
                     "delay": "0", 
-                    "type": "input", 
-                    "port": "oclk_i", 
-                    "clock": "oclk"
+                    "type": "output", 
+                    "port": "iclk_data_o", 
+                    "clock": "iclk"
                 }, 
                 {
                     "delay": "0", 
@@ -182,9 +182,9 @@
                 }, 
                 {
                     "delay": "0", 
-                    "type": "input", 
-                    "port": "oclk_i", 
-                    "clock": "oclk"
+                    "type": "output", 
+                    "port": "iclk_data_o", 
+                    "clock": "iclk"
                 }, 
                 {
                     "delay": "0", 
@@ -237,9 +237,9 @@
                 }, 
                 {
                     "delay": "0", 
-                    "type": "input", 
-                    "port": "oclk_i", 
-                    "clock": "oclk"
+                    "type": "output", 
+                    "port": "iclk_data_o", 
+                    "clock": "iclk"
                 }, 
                 {
                     "delay": "0", 
@@ -292,9 +292,9 @@
                 }, 
                 {
                     "delay": "0", 
-                    "type": "input", 
-                    "port": "oclk_i", 
-                    "clock": "oclk"
+                    "type": "output", 
+                    "port": "iclk_data_o", 
+                    "clock": "iclk"
                 }, 
                 {
                     "delay": "0", 
@@ -347,9 +347,9 @@
                 }, 
                 {
                     "delay": "0", 
-                    "type": "input", 
-                    "port": "oclk_i", 
-                    "clock": "oclk"
+                    "type": "output", 
+                    "port": "iclk_data_o", 
+                    "clock": "iclk"
                 }, 
                 {
                     "delay": "0", 
@@ -402,9 +402,9 @@
                 }, 
                 {
                     "delay": "0", 
-                    "type": "input", 
-                    "port": "oclk_i", 
-                    "clock": "oclk"
+                    "type": "output", 
+                    "port": "iclk_data_o", 
+                    "clock": "iclk"
                 }, 
                 {
                     "delay": "0", 
@@ -457,9 +457,9 @@
                 }, 
                 {
                     "delay": "0", 
-                    "type": "input", 
-                    "port": "oclk_i", 
-                    "clock": "oclk"
+                    "type": "output", 
+                    "port": "iclk_data_o", 
+                    "clock": "iclk"
                 }, 
                 {
                     "delay": "0", 
@@ -512,9 +512,9 @@
                 }, 
                 {
                     "delay": "0", 
-                    "type": "input", 
-                    "port": "oclk_i", 
-                    "clock": "oclk"
+                    "type": "output", 
+                    "port": "iclk_data_o", 
+                    "clock": "iclk"
                 }, 
                 {
                     "delay": "0", 
@@ -567,9 +567,9 @@
                 }, 
                 {
                     "delay": "0", 
-                    "type": "input", 
-                    "port": "oclk_i", 
-                    "clock": "oclk"
+                    "type": "output", 
+                    "port": "iclk_data_o", 
+                    "clock": "iclk"
                 }, 
                 {
                     "delay": "0", 
@@ -622,9 +622,9 @@
                 }, 
                 {
                     "delay": "0", 
-                    "type": "input", 
-                    "port": "oclk_i", 
-                    "clock": "oclk"
+                    "type": "output", 
+                    "port": "iclk_data_o", 
+                    "clock": "iclk"
                 }, 
                 {
                     "delay": "0", 
@@ -677,9 +677,9 @@
                 }, 
                 {
                     "delay": "0", 
-                    "type": "input", 
-                    "port": "oclk_i", 
-                    "clock": "oclk"
+                    "type": "output", 
+                    "port": "iclk_data_o", 
+                    "clock": "iclk"
                 }, 
                 {
                     "delay": "0", 
@@ -732,9 +732,9 @@
                 }, 
                 {
                     "delay": "0", 
-                    "type": "input", 
-                    "port": "oclk_i", 
-                    "clock": "oclk"
+                    "type": "output", 
+                    "port": "iclk_data_o", 
+                    "clock": "iclk"
                 }, 
                 {
                     "delay": "0", 
@@ -787,9 +787,9 @@
                 }, 
                 {
                     "delay": "0", 
-                    "type": "input", 
-                    "port": "oclk_i", 
-                    "clock": "oclk"
+                    "type": "output", 
+                    "port": "iclk_data_o", 
+                    "clock": "iclk"
                 }, 
                 {
                     "delay": "0", 
@@ -842,9 +842,9 @@
                 }, 
                 {
                     "delay": "0", 
-                    "type": "input", 
-                    "port": "oclk_i", 
-                    "clock": "oclk"
+                    "type": "output", 
+                    "port": "iclk_data_o", 
+                    "clock": "iclk"
                 }, 
                 {
                     "delay": "0", 
