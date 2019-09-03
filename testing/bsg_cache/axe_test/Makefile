@@ -9,7 +9,7 @@ INCDIR = +incdir+$(BSG_IP_CORES_DIR)/bsg_misc
 INCDIR += +incdir+$(BSG_IP_CORES_DIR)/bsg_cache
 
 VCS_LOG = vcs.log
-TRACE_AXE = trace.axe
+TRACE_AXE = bsg_cache.axe
 
 .PHONY: dve sim clean axe all
 
@@ -38,9 +38,6 @@ sim: bsg_trace_rom.v
 
 dve:
 	dve -full64 -vpd vcdplus.vpd &
-
-$(TRACE_AXE):
-	python axe_trace_filter.py vcs.log > $(TRACE_AXE)
 
 axe: $(TRACE_AXE)
 	cat $<

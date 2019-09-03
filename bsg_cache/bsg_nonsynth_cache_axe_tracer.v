@@ -32,20 +32,30 @@ module bsg_nonsynth_cache_axe_tracer
 
 
   // synopsys translate_off
-  always_ff @ (posedge clk_i) begin
-    if (v_o & yumi_i) begin
-      if (decode_v_r.st_op) begin
-        $display("time: %0t", $time);
-        $display("#AXE 0: M[%0d] := %0d", addr_v_r>>2, sbuf_entry.data);
-      end
   
-      if (decode_v_r.ld_op) begin
-        $display("time: %0t", $time);
-        $display("#AXE 0: M[%0d] == %0d", addr_v_r>>2, data_o);
+  localparam logfile_lp = "bsg_cache.axe";
+
+  integer fd;
+  string header;
+
+  initial forever begin
+    @(negedge clk_i) begin
+      if (v_o & yumi_i) begin
+        if (decode_v_r.st_op) begin
+          fd = $fopen(logfile_lp, "a");
+          $fwrite(fd, "0: M[%0d] := %0d\n", addr_v_r>>2, sbuf_entry.data);
+          $fclose(fd);
+        end
+  
+        if (decode_v_r.ld_op) begin
+          fd = $fopen(logfile_lp, "a");
+          $fwrite(fd, "0: M[%0d] == %0d\n", addr_v_r>>2, data_o);
+          $fclose(fd);
+        end
       end
-    end
-  end
-  // synopsys translate_on
+    end 
+  end   
+// synopsys translate_on
 
 
 endmodule

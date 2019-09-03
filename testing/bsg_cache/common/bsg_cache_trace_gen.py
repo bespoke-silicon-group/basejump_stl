@@ -82,6 +82,7 @@ class BsgCacheTraceGen:
   def nop(self):
     trace = "0000_"
     trace += self.get_bin_str(0, self.packet_len)
+    print(trace)
 
   # get binary string (helper)
   def get_bin_str(self, val, width):
