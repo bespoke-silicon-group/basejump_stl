@@ -48,24 +48,24 @@ class BsgCacheTraceGen:
   # send packet
   def send(self, opcode, addr, data=0, mask=0):
     trace = "0001_"
-    trace += format(opcode, "05b") + "_"
-    trace += format(addr, "0" + str(self.addr_width_p) + "b") + "_"
-    trace += format(data, "0" + str(self.data_width_p) + "b") + "_"
-    trace += format(mask, "0" + str(self.data_mask_width_lp) + "b")
+    trace += self.get_bin_str(opcode, 5) + "_"
+    trace += self.get_bin_str(addr, self.addr_width_p) + "_"
+    trace += self.get_bin_str(data, self.data_width_p) + "_"
+    trace += self.get_bin_str(mask, self.data_mask_width_lp)
     print(trace)
 
   
   # recv data
   def recv(self, data):
     trace = "0010_"
-    trace += format(0, "0" + str(self.packet_len-self.data_width_p) + "b") + "_"
-    trace += format(data, "0" + str(self.data_width_p) + "b")
+    trace += self.get_bin_str(0, self.packet_len-self.data_width_p)
+    trace += self.get_bin_str(data, self.data_width_p)
     print(trace)
 
   # done
   def done(self):
     trace = "0100_"
-    trace += format(0, "0" + str(self.packet_len) + "b")
+    trace += self.get_bin_str(0, self.packet_len)
     print(trace)
 
   # wait
@@ -78,6 +78,13 @@ class BsgCacheTraceGen:
     trace += self.get_bin_str(0, self.packet_len)
     print(trace)
 
-  # get binary string (helper).
+  # nop
+  def nop(self):
+    trace = "0000_"
+    trace += self.get_bin_str(0, self.packet_len)
+
+  # get binary string (helper)
   def get_bin_str(self, val, width):
     return format(val, "0" + str(width) + "b")
+
+

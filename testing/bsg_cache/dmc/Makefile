@@ -18,7 +18,7 @@ TRACE_ROMS = $(addsuffix .v, $(addprefix $(BASE), $(NUMS)))
 all: sim
 
 bsg_trace_rom_%.tr:
-	python bsg_trace_rom.py $* $(WAYS_P) > $@
+	python dmc_trace_gen.py $* $(WAYS_P) > $@
 
 bsg_trace_rom_%.v: bsg_trace_rom_%.tr
 	python $(BASEJUMP_STL_DIR)/bsg_mem/bsg_ascii_to_rom.py $< bsg_trace_rom_$* > $@

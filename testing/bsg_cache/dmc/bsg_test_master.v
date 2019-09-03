@@ -8,7 +8,7 @@ module bsg_test_master
     , parameter ways_p="inv"
   
     , localparam dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
-    , localparam ring_width_lp=(addr_width_p+data_width_p+5)
+    , localparam ring_width_lp=`bsg_cache_pkt_width(addr_width_p, data_width_p)
     , localparam rom_addr_width_lp=32
   )
   (
@@ -135,11 +135,7 @@ module bsg_test_master
       ,.v_we_o()
     );
 
-    assign cache_pkt[i].sigext = 1'b0; 
-    assign cache_pkt[i].mask = '0; 
-    assign cache_pkt[i].data = tr_data_lo[i][0+:data_width_p]; 
-    assign cache_pkt[i].addr = tr_data_lo[i][data_width_p+:addr_width_p]; 
-    assign cache_pkt[i].opcode = bsg_cache_opcode_e'(tr_data_lo[i][data_width_p+addr_width_p+:5]); 
+    assign cache_pkt[i] = tr_data_lo[i];
     
     assign cache_v_li[i] = tr_v_lo[i];
     assign tr_yumi_li[i] = tr_v_lo[i] & cache_ready_lo[i];

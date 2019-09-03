@@ -13,15 +13,10 @@ module testbench();
   parameter sets_p = 4;
   parameter ways_p = `WAYS_P;
 
-  parameter ring_width_p = addr_width_p + data_width_p + 5;
+  parameter ring_width_p = `bsg_cache_pkt_width(addr_width_p, data_width_p);
   parameter rom_addr_width_p = 32;
 
   localparam mem_els_lp = 2*8*sets_p*block_size_in_words_p;
-  localparam mask_width_lp = (data_width_p>>3);
-  localparam byte_offset_width_lp = `BSG_SAFE_CLOG2(data_width_p>>3);
-  localparam word_offset_width_lp = `BSG_SAFE_CLOG2(block_size_in_words_p);
-  localparam block_offset_width_lp = (byte_offset_width_lp+word_offset_width_lp);
-  localparam index_width_lp = `BSG_SAFE_CLOG2(sets_p);
 
   logic clk;
   bsg_nonsynth_clock_gen #(
@@ -162,11 +157,7 @@ module testbench();
 
   assign tr_yumi_li = v_li & ready_lo;
 
-  assign cache_pkt.sigext = 1'b0;
-  assign cache_pkt.mask = {mask_width_lp{1'b1}};
-  assign cache_pkt.opcode = bsg_cache_opcode_e'(tr_data_lo[data_width_p+addr_width_p+:5]);
-  assign cache_pkt.addr = tr_data_lo[data_width_p+:addr_width_p];
-  assign cache_pkt.data = tr_data_lo[0+:data_width_p];
+  assign cache_pkt = tr_data_lo;
 
 
   bsg_trace_rom #(

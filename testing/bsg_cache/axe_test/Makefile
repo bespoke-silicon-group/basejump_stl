@@ -24,7 +24,7 @@ DEFINE += +define+DATA_WIDTH_P=$(DATA_WIDTH_P)
 all: clean sim
 
 bsg_trace_rom.tr:
-	python trace_gen.py $(NUM_INSTR_P) $(SEED_P) $(WAYS_P) $(DATA_WIDTH_P) > $@
+	python axe_trace_gen.py $(NUM_INSTR_P) $(SEED_P) $(WAYS_P) $(DATA_WIDTH_P) > $@
 
 bsg_trace_rom.v: bsg_trace_rom.tr
 	python $(BSG_IP_CORES_DIR)/bsg_mem/bsg_ascii_to_rom.py \
