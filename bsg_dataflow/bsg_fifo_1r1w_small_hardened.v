@@ -1,9 +1,13 @@
+//
 // bsg_fifo_1r1w_small_hardened
 //
-// bsg_fifo with 1 read and 1 write, using
-// 1-write 1-async-read register file implementation.
+// bsg_fifo with 1 read and 1 write, used for smaller fifos
+// No bubble between packets, has 1-cycle latency
 //
-// used for smaller fifos.
+// This fifo instantiates bsg_mem_1r1w_sync memory, which has synchronous read
+// Data writes into both sync_mem and w_data_bypass_reg when sync_mem is empty, 
+// so that it can be available on read side in next cycle.
+// Only read from sync_mem when sync_mem is not empty
 //
 // input handshake protocol (based on ready_THEN_valid_p parameter):
 //     valid-and-ready or
@@ -53,9 +57,9 @@ module bsg_fifo_1r1w_small_hardened #( parameter width_p      = -1
    // one read pointer, one write pointer;
    logic [ptr_width_lp-1:0] rptr_r, wptr_r;
    logic                    full, empty;
-   // one cycle earlier than rptr_r
+   // rptr_n is one cycle earlier than rptr_r
    logic [ptr_width_lp-1:0] rptr_n;
-   // one cycle later than empty
+   // empty_r is one cycle later than empty
    logic empty_r;
    // avoid reading and writing same address 
    logic [width_p-1:0] data_o_mem, data_o_reg;
@@ -91,7 +95,7 @@ module bsg_fifo_1r1w_small_hardened #( parameter width_p      = -1
       ,.r_data_o (data_o_mem)
       );
       
-   // w_data bypass register, handling read_write_same_addr case
+   // w_data bypass register, avoid reading and writing same address in memory
    bsg_dff_en #(.width_p(width_p)) bypass_reg
      (.clk_i
       ,.data_i(data_i)
@@ -119,10 +123,4 @@ module bsg_fifo_1r1w_small_hardened #( parameter width_p      = -1
      end
    //synopsys translate_on
 
-/*
-   always_ff @(negedge clk_i)
-     begin
-        $display("%m v_i=%x yumi_i=%x wptr=%b rptr=%b enque=%b full=%d empty=%d ready_o=%d",v_i,yumi_i,wptr_r, rptr_r, enque, full,empty,ready_o);
-     end
- */
 endmodule
