@@ -28,6 +28,13 @@
                     "clock": "oclk"
                 }, 
                 {
+                    "type": "false_path", 
+                    "clock": [
+                        "iclk", 
+                        "oclk"
+                    ]
+                }, 
+                {
                     "period": "9", 
                     "uncertainty": "0", 
                     "type": "clock", 
@@ -74,6 +81,13 @@
                     "type": "output", 
                     "port": "oclk_data_o", 
                     "clock": "oclk"
+                }, 
+                {
+                    "type": "false_path", 
+                    "clock": [
+                        "iclk", 
+                        "oclk"
+                    ]
                 }, 
                 {
                     "period": "9", 
@@ -124,6 +138,13 @@
                     "clock": "oclk"
                 }, 
                 {
+                    "type": "false_path", 
+                    "clock": [
+                        "iclk", 
+                        "oclk"
+                    ]
+                }, 
+                {
                     "period": "10", 
                     "uncertainty": "0", 
                     "type": "clock", 
@@ -170,6 +191,13 @@
                     "type": "output", 
                     "port": "oclk_data_o", 
                     "clock": "oclk"
+                }, 
+                {
+                    "type": "false_path", 
+                    "clock": [
+                        "iclk", 
+                        "oclk"
+                    ]
                 }, 
                 {
                     "period": "10", 
@@ -220,6 +248,13 @@
                     "clock": "oclk"
                 }, 
                 {
+                    "type": "false_path", 
+                    "clock": [
+                        "iclk", 
+                        "oclk"
+                    ]
+                }, 
+                {
                     "period": "9", 
                     "uncertainty": "0", 
                     "type": "clock", 
@@ -266,6 +301,13 @@
                     "type": "output", 
                     "port": "oclk_data_o", 
                     "clock": "oclk"
+                }, 
+                {
+                    "type": "false_path", 
+                    "clock": [
+                        "iclk", 
+                        "oclk"
+                    ]
                 }, 
                 {
                     "period": "9", 
@@ -316,6 +358,13 @@
                     "clock": "oclk"
                 }, 
                 {
+                    "type": "false_path", 
+                    "clock": [
+                        "iclk", 
+                        "oclk"
+                    ]
+                }, 
+                {
                     "period": "10", 
                     "uncertainty": "0", 
                     "type": "clock", 
@@ -362,6 +411,13 @@
                     "type": "output", 
                     "port": "oclk_data_o", 
                     "clock": "oclk"
+                }, 
+                {
+                    "type": "false_path", 
+                    "clock": [
+                        "iclk", 
+                        "oclk"
+                    ]
                 }, 
                 {
                     "period": "10", 
@@ -412,6 +468,13 @@
                     "clock": "oclk"
                 }, 
                 {
+                    "type": "false_path", 
+                    "clock": [
+                        "iclk", 
+                        "oclk"
+                    ]
+                }, 
+                {
                     "period": "9", 
                     "uncertainty": "0", 
                     "type": "clock", 
@@ -458,6 +521,13 @@
                     "type": "output", 
                     "port": "oclk_data_o", 
                     "clock": "oclk"
+                }, 
+                {
+                    "type": "false_path", 
+                    "clock": [
+                        "iclk", 
+                        "oclk"
+                    ]
                 }, 
                 {
                     "period": "9", 
@@ -508,6 +578,13 @@
                     "clock": "oclk"
                 }, 
                 {
+                    "type": "false_path", 
+                    "clock": [
+                        "iclk", 
+                        "oclk"
+                    ]
+                }, 
+                {
                     "period": "10", 
                     "uncertainty": "0", 
                     "type": "clock", 
@@ -554,6 +631,13 @@
                     "type": "output", 
                     "port": "oclk_data_o", 
                     "clock": "oclk"
+                }, 
+                {
+                    "type": "false_path", 
+                    "clock": [
+                        "iclk", 
+                        "oclk"
+                    ]
                 }, 
                 {
                     "period": "10", 
@@ -604,6 +688,13 @@
                     "clock": "oclk"
                 }, 
                 {
+                    "type": "false_path", 
+                    "clock": [
+                        "iclk", 
+                        "oclk"
+                    ]
+                }, 
+                {
                     "period": "9", 
                     "uncertainty": "0", 
                     "type": "clock", 
@@ -650,6 +741,13 @@
                     "type": "output", 
                     "port": "oclk_data_o", 
                     "clock": "oclk"
+                }, 
+                {
+                    "type": "false_path", 
+                    "clock": [
+                        "iclk", 
+                        "oclk"
+                    ]
                 }, 
                 {
                     "period": "9", 
@@ -700,6 +798,13 @@
                     "clock": "oclk"
                 }, 
                 {
+                    "type": "false_path", 
+                    "clock": [
+                        "iclk", 
+                        "oclk"
+                    ]
+                }, 
+                {
                     "period": "10", 
                     "uncertainty": "0", 
                     "type": "clock", 
@@ -746,6 +851,13 @@
                     "type": "output", 
                     "port": "oclk_data_o", 
                     "clock": "oclk"
+                }, 
+                {
+                    "type": "false_path", 
+                    "clock": [
+                        "iclk", 
+                        "oclk"
+                    ]
                 }, 
                 {
                     "period": "10", 
