@@ -55,9 +55,10 @@ module bsg_fifo_1r1w_small_hardened_tester
   ,.link_o(master_node_link_lo)
   );
   
-  bsg_fifo_1r1w_small_hardened 
+  bsg_fifo_1r1w_small
  #(.width_p (width_p)
   ,.els_p   (els_p)
+  ,.harden_p(1)
   ) fifo_m2c
   (.clk_i  (fifo_clk)
   ,.reset_i(fifo_reset)
@@ -69,9 +70,10 @@ module bsg_fifo_1r1w_small_hardened_tester
   ,.yumi_i (client_node_link_li.v & client_node_link_lo.ready_and_rev)
   );
   
-  bsg_fifo_1r1w_small_hardened 
+  bsg_fifo_1r1w_small
  #(.width_p (width_p)
   ,.els_p   (els_p)
+  ,.harden_p(1)
   ) fifo_c2m
   (.clk_i  (fifo_clk)
   ,.reset_i(fifo_reset)
