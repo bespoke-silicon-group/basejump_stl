@@ -66,9 +66,6 @@ module bsg_cache_pkt_decode
   assign decode_o.alock_op = (cache_pkt.opcode == ALOCK);
   assign decode_o.aunlock_op = (cache_pkt.opcode == AUNLOCK);
 
-  assign decode_o.tag_read_op = decode_o.ld_op | decode_o.st_op
-    | decode_o.tagfl_op | decode_o.taglv_op | decode_o.tagla_op
-    | decode_o.afl_op | decode_o.aflinv_op | decode_o.ainv_op
-    | decode_o.alock_op | decode_o.aunlock_op;
+  assign decode_o.tag_read_op = ~decode_o.tagst_op;
 
 endmodule
