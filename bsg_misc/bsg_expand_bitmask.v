@@ -1,5 +1,5 @@
 /**
- *  bsg_expand.v
+ *  bsg_expand_bitmask.v
  *
  *  This module expands each bit in the input vector by the factor of
  *  expand_p.
@@ -19,7 +19,7 @@
  */
 
 
-module bsg_expand #(parameter in_width_p="inv", expand_p="inv")
+module bsg_expand_bitmask #(parameter in_width_p="inv", expand_p="inv")
 (
   input [in_width_p-1:0] i
   , output logic [(in_width_p*expand_p)-1:0] o

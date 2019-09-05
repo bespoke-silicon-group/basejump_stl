@@ -546,7 +546,7 @@ module bsg_cache
         ,.o(decode_lo)
       );
 
-      bsg_expand #(
+      bsg_expand_bitmask #(
         .in_width_p(data_width_p/(8*(2**i)))
         ,.expand_p(2**i)
       ) exp (
@@ -600,7 +600,7 @@ module bsg_cache
 
   logic [data_width_p-1:0] expanded_mask_v;
 
-  bsg_expand #(
+  bsg_expand_bitmask #(
     .in_width_p(data_mask_width_lp)
     ,.expand_p(8)
   ) mask_v_expand (
