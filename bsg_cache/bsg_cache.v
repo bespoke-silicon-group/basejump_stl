@@ -597,10 +597,18 @@ module bsg_cache
     ? snoop_word_lo
     : bypass_data_masked;
 
-  for (genvar i = 0; i < data_mask_width_lp; i++) begin
-    assign ld_data_masked[8*i+:8] = {8{mask_v_r[i]}} & snoop_or_ld_data[8*i+:8];
-  end
 
+  logic [data_width_p-1:0] expanded_mask_v;
+
+  bsg_expand #(
+    .in_width_p(data_mask_width_lp)
+    ,.expand_p(8)
+  ) mask_v_expand (
+    .i(mask_v_r)
+    ,.o(expanded_mask_v)
+  );
+
+  assign ld_data_masked = snoop_or_ld_data & expanded_mask_v;
 
   // select double/word/half/byte load data
   //
