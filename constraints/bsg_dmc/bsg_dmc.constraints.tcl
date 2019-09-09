@@ -23,7 +23,7 @@ proc bsg_dmc_data_timing_constraints { \
                -name dqs_${grp_idx}    \
                $dqs_i
 
-  set quarter_cycle [expr [get_attribute [get_clocks dqs0] period] / 4.0]
+  set quarter_cycle [expr [get_attribute [get_clocks dqs_${grp_idx}] period] / 4.0]
   # create 90-degree shifted clock on the output of delay line
   create_generated_clock -name dqs_${grp_idx}_dly \
                          -edges {1 2 3} \
