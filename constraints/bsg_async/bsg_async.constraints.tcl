@@ -26,6 +26,7 @@ proc bsg_async {} {
       set launch_period [get_attribute $launch_clk period]
       set latch_period [get_attribute $latch_clk period]
       set max_delay_ps [expr min($launch_period,$latch_period)/2]
+      # we use -ignore_clock_latency to avoid taking clock network delay into account
       set_max_delay $max_delay_ps -from $launch_clk -to $latch_clk -ignore_clock_latency
       set_min_delay 0             -from $launch_clk -to $latch_clk -ignore_clock_latency
     }
