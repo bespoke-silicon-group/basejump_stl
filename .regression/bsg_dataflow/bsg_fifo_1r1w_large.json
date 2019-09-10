@@ -23,6 +23,11 @@
         "basejump_stl/bsg_misc/bsg_thermometer_count.v",
         "basejump_stl/bsg_misc/bsg_encode_one_hot.v"
     ],
+    
+    "include_path": [
+        "basejump_stl/bsg_misc"
+    ],
+    
     "run_config": [
         {
             "name": "bsg_fifo_1r1w_large_small_clkperiod_1",
