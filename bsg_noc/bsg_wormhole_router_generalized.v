@@ -40,9 +40,8 @@ module bsg_wormhole_router_generalized
     bsg_transpose #(.width_p(dirs_lp),.els_p(dirs_lp)) tr (.i(routing_matrix_p[0])
                                                           ,.o(matrix_out_in_transpose)
                                                           );
-    initial
+    always_ff @(negedge reset_i)
       begin
-        #1000;
         assert (routing_matrix_p[1] == matrix_out_in_transpose)
           else $error("inconsistent matrixes");
       end

@@ -54,6 +54,8 @@ module bsg_async_ptr_gray #(parameter lg_size_p = -1
    
    if (use_negedge_for_launch_p)
      begin
+
+	// synopsys sync_set_reset "w_reset_i"
         always @(negedge w_clk_i)
           if (w_reset_i)
             begin
@@ -68,6 +70,7 @@ module bsg_async_ptr_gray #(parameter lg_size_p = -1
      end
    else
      begin
+	// synopsys sync_set_reset "w_reset_i"
         always @(posedge w_clk_i)
           if (w_reset_i)
             begin
@@ -81,38 +84,54 @@ module bsg_async_ptr_gray #(parameter lg_size_p = -1
             end
      end
 
-   end 
+   end
    else begin: async
-   
+
+    // we declare shadow registers inside this block
+    // so that they will pick up the BSG_NO_CLOCK_GATE_X tag
+
    if (use_negedge_for_launch_p)
-     begin
+     begin : BSG_NO_CLOCK_GATE_1
+	logic  [lg_size_p-1:0] async_reset_w_ptr_r;
+	logic  [lg_size_p-1:0] async_reset_w_ptr_p1_r;
+
+	assign w_ptr_r    = async_reset_w_ptr_r;
+	assign w_ptr_p1_r = async_reset_w_ptr_p1_r;
+
+	// synopsys async_set_reset "w_reset_i"
         always @(negedge w_clk_i or posedge w_reset_i)
           if (w_reset_i)
             begin
-               w_ptr_r    <= 0;
-               w_ptr_p1_r <= 1;
+               async_reset_w_ptr_r    <= 0;
+               async_reset_w_ptr_p1_r <= 1;
             end
           else
             begin
-               w_ptr_r    <= w_ptr_n;
-               w_ptr_p1_r <= w_ptr_p1_n;
+               async_reset_w_ptr_r    <= w_ptr_n;
+               async_reset_w_ptr_p1_r <= w_ptr_p1_n;
             end
      end
    else
-     begin
+     begin : BSG_NO_CLOCK_GATE_2
+	logic  [lg_size_p-1:0] async_reset_w_ptr_r;
+	logic  [lg_size_p-1:0] async_reset_w_ptr_p1_r;
+
+	assign w_ptr_r    = async_reset_w_ptr_r;
+	assign w_ptr_p1_r = async_reset_w_ptr_p1_r;
+
+	// synopsys async_set_reset "w_reset_i"
         always @(posedge w_clk_i or posedge w_reset_i)
           if (w_reset_i)
             begin
-               w_ptr_r    <= 0;
-               w_ptr_p1_r <= 1;
+               async_reset_w_ptr_r    <= 0;
+               async_reset_w_ptr_p1_r <= 1;
             end
           else
             begin
-               w_ptr_r    <= w_ptr_n;
-               w_ptr_p1_r <= w_ptr_p1_n;
+               async_reset_w_ptr_r    <= w_ptr_n;
+               async_reset_w_ptr_p1_r <= w_ptr_p1_n;
             end
      end
-   
    end
 
    assign w_ptr_binary_r_o = w_ptr_r;

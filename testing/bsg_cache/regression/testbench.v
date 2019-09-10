@@ -2,10 +2,9 @@
  *  testbench.v
  */
 
-`include "bsg_cache_pkt.vh"
-`include "bsg_cache_dma_pkt.vh"
 
 module testbench();
+  import bsg_cache_pkg::*;
 
   // parameters
   //

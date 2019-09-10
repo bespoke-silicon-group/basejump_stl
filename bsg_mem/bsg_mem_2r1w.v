@@ -42,10 +42,10 @@ module bsg_mem_2r1w #(parameter width_p=-1
           assert (w_addr_i < els_p)
             else $error("Invalid address %x to %m of size %x\n", w_addr_i, els_p);
 
-          assert (~(r0_addr_i == w_addr_i && w_v_i && r0_v_i && !read_write_same_addr_p))
+          assert (!(r0_addr_i == w_addr_i && w_v_i && r0_v_i && !read_write_same_addr_p))
             else $error("%m: Attempt to read and write same address");
 
-          assert (~(r1_addr_i == w_addr_i && w_v_i && r1_v_i && !read_write_same_addr_p))
+          assert (!(r1_addr_i == w_addr_i && w_v_i && r1_v_i && !read_write_same_addr_p))
             else $error("%m: Attempt to read and write same address");
        end
 

@@ -1,35 +1,22 @@
 /**
  *  bsg_cache.v
  *
- *  @param addr_width_p
- *  @param data_width_p
- *  @param block_size_in_words_p
- *  @param sets_p
- *
  *  @author tommy
  * 
  * See https://docs.google.com/document/d/1AIjhuwTbOYwyZHdu-Uc4dr9Fwxi6ZKscKSGTiUeQEYo/edit for design doc
  */
 
-`include "bsg_cache_pkt.vh"
-`include "bsg_cache_dma_pkt.vh"
-
 module bsg_cache
+  import bsg_cache_pkg::*;
   #(parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
 
-    ,localparam lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
-    ,localparam data_mask_width_lp=(data_width_p>>3)
-    ,localparam lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
-    ,localparam lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    ,localparam tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp)
-    ,localparam bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,data_width_p)
-    ,localparam bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    ,parameter bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,data_width_p)
+    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
 
     ,parameter debug_p=0
-    ,parameter axe_trace_p=0
   )
   (
     input clk_i
@@ -57,6 +44,14 @@ module bsg_cache
 
     ,output logic v_we_o
   );
+
+  // localparam
+  //
+  localparam lg_sets_lp=`BSG_SAFE_CLOG2(sets_p);
+  localparam data_mask_width_lp=(data_width_p>>3);
+  localparam lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp);
+  localparam lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p);
+  localparam tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp);
 
   // instruction decoding
   //
@@ -144,6 +139,7 @@ module bsg_cache
       ,ld_op_tl_r
       ,st_op_tl_r
       ,tagst_op_tl_r
+      ,tagfl_op_tl_r
       ,taglv_op_tl_r
       ,tagla_op_tl_r
       ,afl_op_tl_r
@@ -166,6 +162,7 @@ module bsg_cache
           ld_op_tl_r <= ld_op;
           st_op_tl_r <= st_op;
           tagst_op_tl_r <= tagst_op;
+          tagfl_op_tl_r <= tagfl_op;
           taglv_op_tl_r <= taglv_op;
           tagla_op_tl_r <= tagla_op;
           afl_op_tl_r <= afl_op;
@@ -201,6 +198,7 @@ module bsg_cache
   bsg_mem_1rw_sync_mask_write_bit #(
     .width_p((tag_width_lp+1)*2)
     ,.els_p(sets_p)
+    ,.latch_last_read_p(1)
   ) tag_mem (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -236,6 +234,7 @@ module bsg_cache
   bsg_mem_1rw_sync_mask_write_byte #(
     .data_width_p(data_width_p*2)
     ,.els_p(block_size_in_words_p*sets_p)
+    ,.latch_last_read_p(1)
   ) data_mem (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -309,7 +308,7 @@ module bsg_cache
           ld_op_v_r <= ld_op_tl_r;
           st_op_v_r <= st_op_tl_r;
           tagst_op_v_r <= tagst_op_tl_r;
-          tagfl_op_v_r <= tagfl_op_v_r;
+          tagfl_op_v_r <= tagfl_op_tl_r;
           taglv_op_v_r <= taglv_op_tl_r;
           tagla_op_v_r <= tagla_op_tl_r;
           afl_op_v_r <= afl_op_tl_r;
@@ -342,7 +341,11 @@ module bsg_cache
 
   assign tag_hit_v[1] = (addr_tag_v == tag_v_r[1]) & valid_v_r[1];
   assign tag_hit_v[0] = (addr_tag_v == tag_v_r[0]) & valid_v_r[0];
-  assign miss_v = v_v_r & (((ld_op_v_r | st_op_v_r) & ~(tag_hit_v[1] | tag_hit_v[0]))
+
+  // MBT: the ~tagst_op_v_r is necessary at the top of this expression
+  //      to avoid X-pessimism post synthesis due to X's coming out of the tags
+
+  assign miss_v = (~tagst_op_v_r) & v_v_r & (((ld_op_v_r | st_op_v_r) & ~(tag_hit_v[1] | tag_hit_v[0]))
     | (tagfl_op_v_r & valid_v_r[addr_set_v])
     | ((afl_op_v_r | aflinv_op_v_r | ainv_op_v_r) & (tag_hit_v[1] | tag_hit_v[0])));
 
@@ -360,6 +363,7 @@ module bsg_cache
   bsg_mem_1rw_sync_mask_write_bit #(
     .width_p(4)
     ,.els_p(sets_p)
+    ,.latch_last_read_p(1)
   ) stat_mem (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -373,10 +377,7 @@ module bsg_cache
  
   // miss handler
   //
-  logic dma_send_fill_addr_lo;
-  logic dma_send_evict_addr_lo;
-  logic dma_get_fill_data_lo;
-  logic dma_send_evict_data_lo;
+  bsg_cache_dma_cmd_e dma_cmd_lo;
   logic dma_set_lo;
   logic [addr_width_p-1:0] dma_addr_lo;
   logic dma_done_li;
@@ -421,11 +422,8 @@ module bsg_cache
     ,.tag_hit_v_i(tag_hit_v)
 
     ,.sbuf_empty_i(sbuf_empty_li)
-  
-    ,.dma_send_fill_addr_o(dma_send_fill_addr_lo)
-    ,.dma_send_evict_addr_o(dma_send_evict_addr_lo)
-    ,.dma_get_fill_data_o(dma_get_fill_data_lo)
-    ,.dma_send_evict_data_o(dma_send_evict_data_lo)
+ 
+    ,.dma_cmd_o(dma_cmd_lo) 
     ,.dma_set_o(dma_set_lo)
     ,.dma_addr_o(dma_addr_lo)
     ,.dma_done_i(dma_done_li)
@@ -472,10 +470,8 @@ module bsg_cache
     .clk_i(clk_i)
     ,.reset_i(reset_i)
    
-    ,.dma_send_fill_addr_i(dma_send_fill_addr_lo)
-    ,.dma_send_evict_addr_i(dma_send_evict_addr_lo)
-    ,.dma_get_fill_data_i(dma_get_fill_data_lo)
-    ,.dma_send_evict_data_i(dma_send_evict_data_lo)
+    ,.dma_cmd_i(dma_cmd_lo)
+
     ,.dma_set_i(dma_set_lo)
     ,.dma_addr_i(dma_addr_lo)
     ,.done_o(dma_done_li)
@@ -712,10 +708,13 @@ module bsg_cache
     ? dma_data_mem_data_lo
     : sbuf_data_mem_data;
 
-  assign data_mem_addr_li = recover_lo ? {addr_index_tl, addr_block_offset_tl}
-    : (dma_data_mem_v_lo ? dma_data_mem_addr_lo
-    : ((ld_op & v_i & ready_o) ? {addr_index, addr_block_offset}
-    : sbuf_addr_lo[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp]));
+  assign data_mem_addr_li = recover_lo
+    ? {addr_index_tl, addr_block_offset_tl}
+    : (dma_data_mem_v_lo
+      ? dma_data_mem_addr_lo
+      : ((ld_op & v_i & ready_o) 
+        ? {addr_index, addr_block_offset}
+        : sbuf_addr_lo[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp]));
 
   assign data_mem_w_mask_li = dma_data_mem_w_lo
     ? dma_data_mem_w_mask_lo
@@ -795,21 +794,6 @@ module bsg_cache
       end
     end
 
-  end
-
-  if (axe_trace_p) begin
-    bsg_nonsynth_axe_tracer #(
-      .data_width_p(data_width_p)
-      ,.addr_width_p(addr_width_p)
-    ) axe_tracer (
-      .clk_i(clk_i)
-      ,.v_i(v_o & yumi_i)
-      ,.store_op_i(st_op_v_r)
-      ,.load_op_i(ld_op_v_r)
-      ,.addr_i(addr_v_r)
-      ,.store_data_i(sbuf_data_li)
-      ,.load_data_i(data_o)
-    );
   end
 
   // synopsys translate_on

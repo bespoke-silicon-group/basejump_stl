@@ -12,7 +12,6 @@ module bsg_cache_sbuf
     ,parameter addr_width_p="inv"
 
     ,localparam data_mask_width_lp=(data_width_p>>3)
-    ,localparam lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
   )
   (
     input clk_i
@@ -38,6 +37,10 @@ module bsg_cache_sbuf
     ,output logic [data_width_p-1:0] bypass_data_o
     ,output logic [data_mask_width_lp-1:0] bypass_mask_o
   );
+
+  // localparam
+  //
+  localparam lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3);
 
   logic [addr_width_p-1:0] el0_addr;
   logic [addr_width_p-1:0] el1_addr;

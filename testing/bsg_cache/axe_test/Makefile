@@ -3,6 +3,7 @@
 #
 #
 
+include ../../../../bsg_cadenv/cadenv.mk
 
 INCDIR = +incdir+$(BSG_IP_CORES_DIR)/bsg_misc
 INCDIR += +incdir+$(BSG_IP_CORES_DIR)/bsg_cache
@@ -12,7 +13,7 @@ TRACE_AXE = trace.axe
 
 .PHONY: dve sim clean axe all
 
-NUM_INSTR_P ?= 10000
+NUM_INSTR_P ?= 50000
 SEED_P = $(shell shuf -i 0-4294967295 -n 1)
 DEFINE = +define+NUM_INSTR_P=$(NUM_INSTR_P)
 
@@ -26,7 +27,7 @@ bsg_trace_rom.v: bsg_trace_rom.tr
 		bsg_trace_rom.tr bsg_trace_rom > bsg_trace_rom.v
 
 sim: bsg_trace_rom.v
-	vcs +v2k -R -sverilog -full64 -debug_pp \
+	vcs +v2k -R -sverilog -full64 \
 		+lint=all,noSVA-UA,noSVA-NSVU,noVCDE,noNS \
 		-timescale=1ns/1ps +vcs+vcdpluson \
 		-f sv.include $(INCDIR) -l $(VCS_LOG) $(DEFINE)

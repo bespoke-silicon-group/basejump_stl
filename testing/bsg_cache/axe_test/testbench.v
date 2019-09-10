@@ -3,9 +3,8 @@
  *
  */
 
-`include "bsg_cache_pkt.vh"
-
 module testbench();
+  import bsg_cache_pkg::*;
 
   parameter num_instr_p = `NUM_INSTR_P;
   parameter addr_width_p = 32;
@@ -69,7 +68,6 @@ module testbench();
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.sets_p(sets_p) 
-    ,.axe_trace_p(1)
   ) cache (
     .clk_i(clk)
     ,.reset_i(reset)
@@ -98,6 +96,13 @@ module testbench();
   );
 
   assign yumi_li = v_lo;
+
+  bind bsg_cache bsg_nonsynth_cache_axe_tracer #(
+    .addr_width_p(addr_width_p)
+    ,.data_width_p(data_width_p)
+  ) axe_tracer (
+    .*
+  );
 
   // mock_dma
   //
