@@ -1,6 +1,8 @@
 /**
  *  bsg_cache_dma.v
  *
+ *  DMA engine.
+ *
  *  @author tommy
  */
 
@@ -9,11 +11,14 @@ module bsg_cache_dma
   #(parameter addr_width_p="inv"
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
-    ,parameter sets_p="int"
+    ,parameter sets_p="inv"
+    ,parameter ways_p="inv"
 
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
     ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    ,parameter data_mask_width_lp=(data_width_p>>3)
+    ,parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
   
     ,parameter debug_p=0
   )
@@ -22,7 +27,7 @@ module bsg_cache_dma
     ,input reset_i
 
     ,input bsg_cache_dma_cmd_e dma_cmd_i
-    ,input dma_set_i
+    ,input [lg_ways_lp-1:0]dma_way_i
     ,input [addr_width_p-1:0] dma_addr_i
     ,output logic done_o
 
@@ -43,9 +48,9 @@ module bsg_cache_dma
     ,output logic data_mem_v_o
     ,output logic data_mem_w_o
     ,output logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_mem_addr_o
-    ,output logic [2*(data_width_p>>3)-1:0] data_mem_w_mask_o
-    ,output logic [(2*data_width_p)-1:0] data_mem_data_o
-    ,input [(2*data_width_p)-1:0] data_mem_data_i
+    ,output logic [ways_p-1:0][data_mask_width_lp-1:0] data_mem_w_mask_o
+    ,output logic [ways_p-1:0][data_width_p-1:0] data_mem_data_o
+    ,input [ways_p-1:0][data_width_p-1:0] data_mem_data_i
   );
 
   // localparam
@@ -135,27 +140,37 @@ module bsg_cache_dma
 
   assign dma_pkt_o = dma_pkt;
 
-  assign data_mem_w_mask_o = {
-    {(data_width_p>>3){dma_set_i}},
-    {(data_width_p>>3){~dma_set_i}}
-  };
+  logic [ways_p-1:0] dma_way_mask;
+
+  bsg_decode #(
+    .num_out_p(ways_p)
+  ) dma_way_demux (
+    .i(dma_way_i)
+    ,.o(dma_way_mask)
+  );
+
+  for (genvar i = 0; i < ways_p; i++) begin
+    assign data_mem_w_mask_o[i] = {data_mask_width_lp{dma_way_mask[i]}};
+  end
+
 
   assign data_mem_addr_o = {
     dma_addr_i[byte_offset_width_lp+lg_block_size_in_words_lp+:lg_sets_lp],
     counter_r[lg_block_size_in_words_lp-1:0]
   };
   
-  assign data_mem_data_o = {2{in_fifo_data_lo}};
+  assign data_mem_data_o = {ways_p{in_fifo_data_lo}};
 
-  assign out_fifo_data_li = dma_set_i
-    ? data_mem_data_i[data_width_p+:data_width_p]
-    : data_mem_data_i[0+:data_width_p];
+  bsg_mux #(
+    .width_p(data_width_p)
+    ,.els_p(ways_p)
+  ) write_data_mux (
+    .data_i(data_mem_data_i)
+    ,.sel_i(dma_way_i)
+    ,.data_o(out_fifo_data_li)
+  );
 
 
-  // snoop_word offset
-  //
-  logic [lg_block_size_in_words_lp-1:0] snoop_word_offset;
-  assign snoop_word_offset = dma_addr_i[byte_offset_width_lp+:lg_block_size_in_words_lp];
 
   always_comb begin
     done_o = 1'b0;
@@ -270,9 +285,14 @@ module bsg_cache_dma
     endcase
   end
 
-  // sequential
-  //
+  // snoop_word register
+  // As the fill data is coming in, grab the word that matches the block
+  // offset, so that we don't have to read the data_mem again to return the
+  // load data.
+  logic [lg_block_size_in_words_lp-1:0] snoop_word_offset;
   logic snoop_word_we;
+
+  assign snoop_word_offset = dma_addr_i[byte_offset_width_lp+:lg_block_size_in_words_lp];
   assign snoop_word_we = (dma_state_r == GET_FILL_DATA)
     & (snoop_word_offset == counter_r[lg_block_size_in_words_lp-1:0])
     & in_fifo_v_lo;

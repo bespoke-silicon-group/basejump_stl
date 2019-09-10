@@ -8,13 +8,15 @@ module testbench();
 
   // parameters
   //
-  parameter ring_width_p = 76;
-  parameter rom_addr_width_p = 32;
 
   parameter addr_width_p = 32;
   parameter data_width_p = 32;
   parameter block_size_in_words_p = 8;
   parameter sets_p = 512;
+  parameter ways_p = `WAYS_P;
+
+  parameter ring_width_p = `bsg_cache_pkt_width(addr_width_p, data_width_p);
+  parameter rom_addr_width_p = 32;
 
   // clock and reset
   //
@@ -66,7 +68,8 @@ module testbench();
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.sets_p(sets_p)
-  ) cache (
+    ,.ways_p(ways_p)
+  ) DUT (
     .clk_i(clk)
     ,.reset_i(reset)
 
@@ -165,11 +168,11 @@ module testbench();
   
   assign tr_data_li = {{(ring_width_p-data_width_p){1'b0}}, fifo_data_lo};
 
-  assign cache_pkt.sigext = tr_data_lo[data_width_p+addr_width_p+5+(data_width_p>>3)];
-  assign cache_pkt.mask = tr_data_lo[data_width_p+addr_width_p+5+:(data_width_p>>3)];
-  assign cache_pkt.opcode = bsg_cache_opcode_e'(tr_data_lo[data_width_p+addr_width_p+:5]);
-  assign cache_pkt.addr = tr_data_lo[data_width_p+:addr_width_p];
-  assign cache_pkt.data = tr_data_lo[0+:data_width_p];
+  assign cache_pkt = tr_data_lo;
+  //assign cache_pkt.mask = tr_data_lo[data_width_p+addr_width_p+5+:(data_width_p>>3)];
+  //assign cache_pkt.opcode = bsg_cache_opcode_e'(tr_data_lo[data_width_p+addr_width_p+:5]);
+  //assign cache_pkt.addr = tr_data_lo[data_width_p+:addr_width_p];
+  //assign cache_pkt.data = tr_data_lo[0+:data_width_p];
 
   
   // mock_dma
@@ -178,7 +181,7 @@ module testbench();
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
-    ,.els_p(2**16)
+    ,.els_p(2**18)
   ) dma (
     .clk_i(clk)
     ,.reset_i(reset)

@@ -9,6 +9,7 @@ parameter addr_width_p = 27;
 parameter data_width_p = 32;
 parameter block_size_in_words_p = 8;
 parameter sets_p = 512;
+parameter ways_p = `WAYS_P;
 
 parameter ui_addr_width_p = 27;
 parameter ui_data_width_p = 32;
@@ -73,6 +74,7 @@ bsg_test_master #(
   ,.data_width_p(data_width_p)
   ,.block_size_in_words_p(block_size_in_words_p)
   ,.sets_p(sets_p)
+  ,.ways_p(ways_p)
 ) test_master (
   .clk_i(clk)
   ,.reset_i(reset)

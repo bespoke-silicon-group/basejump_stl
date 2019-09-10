@@ -1,6 +1,11 @@
 /**
  *  bsg_cache_sbuf.v
  *
+ *  store (write) buffer.
+ *
+ *  input interface is valid-only.
+ *  output interface is valid-yumi;
+ *  
  *  el1 is head of the queue.
  *  el0 is the tail.
  *
@@ -8,25 +13,22 @@
  */
 
 module bsg_cache_sbuf
+  import bsg_cache_pkg::*;
   #(parameter data_width_p="inv"
     ,parameter addr_width_p="inv"
+    ,parameter ways_p="inv"
 
     ,localparam data_mask_width_lp=(data_width_p>>3)
+    ,localparam sbuf_entry_width_lp=`bsg_cache_sbuf_entry_width(addr_width_p,data_width_p,ways_p)
   )
   (
     input clk_i
     ,input reset_i
 
-    ,input [addr_width_p-1:0] addr_i
-    ,input [data_width_p-1:0] data_i 
-    ,input [data_mask_width_lp-1:0] mask_i
-    ,input set_i
+    ,input [sbuf_entry_width_lp-1:0] sbuf_entry_i
     ,input v_i
   
-    ,output logic [data_width_p-1:0] data_o
-    ,output logic [addr_width_p-1:0] addr_o
-    ,output logic [data_mask_width_lp-1:0] mask_o
-    ,output logic set_o
+    ,output logic [sbuf_entry_width_lp-1:0] sbuf_entry_o
     ,output logic v_o
     ,input logic yumi_i
 
@@ -42,15 +44,11 @@ module bsg_cache_sbuf
   //
   localparam lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3);
 
-  logic [addr_width_p-1:0] el0_addr;
-  logic [addr_width_p-1:0] el1_addr;
-  logic [data_width_p-1:0] el0_data;
-  logic [data_width_p-1:0] el1_data;
-  logic [data_mask_width_lp-1:0] el0_mask;
-  logic [data_mask_width_lp-1:0] el1_mask;
+  `declare_bsg_cache_sbuf_entry_s(addr_width_p, data_width_p, ways_p);
+  bsg_cache_sbuf_entry_s el0, el1;
+
 
   logic [1:0] num_els_r;
-  logic [addr_width_p-1:0] storebuf_addr;
 
   logic el0_valid;
   logic el1_valid;
@@ -94,6 +92,7 @@ module bsg_cache_sbuf
         mux1_sel = 1;
       end
       default: begin
+        // this would never happen.
         v_o = 0;
         empty_o = 0;
         el0_valid = 0;
@@ -104,7 +103,6 @@ module bsg_cache_sbuf
         mux1_sel = 0;
       end
     endcase
-
   end
 
   always_ff @ (posedge clk_i) begin
@@ -118,53 +116,23 @@ module bsg_cache_sbuf
 
   // sbuf queues 
   // 
-  bsg_cache_sbuf_queue #(.width_p(data_mask_width_lp)) wbq_mask (
+  bsg_cache_sbuf_entry_s sbuf_entry_in;
+  assign sbuf_entry_in = sbuf_entry_i;
+   
+  bsg_cache_sbuf_queue #(
+    .width_p(sbuf_entry_width_lp)
+  ) sbq (
     .clk_i(clk_i)
-    ,.data_i(mask_i)
+    ,.data_i(sbuf_entry_in)
     ,.el0_en_i(el0_enable)
     ,.el1_en_i(el1_enable)
     ,.mux0_sel_i(mux0_sel)
     ,.mux1_sel_i(mux1_sel)
-    ,.el0_snoop_o(el0_mask)
-    ,.el1_snoop_o(el1_mask)
-    ,.data_o(mask_o)
+    ,.el0_snoop_o(el0)
+    ,.el1_snoop_o(el1)
+    ,.data_o(sbuf_entry_o)
   );
 
-  bsg_cache_sbuf_queue #(.width_p(data_width_p)) wbq_data (
-    .clk_i(clk_i)
-    ,.data_i(data_i)
-    ,.el0_en_i(el0_enable)
-    ,.el1_en_i(el1_enable)
-    ,.mux0_sel_i(mux0_sel)
-    ,.mux1_sel_i(mux1_sel)
-    ,.el0_snoop_o(el0_data)
-    ,.el1_snoop_o(el1_data)
-    ,.data_o(data_o)
-  );
-
-  bsg_cache_sbuf_queue #(.width_p(addr_width_p)) wbq_addr (
-    .clk_i(clk_i)
-    ,.data_i(addr_i)
-    ,.el0_en_i(el0_enable)
-    ,.el1_en_i(el1_enable)
-    ,.mux0_sel_i(mux0_sel)
-    ,.mux1_sel_i(mux1_sel)
-    ,.el0_snoop_o(el0_addr)
-    ,.el1_snoop_o(el1_addr)
-    ,.data_o(addr_o)
-  );
-
-  bsg_cache_sbuf_queue #(.width_p(1)) wbq_set (
-    .clk_i(clk_i)
-    ,.data_i(set_i)
-    ,.el0_en_i(el0_enable)
-    ,.el1_en_i(el1_enable)
-    ,.mux0_sel_i(mux0_sel)
-    ,.mux1_sel_i(mux1_sel)
-    ,.el0_snoop_o()
-    ,.el1_snoop_o()
-    ,.data_o(set_o)
-  );
 
 
   // bypassing
@@ -175,9 +143,9 @@ module bsg_cache_sbuf
   logic [addr_width_p-lg_data_mask_width_lp-1:0] bypass_word_addr;
 
   assign bypass_word_addr = bypass_addr_i[addr_width_p-1:lg_data_mask_width_lp];
-  assign tag_hit0_n = bypass_word_addr == el0_addr[addr_width_p-1:lg_data_mask_width_lp]; 
-  assign tag_hit1_n = bypass_word_addr == el1_addr[addr_width_p-1:lg_data_mask_width_lp]; 
-  assign tag_hit2_n = bypass_word_addr == addr_i[addr_width_p-1:lg_data_mask_width_lp]; 
+  assign tag_hit0_n = bypass_word_addr == el0.addr[addr_width_p-1:lg_data_mask_width_lp]; 
+  assign tag_hit1_n = bypass_word_addr == el1.addr[addr_width_p-1:lg_data_mask_width_lp]; 
+  assign tag_hit2_n = bypass_word_addr == sbuf_entry_in.addr[addr_width_p-1:lg_data_mask_width_lp]; 
 
   assign tag_hit0 = tag_hit0_n & el0_valid;
   assign tag_hit1 = tag_hit1_n & el1_valid;
@@ -195,17 +163,17 @@ module bsg_cache_sbuf
   logic [data_width_p-1:0] bypass_data_n;
   logic [(data_width_p>>3)-1:0] bypass_mask_n;
 
-  assign bypass_mask_n = (tag_hit0x4 & el0_mask)
-    | (tag_hit1x4 & el1_mask)
-    | (tag_hit2x4 & mask_i);
+  assign bypass_mask_n = (tag_hit0x4 & el0.mask)
+    | (tag_hit1x4 & el1.mask)
+    | (tag_hit2x4 & sbuf_entry_in.mask);
 
   bsg_mux_segmented #(
     .segments_p(data_width_p>>3)
     ,.segment_width_p(8) 
   ) mux_segmented_merge0 (
-    .data0_i(el1_data)
-    ,.data1_i(el0_data)
-    ,.sel_i(tag_hit0x4 & el0_mask)
+    .data0_i(el1.data)
+    ,.data1_i(el0.data)
+    ,.sel_i(tag_hit0x4 & el0.mask)
     ,.data_o(el0or1_data)
   );
 
@@ -214,8 +182,8 @@ module bsg_cache_sbuf
     ,.segment_width_p(8) 
   ) mux_segmented_merge1 (
     .data0_i(el0or1_data)
-    ,.data1_i(data_i)
-    ,.sel_i(tag_hit2x4 & mask_i)
+    ,.data1_i(sbuf_entry_in.data)
+    ,.sel_i(tag_hit2x4 & sbuf_entry_in.mask)
     ,.data_o(bypass_data_n)
   );
 
