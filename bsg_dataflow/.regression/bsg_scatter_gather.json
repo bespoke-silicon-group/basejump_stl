@@ -1,0 +1,705 @@
+{
+    "design_name": "bsg_scatter_gather",
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_dataflow/bsg_scatter_gather.v"
+    ],
+    "run_config": [
+        {
+            "name": "bsg_scatter_gather_small_clkperiod_1",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size small at clock period=1",
+            "design_size": "small",
+            "parameters": [
+                "vec_size_lp=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_small_clkperiod_3",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size small at clock period=3",
+            "design_size": "small",
+            "parameters": [
+                "vec_size_lp=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_small_clkperiod_5",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size small at clock period=5",
+            "design_size": "small",
+            "parameters": [
+                "vec_size_lp=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_small_clkperiod_7",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size small at clock period=7",
+            "design_size": "small",
+            "parameters": [
+                "vec_size_lp=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_small_clkperiod_9",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size small at clock period=9",
+            "design_size": "small",
+            "parameters": [
+                "vec_size_lp=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_small_clkperiod_11",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size small at clock period=11",
+            "design_size": "small",
+            "parameters": [
+                "vec_size_lp=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_large_clkperiod_1",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size large at clock period=1",
+            "design_size": "large",
+            "parameters": [
+                "vec_size_lp=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_large_clkperiod_3",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size large at clock period=3",
+            "design_size": "large",
+            "parameters": [
+                "vec_size_lp=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_large_clkperiod_5",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size large at clock period=5",
+            "design_size": "large",
+            "parameters": [
+                "vec_size_lp=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_large_clkperiod_7",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size large at clock period=7",
+            "design_size": "large",
+            "parameters": [
+                "vec_size_lp=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_large_clkperiod_9",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size large at clock period=9",
+            "design_size": "large",
+            "parameters": [
+                "vec_size_lp=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_large_clkperiod_11",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size large at clock period=11",
+            "design_size": "large",
+            "parameters": [
+                "vec_size_lp=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_very_large_clkperiod_1",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size very_large at clock period=1",
+            "design_size": "very_large",
+            "parameters": [
+                "vec_size_lp=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_very_large_clkperiod_3",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size very_large at clock period=3",
+            "design_size": "very_large",
+            "parameters": [
+                "vec_size_lp=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_very_large_clkperiod_5",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size very_large at clock period=5",
+            "design_size": "very_large",
+            "parameters": [
+                "vec_size_lp=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_very_large_clkperiod_7",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size very_large at clock period=7",
+            "design_size": "very_large",
+            "parameters": [
+                "vec_size_lp=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_very_large_clkperiod_9",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size very_large at clock period=9",
+            "design_size": "very_large",
+            "parameters": [
+                "vec_size_lp=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_very_large_clkperiod_11",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size very_large at clock period=11",
+            "design_size": "very_large",
+            "parameters": [
+                "vec_size_lp=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_medium_clkperiod_1",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size medium at clock period=1",
+            "design_size": "medium",
+            "parameters": [
+                "vec_size_lp=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_medium_clkperiod_3",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size medium at clock period=3",
+            "design_size": "medium",
+            "parameters": [
+                "vec_size_lp=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_medium_clkperiod_5",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size medium at clock period=5",
+            "design_size": "medium",
+            "parameters": [
+                "vec_size_lp=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_medium_clkperiod_7",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size medium at clock period=7",
+            "design_size": "medium",
+            "parameters": [
+                "vec_size_lp=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_medium_clkperiod_9",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size medium at clock period=9",
+            "design_size": "medium",
+            "parameters": [
+                "vec_size_lp=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_scatter_gather_medium_clkperiod_11",
+            "description": "Given a bit vector, generate permutation vectors that perform concentration with size medium at clock period=11",
+            "design_size": "medium",
+            "parameters": [
+                "vec_size_lp=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        }
+    ]
+}

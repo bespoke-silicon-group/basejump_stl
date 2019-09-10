@@ -1,0 +1,70 @@
+{
+    "design_name": "bsg_mem_1r1w",
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w.v",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v"
+    ],
+    "run_config": [
+        {
+            "name": "async_sram_32x32_1GHz",
+            "description": "asynchronous SRAM with 32 words and 32 bits/word",
+            "design_size": "small",
+            "parameters": [
+                "width_p=32",
+                "els_p=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "w_clk_i",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0.05"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0.1"
+                }
+            ]
+        },
+        {
+            "name": "async_sram_64x32_500MHz",
+            "description": "asynchronous SRAM with 64 words and 32 bits/word",
+            "design_size": "medium",
+            "parameters": [
+                "width_p=32",
+                "els_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "w_clk_i",
+                    "period": "2",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0.05"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0.1"
+                }
+            ]
+        }
+    ]
+}

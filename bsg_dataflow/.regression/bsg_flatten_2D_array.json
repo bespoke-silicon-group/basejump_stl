@@ -1,0 +1,728 @@
+{
+    "design_name": "bsg_flatten_2D_array",
+    "filelist": [
+        "basejump_stl/bsg_dataflow/bsg_flatten_2D_array.v"
+    ],
+    "run_config": [
+        {
+            "name": "bsg_flatten_2D_array_small_clkperiod_1",
+            "description": "a flattetned 2D array with size small at clock period=1",
+            "design_size": "small",
+            "parameters": [
+                "items_p=10",
+                "width_p=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_small_clkperiod_3",
+            "description": "a flattetned 2D array with size small at clock period=3",
+            "design_size": "small",
+            "parameters": [
+                "items_p=10",
+                "width_p=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_small_clkperiod_5",
+            "description": "a flattetned 2D array with size small at clock period=5",
+            "design_size": "small",
+            "parameters": [
+                "items_p=10",
+                "width_p=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_small_clkperiod_7",
+            "description": "a flattetned 2D array with size small at clock period=7",
+            "design_size": "small",
+            "parameters": [
+                "items_p=10",
+                "width_p=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_small_clkperiod_9",
+            "description": "a flattetned 2D array with size small at clock period=9",
+            "design_size": "small",
+            "parameters": [
+                "items_p=10",
+                "width_p=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_small_clkperiod_11",
+            "description": "a flattetned 2D array with size small at clock period=11",
+            "design_size": "small",
+            "parameters": [
+                "items_p=10",
+                "width_p=32"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_large_clkperiod_1",
+            "description": "a flattetned 2D array with size large at clock period=1",
+            "design_size": "large",
+            "parameters": [
+                "items_p=100",
+                "width_p=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_large_clkperiod_3",
+            "description": "a flattetned 2D array with size large at clock period=3",
+            "design_size": "large",
+            "parameters": [
+                "items_p=100",
+                "width_p=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_large_clkperiod_5",
+            "description": "a flattetned 2D array with size large at clock period=5",
+            "design_size": "large",
+            "parameters": [
+                "items_p=100",
+                "width_p=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_large_clkperiod_7",
+            "description": "a flattetned 2D array with size large at clock period=7",
+            "design_size": "large",
+            "parameters": [
+                "items_p=100",
+                "width_p=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_large_clkperiod_9",
+            "description": "a flattetned 2D array with size large at clock period=9",
+            "design_size": "large",
+            "parameters": [
+                "items_p=100",
+                "width_p=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_large_clkperiod_11",
+            "description": "a flattetned 2D array with size large at clock period=11",
+            "design_size": "large",
+            "parameters": [
+                "items_p=100",
+                "width_p=128"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_very_large_clkperiod_1",
+            "description": "a flattetned 2D array with size very_large at clock period=1",
+            "design_size": "very_large",
+            "parameters": [
+                "items_p=500",
+                "width_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_very_large_clkperiod_3",
+            "description": "a flattetned 2D array with size very_large at clock period=3",
+            "design_size": "very_large",
+            "parameters": [
+                "items_p=500",
+                "width_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_very_large_clkperiod_5",
+            "description": "a flattetned 2D array with size very_large at clock period=5",
+            "design_size": "very_large",
+            "parameters": [
+                "items_p=500",
+                "width_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_very_large_clkperiod_7",
+            "description": "a flattetned 2D array with size very_large at clock period=7",
+            "design_size": "very_large",
+            "parameters": [
+                "items_p=500",
+                "width_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_very_large_clkperiod_9",
+            "description": "a flattetned 2D array with size very_large at clock period=9",
+            "design_size": "very_large",
+            "parameters": [
+                "items_p=500",
+                "width_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_very_large_clkperiod_11",
+            "description": "a flattetned 2D array with size very_large at clock period=11",
+            "design_size": "very_large",
+            "parameters": [
+                "items_p=500",
+                "width_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_medium_clkperiod_1",
+            "description": "a flattetned 2D array with size medium at clock period=1",
+            "design_size": "medium",
+            "parameters": [
+                "items_p=50",
+                "width_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_medium_clkperiod_3",
+            "description": "a flattetned 2D array with size medium at clock period=3",
+            "design_size": "medium",
+            "parameters": [
+                "items_p=50",
+                "width_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_medium_clkperiod_5",
+            "description": "a flattetned 2D array with size medium at clock period=5",
+            "design_size": "medium",
+            "parameters": [
+                "items_p=50",
+                "width_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_medium_clkperiod_7",
+            "description": "a flattetned 2D array with size medium at clock period=7",
+            "design_size": "medium",
+            "parameters": [
+                "items_p=50",
+                "width_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_medium_clkperiod_9",
+            "description": "a flattetned 2D array with size medium at clock period=9",
+            "design_size": "medium",
+            "parameters": [
+                "items_p=50",
+                "width_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_flatten_2D_array_medium_clkperiod_11",
+            "description": "a flattetned 2D array with size medium at clock period=11",
+            "design_size": "medium",
+            "parameters": [
+                "items_p=50",
+                "width_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "vclk",
+                    "port": "virtual",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "vclk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        }
+    ]
+}

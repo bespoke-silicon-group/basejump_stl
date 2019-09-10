@@ -1,0 +1,728 @@
+{
+    "design_name": "bsg_fifo_shift_datapath",
+    "filelist": [
+        "basejump_stl/bsg_dataflow/bsg_fifo_shift_datapath.v"
+    ],
+    "run_config": [
+        {
+            "name": "bsg_fifo_shift_datapath_small_clkperiod_1",
+            "description": "an array of shift registers, with independently controlled three input muxes with size small at clock period=1",
+            "design_size": "small",
+            "parameters": [
+                "width_p=32",
+                "els_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_small_clkperiod_3",
+            "description": "an array of shift registers, with independently controlled three input muxes with size small at clock period=3",
+            "design_size": "small",
+            "parameters": [
+                "width_p=32",
+                "els_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_small_clkperiod_5",
+            "description": "an array of shift registers, with independently controlled three input muxes with size small at clock period=5",
+            "design_size": "small",
+            "parameters": [
+                "width_p=32",
+                "els_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_small_clkperiod_7",
+            "description": "an array of shift registers, with independently controlled three input muxes with size small at clock period=7",
+            "design_size": "small",
+            "parameters": [
+                "width_p=32",
+                "els_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_small_clkperiod_9",
+            "description": "an array of shift registers, with independently controlled three input muxes with size small at clock period=9",
+            "design_size": "small",
+            "parameters": [
+                "width_p=32",
+                "els_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_small_clkperiod_11",
+            "description": "an array of shift registers, with independently controlled three input muxes with size small at clock period=11",
+            "design_size": "small",
+            "parameters": [
+                "width_p=32",
+                "els_p=64"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_large_clkperiod_1",
+            "description": "an array of shift registers, with independently controlled three input muxes with size large at clock period=1",
+            "design_size": "large",
+            "parameters": [
+                "width_p=128",
+                "els_p=512"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_large_clkperiod_3",
+            "description": "an array of shift registers, with independently controlled three input muxes with size large at clock period=3",
+            "design_size": "large",
+            "parameters": [
+                "width_p=128",
+                "els_p=512"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_large_clkperiod_5",
+            "description": "an array of shift registers, with independently controlled three input muxes with size large at clock period=5",
+            "design_size": "large",
+            "parameters": [
+                "width_p=128",
+                "els_p=512"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_large_clkperiod_7",
+            "description": "an array of shift registers, with independently controlled three input muxes with size large at clock period=7",
+            "design_size": "large",
+            "parameters": [
+                "width_p=128",
+                "els_p=512"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_large_clkperiod_9",
+            "description": "an array of shift registers, with independently controlled three input muxes with size large at clock period=9",
+            "design_size": "large",
+            "parameters": [
+                "width_p=128",
+                "els_p=512"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_large_clkperiod_11",
+            "description": "an array of shift registers, with independently controlled three input muxes with size large at clock period=11",
+            "design_size": "large",
+            "parameters": [
+                "width_p=128",
+                "els_p=512"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_very_large_clkperiod_1",
+            "description": "an array of shift registers, with independently controlled three input muxes with size very_large at clock period=1",
+            "design_size": "very_large",
+            "parameters": [
+                "width_p=256",
+                "els_p=1024"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_very_large_clkperiod_3",
+            "description": "an array of shift registers, with independently controlled three input muxes with size very_large at clock period=3",
+            "design_size": "very_large",
+            "parameters": [
+                "width_p=256",
+                "els_p=1024"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_very_large_clkperiod_5",
+            "description": "an array of shift registers, with independently controlled three input muxes with size very_large at clock period=5",
+            "design_size": "very_large",
+            "parameters": [
+                "width_p=256",
+                "els_p=1024"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_very_large_clkperiod_7",
+            "description": "an array of shift registers, with independently controlled three input muxes with size very_large at clock period=7",
+            "design_size": "very_large",
+            "parameters": [
+                "width_p=256",
+                "els_p=1024"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_very_large_clkperiod_9",
+            "description": "an array of shift registers, with independently controlled three input muxes with size very_large at clock period=9",
+            "design_size": "very_large",
+            "parameters": [
+                "width_p=256",
+                "els_p=1024"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_very_large_clkperiod_11",
+            "description": "an array of shift registers, with independently controlled three input muxes with size very_large at clock period=11",
+            "design_size": "very_large",
+            "parameters": [
+                "width_p=256",
+                "els_p=1024"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_medium_clkperiod_1",
+            "description": "an array of shift registers, with independently controlled three input muxes with size medium at clock period=1",
+            "design_size": "medium",
+            "parameters": [
+                "width_p=64",
+                "els_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "1",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_medium_clkperiod_3",
+            "description": "an array of shift registers, with independently controlled three input muxes with size medium at clock period=3",
+            "design_size": "medium",
+            "parameters": [
+                "width_p=64",
+                "els_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "3",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_medium_clkperiod_5",
+            "description": "an array of shift registers, with independently controlled three input muxes with size medium at clock period=5",
+            "design_size": "medium",
+            "parameters": [
+                "width_p=64",
+                "els_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "5",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_medium_clkperiod_7",
+            "description": "an array of shift registers, with independently controlled three input muxes with size medium at clock period=7",
+            "design_size": "medium",
+            "parameters": [
+                "width_p=64",
+                "els_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "7",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_medium_clkperiod_9",
+            "description": "an array of shift registers, with independently controlled three input muxes with size medium at clock period=9",
+            "design_size": "medium",
+            "parameters": [
+                "width_p=64",
+                "els_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "9",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        },
+        {
+            "name": "bsg_fifo_shift_datapath_medium_clkperiod_11",
+            "description": "an array of shift registers, with independently controlled three input muxes with size medium at clock period=11",
+            "design_size": "medium",
+            "parameters": [
+                "width_p=64",
+                "els_p=256"
+            ],
+            "constraints": [
+                {
+                    "type": "clock",
+                    "name": "clk",
+                    "port": "clk_i",
+                    "period": "11",
+                    "uncertainty": "0"
+                },
+                {
+                    "type": "input",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                },
+                {
+                    "type": "output",
+                    "clock": "clk",
+                    "port": "all",
+                    "delay": "0"
+                }
+            ]
+        }
+    ]
+}
