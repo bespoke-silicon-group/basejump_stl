@@ -31,8 +31,8 @@
             "design_size": "small", 
             "name": "bsg_array_concentrate_static_small_vclk_30_FO4", 
             "parameters": [
-                "width_p=16", 
-                "pattern_p=65535"
+                "pattern_els_p=65535", 
+                "width_p=16"
             ]
         }, 
         {
@@ -61,8 +61,8 @@
             "design_size": "small", 
             "name": "bsg_array_concentrate_static_small_vclk_40_FO4", 
             "parameters": [
-                "width_p=16", 
-                "pattern_p=65535"
+                "pattern_els_p=65535", 
+                "width_p=16"
             ]
         }, 
         {
@@ -91,8 +91,8 @@
             "design_size": "small", 
             "name": "bsg_array_concentrate_static_small_vclk_50_FO4", 
             "parameters": [
-                "width_p=16", 
-                "pattern_p=65535"
+                "pattern_els_p=65535", 
+                "width_p=16"
             ]
         }, 
         {
@@ -121,8 +121,8 @@
             "design_size": "small", 
             "name": "bsg_array_concentrate_static_small_vclk_60_FO4", 
             "parameters": [
-                "width_p=16", 
-                "pattern_p=65535"
+                "pattern_els_p=65535", 
+                "width_p=16"
             ]
         }, 
         {
@@ -151,8 +151,8 @@
             "design_size": "small", 
             "name": "bsg_array_concentrate_static_small_vclk_70_FO4", 
             "parameters": [
-                "width_p=16", 
-                "pattern_p=65535"
+                "pattern_els_p=65535", 
+                "width_p=16"
             ]
         }, 
         {
@@ -181,8 +181,8 @@
             "design_size": "small", 
             "name": "bsg_array_concentrate_static_small_vclk_80_FO4", 
             "parameters": [
-                "width_p=16", 
-                "pattern_p=65535"
+                "pattern_els_p=65535", 
+                "width_p=16"
             ]
         }, 
         {
@@ -211,8 +211,8 @@
             "design_size": "small", 
             "name": "bsg_array_concentrate_static_small_vclk_90_FO4", 
             "parameters": [
-                "width_p=16", 
-                "pattern_p=65535"
+                "pattern_els_p=65535", 
+                "width_p=16"
             ]
         }, 
         {
@@ -241,8 +241,8 @@
             "design_size": "small", 
             "name": "bsg_array_concentrate_static_small_vclk_100_FO4", 
             "parameters": [
-                "width_p=16", 
-                "pattern_p=65535"
+                "pattern_els_p=65535", 
+                "width_p=16"
             ]
         }, 
         {
@@ -271,8 +271,8 @@
             "design_size": "large", 
             "name": "bsg_array_concentrate_static_large_vclk_30_FO4", 
             "parameters": [
-                "width_p=64", 
-                "pattern_p=4294967295"
+                "pattern_els_p=4294967295", 
+                "width_p=64"
             ]
         }, 
         {
@@ -301,8 +301,8 @@
             "design_size": "large", 
             "name": "bsg_array_concentrate_static_large_vclk_40_FO4", 
             "parameters": [
-                "width_p=64", 
-                "pattern_p=4294967295"
+                "pattern_els_p=4294967295", 
+                "width_p=64"
             ]
         }, 
         {
@@ -331,8 +331,8 @@
             "design_size": "large", 
             "name": "bsg_array_concentrate_static_large_vclk_50_FO4", 
             "parameters": [
-                "width_p=64", 
-                "pattern_p=4294967295"
+                "pattern_els_p=4294967295", 
+                "width_p=64"
             ]
         }, 
         {
@@ -361,8 +361,8 @@
             "design_size": "large", 
             "name": "bsg_array_concentrate_static_large_vclk_60_FO4", 
             "parameters": [
-                "width_p=64", 
-                "pattern_p=4294967295"
+                "pattern_els_p=4294967295", 
+                "width_p=64"
             ]
         }, 
         {
@@ -391,8 +391,8 @@
             "design_size": "large", 
             "name": "bsg_array_concentrate_static_large_vclk_70_FO4", 
             "parameters": [
-                "width_p=64", 
-                "pattern_p=4294967295"
+                "pattern_els_p=4294967295", 
+                "width_p=64"
             ]
         }, 
         {
@@ -421,8 +421,8 @@
             "design_size": "large", 
             "name": "bsg_array_concentrate_static_large_vclk_80_FO4", 
             "parameters": [
-                "width_p=64", 
-                "pattern_p=4294967295"
+                "pattern_els_p=4294967295", 
+                "width_p=64"
             ]
         }, 
         {
@@ -451,8 +451,8 @@
             "design_size": "large", 
             "name": "bsg_array_concentrate_static_large_vclk_90_FO4", 
             "parameters": [
-                "width_p=64", 
-                "pattern_p=4294967295"
+                "pattern_els_p=4294967295", 
+                "width_p=64"
             ]
         }, 
         {
@@ -481,8 +481,8 @@
             "design_size": "large", 
             "name": "bsg_array_concentrate_static_large_vclk_100_FO4", 
             "parameters": [
-                "width_p=64", 
-                "pattern_p=4294967295"
+                "pattern_els_p=4294967295", 
+                "width_p=64"
             ]
         }, 
         {
@@ -511,8 +511,8 @@
             "design_size": "very_large", 
             "name": "bsg_array_concentrate_static_very_large_vclk_30_FO4", 
             "parameters": [
-                "width_p=128", 
-                "pattern_p=4294967295"
+                "pattern_els_p=4294967295", 
+                "width_p=128"
             ]
         }, 
         {
@@ -541,8 +541,8 @@
             "design_size": "very_large", 
             "name": "bsg_array_concentrate_static_very_large_vclk_40_FO4", 
             "parameters": [
-                "width_p=128", 
-                "pattern_p=4294967295"
+                "pattern_els_p=4294967295", 
+                "width_p=128"
             ]
         }, 
         {
@@ -571,8 +571,8 @@
             "design_size": "very_large", 
             "name": "bsg_array_concentrate_static_very_large_vclk_50_FO4", 
             "parameters": [
-                "width_p=128", 
-                "pattern_p=4294967295"
+                "pattern_els_p=4294967295", 
+                "width_p=128"
             ]
         }, 
         {
@@ -601,8 +601,8 @@
             "design_size": "very_large", 
             "name": "bsg_array_concentrate_static_very_large_vclk_60_FO4", 
             "parameters": [
-                "width_p=128", 
-                "pattern_p=4294967295"
+                "pattern_els_p=4294967295", 
+                "width_p=128"
             ]
         }, 
         {
@@ -631,8 +631,8 @@
             "design_size": "very_large", 
             "name": "bsg_array_concentrate_static_very_large_vclk_70_FO4", 
             "parameters": [
-                "width_p=128", 
-                "pattern_p=4294967295"
+                "pattern_els_p=4294967295", 
+                "width_p=128"
             ]
         }, 
         {
@@ -661,8 +661,8 @@
             "design_size": "very_large", 
             "name": "bsg_array_concentrate_static_very_large_vclk_80_FO4", 
             "parameters": [
-                "width_p=128", 
-                "pattern_p=4294967295"
+                "pattern_els_p=4294967295", 
+                "width_p=128"
             ]
         }, 
         {
@@ -691,8 +691,8 @@
             "design_size": "very_large", 
             "name": "bsg_array_concentrate_static_very_large_vclk_90_FO4", 
             "parameters": [
-                "width_p=128", 
-                "pattern_p=4294967295"
+                "pattern_els_p=4294967295", 
+                "width_p=128"
             ]
         }, 
         {
@@ -721,8 +721,8 @@
             "design_size": "very_large", 
             "name": "bsg_array_concentrate_static_very_large_vclk_100_FO4", 
             "parameters": [
-                "width_p=128", 
-                "pattern_p=4294967295"
+                "pattern_els_p=4294967295", 
+                "width_p=128"
             ]
         }, 
         {
@@ -751,8 +751,8 @@
             "design_size": "medium", 
             "name": "bsg_array_concentrate_static_medium_vclk_30_FO4", 
             "parameters": [
-                "width_p=32", 
-                "pattern_p=65535"
+                "pattern_els_p=65535", 
+                "width_p=32"
             ]
         }, 
         {
@@ -781,8 +781,8 @@
             "design_size": "medium", 
             "name": "bsg_array_concentrate_static_medium_vclk_40_FO4", 
             "parameters": [
-                "width_p=32", 
-                "pattern_p=65535"
+                "pattern_els_p=65535", 
+                "width_p=32"
             ]
         }, 
         {
@@ -811,8 +811,8 @@
             "design_size": "medium", 
             "name": "bsg_array_concentrate_static_medium_vclk_50_FO4", 
             "parameters": [
-                "width_p=32", 
-                "pattern_p=65535"
+                "pattern_els_p=65535", 
+                "width_p=32"
             ]
         }, 
         {
@@ -841,8 +841,8 @@
             "design_size": "medium", 
             "name": "bsg_array_concentrate_static_medium_vclk_60_FO4", 
             "parameters": [
-                "width_p=32", 
-                "pattern_p=65535"
+                "pattern_els_p=65535", 
+                "width_p=32"
             ]
         }, 
         {
@@ -871,8 +871,8 @@
             "design_size": "medium", 
             "name": "bsg_array_concentrate_static_medium_vclk_70_FO4", 
             "parameters": [
-                "width_p=32", 
-                "pattern_p=65535"
+                "pattern_els_p=65535", 
+                "width_p=32"
             ]
         }, 
         {
@@ -901,8 +901,8 @@
             "design_size": "medium", 
             "name": "bsg_array_concentrate_static_medium_vclk_80_FO4", 
             "parameters": [
-                "width_p=32", 
-                "pattern_p=65535"
+                "pattern_els_p=65535", 
+                "width_p=32"
             ]
         }, 
         {
@@ -931,8 +931,8 @@
             "design_size": "medium", 
             "name": "bsg_array_concentrate_static_medium_vclk_90_FO4", 
             "parameters": [
-                "width_p=32", 
-                "pattern_p=65535"
+                "pattern_els_p=65535", 
+                "width_p=32"
             ]
         }, 
         {
@@ -961,8 +961,8 @@
             "design_size": "medium", 
             "name": "bsg_array_concentrate_static_medium_vclk_100_FO4", 
             "parameters": [
-                "width_p=32", 
-                "pattern_p=65535"
+                "pattern_els_p=65535", 
+                "width_p=32"
             ]
         }
     ]
