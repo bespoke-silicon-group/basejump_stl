@@ -1,704 +1,936 @@
 {
-    "design_name": "bsg_round_robin_arb",
+    "design_name": "bsg_round_robin_arb", 
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_misc/bsg_defines.v", 
         "basejump_stl/bsg_misc/bsg_round_robin_arb.v"
-    ],
+    ], 
     "run_config": [
         {
-            "name": "bsg_round_robin_arb_small_clkperiod_1",
-            "description": "Round robin arbitration unit with size small at clock period=1",
-            "design_size": "small",
-            "parameters": [
-                "inputs_p=32"
-            ],
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "1",
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "clk_i", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_small_clkperiod_3",
-            "description": "Round robin arbitration unit with size small at clock period=3",
-            "design_size": "small",
+            ], 
+            "description": "Round robin arbitration unit with size small at a clock period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_round_robin_arb_small_clk_30_FO4", 
             "parameters": [
-                "inputs_p=32"
-            ],
+                "inputs_p=16"
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "3",
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "clk_i", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_small_clkperiod_5",
-            "description": "Round robin arbitration unit with size small at clock period=5",
-            "design_size": "small",
+            ], 
+            "description": "Round robin arbitration unit with size small at a clock period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_round_robin_arb_small_clk_40_FO4", 
             "parameters": [
-                "inputs_p=32"
-            ],
+                "inputs_p=16"
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "5",
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "clk_i", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_small_clkperiod_7",
-            "description": "Round robin arbitration unit with size small at clock period=7",
-            "design_size": "small",
+            ], 
+            "description": "Round robin arbitration unit with size small at a clock period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_round_robin_arb_small_clk_50_FO4", 
             "parameters": [
-                "inputs_p=32"
-            ],
+                "inputs_p=16"
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "7",
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "clk_i", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_small_clkperiod_9",
-            "description": "Round robin arbitration unit with size small at clock period=9",
-            "design_size": "small",
+            ], 
+            "description": "Round robin arbitration unit with size small at a clock period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_round_robin_arb_small_clk_60_FO4", 
             "parameters": [
-                "inputs_p=32"
-            ],
+                "inputs_p=16"
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "9",
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "clk_i", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_small_clkperiod_11",
-            "description": "Round robin arbitration unit with size small at clock period=11",
-            "design_size": "small",
+            ], 
+            "description": "Round robin arbitration unit with size small at a clock period (in num of FO4) = 70", 
+            "design_size": "small", 
+            "name": "bsg_round_robin_arb_small_clk_70_FO4", 
             "parameters": [
-                "inputs_p=32"
-            ],
+                "inputs_p=16"
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "11",
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "clk_i", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_large_clkperiod_1",
-            "description": "Round robin arbitration unit with size large at clock period=1",
-            "design_size": "large",
+            ], 
+            "description": "Round robin arbitration unit with size small at a clock period (in num of FO4) = 80", 
+            "design_size": "small", 
+            "name": "bsg_round_robin_arb_small_clk_80_FO4", 
             "parameters": [
-                "inputs_p=128"
-            ],
+                "inputs_p=16"
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "1",
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "clk_i", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_large_clkperiod_3",
-            "description": "Round robin arbitration unit with size large at clock period=3",
-            "design_size": "large",
+            ], 
+            "description": "Round robin arbitration unit with size small at a clock period (in num of FO4) = 90", 
+            "design_size": "small", 
+            "name": "bsg_round_robin_arb_small_clk_90_FO4", 
             "parameters": [
-                "inputs_p=128"
-            ],
+                "inputs_p=16"
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "3",
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "clk_i", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_large_clkperiod_5",
-            "description": "Round robin arbitration unit with size large at clock period=5",
-            "design_size": "large",
+            ], 
+            "description": "Round robin arbitration unit with size small at a clock period (in num of FO4) = 100", 
+            "design_size": "small", 
+            "name": "bsg_round_robin_arb_small_clk_100_FO4", 
             "parameters": [
-                "inputs_p=128"
-            ],
+                "inputs_p=16"
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "5",
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "clk_i", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_large_clkperiod_7",
-            "description": "Round robin arbitration unit with size large at clock period=7",
-            "design_size": "large",
-            "parameters": [
-                "inputs_p=128"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "7",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_large_clkperiod_9",
-            "description": "Round robin arbitration unit with size large at clock period=9",
-            "design_size": "large",
-            "parameters": [
-                "inputs_p=128"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "9",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_large_clkperiod_11",
-            "description": "Round robin arbitration unit with size large at clock period=11",
-            "design_size": "large",
-            "parameters": [
-                "inputs_p=128"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "11",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_very_large_clkperiod_1",
-            "description": "Round robin arbitration unit with size very_large at clock period=1",
-            "design_size": "very_large",
-            "parameters": [
-                "inputs_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "1",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_very_large_clkperiod_3",
-            "description": "Round robin arbitration unit with size very_large at clock period=3",
-            "design_size": "very_large",
-            "parameters": [
-                "inputs_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "3",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_very_large_clkperiod_5",
-            "description": "Round robin arbitration unit with size very_large at clock period=5",
-            "design_size": "very_large",
-            "parameters": [
-                "inputs_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "5",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_very_large_clkperiod_7",
-            "description": "Round robin arbitration unit with size very_large at clock period=7",
-            "design_size": "very_large",
-            "parameters": [
-                "inputs_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "7",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_very_large_clkperiod_9",
-            "description": "Round robin arbitration unit with size very_large at clock period=9",
-            "design_size": "very_large",
-            "parameters": [
-                "inputs_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "9",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_very_large_clkperiod_11",
-            "description": "Round robin arbitration unit with size very_large at clock period=11",
-            "design_size": "very_large",
-            "parameters": [
-                "inputs_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "11",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_medium_clkperiod_1",
-            "description": "Round robin arbitration unit with size medium at clock period=1",
-            "design_size": "medium",
+            ], 
+            "description": "Round robin arbitration unit with size large at a clock period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_round_robin_arb_large_clk_30_FO4", 
             "parameters": [
                 "inputs_p=64"
-            ],
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "1",
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "clk_i", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_medium_clkperiod_3",
-            "description": "Round robin arbitration unit with size medium at clock period=3",
-            "design_size": "medium",
+            ], 
+            "description": "Round robin arbitration unit with size large at a clock period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_round_robin_arb_large_clk_40_FO4", 
             "parameters": [
                 "inputs_p=64"
-            ],
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "3",
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "clk_i", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_medium_clkperiod_5",
-            "description": "Round robin arbitration unit with size medium at clock period=5",
-            "design_size": "medium",
+            ], 
+            "description": "Round robin arbitration unit with size large at a clock period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_round_robin_arb_large_clk_50_FO4", 
             "parameters": [
                 "inputs_p=64"
-            ],
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "5",
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "clk_i", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_medium_clkperiod_7",
-            "description": "Round robin arbitration unit with size medium at clock period=7",
-            "design_size": "medium",
+            ], 
+            "description": "Round robin arbitration unit with size large at a clock period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_round_robin_arb_large_clk_60_FO4", 
             "parameters": [
                 "inputs_p=64"
-            ],
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "7",
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "clk_i", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_medium_clkperiod_9",
-            "description": "Round robin arbitration unit with size medium at clock period=9",
-            "design_size": "medium",
+            ], 
+            "description": "Round robin arbitration unit with size large at a clock period (in num of FO4) = 70", 
+            "design_size": "large", 
+            "name": "bsg_round_robin_arb_large_clk_70_FO4", 
             "parameters": [
                 "inputs_p=64"
-            ],
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "9",
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "clk_i", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_round_robin_arb_medium_clkperiod_11",
-            "description": "Round robin arbitration unit with size medium at clock period=11",
-            "design_size": "medium",
+            ], 
+            "description": "Round robin arbitration unit with size large at a clock period (in num of FO4) = 80", 
+            "design_size": "large", 
+            "name": "bsg_round_robin_arb_large_clk_80_FO4", 
             "parameters": [
                 "inputs_p=64"
-            ],
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "11",
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "clk_i", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
                 }
+            ], 
+            "description": "Round robin arbitration unit with size large at a clock period (in num of FO4) = 90", 
+            "design_size": "large", 
+            "name": "bsg_round_robin_arb_large_clk_90_FO4", 
+            "parameters": [
+                "inputs_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size large at a clock period (in num of FO4) = 100", 
+            "design_size": "large", 
+            "name": "bsg_round_robin_arb_large_clk_100_FO4", 
+            "parameters": [
+                "inputs_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size very_large at a clock period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_round_robin_arb_very_large_clk_30_FO4", 
+            "parameters": [
+                "inputs_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size very_large at a clock period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_round_robin_arb_very_large_clk_40_FO4", 
+            "parameters": [
+                "inputs_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size very_large at a clock period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_round_robin_arb_very_large_clk_50_FO4", 
+            "parameters": [
+                "inputs_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size very_large at a clock period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_round_robin_arb_very_large_clk_60_FO4", 
+            "parameters": [
+                "inputs_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size very_large at a clock period (in num of FO4) = 70", 
+            "design_size": "very_large", 
+            "name": "bsg_round_robin_arb_very_large_clk_70_FO4", 
+            "parameters": [
+                "inputs_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size very_large at a clock period (in num of FO4) = 80", 
+            "design_size": "very_large", 
+            "name": "bsg_round_robin_arb_very_large_clk_80_FO4", 
+            "parameters": [
+                "inputs_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size very_large at a clock period (in num of FO4) = 90", 
+            "design_size": "very_large", 
+            "name": "bsg_round_robin_arb_very_large_clk_90_FO4", 
+            "parameters": [
+                "inputs_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size very_large at a clock period (in num of FO4) = 100", 
+            "design_size": "very_large", 
+            "name": "bsg_round_robin_arb_very_large_clk_100_FO4", 
+            "parameters": [
+                "inputs_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size medium at a clock period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_round_robin_arb_medium_clk_30_FO4", 
+            "parameters": [
+                "inputs_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size medium at a clock period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_round_robin_arb_medium_clk_40_FO4", 
+            "parameters": [
+                "inputs_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size medium at a clock period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_round_robin_arb_medium_clk_50_FO4", 
+            "parameters": [
+                "inputs_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size medium at a clock period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_round_robin_arb_medium_clk_60_FO4", 
+            "parameters": [
+                "inputs_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size medium at a clock period (in num of FO4) = 70", 
+            "design_size": "medium", 
+            "name": "bsg_round_robin_arb_medium_clk_70_FO4", 
+            "parameters": [
+                "inputs_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size medium at a clock period (in num of FO4) = 80", 
+            "design_size": "medium", 
+            "name": "bsg_round_robin_arb_medium_clk_80_FO4", 
+            "parameters": [
+                "inputs_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size medium at a clock period (in num of FO4) = 90", 
+            "design_size": "medium", 
+            "name": "bsg_round_robin_arb_medium_clk_90_FO4", 
+            "parameters": [
+                "inputs_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "Round robin arbitration unit with size medium at a clock period (in num of FO4) = 100", 
+            "design_size": "medium", 
+            "name": "bsg_round_robin_arb_medium_clk_100_FO4", 
+            "parameters": [
+                "inputs_p=32"
             ]
         }
     ]
