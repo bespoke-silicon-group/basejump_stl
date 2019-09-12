@@ -45,7 +45,8 @@ module bsg_mem_1rw_sync #( parameter width_p = -1
   `bsg_mem_1rw_sync_macro(256,96,2) else
   `bsg_mem_1rw_sync_macro(1024,46,4) else
   `bsg_mem_1rw_sync_macro(16,32,2) else
-  `bsg_mem_1rw_sync_macro(64,49,4) else
+  // BTB
+  //`bsg_mem_1rw_sync_macro(64,49,4) else
 
   // no hardened version found
     begin : z
