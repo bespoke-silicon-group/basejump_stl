@@ -62,8 +62,10 @@ module bsg_mem_1rw_sync_mask_write_bit #( parameter width_p = -1
   wire unused = reset_i;
 
   // TODO: Define more hardened macro configs here
-  `bsg_mem_1rw_sync_mask_write_bit_macro( 64,15,4) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro( 64, 7,4) else
+  // D$ stat
+  //`bsg_mem_1rw_sync_mask_write_bit_macro( 64,15,4) else
+  // I$ stat
+  //`bsg_mem_1rw_sync_mask_write_bit_macro( 64, 7,4) else
   `bsg_mem_1rw_sync_mask_write_bit_macro(256,48,2) else
   `bsg_mem_1rw_sync_mask_write_bit_macro(256,30,2) else
   `bsg_mem_1rw_sync_mask_write_bit_macro(256,4,2) else
@@ -71,8 +73,14 @@ module bsg_mem_1rw_sync_mask_write_bit #( parameter width_p = -1
   `bsg_mem_1rw_sync_mask_write_bit_macro(512,4,2) else
   `bsg_mem_1rw_sync_mask_write_bit_macro(512,32,4) else
 
-  `bsg_mem_1rw_sync_mask_write_bit_macro_banks(64,116,2, 2) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro_banks(128,116,2, 2) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro_banks(64,116,2,2) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro_banks(128,116,2,2) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro_banks(64,124,2,2) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro_banks(64,62,2,8) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro_banks(56,62,2,8) else
+   // CCE tags v1
+   //`bsg_mem_1rw_sync_mask_write_bit_macro_banks(64,124,2,4) else
+>>>>>>> Adding hardened memories
   
   // HACKED VERSION OF THE FOLLOWING
   // `bsg_mem_1rw_sync_mask_write_bit_macro_banks( 8,116,2,32) else
