@@ -1,704 +1,936 @@
 {
-    "design_name": "bsg_decode",
+    "design_name": "bsg_decode", 
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_misc/bsg_defines.v", 
         "basejump_stl/bsg_misc/bsg_decode.v"
-    ],
+    ], 
     "run_config": [
         {
-            "name": "bsg_decode_small_clkperiod_1",
-            "description": "a decoder with size small at clock period=1",
-            "design_size": "small",
-            "parameters": [
-                "num_out_p=32"
-            ],
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "1",
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "virtual", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_decode_small_clkperiod_3",
-            "description": "a decoder with size small at clock period=3",
-            "design_size": "small",
+            ], 
+            "description": "a decoder with size small at a clock period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_decode_small_vclk_30_FO4", 
             "parameters": [
-                "num_out_p=32"
-            ],
+                "num_out_p=16"
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "3",
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "virtual", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_decode_small_clkperiod_5",
-            "description": "a decoder with size small at clock period=5",
-            "design_size": "small",
+            ], 
+            "description": "a decoder with size small at a clock period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_decode_small_vclk_40_FO4", 
             "parameters": [
-                "num_out_p=32"
-            ],
+                "num_out_p=16"
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "5",
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "virtual", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_decode_small_clkperiod_7",
-            "description": "a decoder with size small at clock period=7",
-            "design_size": "small",
+            ], 
+            "description": "a decoder with size small at a clock period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_decode_small_vclk_50_FO4", 
             "parameters": [
-                "num_out_p=32"
-            ],
+                "num_out_p=16"
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "7",
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "virtual", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_decode_small_clkperiod_9",
-            "description": "a decoder with size small at clock period=9",
-            "design_size": "small",
+            ], 
+            "description": "a decoder with size small at a clock period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_decode_small_vclk_60_FO4", 
             "parameters": [
-                "num_out_p=32"
-            ],
+                "num_out_p=16"
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "9",
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "virtual", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_decode_small_clkperiod_11",
-            "description": "a decoder with size small at clock period=11",
-            "design_size": "small",
+            ], 
+            "description": "a decoder with size small at a clock period (in num of FO4) = 70", 
+            "design_size": "small", 
+            "name": "bsg_decode_small_vclk_70_FO4", 
             "parameters": [
-                "num_out_p=32"
-            ],
+                "num_out_p=16"
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "11",
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "virtual", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_decode_large_clkperiod_1",
-            "description": "a decoder with size large at clock period=1",
-            "design_size": "large",
+            ], 
+            "description": "a decoder with size small at a clock period (in num of FO4) = 80", 
+            "design_size": "small", 
+            "name": "bsg_decode_small_vclk_80_FO4", 
             "parameters": [
-                "num_out_p=128"
-            ],
+                "num_out_p=16"
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "1",
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "virtual", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_decode_large_clkperiod_3",
-            "description": "a decoder with size large at clock period=3",
-            "design_size": "large",
+            ], 
+            "description": "a decoder with size small at a clock period (in num of FO4) = 90", 
+            "design_size": "small", 
+            "name": "bsg_decode_small_vclk_90_FO4", 
             "parameters": [
-                "num_out_p=128"
-            ],
+                "num_out_p=16"
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "3",
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "virtual", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_decode_large_clkperiod_5",
-            "description": "a decoder with size large at clock period=5",
-            "design_size": "large",
+            ], 
+            "description": "a decoder with size small at a clock period (in num of FO4) = 100", 
+            "design_size": "small", 
+            "name": "bsg_decode_small_vclk_100_FO4", 
             "parameters": [
-                "num_out_p=128"
-            ],
+                "num_out_p=16"
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "5",
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "virtual", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_decode_large_clkperiod_7",
-            "description": "a decoder with size large at clock period=7",
-            "design_size": "large",
-            "parameters": [
-                "num_out_p=128"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "7",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_decode_large_clkperiod_9",
-            "description": "a decoder with size large at clock period=9",
-            "design_size": "large",
-            "parameters": [
-                "num_out_p=128"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "9",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_decode_large_clkperiod_11",
-            "description": "a decoder with size large at clock period=11",
-            "design_size": "large",
-            "parameters": [
-                "num_out_p=128"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "11",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_decode_very_large_clkperiod_1",
-            "description": "a decoder with size very_large at clock period=1",
-            "design_size": "very_large",
-            "parameters": [
-                "num_out_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "1",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_decode_very_large_clkperiod_3",
-            "description": "a decoder with size very_large at clock period=3",
-            "design_size": "very_large",
-            "parameters": [
-                "num_out_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "3",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_decode_very_large_clkperiod_5",
-            "description": "a decoder with size very_large at clock period=5",
-            "design_size": "very_large",
-            "parameters": [
-                "num_out_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "5",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_decode_very_large_clkperiod_7",
-            "description": "a decoder with size very_large at clock period=7",
-            "design_size": "very_large",
-            "parameters": [
-                "num_out_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "7",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_decode_very_large_clkperiod_9",
-            "description": "a decoder with size very_large at clock period=9",
-            "design_size": "very_large",
-            "parameters": [
-                "num_out_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "9",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_decode_very_large_clkperiod_11",
-            "description": "a decoder with size very_large at clock period=11",
-            "design_size": "very_large",
-            "parameters": [
-                "num_out_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "11",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_decode_medium_clkperiod_1",
-            "description": "a decoder with size medium at clock period=1",
-            "design_size": "medium",
+            ], 
+            "description": "a decoder with size large at a clock period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_decode_large_vclk_30_FO4", 
             "parameters": [
                 "num_out_p=64"
-            ],
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "1",
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "virtual", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_decode_medium_clkperiod_3",
-            "description": "a decoder with size medium at clock period=3",
-            "design_size": "medium",
+            ], 
+            "description": "a decoder with size large at a clock period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_decode_large_vclk_40_FO4", 
             "parameters": [
                 "num_out_p=64"
-            ],
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "3",
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "virtual", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_decode_medium_clkperiod_5",
-            "description": "a decoder with size medium at clock period=5",
-            "design_size": "medium",
+            ], 
+            "description": "a decoder with size large at a clock period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_decode_large_vclk_50_FO4", 
             "parameters": [
                 "num_out_p=64"
-            ],
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "5",
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "virtual", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_decode_medium_clkperiod_7",
-            "description": "a decoder with size medium at clock period=7",
-            "design_size": "medium",
+            ], 
+            "description": "a decoder with size large at a clock period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_decode_large_vclk_60_FO4", 
             "parameters": [
                 "num_out_p=64"
-            ],
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "7",
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "virtual", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_decode_medium_clkperiod_9",
-            "description": "a decoder with size medium at clock period=9",
-            "design_size": "medium",
+            ], 
+            "description": "a decoder with size large at a clock period (in num of FO4) = 70", 
+            "design_size": "large", 
+            "name": "bsg_decode_large_vclk_70_FO4", 
             "parameters": [
                 "num_out_p=64"
-            ],
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "9",
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "virtual", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_decode_medium_clkperiod_11",
-            "description": "a decoder with size medium at clock period=11",
-            "design_size": "medium",
+            ], 
+            "description": "a decoder with size large at a clock period (in num of FO4) = 80", 
+            "design_size": "large", 
+            "name": "bsg_decode_large_vclk_80_FO4", 
             "parameters": [
                 "num_out_p=64"
-            ],
+            ]
+        }, 
+        {
             "constraints": [
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "11",
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "virtual", 
+                    "type": "clock", 
                     "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
                 }
+            ], 
+            "description": "a decoder with size large at a clock period (in num of FO4) = 90", 
+            "design_size": "large", 
+            "name": "bsg_decode_large_vclk_90_FO4", 
+            "parameters": [
+                "num_out_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size large at a clock period (in num of FO4) = 100", 
+            "design_size": "large", 
+            "name": "bsg_decode_large_vclk_100_FO4", 
+            "parameters": [
+                "num_out_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size very_large at a clock period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_decode_very_large_vclk_30_FO4", 
+            "parameters": [
+                "num_out_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size very_large at a clock period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_decode_very_large_vclk_40_FO4", 
+            "parameters": [
+                "num_out_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size very_large at a clock period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_decode_very_large_vclk_50_FO4", 
+            "parameters": [
+                "num_out_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size very_large at a clock period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_decode_very_large_vclk_60_FO4", 
+            "parameters": [
+                "num_out_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size very_large at a clock period (in num of FO4) = 70", 
+            "design_size": "very_large", 
+            "name": "bsg_decode_very_large_vclk_70_FO4", 
+            "parameters": [
+                "num_out_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size very_large at a clock period (in num of FO4) = 80", 
+            "design_size": "very_large", 
+            "name": "bsg_decode_very_large_vclk_80_FO4", 
+            "parameters": [
+                "num_out_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size very_large at a clock period (in num of FO4) = 90", 
+            "design_size": "very_large", 
+            "name": "bsg_decode_very_large_vclk_90_FO4", 
+            "parameters": [
+                "num_out_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size very_large at a clock period (in num of FO4) = 100", 
+            "design_size": "very_large", 
+            "name": "bsg_decode_very_large_vclk_100_FO4", 
+            "parameters": [
+                "num_out_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size medium at a clock period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_decode_medium_vclk_30_FO4", 
+            "parameters": [
+                "num_out_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size medium at a clock period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_decode_medium_vclk_40_FO4", 
+            "parameters": [
+                "num_out_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size medium at a clock period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_decode_medium_vclk_50_FO4", 
+            "parameters": [
+                "num_out_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size medium at a clock period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_decode_medium_vclk_60_FO4", 
+            "parameters": [
+                "num_out_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size medium at a clock period (in num of FO4) = 70", 
+            "design_size": "medium", 
+            "name": "bsg_decode_medium_vclk_70_FO4", 
+            "parameters": [
+                "num_out_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size medium at a clock period (in num of FO4) = 80", 
+            "design_size": "medium", 
+            "name": "bsg_decode_medium_vclk_80_FO4", 
+            "parameters": [
+                "num_out_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size medium at a clock period (in num of FO4) = 90", 
+            "design_size": "medium", 
+            "name": "bsg_decode_medium_vclk_90_FO4", 
+            "parameters": [
+                "num_out_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a decoder with size medium at a clock period (in num of FO4) = 100", 
+            "design_size": "medium", 
+            "name": "bsg_decode_medium_vclk_100_FO4", 
+            "parameters": [
+                "num_out_p=32"
             ]
         }
     ]
