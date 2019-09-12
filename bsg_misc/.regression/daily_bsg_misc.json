@@ -1,5 +1,8 @@
-include bsg_arb_fixed.json
-include bsg_array_concentrate_static.json
-include bsg_binary_plus_one_to_gray.json
-include bsg_buf.json
-include bsg_buf_ctrl.json
+include bsg_circular_ptr.json
+include bsg_clkbuf.json
+include bsg_concentrate_static.json
+include bsg_counter_clear_up.json
+include bsg_counter_clear_up_one_hot.json
+include bsg_counter_clock_downsample.json
+include bsg_counter_dynamic_limit.json
+include bsg_counter_dynamic_limit_en.json
