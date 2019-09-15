@@ -41,7 +41,7 @@ test.$$(TEST_NAME_$1): test.%: build_tools
 	cp $$(RUN_COCOTB_MAKEFILE) $$*/Makefile
 	$$(eval export BSG_TOPLEVEL_PVALS=$$(TEST_PVAL_$1))
 	$$(eval export BSG_ADDITIONAL_PYTHONPATH=$$(CURDIR))
-	cd $$* && $(COCOTB_VENV_ACTIVATE) && make $$(TEST_PVAL_$1) sim 2>&1 | tee -i run.log
+	cd $$* && $(COCOTB_VENV_ACTIVATE) && make sim 2>&1 | tee -i run.log
 
 clean.test.$$(TEST_NAME_$1): clean.test.%:
 	rm -rf $$*
