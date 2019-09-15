@@ -49,7 +49,7 @@ clean.test.$$(TEST_NAME_$1): clean.test.%:
 endef
 
 # Spawn all of the test cases based on the BSG_PARAM_SWEEP_* variables.
-$(foreach i, $(shell for i in {1..$(BSG_PARAM_SWEEP_COUNT)}; do echo $$i; done), $(eval $(call add_test,$i)))
+$(foreach i, $(shell for i in {$(BSG_PARAM_SWEEP_START)..$(BSG_PARAM_SWEEP_STOP)}; do echo $$i; done), $(eval $(call add_test,$i)))
 
 #===============================================================================
 # Main Targets
