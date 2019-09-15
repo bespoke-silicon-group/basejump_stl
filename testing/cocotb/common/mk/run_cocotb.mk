@@ -31,7 +31,7 @@ TOPLEVEL ?= $(BSG_TOPLEVEL_MODULE)
 MODULE ?= $(BSG_PY_TEST_MODULES)
 
 # Any arguments or flags to pass to the compile stage of the simulation.
-COMPILE_ARGS ?= -timescale=1ns/1ns \
+COMPILE_ARGS ?= -timescale=1ps/1ps \
                 $(addprefix +incdir+,$(BSG_VERILOG_INCDIRS)) \
                 $(addprefix -pvalue ,$(BSG_TOPLEVEL_PVALS))
 
