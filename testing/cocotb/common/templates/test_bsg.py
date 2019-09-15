@@ -12,7 +12,6 @@ import cocotb
 from cocotb.triggers import Timer
 from cocotb.result import TestFailure
 import random
-import os
 
 # Test Pass -- wait 1 tick and passes
 @cocotb.test()
