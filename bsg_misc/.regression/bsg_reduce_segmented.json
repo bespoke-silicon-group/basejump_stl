@@ -26,10 +26,11 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size small at a clock period (in num of FO4) = 30", 
+            "description": "a segmented reduction module with size small at a clock period (in num of FO4) = 30", 
             "design_size": "small", 
             "name": "bsg_reduce_segmented_small_vclk_30_FO4", 
             "parameters": [
+                "xor_p=1", 
                 "segments_p=1", 
                 "segment_width_p=16"
             ]
@@ -56,10 +57,11 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size small at a clock period (in num of FO4) = 40", 
+            "description": "a segmented reduction module with size small at a clock period (in num of FO4) = 40", 
             "design_size": "small", 
             "name": "bsg_reduce_segmented_small_vclk_40_FO4", 
             "parameters": [
+                "xor_p=1", 
                 "segments_p=1", 
                 "segment_width_p=16"
             ]
@@ -86,10 +88,11 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size small at a clock period (in num of FO4) = 50", 
+            "description": "a segmented reduction module with size small at a clock period (in num of FO4) = 50", 
             "design_size": "small", 
             "name": "bsg_reduce_segmented_small_vclk_50_FO4", 
             "parameters": [
+                "xor_p=1", 
                 "segments_p=1", 
                 "segment_width_p=16"
             ]
@@ -116,10 +119,11 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size small at a clock period (in num of FO4) = 60", 
+            "description": "a segmented reduction module with size small at a clock period (in num of FO4) = 60", 
             "design_size": "small", 
             "name": "bsg_reduce_segmented_small_vclk_60_FO4", 
             "parameters": [
+                "xor_p=1", 
                 "segments_p=1", 
                 "segment_width_p=16"
             ]
@@ -146,10 +150,11 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size small at a clock period (in num of FO4) = 70", 
+            "description": "a segmented reduction module with size small at a clock period (in num of FO4) = 70", 
             "design_size": "small", 
             "name": "bsg_reduce_segmented_small_vclk_70_FO4", 
             "parameters": [
+                "xor_p=1", 
                 "segments_p=1", 
                 "segment_width_p=16"
             ]
@@ -176,10 +181,11 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size small at a clock period (in num of FO4) = 80", 
+            "description": "a segmented reduction module with size small at a clock period (in num of FO4) = 80", 
             "design_size": "small", 
             "name": "bsg_reduce_segmented_small_vclk_80_FO4", 
             "parameters": [
+                "xor_p=1", 
                 "segments_p=1", 
                 "segment_width_p=16"
             ]
@@ -206,10 +212,11 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size small at a clock period (in num of FO4) = 90", 
+            "description": "a segmented reduction module with size small at a clock period (in num of FO4) = 90", 
             "design_size": "small", 
             "name": "bsg_reduce_segmented_small_vclk_90_FO4", 
             "parameters": [
+                "xor_p=1", 
                 "segments_p=1", 
                 "segment_width_p=16"
             ]
@@ -236,10 +243,11 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size small at a clock period (in num of FO4) = 100", 
+            "description": "a segmented reduction module with size small at a clock period (in num of FO4) = 100", 
             "design_size": "small", 
             "name": "bsg_reduce_segmented_small_vclk_100_FO4", 
             "parameters": [
+                "xor_p=1", 
                 "segments_p=1", 
                 "segment_width_p=16"
             ]
@@ -266,11 +274,12 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size large at a clock period (in num of FO4) = 30", 
+            "description": "a segmented reduction module with size large at a clock period (in num of FO4) = 30", 
             "design_size": "large", 
             "name": "bsg_reduce_segmented_large_vclk_30_FO4", 
             "parameters": [
-                "segments_p=15", 
+                "or_p=1", 
+                "segments_p=10", 
                 "segment_width_p=64"
             ]
         }, 
@@ -296,11 +305,12 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size large at a clock period (in num of FO4) = 40", 
+            "description": "a segmented reduction module with size large at a clock period (in num of FO4) = 40", 
             "design_size": "large", 
             "name": "bsg_reduce_segmented_large_vclk_40_FO4", 
             "parameters": [
-                "segments_p=15", 
+                "or_p=1", 
+                "segments_p=10", 
                 "segment_width_p=64"
             ]
         }, 
@@ -326,11 +336,12 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size large at a clock period (in num of FO4) = 50", 
+            "description": "a segmented reduction module with size large at a clock period (in num of FO4) = 50", 
             "design_size": "large", 
             "name": "bsg_reduce_segmented_large_vclk_50_FO4", 
             "parameters": [
-                "segments_p=15", 
+                "or_p=1", 
+                "segments_p=10", 
                 "segment_width_p=64"
             ]
         }, 
@@ -356,11 +367,12 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size large at a clock period (in num of FO4) = 60", 
+            "description": "a segmented reduction module with size large at a clock period (in num of FO4) = 60", 
             "design_size": "large", 
             "name": "bsg_reduce_segmented_large_vclk_60_FO4", 
             "parameters": [
-                "segments_p=15", 
+                "or_p=1", 
+                "segments_p=10", 
                 "segment_width_p=64"
             ]
         }, 
@@ -386,11 +398,12 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size large at a clock period (in num of FO4) = 70", 
+            "description": "a segmented reduction module with size large at a clock period (in num of FO4) = 70", 
             "design_size": "large", 
             "name": "bsg_reduce_segmented_large_vclk_70_FO4", 
             "parameters": [
-                "segments_p=15", 
+                "or_p=1", 
+                "segments_p=10", 
                 "segment_width_p=64"
             ]
         }, 
@@ -416,11 +429,12 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size large at a clock period (in num of FO4) = 80", 
+            "description": "a segmented reduction module with size large at a clock period (in num of FO4) = 80", 
             "design_size": "large", 
             "name": "bsg_reduce_segmented_large_vclk_80_FO4", 
             "parameters": [
-                "segments_p=15", 
+                "or_p=1", 
+                "segments_p=10", 
                 "segment_width_p=64"
             ]
         }, 
@@ -446,11 +460,12 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size large at a clock period (in num of FO4) = 90", 
+            "description": "a segmented reduction module with size large at a clock period (in num of FO4) = 90", 
             "design_size": "large", 
             "name": "bsg_reduce_segmented_large_vclk_90_FO4", 
             "parameters": [
-                "segments_p=15", 
+                "or_p=1", 
+                "segments_p=10", 
                 "segment_width_p=64"
             ]
         }, 
@@ -476,11 +491,12 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size large at a clock period (in num of FO4) = 100", 
+            "description": "a segmented reduction module with size large at a clock period (in num of FO4) = 100", 
             "design_size": "large", 
             "name": "bsg_reduce_segmented_large_vclk_100_FO4", 
             "parameters": [
-                "segments_p=15", 
+                "or_p=1", 
+                "segments_p=10", 
                 "segment_width_p=64"
             ]
         }, 
@@ -506,10 +522,11 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size very_large at a clock period (in num of FO4) = 30", 
+            "description": "a segmented reduction module with size very_large at a clock period (in num of FO4) = 30", 
             "design_size": "very_large", 
             "name": "bsg_reduce_segmented_very_large_vclk_30_FO4", 
             "parameters": [
+                "nor_p=1", 
                 "segments_p=20", 
                 "segment_width_p=128"
             ]
@@ -536,10 +553,11 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size very_large at a clock period (in num of FO4) = 40", 
+            "description": "a segmented reduction module with size very_large at a clock period (in num of FO4) = 40", 
             "design_size": "very_large", 
             "name": "bsg_reduce_segmented_very_large_vclk_40_FO4", 
             "parameters": [
+                "nor_p=1", 
                 "segments_p=20", 
                 "segment_width_p=128"
             ]
@@ -566,10 +584,11 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size very_large at a clock period (in num of FO4) = 50", 
+            "description": "a segmented reduction module with size very_large at a clock period (in num of FO4) = 50", 
             "design_size": "very_large", 
             "name": "bsg_reduce_segmented_very_large_vclk_50_FO4", 
             "parameters": [
+                "nor_p=1", 
                 "segments_p=20", 
                 "segment_width_p=128"
             ]
@@ -596,10 +615,11 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size very_large at a clock period (in num of FO4) = 60", 
+            "description": "a segmented reduction module with size very_large at a clock period (in num of FO4) = 60", 
             "design_size": "very_large", 
             "name": "bsg_reduce_segmented_very_large_vclk_60_FO4", 
             "parameters": [
+                "nor_p=1", 
                 "segments_p=20", 
                 "segment_width_p=128"
             ]
@@ -626,10 +646,11 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size very_large at a clock period (in num of FO4) = 70", 
+            "description": "a segmented reduction module with size very_large at a clock period (in num of FO4) = 70", 
             "design_size": "very_large", 
             "name": "bsg_reduce_segmented_very_large_vclk_70_FO4", 
             "parameters": [
+                "nor_p=1", 
                 "segments_p=20", 
                 "segment_width_p=128"
             ]
@@ -656,10 +677,11 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size very_large at a clock period (in num of FO4) = 80", 
+            "description": "a segmented reduction module with size very_large at a clock period (in num of FO4) = 80", 
             "design_size": "very_large", 
             "name": "bsg_reduce_segmented_very_large_vclk_80_FO4", 
             "parameters": [
+                "nor_p=1", 
                 "segments_p=20", 
                 "segment_width_p=128"
             ]
@@ -686,10 +708,11 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size very_large at a clock period (in num of FO4) = 90", 
+            "description": "a segmented reduction module with size very_large at a clock period (in num of FO4) = 90", 
             "design_size": "very_large", 
             "name": "bsg_reduce_segmented_very_large_vclk_90_FO4", 
             "parameters": [
+                "nor_p=1", 
                 "segments_p=20", 
                 "segment_width_p=128"
             ]
@@ -716,10 +739,11 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size very_large at a clock period (in num of FO4) = 100", 
+            "description": "a segmented reduction module with size very_large at a clock period (in num of FO4) = 100", 
             "design_size": "very_large", 
             "name": "bsg_reduce_segmented_very_large_vclk_100_FO4", 
             "parameters": [
+                "nor_p=1", 
                 "segments_p=20", 
                 "segment_width_p=128"
             ]
@@ -746,11 +770,12 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size medium at a clock period (in num of FO4) = 30", 
+            "description": "a segmented reduction module with size medium at a clock period (in num of FO4) = 30", 
             "design_size": "medium", 
             "name": "bsg_reduce_segmented_medium_vclk_30_FO4", 
             "parameters": [
-                "segments_p=10", 
+                "and_p=1", 
+                "segments_p=5", 
                 "segment_width_p=32"
             ]
         }, 
@@ -776,11 +801,12 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size medium at a clock period (in num of FO4) = 40", 
+            "description": "a segmented reduction module with size medium at a clock period (in num of FO4) = 40", 
             "design_size": "medium", 
             "name": "bsg_reduce_segmented_medium_vclk_40_FO4", 
             "parameters": [
-                "segments_p=10", 
+                "and_p=1", 
+                "segments_p=5", 
                 "segment_width_p=32"
             ]
         }, 
@@ -806,11 +832,12 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size medium at a clock period (in num of FO4) = 50", 
+            "description": "a segmented reduction module with size medium at a clock period (in num of FO4) = 50", 
             "design_size": "medium", 
             "name": "bsg_reduce_segmented_medium_vclk_50_FO4", 
             "parameters": [
-                "segments_p=10", 
+                "and_p=1", 
+                "segments_p=5", 
                 "segment_width_p=32"
             ]
         }, 
@@ -836,11 +863,12 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size medium at a clock period (in num of FO4) = 60", 
+            "description": "a segmented reduction module with size medium at a clock period (in num of FO4) = 60", 
             "design_size": "medium", 
             "name": "bsg_reduce_segmented_medium_vclk_60_FO4", 
             "parameters": [
-                "segments_p=10", 
+                "and_p=1", 
+                "segments_p=5", 
                 "segment_width_p=32"
             ]
         }, 
@@ -866,11 +894,12 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size medium at a clock period (in num of FO4) = 70", 
+            "description": "a segmented reduction module with size medium at a clock period (in num of FO4) = 70", 
             "design_size": "medium", 
             "name": "bsg_reduce_segmented_medium_vclk_70_FO4", 
             "parameters": [
-                "segments_p=10", 
+                "and_p=1", 
+                "segments_p=5", 
                 "segment_width_p=32"
             ]
         }, 
@@ -896,11 +925,12 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size medium at a clock period (in num of FO4) = 80", 
+            "description": "a segmented reduction module with size medium at a clock period (in num of FO4) = 80", 
             "design_size": "medium", 
             "name": "bsg_reduce_segmented_medium_vclk_80_FO4", 
             "parameters": [
-                "segments_p=10", 
+                "and_p=1", 
+                "segments_p=5", 
                 "segment_width_p=32"
             ]
         }, 
@@ -926,11 +956,12 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size medium at a clock period (in num of FO4) = 90", 
+            "description": "a segmented reduction module with size medium at a clock period (in num of FO4) = 90", 
             "design_size": "medium", 
             "name": "bsg_reduce_segmented_medium_vclk_90_FO4", 
             "parameters": [
-                "segments_p=10", 
+                "and_p=1", 
+                "segments_p=5", 
                 "segment_width_p=32"
             ]
         }, 
@@ -956,11 +987,12 @@
                     "uncertainty": "0"
                 }
             ], 
-            "description": "A segmented reduction module with size medium at a clock period (in num of FO4) = 100", 
+            "description": "a segmented reduction module with size medium at a clock period (in num of FO4) = 100", 
             "design_size": "medium", 
             "name": "bsg_reduce_segmented_medium_vclk_100_FO4", 
             "parameters": [
-                "segments_p=10", 
+                "and_p=1", 
+                "segments_p=5", 
                 "segment_width_p=32"
             ]
         }
