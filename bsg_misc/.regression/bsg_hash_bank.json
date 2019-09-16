@@ -34,7 +34,7 @@
             "design_size": "small", 
             "name": "bsg_hash_bank_small_vclk_30_FO4", 
             "parameters": [
-                "banks_p=2", 
+                "banks_p=1", 
                 "width_p=16"
             ]
         }, 
@@ -64,7 +64,7 @@
             "design_size": "small", 
             "name": "bsg_hash_bank_small_vclk_40_FO4", 
             "parameters": [
-                "banks_p=2", 
+                "banks_p=1", 
                 "width_p=16"
             ]
         }, 
@@ -94,7 +94,7 @@
             "design_size": "small", 
             "name": "bsg_hash_bank_small_vclk_50_FO4", 
             "parameters": [
-                "banks_p=2", 
+                "banks_p=1", 
                 "width_p=16"
             ]
         }, 
@@ -124,7 +124,7 @@
             "design_size": "small", 
             "name": "bsg_hash_bank_small_vclk_60_FO4", 
             "parameters": [
-                "banks_p=2", 
+                "banks_p=1", 
                 "width_p=16"
             ]
         }, 
@@ -154,7 +154,7 @@
             "design_size": "small", 
             "name": "bsg_hash_bank_small_vclk_70_FO4", 
             "parameters": [
-                "banks_p=2", 
+                "banks_p=1", 
                 "width_p=16"
             ]
         }, 
@@ -184,7 +184,7 @@
             "design_size": "small", 
             "name": "bsg_hash_bank_small_vclk_80_FO4", 
             "parameters": [
-                "banks_p=2", 
+                "banks_p=1", 
                 "width_p=16"
             ]
         }, 
@@ -214,7 +214,7 @@
             "design_size": "small", 
             "name": "bsg_hash_bank_small_vclk_90_FO4", 
             "parameters": [
-                "banks_p=2", 
+                "banks_p=1", 
                 "width_p=16"
             ]
         }, 
@@ -244,7 +244,7 @@
             "design_size": "small", 
             "name": "bsg_hash_bank_small_vclk_100_FO4", 
             "parameters": [
-                "banks_p=2", 
+                "banks_p=1", 
                 "width_p=16"
             ]
         }, 
@@ -274,7 +274,7 @@
             "design_size": "large", 
             "name": "bsg_hash_bank_large_vclk_30_FO4", 
             "parameters": [
-                "banks_p=8", 
+                "banks_p=2", 
                 "width_p=64"
             ]
         }, 
@@ -304,7 +304,7 @@
             "design_size": "large", 
             "name": "bsg_hash_bank_large_vclk_40_FO4", 
             "parameters": [
-                "banks_p=8", 
+                "banks_p=2", 
                 "width_p=64"
             ]
         }, 
@@ -334,7 +334,7 @@
             "design_size": "large", 
             "name": "bsg_hash_bank_large_vclk_50_FO4", 
             "parameters": [
-                "banks_p=8", 
+                "banks_p=2", 
                 "width_p=64"
             ]
         }, 
@@ -364,7 +364,7 @@
             "design_size": "large", 
             "name": "bsg_hash_bank_large_vclk_60_FO4", 
             "parameters": [
-                "banks_p=8", 
+                "banks_p=2", 
                 "width_p=64"
             ]
         }, 
@@ -394,7 +394,7 @@
             "design_size": "large", 
             "name": "bsg_hash_bank_large_vclk_70_FO4", 
             "parameters": [
-                "banks_p=8", 
+                "banks_p=2", 
                 "width_p=64"
             ]
         }, 
@@ -424,7 +424,7 @@
             "design_size": "large", 
             "name": "bsg_hash_bank_large_vclk_80_FO4", 
             "parameters": [
-                "banks_p=8", 
+                "banks_p=2", 
                 "width_p=64"
             ]
         }, 
@@ -454,7 +454,7 @@
             "design_size": "large", 
             "name": "bsg_hash_bank_large_vclk_90_FO4", 
             "parameters": [
-                "banks_p=8", 
+                "banks_p=2", 
                 "width_p=64"
             ]
         }, 
@@ -484,7 +484,7 @@
             "design_size": "large", 
             "name": "bsg_hash_bank_large_vclk_100_FO4", 
             "parameters": [
-                "banks_p=8", 
+                "banks_p=2", 
                 "width_p=64"
             ]
         }, 
@@ -514,7 +514,7 @@
             "design_size": "very_large", 
             "name": "bsg_hash_bank_very_large_vclk_30_FO4", 
             "parameters": [
-                "banks_p=32", 
+                "banks_p=2", 
                 "width_p=128"
             ]
         }, 
@@ -544,7 +544,7 @@
             "design_size": "very_large", 
             "name": "bsg_hash_bank_very_large_vclk_40_FO4", 
             "parameters": [
-                "banks_p=32", 
+                "banks_p=2", 
                 "width_p=128"
             ]
         }, 
@@ -574,7 +574,7 @@
             "design_size": "very_large", 
             "name": "bsg_hash_bank_very_large_vclk_50_FO4", 
             "parameters": [
-                "banks_p=32", 
+                "banks_p=2", 
                 "width_p=128"
             ]
         }, 
@@ -604,7 +604,7 @@
             "design_size": "very_large", 
             "name": "bsg_hash_bank_very_large_vclk_60_FO4", 
             "parameters": [
-                "banks_p=32", 
+                "banks_p=2", 
                 "width_p=128"
             ]
         }, 
@@ -634,7 +634,7 @@
             "design_size": "very_large", 
             "name": "bsg_hash_bank_very_large_vclk_70_FO4", 
             "parameters": [
-                "banks_p=32", 
+                "banks_p=2", 
                 "width_p=128"
             ]
         }, 
@@ -664,7 +664,7 @@
             "design_size": "very_large", 
             "name": "bsg_hash_bank_very_large_vclk_80_FO4", 
             "parameters": [
-                "banks_p=32", 
+                "banks_p=2", 
                 "width_p=128"
             ]
         }, 
@@ -694,7 +694,7 @@
             "design_size": "very_large", 
             "name": "bsg_hash_bank_very_large_vclk_90_FO4", 
             "parameters": [
-                "banks_p=32", 
+                "banks_p=2", 
                 "width_p=128"
             ]
         }, 
@@ -724,7 +724,7 @@
             "design_size": "very_large", 
             "name": "bsg_hash_bank_very_large_vclk_100_FO4", 
             "parameters": [
-                "banks_p=32", 
+                "banks_p=2", 
                 "width_p=128"
             ]
         }, 
@@ -754,7 +754,7 @@
             "design_size": "medium", 
             "name": "bsg_hash_bank_medium_vclk_30_FO4", 
             "parameters": [
-                "banks_p=4", 
+                "banks_p=1", 
                 "width_p=32"
             ]
         }, 
@@ -784,7 +784,7 @@
             "design_size": "medium", 
             "name": "bsg_hash_bank_medium_vclk_40_FO4", 
             "parameters": [
-                "banks_p=4", 
+                "banks_p=1", 
                 "width_p=32"
             ]
         }, 
@@ -814,7 +814,7 @@
             "design_size": "medium", 
             "name": "bsg_hash_bank_medium_vclk_50_FO4", 
             "parameters": [
-                "banks_p=4", 
+                "banks_p=1", 
                 "width_p=32"
             ]
         }, 
@@ -844,7 +844,7 @@
             "design_size": "medium", 
             "name": "bsg_hash_bank_medium_vclk_60_FO4", 
             "parameters": [
-                "banks_p=4", 
+                "banks_p=1", 
                 "width_p=32"
             ]
         }, 
@@ -874,7 +874,7 @@
             "design_size": "medium", 
             "name": "bsg_hash_bank_medium_vclk_70_FO4", 
             "parameters": [
-                "banks_p=4", 
+                "banks_p=1", 
                 "width_p=32"
             ]
         }, 
@@ -904,7 +904,7 @@
             "design_size": "medium", 
             "name": "bsg_hash_bank_medium_vclk_80_FO4", 
             "parameters": [
-                "banks_p=4", 
+                "banks_p=1", 
                 "width_p=32"
             ]
         }, 
@@ -934,7 +934,7 @@
             "design_size": "medium", 
             "name": "bsg_hash_bank_medium_vclk_90_FO4", 
             "parameters": [
-                "banks_p=4", 
+                "banks_p=1", 
                 "width_p=32"
             ]
         }, 
@@ -964,7 +964,7 @@
             "design_size": "medium", 
             "name": "bsg_hash_bank_medium_vclk_100_FO4", 
             "parameters": [
-                "banks_p=4", 
+                "banks_p=1", 
                 "width_p=32"
             ]
         }
