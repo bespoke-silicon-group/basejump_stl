@@ -57,7 +57,7 @@ export RANDOM_SEED ?= 0
 export COCOTB_REDUCED_LOG_FMT
 
 # Search path for python imports.
-PYTHONPATH := $(PYTHONPATH):$(BSG_ADDITIONAL_PYTHONPATH)
+PYTHONPATH := $(PYTHONPATH):$(TESTING_COCOTB_COMMON_DIR)/bsg_cocotb_lib:$(BSG_ADDITIONAL_PYTHONPATH)
 
 # Include standard cocotb makefile infrastructure
 include $(shell cocotb-config --makefiles)/Makefile.inc

@@ -1,4 +1,4 @@
-TESTING_COCOTB_COMMON_MK_DIR := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
+export TESTING_COCOTB_COMMON_MK_DIR := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
 include $(TESTING_COCOTB_COMMON_MK_DIR)/../cocotb_tools.mk
 

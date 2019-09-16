@@ -1,4 +1,4 @@
-TESTING_COCOTB_COMMON_DIR := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
+export TESTING_COCOTB_COMMON_DIR := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
 
 COCOTB_BUILD_DIR      := $(TESTING_COCOTB_COMMON_DIR)/cocotb
 COCOTB_VENV_BUILD_DIR := $(TESTING_COCOTB_COMMON_DIR)/cocotb_venv
