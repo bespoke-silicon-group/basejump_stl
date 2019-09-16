@@ -1,15 +1,3 @@
-
-include bsg_mux_segmented.json
-include bsg_reduce.json
-include bsg_reduce_segmented.json
-include bsg_scan.json
-include bsg_strobe.json
-include bsg_swap.json
-include bsg_thermometer_count.json
-include bsg_tiehi.json
-include bsg_tielo.json
-include bsg_transpose.json
-include bsg_unconcentrate_static.json
 include bsg_wait_after_reset.json
 include bsg_wait_cycles.json
 include bsg_xnor.json
