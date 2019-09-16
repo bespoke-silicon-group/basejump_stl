@@ -1,8 +1,3 @@
-include bsg_mul.json
-include bsg_mul_array.json
-include bsg_mul_array_row.json
-include bsg_mul_pipelined.json
-include bsg_mul_synth.json
 include bsg_mux.json
 include bsg_mux2_gatestack.json
 include bsg_mux_bitwise.json
@@ -13,3 +8,10 @@ include bsg_muxi2_gatestack.json
 include bsg_nand.json
 include bsg_nor2.json
 include bsg_nor3.json
+include bsg_popcount.json
+include bsg_priority_encode.json
+include bsg_priority_encode_one_hot_out.json
+include bsg_reduce.json
+include bsg_reduce_segmented.json
+include bsg_rotate_right.json
+include bsg_round_robin_arb.json
