@@ -1,6 +1,6 @@
 {
-    "design_name": "bsg_mem_1rw_sync",
-    "filelist": [
+    "design_name":"bsg_mem_1rw_sync",
+    "filelist":[
         "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_mem/bsg_mem_1rw_sync.v",
         "basejump_stl/bsg_mem/bsg_mem_1rw_sync_synth.v",
@@ -9,725 +9,965 @@
         "basejump_stl/bsg_misc/bsg_dff_en_bypass.v",
         "basejump_stl/bsg_misc/bsg_dff_en.v"
     ],
-    "run_config": [
+    "run_config":[
         {
-            "name": "bsg_mem_1rw_sync_small_clkperiod_1",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size small at clock period=1",
-            "design_size": "small",
-            "parameters": [
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"30",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with small size at a clock period (in num of FO4) = 30",
+            "design_size":"small",
+            "name":"bsg_mem_1rw_sync_small_clk_30_FO4",
+            "parameters":[
                 "els_p=512",
-                "width_p=32"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "1",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
+                "width_p=16"
             ]
         },
         {
-            "name": "bsg_mem_1rw_sync_small_clkperiod_3",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size small at clock period=3",
-            "design_size": "small",
-            "parameters": [
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"40",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with small size at a clock period (in num of FO4) = 40",
+            "design_size":"small",
+            "name":"bsg_mem_1rw_sync_small_clk_40_FO4",
+            "parameters":[
                 "els_p=512",
-                "width_p=32"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "3",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
+                "width_p=16"
             ]
         },
         {
-            "name": "bsg_mem_1rw_sync_small_clkperiod_5",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size small at clock period=5",
-            "design_size": "small",
-            "parameters": [
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"50",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with small size at a clock period (in num of FO4) = 50",
+            "design_size":"small",
+            "name":"bsg_mem_1rw_sync_small_clk_50_FO4",
+            "parameters":[
                 "els_p=512",
-                "width_p=32"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "5",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
+                "width_p=16"
             ]
         },
         {
-            "name": "bsg_mem_1rw_sync_small_clkperiod_7",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size small at clock period=7",
-            "design_size": "small",
-            "parameters": [
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"60",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with small size at a clock period (in num of FO4) = 60",
+            "design_size":"small",
+            "name":"bsg_mem_1rw_sync_small_clk_60_FO4",
+            "parameters":[
                 "els_p=512",
-                "width_p=32"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "7",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
+                "width_p=16"
             ]
         },
         {
-            "name": "bsg_mem_1rw_sync_small_clkperiod_9",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size small at clock period=9",
-            "design_size": "small",
-            "parameters": [
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"70",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with small size at a clock period (in num of FO4) = 70",
+            "design_size":"small",
+            "name":"bsg_mem_1rw_sync_small_clk_70_FO4",
+            "parameters":[
                 "els_p=512",
-                "width_p=32"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "9",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
+                "width_p=16"
             ]
         },
         {
-            "name": "bsg_mem_1rw_sync_small_clkperiod_11",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size small at clock period=11",
-            "design_size": "small",
-            "parameters": [
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"80",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with small size at a clock period (in num of FO4) = 80",
+            "design_size":"small",
+            "name":"bsg_mem_1rw_sync_small_clk_80_FO4",
+            "parameters":[
                 "els_p=512",
+                "width_p=16"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"90",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with small size at a clock period (in num of FO4) = 90",
+            "design_size":"small",
+            "name":"bsg_mem_1rw_sync_small_clk_90_FO4",
+            "parameters":[
+                "els_p=512",
+                "width_p=16"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"100",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with small size at a clock period (in num of FO4) = 100",
+            "design_size":"small",
+            "name":"bsg_mem_1rw_sync_small_clk_100_FO4",
+            "parameters":[
+                "els_p=512",
+                "width_p=16"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"30",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with large size at a clock period (in num of FO4) = 30",
+            "design_size":"large",
+            "name":"bsg_mem_1rw_sync_large_clk_30_FO4",
+            "parameters":[
+                "els_p=2048",
+                "width_p=64"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"40",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with large size at a clock period (in num of FO4) = 40",
+            "design_size":"large",
+            "name":"bsg_mem_1rw_sync_large_clk_40_FO4",
+            "parameters":[
+                "els_p=2048",
+                "width_p=64"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"50",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with large size at a clock period (in num of FO4) = 50",
+            "design_size":"large",
+            "name":"bsg_mem_1rw_sync_large_clk_50_FO4",
+            "parameters":[
+                "els_p=2048",
+                "width_p=64"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"60",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with large size at a clock period (in num of FO4) = 60",
+            "design_size":"large",
+            "name":"bsg_mem_1rw_sync_large_clk_60_FO4",
+            "parameters":[
+                "els_p=2048",
+                "width_p=64"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"70",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with large size at a clock period (in num of FO4) = 70",
+            "design_size":"large",
+            "name":"bsg_mem_1rw_sync_large_clk_70_FO4",
+            "parameters":[
+                "els_p=2048",
+                "width_p=64"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"80",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with large size at a clock period (in num of FO4) = 80",
+            "design_size":"large",
+            "name":"bsg_mem_1rw_sync_large_clk_80_FO4",
+            "parameters":[
+                "els_p=2048",
+                "width_p=64"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"90",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with large size at a clock period (in num of FO4) = 90",
+            "design_size":"large",
+            "name":"bsg_mem_1rw_sync_large_clk_90_FO4",
+            "parameters":[
+                "els_p=2048",
+                "width_p=64"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"100",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with large size at a clock period (in num of FO4) = 100",
+            "design_size":"large",
+            "name":"bsg_mem_1rw_sync_large_clk_100_FO4",
+            "parameters":[
+                "els_p=2048",
+                "width_p=64"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"30",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with very_large size at a clock period (in num of FO4) = 30",
+            "design_size":"very_large",
+            "name":"bsg_mem_1rw_sync_very_large_clk_30_FO4",
+            "parameters":[
+                "els_p=4096",
+                "width_p=128"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"40",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with very_large size at a clock period (in num of FO4) = 40",
+            "design_size":"very_large",
+            "name":"bsg_mem_1rw_sync_very_large_clk_40_FO4",
+            "parameters":[
+                "els_p=4096",
+                "width_p=128"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"50",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with very_large size at a clock period (in num of FO4) = 50",
+            "design_size":"very_large",
+            "name":"bsg_mem_1rw_sync_very_large_clk_50_FO4",
+            "parameters":[
+                "els_p=4096",
+                "width_p=128"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"60",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with very_large size at a clock period (in num of FO4) = 60",
+            "design_size":"very_large",
+            "name":"bsg_mem_1rw_sync_very_large_clk_60_FO4",
+            "parameters":[
+                "els_p=4096",
+                "width_p=128"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"70",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with very_large size at a clock period (in num of FO4) = 70",
+            "design_size":"very_large",
+            "name":"bsg_mem_1rw_sync_very_large_clk_70_FO4",
+            "parameters":[
+                "els_p=4096",
+                "width_p=128"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"80",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with very_large size at a clock period (in num of FO4) = 80",
+            "design_size":"very_large",
+            "name":"bsg_mem_1rw_sync_very_large_clk_80_FO4",
+            "parameters":[
+                "els_p=4096",
+                "width_p=128"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"90",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with very_large size at a clock period (in num of FO4) = 90",
+            "design_size":"very_large",
+            "name":"bsg_mem_1rw_sync_very_large_clk_90_FO4",
+            "parameters":[
+                "els_p=4096",
+                "width_p=128"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"100",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with very_large size at a clock period (in num of FO4) = 100",
+            "design_size":"very_large",
+            "name":"bsg_mem_1rw_sync_very_large_clk_100_FO4",
+            "parameters":[
+                "els_p=4096",
+                "width_p=128"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"30",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with medium size at a clock period (in num of FO4) = 30",
+            "design_size":"medium",
+            "name":"bsg_mem_1rw_sync_medium_clk_30_FO4",
+            "parameters":[
+                "els_p=1024",
                 "width_p=32"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "11",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
             ]
         },
         {
-            "name": "bsg_mem_1rw_sync_large_clkperiod_1",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size large at clock period=1",
-            "design_size": "large",
-            "parameters": [
-                "els_p=2048",
-                "width_p=128"
-            ],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "1",
-                    "uncertainty": "0"
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"clk",
+                    "period_in_num_of_FO4":"40",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
-        },
-        {
-            "name": "bsg_mem_1rw_sync_large_clkperiod_3",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size large at clock period=3",
-            "design_size": "large",
-            "parameters": [
-                "els_p=2048",
-                "width_p=128"
             ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "3",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_mem_1rw_sync_large_clkperiod_5",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size large at clock period=5",
-            "design_size": "large",
-            "parameters": [
-                "els_p=2048",
-                "width_p=128"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "5",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_mem_1rw_sync_large_clkperiod_7",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size large at clock period=7",
-            "design_size": "large",
-            "parameters": [
-                "els_p=2048",
-                "width_p=128"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "7",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_mem_1rw_sync_large_clkperiod_9",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size large at clock period=9",
-            "design_size": "large",
-            "parameters": [
-                "els_p=2048",
-                "width_p=128"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "9",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_mem_1rw_sync_large_clkperiod_11",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size large at clock period=11",
-            "design_size": "large",
-            "parameters": [
-                "els_p=2048",
-                "width_p=128"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "11",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_mem_1rw_sync_very_large_clkperiod_1",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size very_large at clock period=1",
-            "design_size": "very_large",
-            "parameters": [
-                "els_p=4096",
-                "width_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "1",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_mem_1rw_sync_very_large_clkperiod_3",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size very_large at clock period=3",
-            "design_size": "very_large",
-            "parameters": [
-                "els_p=4096",
-                "width_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "3",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_mem_1rw_sync_very_large_clkperiod_5",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size very_large at clock period=5",
-            "design_size": "very_large",
-            "parameters": [
-                "els_p=4096",
-                "width_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "5",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_mem_1rw_sync_very_large_clkperiod_7",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size very_large at clock period=7",
-            "design_size": "very_large",
-            "parameters": [
-                "els_p=4096",
-                "width_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "7",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_mem_1rw_sync_very_large_clkperiod_9",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size very_large at clock period=9",
-            "design_size": "very_large",
-            "parameters": [
-                "els_p=4096",
-                "width_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "9",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_mem_1rw_sync_very_large_clkperiod_11",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size very_large at clock period=11",
-            "design_size": "very_large",
-            "parameters": [
-                "els_p=4096",
-                "width_p=256"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "11",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
-            ]
-        },
-        {
-            "name": "bsg_mem_1rw_sync_medium_clkperiod_1",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size medium at clock period=1",
-            "design_size": "medium",
-            "parameters": [
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with medium size at a clock period (in num of FO4) = 40",
+            "design_size":"medium",
+            "name":"bsg_mem_1rw_sync_medium_clk_40_FO4",
+            "parameters":[
                 "els_p=1024",
-                "width_p=64"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "1",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
-                }
+                "width_p=32"
             ]
         },
         {
-            "name": "bsg_mem_1rw_sync_medium_clkperiod_3",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size medium at clock period=3",
-            "design_size": "medium",
-            "parameters": [
-                "els_p=1024",
-                "width_p=64"
-            ],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "3",
-                    "uncertainty": "0"
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"clk",
+                    "period_in_num_of_FO4":"50",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with medium size at a clock period (in num of FO4) = 50",
+            "design_size":"medium",
+            "name":"bsg_mem_1rw_sync_medium_clk_50_FO4",
+            "parameters":[
+                "els_p=1024",
+                "width_p=32"
             ]
         },
         {
-            "name": "bsg_mem_1rw_sync_medium_clkperiod_5",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size medium at clock period=5",
-            "design_size": "medium",
-            "parameters": [
-                "els_p=1024",
-                "width_p=64"
-            ],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "5",
-                    "uncertainty": "0"
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"clk",
+                    "period_in_num_of_FO4":"60",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with medium size at a clock period (in num of FO4) = 60",
+            "design_size":"medium",
+            "name":"bsg_mem_1rw_sync_medium_clk_60_FO4",
+            "parameters":[
+                "els_p=1024",
+                "width_p=32"
             ]
         },
         {
-            "name": "bsg_mem_1rw_sync_medium_clkperiod_7",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size medium at clock period=7",
-            "design_size": "medium",
-            "parameters": [
-                "els_p=1024",
-                "width_p=64"
-            ],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "7",
-                    "uncertainty": "0"
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"clk",
+                    "period_in_num_of_FO4":"70",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with medium size at a clock period (in num of FO4) = 70",
+            "design_size":"medium",
+            "name":"bsg_mem_1rw_sync_medium_clk_70_FO4",
+            "parameters":[
+                "els_p=1024",
+                "width_p=32"
             ]
         },
         {
-            "name": "bsg_mem_1rw_sync_medium_clkperiod_9",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size medium at clock period=9",
-            "design_size": "medium",
-            "parameters": [
-                "els_p=1024",
-                "width_p=64"
-            ],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "9",
-                    "uncertainty": "0"
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"clk",
+                    "period_in_num_of_FO4":"80",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with medium size at a clock period (in num of FO4) = 80",
+            "design_size":"medium",
+            "name":"bsg_mem_1rw_sync_medium_clk_80_FO4",
+            "parameters":[
+                "els_p=1024",
+                "width_p=32"
             ]
         },
         {
-            "name": "bsg_mem_1rw_sync_medium_clkperiod_11",
-            "description": "Synchronous 1-port ram, only one read or one write may be done per cycle with size medium at clock period=11",
-            "design_size": "medium",
-            "parameters": [
-                "els_p=1024",
-                "width_p=64"
-            ],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "clk_i",
-                    "period": "11",
-                    "uncertainty": "0"
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"clk",
+                    "period_in_num_of_FO4":"90",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with medium size at a clock period (in num of FO4) = 90",
+            "design_size":"medium",
+            "name":"bsg_mem_1rw_sync_medium_clk_90_FO4",
+            "parameters":[
+                "els_p=1024",
+                "width_p=32"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"100",
+                    "port":"clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Synchronous 1-port ram, only one read or one write may be done per cycle with medium size at a clock period (in num of FO4) = 100",
+            "design_size":"medium",
+            "name":"bsg_mem_1rw_sync_medium_clk_100_FO4",
+            "parameters":[
+                "els_p=1024",
+                "width_p=32"
             ]
         }
     ]

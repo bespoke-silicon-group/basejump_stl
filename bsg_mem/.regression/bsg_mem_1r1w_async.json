@@ -1,69 +1,489 @@
 {
-    "design_name": "bsg_mem_1r1w",
-    "filelist": [
+    "design_name":"bsg_mem_1r1w",
+    "filelist":[
         "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_mem/bsg_mem_1r1w.v",
         "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v"
     ],
-    "run_config": [
+    "run_config":[
         {
-            "name": "async_sram_32x32_1GHz",
-            "description": "asynchronous SRAM with 32 words and 32 bits/word",
-            "design_size": "small",
-            "parameters": [
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"30",
+                    "port":"w_clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"asynchronous SRAM with small size at a clock period (in num of FO4) = 30",
+            "design_size":"small",
+            "name":"bsg_mem_1r1w_small_clk_30_FO4",
+            "parameters":[
                 "width_p=32",
                 "els_p=32"
-            ],
-            "constraints": [
-                {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "w_clk_i",
-                    "period": "1",
-                    "uncertainty": "0"
-                },
-                {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0.05"
-                },
-                {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0.1"
-                }
             ]
         },
         {
-            "name": "async_sram_64x32_500MHz",
-            "description": "asynchronous SRAM with 64 words and 32 bits/word",
-            "design_size": "medium",
-            "parameters": [
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"40",
+                    "port":"w_clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"asynchronous SRAM with small size at a clock period (in num of FO4) = 40",
+            "design_size":"small",
+            "name":"bsg_mem_1r1w_small_clk_40_FO4",
+            "parameters":[
+                "width_p=32",
+                "els_p=32"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"50",
+                    "port":"w_clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"asynchronous SRAM with small size at a clock period (in num of FO4) = 50",
+            "design_size":"small",
+            "name":"bsg_mem_1r1w_small_clk_50_FO4",
+            "parameters":[
+                "width_p=32",
+                "els_p=32"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"60",
+                    "port":"w_clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"asynchronous SRAM with small size at a clock period (in num of FO4) = 60",
+            "design_size":"small",
+            "name":"bsg_mem_1r1w_small_clk_60_FO4",
+            "parameters":[
+                "width_p=32",
+                "els_p=32"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"70",
+                    "port":"w_clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"asynchronous SRAM with small size at a clock period (in num of FO4) = 70",
+            "design_size":"small",
+            "name":"bsg_mem_1r1w_small_clk_70_FO4",
+            "parameters":[
+                "width_p=32",
+                "els_p=32"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"80",
+                    "port":"w_clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"asynchronous SRAM with small size at a clock period (in num of FO4) = 80",
+            "design_size":"small",
+            "name":"bsg_mem_1r1w_small_clk_80_FO4",
+            "parameters":[
+                "width_p=32",
+                "els_p=32"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"90",
+                    "port":"w_clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"asynchronous SRAM with small size at a clock period (in num of FO4) = 90",
+            "design_size":"small",
+            "name":"bsg_mem_1r1w_small_clk_90_FO4",
+            "parameters":[
+                "width_p=32",
+                "els_p=32"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"100",
+                    "port":"w_clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"asynchronous SRAM with small size at a clock period (in num of FO4) = 100",
+            "design_size":"small",
+            "name":"bsg_mem_1r1w_small_clk_100_FO4",
+            "parameters":[
+                "width_p=32",
+                "els_p=32"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"30",
+                    "port":"w_clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"asynchronous SRAM with medium size at a clock period (in num of FO4) = 30",
+            "design_size":"medium",
+            "name":"bsg_mem_1r1w_medium_clk_30_FO4",
+            "parameters":[
                 "width_p=32",
                 "els_p=64"
-            ],
-            "constraints": [
+            ]
+        },
+        {
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "clk",
-                    "port": "w_clk_i",
-                    "period": "2",
-                    "uncertainty": "0"
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0.05"
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "clk",
-                    "port": "all",
-                    "delay": "0.1"
+                    "name":"clk",
+                    "period_in_num_of_FO4":"40",
+                    "port":"w_clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
+            ],
+            "description":"asynchronous SRAM with medium size at a clock period (in num of FO4) = 40",
+            "design_size":"medium",
+            "name":"bsg_mem_1r1w_medium_clk_40_FO4",
+            "parameters":[
+                "width_p=32",
+                "els_p=64"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"50",
+                    "port":"w_clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"asynchronous SRAM with medium size at a clock period (in num of FO4) = 50",
+            "design_size":"medium",
+            "name":"bsg_mem_1r1w_medium_clk_50_FO4",
+            "parameters":[
+                "width_p=32",
+                "els_p=64"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"60",
+                    "port":"w_clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"asynchronous SRAM with medium size at a clock period (in num of FO4) = 60",
+            "design_size":"medium",
+            "name":"bsg_mem_1r1w_medium_clk_60_FO4",
+            "parameters":[
+                "width_p=32",
+                "els_p=64"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"70",
+                    "port":"w_clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"asynchronous SRAM with medium size at a clock period (in num of FO4) = 70",
+            "design_size":"medium",
+            "name":"bsg_mem_1r1w_medium_clk_70_FO4",
+            "parameters":[
+                "width_p=32",
+                "els_p=64"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"80",
+                    "port":"w_clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"asynchronous SRAM with medium size at a clock period (in num of FO4) = 80",
+            "design_size":"medium",
+            "name":"bsg_mem_1r1w_medium_clk_80_FO4",
+            "parameters":[
+                "width_p=32",
+                "els_p=64"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"90",
+                    "port":"w_clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"asynchronous SRAM with medium size at a clock period (in num of FO4) = 90",
+            "design_size":"medium",
+            "name":"bsg_mem_1r1w_medium_clk_90_FO4",
+            "parameters":[
+                "width_p=32",
+                "els_p=64"
+            ]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"clk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"clk",
+                    "period_in_num_of_FO4":"100",
+                    "port":"w_clk_i",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"asynchronous SRAM with medium size at a clock period (in num of FO4) = 100",
+            "design_size":"medium",
+            "name":"bsg_mem_1r1w_medium_clk_100_FO4",
+            "parameters":[
+                "width_p=32",
+                "els_p=64"
             ]
         }
     ]
