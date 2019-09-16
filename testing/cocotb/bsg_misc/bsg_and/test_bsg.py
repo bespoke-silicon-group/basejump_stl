@@ -7,6 +7,8 @@ from cocotb.triggers import Timer
 from cocotb.result import TestFailure
 import random
 
+from bsg_cocotb_lib import bsg_assert
+
 def model_and (a, b):
   return (a & b)
 
@@ -16,9 +18,6 @@ def test_all_inputs (dut):
     for b in range(2**int(dut.width_p)):
       dut.a_i = a
       dut.b_i = b
-
       yield Timer(1)
-
-      if int(dut.o) != model_and(a,b):
-        raise TestFailure("%d - expected %d" % (int(dut.o), model_and(a,b)))
+      bsg_assert(int(dut.o), model_and(a,b))
 
