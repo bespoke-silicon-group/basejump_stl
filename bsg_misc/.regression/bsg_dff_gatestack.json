@@ -7,13 +7,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -36,13 +36,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -65,13 +65,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -94,13 +94,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -123,13 +123,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -152,13 +152,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -181,13 +181,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -210,13 +210,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -239,13 +239,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -268,13 +268,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -297,13 +297,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -326,13 +326,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -355,13 +355,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -384,13 +384,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -413,13 +413,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -442,13 +442,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -471,13 +471,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -500,13 +500,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -529,13 +529,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -558,13 +558,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -587,13 +587,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -616,13 +616,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -645,13 +645,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -674,13 +674,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -703,13 +703,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -732,13 +732,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -761,13 +761,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -790,13 +790,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -819,13 +819,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -848,13 +848,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -877,13 +877,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
@@ -906,13 +906,13 @@
         {
             "constraints": [
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "input"
                 }, 
                 {
-                    "clock": "clk", 
+                    "clock": "vclk", 
                     "delay": "0", 
                     "port": "all", 
                     "type": "output"
