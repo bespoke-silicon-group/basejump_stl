@@ -24,6 +24,27 @@
           );                                                   \
     end: macro
 
+`define bsg_mem_1rw_sync_mask_write_byte_banked_macro(words,bits,wbank,dbank) \
+  if (harden_p && els_p == words && data_width_p == bits) begin: macro        \
+      bsg_mem_1rw_sync_mask_write_byte_banked #(                              \
+        .data_width_p(data_width_p)                                           \
+        ,.els_p(els_p)                                                        \
+        ,.latch_last_read_p(latch_last_read_p)                                \
+        ,.num_width_bank_p(wbank)                                             \
+        ,.num_depth_bank_p(dbank)                                             \
+      ) bmem (                                                                \
+        .clk_i(clk_i)                                                         \
+        ,.reset_i(reset_i)                                                    \
+        ,.v_i(v_i)                                                            \
+        ,.w_i(w_i)                                                            \
+        ,.addr_i(addr_i)                                                      \
+        ,.data_i(data_i)                                                      \
+        ,.write_mask_i(write_mask_i)                                          \
+        ,.data_o(data_o)                                                      \
+      );                                                                      \
+    end: macro
+  
+
 module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
                                          , parameter data_width_p = -1
                                          , parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
@@ -49,7 +70,8 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
   `bsg_mem_1rw_sync_mask_write_byte_macro(1024,32,4) else
   `bsg_mem_1rw_sync_mask_write_byte_macro(2048,64,4) else
   `bsg_mem_1rw_sync_mask_write_byte_macro(4096,64,4) else
-
+  `bsg_mem_1rw_sync_mask_write_byte_macro(1024,32,4) else
+  `bsg_mem_1rw_sync_mask_write_byte_banked_macro(1024,256,8,1) else
   // no hardened version found
     begin : notmacro
       bsg_mem_1rw_sync_mask_write_byte_synth #(.data_width_p(data_width_p), .els_p(els_p))

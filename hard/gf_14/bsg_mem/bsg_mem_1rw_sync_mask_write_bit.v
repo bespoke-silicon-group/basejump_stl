@@ -43,6 +43,7 @@
         end: bank                                                         \
     end: macro
 
+
 module bsg_mem_1rw_sync_mask_write_bit #( parameter width_p = -1
                                         , parameter els_p = -1
                                         , parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
@@ -70,7 +71,8 @@ module bsg_mem_1rw_sync_mask_write_bit #( parameter width_p = -1
   `bsg_mem_1rw_sync_mask_write_bit_macro(256,34,2) else
   `bsg_mem_1rw_sync_mask_write_bit_macro(512,4,2) else
   `bsg_mem_1rw_sync_mask_write_bit_macro(512,32,4) else
-
+  `bsg_mem_1rw_sync_mask_write_bit_macro(128,152,2) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro(128,15,4) else
   `bsg_mem_1rw_sync_mask_write_bit_macro_banks(64,116,2, 2) else
   
   // HACKED VERSION OF THE FOLLOWING
