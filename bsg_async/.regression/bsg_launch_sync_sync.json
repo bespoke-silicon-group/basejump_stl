@@ -47,7 +47,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_30_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_30_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -95,7 +95,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_30_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_30_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -143,7 +143,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_30_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_30_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -191,7 +191,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_30_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_30_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -239,7 +239,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_30_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_30_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -287,7 +287,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_30_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_30_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -335,7 +335,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_30_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_30_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -383,7 +383,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_30_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_30_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -431,7 +431,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_40_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_40_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -479,7 +479,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_40_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_40_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -527,7 +527,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_40_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_40_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -575,7 +575,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_40_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_40_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -623,7 +623,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_40_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_40_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -671,7 +671,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_40_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_40_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -719,7 +719,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_40_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_40_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -767,7 +767,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_40_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_40_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -815,7 +815,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_50_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_50_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -863,7 +863,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_50_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_50_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -911,7 +911,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_50_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_50_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -959,7 +959,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_50_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_50_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1007,7 +1007,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_50_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_50_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1055,7 +1055,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_50_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_50_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1103,7 +1103,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_50_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_50_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1151,7 +1151,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_50_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_50_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1199,7 +1199,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_60_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_60_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1247,7 +1247,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_60_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_60_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1295,7 +1295,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_60_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_60_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1343,7 +1343,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_60_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_60_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1391,7 +1391,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_60_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_60_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1439,7 +1439,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_60_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_60_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1487,7 +1487,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_60_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_60_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1535,7 +1535,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_60_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_60_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1583,7 +1583,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_70_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_70_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1631,7 +1631,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_70_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_70_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1679,7 +1679,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_70_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_70_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1727,7 +1727,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_70_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_70_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1775,7 +1775,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_70_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_70_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1823,7 +1823,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_70_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_70_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1871,7 +1871,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_70_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_70_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1919,7 +1919,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_70_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_70_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -1967,7 +1967,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_80_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_80_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2015,7 +2015,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_80_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_80_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2063,7 +2063,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_80_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_80_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2111,7 +2111,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_80_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_80_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2159,7 +2159,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_80_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_80_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2207,7 +2207,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_80_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_80_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2255,7 +2255,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_80_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_80_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2303,7 +2303,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_80_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_80_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2351,7 +2351,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_90_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_90_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2399,7 +2399,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_90_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_90_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2447,7 +2447,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_90_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_90_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2495,7 +2495,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_90_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_90_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2543,7 +2543,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_90_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_90_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2591,7 +2591,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_90_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_90_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2639,7 +2639,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_90_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_90_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2687,7 +2687,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_90_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_90_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2735,7 +2735,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_100_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_100_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2783,7 +2783,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_100_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_100_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2831,7 +2831,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_100_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_100_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2879,7 +2879,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_100_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_100_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2927,7 +2927,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_100_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_100_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -2975,7 +2975,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_100_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_100_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -3023,7 +3023,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_100_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_100_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -3071,7 +3071,7 @@
             ], 
             "description": "a launch/synchronization complex with size small at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "small", 
-            "name": "bsg_launch_sync_sync_small_iclk_100_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_small_iclk_100_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -3119,7 +3119,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_30_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_30_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3167,7 +3167,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_30_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_30_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3215,7 +3215,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_30_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_30_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3263,7 +3263,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_30_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_30_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3311,7 +3311,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_30_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_30_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3359,7 +3359,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_30_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_30_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3407,7 +3407,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_30_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_30_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3455,7 +3455,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_30_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_30_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3503,7 +3503,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_40_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_40_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3551,7 +3551,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_40_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_40_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3599,7 +3599,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_40_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_40_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3647,7 +3647,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_40_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_40_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3695,7 +3695,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_40_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_40_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3743,7 +3743,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_40_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_40_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3791,7 +3791,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_40_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_40_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3839,7 +3839,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_40_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_40_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3887,7 +3887,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_50_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_50_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3935,7 +3935,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_50_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_50_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -3983,7 +3983,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_50_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_50_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4031,7 +4031,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_50_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_50_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4079,7 +4079,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_50_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_50_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4127,7 +4127,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_50_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_50_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4175,7 +4175,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_50_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_50_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4223,7 +4223,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_50_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_50_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4271,7 +4271,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_60_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_60_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4319,7 +4319,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_60_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_60_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4367,7 +4367,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_60_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_60_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4415,7 +4415,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_60_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_60_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4463,7 +4463,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_60_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_60_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4511,7 +4511,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_60_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_60_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4559,7 +4559,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_60_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_60_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4607,7 +4607,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_60_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_60_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4655,7 +4655,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_70_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_70_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4703,7 +4703,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_70_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_70_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4751,7 +4751,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_70_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_70_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4799,7 +4799,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_70_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_70_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4847,7 +4847,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_70_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_70_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4895,7 +4895,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_70_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_70_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4943,7 +4943,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_70_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_70_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -4991,7 +4991,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_70_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_70_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5039,7 +5039,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_80_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_80_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5087,7 +5087,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_80_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_80_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5135,7 +5135,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_80_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_80_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5183,7 +5183,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_80_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_80_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5231,7 +5231,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_80_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_80_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5279,7 +5279,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_80_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_80_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5327,7 +5327,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_80_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_80_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5375,7 +5375,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_80_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_80_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5423,7 +5423,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_90_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_90_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5471,7 +5471,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_90_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_90_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5519,7 +5519,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_90_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_90_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5567,7 +5567,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_90_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_90_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5615,7 +5615,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_90_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_90_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5663,7 +5663,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_90_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_90_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5711,7 +5711,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_90_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_90_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5759,7 +5759,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_90_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_90_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5807,7 +5807,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_100_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_100_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5855,7 +5855,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_100_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_100_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5903,7 +5903,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_100_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_100_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5951,7 +5951,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_100_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_100_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -5999,7 +5999,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_100_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_100_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -6047,7 +6047,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_100_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_100_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -6095,7 +6095,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_100_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_100_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -6143,7 +6143,7 @@
             ], 
             "description": "a launch/synchronization complex with size large at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "large", 
-            "name": "bsg_launch_sync_sync_large_iclk_100_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_large_iclk_100_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -6191,7 +6191,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -6239,7 +6239,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -6287,7 +6287,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -6335,7 +6335,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -6383,7 +6383,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -6431,7 +6431,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -6479,7 +6479,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -6527,7 +6527,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_30_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -6575,7 +6575,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -6623,7 +6623,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -6671,7 +6671,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -6719,7 +6719,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -6767,7 +6767,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -6815,7 +6815,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -6863,7 +6863,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -6911,7 +6911,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_40_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -6959,7 +6959,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7007,7 +7007,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7055,7 +7055,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7103,7 +7103,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7151,7 +7151,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7199,7 +7199,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7247,7 +7247,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7295,7 +7295,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_50_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7343,7 +7343,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7391,7 +7391,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7439,7 +7439,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7487,7 +7487,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7535,7 +7535,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7583,7 +7583,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7631,7 +7631,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7679,7 +7679,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_60_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7727,7 +7727,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_70_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_70_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7775,7 +7775,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_70_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_70_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7823,7 +7823,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_70_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_70_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7871,7 +7871,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_70_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_70_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7919,7 +7919,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_70_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_70_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -7967,7 +7967,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_70_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_70_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8015,7 +8015,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_70_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_70_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8063,7 +8063,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_70_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_70_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8111,7 +8111,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_80_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_80_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8159,7 +8159,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_80_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_80_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8207,7 +8207,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_80_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_80_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8255,7 +8255,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_80_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_80_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8303,7 +8303,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_80_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_80_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8351,7 +8351,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_80_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_80_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8399,7 +8399,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_80_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_80_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8447,7 +8447,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_80_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_80_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8495,7 +8495,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_90_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_90_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8543,7 +8543,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_90_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_90_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8591,7 +8591,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_90_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_90_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8639,7 +8639,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_90_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_90_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8687,7 +8687,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_90_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_90_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8735,7 +8735,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_90_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_90_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8783,7 +8783,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_90_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_90_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8831,7 +8831,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_90_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_90_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8879,7 +8879,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_100_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_100_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8927,7 +8927,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_100_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_100_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -8975,7 +8975,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_100_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_100_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -9023,7 +9023,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_100_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_100_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -9071,7 +9071,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_100_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_100_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -9119,7 +9119,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_100_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_100_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -9167,7 +9167,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_100_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_100_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -9215,7 +9215,7 @@
             ], 
             "description": "a launch/synchronization complex with size very_large at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "very_large", 
-            "name": "bsg_launch_sync_sync_very_large_iclk_100_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_very_large_iclk_100_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -9263,7 +9263,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -9311,7 +9311,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -9359,7 +9359,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -9407,7 +9407,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -9455,7 +9455,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -9503,7 +9503,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -9551,7 +9551,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -9599,7 +9599,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_30_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -9647,7 +9647,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -9695,7 +9695,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -9743,7 +9743,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -9791,7 +9791,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -9839,7 +9839,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -9887,7 +9887,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -9935,7 +9935,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -9983,7 +9983,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_40_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10031,7 +10031,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10079,7 +10079,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10127,7 +10127,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10175,7 +10175,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10223,7 +10223,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10271,7 +10271,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10319,7 +10319,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10367,7 +10367,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_50_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10415,7 +10415,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10463,7 +10463,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10511,7 +10511,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10559,7 +10559,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10607,7 +10607,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10655,7 +10655,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10703,7 +10703,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10751,7 +10751,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_60_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10799,7 +10799,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_70_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_70_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10847,7 +10847,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_70_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_70_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10895,7 +10895,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_70_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_70_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10943,7 +10943,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_70_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_70_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -10991,7 +10991,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_70_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_70_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11039,7 +11039,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_70_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_70_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11087,7 +11087,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_70_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_70_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11135,7 +11135,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 70 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_70_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_70_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11183,7 +11183,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_80_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_80_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11231,7 +11231,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_80_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_80_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11279,7 +11279,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_80_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_80_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11327,7 +11327,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_80_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_80_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11375,7 +11375,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_80_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_80_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11423,7 +11423,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_80_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_80_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11471,7 +11471,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_80_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_80_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11519,7 +11519,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 80 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_80_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_80_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11567,7 +11567,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_90_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_90_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11615,7 +11615,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_90_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_90_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11663,7 +11663,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_90_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_90_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11711,7 +11711,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_90_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_90_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11759,7 +11759,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_90_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_90_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11807,7 +11807,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_90_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_90_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11855,7 +11855,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_90_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_90_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11903,7 +11903,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 90 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_90_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_90_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11951,7 +11951,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 30", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_100_FO4oclk_30_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_100_FO4_oclk_30_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -11999,7 +11999,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 40", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_100_FO4oclk_40_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_100_FO4_oclk_40_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -12047,7 +12047,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 50", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_100_FO4oclk_50_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_100_FO4_oclk_50_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -12095,7 +12095,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 60", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_100_FO4oclk_60_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_100_FO4_oclk_60_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -12143,7 +12143,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 70", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_100_FO4oclk_70_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_100_FO4_oclk_70_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -12191,7 +12191,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 80", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_100_FO4oclk_80_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_100_FO4_oclk_80_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -12239,7 +12239,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 90", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_100_FO4oclk_90_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_100_FO4_oclk_90_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -12287,7 +12287,7 @@
             ], 
             "description": "a launch/synchronization complex with size medium at a clk 1 period (in num of FO4) = 100 and a clk 2 period (in num of FO4) = 100", 
             "design_size": "medium", 
-            "name": "bsg_launch_sync_sync_medium_iclk_100_FO4oclk_100_FO4", 
+            "name": "bsg_launch_sync_sync_medium_iclk_100_FO4_oclk_100_FO4", 
             "parameters": [
                 "width_p=32"
             ]
