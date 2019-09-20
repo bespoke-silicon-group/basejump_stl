@@ -65,7 +65,14 @@ module bsg_booth_encoder (
   input [2:0] source_bits_i
   ,output logic [2:0] code_o
 );
-always_comb begin
+
+wire all_zero = source_bits_i == '0;
+wire all_one = source_bits_i == '1;
+assign code_o[0] = ~all_zero && ~all_one;
+assign code_o[2] = ~all_one && source_bits_i[2];
+assign code_o[1] = source_bits_i == 3'b011 || source_bits_i == 3'b100;
+
+/*always_comb begin
   unique case(source_bits_i)
     3'b000: code_o = 3'b000;//eZERO
     3'b001: code_o = 3'b001;//ePOS_1
@@ -77,6 +84,7 @@ always_comb begin
     3'b111: code_o = 3'b000;//eZERO
   endcase
 end
+*/
 endmodule
 
 module bsg_booth_selector #(
@@ -84,15 +92,15 @@ module bsg_booth_selector #(
   ,parameter bit initial_p = 0
 )(
   input [width_p:0] pos_op_i // original operand.
-  ,input [width_p:0] inv_op_i // inverted operand.
   ,input [2:0] code_i
 
   ,output [width_p+2+initial_p:0] partial_product_o
 );
 
-wire [width_p:0] pos_neg = code_i[2] ? inv_op_i : pos_op_i;
-wire [width_p:0] zero_or_not = code_i[0] ? pos_neg : '0;
-wire [width_p:0] pd = code_i[1] ? {zero_or_not[width_p-1:0], code_i[2]} : zero_or_not;
+wire [width_p:0] zero_or_not = {(width_p+1){code_i[0]}} & pos_op_i;
+wire [width_p:0] sht = code_i[1] ? {zero_or_not[width_p-1:0], '0} : zero_or_not;
+wire [width_p:0] pd = {(width_p+1){code_i[2]}} ^ sht;
+
 
 wire e = pd[width_p]; // E is used for sign extension.
 if(!initial_p)
@@ -179,7 +187,6 @@ if (booth_step_lp == 1) begin: NO_WALLACE_TREE
     ,.initial_p(0)
   ) unique_selector (
     .pos_op_i(opA_i)
-    ,.inv_op_i(~opA_i)
     ,.code_i({opB_i[2][0], opB_i[1][0], opB_i[0][0]})
     ,.partial_product_o(partial_product_lo[width_p+2:0])
   );
@@ -211,7 +218,6 @@ else begin: WALLACE_TREE
       ,.initial_p(0)
       ) booth_selector (
       .pos_op_i(opA_i)
-      ,.inv_op_i(~opA_i)
       ,.code_i({opB_i[2][i], opB_i[1][i], opB_i[0][i]})
       ,.partial_product_o(partial_product_lo[i])
     );
@@ -377,7 +383,6 @@ module bsg_mul_iterative_booth_unpipelined #(
     ,.initial_p(1)
   ) first_selector (
     .pos_op_i(extend_opA_i)
-    ,.inv_op_i(~extend_opA_i)
     ,.code_i({opB_n[2][0], opB_n[1][0], opB_n[0][0]})
     ,.partial_product_o(csa_opA_init)
   );
@@ -599,7 +604,6 @@ bsg_booth_selector #(
   ,.initial_p(1)
 ) first_selector (
   .pos_op_i(extend_opA_i)
-  ,.inv_op_i(~extend_opA_i)
   ,.code_i({opB_n[2][0], opB_n[1][0], opB_n[0][0]})
   ,.partial_product_o(csa_opA_init)
 );
