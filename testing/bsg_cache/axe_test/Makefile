@@ -4,9 +4,8 @@
 #
 
 include ../../../../bsg_cadenv/cadenv.mk
-
-INCDIR = +incdir+$(BSG_IP_CORES_DIR)/bsg_misc
-INCDIR += +incdir+$(BSG_IP_CORES_DIR)/bsg_cache
+export BASEJUMP_STL_DIR=$(abspath ../../..)
+INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 
 VCS_LOG = vcs.log
 TRACE_AXE = bsg_cache.axe
@@ -27,7 +26,7 @@ bsg_trace_rom.tr:
 	python axe_trace_gen.py $(NUM_INSTR_P) $(SEED_P) $(WAYS_P) $(DATA_WIDTH_P) > $@
 
 bsg_trace_rom.v: bsg_trace_rom.tr
-	python $(BSG_IP_CORES_DIR)/bsg_mem/bsg_ascii_to_rom.py \
+	python $(BASEJUMP_STL_DIR)/bsg_mem/bsg_ascii_to_rom.py \
 		bsg_trace_rom.tr bsg_trace_rom > bsg_trace_rom.v
 
 sim: bsg_trace_rom.v
