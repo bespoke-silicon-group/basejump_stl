@@ -34,6 +34,7 @@ include bsg_round_robin_n_to_1.json
 include bsg_sbox.json
 include bsg_scatter_gather.json
 include bsg_serial_in_parallel_out.json
+include bsg_serial_in_parallel_out_dynamic.json
 include bsg_serial_in_parallel_out_full.json
 include bsg_shift_reg.json
 include bsg_two_buncher.json
