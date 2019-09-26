@@ -51,9 +51,9 @@ package bsg_cache_non_blocking_pkg;
       logic [addr_width_mp-1:0] addr;                           \
       logic [data_width_mp-1:0] data;                           \
       logic [(data_width_mp>>3)-1:0] mask;                      \
-    } bsg_cache_pkt_s
+    } bsg_cache_non_blocking_pkt_s
 
-  `define bsg_cache_non_blocking_pkt_width(addr_width_mp,data_width_mp) \
+  `define bsg_cache_non_blocking_pkt_width(id_width_mp,addr_width_mp,data_width_mp) \
     (5+id_width_mp+addr_width_mp+data_width_mp+(data_width_mp>>3))
 
 
@@ -84,11 +84,11 @@ package bsg_cache_non_blocking_pkg;
 
   // bsg_cache_dma_pkt_s
   //
-  `define declare_bsg_cache_non_blocking__dma_pkt_s(addr_width_mp) \
+  `define declare_bsg_cache_non_blocking_dma_pkt_s(addr_width_mp) \
     typedef struct packed {               \
       logic write_not_read;               \
       logic [addr_width_mp-1:0] addr;     \
-    } bsg_cache_dma_pkt_s
+    } bsg_cache_non_blocking_dma_pkt_s
 
   `define bsg_cache_non_blocking_dma_pkt_width(addr_width_mp)    \
     (1+addr_width_mp)
@@ -101,7 +101,7 @@ package bsg_cache_non_blocking_pkg;
       logic valid;                            \
       logic lock;                             \
       logic [tag_width_mp-1:0] tag;           \
-    } bsg_cache_tag_info_s
+    } bsg_cache_non_blocking_tag_info_s
 
   `define bsg_cache_non_blocking_tag_info_width(tag_width_mp) (tag_width_mp+2)
 
@@ -116,6 +116,21 @@ package bsg_cache_non_blocking_pkg;
 
   `define bsg_cache_non_blocking_stat_info_width(ways_mp) \
     (ways_mp+ways_mp-1)
+
+
+  // tag-lookup stage
+  //
+  `define declare_bsg_cache_non_blocking_tl_stage_s(id_width_mp,addr_width_mp,data_width_mp) \
+    typedef struct packed {                       \
+      logic v;                                    \
+      bsg_cache_non_blocking_decode_s decode;     \
+      logic [id_width_mp-1:0] id;                 \
+      logic [addr_width_mp-1:0] addr;             \
+      logic [data_width_mp-1:0] data;             \
+      logic [(data_width_mp>>3)-1:0] mask;        \
+    } bsg_cache_non_blocking_tl_stage_s;
+
+
 
 
 endpackage

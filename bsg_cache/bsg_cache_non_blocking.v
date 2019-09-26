@@ -83,47 +83,18 @@ module bsg_cache_non_blocking
 
   // tl_stage
   //
-  logic v_tl_r;
-  bsg_cache_non_blocking_decode_s decode_tl_r;
-  logic [data_mask_width_lp-1:0] mask_tl_r;
-  logic [addr_width_p-1:0] addr_tl_r;
-  logic [data_width_p-1:0] data_tl_r;
+  `declare_bsg_cache_non_blocking_tl_stage_s(id_width_p,addr_width_p,data_width_p); 
 
-  always_ff @ (posedge clk_i) begin
-    if (reset_i) begin
-      v_tl_r <= 1'b0;
-      {decode_tl_r
-       ,mask_tl_r
-       ,addr_tl_r
-       ,data_tl_r} <= '0;
-    end
-    else begin
-      if (ready_o) begin
-        v_tl_r <= v_i;
-        if (v_i) begin
-          decode_tl_r <= decode;
-          mask_tl_r <= cache_pkt.mask;
-          addr_tl_r <= cache_pkt.addr;
-          data_tl_r <= cache_pkt.data;
-        end
-      end
-      else begin
-        v_tl_r <= 1'b0;
-      end
-    end
-  end
+  bsg_cache_non_blocking_tl_stage_s tl_n, tl_r;  
 
-  logic [tag_width_lp-1:0] addr_tag_tl;
-  logic [lg_sets_lp-1:0] addr_index_tl;
-  logic [lg_block_size_in_words_lp-1:0] addr_block_offset_tl;
- 
-  assign addr_tag_tl = 
-    addr_tl_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+lg_set_lp+:tag_width_lp]; 
-  assign addr_index_tl = 
-    addr_tl_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
-  assign addr_block_offset_tl = 
-    addr_tl_r[lg_data_mask_width_lp+lg_block_size_in_words_lp];
-
+  bsg_dff_reset #(
+    .width_p($bits(bsg_cache_non_blocking_tl_stage_s))
+  ) tl_stage (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.data_i(tl_n)
+    ,.data_o(tl_r)
+  );
 
 
 

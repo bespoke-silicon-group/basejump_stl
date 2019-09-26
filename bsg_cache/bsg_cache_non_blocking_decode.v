@@ -10,7 +10,7 @@ module bsg_cache_non_blocking_decode
   import bsg_cache_non_blocking_pkg::*;
   (
     input bsg_cache_non_blocking_opcode_e opcode_i
-    , output bsg_cache_pkt_decode_s decode_o
+    , output bsg_cache_non_blocking_decode_s decode_o
   );
 
   always_comb begin
