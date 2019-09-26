@@ -58,6 +58,8 @@ module bsg_cache_non_blocking
   localparam lg_data_mask_width_lp = `BSG_SAFE_CLOG2(data_mask_width_lp);
   localparam tag_width_lp = (addr_width_p-lg_data_mask_width_lp-lg_block_size_in_words_lp-lg_sets_lp);
 
+  localparam tag_info_width_lp = `bsg_cache_non_blocking_tag_info_width(tag_width_lp);
+
 
   // packet decoding
   //
@@ -69,7 +71,7 @@ module bsg_cache_non_blocking
   assign cache_pkt = cache_pkt_i;
 
   bsg_cache_non_blocking_decode_s decode;
-  bsg_cache_non_blocking_decode op_decode
+  bsg_cache_non_blocking_decode decode0
   (
     .opcode_i(cache_pkt.opcode)
     ,.decode_o(decode)
@@ -95,6 +97,70 @@ module bsg_cache_non_blocking
     ,.data_i(tl_n)
     ,.data_o(tl_r)
   );
+
+
+  // tag_mem
+  //
+  `declare_bsg_cache_non_blocking_tag_info_s(tag_width_lp);
+  logic tag_mem_v_li;
+  logic tag_mem_w_li;
+  logic [lg_sets_lp-1:0] tag_mem_addr_li;
+  bsg_cache_non_blocking_tag_info_s [ways_p-1:0] tag_mem_data_li;
+  bsg_cache_non_blocking_tag_info_s [ways_p-1:0] tag_mem_mask_li;
+  bsg_cache_non_blocking_tag_info_s [ways_p-1:0] tag_mem_data_lo;
+
+  bsg_mem_1rw_sync_mask_write_bit #(
+    .width_p(ways_p*tag_info_width_lp)
+    ,.els_p(sets_p)
+    ,.latch_last_read_p(1)
+  ) tag_mem0 (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.v_i(tag_mem_v_li)
+    ,.w_i(tag_mem_w_li)
+    ,.addr_i(tag_mem_addr_li)
+    ,.data_i(tag_mem_data_li)
+    ,.w_mask_i(tag_mem_mask_li)
+    ,.data_o(tag_mem_data_lo)
+  );
+
+  logic [ways_p-1:0] valid_tl;
+  logic [ways_p-1:0][tag_width_lp-1:0] tag_tl;
+  logic [ways_p-1:0] lock_tl;
+
+  for (genvar i = 0; i < ways_p; i++) begin
+    assign valid_tl[i] = tag_mem_data_lo[i].valid;
+    assign tag_tl[i] = tag_mem_data_lo[i].tag;
+    assign lock_tl[i] = tag_mem_data_lo[i].lock;
+  end
+
+
+  // data_mem
+  //
+  logic data_mem_v_li;
+  logic data_mem_w_li;
+  logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_mem_addr_li;
+  logic [ways_p-1:0][data_width_p-1:0] data_mem_data_li;
+  logic [ways_p-1:0][data_mask_width_lp-1:0] data_mem_mask_li;
+  logic [ways_p-1:0][data_width_p-1:0] data_mem_data_lo;
+
+  bsg_mem_1rw_sync_mask_write_byte #(
+    .data_width_p(data_width_p*ways_p)
+    ,.els_p(block_size_in_words_p*sets_p)
+    ,.latch_last_read_p(1)
+  ) data_mem0 (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.v_i(data_mem_v_li)
+    ,.w_i(data_mem_w_li)
+    ,.addr_i(data_mem_addr_li)
+    ,.data_i(data_mem_data_li)
+    ,.write_mask_i(data_mem_mask_li)
+    ,.data_o(data_mem_data_lo)
+  );
+
+
+
 
 
 
