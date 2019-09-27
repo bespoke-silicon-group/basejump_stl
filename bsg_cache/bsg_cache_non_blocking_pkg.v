@@ -130,7 +130,28 @@ package bsg_cache_non_blocking_pkg;
       logic [(data_width_mp>>3)-1:0] mask;        \
     } bsg_cache_non_blocking_tl_stage_s;
 
+  
+  // miss FIFO yumi op 
+  //
+  typedef enum logic [1:0] {
+    e_miss_fifo_dequeue
+    ,e_miss_fifo_scan_skip
+    ,e_miss_fifo_dequeue_skip
+    ,e_miss_fifo_invalidate
+  } bsg_cache_non_blocking_miss_fifo_yumi_op_e;
 
 
+  // miss FIFO entry
+  //
+  `define declare_bsg_cache_non_blocking_miss_fifo_entry_s(id_width_mp,addr_width_mp,data_width_mp) \
+    typedef struct packed {             \
+      logic load_not_store;             \
+      logic [id_width_mp-1:0] id;       \
+      logic [addr_width_mp-1:0] addr;   \
+      logic [data_width_mp-1:0] data;   \
+      logic [1:0] data_size_op;         \
+      logic mask_op;                    \
+      logic [(data_width_mp>>3)-1:0] mask;    \
+    } bsg_cache_non_blocking_miss_fifo_entry_s;  
 
 endpackage

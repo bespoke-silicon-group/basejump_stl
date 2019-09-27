@@ -22,7 +22,7 @@ all: sim
 #	python $(BSG_IP_CORES_DIR)/bsg_mem/bsg_ascii_to_rom.py $(TRACE_FILE) $(TRACE_ROM) \
 #	> $(TRACE_ROM_V)
 
-sim: $(TRACE_ROM_V)
+sim:
 	vcs +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
 		-sverilog -full64 -f sv.include $(INCDIR) \
 		-timescale=1ps/1ps +vcs+vcdpluson $(DEFINE) -l vcs.log\
@@ -34,7 +34,6 @@ dve:
 clean:
 	rm -rf DVEfiles
 	rm -rf csrc
-	rm -f $(TRACE_ROM)*.v
 	rm -rf simv.daidir simv.vdb
 	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz vcs.log
 	rm -rf stack.info.*

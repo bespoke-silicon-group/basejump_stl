@@ -19,6 +19,8 @@ module bsg_cache_non_blocking
     , parameter sets_p="inv"
     , parameter ways_p="inv"
     , parameter block_size_in_words_p="inv"
+
+    , parameter miss_fifo_els_p=32
     
     , parameter cache_pkt_width_lp=`bsg_cache_non_blocking_pkt_width(id_width_p,addr_width_p,data_width_p)
     , parameter dma_pkt_width_lp=`bsg_cache_non_blocking_dma_pkt_width(addr_width_p)
@@ -134,6 +136,7 @@ module bsg_cache_non_blocking
     assign lock_tl[i] = tag_mem_data_lo[i].lock;
   end
 
+  
 
   // data_mem
   //
@@ -160,7 +163,40 @@ module bsg_cache_non_blocking
   );
 
 
+  // miss FIFO
+  //
+  `declare_bsg_cache_non_blocking_miss_fifo_entry_s(id_width_p,addr_width_p,data_width_p);  
+  bsg_cache_non_blocking_miss_fifo_entry_s miss_fifo_data_li;
+  logic miss_fifo_v_li;
+  logic miss_fifo_ready_lo;
 
+  bsg_cache_non_blocking_miss_fifo_entry_s miss_fifo_data_lo;
+  logic miss_fifo_v_lo;
+  logic miss_fifo_yumi_li;
+  bsg_cache_non_blocking_miss_fifo_yumi_op_e miss_fifo_yumi_op_li; 
+  logic miss_fifo_rollback_li;
+  logic miss_fifo_empty_lo;
+  
+
+  bsg_cache_non_blocking_miss_fifo #(
+    .width_p($bits(bsg_cache_non_blocking_miss_fifo_entry_s))
+    ,.els_p(miss_fifo_els_p)
+  ) miss_fifo0 (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+
+    ,.data_i(miss_fifo_data_li)
+    ,.v_i(miss_fifo_v_li)
+    ,.ready_o(miss_fifo_ready_lo)
+
+    ,.v_o(miss_fifo_v_lo)
+    ,.data_o(miss_fifo_data_lo)
+    ,.yumi_i(miss_fifo_yumi_li)
+    ,.yumi_op_i(miss_fifo_yumi_op_li)
+
+    ,.rollback_i(miss_fifo_rollback_li)
+    ,.empty_o(miss_fifo_empty_lo)
+  );
 
 
 
