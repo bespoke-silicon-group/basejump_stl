@@ -1,657 +1,873 @@
 {
-    "design_name": "bsg_8b10b_encode_comb",
-    "filelist": [
+    "design_name":"bsg_8b10b_encode_comb",
+    "filelist":[
         "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_dataflow/bsg_8b10b_encode_comb.v"
     ],
-    "run_config": [
+    "run_config":[
         {
-            "name": "bsg_8b10b_encode_comb_small_clkperiod_1",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size small at clock period=1",
-            "design_size": "small",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "1",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"30",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with small size at a clock period (in num of FO4) = 30",
+            "design_size":"small",
+            "name":"bsg_8b10b_encode_comb_small_vclk_30_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_small_clkperiod_3",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size small at clock period=3",
-            "design_size": "small",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "3",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"40",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with small size at a clock period (in num of FO4) = 40",
+            "design_size":"small",
+            "name":"bsg_8b10b_encode_comb_small_vclk_40_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_small_clkperiod_5",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size small at clock period=5",
-            "design_size": "small",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "5",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"50",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with small size at a clock period (in num of FO4) = 50",
+            "design_size":"small",
+            "name":"bsg_8b10b_encode_comb_small_vclk_50_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_small_clkperiod_7",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size small at clock period=7",
-            "design_size": "small",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "7",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"60",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with small size at a clock period (in num of FO4) = 60",
+            "design_size":"small",
+            "name":"bsg_8b10b_encode_comb_small_vclk_60_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_small_clkperiod_9",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size small at clock period=9",
-            "design_size": "small",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "9",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"70",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with small size at a clock period (in num of FO4) = 70",
+            "design_size":"small",
+            "name":"bsg_8b10b_encode_comb_small_vclk_70_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_small_clkperiod_11",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size small at clock period=11",
-            "design_size": "small",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "11",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"80",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with small size at a clock period (in num of FO4) = 80",
+            "design_size":"small",
+            "name":"bsg_8b10b_encode_comb_small_vclk_80_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_large_clkperiod_1",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size large at clock period=1",
-            "design_size": "large",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "1",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"90",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with small size at a clock period (in num of FO4) = 90",
+            "design_size":"small",
+            "name":"bsg_8b10b_encode_comb_small_vclk_90_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_large_clkperiod_3",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size large at clock period=3",
-            "design_size": "large",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "3",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"100",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with small size at a clock period (in num of FO4) = 100",
+            "design_size":"small",
+            "name":"bsg_8b10b_encode_comb_small_vclk_100_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_large_clkperiod_5",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size large at clock period=5",
-            "design_size": "large",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "5",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"30",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with large size at a clock period (in num of FO4) = 30",
+            "design_size":"large",
+            "name":"bsg_8b10b_encode_comb_large_vclk_30_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_large_clkperiod_7",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size large at clock period=7",
-            "design_size": "large",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "7",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"40",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with large size at a clock period (in num of FO4) = 40",
+            "design_size":"large",
+            "name":"bsg_8b10b_encode_comb_large_vclk_40_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_large_clkperiod_9",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size large at clock period=9",
-            "design_size": "large",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "9",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"50",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with large size at a clock period (in num of FO4) = 50",
+            "design_size":"large",
+            "name":"bsg_8b10b_encode_comb_large_vclk_50_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_large_clkperiod_11",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size large at clock period=11",
-            "design_size": "large",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "11",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"60",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with large size at a clock period (in num of FO4) = 60",
+            "design_size":"large",
+            "name":"bsg_8b10b_encode_comb_large_vclk_60_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_very_large_clkperiod_1",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size very_large at clock period=1",
-            "design_size": "very_large",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "1",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"70",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with large size at a clock period (in num of FO4) = 70",
+            "design_size":"large",
+            "name":"bsg_8b10b_encode_comb_large_vclk_70_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_very_large_clkperiod_3",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size very_large at clock period=3",
-            "design_size": "very_large",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "3",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"80",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with large size at a clock period (in num of FO4) = 80",
+            "design_size":"large",
+            "name":"bsg_8b10b_encode_comb_large_vclk_80_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_very_large_clkperiod_5",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size very_large at clock period=5",
-            "design_size": "very_large",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "5",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"90",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with large size at a clock period (in num of FO4) = 90",
+            "design_size":"large",
+            "name":"bsg_8b10b_encode_comb_large_vclk_90_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_very_large_clkperiod_7",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size very_large at clock period=7",
-            "design_size": "very_large",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "7",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"100",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with large size at a clock period (in num of FO4) = 100",
+            "design_size":"large",
+            "name":"bsg_8b10b_encode_comb_large_vclk_100_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_very_large_clkperiod_9",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size very_large at clock period=9",
-            "design_size": "very_large",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "9",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"30",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with very_large size at a clock period (in num of FO4) = 30",
+            "design_size":"very_large",
+            "name":"bsg_8b10b_encode_comb_very_large_vclk_30_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_very_large_clkperiod_11",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size very_large at clock period=11",
-            "design_size": "very_large",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "11",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"40",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with very_large size at a clock period (in num of FO4) = 40",
+            "design_size":"very_large",
+            "name":"bsg_8b10b_encode_comb_very_large_vclk_40_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_medium_clkperiod_1",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size medium at clock period=1",
-            "design_size": "medium",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "1",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"50",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with very_large size at a clock period (in num of FO4) = 50",
+            "design_size":"very_large",
+            "name":"bsg_8b10b_encode_comb_very_large_vclk_50_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_medium_clkperiod_3",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size medium at clock period=3",
-            "design_size": "medium",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "3",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"60",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with very_large size at a clock period (in num of FO4) = 60",
+            "design_size":"very_large",
+            "name":"bsg_8b10b_encode_comb_very_large_vclk_60_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_medium_clkperiod_5",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size medium at clock period=5",
-            "design_size": "medium",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "5",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"70",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with very_large size at a clock period (in num of FO4) = 70",
+            "design_size":"very_large",
+            "name":"bsg_8b10b_encode_comb_very_large_vclk_70_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_medium_clkperiod_7",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size medium at clock period=7",
-            "design_size": "medium",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "7",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"80",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with very_large size at a clock period (in num of FO4) = 80",
+            "design_size":"very_large",
+            "name":"bsg_8b10b_encode_comb_very_large_vclk_80_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_medium_clkperiod_9",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size medium at clock period=9",
-            "design_size": "medium",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "9",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"90",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with very_large size at a clock period (in num of FO4) = 90",
+            "design_size":"very_large",
+            "name":"bsg_8b10b_encode_comb_very_large_vclk_90_FO4",
+            "parameters":[]
         },
         {
-            "name": "bsg_8b10b_encode_comb_medium_clkperiod_11",
-            "description": "Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with size medium at clock period=11",
-            "design_size": "medium",
-            "parameters": [],
-            "constraints": [
+            "constraints":[
                 {
-                    "type": "clock",
-                    "name": "vclk",
-                    "port": "virtual",
-                    "period": "11",
-                    "uncertainty": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
                 },
                 {
-                    "type": "input",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
                 },
                 {
-                    "type": "output",
-                    "clock": "vclk",
-                    "port": "all",
-                    "delay": "0"
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"100",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
                 }
-            ]
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with very_large size at a clock period (in num of FO4) = 100",
+            "design_size":"very_large",
+            "name":"bsg_8b10b_encode_comb_very_large_vclk_100_FO4",
+            "parameters":[]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"30",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with medium size at a clock period (in num of FO4) = 30",
+            "design_size":"medium",
+            "name":"bsg_8b10b_encode_comb_medium_vclk_30_FO4",
+            "parameters":[]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"40",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with medium size at a clock period (in num of FO4) = 40",
+            "design_size":"medium",
+            "name":"bsg_8b10b_encode_comb_medium_vclk_40_FO4",
+            "parameters":[]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"50",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with medium size at a clock period (in num of FO4) = 50",
+            "design_size":"medium",
+            "name":"bsg_8b10b_encode_comb_medium_vclk_50_FO4",
+            "parameters":[]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"60",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with medium size at a clock period (in num of FO4) = 60",
+            "design_size":"medium",
+            "name":"bsg_8b10b_encode_comb_medium_vclk_60_FO4",
+            "parameters":[]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"70",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with medium size at a clock period (in num of FO4) = 70",
+            "design_size":"medium",
+            "name":"bsg_8b10b_encode_comb_medium_vclk_70_FO4",
+            "parameters":[]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"80",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with medium size at a clock period (in num of FO4) = 80",
+            "design_size":"medium",
+            "name":"bsg_8b10b_encode_comb_medium_vclk_80_FO4",
+            "parameters":[]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"90",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with medium size at a clock period (in num of FO4) = 90",
+            "design_size":"medium",
+            "name":"bsg_8b10b_encode_comb_medium_vclk_90_FO4",
+            "parameters":[]
+        },
+        {
+            "constraints":[
+                {
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"input"
+                },
+                {
+                    "clock":"vclk",
+                    "delay":"0",
+                    "port":"all",
+                    "type":"output"
+                },
+                {
+                    "name":"vclk",
+                    "period_in_num_of_FO4":"100",
+                    "port":"virtual",
+                    "type":"clock",
+                    "uncertainty":"0"
+                }
+            ],
+            "description":"Byte Oriented DC Balanced 8B/10B Partitioned Block Transmission Code with medium size at a clock period (in num of FO4) = 100",
+            "design_size":"medium",
+            "name":"bsg_8b10b_encode_comb_medium_vclk_100_FO4",
+            "parameters":[]
         }
     ]
 }
