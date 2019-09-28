@@ -10,23 +10,22 @@ package bsg_cache_non_blocking_pkg;
   // cache opcode
   //
   typedef enum logic [4:0] {
-    LB  = 5'b00000        // load byte
-    ,LH = 5'b00001        // load half
-    ,LW = 5'b00010        // load word
-    ,LD = 5'b00011        // load double
+
+    LB  = 5'b00000        // load byte   (signed)
+    ,LH = 5'b00001        // load half   (signed)
+    ,LW = 5'b00010        // load word   (signed)
+    ,LD = 5'b00011        // load double (signed)
 
     ,LBU = 5'b00100       // load byte   (unsigned)
     ,LHU = 5'b00101       // load half   (unsigned)
     ,LWU = 5'b00110       // load word   (unsigned)
-    ,LDU = 5'b00111       // load double (unsigned)
 
     ,SB  = 5'b01000       // store byte
     ,SH  = 5'b01001       // store half
     ,SW  = 5'b01010       // store word
     ,SD  = 5'b01011       // store double
 
-    ,LM  = 5'b01100       // load mask
-    ,SM  = 5'b01101       // store mask
+    ,BLOCK_LD = 5'b01110  // block load
 
     ,TAGST   = 5'b10000   // tag store
     ,TAGFL   = 5'b10001   // tag flush
@@ -39,6 +38,7 @@ package bsg_cache_non_blocking_pkg;
 
     ,ALOCK   = 5'b11011   // address lock
     ,AUNLOCK = 5'b11100   // address unlock
+
   } bsg_cache_non_blocking_opcode_e;
 
 
@@ -53,6 +53,7 @@ package bsg_cache_non_blocking_pkg;
       logic [(data_width_mp>>3)-1:0] mask;                      \
     } bsg_cache_non_blocking_pkt_s
 
+
   `define bsg_cache_non_blocking_pkt_width(id_width_mp,addr_width_mp,data_width_mp) \
     (5+id_width_mp+addr_width_mp+data_width_mp+(data_width_mp>>3))
 
@@ -66,7 +67,6 @@ package bsg_cache_non_blocking_pkg;
     // 11 - double
     logic [1:0] data_size_op;
     logic sigext_op;
-    logic mask_op;
     logic ld_op;
     logic st_op;
     logic tagst_op;
@@ -79,16 +79,35 @@ package bsg_cache_non_blocking_pkg;
     logic alock_op;
     logic aunlock_op;
     logic tag_read_op;
+    logic block_ld_op;
   } bsg_cache_non_blocking_decode_s;
 
 
-  // bsg_cache_dma_pkt_s
+  // DMA command
+  //
+  `define declare_bsg_cache_non_blocking_dma_cmd_s(ways_mp,sets_mp,tag_width_mp) \
+    typedef struct packed {                         \
+      logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way_id;  \
+      logic [`BSG_SAFE_CLOG2(sets_mp)-1:0] index;   \
+      logic refill;                                 \
+      logic evict;                                  \
+      logic [tag_width_mp-1:0] refill_tag;          \
+      logic [tag_width_mp-1:0] evict_tag;           \
+    } bsg_cache_non_blocking_dma_cmd_s
+
+
+  `define bsg_cache_non_blocking_dma_cmd_width(ways_mp,sets_mp,tag_width_mp) \
+    (`BSG_SAFE_CLOG2(ways_mp)+`BSG_SAFE_CLOG2(sets_mp)+((1+tag_width_mp)*2))
+
+
+  // DMA packet
   //
   `define declare_bsg_cache_non_blocking_dma_pkt_s(addr_width_mp) \
     typedef struct packed {               \
       logic write_not_read;               \
       logic [addr_width_mp-1:0] addr;     \
     } bsg_cache_non_blocking_dma_pkt_s
+
 
   `define bsg_cache_non_blocking_dma_pkt_width(addr_width_mp)    \
     (1+addr_width_mp)
@@ -103,7 +122,9 @@ package bsg_cache_non_blocking_pkg;
       logic [tag_width_mp-1:0] tag;           \
     } bsg_cache_non_blocking_tag_info_s
 
-  `define bsg_cache_non_blocking_tag_info_width(tag_width_mp) (tag_width_mp+2)
+
+  `define bsg_cache_non_blocking_tag_info_width(tag_width_mp) \
+    (tag_width_mp+2)
 
 
   // stat info s
@@ -114,21 +135,9 @@ package bsg_cache_non_blocking_pkg;
       logic [ways_mp-2:0] lru_bits;                 \
     } bsg_cache_non_blocking_stat_info_s
 
+
   `define bsg_cache_non_blocking_stat_info_width(ways_mp) \
     (ways_mp+ways_mp-1)
-
-
-  // tag-lookup stage
-  //
-  `define declare_bsg_cache_non_blocking_tl_stage_s(id_width_mp,addr_width_mp,data_width_mp) \
-    typedef struct packed {                       \
-      logic v;                                    \
-      bsg_cache_non_blocking_decode_s decode;     \
-      logic [id_width_mp-1:0] id;                 \
-      logic [addr_width_mp-1:0] addr;             \
-      logic [data_width_mp-1:0] data;             \
-      logic [(data_width_mp>>3)-1:0] mask;        \
-    } bsg_cache_non_blocking_tl_stage_s;
 
   
   // miss FIFO yumi op 
@@ -138,20 +147,19 @@ package bsg_cache_non_blocking_pkg;
     ,e_miss_fifo_scan_skip
     ,e_miss_fifo_dequeue_skip
     ,e_miss_fifo_invalidate
-  } bsg_cache_non_blocking_miss_fifo_yumi_op_e;
+  } bsg_cache_non_blocking_miss_fifo_op_e;
 
 
   // miss FIFO entry
   //
   `define declare_bsg_cache_non_blocking_miss_fifo_entry_s(id_width_mp,addr_width_mp,data_width_mp) \
-    typedef struct packed {             \
-      logic load_not_store;             \
-      logic [id_width_mp-1:0] id;       \
-      logic [addr_width_mp-1:0] addr;   \
-      logic [data_width_mp-1:0] data;   \
-      logic [1:0] data_size_op;         \
-      logic mask_op;                    \
-      logic [(data_width_mp>>3)-1:0] mask;    \
+    typedef struct packed {                   \
+      logic load_not_store;                   \
+      logic [id_width_mp-1:0] id;             \
+      logic [addr_width_mp-1:0] addr;         \
+      logic [data_width_mp-1:0] data;         \
+      logic [1:0] data_size_op;               \
     } bsg_cache_non_blocking_miss_fifo_entry_s;  
+
 
 endpackage

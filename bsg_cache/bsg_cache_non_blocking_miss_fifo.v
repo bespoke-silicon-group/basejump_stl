@@ -25,7 +25,7 @@ module bsg_cache_non_blocking_miss_fifo
     , output logic v_o
     , output logic [width_p-1:0] data_o
     , input yumi_i
-    , input bsg_cache_non_blocking_miss_fifo_yumi_op_e yumi_op_i
+    , input bsg_cache_non_blocking_miss_fifo_op_e yumi_op_i
 
     , input rollback_i
 

@@ -35,7 +35,6 @@ module bsg_cache_non_blocking
 
     , output logic [data_width_p-1:0] data_o
     , output logic v_o
-    , input yumi_i
 
     , output logic [dma_pkt_width_lp-1:0] dma_pkt_o
     , output logic dma_pkt_v_o
@@ -87,18 +86,41 @@ module bsg_cache_non_blocking
 
   // tl_stage
   //
-  `declare_bsg_cache_non_blocking_tl_stage_s(id_width_p,addr_width_p,data_width_p); 
+  logic stall_tl;
+  logic v_tl_r;
+  bsg_cache_non_blocking_decode_s decode_tl_r;
+  logic [id_width_p-1:0] id_tl_r;
+  logic [addr_width_p-1:0] addr_tl_r;
+  logic [data_width_p-1:0] data_tl_r;
+  logic [data_mask_width_lp-1:0] mask_tl_r;
 
-  bsg_cache_non_blocking_tl_stage_s tl_n, tl_r;  
-
-  bsg_dff_reset #(
-    .width_p($bits(bsg_cache_non_blocking_tl_stage_s))
-  ) tl_stage (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.data_i(tl_n)
-    ,.data_o(tl_r)
-  );
+  always_ff @ (posedge clk_i) begin
+    if (reset_i) begin
+      v_tl_r <= 1'b0;
+      {decode_tl_r
+      ,id_tl_r
+      ,addr_tl_r
+      ,data_tl_r
+      ,mask_tl_r} <= '0;
+    end
+    else begin
+      if (ready_o) begin
+        v_tl_r <= v_i;
+        if (v_i) begin
+          id_tl_r <= cache_pkt.id;
+          addr_tl_r <= cache_pkt.addr;
+          data_tl_r <= cache_pkt.data;
+          mask_tl_r <= cache_pkt.mask;
+          decode_tl_r <= decode;
+        end
+      end
+      else begin
+        if (~stall_tl) begin
+          v_tl_r <= 1'b0;
+        end
+      end
+    end
+  end
 
 
   // tag_mem
@@ -137,31 +159,22 @@ module bsg_cache_non_blocking
   end
 
   
+  logic [ways_p-1:0] tag_hit_tl;
+  logic [lg_ways_lp-1:0] tag_hit_way_id_tl;
+  logic tag_hit_found_tl;
 
-  // data_mem
-  //
-  logic data_mem_v_li;
-  logic data_mem_w_li;
-  logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_mem_addr_li;
-  logic [ways_p-1:0][data_width_p-1:0] data_mem_data_li;
-  logic [ways_p-1:0][data_mask_width_lp-1:0] data_mem_mask_li;
-  logic [ways_p-1:0][data_width_p-1:0] data_mem_data_lo;
+  for (genvar i = 0; i < ways_p; i++) begin
+    assign tag_hit_tl[i] = (addr_tag_tl == tag_tl[i]) & valid_tl[i];
+  end  
 
-  bsg_mem_1rw_sync_mask_write_byte #(
-    .data_width_p(data_width_p*ways_p)
-    ,.els_p(block_size_in_words_p*sets_p)
-    ,.latch_last_read_p(1)
-  ) data_mem0 (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.v_i(data_mem_v_li)
-    ,.w_i(data_mem_w_li)
-    ,.addr_i(data_mem_addr_li)
-    ,.data_i(data_mem_data_li)
-    ,.write_mask_i(data_mem_mask_li)
-    ,.data_o(data_mem_data_lo)
+  bsg_priority_encode #(
+    .width_p(ways_p)
+    ,.lo_to_hi_p(1)
+  ) tag_hit_pe (
+    .i(tag_hit_tl)
+    ,.addr_o(tag_hit_way_id_tl)
+    ,.v_o(tag_hit_found_tl)
   );
-
 
   // miss FIFO
   //
@@ -199,5 +212,90 @@ module bsg_cache_non_blocking
   );
 
 
+
+
+
+
+  // data bank
+  //
+  bsg_cache_non_blocking_data_bank #(
+  ) db0 (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.v_i()
+    ,.w_i()
+    ,. 
+  );
+
+
+
+
+
+
+
+
+
+  // MHU
+  //
+  bsg_cache_non_blocking_mhu #(
+  ) mhu0 (
+  );
+
+
+
+
+
+
+
+
+
+  // DMA engine
+  //
+  logic dma_data_mem_v_lo;
+  logic dma_data_mem_w_lo;
+  logic [lg_ways_lp-1:0] dma_data_mem_way_lo;
+  logic [lg_block_size_in_words_lp+lg_sets_lp-1:0] dma_data_mem_addr_lo;
+  logic [data_width_p-1:0] dma_data_mem_data_lo;
+  logic [data_width_p-1:0] dma_data_mem_data_li;
+  
+
+  bsg_cache_non_blocking_dma #(
+    .addr_width_p(addr_width_p)
+    ,.data_width_p(data_width_p)
+    ,.block_size_in_words_p(block_size_in_words_p)
+    ,.sets_p(sets_p)
+    ,.ways_p(ways_p)
+  ) dma0 (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+  
+    ,.dma_cmd_i()
+    ,.dma_cmd_v_i()
+    ,.dma_cmd_ready_o()
+
+    ,.dma_cmd_return_o()
+    ,.done_o()
+    ,.pending_o()
+    ,.ack_i()
+
+    ,.data_mem_v_o(dma_data_mem_v_lo)
+    ,.data_mem_w_o(dma_data_mem_w_lo)
+    ,.data_mem_way_o(dma_data_mem_way_lo)
+    ,.data_mem_addr_o(dma_data_mem_addr_lo)
+    ,.data_mem_data_o(dma_data_mem_data_lo)
+    ,.data_mem_data_i(dma_data_mem_data_li)
+    
+    ,.dma_pkt_o(dma_pkt_o)
+    ,.dma_pkt_v_o(dma_pkt_v_o)
+    ,.dma_pkt_yumi_i(dma_pkt_yumi_i)
+
+    ,.dma_data_i(dma_data_i)
+    ,.dma_data_v_i(dma_data_v_i)
+    ,.dma_data_ready_o(dma_data_ready_o)
+    
+    ,.dma_data_o(dma_data_o)
+    ,.dma_data_v_o(dma_data_v_o)
+    ,.dma_data_yumi_i(dma_data_yumi_i)
+  );
 
 endmodule
