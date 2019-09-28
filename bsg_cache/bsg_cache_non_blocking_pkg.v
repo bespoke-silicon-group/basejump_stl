@@ -65,7 +65,7 @@ package bsg_cache_non_blocking_pkg;
     // 01 - half
     // 10 - word
     // 11 - double
-    logic [1:0] data_size_op;
+    logic [1:0] size_op;
     logic sigext_op;
     logic ld_op;
     logic st_op;
@@ -139,6 +139,18 @@ package bsg_cache_non_blocking_pkg;
   `define bsg_cache_non_blocking_stat_info_width(ways_mp) \
     (ways_mp+ways_mp-1)
 
+
+  // stat_mem op
+  //
+  typedef enum logic [2:0] {
+    e_stat_read
+    ,e_stat_clear_dirty
+    ,e_stat_set_lru
+    ,e_stat_set_lru_and_dirty
+    ,e_stat_reset
+  } bsg_cache_non_blocking_stat_op_e;
+
+
   
   // miss FIFO yumi op 
   //
@@ -158,7 +170,7 @@ package bsg_cache_non_blocking_pkg;
       logic [id_width_mp-1:0] id;             \
       logic [addr_width_mp-1:0] addr;         \
       logic [data_width_mp-1:0] data;         \
-      logic [1:0] data_size_op;               \
+      logic [1:0] size_op;                    \
     } bsg_cache_non_blocking_miss_fifo_entry_s;  
 
 

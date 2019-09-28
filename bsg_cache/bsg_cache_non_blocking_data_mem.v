@@ -10,9 +10,9 @@
 
 module bsg_cache_non_blocking_data_bank
   #(parameter data_width_p="inv"
+    , parameter ways_p="inv"
     , parameter sets_p="inv"
     , parameter block_size_in_words_p="inv"
-    , parameter ways_p="inv"
 
     , parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
     , parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
@@ -28,7 +28,7 @@ module bsg_cache_non_blocking_data_bank
     , input w_i
 
     , input sigext_op_i
-    , input [1:0] data_size_op_i
+    , input [1:0] size_op_i
     , input [byte_sel_width_lp-1:0] byte_sel_i
 
     , input [lg_sets_lp+lg_block_size_in_words_lp-1:0] addr_i
@@ -58,7 +58,7 @@ module bsg_cache_non_blocking_data_bank
     .data_width_p(data_width_p)
     ,.els_p(block_size_in_words_p*sets_p*ways_p)
     ,.latch_last_read_p(1)
-  ) data_mem0 (
+  ) data_mem (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
     ,.v_i(v_i)
@@ -80,7 +80,7 @@ module bsg_cache_non_blocking_data_bank
     ,.els_p(data_sel_mux_els_lp)
   ) input_data_mux (
     .data_i(input_mux_data_li)
-    ,.sel_i(data_size_op_i[0+:lg_data_sel_mux_els_lp])
+    ,.sel_i(size_op_i[0+:lg_data_sel_mux_els_lp])
     ,.data_o(data_li)
   );
 
@@ -90,7 +90,7 @@ module bsg_cache_non_blocking_data_bank
     ,.els_p(data_sel_mux_els_lp)
   ) input_mask_mux (
     .data_i(input_mux_mask_li)
-    ,.sel_i(data_size_op_i[0+:lg_data_sel_mux_els_lp])
+    ,.sel_i(size_op_i[0+:lg_data_sel_mux_els_lp])
     ,.data_o(mask_li)
   );
 
@@ -132,7 +132,7 @@ module bsg_cache_non_blocking_data_bank
   //
   wire load_en = v_i & ~w_i;
   logic sigext_op_r;
-  logic [1:0] data_size_op_r;
+  logic [1:0] size_op_r;
   logic [byte_sel_width_lp-1:0] byte_sel_r
 
   bsg_dff_en #(
@@ -140,8 +140,8 @@ module bsg_cache_non_blocking_data_bank
   ) op_dff (
     .clk_i(clk_i)
     ,.en_i(load_en)
-    ,.data_i({sigext_op_i, data_size_op_i, byte_sel_i})
-    ,.data_o({sigext_op_r, data_size_op_r, byte_sel_r})
+    ,.data_i({sigext_op_i, size_op_i, byte_sel_i})
+    ,.data_o({sigext_op_r, size_op_r, byte_sel_r})
   );
 
   logic [data_sel_mux_els_lp-1:0][data_width_p-1:0] output_mux_data_li;
@@ -151,7 +151,7 @@ module bsg_cache_non_blocking_data_bank
     ,.els_p(data_sel_mux_els_lp)
   ) output_mux (
     .data_i(output_mux_data_li)
-    ,.sel_i(data_size_op_r[0+:lg_data_sel_mux_els_lp])
+    ,.sel_i(size_op_r[0+:lg_data_sel_mux_els_lp])
     ,.data_o(data_o)
   ); 
 

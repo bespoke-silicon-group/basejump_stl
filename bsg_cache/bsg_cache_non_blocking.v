@@ -1,14 +1,13 @@
 /**
  *    bsg_cache_non_blocking.v
  *
- *    Non-blocking cache
+ *    Non-blocking cache.
+ *
  *
  *    @author tommy
  *
  *
  */
-
-
 
 
 module bsg_cache_non_blocking 
@@ -19,8 +18,7 @@ module bsg_cache_non_blocking
     , parameter sets_p="inv"
     , parameter ways_p="inv"
     , parameter block_size_in_words_p="inv"
-
-    , parameter miss_fifo_els_p=32
+    , parameter miss_fifo_els_p="inv"
     
     , parameter cache_pkt_width_lp=`bsg_cache_non_blocking_pkt_width(id_width_p,addr_width_p,data_width_p)
     , parameter dma_pkt_width_lp=`bsg_cache_non_blocking_dma_pkt_width(addr_width_p)
@@ -212,42 +210,70 @@ module bsg_cache_non_blocking
   );
 
 
-
-
-
-
-  // data bank
+  // data_mem
   //
-  bsg_cache_non_blocking_data_bank #(
-  ) db0 (
+  logic data_mem_v_li;
+  logic data_mem_w_li;
+  logic data_mem_sigext_op_li;
+  logic [1:0] data_mem_size_op_li;
+  logic [lg_data_mask_width_lp-1:0] data_mem_byte_sel_li;
+  logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_mem_addr_li;
+  logic [lg_ways_lp-1:0] data_mem_way_li;
+  logic [data_width_p-1:0] data_mem_data_li;
+  logic [data_width_p-1:0] data_mem_data_lo;
+  
+  
+  bsg_cache_non_blocking_data_mem #(
+    .data_width_p(data_width_p)
+    ,.ways_p(ways_p)
+    ,.sets_p(sets_p)
+    ,.block_size_in_words_p(block_size_in_words_p)
+  ) data_mem0 (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
-    ,.v_i()
-    ,.w_i()
-    ,. 
+
+    ,.v_i(data_mem_v_li)
+    ,.w_i(data_mem_w_li)
+
+    ,.sigext_op_i(data_mem_sigext_op_li)
+    ,.size_op_i(data_mem_size_op_li)
+    ,.byte_sel_i(data_mem_byte_sel_li)
+
+    ,.addr_i(data_mem_addr_li)
+    ,.way_i(data_mem_way_li)
+    ,.data_i(data_mem_data_li)
+    ,.data_o(data_mem_data_lo)
   );
 
 
+  // stat_mem
+  //
+  logic stat_mem_v_li;
+  logic stat_mem_op_li;
+  logic [lg_sets_lp-1:0] stat_mem_addr_li;
+  logic [lg_ways_lp-1:0] stat_mem_way_li;
+  logic [ways_p-1:0] dirty_lo;
+  logic [lg_ways_lp-1:0] lru_way_lo;
 
+  bsg_cache_non_blocking_stat_mem #(
+    .ways_p(ways_p)
+    ,.sets_p(sets_p)
+  ) stat_mem0 (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
 
+    ,.v_i(stat_mem_v_li)
+    ,.stat_op_i(stat_mem_op_li)
+    ,.addr_i(stat_mem_addr_li)
+    ,.way_i(stat_mem_way_li)
 
-
-
-
+    ,.dirty_o(dirty_lo)
+    ,.lru_way_o(lry_way_lo)
+  );
 
   // MHU
   //
-  bsg_cache_non_blocking_mhu #(
-  ) mhu0 (
-  );
-
-
-
-
-
-
-
-
+  
 
   // DMA engine
   //
@@ -257,7 +283,6 @@ module bsg_cache_non_blocking
   logic [lg_block_size_in_words_lp+lg_sets_lp-1:0] dma_data_mem_addr_lo;
   logic [data_width_p-1:0] dma_data_mem_data_lo;
   logic [data_width_p-1:0] dma_data_mem_data_li;
-  
 
   bsg_cache_non_blocking_dma #(
     .addr_width_p(addr_width_p)
