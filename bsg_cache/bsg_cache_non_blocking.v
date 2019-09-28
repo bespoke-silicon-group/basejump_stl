@@ -161,9 +161,6 @@ module bsg_cache_non_blocking
   logic [lg_ways_lp-1:0] tag_hit_way_id_tl;
   logic tag_hit_found_tl;
 
-  for (genvar i = 0; i < ways_p; i++) begin
-    assign tag_hit_tl[i] = (addr_tag_tl == tag_tl[i]) & valid_tl[i];
-  end  
 
   bsg_priority_encode #(
     .width_p(ways_p)
@@ -184,7 +181,7 @@ module bsg_cache_non_blocking
   bsg_cache_non_blocking_miss_fifo_entry_s miss_fifo_data_lo;
   logic miss_fifo_v_lo;
   logic miss_fifo_yumi_li;
-  bsg_cache_non_blocking_miss_fifo_yumi_op_e miss_fifo_yumi_op_li; 
+  bsg_cache_non_blocking_miss_fifo_op_e miss_fifo_yumi_op_li; 
   logic miss_fifo_rollback_li;
   logic miss_fifo_empty_lo;
   
@@ -249,7 +246,7 @@ module bsg_cache_non_blocking
   // stat_mem
   //
   logic stat_mem_v_li;
-  logic stat_mem_op_li;
+  bsg_cache_non_blocking_stat_op_e stat_mem_op_li;
   logic [lg_sets_lp-1:0] stat_mem_addr_li;
   logic [lg_ways_lp-1:0] stat_mem_way_li;
   logic [ways_p-1:0] dirty_lo;
@@ -268,8 +265,9 @@ module bsg_cache_non_blocking
     ,.way_i(stat_mem_way_li)
 
     ,.dirty_o(dirty_lo)
-    ,.lru_way_o(lry_way_lo)
+    ,.lru_way_o(lru_way_lo)
   );
+
 
   // MHU
   //

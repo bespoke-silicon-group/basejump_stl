@@ -8,7 +8,7 @@
  */
 
 
-module bsg_cache_non_blocking_data_bank
+module bsg_cache_non_blocking_data_mem
   #(parameter data_width_p="inv"
     , parameter ways_p="inv"
     , parameter sets_p="inv"
@@ -84,7 +84,6 @@ module bsg_cache_non_blocking_data_bank
     ,.data_o(data_li)
   );
 
-
   bsg_mux #(
     .width_p(data_mask_width_lp)
     ,.els_p(data_sel_mux_els_lp)
@@ -133,7 +132,7 @@ module bsg_cache_non_blocking_data_bank
   wire load_en = v_i & ~w_i;
   logic sigext_op_r;
   logic [1:0] size_op_r;
-  logic [byte_sel_width_lp-1:0] byte_sel_r
+  logic [byte_sel_width_lp-1:0] byte_sel_r;
 
   bsg_dff_en #(
     .width_p(1+2+byte_sel_width_lp)
@@ -175,7 +174,7 @@ module bsg_cache_non_blocking_data_bank
         ,.data_o(selected_bytes)
       );
 
-      assign ld_data_final_li[i] = 
+      assign output_mux_data_li[i] = 
         {{(data_width_p-(8*(2**i))){sigext_op_r & selected_bytes[(8*(2**i))-1]}}, selected_bytes};   
  
     end

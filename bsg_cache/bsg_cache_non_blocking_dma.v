@@ -19,7 +19,10 @@ module bsg_cache_non_blocking_dma
     , parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
     , parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p) 
     , parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    , parameter dma_cmd_width_lp=`bsg_cache_non_blocking_dma_cmd_width(ways_p,sets_p,tag_width_p)
+    , parameter byte_sel_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
+    , parameter tag_width_lp=(addr_width_p-lg_sets_lp-lg_block_size_in_words_lp-byte_sel_width_lp)
+
+    , parameter dma_cmd_width_lp=`bsg_cache_non_blocking_dma_cmd_width(ways_p,sets_p,tag_width_lp)
     , parameter dma_pkt_width_lp=`bsg_cache_non_blocking_dma_pkt_width(addr_width_p)
   )
   (
@@ -69,8 +72,8 @@ module bsg_cache_non_blocking_dma
 
   // casting structs
   //
-  `declare_bsg_cache_non_blocking_dma_cmd_s(ways_mp,sets_mp,tag_width_mp);
-  `declare_bsg_cache_non_blocking_dma_pkt_s(addr_width_mp);
+  `declare_bsg_cache_non_blocking_dma_cmd_s(ways_p,sets_p,tag_width_lp);
+  `declare_bsg_cache_non_blocking_dma_pkt_s(addr_width_p);
  
   bsg_cache_non_blocking_dma_cmd_s dma_cmd_in;
   bsg_cache_non_blocking_dma_cmd_s dma_cmd_r;
@@ -100,7 +103,7 @@ module bsg_cache_non_blocking_dma
     ,SEND_REFILL_ADDR
     ,SEND_EVICT_ADDR
     ,SEND_EVICT_DATA
-    ,RECV_FILL_DATA
+    ,RECV_REFILL_DATA
     ,DONE
   } dma_state_e;
 

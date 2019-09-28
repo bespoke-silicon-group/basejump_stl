@@ -15,15 +15,13 @@ module bsg_cache_non_blocking_decode
 
   always_comb begin
     case (opcode_i)
-      LD, SD, LDU: decode_o.data_size_op = 2'b11;
-      LW, SW, LWU: decode_o.data_size_op = 2'b10;
-      LH, SH, LHU: decode_o.data_size_op = 2'b01;
-      LB, SB, LBU: decode_o.data_size_op = 2'b00;
-      default: decode_o.data_size_op = 2'b00;
+      LD, SD: decode_o.size_op = 2'b11;
+      LW, SW, LWU: decode_o.size_op = 2'b10;
+      LH, SH, LHU: decode_o.size_op = 2'b01;
+      LB, SB, LBU: decode_o.size_op = 2'b00;
+      default: decode_o.size_op = 2'b00;
     endcase    
   end
-
-  assign decode_o.mask_op = (opcode_i == LM) | (opcode_i == SM);
 
   assign decode_o.sigext_op = (opcode_i == LB)
     | (opcode_i == LH)
@@ -36,15 +34,12 @@ module bsg_cache_non_blocking_decode
     | (opcode_i == LD)
     | (opcode_i == LBU)
     | (opcode_i == LHU)
-    | (opcode_i == LWU)
-    | (opcode_i == LDU)
-    | (opcode_i == LM);
+    | (opcode_i == LWU);
 
   assign decode_o.st_op = (opcode_i == SB)
     | (opcode_i == SH)
     | (opcode_i == SW)
-    | (opcode_i == SD)
-    | (opcode_i == SM);
+    | (opcode_i == SD);
 
   assign decode_o.tagst_op    = (opcode_i == TAGST);
   assign decode_o.tagfl_op    = (opcode_i == TAGFL);

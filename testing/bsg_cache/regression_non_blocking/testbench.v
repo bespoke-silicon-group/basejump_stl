@@ -12,8 +12,9 @@ module testbench();
   parameter addr_width_p = 32;
   parameter data_width_p = 32;
   parameter block_size_in_words_p = 8;
-  parameter sets_p = 512;
+  parameter sets_p = 128;
   parameter ways_p = 8;
+  parameter miss_fifo_els_p = 23;
 
 
   // clock and reset
@@ -68,6 +69,7 @@ module testbench();
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.sets_p(sets_p)
     ,.ways_p(ways_p)
+    ,.miss_fifo_els_p(miss_fifo_els_p)
   ) DUT (
     .clk_i(clk)
     ,.reset_i(reset)
@@ -78,7 +80,6 @@ module testbench();
 
     ,.data_o(cache_data_lo)
     ,.v_o(cache_v_lo)
-    ,.yumi_i(cache_yumi_li)
 
     ,.dma_pkt_o(dma_pkt)
     ,.dma_pkt_v_o(dma_pkt_v_lo)
