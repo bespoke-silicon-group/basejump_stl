@@ -57,8 +57,9 @@ module bsg_cache_non_blocking
 
   // declare structs
   //
-  `declare_bsg_cache_non_blocking_data_mem_pkt_s(id_width_p,ways_p,sets_p,block_size_in_words_p,data_width_p);
+  `declare_bsg_cache_non_blocking_data_mem_pkt_s(ways_p,sets_p,block_size_in_words_p,data_width_p);
   `declare_bsg_cache_non_blocking_miss_fifo_entry_s(id_width_p,addr_width_p,data_width_p);
+  `declare_bsg_cache_non_blocking_dma_cmd_s(ways_p,sets_p,tag_width_lp);
   
   // cache pkt
   //
@@ -167,12 +168,10 @@ module bsg_cache_non_blocking
   //
   bsg_cache_non_blocking_data_mem_pkt_s data_mem_pkt_li;
   logic data_mem_v_li;
-  logic [id_width_p-1:0] data_mem_id_lo;
   logic [data_width_p-1:0] data_mem_data_lo;
   
   bsg_cache_non_blocking_data_mem #(
-    .id_width_p(id_width_p)
-    ,.data_width_p(data_width_p)
+    .data_width_p(data_width_p)
     ,.ways_p(ways_p)
     ,.sets_p(sets_p)
     ,.block_size_in_words_p(block_size_in_words_p)
@@ -183,7 +182,6 @@ module bsg_cache_non_blocking
     ,.v_i(data_mem_v_li)
     ,.data_mem_pkt_i(data_mem_pkt_li)
 
-    ,.id_o(data_mem_id_lo)
     ,.data_o(data_mem_data_lo)
   );
 
@@ -216,6 +214,16 @@ module bsg_cache_non_blocking
 
   // MHU
   //
+  bsg_cache_non_blocking_dma_cmd_s dma_cmd_lo;
+  logic dma_cmd_v_lo;
+  logic dma_cmd_ready_li;
+
+  bsg_cache_non_blocking_dma_cmd_s dma_cmd_return_li;
+  logic dma_done_li;
+  logic dma_pending_li;
+  logic dma_ack_lo;
+  
+
   bsg_cache_non_blocking_mhu #(
     .id_width_p(id_width_p)
     ,.addr_width_p(addr_width_p)
@@ -237,17 +245,22 @@ module bsg_cache_non_blocking
     ,.miss_fifo_entry_yumi_op_o(miss_fifo_yumi_op_li)
     ,.miss_fifo_rollback_o(miss_fifo_rollback_li)
     ,.miss_fifo_empty_i(miss_fifo_empty_lo)
+
+    ,.dma_cmd_o(dma_cmd_lo)
+    ,.dma_cmd_v_o(dma_cmd_v_lo)
+    ,.dma_cmd_ready_i(dma_cmd_ready_li)
+
+    ,.dma_cmd_return_i(dma_cmd_return_li)
+    ,.dma_done_i(dma_done_li)
+    ,.dma_pending_i(dma_pending_li)
+    ,.dma_ack_o(dma_ack_lo)
   );
   
 
   // DMA engine
   //
-  logic dma_data_mem_v_lo;
-  logic dma_data_mem_w_lo;
-  logic [lg_ways_lp-1:0] dma_data_mem_way_lo;
-  logic [lg_block_size_in_words_lp+lg_sets_lp-1:0] dma_data_mem_addr_lo;
-  logic [data_width_p-1:0] dma_data_mem_data_lo;
-  logic [data_width_p-1:0] dma_data_mem_data_li;
+  logic dma_data_mem_pkt_v_lo;
+  bsg_cache_non_blocking_data_mem_pkt_s dma_data_mem_pkt_lo;
 
   bsg_cache_non_blocking_dma #(
     .addr_width_p(addr_width_p)
@@ -259,21 +272,18 @@ module bsg_cache_non_blocking
     .clk_i(clk_i)
     ,.reset_i(reset_i)
   
-    ,.dma_cmd_i()
-    ,.dma_cmd_v_i()
-    ,.dma_cmd_ready_o()
+    ,.dma_cmd_i(dma_cmd_lo)
+    ,.dma_cmd_v_i(dma_cmd_v_lo)
+    ,.dma_cmd_ready_o(dma_cmd_ready_li)
 
-    ,.dma_cmd_return_o()
-    ,.done_o()
-    ,.pending_o()
-    ,.ack_i()
+    ,.dma_cmd_return_o(dma_cmd_return_li)
+    ,.done_o(dma_done_li)
+    ,.pending_o(dma_pending_li)
+    ,.ack_i(dma_ack_lo)
 
-    ,.data_mem_v_o(dma_data_mem_v_lo)
-    ,.data_mem_w_o(dma_data_mem_w_lo)
-    ,.data_mem_way_o(dma_data_mem_way_lo)
-    ,.data_mem_addr_o(dma_data_mem_addr_lo)
-    ,.data_mem_data_o(dma_data_mem_data_lo)
-    ,.data_mem_data_i(dma_data_mem_data_li)
+    ,.data_mem_pkt_v_o(dma_data_mem_pkt_v_lo)
+    ,.data_mem_pkt_o(dma_data_mem_pkt_lo)
+    ,.data_mem_data_i(data_mem_data_lo)
     
     ,.dma_pkt_o(dma_pkt_o)
     ,.dma_pkt_v_o(dma_pkt_v_o)

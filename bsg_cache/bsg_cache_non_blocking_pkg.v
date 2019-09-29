@@ -118,9 +118,8 @@ package bsg_cache_non_blocking_pkg;
 
   // data_mem pkt s
   //
-  `define declare_bsg_cache_non_blocking_data_mem_pkt_s(id_width_mp,ways_mp,sets_mp,block_size_in_words_mp,data_width_mp) \
+  `define declare_bsg_cache_non_blocking_data_mem_pkt_s(ways_mp,sets_mp,block_size_in_words_mp,data_width_mp) \
     typedef struct packed {                                                               \
-      logic [id_width_mp-1:0] id;                                                          \
       logic write_not_read;                                                               \
       logic sigext_op;                                                                     \
       logic [1:0] size_op;                                                                \
@@ -130,8 +129,8 @@ package bsg_cache_non_blocking_pkg;
       logic [data_width_mp-1:0] data;                                                      \
     } bsg_cache_non_blocking_data_mem_pkt_s
 
-  `define bsg_cache_non_blocking_data_mem_pkt_width(id_width_mp,ways_mp,sets_mp,block_size_in_words_mp,data_width_mp) \
-    (id_width_mp+1+1+2+`BSG_SAFE_CLOG2(data_width_mp>>3)+`BSG_SAFE_CLOG2(ways_mp)+        \
+  `define bsg_cache_non_blocking_data_mem_pkt_width(ways_mp,sets_mp,block_size_in_words_mp,data_width_mp) \
+    (1+1+2+`BSG_SAFE_CLOG2(data_width_mp>>3)+`BSG_SAFE_CLOG2(ways_mp)+        \
       `BSG_SAFE_CLOG2(sets_mp)+`BSG_SAFE_CLOG2(block_size_in_words_mp)+data_width_mp)
 
 

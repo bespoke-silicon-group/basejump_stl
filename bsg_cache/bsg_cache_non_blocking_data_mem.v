@@ -10,8 +10,7 @@
 
 module bsg_cache_non_blocking_data_mem
   import bsg_cache_non_blocking_pkg::*;
-  #(parameter id_width_p="inv"
-    , parameter data_width_p="inv"
+  #(parameter data_width_p="inv"
     , parameter ways_p="inv"
     , parameter sets_p="inv"
     , parameter block_size_in_words_p="inv"
@@ -23,7 +22,7 @@ module bsg_cache_non_blocking_data_mem
     , parameter byte_sel_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
 
     , parameter data_mem_pkt_width_lp=
-      `bsg_cache_non_blocking_data_mem_pkt_width(id_width_p,ways_p,sets_p,block_size_in_words_p,data_width_p)
+      `bsg_cache_non_blocking_data_mem_pkt_width(ways_p,sets_p,block_size_in_words_p,data_width_p)
   ) 
   (
     input clk_i
@@ -32,7 +31,6 @@ module bsg_cache_non_blocking_data_mem
     , input v_i
     , input [data_mem_pkt_width_lp-1:0] data_mem_pkt_i
 
-    , output logic [id_width_p-1:0] id_o
     , output logic [data_width_p-1:0] data_o
   );
 
@@ -47,7 +45,7 @@ module bsg_cache_non_blocking_data_mem
 
   // data_mem_pkt
   //
-  `declare_bsg_cache_non_blocking_data_mem_pkt_s(id_width_p,ways_p,sets_p,block_size_in_words_p,data_width_p);
+  `declare_bsg_cache_non_blocking_data_mem_pkt_s(ways_p,sets_p,block_size_in_words_p,data_width_p);
 
   bsg_cache_non_blocking_data_mem_pkt_s data_mem_pkt;
 
@@ -188,19 +186,6 @@ module bsg_cache_non_blocking_data_mem
  
     end
   end  
-
-
-  // id_dff
-  //
-  bsg_dff_en #(
-    .width_p(id_width_p)
-  ) id_dff (
-    .clk_i(clk_i)
-    ,.en_i(v_i)
-    ,.data_i(data_mem_pkt.id)
-    ,.data_o(id_o)
-  );
-
 
 endmodule
   

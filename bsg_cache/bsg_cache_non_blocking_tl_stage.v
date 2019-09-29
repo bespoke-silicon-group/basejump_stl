@@ -25,7 +25,7 @@ module bsg_cache_non_blocking_tl_stage
     , parameter tag_width_lp=(addr_width_p-lg_sets_lp-lg_block_size_in_words_lp-byte_sel_width_lp)
 
     , parameter data_mem_pkt_width_lp=
-      `bsg_cache_non_blocking_data_mem_pkt_width(id_width_p,ways_p,sets_p,block_size_in_words_p,data_width_p) 
+      `bsg_cache_non_blocking_data_mem_pkt_width(ways_p,sets_p,block_size_in_words_p,data_width_p) 
 
     , parameter miss_fifo_entry_width_lp=
       `bsg_cache_non_blocking_miss_fifo_entry_width(id_width_p,addr_width_p,data_width_p)

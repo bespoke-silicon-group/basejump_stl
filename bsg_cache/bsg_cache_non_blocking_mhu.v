@@ -26,6 +26,8 @@ module bsg_cache_non_blocking_mhu
 
     , parameter miss_fifo_entry_width_lp=
       `bsg_cache_non_blocking_miss_fifo_entry_width(id_width_p,addr_width_p,data_width_p)
+    , parameter dma_cmd_width_lp=
+      `bsg_cache_non_blocking_dma_cmd_width(ways_p,sets_p,tag_width_lp)
   )
   (
     input clk_i
@@ -49,7 +51,15 @@ module bsg_cache_non_blocking_mhu
     , input miss_fifo_empty_i
     
     // DMA
-    
+    , output logic [dma_cmd_width_lp-1:0] dma_cmd_o
+    , output logic dma_cmd_v_o
+    , input dma_cmd_ready_i
+
+    , input [dma_cmd_width_lp-1:0] dma_cmd_return_i
+    , input dma_done_i
+    , input dma_pending_i
+    , output logic dma_ack_o
+
   );
 
 

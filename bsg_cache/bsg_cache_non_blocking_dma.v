@@ -24,6 +24,9 @@ module bsg_cache_non_blocking_dma
 
     , parameter dma_cmd_width_lp=`bsg_cache_non_blocking_dma_cmd_width(ways_p,sets_p,tag_width_lp)
     , parameter dma_pkt_width_lp=`bsg_cache_non_blocking_dma_pkt_width(addr_width_p)
+
+    , parameter data_mem_pkt_width_lp=
+      `bsg_cache_non_blocking_data_mem_pkt_width(ways_p,sets_p,block_size_in_words_p,data_width_p)
   )
   (
     input clk_i
@@ -40,11 +43,8 @@ module bsg_cache_non_blocking_dma
     , input ack_i
 
     // data_mem
-    , output logic data_mem_v_o
-    , output logic data_mem_w_o
-    , output logic [lg_ways_lp-1:0] data_mem_way_o
-    , output logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_mem_addr_o
-    , output logic [data_width_p-1:0] data_mem_data_o
+    , output logic data_mem_pkt_v_o
+    , output logic [data_mem_pkt_width_lp-1:0] data_mem_pkt_o
     , input [data_width_p-1:0] data_mem_data_i
 
     // DMA request
@@ -83,7 +83,13 @@ module bsg_cache_non_blocking_dma
   assign dma_cmd_return_o = dma_cmd_r;
   assign dma_pkt_o = dma_pkt;
 
+  `declare_bsg_cache_non_blocking_data_mem_pkt_s(ways_p,sets_p,block_size_in_words_p,data_width_p);
+  bsg_cache_non_blocking_data_mem_pkt_s data_mem_pkt;
+  
+  assign data_mem_pkt_o = data_mem_pkt; 
 
+  // data_cmd dff
+  //
   logic dma_cmd_dff_en;
 
   bsg_dff_reset_en #(
@@ -179,12 +185,6 @@ module bsg_cache_non_blocking_dma
 
   // comb logic
   //
-  assign data_mem_way_o = dma_cmd_r.way_id;
-  assign data_mem_data_o = in_fifo_data_lo;
-  assign data_mem_addr_o = {
-    dma_cmd_in.index,
-    counter_r[0+:lg_block_size_in_words_lp]
-  };
 
   assign out_fifo_data_li = data_mem_data_i;
 
@@ -217,8 +217,17 @@ module bsg_cache_non_blocking_dma
     out_fifo_v_li = 1'b0;
     in_fifo_yumi_li = 1'b0;
 
-    data_mem_v_o = 1'b0;
-    data_mem_w_o = 1'b0;
+    data_mem_pkt_v_o = 1'b0;
+    data_mem_pkt.write_not_read = 1'b0;
+    data_mem_pkt.way = dma_cmd_r.way_id;
+    data_mem_pkt.addr = {
+      dma_cmd_r.index,
+      counter_r[0+:lg_block_size_in_words_lp]
+    };
+    data_mem_pkt.data = in_fifo_data_lo;
+    data_mem_pkt.sigext_op = 1'b0;
+    data_mem_pkt.size_op = (2)'($clog2(data_width_p>>3));
+    data_mem_pkt.byte_sel = (byte_sel_width_lp)'(0);
     
     dma_pkt_v_o = 1'b0;
     dma_pkt.write_not_read = 1'b0;
@@ -251,7 +260,7 @@ module bsg_cache_non_blocking_dma
   
 
       SEND_EVICT_ADDR: begin
-        data_mem_v_o = dma_pkt_yumi_i; // read the first word in block.
+        data_mem_pkt_v_o = dma_pkt_yumi_i; // read the first word in block.
 
         dma_pkt_v_o = 1'b1;
         dma_pkt.write_not_read = 1'b1;
@@ -266,7 +275,7 @@ module bsg_cache_non_blocking_dma
 
 
       SEND_EVICT_DATA: begin
-        data_mem_v_o = out_fifo_ready_lo & ~counter_evict_max;
+        data_mem_pkt_v_o = out_fifo_ready_lo & ~counter_evict_max;
       
         out_fifo_v_li = 1'b1;
 
@@ -282,8 +291,8 @@ module bsg_cache_non_blocking_dma
 
 
       RECV_REFILL_DATA: begin
-        data_mem_v_o = in_fifo_v_lo;
-        data_mem_w_o = 1'b1;
+        data_mem_pkt_v_o = in_fifo_v_lo;
+        data_mem_pkt.write_not_read = 1'b1;
         in_fifo_yumi_li = in_fifo_v_lo;
 
         counter_up = in_fifo_v_lo & ~counter_fill_max;
