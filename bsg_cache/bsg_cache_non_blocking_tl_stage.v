@@ -59,8 +59,11 @@ module bsg_cache_non_blocking_tl_stage
     , output logic [miss_fifo_entry_width_lp-1:0] miss_fifo_entry_o
     , input miss_fifo_entry_ready_i
   
-    // cache management
- 
+    // cache management (to MHU)
+    //, output logic mgmt_v_o
+    //, output bsg_cache_non_blocking_decode_s decode_tl_o
+    //, output logic [addr_width_p-1:0] addr_tl_o
+
     // to MHU 
     , output logic [ways_p-1:0] valid_tl_o
     , output logic [ways_p-1:0] lock_tl_o

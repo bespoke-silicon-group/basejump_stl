@@ -219,6 +219,14 @@ module bsg_cache_non_blocking
 
   // MHU
   //
+  bsg_cache_non_blocking_data_mem_pkt_s mhu_data_mem_pkt_lo;
+  logic mhu_data_mem_pkt_v_lo;
+  logic mhu_data_mem_pkt_yumi_li;
+
+  bsg_cache_non_blocking_stat_mem_pkt_s mhu_stat_mem_pkt_lo;
+  logic mhu_stat_mem_pkt_v_lo;
+  logic mhu_stat_mem_pkt_yumi_li;
+
   bsg_cache_non_blocking_dma_cmd_s dma_cmd_lo;
   logic dma_cmd_v_lo;
   logic dma_cmd_ready_li;
@@ -243,6 +251,14 @@ module bsg_cache_non_blocking
     ,.valid_tl_i(valid_tl_lo)
     ,.lock_tl_i(lock_tl_lo)
     ,.tag_tl_i(tag_tl_lo) 
+
+    ,.data_mem_pkt_v_o(mhu_data_mem_pkt_v_lo)
+    ,.data_mem_pkt_o(mhu_data_mem_pkt_lo)
+    ,.data_mem_pkt_yumi_i(mhu_data_mem_pkt_yumi_li)
+
+    ,.stat_mem_pkt_v_o(mhu_stat_mem_pkt_v_lo)
+    ,.stat_mem_pkt_o(mhu_stat_mem_pkt_lo)
+    ,.stat_mem_pkt_yumi_i(mhu_stat_mem_pkt_yumi_li)
 
     ,.miss_fifo_entry_v_i(miss_fifo_v_lo)
     ,.miss_fifo_entry_i(miss_fifo_data_lo)

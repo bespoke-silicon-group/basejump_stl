@@ -24,6 +24,11 @@ module bsg_cache_non_blocking_mhu
     , parameter byte_sel_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
     , parameter tag_width_lp=(addr_width_p-lg_sets_lp-lg_block_size_in_words_lp-byte_sel_width_lp)
 
+    , parameter data_mem_pkt_width_lp=
+      `bsg_cache_non_blocking_data_mem_pkt_width(ways_p,sets_p,block_size_in_words_p,data_width_p) 
+    , parameter stat_mem_pkt_width_lp=
+      `bsg_cache_non_blocking_stat_mem_pkt_width(ways_p,sets_p)
+
     , parameter miss_fifo_entry_width_lp=
       `bsg_cache_non_blocking_miss_fifo_entry_width(id_width_p,addr_width_p,data_width_p)
     , parameter dma_cmd_width_lp=
@@ -39,8 +44,14 @@ module bsg_cache_non_blocking_mhu
     , input [ways_p-1:0][tag_width_lp-1:0] tag_tl_i
    
     // data_mem
+    , output logic data_mem_pkt_v_o
+    , output logic [data_mem_pkt_width_lp-1:0] data_mem_pkt_o
+    , input data_mem_pkt_yumi_i
     
     // stat_mem
+    , output logic stat_mem_pkt_v_o
+    , output logic [stat_mem_pkt_width_lp-1:0] stat_mem_pkt_o
+    , input stat_mem_pkt_yumi_i
  
     // miss FIFO
     , input miss_fifo_entry_v_i
@@ -59,7 +70,6 @@ module bsg_cache_non_blocking_mhu
     , input dma_done_i
     , input dma_pending_i
     , output logic dma_ack_o
-
   );
 
 
