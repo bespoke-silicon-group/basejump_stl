@@ -26,6 +26,8 @@ module bsg_cache_non_blocking_tl_stage
 
     , parameter data_mem_pkt_width_lp=
       `bsg_cache_non_blocking_data_mem_pkt_width(ways_p,sets_p,block_size_in_words_p,data_width_p) 
+    , parameter stat_mem_pkt_width_lp=
+      `bsg_cache_non_blocking_stat_mem_pkt_width(ways_p,sets_p)
 
     , parameter miss_fifo_entry_width_lp=
       `bsg_cache_non_blocking_miss_fifo_entry_width(id_width_p,addr_width_p,data_width_p)
@@ -48,6 +50,9 @@ module bsg_cache_non_blocking_tl_stage
     , input data_mem_pkt_yumi_i
 
     // stat_mem access (hit)
+    , output logic stat_mem_pkt_v_o
+    , output logic [stat_mem_pkt_width_lp-1:0] stat_mem_pkt_o
+    , input stat_mem_pkt_yumi_i
 
     // miss FIFO (miss)
     , output logic miss_fifo_entry_v_o
@@ -62,6 +67,7 @@ module bsg_cache_non_blocking_tl_stage
     , output logic [ways_p-1:0][tag_width_lp-1:0] tag_tl_o
     
     // from MHU
+
   );
 
 

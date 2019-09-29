@@ -174,7 +174,7 @@ package bsg_cache_non_blocking_pkg;
     (ways_mp+ways_mp-1)
 
 
-  // stat info op
+  // stat op
   //
   typedef enum logic [2:0] {
     e_stat_read
@@ -184,7 +184,20 @@ package bsg_cache_non_blocking_pkg;
     ,e_stat_reset
   } bsg_cache_non_blocking_stat_op_e;
 
-  
+
+  // stat_mem pkt
+  //
+  `define declare_bsg_cache_non_blocking_stat_mem_pkt_s(ways_mp,sets_mp) \
+    typedef struct packed {                               \
+      bsg_cache_non_blocking_stat_op_e opcode;            \
+      logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way;           \
+      logic [`BSG_SAFE_CLOG2(sets_mp)-1:0] addr;          \
+    } bsg_cache_non_blocking_stat_mem_pkt_s
+ 
+  `define bsg_cache_non_blocking_stat_mem_pkt_width(ways_mp,sets_mp) \
+    ($bits(bsg_cache_non_blocking_stat_op_e)+`BSG_SAFE_CLOG2(ways_mp)+`BSG_SAFE_CLOG2(sets_mp)) 
+
+
   // miss FIFO yumi op 
   //
   typedef enum logic [1:0] {

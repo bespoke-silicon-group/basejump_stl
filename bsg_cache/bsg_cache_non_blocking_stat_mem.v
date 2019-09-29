@@ -15,15 +15,16 @@ module bsg_cache_non_blocking_stat_mem
 
     , parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
     , parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
+
+    , parameter stat_mem_pkt_width_lp=
+      `bsg_cache_non_blocking_stat_mem_pkt_width(ways_p,sets_p)
   )
   (
     input clk_i
     , input reset_i
     
     , input v_i
-    , input bsg_cache_non_blocking_stat_op_e stat_op_i
-    , input [lg_sets_lp-1:0] addr_i
-    , input [lg_ways_lp-1:0] way_i
+    , input [stat_mem_pkt_width_lp-1:0] stat_mem_pkt_i
 
     , output logic [ways_p-1:0] dirty_o
     , output logic [lg_ways_lp-1:0] lru_way_o
@@ -34,13 +35,17 @@ module bsg_cache_non_blocking_stat_mem
   //
   localparam stat_info_width_lp = `bsg_cache_non_blocking_stat_info_width(ways_p);
 
+  // stat_mem_pkt
+  //
+  `declare_bsg_cache_non_blocking_stat_mem_pkt_s(ways_p,sets_p);
+  bsg_cache_non_blocking_stat_mem_pkt_s stat_mem_pkt;
+  assign stat_mem_pkt = stat_mem_pkt_i;
 
   // stat_mem
   //
   `declare_bsg_cache_non_blocking_stat_info_s(ways_p);
-
-  logic w_li;
   bsg_cache_non_blocking_stat_info_s data_li, data_lo, mask_li;
+  logic w_li;
 
   bsg_mem_1rw_sync_mask_write_bit #(
     .width_p(stat_info_width_lp)
@@ -53,7 +58,7 @@ module bsg_cache_non_blocking_stat_mem
     ,.v_i(v_i)
     ,.w_i(w_li)
 
-    ,.addr_i(addr_i)
+    ,.addr_i(stat_mem_pkt.addr)
     ,.w_mask_i(mask_li)
     ,.data_i(data_li)
     ,.data_o(data_lo)
@@ -67,7 +72,7 @@ module bsg_cache_non_blocking_stat_mem
   bsg_decode #(
     .num_out_p(ways_p)
   ) way_demux (
-    .i(way_i)
+    .i(stat_mem_pkt.way)
     ,.o(way_decode_lo)
   );  
 
@@ -77,7 +82,7 @@ module bsg_cache_non_blocking_stat_mem
   bsg_lru_pseudo_tree_decode #(
     .ways_p(ways_p)
   ) lru_decode (
-    .way_id_i(way_i)
+    .way_id_i(stat_mem_pkt.way)
     ,.data_o(lru_decode_data_lo)
     ,.mask_o(lru_decode_mask_lo)
   );
@@ -91,7 +96,7 @@ module bsg_cache_non_blocking_stat_mem
     data_li.dirty = '0;
     mask_li.dirty = '0;
 
-    case (stat_op_i)
+    case (stat_mem_pkt.opcode)
 
       e_stat_read: begin
         w_li = 1'b0;

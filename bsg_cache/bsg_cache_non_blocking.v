@@ -55,12 +55,15 @@ module bsg_cache_non_blocking
   localparam byte_sel_width_lp = `BSG_SAFE_CLOG2(data_width_p>>3);
   localparam tag_width_lp = (addr_width_p-lg_sets_lp-lg_block_size_in_words_lp-byte_sel_width_lp);
 
+
   // declare structs
   //
   `declare_bsg_cache_non_blocking_data_mem_pkt_s(ways_p,sets_p,block_size_in_words_p,data_width_p);
+  `declare_bsg_cache_non_blocking_stat_mem_pkt_s(ways_p,sets_p);
   `declare_bsg_cache_non_blocking_miss_fifo_entry_s(id_width_p,addr_width_p,data_width_p);
   `declare_bsg_cache_non_blocking_dma_cmd_s(ways_p,sets_p,tag_width_lp);
   
+
   // cache pkt
   //
   `declare_bsg_cache_non_blocking_pkt_s(id_width_p,addr_width_p,data_width_p);
@@ -84,6 +87,10 @@ module bsg_cache_non_blocking
   bsg_cache_non_blocking_data_mem_pkt_s tl_data_mem_pkt_lo;
   logic tl_data_mem_pkt_v_lo;
   logic tl_data_mem_pkt_yumi_li;
+
+  bsg_cache_non_blocking_stat_mem_pkt_s tl_stat_mem_pkt_lo;
+  logic tl_stat_mem_pkt_v_lo;
+  logic tl_stat_mem_pkt_yumi_li;
 
   bsg_cache_non_blocking_miss_fifo_entry_s tl_miss_fifo_entry_lo;
   logic tl_miss_fifo_entry_v_lo;
@@ -114,6 +121,10 @@ module bsg_cache_non_blocking
     ,.data_mem_pkt_v_o(tl_data_mem_pkt_v_lo)
     ,.data_mem_pkt_o(tl_data_mem_pkt_lo)
     ,.data_mem_pkt_yumi_i(tl_data_mem_pkt_yumi_li)
+
+    ,.stat_mem_pkt_v_o(tl_stat_mem_pkt_v_lo)
+    ,.stat_mem_pkt_o(tl_stat_mem_pkt_lo)
+    ,.stat_mem_pkt_yumi_i(tl_stat_mem_pkt_yumi_li)
 
     ,.miss_fifo_entry_v_o(tl_miss_fifo_entry_v_lo)
     ,.miss_fifo_entry_o(tl_miss_fifo_entry_lo)
@@ -178,20 +189,16 @@ module bsg_cache_non_blocking
   ) data_mem0 (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
-
     ,.v_i(data_mem_v_li)
     ,.data_mem_pkt_i(data_mem_pkt_li)
-
     ,.data_o(data_mem_data_lo)
   );
 
 
   // stat_mem
   //
+  bsg_cache_non_blocking_stat_mem_pkt_s stat_mem_pkt_li;
   logic stat_mem_v_li;
-  bsg_cache_non_blocking_stat_op_e stat_mem_op_li;
-  logic [lg_sets_lp-1:0] stat_mem_addr_li;
-  logic [lg_ways_lp-1:0] stat_mem_way_li;
   logic [ways_p-1:0] dirty_lo;
   logic [lg_ways_lp-1:0] lru_way_lo;
 
@@ -203,9 +210,7 @@ module bsg_cache_non_blocking
     ,.reset_i(reset_i)
 
     ,.v_i(stat_mem_v_li)
-    ,.stat_op_i(stat_mem_op_li)
-    ,.addr_i(stat_mem_addr_li)
-    ,.way_i(stat_mem_way_li)
+    ,.stat_mem_pkt_i(stat_mem_pkt_li)
 
     ,.dirty_o(dirty_lo)
     ,.lru_way_o(lru_way_lo)
