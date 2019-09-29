@@ -3,9 +3,7 @@
  *
  *    Non-blocking cache.
  *
- *
  *    @author tommy
- *
  *
  */
 
@@ -31,8 +29,9 @@ module bsg_cache_non_blocking
     , input [cache_pkt_width_lp-1:0] cache_pkt_i
     , output logic ready_o 
 
-    , output logic [data_width_p-1:0] data_o
     , output logic v_o
+    , output logic [id_width_p-1:0] id_o
+    , output logic [data_width_p-1:0] data_o
 
     , output logic [dma_pkt_width_lp-1:0] dma_pkt_o
     , output logic dma_pkt_v_o
@@ -52,124 +51,58 @@ module bsg_cache_non_blocking
   //
   localparam lg_ways_lp = `BSG_SAFE_CLOG2(ways_p);
   localparam lg_sets_lp = `BSG_SAFE_CLOG2(sets_p);
-  localparam lg_block_size_in_words_lp = `BSG_SAFE_CLOG2(block_size_in_words_p);
-  localparam data_mask_width_lp = (data_width_p>>3);
-  localparam lg_data_mask_width_lp = `BSG_SAFE_CLOG2(data_mask_width_lp);
-  localparam tag_width_lp = (addr_width_p-lg_data_mask_width_lp-lg_block_size_in_words_lp-lg_sets_lp);
+  localparam lg_block_size_in_words_lp = `BSG_SAFE_CLOG2(block_size_in_words_lp);
+  localparam byte_sel_width_lp = `BSG_SAFE_CLOG2(data_width_p>>3);
+  localparam tag_width_lp = (addr_width_p-lg_sets_lp-lg_block_size_in_words_lp-byte_sel_width-lp);
 
-  localparam tag_info_width_lp = `bsg_cache_non_blocking_tag_info_width(tag_width_lp);
-
-
-  // packet decoding
+  
+  // cache pkt
   //
-  logic [lg_ways_lp-1:0] addr_way;
-  logic [lg_sets_lp-1:0] addr_index;
+  `declare_bsg_cache_non_blocking_pkt_s(id_width_p,addr_width_p,data_width_p);
 
-  `declare_bsg_cache_non_blocking_pkt_s(id_width_p, addr_width_p, data_width_p);
   bsg_cache_non_blocking_pkt_s cache_pkt;
   assign cache_pkt = cache_pkt_i;
 
+
+  // decode
+  //
   bsg_cache_non_blocking_decode_s decode;
-  bsg_cache_non_blocking_decode decode0
-  (
+
+  bsg_cache_non_blocking_cache_decode decode0 (
     .opcode_i(cache_pkt.opcode)
     ,.decode_o(decode)
   );
 
-  assign addr_way
-    = cache_pkt.addr[lg_data_mask_width_lp+lg_block_size_in_words_lp+lg_sets_lp+:lg_ways_lp];
-  assign addr_index
-    = cache_pkt.addr[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
 
-
-  // tl_stage
+  // TL stage
   //
-  logic stall_tl;
-  logic v_tl_r;
-  bsg_cache_non_blocking_decode_s decode_tl_r;
-  logic [id_width_p-1:0] id_tl_r;
-  logic [addr_width_p-1:0] addr_tl_r;
-  logic [data_width_p-1:0] data_tl_r;
-  logic [data_mask_width_lp-1:0] mask_tl_r;
+  logic [ways_p-1:0] valid_tl_lo;
+  logic [ways_p-1:0] lock_tl_lo;
+  logic [ways_p-1:0][tag_width_lp-1:0] tag_tl_lo;
 
-  always_ff @ (posedge clk_i) begin
-    if (reset_i) begin
-      v_tl_r <= 1'b0;
-      {decode_tl_r
-      ,id_tl_r
-      ,addr_tl_r
-      ,data_tl_r
-      ,mask_tl_r} <= '0;
-    end
-    else begin
-      if (ready_o) begin
-        v_tl_r <= v_i;
-        if (v_i) begin
-          id_tl_r <= cache_pkt.id;
-          addr_tl_r <= cache_pkt.addr;
-          data_tl_r <= cache_pkt.data;
-          mask_tl_r <= cache_pkt.mask;
-          decode_tl_r <= decode;
-        end
-      end
-      else begin
-        if (~stall_tl) begin
-          v_tl_r <= 1'b0;
-        end
-      end
-    end
-  end
-
-
-  // tag_mem
-  //
-  `declare_bsg_cache_non_blocking_tag_info_s(tag_width_lp);
-  logic tag_mem_v_li;
-  logic tag_mem_w_li;
-  logic [lg_sets_lp-1:0] tag_mem_addr_li;
-  bsg_cache_non_blocking_tag_info_s [ways_p-1:0] tag_mem_data_li;
-  bsg_cache_non_blocking_tag_info_s [ways_p-1:0] tag_mem_mask_li;
-  bsg_cache_non_blocking_tag_info_s [ways_p-1:0] tag_mem_data_lo;
-
-  bsg_mem_1rw_sync_mask_write_bit #(
-    .width_p(ways_p*tag_info_width_lp)
-    ,.els_p(sets_p)
-    ,.latch_last_read_p(1)
-  ) tag_mem0 (
+  bsg_cache_non_blocking_tl_stage #(
+    .id_width_p(id_width_p)
+    ,.addr_width_p(addr_width_p)
+    ,.data_width_p(data_width_p)
+    ,.ways_p(ways_p)
+    ,.sets_p(sets_p)
+    ,.block_size_in_words_p(block_size_in_words_p)
+  ) tl0 (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
-    ,.v_i(tag_mem_v_li)
-    ,.w_i(tag_mem_w_li)
-    ,.addr_i(tag_mem_addr_li)
-    ,.data_i(tag_mem_data_li)
-    ,.w_mask_i(tag_mem_mask_li)
-    ,.data_o(tag_mem_data_lo)
+
+    ,.v_i(v_i)
+    ,.id_i(cache_pkt.id)
+    ,.addr_i(cache_pkt.addr)
+    ,.data_i(cache_pkt.data)
+    ,.decode_i(decode)
+    ,.ready_o(ready_o)
+
+    ,.valid_tl_o(valid_tl_lo)
+    ,.lock_tl_o(lock_tl_lo)
+    ,.tag_tl_o(tag_tl_lo)
   );
 
-  logic [ways_p-1:0] valid_tl;
-  logic [ways_p-1:0][tag_width_lp-1:0] tag_tl;
-  logic [ways_p-1:0] lock_tl;
-
-  for (genvar i = 0; i < ways_p; i++) begin
-    assign valid_tl[i] = tag_mem_data_lo[i].valid;
-    assign tag_tl[i] = tag_mem_data_lo[i].tag;
-    assign lock_tl[i] = tag_mem_data_lo[i].lock;
-  end
-
-  
-  logic [ways_p-1:0] tag_hit_tl;
-  logic [lg_ways_lp-1:0] tag_hit_way_id_tl;
-  logic tag_hit_found_tl;
-
-
-  bsg_priority_encode #(
-    .width_p(ways_p)
-    ,.lo_to_hi_p(1)
-  ) tag_hit_pe (
-    .i(tag_hit_tl)
-    ,.addr_o(tag_hit_way_id_tl)
-    ,.v_o(tag_hit_found_tl)
-  );
 
   // miss FIFO
   //
@@ -184,7 +117,6 @@ module bsg_cache_non_blocking
   bsg_cache_non_blocking_miss_fifo_op_e miss_fifo_yumi_op_li; 
   logic miss_fifo_rollback_li;
   logic miss_fifo_empty_lo;
-  
 
   bsg_cache_non_blocking_miss_fifo #(
     .width_p($bits(bsg_cache_non_blocking_miss_fifo_entry_s))
@@ -213,12 +145,11 @@ module bsg_cache_non_blocking
   logic data_mem_w_li;
   logic data_mem_sigext_op_li;
   logic [1:0] data_mem_size_op_li;
-  logic [lg_data_mask_width_lp-1:0] data_mem_byte_sel_li;
+  logic [byte_sel_width_lp-1:0] data_mem_byte_sel_li;
   logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_mem_addr_li;
   logic [lg_ways_lp-1:0] data_mem_way_li;
   logic [data_width_p-1:0] data_mem_data_li;
   logic [data_width_p-1:0] data_mem_data_lo;
-  
   
   bsg_cache_non_blocking_data_mem #(
     .data_width_p(data_width_p)
@@ -271,6 +202,21 @@ module bsg_cache_non_blocking
 
   // MHU
   //
+  bsg_cache_non_blocking_mhu #(
+    .id_width_p(id_width_p)
+    ,.addr_width_p(addr_width_p)
+    ,.data_width_p(data_width_p)
+    ,.ways_p(ways_p)
+    ,.sets_p(sets_p)
+    ,.block_size_in_words_p(block_size_in_words_p)
+  ) mhu0 (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+  
+    ,.valid_tl_i(valid_tl_lo)
+    ,.lock_tl_i(lock_tl_lo)
+    ,.tag_tl_i(tag_tl_lo) 
+  );
   
 
   // DMA engine
@@ -320,5 +266,6 @@ module bsg_cache_non_blocking
     ,.dma_data_v_o(dma_data_v_o)
     ,.dma_data_yumi_i(dma_data_yumi_i)
   );
+
 
 endmodule

@@ -50,12 +50,11 @@ package bsg_cache_non_blocking_pkg;
       bsg_cache_non_blocking_opcode_e opcode;                   \
       logic [addr_width_mp-1:0] addr;                           \
       logic [data_width_mp-1:0] data;                           \
-      logic [(data_width_mp>>3)-1:0] mask;                      \
     } bsg_cache_non_blocking_pkt_s
 
 
   `define bsg_cache_non_blocking_pkt_width(id_width_mp,addr_width_mp,data_width_mp) \
-    (5+id_width_mp+addr_width_mp+data_width_mp+(data_width_mp>>3))
+    (5+id_width_mp+addr_width_mp+data_width_mp)
 
 
   // cache pkt decode
@@ -69,17 +68,21 @@ package bsg_cache_non_blocking_pkg;
     logic sigext_op;
     logic ld_op;
     logic st_op;
+    logic block_ld_op;
+
     logic tagst_op;
-    logic tagfl_op;
     logic taglv_op;
     logic tagla_op;
+
+    logic tagfl_op;
     logic afl_op;
     logic aflinv_op;
     logic ainv_op;
+
     logic alock_op;
     logic aunlock_op;
+
     logic tag_read_op;
-    logic block_ld_op;
   } bsg_cache_non_blocking_decode_s;
 
 
@@ -126,6 +129,19 @@ package bsg_cache_non_blocking_pkg;
   `define bsg_cache_non_blocking_tag_info_width(tag_width_mp) \
     (tag_width_mp+2)
 
+  
+  // tag info op
+  //
+  typedef enum logic [2:0] {
+    e_tag_read                    // w_i = 0;
+    ,e_tag_store                  // tagst
+    ,e_tag_set_tag                // valid <= 1;
+    ,e_tag_set_tag_and_lock       // valid <= 1; lock <= 1;
+    ,e_tag_invalidate             // valid <= 0; lock <= 0;
+    ,e_tag_lock                   // lock <= 0;
+    ,e_tag_unlock                 // lock <= 0;
+  } bsg_cache_non_blocking_tag_op_e;
+
 
   // stat info s
   //
@@ -140,7 +156,7 @@ package bsg_cache_non_blocking_pkg;
     (ways_mp+ways_mp-1)
 
 
-  // stat_mem op
+  // stat info op
   //
   typedef enum logic [2:0] {
     e_stat_read
@@ -149,7 +165,6 @@ package bsg_cache_non_blocking_pkg;
     ,e_stat_set_lru_and_dirty
     ,e_stat_reset
   } bsg_cache_non_blocking_stat_op_e;
-
 
   
   // miss FIFO yumi op 

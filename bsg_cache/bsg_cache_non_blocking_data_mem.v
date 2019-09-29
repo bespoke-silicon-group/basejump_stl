@@ -45,6 +45,7 @@ module bsg_cache_non_blocking_data_mem
   localparam data_sel_mux_els_lp = `BSG_MIN(4,byte_sel_width_lp+1);
   localparam lg_data_sel_mux_els_lp = `BSG_SAFE_CLOG2(data_sel_mux_els_lp);
 
+
   // data_mem
   //
   logic [data_bank_addr_width_lp-1:0] addr_li;
