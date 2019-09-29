@@ -45,9 +45,9 @@ module testbench();
   logic cache_v_li;
   logic cache_ready_lo;
 
+  logic [id_width_p-1:0] cache_id_lo;
   logic [data_width_p-1:0] cache_data_lo;
   logic cache_v_lo;
-  logic cache_yumi_li;
 
   `declare_bsg_cache_non_blocking_dma_pkt_s(addr_width_p);
   bsg_cache_non_blocking_dma_pkt_s dma_pkt;
@@ -79,6 +79,7 @@ module testbench();
     ,.ready_o(cache_ready_lo)
 
     ,.data_o(cache_data_lo)
+    ,.id_o(cache_id_lo)
     ,.v_o(cache_v_lo)
 
     ,.dma_pkt_o(dma_pkt)
@@ -96,7 +97,6 @@ module testbench();
 
   assign cache_pkt = '0;
   assign cache_v_li = 1'b0;
-  assign cache_yumi_li = 1'b0;
 
   assign dma_pkt_yumi_li = 1'b0;
    

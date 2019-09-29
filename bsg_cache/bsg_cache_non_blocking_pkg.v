@@ -116,6 +116,25 @@ package bsg_cache_non_blocking_pkg;
     (1+addr_width_mp)
 
 
+  // data_mem pkt s
+  //
+  `define declare_bsg_cache_non_blocking_data_mem_pkt_s(id_width_mp,ways_mp,sets_mp,block_size_in_words_mp,data_width_mp) \
+    typedef struct packed {                                                               \
+      logic [id_width_mp-1:0] id;                                                          \
+      logic write_not_read;                                                               \
+      logic sigext_op;                                                                     \
+      logic [1:0] size_op;                                                                \
+      logic [`BSG_SAFE_CLOG2(data_width_mp>>3)-1:0] byte_sel;                              \
+      logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way;                                            \
+      logic [`BSG_SAFE_CLOG2(sets_mp)+`BSG_SAFE_CLOG2(block_size_in_words_mp)-1:0] addr;    \
+      logic [data_width_mp-1:0] data;                                                      \
+    } bsg_cache_non_blocking_data_mem_pkt_s
+
+  `define bsg_cache_non_blocking_data_mem_pkt_width(id_width_mp,ways_mp,sets_mp,block_size_in_words_mp,data_width_mp) \
+    (id_width_mp+1+1+2+`BSG_SAFE_CLOG2(data_width_mp>>3)+`BSG_SAFE_CLOG2(ways_mp)+        \
+      `BSG_SAFE_CLOG2(sets_mp)+`BSG_SAFE_CLOG2(block_size_in_words_mp)+data_width_mp)
+
+
   // tag info s
   //
   `define declare_bsg_cache_non_blocking_tag_info_s(tag_width_mp) \
@@ -182,11 +201,15 @@ package bsg_cache_non_blocking_pkg;
   `define declare_bsg_cache_non_blocking_miss_fifo_entry_s(id_width_mp,addr_width_mp,data_width_mp) \
     typedef struct packed {                   \
       logic load_not_store;                   \
+      logic block_load;                       \
+      logic [1:0] size_op;                    \
       logic [id_width_mp-1:0] id;             \
       logic [addr_width_mp-1:0] addr;         \
       logic [data_width_mp-1:0] data;         \
-      logic [1:0] size_op;                    \
     } bsg_cache_non_blocking_miss_fifo_entry_s;  
+
+  `define bsg_cache_non_blocking_miss_fifo_entry_width(id_width_mp,addr_width_mp,data_width_mp) \
+    (1+1+2+id_width_mp+addr_width_mp+data_width_mp) 
 
 
 endpackage

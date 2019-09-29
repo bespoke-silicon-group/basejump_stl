@@ -9,7 +9,9 @@
 
 
 module bsg_cache_non_blocking_data_mem
-  #(parameter data_width_p="inv"
+  import bsg_cache_non_blocking_pkg::*;
+  #(parameter id_width_p="inv"
+    , parameter data_width_p="inv"
     , parameter ways_p="inv"
     , parameter sets_p="inv"
     , parameter block_size_in_words_p="inv"
@@ -19,21 +21,18 @@ module bsg_cache_non_blocking_data_mem
     , parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p) 
 
     , parameter byte_sel_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
+
+    , parameter data_mem_pkt_width_lp=
+      `bsg_cache_non_blocking_data_mem_pkt_width(id_width_p,ways_p,sets_p,block_size_in_words_p,data_width_p)
   ) 
   (
     input clk_i
     , input reset_i
 
     , input v_i
-    , input w_i
+    , input [data_mem_pkt_width_lp-1:0] data_mem_pkt_i
 
-    , input sigext_op_i
-    , input [1:0] size_op_i
-    , input [byte_sel_width_lp-1:0] byte_sel_i
-
-    , input [lg_sets_lp+lg_block_size_in_words_lp-1:0] addr_i
-    , input [lg_ways_lp-1:0] way_i
-    , input [data_width_p-1:0] data_i
+    , output logic [id_width_p-1:0] id_o
     , output logic [data_width_p-1:0] data_o
   );
 
@@ -46,6 +45,15 @@ module bsg_cache_non_blocking_data_mem
   localparam lg_data_sel_mux_els_lp = `BSG_SAFE_CLOG2(data_sel_mux_els_lp);
 
 
+  // data_mem_pkt
+  //
+  `declare_bsg_cache_non_blocking_data_mem_pkt_s(id_width_p,ways_p,sets_p,block_size_in_words_p,data_width_p);
+
+  bsg_cache_non_blocking_data_mem_pkt_s data_mem_pkt;
+
+  assign data_mem_pkt = data_mem_pkt_i;
+
+
   // data_mem
   //
   logic [data_bank_addr_width_lp-1:0] addr_li;
@@ -53,7 +61,7 @@ module bsg_cache_non_blocking_data_mem
   logic [data_mask_width_lp-1:0] mask_li;
   logic [data_width_p-1:0] data_lo;
 
-  assign addr_li = {way_i, addr_i};
+  assign addr_li = {data_mem_pkt.way, data_mem_pkt.addr};
 
   bsg_mem_1rw_sync_mask_write_byte #(
     .data_width_p(data_width_p)
@@ -63,7 +71,7 @@ module bsg_cache_non_blocking_data_mem
     .clk_i(clk_i)
     ,.reset_i(reset_i)
     ,.v_i(v_i)
-    ,.w_i(w_i)
+    ,.w_i(data_mem_pkt.write_not_read)
     ,.addr_i(addr_li)
     ,.data_i(data_li)
     ,.write_mask_i(mask_li)
@@ -81,7 +89,7 @@ module bsg_cache_non_blocking_data_mem
     ,.els_p(data_sel_mux_els_lp)
   ) input_data_mux (
     .data_i(input_mux_data_li)
-    ,.sel_i(size_op_i[0+:lg_data_sel_mux_els_lp])
+    ,.sel_i(data_mem_pkt.size_op[0+:lg_data_sel_mux_els_lp])
     ,.data_o(data_li)
   );
 
@@ -90,14 +98,14 @@ module bsg_cache_non_blocking_data_mem
     ,.els_p(data_sel_mux_els_lp)
   ) input_mask_mux (
     .data_i(input_mux_mask_li)
-    ,.sel_i(size_op_i[0+:lg_data_sel_mux_els_lp])
+    ,.sel_i(data_mem_pkt.size_op[0+:lg_data_sel_mux_els_lp])
     ,.data_o(mask_li)
   );
 
   for (genvar i = 0; i < data_sel_mux_els_lp; i++) begin: input_sel
 
     // data
-    assign input_mux_data_li[i] = {(data_width_p/(8*(2**i))){data_i[0+:(8*(2**i))]}};
+    assign input_mux_data_li[i] = {(data_width_p/(8*(2**i))){data_mem_pkt.data[0+:(8*(2**i))]}};
 
     // mask
     if (i == data_sel_mux_els_lp-1) begin: max_size
@@ -112,7 +120,7 @@ module bsg_cache_non_blocking_data_mem
       bsg_decode #(
         .num_out_p(data_width_p/(8*(2**i)))
       ) dec (
-        .i(byte_sel_i[i+:`BSG_MAX(byte_sel_width_lp-i,1)])
+        .i(data_mem_pkt.byte_sel[i+:`BSG_MAX(byte_sel_width_lp-i,1)])
         ,.o(decode_lo)
       );
 
@@ -130,7 +138,7 @@ module bsg_cache_non_blocking_data_mem
 
   // output logic (load)
   //
-  wire load_en = v_i & ~w_i;
+  wire load_en = v_i & ~data_mem_pkt.write_not_read;
   logic sigext_op_r;
   logic [1:0] size_op_r;
   logic [byte_sel_width_lp-1:0] byte_sel_r;
@@ -140,7 +148,7 @@ module bsg_cache_non_blocking_data_mem
   ) op_dff (
     .clk_i(clk_i)
     ,.en_i(load_en)
-    ,.data_i({sigext_op_i, size_op_i, byte_sel_i})
+    ,.data_i({data_mem_pkt.sigext_op, data_mem_pkt.size_op, data_mem_pkt.byte_sel})
     ,.data_o({sigext_op_r, size_op_r, byte_sel_r})
   );
 
@@ -180,6 +188,18 @@ module bsg_cache_non_blocking_data_mem
  
     end
   end  
+
+
+  // id_dff
+  //
+  bsg_dff_en #(
+    .width_p(id_width_p)
+  ) id_dff (
+    .clk_i(clk_i)
+    ,.en_i(v_i)
+    ,.data_i(data_mem_pkt.id)
+    ,.data_o(id_o)
+  );
 
 
 endmodule

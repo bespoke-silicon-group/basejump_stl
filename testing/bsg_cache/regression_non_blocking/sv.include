@@ -36,9 +36,12 @@ $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1r1w_synth.v
 
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_non_blocking_pkg.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_non_blocking_decode.v
-$BASEJUMP_STL_DIR/bsg_cache/bsg_cache_non_blocking_miss_fifo.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_non_blocking_data_mem.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_non_blocking_stat_mem.v
+$BASEJUMP_STL_DIR/bsg_cache/bsg_cache_non_blocking_tag_mem.v
+$BASEJUMP_STL_DIR/bsg_cache/bsg_cache_non_blocking_tl_stage.v
+$BASEJUMP_STL_DIR/bsg_cache/bsg_cache_non_blocking_mhu.v
+$BASEJUMP_STL_DIR/bsg_cache/bsg_cache_non_blocking_miss_fifo.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_non_blocking_dma.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_non_blocking.v
 

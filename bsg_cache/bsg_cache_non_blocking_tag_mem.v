@@ -47,7 +47,7 @@ module bsg_cache_non_blocking_tag_mem
   bsg_cache_non_blocking_tag_info_s [ways_p-1:0] mask_li, data_li, data_lo;
 
   bsg_mem_1rw_sync_mask_write_bit #(
-    .width_p(tag_width_p*ways_p)
+    .width_p(tag_info_width_lp*ways_p)
     ,.els_p(sets_p)
     ,.latch_last_read_p(1)
   ) tag_mem0 (

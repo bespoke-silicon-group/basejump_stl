@@ -51,10 +51,14 @@ module bsg_cache_non_blocking
   //
   localparam lg_ways_lp = `BSG_SAFE_CLOG2(ways_p);
   localparam lg_sets_lp = `BSG_SAFE_CLOG2(sets_p);
-  localparam lg_block_size_in_words_lp = `BSG_SAFE_CLOG2(block_size_in_words_lp);
+  localparam lg_block_size_in_words_lp = `BSG_SAFE_CLOG2(block_size_in_words_p);
   localparam byte_sel_width_lp = `BSG_SAFE_CLOG2(data_width_p>>3);
-  localparam tag_width_lp = (addr_width_p-lg_sets_lp-lg_block_size_in_words_lp-byte_sel_width-lp);
+  localparam tag_width_lp = (addr_width_p-lg_sets_lp-lg_block_size_in_words_lp-byte_sel_width_lp);
 
+  // declare structs
+  //
+  `declare_bsg_cache_non_blocking_data_mem_pkt_s(id_width_p,ways_p,sets_p,block_size_in_words_p,data_width_p);
+  `declare_bsg_cache_non_blocking_miss_fifo_entry_s(id_width_p,addr_width_p,data_width_p);
   
   // cache pkt
   //
@@ -68,7 +72,7 @@ module bsg_cache_non_blocking
   //
   bsg_cache_non_blocking_decode_s decode;
 
-  bsg_cache_non_blocking_cache_decode decode0 (
+  bsg_cache_non_blocking_decode decode0 (
     .opcode_i(cache_pkt.opcode)
     ,.decode_o(decode)
   );
@@ -76,6 +80,14 @@ module bsg_cache_non_blocking
 
   // TL stage
   //
+  bsg_cache_non_blocking_data_mem_pkt_s tl_data_mem_pkt_lo;
+  logic tl_data_mem_pkt_v_lo;
+  logic tl_data_mem_pkt_yumi_li;
+
+  bsg_cache_non_blocking_miss_fifo_entry_s tl_miss_fifo_entry_lo;
+  logic tl_miss_fifo_entry_v_lo;
+  logic tl_miss_fifo_entry_ready_li;
+  
   logic [ways_p-1:0] valid_tl_lo;
   logic [ways_p-1:0] lock_tl_lo;
   logic [ways_p-1:0][tag_width_lp-1:0] tag_tl_lo;
@@ -98,6 +110,14 @@ module bsg_cache_non_blocking
     ,.decode_i(decode)
     ,.ready_o(ready_o)
 
+    ,.data_mem_pkt_v_o(tl_data_mem_pkt_v_lo)
+    ,.data_mem_pkt_o(tl_data_mem_pkt_lo)
+    ,.data_mem_pkt_yumi_i(tl_data_mem_pkt_yumi_li)
+
+    ,.miss_fifo_entry_v_o(tl_miss_fifo_entry_v_lo)
+    ,.miss_fifo_entry_o(tl_miss_fifo_entry_lo)
+    ,.miss_fifo_entry_ready_i(tl_miss_fifo_entry_ready_li)
+
     ,.valid_tl_o(valid_tl_lo)
     ,.lock_tl_o(lock_tl_lo)
     ,.tag_tl_o(tag_tl_lo)
@@ -106,7 +126,6 @@ module bsg_cache_non_blocking
 
   // miss FIFO
   //
-  `declare_bsg_cache_non_blocking_miss_fifo_entry_s(id_width_p,addr_width_p,data_width_p);  
   bsg_cache_non_blocking_miss_fifo_entry_s miss_fifo_data_li;
   logic miss_fifo_v_li;
   logic miss_fifo_ready_lo;
@@ -114,6 +133,7 @@ module bsg_cache_non_blocking
   bsg_cache_non_blocking_miss_fifo_entry_s miss_fifo_data_lo;
   logic miss_fifo_v_lo;
   logic miss_fifo_yumi_li;
+
   bsg_cache_non_blocking_miss_fifo_op_e miss_fifo_yumi_op_li; 
   logic miss_fifo_rollback_li;
   logic miss_fifo_empty_lo;
@@ -125,8 +145,8 @@ module bsg_cache_non_blocking
     .clk_i(clk_i)
     ,.reset_i(reset_i)
 
-    ,.data_i(miss_fifo_data_li)
     ,.v_i(miss_fifo_v_li)
+    ,.data_i(miss_fifo_data_li)
     ,.ready_o(miss_fifo_ready_lo)
 
     ,.v_o(miss_fifo_v_lo)
@@ -138,21 +158,21 @@ module bsg_cache_non_blocking
     ,.empty_o(miss_fifo_empty_lo)
   );
 
+  assign miss_fifo_v_li = tl_miss_fifo_entry_v_lo;
+  assign miss_fifo_data_li = tl_miss_fifo_entry_lo;
+  assign tl_miss_fifo_entry_ready_li = miss_fifo_ready_lo;
+
 
   // data_mem
   //
+  bsg_cache_non_blocking_data_mem_pkt_s data_mem_pkt_li;
   logic data_mem_v_li;
-  logic data_mem_w_li;
-  logic data_mem_sigext_op_li;
-  logic [1:0] data_mem_size_op_li;
-  logic [byte_sel_width_lp-1:0] data_mem_byte_sel_li;
-  logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_mem_addr_li;
-  logic [lg_ways_lp-1:0] data_mem_way_li;
-  logic [data_width_p-1:0] data_mem_data_li;
+  logic [id_width_p-1:0] data_mem_id_lo;
   logic [data_width_p-1:0] data_mem_data_lo;
   
   bsg_cache_non_blocking_data_mem #(
-    .data_width_p(data_width_p)
+    .id_width_p(id_width_p)
+    ,.data_width_p(data_width_p)
     ,.ways_p(ways_p)
     ,.sets_p(sets_p)
     ,.block_size_in_words_p(block_size_in_words_p)
@@ -161,15 +181,9 @@ module bsg_cache_non_blocking
     ,.reset_i(reset_i)
 
     ,.v_i(data_mem_v_li)
-    ,.w_i(data_mem_w_li)
+    ,.data_mem_pkt_i(data_mem_pkt_li)
 
-    ,.sigext_op_i(data_mem_sigext_op_li)
-    ,.size_op_i(data_mem_size_op_li)
-    ,.byte_sel_i(data_mem_byte_sel_li)
-
-    ,.addr_i(data_mem_addr_li)
-    ,.way_i(data_mem_way_li)
-    ,.data_i(data_mem_data_li)
+    ,.id_o(data_mem_id_lo)
     ,.data_o(data_mem_data_lo)
   );
 
@@ -216,6 +230,13 @@ module bsg_cache_non_blocking
     ,.valid_tl_i(valid_tl_lo)
     ,.lock_tl_i(lock_tl_lo)
     ,.tag_tl_i(tag_tl_lo) 
+
+    ,.miss_fifo_entry_v_i(miss_fifo_v_lo)
+    ,.miss_fifo_entry_i(miss_fifo_data_lo)
+    ,.miss_fifo_entry_yumi_o(miss_fifo_yumi_li)
+    ,.miss_fifo_entry_yumi_op_o(miss_fifo_yumi_op_li)
+    ,.miss_fifo_rollback_o(miss_fifo_rollback_li)
+    ,.miss_fifo_empty_i(miss_fifo_empty_lo)
   );
   
 
