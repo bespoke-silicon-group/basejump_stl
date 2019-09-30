@@ -16,17 +16,16 @@ module bsg_cache_non_blocking_tag_mem
 
     , parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
     , parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+
+    , parameter tag_mem_pkt_width_lp=
+      `bsg_cache_non_blocking_tag_mem_pkt_width(ways_p,sets_p,data_width_p,tag_width_p)
   )
   (
     input clk_i
     , input reset_i
 
     , input v_i
-    , input [lg_ways_lp-1:0] way_i
-    , input [lg_sets_lp-1:0] addr_i
-    , input [data_width_p-1:0] data_i
-    , input [tag_width_p-1:0] tag_i
-    , input bsg_cache_non_blocking_tag_op_e tag_op_i
+    , input [tag_mem_pkt_width_lp-1:0] tag_mem_pkt_i
 
     , output logic [ways_p-1:0] valid_o
     , output logic [ways_p-1:0] lock_o
@@ -38,6 +37,14 @@ module bsg_cache_non_blocking_tag_mem
   //
   localparam tag_info_width_lp = `bsg_cache_non_blocking_tag_info_width(tag_width_p);
 
+
+  // tag_mem pkt
+  //
+  `declare_bsg_cache_non_blocking_tag_mem_pkt_s(ways_p,sets_p,data_width_p,tag_width_p);
+  
+  bsg_cache_non_blocking_tag_mem_pkt_s tag_mem_pkt;
+  
+  assign tag_mem_pkt = tag_mem_pkt_i;
 
   // tag_mem
   //
@@ -57,7 +64,7 @@ module bsg_cache_non_blocking_tag_mem
     ,.v_i(v_i)
     ,.w_i(w_li)
 
-    ,.addr_i(addr_i)
+    ,.addr_i(tag_mem_pkt.index)
     ,.w_mask_i(mask_li)
     ,.data_i(data_li)
     ,.data_o(data_lo)
@@ -71,7 +78,7 @@ module bsg_cache_non_blocking_tag_mem
   bsg_decode #(
     .num_out_p(ways_p)
   ) way_demux (
-    .i(way_i)
+    .i(tag_mem_pkt.way)
     ,.o(way_decode)
   );
 
@@ -82,7 +89,7 @@ module bsg_cache_non_blocking_tag_mem
     data_li = '0;
     mask_li = '0;
 
-    case (tag_op_i)
+    case (tag_mem_pkt.opcode)
 
       e_tag_read: begin
         w_li = 1'b0;
@@ -94,9 +101,9 @@ module bsg_cache_non_blocking_tag_mem
       e_tag_store: begin 
         w_li = 1'b1;
         for (integer i = 0 ; i < ways_p; i++) begin
-          data_li[i].tag = data_i[0+:tag_width_p];
-          data_li[i].valid = data_i[data_width_p-1];
-          data_li[i].lock = data_i[tag_width_p-2];
+          data_li[i].tag = tag_mem_pkt.data[0+:tag_width_p];
+          data_li[i].valid = tag_mem_pkt.data[data_width_p-1];
+          data_li[i].lock = tag_mem_pkt.data[tag_width_p-2];
           mask_li[i].tag = {tag_width_p{way_decode[i]}};
           mask_li[i].valid = way_decode[i];
           mask_li[i].lock = way_decode[i];
@@ -106,7 +113,7 @@ module bsg_cache_non_blocking_tag_mem
       e_tag_set_tag: begin
         w_li = 1'b1;
         for (integer i = 0 ; i < ways_p; i++) begin
-          data_li[i].tag = tag_i;
+          data_li[i].tag = tag_mem_pkt.tag;
           data_li[i].valid = 1'b1;
           data_li[i].lock = 1'b0;
           mask_li[i].tag = {tag_width_p{way_decode[i]}};
@@ -118,7 +125,7 @@ module bsg_cache_non_blocking_tag_mem
       e_tag_set_tag_and_lock: begin
         w_li = 1'b1;
         for (integer i = 0 ; i < ways_p; i++) begin
-          data_li[i].tag = tag_i;
+          data_li[i].tag = tag_mem_pkt.tag;
           data_li[i].valid = 1'b1;
           data_li[i].lock = 1'b1;
           mask_li[i].tag = {tag_width_p{way_decode[i]}};
@@ -130,7 +137,7 @@ module bsg_cache_non_blocking_tag_mem
       e_tag_invalidate: begin
         w_li = 1'b1;
         for (integer i = 0 ; i < ways_p; i++) begin
-          data_li[i].tag = tag_i;
+          data_li[i].tag = tag_mem_pkt.tag;
           data_li[i].valid = 1'b0;
           data_li[i].lock = 1'b0;
           mask_li[i].tag = {tag_width_p{1'b0}};
@@ -142,7 +149,7 @@ module bsg_cache_non_blocking_tag_mem
       e_tag_lock: begin
         w_li = 1'b1;
         for (integer i = 0 ; i < ways_p; i++) begin
-          data_li[i].tag = tag_i;
+          data_li[i].tag = tag_mem_pkt.tag;
           data_li[i].valid = 1'b0;
           data_li[i].lock = 1'b1;
           mask_li[i].tag = {tag_width_p{1'b0}};
@@ -154,7 +161,7 @@ module bsg_cache_non_blocking_tag_mem
       e_tag_unlock: begin
         w_li = 1'b1;
         for (integer i = 0 ; i < ways_p; i++) begin
-          data_li[i].tag = tag_i;
+          data_li[i].tag = tag_mem_pkt.tag;
           data_li[i].valid = 1'b0;
           data_li[i].lock = 1'b0;
           mask_li[i].tag = {tag_width_p{1'b0}};

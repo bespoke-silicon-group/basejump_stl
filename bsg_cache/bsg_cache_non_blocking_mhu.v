@@ -28,6 +28,8 @@ module bsg_cache_non_blocking_mhu
       `bsg_cache_non_blocking_data_mem_pkt_width(ways_p,sets_p,block_size_in_words_p,data_width_p) 
     , parameter stat_mem_pkt_width_lp=
       `bsg_cache_non_blocking_stat_mem_pkt_width(ways_p,sets_p)
+    , parameter tag_mem_pkt_width_lp=
+      `bsg_cache_non_blocking_tag_mem_pkt_width(ways_p,sets_p,data_width_p,tag_width_lp)
 
     , parameter miss_fifo_entry_width_lp=
       `bsg_cache_non_blocking_miss_fifo_entry_width(id_width_p,addr_width_p,data_width_p)
@@ -52,6 +54,12 @@ module bsg_cache_non_blocking_mhu
     , output logic stat_mem_pkt_v_o
     , output logic [stat_mem_pkt_width_lp-1:0] stat_mem_pkt_o
     , input stat_mem_pkt_yumi_i
+  
+    // tag_mem
+    , output logic tag_mem_pkt_v_o
+    , output logic [tag_mem_pkt_width_lp-1:0] tag_mem_pkt_o
+    , input tag_mem_pkt_yumi_i
+     
  
     // miss FIFO
     , input miss_fifo_entry_v_i
@@ -71,6 +79,17 @@ module bsg_cache_non_blocking_mhu
     , input dma_pending_i
     , output logic dma_ack_o
   );
+
+
+  
+
+
+
+
+
+
+
+
 
 
 

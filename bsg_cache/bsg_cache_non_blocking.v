@@ -60,6 +60,7 @@ module bsg_cache_non_blocking
   //
   `declare_bsg_cache_non_blocking_data_mem_pkt_s(ways_p,sets_p,block_size_in_words_p,data_width_p);
   `declare_bsg_cache_non_blocking_stat_mem_pkt_s(ways_p,sets_p);
+  `declare_bsg_cache_non_blocking_tag_mem_pkt_s(ways_p,sets_p,data_width_p,tag_width_lp);
   `declare_bsg_cache_non_blocking_miss_fifo_entry_s(id_width_p,addr_width_p,data_width_p);
   `declare_bsg_cache_non_blocking_dma_cmd_s(ways_p,sets_p,tag_width_lp);
   
@@ -96,6 +97,10 @@ module bsg_cache_non_blocking
   logic tl_miss_fifo_entry_v_lo;
   logic tl_miss_fifo_entry_ready_li;
   
+  bsg_cache_non_blocking_tag_mem_pkt_s mhu_tag_mem_pkt_lo;
+  logic mhu_tag_mem_pkt_v_lo;
+  logic mhu_tag_mem_pkt_yumi_li;
+
   logic [ways_p-1:0] valid_tl_lo;
   logic [ways_p-1:0] lock_tl_lo;
   logic [ways_p-1:0][tag_width_lp-1:0] tag_tl_lo;
@@ -133,6 +138,10 @@ module bsg_cache_non_blocking
     ,.valid_tl_o(valid_tl_lo)
     ,.lock_tl_o(lock_tl_lo)
     ,.tag_tl_o(tag_tl_lo)
+
+    ,.mhu_tag_mem_pkt_v_i(mhu_tag_mem_pkt_v_lo)
+    ,.mhu_tag_mem_pkt_i(mhu_tag_mem_pkt_lo)
+    ,.mhu_tag_mem_pkt_yumi_o(mhu_tag_mem_pkt_yumi_li)
   );
 
 
@@ -260,6 +269,10 @@ module bsg_cache_non_blocking
     ,.stat_mem_pkt_o(mhu_stat_mem_pkt_lo)
     ,.stat_mem_pkt_yumi_i(mhu_stat_mem_pkt_yumi_li)
 
+    ,.tag_mem_pkt_v_o(mhu_tag_mem_pkt_v_lo)
+    ,.tag_mem_pkt_o(mhu_tag_mem_pkt_lo)
+    ,.tag_mem_pkt_yumi_i(mhu_tag_mem_pkt_yumi_li)
+
     ,.miss_fifo_entry_v_i(miss_fifo_v_lo)
     ,.miss_fifo_entry_i(miss_fifo_data_lo)
     ,.miss_fifo_entry_yumi_o(miss_fifo_yumi_li)
@@ -320,4 +333,17 @@ module bsg_cache_non_blocking
   );
 
 
+  ///                   ///
+  ///   CONTROL LOGIC   ///
+  ///                   ///
+
+
+
+
+
+
+
+
+
+ 
 endmodule

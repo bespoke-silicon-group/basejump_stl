@@ -161,6 +161,22 @@ package bsg_cache_non_blocking_pkg;
   } bsg_cache_non_blocking_tag_op_e;
 
 
+  // tag_mem_pkt
+  //
+  `define declare_bsg_cache_non_blocking_tag_mem_pkt_s(ways_mp,sets_mp,data_width_mp,tag_width_mp) \
+    typedef struct packed {                               \
+      logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way;           \
+      logic [`BSG_SAFE_CLOG2(sets_mp)-1:0] index;         \
+      logic [data_width_mp-1:0] data;                     \
+      logic [tag_width_mp-1:0] tag;                       \
+      bsg_cache_non_blocking_tag_op_e opcode;             \
+    } bsg_cache_non_blocking_tag_mem_pkt_s
+
+
+  `define bsg_cache_non_blocking_tag_mem_pkt_width(ways_mp,sets_mp,data_width_mp,tag_width_mp) \
+    (`BSG_SAFE_CLOG2(ways_mp)+`BSG_SAFE_CLOG2(sets_mp)+data_width_mp+tag_width_mp+$bits(bsg_cache_non_blocking_tag_op_e)) 
+
+
   // stat info s
   //
   `define declare_bsg_cache_non_blocking_stat_info_s(ways_mp)    \

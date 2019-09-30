@@ -28,6 +28,8 @@ module bsg_cache_non_blocking_tl_stage
       `bsg_cache_non_blocking_data_mem_pkt_width(ways_p,sets_p,block_size_in_words_p,data_width_p) 
     , parameter stat_mem_pkt_width_lp=
       `bsg_cache_non_blocking_stat_mem_pkt_width(ways_p,sets_p)
+    , parameter tag_mem_pkt_width_lp=
+      `bsg_cache_non_blocking_tag_mem_pkt_width(ways_p,sets_p,data_width_p,tag_width_lp)
 
     , parameter miss_fifo_entry_width_lp=
       `bsg_cache_non_blocking_miss_fifo_entry_width(id_width_p,addr_width_p,data_width_p)
@@ -70,17 +72,21 @@ module bsg_cache_non_blocking_tl_stage
     , output logic [ways_p-1:0][tag_width_lp-1:0] tag_tl_o
     
     // from MHU
-
+    , input mhu_tag_mem_pkt_v_i
+    , input [tag_mem_pkt_width_lp-1:0] mhu_tag_mem_pkt_i
+    , output logic mhu_tag_mem_pkt_yumi_o
   );
+
+
+  // declare structs
+  //
+  `declare_bsg_cache_non_blocking_tag_mem_pkt_s(ways_p,sets_p,data_width_p,tag_width_lp);
 
 
   // tag_mem
   //
   logic tag_mem_v_li;
-  logic [lg_ways_lp-1:0] tag_mem_way_li;
-  logic [lg_sets_lp-1:0] tag_mem_addr_li;
-  logic [tag_width_lp-1:0] tag_mem_tag_li;
-  bsg_cache_non_blocking_tag_op_e tag_mem_tag_op_li;
+  bsg_cache_non_blocking_tag_mem_pkt_s tag_mem_pkt_li;
 
   logic [ways_p-1:0] valid_tl;
   logic [ways_p-1:0] lock_tl;
@@ -96,11 +102,7 @@ module bsg_cache_non_blocking_tl_stage
     ,.reset_i(reset_i)
 
     ,.v_i(tag_mem_v_li)
-    ,.way_i(tag_mem_way_li)
-    ,.addr_i(tag_mem_addr_li)
-    ,.data_i(data_i)
-    ,.tag_i(tag_mem_tag_li)
-    ,.tag_op_i(tag_mem_tag_op_li)
+    ,.tag_mem_pkt_i(tag_mem_pkt_li)
 
     ,.valid_o(valid_tl)
     ,.lock_o(lock_tl)
