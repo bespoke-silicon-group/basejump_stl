@@ -1,129 +1,95 @@
-// STD 10-30-16
-//
-// Synchronous 1-port ram with byte masking
-// Only one read or one write may be done per cycle.
-//
 
-`define bsg_mem_1rw_sync_macro_byte(words,bits,lgEls,mux) \
-if (els_p == words && data_width_p == bits)               \
-  begin: macro                                            \
-    wire [data_width_p-1:0] wen;                          \
-    genvar i;                                             \
-    for(i=0;i<write_mask_width_lp;i++)                    \
-      assign wen[8*i+:8] = {8{write_mask_i[i]}};          \
-    tsmc40_1rw_lg``lgEls``_w``bits``_m``mux mem           \
-      (.A     ( addr_i )                                  \
-      ,.D     ( data_i )                                  \
-      ,.BWEB  ( ~wen   )                                  \
-      ,.WEB   ( ~w_i   )                                  \
-      ,.CEB   ( ~v_i   )                                  \
-      ,.CLK   ( clk_i  )                                  \
-      ,.Q     ( data_o )                                  \
-      ,.DELAY ( 2'b0   )                                  \
-      ,.TEST  ( 2'b0   ));                                \
-  end
+`define bsg_mem_1rw_sync_mask_write_byte_macro(words,bits,mux) \
+  if (harden_p && els_p == words && data_width_p == bits)      \
+    begin: macro                                               \
+      wire [data_width_p-1:0] wen;                             \
+      genvar j;                                                \
+      for(j = 0; j < write_mask_width_lp; j++)                 \
+        assign wen[8*j+:8] = {8{write_mask_i[j]}};             \
+                                                               \
+      tsmc40_1rw_d``words``_w``bits``_m``mux``_byte            \
+        mem                                                    \
+          ( .CLK   ( clk_i  )                                  \
+          , .A     ( addr_i )                                  \
+          , .D     ( data_i )                                  \
+          , .Q     ( data_o )                                  \
+          , .CEB   ( ~v_i   )                                  \
+          , .WEB   ( ~w_i   )                                  \
+          , .BWEB  ( ~wen   )                                  \
+          );                                                   \
+    end: macro
 
-`define bsg_mem_1rf_sync_macro_byte(words,bits,lgEls,mux) \
-if (els_p == words && data_width_p == bits)               \
-  begin: macro                                            \
-    wire [data_width_p-1:0] wen;                          \
-    genvar i;                                             \
-    for(i=0;i<write_mask_width_lp;i++)                    \
-      assign wen[8*i+:8] = {8{write_mask_i[i]}};          \
-    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem           \
-      (.A     ( addr_i )                                  \
-      ,.D     ( data_i )                                  \
-      ,.BWEB  ( ~wen   )                                  \
-      ,.WEB   ( ~w_i   )                                  \
-      ,.CEB   ( ~v_i   )                                  \
-      ,.CLK   ( clk_i  )                                  \
-      ,.Q     ( data_o )                                  \
-      ,.DELAY ( 2'b0   ));                                \
-  end
+`define bsg_mem_1rw_sync_mask_write_byte_macro_banks(words,bits,mux,banks)    \
+  if (harden_p && els_p == words && data_width_p == banks*bits)               \
+    begin: macro                                                              \
+      wire [data_width_p-1:0] wen;                                            \
+      genvar j;                                                               \
+      for(j = 0; j < write_mask_width_lp; j++)                                \
+        assign wen[8*j+:8] = {8{write_mask_i[j]}};                            \
+                                                                              \
+      genvar i;                                                               \
+      for (i = 0; i < banks; i++)                                             \
+        begin: bank                                                           \
+          tsmc40_1rw_d``words``_w``bits``_m``mux``_byte                       \
+            mem                                                               \
+              ( .CLK   ( clk_i                                              ) \
+              , .A     ( addr_i                                             ) \
+              , .D     ( data_i[i*(data_width_p/banks)+:data_width_p/banks] ) \
+              , .Q     ( data_o[i*(data_width_p/banks)+:data_width_p/banks] ) \
+              , .CEB   ( ~v_i                                               ) \
+              , .WEB   ( ~w_i                                               ) \
+              , .BWEB  ( ~wen[i*(data_width_p/banks)+:data_width_p/banks]   ) \
+              );                                                              \
+        end: bank                                                             \
+    end: macro
 
-`define bsg_mem_1rf_sync_macro_byte_banks(words,bits,lgEls,mux) \
-if (els_p == 2*``words`` && data_width_p == bits)               \
-  begin: macro                                                  \
-    wire [data_width_p-1:0] wen;                                \
-    wire [data_width_p-1:0] bank_data [0:1];                    \
-    logic sel;                                                  \
-    always_ff @(posedge clk_i)                                  \
-      sel <= addr_i[0];                                         \
-    genvar i;                                                   \
-    for(i=0;i<write_mask_width_lp;i++)                          \
-      assign wen[8*i+:8] = {8{write_mask_i[i]}};                \
-    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem0                \
-      (.A     ( addr_i[addr_width_lp-1:1] )                     \
-      ,.D     ( data_i                    )                     \
-      ,.BWEB  ( ~wen                      )                     \
-      ,.WEB   ( ~w_i | addr_i[0]          )                     \
-      ,.CEB   ( ~v_i | addr_i[0]          )                     \
-      ,.CLK   ( clk_i                     )                     \
-      ,.Q     ( bank_data[0]              )                     \
-      ,.DELAY ( 2'b0   ));                                      \
-    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem1                \
-      (.A     ( addr_i[addr_width_lp-1:1] )                     \
-      ,.D     ( data_i                    )                     \
-      ,.BWEB  ( ~wen                      )                     \
-      ,.WEB   ( ~w_i | ~addr_i[0]         )                     \
-      ,.CEB   ( ~v_i | ~addr_i[0]         )                     \
-      ,.CLK   ( clk_i                     )                     \
-      ,.Q     ( bank_data[1]              )                     \
-      ,.DELAY ( 2'b0                      ));                   \
-    assign data_o = sel? bank_data[1]: bank_data[0];            \
-  end
+module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
+                                         , parameter data_width_p = -1
+                                         , parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
+                                         , parameter write_mask_width_lp = data_width_p>>3
+                                         , parameter harden_p = 1
+                                         , parameter latch_last_read_p = 1
+                                         )
 
-module bsg_mem_1rw_sync_mask_write_byte
-
- #(parameter els_p = -1
-  ,parameter data_width_p = -1
-  ,parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
-  ,parameter write_mask_width_lp = data_width_p>>3
-  )
-
-  (input                           clk_i
-  ,input                           reset_i
-
-  ,input                           v_i
-  ,input                           w_i
-
-  ,input [addr_width_lp-1:0]       addr_i
-  ,input [data_width_p-1:0]        data_i
-
-  ,input [write_mask_width_lp-1:0] write_mask_i
-
-  ,output [data_width_p-1:0] data_o
+  ( input                           clk_i
+  , input                           reset_i
+  , input                           v_i
+  , input                           w_i
+  , input [addr_width_lp-1:0]       addr_i
+  , input [data_width_p-1:0]        data_i
+  , input [write_mask_width_lp-1:0] write_mask_i
+  , output logic [data_width_p-1:0] data_o
   );
 
   wire unused = reset_i;
 
-  `bsg_mem_1rw_sync_macro_byte(4096,64,12,8) else
-  `bsg_mem_1rw_sync_macro_byte(2048,64,11,4) else
-  `bsg_mem_1rw_sync_macro_byte(2048,64,11,4) else
-  `bsg_mem_1rf_sync_macro_byte_banks(512,32,9,4) else
-  `bsg_mem_1rf_sync_macro_byte(1024,32,10,8) else
-  `bsg_mem_1rw_sync_macro_byte(1024,32,10,4) else
+  // TODO: Define more hardened macro configs here
+  `bsg_mem_1rw_sync_mask_write_byte_macro( 512,64,4) else
+  `bsg_mem_1rw_sync_mask_write_byte_macro(1024,32,4) else
+  `bsg_mem_1rw_sync_mask_write_byte_macro(2048,64,4) else
+  `bsg_mem_1rw_sync_mask_write_byte_macro_banks(2048,32,4,2) else
+  `bsg_mem_1rw_sync_mask_write_byte_macro(4096,64,4) else
+
   // no hardened version found
-    begin  : notmacro
-
-       bsg_mem_1rw_sync_mask_write_byte_synth
-	 #(.els_p(els_p), .data_width_p(data_width_p))
-       synth (.*);
-
-    end
+    begin : notmacro
+      bsg_mem_1rw_sync_mask_write_byte_synth #(.data_width_p(data_width_p), .els_p(els_p))
+        synth
+          (.*);
+    end // block: notmacro
 
 
   // synopsys translate_off
-
   always_comb
-    assert (data_width_p % 8 == 0)
-      else $error("data width should be a multiple of 8 for byte masking");
+    begin
+      assert (data_width_p % 8 == 0)
+        else $error("data width should be a multiple of 8 for byte masking");
+    end
 
-   initial
-     begin
-        $display("## bsg_mem_1rw_sync_mask_write_byte: instantiating data_width_p=%d, els_p=%d (%m)",data_width_p,els_p);
-     end
-
+  initial
+    begin
+      $display("## bsg_mem_1rw_sync_mask_write_byte: instantiating data_width_p=%d, els_p=%d (%m)",data_width_p,els_p);
+    end
   // synopsys translate_on
    
 endmodule
+
