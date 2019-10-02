@@ -96,6 +96,7 @@ module bsg_cache_non_blocking_mhu
   // localparam
   //
   localparam block_offset_width_lp = lg_block_size_in_words_lp+byte_sel_width_lp;
+  localparam counter_width_lp = `BSG_SAFE_CLOG2(block_size_in_words_p+1);
 
 
   // declare structs
@@ -134,8 +135,11 @@ module bsg_cache_non_blocking_mhu
     ,RECOVER
   } mhu_state_e;
 
-  mhu_state_e mhu_state_r, mhu_state_n;
+  mhu_state_e mhu_state_r;
+  mhu_state_e mhu_state_n;
  
+  logic set_dirty_n, set_dirty_r; // used for setting dirty bit at the end of cycle.
+
   // Replacement policy 
   // Find the way that is invalid.
   // If invalid does not exist, pick LRU.
@@ -188,9 +192,35 @@ module bsg_cache_non_blocking_mhu
 
   // current dma_cmd
   //
-  bsg_cache_non_blocking_dma_cmd_s curr_dma_cmd_r, curr_dma_cmd_n;
+  bsg_cache_non_blocking_dma_cmd_s curr_dma_cmd_r;
+  bsg_cache_non_blocking_dma_cmd_s curr_dma_cmd_n;
   logic [tag_width_lp-1:0] curr_miss_tag;
   logic [lg_sets_lp-1:0] curr_miss_index;
+  logic [tag_width_lp-1:0] miss_fifo_tag;
+  logic [lg_sets_lp-1:0] miss_fifo_index;
+  logic is_secondary;
+  
+  assign curr_miss_tag = curr_dma_cmd_r.addr[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
+  assign curr_miss_index = curr_dma_cmd_r.addr[block_offset_width_lp+:lg_sets_lp];
+  assign miss_fifo_tag = miss_fifo_entry.addr[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
+  assign miss_fifo_index = miss_fifo_entry.addr[block_offset_width_lp+:lg_sets_lp];
+  assign is_secondary = (curr_miss_tag == miss_fifo_tag) & (curr_miss_index == miss_fifo_index);
+
+  // block load counter
+  //
+  logic counter_clear;
+  logic counter_up;
+  logic [counter_width_lp-1:0] counter_r;
+
+  bsg_counter_clear_up #(
+    .max_val_p(block_size_in_words_p)
+  ) block_ld_counter (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.clear_i(counter_clear)
+    ,.up_i(counter_up)
+    ,.count_o(counter_r)
+  );
 
   // FSM
   //
@@ -198,6 +228,7 @@ module bsg_cache_non_blocking_mhu
 
     mhu_state_n = mhu_state_r;
     curr_dma_cmd_n = curr_dma_cmd_r;
+    set_dirty_n = set_dirty_r;
 
     idle_o = 1'b0;
     recover_o = 1'b0;
@@ -215,6 +246,13 @@ module bsg_cache_non_blocking_mhu
     dma_cmd_v_o = 1'b0;
     dma_cmd_out = '0;
     dma_ack_o = 1'b0;
+
+    miss_fifo_yumi_o = 1'b0;
+    miss_fifo_yumi_op_o = e_miss_fifo_dequeue;
+    miss_fifo_rollback_o = 1'b0;
+
+    counter_clear = 1'b0;
+    counter_up = 1'b0;
   
     case (mhu_state_r)
 
@@ -425,14 +463,44 @@ module bsg_cache_non_blocking_mhu
           ? dma_cmd_return
           : curr_dma_cmd_r;
 
+        set_dirty_n = 1'b0; // reset
+
         mhu_state_n = dma_done_i
           ? DEQUEUE_MODE
           : WAIT_DMA_DONE;
       end 
 
-      // 
+      // Dequeue and process secondary miss.
+      // When non-secondary is encounter, send out the next DMA.
+      // At this time, there is no pending DMA.
       DEQUEUE_MODE: begin
 
+        data_mem_pkt_v_o = miss_fifo_v_i & is_secondary;
+        data_mem_pkt.write_not_read = miss_fifo_entry.write_not_read;
+        data_mem_pkt.sigext_op = miss_fifo_entry.block_load
+          ? 1'b0
+          : miss_fifo_entry.sigext_op;
+        data_mem_pkt.size_op = miss_fifo_entry.block_load
+          ? (2)'($clog2(data_width_p>>3))
+          : miss_fifo_entry.size_op;
+        data_mem_pkt.byte_sel = miss_fifo_entry.0+:byte_sel_width_lp]; // dont care for block_ld.
+        data_mem_pkt.way_id = curr_dma_cmd_r.way_id;
+        data_mem_pkt.addr = miss_fifo_entry.block_load
+          ? {curr_miss_index, counter_r[0+:lg_block_size_in_words_lp]}
+          : {curr_miss_index, miss_fifo_entry.addr[byte_sel_width_lp+:lg_block_size_in_words_lp]};
+        data_mem_pkt.data = miss_fifo_entry.data;
+        
+        miss_fifo_yumi_o = miss_fifo_v_i & is_secondary & (miss_fifo_entry.block_load
+          ? 
+          :);
+        miss_fifo_yumi_op_o = e_miss_fifo_dequeue;       
+ 
+
+        mhu_state_n = miss_fifo_empty_i
+          ? RECOVER
+          : (miss_fifo_v_i
+            ? (is_secondary ? DEQUEUE_MODE : SEND_DMA_REQ2)
+            : DEQUEUE_MODE);
       end
       
     endcase
@@ -445,10 +513,12 @@ module bsg_cache_non_blocking_mhu
     if (reset_i) begin
       mhu_state_r <= IDLE; 
       curr_dma_cmd_r <= '0;
+      set_dirty_r <= 1'b0;
     end
     else begin
       mhu_state_r <= mhu_state_n;
       curr_dma_cmd_r <= curr_dma_cmd_n;
+      set_dirty_r <= set_dirty_n;
     end
   end
 
