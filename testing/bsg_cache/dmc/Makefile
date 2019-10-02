@@ -1,10 +1,10 @@
 include ../../../../bsg_cadenv/cadenv.mk
+export BASEJUMP_STL_DIR=../../..
 
 NUM_CACHE_P = 4
 WAYS_P ?= 2 
 
 INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
-INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_cache
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/testing/bsg_dmc/lpddr_verilog_model
 
 DEFINE = +define+WAYS_P=$(WAYS_P)

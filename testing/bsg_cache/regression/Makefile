@@ -2,6 +2,7 @@
 # Makefile
 #
 include ../../../../bsg_cadenv/cadenv.mk
+export BASEJUMP_STL_DIR = $(abspath ../../..)
 
 WAYS_P ?= 2
 
@@ -10,8 +11,8 @@ TRACE_FILE = trace_way$(WAYS_P).tr
 TRACE_ROM = bsg_trace_master_rom
 TRACE_ROM_V = bsg_trace_master_rom_way$(WAYS_P).v
 
-INCDIR = +incdir+$(BSG_IP_CORES_DIR)/bsg_misc/
-INCDIR += +incdir+$(BSG_IP_CORES_DIR)/bsg_cache/
+INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc/
+#INCDIR += +incdir+$(BSG_IP_CORES_DIR)/bsg_cache/
 
 DEFINE += +define+WAYS_P=$(WAYS_P)
 
@@ -26,7 +27,7 @@ $(TRACE_FILE): $(TRACE_GEN_PY)
 	python $(TRACE_GEN_PY) > $(TRACE_FILE)
 
 $(TRACE_ROM_V): $(TRACE_FILE)
-	python $(BSG_IP_CORES_DIR)/bsg_mem/bsg_ascii_to_rom.py $(TRACE_FILE) $(TRACE_ROM) \
+	python $(BASEJUMP_STL_DIR)/bsg_mem/bsg_ascii_to_rom.py $(TRACE_FILE) $(TRACE_ROM) \
 	> $(TRACE_ROM_V)
 
 sim: $(TRACE_ROM_V)
