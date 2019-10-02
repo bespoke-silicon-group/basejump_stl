@@ -87,11 +87,12 @@ module bsg_cache_non_blocking
   //
   bsg_cache_non_blocking_data_mem_pkt_s tl_data_mem_pkt_lo;
   logic tl_data_mem_pkt_v_lo;
-  logic tl_data_mem_pkt_yumi_li;
+  logic tl_data_mem_pkt_ready_li;
+  logic tl_block_mode_lo;
 
   bsg_cache_non_blocking_stat_mem_pkt_s tl_stat_mem_pkt_lo;
   logic tl_stat_mem_pkt_v_lo;
-  logic tl_stat_mem_pkt_yumi_li;
+  logic tl_stat_mem_pkt_ready_li;
 
   bsg_cache_non_blocking_miss_fifo_entry_s tl_miss_fifo_entry_lo;
   logic tl_miss_fifo_entry_v_lo;
@@ -99,11 +100,17 @@ module bsg_cache_non_blocking
   
   bsg_cache_non_blocking_tag_mem_pkt_s mhu_tag_mem_pkt_lo;
   logic mhu_tag_mem_pkt_v_lo;
-  logic mhu_tag_mem_pkt_yumi_li;
 
+  logic mgmt_v_lo;
   logic [ways_p-1:0] valid_tl_lo;
   logic [ways_p-1:0] lock_tl_lo;
   logic [ways_p-1:0][tag_width_lp-1:0] tag_tl_lo;
+  bsg_cache_non_blocking_decode_s decode_tl_lo;
+  logic [addr_width_p-1:0] addr_tl_lo;
+  logic [id_width_p-1:0] id_tl_lo;
+  logic [lg_ways_lp-1:0] tag_hit_way_lo;
+  logic tag_hit_found_lo;
+  logic mgmt_yumi_li;
 
   bsg_cache_non_blocking_tl_stage #(
     .id_width_p(id_width_p)
@@ -116,6 +123,7 @@ module bsg_cache_non_blocking
     .clk_i(clk_i)
     ,.reset_i(reset_i)
 
+    // input
     ,.v_i(v_i)
     ,.id_i(cache_pkt.id)
     ,.addr_i(cache_pkt.addr)
@@ -123,25 +131,37 @@ module bsg_cache_non_blocking
     ,.decode_i(decode)
     ,.ready_o(ready_o)
 
+    // hit
     ,.data_mem_pkt_v_o(tl_data_mem_pkt_v_lo)
     ,.data_mem_pkt_o(tl_data_mem_pkt_lo)
-    ,.data_mem_pkt_yumi_i(tl_data_mem_pkt_yumi_li)
+    ,.data_mem_pkt_ready_i(tl_data_mem_pkt_ready_li)
+    ,.block_mode_o(tl_block_mode_lo)
 
     ,.stat_mem_pkt_v_o(tl_stat_mem_pkt_v_lo)
     ,.stat_mem_pkt_o(tl_stat_mem_pkt_lo)
-    ,.stat_mem_pkt_yumi_i(tl_stat_mem_pkt_yumi_li)
+    ,.stat_mem_pkt_ready_i(tl_stat_mem_pkt_ready_li)
 
+    // miss
     ,.miss_fifo_entry_v_o(tl_miss_fifo_entry_v_lo)
     ,.miss_fifo_entry_o(tl_miss_fifo_entry_lo)
     ,.miss_fifo_entry_ready_i(tl_miss_fifo_entry_ready_li)
 
+    // mgmt
+    ,.mgmt_v_o(mgmt_v_lo)
     ,.valid_tl_o(valid_tl_lo)
     ,.lock_tl_o(lock_tl_lo)
     ,.tag_tl_o(tag_tl_lo)
+    ,.decode_tl_o(decode_tl_lo)
+    ,.addr_tl_o(addr_tl_lo)
+    ,.id_tl_o(id_tl_lo)
+    ,.tag_hit_way_o(tag_hit_way_lo)
+    ,.tag_hit_found_o(tag_hit_found_lo)
+    ,.mgmt_yumi_i(mgmt_yumi_li)
 
+    // MHU tag_mem_pkt
     ,.mhu_tag_mem_pkt_v_i(mhu_tag_mem_pkt_v_lo)
     ,.mhu_tag_mem_pkt_i(mhu_tag_mem_pkt_lo)
-    ,.mhu_tag_mem_pkt_yumi_o(mhu_tag_mem_pkt_yumi_li)
+    ,.recover_i()
   );
 
 
@@ -234,7 +254,6 @@ module bsg_cache_non_blocking
 
   bsg_cache_non_blocking_stat_mem_pkt_s mhu_stat_mem_pkt_lo;
   logic mhu_stat_mem_pkt_v_lo;
-  logic mhu_stat_mem_pkt_yumi_li;
 
   bsg_cache_non_blocking_dma_cmd_s dma_cmd_lo;
   logic dma_cmd_v_lo;
@@ -256,10 +275,18 @@ module bsg_cache_non_blocking
   ) mhu0 (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
-  
+
+    ,.mgmt_v_i(mgmt_v_lo)
+    ,.decode_tl_i(decode_tl_lo)  
+    ,.addr_tl_i(addr_tl_lo)
     ,.valid_tl_i(valid_tl_lo)
     ,.lock_tl_i(lock_tl_lo)
     ,.tag_tl_i(tag_tl_lo) 
+    ,.tag_hit_way_i(tag_hit_way_lo)
+    ,.tag_hit_found_i(tag_hit_found_lo)
+    ,.mgmt_yumi_o(mgmt_yumi_li)
+    ,.out_v_o()
+    ,.out_data_o()
 
     ,.data_mem_pkt_v_o(mhu_data_mem_pkt_v_lo)
     ,.data_mem_pkt_o(mhu_data_mem_pkt_lo)
@@ -267,16 +294,17 @@ module bsg_cache_non_blocking
 
     ,.stat_mem_pkt_v_o(mhu_stat_mem_pkt_v_lo)
     ,.stat_mem_pkt_o(mhu_stat_mem_pkt_lo)
-    ,.stat_mem_pkt_yumi_i(mhu_stat_mem_pkt_yumi_li)
+    
+    ,.dirty_i(dirty_lo)
+    ,.lru_way_i(lru_way_lo)
 
     ,.tag_mem_pkt_v_o(mhu_tag_mem_pkt_v_lo)
     ,.tag_mem_pkt_o(mhu_tag_mem_pkt_lo)
-    ,.tag_mem_pkt_yumi_i(mhu_tag_mem_pkt_yumi_li)
 
-    ,.miss_fifo_entry_v_i(miss_fifo_v_lo)
+    ,.miss_fifo_v_i(miss_fifo_v_lo)
     ,.miss_fifo_entry_i(miss_fifo_data_lo)
-    ,.miss_fifo_entry_yumi_o(miss_fifo_yumi_li)
-    ,.miss_fifo_entry_yumi_op_o(miss_fifo_yumi_op_li)
+    ,.miss_fifo_yumi_o(miss_fifo_yumi_li)
+    ,.miss_fifo_yumi_op_o(miss_fifo_yumi_op_li)
     ,.miss_fifo_rollback_o(miss_fifo_rollback_li)
     ,.miss_fifo_empty_i(miss_fifo_empty_lo)
 

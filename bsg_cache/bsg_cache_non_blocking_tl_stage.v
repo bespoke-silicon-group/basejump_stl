@@ -49,38 +49,110 @@ module bsg_cache_non_blocking_tl_stage
     // data_mem access (hit)
     , output logic data_mem_pkt_v_o
     , output logic [data_mem_pkt_width_lp-1:0] data_mem_pkt_o
-    , input data_mem_pkt_yumi_i
+    , output logic block_mode_o
+    , input data_mem_pkt_ready_i
 
     // stat_mem access (hit)
     , output logic stat_mem_pkt_v_o
     , output logic [stat_mem_pkt_width_lp-1:0] stat_mem_pkt_o
-    , input stat_mem_pkt_yumi_i
+    , input stat_mem_pkt_ready_i
 
     // miss FIFO (miss)
     , output logic miss_fifo_entry_v_o
     , output logic [miss_fifo_entry_width_lp-1:0] miss_fifo_entry_o
     , input miss_fifo_entry_ready_i
   
-    // cache management (to MHU)
-    //, output logic mgmt_v_o
-    //, output bsg_cache_non_blocking_decode_s decode_tl_o
-    //, output logic [addr_width_p-1:0] addr_tl_o
-
-    // to MHU 
+    // to MHU (cache management)
+    , output logic mgmt_v_o
     , output logic [ways_p-1:0] valid_tl_o
     , output logic [ways_p-1:0] lock_tl_o
     , output logic [ways_p-1:0][tag_width_lp-1:0] tag_tl_o
-    
+    , output bsg_cache_non_blocking_decode_s decode_tl_o
+    , output logic [addr_width_p-1:0] addr_tl_o
+    , output logic [id_width_p-1:0] id_tl_o
+    , output logic [data_width_p-1:0] data_tl_o
+    , output logic [lg_ways_lp-1:0] tag_hit_way_o
+    , output logic tag_hit_found_o
+    , output logic mgmt_yumi_i
+
     // from MHU
     , input mhu_tag_mem_pkt_v_i
     , input [tag_mem_pkt_width_lp-1:0] mhu_tag_mem_pkt_i
-    , output logic mhu_tag_mem_pkt_yumi_o
+    , input mhu_idle_i
+    , input [tag_width_lp+lg_sets_lp-1:0] mhu_evict_block_num_i
+    , input mhu_evict_v_i
+
+    // from DMA
+    , input [tag_width_lp+lg_sets_lp-1:0] dma_evict_block_num_i
+    , input dma_evict_v_i
   );
+
+
+  // localparam
+  //
+  localparam counter_width_lp = `BSG_SAFE_CLOG2(block_size_in_words_p+1);
+  localparam block_offset_width_lp = byte_sel_width_lp+lg_block_size_in_words_lp;
 
 
   // declare structs
   //
   `declare_bsg_cache_non_blocking_tag_mem_pkt_s(ways_p,sets_p,data_width_p,tag_width_lp);
+  `declare_bsg_cache_non_blocking_stat_mem_pkt_s(ways_p,sets_p);
+  `declare_bsg_cache_non_blocking_data_mem_pkt_s(ways_p,sets_p,block_size_in_words_p,data_width_p);
+  `declare_bsg_cache_non_blocking_miss_fifo_entry_s(id_width_p,addr_width_p,data_width_p);
+
+  bsg_cache_non_blocking_data_mem_pkt_s data_mem_pkt;
+  bsg_cache_non_blocking_stat_mem_pkt_s stat_mem_pkt;
+  bsg_cache_non_blocking_tag_mem_pkt_s mhu_tag_mem_pkt;
+  bsg_cache_non_blocking_miss_fifo_entry_s miss_fifo_entry;
+
+  assign data_mem_pkt_o = data_mem_pkt;
+  assign stat_mem_pkt_o = stat_mem_pkt;
+  assign mhu_tag_mem_pkt = mhu_tag_mem_pkt_i;
+  assign miss_fifo_entry_o = miss_fifo_entry;
+
+
+  // TL stage
+  //
+  typedef enum logic {
+    START
+    ,BLOCK_MODE
+  } tl_state_e;
+
+  tl_state_e tl_state_n;
+  tl_state_e tl_state_r;
+
+  logic v_tl_r, v_tl_n;
+  bsg_cache_non_blocking_decode_s decode_tl_r, decode_tl_n;
+  logic [id_width_p-1:0] id_tl_r, id_tl_n;
+  logic [addr_width_p-1:0] addr_tl_r, addr_tl_n;
+  logic [data_width_p-1:0] data_tl_r, data_tl_n;
+
+  assign decode_tl_o = decode_tl_r;
+  assign id_tl_o = id_tl_r;
+  assign addr_tl_o = addr_tl_r;
+  assign data_tl_o = data_tl_r;
+
+  logic [tag_width_lp-1:0] addr_tag_tl;
+  logic [lg_sets_lp-1:0] addr_index_tl;
+
+  assign addr_tag_tl = addr_tl_r[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
+  assign addr_index_tl = addr_tl_r[block_offset_width_lp+:lg_sets_lp];
+
+
+  logic counter_clear;
+  logic counter_up;
+  logic [counter_width_lp-1:0] counter_r;
+
+  bsg_counter_clear_up #(
+    .max_val_p(block_size_in_words_p)
+  ) block_counter (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.clear_i(counter_clear)
+    ,.up_i(counter_up)
+    ,.count_o(counter_r)
+  );
 
 
   // tag_mem
@@ -112,6 +184,170 @@ module bsg_cache_non_blocking_tl_stage
   assign valid_tl_o = valid_tl;
   assign lock_tl_o = lock_tl;
   assign tag_tl_o = tag_tl;
+
+
+  // tag hit detection
+  //
+  logic [ways_p-1:0] tag_hit;
+
+  for (genvar i = 0; i < ways_p; i++) begin
+    assign tag_hit[i] = (tag_tl[i] == addr_tag_tl) & valid_tl[i];
+  end
+
+  logic [lg_ways_lp-1:0] tag_hit_way;
+  logic tag_hit_found;
+  
+  bsg_priority_encode #(
+    .width_p(ways_p)
+    ,.lo_to_hi_p(1)
+  ) tag_hit_pe (
+    .i(tag_hit)
+    ,.addr_o(tag_hit_way)
+    ,.v_o(tag_hit_found)
+  );
+  
+  assign tag_hit_way_o = tag_hit_way;
+  assign tag_hit_found_o = tag_hit_found;
+
+
+  // TL stage output logic
+  //
+  assign data_mem_pkt.write_not_read = decode_tl_r.st_op;
+  assign data_mem_pkt.sigext_op = decode_tl_r.sigext_op;
+  assign data_mem_pkt.size_op = decode_tl_r.size_op;
+  assign data_mem_pkt.byte_sel = addr_tl_r[0+:byte_sel_width_lp];
+  assign data_mem_pkt.way = tag_hit_way;
+  assign data_mem_pkt.addr = addr_tl_r[byte_sel_width_lp+:lg_block_size_in_words_lp+lg_sets_lp];
+  assign data_mem_pkt.data = data_tl_r;
+  assign block_mode_o = decode_tl_r.block_ld_op;
+
+  assign stat_mem_pkt.way = tag_hit_way;
+  assign stat_mem_pkt.index = addr_index_tl;
+  assign stat_mem_pkt.opcode = decode_tl_r.st_op
+    ? e_stat_set_lru_and_dirty
+    : e_stat_set_lru;
+
+  assign miss_fifo_entry.write_not_read = decode_tl_r.st_op;
+  assign miss_fifo_entry.block_load = decode_tl_r.block_load_op;
+  assign miss_fifo_entry.size_op = decode_tl_r.size_op;
+  assign miss_fifo_entry.id = id_tl_r;
+  assign miss_fifo_entry.addr = addr_tl_r;
+  assign miss_fifo_entry.data = data_tl_r;
+
+
+  // miss detection logic
+  //
+  logic mhu_evict_match;
+  logic dma_evict_match;
+
+  assign mhu_evict_match = mhu_evict_v_i & (mhu_evict_block_num_i == {addr_tag_tl, addr_index_tl});
+  assign dma_evict_match = dma_evict_v_i & (dma_evict_block_num_i == {addr_tag_tl, addr_index_tl});
+
+
+  // 1) load/store hit
+  // it's a hit, and the addr does not match evict addrs (from DMA or MHU).
+  // OR, it's a miss, but the tag is being set to valid by MHU.
+  // Both stat_mem and tag_mem has to be ready.
+  //
+  // 2) load/store/block_load miss
+  // it's a miss, and the tag is NOT being set to valid by MHU. 
+  // OR, it's a hit, with matching evict addrs (from DMA or MHU).
+  // Miss FIFO has to be ready to proceed.
+  //
+  // 3) block_load hit
+  // it's a block_load and hit, and the addr does not match evict
+  // addrs. Switch to BLOCK_MODE. Once it starts, BLOCK_MODE cannot
+  // be interrupted by any process except DMA. Update LRU, when loading the first word.
+  //
+  // 4) mgmt op
+  // Wait for mgmt_op_yumi_i. cache management ops cannot enter the
+  // pipeline until mhu_idle_i = 1.
+  logic cache_hit;
+  logic ld_st_hit;
+  logic block_ld_hit;
+
+  assign cache_hit = tag_hit_found & ~(mhu_evict_match | dma_evict_match);
+
+  assign ld_st_hit = v_tl_r
+    & (decode_tl_r.ld_op | decode_tl_r.st_op)
+    & cache_hit;
+
+  assign block_ld_hit = v_tl_r
+    & (decode_tl_r.block_ld_op)
+    & cache_hit;
+
+
+  always_comb begin
+
+    v_tl_n = v_tl_r;
+    decode_tl_n = decode_tl_r;
+    id_tl_n = id_tl_r;
+    addr_tl_n = addr_tl_r;
+    data_tl_n = data_tl_r;
+
+    counter_clear = 1'b0;
+    counter_up = 1'b0;
+
+    ready_o = 1'b0;
+
+    data_mem_pkt_v_o = 1'b0;
+    stat_mem_pkt_v_o = 1'b0;
+
+    miss_fifo_entry_v_o = 1'b0;
+    
+    mgmt_v_o = 1'b0;
+    
+
+    case (tl_state_r)
+
+      START: begin
+        if (v_tl_r) begin
+          if (ld_st_hit) begin
+
+          end
+          else if (block_ld_hit) begin
+
+          end
+          else if (decode_tl_r.mgmt_op) begin
+
+          end
+          else begin
+
+          end
+        end
+        else begin
+
+        end
+      end
+
+      BLOCK_MODE: begin
+
+      end
+
+    endcase
+
+  end
+
+
+  // synopsys sync_set_reset "reset_i"
+  always_ff @ (posedge clk_i) begin
+    if (reset_i) begin
+      tl_state_r <= START;
+      v_tl_r <= 1'b0;
+      decode_tl_r <= '0;
+      id_tl_r <= '0;
+      addr_tl_r <= '0;
+      data_tl_r <= '0;
+    end
+    else begin
+      tl_state_r <= tl_state_n;
+      v_tl_r <= v_tl_n;
+      decode_tl_r <= decode_tl_n;
+      id_tl_r <= id_tl_n;
+      addr_tl_r <= addr_tl_n;
+      data_tl_r <= data_tl_n;
+    end
+  end  
 
 
 endmodule

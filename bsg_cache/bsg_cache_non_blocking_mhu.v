@@ -4,9 +4,8 @@
  *    Miss Handling Unit
  *
  *    @author tommy
+ *
  */
-
-
 
 
 module bsg_cache_non_blocking_mhu
@@ -40,11 +39,24 @@ module bsg_cache_non_blocking_mhu
     input clk_i
     , input reset_i
 
-    // tl_stage
+    // cache management
+    , input mgmt_v_i
+    , input bsg_cache_non_blocking_decode_s decode_tl_i
+    , input [addr_width_p-1:0] addr_tl_i
     , input [ways_p-1:0] valid_tl_i
     , input [ways_p-1:0] lock_tl_i
     , input [ways_p-1:0][tag_width_lp-1:0] tag_tl_i
-   
+    , input [lg_ways_lp-1:0] tag_hit_way_i
+    , input tag_hit_found_i
+    , output logic mgmt_yumi_o
+
+    , output logic out_v_o
+    , output logic [data_width_p-1:0] out_data_o
+
+    , output logic idle_o
+    , output logic recover_o
+    , input tl_block_loading_i
+
     // data_mem
     , output logic data_mem_pkt_v_o
     , output logic [data_mem_pkt_width_lp-1:0] data_mem_pkt_o
@@ -53,22 +65,22 @@ module bsg_cache_non_blocking_mhu
     // stat_mem
     , output logic stat_mem_pkt_v_o
     , output logic [stat_mem_pkt_width_lp-1:0] stat_mem_pkt_o
-    , input stat_mem_pkt_yumi_i
-  
+ 
+    , input [ways_p-1:0] dirty_i
+    , input [lg_ways_lp-1:0] lru_way_i
+ 
     // tag_mem
     , output logic tag_mem_pkt_v_o
     , output logic [tag_mem_pkt_width_lp-1:0] tag_mem_pkt_o
-    , input tag_mem_pkt_yumi_i
      
- 
     // miss FIFO
-    , input miss_fifo_entry_v_i
+    , input miss_fifo_v_i
     , input [miss_fifo_entry_width_lp-1:0] miss_fifo_entry_i
-    , output logic miss_fifo_entry_yumi_o
-    , output bsg_cache_non_blocking_miss_fifo_op_e miss_fifo_entry_yumi_op_o
+    , output logic miss_fifo_yumi_o
+    , output bsg_cache_non_blocking_miss_fifo_op_e miss_fifo_yumi_op_o
     , output logic miss_fifo_rollback_o
     , input miss_fifo_empty_i
-    
+   
     // DMA
     , output logic [dma_cmd_width_lp-1:0] dma_cmd_o
     , output logic dma_cmd_v_o
@@ -81,16 +93,364 @@ module bsg_cache_non_blocking_mhu
   );
 
 
+  // localparam
+  //
+  localparam block_offset_width_lp = lg_block_size_in_words_lp+byte_sel_width_lp;
+
+
+  // declare structs
+  //
+  `declare_bsg_cache_non_blocking_data_mem_pkt_s(ways_p,sets_p,block_size_in_words_p,data_width_p);
+  `declare_bsg_cache_non_blocking_stat_mem_pkt_s(ways_p,sets_p);
+  `declare_bsg_cache_non_blocking_tag_mem_pkt_s(ways_p,sets_p,data_width_p,tag_width_lp);
+  `declare_bsg_cache_non_blocking_miss_fifo_entry_s(id_width_p,addr_width_p,data_width_p);
+  `declare_bsg_cache_non_blocking_dma_cmd_s(ways_p,sets_p,tag_width_lp);
+
+  bsg_cache_non_blocking_data_mem_pkt_s data_mem_pkt;
+  bsg_cache_non_blocking_stat_mem_pkt_s stat_mem_pkt;
+  bsg_cache_non_blocking_tag_mem_pkt_s tag_mem_pkt;
+  bsg_cache_non_blocking_miss_fifo_entry_s miss_fifo_entry;
+  bsg_cache_non_blocking_dma_cmd_s dma_cmd_out, dma_cmd_return;
+
+  assign data_mem_pkt_o = data_mem_pkt;
+  assign stat_mem_pkt_o = stat_mem_pkt;
+  assign tag_mem_pkt_o = tag_mem_pkt;
+  assign miss_fifo_entry = miss_fifo_entry_i;
+  assign dma_cmd_o = dma_cmd_out;
+  assign dma_cmd_return = dma_cmd_return_i;
+
+
+  // mhu_state
+  //
+  typedef enum logic [3:0] {
+    IDLE
+    ,SEND_MGMT_DMA
+    ,WAIT_MGMT_DMA
+    ,SEND_DMA_REQ1
+    ,WAIT_DMA_DONE
+    ,DEQUEUE_MODE
+    ,SEND_DMA_REQ2
+    ,SCAN_MODE 
+    ,RECOVER
+  } mhu_state_e;
+
+  mhu_state_e mhu_state_r, mhu_state_n;
+ 
+  // Replacement policy 
+  // Find the way that is invalid.
+  // If invalid does not exist, pick LRU.
+  // If LRU is locked, then resort to backup LRU.
+  //
+  logic [lg_ways_lp-1:0] invalid_way_id;
+  logic invalid_exist;
+  logic [lg_ways_lp-1:0] backup_lru_way_id;
+  logic [lg_ways_lp-1:0] replacement_way_id;
+
+  bsg_priority_encode #(
+    .width_p(ways_p)
+    ,.lo_to_hi_p(1)
+  ) invalid_way_pe (
+    .i(~valid_tl_i & ~lock_tl_i) // invalid and unlocked
+    ,.addr_o(invalid_way_id)
+    ,.v_o(invalid_exist)
+  );
+
+  bsg_priority_encode #(
+    .width_p(ways_p)
+    ,.lo_to_hi_p(1)
+  ) backup_lru_pe (
+    .i(~lock_tl_i)
+    ,.addr_o(backup_lru_way_id)
+    ,.v_o()  // backup LRU has to exist.
+  );
+
+  assign replacement_way_id = invalid_exist
+    ? invalid_way_id
+    : (lock_tl_i[lru_way_i]
+      ? backup_lru_way_id
+      : lru_way_id);
+
+  logic replacement_dirty;
+  logic replacement_valid;
+  logic [tag_width_lp-1:0] replacement_tag;
+
+  assign replacement_dirty = dirty_i[replacement_way_id];
+  assign replacement_valid = valid_tl_i[replacement_way_id];
+  assign replacement_tag = tag_tl_i[replacement_way_id];
+
+  logic [lg_ways_lp-1:0] addr_way_tl;
+  logic [tag_width_lp-1:0] addr_tag_tl;
+  logic [lg_sets_lp-1:0] addr_index_tl;
+
+  assign addr_way_tl = addr_tl_i[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
+  assign addr_tag_tl = addr_tl_i[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
+  assign addr_index_tl = addr_tl_i[block_offset_width_lp+:lg_sets_lp];
+
+  // current dma_cmd
+  //
+  bsg_cache_non_blocking_dma_cmd_s curr_dma_cmd_r, curr_dma_cmd_n;
+  logic [tag_width_lp-1:0] curr_miss_tag;
+  logic [lg_sets_lp-1:0] curr_miss_index;
+
+  // FSM
+  //
+  always_comb begin
+
+    mhu_state_n = mhu_state_r;
+    curr_dma_cmd_n = curr_dma_cmd_r;
+
+    idle_o = 1'b0;
+    recover_o = 1'b0;
+
+    mgmt_yumi_o = 1'b0;
+    out_data_o = '0;
+    out_data_v_o = 1'b0;
+
+    stat_mem_pkt_v_o = 1'b0;
+    stat_mem_pkt_o = '0;
+
+    tag_mem_pkt_v_o = 1'b0;
+    tag_mem_pkt_o = '0;
+
+    dma_cmd_v_o = 1'b0;
+    dma_cmd_out = '0;
+    dma_ack_o = 1'b0;
   
+    case (mhu_state_r)
+
+      IDLE: begin
+        if (mgmt_v_i) begin
+
+          out_data_o = '0;
+          stat_mem_pkt.index = addr_index_tl;
+          tag_mem_pkt.index = addr_index_tl;
+
+          if (decode_tl_r.tagla_op) begin
+            mgmt_yumi_o = 1'b1;
+            out_data_o = {tag_tl_i[addr_way_tl], addr_index_tl, {block_offset_width_lp{1'b0}}};            
+            out_data_v_o = 1'b1;
+          end
+          else if (decode_tl_r.taglv_op) begin
+            mgmt_yumi_o = 1'b1;
+            out_data_o = {{(data_width_p-2){1'b0}}, lock_tl_i[addr_way_tl], valid_tl_i[addr_way_tl]};
+            out_data_v_o = 1'b1;
+          end
+          else if (decode_tl_r.tagst_op) begin
+            mgmt_yumi_o = 1'b1;
+            out_data_v_o = 1'b1;
+
+            stat_mem_pkt_v_o = 1'b1;
+            stat_mem_pkt.opcode = e_stat_reset;
+          end
+          else if (decode_tl_r.tagfl_op) begin
+            mgmt_yumi_o = ~valid_tl_i[addr_way_tl];
+            out_data_v_o = ~valid_tl_i[addr_way_tl];
+        
+            stat_mem_pkt_v_o = valid_tl_i[addr_way_tl];
+            stat_mem_pkt.opcode = e_stat_read;
+
+            mhu_state_n = valid_tl_i[addr_way_tl]
+              ? SEND_MGMT_DMA
+              : IDLE;
+          end
+          else if (decode_tl_r.afl_op | decode_tl_r.aflinv_op) begin
+            mgmt_yumi_o = ~tag_hit_found_i;
+            out_data_v_o = ~tag_hit_found_i;
+           
+            stat_mem_pkt_v_o = tag_hit_found_i;
+            stat_mem_pkt.opcode = e_stat_read;
+   
+            mhu_state_n = tag_hit_found_i
+              ? SEND_MGMT_DMA
+              : IDLE;
+          end
+          else if (decode_tl_r.ainv_op) begin
+            mgmt_yumi_o = 1'b1;
+            out_data_v_o = 1'b1;
+            
+            stat_mem_pkt_v_o = tag_hit_found_i;
+            stat_mem_pkt.way_id = tag_hit_way_i;
+            stat_mem_pkt.opcode = e_stat_clear_dirty; 
+
+            tag_mem_pkt_v_o = tag_hit_found_i;
+            tag_mem_pkt.way_id = tag_hit_way_i;
+            tag_mem_pkt.opcode = e_tag_invalidate;
+          end
+          else if (decode_tl_r.alock_op) begin
+            mgmt_yumi_o = tag_hit_found_i;
+            out_data_v_o = tag_hit_found_i;
+
+            stat_mem_pkt_v_o = ~tag_hit_found_i;
+            stat_mem_pkt.opcode = e_stat_read;
+
+            tag_mem_pkt_v_o = tag_hit_found_i;
+            tag_mem_pkt.way_id = tag_hit_way_i;
+            tag_mem_pkt.opcode = e_tag_lock;
+        
+            mhu_state_n = tag_hit_found_i
+              ? IDLE
+              : SEND_MGMT_DMA;
+          end
+          else if (decode_tl_r.aunlock_op) begin
+            mgmt_yumi_o = 1'b1;
+            out_data_v_o = 1'b1;
+
+            tag_mem_pkt_v_o = tag_hit_found_i;
+            tag_mem_pkt.way_id = tag_hit_way_i;
+            tag_mem_pkt.opcode = e_tag_unlock;
+          end
+          else begin
+            // This would never happen by design.
+            // Do nothing.
+          end
+        end
+        else if (dma_pending_i | dma_done_i) begin
+          mhu_state_n = WAIT_DMA_DONE; 
+        end
+        else begin
+          idle_o = ~miss_fifo_entry_v_i;
+
+          tag_mem_pkt_v_o = miss_fifo_entry_v_i;
+          tag_mem_pkt.index = miss_fifo_entry.addr[block_offset_width_lp+:lg_sets_lp];
+          tag_mem_pkt.opcode = e_tag_read;
+
+          stat_mem_pkt_v_o = miss_fifo_entry_v_i;
+          stat_mem_pkt.index = miss_fifo_entry.addr[block_offset_width_lp+:lg_sets_lp];
+          stat_mem_pkt.opcode = e_stat_read;
+
+          mhu_state_n = (miss_fifo_entry_v_i & ~tl_block_loading_i)
+            ? SEND_DMA_REQ1
+            : IDLE;
+        end
+      end
+  
+      // Sending DMA for TAGFL,AFL,AFLINV,ALOCK.
+      SEND_MGMT_DMA: begin
+  
+        dma_cmd_v_o = decode_tl_r.alock_op
+          ? 1'b1
+          : (decode_tl_r.tagfl_op
+            ? dirty_i[addr_way_tl]
+            : dirty_i[tag_hit_way_i]);
+        dma_cmd_out.way_id = decode_tl_r.alock_op
+          ? replacement_way_id
+          : tag_hit_way_i;
+        dma_cmd_out.index = addr_index_tl;
+        dma_cmd_out.refill = decode_tl_r.alock_op;
+        dma_cmd_out.refill_tag = addr_tag_tl; // don't care for flush ops.
+        dma_cmd_out.evict = decode_tl_r.alock_op
+          ? (replacement_dirty & replacement_valid)
+          : 1'b1;
+        dma_cmd_out.evict_tag = decode_tl_r.alock_op
+          ? replacement_tag
+          : (decode_tl_r.tagfl_op
+            ? tag_tl_i[addr_way_tl]
+            : tag_tl_i[tag_hit_way_i]);
+        
+        mgmt_yumi_o = ~decode_tl_r.alock_op
+          & (decode_tl_r.tagfl_op
+            ? ~dirty_i[addr_way_tl]
+            : ~dirty_i[tag_hit_way_i]);
+
+        out_v_o = ~decode_tl_r.alock_op
+          & (decode_tl_r.tagfl_op
+            ? ~dirty_i[addr_way_tl]
+            : ~dirty_i[tag_hit_way_i]);
+
+        tag_mem_pkt_v_o = decode_tl_r.aflinv_op & ~dirty_i[tag_hit_way_i];
+        tag_mem_pkt.way = tag_hit_way_i;
+        tag_mem_pkt.index = addr_tl_index;
+        tag_mem_pkt.opcode = e_tag_invalidate;
+
+        mhu_state_n = decode_tl_r.alock_op
+          ? WAIT_MGMT_DMA
+          : (decode_tl_r.tagfl_op
+            ? (dirty_i[addr_way_tl] ? WAIT_MGMT_DMA : IDLE)
+            : (dirty_i[tag_hit_way_i] ? WAIT_MGMT_DMA : IDLE));
+
+      end
+
+      // Waiting DMA for TAGFL,AFL,AFLINV,ALOCK.
+      WAIT_MGMT_DMA: begin
+
+        stat_mem_pkt_v_o = dma_done_i;
+        stat_mem_pkt.index = addr_index_tl;
+        stat_mem_pkt.way_id = decode_tl_r.tagfl_op
+          ? addr_way_tl
+          : (decode_tl_r.alock
+            ? replacement_way_id
+            : tag_hit_way_i);
+        stat_mem_pkt.opcode = e_stat_clear_dirty;
+
+        tag_mem_pkt_v_o = dma_done_i & (decode_tl_r.alock_op | decode_tl_r.aflinv_op);
+        tag_mem_pkt.way_id = decode_tl_r.alock_op
+          ? replacement_way_id
+          : tag_hit_way_i;
+        tag_mem_pkt.index = addr_index_tl;
+        tag_mem_pkt.tag = addr_tag_tl; // dont care for AFLINV.
+        tag_mem_pkt.opcode = decode_tl_r.alock_op
+          ? e_tag_set_tag_and_lock
+          : e_tag_invalidate;
+
+        dma_ack_o = dma_done_i;
+        out_v_o = dma_done_i;
+     
+        mhu_state_n = dma_done_i
+          ? IDLE
+          : WAIT_MGMT_DMA;
+
+      end
+
+      // sending DMA request for the first primary miss.
+      SEND_DMA_REQ1: begin
+        dma_cmd_v_o = 1'b1;
+        dma_cmd_out.way_id = replacement_way_id;
+        dma_cmd_out.index = miss_fifo_entry.addr[block_offset_width_lp+:lg_sets_lp]; 
+        dma_cmd_out.refill = 1'b1;
+        dma_cmd_out.evict = replacement_valid & replacement_dirty;
+        dma_cmd_out.refill_tag = miss_fifo_entry.addr[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
+        dma_cmd_out.evict_tag = replacement_tag;
+        
+        recover_o = 1'b1;
+ 
+        mhu_state_n = WAIT_DMA_DONE;
+      end
+
+      // Wait for DMA to be done for load/store miss
+      // It might already be done.
+      WAIT_DMA_DONE: begin
+        dma_ack_o = dma_done_i;
+
+        curr_dma_cmd_n = dma_done_i
+          ? dma_cmd_return
+          : curr_dma_cmd_r;
+
+        mhu_state_n = dma_done_i
+          ? DEQUEUE_MODE
+          : WAIT_DMA_DONE;
+      end 
+
+      // 
+      DEQUEUE_MODE: begin
+
+      end
+      
+    endcase
+       
+  end
 
 
-
-
-
-
-
-
-
+  // synopsys sync_set_reset "reset_i"
+  always_ff @ (posedge clk_i) begin
+    if (reset_i) begin
+      mhu_state_r <= IDLE; 
+      curr_dma_cmd_r <= '0;
+    end
+    else begin
+      mhu_state_r <= mhu_state_n;
+      curr_dma_cmd_r <= curr_dma_cmd_n;
+    end
+  end
 
 
 endmodule

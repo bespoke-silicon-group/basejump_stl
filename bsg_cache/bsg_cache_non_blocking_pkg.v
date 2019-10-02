@@ -83,6 +83,7 @@ package bsg_cache_non_blocking_pkg;
     logic aunlock_op;
 
     logic tag_read_op;
+    logic mgmt_op;
   } bsg_cache_non_blocking_decode_s;
 
 
@@ -124,7 +125,7 @@ package bsg_cache_non_blocking_pkg;
       logic sigext_op;                                                                     \
       logic [1:0] size_op;                                                                \
       logic [`BSG_SAFE_CLOG2(data_width_mp>>3)-1:0] byte_sel;                              \
-      logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way;                                            \
+      logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way_id;                                          \
       logic [`BSG_SAFE_CLOG2(sets_mp)+`BSG_SAFE_CLOG2(block_size_in_words_mp)-1:0] addr;    \
       logic [data_width_mp-1:0] data;                                                      \
     } bsg_cache_non_blocking_data_mem_pkt_s
@@ -156,7 +157,7 @@ package bsg_cache_non_blocking_pkg;
     ,e_tag_set_tag                // valid <= 1;
     ,e_tag_set_tag_and_lock       // valid <= 1; lock <= 1;
     ,e_tag_invalidate             // valid <= 0; lock <= 0;
-    ,e_tag_lock                   // lock <= 0;
+    ,e_tag_lock                   // lock <= 1;
     ,e_tag_unlock                 // lock <= 0;
   } bsg_cache_non_blocking_tag_op_e;
 
@@ -165,7 +166,7 @@ package bsg_cache_non_blocking_pkg;
   //
   `define declare_bsg_cache_non_blocking_tag_mem_pkt_s(ways_mp,sets_mp,data_width_mp,tag_width_mp) \
     typedef struct packed {                               \
-      logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way;           \
+      logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way_id;        \
       logic [`BSG_SAFE_CLOG2(sets_mp)-1:0] index;         \
       logic [data_width_mp-1:0] data;                     \
       logic [tag_width_mp-1:0] tag;                       \
@@ -206,8 +207,8 @@ package bsg_cache_non_blocking_pkg;
   `define declare_bsg_cache_non_blocking_stat_mem_pkt_s(ways_mp,sets_mp) \
     typedef struct packed {                               \
       bsg_cache_non_blocking_stat_op_e opcode;            \
-      logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way;           \
-      logic [`BSG_SAFE_CLOG2(sets_mp)-1:0] addr;          \
+      logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way_id;         \
+      logic [`BSG_SAFE_CLOG2(sets_mp)-1:0] index;          \
     } bsg_cache_non_blocking_stat_mem_pkt_s
  
   `define bsg_cache_non_blocking_stat_mem_pkt_width(ways_mp,sets_mp) \
@@ -228,16 +229,17 @@ package bsg_cache_non_blocking_pkg;
   //
   `define declare_bsg_cache_non_blocking_miss_fifo_entry_s(id_width_mp,addr_width_mp,data_width_mp) \
     typedef struct packed {                   \
-      logic load_not_store;                   \
+      logic write_not_read;                   \
       logic block_load;                       \
       logic [1:0] size_op;                    \
+      logic sigext_op;                        \
       logic [id_width_mp-1:0] id;             \
       logic [addr_width_mp-1:0] addr;         \
       logic [data_width_mp-1:0] data;         \
     } bsg_cache_non_blocking_miss_fifo_entry_s;  
 
   `define bsg_cache_non_blocking_miss_fifo_entry_width(id_width_mp,addr_width_mp,data_width_mp) \
-    (1+1+2+id_width_mp+addr_width_mp+data_width_mp) 
+    (1+1+2+1+id_width_mp+addr_width_mp+data_width_mp) 
 
 
 endpackage
