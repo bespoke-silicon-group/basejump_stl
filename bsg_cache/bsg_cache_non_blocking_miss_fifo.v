@@ -1,7 +1,7 @@
 /**
  *    bsg_cache_non_blocking_miss_fifo.v
  *
- *    Miss FIFO
+ *    Special Miss FIFO
  *
  *    @author tommy
  *
@@ -26,6 +26,7 @@ module bsg_cache_non_blocking_miss_fifo
     , output logic [width_p-1:0] data_o
     , input yumi_i
     , input bsg_cache_non_blocking_miss_fifo_op_e yumi_op_i
+    , input scan_not_dq_i // SCAN or DEQUEUE mode
 
     , input rollback_i
     , output logic empty_o
@@ -185,20 +186,21 @@ module bsg_cache_non_blocking_miss_fifo
               cp_inc = 1'b1;
               read_inc = '1;
             end
-            e_miss_fifo_scan_skip: begin
+            e_miss_fifo_skip: begin
               inval = 1'b0;
               cp_inc = 1'b0;
-              read_inc = '1;
-            end
-            e_miss_fifo_dequeue_skip: begin
-              inval = 1'b0;
-              cp_inc = 1'b1;
               read_inc = '1;
             end
             e_miss_fifo_invalidate: begin
               inval = 1'b1;
               cp_inc = 1'b0;
               read_inc = '1;
+            end
+            default: begin
+              // this should never happen.
+              inval = 1'b0;
+              cp_inc = 1'b0;
+              read_inc = '0;
             end
           endcase
         end
@@ -210,7 +212,7 @@ module bsg_cache_non_blocking_miss_fifo
       end
       else begin
         inval = 1'b0;
-        cp_inc = 1'b0;
+        cp_inc = ~scan_not_dq_i;
         read_inc = empty ? '0 : '1;
       end
     end

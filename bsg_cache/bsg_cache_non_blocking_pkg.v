@@ -120,14 +120,14 @@ package bsg_cache_non_blocking_pkg;
   // data_mem pkt s
   //
   `define declare_bsg_cache_non_blocking_data_mem_pkt_s(ways_mp,sets_mp,block_size_in_words_mp,data_width_mp) \
-    typedef struct packed {                                                               \
-      logic write_not_read;                                                               \
+    typedef struct packed {                                                                \
+      logic write_not_read;                                                                \
       logic sigext_op;                                                                     \
-      logic [1:0] size_op;                                                                \
-      logic [`BSG_SAFE_CLOG2(data_width_mp>>3)-1:0] byte_sel;                              \
+      logic [1:0] size_op;                                                                 \
+      logic [`BSG_SAFE_CLOG2(data_width_mp>>3)-1:0] byte_sel;                               \
       logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way_id;                                          \
       logic [`BSG_SAFE_CLOG2(sets_mp)+`BSG_SAFE_CLOG2(block_size_in_words_mp)-1:0] addr;    \
-      logic [data_width_mp-1:0] data;                                                      \
+      logic [data_width_mp-1:0] data;                                                       \
     } bsg_cache_non_blocking_data_mem_pkt_s
 
   `define bsg_cache_non_blocking_data_mem_pkt_width(ways_mp,sets_mp,block_size_in_words_mp,data_width_mp) \
@@ -219,8 +219,7 @@ package bsg_cache_non_blocking_pkg;
   //
   typedef enum logic [1:0] {
     e_miss_fifo_dequeue
-    ,e_miss_fifo_scan_skip
-    ,e_miss_fifo_dequeue_skip
+    ,e_miss_fifo_skip
     ,e_miss_fifo_invalidate
   } bsg_cache_non_blocking_miss_fifo_op_e;
 

@@ -194,6 +194,7 @@ module bsg_cache_non_blocking
     ,.data_o(miss_fifo_data_lo)
     ,.yumi_i(miss_fifo_yumi_li)
     ,.yumi_op_i(miss_fifo_yumi_op_li)
+    ,.scan_not_dq_i(miss_fifo_scan_not_dq_li)
 
     ,.rollback_i(miss_fifo_rollback_li)
     ,.empty_o(miss_fifo_empty_lo)
@@ -305,6 +306,7 @@ module bsg_cache_non_blocking
     ,.miss_fifo_entry_i(miss_fifo_data_lo)
     ,.miss_fifo_yumi_o(miss_fifo_yumi_li)
     ,.miss_fifo_yumi_op_o(miss_fifo_yumi_op_li)
+    ,.miss_fifo_scan_not_dq_o(miss_fifo_scan_not_dq_li)
     ,.miss_fifo_rollback_o(miss_fifo_rollback_li)
     ,.miss_fifo_empty_i(miss_fifo_empty_lo)
 

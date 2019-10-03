@@ -78,6 +78,7 @@ module bsg_cache_non_blocking_mhu
     , input [miss_fifo_entry_width_lp-1:0] miss_fifo_entry_i
     , output logic miss_fifo_yumi_o
     , output bsg_cache_non_blocking_miss_fifo_op_e miss_fifo_yumi_op_o
+    , output logic miss_fifo_scan_not_dq_o
     , output logic miss_fifo_rollback_o
     , input miss_fifo_empty_i
    
@@ -144,8 +145,8 @@ module bsg_cache_non_blocking_mhu
   // If invalid does not exist, pick LRU.
   // If LRU is locked, then resort to backup LRU.
   //
-  logic [lg_ways_lp-1:0] invalid_way_id;
   logic invalid_exist;
+  logic [lg_ways_lp-1:0] invalid_way_id;
   logic [lg_ways_lp-1:0] backup_lru_way_id;
   logic [lg_ways_lp-1:0] replacement_way_id;
 
@@ -198,14 +199,12 @@ module bsg_cache_non_blocking_mhu
   logic [tag_width_lp-1:0] miss_fifo_tag;
   logic [lg_sets_lp-1:0] miss_fifo_index;
   logic is_secondary;
-  logic processed;
   
   assign curr_miss_tag = curr_dma_cmd_r.addr[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
   assign curr_miss_index = curr_dma_cmd_r.addr[block_offset_width_lp+:lg_sets_lp];
   assign miss_fifo_tag = miss_fifo_entry.addr[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
   assign miss_fifo_index = miss_fifo_entry.addr[block_offset_width_lp+:lg_sets_lp];
   assign is_secondary = (curr_miss_tag == miss_fifo_tag) & (curr_miss_index == miss_fifo_index);
-  assign processed = miss_fifo_v_i & is_secondary & data_mem_pkt_yumi_i;
 
   // block load counter
   //
@@ -242,6 +241,21 @@ module bsg_cache_non_blocking_mhu
     out_data_o = '0;
     out_data_v_o = 1'b0;
 
+    data_mem_pkt_v_o = 1'b0;
+    data_mem_pkt.write_not_read = miss_fifo_entry.write_not_read;
+    data_mem_pkt.sigext_op = miss_fifo_entry.block_load
+      ? 1'b0
+      : miss_fifo_entry.sigext_op;
+    data_mem_pkt.size_op = miss_fifo_entry.block_load
+      ? (2)'($clog2(data_width_p>>3))
+      : miss_fifo_entry.size_op;
+    data_mem_pkt.byte_sel = miss_fifo_entry.addr[0+:byte_sel_width_lp]; // dont care for block_ld.
+    data_mem_pkt.way_id = curr_dma_cmd_r.way_id;
+    data_mem_pkt.addr = miss_fifo_entry.block_load
+      ? {curr_miss_index, counter_r}
+      : {curr_miss_index, miss_fifo_entry.addr[byte_sel_width_lp+:lg_block_size_in_words_lp]};
+    data_mem_pkt.data = miss_fifo_entry.data;
+
     stat_mem_pkt_v_o = 1'b0;
     stat_mem_pkt_o = '0;
 
@@ -255,6 +269,7 @@ module bsg_cache_non_blocking_mhu
     miss_fifo_yumi_o = 1'b0;
     miss_fifo_yumi_op_o = e_miss_fifo_dequeue;
     miss_fifo_rollback_o = 1'b0;
+    miss_fifo_scan_not_dq_o = 1'b0;
 
     counter_clear = 1'b0;
     counter_up = 1'b0;
@@ -468,7 +483,7 @@ module bsg_cache_non_blocking_mhu
           ? dma_cmd_return
           : curr_dma_cmd_r;
 
-        set_dirty_n = 1'b0; // reset
+        set_dirty_n = 1'b0;
         counter_clear = 1'b1;
 
         mhu_state_n = dma_done_i
@@ -482,44 +497,41 @@ module bsg_cache_non_blocking_mhu
       DEQUEUE_MODE: begin
 
         data_mem_pkt_v_o = miss_fifo_v_i & is_secondary & ~tl_blocking_load_i;
-        data_mem_pkt.write_not_read = miss_fifo_entry.write_not_read;
-        data_mem_pkt.sigext_op = miss_fifo_entry.block_load
-          ? 1'b0
-          : miss_fifo_entry.sigext_op;
-        data_mem_pkt.size_op = miss_fifo_entry.block_load
-          ? (2)'($clog2(data_width_p>>3))
-          : miss_fifo_entry.size_op;
-        data_mem_pkt.byte_sel = miss_fifo_entry.0+:byte_sel_width_lp]; // dont care for block_ld.
-        data_mem_pkt.way_id = curr_dma_cmd_r.way_id;
-        data_mem_pkt.addr = miss_fifo_entry.block_load
-          ? {curr_miss_index, counter_r}
-          : {curr_miss_index, miss_fifo_entry.addr[byte_sel_width_lp+:lg_block_size_in_words_lp]};
-        data_mem_pkt.data = miss_fifo_entry.data;
         
-        miss_fifo_yumi_o = processed
+        miss_fifo_yumi_o = data_mem_pkt_yumi_i
           & (miss_fifo_entry.block_load
             ? counter_max
             : 1'b1);
 
         miss_fifo_yumi_op_o = e_miss_fifo_dequeue;
  
-        counter_up = processed & miss_fifo_entry.block_load & ~counter_max;
-        counter_clear = processed & miss_fifo_entry.block_load & counter_max;
+        counter_up = data_mem_pkt_yumi_i
+          & miss_fifo_entry.block_load & ~counter_max;
+        counter_clear = data_mem_pkt_yumi_i
+          & miss_fifo_entry.block_load & counter_max;
 
         stat_mem_pkt_v_o = miss_fifo_empty_i | (miss_fifo_v_i & ~is_secondary);
         stat_mem_pkt.way_id = curr_dma_cmd_r.way; // dont care for read
-        stat_mem_pkt.index = miss_fifo_index;
+        stat_mem_pkt.index = miss_fifo_empty_i
+          ? curr_miss_index
+          : miss_fifo_index;
         stat_mem_pkt.opcode = miss_fifo_empty_i;  // dont care for read
           ? (set_dirty_r ? e_stat_set_lru_and_dirty : e_stat_set_lru)
           : e_stat_read;
 
         tag_mem_pkt_v_o = miss_fifo_empty_i | (miss_fifo_v_i & ~is_secondary);
         tag_mem_pkt.way_id = curr_dma_cmd_r.way; // dont care for read
-        tag_mem_pkt.index = miss_fifo_index;
+        tag_mem_pkt.index = miss_fifo_empty_i
+          ? curr_miss_index
+          : miss_fifo_index;
         tag_mem_pkt.tag = curr_miss_tag; // dont care for read
         tag_mem_pkt.opcode = miss_fifo_empty_i
           ? e_tag_set_tag
           : e_tag_read;
+
+        set_dirty_n = set_dirty_r 
+          ? 1'b1
+          : data_mem_pkt_yumi_i & miss_fifo_entry.write_not_read;
 
         mhu_state_n = miss_fifo_empty_i
           ? RECOVER
@@ -539,20 +551,69 @@ module bsg_cache_non_blocking_mhu
         dma_cmd_out.refill_tag = miss_fifo_tag;
         dma_cmd_out.evict_tag = replacement_tag;
 
+        counter_clear = 1'b1;
+
         recover_o = 1'b1;
+
         mhu_state_n = SCAN_MODE;
+
       end
 
       // Scan for secondary misses, which is invalidated.
       // non-secondary misses are skipped instead.
       SCAN_MODE: begin
 
+        data_mem_pkt_v_o = miss_fifo_v_i & is_secondary & ~tl_block_loading_i;
+
+        miss_fifo_scan_not_dq_o = 1'b1;
+        miss_fifo_yumi_o = miss_fifo_v_i & (is_secondary
+          ? data_mem_pkt_yumi_i   // invalidate
+          : 1'b1);                // skip
+        miss_fifo_yumi_op_o = is_secondary
+          ? e_miss_fifo_invalidate
+          : e_miss_fifo_skip;
+ 
+        counter_up = data_mem_pkt_yumi_i
+          & miss_fifo_entry.block_load & ~counter_max;
+        counter_clear = data_mem_pkt_yumi_i
+          & miss_fifo_entry.block_load & counter_max;
+       
+        stat_mem_pkt_v_o = miss_fifo_empty_i;
+        stat_mem_pkt.way_id = curr_dma_cmd_r.way;
+        stat_mem_pkt.index = curr_miss_index;
+        stat_mem_pkt.opcode = set_dirty_r
+          ? e_stat_set_lru_and_dirty
+          : e_stat_set_lru;
+
+        tag_mem_pkt_v_o = miss_fifo_empty_i;
+        tag_mem_pkt.way_id = curr_dma_cmd_r.way;
+        tag_mem_pkt.index = curr_miss_index;
+        tag_mem_pkt.tag = curr_miss_tag;
+        tag_mem_pkt.opcode = e_tag_set_tag;
+      
+        set_dirty_n = set_dirty_r 
+          ? 1'b1
+          : data_mem_pkt_yumi_i & miss_fifo_entry.write_not_read;
+ 
+        mhu_state_n = miss_fifo_empty_i
+          ? SCAN_MODE
+          : RECOVER;
+
       end
 
 
       // Recover
       //
-
+      RECOVER: begin
+        recover_o = 1'b1;
+        miss_fifo_rollback_o 1'b1;
+        mhu_state_n = IDLE;
+      end
+      
+      // this should never happen
+      default: begin
+        mhu_state_n = IDLE;
+      end
 
     endcase
        
