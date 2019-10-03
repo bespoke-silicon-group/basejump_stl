@@ -96,7 +96,6 @@ module bsg_cache_non_blocking_mhu
   // localparam
   //
   localparam block_offset_width_lp = lg_block_size_in_words_lp+byte_sel_width_lp;
-  localparam counter_width_lp = `BSG_SAFE_CLOG2(block_size_in_words_p+1);
 
 
   // declare structs
@@ -199,21 +198,24 @@ module bsg_cache_non_blocking_mhu
   logic [tag_width_lp-1:0] miss_fifo_tag;
   logic [lg_sets_lp-1:0] miss_fifo_index;
   logic is_secondary;
+  logic processed;
   
   assign curr_miss_tag = curr_dma_cmd_r.addr[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
   assign curr_miss_index = curr_dma_cmd_r.addr[block_offset_width_lp+:lg_sets_lp];
   assign miss_fifo_tag = miss_fifo_entry.addr[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
   assign miss_fifo_index = miss_fifo_entry.addr[block_offset_width_lp+:lg_sets_lp];
   assign is_secondary = (curr_miss_tag == miss_fifo_tag) & (curr_miss_index == miss_fifo_index);
+  assign processed = miss_fifo_v_i & is_secondary & data_mem_pkt_yumi_i;
 
   // block load counter
   //
   logic counter_clear;
   logic counter_up;
-  logic [counter_width_lp-1:0] counter_r;
+  logic [lg_block_size_in_words_lp-1:0] counter_r;
+  logic counter_max;
 
   bsg_counter_clear_up #(
-    .max_val_p(block_size_in_words_p)
+    .max_val_p(block_size_in_words_p-1)
   ) block_ld_counter (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -221,6 +223,9 @@ module bsg_cache_non_blocking_mhu
     ,.up_i(counter_up)
     ,.count_o(counter_r)
   );
+  
+  assign counter_max = counter_r = (block_size_in_words_p-1);
+  
 
   // FSM
   //
@@ -464,6 +469,7 @@ module bsg_cache_non_blocking_mhu
           : curr_dma_cmd_r;
 
         set_dirty_n = 1'b0; // reset
+        counter_clear = 1'b1;
 
         mhu_state_n = dma_done_i
           ? DEQUEUE_MODE
@@ -475,7 +481,7 @@ module bsg_cache_non_blocking_mhu
       // At this time, there is no pending DMA.
       DEQUEUE_MODE: begin
 
-        data_mem_pkt_v_o = miss_fifo_v_i & is_secondary;
+        data_mem_pkt_v_o = miss_fifo_v_i & is_secondary & ~tl_blocking_load_i;
         data_mem_pkt.write_not_read = miss_fifo_entry.write_not_read;
         data_mem_pkt.sigext_op = miss_fifo_entry.block_load
           ? 1'b0
@@ -486,23 +492,68 @@ module bsg_cache_non_blocking_mhu
         data_mem_pkt.byte_sel = miss_fifo_entry.0+:byte_sel_width_lp]; // dont care for block_ld.
         data_mem_pkt.way_id = curr_dma_cmd_r.way_id;
         data_mem_pkt.addr = miss_fifo_entry.block_load
-          ? {curr_miss_index, counter_r[0+:lg_block_size_in_words_lp]}
+          ? {curr_miss_index, counter_r}
           : {curr_miss_index, miss_fifo_entry.addr[byte_sel_width_lp+:lg_block_size_in_words_lp]};
         data_mem_pkt.data = miss_fifo_entry.data;
         
-        miss_fifo_yumi_o = miss_fifo_v_i & is_secondary & (miss_fifo_entry.block_load
-          ? 
-          :);
-        miss_fifo_yumi_op_o = e_miss_fifo_dequeue;       
+        miss_fifo_yumi_o = processed
+          & (miss_fifo_entry.block_load
+            ? counter_max
+            : 1'b1);
+
+        miss_fifo_yumi_op_o = e_miss_fifo_dequeue;
  
+        counter_up = processed & miss_fifo_entry.block_load & ~counter_max;
+        counter_clear = processed & miss_fifo_entry.block_load & counter_max;
+
+        stat_mem_pkt_v_o = miss_fifo_empty_i | (miss_fifo_v_i & ~is_secondary);
+        stat_mem_pkt.way_id = curr_dma_cmd_r.way; // dont care for read
+        stat_mem_pkt.index = miss_fifo_index;
+        stat_mem_pkt.opcode = miss_fifo_empty_i;  // dont care for read
+          ? (set_dirty_r ? e_stat_set_lru_and_dirty : e_stat_set_lru)
+          : e_stat_read;
+
+        tag_mem_pkt_v_o = miss_fifo_empty_i | (miss_fifo_v_i & ~is_secondary);
+        tag_mem_pkt.way_id = curr_dma_cmd_r.way; // dont care for read
+        tag_mem_pkt.index = miss_fifo_index;
+        tag_mem_pkt.tag = curr_miss_tag; // dont care for read
+        tag_mem_pkt.opcode = miss_fifo_empty_i
+          ? e_tag_set_tag
+          : e_tag_read;
 
         mhu_state_n = miss_fifo_empty_i
           ? RECOVER
           : (miss_fifo_v_i
             ? (is_secondary ? DEQUEUE_MODE : SEND_DMA_REQ2)
             : DEQUEUE_MODE);
+
       end
       
+      // Send the DMA for the next miss.
+      SEND_DMA_REQ2: begin
+        dma_cmd_v_o = 1'b1;
+        dma_cmd_out.way_id = replacement_way_id;
+        dma_cmd_out.index = miss_fifo_index;
+        dma_cmd_out.refill = 1'b1;
+        dma_cmd_out.evict = replacement_dirty & replacement_valid;
+        dma_cmd_out.refill_tag = miss_fifo_tag;
+        dma_cmd_out.evict_tag = replacement_tag;
+
+        recover_o = 1'b1;
+        mhu_state_n = SCAN_MODE;
+      end
+
+      // Scan for secondary misses, which is invalidated.
+      // non-secondary misses are skipped instead.
+      SCAN_MODE: begin
+
+      end
+
+
+      // Recover
+      //
+
+
     endcase
        
   end
