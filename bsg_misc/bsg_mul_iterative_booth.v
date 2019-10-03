@@ -18,7 +18,6 @@ module bsg_mul_iterative_booth  #(
   ,parameter integer stride_p = 32
   ,parameter integer cpa_stride_p = 32
   ,parameter bit pipelined_p = 0
-  ,parameter bit csa_3_2_p = 1
   ,parameter bit debug_p = 0
 ) (
   input clk_i
@@ -42,7 +41,6 @@ if(pipelined_p) begin
     ,.stride_p(stride_p)
     ,.cpa_stride_p(cpa_stride_p)
     ,.debug_p(debug_p)
-    ,.csa_3_2_p(csa_3_2_p)
   ) mul_pipelined (.*);
   assign ready_o = 1'b1;
 end
@@ -52,7 +50,6 @@ else begin
     ,.stride_p(stride_p)
     ,.cpa_stride_p(cpa_stride_p)
     ,.debug_p(debug_p)
-    ,.csa_3_2_p(csa_3_2_p)
   ) mul_pipelined (.*);
 end
 endmodule
@@ -110,72 +107,21 @@ else
   
 endmodule
 
-// This module merges 3:2 compressor and 4:2 compressor. Using which wallace tree is determined by a simple parameter.
-module bsg_wallace_tree_configuration #(
-  parameter integer width_p = "inv"
-  ,parameter integer capacity_p = "inv"
-  ,parameter integer out_width_p = width_p
-  ,parameter bit csa_3_2_p = 1 // if this parameter is set to 1, 3:2 compressor is enabled.
-)(
-  input [capacity_p+1:0][width_p-1:0] ops_i
-  ,output [out_width_p-1:0] resA_o
-  ,output [out_width_p-1:0] resB_o
-);
-  if(csa_3_2_p == 1) begin: WALLACE_TREE_3_2
-    bsg_adder_wallace_tree_3_2 #(
-      .width_p(width_p)
-      ,.capacity_p(capacity_p+2)
-      ,.out_width_p(out_width_p)
-    ) tree (
-      .ops_i(ops_i)
-      ,.resA_o(resA_o)
-      ,.resB_o(resB_o)
-    );
-  end
-  else begin
-    wire [out_width_p-1:0] tree_outA;
-    wire [out_width_p-1:0] tree_outB;
-    bsg_adder_wallace_tree #(
-      .width_p(width_p)
-      ,.iter_step_p(capacity_p)
-      ,.max_out_size_lp(out_width_p)
-    ) tree (
-      .op_i(ops_i[capacity_p-1:0])
-      ,.resA_o(tree_outA)
-      ,.resB_o(tree_outB)
-    );
-    bsg_adder_carry_save_4_2 #(
-      .width_p(out_width_p)
-    ) acc (
-      .opA_i(ops_i[capacity_p])
-      ,.opB_i(ops_i[capacity_p+1])
-      ,.opC_i(tree_outA)
-      ,.opD_i(tree_outB)
-
-      ,.A_o(resA_o)
-      ,.B_o(resB_o)
-    );
-  end
-
-endmodule
-
-
 // this module generates the partial product, and at the same time compress the partial product with wallace tree.
 module bsg_mul_booth_compressor #(
   parameter integer width_p = "inv"
   ,parameter integer stride_p = "inv"
-  ,parameter bit csa_3_2_p = 0
-  ,localparam integer csa_tree_width_lp = stride_p + 2 + width_p + 1 + 1
   ,parameter bit debug_p = 0
+  ,localparam integer output_size_lp = (width_p + stride_p + 4) > 2*width_p ? 2*width_p : (width_p + stride_p + 4)
 )(
   input [width_p:0] opA_i
   ,input [2:0][width_p/2-1:0] opB_i
-  ,input [csa_tree_width_lp-1:0] csa_opA_i
-  ,input [csa_tree_width_lp-1:0] csa_opB_i
+  ,input [width_p+3:0] csa_opA_i
+  ,input [width_p+3:0] csa_opB_i
   ,input last_sign_correction_i
 
-  ,output [csa_tree_width_lp-1:0] A_o
-  ,output [csa_tree_width_lp-1:0] B_o
+  ,output [output_size_lp-1:0] A_o
+  ,output [output_size_lp-1:0] B_o
 
   ,input clk_i // for debug
 );
@@ -190,20 +136,26 @@ if (booth_step_lp == 1) begin: NO_WALLACE_TREE
     ,.code_i({opB_i[2][0], opB_i[1][0], opB_i[0][0]})
     ,.partial_product_o(partial_product_lo[width_p+2:0])
   );
-  wire [csa_tree_width_lp-1:0] csa_op = {1'b0, partial_product_lo, (stride_p-1)'(0), last_sign_correction_i};
-  wire [csa_tree_width_lp-1:0] csa_res_o;
-  wire [csa_tree_width_lp-1:0] csa_car_o;
+  wire [output_size_lp-1:0] csa_op;
+  if(width_p + stride_p + 4 < 2*width_p) begin
+    assign csa_op = {1'b0, partial_product_lo, (stride_p-1)'(0), last_sign_correction_i};
+  end
+  else begin
+    assign csa_op = {partial_product_lo[width_p-1:0], (stride_p-1)'(0), last_sign_correction_i};
+  end
+  wire [output_size_lp-1:0] csa_res_o;
+  wire [output_size_lp-1:0] csa_car_o;
   bsg_adder_carry_save #(
-    .width_p(csa_tree_width_lp)
+    .width_p(output_size_lp)
   ) unique_csa (
-    .opA_i(csa_opA_i[csa_tree_width_lp-1:stride_p])
-    ,.opB_i(csa_opB_i[csa_tree_width_lp-1:stride_p])
+    .opA_i(csa_opA_i)
+    ,.opB_i(csa_opB_i)
     ,.opC_i(csa_op)
     ,.res_o(csa_res_o)
     ,.car_o(csa_car_o)
   );
   assign A_o = csa_res_o;
-  assign B_o = {csa_car_o[csa_tree_width_lp-2:0], 1'b0};
+  assign B_o = {csa_car_o[output_size_lp-2:0], 1'b0};
   if(debug_p) always_ff @(posedge clk_i) begin
       //$display("Partial Sum:%b",partial_product_lo);
   end
@@ -211,8 +163,9 @@ end
 else begin: WALLACE_TREE
   // Wallace Tree 
   wire [booth_step_lp-1:0][width_p+2:0] partial_product_lo;
-  wire [booth_step_lp+1:0][csa_tree_width_lp-1:0] ops_i;
-  for(genvar i = 0; i < booth_step_lp; ++i) begin
+  wire [booth_step_lp-1:0] sign_correction;
+  wire [1:0][width_p+3:0] base_reg;
+  for(genvar i = 0; i < booth_step_lp; ++i) begin: BOOTH_SELECTOR
     bsg_booth_selector #(
       .width_p(width_p)
       ,.initial_p(0)
@@ -221,31 +174,37 @@ else begin: WALLACE_TREE
       ,.code_i({opB_i[2][i], opB_i[1][i], opB_i[0][i]})
       ,.partial_product_o(partial_product_lo[i])
     );
+    
     if (i == 0)
-      assign ops_i[i] = {(stride_p-1)'(0), partial_product_lo[i], 1'b0, (last_sign_correction_i)};
+      assign sign_correction[i] = last_sign_correction_i;
     else 
-      assign ops_i[i] = {(stride_p-1-2*i)'(0), partial_product_lo[i], 1'b0, (opB_i[2][i-1]), (2*i)'(0)};
+      assign sign_correction[i] = opB_i[2][i-1];
   end
 
-  assign ops_i[booth_step_lp] = {stride_p'(0) ,csa_opA_i[csa_tree_width_lp-1:stride_p]};
-  assign ops_i[booth_step_lp+1] = {stride_p'(0) ,csa_opB_i[csa_tree_width_lp-1:stride_p]};
+  assign base_reg[0] = csa_opA_i;
+  assign base_reg[1] = csa_opB_i;
 
-  wire [csa_tree_width_lp-1:0] tree_outA;
-  wire [csa_tree_width_lp-1:0] tree_outB;
-
-  bsg_wallace_tree_configuration #(
-    .width_p(csa_tree_width_lp)
-    ,.capacity_p(booth_step_lp)
-    ,.out_width_p(csa_tree_width_lp)
-    ,.csa_3_2_p(csa_3_2_p)
-  ) tree (
-    .ops_i(ops_i)
-    ,.resA_o(tree_outA)
-    ,.resB_o(tree_outB)
+  bsg_adder_wallace_tree_3_2 #(
+    .width_p(width_p)
+    ,.stride_p(stride_p)
+  ) cps (
+    .base_i(base_reg)
+    ,.psum_i(partial_product_lo)
+    ,.sign_modification_i(sign_correction)
+    ,.outA_o(A_o)
+    ,.outB_o(B_o)
   );
-
-  assign A_o = tree_outA[csa_tree_width_lp-1:0];
-  assign B_o = tree_outB[csa_tree_width_lp-1:0];
+  if(debug_p) begin
+    always_ff @(posedge clk_i) begin
+      $display("=======================");
+      for(int i = 0; i < booth_step_lp; ++i)
+        $display("partial_product_lo[%d]:%b", i, partial_product_lo[i]);
+      $display("A_o:%b", A_o);
+      $display("B_o:%b", B_o);
+      $display("csa_opA_i:%b", csa_opA_i);
+      $display("csa_opB_i:%b", csa_opB_i);
+    end
+  end
 end
 
 endmodule
@@ -254,7 +213,6 @@ module bsg_mul_iterative_booth_unpipelined #(
   parameter integer width_p = 32
   ,parameter integer stride_p = 32
   ,parameter integer cpa_stride_p = 32
-  ,parameter bit csa_3_2_p = 1
   ,parameter bit debug_p = 0
 ) (
   input clk_i
@@ -368,13 +326,13 @@ module bsg_mul_iterative_booth_unpipelined #(
   // stride_p: for partial products which is most shifted. 
   // width_p + 1 + 2: the size of partial product.
   // 1: carry 
-  localparam csa_tree_width_lp = stride_p + 2 + width_p + 1 + 1;
+  localparam csa_reg_width_lp = stride_p + 4 + width_p;
 
-  reg [csa_tree_width_lp-1:0] csa_opA_r;
-  reg [csa_tree_width_lp-1:0] csa_opB_r;
+  reg [csa_reg_width_lp-1:0] csa_opA_r;
+  reg [csa_reg_width_lp-1:0] csa_opB_r;
 
-  wire [csa_tree_width_lp-1:0] csa_opA_n;
-  wire [csa_tree_width_lp-1:0] csa_opB_n;
+  wire [csa_reg_width_lp-1:0] csa_opA_n;
+  wire [csa_reg_width_lp-1:0] csa_opB_n;
 
   wire [width_p+3:0] csa_opA_init;
 
@@ -387,6 +345,8 @@ module bsg_mul_iterative_booth_unpipelined #(
     ,.partial_product_o(csa_opA_init)
   );
 
+  localparam csa_tree_width_lp = csa_reg_width_lp > 2*width_p ? 2*width_p : csa_reg_width_lp;
+
   wire [csa_tree_width_lp-1:0] aggregation_outA;
   wire [csa_tree_width_lp-1:0] aggregation_outB;
   // Setup aggregation units
@@ -395,12 +355,11 @@ module bsg_mul_iterative_booth_unpipelined #(
     .width_p(width_p)
     ,.stride_p(stride_p)
     ,.debug_p(debug_p)
-    ,.csa_3_2_p(csa_3_2_p)
   ) compressor (
     .opA_i(opA_r)
     ,.opB_i(opB_r)
-    ,.csa_opA_i(csa_opA_r)
-    ,.csa_opB_i(csa_opB_r)
+    ,.csa_opA_i(csa_opA_r[csa_reg_width_lp-1:stride_p])
+    ,.csa_opB_i(csa_opB_r[csa_reg_width_lp-1:stride_p])
     ,.last_sign_correction_i(partial_sign_correction_r)
 
     ,.A_o(aggregation_outA)
@@ -483,7 +442,6 @@ module bsg_mul_iterative_booth_pipelined #(
   parameter integer width_p = "inv"
   ,parameter integer stride_p = "inv"
   ,parameter integer cpa_stride_p = width_p
-  ,parameter bit csa_3_2_p = 1
   ,parameter bit debug_p = 0
 )(
   input clk_i
@@ -585,17 +543,13 @@ for(genvar i = 0; i < booth_level_lp; ++i) begin: OPB_SFR
   end
 end
 
-// Partial Sum 
-// stride_p: for partial products which is most shifted. 
-// width_p + 1 + 2: the size of partial product.
-// 1: carry 
-localparam csa_tree_width_lp = stride_p + 2 + width_p + 1 + 1;
+localparam csa_reg_width_lp = stride_p + width_p + 4;
 
-reg [booth_level_lp:0][csa_tree_width_lp-1:0] csa_opA_r;
-reg [booth_level_lp:0][csa_tree_width_lp-1:0] csa_opB_r;
+reg [booth_level_lp:0][csa_reg_width_lp-1:0] csa_opA_r;
+reg [booth_level_lp:0][csa_reg_width_lp-1:0] csa_opB_r;
 
-wire [booth_level_lp:0][csa_tree_width_lp-1:0] csa_opA_n;
-wire [booth_level_lp:0][csa_tree_width_lp-1:0] csa_opB_n;
+wire [booth_level_lp:0][csa_reg_width_lp-1:0] csa_opA_n;
+wire [booth_level_lp:0][csa_reg_width_lp-1:0] csa_opB_n;
 
 wire [width_p+3:0] csa_opA_init;
 
@@ -608,7 +562,7 @@ bsg_booth_selector #(
   ,.partial_product_o(csa_opA_init)
 );
 
-assign csa_opA_n[0] = {csa_opA_init,stride_p'(0)};
+assign csa_opA_n[0] = {csa_opA_init, stride_p'(0)};
 assign csa_opB_n[0] = '0;
 
 for(genvar i = 0; i <= booth_level_lp; ++i) begin: CSA_SUM_SFR
@@ -655,8 +609,12 @@ for(genvar i = 0; i < booth_level_lp; ++i) begin
   end
 end
 
+localparam csa_tree_width_lp = csa_reg_width_lp > 2*width_p ? 2*width_p : csa_reg_width_lp;
+
 wire [booth_level_lp-1:0][csa_tree_width_lp-1:0] wallace_tree_outA;
 wire [booth_level_lp-1:0][csa_tree_width_lp-1:0] wallace_tree_outB;
+
+
 
 // Wallace Tree 
 for(genvar i = 0; i < booth_level_lp; ++i) begin: WALLACE_TREE
@@ -668,12 +626,11 @@ for(genvar i = 0; i < booth_level_lp; ++i) begin: WALLACE_TREE
     .width_p(width_p)
     ,.stride_p(stride_p)
     ,.debug_p(debug_p)
-    ,.csa_3_2_p(csa_3_2_p)
   ) compressor (
     .opA_i(opA_r[i])
     ,.opB_i(opB_local)
-    ,.csa_opA_i(csa_opA_r[i])
-    ,.csa_opB_i(csa_opB_r[i])
+    ,.csa_opA_i(csa_opA_r[i][csa_reg_width_lp-1:stride_p])
+    ,.csa_opB_i(csa_opB_r[i][csa_reg_width_lp-1:stride_p])
     ,.last_sign_correction_i(sign_modification_r[i])
 
     ,.A_o(wallace_tree_outA[i])
@@ -684,8 +641,14 @@ for(genvar i = 0; i < booth_level_lp; ++i) begin: WALLACE_TREE
 end
 // Bind wallace_tree_outA/B with csa_opA/B_n
 for(genvar i = 0; i < booth_level_lp; ++i) begin: CSA_RESULT_BINDER
-  assign csa_opA_n[i+1] = wallace_tree_outA[i];
-  assign csa_opB_n[i+1] = wallace_tree_outB[i];
+  if(stride_p == width_p) begin
+    assign csa_opA_n[i+1] = {4'b0, wallace_tree_outA[i]};
+    assign csa_opB_n[i+1] = {4'b0, wallace_tree_outB[i]};
+  end
+  else begin
+    assign csa_opA_n[i+1] = wallace_tree_outA[i];
+    assign csa_opB_n[i+1] = wallace_tree_outB[i];
+  end
 end
 
 reg [booth_level_lp + cpa_level_lp-2:0][width_p:0] result_low_r;
@@ -763,10 +726,6 @@ if(cpa_stride_p != width_p) begin: CPA_PIPELINE
     end
     wire [cpa_stride_p:0] cpa_output = {1'b0, remnant_opA_r[i][cpa_stride_p-1:0]} + {1'b0, remnant_opB_r[i][cpa_stride_p-1:0]} + result_high_r[i][width_p];
     assign result_high_n[i+1] = {cpa_output,result_high_r[i][width_p-1:cpa_stride_p]};
-    if(debug_p) always_ff @(posedge clk_i) begin 
-        $display("remnant_opA_r[%d]:%b",i,remnant_opA_r[i]);
-        $display("remnant_opB_r[%d]:%b",i,remnant_opB_r[i]);
-    end
   end
 end
 
@@ -782,15 +741,6 @@ for(genvar i = 0; i < cpa_level_lp; i++) begin: HIGH_RESULT
 end
 
 assign result_o = {result_high_r[cpa_level_lp-1][width_p-1:0],result_low_r[booth_level_lp + cpa_level_lp-2][width_p-1:0]};
-
-if(debug_p) begin
-  always_ff @(posedge clk_i) begin
-    $display("============================");
-    for(int i = 0; i < cpa_level_lp; i++) begin
-      $display("result_high_n[%d]:%b", i, result_high_n[i]);
-    end
-  end
-end
 
 endmodule
 
