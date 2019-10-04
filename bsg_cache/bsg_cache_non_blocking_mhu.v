@@ -41,17 +41,14 @@ module bsg_cache_non_blocking_mhu
 
     // cache management
     , input mgmt_v_i
+    , output logic mgmt_yumi_o
+    , output logic mgmt_data_v_o
+    , output logic [data_width_p-1:0] mgmt_data_o
+    , output logic [id_width_p-1:0] mgmt_id_o
+
     , input bsg_cache_non_blocking_decode_s decode_tl_i
     , input [addr_width_p-1:0] addr_tl_i
-    , input [ways_p-1:0] valid_tl_i
-    , input [ways_p-1:0] lock_tl_i
-    , input [ways_p-1:0][tag_width_lp-1:0] tag_tl_i
-    , input [lg_ways_lp-1:0] tag_hit_way_i
-    , input tag_hit_found_i
-    , output logic mgmt_yumi_o
-
-    , output logic out_v_o
-    , output logic [data_width_p-1:0] out_data_o
+    , input [id_width_p-1:0] id_tl_i
 
     , output logic idle_o
     , output logic recover_o
@@ -60,6 +57,7 @@ module bsg_cache_non_blocking_mhu
     // data_mem
     , output logic data_mem_pkt_v_o
     , output logic [data_mem_pkt_width_lp-1:0] data_mem_pkt_o
+    , output logic [id_width_p-1:0] data_mem_pkt_id_o
     , input data_mem_pkt_yumi_i
     
     // stat_mem
@@ -72,6 +70,11 @@ module bsg_cache_non_blocking_mhu
     // tag_mem
     , output logic tag_mem_pkt_v_o
     , output logic [tag_mem_pkt_width_lp-1:0] tag_mem_pkt_o
+    , input [ways_p-1:0] valid_tl_i
+    , input [ways_p-1:0] lock_tl_i
+    , input [ways_p-1:0][tag_width_lp-1:0] tag_tl_i
+    , input [lg_ways_lp-1:0] tag_hit_way_i
+    , input tag_hit_found_i
      
     // miss FIFO
     , input miss_fifo_v_i
@@ -238,8 +241,9 @@ module bsg_cache_non_blocking_mhu
     recover_o = 1'b0;
 
     mgmt_yumi_o = 1'b0;
-    out_data_o = '0;
-    out_data_v_o = 1'b0;
+    mgmt_data_o = '0;
+    mgmt_data_v_o = 1'b0;
+    mgmt_id_o = id_tl_i;
 
     data_mem_pkt_v_o = 1'b0;
     data_mem_pkt.write_not_read = miss_fifo_entry.write_not_read;
@@ -255,6 +259,7 @@ module bsg_cache_non_blocking_mhu
       ? {curr_miss_index, counter_r}
       : {curr_miss_index, miss_fifo_entry.addr[byte_sel_width_lp+:lg_block_size_in_words_lp]};
     data_mem_pkt.data = miss_fifo_entry.data;
+    data_mem_pkt_id_o = miss_fifo_entry.id;
 
     stat_mem_pkt_v_o = 1'b0;
     stat_mem_pkt_o = '0;
@@ -279,30 +284,30 @@ module bsg_cache_non_blocking_mhu
       IDLE: begin
         if (mgmt_v_i) begin
 
-          out_data_o = '0;
+         mgmt_data_o = '0;
           stat_mem_pkt.index = addr_index_tl;
           tag_mem_pkt.index = addr_index_tl;
 
           if (decode_tl_r.tagla_op) begin
             mgmt_yumi_o = 1'b1;
-            out_data_o = {tag_tl_i[addr_way_tl], addr_index_tl, {block_offset_width_lp{1'b0}}};            
-            out_data_v_o = 1'b1;
+            mgmt_data_o = {tag_tl_i[addr_way_tl], addr_index_tl, {block_offset_width_lp{1'b0}}};            
+            mgmt_data_v_o = 1'b1;
           end
           else if (decode_tl_r.taglv_op) begin
             mgmt_yumi_o = 1'b1;
-            out_data_o = {{(data_width_p-2){1'b0}}, lock_tl_i[addr_way_tl], valid_tl_i[addr_way_tl]};
-            out_data_v_o = 1'b1;
+            mgmt_data_o = {{(data_width_p-2){1'b0}}, lock_tl_i[addr_way_tl], valid_tl_i[addr_way_tl]};
+            mgmt_data_v_o = 1'b1;
           end
           else if (decode_tl_r.tagst_op) begin
             mgmt_yumi_o = 1'b1;
-            out_data_v_o = 1'b1;
+            mgmt_data_v_o = 1'b1;
 
             stat_mem_pkt_v_o = 1'b1;
             stat_mem_pkt.opcode = e_stat_reset;
           end
           else if (decode_tl_r.tagfl_op) begin
             mgmt_yumi_o = ~valid_tl_i[addr_way_tl];
-            out_data_v_o = ~valid_tl_i[addr_way_tl];
+            mgmt_data_v_o = ~valid_tl_i[addr_way_tl];
         
             stat_mem_pkt_v_o = valid_tl_i[addr_way_tl];
             stat_mem_pkt.opcode = e_stat_read;
@@ -313,7 +318,7 @@ module bsg_cache_non_blocking_mhu
           end
           else if (decode_tl_r.afl_op | decode_tl_r.aflinv_op) begin
             mgmt_yumi_o = ~tag_hit_found_i;
-            out_data_v_o = ~tag_hit_found_i;
+            mgmt_data_v_o = ~tag_hit_found_i;
            
             stat_mem_pkt_v_o = tag_hit_found_i;
             stat_mem_pkt.opcode = e_stat_read;
@@ -324,7 +329,7 @@ module bsg_cache_non_blocking_mhu
           end
           else if (decode_tl_r.ainv_op) begin
             mgmt_yumi_o = 1'b1;
-            out_data_v_o = 1'b1;
+            mgmt_data_v_o = 1'b1;
             
             stat_mem_pkt_v_o = tag_hit_found_i;
             stat_mem_pkt.way_id = tag_hit_way_i;
@@ -336,7 +341,7 @@ module bsg_cache_non_blocking_mhu
           end
           else if (decode_tl_r.alock_op) begin
             mgmt_yumi_o = tag_hit_found_i;
-            out_data_v_o = tag_hit_found_i;
+            mgmt_data_v_o = tag_hit_found_i;
 
             stat_mem_pkt_v_o = ~tag_hit_found_i;
             stat_mem_pkt.opcode = e_stat_read;
@@ -351,7 +356,7 @@ module bsg_cache_non_blocking_mhu
           end
           else if (decode_tl_r.aunlock_op) begin
             mgmt_yumi_o = 1'b1;
-            out_data_v_o = 1'b1;
+            mgmt_data_v_o = 1'b1;
 
             tag_mem_pkt_v_o = tag_hit_found_i;
             tag_mem_pkt.way_id = tag_hit_way_i;
@@ -410,7 +415,7 @@ module bsg_cache_non_blocking_mhu
             ? ~dirty_i[addr_way_tl]
             : ~dirty_i[tag_hit_way_i]);
 
-        out_v_o = ~decode_tl_r.alock_op
+        mgmt_data_v_o = ~decode_tl_r.alock_op
           & (decode_tl_r.tagfl_op
             ? ~dirty_i[addr_way_tl]
             : ~dirty_i[tag_hit_way_i]);
@@ -451,7 +456,7 @@ module bsg_cache_non_blocking_mhu
           : e_tag_invalidate;
 
         dma_ack_o = dma_done_i;
-        out_v_o = dma_done_i;
+        mgmt_data_v_o = dma_done_i;
      
         mhu_state_n = dma_done_i
           ? IDLE
@@ -600,7 +605,6 @@ module bsg_cache_non_blocking_mhu
           : RECOVER;
 
       end
-
 
       // Recover
       //

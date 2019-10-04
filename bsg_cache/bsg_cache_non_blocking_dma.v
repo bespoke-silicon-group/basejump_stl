@@ -42,6 +42,9 @@ module bsg_cache_non_blocking_dma
     , output logic pending_o
     , input ack_i
 
+    , output logic evict_v_o
+    , output logic [addr_width_p-1:0] evict_addr_o
+
     // data_mem
     , output logic data_mem_pkt_v_o
     , output logic [data_mem_pkt_width_lp-1:0] data_mem_pkt_o
@@ -67,7 +70,8 @@ module bsg_cache_non_blocking_dma
   // localparam
   //
   localparam counter_width_lp=`BSG_SAFE_CLOG2(block_size_in_words_p+1);
-  localparam byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3);
+  localparam byte_sel_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3);
+  localparam block_offset_width_lp=byte_sel_width_lp+lg_block_size_in_words_lp;
 
 
   // casting structs
@@ -194,12 +198,13 @@ module bsg_cache_non_blocking_dma
   assign dma_pkt_refill_addr = {
     dma_cmd_r.refill_tag,
     dma_cmd_r.index,
-    {(byte_offset_width_lp+lg_block_size_in_words_lp){1'b0}}
+    {block_offset_width_lp{1'b0}}
   };
+
   assign dma_pkt_evict_addr = {
     dma_cmd_r.evict_tag,
     dma_cmd_r.index,
-    {(byte_offset_width_lp+lg_block_size_in_words_lp){1'b0}}
+    {block_offset_width_lp{1'b0}}
   };
 
 
@@ -314,7 +319,7 @@ module bsg_cache_non_blocking_dma
           : DONE;
       end
 
-      // this should never happen, but it does, return to IDLE.
+      // this should never happen, but if it does, return to IDLE.
       default: begin
         dma_state_n = IDLE;
       end
@@ -323,6 +328,8 @@ module bsg_cache_non_blocking_dma
 
   end
 
+  assign evict_v_o = (dma_state_r != IDLE) & dma_cmd_r.evict;
+  assign evict_addr_o = dma_pkt_evict_addr;
 
 
   // synopsys sync_set_reset "reset_i"

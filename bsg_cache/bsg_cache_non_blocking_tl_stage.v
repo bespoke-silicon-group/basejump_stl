@@ -49,8 +49,9 @@ module bsg_cache_non_blocking_tl_stage
     // data_mem access (hit)
     , output logic data_mem_pkt_v_o
     , output logic [data_mem_pkt_width_lp-1:0] data_mem_pkt_o
-    , output logic block_mode_o
     , input data_mem_pkt_ready_i
+    , output logic [id_width_p-1:0] data_mem_pkt_id_o
+    , output logic block_loading_o
 
     // stat_mem access (hit)
     , output logic stat_mem_pkt_v_o
@@ -73,17 +74,17 @@ module bsg_cache_non_blocking_tl_stage
     , output logic [data_width_p-1:0] data_tl_o
     , output logic [lg_ways_lp-1:0] tag_hit_way_o
     , output logic tag_hit_found_o
-    , output logic mgmt_yumi_i
+    , input mgmt_yumi_i
 
     // from MHU
     , input mhu_tag_mem_pkt_v_i
     , input [tag_mem_pkt_width_lp-1:0] mhu_tag_mem_pkt_i
     , input mhu_idle_i
-    , input [tag_width_lp+lg_sets_lp-1:0] mhu_evict_block_num_i
-    , input mhu_evict_v_i
+    , input recover_i
 
-    // from DMA
-    , input [tag_width_lp+lg_sets_lp-1:0] dma_evict_block_num_i
+    , input [addr_width_p-1:0] mhu_evict_addr_i
+    , input mhu_evict_v_i
+    , input [addr_width_p-1:0] dma_evict_addr_i
     , input dma_evict_v_i
   );
 
@@ -140,6 +141,8 @@ module bsg_cache_non_blocking_tl_stage
   assign addr_index_tl = addr_tl_r[block_offset_width_lp+:lg_sets_lp];
 
 
+  // block_load counter
+  //
   logic counter_clear;
   logic counter_up;
   logic [counter_width_lp-1:0] counter_r;
@@ -219,7 +222,6 @@ module bsg_cache_non_blocking_tl_stage
   assign data_mem_pkt.way = tag_hit_way;
   assign data_mem_pkt.addr = addr_tl_r[byte_sel_width_lp+:lg_block_size_in_words_lp+lg_sets_lp];
   assign data_mem_pkt.data = data_tl_r;
-  assign block_mode_o = decode_tl_r.block_ld_op;
 
   assign stat_mem_pkt.way = tag_hit_way;
   assign stat_mem_pkt.index = addr_index_tl;
@@ -244,89 +246,6 @@ module bsg_cache_non_blocking_tl_stage
   assign dma_evict_match = dma_evict_v_i & (dma_evict_block_num_i == {addr_tag_tl, addr_index_tl});
 
 
-  // 1) load/store hit
-  // it's a hit, and the addr does not match evict addrs (from DMA or MHU).
-  // OR, it's a miss, but the tag is being set to valid by MHU.
-  // Both stat_mem and tag_mem has to be ready.
-  //
-  // 2) load/store/block_load miss
-  // it's a miss, and the tag is NOT being set to valid by MHU. 
-  // OR, it's a hit, with matching evict addrs (from DMA or MHU).
-  // Miss FIFO has to be ready to proceed.
-  //
-  // 3) block_load hit
-  // it's a block_load and hit, and the addr does not match evict
-  // addrs. Switch to BLOCK_MODE. Once it starts, BLOCK_MODE cannot
-  // be interrupted by any process except DMA. Update LRU, when loading the first word.
-  //
-  // 4) mgmt op
-  // Wait for mgmt_op_yumi_i. cache management ops cannot enter the
-  // pipeline until mhu_idle_i = 1.
-  logic cache_hit;
-  logic ld_st_hit;
-  logic block_ld_hit;
-
-  assign cache_hit = tag_hit_found & ~(mhu_evict_match | dma_evict_match);
-
-  assign ld_st_hit = v_tl_r
-    & (decode_tl_r.ld_op | decode_tl_r.st_op)
-    & cache_hit;
-
-  assign block_ld_hit = v_tl_r
-    & (decode_tl_r.block_ld_op)
-    & cache_hit;
-
-
-  always_comb begin
-
-    v_tl_n = v_tl_r;
-    decode_tl_n = decode_tl_r;
-    id_tl_n = id_tl_r;
-    addr_tl_n = addr_tl_r;
-    data_tl_n = data_tl_r;
-
-    counter_clear = 1'b0;
-    counter_up = 1'b0;
-
-    ready_o = 1'b0;
-
-    data_mem_pkt_v_o = 1'b0;
-    stat_mem_pkt_v_o = 1'b0;
-
-    miss_fifo_entry_v_o = 1'b0;
-    
-    mgmt_v_o = 1'b0;
-    
-
-    case (tl_state_r)
-
-      START: begin
-        if (v_tl_r) begin
-          if (ld_st_hit) begin
-
-          end
-          else if (block_ld_hit) begin
-
-          end
-          else if (decode_tl_r.mgmt_op) begin
-
-          end
-          else begin
-
-          end
-        end
-        else begin
-
-        end
-      end
-
-      BLOCK_MODE: begin
-
-      end
-
-    endcase
-
-  end
 
 
   // synopsys sync_set_reset "reset_i"

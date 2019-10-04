@@ -86,9 +86,10 @@ module bsg_cache_non_blocking
   // TL stage
   //
   bsg_cache_non_blocking_data_mem_pkt_s tl_data_mem_pkt_lo;
+  logic [id_width_p-1:0] tl_data_mem_pkt_id_lo;
   logic tl_data_mem_pkt_v_lo;
   logic tl_data_mem_pkt_ready_li;
-  logic tl_block_mode_lo;
+  logic tl_block_loading;
 
   bsg_cache_non_blocking_stat_mem_pkt_s tl_stat_mem_pkt_lo;
   logic tl_stat_mem_pkt_v_lo;
@@ -98,9 +99,6 @@ module bsg_cache_non_blocking
   logic tl_miss_fifo_entry_v_lo;
   logic tl_miss_fifo_entry_ready_li;
   
-  bsg_cache_non_blocking_tag_mem_pkt_s mhu_tag_mem_pkt_lo;
-  logic mhu_tag_mem_pkt_v_lo;
-
   logic mgmt_v_lo;
   logic [ways_p-1:0] valid_tl_lo;
   logic [ways_p-1:0] lock_tl_lo;
@@ -108,9 +106,20 @@ module bsg_cache_non_blocking
   bsg_cache_non_blocking_decode_s decode_tl_lo;
   logic [addr_width_p-1:0] addr_tl_lo;
   logic [id_width_p-1:0] id_tl_lo;
+  logic [data_width_p-1;0] data_tl_lo;
   logic [lg_ways_lp-1:0] tag_hit_way_lo;
   logic tag_hit_found_lo;
   logic mgmt_yumi_li;
+
+  bsg_cache_non_blocking_tag_mem_pkt_s mhu_tag_mem_pkt_lo;
+  logic mhu_tag_mem_pkt_v_lo;
+  logic mhu_idle;
+  logic mhu_recover;
+
+  logic [addr_width_p-1:0] mhu_evict_addr;
+  logic mhu_evict_v;
+  logic [addr_width_p-1:0] dma_evict_addr;
+  logic dma_evict_v;
 
   bsg_cache_non_blocking_tl_stage #(
     .id_width_p(id_width_p)
@@ -123,7 +132,6 @@ module bsg_cache_non_blocking
     .clk_i(clk_i)
     ,.reset_i(reset_i)
 
-    // input
     ,.v_i(v_i)
     ,.id_i(cache_pkt.id)
     ,.addr_i(cache_pkt.addr)
@@ -131,22 +139,20 @@ module bsg_cache_non_blocking
     ,.decode_i(decode)
     ,.ready_o(ready_o)
 
-    // hit
     ,.data_mem_pkt_v_o(tl_data_mem_pkt_v_lo)
     ,.data_mem_pkt_o(tl_data_mem_pkt_lo)
     ,.data_mem_pkt_ready_i(tl_data_mem_pkt_ready_li)
-    ,.block_mode_o(tl_block_mode_lo)
+    ,.data_mem_pkt_id_o(tl_data_mem_pkt_id_lo)
+    ,.block_loading_o(tl_block_loading)
 
     ,.stat_mem_pkt_v_o(tl_stat_mem_pkt_v_lo)
     ,.stat_mem_pkt_o(tl_stat_mem_pkt_lo)
     ,.stat_mem_pkt_ready_i(tl_stat_mem_pkt_ready_li)
 
-    // miss
     ,.miss_fifo_entry_v_o(tl_miss_fifo_entry_v_lo)
     ,.miss_fifo_entry_o(tl_miss_fifo_entry_lo)
     ,.miss_fifo_entry_ready_i(tl_miss_fifo_entry_ready_li)
 
-    // mgmt
     ,.mgmt_v_o(mgmt_v_lo)
     ,.valid_tl_o(valid_tl_lo)
     ,.lock_tl_o(lock_tl_lo)
@@ -154,14 +160,21 @@ module bsg_cache_non_blocking
     ,.decode_tl_o(decode_tl_lo)
     ,.addr_tl_o(addr_tl_lo)
     ,.id_tl_o(id_tl_lo)
+    ,.data_tl_o(data_tl_lo)
     ,.tag_hit_way_o(tag_hit_way_lo)
     ,.tag_hit_found_o(tag_hit_found_lo)
     ,.mgmt_yumi_i(mgmt_yumi_li)
 
-    // MHU tag_mem_pkt
     ,.mhu_tag_mem_pkt_v_i(mhu_tag_mem_pkt_v_lo)
     ,.mhu_tag_mem_pkt_i(mhu_tag_mem_pkt_lo)
-    ,.recover_i()
+    ,.mhu_idle_i(mhu_idle)
+    ,.recover_i(mhu_recover)
+
+    ,.mhu_evict_addr_i(mhu_evict_addr)
+    ,.mhu_evict_v_i(mhu_evict_v)
+    
+    ,.dma_evict_addr_i(dma_evict_addr)
+    ,.dma_evict_v_i(dma_evict_v)
   );
 
 
@@ -250,6 +263,7 @@ module bsg_cache_non_blocking
   // MHU
   //
   bsg_cache_non_blocking_data_mem_pkt_s mhu_data_mem_pkt_lo;
+  logic [id_width_p-1:0] mhu_data_mem_pkt_id_lo;
   logic mhu_data_mem_pkt_v_lo;
   logic mhu_data_mem_pkt_yumi_li;
 
@@ -264,7 +278,10 @@ module bsg_cache_non_blocking
   logic dma_done_li;
   logic dma_pending_li;
   logic dma_ack_lo;
-  
+
+  logic mgmt_data_v_lo;
+  logic [data_width_p-1:0] mgmt_data_lo;  
+  logic [id_width_p-1:0] mgmt_id_lo;
 
   bsg_cache_non_blocking_mhu #(
     .id_width_p(id_width_p)
@@ -278,29 +295,36 @@ module bsg_cache_non_blocking
     ,.reset_i(reset_i)
 
     ,.mgmt_v_i(mgmt_v_lo)
+    ,.mgmt_yumi_o(mgmt_yumi_li)
+    ,.mgmt_data_v_o(mgmt_data_v_lo)
+    ,.mgmt_data_o(mgmt_data_lo)
+    ,.mgmt_id_o(mgmt_id_lo)
+
     ,.decode_tl_i(decode_tl_lo)  
     ,.addr_tl_i(addr_tl_lo)
-    ,.valid_tl_i(valid_tl_lo)
-    ,.lock_tl_i(lock_tl_lo)
-    ,.tag_tl_i(tag_tl_lo) 
-    ,.tag_hit_way_i(tag_hit_way_lo)
-    ,.tag_hit_found_i(tag_hit_found_lo)
-    ,.mgmt_yumi_o(mgmt_yumi_li)
-    ,.out_v_o()
-    ,.out_data_o()
+    ,.id_tl_i(id_tl_lo)
+
+    ,.idle_o(mhu_idle)
+    ,.recover_o(mhu_recover)
+    ,.tl_block_loading_i(tl_block_loading)
 
     ,.data_mem_pkt_v_o(mhu_data_mem_pkt_v_lo)
     ,.data_mem_pkt_o(mhu_data_mem_pkt_lo)
     ,.data_mem_pkt_yumi_i(mhu_data_mem_pkt_yumi_li)
+    ,.data_mem_pkt_id_o(mhu_data_mem_pkt_id_lo)
 
     ,.stat_mem_pkt_v_o(mhu_stat_mem_pkt_v_lo)
     ,.stat_mem_pkt_o(mhu_stat_mem_pkt_lo)
-    
     ,.dirty_i(dirty_lo)
     ,.lru_way_i(lru_way_lo)
 
     ,.tag_mem_pkt_v_o(mhu_tag_mem_pkt_v_lo)
     ,.tag_mem_pkt_o(mhu_tag_mem_pkt_lo)
+    ,.valid_tl_i(valid_tl_lo)
+    ,.lock_tl_i(lock_tl_lo)
+    ,.tag_tl_i(tag_tl_lo) 
+    ,.tag_hit_way_i(tag_hit_way_lo)
+    ,.tag_hit_found_i(tag_hit_found_lo)
 
     ,.miss_fifo_v_i(miss_fifo_v_lo)
     ,.miss_fifo_entry_i(miss_fifo_data_lo)
@@ -345,6 +369,9 @@ module bsg_cache_non_blocking
     ,.pending_o(dma_pending_li)
     ,.ack_i(dma_ack_lo)
 
+    ,.evict_v_o(dma_evict_v)
+    ,.evict_addr_o(dma_evict_addr)
+
     ,.data_mem_pkt_v_o(dma_data_mem_pkt_v_lo)
     ,.data_mem_pkt_o(dma_data_mem_pkt_lo)
     ,.data_mem_data_i(data_mem_data_lo)
@@ -364,16 +391,122 @@ module bsg_cache_non_blocking
 
 
   ///                   ///
-  ///   CONTROL LOGIC   ///
+  ///   CTRL  LOGIC     ///
   ///                   ///
 
 
+  // data_mem
+  //
+  always_comb begin
+
+    data_mem_v_li = 1'b0;
+    data_mem_pkt_li = dma_data_mem_pkt_lo;
+    mhu_data_mem_pkt_yumi_li = 1'b0;
+    tl_data_mem_pkt_ready_li = 1'b0;
+
+    if (dma_data_mem_pkt_v_lo) begin
+      data_mem_pkt_li = dma_data_mem_pkt_lo;
+      data_mem_v_li = 1'b1;
+    end
+    else if (mhu_data_mem_pkt_v_lo) begin
+      data_mem_pkt_li = mhu_data_mem_pkt_lo;
+      data_mem_v_li = 1'b1;
+      mhu_data_mem_pkt_yumi_li = 1'b1;
+    end
+    else begin
+      data_mem_pkt_li = tl_data_mem_pkt_lo;
+      data_mem_v_li = tl_data_mem_pkt_v_lo;
+      tl_data_mem_pkt_ready_li = 1'b1;
+    end
+  end
 
 
+  // stat_mem
+  //
+  always_comb begin
+    
+    stat_mem_v_li = 1'b0;
+    stat_mem_pkt_li = mhu_stat_mem_pkt_lo;
+    tl_stat_mem_pkt_ready_li = 1'b0;
+
+    if (mhu_stat_mem_pkt_v_lo) begin
+      stat_mem_v_li = 1'b1;
+      stat_mem_pkt_li = mhu_stat_mem_pkt_lo;
+    end
+    else begin
+      tl_stat_mem_pkt_ready_li = 1'b1;
+      stat_mem_pkt_li = tl_stat_mem_pkt_lo;
+      stat_mem_v_li = tl_stat_mem_pkt_v_lo;
+    end
+  end
 
 
+  // output logic
+  //
+  logic [data_width_p-1:0] mgmt_data_r, mgmt_data_n;
+  logic [id_width_p-1:0] out_id_r, out_id_n;
+  logic mgmt_data_v_r mgmt_data_v_n;
+  logic store_v_r, store_v_n;
+  logic load_v_r, load_v_n;
+
+  always_comb begin
+
+    out_id_n = out_id_r;
+    mgmt_data_n = mgmt_data_r;
+    store_v_n = 1'b0;
+    load_v_n = 1'b0;
+    mgmt_data_v_n = 1'b0;
+
+    if (mgmt_data_v_lo) begin
+      mgmt_data_n = mgmt_data_lo;
+      out_id_n = mgmt_id_lo;
+      mgmt_data_v_n = mgmt_data_v_lo;
+    end
+    else if (mhu_data_mem_pkt_yumi_li) begin
+      out_id_n = mhu_data_mem_pkt_id_lo;
+      store_v_n = mhu_data_mem_pkt_lo.write_not_read;
+      load_v_n = ~mhu_data_mem_pkt_lo.write_not_read;
+    end
+    else if (tl_data_mem_pkt_ready_li & tl_data_mem_pkt_v_lo) begin
+      out_id_n = tl_data_mem_pkt_id_lo;
+      store_v_n = tl_data_mem_pkt_lo.write_not_read;
+      load_v_n = ~tl_data_mem_pkt_lo.write_not_read;
+    end
+    
+ 
+    if (mgmt_data_v_r) begin
+      data_o = mgmt_data_r;
+    end
+    else if (load_v_r) begin
+      data_o = data_mem_data_lo;
+    end
+    else begin
+      data_o = '0;
+    end
+    
+    id_o = out_id_r;
+    v_o = mgmt_data_v_r | store_v_r | load_v_r;
+  
+  end
 
 
+  // synopsys sync_set_reset "reset_i"
+  always_ff @ (posedge clk_i) begin
+    if (reset_i) begin
+      mgmt_data_r <= '0;
+      mgmt_id_r <= '0;
+      mgmt_data_v_r <= 1'b0;
+      store_v_r <= 1'b0;
+      load_v_r <= 1'b0;
+    end
+    else begin
+      mgmt_data_r <= mgmt_data_n;
+      mgmt_id_r <= mgmt_id_n;
+      mgmt_data_v_r <= mgmt_data_v_n;
+      store_v_r <= store_v_n;
+      load_v_r <= load_v_n;
+    end
+  end
 
  
 endmodule
