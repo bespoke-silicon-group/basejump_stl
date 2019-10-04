@@ -216,6 +216,11 @@ module bsg_cache
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       v_v_r <= 1'b0;
+    end else if (v_we) begin
+        v_v_r <= v_tl_r;
+    end
+
+    if (reset_i) begin
       {mask_v_r
       ,decode_v_r
       ,addr_v_r
@@ -223,21 +228,15 @@ module bsg_cache
       ,valid_v_r
       ,lock_v_r
       ,tag_v_r} <= '0;
-    end
-    else begin
-      if (v_we) begin
-        v_v_r <= v_tl_r;
-        if (v_tl_r) begin
-          mask_v_r <= mask_tl_r;
-          decode_v_r <= decode_tl_r;
-          addr_v_r <= addr_tl_r;
-          data_v_r <= data_tl_r;
-          valid_v_r <= valid_tl;
-          tag_v_r <= tag_tl;
-          lock_v_r <= lock_tl;
-          ld_data_v_r <= data_mem_data_lo;
-        end
-      end
+    end else if (v_we & v_tl_r) begin
+      mask_v_r <= mask_tl_r;
+      decode_v_r <= decode_tl_r;
+      addr_v_r <= addr_tl_r;
+      data_v_r <= data_tl_r;
+      valid_v_r <= valid_tl;
+      tag_v_r <= tag_tl;
+      lock_v_r <= lock_tl;
+      ld_data_v_r <= data_mem_data_lo;
     end
   end
 
