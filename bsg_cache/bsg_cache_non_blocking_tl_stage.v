@@ -50,7 +50,6 @@ module bsg_cache_non_blocking_tl_stage
     , output logic data_mem_pkt_v_o
     , output logic [data_mem_pkt_width_lp-1:0] data_mem_pkt_o
     , input data_mem_pkt_ready_i
-    , output logic [id_width_p-1:0] data_mem_pkt_id_o
     , output logic block_loading_o
 
     // stat_mem access (hit)
@@ -219,18 +218,18 @@ module bsg_cache_non_blocking_tl_stage
   assign data_mem_pkt.sigext_op = decode_tl_r.sigext_op;
   assign data_mem_pkt.size_op = decode_tl_r.size_op;
   assign data_mem_pkt.byte_sel = addr_tl_r[0+:byte_sel_width_lp];
-  assign data_mem_pkt.way = tag_hit_way;
+  assign data_mem_pkt.way_id = tag_hit_way;
   assign data_mem_pkt.addr = addr_tl_r[byte_sel_width_lp+:lg_block_size_in_words_lp+lg_sets_lp];
   assign data_mem_pkt.data = data_tl_r;
 
-  assign stat_mem_pkt.way = tag_hit_way;
+  assign stat_mem_pkt.way_id = tag_hit_way;
   assign stat_mem_pkt.index = addr_index_tl;
   assign stat_mem_pkt.opcode = decode_tl_r.st_op
     ? e_stat_set_lru_and_dirty
     : e_stat_set_lru;
 
   assign miss_fifo_entry.write_not_read = decode_tl_r.st_op;
-  assign miss_fifo_entry.block_load = decode_tl_r.block_load_op;
+  assign miss_fifo_entry.block_load = decode_tl_r.block_ld_op;
   assign miss_fifo_entry.size_op = decode_tl_r.size_op;
   assign miss_fifo_entry.id = id_tl_r;
   assign miss_fifo_entry.addr = addr_tl_r;
@@ -242,9 +241,14 @@ module bsg_cache_non_blocking_tl_stage
   logic mhu_evict_match;
   logic dma_evict_match;
 
-  assign mhu_evict_match = mhu_evict_v_i & (mhu_evict_block_num_i == {addr_tag_tl, addr_index_tl});
-  assign dma_evict_match = dma_evict_v_i & (dma_evict_block_num_i == {addr_tag_tl, addr_index_tl});
+  assign mhu_evict_match = 
+    mhu_evict_v_i & (mhu_evict_addr_i == {addr_tag_tl, addr_index_tl, {block_offset_width_lp{1'b0}}});
+  assign dma_evict_match = 
+    dma_evict_v_i & (dma_evict_addr_i == {addr_tag_tl, addr_index_tl, {block_offset_width_lp{1'b0}}});
 
+
+  // pipeline logic
+  //
 
 
 

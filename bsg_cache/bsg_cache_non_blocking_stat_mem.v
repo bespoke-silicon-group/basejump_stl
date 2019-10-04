@@ -58,7 +58,7 @@ module bsg_cache_non_blocking_stat_mem
     ,.v_i(v_i)
     ,.w_i(w_li)
 
-    ,.addr_i(stat_mem_pkt.addr)
+    ,.addr_i(stat_mem_pkt.index)
     ,.w_mask_i(mask_li)
     ,.data_i(data_li)
     ,.data_o(data_lo)
@@ -72,7 +72,7 @@ module bsg_cache_non_blocking_stat_mem
   bsg_decode #(
     .num_out_p(ways_p)
   ) way_demux (
-    .i(stat_mem_pkt.way)
+    .i(stat_mem_pkt.way_id)
     ,.o(way_decode_lo)
   );  
 
@@ -82,7 +82,7 @@ module bsg_cache_non_blocking_stat_mem
   bsg_lru_pseudo_tree_decode #(
     .ways_p(ways_p)
   ) lru_decode (
-    .way_id_i(stat_mem_pkt.way)
+    .way_id_i(stat_mem_pkt.way_id)
     ,.data_o(lru_decode_data_lo)
     ,.mask_o(lru_decode_mask_lo)
   );

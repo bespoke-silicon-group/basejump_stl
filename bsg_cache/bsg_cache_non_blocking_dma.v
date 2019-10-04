@@ -70,7 +70,6 @@ module bsg_cache_non_blocking_dma
   // localparam
   //
   localparam counter_width_lp=`BSG_SAFE_CLOG2(block_size_in_words_p+1);
-  localparam byte_sel_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3);
   localparam block_offset_width_lp=byte_sel_width_lp+lg_block_size_in_words_lp;
 
 
@@ -224,7 +223,7 @@ module bsg_cache_non_blocking_dma
 
     data_mem_pkt_v_o = 1'b0;
     data_mem_pkt.write_not_read = 1'b0;
-    data_mem_pkt.way = dma_cmd_r.way_id;
+    data_mem_pkt.way_id = dma_cmd_r.way_id;
     data_mem_pkt.addr = {
       dma_cmd_r.index,
       counter_r[0+:lg_block_size_in_words_lp]

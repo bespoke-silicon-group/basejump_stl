@@ -59,7 +59,7 @@ module bsg_cache_non_blocking_data_mem
   logic [data_mask_width_lp-1:0] mask_li;
   logic [data_width_p-1:0] data_lo;
 
-  assign addr_li = {data_mem_pkt.way, data_mem_pkt.addr};
+  assign addr_li = {data_mem_pkt.way_id, data_mem_pkt.addr};
 
   bsg_mem_1rw_sync_mask_write_byte #(
     .data_width_p(data_width_p)

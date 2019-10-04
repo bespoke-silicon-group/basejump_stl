@@ -86,7 +86,6 @@ module bsg_cache_non_blocking
   // TL stage
   //
   bsg_cache_non_blocking_data_mem_pkt_s tl_data_mem_pkt_lo;
-  logic [id_width_p-1:0] tl_data_mem_pkt_id_lo;
   logic tl_data_mem_pkt_v_lo;
   logic tl_data_mem_pkt_ready_li;
   logic tl_block_loading;
@@ -106,7 +105,7 @@ module bsg_cache_non_blocking
   bsg_cache_non_blocking_decode_s decode_tl_lo;
   logic [addr_width_p-1:0] addr_tl_lo;
   logic [id_width_p-1:0] id_tl_lo;
-  logic [data_width_p-1;0] data_tl_lo;
+  logic [data_width_p-1:0] data_tl_lo;
   logic [lg_ways_lp-1:0] tag_hit_way_lo;
   logic tag_hit_found_lo;
   logic mgmt_yumi_li;
@@ -142,7 +141,6 @@ module bsg_cache_non_blocking
     ,.data_mem_pkt_v_o(tl_data_mem_pkt_v_lo)
     ,.data_mem_pkt_o(tl_data_mem_pkt_lo)
     ,.data_mem_pkt_ready_i(tl_data_mem_pkt_ready_li)
-    ,.data_mem_pkt_id_o(tl_data_mem_pkt_id_lo)
     ,.block_loading_o(tl_block_loading)
 
     ,.stat_mem_pkt_v_o(tl_stat_mem_pkt_v_lo)
@@ -187,6 +185,7 @@ module bsg_cache_non_blocking
   bsg_cache_non_blocking_miss_fifo_entry_s miss_fifo_data_lo;
   logic miss_fifo_v_lo;
   logic miss_fifo_yumi_li;
+  logic miss_fifo_scan_not_dq_li;
 
   bsg_cache_non_blocking_miss_fifo_op_e miss_fifo_yumi_op_li; 
   logic miss_fifo_rollback_li;
@@ -445,7 +444,7 @@ module bsg_cache_non_blocking
   //
   logic [data_width_p-1:0] mgmt_data_r, mgmt_data_n;
   logic [id_width_p-1:0] out_id_r, out_id_n;
-  logic mgmt_data_v_r mgmt_data_v_n;
+  logic mgmt_data_v_r, mgmt_data_v_n;
   logic store_v_r, store_v_n;
   logic load_v_r, load_v_n;
 
@@ -468,21 +467,18 @@ module bsg_cache_non_blocking
       load_v_n = ~mhu_data_mem_pkt_lo.write_not_read;
     end
     else if (tl_data_mem_pkt_ready_li & tl_data_mem_pkt_v_lo) begin
-      out_id_n = tl_data_mem_pkt_id_lo;
+      out_id_n = id_tl_lo;
       store_v_n = tl_data_mem_pkt_lo.write_not_read;
       load_v_n = ~tl_data_mem_pkt_lo.write_not_read;
     end
     
  
-    if (mgmt_data_v_r) begin
+    if (mgmt_data_v_r)
       data_o = mgmt_data_r;
-    end
-    else if (load_v_r) begin
+    else if (load_v_r)
       data_o = data_mem_data_lo;
-    end
-    else begin
+    else
       data_o = '0;
-    end
     
     id_o = out_id_r;
     v_o = mgmt_data_v_r | store_v_r | load_v_r;
@@ -494,14 +490,14 @@ module bsg_cache_non_blocking
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       mgmt_data_r <= '0;
-      mgmt_id_r <= '0;
+      out_id_r <= '0;
       mgmt_data_v_r <= 1'b0;
       store_v_r <= 1'b0;
       load_v_r <= 1'b0;
     end
     else begin
       mgmt_data_r <= mgmt_data_n;
-      mgmt_id_r <= mgmt_id_n;
+      out_id_r <= out_id_n;
       mgmt_data_v_r <= mgmt_data_v_n;
       store_v_r <= store_v_n;
       load_v_r <= load_v_n;

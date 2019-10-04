@@ -78,7 +78,7 @@ module bsg_cache_non_blocking_tag_mem
   bsg_decode #(
     .num_out_p(ways_p)
   ) way_demux (
-    .i(tag_mem_pkt.way)
+    .i(tag_mem_pkt.way_id)
     ,.o(way_decode)
   );
 

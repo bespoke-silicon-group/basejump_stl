@@ -2,10 +2,11 @@
 # Makefile
 #
 include ../../../../bsg_cadenv/cadenv.mk
+export BASEJUMP_STL_DIR = $(abspath ../../..)
 
 
-INCDIR = +incdir+$(BSG_IP_CORES_DIR)/bsg_misc/
-INCDIR += +incdir+$(BSG_IP_CORES_DIR)/bsg_cache/
+INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc/
+INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_cache/
 
 
 HIGHLIGHT = grep --color -E '^|Error|Warning|Implicit wire is used|Too few instance port connections|Port connection width mismatch|Width mismatch'
