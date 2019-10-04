@@ -88,7 +88,6 @@ module bsg_cache_non_blocking_mhu
     // DMA
     , output logic [dma_cmd_width_lp-1:0] dma_cmd_o
     , output logic dma_cmd_v_o
-    , input dma_cmd_ready_i
 
     , input [dma_cmd_width_lp-1:0] dma_cmd_return_i
     , input dma_done_i

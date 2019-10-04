@@ -35,7 +35,6 @@ module bsg_cache_non_blocking_dma
     // MHU
     , input [dma_cmd_width_lp-1:0] dma_cmd_i
     , input dma_cmd_v_i
-    , output logic dma_cmd_ready_o
 
     , output logic [dma_cmd_width_lp-1:0] dma_cmd_return_o
     , output logic done_o
@@ -212,7 +211,6 @@ module bsg_cache_non_blocking_dma
     done_o = 1'b0;
     pending_o = 1'b0;
 
-    dma_cmd_ready_o = 1'b0;
     dma_cmd_dff_en = 1'b0;
 
     counter_clear = 1'b0;

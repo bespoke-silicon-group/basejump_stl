@@ -114,19 +114,11 @@ module bsg_cache_non_blocking_tl_stage
 
   // TL stage
   //
-  typedef enum logic {
-    START
-    ,BLOCK_MODE
-  } tl_state_e;
-
-  tl_state_e tl_state_n;
-  tl_state_e tl_state_r;
-
-  logic v_tl_r, v_tl_n;
-  bsg_cache_non_blocking_decode_s decode_tl_r, decode_tl_n;
-  logic [id_width_p-1:0] id_tl_r, id_tl_n;
-  logic [addr_width_p-1:0] addr_tl_r, addr_tl_n;
-  logic [data_width_p-1:0] data_tl_r, data_tl_n;
+  logic v_tl_r;
+  bsg_cache_non_blocking_decode_s decode_tl_r;
+  logic [id_width_p-1:0] id_tl_r;
+  logic [addr_width_p-1:0] addr_tl_r;
+  logic [data_width_p-1:0] data_tl_r;
 
   assign decode_tl_o = decode_tl_r;
   assign id_tl_o = id_tl_r;
@@ -212,6 +204,17 @@ module bsg_cache_non_blocking_tl_stage
   assign tag_hit_found_o = tag_hit_found;
 
 
+  // miss detection logic
+  //
+  logic [addr_width_p-1:0] block_addr_tl;
+  logic mhu_evict_match;
+  logic dma_evict_match;
+
+  assign block_addr_tl = {addr_tag_tl, addr_index_tl, {block_offset_width_lp{1'b0}}};
+  assign mhu_evict_match = mhu_evict_v_i & (mhu_evict_addr_i == block_addr_tl);
+  assign dma_evict_match = dma_evict_v_i & (dma_evict_addr_i == block_addr_tl);
+
+
   // TL stage output logic
   //
   assign data_mem_pkt.write_not_read = decode_tl_r.st_op;
@@ -236,41 +239,7 @@ module bsg_cache_non_blocking_tl_stage
   assign miss_fifo_entry.data = data_tl_r;
 
 
-  // miss detection logic
-  //
-  logic mhu_evict_match;
-  logic dma_evict_match;
-
-  assign mhu_evict_match = 
-    mhu_evict_v_i & (mhu_evict_addr_i == {addr_tag_tl, addr_index_tl, {block_offset_width_lp{1'b0}}});
-  assign dma_evict_match = 
-    dma_evict_v_i & (dma_evict_addr_i == {addr_tag_tl, addr_index_tl, {block_offset_width_lp{1'b0}}});
-
-
   // pipeline logic
   //
-
-
-
-  // synopsys sync_set_reset "reset_i"
-  always_ff @ (posedge clk_i) begin
-    if (reset_i) begin
-      tl_state_r <= START;
-      v_tl_r <= 1'b0;
-      decode_tl_r <= '0;
-      id_tl_r <= '0;
-      addr_tl_r <= '0;
-      data_tl_r <= '0;
-    end
-    else begin
-      tl_state_r <= tl_state_n;
-      v_tl_r <= v_tl_n;
-      decode_tl_r <= decode_tl_n;
-      id_tl_r <= id_tl_n;
-      addr_tl_r <= addr_tl_n;
-      data_tl_r <= data_tl_n;
-    end
-  end  
-
 
 endmodule

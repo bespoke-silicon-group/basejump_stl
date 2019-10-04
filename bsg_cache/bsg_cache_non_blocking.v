@@ -95,8 +95,8 @@ module bsg_cache_non_blocking
   logic tl_stat_mem_pkt_ready_li;
 
   bsg_cache_non_blocking_miss_fifo_entry_s tl_miss_fifo_entry_lo;
-  logic tl_miss_fifo_entry_v_lo;
-  logic tl_miss_fifo_entry_ready_li;
+  logic tl_miss_fifo_v_lo;
+  logic tl_miss_fifo_ready_li;
   
   logic mgmt_v_lo;
   logic [ways_p-1:0] valid_tl_lo;
@@ -147,9 +147,9 @@ module bsg_cache_non_blocking
     ,.stat_mem_pkt_o(tl_stat_mem_pkt_lo)
     ,.stat_mem_pkt_ready_i(tl_stat_mem_pkt_ready_li)
 
-    ,.miss_fifo_entry_v_o(tl_miss_fifo_entry_v_lo)
+    ,.miss_fifo_v_o(tl_miss_fifo_v_lo)
     ,.miss_fifo_entry_o(tl_miss_fifo_entry_lo)
-    ,.miss_fifo_entry_ready_i(tl_miss_fifo_entry_ready_li)
+    ,.miss_fifo_ready_i(tl_miss_fifo_ready_li)
 
     ,.mgmt_v_o(mgmt_v_lo)
     ,.valid_tl_o(valid_tl_lo)
@@ -212,9 +212,9 @@ module bsg_cache_non_blocking
     ,.empty_o(miss_fifo_empty_lo)
   );
 
-  assign miss_fifo_v_li = tl_miss_fifo_entry_v_lo;
+  assign miss_fifo_v_li = tl_miss_fifo_v_lo;
   assign miss_fifo_data_li = tl_miss_fifo_entry_lo;
-  assign tl_miss_fifo_entry_ready_li = miss_fifo_ready_lo;
+  assign tl_miss_fifo_ready_li = miss_fifo_ready_lo;
 
 
   // data_mem
@@ -271,7 +271,6 @@ module bsg_cache_non_blocking
 
   bsg_cache_non_blocking_dma_cmd_s dma_cmd_lo;
   logic dma_cmd_v_lo;
-  logic dma_cmd_ready_li;
 
   bsg_cache_non_blocking_dma_cmd_s dma_cmd_return_li;
   logic dma_done_li;
@@ -335,7 +334,6 @@ module bsg_cache_non_blocking
 
     ,.dma_cmd_o(dma_cmd_lo)
     ,.dma_cmd_v_o(dma_cmd_v_lo)
-    ,.dma_cmd_ready_i(dma_cmd_ready_li)
 
     ,.dma_cmd_return_i(dma_cmd_return_li)
     ,.dma_done_i(dma_done_li)
@@ -361,7 +359,6 @@ module bsg_cache_non_blocking
   
     ,.dma_cmd_i(dma_cmd_lo)
     ,.dma_cmd_v_i(dma_cmd_v_lo)
-    ,.dma_cmd_ready_o(dma_cmd_ready_li)
 
     ,.dma_cmd_return_o(dma_cmd_return_li)
     ,.done_o(dma_done_li)
