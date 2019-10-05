@@ -1,4 +1,4 @@
-module bsg_adder_wallace_tree_3_2 #(
+module bsg_multiplier_compressor #(
   parameter integer width_p = "inv"
   ,parameter integer stride_p = "inv"
   ,localparam integer out_width_p = (width_p + stride_p + 4) > 2*width_p ? 2*width_p : (width_p + stride_p + 4)
@@ -10,13 +10,19 @@ module bsg_adder_wallace_tree_3_2 #(
   ,output [out_width_p-1:0] outA_o
   ,output [out_width_p-1:0] outB_o
 );
-  if(width_p == 32) begin
-    if(stride_p == 32) begin
+  if(width_p == 32) begin: WIDTH_32
+    if(stride_p == 32) begin: STRIDE_32
       bsg_multiplier_compressor_32_32 wt(.*);
     end
+    else if(stride_p == 16) begin: STRIDE_16
+      bsg_multiplier_compressor_32_16 wt(.*);
+    end
+    else if(stride_p == 8) begin: STRIDE_8
+      bsg_multiplier_compressor_32_8 wt(.*);
+    end
   end
-  else if(width_p == 8) begin
-    if(stride_p == 8) begin
+  else if(width_p == 8) begin: WIDTH_8
+    if(stride_p == 8) begin: STRIDE_8
       bsg_multiplier_compressor_8_8 wt(.*);
     end
   end

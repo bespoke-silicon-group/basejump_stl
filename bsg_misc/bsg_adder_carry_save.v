@@ -13,7 +13,7 @@ Carry propagation is needed to recover the sum.
 module bsg_adder_carry_save 
 #(
   parameter integer width_p = "inv"
-  ,parameter bit designware_enabled_p = 0
+  ,parameter bit designware_enabled_p = 1
 )(
    input [width_p-1:0] opA_i
   ,input [width_p-1:0] opB_i

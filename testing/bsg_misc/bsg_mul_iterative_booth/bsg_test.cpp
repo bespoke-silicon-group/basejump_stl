@@ -76,7 +76,7 @@ void performTesting(int bias){
             dut->eval();
             if(res != opA * opB){
                 std::printf("Error!\n");
-                std::printf("opA = %d, opB = %d",opA, opB);
+                std::printf("opA = %d, opB = %d res = %x\n", opA, opB, res);
                 return;
             }
         }

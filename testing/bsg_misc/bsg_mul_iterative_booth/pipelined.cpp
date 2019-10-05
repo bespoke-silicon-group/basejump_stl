@@ -40,8 +40,8 @@ int main(int argc, char **argv){
 	dut->clk_i = 0;
 	dut->reset_i = 0;
 
-	int a = -1000;
-	int b = -2001;
+	int a = 0;
+	int b = 0;
 
 	dut->opA_i = a;
 	dut->opB_i = b;

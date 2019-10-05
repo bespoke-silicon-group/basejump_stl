@@ -1,10 +1,10 @@
 pipelined:
 	verilator --Wno-fatal -I../../../bsg_misc/ \
-	-I../../../bsg_misc/bsg_wallace_tree/ \
+	-I../../../bsg_misc/bsg_multiplier_compressor/ \
 	-sv --cc \
 	../../../bsg_misc/bsg_defines.v \
 	../../../bsg_misc/bsg_mul_iterative_booth.v \
-	-Gwidth_p=32 -Gstride_p=2 -Gcpa_stride_p=8 -Gdebug_p=0 -Gpipelined_p=1 -Gcsa_3_2_p=0 \
+	-Gwidth_p=32 -Gstride_p=16 -Gcpa_stride_p=32 -Gdebug_p=0 -Gpipelined_p=1 \
 	--top-module bsg_mul_iterative_booth \
 	--clk clk_i \
 	--exe ./pipelined.cpp \
@@ -17,11 +17,11 @@ pipelined:
 
 unpipelined:
 	verilator --Wno-fatal -I../../../bsg_misc/ \
-	-I../../../bsg_misc/bsg_wallace_tree/ \
+	-I../../../bsg_misc/bsg_multiplier_compressor/ \
 	-sv --cc \
 	../../../bsg_misc/bsg_defines.v \
 	../../../bsg_misc/bsg_mul_iterative_booth.v \
-	-Gwidth_p=16 -Gstride_p=16 -Gcpa_stride_p=16 -Gdebug_p=0 -Gpipelined_p=0 \
+	-Gwidth_p=32 -Gstride_p=32 -Gcpa_stride_p=16 -Gdebug_p=0 -Gpipelined_p=0 \
 	--top-module bsg_mul_iterative_booth \
 	--clk clk_i \
 	--exe ./bsg_test.cpp \
