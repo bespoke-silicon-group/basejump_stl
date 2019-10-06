@@ -324,6 +324,9 @@ module bsg_cache_non_blocking
     ,.tag_hit_way_i(tag_hit_way_lo)
     ,.tag_hit_found_i(tag_hit_found_lo)
 
+    ,.evict_addr_o(mhu_evict_addr)
+    ,.evict_v_o(mhu_evict_v)
+
     ,.miss_fifo_v_i(miss_fifo_v_lo)
     ,.miss_fifo_entry_i(miss_fifo_data_lo)
     ,.miss_fifo_yumi_o(miss_fifo_yumi_li)

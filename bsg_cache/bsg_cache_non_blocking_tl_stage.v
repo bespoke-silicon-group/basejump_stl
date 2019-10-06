@@ -90,7 +90,6 @@ module bsg_cache_non_blocking_tl_stage
 
   // localparam
   //
-  localparam counter_width_lp = `BSG_SAFE_CLOG2(block_size_in_words_p+1);
   localparam block_offset_width_lp = byte_sel_width_lp+lg_block_size_in_words_lp;
 
 
@@ -127,8 +126,8 @@ module bsg_cache_non_blocking_tl_stage
   assign addr_tl_o = addr_tl_r;
   assign data_tl_o = data_tl_r;
 
-  logic addr_index;
-  logic addr_way;
+  logic [lg_sets_lp-1:0] addr_index;
+  logic [lg_ways_lp-1:0] addr_way;
 
   assign addr_index = addr_i[block_offset_width_lp+:lg_sets_lp];
   assign addr_way = addr_i[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
@@ -172,7 +171,7 @@ module bsg_cache_non_blocking_tl_stage
   //
   logic counter_clear;
   logic counter_up;
-  logic [counter_width_lp-1:0] counter_r;
+  logic [lg_block_size_in_words_lp-1:0] counter_r;
   logic counter_max;
 
   bsg_counter_clear_up #(
@@ -327,7 +326,7 @@ module bsg_cache_non_blocking_tl_stage
       data_mem_pkt_v_o = ld_st_ready;
       stat_mem_pkt_v_o = ld_st_ready;
       ready_o = ld_st_ready & ~(decode_i.mgmt_op & v_i);
-      v_tl_n = ld_st_ready;
+      v_tl_n = ld_st_ready
         ? (decode_i.mgmt_op ? 1'b0 : v_i)
         : v_tl_r;
       tl_we = ld_st_ready & v_i & ~decode_i.mgmt_op;
@@ -401,7 +400,7 @@ module bsg_cache_non_blocking_tl_stage
 
       tag_mem_pkt.way_id = addr_way;
       tag_mem_pkt.index = addr_index;
-      tag_mem_pkt.data = data_i
+      tag_mem_pkt.data = data_i;
       tag_mem_pkt.opcode = decode_i.tagst_op
         ? e_tag_store
         : e_tag_read;

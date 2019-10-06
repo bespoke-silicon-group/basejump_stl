@@ -75,7 +75,10 @@ module bsg_cache_non_blocking_mhu
     , input [ways_p-1:0][tag_width_lp-1:0] tag_tl_i
     , input [lg_ways_lp-1:0] tag_hit_way_i
     , input tag_hit_found_i
-     
+    
+    , output logic [addr_width_p-1:0] evict_addr_o
+    , output logic evict_v_o
+   
     // miss FIFO
     , input miss_fifo_v_i
     , input [miss_fifo_entry_width_lp-1:0] miss_fifo_entry_i
@@ -196,6 +199,7 @@ module bsg_cache_non_blocking_mhu
   //
   bsg_cache_non_blocking_dma_cmd_s curr_dma_cmd_r;
   bsg_cache_non_blocking_dma_cmd_s curr_dma_cmd_n;
+  logic curr_dma_cmd_v_r, curr_dma_cmd_v_n;
   logic [tag_width_lp-1:0] curr_miss_tag;
   logic [lg_sets_lp-1:0] curr_miss_index;
   logic [tag_width_lp-1:0] miss_fifo_tag;
@@ -207,6 +211,9 @@ module bsg_cache_non_blocking_mhu
   assign miss_fifo_tag = miss_fifo_entry.addr[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
   assign miss_fifo_index = miss_fifo_entry.addr[block_offset_width_lp+:lg_sets_lp];
   assign is_secondary = (curr_miss_tag == miss_fifo_tag) & (curr_miss_index == miss_fifo_index);
+
+  assign evict_addr_o = {curr_dma_cmd_r.evict_tag, curr_dma_cmd_r.index, {block_offset_width_lp{1'b0}}};
+  assign evict_v_o = curr_dma_cmd_r.evict & curr_dma_cmd_v_r;
 
   // block load counter
   //
@@ -234,6 +241,7 @@ module bsg_cache_non_blocking_mhu
 
     mhu_state_n = mhu_state_r;
     curr_dma_cmd_n = curr_dma_cmd_r;
+    curr_dma_cmd_v_n = curr_dma_cmd_v_r;
     set_dirty_n = set_dirty_r;
 
     idle_o = 1'b0;
@@ -487,6 +495,8 @@ module bsg_cache_non_blocking_mhu
           ? dma_cmd_return
           : curr_dma_cmd_r;
 
+        curr_dma_cmd_v_n = dma_done_i;
+
         set_dirty_n = 1'b0;
         counter_clear = 1'b1;
 
@@ -610,6 +620,7 @@ module bsg_cache_non_blocking_mhu
       RECOVER: begin
         recover_o = 1'b1;
         miss_fifo_rollback_o = 1'b1;
+        curr_dma_cmd_v_n = 1'b0;
         mhu_state_n = IDLE;
       end
       
@@ -628,11 +639,13 @@ module bsg_cache_non_blocking_mhu
     if (reset_i) begin
       mhu_state_r <= IDLE; 
       curr_dma_cmd_r <= '0;
+      curr_dma_cmd_v_r <= 1'b0;
       set_dirty_r <= 1'b0;
     end
     else begin
       mhu_state_r <= mhu_state_n;
       curr_dma_cmd_r <= curr_dma_cmd_n;
+      curr_dma_cmd_v_r <= curr_dma_cmd_v_n;
       set_dirty_r <= set_dirty_n;
     end
   end

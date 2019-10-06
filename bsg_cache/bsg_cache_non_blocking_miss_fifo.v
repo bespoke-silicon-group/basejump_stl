@@ -222,7 +222,7 @@ module bsg_cache_non_blocking_miss_fifo
   // synopsys translate_off
   always_ff @ (negedge clk_i) begin
     if (~reset_i) begin
-      assert(~yumi_i | ~rollback_i)
+      assert(~(yumi_i & rollback_i))
         else $error("Error: %m. yumi_i and rollback_i cannot be both asserted. t=%0t", $time);
     end
   end
