@@ -4,6 +4,7 @@
  *  DMA engine.
  *
  *  @author tommy
+ *
  */
 
 module bsg_cache_dma
@@ -51,6 +52,8 @@ module bsg_cache_dma
     ,output logic [ways_p-1:0][data_mask_width_lp-1:0] data_mem_w_mask_o
     ,output logic [ways_p-1:0][data_width_p-1:0] data_mem_data_o
     ,input [ways_p-1:0][data_width_p-1:0] data_mem_data_i
+
+    ,output logic dma_evict_o // data eviction in progress
   );
 
   // localparam
@@ -191,6 +194,8 @@ module bsg_cache_dma
     counter_clear = 1'b0;
     counter_up = 1'b0;
 
+    dma_evict_o = 1'b0;
+
     case (dma_state_r)
 
       // wait for dma_cmd from bsg_cache_miss.
@@ -276,6 +281,8 @@ module bsg_cache_dma
         data_mem_v_o = out_fifo_ready_lo & ~counter_evict_max;
 
         done_o = counter_evict_max & out_fifo_ready_lo;
+
+        dma_evict_o = 1'b1;
       end
 
       default: begin

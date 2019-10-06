@@ -402,6 +402,7 @@ module bsg_cache
   logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] dma_data_mem_addr_lo;
   logic [ways_p-1:0][data_mask_width_lp-1:0] dma_data_mem_w_mask_lo;
   logic [ways_p-1:0][data_width_p-1:0] dma_data_mem_data_lo;
+  logic dma_evict_lo;
 
   bsg_cache_dma #(
     .addr_width_p(addr_width_p)
@@ -439,6 +440,8 @@ module bsg_cache
     ,.data_mem_w_mask_o(dma_data_mem_w_mask_lo)
     ,.data_mem_data_o(dma_data_mem_data_lo)
     ,.data_mem_data_i(data_mem_data_lo)
+    
+    ,.dma_evict_o(dma_evict_lo)
   ); 
 
   // store buffer
@@ -692,7 +695,7 @@ module bsg_cache
   // 4) tl_stage is recovering from tag_miss
   logic tl_ready;
   assign tl_ready = miss_v
-    ? (~(decode.tagst_op & v_i) & ~miss_tag_mem_v_lo & ~dma_data_mem_v_lo & ~recover_lo)
+    ? (~(decode.tagst_op & v_i) & ~miss_tag_mem_v_lo & ~dma_data_mem_v_lo & ~recover_lo & ~dma_evict_lo)
     : 1'b1;
   assign ready_o = v_tl_r
     ? (v_we & tl_ready)
