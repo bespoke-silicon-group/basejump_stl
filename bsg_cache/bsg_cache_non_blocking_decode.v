@@ -54,8 +54,6 @@ module bsg_cache_non_blocking_decode
   assign decode_o.alock_op    = (opcode_i == ALOCK);
   assign decode_o.aunlock_op  = (opcode_i == AUNLOCK);
 
-  assign decode_o.tag_read_op = (opcode_i != TAGST);
-
   assign decode_o.mgmt_op = ~(decode_o.ld_op | decode_o.st_op | decode_o.block_ld_op);
 
 endmodule

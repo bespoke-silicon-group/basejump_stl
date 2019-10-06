@@ -82,7 +82,6 @@ package bsg_cache_non_blocking_pkg;
     logic alock_op;
     logic aunlock_op;
 
-    logic tag_read_op;
     logic mgmt_op;
   } bsg_cache_non_blocking_decode_s;
 

@@ -58,9 +58,9 @@ module bsg_cache_non_blocking_tl_stage
     , input stat_mem_pkt_ready_i
 
     // miss FIFO (miss)
-    , output logic miss_fifo_entry_v_o
+    , output logic miss_fifo_v_o
     , output logic [miss_fifo_entry_width_lp-1:0] miss_fifo_entry_o
-    , input miss_fifo_entry_ready_i
+    , input miss_fifo_ready_i
   
     // to MHU (cache management)
     , output logic mgmt_v_o
@@ -114,7 +114,9 @@ module bsg_cache_non_blocking_tl_stage
 
   // TL stage
   //
-  logic v_tl_r;
+  logic v_tl_r, v_tl_n;
+  logic block_mode_r, block_mode_n;
+  logic tl_we;
   bsg_cache_non_blocking_decode_s decode_tl_r;
   logic [id_width_p-1:0] id_tl_r;
   logic [addr_width_p-1:0] addr_tl_r;
@@ -125,11 +127,45 @@ module bsg_cache_non_blocking_tl_stage
   assign addr_tl_o = addr_tl_r;
   assign data_tl_o = data_tl_r;
 
+  logic addr_index;
+  logic addr_way;
+
+  assign addr_index = addr_i[block_offset_width_lp+:lg_sets_lp];
+  assign addr_way = addr_i[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
+
   logic [tag_width_lp-1:0] addr_tag_tl;
   logic [lg_sets_lp-1:0] addr_index_tl;
 
   assign addr_tag_tl = addr_tl_r[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
   assign addr_index_tl = addr_tl_r[block_offset_width_lp+:lg_sets_lp];
+
+  assign block_loading_o = block_mode_r;
+
+  always_ff @ (posedge clk_i) begin
+    if (reset_i) begin
+      v_tl_r <= 1'b0;
+      block_mode_r <= 1'b0;
+    end
+    else begin
+      v_tl_r <= v_tl_n;
+      block_mode_r <= block_mode_n;
+    end
+    
+    if (reset_i) begin
+      {decode_tl_r
+      ,id_tl_r
+      ,addr_tl_r
+      ,data_tl_r} <= '0;
+    end
+    else begin
+      if (tl_we) begin
+        decode_tl_r <= decode_i;
+        id_tl_r <= id_i;
+        addr_tl_r <= addr_i;
+        data_tl_r <= data_i;
+      end
+    end
+  end 
 
 
   // block_load counter
@@ -137,9 +173,10 @@ module bsg_cache_non_blocking_tl_stage
   logic counter_clear;
   logic counter_up;
   logic [counter_width_lp-1:0] counter_r;
+  logic counter_max;
 
   bsg_counter_clear_up #(
-    .max_val_p(block_size_in_words_p)
+    .max_val_p(block_size_in_words_p-1)
   ) block_counter (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -148,11 +185,13 @@ module bsg_cache_non_blocking_tl_stage
     ,.count_o(counter_r)
   );
 
+  assign counter_max = counter_r == (block_size_in_words_p-1);
+
 
   // tag_mem
   //
   logic tag_mem_v_li;
-  bsg_cache_non_blocking_tag_mem_pkt_s tag_mem_pkt_li;
+  bsg_cache_non_blocking_tag_mem_pkt_s tag_mem_pkt;
 
   logic [ways_p-1:0] valid_tl;
   logic [ways_p-1:0] lock_tl;
@@ -168,7 +207,7 @@ module bsg_cache_non_blocking_tl_stage
     ,.reset_i(reset_i)
 
     ,.v_i(tag_mem_v_li)
-    ,.tag_mem_pkt_i(tag_mem_pkt_li)
+    ,.tag_mem_pkt_i(tag_mem_pkt)
 
     ,.valid_o(valid_tl)
     ,.lock_o(lock_tl)
@@ -222,7 +261,9 @@ module bsg_cache_non_blocking_tl_stage
   assign data_mem_pkt.size_op = decode_tl_r.size_op;
   assign data_mem_pkt.byte_sel = addr_tl_r[0+:byte_sel_width_lp];
   assign data_mem_pkt.way_id = tag_hit_way;
-  assign data_mem_pkt.addr = addr_tl_r[byte_sel_width_lp+:lg_block_size_in_words_lp+lg_sets_lp];
+  assign data_mem_pkt.addr = decode_tl_r.block_ld_op
+    ? {addr_tl_r[block_offset_width_lp+:lg_sets_lp], counter_r}
+    : addr_tl_r[byte_sel_width_lp+:lg_block_size_in_words_lp+lg_sets_lp];
   assign data_mem_pkt.data = data_tl_r;
 
   assign stat_mem_pkt.way_id = tag_hit_way;
@@ -241,5 +282,130 @@ module bsg_cache_non_blocking_tl_stage
 
   // pipeline logic
   //
+  logic miss_tl;
+  logic ld_st_hit;
+  logic block_ld_hit;
+  logic ld_st_miss;
+  logic ld_st_ready;
+  logic mgmt_op_tl;
+
+  assign miss_tl = tag_hit_found
+    ? (mhu_evict_match | dma_evict_match)
+    : 1'b1;
+
+  assign ld_st_hit = v_tl_r & (decode_tl_r.ld_op | decode_tl_r.st_op) & ~miss_tl;
+  assign block_ld_hit = v_tl_r & decode_tl_r.block_ld_op & ~miss_tl;
+  assign ld_st_miss = v_tl_r & (decode_tl_r.ld_op | decode_tl_r.st_op | decode_tl_r.block_ld_op) & miss_tl;
+  assign ld_st_ready = data_mem_pkt_ready_i & stat_mem_pkt_ready_i;
+  assign mgmt_op_tl = v_tl_r & decode_tl_r.mgmt_op;
+
+  always_comb begin
+
+    ready_o = 1'b0;
+    data_mem_pkt_v_o = 1'b0;
+    stat_mem_pkt_v_o = 1'b0;
+    miss_fifo_v_o = 1'b0;
+    mgmt_v_o = 1'b0;
+    v_tl_n = v_tl_r;
+    tl_we = 1'b0;
+    tag_mem_v_li = 1'b0;
+    tag_mem_pkt = mhu_tag_mem_pkt;
+    block_mode_n = block_mode_r;
+    counter_up = 1'b0;
+    counter_clear = 1'b0;
+
+    if (recover_i) begin
+      tag_mem_v_li = 1'b1;
+      tag_mem_pkt.index = addr_index_tl;
+      tag_mem_pkt.opcode = e_tag_read;
+    end
+    else if (mhu_tag_mem_pkt_v_i) begin
+      tag_mem_v_li = 1'b1;
+      tag_mem_pkt = mhu_tag_mem_pkt;
+    end
+    else if (ld_st_hit) begin
+      data_mem_pkt_v_o = ld_st_ready;
+      stat_mem_pkt_v_o = ld_st_ready;
+      ready_o = ld_st_ready & ~(decode_i.mgmt_op & v_i);
+      v_tl_n = ld_st_ready;
+        ? (decode_i.mgmt_op ? 1'b0 : v_i)
+        : v_tl_r;
+      tl_we = ld_st_ready & v_i & ~decode_i.mgmt_op;
+      tag_mem_v_li = ld_st_ready & v_i & ~decode_i.mgmt_op;
+      tag_mem_pkt.index = addr_index;
+      tag_mem_pkt.opcode = e_tag_read;
+    end
+    else if (ld_st_miss) begin
+      miss_fifo_v_o = 1'b1;
+      ready_o = miss_fifo_ready_i & ~(decode_i.mgmt_op & v_i);
+      v_tl_n = miss_fifo_ready_i
+        ? (decode_i.mgmt_op ? 1'b0 : v_i)
+        : v_tl_r;
+      tl_we = miss_fifo_ready_i & v_i & ~decode_i.mgmt_op;
+      tag_mem_v_li = miss_fifo_ready_i & v_i & ~decode_i.mgmt_op;
+      tag_mem_pkt.index = addr_index;
+      tag_mem_pkt.opcode = e_tag_read;
+    end
+    else if (block_ld_hit) begin
+      data_mem_pkt_v_o = ld_st_ready; 
+      stat_mem_pkt_v_o = ld_st_ready; 
+      ready_o = ld_st_ready & ~(decode_i.mgmt_op & v_i) & counter_max;
+      v_tl_n = (ld_st_ready & counter_max)
+        ? (decode_i.mgmt_op ? 1'b0 : v_i)
+        : v_tl_r;
+      tl_we = ld_st_ready & v_i & ~decode_i.mgmt_op & counter_max;
+
+      tag_mem_v_li = ld_st_ready & v_i & ~decode_i.mgmt_op & counter_max;
+      tag_mem_pkt.index = addr_index;
+      tag_mem_pkt.opcode = e_tag_read;
+
+      counter_up = ld_st_ready & ~counter_max;
+      counter_clear = ld_st_ready & counter_max;
+
+      block_mode_n = ld_st_ready
+        ? (block_mode_r ? ~counter_max : 1'b1)
+        : block_mode_r;
+    end
+    else if (mgmt_op_tl) begin
+      mgmt_v_o = 1'b1;
+      ready_o = mgmt_yumi_i;
+      v_tl_n = mgmt_yumi_i
+        ? v_i
+        : v_tl_r;
+
+      tl_we = mgmt_yumi_i & v_i;
+  
+      tag_mem_v_li = mgmt_yumi_i & v_i;
+      tag_mem_pkt.way_id = addr_way;
+      tag_mem_pkt.index = addr_index;
+      tag_mem_pkt.data = data_i;
+      tag_mem_pkt.opcode = decode_i.tagst_op
+        ? e_tag_store
+        : e_tag_read;
+
+    end
+    else begin
+      // TL stage empty.
+      ready_o = decode_i.mgmt_op
+        ? mhu_idle_i
+        : 1'b1;
+      v_tl_n = decode_i.mgmt_op
+        ? (mhu_idle_i ? v_i : 1'b0)
+        : v_i;
+      tl_we = decode_i.mgmt_op
+        ? (mhu_idle_i ? v_i : 1'b0)
+        : v_i;
+      tag_mem_v_li = decode_i.mgmt_op
+        ? (mhu_idle_i ? v_i : 1'b0)
+        : v_i;
+
+      tag_mem_pkt.way_id = addr_way;
+      tag_mem_pkt.index = addr_index;
+      tag_mem_pkt.data = data_i
+      tag_mem_pkt.opcode = decode_i.tagst_op
+        ? e_tag_store
+        : e_tag_read;
+    end
+  end
 
 endmodule
