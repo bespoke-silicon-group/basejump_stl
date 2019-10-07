@@ -191,6 +191,7 @@ module testbench();
 
 
     if (~reset & cache_v_lo) begin
+      $display("id=%d, data=%x", cache_id_lo, cache_data_lo);
       assert(result[cache_id_lo] == cache_data_lo)
         else $error("Output does not match expected result. Expected: %x. Actual: %x"
               , cache_data_lo, result[cache_id_lo]);
