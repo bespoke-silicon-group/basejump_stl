@@ -16,16 +16,21 @@ HIGHLIGHT = grep --color -E '^|Error|Warning|Implicit wire is used|Too few insta
 
 all: sim
 
-#$(TRACE_FILE): $(TRACE_GEN_PY)
-#	python $(TRACE_GEN_PY) > $(TRACE_FILE)
+TRACE_TR = trace.tr
+TRACE_GEN_PY = trace_gen.py
+TRACE_ROM = trace_rom
+TRACE_ROM_V = trace_rom.v
 
-#$(TRACE_ROM_V): $(TRACE_FILE)
-#	python $(BSG_IP_CORES_DIR)/bsg_mem/bsg_ascii_to_rom.py $(TRACE_FILE) $(TRACE_ROM) \
-#	> $(TRACE_ROM_V)
+$(TRACE_TR): $(TRACE_GEN_PY)
+	python $(TRACE_GEN_PY) > $(TRACE_TR)
 
-sim:
+$(TRACE_ROM_V): $(TRACE_TR)
+	python $(BASEJUMP_STL_DIR)/bsg_mem/bsg_ascii_to_rom.py $(TRACE_TR) $(TRACE_ROM) \
+		> $(TRACE_ROM_V)
+
+sim: $(TRACE_ROM_V)
 	vcs +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
-		-sverilog -full64 -f sv.include $(INCDIR) \
+		-sverilog -full64 -f sv.include $(INCDIR) $(TRACE_ROM_V) \
 		-timescale=1ps/1ps +vcs+vcdpluson $(DEFINE) -l vcs.log\
 		| $(HIGHLIGHT)
 
@@ -38,5 +43,5 @@ clean:
 	rm -rf simv.daidir simv.vdb
 	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz vcs.log
 	rm -rf stack.info.*
-	rm -f *.tr
+	rm -f $(TRACE_TR) $(TRACE_ROM_V)
 

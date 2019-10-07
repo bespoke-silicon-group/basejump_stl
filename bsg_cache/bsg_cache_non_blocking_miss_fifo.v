@@ -36,11 +36,12 @@ module bsg_cache_non_blocking_miss_fifo
   // localparam
   //
   localparam lg_els_lp = `BSG_SAFE_CLOG2(els_p);
+  localparam read_inc_width_lp = $clog2(els_p);
 
 
   // read pointer
   //
-  logic [$clog2(els_p)-1:0] read_inc;
+  logic [read_inc_width_lp-1:0] read_inc;
   logic [lg_els_lp-1:0] read_ptr;
   
   bsg_circular_ptr #(
@@ -174,8 +175,8 @@ module bsg_cache_non_blocking_miss_fifo
       cp_inc = 1'b0;
       inval = 1'b0;
       read_inc = (cp_ptr >= read_ptr)
-        ? (cp_ptr - read_ptr)
-        : (els_p + (cp_ptr+1) - read_ptr);
+        ? (read_inc_width_lp)'(cp_ptr - read_ptr)
+        : (read_inc_width_lp)'(els_p + (cp_ptr+1) - read_ptr);
     end
     else begin
       if (v_o) begin
@@ -184,36 +185,38 @@ module bsg_cache_non_blocking_miss_fifo
             e_miss_fifo_dequeue: begin
               inval = 1'b1;
               cp_inc = 1'b1;
-              read_inc = '1;
+              read_inc = (read_inc_width_lp)'(1);
             end
             e_miss_fifo_skip: begin
               inval = 1'b0;
               cp_inc = 1'b0;
-              read_inc = '1;
+              read_inc = (read_inc_width_lp)'(1);
             end
             e_miss_fifo_invalidate: begin
               inval = 1'b1;
               cp_inc = 1'b0;
-              read_inc = '1;
+              read_inc = (read_inc_width_lp)'(1);
             end
             default: begin
               // this should never happen.
               inval = 1'b0;
               cp_inc = 1'b0;
-              read_inc = '0;
+              read_inc = (read_inc_width_lp)'(0);
             end
           endcase
         end
         else begin
           inval = 1'b0;
           cp_inc = 1'b0;
-          read_inc = '0;
+          read_inc = (read_inc_width_lp)'(0);
         end
       end
       else begin
         inval = 1'b0;
-        cp_inc = ~scan_not_dq_i;
-        read_inc = empty ? '0 : '1;
+        cp_inc = ~scan_not_dq_i & ~empty;
+        read_inc = empty
+          ? (read_inc_width_lp)'(0)
+          : (read_inc_width_lp)'(1);
       end
     end
   end

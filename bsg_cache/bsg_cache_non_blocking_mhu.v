@@ -291,7 +291,7 @@ module bsg_cache_non_blocking_mhu
       IDLE: begin
         if (mgmt_v_i) begin
 
-         mgmt_data_o = '0;
+          mgmt_data_o = '0;
           stat_mem_pkt.index = addr_index_tl;
           tag_mem_pkt.index = addr_index_tl;
 
