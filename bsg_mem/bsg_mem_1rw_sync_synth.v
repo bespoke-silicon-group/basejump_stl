@@ -75,7 +75,7 @@ module bsg_mem_1rw_sync_synth
         $display("## %L: instantiating width_p=%d, els_p=%d (%m)",width_p,els_p);
      end
 
-   always_ff @(posedge clk_i)
+   always_ff @(negedge clk_i)
      if (v_i)
        assert ( (v_i !== 1'b1) || (reset_i === 'X) || (reset_i === 1'b1) || (addr_i < els_p))
          else $error("Invalid address %x to %m of size %x (reset_i = %b, v_i = %b, clk_i = %b)\n", addr_i, els_p, reset_i, v_i, clk_i);
