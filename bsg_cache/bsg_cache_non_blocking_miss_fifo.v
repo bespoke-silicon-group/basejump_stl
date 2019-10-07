@@ -39,6 +39,20 @@ module bsg_cache_non_blocking_miss_fifo
   localparam read_inc_width_lp = $clog2(els_p);
 
 
+  // valid bits
+  //
+  logic [els_p-1:0] valid_r, valid_n;
+
+  bsg_dff_reset #(
+    .width_p(els_p)
+  ) valid_dff (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.data_i(valid_n)
+    ,.data_o(valid_r)
+  );
+
+
   // read pointer
   //
   logic [read_inc_width_lp-1:0] read_inc;
@@ -103,24 +117,11 @@ module bsg_cache_non_blocking_miss_fifo
     ,.w_addr_i(write_ptr)
     ,.w_data_i(data_i)
   
-    ,.r_v_i() // unused
+    ,.r_v_i(valid_r[read_ptr]) // unused
     ,.r_addr_i(read_ptr) 
     ,.r_data_o(data_o)
   );
 
-
-  // valid bits
-  //
-  logic [els_p-1:0] valid_r, valid_n;
-
-  bsg_dff_reset #(
-    .width_p(els_p)
-  ) valid_dff (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.data_i(valid_n)
-    ,.data_o(valid_r)
-  );
   
   logic inval;
   logic [els_p-1:0] inval_decode;

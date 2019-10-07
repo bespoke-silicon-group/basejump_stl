@@ -127,6 +127,7 @@ module bsg_cache_non_blocking_dma
 
   bsg_counter_clear_up #(
     .max_val_p(block_size_in_words_p)
+    ,.init_val_p(0)
   ) dma_counter (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -169,8 +170,9 @@ module bsg_cache_non_blocking_dma
   logic out_fifo_ready_lo;
   logic [data_width_p-1:0] out_fifo_data_li;
   
-  bsg_two_fifo #(
+  bsg_fifo_1r1w_small #(
     .width_p(data_width_p)
+    ,.els_p(block_size_in_words_p)
   ) out_fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)

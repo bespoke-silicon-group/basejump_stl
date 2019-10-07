@@ -23,7 +23,6 @@ $BASEJUMP_STL_DIR/bsg_misc/bsg_counter_clear_up.v
 
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_tracker.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1r1w_small.v
-$BASEJUMP_STL_DIR/bsg_dataflow/bsg_two_fifo.v
 
 $BASEJUMP_STL_DIR/bsg_fsb/bsg_fsb_node_trace_replay.v
 
