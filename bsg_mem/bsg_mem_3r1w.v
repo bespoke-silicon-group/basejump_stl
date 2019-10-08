@@ -39,7 +39,7 @@ module bsg_mem_3r1w #(parameter width_p=-1
 
    wire                   unused = w_reset_i;
 
-   always_ff @(posedge w_clk_i)
+   always_ff @(negedge w_clk_i)
      if (w_v_i)
        begin
 //synopsys translate_off

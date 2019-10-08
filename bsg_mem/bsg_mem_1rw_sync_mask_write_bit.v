@@ -53,7 +53,7 @@ module bsg_mem_1rw_sync_mask_write_bit #(
 
    // synopsys translate_off
 
-   always_ff @(posedge clk_lo)
+   always_ff @(negedge clk_lo)
      if (v_i === 1)
        assert ((reset_i === 'X) || (reset_i === 1'b1) || (addr_i < els_p))
          else $error("Invalid address %x to %m of size %x (reset_i = %b, v_i = %b, clk_lo=%b)\n", addr_i, els_p, reset_i, v_i, clk_lo);
