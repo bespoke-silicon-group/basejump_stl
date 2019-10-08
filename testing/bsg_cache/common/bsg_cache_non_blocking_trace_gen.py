@@ -62,7 +62,7 @@ class BsgCacheNonBlockingTraceGen:
 
   # done
   def done(self):
-    trace = "0100_"
+    trace = "0011_"
     trace += self.get_bin_str(0, self.packet_len)
     print(trace)
 

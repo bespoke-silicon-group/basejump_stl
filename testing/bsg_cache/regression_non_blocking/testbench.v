@@ -199,8 +199,32 @@ module testbench();
 
   end
 
+
+  // waiting for all responses to be received.
+  //
+  integer sent_r, recv_r;
+
+  always_ff @ (negedge clk) begin
+    if (reset) begin
+      sent_r <= '0;
+      recv_r <= '0;
+    end
+    else begin
+
+      if (cache_v_li & cache_ready_lo)
+        sent_r <= sent_r + 1;
+
+      if (cache_v_lo)
+        recv_r <= recv_r + 1;
+
+    end
+  end
+
+
+
   initial begin
-    wait(done);
+    wait(done & (sent_r == recv_r));
+    #500;
     $finish;
   end
 

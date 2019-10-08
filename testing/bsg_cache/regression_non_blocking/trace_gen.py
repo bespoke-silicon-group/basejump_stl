@@ -39,9 +39,9 @@ if __name__ == "__main__":
   data_width_p = 32
   addr_width_p = 32
   tg = BsgCacheNonBlockingRegression(id_width_p, addr_width_p, data_width_p)
+
   tg.wait(10)
   tg.clear_tag()
-  tg.wait(20)
 
   for i in range(16):
     tg.send(SW, i<<2)
@@ -51,7 +51,6 @@ if __name__ == "__main__":
 
 
   # done
-  tg.wait(500)
   tg.done()
 
 
