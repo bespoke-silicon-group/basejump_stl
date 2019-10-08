@@ -122,7 +122,7 @@ module testbench();
 
   // trace replay
   //
-  localparam rom_addr_width_lp = 32; 
+  localparam rom_addr_width_lp = 26; 
   localparam ring_width_lp =
     `bsg_cache_non_blocking_pkt_width(id_width_p,addr_width_p,data_width_p);
 
@@ -156,14 +156,24 @@ module testbench();
     ,.done_o(done)
     ,.error_o()
   );
-
+  /*
   trace_rom #(
     .width_p(ring_width_lp+4)
     ,.addr_width_p(rom_addr_width_lp)
   ) trom (
     .addr_i(trace_rom_addr)
     ,.data_o(trace_rom_data)
-  ); 
+  );
+  */ 
+
+  bsg_nonsynth_test_rom #(
+    .filename_p("trace.tr")
+    ,.data_width_p(ring_width_lp+4)
+    ,.addr_width_p(rom_addr_width_lp)
+  ) test_rom (
+    .addr_i(trace_rom_addr)
+    ,.data_o(trace_rom_data)
+  );
 
   assign cache_pkt = tr_data_lo;
   assign cache_v_li = tr_v_lo;

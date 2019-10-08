@@ -237,6 +237,31 @@ module bsg_cache_non_blocking
   );
 
 
+  // DMA read data buffer
+  //
+  logic dma_read_en;
+  logic dma_read_en_r;
+  logic [data_width_p-1:0] dma_read_data_r;
+
+  bsg_dff_reset #(
+    .width_p(1)
+  ) dma_read_en_dff (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.data_i(dma_read_en)
+    ,.data_o(dma_read_en_r)
+  );
+
+  bsg_dff_en_bypass #(
+    .width_p(data_width_p)
+  ) dma_read_buffer (
+    .clk_i(clk_i)
+    ,.en_i(dma_read_en_r)
+    ,.data_i(data_mem_data_lo)
+    ,.data_o(dma_read_data_r)
+  );
+
+
   // stat_mem
   //
   bsg_cache_non_blocking_stat_mem_pkt_s stat_mem_pkt_li;
@@ -373,7 +398,7 @@ module bsg_cache_non_blocking
 
     ,.data_mem_pkt_v_o(dma_data_mem_pkt_v_lo)
     ,.data_mem_pkt_o(dma_data_mem_pkt_lo)
-    ,.data_mem_data_i(data_mem_data_lo)
+    ,.data_mem_data_i(dma_read_data_r)
     
     ,.dma_pkt_o(dma_pkt_o)
     ,.dma_pkt_v_o(dma_pkt_v_o)
@@ -402,10 +427,12 @@ module bsg_cache_non_blocking
     data_mem_pkt_li = dma_data_mem_pkt_lo;
     mhu_data_mem_pkt_yumi_li = 1'b0;
     tl_data_mem_pkt_ready_li = 1'b0;
+    dma_read_en = 1'b0;
 
     if (dma_data_mem_pkt_v_lo) begin
       data_mem_pkt_li = dma_data_mem_pkt_lo;
       data_mem_v_li = 1'b1;
+      dma_read_en =  ~dma_data_mem_pkt_lo.write_not_read;
     end
     else if (mhu_data_mem_pkt_v_lo) begin
       data_mem_pkt_li = mhu_data_mem_pkt_lo;
@@ -417,6 +444,7 @@ module bsg_cache_non_blocking
       data_mem_v_li = tl_data_mem_pkt_v_lo;
       tl_data_mem_pkt_ready_li = 1'b1;
     end
+
   end
 
 

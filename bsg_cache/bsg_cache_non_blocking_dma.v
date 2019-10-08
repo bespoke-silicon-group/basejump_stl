@@ -170,9 +170,8 @@ module bsg_cache_non_blocking_dma
   logic out_fifo_ready_lo;
   logic [data_width_p-1:0] out_fifo_data_li;
   
-  bsg_fifo_1r1w_small #(
+  bsg_two_fifo #(
     .width_p(data_width_p)
-    ,.els_p(block_size_in_words_p)
   ) out_fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
