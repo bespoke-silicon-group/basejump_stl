@@ -28,8 +28,8 @@ module bsg_cache_non_blocking_miss_fifo
     , input bsg_cache_non_blocking_miss_fifo_op_e yumi_op_i
     , input scan_not_dq_i // SCAN or DEQUEUE mode
 
-    , input rollback_i
     , output logic empty_o
+    , input rollback_i
   );
 
 
@@ -68,6 +68,8 @@ module bsg_cache_non_blocking_miss_fifo
     ,.o(read_ptr)
   );
 
+  wire read_ptr_valid = valid_r[read_ptr];
+
 
   // write pointer
   //
@@ -99,11 +101,12 @@ module bsg_cache_non_blocking_miss_fifo
     ,.add_i(cp_inc)
     ,.o(cp_ptr)
   );
-  
+
+  wire cp_ptr_valid = valid_r[cp_ptr];
 
   // 1r1w mem
   //
-  logic enque;
+  logic enque, deque;
 
   bsg_mem_1r1w #(
     .width_p(width_p)
@@ -117,7 +120,7 @@ module bsg_cache_non_blocking_miss_fifo
     ,.w_addr_i(write_ptr)
     ,.w_data_i(data_i)
   
-    ,.r_v_i(valid_r[read_ptr]) // unused
+    ,.r_v_i(read_ptr_valid)
     ,.r_addr_i(read_ptr) 
     ,.r_data_o(data_o)
   );
@@ -156,44 +159,77 @@ module bsg_cache_non_blocking_miss_fifo
 
   // FIFO logic
   //
+  logic enque_r;
+  logic deque_r;
+
+  always_ff @ (posedge clk_i) begin
+    if (reset_i) begin
+      enque_r <= 1'b0;
+      deque_r <= 1'b1;
+    end
+    else begin
+
+      if (cp_inc | enque) begin
+        enque_r <= enque;
+      end
+
+      if (rollback_i) begin
+        deque_r <= ~cp_ptr_valid;
+      end
+      else begin
+        if (enque | deque) begin
+          deque_r <= deque;
+        end
+      end
+
+    end
+  end
+
   logic full;
   logic empty;
 
-  assign full = (cp_ptr == write_ptr) & valid_r[write_ptr];
-  assign empty = (cp_ptr == write_ptr) & ~valid_r[write_ptr];
+  assign full = enque_r & (cp_ptr == write_ptr);
+  assign empty = deque_r & (read_ptr == write_ptr);
 
-  assign ready_o = ~full;
+  // empty_o and v_o cannot be both high.
+  assign v_o = read_ptr_valid & ~empty;
   assign empty_o = empty;
+  assign ready_o = ~full;
 
-  assign v_o = valid_r[read_ptr];
- 
-  assign enque = ready_o & v_i; 
+  assign enque = ready_o & v_i;
+  assign write_inc = enque; 
 
-  assign write_inc = enque;
 
   always_comb begin
+
+    deque = 1'b0;
+
     if (rollback_i) begin
+      // only rollback when empty_o=1
       cp_inc = 1'b0;
       inval = 1'b0;
       read_inc = (cp_ptr >= read_ptr)
         ? (read_inc_width_lp)'(cp_ptr - read_ptr)
-        : (read_inc_width_lp)'(els_p + (cp_ptr+1) - read_ptr);
+        : (read_inc_width_lp)'(els_p + cp_ptr - read_ptr);
     end
     else begin
       if (v_o) begin
         if (yumi_i) begin
           case (yumi_op_i)
             e_miss_fifo_dequeue: begin
+              deque = 1'b1;
               inval = 1'b1;
               cp_inc = 1'b1;
               read_inc = (read_inc_width_lp)'(1);
             end
             e_miss_fifo_skip: begin
+              deque = 1'b1;
               inval = 1'b0;
               cp_inc = 1'b0;
               read_inc = (read_inc_width_lp)'(1);
             end
             e_miss_fifo_invalidate: begin
+              deque = 1'b1;
               inval = 1'b1;
               cp_inc = 1'b0;
               read_inc = (read_inc_width_lp)'(1);
@@ -214,22 +250,17 @@ module bsg_cache_non_blocking_miss_fifo
       end
       else begin
         inval = 1'b0;
-        cp_inc = ~scan_not_dq_i & ~empty;
+        cp_inc = empty
+          ? 1'b0
+          : ~scan_not_dq_i;
         read_inc = empty
           ? (read_inc_width_lp)'(0)
           : (read_inc_width_lp)'(1);
+        deque = empty
+          ? 1'b0
+          : 1'b1;
       end
     end
   end
-
-
-  // synopsys translate_off
-  always_ff @ (negedge clk_i) begin
-    if (~reset_i) begin
-      assert(~(yumi_i & rollback_i))
-        else $error("Error: %m. yumi_i and rollback_i cannot be both asserted. t=%0t", $time);
-    end
-  end
-  // synopsys translate_on
 
 endmodule

@@ -277,6 +277,7 @@ module bsg_cache_non_blocking_tl_stage
   assign miss_fifo_entry.id = id_tl_r;
   assign miss_fifo_entry.addr = addr_tl_r;
   assign miss_fifo_entry.data = data_tl_r;
+  assign miss_fifo_entry.sigext_op = decode_tl_r.sigext_op;
 
 
   // pipeline logic

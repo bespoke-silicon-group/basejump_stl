@@ -266,6 +266,7 @@ module bsg_cache_non_blocking_mhu
       ? {curr_miss_index, counter_r}
       : {curr_miss_index, miss_fifo_entry.addr[byte_sel_width_lp+:lg_block_size_in_words_lp]};
     data_mem_pkt.data = miss_fifo_entry.data;
+    data_mem_pkt.sigext_op = miss_fifo_entry.sigext_op;
     data_mem_pkt_id_o = miss_fifo_entry.id;
 
     stat_mem_pkt_v_o = 1'b0;
@@ -610,8 +611,8 @@ module bsg_cache_non_blocking_mhu
           : data_mem_pkt_yumi_i & miss_fifo_entry.write_not_read;
  
         mhu_state_n = miss_fifo_empty_i
-          ? SCAN_MODE
-          : RECOVER;
+          ? RECOVER
+          : SCAN_MODE;
 
       end
 
