@@ -101,6 +101,8 @@ module testbench();
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.els_p(2*ways_p*sets_p*block_size_in_words_p)
+    ,.read_delay_p(16)
+    ,.write_delay_p(16)
   ) dma_model (
     .clk_i(clk)
     ,.reset_i(reset)
@@ -224,6 +226,9 @@ module testbench();
 
   initial begin
     wait(done & (sent_r == recv_r));
+    $display("[BSG_FINISH] Test Successful.");
+    //for (integer i = 0; i < 70000; i++)
+    //  @(posedge clk);
     #500;
     $finish;
   end

@@ -266,6 +266,9 @@ module bsg_cache_non_blocking_dma
       SEND_EVICT_ADDR: begin
         data_mem_pkt_v_o = dma_pkt_yumi_i; // read the first word in block.
 
+        counter_up = dma_pkt_yumi_i;
+        counter_clear = dma_pkt_yumi_i;
+
         dma_pkt_v_o = 1'b1;
         dma_pkt.write_not_read = 1'b1;
         dma_pkt.addr = dma_pkt_evict_addr;

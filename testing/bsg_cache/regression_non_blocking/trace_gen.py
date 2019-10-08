@@ -43,10 +43,11 @@ if __name__ == "__main__":
   tg.wait(10)
   tg.clear_tag()
 
-  for i in range(16):
+  N = 8208
+  for i in range(N):
     tg.send(SW, i<<2)
     
-  for i in range(16):
+  for i in range(N):
     tg.send(LW, i<<2)
 
 
