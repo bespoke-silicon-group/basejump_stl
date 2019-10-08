@@ -9,7 +9,7 @@ INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc/
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_cache/
 
 
-HIGHLIGHT = grep --color -E '^|Error|Warning|Implicit wire is used|Too few instance port connections|Port connection width mismatch|Width mismatch'
+HIGHLIGHT = grep --color -E '^|Fatal|Error|Warning|Implicit wire is used|Too few instance port connections|Port connection width mismatch|Width mismatch'
 
 
 .PHONY: dve sim all clean

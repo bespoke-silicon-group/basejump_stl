@@ -1,7 +1,7 @@
 /**
  *    bsg_cache_non_blocking_mhu.v
  *
- *    Miss Handling Unit
+ *    Miss Handling Unit.
  *
  *    @author tommy
  *
@@ -145,55 +145,6 @@ module bsg_cache_non_blocking_mhu
  
   logic set_dirty_n, set_dirty_r; // used for setting dirty bit at the end of cycle.
 
-  // Replacement policy 
-  // Find the way that is invalid.
-  // If invalid does not exist, pick LRU.
-  // If LRU is locked, then resort to backup LRU.
-  //
-  logic invalid_exist;
-  logic [lg_ways_lp-1:0] invalid_way_id;
-  logic [lg_ways_lp-1:0] backup_lru_way_id;
-  logic [lg_ways_lp-1:0] replacement_way_id;
-
-  bsg_priority_encode #(
-    .width_p(ways_p)
-    ,.lo_to_hi_p(1)
-  ) invalid_way_pe (
-    .i(~valid_tl_i & ~lock_tl_i) // invalid and unlocked
-    ,.addr_o(invalid_way_id)
-    ,.v_o(invalid_exist)
-  );
-
-  bsg_priority_encode #(
-    .width_p(ways_p)
-    ,.lo_to_hi_p(1)
-  ) backup_lru_pe (
-    .i(~lock_tl_i)
-    ,.addr_o(backup_lru_way_id)
-    ,.v_o()  // backup LRU has to exist.
-  );
-
-  assign replacement_way_id = invalid_exist
-    ? invalid_way_id
-    : (lock_tl_i[lru_way_i]
-      ? backup_lru_way_id
-      : lru_way_i);
-
-  logic replacement_dirty;
-  logic replacement_valid;
-  logic [tag_width_lp-1:0] replacement_tag;
-
-  assign replacement_dirty = dirty_i[replacement_way_id];
-  assign replacement_valid = valid_tl_i[replacement_way_id];
-  assign replacement_tag = tag_tl_i[replacement_way_id];
-
-  logic [lg_ways_lp-1:0] addr_way_tl;
-  logic [tag_width_lp-1:0] addr_tag_tl;
-  logic [lg_sets_lp-1:0] addr_index_tl;
-
-  assign addr_way_tl = addr_tl_i[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
-  assign addr_tag_tl = addr_tl_i[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
-  assign addr_index_tl = addr_tl_i[block_offset_width_lp+:lg_sets_lp];
 
   // current dma_cmd
   //
@@ -214,6 +165,74 @@ module bsg_cache_non_blocking_mhu
 
   assign evict_addr_o = {curr_dma_cmd_r.evict_tag, curr_dma_cmd_r.index, {block_offset_width_lp{1'b0}}};
   assign evict_v_o = curr_dma_cmd_r.evict & curr_dma_cmd_v_r;
+
+
+  // Replacement policy                                       // 
+  // Find the way that is invalid.                            //
+  // If invalid does not exist, pick LRU.                     //
+  // If LRU is locked, then resort to backup LRU.             //
+  // Do not evict the way that is being processed by MHU now. //
+
+  logic invalid_exist;
+  logic [lg_ways_lp-1:0] invalid_way_id;
+  logic [lg_ways_lp-1:0] backup_lru_way_id;
+  logic [lg_ways_lp-1:0] replacement_way_id;
+  logic [ways_p-1:0] curr_miss_way_decode;
+  logic lru_match_curr_miss;
+
+  bsg_priority_encode #(
+    .width_p(ways_p)
+    ,.lo_to_hi_p(1)
+  ) invalid_way_pe (
+    .i(~valid_tl_i & ~lock_tl_i) // invalid and unlocked
+    ,.addr_o(invalid_way_id)
+    ,.v_o(invalid_exist)
+  );
+
+  
+  bsg_decode_with_v #(
+    .num_out_p(ways_p) 
+  ) curr_miss_way_demux (
+    .i(curr_dma_cmd_r.way_id)
+    ,.v_i(curr_dma_cmd_v_r)
+    ,.o(curr_miss_way_decode)
+  );
+
+  bsg_priority_encode #(
+    .width_p(ways_p)
+    ,.lo_to_hi_p(1)
+  ) backup_lru_pe (
+    .i(~lock_tl_i & ~curr_miss_way_decode)
+    ,.addr_o(backup_lru_way_id)
+    ,.v_o()  // backup LRU has to exist.
+  );
+
+  assign lru_match_curr_miss = curr_dma_cmd_v_r 
+    & (curr_dma_cmd_r.way_id == lru_way_i)
+    & (curr_dma_cmd_r.index == miss_fifo_index);
+
+  assign replacement_way_id = invalid_exist
+    ? invalid_way_id
+    : ((lock_tl_i[lru_way_i] | lru_match_curr_miss) // lru_way is locked || lru_way matches curr_miss_way.
+      ? backup_lru_way_id
+      : lru_way_i);
+
+  logic replacement_dirty;
+  logic replacement_valid;
+  logic [tag_width_lp-1:0] replacement_tag;
+
+  assign replacement_dirty = dirty_i[replacement_way_id];
+  assign replacement_valid = valid_tl_i[replacement_way_id];
+  assign replacement_tag = tag_tl_i[replacement_way_id];
+
+  logic [lg_ways_lp-1:0] addr_way_tl;
+  logic [tag_width_lp-1:0] addr_tag_tl;
+  logic [lg_sets_lp-1:0] addr_index_tl;
+
+  assign addr_way_tl = addr_tl_i[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
+  assign addr_tag_tl = addr_tl_i[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
+  assign addr_index_tl = addr_tl_i[block_offset_width_lp+:lg_sets_lp];
+
 
   // block load counter
   //

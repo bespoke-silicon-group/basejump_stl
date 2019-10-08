@@ -3,6 +3,7 @@
 #
 
 import sys
+import random
 sys.path.append('../common')
 from bsg_cache_non_blocking_trace_gen import *
 
@@ -18,7 +19,7 @@ class BsgCacheNonBlockingRegression:
 
   def send(self, opcode, addr):
     if opcode == SW:
-      self.tg.send(self.curr_id, SW, addr)
+      self.tg.send(self.curr_id, SW, addr, self.curr_data)
       self.curr_data += 1 
     elif opcode == LW:
       self.tg.send(self.curr_id, LW, addr)
@@ -51,6 +52,17 @@ class BsgCacheNonBlockingRegression:
         i += stride
       base += 4
 
+  # num: number of random accesses
+  # max_addr: exclusive upper bound for addr.
+  def test_random(self, num, max_addr):
+    for i in range(num):
+      addr = random.randint(0, (max_addr/4)-1)*4
+      store_not_load = random.randint(0,1)
+      if store_not_load:
+        self.send(SW, addr)
+      else:
+        self.send(LW, addr)
+
 
 #   main()
 if __name__ == "__main__":
@@ -63,10 +75,17 @@ if __name__ == "__main__":
   tg.clear_tag()
 
   MAX_ADDR = 65536
+
+  # test_stride
   stride = 4
   while stride < 256:
     tg.test_stride(stride, MAX_ADDR)
     stride += 4
+
+  # test_random
+  N = 10000
+  tg.test_random(N, MAX_ADDR)
+
 
   # done
   tg.done()
