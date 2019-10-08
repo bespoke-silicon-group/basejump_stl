@@ -8,7 +8,7 @@ module testbench();
 
   // parameters
   //
-  parameter id_width_p = 20;
+  parameter id_width_p = 30;
   parameter addr_width_p = 32;
   parameter data_width_p = 32;
   parameter block_size_in_words_p = 8;
@@ -189,7 +189,6 @@ module testbench();
 
       if (cache_pkt.opcode == TAGST) begin
         result[cache_pkt.id] = '0;
-
       end
       else if (cache_pkt.opcode == LW) begin
         result[cache_pkt.id] = mem[cache_pkt.addr];
@@ -205,7 +204,7 @@ module testbench();
     if (~reset & cache_v_lo) begin
       $display("id=%d, data=%x", cache_id_lo, cache_data_lo);
       assert(result[cache_id_lo] == cache_data_lo)
-        else $error("Output does not match expected result. Id= %d, Expected: %x. Actual: %x",
+        else $fatal("Output does not match expected result. Id= %d, Expected: %x. Actual: %x",
               cache_id_lo, result[cache_id_lo], cache_data_lo);
     end
 
@@ -237,7 +236,7 @@ module testbench();
   initial begin
     wait(done & (sent_r == recv_r));
     $display("[BSG_FINISH] Test Successful.");
-    //for (integer i = 0; i < 70000; i++)
+    //for (integer i = 0; i < 100000000; i++)
     //  @(posedge clk);
     #500;
     $finish;

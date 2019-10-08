@@ -120,11 +120,13 @@ module bsg_cache_non_blocking_tl_stage
   logic [id_width_p-1:0] id_tl_r;
   logic [addr_width_p-1:0] addr_tl_r;
   logic [data_width_p-1:0] data_tl_r;
+  logic mgmt_op_v;
 
   assign decode_tl_o = decode_tl_r;
   assign id_tl_o = id_tl_r;
   assign addr_tl_o = addr_tl_r;
   assign data_tl_o = data_tl_r;
+  assign mgmt_op_v = decode_i.mgmt_op & v_i;
 
   logic [lg_sets_lp-1:0] addr_index;
   logic [lg_ways_lp-1:0] addr_way;
@@ -326,9 +328,9 @@ module bsg_cache_non_blocking_tl_stage
     else if (ld_st_hit) begin
       data_mem_pkt_v_o = ld_st_ready;
       stat_mem_pkt_v_o = ld_st_ready;
-      ready_o = ld_st_ready & ~(decode_i.mgmt_op & v_i);
+      ready_o = ld_st_ready & ~mgmt_op_v;
       v_tl_n = ld_st_ready
-        ? (decode_i.mgmt_op ? 1'b0 : v_i)
+        ? (mgmt_op_v ? 1'b0 : v_i)
         : v_tl_r;
       tl_we = ld_st_ready & v_i & ~decode_i.mgmt_op;
       tag_mem_v_li = ld_st_ready & v_i & ~decode_i.mgmt_op;
@@ -337,9 +339,9 @@ module bsg_cache_non_blocking_tl_stage
     end
     else if (ld_st_miss) begin
       miss_fifo_v_o = 1'b1;
-      ready_o = miss_fifo_ready_i & ~(decode_i.mgmt_op & v_i);
+      ready_o = miss_fifo_ready_i & ~mgmt_op_v;
       v_tl_n = miss_fifo_ready_i
-        ? (decode_i.mgmt_op ? 1'b0 : v_i)
+        ? (mgmt_op_v ? 1'b0 : v_i)
         : v_tl_r;
       tl_we = miss_fifo_ready_i & v_i & ~decode_i.mgmt_op;
       tag_mem_v_li = miss_fifo_ready_i & v_i & ~decode_i.mgmt_op;
@@ -349,9 +351,9 @@ module bsg_cache_non_blocking_tl_stage
     else if (block_ld_hit) begin
       data_mem_pkt_v_o = ld_st_ready; 
       stat_mem_pkt_v_o = ld_st_ready; 
-      ready_o = ld_st_ready & ~(decode_i.mgmt_op & v_i) & counter_max;
+      ready_o = ld_st_ready & ~mgmt_op_v & counter_max;
       v_tl_n = (ld_st_ready & counter_max)
-        ? (decode_i.mgmt_op ? 1'b0 : v_i)
+        ? (mgmt_op_v ? 1'b0 : v_i)
         : v_tl_r;
       tl_we = ld_st_ready & v_i & ~decode_i.mgmt_op & counter_max;
 
@@ -386,16 +388,16 @@ module bsg_cache_non_blocking_tl_stage
     end
     else begin
       // TL stage empty.
-      ready_o = decode_i.mgmt_op
+      ready_o = mgmt_op_v
         ? mhu_idle_i
         : 1'b1;
-      v_tl_n = decode_i.mgmt_op
+      v_tl_n = mgmt_op_v
         ? (mhu_idle_i ? v_i : 1'b0)
         : v_i;
-      tl_we = decode_i.mgmt_op
+      tl_we = mgmt_op_v
         ? (mhu_idle_i ? v_i : 1'b0)
         : v_i;
-      tag_mem_v_li = decode_i.mgmt_op
+      tag_mem_v_li = mgmt_op_v
         ? (mhu_idle_i ? v_i : 1'b0)
         : v_i;
 

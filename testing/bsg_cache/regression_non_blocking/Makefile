@@ -24,10 +24,6 @@ TRACE_ROM_V = trace_rom.v
 $(TRACE_TR): $(TRACE_GEN_PY)
 	python $(TRACE_GEN_PY) > $(TRACE_TR)
 
-#$(TRACE_ROM_V): $(TRACE_TR)
-#	python $(BASEJUMP_STL_DIR)/bsg_mem/bsg_ascii_to_rom.py $(TRACE_TR) $(TRACE_ROM) \
-#		> $(TRACE_ROM_V)
-
 sim: $(TRACE_TR)
 	vcs +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
 		-sverilog -full64 -f sv.include $(INCDIR) \
