@@ -280,7 +280,9 @@ module bsg_cache_non_blocking_mhu
     data_mem_pkt.size_op = miss_fifo_entry.block_load
       ? (2)'($clog2(data_width_p>>3))
       : miss_fifo_entry.size_op;
-    data_mem_pkt.byte_sel = miss_fifo_entry.addr[0+:byte_sel_width_lp]; // dont care for block_ld.
+    data_mem_pkt.byte_sel = miss_fifo_entry.block_load
+      ? {byte_sel_width_lp{1'b0}}
+      : miss_fifo_entry.addr[0+:byte_sel_width_lp];
     data_mem_pkt.way_id = curr_dma_cmd_r.way_id;
     data_mem_pkt.addr = miss_fifo_entry.block_load
       ? {curr_miss_index, counter_r}

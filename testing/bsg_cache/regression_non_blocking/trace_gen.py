@@ -90,7 +90,22 @@ class BsgCacheNonBlockingRegression:
         self.send(LW, addr)
       elif op == 1:
         self.send(SW, addr)
-      
+    
+  #
+  def test_linear(self, start_addr, length, max_addr):
+    start_word_addr = start_addr - (start_addr%4)
+    store_not_load = random.randint(0,1)
+    if store_not_load:
+      for i in range(length):
+        taddr = start_word_addr + (i*4)
+        if taddr < max_addr:
+          self.send(SW, start_word_addr + (i*4))
+    else:
+      for i in range(length):
+        taddr = start_word_addr + (i*4)
+        if taddr < max_addr:
+          self.send(LW, start_word_addr + (i*4))
+         
       
 
 
@@ -120,6 +135,12 @@ if __name__ == "__main__":
   for i in range(100000):
     addr = random.randint(0,MAX_ADDR-1)
     tg.test_block_random(addr)
+
+  # test_linear
+  for i in range(40000):
+    addr = random.randint(0,(MAX_ADDR/4)-1)
+    length = random.randint(1,32)
+    tg.test_linear(addr,length,MAX_ADDR)
 
   # done
   tg.done()

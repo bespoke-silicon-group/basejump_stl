@@ -263,7 +263,9 @@ module bsg_cache_non_blocking_tl_stage
   assign data_mem_pkt.size_op = decode_tl_r.block_ld_op
     ? (2)'($clog2(data_width_p>>3))
     : decode_tl_r.size_op;
-  assign data_mem_pkt.byte_sel = addr_tl_r[0+:byte_sel_width_lp];
+  assign data_mem_pkt.byte_sel = decode_tl_r.block_ld_op
+    ? {byte_sel_width_lp{1'b0}}
+    : addr_tl_r[0+:byte_sel_width_lp];
   assign data_mem_pkt.way_id = tag_hit_way;
   assign data_mem_pkt.addr = decode_tl_r.block_ld_op
     ? {addr_tl_r[block_offset_width_lp+:lg_sets_lp], counter_r}
