@@ -602,8 +602,9 @@ module bsg_cache_non_blocking_mhu
 
         miss_fifo_scan_not_dq_o = 1'b1;
         miss_fifo_yumi_o = miss_fifo_v_i & (is_secondary
-          ? data_mem_pkt_yumi_i   // invalidate
-          : 1'b1);                // skip
+          ? (data_mem_pkt_yumi_i
+            & (miss_fifo_entry.block_load ? counter_max : 1'b1))
+          : 1'b1);
         miss_fifo_yumi_op_o = is_secondary
           ? e_miss_fifo_invalidate
           : e_miss_fifo_skip;

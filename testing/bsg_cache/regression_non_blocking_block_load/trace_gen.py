@@ -75,7 +75,7 @@ if __name__ == "__main__":
     tg.block_store(i)
     tg.block_load(i)
 
-  for i in range(100):
+  for i in range(1000000):
     load_not_store = random.randint(0,1)
     addr = random.randint(0,MAX_ADDR-1)
     if load_not_store: 

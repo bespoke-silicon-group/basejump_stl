@@ -19,7 +19,6 @@ all: sim
 TRACE_TR = trace.tr
 TRACE_GEN_PY = trace_gen.py
 TRACE_ROM = trace_rom
-TRACE_ROM_V = trace_rom.v
 
 $(TRACE_TR): $(TRACE_GEN_PY)
 	python $(TRACE_GEN_PY) > $(TRACE_TR)
@@ -39,5 +38,5 @@ clean:
 	rm -rf simv.daidir simv.vdb
 	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz vcs.log
 	rm -rf stack.info.*
-	rm -f $(TRACE_TR) $(TRACE_ROM_V)
+	rm -f $(TRACE_TR)
 

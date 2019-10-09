@@ -246,7 +246,7 @@ module testbench();
   initial begin
     wait(done & (sent_r == recv_r));
     $display("[BSG_FINISH] Test Successful.");
-    //for (integer i = 0; i < 100000000; i++)
+    //for (integer i = 0; i < 1000000; i++)
     //  @(posedge clk);
     #500;
     $finish;
