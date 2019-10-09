@@ -243,6 +243,7 @@ module bsg_cache_non_blocking_mhu
 
   bsg_counter_clear_up #(
     .max_val_p(block_size_in_words_p-1)
+    ,.init_val_p(0)
   ) block_ld_counter (
     .clk_i(clk_i)
     ,.reset_i(reset_i)

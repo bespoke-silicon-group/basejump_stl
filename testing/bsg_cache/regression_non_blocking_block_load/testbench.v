@@ -156,15 +156,6 @@ module testbench();
     ,.done_o(done)
     ,.error_o()
   );
-  /*
-  trace_rom #(
-    .width_p(ring_width_lp+4)
-    ,.addr_width_p(rom_addr_width_lp)
-  ) trom (
-    .addr_i(trace_rom_addr)
-    ,.data_o(trace_rom_data)
-  );
-  */ 
 
   bsg_nonsynth_test_rom #(
     .filename_p("trace.tr")
@@ -181,7 +172,8 @@ module testbench();
 
   // consistency checking
   logic [data_width_p-1:0] mem [*];    // indexed by addr.
-  logic [data_width_p-1:0] result [*]; // indexed by id.
+  logic [block_size_in_words_p-1:0][data_width_p-1:0] result [*]; // indexed by id.
+  integer load_idx [*];
 
   always @ (negedge clk) begin
     
@@ -190,12 +182,14 @@ module testbench();
       if (cache_pkt.opcode == TAGST) begin
         result[cache_pkt.id] = '0;
       end
-      else if (cache_pkt.opcode == LW) begin
-        result[cache_pkt.id] = mem[cache_pkt.addr];
+      else if (cache_pkt.opcode == BLOCK_LD) begin
+        for (integer i = 0; i < block_size_in_words_p; i++)
+          result[cache_pkt.id][i] = mem[cache_pkt.addr+(4*i)];
+        load_idx[cache_pkt.id] = 0;
       end
       else if (cache_pkt.opcode == SW) begin
         mem[cache_pkt.addr] = cache_pkt.data;
-        result[cache_pkt.id] = '0;
+        result[cache_pkt.id][0] = '0;
       end
     
     end
@@ -203,9 +197,17 @@ module testbench();
 
     if (~reset & cache_v_lo) begin
       $display("id=%d, data=%x", cache_id_lo, cache_data_lo);
-      assert(result[cache_id_lo] == cache_data_lo)
-        else $fatal("Output does not match expected result. Id= %d, Expected: %x. Actual: %x",
-              cache_id_lo, result[cache_id_lo], cache_data_lo);
+      if (load_idx.exists(cache_id_lo)) begin
+        assert(result[cache_id_lo][load_idx[cache_id_lo]] == cache_data_lo)
+          else $fatal("Output does not match expected result. Id= %d, Expected: %x. Actual: %x",
+                cache_id_lo, result[cache_id_lo][load_idx[cache_id_lo]], cache_data_lo);
+        load_idx[cache_id_lo]++;
+      end
+      else begin
+        assert(result[cache_id_lo][0] == cache_data_lo)
+          else $fatal("Output does not match expected result. Id= %d, Expected: %x. Actual: %x",
+              cache_id_lo, result[cache_id_lo][0], cache_data_lo);
+      end
     end
 
   end
@@ -222,8 +224,16 @@ module testbench();
     end
     else begin
 
-      if (cache_v_li & cache_ready_lo)
-        sent_r <= sent_r + 1;
+      if (cache_v_li & cache_ready_lo) begin
+        if (cache_pkt.opcode == TAGST)
+          sent_r <= sent_r + 1;
+        else if (cache_pkt.opcode == SW)
+          sent_r <= sent_r + 1;
+        else if (cache_pkt.opcode == BLOCK_LD)
+          sent_r <= sent_r + 8;
+      
+
+      end
 
       if (cache_v_lo)
         recv_r <= recv_r + 1;
