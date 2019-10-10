@@ -95,7 +95,7 @@ module bsg_booth_selector #(
 );
 
 wire [width_p:0] zero_or_not = {(width_p+1){code_i[0]}} & pos_op_i;
-wire [width_p:0] sht = code_i[1] ? {zero_or_not[width_p-1:0], '0} : zero_or_not;
+wire [width_p:0] sht = code_i[1] ? {zero_or_not[width_p-1:0], 1'b0} : zero_or_not;
 wire [width_p:0] pd = {(width_p+1){code_i[2]}} ^ sht;
 
 
@@ -184,7 +184,7 @@ else begin: WALLACE_TREE
   assign base_reg[0] = csa_opA_i;
   assign base_reg[1] = csa_opB_i;
 
-  bsg_adder_wallace_tree_3_2 #(
+  bsg_multiplier_compressor #(
     .width_p(width_p)
     ,.stride_p(stride_p)
   ) cps (
