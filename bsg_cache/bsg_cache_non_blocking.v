@@ -267,7 +267,7 @@ module bsg_cache_non_blocking
   bsg_cache_non_blocking_stat_mem_pkt_s stat_mem_pkt_li;
   logic stat_mem_v_li;
   logic [ways_p-1:0] dirty_lo;
-  logic [lg_ways_lp-1:0] lru_way_lo;
+  logic [ways_p-2:0] lru_bits_lo;
 
   bsg_cache_non_blocking_stat_mem #(
     .ways_p(ways_p)
@@ -280,7 +280,7 @@ module bsg_cache_non_blocking
     ,.stat_mem_pkt_i(stat_mem_pkt_li)
 
     ,.dirty_o(dirty_lo)
-    ,.lru_way_o(lru_way_lo)
+    ,.lru_bits_o(lru_bits_lo)
   );
 
 
@@ -339,7 +339,7 @@ module bsg_cache_non_blocking
     ,.stat_mem_pkt_v_o(mhu_stat_mem_pkt_v_lo)
     ,.stat_mem_pkt_o(mhu_stat_mem_pkt_lo)
     ,.dirty_i(dirty_lo)
-    ,.lru_way_i(lru_way_lo)
+    ,.lru_bits_i(lru_bits_lo)
 
     ,.tag_mem_pkt_v_o(mhu_tag_mem_pkt_v_lo)
     ,.tag_mem_pkt_o(mhu_tag_mem_pkt_lo)

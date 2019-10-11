@@ -65,7 +65,7 @@ module bsg_cache_non_blocking_mhu
     , output logic [stat_mem_pkt_width_lp-1:0] stat_mem_pkt_o
  
     , input [ways_p-1:0] dirty_i
-    , input [lg_ways_lp-1:0] lru_way_i
+    , input [ways_p-2:0] lru_bits_i
  
     // tag_mem
     , output logic tag_mem_pkt_v_o
@@ -178,7 +178,8 @@ module bsg_cache_non_blocking_mhu
   logic [lg_ways_lp-1:0] backup_lru_way_id;
   logic [lg_ways_lp-1:0] replacement_way_id;
   logic [ways_p-1:0] curr_miss_way_decode;
-  logic lru_match_curr_miss;
+  logic [ways_p-1:0] disabled_ways;
+  logic next_miss_index_match;
 
   bsg_priority_encode #(
     .width_p(ways_p)
@@ -189,33 +190,30 @@ module bsg_cache_non_blocking_mhu
     ,.v_o(invalid_exist)
   );
 
+  assign next_miss_index_match = curr_dma_cmd_v_r & (curr_dma_cmd_r.index == miss_fifo_index);
+
   
   bsg_decode_with_v #(
     .num_out_p(ways_p) 
   ) curr_miss_way_demux (
     .i(curr_dma_cmd_r.way_id)
-    ,.v_i(curr_dma_cmd_v_r)
+    ,.v_i(next_miss_index_match)
     ,.o(curr_miss_way_decode)
   );
 
-  bsg_priority_encode #(
-    .width_p(ways_p)
-    ,.lo_to_hi_p(1)
-  ) backup_lru_pe (
-    .i(~lock_tl_i & ~curr_miss_way_decode)
-    ,.addr_o(backup_lru_way_id)
-    ,.v_o()  // backup LRU has to exist.
-  );
+  assign disabled_ways = lock_tl_i | curr_miss_way_decode;
 
-  assign lru_match_curr_miss = curr_dma_cmd_v_r 
-    & (curr_dma_cmd_r.way_id == lru_way_i)
-    & (curr_dma_cmd_r.index == miss_fifo_index);
+  bsg_lru_pseudo_tree_backup #(
+    .ways_p(ways_p)
+  ) lru_backup (
+    .lru_bits_i(lru_bits_i)
+    ,.disabled_ways_i(disabled_ways)
+    ,.lru_way_id_o(backup_lru_way_id)
+  );
 
   assign replacement_way_id = invalid_exist
     ? invalid_way_id
-    : ((lock_tl_i[lru_way_i] | lru_match_curr_miss) // lru_way is locked || lru_way matches curr_miss_way.
-      ? backup_lru_way_id
-      : lru_way_i);
+    : backup_lru_way_id;
 
   logic replacement_dirty;
   logic replacement_valid;

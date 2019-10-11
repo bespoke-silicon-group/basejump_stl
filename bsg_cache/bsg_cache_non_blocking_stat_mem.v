@@ -14,7 +14,6 @@ module bsg_cache_non_blocking_stat_mem
     , parameter sets_p="inv"
 
     , parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
-    , parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
 
     , parameter stat_mem_pkt_width_lp=
       `bsg_cache_non_blocking_stat_mem_pkt_width(ways_p,sets_p)
@@ -27,7 +26,7 @@ module bsg_cache_non_blocking_stat_mem
     , input [stat_mem_pkt_width_lp-1:0] stat_mem_pkt_i
 
     , output logic [ways_p-1:0] dirty_o
-    , output logic [lg_ways_lp-1:0] lru_way_o
+    , output logic [ways_p-2:0] lru_bits_o
   );
 
 
@@ -146,15 +145,11 @@ module bsg_cache_non_blocking_stat_mem
 
   end
 
+  
   // output logic
   //
-  bsg_lru_pseudo_tree_encode #(
-    .ways_p(ways_p)
-  ) lru_encode (
-    .lru_i(data_lo.lru_bits)
-    ,.way_id_o(lru_way_o)
-  );
-
+  assign lru_bits_o = data_lo.lru_bits;
   assign dirty_o = data_lo.dirty;
+
 
 endmodule
