@@ -203,12 +203,32 @@ module bsg_cache_non_blocking_mhu
 
   assign disabled_ways = lock_tl_i | curr_miss_way_decode;
 
+  logic [ways_p-2:0] modify_data_lo;
+  logic [ways_p-2:0] modify_mask_lo;
+  logic [ways_p-2:0] modified_lru_bits;
+
   bsg_lru_pseudo_tree_backup #(
     .ways_p(ways_p)
   ) lru_backup (
-    .lru_bits_i(lru_bits_i)
-    ,.disabled_ways_i(disabled_ways)
-    ,.lru_way_id_o(backup_lru_way_id)
+    .disabled_ways_i(disabled_ways)
+    ,.modify_data_o(modify_data_lo)
+    ,.modify_mask_o(modify_mask_lo)
+  );
+
+  bsg_mux_bitwise #(
+    .width_p(ways_p-1)
+  ) mux (
+    .data0_i(lru_bits_i)
+    ,.data1_i(modify_data_lo)
+    ,.sel_i(modify_mask_lo)
+    ,.data_o(modified_lru_bits)
+  );
+
+  bsg_lru_pseudo_tree_encode #(
+    .ways_p(ways_p)
+  ) lru_encode (
+    .lru_i(modified_lru_bits)
+    ,.way_id_o(backup_lru_way_id)
   );
 
   assign replacement_way_id = invalid_exist

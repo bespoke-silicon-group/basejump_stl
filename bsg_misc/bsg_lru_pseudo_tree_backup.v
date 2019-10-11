@@ -3,8 +3,9 @@
  *
  *    tree pseudo LRU backup finder.
  *
- *    Given the LRU bits and the bit vector of disabled ways, it will tell
- *    you the backup LRU to replace.
+ *    Given the bit vector of disabled ways, it will tell
+ *    you bit-mask and data to modify the original LRU bits to obtain
+ *    the backup LRU.
  *      
  *    The algorithm to find backup_LRU is:
  *    start from the root of the LRU tree, and traverse down the tree in the
@@ -45,17 +46,10 @@ module bsg_lru_pseudo_tree_backup
     , parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
   )
   (
-    input [ways_p-2:0] lru_bits_i
-    , input [ways_p-1:0] disabled_ways_i
-    , output logic [lg_ways_lp-1:0] lru_way_id_o
+    input [ways_p-1:0] disabled_ways_i
+    , output logic [ways_p-2:0] modify_mask_o
+    , output logic [ways_p-2:0] modify_data_o
   );
-
-
-  // localparam 
-  //
-  logic [ways_p-2:0] modify_data;
-  logic [ways_p-2:0] modify_mask;
-  logic [ways_p-2:0] modified_lru_bits;
 
 
   // backup LRU logic
@@ -70,29 +64,9 @@ module bsg_lru_pseudo_tree_backup
   
     // k = start index in LRU bits
     for (genvar k = 0; k < (2**(i+1))/2; k++) begin
-      assign modify_data[(2**i)-1+k] = and_reduce[2*k];
-      assign modify_mask[(2**i)-1+k] = |and_reduce[2*k+:2];
+      assign modify_data_o[(2**i)-1+k] = and_reduce[2*k];
+      assign modify_mask_o[(2**i)-1+k] = |and_reduce[2*k+:2];
     end
   end
-
-  bsg_mux_bitwise #(
-    .width_p(ways_p-1)
-  ) mux (
-    .data0_i(lru_bits_i)
-    ,.data1_i(modify_data)
-    ,.sel_i(modify_mask)
-    ,.data_o(modified_lru_bits)
-  );
-
-
-  // encoder
-  //
-  bsg_lru_pseudo_tree_encode #(
-    .ways_p(ways_p)
-  ) lru_encode (
-    .lru_i(modified_lru_bits)
-    ,.way_id_o(lru_way_id_o)
-  );
-
 
 endmodule
