@@ -44,6 +44,7 @@ module bsg_round_robin_n_to_1 #(parameter width_p = -1
            ,.reset_i(reset_i)
            ,.add_i  (yumi_i )
            ,.o      (ptr_r  )
+           ,.n_o    ()
            );
 
         assign v_o = v_i [ptr_r];
