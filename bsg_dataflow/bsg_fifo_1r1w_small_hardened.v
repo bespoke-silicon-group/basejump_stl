@@ -64,7 +64,7 @@ module bsg_fifo_1r1w_small_hardened #( parameter width_p      = -1
    // avoid reading and writing same address 
    logic [width_p-1:0] data_o_mem, data_o_reg;
   
-   bsg_fifo_tracker_sync #(.els_p(els_p)
+   bsg_fifo_tracker #(.els_p(els_p)
                           ) fts
      (.clk_i
       ,.reset_i

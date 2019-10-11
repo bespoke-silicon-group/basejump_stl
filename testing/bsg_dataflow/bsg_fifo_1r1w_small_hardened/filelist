@@ -12,7 +12,6 @@ $BASEJUMP_STL_DIR/bsg_misc/bsg_array_reverse.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_scan.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_mux.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_circular_ptr.v
-$BASEJUMP_STL_DIR/bsg_misc/bsg_circular_ptr_sync.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_gray_to_binary.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_binary_plus_one_to_gray.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_wait_cycles.v
@@ -37,7 +36,6 @@ $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1r1w_sync_synth.v
 $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1rw_sync.v
 $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1rw_sync_synth.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_tracker.v
-$BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_tracker_sync.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1r1w_small.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1r1w_small_hardened.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1r1w_small_unhardened.v

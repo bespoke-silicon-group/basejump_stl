@@ -14,22 +14,25 @@ module bsg_fifo_tracker #(parameter els_p           = -1
 
     , output [ptr_width_lp-1:0] wptr_r_o
     , output [ptr_width_lp-1:0] rptr_r_o
+    , output [ptr_width_lp-1:0] rptr_n_o
 
     , output full_o
     , output empty_o
+    , output empty_r_o
     );
 
    // one read pointer, one write pointer;
-   logic [ptr_width_lp-1:0] rptr_r, wptr_r;
+   logic [ptr_width_lp-1:0] rptr_r, rptr_n, wptr_r;
 
    assign wptr_r_o = wptr_r;
    assign rptr_r_o = rptr_r;
+   assign rptr_n_o = rptr_n;
 
    // Used to latch last operation, to determine fifo full or empty
    logic                    enq_r, deq_r;
 
    // internal signals
-   logic                    empty, full, equal_ptrs;
+   logic                    empty, empty_r, full, equal_ptrs;
 
    bsg_circular_ptr #(.slots_p   (els_p)
                       ,.max_add_p(1    )
@@ -38,6 +41,7 @@ module bsg_fifo_tracker #(parameter els_p           = -1
        , .reset_i(reset_i)
        , .add_i  (deq_i )
        , .o      (rptr_r )
+       , .n_o    (rptr_n)
        );
 
    bsg_circular_ptr #(.slots_p   (els_p)
@@ -47,6 +51,7 @@ module bsg_fifo_tracker #(parameter els_p           = -1
        , .reset_i(reset_i)
        , .add_i  (enq_i  )
        , .o      (wptr_r )
+       , .n_o    ()
        );
 
    // registering last operation
@@ -69,6 +74,9 @@ module bsg_fifo_tracker #(parameter els_p           = -1
                deq_r <= deq_i;
             end
        end // else: !if(reset_i)
+       
+   always_ff @(posedge clk_i)
+     empty_r <= empty;
 
    // if read and write pointers are equal
    // empty or fullness is determined by whether
@@ -82,7 +90,11 @@ module bsg_fifo_tracker #(parameter els_p           = -1
    // enque signals would not make the counters equal
 
    assign equal_ptrs = (rptr_r == wptr_r);
-   assign empty_o    = equal_ptrs & deq_r;
-   assign full_o     = equal_ptrs & enq_r;
+   assign empty      = equal_ptrs & deq_r;
+   assign full       = equal_ptrs & enq_r;
+   
+   assign full_o = full;
+   assign empty_o = empty;
+   assign empty_r_o = empty_r;
 
 endmodule // bsg_fifo_tracker
