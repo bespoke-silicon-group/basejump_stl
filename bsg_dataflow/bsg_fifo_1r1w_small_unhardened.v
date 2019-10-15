@@ -66,7 +66,6 @@ module bsg_fifo_1r1w_small_unhardened #( parameter width_p      = -1
       ,.rptr_n_o()
       ,.full_o  (full)
       ,.empty_o (empty)
-      ,.empty_r_o()
       );
 
    // async read

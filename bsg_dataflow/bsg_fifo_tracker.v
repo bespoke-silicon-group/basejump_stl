@@ -18,7 +18,6 @@ module bsg_fifo_tracker #(parameter els_p           = -1
 
     , output full_o
     , output empty_o
-    , output empty_r_o
     );
 
    // one read pointer, one write pointer;
@@ -32,7 +31,7 @@ module bsg_fifo_tracker #(parameter els_p           = -1
    logic                    enq_r, deq_r;
 
    // internal signals
-   logic                    empty, empty_r, full, equal_ptrs;
+   logic                    empty, full, equal_ptrs;
 
    bsg_circular_ptr #(.slots_p   (els_p)
                       ,.max_add_p(1    )
@@ -74,9 +73,6 @@ module bsg_fifo_tracker #(parameter els_p           = -1
                deq_r <= deq_i;
             end
        end // else: !if(reset_i)
-       
-   always_ff @(posedge clk_i)
-     empty_r <= empty;
 
    // if read and write pointers are equal
    // empty or fullness is determined by whether
@@ -95,6 +91,5 @@ module bsg_fifo_tracker #(parameter els_p           = -1
    
    assign full_o = full;
    assign empty_o = empty;
-   assign empty_r_o = empty_r;
 
 endmodule // bsg_fifo_tracker
