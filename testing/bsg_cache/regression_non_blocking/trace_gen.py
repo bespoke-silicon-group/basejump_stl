@@ -19,11 +19,11 @@ class BsgCacheNonBlockingRegression:
     self.block_size_in_words_p = 8
 
   def send(self, opcode, addr):
-    if opcode == SW:
-      self.tg.send(self.curr_id, SW, addr, self.curr_data)
+    if opcode == SW or opcode == SH or opcode == SB:
+      self.tg.send(self.curr_id, opcode, addr, self.curr_data)
       self.curr_data += 1 
-    elif opcode == LW:
-      self.tg.send(self.curr_id, LW, addr)
+    elif opcode == LW or opcode == LH or opcode == LB or opcode == LHU or opcode == LBU:
+      self.tg.send(self.curr_id, opcode, addr)
     elif opcode == TAGST:
       self.tg.send(self.curr_id, TAGST, addr)
     self.curr_id += 1
@@ -105,7 +105,28 @@ class BsgCacheNonBlockingRegression:
         taddr = start_word_addr + (i*4)
         if taddr < max_addr:
           self.send(LW, start_word_addr + (i*4))
-         
+  
+  def test_byte_half(self, num, max_addr):
+    for i in range(num):
+      op = random.randint(0,7)
+      addr = random.randint(0,max_addr)
+      if op == 0:
+        self.send(SB, addr)
+      elif op == 1:
+        self.send(SH, addr)
+      elif op == 2:
+        self.send(SW, addr)
+      elif op == 3:
+        self.send(LB, addr)
+      elif op == 4:
+        self.send(LH, addr)
+      elif op == 5:
+        self.send(LW, addr)
+      elif op == 6:
+        self.send(LBU, addr)
+      elif op == 7:
+        self.send(LHU, addr)
+       
       
 
 
@@ -122,25 +143,29 @@ if __name__ == "__main__":
   MAX_ADDR = 65536
 
   # test_stride
-  strides = list(range(4,256,4))
+  strides = list(range(4,128,4))
   random.shuffle(strides)
   for i in strides:
     tg.test_stride(i, MAX_ADDR)
 
   # test_random
-  N = 2500000
+  N = 200000
   tg.test_random(N, MAX_ADDR)
 
   # test_block_random
-  for i in range(100000):
+  for i in range(10000):
     addr = random.randint(0,MAX_ADDR-1)
     tg.test_block_random(addr)
 
   # test_linear
-  for i in range(40000):
+  for i in range(2000):
     addr = random.randint(0,(MAX_ADDR/4)-1)
     length = random.randint(1,32)
     tg.test_linear(addr,length,MAX_ADDR)
+
+  # test_byte_half
+  tg.test_byte_half(50000, MAX_ADDR-1)
+  
 
   # done
   tg.done()
