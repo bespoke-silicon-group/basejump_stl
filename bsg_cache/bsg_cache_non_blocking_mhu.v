@@ -39,7 +39,7 @@ module bsg_cache_non_blocking_mhu
     input clk_i
     , input reset_i
 
-    // cache management
+    // cache management interface
     , input mgmt_v_i
     , output logic mgmt_yumi_o
     , output logic mgmt_data_v_o
@@ -142,8 +142,11 @@ module bsg_cache_non_blocking_mhu
 
   mhu_state_e mhu_state_r;
   mhu_state_e mhu_state_n;
- 
-  logic set_dirty_n, set_dirty_r; // used for setting dirty bit at the end of cycle.
+
+  // During DQ or SCAN mode, when secondary store is encountered, this flop is
+  // set to one. Later, when the stat_mem is being updated, set the dirty bit
+  // if this is 1'b1.
+  logic set_dirty_n, set_dirty_r; 
 
 
   // current dma_cmd
@@ -163,6 +166,9 @@ module bsg_cache_non_blocking_mhu
   assign miss_fifo_index = miss_fifo_entry.addr[block_offset_width_lp+:lg_sets_lp];
   assign is_secondary = (curr_miss_tag == miss_fifo_tag) & (curr_miss_index == miss_fifo_index);
 
+
+  // This tells if there is an evict address being handled currently.
+  // Used by TL stage to determine miss.
   assign evict_addr_o = {curr_dma_cmd_r.evict_tag, curr_dma_cmd_r.index, {block_offset_width_lp{1'b0}}};
   assign evict_v_o = curr_dma_cmd_r.evict & curr_dma_cmd_v_r;
 
@@ -192,7 +198,6 @@ module bsg_cache_non_blocking_mhu
 
   assign next_miss_index_match = curr_dma_cmd_v_r & (curr_dma_cmd_r.index == miss_fifo_index);
 
-  
   bsg_decode_with_v #(
     .num_out_p(ways_p) 
   ) curr_miss_way_demux (
@@ -329,6 +334,14 @@ module bsg_cache_non_blocking_mhu
   
     case (mhu_state_r)
 
+      // When MHU is idle, and there is no pending miss, cache management op may come in.
+      // Or MHU has just returned from completing the previous cache miss.
+      // For the cache mgmt op that requires data_eviction, it reads the
+      // stat_mem for dirty bits, as it moves to SEND_MGMT_DMA.
+      // There could be a pending DMA transaction, or it has already
+      // completed (dma_pending_i, dma_pending_o).
+      // Switch to WAIT_DMA_DONE in that case. Or wait for the miss FIFO to
+      // have a valid output.
       IDLE: begin
         if (mgmt_v_i) begin
 
@@ -336,16 +349,19 @@ module bsg_cache_non_blocking_mhu
           stat_mem_pkt.index = addr_index_tl;
           tag_mem_pkt.index = addr_index_tl;
 
+          // TAGLA: return the tag address at the output.
           if (decode_tl_i.tagla_op) begin
             mgmt_yumi_o = 1'b1;
             mgmt_data_o = {tag_tl_i[addr_way_tl], addr_index_tl, {block_offset_width_lp{1'b0}}};            
             mgmt_data_v_o = 1'b1;
           end
+          // TAGLV: return the tag valid and lock bit at the output.
           else if (decode_tl_i.taglv_op) begin
             mgmt_yumi_o = 1'b1;
             mgmt_data_o = {{(data_width_p-2){1'b0}}, lock_tl_i[addr_way_tl], valid_tl_i[addr_way_tl]};
             mgmt_data_v_o = 1'b1;
           end
+          // TAGST: also clears the stat_mem (dirty/LRU bits).
           else if (decode_tl_i.tagst_op) begin
             mgmt_yumi_o = 1'b1;
             mgmt_data_v_o = 1'b1;
@@ -353,6 +369,7 @@ module bsg_cache_non_blocking_mhu
             stat_mem_pkt_v_o = 1'b1;
             stat_mem_pkt.opcode = e_stat_reset;
           end
+          // TAGFL: reads the stat_mem.
           else if (decode_tl_i.tagfl_op) begin
             mgmt_yumi_o = ~valid_tl_i[addr_way_tl];
             mgmt_data_v_o = ~valid_tl_i[addr_way_tl];
@@ -364,6 +381,7 @@ module bsg_cache_non_blocking_mhu
               ? SEND_MGMT_DMA
               : IDLE;
           end
+          // AFL/AFLINV: If there is tag hit, it reads the stat_mem.
           else if (decode_tl_i.afl_op | decode_tl_i.aflinv_op) begin
             mgmt_yumi_o = ~tag_hit_found_i;
             mgmt_data_v_o = ~tag_hit_found_i;
@@ -375,6 +393,7 @@ module bsg_cache_non_blocking_mhu
               ? SEND_MGMT_DMA
               : IDLE;
           end
+          // AINV: If there is tag hit, invalidate the cache line.
           else if (decode_tl_i.ainv_op) begin
             mgmt_yumi_o = 1'b1;
             mgmt_data_v_o = 1'b1;
@@ -387,6 +406,8 @@ module bsg_cache_non_blocking_mhu
             tag_mem_pkt.way_id = tag_hit_way_i;
             tag_mem_pkt.opcode = e_tag_invalidate;
           end
+          // ALOCK: if there is tag hit, then lock the line.
+          // If not, read stat_mem and send mgmt DMA.
           else if (decode_tl_i.alock_op) begin
             mgmt_yumi_o = tag_hit_found_i;
             mgmt_data_v_o = tag_hit_found_i;
@@ -402,6 +423,7 @@ module bsg_cache_non_blocking_mhu
               ? IDLE
               : SEND_MGMT_DMA;
           end
+          // AUNLOCK: if there is tag hit, then unlock the line.
           else if (decode_tl_i.aunlock_op) begin
             mgmt_yumi_o = 1'b1;
             mgmt_data_v_o = 1'b1;
@@ -415,9 +437,12 @@ module bsg_cache_non_blocking_mhu
             // Do nothing.
           end
         end
+        // Go to WAIT_DMA_DONE.
         else if (dma_pending_i | dma_done_i) begin
           mhu_state_n = WAIT_DMA_DONE; 
         end
+        // Wait for miss FIFO output to be valid.
+        // When TL block loading is in progress, then wait for it to finish.
         else begin
           idle_o = ~miss_fifo_v_i;
 
@@ -549,6 +574,10 @@ module bsg_cache_non_blocking_mhu
       // Dequeue and process secondary miss.
       // When non-secondary is encounter, send out the next DMA.
       // At this time, there is no pending DMA.
+      // If the FIFO is empty, then move to RECOVER, and update tag_and
+      // stat_mem.
+      // When the TL stage is block loading, we don't want to pause until it's
+      // over.
       DEQUEUE_MODE: begin
 
         data_mem_pkt_v_o = miss_fifo_v_i & is_secondary & ~tl_block_loading_i;
@@ -565,7 +594,7 @@ module bsg_cache_non_blocking_mhu
         counter_clear = data_mem_pkt_yumi_i
           & miss_fifo_entry.block_load & counter_max;
 
-        stat_mem_pkt_v_o = miss_fifo_empty_i | (miss_fifo_v_i & ~is_secondary);
+        stat_mem_pkt_v_o = ~tl_block_loading_i & (miss_fifo_empty_i | (miss_fifo_v_i & ~is_secondary));
         stat_mem_pkt.way_id = curr_dma_cmd_r.way_id; // dont care for read
         stat_mem_pkt.index = miss_fifo_empty_i
           ? curr_miss_index
@@ -574,7 +603,7 @@ module bsg_cache_non_blocking_mhu
           ? (set_dirty_r ? e_stat_set_lru_and_dirty : e_stat_set_lru)
           : e_stat_read;
 
-        tag_mem_pkt_v_o = miss_fifo_empty_i | (miss_fifo_v_i & ~is_secondary);
+        tag_mem_pkt_v_o = ~tl_block_loading_i & (miss_fifo_empty_i | (miss_fifo_v_i & ~is_secondary));
         tag_mem_pkt.way_id = curr_dma_cmd_r.way_id; // dont care for read
         tag_mem_pkt.index = miss_fifo_empty_i
           ? curr_miss_index
@@ -588,11 +617,13 @@ module bsg_cache_non_blocking_mhu
           ? 1'b1
           : data_mem_pkt_yumi_i & miss_fifo_entry.write_not_read;
 
-        mhu_state_n = miss_fifo_empty_i
-          ? RECOVER
-          : (miss_fifo_v_i
-            ? (is_secondary ? DEQUEUE_MODE : SEND_DMA_REQ2)
-            : DEQUEUE_MODE);
+        mhu_state_n = tl_block_loading_i
+          ? DEQUEUE_MODE
+          : (miss_fifo_empty_i
+            ? RECOVER
+            : (miss_fifo_v_i
+              ? (is_secondary ? DEQUEUE_MODE : SEND_DMA_REQ2)
+              : DEQUEUE_MODE));
 
       end
       
@@ -634,14 +665,14 @@ module bsg_cache_non_blocking_mhu
         counter_clear = data_mem_pkt_yumi_i
           & miss_fifo_entry.block_load & counter_max;
        
-        stat_mem_pkt_v_o = miss_fifo_empty_i;
+        stat_mem_pkt_v_o = miss_fifo_empty_i & ~tl_block_loading_i;
         stat_mem_pkt.way_id = curr_dma_cmd_r.way_id;
         stat_mem_pkt.index = curr_miss_index;
         stat_mem_pkt.opcode = set_dirty_r
           ? e_stat_set_lru_and_dirty
           : e_stat_set_lru;
 
-        tag_mem_pkt_v_o = miss_fifo_empty_i;
+        tag_mem_pkt_v_o = miss_fifo_empty_i & ~tl_block_loading_i;
         tag_mem_pkt.way_id = curr_dma_cmd_r.way_id;
         tag_mem_pkt.index = curr_miss_index;
         tag_mem_pkt.tag = curr_miss_tag;
@@ -651,14 +682,16 @@ module bsg_cache_non_blocking_mhu
           ? 1'b1
           : data_mem_pkt_yumi_i & miss_fifo_entry.write_not_read;
  
-        mhu_state_n = miss_fifo_empty_i
-          ? RECOVER
-          : SCAN_MODE;
+        mhu_state_n = tl_block_loading_i
+          ? SCAN_MODE
+          : (miss_fifo_empty_i
+            ? RECOVER
+            : SCAN_MODE);
 
       end
 
       // Recover
-      //
+      // TL stage will read the tag_mem.
       RECOVER: begin
         recover_o = 1'b1;
         miss_fifo_rollback_o = 1'b1;
@@ -666,7 +699,7 @@ module bsg_cache_non_blocking_mhu
         mhu_state_n = IDLE;
       end
       
-      // this should never happen
+      // this should never happen.
       default: begin
         mhu_state_n = IDLE;
       end

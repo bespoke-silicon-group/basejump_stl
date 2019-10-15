@@ -188,7 +188,6 @@ module bsg_cache_non_blocking_dma
 
   // comb logic
   //
-
   assign out_fifo_data_li = data_mem_data_i;
 
   logic [addr_width_p-1:0] dma_pkt_refill_addr;
@@ -239,7 +238,7 @@ module bsg_cache_non_blocking_dma
   
     case (dma_state_r)
 
-
+      // Wait for dma_cmd from MHU.
       IDLE: begin
         dma_cmd_dff_en = dma_cmd_v_i;
 
@@ -248,7 +247,7 @@ module bsg_cache_non_blocking_dma
           : IDLE;
       end
 
-
+      // Send refill address by dma_req channel.
       SEND_REFILL_ADDR: begin
         dma_pkt_v_o = 1'b1;
         dma_pkt.write_not_read = 1'b0;
@@ -261,7 +260,7 @@ module bsg_cache_non_blocking_dma
           : SEND_REFILL_ADDR;
       end
   
-
+      // Send evict address by dma_req channel.
       SEND_EVICT_ADDR: begin
         data_mem_pkt_v_o = dma_pkt_yumi_i; // read the first word in block.
 
@@ -279,7 +278,7 @@ module bsg_cache_non_blocking_dma
           : SEND_EVICT_ADDR;
       end
 
-
+      // Read the cache block word by word, send it out by dma_data_o channel.
       SEND_EVICT_DATA: begin
         data_mem_pkt_v_o = out_fifo_ready_lo & ~counter_evict_max;
       
@@ -295,7 +294,8 @@ module bsg_cache_non_blocking_dma
           : SEND_EVICT_DATA;
       end
 
-
+      // Receive the cache block word by word from dma_data_i channel,
+      // and write it to data_mem.
       RECV_REFILL_DATA: begin
         data_mem_pkt_v_o = in_fifo_v_lo;
         data_mem_pkt.write_not_read = 1'b1;
@@ -311,7 +311,7 @@ module bsg_cache_non_blocking_dma
           : RECV_REFILL_DATA;
       end
 
-
+      // DMA transaction is over, and wait for MHU to acknowledge it.
       DONE: begin
         done_o = 1'b1;
         counter_clear = ack_i;
@@ -329,6 +329,8 @@ module bsg_cache_non_blocking_dma
 
   end
 
+  // Whether there is a block that is being evicted.
+  // Used by TL stage to determine miss.
   assign evict_v_o = (dma_state_r != IDLE) & dma_cmd_r.evict;
   assign evict_addr_o = dma_pkt_evict_addr;
 

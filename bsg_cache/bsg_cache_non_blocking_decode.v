@@ -43,7 +43,6 @@ module bsg_cache_non_blocking_decode
 
   assign decode_o.block_ld_op = (opcode_i == BLOCK_LD);
 
-
   assign decode_o.tagst_op    = (opcode_i == TAGST);
   assign decode_o.tagfl_op    = (opcode_i == TAGFL);
   assign decode_o.taglv_op    = (opcode_i == TAGLV);

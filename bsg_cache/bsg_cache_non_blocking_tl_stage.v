@@ -81,6 +81,7 @@ module bsg_cache_non_blocking_tl_stage
     , input mhu_idle_i
     , input recover_i
 
+    // evict address
     , input [addr_width_p-1:0] mhu_evict_addr_i
     , input mhu_evict_v_i
     , input [addr_width_p-1:0] dma_evict_addr_i
@@ -246,7 +247,13 @@ module bsg_cache_non_blocking_tl_stage
 
 
   // miss detection logic
-  //
+  // when mhu_evict_v_i is high, then the block address matching
+  // mhu_evict_addr_i should be considered as miss. Similarly, with
+  // dma_evict_v_i. This is because the replacement decision has already
+  // been made, and the DMA transaction has already begun or even finished,
+  // but the MHU does not update the tag until it has completed the miss
+  // handling (e.g. going through the miss FIFO to collect all the secondary
+  // misses). 
   logic [addr_width_p-1:0] block_addr_tl;
   logic mhu_evict_match;
   logic dma_evict_match;
@@ -321,15 +328,23 @@ module bsg_cache_non_blocking_tl_stage
     counter_up = 1'b0;
     counter_clear = 1'b0;
 
+    // The recover signal from MHU forces the TL stage to read the tag_mem
+    // again using addr_tl. Recover logic is necessary, because when the MHU
+    // updates the tag, the tag_mem output may be stale, or the tag_mem output
+    // is perturbed, because the MHU also reads the tag_mem to make
+    // replacement decision to send out the next DMA request.
     if (recover_i) begin
-      tag_mem_v_li = 1'b1;
+      tag_mem_v_li = v_tl_r;
       tag_mem_pkt.index = addr_index_tl;
       tag_mem_pkt.opcode = e_tag_read;
     end
+    // When MHU reads the tag_mem, the TL stage is stalled.
     else if (mhu_tag_mem_pkt_v_i) begin
       tag_mem_v_li = 1'b1;
       tag_mem_pkt = mhu_tag_mem_pkt;
     end
+    // If there is a load/store hit, it waits for both data_mem and
+    // stat_mem to be ready.
     else if (ld_st_hit) begin
       data_mem_pkt_v_o = ld_st_ready;
       stat_mem_pkt_v_o = ld_st_ready;
@@ -342,6 +357,8 @@ module bsg_cache_non_blocking_tl_stage
       tag_mem_pkt.index = addr_index;
       tag_mem_pkt.opcode = e_tag_read;
     end
+    // If there is a load/store miss, it enques a new miss FIFO entry.
+    // If the miss FIFO is full, then the TL stage is stalled.
     else if (ld_st_miss) begin
       miss_fifo_v_o = 1'b1;
       ready_o = miss_fifo_ready_i & ~mgmt_op_v;
@@ -353,9 +370,19 @@ module bsg_cache_non_blocking_tl_stage
       tag_mem_pkt.index = addr_index;
       tag_mem_pkt.opcode = e_tag_read;
     end
+    // If there is a block_load hit, it reads the data_mem word by word,
+    // whenever the data_mem is available. When it's time to read the last
+    // word in the block, it also updates the LRU bits.
+    // Once it reads the first word in the block, the block_mode signal goes
+    // on. During this time, the MHU cannot make any replacement decision or
+    // process any secondary miss.
     else if (block_ld_hit) begin
-      data_mem_pkt_v_o = ld_st_ready; 
-      stat_mem_pkt_v_o = ld_st_ready; 
+      data_mem_pkt_v_o = counter_max
+        ? ld_st_ready
+        : data_mem_pkt_ready_i; 
+      stat_mem_pkt_v_o = counter_max
+        ? ld_st_ready
+        : 1'b0; 
       ready_o = ld_st_ready & ~mgmt_op_v & counter_max;
       v_tl_n = (ld_st_ready & counter_max)
         ? (mgmt_op_v ? 1'b0 : v_i)
@@ -369,10 +396,12 @@ module bsg_cache_non_blocking_tl_stage
       counter_up = ld_st_ready & ~counter_max;
       counter_clear = ld_st_ready & counter_max;
 
-      block_mode_n = ld_st_ready
+      block_mode_n = (counter_max ? ld_st_ready : data_mem_pkt_ready_i)
         ? (block_mode_r ? ~counter_max : 1'b1)
         : block_mode_r;
     end
+    // If there is cache management op, wait for MHU to yumi.
+    // Either mgmt or load/store op can come in next.
     else if (mgmt_op_tl) begin
       mgmt_v_o = 1'b1;
       ready_o = mgmt_yumi_i;
@@ -389,10 +418,11 @@ module bsg_cache_non_blocking_tl_stage
       tag_mem_pkt.opcode = decode_i.tagst_op
         ? e_tag_store
         : e_tag_read;
-
     end
     else begin
       // TL stage empty.
+      // cache management op cannot enter, if there is load/store in TL stage,
+      // or MHU is not idle.
       ready_o = mgmt_op_v
         ? mhu_idle_i
         : 1'b1;

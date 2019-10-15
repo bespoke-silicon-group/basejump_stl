@@ -238,7 +238,8 @@ module bsg_cache_non_blocking
 
 
   // DMA read data buffer
-  //
+  // When the DMA engine reads the data_mem for eviction, the output 
+  // is buffered here, in case dma_data_o is stalled. 
   logic dma_read_en;
   logic dma_read_en_r;
   logic [data_width_p-1:0] dma_read_data_r;
@@ -420,7 +421,11 @@ module bsg_cache_non_blocking
 
 
   // data_mem
-  //
+  // Access priority in descending order.
+  // 1) DMA engine
+  // 2) MHU
+  // 3) TL stage (hit). When neither DMA nor MHU is accessing the data_mem,
+  //    ready signal to TL stage goes high.
   always_comb begin
 
     data_mem_v_li = 1'b0;
@@ -449,7 +454,7 @@ module bsg_cache_non_blocking
 
 
   // stat_mem
-  //
+  // MHU has higher priority over TL stage.
   always_comb begin
     
     stat_mem_v_li = 1'b0;
@@ -469,7 +474,8 @@ module bsg_cache_non_blocking
 
 
   // output logic
-  //
+  // Output valid signal lasts for only one cycle. The consumer needs to be
+  // ready to accept the data whenever it becomes ready.
   logic [data_width_p-1:0] mgmt_data_r, mgmt_data_n;
   logic [id_width_p-1:0] out_id_r, out_id_n;
   logic mgmt_data_v_r, mgmt_data_v_n;

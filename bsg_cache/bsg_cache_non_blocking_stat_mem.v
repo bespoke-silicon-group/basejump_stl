@@ -97,6 +97,7 @@ module bsg_cache_non_blocking_stat_mem
 
     case (stat_mem_pkt.opcode)
 
+      // read the stat_mem.
       e_stat_read: begin
         w_li = 1'b0;
         data_li.lru_bits = '0;
@@ -105,6 +106,7 @@ module bsg_cache_non_blocking_stat_mem
         mask_li.dirty = '0;
       end
 
+      // clear dirty bit for the block, chosen by index and way_id.
       e_stat_clear_dirty: begin
         w_li = 1'b1;
         data_li.lru_bits = '0;
@@ -113,6 +115,7 @@ module bsg_cache_non_blocking_stat_mem
         mask_li.dirty = way_decode_lo;
       end
 
+      // set LRU so that the chosen block is not LRU.
       e_stat_set_lru: begin
         w_li = 1'b1;
         data_li.lru_bits = lru_decode_data_lo;
@@ -121,6 +124,8 @@ module bsg_cache_non_blocking_stat_mem
         mask_li.dirty = '0;
       end
 
+      // set LRU so that the chosen block is not LRU.
+      // Also, set the dirty bit.
       e_stat_set_lru_and_dirty: begin
         w_li = 1'b1;
         data_li.lru_bits = lru_decode_data_lo;
@@ -129,6 +134,7 @@ module bsg_cache_non_blocking_stat_mem
         mask_li.dirty = way_decode_lo;
       end
 
+      // clear LRU and dirty bits to zero.
       e_stat_reset: begin
         w_li = 1'b1;
         data_li.lru_bits = '0;

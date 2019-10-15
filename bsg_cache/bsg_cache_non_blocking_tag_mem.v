@@ -91,6 +91,7 @@ module bsg_cache_non_blocking_tag_mem
 
     case (tag_mem_pkt.opcode)
 
+      // read tags for given index.
       e_tag_read: begin
         w_li = 1'b0;
         data_li = '0;
@@ -110,6 +111,7 @@ module bsg_cache_non_blocking_tag_mem
         end
       end
 
+      // set tag and valid bit for the cache line, chosen by index and way_id.
       e_tag_set_tag: begin
         w_li = 1'b1;
         for (integer i = 0 ; i < ways_p; i++) begin
@@ -122,6 +124,7 @@ module bsg_cache_non_blocking_tag_mem
         end
       end
 
+      // set tag, valid bit, and lock bit for the chosen cache line.
       e_tag_set_tag_and_lock: begin
         w_li = 1'b1;
         for (integer i = 0 ; i < ways_p; i++) begin
@@ -134,6 +137,8 @@ module bsg_cache_non_blocking_tag_mem
         end
       end
 
+      // set valid bit to zero for the chosen line.
+      // also unlocks the line.
       e_tag_invalidate: begin
         w_li = 1'b1;
         for (integer i = 0 ; i < ways_p; i++) begin
@@ -145,7 +150,8 @@ module bsg_cache_non_blocking_tag_mem
           mask_li[i].lock = way_decode[i];
         end
       end
-    
+   
+      // lock the chosen line. 
       e_tag_lock: begin
         w_li = 1'b1;
         for (integer i = 0 ; i < ways_p; i++) begin
@@ -158,6 +164,7 @@ module bsg_cache_non_blocking_tag_mem
         end
       end
 
+      // unlock the chosen line.
       e_tag_unlock: begin
         w_li = 1'b1;
         for (integer i = 0 ; i < ways_p; i++) begin
