@@ -5,14 +5,33 @@ module testbench();
 
   logic [ways_p-2:0] lru_bits_li;
   logic [ways_p-1:0] disabled_ways_li;
+  logic [ways_p-2:0] modify_data_lo;
+  logic [ways_p-2:0] modify_mask_lo;
+  logic [ways_p-2:0] modified_lru_bits;
   logic [lg_ways_lp-1:0] lru_way_id_lo;
 
   bsg_lru_pseudo_tree_backup #(
     .ways_p(ways_p)
-  ) lru (
-    .lru_bits_i(lru_bits_li)
-    ,.disabled_ways_i(disabled_ways_li)
-    ,.lru_way_id_o(lru_way_id_lo)
+  ) lru_backup (
+    .disabled_ways_i(disabled_ways_li)
+    ,.modify_data_o(modify_data_lo)
+    ,.modify_mask_o(modify_mask_lo)
+  );
+
+  bsg_mux_bitwise #(
+    .width_p(ways_p-1)
+  ) mux (
+    .data0_i(lru_bits_li)
+    ,.data1_i(modify_data_lo)
+    ,.sel_i(modify_mask_lo)
+    ,.data_o(modified_lru_bits)
+  );
+ 
+  bsg_lru_pseudo_tree_encode #(
+    .ways_p(ways_p)
+  ) encode (
+    .lru_i(modified_lru_bits)
+    ,.way_id_o(lru_way_id_lo)
   );
 
   task test(
