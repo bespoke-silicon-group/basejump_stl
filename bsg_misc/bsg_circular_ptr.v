@@ -17,12 +17,14 @@ module bsg_circular_ptr #(parameter slots_p     = -1
     , input reset_i
     , input  [$clog2(max_add_p+1)-1:0] add_i
     , output [ptr_width_lp-1:0] o
+    , output [ptr_width_lp-1:0] n_o
     );
 
    logic [ptr_width_lp-1:0] ptr_r, ptr_n;
    logic [ptr_width_lp:0]   ptr_wrap;
 
    assign o = ptr_r;
+   assign n_o = ptr_n;
 
    // increment round robin pointers
    always @(posedge clk)

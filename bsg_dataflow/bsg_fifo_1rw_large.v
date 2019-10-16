@@ -95,6 +95,7 @@ module bsg_fifo_1rw_large #(parameter width_p         = -1
       , .reset_i(reset_i)
       , .add_i  (mem_re)
       , .o      (rd_ptr )
+      , .n_o()
       );
 
    bsg_circular_ptr #(.slots_p(els_p)
@@ -104,6 +105,7 @@ module bsg_fifo_1rw_large #(parameter width_p         = -1
       , .reset_i(reset_i)
       , .add_i  (mem_we)
       , .o      (wr_ptr )
+      , .n_o()
       );
 
    bsg_mem_1rw_sync #(.width_p(width_p)

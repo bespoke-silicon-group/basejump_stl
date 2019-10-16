@@ -45,6 +45,7 @@ module bsg_round_robin_1_to_n #(parameter width_p = "inv"
           ,.reset_i(reset_i)
           ,.add_i  (yumi_i )
           ,.o      (ptr_r  )
+          ,.n_o    ()
           );
 
        // bsg_decode_with_v could potentially be used to optimize this critical path 
