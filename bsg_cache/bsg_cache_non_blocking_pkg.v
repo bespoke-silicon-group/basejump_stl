@@ -24,6 +24,7 @@ package bsg_cache_non_blocking_pkg;
     ,SH  = 5'b01001       // store half
     ,SW  = 5'b01010       // store word
     ,SD  = 5'b01011       // store double
+    ,SM  = 5'b01101       // store mask
 
     ,BLOCK_LD = 5'b01110  // block load
 
@@ -50,11 +51,12 @@ package bsg_cache_non_blocking_pkg;
       bsg_cache_non_blocking_opcode_e opcode;                   \
       logic [addr_width_mp-1:0] addr;                           \
       logic [data_width_mp-1:0] data;                           \
+      logic [(data_width_mp>>3)-1:0] mask;                      \
     } bsg_cache_non_blocking_pkt_s
 
 
   `define bsg_cache_non_blocking_pkt_width(id_width_mp,addr_width_mp,data_width_mp) \
-    (5+id_width_mp+addr_width_mp+data_width_mp)
+    ($bits(bsg_cache_non_blocking_opcode_e)+id_width_mp+addr_width_mp+data_width_mp+(data_width_mp>>3))
 
 
   // cache pkt decode
@@ -69,6 +71,7 @@ package bsg_cache_non_blocking_pkg;
     logic ld_op;
     logic st_op;
     logic block_ld_op;
+    logic mask_op;
 
     logic tagst_op;
     logic taglv_op;
@@ -122,16 +125,18 @@ package bsg_cache_non_blocking_pkg;
     typedef struct packed {                                                                \
       logic write_not_read;                                                                \
       logic sigext_op;                                                                     \
+      logic mask_op;                                                                       \
       logic [1:0] size_op;                                                                 \
       logic [`BSG_SAFE_CLOG2(data_width_mp>>3)-1:0] byte_sel;                               \
       logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way_id;                                          \
       logic [`BSG_SAFE_CLOG2(sets_mp)+`BSG_SAFE_CLOG2(block_size_in_words_mp)-1:0] addr;    \
       logic [data_width_mp-1:0] data;                                                       \
+      logic [(data_width_mp>>3)-1:0] mask;                                                  \
     } bsg_cache_non_blocking_data_mem_pkt_s
 
   `define bsg_cache_non_blocking_data_mem_pkt_width(ways_mp,sets_mp,block_size_in_words_mp,data_width_mp) \
-    (1+1+2+`BSG_SAFE_CLOG2(data_width_mp>>3)+`BSG_SAFE_CLOG2(ways_mp)+        \
-      `BSG_SAFE_CLOG2(sets_mp)+`BSG_SAFE_CLOG2(block_size_in_words_mp)+data_width_mp)
+    (1+1+1+2+`BSG_SAFE_CLOG2(data_width_mp>>3)+`BSG_SAFE_CLOG2(ways_mp)+        \
+      `BSG_SAFE_CLOG2(sets_mp)+`BSG_SAFE_CLOG2(block_size_in_words_mp)+data_width_mp+(data_width_mp>>3))
 
 
   // tag info s
@@ -231,13 +236,15 @@ package bsg_cache_non_blocking_pkg;
       logic block_load;                       \
       logic [1:0] size_op;                    \
       logic sigext_op;                        \
+      logic mask_op;                          \
       logic [id_width_mp-1:0] id;             \
       logic [addr_width_mp-1:0] addr;         \
       logic [data_width_mp-1:0] data;         \
+      logic [(data_width_mp>>3)-1:0] mask;    \
     } bsg_cache_non_blocking_miss_fifo_entry_s;  
 
   `define bsg_cache_non_blocking_miss_fifo_entry_width(id_width_mp,addr_width_mp,data_width_mp) \
-    (1+1+2+1+id_width_mp+addr_width_mp+data_width_mp) 
+    (1+1+2+1+1+id_width_mp+addr_width_mp+data_width_mp+(data_width_mp>>3)) 
 
 
 endpackage

@@ -135,6 +135,7 @@ module bsg_cache_non_blocking
     ,.id_i(cache_pkt.id)
     ,.addr_i(cache_pkt.addr)
     ,.data_i(cache_pkt.data)
+    ,.mask_i(cache_pkt.mask)
     ,.decode_i(decode)
     ,.ready_o(ready_o)
 

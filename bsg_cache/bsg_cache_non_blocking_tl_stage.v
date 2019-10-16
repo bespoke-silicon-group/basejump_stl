@@ -43,6 +43,7 @@ module bsg_cache_non_blocking_tl_stage
     , input [id_width_p-1:0] id_i
     , input [addr_width_p-1:0] addr_i
     , input [data_width_p-1:0] data_i
+    , input [data_mask_width_lp-1:0] mask_i
     , input bsg_cache_non_blocking_decode_s decode_i
     , output logic ready_o  
 
@@ -121,6 +122,7 @@ module bsg_cache_non_blocking_tl_stage
   logic [id_width_p-1:0] id_tl_r;
   logic [addr_width_p-1:0] addr_tl_r;
   logic [data_width_p-1:0] data_tl_r;
+  logic [data_mask_width_lp-1:0] mask_tl_r;
   logic mgmt_op_v;
 
   assign decode_tl_o = decode_tl_r;
@@ -157,7 +159,8 @@ module bsg_cache_non_blocking_tl_stage
       {decode_tl_r
       ,id_tl_r
       ,addr_tl_r
-      ,data_tl_r} <= '0;
+      ,data_tl_r
+      ,mask_tl_r} <= '0;
     end
     else begin
       if (tl_we) begin
@@ -165,6 +168,7 @@ module bsg_cache_non_blocking_tl_stage
         id_tl_r <= id_i;
         addr_tl_r <= addr_i;
         data_tl_r <= data_i;
+        mask_tl_r <= mask_i;
       end
     end
   end 
@@ -254,6 +258,7 @@ module bsg_cache_non_blocking_tl_stage
   // but the MHU does not update the tag until it has completed the miss
   // handling (e.g. going through the miss FIFO to collect all the secondary
   // misses). 
+
   logic [addr_width_p-1:0] block_addr_tl;
   logic mhu_evict_match;
   logic dma_evict_match;
@@ -266,6 +271,11 @@ module bsg_cache_non_blocking_tl_stage
   // TL stage output logic
   //
   assign data_mem_pkt.write_not_read = decode_tl_r.st_op;
+  assign data_mem_pkt.way_id = tag_hit_way;
+  assign data_mem_pkt.addr = decode_tl_r.block_ld_op
+    ? {addr_tl_r[block_offset_width_lp+:lg_sets_lp], counter_r}
+    : addr_tl_r[byte_sel_width_lp+:lg_block_size_in_words_lp+lg_sets_lp];
+
   assign data_mem_pkt.sigext_op = decode_tl_r.sigext_op;
   assign data_mem_pkt.size_op = decode_tl_r.block_ld_op
     ? (2)'($clog2(data_width_p>>3))
@@ -273,11 +283,10 @@ module bsg_cache_non_blocking_tl_stage
   assign data_mem_pkt.byte_sel = decode_tl_r.block_ld_op
     ? {byte_sel_width_lp{1'b0}}
     : addr_tl_r[0+:byte_sel_width_lp];
-  assign data_mem_pkt.way_id = tag_hit_way;
-  assign data_mem_pkt.addr = decode_tl_r.block_ld_op
-    ? {addr_tl_r[block_offset_width_lp+:lg_sets_lp], counter_r}
-    : addr_tl_r[byte_sel_width_lp+:lg_block_size_in_words_lp+lg_sets_lp];
+
   assign data_mem_pkt.data = data_tl_r;
+  assign data_mem_pkt.mask = mask_tl_r;
+  assign data_mem_pkt.mask_op = decode_tl_r.mask_op;
 
   assign stat_mem_pkt.way_id = tag_hit_way;
   assign stat_mem_pkt.index = addr_index_tl;
@@ -292,6 +301,8 @@ module bsg_cache_non_blocking_tl_stage
   assign miss_fifo_entry.addr = addr_tl_r;
   assign miss_fifo_entry.data = data_tl_r;
   assign miss_fifo_entry.sigext_op = decode_tl_r.sigext_op;
+  assign miss_fifo_entry.mask = mask_tl_r;
+  assign miss_fifo_entry.mask_op = decode_tl_r.mask_op;
 
 
   // pipeline logic

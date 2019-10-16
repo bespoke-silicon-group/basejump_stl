@@ -81,6 +81,8 @@ module bsg_cache_non_blocking_data_mem
   //
   logic [data_sel_mux_els_lp-1:0][data_width_p-1:0] input_mux_data_li;
   logic [data_sel_mux_els_lp-1:0][data_mask_width_lp-1:0] input_mux_mask_li;
+  logic [data_width_p-1:0] input_mux_data_lo;
+  logic [data_mask_width_lp-1:0] input_mux_mask_lo;
 
   bsg_mux #(
     .width_p(data_width_p)
@@ -88,7 +90,7 @@ module bsg_cache_non_blocking_data_mem
   ) input_data_mux (
     .data_i(input_mux_data_li)
     ,.sel_i(data_mem_pkt.size_op[0+:lg_data_sel_mux_els_lp])
-    ,.data_o(data_li)
+    ,.data_o(input_mux_data_lo)
   );
 
   bsg_mux #(
@@ -97,7 +99,7 @@ module bsg_cache_non_blocking_data_mem
   ) input_mask_mux (
     .data_i(input_mux_mask_li)
     ,.sel_i(data_mem_pkt.size_op[0+:lg_data_sel_mux_els_lp])
-    ,.data_o(mask_li)
+    ,.data_o(input_mux_mask_lo)
   );
 
   for (genvar i = 0; i < data_sel_mux_els_lp; i++) begin: input_sel
@@ -132,6 +134,14 @@ module bsg_cache_non_blocking_data_mem
 
     end
   end
+
+  assign data_li = data_mem_pkt.mask_op
+    ? data_mem_pkt.data
+    : input_mux_data_lo;
+
+  assign mask_li =  data_mem_pkt.mask_op
+    ? data_mem_pkt.mask
+    : input_mux_mask_lo;
 
 
   // output logic (load)

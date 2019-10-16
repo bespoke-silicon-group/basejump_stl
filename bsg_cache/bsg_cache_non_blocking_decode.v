@@ -39,7 +39,10 @@ module bsg_cache_non_blocking_decode
   assign decode_o.st_op = (opcode_i == SB)
     | (opcode_i == SH)
     | (opcode_i == SW)
-    | (opcode_i == SD);
+    | (opcode_i == SD)
+    | (opcode_i == SM);
+
+  assign decode_o.mask_op = (opcode_i == SM);
 
   assign decode_o.block_ld_op = (opcode_i == BLOCK_LD);
 

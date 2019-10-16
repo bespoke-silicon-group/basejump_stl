@@ -297,22 +297,24 @@ module bsg_cache_non_blocking_mhu
 
     data_mem_pkt_v_o = 1'b0;
     data_mem_pkt.write_not_read = miss_fifo_entry.write_not_read;
-    data_mem_pkt.sigext_op = miss_fifo_entry.block_load
-      ? 1'b0
-      : miss_fifo_entry.sigext_op;
+    data_mem_pkt_id_o = miss_fifo_entry.id;
+
+    data_mem_pkt.way_id = curr_dma_cmd_r.way_id;
+    data_mem_pkt.addr = miss_fifo_entry.block_load
+      ? {curr_miss_index, counter_r}
+      : {curr_miss_index, miss_fifo_entry.addr[byte_sel_width_lp+:lg_block_size_in_words_lp]};
+
+    data_mem_pkt.sigext_op = miss_fifo_entry.sigext_op;
     data_mem_pkt.size_op = miss_fifo_entry.block_load
       ? (2)'($clog2(data_width_p>>3))
       : miss_fifo_entry.size_op;
     data_mem_pkt.byte_sel = miss_fifo_entry.block_load
       ? {byte_sel_width_lp{1'b0}}
       : miss_fifo_entry.addr[0+:byte_sel_width_lp];
-    data_mem_pkt.way_id = curr_dma_cmd_r.way_id;
-    data_mem_pkt.addr = miss_fifo_entry.block_load
-      ? {curr_miss_index, counter_r}
-      : {curr_miss_index, miss_fifo_entry.addr[byte_sel_width_lp+:lg_block_size_in_words_lp]};
+
     data_mem_pkt.data = miss_fifo_entry.data;
-    data_mem_pkt.sigext_op = miss_fifo_entry.sigext_op;
-    data_mem_pkt_id_o = miss_fifo_entry.id;
+    data_mem_pkt.mask = miss_fifo_entry.mask;
+    data_mem_pkt.mask_op = miss_fifo_entry.mask_op;
 
     stat_mem_pkt_v_o = 1'b0;
     stat_mem_pkt = '0;

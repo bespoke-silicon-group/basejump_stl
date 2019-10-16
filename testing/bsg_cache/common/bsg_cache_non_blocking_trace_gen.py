@@ -17,6 +17,7 @@ SB = 0b01000
 SH = 0b01001
 SW = 0b01010
 SD = 0b01011
+SM = 0b01101
 
 BLOCK_LD = 0b01110
 
@@ -40,16 +41,18 @@ class BsgCacheNonBlockingTraceGen:
     self.id_width_p = id_width_p
     self.addr_width_p = addr_width_p
     self.data_width_p = data_width_p
-    self.packet_len = id_width_p + addr_width_p + data_width_p + 5
+    self.data_mask_width_lp = (data_width_p>>3)
+    self.packet_len = id_width_p + addr_width_p + data_width_p + 5 + self.data_mask_width_lp
 
 
   # send packet
-  def send(self, req_id, opcode, addr, data=0):
+  def send(self, req_id, opcode, addr, data=0, mask=0):
     trace = "0001_"
     trace += self.get_bin_str(req_id, self.id_width_p) + "_"
     trace += self.get_bin_str(opcode, 5) + "_"
     trace += self.get_bin_str(addr, self.addr_width_p) + "_"
-    trace += self.get_bin_str(data, self.data_width_p)
+    trace += self.get_bin_str(data, self.data_width_p) + "_"
+    trace += self.get_bin_str(mask, self.data_mask_width_lp)
     print(trace)
 
   

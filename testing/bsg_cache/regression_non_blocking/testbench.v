@@ -214,6 +214,10 @@ module testbench();
           ~cache_pkt.addr[1] & ~cache_pkt.addr[0]
         };
       end
+      SM: begin
+        store_data = cache_pkt.data;
+        store_mask = cache_pkt.mask;
+      end
       default: begin
         store_data = '0;
         store_mask = '0;
@@ -266,7 +270,7 @@ module testbench();
           result[cache_pkt.id] = '0;
         end
 
-        SB, SH, SW: begin
+        SB, SH, SW, SM: begin
           result[cache_pkt.id] = '0;
           for (integer i = 0; i < data_mask_width_lp; i++)
             if (store_mask[i])

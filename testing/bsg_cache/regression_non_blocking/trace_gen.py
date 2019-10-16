@@ -18,9 +18,12 @@ class BsgCacheNonBlockingRegression:
     self.ways_p = 8
     self.block_size_in_words_p = 8
 
-  def send(self, opcode, addr):
+  def send(self, opcode, addr, mask=0):
     if opcode == SW or opcode == SH or opcode == SB:
       self.tg.send(self.curr_id, opcode, addr, self.curr_data)
+      self.curr_data += 1 
+    elif opcode == SM:
+      self.tg.send(self.curr_id, opcode, addr, self.curr_data, mask)
       self.curr_data += 1 
     elif opcode == LW or opcode == LH or opcode == LB or opcode == LHU or opcode == LBU:
       self.tg.send(self.curr_id, opcode, addr)
@@ -108,7 +111,7 @@ class BsgCacheNonBlockingRegression:
   
   def test_byte_half(self, num, max_addr):
     for i in range(num):
-      op = random.randint(0,7)
+      op = random.randint(0,8)
       addr = random.randint(0,max_addr)
       if op == 0:
         self.send(SB, addr)
@@ -126,6 +129,9 @@ class BsgCacheNonBlockingRegression:
         self.send(LBU, addr)
       elif op == 7:
         self.send(LHU, addr)
+      elif op == 8:
+        mask = random.randint(0,3)
+        self.send(SM, addr, mask)
        
       
 
