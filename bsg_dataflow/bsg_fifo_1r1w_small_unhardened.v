@@ -93,7 +93,7 @@ module bsg_fifo_1r1w_small_unhardened #( parameter width_p      = -1
    assign v_o_tmp = ~empty;
 
    //synopsys translate_off
-   always_ff @ (posedge clk_i)
+   always_ff @ (negedge clk_i)
      begin
         if (ready_THEN_valid_p & full  & v_i    & ~reset_i)
           $display("%m error: enque full fifo at time %t", $time);
