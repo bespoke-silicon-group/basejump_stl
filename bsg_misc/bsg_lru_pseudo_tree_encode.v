@@ -4,7 +4,23 @@
  *    Pseudo-Tree-LRU encode unit.
  *    Given the LRU bits, traverses the pseudo-LRU tree and returns the
  *    LRU way_id.
- *    Only power of 2 ways.
+ *    Only for power-of-2 ways.
+ *
+ *    --------------------
+ *    Example (ways_p=8)
+ *    --------------------
+ *    lru_i       way_id_o
+ *    -----       --------
+ *    xxx_0x00        0
+ *    xxx_1x00        1
+ *    xx0 xx10        2
+ *    xx1 xx10        3
+ *    x0x x0x1        4
+ *    x1x x0x1        5
+ *    0xx x1x1        6
+ *    1xx x1x1        7
+ *    --------------------
+ *    'x' means don't care.
  *
  *    @author tommy
  *
