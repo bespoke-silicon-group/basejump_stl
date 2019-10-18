@@ -1,47 +1,83 @@
-
 module testbench();
 
-localparam ways_p     = 8;   
-localparam lg_ways_lp =`BSG_SAFE_CLOG2(ways_p);
+  localparam ways_p = 8;   
+  localparam lg_ways_lp =`BSG_SAFE_CLOG2(ways_p);
 
-logic                  clk, reset;
-logic [ways_p-2:0]     lru;
-logic [lg_ways_lp-1:0] way_id;
+  logic [ways_p-2:0] lru_li;
+  logic [lg_ways_lp-1:0] way_id_lo;
 
-always_ff @(posedge clk) begin
-  if(reset) begin
-    lru <= '0;
-  end
-  else begin
-    lru <= lru + 'b1;
-	$display("lru_i: %b | way_id_o: %b", lru, way_id);
-  end
-  
-  if(lru == '1) begin
-    $finish;
-  end
-  
-end
-
-bsg_nonsynth_clock_gen #(.cycle_time_p(10)
-                         )
-              clock_gen (.o(clk)
-                         );
-
-bsg_nonsynth_reset_gen #(.num_clocks_p(1)
-                         ,.reset_cycles_lo_p(1)
-                         ,.reset_cycles_hi_p(4)
-                         )
-               reset_gen(.clk_i(clk)
-                         ,.async_reset_o(reset)
-                         );
-
-bsg_lru_pseudo_tree_encode
-  #(.ways_p(ways_p)
-  )
-  ptw
-  (.lru_i(lru)
-   ,.way_id_o(way_id)
+  bsg_lru_pseudo_tree_encode #(
+    .ways_p(ways_p)
+  ) DUT (
+    .lru_i(lru_li)
+    ,.way_id_o(way_id_lo)
   );
+
+  task test(
+    input [ways_p-2:0] lru
+    , input [lg_ways_lp-1:0] expected
+  );
+
+    lru_li = lru;
+    #10;
+    assert(expected == way_id_lo) else
+      $fatal("[BSG_FATAL] expected: %b, actual: %b", expected, way_id_lo);
+    #10;
+
+  endtask
+
+  initial begin
+    // 0
+    test(7'b000_0000, 3'b000);
+    test(7'b000_0100, 3'b000);
+    test(7'b111_0100, 3'b000);
+    test(7'b101_0100, 3'b000);
+
+    // 1
+    test(7'b000_1000, 3'b001);
+    test(7'b000_1100, 3'b001);
+    test(7'b100_1000, 3'b001);
+    test(7'b110_1000, 3'b001);
+
+    // 2
+    test(7'b000_0010, 3'b010);
+    test(7'b000_1010, 3'b010);
+    test(7'b100_1010, 3'b010);
+    test(7'b110_1010, 3'b010);
+
+    // 3
+    test(7'b001_0010, 3'b011);
+    test(7'b001_0110, 3'b011);
+    test(7'b101_0110, 3'b011);
+    test(7'b111_0110, 3'b011);
+
+    // 4
+    test(7'b000_0001, 3'b100);
+    test(7'b000_1001, 3'b100);
+    test(7'b001_1001, 3'b100);
+    test(7'b101_1001, 3'b100);
+
+
+    // 5
+    test(7'b010_0001, 3'b101);
+    test(7'b010_0011, 3'b101);
+    test(7'b010_1011, 3'b101);
+    test(7'b011_1011, 3'b101);
+
+    // 6
+    test(7'b000_0101, 3'b110);
+    test(7'b010_0101, 3'b110);
+    test(7'b011_0101, 3'b110);
+    test(7'b011_1101, 3'b110);
+
+    // 7
+    test(7'b100_0101, 3'b111);
+    test(7'b100_0111, 3'b111);
+    test(7'b111_1111, 3'b111);
+    test(7'b101_1111, 3'b111);
+
+    $display("[BSG_FINISH] Test Successful!");
+    $finish; 
+  end
 
 endmodule
