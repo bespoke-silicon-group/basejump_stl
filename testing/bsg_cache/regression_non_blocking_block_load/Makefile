@@ -24,13 +24,13 @@ $(TRACE_TR): $(TRACE_GEN_PY)
 	python $(TRACE_GEN_PY) > $(TRACE_TR)
 
 sim: $(TRACE_TR)
-	vcs +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
+	$(VCS) +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
 		-sverilog -full64 -f sv.include $(INCDIR) \
 		-timescale=1ps/1ps +vcs+vcdpluson $(DEFINE) -l vcs.log\
 		| $(HIGHLIGHT)
 
 dve:
-	dve -full64 -vpd vcdplus.vpd &
+	$(DVE) -full64 -vpd vcdplus.vpd &
 
 clean:
 	rm -rf DVEfiles

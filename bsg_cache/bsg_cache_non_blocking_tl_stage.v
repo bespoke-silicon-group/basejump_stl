@@ -323,6 +323,7 @@ module bsg_cache_non_blocking_tl_stage
   assign ld_st_miss = v_tl_r & (decode_tl_r.ld_op | decode_tl_r.st_op | decode_tl_r.block_ld_op) & miss_tl;
   assign ld_st_ready = data_mem_pkt_ready_i & stat_mem_pkt_ready_i;
   assign mgmt_op_tl = v_tl_r & decode_tl_r.mgmt_op;
+  assign mgmt_v_o = mgmt_op_tl;
 
   always_comb begin
 
@@ -330,7 +331,6 @@ module bsg_cache_non_blocking_tl_stage
     data_mem_pkt_v_o = 1'b0;
     stat_mem_pkt_v_o = 1'b0;
     miss_fifo_v_o = 1'b0;
-    mgmt_v_o = 1'b0;
     v_tl_n = v_tl_r;
     tl_we = 1'b0;
     tag_mem_v_li = 1'b0;
@@ -414,7 +414,6 @@ module bsg_cache_non_blocking_tl_stage
     // If there is cache management op, wait for MHU to yumi.
     // Either mgmt or load/store op can come in next.
     else if (mgmt_op_tl) begin
-      mgmt_v_o = 1'b1;
       ready_o = mgmt_yumi_i;
       v_tl_n = mgmt_yumi_i
         ? v_i
