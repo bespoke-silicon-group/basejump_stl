@@ -30,6 +30,7 @@
             "design_size": "small", 
             "name": "bsg_dlatch_small_vclk_30_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=16"
             ]
         }, 
@@ -59,6 +60,7 @@
             "design_size": "small", 
             "name": "bsg_dlatch_small_vclk_40_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=16"
             ]
         }, 
@@ -88,6 +90,7 @@
             "design_size": "small", 
             "name": "bsg_dlatch_small_vclk_50_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=16"
             ]
         }, 
@@ -117,6 +120,7 @@
             "design_size": "small", 
             "name": "bsg_dlatch_small_vclk_60_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=16"
             ]
         }, 
@@ -146,6 +150,7 @@
             "design_size": "small", 
             "name": "bsg_dlatch_small_vclk_70_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=16"
             ]
         }, 
@@ -175,6 +180,7 @@
             "design_size": "small", 
             "name": "bsg_dlatch_small_vclk_80_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=16"
             ]
         }, 
@@ -204,6 +210,7 @@
             "design_size": "small", 
             "name": "bsg_dlatch_small_vclk_90_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=16"
             ]
         }, 
@@ -233,6 +240,7 @@
             "design_size": "small", 
             "name": "bsg_dlatch_small_vclk_100_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=16"
             ]
         }, 
@@ -262,6 +270,7 @@
             "design_size": "large", 
             "name": "bsg_dlatch_large_vclk_30_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=64"
             ]
         }, 
@@ -291,6 +300,7 @@
             "design_size": "large", 
             "name": "bsg_dlatch_large_vclk_40_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=64"
             ]
         }, 
@@ -320,6 +330,7 @@
             "design_size": "large", 
             "name": "bsg_dlatch_large_vclk_50_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=64"
             ]
         }, 
@@ -349,6 +360,7 @@
             "design_size": "large", 
             "name": "bsg_dlatch_large_vclk_60_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=64"
             ]
         }, 
@@ -378,6 +390,7 @@
             "design_size": "large", 
             "name": "bsg_dlatch_large_vclk_70_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=64"
             ]
         }, 
@@ -407,6 +420,7 @@
             "design_size": "large", 
             "name": "bsg_dlatch_large_vclk_80_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=64"
             ]
         }, 
@@ -436,6 +450,7 @@
             "design_size": "large", 
             "name": "bsg_dlatch_large_vclk_90_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=64"
             ]
         }, 
@@ -465,6 +480,7 @@
             "design_size": "large", 
             "name": "bsg_dlatch_large_vclk_100_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=64"
             ]
         }, 
@@ -494,6 +510,7 @@
             "design_size": "very_large", 
             "name": "bsg_dlatch_very_large_vclk_30_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=128"
             ]
         }, 
@@ -523,6 +540,7 @@
             "design_size": "very_large", 
             "name": "bsg_dlatch_very_large_vclk_40_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=128"
             ]
         }, 
@@ -552,6 +570,7 @@
             "design_size": "very_large", 
             "name": "bsg_dlatch_very_large_vclk_50_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=128"
             ]
         }, 
@@ -581,6 +600,7 @@
             "design_size": "very_large", 
             "name": "bsg_dlatch_very_large_vclk_60_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=128"
             ]
         }, 
@@ -610,6 +630,7 @@
             "design_size": "very_large", 
             "name": "bsg_dlatch_very_large_vclk_70_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=128"
             ]
         }, 
@@ -639,6 +660,7 @@
             "design_size": "very_large", 
             "name": "bsg_dlatch_very_large_vclk_80_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=128"
             ]
         }, 
@@ -668,6 +690,7 @@
             "design_size": "very_large", 
             "name": "bsg_dlatch_very_large_vclk_90_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=128"
             ]
         }, 
@@ -697,6 +720,7 @@
             "design_size": "very_large", 
             "name": "bsg_dlatch_very_large_vclk_100_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=128"
             ]
         }, 
@@ -726,6 +750,7 @@
             "design_size": "medium", 
             "name": "bsg_dlatch_medium_vclk_30_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=32"
             ]
         }, 
@@ -755,6 +780,7 @@
             "design_size": "medium", 
             "name": "bsg_dlatch_medium_vclk_40_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=32"
             ]
         }, 
@@ -784,6 +810,7 @@
             "design_size": "medium", 
             "name": "bsg_dlatch_medium_vclk_50_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=32"
             ]
         }, 
@@ -813,6 +840,7 @@
             "design_size": "medium", 
             "name": "bsg_dlatch_medium_vclk_60_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=32"
             ]
         }, 
@@ -842,6 +870,7 @@
             "design_size": "medium", 
             "name": "bsg_dlatch_medium_vclk_70_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=32"
             ]
         }, 
@@ -871,6 +900,7 @@
             "design_size": "medium", 
             "name": "bsg_dlatch_medium_vclk_80_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=32"
             ]
         }, 
@@ -900,6 +930,7 @@
             "design_size": "medium", 
             "name": "bsg_dlatch_medium_vclk_90_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=32"
             ]
         }, 
@@ -929,6 +960,7 @@
             "design_size": "medium", 
             "name": "bsg_dlatch_medium_vclk_100_FO4", 
             "parameters": [
+                "i_know_this_is_a_bad_idea_p=1", 
                 "width_p=32"
             ]
         }
