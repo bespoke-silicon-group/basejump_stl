@@ -41,4 +41,3 @@ include bsg_serial_in_parallel_out_full.json
 include bsg_shift_reg.json
 include bsg_two_buncher.json
 include bsg_two_fifo.json
-include daily_dataflow.json
