@@ -9,6 +9,12 @@ module bsg_nonsynth_dma_model
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
     ,parameter els_p="inv"
+    
+    ,parameter read_delay_p=16
+    ,parameter write_delay_p=12
+  
+    ,parameter lg_read_delay_lp=`BSG_SAFE_CLOG2(read_delay_p)
+    ,parameter lg_write_delay_lp=`BSG_SAFE_CLOG2(write_delay_p)
 
     ,parameter data_mask_width_lp=(data_width_p>>3)
     ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
@@ -33,7 +39,7 @@ module bsg_nonsynth_dma_model
     ,output logic dma_data_yumi_o
   );
 
-  logic [31:0] mem [els_p-1:0];
+  logic [data_width_p-1:0] mem [els_p-1:0];
   
   
   `declare_bsg_cache_dma_pkt_s(addr_width_p);
@@ -42,6 +48,7 @@ module bsg_nonsynth_dma_model
 
   typedef enum logic [1:0] {
     WAIT
+    ,DELAY
     ,BUSY
   } state_e;
 
@@ -56,6 +63,7 @@ module bsg_nonsynth_dma_model
   logic [addr_width_p-1:0] read_addr_r, read_addr_n;
   state_e read_state_r, read_state_n;
   logic [lg_block_size_in_words_lp-1:0] read_counter_r, read_counter_n;
+  logic [lg_read_delay_lp-1:0] read_delay_r, read_delay_n;
 
   logic [lg_els_lp-lg_block_size_in_words_lp-1:0] read_upper_addr;
   assign read_upper_addr = read_addr_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_els_lp-lg_block_size_in_words_lp];
@@ -64,6 +72,8 @@ module bsg_nonsynth_dma_model
   always_comb begin
     dma_data_v_o = 1'b0;
     read_addr_n = read_addr_r;
+    read_delay_n = read_delay_r;
+    read_counter_n = read_counter_r;
 
     case (read_state_r)
       WAIT: begin
@@ -74,9 +84,18 @@ module bsg_nonsynth_dma_model
           ? '0
           : read_counter_r;
         read_state_n = start_read
-          ? BUSY
+          ? DELAY
           : WAIT;
+        read_delay_n = '0;
       end
+
+      DELAY: begin
+        read_delay_n = read_delay_r + 1;
+        read_state_n = read_delay_r == (read_delay_p-1)
+          ? BUSY
+          : DELAY;
+      end
+
       BUSY: begin
         dma_data_v_o = 1'b1;
         read_counter_n = dma_data_ready_i
@@ -94,12 +113,15 @@ module bsg_nonsynth_dma_model
   logic [addr_width_p-1:0] write_addr_r, write_addr_n;
   state_e write_state_r, write_state_n;
   logic [lg_block_size_in_words_lp-1:0] write_counter_r, write_counter_n;
+  logic [lg_write_delay_lp-1:0] write_delay_r, write_delay_n;
 
   logic [lg_els_lp-lg_block_size_in_words_lp-1:0] write_upper_addr;
   assign write_upper_addr = write_addr_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_els_lp-lg_block_size_in_words_lp];
 
   always_comb begin
     write_addr_n = write_addr_r;
+    write_delay_n = write_delay_r;
+    write_counter_n = write_counter_r;
     dma_data_yumi_o = 1'b0;
 
     case (write_state_r)
@@ -111,8 +133,16 @@ module bsg_nonsynth_dma_model
           ? '0
           : write_counter_r;
         write_state_n = start_write
-          ? BUSY
+          ? DELAY
           : WAIT;
+        write_delay_n = '0;
+      end
+
+      DELAY: begin
+        write_delay_n = write_delay_r + 1;
+        write_state_n = write_delay_r == (write_delay_p-1)
+          ? BUSY
+          : DELAY;
       end
       
       BUSY: begin
@@ -138,9 +168,11 @@ module bsg_nonsynth_dma_model
       read_state_r <= WAIT;
       read_addr_r <= '0;
       read_counter_r <= '0;
+      read_delay_r <= '0;
       write_state_r <= WAIT;
       write_addr_r <= '0;
       write_counter_r <= '0;
+      write_delay_r <= '0;
       for (integer i = 0; i < els_p; i++) begin
         mem[i] <= '0;
       end
@@ -149,9 +181,11 @@ module bsg_nonsynth_dma_model
       read_state_r <= read_state_n;
       read_addr_r <= read_addr_n;
       read_counter_r <= read_counter_n;
+      read_delay_r <= read_delay_n;
       write_state_r <= write_state_n;
       write_addr_r <= write_addr_n;
       write_counter_r <= write_counter_n;
+      write_delay_r <= write_delay_n;
     
       if (write_state_r == BUSY & dma_data_v_i) begin
         mem[{write_upper_addr, write_counter_r}] <= dma_data_i;
