@@ -15,6 +15,7 @@ include bsg_fifo_1r1w_large_banked.json
 include bsg_fifo_1r1w_narrowed.json
 include bsg_fifo_1r1w_pseudo_large.json
 include bsg_fifo_1r1w_small.json
+include bsg_fifo_1r1w_small_credit_on_input.json
 include bsg_fifo_1rw_large.json
 include bsg_fifo_shift_datapath.json
 include bsg_fifo_tracker.json
@@ -24,6 +25,7 @@ include bsg_flow_counter.json
 include bsg_make_2D_array.json
 include bsg_one_fifo.json
 include bsg_parallel_in_serial_out.json
+include bsg_parallel_in_serial_out_dynamic.json
 include bsg_permute_box.json
 include bsg_ready_to_credit_flow_converter.json
 include bsg_relay_fifo.json
