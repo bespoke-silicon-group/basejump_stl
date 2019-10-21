@@ -76,13 +76,11 @@ module bsg_mem_1rw_sync_mask_write_bit_banked
   end
   else begin: dbn
 
-    logic [depth_bank_idx_width_lp-1:0] depth_bank_idx_li;
+    wire [depth_bank_idx_width_lp-1:0] depth_bank_idx_li = addr_i[0+:depth_bank_idx_width_lp];
+    wire [bank_addr_width_lp-1:0] bank_addr_li = addr_i[depth_bank_idx_width_lp+:bank_addr_width_lp];
     logic [num_depth_bank_p-1:0] bank_v_li;
-    logic [bank_addr_width_lp-1:0] bank_addr_li;
     logic [num_depth_bank_p-1:0][width_p-1:0] bank_data_lo;
    
-    assign depth_bank_idx_li = addr_i[0+:depth_bank_idx_width_lp];
-    assign bank_addr_li = addr_i[depth_bank_idx_width_lp+:bank_addr_width_lp];
 
     bsg_decode_with_v #(
       .num_out_p(num_depth_bank_p)
