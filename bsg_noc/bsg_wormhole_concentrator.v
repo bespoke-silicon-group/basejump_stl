@@ -28,18 +28,19 @@ module bsg_wormhole_concentrator
    ,parameter cord_width_p        = "inv"
    ,parameter num_in_p            = 1
    ,parameter debug_lp            = 0
+   ,parameter link_width_lp       = `bsg_ready_and_link_sif_width(flit_width_p)
    )
 
   (input clk_i
   ,input reset_i
 
   // unconcentrated multiple links
-  ,input  [num_in_p-1:0][`bsg_ready_and_link_sif_width(flit_width_p)-1:0] links_i
-  ,output [num_in_p-1:0][`bsg_ready_and_link_sif_width(flit_width_p)-1:0] links_o
+  ,input  [num_in_p-1:0][link_width_lp-1:0] links_i
+  ,output [num_in_p-1:0][link_width_lp-1:0] links_o
 
   // concentrated single link
-  ,input  [`bsg_ready_and_link_sif_width(flit_width_p)-1:0] concentrated_link_i
-  ,output [`bsg_ready_and_link_sif_width(flit_width_p)-1:0] concentrated_link_o
+  ,input  [link_width_lp-1:0] concentrated_link_i
+  ,output [link_width_lp-1:0] concentrated_link_o
   );
 
   `declare_bsg_ready_and_link_sif_s(flit_width_p,bsg_ready_and_link_sif_s);
