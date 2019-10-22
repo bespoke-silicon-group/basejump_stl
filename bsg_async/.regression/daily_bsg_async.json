@@ -1,6 +1,5 @@
-bsg_async_credit_counter.json
-bsg_async_fifo.json
-bsg_async_ptr_gray.json
-bsg_launch_sync_sync.json
-bsg_sync_sync.json
-daily_bsg_async.json
+include bsg_async_credit_counter.json
+include bsg_async_fifo.json
+include bsg_async_ptr_gray.json
+include bsg_launch_sync_sync.json
+include bsg_sync_sync.json
