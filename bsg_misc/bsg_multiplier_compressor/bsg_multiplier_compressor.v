@@ -10,7 +10,18 @@ module bsg_multiplier_compressor #(
   ,output [out_width_p-1:0] outA_o
   ,output [out_width_p-1:0] outB_o
 );
-  if(width_p == 32) begin: WIDTH_32
+  if (width_p == 64) begin:WIDTH_64
+    if(stride_p == 16) begin: STRIDE_16
+      bsg_multiplier_compressor_64_16 wt(.*);
+    end
+    else if(stride_p == 32) begin: STRIDE_32
+      bsg_multiplier_compressor_64_32 wt(.*);
+    end
+    else if(stride_p == 64) begin: STRIDE_64
+      bsg_multiplier_compressor_64_64 wt(.*);
+    end
+  end
+  else if(width_p == 32) begin: WIDTH_32
     if(stride_p == 32) begin: STRIDE_32
       bsg_multiplier_compressor_32_32 wt(.*);
     end
