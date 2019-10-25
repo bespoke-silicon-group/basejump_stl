@@ -540,6 +540,13 @@ module bsg_cache_non_blocking
       mgmt_data_yumi_li = 1'b0;
     end
     else begin
+      out_id_n = out_id_r;
+      mgmt_data_n = mgmt_data_r;
+      store_v_n = 1'b0;
+      load_v_n = 1'b0;
+      mgmt_data_v_n = 1'b0;
+      mgmt_data_yumi_li = 1'b0;
+
       if (mgmt_data_v_lo) begin
         mgmt_data_n = mgmt_data_lo;
         out_id_n = mgmt_id_lo;
@@ -555,14 +562,6 @@ module bsg_cache_non_blocking
         out_id_n = id_tl_lo;
         store_v_n = tl_data_mem_pkt_lo.write_not_read;
         load_v_n = ~tl_data_mem_pkt_lo.write_not_read;
-      end
-      else begin
-        out_id_n = out_id_r;
-        mgmt_data_n = mgmt_data_r;
-        store_v_n = 1'b0;
-        load_v_n = 1'b0;
-        mgmt_data_v_n = 1'b0;
-        mgmt_data_yumi_li = 1'b0;
       end
     end
     
