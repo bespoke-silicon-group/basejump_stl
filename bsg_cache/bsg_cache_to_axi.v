@@ -156,18 +156,27 @@ module bsg_cache_to_axi
   //
   logic [axi_addr_width_p-1:0] rx_axi_addr;
   logic [axi_addr_width_p-1:0] tx_axi_addr;
+  
+  if (num_cache_p == 1) begin
 
-  assign rx_axi_addr = {
-    {(axi_addr_width_p-lg_num_cache_lp-addr_width_p){1'b0}}
-    ,read_rr_tag_lo
-    ,read_rr_dma_pkt.addr
-  };  
+    assign rx_axi_addr = read_rr_dma_pkt.addr;
+    assign rx_axi_addr = write_rr_dma_pkt.addr;
 
-  assign tx_axi_addr = {
-    {(axi_addr_width_p-lg_num_cache_lp-addr_width_p){1'b0}}
-    ,write_rr_tag_lo
-    ,write_rr_dma_pkt.addr
-  };  
+  end
+  else begin
+
+    assign rx_axi_addr = {
+      {(axi_addr_width_p-lg_num_cache_lp-addr_width_p){1'b0}}
+      ,read_rr_tag_lo
+      ,read_rr_dma_pkt.addr
+    };  
+    assign tx_axi_addr = {
+      {(axi_addr_width_p-lg_num_cache_lp-addr_width_p){1'b0}}
+      ,write_rr_tag_lo
+      ,write_rr_dma_pkt.addr
+    };  
+
+  end
 
   // dma_pkt handshake
   //
