@@ -32,6 +32,7 @@ module bsg_cache_non_blocking
     , output logic v_o
     , output logic [id_width_p-1:0] id_o
     , output logic [data_width_p-1:0] data_o
+    , input yumi_i
 
     , output logic [dma_pkt_width_lp-1:0] dma_pkt_o
     , output logic dma_pkt_v_o
@@ -64,6 +65,14 @@ module bsg_cache_non_blocking
   `declare_bsg_cache_non_blocking_miss_fifo_entry_s(id_width_p,addr_width_p,data_width_p);
   `declare_bsg_cache_non_blocking_dma_cmd_s(ways_p,sets_p,tag_width_lp);
   
+
+  // stall signal
+  // When the pipeline is stalled, DMA can still operate, and move data in and
+  // output of data_mem. TL stage is not able to access data_mem, but it can
+  // still enqueue missed requests into miss_fifo. MHU cannot dequeue or invalidate 
+  // an entry from miss FIFO.
+  wire stall = v_o & ~yumi_i;
+
 
   // cache pkt
   //
@@ -263,6 +272,31 @@ module bsg_cache_non_blocking
     ,.data_o(dma_read_data_r)
   );
 
+  
+  // Load data buffer
+  // When the TL stage or MHU does load, the output is buffered here.
+  logic load_read_en;
+  logic load_read_en_r;
+  logic [data_width_p-1:0] load_read_data_r;
+
+  bsg_dff_reset #(
+    .width_p(1)
+  ) load_read_en_eff (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.data_i(load_read_en)
+    ,.data_o(load_read_en_r)
+  );
+
+  bsg_dff_en_bypass #(
+    .width_p(data_width_p)
+  ) load_read_buffer (
+    .clk_i(clk_i)
+    ,.en_i(load_read_en_r)
+    ,.data_i(data_mem_data_lo)
+    ,.data_o(load_read_data_r)
+  );
+
 
   // stat_mem
   //
@@ -307,6 +341,7 @@ module bsg_cache_non_blocking
   logic mgmt_data_v_lo;
   logic [data_width_p-1:0] mgmt_data_lo;  
   logic [id_width_p-1:0] mgmt_id_lo;
+  logic mgmt_data_yumi_li;
 
   bsg_cache_non_blocking_mhu #(
     .id_width_p(id_width_p)
@@ -324,6 +359,7 @@ module bsg_cache_non_blocking
     ,.mgmt_data_v_o(mgmt_data_v_lo)
     ,.mgmt_data_o(mgmt_data_lo)
     ,.mgmt_id_o(mgmt_id_lo)
+    ,.mgmt_data_yumi_i(mgmt_data_yumi_li)
 
     ,.decode_tl_i(decode_tl_lo)  
     ,.addr_tl_i(addr_tl_lo)
@@ -421,12 +457,14 @@ module bsg_cache_non_blocking
   ///                   ///
 
 
-  // data_mem
+  // data_mem ctrl logic 
+  //
   // Access priority in descending order.
   // 1) DMA engine
   // 2) MHU
   // 3) TL stage (hit). When neither DMA nor MHU is accessing the data_mem,
   //    ready signal to TL stage goes high.
+
   always_comb begin
 
     data_mem_v_li = 1'b0;
@@ -434,6 +472,7 @@ module bsg_cache_non_blocking
     mhu_data_mem_pkt_yumi_li = 1'b0;
     tl_data_mem_pkt_ready_li = 1'b0;
     dma_read_en = 1'b0;
+    load_read_en = 1'b0;
 
     if (dma_data_mem_pkt_v_lo) begin
       data_mem_pkt_li = dma_data_mem_pkt_lo;
@@ -442,20 +481,24 @@ module bsg_cache_non_blocking
     end
     else if (mhu_data_mem_pkt_v_lo) begin
       data_mem_pkt_li = mhu_data_mem_pkt_lo;
-      data_mem_v_li = 1'b1;
-      mhu_data_mem_pkt_yumi_li = 1'b1;
+      data_mem_v_li = ~stall;
+      mhu_data_mem_pkt_yumi_li = ~stall;
+      load_read_en = ~mhu_data_mem_pkt_lo.write_not_read & ~stall;
     end
     else begin
       data_mem_pkt_li = tl_data_mem_pkt_lo;
-      data_mem_v_li = tl_data_mem_pkt_v_lo;
-      tl_data_mem_pkt_ready_li = 1'b1;
+      data_mem_v_li = tl_data_mem_pkt_v_lo & ~stall;
+      tl_data_mem_pkt_ready_li = ~stall;
+      load_read_en = ~tl_data_mem_pkt_lo.write_not_read & tl_data_mem_pkt_v_lo & ~stall;
     end
 
   end
 
 
-  // stat_mem
+  // stat_mem ctrl logic
+  //
   // MHU has higher priority over TL stage.
+  // MHU accesses tag_mem and stat_mem together.
   always_comb begin
     
     stat_mem_v_li = 1'b0;
@@ -467,16 +510,19 @@ module bsg_cache_non_blocking
       stat_mem_pkt_li = mhu_stat_mem_pkt_lo;
     end
     else begin
-      tl_stat_mem_pkt_ready_li = 1'b1;
+      tl_stat_mem_pkt_ready_li = ~stall;
       stat_mem_pkt_li = tl_stat_mem_pkt_lo;
-      stat_mem_v_li = tl_stat_mem_pkt_v_lo;
+      stat_mem_v_li = tl_stat_mem_pkt_v_lo & ~stall;
     end
   end
 
 
-  // output logic
+  // Output Logic
+  //
   // Output valid signal lasts for only one cycle. The consumer needs to be
   // ready to accept the data whenever it becomes ready.
+  // When the pipeline is stalled, these register values stay the same.
+  // But the pipeline can only stall, when the output is valid.
   logic [data_width_p-1:0] mgmt_data_r, mgmt_data_n;
   logic [id_width_p-1:0] out_id_r, out_id_n;
   logic mgmt_data_v_r, mgmt_data_v_n;
@@ -485,33 +531,46 @@ module bsg_cache_non_blocking
 
   always_comb begin
 
-    out_id_n = out_id_r;
-    mgmt_data_n = mgmt_data_r;
-    store_v_n = 1'b0;
-    load_v_n = 1'b0;
-    mgmt_data_v_n = 1'b0;
-
-    if (mgmt_data_v_lo) begin
-      mgmt_data_n = mgmt_data_lo;
-      out_id_n = mgmt_id_lo;
-      mgmt_data_v_n = mgmt_data_v_lo;
+    if (stall) begin
+      out_id_n = out_id_r;
+      mgmt_data_n = mgmt_data_r;
+      store_v_n = store_v_r;
+      load_v_n = load_v_r;
+      mgmt_data_v_n = mgmt_data_v_r;
+      mgmt_data_yumi_li = 1'b0;
     end
-    else if (mhu_data_mem_pkt_yumi_li) begin
-      out_id_n = mhu_data_mem_pkt_id_lo;
-      store_v_n = mhu_data_mem_pkt_lo.write_not_read;
-      load_v_n = ~mhu_data_mem_pkt_lo.write_not_read;
-    end
-    else if (tl_data_mem_pkt_ready_li & tl_data_mem_pkt_v_lo) begin
-      out_id_n = id_tl_lo;
-      store_v_n = tl_data_mem_pkt_lo.write_not_read;
-      load_v_n = ~tl_data_mem_pkt_lo.write_not_read;
+    else begin
+      if (mgmt_data_v_lo) begin
+        mgmt_data_n = mgmt_data_lo;
+        out_id_n = mgmt_id_lo;
+        mgmt_data_v_n = mgmt_data_v_lo;
+        mgmt_data_yumi_li = mgmt_data_v_lo;
+      end
+      else if (mhu_data_mem_pkt_yumi_li) begin
+        out_id_n = mhu_data_mem_pkt_id_lo;
+        store_v_n = mhu_data_mem_pkt_lo.write_not_read;
+        load_v_n = ~mhu_data_mem_pkt_lo.write_not_read;
+      end
+      else if (tl_data_mem_pkt_ready_li & tl_data_mem_pkt_v_lo) begin
+        out_id_n = id_tl_lo;
+        store_v_n = tl_data_mem_pkt_lo.write_not_read;
+        load_v_n = ~tl_data_mem_pkt_lo.write_not_read;
+      end
+      else begin
+        out_id_n = out_id_r;
+        mgmt_data_n = mgmt_data_r;
+        store_v_n = 1'b0;
+        load_v_n = 1'b0;
+        mgmt_data_v_n = 1'b0;
+        mgmt_data_yumi_li = 1'b0;
+      end
     end
     
  
     if (mgmt_data_v_r)
       data_o = mgmt_data_r;
     else if (load_v_r)
-      data_o = data_mem_data_lo;
+      data_o = load_read_data_r;
     else
       data_o = '0;
     

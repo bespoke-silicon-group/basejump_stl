@@ -455,4 +455,16 @@ module bsg_cache_non_blocking_tl_stage
     end
   end
 
+
+  // synopsys translate_off
+  always_ff @ (negedge clk_i) begin
+    if (~reset_i & v_tl_r) begin
+      assert($countones(tag_hit) <= 1) 
+        else $error("[BSG_ERROR] %m. t=%t. multiple hits detected.", $time); 
+    end
+  end
+  // synopsys translate_on
+
+
+
 endmodule

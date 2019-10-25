@@ -45,6 +45,7 @@ module bsg_cache_non_blocking_mhu
     , output logic mgmt_data_v_o
     , output logic [data_width_p-1:0] mgmt_data_o
     , output logic [id_width_p-1:0] mgmt_id_o
+    , input mgmt_data_yumi_i
 
     , input bsg_cache_non_blocking_decode_s decode_tl_i
     , input [addr_width_p-1:0] addr_tl_i
@@ -353,27 +354,29 @@ module bsg_cache_non_blocking_mhu
 
           // TAGLA: return the tag address at the output.
           if (decode_tl_i.tagla_op) begin
-            mgmt_yumi_o = 1'b1;
+            mgmt_yumi_o = mgmt_data_yumi_i;
             mgmt_data_o = {tag_tl_i[addr_way_tl], addr_index_tl, {block_offset_width_lp{1'b0}}};            
             mgmt_data_v_o = 1'b1;
           end
           // TAGLV: return the tag valid and lock bit at the output.
           else if (decode_tl_i.taglv_op) begin
-            mgmt_yumi_o = 1'b1;
+            mgmt_yumi_o = mgmt_data_yumi_i;
             mgmt_data_o = {{(data_width_p-2){1'b0}}, lock_tl_i[addr_way_tl], valid_tl_i[addr_way_tl]};
             mgmt_data_v_o = 1'b1;
           end
           // TAGST: also clears the stat_mem (dirty/LRU bits).
           else if (decode_tl_i.tagst_op) begin
-            mgmt_yumi_o = 1'b1;
+            mgmt_yumi_o = mgmt_data_yumi_i;
             mgmt_data_v_o = 1'b1;
 
-            stat_mem_pkt_v_o = 1'b1;
+            stat_mem_pkt_v_o = mgmt_data_yumi_i;
             stat_mem_pkt.opcode = e_stat_reset;
           end
-          // TAGFL: reads the stat_mem.
+          // TAGFL:
+          // if the cache line is valid, read stat_mem.
+          // otherwise, return 0;
           else if (decode_tl_i.tagfl_op) begin
-            mgmt_yumi_o = ~valid_tl_i[addr_way_tl];
+            mgmt_yumi_o = ~valid_tl_i[addr_way_tl] & mgmt_data_yumi_i;
             mgmt_data_v_o = ~valid_tl_i[addr_way_tl];
         
             stat_mem_pkt_v_o = valid_tl_i[addr_way_tl];
@@ -383,9 +386,11 @@ module bsg_cache_non_blocking_mhu
               ? SEND_MGMT_DMA
               : IDLE;
           end
-          // AFL/AFLINV: If there is tag hit, it reads the stat_mem.
+          // AFL/AFLINV:
+          // If there is tag hit, it reads the stat_mem.
+          // otherwise, return 0;
           else if (decode_tl_i.afl_op | decode_tl_i.aflinv_op) begin
-            mgmt_yumi_o = ~tag_hit_found_i;
+            mgmt_yumi_o = ~tag_hit_found_i & mgmt_data_yumi_i;
             mgmt_data_v_o = ~tag_hit_found_i;
            
             stat_mem_pkt_v_o = tag_hit_found_i;
@@ -397,7 +402,7 @@ module bsg_cache_non_blocking_mhu
           end
           // AINV: If there is tag hit, invalidate the cache line.
           else if (decode_tl_i.ainv_op) begin
-            mgmt_yumi_o = 1'b1;
+            mgmt_yumi_o = mgmt_data_yumi_i;
             mgmt_data_v_o = 1'b1;
             
             stat_mem_pkt_v_o = tag_hit_found_i;
@@ -411,13 +416,13 @@ module bsg_cache_non_blocking_mhu
           // ALOCK: if there is tag hit, then lock the line.
           // If not, read stat_mem and send mgmt DMA.
           else if (decode_tl_i.alock_op) begin
-            mgmt_yumi_o = tag_hit_found_i;
+            mgmt_yumi_o = tag_hit_found_i & mgmt_data_yumi_i;
             mgmt_data_v_o = tag_hit_found_i;
 
             stat_mem_pkt_v_o = ~tag_hit_found_i;
             stat_mem_pkt.opcode = e_stat_read;
 
-            tag_mem_pkt_v_o = tag_hit_found_i;
+            tag_mem_pkt_v_o = tag_hit_found_i & mgmt_data_yumi_i;
             tag_mem_pkt.way_id = tag_hit_way_i;
             tag_mem_pkt.opcode = e_tag_lock;
         
@@ -427,10 +432,10 @@ module bsg_cache_non_blocking_mhu
           end
           // AUNLOCK: if there is tag hit, then unlock the line.
           else if (decode_tl_i.aunlock_op) begin
-            mgmt_yumi_o = 1'b1;
+            mgmt_yumi_o = mgmt_data_yumi_i;
             mgmt_data_v_o = 1'b1;
 
-            tag_mem_pkt_v_o = tag_hit_found_i;
+            tag_mem_pkt_v_o = tag_hit_found_i & mgmt_data_yumi_i;
             tag_mem_pkt.way_id = tag_hit_way_i;
             tag_mem_pkt.opcode = e_tag_unlock;
           end
@@ -439,7 +444,8 @@ module bsg_cache_non_blocking_mhu
             // Do nothing.
           end
         end
-        // Go to WAIT_DMA_DONE.
+        // Go to WAIT_DMA_DONE to wait for a DMA request that was previous
+        // sent out while transitioning out of DQ mode.
         else if (dma_pending_i | dma_done_i) begin
           mhu_state_n = WAIT_DMA_DONE; 
         end
@@ -463,6 +469,9 @@ module bsg_cache_non_blocking_mhu
       end
   
       // Sending DMA for TAGFL,AFL,AFLINV,ALOCK.
+      // For TAGFL,AFL,AFLINV, if the block is dirty, then send out the dma
+      // cmd. Otherwise, return 0;
+      // For ALOCK, always send the dma cmd to bring in the missing block.
       SEND_MGMT_DMA: begin
   
         dma_cmd_v_o = decode_tl_i.alock_op
@@ -485,7 +494,8 @@ module bsg_cache_non_blocking_mhu
             ? tag_tl_i[addr_way_tl]
             : tag_tl_i[tag_hit_way_i]);
         
-        mgmt_yumi_o = ~decode_tl_i.alock_op
+        mgmt_yumi_o = mgmt_data_yumi_i
+          & ~decode_tl_i.alock_op
           & (decode_tl_i.tagfl_op
             ? ~dirty_i[addr_way_tl]
             : ~dirty_i[tag_hit_way_i]);
@@ -495,7 +505,7 @@ module bsg_cache_non_blocking_mhu
             ? ~dirty_i[addr_way_tl]
             : ~dirty_i[tag_hit_way_i]);
 
-        tag_mem_pkt_v_o = decode_tl_i.aflinv_op & ~dirty_i[tag_hit_way_i];
+        tag_mem_pkt_v_o = mgmt_data_yumi_i & decode_tl_i.aflinv_op & ~dirty_i[tag_hit_way_i];
         tag_mem_pkt.way_id = tag_hit_way_i;
         tag_mem_pkt.index = addr_index_tl;
         tag_mem_pkt.opcode = e_tag_invalidate;
@@ -503,15 +513,19 @@ module bsg_cache_non_blocking_mhu
         mhu_state_n = decode_tl_i.alock_op
           ? WAIT_MGMT_DMA
           : (decode_tl_i.tagfl_op
-            ? (dirty_i[addr_way_tl] ? WAIT_MGMT_DMA : IDLE)
-            : (dirty_i[tag_hit_way_i] ? WAIT_MGMT_DMA : IDLE));
+            ? (dirty_i[addr_way_tl] 
+              ? WAIT_MGMT_DMA 
+              : (mgmt_data_yumi_i ? IDLE : SEND_MGMT_DMA))
+            : (dirty_i[tag_hit_way_i] 
+              ? WAIT_MGMT_DMA 
+              : (mgmt_data_yumi_i ? IDLE : SEND_MGMT_DMA)));
 
       end
 
       // Waiting DMA for TAGFL,AFL,AFLINV,ALOCK.
       WAIT_MGMT_DMA: begin
 
-        stat_mem_pkt_v_o = dma_done_i;
+        stat_mem_pkt_v_o = dma_done_i & mgmt_data_yumi_i;
         stat_mem_pkt.index = addr_index_tl;
         stat_mem_pkt.way_id = decode_tl_i.tagfl_op
           ? addr_way_tl
@@ -520,7 +534,7 @@ module bsg_cache_non_blocking_mhu
             : tag_hit_way_i);
         stat_mem_pkt.opcode = e_stat_clear_dirty;
 
-        tag_mem_pkt_v_o = dma_done_i & (decode_tl_i.alock_op | decode_tl_i.aflinv_op);
+        tag_mem_pkt_v_o = mgmt_data_yumi_i & dma_done_i & (decode_tl_i.alock_op | decode_tl_i.aflinv_op);
         tag_mem_pkt.way_id = decode_tl_i.alock_op
           ? replacement_way_id
           : tag_hit_way_i;
@@ -530,10 +544,10 @@ module bsg_cache_non_blocking_mhu
           ? e_tag_set_tag_and_lock
           : e_tag_invalidate;
 
-        dma_ack_o = dma_done_i;
+        dma_ack_o = dma_done_i & mgmt_data_yumi_i;
         mgmt_data_v_o = dma_done_i;
      
-        mhu_state_n = dma_done_i
+        mhu_state_n = (dma_done_i & mgmt_data_yumi_i)
           ? IDLE
           : WAIT_MGMT_DMA;
 

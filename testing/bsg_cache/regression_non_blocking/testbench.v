@@ -50,6 +50,7 @@ module testbench();
   logic [id_width_p-1:0] cache_id_lo;
   logic [data_width_p-1:0] cache_data_lo;
   logic cache_v_lo;
+  logic cache_yumi_li;
 
   `declare_bsg_cache_non_blocking_dma_pkt_s(addr_width_p);
   bsg_cache_non_blocking_dma_pkt_s dma_pkt;
@@ -83,6 +84,7 @@ module testbench();
     ,.data_o(cache_data_lo)
     ,.id_o(cache_id_lo)
     ,.v_o(cache_v_lo)
+    ,.yumi_i(cache_yumi_li)
 
     ,.dma_pkt_o(dma_pkt)
     ,.dma_pkt_v_o(dma_pkt_v_lo)
@@ -98,6 +100,30 @@ module testbench();
   );
 
 
+  // random yumi generator
+  //
+  integer counter_r;
+ 
+  
+  always_ff @ (posedge clk) begin
+    if (reset) begin
+      counter_r <= 0;
+    end
+    else begin
+      if (cache_v_lo) begin
+        if (counter_r == 0)
+          counter_r <= $urandom_range(8,0);
+        else
+          counter_r <= counter_r - 1;
+      end
+    end
+  end
+
+  assign cache_yumi_li = cache_v_lo & (counter_r == 0);
+   
+
+  // dma model
+  //
   bsg_nonsynth_non_blocking_dma_model #(
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
@@ -158,15 +184,6 @@ module testbench();
     ,.done_o(done)
     ,.error_o()
   );
-  /*
-  trace_rom #(
-    .width_p(ring_width_lp+4)
-    ,.addr_width_p(rom_addr_width_lp)
-  ) trom (
-    .addr_i(trace_rom_addr)
-    ,.data_o(trace_rom_data)
-  );
-  */ 
 
   bsg_nonsynth_test_rom #(
     .filename_p("trace.tr")
@@ -285,7 +302,7 @@ module testbench();
     end
 
 
-    if (~reset & cache_v_lo) begin
+    if (~reset & cache_v_lo & cache_yumi_li) begin
       $display("id=%d, data=%x", cache_id_lo, cache_data_lo);
       assert(result[cache_id_lo] == cache_data_lo)
         else $fatal("Output does not match expected result. Id= %d, Expected: %x. Actual: %x",
@@ -309,7 +326,7 @@ module testbench();
       if (cache_v_li & cache_ready_lo)
         sent_r <= sent_r + 1;
 
-      if (cache_v_lo)
+      if (cache_v_lo & cache_yumi_li)
         recv_r <= recv_r + 1;
 
     end
