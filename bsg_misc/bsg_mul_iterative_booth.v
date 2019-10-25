@@ -252,26 +252,24 @@ module bsg_mul_iterative_booth_unpipelined #(
     endcase
   end
   // Counter for eCal and eCPA. 
-  reg [`BSG_SAFE_CLOG2(gather_level_lp)-1:0] cal_cnt_r;
-  reg [`BSG_SAFE_CLOG2(cpa_level_lp)-1:0] cpa_cnt_r;
+  localparam state_cnt_size_lp = cpa_level_lp + gather_level_lp;
+  reg [`BSG_SAFE_CLOG2(state_cnt_size_lp)-1:0] state_cnt_r;
 
-  assign calc_is_done = cal_cnt_r == (gather_level_lp-1);
-  assign cpa_is_done = cpa_cnt_r == (cpa_level_lp-1);
+  assign calc_is_done = state_cnt_r == (gather_level_lp-1);
+  assign cpa_is_done = state_cnt_r == (state_cnt_size_lp-1);
   // Counter update
   always_ff @(posedge clk_i) begin
     if(reset_i) begin
-      cal_cnt_r <= '0;
-      cpa_cnt_r <= '0;
+      state_cnt_r <= '0;
     end
     else if(state_r == eIdle && v_i) begin
-      cal_cnt_r <= '0;
-      cpa_cnt_r <= '0;
+      state_cnt_r <= '0;
     end
     else if(state_r == eCal) begin
-      cal_cnt_r <= cal_cnt_r + 1;
+      state_cnt_r <= state_cnt_r + 1;
     end
     else if(state_r == eCPA) begin
-      cpa_cnt_r <= cpa_cnt_r + 1;
+      state_cnt_r <= state_cnt_r + 1;
     end
   end
 
@@ -418,7 +416,7 @@ module bsg_mul_iterative_booth_unpipelined #(
       last_cpa_carry_r <= '0;
     end
     else if(state_r == eCPA) begin
-      if(cpa_cnt_r == '0) begin
+      if(state_cnt_r == gather_level_lp) begin
         result_low_r <= result_low_n;
         result_high_r <= result_high_initial_n[width_p-1:0];
         last_cpa_carry_r <= result_high_initial_n[width_p];
