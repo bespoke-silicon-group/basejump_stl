@@ -1,5 +1,5 @@
 {
-    "design_name": "bsg_mul_iterative_booth", 
+    "design_name": "mul", 
     "filelist": [ 
         "basejump_stl/bsg_misc/mul.v",
         "basejump_stl/bsg_misc/bsg_dff_chain.v",  
