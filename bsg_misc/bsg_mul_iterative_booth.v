@@ -402,6 +402,7 @@ module bsg_mul_iterative_booth_unpipelined #(
       csa_opB_r <= '0;
       result_low_r <= '0;
       last_cpa_carry_r <= '0;
+      result_high_r <= '0;
     end
     else if(state_r == eIdle && v_i) begin
       csa_opA_r <= {csa_opA_init, stride_p'(0)};
