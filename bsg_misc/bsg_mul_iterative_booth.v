@@ -99,7 +99,7 @@ wire [width_p:0] sht = code_i[1] ? {zero_or_not[width_p-1:0], 1'b0} : zero_or_no
 wire [width_p:0] pd = {(width_p+1){code_i[2]}} ^ sht;
 
 
-wire e = pd[width_p]; // E is used for sign extension.
+wire e = pos_op_i[width_p] ? pd[width_p] : code_i[2]; // E is used for sign extension.
 if(!initial_p)
   assign partial_product_o = {1'b1, ~e, pd};
 else
