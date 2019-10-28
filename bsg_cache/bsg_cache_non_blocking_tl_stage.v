@@ -339,12 +339,30 @@ module bsg_cache_non_blocking_tl_stage
     counter_up = 1'b0;
     counter_clear = 1'b0;
 
+    // If there is cache management op, wait for MHU to yumi.
+    // Either mgmt or load/store op can come in next.
+    if (mgmt_op_tl) begin
+      ready_o = mgmt_yumi_i;
+      v_tl_n = mgmt_yumi_i
+        ? v_i
+        : v_tl_r;
+
+      tl_we = mgmt_yumi_i & v_i;
+  
+      tag_mem_v_li = mgmt_yumi_i & v_i;
+      tag_mem_pkt.way_id = addr_way;
+      tag_mem_pkt.index = addr_index;
+      tag_mem_pkt.data = data_i;
+      tag_mem_pkt.opcode = decode_i.tagst_op
+        ? e_tag_store
+        : e_tag_read;
+    end
     // The recover signal from MHU forces the TL stage to read the tag_mem
     // again using addr_tl. Recover logic is necessary, because when the MHU
     // updates the tag, the tag_mem output may be stale, or the tag_mem output
     // is perturbed, because the MHU also reads the tag_mem to make
     // replacement decision to send out the next DMA request.
-    if (recover_i) begin
+    else if (recover_i) begin
       tag_mem_v_li = v_tl_r;
       tag_mem_pkt.index = addr_index_tl;
       tag_mem_pkt.opcode = e_tag_read;
@@ -410,24 +428,6 @@ module bsg_cache_non_blocking_tl_stage
       block_mode_n = (counter_max ? ld_st_ready : data_mem_pkt_ready_i)
         ? (block_mode_r ? ~counter_max : 1'b1)
         : block_mode_r;
-    end
-    // If there is cache management op, wait for MHU to yumi.
-    // Either mgmt or load/store op can come in next.
-    else if (mgmt_op_tl) begin
-      ready_o = mgmt_yumi_i;
-      v_tl_n = mgmt_yumi_i
-        ? v_i
-        : v_tl_r;
-
-      tl_we = mgmt_yumi_i & v_i;
-  
-      tag_mem_v_li = mgmt_yumi_i & v_i;
-      tag_mem_pkt.way_id = addr_way;
-      tag_mem_pkt.index = addr_index;
-      tag_mem_pkt.data = data_i;
-      tag_mem_pkt.opcode = decode_i.tagst_op
-        ? e_tag_store
-        : e_tag_read;
     end
     else begin
       // TL stage empty.

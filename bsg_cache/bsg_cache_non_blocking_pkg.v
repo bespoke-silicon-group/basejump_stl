@@ -247,4 +247,26 @@ package bsg_cache_non_blocking_pkg;
     (1+1+2+1+1+id_width_mp+addr_width_mp+data_width_mp+(data_width_mp>>3)) 
 
 
+  // MHU dff
+  //
+  `define declare_bsg_cache_non_blocking_mhu_dff_s(id_width_mp,addr_width_mp,tag_width_mp,ways_mp) \
+    typedef struct packed {                                                                 \
+      bsg_cache_non_blocking_decode_s decode;                                               \
+      logic [ways_mp-1:0] valid;                                                           \
+      logic [ways_mp-1:0] lock;                                                            \
+      logic [ways_mp-1:0][tag_width_mp-1:0] tag;                                           \
+      logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] tag_hit_way;                                  \
+      logic tag_hit_found;                                                                \
+      logic [id_width_mp-1:0] id;                                                          \
+      logic [addr_width_mp-1:0] addr;                                                      \
+    } bsg_cache_non_blocking_mhu_dff_s
+
+
+  `define bsg_cache_non_blocking_mhu_dff_width(id_width_mp,addr_width_mp,tag_width_mp,ways_mp) \
+    ($bits(bsg_cache_non_blocking_decode_s)+ways_mp+ways_mp+(ways_mp*tag_width_mp)+`BSG_SAFE_CLOG2(ways_mp)+1+id_width_mp+addr_width_mp)
+
+
+
+
+
 endpackage
