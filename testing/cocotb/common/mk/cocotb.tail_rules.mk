@@ -1,7 +1,3 @@
-export TESTING_COCOTB_COMMON_MK_DIR := $(realpath $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST)))))
-
-include $(TESTING_COCOTB_COMMON_MK_DIR)/../cocotb_tools.mk
-
 #===============================================================================
 # bsg_cocotb.tail_rules.mk
 #
@@ -15,7 +11,16 @@ include $(TESTING_COCOTB_COMMON_MK_DIR)/../cocotb_tools.mk
 
 # This is the makefile that is going to run the cocotb test. We copy this into
 # the sweep test run directory and then call make on this makefile.
-RUN_COCOTB_MAKEFILE := $(TESTING_COCOTB_COMMON_MK_DIR)/run_cocotb.mk
+RUN_COCOTB_MAKEFILE := $(TESTING_COCOTB_DIR)/common/mk/cocotb.run.mk
+
+# Python script to read the config json file for the test
+READ_JSON_CONFIG_PY := $(TESTING_COCOTB_DIR)/common/py/read_json_config.py
+
+# Read in the json configuration file
+export BSG_TOPLEVEL_MODULE :=$(shell python $(READ_JSON_CONFIG_PY) $(CFG) toplevel)
+export BSG_PY_TEST_MODULES :=$(shell python $(READ_JSON_CONFIG_PY) $(CFG) test_modules)
+export BSG_VERILOG_SOURCES :=$(addprefix $(shell git rev-parse --show-toplevel)/,$(shell python $(READ_JSON_CONFIG_PY) $(CFG) filelist))
+export BSG_VERILOG_INCDIRS :=$(addprefix $(shell git rev-parse --show-toplevel)/,$(shell python $(READ_JSON_CONFIG_PY) $(CFG) include))
 
 #===============================================================================
 # Spawn Test Parameterization Targets
@@ -25,34 +30,40 @@ RUN_COCOTB_MAKEFILE := $(TESTING_COCOTB_COMMON_MK_DIR)/run_cocotb.mk
 # of the defined parameterizations.
 #
 
+# Read from the json configuration file. This is a list of strings with each
+# string being a configuration. The string has % characters that act as
+# delimiters. The first delimited item is the name of the sweep and the rest of
+# the items are parameters in the format name=value.
+BSG_PARAMETER_SWEEP :=$(shell $(READ_JSON_CONFIG_PY) $(CFG) psweep)
+
 # Collection of all test targets that get spawned
 ALL_TEST_TARGETS :=
 
 # Function to spawn a test.% and clean.test.% target for the given param value
 define add_test=
 
-TEST_NAME_$1 :=$$(word 1,$$(BSG_PARAM_SWEEP_PARAMS_$1))
-TEST_PVAL_$1 :=$$(wordlist 2,$$(words $$(BSG_PARAM_SWEEP_PARAMS_$1)),$$(BSG_PARAM_SWEEP_PARAMS_$1))
+# Add this test to the collection of all tests
+ALL_TEST_TARGETS += test.$(word 1,$(subst %, ,$1))
 
-ALL_TEST_TARGETS += test.$$(TEST_NAME_$1)
-
-test.$$(TEST_NAME_$1): test.%: build_tools
-	mkdir -p $$*
-	cp $$(RUN_COCOTB_MAKEFILE) $$*/Makefile
-	$$(eval export BSG_TOPLEVEL_PVALS=$$(TEST_PVAL_$1))
+# Run test target
+test.$(word 1,$(subst %, ,$1)): test.%: build_tools
+	mkdir -p run_$$*
+	cp $$(RUN_COCOTB_MAKEFILE) run_$$*/Makefile
+	$$(eval export BSG_TOPLEVEL_PVALS=$(wordlist 2,$(words $(subst %, ,$1)), $(subst %, ,$1)))
 	$$(eval export BSG_ADDITIONAL_PYTHONPATH=$$(CURDIR))
-	cd $$* && $(COCOTB_VENV_ACTIVATE) && make sim 2>&1 | tee -i run.log
+	cd run_$$* && $(COCOTB_VENV_ACTIVATE) && make sim 2>&1 | tee -i run.log
 
-clean.test.$$(TEST_NAME_$1): clean.test.%:
-	rm -rf $$*
+# Clean test target
+clean.test.$(word 1,$(subst %, ,$1)): clean.test.%:
+	rm -rf run_$$*
 
 endef
 
 # Spawn all of the test cases based on the BSG_PARAM_SWEEP_* variables.
-$(foreach i, $(shell for i in {$(BSG_PARAM_SWEEP_START)..$(BSG_PARAM_SWEEP_STOP)}; do echo $$i; done), $(eval $(call add_test,$i)))
+$(foreach i, $(BSG_PARAMETER_SWEEP), $(eval $(call add_test,$i)))
 
 #===============================================================================
-# Main Targets
+# Additional Targets
 #
 # All other standard target declarations. Makefiles that include this makefile
 # can extend the prereq list for these targets to do design specific actions
@@ -70,5 +81,5 @@ clean:
 	rm -f *.pyc
 
 # Alias target to clean everything (prestine)
-deep_clean: clean.test.all clean
+clean_all: clean.test.all clean
 

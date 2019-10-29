@@ -8,10 +8,10 @@
 # is working without worrying about creating a real test script.
 #
 
+import random
 import cocotb
 from cocotb.triggers import Timer
 from cocotb.result import TestFailure
-import random
 
 # Test Pass -- wait 1 tick and passes
 @cocotb.test()

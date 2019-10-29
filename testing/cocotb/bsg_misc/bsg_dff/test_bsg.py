@@ -2,15 +2,19 @@
 # test_bsg.py
 #
 
+import random
 import cocotb
 from bsg_cocotb_lib import bsg_assert
 from cocotb.clock import Clock
 from cocotb.triggers import RisingEdge,FallingEdge,Timer
 from cocotb.result import TestFailure
-import random
+
+from bsg_cocotb_lib import bsg_top_params
 
 @cocotb.test()
 def test_random (dut):
+
+  p = bsg_top_params()
 
   num_test_inputs = 1000  ;# The number of random test vectors to try
   clock_period    = 778   ;# The clock period of the clock object
@@ -28,7 +32,7 @@ def test_random (dut):
   # output has not changed, and after the rising edge it gets updated.
   prev_val = 0
   for i in range(num_test_inputs):
-    val = random.randint(0,(2**int(dut.width_p))-1)
+    val = random.randint(0,(2**int(p['width_p']))-1)
     dut.data_i = val
 
     # Check no change on the negative edge
