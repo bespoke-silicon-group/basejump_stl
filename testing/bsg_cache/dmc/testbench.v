@@ -122,6 +122,7 @@ bsg_cache_to_dram_ctrl #(
 ) DUT (
   .clk_i(clk)
   ,.reset_i(reset)
+  ,.dram_size_i(3'h4)
 
   ,.dma_pkt_i(dma_pkt)
   ,.dma_pkt_v_i(dma_pkt_v_lo)
