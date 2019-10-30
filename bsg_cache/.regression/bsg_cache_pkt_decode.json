@@ -31,7 +31,7 @@
             "design_size": "small", 
             "name": "bsg_cache_pkt_decode_small_clk_30_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=16"
             ]
         }, 
@@ -61,7 +61,7 @@
             "design_size": "small", 
             "name": "bsg_cache_pkt_decode_small_clk_40_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=16"
             ]
         }, 
@@ -91,7 +91,7 @@
             "design_size": "small", 
             "name": "bsg_cache_pkt_decode_small_clk_50_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=16"
             ]
         }, 
@@ -121,7 +121,7 @@
             "design_size": "small", 
             "name": "bsg_cache_pkt_decode_small_clk_60_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=16"
             ]
         }, 
@@ -151,7 +151,7 @@
             "design_size": "small", 
             "name": "bsg_cache_pkt_decode_small_clk_70_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=16"
             ]
         }, 
@@ -181,7 +181,7 @@
             "design_size": "small", 
             "name": "bsg_cache_pkt_decode_small_clk_80_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=16"
             ]
         }, 
@@ -211,7 +211,7 @@
             "design_size": "small", 
             "name": "bsg_cache_pkt_decode_small_clk_90_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=16"
             ]
         }, 
@@ -241,7 +241,7 @@
             "design_size": "small", 
             "name": "bsg_cache_pkt_decode_small_clk_100_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=16"
             ]
         }, 
@@ -271,7 +271,7 @@
             "design_size": "large", 
             "name": "bsg_cache_pkt_decode_large_clk_30_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=64"
             ]
         }, 
@@ -301,7 +301,7 @@
             "design_size": "large", 
             "name": "bsg_cache_pkt_decode_large_clk_40_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=64"
             ]
         }, 
@@ -331,7 +331,7 @@
             "design_size": "large", 
             "name": "bsg_cache_pkt_decode_large_clk_50_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=64"
             ]
         }, 
@@ -361,7 +361,7 @@
             "design_size": "large", 
             "name": "bsg_cache_pkt_decode_large_clk_60_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=64"
             ]
         }, 
@@ -391,7 +391,7 @@
             "design_size": "large", 
             "name": "bsg_cache_pkt_decode_large_clk_70_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=64"
             ]
         }, 
@@ -421,7 +421,7 @@
             "design_size": "large", 
             "name": "bsg_cache_pkt_decode_large_clk_80_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=64"
             ]
         }, 
@@ -451,7 +451,7 @@
             "design_size": "large", 
             "name": "bsg_cache_pkt_decode_large_clk_90_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=64"
             ]
         }, 
@@ -481,7 +481,7 @@
             "design_size": "large", 
             "name": "bsg_cache_pkt_decode_large_clk_100_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=64"
             ]
         }, 
@@ -511,7 +511,7 @@
             "design_size": "very_large", 
             "name": "bsg_cache_pkt_decode_very_large_clk_30_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=128"
             ]
         }, 
@@ -541,7 +541,7 @@
             "design_size": "very_large", 
             "name": "bsg_cache_pkt_decode_very_large_clk_40_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=128"
             ]
         }, 
@@ -571,7 +571,7 @@
             "design_size": "very_large", 
             "name": "bsg_cache_pkt_decode_very_large_clk_50_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=128"
             ]
         }, 
@@ -601,7 +601,7 @@
             "design_size": "very_large", 
             "name": "bsg_cache_pkt_decode_very_large_clk_60_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=128"
             ]
         }, 
@@ -631,7 +631,7 @@
             "design_size": "very_large", 
             "name": "bsg_cache_pkt_decode_very_large_clk_70_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=128"
             ]
         }, 
@@ -661,7 +661,7 @@
             "design_size": "very_large", 
             "name": "bsg_cache_pkt_decode_very_large_clk_80_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=128"
             ]
         }, 
@@ -691,7 +691,7 @@
             "design_size": "very_large", 
             "name": "bsg_cache_pkt_decode_very_large_clk_90_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=128"
             ]
         }, 
@@ -721,7 +721,7 @@
             "design_size": "very_large", 
             "name": "bsg_cache_pkt_decode_very_large_clk_100_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=128"
             ]
         }, 
@@ -751,7 +751,7 @@
             "design_size": "medium", 
             "name": "bsg_cache_pkt_decode_medium_clk_30_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=32"
             ]
         }, 
@@ -781,7 +781,7 @@
             "design_size": "medium", 
             "name": "bsg_cache_pkt_decode_medium_clk_40_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=32"
             ]
         }, 
@@ -811,7 +811,7 @@
             "design_size": "medium", 
             "name": "bsg_cache_pkt_decode_medium_clk_50_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=32"
             ]
         }, 
@@ -841,7 +841,7 @@
             "design_size": "medium", 
             "name": "bsg_cache_pkt_decode_medium_clk_60_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=32"
             ]
         }, 
@@ -871,7 +871,7 @@
             "design_size": "medium", 
             "name": "bsg_cache_pkt_decode_medium_clk_70_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=32"
             ]
         }, 
@@ -901,7 +901,7 @@
             "design_size": "medium", 
             "name": "bsg_cache_pkt_decode_medium_clk_80_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=32"
             ]
         }, 
@@ -931,7 +931,7 @@
             "design_size": "medium", 
             "name": "bsg_cache_pkt_decode_medium_clk_90_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=32"
             ]
         }, 
@@ -961,7 +961,7 @@
             "design_size": "medium", 
             "name": "bsg_cache_pkt_decode_medium_clk_100_FO4", 
             "parameters": [
-                "addr_width=32", 
+                "addr_width_p=32", 
                 "data_width_p=32"
             ]
         }
