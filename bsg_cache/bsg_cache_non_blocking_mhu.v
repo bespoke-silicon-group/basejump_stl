@@ -391,7 +391,7 @@ module bsg_cache_non_blocking_mhu
         // Wait for miss FIFO output to be valid.
         // When TL block loading is in progress, then wait for it to finish.
         else begin
-          idle_o = ~miss_fifo_v_i;
+          idle_o = miss_fifo_empty_i;
 
           tag_mem_pkt_v_o = miss_fifo_v_i;
           tag_mem_pkt.index = miss_fifo_entry.addr[block_offset_width_lp+:lg_sets_lp];

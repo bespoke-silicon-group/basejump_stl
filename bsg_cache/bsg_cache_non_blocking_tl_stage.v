@@ -235,7 +235,6 @@ module bsg_cache_non_blocking_tl_stage
   end
 
   logic [lg_ways_lp-1:0] tag_hit_way;
-  logic tag_hit_found;
   
   bsg_priority_encode #(
     .width_p(ways_p)
@@ -243,10 +242,12 @@ module bsg_cache_non_blocking_tl_stage
   ) tag_hit_pe (
     .i(tag_hit)
     ,.addr_o(tag_hit_way)
-    ,.v_o(tag_hit_found)
+    ,.v_o() // too slow
   );
   
   assign tag_hit_way_o = tag_hit_way;
+
+  wire tag_hit_found = |tag_hit;
   assign tag_hit_found_o = tag_hit_found;
 
 

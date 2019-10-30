@@ -35,7 +35,7 @@ module bsg_cache_non_blocking_miss_fifo
   // localparam
   //
   localparam lg_els_lp = `BSG_SAFE_CLOG2(els_p);
-  localparam read_inc_width_lp = $clog2(els_p);
+  localparam rptr_inc_width_lp = $clog2(els_p);
 
 
   // valid bits array
@@ -53,8 +53,8 @@ module bsg_cache_non_blocking_miss_fifo
 
   // read pointer
   //
-  logic [read_inc_width_lp-1:0] read_inc;
-  logic [lg_els_lp-1:0] read_ptr_r, read_ptr_n;
+  logic [rptr_inc_width_lp-1:0] rptr_inc;
+  logic [lg_els_lp-1:0] rptr_r, rptr_n;
   
   bsg_circular_ptr #(
     .slots_p(els_p)
@@ -62,15 +62,23 @@ module bsg_cache_non_blocking_miss_fifo
   ) read_ptr0 (
     .clk(clk_i)
     ,.reset_i(reset_i)
-    ,.add_i(read_inc)
-    ,.o(read_ptr_r)
-    ,.n_o(read_ptr_n)
+    ,.add_i(rptr_inc)
+    ,.o(rptr_r)
+    ,.n_o(rptr_n)
   );
+
+  wire [lg_els_lp-1:0] rptr_plus1 = (els_p-1 == rptr_r)
+    ? (lg_els_lp)'(0)
+    : (lg_els_lp)'(rptr_r+1);
+
+  wire [lg_els_lp-1:0] rptr_plus2 = (els_p-1 == rptr_plus1)
+    ? (lg_els_lp)'(0)
+    : (lg_els_lp)'(rptr_plus1+1);
 
   // write pointer
   //
-  logic write_inc;
-  logic [lg_els_lp-1:0] write_ptr_r;
+  logic wptr_inc;
+  logic [lg_els_lp-1:0] wptr_r;
 
   bsg_circular_ptr #(
     .slots_p(els_p)
@@ -78,15 +86,15 @@ module bsg_cache_non_blocking_miss_fifo
   ) write_ptr0 (
     .clk(clk_i)
     ,.reset_i(reset_i)
-    ,.add_i(write_inc)
-    ,.o(write_ptr_r)
+    ,.add_i(wptr_inc)
+    ,.o(wptr_r)
     ,.n_o()
   );
 
   // checkpoint pointer
   //
-  logic cp_inc;
-  logic [lg_els_lp-1:0] cp_ptr_r;
+  logic cptr_inc;
+  logic [lg_els_lp-1:0] cptr_r;
 
   bsg_circular_ptr #(
     .slots_p(els_p)
@@ -94,20 +102,23 @@ module bsg_cache_non_blocking_miss_fifo
   ) cp_ptr0 (
     .clk(clk_i)
     ,.reset_i(reset_i)
-    ,.add_i(cp_inc)
-    ,.o(cp_ptr_r)
+    ,.add_i(cptr_inc)
+    ,.o(cptr_r)
     ,.n_o()
   );
 
-  wire read_ptr_valid = valid_r[read_ptr_r];
-  wire cp_ptr_valid = valid_r[cp_ptr_r];
-  wire read_write_same_addr = (read_ptr_n == write_ptr_r);
+  wire rptr_valid = valid_r[rptr_r];
+  wire rptr_plus1_valid = valid_r[rptr_plus1];
+  wire rptr_plus2_valid = valid_r[rptr_plus2];
+  wire cptr_valid = valid_r[cptr_r];
+  wire read_write_same_addr = (rptr_n == wptr_r);
 
   // 1r1w mem
   //
   logic enque, deque;
   logic mem_read_en;
   logic [width_p-1:0] mem_data_lo;
+  logic [lg_els_lp-1:0] mem_read_addr;
 
   bsg_mem_1r1w_sync #(
     .width_p(width_p)
@@ -120,66 +131,45 @@ module bsg_cache_non_blocking_miss_fifo
     ,.reset_i(reset_i)
     
     ,.w_v_i(enque)
-    ,.w_addr_i(write_ptr_r)
+    ,.w_addr_i(wptr_r)
     ,.w_data_i(data_i)
   
     ,.r_v_i(mem_read_en)
-    ,.r_addr_i(read_ptr_n) 
+    ,.r_addr_i(mem_read_addr) 
     ,.r_data_o(mem_data_lo)
   );
 
-  // mem read buffer
-  //
   logic mem_read_en_r;
-  logic [width_p-1:0] mem_data_r;
+  logic [lg_els_lp-1:0] mem_read_addr_r;
 
-  bsg_dff_reset #(
-    .width_p(1) 
-  ) mem_read_en_dff (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.data_i(mem_read_en)
-    ,.data_o(mem_read_en_r)
-  );
+  always_ff @ (posedge clk_i) begin
+    if (reset_i) begin
+      mem_read_en_r <= 1'b0;
+      mem_read_addr_r <= '0;
+    end
+    else begin
+      mem_read_en_r <= mem_read_en;
+      if (mem_read_en)
+        mem_read_addr_r <= mem_read_addr;      
+    end
+  end
 
-  bsg_dff_en_bypass #(
-    .width_p(width_p)  
-  ) mem_read_buf (
-    .clk_i(clk_i)
-    ,.en_i(mem_read_en_r)
-    ,.data_i(mem_data_lo)
-    ,.data_o(mem_data_r)
-  );
+  logic [width_p-1:0] data_r, data_n;
+  logic v_r, v_n;
 
-  // write bypass reg
-  //
-  logic write_bypass_en;
-  logic write_bypass_en_r;
-  logic [width_p-1:0] write_bypass_data_r;
-
-  bsg_dff_reset #(
-    .width_p(1)
-  ) w_bypass_en_dff (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.data_i(write_bypass_en)
-    ,.data_o(write_bypass_en_r)
-  );  
-
-  bsg_dff_en #(
-    .width_p(width_p)
-  ) bypass_reg (
-    .clk_i(clk_i)
-    ,.en_i(write_bypass_en)
-    ,.data_i(data_i)
-    ,.data_o(write_bypass_data_r)
-  );
-
-  assign data_o = write_bypass_en_r
-    ? write_bypass_data_r
-    : mem_data_r;
-
-  assign write_bypass_en = enque & read_write_same_addr;
+  always_ff @ (posedge clk_i) begin
+    if (reset_i) begin
+      data_r <= '0;
+      v_r <= 1'b0;
+    end
+    else begin
+      data_r <= data_n;
+      v_r <= v_n;
+    end
+  end
+ 
+  assign v_o = v_r;
+  assign data_o = data_r; 
  
   // next state logic for valid bit array
   //
@@ -190,7 +180,7 @@ module bsg_cache_non_blocking_miss_fifo
   bsg_decode_with_v #(
     .num_out_p(els_p)
   ) enque_dec (
-    .i(write_ptr_r)
+    .i(wptr_r)
     ,.v_i(enque)
     ,.o(enque_decode)
   );
@@ -198,7 +188,7 @@ module bsg_cache_non_blocking_miss_fifo
   bsg_decode_with_v #(
     .num_out_p(els_p)
   ) inval_dec (
-    .i(read_ptr_r)
+    .i(rptr_r)
     ,.v_i(inval)
     ,.o(inval_decode)
   );
@@ -228,12 +218,12 @@ module bsg_cache_non_blocking_miss_fifo
     end
     else begin
 
-      if (cp_inc | enque) begin
+      if (cptr_inc | enque) begin
         enque_r <= enque;
       end
 
       if (rollback_i) begin
-        deque_r <= ~cp_ptr_valid;
+        deque_r <= ~cptr_valid;
       end
       else begin
         if (enque | deque) begin
@@ -244,84 +234,133 @@ module bsg_cache_non_blocking_miss_fifo
     end
   end
 
-  logic full;
-  logic empty;
+  wire full = enque_r & (cptr_r == wptr_r);
+  wire empty = deque_r & (rptr_r == wptr_r);
 
-  assign full = enque_r & (cp_ptr_r == write_ptr_r);
-  assign empty = deque_r & (read_ptr_r == write_ptr_r);
-
-  assign mem_read_en = rollback_i
-    ? cp_ptr_valid
-    : ~read_write_same_addr;
-
-  // empty_o and v_o cannot be both high.
-  assign v_o = read_ptr_valid & ~empty;
   assign empty_o = empty;
   assign ready_o = ~full;
 
   assign enque = ready_o & v_i;
-  assign write_inc = enque; 
+  assign wptr_inc = enque; 
 
 
   always_comb begin
 
-    deque = 1'b0;
 
     if (rollback_i) begin
       // only rollback when empty_o=1
-      cp_inc = 1'b0;
+      deque = 1'b0;
+      cptr_inc = 1'b0;
       inval = 1'b0;
-      read_inc = (cp_ptr_r >= read_ptr_r)
-        ? (read_inc_width_lp)'(cp_ptr_r - read_ptr_r)
-        : (read_inc_width_lp)'(els_p + cp_ptr_r - read_ptr_r);
+      rptr_inc = (cptr_r >= rptr_r)
+        ? (rptr_inc_width_lp)'(cptr_r - rptr_r)
+        : (rptr_inc_width_lp)'(els_p + cptr_r - rptr_r);
+
+      mem_read_en = cptr_valid;
+      mem_read_addr = rptr_n; 
+      v_n = v_r;
+      data_n = data_r;
+      
     end
     else begin
-      if (v_o) begin
+      // output valid
+      if (v_r) begin
+        // output taken
         if (yumi_i) begin
+
+          //mem_read_addr = rptr_n;
+          //mem_read_en = ~read_write_same_addr & rptr_plus1_valid;
+          mem_read_addr = ((rptr_n == mem_read_addr_r) & mem_read_en_r)
+            ? rptr_plus2
+            : rptr_plus1;
+          mem_read_en = ~read_write_same_addr & ((rptr_n == mem_read_addr_r) & mem_read_en_r
+            ? rptr_plus2_valid
+            : rptr_plus1_valid);
+
+          v_n = read_write_same_addr
+            ? enque
+            : mem_read_en_r;
+          data_n = read_write_same_addr
+            ? (enque ? data_i : data_r)
+            : (mem_read_en_r ? mem_data_lo : data_r);
+
           case (yumi_op_i)
             e_miss_fifo_dequeue: begin
               deque = 1'b1;
               inval = 1'b1;
-              cp_inc = 1'b1;
-              read_inc = (read_inc_width_lp)'(1);
+              cptr_inc = 1'b1;
+              rptr_inc = (rptr_inc_width_lp)'(1);
+
             end
             e_miss_fifo_skip: begin
               deque = 1'b1;
               inval = 1'b0;
-              cp_inc = 1'b0;
-              read_inc = (read_inc_width_lp)'(1);
+              cptr_inc = 1'b0;
+              rptr_inc = (rptr_inc_width_lp)'(1);
             end
             e_miss_fifo_invalidate: begin
               deque = 1'b1;
               inval = 1'b1;
-              cp_inc = 1'b0;
-              read_inc = (read_inc_width_lp)'(1);
+              cptr_inc = 1'b0;
+              rptr_inc = (rptr_inc_width_lp)'(1);
             end
             default: begin
               // this should never happen.
+              deque = 1'b0;
               inval = 1'b0;
-              cp_inc = 1'b0;
-              read_inc = (read_inc_width_lp)'(0);
+              cptr_inc = 1'b0;
+              rptr_inc = (rptr_inc_width_lp)'(0);
+
+              mem_read_en = 1'b0;
+              mem_read_addr = (lg_els_lp)'(0); 
+              v_n = v_r;
+              data_n = data_r;
             end
           endcase
         end
+        // output valid, but not taken.
         else begin
+          deque = 1'b0;
           inval = 1'b0;
-          cp_inc = 1'b0;
-          read_inc = (read_inc_width_lp)'(0);
+          cptr_inc = 1'b0;
+          rptr_inc = (rptr_inc_width_lp)'(0);
+
+          mem_read_en = rptr_plus1_valid;
+          mem_read_addr = rptr_plus1;
+          v_n = v_r;
+          data_n = data_r;
         end
       end
+      // output not valid.
       else begin
-        inval = 1'b0;
-        cp_inc = empty
-          ? 1'b0
-          : ~scan_not_dq_i;
-        read_inc = empty
-          ? (read_inc_width_lp)'(0)
-          : (read_inc_width_lp)'(1);
         deque = empty
           ? 1'b0
-          : 1'b1;
+          : ~rptr_valid;
+        inval = 1'b0;
+        cptr_inc = empty
+          ? 1'b0
+          : (rptr_valid
+            ? 1'b0
+            : ~scan_not_dq_i);
+        rptr_inc = empty
+          ? (rptr_inc_width_lp)'(0)
+          : (rptr_valid 
+            ? 1'b0
+            : (rptr_inc_width_lp)'(1));
+
+        mem_read_en = mem_read_en_r
+          ? rptr_plus1_valid
+          : rptr_valid;
+        mem_read_addr = mem_read_en_r
+          ? rptr_plus1
+          : rptr_r;
+
+        v_n = empty
+          ? enque 
+          : mem_read_en_r;
+        data_n = empty
+          ? (enque ? data_i : data_r)
+          : (mem_read_en_r ? mem_data_lo : data_r);
       end
     end
   end
