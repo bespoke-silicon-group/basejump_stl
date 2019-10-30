@@ -201,11 +201,11 @@ module bsg_cache_to_dram_ctrl
   // tag_r not used when only 1 cache exists
   always_comb
     case (dram_size_i)
-      0: app_addr_o = {tag_r, addr_r[25-$clog2(num_cache_p)-1:0]};
-      1: app_addr_o = {tag_r, addr_r[26-$clog2(num_cache_p)-1:0]};
-      2: app_addr_o = {tag_r, addr_r[27-$clog2(num_cache_p)-1:0]};
-      3: app_addr_o = {tag_r, addr_r[28-$clog2(num_cache_p)-1:0]};
-      4: app_addr_o = {tag_r, addr_r[29-$clog2(num_cache_p)-1:0]};
+      0: app_addr_o = dram_ctrl_addr_width_p'({tag_r, addr_r[25-$clog2(num_cache_p)-1:0]});
+      1: app_addr_o = dram_ctrl_addr_width_p'({tag_r, addr_r[26-$clog2(num_cache_p)-1:0]});
+      2: app_addr_o = dram_ctrl_addr_width_p'({tag_r, addr_r[27-$clog2(num_cache_p)-1:0]});
+      3: app_addr_o = dram_ctrl_addr_width_p'({tag_r, addr_r[28-$clog2(num_cache_p)-1:0]});
+      4: app_addr_o = dram_ctrl_addr_width_p'({tag_r, addr_r[29-$clog2(num_cache_p)-1:0]});
       default: app_addr_o = {tag_r, addr_r};
     endcase
 
