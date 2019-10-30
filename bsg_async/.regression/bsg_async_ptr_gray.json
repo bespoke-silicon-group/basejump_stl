@@ -57,7 +57,7 @@
             "name": "bsg_async_ptr_gray_small_w_clk_30_FO4_r_clk_30_FO4", 
             "parameters": [
                 "lg_size_p=5", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -113,7 +113,7 @@
             "name": "bsg_async_ptr_gray_small_w_clk_30_FO4_r_clk_40_FO4", 
             "parameters": [
                 "lg_size_p=5", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -169,7 +169,7 @@
             "name": "bsg_async_ptr_gray_small_w_clk_30_FO4_r_clk_50_FO4", 
             "parameters": [
                 "lg_size_p=5", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -225,7 +225,7 @@
             "name": "bsg_async_ptr_gray_small_w_clk_30_FO4_r_clk_60_FO4", 
             "parameters": [
                 "lg_size_p=5", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -281,7 +281,7 @@
             "name": "bsg_async_ptr_gray_small_w_clk_40_FO4_r_clk_30_FO4", 
             "parameters": [
                 "lg_size_p=5", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -337,7 +337,7 @@
             "name": "bsg_async_ptr_gray_small_w_clk_40_FO4_r_clk_40_FO4", 
             "parameters": [
                 "lg_size_p=5", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -393,7 +393,7 @@
             "name": "bsg_async_ptr_gray_small_w_clk_40_FO4_r_clk_50_FO4", 
             "parameters": [
                 "lg_size_p=5", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -449,7 +449,7 @@
             "name": "bsg_async_ptr_gray_small_w_clk_40_FO4_r_clk_60_FO4", 
             "parameters": [
                 "lg_size_p=5", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -505,7 +505,7 @@
             "name": "bsg_async_ptr_gray_small_w_clk_50_FO4_r_clk_30_FO4", 
             "parameters": [
                 "lg_size_p=5", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -561,7 +561,7 @@
             "name": "bsg_async_ptr_gray_small_w_clk_50_FO4_r_clk_40_FO4", 
             "parameters": [
                 "lg_size_p=5", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -617,7 +617,7 @@
             "name": "bsg_async_ptr_gray_small_w_clk_50_FO4_r_clk_50_FO4", 
             "parameters": [
                 "lg_size_p=5", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -673,7 +673,7 @@
             "name": "bsg_async_ptr_gray_small_w_clk_50_FO4_r_clk_60_FO4", 
             "parameters": [
                 "lg_size_p=5", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -729,7 +729,7 @@
             "name": "bsg_async_ptr_gray_small_w_clk_60_FO4_r_clk_30_FO4", 
             "parameters": [
                 "lg_size_p=5", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -785,7 +785,7 @@
             "name": "bsg_async_ptr_gray_small_w_clk_60_FO4_r_clk_40_FO4", 
             "parameters": [
                 "lg_size_p=5", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -841,7 +841,7 @@
             "name": "bsg_async_ptr_gray_small_w_clk_60_FO4_r_clk_50_FO4", 
             "parameters": [
                 "lg_size_p=5", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -897,7 +897,7 @@
             "name": "bsg_async_ptr_gray_small_w_clk_60_FO4_r_clk_60_FO4", 
             "parameters": [
                 "lg_size_p=5", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -953,7 +953,7 @@
             "name": "bsg_async_ptr_gray_large_w_clk_30_FO4_r_clk_30_FO4", 
             "parameters": [
                 "lg_size_p=7", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -1009,7 +1009,7 @@
             "name": "bsg_async_ptr_gray_large_w_clk_30_FO4_r_clk_40_FO4", 
             "parameters": [
                 "lg_size_p=7", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -1065,7 +1065,7 @@
             "name": "bsg_async_ptr_gray_large_w_clk_30_FO4_r_clk_50_FO4", 
             "parameters": [
                 "lg_size_p=7", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -1121,7 +1121,7 @@
             "name": "bsg_async_ptr_gray_large_w_clk_30_FO4_r_clk_60_FO4", 
             "parameters": [
                 "lg_size_p=7", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -1177,7 +1177,7 @@
             "name": "bsg_async_ptr_gray_large_w_clk_40_FO4_r_clk_30_FO4", 
             "parameters": [
                 "lg_size_p=7", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -1233,7 +1233,7 @@
             "name": "bsg_async_ptr_gray_large_w_clk_40_FO4_r_clk_40_FO4", 
             "parameters": [
                 "lg_size_p=7", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -1289,7 +1289,7 @@
             "name": "bsg_async_ptr_gray_large_w_clk_40_FO4_r_clk_50_FO4", 
             "parameters": [
                 "lg_size_p=7", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -1345,7 +1345,7 @@
             "name": "bsg_async_ptr_gray_large_w_clk_40_FO4_r_clk_60_FO4", 
             "parameters": [
                 "lg_size_p=7", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -1401,7 +1401,7 @@
             "name": "bsg_async_ptr_gray_large_w_clk_50_FO4_r_clk_30_FO4", 
             "parameters": [
                 "lg_size_p=7", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -1457,7 +1457,7 @@
             "name": "bsg_async_ptr_gray_large_w_clk_50_FO4_r_clk_40_FO4", 
             "parameters": [
                 "lg_size_p=7", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -1513,7 +1513,7 @@
             "name": "bsg_async_ptr_gray_large_w_clk_50_FO4_r_clk_50_FO4", 
             "parameters": [
                 "lg_size_p=7", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -1569,7 +1569,7 @@
             "name": "bsg_async_ptr_gray_large_w_clk_50_FO4_r_clk_60_FO4", 
             "parameters": [
                 "lg_size_p=7", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -1625,7 +1625,7 @@
             "name": "bsg_async_ptr_gray_large_w_clk_60_FO4_r_clk_30_FO4", 
             "parameters": [
                 "lg_size_p=7", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -1681,7 +1681,7 @@
             "name": "bsg_async_ptr_gray_large_w_clk_60_FO4_r_clk_40_FO4", 
             "parameters": [
                 "lg_size_p=7", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -1737,7 +1737,7 @@
             "name": "bsg_async_ptr_gray_large_w_clk_60_FO4_r_clk_50_FO4", 
             "parameters": [
                 "lg_size_p=7", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -1793,7 +1793,7 @@
             "name": "bsg_async_ptr_gray_large_w_clk_60_FO4_r_clk_60_FO4", 
             "parameters": [
                 "lg_size_p=7", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -1849,7 +1849,7 @@
             "name": "bsg_async_ptr_gray_very_large_w_clk_30_FO4_r_clk_30_FO4", 
             "parameters": [
                 "lg_size_p=8", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -1905,7 +1905,7 @@
             "name": "bsg_async_ptr_gray_very_large_w_clk_30_FO4_r_clk_40_FO4", 
             "parameters": [
                 "lg_size_p=8", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -1961,7 +1961,7 @@
             "name": "bsg_async_ptr_gray_very_large_w_clk_30_FO4_r_clk_50_FO4", 
             "parameters": [
                 "lg_size_p=8", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -2017,7 +2017,7 @@
             "name": "bsg_async_ptr_gray_very_large_w_clk_30_FO4_r_clk_60_FO4", 
             "parameters": [
                 "lg_size_p=8", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -2073,7 +2073,7 @@
             "name": "bsg_async_ptr_gray_very_large_w_clk_40_FO4_r_clk_30_FO4", 
             "parameters": [
                 "lg_size_p=8", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -2129,7 +2129,7 @@
             "name": "bsg_async_ptr_gray_very_large_w_clk_40_FO4_r_clk_40_FO4", 
             "parameters": [
                 "lg_size_p=8", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -2185,7 +2185,7 @@
             "name": "bsg_async_ptr_gray_very_large_w_clk_40_FO4_r_clk_50_FO4", 
             "parameters": [
                 "lg_size_p=8", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -2241,7 +2241,7 @@
             "name": "bsg_async_ptr_gray_very_large_w_clk_40_FO4_r_clk_60_FO4", 
             "parameters": [
                 "lg_size_p=8", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -2297,7 +2297,7 @@
             "name": "bsg_async_ptr_gray_very_large_w_clk_50_FO4_r_clk_30_FO4", 
             "parameters": [
                 "lg_size_p=8", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -2353,7 +2353,7 @@
             "name": "bsg_async_ptr_gray_very_large_w_clk_50_FO4_r_clk_40_FO4", 
             "parameters": [
                 "lg_size_p=8", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -2409,7 +2409,7 @@
             "name": "bsg_async_ptr_gray_very_large_w_clk_50_FO4_r_clk_50_FO4", 
             "parameters": [
                 "lg_size_p=8", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -2465,7 +2465,7 @@
             "name": "bsg_async_ptr_gray_very_large_w_clk_50_FO4_r_clk_60_FO4", 
             "parameters": [
                 "lg_size_p=8", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -2521,7 +2521,7 @@
             "name": "bsg_async_ptr_gray_very_large_w_clk_60_FO4_r_clk_30_FO4", 
             "parameters": [
                 "lg_size_p=8", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -2577,7 +2577,7 @@
             "name": "bsg_async_ptr_gray_very_large_w_clk_60_FO4_r_clk_40_FO4", 
             "parameters": [
                 "lg_size_p=8", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -2633,7 +2633,7 @@
             "name": "bsg_async_ptr_gray_very_large_w_clk_60_FO4_r_clk_50_FO4", 
             "parameters": [
                 "lg_size_p=8", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -2689,7 +2689,7 @@
             "name": "bsg_async_ptr_gray_very_large_w_clk_60_FO4_r_clk_60_FO4", 
             "parameters": [
                 "lg_size_p=8", 
-                "use_negedge_for_lauch_p=1", 
+                "use_negedge_for_launch_p=1", 
                 "use_async_reset_p=0"
             ]
         }, 
@@ -2745,7 +2745,7 @@
             "name": "bsg_async_ptr_gray_medium_w_clk_30_FO4_r_clk_30_FO4", 
             "parameters": [
                 "lg_size_p=6", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -2801,7 +2801,7 @@
             "name": "bsg_async_ptr_gray_medium_w_clk_30_FO4_r_clk_40_FO4", 
             "parameters": [
                 "lg_size_p=6", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -2857,7 +2857,7 @@
             "name": "bsg_async_ptr_gray_medium_w_clk_30_FO4_r_clk_50_FO4", 
             "parameters": [
                 "lg_size_p=6", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -2913,7 +2913,7 @@
             "name": "bsg_async_ptr_gray_medium_w_clk_30_FO4_r_clk_60_FO4", 
             "parameters": [
                 "lg_size_p=6", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -2969,7 +2969,7 @@
             "name": "bsg_async_ptr_gray_medium_w_clk_40_FO4_r_clk_30_FO4", 
             "parameters": [
                 "lg_size_p=6", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -3025,7 +3025,7 @@
             "name": "bsg_async_ptr_gray_medium_w_clk_40_FO4_r_clk_40_FO4", 
             "parameters": [
                 "lg_size_p=6", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -3081,7 +3081,7 @@
             "name": "bsg_async_ptr_gray_medium_w_clk_40_FO4_r_clk_50_FO4", 
             "parameters": [
                 "lg_size_p=6", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -3137,7 +3137,7 @@
             "name": "bsg_async_ptr_gray_medium_w_clk_40_FO4_r_clk_60_FO4", 
             "parameters": [
                 "lg_size_p=6", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -3193,7 +3193,7 @@
             "name": "bsg_async_ptr_gray_medium_w_clk_50_FO4_r_clk_30_FO4", 
             "parameters": [
                 "lg_size_p=6", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -3249,7 +3249,7 @@
             "name": "bsg_async_ptr_gray_medium_w_clk_50_FO4_r_clk_40_FO4", 
             "parameters": [
                 "lg_size_p=6", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -3305,7 +3305,7 @@
             "name": "bsg_async_ptr_gray_medium_w_clk_50_FO4_r_clk_50_FO4", 
             "parameters": [
                 "lg_size_p=6", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -3361,7 +3361,7 @@
             "name": "bsg_async_ptr_gray_medium_w_clk_50_FO4_r_clk_60_FO4", 
             "parameters": [
                 "lg_size_p=6", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -3417,7 +3417,7 @@
             "name": "bsg_async_ptr_gray_medium_w_clk_60_FO4_r_clk_30_FO4", 
             "parameters": [
                 "lg_size_p=6", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -3473,7 +3473,7 @@
             "name": "bsg_async_ptr_gray_medium_w_clk_60_FO4_r_clk_40_FO4", 
             "parameters": [
                 "lg_size_p=6", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -3529,7 +3529,7 @@
             "name": "bsg_async_ptr_gray_medium_w_clk_60_FO4_r_clk_50_FO4", 
             "parameters": [
                 "lg_size_p=6", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=1"
             ]
         }, 
@@ -3585,7 +3585,7 @@
             "name": "bsg_async_ptr_gray_medium_w_clk_60_FO4_r_clk_60_FO4", 
             "parameters": [
                 "lg_size_p=6", 
-                "use_negedge_for_lauch_p=0", 
+                "use_negedge_for_launch_p=0", 
                 "use_async_reset_p=1"
             ]
         }
