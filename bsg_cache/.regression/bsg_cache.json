@@ -1,9 +1,9 @@
 {
-    "design_name": "bsg_cache",
+    "design_name": "bsg_cache", 
     "filelist": [
-        "basejump_stl/bsg_cache/bsg_cache_pkg.v",
+        "basejump_stl/bsg_cache/bsg_cache_pkg.v", 
         "basejump_stl/bsg_misc/bsg_defines.v", 
-        "basejump_stl/bsg_cache/bsg_cache.v",  
+        "basejump_stl/bsg_cache/bsg_cache.v", 
         "basejump_stl/bsg_cache/bsg_cache_pkt_decode.v", 
         "basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_bit.v", 
         "basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_bit_synth.v", 
@@ -63,6 +63,7 @@
             "design_size": "small", 
             "name": "bsg_cache_small_clk_30_FO4", 
             "parameters": [
+                "ways_p=1", 
                 "addr_width_p=32", 
                 "data_width_p=16", 
                 "block_size_in_words_p=1", 
@@ -95,6 +96,7 @@
             "design_size": "small", 
             "name": "bsg_cache_small_clk_40_FO4", 
             "parameters": [
+                "ways_p=1", 
                 "addr_width_p=32", 
                 "data_width_p=16", 
                 "block_size_in_words_p=1", 
@@ -127,6 +129,7 @@
             "design_size": "small", 
             "name": "bsg_cache_small_clk_50_FO4", 
             "parameters": [
+                "ways_p=1", 
                 "addr_width_p=32", 
                 "data_width_p=16", 
                 "block_size_in_words_p=1", 
@@ -159,6 +162,7 @@
             "design_size": "small", 
             "name": "bsg_cache_small_clk_60_FO4", 
             "parameters": [
+                "ways_p=1", 
                 "addr_width_p=32", 
                 "data_width_p=16", 
                 "block_size_in_words_p=1", 
@@ -191,6 +195,7 @@
             "design_size": "small", 
             "name": "bsg_cache_small_clk_70_FO4", 
             "parameters": [
+                "ways_p=1", 
                 "addr_width_p=32", 
                 "data_width_p=16", 
                 "block_size_in_words_p=1", 
@@ -223,6 +228,7 @@
             "design_size": "small", 
             "name": "bsg_cache_small_clk_80_FO4", 
             "parameters": [
+                "ways_p=1", 
                 "addr_width_p=32", 
                 "data_width_p=16", 
                 "block_size_in_words_p=1", 
@@ -255,6 +261,7 @@
             "design_size": "small", 
             "name": "bsg_cache_small_clk_90_FO4", 
             "parameters": [
+                "ways_p=1", 
                 "addr_width_p=32", 
                 "data_width_p=16", 
                 "block_size_in_words_p=1", 
@@ -287,6 +294,7 @@
             "design_size": "small", 
             "name": "bsg_cache_small_clk_100_FO4", 
             "parameters": [
+                "ways_p=1", 
                 "addr_width_p=32", 
                 "data_width_p=16", 
                 "block_size_in_words_p=1", 
@@ -319,6 +327,7 @@
             "design_size": "large", 
             "name": "bsg_cache_large_clk_30_FO4", 
             "parameters": [
+                "ways_p=4", 
                 "addr_width_p=32", 
                 "data_width_p=64", 
                 "block_size_in_words_p=1", 
@@ -351,6 +360,7 @@
             "design_size": "large", 
             "name": "bsg_cache_large_clk_40_FO4", 
             "parameters": [
+                "ways_p=4", 
                 "addr_width_p=32", 
                 "data_width_p=64", 
                 "block_size_in_words_p=1", 
@@ -383,6 +393,7 @@
             "design_size": "large", 
             "name": "bsg_cache_large_clk_50_FO4", 
             "parameters": [
+                "ways_p=4", 
                 "addr_width_p=32", 
                 "data_width_p=64", 
                 "block_size_in_words_p=1", 
@@ -415,6 +426,7 @@
             "design_size": "large", 
             "name": "bsg_cache_large_clk_60_FO4", 
             "parameters": [
+                "ways_p=4", 
                 "addr_width_p=32", 
                 "data_width_p=64", 
                 "block_size_in_words_p=1", 
@@ -447,6 +459,7 @@
             "design_size": "large", 
             "name": "bsg_cache_large_clk_70_FO4", 
             "parameters": [
+                "ways_p=4", 
                 "addr_width_p=32", 
                 "data_width_p=64", 
                 "block_size_in_words_p=1", 
@@ -479,6 +492,7 @@
             "design_size": "large", 
             "name": "bsg_cache_large_clk_80_FO4", 
             "parameters": [
+                "ways_p=4", 
                 "addr_width_p=32", 
                 "data_width_p=64", 
                 "block_size_in_words_p=1", 
@@ -511,6 +525,7 @@
             "design_size": "large", 
             "name": "bsg_cache_large_clk_90_FO4", 
             "parameters": [
+                "ways_p=4", 
                 "addr_width_p=32", 
                 "data_width_p=64", 
                 "block_size_in_words_p=1", 
@@ -543,6 +558,7 @@
             "design_size": "large", 
             "name": "bsg_cache_large_clk_100_FO4", 
             "parameters": [
+                "ways_p=4", 
                 "addr_width_p=32", 
                 "data_width_p=64", 
                 "block_size_in_words_p=1", 
@@ -575,6 +591,7 @@
             "design_size": "very_large", 
             "name": "bsg_cache_very_large_clk_30_FO4", 
             "parameters": [
+                "ways_p=16", 
                 "addr_width_p=32", 
                 "data_width_p=128", 
                 "block_size_in_words_p=1", 
@@ -607,6 +624,7 @@
             "design_size": "very_large", 
             "name": "bsg_cache_very_large_clk_40_FO4", 
             "parameters": [
+                "ways_p=16", 
                 "addr_width_p=32", 
                 "data_width_p=128", 
                 "block_size_in_words_p=1", 
@@ -639,6 +657,7 @@
             "design_size": "very_large", 
             "name": "bsg_cache_very_large_clk_50_FO4", 
             "parameters": [
+                "ways_p=16", 
                 "addr_width_p=32", 
                 "data_width_p=128", 
                 "block_size_in_words_p=1", 
@@ -671,6 +690,7 @@
             "design_size": "very_large", 
             "name": "bsg_cache_very_large_clk_60_FO4", 
             "parameters": [
+                "ways_p=16", 
                 "addr_width_p=32", 
                 "data_width_p=128", 
                 "block_size_in_words_p=1", 
@@ -703,6 +723,7 @@
             "design_size": "very_large", 
             "name": "bsg_cache_very_large_clk_70_FO4", 
             "parameters": [
+                "ways_p=16", 
                 "addr_width_p=32", 
                 "data_width_p=128", 
                 "block_size_in_words_p=1", 
@@ -735,6 +756,7 @@
             "design_size": "very_large", 
             "name": "bsg_cache_very_large_clk_80_FO4", 
             "parameters": [
+                "ways_p=16", 
                 "addr_width_p=32", 
                 "data_width_p=128", 
                 "block_size_in_words_p=1", 
@@ -767,6 +789,7 @@
             "design_size": "very_large", 
             "name": "bsg_cache_very_large_clk_90_FO4", 
             "parameters": [
+                "ways_p=16", 
                 "addr_width_p=32", 
                 "data_width_p=128", 
                 "block_size_in_words_p=1", 
@@ -799,6 +822,7 @@
             "design_size": "very_large", 
             "name": "bsg_cache_very_large_clk_100_FO4", 
             "parameters": [
+                "ways_p=16", 
                 "addr_width_p=32", 
                 "data_width_p=128", 
                 "block_size_in_words_p=1", 
@@ -831,6 +855,7 @@
             "design_size": "medium", 
             "name": "bsg_cache_medium_clk_30_FO4", 
             "parameters": [
+                "ways_p=2", 
                 "addr_width_p=32", 
                 "data_width_p=32", 
                 "block_size_in_words_p=1", 
@@ -863,6 +888,7 @@
             "design_size": "medium", 
             "name": "bsg_cache_medium_clk_40_FO4", 
             "parameters": [
+                "ways_p=2", 
                 "addr_width_p=32", 
                 "data_width_p=32", 
                 "block_size_in_words_p=1", 
@@ -895,6 +921,7 @@
             "design_size": "medium", 
             "name": "bsg_cache_medium_clk_50_FO4", 
             "parameters": [
+                "ways_p=2", 
                 "addr_width_p=32", 
                 "data_width_p=32", 
                 "block_size_in_words_p=1", 
@@ -927,6 +954,7 @@
             "design_size": "medium", 
             "name": "bsg_cache_medium_clk_60_FO4", 
             "parameters": [
+                "ways_p=2", 
                 "addr_width_p=32", 
                 "data_width_p=32", 
                 "block_size_in_words_p=1", 
@@ -959,6 +987,7 @@
             "design_size": "medium", 
             "name": "bsg_cache_medium_clk_70_FO4", 
             "parameters": [
+                "ways_p=2", 
                 "addr_width_p=32", 
                 "data_width_p=32", 
                 "block_size_in_words_p=1", 
@@ -991,6 +1020,7 @@
             "design_size": "medium", 
             "name": "bsg_cache_medium_clk_80_FO4", 
             "parameters": [
+                "ways_p=2", 
                 "addr_width_p=32", 
                 "data_width_p=32", 
                 "block_size_in_words_p=1", 
@@ -1023,6 +1053,7 @@
             "design_size": "medium", 
             "name": "bsg_cache_medium_clk_90_FO4", 
             "parameters": [
+                "ways_p=2", 
                 "addr_width_p=32", 
                 "data_width_p=32", 
                 "block_size_in_words_p=1", 
@@ -1055,6 +1086,7 @@
             "design_size": "medium", 
             "name": "bsg_cache_medium_clk_100_FO4", 
             "parameters": [
+                "ways_p=2", 
                 "addr_width_p=32", 
                 "data_width_p=32", 
                 "block_size_in_words_p=1", 
