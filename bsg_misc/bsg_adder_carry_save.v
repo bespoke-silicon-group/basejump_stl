@@ -13,7 +13,6 @@ Carry propagation is needed to recover the sum.
 module bsg_adder_carry_save 
 #(
   parameter integer width_p = "inv"
-  ,parameter bit designware_enabled_p = 1
 )(
   input [width_p-1:0] opA_i
   ,input [width_p-1:0] opB_i
@@ -22,17 +21,7 @@ module bsg_adder_carry_save
   ,output [width_p-1:0] res_o
   ,output [width_p-1:0] car_o
 );
-  if(designware_enabled_p == 1) begin: DW_CSA
-    DW01_csa #(width_p) 
-      dw_csa (
-      .a(opA_i),.b(opB_i),.c(opC_i)
-      ,.ci(1'b0),.sum(res_o), .carry(car_o)
-      ,.co()
-    );
-  end
-  else begin: SELF_CSA
-    for(genvar i = 0; i < width_p; i++) begin
-      assign {car_o[i], res_o[i]} = opA_i[i] + opB_i[i] + opC_i[i];
-    end
+  for(genvar i = 0; i < width_p; i++) begin
+    assign {car_o[i], res_o[i]} = opA_i[i] + opB_i[i] + opC_i[i];
   end
 endmodule
