@@ -4,9 +4,9 @@
         "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_adder_carry_save.v",  
         "basejump_stl/bsg_misc/bsg_multiplier_compressor/bsg_multiplier_compressor.v",  
-        "basejump_stl/bsg_misc/bsg_multiplier_compressor/bsg_multiplier_compressor_32_32.v",  
-        "basejump_stl/bsg_misc/bsg_multiplier_compressor/bsg_multiplier_compressor_32_16.v", 
-        "basejump_stl/bsg_misc/bsg_multiplier_compressor/bsg_multiplier_compressor_32_8.v",   
+        "basejump_stl/bsg_misc/bsg_multiplier_compressor/bsg_multiplier_compressor_64_64.v",  
+        "basejump_stl/bsg_misc/bsg_multiplier_compressor/bsg_multiplier_compressor_64_32.v", 
+        "basejump_stl/bsg_misc/bsg_multiplier_compressor/bsg_multiplier_compressor_64_16.v",   
         "basejump_stl/bsg_misc/bsg_mul_iterative_booth.v"
         ],  
     "run_config": [{

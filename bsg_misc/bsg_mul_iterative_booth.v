@@ -50,7 +50,7 @@ else begin
     ,.stride_p(stride_p)
     ,.cpa_stride_p(cpa_stride_p)
     ,.debug_p(debug_p)
-  ) mul_pipelined (.*);
+  ) mul_unpipelined (.*);
 end
 endmodule
 
