@@ -19,14 +19,27 @@ module mul #(
 
   ,output [2*width_p-1:0] res_o
 );
-  wire [2*width_p-1:0] data_li = reset_i ? '0 : opA_i * opB_i;
-  bsg_dff_chain #(
-    .width_p(2*width_p)
-    ,.num_stages_p(stage_p)
-  ) chain (
-    .clk_i(clk_i)
-    ,.data_i(data_li)
-    ,.data_o(res_o)
-  );
-
+  wire [2*width_p-1:0] data_li = opA_i * opB_i;
+  reg [stage_p-2:0][2*width_p-1:0] delay_r;
+  for(genvar i = 0; i < stage_p-1; ++i) begin: dff_chain
+    if(i == 0) begin: first_sage
+      always_ff @(posedge clk_i) begin // update for delay_r
+        if(reset_i) begin
+          delay_r[0] <= '0;
+        end
+        else
+          delay_r[0] <= data_li
+      end
+    end //first_sage
+    else begin: other_stage
+      always_ff @(posedge clk_i) begin // update for delay_r
+        if(reset_i) begin
+          delay_r[i] <= '0;
+        end
+        else
+          delay_r[i] <= delay_r[i-1];
+      end
+    end: //other_stage
+  end //dff_chain
+  assign res_o = delay_r[stage_p-2];
 endmodule
