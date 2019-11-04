@@ -52,6 +52,13 @@ else begin
     ,.debug_p(debug_p)
   ) mul_unpipelined (.*);
 end
+
+`ifdef COCOTB_SIM
+  initial begin
+    $dumpfile("test.vcd");
+    $dumpvars();
+  end
+`endif
 endmodule
 
 // define the booth encoder
@@ -232,7 +239,9 @@ module bsg_mul_iterative_booth_unpipelined #(
 
   localparam cpa_level_lp = width_p / cpa_stride_p;
   localparam booth_step_lp = stride_p / 2;
-  localparam gather_level_lp = width_p / stride_p;
+
+  localparam gather_level_lp = width_p % stride_p ? width_p / stride_p + 1 : width_p / stride_p;
+  localparam last_shift_count_lp = width_p % stride_p ? width_p % stride_p : stride_p;
 
   typedef enum logic [1:0] {eIdle, eCal, eCPA, eDone} state_e;
 
@@ -366,7 +375,11 @@ module bsg_mul_iterative_booth_unpipelined #(
   );
 
   // Partial Adder for tail 
-  wire [stride_p:0] tail_cpa_opt = csa_opA_r[stride_p-1:0] + csa_opB_r[stride_p-1:0];
+  wire [stride_p-1:0] tail_cpa_opA;
+  wire [stride_p-1:0] tail_cpa_opB;
+  wire [stride_p:0] tail_cpa_opt = tail_cpa_opA + tail_cpa_opB; 
+  assign tail_cpa_opA = state_cnt_r == gather_level_lp ? csa_opA_r[last_shift_count_lp-1:0] : csa_opA_r[stride_p-1:0];
+  assign tail_cpa_opB = state_cnt_r == gather_level_lp ? csa_opB_r[last_shift_count_lp-1:0] : csa_opB_r[stride_p-1:0];
   assign csa_opA_n = aggregation_outA;
   assign csa_opB_n = {aggregation_outB[csa_tree_width_lp-1:1], tail_cpa_opt[stride_p]};
   
@@ -378,21 +391,23 @@ module bsg_mul_iterative_booth_unpipelined #(
   reg last_cpa_carry_r;
 
   if(stride_p != width_p)
-    assign result_low_n = {tail_cpa_opt[stride_p-1:0],result_low_r[width_p-1:stride_p]};
+    assign result_low_n = state_cnt_r == gather_level_lp ? 
+                    {tail_cpa_opt[last_shift_count_lp-1:0], result_low_r[width_p-1:last_shift_count_lp]} :
+                     {tail_cpa_opt[stride_p-1:0],result_low_r[width_p-1:stride_p]};
   else 
     assign result_low_n = tail_cpa_opt[stride_p-1:0];
 
   // A carry selected adder 
-  wire [cpa_stride_p:0] cpa_res_0 = {1'b0, csa_opA_r[stride_p+:cpa_stride_p]} + {1'b0, csa_opB_r[stride_p+:cpa_stride_p]};
-  wire [cpa_stride_p:0] cpa_res_1 = {1'b0, csa_opA_r[stride_p+:cpa_stride_p]} + {1'b0, csa_opB_r[stride_p+:cpa_stride_p]} + 1;
+  wire [cpa_stride_p:0] cpa_res_0 = {1'b0, csa_opA_r[last_shift_count_lp+:cpa_stride_p]} + {1'b0, csa_opB_r[last_shift_count_lp+:cpa_stride_p]};
+  wire [cpa_stride_p:0] cpa_res_1 = {1'b0, csa_opA_r[last_shift_count_lp+:cpa_stride_p]} + {1'b0, csa_opB_r[last_shift_count_lp+:cpa_stride_p]} + 1;
 
   if(cpa_stride_p == width_p)
-    assign result_high_initial_n = tail_cpa_opt[stride_p] ? cpa_res_1 : cpa_res_0;
+    assign result_high_initial_n = tail_cpa_opt[last_shift_count_lp] ? cpa_res_1 : cpa_res_0;
   else 
-    assign result_high_initial_n = tail_cpa_opt[stride_p] ? {cpa_res_1[cpa_stride_p:0],result_high_r[width_p-1:cpa_stride_p]} : {cpa_res_0[cpa_stride_p:0],result_high_r[width_p-1:cpa_stride_p]};
+    assign result_high_initial_n = tail_cpa_opt[last_shift_count_lp] ? {cpa_res_1[cpa_stride_p:0],result_high_r[width_p-1:cpa_stride_p]} : {cpa_res_0[cpa_stride_p:0],result_high_r[width_p-1:cpa_stride_p]};
 
   if(cpa_stride_p == width_p) 
-    assign result_high_n = tail_cpa_opt[stride_p] ? cpa_res_1 : cpa_res_0;
+    assign result_high_n = tail_cpa_opt[last_shift_count_lp] ? cpa_res_1 : cpa_res_0;
   else 
     assign result_high_n = last_cpa_carry_r ? {cpa_res_1[cpa_stride_p:0],result_high_r[width_p-1:cpa_stride_p]} : {cpa_res_0[cpa_stride_p:0],result_high_r[width_p-1:cpa_stride_p]};
 
@@ -455,8 +470,9 @@ module bsg_mul_iterative_booth_pipelined #(
   ,output [2*width_p-1:0] result_o 
 );
 
-localparam booth_level_lp = width_p / stride_p;
+localparam booth_level_lp = width_p % stride_p ? width_p / stride_p + 1 : width_p / stride_p;
 localparam cpa_level_lp = width_p / cpa_stride_p;
+localparam last_shift_count_lp = width_p % stride_p ? width_p % stride_p : stride_p;
 
 reg [booth_level_lp + cpa_level_lp:0] v_r; // Valid signal
 
@@ -656,6 +672,8 @@ wire [booth_level_lp-1:0][stride_p:0] local_cpa_out;
 for(genvar i = 0; i < booth_level_lp; ++i) begin: LOCAL_CPA
   if(i == 0)
     assign local_cpa_out[i] = {1'b0, csa_opA_r[i+1][stride_p-1:0]} + {1'b0, csa_opB_r[i+1][stride_p-1:0]};
+  else if(i == booth_level_lp-1)
+    assign local_cpa_out[i] = csa_opA_r[i+1][last_shift_count_lp-1:0] + csa_opB_r[i+1][last_shift_count_lp-1:0];
   else
     assign local_cpa_out[i] = {1'b0, csa_opA_r[i+1][stride_p-1:0]} + {1'b0, csa_opB_r[i+1][stride_p-1:0]} + result_low_r[i-1][width_p];
 end
@@ -665,6 +683,10 @@ for(genvar i = 0; i < booth_level_lp + cpa_level_lp-1; ++i) begin: RESULT_LOW_ST
 
   if(stride_p == width_p)
     assign result_low_n = local_cpa_out[i];
+  else if(i == 0)
+    assign result_low_n = {local_cpa_out[i], (width_p-stride_p)'(0)};
+  else if(i == booth_level_lp-1)
+    assign result_low_n = {local_cpa_out[i][last_shift_count_lp:0], result_low_r[i-1][width_p-1:last_shift_count_lp]};
   else if(i < booth_level_lp)
     assign result_low_n = {local_cpa_out[i], result_low_r[i-1][width_p-1:stride_p]};
   else
@@ -686,14 +708,14 @@ reg [cpa_level_lp-1:0][width_p:0] result_high_r;
 
 // We use a carry-selected adder in the first stage of CPA because hope to avoid an extra stage waiting for the carry from local CPA. 
 
-wire [cpa_stride_p:0] first_stage_cpa_zero = {1'b0,csa_opA_r[booth_level_lp][stride_p+:cpa_stride_p]} + {1'b0, csa_opB_r[booth_level_lp][stride_p+:cpa_stride_p]};
-wire [cpa_stride_p:0] first_stage_cpa_one = {1'b0 , csa_opA_r[booth_level_lp][stride_p+:cpa_stride_p]} + {1'b0, csa_opB_r[booth_level_lp][stride_p+:cpa_stride_p]} + (cpa_stride_p+1)'(1);
+wire [cpa_stride_p:0] first_stage_cpa_zero = {1'b0,csa_opA_r[booth_level_lp][last_shift_count_lp+:cpa_stride_p]} + {1'b0, csa_opB_r[booth_level_lp][last_shift_count_lp+:cpa_stride_p]};
+wire [cpa_stride_p:0] first_stage_cpa_one = {1'b0 , csa_opA_r[booth_level_lp][last_shift_count_lp+:cpa_stride_p]} + {1'b0, csa_opB_r[booth_level_lp][last_shift_count_lp+:cpa_stride_p]} + (cpa_stride_p+1)'(1);
 
 wire [cpa_level_lp-1:0][width_p:0] result_high_n;
 if(cpa_stride_p == width_p)
-  assign result_high_n[0] = local_cpa_out[booth_level_lp-1][stride_p] ? first_stage_cpa_one : first_stage_cpa_zero;
+  assign result_high_n[0] = local_cpa_out[booth_level_lp-1][last_shift_count_lp] ? first_stage_cpa_one : first_stage_cpa_zero;
 else
-  assign result_high_n[0] = local_cpa_out[booth_level_lp-1][stride_p] ? {first_stage_cpa_one, (width_p-cpa_stride_p)'(0)} : {first_stage_cpa_zero, (width_p-cpa_stride_p)'(0)};
+  assign result_high_n[0] = local_cpa_out[booth_level_lp-1][last_shift_count_lp] ? {first_stage_cpa_one, (width_p-cpa_stride_p)'(0)} : {first_stage_cpa_zero, (width_p-cpa_stride_p)'(0)};
 
 if(cpa_stride_p != width_p) begin: CPA_PIPELINE
   reg [cpa_level_lp-2:0][width_p-cpa_stride_p-1:0] remnant_opA_r;

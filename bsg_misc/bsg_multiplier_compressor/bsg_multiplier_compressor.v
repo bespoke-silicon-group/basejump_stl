@@ -17,6 +17,9 @@ module bsg_multiplier_compressor #(
     else if(stride_p == 32) begin: STRIDE_32
       bsg_multiplier_compressor_64_32 wt(.*);
     end
+    else if(stride_p == 22) begin: STRIDE_22
+      bsg_multiplier_compressor_64_22 wt(.*);
+    end
     else if(stride_p == 64) begin: STRIDE_64
       bsg_multiplier_compressor_64_64 wt(.*);
     end
