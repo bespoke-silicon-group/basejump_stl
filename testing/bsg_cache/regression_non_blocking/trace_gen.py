@@ -94,21 +94,117 @@ class BsgCacheNonBlockingRegression:
       elif op == 1:
         self.send(SW, addr)
     
-  #
+  # going straight up
   def test_linear(self, start_addr, length, max_addr):
     start_word_addr = start_addr - (start_addr%4)
     store_not_load = random.randint(0,1)
     if store_not_load:
       for i in range(length):
+        self.delay_random(12) # magic delay
         taddr = start_word_addr + (i*4)
         if taddr < max_addr:
-          self.send(SW, start_word_addr + (i*4))
+          self.send(SW, taddr)
     else:
       for i in range(length):
+        self.delay_random(12) # magic delay
         taddr = start_word_addr + (i*4)
         if taddr < max_addr:
-          self.send(LW, start_word_addr + (i*4))
-  
+          self.send(LW, taddr)
+
+  # going up and down
+  def test_updown(self, start_addr, length, max_addr):
+    start_word_addr = start_addr - (start_addr%4)
+    for i in range(length):
+      self.delay_random(5) # magic delay
+      store_not_load = random.randint(0,1)
+      taddr = start_word_addr + (i*4)
+      if taddr < max_addr:
+        if store_not_load:
+          self.send(SW, taddr)
+        else:
+          self.send(LW, taddr)
+    for i in range(length):
+      self.delay_random(5) # magic delay
+      store_not_load = random.randint(0,1)
+      taddr = start_word_addr + (4*(length-1)) - (i*4)
+      if taddr < max_addr:
+        if store_not_load:
+          self.send(SW, taddr)
+        else:
+          self.send(LW, taddr)
+
+  # test square
+  def test_square(self, start_addr, row, col, max_addr):
+    start_word_addr = start_addr - (start_addr%4)
+    for r in range(row):
+      for c in range(col):
+        center_addr = start_word_addr + (c*4) + (4*col*r)
+        taddrs = []
+        taddrs.append(center_addr - 4 - (col*4))  # top-left
+        taddrs.append(center_addr - (col*4))      # top
+        taddrs.append(center_addr + 4 - (col*4))  # top-right
+        taddrs.append(center_addr + 4)            # right
+        taddrs.append(center_addr + 4 + (col*4))  # bot-right
+        taddrs.append(center_addr + (col*4))      # bot
+        taddrs.append(center_addr - 4 + (col*4))  # bot-left
+        taddrs.append(center_addr + 4)            # left
+        store_not_load = random.randint(0,1)
+        for taddr in taddrs:
+          if taddr >= 0 and taddr < max_addr:
+            if store_not_load:
+              self.send(SW, taddr)
+            else:
+              self.send(LW, taddr)
+
+  # test z-order
+  def test_zorder(self, start_addr, order, max_addr):
+    start_word_addr = start_addr - (start_addr%4)
+    i_idx = []
+    for y in range(2**order):
+      for x in range(2**order):
+        # interleave x,y bits
+        idx = 0
+        temp_x = x
+        temp_y = y
+        for o in range(order):
+          xbit = temp_x & 1
+          ybit = temp_y & 1
+          idx = idx | (xbit << (2*o))
+          idx = idx | (ybit << ((2*o)+1))
+          temp_x = temp_x >> 1
+          temp_y = temp_y >> 1
+        i_idx.append(idx)
+
+    z_idx = [0]*(2**(order*2))
+    for i in range(2**(order*2)):
+      z_idx[i_idx[i]] = i
+
+    store_not_load = random.randint(0,1)
+    for z in z_idx:
+      taddr = (z*4) + start_word_addr
+      if taddr < max_addr:
+        if store_not_load:
+          self.send(SW, taddr)
+        else:
+          self.send(LW, taddr)
+        
+          
+      
+    
+
+  # going in loop
+  def test_loop(self,start_addr,length,loop,max_addr):
+    start_word_addr = start_addr - (start_addr%4)
+    for l in range(loop):
+      for i in range(length):
+        store_not_load = random.randint(0,1)
+        taddr = start_word_addr + (i*4)
+        if taddr < max_addr:
+          if store_not_load:
+            self.send(SW, taddr)
+          else:
+            self.send(LW, taddr)
+ 
   def test_byte_half(self, num, max_addr):
     for i in range(num):
       op = random.randint(0,8)
@@ -146,7 +242,7 @@ if __name__ == "__main__":
   tg.wait(10)
   tg.clear_tag()
 
-  MAX_ADDR = 65536
+  MAX_ADDR = 65536 # byte address
 
   # test_stride
   strides = list(range(4,128,4))
@@ -164,14 +260,53 @@ if __name__ == "__main__":
     tg.test_block_random(addr)
 
   # test_linear
-  for i in range(2000):
-    addr = random.randint(0,(MAX_ADDR/4)-1)
-    length = random.randint(1,32)
+  for i in range(1000):
+    addr = random.randint(0,MAX_ADDR-1)
+    length = random.randint(1,64)
     tg.test_linear(addr,length,MAX_ADDR)
+
+  # test updown
+  for i in range(1000):
+    addr = random.randint(0,MAX_ADDR-1)
+    length = random.randint(1,64)
+    tg.test_updown(addr,length,MAX_ADDR)
+
+  # test loop
+  for i in range(1000):
+    addr = random.randint(0,MAX_ADDR-1)
+    length = random.randint(1,64)
+    loop = random.randint(2,4)
+    tg.test_loop(addr,length,loop,MAX_ADDR)
+
+  # test square
+  for i in range(100):
+    addr = random.randint(0,MAX_ADDR)
+    tg.test_square(addr,4,4,MAX_ADDR)
+  for i in range(50):
+    addr = random.randint(0,MAX_ADDR)
+    tg.test_square(addr,8,8,MAX_ADDR)
+  for i in range(25):
+    addr = random.randint(0,MAX_ADDR)
+    tg.test_square(addr,4,8,MAX_ADDR)
+  for i in range(25):
+    addr = random.randint(0,MAX_ADDR)
+    tg.test_square(addr,8,4,MAX_ADDR)
+  for i in range(25):
+    addr = random.randint(0,MAX_ADDR)
+    tg.test_square(addr,12,12,MAX_ADDR)
+  for i in range(25):
+    addr = random.randint(0,MAX_ADDR)
+    tg.test_square(addr,16,16,MAX_ADDR)
+
+
+  # test z-order
+  for i in range(222):
+    addr = random.randint(0,MAX_ADDR-1)
+    tg.test_zorder(addr,3,MAX_ADDR)
 
   # test_byte_half
   tg.test_byte_half(50000, MAX_ADDR-1)
-  
+ 
 
   # done
   tg.done()

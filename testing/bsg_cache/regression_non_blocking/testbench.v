@@ -14,9 +14,14 @@ module testbench();
   parameter block_size_in_words_p = 8;
   parameter sets_p = 128;
   parameter ways_p = 8;
-  parameter miss_fifo_els_p = 23;
+  parameter miss_fifo_els_p = `MISS_FIFO_ELS_P;
   parameter data_mask_width_lp=(data_width_p>>3);
   parameter mem_size_p = 2**14;
+
+  parameter dma_read_delay_p=`DMA_READ_DELAY_P;
+  parameter dma_write_delay_p=`DMA_WRITE_DELAY_P;
+  parameter yumi_max_delay_p=`YUMI_MAX_DELAY_P;
+  parameter yumi_min_delay_p=`YUMI_MIN_DELAY_P;
 
 
   // clock and reset
@@ -112,7 +117,7 @@ module testbench();
     else begin
       if (cache_v_lo) begin
         if (counter_r == 0)
-          counter_r <= $urandom_range(8,0);
+          counter_r <= $urandom_range(yumi_max_delay_p,yumi_min_delay_p);
         else
           counter_r <= counter_r - 1;
       end
@@ -129,8 +134,8 @@ module testbench();
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.els_p(2*ways_p*sets_p*block_size_in_words_p)
-    ,.read_delay_p(64)
-    ,.write_delay_p(64)
+    ,.read_delay_p(dma_read_delay_p)
+    ,.write_delay_p(dma_write_delay_p)
   ) dma_model (
     .clk_i(clk)
     ,.reset_i(reset)
