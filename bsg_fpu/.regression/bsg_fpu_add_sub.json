@@ -1,9 +1,9 @@
 {
     "design_name": "bsg_fpu_add_sub", 
     "filelist": [
+        "basejump_stl/bsg_fpu/bsg_fpu_pkg.v",
         "basejump_stl/bsg_misc/bsg_defines.v", 
         "basejump_stl/bsg_fpu/bsg_fpu_add_sub.v", 
-        "basejump_stl/bsg_fpu/bsg_fpu_pkg.v", 
         "basejump_stl/bsg_fpu/bsg_fpu_preprocess.v", 
         "basejump_stl/bsg_misc/bsg_less_than.v", 
         "basejump_stl/bsg_misc/bsg_fpu_sticky.v", 
