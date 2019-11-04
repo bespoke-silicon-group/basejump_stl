@@ -14,7 +14,6 @@
         "basejump_stl/bsg_misc/bsg_clkgate_optional.v", 
         "basejump_stl/bsg_misc/bsg_dff.v", 
         "basejump_stl/bsg_misc/bsg_dff_en_bypass.v", 
-        "basejump_stl/bsg_misc/bsg_dff_en.v", 
         "basejump_stl/bsg_dataflow/bsg_round_robin_n_to_1.v", 
         "basejump_stl/bsg_misc/bsg_round_robin_arb.v", 
         "basejump_stl/bsg_misc/bsg_crossbar_o_by_i.v", 
@@ -27,7 +26,12 @@
         "basejump_stl/bsg_dataflow/bsg_fifo_1r1w_small.v", 
         "basejump_stl/bsg_misc/bsg_decode_with_v.v", 
         "basejump_stl/bsg_misc/bsg_decode.v", 
-        "basejump_stl/bsg_misc/bsg_counter_clear_up.v"
+        "basejump_stl/bsg_misc/bsg_counter_clear_up.v", 
+        "basejump_stl/bsg_dataflow/bsg_fifo_1r1w_small_hardened.v", 
+        "basejump_stl/bsg_dataflow/bsg_fifo_1r1w_small_unhardened.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync_synth.v", 
+        "basejump_stl/bsg_misc/bsg_dff_en.v"
     ], 
     "include_path": [
         "basejump_stl/bsg_misc"
@@ -61,8 +65,8 @@
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
                 "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=16"
+                "block_size_in_words_p=4", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -93,8 +97,8 @@
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
                 "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=16"
+                "block_size_in_words_p=4", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -125,8 +129,8 @@
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
                 "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=16"
+                "block_size_in_words_p=4", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -157,8 +161,8 @@
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
                 "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=16"
+                "block_size_in_words_p=4", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -189,8 +193,8 @@
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
                 "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=16"
+                "block_size_in_words_p=4", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -221,8 +225,8 @@
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
                 "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=16"
+                "block_size_in_words_p=4", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -253,8 +257,8 @@
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
                 "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=16"
+                "block_size_in_words_p=4", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -285,8 +289,8 @@
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
                 "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=16"
+                "block_size_in_words_p=4", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -316,9 +320,9 @@
             "name": "bsg_cache_to_dram_ctrl_rx_large_clk_30_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=64"
+                "num_cache_p=2", 
+                "block_size_in_words_p=8", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -348,9 +352,9 @@
             "name": "bsg_cache_to_dram_ctrl_rx_large_clk_40_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=64"
+                "num_cache_p=2", 
+                "block_size_in_words_p=8", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -380,9 +384,9 @@
             "name": "bsg_cache_to_dram_ctrl_rx_large_clk_50_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=64"
+                "num_cache_p=2", 
+                "block_size_in_words_p=8", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -412,9 +416,9 @@
             "name": "bsg_cache_to_dram_ctrl_rx_large_clk_60_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=64"
+                "num_cache_p=2", 
+                "block_size_in_words_p=8", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -444,9 +448,9 @@
             "name": "bsg_cache_to_dram_ctrl_rx_large_clk_70_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=64"
+                "num_cache_p=2", 
+                "block_size_in_words_p=8", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -476,9 +480,9 @@
             "name": "bsg_cache_to_dram_ctrl_rx_large_clk_80_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=64"
+                "num_cache_p=2", 
+                "block_size_in_words_p=8", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -508,9 +512,9 @@
             "name": "bsg_cache_to_dram_ctrl_rx_large_clk_90_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=64"
+                "num_cache_p=2", 
+                "block_size_in_words_p=8", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -540,9 +544,9 @@
             "name": "bsg_cache_to_dram_ctrl_rx_large_clk_100_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=64"
+                "num_cache_p=2", 
+                "block_size_in_words_p=8", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -572,9 +576,9 @@
             "name": "bsg_cache_to_dram_ctrl_rx_very_large_clk_30_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=128"
+                "num_cache_p=4", 
+                "block_size_in_words_p=8", 
+                "data_width_p=64"
             ]
         }, 
         {
@@ -604,9 +608,9 @@
             "name": "bsg_cache_to_dram_ctrl_rx_very_large_clk_40_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=128"
+                "num_cache_p=4", 
+                "block_size_in_words_p=8", 
+                "data_width_p=64"
             ]
         }, 
         {
@@ -636,9 +640,9 @@
             "name": "bsg_cache_to_dram_ctrl_rx_very_large_clk_50_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=128"
+                "num_cache_p=4", 
+                "block_size_in_words_p=8", 
+                "data_width_p=64"
             ]
         }, 
         {
@@ -668,9 +672,9 @@
             "name": "bsg_cache_to_dram_ctrl_rx_very_large_clk_60_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=128"
+                "num_cache_p=4", 
+                "block_size_in_words_p=8", 
+                "data_width_p=64"
             ]
         }, 
         {
@@ -700,9 +704,9 @@
             "name": "bsg_cache_to_dram_ctrl_rx_very_large_clk_70_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=128"
+                "num_cache_p=4", 
+                "block_size_in_words_p=8", 
+                "data_width_p=64"
             ]
         }, 
         {
@@ -732,9 +736,9 @@
             "name": "bsg_cache_to_dram_ctrl_rx_very_large_clk_80_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=128"
+                "num_cache_p=4", 
+                "block_size_in_words_p=8", 
+                "data_width_p=64"
             ]
         }, 
         {
@@ -764,9 +768,9 @@
             "name": "bsg_cache_to_dram_ctrl_rx_very_large_clk_90_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=128"
+                "num_cache_p=4", 
+                "block_size_in_words_p=8", 
+                "data_width_p=64"
             ]
         }, 
         {
@@ -796,9 +800,9 @@
             "name": "bsg_cache_to_dram_ctrl_rx_very_large_clk_100_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=128"
+                "num_cache_p=4", 
+                "block_size_in_words_p=8", 
+                "data_width_p=64"
             ]
         }, 
         {
@@ -828,8 +832,8 @@
             "name": "bsg_cache_to_dram_ctrl_rx_medium_clk_30_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
+                "num_cache_p=2", 
+                "block_size_in_words_p=4", 
                 "data_width_p=32"
             ]
         }, 
@@ -860,8 +864,8 @@
             "name": "bsg_cache_to_dram_ctrl_rx_medium_clk_40_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
+                "num_cache_p=2", 
+                "block_size_in_words_p=4", 
                 "data_width_p=32"
             ]
         }, 
@@ -892,8 +896,8 @@
             "name": "bsg_cache_to_dram_ctrl_rx_medium_clk_50_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
+                "num_cache_p=2", 
+                "block_size_in_words_p=4", 
                 "data_width_p=32"
             ]
         }, 
@@ -924,8 +928,8 @@
             "name": "bsg_cache_to_dram_ctrl_rx_medium_clk_60_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
+                "num_cache_p=2", 
+                "block_size_in_words_p=4", 
                 "data_width_p=32"
             ]
         }, 
@@ -956,8 +960,8 @@
             "name": "bsg_cache_to_dram_ctrl_rx_medium_clk_70_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
+                "num_cache_p=2", 
+                "block_size_in_words_p=4", 
                 "data_width_p=32"
             ]
         }, 
@@ -988,8 +992,8 @@
             "name": "bsg_cache_to_dram_ctrl_rx_medium_clk_80_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
+                "num_cache_p=2", 
+                "block_size_in_words_p=4", 
                 "data_width_p=32"
             ]
         }, 
@@ -1020,8 +1024,8 @@
             "name": "bsg_cache_to_dram_ctrl_rx_medium_clk_90_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
+                "num_cache_p=2", 
+                "block_size_in_words_p=4", 
                 "data_width_p=32"
             ]
         }, 
@@ -1052,8 +1056,8 @@
             "name": "bsg_cache_to_dram_ctrl_rx_medium_clk_100_FO4", 
             "parameters": [
                 "dram_ctrl_burst_len_p=1", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
+                "num_cache_p=2", 
+                "block_size_in_words_p=4", 
                 "data_width_p=32"
             ]
         }

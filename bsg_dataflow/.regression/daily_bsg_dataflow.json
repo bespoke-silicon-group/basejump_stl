@@ -16,6 +16,8 @@ include bsg_fifo_1r1w_narrowed.json
 include bsg_fifo_1r1w_pseudo_large.json
 include bsg_fifo_1r1w_small.json
 include bsg_fifo_1r1w_small_credit_on_input.json
+include bsg_fifo_1r1w_small_hardened.json
+include bsg_fifo_1r1w_small_unhardened.json
 include bsg_fifo_1rw_large.json
 include bsg_fifo_shift_datapath.json
 include bsg_fifo_tracker.json

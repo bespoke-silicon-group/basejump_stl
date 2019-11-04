@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_cache_sbuf", 
     "filelist": [
+        "basejump_stl/bsg_cache/bsg_cache_pkg.v", 
         "basejump_stl/bsg_misc/bsg_defines.v", 
         "basejump_stl/bsg_cache/bsg_cache_sbuf.v", 
         "basejump_stl/bsg_cache/bsg_cache_sbuf_queue.v", 
@@ -34,8 +35,8 @@
             "name": "bsg_cache_sbuf_small_clk_30_FO4", 
             "parameters": [
                 "ways_p=2", 
-                "addr_width_p=32", 
-                "data_width_p=16"
+                "addr_width_p=28", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -65,8 +66,8 @@
             "name": "bsg_cache_sbuf_small_clk_40_FO4", 
             "parameters": [
                 "ways_p=2", 
-                "addr_width_p=32", 
-                "data_width_p=16"
+                "addr_width_p=28", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -96,8 +97,8 @@
             "name": "bsg_cache_sbuf_small_clk_50_FO4", 
             "parameters": [
                 "ways_p=2", 
-                "addr_width_p=32", 
-                "data_width_p=16"
+                "addr_width_p=28", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -127,8 +128,8 @@
             "name": "bsg_cache_sbuf_small_clk_60_FO4", 
             "parameters": [
                 "ways_p=2", 
-                "addr_width_p=32", 
-                "data_width_p=16"
+                "addr_width_p=28", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -158,8 +159,8 @@
             "name": "bsg_cache_sbuf_small_clk_70_FO4", 
             "parameters": [
                 "ways_p=2", 
-                "addr_width_p=32", 
-                "data_width_p=16"
+                "addr_width_p=28", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -189,8 +190,8 @@
             "name": "bsg_cache_sbuf_small_clk_80_FO4", 
             "parameters": [
                 "ways_p=2", 
-                "addr_width_p=32", 
-                "data_width_p=16"
+                "addr_width_p=28", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -220,8 +221,8 @@
             "name": "bsg_cache_sbuf_small_clk_90_FO4", 
             "parameters": [
                 "ways_p=2", 
-                "addr_width_p=32", 
-                "data_width_p=16"
+                "addr_width_p=28", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -251,8 +252,8 @@
             "name": "bsg_cache_sbuf_small_clk_100_FO4", 
             "parameters": [
                 "ways_p=2", 
-                "addr_width_p=32", 
-                "data_width_p=16"
+                "addr_width_p=28", 
+                "data_width_p=32"
             ]
         }, 
         {
@@ -281,9 +282,9 @@
             "design_size": "large", 
             "name": "bsg_cache_sbuf_large_clk_30_FO4", 
             "parameters": [
-                "ways_p=4", 
+                "ways_p=8", 
                 "addr_width_p=32", 
-                "data_width_p=64"
+                "data_width_p=32"
             ]
         }, 
         {
@@ -312,9 +313,9 @@
             "design_size": "large", 
             "name": "bsg_cache_sbuf_large_clk_40_FO4", 
             "parameters": [
-                "ways_p=4", 
+                "ways_p=8", 
                 "addr_width_p=32", 
-                "data_width_p=64"
+                "data_width_p=32"
             ]
         }, 
         {
@@ -343,9 +344,9 @@
             "design_size": "large", 
             "name": "bsg_cache_sbuf_large_clk_50_FO4", 
             "parameters": [
-                "ways_p=4", 
+                "ways_p=8", 
                 "addr_width_p=32", 
-                "data_width_p=64"
+                "data_width_p=32"
             ]
         }, 
         {
@@ -374,9 +375,9 @@
             "design_size": "large", 
             "name": "bsg_cache_sbuf_large_clk_60_FO4", 
             "parameters": [
-                "ways_p=4", 
+                "ways_p=8", 
                 "addr_width_p=32", 
-                "data_width_p=64"
+                "data_width_p=32"
             ]
         }, 
         {
@@ -405,9 +406,9 @@
             "design_size": "large", 
             "name": "bsg_cache_sbuf_large_clk_70_FO4", 
             "parameters": [
-                "ways_p=4", 
+                "ways_p=8", 
                 "addr_width_p=32", 
-                "data_width_p=64"
+                "data_width_p=32"
             ]
         }, 
         {
@@ -436,9 +437,9 @@
             "design_size": "large", 
             "name": "bsg_cache_sbuf_large_clk_80_FO4", 
             "parameters": [
-                "ways_p=4", 
+                "ways_p=8", 
                 "addr_width_p=32", 
-                "data_width_p=64"
+                "data_width_p=32"
             ]
         }, 
         {
@@ -467,9 +468,9 @@
             "design_size": "large", 
             "name": "bsg_cache_sbuf_large_clk_90_FO4", 
             "parameters": [
-                "ways_p=4", 
+                "ways_p=8", 
                 "addr_width_p=32", 
-                "data_width_p=64"
+                "data_width_p=32"
             ]
         }, 
         {
@@ -498,9 +499,9 @@
             "design_size": "large", 
             "name": "bsg_cache_sbuf_large_clk_100_FO4", 
             "parameters": [
-                "ways_p=4", 
+                "ways_p=8", 
                 "addr_width_p=32", 
-                "data_width_p=64"
+                "data_width_p=32"
             ]
         }, 
         {
@@ -529,9 +530,9 @@
             "design_size": "very_large", 
             "name": "bsg_cache_sbuf_very_large_clk_30_FO4", 
             "parameters": [
-                "ways_p=4", 
-                "addr_width_p=32", 
-                "data_width_p=128"
+                "ways_p=8", 
+                "addr_width_p=39", 
+                "data_width_p=64"
             ]
         }, 
         {
@@ -560,9 +561,9 @@
             "design_size": "very_large", 
             "name": "bsg_cache_sbuf_very_large_clk_40_FO4", 
             "parameters": [
-                "ways_p=4", 
-                "addr_width_p=32", 
-                "data_width_p=128"
+                "ways_p=8", 
+                "addr_width_p=39", 
+                "data_width_p=64"
             ]
         }, 
         {
@@ -591,9 +592,9 @@
             "design_size": "very_large", 
             "name": "bsg_cache_sbuf_very_large_clk_50_FO4", 
             "parameters": [
-                "ways_p=4", 
-                "addr_width_p=32", 
-                "data_width_p=128"
+                "ways_p=8", 
+                "addr_width_p=39", 
+                "data_width_p=64"
             ]
         }, 
         {
@@ -622,9 +623,9 @@
             "design_size": "very_large", 
             "name": "bsg_cache_sbuf_very_large_clk_60_FO4", 
             "parameters": [
-                "ways_p=4", 
-                "addr_width_p=32", 
-                "data_width_p=128"
+                "ways_p=8", 
+                "addr_width_p=39", 
+                "data_width_p=64"
             ]
         }, 
         {
@@ -653,9 +654,9 @@
             "design_size": "very_large", 
             "name": "bsg_cache_sbuf_very_large_clk_70_FO4", 
             "parameters": [
-                "ways_p=4", 
-                "addr_width_p=32", 
-                "data_width_p=128"
+                "ways_p=8", 
+                "addr_width_p=39", 
+                "data_width_p=64"
             ]
         }, 
         {
@@ -684,9 +685,9 @@
             "design_size": "very_large", 
             "name": "bsg_cache_sbuf_very_large_clk_80_FO4", 
             "parameters": [
-                "ways_p=4", 
-                "addr_width_p=32", 
-                "data_width_p=128"
+                "ways_p=8", 
+                "addr_width_p=39", 
+                "data_width_p=64"
             ]
         }, 
         {
@@ -715,9 +716,9 @@
             "design_size": "very_large", 
             "name": "bsg_cache_sbuf_very_large_clk_90_FO4", 
             "parameters": [
-                "ways_p=4", 
-                "addr_width_p=32", 
-                "data_width_p=128"
+                "ways_p=8", 
+                "addr_width_p=39", 
+                "data_width_p=64"
             ]
         }, 
         {
@@ -746,9 +747,9 @@
             "design_size": "very_large", 
             "name": "bsg_cache_sbuf_very_large_clk_100_FO4", 
             "parameters": [
-                "ways_p=4", 
-                "addr_width_p=32", 
-                "data_width_p=128"
+                "ways_p=8", 
+                "addr_width_p=39", 
+                "data_width_p=64"
             ]
         }, 
         {
@@ -777,8 +778,8 @@
             "design_size": "medium", 
             "name": "bsg_cache_sbuf_medium_clk_30_FO4", 
             "parameters": [
-                "ways_p=2", 
-                "addr_width_p=32", 
+                "ways_p=4", 
+                "addr_width_p=28", 
                 "data_width_p=32"
             ]
         }, 
@@ -808,8 +809,8 @@
             "design_size": "medium", 
             "name": "bsg_cache_sbuf_medium_clk_40_FO4", 
             "parameters": [
-                "ways_p=2", 
-                "addr_width_p=32", 
+                "ways_p=4", 
+                "addr_width_p=28", 
                 "data_width_p=32"
             ]
         }, 
@@ -839,8 +840,8 @@
             "design_size": "medium", 
             "name": "bsg_cache_sbuf_medium_clk_50_FO4", 
             "parameters": [
-                "ways_p=2", 
-                "addr_width_p=32", 
+                "ways_p=4", 
+                "addr_width_p=28", 
                 "data_width_p=32"
             ]
         }, 
@@ -870,8 +871,8 @@
             "design_size": "medium", 
             "name": "bsg_cache_sbuf_medium_clk_60_FO4", 
             "parameters": [
-                "ways_p=2", 
-                "addr_width_p=32", 
+                "ways_p=4", 
+                "addr_width_p=28", 
                 "data_width_p=32"
             ]
         }, 
@@ -901,8 +902,8 @@
             "design_size": "medium", 
             "name": "bsg_cache_sbuf_medium_clk_70_FO4", 
             "parameters": [
-                "ways_p=2", 
-                "addr_width_p=32", 
+                "ways_p=4", 
+                "addr_width_p=28", 
                 "data_width_p=32"
             ]
         }, 
@@ -932,8 +933,8 @@
             "design_size": "medium", 
             "name": "bsg_cache_sbuf_medium_clk_80_FO4", 
             "parameters": [
-                "ways_p=2", 
-                "addr_width_p=32", 
+                "ways_p=4", 
+                "addr_width_p=28", 
                 "data_width_p=32"
             ]
         }, 
@@ -963,8 +964,8 @@
             "design_size": "medium", 
             "name": "bsg_cache_sbuf_medium_clk_90_FO4", 
             "parameters": [
-                "ways_p=2", 
-                "addr_width_p=32", 
+                "ways_p=4", 
+                "addr_width_p=28", 
                 "data_width_p=32"
             ]
         }, 
@@ -994,8 +995,8 @@
             "design_size": "medium", 
             "name": "bsg_cache_sbuf_medium_clk_100_FO4", 
             "parameters": [
-                "ways_p=2", 
-                "addr_width_p=32", 
+                "ways_p=4", 
+                "addr_width_p=28", 
                 "data_width_p=32"
             ]
         }

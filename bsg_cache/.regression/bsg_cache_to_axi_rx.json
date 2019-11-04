@@ -13,7 +13,16 @@
         "basejump_stl/bsg_misc/bsg_array_reverse.v", 
         "basejump_stl/bsg_misc/bsg_decode_with_v.v", 
         "basejump_stl/bsg_misc/bsg_decode.v", 
-        "basejump_stl/bsg_misc/bsg_counter_clear_up.v"
+        "basejump_stl/bsg_misc/bsg_counter_clear_up.v", 
+        "basejump_stl/bsg_dataflow/bsg_fifo_1r1w_small_hardened.v", 
+        "basejump_stl/bsg_dataflow/bsg_fifo_1r1w_small_unhardened.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync.v", 
+        "basejump_stl/bsg_misc/bsg_clkgate_optional.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync_synth.v", 
+        "basejump_stl/bsg_misc/bsg_dff_en.v"
+    ], 
+    "include_path": [
+        "basejump_stl/bsg_misc"
     ], 
     "run_config": [
         {
@@ -43,12 +52,12 @@
             "name": "bsg_cache_to_axi_rx_small_clk_30_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=16", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
                 "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=16"
+                "block_size_in_words_p=4", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -78,12 +87,12 @@
             "name": "bsg_cache_to_axi_rx_small_clk_40_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=16", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
                 "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=16"
+                "block_size_in_words_p=4", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -113,12 +122,12 @@
             "name": "bsg_cache_to_axi_rx_small_clk_50_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=16", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
                 "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=16"
+                "block_size_in_words_p=4", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -148,12 +157,12 @@
             "name": "bsg_cache_to_axi_rx_small_clk_60_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=16", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
                 "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=16"
+                "block_size_in_words_p=4", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -183,12 +192,12 @@
             "name": "bsg_cache_to_axi_rx_small_clk_70_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=16", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
                 "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=16"
+                "block_size_in_words_p=4", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -218,12 +227,12 @@
             "name": "bsg_cache_to_axi_rx_small_clk_80_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=16", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
                 "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=16"
+                "block_size_in_words_p=4", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -253,12 +262,12 @@
             "name": "bsg_cache_to_axi_rx_small_clk_90_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=16", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
                 "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=16"
+                "block_size_in_words_p=4", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -288,12 +297,12 @@
             "name": "bsg_cache_to_axi_rx_small_clk_100_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=16", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
                 "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=16"
+                "block_size_in_words_p=4", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -323,12 +332,12 @@
             "name": "bsg_cache_to_axi_rx_large_clk_30_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=64", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=64"
+                "num_cache_p=2", 
+                "block_size_in_words_p=8", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -358,12 +367,12 @@
             "name": "bsg_cache_to_axi_rx_large_clk_40_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=64", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=64"
+                "num_cache_p=2", 
+                "block_size_in_words_p=8", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -393,12 +402,12 @@
             "name": "bsg_cache_to_axi_rx_large_clk_50_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=64", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=64"
+                "num_cache_p=2", 
+                "block_size_in_words_p=8", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -428,12 +437,12 @@
             "name": "bsg_cache_to_axi_rx_large_clk_60_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=64", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=64"
+                "num_cache_p=2", 
+                "block_size_in_words_p=8", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -463,12 +472,12 @@
             "name": "bsg_cache_to_axi_rx_large_clk_70_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=64", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=64"
+                "num_cache_p=2", 
+                "block_size_in_words_p=8", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -498,12 +507,12 @@
             "name": "bsg_cache_to_axi_rx_large_clk_80_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=64", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=64"
+                "num_cache_p=2", 
+                "block_size_in_words_p=8", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -533,12 +542,12 @@
             "name": "bsg_cache_to_axi_rx_large_clk_90_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=64", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=64"
+                "num_cache_p=2", 
+                "block_size_in_words_p=8", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -568,12 +577,12 @@
             "name": "bsg_cache_to_axi_rx_large_clk_100_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=64", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=64"
+                "num_cache_p=2", 
+                "block_size_in_words_p=8", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -603,12 +612,12 @@
             "name": "bsg_cache_to_axi_rx_very_large_clk_30_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=128", 
-                "axi_id_width_p=2", 
+                "data_width_p=64", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=128"
+                "num_cache_p=4", 
+                "block_size_in_words_p=8", 
+                "axi_data_width_p=64"
             ]
         }, 
         {
@@ -638,12 +647,12 @@
             "name": "bsg_cache_to_axi_rx_very_large_clk_40_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=128", 
-                "axi_id_width_p=2", 
+                "data_width_p=64", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=128"
+                "num_cache_p=4", 
+                "block_size_in_words_p=8", 
+                "axi_data_width_p=64"
             ]
         }, 
         {
@@ -673,12 +682,12 @@
             "name": "bsg_cache_to_axi_rx_very_large_clk_50_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=128", 
-                "axi_id_width_p=2", 
+                "data_width_p=64", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=128"
+                "num_cache_p=4", 
+                "block_size_in_words_p=8", 
+                "axi_data_width_p=64"
             ]
         }, 
         {
@@ -708,12 +717,12 @@
             "name": "bsg_cache_to_axi_rx_very_large_clk_60_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=128", 
-                "axi_id_width_p=2", 
+                "data_width_p=64", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=128"
+                "num_cache_p=4", 
+                "block_size_in_words_p=8", 
+                "axi_data_width_p=64"
             ]
         }, 
         {
@@ -743,12 +752,12 @@
             "name": "bsg_cache_to_axi_rx_very_large_clk_70_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=128", 
-                "axi_id_width_p=2", 
+                "data_width_p=64", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=128"
+                "num_cache_p=4", 
+                "block_size_in_words_p=8", 
+                "axi_data_width_p=64"
             ]
         }, 
         {
@@ -778,12 +787,12 @@
             "name": "bsg_cache_to_axi_rx_very_large_clk_80_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=128", 
-                "axi_id_width_p=2", 
+                "data_width_p=64", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=128"
+                "num_cache_p=4", 
+                "block_size_in_words_p=8", 
+                "axi_data_width_p=64"
             ]
         }, 
         {
@@ -813,12 +822,12 @@
             "name": "bsg_cache_to_axi_rx_very_large_clk_90_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=128", 
-                "axi_id_width_p=2", 
+                "data_width_p=64", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=128"
+                "num_cache_p=4", 
+                "block_size_in_words_p=8", 
+                "axi_data_width_p=64"
             ]
         }, 
         {
@@ -848,12 +857,12 @@
             "name": "bsg_cache_to_axi_rx_very_large_clk_100_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=128", 
-                "axi_id_width_p=2", 
+                "data_width_p=64", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=128"
+                "num_cache_p=4", 
+                "block_size_in_words_p=8", 
+                "axi_data_width_p=64"
             ]
         }, 
         {
@@ -883,12 +892,12 @@
             "name": "bsg_cache_to_axi_rx_medium_clk_30_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=32", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=32"
+                "num_cache_p=2", 
+                "block_size_in_words_p=4", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -918,12 +927,12 @@
             "name": "bsg_cache_to_axi_rx_medium_clk_40_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=32", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=32"
+                "num_cache_p=2", 
+                "block_size_in_words_p=4", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -953,12 +962,12 @@
             "name": "bsg_cache_to_axi_rx_medium_clk_50_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=32", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=32"
+                "num_cache_p=2", 
+                "block_size_in_words_p=4", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -988,12 +997,12 @@
             "name": "bsg_cache_to_axi_rx_medium_clk_60_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=32", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=32"
+                "num_cache_p=2", 
+                "block_size_in_words_p=4", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -1023,12 +1032,12 @@
             "name": "bsg_cache_to_axi_rx_medium_clk_70_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=32", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=32"
+                "num_cache_p=2", 
+                "block_size_in_words_p=4", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -1058,12 +1067,12 @@
             "name": "bsg_cache_to_axi_rx_medium_clk_80_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=32", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=32"
+                "num_cache_p=2", 
+                "block_size_in_words_p=4", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -1093,12 +1102,12 @@
             "name": "bsg_cache_to_axi_rx_medium_clk_90_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=32", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=32"
+                "num_cache_p=2", 
+                "block_size_in_words_p=4", 
+                "axi_data_width_p=32"
             ]
         }, 
         {
@@ -1128,12 +1137,12 @@
             "name": "bsg_cache_to_axi_rx_medium_clk_100_FO4", 
             "parameters": [
                 "axi_burst_len_p=1", 
-                "axi_data_width_p=32", 
-                "axi_id_width_p=2", 
+                "data_width_p=32", 
+                "axi_id_width_p=6", 
                 "axi_addr_width_p=5", 
-                "num_cache_p=1", 
-                "block_size_in_words_p=1", 
-                "data_width_p=32"
+                "num_cache_p=2", 
+                "block_size_in_words_p=4", 
+                "axi_data_width_p=32"
             ]
         }
     ]

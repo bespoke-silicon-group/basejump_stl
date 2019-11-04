@@ -1,9 +1,9 @@
 {
     "design_name": "bsg_cache_dma", 
     "filelist": [
+        "basejump_stl/bsg_cache/bsg_cache_pkg.v", 
         "basejump_stl/bsg_misc/bsg_defines.v", 
         "basejump_stl/bsg_cache/bsg_cache.v", 
-        "basejump_stl/bsg_cache/bsg_cache_pkg.v", 
         "basejump_stl/bsg_cache/bsg_cache_dma.v", 
         "basejump_stl/bsg_misc/bsg_counter_clear_up.v", 
         "basejump_stl/bsg_dataflow/bsg_fifo_tracker.v", 
@@ -16,7 +16,13 @@
         "basejump_stl/bsg_misc/bsg_mux.v", 
         "basejump_stl/bsg_cache/bsg_cache_sbuf.v", 
         "basejump_stl/bsg_cache/bsg_cache_sbuf_queue.v", 
-        "basejump_stl/bsg_misc/bsg_mux_segmented.v"
+        "basejump_stl/bsg_misc/bsg_mux_segmented.v", 
+        "basejump_stl/bsg_dataflow/bsg_fifo_1r1w_small_hardened.v", 
+        "basejump_stl/bsg_dataflow/bsg_fifo_1r1w_small_unhardened.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync.v", 
+        "basejump_stl/bsg_misc/bsg_clkgate_optional.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync_synth.v", 
+        "basejump_stl/bsg_misc/bsg_dff_en.v"
     ], 
     "run_config": [
         {
@@ -45,10 +51,10 @@
             "design_size": "small", 
             "name": "bsg_cache_dma_small_clk_30_FO4", 
             "parameters": [
-                "addr_width_p=32", 
-                "data_width_p=16", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "addr_width_p=28", 
+                "data_width_p=32", 
+                "block_size_in_words_p=4", 
+                "sets_p=64"
             ]
         }, 
         {
@@ -77,10 +83,10 @@
             "design_size": "small", 
             "name": "bsg_cache_dma_small_clk_40_FO4", 
             "parameters": [
-                "addr_width_p=32", 
-                "data_width_p=16", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "addr_width_p=28", 
+                "data_width_p=32", 
+                "block_size_in_words_p=4", 
+                "sets_p=64"
             ]
         }, 
         {
@@ -109,10 +115,10 @@
             "design_size": "small", 
             "name": "bsg_cache_dma_small_clk_50_FO4", 
             "parameters": [
-                "addr_width_p=32", 
-                "data_width_p=16", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "addr_width_p=28", 
+                "data_width_p=32", 
+                "block_size_in_words_p=4", 
+                "sets_p=64"
             ]
         }, 
         {
@@ -141,10 +147,10 @@
             "design_size": "small", 
             "name": "bsg_cache_dma_small_clk_60_FO4", 
             "parameters": [
-                "addr_width_p=32", 
-                "data_width_p=16", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "addr_width_p=28", 
+                "data_width_p=32", 
+                "block_size_in_words_p=4", 
+                "sets_p=64"
             ]
         }, 
         {
@@ -173,10 +179,10 @@
             "design_size": "small", 
             "name": "bsg_cache_dma_small_clk_70_FO4", 
             "parameters": [
-                "addr_width_p=32", 
-                "data_width_p=16", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "addr_width_p=28", 
+                "data_width_p=32", 
+                "block_size_in_words_p=4", 
+                "sets_p=64"
             ]
         }, 
         {
@@ -205,10 +211,10 @@
             "design_size": "small", 
             "name": "bsg_cache_dma_small_clk_80_FO4", 
             "parameters": [
-                "addr_width_p=32", 
-                "data_width_p=16", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "addr_width_p=28", 
+                "data_width_p=32", 
+                "block_size_in_words_p=4", 
+                "sets_p=64"
             ]
         }, 
         {
@@ -237,10 +243,10 @@
             "design_size": "small", 
             "name": "bsg_cache_dma_small_clk_90_FO4", 
             "parameters": [
-                "addr_width_p=32", 
-                "data_width_p=16", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "addr_width_p=28", 
+                "data_width_p=32", 
+                "block_size_in_words_p=4", 
+                "sets_p=64"
             ]
         }, 
         {
@@ -269,10 +275,10 @@
             "design_size": "small", 
             "name": "bsg_cache_dma_small_clk_100_FO4", 
             "parameters": [
-                "addr_width_p=32", 
-                "data_width_p=16", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "addr_width_p=28", 
+                "data_width_p=32", 
+                "block_size_in_words_p=4", 
+                "sets_p=64"
             ]
         }, 
         {
@@ -302,9 +308,9 @@
             "name": "bsg_cache_dma_large_clk_30_FO4", 
             "parameters": [
                 "addr_width_p=32", 
-                "data_width_p=64", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "data_width_p=32", 
+                "block_size_in_words_p=8", 
+                "sets_p=128"
             ]
         }, 
         {
@@ -334,9 +340,9 @@
             "name": "bsg_cache_dma_large_clk_40_FO4", 
             "parameters": [
                 "addr_width_p=32", 
-                "data_width_p=64", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "data_width_p=32", 
+                "block_size_in_words_p=8", 
+                "sets_p=128"
             ]
         }, 
         {
@@ -366,9 +372,9 @@
             "name": "bsg_cache_dma_large_clk_50_FO4", 
             "parameters": [
                 "addr_width_p=32", 
-                "data_width_p=64", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "data_width_p=32", 
+                "block_size_in_words_p=8", 
+                "sets_p=128"
             ]
         }, 
         {
@@ -398,9 +404,9 @@
             "name": "bsg_cache_dma_large_clk_60_FO4", 
             "parameters": [
                 "addr_width_p=32", 
-                "data_width_p=64", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "data_width_p=32", 
+                "block_size_in_words_p=8", 
+                "sets_p=128"
             ]
         }, 
         {
@@ -430,9 +436,9 @@
             "name": "bsg_cache_dma_large_clk_70_FO4", 
             "parameters": [
                 "addr_width_p=32", 
-                "data_width_p=64", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "data_width_p=32", 
+                "block_size_in_words_p=8", 
+                "sets_p=128"
             ]
         }, 
         {
@@ -462,9 +468,9 @@
             "name": "bsg_cache_dma_large_clk_80_FO4", 
             "parameters": [
                 "addr_width_p=32", 
-                "data_width_p=64", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "data_width_p=32", 
+                "block_size_in_words_p=8", 
+                "sets_p=128"
             ]
         }, 
         {
@@ -494,9 +500,9 @@
             "name": "bsg_cache_dma_large_clk_90_FO4", 
             "parameters": [
                 "addr_width_p=32", 
-                "data_width_p=64", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "data_width_p=32", 
+                "block_size_in_words_p=8", 
+                "sets_p=128"
             ]
         }, 
         {
@@ -526,9 +532,9 @@
             "name": "bsg_cache_dma_large_clk_100_FO4", 
             "parameters": [
                 "addr_width_p=32", 
-                "data_width_p=64", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "data_width_p=32", 
+                "block_size_in_words_p=8", 
+                "sets_p=128"
             ]
         }, 
         {
@@ -557,10 +563,10 @@
             "design_size": "very_large", 
             "name": "bsg_cache_dma_very_large_clk_30_FO4", 
             "parameters": [
-                "addr_width_p=32", 
-                "data_width_p=128", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "addr_width_p=39", 
+                "data_width_p=64", 
+                "block_size_in_words_p=8", 
+                "sets_p=256"
             ]
         }, 
         {
@@ -589,10 +595,10 @@
             "design_size": "very_large", 
             "name": "bsg_cache_dma_very_large_clk_40_FO4", 
             "parameters": [
-                "addr_width_p=32", 
-                "data_width_p=128", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "addr_width_p=39", 
+                "data_width_p=64", 
+                "block_size_in_words_p=8", 
+                "sets_p=256"
             ]
         }, 
         {
@@ -621,10 +627,10 @@
             "design_size": "very_large", 
             "name": "bsg_cache_dma_very_large_clk_50_FO4", 
             "parameters": [
-                "addr_width_p=32", 
-                "data_width_p=128", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "addr_width_p=39", 
+                "data_width_p=64", 
+                "block_size_in_words_p=8", 
+                "sets_p=256"
             ]
         }, 
         {
@@ -653,10 +659,10 @@
             "design_size": "very_large", 
             "name": "bsg_cache_dma_very_large_clk_60_FO4", 
             "parameters": [
-                "addr_width_p=32", 
-                "data_width_p=128", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "addr_width_p=39", 
+                "data_width_p=64", 
+                "block_size_in_words_p=8", 
+                "sets_p=256"
             ]
         }, 
         {
@@ -685,10 +691,10 @@
             "design_size": "very_large", 
             "name": "bsg_cache_dma_very_large_clk_70_FO4", 
             "parameters": [
-                "addr_width_p=32", 
-                "data_width_p=128", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "addr_width_p=39", 
+                "data_width_p=64", 
+                "block_size_in_words_p=8", 
+                "sets_p=256"
             ]
         }, 
         {
@@ -717,10 +723,10 @@
             "design_size": "very_large", 
             "name": "bsg_cache_dma_very_large_clk_80_FO4", 
             "parameters": [
-                "addr_width_p=32", 
-                "data_width_p=128", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "addr_width_p=39", 
+                "data_width_p=64", 
+                "block_size_in_words_p=8", 
+                "sets_p=256"
             ]
         }, 
         {
@@ -749,10 +755,10 @@
             "design_size": "very_large", 
             "name": "bsg_cache_dma_very_large_clk_90_FO4", 
             "parameters": [
-                "addr_width_p=32", 
-                "data_width_p=128", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "addr_width_p=39", 
+                "data_width_p=64", 
+                "block_size_in_words_p=8", 
+                "sets_p=256"
             ]
         }, 
         {
@@ -781,10 +787,10 @@
             "design_size": "very_large", 
             "name": "bsg_cache_dma_very_large_clk_100_FO4", 
             "parameters": [
-                "addr_width_p=32", 
-                "data_width_p=128", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "addr_width_p=39", 
+                "data_width_p=64", 
+                "block_size_in_words_p=8", 
+                "sets_p=256"
             ]
         }, 
         {
@@ -813,10 +819,10 @@
             "design_size": "medium", 
             "name": "bsg_cache_dma_medium_clk_30_FO4", 
             "parameters": [
-                "addr_width_p=32", 
+                "addr_width_p=28", 
                 "data_width_p=32", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "block_size_in_words_p=4", 
+                "sets_p=64"
             ]
         }, 
         {
@@ -845,10 +851,10 @@
             "design_size": "medium", 
             "name": "bsg_cache_dma_medium_clk_40_FO4", 
             "parameters": [
-                "addr_width_p=32", 
+                "addr_width_p=28", 
                 "data_width_p=32", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "block_size_in_words_p=4", 
+                "sets_p=64"
             ]
         }, 
         {
@@ -877,10 +883,10 @@
             "design_size": "medium", 
             "name": "bsg_cache_dma_medium_clk_50_FO4", 
             "parameters": [
-                "addr_width_p=32", 
+                "addr_width_p=28", 
                 "data_width_p=32", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "block_size_in_words_p=4", 
+                "sets_p=64"
             ]
         }, 
         {
@@ -909,10 +915,10 @@
             "design_size": "medium", 
             "name": "bsg_cache_dma_medium_clk_60_FO4", 
             "parameters": [
-                "addr_width_p=32", 
+                "addr_width_p=28", 
                 "data_width_p=32", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "block_size_in_words_p=4", 
+                "sets_p=64"
             ]
         }, 
         {
@@ -941,10 +947,10 @@
             "design_size": "medium", 
             "name": "bsg_cache_dma_medium_clk_70_FO4", 
             "parameters": [
-                "addr_width_p=32", 
+                "addr_width_p=28", 
                 "data_width_p=32", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "block_size_in_words_p=4", 
+                "sets_p=64"
             ]
         }, 
         {
@@ -973,10 +979,10 @@
             "design_size": "medium", 
             "name": "bsg_cache_dma_medium_clk_80_FO4", 
             "parameters": [
-                "addr_width_p=32", 
+                "addr_width_p=28", 
                 "data_width_p=32", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "block_size_in_words_p=4", 
+                "sets_p=64"
             ]
         }, 
         {
@@ -1005,10 +1011,10 @@
             "design_size": "medium", 
             "name": "bsg_cache_dma_medium_clk_90_FO4", 
             "parameters": [
-                "addr_width_p=32", 
+                "addr_width_p=28", 
                 "data_width_p=32", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "block_size_in_words_p=4", 
+                "sets_p=64"
             ]
         }, 
         {
@@ -1037,10 +1043,10 @@
             "design_size": "medium", 
             "name": "bsg_cache_dma_medium_clk_100_FO4", 
             "parameters": [
-                "addr_width_p=32", 
+                "addr_width_p=28", 
                 "data_width_p=32", 
-                "block_size_in_words_p=1", 
-                "sets_p=2"
+                "block_size_in_words_p=4", 
+                "sets_p=64"
             ]
         }
     ]
