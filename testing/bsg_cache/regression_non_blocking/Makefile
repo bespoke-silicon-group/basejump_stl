@@ -10,6 +10,7 @@ INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_cache/
 
 VCS_FLAGS = +v2k -sverilog -timescale=1ps/1ps -O4
 
+### Options #####
 ifeq ($(WAVE), 1)
 VCS_FLAGS += +vcs+vcdpluson
 endif
@@ -17,6 +18,11 @@ endif
 ifeq ($(LOG), 1)
 VCS_FLAGS += -l vcs.log
 endif
+
+ifeq ($(COV), 1)
+VCS_FLAGS += -lca -cm line+cond+fsm+tgl+path+branch+assert
+endif
+#################
 
 
 HIGHLIGHT = grep --color -E '^|Fatal|Error|Warning|Implicit wire is used|Too few instance port connections|Port connection width mismatch|Width mismatch'
@@ -58,6 +64,9 @@ sim: $(TRACE_TR)
 
 dve:
 	$(DVE) -full64 -vpd vcdplus.vpd &
+
+cov:
+	$(DVE) -full64 -cov -dir simv.vdb &
 
 clean:
 	rm -rf DVEfiles
