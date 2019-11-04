@@ -19,13 +19,13 @@ module mul #(
 
   ,output [2*width_p-1:0] res_o
 );
-  wire [2*width_p-1:0] reset_i ? '0 : res_n;
+  wire [2*width_p-1:0] data_li = reset_i ? '0 : opA_i * opB_i;
   bsg_dff_chain #(
     .width_p(2*width_p)
     ,.num_stages_p(stage_p)
   ) chain (
     .clk_i(clk_i)
-    ,.data_i(res_n)
+    ,.data_i(data_li)
     ,.data_o(res_o)
   );
 
