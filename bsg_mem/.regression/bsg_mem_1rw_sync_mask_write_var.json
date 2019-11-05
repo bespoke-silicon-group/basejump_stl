@@ -38,7 +38,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_small_clk_30_FO4",
             "parameters":[
                 "mask_width_p=16",
-                "els_p=512",
+                "els_p=10",
                 "width_p=16"
             ]
         },
@@ -69,7 +69,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_small_clk_40_FO4",
             "parameters":[
                 "mask_width_p=16",
-                "els_p=512",
+                "els_p=10",
                 "width_p=16"
             ]
         },
@@ -100,7 +100,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_small_clk_50_FO4",
             "parameters":[
                 "mask_width_p=16",
-                "els_p=512",
+                "els_p=10",
                 "width_p=16"
             ]
         },
@@ -131,7 +131,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_small_clk_60_FO4",
             "parameters":[
                 "mask_width_p=16",
-                "els_p=512",
+                "els_p=10",
                 "width_p=16"
             ]
         },
@@ -162,7 +162,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_small_clk_70_FO4",
             "parameters":[
                 "mask_width_p=16",
-                "els_p=512",
+                "els_p=10",
                 "width_p=16"
             ]
         },
@@ -193,7 +193,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_small_clk_80_FO4",
             "parameters":[
                 "mask_width_p=16",
-                "els_p=512",
+                "els_p=10",
                 "width_p=16"
             ]
         },
@@ -224,7 +224,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_small_clk_90_FO4",
             "parameters":[
                 "mask_width_p=16",
-                "els_p=512",
+                "els_p=10",
                 "width_p=16"
             ]
         },
@@ -255,7 +255,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_small_clk_100_FO4",
             "parameters":[
                 "mask_width_p=16",
-                "els_p=512",
+                "els_p=10",
                 "width_p=16"
             ]
         },
@@ -286,7 +286,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_large_clk_30_FO4",
             "parameters":[
                 "mask_width_p=32",
-                "els_p=2048",
+                "els_p=500",
                 "width_p=64"
             ]
         },
@@ -317,7 +317,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_large_clk_40_FO4",
             "parameters":[
                 "mask_width_p=32",
-                "els_p=2048",
+                "els_p=500",
                 "width_p=64"
             ]
         },
@@ -348,7 +348,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_large_clk_50_FO4",
             "parameters":[
                 "mask_width_p=32",
-                "els_p=2048",
+                "els_p=500",
                 "width_p=64"
             ]
         },
@@ -379,7 +379,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_large_clk_60_FO4",
             "parameters":[
                 "mask_width_p=32",
-                "els_p=2048",
+                "els_p=500",
                 "width_p=64"
             ]
         },
@@ -410,7 +410,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_large_clk_70_FO4",
             "parameters":[
                 "mask_width_p=32",
-                "els_p=2048",
+                "els_p=500",
                 "width_p=64"
             ]
         },
@@ -441,7 +441,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_large_clk_80_FO4",
             "parameters":[
                 "mask_width_p=32",
-                "els_p=2048",
+                "els_p=500",
                 "width_p=64"
             ]
         },
@@ -472,7 +472,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_large_clk_90_FO4",
             "parameters":[
                 "mask_width_p=32",
-                "els_p=2048",
+                "els_p=500",
                 "width_p=64"
             ]
         },
@@ -503,7 +503,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_large_clk_100_FO4",
             "parameters":[
                 "mask_width_p=32",
-                "els_p=2048",
+                "els_p=500",
                 "width_p=64"
             ]
         },
@@ -534,7 +534,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_very_large_clk_30_FO4",
             "parameters":[
                 "mask_width_p=64",
-                "els_p=4096",
+                "els_p=1000",
                 "width_p=128"
             ]
         },
@@ -565,7 +565,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_very_large_clk_40_FO4",
             "parameters":[
                 "mask_width_p=64",
-                "els_p=4096",
+                "els_p=1000",
                 "width_p=128"
             ]
         },
@@ -596,7 +596,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_very_large_clk_50_FO4",
             "parameters":[
                 "mask_width_p=64",
-                "els_p=4096",
+                "els_p=1000",
                 "width_p=128"
             ]
         },
@@ -627,7 +627,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_very_large_clk_60_FO4",
             "parameters":[
                 "mask_width_p=64",
-                "els_p=4096",
+                "els_p=1000",
                 "width_p=128"
             ]
         },
@@ -658,7 +658,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_very_large_clk_70_FO4",
             "parameters":[
                 "mask_width_p=64",
-                "els_p=4096",
+                "els_p=1000",
                 "width_p=128"
             ]
         },
@@ -689,7 +689,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_very_large_clk_80_FO4",
             "parameters":[
                 "mask_width_p=64",
-                "els_p=4096",
+                "els_p=1000",
                 "width_p=128"
             ]
         },
@@ -720,7 +720,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_very_large_clk_90_FO4",
             "parameters":[
                 "mask_width_p=64",
-                "els_p=4096",
+                "els_p=1000",
                 "width_p=128"
             ]
         },
@@ -751,7 +751,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_very_large_clk_100_FO4",
             "parameters":[
                 "mask_width_p=64",
-                "els_p=4096",
+                "els_p=1000",
                 "width_p=128"
             ]
         },
@@ -782,7 +782,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_medium_clk_30_FO4",
             "parameters":[
                 "mask_width_p=16",
-                "els_p=1024",
+                "els_p=50",
                 "width_p=32"
             ]
         },
@@ -813,7 +813,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_medium_clk_40_FO4",
             "parameters":[
                 "mask_width_p=16",
-                "els_p=1024",
+                "els_p=50",
                 "width_p=32"
             ]
         },
@@ -844,7 +844,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_medium_clk_50_FO4",
             "parameters":[
                 "mask_width_p=16",
-                "els_p=1024",
+                "els_p=50",
                 "width_p=32"
             ]
         },
@@ -875,7 +875,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_medium_clk_60_FO4",
             "parameters":[
                 "mask_width_p=16",
-                "els_p=1024",
+                "els_p=50",
                 "width_p=32"
             ]
         },
@@ -906,7 +906,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_medium_clk_70_FO4",
             "parameters":[
                 "mask_width_p=16",
-                "els_p=1024",
+                "els_p=50",
                 "width_p=32"
             ]
         },
@@ -937,7 +937,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_medium_clk_80_FO4",
             "parameters":[
                 "mask_width_p=16",
-                "els_p=1024",
+                "els_p=50",
                 "width_p=32"
             ]
         },
@@ -968,7 +968,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_medium_clk_90_FO4",
             "parameters":[
                 "mask_width_p=16",
-                "els_p=1024",
+                "els_p=50",
                 "width_p=32"
             ]
         },
@@ -999,7 +999,7 @@
             "name":"bsg_mem_1rw_sync_mask_write_var_medium_clk_100_FO4",
             "parameters":[
                 "mask_width_p=16",
-                "els_p=1024",
+                "els_p=50",
                 "width_p=32"
             ]
         }

@@ -31,7 +31,7 @@
             "design_size":"small",
             "name":"bsg_mem_1r1w_small_clk_30_FO4",
             "parameters":[
-                "els_p=512",
+                "els_p=10",
                 "width_p=16",
                 "read_write_same_addr_p=0"
             ]
@@ -62,7 +62,7 @@
             "design_size":"small",
             "name":"bsg_mem_1r1w_small_clk_40_FO4",
             "parameters":[
-                "els_p=512",
+                "els_p=10",
                 "width_p=16",
                 "read_write_same_addr_p=0"
             ]
@@ -93,7 +93,7 @@
             "design_size":"small",
             "name":"bsg_mem_1r1w_small_clk_50_FO4",
             "parameters":[
-                "els_p=512",
+                "els_p=10",
                 "width_p=16",
                 "read_write_same_addr_p=0"
             ]
@@ -124,7 +124,7 @@
             "design_size":"small",
             "name":"bsg_mem_1r1w_small_clk_60_FO4",
             "parameters":[
-                "els_p=512",
+                "els_p=10",
                 "width_p=16",
                 "read_write_same_addr_p=0"
             ]
@@ -155,7 +155,7 @@
             "design_size":"small",
             "name":"bsg_mem_1r1w_small_clk_70_FO4",
             "parameters":[
-                "els_p=512",
+                "els_p=10",
                 "width_p=16",
                 "read_write_same_addr_p=0"
             ]
@@ -186,7 +186,7 @@
             "design_size":"small",
             "name":"bsg_mem_1r1w_small_clk_80_FO4",
             "parameters":[
-                "els_p=512",
+                "els_p=10",
                 "width_p=16",
                 "read_write_same_addr_p=0"
             ]
@@ -217,7 +217,7 @@
             "design_size":"small",
             "name":"bsg_mem_1r1w_small_clk_90_FO4",
             "parameters":[
-                "els_p=512",
+                "els_p=10",
                 "width_p=16",
                 "read_write_same_addr_p=0"
             ]
@@ -248,7 +248,7 @@
             "design_size":"small",
             "name":"bsg_mem_1r1w_small_clk_100_FO4",
             "parameters":[
-                "els_p=512",
+                "els_p=10",
                 "width_p=16",
                 "read_write_same_addr_p=0"
             ]
@@ -279,7 +279,7 @@
             "design_size":"large",
             "name":"bsg_mem_1r1w_large_clk_30_FO4",
             "parameters":[
-                "els_p=2048",
+                "els_p=500",
                 "width_p=64",
                 "read_write_same_addr_p=1"
             ]
@@ -310,7 +310,7 @@
             "design_size":"large",
             "name":"bsg_mem_1r1w_large_clk_40_FO4",
             "parameters":[
-                "els_p=2048",
+                "els_p=500",
                 "width_p=64",
                 "read_write_same_addr_p=1"
             ]
@@ -341,7 +341,7 @@
             "design_size":"large",
             "name":"bsg_mem_1r1w_large_clk_50_FO4",
             "parameters":[
-                "els_p=2048",
+                "els_p=500",
                 "width_p=64",
                 "read_write_same_addr_p=1"
             ]
@@ -372,7 +372,7 @@
             "design_size":"large",
             "name":"bsg_mem_1r1w_large_clk_60_FO4",
             "parameters":[
-                "els_p=2048",
+                "els_p=500",
                 "width_p=64",
                 "read_write_same_addr_p=1"
             ]
@@ -403,7 +403,7 @@
             "design_size":"large",
             "name":"bsg_mem_1r1w_large_clk_70_FO4",
             "parameters":[
-                "els_p=2048",
+                "els_p=500",
                 "width_p=64",
                 "read_write_same_addr_p=1"
             ]
@@ -434,7 +434,7 @@
             "design_size":"large",
             "name":"bsg_mem_1r1w_large_clk_80_FO4",
             "parameters":[
-                "els_p=2048",
+                "els_p=500",
                 "width_p=64",
                 "read_write_same_addr_p=1"
             ]
@@ -465,7 +465,7 @@
             "design_size":"large",
             "name":"bsg_mem_1r1w_large_clk_90_FO4",
             "parameters":[
-                "els_p=2048",
+                "els_p=500",
                 "width_p=64",
                 "read_write_same_addr_p=1"
             ]
@@ -496,7 +496,7 @@
             "design_size":"large",
             "name":"bsg_mem_1r1w_large_clk_100_FO4",
             "parameters":[
-                "els_p=2048",
+                "els_p=500",
                 "width_p=64",
                 "read_write_same_addr_p=1"
             ]
@@ -527,7 +527,7 @@
             "design_size":"very_large",
             "name":"bsg_mem_1r1w_very_large_clk_30_FO4",
             "parameters":[
-                "els_p=4096",
+                "els_p=1000",
                 "width_p=128",
                 "read_write_same_addr_p=0"
             ]
@@ -558,7 +558,7 @@
             "design_size":"very_large",
             "name":"bsg_mem_1r1w_very_large_clk_40_FO4",
             "parameters":[
-                "els_p=4096",
+                "els_p=1000",
                 "width_p=128",
                 "read_write_same_addr_p=0"
             ]
@@ -589,7 +589,7 @@
             "design_size":"very_large",
             "name":"bsg_mem_1r1w_very_large_clk_50_FO4",
             "parameters":[
-                "els_p=4096",
+                "els_p=1000",
                 "width_p=128",
                 "read_write_same_addr_p=0"
             ]
@@ -620,7 +620,7 @@
             "design_size":"very_large",
             "name":"bsg_mem_1r1w_very_large_clk_60_FO4",
             "parameters":[
-                "els_p=4096",
+                "els_p=1000",
                 "width_p=128",
                 "read_write_same_addr_p=0"
             ]
@@ -651,7 +651,7 @@
             "design_size":"very_large",
             "name":"bsg_mem_1r1w_very_large_clk_70_FO4",
             "parameters":[
-                "els_p=4096",
+                "els_p=1000",
                 "width_p=128",
                 "read_write_same_addr_p=0"
             ]
@@ -682,7 +682,7 @@
             "design_size":"very_large",
             "name":"bsg_mem_1r1w_very_large_clk_80_FO4",
             "parameters":[
-                "els_p=4096",
+                "els_p=1000",
                 "width_p=128",
                 "read_write_same_addr_p=0"
             ]
@@ -713,7 +713,7 @@
             "design_size":"very_large",
             "name":"bsg_mem_1r1w_very_large_clk_90_FO4",
             "parameters":[
-                "els_p=4096",
+                "els_p=1000",
                 "width_p=128",
                 "read_write_same_addr_p=0"
             ]
@@ -744,7 +744,7 @@
             "design_size":"very_large",
             "name":"bsg_mem_1r1w_very_large_clk_100_FO4",
             "parameters":[
-                "els_p=4096",
+                "els_p=1000",
                 "width_p=128",
                 "read_write_same_addr_p=0"
             ]
@@ -775,7 +775,7 @@
             "design_size":"medium",
             "name":"bsg_mem_1r1w_medium_clk_30_FO4",
             "parameters":[
-                "els_p=1024",
+                "els_p=50",
                 "width_p=32",
                 "read_write_same_addr_p=1"
             ]
@@ -806,7 +806,7 @@
             "design_size":"medium",
             "name":"bsg_mem_1r1w_medium_clk_40_FO4",
             "parameters":[
-                "els_p=1024",
+                "els_p=50",
                 "width_p=32",
                 "read_write_same_addr_p=1"
             ]
@@ -837,7 +837,7 @@
             "design_size":"medium",
             "name":"bsg_mem_1r1w_medium_clk_50_FO4",
             "parameters":[
-                "els_p=1024",
+                "els_p=50",
                 "width_p=32",
                 "read_write_same_addr_p=1"
             ]
@@ -868,7 +868,7 @@
             "design_size":"medium",
             "name":"bsg_mem_1r1w_medium_clk_60_FO4",
             "parameters":[
-                "els_p=1024",
+                "els_p=50",
                 "width_p=32",
                 "read_write_same_addr_p=1"
             ]
@@ -899,7 +899,7 @@
             "design_size":"medium",
             "name":"bsg_mem_1r1w_medium_clk_70_FO4",
             "parameters":[
-                "els_p=1024",
+                "els_p=50",
                 "width_p=32",
                 "read_write_same_addr_p=1"
             ]
@@ -930,7 +930,7 @@
             "design_size":"medium",
             "name":"bsg_mem_1r1w_medium_clk_80_FO4",
             "parameters":[
-                "els_p=1024",
+                "els_p=50",
                 "width_p=32",
                 "read_write_same_addr_p=1"
             ]
@@ -961,7 +961,7 @@
             "design_size":"medium",
             "name":"bsg_mem_1r1w_medium_clk_90_FO4",
             "parameters":[
-                "els_p=1024",
+                "els_p=50",
                 "width_p=32",
                 "read_write_same_addr_p=1"
             ]
@@ -992,7 +992,7 @@
             "design_size":"medium",
             "name":"bsg_mem_1r1w_medium_clk_100_FO4",
             "parameters":[
-                "els_p=1024",
+                "els_p=50",
                 "width_p=32",
                 "read_write_same_addr_p=1"
             ]
