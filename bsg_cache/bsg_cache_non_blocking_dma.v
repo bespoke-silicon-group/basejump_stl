@@ -41,8 +41,11 @@ module bsg_cache_non_blocking_dma
     , output logic pending_o
     , input ack_i
 
-    , output logic evict_v_o
-    , output logic [addr_width_p-1:0] evict_addr_o
+    //, output logic evict_v_o
+    //, output logic [addr_width_p-1:0] evict_addr_o
+    , output logic [lg_ways_lp-1:0] curr_dma_way_id_o
+    , output logic [lg_sets_lp-1:0] curr_dma_index_o
+    , output logic curr_dma_v_o
 
     // data_mem
     , output logic data_mem_pkt_v_o
@@ -334,10 +337,11 @@ module bsg_cache_non_blocking_dma
 
   end
 
-  // Whether there is a block that is being evicted.
-  // Used by TL stage to determine miss.
-  assign evict_v_o = (dma_state_r != IDLE) & dma_cmd_r.evict;
-  assign evict_addr_o = dma_pkt_evict_addr;
+  //assign evict_v_o = (dma_state_r != IDLE) & dma_cmd_r.evict;
+  //assign evict_addr_o = dma_pkt_evict_addr;
+  assign curr_dma_v_o = (dma_state_r != IDLE);
+  assign curr_dma_way_id_o = dma_cmd_r.way_id;
+  assign curr_dma_index_o = dma_cmd_r.index;
 
 
   // synopsys sync_set_reset "reset_i"

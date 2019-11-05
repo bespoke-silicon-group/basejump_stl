@@ -16,13 +16,21 @@ module testbench();
   parameter ways_p = 8;
   parameter miss_fifo_els_p = `MISS_FIFO_ELS_P;
   parameter data_mask_width_lp=(data_width_p>>3);
-  parameter mem_size_p = 2**14;
+  parameter mem_size_p = 2**15;
 
   parameter dma_read_delay_p=`DMA_READ_DELAY_P;
   parameter dma_write_delay_p=`DMA_WRITE_DELAY_P;
   parameter yumi_max_delay_p=`YUMI_MAX_DELAY_P;
   parameter yumi_min_delay_p=`YUMI_MIN_DELAY_P;
 
+
+  integer status;
+  integer wave;
+
+  initial begin
+    status = $value$plusargs("wave=%d",wave);
+    if (wave) $vcdpluson;
+  end
 
   // clock and reset
   //
@@ -133,7 +141,7 @@ module testbench();
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
-    ,.els_p(2*ways_p*sets_p*block_size_in_words_p)
+    ,.els_p(4*ways_p*sets_p*block_size_in_words_p)
     ,.read_delay_p(dma_read_delay_p)
     ,.write_delay_p(dma_write_delay_p)
   ) dma_model (
@@ -284,11 +292,11 @@ module testbench();
   end
 
 
-  always_ff @ (negedge clk) begin
+  always_ff @ (posedge clk) begin
     
     if (~reset & cache_v_li & cache_ready_lo) begin
       case (cache_pkt.opcode)
-        TAGST: begin
+        TAGST, TAGFL: begin
           result[cache_pkt.id] = '0;
         end
 
@@ -310,7 +318,7 @@ module testbench();
     if (~reset & cache_v_lo & cache_yumi_li) begin
       $display("id=%d, data=%x", cache_id_lo, cache_data_lo);
       assert(result[cache_id_lo] == cache_data_lo)
-        else $fatal("Output does not match expected result. Id= %d, Expected: %x. Actual: %x",
+        else $fatal("[BSG_FATAL] Output does not match expected result. Id= %d, Expected: %x. Actual: %x",
               cache_id_lo, result[cache_id_lo], cache_data_lo);
     end
 
@@ -321,7 +329,7 @@ module testbench();
   //
   integer sent_r, recv_r;
 
-  always_ff @ (negedge clk) begin
+  always_ff @ (posedge clk) begin
     if (reset) begin
       sent_r <= '0;
       recv_r <= '0;
@@ -340,10 +348,10 @@ module testbench();
 
 
   initial begin
-    wait(done & (sent_r == recv_r));
+    //wait(done & (sent_r == recv_r));
     $display("[BSG_FINISH] Test Successful.");
-    //for (integer i = 0; i < 10000; i++)
-    //  @(posedge clk);
+    for (integer i = 0; i < 1000000; i++)
+      @(posedge clk);
     #500;
     $finish;
   end

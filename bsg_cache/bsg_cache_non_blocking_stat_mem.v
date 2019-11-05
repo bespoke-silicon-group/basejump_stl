@@ -134,13 +134,13 @@ module bsg_cache_non_blocking_stat_mem
         mask_li.dirty = way_decode_lo;
       end
 
-      // clear LRU and dirty bits to zero.
+      // resets the LRU to zero, and clear the dirty bits of chosen way.
       e_stat_reset: begin
         w_li = 1'b1;
         data_li.lru_bits = '0;
         mask_li.lru_bits = {(ways_p-1){1'b1}};
         data_li.dirty = '0;
-        mask_li.dirty = {ways_p{1'b1}};
+        mask_li.dirty = way_decode_lo;
       end
     
       default: begin

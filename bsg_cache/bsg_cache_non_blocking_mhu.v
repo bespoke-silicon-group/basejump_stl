@@ -77,8 +77,11 @@ module bsg_cache_non_blocking_mhu
     , input [lg_ways_lp-1:0] tag_hit_way_i
     , input tag_hit_found_i
     
-    , output logic [addr_width_p-1:0] evict_addr_o
-    , output logic evict_v_o
+    //, output logic [addr_width_p-1:0] evict_addr_o
+    //, output logic evict_v_o
+    , output logic [lg_ways_lp-1:0] curr_mhu_way_id_o
+    , output logic [lg_sets_lp-1:0] curr_mhu_index_o
+    , output logic curr_mhu_v_o
    
     // miss FIFO
     , input miss_fifo_v_i
@@ -204,17 +207,21 @@ module bsg_cache_non_blocking_mhu
   assign is_secondary = (curr_miss_tag == miss_fifo_tag) & (curr_miss_index == miss_fifo_index);
 
 
-  // This tells if there is an evict address being handled currently.
-  // Used by TL stage to determine miss.
-  assign evict_addr_o = {curr_dma_cmd_r.evict_tag, curr_dma_cmd_r.index, {block_offset_width_lp{1'b0}}};
-  assign evict_v_o = curr_dma_cmd_r.evict & curr_dma_cmd_v_r;
+  //assign evict_addr_o = {curr_dma_cmd_r.evict_tag, curr_dma_cmd_r.index, {block_offset_width_lp{1'b0}}};
+  //assign evict_v_o = curr_dma_cmd_r.evict & curr_dma_cmd_v_r;
+  assign curr_mhu_v_o = curr_dma_cmd_v_r;
+  assign curr_mhu_index_o = curr_dma_cmd_r.index;
+  assign curr_mhu_way_id_o = curr_dma_cmd_r.way_id;
 
 
-  // Replacement policy                                       // 
-  // Find the way that is invalid.                            //
-  // If invalid does not exist, pick LRU.                     //
-  // If LRU is locked, then resort to backup LRU.             //
-  // Do not evict the way that is being processed by MHU now. //
+  // Replacement Policy
+  //
+  // Try to find a way that is invalid and unlocked. There could be a way that is
+  // invalid in tag_mem, BUT has a pending DMA request on it. Those are
+  // considered to be NOT invalid.
+  // If invalid does not exist, pick the LRU. It is also possible that the LRU
+  // way has a pending DMA request, or it is locked. In such occasion, resort
+  // to the backup LRU.
 
   logic invalid_exist;
   logic [lg_ways_lp-1:0] invalid_way_id;
@@ -222,18 +229,8 @@ module bsg_cache_non_blocking_mhu
   logic [lg_ways_lp-1:0] replacement_way_id;
   logic [ways_p-1:0] curr_miss_way_decode;
   logic [ways_p-1:0] disabled_ways;
-  logic next_miss_index_match;
 
-  bsg_priority_encode #(
-    .width_p(ways_p)
-    ,.lo_to_hi_p(1)
-  ) invalid_way_pe (
-    .i(~mhu_dff_r.valid & ~mhu_dff_r.lock) // invalid and unlocked
-    ,.addr_o(invalid_way_id)
-    ,.v_o(invalid_exist)
-  );
-
-  assign next_miss_index_match = curr_dma_cmd_v_r & (curr_dma_cmd_r.index == miss_fifo_index);
+  wire next_miss_index_match = curr_dma_cmd_v_r & (curr_dma_cmd_r.index == miss_fifo_index);
 
   bsg_decode_with_v #(
     .num_out_p(ways_p) 
@@ -241,6 +238,15 @@ module bsg_cache_non_blocking_mhu
     .i(curr_dma_cmd_r.way_id)
     ,.v_i(next_miss_index_match)
     ,.o(curr_miss_way_decode)
+  );
+
+  bsg_priority_encode #(
+    .width_p(ways_p)
+    ,.lo_to_hi_p(1)
+  ) invalid_way_pe (
+    .i(~mhu_dff_r.valid & ~mhu_dff_r.lock & ~curr_miss_way_decode) // invalid and unlocked + not current miss
+    ,.addr_o(invalid_way_id)
+    ,.v_o(invalid_exist)
   );
 
   assign disabled_ways = mhu_dff_r.lock | curr_miss_way_decode;
@@ -440,13 +446,14 @@ module bsg_cache_non_blocking_mhu
 
             stat_mem_pkt_v_o = mgmt_data_yumi_i;
             stat_mem_pkt.opcode = e_stat_reset;
+            stat_mem_pkt.way_id = addr_way_mhu;
 
             mhu_state_n = mgmt_data_yumi_i
               ? IDLE
               : MGMT_OP;
           end
           // TAGFL:
-          // if the cache line is valid, read stat_mem.
+          // if the cache line is valid, read stat_mem to check dirty bit.
           // otherwise, return 0;
           else if (mhu_dff_r.decode.tagfl_op) begin
             mgmt_yumi_o = ~mhu_dff_r.valid[addr_way_mhu] & mgmt_data_yumi_i;
@@ -540,7 +547,9 @@ module bsg_cache_non_blocking_mhu
             : dirty_i[mhu_dff_r.tag_hit_way]);
         dma_cmd_out.way_id = mhu_dff_r.decode.alock_op
           ? replacement_way_id
-          : mhu_dff_r.tag_hit_way;
+          : (mhu_dff_r.decode.tagfl_op
+            ? addr_way_mhu
+            : mhu_dff_r.tag_hit_way);
         dma_cmd_out.index = addr_index_mhu;
         dma_cmd_out.refill = mhu_dff_r.decode.alock_op;
         dma_cmd_out.refill_tag = addr_tag_mhu; // don't care for flush ops.
@@ -583,7 +592,8 @@ module bsg_cache_non_blocking_mhu
 
       // Waiting DMA for TAGFL,AFL,AFLINV,ALOCK.
       WAIT_MGMT_DMA: begin
-
+        mgmt_yumi_o = mgmt_data_yumi_i;
+  
         stat_mem_pkt_v_o = dma_done_i & mgmt_data_yumi_i;
         stat_mem_pkt.index = addr_index_mhu;
         stat_mem_pkt.way_id = mhu_dff_r.decode.tagfl_op
@@ -603,7 +613,7 @@ module bsg_cache_non_blocking_mhu
           ? e_tag_set_tag_and_lock
           : e_tag_invalidate;
 
-        dma_ack_o = dma_done_i & mgmt_data_yumi_i;
+        dma_ack_o = mgmt_data_yumi_i;
         mgmt_data_v_o = dma_done_i;
      
         mhu_state_n = (dma_done_i & mgmt_data_yumi_i)
