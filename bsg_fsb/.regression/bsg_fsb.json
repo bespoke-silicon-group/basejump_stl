@@ -1,5 +1,8 @@
 {
-    "design_name": "bsg_fsb", 
+    "design_name": "bsg_fsb",
+    "include_path" : [
+        "basejump_stl/bsg_misc"
+    ],
     "filelist": [
         "basejump_stl/bsg_misc/bsg_defines.v", 
         "basejump_stl/bsg_fsb/bsg_fsb_pkg.v", 
