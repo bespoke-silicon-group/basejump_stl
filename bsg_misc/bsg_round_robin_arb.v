@@ -40,6 +40,17 @@ logic hold_on_sr, reset_on_sr;
 
 
 
+// synopsys translate_off
+initial begin
+assert (inputs_p <= 10)
+  else begin
+    $error("[%m] Can not support inputs_p greater than %d!", 10);
+    $finish();
+  end
+end
+// synopsys translate_on
+
+
 if(inputs_p == 1)
 begin: inputs_1
 
