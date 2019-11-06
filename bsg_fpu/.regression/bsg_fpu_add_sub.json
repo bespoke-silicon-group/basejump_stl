@@ -6,7 +6,7 @@
         "basejump_stl/bsg_fpu/bsg_fpu_add_sub.v", 
         "basejump_stl/bsg_fpu/bsg_fpu_preprocess.v", 
         "basejump_stl/bsg_misc/bsg_less_than.v", 
-        "basejump_stl/bsg_misc/bsg_fpu_sticky.v", 
+        "basejump_stl/bsg_fpu/bsg_fpu_sticky.v", 
         "basejump_stl/bsg_misc/bsg_scan.v", 
         "basejump_stl/bsg_fpu/bsg_fpu_clz.v", 
         "basejump_stl/bsg_misc/bsg_priority_encode.v", 
