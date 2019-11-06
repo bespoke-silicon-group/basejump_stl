@@ -1,7 +1,7 @@
 {
     "design_name": "bsg_fpu_sticky", 
     "filelist": [
-        "basejump_stl/bsg_misc/defines.v", 
+        "basejump_stl/bsg_misc/bsg_defines.v", 
         "basejump_stl/bsg_fpu/bsg_fpu_sticky.v", 
         "basejump_stl/bsg_misc/bsg_scan.v"
     ], 
