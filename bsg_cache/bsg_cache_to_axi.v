@@ -160,7 +160,7 @@ module bsg_cache_to_axi
   if (num_cache_p == 1) begin
 
     assign rx_axi_addr = read_rr_dma_pkt.addr;
-    assign rx_axi_addr = write_rr_dma_pkt.addr;
+    assign tx_axi_addr = write_rr_dma_pkt.addr;
 
   end
   else begin
