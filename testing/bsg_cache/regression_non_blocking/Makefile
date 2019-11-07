@@ -32,7 +32,7 @@ HIGHLIGHT = grep --color -E '^|Fatal|Error|Warning|Implicit wire is used|Too few
 MISS_FIFO_ELS_P   = 32
 DMA_READ_DELAY_P  = 64
 DMA_WRITE_DELAY_P = 64
-DMA_DATA_DELAY_P  = 8
+DMA_DATA_DELAY_P  = 4
 YUMI_MIN_DELAY_P  = 0
 YUMI_MAX_DELAY_P  = 4
 

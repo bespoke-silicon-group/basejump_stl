@@ -16,6 +16,7 @@ module bsg_nonsynth_non_blocking_dma_model
 
     ,parameter read_delay_p=16
     ,parameter write_delay_p=16
+    ,parameter dma_data_delay_p=16
 
     ,parameter data_mask_width_lp=(data_width_p>>3)
     ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
@@ -63,6 +64,8 @@ module bsg_nonsynth_non_blocking_dma_model
   state_e read_state_r, read_state_n;
   logic [lg_block_size_in_words_lp-1:0] read_counter_r, read_counter_n;
   integer read_delay_r, read_delay_n;
+  integer read_data_delay_r, read_data_delay_n;
+  wire read_data_delay_zero = (read_data_delay_r == 0);
 
   logic [lg_els_lp-lg_block_size_in_words_lp-1:0] read_upper_addr;
   assign read_upper_addr = read_addr_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_els_lp-lg_block_size_in_words_lp];
@@ -73,6 +76,7 @@ module bsg_nonsynth_non_blocking_dma_model
     read_addr_n = read_addr_r;
     read_counter_n = read_counter_r;
     read_delay_n = read_delay_r;
+    read_data_delay_n = read_data_delay_r;
 
     case (read_state_r)
       WAIT: begin
@@ -93,14 +97,21 @@ module bsg_nonsynth_non_blocking_dma_model
         read_state_n = read_delay_r == (read_delay_p-1)
           ? BUSY
           : DELAY;
+
+        read_data_delay_n = read_delay_r == (read_delay_p-1)
+          ? $urandom_range(dma_data_delay_p, 0)
+          : read_data_delay_r;
       end
 
       BUSY: begin
-        dma_data_v_o = 1'b1;
-        read_counter_n = dma_data_ready_i
+        read_data_delay_n = read_data_delay_zero
+          ? (dma_data_ready_i ? $urandom_range(dma_data_delay_p, 0) : 0)
+          : read_data_delay_r - 1;
+        dma_data_v_o = read_data_delay_zero;
+        read_counter_n = read_data_delay_zero & dma_data_ready_i
           ? read_counter_r + 1
           : read_counter_r;
-        read_state_n = dma_data_ready_i & (read_counter_r == block_size_in_words_p-1)
+        read_state_n = read_data_delay_zero & dma_data_ready_i & (read_counter_r == block_size_in_words_p-1)
           ? WAIT
           : BUSY;
       end
@@ -113,12 +124,14 @@ module bsg_nonsynth_non_blocking_dma_model
       read_addr_r <= '0;
       read_counter_r <= '0;
       read_delay_r <= '0;
+      read_data_delay_r <= '0;
     end
     else begin
       read_state_r <= read_state_n;
       read_addr_r <= read_addr_n;
       read_counter_r <= read_counter_n;
       read_delay_r <= read_delay_n;
+      read_data_delay_r <= read_data_delay_n;
     end
   end
 
@@ -128,12 +141,16 @@ module bsg_nonsynth_non_blocking_dma_model
   state_e write_state_r, write_state_n;
   logic [lg_block_size_in_words_lp-1:0] write_counter_r, write_counter_n;
   integer write_delay_r, write_delay_n;
+  integer write_data_delay_r, write_data_delay_n;
+  
+  wire write_data_delay_zero = write_data_delay_r == 0;
 
   logic [lg_els_lp-lg_block_size_in_words_lp-1:0] write_upper_addr;
   assign write_upper_addr = write_addr_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_els_lp-lg_block_size_in_words_lp];
 
   always_comb begin
     write_addr_n = write_addr_r;
+    write_data_delay_n = write_data_delay_r;
     dma_data_yumi_o = 1'b0;
 
     case (write_state_r)
@@ -155,14 +172,21 @@ module bsg_nonsynth_non_blocking_dma_model
         write_state_n = write_delay_r == (write_delay_p-1)
           ? BUSY
           : DELAY;
+        write_data_delay_n = write_delay_r == (write_delay_p-1)
+          ? $urandom_range(dma_data_delay_p, 0)
+          : write_data_delay_r;
       end
 
       BUSY: begin
-        dma_data_yumi_o = dma_data_v_i;
-        write_counter_n = dma_data_v_i
+        write_data_delay_n = write_data_delay_zero
+          ? (dma_data_v_i ? $urandom_range(dma_data_delay_p, 0) : 0)
+          : write_data_delay_r - 1;
+
+        dma_data_yumi_o = dma_data_v_i & write_data_delay_zero;
+        write_counter_n = (dma_data_v_i & write_data_delay_zero)
           ? write_counter_r + 1
           : write_counter_r;
-        write_state_n = (write_counter_r == block_size_in_words_p-1) & dma_data_v_i
+        write_state_n = (write_counter_r == block_size_in_words_p-1) & dma_data_v_i & write_data_delay_zero
           ? WAIT
           : BUSY;
       end
@@ -181,6 +205,7 @@ module bsg_nonsynth_non_blocking_dma_model
       write_addr_r <= '0;
       write_counter_r <= '0;
       write_delay_r <= '0;
+      write_data_delay_r <= '0;
 
       for (integer i = 0; i < els_p; i++) begin
         mem[i] <= '0;
@@ -192,8 +217,9 @@ module bsg_nonsynth_non_blocking_dma_model
       write_addr_r <= write_addr_n;
       write_counter_r <= write_counter_n;
       write_delay_r <= write_delay_n;
+      write_data_delay_r <= write_data_delay_n;
     
-      if (write_state_r == BUSY & dma_data_v_i) begin
+      if ((write_state_r == BUSY) & dma_data_v_i & dma_data_yumi_o) begin
         mem[{write_upper_addr, write_counter_r}] <= dma_data_i;
       end
 

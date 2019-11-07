@@ -20,6 +20,7 @@ module testbench();
 
   parameter dma_read_delay_p=`DMA_READ_DELAY_P;
   parameter dma_write_delay_p=`DMA_WRITE_DELAY_P;
+  parameter dma_data_delay_p=`DMA_DATA_DELAY_P;
   parameter yumi_max_delay_p=`YUMI_MAX_DELAY_P;
   parameter yumi_min_delay_p=`YUMI_MIN_DELAY_P;
 
@@ -144,6 +145,7 @@ module testbench();
     ,.els_p(4*ways_p*sets_p*block_size_in_words_p)
     ,.read_delay_p(dma_read_delay_p)
     ,.write_delay_p(dma_write_delay_p)
+    ,.dma_data_delay_p(dma_data_delay_p)
   ) dma_model (
     .clk_i(clk)
     ,.reset_i(reset)
