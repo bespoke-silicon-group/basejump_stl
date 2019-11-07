@@ -49,10 +49,12 @@ class TestBase:
     return addr 
 
   def wait(self, n):
-    if n == 1:
+    if n == 0:
+      pass
+    elif n == 1:
       self.tg.nop()
     else:
-      self.tg.wait(n)
+      self.tg.wait(n-1)
 
   def done(self):
     self.tg.done()
