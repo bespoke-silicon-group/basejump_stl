@@ -296,7 +296,7 @@ module testbench();
     
     if (~reset & cache_v_li & cache_ready_lo) begin
       case (cache_pkt.opcode)
-        TAGST, TAGFL: begin
+        TAGST, TAGFL, AFL: begin
           result[cache_pkt.id] = '0;
         end
 

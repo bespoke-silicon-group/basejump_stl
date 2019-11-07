@@ -28,7 +28,7 @@ class TestBase:
       self.curr_data += 1 
     elif opcode == LW or opcode == LH or opcode == LB or opcode == LHU or opcode == LBU:
       self.tg.send(self.curr_id, opcode, addr)
-    elif opcode == TAGST or opcode == TAGFL:
+    elif opcode == TAGST or opcode == TAGFL or opcode == AFL:
       self.tg.send(self.curr_id, opcode, addr, data=0)
     self.curr_id += 1
 
