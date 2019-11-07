@@ -8,8 +8,6 @@ class TestRandomAFL(TestBase):
   def generate(self):
     # scrub tag and data
     self.clear_tag()
-    for i in range(self.MAX_ADDR/4):
-      self.send(SW, 4*i)
 
     # random SW/LW
     for iteration in range(100):

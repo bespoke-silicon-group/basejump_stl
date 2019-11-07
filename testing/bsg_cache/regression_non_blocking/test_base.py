@@ -41,6 +41,11 @@ class TestBase:
     self.send(TAGFL, addr)
     self.send(TAGST, addr)
 
+  def flush_inv_all(self):
+    for way in range(self.ways_p):
+      for index in range(self.sets_p):
+        self.flush_inv(way, index)
+
   def get_addr(self, tag, index, block_offset=0, byte_offset=0):
     addr = tag << 12
     addr += index << 5

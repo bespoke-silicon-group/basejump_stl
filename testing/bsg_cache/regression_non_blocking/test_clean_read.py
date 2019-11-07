@@ -10,6 +10,7 @@ class TestCleanRead(TestBase):
     self.clear_tag()
     for i in range(self.MAX_ADDR/4):
       self.send(SW, 4*i)
+    self.flush_inv_all()
 
     # random read for the same set
     for n in range(10000):

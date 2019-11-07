@@ -293,25 +293,29 @@ module testbench();
 
 
   always_ff @ (posedge clk) begin
-    
-    if (~reset & cache_v_li & cache_ready_lo) begin
-      case (cache_pkt.opcode)
-        TAGST, TAGFL, AFL, AFLINV: begin
-          result[cache_pkt.id] = '0;
-        end
+    if (reset) begin
+      for (integer i = 0; i < mem_size_p; i++)
+        shadow_mem[i] <= '0;
+    end
+    else begin 
+      if (cache_v_li & cache_ready_lo) begin
+        case (cache_pkt.opcode)
+          TAGST, TAGFL, AFL, AFLINV: begin
+            result[cache_pkt.id] = '0;
+          end
 
-        SB, SH, SW, SM: begin
-          result[cache_pkt.id] = '0;
-          for (integer i = 0; i < data_mask_width_lp; i++)
-            if (store_mask[i])
-              shadow_mem[cache_pkt_word_addr][8*i+:8] <= store_data[8*i+:8];
-        end
+          SB, SH, SW, SM: begin
+            result[cache_pkt.id] = '0;
+            for (integer i = 0; i < data_mask_width_lp; i++)
+              if (store_mask[i])
+                shadow_mem[cache_pkt_word_addr][8*i+:8] <= store_data[8*i+:8];
+          end
       
-        LW, LH, LB, LHU, LBU: begin
-          result[cache_pkt.id] = load_data_final;
-        end
-
-      endcase
+          LW, LH, LB, LHU, LBU: begin
+            result[cache_pkt.id] = load_data_final;
+          end
+        endcase
+      end
     end
 
 

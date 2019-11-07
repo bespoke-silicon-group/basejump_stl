@@ -15,6 +15,7 @@ VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4
 #### Test Suite #####
 
 TEST_SUITE =  test_stride test_random test_square test_block test_zorder test_byte
+TEST_SUITE += test_linear
 TEST_SUITE += test_random_flush test_random_afl test_random_aflinv test_random_aflinv2
 TEST_SUITE += test_clean_read
 
@@ -31,12 +32,15 @@ HIGHLIGHT = grep --color -E '^|Fatal|Error|Warning|Implicit wire is used|Too few
 MISS_FIFO_ELS_P   = 32
 DMA_READ_DELAY_P  = 64
 DMA_WRITE_DELAY_P = 64
+DMA_DATA_DELAY_P  = 8
 YUMI_MIN_DELAY_P  = 0
 YUMI_MAX_DELAY_P  = 4
+
 
 VCS_DEFINE =  +define+MISS_FIFO_ELS_P=$(MISS_FIFO_ELS_P)
 VCS_DEFINE += +define+DMA_READ_DELAY_P=$(DMA_READ_DELAY_P)
 VCS_DEFINE += +define+DMA_WRITE_DELAY_P=$(DMA_WRITE_DELAY_P)
+VCS_DEFINE += +define+DMA_DATA_DELAY_P=$(DMA_DATA_DELAY_P)
 VCS_DEFINE += +define+YUMI_MIN_DELAY_P=$(YUMI_MIN_DELAY_P)
 VCS_DEFINE += +define+YUMI_MAX_DELAY_P=$(YUMI_MAX_DELAY_P)
 

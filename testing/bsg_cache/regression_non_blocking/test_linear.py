@@ -7,6 +7,7 @@ class TestLinear(TestBase):
   
   def generate(self):
     self.clear_tag()
+
     for iteration in range(5000):
       length = random.randint(1,32)
       store_not_load = random.randint(0,1)
