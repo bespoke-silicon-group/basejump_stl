@@ -28,23 +28,63 @@ class TestBase:
       self.curr_data += 1 
     elif opcode == LW or opcode == LH or opcode == LB or opcode == LHU or opcode == LBU:
       self.tg.send(self.curr_id, opcode, addr)
-    elif opcode == TAGST or opcode == TAGFL or opcode == AFL or opcode == AFLINV:
+    elif opcode == AFL or opcode == AFLINV:
       self.tg.send(self.curr_id, opcode, addr, data=0)
+    else:
+      raise Exception("don't do this here.")
     self.curr_id += 1
 
+  
+  # TAGST
+  def send_tagst(self, way, index, valid=0, lock=0, tag=0):
+    addr = self.get_addr(way, index)
+    data = (valid << 31) + (lock << 30) + tag
+    self.tg.send(self.curr_id, TAGST, addr, data)
+    self.curr_id += 1
+
+  # TAGFL
+  def send_tagfl(self, way, index):
+    addr = self.get_addr(way, index)
+    self.tg.send(self.curr_id, TAGFL, addr)
+    self.curr_id += 1
+
+  # SW
+  def send_sw(self, addr):
+    self.tg.send(self.curr_id, SW, addr, self.curr_data)
+    self.curr_data += 1
+    self.curr_id += 1
+  
+  # LW
+  def send_lw(self, addr):
+    self.tg.send(self.curr_id, LW, addr)
+    self.curr_id += 1
+    
+
+  #                         #
+  #   COMPOSITE functions   #
+  #                         #
+
+  # clear all tags in the cache
   def clear_tag(self):
-    for i in range(self.sets_p * self.ways_p):
-      self.send(TAGST, i<<5)
+    for way in range(self.ways_p):
+      for index in range(self.sets_p):
+        self.send_tagst(way, index)
 
   def flush_inv(self, way, index):
     addr = self.get_addr(way, index)
-    self.send(TAGFL, addr)
-    self.send(TAGST, addr)
+    self.send_tagfl(way, index)
+    self.send_tagst(way, index)
 
   def flush_inv_all(self):
     for way in range(self.ways_p):
       for index in range(self.sets_p):
         self.flush_inv(way, index)
+
+
+  #                         #
+  #   HELPER FUNCTIONS      #
+  #                         #
+
 
   def get_addr(self, tag, index, block_offset=0, byte_offset=0):
     addr = tag << 12

@@ -15,9 +15,9 @@ VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4
 #### Test Suite #####
 
 TEST_SUITE =  test_stride test_random test_square test_block test_zorder test_byte
-TEST_SUITE += test_linear
+TEST_SUITE += test_linear test_long_interval
 TEST_SUITE += test_random_flush test_random_afl test_random_aflinv test_random_aflinv2
-TEST_SUITE += test_clean_read
+TEST_SUITE += test_clean_read test_invalid_lock test_invalid_lock2
 
 
 #####################

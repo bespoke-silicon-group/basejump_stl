@@ -3,15 +3,22 @@ import random
 from test_base import *
 
 
-class TestRandom(TestBase):
+class TestLongInterval(TestBase):
 
   def generate(self):
     # scrub tag and data
     self.clear_tag()
 
     # random SW/LW
-    for n in range(200000):
-      addr = random.randint(0, (self.MAX_ADDR/4)-1)*4
+    for n in range(15000):
+      delay = random.randint(32,128)
+      self.wait(delay)
+      
+      tag = random.randint(0,8)
+      index = 0
+      block_offset = random.randint(0,3)
+      addr = self.get_addr(tag,index,block_offset) 
+
       store_not_load = random.randint(0,1)
       if store_not_load:
         self.send(SW, addr)
@@ -22,5 +29,5 @@ class TestRandom(TestBase):
           
 #   main()
 if __name__ == "__main__":
-  t = TestRandom()
-  t.generate()
+  rd = TestLongInterval()
+  rd.generate()

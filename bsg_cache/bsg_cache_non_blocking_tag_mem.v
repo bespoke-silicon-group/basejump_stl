@@ -104,7 +104,7 @@ module bsg_cache_non_blocking_tag_mem
         for (integer i = 0 ; i < ways_p; i++) begin
           data_li[i].tag = tag_mem_pkt.data[0+:tag_width_p];
           data_li[i].valid = tag_mem_pkt.data[data_width_p-1];
-          data_li[i].lock = tag_mem_pkt.data[tag_width_p-2];
+          data_li[i].lock = tag_mem_pkt.data[data_width_p-2];
           mask_li[i].tag = {tag_width_p{way_decode[i]}};
           mask_li[i].valid = way_decode[i];
           mask_li[i].lock = way_decode[i];
