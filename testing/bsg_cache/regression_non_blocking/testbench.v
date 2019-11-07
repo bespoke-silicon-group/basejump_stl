@@ -18,11 +18,12 @@ module testbench();
   parameter data_mask_width_lp=(data_width_p>>3);
   parameter mem_size_p = 2**15;
 
-  parameter dma_read_delay_p=`DMA_READ_DELAY_P;
-  parameter dma_write_delay_p=`DMA_WRITE_DELAY_P;
-  parameter dma_data_delay_p=`DMA_DATA_DELAY_P;
-  parameter yumi_max_delay_p=`YUMI_MAX_DELAY_P;
-  parameter yumi_min_delay_p=`YUMI_MIN_DELAY_P;
+  parameter dma_read_delay_p  = `DMA_READ_DELAY_P;
+  parameter dma_write_delay_p = `DMA_WRITE_DELAY_P;
+  parameter dma_data_delay_p  = `DMA_DATA_DELAY_P;
+  parameter dma_req_delay_p   = `DMA_REQ_DELAY_P;
+  parameter yumi_max_delay_p  = `YUMI_MAX_DELAY_P;
+  parameter yumi_min_delay_p  = `YUMI_MIN_DELAY_P;
 
 
   integer status;
@@ -146,6 +147,7 @@ module testbench();
     ,.read_delay_p(dma_read_delay_p)
     ,.write_delay_p(dma_write_delay_p)
     ,.dma_data_delay_p(dma_data_delay_p)
+    ,.dma_req_delay_p(dma_req_delay_p)
   ) dma_model (
     .clk_i(clk)
     ,.reset_i(reset)
