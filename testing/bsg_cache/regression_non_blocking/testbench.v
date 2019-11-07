@@ -296,7 +296,7 @@ module testbench();
     
     if (~reset & cache_v_li & cache_ready_lo) begin
       case (cache_pkt.opcode)
-        TAGST, TAGFL, AFL: begin
+        TAGST, TAGFL, AFL, AFLINV: begin
           result[cache_pkt.id] = '0;
         end
 
@@ -348,10 +348,10 @@ module testbench();
 
 
   initial begin
-    //wait(done & (sent_r == recv_r));
+    wait(done & (sent_r == recv_r));
     $display("[BSG_FINISH] Test Successful.");
-    for (integer i = 0; i < 1000000; i++)
-      @(posedge clk);
+    //for (integer i = 0; i < 1000000; i++)
+    //  @(posedge clk);
     #500;
     $finish;
   end
