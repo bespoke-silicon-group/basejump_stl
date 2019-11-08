@@ -26,6 +26,7 @@ module testbench();
   parameter yumi_min_delay_p  = `YUMI_MIN_DELAY_P;
 
 
+  // synopsys translate_off
   integer status;
   integer wave;
 
@@ -53,6 +54,7 @@ module testbench();
     .clk_i(clk)
     ,.async_reset_o(reset)
   );
+  // synopsys translate_on
 
   // non-blocking cache
   //
@@ -114,27 +116,27 @@ module testbench();
     ,.dma_data_yumi_i(dma_data_yumi_li)
   );
 
+  // synopsys translate_off
 
   // random yumi generator
   //
-  integer counter_r;
- 
+  integer yumi_count_r;
   
   always_ff @ (posedge clk) begin
     if (reset) begin
-      counter_r <= 0;
+      yumi_count_r <= 0;
     end
     else begin
       if (cache_v_lo) begin
-        if (counter_r == 0)
-          counter_r <= $urandom_range(yumi_max_delay_p,yumi_min_delay_p);
+        if (yumi_count_r == 0)
+          yumi_count_r <= $urandom_range(yumi_max_delay_p,yumi_min_delay_p);
         else
-          counter_r <= counter_r - 1;
+          yumi_count_r <= yumi_count_r - 1;
       end
     end
   end
 
-  assign cache_yumi_li = cache_v_lo & (counter_r == 0);
+  assign cache_yumi_li = cache_v_lo & (yumi_count_r == 0);
    
 
   // dma model
@@ -363,5 +365,7 @@ module testbench();
     #500;
     $finish;
   end
+
+  // synopsys translate_on
 
 endmodule

@@ -10,7 +10,7 @@ INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_cache/
 
 VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access
 VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4
-#VCS_FLAGS += -lca -cm line+cond+fsm+tgl+branch+assert
+VCS_FLAGS += -cm line
 
 #### Test Suite #####
 
@@ -62,7 +62,7 @@ out/%/trace.tr:
 	python $*.py > $@
 
 %.run: simv out/%/trace.tr
-	(cd out/$*; $(SIMV) +wave=$(WAVE) -l simv.log)
+	(cd out/$*; $(SIMV) +wave=$(WAVE) -l simv.log -cm line -cm_name $*)
 
 %.dve:
 	$(DVE) -full64 -vpd out/$*/vcdplus.vpd &
