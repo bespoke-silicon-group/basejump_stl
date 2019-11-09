@@ -65,7 +65,8 @@ out/%/trace.tr:
 	python $*.py > $@
 
 %.run: simv out/%/trace.tr
-	(cd out/$*; $(SIMV) +wave=$(WAVE) -l simv.log -cm line -cm_name $*)
+	echo "Running $*..."
+	@(cd out/$*; $(SIMV) +wave=$(WAVE) -l simv.log -cm line -cm_name $*)
 
 %.dve:
 	$(DVE) -full64 -vpd out/$*/vcdplus.vpd &
@@ -74,7 +75,8 @@ cov:
 	$(DVE) -full64 -cov -dir simv.vdb &
 
 summary:
-	@$(foreach test, $(TEST_SUITE), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" out/$(test)/simv.log;)
+	@$(foreach test, $(TEST_SUITE), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
+			-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
 
 clean:
 	rm -rf DVEfiles

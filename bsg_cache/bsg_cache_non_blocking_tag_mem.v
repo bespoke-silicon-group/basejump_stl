@@ -17,7 +17,7 @@ module bsg_cache_non_blocking_tag_mem
     , parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
     , parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
 
-    , parameter debug_p=1
+    , parameter debug_p=0
 
     , parameter tag_mem_pkt_width_lp=
       `bsg_cache_non_blocking_tag_mem_pkt_width(ways_p,sets_p,data_width_p,tag_width_p)
