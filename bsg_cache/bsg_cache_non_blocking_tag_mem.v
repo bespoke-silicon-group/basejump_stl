@@ -17,6 +17,8 @@ module bsg_cache_non_blocking_tag_mem
     , parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
     , parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
 
+    , parameter debug_p=1
+
     , parameter tag_mem_pkt_width_lp=
       `bsg_cache_non_blocking_tag_mem_pkt_width(ways_p,sets_p,data_width_p,tag_width_p)
   )
@@ -194,5 +196,16 @@ module bsg_cache_non_blocking_tag_mem
     assign tag_o[i] = data_lo[i].tag;
   end
 
+
+  // synopsys translate_off
+  always_ff @ (negedge clk_i) begin
+
+    if (v_i & debug_p)
+      $display("[tag_mem] way=%x, index=%x, opcode=%0s, t=%t", tag_mem_pkt.way_id, tag_mem_pkt.index, tag_mem_pkt.opcode.name, $time);
+    
+  end
+
+
+  // synopsys translate_on
 
 endmodule

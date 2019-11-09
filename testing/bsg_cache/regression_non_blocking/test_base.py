@@ -42,11 +42,35 @@ class TestBase:
     self.tg.send(self.curr_id, TAGST, addr, data)
     self.curr_id += 1
 
+  # TAGLA
+  def send_tagla(self, way, index):
+    addr = self.get_addr(way, index)
+    self.tg.send(self.curr_id, TAGLA, addr) 
+    self.curr_id += 1
+
+  # TAGLV
+  def send_taglv(self, way, index):
+    addr = self.get_addr(way, index)
+    self.tg.send(self.curr_id, TAGLV, addr) 
+    self.curr_id += 1
+
   # TAGFL
   def send_tagfl(self, way, index):
     addr = self.get_addr(way, index)
     self.tg.send(self.curr_id, TAGFL, addr)
     self.curr_id += 1
+
+  # ALOCK
+  def send_alock(self, addr):
+    self.tg.send(self.curr_id, ALOCK, addr)
+    self.curr_id += 1
+
+
+  # AUNLOCK
+  def send_aunlock(self, addr):
+    self.tg.send(self.curr_id, AUNLOCK, addr)
+    self.curr_id += 1
+
 
   # SW
   def send_sw(self, addr):

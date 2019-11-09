@@ -400,11 +400,11 @@ module bsg_cache_non_blocking_mhu
           idle_o = miss_fifo_empty_i;
 
           tag_mem_pkt_v_o = miss_fifo_v_i;
-          tag_mem_pkt.index = miss_fifo_entry.addr[block_offset_width_lp+:lg_sets_lp];
+          tag_mem_pkt.index = miss_fifo_index;
           tag_mem_pkt.opcode = e_tag_read;
 
           stat_mem_pkt_v_o = miss_fifo_v_i;
-          stat_mem_pkt.index = miss_fifo_entry.addr[block_offset_width_lp+:lg_sets_lp];
+          stat_mem_pkt.index = miss_fifo_index;
           stat_mem_pkt.opcode = e_stat_read;
 
           mhu_state_n = (miss_fifo_v_i & ~tl_block_loading_i)
@@ -511,7 +511,7 @@ module bsg_cache_non_blocking_mhu
             tag_mem_pkt.opcode = e_tag_lock;
         
             mhu_state_n = mhu_dff_r.tag_hit_found
-              ? IDLE
+              ? (mgmt_data_yumi_i ? IDLE : MGMT_OP)
               : SEND_MGMT_DMA;
           end
           // AUNLOCK: if there is tag hit, then unlock the line.
@@ -636,12 +636,11 @@ module bsg_cache_non_blocking_mhu
         recover_o = 1'b1;
         dma_cmd_v_o = 1'b1;
         dma_cmd_out.way_id = replacement_way_id;
-        dma_cmd_out.index = miss_fifo_entry.addr[block_offset_width_lp+:lg_sets_lp]; 
+        dma_cmd_out.index = miss_fifo_index; 
         dma_cmd_out.refill = 1'b1;
         dma_cmd_out.evict = replacement_valid & replacement_dirty;
-        dma_cmd_out.refill_tag = miss_fifo_entry.addr[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
+        dma_cmd_out.refill_tag = miss_fifo_tag;
         dma_cmd_out.evict_tag = replacement_tag;
-        
  
         mhu_state_n = WAIT_DMA_DONE;
       end
@@ -826,6 +825,16 @@ module bsg_cache_non_blocking_mhu
       set_dirty_r <= set_dirty_n;
     end
   end
+
+  // synopsys translate_off
+  always_ff @ (negedge clk_i) begin
+    if (~reset_i) begin
+      if (dma_cmd_v_o)
+        assert(~mhu_dff_r.lock[replacement_way_id]) 
+          else $error("[BSG_ERROR] can't replace locked way.");
+    end
+  end
+  // synopsys translate_on
 
 
 endmodule

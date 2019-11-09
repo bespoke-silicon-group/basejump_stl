@@ -25,6 +25,12 @@ module testbench();
   parameter yumi_max_delay_p  = `YUMI_MAX_DELAY_P;
   parameter yumi_min_delay_p  = `YUMI_MIN_DELAY_P;
 
+  localparam lg_ways_lp = `BSG_SAFE_CLOG2(ways_p);
+  localparam lg_sets_lp = `BSG_SAFE_CLOG2(sets_p);
+  localparam lg_block_size_in_words_lp = `BSG_SAFE_CLOG2(block_size_in_words_p);
+  localparam byte_sel_width_lp = `BSG_SAFE_CLOG2(data_width_p>>3);
+  localparam tag_width_lp = (addr_width_p-lg_sets_lp-lg_block_size_in_words_lp-byte_sel_width_lp);
+  localparam block_offset_width_lp = lg_block_size_in_words_lp+byte_sel_width_lp;
 
   // synopsys translate_off
   integer status;
@@ -224,6 +230,13 @@ module testbench();
   logic [addr_width_p-1:0] cache_pkt_word_addr;
   assign cache_pkt_word_addr = cache_pkt.addr[addr_width_p-1:2];
 
+  // tag consistency checking
+
+  `declare_bsg_cache_non_blocking_tag_info_s(tag_width_lp);
+  bsg_cache_non_blocking_tag_info_s [ways_p-1:0][sets_p-1:0] shadow_tag;
+  wire [lg_ways_lp-1:0] addr_way = cache_pkt.addr[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
+  wire [lg_sets_lp-1:0] addr_index = cache_pkt.addr[block_offset_width_lp+:lg_sets_lp];
+
   // store logic
   logic [data_width_p-1:0] store_data;
   logic [data_mask_width_lp-1:0] store_mask;
@@ -300,13 +313,44 @@ module testbench();
 
   always_ff @ (posedge clk) begin
     if (reset) begin
+
       for (integer i = 0; i < mem_size_p; i++)
         shadow_mem[i] <= '0;
+
+      for (integer i = 0; i < ways_p; i++)
+        for (integer j = 0; j < ways_p; j++)
+          shadow_tag[i][j] <= '0;
+
     end
     else begin 
       if (cache_v_li & cache_ready_lo) begin
         case (cache_pkt.opcode)
-          TAGST, TAGFL, AFL, AFLINV: begin
+          TAGST: begin
+            result[cache_pkt.id] = '0;
+            shadow_tag[addr_way][addr_index].tag <= cache_pkt.data[0+:tag_width_lp];
+            shadow_tag[addr_way][addr_index].valid <= cache_pkt.data[data_width_p-1];
+            shadow_tag[addr_way][addr_index].lock <= cache_pkt.data[data_width_p-2];
+          end
+
+          TAGLV: begin
+            result[cache_pkt.id] = '0;
+            result[cache_pkt.id][1] = shadow_tag[addr_way][addr_index].lock;
+            result[cache_pkt.id][0] = shadow_tag[addr_way][addr_index].valid;
+          end
+      
+          TAGLA: begin
+            result[cache_pkt.id] = {
+              shadow_tag[addr_way][addr_index].tag,
+              addr_index,
+              {block_offset_width_lp{1'b0}}
+            };
+          end
+
+          ALOCK, AUNLOCK: begin
+            result[cache_pkt.id] = '0;
+          end
+
+          TAGFL, AFL, AFLINV: begin
             result[cache_pkt.id] = '0;
           end
 

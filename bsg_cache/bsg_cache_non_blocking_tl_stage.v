@@ -342,20 +342,28 @@ module bsg_cache_non_blocking_tl_stage
     // If there is cache management op, wait for MHU to yumi.
     // Either mgmt or load/store op can come in next.
     if (mgmt_op_tl) begin
-      ready_o = mgmt_yumi_i;
+      ready_o = mgmt_yumi_i & ~mhu_tag_mem_pkt_v_i;
       v_tl_n = mgmt_yumi_i
-        ? v_i
+        ? (mhu_tag_mem_pkt_v_i
+          ? 1'b0
+          : v_i)
         : v_tl_r;
 
-      tl_we = mgmt_yumi_i & v_i;
+      tl_we = mgmt_yumi_i & v_i & ~mhu_tag_mem_pkt_v_i;
   
-      tag_mem_v_li = mgmt_yumi_i & v_i;
-      tag_mem_pkt.way_id = addr_way;
-      tag_mem_pkt.index = addr_index;
-      tag_mem_pkt.data = data_i;
-      tag_mem_pkt.opcode = decode_i.tagst_op
-        ? e_tag_store
-        : e_tag_read;
+      tag_mem_v_li = mgmt_yumi_i & (v_i | mhu_tag_mem_pkt_v_i);
+
+      if (mhu_tag_mem_pkt_v_i) begin
+        tag_mem_pkt = mhu_tag_mem_pkt;
+      end
+      else begin
+        tag_mem_pkt.way_id = addr_way;
+        tag_mem_pkt.index = addr_index;
+        tag_mem_pkt.data = data_i;
+        tag_mem_pkt.opcode = decode_i.tagst_op
+          ? e_tag_store
+          : e_tag_read;
+      end
     end
     // The recover signal from MHU forces the TL stage to read the tag_mem
     // again using addr_tl. Recover logic is necessary, because when the MHU
@@ -461,6 +469,10 @@ module bsg_cache_non_blocking_tl_stage
     if (~reset_i & v_tl_r) begin
       assert($countones(tag_hit) <= 1) 
         else $error("[BSG_ERROR] %m. t=%t. multiple hits detected.", $time); 
+    end
+    if (~reset_i & v_tl_r) begin
+      assert($countones(lock_tl) <= ways_p-2)
+        else $error("[BSG_ERROR] %m. t=%t. There needs to be at least 2 unlocked ways.]", $time);
     end
   end
   // synopsys translate_on

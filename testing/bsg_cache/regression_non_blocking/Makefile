@@ -18,6 +18,7 @@ TEST_SUITE =  test_stride test_random test_square test_block test_zorder test_by
 TEST_SUITE += test_linear test_long_interval
 TEST_SUITE += test_random_flush test_random_afl test_random_aflinv test_random_aflinv2
 TEST_SUITE += test_clean_read test_invalid_lock test_invalid_lock2
+TEST_SUITE += test_tag_access test_alock
 
 
 #####################
@@ -51,11 +52,13 @@ VCS_DEFINE += +define+YUMI_MAX_DELAY_P=$(YUMI_MAX_DELAY_P)
 SIMV = $(abspath simv)
 WAVE ?= 0
 
+.PRECIOUS: $(addprefix out/, $(addsuffix /trace.tr, $(TEST_SUITE)))
+
 all: $(addsuffix .run, $(TEST_SUITE))
 
 simv:
 	$(VCS) $(VCS_FLAGS) -f sv.include $(INCDIR) $(VCS_DEFINE) -l vcs.log | $(HIGHLIGHT)
-	
+
 out/%/trace.tr:
 	mkdir -p out/
 	mkdir -p out/$*
