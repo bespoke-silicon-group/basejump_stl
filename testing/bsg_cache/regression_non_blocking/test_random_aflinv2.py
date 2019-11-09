@@ -27,7 +27,7 @@ class TestRandomAFLINV2(TestBase):
       index = random.randint(0,1)
       store_not_load = random.randint(0,1)
       taddr = self.get_addr(tag, index)
-      self.send(AFLINV, taddr)
+      self.send_aflinv(taddr)
 
     self.tg.done()
           

@@ -10,21 +10,20 @@ INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_cache/
 
 VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access
 VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4
-VCS_FLAGS += -cm line+fsm
 
 #### Test Suite #####
 
 BASIC_TEST =  test_stride test_random test_square test_block test_zorder test_byte
 BASIC_TEST += test_linear test_long_interval
 BASIC_TEST += test_random_flush test_random_afl test_random_aflinv test_random_aflinv2
-BASIC_TEST += test_clean_read test_invalid_lock test_invalid_lock2
+BASIC_TEST += test_clean_read test_invalid_lock test_invalid_lock2 test_pe_cover
 BASIC_TEST += test_alock
 
 TAG_TEST = test_tag_access
 
 AINV_TEST = test_ainv
 
-BLOCK_LD_TEST = test_block_ld
+BLOCK_LD_TEST = test_block_ld test_block_ld2
 
 #####################
 
@@ -70,25 +69,28 @@ tag_test: $(addsuffix .tag.run, $(TAG_TEST))
 ainv_test: $(addsuffix .ainv.run, $(AINV_TEST))
 block_ld_test: $(addsuffix .block_ld.run, $(BLOCK_LD_TEST))
 
+# coverage options
+CM_OPT = -cm line+fsm+branch
+
 simv:
-	$(VCS) $(VCS_FLAGS) -f sv.include $(INCDIR) $(VCS_DEFINE) -l vcs.log | $(HIGHLIGHT)
+	$(VCS) $(VCS_FLAGS) $(CM_OPT) -f sv.include $(INCDIR) $(VCS_DEFINE) -l vcs.log | $(HIGHLIGHT)
 
 out/%/trace.tr:
 	mkdir -p out/
 	mkdir -p out/$*
 	python $*.py > $@
 
-%.basic.run: simv $(BASIC_TRACE_TR)
-	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=basic -l simv.log -cm line+fsm -cm_name $*)
+%.basic.run: simv out/%/trace.tr
+	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=basic -l simv.log $(CM_OPT) -cm_name $*)
 
-%.tag.run: simv $(TAG_TRACE_TR)
-	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=tag -l simv.log -cm line+fsm -cm_name $*)
+%.tag.run: simv out/%/trace.tr
+	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=tag -l simv.log $(CM_OPT) -cm_name $*)
 
-%.ainv.run: simv $(AINV_TRACE_TR)
-	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=ainv -l simv.log -cm line+fsm -cm_name $*)
+%.ainv.run: simv out/%/trace.tr
+	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=ainv -l simv.log $(CM_OPT) -cm_name $*)
 
-%.block_ld.run: simv $(BLOCK_LD_TRACE_TR)
-	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=block_ld -l simv.log -cm line+fsm -cm_name $*)
+%.block_ld.run: simv out/%/trace.tr
+	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=block_ld -l simv.log $(CM_OPT) -cm_name $*)
 
 %.dve:
 	$(DVE) -full64 -vpd out/$*/vcdplus.vpd &

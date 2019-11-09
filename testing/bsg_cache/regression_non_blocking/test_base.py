@@ -28,7 +28,7 @@ class TestBase:
       self.curr_data += 1 
     elif opcode == LW or opcode == LH or opcode == LB or opcode == LHU or opcode == LBU:
       self.tg.send(self.curr_id, opcode, addr)
-    elif opcode == AFL or opcode == AFLINV:
+    elif opcode == AFL:
       self.tg.send(self.curr_id, opcode, addr, data=0)
     else:
       raise Exception("don't do this here.")
@@ -70,6 +70,10 @@ class TestBase:
     self.tg.send(self.curr_id, ALOCK, addr)
     self.curr_id += 1
 
+  # AFLINV
+  def send_aflinv(self, addr):
+    self.tg.send(self.curr_id, AFLINV, addr)
+    self.curr_id += 1
 
   # AUNLOCK
   def send_aunlock(self, addr):

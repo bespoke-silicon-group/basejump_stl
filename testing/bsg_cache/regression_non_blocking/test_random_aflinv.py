@@ -36,7 +36,7 @@ class TestRandomAFLINV(TestBase):
         tag = random.randint(0,9)
         index = random.randint(0,3)
         taddr = self.get_addr(tag, index)
-        self.send(AFLINV, taddr)
+        self.send_aflinv(taddr)
 
     self.tg.done()
           
