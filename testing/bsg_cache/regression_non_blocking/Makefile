@@ -10,7 +10,7 @@ INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_cache/
 
 VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access
 VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4
-VCS_FLAGS += -cm line
+VCS_FLAGS += -cm line+fsm
 
 #### Test Suite #####
 
@@ -79,16 +79,16 @@ out/%/trace.tr:
 	python $*.py > $@
 
 %.basic.run: simv $(BASIC_TRACE_TR)
-	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=basic -l simv.log -cm line -cm_name $*)
+	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=basic -l simv.log -cm line+fsm -cm_name $*)
 
 %.tag.run: simv $(TAG_TRACE_TR)
-	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=tag -l simv.log -cm line -cm_name $*)
+	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=tag -l simv.log -cm line+fsm -cm_name $*)
 
 %.ainv.run: simv $(AINV_TRACE_TR)
-	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=ainv -l simv.log -cm line -cm_name $*)
+	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=ainv -l simv.log -cm line+fsm -cm_name $*)
 
 %.block_ld.run: simv $(BLOCK_LD_TRACE_TR)
-	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=block_ld -l simv.log -cm line -cm_name $*)
+	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=block_ld -l simv.log -cm line+fsm -cm_name $*)
 
 %.dve:
 	$(DVE) -full64 -vpd out/$*/vcdplus.vpd &
