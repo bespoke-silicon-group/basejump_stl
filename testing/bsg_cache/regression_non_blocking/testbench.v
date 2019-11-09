@@ -35,11 +35,14 @@ module testbench();
   // synopsys translate_off
   integer status;
   integer wave;
+  string checker;
 
   initial begin
     status = $value$plusargs("wave=%d",wave);
+    status = $value$plusargs("checker=%s",checker);
     if (wave) $vcdpluson;
   end
+
 
   // clock and reset
   //
@@ -61,6 +64,7 @@ module testbench();
     ,.async_reset_o(reset)
   );
   // synopsys translate_on
+
 
   // non-blocking cache
   //
@@ -126,24 +130,16 @@ module testbench();
 
   // random yumi generator
   //
-  integer yumi_count_r;
-  
-  always_ff @ (posedge clk) begin
-    if (reset) begin
-      yumi_count_r <= 0;
-    end
-    else begin
-      if (cache_v_lo) begin
-        if (yumi_count_r == 0)
-          yumi_count_r <= $urandom_range(yumi_max_delay_p,yumi_min_delay_p);
-        else
-          yumi_count_r <= yumi_count_r - 1;
-      end
-    end
-  end
+  bsg_nonsynth_random_yumi_gen #(
+    .yumi_min_delay_p(yumi_min_delay_p)
+    ,.yumi_max_delay_p(yumi_max_delay_p)
+  ) yumi_gen (
+    .clk_i(clk)
+    ,.reset_i(reset)
 
-  assign cache_yumi_li = cache_v_lo & (yumi_count_r == 0);
-   
+    ,.v_i(cache_v_lo)
+    ,.yumi_o(cache_yumi_li)
+  ); 
 
   // dma model
   //
@@ -172,6 +168,7 @@ module testbench();
     ,.dma_data_v_i(dma_data_v_lo)
     ,.dma_data_yumi_o(dma_data_yumi_li) 
   );
+
 
   // trace replay
   //
@@ -219,164 +216,37 @@ module testbench();
     ,.data_o(trace_rom_data)
   );
 
+
   assign cache_pkt = tr_data_lo;
   assign cache_v_li = tr_v_lo;
   assign tr_yumi_li = tr_v_lo & cache_ready_lo;
 
-  // consistency checking
-  logic [data_width_p-1:0] shadow_mem [mem_size_p-1:0];    // indexed by addr.
-  logic [data_width_p-1:0] result [*]; // indexed by id.
 
-  logic [addr_width_p-1:0] cache_pkt_word_addr;
-  assign cache_pkt_word_addr = cache_pkt.addr[addr_width_p-1:2];
-
-  // tag consistency checking
-
-  `declare_bsg_cache_non_blocking_tag_info_s(tag_width_lp);
-  bsg_cache_non_blocking_tag_info_s [ways_p-1:0][sets_p-1:0] shadow_tag;
-  wire [lg_ways_lp-1:0] addr_way = cache_pkt.addr[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
-  wire [lg_sets_lp-1:0] addr_index = cache_pkt.addr[block_offset_width_lp+:lg_sets_lp];
-
-  // store logic
-  logic [data_width_p-1:0] store_data;
-  logic [data_mask_width_lp-1:0] store_mask;
-
-  always_comb begin
-    case (cache_pkt.opcode)
-      SW: begin
-        store_data = cache_pkt.data;
-        store_mask = 4'b1111;
-      end
-      SH: begin
-        store_data = {2{cache_pkt.data[15:0]}};
-        store_mask = {
-          {2{ cache_pkt.addr[1]}},
-          {2{~cache_pkt.addr[1]}}
-        };
-      end
-      SB: begin
-        store_data = {4{cache_pkt.data[7:0]}};
-        store_mask = {
-           cache_pkt.addr[1] &  cache_pkt.addr[0],
-           cache_pkt.addr[1] & ~cache_pkt.addr[0],
-          ~cache_pkt.addr[1] &  cache_pkt.addr[0],
-          ~cache_pkt.addr[1] & ~cache_pkt.addr[0]
-        };
-      end
-      SM: begin
-        store_data = cache_pkt.data;
-        store_mask = cache_pkt.mask;
-      end
-      default: begin
-        store_data = '0;
-        store_mask = '0;
-      end
-    endcase
-  end
-
-  // load logic
-  logic [data_width_p-1:0] load_data, load_data_final;
-  logic [7:0] byte_sel;
-  logic [15:0] half_sel;
-
-  assign load_data = shadow_mem[cache_pkt_word_addr];
-
-  bsg_mux #(
-    .els_p(4)
-    ,.width_p(8)
-  ) byte_mux (
-    .data_i(load_data)
-    ,.sel_i(cache_pkt.addr[1:0])
-    ,.data_o(byte_sel)
+  bind bsg_cache_non_blocking basic_checker #(
+    .data_width_p(data_width_p)
+    ,.id_width_p(id_width_p)
+    ,.addr_width_p(addr_width_p)
+    ,.cache_pkt_width_lp(cache_pkt_width_lp)
+    ,.mem_size_p($root.testbench.mem_size_p)
+  ) bc (
+    .*
+    ,.en_i($root.testbench.checker == "basic")
   );
 
-  bsg_mux #(
-    .els_p(2)
-    ,.width_p(16)
-  ) half_mux (
-    .data_i(load_data)
-    ,.sel_i(cache_pkt.addr[1])
-    ,.data_o(half_sel)
+
+  bind bsg_cache_non_blocking tag_checker #(
+    .data_width_p(data_width_p)
+    ,.id_width_p(id_width_p)
+    ,.addr_width_p(addr_width_p)
+    ,.tag_width_lp(tag_width_lp)
+    ,.ways_p(ways_p)
+    ,.sets_p(sets_p)
+    ,.block_size_in_words_p(block_size_in_words_p)
+    ,.cache_pkt_width_lp(cache_pkt_width_lp)
+  ) tc (
+    .*
+    ,.en_i($root.testbench.checker == "tag")
   );
-
-  always_comb begin
-    case (cache_pkt.opcode)
-      LW: load_data_final = load_data;
-      LH: load_data_final = {{16{half_sel[15]}}, half_sel};
-      LB: load_data_final = {{24{byte_sel[7]}}, byte_sel};
-      LHU: load_data_final = {{16{1'b0}}, half_sel};
-      LBU: load_data_final = {{24{1'b0}}, byte_sel};
-      default: load_data_final = '0;
-    endcase
-  end
-
-
-  always_ff @ (posedge clk) begin
-    if (reset) begin
-
-      for (integer i = 0; i < mem_size_p; i++)
-        shadow_mem[i] <= '0;
-
-      for (integer i = 0; i < ways_p; i++)
-        for (integer j = 0; j < ways_p; j++)
-          shadow_tag[i][j] <= '0;
-
-    end
-    else begin 
-      if (cache_v_li & cache_ready_lo) begin
-        case (cache_pkt.opcode)
-          TAGST: begin
-            result[cache_pkt.id] = '0;
-            shadow_tag[addr_way][addr_index].tag <= cache_pkt.data[0+:tag_width_lp];
-            shadow_tag[addr_way][addr_index].valid <= cache_pkt.data[data_width_p-1];
-            shadow_tag[addr_way][addr_index].lock <= cache_pkt.data[data_width_p-2];
-          end
-
-          TAGLV: begin
-            result[cache_pkt.id] = '0;
-            result[cache_pkt.id][1] = shadow_tag[addr_way][addr_index].lock;
-            result[cache_pkt.id][0] = shadow_tag[addr_way][addr_index].valid;
-          end
-      
-          TAGLA: begin
-            result[cache_pkt.id] = {
-              shadow_tag[addr_way][addr_index].tag,
-              addr_index,
-              {block_offset_width_lp{1'b0}}
-            };
-          end
-
-          ALOCK, AUNLOCK: begin
-            result[cache_pkt.id] = '0;
-          end
-
-          TAGFL, AFL, AFLINV: begin
-            result[cache_pkt.id] = '0;
-          end
-
-          SB, SH, SW, SM: begin
-            result[cache_pkt.id] = '0;
-            for (integer i = 0; i < data_mask_width_lp; i++)
-              if (store_mask[i])
-                shadow_mem[cache_pkt_word_addr][8*i+:8] <= store_data[8*i+:8];
-          end
-      
-          LW, LH, LB, LHU, LBU: begin
-            result[cache_pkt.id] = load_data_final;
-          end
-        endcase
-      end
-    end
-
-
-    if (~reset & cache_v_lo & cache_yumi_li) begin
-      $display("id=%d, data=%x", cache_id_lo, cache_data_lo);
-      assert(result[cache_id_lo] == cache_data_lo)
-        else $fatal("[BSG_FATAL] Output does not match expected result. Id= %d, Expected: %x. Actual: %x",
-              cache_id_lo, result[cache_id_lo], cache_data_lo);
-    end
-
-  end
 
 
   // waiting for all responses to be received.

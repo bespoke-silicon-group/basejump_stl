@@ -14,12 +14,17 @@ VCS_FLAGS += -cm line
 
 #### Test Suite #####
 
-TEST_SUITE =  test_stride test_random test_square test_block test_zorder test_byte
-TEST_SUITE += test_linear test_long_interval
-TEST_SUITE += test_random_flush test_random_afl test_random_aflinv test_random_aflinv2
-TEST_SUITE += test_clean_read test_invalid_lock test_invalid_lock2
-TEST_SUITE += test_tag_access test_alock
+BASIC_TEST =  test_stride test_random test_square test_block test_zorder test_byte
+BASIC_TEST += test_linear test_long_interval
+BASIC_TEST += test_random_flush test_random_afl test_random_aflinv test_random_aflinv2
+BASIC_TEST += test_clean_read test_invalid_lock test_invalid_lock2
+BASIC_TEST += test_alock
 
+TAG_TEST = test_tag_access
+
+AINV_TEST = test_ainv
+
+BLOCK_LD_TEST = test_block_load
 
 #####################
 
@@ -38,7 +43,6 @@ DMA_REQ_DELAY_P  = 4
 YUMI_MIN_DELAY_P  = 0
 YUMI_MAX_DELAY_P  = 4
 
-
 VCS_DEFINE =  +define+MISS_FIFO_ELS_P=$(MISS_FIFO_ELS_P)
 VCS_DEFINE += +define+DMA_READ_DELAY_P=$(DMA_READ_DELAY_P)
 VCS_DEFINE += +define+DMA_WRITE_DELAY_P=$(DMA_WRITE_DELAY_P)
@@ -52,9 +56,15 @@ VCS_DEFINE += +define+YUMI_MAX_DELAY_P=$(YUMI_MAX_DELAY_P)
 SIMV = $(abspath simv)
 WAVE ?= 0
 
-.PRECIOUS: $(addprefix out/, $(addsuffix /trace.tr, $(TEST_SUITE)))
+BASIC_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BASIC_TEST)))
+TAG_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(TAG_TEST)))
 
-all: $(addsuffix .run, $(TEST_SUITE))
+.PRECIOUS: $(BASIC_TRACE_TR) $(TAG_TRACE_TR)
+
+all: basic_test tag_test
+
+basic_test: $(addsuffix .basic.run, $(BASIC_TEST))
+tag_test: $(addsuffix .tag.run, $(TAG_TEST))
 
 simv:
 	$(VCS) $(VCS_FLAGS) -f sv.include $(INCDIR) $(VCS_DEFINE) -l vcs.log | $(HIGHLIGHT)
@@ -64,9 +74,11 @@ out/%/trace.tr:
 	mkdir -p out/$*
 	python $*.py > $@
 
-%.run: simv out/%/trace.tr
-	echo "Running $*..."
-	@(cd out/$*; $(SIMV) +wave=$(WAVE) -l simv.log -cm line -cm_name $*)
+%.basic.run: simv out/%/trace.tr
+	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=basic -l simv.log -cm line -cm_name $*)
+
+%.tag.run: simv out/%/trace.tr
+	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=tag -l simv.log -cm line -cm_name $*)
 
 %.dve:
 	$(DVE) -full64 -vpd out/$*/vcdplus.vpd &
@@ -75,7 +87,9 @@ cov:
 	$(DVE) -full64 -cov -dir simv.vdb &
 
 summary:
-	@$(foreach test, $(TEST_SUITE), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
+	@$(foreach test, $(BASIC_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
+			-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
+	@$(foreach test, $(TAG_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
 			-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
 
 clean:
