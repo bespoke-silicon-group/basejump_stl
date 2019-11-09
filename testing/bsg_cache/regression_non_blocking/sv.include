@@ -59,4 +59,5 @@ bsg_nonsynth_random_yumi_gen.v
 basic_checker.v
 tag_checker.v
 ainv_checker.v
+block_ld_checker.v
 testbench.v

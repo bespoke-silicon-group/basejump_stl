@@ -255,6 +255,18 @@ module testbench();
     ,.en_i($root.testbench.checker == "ainv")
   );
 
+  bind bsg_cache_non_blocking block_ld_checker #(
+    .data_width_p(data_width_p)
+    ,.id_width_p(id_width_p)
+    ,.addr_width_p(addr_width_p)
+    ,.block_size_in_words_p(block_size_in_words_p)
+    ,.cache_pkt_width_lp(cache_pkt_width_lp)
+    ,.mem_size_p($root.testbench.mem_size_p)
+  ) blc (
+    .*
+    ,.en_i($root.testbench.checker == "block_ld")
+  );
+
 
   // waiting for all responses to be received.
   //
@@ -268,7 +280,10 @@ module testbench();
     else begin
 
       if (cache_v_li & cache_ready_lo)
-        sent_r <= sent_r + 1;
+        if (cache_pkt.opcode == BLOCK_LD)
+          sent_r <= sent_r + block_size_in_words_p;
+        else 
+          sent_r <= sent_r + 1;
 
       if (cache_v_lo & cache_yumi_li)
         recv_r <= recv_r + 1;

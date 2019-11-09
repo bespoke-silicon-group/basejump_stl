@@ -77,6 +77,12 @@ class TestBase:
     self.curr_id += 1
 
 
+  # BLOCK_LD
+  def send_block_ld(self, addr):
+    base_addr = addr - (addr % (self.block_size_in_words_p*4))
+    self.tg.send(self.curr_id, BLOCK_LD, base_addr)
+    self.curr_id += 1
+
   # SW
   def send_sw(self, addr):
     self.tg.send(self.curr_id, SW, addr, self.curr_data)

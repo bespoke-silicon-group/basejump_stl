@@ -24,7 +24,7 @@ TAG_TEST = test_tag_access
 
 AINV_TEST = test_ainv
 
-BLOCK_LD_TEST = test_block_load
+BLOCK_LD_TEST = test_block_ld
 
 #####################
 
@@ -59,14 +59,16 @@ WAVE ?= 0
 BASIC_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BASIC_TEST)))
 TAG_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(TAG_TEST)))
 AINV_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(AINV_TEST)))
+BLOCK_LD_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BLOCK_LD_TEST)))
 
 .PRECIOUS: $(BASIC_TRACE_TR) $(TAG_TRACE_TR) $(AINV_TRACE_TR)
 
-all: basic_test tag_test ainv_test
+all: basic_test tag_test ainv_test block_ld_test
 
 basic_test: $(addsuffix .basic.run, $(BASIC_TEST))
 tag_test: $(addsuffix .tag.run, $(TAG_TEST))
 ainv_test: $(addsuffix .ainv.run, $(AINV_TEST))
+block_ld_test: $(addsuffix .block_ld.run, $(BLOCK_LD_TEST))
 
 simv:
 	$(VCS) $(VCS_FLAGS) -f sv.include $(INCDIR) $(VCS_DEFINE) -l vcs.log | $(HIGHLIGHT)
@@ -85,6 +87,9 @@ out/%/trace.tr:
 %.ainv.run: simv $(AINV_TRACE_TR)
 	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=ainv -l simv.log -cm line -cm_name $*)
 
+%.block_ld.run: simv $(BLOCK_LD_TRACE_TR)
+	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=block_ld -l simv.log -cm line -cm_name $*)
+
 %.dve:
 	$(DVE) -full64 -vpd out/$*/vcdplus.vpd &
 
@@ -97,6 +102,8 @@ summary:
 	@$(foreach test, $(TAG_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
 			-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
 	@$(foreach test, $(AINV_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
+			-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
+	@$(foreach test, $(BLOCK_LD_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
 			-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
 
 clean:
