@@ -54,7 +54,8 @@ VCS_BIN_DIR ?= $(VCS_HOME)/bin
 COMPILE_ARGS ?= \
     -timescale=1ps/1ps \
     $(addprefix +incdir+,$(BSG_VERILOG_INCDIRS)) \
-    $(addprefix -pvalue+,$(BSG_TOPLEVEL_PVALS))
+    $(addprefix -pvalue+,$(BSG_TOPLEVEL_PVALS)) \
+    $(BSG_COMPILE_ARGS)
 
 # Any arguments or flags to pass to the execution of the compiled simulation.
 #SIM_ARGS ?=
@@ -84,7 +85,8 @@ VERILATOR_TRACE ?= 1
 # Any arguments or flags to pass to the compile stage of the simulation.
 COMPILE_ARGS ?= \
     $(addprefix +incdir+,$(BSG_VERILOG_INCDIRS)) \
-    $(addprefix -pvalue+,$(BSG_TOPLEVEL_PVALS))
+    $(addprefix -pvalue+,$(BSG_TOPLEVEL_PVALS)) \
+    $(BSG_COMPILE_ARGS)
 
 # Any arguments or flags to pass to the execution of the compiled simulation.
 #SIM_ARGS ?=

@@ -21,6 +21,7 @@ export BSG_TOPLEVEL_MODULE :=$(shell python $(READ_JSON_CONFIG_PY) $(CFG) toplev
 export BSG_PY_TEST_MODULES :=$(shell python $(READ_JSON_CONFIG_PY) $(CFG) test_modules)
 export BSG_VERILOG_SOURCES :=$(addprefix $(shell git rev-parse --show-toplevel)/,$(shell python $(READ_JSON_CONFIG_PY) $(CFG) filelist))
 export BSG_VERILOG_INCDIRS :=$(addprefix $(shell git rev-parse --show-toplevel)/,$(shell python $(READ_JSON_CONFIG_PY) $(CFG) include))
+export BSG_COMPILE_ARGS :=$(shell python $(READ_JSON_CONFIG_PY) $(CFG) compile_args)
 
 #===============================================================================
 # Spawn Test Parameterization Targets

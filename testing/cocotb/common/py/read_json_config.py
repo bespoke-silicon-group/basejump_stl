@@ -40,6 +40,10 @@ elif act == 'filelist':
 elif act == 'include':
   print(' '.join(cfg[act]))
 
+# Print a space separated string of all simulator compilation arguments
+elif act == 'compile_args':
+  print(' '.join(cfg[act]))
+
 # Print a space separated string of parameterizations. Each parameterization is
 # in the form "name%k0=v0%k1=v1...". This string is a % delimited string. The
 # first delimited item is the name of the run. This corresponds to the 'name'
