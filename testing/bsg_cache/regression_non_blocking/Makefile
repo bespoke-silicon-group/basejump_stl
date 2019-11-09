@@ -58,13 +58,15 @@ WAVE ?= 0
 
 BASIC_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BASIC_TEST)))
 TAG_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(TAG_TEST)))
+AINV_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(AINV_TEST)))
 
-.PRECIOUS: $(BASIC_TRACE_TR) $(TAG_TRACE_TR)
+.PRECIOUS: $(BASIC_TRACE_TR) $(TAG_TRACE_TR) $(AINV_TRACE_TR)
 
-all: basic_test tag_test
+all: basic_test tag_test ainv_test
 
 basic_test: $(addsuffix .basic.run, $(BASIC_TEST))
 tag_test: $(addsuffix .tag.run, $(TAG_TEST))
+ainv_test: $(addsuffix .ainv.run, $(AINV_TEST))
 
 simv:
 	$(VCS) $(VCS_FLAGS) -f sv.include $(INCDIR) $(VCS_DEFINE) -l vcs.log | $(HIGHLIGHT)
@@ -74,11 +76,14 @@ out/%/trace.tr:
 	mkdir -p out/$*
 	python $*.py > $@
 
-%.basic.run: simv out/%/trace.tr
+%.basic.run: simv $(BASIC_TRACE_TR)
 	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=basic -l simv.log -cm line -cm_name $*)
 
-%.tag.run: simv out/%/trace.tr
+%.tag.run: simv $(TAG_TRACE_TR)
 	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=tag -l simv.log -cm line -cm_name $*)
+
+%.ainv.run: simv $(AINV_TRACE_TR)
+	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=ainv -l simv.log -cm line -cm_name $*)
 
 %.dve:
 	$(DVE) -full64 -vpd out/$*/vcdplus.vpd &
@@ -90,6 +95,8 @@ summary:
 	@$(foreach test, $(BASIC_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
 			-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
 	@$(foreach test, $(TAG_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
+			-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
+	@$(foreach test, $(AINV_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
 			-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
 
 clean:

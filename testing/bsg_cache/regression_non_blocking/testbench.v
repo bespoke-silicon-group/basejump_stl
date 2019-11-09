@@ -248,6 +248,13 @@ module testbench();
     ,.en_i($root.testbench.checker == "tag")
   );
 
+  bind bsg_cache_non_blocking ainv_checker #(
+    .data_width_p(data_width_p)
+  ) ac (
+    .*
+    ,.en_i($root.testbench.checker == "ainv")
+  );
+
 
   // waiting for all responses to be received.
   //

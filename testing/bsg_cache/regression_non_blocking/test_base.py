@@ -60,6 +60,11 @@ class TestBase:
     self.tg.send(self.curr_id, TAGFL, addr)
     self.curr_id += 1
 
+  # AINV
+  def send_ainv(self, addr):
+    self.tg.send(self.curr_id, AINV, addr)
+    self.curr_id += 1
+
   # ALOCK
   def send_alock(self, addr):
     self.tg.send(self.curr_id, ALOCK, addr)
