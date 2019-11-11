@@ -276,6 +276,9 @@ module testbench();
     .*
   );
 
+  bind bsg_cache_non_blocking_tl_stage cov_bsg_cache_non_blocking_tl_stage cov_tl_stage (
+    .*
+  );
 
 
 
