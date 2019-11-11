@@ -23,7 +23,7 @@ TAG_TEST = test_tag_access
 
 AINV_TEST = test_ainv
 
-BLOCK_LD_TEST = test_block_ld test_block_ld2
+BLOCK_LD_TEST = test_block_ld test_block_ld2 test_block_ld3
 
 #####################
 

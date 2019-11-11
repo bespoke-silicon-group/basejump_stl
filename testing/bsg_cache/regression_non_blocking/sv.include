@@ -55,6 +55,7 @@ $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_non_blocking_dma.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_non_blocking.v
 
 ../common/bsg_nonsynth_non_blocking_dma_model.v
+cov_bsg_cache_non_blocking.v
 bsg_nonsynth_random_yumi_gen.v
 basic_checker.v
 tag_checker.v

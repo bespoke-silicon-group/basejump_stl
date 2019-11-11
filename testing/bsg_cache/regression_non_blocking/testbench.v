@@ -268,6 +268,17 @@ module testbench();
   );
 
 
+  //                        //
+  //  FUNCTIONAL COVERAGE   //
+  //                        //
+
+  bind bsg_cache_non_blocking cov_bsg_cache_non_blocking cov_top (
+    .*
+  );
+
+
+
+
   // waiting for all responses to be received.
   //
   integer sent_r, recv_r;

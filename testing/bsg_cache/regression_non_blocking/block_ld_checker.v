@@ -54,6 +54,9 @@ module block_ld_checker
           shadow_mem[cache_pkt.addr[2+:`BSG_SAFE_CLOG2(mem_size_p)]] = cache_pkt.data;
           result[cache_pkt.id][0] = '0;
         end
+        else if (cache_pkt.opcode == LW) begin
+          result[cache_pkt.id][0] = shadow_mem[cache_pkt.addr[2+:`BSG_SAFE_CLOG2(mem_size_p)]];
+        end
         else if (cache_pkt.opcode == AFLINV) begin
           result[cache_pkt.id][0] = '0;
         end
