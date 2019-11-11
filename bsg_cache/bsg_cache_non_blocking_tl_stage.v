@@ -82,10 +82,6 @@ module bsg_cache_non_blocking_tl_stage
     , input mhu_idle_i
     , input recover_i
 
-    //, input [addr_width_p-1:0] mhu_evict_addr_i
-    //, input mhu_evict_v_i
-    //, input [addr_width_p-1:0] dma_evict_addr_i
-    //, input dma_evict_v_i
     , input [lg_ways_lp-1:0] curr_mhu_way_id_i
     , input [lg_sets_lp-1:0] curr_mhu_index_i
     , input curr_mhu_v_i
@@ -259,11 +255,6 @@ module bsg_cache_non_blocking_tl_stage
 
   // miss detection logic
 
-  //logic [addr_width_p-1:0] block_addr_tl;
-  //logic mhu_evict_match;
-  //logic dma_evict_match;
-
-  //assign block_addr_tl = {addr_tag_tl, addr_index_tl, {block_offset_width_lp{1'b0}}};
   wire mhu_miss_match = curr_mhu_v_i & (tag_hit_way == curr_mhu_way_id_i) & (curr_mhu_index_i == addr_index_tl);
   wire dma_miss_match = curr_dma_v_i & (tag_hit_way == curr_dma_way_id_i) & (curr_dma_index_i == addr_index_tl);
 

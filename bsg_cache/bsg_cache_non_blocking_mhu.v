@@ -77,8 +77,6 @@ module bsg_cache_non_blocking_mhu
     , input [lg_ways_lp-1:0] tag_hit_way_i
     , input tag_hit_found_i
     
-    //, output logic [addr_width_p-1:0] evict_addr_o
-    //, output logic evict_v_o
     , output logic [lg_ways_lp-1:0] curr_mhu_way_id_o
     , output logic [lg_sets_lp-1:0] curr_mhu_index_o
     , output logic curr_mhu_v_o
@@ -207,8 +205,6 @@ module bsg_cache_non_blocking_mhu
   assign is_secondary = (curr_miss_tag == miss_fifo_tag) & (curr_miss_index == miss_fifo_index);
 
 
-  //assign evict_addr_o = {curr_dma_cmd_r.evict_tag, curr_dma_cmd_r.index, {block_offset_width_lp{1'b0}}};
-  //assign evict_v_o = curr_dma_cmd_r.evict & curr_dma_cmd_v_r;
   assign curr_mhu_v_o = curr_dma_cmd_v_r;
   assign curr_mhu_index_o = curr_dma_cmd_r.index;
   assign curr_mhu_way_id_o = curr_dma_cmd_r.way_id;
@@ -827,13 +823,20 @@ module bsg_cache_non_blocking_mhu
   end
 
   // synopsys translate_off
+
   always_ff @ (negedge clk_i) begin
     if (~reset_i) begin
       if (dma_cmd_v_o)
         assert(~mhu_dff_r.lock[replacement_way_id]) 
-          else $error("[BSG_ERROR] can't replace locked way.");
+          else $error("[BSG_ERROR] MHU cannot replace a locked way.");
+
+      if (mhu_state_r == IDLE & mgmt_v_i)
+        assert(~dma_done_i & ~dma_pending_i & ~miss_fifo_v_i)
+          else $error("[BSG_ERROR] cache management op cannot enter the pipeline, when there is a pending load/store miss");
+    
     end
   end
+
   // synopsys translate_on
 
 

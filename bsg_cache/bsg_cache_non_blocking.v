@@ -124,10 +124,6 @@ module bsg_cache_non_blocking
   logic mhu_idle;
   logic mhu_recover;
 
-  //logic [addr_width_p-1:0] mhu_evict_addr;
-  //logic mhu_evict_v;
-  //logic [addr_width_p-1:0] dma_evict_addr;
-  //logic dma_evict_v;
   logic [lg_ways_lp-1:0] curr_mhu_way_id;
   logic [lg_sets_lp-1:0] curr_mhu_index;
   logic curr_mhu_v;
@@ -184,11 +180,6 @@ module bsg_cache_non_blocking
     ,.mhu_idle_i(mhu_idle)
     ,.recover_i(mhu_recover)
 
-    //,.mhu_evict_addr_i(mhu_evict_addr)
-    //,.mhu_evict_v_i(mhu_evict_v)
-    
-    //,.dma_evict_addr_i(dma_evict_addr)
-    //,.dma_evict_v_i(dma_evict_v)
     ,.curr_dma_way_id_i(curr_dma_way_id)
     ,.curr_dma_index_i(curr_dma_index)
     ,.curr_dma_v_i(curr_dma_v)
@@ -400,8 +391,6 @@ module bsg_cache_non_blocking
     ,.tag_hit_way_i(tag_hit_way_lo)
     ,.tag_hit_found_i(tag_hit_found_lo)
 
-    //,.evict_addr_o(mhu_evict_addr)
-    //,.evict_v_o(mhu_evict_v)
     ,.curr_mhu_way_id_o(curr_mhu_way_id)
     ,.curr_mhu_index_o(curr_mhu_index)
     ,.curr_mhu_v_o(curr_mhu_v)
@@ -447,8 +436,6 @@ module bsg_cache_non_blocking
     ,.pending_o(dma_pending_li)
     ,.ack_i(dma_ack_lo)
 
-    //,.evict_v_o(dma_evict_v)
-    //,.evict_addr_o(dma_evict_addr)
     ,.curr_dma_way_id_o(curr_dma_way_id)
     ,.curr_dma_index_o(curr_dma_index)
     ,.curr_dma_v_o(curr_dma_v)

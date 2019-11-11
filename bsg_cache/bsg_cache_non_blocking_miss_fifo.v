@@ -268,8 +268,6 @@ module bsg_cache_non_blocking_miss_fifo
         // output taken
         if (yumi_i) begin
 
-          //mem_read_addr = rptr_n;
-          //mem_read_en = ~read_write_same_addr & rptr_plus1_valid;
           mem_read_addr = ((rptr_n == mem_read_addr_r) & mem_read_en_r)
             ? rptr_plus2
             : rptr_plus1;
@@ -364,5 +362,17 @@ module bsg_cache_non_blocking_miss_fifo
       end
     end
   end
+
+
+
+  // synopsys translate_off
+
+  always_ff @ (negedge clk_i) begin
+    if (~reset_i) begin
+      if (rollback_i) assert(empty_o) else $error("[BSG_ERROR] rollback_i called when fifo is not empty_o.");
+    end
+  end
+
+  // synopsys translate_on
 
 endmodule
