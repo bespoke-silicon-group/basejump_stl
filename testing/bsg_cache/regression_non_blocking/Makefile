@@ -14,7 +14,7 @@ VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4
 #### Test Suite #####
 
 BASIC_TEST =  test_stride test_random test_square test_block test_zorder test_byte
-BASIC_TEST += test_linear test_long_interval
+BASIC_TEST += test_linear test_long_interval test_burst
 BASIC_TEST += test_random_flush test_random_afl test_random_aflinv test_random_aflinv2
 BASIC_TEST += test_clean_read test_invalid_lock test_invalid_lock2 test_pe_cover
 BASIC_TEST += test_alock test_random_tagfl test_ld_st
