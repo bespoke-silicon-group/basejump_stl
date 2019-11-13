@@ -71,7 +71,6 @@ module bsg_cache_non_blocking_dma
   //
   localparam counter_width_lp=`BSG_SAFE_CLOG2(block_size_in_words_p+1);
   localparam block_offset_width_lp=byte_sel_width_lp+lg_block_size_in_words_lp;
-  localparam data_mask_width_lp=(data_width_p>>3);
 
 
   // casting structs
@@ -233,8 +232,6 @@ module bsg_cache_non_blocking_dma
     data_mem_pkt.size_op = (2)'($clog2(data_width_p>>3));
     data_mem_pkt.byte_sel = (byte_sel_width_lp)'(0);
     // for store
-    data_mem_pkt.mask_op = 1'b1;
-    data_mem_pkt.mask = {data_mask_width_lp{1'b1}};
     data_mem_pkt.data = in_fifo_data_lo;
     
     dma_pkt_v_o = 1'b0;

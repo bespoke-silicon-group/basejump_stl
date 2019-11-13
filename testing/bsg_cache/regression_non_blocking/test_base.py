@@ -19,12 +19,9 @@ class TestBase:
     self.ways_p = 8
     self.block_size_in_words_p = 8
 
-  def send(self, opcode, addr, mask=0):
+  def send(self, opcode, addr):
     if opcode == SW or opcode == SH or opcode == SB:
       self.tg.send(self.curr_id, opcode, addr, self.curr_data)
-      self.curr_data += 1 
-    elif opcode == SM:
-      self.tg.send(self.curr_id, opcode, addr, self.curr_data, mask)
       self.curr_data += 1 
     elif opcode == LW or opcode == LH or opcode == LB or opcode == LHU or opcode == LBU:
       self.tg.send(self.curr_id, opcode, addr)

@@ -347,8 +347,6 @@ module bsg_cache_non_blocking_mhu
       : miss_fifo_entry.addr[0+:byte_sel_width_lp];
 
     data_mem_pkt.data = miss_fifo_entry.data;
-    data_mem_pkt.mask = miss_fifo_entry.mask;
-    data_mem_pkt.mask_op = miss_fifo_entry.mask_op;
 
     stat_mem_pkt_v_o = 1'b0;
     stat_mem_pkt = '0;

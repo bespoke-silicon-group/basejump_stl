@@ -135,13 +135,8 @@ module bsg_cache_non_blocking_data_mem
     end
   end
 
-  assign data_li = data_mem_pkt.mask_op
-    ? data_mem_pkt.data
-    : input_mux_data_lo;
-
-  assign mask_li =  data_mem_pkt.mask_op
-    ? data_mem_pkt.mask
-    : input_mux_mask_lo;
+  assign data_li = input_mux_data_lo;
+  assign mask_li = input_mux_mask_lo;
 
 
   // output logic (load)

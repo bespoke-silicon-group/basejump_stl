@@ -20,7 +20,6 @@ module bsg_cache_non_blocking_tl_stage
     , parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
     , parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
     , parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    , parameter data_mask_width_lp=(data_width_p>>3)
     , parameter byte_sel_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
     , parameter tag_width_lp=(addr_width_p-lg_sets_lp-lg_block_size_in_words_lp-byte_sel_width_lp)
 
@@ -43,7 +42,6 @@ module bsg_cache_non_blocking_tl_stage
     , input [id_width_p-1:0] id_i
     , input [addr_width_p-1:0] addr_i
     , input [data_width_p-1:0] data_i
-    , input [data_mask_width_lp-1:0] mask_i
     , input bsg_cache_non_blocking_decode_s decode_i
     , output logic ready_o  
 
@@ -124,7 +122,6 @@ module bsg_cache_non_blocking_tl_stage
   logic [id_width_p-1:0] id_tl_r;
   logic [addr_width_p-1:0] addr_tl_r;
   logic [data_width_p-1:0] data_tl_r;
-  logic [data_mask_width_lp-1:0] mask_tl_r;
   logic mgmt_op_v;
 
   assign decode_tl_o = decode_tl_r;
@@ -161,8 +158,7 @@ module bsg_cache_non_blocking_tl_stage
       {decode_tl_r
       ,id_tl_r
       ,addr_tl_r
-      ,data_tl_r
-      ,mask_tl_r} <= '0;
+      ,data_tl_r} <= '0;
     end
     else begin
       if (tl_we) begin
@@ -170,7 +166,6 @@ module bsg_cache_non_blocking_tl_stage
         id_tl_r <= id_i;
         addr_tl_r <= addr_i;
         data_tl_r <= data_i;
-        mask_tl_r <= mask_i;
       end
     end
   end 
@@ -276,8 +271,6 @@ module bsg_cache_non_blocking_tl_stage
     : addr_tl_r[0+:byte_sel_width_lp];
 
   assign data_mem_pkt.data = data_tl_r;
-  assign data_mem_pkt.mask = mask_tl_r;
-  assign data_mem_pkt.mask_op = decode_tl_r.mask_op;
 
   assign stat_mem_pkt.way_id = tag_hit_way;
   assign stat_mem_pkt.index = addr_index_tl;
@@ -292,8 +285,6 @@ module bsg_cache_non_blocking_tl_stage
   assign miss_fifo_entry.addr = addr_tl_r;
   assign miss_fifo_entry.data = data_tl_r;
   assign miss_fifo_entry.sigext_op = decode_tl_r.sigext_op;
-  assign miss_fifo_entry.mask = mask_tl_r;
-  assign miss_fifo_entry.mask_op = decode_tl_r.mask_op;
 
 
   // pipeline logic
