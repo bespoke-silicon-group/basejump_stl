@@ -96,7 +96,7 @@ out/%/trace.tr:
 	$(DVE) -full64 -vpd out/$*/vcdplus.vpd &
 
 cov:
-	$(DVE) -full64 -cov -dir simv.vdb &
+	$(DVE) -full64 -cov -session cov.tcl &
 
 summary:
 	@$(foreach test, $(BASIC_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \

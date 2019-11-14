@@ -16,7 +16,7 @@ class TestALOCK(TestBase):
     for i in range(self.sets_p):
       locked_tags.append(set())
 
-    for iteration in range(300):
+    for iteration in range(200):
       
       # lock some sets
       for n in range(25):

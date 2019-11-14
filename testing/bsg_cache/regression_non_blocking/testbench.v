@@ -272,13 +272,10 @@ module testbench();
   //  FUNCTIONAL COVERAGE   //
   //                        //
 
-  bind bsg_cache_non_blocking cov_top _cov_top (
-    .*
-  );
-
-  bind bsg_cache_non_blocking_tl_stage cov_tl_stage _cov_tl_stage (
-    .*
-  );
+  bind bsg_cache_non_blocking cov_top _cov_top (.*);
+  bind bsg_cache_non_blocking_tl_stage cov_tl_stage _cov_tl_stage (.*);
+  bind bsg_cache_non_blocking_mhu cov_mhu _cov_mhu (.*);
+  bind bsg_cache_non_blocking_miss_fifo cov_miss_fifo _cov_miss_fifo (.*);
 
 
 

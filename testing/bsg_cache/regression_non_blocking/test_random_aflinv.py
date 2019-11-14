@@ -10,7 +10,7 @@ class TestRandomAFLINV(TestBase):
     self.clear_tag()
 
     # random SW/LW
-    for iteration in range(500):
+    for iteration in range(300):
 
       # accessing only 10 blocks for each set.
       # 40 blocks in total; 320 word addresses

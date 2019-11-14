@@ -131,20 +131,6 @@ module bsg_cache_non_blocking_mhu
 
   // mhu_state
   //
-  typedef enum logic [3:0] {
-    IDLE
-    ,MGMT_OP
-    ,SEND_MGMT_DMA
-    ,WAIT_MGMT_DMA
-    ,READ_TAG1
-    ,SEND_DMA_REQ1
-    ,WAIT_DMA_DONE
-    ,DEQUEUE_MODE
-    ,READ_TAG2
-    ,SEND_DMA_REQ2
-    ,SCAN_MODE 
-    ,RECOVER
-  } mhu_state_e;
 
   mhu_state_e mhu_state_r;
   mhu_state_e mhu_state_n;

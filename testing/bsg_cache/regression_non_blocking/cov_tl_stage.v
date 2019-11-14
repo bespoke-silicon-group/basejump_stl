@@ -14,7 +14,6 @@ module cov_tl_stage
     , input stat_mem_pkt_ready_i
     , input v_i
     , input bsg_cache_non_blocking_decode_s decode_i
-    , input mgmt_op_v
     , input miss_fifo_ready_i
     , input recover_i
     , input v_tl_r
