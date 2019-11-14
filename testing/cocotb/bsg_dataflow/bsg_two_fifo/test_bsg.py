@@ -14,6 +14,7 @@ from cocotb.triggers import RisingEdge, Timer
 
 from bsg_cocotb_lib import bsg_assert, bsg_top_params
 from bsg_cocotb_utils import (
+    BsgBaseTestbench,
     ReadyValidBusMonitor,
     ReadyValidBusProducer,
     ValidYumiBusConsumer,
@@ -21,16 +22,9 @@ from bsg_cocotb_utils import (
 )
 
 
-class BsgTwoFifoTB(object):
-    def __init__(self, dut, log_level=logging.INFO):
-        self.num_cycles = 0
-        self.num_txns = 0
-        self.expected_output = []
-
-        self.dut = dut
-
-        self.log = self.dut._log
-        self.log.setLevel(log_level)
+class BsgTwoFifoTB(BsgBaseTestbench):
+    def __init__(self, dut, clock_sig, reset_sig, log_level=logging.INFO):
+        super(BsgTwoFifoTB, self).__init__(dut, clock_sig, reset_sig, log_level)
 
         self.dut_idrive = ReadyValidBusProducer(
             dut, "In Driver", dut.clk_i, dut.data_i, dut.ready_o, dut.v_i
@@ -44,7 +38,8 @@ class BsgTwoFifoTB(object):
         self.dut_omon = ValidYumiBusMonitor(
             dut, "Out Monitor", dut.clk_i, dut.data_o, dut.v_o, dut.yumi_i, self.record
         )
-        self.scoreboard = Scoreboard(dut)
+
+        self.expected_output = []
         self.scoreboard.add_interface(self.dut_omon, self.expected_output)
 
     def model(self, transaction):
@@ -52,27 +47,6 @@ class BsgTwoFifoTB(object):
 
     def record(self, transaction):
         self.num_txns += 1
-
-    @cocotb.coroutine
-    def reset(self, duration=10):
-        self.dut._log.info("Resetting DUT")
-        self.dut.reset_i <= 1
-        self.dut.v_i <= 0
-        self.dut.yumi_i <= 0
-        yield Timer(duration, units="ns")
-        yield RisingEdge(self.dut.clk_i)
-        self.dut._log.info("DUT out of reset")
-        self.dut.reset_i <= 0
-
-    @cocotb.coroutine
-    def run(self, max_txns=None, timeout=None):
-        for i in range(timeout):
-            yield RisingEdge(self.dut.clk_i)
-            if self.num_txns == max_txns:
-                self.log.info("Test finished with {} txns".format(self.num_txns))
-                raise self.scoreboard.result
-        self.log.error("Test timed out at {} with {} txns".format(timeout, max_txns))
-        raise TestFailure
 
 
 def random_data(min_val=0, max_val=100):
@@ -111,7 +85,7 @@ def run_test(
     width_p = int(p["width_p"])
 
     cocotb.fork(Clock(dut.clk_i, 5, units="ns").start())
-    tb = BsgTwoFifoTB(dut, logging.INFO)
+    tb = BsgTwoFifoTB(dut, dut.clk_i, dut.reset_i, logging.INFO)
     yield tb.reset()
 
     cocotb.fork(tb.dut_idrive.start(data_gen, idle_gen, max_txns))
