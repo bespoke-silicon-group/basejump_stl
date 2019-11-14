@@ -9,7 +9,7 @@ class TestBlockLD3(TestBase):
 
     self.clear_tag()
 
-    for n in range(100000):
+    for n in range(50000):
       op = random.randint(0,3)
       tag = random.randint(0,15)
       index = random.randint(0,3)

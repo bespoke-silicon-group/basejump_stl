@@ -9,7 +9,7 @@ class TestBlockLD2(TestBase):
 
     self.clear_tag()
 
-    for n in range(100000):
+    for n in range(50000):
       tag = random.randint(0, 15)
       index = random.randint(0,self.sets_p-1)
       taddr = self.get_addr(tag,index)

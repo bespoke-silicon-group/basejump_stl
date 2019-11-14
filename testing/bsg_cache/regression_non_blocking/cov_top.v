@@ -1,4 +1,4 @@
-module cov_bsg_cache_non_blocking
+module cov_top
   (
     input clk_i
     , input reset_i

@@ -11,10 +11,12 @@ class TestTagAccess(TestBase):
 
     # random SW/LW
     for n in range(50000):
+      self.wait(random.randint(0,10))
+  
       index = random.randint(0,self.sets_p-1)
       way = random.randint(0,self.ways_p-1)
       op = random.randint(0,2)
-      
+    
       if op == 0:
         # tagst
         lock = random.randint(0,1)
