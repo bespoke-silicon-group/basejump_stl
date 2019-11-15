@@ -268,7 +268,7 @@ package bsg_cache_non_blocking_pkg;
 
   // MHU FSM states
   typedef enum logic [3:0] {
-    IDLE
+    MHU_IDLE
     ,MGMT_OP
     ,SEND_MGMT_DMA
     ,WAIT_MGMT_DMA

@@ -364,7 +364,7 @@ module bsg_cache_non_blocking_mhu
       // completed (dma_pending_i, dma_pending_o).
       // Switch to WAIT_DMA_DONE in that case. Or wait for the miss FIFO to
       // have a valid output.
-      IDLE: begin
+      MHU_IDLE: begin
 
         // Flop the necesssary data coming from tl stage, and go to MGMT_OP.
         if (mgmt_v_i) begin
@@ -391,7 +391,7 @@ module bsg_cache_non_blocking_mhu
 
           mhu_state_n = (miss_fifo_v_i & ~tl_block_loading_i)
             ? READ_TAG1
-            : IDLE;
+            : MHU_IDLE;
         end
       end
 
@@ -408,7 +408,7 @@ module bsg_cache_non_blocking_mhu
             mgmt_data_v_o = 1'b1;
 
             mhu_state_n = mgmt_data_yumi_i
-              ? IDLE
+              ? MHU_IDLE
               : MGMT_OP;
           end
           // TAGLV: return the tag valid and lock bit at the output.
@@ -418,7 +418,7 @@ module bsg_cache_non_blocking_mhu
             mgmt_data_v_o = 1'b1;
 
             mhu_state_n = mgmt_data_yumi_i
-              ? IDLE
+              ? MHU_IDLE
               : MGMT_OP;
           end
           // TAGST: also clears the stat_mem (dirty/LRU bits).
@@ -431,7 +431,7 @@ module bsg_cache_non_blocking_mhu
             stat_mem_pkt.way_id = addr_way_mhu;
 
             mhu_state_n = mgmt_data_yumi_i
-              ? IDLE
+              ? MHU_IDLE
               : MGMT_OP;
           end
           // TAGFL:
@@ -446,7 +446,7 @@ module bsg_cache_non_blocking_mhu
 
             mhu_state_n = mhu_dff_r.valid[addr_way_mhu]
               ? SEND_MGMT_DMA
-              : IDLE;
+              : MHU_IDLE;
           end
           // AFL/AFLINV:
           // If there is tag hit, it reads the stat_mem.
@@ -460,7 +460,7 @@ module bsg_cache_non_blocking_mhu
    
             mhu_state_n = mhu_dff_r.tag_hit_found
               ? SEND_MGMT_DMA
-              : IDLE;
+              : MHU_IDLE;
           end
           // AINV: If there is tag hit, invalidate the cache line.
           else if (mhu_dff_r.decode.ainv_op) begin
@@ -476,7 +476,7 @@ module bsg_cache_non_blocking_mhu
             tag_mem_pkt.opcode = e_tag_invalidate;
 
             mhu_state_n = mgmt_data_yumi_i
-              ? IDLE
+              ? MHU_IDLE
               : MGMT_OP;
           end
           // ALOCK: if there is tag hit, then lock the line.
@@ -493,7 +493,7 @@ module bsg_cache_non_blocking_mhu
             tag_mem_pkt.opcode = e_tag_lock;
         
             mhu_state_n = mhu_dff_r.tag_hit_found
-              ? (mgmt_data_yumi_i ? IDLE : MGMT_OP)
+              ? (mgmt_data_yumi_i ? MHU_IDLE : MGMT_OP)
               : SEND_MGMT_DMA;
           end
           // AUNLOCK: if there is tag hit, then unlock the line.
@@ -506,7 +506,7 @@ module bsg_cache_non_blocking_mhu
             tag_mem_pkt.opcode = e_tag_unlock;
 
             mhu_state_n = mgmt_data_yumi_i
-              ? IDLE
+              ? MHU_IDLE
               : MGMT_OP;
           end
           else begin
@@ -565,10 +565,10 @@ module bsg_cache_non_blocking_mhu
           : (mhu_dff_r.decode.tagfl_op
             ? (dirty_i[addr_way_mhu] 
               ? WAIT_MGMT_DMA 
-              : (mgmt_data_yumi_i ? IDLE : SEND_MGMT_DMA))
+              : (mgmt_data_yumi_i ? MHU_IDLE : SEND_MGMT_DMA))
             : (dirty_i[mhu_dff_r.tag_hit_way] 
               ? WAIT_MGMT_DMA 
-              : (mgmt_data_yumi_i ? IDLE : SEND_MGMT_DMA)));
+              : (mgmt_data_yumi_i ? MHU_IDLE : SEND_MGMT_DMA)));
 
       end
 
@@ -599,7 +599,7 @@ module bsg_cache_non_blocking_mhu
         mgmt_data_v_o = dma_done_i;
      
         mhu_state_n = (dma_done_i & mgmt_data_yumi_i)
-          ? IDLE
+          ? MHU_IDLE
           : WAIT_MGMT_DMA;
 
       end
@@ -779,12 +779,12 @@ module bsg_cache_non_blocking_mhu
         recover_o = 1'b1;
         miss_fifo_rollback_o = 1'b1;
         curr_dma_cmd_v_n = 1'b0;
-        mhu_state_n = IDLE;
+        mhu_state_n = MHU_IDLE;
       end
       
       // this should never happen.
       default: begin
-        mhu_state_n = IDLE;
+        mhu_state_n = MHU_IDLE;
       end
 
     endcase
@@ -795,7 +795,7 @@ module bsg_cache_non_blocking_mhu
   // synopsys sync_set_reset "reset_i"
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      mhu_state_r <= IDLE; 
+      mhu_state_r <= MHU_IDLE; 
       curr_dma_cmd_r <= '0;
       curr_dma_cmd_v_r <= 1'b0;
       set_dirty_r <= 1'b0;
@@ -816,7 +816,7 @@ module bsg_cache_non_blocking_mhu
         assert(~mhu_dff_r.lock[replacement_way_id]) 
           else $error("[BSG_ERROR] MHU cannot replace a locked way.");
 
-      if (mhu_state_r == IDLE & mgmt_v_i)
+      if (mhu_state_r == MHU_IDLE & mgmt_v_i)
         assert(~dma_done_i & ~dma_pending_i & ~miss_fifo_v_i)
           else $error("[BSG_ERROR] cache management op cannot enter the pipeline, when there is a pending load/store miss");
     
