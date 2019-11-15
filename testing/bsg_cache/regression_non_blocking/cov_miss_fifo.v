@@ -11,23 +11,21 @@ module cov_miss_fifo
     , input bsg_cache_non_blocking_miss_fifo_op_e yumi_op_i
     , input scan_not_dq_i
     , input read_write_same_addr
-    , input mem_read_en_r
     , input v_r
     , input empty
     , input rptr_valid
     , input enque
-    
-//    , input rollback_i 
+    , input rollback_i
   );
 
 
-  covergroup cg_output_taken @ (negedge clk_i iff v_r & yumi_i);
+  covergroup cg_output_taken @ (negedge clk_i iff v_r & yumi_i & ~rollback_i);
 
     coverpoint yumi_op_i;
-    coverpoint mem_read_en_r;
     coverpoint read_write_same_addr;
+    coverpoint enque;
 
-    cross yumi_op_i, mem_read_en_r, read_write_same_addr;
+    cross yumi_op_i, read_write_same_addr, enque;
 
   endgroup
 
@@ -48,15 +46,24 @@ module cov_miss_fifo
   endgroup 
 
 
-  covergroup cg_output_not_valid @ (negedge clk_i);
+  covergroup cg_output_not_valid @ (negedge clk_i iff ~rollback_i & ~v_r);
 
     coverpoint empty;
     coverpoint scan_not_dq_i;
     coverpoint rptr_valid;
-    coverpoint mem_read_en_r;
     coverpoint enque;
 
-    cross empty, scan_not_dq_i, rptr_valid, mem_read_en_r, enque;
+    cross empty, scan_not_dq_i, rptr_valid, enque {
+      ignore_bins ig0 =
+        binsof(empty) intersect {1'b1} &&
+        binsof(scan_not_dq_i) intersect {1'b0} &&
+        binsof(rptr_valid) intersect {1'b1};
+    
+      ignore_bins ig1 = 
+        binsof(empty) intersect {1'b1} &&
+        binsof(scan_not_dq_i) intersect {1'b1} &&
+        binsof(enque) intersect {1'b1};
+    }
 
   endgroup
 

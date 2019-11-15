@@ -1,6 +1,5 @@
 import sys
 import random
-sys.path.append('../common')
 from bsg_cache_non_blocking_trace_gen import *
 
 class TestBase:
