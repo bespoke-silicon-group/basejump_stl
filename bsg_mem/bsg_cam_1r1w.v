@@ -48,7 +48,6 @@ module bsg_cam_1r1w
   logic               matched, empty_found;
   
   assign r_v_o     = en_i & r_v_i & matched;
-  assign empty_v_o = en_i & empty_found;
    
   //write the input pattern into the cam and set the corresponding valid bit
   always_ff @(posedge clk_i) begin
@@ -113,12 +112,14 @@ module bsg_cam_1r1w
          ,.addr_o(empty_addr_o)
          ,.v_o(empty_found)
         );
+    
+      assign empty_v_o = en_i & empty_found;
     end
-	else begin: fi6
-	// Otherwise, sets empty_v_o and empty_addr_o to zero
-	  assign empty_v_o    = 1'b0;
-	  assign empty_addr_o = '0;
-	end
+    else begin: fi6
+	// Otherwise, sets empty_v_o and empty_addr_o to zero	
+      assign empty_v_o    = 1'b0;
+      assign empty_addr_o = '0;
+    end
   endgenerate
   
   
