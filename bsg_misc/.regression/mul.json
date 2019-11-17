@@ -1,7 +1,7 @@
 {
     "design_name": "mul", 
     "filelist": [ 
-        "basejump_stl/bsg_misc/mul.v",
+        "basejump_stl/bsg_misc/mul.v"
         ],  
     "run_config": [
         {

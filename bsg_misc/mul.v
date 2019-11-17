@@ -28,7 +28,7 @@ module mul #(
           delay_r[0] <= '0;
         end
         else
-          delay_r[0] <= data_li
+          delay_r[0] <= data_li;
       end
     end //first_sage
     else begin: other_stage
@@ -39,7 +39,7 @@ module mul #(
         else
           delay_r[i] <= delay_r[i-1];
       end
-    end: //other_stage
-  end //dff_chain
+    end: other_stage
+  end: dff_chain
   assign res_o = delay_r[stage_p-2];
 endmodule
