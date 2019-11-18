@@ -10,9 +10,9 @@ from cocotb.clock import Clock
 from cocotb.regression import TestFactory
 from cocotb.result import TestFailure
 from cocotb.scoreboard import Scoreboard
-from cocotb.triggers import RisingEdge, Timer
+from cocotb.triggers import NextTimeStep, ReadOnly, RisingEdge, Timer
 
-from bsg_cocotb_lib import bsg_assert, bsg_top_params
+from bsg_cocotb_lib import bsg_assert, bsg_assert_sig, bsg_top_params
 from bsg_cocotb_utils import (
     BsgBaseTestbench,
     ReadyValidBusMonitor,
@@ -49,30 +49,138 @@ class BsgTwoFifoTB(BsgBaseTestbench):
         self.num_txns += 1
 
 
-def random_data(min_val=0, max_val=100):
-    while True:
+# Streaming generators
+def constant_delay(val=0, max_pkts=100):
+    for _ in range(max_pkts):
+        yield val
+
+
+def random_data(min_val=0, max_val=100, max_pkts=100):
+    for _ in range(max_pkts):
         yield random.randint(min_val, max_val)
 
 
-def random_delay(min_delay=0, max_delay=5):
-    while True:
+def random_delay(min_delay=0, max_delay=5, max_pkts=100):
+    for _ in range(max_pkts):
         yield random.randint(min_delay, max_delay)
 
 
-def increasing_delay(min_delay=0, max_delay=5):
-    while True:
-        for i in range(min_delay, max_delay):
-            yield i
+def increasing_delay(min_delay=0, max_delay=5, max_pkts=100):
+    for num_pkts in range(max_pkts):
+        yield num_pkts % (max_delay - min_delay)
 
 
-def decreasing_delay(min_delay=0, max_delay=5):
-    while True:
-        for i in range(max_delay, min_delay, -1):
-            yield i
+def decreasing_delay(min_delay=0, max_delay=5, max_pkts=100):
+    for num_pkts in range(max_pkts, 0, -1):
+        yield num_pkts % (max_delay - min_delay)
+
+
+@cocotb.test()
+def test_single_and_empty(dut, max_txns=None, timeout=None):
+    p = bsg_top_params()
+    width_p = int(p["width_p"])
+
+    tb = BsgTwoFifoTB(dut, dut.clk_i, dut.reset_i, logging.INFO)
+    tb.start()
+    yield tb.reset()
+
+    # Quiescent start
+    yield RisingEdge(dut.clk_i)
+    yield RisingEdge(dut.clk_i)
+    yield RisingEdge(dut.clk_i)
+    yield RisingEdge(dut.clk_i)
+    yield RisingEdge(dut.clk_i)
+
+    # Should be ready because it's empty
+    bsg_assert_sig(dut.ready_o, 1)
+    # Should not be valid because we haven't sent in data yet
+    bsg_assert_sig(dut.v_o, 0)
+
+    # Send in some data, ensure no bypass through the fifo
+    yield RisingEdge(dut.clk_i)
+    data = 1
+    cocotb.fork(tb.dut_idrive.send(data))
+    bsg_assert_sig(int(dut.v_o.value), 0)
+
+    # Wait a cycle, should have data then
+    yield RisingEdge(dut.clk_i)
+    bsg_assert_sig(dut.v_o, 1)
+    bsg_assert_sig(dut.data_o, 1)
+    # Check that we can still enqueue
+    bsg_assert_sig(dut.ready_o, 1)
+
+    # Check that data is retained in the fifo
+    yield RisingEdge(dut.clk_i)
+    yield RisingEdge(dut.clk_i)
+    yield RisingEdge(dut.clk_i)
+    bsg_assert_sig(dut.v_o, 1)
+    bsg_assert_sig(dut.data_o, 1)
+    # Check that we can still enqueue
+    bsg_assert_sig(dut.ready_o, 1)
+
+    # Pop data off the fifo
+    yield RisingEdge(dut.clk_i)
+    cocotb.fork(tb.dut_odrive.recv())
+    yield RisingEdge(dut.clk_i)
+    # Ensure fifo is now empty
+    bsg_assert_sig(dut.v_o, 0)
+
+
+@cocotb.test()
+def test_double_and_full(dut, max_txns=None, timeout=None):
+    p = bsg_top_params()
+    width_p = int(p["width_p"])
+
+    tb = BsgTwoFifoTB(dut, dut.clk_i, dut.reset_i, logging.INFO)
+    tb.start()
+    yield tb.reset()
+
+    # Quiescent start
+    yield RisingEdge(dut.clk_i)
+    yield RisingEdge(dut.clk_i)
+    yield RisingEdge(dut.clk_i)
+    yield RisingEdge(dut.clk_i)
+    yield RisingEdge(dut.clk_i)
+
+    # Should be ready because it's empty
+    bsg_assert_sig(dut.ready_o, 1)
+    # Should not be valid because we haven't sent in data yet
+    bsg_assert_sig(dut.v_o, 0)
+
+    # Send in some data, ensure no bypass through the fifo
+    yield RisingEdge(dut.clk_i)
+    data = 1
+    cocotb.fork(tb.dut_idrive.send(data))
+    yield RisingEdge(dut.clk_i)
+    cocotb.fork(tb.dut_idrive.send(data))
+
+    # Wait a cycle, should have data then
+    yield RisingEdge(dut.clk_i)
+    bsg_assert_sig(dut.v_o, 1)
+    bsg_assert_sig(dut.data_o, 1)
+    # Check that fifo is full
+    bsg_assert_sig(dut.ready_o, 0)
+
+    # Check that data is retained in the fifo
+    yield RisingEdge(dut.clk_i)
+    yield RisingEdge(dut.clk_i)
+    bsg_assert_sig(dut.v_o, 1)
+    bsg_assert_sig(dut.data_o, 1)
+    # Check that the fifo is still full
+    bsg_assert_sig(dut.ready_o, 0)
+
+    # Pop data off the fifo
+    cocotb.fork(tb.dut_odrive.recv())
+    yield RisingEdge(dut.clk_i)
+    bsg_assert_sig(dut.v_o, 1)
+    cocotb.fork(tb.dut_odrive.recv())
+    yield RisingEdge(dut.clk_i)
+    # Ensure fifo is now empty
+    bsg_assert_sig(dut.v_o, 0)
 
 
 @cocotb.coroutine
-def run_test(
+def test_crandom(
     dut,
     data_gen=None,
     idle_gen=None,
@@ -84,23 +192,25 @@ def run_test(
     p = bsg_top_params()
     width_p = int(p["width_p"])
 
-    cocotb.fork(Clock(dut.clk_i, 5, units="ns").start())
-    tb = BsgTwoFifoTB(dut, dut.clk_i, dut.reset_i, logging.INFO)
+    tb = BsgTwoFifoTB(dut, dut.clk_i, dut.reset_i, logging.INFO).start()
     yield tb.reset()
 
-    cocotb.fork(tb.dut_idrive.start(data_gen, idle_gen, max_txns))
-    cocotb.fork(tb.dut_odrive.start(backpressure_gen))
+    cocotb.fork(
+        tb.dut_idrive.start(data_gen(max_pkts=max_txns), idle_gen(max_pkts=max_txns))
+    )
+    cocotb.fork(tb.dut_odrive.start(backpressure_gen(max_pkts=max_txns)))
 
     yield tb.run(max_txns, timeout)
 
 
-factory = TestFactory(run_test)
-factory.add_option("data_gen", [random_data()])
+factory = TestFactory(test_crandom)
+factory.add_option("data_gen", [random_data])
 factory.add_option(
-    "idle_gen", [None, random_delay(), increasing_delay(), decreasing_delay()]
+    "idle_gen", [constant_delay, random_delay, increasing_delay, decreasing_delay]
 )
 factory.add_option(
-    "backpressure_gen", [None, random_delay(), increasing_delay(), decreasing_delay()]
+    "backpressure_gen",
+    [constant_delay, random_delay, increasing_delay, decreasing_delay],
 )
 factory.add_option("max_txns", [10, 100])
 factory.add_option("timeout", [1000])

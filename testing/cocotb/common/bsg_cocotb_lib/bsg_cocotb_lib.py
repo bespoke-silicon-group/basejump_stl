@@ -1,7 +1,10 @@
 import os
 import re
 
+import cocotb
+
 from cocotb.result import TestFailure
+from cocotb.triggers import NextTimeStep, ReadOnly
 
 """
 For vcs, you can get params from the py obj (ie. dut.<param>); however, for
@@ -25,3 +28,13 @@ def bsg_assert ( actual, expected ):
   if actual != expected:
     raise TestFailure('Assertion failed - expect value: %d, actual value: %d' % (int(expected),  int(actual)))
 
+"""
+Simple single assert coroutine.
+"""
+@cocotb.coroutine
+def bsg_assert_sig ( signal, expected ):
+    yield NextTimeStep()
+    yield NextTimeStep()
+    yield ReadOnly()
+    if int(signal.value) != expected:
+        raise TestFailure('Assertion failed - expect value: %d, actual value: %d' % (int(expected), int(signal.value)))

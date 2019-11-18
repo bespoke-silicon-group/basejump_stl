@@ -1,7 +1,9 @@
 import cocotb
 
+from cocotb.clock import Clock
 from cocotb.drivers import Driver
 from cocotb.monitors import Monitor
+from cocotb.result import TestFailure
 from cocotb.scoreboard import Scoreboard
 from cocotb.triggers import NextTimeStep, RisingEdge, ReadOnly, ReadWrite, Timer
 
@@ -25,13 +27,13 @@ class ReadyValidBusProducer(Driver):
         self.log.info("{} created".format(self.name))
 
     @cocotb.coroutine
-    def start(self, data_gen=None, idle_gen=None, max_txns=None):
+    def start(self, data_gen=None, idle_gen=None):
         if data_gen is not None:
-            for i in range(max_txns):
+            for data in data_gen:
                 if idle_gen is not None:
                     for i in range(next(idle_gen)):
                         yield RisingEdge(self.clock_sig)
-                yield self.send(next(data_gen))
+                yield self.send(data)
         else:
             self.log.error("No data generator specified")
 
@@ -75,7 +77,7 @@ class ValidYumiBusProducer(Driver):
                 if idle_gen is not None:
                     for i in range(next(idle_gen)):
                         yield RisingEdge(self.clock_sig)
-                yield self.send(next(data_gen))
+                yield self.send(data)
         else:
             self.log.error("No data generator specified")
 
@@ -287,6 +289,10 @@ class BsgBaseTestbench(object):
 
         self.scoreboard = Scoreboard(dut)
 
+    def start(self, period=5, units="ns"):
+        cocotb.fork(Clock(self.clock_sig, period, units=units).start())
+        return self
+
     @cocotb.coroutine
     def reset(self, duration=10):
         self.log.info("Resetting DUT - START")
@@ -303,5 +309,7 @@ class BsgBaseTestbench(object):
             if self.num_txns == max_txns:
                 self.log.info("Test finished with {} txns".format(self.num_txns))
                 raise self.scoreboard.result
-        self.log.error("Test timed out at {} with {} txns".format(timeout, max_txns))
+        self.log.error(
+            "Test timed out at {} with {} txns".format(timeout, self.num_txns)
+        )
         raise TestFailure
