@@ -1,0 +1,71 @@
+{
+    "design_name": "bsg_mem_1r1w_sync", 
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync.v", 
+        "basejump_stl/bsg_misc/bsg_clkgate_optional.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync_synth.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "1 read-port, 1 write-port ram, reads are synchronous with size s31 at a clock period (in num of FO4) = 30", 
+            "design_size": "s31", 
+            "name": "bsg_mem_1r1w_sync_s31_clk_30_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "els_p=2500"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "1 read-port, 1 write-port ram, reads are synchronous with size s30 at a clock period (in num of FO4) = 30", 
+            "design_size": "s30", 
+            "name": "bsg_mem_1r1w_sync_s30_clk_30_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "els_p=2000"
+            ]
+        }
+    ]
+}
