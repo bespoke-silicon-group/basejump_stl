@@ -16,12 +16,32 @@ module testbench();
   parameter ways_p = 8;
   parameter miss_fifo_els_p = `MISS_FIFO_ELS_P;
   parameter data_mask_width_lp=(data_width_p>>3);
-  parameter mem_size_p = 2**14;
+  parameter mem_size_p = 2**15;
 
-  parameter dma_read_delay_p=`DMA_READ_DELAY_P;
-  parameter dma_write_delay_p=`DMA_WRITE_DELAY_P;
-  parameter yumi_max_delay_p=`YUMI_MAX_DELAY_P;
-  parameter yumi_min_delay_p=`YUMI_MIN_DELAY_P;
+  parameter dma_read_delay_p  = `DMA_READ_DELAY_P;
+  parameter dma_write_delay_p = `DMA_WRITE_DELAY_P;
+  parameter dma_data_delay_p  = `DMA_DATA_DELAY_P;
+  parameter dma_req_delay_p   = `DMA_REQ_DELAY_P;
+  parameter yumi_max_delay_p  = `YUMI_MAX_DELAY_P;
+  parameter yumi_min_delay_p  = `YUMI_MIN_DELAY_P;
+
+  localparam lg_ways_lp = `BSG_SAFE_CLOG2(ways_p);
+  localparam lg_sets_lp = `BSG_SAFE_CLOG2(sets_p);
+  localparam lg_block_size_in_words_lp = `BSG_SAFE_CLOG2(block_size_in_words_p);
+  localparam byte_sel_width_lp = `BSG_SAFE_CLOG2(data_width_p>>3);
+  localparam tag_width_lp = (addr_width_p-lg_sets_lp-lg_block_size_in_words_lp-byte_sel_width_lp);
+  localparam block_offset_width_lp = lg_block_size_in_words_lp+byte_sel_width_lp;
+
+  // synopsys translate_off
+  integer status;
+  integer wave;
+  string checker;
+
+  initial begin
+    status = $value$plusargs("wave=%d",wave);
+    status = $value$plusargs("checker=%s",checker);
+    if (wave) $vcdpluson;
+  end
 
 
   // clock and reset
@@ -43,6 +63,8 @@ module testbench();
     .clk_i(clk)
     ,.async_reset_o(reset)
   );
+  // synopsys translate_on
+
 
   // non-blocking cache
   //
@@ -104,28 +126,20 @@ module testbench();
     ,.dma_data_yumi_i(dma_data_yumi_li)
   );
 
+  // synopsys translate_off
 
   // random yumi generator
   //
-  integer counter_r;
- 
-  
-  always_ff @ (posedge clk) begin
-    if (reset) begin
-      counter_r <= 0;
-    end
-    else begin
-      if (cache_v_lo) begin
-        if (counter_r == 0)
-          counter_r <= $urandom_range(yumi_max_delay_p,yumi_min_delay_p);
-        else
-          counter_r <= counter_r - 1;
-      end
-    end
-  end
+  bsg_nonsynth_random_yumi_gen #(
+    .yumi_min_delay_p(yumi_min_delay_p)
+    ,.yumi_max_delay_p(yumi_max_delay_p)
+  ) yumi_gen (
+    .clk_i(clk)
+    ,.reset_i(reset)
 
-  assign cache_yumi_li = cache_v_lo & (counter_r == 0);
-   
+    ,.v_i(cache_v_lo)
+    ,.yumi_o(cache_yumi_li)
+  ); 
 
   // dma model
   //
@@ -133,9 +147,11 @@ module testbench();
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
-    ,.els_p(2*ways_p*sets_p*block_size_in_words_p)
+    ,.els_p(4*ways_p*sets_p*block_size_in_words_p)
     ,.read_delay_p(dma_read_delay_p)
     ,.write_delay_p(dma_write_delay_p)
+    ,.dma_data_delay_p(dma_data_delay_p)
+    ,.dma_req_delay_p(dma_req_delay_p)
   ) dma_model (
     .clk_i(clk)
     ,.reset_i(reset)
@@ -152,6 +168,7 @@ module testbench();
     ,.dma_data_v_i(dma_data_v_lo)
     ,.dma_data_yumi_o(dma_data_yumi_li) 
   );
+
 
   // trace replay
   //
@@ -199,129 +216,74 @@ module testbench();
     ,.data_o(trace_rom_data)
   );
 
+
   assign cache_pkt = tr_data_lo;
   assign cache_v_li = tr_v_lo;
   assign tr_yumi_li = tr_v_lo & cache_ready_lo;
 
-  // consistency checking
-  logic [data_width_p-1:0] shadow_mem [mem_size_p-1:0];    // indexed by addr.
-  logic [data_width_p-1:0] result [*]; // indexed by id.
 
-  logic [addr_width_p-1:0] cache_pkt_word_addr;
-  assign cache_pkt_word_addr = cache_pkt.addr[addr_width_p-1:2];
-
-  // store logic
-  logic [data_width_p-1:0] store_data;
-  logic [data_mask_width_lp-1:0] store_mask;
-
-  always_comb begin
-    case (cache_pkt.opcode)
-      SW: begin
-        store_data = cache_pkt.data;
-        store_mask = 4'b1111;
-      end
-      SH: begin
-        store_data = {2{cache_pkt.data[15:0]}};
-        store_mask = {
-          {2{ cache_pkt.addr[1]}},
-          {2{~cache_pkt.addr[1]}}
-        };
-      end
-      SB: begin
-        store_data = {4{cache_pkt.data[7:0]}};
-        store_mask = {
-           cache_pkt.addr[1] &  cache_pkt.addr[0],
-           cache_pkt.addr[1] & ~cache_pkt.addr[0],
-          ~cache_pkt.addr[1] &  cache_pkt.addr[0],
-          ~cache_pkt.addr[1] & ~cache_pkt.addr[0]
-        };
-      end
-      SM: begin
-        store_data = cache_pkt.data;
-        store_mask = cache_pkt.mask;
-      end
-      default: begin
-        store_data = '0;
-        store_mask = '0;
-      end
-    endcase
-  end
-
-  // load logic
-  logic [data_width_p-1:0] load_data, load_data_final;
-  logic [7:0] byte_sel;
-  logic [15:0] half_sel;
-
-  assign load_data = shadow_mem[cache_pkt_word_addr];
-
-  bsg_mux #(
-    .els_p(4)
-    ,.width_p(8)
-  ) byte_mux (
-    .data_i(load_data)
-    ,.sel_i(cache_pkt.addr[1:0])
-    ,.data_o(byte_sel)
+  bind bsg_cache_non_blocking basic_checker #(
+    .data_width_p(data_width_p)
+    ,.id_width_p(id_width_p)
+    ,.addr_width_p(addr_width_p)
+    ,.cache_pkt_width_lp(cache_pkt_width_lp)
+    ,.mem_size_p($root.testbench.mem_size_p)
+  ) bc (
+    .*
+    ,.en_i($root.testbench.checker == "basic")
   );
 
-  bsg_mux #(
-    .els_p(2)
-    ,.width_p(16)
-  ) half_mux (
-    .data_i(load_data)
-    ,.sel_i(cache_pkt.addr[1])
-    ,.data_o(half_sel)
+
+  bind bsg_cache_non_blocking tag_checker #(
+    .data_width_p(data_width_p)
+    ,.id_width_p(id_width_p)
+    ,.addr_width_p(addr_width_p)
+    ,.tag_width_lp(tag_width_lp)
+    ,.ways_p(ways_p)
+    ,.sets_p(sets_p)
+    ,.block_size_in_words_p(block_size_in_words_p)
+    ,.cache_pkt_width_lp(cache_pkt_width_lp)
+  ) tc (
+    .*
+    ,.en_i($root.testbench.checker == "tag")
   );
 
-  always_comb begin
-    case (cache_pkt.opcode)
-      LW: load_data_final = load_data;
-      LH: load_data_final = {{16{half_sel[15]}}, half_sel};
-      LB: load_data_final = {{24{byte_sel[7]}}, byte_sel};
-      LHU: load_data_final = {{16{1'b0}}, half_sel};
-      LBU: load_data_final = {{24{1'b0}}, byte_sel};
-      default: load_data_final = '0;
-    endcase
-  end
+  bind bsg_cache_non_blocking ainv_checker #(
+    .data_width_p(data_width_p)
+  ) ac (
+    .*
+    ,.en_i($root.testbench.checker == "ainv")
+  );
+
+  bind bsg_cache_non_blocking block_ld_checker #(
+    .data_width_p(data_width_p)
+    ,.id_width_p(id_width_p)
+    ,.addr_width_p(addr_width_p)
+    ,.block_size_in_words_p(block_size_in_words_p)
+    ,.cache_pkt_width_lp(cache_pkt_width_lp)
+    ,.mem_size_p($root.testbench.mem_size_p)
+  ) blc (
+    .*
+    ,.en_i($root.testbench.checker == "block_ld")
+  );
 
 
-  always_ff @ (negedge clk) begin
-    
-    if (~reset & cache_v_li & cache_ready_lo) begin
-      case (cache_pkt.opcode)
-        TAGST: begin
-          result[cache_pkt.id] = '0;
-        end
+  //                        //
+  //  FUNCTIONAL COVERAGE   //
+  //                        //
 
-        SB, SH, SW, SM: begin
-          result[cache_pkt.id] = '0;
-          for (integer i = 0; i < data_mask_width_lp; i++)
-            if (store_mask[i])
-              shadow_mem[cache_pkt_word_addr][8*i+:8] <= store_data[8*i+:8];
-        end
-      
-        LW, LH, LB, LHU, LBU: begin
-          result[cache_pkt.id] = load_data_final;
-        end
+  bind bsg_cache_non_blocking cov_top _cov_top (.*);
+  bind bsg_cache_non_blocking_tl_stage cov_tl_stage _cov_tl_stage (.*);
+  bind bsg_cache_non_blocking_mhu cov_mhu _cov_mhu (.*);
+  bind bsg_cache_non_blocking_miss_fifo cov_miss_fifo _cov_miss_fifo (.*);
 
-      endcase
-    end
-
-
-    if (~reset & cache_v_lo & cache_yumi_li) begin
-      $display("id=%d, data=%x", cache_id_lo, cache_data_lo);
-      assert(result[cache_id_lo] == cache_data_lo)
-        else $fatal("Output does not match expected result. Id= %d, Expected: %x. Actual: %x",
-              cache_id_lo, result[cache_id_lo], cache_data_lo);
-    end
-
-  end
 
 
   // waiting for all responses to be received.
   //
   integer sent_r, recv_r;
 
-  always_ff @ (negedge clk) begin
+  always_ff @ (posedge clk) begin
     if (reset) begin
       sent_r <= '0;
       recv_r <= '0;
@@ -329,7 +291,10 @@ module testbench();
     else begin
 
       if (cache_v_li & cache_ready_lo)
-        sent_r <= sent_r + 1;
+        if (cache_pkt.opcode == BLOCK_LD)
+          sent_r <= sent_r + block_size_in_words_p;
+        else 
+          sent_r <= sent_r + 1;
 
       if (cache_v_lo & cache_yumi_li)
         recv_r <= recv_r + 1;
@@ -342,10 +307,12 @@ module testbench();
   initial begin
     wait(done & (sent_r == recv_r));
     $display("[BSG_FINISH] Test Successful.");
-    //for (integer i = 0; i < 10000; i++)
+    //for (integer i = 0; i < 1000000; i++)
     //  @(posedge clk);
     #500;
     $finish;
   end
+
+  // synopsys translate_on
 
 endmodule

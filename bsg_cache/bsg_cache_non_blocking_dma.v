@@ -41,8 +41,9 @@ module bsg_cache_non_blocking_dma
     , output logic pending_o
     , input ack_i
 
-    , output logic evict_v_o
-    , output logic [addr_width_p-1:0] evict_addr_o
+    , output logic [lg_ways_lp-1:0] curr_dma_way_id_o
+    , output logic [lg_sets_lp-1:0] curr_dma_index_o
+    , output logic curr_dma_v_o
 
     // data_mem
     , output logic data_mem_pkt_v_o
@@ -108,12 +109,12 @@ module bsg_cache_non_blocking_dma
   // dma states
   //
   typedef enum logic [2:0] {
-    IDLE
+    DMA_IDLE
     ,SEND_REFILL_ADDR
     ,SEND_EVICT_ADDR
     ,SEND_EVICT_DATA
     ,RECV_REFILL_DATA
-    ,DONE
+    ,DMA_DONE
   } dma_state_e;
 
 
@@ -244,12 +245,12 @@ module bsg_cache_non_blocking_dma
     case (dma_state_r)
 
       // Wait for dma_cmd from MHU.
-      IDLE: begin
+      DMA_IDLE: begin
         dma_cmd_dff_en = dma_cmd_v_i;
 
         dma_state_n = dma_cmd_v_i
           ? (dma_cmd_in.refill ? SEND_REFILL_ADDR : SEND_EVICT_ADDR)
-          : IDLE;
+          : DMA_IDLE;
       end
 
       // Send refill address by dma_req channel.
@@ -295,7 +296,7 @@ module bsg_cache_non_blocking_dma
         pending_o = 1'b1;
   
         dma_state_n = (out_fifo_ready_lo & counter_evict_max)
-          ? (dma_cmd_r.refill ? RECV_REFILL_DATA : DONE) 
+          ? (dma_cmd_r.refill ? RECV_REFILL_DATA : DMA_DONE) 
           : SEND_EVICT_DATA;
       end
 
@@ -312,38 +313,37 @@ module bsg_cache_non_blocking_dma
         pending_o = 1'b1;
       
         dma_state_n = in_fifo_v_lo & counter_fill_max
-          ? DONE
+          ? DMA_DONE
           : RECV_REFILL_DATA;
       end
 
       // DMA transaction is over, and wait for MHU to acknowledge it.
-      DONE: begin
+      DMA_DONE: begin
         done_o = 1'b1;
         counter_clear = ack_i;
         dma_state_n = ack_i
-          ? IDLE
-          : DONE;
+          ? DMA_IDLE
+          : DMA_DONE;
       end
 
       // this should never happen, but if it does, return to IDLE.
       default: begin
-        dma_state_n = IDLE;
+        dma_state_n = DMA_IDLE;
       end
 
     endcase 
 
   end
 
-  // Whether there is a block that is being evicted.
-  // Used by TL stage to determine miss.
-  assign evict_v_o = (dma_state_r != IDLE) & dma_cmd_r.evict;
-  assign evict_addr_o = dma_pkt_evict_addr;
+  assign curr_dma_v_o = (dma_state_r != DMA_IDLE);
+  assign curr_dma_way_id_o = dma_cmd_r.way_id;
+  assign curr_dma_index_o = dma_cmd_r.index;
 
 
   // synopsys sync_set_reset "reset_i"
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      dma_state_r <= IDLE;
+      dma_state_r <= DMA_IDLE;
     end
     else begin
       dma_state_r <= dma_state_n;
