@@ -80,8 +80,7 @@ def test_single_and_empty(dut, max_txns=None, timeout=None):
     p = bsg_top_params()
     width_p = int(p["width_p"])
 
-    tb = BsgTwoFifoTB(dut, dut.clk_i, dut.reset_i, logging.INFO)
-    tb.start()
+    tb = BsgTwoFifoTB(dut, dut.clk_i, dut.reset_i, logging.INFO).start()
     yield tb.reset()
 
     # Quiescent start
@@ -131,8 +130,7 @@ def test_double_and_full(dut, max_txns=None, timeout=None):
     p = bsg_top_params()
     width_p = int(p["width_p"])
 
-    tb = BsgTwoFifoTB(dut, dut.clk_i, dut.reset_i, logging.INFO)
-    tb.start()
+    tb = BsgTwoFifoTB(dut, dut.clk_i, dut.reset_i, logging.INFO).start()
     yield tb.reset()
 
     # Quiescent start
