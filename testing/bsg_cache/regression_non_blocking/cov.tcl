@@ -186,8 +186,6 @@ gui_set_time -C1_only 0
 
 # Wave/List view global setting
 ## Load User Defined Groups
-## Load Exclusion File
-gui_exclusion_file -file /mnt/users/ssd1/homes/dcjung/bsg/basejump_stl/testing/bsg_cache/regression_non_blocking/cov.el -load 
 #reload all efliles:
  gui_exclusion_file -file /mnt/users/ssd1/homes/dcjung/bsg/basejump_stl/testing/bsg_cache/regression_non_blocking/exclusion.el -load
 #unmappable review objects:
