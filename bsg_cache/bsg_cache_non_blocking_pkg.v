@@ -202,6 +202,7 @@ package bsg_cache_non_blocking_pkg;
     ,e_stat_clear_dirty
     ,e_stat_set_lru
     ,e_stat_set_lru_and_dirty
+    ,e_stat_set_lru_and_clear_dirty
     ,e_stat_reset
   } bsg_cache_non_blocking_stat_op_e;
 
