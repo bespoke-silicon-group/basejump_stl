@@ -70,7 +70,7 @@ ainv_test: $(addsuffix .ainv.run, $(AINV_TEST))
 block_ld_test: $(addsuffix .block_ld.run, $(BLOCK_LD_TEST))
 
 # coverage options
-CM_OPT = -cm line+fsm+branch+cond
+CM_OPT = -cm line+fsm+branch+cond+tgl
 
 simv:
 	$(VCS) $(VCS_FLAGS) $(CM_OPT) -f sv.include $(INCDIR) $(VCS_DEFINE) -l vcs.log | $(HIGHLIGHT)

@@ -675,7 +675,9 @@ module bsg_cache_non_blocking_mhu
           ? curr_miss_index
           : miss_fifo_index;
         stat_mem_pkt.opcode = miss_fifo_empty_i  // dont care for read
-          ? (set_dirty_r ? e_stat_set_lru_and_dirty : e_stat_set_lru)
+          ? (set_dirty_r
+            ? e_stat_set_lru_and_dirty
+            : e_stat_set_lru_and_clear_dirty)
           : e_stat_read;
 
         tag_mem_pkt_v_o = ~tl_block_loading_i & (miss_fifo_empty_i | (miss_fifo_v_i & ~is_secondary));
@@ -753,7 +755,7 @@ module bsg_cache_non_blocking_mhu
         stat_mem_pkt.index = curr_miss_index;
         stat_mem_pkt.opcode = set_dirty_r
           ? e_stat_set_lru_and_dirty
-          : e_stat_set_lru;
+          : e_stat_set_lru_and_clear_dirty;
 
         tag_mem_pkt_v_o = miss_fifo_empty_i & ~tl_block_loading_i;
         tag_mem_pkt.way_id = curr_dma_cmd_r.way_id;
