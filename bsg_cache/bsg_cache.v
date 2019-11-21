@@ -275,14 +275,16 @@ module bsg_cache
   logic ld_st_miss;
   logic tagfl_hit;
   logic aflinv_hit;
-  logic alock_miss;  // either the line is miss, or the line is unlocked.
+  logic alock_miss;  // either the line is miss, or the line is unlockedz.
   logic aunlock_hit; // the line is hit and locked.
+  logic l2_bypass_r; // l2_bypass enable logic passed by the CCE to L2 adapter
 
   assign ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op);
   assign tagfl_hit = decode_v_r.tagfl_op& valid_v_r[addr_way_v];
   assign aflinv_hit = (decode_v_r.afl_op| decode_v_r.aflinv_op| decode_v_r.ainv_op) & tag_hit_found;
   assign alock_miss = decode_v_r.alock_op& (tag_hit_found ? ~lock_v_r[tag_hit_way_id] : 1'b1);
   assign aunlock_hit = decode_v_r.aunlock_op& (tag_hit_found ? lock_v_r[tag_hit_way_id] : 1'b0);
+  assign l2_bypass_r = ~tag_hit_found & decode_v_r.ld_op & decode_v_r.l2_bypass_op; // l2_bypass in decode packet is enabled and it's a LD miss in L2
 
   // miss_v signal activates the miss handling unit.
   // MBT: the ~decode_v_r.tagst_op is necessary at the top of this expression
@@ -729,7 +731,7 @@ module bsg_cache
     | (decode.tagst_op & ready_o & v_i); 
   
   assign tag_mem_w_li = miss_v
-    ? miss_tag_mem_w_lo
+    ? (miss_tag_mem_w_lo & ~l2_bypass_r)
     : tagst_write_en;
 
   always_comb begin
@@ -758,7 +760,7 @@ module bsg_cache
     | (sbuf_v_lo & sbuf_yumi_li)
   );
   
-  assign data_mem_w_li = dma_data_mem_w_lo | (sbuf_v_lo & sbuf_yumi_li);
+  assign data_mem_w_li = (dma_data_mem_w_lo & ~l2_bypass_r) | (sbuf_v_lo & sbuf_yumi_li);
 
   assign data_mem_data_li = dma_data_mem_w_lo
     ? dma_data_mem_data_lo
@@ -796,7 +798,7 @@ module bsg_cache
   always_comb begin
     if (miss_v) begin
       stat_mem_v_li = miss_stat_mem_v_lo;
-      stat_mem_w_li = miss_stat_mem_w_lo;
+      stat_mem_w_li = ~l2_bypass_r & miss_stat_mem_w_lo;
       stat_mem_addr_li = miss_stat_mem_addr_lo; // essentially same as addr_index_v
       stat_mem_data_li = miss_stat_mem_data_lo;
       stat_mem_w_mask_li = miss_stat_mem_w_mask_lo;
