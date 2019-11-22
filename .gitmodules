@@ -1,3 +1,0 @@
-[submodule "bsg_riscv/imports/vscale"]
-	path = bsg_riscv/imports/vscale
-	url = https://github.com/ucb-bar/vscale.git
