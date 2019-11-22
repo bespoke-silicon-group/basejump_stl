@@ -20,9 +20,9 @@ Small, miscellaneous building blocks, like counters, reset timers, gray to binar
 
 Bsg front side bus modules; also murn interfacing code.
 
-* bsg_comm_link
+* bsg_link
 
-Source synchronous communication interface. (Also used as FPGA bridge).
+Unidirectional off-chip high-speed source synchronous communication interface. (also used as FPGA bridge).
  
 * bsg_dataflow
 
