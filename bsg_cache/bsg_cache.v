@@ -33,6 +33,7 @@ module bsg_cache
     ,output logic ready_o
     
     ,output logic [data_width_p-1:0] data_o
+    ,output logic [511:0] block_load_o
     ,output logic v_o
     ,input yumi_i
 
@@ -795,96 +796,129 @@ module bsg_cache
     ,.mask_o(plru_decode_mask_lo)
   );
 
+  
+
+  logic [511:0] block_load = '0;
+  always_ff @ (negedge clk_i) begin
+      if (dma_data_mem_w_lo) begin
+        block_load = block_load >> 64;
+        block_load[511:448] = dma_data_mem_data_lo[0];
+      end
+  end
+
+  assign block_load_o = block_load;
+
+/*
+  assign SIPO_block_load_v_li = dma_data_mem_w_lo;
+
+  logic [511:0] block_load_sipo;
+  logic block_load_v_o;
+  logic yumi_block_load_li;
+
+  bsg_serial_in_parallel_out_full #(
+    .width_p                (64)
+    ,.els_p                  (8)
+  ) sipo_block_load (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)      
+    ,.v_i(SIPO_block_load_v_li)
+    ,.ready_o()
+    ,.data_i(dma_data_mem_data_lo)
+    ,.data_o(block_load_sipo)
+    ,.v_o(block_load_v_o)
+    ,.yumi_i(1)
+  );
+*/
+
   always_comb begin
     if (miss_v) begin
       stat_mem_v_li = miss_stat_mem_v_lo;
-			  stat_mem_w_li = ~l2_bypass_r & miss_stat_mem_w_lo;
-			  stat_mem_addr_li = miss_stat_mem_addr_lo; // essentially same as addr_index_v
-			  stat_mem_data_li = miss_stat_mem_data_lo;
-			  stat_mem_w_mask_li = miss_stat_mem_w_mask_lo;
-			end
-			else begin
-			  stat_mem_v_li = ((decode_v_r.st_op| decode_v_r.ld_op| decode_v_r.tagst_op) & v_o & yumi_i);
-			  stat_mem_w_li = ((decode_v_r.st_op| decode_v_r.ld_op| decode_v_r.tagst_op) & v_o & yumi_i);
-			  stat_mem_addr_li = addr_index_v;
+        stat_mem_w_li = ~l2_bypass_r & miss_stat_mem_w_lo;
+        stat_mem_addr_li = miss_stat_mem_addr_lo; // essentially same as addr_index_v
+        stat_mem_data_li = miss_stat_mem_data_lo;
+        stat_mem_w_mask_li = miss_stat_mem_w_mask_lo;
+      end
+      else begin
+        stat_mem_v_li = ((decode_v_r.st_op| decode_v_r.ld_op| decode_v_r.tagst_op) & v_o & yumi_i);
+        stat_mem_w_li = ((decode_v_r.st_op| decode_v_r.ld_op| decode_v_r.tagst_op) & v_o & yumi_i);
+        stat_mem_addr_li = addr_index_v;
 
-			  if (decode_v_r.tagst_op) begin
-				// for TAGST
-				stat_mem_data_li.dirty = {ways_p{1'b0}};
-				stat_mem_data_li.lru_bits = {(ways_p-1){1'b0}};
-				stat_mem_w_mask_li.dirty = {ways_p{1'b1}};
-				stat_mem_w_mask_li.lru_bits = {(ways_p-1){1'b1}};
-			  end
-			  else begin
-				// for LD, ST
-				stat_mem_data_li.dirty = {ways_p{decode_v_r.st_op}};
-				stat_mem_data_li.lru_bits = plru_decode_data_lo;
-				stat_mem_w_mask_li.dirty = {ways_p{decode_v_r.st_op}} & tag_hit_v;
-				stat_mem_w_mask_li.lru_bits = plru_decode_mask_lo;
-			  end
-			end
-		  end
+        if (decode_v_r.tagst_op) begin
+        // for TAGST
+        stat_mem_data_li.dirty = {ways_p{1'b0}};
+        stat_mem_data_li.lru_bits = {(ways_p-1){1'b0}};
+        stat_mem_w_mask_li.dirty = {ways_p{1'b1}};
+        stat_mem_w_mask_li.lru_bits = {(ways_p-1){1'b1}};
+        end
+        else begin
+        // for LD, ST
+        stat_mem_data_li.dirty = {ways_p{decode_v_r.st_op}};
+        stat_mem_data_li.lru_bits = plru_decode_data_lo;
+        stat_mem_w_mask_li.dirty = {ways_p{decode_v_r.st_op}} & tag_hit_v;
+        stat_mem_w_mask_li.lru_bits = plru_decode_mask_lo;
+        end
+      end
+      end
 
+      // store buffer
+      //
+      assign sbuf_v_li = decode_v_r.st_op & v_o & yumi_i;
+      assign sbuf_entry_li.way_id = miss_v ? chosen_way_lo : tag_hit_way_id;
+      assign sbuf_entry_li.addr = addr_v_r;
+      assign sbuf_yumi_li = sbuf_v_lo & ~(decode.ld_op & v_i & ready_o) & (~dma_data_mem_v_lo); 
 
-		  // store buffer
-		  //
-		  assign sbuf_v_li = decode_v_r.st_op & v_o & yumi_i;
-		  assign sbuf_entry_li.way_id = miss_v ? chosen_way_lo : tag_hit_way_id;
-		  assign sbuf_entry_li.addr = addr_v_r;
-		  assign sbuf_yumi_li = sbuf_v_lo & ~(decode.ld_op & v_i & ready_o) & (~dma_data_mem_v_lo); 
-
-		  assign bypass_addr_li = addr_tl_r;
-		  assign bypass_v_li = decode_tl_r.ld_op & v_tl_r & v_we;
-
-
-		  // synopsys translate_off
-
-		  always_ff @ (negedge clk_i) begin
-			if (~reset_i) begin
-			  if (v_v_r) begin
-				// check that there is no multiple hit.
-				assert($countones(tag_hit_v) <= 1)
-				  else $error("[BSG_ERROR][BSG_CACHE] Multiple cache hit detected. %m, T=%t", $time);
-
-				// check that there is at least one unlocked way in a set.
-				assert($countones(lock_v_r) < ways_p)
-				  else $error("[BSG_ERROR][BSG_CACHE] There should be at least one unlocked way in a set. %m, T=%t", $time);
-			  end
-			end
-		  end
+      assign bypass_addr_li = addr_tl_r;
+      assign bypass_v_li = decode_tl_r.ld_op & v_tl_r & v_we;
 
 
-		  if (debug_p) begin
-			always_ff @ (posedge clk_i) begin
-			  if (v_o & yumi_i) begin
-				if (decode_v_r.ld_op) begin
-				  $display("<VCACHE> M[%4h] == %8h // %8t", addr_v_r, data_o, $time);
-				end
-				
-				if (decode_v_r.st_op) begin
-				  $display("<VCACHE> M[%4h] := %8h // %8t", addr_v_r, sbuf_entry_li.data, $time);
-				end
+      // synopsys translate_off
 
-			  end
-			  if (tag_mem_v_li & tag_mem_w_li) begin
-				$display("<VCACHE> tag_mem_write. addr=%8h data_1=%8h data_0=%8h mask_1=%8h mask_0=%8h // %8t",
-				  tag_mem_addr_li,
-				  tag_mem_data_li[1+tag_width_lp+:1+tag_width_lp],
-				  tag_mem_data_li[0+:1+tag_width_lp],
-				  tag_mem_w_mask_li[1+tag_width_lp+:1+tag_width_lp],
-				  tag_mem_w_mask_li[0+:1+tag_width_lp],
-				  $time
-				);
-			  end
-			end
-		  end
+      always_ff @ (negedge clk_i) begin
+      if (~reset_i) begin
+        if (v_v_r) begin
+        // check that there is no multiple hit.
+        assert($countones(tag_hit_v) <= 1)
+          else $error("[BSG_ERROR][BSG_CACHE] Multiple cache hit detected. %m, T=%t", $time);
 
-		  // synopsys translate_on
+        // check that there is at least one unlocked way in a set.
+        assert($countones(lock_v_r) < ways_p)
+          else $error("[BSG_ERROR][BSG_CACHE] There should be at least one unlocked way in a set. %m, T=%t", $time);
+        end
+      end
+      end
+
+
+      if (debug_p) begin
+      always_ff @ (posedge clk_i) begin
+        if (v_o & yumi_i) begin
+        if (decode_v_r.ld_op) begin
+          $display("<VCACHE> M[%4h] == %8h // %8t", addr_v_r, data_o, $time);
+        end
+        
+        if (decode_v_r.st_op) begin
+          $display("<VCACHE> M[%4h] := %8h // %8t", addr_v_r, sbuf_entry_li.data, $time);
+        end
+
+        end
+        if (tag_mem_v_li & tag_mem_w_li) begin
+        $display("<VCACHE> tag_mem_write. addr=%8h data_1=%8h data_0=%8h mask_1=%8h mask_0=%8h // %8t",
+          tag_mem_addr_li,
+          tag_mem_data_li[1+tag_width_lp+:1+tag_width_lp],
+          tag_mem_data_li[0+:1+tag_width_lp],
+          tag_mem_w_mask_li[1+tag_width_lp+:1+tag_width_lp],
+          tag_mem_w_mask_li[0+:1+tag_width_lp],
+          $time
+        );
+        end
+      end
+      end
+
+      // synopsys translate_on
 /*
-		  string file_name;
-		  integer file;
+      string file_name;
+      integer file;
 
-		  always_ff @(negedge reset_i) 
+      always_ff @(negedge reset_i) 
     begin
       file_name = $sformatf("data_mem_out.trace");
       file = $fopen(file_name, "w");
