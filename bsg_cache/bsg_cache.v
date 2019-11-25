@@ -96,13 +96,14 @@ module bsg_cache
     = cache_pkt.addr[lg_data_mask_width_lp+lg_block_size_in_words_lp+lg_sets_lp+:lg_ways_lp];
   assign addr_index
     = cache_pkt.addr[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
-  assign addr_block_offset
+  assign addr_block_offset 
     = cache_pkt.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
 
 
   // tl_stage
   //
   logic v_tl_r;
+  logic [2:0] counter_r;
   bsg_cache_pkt_decode_s decode_tl_r;
   logic [data_mask_width_lp-1:0] mask_tl_r;
   logic [addr_width_p-1:0] addr_tl_r;
@@ -111,6 +112,7 @@ module bsg_cache
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       v_tl_r <= 1'b0;
+      counter_r <= '0;
       {mask_tl_r
       ,addr_tl_r
       ,data_tl_r
@@ -120,11 +122,14 @@ module bsg_cache
       if (ready_o) begin
         v_tl_r <= v_i;
         if (v_i) begin
+          counter_r <= counter_r + 1;
           mask_tl_r <= cache_pkt.mask;
           addr_tl_r <= cache_pkt.addr;
           data_tl_r <= cache_pkt.data;
           decode_tl_r <= decode;
         end
+		    else
+		      counter_r <= '0;
       end
     end
   end
@@ -772,7 +777,7 @@ module bsg_cache
     : (dma_data_mem_v_lo
       ? dma_data_mem_addr_lo
       : ((decode.ld_op & v_i & ready_o) 
-        ? {addr_index, addr_block_offset}
+        ? {addr_index, counter_r}
         : sbuf_entry_lo.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp]));
 
   assign data_mem_w_mask_li = dma_data_mem_w_lo
