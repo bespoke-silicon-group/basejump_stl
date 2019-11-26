@@ -784,7 +784,7 @@ module bsg_cache
     : sbuf_data_mem_data;
 
   assign data_mem_addr_li = recover_lo
-    ? {addr_index_tl, addr_block_offset_tl}
+    ? {addr_index_tl, 3'b001} //addr_block_offset_tl}
     : (dma_data_mem_v_lo
       ? dma_data_mem_addr_lo
       : ((decode.ld_op & v_i & ready_o) 
