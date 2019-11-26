@@ -10,9 +10,10 @@ INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 VCS_LOG = vcs.log
 TRACE_AXE = bsg_cache.axe
 
+AXE_DIR = ../../../../axe
 .PHONY: dve sim clean axe all
 
-NUM_INSTR_P ?= 50000
+NUM_INSTR_P ?= 500
 WAYS_P ?= 2
 DATA_WIDTH_P ?= 32
 SEED_P ?= $(shell shuf -i 0-4294967295 -n 1)

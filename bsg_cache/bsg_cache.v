@@ -103,7 +103,7 @@ module bsg_cache
   // tl_stage
   //
   logic v_tl_r;
-  logic [2:0] counter_r;
+  logic [2:0] counter_r, data_counter_r;
   bsg_cache_pkt_decode_s decode_tl_r;
   logic [data_mask_width_lp-1:0] mask_tl_r;
   logic [addr_width_p-1:0] addr_tl_r;
@@ -128,8 +128,8 @@ module bsg_cache
           data_tl_r <= cache_pkt.data;
           decode_tl_r <= decode;
         end
-		    else
-		      counter_r <= '0;
+        else
+          counter_r <= '0;
       end
     end
   end
@@ -222,6 +222,7 @@ module bsg_cache
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       v_v_r <= 1'b0;
+      data_counter_r <= '0;
       {mask_v_r
       ,decode_v_r
       ,addr_v_r
@@ -243,10 +244,13 @@ module bsg_cache
           lock_v_r <= lock_tl;
           ld_data_v_r <= data_mem_data_lo;
         end
-      end
+    end
+      if (v_o)
+        data_counter_r <= data_counter_r + 1;
+      else
+        data_counter_r <= 0;
     end
   end
-
   assign v_we_o = v_we;
   
   logic [tag_width_lp-1:0] addr_tag_v;
@@ -284,20 +288,23 @@ module bsg_cache
   logic alock_miss;  // either the line is miss, or the line is unlockedz.
   logic aunlock_hit; // the line is hit and locked.
   logic l2_bypass_r; // l2_bypass enable logic passed by the CCE to L2 adapter
+  logic block_ld_miss; // -- added 
 
+  assign block_ld_miss  = ~tag_hit_found & decode_v_r.block_ld_op; // -- added
+  
   assign ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op);
   assign tagfl_hit = decode_v_r.tagfl_op& valid_v_r[addr_way_v];
   assign aflinv_hit = (decode_v_r.afl_op| decode_v_r.aflinv_op| decode_v_r.ainv_op) & tag_hit_found;
   assign alock_miss = decode_v_r.alock_op& (tag_hit_found ? ~lock_v_r[tag_hit_way_id] : 1'b1);
   assign aunlock_hit = decode_v_r.aunlock_op& (tag_hit_found ? lock_v_r[tag_hit_way_id] : 1'b0);
-  assign l2_bypass_r = ~tag_hit_found & decode_v_r.ld_op & decode_v_r.l2_bypass_op; // l2_bypass in decode packet is enabled and it's a LD miss in L2
+  assign l2_bypass_r = 1'b0; //~tag_hit_found & decode_v_r.ld_op & decode_v_r.l2_bypass_op; // l2_bypass in decode packet is enabled and it's a LD miss in L2
 
   // miss_v signal activates the miss handling unit.
   // MBT: the ~decode_v_r.tagst_op is necessary at the top of this expression
   //      to avoid X-pessimism post synthesis due to X's coming out of the tags
   logic miss_v;
   assign miss_v = (~decode_v_r.tagst_op) & v_v_r
-    & (ld_st_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit);
+    & (ld_st_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit | block_ld_miss);
   
   // ops that return some value other than '0.
   assign retval_op_v = decode_v_r.ld_op | decode_v_r.taglv_op | decode_v_r.tagla_op; 
@@ -583,6 +590,7 @@ module bsg_cache
   logic [data_width_p-1:0] bypass_data_masked;
   logic [data_width_p-1:0] snoop_or_ld_data;
   logic [data_width_p-1:0] ld_data_masked;
+  logic [7:0][63:0] block_load;
 
   bsg_mux #(
     .width_p(data_width_p)
@@ -675,7 +683,10 @@ module bsg_cache
         };
       end
       else if (decode_v_r.mask_op) begin
-        data_o = ld_data_masked;
+        data_o = ld_data_masked; /*
+      end
+      else if (decode_v_r.block_ld_op) begin */
+        block_load[data_counter_r] = ld_data_masked;
       end
       else begin
         data_o = ld_data_final_lo;
@@ -778,7 +789,9 @@ module bsg_cache
       ? dma_data_mem_addr_lo
       : ((decode.ld_op & v_i & ready_o) 
         ? {addr_index, counter_r}
-        : sbuf_entry_lo.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp]));
+        : ((decode.block_ld_op & v_i & ready_o) // counter!=0
+        ? {addr_index, counter_r}
+        : sbuf_entry_lo.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp])));
 
   assign data_mem_w_mask_li = dma_data_mem_w_lo
     ? dma_data_mem_w_mask_lo
@@ -800,40 +813,18 @@ module bsg_cache
     ,.data_o(plru_decode_data_lo)
     ,.mask_o(plru_decode_mask_lo)
   );
-
   
-
-  logic [511:0] block_load = '0;
+  
+  /*
   always_ff @ (negedge clk_i) begin
       if (dma_data_mem_w_lo) begin
         block_load = block_load >> 64;
         block_load[511:448] = dma_data_mem_data_lo[0];
       end
   end
-
-  assign block_load_o = block_load;
-
-/*
-  assign SIPO_block_load_v_li = dma_data_mem_w_lo;
-
-  logic [511:0] block_load_sipo;
-  logic block_load_v_o;
-  logic yumi_block_load_li;
-
-  bsg_serial_in_parallel_out_full #(
-    .width_p                (64)
-    ,.els_p                  (8)
-  ) sipo_block_load (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)      
-    ,.v_i(SIPO_block_load_v_li)
-    ,.ready_o()
-    ,.data_i(dma_data_mem_data_lo)
-    ,.data_o(block_load_sipo)
-    ,.v_o(block_load_v_o)
-    ,.yumi_i(1)
-  );
-*/
+  */
+  
+  //assign block_load_o = block_load;
 
   always_comb begin
     if (miss_v) begin

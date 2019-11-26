@@ -38,6 +38,7 @@ package bsg_cache_pkg;
 
     ,ALOCK   = 5'b11011   // address lock
     ,AUNLOCK = 5'b11100   // address unlock
+    ,BLOCK_LD = 5'b11111  // block load
   } bsg_cache_opcode_e;
 
   // bsg_cache_pkt_s
@@ -78,6 +79,7 @@ package bsg_cache_pkg;
     logic aunlock_op;
     logic tag_read_op;
     logic l2_bypass_op;
+    logic block_ld_op;
   } bsg_cache_pkt_decode_s;
 
 
