@@ -31,7 +31,6 @@ module bsg_nonsynth_ramulator_hbm_channel
     , output logic [data_width_p-1:0] data_o
   );
 
-
   logic [data_width_p-1:0] mem [mem_els_p-1:0];
 
   assign data_v_o = read_v_i;
@@ -40,12 +39,15 @@ module bsg_nonsynth_ramulator_hbm_channel
   assign data_yumi_o = data_v_i & write_v_i;
 
 
+  // zero out memory once at the beginning
+  initial begin
+    for (integer i = 0; i < mem_els_p; i++)
+      mem[i] = '0;
+  end
+
+
   always_ff @ (posedge clk_i) begin
-    if (reset_i) begin
-      for (integer i = 0; i < mem_els_p; i++)
-        mem[i] <= '0;
-    end
-    else begin
+    if (~reset_i) begin
       if (write_v_i)
         mem[write_addr_i[channel_addr_width_p-1:byte_offset_width_lp]] <= data_i;
     end
