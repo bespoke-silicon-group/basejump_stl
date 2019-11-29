@@ -34,6 +34,8 @@ AINV = 0b11010
 ALOCK = 0b11011
 AUNLOCK = 0b11100
 
+AMOSWAP = 0b11101
+
 
 class BsgCacheTraceGen:
 

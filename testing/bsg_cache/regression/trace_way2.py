@@ -689,6 +689,83 @@ if __name__ == "__main__":
 
 
 
+  # AMOSWAP test
+
+  # TAGST
+  tg.send(TAGST, 0, 0)
+  tg.recv(0)
+  tg.send(TAGST, 1<<14, 0)
+  tg.recv(0)
+
+  tg.send(SW, 0, 123) 
+  tg.recv(0)
+
+  tg.send(LW, 0, 123)
+  tg.recv(123)
+  
+  tg.send(AMOSWAP, 0, 456)
+  tg.recv(123)
+
+  tg.send(LW, 0)
+  tg.recv(456)
+
+
+  # AMOSWAP miss
+  tg.send(AFLINV, 0)
+  tg.recv(0)
+
+  tg.send(AMOSWAP, 0, 789)
+  tg.recv(456)
+
+  tg.send(LW, 0)
+  tg.recv(789)
+
+  # AMOSWAP replacement
+  tg.send(SW, 1<<14, 246)  
+  tg.recv(0)
+  
+  tg.send(LW, 1<<14)
+  tg.recv(246)
+
+  tg.send(SW, 3<<14, 345)
+  tg.recv(0)
+
+  tg.send(LW, 3<<14)
+  tg.recv(345)
+
+  tg.send(AMOSWAP, 0, 111)
+  tg.recv(789)
+
+  tg.send(AMOSWAP, 1<<14, 222)
+  tg.recv(246)
+
+  tg.send(AMOSWAP, 3<<14, 333)
+  tg.recv(345)
+
+  tg.send(AMOSWAP, 0, 444)
+  tg.send(AMOSWAP, 1<<14, 555)
+  tg.send(AMOSWAP, 3<<14, 666)
+  tg.send(AMOSWAP, 0, 777)
+  tg.send(AMOSWAP, 1<<14, 888)
+  tg.send(AMOSWAP, 3<<14, 999)
+  
+  tg.recv(111)
+  tg.recv(222)
+  tg.recv(333)
+  tg.recv(444)
+  tg.recv(555)
+  tg.recv(666)
+
+  tg.send(LW, 0)
+  tg.send(LW, 1<<14)
+  tg.send(LW, 3<<14)
+  tg.recv(777)
+  tg.recv(888)
+  tg.recv(999)
+
+
+
+
   #### DONE ####
   tg.wait(16)
   tg.done()

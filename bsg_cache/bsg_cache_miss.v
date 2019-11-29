@@ -29,16 +29,7 @@ module bsg_cache_miss
 
     // from tv stage
     ,input miss_v_i
-    /*
-    ,input st_op_v_i
-    ,input tagfl_op_v_i
-    ,input afl_op_v_i
-    ,input aflinv_op_v_i
-    ,input ainv_op_v_i
-    ,input alock_op_v_i
-    ,input aunlock_op_v_i
-    */
-    ,input bsg_cache_pkt_decode_s decode_v_i
+    ,input bsg_cache_decode_s decode_v_i
     ,input [addr_width_p-1:0] addr_v_i
     ,input [ways_p-1:0][tag_width_lp-1:0] tag_v_i
     ,input [ways_p-1:0] valid_v_i
@@ -273,7 +264,7 @@ module bsg_cache_miss
         // the input way is "not" the LRU way.
         stat_mem_v_o = dma_done_i;
         stat_mem_w_o = dma_done_i;
-        stat_mem_data_out.dirty = {ways_p{decode_v_i.st_op}};
+        stat_mem_data_out.dirty = {ways_p{decode_v_i.st_op | decode_v_i.amoswap_op}};
         stat_mem_data_out.lru_bits = chosen_way_lru_data;
         stat_mem_w_mask_out.dirty = chosen_way_decode;
         stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;

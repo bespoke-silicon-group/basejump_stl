@@ -20,7 +20,7 @@ module bsg_nonsynth_cache_axe_tracer
     input clk_i
     , input v_o
     , input yumi_i
-    , input bsg_cache_pkt_decode_s decode_v_r
+    , input bsg_cache_decode_s decode_v_r
     , input [addr_width_p-1:0] addr_v_r
     , input [sbuf_entry_width_lp-1:0] sbuf_entry_li
     , input [data_width_p-1:0] data_o

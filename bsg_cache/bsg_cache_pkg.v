@@ -38,6 +38,8 @@ package bsg_cache_pkg;
 
     ,ALOCK   = 5'b11011   // address lock
     ,AUNLOCK = 5'b11100   // address unlock
+
+    ,AMOSWAP = 5'b11101   // atomic swap
   } bsg_cache_opcode_e;
 
   // bsg_cache_pkt_s
@@ -76,7 +78,8 @@ package bsg_cache_pkg;
     logic alock_op;
     logic aunlock_op;
     logic tag_read_op;
-  } bsg_cache_pkt_decode_s;
+    logic amoswap_op;
+  } bsg_cache_decode_s;
 
 
   // bsg_cache_dma_pkt_s
