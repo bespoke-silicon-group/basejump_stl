@@ -226,7 +226,10 @@ module bsg_cache
   logic [ways_p-1:0] lock_v_r;
   logic [ways_p-1:0][tag_width_lp-1:0] tag_v_r;
   logic [ways_p-1:0][data_width_p-1:0] ld_data_v_r;
+  logic [data_width_p-1:0] DMA_data_mem_buf_data_latched_lo;
+  logic [data_width_p-1:0] DMA_data_mem_buf_data_lo;
   logic retval_op_v;
+  logic ld_from_dma_buf;
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
@@ -252,6 +255,7 @@ module bsg_cache
           tag_v_r <= tag_tl;
           lock_v_r <= lock_tl;
           ld_data_v_r <= data_mem_data_lo;
+          DMA_data_mem_buf_data_latched_lo <= DMA_data_mem_buf_data_lo;
         end
       end
     end
@@ -260,9 +264,11 @@ module bsg_cache
   assign v_we_o = v_we;
   
   logic [tag_width_lp-1:0] addr_tag_v;
+  logic [tag_width_lp-1:0] last_addr_tag_v;
   logic [lg_sets_lp-1:0] addr_index_v;
   logic [lg_ways_lp-1:0] addr_way_v; 
   logic [ways_p-1:0] tag_hit_v;
+  logic [ways_p-1:0] dummy_tag_hit_v;
 
   assign addr_tag_v =
     addr_v_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+lg_sets_lp+:tag_width_lp];
@@ -272,7 +278,8 @@ module bsg_cache
     addr_v_r[lg_sets_lp+lg_block_size_in_words_lp+lg_data_mask_width_lp+:lg_ways_lp];
 
   for (genvar i = 0; i < ways_p; i++) begin
-    assign tag_hit_v[i] = (addr_tag_v == tag_v_r[i]) & valid_v_r[i];
+  	 //assign tag_hit_v[i] = (addr_tag_v == tag_v_r[i]) & valid_v_r[i];
+     assign tag_hit_v[i] = (decode_v_r.ld_op & decode_v_r.mask_op) & ld_from_dma_buf & (addr_tag_v == last_addr_tag_v) ? 1'b1 :  (addr_tag_v == tag_v_r[i]) & valid_v_r[i];
   end
 
 
@@ -295,15 +302,17 @@ module bsg_cache
   logic aunlock_hit; // the line is hit and locked.
   logic l2_bypass_r; // l2_bypass enable logic passed by the CCE to L2 adapter
   logic block_ld_miss; // -- added 
+  logic recover_lo;
+  logic miss_done_lo;
 
-  assign block_ld_miss  = ~tag_hit_found & decode_v_r.block_ld_op; // -- added
+  assign block_ld_miss  = ~tag_hit_found & decode_v_r.ld_op & decode_v_r.mask_op; // -- added
   
   assign ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op);
   assign tagfl_hit = decode_v_r.tagfl_op& valid_v_r[addr_way_v];
   assign aflinv_hit = (decode_v_r.afl_op| decode_v_r.aflinv_op| decode_v_r.ainv_op) & tag_hit_found;
   assign alock_miss = decode_v_r.alock_op& (tag_hit_found ? ~lock_v_r[tag_hit_way_id] : 1'b1);
   assign aunlock_hit = decode_v_r.aunlock_op& (tag_hit_found ? lock_v_r[tag_hit_way_id] : 1'b0);
-  assign l2_bypass_r = 1'b0; // ~tag_hit_found & decode_v_r.ld_op & decode_v_r.l2_bypass_op; // l2_bypass in decode packet is enabled and it's a LD miss in L2
+  assign l2_bypass_r =  1'b0; //~tag_hit_found & decode_v_r.ld_op & decode_v_r.l2_bypass_op; // l2_bypass in decode packet is enabled and it's a LD miss in L2
 
   // miss_v signal activates the miss handling unit.
   // MBT: the ~decode_v_r.tagst_op is necessary at the top of this expression
@@ -314,6 +323,22 @@ module bsg_cache
   
   // ops that return some value other than '0.
   assign retval_op_v = decode_v_r.ld_op | decode_v_r.taglv_op | decode_v_r.tagla_op; 
+
+  // Victim Tag
+  always_ff @ (posedge clk_i) begin
+    if (miss_done_lo)
+        last_addr_tag_v <= addr_tag_v;	
+    if (v_i)
+    	last_addr_tag_v <= '0;
+  end
+
+  // Block Miss Latch
+  always_ff @ (posedge clk_i) begin
+    if(v_i)
+      ld_from_dma_buf <= 1'b0;
+    if(block_ld_miss)
+      ld_from_dma_buf <= 1'b1; // ld_from_dma_buf is like a block_ld_miss latch 
+  end
 
   // stat_mem
   //
@@ -347,9 +372,6 @@ module bsg_cache
   logic [addr_width_p-1:0] dma_addr_lo;
   logic [lg_ways_lp-1:0] dma_way_lo;
   logic dma_done_li;
-
-  logic recover_lo;
-  logic miss_done_lo;
 
   logic miss_stat_mem_v_lo;
   logic miss_stat_mem_w_lo;
@@ -593,6 +615,7 @@ module bsg_cache
   // output stage
   //
   logic [data_width_p-1:0] ld_data_way_picked;
+  logic [data_width_p-1:0] ld_data_way_picked_temp;
   logic [data_width_p-1:0] bypass_data_masked;
   logic [data_width_p-1:0] snoop_or_ld_data;
   logic [data_width_p-1:0] ld_data_masked;
@@ -606,11 +629,20 @@ module bsg_cache
     ,.data_o(ld_data_way_picked)
   );
 
+  bsg_mux #(
+    .width_p(data_width_p)
+    ,.els_p(2)
+  ) ld_data_from_dma_buf_mux (
+    .data_i({DMA_data_mem_buf_data_latched_lo,ld_data_way_picked})
+    ,.sel_i(ld_from_dma_buf)
+    ,.data_o(ld_data_way_picked_temp)
+  );
+
   bsg_mux_segmented #(
     .segments_p(data_mask_width_lp)
     ,.segment_width_p(8)
   ) bypass_mux_segmented (
-    .data0_i(ld_data_way_picked)
+    .data0_i(ld_data_way_picked_temp)
     ,.data1_i(bypass_data_lo)
     ,.sel_i(bypass_mask_lo)
     ,.data_o(bypass_data_masked)
@@ -803,6 +835,22 @@ module bsg_cache
     ? dma_data_mem_w_mask_lo
     : sbuf_data_mem_w_mask;
 
+  bsg_mem_1rw_sync_mask_write_byte #(
+    .data_width_p(data_width_p)
+    ,.els_p(block_size_in_words_p)
+    ,.latch_last_read_p(1)
+  ) DMA_data_mem_buf (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.v_i(data_mem_v_li)
+    ,.w_i(dma_data_mem_w_lo)
+    ,.addr_i(data_mem_addr_li[2:0])
+    ,.data_i(dma_data_mem_data_lo[0])
+    ,.write_mask_i('1)
+    ,.data_o(DMA_data_mem_buf_data_lo)
+  );
+
+
   // stat_mem ctrl logic
   // TAGST clears the stat_info as it exits tv stage.
   // If it's load or store, and there is a hit, it updates the dirty bits and LRU.
@@ -829,7 +877,7 @@ module bsg_cache
       end
       else begin
         stat_mem_v_li = ((decode_v_r.st_op| decode_v_r.ld_op| decode_v_r.tagst_op) & v_o & yumi_i);
-        stat_mem_w_li = ((decode_v_r.st_op| decode_v_r.ld_op| decode_v_r.tagst_op) & v_o & yumi_i);
+        stat_mem_w_li = ((decode_v_r.st_op| decode_v_r.ld_op| decode_v_r.tagst_op) & v_o & yumi_i & ~(ld_from_dma_buf & l2_bypass_r));
         stat_mem_addr_li = addr_index_v;
 
         if (decode_v_r.tagst_op) begin
@@ -866,9 +914,10 @@ module bsg_cache
       if (~reset_i) begin
         if (v_v_r) begin
         // check that there is no multiple hit.
+        /*
         assert($countones(tag_hit_v) <= 1)
           else $error("[BSG_ERROR][BSG_CACHE] Multiple cache hit detected. %m, T=%t", $time);
-
+*/
         // check that there is at least one unlocked way in a set.
         assert($countones(lock_v_r) < ways_p)
           else $error("[BSG_ERROR][BSG_CACHE] There should be at least one unlocked way in a set. %m, T=%t", $time);
