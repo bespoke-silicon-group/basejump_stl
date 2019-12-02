@@ -312,7 +312,7 @@ module bsg_cache
   assign aflinv_hit = (decode_v_r.afl_op| decode_v_r.aflinv_op| decode_v_r.ainv_op) & tag_hit_found;
   assign alock_miss = decode_v_r.alock_op& (tag_hit_found ? ~lock_v_r[tag_hit_way_id] : 1'b1);
   assign aunlock_hit = decode_v_r.aunlock_op& (tag_hit_found ? lock_v_r[tag_hit_way_id] : 1'b0);
-  assign l2_bypass_r =  1'b0; //~tag_hit_found & decode_v_r.ld_op & decode_v_r.l2_bypass_op; // l2_bypass in decode packet is enabled and it's a LD miss in L2
+  assign l2_bypass_r =  ~tag_hit_found & decode_v_r.ld_op & decode_v_r.l2_bypass_op; // l2_bypass in decode packet is enabled and it's a LD miss in L2
 
   // miss_v signal activates the miss handling unit.
   // MBT: the ~decode_v_r.tagst_op is necessary at the top of this expression
