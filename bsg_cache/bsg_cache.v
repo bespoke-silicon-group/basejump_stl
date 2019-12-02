@@ -833,7 +833,7 @@ module bsg_cache
   assign sbuf_v_li = (decode_v_r.st_op | decode_v_r.amoswap_op) & v_o & yumi_i;
   assign sbuf_entry_li.way_id = miss_v ? chosen_way_lo : tag_hit_way_id;
   assign sbuf_entry_li.addr = addr_v_r;
-  assign sbuf_yumi_li = sbuf_v_lo & ~(decode.ld_op & v_i & ready_o) & (~dma_data_mem_v_lo); 
+  assign sbuf_yumi_li = sbuf_v_lo & ~((decode.ld_op | decode.amoswap_op) & v_i & ready_o) & (~dma_data_mem_v_lo); 
 
   assign bypass_addr_li = addr_tl_r;
   assign bypass_v_li = (decode_tl_r.ld_op | decode_tl_r.amoswap_op) & v_tl_r & v_we;
