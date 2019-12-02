@@ -43,6 +43,7 @@ module testbench();
     .channel_addr_width_p(channel_addr_width_p)
     ,.num_channels_p(num_channels_p)
     ,.data_width_p(data_width_p)
+    ,.debug_p(1)
   ) hbm0 (
     .clk_i(clk)
     ,.reset_i(reset)
@@ -80,6 +81,8 @@ module testbench();
   logic [num_channels_p-1:0][4+ring_width_p-1:0] rom_data;
   logic [num_channels_p-1:0][rom_addr_width_p-1:0] rom_addr;
 
+  logic [num_channels_p-1:0] ch_done;
+
   for (genvar i = 0; i < num_channels_p; i++) begin
 
     bsg_fsb_node_trace_replay #(
@@ -101,7 +104,7 @@ module testbench();
       ,.rom_addr_o(rom_addr[i])
       ,.rom_data_i(rom_data[i])
 
-      ,.done_o()
+      ,.done_o(ch_done[i])
       ,.error_o()
     );
 
@@ -121,9 +124,20 @@ module testbench();
 
   end
 
-  initial begin
-    #10000000;
-    $finish;
-  end
+   logic done;
+
+   bsg_reduce #(
+     .width_p(num_channels_p)
+     ,.and_p(1)
+   ) reduce_done (
+     .i(ch_done)
+     ,.o(done)
+   );
+
+  always @(posedge clk)
+    begin
+       if (done)
+         $finish;
+    end
 
 endmodule
