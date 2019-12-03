@@ -8,6 +8,8 @@ module bsg_nonsynth_ramulator_hbm_channel
     , parameter data_width_p="inv"
     , parameter mem_els_p=2**23 // 512 MB total
 
+    , parameter init_mem_p=0
+
     , parameter data_mask_width_lp=(data_width_p>>3)
     , parameter byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
   )
@@ -41,8 +43,9 @@ module bsg_nonsynth_ramulator_hbm_channel
 
   // zero out memory once at the beginning
   initial begin
-    for (integer i = 0; i < mem_els_p; i++)
-      mem[i] = '0;
+    if (init_mem_p)
+      for (integer i = 0; i < mem_els_p; i++)
+        mem[i] = '0;
   end
 
 

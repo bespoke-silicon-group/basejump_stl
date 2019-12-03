@@ -10,6 +10,7 @@ module bsg_nonsynth_ramulator_hbm
     , parameter num_channels_p="inv"
 
     , parameter debug_p=0
+    , parameter init_mem_p=0 // zero out values in memory at the beginning
 
     , parameter lg_num_channels_lp=`BSG_SAFE_CLOG2(num_channels_p)
     , parameter data_mask_width_lp=(data_width_p>>3)
@@ -129,6 +130,7 @@ module bsg_nonsynth_ramulator_hbm
     bsg_nonsynth_ramulator_hbm_channel #(
       .channel_addr_width_p(channel_addr_width_p)
       ,.data_width_p(data_width_p)
+      ,.init_mem_p(init_mem_p)
     ) channel (
       .clk_i(clk_i)
       ,.reset_i(reset_i)
