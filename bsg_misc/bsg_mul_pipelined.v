@@ -62,7 +62,7 @@ module bsg_mul_pipelined #(parameter width_p="inv"
                            , parameter pipeline_p=1
                            , parameter harden_p  =1
                            )
-   (  input clock_i
+   (  input clk_i
     , input en_i
     , input   [width_p-1:0] x_i
     , input [width_p-1:0] y_i
@@ -83,7 +83,7 @@ module bsg_mul_pipelined #(parameter width_p="inv"
 endmodule // bsg_mul
 
 module bsg_mul_32_32 #(parameter harden_p=0, pipeline_p=0)
-   (  input clock_i
+   (  input clk_i
     , input en_i
     , input   [31:0] x_i
     , input [31:0] y_i
@@ -241,7 +241,7 @@ module bsg_mul_32_32 #(parameter harden_p=0, pipeline_p=0)
                              ,.group_vec_p((64'h32_2b_23_1b_15_10_08_00 << 1))
                              ,.harden_p(harden_p)
                      )
-        dffe_c42_03_r (.clock_i
+        dffe_c42_03_r (.clk_i
                        ,.en_i
                        ,.data_i(c42_03_trans)
                        ,.data_o(c42_03_trans_r)
@@ -327,7 +327,7 @@ module bsg_mul_32_32 #(parameter harden_p=0, pipeline_p=0)
         bsg_dff_en #(.width_p(11)
                      ,.harden_p(harden_p)
                      )
-        dffe_gb_dot_r (.clock_i
+        dffe_gb_dot_r (.clk_i
                        ,.en_i
                        ,.data_i(gb_dot[10:0])
                        ,.data_o(gb_dot_r)
@@ -336,7 +336,7 @@ module bsg_mul_32_32 #(parameter harden_p=0, pipeline_p=0)
         bsg_dff_en #(.width_p(8)
                      ,.harden_p(harden_p)
                      )
-        dffe_c42_01s_r (.clock_i
+        dffe_c42_01s_r (.clk_i
                         ,.en_i
                         ,.data_i(c42_01s[7:0])
                         ,.data_o(c42_01s_r)
@@ -345,7 +345,7 @@ module bsg_mul_32_32 #(parameter harden_p=0, pipeline_p=0)
         bsg_dff_en #(.width_p(7)
                      ,.harden_p(harden_p)
                      )
-        dffe_c42_01c_r (.clock_i
+        dffe_c42_01c_r (.clk_i
                         ,.en_i
                         ,.data_i(c42_01c[6:0])
                         ,.data_o(c42_01c_r)
@@ -354,7 +354,7 @@ module bsg_mul_32_32 #(parameter harden_p=0, pipeline_p=0)
         bsg_dff_en #(.width_p(6)
                      ,.harden_p(harden_p)
                      )
-        dffe_s30_r (.clock_i
+        dffe_s30_r (.clk_i
                     ,.en_i
                     ,.data_i(s30[5:0])
                     ,.data_o(s30_r)
@@ -363,7 +363,7 @@ module bsg_mul_32_32 #(parameter harden_p=0, pipeline_p=0)
         bsg_dff_en #(.width_p(5)
                      ,.harden_p(harden_p)
                      )
-        dffe_c30_r (.clock_i
+        dffe_c30_r (.clk_i
                     ,.en_i
                     ,.data_i(c30[4:0])
                     ,.data_o(c30_r)
@@ -568,7 +568,7 @@ module bsg_dff_en_rep_rep #(parameter blocks_p=0
                             , group_vec_p=0
                             , harden_p=1
                             )
-   (input clock_i
+   (input clk_i
     , input en_i
     , input  [width_p-1:0] data_i
     , output [width_p-1:0] data_o
@@ -583,7 +583,7 @@ module bsg_dff_en_rep_rep #(parameter blocks_p=0
         localparam [31:0] blocks_lp  = group_end_lp-group_start_lp;
 
         bsg_dff_en #(.width_p(blocks_lp), .harden_p(harden_p)) bde
-        (.clock_i
+        (.clk_i
          ,.en_i
          ,.data_i(data_i[group_end_lp-1:group_start_lp])
          ,.data_o(data_o[group_end_lp-1:group_start_lp])
