@@ -40,6 +40,8 @@ if __name__ == "__main__":
   for i in range(2048):
     # stride is by column
     tg.send(READ, i * 64)
+    # stride is by row
+    #tg.send(READ, i * 2048)
     # only using 1/4 banks (1 bank group)
     #tg.send(READ, i * 4 * 2048)
     # only using 1/16 banks (1 bank group)
