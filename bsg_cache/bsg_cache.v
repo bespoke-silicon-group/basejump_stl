@@ -716,13 +716,6 @@ module bsg_cache
   // ctrl logic
   //
 
-  /*
-  block_ld_miss
-    ? dma_data_mem_w_lo
-    :
-(miss_v ? miss_done_lo : 1'b1)
-  */
-
   assign v_o = v_v_r & (miss_v
     ? block_ld_miss               // On a block ld miss, data is forwarded to the CCE simultaneously as it's written into data_mem
     ? dma_data_mem_w_lo
