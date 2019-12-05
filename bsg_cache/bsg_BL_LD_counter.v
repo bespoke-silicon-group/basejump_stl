@@ -6,7 +6,7 @@
 module bsg_BL_LD_counter #(parameter max_val_p     = -1
 			      // this originally had an "invalid" default value of -1
 			      // which is a bad choice for a counter
-                ,parameter init_val_p   = `BSG_UNDEFINED_IN_SIM('0)
+                ,parameter init_val_p   = `BSG_UNDEFINED_IN_SIM(`0)
                 ,parameter ptr_width_lp = `BSG_SAFE_CLOG2(max_val_p+1)
 			    ,parameter disable_overflow_warning_p = 0
                              )
@@ -27,7 +27,7 @@ module bsg_BL_LD_counter #(parameter max_val_p     = -1
    logic counter_max, v_r;
    
    assign counter_max = (count_o == max_val_p);
-   assign v_o = |count_o;
+   assign v_o = ready_i & v_r;
 
    always_ff @(posedge clk_i)
    	begin
@@ -37,7 +37,7 @@ module bsg_BL_LD_counter #(parameter max_val_p     = -1
 
    always_ff @(posedge clk_i)
      begin
-        if (reset_i)
+        if (reset_i | counter_max)
           count_o <= init_val_p;
         else if (v_i | v_r)
 	  	    count_o <= clear_i ? (ptr_width_lp ' (ready_i) ) : (count_o+(ptr_width_lp ' (ready_i)));
