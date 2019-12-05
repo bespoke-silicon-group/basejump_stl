@@ -157,14 +157,27 @@ module bsg_nonsynth_ramulator_hbm
 
 
   // debugging
+   integer file;
+   initial begin
+      if (debug_p) begin
+         file = $fopen("ramulator_access_trace.txt");
+         $fwrite(file, "request,time,channel,write_not_read,address\n");
+      end
+   end
+
   always_ff @ (posedge clk_i) begin
     if (~reset_i & debug_p) begin
       for (integer i = 0; i < num_channels_p; i++) begin
         if (yumi_o[i])
-          $display("req sent:  t=%012t, channel=%0d, write_not_read=%0b, addr=%032b", $time, i, write_not_read_i[i], ch_addr_i[i]);
-
+          begin
+             $display("req sent:  t=%012t, channel=%0d, write_not_read=%0b, addr=%032b", $time, i, write_not_read_i[i], ch_addr_i[i]);
+             $fwrite(file, "send,%t,%0d,%0b,%08h\n", $time, i, write_not_read_i[i], ch_addr_i[i]);
+          end
         if (read_done[i])
-          $display("read done: t=%012t, channel=%0d, addr=%32b", $time, i, read_done_ch_addr[i]);
+          begin
+             $display("read done: t=%012t, channel=%0d, addr=%32b", $time, i, read_done_ch_addr[i]);
+             $fwrite(file, "recv,%t,%0d,,%08h\n", $time, i, read_done_ch_addr[i]);
+          end
       end
     end
   end
@@ -174,6 +187,7 @@ module bsg_nonsynth_ramulator_hbm
   // final
   final begin
     finish_hbm();
+    $fclose(file);
   end
 
 endmodule

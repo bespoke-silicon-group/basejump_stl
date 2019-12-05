@@ -15,4 +15,6 @@ $BASEJUMP_STL_DIR/bsg_test/bsg_ramulator_hbm.cpp
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_ramulator_hbm.v
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_ramulator_hbm_channel.v
 
+$BASEJUMP_STL_DIR/bsg_misc/bsg_reduce.v
+
 testbench.v
