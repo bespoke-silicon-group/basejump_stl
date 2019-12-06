@@ -109,7 +109,7 @@ module bsg_1_to_n_tagged_fifo_shared   #(parameter width_p              = "inv"
              assign els[i] = 0;
           end
         else
-          begin : buf
+          begin : bufd
              bsg_fifo_tracker #(.els_p(els_p)
                                 ) ft
                (.clk_i
