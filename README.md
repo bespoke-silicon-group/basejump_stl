@@ -6,15 +6,19 @@ contain all of the commonly used HW primitives.
 See this paper http://cseweb.ucsd.edu/~mbtaylor/papers/Taylor_DAC_BaseJump_STL_2018.pdf
 which describes the design and usage.
 
+To use BaseJump STL, you currently need to specify https://github.com/bespoke-silicon-group/basejump_stl/blob/master/bsg_misc/bsg_defines.v as a pre include file for your toolsuite.
+
+It defines a bunch of macros that are used across BaseJump STL.
+
 ## Contents
-
-* bsg_async
-
-This is for asynchronous building blocks, like the bsg_async_fifo, synchronizers, and credit counters.
 
 * bsg_misc
 
 Small, miscellaneous building blocks, like counters, reset timers, gray to binary coders, etc.
+
+* bsg_async
+
+This is for asynchronous building blocks, like the bsg_async_fifo, synchronizers, and credit counters.
 
 * bsg_fsb
 
