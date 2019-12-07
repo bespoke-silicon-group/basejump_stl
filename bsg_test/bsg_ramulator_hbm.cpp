@@ -8,7 +8,9 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#ifdef SV_TEST
 #include "svdpi.h"
+#endif
 #include "HBM.h"
 #include "Controller.h"
 #include "Config.h"
