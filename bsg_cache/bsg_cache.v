@@ -103,6 +103,7 @@ module bsg_cache
   logic [data_mask_width_lp-1:0] mask_tl_r;
   logic [addr_width_p-1:0] addr_tl_r;
   logic [data_width_p-1:0] data_tl_r;
+  logic sbuf_hazard;
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
@@ -121,6 +122,10 @@ module bsg_cache
           data_tl_r <= cache_pkt.data;
           decode_tl_r <= decode;
         end
+      end
+      else begin
+        if (sbuf_hazard)
+          v_tl_r <= 1'b0;
       end
     end
   end
@@ -274,24 +279,24 @@ module bsg_cache
   logic aflinv_hit;
   logic alock_miss;  // either the line is miss, or the line is unlocked.
   logic aunlock_hit; // the line is hit and locked.
-  logic amoswap_miss;
+  logic atomic_miss;
 
   assign ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op);
   assign tagfl_hit = decode_v_r.tagfl_op & valid_v_r[addr_way_v];
   assign aflinv_hit = (decode_v_r.afl_op | decode_v_r.aflinv_op| decode_v_r.ainv_op) & tag_hit_found;
   assign alock_miss = decode_v_r.alock_op & (tag_hit_found ? ~lock_v_r[tag_hit_way_id] : 1'b1);
   assign aunlock_hit = decode_v_r.aunlock_op & (tag_hit_found ? lock_v_r[tag_hit_way_id] : 1'b0);
-  assign amoswap_miss = decode_v_r.amoswap_op & ~tag_hit_found;
+  assign atomic_miss = decode_v_r.atomic_op & ~tag_hit_found;
 
   // miss_v signal activates the miss handling unit.
   // MBT: the ~decode_v_r.tagst_op is necessary at the top of this expression
   //      to avoid X-pessimism post synthesis due to X's coming out of the tags
   logic miss_v;
   assign miss_v = (~decode_v_r.tagst_op) & v_v_r
-    & (ld_st_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit | amoswap_miss);
+    & (ld_st_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit | atomic_miss);
   
   // ops that return some value other than '0.
-  assign retval_op_v = decode_v_r.ld_op | decode_v_r.taglv_op | decode_v_r.tagla_op | decode_v_r.amoswap_op; 
+  assign retval_op_v = decode_v_r.ld_op | decode_v_r.taglv_op | decode_v_r.tagla_op | decode_v_r.atomic_op; 
 
   // stat_mem
   //
@@ -509,6 +514,7 @@ module bsg_cache
   logic [data_sel_mux_els_lp-1:0][data_mask_width_lp-1:0] sbuf_mask_in_mux_li;
   logic [data_width_p-1:0] sbuf_data_in;
   logic [data_mask_width_lp-1:0] sbuf_mask_in;
+  logic [data_width_p-1:0] snoop_or_ld_data;
 
   bsg_mux #(
     .width_p(data_width_p)
@@ -560,22 +566,31 @@ module bsg_cache
     end
   end
 
-  assign sbuf_entry_li.data = (decode_v_r.mask_op | decode_v_r.amoswap_op)
-    ? data_v_r
-    : sbuf_data_in;
-
-  assign sbuf_entry_li.mask = decode_v_r.mask_op
-    ? mask_v_r
-    : (decode_v_r.amoswap_op
-      ? {data_mask_width_lp{1'b1}}
-      : sbuf_mask_in);
+  // store buffer data,mask input
+  always_comb begin
+    if (decode_v_r.mask_op) begin
+      sbuf_entry_li.data = data_v_r;
+      sbuf_entry_li.mask = mask_v_r;
+    end
+    else if (decode_v_r.amoswap_op) begin
+      sbuf_entry_li.data = data_v_r;
+      sbuf_entry_li.mask = {data_mask_width_lp{1'b1}};
+    end
+    else if (decode_v_r.amoor_op) begin
+      sbuf_entry_li.data = data_v_r | snoop_or_ld_data;
+      sbuf_entry_li.mask = {data_mask_width_lp{1'b1}};
+    end
+    else begin
+      sbuf_entry_li.data = sbuf_data_in;
+      sbuf_entry_li.mask = sbuf_mask_in;
+    end
+  end
 
 
   // output stage
   //
   logic [data_width_p-1:0] ld_data_way_picked;
   logic [data_width_p-1:0] bypass_data_masked;
-  logic [data_width_p-1:0] snoop_or_ld_data;
   logic [data_width_p-1:0] ld_data_masked;
 
   bsg_mux #(
@@ -671,7 +686,7 @@ module bsg_cache
       else if (decode_v_r.mask_op) begin
         data_o = ld_data_masked;
       end
-      else if (decode_v_r.amoswap_op) begin
+      else if (decode_v_r.atomic_op) begin
         data_o = snoop_or_ld_data;
       end
       else begin
@@ -693,16 +708,21 @@ module bsg_cache
     ? (v_o & yumi_i)
     : 1'b1;
 
+  // when the store buffer is full, and the TV stage is inserting another entry,
+  // load/atomic cannot enter tl stage.
+  assign sbuf_hazard = (sbuf_full_lo & (v_o & yumi_i & (decode_v_r.st_op | decode_v_r.atomic_op)))
+    & (v_i & (decode.ld_op | decode.atomic_op));
+
   // during miss, tl pipeline cannot take next instruction when
   // 1) input is tagst
   // 2) miss handler is writing to tag_mem
   // 3) dma engine is writing to data_mem
   // 4) tl_stage is recovering from tag_miss
-  // 5) store buffer is full, and TV stage is inserting another entry.
-  logic tl_ready;
-  assign tl_ready = miss_v
+  // 5) DMA is evicting a block.
+  wire tl_ready = (miss_v
     ? (~(decode.tagst_op & v_i) & ~miss_tag_mem_v_lo & ~dma_data_mem_v_lo & ~recover_lo & ~dma_evict_lo)
-    : 1'b1;
+    : 1'b1) & ~sbuf_hazard;
+
   assign ready_o = v_tl_r
     ? (v_we & tl_ready)
     : tl_ready;
@@ -758,8 +778,8 @@ module bsg_cache
 
   // data_mem ctrl logic
   //
-  assign data_mem_v_li = ((v_i & ready_o & (decode.ld_op | decode.amoswap_op))
-    | (v_tl_r & recover_lo & (decode_tl_r.ld_op | decode_tl_r.amoswap_op)) 
+  assign data_mem_v_li = ((v_i & ready_o & (decode.ld_op | decode.atomic_op))
+    | (v_tl_r & recover_lo & (decode_tl_r.ld_op | decode_tl_r.atomic_op)) 
     | dma_data_mem_v_lo
     | (sbuf_v_lo & sbuf_yumi_li)
   );
@@ -808,8 +828,8 @@ module bsg_cache
       stat_mem_w_mask_li = miss_stat_mem_w_mask_lo;
     end
     else begin
-      stat_mem_v_li = ((decode_v_r.st_op | decode_v_r.ld_op | decode_v_r.tagst_op | decode_v_r.amoswap_op) & v_o & yumi_i);
-      stat_mem_w_li = ((decode_v_r.st_op | decode_v_r.ld_op | decode_v_r.tagst_op | decode_v_r.amoswap_op) & v_o & yumi_i);
+      stat_mem_v_li = ((decode_v_r.st_op | decode_v_r.ld_op | decode_v_r.tagst_op | decode_v_r.atomic_op) & v_o & yumi_i);
+      stat_mem_w_li = ((decode_v_r.st_op | decode_v_r.ld_op | decode_v_r.tagst_op | decode_v_r.atomic_op) & v_o & yumi_i);
       stat_mem_addr_li = addr_index_v;
 
       if (decode_v_r.tagst_op) begin
@@ -821,9 +841,9 @@ module bsg_cache
       end
       else begin
         // for LD, ST
-        stat_mem_data_li.dirty = {ways_p{decode_v_r.st_op | decode_v_r.amoswap_op}};
+        stat_mem_data_li.dirty = {ways_p{decode_v_r.st_op | decode_v_r.atomic_op}};
         stat_mem_data_li.lru_bits = plru_decode_data_lo;
-        stat_mem_w_mask_li.dirty = {ways_p{decode_v_r.st_op | decode_v_r.amoswap_op}} & tag_hit_v;
+        stat_mem_w_mask_li.dirty = {ways_p{decode_v_r.st_op | decode_v_r.atomic_op}} & tag_hit_v;
         stat_mem_w_mask_li.lru_bits = plru_decode_mask_lo;
       end
     end
@@ -832,13 +852,13 @@ module bsg_cache
 
   // store buffer
   //
-  assign sbuf_v_li = (decode_v_r.st_op | decode_v_r.amoswap_op) & v_o & yumi_i;
+  assign sbuf_v_li = (decode_v_r.st_op | decode_v_r.atomic_op) & v_o & yumi_i;
   assign sbuf_entry_li.way_id = miss_v ? chosen_way_lo : tag_hit_way_id;
   assign sbuf_entry_li.addr = addr_v_r;
-  assign sbuf_yumi_li = sbuf_v_lo & ~((decode.ld_op | decode.amoswap_op) & v_i & ready_o) & (~dma_data_mem_v_lo); 
+  assign sbuf_yumi_li = sbuf_v_lo & ~((decode.ld_op | decode.atomic_op) & v_i & ready_o) & (~dma_data_mem_v_lo); 
 
   assign bypass_addr_li = addr_tl_r;
-  assign bypass_v_li = (decode_tl_r.ld_op | decode_tl_r.amoswap_op) & v_tl_r & v_we;
+  assign bypass_v_li = (decode_tl_r.ld_op | decode_tl_r.atomic_op) & v_tl_r & v_we;
 
 
   // synopsys translate_off

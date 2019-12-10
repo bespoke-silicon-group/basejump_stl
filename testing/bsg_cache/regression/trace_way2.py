@@ -764,25 +764,25 @@ if __name__ == "__main__":
   tg.recv(999)
 
   
-  #tg.send(SW, 0, 0)
-  #tg.send(SW, 4, 0)
-  #tg.recv(0)
-  #tg.recv(0)
-  #tg.wait(20)
+  tg.send(SW, 0, 0)
+  tg.send(SW, 4, 0)
+  tg.recv(0)
+  tg.recv(0)
+  tg.wait(20)
 
-  #tg.send(AMOSWAP_W, 0, 2)
-  #tg.send(AMOSWAP_W, 0, 3)
-  #tg.send(AMOSWAP_W, 4, 5)
-  #tg.send(AMOSWAP_W, 0, 7)
-  #tg.send(AMOSWAP_W, 0, 11)
-  #tg.send(AMOSWAP_W, 0, 13)
-  #tg.send(AMOSWAP_W, 0, 17)
+  tg.send(AMOSWAP_W, 0, 2)
+  tg.send(AMOSWAP_W, 0, 3)
+  tg.send(AMOSWAP_W, 4, 5)
+  tg.send(AMOSWAP_W, 0, 7)
+  tg.send(AMOSWAP_W, 0, 11)
+  tg.send(AMOSWAP_W, 0, 13)
+  tg.send(AMOSWAP_W, 0, 17)
 
-  #tg.recv(0)
-  #tg.recv(2)
-  #tg.recv(0)
-  #tg.recv(3)
-  #tg.recv(7)
+  tg.recv(0)
+  tg.recv(2)
+  tg.recv(0)
+  tg.recv(3)
+  tg.recv(7)
 
 
 

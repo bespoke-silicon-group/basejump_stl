@@ -264,7 +264,7 @@ module bsg_cache_miss
         // the input way is "not" the LRU way.
         stat_mem_v_o = dma_done_i;
         stat_mem_w_o = dma_done_i;
-        stat_mem_data_out.dirty = {ways_p{decode_v_i.st_op | decode_v_i.amoswap_op}};
+        stat_mem_data_out.dirty = {ways_p{decode_v_i.st_op | decode_v_i.atomic_op}};
         stat_mem_data_out.lru_bits = chosen_way_lru_data;
         stat_mem_w_mask_out.dirty = chosen_way_decode;
         stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
