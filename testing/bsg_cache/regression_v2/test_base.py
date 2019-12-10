@@ -45,6 +45,15 @@ class TestBase:
     self.tg.send(SB, addr, self.curr_data)
     self.curr_data += 1
 
+  # SM
+  def send_sm(self, addr, mask):
+    self.tg.send(SM, addr, self.curr_data, mask)
+    self.curr_data += 1
+   
+  # LM 
+  def send_lm(self, addr, mask):
+    self.tg.send(SM, addr, 0, mask)
+
   # LW
   def send_lw(self, addr):
     self.tg.send(LW, addr)

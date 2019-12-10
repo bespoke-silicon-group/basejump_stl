@@ -95,6 +95,15 @@ module basic_checker
     ,.data_o(half_sel)
   );
 
+  logic [data_width_p-1:0] load_mask;
+  bsg_expand_bitmask #(
+    .in_width_p(4)
+    ,.expand_p(8)
+  ) eb (
+    .i(cache_pkt.mask)
+    ,.o(load_mask)
+  );
+
   always_comb begin
     case (cache_pkt.opcode)
       LW: load_data_final = load_data;
@@ -102,6 +111,7 @@ module basic_checker
       LB: load_data_final = {{24{byte_sel[7]}}, byte_sel};
       LHU: load_data_final = {{16{1'b0}}, half_sel};
       LBU: load_data_final = {{24{1'b0}}, byte_sel};
+      LM: load_data_final = load_data & load_mask;
       default: load_data_final = '0;
     endcase
   end
@@ -128,7 +138,7 @@ module basic_checker
               result[send_id] = '0;
               send_id++;
             end
-            LW, LH, LB, LHU, LBU: begin
+            LM, LW, LH, LB, LHU, LBU: begin
               result[send_id] = load_data_final;
               send_id++;
             end
