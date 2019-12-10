@@ -35,7 +35,8 @@ module testbench();
   string checker;
   initial begin
     status = $value$plusargs("wave=%d",wave);
-    status = $value$plusargs("checker=%d",checker);
+    status = $value$plusargs("checker=%s",checker);
+    $display("checker=%s", checker);
     if (wave) $vcdpluson;
   end
 

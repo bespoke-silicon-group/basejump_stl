@@ -794,7 +794,7 @@ module bsg_cache
     ? {addr_index_tl, addr_block_offset_tl}
     : (dma_data_mem_v_lo
       ? dma_data_mem_addr_lo
-      : ((decode.ld_op & v_i & ready_o) 
+      : (((decode.ld_op | decode.atomic_op) & v_i & ready_o) 
         ? {addr_index, addr_block_offset}
         : sbuf_entry_lo.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp]));
 

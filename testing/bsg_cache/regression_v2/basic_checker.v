@@ -155,14 +155,14 @@ module basic_checker
                   shadow_mem[cache_pkt_word_addr][8*i+:8] <= store_data[8*i+:8];
             end
             AMOSWAP_W: begin
-              result[send_id] <= shadow_mem[cache_pkt_word_addr];
+              result[send_id] <= load_data;
               send_id <= send_id + 1;
               shadow_mem[cache_pkt_word_addr] <= cache_pkt.data;
             end
             AMOOR_W: begin
-              result[send_id] = shadow_mem[cache_pkt_word_addr];
+              result[send_id] <= load_data;
               send_id <= send_id + 1;
-              shadow_mem[cache_pkt_word_addr] <= cache_pkt.data | shadow_mem[cache_pkt_word_addr];
+              shadow_mem[cache_pkt_word_addr] <= cache_pkt.data | load_data;
             end
           endcase
         end
@@ -172,6 +172,7 @@ module basic_checker
           assert(result[recv_id] == data_o)
             else $fatal("[BSG_FATAL] output does not match expected result. Id=%d, Expected: %x. Actual: %x.",
                     recv_id, result[recv_id], data_o);
+          recv_id++;
         end
       end
     end
