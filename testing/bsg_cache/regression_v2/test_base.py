@@ -74,6 +74,16 @@ class TestBase:
   def send_lbu(self, addr):
     self.tg.send(LBU, addr)
 
+  # AMOSWAP_W
+  def send_amoswap_w(self, addr):
+    self.tg.send(AMOSWAP_W, addr, self.curr_data)
+    self.curr_data += 1
+    
+  # AMOOR_W
+  def send_amoor_w(self, addr):
+    self.tg.send(AMOOR_W, addr, self.curr_data)
+    self.curr_data += 1
+
   #                         #
   #   COMPOSITE FUNCTIONS   #
   #                         #

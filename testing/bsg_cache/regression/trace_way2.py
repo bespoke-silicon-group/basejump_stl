@@ -783,6 +783,23 @@ if __name__ == "__main__":
   tg.recv(0)
   tg.recv(3)
   tg.recv(7)
+  tg.recv(11)
+  tg.recv(13)
+
+  # AMOOR
+  tg.send(SW, 0, 0)
+  tg.recv(0)
+
+  tg.send(AMOOR_W, 0, 0b11)
+  tg.recv(0)
+
+  tg.send(AMOOR_W, 0, 0b11111)
+  tg.recv(0b11)
+
+  tg.send(AMOOR_W, 0, 0b0)
+  tg.recv(0b11111)
+
+
 
 
 

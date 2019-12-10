@@ -39,10 +39,12 @@ module basic_checker
 
   always_comb begin
     case (cache_pkt.opcode)
+
       SW: begin
         store_data = cache_pkt.data;
         store_mask = 4'b1111;
       end
+
       SH: begin
         store_data = {2{cache_pkt.data[15:0]}};
         store_mask = {
@@ -50,6 +52,7 @@ module basic_checker
           {2{~cache_pkt.addr[1]}}
         };
       end
+
       SB: begin
         store_data = {4{cache_pkt.data[7:0]}};
         store_mask = {
@@ -59,10 +62,12 @@ module basic_checker
           ~cache_pkt.addr[1] & ~cache_pkt.addr[0]
         };
       end
+
       SM: begin
         store_data = cache_pkt.data;
         store_mask = cache_pkt.mask;
       end
+
       default: begin
         store_data = '0;
         store_mask = '0;
@@ -148,6 +153,16 @@ module basic_checker
               for (integer i = 0; i < data_mask_width_lp; i++)
                 if (store_mask[i])
                   shadow_mem[cache_pkt_word_addr][8*i+:8] <= store_data[8*i+:8];
+            end
+            AMOSWAP_W: begin
+              result[send_id] <= shadow_mem[cache_pkt_word_addr];
+              send_id <= send_id + 1;
+              shadow_mem[cache_pkt_word_addr] <= cache_pkt.data;
+            end
+            AMOOR_W: begin
+              result[send_id] = shadow_mem[cache_pkt_word_addr];
+              send_id <= send_id + 1;
+              shadow_mem[cache_pkt_word_addr] <= cache_pkt.data | shadow_mem[cache_pkt_word_addr];
             end
           endcase
         end
