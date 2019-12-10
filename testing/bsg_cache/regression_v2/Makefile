@@ -8,7 +8,7 @@ VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4
 
 
 ##### Test Suite #######
-BASIC_TEST = test_random1
+BASIC_TEST = test_random1 test_random2
 
 
 ########################
