@@ -43,6 +43,26 @@ module basic_checker
         store_data = cache_pkt.data;
         store_mask = 4'b1111;
       end
+      SH: begin
+        store_data = {2{cache_pkt.data[15:0]}};
+        store_mask = {
+          {2{ cache_pkt.addr[1]}},
+          {2{~cache_pkt.addr[1]}}
+        };
+      end
+      SB: begin
+        store_data = {4{cache_pkt.data[7:0]}};
+        store_mask = {
+           cache_pkt.addr[1] &  cache_pkt.addr[0],
+           cache_pkt.addr[1] & ~cache_pkt.addr[0],
+          ~cache_pkt.addr[1] &  cache_pkt.addr[0],
+          ~cache_pkt.addr[1] & ~cache_pkt.addr[0]
+        };
+      end
+      SM: begin
+        store_data = cache_pkt.data;
+        store_mask = cache_pkt.mask;
+      end
       default: begin
         store_data = '0;
         store_mask = '0;
@@ -108,11 +128,11 @@ module basic_checker
               result[send_id] = '0;
               send_id++;
             end
-            LW: begin
+            LW, LH, LB, LHU, LBU: begin
               result[send_id] = load_data_final;
               send_id++;
             end
-            SW: begin
+            SW, SH, SB, SM: begin
               result[send_id] = '0;
               send_id++;
               for (integer i = 0; i < data_mask_width_lp; i++)

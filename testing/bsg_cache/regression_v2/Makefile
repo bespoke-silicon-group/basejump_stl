@@ -8,7 +8,7 @@ VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4
 
 
 ##### Test Suite #######
-BASIC_TEST = test_random1 test_random2
+BASIC_TEST = test_random1 test_random2 test_byte1 test_byte2 test_byte3
 
 
 ########################
@@ -27,7 +27,7 @@ BASIC_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BASIC_TEST)))
 
 .PRECIOUS: $(BASIC_TRACE_TR)
 
-all: basic_test
+all: basic_test 
 
 basic_test: $(addsuffix .basic.run, $(BASIC_TEST))
 
@@ -53,20 +53,6 @@ summary:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 clean:
 	rm -rf DVEfiles
 	rm -rf csrc
@@ -74,3 +60,4 @@ clean:
 	rm -rf ucli.key vcdplus.vpd simv cm.log *.tar.gz
 	rm -rf stack.info.* *.pyc
 	rm -rf out
+	rm -f ../common/*.pyc

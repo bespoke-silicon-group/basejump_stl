@@ -2,7 +2,7 @@ import sys
 import random
 from test_base import *
 
-class TestRandom1(TestBase):
+class TestRandom2(TestBase):
   
   def generate(self):
     self.clear_tag()
@@ -19,12 +19,12 @@ class TestRandom1(TestBase):
         index = random.randint(0,2)
         block_offset = random.randint(0,3)
         taddr = self.get_addr(tag,index,block_offset)
-        self.send_sw(taddr)
+        self.send_lw(taddr)
 
     self.tg.done()
 
 
 # main()
 if __name__ == "__main__":
-  t = TestRandom1()
+  t = TestRandom2()
   t.generate()

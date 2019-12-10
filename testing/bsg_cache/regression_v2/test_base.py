@@ -35,11 +35,35 @@ class TestBase:
     self.tg.send(SW, addr, self.curr_data)
     self.curr_data += 1
 
+  # SH
+  def send_sh(self, addr):
+    self.tg.send(SH, addr, self.curr_data)
+    self.curr_data += 1
+
+  # SB
+  def send_sb(self, addr):
+    self.tg.send(SB, addr, self.curr_data)
+    self.curr_data += 1
+
   # LW
   def send_lw(self, addr):
     self.tg.send(LW, addr)
-    self.curr_data += 1
 
+  # LH
+  def send_lh(self, addr):
+    self.tg.send(LH, addr)
+  
+  # LB
+  def send_lb(self, addr):
+    self.tg.send(LB, addr)
+
+  # LHU
+  def send_lhu(self, addr):
+    self.tg.send(LHU, addr)
+  
+  # LBU
+  def send_lbu(self, addr):
+    self.tg.send(LBU, addr)
 
   #                         #
   #   COMPOSITE FUNCTIONS   #
@@ -54,6 +78,7 @@ class TestBase:
   #                       #
   #   HELPER FUNCTIONS    #
   #                       #
+
   def get_addr(self, tag, index, block_offset=0, byte_offset=0):
     addr = tag << 12
     addr += index << 5
