@@ -458,7 +458,7 @@ module bsg_cache
   logic bypass_v_li;
   logic [data_width_p-1:0] bypass_data_lo;
   logic [data_mask_width_lp-1:0] bypass_mask_lo;
-
+  logic sbuf_full_lo;
 
   bsg_cache_sbuf #(
     .data_width_p(data_width_p)
@@ -476,6 +476,7 @@ module bsg_cache
     ,.yumi_i(sbuf_yumi_li)
 
     ,.empty_o(sbuf_empty_li)
+    ,.full_o(sbuf_full_lo)
 
     ,.bypass_addr_i(bypass_addr_li)
     ,.bypass_v_i(bypass_v_li)
@@ -697,6 +698,7 @@ module bsg_cache
   // 2) miss handler is writing to tag_mem
   // 3) dma engine is writing to data_mem
   // 4) tl_stage is recovering from tag_miss
+  // 5) store buffer is full, and TV stage is inserting another entry.
   logic tl_ready;
   assign tl_ready = miss_v
     ? (~(decode.tagst_op & v_i) & ~miss_tag_mem_v_lo & ~dma_data_mem_v_lo & ~recover_lo & ~dma_evict_lo)

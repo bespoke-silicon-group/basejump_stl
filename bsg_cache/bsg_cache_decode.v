@@ -54,7 +54,7 @@ module bsg_cache_decode
   assign decode_o.ainv_op = (opcode_i == AINV);
   assign decode_o.alock_op = (opcode_i == ALOCK);
   assign decode_o.aunlock_op = (opcode_i == AUNLOCK);
-  assign decode_o.amoswap_op = (opcode_i == AMOSWAP);
+  assign decode_o.amoswap_op = (opcode_i == AMOSWAP_W);
 
   assign decode_o.tag_read_op = ~decode_o.tagst_op;
 

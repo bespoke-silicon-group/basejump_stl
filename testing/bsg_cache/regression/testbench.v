@@ -20,8 +20,8 @@ module testbench();
 
   // clock and reset
   //
-  logic clk;
-  logic reset;
+  bit clk;
+  bit reset;
 
   bsg_nonsynth_clock_gen #(
     .cycle_time_p(100)
@@ -205,6 +205,7 @@ module testbench();
     //for (integer i = 0; i < 100000; i++) begin
     //  @(posedge clk);
     //end
+    $display("[BSG_FINISH] Test Successful.");
     $finish;
   end
 

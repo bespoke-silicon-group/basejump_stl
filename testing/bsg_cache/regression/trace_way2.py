@@ -689,7 +689,7 @@ if __name__ == "__main__":
 
 
 
-  # AMOSWAP test
+  # AMOSWAP_W test
 
   # TAGST
   tg.send(TAGST, 0, 0)
@@ -703,18 +703,18 @@ if __name__ == "__main__":
   tg.send(LW, 0, 123)
   tg.recv(123)
   
-  tg.send(AMOSWAP, 0, 456)
+  tg.send(AMOSWAP_W, 0, 456)
   tg.recv(123)
 
   tg.send(LW, 0)
   tg.recv(456)
 
 
-  # AMOSWAP miss
+  # AMOSWAP_W miss
   tg.send(AFLINV, 0)
   tg.recv(0)
 
-  tg.send(AMOSWAP, 0, 789)
+  tg.send(AMOSWAP_W, 0, 789)
   tg.recv(456)
 
   tg.send(LW, 0)
@@ -733,21 +733,21 @@ if __name__ == "__main__":
   tg.send(LW, 3<<14)
   tg.recv(345)
 
-  tg.send(AMOSWAP, 0, 111)
+  tg.send(AMOSWAP_W, 0, 111)
   tg.recv(789)
 
-  tg.send(AMOSWAP, 1<<14, 222)
+  tg.send(AMOSWAP_W, 1<<14, 222)
   tg.recv(246)
 
-  tg.send(AMOSWAP, 3<<14, 333)
+  tg.send(AMOSWAP_W, 3<<14, 333)
   tg.recv(345)
 
-  tg.send(AMOSWAP, 0, 444)
-  tg.send(AMOSWAP, 1<<14, 555)
-  tg.send(AMOSWAP, 3<<14, 666)
-  tg.send(AMOSWAP, 0, 777)
-  tg.send(AMOSWAP, 1<<14, 888)
-  tg.send(AMOSWAP, 3<<14, 999)
+  tg.send(AMOSWAP_W, 0, 444)
+  tg.send(AMOSWAP_W, 1<<14, 555)
+  tg.send(AMOSWAP_W, 3<<14, 666)
+  tg.send(AMOSWAP_W, 0, 777)
+  tg.send(AMOSWAP_W, 1<<14, 888)
+  tg.send(AMOSWAP_W, 3<<14, 999)
   
   tg.recv(111)
   tg.recv(222)
@@ -763,6 +763,26 @@ if __name__ == "__main__":
   tg.recv(888)
   tg.recv(999)
 
+  
+  #tg.send(SW, 0, 0)
+  #tg.send(SW, 4, 0)
+  #tg.recv(0)
+  #tg.recv(0)
+  #tg.wait(20)
+
+  #tg.send(AMOSWAP_W, 0, 2)
+  #tg.send(AMOSWAP_W, 0, 3)
+  #tg.send(AMOSWAP_W, 4, 5)
+  #tg.send(AMOSWAP_W, 0, 7)
+  #tg.send(AMOSWAP_W, 0, 11)
+  #tg.send(AMOSWAP_W, 0, 13)
+  #tg.send(AMOSWAP_W, 0, 17)
+
+  #tg.recv(0)
+  #tg.recv(2)
+  #tg.recv(0)
+  #tg.recv(3)
+  #tg.recv(7)
 
 
 

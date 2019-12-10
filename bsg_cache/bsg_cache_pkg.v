@@ -8,38 +8,58 @@ package bsg_cache_pkg;
 
   // cache opcode
   //
-  typedef enum logic [4:0] {
-    LB  = 5'b00000        // load byte
-    ,LH = 5'b00001        // load half
-    ,LW = 5'b00010        // load word
-    ,LD = 5'b00011        // load double
+  typedef enum logic [5:0] {
+    LB      = 6'b000000        // load byte
+    ,LH     = 6'b000001        // load half
+    ,LW     = 6'b000010        // load word
+    ,LD     = 6'b000011        // load double
 
-    ,LBU = 5'b00100       // load byte   (unsigned)
-    ,LHU = 5'b00101       // load half   (unsigned)
-    ,LWU = 5'b00110       // load word   (unsigned)
-    ,LDU = 5'b00111       // load double (unsigned)
+    ,LBU    = 6'b000100       // load byte   (unsigned)
+    ,LHU    = 6'b000101       // load half   (unsigned)
+    ,LWU    = 6'b000110       // load word   (unsigned)
+    ,LDU    = 6'b000111       // load double (unsigned)
 
-    ,SB  = 5'b01000       // store byte
-    ,SH  = 5'b01001       // store half
-    ,SW  = 5'b01010       // store word
-    ,SD  = 5'b01011       // store double
+    ,SB     = 6'b001000       // store byte
+    ,SH     = 6'b001001       // store half
+    ,SW     = 6'b001010       // store word
+    ,SD     = 6'b001011       // store double
 
-    ,LM  = 5'b01100       // load mask
-    ,SM  = 5'b01101       // store mask
+    ,LM     = 6'b001100       // load mask
+    ,SM     = 6'b001101       // store mask
 
-    ,TAGST   = 5'b10000   // tag store
-    ,TAGFL   = 5'b10001   // tag flush
-    ,TAGLV   = 5'b10010   // tag load valid
-    ,TAGLA   = 5'b10011   // tag load address
+    ,TAGST   = 6'b010000      // tag store
+    ,TAGFL   = 6'b010001      // tag flush
+    ,TAGLV   = 6'b010010      // tag load valid
+    ,TAGLA   = 6'b010011      // tag load address
 
-    ,AFL     = 5'b11000   // address flush
-    ,AFLINV  = 5'b11001   // address flush invalidate
-    ,AINV    = 5'b11010   // address invalidate
+    ,AFL     = 6'b011000      // address flush
+    ,AFLINV  = 6'b011001      // address flush invalidate
+    ,AINV    = 6'b011010      // address invalidate
 
-    ,ALOCK   = 5'b11011   // address lock
-    ,AUNLOCK = 5'b11100   // address unlock
+    ,ALOCK   = 6'b011011      // address lock
+    ,AUNLOCK = 6'b011100      // address unlock
+   
+    // 32-bit atomic
+    ,AMOSWAP_W = 6'b100000    // atomic swap
+    ,AMOADD_W  = 6'b100001    // atomic add
+    ,AMOXOR_W  = 6'b100010    // atomic xor 
+    ,AMOAND_W  = 6'b100011    // atomic and
+    ,AMOOR_W   = 6'b100100    // atomic or
+    ,AMOMIN_W  = 6'b100101    // atomic min
+    ,AMOMAX_W  = 6'b100110    // atomic max
+    ,AMOMINU_W = 6'b100111    // atomic min unsigned
+    ,AMOMAXU_W = 6'b101000    // atomic max unsigned
 
-    ,AMOSWAP = 5'b11101   // atomic swap
+    // 64-bit atomic (reserved)
+    ,AMOSWAP_D = 6'b110000    // atomic swap
+    ,AMOADD_D  = 6'b110001    // atomic add
+    ,AMOXOR_D  = 6'b110010    // atomic xor 
+    ,AMOAND_D  = 6'b110011    // atomic and
+    ,AMOOR_D   = 6'b110100    // atomic or
+    ,AMOMIN_D  = 6'b110101    // atomic min
+    ,AMOMAX_D  = 6'b110110    // atomic max
+    ,AMOMINU_D = 6'b110111    // atomic min unsigned
+    ,AMOMAXU_D = 6'b111000    // atomic max unsigned
   } bsg_cache_opcode_e;
 
   // bsg_cache_pkt_s
@@ -53,7 +73,7 @@ package bsg_cache_pkg;
     } bsg_cache_pkt_s
 
   `define bsg_cache_pkt_width(addr_width_mp, data_width_mp) \
-    (5+addr_width_mp+data_width_mp+(data_width_mp>>3))
+    ($bits(bsg_cache_opcode_e)+addr_width_mp+data_width_mp+(data_width_mp>>3))
 
 
   // cache pkt decode
@@ -78,7 +98,10 @@ package bsg_cache_pkg;
     logic alock_op;
     logic aunlock_op;
     logic tag_read_op;
+   
+    logic atomic_op; 
     logic amoswap_op;
+    logic amoor_op;
   } bsg_cache_decode_s;
 
 
