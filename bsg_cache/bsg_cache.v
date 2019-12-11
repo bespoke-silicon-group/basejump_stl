@@ -871,7 +871,6 @@ module bsg_cache
     ? dma_data_mem_w_mask_lo
     : sbuf_data_mem_w_mask;
 
-//{lg_block_size_in_words_lp{1'b0}} 
   // stat_mem ctrl logic
   // TAGST clears the stat_info as it exits tv stage.
   // If it's load or store, and there is a hit, it updates the dirty bits and LRU.
