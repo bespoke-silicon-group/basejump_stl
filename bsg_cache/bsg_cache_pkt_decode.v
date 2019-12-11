@@ -35,8 +35,6 @@ module bsg_cache_pkt_decode
 
   assign decode_o.mask_op = (cache_pkt.opcode == LM) | (cache_pkt.opcode == SM);
 
-  assign decode_o.block_ld_op = (cache_pkt.opcode == BLOCK_LD);
-
   assign decode_o.sigext_op = (cache_pkt.opcode == LB)
     | (cache_pkt.opcode == LH)
     | (cache_pkt.opcode == LW)
@@ -58,6 +56,7 @@ module bsg_cache_pkt_decode
     | (cache_pkt.opcode == SD)
     | (cache_pkt.opcode == SM);
 
+  assign decode_o.block_ld_op = (cache_pkt.opcode == BLOCK_LD);
   assign decode_o.tagst_op = (cache_pkt.opcode == TAGST);
   assign decode_o.tagfl_op = (cache_pkt.opcode == TAGFL);
   assign decode_o.taglv_op = (cache_pkt.opcode == TAGLV);
