@@ -23,7 +23,9 @@ module bsg_mux_one_hot #(parameter width_p="inv"
         wire [els_p-1:0] gather;
 
         for (j = 0; j < els_p; j++)
-          assign gather[j] = data_masked[j][i];
+          begin : reduce2
+            assign gather[j] = data_masked[j][i];
+          end
 
         assign data_o[i] = | gather;
      end
