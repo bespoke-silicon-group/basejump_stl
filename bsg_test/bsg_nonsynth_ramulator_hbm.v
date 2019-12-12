@@ -70,7 +70,7 @@ module bsg_nonsynth_ramulator_hbm
 
   for (genvar i = 0; i < num_channels_p; i++) begin
     assign read_done_ch_addr[i] = {
-      read_done_addr[i][channel_addr_width_p-1:byte_offset_width_lp+lg_num_channels_lp],
+      read_done_addr[i][channel_addr_width_p+lg_num_channels_lp-1:byte_offset_width_lp+lg_num_channels_lp],
       {byte_offset_width_lp{1'b0}}
     };
   end
