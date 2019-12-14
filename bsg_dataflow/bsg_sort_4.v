@@ -12,7 +12,7 @@
 // NOTE: This code is UNTESTED.
 //
 
-module bsg_stable_sort #(parameter width_p="inv",
+module bsg_sort_4 #(parameter width_p="inv",
                          items_p = 4
                          , t_p   = width_p-1
                          , b_p   = 0
