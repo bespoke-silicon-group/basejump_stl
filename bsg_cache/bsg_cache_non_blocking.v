@@ -5,6 +5,8 @@
  *
  *    @author tommy
  *
+ *    For design doc, follow this link.
+ *    https://docs.google.com/document/d/1hf4WgCuf4CGjPMZXH5AplK7k9wtcAN2uw2moZhroryU/edit
  */
 
 
