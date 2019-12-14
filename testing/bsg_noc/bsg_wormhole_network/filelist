@@ -67,7 +67,7 @@ $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router_decoder_dor.v
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router_input_control.v  
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router_output_control.v 
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router_pkg.v
-$BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router_generalized.v
+$BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router.v
 
 ./bsg_wormhole_network_tester.v
 ./bsg_wormhole_network_test_node_master.v

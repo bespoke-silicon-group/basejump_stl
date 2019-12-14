@@ -55,4 +55,13 @@ $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_non_blocking_dma.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_non_blocking.v
 
 ../common/bsg_nonsynth_non_blocking_dma_model.v
+cov_top.v
+cov_mhu.v
+cov_tl_stage.v
+cov_miss_fifo.v
+bsg_nonsynth_random_yumi_gen.v
+basic_checker.v
+tag_checker.v
+ainv_checker.v
+block_ld_checker.v
 testbench.v

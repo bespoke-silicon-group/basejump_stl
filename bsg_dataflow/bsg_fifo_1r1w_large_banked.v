@@ -86,7 +86,7 @@ module bsg_fifo_1r1w_large_banked #(parameter width_p         = -1
 
    bsg_round_robin_1_to_n #(.width_p(width_p)
                             ,.num_out_p(2)
-                            )
+			   )  rr1n
    (.clk_i   (clk_i      )
     ,.reset_i(reset_i    )
 

@@ -202,6 +202,7 @@ package bsg_cache_non_blocking_pkg;
     ,e_stat_clear_dirty
     ,e_stat_set_lru
     ,e_stat_set_lru_and_dirty
+    ,e_stat_set_lru_and_clear_dirty
     ,e_stat_reset
   } bsg_cache_non_blocking_stat_op_e;
 
@@ -266,7 +267,21 @@ package bsg_cache_non_blocking_pkg;
     ($bits(bsg_cache_non_blocking_decode_s)+ways_mp+ways_mp+(ways_mp*tag_width_mp)+`BSG_SAFE_CLOG2(ways_mp)+1+id_width_mp+addr_width_mp)
 
 
-
+  // MHU FSM states
+  typedef enum logic [3:0] {
+    MHU_IDLE
+    ,MGMT_OP
+    ,SEND_MGMT_DMA
+    ,WAIT_MGMT_DMA
+    ,READ_TAG1
+    ,SEND_DMA_REQ1
+    ,WAIT_DMA_DONE
+    ,DEQUEUE_MODE
+    ,READ_TAG2
+    ,SEND_DMA_REQ2
+    ,SCAN_MODE 
+    ,RECOVER
+  } mhu_state_e;
 
 
 endpackage

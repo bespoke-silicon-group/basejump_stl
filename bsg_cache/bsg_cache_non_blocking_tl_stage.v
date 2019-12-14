@@ -82,11 +82,13 @@ module bsg_cache_non_blocking_tl_stage
     , input mhu_idle_i
     , input recover_i
 
-    // evict address
-    , input [addr_width_p-1:0] mhu_evict_addr_i
-    , input mhu_evict_v_i
-    , input [addr_width_p-1:0] dma_evict_addr_i
-    , input dma_evict_v_i
+    , input [lg_ways_lp-1:0] curr_mhu_way_id_i
+    , input [lg_sets_lp-1:0] curr_mhu_index_i
+    , input curr_mhu_v_i
+
+    , input [lg_ways_lp-1:0] curr_dma_way_id_i
+    , input [lg_sets_lp-1:0] curr_dma_index_i
+    , input curr_dma_v_i
   );
 
 
@@ -252,21 +254,9 @@ module bsg_cache_non_blocking_tl_stage
 
 
   // miss detection logic
-  // when mhu_evict_v_i is high, then the block address matching
-  // mhu_evict_addr_i should be considered as miss. Similarly, with
-  // dma_evict_v_i. This is because the replacement decision has already
-  // been made, and the DMA transaction has already begun or even finished,
-  // but the MHU does not update the tag until it has completed the miss
-  // handling (e.g. going through the miss FIFO to collect all the secondary
-  // misses). 
 
-  logic [addr_width_p-1:0] block_addr_tl;
-  logic mhu_evict_match;
-  logic dma_evict_match;
-
-  assign block_addr_tl = {addr_tag_tl, addr_index_tl, {block_offset_width_lp{1'b0}}};
-  assign mhu_evict_match = mhu_evict_v_i & (mhu_evict_addr_i == block_addr_tl);
-  assign dma_evict_match = dma_evict_v_i & (dma_evict_addr_i == block_addr_tl);
+  wire mhu_miss_match = curr_mhu_v_i & (tag_hit_way == curr_mhu_way_id_i) & (curr_mhu_index_i == addr_index_tl);
+  wire dma_miss_match = curr_dma_v_i & (tag_hit_way == curr_dma_way_id_i) & (curr_dma_index_i == addr_index_tl);
 
 
   // TL stage output logic
@@ -316,7 +306,7 @@ module bsg_cache_non_blocking_tl_stage
   logic mgmt_op_tl;
 
   assign miss_tl = tag_hit_found
-    ? (mhu_evict_match | dma_evict_match)
+    ? (mhu_miss_match | dma_miss_match)
     : 1'b1;
 
   assign ld_st_hit = v_tl_r & (decode_tl_r.ld_op | decode_tl_r.st_op) & ~miss_tl;
@@ -343,20 +333,28 @@ module bsg_cache_non_blocking_tl_stage
     // If there is cache management op, wait for MHU to yumi.
     // Either mgmt or load/store op can come in next.
     if (mgmt_op_tl) begin
-      ready_o = mgmt_yumi_i;
+      ready_o = mgmt_yumi_i & ~mhu_tag_mem_pkt_v_i;
       v_tl_n = mgmt_yumi_i
-        ? v_i
+        ? (mhu_tag_mem_pkt_v_i
+          ? 1'b0
+          : v_i)
         : v_tl_r;
 
-      tl_we = mgmt_yumi_i & v_i;
+      tl_we = mgmt_yumi_i & v_i & ~mhu_tag_mem_pkt_v_i;
   
-      tag_mem_v_li = mgmt_yumi_i & v_i;
-      tag_mem_pkt.way_id = addr_way;
-      tag_mem_pkt.index = addr_index;
-      tag_mem_pkt.data = data_i;
-      tag_mem_pkt.opcode = decode_i.tagst_op
-        ? e_tag_store
-        : e_tag_read;
+      tag_mem_v_li = mgmt_yumi_i & (v_i | mhu_tag_mem_pkt_v_i);
+
+      if (mhu_tag_mem_pkt_v_i) begin
+        tag_mem_pkt = mhu_tag_mem_pkt;
+      end
+      else begin
+        tag_mem_pkt.way_id = addr_way;
+        tag_mem_pkt.index = addr_index;
+        tag_mem_pkt.data = data_i;
+        tag_mem_pkt.opcode = decode_i.tagst_op
+          ? e_tag_store
+          : e_tag_read;
+      end
     end
     // The recover signal from MHU forces the TL stage to read the tag_mem
     // again using addr_tl. Recover logic is necessary, because when the MHU
@@ -462,6 +460,10 @@ module bsg_cache_non_blocking_tl_stage
     if (~reset_i & v_tl_r) begin
       assert($countones(tag_hit) <= 1) 
         else $error("[BSG_ERROR] %m. t=%t. multiple hits detected.", $time); 
+    end
+    if (~reset_i & v_tl_r) begin
+      assert($countones(lock_tl) <= ways_p-2)
+        else $error("[BSG_ERROR] %m. t=%t. There needs to be at least 2 unlocked ways.]", $time);
     end
   end
   // synopsys translate_on
