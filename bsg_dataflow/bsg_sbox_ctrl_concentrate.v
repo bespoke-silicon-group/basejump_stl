@@ -82,7 +82,7 @@ initial
                        , .items_p(4)
                        , .t_p(width_p)    // sort based on vector bit
                        , .b_p(width_p-1)
-                       )
+                       ) sort_stable
    (.i(fwd_sort_li)
     ,.o(fwd_sort_lo)
     );
@@ -109,7 +109,7 @@ initial
                       , .items_p(4)
                       , .t_p(2*lg_width_p-1)
                       , .b_p(lg_width_p)
-                      )
+                      ) sort_stable_2
    (.i(bkwd_sort_li)
     ,.o(bkwd_sort_lo)
     );
