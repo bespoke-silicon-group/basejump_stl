@@ -39,9 +39,6 @@
         "basejump_stl/bsg_mem/bsg_mem_1r1w_sync_synth.v", 
         "basejump_stl/bsg_misc/bsg_dff_en.v"
     ], 
-    "include_path": [
-        "basejump_stl/bsg_misc"
-    ], 
     "run_config": [
         {
             "constraints": [
