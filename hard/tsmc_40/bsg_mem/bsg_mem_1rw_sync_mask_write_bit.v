@@ -56,6 +56,7 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
    `bsg_mem_1rf_sync_macro_bit(256,34,8,2) else
    `bsg_mem_1rf_sync_macro_bit(256,36,8,2) else
    `bsg_mem_1rw_sync_macro_bit(64,80,6,1)  else
+   `bsg_mem_1rw_sync_macro_bit(128,232,2)
    bsg_mem_1rw_sync_mask_write_bit_synth
      #(.width_p(width_p)
        ,.els_p(els_p)
