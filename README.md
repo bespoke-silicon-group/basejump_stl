@@ -3,7 +3,7 @@
 This library is a comprehensive hardware library for SystemVerilog that seeks to
 contain all of the commonly used HW primitives. 
 
-See this paper http://cseweb.ucsd.edu/~mbtaylor/papers/Taylor_DAC_BaseJump_STL_2018.pdf
+See this paper [docs/Taylor_DAC_BaseJump_STL_2018.pdf](https://github.com/github.com/bespoke-silicon-group/basejump_stl/blob/master/docs/Taylor_DAC_BaseJump_STL_2018.pdf)
 which describes the design and usage.
 
 To use BaseJump STL, you currently need to specify [bsg_misc/bsg_defines.v](https://github.com/bespoke-silicon-group/basejump_stl/blob/master/bsg_misc/bsg_defines.v) as a pre include file for your simulation or simulation toolsuite.
