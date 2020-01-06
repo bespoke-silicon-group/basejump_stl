@@ -19,8 +19,7 @@ module bsg_wormhole_concentrator_test_node
 
  #(// Wormhole link parameters
    parameter flit_width_p = "inv"
-  ,parameter dims_p = 2
-  ,parameter int cord_markers_pos_p[dims_p:0] = '{5, 4, 0}
+  ,parameter cord_width_p = 5
   ,parameter len_width_p = "inv"
   ,parameter cid_width_p = "inv"
 
@@ -29,7 +28,6 @@ module bsg_wormhole_concentrator_test_node
   ,parameter is_client_node_p = 0
 
   ,localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(flit_width_p)  
-  ,localparam cord_width_lp = cord_markers_pos_p[dims_p]
   )
 
   (// Node side
@@ -45,8 +43,8 @@ module bsg_wormhole_concentrator_test_node
   ,input clk_i
   ,input reset_i
 
-  ,input [cord_width_lp-1:0] my_cord_i
-  ,input [cord_width_lp-1:0] dest_cord_i
+  ,input [cord_width_p-1:0] my_cord_i
+  ,input [cord_width_p-1:0] dest_cord_i
   
   ,input [cid_width_p-1:0] my_cid_i
   ,input [cid_width_p-1:0] dest_cid_i
@@ -62,7 +60,7 @@ module bsg_wormhole_concentrator_test_node
 
   /********************* Packet definition *********************/
   
-  `declare_bsg_wormhole_router_header_s(cord_width_lp,len_width_p,bsg_wormhole_router_header_s);
+  `declare_bsg_wormhole_router_header_s(cord_width_p,len_width_p,bsg_wormhole_router_header_s);
 
   // Define wormhole packets
   `declare_bsg_wormhole_concentrator_test_node_s(cid_width_p, width_lp, bsg_wormhole_router_header_s, wormhole_concentrator_test_node_s);

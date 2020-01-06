@@ -11,18 +11,23 @@ module bsg_cache_to_dram_ctrl
     , parameter addr_width_p="inv"
     , parameter data_width_p="inv"
     , parameter block_size_in_words_p="inv"
-
-    , parameter dram_ctrl_burst_len_p="inv"
-
+    
     , localparam mask_width_lp=(data_width_p>>3)
     , localparam lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
-    , localparam dram_ctrl_addr_width_lp=(addr_width_p+lg_num_cache_lp)
     , localparam dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+
+    , parameter dram_ctrl_burst_len_p="inv"
+    , parameter dram_ctrl_addr_width_p=(addr_width_p+lg_num_cache_lp)
+
     , localparam num_req_lp=(block_size_in_words_p/dram_ctrl_burst_len_p)
   )
   (
     input clk_i
     , input reset_i
+    
+    // dram size selection
+    // {0:256Mb, 1:512Mb, 2:1Gb, 3:2Gb, 4:4Gb}
+    , input [2:0] dram_size_i
 
     // cache side
     , input [num_cache_p-1:0][dma_pkt_width_lp-1:0] dma_pkt_i
@@ -41,7 +46,7 @@ module bsg_cache_to_dram_ctrl
     , output logic app_en_o
     , input app_rdy_i
     , output logic [2:0] app_cmd_o
-    , output logic [dram_ctrl_addr_width_lp-1:0] app_addr_o
+    , output logic [dram_ctrl_addr_width_p-1:0] app_addr_o
 
     , output logic app_wdf_wren_o
     , input app_wdf_rdy_i
@@ -192,7 +197,17 @@ module bsg_cache_to_dram_ctrl
     endcase
   end
 
-  assign app_addr_o = { tag_r, addr_r };
+  // Append tag_r to top bits of dram address
+  // tag_r not used when only 1 cache exists
+  always_comb
+    case (dram_size_i)
+      0: app_addr_o = dram_ctrl_addr_width_p'({tag_r, addr_r[25-$clog2(num_cache_p)-1:0]});
+      1: app_addr_o = dram_ctrl_addr_width_p'({tag_r, addr_r[26-$clog2(num_cache_p)-1:0]});
+      2: app_addr_o = dram_ctrl_addr_width_p'({tag_r, addr_r[27-$clog2(num_cache_p)-1:0]});
+      3: app_addr_o = dram_ctrl_addr_width_p'({tag_r, addr_r[28-$clog2(num_cache_p)-1:0]});
+      4: app_addr_o = dram_ctrl_addr_width_p'({tag_r, addr_r[29-$clog2(num_cache_p)-1:0]});
+      default: app_addr_o = {tag_r, addr_r};
+    endcase
 
   // sequential
   //

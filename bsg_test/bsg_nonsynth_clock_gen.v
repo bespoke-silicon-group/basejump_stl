@@ -6,6 +6,7 @@ module bsg_nonsynth_clock_gen
   #(parameter cycle_time_p="inv")
    (output bit o);
 
+`ifndef VERILATOR
   initial begin
     $display("%m with cycle_time_p ",cycle_time_p);
     assert(cycle_time_p >= 2)
@@ -15,6 +16,11 @@ module bsg_nonsynth_clock_gen
   always #(cycle_time_p/2.0) begin
     o = ~o;
   end
+`else
+  initial begin
+    $error("bsg_nonsynth_clock_gen is not supported in Verilator due to delay statement (#)");
+  end
+`endif
 
 endmodule
 

@@ -60,7 +60,7 @@ $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router_input_control.v
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router_output_control.v 
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router_pkg.v		  
 $BASEJUMP_STL_DIR/bsg_test/test_bsg_data_gen.v
-$BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router_generalized.v
+$BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router.v
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_concentrator.v
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_concentrator_in.v
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_concentrator_out.v

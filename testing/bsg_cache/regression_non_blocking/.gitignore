@@ -1,0 +1,4 @@
+trace.tr
+trace_rom.v
+*.pyc
+out/
