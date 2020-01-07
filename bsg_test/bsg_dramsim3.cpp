@@ -7,8 +7,22 @@
 #include <cassert>
 #include <cstdio>
 
+#define __stringify(x)                          \
+    #x
+
+#define stringify(x)                            \
+    __stringify(x)
+
 #define pr_err(fmt, ...)                        \
-    fprintf(stderr, fmt, ##__VA_ARGS__)
+    fprintf(stderr, "[DRAMSim3] " fmt, ##__VA_ARGS__)
+
+#define DEBUG
+#if defined(DEBUG)
+#define pr_dbg(fmt, ...)                        \
+    fprintf(stderr, "[DRAMSim3] " fmt, ##__VA_ARGS__)
+#else
+#define pr_dbg(fmt, ...)
+#endif
 
 using namespace::std;
 using dramsim3::MemorySystem;
@@ -77,9 +91,20 @@ extern "C" bool bsg_dramsim3_get_done(int ch)
  * Get the addres of a complete memory request.
  * @param[in] ch The channel to check for an address.
  */
-extern "C" addr_t bsg_dramsim3_get_done_addr(int ch)
+extern "C" addr_t bsg_dramsim3_get_read_done_addr(int ch)
 {
     return _read_done_addr[ch];
+}
+
+
+/**
+ * Cleanup code for the memory system.
+ */
+extern "C" void bsg_dramsim3_exit(void)
+{
+    delete _memory_system;
+    delete [] _read_done;
+    delete [] _read_done_addr;
 }
 
 /**
@@ -97,9 +122,12 @@ extern "C" bool bsg_dramsim3_init(
     long long size_p,
     char *config_p)
 {
-    string config_file(config_p);
+    string config_dir = stringify(BASEJUMP_STL_DIR) "/imports/DRAMSim3/configs/";
+    string config_file = config_dir + std::string(config_p);
     string output_dir(".");
 
+    pr_dbg("config_file='%s'\n", config_file.c_str());
+    
     /* initialize book keeping structures */
     _read_done      = new bool [num_channels_p];
     _read_done_addr = new addr_t [num_channels_p];
@@ -117,13 +145,12 @@ extern "C" bool bsg_dramsim3_init(
     _memory_system = new MemorySystem(config_file, output_dir, read_done, write_done);
 
     /* sanity check */
-    Config *cfg = _memory_system->GetConfig();
+    const Config *cfg = _memory_system->GetConfig();
 
     /* calculate device size */
     long long channels = cfg->channels;
     long long channel_size = cfg->channel_size;
-    long long memory_size = channels * channel_size;
-    long long memory_size_bits = memory_size * 8;
+    long long memory_size = channels * channel_size * (1<<23); // channel_size is in MB; convert to bits
 
     if (cfg->channels != num_channels_p) {
         pr_err("num_channels_p (%d) does not match channels (%d) found in %s\n",
@@ -135,21 +162,12 @@ extern "C" bool bsg_dramsim3_init(
                data_width_p, cfg->BL, cfg->bus_width, config_p);
         bsg_dramsim3_exit();
         return false; // do I exit?
-    } else if (memory_size_bits != size_p) {
-        pr_err("size_p (%d) does not match device size (%d) found in %s\n",
-               size_p, memory_size_bits, config_p);
+    } else if (memory_size != size_p) {
+        pr_err("size_p (%ld) does not match device size (%ld) found in %s\n",
+               size_p, memory_size, config_p);
         return false; // do I exit?
     }
+    
     return true;
 }
 
-
-/**
- * Cleanup code for the memory system.
- */
-extern "C" void bsg_dramsim3_exit(void)
-{
-    delete _memory_system;
-    delete [] _read_done;
-    delete [] _read_done_addr;
-}
