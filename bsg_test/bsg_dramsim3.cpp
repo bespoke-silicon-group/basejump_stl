@@ -82,7 +82,7 @@ extern "C" void bsg_dramsim3_tick()
  * Check if the channel has complete a read request.
  * @param[in] ch The channel to check for completion.
  */
-extern "C" bool bsg_dramsim3_get_done(int ch)
+extern "C" bool bsg_dramsim3_get_read_done(int ch)
 {
     return _read_done[ch];
 }
