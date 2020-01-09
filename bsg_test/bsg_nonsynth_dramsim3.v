@@ -12,6 +12,7 @@ module bsg_nonsynth_dramsim3
     , parameter debug_p=0
     , parameter init_mem_p=0 // zero out values in memory at the beginning
     , parameter string config_p="inv"
+    , parameter string trace_file_p="bsg_nonsynth_dramsim3_trace.txt"
     , parameter lg_num_channels_lp=`BSG_SAFE_CLOG2(num_channels_p)
     , parameter data_mask_width_lp=(data_width_p>>3)
     , parameter byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
@@ -177,7 +178,7 @@ module bsg_nonsynth_dramsim3
    integer file;
    initial begin
       if (debug_p) begin
-         file = $fopen("ramulator_access_trace.txt");
+         file = $fopen(trace_file_p);
          $fwrite(file, "request,time,channel,write_not_read,address\n");
       end
    end
