@@ -5,6 +5,10 @@
  *
  */
 
+ `ifndef BSG_FUP
+
+ `define BSG_FUP
+
 package bsg_fpu_pkg;
 
   // Special numbers
@@ -16,3 +20,5 @@ package bsg_fpu_pkg;
 
 
 endpackage
+
+`endif
