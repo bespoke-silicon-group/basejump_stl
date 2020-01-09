@@ -7,6 +7,7 @@ module bsg_nonsynth_dramsim3
   #(parameter channel_addr_width_p="inv"
     , parameter data_width_p="inv"
     , parameter num_channels_p="inv"
+    , parameter address_mapping_p="inv"
     , parameter size_p=0
     , parameter debug_p=0
     , parameter init_mem_p=0 // zero out values in memory at the beginning
