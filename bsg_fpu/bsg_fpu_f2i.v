@@ -17,8 +17,9 @@
  *
  */
 
+`include "bsg_fpu_pkg.vh"
+
 module bsg_fpu_f2i
-  import bsg_fpu_pkg::*;
   #(parameter e_p="inv"
     , parameter m_p="inv"
 

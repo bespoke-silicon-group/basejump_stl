@@ -7,8 +7,9 @@
  *
  */
 
+`include "bsg_fpu_pkg.vh"
+
 module bsg_fpu_add_sub
-  import bsg_fpu_pkg::*;
   #(parameter e_p="inv"     // exponent width
     , parameter m_p="inv"   // mantissa width
   )
