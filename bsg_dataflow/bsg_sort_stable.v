@@ -35,18 +35,18 @@ module bsg_sort_stable #(parameter width_p="inv",
 
    // stage 1: compare_and swap  <3,2> and <1,0>
 
-   bsg_compare_and_swap #(.width_p(width_p), .t_p(t_p), .b_p(b_p))
+  bsg_compare_and_swap #(.width_p(width_p), .t_p(t_p), .b_p(b_p)) cas_0
    (.data_i({s0[1], s0[0]}), .data_o({s1[1], s1[0]}));
 
-   bsg_compare_and_swap #(.width_p(width_p), .t_p(t_p), .b_p(b_p))
+  bsg_compare_and_swap #(.width_p(width_p), .t_p(t_p), .b_p(b_p)) cas_1
    (.data_i({s0[3], s0[2]}), .data_o({s1[3], s1[2]}));
 
    // stage 2: compare_and swap  <2,0> and <3,1>
 
-   bsg_compare_and_swap #(.width_p(width_p), .t_p(t_p), .b_p(b_p))
+  bsg_compare_and_swap #(.width_p(width_p), .t_p(t_p), .b_p(b_p)) cas_2
    (.data_i({s1[2], s1[0]}), .data_o({s2[2], s2[0]}));
 
-   bsg_compare_and_swap #(.width_p(width_p), .t_p(t_p), .b_p(b_p))
+  bsg_compare_and_swap #(.width_p(width_p), .t_p(t_p), .b_p(b_p)) cas_3
    (.data_i({s1[3], s1[1]}), .data_o({s2[3], s2[1]}), .swapped_o(swapped_3_1));
 
    // stage 3: compare_and swap  <2,1>
@@ -56,7 +56,7 @@ module bsg_sort_stable #(parameter width_p="inv",
    //
 
    bsg_compare_and_swap #(.width_p(width_p), .t_p(t_p), .b_p(b_p)
-                          , .cond_swap_on_equal_p(1))
+                          , .cond_swap_on_equal_p(1)) cas_4
    (.data_i({s2[2], s2[1]})
     , .swap_on_equal_i(swapped_3_1)
     , .data_o({s3[2], s3[1]})
