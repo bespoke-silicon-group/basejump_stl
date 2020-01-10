@@ -6,6 +6,7 @@
 #include <memory>
 #include <cassert>
 #include <cstdio>
+#include <inttypes.h>
 
 #define __stringify(x)                          \
     #x
@@ -16,10 +17,9 @@
 #define pr_err(fmt, ...)                        \
     fprintf(stderr, "[DRAMSim3] " fmt, ##__VA_ARGS__)
 
-#define DEBUG
 #if defined(DEBUG)
 #define pr_dbg(fmt, ...)                        \
-    fprintf(stderr, "[DRAMSim3] " fmt, ##__VA_ARGS__)
+    fprintf(stdout, "[DRAMSim3] " fmt, ##__VA_ARGS__)
 #else
 #define pr_dbg(fmt, ...)
 #endif
@@ -27,6 +27,7 @@
 using namespace::std;
 using dramsim3::MemorySystem;
 using dramsim3::Config;
+using dramsim3::Address;
 using addr_t = long long;
 
 static MemorySystem *_memory_system = nullptr;
@@ -43,6 +44,9 @@ static constexpr bool READ  = false;
  */
 extern "C" bool bsg_dramsim3_send_read_req(addr_t addr)
 {
+    Address map = _memory_system->GetConfig()->AddressMapping(addr);
+    pr_dbg("0x%010llx : co(%d),ch(%d)\n", addr, map.column, map.channel);
+    pr_dbg("sending read request to addr=0x%010llx\n", addr);
     if (_memory_system->WillAcceptTransaction(addr, READ)) {
         _memory_system->AddTransaction(addr, READ);
         return true;
@@ -71,11 +75,10 @@ extern "C" bool bsg_dramsim3_send_write_req(addr_t addr)
  */
 extern "C" void bsg_dramsim3_tick()
 {
-    _memory_system->ClockTick();
-
     for (int ch = 0; ch < _memory_system->GetConfig()->channels; ch++) {
         _read_done[ch] = false;
     }
+    _memory_system->ClockTick();
 }
 
 /**
@@ -132,9 +135,15 @@ extern "C" bool bsg_dramsim3_init(
     _read_done      = new bool [num_channels_p];
     _read_done_addr = new addr_t [num_channels_p];
 
+    for (int i = 0; i < num_channels_p; i++) {
+        _read_done[i] = false;
+        _read_done_addr[i] = 0;
+    }
+
     /* called when read completes */
     auto read_done  = [](uint64_t addr) {
         int ch = _memory_system->GetConfig()->AddressMapping(addr).channel;
+        pr_dbg("read_done called: ch=%d, addr=0x%010" PRIx64 "\n", ch, addr);
         _read_done[ch] = true;
         _read_done_addr[ch] = addr;
     };
@@ -143,6 +152,8 @@ extern "C" bool bsg_dramsim3_init(
     auto write_done = [](uint64_t addr) {};
 
     _memory_system = new MemorySystem(config_file, output_dir, read_done, write_done);
+
+    pr_dbg("using clock period %lf ns\n", _memory_system->GetTCK());
 
     /* sanity check */
     const Config *cfg = _memory_system->GetConfig();

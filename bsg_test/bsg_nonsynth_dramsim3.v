@@ -7,6 +7,7 @@ module bsg_nonsynth_dramsim3
   #(parameter channel_addr_width_p="inv"
     , parameter data_width_p="inv"
     , parameter num_channels_p="inv"
+    , parameter num_columns_p="inv"
     , parameter address_mapping_p="inv"
     , parameter size_p=0
     , parameter debug_p=0
@@ -67,14 +68,18 @@ module bsg_nonsynth_dramsim3
   // memory addr
   logic [num_channels_p-1:0][lg_num_channels_lp+channel_addr_width_p-1:0] mem_addr;
 
-  for (genvar i = 0; i < num_channels_p; i++) begin
-    assign mem_addr[i] = {
-      ch_addr_i[i][channel_addr_width_p-1:byte_offset_width_lp],
-      (lg_num_channels_lp)'(i),
-      {byte_offset_width_lp{1'b0}}
-    };
-  end
-  
+  bsg_nonsynth_dramsim3_map
+    #(.channel_addr_width_p(channel_addr_width_p)
+      ,.data_width_p(data_width_p)
+      ,.num_channels_p(num_channels_p)
+      ,.num_columns_p(num_columns_p)
+      ,.address_mapping_p(address_mapping_p)
+      ,.size_p(size_p)
+      ,.debug_p(debug_p))
+  map
+    (.ch_addr_i(ch_addr_i)
+     ,.mem_addr_o(mem_addr));
+
   // request yumi
   logic [num_channels_p-1:0] yumi_lo;
   for (genvar i = 0; i < num_channels_p; i++)
@@ -85,12 +90,17 @@ module bsg_nonsynth_dramsim3
   logic [num_channels_p-1:0][lg_num_channels_lp+channel_addr_width_p-1:0] read_done_addr;
   logic [num_channels_p-1:0][channel_addr_width_p-1:0] read_done_ch_addr;
 
-  for (genvar i = 0; i < num_channels_p; i++) begin
-    assign read_done_ch_addr[i] = {
-      read_done_addr[i][channel_addr_width_p+lg_num_channels_lp-1:byte_offset_width_lp+lg_num_channels_lp],
-      {byte_offset_width_lp{1'b0}}
-    };
-  end
+  bsg_nonsynth_dramsim3_unmap
+    #(.channel_addr_width_p(channel_addr_width_p)
+      ,.data_width_p(data_width_p)
+      ,.num_channels_p(num_channels_p)
+      ,.num_columns_p(num_columns_p)
+      ,.address_mapping_p(address_mapping_p)
+      ,.size_p(size_p)
+      ,.debug_p(debug_p))
+  unmap
+    (.mem_addr_i(read_done_addr)
+     ,.ch_addr_o(read_done_ch_addr));
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
@@ -188,12 +198,12 @@ module bsg_nonsynth_dramsim3
       for (integer i = 0; i < num_channels_p; i++) begin
         if (yumi_o[i])
           begin
-             $display("req sent:  t=%012t, channel=%0d, write_not_read=%0b, addr=%032b", $time, i, write_not_read_i[i], ch_addr_i[i]);
+             $display("req sent:  t=%012t, channel=%0d, write_not_read=%0b, addr=%010x", $time, i, write_not_read_i[i], ch_addr_i[i]);
              $fwrite(file, "send,%t,%0d,%0b,%08h\n", $time, i, write_not_read_i[i], ch_addr_i[i]);
           end
         if (read_done[i])
           begin
-             $display("read done: t=%012t, channel=%0d, addr=%32b", $time, i, read_done_ch_addr[i]);
+             $display("read done: t=%012t, channel=%0d, addr=%010x", $time, i, read_done_ch_addr[i]);
              $fwrite(file, "recv,%t,%0d,,%08h\n", $time, i, read_done_ch_addr[i]);
           end
       end
