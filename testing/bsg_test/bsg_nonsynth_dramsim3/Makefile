@@ -13,7 +13,7 @@ CFLAGS += -CFLAGS "-I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/ext/fmt/include"
 CFLAGS += -CFLAGS "-DFMT_HEADER_ONLY=1"
 CFLAGS += -CFLAGS "-DBASEJUMP_STL_DIR=$(BASEJUMP_STL_DIR)"
 
-DRAMS := hbm2_8gb_x128 hbm2_4gb_x128 gddr5x_8gb_x32
+DRAMS := hbm2_8gb_x128 hbm2_4gb_x128
 
 all: $(DRAMS)
 
