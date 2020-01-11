@@ -25,7 +25,7 @@
  *
  */
 
-`include "bsg_fpu_pkg.vh"
+`include "bsg_fpu_defines.vh"
 
 module bsg_fpu_cmp
   #(parameter e_p="inv"

@@ -7,7 +7,7 @@
  */
 
 
-`include "bsg_fpu_pkg.vh"
+`include "bsg_fpu_defines.vh"
 
 module bsg_fpu_mul
   #(parameter e_p="inv"   // exponent width

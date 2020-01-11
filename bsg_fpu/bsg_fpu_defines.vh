@@ -1,12 +1,12 @@
 /**
- *  bsg_fpu_pkg.v
+ *  bsg_fpu_defines.vh
  *
  *  @author tommy
  *
  */
 
-`ifndef BSG_FPU
-`define BSG_FPU
+`ifndef BSG_FPU_DEFINES_VH
+`define BSG_FPU_DEFINES_VH
   // Special numbers
   `define BSG_FPU_QUIETNAN(e,m) {1'b0, {e{1'b1}}, 1'b1, {(m-1){1'b0}}}  // aka canonical NaN
   `define BSG_FPU_SIGNAN(e,m) {1'b0, {e{1'b1}}, 1'b0, {(m-1){1'b1}}}    // signaling NaN
