@@ -1,4 +1,6 @@
 from random import randrange
+import sys
+
 WRITE = 1
 READ  = 0
 
@@ -34,7 +36,13 @@ class HBMTraceGen:
 
 
 if __name__ == "__main__":
-  addr_width_p = 30
+
+  dram = sys.argv[1]
+  addr_width_p = {
+    'hbm2_8gb_x128' : 30,
+    'hbm2_4gb_x128' : 29,
+    'gddr5x_8gb_x32' : 33,
+  } [dram]
 
   tg = HBMTraceGen(addr_width_p)
   for i in range(1024):

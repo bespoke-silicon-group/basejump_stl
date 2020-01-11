@@ -1,12 +1,16 @@
 `include "bsg_nonsynth_dramsim3.svh"
 
+`ifndef dram_pkg
+  `define dram_pkg bsg_nonsynth_dramsim3_hbm2_8gb_x128_pkg
+`endif
+
 module testbench ();
 
   // clock
   logic clk;
   
   bsg_nonsynth_clock_gen
-    #(.cycle_time_p(1000))
+    #(.cycle_time_p(`dram_pkg::tck_ps))
   clkgen
     (.o(clk));
   
@@ -21,7 +25,7 @@ module testbench ();
      ,.async_reset_o(reset));
   
   // dramsim3
-  import bsg_nonsynth_dramsim3_hbm2_8gb_x128_pkg::*;
+  import `dram_pkg::*;
 
   logic [num_channels_p-1:0]                            dramsim3_v_li;
   logic [num_channels_p-1:0]                            dramsim3_write_not_read_li;
@@ -35,7 +39,16 @@ module testbench ();
   logic [num_channels_p-1:0]                            dramsim3_data_v_lo;
   logic [num_channels_p-1:0] [data_width_p-1:0]         dramsim3_data_lo;
       
-  `bsg_nonsynth_dramsim3_hbm2_8gb_x128_dbg
+  bsg_nonsynth_dramsim3
+    #(.channel_addr_width_p(`dram_pkg::channel_addr_width_p)
+      ,.data_width_p(`dram_pkg::data_width_p)
+      ,.num_channels_p(`dram_pkg::num_channels_p)
+      ,.num_columns_p(`dram_pkg::num_columns_p)
+      ,.size_p(`dram_pkg::size_p)
+      ,.address_mapping_p(`dram_pkg::address_mapping_p)
+      ,.config_p(`dram_pkg::config_p)
+      ,.trace_file_p(`BSG_STRINGIFY(`trace_file))
+      ,.debug_p(1))
     mem
       (.clk_i(clk)
        ,.reset_i(reset)
@@ -101,7 +114,7 @@ module testbench ();
     bsg_nonsynth_test_rom #(
       .data_width_p(ring_width_p+4)
       ,.addr_width_p(rom_addr_width_p)
-      ,.filename_p("trace_0.tr")
+      ,.filename_p(`BSG_STRINGIFY(`rom_file))
     ) rom0 (
       .addr_i(rom_addr[i])
       ,.data_o(rom_data[i]) 

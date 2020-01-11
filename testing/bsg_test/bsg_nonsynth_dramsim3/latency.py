@@ -1,7 +1,8 @@
 import pandas
+import sys
 
 # read in the trace file only look at channel 0
-data = pandas.read_csv('bsg_nonsynth_dramsim3_hbm2_8gb_x128_trace.txt').query('channel==0')
+data = pandas.read_csv(sys.argv[1]).query('channel==0')
 
 # get a 'send' table and 'recv' table
 send = data.query('request=="send"')
