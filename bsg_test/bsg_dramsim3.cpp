@@ -19,7 +19,7 @@
 
 #if defined(DEBUG)
 #define pr_dbg(fmt, ...)                        \
-    fprintf(stdout, "[DRAMSim3] " fmt, ##__VA_ARGS__)
+    do {fprintf(stdout, "[DRAMSim3] " fmt, ##__VA_ARGS__); fflush(stdout); } while(0)
 #else
 #define pr_dbg(fmt, ...)
 #endif
@@ -113,7 +113,7 @@ extern "C" void bsg_dramsim3_exit(void)
 /**
  * Initialize the memory system.
  * @param[in] num_channels_p RTL parameter for the expected number of channels
- * @param[in] data_width_p   RTL parameter for the expected data width of the memory system (BL * bus width)
+ * @param[in] data_width_p   RTL parameter for the expected data width of the memory system (BL * device width)
  * @param[in] size_p         RTL parameter for the exepected size of the memory system in bits
  * @param[in] config_p       The path to the configuration file for the memory system (.ini)
  * @return true if the system was succesfully initialized, otherwise false.
@@ -167,16 +167,16 @@ extern "C" bool bsg_dramsim3_init(
         pr_err("num_channels_p (%d) does not match channels (%d) found in %s\n",
                num_channels_p, cfg->channels, config_p);
         bsg_dramsim3_exit();
-        return false; // do I exit?
-    } else if (cfg->BL * cfg->bus_width != data_width_p) {
-        pr_err("data_width_p (%d) does not match product of burst length (%d) and bus width (%d) found in %s\n",
-               data_width_p, cfg->BL, cfg->bus_width, config_p);
+        exit(1);
+    } else if (cfg->BL * cfg->device_width != data_width_p) {
+        pr_err("data_width_p (%d) does not match product of burst length (%d) and device width (%d) found in %s\n",
+               data_width_p, cfg->BL, cfg->device_width, config_p);
         bsg_dramsim3_exit();
-        return false; // do I exit?
+        exit(1);
     } else if (memory_size != size_p) {
         pr_err("size_p (%ld) does not match device size (%ld) found in %s\n",
                size_p, memory_size, config_p);
-        return false; // do I exit?
+        exit(1);
     }
     
     return true;
