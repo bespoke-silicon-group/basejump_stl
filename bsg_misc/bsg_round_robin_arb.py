@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 """
 Round robin arbitration unit generator
@@ -10,6 +10,8 @@ Added the Hold logic by Shaolin Xie(shawnless.xie@gmail.com), 12/09/2016
     don't update the grant register, so the master with most request would get
     more priorities.
 """
+
+from __future__ import * 
 
 import sys, math
 

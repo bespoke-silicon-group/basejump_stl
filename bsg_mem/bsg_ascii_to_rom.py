@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 #
 # input format:
@@ -17,6 +17,8 @@
 # usage: bsg_ascii_to_rom.py <filename> <modulename> zero  
 # 
  
+from __future__ import * 
+
 import sys;
 import os;
 import binascii;

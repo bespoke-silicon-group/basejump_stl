@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 #
 # bsg_mesh_to_ring_stitch
@@ -12,6 +12,8 @@
 # MBT 5-26-2016
 #
 #
+
+from __future__ import * 
 
 topX = 8
 topY = 8
