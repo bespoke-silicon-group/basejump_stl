@@ -98,7 +98,6 @@ module bsg_cache
   assign addr_block_offset
     = cache_pkt.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
 
-
   // tl_stage
   //
   logic v_tl_r;
@@ -136,7 +135,6 @@ module bsg_cache
 
   assign addr_block_offset_tl =
     addr_tl_r[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
-
 
   // tag_mem
   //
@@ -212,6 +210,18 @@ module bsg_cache
   logic [ways_p-1:0][tag_width_lp-1:0] tag_v_r;
   logic [ways_p-1:0][data_width_p-1:0] ld_data_v_r;
   logic retval_op_v;
+  logic block_ld_busy;
+  logic [lg_block_size_in_words_lp-1:0] block_ld_counter_r;
+  logic counter_clear;
+  logic counter_en;
+  logic v_we_r;
+  logic v_we_posedge;
+  logic block_ld_busy_r;
+  logic ld_under_block_ld_en;
+  logic ld_under_block_ld_pending;
+  logic ld_under_block_ld_done;
+  logic [addr_width_p-1:0] ld_under_block_ld_addr_r;
+  logic [ways_p-1:0][data_width_p-1:0] ld_under_block_ld_data_r;
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
@@ -222,9 +232,12 @@ module bsg_cache
       ,data_v_r
       ,valid_v_r
       ,lock_v_r
-      ,tag_v_r} <= '0;
+      ,tag_v_r
+      ,ld_under_block_ld_pending} <= '0;
     end
     else begin
+      v_we_r <= v_we;
+      block_ld_busy_r <= block_ld_busy;
       if (v_we) begin
         v_v_r <= v_tl_r;
         if (v_tl_r) begin
@@ -238,10 +251,18 @@ module bsg_cache
           ld_data_v_r <= data_mem_data_lo;
         end
       end
+      if(ld_under_block_ld_en) begin 
+        ld_under_block_ld_data_r <= data_mem_data_lo;
+        ld_under_block_ld_pending <= 1'b1;
+        ld_under_block_ld_addr_r <= addr_tl_r;
+      end
+      else if (ld_under_block_ld_done)
+        ld_under_block_ld_pending <= 1'b0;
     end
   end
 
   assign v_we_o = v_we;
+  assign v_we_posedge = v_we & ~v_we_r;
   
   logic [tag_width_lp-1:0] addr_tag_v;
   logic [lg_sets_lp-1:0] addr_index_v;
@@ -258,7 +279,6 @@ module bsg_cache
   for (genvar i = 0; i < ways_p; i++) begin
     assign tag_hit_v[i] = (addr_tag_v == tag_v_r[i]) & valid_v_r[i];
   end
-
 
   logic [lg_ways_lp-1:0] tag_hit_way_id;
   logic tag_hit_found;
@@ -277,22 +297,28 @@ module bsg_cache
   logic aflinv_hit;
   logic alock_miss;  // either the line is miss, or the line is unlocked.
   logic aunlock_hit; // the line is hit and locked.
+  logic block_ld_miss;
+  logic block_ld;
+  logic ld_bypass;
 
+  assign block_ld = decode_v_r.block_ld_op;            //decode_v_r.ld_op & decode_v_r.mask_op;
+  assign block_ld_miss  = ~tag_hit_found & block_ld;
   assign ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op);
   assign tagfl_hit = decode_v_r.tagfl_op& valid_v_r[addr_way_v];
   assign aflinv_hit = (decode_v_r.afl_op| decode_v_r.aflinv_op| decode_v_r.ainv_op) & tag_hit_found;
   assign alock_miss = decode_v_r.alock_op& (tag_hit_found ? ~lock_v_r[tag_hit_way_id] : 1'b1);
   assign aunlock_hit = decode_v_r.aunlock_op& (tag_hit_found ? lock_v_r[tag_hit_way_id] : 1'b0);
+  assign ld_bypass = block_ld_miss & decode_v_r.ld_bypass_op; // l2_bypass_op is passed via cache_pkt to bypass insertion into data_mem in case of a miss
 
   // miss_v signal activates the miss handling unit.
   // MBT: the ~decode_v_r.tagst_op is necessary at the top of this expression
   //      to avoid X-pessimism post synthesis due to X's coming out of the tags
   logic miss_v;
   assign miss_v = (~decode_v_r.tagst_op) & v_v_r
-    & (ld_st_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit);
+    & (ld_st_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit | block_ld_miss);
   
   // ops that return some value other than '0.
-  assign retval_op_v = decode_v_r.ld_op | decode_v_r.taglv_op | decode_v_r.tagla_op; 
+  assign retval_op_v = decode_v_r.ld_op | decode_v_r.taglv_op | decode_v_r.tagla_op | decode_v_r.block_ld_op; 
 
   // stat_mem
   //
@@ -329,6 +355,7 @@ module bsg_cache
 
   logic recover_lo;
   logic miss_done_lo;
+  logic miss_ack;
 
   logic miss_stat_mem_v_lo;
   logic miss_stat_mem_w_lo;
@@ -391,7 +418,7 @@ module bsg_cache
 
     ,.chosen_way_o(chosen_way_lo)
     
-    ,.ack_i(v_o & yumi_i) 
+    ,.ack_i(miss_ack)                       // Since dma data is forwarded while miss is handled, (v_o & yumi_i) is low by the time  miss handler fsm checks ack_i
   );
 
   // dma
@@ -443,6 +470,33 @@ module bsg_cache
     
     ,.dma_evict_o(dma_evict_lo)
   ); 
+
+  // Block Load Counter
+  //
+  always_ff @ (posedge clk_i)begin
+  if(v_we_posedge)                                   // Latching Counter Enable
+    counter_en = 1'b1;
+  if(counter_clear)
+    counter_en = 1'b0;
+  end
+
+  assign counter_clear = (block_ld_counter_r == (block_size_in_words_p-1));
+  assign block_ld_busy = block_ld & tag_hit_found & counter_en & v_v_r;
+
+  assign ld_under_block_ld_en = decode_tl_r.ld_op & block_ld_busy & (block_ld_counter_r == '0); // latch_en to latch the data read by ld_op during input stage while block ld is in tv stage
+  assign ld_under_block_ld_done = decode_v_r.ld_op & ld_under_block_ld_pending & (addr_v_r == ld_under_block_ld_addr_r);
+
+  bsg_counter_clear_up #(                  // Counter to go through different word offsets in a block
+    .max_val_p(block_size_in_words_p-1)
+    ,.init_val_p(0)
+  ) block_counter (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i|counter_clear)
+    ,.clear_i(0)
+    ,.up_i(block_ld_busy)
+    ,.count_o(block_ld_counter_r)
+  );
+
 
   // store buffer
   //
@@ -575,21 +629,51 @@ module bsg_cache
   logic [data_width_p-1:0] bypass_data_masked;
   logic [data_width_p-1:0] snoop_or_ld_data;
   logic [data_width_p-1:0] ld_data_masked;
+  logic [data_width_p-1:0] block_ld_data;
+  logic [data_width_p-1:0] ld_or_bl_ld_data;
+  logic [ways_p-1:0][data_width_p-1:0] ld_under_ld_data_picked;
+
+  bsg_mux #(                  
+    .width_p(data_width_p)
+    ,.els_p(ways_p)
+  ) bl_ld_data_mux (
+    .data_i(data_mem_data_lo)
+    ,.sel_i(tag_hit_way_id)
+    ,.data_o(block_ld_data)
+  );
+
+  bsg_mux #(
+    .width_p(ways_p*data_width_p)
+    ,.els_p(ways_p)
+  ) ld_under_block_ld_data_mux (
+    .data_i({ld_under_block_ld_data_r, ld_data_v_r})
+    ,.sel_i(ld_under_block_ld_pending)
+    ,.data_o(ld_under_ld_data_picked)
+  );
 
   bsg_mux #(
     .width_p(data_width_p)
     ,.els_p(ways_p)
   ) ld_data_mux (
-    .data_i(ld_data_v_r)
+    .data_i(ld_under_ld_data_picked)
     ,.sel_i(tag_hit_way_id)
     ,.data_o(ld_data_way_picked)
+  );
+
+  bsg_mux #(
+    .width_p(data_width_p)
+    ,.els_p(2)
+  ) ld_or_bl_ld_data_mux (
+    .data_i({block_ld_data, ld_data_way_picked})
+    ,.sel_i(block_ld)
+    ,.data_o(ld_or_bl_ld_data)
   );
 
   bsg_mux_segmented #(
     .segments_p(data_mask_width_lp)
     ,.segment_width_p(8)
   ) bypass_mux_segmented (
-    .data0_i(ld_data_way_picked)
+    .data0_i(ld_or_bl_ld_data)
     ,.data1_i(bypass_data_lo)
     ,.sel_i(bypass_mask_lo)
     ,.data_o(bypass_data_masked)
@@ -666,6 +750,9 @@ module bsg_cache
           {(lg_block_size_in_words_lp+lg_data_mask_width_lp){1'b0}}
         };
       end
+      else if (block_ld) begin
+        data_o = (block_ld_miss & dma_data_mem_w_lo) ? dma_data_mem_data_lo[0] : snoop_or_ld_data; // On a block ld miss, dma_data is directly forwarded to output
+      end
       else if (decode_v_r.mask_op) begin
         data_o = ld_data_masked;
       end
@@ -681,13 +768,18 @@ module bsg_cache
   // ctrl logic
   //
   assign v_o = v_v_r & (miss_v
-    ? miss_done_lo
-    : 1'b1); 
+    ? (block_ld_miss               // On a block ld miss, data is forwarded to the CCE simultaneously as it's written into data_mem
+    ? dma_data_mem_w_lo
+    : miss_done_lo)
+    : (block_ld 
+    ? block_ld_busy_r
+    : 1'b1));
 
   assign v_we = v_v_r
-    ? (v_o & yumi_i)
+    ? (miss_v ? miss_done_lo : ~block_ld_busy)
     : 1'b1;
 
+  assign miss_ack = block_ld_miss ? miss_done_lo : (v_o & yumi_i);
   // during miss, tl pipeline cannot take next instruction when
   // 1) input is tagst
   // 2) miss handler is writing to tag_mem
@@ -696,7 +788,7 @@ module bsg_cache
   logic tl_ready;
   assign tl_ready = miss_v
     ? (~(decode.tagst_op & v_i) & ~miss_tag_mem_v_lo & ~dma_data_mem_v_lo & ~recover_lo & ~dma_evict_lo)
-    : 1'b1;
+    : ~(block_ld_busy); // Block_ld_busy is high only for block ld hits, thus tl_ready lowered to prevent successive requests
   assign ready_o = v_tl_r
     ? (v_we & tl_ready)
     : tl_ready;
@@ -729,7 +821,7 @@ module bsg_cache
     | (decode.tagst_op & ready_o & v_i); 
   
   assign tag_mem_w_li = miss_v
-    ? miss_tag_mem_w_lo
+    ? (miss_tag_mem_w_lo & ~ld_bypass)
     : tagst_write_en;
 
   always_comb begin
@@ -754,11 +846,12 @@ module bsg_cache
   //
   assign data_mem_v_li = ((v_i & decode.ld_op & ready_o)
     | (v_tl_r & recover_lo & decode_tl_r.ld_op)
+    | block_ld_busy
     | dma_data_mem_v_lo
     | (sbuf_v_lo & sbuf_yumi_li)
   );
   
-  assign data_mem_w_li = dma_data_mem_w_lo | (sbuf_v_lo & sbuf_yumi_li);
+  assign data_mem_w_li = (dma_data_mem_w_lo & ~ld_bypass) | (sbuf_v_lo & sbuf_yumi_li);
 
   assign data_mem_data_li = dma_data_mem_w_lo
     ? dma_data_mem_data_lo
@@ -768,14 +861,15 @@ module bsg_cache
     ? {addr_index_tl, addr_block_offset_tl}
     : (dma_data_mem_v_lo
       ? dma_data_mem_addr_lo
-      : ((decode.ld_op & v_i & ready_o) 
-        ? {addr_index, addr_block_offset}
-        : sbuf_entry_lo.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp]));
+      : ((block_ld_busy & v_v_r)
+        ? {addr_index_v, block_ld_counter_r}
+        : ((decode.ld_op & v_i & ready_o)
+          ? {addr_index, addr_block_offset}
+          : sbuf_entry_lo.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp])));
 
   assign data_mem_w_mask_li = dma_data_mem_w_lo
     ? dma_data_mem_w_mask_lo
     : sbuf_data_mem_w_mask;
-
 
   // stat_mem ctrl logic
   // TAGST clears the stat_info as it exits tv stage.
@@ -796,14 +890,14 @@ module bsg_cache
   always_comb begin
     if (miss_v) begin
       stat_mem_v_li = miss_stat_mem_v_lo;
-      stat_mem_w_li = miss_stat_mem_w_lo;
+      stat_mem_w_li = ~ld_bypass & miss_stat_mem_w_lo;
       stat_mem_addr_li = miss_stat_mem_addr_lo; // essentially same as addr_index_v
       stat_mem_data_li = miss_stat_mem_data_lo;
       stat_mem_w_mask_li = miss_stat_mem_w_mask_lo;
     end
     else begin
-      stat_mem_v_li = ((decode_v_r.st_op| decode_v_r.ld_op| decode_v_r.tagst_op) & v_o & yumi_i);
-      stat_mem_w_li = ((decode_v_r.st_op| decode_v_r.ld_op| decode_v_r.tagst_op) & v_o & yumi_i);
+      stat_mem_v_li = ((decode_v_r.st_op| decode_v_r.ld_op| decode_v_r.block_ld_op| decode_v_r.tagst_op) & v_o & yumi_i);
+      stat_mem_w_li = ((decode_v_r.st_op| decode_v_r.ld_op| decode_v_r.block_ld_op| decode_v_r.tagst_op) & v_o & yumi_i);
       stat_mem_addr_li = addr_index_v;
 
       if (decode_v_r.tagst_op) begin
@@ -829,10 +923,10 @@ module bsg_cache
   assign sbuf_v_li = decode_v_r.st_op & v_o & yumi_i;
   assign sbuf_entry_li.way_id = miss_v ? chosen_way_lo : tag_hit_way_id;
   assign sbuf_entry_li.addr = addr_v_r;
-  assign sbuf_yumi_li = sbuf_v_lo & ~(decode.ld_op & v_i & ready_o) & (~dma_data_mem_v_lo); 
+  assign sbuf_yumi_li = sbuf_v_lo & ~(decode.ld_op & v_i & ready_o) & (~dma_data_mem_v_lo) & (~block_ld_busy); 
 
-  assign bypass_addr_li = addr_tl_r;
-  assign bypass_v_li = decode_tl_r.ld_op & v_tl_r & v_we;
+  assign bypass_addr_li = block_ld_busy ? {addr_tag_v, addr_index_v, block_ld_counter_r, {lg_data_mask_width_lp{1'b0}}}: addr_tl_r;
+  assign bypass_v_li = ((decode_tl_r.ld_op | decode_tl_r.block_ld_op) & v_tl_r & v_we) | block_ld;
 
 
   // synopsys translate_off

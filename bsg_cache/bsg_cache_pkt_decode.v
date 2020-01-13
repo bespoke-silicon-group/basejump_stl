@@ -56,6 +56,7 @@ module bsg_cache_pkt_decode
     | (cache_pkt.opcode == SD)
     | (cache_pkt.opcode == SM);
 
+  assign decode_o.block_ld_op = (cache_pkt.opcode == BLOCK_LD);
   assign decode_o.tagst_op = (cache_pkt.opcode == TAGST);
   assign decode_o.tagfl_op = (cache_pkt.opcode == TAGFL);
   assign decode_o.taglv_op = (cache_pkt.opcode == TAGLV);
@@ -67,5 +68,6 @@ module bsg_cache_pkt_decode
   assign decode_o.aunlock_op = (cache_pkt.opcode == AUNLOCK);
 
   assign decode_o.tag_read_op = ~decode_o.tagst_op;
+  assign decode_o.ld_bypass_op = cache_pkt.ld_bypass;
 
 endmodule
