@@ -106,19 +106,12 @@ module bsg_mem_1rw_sync_mask_write_bit #( parameter width_p = -1
   `bsg_mem_1rw_sync_mask_write_bit_macro(128,152,2) else
   `bsg_mem_1rw_sync_mask_write_bit_macro(64,58,2) else
   `bsg_mem_1rw_sync_mask_write_bit_macro(128,112,2) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro(64,124,2) else
 
   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,116,2,1) else
-  `bsg_mem_1rw_sync_mask_write_bit_banked_macro(128,112,1,2) else
+  `bsg_mem_1rw_sync_mask_write_bit_banked_macro(256,112,1,2) else
+  `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,248,2,1) else
 
-  `bsg_mem_1rw_sync_mask_write_bit_macro_banks(64,116,2, 2) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro_banks(64,116,2, 2) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro_banks(128,116,2, 2) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro_banks(256,112,2, 2) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro_banks(64,62,2,8) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro_banks(64,124,2,2) else
-
-  `bsg_mem_1rw_sync_mask_write_bit_macro_banks_cracks(128,112,2,1,2) else
-  
     begin: notmacro
       bsg_mem_1rw_sync_mask_write_bit_synth #(.width_p(width_p), .els_p(els_p))
         synth
