@@ -1,4 +1,4 @@
-INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
+INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc +incdir+$(BASEJUMP_STL_DIR)/bsg_fpu
 
 FPU_TRACE_ROM = bsg_fpu_trace_rom
 

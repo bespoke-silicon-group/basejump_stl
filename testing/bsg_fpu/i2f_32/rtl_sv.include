@@ -8,7 +8,6 @@ $BASEJUMP_STL_DIR/bsg_misc/bsg_priority_encode.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_priority_encode_one_hot_out.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_encode_one_hot.v
 
-$BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_pkg.v
 $BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_clz.v
 $BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_i2f.v
 
