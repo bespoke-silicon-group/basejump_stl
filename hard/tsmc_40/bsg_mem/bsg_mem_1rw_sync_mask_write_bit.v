@@ -32,9 +32,33 @@ if (els_p == words && width_p == bits)                   \
       ,.DELAY ( 2'b0      ));                            \
   end
 
+`define bsg_mem_1rw_sync_mask_write_bit_banked_macro(words,bits,wbank,dbank) \
+  if (harden_p && els_p == words && width_p == bits) begin: macro           \
+    bsg_mem_1rw_sync_mask_write_bit_banked #(                               \
+      .width_p(width_p)                                                     \
+      ,.els_p(els_p)                                                        \
+      ,.latch_last_read_p(latch_last_read_p)                                \
+      ,.num_width_bank_p(wbank)                                             \
+      ,.num_depth_bank_p(dbank)                                             \
+      ,.harden_p(harden_p)                                                  \
+    ) bmem (                                                                \
+      .clk_i(clk_i)                                                         \
+      ,.reset_i(reset_i)                                                    \
+      ,.v_i(v_i)                                                            \
+      ,.w_i(w_i)                                                            \
+      ,.addr_i(addr_i)                                                      \
+      ,.data_i(data_i)                                                      \
+      ,.w_mask_i(w_mask_i)                                                  \
+      ,.data_o(data_o)                                                      \
+    );                                                                      \
+  end: macro
+
+
 module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
 			               , parameter els_p=-1
-			               , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p))
+                     , parameter latch_last_read_p=0
+			               , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+                     , parameter harden_p=1)
    (input   clk_i
     , input reset_i
     , input [width_p-1:0] data_i
@@ -55,13 +79,22 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
    `bsg_mem_1rf_sync_macro_bit(256,32,8,2) else
    `bsg_mem_1rf_sync_macro_bit(256,34,8,2) else
    `bsg_mem_1rf_sync_macro_bit(256,36,8,2) else
-   `bsg_mem_1rw_sync_macro_bit(64,80,6,1)  else
-   `bsg_mem_1rw_sync_macro_bit(128,232,2)
-   bsg_mem_1rw_sync_mask_write_bit_synth
-     #(.width_p(width_p)
-       ,.els_p(els_p)
-       ) synth
-       (.*);
+   `bsg_mem_1rw_sync_macro_bit(64,80,6,1) else
+   `bsg_mem_1rw_sync_macro_bit(64,124,6,2) else
+   `bsg_mem_1rw_sync_macro_bit(64,62,6,2) else
+   `bsg_mem_1rw_sync_macro_bit(128,112,7,2) else
+
+   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,248,2,1) else
+   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,496,8,1) else
+   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(256,112,1,2) else
+
+   begin : notmacro
+     bsg_mem_1rw_sync_mask_write_bit_synth
+       #(.width_p(width_p)
+         ,.els_p(els_p)
+         ) synth
+         (.*);
+   end
 
    // synopsys translate_off
 
