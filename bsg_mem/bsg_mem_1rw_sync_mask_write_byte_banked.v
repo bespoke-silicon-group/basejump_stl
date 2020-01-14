@@ -26,6 +26,7 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
   #(parameter data_width_p="inv"
     , parameter els_p="inv"
     , parameter latch_last_read_p=0
+    , parameter harden_p=0
 
     , parameter write_mask_width_lp=(data_width_p>>3)
 
@@ -61,6 +62,7 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
         .data_width_p(bank_width_lp)
         ,.els_p(bank_depth_lp)
         ,.latch_last_read_p(latch_last_read_p)
+        ,.harden_p(harden_p)
       ) bank (
         .clk_i(clk_i)
         ,.reset_i(reset_i)

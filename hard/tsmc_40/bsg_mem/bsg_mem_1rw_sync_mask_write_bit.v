@@ -6,7 +6,7 @@
 `define bsg_mem_1rw_sync_macro_bit(words,bits,lgEls,mux) \
 if (els_p == words && width_p == bits)                   \
   begin: macro                                           \
-    tsmc40_1rw_lg``lgEls``_w``bits``_m``mux mem          \
+    tsmc40_1rw_d``words``_w``bits``_m``mux``_bit mem     \
       (.A     ( addr_i    )                              \
       ,.D     ( data_i    )                              \
       ,.BWEB  ( ~w_mask_i )                              \
@@ -14,14 +14,13 @@ if (els_p == words && width_p == bits)                   \
       ,.CEB   ( ~v_i      )                              \
       ,.CLK   ( clk_i     )                              \
       ,.Q     ( data_o    )                              \
-      ,.DELAY ( 2'b0      )                              \
-      ,.TEST  ( 2'b0      ));                            \
+      ,.DELAY ( 2'b0      ));                            \
   end
 
 `define bsg_mem_1rf_sync_macro_bit(words,bits,lgEls,mux) \
 if (els_p == words && width_p == bits)                   \
   begin: macro                                           \
-    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem          \
+    tsmc40_1rf_d``words``_w``bits``_m``mux``_bit mem     \
       (.A     ( addr_i    )                              \
       ,.D     ( data_i    )                              \
       ,.BWEB  ( ~w_mask_i )                              \

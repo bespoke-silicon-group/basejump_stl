@@ -11,7 +11,7 @@ if (els_p == words && data_width_p == bits)               \
     genvar i;                                             \
     for(i=0;i<write_mask_width_lp;i++)                    \
       assign wen[8*i+:8] = {8{write_mask_i[i]}};          \
-    tsmc40_1rw_lg``lgEls``_w``bits``_m``mux mem           \
+    tsmc40_1rw_d``words``_w``bits``_m``mux``_byte mem     \
       (.A     ( addr_i )                                  \
       ,.D     ( data_i )                                  \
       ,.BWEB  ( ~wen   )                                  \
@@ -19,8 +19,7 @@ if (els_p == words && data_width_p == bits)               \
       ,.CEB   ( ~v_i   )                                  \
       ,.CLK   ( clk_i  )                                  \
       ,.Q     ( data_o )                                  \
-      ,.DELAY ( 2'b0   )                                  \
-      ,.TEST  ( 2'b0   ));                                \
+      ,.DELAY ( 2'b0   ));                                \
   end
 
 `define bsg_mem_1rf_sync_macro_byte(words,bits,lgEls,mux) \
@@ -30,7 +29,7 @@ if (els_p == words && data_width_p == bits)               \
     genvar i;                                             \
     for(i=0;i<write_mask_width_lp;i++)                    \
       assign wen[8*i+:8] = {8{write_mask_i[i]}};          \
-    tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem           \
+    tsmc40_1rf_d``words``_w``bits``_m``mux``_byte mem     \
       (.A     ( addr_i )                                  \
       ,.D     ( data_i )                                  \
       ,.BWEB  ( ~wen   )                                  \
@@ -94,7 +93,7 @@ module bsg_mem_1rw_sync_mask_write_byte
   `bsg_mem_1rf_sync_macro_byte(1024,32,10,8) else
   `bsg_mem_1rw_sync_macro_byte(1024,32,10,4) else
   `bsg_mem_1rw_sync_macro_byte(1024,512,10,2) else
-  `bsg_mem_1rw_sync_macro_byte(512,64,9,2) else
+  `bsg_mem_1rw_sync_macro_byte(512,64,9,4) else
 
   `bsg_mem_1rw_sync_mask_write_byte_banked_macro(1024,32,1,2) else
   `bsg_mem_1rw_sync_mask_write_byte_banked_macro(2048,256,4,4) else
