@@ -20,7 +20,7 @@
           );                                                  \
     end: macro
 
-`define bsg_mem_1rw_sync_mask_write_banked_macro(words,bits,wbank,dbank) \
+`define bsg_mem_1rw_sync_mask_write_bit_banked_macro(words,bits,wbank,dbank) \
   if (harden_p && els_p == words && width_p == bits) begin: macro \
     bsg_mem_1rw_sync_mask_write_bit_banked #(                     \
       .width_p(width_p)                                                     \
@@ -107,10 +107,12 @@ module bsg_mem_1rw_sync_mask_write_bit #( parameter width_p = -1
   `bsg_mem_1rw_sync_mask_write_bit_macro(64,58,2) else
   `bsg_mem_1rw_sync_mask_write_bit_macro(128,112,2) else
   `bsg_mem_1rw_sync_mask_write_bit_macro(64,124,2) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro(64,62,2) else
 
   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,116,2,1) else
   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(256,112,1,2) else
   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,248,2,1) else
+  `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,496,8,1) else
 
     begin: notmacro
       bsg_mem_1rw_sync_mask_write_bit_synth #(.width_p(width_p), .els_p(els_p))
