@@ -8,7 +8,7 @@ module bsg_nonsynth_dramsim3_map
     , parameter num_channels_p="inv"
     , parameter num_columns_p="inv"
     , parameter address_mapping_p="inv"
-    , parameter size_p=0
+    , parameter channel_select_p="inv"
     , parameter debug_p=0
     , parameter lg_num_channels_lp=`BSG_SAFE_CLOG2(num_channels_p)
     , parameter lg_num_columns_lp=`BSG_SAFE_CLOG2(num_columns_p)
@@ -17,32 +17,27 @@ module bsg_nonsynth_dramsim3_map
     , parameter addr_width_lp=lg_num_channels_lp+channel_addr_width_p
     )
    (
-    input logic [num_channels_p-1:0] [channel_addr_width_p-1:0] ch_addr_i
-    , output logic [num_channels_p-1:0] [addr_width_lp-1:0] mem_addr_o
+    input logic [channel_addr_width_p-1:0] ch_addr_i
+    , output logic [addr_width_lp-1:0] mem_addr_o
    );
 
   if (address_mapping_p == e_ro_ra_bg_ba_co_ch) begin
-    for (genvar i = 0; i < num_channels_p; i++) begin
-      assign mem_addr_o[i]
-        = {
-           ch_addr_i[i][channel_addr_width_p-1:byte_offset_width_lp],
-           (lg_num_channels_lp)'(i),
-           {byte_offset_width_lp{1'b0}}
-           };
-    end
+    assign mem_addr_o
+      = {
+         ch_addr_i[channel_addr_width_p-1:byte_offset_width_lp],
+         (lg_num_channels_lp)'(channel_select_p),
+         {byte_offset_width_lp{1'b0}}
+         };
   end
 
   else if (address_mapping_p == e_ro_ra_bg_ba_ch_co) begin
-    for (genvar i = 0; i < num_channels_p; i++) begin
-      assign mem_addr_o[i]
-        = {
-           ch_addr_i[i][channel_addr_width_p-1:lg_num_channels_lp+lg_num_columns_lp+byte_offset_width_lp],
-           (lg_num_channels_lp)'(i),
-           ch_addr_i[i][lg_num_columns_lp+byte_offset_width_lp-1:byte_offset_width_lp],
-           {byte_offset_width_lp{1'b0}}
-           };
-
-    end
+    assign mem_addr_o
+      = {
+         ch_addr_i[channel_addr_width_p-1:lg_num_channels_lp+lg_num_columns_lp+byte_offset_width_lp],
+         (lg_num_channels_lp)'(channel_select_p),
+         ch_addr_i[lg_num_columns_lp+byte_offset_width_lp-1:byte_offset_width_lp],
+         {byte_offset_width_lp{1'b0}}
+         };
   end
 
 

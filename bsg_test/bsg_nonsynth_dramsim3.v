@@ -68,16 +68,20 @@ module bsg_nonsynth_dramsim3
   // memory addr
   logic [num_channels_p-1:0][lg_num_channels_lp+channel_addr_width_p-1:0] mem_addr;
 
-  bsg_nonsynth_dramsim3_map
-    #(.channel_addr_width_p(channel_addr_width_p)
-      ,.data_width_p(data_width_p)
-      ,.num_channels_p(num_channels_p)
-      ,.num_columns_p(num_columns_p)
-      ,.address_mapping_p(address_mapping_p)
-      ,.debug_p(debug_p))
-  map
-    (.ch_addr_i(ch_addr_i)
-     ,.mem_addr_o(mem_addr));
+  for (genvar i = 0; i < num_channels_p; i++) begin
+    bsg_nonsynth_dramsim3_map
+      #(.channel_addr_width_p(channel_addr_width_p)
+        ,.data_width_p(data_width_p)
+        ,.num_channels_p(num_channels_p)
+        ,.num_columns_p(num_columns_p)
+        ,.address_mapping_p(address_mapping_p)
+        ,.channel_select_p(i)
+        ,.debug_p(debug_p))
+    map
+      (.ch_addr_i(ch_addr_i[i])
+       ,.mem_addr_o(mem_addr[i]));
+  end
+
 
   // request yumi
   logic [num_channels_p-1:0] yumi_lo;
@@ -89,16 +93,20 @@ module bsg_nonsynth_dramsim3
   logic [num_channels_p-1:0][lg_num_channels_lp+channel_addr_width_p-1:0] read_done_addr;
   logic [num_channels_p-1:0][channel_addr_width_p-1:0] read_done_ch_addr;
 
-  bsg_nonsynth_dramsim3_unmap
-    #(.channel_addr_width_p(channel_addr_width_p)
-      ,.data_width_p(data_width_p)
-      ,.num_channels_p(num_channels_p)
-      ,.num_columns_p(num_columns_p)
-      ,.address_mapping_p(address_mapping_p)
-      ,.debug_p(debug_p))
-  unmap
-    (.mem_addr_i(read_done_addr)
-     ,.ch_addr_o(read_done_ch_addr));
+  for (genvar i = 0; i < num_channels_p; i++) begin
+    bsg_nonsynth_dramsim3_unmap
+     #(.channel_addr_width_p(channel_addr_width_p)
+       ,.data_width_p(data_width_p)
+       ,.num_channels_p(num_channels_p)
+       ,.num_columns_p(num_columns_p)
+       ,.address_mapping_p(address_mapping_p)
+       ,.channel_select_p(i)
+       ,.debug_p(debug_p))
+    unmap
+      (.mem_addr_i(read_done_addr[i])
+       ,.ch_addr_o(read_done_ch_addr[i]));
+  end
+
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
