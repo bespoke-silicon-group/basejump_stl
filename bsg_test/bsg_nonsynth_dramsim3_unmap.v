@@ -8,7 +8,6 @@ module bsg_nonsynth_dramsim3_unmap
     , parameter num_channels_p="inv"
     , parameter num_columns_p="inv"
     , parameter address_mapping_p="inv"
-    , parameter size_p=0
     , parameter debug_p=0
     , parameter lg_num_channels_lp=`BSG_SAFE_CLOG2(num_channels_p)
     , parameter lg_num_columns_lp=`BSG_SAFE_CLOG2(num_columns_p)

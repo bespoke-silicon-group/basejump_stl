@@ -122,7 +122,7 @@ extern "C" bool bsg_dramsim3_init(
     /* for sanity checking */
     int num_channels_p,
     int data_width_p,
-    long long size_p,
+    long long size_in_bits_p,
     char *config_p)
 {
     string config_dir = stringify(BASEJUMP_STL_DIR) "/imports/DRAMSim3/configs/";
@@ -173,9 +173,9 @@ extern "C" bool bsg_dramsim3_init(
                data_width_p, cfg->BL, cfg->device_width, config_p);
         bsg_dramsim3_exit();
         exit(1);
-    } else if (memory_size != size_p) {
-        pr_err("size_p (%ld) does not match device size (%ld) found in %s\n",
-               size_p, memory_size, config_p);
+    } else if (memory_size != size_in_bits_p) {
+        pr_err("size_in_bits_p (%ld) does not match device size (%ld) found in %s\n",
+               size_in_bits_p, memory_size, config_p);
         exit(1);
     }
     

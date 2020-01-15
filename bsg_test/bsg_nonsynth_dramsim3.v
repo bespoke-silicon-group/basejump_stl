@@ -9,7 +9,7 @@ module bsg_nonsynth_dramsim3
     , parameter num_channels_p="inv"
     , parameter num_columns_p="inv"
     , parameter address_mapping_p="inv"
-    , parameter size_p=0
+    , parameter size_in_bits_p=0
     , parameter debug_p=0
     , parameter init_mem_p=0 // zero out values in memory at the beginning
     , parameter string config_p="inv"
@@ -62,7 +62,7 @@ module bsg_nonsynth_dramsim3
     void    bsg_dramsim3_exit();
 
   initial begin
-    bsg_dramsim3_init(num_channels_p, data_width_p, size_p, config_p);
+    bsg_dramsim3_init(num_channels_p, data_width_p, size_in_bits_p, config_p);
   end
 
   // memory addr
@@ -74,7 +74,6 @@ module bsg_nonsynth_dramsim3
       ,.num_channels_p(num_channels_p)
       ,.num_columns_p(num_columns_p)
       ,.address_mapping_p(address_mapping_p)
-      ,.size_p(size_p)
       ,.debug_p(debug_p))
   map
     (.ch_addr_i(ch_addr_i)
@@ -96,7 +95,6 @@ module bsg_nonsynth_dramsim3
       ,.num_channels_p(num_channels_p)
       ,.num_columns_p(num_columns_p)
       ,.address_mapping_p(address_mapping_p)
-      ,.size_p(size_p)
       ,.debug_p(debug_p))
   unmap
     (.mem_addr_i(read_done_addr)
@@ -158,7 +156,7 @@ module bsg_nonsynth_dramsim3
       #(.channel_addr_width_p(channel_addr_width_p)
         ,.data_width_p(data_width_p)
         ,.init_mem_p(init_mem_p)
-        ,.mem_els_p((size_p/num_channels_p)/data_width_p))
+        ,.mem_els_p((size_in_bits_p/num_channels_p)/data_width_p))
     channel
       (.clk_i(clk_i)
       ,.reset_i(reset_i)
