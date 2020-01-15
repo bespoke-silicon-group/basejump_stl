@@ -26,6 +26,8 @@
 `define BSG_DISCONNECTED_IN_SIM(val) ('z)
 `endif
 
+`define BSG_STRINGIFY(x) `"x`"
+
 // using C-style shifts instead of a[i] allows the parameter of BSG_GET_BIT to be a parameter subrange                                                                                                                                                                               
 // e.g., parameter[4:1][1], which DC 2016.12 does not allow                                                                                                                                                                                                                          
 
