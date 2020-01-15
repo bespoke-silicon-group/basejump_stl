@@ -152,7 +152,7 @@ module bsg_nonsynth_dramsim3
 
   for (genvar i = 0; i < num_channels_p; i++) begin
 
-    bsg_nonsynth_ramulator_hbm_channel
+    bsg_nonsynth_test_dram_channel
       #(.channel_addr_width_p(channel_addr_width_p)
         ,.data_width_p(data_width_p)
         ,.init_mem_p(init_mem_p)
