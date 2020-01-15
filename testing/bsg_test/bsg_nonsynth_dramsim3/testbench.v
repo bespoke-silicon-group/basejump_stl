@@ -44,7 +44,7 @@ module testbench ();
       ,.data_width_p(`dram_pkg::data_width_p)
       ,.num_channels_p(`dram_pkg::num_channels_p)
       ,.num_columns_p(`dram_pkg::num_columns_p)
-      ,.size_p(`dram_pkg::size_p)
+      ,.size_in_bits_p(`dram_pkg::size_in_bits_p)
       ,.address_mapping_p(`dram_pkg::address_mapping_p)
       ,.config_p(`dram_pkg::config_p)
       ,.trace_file_p(`BSG_STRINGIFY(`trace_file))
