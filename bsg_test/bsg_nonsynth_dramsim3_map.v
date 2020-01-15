@@ -40,12 +40,4 @@ module bsg_nonsynth_dramsim3_map
          };
   end
 
-
-  initial begin
-    $display("lg_num_channels_lp=%d", lg_num_channels_lp);
-    $display("channel_addr_width_p=%d", channel_addr_width_p);
-    $display("byte_offset_width_lp=%d", byte_offset_width_lp);
-    $display("lg_num_columns_p=%d", lg_num_columns_lp);
-  end
-
 endmodule // bsg_nonsynth_dramsim3_map
