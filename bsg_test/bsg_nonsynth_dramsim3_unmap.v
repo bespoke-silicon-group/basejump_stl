@@ -2,7 +2,7 @@
 // bsg_nonsynth_dramsim3_unmap //
 /////////////////////////////////
 module bsg_nonsynth_dramsim3_unmap
-  import bsg_nonsynth_dramsim3_pkg::*;
+  import bsg_dramsim3_pkg::*;
   #(parameter channel_addr_width_p="inv"
     , parameter data_width_p="inv"
     , parameter num_channels_p="inv"
