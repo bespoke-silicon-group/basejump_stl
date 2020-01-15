@@ -22,7 +22,7 @@ $(DRAMS):
 	vcs -R +v2k +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
 		-cpp g++ $(CFLAGS) \
 		$(INCDIR) \
-		+define+dram_pkg=bsg_nonsynth_dramsim3_$@_pkg \
+		+define+dram_pkg=bsg_dramsim3_$@_pkg \
 		+define+trace_file=$@.trace \
 		+define+rom_file=$@.tr \
 		-sverilog -full64 -f sv.include -timescale=1ps/1ps +vcs+vcdpluson -l vcs.log
