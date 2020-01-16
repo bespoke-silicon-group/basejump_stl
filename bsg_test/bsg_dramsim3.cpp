@@ -44,8 +44,9 @@ static constexpr bool READ  = false;
  */
 extern "C" bool bsg_dramsim3_send_read_req(addr_t addr)
 {
-    Address map = _memory_system->GetConfig()->AddressMapping(addr);
-    pr_dbg("0x%010llx : co(%d),ch(%d)\n", addr, map.column, map.channel);
+    pr_dbg("0x%010llx : co(%d),ch(%d)\n", addr,
+           _memory_system->GetConfig()->AddressMapping(addr).column,
+           _memory_system->GetConfig()->AddressMapping(addr).channel);
     pr_dbg("sending read request to addr=0x%010llx\n", addr);
     if (_memory_system->WillAcceptTransaction(addr, READ)) {
         _memory_system->AddTransaction(addr, READ);
@@ -174,7 +175,7 @@ extern "C" bool bsg_dramsim3_init(
         bsg_dramsim3_exit();
         exit(1);
     } else if (memory_size != size_in_bits_p) {
-        pr_err("size_in_bits_p (%ld) does not match device size (%ld) found in %s\n",
+        pr_err("size_in_bits_p (%lld) does not match device size (%lld) found in %s\n",
                size_in_bits_p, memory_size, config_p);
         exit(1);
     }
