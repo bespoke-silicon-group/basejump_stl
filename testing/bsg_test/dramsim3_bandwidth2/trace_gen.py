@@ -4,12 +4,13 @@ import math
 
 class TraceGen:
 
-  def __init__(self, block_size_in_words_p):
-    # we are keeping 32KB capacity per cache.
-    self.addr_width_p = 29
+  def __init__(self, num_subcache_p, block_size_in_words_p):
+    # we are keeping 32KB capacity per cache group.
+    self.addr_width_p = 30
     self.data_width_p = 32
     self.ways_p = 8
-    self.sets_p = 1024/block_size_in_words_p
+    self.sets_p = 1024/block_size_in_words_p/num_subcache_p
+    self.num_subcache_p = num_subcache_p
     self.block_size_in_words_p = block_size_in_words_p
     self.curr_data = 1
 
@@ -36,7 +37,7 @@ class TraceGen:
     print(trace)
 
   def clear_tags(self):
-    for i in range(self.ways_p*self.sets_p):
+    for i in range(self.ways_p*self.sets_p*self.num_subcache_p):
       self.send_tagst(i<<(2+int(math.log(self.block_size_in_words_p,2))))
     
 

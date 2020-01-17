@@ -4,14 +4,15 @@ from trace_gen import *
 
 if __name__ == "__main__":
   random.seed(0)
-  num_cache_p = int(sys.argv[1])
-  block_size_in_words_p = int(sys.argv[2])
+  num_cache_group_p = int(sys.argv[1])
+  num_subcache_p = int(sys.argv[2])
+  block_size_in_words_p = int(sys.argv[3])
 
-  tg = TraceGen(block_size_in_words_p)
+  tg = TraceGen(num_subcache_p, block_size_in_words_p)
   tg.clear_tags()
 
   #words = (2**18)/num_cache_p # 1MB
-  words = (2**18)/num_cache_p # 1MB
+  words = (2**18)/num_cache_group_p # 1MB
 
   max_range = (2**14)# 64KB
 

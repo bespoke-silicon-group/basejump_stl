@@ -127,6 +127,7 @@ extern "C" addr_t bsg_dramsim3_get_write_done_addr(int ch)
  */
 extern "C" void bsg_dramsim3_exit(void)
 {
+    _memory_system->PrintStats();
     delete _memory_system;
     delete [] _read_done;
     delete [] _read_done_addr;

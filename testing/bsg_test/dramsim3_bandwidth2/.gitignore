@@ -5,3 +5,5 @@ vc_hdrs.h
 *.trace
 miss_latency.txt
 libdramsim3.so
+dramsim3.json
+dramsim3.txt
