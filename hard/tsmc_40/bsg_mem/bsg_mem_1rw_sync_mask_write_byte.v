@@ -92,11 +92,13 @@ module bsg_mem_1rw_sync_mask_write_byte
   `bsg_mem_1rw_sync_macro_byte(512,32,9,4) else
   `bsg_mem_1rf_sync_macro_byte(1024,32,10,8) else
   `bsg_mem_1rw_sync_macro_byte(1024,32,10,4) else
-  `bsg_mem_1rw_sync_macro_byte(1024,512,10,2) else
+  //`bsg_mem_1rw_sync_macro_byte(1024,512,10,2) else
   `bsg_mem_1rw_sync_macro_byte(512,64,9,4) else
+  `bsg_mem_1rw_sync_macro_byte(1024,64,10,4) else
 
   `bsg_mem_1rw_sync_mask_write_byte_banked_macro(1024,32,1,2) else
-  `bsg_mem_1rw_sync_mask_write_byte_banked_macro(2048,256,4,4) else
+  `bsg_mem_1rw_sync_mask_write_byte_banked_macro(2048,256,4,2) else
+  `bsg_mem_1rw_sync_mask_write_byte_banked_macro(1024,512,8,2) else
   // no hardened version found
     begin  : notmacro
 
