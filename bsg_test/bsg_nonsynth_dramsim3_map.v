@@ -33,7 +33,7 @@ module bsg_nonsynth_dramsim3_map
   else if (address_mapping_p == e_ro_ra_bg_ba_ch_co) begin
     assign mem_addr_o
       = {
-         ch_addr_i[channel_addr_width_p-1:lg_num_channels_lp+lg_num_columns_lp+byte_offset_width_lp],
+         ch_addr_i[channel_addr_width_p-1:lg_num_columns_lp+byte_offset_width_lp],
          (lg_num_channels_lp)'(channel_select_p),
          ch_addr_i[lg_num_columns_lp+byte_offset_width_lp-1:byte_offset_width_lp],
          {byte_offset_width_lp{1'b0}}
