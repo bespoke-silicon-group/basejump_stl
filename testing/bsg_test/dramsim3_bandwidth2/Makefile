@@ -16,14 +16,14 @@ CFLAGS += -CFLAGS "-DCMD_TRACE"
 CFLAGS += -CFLAGS "-DBASEJUMP_STL_DIR=$(BASEJUMP_STL_DIR)"
 
 # test parameter
-NUM_CACHE_P ?= 1
+NUM_CACHE_GROUP_P ?= 16
+NUM_SUBCACHE_P ?= 2
 BLOCK_SIZE_IN_WORDS_P ?= 8
 DMA_DATA_WIDTH_P ?= 32
 TRACE_GEN ?= stream_read
 
-#NUMS = $(shell seq 0 `expr $(NUM_CACHE_P) - 1`)
-#TRACE_ROMS = $(addsuffix .tr, $(addprefix trace_, $(NUMS)))
-VCS_DEFINE =  +define+NUM_CACHE_P=$(NUM_CACHE_P)
+VCS_DEFINE =  +define+NUM_CACHE_GROUP_P=$(NUM_CACHE_GROUP_P)
+VCS_DEFINE +=  +define+NUM_SUBCACHE_P=$(NUM_SUBCACHE_P)
 VCS_DEFINE += +define+BLOCK_SIZE_IN_WORDS_P=$(BLOCK_SIZE_IN_WORDS_P)
 VCS_DEFINE += +define+DMA_DATA_WIDTH_P=$(DMA_DATA_WIDTH_P)
 VCS_DEFINE += +define+TRACE=$(TRACE_GEN).tr
@@ -59,7 +59,7 @@ libdramsim3.so: $(DRAMSIM3_SRC)
 	$(CXX) $(CXXFLAGS) -o libdramsim3.so $(DRAMSIM3_SRC)
 
 $(TRACE_GEN).tr: $(TRACE_GEN).py
-	python $(TRACE_GEN).py $(NUM_CACHE_P) $(BLOCK_SIZE_IN_WORDS_P) > $@
+	python $(TRACE_GEN).py $(NUM_CACHE_GROUP_P) $(NUM_SUBCACHE_P) $(BLOCK_SIZE_IN_WORDS_P) > $@
 
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_defines.v
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_counter_clear_up.v
@@ -148,6 +148,7 @@ clean:
 	rm -rf out/
 	rm -rf csrc simv.daidir simv ucli.key vcdplus.vpd vc_hdrs.h DVEfiles simv.log *.pyc
 	rm -f vcs.log bsg_nonsynth_dramsim3_trace.txt dramsim3epoch.json
+	rm -f dramsim3.json dramsim3.txt
 	rm -f *.tr *.trace miss_latency.txt
 	rm -f libdramsim3.so
 

@@ -188,18 +188,28 @@ module testbench();
       if (dramsim3_v_li[0] & dramsim3_yumi_lo[0]) begin
         if (dramsim3_write_not_read_li[0]) begin
           shadow_mem[col_addr] <= dramsim3_data_li[0][0+:32];
+<<<<<<< HEAD
           $display("[BSG_DEBUG] t=%t writing 0x%08x to   0x%08x\n", $time, dramsim3_data_li[0][0+:32], dramsim3_ch_addr_li[0]);          
+=======
+>>>>>>> dramsim3 bandwidth
         end
       end
 
       // output checker
       if (dramsim3_data_v_lo[0]) begin
+<<<<<<< HEAD
         $display("[BSG_DEBUG] t=%t read 0x%08x from 0x%08x\n",$time, dramsim3_data_lo[0][0+:32], dramsim3_read_done_ch_addr_lo[0]);
 
         assert(shadow_mem[read_done_col_addr] == dramsim3_data_lo[0][0+:32])
           //$display("[BSG_INFO] output matched. Id=%d, Expected=%x, Actual=%x", recv_id, result[recv_id], dramsim3_data_lo[0][0+:32]);
           else $fatal("[BSG_FATAL] output does not match expected result for 0x%x. Expected=%x, Actual=%x",
                       dramsim3_read_done_ch_addr_lo[0], shadow_mem[read_done_col_addr], dramsim3_data_lo[0][0+:32]);
+=======
+        assert(shadow_mem[read_done_col_addr] == dramsim3_data_lo[0][0+:32])
+          //$display("[BSG_INFO] output matched. Id=%d, Expected=%x, Actual=%x", recv_id, result[recv_id], dramsim3_data_lo[0][0+:32]);
+          else $fatal("[BSG_FATAL] output does not match expected result. Expected=%x, Actual=%x",
+            shadow_mem[read_done_col_addr], dramsim3_data_lo[0][0+:32]);
+>>>>>>> dramsim3 bandwidth
       end
 
     end

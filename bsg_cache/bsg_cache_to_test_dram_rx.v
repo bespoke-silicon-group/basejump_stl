@@ -6,6 +6,7 @@
 
 module bsg_cache_to_test_dram_rx
   #(parameter num_cache_p="inv"
+    , parameter num_subcache_p="inv"
     , parameter data_width_p="inv"
     , parameter dma_data_width_p="inv"
     , parameter block_size_in_words_p="inv"
@@ -13,9 +14,14 @@ module bsg_cache_to_test_dram_rx
     , parameter dram_data_width_p="inv"
     , parameter dram_channel_addr_width_p="inv"
 
+    , parameter num_cache_group_lp=(num_cache_p/num_subcache_p)
+    , parameter lg_num_cache_group_lp=`BSG_SAFE_CLOG2(num_cache_group_lp)
     , parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
+    , parameter lg_num_subcache_lp=`BSG_SAFE_CLOG2(num_subcache_p)
     , parameter num_req_lp = (block_size_in_words_p*data_width_p/dram_data_width_p)
-
+    , parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
+    , parameter data_mask_width_lp=(data_width_p>>3)
+    , parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
   )
   (
     input core_clk_i
@@ -57,7 +63,6 @@ module bsg_cache_to_test_dram_rx
     ,.r_data_o(ch_addr_lo)
     ,.r_valid_o(ch_addr_v_lo)
   );
-
 
 
   // data CDC

@@ -104,6 +104,7 @@ module bsg_cache_to_test_dram_tx
     assign dma_data_yumi_o = dma_data_v_i & sipo_ready_lo;
   end
   else begin
+
     logic [num_cache_p-1:0] fifo_ready_lo;
 
     for (genvar i = 0; i < num_cache_p; i++) begin
@@ -124,8 +125,8 @@ module bsg_cache_to_test_dram_tx
       );
       
       assign dma_data_yumi_o[i] = fifo_ready_lo[i] & dma_data_v_i[i];
-    end
 
+    end
   end 
 
  
