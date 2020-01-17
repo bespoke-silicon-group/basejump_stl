@@ -1,5 +1,5 @@
 /**
- *    bsg_nonsynth_ramulator_hbm_channel.v
+ *    bsg_nonsynth_test_dram_channel.v
  *
  */
 

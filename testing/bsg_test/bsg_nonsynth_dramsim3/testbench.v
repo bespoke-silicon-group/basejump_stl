@@ -64,6 +64,10 @@ module testbench ();
       
        ,.data_v_o(dramsim3_data_v_lo)
        ,.data_o(dramsim3_data_lo)
+       ,.read_done_ch_addr_o()
+
+       ,.write_done_o()
+       ,.write_done_ch_addr_o()
        );
 
   // trace replay

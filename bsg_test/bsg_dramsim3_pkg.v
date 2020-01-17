@@ -30,7 +30,7 @@ package bsg_dramsim3_hbm2_4gb_x128_pkg;
   parameter int data_width_p=256;
   parameter int num_channels_p=8;
   parameter int num_columns_p=64;
-  parameter longint size_in_bits_p=2**35; // 8GB (64Gb)
+  parameter longint size_in_bits_p=2**35; // 4GB (32Gb)
   parameter string config_p="HBM2_4Gb_x128.ini";
   parameter address_mapping_p=bsg_dramsim3_pkg::e_ro_ra_bg_ba_ch_co;
 

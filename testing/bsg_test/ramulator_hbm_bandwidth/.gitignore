@@ -1,0 +1,4 @@
+*.cmdtrace
+ramulator_trace_access.txt
+trace.tr
+vc_hdrs.h
