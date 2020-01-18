@@ -33,6 +33,7 @@ module bsg_cache_sbuf
     ,input logic yumi_i
 
     ,output logic empty_o
+    ,output logic full_o
 
     ,input [addr_width_p-1:0] bypass_addr_i
     ,input bypass_v_i
@@ -62,6 +63,7 @@ module bsg_cache_sbuf
       0: begin
         v_o = v_i;
         empty_o = 1;
+        full_o = 0;
         el0_valid = 0;
         el1_valid = 0;
         el0_enable = 0;
@@ -73,6 +75,7 @@ module bsg_cache_sbuf
       1: begin
         v_o = 1;
         empty_o = 0;
+        full_o = 0;
         el0_valid = 0;
         el1_valid = 1;
         el0_enable = v_i & ~yumi_i;
@@ -84,6 +87,7 @@ module bsg_cache_sbuf
       2: begin
         v_o = 1;
         empty_o = 0;
+        full_o = 1;
         el0_valid = 1;
         el1_valid = 1;
         el0_enable = v_i & yumi_i;
@@ -199,5 +203,14 @@ module bsg_cache_sbuf
       end
     end
   end
+
+  // synopsys translate_off
+  always_ff @ (negedge clk_i) begin
+    if (~reset_i & num_els_r !== 2'bx) 
+      assert(num_els_r != 3) else $error("store buffer cannot hold more than 2 entries.");
+
+  end
+
+  // synopsys translate_on
 
 endmodule
