@@ -28,6 +28,7 @@
       ,.latch_last_read_p(latch_last_read_p)                                \
       ,.num_width_bank_p(wbank)                                             \
       ,.num_depth_bank_p(dbank)                                             \
+      ,.harden_p(harden_p)                                                  \
     ) bmem (                                                                \
       .clk_i(clk_i)                                                         \
       ,.reset_i(reset_i)                                                    \
@@ -108,11 +109,13 @@ module bsg_mem_1rw_sync_mask_write_bit #( parameter width_p = -1
   `bsg_mem_1rw_sync_mask_write_bit_macro(128,112,2) else
   `bsg_mem_1rw_sync_mask_write_bit_macro(64,124,2) else
   `bsg_mem_1rw_sync_mask_write_bit_macro(64,62,2) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro(128,116,2) else
 
   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,116,2,1) else
   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(256,112,1,2) else
   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,248,2,1) else
   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,496,8,1) else
+  `bsg_mem_1rw_sync_mask_write_bit_banked_macro(128,232,2,1) else
 
     begin: notmacro
       bsg_mem_1rw_sync_mask_write_bit_synth #(.width_p(width_p), .els_p(els_p))
