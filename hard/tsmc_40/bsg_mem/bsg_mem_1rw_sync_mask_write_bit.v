@@ -39,7 +39,6 @@ if (els_p == words && width_p == bits)                   \
       ,.latch_last_read_p(latch_last_read_p)                                \
       ,.num_width_bank_p(wbank)                                             \
       ,.num_depth_bank_p(dbank)                                             \
-      ,.harden_p(harden_p)                                                  \
     ) bmem (                                                                \
       .clk_i(clk_i)                                                         \
       ,.reset_i(reset_i)                                                    \
