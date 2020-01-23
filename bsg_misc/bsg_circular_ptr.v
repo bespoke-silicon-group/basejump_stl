@@ -27,6 +27,7 @@ module bsg_circular_ptr #(parameter slots_p     = -1
    assign n_o = ptr_n;
 
    // increment round robin pointers
+   //synopsys sync_set_reset "reset_i"
    always @(posedge clk)
      if (reset_i) ptr_r <= 0;
      else       ptr_r <= ptr_n;
