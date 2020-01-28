@@ -13,3 +13,6 @@ recv.set_index('address')
 merged = pandas.merge(send, recv, on='address')
 merged['latency'] = merged['time_y']-merged['time_x']
 print("mean latency = {} ns".format(merged['latency'].mean() * 1e-3))
+print("median latency = {} ns".format(merged['latency'].median() * 1e-3))
+print("min latency = {} ns".format(merged['latency'].min() * 1e-3))
+print("max latency = {} ns".format(merged['latency'].max() * 1e-3))

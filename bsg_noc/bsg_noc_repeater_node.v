@@ -50,9 +50,9 @@ module bsg_noc_repeater_node
      ,.data_i  ( links_A_cast_i.data )
      ,.ready_o ( links_A_cast_o.ready_and_rev )
 
-     ,.v_o     ( links_A_cast_o.v    )
-     ,.data_o  ( links_A_cast_o.data )
-     ,.yumi_i  ( links_A_cast_i.ready_and_rev & links_A_cast_o.v )
+     ,.v_o     ( links_B_cast_o.v    )
+     ,.data_o  ( links_B_cast_o.data )
+     ,.yumi_i  ( links_B_cast_i.ready_and_rev & links_B_cast_o.v )
      );
 
   bsg_two_fifo #(.width_p(width_p))
@@ -64,9 +64,9 @@ module bsg_noc_repeater_node
      ,.data_i  ( links_B_cast_i.data )
      ,.ready_o ( links_B_cast_o.ready_and_rev )
 
-     ,.v_o     ( links_B_cast_o.v    )
-     ,.data_o  ( links_B_cast_o.data )
-     ,.yumi_i  ( links_B_cast_i.ready_and_rev & links_B_cast_o.v )
+     ,.v_o     ( links_A_cast_o.v    )
+     ,.data_o  ( links_A_cast_o.data )
+     ,.yumi_i  ( links_A_cast_i.ready_and_rev & links_A_cast_o.v )
      );
 
 endmodule

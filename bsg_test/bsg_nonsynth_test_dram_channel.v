@@ -3,7 +3,7 @@
  *
  */
 
-module bsg_nonsynth_ramulator_hbm_channel
+module bsg_nonsynth_test_dram_channel
   #(parameter channel_addr_width_p="inv"
     , parameter data_width_p="inv"
     , parameter mem_els_p=2**23 // 512 MB total

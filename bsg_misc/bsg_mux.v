@@ -10,8 +10,14 @@ module bsg_mux #(parameter width_p="inv"
     ,input [lg_els_lp-1:0] sel_i
     ,output [width_p-1:0] data_o
     );
-
-   assign data_o = data_i[sel_i];
+   
+   if (els_p == 1)
+     begin
+      assign data_o = data_i;
+      wire unused = sel_i;
+     end
+   else
+     assign data_o = data_i[sel_i];
 
    // synopsys translate_off
    initial

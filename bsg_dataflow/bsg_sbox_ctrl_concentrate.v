@@ -78,11 +78,11 @@ initial
    for (i = 0; i < width_p; i=i+1)
      assign fwd_sort_li[i] = { ~vec_i[i], i[0+:lg_width_p] };
 
-   bsg_stable_sort #(  .width_p(lg_width_p+1)
+   bsg_sort_stable #(  .width_p(lg_width_p+1)
                        , .items_p(4)
                        , .t_p(width_p)    // sort based on vector bit
                        , .b_p(width_p-1)
-                       )
+                       ) sort_stable
    (.i(fwd_sort_li)
     ,.o(fwd_sort_lo)
     );
@@ -105,11 +105,11 @@ initial
    for (i = 0; i < width_p; i=i+1)
      assign bkwd_sort_li[i] = { fwd_perm_o[i], i[0+:lg_width_p] };
 
-   bsg_stable_sort #( .width_p(2*lg_width_p)
+   bsg_sort_stable #( .width_p(2*lg_width_p)
                       , .items_p(4)
                       , .t_p(2*lg_width_p-1)
                       , .b_p(lg_width_p)
-                      )
+                      ) sort_stable_2
    (.i(bkwd_sort_li)
     ,.o(bkwd_sort_lo)
     );
