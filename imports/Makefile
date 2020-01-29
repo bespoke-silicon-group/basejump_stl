@@ -1,6 +1,9 @@
 IMPORTS := ramulator DRAMSim3
 
-.PHONY: $(IMPORTS)
+.PHONY: help $(IMPORTS)
+
+help:
+	@echo "usage: make {$(strip $(foreach import, $(IMPORTS), $(import),))}"
 
 DRAMSim3: UPDATE_FLAGS+=--rebase
 $(IMPORTS):
