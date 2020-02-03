@@ -21,6 +21,7 @@ module bsg_nonsynth_dramsim3
   (
     input clk_i
     , input reset_i
+    , input timing_enable_i
 
     , input [num_channels_p-1:0] v_i
     , input [num_channels_p-1:0] write_not_read_i
@@ -29,7 +30,7 @@ module bsg_nonsynth_dramsim3
 
     , input [num_channels_p-1:0] data_v_i
     , input [num_channels_p-1:0][data_width_p-1:0] data_i
-    , output logic [num_channels_p-1:0] data_yumi_o 
+    , output logic [num_channels_p-1:0] data_yumi_o
 
     , output logic [num_channels_p-1:0] data_v_o
     , output logic [num_channels_p-1:0][data_width_p-1:0] data_o
@@ -37,28 +38,28 @@ module bsg_nonsynth_dramsim3
 
 
   // DPI
-  import "DPI-C" context function 
+  import "DPI-C" context function
     bit     bsg_dramsim3_init(input int     num_channels,
                               input int     data_width,
                               input longint size,
                               string        config_file);
-  
-  import "DPI-C" context function 
+
+  import "DPI-C" context function
     bit     bsg_dramsim3_send_write_req(input longint addr);
-  
-  import "DPI-C" context function 
+
+  import "DPI-C" context function
     bit     bsg_dramsim3_send_read_req(input longint addr);
-  
-  import "DPI-C" context function 
+
+  import "DPI-C" context function
     bit     bsg_dramsim3_get_read_done(int ch);
-  
-  import "DPI-C" context function 
+
+  import "DPI-C" context function
     longint bsg_dramsim3_get_read_done_addr(int ch);
-  
+
   import "DPI-C" context function
     void    bsg_dramsim3_tick();
-  
-  import "DPI-C" context function 
+
+  import "DPI-C" context function
     void    bsg_dramsim3_exit();
 
   initial begin
@@ -87,7 +88,7 @@ module bsg_nonsynth_dramsim3
   logic [num_channels_p-1:0] yumi_lo;
   for (genvar i = 0; i < num_channels_p; i++)
     assign yumi_o[i] = yumi_lo[i] & v_i[i];
-    
+
   // read channel signal
   logic [num_channels_p-1:0] read_done;
   logic [num_channels_p-1:0][lg_num_channels_lp+channel_addr_width_p-1:0] read_done_addr;
@@ -113,7 +114,7 @@ module bsg_nonsynth_dramsim3
       read_done <= '0;
       read_done_addr <= '0;
     end
-    else begin
+    else if (timing_enable_i) begin
 
       // getting read done
       for (integer i = 0; i < num_channels_p; i++) begin
@@ -125,9 +126,16 @@ module bsg_nonsynth_dramsim3
       // tick
       bsg_dramsim3_tick();
 
-    end
+    end // if (timing_enable_i)
+    else begin
+      for (integer i = 0; i < num_channels_p; i++) begin
+        read_done[i] <= v_i[i] & ~write_not_read_i[i];
+        read_done_addr[i] <= mem_addr[i];
+      end
+    end // else: !if(timing_enable_i)
+
   end
-  
+
   always_ff @ (negedge clk_i) begin
     if (reset_i) begin
       yumi_lo <= '0;
@@ -138,12 +146,12 @@ module bsg_nonsynth_dramsim3
         if (v_i[i]) begin
           if (write_not_read_i[i]) begin
             if (data_v_i[i])
-              yumi_lo[i] <= bsg_dramsim3_send_write_req(mem_addr[i]);
+              yumi_lo[i] <= timing_enable_i ? bsg_dramsim3_send_write_req(mem_addr[i]) : 1'b1;
             else
               yumi_lo[i] <= 1'b0;
           end
           else begin
-            yumi_lo[i] <= bsg_dramsim3_send_read_req(mem_addr[i]);
+            yumi_lo[i] <= timing_enable_i ? bsg_dramsim3_send_read_req(mem_addr[i]) : 1'b1;
           end
         end
         else begin
@@ -168,12 +176,12 @@ module bsg_nonsynth_dramsim3
     channel
       (.clk_i(clk_i)
       ,.reset_i(reset_i)
-     
+
       ,.read_v_i(read_v_li[i])
       ,.read_addr_i(read_addr_li[i])
-      ,.write_v_i(write_v_li[i])    
+      ,.write_v_i(write_v_li[i])
       ,.write_addr_i(ch_addr_i[i])
- 
+
       ,.data_v_i(data_v_i[i])
       ,.data_i(data_i[i])
       ,.data_yumi_o(data_yumi_o[i])
@@ -184,7 +192,7 @@ module bsg_nonsynth_dramsim3
 
     assign read_v_li[i] = read_done[i];
     assign read_addr_li[i] = read_done_ch_addr[i];
-  
+
     assign write_v_li[i] = v_i[i] & write_not_read_i[i] & yumi_o[i];
 
   end
