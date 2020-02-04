@@ -52,6 +52,7 @@ module testbench ();
     mem
       (.clk_i(clk)
        ,.reset_i(reset)
+       ,.timing_enable(1'b1)
 
        ,.v_i(dramsim3_v_li)
        ,.write_not_read_i(dramsim3_write_not_read_li)
