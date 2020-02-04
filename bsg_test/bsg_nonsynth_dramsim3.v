@@ -21,6 +21,7 @@ module bsg_nonsynth_dramsim3
   (
     input clk_i
     , input reset_i
+    , input timing_enable_i
 
     , input [num_channels_p-1:0] v_i
     , input [num_channels_p-1:0] write_not_read_i
@@ -113,7 +114,7 @@ module bsg_nonsynth_dramsim3
       read_done <= '0;
       read_done_addr <= '0;
     end
-    else begin
+    else if (timing_enable_i) begin
 
       // getting read done
       for (integer i = 0; i < num_channels_p; i++) begin
@@ -125,7 +126,14 @@ module bsg_nonsynth_dramsim3
       // tick
       bsg_dramsim3_tick();
 
-    end
+    end // if (timing_enable_i)
+    else begin
+      for (integer i = 0; i < num_channels_p; i++) begin
+        read_done[i] <= v_i[i] & ~write_not_read_i[i];
+        read_done_addr[i] <= mem_addr[i];
+      end
+    end // else: !if(timing_enable_i)
+
   end
   
   always_ff @ (negedge clk_i) begin
@@ -138,12 +146,12 @@ module bsg_nonsynth_dramsim3
         if (v_i[i]) begin
           if (write_not_read_i[i]) begin
             if (data_v_i[i])
-              yumi_lo[i] <= bsg_dramsim3_send_write_req(mem_addr[i]);
+              yumi_lo[i] <= timing_enable_i ? bsg_dramsim3_send_write_req(mem_addr[i]) : 1'b1;
             else
               yumi_lo[i] <= 1'b0;
           end
           else begin
-            yumi_lo[i] <= bsg_dramsim3_send_read_req(mem_addr[i]);
+            yumi_lo[i] <= timing_enable_i ? bsg_dramsim3_send_read_req(mem_addr[i]) : 1'b1;
           end
         end
         else begin
