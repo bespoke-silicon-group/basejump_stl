@@ -36,14 +36,20 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
   );
 
    wire clk_lo;
-
-   bsg_clkgate_optional icg
-     (.clk_i( clk_i )
-     ,.en_i( v_i )
-     ,.bypass_i( ~enable_clock_gating_p )
-     ,.gated_clock_o( clk_lo )
-     );
-
+   
+   if (enable_clock_gating_p)
+     begin
+       bsg_clkgate_optional icg
+         (.clk_i( clk_i )
+         ,.en_i( v_i )
+         ,.bypass_i( 1'b0 )
+         ,.gated_clock_o( clk_lo )
+         );
+     end
+   else
+     begin
+       assign clk_lo = clk_i;
+     end
 
   // TODO: ADD ANY NEW RAM CONFIGURATIONS HERE
   `bsg_mem_1rw_sync_macro    (512,512) else
