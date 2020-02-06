@@ -24,6 +24,7 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
                          // whether to substitute a 1r1w
                          ,parameter substitute_1r1w_p=1
                          ,parameter enable_clock_gating_p=1'b0
+			 ,parameter latch_last_read_p=0
                          )
   (input                      clk_i
   ,input                      reset_i
@@ -79,7 +80,7 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
       begin: notmacro
 
         // Instantiate a synthesizable 1rw sync ram
-        bsg_mem_1rw_sync_synth #(.width_p(width_p), .els_p(els_p)) synth
+        bsg_mem_1rw_sync_synth #(.width_p(width_p), .els_p(els_p), .latch_last_read_p(latch_last_read_p)) synth
           (.clk_i( clk_lo )
           ,.reset_i
           ,.data_i
