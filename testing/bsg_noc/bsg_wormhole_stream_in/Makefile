@@ -13,7 +13,7 @@ bsg_trace_rom.v: trace.tr
 	#python $(BASEJUMP_STL_DIR)/bsg_mem/bsg_ascii_to_rom.py trace.tr bsg_trace_rom \
 	#	> bsg_trace_rom.v
 
-sim: bsg_trace_rom.v
+sim: 
 	vcs -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -sverilog -full64 -f sv.include $(INCDIR) \
 		-debug_pp -assert svaext -timescale=1ps/1ps +vcs+vcdpluson
 
