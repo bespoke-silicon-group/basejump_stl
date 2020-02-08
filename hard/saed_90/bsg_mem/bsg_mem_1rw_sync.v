@@ -24,6 +24,7 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
                          // whether to substitute a 1r1w
                          ,parameter substitute_1r1w_p=1
                          ,parameter enable_clock_gating_p=1'b0
+			 ,parameter latch_last_read_p=0
                          )
   (input                      clk_i
   ,input                      reset_i
@@ -35,14 +36,20 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
   );
 
    wire clk_lo;
-
-   bsg_clkgate_optional icg
-     (.clk_i( clk_i )
-     ,.en_i( v_i )
-     ,.bypass_i( ~enable_clock_gating_p )
-     ,.gated_clock_o( clk_lo )
-     );
-
+   
+   if (enable_clock_gating_p)
+     begin
+       bsg_clkgate_optional icg
+         (.clk_i( clk_i )
+         ,.en_i( v_i )
+         ,.bypass_i( 1'b0 )
+         ,.gated_clock_o( clk_lo )
+         );
+     end
+   else
+     begin
+       assign clk_lo = clk_i;
+     end
 
   // TODO: ADD ANY NEW RAM CONFIGURATIONS HERE
   `bsg_mem_1rw_sync_macro    (512,512) else
@@ -79,7 +86,7 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
       begin: notmacro
 
         // Instantiate a synthesizable 1rw sync ram
-        bsg_mem_1rw_sync_synth #(.width_p(width_p), .els_p(els_p)) synth
+        bsg_mem_1rw_sync_synth #(.width_p(width_p), .els_p(els_p), .latch_last_read_p(latch_last_read_p)) synth
           (.clk_i( clk_lo )
           ,.reset_i
           ,.data_i
