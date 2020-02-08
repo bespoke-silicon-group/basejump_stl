@@ -12,9 +12,12 @@ module testbench();
   typedef struct packed {
     logic [pad_width_p-1:0] pad;
     logic [msg_width_p-1:0] msg;
+  } pr_header_s;
+
+  typedef struct packed {
     logic [len_width_p-1:0] len;
     logic [cord_width_p-1:0] cord;
-  } header_s;
+  } wh_header_s;
 
   logic clk;
   bsg_nonsynth_clock_gen #(
@@ -36,18 +39,22 @@ module testbench();
   `declare_bsg_ready_and_link_sif_s(flit_width_p, bsg_ready_and_link_sif_s);
   bsg_ready_and_link_sif_s link_lo, link_li;
 
-  header_s hdr_li;
+  pr_header_s pr_hdr_li;
+  wh_header_s wh_hdr_li;
   logic hdr_v_li, hdr_ready_lo;
   logic [flit_width_p-1:0] data_li;
   logic data_v_li, data_ready_lo;
   bsg_wormhole_stream_in #(
     .flit_width_p(flit_width_p)
-    ,.hdr_width_p($bits(header_s))
+    ,.cord_width_p(cord_width_p)
+    ,.len_width_p(len_width_p)
+    ,.pr_hdr_width_p($bits(pr_header_s))
+    ,.pr_data_width_p(flit_width_p)
     ) DUT (
     .clk_i(clk)
     ,.reset_i(reset)
 
-    ,.hdr_i(hdr_li)
+    ,.hdr_i({pr_hdr_li, wh_hdr_li})
     ,.hdr_v_i(hdr_v_li)
     ,.hdr_ready_o(hdr_ready_lo)
 
@@ -62,7 +69,8 @@ module testbench();
 
   typedef struct packed {
     logic [data_width_p-1:0] data;
-    header_s hdr;
+    pr_header_s pr_hdr;
+    wh_header_s wh_hdr;
   } wormhole_packet_s;
 
   wormhole_packet_s test_data_lo;
@@ -85,7 +93,8 @@ module testbench();
   );
 
   initial begin
-    hdr_li = '0;
+    wh_hdr_li = '0;
+    pr_hdr_li = '0;
     hdr_v_li = '0;
 
     data_li = '0;
@@ -95,7 +104,8 @@ module testbench();
     @(posedge clk);
     @(negedge reset);
 
-    hdr_li = '{pad: '0, msg: 4'h3, len: 2'h3, cord: 'h1};
+    wh_hdr_li = '{len: 2'h3, cord: 'h1};
+    pr_hdr_li = '{pad: '0, msg: 4'h3};
     hdr_v_li = 1'b1;
     @(posedge clk);
     hdr_v_li = 1'b0;
