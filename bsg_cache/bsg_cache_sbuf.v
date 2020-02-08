@@ -99,6 +99,7 @@ module bsg_cache_sbuf
         // this would never happen.
         v_o = 0;
         empty_o = 0;
+        full_o = 0;
         el0_valid = 0;
         el1_valid = 0;
         el0_enable = 0;

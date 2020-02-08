@@ -4,3 +4,4 @@
 [submodule "DRAMSim3"]
 	path = imports/DRAMSim3
 	url = git@github.com:bespoke-silicon-group/bsg_dramsim3
+        update = none
