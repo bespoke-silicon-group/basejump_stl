@@ -12,6 +12,7 @@ module bsg_nonsynth_test_dram_channel
 
     , parameter data_mask_width_lp=(data_width_p>>3)
     , parameter byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
+    , parameter data_width_in_bytes_lp = data_mask_width_lp
   )
   (
     input clk_i
@@ -35,25 +36,73 @@ module bsg_nonsynth_test_dram_channel
 
   logic [data_width_p-1:0] mem [mem_els_p-1:0];
 
-  assign data_v_o = read_v_i;
-  assign data_o = mem[read_addr_i[channel_addr_width_p-1:byte_offset_width_lp]];
+  import "DPI-C" function chandle bsg_test_dram_channel_init(longint unsigned channel_addr_width_fp,
+                                                             longint unsigned data_width_fp,
+                                                             longint unsigned mem_els_fp);
 
-  assign data_yumi_o = data_v_i & write_v_i;
+  import "DPI-C" function byte unsigned bsg_test_dram_channel_get(chandle handle, longint unsigned addr);
+
+  import "DPI-C" function void bsg_test_dram_channel_set(chandle handle, longint unsigned addr, byte val);
+
+  chandle memory;
 
 
-  // zero out memory once at the beginning
   initial begin
-    if (init_mem_p)
-      for (integer i = 0; i < mem_els_p; i++)
-        mem[i] = '0;
+    memory = bsg_test_dram_channel_init(channel_addr_width_p, data_width_p, mem_els_p);
+  end
+
+  ////////////////
+  // read logic //
+  ////////////////
+
+  logic [7:0] mem_data_lo [0:data_width_in_bytes_lp-1];
+  logic       data_v_lo;
+
+  for (genvar byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
+    always_ff @(negedge clk_i) begin
+      if (read_v_i) begin
+        mem_data_lo[byte_id] <= bsg_test_dram_channel_get(memory, read_addr_i+byte_id);
+      end
+    end
+  end
+
+  always_ff @(negedge clk_i) begin
+    data_v_lo <= '0;
+    if (read_v_i)
+      data_v_lo <= '1;
+  end
+
+  assign data_v_o = data_v_lo;
+
+  for (genvar byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
+    assign data_o[byte_id*8+:8] = mem_data_lo[byte_id];
   end
 
 
-  always_ff @ (posedge clk_i) begin
-    if (~reset_i) begin
-      if (write_v_i)
-        mem[write_addr_i[channel_addr_width_p-1:byte_offset_width_lp]] <= data_i;
+  /////////////////
+  // write logic //
+  /////////////////
+
+  logic [7:0] mem_data_li [0:data_width_in_bytes_lp-1];
+
+  for (genvar byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
+    assign mem_data_li[byte_id] = data_i[byte_id*8+:8];
+  end
+
+  for (genvar byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
+    always_ff @ (posedge clk_i) begin
+      if (~reset_i) begin
+        if (write_v_i & data_v_i) begin
+          bsg_test_dram_channel_set(memory, write_addr_i+byte_id, mem_data_li[byte_id]);
+        end
+      end
     end
+  end
+
+  always_ff @(posedge clk_i) begin
+    data_yumi_o <= '0;
+    if (~reset_i & write_v_i & data_v_i)
+      data_yumi_o <= '1;
   end
 
 
