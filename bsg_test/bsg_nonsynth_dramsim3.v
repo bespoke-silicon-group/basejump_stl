@@ -158,13 +158,13 @@ module bsg_nonsynth_dramsim3
   logic [num_channels_p-1:0][channel_addr_width_p-1:0] read_addr_li;
   logic [num_channels_p-1:0] write_v_li;
 
-  for (genvar i = 0; i < num_channels_p; i++) begin
-
+  for (genvar i = 0; i < num_channels_p; i++) begin: channels
     bsg_nonsynth_test_dram_channel
       #(.channel_addr_width_p(channel_addr_width_p)
         ,.data_width_p(data_width_p)
         ,.init_mem_p(init_mem_p)
-        ,.mem_els_p((size_in_bits_p/num_channels_p)/data_width_p))
+        ,.mem_els_p((size_in_bits_p/num_channels_p)/data_width_p)
+        ,.channel_id_p(i))
     channel
       (.clk_i(clk_i)
       ,.reset_i(reset_i)
@@ -215,7 +215,6 @@ module bsg_nonsynth_dramsim3
       end
     end
   end
-
 
 
   // final

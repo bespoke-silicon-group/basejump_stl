@@ -7,8 +7,7 @@ module bsg_nonsynth_test_dram_channel
   #(parameter channel_addr_width_p="inv"
     , parameter data_width_p="inv"
     , parameter mem_els_p=2**23 // 512 MB total
-
-    , parameter init_mem_p=0
+    , parameter channel_id_p="inv"
 
     , parameter data_mask_width_lp=(data_width_p>>3)
     , parameter byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
@@ -36,19 +35,24 @@ module bsg_nonsynth_test_dram_channel
 
   logic [data_width_p-1:0] mem [mem_els_p-1:0];
 
-  import "DPI-C" function chandle bsg_test_dram_channel_init(longint unsigned channel_addr_width_fp,
-                                                             longint unsigned data_width_fp,
-                                                             longint unsigned mem_els_fp);
+  import "DPI-C" context function
+    chandle bsg_test_dram_channel_init(longint unsigned id,
+                                       longint unsigned channel_addr_width_fp,
+                                       longint unsigned data_width_fp,
+                                       longint unsigned mem_els_fp);
 
-  import "DPI-C" function byte unsigned bsg_test_dram_channel_get(chandle handle, longint unsigned addr);
+  import "DPI-C" context function
+    byte unsigned bsg_test_dram_channel_get(chandle handle, longint unsigned addr);
 
-  import "DPI-C" function void bsg_test_dram_channel_set(chandle handle, longint unsigned addr, byte val);
+  import "DPI-C" context function
+    void bsg_test_dram_channel_set(chandle handle, longint unsigned addr, byte val);
 
   chandle memory;
 
 
   initial begin
-    memory = bsg_test_dram_channel_init(channel_addr_width_p, data_width_p, mem_els_p);
+    memory
+      = bsg_test_dram_channel_init(channel_id_p, channel_addr_width_p, data_width_p, mem_els_p);
   end
 
   ////////////////
