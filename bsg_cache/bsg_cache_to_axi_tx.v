@@ -9,6 +9,7 @@ module bsg_cache_to_axi_tx
   #(parameter num_cache_p="inv"
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
+    ,parameter tag_fifo_els_p=num_cache_p
     
     ,parameter axi_id_width_p="inv"
     ,parameter axi_addr_width_p="inv"
@@ -63,19 +64,20 @@ module bsg_cache_to_axi_tx
   // tag fifo
   //
   logic tag_fifo_v_li;
+  logic tag_fifo_ready_lo;
   logic tag_fifo_v_lo;
   logic tag_fifo_yumi_li;
   logic [lg_num_cache_lp-1:0] tag_lo;
 
   bsg_fifo_1r1w_small #(
     .width_p(lg_num_cache_lp)
-    ,.els_p(num_cache_p)
+    ,.els_p(tag_fifo_els_p)
   ) tag_fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
 
     ,.v_i(tag_fifo_v_li)
-    ,.ready_o()
+    ,.ready_o(tag_fifo_ready_lo)
     ,.data_i(tag_i)
 
     ,.v_o(tag_fifo_v_lo)
@@ -92,8 +94,10 @@ module bsg_cache_to_axi_tx
 
   // tag 
   //
-  assign yumi_o = v_i & axi_awready_i;
-  assign tag_fifo_v_li = yumi_o;
+  // yumi when both tag_fifo and axi_aw are ready
+  assign yumi_o = v_i & axi_awready_i & tag_fifo_ready_lo;
+  // tag_fifo is valid when axi_aw is ready
+  assign tag_fifo_v_li = v_i & axi_awready_i;
 
   // axi write address channel
   //
@@ -105,7 +109,8 @@ module bsg_cache_to_axi_tx
   assign axi_awcache_o = 4'b0000; // non-bufferable
   assign axi_awprot_o = 2'b00;    // unprivileged
   assign axi_awlock_o = 1'b0;    // normal access
-  assign axi_awvalid_o = v_i;
+  // axi_aw is valid when tag_fifo is ready
+  assign axi_awvalid_o = v_i & tag_fifo_ready_lo;
 
   // axi write data channel
   //
