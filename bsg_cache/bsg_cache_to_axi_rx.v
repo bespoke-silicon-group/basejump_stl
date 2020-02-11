@@ -8,7 +8,7 @@ module bsg_cache_to_axi_rx
   #(parameter num_cache_p="inv"
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
-    ,parameter tag_fifo_els_p="inv"
+    ,parameter tag_fifo_els_p=num_cache_p
 
     ,parameter axi_id_width_p="inv"
     ,parameter axi_addr_width_p="inv"
