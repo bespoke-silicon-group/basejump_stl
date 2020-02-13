@@ -34,8 +34,6 @@ module bsg_wormhole_stream_in
   localparam [len_width_p-1:0] hdr_len_lp = `BSG_CDIV(hdr_width_lp, flit_width_p);
 
   wire                link_accept = link_ready_i & link_v_o;
-  wire [cord_width_p-1:0] cord_li = hdr_i[0+:cord_width_p];
-  wire [len_width_p-1:0]   len_li = hdr_i[cord_width_p+:len_width_p] - (hdr_len_lp - 1'b1);
 
   logic [flit_width_p-1:0] hdr_lo;
   logic hdr_ready_lo, hdr_v_lo, hdr_yumi_li;
@@ -55,8 +53,8 @@ module bsg_wormhole_stream_in
      ,.valid_o(hdr_v_lo)
      ,.yumi_i(hdr_yumi_li)
      );
-  assign hdr_ready_o = hdr_ready_lo & is_hdr;
-  assign hdr_yumi_li = hdr_v_lo & link_accept;
+  assign hdr_ready_o = hdr_ready_lo;
+  assign hdr_yumi_li = is_hdr & link_accept;
 
   logic [flit_width_p-1:0] data_lo;
   logic data_ready_lo, data_v_lo, data_yumi_li;
@@ -102,27 +100,83 @@ module bsg_wormhole_stream_in
          ,.yumi_i(data_yumi_li)
          );
     end
-    assign data_ready_o = data_ready_lo & is_data;
-    assign data_yumi_li = data_v_lo & link_accept;
+  assign data_ready_o = data_ready_lo;
+  assign data_yumi_li = is_data & link_accept;
+  
+  // Extract wormhole header on output of PISO
+  // Wormhole len is defined to be (num_flits-1), add it back here
+  wire [len_width_p-1:0] data_len_li =
+        hdr_lo[cord_width_p+:len_width_p] - hdr_len_lp + (len_width_p)'(1);
 
-  logic [len_width_p-1:0] flit_cnt;
+  // count from num_flits to zero, count_r_o==1 means last flit
+  logic [len_width_p-1:0] hdr_flit_cnt, data_flit_cnt;
+
+  // Sending last hdr flit
+  wire hdr_flit_last  = (hdr_flit_cnt  == (len_width_p)'(1));
+  // Sending last data flit
+  wire data_flit_last = (data_flit_cnt == (len_width_p)'(1));
+  // All hdr flits are sent
+  wire hdr_flit_done  = (hdr_flit_cnt  == '0);
+  // All data flits are sent
+  wire data_flit_done = (data_flit_cnt == '0);
+
+  // Set counter value when new packet hdr arrives
+  // and all hdr flits are sent
+  // (set data_flit_counter in same cycle)
+  wire set_counter    = is_hdr & hdr_flit_done & hdr_v_lo;
+
   bsg_counter_set_down
-   #(.width_p(len_width_p), .init_val_p(0), .set_and_down_exclusive_p(1))
-   flit_counter
+   #(.width_p(len_width_p)
+     ,.init_val_p(0)
+     // allow set down same cycle to aviod bubble
+     ,.set_and_down_exclusive_p(0)
+     )
+   hdr_flit_counter
     (.clk_i(clk_i)
      ,.reset_i(reset_i)
-
-     ,.set_i(hdr_v_i)
-     ,.val_i(len_li)
-     ,.down_i(link_accept)
-     ,.count_r_o(flit_cnt)
+     ,.set_i(set_counter)
+     ,.val_i(hdr_len_lp)
+     ,.down_i(hdr_yumi_li)
+     ,.count_r_o(hdr_flit_cnt)
      );
-  wire flit_done = (flit_cnt == '0);
+
+  bsg_counter_set_down
+   #(.width_p(len_width_p)
+     ,.init_val_p(0)
+     // allow set down same cycle to aviod bubble
+     ,.set_and_down_exclusive_p(0)
+     )
+   data_flit_counter
+    (.clk_i(clk_i)
+     ,.reset_i(reset_i)
+     ,.set_i(set_counter)
+     ,.val_i(data_len_li)
+     ,.down_i(data_yumi_li)
+     ,.count_r_o(data_flit_cnt)
+     );
+
+  wire e_hdr_to_e_data;
+
+  // Single hdr flit
+  if (hdr_len_lp == 1)
+    // When wormhole link accept flit 
+    // and data flit non-zero
+    // and hdr_v_lo (avoid possible X-pessimism in simulation)
+    assign e_hdr_to_e_data = (link_accept & (hdr_v_lo & data_len_li != '0));
+  // Multiple hdr flits
+  else
+    // When wormhole link accept flit 
+    // and sending last hdr flit
+    // and data flit non-zero
+    assign e_hdr_to_e_data = (link_accept & hdr_flit_last & ~data_flit_done);
+  
+  // When wormhole link accept flit and sending last data flit
+  wire e_data_to_e_hdr = link_accept & data_flit_last;
 
   always_comb
     case (state_r)
-      e_hdr  : state_n = hdr_v_i ? e_data : e_hdr;
-      e_data : state_n = flit_done ? e_hdr : e_data;
+      e_hdr  : state_n = (e_hdr_to_e_data)? e_data : e_hdr;
+      e_data : state_n = (e_data_to_e_hdr)? e_hdr : e_data;
       default: state_n = e_hdr;
     endcase
 
