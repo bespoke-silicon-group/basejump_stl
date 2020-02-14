@@ -162,12 +162,18 @@ module bsg_wormhole_stream_in
     // When wormhole link accept flit 
     // and data flit non-zero
     // and hdr_v_lo (avoid possible X-pessimism in simulation)
+    //
+    // (data_flit_done signal takes one cycle to be registered, not useful
+    // in this case, extract data_len_li signal directly from hdr)
     assign e_hdr_to_e_data = (link_accept & (hdr_v_lo & data_len_li != '0));
   // Multiple hdr flits
   else
     // When wormhole link accept flit 
     // and sending last hdr flit
     // and data flit non-zero
+    //
+    // (data_len_li signal only meaningful in first hdr flit, not useful
+    // in this case, use registered data_flit_done signal from data_flit_counter)
     assign e_hdr_to_e_data = (link_accept & hdr_flit_last & ~data_flit_done);
   
   // When wormhole link accept flit and sending last data flit
