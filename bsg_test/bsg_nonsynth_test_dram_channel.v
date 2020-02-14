@@ -64,19 +64,18 @@ module bsg_nonsynth_test_dram_channel
   logic [7:0] mem_data_lo [0:data_width_in_bytes_lp-1];
   logic       data_v_lo;
 
-  for (genvar byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
-    always_ff @(negedge clk_i) begin
-      if (read_v_i) begin
-        mem_data_lo[byte_id] <= bsg_test_dram_channel_get(memory, read_addr_i+byte_id);
-      end
-    end
-  end
+   always_ff @(negedge clk_i) begin
+      for (integer byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
+	 if (read_v_i)
+	   mem_data_lo[byte_id] <= bsg_test_dram_channel_get(memory, read_addr_i+byte_id);
 
-  always_ff @(negedge clk_i) begin
-    data_v_lo <= '0;
-    if (read_v_i)
-      data_v_lo <= '1;
-  end
+      end
+
+      data_v_lo <= '0;
+      if (read_v_i)
+	data_v_lo <= '1;
+
+   end
 
   assign data_v_o = data_v_lo;
 
@@ -95,21 +94,17 @@ module bsg_nonsynth_test_dram_channel
     assign mem_data_li[byte_id] = data_i[byte_id*8+:8];
   end
 
-  for (genvar byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
-    always_ff @ (posedge clk_i) begin
-      if (~reset_i) begin
-        if (write_v_i & data_v_i) begin
-          bsg_test_dram_channel_set(memory, write_addr_i+byte_id, mem_data_li[byte_id]);
-        end
+   always_ff @(posedge clk_i) begin
+      for (integer byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
+	 if (~reset_i & write_v_i & data_v_i)
+	   bsg_test_dram_channel_set(memory, write_addr_i+byte_id, mem_data_li[byte_id]);
+
       end
-    end
-  end
 
-  always_ff @(posedge clk_i) begin
-    data_yumi_o <= '0;
-    if (~reset_i & write_v_i & data_v_i)
-      data_yumi_o <= '1;
-  end
+      data_yumi_o <= '0;
+      if (~reset_i & write_v_i & data_v_i)
+	data_yumi_o <= '1;
 
+   end
 
 endmodule
