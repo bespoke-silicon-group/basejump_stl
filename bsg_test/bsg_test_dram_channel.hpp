@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <cstring>
 
 namespace bsg_test_dram_channel {
     using parameter_t = unsigned long long;
@@ -10,13 +11,16 @@ namespace bsg_test_dram_channel {
     public:
         Memory(parameter_t channel_addr_width_p,
                parameter_t data_width_p,
-               parameter_t mem_els_p):
+               parameter_t mem_els_p,
+	       parameter_t init_mem_p):
             _channel_addr_width_p(channel_addr_width_p),
             _data_width_p(data_width_p),
             _mem_els_p(mem_els_p) {
 
             parameter_t bytes = (data_width_p/8) * mem_els_p;
             _data.resize(bytes);
+	    if (init_mem_p != 0)
+	      std::memset(&_data[0], 0, _data.size());
         }
 
         byte_t get(address_t addr) const {
