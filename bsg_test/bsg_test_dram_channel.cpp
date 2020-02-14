@@ -24,11 +24,12 @@ extern "C" void * bsg_test_dram_channel_init(
     parameter_t id,
     parameter_t channel_addr_width_p,
     parameter_t data_width_p,
-    parameter_t mem_els_p
+    parameter_t mem_els_p,
+    parameter_t init_mem_p
     )
 {
     assert(data_width_p % 8 == 0);
-    Memory *memory =  new Memory(channel_addr_width_p, data_width_p, mem_els_p);
+    Memory *memory =  new Memory(channel_addr_width_p, data_width_p, mem_els_p, init_mem_p);
     global_memories[id] = memory;
     return memory;
 }
