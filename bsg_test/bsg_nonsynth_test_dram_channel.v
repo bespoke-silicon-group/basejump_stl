@@ -89,6 +89,9 @@ module bsg_nonsynth_test_dram_channel
   /////////////////
 
   logic [7:0] mem_data_li [0:data_width_in_bytes_lp-1];
+  logic      write_valid;
+
+  assign write_valid = ~reset_i & write_v_i & data_v_i;
 
   for (genvar byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
     assign mem_data_li[byte_id] = data_i[byte_id*8+:8];
@@ -96,15 +99,13 @@ module bsg_nonsynth_test_dram_channel
 
    always_ff @(posedge clk_i) begin
       for (integer byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
-	 if (~reset_i & write_v_i & data_v_i)
+	 if (write_valid)
 	   bsg_test_dram_channel_set(memory, write_addr_i+byte_id, mem_data_li[byte_id]);
 
       end
-
-      data_yumi_o <= '0;
-      if (~reset_i & write_v_i & data_v_i)
-	data_yumi_o <= '1;
-
    end
+
+   assign data_yumi_o = write_valid;
+
 
 endmodule
