@@ -42,7 +42,10 @@ module bsg_parallel_in_serial_out #( parameter width_p    = -1
     , output [width_p-1:0] data_o
     , input                yumi_i
     );
-    
+  
+  
+  typedef enum logic [0:0] {eRX, eTX} state_e;
+  
   // When els_p equals to 1, use fifo to minimize hardware.
   if (els_p == 1) 
   begin: fifo
@@ -65,7 +68,6 @@ module bsg_parallel_in_serial_out #( parameter width_p    = -1
 
     // A small statemachine is used to transition from the recieving
     // state to the transmission state.
-    typedef enum logic [0:0] {eRX, eTX} state_e;
 
    localparam clog2els_lp = $clog2(els_p);
    
