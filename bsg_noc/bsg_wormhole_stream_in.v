@@ -128,7 +128,7 @@ module bsg_wormhole_stream_in
   bsg_counter_set_down
    #(.width_p(len_width_p)
      ,.init_val_p(0)
-     // allow set down same cycle to aviod bubble
+     // allow set down same cycle to avoid bubble
      ,.set_and_down_exclusive_p(0)
      )
    hdr_flit_counter
@@ -143,7 +143,7 @@ module bsg_wormhole_stream_in
   bsg_counter_set_down
    #(.width_p(len_width_p)
      ,.init_val_p(0)
-     // allow set down same cycle to aviod bubble
+     // allow set down same cycle to avoid bubble
      ,.set_and_down_exclusive_p(0)
      )
    data_flit_counter

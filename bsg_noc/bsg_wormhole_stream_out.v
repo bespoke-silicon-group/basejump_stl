@@ -119,7 +119,7 @@ module bsg_wormhole_stream_out
   bsg_counter_set_down
    #(.width_p(len_width_p)
      ,.init_val_p(0)
-     // allow set down same cycle to aviod bubble
+     // allow set down same cycle to avoid bubble
      ,.set_and_down_exclusive_p(0)
      )
    hdr_flit_counter
@@ -134,7 +134,7 @@ module bsg_wormhole_stream_out
   bsg_counter_set_down
    #(.width_p(len_width_p)
      ,.init_val_p(0)
-     // allow set down same cycle to aviod bubble
+     // allow set down same cycle to avoid bubble
      ,.set_and_down_exclusive_p(0)
      )
    data_flit_counter
@@ -152,7 +152,7 @@ module bsg_wormhole_stream_out
   if (hdr_len_lp == 1)
     // When wormhole link accept flit 
     // and data flit non-zero
-    // and hdr_v_lo (avoid possible X-pessimism in simulation)
+    // and link_v_i (avoid possible X-pessimism in simulation)
     //
     // (data_flit_done signal takes one cycle to be registered, not useful
     // in this case, extract data_len_li signal directly from hdr)
