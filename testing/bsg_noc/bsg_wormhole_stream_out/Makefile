@@ -1,4 +1,4 @@
-export BASEJUMP_STL_DIR ?= ../../../
+export BASEJUMP_STL_DIR = ../../..
 
 INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_noc

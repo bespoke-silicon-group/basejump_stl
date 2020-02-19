@@ -91,10 +91,11 @@ module testbench();
     ,.data_v_o(data_v_lo)
     ,.data_yumi_i(data_yumi_li)
      );
+     
+  assign hdr_yumi_li = hdr_v_lo;
+  assign data_yumi_li = data_v_lo;
 
   initial begin
-    hdr_yumi_li = '0;
-    data_yumi_li = '0;
     @(posedge clk);
     @(negedge reset);
     test_data_li.data = 32'hbeef;
@@ -105,17 +106,9 @@ module testbench();
     test_data_v_li = 1'b1;
     @(posedge clk);
     test_data_v_li = 1'b0;
-    @(posedge hdr_v_lo);
-    @(posedge clk);
-    data_yumi_li = data_v_lo;
-    @(posedge clk);
-    data_yumi_li = data_v_lo;
-    @(posedge clk);
-    data_yumi_li = data_v_lo;
-    @(posedge clk);
-    data_yumi_li = data_v_lo;
-    hdr_yumi_li = hdr_v_lo;
-    @(posedge clk);
+    
+    #20000;
+    
     $finish;
     //wait(0);
     //for (integer i =0; i < 1000; i++) begin
