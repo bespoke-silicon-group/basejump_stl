@@ -1,4 +1,5 @@
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_stream_in.v
+$BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_stream_control.v
 $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1r1w.v
 $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1r1w_synth.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_counter_clear_up.v
