@@ -2,22 +2,21 @@ module testbench();
  
   `include "bsg_noc_links.vh"
 
-  parameter data_width_p = 32;
-  parameter flit_width_p = 8;
-  parameter cord_width_p = 4;
-  parameter len_width_p  = 4;
-  parameter msg_width_p  = 4;
-  parameter pad_width_p  = 4;
+  // Sync with trace gen
+  localparam hdr_width_p = 16;
+  localparam cord_width_p = 5;
+  localparam len_width_p = 3;
+  localparam flit_width_p = 8;
+  localparam pr_data_width_p = 16;
+  localparam wh_hdr_width_p = cord_width_p + len_width_p;
+  localparam pr_hdr_width_p = hdr_width_p - wh_hdr_width_p;
+  localparam hdr_flits_p = hdr_width_p / flit_width_p;
+  localparam data_width_p = flit_width_p*(2**len_width_p-hdr_flits_p+1);
+  localparam data_flits_p = data_width_p / flit_width_p;
 
-  typedef struct packed {
-    logic [pad_width_p-1:0] pad;
-    logic [msg_width_p-1:0] msg;
-  } pr_header_s;
-
-  typedef struct packed {
-    logic [len_width_p-1:0] len;
-    logic [cord_width_p-1:0] cord;
-  } wh_header_s;
+  localparam ring_width_p = 1+`BSG_MAX(`BSG_MAX(hdr_width_p, data_width_p), flit_width_p);
+  localparam rom_data_width_p = 4 + ring_width_p;
+  localparam rom_addr_width_p = 32;
 
   logic clk;
   bsg_nonsynth_clock_gen #(
@@ -39,22 +38,21 @@ module testbench();
   `declare_bsg_ready_and_link_sif_s(flit_width_p, bsg_ready_and_link_sif_s);
   bsg_ready_and_link_sif_s link_lo, link_li;
 
-  pr_header_s pr_hdr_li;
-  wh_header_s wh_hdr_li;
+  logic [hdr_width_p-1:0] hdr_li;
   logic hdr_v_li, hdr_ready_lo;
-  logic [flit_width_p-1:0] data_li;
+  logic [pr_data_width_p-1:0] data_li;
   logic data_v_li, data_ready_lo;
   bsg_wormhole_stream_in #(
     .flit_width_p(flit_width_p)
     ,.cord_width_p(cord_width_p)
     ,.len_width_p(len_width_p)
-    ,.pr_hdr_width_p($bits(pr_header_s))
-    ,.pr_data_width_p(flit_width_p)
+    ,.pr_hdr_width_p(pr_hdr_width_p)
+    ,.pr_data_width_p(pr_data_width_p)
     ) DUT (
     .clk_i(clk)
     ,.reset_i(reset)
 
-    ,.hdr_i({pr_hdr_li, wh_hdr_li})
+    ,.hdr_i(hdr_li)
     ,.hdr_v_i(hdr_v_li)
     ,.hdr_ready_o(hdr_ready_lo)
 
@@ -66,77 +64,72 @@ module testbench();
     ,.link_v_o(link_li.v)
     ,.link_ready_i(link_lo.ready_and_rev)
      );
+  wire [cord_width_p-1:0] cord_li = hdr_li[0+:cord_width_p];
+  wire [len_width_p-1:0] len_li = hdr_li[cord_width_p+:len_width_p];
 
-  typedef struct packed {
-    logic [data_width_p-1:0] data;
-    pr_header_s pr_hdr;
-    wh_header_s wh_hdr;
-  } wormhole_packet_s;
+  logic [ring_width_p-1:0] tr_data_li;
+  logic tr_v_li, tr_ready_lo;
+  bsg_fifo_1r1w_small
+   #(.width_p(flit_width_p)
+     ,.els_p(32)
+     )
+   out_fifo
+    (.clk_i(clk)
+     ,.reset_i(reset)
 
-  wormhole_packet_s test_data_lo;
-  logic test_data_v_lo, test_data_yumi_li;
-  bsg_wormhole_router_adapter_out #(
-    .max_payload_width_p(data_width_p+pad_width_p+msg_width_p)
-    ,.len_width_p(len_width_p)
-    ,.cord_width_p(cord_width_p)
-    ,.flit_width_p(flit_width_p)
-  ) adapter (
+     ,.data_i(link_li.data)
+     ,.v_i(link_li.v & link_lo.ready_and_rev)
+     ,.ready_o(link_lo.ready_and_rev)
+
+     ,.data_o(tr_data_li[0+:flit_width_p])
+     ,.v_o(tr_v_li)
+     ,.yumi_i(tr_ready_lo & tr_v_li)
+     );
+  assign tr_data_li[ring_width_p-1:flit_width_p] = '0;
+
+
+  logic [rom_addr_width_p-1:0] rom_addr;
+  logic [rom_data_width_p-1:0] rom_data;
+  logic [ring_width_p-1:0] tr_data_lo;
+  logic tr_v_lo, tr_yumi_li;
+  logic tr_done;
+  bsg_trace_replay #(
+    .payload_width_p(ring_width_p)
+    ,.rom_addr_width_p(rom_addr_width_p)
+  ) trace_replay (
     .clk_i(clk)
     ,.reset_i(reset)
-    
-    ,.link_i(link_li)
-    ,.link_o(link_lo)
+    ,.en_i(1'b1)
 
-    ,.packet_o(test_data_lo)
-    ,.v_o(test_data_v_lo)
-    ,.yumi_i(test_data_yumi_li)
+    ,.v_i(tr_v_li)
+    ,.data_i(tr_data_li)
+    ,.ready_o(tr_ready_lo)
+
+    ,.v_o(tr_v_lo)
+    ,.data_o(tr_data_lo)
+    ,.yumi_i(tr_yumi_li)
+
+    ,.rom_addr_o(rom_addr)
+    ,.rom_data_i(rom_data)
+
+    ,.done_o(tr_done)
+    ,.error_o()
+    );
+  assign hdr_v_li = tr_v_lo & ~tr_data_lo[ring_width_p-1];
+  assign hdr_li = tr_data_lo[0+:hdr_width_p];
+
+  assign data_v_li = tr_v_lo & tr_data_lo[ring_width_p-1];
+  assign data_li = tr_data_lo[0+:pr_data_width_p];
+
+  assign tr_yumi_li = (hdr_v_li && hdr_ready_lo) || (data_v_li && data_ready_lo);
+  
+  bsg_trace_rom #(
+    .width_p(rom_data_width_p)
+    ,.addr_width_p(rom_addr_width_p)
+  ) trace_rom (
+    .addr_i(rom_addr)
+    ,.data_o(rom_data)
   );
-
-  initial begin
-    wh_hdr_li = '0;
-    pr_hdr_li = '0;
-    hdr_v_li = '0;
-
-    data_li = '0;
-    data_v_li = '0;
-
-    test_data_yumi_li = '0;
-    @(posedge clk);
-    @(negedge reset);
-
-    wh_hdr_li = '{len: 2'h3, cord: 'h1};
-    pr_hdr_li = '{pad: '0, msg: 4'h3};
-    hdr_v_li = 1'b1;
-    @(posedge clk);
-    hdr_v_li = 1'b0;
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    data_li = 32'hef;
-    data_v_li = 1'b1;
-    @(posedge clk);
-    data_li = 32'hbe;
-    data_v_li = 1'b1;
-    @(posedge clk);
-    data_v_li = '0;
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    @(posedge clk);
-    $finish;
-    //data_yumi_li = data_v_lo;
-    //hdr_yumi_li = hdr_v_lo;
-    //@(posedge clk);
-    //$finish;
-    //wait(0);
-    //for (integer i =0; i < 1000; i++) begin
-    //  @(posedge clk);
-    //end
-    //$finish;
-  end 
 
 initial 
   begin
@@ -144,6 +137,9 @@ initial
     @(posedge clk)
     @(negedge reset)
     $asserton();
+
+    @(tr_done);
+    $finish();
   end
 
 endmodule
