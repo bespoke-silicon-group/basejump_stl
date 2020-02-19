@@ -114,7 +114,7 @@ module bsg_wormhole_stream_out
   // Set counter value when new packet hdr arrives
   // and all hdr flits are sent
   // (set data_flit_counter in same cycle)
-  wire set_counter    = is_hdr & hdr_flit_done & link_v_i;
+  wire set_counter    = is_hdr & hdr_flit_done & link_accept;
 
   bsg_counter_set_down
    #(.width_p(len_width_p)
