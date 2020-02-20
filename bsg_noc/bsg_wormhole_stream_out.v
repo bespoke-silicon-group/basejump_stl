@@ -86,11 +86,11 @@ module bsg_wormhole_stream_out
          ,.reset_i(reset_i)
 
          ,.data_i(link_data_i)
-         ,.valid_i(data_v_li)
+         ,.v_i(data_v_li)
          ,.ready_o(data_ready_lo)
 
          ,.data_o(data_o)
-         ,.valid_o(data_v_o)
+         ,.v_o(data_v_o)
          ,.yumi_i(data_yumi_i)
          );
     end
