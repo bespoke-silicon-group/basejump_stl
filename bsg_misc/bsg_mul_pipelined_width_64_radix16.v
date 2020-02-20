@@ -117,6 +117,7 @@ endmodule
 
 
 module bsg_mul_compressor (
+  input [71:0] initial_i,
   input [15:0][70:0] pps_i,
   input [15:0] sign_correction_i,
   output [127:0] resA_o,
