@@ -123,7 +123,6 @@ module bsg_cache_to_test_dram_rx
   end
 
 
-  logic [num_cache_p-1:0] cache_sel; 
   bsg_decode_with_v #(
     .num_out_p(num_cache_p)
   ) demux0 (

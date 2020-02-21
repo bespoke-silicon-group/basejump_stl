@@ -104,7 +104,7 @@ module bsg_cache_to_test_dram
 
   logic counter_clear;
   logic counter_up;
-  logic [lg_num_req_lp-1:0] count_r;
+  logic [lg_num_req_lp-1:0] count_r; // this counts the number of DRAM requests sent.
 
   bsg_counter_clear_up #(
     .max_val_p(num_req_lp-1)
@@ -117,9 +117,7 @@ module bsg_cache_to_test_dram
     ,.count_o(count_r)
   );
 
-  // {bg,ba,row,col} 
   logic [dram_channel_addr_width_p-1:0] dram_req_addr;
-
 
   
   // request async fifo
@@ -201,38 +199,6 @@ module bsg_cache_to_test_dram
     ,.dram_data_yumi_i(dram_data_yumi_i)
   );
  
-
-/*
-  wire send_req = ~req_afifo_full & (rr_tag_n.write_not_read ? tx_ready_lo : 1'b1);
-  assign tx_v_li = ~req_afifo_full & rr_tag_n.write_not_read & tx_ready_lo;
-
-  assign rr_tag_n = (send_req & (count_r == 0))
-    ? rr_tag_lo
-    : rr_tag_r;
-  assign dma_pkt_n = (send_req & (count_r == 0))
-    ? rr_dma_pkt_lo
-    : dma_pkt_r;
-
-
-  always_comb begin
-
-    counter_up = 1'b0;
-    counter_clear = 1'b0;
-    rr_yumi_li = 1'b0;
-    req_afifo_enq = 1'b0;      
-    tx_v_li = 1'b0;
-
-    if (count_r == num_req_lp-1) begin
-      req_afifo_enq = send_req;
-      rr_yumi_li = send_req;
-      counter_clear = send_req;
-    end
-    else begin
-      req_afifo_enq = send_req;
-      counter_up = send_req;
-    end    
-  end
-*/
 
   if (num_req_lp == 1) begin
     assign counter_up = 1'b0;
