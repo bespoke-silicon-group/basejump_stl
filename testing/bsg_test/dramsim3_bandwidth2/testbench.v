@@ -293,6 +293,9 @@ module testbench();
   integer total_load_count;
   integer total_store_count;
 
+  real bandwidth;
+  real bandwidth_pct;
+
   initial begin
     wait(&cache_done_lo);
     total_load_count = 0;
@@ -309,9 +312,9 @@ module testbench();
     $display("total_load_count = %d", total_load_count);
     $display("total_store_count = %d", total_store_count);
     $display("total time = %t (ps)", $time-first_access_time_lo[0]);
-    $display("bandwidth = %f (GB/s)",
-      (real'((total_load_count+total_store_count)*4))/($time-first_access_time_lo[0])*(10**12)/(10**9)
-    );
+    bandwidth = (real'((total_load_count+total_store_count)*4))/($time-first_access_time_lo[0])*(10**12)/(10**9);
+    bandwidth_pct = bandwidth / 32.0 * 100.0;
+    $display("bandwidth = %f (GB/s) ( %f %%)", bandwidth, bandwidth_pct);
     $display("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
     $display("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
