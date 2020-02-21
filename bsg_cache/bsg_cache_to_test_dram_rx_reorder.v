@@ -72,16 +72,23 @@ module bsg_cache_to_test_dram_rx_reorder
   else begin: reqn
 
     // reordering logic 
+    // when the data arrives during its turn, go into the piso, if the piso is ready. Then, increment the counter.
+    // If the piso is not ready, then go into the buffer.
+    // If the piso is ready, and the data is available in the buffer, put that in piso and increment the counter.
+    // when the data arrives and it's not its turn, then wait in the buffer.
 
     wire [lg_num_req_lp-1:0] req_num = dram_ch_addr_i[dram_data_byte_offset_width_lp+:lg_num_req_lp];
 
+    // data that is not ready to go into piso is buffered here.
     logic [dram_data_width_p-1:0] data_buffer_r [num_req_lp-1:0];
     logic [num_req_lp-1:0] data_buffer_v_r;
     
     logic counter_clear;
     logic counter_up;
     logic [lg_num_req_lp-1:0] count_r;
-    
+
+    // this counts the number of DRAM data that have arrived and been fed into the piso.
+    // the data is fed into the piso sequentially in address order. 
     bsg_counter_clear_up #(
       .max_val_p(num_req_lp-1)
       ,.init_val_p(0)
