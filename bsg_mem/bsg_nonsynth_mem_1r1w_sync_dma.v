@@ -7,8 +7,9 @@ module bsg_nonsynth_mem_1r1w_sync_dma
   #(parameter width_p="inv"
     , parameter els_p=-1
     , parameter id_p="inv"
-    , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
     , parameter data_width_in_bytes_lp=(width_p>>3)
+    , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+    , parameter byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_in_bytes_lp)
     , parameter init_mem_p=0
   )
   (
@@ -33,10 +34,10 @@ module bsg_nonsynth_mem_1r1w_sync_dma
 
   import "DPI-C" context function
     chandle bsg_mem_dma_init(longint unsigned id,
-                                       longint unsigned channel_addr_width_fp,
-                                       longint unsigned data_width_fp,
-                                       longint unsigned mem_els_fp,
-				       longint unsigned init_mem_fp);
+                             longint unsigned channel_addr_width_fp,
+                             longint unsigned data_width_fp,
+                             longint unsigned mem_els_fp,
+			     longint unsigned init_mem_fp);
 
   import "DPI-C" context function
     byte unsigned bsg_mem_dma_get(chandle handle, longint unsigned addr);
@@ -55,6 +56,8 @@ module bsg_nonsynth_mem_1r1w_sync_dma
   ////////////////
   // read logic //
   ////////////////
+  logic [addr_width_lp+byte_offset_width_lp-1:0] read_byte_addr;
+  assign read_byte_addr = { read_addr_i, {(byte_offset_width_lp){1'b0}} };
 
   logic [width_p-1:0] mem_data_lo;
   logic               data_v_lo;
@@ -62,7 +65,7 @@ module bsg_nonsynth_mem_1r1w_sync_dma
    always_ff @(negedge clk_i) begin
       for (integer byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
 	 if (read_v_i)
-	   mem_data_lo[byte_id*8+:8] <= bsg_mem_dma_get(memory, read_addr_i+byte_id);
+	   mem_data_lo[byte_id*8+:8] <= bsg_mem_dma_get(memory, read_byte_addr+byte_id);
 
       end
 
@@ -77,6 +80,8 @@ module bsg_nonsynth_mem_1r1w_sync_dma
   /////////////////
   // write logic //
   /////////////////
+  logic [addr_width_lp+byte_offset_width_lp-1:0] write_byte_addr;
+  assign write_byte_addr = { write_addr_i, {(byte_offset_width_lp){1'b0}} };
 
   logic [width_p-1:0] mem_data_li;
   logic               write_valid;
@@ -88,7 +93,7 @@ module bsg_nonsynth_mem_1r1w_sync_dma
    always_ff @(posedge clk_i) begin
       for (integer byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
 	 if (write_valid)
-	   bsg_mem_dma_set(memory, write_addr_i+byte_id, mem_data_li[byte_id*8+:8]);
+	   bsg_mem_dma_set(memory, write_byte_addr+byte_id, mem_data_li[byte_id*8+:8]);
 
       end
    end
