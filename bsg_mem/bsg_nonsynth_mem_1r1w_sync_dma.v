@@ -4,14 +4,11 @@
  */
 
 module bsg_nonsynth_mem_1r1w_sync_dma
-  #(parameter channel_addr_width_p="inv"
-    , parameter data_width_p="inv"
-    , parameter mem_els_p=2**23 // 512 MB total
-    , parameter channel_id_p="inv"
-
-    , parameter data_mask_width_lp=(data_width_p>>3)
-    , parameter byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
-    , parameter data_width_in_bytes_lp = data_mask_width_lp
+  #(parameter width_p="inv"
+    , parameter els_p=-1
+    , parameter id_p="inv"
+    , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+    , parameter data_width_in_bytes_lp=(width_p>>3)
     , parameter init_mem_p=0
   )
   (
@@ -20,21 +17,19 @@ module bsg_nonsynth_mem_1r1w_sync_dma
 
     // ctrl interface
     , input read_v_i
-    , input [channel_addr_width_p-1:0] read_addr_i
+    , input [addr_width_lp-1:0] read_addr_i
+
     , input write_v_i
-    , input [channel_addr_width_p-1:0] write_addr_i
+    , input [addr_width_lp-1:0] write_addr_i
 
     // write channel
     , input data_v_i
-    , input [data_width_p-1:0] data_i
-    , output logic data_yumi_o
+    , input [width_p-1:0] data_i
 
     // read channel
     , output logic data_v_o
-    , output logic [data_width_p-1:0] data_o
+    , output logic [width_p-1:0] data_o
   );
-
-  logic [data_width_p-1:0] mem [mem_els_p-1:0];
 
   import "DPI-C" context function
     chandle bsg_mem_dma_init(longint unsigned id,
@@ -54,15 +49,15 @@ module bsg_nonsynth_mem_1r1w_sync_dma
 
   initial begin
     memory
-      = bsg_mem_dma_init(channel_id_p, channel_addr_width_p, data_width_p, mem_els_p, init_mem_p);
+      = bsg_mem_dma_init(id_p, addr_width_lp, width_p, els_p, init_mem_p);
   end
 
   ////////////////
   // read logic //
   ////////////////
 
-  logic [data_width_p-1:0] mem_data_lo;
-  logic 		   data_v_lo;
+  logic [width_p-1:0] mem_data_lo;
+  logic               data_v_lo;
 
    always_ff @(negedge clk_i) begin
       for (integer byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
@@ -83,8 +78,8 @@ module bsg_nonsynth_mem_1r1w_sync_dma
   // write logic //
   /////////////////
 
-  logic [data_width_p-1:0] mem_data_li;
-  logic 		   write_valid;
+  logic [width_p-1:0] mem_data_li;
+  logic               write_valid;
 
   assign write_valid = ~reset_i & write_v_i & data_v_i;
 
@@ -97,8 +92,5 @@ module bsg_nonsynth_mem_1r1w_sync_dma
 
       end
    end
-
-   assign data_yumi_o = write_valid;
-
 
 endmodule
