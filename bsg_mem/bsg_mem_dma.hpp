@@ -2,7 +2,7 @@
 #include <vector>
 #include <cstring>
 
-namespace bsg_test_dram_channel {
+namespace bsg_mem_dma {
     using parameter_t = unsigned long long;
     using byte_t = unsigned char;
     using address_t = unsigned long long;
@@ -46,5 +46,5 @@ namespace bsg_test_dram_channel {
 
     };
 
-    Memory *bsg_test_dram_channel_get_memory(parameter_t id);
+    Memory *bsg_mem_dma_get_memory(parameter_t id);
 }
