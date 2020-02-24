@@ -160,11 +160,10 @@ module bsg_nonsynth_dramsim3
 
   for (genvar i = 0; i < num_channels_p; i++) begin: channels
     bsg_nonsynth_mem_1r1w_sync_dma
-      #(.channel_addr_width_p(channel_addr_width_p)
-        ,.data_width_p(data_width_p)
-        ,.init_mem_p(init_mem_p)
-        ,.mem_els_p((size_in_bits_p/num_channels_p)/data_width_p)
-        ,.channel_id_p(i))
+      #(.width_p(data_width_p)
+        ,.els_p((size_in_bits_p/num_channels_p)/data_width_p)
+        ,.id_p(i)
+        ,.init_mem_p(init_mem_p))
     channel
       (.clk_i(clk_i)
       ,.reset_i(reset_i)
