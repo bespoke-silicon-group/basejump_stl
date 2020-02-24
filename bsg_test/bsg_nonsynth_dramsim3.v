@@ -198,7 +198,7 @@ module bsg_nonsynth_dramsim3
   logic [num_channels_p-1:0] write_v_li;
 
   for (genvar i = 0; i < num_channels_p; i++) begin: channels
-    bsg_nonsynth_test_dram_channel
+    bsg_nonsynth_mem_1r1w_sync_dma
       #(.channel_addr_width_p(channel_addr_width_p)
         ,.data_width_p(data_width_p)
         ,.init_mem_p(init_mem_p)
@@ -215,7 +215,7 @@ module bsg_nonsynth_dramsim3
  
       ,.data_v_i(data_v_i[i])
       ,.data_i(data_i[i])
-      ,.data_yumi_o(data_yumi_o[i])
+      //,.data_yumi_o(data_yumi_o[i])
 
       ,.data_v_o(data_v_o[i])
       ,.data_o(data_o[i])
@@ -225,7 +225,8 @@ module bsg_nonsynth_dramsim3
     assign read_addr_li[i] = read_done_ch_addr[i];
   
     assign write_v_li[i] = v_i[i] & write_not_read_i[i] & yumi_o[i];
-
+    assign data_yumi_o[i] = v_i[i] & write_not_read_i[i] & yumi_o[i];    
+    
   end
 
 
