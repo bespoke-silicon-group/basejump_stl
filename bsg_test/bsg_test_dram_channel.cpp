@@ -1,5 +1,3 @@
-#include "svdpi.h"
-#include "svdpi_src.h"
 #include <cstdio>
 #include <cassert>
 #include <map>
