@@ -10,6 +10,7 @@ CFLAGS += -CFLAGS "-fPIC"
 CFLAGS += -CFLAGS "-I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/src"
 CFLAGS += -CFLAGS "-I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/ext/headers"
 CFLAGS += -CFLAGS "-I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/ext/fmt/include"
+CFLAGS += -CFLAGS "-I$(BASEJUMP_STL_DIR)/bsg_test"
 CFLAGS += -CFLAGS "-DFMT_HEADER_ONLY=1"
 CFLAGS += -CFLAGS "-DCMD_TRACE"
 CFLAGS += -CFLAGS "-DBASEJUMP_STL_DIR=$(BASEJUMP_STL_DIR)"
@@ -50,7 +51,7 @@ DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/refresh.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/simple_stats.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/timing.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/bsg_test/bsg_dramsim3.cpp
-
+DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/bsg_test/bsg_test_dram_channel.cpp
 run: libdramsim3.so $(TRACE_GEN).tr simv
 	./simv -l simv.log -sv_root $(CURDIR) -sv_lib libdramsim3
 
