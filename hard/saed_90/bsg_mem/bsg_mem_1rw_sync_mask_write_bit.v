@@ -18,6 +18,25 @@
          );                                 \
     end
 
+`define bsg_mem_1rw_sync_mask_write_bit_convert_macro(bits,real_bits,diff,words)    \
+  if (els_p == words && width_p == bits)                                            \
+    begin: macro                                                                    \
+       logic [real_bits-1:0] data_li, data_lo, w_mask_li;                           \
+       assign data_li = { {diff{1'b0}}, data_i };                                   \
+       assign data_o = data_lo[0+:bits];                                            \
+       assign w_mask_li = { {diff{1'b0}}, w_mask_i };                               \
+       saed90_``real_bits``x``words``_1P_bit mem                                    \
+         (.CE1  (clk_lo)                                                            \
+         ,.WEB1 (~w_i)                                                              \
+         ,.OEB1 (1'b0)                                                              \
+         ,.CSB1 (~v_i)                                                              \
+         ,.A1   (addr_i)                                                            \
+         ,.I1   (data_li)                                                           \
+         ,.O1   (data_lo)                                                           \
+         ,.WBM1 (w_mask_li)                                                         \
+         );                                                                         \
+    end
+
 module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
 			               , parameter els_p=-1
 			               , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
@@ -34,38 +53,30 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
     );
 
    wire clk_lo;
-
-   bsg_clkgate_optional icg
-     (.clk_i( clk_i )
-     ,.en_i( v_i )
-     ,.bypass_i( ~enable_clock_gating_p )
-     ,.gated_clock_o( clk_lo )
-     );
+   if (enable_clock_gating_p)
+     begin
+       bsg_clkgate_optional icg
+         (.clk_i( clk_i )
+         ,.en_i( v_i )
+         ,.bypass_i( ~enable_clock_gating_p )
+         ,.gated_clock_o( clk_lo )
+         );
+      end
+   else
+     begin
+       assign clk_lo = clk_i;
+     end
 
 
   // TODO: ADD ANY NEW RAM CONFIGURATIONS HERE
   `bsg_mem_1rw_sync_mask_write_bit_macro (736, 64) else
   `bsg_mem_1rw_sync_mask_write_bit_macro ( 96, 64) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro ( 248, 64) else
+  `bsg_mem_1rw_sync_mask_write_bit_convert_macro (124,128,4,64) else
+  `bsg_mem_1rw_sync_mask_write_bit_convert_macro (7,8,1,64) else
+  `bsg_mem_1rw_sync_mask_write_bit_convert_macro (15,16,1,64) else
 
 
-  // Hack fo 7 bit ram to use 8 bit ram
-  if (els_p == 64 && width_p == 7)
-    begin: macro
-       logic [7:0] data_lo;
-       saed90_8x64_1P_bit mem
-         (.CE1  (clk_lo)
-         ,.WEB1 (~w_i)
-         ,.OEB1 (1'b0)
-         ,.CSB1 (~v_i)
-         ,.A1   (addr_i)
-         ,.I1   ({1'b0, data_i})
-         ,.O1   (data_lo)
-         ,.WBM1 ({1'b0, w_mask_i})
-         );
-      assign data_o = data_lo[6:0];
-    end
-  else
-  
   // no hardened version found
     begin: notmacro
 
