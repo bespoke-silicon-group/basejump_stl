@@ -42,7 +42,7 @@ module bsg_cache_to_test_dram_rx
   logic ch_addr_v_lo;
 
   bsg_async_fifo #(
-    .lg_size_p(`BSG_SAFE_CLOG2(`BSG_MAX(num_req_lp*num_cache_p,4)))
+    .lg_size_p(`BSG_SAFE_CLOG2(`BSG_MAX(num_req_lp*num_cache_p+1,4)))
     ,.width_p(dram_channel_addr_width_p)
   ) ch_addr_afifo (
     .w_clk_i(dram_clk_i)
@@ -68,7 +68,7 @@ module bsg_cache_to_test_dram_rx
   logic dram_data_v_lo;
 
   bsg_async_fifo #(
-    .lg_size_p(`BSG_SAFE_CLOG2(`BSG_MAX(num_req_lp*num_cache_p,4)))
+    .lg_size_p(`BSG_SAFE_CLOG2(`BSG_MAX(num_req_lp*num_cache_p+1,4)))
     ,.width_p(dram_data_width_p)
   ) data_afifo (
     .w_clk_i(dram_clk_i)
