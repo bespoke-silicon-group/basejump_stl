@@ -26,7 +26,7 @@ module bsg_one_fifo_bypass #(parameter width_p="inv"
 
     // output side
     , output              v_o     // early
-    , output[width_p-1:0] data_o  // early
+    , output[width_p-1:0] data_o  // late
     , input               yumi_i  // late
     );
   
