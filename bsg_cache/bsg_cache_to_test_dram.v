@@ -177,6 +177,7 @@ module bsg_cache_to_test_dram
   bsg_cache_to_test_dram_tx #(
     .num_cache_p(num_cache_p)
     ,.data_width_p(data_width_p)
+    ,.block_size_in_words_p(block_size_in_words_p)
     ,.dma_data_width_p(dma_data_width_p)
     ,.dram_data_width_p(dram_data_width_p)
   ) tx0 (
