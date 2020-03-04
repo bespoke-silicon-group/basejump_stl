@@ -10,3 +10,4 @@ DVEfiles
 ucli.key
 *.swp
 .nfs*
+*.pyc

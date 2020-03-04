@@ -59,6 +59,7 @@ module testbench();
 
     ,.data_v_o(data_v_lo)
     ,.data_o(data_lo)
+    ,.read_done_ch_addr_o()
     
   ); 
 

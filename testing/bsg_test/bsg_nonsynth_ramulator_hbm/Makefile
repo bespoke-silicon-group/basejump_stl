@@ -30,4 +30,4 @@ clean:
 	rm -rf csrc simv.daidir DVEfiles
 	rm -rf stack.info.*
 	rm -f trace_0.tr
-	rm -f HBM.stats
+	rm -f HBM.stats ramulator_access_trace.txt
