@@ -71,7 +71,7 @@ module bsg_nonsynth_test_dram_channel
 
       end
 
-      data_v_lo <= read_v_li;
+      data_v_lo <= read_v_i;
 
    end
 
