@@ -7,11 +7,12 @@ module bsg_nonsynth_test_dram_channel
   #(parameter channel_addr_width_p="inv"
     , parameter data_width_p="inv"
     , parameter mem_els_p=2**23 // 512 MB total
-
-    , parameter init_mem_p=0
+    , parameter channel_id_p="inv"
 
     , parameter data_mask_width_lp=(data_width_p>>3)
     , parameter byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
+    , parameter data_width_in_bytes_lp = data_mask_width_lp
+    , parameter init_mem_p=0
   )
   (
     input clk_i
@@ -35,26 +36,69 @@ module bsg_nonsynth_test_dram_channel
 
   logic [data_width_p-1:0] mem [mem_els_p-1:0];
 
-  assign data_v_o = read_v_i;
-  assign data_o = mem[read_addr_i[channel_addr_width_p-1:byte_offset_width_lp]];
+  import "DPI-C" context function
+    chandle bsg_test_dram_channel_init(longint unsigned id,
+                                       longint unsigned channel_addr_width_fp,
+                                       longint unsigned data_width_fp,
+                                       longint unsigned mem_els_fp,
+				       longint unsigned init_mem_fp);
 
-  assign data_yumi_o = data_v_i & write_v_i;
+  import "DPI-C" context function
+    byte unsigned bsg_test_dram_channel_get(chandle handle, longint unsigned addr);
+
+  import "DPI-C" context function
+    void bsg_test_dram_channel_set(chandle handle, longint unsigned addr, byte val);
+
+  chandle memory;
 
 
-  // zero out memory once at the beginning
   initial begin
-    if (init_mem_p)
-      for (integer i = 0; i < mem_els_p; i++)
-        mem[i] = '0;
+    memory
+      = bsg_test_dram_channel_init(channel_id_p, channel_addr_width_p, data_width_p, mem_els_p, init_mem_p);
   end
 
+  ////////////////
+  // read logic //
+  ////////////////
 
-  always_ff @ (posedge clk_i) begin
-    if (~reset_i) begin
-      if (write_v_i)
-        mem[write_addr_i[channel_addr_width_p-1:byte_offset_width_lp]] <= data_i;
-    end
-  end
+  logic [data_width_p-1:0] mem_data_lo;
+  logic 		   data_v_lo;
+
+   always_ff @(negedge clk_i) begin
+      for (integer byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
+	 if (read_v_i)
+	   mem_data_lo[byte_id*8+:8] <= bsg_test_dram_channel_get(memory, read_addr_i+byte_id);
+
+      end
+
+      data_v_lo <= read_v_i;
+
+   end
+
+  assign data_v_o = data_v_lo;
+  assign data_o = mem_data_lo;
+
+
+  /////////////////
+  // write logic //
+  /////////////////
+
+  logic [data_width_p-1:0] mem_data_li;
+  logic 		   write_valid;
+
+  assign write_valid = ~reset_i & write_v_i & data_v_i;
+
+  assign mem_data_li = data_i;
+
+   always_ff @(posedge clk_i) begin
+      for (integer byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
+	 if (write_valid)
+	   bsg_test_dram_channel_set(memory, write_addr_i+byte_id, mem_data_li[byte_id*8+:8]);
+
+      end
+   end
+
+   assign data_yumi_o = write_valid;
 
 
 endmodule
