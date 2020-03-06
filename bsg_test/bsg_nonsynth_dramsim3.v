@@ -207,14 +207,12 @@ module bsg_nonsynth_dramsim3
       (.clk_i(clk_i)
       ,.reset_i(reset_i)
      
-      ,.read_v_i(read_v_li[i])
-      ,.read_addr_i(read_addr_li[i][channel_addr_width_p-1:byte_offset_width_lp])
-      ,.write_v_i(write_v_li[i])    
-      ,.write_addr_i(ch_addr_i[i][channel_addr_width_p-1:byte_offset_width_lp])
- 
-      ,.data_v_i(data_v_i[i])
-      ,.data_i(data_i[i])
-      //,.data_yumi_o(data_yumi_o[i])
+      ,.r_v_i(read_v_li[i])
+      ,.r_addr_i(read_addr_li[i][channel_addr_width_p-1:byte_offset_width_lp])
+
+      ,.w_v_i(write_v_li[i])    
+      ,.w_addr_i(ch_addr_i[i][channel_addr_width_p-1:byte_offset_width_lp]) 
+      ,.w_data_i(data_i[i])
 
       ,.data_v_o(data_v_o[i])
       ,.data_o(data_o[i])
@@ -223,9 +221,9 @@ module bsg_nonsynth_dramsim3
     assign read_v_li[i] = read_done[i];
     assign read_addr_li[i] = read_done_ch_addr[i];
   
-    assign write_v_li[i] = v_i[i] & write_not_read_i[i] & yumi_o[i];
-    assign data_yumi_o[i] = v_i[i] & write_not_read_i[i] & yumi_o[i];    
-    
+    assign write_v_li[i] = data_v_i[i] & v_i[i] & write_not_read_i[i] & yumi_o[i];
+    assign data_yumi_o[i] = v_i[i] & write_not_read_i[i] & yumi_o[i];
+  
   end
 
 

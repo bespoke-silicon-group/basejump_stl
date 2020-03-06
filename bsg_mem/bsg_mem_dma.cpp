@@ -5,7 +5,7 @@
 
 #ifdef DEBUG
 #define pr_dbg(fmt, ...)                        \
-    printf("[bsg_mem_dma]: " fmt, ##__VA_ARGS__)
+    do { printf("[bsg_mem_dma]: " fmt, ##__VA_ARGS__); fflush(stdout); } while (0)
 #else
 #define pr_dbg(fmt, ...)
 #endif
@@ -26,8 +26,11 @@ extern "C" void * bsg_mem_dma_init(
     parameter_t init_mem_p
     )
 {
+    pr_dbg("id = %llu, addr_width_p=%llu, data_width_p=%llu, mem_els_p=%llu\n",
+           id, channel_addr_width_p, data_width_p, mem_els_p);
+    
     assert(data_width_p % 8 == 0);
-    Memory *memory =  new Memory(channel_addr_width_p, data_width_p, mem_els_p, init_mem_p);
+    Memory *memory =  new Memory(channel_addr_width_p, data_width_p, mem_els_p, init_mem_p, id);
     global_memories[id] = memory;
     return memory;
 }
@@ -38,7 +41,7 @@ extern "C" byte_t bsg_mem_dma_get(
     )
 {
     Memory *memory = reinterpret_cast<Memory*>(handle);
-    pr_dbg("getting 0x%08llx   (%02x)\n", addr, memory->get(addr));
+    pr_dbg("id = %llu: getting 0x%08llx   (%02x)\n", memory->_id, addr, memory->get(addr));
     return memory->get(addr);
 }
 
@@ -48,8 +51,8 @@ extern "C" void bsg_mem_dma_set(
     byte_t val
     )
 {
-    pr_dbg("setting 0x%08llx to %02x\n", addr, val);
     Memory *memory = reinterpret_cast<Memory*>(handle);
+    pr_dbg("id = %llu: setting 0x%08llx to %02x\n", memory->_id, addr, val);
     memory->set(addr, val);
 }
 

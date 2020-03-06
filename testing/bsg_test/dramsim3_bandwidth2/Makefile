@@ -51,7 +51,7 @@ DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/refresh.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/simple_stats.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/timing.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/bsg_test/bsg_dramsim3.cpp
-DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/bsg_test/bsg_test_dram_channel.cpp
+DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_mem_dma.cpp
 run: libdramsim3.so $(TRACE_GEN).tr simv
 	./simv -l simv.log -sv_root $(CURDIR) -sv_lib libdramsim3
 
