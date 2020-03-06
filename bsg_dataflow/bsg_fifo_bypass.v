@@ -25,7 +25,7 @@ module bsg_fifo_bypass
 
   assign ready_o     = fifo_ready_i;
   assign fifo_data_o = data_i;
-  assign fifo_v_o    = enq & (fifo_v_i || ~yumi_i);
+  assign fifo_v_o    = enq & (fifo_v_i | ~yumi_i);
 
   assign data_o      = fifo_v_i ? fifo_data_i : data_i;
   assign v_o         = fifo_v_i | enq;
