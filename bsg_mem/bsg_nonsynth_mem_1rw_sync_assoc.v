@@ -27,12 +27,17 @@ module bsg_nonsynth_mem_1rw_sync_assoc
 
   // associative array
   //
-  logic [width_p-1:0] mem [*];
+  `ifdef VERILATOR
+    // Verilator 4.024 supports associative array, but not wildcard indexed.
+    logic [width_p-1:0] mem [longint];
+  `else
+    logic [width_p-1:0] mem [*];
+  `endif
 
   // write logic
   //
   always_ff @ (posedge clk_i) begin
-    if (v_i & w_i) begin
+    if (~reset_i & v_i & w_i) begin
       mem[addr_i] <= data_i;
     end
   end
@@ -41,7 +46,7 @@ module bsg_nonsynth_mem_1rw_sync_assoc
   //
   always_ff @ (posedge clk_i) begin
 
-    if (v_i & ~w_i) begin
+    if (~reset_i & v_i & ~w_i) begin
       data_o <= mem[addr_i];
     end
 
