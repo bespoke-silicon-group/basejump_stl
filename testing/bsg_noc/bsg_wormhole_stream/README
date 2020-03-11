@@ -1,0 +1,10 @@
+First time run of test
+
+$ git clone https://bitbucket.org/taylor-bsg/bsg_cadenv.git ../../../../bsg_cadenv
+$ make run
+$ make view
+
+
+Clean generated files
+
+$ make clean
