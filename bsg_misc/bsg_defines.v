@@ -28,6 +28,9 @@
 
 `define BSG_STRINGIFY(x) `"x`"
 
+`define BSG_CAST_I(struct,x) struct ``x``_cast_i; assign ``x``_cast_i = ``x``_i;
+`define BSG_CAST_O(struct,x) struct ``x``_cast_o; assign ``x``_o = ``x``_cast_o;
+
 // using C-style shifts instead of a[i] allows the parameter of BSG_GET_BIT to be a parameter subrange                                                                                                                                                                               
 // e.g., parameter[4:1][1], which DC 2016.12 does not allow                                                                                                                                                                                                                          
 
