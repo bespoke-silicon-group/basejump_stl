@@ -1,5 +1,5 @@
 /**
- *    bsg_id_allocator.v
+ *    bsg_id_pool.v
  *
  *    This module maintains of a pool of IDs, and supports allocation and deallocation of these IDs.
  *
@@ -7,7 +7,7 @@
 
 
 
-module bsg_id_allocator
+module bsg_id_pool
   #(parameter els_p="inv"
     , parameter id_width_lp=`BSG_SAFE_CLOG2(els_p)
   ) 
@@ -20,7 +20,7 @@ module bsg_id_allocator
     , output logic alloc_v_o
     , input alloc_yumi_i
 
-    // id to deallocate
+    // id to return
     , input dealloc_v_i
     , input [id_width_lp-1:0] dealloc_id_i    
   );
