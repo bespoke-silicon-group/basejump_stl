@@ -74,7 +74,7 @@ module bsg_dmc_controller
   logic                                                                cmd_afifo_wrst,     cmd_afifo_rrst;
   logic                                                                cmd_afifo_winc,     cmd_afifo_rinc;
   logic                                                                cmd_afifo_wfull,    cmd_afifo_rvalid;
-  logic                                            [ui_addr_width_p:0] cmd_afifo_wdata,    cmd_afifo_rdata;
+  logic                                          [ui_addr_width_p+2:0] cmd_afifo_wdata,    cmd_afifo_rdata;
 
   logic                                                                cmd_sfifo_winc,     cmd_sfifo_rinc;
   logic                                                                cmd_sfifo_ready,    cmd_sfifo_valid;
@@ -133,12 +133,14 @@ module bsg_dmc_controller
 
   logic                     [dfi_data_width_p*dfi_burst_length_lp-1:0] rx_data;
 
+  logic [31:0] row_col_addr;
   logic [15:0] row_addr, col_addr;
   logic  [2:0] bank_addr;
+  logic        ap;
 
-  logic  [3:0] cmd_tick;
-  logic  [3:0] cmd_act_tick;
-  logic  [3:0] cmd_wr_tick, cmd_rd_tick;
+  logic  [7:0] cmd_tick;
+  logic  [7:0] cmd_act_tick;
+  logic  [7:0] cmd_wr_tick, cmd_rd_tick;
 
   logic        cwd_valid;
   logic  [7:0] cwd_tick;
@@ -175,6 +177,20 @@ module bsg_dmc_controller
 
   logic  [3:0] tbl;
 
+  logic [15:0] tick_refi;
+  logic  [3:0] tick_mrd;
+  logic  [3:0] tick_rfc;
+  logic  [3:0] tick_rc;
+  logic  [3:0] tick_rp;
+  logic  [3:0] tick_ras;
+  logic  [3:0] tick_rrd;
+  logic  [3:0] tick_rcd;
+  logic  [3:0] tick_wr;
+  logic  [3:0] tick_wtr;
+  logic  [3:0] tick_rtp;
+  logic  [3:0] tick_cas;
+
+
   assign app_ref_ack_o = app_ref_req_i & ~app_wdf_end_i;
   assign app_zq_ack_o = app_zq_req_i;
   assign app_sr_active_o = app_sr_req_i;
@@ -186,15 +202,15 @@ module bsg_dmc_controller
   assign cmd_afifo_wclk  = ui_clk_i;
   assign cmd_afifo_wrst  = ui_clk_sync_rst_i;
   assign cmd_afifo_winc  = app_en_i & app_rdy_o;
-  assign cmd_afifo_wdata = {app_cmd_i[0], app_addr_i};
+  assign cmd_afifo_wdata = {app_cmd_i, app_addr_i};
 
   assign cmd_afifo_rclk  = dfi_clk_i;
   assign cmd_afifo_rrst  = dfi_clk_sync_rst_i;
   assign cmd_afifo_rinc  = cmd_afifo_rvalid & cmd_sfifo_ready & (cstate == LDST && ldst_tick == 0);
 
   bsg_async_fifo #
-    (.width_p   ( ui_addr_width_p+1 )
-    ,.lg_size_p ( 2                 ))
+    (.width_p   ( ui_addr_width_p+3 )
+    ,.lg_size_p ( 3                 ))
   cmd_afifo
     (.r_data_o  ( cmd_afifo_rdata   )
     ,.w_full_o  ( cmd_afifo_wfull   )
@@ -219,7 +235,7 @@ module bsg_dmc_controller
 
   bsg_async_fifo #
     (.width_p   ( ui_data_width_p+ui_mask_width_lp )
-    ,.lg_size_p ( 4                                ))
+    ,.lg_size_p ( 6                                ))
   wrdata_afifo
     (.r_data_o  ( wrdata_afifo_rdata               )
     ,.w_full_o  ( wrdata_afifo_wfull               )
@@ -249,9 +265,15 @@ module bsg_dmc_controller
     ,.data_o     ( tx_sipo_data_lo                  )
     ,.yumi_cnt_i ( tx_sipo_yumi_cnt_li              ));
 
-  assign col_addr  = 16'(((1 << dmc_p_i.col_width) - 1) & cmd_afifo_rdata[ui_addr_width_p-1:0]);
-  assign row_addr  = 16'(((1 << dmc_p_i.row_width) - 1) & (cmd_afifo_rdata[ui_addr_width_p-1:0] >> dmc_p_i.col_width));
-  assign bank_addr = 3'(((1 << dmc_p_i.bank_width) - 1) & (cmd_afifo_rdata[ui_addr_width_p-1:0] >> ( {1'b0,dmc_p_i.col_width} + {1'b0,dmc_p_i.row_width})));
+  //assign col_addr  = 16'(((1 << dmc_p_i.col_width) - 1) & cmd_afifo_rdata[ui_addr_width_p-1:0]);
+  //assign row_addr  = 16'(((1 << dmc_p_i.row_width) - 1) & (cmd_afifo_rdata[ui_addr_width_p-1:0] >> dmc_p_i.col_width));
+  //assign bank_addr = 3'(((1 << dmc_p_i.bank_width) - 1) & (cmd_afifo_rdata[ui_addr_width_p-1:0] >> ( {1'b0,dmc_p_i.col_width} + {1'b0,dmc_p_i.row_width})));
+  //assign row_col_addr = ((cmd_afifo_rdata[ui_addr_width_p-1:0] >> (dmc_p_i.bank_pos + dmc_p_i.bank_width)) << dmc_p_i.bank_pos) | (((1 << dmc_p_i.col_width) - 1) & cmd_afifo_rdata[ui_addr_width_p-1:0]);
+  assign row_col_addr = ((cmd_afifo_rdata[ui_addr_width_p-1:0] >> (dmc_p_i.bank_pos + dmc_p_i.bank_width)) << dmc_p_i.bank_pos) | (((1 << dmc_p_i.bank_pos) - 1) & cmd_afifo_rdata[ui_addr_width_p-1:0]);
+  assign col_addr     = 16'(((1 << dmc_p_i.col_width) - 1) & row_col_addr[ui_addr_width_p-1:0]);
+  assign row_addr     = 16'(((1 << dmc_p_i.row_width) - 1) & (row_col_addr >> dmc_p_i.col_width));
+  assign bank_addr    = 3'(((1 << dmc_p_i.bank_width) - 1) & (cmd_afifo_rdata[ui_addr_width_p-1:0] >> dmc_p_i.bank_pos));
+  assign ap           = cmd_afifo_rdata[ui_addr_width_p+1];
 
   always @(posedge dfi_clk_i)
     if(dfi_clk_sync_rst_i)
@@ -392,9 +414,9 @@ module bsg_dmc_controller
         'd0:     begin
                    push_ldst_cmd = cmd_sfifo_ready;
                    if(cmd_afifo_rdata[ui_addr_width_p])
-                     ldst_cmd = {4'h2, READ,  {1'b0, bank_addr}, {col_addr[14:10], 1'b0, col_addr[9:0]}};
+                     ldst_cmd = {4'h2, READ,  {1'b0, bank_addr}, {col_addr[14:10], ap, col_addr[9:0]}};
                    else
-                     ldst_cmd = {4'h2, WRITE, {1'b0, bank_addr}, {col_addr[14:10], 1'b0, col_addr[9:0]}};
+                     ldst_cmd = {4'h2, WRITE, {1'b0, bank_addr}, {col_addr[14:10], ap, col_addr[9:0]}};
                  end
         default: begin
                    push_ldst_cmd = 0;
@@ -465,14 +487,16 @@ module bsg_dmc_controller
                  PRE:     shoot = (cmd_tick >= dmc_p_i.twr) & (cmd_act_tick >= dmc_p_i.tras);
                  WRITE:   shoot = (cmd_tick >= tbl) & (&tx_sipo_valid_lo);
                  READ:    shoot = cmd_tick >= dmc_p_i.twtr;
-                 ACT:     shoot = cmd_act_tick >= dmc_p_i.trc;
+                 //ACT:     shoot = cmd_act_tick >= dmc_p_i.trc;
+                 ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.twr + dmc_p_i.trp);
 	         default: shoot = 1'b1;
                endcase
         READ:  case(n_cmd)
                  PRE:     shoot = (cmd_tick >= dmc_p_i.trtp) & (cmd_act_tick >= dmc_p_i.tras);
                  WRITE:   shoot = (cmd_tick >= tbl+dmc_p_i.tcas) & (&tx_sipo_valid_lo);
                  READ:    shoot = cmd_tick >= tbl;
-                 ACT:     shoot = cmd_act_tick >= dmc_p_i.trc;
+                 //ACT:     shoot = cmd_act_tick >= dmc_p_i.trc;
+                 ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.trtp + dmc_p_i.trp);
 	         default: shoot = 1'b1;
                endcase
 	default: shoot = 1'b1;
@@ -486,7 +510,7 @@ module bsg_dmc_controller
       cmd_tick <= 0;
     else if(shoot)
       cmd_tick <= 0;
-    else if(cmd_tick != 4'hf)
+    else if(cmd_tick != 8'hf)
       cmd_tick <= cmd_tick + 1;
 
   always @(posedge dfi_clk_i)
@@ -494,7 +518,7 @@ module bsg_dmc_controller
       cmd_act_tick <= 0;
     else if(shoot && n_cmd == ACT)
       cmd_act_tick <= 0;
-    else if(cmd_act_tick != 4'hf)
+    else if(cmd_act_tick != 8'hf)
       cmd_act_tick <= cmd_act_tick + 1;
 
   always @(posedge dfi_clk_i)
@@ -502,7 +526,7 @@ module bsg_dmc_controller
       cmd_wr_tick <= 0;
     else if(shoot && n_cmd == WRITE)
       cmd_wr_tick <= 0;
-    else if(cmd_tick != 4'hf)
+    else if(cmd_tick != 8'hf)
       cmd_wr_tick <= cmd_wr_tick + 1;
 
   always @(posedge dfi_clk_i)
@@ -510,7 +534,7 @@ module bsg_dmc_controller
       cmd_rd_tick <= 0;
     else if(shoot && n_cmd == READ)
       cmd_rd_tick <= 0;
-    else if(cmd_tick != 4'hf)
+    else if(cmd_tick != 8'hf)
       cmd_rd_tick <= cmd_rd_tick + 1;
 
   always @(posedge dfi_clk_i)
@@ -547,6 +571,7 @@ module bsg_dmc_controller
         8'h01:   wburst_tick <= 0;
         8'h02:   wburst_tick <= 1;
         8'h03:   wburst_tick <= 3;
+        8'h04:   wburst_tick <= 7;
         default: wburst_tick <= 0;
       endcase
       wburst_valid <= 1;
@@ -580,6 +605,7 @@ module bsg_dmc_controller
         8'h01:   rburst_tick <= 0;
         8'h02:   rburst_tick <= 1;
         8'h03:   rburst_tick <= 3;
+        8'h04:   rburst_tick <= 7;
         default: rburst_tick <= 0;
       endcase
       dfi_rddata_en_o <= 1;
@@ -623,7 +649,24 @@ module bsg_dmc_controller
   always @(posedge dfi_clk_i)
     if(dfi_clk_sync_rst_i)
       open_bank <= 0;
-    else if(cmd_sfifo_winc && cmd_sfifo_wdata[25])
+    else if(cmd_sfifo_winc && cmd_sfifo_wdata[25]) begin
+      case(cmd_sfifo_wdata[23:20])
+        ACT: begin
+               open_bank[cmd_sfifo_wdata[18:16]] <= 1'b1;
+               open_row[cmd_sfifo_wdata[18:16]] <= cmd_sfifo_wdata[15:0];
+             end
+        WRITE,
+        READ: open_bank[cmd_sfifo_wdata[18:16]] <= ~ap;
+        PRE: begin
+               if(cmd_sfifo_wdata[10])
+                 open_bank <= 0;
+               else
+                 open_bank[cmd_sfifo_wdata[18:16]] <= 1'b0;
+             end
+      endcase
+    end
+
+/*
       if(cmd_sfifo_wdata[23:20] == ACT) begin
         open_bank[cmd_sfifo_wdata[18:16]] <= 1'b1;
         open_row[cmd_sfifo_wdata[18:16]] <= cmd_sfifo_wdata[15:0];
@@ -633,6 +676,7 @@ module bsg_dmc_controller
           open_bank <= 0;
         else
           open_bank[cmd_sfifo_wdata[18:16]] <= 1'b0;
+*/
 
 
   for(k=0;k<ui_burst_length_lp;k++) begin: tx_flatten
@@ -693,7 +737,7 @@ module bsg_dmc_controller
 
   bsg_async_fifo #
     (.width_p   ( dfi_data_width_p    )
-    ,.lg_size_p ( 4                   ))
+    ,.lg_size_p ( 6                   ))
   rddata_afifo
     (.r_data_o  ( rddata_afifo_rdata  )
     ,.w_full_o  ( rddata_afifo_wfull  )
@@ -745,16 +789,21 @@ module bsg_dmc_controller
     ,.data_o  ( rx_piso_data_lo    )
     ,.yumi_i  ( rx_piso_yumi_li    ));
 
-  logic [$clog2(ui_burst_length_lp)-1:0] rd_cnt;
+  //logic [$clog2(ui_burst_length_lp)-1:0] rd_cnt;
+  logic [7:0] rd_cnt;
 
   always @(posedge ui_clk_i)
     if(ui_clk_sync_rst_i)
       rd_cnt <= 0;
-    else if(rx_piso_yumi_li)
-      rd_cnt <= rd_cnt + 1;
+    else if(rx_piso_yumi_li) begin
+      if(rd_cnt == ui_burst_length_lp - 1)
+        rd_cnt <= '0;
+      else
+        rd_cnt <= rd_cnt + 1;
+    end
 
   assign app_rd_data_valid_o = rx_piso_valid_lo;
   assign app_rd_data_o       = rx_piso_data_lo;
-  assign app_rd_data_end_o   = rd_cnt == (ui_burst_length_lp - 1);
+  assign app_rd_data_end_o   = rx_piso_valid_lo && (rd_cnt == ui_burst_length_lp - 1);
 
 endmodule

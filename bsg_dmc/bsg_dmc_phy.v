@@ -5,7 +5,7 @@
  `define rp_fill(x)
  `define rp_array_dir(up)
 `endif
-module tx_bit_slice
+module bsg_dmc_phy_tx_bit_slice
   (input        clk_2x_n
   ,input        wrdata_en_90
   ,input  [1:0] wrdata_90
@@ -30,7 +30,7 @@ module tx_bit_slice
   end
 endmodule
 
-module rx_bit_slice
+module bsg_dmc_phy_rx_bit_slice
   (input        clk
   ,input  [1:0] write_pointer
   ,input  [1:0] read_pointer
@@ -74,7 +74,7 @@ module rx_bit_slice
 
 endmodule
 
-module bit_slice
+module bsg_dmc_phy_bit_slice
   (input        clk
   ,input        clk_2x_n
   ,input        dqs_p
@@ -89,14 +89,14 @@ module bit_slice
   ,output logic rddata_even
   ,output logic rddata_odd);
 
-  tx_bit_slice tx_bit_slice
+  bsg_dmc_phy_tx_bit_slice tx_bit_slice
     (.clk_2x_n      ( clk_2x_n      )
     ,.wrdata_en_90  ( wrdata_en_90  )
     ,.wrdata_90     ( wrdata_90     )
     ,.dq_o          ( dq_o          )
     ,.dq_oe_n       ( dq_oe_n       ));
 
-  rx_bit_slice rx_bit_slice
+  bsg_dmc_phy_rx_bit_slice rx_bit_slice
     (.clk           ( clk           )
     ,.write_pointer ( write_pointer )
     ,.read_pointer  ( read_pointer  )
@@ -197,7 +197,7 @@ module rx_byte_slice
 
   generate
     for(i=0;i<8;i=i+1) begin: one_bit
-      rx_bit_slice rx_bit_slice
+      bsg_dmc_phy_rx_bit_slice rx_bit_slice
        (.clk            ( clk           )
        ,.write_pointer  ( write_pointer )
        ,.read_pointer   ( read_pointer  )
@@ -298,7 +298,7 @@ module byte_slice
 
   generate
     for(i=0;i<8;i++) begin: bs
-      bit_slice bit_slice
+      bsg_dmc_phy_bit_slice dq_bit_slice
         (.clk           ( clk           )
         ,.clk_2x_n      ( clk_2x_n      )
         ,.dqs_p         ( dqs_p         )
@@ -315,7 +315,7 @@ module byte_slice
     end
   endgenerate
 
-  tx_bit_slice dm_bit_slice
+  bsg_dmc_phy_tx_bit_slice dm_bit_slice
     (.clk_2x_n      ( clk_2x_n       )
     ,.wrdata_en_90  ( wrdata_en_90   )
     ,.wrdata_90     ( wrdata_mask_90 )
@@ -328,7 +328,7 @@ module bsg_dmc_phy #
   (parameter  dq_data_width_p = "inv"
   ,localparam dq_group_lp     = dq_data_width_p >> 3)
   // dfi interface signals
-  (input                          dfi_clk_i
+  (input                          dfi_clk_1x_i
   ,input                          dfi_clk_2x_i
   ,input                          dfi_rst_i
   ,input                    [2:0] dfi_bank_i
@@ -448,8 +448,8 @@ module bsg_dmc_phy #
 
   assign clk_2x_0   = dfi_clk_2x_i;
   assign clk_2x_180 = ~dfi_clk_2x_i;
-  assign clk_1x_0   = dfi_clk_i;
-  assign clk_1x_180 = ~dfi_clk_i;
+  assign clk_1x_0   = dfi_clk_1x_i;
+  assign clk_1x_180 = ~dfi_clk_1x_i;
   assign ck_p_o     = clk_1x_0;
   assign ck_n_o     = clk_1x_180;
 

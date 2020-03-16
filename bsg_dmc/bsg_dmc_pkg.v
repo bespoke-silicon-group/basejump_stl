@@ -17,5 +17,6 @@ package bsg_dmc_pkg;
     logic  [1:0] bank_width;
     logic  [1:0] dqs_sel_cal;
     logic  [3:0] init_cmd_cnt;
+    logic  [5:0] bank_pos;
   } bsg_dmc_s;
 endpackage // bsg_dmc_pkg

@@ -18,6 +18,7 @@ module bsg_dly_line
   (
    input async_reset_i
    ,input bsg_tag_s bsg_tag_i
+   ,input bsg_tag_s bsg_tag_trigger_i
    ,input clk_i
    ,output logic clk_o
    );
