@@ -33,11 +33,21 @@ module bsg_id_pool
   // find the next available id.
   logic [id_width_lp-1:0] alloc_id_lo;
   logic alloc_v_lo;
-  bsg_priority_encode #(
+  logic [els_p-1:0] one_hot_out;
+
+  bsg_priority_encode_one_hot_out #(
     .width_p(els_p)
     ,.lo_to_hi_p(1)
   ) pe0 (
     .i(~allocated_r)
+    ,.o(one_hot_out)
+  );
+
+  bsg_encode_one_hot #(
+    .width_p(els_p)
+    ,.lo_to_hi_p(1)
+  ) enc0 (
+    .i(one_hot_out)
     ,.addr_o(alloc_id_lo)
     ,.v_o(alloc_v_lo)
   );
@@ -46,14 +56,7 @@ module bsg_id_pool
   assign alloc_v_o = alloc_v_lo;
 
   // next id to alloc
-  logic [els_p-1:0] alloc_decode;
-  bsg_decode_with_v #(
-    .num_out_p(els_p)
-  ) d0 (
-    .i(alloc_id_lo)
-    ,.v_i(alloc_yumi_i)
-    ,.o(alloc_decode)
-  );
+  wire [els_p-1:0] alloc_decode = one_hot_out & {els_p{alloc_yumi_i}};
 
   // next id to dealloc
   logic [els_p-1:0] dealloc_decode;
