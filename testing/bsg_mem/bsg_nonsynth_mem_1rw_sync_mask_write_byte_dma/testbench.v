@@ -141,17 +141,8 @@ module testbench ();
   assign assoc_addr_li = trace_lo.addr;
   assign assoc_mask_li = '1;  
 
-  logic v_r;
-  logic w_r;
-
   always_ff @(posedge clk) begin
-    v_r <= trace_v_lo;
-    w_r <= trace_lo.write_not_read;
-  end  
-    
-  always_ff @(negedge clk) begin
-    if (v_r)
-      assert(assoc_data_lo == data_lo) else $error("Mismatch");
+    assert(assoc_data_lo == data_lo) else $error("Mismatch");
   end  
   
 endmodule
