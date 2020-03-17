@@ -58,15 +58,22 @@ module bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma
   logic [addr_width_lp+byte_offset_width_lp-1:0] read_byte_addr;
   assign read_byte_addr = { r_addr_i, {(byte_offset_width_lp){1'b0}} };
 
+  logic [width_p-1:0] data_r;
+  logic data_v_r;
+  
    always_ff @(negedge clk_i) begin
       for (integer byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
 	 if (r_v_i)
-	   data_o[byte_id*8+:8] <= bsg_mem_dma_get(memory, read_byte_addr+byte_id);
+	   data_r[byte_id*8+:8] <= bsg_mem_dma_get(memory, read_byte_addr+byte_id);
 
       end
+     data_v_r <= r_v_i;     
+   end
 
-      data_v_o <= r_v_i;
-
+  // most client code expects outputs to change at the positive edge
+  always_ff @(posedge clk_i) begin
+      data_o <= data_r;    
+      data_v_o <= data_v_r;
    end
 
   
