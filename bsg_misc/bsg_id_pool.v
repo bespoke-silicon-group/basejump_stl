@@ -86,11 +86,15 @@ module bsg_id_pool
   // synopsys translate_off
   always_ff @ (negedge clk_i) begin
     if (~reset_i) begin
-      if (dealloc_v_i)
+      if (dealloc_v_i) begin
         assert(allocated_r[dealloc_id_i]) else $error("Cannot deallocate an id that hasn't been allocated.");
+        assert(dealloc_id_i < els_p) else $error("Cannot deallocate an id that is outside the range.");
+      end
 
       if (alloc_yumi_i)
         assert(alloc_v_o) else $error("Handshaking error. alloc_yumi_i raised without alloc_v_o.");
+
+      
     end
   end
   // synopsys translate_on
