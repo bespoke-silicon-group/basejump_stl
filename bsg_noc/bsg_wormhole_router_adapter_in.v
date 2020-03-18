@@ -68,7 +68,7 @@ module bsg_wormhole_router_adapter_in
 
 `ifndef SYNTHESIS
   always_ff @(negedge clk_i)
-    assert(reset_i || ~v_i || (packet_cast_i.len <= max_num_flits_lp))
+    assert((reset_i !== 1'b0) || ~v_i || (packet_cast_i.len <= max_num_flits_lp))
       else 
         $error("Packet received with len: %x > max_num_flits: %x", packet_cast_i.len, max_num_flits_lp);
 `endif
