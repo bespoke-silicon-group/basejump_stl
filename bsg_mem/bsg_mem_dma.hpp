@@ -26,18 +26,22 @@ namespace bsg_mem_dma {
         }
 
         byte_t get(address_t addr) const {
+            assert(addr < _data.size());
             return _data[addr];
         }
 
         void set(address_t addr, byte_t val) {
+            assert(addr < _data.size());
             _data[addr] = val;
         }
 
         byte_t & operator[](address_t addr) {
+            assert(addr < _data.size());
             return _data[addr];
         }
 
         byte_t operator[](address_t addr) const {
+            assert(addr < _data.size());
             return _data[addr];
         }
 
