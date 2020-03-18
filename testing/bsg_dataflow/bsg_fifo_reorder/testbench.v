@@ -52,6 +52,8 @@ module testbench();
     ,.fifo_deq_v_o(fifo_deq_v_lo)
     ,.fifo_deq_data_o(fifo_deq_data_lo)
     ,.fifo_deq_yumi_i(fifo_deq_yumi_li)
+
+    ,.empty_o()
   );
 
 

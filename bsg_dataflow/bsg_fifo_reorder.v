@@ -28,6 +28,11 @@ module bsg_fifo_reorder
     , output fifo_deq_v_o
     , output [width_p-1:0] fifo_deq_data_o
     , input fifo_deq_yumi_i
+
+    // this signals that the FIFO is empty
+    // i.e. there is no reserved spot for returning data,
+    // and all valid data in the FIFO has been consumed.
+    , output logic empty_o
   );
 
 
@@ -58,24 +63,8 @@ module bsg_fifo_reorder
   assign enq = ~full & fifo_alloc_yumi_i;
   assign fifo_alloc_id_o = wptr_r;
     
+  assign empty_o = empty;
  
-  // data storage
-  bsg_mem_1r1w #(
-    .width_p(width_p)
-    ,.els_p(els_p)
-  ) mem0 (
-    .w_clk_i(clk_i)
-    ,.w_reset_i(reset_i)
-    
-    ,.w_v_i(write_v_i)
-    ,.w_addr_i(write_id_i)
-    ,.w_data_i(write_data_i)
-
-    ,.r_v_i(1'b0) // unused
-    ,.r_addr_i(rptr_r)
-    ,.r_data_o(fifo_deq_data_o)
-  );
-
 
   // valid bit for each entry
   // this valid bit is cleared, when the valid data is dequeued.
@@ -120,7 +109,25 @@ module bsg_fifo_reorder
   // deque logic
   wire fifo_deq_v_lo = valid_r[rptr_r] & ~empty;
   assign fifo_deq_v_o = fifo_deq_v_lo;
-  assign deq = fifo_deq_v_lo & fifo_deq_yumi_i;
+  assign deq = fifo_deq_yumi_i;
+
+
+  // data storage
+  bsg_mem_1r1w #(
+    .width_p(width_p)
+    ,.els_p(els_p)
+  ) mem0 (
+    .w_clk_i(clk_i)
+    ,.w_reset_i(reset_i)
+
+    ,.w_v_i(write_v_i)
+    ,.w_addr_i(write_id_i)
+    ,.w_data_i(write_data_i)
+
+    ,.r_v_i(fifo_deq_v_lo)
+    ,.r_addr_i(rptr_r)
+    ,.r_data_o(fifo_deq_data_o)
+  );
 
 
   // synopsys translate_off
@@ -133,6 +140,9 @@ module bsg_fifo_reorder
 
       if (fifo_deq_yumi_i) 
         assert(fifo_deq_v_o) else $error("Handshaking error. fifo_deq_yumi_i raised without fifo_deq_v_o.");
+
+      if (write_v_i)
+        assert(~valid_r[write_id_i]) else $error("Cannot write to an already valid data.");
 
     end    
   end
