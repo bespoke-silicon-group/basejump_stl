@@ -10,7 +10,7 @@ module bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma
     , parameter data_width_in_bytes_lp=(width_p>>3)
     , parameter write_mask_width_lp=data_width_in_bytes_lp
     , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
-    , parameter byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_in_bytes_lp)
+    , parameter byte_offset_width_lp=$clog2(data_width_in_bytes_lp)
     , parameter init_mem_p=0
   )
   (
