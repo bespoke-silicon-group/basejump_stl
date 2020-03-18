@@ -1,5 +1,5 @@
 # FIXME:  set up VCS, should modified for different users.
-include /homes/shx089/cad/common/mk/cadenv.mk
+include ../../../../bsg_cadenv/cadenv.mk
 
 PLI_OPTS = -P mypli.tab get_stim.c +acc
 VCS_OP     +=  +vcs+vcdpluson -debug_access+all

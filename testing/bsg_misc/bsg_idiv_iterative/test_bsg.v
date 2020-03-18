@@ -44,7 +44,6 @@ module test_bsg;
 	       .signed_div_i(signed_div),
 	       .quotient_o(quotient),
 	       .remainder_o(remainder),
-	       //.yumi_o(div_ack),
            .ready_o( ready_o ),
 	       .v_o(done),
            .yumi_i( done  ),
