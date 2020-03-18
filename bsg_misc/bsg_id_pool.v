@@ -29,6 +29,15 @@ module bsg_id_pool
   // keeps track of which id has been allocated.
   logic [els_p-1:0] allocated_r;
 
+  // next id to dealloc
+  logic [els_p-1:0] dealloc_decode;
+  bsg_decode_with_v #(
+    .num_out_p(els_p)
+  ) d1 (
+    .i(dealloc_id_i)
+    ,.v_i(dealloc_v_i)
+    ,.o(dealloc_decode)
+  );
   
   // find the next available id.
   logic [id_width_lp-1:0] alloc_id_lo;
@@ -39,7 +48,7 @@ module bsg_id_pool
     .width_p(els_p)
     ,.lo_to_hi_p(1)
   ) pe0 (
-    .i(~allocated_r)
+    .i(~allocated_r | dealloc_decode)
     ,.o(one_hot_out)
   );
 
@@ -58,16 +67,6 @@ module bsg_id_pool
   // next id to alloc
   wire [els_p-1:0] alloc_decode = one_hot_out & {els_p{alloc_yumi_i}};
 
-  // next id to dealloc
-  logic [els_p-1:0] dealloc_decode;
-  bsg_decode_with_v #(
-    .num_out_p(els_p)
-  ) d1 (
-    .i(dealloc_id_i)
-    ,.v_i(dealloc_v_i)
-    ,.o(dealloc_decode)
-  );
-
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
@@ -76,10 +75,11 @@ module bsg_id_pool
     else begin
 
       for (integer i = 0; i < els_p; i++) begin
-        if (dealloc_decode[i])
-          allocated_r[i] <= 1'b0;
-        else if (alloc_decode[i])
+        // this allows immediately allocating the deallocated id.
+        if (alloc_decode[i])
           allocated_r[i] <= 1'b1;
+        else if (dealloc_decode[i])
+          allocated_r[i] <= 1'b0;
       end
 
     end
@@ -96,7 +96,6 @@ module bsg_id_pool
 
       if (alloc_yumi_i)
         assert(alloc_v_o) else $error("Handshaking error. alloc_yumi_i raised without alloc_v_o.");
-
       
     end
   end
