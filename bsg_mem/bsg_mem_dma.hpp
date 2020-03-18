@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <cstring>
-
+#include <assert.h>
 namespace bsg_mem_dma {
     using parameter_t = unsigned long long;
     using byte_t = unsigned char;
