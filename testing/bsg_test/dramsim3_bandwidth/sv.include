@@ -10,5 +10,5 @@ $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_dramsim3.v
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_dramsim3_map.v
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_dramsim3_unmap.v
 $BASEJUMP_STL_DIR/bsg_mem/bsg_nonsynth_mem_1r1w_sync_dma.v
-
+$BASEJUMP_STL_DIR/bsg_mem/bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma.v
 testbench.v
