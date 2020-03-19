@@ -14,6 +14,7 @@ module bsg_nonsynth_dramsim3
     , parameter init_mem_p=0 // zero out values in memory at the beginning
     , parameter string config_p="inv"
     , parameter string trace_file_p="bsg_nonsynth_dramsim3_trace.txt"
+    , parameter base_id_p=0 // use this for multiple instances of this module
     , parameter lg_num_channels_lp=`BSG_SAFE_CLOG2(num_channels_p)
     , parameter data_mask_width_lp=(data_width_p>>3)
     , parameter byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
@@ -201,7 +202,7 @@ module bsg_nonsynth_dramsim3
     bsg_nonsynth_mem_1r1w_sync_dma
       #(.width_p(data_width_p)
         ,.els_p((size_in_bits_p/num_channels_p)/data_width_p)
-        ,.id_p(i)
+        ,.id_p(base_id_p+i)
         ,.init_mem_p(init_mem_p))
     channel
       (.clk_i(clk_i)
