@@ -38,7 +38,6 @@ module testbench ();
   logic [width_p-1:0] data_li;
   logic [mask_width_p-1:0] wmask_li;
 
-  logic data_v_lo;  
   logic [width_p-1:0] data_lo;  
   
   bsg_nonsynth_mem_1rw_sync_mask_write_byte_dma
@@ -55,7 +54,6 @@ module testbench ();
      ,.data_i(data_li)
      ,.w_mask_i(wmask_li)
 
-     ,.data_v_o(data_v_lo)
      ,.data_o(data_lo)
      );
 

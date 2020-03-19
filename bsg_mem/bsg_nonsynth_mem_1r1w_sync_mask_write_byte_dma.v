@@ -29,7 +29,6 @@ module bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma
     , input [write_mask_width_lp-1:0] w_mask_i
 
     // read channel
-    , output logic data_v_o
     , output logic [width_p-1:0] data_o
   );
 
@@ -61,7 +60,6 @@ module bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma
   assign read_byte_addr = { r_addr_i, {(byte_offset_width_lp){1'b0}} };
 
   logic [width_p-1:0] data_r;
-  logic data_v_r;
   
    always_ff @(negedge clk_i) begin
      if (r_v_i) begin
@@ -70,13 +68,11 @@ module bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma
       end
      end
 
-     data_v_r <= r_v_i;     
    end
 
   // most client code expects outputs to change at the positive edge
   always_ff @(posedge clk_i) begin
       data_o <= data_r;    
-      data_v_o <= data_v_r;
    end
 
   

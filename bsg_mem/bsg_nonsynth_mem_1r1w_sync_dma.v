@@ -26,7 +26,6 @@ module bsg_nonsynth_mem_1r1w_sync_dma
     , input [width_p-1:0]             w_data_i
 
     // read channel
-    , output logic data_v_o
     , output logic [width_p-1:0] data_o
   );
 

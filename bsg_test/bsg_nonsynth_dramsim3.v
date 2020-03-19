@@ -214,7 +214,6 @@ module bsg_nonsynth_dramsim3
       ,.w_addr_i(ch_addr_i[i][channel_addr_width_p-1:byte_offset_width_lp]) 
       ,.w_data_i(data_i[i])
 
-      ,.data_v_o(data_v_o[i])
       ,.data_o(data_o[i])
     );
 
@@ -226,6 +225,14 @@ module bsg_nonsynth_dramsim3
   
   end
 
+  logic data_v_r[num_channels_p-1:0];
+
+  always_ff @(posedge clk_i) begin
+    for (integer i = 0; i < num_channels_p; i++) begin
+      data_v_r[i] <= read_v_li[i];
+      data_v_o[i] <= data_v_r[i];
+    end
+  end
 
   // debugging
    integer file;

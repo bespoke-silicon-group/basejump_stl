@@ -27,7 +27,6 @@ module bsg_nonsynth_mem_1rw_sync_mask_write_byte_dma
     , input [write_mask_width_lp-1:0] w_mask_i
 
     // read channel
-    , output logic data_v_o
     , output logic [width_p-1:0] data_o
   );
 
@@ -48,7 +47,6 @@ module bsg_nonsynth_mem_1rw_sync_mask_write_byte_dma
      ,.w_data_i(data_i)
      ,.w_mask_i(w_mask_i)
 
-     ,.data_v_o(data_v_o)
      ,.data_o(data_o));
 
 endmodule
