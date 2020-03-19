@@ -75,7 +75,7 @@ module bsg_fifo_reorder
 
   bsg_decode_with_v #(
     .num_out_p(els_p)
-  ) demux0 (
+  ) set_demux0 (
     .i(write_id_i)
     ,.v_i(write_v_i)
     ,.o(set_valid)
@@ -83,7 +83,7 @@ module bsg_fifo_reorder
 
   bsg_decode_with_v #(
     .num_out_p(els_p)
-  ) demux1 (
+  ) clear_demux0 (
     .i(rptr_r)
     ,.v_i(deq)
     ,.o(clear_valid)
