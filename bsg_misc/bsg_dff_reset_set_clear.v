@@ -1,6 +1,9 @@
 /**
  *    bsg_dff_reset_set_clear.v
  *
+ *    Reset has priority over set.
+ *    Set has priority over clear (by default).
+ *
  */
 
 
