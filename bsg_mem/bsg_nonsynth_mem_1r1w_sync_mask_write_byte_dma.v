@@ -1,5 +1,7 @@
 /**
- *    bsg_nonsynth_test_dram_channel.v
+ *    bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma.v
+ *
+ * If a read and write are issued to the same address the new value is read back.
  *
  */
 

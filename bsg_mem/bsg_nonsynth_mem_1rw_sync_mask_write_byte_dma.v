@@ -1,5 +1,5 @@
 /**
- *    bsg_nonsynth_test_dram_channel.v
+ *    bsg_nonsynth_mem_1rw_sync_mask_write_byte_dma.v
  *
  */
 
