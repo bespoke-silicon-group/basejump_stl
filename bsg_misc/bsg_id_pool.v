@@ -96,6 +96,9 @@ module bsg_id_pool
 
       if (alloc_yumi_i)
         assert(alloc_v_o) else $error("Handshaking error. alloc_yumi_i raised without alloc_v_o.");
+
+      if (alloc_yumi_i & dealloc_v_i & (alloc_id_o == dealloc_id_i))
+        assert(allocated_r[dealloc_id_i]) else $error("Cannot immediately dellocate an allocated id.");
       
     end
   end
