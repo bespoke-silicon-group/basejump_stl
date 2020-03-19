@@ -183,7 +183,7 @@ module bsg_idiv_iterative #(parameter width_p=32)
      ,.o    (add_out)
      );
 
-  bsg_idiv_iterative_controller control
+  bsg_idiv_iterative_controller #(.width_p(width_p)) control 
      ( .reset_i                  (reset_i)
       ,.clk_i                    (clk_i)
 
