@@ -62,11 +62,12 @@ module bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma
   logic data_v_r;
   
    always_ff @(negedge clk_i) begin
+     if (r_v_i) begin
       for (integer byte_id = 0; byte_id < data_width_in_bytes_lp; byte_id++) begin
-	 if (r_v_i)
 	   data_r[byte_id*8+:8] <= bsg_mem_dma_get(memory, read_byte_addr+byte_id);
-
       end
+     end
+
      data_v_r <= r_v_i;     
    end
 
