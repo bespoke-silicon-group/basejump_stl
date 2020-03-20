@@ -67,6 +67,7 @@ module bsg_id_pool
   // next id to alloc
   wire [els_p-1:0] alloc_decode = one_hot_out & {els_p{alloc_yumi_i}};
 
+  // Immediately allocating the deallocated id is allowed.
   bsg_dff_reset_set_clear #(
     .width_p(els_p)
   ) dff_alloc0 (
