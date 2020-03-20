@@ -89,21 +89,15 @@ module bsg_fifo_reorder
     ,.o(clear_valid)
   );
 
-  always_ff @ (posedge clk_i) begin
-    if (reset_i) begin
-      valid_r <= '0;
-    end
-    else begin
-
-      for (integer i = 0; i < els_p; i++) begin
-        if (set_valid[i])
-          valid_r[i] <= 1'b1;
-        else if (clear_valid[i])
-          valid_r[i] <= 1'b0;
-      end
-
-    end
-  end
+  bsg_dff_reset_set_clear #(
+    .width_p(els_p)
+  ) dff_valid0 (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.set_i(set_valid)
+    ,.clear_i(clear_valid)
+    ,.data_o(valid_r)
+  );
 
 
   // deque logic

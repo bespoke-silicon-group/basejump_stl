@@ -5,6 +5,7 @@ $BASEJUMP_STL_DIR/bsg_misc/bsg_circular_ptr.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_crossbar_o_by_i.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_mux_one_hot.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_round_robin_arb.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_dff_reset_set_clear.v
 
 $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1r1w.v
 $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1r1w_synth.v
