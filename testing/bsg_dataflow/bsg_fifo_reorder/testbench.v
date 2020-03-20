@@ -34,6 +34,8 @@ module testbench();
   logic [width_p-1:0] fifo_deq_data_lo;
   logic fifo_deq_yumi_li;
 
+  logic empty_lo;
+
   bsg_fifo_reorder #(
     .width_p(width_p)
     ,.els_p(els_p)
@@ -53,7 +55,7 @@ module testbench();
     ,.fifo_deq_data_o(fifo_deq_data_lo)
     ,.fifo_deq_yumi_i(fifo_deq_yumi_li)
 
-    ,.empty_o()
+    ,.empty_o(empty_lo)
   );
 
 
@@ -196,6 +198,8 @@ module testbench();
 
   initial begin
     wait((check_count_r == num_test_p) & (sent_r == num_test_p));
+    #100000;
+    assert(empty_lo) else $fatal("[BSG_FAIL] FIFO is not empty.");
     $finish();
   end
   
