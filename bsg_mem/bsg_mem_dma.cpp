@@ -1,24 +1,24 @@
 #include <cstdio>
 #include <cassert>
 #include <map>
-#include "bsg_test_dram_channel.hpp"
+#include "bsg_mem_dma.hpp"
 
 #ifdef DEBUG
 #define pr_dbg(fmt, ...)                        \
-    printf("[bsg_test_dram_channel]: " fmt, ##__VA_ARGS__)
+    do { printf("[bsg_mem_dma]: " fmt, ##__VA_ARGS__); fflush(stdout); } while (0)
 #else
 #define pr_dbg(fmt, ...)
 #endif
 
 using namespace std;
 
-namespace bsg_test_dram_channel {
+namespace bsg_mem_dma {
     std::map<parameter_t, Memory *> global_memories;
 }
 
-using namespace bsg_test_dram_channel;
+using namespace bsg_mem_dma;
 
-extern "C" void * bsg_test_dram_channel_init(
+extern "C" void * bsg_mem_dma_init(
     parameter_t id,
     parameter_t channel_addr_width_p,
     parameter_t data_width_p,
@@ -26,34 +26,38 @@ extern "C" void * bsg_test_dram_channel_init(
     parameter_t init_mem_p
     )
 {
+    pr_dbg("id = %llu, addr_width_p=%llu, data_width_p=%llu, mem_els_p=%llu\n",
+           id, channel_addr_width_p, data_width_p, mem_els_p);
+    
     assert(data_width_p % 8 == 0);
-    Memory *memory =  new Memory(channel_addr_width_p, data_width_p, mem_els_p, init_mem_p);
+    Memory *memory =  new Memory(channel_addr_width_p, data_width_p, mem_els_p, init_mem_p, id);
     global_memories[id] = memory;
     return memory;
 }
 
-extern "C" byte_t bsg_test_dram_channel_get(
+extern "C" byte_t bsg_mem_dma_get(
     void *handle,
     address_t addr
     )
 {
     Memory *memory = reinterpret_cast<Memory*>(handle);
-    pr_dbg("getting 0x%08llx   (%02x)\n", addr, memory->get(addr));
+    pr_dbg("id = %llu: getting 0x%08llx   (%02x)\n", memory->_id, addr, memory->get(addr));
     return memory->get(addr);
 }
 
-extern "C" void bsg_test_dram_channel_set(
+extern "C" void bsg_mem_dma_set(
     void *handle,
     address_t addr,
     byte_t val
     )
 {
-    pr_dbg("setting 0x%08llx to %02x\n", addr, val);
     Memory *memory = reinterpret_cast<Memory*>(handle);
+    pr_dbg("id = %llu: setting 0x%08llx to %02x\n", memory->_id, addr, val);
     memory->set(addr, val);
 }
-namespace bsg_test_dram_channel {
-    Memory *bsg_test_dram_channel_get_memory(parameter_t id)
+
+namespace bsg_mem_dma {
+    Memory *bsg_mem_dma_get_memory(parameter_t id)
     {
         auto m = global_memories.find(id);
         if (m != global_memories.end()) {

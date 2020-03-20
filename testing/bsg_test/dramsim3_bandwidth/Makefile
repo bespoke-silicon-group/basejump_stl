@@ -23,6 +23,7 @@ CXXFLAGS = -std=c++11 -D_GNU_SOURCE -Wall -fPIC -shared
 CXXFLAGS += -I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/src
 CXXFLAGS += -I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/ext/headers
 CXXFLAGS += -I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/ext/fmt/include
+CXXFLAGS += -I$(BASEJUMP_STL_DIR)/bsg_mem
 CXXFLAGS += -DFMT_HEADER_ONLY=1
 CXXFLAGS += -DCMD_TRACE
 CXXFLAGS += -DBASEJUMP_STL_DIR=$(BASEJUMP_STL_DIR)
@@ -39,12 +40,29 @@ DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/refresh.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/simple_stats.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/timing.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/bsg_test/bsg_dramsim3.cpp
+DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_mem_dma.cpp
 
-libdramsim3.so:
+
+VSOURCES := $(BASEJUMP_STL_DIR)/bsg_misc/bsg_defines.v
+
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_clock_gen.v
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_reset_gen.v
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_test_rom.v
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_trace_replay.v
+
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_dramsim3_pkg.v
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_dramsim3.v
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_dramsim3_map.v
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_dramsim3_unmap.v
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_nonsynth_mem_1r1w_sync_dma.v
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma.v
+VSOURCES += testbench.v
+
+libdramsim3.so: $(DRAMSIM3_SRC)
 	$(CXX) $(CXXFLAGS) -o libdramsim3.so $(DRAMSIM3_SRC)
 
-simv:
-	vcs $(VCS_FLAGS) -f sv.include -l vcs.log $(INCDIR)
+simv: $(VSOURCES)
+	vcs $(VCS_FLAGS) -l vcs.log $(INCDIR) $(VSOURCES)
 
 out/%/trace.tr: %.py
 	mkdir -p out
@@ -66,3 +84,4 @@ clean:
 	rm -f vcs.log bsg_nonsynth_dramsim3_trace.txt dramsim3epoch.json
 	rm -f trace.tr *.trace *.pyc
 	rm -rf out
+	rm -f libdramsim3.so
