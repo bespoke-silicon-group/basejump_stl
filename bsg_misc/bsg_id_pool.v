@@ -67,23 +67,15 @@ module bsg_id_pool
   // next id to alloc
   wire [els_p-1:0] alloc_decode = one_hot_out & {els_p{alloc_yumi_i}};
 
-
-  always_ff @ (posedge clk_i) begin
-    if (reset_i) begin
-      allocated_r <= '0;
-    end
-    else begin
-
-      for (integer i = 0; i < els_p; i++) begin
-        // this allows immediately allocating the deallocated id.
-        if (alloc_decode[i])
-          allocated_r[i] <= 1'b1;
-        else if (dealloc_decode[i])
-          allocated_r[i] <= 1'b0;
-      end
-
-    end
-  end
+  bsg_dff_reset_set_clear #(
+    .width_p(els_p)
+  ) dff_alloc0 (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.set_i(alloc_decode)
+    ,.clear_i(dealloc_decode)
+    ,.data_o(allocated_r)
+  );
 
 
   // synopsys translate_off
