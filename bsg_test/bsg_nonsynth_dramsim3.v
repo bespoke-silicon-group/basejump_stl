@@ -119,7 +119,6 @@ module bsg_nonsynth_dramsim3
       (.mem_addr_i(read_done_addr[i])
        ,.ch_addr_o(read_done_ch_addr[i]));
 
-    assign read_done_ch_addr_o[i] = read_done_ch_addr[i];
   end
 
   // write channel signal
@@ -222,7 +221,7 @@ module bsg_nonsynth_dramsim3
     assign read_addr_li[i] = read_done_ch_addr[i];
   
     assign write_v_li[i] = data_v_i[i] & v_i[i] & write_not_read_i[i] & yumi_o[i];
-    assign data_yumi_o[i] = v_i[i] & write_not_read_i[i] & yumi_o[i];
+    assign data_yumi_o[i] = data_v_i[i] & write_not_read_i[i] & yumi_o[i];
   
   end
 
@@ -231,10 +230,13 @@ module bsg_nonsynth_dramsim3
   // without this register data_v_o mirrors read_v_li instead
   // of being its value from the previous cycle.
   logic [num_channels_p-1:0] data_v_r;
+  logic [num_channels_p-1:0] [channel_addr_width_p-1:0] read_done_ch_addr_r;
 
   always_ff @(posedge clk_i) begin
     data_v_r <= read_v_li;
     data_v_o <= data_v_r;
+    read_done_ch_addr_r <= read_done_ch_addr;
+    read_done_ch_addr_o <= read_done_ch_addr_r;
   end
 
   // debugging
