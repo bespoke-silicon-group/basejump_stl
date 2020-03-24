@@ -52,6 +52,25 @@ endpackage // bsg_dramsim3_hbm2_8gb_x128_pkg
    - `dramsim3_co_width(num_columns_mp)   \
    - `dramsim3_byte_offset_width(data_width_mp))
 
+`define dramsim3_ro_width_pkg(dram_pkg) \
+  `dramsim3_ro_width(dram_pkg::channel_addr_width_p, \
+                    dram_pkg::data_width_p, \
+                    dram_pkg::num_ba_p, \
+                    dram_pkg::num_bg_p, \
+                    dram_pkg::num_columns_p)
+
+`define dramsim3_ba_width_pkg(dram_pkg) \
+  `dramsim3_ba_width(dram_pkg::num_ba_p)
+
+`define dramsim3_bg_width_pkg(dram_pkg) \
+  `dramsim3_bg_width(dram_pkg::num_bg_p)
+
+`define dramsim3_co_width_pkg(dram_pkg) \
+  `dramsim3_co_width(dram_pkg::num_columns_p)
+
+`define dramsim3_byte_offset_width_pkg(dram_pkg) \
+  `dramsim3_byte_offset_width(dram_pkg::data_width_p)
+
 `define declare_dramsim3_ch_addr_s(typename_mp, ch_addr_width_mp, data_width_mp, num_ba_mp, num_bg_mp, num_columns_mp) \
   typedef struct packed { \
     logic [`dramsim3_ro_width(ch_addr_width_mp, data_width_mp, num_ba_mp, num_bg_mp, num_columns_mp)-1:0] ro; \
