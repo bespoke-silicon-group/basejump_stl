@@ -17,6 +17,7 @@ module bsg_fsb_node_trace_replay
   #(parameter   ring_width_p=80
     , parameter rom_addr_width_p=6
     , parameter counter_width_p=`BSG_MIN(ring_width_p,16)
+    , parameter quiet_p=0
     )
    (input clk_i
     , input reset_i
@@ -52,7 +53,7 @@ module bsg_fsb_node_trace_replay
    // 6: initialized cycle counter with 16 bits
    // in theory, we could add branching, etc.
    // before we know it, we have a processor =)
-   
+
    typedef enum logic [3:0] {
       eNop=4'd0,
       eSend=4'd1,
@@ -62,8 +63,8 @@ module bsg_fsb_node_trace_replay
       eCycleDec=4'd5,
       eCycleInit=4'd6
    } eOp;
- 
-   
+
+
    logic [counter_width_p-1:0] cycle_ctr_r, cycle_ctr_n;
 
    logic [rom_addr_width_p-1:0] addr_r, addr_n;
@@ -141,7 +142,7 @@ module bsg_fsb_node_trace_replay
                  begin
                     if (v_i)
                       begin
-                         instr_completed = 1'b1;  
+                         instr_completed = 1'b1;
                          if (error_r == 0)
                             error_n = data_i != data_o;
                       end
@@ -171,45 +172,51 @@ module bsg_fsb_node_trace_replay
         if (instr_completed & ~reset_i & ~done_r)
           begin
              case(op)
-               eSend: $display("### bsg_fsb_node_trace_replay SEND %d'b%b (%m)", ring_width_p,data_o);
+               eSend: if (!quiet_p) $display("### bsg_fsb_node_trace_replay SEND %d'b%b (%m)", ring_width_p,data_o);
                eReceive:
                  begin
                     if (data_i !== data_o)
                       begin
-                         $display("############################################################################");
-                         $display("### bsg_fsb_node_trace_replay RECEIVE unmatched (%m) ");
-                         $display("###    ");
-                         $display("### FAIL (trace mismatch) = %h", data_i);
-                         $display("###              expected = %h\n", data_o);
-                         $display("###              diff     = %h\n", data_o ^ data_i);
-                         $display("############################################################################");
+                         if (!quiet_p) begin
+                           $display("############################################################################");
+                           $display("### bsg_fsb_node_trace_replay RECEIVE unmatched (%m) ");
+                           $display("###    ");
+                           $display("### FAIL (trace mismatch) = %h", data_i);
+                           $display("###              expected = %h\n", data_o);
+                           $display("###              diff     = %h\n", data_o ^ data_i);
+                           $display("############################################################################");
+                         end
                          $finish();
                       end
                     else
                       begin
-                         $display("### bsg_fsb_node_trace_replay RECEIVE matched %h (%m)", data_o);
+                         if (!quiet_p) $display("### bsg_fsb_node_trace_replay RECEIVE matched %h (%m)", data_o);
                       end // else: !if(data_i != data_o)
                  end
                eDone:
                  begin
-                    $display("############################################################################");
-                    $display("###### bsg_fsb_node_trace_replay DONE done_o=1 (trace finished addr=%x) (%m)",rom_addr_o);
-                    $display("############################################################################");
+                    if (!quiet_p) begin
+                      $display("############################################################################");
+                      $display("###### bsg_fsb_node_trace_replay DONE done_o=1 (trace finished addr=%x) (%m)",rom_addr_o);
+                      $display("############################################################################");
+                    end
                  end
                eFinish:
                  begin
-                    $display("############################################################################");
-                    $display("###### bsg_fsb_node_trace_replay FINISH (trace finished; CALLING $finish) (%m)");
-                    $display("############################################################################");
+                    if (!quiet_p) begin
+                      $display("############################################################################");
+                      $display("###### bsg_fsb_node_trace_replay FINISH (trace finished; CALLING $finish) (%m)");
+                      $display("############################################################################");
+                    end
                     $finish;
                  end
                eCycleDec:
                  begin
-                    $display("### bsg_fsb_node_trace_replay CYCLE DEC cycle_ctr_r = %x (%m)",cycle_ctr_r);
+                    if (!quiet_p) $display("### bsg_fsb_node_trace_replay CYCLE DEC cycle_ctr_r = %x (%m)",cycle_ctr_r);
                  end
                eCycleInit:
                  begin
-                    $display("### bsg_fsb_node_trace_replay CYCLE INIT = %x (%m)",cycle_ctr_n);
+                    if (!quiet_p) $display("### bsg_fsb_node_trace_replay CYCLE INIT = %x (%m)",cycle_ctr_n);
                  end
                default:
                  begin
@@ -220,7 +227,7 @@ module bsg_fsb_node_trace_replay
                eNop, eSend, eReceive, eDone, eFinish, eCycleDec, eCycleInit:
                  begin
                  end
-               default: $display("### bsg_fsb_node_trace_replay UNKNOWN op %x (%m)\n", op);
+               default: if (!quiet_p) $display("### bsg_fsb_node_trace_replay UNKNOWN op %x (%m)\n", op);
              endcase // case (op)
           end // if (instr_completed & ~reset_i & ~done_r)
      end // always @ (negedge clk_i)
