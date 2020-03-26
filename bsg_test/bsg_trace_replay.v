@@ -201,19 +201,11 @@ module bsg_trace_replay
                          $display("### bsg_trace_replay CYCLE INIT = %x (%m)",cycle_ctr_n);
                     end
                end
-               default:
-                 begin
-
-                 end
+               default: begin
+                    $display("### bsg_trace_replay UNKNOWN op %x (%m)\n", op);
+               end
              endcase // case (op)
-
-             case (op)
-               eNop, eSend, eReceive, eDone, eFinish, eCycleDec, eCycleInit:
-                 begin
-                 end
-               default: $display("### bsg_trace_replay UNKNOWN op %x (%m)\n", op);
-             endcase // case (op)
-          end // if (instr_completed & ~reset_i & ~done_r)
-     end // always @ (negedge clk_i)
+        end // if (instr_completed & ~reset_i & ~done_r)
+   end // always @ (negedge clk_i)
 
 endmodule
