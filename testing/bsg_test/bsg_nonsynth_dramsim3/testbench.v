@@ -26,7 +26,8 @@ module testbench ();
   
   // dramsim3
   import `dram_pkg::*;
-
+  `declare_dramsim3_ch_addr_s_with_pkg(dram_ch_addr_s, `dram_pkg);
+  
   logic [num_channels_p-1:0]                            dramsim3_v_li;
   logic [num_channels_p-1:0]                            dramsim3_write_not_read_li;
   logic [num_channels_p-1:0] [channel_addr_width_p-1:0] dramsim3_ch_addr_li;
@@ -38,7 +39,10 @@ module testbench ();
 
   logic [num_channels_p-1:0]                            dramsim3_data_v_lo;
   logic [num_channels_p-1:0] [data_width_p-1:0]         dramsim3_data_lo;
-      
+
+  dram_ch_addr_s dramsim3_ch_addr_li_cast;
+  assign dramsim3_ch_addr_li_cast = dramsim3_ch_addr_li[0];
+  
   bsg_nonsynth_dramsim3
     #(.channel_addr_width_p(`dram_pkg::channel_addr_width_p)
       ,.data_width_p(`dram_pkg::data_width_p)
@@ -146,5 +150,25 @@ module testbench ();
     # 10000000 $finish;
   end
   
+  always_ff @(posedge clk) begin
+    if (~reset & dramsim3_v_li[0]) begin
+      if (dramsim3_write_not_read_li[0])
+        $display("write: 0x%08x {ro: %d, ba: %d, bg: %d, co: %d, byte: %d}",
+                 dramsim3_ch_addr_li[0], 
+                 dramsim3_ch_addr_li_cast.ro,
+                 dramsim3_ch_addr_li_cast.ba,
+                 dramsim3_ch_addr_li_cast.bg,
+                 dramsim3_ch_addr_li_cast.co,
+                 dramsim3_ch_addr_li_cast.byte_offset);
+      else
+        $display("read: 0x%08x {ro: %d, ba: %d, bg: %d, co: %d, byte: %d}",
+                 dramsim3_ch_addr_li[0], 
+                 dramsim3_ch_addr_li_cast.ro,
+                 dramsim3_ch_addr_li_cast.ba,
+                 dramsim3_ch_addr_li_cast.bg,
+                 dramsim3_ch_addr_li_cast.co,
+                 dramsim3_ch_addr_li_cast.byte_offset);
+    end    
+  end
   
 endmodule
