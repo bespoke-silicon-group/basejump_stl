@@ -15,6 +15,7 @@ module bsg_trace_replay
     , parameter rom_addr_width_p=6
     , parameter counter_width_p=`BSG_MIN(payload_width_p,16)
     , parameter debug_p = 1
+    , parameter finish_on_error_p = 1
      //The operation code is always 4 bits.
     , parameter opcode_width_lp = 4
     )
@@ -143,10 +144,12 @@ module bsg_trace_replay
                eCycleInit:
                  begin
                     cycle_ctr_n = rom_data_i[counter_width_p-1:0];
-                    instr_completed = 1;
+                    instr_completed = 1'b1;
                  end
                default:
                  begin
+                    error_n = 1'b1;
+                    instr_completed = 1'b1;
                  end
              endcase // case (op)
           end
@@ -169,7 +172,9 @@ module bsg_trace_replay
                          $display("### FAIL (trace mismatch) = %h", data_i);
                          $display("###              expected = %h\n", data_o);
                          $display("############################################################################");
-                         $finish();
+                         if (finish_on_error_p == 1) begin
+                              $finish();
+                         end
                     end else begin
                          if (debug_p >= 2) begin
                               $display("### bsg_trace_replay RECEIVE matched %h (%m)", data_o);
@@ -202,7 +207,10 @@ module bsg_trace_replay
                     end
                end
                default: begin
-                    $display("### bsg_trace_replay UNKNOWN op %x (%m)\n", op);
+                    $error("### bsg_trace_replay UNKNOWN op %x (%m)\n", op);
+                    if (finish_on_error_p == 1) begin
+                         $finish();
+                    end
                end
              endcase // case (op)
         end // if (instr_completed & ~reset_i & ~done_r)
