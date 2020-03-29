@@ -10,6 +10,10 @@ module bsg_cache_to_axi
     ,parameter block_size_in_words_p="inv"
     ,parameter data_width_p="inv"
     ,parameter num_cache_p="inv"
+    
+    // tag fifo size can be greater than number of cache dma interfaces
+    // Set to maximum possible outstanding requests to avoid stalling
+    ,parameter tag_fifo_els_p=num_cache_p
 
     ,parameter axi_id_width_p="inv" // 6
     ,parameter axi_addr_width_p="inv"
@@ -183,6 +187,7 @@ module bsg_cache_to_axi
     .num_cache_p(num_cache_p)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
+    ,.tag_fifo_els_p(tag_fifo_els_p)
     ,.axi_id_width_p(axi_id_width_p)
     ,.axi_addr_width_p(axi_addr_width_p)
     ,.axi_data_width_p(axi_data_width_p)
@@ -225,6 +230,7 @@ module bsg_cache_to_axi
     .num_cache_p(num_cache_p)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
+    ,.tag_fifo_els_p(tag_fifo_els_p)
     ,.axi_id_width_p(axi_id_width_p)
     ,.axi_addr_width_p(axi_addr_width_p)
     ,.axi_data_width_p(axi_data_width_p)
