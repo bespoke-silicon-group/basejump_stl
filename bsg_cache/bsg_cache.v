@@ -927,6 +927,7 @@ module bsg_cache
   // 2) incoming request does not read DMEM.
   // 3) DMA engine is not accessing DMEM.
   // 4) TL read DMEM (and bypass from sbuf), and TV is not stalled (v_we).
+  //    During miss, the store buffer can be drained.
   assign sbuf_yumi_li = sbuf_v_lo
     & ~((decode.ld_op | decode.atomic_op) & v_i & ready_o)
     & (~dma_data_mem_v_lo)
