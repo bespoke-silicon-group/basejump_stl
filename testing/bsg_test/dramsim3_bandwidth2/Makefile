@@ -52,14 +52,6 @@ DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/simple_stats.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/timing.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/bsg_test/bsg_dramsim3.cpp
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_mem_dma.cpp
-run: libdramsim3.so $(TRACE_GEN).tr simv
-	./simv -l simv.log -sv_root $(CURDIR) -sv_lib libdramsim3
-
-libdramsim3.so: $(DRAMSIM3_SRC)
-	$(CXX) $(CXXFLAGS) -o libdramsim3.so $(DRAMSIM3_SRC)
-
-$(TRACE_GEN).tr: $(TRACE_GEN).py
-	python $(TRACE_GEN).py $(NUM_CACHE_GROUP_P) $(NUM_SUBCACHE_P) $(BLOCK_SIZE_IN_WORDS_P) > $@
 
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_defines.v
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_counter_clear_up.v
@@ -82,6 +74,7 @@ VSOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_lru_pseudo_tree_decode.v
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_lru_pseudo_tree_encode.v
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_round_robin_arb.v
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_crossbar_o_by_i.v
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_dff_reset_set_clear.v
 
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_clock_gen.v
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_reset_gen.v
@@ -104,6 +97,7 @@ VSOURCES += $(BASEJUMP_STL_DIR)/bsg_dataflow/bsg_round_robin_n_to_1.v
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_dataflow/bsg_round_robin_1_to_n.v
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_dataflow/bsg_parallel_in_serial_out.v
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_dataflow/bsg_serial_in_parallel_out_full.v
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_dataflow/bsg_fifo_reorder.v
 
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_async/bsg_async_fifo.v
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_async/bsg_async_ptr_gray.v
@@ -133,10 +127,24 @@ VSOURCES += $(BASEJUMP_STL_DIR)/bsg_cache/bsg_cache_to_test_dram_tx.v
 
 VSOURCES += $(BASEJUMP_STL_DIR)/testing/bsg_cache/regression_v2/basic_checker.v
 VSOURCES += cache_miss_counter.v
-VSOURCES += vcache_blocking.v
+VSOURCES += test_master.v
+VSOURCES += vcache.v
 VSOURCES += testbench.v
 
-simv: $(VSOURCES) $(TRACE_GEN).tr
+NUMS = $(shell seq 0 `expr $(NUM_CACHE_GROUP_P) - 1`)
+TRACES = $(addsuffix .tr, $(addprefix trace_, $(NUMS)))
+
+run: libdramsim3.so $(TRACES) simv
+	./simv -l simv.log -sv_root $(CURDIR) -sv_lib libdramsim3
+
+libdramsim3.so: $(DRAMSIM3_SRC)
+	$(CXX) $(CXXFLAGS) -o libdramsim3.so $(DRAMSIM3_SRC)
+
+trace_%.tr:
+	python $(TRACE_GEN).py $* $(NUM_CACHE_GROUP_P) $(NUM_SUBCACHE_P) $(BLOCK_SIZE_IN_WORDS_P) > $@
+
+
+simv: $(VSOURCES) $(TRACES)
 	vcs +v2k +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
 		-cpp g++ $(CFLAGS) $(INCDIR) $(VCS_DEFINE) \
 		-sverilog -full64 -timescale=1ps/1ps +vcs+vcdpluson -l vcs.log $(VSOURCES)

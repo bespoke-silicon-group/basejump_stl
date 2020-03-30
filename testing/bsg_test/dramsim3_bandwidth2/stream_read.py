@@ -2,9 +2,11 @@ import sys
 from trace_gen import *
 
 if __name__ == "__main__":
-  num_cache_group_p = int(sys.argv[1])
-  num_subcache_p = int(sys.argv[2])
-  block_size_in_words_p = int(sys.argv[3])
+  # common parameters
+  id_p = int(sys.argv[1])
+  num_cache_group_p = int(sys.argv[2])
+  num_subcache_p = int(sys.argv[3])
+  block_size_in_words_p = int(sys.argv[4])
 
   tg = TraceGen(num_subcache_p, block_size_in_words_p)
   tg.clear_tags()
