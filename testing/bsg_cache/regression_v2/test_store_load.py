@@ -8,13 +8,13 @@ class TestStoreLoad(TestBase):
     self.clear_tag()
     random.seed(0)
   
-    for n in range(2500):
-      tag = random.randint(0,9)
-      index = random.randint(0,1)
-      block_offset = random.randint(0,self.block_size_in_words_p-1)
-      taddr = self.get_addr(tag,index,block_offset)
-      self.send_sw(taddr)
-      self.send_lw(taddr)
+    #for n in range(2500):
+    #  tag = random.randint(0,9)
+    #  index = random.randint(0,1)
+    #  block_offset = random.randint(0,self.block_size_in_words_p-1)
+    #  taddr = self.get_addr(tag,index,block_offset)
+    #  self.send_sw(taddr)
+    #  self.send_lw(taddr)
 
     for n in range(2500):
       tag = random.randint(0,9)
