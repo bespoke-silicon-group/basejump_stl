@@ -158,7 +158,7 @@ clean:
 	rm -f vcs.log bsg_nonsynth_dramsim3_trace.txt dramsim3epoch.json
 	rm -f dramsim3.json dramsim3.txt
 	rm -f *.tr *.trace miss_latency.txt
-	rm -f libdramsim3.so
+#	rm -f libdramsim3.so
 
 latency:
 	python3 miss_latency.py
