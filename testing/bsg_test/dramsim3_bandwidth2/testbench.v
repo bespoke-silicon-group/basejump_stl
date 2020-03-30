@@ -49,7 +49,48 @@ module testbench();
   );
 
 
-  // driver
+  // test master
+  `declare_bsg_cache_pkt_s(cache_addr_width_lp, data_width_p);
+  logic [num_cache_group_p-1:0] vcache_v_lo;
+  bsg_cache_pkt_s [num_cache_group_p-1:0] vcache_pkt_lo;
+  logic [num_cache_group_p-1:0] vcache_yumi_li;
+
+  logic [num_cache_group_p-1:0] vcache_v_li;
+  logic [num_cache_group_p-1:0][data_width_p-1:0] vcache_data_li;
+  logic [num_cache_group_p-1:0] vcache_yumi_lo;
+
+
+  logic [num_cache_group_p-1:0] done;
+  time first_access_time_lo [num_cache_group_p-1:0];
+  integer load_count_lo [num_cache_group_p-1:0];
+  integer store_count_lo [num_cache_group_p-1:0];
+
+  for (genvar i = 0; i < num_cache_group_p; i++) begin
+    test_master #(
+      .id_p(i)
+      ,.addr_width_p(cache_addr_width_lp)
+      ,.data_width_p(data_width_p) 
+    ) tm0 (
+      .clk_i(core_clk)
+      ,.reset_i(reset)
+
+      ,.v_o(vcache_v_lo[i])
+      ,.cache_pkt_o(vcache_pkt_lo[i])
+      ,.yumi_i(vcache_yumi_li[i])
+
+      ,.v_i(vcache_v_li[i])
+      ,.data_i(vcache_data_li[i])
+      ,.yumi_o(vcache_yumi_lo[i])
+
+      ,.done_o(done[i])
+      ,.first_access_time_o(first_access_time_lo[i])
+      ,.load_count_o(load_count_lo[i])
+      ,.store_count_o(store_count_lo[i])
+    );
+  end
+
+
+  // vcache
   `declare_bsg_cache_dma_pkt_s(cache_addr_width_lp);
   bsg_cache_dma_pkt_s [num_cache_lp-1:0] dma_pkt_lo;
   logic [num_cache_lp-1:0] dma_pkt_v_lo;
@@ -62,62 +103,54 @@ module testbench();
   logic [num_cache_lp-1:0][dma_data_width_p-1:0] dma_data_lo;
   logic [num_cache_lp-1:0] dma_data_v_lo;
   logic [num_cache_lp-1:0] dma_data_yumi_li;
-  
-  logic [num_cache_group_p-1:0] cache_done_lo;
-  time first_access_time_lo [num_cache_group_p-1:0];
-  integer load_count_lo [num_cache_group_p-1:0];
-  integer store_count_lo [num_cache_group_p-1:0];
 
   for (genvar i = 0; i < num_cache_group_p; i++) begin
+    vcache #(
+      .num_subcache_p(num_subcache_p)
+      ,.addr_width_p(cache_addr_width_lp)
+      ,.data_width_p(data_width_p)
+      ,.block_size_in_words_p(block_size_in_words_p)
+      ,.sets_p(sets_p)
+      ,.ways_p(ways_p)
+      ,.dma_data_width_p(dma_data_width_p)
+    ) v0 (
+      .clk_i(core_clk)
+      ,.reset_i(reset)
 
-    if (1) begin
-      // blocking
-      vcache_blocking #(
-        .id_p(i)
-        ,.num_subcache_p(num_subcache_p)
-        ,.addr_width_p(cache_addr_width_lp)
-        ,.data_width_p(data_width_p)
-        ,.block_size_in_words_p(block_size_in_words_p)
-        ,.sets_p(sets_p)
-        ,.ways_p(ways_p)
-        ,.dma_data_width_p(dma_data_width_p)
-      ) vb (
-        .clk_i(core_clk)
-        ,.reset_i(reset)
+      ,.v_i(vcache_v_lo[i])
+      ,.cache_pkt_i(vcache_pkt_lo[i])
+      ,.yumi_o(vcache_yumi_li[i])
 
-        ,.dma_pkt_o(dma_pkt_lo[num_subcache_p*i+:num_subcache_p])
-        ,.dma_pkt_v_o(dma_pkt_v_lo[num_subcache_p*i+:num_subcache_p])
-        ,.dma_pkt_yumi_i(dma_pkt_yumi_li[num_subcache_p*i+:num_subcache_p])
+      ,.v_o(vcache_v_li[i])
+      ,.data_o(vcache_data_li[i])
+      ,.yumi_i(vcache_yumi_lo[i])
 
-        ,.dma_data_i(dma_data_li[num_subcache_p*i+:num_subcache_p])
-        ,.dma_data_v_i(dma_data_v_li[num_subcache_p*i+:num_subcache_p])
-        ,.dma_data_ready_o(dma_data_ready_lo[num_subcache_p*i+:num_subcache_p])
+      ,.dma_pkt_o(dma_pkt_lo[num_subcache_p*i+:num_subcache_p])
+      ,.dma_pkt_v_o(dma_pkt_v_lo[num_subcache_p*i+:num_subcache_p])
+      ,.dma_pkt_yumi_i(dma_pkt_yumi_li[num_subcache_p*i+:num_subcache_p])
 
-        ,.dma_data_o(dma_data_lo[num_subcache_p*i+:num_subcache_p])
-        ,.dma_data_v_o(dma_data_v_lo[num_subcache_p*i+:num_subcache_p])
-        ,.dma_data_yumi_i(dma_data_yumi_li[num_subcache_p*i+:num_subcache_p])
+      ,.dma_data_i(dma_data_li[num_subcache_p*i+:num_subcache_p])
+      ,.dma_data_v_i(dma_data_v_li[num_subcache_p*i+:num_subcache_p])
+      ,.dma_data_ready_o(dma_data_ready_lo[num_subcache_p*i+:num_subcache_p])
 
-        ,.done_o(cache_done_lo[i])
-        ,.first_access_time_o(first_access_time_lo[i])
-        ,.load_count_o(load_count_lo[i])
-        ,.store_count_o(store_count_lo[i])
-      );
-    end
-    else begin
-      // TODO: non-blocking
-    end
-  end
-
-  if (1) begin
-    bind bsg_cache basic_checker #(
-      .data_width_p(data_width_p)
-      ,.addr_width_p(addr_width_p)
-      ,.mem_size_p(2**28/`NUM_CACHE_GROUP_P/`NUM_SUBCACHE_P)
-    ) bc (
-      .*
-      ,.en_i(1'b1)
+      ,.dma_data_o(dma_data_lo[num_subcache_p*i+:num_subcache_p])
+      ,.dma_data_v_o(dma_data_v_lo[num_subcache_p*i+:num_subcache_p])
+      ,.dma_data_yumi_i(dma_data_yumi_li[num_subcache_p*i+:num_subcache_p])
     );
   end
+
+  bind bsg_cache basic_checker #(
+    .data_width_p(data_width_p)
+    ,.addr_width_p(addr_width_p)
+    ,.mem_size_p(2**28/`NUM_CACHE_GROUP_P/`NUM_SUBCACHE_P)
+  ) bc (
+    .*
+    ,.en_i(1'b1)
+  );
+
+  bind bsg_cache cache_miss_counter c0 (
+    .*
+  );
 
   logic dram_req_v_lo;
   logic dram_write_not_read_lo;
@@ -294,7 +327,7 @@ module testbench();
   real bandwidth_pct;
 
   initial begin
-    wait(&cache_done_lo);
+    wait(&done);
     total_load_count = 0;
     total_store_count = 0;
     for (integer i = 0; i < num_cache_group_p; i++) begin
@@ -323,9 +356,5 @@ module testbench();
     #100000;
     $finish;
   end
-
-  bind bsg_cache cache_miss_counter c0 (
-    .*
-  );
 
 endmodule
