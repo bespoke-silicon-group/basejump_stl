@@ -15,6 +15,7 @@ BASIC_TEST += test_atomic1 test_atomic2
 BASIC_TEST += test_store_buffer1
 BASIC_TEST += test_block1
 BASIC_TEST += test_stride1
+BASIC_TEST += test_store_load
 
 
 ########################

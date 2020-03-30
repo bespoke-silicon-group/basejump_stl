@@ -102,7 +102,7 @@ module testbench();
   // random yumi generator
   bsg_nonsynth_random_yumi_gen #(
     .yumi_min_delay_p(0)
-    ,.yumi_max_delay_p(0)
+    ,.yumi_max_delay_p(2)
   ) yumi_gen (
     .clk_i(clk)
     ,.reset_i(reset)
