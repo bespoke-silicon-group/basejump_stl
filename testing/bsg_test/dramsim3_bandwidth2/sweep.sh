@@ -1,17 +1,32 @@
-make stat_header > stat.csv
 
 traces=("stream_read" "stream_write" "vector_add" "memcpy")
+block_sizes=(8 16 32)
+dma_data_widths=(32 64)
 
-make clean
-make simv
+make stat_header > stat.csv
 
-for trace in ${traces[*]}
+for block_size in ${block_sizes[*]}
 do
-  make run TRACE_GEN=$trace &
-done
-wait
+  for dma_data_width in ${dma_data_widths[*]}
+  do
+    # rebuild
+    make clean
+    make simv BLOCK_SIZE_IN_WORDS_P=$block_size DMA_DATA_WIDTH_P=$dma_data_width
 
-for trace in ${traces[*]}
-do
-  make stat TRACE_GEN=$trace >> stat.csv
+    # run in parallel
+    for trace in ${traces[*]}
+    do
+      make run TRACE_GEN=$trace &
+    done
+    wait
+
+    # gather stat
+    for trace in ${traces[*]}
+    do
+      make stat TRACE_GEN=$trace >> stat.csv
+    done
+
+  done
 done
+
+
