@@ -24,6 +24,11 @@ HIGHLIGHT = grep --color -E '^|Fatal|Error|Warning|Implicit wire is used|Too few
 
 
 ### TEST parameters ####
+YUMI_MIN_DELAY_P ?= 0
+YUMI_MAX_DELAY_P ?= 2
+
+VCS_DEFINES += +define+YUMI_MIN_DELAY_P=$(YUMI_MIN_DELAY_P)
+VCS_DEFINES += +define+YUMI_MAX_DELAY_P=$(YUMI_MAX_DELAY_P)
 ########################
 
 
