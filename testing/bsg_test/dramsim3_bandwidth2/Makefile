@@ -164,7 +164,7 @@ latency:
 	python3 miss_latency.py
 
 stat_header:
-	python3 gather_stat.py 0
+	@python3 gather_stat.py 0
 
 stat:
-	python3 gather_stat.py 1
+	@python3 gather_stat.py 1
