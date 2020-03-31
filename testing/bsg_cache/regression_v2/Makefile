@@ -11,7 +11,7 @@ VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4
 BASIC_TEST = test_random1 test_random2
 BASIC_TEST += test_byte1 test_byte2 test_byte3
 BASIC_TEST += test_mask1
-BASIC_TEST += test_atomic1 test_atomic2
+BASIC_TEST += test_atomic1 test_atomic2 test_atomic3
 BASIC_TEST += test_store_buffer1
 BASIC_TEST += test_block1
 BASIC_TEST += test_stride1

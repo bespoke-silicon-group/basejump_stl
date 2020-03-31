@@ -2,7 +2,8 @@ import sys
 import random
 from test_base import *
 
-class TestStoreLoad(TestBase):
+class TestAtomic3(TestBase):
+
   def get_random_addr(self):
     tag = random.randint(0,9)
     index = random.randint(0,1)
@@ -12,52 +13,64 @@ class TestStoreLoad(TestBase):
 
   def generate(self):
     self.clear_tag()
-    random.seed(0)
+  
+    for n in range(2000):
+      taddr1 = self.get_random_addr()
+      taddr2 = self.get_random_addr()
+      self.send_sw(taddr1)
+      self.send_sw(taddr2)
+      self.send_amoswap_w(taddr1)
+      self.send_amoswap_w(taddr2)
 
-    for n in range(1000):
-      taddr1 = self.get_random_addr()
-      taddr2 = self.get_random_addr()
-      self.send_sw(taddr1)
-      self.send_sw(taddr2)
-      self.send_lw(taddr1)
-    for n in range(1000):
-      taddr1 = self.get_random_addr()
-      taddr2 = self.get_random_addr()
-      self.send_sw(taddr1)
-      self.send_sw(taddr2)
-      self.send_lw(taddr1)
-      self.send_lw(taddr2)
-    for n in range(1000):
+    for n in range(2000):
       taddr1 = self.get_random_addr()
       taddr2 = self.get_random_addr()
       self.send_sw(taddr1)
       self.send_sw(taddr2)
       self.send_lw(taddr2)
       self.send_lw(taddr1)
-    for n in range(1000):
+      self.send_amoswap_w(taddr1)
+      self.send_amoswap_w(taddr2)
+
+    for n in range(2000):
+      taddr1 = self.get_random_addr()
+      taddr2 = self.get_random_addr()
+      self.send_sw(taddr1)
+      self.send_amoswap_w(taddr2)
+      self.send_lw(taddr1)
+
+    for n in range(2000):
+      taddr1 = self.get_random_addr()
+      taddr2 = self.get_random_addr()
+      self.send_sw(taddr1)
+      self.send_lw(taddr2)
+      self.send_amoswap_w(taddr1)
+
+    for n in range(2000):
+      taddr1 = self.get_random_addr()
+      taddr2 = self.get_random_addr()
+      self.send_amoswap_w(taddr1)
+      self.send_sw(taddr2)
+      self.send_lw(taddr1)
+
+    for n in range(2000):
       taddr1 = self.get_random_addr()
       taddr2 = self.get_random_addr()
       taddr3 = self.get_random_addr()
-      self.send_sw(taddr1)
+      self.send_amoswap_w(taddr1)
       self.send_sw(taddr2)
       self.send_sw(taddr3)
       self.send_lw(taddr1)
-    for n in range(1000):
+
+    for n in range(2000):
       taddr1 = self.get_random_addr()
       taddr2 = self.get_random_addr()
       taddr3 = self.get_random_addr()
-      self.send_sw(taddr1)
+      taddr4 = self.get_random_addr()
+      self.send_amoswap_w(taddr1)
       self.send_sw(taddr2)
+      self.send_amoswap_w(taddr1)
       self.send_sw(taddr3)
-      self.send_lw(taddr1)
-      self.send_lw(taddr2)
-    for n in range(1000):
-      taddr1 = self.get_random_addr()
-      taddr2 = self.get_random_addr()
-      self.send_sw(taddr1)
-      self.send_sw(taddr2)
-      self.send_sw(taddr2)
-      self.send_lw(taddr1)
       self.send_lw(taddr1)
 
     # done
@@ -66,5 +79,5 @@ class TestStoreLoad(TestBase):
 
 # main()
 if __name__ == "__main__":
-  t = TestStoreLoad()
+  t = TestAtomic3()
   t.generate()
