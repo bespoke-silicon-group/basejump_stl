@@ -26,8 +26,7 @@ VCS_DEFINE =  +define+NUM_CACHE_GROUP_P=$(NUM_CACHE_GROUP_P)
 VCS_DEFINE +=  +define+NUM_SUBCACHE_P=$(NUM_SUBCACHE_P)
 VCS_DEFINE += +define+BLOCK_SIZE_IN_WORDS_P=$(BLOCK_SIZE_IN_WORDS_P)
 VCS_DEFINE += +define+DMA_DATA_WIDTH_P=$(DMA_DATA_WIDTH_P)
-VCS_DEFINE += +define+TRACE=$(TRACE_GEN)
-
+#VCS_DEFINE += +define+TRACE=$(TRACE_GEN)
 
 CXXFLAGS = -std=c++11 -D_GNU_SOURCE -Wall -fPIC -shared
 CXXFLAGS += -I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/src
@@ -36,7 +35,6 @@ CXXFLAGS += -I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/ext/fmt/include
 CXXFLAGS += -DFMT_HEADER_ONLY=1
 CXXFLAGS += -DCMD_TRACE
 #CXXFLAGS += -DDEBUG
-#CXXFLAGS += -DSTALL_TRACE
 CXXFLAGS += -DBASEJUMP_STL_DIR=$(BASEJUMP_STL_DIR)
 DRAMSIM3_SRC =  $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/bankstate.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/channel_state.cc
@@ -112,7 +110,6 @@ VSOURCES += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_mem_1rw_sync_mask_write_bit_synth.v
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_mem_1rw_sync_mask_write_byte.v
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_mem_1rw_sync_mask_write_byte_synth.v
 
-
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_cache/bsg_cache_pkg.v
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_cache/bsg_cache.v
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_cache/bsg_cache_miss.v
@@ -132,25 +129,30 @@ VSOURCES += vcache.v
 VSOURCES += testbench.v
 
 NUMS = $(shell seq 0 `expr $(NUM_CACHE_GROUP_P) - 1`)
-TRACES = $(addsuffix .tr, $(addprefix trace_, $(NUMS)))
+TRACES = $(addsuffix .tr, $(addprefix out/$(TRACE_GEN)/trace_, $(NUMS)))
+SIMV = $(abspath ./simv)
 
-run: libdramsim3.so $(TRACES) simv
-	./simv -l simv.log -sv_root $(CURDIR) -sv_lib libdramsim3
+run: libdramsim3.so simv $(TRACES)
+	mkdir -p out/
+	mkdir -p out/$(TRACE_GEN)
+	(cd out/$(TRACE_GEN); $(SIMV) -l simv.log -sv_root $(CURDIR) -sv_lib libdramsim3)
 
 libdramsim3.so: $(DRAMSIM3_SRC)
 	$(CXX) $(CXXFLAGS) -o libdramsim3.so $(DRAMSIM3_SRC)
 
-trace_%.tr:
+out/$(TRACE_GEN)/trace_%.tr:
+	mkdir -p out/
+	mkdir -p out/$(TRACE_GEN)
 	python $(TRACE_GEN).py $* $(NUM_CACHE_GROUP_P) $(NUM_SUBCACHE_P) $(BLOCK_SIZE_IN_WORDS_P) > $@
 
 
-simv: $(VSOURCES) $(TRACES)
+simv: $(VSOURCES)
 	vcs +v2k +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
 		-cpp g++ $(CFLAGS) $(INCDIR) $(VCS_DEFINE) \
 		-sverilog -full64 -timescale=1ps/1ps +vcs+vcdpluson -l vcs.log $(VSOURCES)
 
 dve:
-	dve -full64 -vpd vcdplus.vpd &
+	dve -full64 -vpd out/$(TRACE_GEN)/vcdplus.vpd &
 
 clean:
 	rm -rf out/
@@ -167,4 +169,4 @@ stat_header:
 	@python3 gather_stat.py 0
 
 stat:
-	@python3 gather_stat.py 1
+	@python3 gather_stat.py 1 $(TRACE_GEN) out/$(TRACE_GEN)/simv.log out/$(TRACE_GEN)/dramsim3.json
