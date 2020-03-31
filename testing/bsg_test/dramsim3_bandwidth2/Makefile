@@ -133,16 +133,16 @@ TRACES = $(addsuffix .tr, $(addprefix out/$(TRACE_GEN)/trace_, $(NUMS)))
 SIMV = $(abspath ./simv)
 
 run: libdramsim3.so simv $(TRACES)
-	mkdir -p out/
-	mkdir -p out/$(TRACE_GEN)
+	@mkdir -p out/
+	@mkdir -p out/$(TRACE_GEN)
 	(cd out/$(TRACE_GEN); $(SIMV) -l simv.log -sv_root $(CURDIR) -sv_lib libdramsim3)
 
 libdramsim3.so: $(DRAMSIM3_SRC)
 	$(CXX) $(CXXFLAGS) -o libdramsim3.so $(DRAMSIM3_SRC)
 
 out/$(TRACE_GEN)/trace_%.tr:
-	mkdir -p out/
-	mkdir -p out/$(TRACE_GEN)
+	@mkdir -p out/
+	@mkdir -p out/$(TRACE_GEN)
 	python $(TRACE_GEN).py $* $(NUM_CACHE_GROUP_P) $(NUM_SUBCACHE_P) $(BLOCK_SIZE_IN_WORDS_P) > $@
 
 
@@ -163,7 +163,7 @@ clean:
 #	rm -f libdramsim3.so
 
 latency:
-	python3 miss_latency.py
+	@python3 miss_latency.py
 
 stat_header:
 	@python3 gather_stat.py 0
