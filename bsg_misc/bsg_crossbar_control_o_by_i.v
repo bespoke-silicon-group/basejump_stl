@@ -51,7 +51,7 @@ module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
 
    for(i=0; i<o_els_p; i=i+1)
      begin: arb
-        if (rr_lo_hi_p == 3 || rr_lo_hi_p == 4 )
+        if (rr_lo_hi_p == 3 || rr_lo_hi_p == 4 || rr_lo_hi_p==2)
           begin: rr
             bsg_round_robin_arb #( .inputs_p    (i_els_p)
                                   ,.hold_on_sr_p(rr_lo_hi_p == 3)
