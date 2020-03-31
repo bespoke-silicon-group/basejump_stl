@@ -162,3 +162,7 @@ clean:
 
 latency:
 	python3 miss_latency.py
+
+
+stat:
+	python3 gather_stat.py

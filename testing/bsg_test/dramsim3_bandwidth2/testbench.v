@@ -348,7 +348,8 @@ module testbench();
     $display("total time = %t (ps)", $time-first_access_time_lo[0]);
     bandwidth = (real'((total_load_count+total_store_count)*4))/($time-first_access_time_lo[0])*(10**12)/(10**9);
     bandwidth_pct = bandwidth / 32.0 * 100.0;
-    $display("bandwidth = %f (GB/s) ( %f %%)", bandwidth, bandwidth_pct);
+    $display("bandwidth = %f", bandwidth);
+    $display("peak_bandwidth_pct = %f", bandwidth_pct);
     $display("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
     $display("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
