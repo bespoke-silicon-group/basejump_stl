@@ -26,7 +26,7 @@ VCS_DEFINE =  +define+NUM_CACHE_GROUP_P=$(NUM_CACHE_GROUP_P)
 VCS_DEFINE +=  +define+NUM_SUBCACHE_P=$(NUM_SUBCACHE_P)
 VCS_DEFINE += +define+BLOCK_SIZE_IN_WORDS_P=$(BLOCK_SIZE_IN_WORDS_P)
 VCS_DEFINE += +define+DMA_DATA_WIDTH_P=$(DMA_DATA_WIDTH_P)
-VCS_DEFINE += +define+TRACE=$(TRACE_GEN).tr
+VCS_DEFINE += +define+TRACE=$(TRACE_GEN)
 
 
 CXXFLAGS = -std=c++11 -D_GNU_SOURCE -Wall -fPIC -shared
@@ -163,6 +163,8 @@ clean:
 latency:
 	python3 miss_latency.py
 
+stat_header:
+	python3 gather_stat.py 0
 
 stat:
-	python3 gather_stat.py
+	python3 gather_stat.py 1

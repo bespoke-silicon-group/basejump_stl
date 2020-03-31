@@ -9,6 +9,7 @@ import json
 
 class GatherStat:
 
+  simv_string_stat = ["trace"]
   simv_int_stat = ["num_cache_group_p", "num_subcache_p", "block_size_in_words_p", "dma_data_width_p"]
   simv_float_stat = ["bandwidth", "peak_bandwidth_pct"]
   dramsim3_stat = ["num_act_cmds", "num_pre_cmds", "num_ref_cmds"]
@@ -22,6 +23,10 @@ class GatherStat:
     with open("simv.log", "r") as f:
       lines = f.readlines()
       for line in lines:
+        for stat in self.simv_string_stat:
+          if line.startswith(stat):
+            words = line.split("=")
+            self.stat[stat] = words[1].strip()
         for stat in self.simv_int_stat:
           if line.startswith(stat):
             words = line.split("=")
@@ -42,15 +47,18 @@ class GatherStat:
   def get_stat(self):
     return self.stat
 
+  # get all stat
+  def get_all_stats(self):
+    return self.simv_string_stat + self.simv_int_stat + self.simv_float_stat + self.dramsim3_stat
+  
+
   # print csv header
   def print_csv_header(self):
-    all_stats = self.simv_int_stat + self.simv_float_stat + self.dramsim3_stat
-    print(",".join(all_stats))
+    print(",".join(self.get_all_stats()))
  
   # print csv data
   def print_csv_data(self):
-    all_stats = self.simv_int_stat + self.simv_float_stat + self.dramsim3_stat
-    all_data = map(lambda x: str(self.stat[x]), all_stats)
+    all_data = map(lambda x: str(self.stat[x]), self.get_all_stats())
     print(",".join(all_data))
 
 if __name__ == "__main__":
