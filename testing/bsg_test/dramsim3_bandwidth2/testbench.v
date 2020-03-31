@@ -339,7 +339,7 @@ module testbench();
     $display("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
     $display("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
     $display("all done.");
-    $display("trace=%s", `BSG_STRINGIFY(`TRACE));
+    //$display("trace=%s", `BSG_STRINGIFY(`TRACE));
     $display("num_cache_group_p=%d", num_cache_group_p);
     $display("num_subcache_p=%d", num_subcache_p);
     $display("block_size_in_words_p=%d", block_size_in_words_p);

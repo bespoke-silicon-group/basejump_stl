@@ -9,7 +9,6 @@ import json
 
 class GatherStat:
 
-  simv_string_stat = ["trace"]
   simv_int_stat = ["num_cache_group_p", "num_subcache_p", "block_size_in_words_p", "dma_data_width_p"]
   simv_float_stat = ["bandwidth", "peak_bandwidth_pct"]
   dramsim3_stat = ["num_act_cmds", "num_pre_cmds", "num_ref_cmds"]
@@ -19,14 +18,10 @@ class GatherStat:
     self.stat = {}
 
   # parse simv.log
-  def parse_simv_log(self):
-    with open("simv.log", "r") as f:
+  def parse_simv_log(self, filepath):
+    with open(filepath, "r") as f:
       lines = f.readlines()
       for line in lines:
-        for stat in self.simv_string_stat:
-          if line.startswith(stat):
-            words = line.split("=")
-            self.stat[stat] = words[1].strip()
         for stat in self.simv_int_stat:
           if line.startswith(stat):
             words = line.split("=")
@@ -37,8 +32,8 @@ class GatherStat:
             self.stat[stat] = float(words[1])
 
   # parse dramsim3.json
-  def parse_dramsim3_json(self):
-    with open("dramsim3.json", "r") as f:
+  def parse_dramsim3_json(self, filepath):
+    with open(filepath, "r") as f:
       j = json.load(f)
       for stat in self.dramsim3_stat:
         self.stat[stat] = j["0"][stat]
@@ -49,7 +44,11 @@ class GatherStat:
 
   # get all stat
   def get_all_stats(self):
-    return self.simv_string_stat + self.simv_int_stat + self.simv_float_stat + self.dramsim3_stat
+    return ["trace"] + self.simv_int_stat + self.simv_float_stat + self.dramsim3_stat
+
+  # set trace
+  def set_trace(self, trace):
+    self.stat["trace"] = trace
   
 
   # print csv header
@@ -69,7 +68,8 @@ if __name__ == "__main__":
   if sys.argv[1] == "0":
     gs.print_csv_header()
   else:
-    gs.parse_simv_log()
-    gs.parse_dramsim3_json()
+    gs.set_trace(sys.argv[2])
+    gs.parse_simv_log(sys.argv[3])
+    gs.parse_dramsim3_json(sys.argv[4])
     gs.print_csv_data()
 

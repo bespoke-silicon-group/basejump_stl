@@ -2,9 +2,16 @@ make stat_header > stat.csv
 
 traces=("stream_read" "stream_write" "vector_add" "memcpy")
 
-#for trace in ${traces[*]}
-#do
-  #make clean
-  #make TRACE_GEN=$trace
-  #make stat >> stat.csv
-#done
+make clean
+make simv
+
+for trace in ${traces[*]}
+do
+  make run TRACE_GEN=$trace &
+done
+wait
+
+for trace in ${traces[*]}
+do
+  make stat TRACE_GEN=$trace >> stat.csv
+done
