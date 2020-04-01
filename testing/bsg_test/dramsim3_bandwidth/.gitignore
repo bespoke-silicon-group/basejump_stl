@@ -4,3 +4,4 @@ trace.tr
 vc_hdrs.h
 *.trace
 *.so
+out/
