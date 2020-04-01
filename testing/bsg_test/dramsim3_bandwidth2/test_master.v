@@ -36,7 +36,7 @@ module test_master
   bsg_trace_replay #(
     .payload_width_p(bsg_cache_pkt_width_lp)
     ,.rom_addr_width_p(rom_addr_width_lp)
-    ,.debug_p(2)
+    ,.debug_p(1)
   ) tr0 (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
