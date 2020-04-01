@@ -23,10 +23,7 @@ CXXFLAGS = -std=c++11 -D_GNU_SOURCE -Wall -fPIC -shared
 CXXFLAGS += -I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/src
 CXXFLAGS += -I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/ext/headers
 CXXFLAGS += -I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/ext/fmt/include
-<<<<<<< HEAD
 CXXFLAGS += -I$(BASEJUMP_STL_DIR)/bsg_mem
-=======
->>>>>>> dramsim3 bandwidth
 CXXFLAGS += -DFMT_HEADER_ONLY=1
 CXXFLAGS += -DCMD_TRACE
 CXXFLAGS += -DBASEJUMP_STL_DIR=$(BASEJUMP_STL_DIR)
@@ -43,7 +40,6 @@ DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/refresh.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/simple_stats.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/timing.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/bsg_test/bsg_dramsim3.cpp
-<<<<<<< HEAD
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_mem_dma.cpp
 
 
@@ -67,14 +63,6 @@ libdramsim3.so: $(DRAMSIM3_SRC)
 
 simv: $(VSOURCES)
 	vcs $(VCS_FLAGS) -l vcs.log $(INCDIR) $(VSOURCES)
-=======
-
-libdramsim3.so:
-	$(CXX) $(CXXFLAGS) -o libdramsim3.so $(DRAMSIM3_SRC)
-
-simv:
-	vcs $(VCS_FLAGS) -f sv.include -l vcs.log $(INCDIR)
->>>>>>> dramsim3 bandwidth
 
 out/%/trace.tr: %.py
 	mkdir -p out
@@ -96,7 +84,4 @@ clean:
 	rm -f vcs.log bsg_nonsynth_dramsim3_trace.txt dramsim3epoch.json
 	rm -f trace.tr *.trace *.pyc
 	rm -rf out
-<<<<<<< HEAD
 	rm -f libdramsim3.so
-=======
->>>>>>> dramsim3 bandwidth
