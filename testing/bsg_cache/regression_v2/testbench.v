@@ -117,6 +117,12 @@ module testbench();
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.els_p(mem_size_p)
+
+    ,.read_delay_p(`DMA_READ_DELAY_P)
+    ,.write_delay_p(`DMA_WRITE_DELAY_P)
+    ,.dma_req_delay_p(`DMA_REQ_DELAY_P)
+    ,.dma_data_delay_p(`DMA_DATA_DELAY_P)
+
   ) dma0 (
     .clk_i(clk)
     ,.reset_i(reset)
