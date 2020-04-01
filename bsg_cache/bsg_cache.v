@@ -922,7 +922,16 @@ module bsg_cache
   assign sbuf_v_li = (decode_v_r.st_op | decode_v_r.atomic_op) & v_o & yumi_i;
   assign sbuf_entry_li.way_id = miss_v ? chosen_way_lo : tag_hit_way_id;
   assign sbuf_entry_li.addr = addr_v_r;
-  assign sbuf_yumi_li = sbuf_v_lo & ~((decode.ld_op | decode.atomic_op) & v_i & ready_o) & (~dma_data_mem_v_lo); 
+  // store buffer can write to dmem when
+  // 1) there is valid entry in store buffer.
+  // 2) incoming request does not read DMEM.
+  // 3) DMA engine is not accessing DMEM.
+  // 4) TL read DMEM (and bypass from sbuf), and TV is not stalled (v_we).
+  //    During miss, the store buffer can be drained.
+  assign sbuf_yumi_li = sbuf_v_lo
+    & ~((decode.ld_op | decode.atomic_op) & v_i & ready_o)
+    & (~dma_data_mem_v_lo)
+    & ~(v_tl_r & (decode_tl_r.ld_op | decode_tl_r.atomic_op) & (~v_we) & (~miss_v)); 
 
   assign bypass_addr_li = addr_tl_r;
   assign bypass_v_li = (decode_tl_r.ld_op | decode_tl_r.atomic_op) & v_tl_r & v_we;
