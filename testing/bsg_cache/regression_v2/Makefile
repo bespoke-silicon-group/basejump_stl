@@ -25,7 +25,7 @@ HIGHLIGHT = grep --color -E '^|Fatal|Error|Warning|Implicit wire is used|Too few
 
 ### TEST parameters ####
 YUMI_MIN_DELAY_P  ?= 0
-YUMI_MAX_DELAY_P  ?= 2
+YUMI_MAX_DELAY_P  ?= 0
 DMA_READ_DELAY_P  ?= 0
 DMA_WRITE_DELAY_P ?= 0
 DMA_REQ_DELAY_P   ?= 0
