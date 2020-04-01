@@ -76,7 +76,7 @@ summary:
 
 clean:
 	rm -rf DVEfiles
-	rm -rf csrc
+	rm -rf csrc simv
 	rm -rf simv.daidir simv.vdb vcs.log
 	rm -rf ucli.key vcdplus.vpd simv cm.log *.tar.gz
 	rm -rf stack.info.* *.pyc
