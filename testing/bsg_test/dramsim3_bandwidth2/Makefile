@@ -15,18 +15,18 @@ CFLAGS += -CFLAGS "-DFMT_HEADER_ONLY=1"
 CFLAGS += -CFLAGS "-DCMD_TRACE"
 CFLAGS += -CFLAGS "-DBASEJUMP_STL_DIR=$(BASEJUMP_STL_DIR)"
 
-# test parameter
+## test parameter #########
 NUM_CACHE_GROUP_P ?= 16
 NUM_SUBCACHE_P ?= 2
 BLOCK_SIZE_IN_WORDS_P ?= 8
 DMA_DATA_WIDTH_P ?= 32
 TRACE_GEN ?= stream_read
+###########################
 
 VCS_DEFINE =  +define+NUM_CACHE_GROUP_P=$(NUM_CACHE_GROUP_P)
 VCS_DEFINE +=  +define+NUM_SUBCACHE_P=$(NUM_SUBCACHE_P)
 VCS_DEFINE += +define+BLOCK_SIZE_IN_WORDS_P=$(BLOCK_SIZE_IN_WORDS_P)
 VCS_DEFINE += +define+DMA_DATA_WIDTH_P=$(DMA_DATA_WIDTH_P)
-#VCS_DEFINE += +define+TRACE=$(TRACE_GEN)
 
 CXXFLAGS = -std=c++11 -D_GNU_SOURCE -Wall -fPIC -shared
 CXXFLAGS += -I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/src
@@ -34,8 +34,8 @@ CXXFLAGS += -I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/ext/headers
 CXXFLAGS += -I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/ext/fmt/include
 CXXFLAGS += -DFMT_HEADER_ONLY=1
 CXXFLAGS += -DCMD_TRACE
-#CXXFLAGS += -DDEBUG
 CXXFLAGS += -DBASEJUMP_STL_DIR=$(BASEJUMP_STL_DIR)
+#CXXFLAGS += -DDEBUG
 DRAMSIM3_SRC =  $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/bankstate.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/channel_state.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/command_queue.cc
@@ -131,11 +131,12 @@ VSOURCES += testbench.v
 NUMS = $(shell seq 0 `expr $(NUM_CACHE_GROUP_P) - 1`)
 TRACES = $(addsuffix .tr, $(addprefix out/$(TRACE_GEN)/trace_, $(NUMS)))
 SIMV = $(abspath ./simv)
+WAVE ?= 0
 
 run: libdramsim3.so simv $(TRACES)
 	@mkdir -p out/
 	@mkdir -p out/$(TRACE_GEN)
-	(cd out/$(TRACE_GEN); $(SIMV) -l simv.log -sv_root $(CURDIR) -sv_lib libdramsim3)
+	(cd out/$(TRACE_GEN); $(SIMV) -l simv.log -sv_root $(CURDIR) -sv_lib libdramsim3 +wave=$(WAVE))
 
 libdramsim3.so: $(DRAMSIM3_SRC)
 	$(CXX) $(CXXFLAGS) -o libdramsim3.so $(DRAMSIM3_SRC)
@@ -147,9 +148,9 @@ out/$(TRACE_GEN)/trace_%.tr:
 
 
 simv: $(VSOURCES)
-	vcs +v2k +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
+	vcs +v2k +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access \
 		-cpp g++ $(CFLAGS) $(INCDIR) $(VCS_DEFINE) \
-		-sverilog -full64 -timescale=1ps/1ps +vcs+vcdpluson -l vcs.log $(VSOURCES)
+		-sverilog -full64 -timescale=1ps/1ps -l vcs.log $(VSOURCES)
 
 dve:
 	dve -full64 -vpd out/$(TRACE_GEN)/vcdplus.vpd &

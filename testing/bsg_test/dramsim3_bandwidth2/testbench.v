@@ -5,6 +5,15 @@
 module testbench();
   import bsg_cache_pkg::*;
   import `dram_pkg::*;
+
+  // waveform
+  integer wave;
+  initial begin
+    $value$plusargs("wave=%d",wave);
+    if (wave) begin
+      $vcdpluson;
+    end
+  end
   
   // parameters
   parameter num_channels_p = `dram_pkg::num_channels_p;
@@ -250,7 +259,7 @@ module testbench();
     ,.config_p(`dram_pkg::config_p)
     ,.init_mem_p(1)
 
-    ,.debug_p(1)
+    //,.debug_p(1)
   ) dram0 (
     .clk_i(dram_clk)
     ,.reset_i(reset)
