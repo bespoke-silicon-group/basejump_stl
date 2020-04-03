@@ -11,7 +11,9 @@ class GatherStat:
 
   simv_int_stat = ["num_cache_group_p", "num_subcache_p", "block_size_in_words_p", "dma_data_width_p"]
   simv_float_stat = ["bandwidth", "peak_bandwidth_pct"]
-  dramsim3_stat = ["num_act_cmds", "num_pre_cmds", "num_ref_cmds"]
+  dramsim3_stat = ["num_act_cmds", "num_pre_cmds", "num_ref_cmds",
+    "num_read_cmds", "num_read_row_hits",
+    "num_write_cmds", "num_write_row_hits"]
 
   # default constructor
   def __init__(self):
