@@ -31,6 +31,8 @@ module testbench();
   localparam data_width_p = 32;
   localparam ways_p = 8;
 
+  localparam num_req_lp = (data_width_p*block_size_in_words_p)/dram_data_width_p;
+
   // clock/reset
   bit dram_clk;
   bit core_clk;
@@ -69,7 +71,7 @@ module testbench();
   logic [num_cache_group_p-1:0] vcache_yumi_lo;
 
 
-  logic [num_cache_group_p-1:0] done;
+  logic [num_cache_group_p-1:0] cache_done;
   time first_access_time_lo [num_cache_group_p-1:0];
   integer load_count_lo [num_cache_group_p-1:0];
   integer store_count_lo [num_cache_group_p-1:0];
@@ -91,7 +93,7 @@ module testbench();
       ,.data_i(vcache_data_li[i])
       ,.yumi_o(vcache_yumi_lo[i])
 
-      ,.done_o(done[i])
+      ,.done_o(cache_done[i])
       ,.first_access_time_o(first_access_time_lo[i])
       ,.load_count_o(load_count_lo[i])
       ,.store_count_o(store_count_lo[i])
@@ -247,6 +249,7 @@ module testbench();
   logic [num_channels_p-1:0] dramsim3_data_v_lo;
   logic [num_channels_p-1:0][channel_addr_width_p-1:0] dramsim3_read_done_ch_addr_lo;
 
+  logic [num_channels_p-1:0] write_done_lo;
 
   bsg_nonsynth_dramsim3 #(
     .channel_addr_width_p(channel_addr_width_p)
@@ -277,7 +280,7 @@ module testbench();
     ,.data_o(dramsim3_data_lo)
     ,.read_done_ch_addr_o(dramsim3_read_done_ch_addr_lo)
 
-    ,.write_done_o()
+    ,.write_done_o(write_done_lo)
     ,.write_done_ch_addr_o()
   ); 
 
@@ -329,6 +332,49 @@ module testbench();
     assign dramsim3_data_li[i] = '0;
   end
 
+  // DRAM counter /////////////
+  // Making sure that DRAM got all the requests from the caches, and completed them all.
+  integer dma_read_sent_r;
+  integer dma_write_sent_r;
+  integer dram_read_recv_r;
+  integer dram_write_recv_r;
+  
+  logic [num_cache_lp-1:0] dma_read_sent;
+  logic [num_cache_lp-1:0] dma_write_sent;
+  always_comb begin
+    for (integer i = 0; i < num_cache_lp; i++) begin
+      dma_read_sent[i] = ~dma_pkt_lo[i].write_not_read & dma_pkt_v_lo[i] & dma_pkt_yumi_li[i];
+      dma_write_sent[i] = dma_pkt_lo[i].write_not_read & dma_pkt_v_lo[i] & dma_pkt_yumi_li[i];
+    end
+  end
+
+  always_ff @ (posedge dram_clk) begin
+    if (reset) begin
+      dma_read_sent_r <= '0;
+      dma_write_sent_r <= '0;
+      dram_read_recv_r <= '0;
+      dram_write_recv_r <= '0;
+    end
+    else begin
+  
+      dma_read_sent_r <= dma_read_sent_r + $countones(dma_read_sent);
+      dma_write_sent_r <= dma_write_sent_r + $countones(dma_write_sent);
+
+      if (dramsim3_data_v_lo[0]) begin
+        dram_read_recv_r <= dram_read_recv_r + 1;
+      end
+
+      if (write_done_lo[0]) begin
+        dram_write_recv_r <= dram_write_recv_r + 1;
+      end
+
+    end
+  end
+
+  wire dram_done = (dma_read_sent_r*num_req_lp == dram_read_recv_r) & (dma_write_sent_r*num_req_lp == dram_write_recv_r);
+  /////////////////////////////
+  
+
   integer total_load_count;
   integer total_store_count;
 
@@ -336,7 +382,7 @@ module testbench();
   real bandwidth_pct;
 
   initial begin
-    wait(&done);
+    wait((&cache_done) & dram_done);
     total_load_count = 0;
     total_store_count = 0;
     for (integer i = 0; i < num_cache_group_p; i++) begin
