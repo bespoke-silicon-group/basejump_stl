@@ -121,10 +121,9 @@ module bsg_nonsynth_dpi_to_fifo
    // We set _v_o so that we can signal a read to the producer on the
    // NEXT positive edge. _v_o flows to v_o on the negative edge of
    // clk_i
-   reg _v_o;
+   logic _v_o;
    // Same as above, but with data_o.
-   reg [width_p-1:0] _data_o;
-   
+   logic [width_p-1:0] _data_o;
    
    // We track the "last" data_o and last ready_i values to detect
    // protocol violations. These are captured on the positive edge of

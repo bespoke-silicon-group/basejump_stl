@@ -115,7 +115,7 @@ module bsg_nonsynth_fifo_to_dpi
 
    // We set _yumi_o so that we can signal a read to the producer on
    // the NEXT positive edge without reading multiple times
-   reg    _yumi_o;
+   logic    _yumi_o;
 
    // We track the "last" v_i and last yumi_o values to detect
    // protocol violations. These are captured on the positive edge of
