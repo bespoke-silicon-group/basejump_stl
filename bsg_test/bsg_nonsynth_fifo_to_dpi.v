@@ -39,7 +39,8 @@ module bsg_nonsynth_fifo_to_dpi
    // Also, Check if width_p is a ctype width. call $fatal, if not.
    initial begin
       if (!(width_p inside {8, 16, 32, 64})) begin
-         $fatal($sformatf("BSG ERROR: width_p: %x is not supported. Must be a power of 2 and divisible by 8", width_p));
+         $display("BSG ERROR: bsg_nonsynth_fifo_to_dpi (%s) -- width_p of %d is not supported. Must be a power of 2 and divisible by 8", name_p, width_p);
+         $fatal();
       end
 
       debug_o = debug_p;
