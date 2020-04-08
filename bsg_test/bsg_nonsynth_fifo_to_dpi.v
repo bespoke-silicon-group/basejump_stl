@@ -33,15 +33,14 @@ module bsg_nonsynth_fifo_to_dpi
    // throw an assertion.
    bit    init_b = 0;
    
+   // Check if width_p is a ctype width. call $fatal, if not.
+   if (!(width_p inside {32'd8, 32'd16, 32'd32, 32'd64})) begin
+      $fatal(1, "BSG ERROR: bsg_nonsynth_dpi_to_fifo (%s) -- width_p of %d is not supported. Must be a power of 2 and divisible by 8", name_p, width_p);
+   end
+
    // Print module parameters to the console and set the intial debug
    // value.
-   //
-   // Also, Check if width_p is a ctype width. call $fatal, if not.
    initial begin
-      if (!(width_p inside {8, 16, 32, 64})) begin
-         $display("BSG ERROR: bsg_nonsynth_fifo_to_dpi (%s) -- width_p of %d is not supported. Must be a power of 2 and divisible by 8", name_p, width_p);
-         $fatal();
-      end
 
       debug_o = debug_p;
 
@@ -113,15 +112,15 @@ module bsg_nonsynth_fifo_to_dpi
    // rx() MUST be called after the positive edge of clk_i is
    // evaluated.
 
-   // We set _yumi_o so that we can signal a read to the producer on
+   // We set yumi_o_n so that we can signal a read to the producer on
    // the NEXT positive edge without reading multiple times
-   logic    _yumi_o;
+   logic    yumi_o_n;
 
    // We track the "last" v_i and last yumi_o values to detect
    // protocol violations. These are captured on the positive edge of
    // the clock
-   reg    last_v_i;
-   reg    last_yumi_o;
+   reg    v_i_r;
+   reg    yumi_o_r;
    
    // We track the polarity of the current edge so that we can notify
    // the user of incorrect behavior.
@@ -133,23 +132,19 @@ module bsg_nonsynth_fifo_to_dpi
    function bit rx(output logic [width_p-1:0] data_o);
 
       if(~init_b) begin
-         $display("BSG ERROR (%s): rx() called before init()", name_p);
-         $fatal();
+         $fatal(1,"BSG ERROR (%s): rx() called before init()", name_p);
       end
 
       if(reset_i) begin
-         $display("BSG ERROR (%s): rx() called while reset_i == 1", name_p);
-         $fatal();
+         $fatal(1, "BSG ERROR (%s): rx() called while reset_i == 1", name_p);
       end      
 
       if(~clk_i) begin
-         $display("BSG ERROR (%s): rx() must be called when clk_i == 1", name_p);
-         $fatal();
+         $fatal(1, "BSG ERROR (%s): rx() must be called when clk_i == 1", name_p);
       end
 
       if(!edgepol) begin
-        $display("BSG ERROR (%s): rx() must be called after the positive edge of clk_i has been evaluated", name_p);
-        $fatal();
+        $fatal(1, "BSG ERROR (%s): rx() must be called after the positive edge of clk_i has been evaluated", name_p);
       end
 
       if(debug_o)
@@ -157,14 +152,14 @@ module bsg_nonsynth_fifo_to_dpi
                  name_p, $time, v_i, data_i);
 
       // This will flow to its output on the next negative clock edge.
-      _yumi_o = '1;
+      yumi_o_n = '1;
       data_o = data_i;
 
       return (v_i === 1);
    endfunction
 
    // To ensure that the correct yumi_o value is read on a positive
-   // clock edge, we set _yumi_o ("next yumi") in rx() and propogate
+   // clock edge, we set yumi_o_n ("next yumi") in rx() and propogate
    // it to yumi_o on the negative clock edge. The producer will see
    // the correct value of yumi_o on the next positive edge.
    //
@@ -172,7 +167,7 @@ module bsg_nonsynth_fifo_to_dpi
    // simulation, i.e. non synthesizable) we need to reset yumi_o to 0
    // on the positive clock edge to ensure that we don't
    // unintentionally read multiple cycles in a row. Therefore, we
-   // pre-emptively set _yumi_o 0 in case rx() is not called again on
+   // pre-emptively set yumi_o_n 0 in case rx() is not called again on
    // the next cycle.
    //
    // We also do some basic protocol checking. Users should never
@@ -180,22 +175,21 @@ module bsg_nonsynth_fifo_to_dpi
    // producer.
    always @(negedge clk_i) begin
       // If the user fails to call rx() AGAIN after a data beat was
-      // not consumed (last_v_i == 0 && last_yumi_o == 1) that is a
+      // not consumed (v_i_r == 0 && yumi_o_r == 1) that is a
       // protocol error.
-      if(_yumi_o === 0 & (last_v_i === 0 & last_yumi_o === 1)) begin
-         $display("BSG ERROR (%s): rx() was not called again the cycle after the producer did not provide valid data", name_p);
-         $fatal();
+      if(yumi_o_n === 0 & (v_i_r === 0 & yumi_o_r === 1)) begin
+         $fatal(1, "BSG ERROR (%s): rx() was not called again the cycle after the producer did not provide valid data", name_p);
       end
 
-      yumi_o <= _yumi_o;
+      yumi_o <= yumi_o_n;
 
-      _yumi_o = '0;
+      yumi_o_n = '0;
    end
 
    // Save the last v_i and yumi_o values for protocol checking
    always @(posedge clk_i) begin
-      last_v_i = v_i;
-      last_yumi_o = yumi_o;
+      v_i_r = v_i;
+      yumi_o_r = yumi_o;
       
       if(debug_o)
         $display("BSG DBGINFO (%s@%t): posedge clk_i -- reset_i: %b v_i: %b yumi_o: %b data_i: 0x%x",
