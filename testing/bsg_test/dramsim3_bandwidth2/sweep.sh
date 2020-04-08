@@ -1,6 +1,6 @@
 
 traces=("stream_read" "stream_write" "vector_add" "memcpy" "const_random" "full_random" \
-        "const_random_read" "full_random_read" "read_modify_write")
+        "const_random_read" )
 block_sizes=(8 16 32)
 dma_data_widths=(32 64)
 
