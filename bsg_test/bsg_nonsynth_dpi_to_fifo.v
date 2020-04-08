@@ -40,7 +40,7 @@ module bsg_nonsynth_dpi_to_fifo
 
    // Print module parameters to the console and set the intial debug
    // value
-   initial begin      
+   initial begin
       debug_o = debug_p;
 
       $display("BSG INFO: bsg_nonsynth_dpi_to_fifo (initial begin)");
