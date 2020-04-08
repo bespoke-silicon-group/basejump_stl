@@ -30,7 +30,7 @@ module bsg_nonsynth_dpi_to_fifo
 
    // This bit tracks whether initialize has been called. If data is
    // sent and recieved before init() is called, then this module will
-   // throw an assertion. TODO
+   // throw an assertion.
    bit    init_b = 0;
    
    // Print module parameters to the console and set the intial debug
