@@ -30,8 +30,11 @@ module bsg_nonsynth_fifo_to_dpi
 
    // This bit tracks whether initialize has been called. If data is
    // sent and recieved before init() is called, then this module will
-   // throw an assertion.
-   bit    init_b = 0;
+   // call $fatal
+   bit    init_r = 0;
+   // This bit checks whether rx() has been called multiple times in a
+   // cycle.
+   bit    rx_r = 0;
    
    // Check if width_p is a ctype width. call $fatal, if not.
    if (!(width_p inside {32'd8, 32'd16, 32'd32, 32'd64})) begin
@@ -51,15 +54,16 @@ module bsg_nonsynth_fifo_to_dpi
       $display("BSG INFO:     debug_o = %d", debug_o);
    end
 
-   // This assert checks that fini was called before $finish
+   // This checks that fini was called before $finish
    final begin
-      assert(!init_b);
+      if (~init_r)
+        $fatal("BSG ERROR: bsg_nonsynth_dpi_to_fifo (%s) -- fini() was not called before $finish");
    end
 
+   // The DPI Functions should be exported from the top-level of the
+   // design, but if you do want to export them here, you can do so by
+   // setting __BSG_PERMODULE_EXPORT
 `ifdef __BSG_PERMODULE_EXPORT
-   // These should be exported from the top-level of the design, but
-   // if you do want to export them here, you can do so by setting
-   // __BSG_PERMODULE_EXPORT
    export "DPI-C" function init;
    export "DPI-C" function fini;
    export "DPI-C" function debug;
@@ -89,14 +93,14 @@ module bsg_nonsynth_fifo_to_dpi
    function void init();
       if(debug_o)
         $display("BSG DBGINFO (%s@%t): init() called", name_p, $time);
-      init_b = 1;
+      init_r = 1;
    endfunction
 
    // Terminate this FIFO DPI Interface
    function void fini();
       if(debug_o)
         $display("BSG DBGINFO (%s@%t): fini() called", name_p, $time);
-      init_b = 0;
+      init_r = 0;
    endfunction
 
    // rx(output logic [width_p-1:0] data_o) -- Set ready_i and read
@@ -104,14 +108,10 @@ module bsg_nonsynth_fifo_to_dpi
    // (v_i === 1) this function will return 1. When there is no valid
    // data available, this function will return 0.
    //
-   // If valid data is not available (v_i === 0) the host C/C++
-   // program MUST call this method again on the next cycle. Not doing
-   // this will cause $fatal to be called to indicate a protocol
-   // violation because ready_i will return to 0 on the next cycle.
-   //
    // rx() MUST be called after the positive edge of clk_i is
-   // evaluated.
-
+   // evaluated. It MUST be called only once per cycle. Failure will
+   // cause an error and a call to $fatal.
+   // 
    // We set yumi_o_n so that we can signal a read to the producer on
    // the NEXT positive edge without reading multiple times
    logic    yumi_o_n;
@@ -131,66 +131,70 @@ module bsg_nonsynth_fifo_to_dpi
 
    function bit rx(output logic [width_p-1:0] data_o);
 
-      if(~init_b) begin
+      if(init_r === 0) begin
          $fatal(1,"BSG ERROR (%s): rx() called before init()", name_p);
       end
 
-      if(reset_i) begin
-         $fatal(1, "BSG ERROR (%s): rx() called while reset_i == 1", name_p);
+      if(reset_i === 1) begin
+         $fatal(1, "BSG ERROR (%s): rx() called while reset_i === 1", name_p);
       end      
 
-      if(~clk_i) begin
+      if(clk_i === 0) begin
          $fatal(1, "BSG ERROR (%s): rx() must be called when clk_i == 1", name_p);
       end
 
-      if(!edgepol) begin
+      if(rx_r !== 0) begin
+         $fatal(1, "BSG ERROR (%s): rx() called multiple times in a clk_i cycle", name_p);
+      end
+
+      if(edgepol === 0) begin
         $fatal(1, "BSG ERROR (%s): rx() must be called after the positive edge of clk_i has been evaluated", name_p);
       end
+
+      // This will flow to its output on the next negative clock edge.
+      yumi_o_n = v_i;
+      data_o = data_i;
+
+      rx_r = 1;
 
       if(debug_o)
         $display("BSG DBGINFO (%s@%t): rx() called -- v_i: %b data_i: 0x%x",
                  name_p, $time, v_i, data_i);
 
-      // This will flow to its output on the next negative clock edge.
-      yumi_o_n = '1;
-      data_o = data_i;
-
       return (v_i === 1);
    endfunction
 
+   // We set yumi_o to 0 on the positive edge of clk_i (after it has
+   // been seen by the producer) so that we don't trigger negedge
+   // protocol assertions in the BSG FIFOs. We also need to reset
+   // yumi_o to 0 after data has been read to ensure that we don't
+   // "latch" yumi_o ===1 and unintentionally read multiple cycles in
+   // a row.
+   // 
    // To ensure that the correct yumi_o value is read on a positive
    // clock edge, we set yumi_o_n ("next yumi") in rx() and propogate
    // it to yumi_o on the negative clock edge. The producer will see
    // the correct value of yumi_o on the next positive edge.
    //
-   // Because we're pulling data out of a FIFO interface (in
-   // simulation, i.e. non synthesizable) we need to reset yumi_o to 0
-   // on the positive clock edge to ensure that we don't
-   // unintentionally read multiple cycles in a row. Therefore, we
-   // pre-emptively set yumi_o_n 0 in case rx() is not called again on
-   // the next cycle.
-   //
-   // We also do some basic protocol checking. Users should never
-   // de-assert ready unless they consume valid data from the
-   // producer.
-   always @(negedge clk_i) begin
-      // If the user fails to call rx() AGAIN after a data beat was
-      // not consumed (v_i_r == 0 && yumi_o_r == 1) that is a
-      // protocol error.
-      if(yumi_o_n === 0 & (v_i_r === 0 & yumi_o_r === 1)) begin
-         $fatal(1, "BSG ERROR (%s): rx() was not called again the cycle after the producer did not provide valid data", name_p);
-      end
-
-      yumi_o <= yumi_o_n;
-
+   // We also set yumi_o on the negative edge to ensure that it
+   // changes after the BSG FIFO protocol assertions have
+   // passed. After yumi_o_n has been read, we pre-emptively set it
+   // back to 0. If rx() is called again on the next cycle, it will
+   // set yumi_o_n === 1 to read.
+   always @ (posedge clk_i or negedge clk_i) begin
+      if(clk_i)
+        yumi_o <= 0;
+      else
+        yumi_o <= yumi_o_n;
       yumi_o_n = '0;
    end
 
    // Save the last v_i and yumi_o values for protocol checking
    always @(posedge clk_i) begin
-      v_i_r = v_i;
-      yumi_o_r = yumi_o;
+      v_i_r <= v_i;
+      yumi_o_r <= yumi_o;
       
+      rx_r = 0;
       if(debug_o)
         $display("BSG DBGINFO (%s@%t): posedge clk_i -- reset_i: %b v_i: %b yumi_o: %b data_i: 0x%x",
                  name_p, $time, reset_i, v_i, yumi_o, data_i);

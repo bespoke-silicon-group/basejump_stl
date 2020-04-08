@@ -30,8 +30,11 @@ module bsg_nonsynth_dpi_to_fifo
 
    // This bit tracks whether initialize has been called. If data is
    // sent and recieved before init() is called, then this module will
-   // throw an assertion.
-   bit    init_b = 0;
+   // call $fatal
+   bit    init_r = 0;
+   // This bit checks whether tx() has been called multiple times in a
+   // cycle.
+   bit    tx_r = 0;
    
    // Check if width_p is a ctype width. call $fatal, if not.
    if (!(width_p inside {32'd8, 32'd16, 32'd32, 32'd64})) begin
@@ -50,15 +53,16 @@ module bsg_nonsynth_dpi_to_fifo
       $display("BSG INFO:     debug_o = %d", debug_o);
    end
 
-   // This assert checks that fini was called before $finish
+   // This checks that fini was called before $finish
    final begin
-      assert(!init_b);
+      if (~init_r)
+        $fatal("BSG ERROR: bsg_nonsynth_dpi_to_fifo (%s) -- fini() was not called before $finish");
    end
    
+   // The DPI Functions should be exported from the top-level of the
+   // design, but if you do want to export them here, you can do so by
+   // setting __BSG_PERMODULE_EXPORT
 `ifdef __BSG_PERMODULE_EXPORT
-   // These should be exported from the top-level of the design, but
-   // if you do want to export them here, you can do so by setting
-   // __BSG_PERMODULE_EXPORT
    export "DPI-C" function init;
    export "DPI-C" function fini;
    export "DPI-C" function debug;
@@ -91,7 +95,7 @@ module bsg_nonsynth_dpi_to_fifo
       if(debug_o)
         $display("BSG DBGINFO (%s@%t): init() called", 
                  name_p, $time);
-      init_b = 1;
+      init_r = 1;
    endfunction
 
    // Terminate this FIFO DPI Interface
@@ -99,7 +103,7 @@ module bsg_nonsynth_dpi_to_fifo
       if(debug_o)
         $display("BSG DBGINFO (%s@%t): fini() called", 
                  name_p, $time);
-      init_b = 0;
+      init_r = 0;
    endfunction
 
    // tx(input logic [width_p-1:0] data_i) -- Provide data_i to the
@@ -116,14 +120,15 @@ module bsg_nonsynth_dpi_to_fifo
    // violation because v_o will return to 0 in the next cycle.
    //
    // tx() MUST be called after the positive edge of clk_i is
-   // evaluated.
+   // evaluated. It MUST be called only once per cycle. Failure will
+   // cause an error and a call to $fatal.
 
    // We set v_o_n so that we can signal a read to the producer on the
    // NEXT positive edge. v_o_n flows to v_o on the negative edge of
    // clk_i
    logic v_o_n;
    // Same as above, but with data_o.
-   logic [width_p-1:0] _data_o;
+   logic [width_p-1:0] data_o_n;
    
    // We track the "last" data_o and last ready_i values to detect
    // protocol violations. These are captured on the positive edge of
@@ -138,21 +143,26 @@ module bsg_nonsynth_dpi_to_fifo
       edgepol <= clk_i;
    end
 
+   // TODO: Check that tx isn't called multiple times in a cycle
    function bit tx(input logic [width_p-1:0] data_i);
 
-      if(~init_b) begin
+      if(init_r === 0) begin
          $fatal(1, "BSG ERROR (%s): tx() called before init()", name_p);
       end
 
-      if(reset_i) begin
-         $fatal(1, "BSG ERROR (%s): tx() called before init()", name_p);
+      if(reset_i === 1) begin
+         $fatal(1, "BSG ERROR (%s): tx() called while reset_i === 1", name_p);
       end      
 
-      if(~clk_i) begin
+      if(tx_r !== 0) begin
+         $fatal(1, "BSG ERROR (%s): tx() called multiple times in a clk_i cycle", name_p);
+      end
+
+      if(clk_i === 0) begin
         $fatal(1, "BSG ERROR (%s): tx() must be called when clk_i == 1", name_p);
       end
 
-      if(!edgepol) begin
+      if(edgepol === 0) begin
         $fatal(1, "BSG ERROR (%s): tx() must be called after the positive edge of clk_i has been evaluated", name_p);
       end
 
@@ -163,17 +173,19 @@ module bsg_nonsynth_dpi_to_fifo
       // These will flow to their respective outputs on the next
       // negative clock edge.
       v_o_n = '1;
-      _data_o = data_i;
+      data_o_n = data_i;
 
+      tx_r = 1;
+      
       if(debug_o)
-        $display("BSG DBGINFO (%s@%t): tx() called -- ready_i: %b, data_i: 0x%x", 
+        $display("BSG DBGINFO (%s@%t): tx() called -- ready_i: %b, data_o_n: 0x%x", 
                  name_p, $time, ready_i, data_i);
 
       return (ready_i === 1);
    endfunction
 
    // We set v_o and data_o on a negative clock edge so that it is
-   // seen on the next positive edge. v_o_n and _data_o hold the "next"
+   // seen on the next positive edge. v_o_n and data_o_n hold the "next"
    // values for v_o and data_o.
    //
    // We proactively clear v_o by setting v_o_n to 0 in case ready_i ==
@@ -194,17 +206,19 @@ module bsg_nonsynth_dpi_to_fifo
          $fatal(1, "BSG ERROR: tx() was not called again on the cycle after the consumer was not ready");
       end
 
-      data_o <= _data_o;
+      data_o <= data_o_n;
       v_o <= v_o_n;
 
       v_o_n = 0;
    end
 
    // Save the last ready_i and data_o values for protocol checking
+   // and reset tx_r to 0 to
    always @(posedge clk_i) begin
       ready_i_r <= ready_i;
       data_o_r <= data_o;
 
+      tx_r = 0;
       if(debug_o)
         $display("BSG DBGINFO (%s@%t): posedge clk_i -- reset_i: %b v_o: %b ready_i: %b data_i: 0x%x",
                  name_p, $time, reset_i, v_o, ready_i, data_o);
