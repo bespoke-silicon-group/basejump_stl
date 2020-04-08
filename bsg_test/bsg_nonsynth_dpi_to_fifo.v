@@ -14,7 +14,7 @@
 //   block, before any runtime functions can be called.
 module bsg_nonsynth_dpi_to_fifo
   #(
-    parameter name_p = "bsg_nonsynth_dpi_to_fifo"
+    parameter string name_p = "bsg_nonsynth_dpi_to_fifo"
     ,parameter width_p = "inv"
     ,parameter bit debug_p = 0
     )
