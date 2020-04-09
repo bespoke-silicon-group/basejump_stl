@@ -21,13 +21,18 @@ module top();
       f2d_i.fini();
    endfunction;
 
+   export "DPI-C" function f2d_width;
+   function int f2d_width();
+      return f2d_i.width();
+   endfunction;
+
    export "DPI-C" function f2d_debug;
    function void f2d_debug(input bit switch_i);
       f2d_i.debug(switch_i);
    endfunction;
 
-   export "DPI-C" function rx;
-   function bit rx(output logic [width_lp-1:0] data_o);
+   export "DPI-C" function f2d_rx;
+   function bit f2d_rx(output logic [width_lp-1:0] data_o);
       return f2d_i.rx(data_o);
    endfunction;
 
@@ -41,30 +46,24 @@ module top();
       d2f_i.fini();
    endfunction;
 
+   export "DPI-C" function d2f_width;
+   function int d2f_width();
+      return d2f_i.width();
+   endfunction;
+
    export "DPI-C" function d2f_debug;
    function void d2f_debug(input bit switch_i);
       d2f_i.debug(switch_i);
    endfunction;
 
-   export "DPI-C" function tx;
-   function bit tx(input logic [width_lp-1:0] data_i);
+   export "DPI-C" function d2f_tx;
+   function bit d2f_tx(input logic [width_lp-1:0] data_i);
       return d2f_i.tx(data_i);
    endfunction;
 
-   // Alternatively, the root module can call all of the fini and init
-   // functions...
-   export "DPI-C" function init;
-   function void init();
-      f2d_i.init();
-      d2f_i.init();
-   endfunction;
-
-   export "DPI-C" function fini;
-   function void fini();
-      f2d_i.fini();
-      d2f_i.fini();
+   export "DPI-C" function finish;
+   function void finish();
       $finish;
-      
    endfunction;
 
    export "DPI-C" function debug;

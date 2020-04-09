@@ -1,17 +1,59 @@
 // bsg_nonsynth_dpi_to_fifo: A FIFO Interface for transmitting FIFO
 // data from C/C++ into simulation via DPI
 // 
+// The functions in this module can be exported via DPI by setting
+// __BSG_PERMODULE_EXPORT. However, the recommended practice is to
+// export them from the top-level of the design.
+// 
 // Parameters: 
 // 
-// name_p is the name to print in this modules BSG DBGINFO messages
+//   name_p: is the name to print in this modules BSG DBGINFO messages
 // 
-// width_p is the bit-width of the FIFO interface. Must be a power of
-//   2 and divisible by 8, i.e. a ctype.
+//   width_p: is the bit-width of the FIFO interface. Must be a power
+//     of 2 and divisible by 8, i.e. a ctype.
 // 
-// debug_p is the intial value to set on debug_o and to control debug
-//   messages. The debug() DPI function can be used to control
-//   messages at runtime, but this allows it to be set in the initial
-//   block, before any runtime functions can be called.
+//   debug_p: is the intial value to set on debug_o and to control
+//     debug messages. The debug() DPI function can be used to control
+//     messages at runtime, but this allows it to be set in the
+//     initial block, before any runtime functions can be called.
+//
+// Functions:
+//
+//   init(): Initialize this FIFO DPI Interface. Init must be called
+//     before any other function
+//
+//   debug(input bit): Enable or disable BSG DBGINFO messages from this
+//     module and set the debug_o output bit.
+//
+//   width(): Return the bit-width of data_i
+//     
+//   fini(): De-Initialize this FIFO DPI Interface. This must be
+//     called before $finish is called in the testbench.
+//
+//   tx(input logic [width_p-1:0] data_i): Write data_i to the FIFO
+//     interface and set v_o. If the consumer is ready (ready_i === 1)
+//     this function will return 1 to indicate that the consumer
+//     accepted the data. Ifthe consumer is not ready (ready_i === 0)
+//     this function will return 0 to indicate that the consumer did
+//     not accept the data.
+//
+//     If the data is not accepted by the consumer FIFO, the host
+//     C/C++ program MUST call this method again on the next cycle.
+//
+//     If the data is not accepted by the consumer FIFO, the host
+//     C/C++ program MUST call this this method with the same
+//     arguments (i.e. data_i should remain constant across calls).
+//
+//     tx() CAN ONLY be called after the positive edge of clk_i is
+//     evaluated.
+//
+//     tx() CAN ONLY be called only once per clk_i cycle. 
+//
+//     Violating any of these constraints this will cause $fatal to be
+//     called to indicate a protocol violation.
+//
+//   For safe operation of this interface use the bsg_nonsynth_fifo_to_dpi
+//   class provided in bsg_nonsynth_fifo.hpp header.
 module bsg_nonsynth_dpi_to_fifo
   #(
     parameter string name_p = "bsg_nonsynth_dpi_to_fifo"
@@ -55,8 +97,8 @@ module bsg_nonsynth_dpi_to_fifo
 
    // This checks that fini was called before $finish
    final begin
-      if (~init_r)
-        $fatal("BSG ERROR: bsg_nonsynth_dpi_to_fifo (%s) -- fini() was not called before $finish");
+      if (init_r === 1)
+        $fatal(1, "BSG ERROR: bsg_nonsynth_dpi_to_fifo (%s) -- fini() was not called before $finish", name_p);
    end
    
    // The DPI Functions should be exported from the top-level of the
@@ -93,16 +135,22 @@ module bsg_nonsynth_dpi_to_fifo
    // Initialize this FIFO DPI Interface
    function void init();
       if(debug_o)
-        $display("BSG DBGINFO (%s@%t): init() called", 
-                 name_p, $time);
+        $display("BSG DBGINFO (%s@%t): init() called", name_p, $time);
+
+      if(init_r)
+        $fatal(1, "BSG ERROR (%s): init() already called", name_p);
+
       init_r = 1;
    endfunction
 
    // Terminate this FIFO DPI Interface
    function void fini();
       if(debug_o)
-        $display("BSG DBGINFO (%s@%t): fini() called", 
-                 name_p, $time);
+        $display("BSG DBGINFO (%s@%t): fini() called", name_p, $time);
+
+      if(~init_r)
+        $fatal(1, "BSG ERROR (%s): fini() already called", name_p);
+
       init_r = 0;
    endfunction
 

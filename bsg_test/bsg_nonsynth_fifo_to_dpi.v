@@ -1,17 +1,52 @@
 // bsg_nonsynth_fifo_to_dpi: A FIFO Interface for receiving FIFO data
-// in C/C++ via DPI
+// in C/C++ via DPI.
+//
+// The functions in this module can be exported via DPI by setting
+// __BSG_PERMODULE_EXPORT. However, the recommended practice is to
+// export them from the top-level of the design.
 // 
 // Parameters: 
 // 
-// name_p is the name to print in this modules BSG DBGINFO messages
+//   name_p: is the name to print in this modules BSG DBGINFO messages
 // 
-// width_p is the bit-width of the FIFO interface. Must be a power of
-//   2 and divisible by 8, i.e. a ctype.
+//   width_p: is the bit-width of the FIFO interface. Must be a power
+//     of 2 and divisible by 8, i.e. a ctype.
 // 
-// debug_p is the intial value to set on debug_o and to control debug
-//   messages. The debug() DPI function can be used to control
-//   messages at runtime, but this allows it to be set in the initial
-//   block, before any runtime functions can be called.
+//   debug_p: is the intial value to set on debug_o and to control
+//     debug messages. The debug() DPI function can be used to control
+//     messages at runtime, but this allows it to be set in the
+//     initial block, before any runtime functions can be called.
+//
+// Functions:
+//
+//   init(): Initialize this FIFO DPI Interface. Init must be called
+//     before any other function
+//
+//   debug(input bit): Enable or disable BSG DBGINFO messages from this
+//     module and set the debug_o output bit.
+//
+//   width(): Return the bit-width of data_i
+//     
+//   fini(): De-Initialize this FIFO DPI Interface. This must be
+//     called before $finish is called in the testbench.
+//     
+//   rx(output logic [width_p-1:0] data_o): Receive width_p bits from
+//     the FIFO interface through the data_o argument. If data is
+//     available, yumi_o will be set to 1 before the next positive
+//     edge of clk_i and this method will return 1. If data is not
+//     available, this method will return 0 and yumi_o will be set to
+//     0 before the next negative edge. 
+//
+//     rx() CAN ONLY be called after the positive edge of clk_i is
+//     evaluated.
+//
+//     rx() CAN ONLY be called only once per cycle.
+//
+//     Violating any of these constraints this will cause $fatal to be
+//     called to indicate a protocol violation.
+//
+//   For safe operation of this interface use the bsg_nonsynth_fifo_to_dpi
+//   class provided in bsg_nonsynth_fifo.hpp header.
 module bsg_nonsynth_fifo_to_dpi
   #(
     parameter string name_p = "bsg_nonsynth_fifo_to_dpi"
@@ -44,7 +79,6 @@ module bsg_nonsynth_fifo_to_dpi
    // Print module parameters to the console and set the intial debug
    // value.
    initial begin
-
       debug_o = debug_p;
 
       $display("BSG INFO: bsg_nonsynth_dpi_to_fifo (initial begin)");
@@ -56,8 +90,8 @@ module bsg_nonsynth_fifo_to_dpi
 
    // This checks that fini was called before $finish
    final begin
-      if (~init_r)
-        $fatal("BSG ERROR: bsg_nonsynth_dpi_to_fifo (%s) -- fini() was not called before $finish");
+      if (init_r === 1)
+        $fatal(1, "BSG ERROR: bsg_nonsynth_dpi_to_fifo (%s) -- fini() was not called before $finish", name_p);
    end
 
    // The DPI Functions should be exported from the top-level of the
@@ -93,6 +127,10 @@ module bsg_nonsynth_fifo_to_dpi
    function void init();
       if(debug_o)
         $display("BSG DBGINFO (%s@%t): init() called", name_p, $time);
+
+      if(init_r)
+        $fatal(1, "BSG ERROR (%s): init() already called", name_p);
+
       init_r = 1;
    endfunction
 
@@ -100,6 +138,10 @@ module bsg_nonsynth_fifo_to_dpi
    function void fini();
       if(debug_o)
         $display("BSG DBGINFO (%s@%t): fini() called", name_p, $time);
+
+      if(~init_r)
+        $fatal(1, "BSG ERROR (%s): fini() already called", name_p);
+
       init_r = 0;
    endfunction
 

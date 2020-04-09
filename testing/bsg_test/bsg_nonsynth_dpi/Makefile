@@ -24,6 +24,7 @@ CXXSOURCES += main.cpp
 CXXSOURCES += $(VERILATOR_ROOT)/include/verilated.cpp
 CXXSOURCES += $(VERILATOR_ROOT)/include/verilated_dpi.cpp
 
+INCLUDES += -I$(BASEJUMP_STL_DIR)/bsg_test/
 INCLUDES += -Iobj_dir
 INCLUDES += -I$(VERILATOR_ROOT)/include
 INCLUDES += -I$(VERILATOR_ROOT)/include/vltstd
