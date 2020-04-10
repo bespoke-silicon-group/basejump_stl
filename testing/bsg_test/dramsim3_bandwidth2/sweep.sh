@@ -1,7 +1,7 @@
 
 traces=("stream_read" "stream_write" "vector_add" "memcpy" "const_random" "full_random" \
-        "const_random_read" )
-block_sizes=(8 16 32)
+        "const_random_read" "stride_read_16" "stride_read_32" "stride_read_64")
+block_sizes=(8 16 32 64)
 dma_data_widths=(32 64)
 
 make stat_header > stat.csv
