@@ -14,6 +14,7 @@ class GatherStat:
   dramsim3_stat = ["num_act_cmds", "num_pre_cmds", "num_ref_cmds",
     "num_reads_done", "num_read_row_hits",
     "num_writes_done", "num_write_row_hits"]
+  calculated_stat = ["read_row_hit_pct", "write_row_hit_pct"]
 
   # default constructor
   def __init__(self):
@@ -40,13 +41,25 @@ class GatherStat:
       for stat in self.dramsim3_stat:
         self.stat[stat] = j["0"][stat]
 
+  # calculate generated stat
+  def calculate_stat(self):
+    if self.stat["num_reads_done"] == 0:
+      self.stat["read_row_hit_pct"] = 0.0
+    else:
+      self.stat["read_row_hit_pct"] = self.stat["num_read_row_hits"] / self.stat["num_reads_done"] * 100.0
+
+    if self.stat["num_writes_done"] == 0:
+      self.stat["write_row_hit_pct"] = 0.0
+    else:
+      self.stat["write_row_hit_pct"] = self.stat["num_write_row_hits"] / self.stat["num_writes_done"] * 100.0
+
   # return stat object.
   def get_stat(self):
     return self.stat
 
   # get all stat
   def get_all_stats(self):
-    return ["trace"] + self.simv_int_stat + self.simv_float_stat + self.dramsim3_stat
+    return ["trace"] + self.simv_int_stat + self.simv_float_stat + self.dramsim3_stat + self.calculated_stat
 
   # set trace
   def set_trace(self, trace):
@@ -73,5 +86,6 @@ if __name__ == "__main__":
     gs.set_trace(sys.argv[2])
     gs.parse_simv_log(sys.argv[3])
     gs.parse_dramsim3_json(sys.argv[4])
+    gs.calculate_stat()
     gs.print_csv_data()
 
