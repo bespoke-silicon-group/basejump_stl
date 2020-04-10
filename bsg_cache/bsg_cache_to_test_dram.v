@@ -11,7 +11,7 @@
 module bsg_cache_to_test_dram 
   import bsg_cache_pkg::*;
   #(parameter num_cache_p="inv"
-    , parameter num_subcache_p="inv" // number of caches that are grouped together for the first-level of round robin.
+    , parameter num_subcache_p=1 // number of caches that are grouped together for the first-level of round robin.
     , parameter addr_width_p="inv" // cache addr (byte)
     , parameter data_width_p="inv" // cache data width
     , parameter block_size_in_words_p="inv" // cache block_size (word)
