@@ -5,8 +5,8 @@
 // Verilator / DPI Headers
 #include <svdpi.h>
 #include <verilated.h>
-#include <bsg_nonsynth_intf.hpp>
-using namespace bsg_nonsynth_intf;
+#include <bsg_nonsynth_dpi.hpp>
+using namespace bsg_nonsynth_dpi;
 // Verilator-Generated Headers
 #include <Vtop.h>
 
