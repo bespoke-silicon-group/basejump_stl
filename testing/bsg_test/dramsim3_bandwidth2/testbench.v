@@ -373,11 +373,39 @@ module testbench();
 
   wire dram_done = (dma_read_sent_r*num_req_lp == dram_read_recv_r) & (dma_write_sent_r*num_req_lp == dram_write_recv_r);
   /////////////////////////////
+
+  // first cache done time ////
+  logic first_cache_done_r;
+  time first_cache_done_time;
+  integer first_cache_done_load_count [num_cache_group_p-1:0];
+  integer first_cache_done_store_count [num_cache_group_p-1:0];
+  
+  
+  always_ff @ (posedge core_clk) begin
+    if (reset) begin
+      first_cache_done_r <= 0;
+    end
+    else begin
+      if ((|cache_done) & ~first_cache_done_r) begin
+        first_cache_done_r <= 1'b1;
+        for (integer i = 0; i < num_cache_group_p; i++) begin
+          first_cache_done_load_count[i] <= load_count_lo[i];
+          first_cache_done_store_count[i] <= store_count_lo[i];
+        end
+        first_cache_done_time <= $time;
+      end
+    end
+  end
+  /////////////////////////////
   
 
   integer total_load_count;
   integer total_store_count;
+  integer total_first_cache_done_load_count;
+  integer total_first_cache_done_store_count;
 
+  real max_bandwidth;
+  real max_bandwidth_pct;
   real bandwidth;
   real bandwidth_pct;
 
@@ -385,9 +413,15 @@ module testbench();
     wait((&cache_done) & dram_done);
     total_load_count = 0;
     total_store_count = 0;
+    total_first_cache_done_load_count = 0;
+    total_first_cache_done_store_count = 0;
     for (integer i = 0; i < num_cache_group_p; i++) begin
       total_load_count += load_count_lo[i];
       total_store_count += store_count_lo[i];
+    end
+    for (integer i = 0; i < num_cache_group_p; i++) begin
+      total_first_cache_done_load_count += first_cache_done_load_count[i];
+      total_first_cache_done_store_count += first_cache_done_store_count[i];
     end
 
 
@@ -402,9 +436,13 @@ module testbench();
     $display("total_load_count = %d", total_load_count);
     $display("total_store_count = %d", total_store_count);
     $display("total time = %t (ps)", $time-first_access_time_lo[0]);
+    max_bandwidth = (real'((total_first_cache_done_load_count+total_first_cache_done_store_count)*4))/(first_cache_done_time-first_access_time_lo[0])*(10**12)/(10**9);
     bandwidth = (real'((total_load_count+total_store_count)*4))/($time-first_access_time_lo[0])*(10**12)/(10**9);
     bandwidth_pct = bandwidth / 32.0 * 100.0;
+    max_bandwidth_pct = max_bandwidth / 32.0 * 100.0;
+    $display("max_bandwidth = %f", max_bandwidth);
     $display("bandwidth = %f", bandwidth);
+    $display("peak_max_bandwidth_pct = %f", max_bandwidth_pct);
     $display("peak_bandwidth_pct = %f", bandwidth_pct);
     $display("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
     $display("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");

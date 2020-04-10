@@ -36,6 +36,7 @@ CXXFLAGS += -DFMT_HEADER_ONLY=1
 CXXFLAGS += -DCMD_TRACE
 CXXFLAGS += -DBASEJUMP_STL_DIR=$(BASEJUMP_STL_DIR)
 #CXXFLAGS += -DDEBUG
+CXXFLAGS += -DBLOOD_GRAPH
 DRAMSIM3_SRC =  $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/bankstate.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/channel_state.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/command_queue.cc
@@ -48,6 +49,7 @@ DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/memory_system.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/refresh.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/simple_stats.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/timing.cc
+DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/imports/DRAMSim3/src/blood_graph.cc
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/bsg_test/bsg_dramsim3.cpp
 DRAMSIM3_SRC += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_mem_dma.cpp
 
@@ -161,7 +163,7 @@ clean:
 	rm -f vcs.log bsg_nonsynth_dramsim3_trace.txt dramsim3epoch.json
 	rm -f dramsim3.json dramsim3.txt
 	rm -f *.tr *.trace miss_latency.txt
-#	rm -f libdramsim3.so
+	rm -f libdramsim3.so
 
 latency:
 	@python3 miss_latency.py
