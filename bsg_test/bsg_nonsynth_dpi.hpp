@@ -37,7 +37,7 @@ namespace bsg_nonsynth_dpi{
                 // Verilog.
                 ~dpi_base(){
                         if(Verilated::gotFinish()){
-                                fprintf("BSG ERROR: $finish called before "
+                                fprintf(stderr, "BSG ERROR: $finish called before "
                                         "bsg_dpi object was destructed");
                                 exit(1);
                         }

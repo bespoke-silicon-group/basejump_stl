@@ -1,13 +1,33 @@
+// This is the testbench for the bsg_nonsynth_fifo_dpi.v and
+// bsg_nonsynth_dpi_fifo.v modules in bsg_test, and the
+// bsg_nonsynth_dpi.hpp associated header file.
+//
+// The top-level verilog file instantiates each module, and a
+// bsg_fifo_1r1w_small_unhardened FIFO between the two interfaces.
+//
+//
+// This testbench performs three tests. 
+//   1. Fills and then Drains the FIFO 100 times
+//   2. Fills the FIFO and then reads/writes 100 elements while nearly full
+//   3. Empties the FIFO and then reads/writes 100 elements while nearly empty
+//
+// Error checking is done throughout the test to ensure that the data
+// transmitted matches the data received, and that the FIFO protocol
+// is followed.
+// 
+// bsg_nonsynth_dpi.hpp contains the C/C++ class-wrappers for the DPI
+// interface. The classes are in the bsg_nonsynth_dpi namespace
+#include <bsg_nonsynth_dpi.hpp>
+using namespace bsg_nonsynth_dpi;
+
 #include <cstdio>
 #include <queue>
-#include <vector>
-#include <iostream>
 // Verilator / DPI Headers
 #include <svdpi.h>
 #include <verilated.h>
-#include <bsg_nonsynth_dpi.hpp>
-using namespace bsg_nonsynth_dpi;
-// Verilator-Generated Headers
+
+// Verilator-Generated Headers. It is called Vtop.h because top.v is
+// the top-level verilog file.
 #include <Vtop.h>
 
 // This clock generator work is initial work to get a
@@ -73,7 +93,10 @@ int main(int argc, char** argv) {
         // Instantiation of module
         Vtop *top = new Vtop;
 
-        // Uncomment this to debug the module hierarchy
+        // Uncomment this to debug the module hierarchy. This is
+        // useful when you're trying to figure out the names of the
+        // DPI functions you are trying to call.
+        //
         // Verilated::internalsDump();
 
         svScope scope;
@@ -85,7 +108,8 @@ int main(int argc, char** argv) {
         top->eval();
 
         // There must be some way to "pass" these functions by only
-        // passing/setting the scope but I can't figure it
+        // passing/setting the scope, or passing a reference to the
+        // scope that they are in, but I can't figure it
         // out. Therefore, they must be enumerated.
         fifo_to_dpi<unsigned int> *f2d = 
                 new fifo_to_dpi<unsigned int>(top->f2d_init, top->f2d_fini,
@@ -111,13 +135,17 @@ int main(int argc, char** argv) {
 
         std::queue<int> queue;
         unsigned int input_val, output_val;
-        // For 10 iterations, fill the attached FIFO and then empty
+        // For 1000 iterations, fill the attached FIFO and then empty
         // it. Track the values that are sent over DPI using a C++
-        // queue
+        // queue. 
+        
+        // enq tracks whether the consumer accepted the data (tx returns 1)
+        // deq tracks whether the producer provided data (rx returns 1)
         bool enq = false, deq = false;
-        for(int iter = 0; iter < 10; iter ++){
+        for(int iter = 0; iter < 100; iter ++){
                 enq = false;
                 deq = false;
+
                 // Send until FIFO is full
                 do {
                         top->tick();
@@ -163,12 +191,17 @@ int main(int argc, char** argv) {
                         }
                 } while(deq);
         }
+
         if(!queue.empty()){
-                printf("BSG ERROR: Software Queue is not Empty!\n");
+                printf("BSG ERROR: Software Queue is not Empty! Should be empty at this point...\n");
         }
+
         printf("BSG INFO: Fill/Drain RW test passed\n");
 
         // Write and read 100 values while the FIFO is nearly empty
+        //
+        // read is used to track how many elements have been read from the RTL FIFO
+        // written is used to track how many elements have been written to the RTL FIFO
         unsigned int read = 0, written = 0;
         input_val = rand();
         while(read < 100){
@@ -197,6 +230,7 @@ int main(int argc, char** argv) {
                         read++;
                 }
         }
+
         if(!queue.empty()){
                 printf("BSG ERROR: Software Queue is not Empty!\n");
         }
@@ -205,7 +239,6 @@ int main(int argc, char** argv) {
         // Write and read 100 values while the FIFO is nearly full
         enq = false;
         deq = false;
-
         // Send until FIFO is full
         do {
                 top->tick();
@@ -219,11 +252,8 @@ int main(int argc, char** argv) {
                         queue.push(input_val);
         } while(enq);
 
-        int was_acc = 1, read_suc = 0;
-
         enq = false;
         deq = false;
-        was_acc = 0, read_suc = 0;
         written = 0; read = 0;
         // While the FIFO is nearly full, write/read 100 values
         while(read  < 100){
