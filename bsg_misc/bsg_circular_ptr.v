@@ -59,7 +59,7 @@ module bsg_circular_ptr #(parameter slots_p     = -1
        begin: notpow2
           // compute wrapped and non-wrap cases
           // in parallel
-          assign ptr_wrap = { 1'b0, ptr_r } - slots_p + add_i;
+          assign ptr_wrap = (ptr_width_lp+1)'({ 1'b0, ptr_r } - slots_p + add_i);
           assign ptr_nowrap = ptr_r + add_i;
 
           // if (ptr_r + add_i - slots_p >= 0)

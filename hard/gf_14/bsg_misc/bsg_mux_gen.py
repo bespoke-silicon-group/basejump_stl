@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# bsg_mux_gen_tsmc_40
+# bsg_mux_gen_gf_14
 #
 # This script generates one hot muxes.
 #

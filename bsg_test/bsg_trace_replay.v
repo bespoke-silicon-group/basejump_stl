@@ -5,10 +5,17 @@
 // trace format (see enum below)
 //
 
+// Debug Display Levels:
+//            0 = suppress all non-errors. only shows mismatch and unknown op
+//  (default) 1 = adds finish and done
+//            2 = all messages. adds send, recv, cycle dec, and cycle init
+
 module bsg_trace_replay
   #(  parameter payload_width_p =80
     , parameter rom_addr_width_p=6
     , parameter counter_width_p=`BSG_MIN(payload_width_p,16)
+    , parameter debug_p = 1
+    , parameter finish_on_error_p = 1
      //The operation code is always 4 bits.
     , parameter opcode_width_lp = 4
     )
@@ -46,7 +53,7 @@ module bsg_trace_replay
    // 6: initialized cycle counter with 16 bits
    // in theory, we could add branching, etc.
    // before we know it, we have a processor =)
-   
+
    typedef enum logic [opcode_width_lp-1:0] {
       eNop=4'd0,
       eSend=4'd1,
@@ -56,8 +63,8 @@ module bsg_trace_replay
       eCycleDec=4'd5,
       eCycleInit=4'd6
    } eOp;
- 
-   
+
+
    logic [counter_width_p-1:0] cycle_ctr_r, cycle_ctr_n;
 
    logic [rom_addr_width_p-1:0] addr_r, addr_n;
@@ -122,7 +129,7 @@ module bsg_trace_replay
                eReceive: begin
                     if (v_i)
                       begin
-                         instr_completed = 1'b1;  
+                         instr_completed = 1'b1;
                          if (error_r == 0)
                             error_n = data_i != data_o;
                       end
@@ -137,10 +144,12 @@ module bsg_trace_replay
                eCycleInit:
                  begin
                     cycle_ctr_n = rom_data_i[counter_width_p-1:0];
-                    instr_completed = 1;
+                    instr_completed = 1'b1;
                  end
                default:
                  begin
+                    error_n = 1'b1;
+                    instr_completed = 1'b1;
                  end
              endcase // case (op)
           end
@@ -150,7 +159,11 @@ module bsg_trace_replay
    always @(negedge clk_i) begin
         if (instr_completed & ~reset_i & ~done_r) begin
              case(op)
-               eSend: $display("### bsg_trace_replay SEND %d'b%b (%m)", payload_width_p,data_o);
+               eSend: begin
+                    if (debug_p >= 2) begin
+                         $display("### bsg_trace_replay SEND %d'b%b (%m)", payload_width_p,data_o);
+                    end
+               end
                eReceive: begin
                     if (data_i !== data_o) begin
                          $display("############################################################################");
@@ -159,41 +172,48 @@ module bsg_trace_replay
                          $display("### FAIL (trace mismatch) = %h", data_i);
                          $display("###              expected = %h\n", data_o);
                          $display("############################################################################");
-                         $finish();
+                         if (finish_on_error_p == 1) begin
+                              $finish();
+                         end
                     end else begin
-                         $display("### bsg_trace_replay RECEIVE matched %h (%m)", data_o);
+                         if (debug_p >= 2) begin
+                              $display("### bsg_trace_replay RECEIVE matched %h (%m)", data_o);
+                         end
                     end // else: !if(data_i != data_o)
                end
                eDone: begin
-                    $display("############################################################################");
-                    $display("###### bsg_trace_replay DONE done_o=1 (trace finished addr=%x) (%m)",rom_addr_o);
-                    $display("############################################################################");
+                    if (debug_p >= 1) begin
+                         $display("############################################################################");
+                         $display("###### bsg_trace_replay DONE done_o=1 (trace finished addr=%x) (%m)",rom_addr_o);
+                         $display("############################################################################");
+                    end
                end
                eFinish: begin
-                    $display("############################################################################");
-                    $display("###### bsg_trace_replay FINISH (trace finished; CALLING $finish) (%m)");
-                    $display("############################################################################");
+                    if (debug_p >= 1) begin
+                         $display("############################################################################");
+                         $display("###### bsg_trace_replay FINISH (trace finished; CALLING $finish) (%m)");
+                         $display("############################################################################");
+                    end
                     $finish;
                end
                eCycleDec: begin
-                    $display("### bsg_trace_replay CYCLE DEC cycle_ctr_r = %x (%m)",cycle_ctr_r);
+                    if (debug_p >= 2) begin
+                         $display("### bsg_trace_replay CYCLE DEC cycle_ctr_r = %x (%m)",cycle_ctr_r);
+                    end
                end
                eCycleInit: begin
-                    $display("### bsg_trace_replay CYCLE INIT = %x (%m)",cycle_ctr_n);
+                    if (debug_p >= 2) begin
+                         $display("### bsg_trace_replay CYCLE INIT = %x (%m)",cycle_ctr_n);
+                    end
                end
-               default:
-                 begin
-
-                 end
+               default: begin
+                    $error("### bsg_trace_replay UNKNOWN op %x (%m)\n", op);
+                    if (finish_on_error_p == 1) begin
+                         $finish();
+                    end
+               end
              endcase // case (op)
-
-             case (op)
-               eNop, eSend, eReceive, eDone, eFinish, eCycleDec, eCycleInit:
-                 begin
-                 end
-               default: $display("### bsg_trace_replay UNKNOWN op %x (%m)\n", op);
-             endcase // case (op)
-          end // if (instr_completed & ~reset_i & ~done_r)
-     end // always @ (negedge clk_i)
+        end // if (instr_completed & ~reset_i & ~done_r)
+   end // always @ (negedge clk_i)
 
 endmodule

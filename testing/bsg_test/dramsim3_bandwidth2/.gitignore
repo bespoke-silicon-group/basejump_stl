@@ -1,0 +1,7 @@
+bsg_nonsynth_dramsim3_trace.txt
+dramsim3epoch.json
+*.tr
+vc_hdrs.h
+*.trace
+miss_latency.txt
+libdramsim3.so
