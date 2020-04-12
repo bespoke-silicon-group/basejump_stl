@@ -8,3 +8,4 @@ libdramsim3.so
 dramsim3.json
 dramsim3.txt
 stat.csv
+*.png

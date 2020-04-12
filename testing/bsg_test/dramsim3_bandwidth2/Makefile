@@ -164,6 +164,7 @@ clean:
 	rm -f dramsim3.json dramsim3.txt
 	rm -f *.tr *.trace miss_latency.txt
 	rm -f libdramsim3.so
+	rm -f *.png
 
 latency:
 	@python3 miss_latency.py
@@ -173,3 +174,6 @@ stat_header:
 
 stat:
 	@python3 gather_stat.py 1 $(TRACE_GEN) out/$(TRACE_GEN)/simv.log out/$(TRACE_GEN)/dramsim3.json
+
+bg:
+	python3 $(BASEJUMP_STL_DIR)/imports/DRAMSim3/py/blood_graph.py out/$(TRACE_GEN)/blood_graph_ch0.log $(TRACE_GEN).png
