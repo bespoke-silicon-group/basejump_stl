@@ -72,23 +72,13 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
    // we use a 2 port RF because the 1 port RF
    // does not support bit-level masking for 80-bit width
    // alternatively we could instantiate 2 40-bit 1rw RF's 								
-   `bsg_mem_1rf_sync_macro_bit(256,4,8,4) else
-   `bsg_mem_1rf_sync_macro_bit(256,30,8,2) else
-   `bsg_mem_1rf_sync_macro_bit(256,32,8,2) else
-   `bsg_mem_1rf_sync_macro_bit(256,34,8,2) else
-   `bsg_mem_1rf_sync_macro_bit(256,36,8,2) else
-   `bsg_mem_1rw_sync_macro_bit(64,80,6,1) else
-   `bsg_mem_1rw_sync_macro_bit(64,124,6,2) else
-   `bsg_mem_1rw_sync_macro_bit(64,62,6,2) else
-   `bsg_mem_1rw_sync_macro_bit(32,124,5,2) else
-   `bsg_mem_1rw_sync_macro_bit(128,112,7,2) else
-   `bsg_mem_1rw_sync_macro_bit(128,116,7,2) else
+   `bsg_mem_1rf_sync_macro_bit(32,124,5,2) else
+   `bsg_mem_1rf_sync_macro_bit(64,124,6,2) else
+   `bsg_mem_1rf_sync_macro_bit(128,116,7,2) else
 
-   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,248,2,1) else
-   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,496,8,1) else
-   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(256,112,1,2) else
-   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(128,232,2,1) else
    `bsg_mem_1rw_sync_mask_write_bit_banked_macro(32,496,4,1) else
+   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,248,2,1) else
+   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(128,232,2,1) else
 
    begin : notmacro
      bsg_mem_1rw_sync_mask_write_bit_synth

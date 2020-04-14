@@ -47,28 +47,7 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
     , output logic [width_p-1:0]  data_o
     );
 
-   `bsg_mem_1rw_sync_macro(4096,48,12,8) else
-   `bsg_mem_1rw_sync_macro(2048,32,11,8) else
-   `bsg_mem_1rw_sync_macro(1024,32,10,4) else
-   `bsg_mem_1rw_sync_macro(1024,46,10,4) else
-   `bsg_mem_1rw_sync_macro(256,128,8,4)  else
-   `bsg_mem_1rf_sync_macro(128,76,7,2)   else
-   `bsg_mem_1rf_sync_macro(128,74,7,2)   else
-   `bsg_mem_1rf_sync_macro(128,73,7,2)   else
-   `bsg_mem_1rf_sync_macro(128,72,7,2)   else
-   `bsg_mem_1rf_sync_macro(128,71,7,2)   else
-   `bsg_mem_1rf_sync_macro(128,70,7,2)   else
-   `bsg_mem_1rf_sync_macro(128,69,7,2)   else
-   `bsg_mem_1rf_sync_macro(128,68,7,2)   else
-   `bsg_mem_1rf_sync_macro(128,67,7,2)   else
-   `bsg_mem_1rf_sync_macro(128,66,7,2)   else
-   `bsg_mem_1rf_sync_macro(128,65,7,2)   else
-   `bsg_mem_1rf_sync_macro(128,64,7,2)   else
-   `bsg_mem_1rf_sync_macro(128,63,7,2)   else
-   `bsg_mem_1rf_sync_macro(128,62,7,2)   else
-   `bsg_mem_1rf_sync_macro(128,61,7,2)   else
-   `bsg_mem_1rw_sync_macro(256,48,8,2)   else
-   `bsg_mem_1rw_sync_macro(256,34,8,2)   else
+   `bsg_mem_1rf_sync_macro(256,34,8,2)   else
 
      begin : z
         // we substitute a 1r1w macro
