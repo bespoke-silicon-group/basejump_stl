@@ -4,6 +4,7 @@
  *  DMA engine.
  *
  *  @author tommy
+ *
  */
 
 module bsg_cache_dma
@@ -13,12 +14,22 @@ module bsg_cache_dma
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
     ,parameter ways_p="inv"
+    ,parameter dma_data_width_p=data_width_p
 
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
-    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
-    ,parameter data_mask_width_lp=(data_width_p>>3)
     ,parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
+    ,parameter data_mask_width_lp=(data_width_p>>3)
+    ,parameter dma_data_mask_width_lp=(dma_data_width_p>>3)
+    ,parameter burst_len_lp=(block_size_in_words_p*data_width_p/dma_data_width_p)
+    ,parameter lg_burst_len_lp=`BSG_SAFE_CLOG2(burst_len_lp)
+    ,parameter burst_size_in_words_lp=(dma_data_width_p/data_width_p)
+    ,parameter lg_burst_size_in_words_lp=`BSG_SAFE_CLOG2(burst_size_in_words_lp)
+
+    ,parameter data_mem_els_lp=(sets_p*burst_len_lp)
+    ,parameter lg_data_mem_els_lp=`BSG_SAFE_CLOG2(data_mem_els_lp)
+
+    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
   
     ,parameter debug_p=0
   )
@@ -27,7 +38,7 @@ module bsg_cache_dma
     ,input reset_i
 
     ,input bsg_cache_dma_cmd_e dma_cmd_i
-    ,input [lg_ways_lp-1:0]dma_way_i
+    ,input [lg_ways_lp-1:0] dma_way_i
     ,input [addr_width_p-1:0] dma_addr_i
     ,output logic done_o
 
@@ -37,25 +48,27 @@ module bsg_cache_dma
     ,output logic dma_pkt_v_o
     ,input dma_pkt_yumi_i
 
-    ,input [data_width_p-1:0] dma_data_i
+    ,input [dma_data_width_p-1:0] dma_data_i
     ,input dma_data_v_i
     ,output logic dma_data_ready_o
 
-    ,output logic [data_width_p-1:0] dma_data_o
+    ,output logic [dma_data_width_p-1:0] dma_data_o
     ,output logic dma_data_v_o
     ,input dma_data_yumi_i
 
     ,output logic data_mem_v_o
     ,output logic data_mem_w_o
-    ,output logic [lg_sets_lp+lg_block_size_in_words_lp-1:0] data_mem_addr_o
-    ,output logic [ways_p-1:0][data_mask_width_lp-1:0] data_mem_w_mask_o
-    ,output logic [ways_p-1:0][data_width_p-1:0] data_mem_data_o
-    ,input [ways_p-1:0][data_width_p-1:0] data_mem_data_i
+    ,output logic [lg_data_mem_els_lp-1:0] data_mem_addr_o
+    ,output logic [ways_p-1:0][dma_data_mask_width_lp-1:0] data_mem_w_mask_o
+    ,output logic [ways_p-1:0][dma_data_width_p-1:0] data_mem_data_o
+    ,input [ways_p-1:0][dma_data_width_p-1:0] data_mem_data_i
+
+    ,output logic dma_evict_o // data eviction in progress
   );
 
   // localparam
   //
-  localparam counter_width_lp=`BSG_SAFE_CLOG2(block_size_in_words_p+1);
+  localparam counter_width_lp=`BSG_SAFE_CLOG2(burst_len_lp+1);
   localparam byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3);
 
   // dma states
@@ -77,7 +90,7 @@ module bsg_cache_dma
   logic [counter_width_lp-1:0] counter_r;
 
   bsg_counter_clear_up #(
-    .max_val_p(block_size_in_words_p)
+    .max_val_p(burst_len_lp)
   ) dma_counter (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -86,10 +99,8 @@ module bsg_cache_dma
     ,.count_o(counter_r)
   );
 
-  logic counter_fill_max;
-  logic counter_evict_max;
-  assign counter_fill_max = counter_r == (block_size_in_words_p-1);
-  assign counter_evict_max = counter_r == block_size_in_words_p;
+  wire counter_fill_max = counter_r == (burst_len_lp-1);
+  wire counter_evict_max = counter_r == burst_len_lp;
 
 
   // dma packet
@@ -100,12 +111,12 @@ module bsg_cache_dma
   // in fifo
   //
   logic in_fifo_v_lo;
-  logic [data_width_p-1:0] in_fifo_data_lo;
+  logic [dma_data_width_p-1:0] in_fifo_data_lo;
   logic in_fifo_yumi_li;
 
   bsg_fifo_1r1w_small #(
-    .width_p(data_width_p)
-    ,.els_p(block_size_in_words_p)
+    .width_p(dma_data_width_p)
+    ,.els_p((burst_len_lp<2) ? 2 : burst_len_lp)
   ) in_fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -121,10 +132,10 @@ module bsg_cache_dma
   //
   logic out_fifo_v_li;
   logic out_fifo_ready_lo;
-  logic [data_width_p-1:0] out_fifo_data_li;
+  logic [dma_data_width_p-1:0] out_fifo_data_li;
 
   bsg_two_fifo #(
-    .width_p(data_width_p)
+    .width_p(dma_data_width_p)
   ) out_fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -149,28 +160,40 @@ module bsg_cache_dma
     ,.o(dma_way_mask)
   );
 
-  for (genvar i = 0; i < ways_p; i++) begin
-    assign data_mem_w_mask_o[i] = {data_mask_width_lp{dma_way_mask[i]}};
+  bsg_expand_bitmask #(
+    .in_width_p(ways_p)
+    ,.expand_p(dma_data_mask_width_lp)
+  ) expand0 (
+    .i(dma_way_mask)
+    ,.o(data_mem_w_mask_o)
+  );
+
+  if (burst_len_lp == 1) begin
+    assign data_mem_addr_o = dma_addr_i[byte_offset_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
   end
-
-
-  assign data_mem_addr_o = {
-    dma_addr_i[byte_offset_width_lp+lg_block_size_in_words_lp+:lg_sets_lp],
-    counter_r[lg_block_size_in_words_lp-1:0]
-  };
+  //else if (burst_len_lp == block_size_in_words_p) begin
+  //  assign data_mem_addr_o = {
+  //    dma_addr_i[byte_offset_width_lp+lg_block_size_in_words_lp+:lg_sets_lp],
+  //    counter_r[0+:lg_burst_len_lp]
+  //  };
+  //end
+  else begin
+    assign data_mem_addr_o = {
+      dma_addr_i[byte_offset_width_lp+lg_block_size_in_words_lp+:lg_sets_lp],
+      counter_r[0+:lg_burst_len_lp]
+    };
+  end
   
   assign data_mem_data_o = {ways_p{in_fifo_data_lo}};
 
   bsg_mux #(
-    .width_p(data_width_p)
+    .width_p(dma_data_width_p)
     ,.els_p(ways_p)
   ) write_data_mux (
     .data_i(data_mem_data_i)
     ,.sel_i(dma_way_i)
     ,.data_o(out_fifo_data_li)
   );
-
-
 
   always_comb begin
     done_o = 1'b0;
@@ -190,6 +213,8 @@ module bsg_cache_dma
     out_fifo_v_li = 1'b0;
     counter_clear = 1'b0;
     counter_up = 1'b0;
+
+    dma_evict_o = 1'b0;
 
     case (dma_state_r)
 
@@ -276,6 +301,8 @@ module bsg_cache_dma
         data_mem_v_o = out_fifo_ready_lo & ~counter_evict_max;
 
         done_o = counter_evict_max & out_fifo_ready_lo;
+
+        dma_evict_o = 1'b1;
       end
 
       default: begin
@@ -285,17 +312,38 @@ module bsg_cache_dma
     endcase
   end
 
+  
   // snoop_word register
   // As the fill data is coming in, grab the word that matches the block
   // offset, so that we don't have to read the data_mem again to return the
   // load data.
-  logic [lg_block_size_in_words_lp-1:0] snoop_word_offset;
+  logic [lg_burst_size_in_words_lp-1:0] snoop_word_offset;
   logic snoop_word_we;
+  logic [data_width_p-1:0] snoop_word_n;
 
-  assign snoop_word_offset = dma_addr_i[byte_offset_width_lp+:lg_block_size_in_words_lp];
-  assign snoop_word_we = (dma_state_r == GET_FILL_DATA)
-    & (snoop_word_offset == counter_r[lg_block_size_in_words_lp-1:0])
-    & in_fifo_v_lo;
+  assign snoop_word_offset = dma_addr_i[byte_offset_width_lp+:lg_burst_size_in_words_lp];
+
+  if (burst_len_lp == 1) begin
+    assign snoop_word_we = (dma_state_r == GET_FILL_DATA) & in_fifo_v_lo;
+  end
+  else if (burst_len_lp == block_size_in_words_p) begin
+    assign snoop_word_we = (dma_state_r == GET_FILL_DATA) & in_fifo_v_lo
+      & (counter_r[0+:lg_burst_len_lp] == dma_addr_i[byte_offset_width_lp+:lg_burst_len_lp]);
+  end
+  else begin
+    assign snoop_word_we = (dma_state_r == GET_FILL_DATA) & in_fifo_v_lo
+      & (counter_r[0+:lg_burst_len_lp] == dma_addr_i[byte_offset_width_lp+lg_burst_size_in_words_lp+:lg_burst_len_lp]);
+  end
+
+
+  bsg_mux #(
+    .width_p(data_width_p)
+    ,.els_p(burst_size_in_words_lp)
+  ) snoop_mux0 (
+    .data_i(in_fifo_data_lo)
+    ,.sel_i(snoop_word_offset)
+    ,.data_o(snoop_word_n)
+  );
 
    // synopsys sync_set_reset "reset_i"
   always_ff @ (posedge clk_i) begin
@@ -306,7 +354,7 @@ module bsg_cache_dma
       dma_state_r <= dma_state_n;
 
       if (snoop_word_we) begin
-        snoop_word_o <= in_fifo_data_lo;
+        snoop_word_o <= snoop_word_n;
       end 
 
     end

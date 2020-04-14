@@ -36,7 +36,7 @@ module bsg_mem_1rw_sync_mask_write_byte_synth
                        ,.reset_i(reset_i)
                        ,.data_i (data_i[(i*8)+:8])
                        ,.addr_i (addr_i)
-                       ,.v_i    (v_i)
+                       ,.v_i    (v_i & (w_i ? write_mask_i[i] : 1'b1))
                        ,.w_i    (w_i & write_mask_i[i])
                        ,.data_o (data_o[(i*8)+:8])
                       );

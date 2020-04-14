@@ -17,12 +17,14 @@ module bsg_circular_ptr #(parameter slots_p     = -1
     , input reset_i
     , input  [$clog2(max_add_p+1)-1:0] add_i
     , output [ptr_width_lp-1:0] o
+    , output [ptr_width_lp-1:0] n_o
     );
 
-   logic [ptr_width_lp-1:0] ptr_r, ptr_n;
+   logic [ptr_width_lp-1:0] ptr_r, ptr_n, ptr_nowrap;
    logic [ptr_width_lp:0]   ptr_wrap;
 
    assign o = ptr_r;
+   assign n_o = ptr_n;
 
    // increment round robin pointers
    always @(posedge clk)
@@ -55,24 +57,21 @@ module bsg_circular_ptr #(parameter slots_p     = -1
        end
      else
        begin: notpow2
+          // compute wrapped and non-wrap cases
+          // in parallel
+          assign ptr_wrap = (ptr_width_lp+1)'({ 1'b0, ptr_r } - slots_p + add_i);
+          assign ptr_nowrap = ptr_r + add_i;
+
+          // if (ptr_r + add_i - slots_p >= 0)
+          // then we have wrapped around
+          assign ptr_n = ~ptr_wrap[ptr_width_lp] ? ptr_wrap[0+:ptr_width_lp] : ptr_nowrap;
+
+	  // synopsys translate_off
           always_comb
             begin
-               // compute wrapped and non-wrap cases
-               // in parallel
-
-               ptr_wrap = { 1'b0, ptr_r } - slots_p + add_i;
-               ptr_n = ptr_r + add_i;
-
-               // if (ptr_r + add_i - slots_p >= 0)
-               // then we have wrapped around
-
-               if  (~ptr_wrap[ptr_width_lp])
-                 ptr_n = ptr_wrap[0+:ptr_width_lp];
-
-	       // synopsys translate_off
-               assert( (ptr_n < slots_p) || (|ptr_n === 'X) || reset_i || (add_i > slots_p))
-                 else $error("bsg_circular_ptr counter overflow (ptr_r=%b/add_i=%b/ptr_wrap=%b/ptr_n=%b)",ptr_r,add_i,ptr_wrap,ptr_n, slots_p);
-	       // synopsys translate_on
+              assert( (ptr_n < slots_p) || (|ptr_n === 'X) || reset_i || (add_i > slots_p))
+                else $error("bsg_circular_ptr counter overflow (ptr_r=%b/add_i=%b/ptr_wrap=%b/ptr_n=%b)",ptr_r,add_i,ptr_wrap,ptr_n, slots_p);
             end
+	  // synopsys translate_on
 end
 endmodule // bsg_circular_ptr

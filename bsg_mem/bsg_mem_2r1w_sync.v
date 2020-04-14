@@ -72,7 +72,7 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
 
 //synopsys translate_off
 
-   always_ff @(posedge clk_lo)
+   always_ff @(negedge clk_lo)
      if (w_v_i)
        begin
           assert (w_addr_i < els_p)

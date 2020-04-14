@@ -39,20 +39,20 @@ module bsg_mem_3r1w #(parameter width_p=-1
 
    wire                   unused = w_reset_i;
 
-   always_ff @(posedge w_clk_i)
+   always_ff @(negedge w_clk_i)
      if (w_v_i)
        begin
 //synopsys translate_off
           assert (w_addr_i < els_p)
             else $error("Invalid address %x to %m of size %x\n", w_addr_i, els_p);
 
-          assert (!(r0_addr_i == w_addr_i && w_v_i && r0_v_i && !read_write_same_addr_p))
+          assert (!(r0_addr_i == w_addr_i && r0_v_i && !read_write_same_addr_p))
             else $error("%m: Attempt to read and write same address");
 
-          assert (!(r1_addr_i == w_addr_i && w_v_i && r1_v_i && !read_write_same_addr_p))
+          assert (!(r1_addr_i == w_addr_i && r1_v_i && !read_write_same_addr_p))
             else $error("%m: Attempt to read and write same address");
 
-          assert (!(r2_addr_i == w_addr_i && w_v_i && r2_v_i && !read_write_same_addr_p))
+          assert (!(r2_addr_i == w_addr_i && r2_v_i && !read_write_same_addr_p))
             else $error("%m: Attempt to read and write same address");
 //synopsys translate_on
 

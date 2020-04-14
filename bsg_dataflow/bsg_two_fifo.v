@@ -2,10 +2,13 @@
 //
 // two element fifo
 //
-// permissive interface
+// helpful interface on both input and output
 //
-// input : ready/valid   flow control
-// output: valid->yumi    flow control
+// input : ready/valid   flow control  (rv->&)
+// output: valid->yumi   flow control ( v->r)
+//
+// see https://github.com/bespoke-silicon-group/basejump_stl/blob/master/docs/BaseJump_STL_DAC_2018_Camera_Ready.pdf
+// to understand the flow control standards in BaseJump STL.
 //
 // INPUTS: although this module's inputs adheres to
 // ready/valid protocol where both sender and receiver

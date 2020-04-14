@@ -1,11 +1,15 @@
 #
 #		Makefile
 #
+	
+include ../../../../bsg_cadenv/cadenv.mk
 
-include $(BSG_CADENV_DIR)/cadenv.mk
+export BASEJUMP_STL_DIR = $(abspath ../../..)
+
+INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 
 sim:
-	vcs +v2k -R +lint=all -sverilog -full64 -f sv.include $(INCDIR) \
+	vcs +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE  -sverilog -full64 -f sv.include $(INCDIR) \
 		-debug_pp -timescale=1ps/1ps +vcs+vcdpluson
 
 dve:

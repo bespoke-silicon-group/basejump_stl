@@ -6,8 +6,10 @@
  *  @author Tommy Jung
  */
 
+
+`include "bsg_fpu_defines.vh"
+
 module bsg_fpu_mul
-  import bsg_fpu_pkg::*;
   #(parameter e_p="inv"   // exponent width
     , parameter m_p="inv" // mantissa width
   )

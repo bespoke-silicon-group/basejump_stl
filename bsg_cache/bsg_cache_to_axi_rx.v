@@ -8,6 +8,7 @@ module bsg_cache_to_axi_rx
   #(parameter num_cache_p="inv"
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
+    ,parameter tag_fifo_els_p=num_cache_p
 
     ,parameter axi_id_width_p="inv"
     ,parameter axi_addr_width_p="inv"
@@ -61,28 +62,31 @@ module bsg_cache_to_axi_rx
   // tag fifo
   //
   logic tag_fifo_v_li;
+  logic tag_fifo_ready_lo;
   logic tag_fifo_v_lo;
   logic tag_fifo_yumi_li;
   logic [lg_num_cache_lp-1:0] tag_lo;
 
   bsg_fifo_1r1w_small #(
     .width_p(lg_num_cache_lp)
-    ,.els_p(num_cache_p)
+    ,.els_p(tag_fifo_els_p)
   ) tag_fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
 
     ,.v_i(tag_fifo_v_li)
-    ,.ready_o()
+    ,.ready_o(tag_fifo_ready_lo)
     ,.data_i(tag_i)
 
     ,.v_o(tag_fifo_v_lo)
     ,.data_o(tag_lo)
     ,.yumi_i(tag_fifo_yumi_li)
   );
-
-  assign yumi_o = v_i & axi_arready_i;
-  assign tag_fifo_v_li = yumi_o;
+  
+  // yumi when both tag_fifo and axi_ar are ready
+  assign yumi_o = v_i & axi_arready_i & tag_fifo_ready_lo;
+  // tag_fifo is valid when axi_ar is ready
+  assign tag_fifo_v_li = v_i & axi_arready_i;
   
   // axi read address channel
   //
@@ -94,7 +98,8 @@ module bsg_cache_to_axi_rx
   assign axi_arcache_o = 4'b0000; // non-bufferable
   assign axi_arprot_o = 2'b00;    // unprevileged
   assign axi_arlock_o = 1'b0;    // normal access
-  assign axi_arvalid_o = v_i;
+  // axi_ar is valid when tag_fifo is ready
+  assign axi_arvalid_o = v_i & tag_fifo_ready_lo;
 
  
   // axi read data channel

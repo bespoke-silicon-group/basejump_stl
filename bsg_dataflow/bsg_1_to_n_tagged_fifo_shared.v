@@ -63,8 +63,8 @@ module bsg_1_to_n_tagged_fifo_shared   #(parameter width_p              = "inv"
    logic [num_out_p-1:0][ptr_width_lp-1:0] rptr_r, wptr_r;
    logic [num_out_p-1:0]                   full,   empty;
    logic [num_out_p-1:0]                   enque, deque;
-   logic [num_out_p-1:0][`BSG_SAFE_CLOG2(buffering_p)] els;
-   logic [num_out_p-1:0]                               credits_avail;
+   logic [num_out_p-1:0][`BSG_SAFE_CLOG2(buffering_p)-1:0] els;
+   logic [num_out_p-1:0]                                   credits_avail;
 
    wire read_req;
    wire write_req = valid_i;
@@ -109,7 +109,7 @@ module bsg_1_to_n_tagged_fifo_shared   #(parameter width_p              = "inv"
              assign els[i] = 0;
           end
         else
-          begin : buf
+          begin : bufd
              bsg_fifo_tracker #(.els_p(els_p)
                                 ) ft
                (.clk_i
@@ -200,8 +200,8 @@ module bsg_1_to_n_tagged_fifo_shared   #(parameter width_p              = "inv"
            );
      end
 
-   bsg_dff_reset #(.width_p($size(big_ram_re)+$size(read_req_tag)), .init_val_p(0))
-   (.clk_i,.reset_i,
+   bsg_dff_reset #(.width_p($size(big_ram_re)+$size(read_req_tag)), .init_val_p(0)) dff
+   (.clk_i,.reset_i
     ,.data_i({big_ram_re,   read_req_tag  })
     ,.data_o({big_ram_re_r, read_req_tag_r})
     );
@@ -236,13 +236,13 @@ module bsg_1_to_n_tagged_fifo_shared   #(parameter width_p              = "inv"
    assign valid_o = valid_o_tmp | (unbuffered_mask_p[i] & tag_one_hot_or_not[i]);
 
    // if we have an unbuffered channel, we override the channel
-   for (int i = 0; i < num_out_p; i=i+1)
+   for (i = 0; i < num_out_p; i=i+1)
      begin: rof
         assign data_o [i]  = unbuffered_mask_p[i] ? data_i : data_o_tmp;
      end
 
    always_ff @(negedge clk_i)
      assert(yumi_lo == big_ram_re_r)
-       else ("%m error; unexpected full little FIFO; credit counters not working?");
+       else $error("%m error; unexpected full little FIFO; credit counters not working?");
 
 endmodule

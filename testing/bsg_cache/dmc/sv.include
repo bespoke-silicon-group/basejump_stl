@@ -46,6 +46,7 @@ $BASEJUMP_STL_DIR/bsg_dataflow/bsg_round_robin_2_to_2.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1r1w_large.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1rw_large.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1r1w_small.v
+$BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1r1w_small_unhardened.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_two_fifo.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_tracker.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_parallel_in_serial_out.v
@@ -54,7 +55,7 @@ $BASEJUMP_STL_DIR/bsg_dataflow/bsg_make_2D_array.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_flatten_2D_array.v
 
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache.v
-$BASEJUMP_STL_DIR/bsg_cache/bsg_cache_pkt_decode.v
+$BASEJUMP_STL_DIR/bsg_cache/bsg_cache_decode.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_dma.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_miss.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_sbuf.v

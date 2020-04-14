@@ -16,6 +16,7 @@ module bsg_nonsynth_clock_gen_plusarg #( parameter default_clk_per_p="inv" )
   output logic o
 );
 
+`ifndef VERILATOR
   // We start logic hi so the first pos-edge occurs at T=<clk_per>. The first
   // negative edge will occur at T=<clk_per>/2.
   logic clk_lo = 1'b1;
@@ -32,6 +33,11 @@ module bsg_nonsynth_clock_gen_plusarg #( parameter default_clk_per_p="inv" )
 
   // Assign clock to output port
   assign o = clk_lo;
+`else
+  initial begin
+    $error("bsg_nonsynth_clock_gen_plusarg is not supported in Verilator due to delay statement (#)");
+  end
+`endif
 
 endmodule
 

@@ -40,12 +40,12 @@ module bsg_wormhole_router_output_control
     ,.tag_o        ()
     // make sure to only allocate the port if we succeeded in transmitting the header
     // otherwise the input will try to allocate again on the next cycle
-    ,.yumi_i       (free_to_schedule & valid_o) // update round_robin
+    ,.yumi_i       (free_to_schedule & ready_i & valid_o) // update round_robin
     );
 
    assign scheduled_n = grants_lo | scheduled_with_release;
    assign data_sel_o = scheduled_n;
-   assign valid_o = ready_i & (|(scheduled_n & valid_i));
+   assign valid_o = (|(scheduled_n & valid_i));
    assign yumi_o  = ready_i ? (scheduled_n & valid_i) : '0;
 endmodule
 

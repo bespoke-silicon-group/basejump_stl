@@ -1,3 +1,7 @@
-[submodule "bsg_riscv/imports/vscale"]
-	path = bsg_riscv/imports/vscale
-	url = https://github.com/ucb-bar/vscale.git
+[submodule "imports/ramulator"]
+	path = imports/ramulator
+	url = https://github.com/bespoke-silicon-group/ramulator
+[submodule "DRAMSim3"]
+	path = imports/DRAMSim3
+	url = git@github.com:bespoke-silicon-group/bsg_dramsim3
+        update = none
