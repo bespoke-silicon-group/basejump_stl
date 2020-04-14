@@ -14,7 +14,9 @@ if (els_p == words && width_p == bits)                   \
       ,.CEB   ( ~v_i      )                              \
       ,.CLK   ( clk_i     )                              \
       ,.Q     ( data_o    )                              \
-      ,.DELAY ( 2'b0      ));                            \
+      ,.WT    ( 1'b0      )                              \
+      ,.DELAY ( 2'b0      )                              \
+      ,.TEST  ( 2'b0      ));                            \
   end
 
 `define bsg_mem_1rf_sync_macro_bit(words,bits,lgEls,mux) \
