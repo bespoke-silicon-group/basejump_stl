@@ -158,7 +158,7 @@ module bsg_cache_non_blocking_mhu
     ,.data_o(mhu_dff_r)
   );
 
-  assign mhu_dff_n = {
+  assign mhu_dff_n = '{
     decode : decode_tl_i,
     valid : valid_tl_i,
     lock : lock_tl_i,

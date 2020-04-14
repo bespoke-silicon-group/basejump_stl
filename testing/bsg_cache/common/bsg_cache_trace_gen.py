@@ -4,35 +4,38 @@
 #   @author tommy
 #
 
-LB = 0b00000
-LH = 0b00001
-LW = 0b00010
-LD = 0b00011
+LB = 0b000000
+LH = 0b000001
+LW = 0b000010
+LD = 0b000011
 
-LBU = 0b00100
-LHU = 0b00101
-LWU = 0b00110
-LDU = 0b00111
+LBU = 0b000100
+LHU = 0b000101
+LWU = 0b000110
+LDU = 0b000111
 
-SB = 0b01000
-SH = 0b01001
-SW = 0b01010
-SD = 0b01011
+SB = 0b001000
+SH = 0b001001
+SW = 0b001010
+SD = 0b001011
 
-LM = 0b01100
-SM = 0b01101
+LM = 0b001100
+SM = 0b001101
 
-TAGST = 0b10000
-TAGFL = 0b10001
-TAGLV = 0b10010
-TAGLA = 0b10011
+TAGST = 0b010000
+TAGFL = 0b010001
+TAGLV = 0b010010
+TAGLA = 0b010011
 
-AFL = 0b11000
-AFLINV = 0b11001
-AINV = 0b11010
+AFL = 0b011000
+AFLINV = 0b011001
+AINV = 0b011010
 
-ALOCK = 0b11011
-AUNLOCK = 0b11100
+ALOCK = 0b011011
+AUNLOCK = 0b011100
+
+AMOSWAP_W = 0b100000
+AMOOR_W   = 0b100100
 
 
 class BsgCacheTraceGen:
@@ -42,13 +45,13 @@ class BsgCacheTraceGen:
     self.addr_width_p = addr_width_p
     self.data_width_p = data_width_p
     self.data_mask_width_lp = (data_width_p>>3)
-    self.packet_len = addr_width_p + data_width_p + 5 + self.data_mask_width_lp
+    self.packet_len = addr_width_p + data_width_p + 6 + self.data_mask_width_lp
 
 
   # send packet
   def send(self, opcode, addr, data=0, mask=0):
     trace = "0001_"
-    trace += self.get_bin_str(opcode, 5) + "_"
+    trace += self.get_bin_str(opcode, 6) + "_"
     trace += self.get_bin_str(addr, self.addr_width_p) + "_"
     trace += self.get_bin_str(data, self.data_width_p) + "_"
     trace += self.get_bin_str(mask, self.data_mask_width_lp)
@@ -64,6 +67,11 @@ class BsgCacheTraceGen:
 
   # done
   def done(self):
+    trace = "0011_"
+    trace += self.get_bin_str(0, self.packet_len)
+    print(trace)
+
+  def finish(self):
     trace = "0100_"
     trace += self.get_bin_str(0, self.packet_len)
     print(trace)

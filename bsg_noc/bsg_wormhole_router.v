@@ -225,9 +225,10 @@ module bsg_wormhole_router
               begin
                 if ((reset_i === 1'b0) && link_o_cast[i].v)
                   begin
-                     // shouldn't really be an error condition; more of indicator that something is not tested enough!
-                     assert (link_i_cast[i].ready_and_rev) else $error("%m Sending when space not available");
-                     $display("%m out ch%2d: sending   packet %h",i,link_o_cast[i].data);
+                    if (link_i_cast[i].ready_and_rev)
+                      begin
+                        $display("%m out ch%2d: sending   packet %h",i,link_o_cast[i].data);
+                      end
                   end
               end
          end

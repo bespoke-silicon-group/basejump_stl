@@ -1,0 +1,6 @@
+bsg_nonsynth_dramsim3_trace.txt
+dramsim3epoch.json
+trace.tr
+vc_hdrs.h
+*.trace
+*.so

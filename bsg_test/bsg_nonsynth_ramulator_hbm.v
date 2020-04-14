@@ -31,6 +31,7 @@ module bsg_nonsynth_ramulator_hbm
 
     , output logic [num_channels_p-1:0] data_v_o
     , output logic [num_channels_p-1:0][data_width_p-1:0] data_o
+    , output logic [num_channels_p-1:0][channel_addr_width_p-1:0] ch_addr_o
   );
 
 
@@ -74,6 +75,8 @@ module bsg_nonsynth_ramulator_hbm
       {byte_offset_width_lp{1'b0}}
     };
   end
+  
+  assign ch_addr_o = read_done_ch_addr;
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
@@ -127,7 +130,7 @@ module bsg_nonsynth_ramulator_hbm
 
   for (genvar i = 0; i < num_channels_p; i++) begin
 
-    bsg_nonsynth_ramulator_hbm_channel #(
+    bsg_nonsynth_test_dram_channel #(
       .channel_addr_width_p(channel_addr_width_p)
       ,.data_width_p(data_width_p)
       ,.init_mem_p(init_mem_p)
