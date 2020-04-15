@@ -2,7 +2,6 @@
 
 using namespace bsg_nonsynth_dpi;
 
-int bsg_timekeeper::tb_key;
 long long bsg_timekeeper::current_timeval_ps = 0;
 std::priority_queue<bsg_clock_gen, std::vector<bsg_clock_gen> > bsg_timekeeper::pq;
 

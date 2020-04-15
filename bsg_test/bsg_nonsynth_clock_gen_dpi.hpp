@@ -42,7 +42,6 @@ namespace bsg_nonsynth_dpi{
                 }
 
         public:
-                static int tb_key;
                 static long long current_timeval(){
                         return current_timeval_ps;
                 }

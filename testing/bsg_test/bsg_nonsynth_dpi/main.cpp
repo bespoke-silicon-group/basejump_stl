@@ -41,10 +41,6 @@ int main(int argc, char** argv) {
         Verilated::internalsDump();
 
         svScope scope;
-
-        scope = svGetScopeFromName("TOP");
-        svPutUserData(scope, &bsg_timekeeper::tb_key, top);
-
         scope = svGetScopeFromName("TOP.top");
         svSetScope(scope);
 
