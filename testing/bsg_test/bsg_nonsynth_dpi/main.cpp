@@ -17,6 +17,11 @@
 // 
 // bsg_nonsynth_dpi.hpp contains the C/C++ class-wrappers for the DPI
 // interface. The classes are in the bsg_nonsynth_dpi namespace
+// Verilator-Generated Headers. It is called Vtop.h because top.v is
+// the top-level verilog file.
+#include <Vtop.h>
+
+#include <bsg_nonsynth_clock_gen_dpi.hpp>
 #include <bsg_nonsynth_dpi.hpp>
 using namespace bsg_nonsynth_dpi;
 
@@ -25,116 +30,6 @@ using namespace bsg_nonsynth_dpi;
 // Verilator / DPI Headers
 #include <svdpi.h>
 #include <verilated.h>
-
-// Verilator-Generated Headers. It is called Vtop.h because top.v is
-// the top-level verilog file.
-#include <Vtop.h>
-#define BSG_VERILATOR_TB_CLASS Vtop
-
-// This clock generator work is initial work to get a
-// bsg_nonsynth_clkgen-like interface in verilator. It's ugly at the
-// moment, so please ignore it.
-class bsg_clk_gen{
-        long long cycle_time_p;
-        bool clk: 1;
-        svScope scope;
-        BSG_VERILATOR_TB_CLASS *tb;
-        long long next_edge_ps;
-public:
-        bsg_clk_gen(const long long cycle_time_p, const char* hier, BSG_VERILATOR_TB_CLASS *tb);
-        long long get_next_edge_ps() const{
-                return next_edge_ps;
-        }
-        bool operator<(const bsg_clk_gen& o) const{
-                return this->get_next_edge_ps() > o.get_next_edge_ps();
-        }
-
-        bool tock(){
-                svScope prev = svSetScope(scope);
-                bool res;
-
-                this->clk ^= 1;
-                this->next_edge_ps += cycle_time_p/2;
-
-                res = this->tb->set_clk_level(clk);
-
-                svSetScope(prev);
-                return res;
-        }
-};
-
-class bsg_time_tracker{
-        static std::priority_queue<bsg_clk_gen, std::vector<bsg_clk_gen> > pq;
-        static long long current_timeval_ps;
-        static long long advance(long long timeval_new){
-                current_timeval_ps = timeval_new;
-                return current_timeval_ps;
-        }
-
-public:
-        static int tb_key;
-        static long long current_timeval(){
-                return current_timeval_ps;
-        }
-
-        static void next();
-
-        static int register_bsg_clk_gen(long long cycle_time_p, const char * hierarchy);
-};
-
-void bsg_time_tracker::next(){
-        std::queue<bsg_clk_gen> temp;
-        bsg_clk_gen &next = const_cast<bsg_clk_gen&>(pq.top());
-        long long next_timeval = next.get_next_edge_ps();
-
-        do {
-                next.tock();
-                pq.pop();
-                next = pq.top();
-                temp.push(next);
-        } while(next_timeval == next.get_next_edge_ps());
-
-        advance(next_timeval);
-
-        while (!temp.empty()){
-                pq.push(temp.front());
-                temp.pop();
-        }
-}
-
-int bsg_time_tracker::register_bsg_clk_gen(long long cycle_time_p, const char * hierarchy){
-        BSG_VERILATOR_TB_CLASS *top;
-        svScope scope = svGetScopeFromName("TOP");
-        top = static_cast<BSG_VERILATOR_TB_CLASS *>(svGetUserData(scope, &bsg_time_tracker::tb_key));
-
-        bsg_clk_gen *cg = new bsg_clk_gen(cycle_time_p, hierarchy, top);
-        pq.push(*cg);
-        return pq.size();
-}
-
-int bsg_time_tracker::tb_key;
-long long bsg_time_tracker::current_timeval_ps = 0;
-std::priority_queue<bsg_clk_gen, std::vector<bsg_clk_gen> > bsg_time_tracker::pq;
-
-bsg_clk_gen::bsg_clk_gen(const long long cycle_time_p, const char* hier, BSG_VERILATOR_TB_CLASS *tb) :
-        tb(tb),
-        cycle_time_p(cycle_time_p),
-        clk(1){
-        // TODO: Check that current_timeval is 0?
-
-        this->scope = svGetScopeFromName(hier); // TODO: Check hierarchy exists.
-        this->next_edge_ps = bsg_time_tracker::current_timeval() + cycle_time_p / 2; // TODO Check that cycle_time_p is divisible by 2
-}
-
-// Called by $time in Verilog
-double sc_time_stamp () {
-        return static_cast<double>(bsg_time_tracker::current_timeval());
-}
-
-// Register a new clock generator
-int bsg_nonsynth_clock_gen_register(long long cycle_time_p, const char* hierarchy){
-        return bsg_time_tracker::register_bsg_clk_gen(cycle_time_p, hierarchy);
-}
 
 int main(int argc, char** argv) {
         Verilated::commandArgs(argc, argv);
@@ -148,7 +43,7 @@ int main(int argc, char** argv) {
         svScope scope;
 
         scope = svGetScopeFromName("TOP");
-        svPutUserData(scope, &bsg_time_tracker::tb_key, top);
+        svPutUserData(scope, &bsg_timekeeper::tb_key, top);
 
         scope = svGetScopeFromName("TOP.top");
         svSetScope(scope);
@@ -177,7 +72,7 @@ int main(int argc, char** argv) {
         // Advance 100 times to clear reset
         for(int i = 0; i < 100; ++i){
 
-                bsg_time_tracker::next();
+                bsg_timekeeper::next();
                 top->eval();
         }
 
@@ -196,7 +91,7 @@ int main(int argc, char** argv) {
 
                 // Send until FIFO is full
                 do {
-                        bsg_time_tracker::next(); // top->tick();
+                        bsg_timekeeper::next();
                         top->eval();
 
                         if(d2f->is_window()){
@@ -213,7 +108,7 @@ int main(int argc, char** argv) {
                 // continue writing it until it is accepted to avoid a
                 // protocol violation.
                 do {
-                        bsg_time_tracker::next(); // top->tick();
+                        bsg_timekeeper::next();
                         top->eval();
 
                         // We have to continue transmitting until the
@@ -253,7 +148,7 @@ int main(int argc, char** argv) {
         unsigned int read = 0, written = 0;
         input_val = rand();
         while(read < 100){
-                bsg_time_tracker::next(); // top->tick();
+                bsg_timekeeper::next();
                 top->eval();
 
                 // Write a random value to the FIFO, and generate a new random value
@@ -289,7 +184,7 @@ int main(int argc, char** argv) {
         deq = false;
         // Send until FIFO is full
         do {
-                bsg_time_tracker::next(); // top->tick();
+                bsg_timekeeper::next();
                 top->eval();
                 if(d2f->is_window()){
 
@@ -305,7 +200,7 @@ int main(int argc, char** argv) {
         written = 0; read = 0;
         // While the FIFO is nearly full, write/read 100 values
         while(read  < 100){
-                bsg_time_tracker::next(); // top->tick();
+                bsg_timekeeper::next();
                 top->eval();
 
                 // Write a random value to the FIFO
@@ -336,7 +231,7 @@ int main(int argc, char** argv) {
         // writing it until it is accepted to avoid a protocol
         // violation.
         do {
-                bsg_time_tracker::next(); // top->tick();
+                bsg_timekeeper::next();
                 top->eval();
 
                 if(f2d->is_window()){
@@ -361,22 +256,22 @@ int main(int argc, char** argv) {
         printf("BSG INFO: Nearly-Full RW test passed\n");
         printf("BSG INFO: All tests passed\n");
 
-        bsg_time_tracker::next(); // top->tick();
+        bsg_timekeeper::next();
         top->eval();
 
-        bsg_time_tracker::next(); // top->tick();
+        bsg_timekeeper::next();
         top->eval();
 
-        bsg_time_tracker::next(); // top->tick();
+        bsg_timekeeper::next();
         top->eval();
 
-        bsg_time_tracker::next(); // top->tick();
+        bsg_timekeeper::next();
         top->eval();
 
-        bsg_time_tracker::next(); // top->tick();
+        bsg_timekeeper::next();
         top->eval();
 
-        bsg_time_tracker::next(); // top->tick();
+        bsg_timekeeper::next();
         top->eval();
 
         // You must call delete to call the internal DPI function
