@@ -110,6 +110,7 @@ module bsg_nonsynth_dpi_to_fifo
    export "DPI-C" function debug;
    export "DPI-C" function width;
    export "DPI-C" function tx;
+   export "DPI-C" function is_window;
 `endif // __BSG_PERMODULE_EXPORT
    
    // Set or unset the debug_o output bit. If a state change occurs
@@ -191,6 +192,7 @@ module bsg_nonsynth_dpi_to_fifo
       edgepol <= clk_i;
    end
 
+
    // TODO: Check that tx isn't called multiple times in a cycle
    function bit tx(input logic [width_p-1:0] data_i);
 
@@ -231,6 +233,13 @@ module bsg_nonsynth_dpi_to_fifo
 
       return (ready_i === 1);
    endfunction
+
+   // The function isWindow returns true if the interface is in a
+   // valid time-window to call tx()
+   function bit is_window();
+      return (~tx_r & clk_i & edgepol);
+   endfunction
+
 
    // We set v_o and data_o on a negative clock edge so that it is
    // seen on the next positive edge. v_o_n and data_o_n hold the "next"

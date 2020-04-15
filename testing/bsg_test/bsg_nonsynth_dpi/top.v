@@ -6,11 +6,6 @@ module top();
    // modules. There may be a cleaner way to do this but I haven't
    // found it yet.
 
-   export "DPI-C" function tick;
-   function bit tick();
-      return core_clk_gen.tick();
-   endfunction;
-
    export "DPI-C" function f2d_init;
    function void f2d_init();
       f2d_i.init();
@@ -61,6 +56,16 @@ module top();
       return d2f_i.tx(data_i);
    endfunction;
 
+   export "DPI-C" function d2f_is_window;
+   function bit d2f_is_window();
+      return d2f_i.is_window();
+   endfunction;
+
+   export "DPI-C" function f2d_is_window;
+   function bit f2d_is_window();
+      return f2d_i.is_window();
+   endfunction;
+
    export "DPI-C" function finish;
    function void finish();
       $finish;
@@ -81,10 +86,16 @@ module top();
    core_clk_gen
      (.o(ns_clk));
 
+   bsg_nonsynth_clock_gen_dpi
+     #(.cycle_time_p(lc_cycle_time_p/2)
+       )
+   core_clk_gen2
+     (.o(ns_clk));
+
    bsg_nonsynth_reset_gen 
      #(
        .num_clocks_p(1)
-       ,.reset_cycles_lo_p(0)
+       ,.reset_cycles_lo_p(1)
        ,.reset_cycles_hi_p(2)
        ) 
    reset_gen 
@@ -100,7 +111,7 @@ module top();
      if(debug_o)
        $display("BSG DBGINFO: top -- Cycle %d", cycle);
    end
-      
+   
    export "DPI-C" function get_cycle;
    function int get_cycle();
       return cycle;

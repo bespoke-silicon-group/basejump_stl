@@ -29,77 +29,127 @@ using namespace bsg_nonsynth_dpi;
 // Verilator-Generated Headers. It is called Vtop.h because top.v is
 // the top-level verilog file.
 #include <Vtop.h>
+#define BSG_VERILATOR_TB_CLASS Vtop
 
 // This clock generator work is initial work to get a
 // bsg_nonsynth_clkgen-like interface in verilator. It's ugly at the
 // moment, so please ignore it.
-class bsg_clk_gen;
-
-class bsg_time{
-        static std::vector<bsg_clk_gen> gens;
-        static double timeval;
+class bsg_clk_gen{
+        long long cycle_time_p;
+        bool clk: 1;
+        svScope scope;
+        BSG_VERILATOR_TB_CLASS *tb;
+        long long next_edge_ps;
 public:
-        static double incr(double incr){
-                return timeval += incr;
+        bsg_clk_gen(const long long cycle_time_p, const char* hier, BSG_VERILATOR_TB_CLASS *tb);
+        long long get_next_edge_ps() const{
+                return next_edge_ps;
+        }
+        bool operator<(const bsg_clk_gen& o) const{
+                return this->get_next_edge_ps() > o.get_next_edge_ps();
         }
 
-        static double time(){
-                return timeval;
-        }
+        bool tock(){
+                svScope prev = svSetScope(scope);
+                bool res;
 
-        static bsg_clk_gen& get(int id){
-                return gens[id];
-        }
+                this->clk ^= 1;
+                this->next_edge_ps += cycle_time_p/2;
 
-        static int add(bsg_clk_gen &cg){
-                int id = gens.size();
-                gens.push_back(cg);
-                return id;
+                res = this->tb->set_clk_level(clk);
+
+                svSetScope(prev);
+                return res;
         }
 };
-double bsg_time::timeval = 0.0d;
-std::vector<bsg_clk_gen> bsg_time::gens = std::vector<bsg_clk_gen>();
+
+class bsg_time_tracker{
+        static std::priority_queue<bsg_clk_gen, std::vector<bsg_clk_gen> > pq;
+        static long long current_timeval_ps;
+        static long long advance(long long timeval_new){
+                current_timeval_ps = timeval_new;
+                return current_timeval_ps;
+        }
+
+public:
+        static int tb_key;
+        static long long current_timeval(){
+                return current_timeval_ps;
+        }
+
+        static void next();
+
+        static int register_bsg_clk_gen(long long cycle_time_p, const char * hierarchy);
+};
+
+void bsg_time_tracker::next(){
+        std::queue<bsg_clk_gen> temp;
+        bsg_clk_gen &next = const_cast<bsg_clk_gen&>(pq.top());
+        long long next_timeval = next.get_next_edge_ps();
+
+        do {
+                next.tock();
+                pq.pop();
+                next = pq.top();
+                temp.push(next);
+        } while(next_timeval == next.get_next_edge_ps());
+
+        advance(next_timeval);
+
+        while (!temp.empty()){
+                pq.push(temp.front());
+                temp.pop();
+        }
+}
+
+int bsg_time_tracker::register_bsg_clk_gen(long long cycle_time_p, const char * hierarchy){
+        BSG_VERILATOR_TB_CLASS *top;
+        svScope scope = svGetScopeFromName("TOP");
+        top = static_cast<BSG_VERILATOR_TB_CLASS *>(svGetUserData(scope, &bsg_time_tracker::tb_key));
+
+        bsg_clk_gen *cg = new bsg_clk_gen(cycle_time_p, hierarchy, top);
+        pq.push(*cg);
+        return pq.size();
+}
+
+int bsg_time_tracker::tb_key;
+long long bsg_time_tracker::current_timeval_ps = 0;
+std::priority_queue<bsg_clk_gen, std::vector<bsg_clk_gen> > bsg_time_tracker::pq;
+
+bsg_clk_gen::bsg_clk_gen(const long long cycle_time_p, const char* hier, BSG_VERILATOR_TB_CLASS *tb) :
+        tb(tb),
+        cycle_time_p(cycle_time_p),
+        clk(1){
+        // TODO: Check that current_timeval is 0?
+
+        this->scope = svGetScopeFromName(hier); // TODO: Check hierarchy exists.
+        this->next_edge_ps = bsg_time_tracker::current_timeval() + cycle_time_p / 2; // TODO Check that cycle_time_p is divisible by 2
+}
 
 // Called by $time in Verilog
 double sc_time_stamp () {
-        return bsg_time::time();
-}
-
-class bsg_clk_gen{
-        double cycle_time_p;
-        bool clk: 1;
-public:
-        bsg_clk_gen(const double cycle_time_p) : cycle_time_p(cycle_time_p) , clk(1){}
-
-        bool tick(){
-                bsg_time::incr(cycle_time_p/2);
-                return clk ^= 1;
-        }
-};
-
-unsigned char bsg_nonsynth_clock_gen_tick(int id){
-        return bsg_time::get(id).tick();
+        return static_cast<double>(bsg_time_tracker::current_timeval());
 }
 
 // Register a new clock generator
-int bsg_nonsynth_clock_gen_init(double cycle_time_p){
-        bsg_clk_gen *cg = new bsg_clk_gen(cycle_time_p);
-        bsg_time::add(*cg);
+int bsg_nonsynth_clock_gen_register(long long cycle_time_p, const char* hierarchy){
+        return bsg_time_tracker::register_bsg_clk_gen(cycle_time_p, hierarchy);
 }
 
 int main(int argc, char** argv) {
         Verilated::commandArgs(argc, argv);
-
-        // Instantiation of module
-        Vtop *top = new Vtop;
+        Vtop *top  = new Vtop;
 
         // Uncomment this to debug the module hierarchy. This is
         // useful when you're trying to figure out the names of the
         // DPI functions you are trying to call.
-        //
-        // Verilated::internalsDump();
+        Verilated::internalsDump();
 
         svScope scope;
+
+        scope = svGetScopeFromName("TOP");
+        svPutUserData(scope, &bsg_time_tracker::tb_key, top);
+
         scope = svGetScopeFromName("TOP.top");
         svSetScope(scope);
 
@@ -114,23 +164,21 @@ int main(int argc, char** argv) {
         fifo_to_dpi<unsigned int> *f2d = 
                 new fifo_to_dpi<unsigned int>(top->f2d_init, top->f2d_fini,
                                               top->f2d_debug,top->f2d_width,
-                                              top->f2d_rx);
+                                              top->f2d_rx, top->f2d_is_window);
         dpi_to_fifo<unsigned int> *d2f = 
                 new dpi_to_fifo<unsigned int>(top->d2f_init, top->d2f_fini,
                                               top->d2f_debug, top->d2f_width,
-                                              top->d2f_tx);
+                                              top->d2f_tx, top->d2f_is_window);
 
         // debug(true) will cause BSG DBGINFO statments to be printed
         f2d->debug(false);
         d2f->debug(false);
 
-        // Run for 100 Cycles to clear reset
+        // Advance 100 times to clear reset
         for(int i = 0; i < 100; ++i){
-                top->tick();
-                top->eval(); // Negedge Clk
 
-                top->tick();
-                top->eval(); // Posedge Clk
+                bsg_time_tracker::next();
+                top->eval();
         }
 
         std::queue<int> queue;
@@ -148,16 +196,16 @@ int main(int argc, char** argv) {
 
                 // Send until FIFO is full
                 do {
-                        top->tick();
-                        top->eval(); // Negedge Clk
-                        top->tick();
-                        top->eval(); // Posedge Clk
+                        bsg_time_tracker::next(); // top->tick();
+                        top->eval();
 
-                        // Write a random value to the FIFO
-                        input_val = rand();
+                        if(d2f->is_window()){
+                                // Write a random value to the FIFO
+                                input_val = rand();
 
-                        if(enq = d2f->tx(input_val))
-                                queue.push(input_val);
+                                if(enq = d2f->tx(input_val))
+                                        queue.push(input_val);
+                        }
                 }while(enq);
 
                 // Drain FIFO until empty. Check each value. However,
@@ -165,29 +213,29 @@ int main(int argc, char** argv) {
                 // continue writing it until it is accepted to avoid a
                 // protocol violation.
                 do {
-                        top->tick();
-                        top->eval(); // Negedge Clk
-                        top->tick();
-                        top->eval(); // Posedge Clk
+                        bsg_time_tracker::next(); // top->tick();
+                        top->eval();
 
                         // We have to continue transmitting until the
                         // last data of the FILL loop is consumed
-                        if(!enq){
+                        if(!enq & d2f->is_window()){
                                 if(enq = d2f->tx(input_val))
                                         queue.push(input_val);
                         }
 
                         // Read the FIFO, and check each value
-                        deq = f2d->rx(output_val);
-                        if(deq && (output_val != queue.front())){
-                                fprintf(stderr,
-                                        "BSG ERROR: data mismatch! HW: %x, SW:%x\n",
-                                        output_val, queue.front());
-                                exit(1);
-                        }
+                        if(top-> f2d_is_window()){
+                                deq = f2d->rx(output_val);
+                                if(deq && (output_val != queue.front())){
+                                        fprintf(stderr,
+                                                "BSG ERROR: data mismatch! HW: %x, SW:%x\n",
+                                                output_val, queue.front());
+                                        exit(1);
+                                }
 
-                        if (deq){
-                                queue.pop();
+                                if (deq){
+                                        queue.pop();
+                                }
                         }
                 } while(deq);
         }
@@ -205,29 +253,29 @@ int main(int argc, char** argv) {
         unsigned int read = 0, written = 0;
         input_val = rand();
         while(read < 100){
-                top->tick();
-                top->eval(); // Negedge Clk
-                top->tick();
-                top->eval(); // Posedge Clk
+                bsg_time_tracker::next(); // top->tick();
+                top->eval();
 
                 // Write a random value to the FIFO, and generate a new random value
-                if(written < 100 && (enq = d2f->tx(input_val))){
+                if(written < 100 && d2f->is_window() && (enq = d2f->tx(input_val))){
                         queue.push(input_val);
                         input_val = rand();
                         written++;
                 }
 
-                deq = f2d->rx(output_val);
-                if(deq && (output_val != queue.front())){
-                        fprintf(stderr,
-                                "BSG ERROR: data mismatch! HW: %x, SW:%x\n",
-                                output_val, queue.front());
-                        exit(1);
-                }
+                if(f2d->is_window()){
+                        deq = f2d->rx(output_val);
+                        if(deq && (output_val != queue.front())){
+                                fprintf(stderr,
+                                        "BSG ERROR: data mismatch! HW: %x, SW:%x\n",
+                                        output_val, queue.front());
+                                exit(1);
+                        }
 
-                if(deq) {
-                        queue.pop();
-                        read++;
+                        if(deq) {
+                                queue.pop();
+                                read++;
+                        }
                 }
         }
 
@@ -241,15 +289,15 @@ int main(int argc, char** argv) {
         deq = false;
         // Send until FIFO is full
         do {
-                top->tick();
-                top->eval(); // Negedge Clk
-                top->tick();
-                top->eval(); // Posedge Clk
+                bsg_time_tracker::next(); // top->tick();
+                top->eval();
+                if(d2f->is_window()){
 
-                // Write a random value to the FIFO
-                input_val = rand();
-                if(enq = d2f->tx(input_val))
-                        queue.push(input_val);
+                        // Write a random value to the FIFO
+                        input_val = rand();
+                        if(enq = d2f->tx(input_val))
+                                queue.push(input_val);
+                }
         } while(enq);
 
         enq = false;
@@ -257,29 +305,29 @@ int main(int argc, char** argv) {
         written = 0; read = 0;
         // While the FIFO is nearly full, write/read 100 values
         while(read  < 100){
-                top->tick();
-                top->eval(); // Negedge Clk
-                top->tick();
-                top->eval(); // Posedge Clk
+                bsg_time_tracker::next(); // top->tick();
+                top->eval();
 
                 // Write a random value to the FIFO
-                if(written < 100 && (enq = d2f->tx(input_val))){
+                if(written < 100 && d2f->is_window() && (enq = d2f->tx(input_val))){
                         queue.push(input_val);
                         input_val = rand();
                         written++;
                 }
+         
+                if(f2d->is_window()){
+                        deq = f2d->rx(output_val);
+                        if(deq && (output_val != queue.front())){
+                                fprintf(stderr,
+                                        "BSG ERROR: data mismatch! HW: %x, SW:%x\n",
+                                        output_val, queue.front());
+                                exit(1);
+                        }
 
-                deq = f2d->rx(output_val);
-                if(deq && (output_val != queue.front())){
-                        fprintf(stderr,
-                                "BSG ERROR: data mismatch! HW: %x, SW:%x\n",
-                                output_val, queue.front());
-                        exit(1);
-                }
-
-                if(deq) {
-                        queue.pop();
-                        read++;
+                        if(deq) {
+                                queue.pop();
+                                read++;
+                        }
                 }
         }
 
@@ -288,21 +336,21 @@ int main(int argc, char** argv) {
         // writing it until it is accepted to avoid a protocol
         // violation.
         do {
-                top->tick();
-                top->eval(); // Negedge Clk
-                top->tick();
-                top->eval(); // Posedge Clk
+                bsg_time_tracker::next(); // top->tick();
+                top->eval();
 
-                deq = f2d->rx(output_val);
-                if(deq && (output_val != queue.front())){
-                        fprintf(stderr,
-                                "BSG ERROR: data mismatch! HW: %x, SW:%x\n",
-                                output_val, queue.front());
-                        exit(1);
-                }
+                if(f2d->is_window()){
+                        deq = f2d->rx(output_val);
+                        if(deq && (output_val != queue.front())){
+                                fprintf(stderr,
+                                        "BSG ERROR: data mismatch! HW: %x, SW:%x\n",
+                                        output_val, queue.front());
+                                exit(1);
+                        }
 
-                if(deq) {
-                        queue.pop();
+                        if(deq) {
+                                queue.pop();
+                        }
                 }
         } while (deq);
 
@@ -313,22 +361,22 @@ int main(int argc, char** argv) {
         printf("BSG INFO: Nearly-Full RW test passed\n");
         printf("BSG INFO: All tests passed\n");
 
-        top->tick();
+        bsg_time_tracker::next(); // top->tick();
         top->eval();
 
-        top->tick();
+        bsg_time_tracker::next(); // top->tick();
         top->eval();
 
-        top->tick();
+        bsg_time_tracker::next(); // top->tick();
         top->eval();
 
-        top->tick();
+        bsg_time_tracker::next(); // top->tick();
         top->eval();
 
-        top->tick();
+        bsg_time_tracker::next(); // top->tick();
         top->eval();
 
-        top->tick();
+        bsg_time_tracker::next(); // top->tick();
         top->eval();
 
         // You must call delete to call the internal DPI function
