@@ -64,8 +64,8 @@ module bsg_nonsynth_dpi_to_fifo
     input clk_i
     , input reset_i
       
-    , output v_o
-    , output [width_p-1:0] data_o
+    , output logic v_o
+    , output logic [width_p-1:0] data_o
     , input ready_i
       
     , output bit debug_o);

@@ -59,7 +59,7 @@ module bsg_nonsynth_fifo_to_dpi
       
     , input v_i
     , input [width_p-1:0] data_i
-    , output yumi_o
+    , output logic yumi_o
       
     , output bit debug_o);
 
