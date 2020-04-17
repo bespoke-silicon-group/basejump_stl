@@ -243,7 +243,7 @@ module bsg_nonsynth_dramsim3
    integer file;
    initial begin
       if (debug_p) begin
-         file = $fopen(trace_file_p);
+         file = $fopen(trace_file_p, "w");
          $fwrite(file, "request,time,channel,write_not_read,address\n");
       end
    end
