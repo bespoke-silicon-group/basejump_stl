@@ -3,6 +3,7 @@
 #include <svdpi.h>
 #include <verilated.h>
 #include <bsg_nonsynth_dpi.hpp>
+#include <cstring>
 
 extern "C" {
         // DPI Export function: Get the value at an index in the
@@ -38,7 +39,7 @@ namespace bsg_nonsynth_dpi{
                 //     the instantiation of this the corresponding
                 //     bsg_nonsynth_dpi_rom verilog module in the
                 //     testbench.
-                dpi_rom(const char *hierarchy)
+                dpi_rom(const std::string &hierarchy)
                         : dpi_base(hierarchy),
                           dpi_width<T>(hierarchy),
                           dpi_nels<N>(hierarchy)
