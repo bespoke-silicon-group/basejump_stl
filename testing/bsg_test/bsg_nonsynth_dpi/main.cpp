@@ -27,7 +27,7 @@
 #include <Vtop.h>
 
 #include <bsg_nonsynth_dpi_clock_gen.hpp>
-#include <bsg_nonsynth_dpi.hpp>
+#include <bsg_nonsynth_dpi_fifo.hpp>
 using namespace bsg_nonsynth_dpi;
 
 #include <cstdio>
@@ -48,10 +48,6 @@ int main(int argc, char** argv) {
         // DPI functions you are trying to call.
         // Verilated::internalsDump();
 
-        svScope scope;
-        scope = svGetScopeFromName("TOP.top");
-        svSetScope(scope);
-
         // Run the intial blocks with eval(). This must happen before
         // the fifo interfaces are constructed. It will also cause the
         // clock generators to register themselves.
@@ -61,14 +57,10 @@ int main(int argc, char** argv) {
         // passing/setting the scope, or passing a reference to the
         // scope that they are in, but I can't figure it
         // out. Therefore, they must be enumerated.
-        fifo_to_dpi<unsigned int> *f2d = 
-                new fifo_to_dpi<unsigned int>(top->f2d_init, top->f2d_fini,
-                                              top->f2d_debug,top->f2d_width,
-                                              top->f2d_rx, top->f2d_is_window);
+        dpi_from_fifo<unsigned int> *f2d = 
+                new dpi_from_fifo<unsigned int>("TOP.top.f2d_i");
         dpi_to_fifo<unsigned int> *d2f = 
-                new dpi_to_fifo<unsigned int>(top->d2f_init, top->d2f_fini,
-                                              top->d2f_debug, top->d2f_width,
-                                              top->d2f_tx, top->d2f_is_window);
+                new dpi_to_fifo<unsigned int>("TOP.top.d2f_i");
 
         // debug(true) will cause BSG DBGINFO statments to be printed
         // for the relevant interface.
@@ -320,8 +312,6 @@ int main(int argc, char** argv) {
         delete d2f;
         delete f2d;
 
-        // Call the DPI Function finish() to call $finish
-        top->finish();
         // Then, trigger the final blocks in Verilog
         top->final();
         return 0;

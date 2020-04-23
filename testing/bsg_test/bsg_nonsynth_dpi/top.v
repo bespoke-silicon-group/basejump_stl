@@ -6,77 +6,6 @@ module top();
    // modules. There may be a cleaner way to do this but I haven't
    // found it yet.
 
-   export "DPI-C" function f2d_init;
-   function void f2d_init();
-      f2d_i.init();
-   endfunction;
-
-   export "DPI-C" function f2d_fini;
-   function void f2d_fini();
-      f2d_i.fini();
-   endfunction;
-
-   export "DPI-C" function f2d_width;
-   function int f2d_width();
-      return f2d_i.width();
-   endfunction;
-
-   export "DPI-C" function f2d_debug;
-   function void f2d_debug(input bit switch_i);
-      f2d_i.debug(switch_i);
-   endfunction;
-
-   export "DPI-C" function f2d_rx;
-   function bit f2d_rx(output logic [width_lp-1:0] data_o);
-      return f2d_i.rx(data_o);
-   endfunction;
-
-   export "DPI-C" function d2f_init;
-   function void d2f_init();
-      d2f_i.init();
-   endfunction;
-
-   export "DPI-C" function d2f_fini;
-   function void d2f_fini();
-      d2f_i.fini();
-   endfunction;
-
-   export "DPI-C" function d2f_width;
-   function int d2f_width();
-      return d2f_i.width();
-   endfunction;
-
-   export "DPI-C" function d2f_debug;
-   function void d2f_debug(input bit switch_i);
-      d2f_i.debug(switch_i);
-   endfunction;
-
-   export "DPI-C" function d2f_tx;
-   function bit d2f_tx(input logic [width_lp-1:0] data_i);
-      return d2f_i.tx(data_i);
-   endfunction;
-
-   export "DPI-C" function d2f_is_window;
-   function bit d2f_is_window();
-      return d2f_i.is_window();
-   endfunction;
-
-   export "DPI-C" function f2d_is_window;
-   function bit f2d_is_window();
-      return f2d_i.is_window();
-   endfunction;
-
-   export "DPI-C" function finish;
-   function void finish();
-      $finish;
-   endfunction;
-
-   export "DPI-C" function debug;
-   function void debug(input bit switch_i);
-      f2d_i.debug(switch_i);
-      d2f_i.debug(switch_i);
-   endfunction;
-
    logic     ns_clk, ns_reset, debug_o;
    parameter lc_cycle_time_p = 1000000;
 
@@ -112,19 +41,13 @@ module top();
        $display("BSG DBGINFO: top -- Cycle %d", cycle);
    end
    
-   export "DPI-C" function get_cycle;
-   function int get_cycle();
-      return cycle;
-   endfunction;
-
-
    logic [width_lp-1:0] data_i;
 
    logic [width_lp-1:0] data_o;
    logic                v_o, v_i, ready_o, yumi_i;
 
    
-   bsg_nonsynth_fifo_to_dpi
+   bsg_nonsynth_dpi_from_fifo
      #(
        .width_p                        (width_lp)
        ,.debug_p                        (debug_lp))
