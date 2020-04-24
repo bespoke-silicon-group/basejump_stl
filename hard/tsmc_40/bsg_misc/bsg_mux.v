@@ -70,7 +70,7 @@ module bsg_mux #(parameter width_p="inv"
     else
       begin: notmacro
          initial assert (harden_p==0) else $error("## %m: warning, failed to harden bsg_mux width=%d, els=%d, balanced=%d",width_p, els_p, balanced_p);
-         assign data_o = data_i[sel_i];
+         assign data_o = (els_p == 1) ? data_i : data_i[sel_i];
       end
 endmodule
 
