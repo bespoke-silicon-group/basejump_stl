@@ -24,7 +24,15 @@ module bsg_mux #(parameter width_p="inv"
      end
    else
      begin : nofi
-        assign data_o = data_i[sel_i];
+
+        if (els_p == 1) begin
+          assign data_o = data_i;
+          wire unused = sel_i;
+        end
+        else begin
+          assign data_o = data_i[sel_i];
+        end
+
 
         // synopsys translate_off
         initial
