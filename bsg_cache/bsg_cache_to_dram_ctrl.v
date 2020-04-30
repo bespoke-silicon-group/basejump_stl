@@ -160,6 +160,7 @@ module bsg_cache_to_dram_ctrl
     tx_v_li = 1'b0;
     req_state_n = req_state_r;
     req_cnt_n = req_cnt_r;
+    addr_n = addr_r;
     
     case (req_state_r)
       WAIT: begin
