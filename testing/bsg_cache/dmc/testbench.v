@@ -112,6 +112,9 @@ logic app_rd_data_valid;
 logic [ui_data_width_p-1:0] app_rd_data;
 logic app_rd_data_end;
 
+logic [num_cache_p-1:0] dma_pkt_ready_lo;
+assign dma_pkt_yumi_li = dma_pkt_v_lo & dma_pkt_ready_lo;
+
 bsg_cache_to_dram_ctrl #(
   .num_cache_p(num_cache_p)
   ,.addr_width_p(addr_width_p)
@@ -126,7 +129,7 @@ bsg_cache_to_dram_ctrl #(
 
   ,.dma_pkt_i(dma_pkt)
   ,.dma_pkt_v_i(dma_pkt_v_lo)
-  ,.dma_pkt_yumi_o(dma_pkt_yumi_li)
+  ,.dma_pkt_ready_o(dma_pkt_ready_lo)
 
   ,.dma_data_o(dma_data_li)
   ,.dma_data_v_o(dma_data_v_li)
