@@ -11,10 +11,11 @@ VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4
 BASIC_TEST = test_random1 test_random2
 BASIC_TEST += test_byte1 test_byte2 test_byte3
 BASIC_TEST += test_mask1
-BASIC_TEST += test_atomic1 test_atomic2
-BASIC_TEST += test_store_buffer1
+BASIC_TEST += test_atomic1 test_atomic2 test_atomic3
+BASIC_TEST += test_store_buffer1 test_store_buffer2 test_store_buffer3
 BASIC_TEST += test_block1
 BASIC_TEST += test_stride1
+BASIC_TEST += test_store_load test_store_load2
 
 
 ########################
@@ -23,6 +24,20 @@ HIGHLIGHT = grep --color -E '^|Fatal|Error|Warning|Implicit wire is used|Too few
 
 
 ### TEST parameters ####
+YUMI_MIN_DELAY_P  ?= 0
+YUMI_MAX_DELAY_P  ?= 0
+DMA_READ_DELAY_P  ?= 0
+DMA_WRITE_DELAY_P ?= 0
+DMA_REQ_DELAY_P   ?= 0
+DMA_DATA_DELAY_P  ?= 0
+
+VCS_DEFINES += +define+YUMI_MIN_DELAY_P=$(YUMI_MIN_DELAY_P)
+VCS_DEFINES += +define+YUMI_MAX_DELAY_P=$(YUMI_MAX_DELAY_P)
+
+VCS_DEFINES += +define+DMA_READ_DELAY_P=$(DMA_READ_DELAY_P)
+VCS_DEFINES += +define+DMA_WRITE_DELAY_P=$(DMA_WRITE_DELAY_P)
+VCS_DEFINES += +define+DMA_REQ_DELAY_P=$(DMA_REQ_DELAY_P)
+VCS_DEFINES += +define+DMA_DATA_DELAY_P=$(DMA_DATA_DELAY_P)
 ########################
 
 
@@ -61,7 +76,7 @@ summary:
 
 clean:
 	rm -rf DVEfiles
-	rm -rf csrc
+	rm -rf csrc simv
 	rm -rf simv.daidir simv.vdb vcs.log
 	rm -rf ucli.key vcdplus.vpd simv cm.log *.tar.gz
 	rm -rf stack.info.* *.pyc

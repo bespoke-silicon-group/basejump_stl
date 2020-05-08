@@ -84,6 +84,11 @@ class TestBase:
     self.tg.send(AMOOR_W, addr, self.curr_data)
     self.curr_data += 1
 
+  # nop
+  def send_nop(self, n=1):
+    for i in range(n):
+      self.tg.nop()
+
   #                         #
   #   COMPOSITE FUNCTIONS   #
   #                         #

@@ -1,5 +1,6 @@
 /**
  *  bsg_nonsynth_dma_model.v
+ *
  */
 
 
@@ -9,24 +10,23 @@ module bsg_nonsynth_dma_model
     ,parameter data_width_p="inv"
     ,parameter block_size_in_words_p="inv"
     ,parameter els_p="inv"
-    
+
     ,parameter read_delay_p=16
-    ,parameter write_delay_p=12
-  
-    ,parameter lg_read_delay_lp=`BSG_SAFE_CLOG2(read_delay_p)
-    ,parameter lg_write_delay_lp=`BSG_SAFE_CLOG2(write_delay_p)
+    ,parameter write_delay_p=16
+    ,parameter dma_req_delay_p=16
+    ,parameter dma_data_delay_p=16
 
     ,parameter data_mask_width_lp=(data_width_p>>3)
     ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
     ,parameter lg_els_lp=`BSG_SAFE_CLOG2(els_p)
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
-    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
   )
   (
     input clk_i
     ,input reset_i
 
-    ,input [bsg_cache_dma_pkt_width_lp-1:0] dma_pkt_i
+    ,input [dma_pkt_width_lp-1:0] dma_pkt_i
     ,input logic dma_pkt_v_i
     ,output logic dma_pkt_yumi_o
 
@@ -52,105 +52,170 @@ module bsg_nonsynth_dma_model
     ,BUSY
   } state_e;
 
-  logic start_read;
-  logic start_write;
-  assign start_read = ~dma_pkt.write_not_read & dma_pkt_v_i;
-  assign start_write = dma_pkt.write_not_read & dma_pkt_v_i;
+  wire start_read = ~dma_pkt.write_not_read & dma_pkt_v_i;
+  wire start_write = dma_pkt.write_not_read & dma_pkt_v_i;
 
 
   // read channel
   //
-  logic [addr_width_p-1:0] read_addr_r, read_addr_n;
-  state_e read_state_r, read_state_n;
-  logic [lg_block_size_in_words_lp-1:0] read_counter_r, read_counter_n;
-  logic [lg_read_delay_lp-1:0] read_delay_r, read_delay_n;
+  logic [addr_width_p-1:0] rd_addr_r, rd_addr_n;
+  state_e rd_state_r, rd_state_n;
+  logic [lg_block_size_in_words_lp-1:0] rd_counter_r, rd_counter_n;
+  integer rd_delay_r, rd_delay_n;
 
-  logic [lg_els_lp-lg_block_size_in_words_lp-1:0] read_upper_addr;
-  assign read_upper_addr = read_addr_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_els_lp-lg_block_size_in_words_lp];
-  assign dma_data_o = mem[{read_upper_addr, read_counter_r}];
+  integer rd_data_delay_r, rd_data_delay_n;
+  wire rd_data_delay_zero = (rd_data_delay_r == 0);
+
+  integer rd_req_delay_r, rd_req_delay_n;
+  wire rd_req_delay_zero = rd_req_delay_r == 0;
+  logic rd_req_ready;
+
+  logic [lg_els_lp-lg_block_size_in_words_lp-1:0] rd_upper_addr;
+  assign rd_upper_addr = rd_addr_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_els_lp-lg_block_size_in_words_lp];
+  assign dma_data_o = mem[{rd_upper_addr, rd_counter_r}];
 
   always_comb begin
     dma_data_v_o = 1'b0;
-    read_addr_n = read_addr_r;
-    read_delay_n = read_delay_r;
-    read_counter_n = read_counter_r;
+    rd_addr_n = rd_addr_r;
+    rd_counter_n = rd_counter_r;
+    rd_delay_n = rd_delay_r;
+    rd_data_delay_n = rd_data_delay_r;
+    rd_req_delay_n = rd_req_delay_r;
+    rd_req_ready = 1'b0;
 
-    case (read_state_r)
+    case (rd_state_r)
       WAIT: begin
-        read_addr_n = start_read
+        rd_req_ready = start_read & rd_req_delay_zero;
+        rd_req_delay_n = start_read
+          ? (rd_req_delay_zero
+            ? $urandom_range(dma_req_delay_p,0)
+            : rd_req_delay_r - 1) 
+          : rd_req_delay_r;
+        rd_addr_n = start_read & rd_req_delay_zero
           ? dma_pkt.addr
-          : read_addr_r;
-        read_counter_n = start_read
+          : rd_addr_r;
+        rd_counter_n = start_read & rd_req_delay_zero
           ? '0
-          : read_counter_r;
-        read_state_n = start_read
+          : rd_counter_r;
+        rd_state_n = start_read & rd_req_delay_zero
           ? DELAY
           : WAIT;
-        read_delay_n = '0;
+        rd_delay_n = start_read & rd_req_delay_zero
+          ? $urandom_range(dma_data_delay_p, 0)
+          : rd_delay_r;
       end
 
       DELAY: begin
-        read_delay_n = read_delay_r + 1;
-        read_state_n = read_delay_r == (read_delay_p-1)
+        rd_delay_n = rd_delay_r - 1;
+        rd_state_n = rd_delay_r == 0
           ? BUSY
           : DELAY;
+
+        rd_data_delay_n = (rd_delay_r == 0)
+          ? $urandom_range(dma_data_delay_p, 0)
+          : rd_data_delay_r;
       end
 
       BUSY: begin
-        dma_data_v_o = 1'b1;
-        read_counter_n = dma_data_ready_i
-          ? read_counter_r + 1
-          : read_counter_r;
-        read_state_n = dma_data_ready_i & (read_counter_r == block_size_in_words_p-1)
+        rd_data_delay_n = rd_data_delay_zero
+          ? (dma_data_ready_i ? $urandom_range(dma_data_delay_p, 0) : 0)
+          : rd_data_delay_r - 1;
+        dma_data_v_o = rd_data_delay_zero;
+        rd_counter_n = rd_data_delay_zero & dma_data_ready_i
+          ? rd_counter_r + 1
+          : rd_counter_r;
+        rd_state_n = rd_data_delay_zero & dma_data_ready_i & (rd_counter_r == block_size_in_words_p-1)
           ? WAIT
           : BUSY;
       end
     endcase
   end  
 
+  always_ff @ (posedge clk_i) begin
+    if (reset_i) begin
+      rd_state_r <= WAIT;
+      rd_addr_r <= '0;
+      rd_counter_r <= '0;
+      rd_delay_r <= '0;
+      rd_data_delay_r <= '0;
+      rd_req_delay_r <= '0;
+    end
+    else begin
+      rd_state_r <= rd_state_n;
+      rd_addr_r <= rd_addr_n;
+      rd_counter_r <= rd_counter_n;
+      rd_delay_r <= rd_delay_n;
+      rd_data_delay_r <= rd_data_delay_n;
+      rd_req_delay_r <= rd_req_delay_n;
+    end
+  end
+
   // write channel
   //
-  logic [addr_width_p-1:0] write_addr_r, write_addr_n;
-  state_e write_state_r, write_state_n;
-  logic [lg_block_size_in_words_lp-1:0] write_counter_r, write_counter_n;
-  logic [lg_write_delay_lp-1:0] write_delay_r, write_delay_n;
+  logic [addr_width_p-1:0] wr_addr_r, wr_addr_n;
+  state_e wr_state_r, wr_state_n;
+  logic [lg_block_size_in_words_lp-1:0] wr_counter_r, wr_counter_n;
+  integer wr_delay_r, wr_delay_n;
+  integer wr_data_delay_r, wr_data_delay_n;
+  
+  wire wr_data_delay_zero = wr_data_delay_r == 0;
 
-  logic [lg_els_lp-lg_block_size_in_words_lp-1:0] write_upper_addr;
-  assign write_upper_addr = write_addr_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_els_lp-lg_block_size_in_words_lp];
+  integer wr_req_delay_r, wr_req_delay_n;
+  wire wr_req_delay_zero = wr_req_delay_r == 0;
+  logic wr_req_ready;
+
+  logic [lg_els_lp-lg_block_size_in_words_lp-1:0] wr_upper_addr;
+  assign wr_upper_addr = wr_addr_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_els_lp-lg_block_size_in_words_lp];
 
   always_comb begin
-    write_addr_n = write_addr_r;
-    write_delay_n = write_delay_r;
-    write_counter_n = write_counter_r;
+    wr_addr_n = wr_addr_r;
+    wr_data_delay_n = wr_data_delay_r;
+    wr_req_delay_n = wr_req_delay_r;
+    wr_req_ready = 1'b0;
     dma_data_yumi_o = 1'b0;
 
-    case (write_state_r)
+    case (wr_state_r)
       WAIT: begin
-        write_addr_n = start_write 
+        wr_req_ready = start_write & wr_req_delay_zero;
+        wr_req_delay_n = start_write
+          ? (wr_req_delay_zero
+            ? $urandom_range(dma_req_delay_p,0)
+            : wr_req_delay_r - 1)
+          : wr_req_delay_r;
+        wr_addr_n = start_write & wr_req_delay_zero
           ? dma_pkt.addr
-          : write_addr_r;
-        write_counter_n = start_write
+          : wr_addr_r;
+        wr_counter_n = start_write & wr_req_delay_zero
           ? '0
-          : write_counter_r;
-        write_state_n = start_write
+          : wr_counter_r;
+        wr_state_n = start_write & wr_req_delay_zero
           ? DELAY
           : WAIT;
-        write_delay_n = '0;
-      end
-
-      DELAY: begin
-        write_delay_n = write_delay_r + 1;
-        write_state_n = write_delay_r == (write_delay_p-1)
-          ? BUSY
-          : DELAY;
+        wr_delay_n = start_write & wr_req_delay_zero
+          ? $urandom_range(dma_data_delay_p,0)
+          : wr_delay_r;
       end
       
+      DELAY: begin
+        wr_delay_n = wr_delay_r - 1;
+        wr_state_n = wr_delay_r == 0
+          ? BUSY
+          : DELAY;
+        wr_data_delay_n = (wr_delay_r == 0)
+          ? $urandom_range(dma_data_delay_p, 0)
+          : wr_data_delay_r;
+      end
+
       BUSY: begin
-        dma_data_yumi_o = dma_data_v_i;
-        write_counter_n = dma_data_v_i
-          ? write_counter_r + 1
-          : write_counter_r;
-        write_state_n = (write_counter_r == block_size_in_words_p-1) & dma_data_v_i
+        wr_data_delay_n = wr_data_delay_zero
+          ? (dma_data_v_i ? $urandom_range(dma_data_delay_p, 0) : 0)
+          : wr_data_delay_r - 1;
+
+        dma_data_yumi_o = dma_data_v_i & wr_data_delay_zero;
+        wr_counter_n = (dma_data_v_i & wr_data_delay_zero)
+          ? wr_counter_r + 1
+          : wr_counter_r;
+        wr_state_n = (wr_counter_r == block_size_in_words_p-1) & dma_data_v_i & wr_data_delay_zero
           ? WAIT
           : BUSY;
       end
@@ -158,38 +223,36 @@ module bsg_nonsynth_dma_model
     endcase
   end
 
-  assign dma_pkt_yumi_o = (start_read & (read_state_r == WAIT))
-    | (start_write & (write_state_r == WAIT));
+  assign dma_pkt_yumi_o = (start_read & rd_req_ready) | (start_write & wr_req_ready);
 
   // sequential
   //
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      read_state_r <= WAIT;
-      read_addr_r <= '0;
-      read_counter_r <= '0;
-      read_delay_r <= '0;
-      write_state_r <= WAIT;
-      write_addr_r <= '0;
-      write_counter_r <= '0;
-      write_delay_r <= '0;
+      wr_state_r <= WAIT;
+      wr_addr_r <= '0;
+      wr_counter_r <= '0;
+      wr_delay_r <= '0;
+      wr_data_delay_r <= '0;
+      wr_req_delay_r <= '0;
+
       for (integer i = 0; i < els_p; i++) begin
         mem[i] <= '0;
       end
+
     end
     else begin
-      read_state_r <= read_state_n;
-      read_addr_r <= read_addr_n;
-      read_counter_r <= read_counter_n;
-      read_delay_r <= read_delay_n;
-      write_state_r <= write_state_n;
-      write_addr_r <= write_addr_n;
-      write_counter_r <= write_counter_n;
-      write_delay_r <= write_delay_n;
+      wr_state_r <= wr_state_n;
+      wr_addr_r <= wr_addr_n;
+      wr_counter_r <= wr_counter_n;
+      wr_delay_r <= wr_delay_n;
+      wr_data_delay_r <= wr_data_delay_n;
+      wr_req_delay_r <= wr_req_delay_n;
     
-      if (write_state_r == BUSY & dma_data_v_i) begin
-        mem[{write_upper_addr, write_counter_r}] <= dma_data_i;
+      if ((wr_state_r == BUSY) & dma_data_v_i & dma_data_yumi_o) begin
+        mem[{wr_upper_addr, wr_counter_r}] <= dma_data_i;
       end
+
     end
   end
 

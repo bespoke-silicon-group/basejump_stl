@@ -128,7 +128,7 @@ module bsg_clk_gen_osc
    // should be ignored in synthesis
    assign #4000 fb_clk_del = fb_clk;
 
-   bsg_rp_clk_gen_atomic_delay_tuner  adt
+   bsg_rp_clk_gen_atomic_delay_tuner  adt_DONT_TOUCH
      (.i(fb_clk_del)
       ,.we_async_i (tag_trigger_r_async   )
       ,.we_inited_i(bsg_tag_trigger_i.en  )
@@ -142,7 +142,7 @@ module bsg_clk_gen_osc
    // this one inverts the output
    // captures config state on negative edge of input clock
 
-   bsg_rp_clk_gen_coarse_delay_tuner cdt
+   bsg_rp_clk_gen_coarse_delay_tuner cdt_DONT_TOUCH
      (.i                 (adt_lo)
       ,.we_i             (adt_to_cdt_trigger_lo)
       ,.async_reset_neg_i(async_reset_neg      )
@@ -155,7 +155,7 @@ module bsg_clk_gen_osc
    // captures config state on positive edge of (inverted) input clk
    // non-inverting
 
-   bsg_rp_clk_gen_fine_delay_tuner fdt
+   bsg_rp_clk_gen_fine_delay_tuner fdt_DONT_TOUCH
      (.i                 (cdt_lo)
       ,.we_i             (cdt_to_fdt_trigger_lo)
       ,.async_reset_neg_i(async_reset_neg)
