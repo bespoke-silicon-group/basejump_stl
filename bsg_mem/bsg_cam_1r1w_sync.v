@@ -12,16 +12,20 @@ module bsg_cam_1r1w_sync
   (input                             clk_i
    , input                           reset_i
 
-   , input                           w_v_i
+   // one or zero-hot
+   , input [els_p-1:0]               w_v_i
+   // Whether to set entry or clear entry
    , input                           w_set_not_clear_i
+   // Tag/data to set on write
    , input [tag_width_p-1:0]         w_tag_i
-   , input [els_p-1:0]               w_addr_i
    , input [data_width_p-1:0]        w_data_i
+   // Vector of empty CAM entries
    , output logic [els_p-1:0]        empty_o
    
-   , input                           r_v_i
+   // Tag to match on read
    , input [tag_width_p-1:0]         r_tag_i
 
+   // Synchronous read / valid
    , output logic [data_width_p-1:0] r_data_o
    , output logic                    r_v_o
   );
@@ -29,53 +33,33 @@ module bsg_cam_1r1w_sync
   logic [tag_width_p-1:0] r_tag_r;
   logic r_v_r;
   bsg_dff
-   #(.width_p(1+tag_width_p))
+   #(.width_p(tag_width_p))
    r_tag_reg
     (.clk_i(clk_i)
 
-     ,.data_i({r_v_i, r_tag_i})
-     ,.data_o({r_v_r, r_tag_r})
+     ,.data_i(r_tag_i)
+     ,.data_o(r_tag_r)
      );
 
-  logic [els_p-1:0] cam_r_addr_lo;
-  bsg_cam_1r1w_decoder
-   #(.tag_width_p(tag_width_p)
-     ,.els_p(els_p)
+  bsg_cam_1r1w
+   #(.els_p(els_p)
+     ,.tag_width_p(tag_width_p)
+     ,.data_width_p(data_width_p)
      )
-   cam_decoder
+   cam
     (.clk_i(clk_i)
      ,.reset_i(reset_i)
 
      ,.w_v_i(w_v_i)
      ,.w_set_not_clear_i(w_set_not_clear_i)
      ,.w_tag_i(w_tag_i)
-     ,.w_addr_i(w_addr_i)
+     ,.w_data_i(w_data_i)
      ,.empty_o(empty_o)
 
-     ,.r_v_i(r_v_r)
      ,.r_tag_i(r_tag_r)
-
-     ,.r_addr_o(cam_r_addr_lo)
-     );
-
-  bsg_mem_1r1w_one_hot
-   #(.width_p(data_width_p)
-     ,.els_p(els_p)
-     )
-   one_hot_mem
-    (.w_clk_i(clk_i)
-     ,.w_reset_i(reset_i)
-
-     ,.w_v_i(w_v_i)
-     ,.w_addr_i(w_addr_i)
-     ,.w_data_i(w_data_i)
-
-     ,.r_v_i(r_v_r)
-     ,.r_addr_i(cam_r_addr_lo)
      ,.r_data_o(r_data_o)
+     ,.r_v_o(r_v_o)
      );
-
-  assign r_v_o = |cam_r_addr_lo;
 
 endmodule
 

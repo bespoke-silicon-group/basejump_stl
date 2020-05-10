@@ -8,31 +8,34 @@
 
 module bsg_mem_1r1w_one_hot #(parameter width_p=-1
                             , parameter els_p=-1
-                            , parameter read_write_same_addr_p=0
                             )
    (input   w_clk_i
+    // Currently unused
     , input w_reset_i
 
-    , input                      w_v_i
-    , input [els_p-1:0]          w_addr_i
+    // one or zero-hot
+    , input [els_p-1:0]          w_v_i
     , input [width_p-1:0]        w_data_i
 
-    // currently unused
-    , input                      r_v_i
-    , input [els_p-1:0]          r_addr_i
+    // one or zero-hot
+    , input [els_p-1:0]          r_v_i
     , output logic [width_p-1:0] r_data_o
     );
 
-  logic [els_p-1:0][width_p-1:0] mem;
+  logic [els_p-1:0][width_p-1:0] data_r;
 
   wire unused0 = w_reset_i;
-  wire unused1 = r_v_i;
 
-  always_ff @(posedge w_clk_i)
-    begin
-      for (integer i = 0; i < els_p; i++)
-        if (w_v_i & w_addr_i[i])
-          mem[i] <= w_data_i;
+  for (genvar i = 0; i < els_p; i++)
+    begin : mem_array
+      bsg_dff_en
+       #(.width_p(width_p))
+       mem_reg
+        (.clk_i(w_clk_i)
+         ,.en_i(w_v_i[i])
+         ,.data_i(w_data_i)
+         ,.data_o(data_r[i])
+         );
     end
 
   bsg_mux_one_hot
@@ -40,8 +43,8 @@ module bsg_mem_1r1w_one_hot #(parameter width_p=-1
      ,.els_p(els_p)
      )
    one_hot_sel
-    (.data_i(mem)
-     ,.sel_one_hot_i(r_addr_i)
+    (.data_i(data_r)
+     ,.sel_one_hot_i(r_v_i)
      ,.data_o(r_data_o)
      );
 
@@ -49,21 +52,18 @@ module bsg_mem_1r1w_one_hot #(parameter width_p=-1
 
    initial
      begin
-	if (read_write_same_addr_p || (width_p*els_p >= 64))
-          $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d (%m)"
-                   ,width_p,els_p,read_write_same_addr_p);
+	if (width_p*els_p >= 64)
+          $display("## %L: instantiating width_p=%d, els_p=%d (%m)"
+                   ,width_p,els_p);
      end
 
    always_ff @(negedge w_clk_i)
-     if (w_v_i===1'b1)
-       begin
-          assert ((w_reset_i === 'X) || (w_reset_i === 1'b1) || $countones(w_addr_i) <= 1)
-            else $error("Invalid write address %b to %m is not onehot (w_reset_i=%b, w_v_i=%b)\n", w_addr_i, w_reset_i, w_v_i);
-          assert ((w_reset_i === 'X) || (w_reset_i === 1'b1) || $countones(r_addr_i) <= 1)
-            else $error("Invalid read address %b to %m is not onehot (w_reset_i=%b, w_v_i=%b)\n", r_addr_i, w_reset_i, r_v_i);
-          assert ((w_reset_i === 'X) || (w_reset_i === 1'b1) || !(r_addr_i == w_addr_i && w_v_i && r_v_i && !read_write_same_addr_p))
-            else $error("%m: Attempt to read and write same address %x (w_v_i = %b, w_reset_i = %b)",w_addr_i,w_v_i,w_reset_i);
-       end
+     begin
+       assert ((w_reset_i === 'X) || (w_reset_i === 1'b1) || $countones(w_v_i) <= 1)
+         else $error("Invalid write address %b to %m is not onehot (w_reset_i=%b)\n", w_v_i, w_reset_i);
+       assert ((w_reset_i === 'X) || (w_reset_i === 1'b1) || $countones(r_v_i) <= 1)
+         else $error("Invalid read address %b to %m is not onehot (w_reset_i=%b)\n", r_v_i, w_reset_i);
+     end
 
    //synopsys translate_on
 
