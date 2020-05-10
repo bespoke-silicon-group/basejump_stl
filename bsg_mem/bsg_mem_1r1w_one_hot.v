@@ -13,9 +13,9 @@ module bsg_mem_1r1w_one_hot #(parameter width_p=-1
    (input   w_clk_i
     , input w_reset_i
 
-    , input                     w_v_i
-    , input [els_p-1:0]         w_addr_i
-    , input [width_p-1:0]       w_data_i
+    , input                      w_v_i
+    , input [els_p-1:0]          w_addr_i
+    , input [width_p-1:0]        w_data_i
 
     // currently unused
     , input                      r_v_i
@@ -28,8 +28,6 @@ module bsg_mem_1r1w_one_hot #(parameter width_p=-1
   wire unused0 = w_reset_i;
   wire unused1 = r_v_i;
 
-  assign r_data_o = mem[r_addr_i];
-
   always_ff @(posedge w_clk_i)
     begin
       for (integer i = 0; i < els_p; i++)
@@ -39,7 +37,7 @@ module bsg_mem_1r1w_one_hot #(parameter width_p=-1
 
   bsg_mux_one_hot
    #(.width_p(width_p)
-     ,.els_o(els_p)
+     ,.els_p(els_p)
      )
    one_hot_sel
     (.data_i(mem)
