@@ -3,4 +3,4 @@
 	url = https://github.com/bespoke-silicon-group/ramulator
 [submodule "DRAMSim3"]
 	path = imports/DRAMSim3
-	url = https://github.com/umd-memsys/DRAMsim3
+	url = https://github.com/bsg-external/DRAMsim3
