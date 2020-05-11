@@ -15,8 +15,6 @@ module bsg_cam_1r1w_tag_array
 
    // one or zero-hot
    , input [els_p-1:0]            w_v_i
-   // Whether to set entry or clear entry
-   , input                        w_set_not_clear_i
    // Tag to set on write
    , input [width_p-1:0]          w_tag_i
 
@@ -34,13 +32,13 @@ module bsg_cam_1r1w_tag_array
   
   for (genvar i = 0; i < els_p; i++)
     begin : tag_array
-      bsg_dff_reset_set_clear
+      bsg_dff_reset_en
        #(.width_p(1))
        v_reg
         (.clk_i(clk_i)
          ,.reset_i(reset_i)
-         ,.set_i(w_v_i[i] & w_set_not_clear_i)
-         ,.clear_i(w_v_i[i] & ~w_set_not_clear_i)
+         ,.en_i(w_v_i[i])
+         ,.data_i(1'b1)
 
          ,.data_o(v_r[i])
          );
