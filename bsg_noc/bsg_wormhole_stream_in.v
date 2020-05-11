@@ -1,27 +1,60 @@
 
 `include "bsg_defines.v"
 
+//
+// Converts a higher level protocol into a wormhole router without deserializing
+//   the data. This module can be used for converting various DMA formats to 
+//   wormhole flits efficently and with minimal buffering. It can also be used to
+//   forward data between wormholes on different networks, or to convert between
+//   multiple protocol formats.
+//
+// Assumptions:
+//   - data width is a multiple of flit width (would be easy to add support)
+//   - header width is a multiple of flit width  (would be more challenging)
+//     - header width == wormhole header width + protocol header width
+//   - wormhole packets are laid out like the following:
+//   ---------------------------------------------------------------
+//   | data   | data  | data  | data  | protocol info | len   cord |
+//   ---------------------------------------------------------------
+//
+//  Header and data can be sent at the same time, but only 1 message at a time 
+//    is supported. 
+//  - Legal: H     H
+//             D-D   D-D
+//  - Legal: H   H
+//           D-D D-D
+//  - Illegal: H H
+//             D-D-D-D
+//
 module bsg_wormhole_stream_in
- #(parameter flit_width_p      = "inv"
+ #(// The wormhole router protocol information
+   parameter flit_width_p      = "inv"
    , parameter len_width_p     = "inv"
    , parameter cord_width_p    = "inv"
+
+   // Higher level protocol information
    , parameter pr_hdr_width_p  = "inv"
    , parameter pr_data_width_p = "inv"
 
+   // Derived size of the wormhole header
    , parameter wh_hdr_width_lp = cord_width_p + len_width_p
+   // Size of the wormhole header + the protocol header. The data starts afterwards
    , parameter hdr_width_lp = wh_hdr_width_lp + pr_hdr_width_p
    )
   (input                         clk_i
    , input                       reset_i
 
+   // The wormhole and protocol header information
    , input [hdr_width_lp-1:0]    hdr_i
    , input                       hdr_v_i
    , output                      hdr_ready_o
 
+   // The protocol data information
    , input [pr_data_width_p-1:0] data_i
    , input                       data_v_i
    , output                      data_ready_o
 
+   // The input to a wormhole network
    , output [flit_width_p-1:0]   link_data_o
    , output                      link_v_o
    , input                       link_ready_i
@@ -31,8 +64,9 @@ module bsg_wormhole_stream_in
 
   localparam [len_width_p-1:0] hdr_len_lp = `BSG_CDIV(hdr_width_lp, flit_width_p);
 
-  wire                link_accept = link_ready_i & link_v_o;
+  wire link_accept = link_ready_i & link_v_o;
 
+  // Header is input all at once and streamed out 1 flit at a time
   logic [flit_width_p-1:0] hdr_lo;
   logic hdr_ready_lo, hdr_v_lo, hdr_yumi_li;
   bsg_parallel_in_serial_out
@@ -57,6 +91,8 @@ module bsg_wormhole_stream_in
   logic [flit_width_p-1:0] data_lo;
   logic data_ready_lo, data_v_lo, data_yumi_li;
 
+  // Protocol data is 1 or multiple flit-sized. We accept a large protocol data
+  //   and then stream out 1 flit at a time
   if (pr_data_width_p >= flit_width_p)
     begin : wide
       localparam [len_width_p-1:0] data_len_lp = `BSG_CDIV(pr_data_width_p, flit_width_p);
@@ -78,6 +114,8 @@ module bsg_wormhole_stream_in
          );
     end
   else
+    // Protocol data is less than a single flit-sized. We accept a small
+    //   protocol data, aggregate it, and then send it out on the wormhole network
     begin : narrow
       localparam [len_width_p-1:0] data_len_lp = `BSG_CDIV(flit_width_p, pr_data_width_p);
       bsg_serial_in_parallel_out_full
@@ -101,6 +139,7 @@ module bsg_wormhole_stream_in
   assign data_ready_o = data_ready_lo;
   assign data_yumi_li = is_data & link_accept;
   
+  // Identifies which flits are header vs data flits
   bsg_wormhole_stream_control
  #(.len_width_p  (len_width_p)
   ,.hdr_len_p    (hdr_len_lp)

@@ -1,4 +1,17 @@
 
+//
+// Handles flow control for a bsg_wormhole packet. Given a length of
+//   wormhole packet and a begin transaction signal, this module tracks which
+//   flits are header flits and which are data flits.
+//
+// A bsg_wormhole packet is assumed to be laid out as:
+//   ---------------------------------------------------------------
+//   | data   | data  | data  | data  | protocol info | len   cord |
+//   ---------------------------------------------------------------
+//
+// where (in this example) the first 2 flits are header flits and the
+//   remaining four flits are data flits
+//
 module bsg_wormhole_stream_control
  #(parameter len_width_p = "inv"
    , parameter [len_width_p-1:0] hdr_len_p = "inv"
