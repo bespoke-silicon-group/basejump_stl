@@ -15,12 +15,10 @@ module bsg_cam_1r1w_replacement
    , input                     reset_i
 
    // Synchronous update (i.e. indicate that an entry was read)
-   , input                     r_v_i
-   , input [els_p-1:0]         r_way_one_hot_i
+   , input [els_p-1:0]         read_v_i
 
-   // Synchronous update (i.e. indicate that an entry was written)
-   , input                     w_v_i
-   , input [els_p-1:0]         w_way_one_hot_i
+   // Synchronous update (i.e. indicate that an entry was allocated)
+   , input [els_p-1:0]         alloc_v_i
 
    // May use combination of internal state and empty vector
    //   to determine replacement
@@ -33,10 +31,9 @@ module bsg_cam_1r1w_replacement
     begin : lru
       localparam lg_els_lp = `BSG_SAFE_CLOG2(els_p);
 
-      // This pseudo-LRU policy can only handle 1 update at a time. We
-      //   prioritize writes over reads, somewhat arbitrarily
-      wire                   touch_v_li = r_v_i | w_v_i;
-      wire [els_p-1:0] touch_one_hot_li = w_v_i ? w_way_one_hot_i : r_way_one_hot_i;
+      wire read_v_li    = |read_v_i;
+      wire alloc_v_li   = |alloc_v_i;
+      wire lru_touch_li = read_v_li | alloc_v_li;
 
       // LRU storage
       logic [els_p-2:0] lru_n, lru_r;
@@ -45,12 +42,15 @@ module bsg_cam_1r1w_replacement
        lru_reg
         (.clk_i(clk_i)
          ,.reset_i(reset_i)
-         ,.en_i(touch_v_li)
+         ,.en_i(lru_touch_li)
 
          ,.data_i(lru_n)
          ,.data_o(lru_r)
          );
 
+      //
+      // Selection output logic 
+      //
       // Encode the one-hot way select based on LRU
       logic [lg_els_lp-1:0] lru_way_lo;
       bsg_lru_pseudo_tree_encode
@@ -82,36 +82,76 @@ module bsg_cam_1r1w_replacement
          ,.o(way_one_hot_o)
          );
 
-      // Encode the one-hot way input to this module
-      logic [lg_els_lp-1:0] way_li;
+      //
+      // LRU update logic
+      //
+      // Encode the one-hot way read inputs to this module
+      logic [lg_els_lp-1:0] read_way_li;
       bsg_encode_one_hot
        #(.width_p(els_p))
-       way_encoder
-        (.i(touch_one_hot_li)
-         ,.addr_o(way_li)
+       read_way_encoder
+        (.i(read_v_i)
+         ,.addr_o(read_way_li)
          ,.v_o()
          );
 
-      // Decides which way to update based on MRU
-      logic [els_p-2:0] update_data_lo, update_mask_lo;
+      // Decides which way to update based on read MRU
+      logic [els_p-2:0] read_update_data_lo, read_update_mask_lo;
       bsg_lru_pseudo_tree_decode
        #(.ways_p(els_p))
-       decoder
-        (.way_id_i(way_li)
-         ,.data_o(update_data_lo)
-         ,.mask_o(update_mask_lo)
+       read_decoder
+        (.way_id_i(read_way_li)
+         ,.data_o(read_update_data_lo)
+         ,.mask_o(read_update_mask_lo)
          );
        
       // Muxes in the update data to compute the next LRU state
       // This doesn't get latched in unless there's an active use
+      logic [els_p-2:0] read_update_lo;
+      logic [els_p-2:0] read_sel_lo;
       bsg_mux_bitwise
        #(.width_p(els_p-1))
-       update_mux
+       read_update_mux
         (.data0_i(lru_r)
-         ,.data1_i(update_data_lo)
-         ,.sel_i(update_mask_lo)
-         ,.data_o(lru_n)
+         ,.data1_i(read_update_data_lo)
+         ,.sel_i(read_sel_lo)
+         ,.data_o(read_update_lo)
          );
+      assign read_sel_lo = read_update_mask_lo & {(els_p-1){read_v_li}};
+
+      // Encode the one-hot way write inputs to this module
+      logic [lg_els_lp-1:0] alloc_way_li;
+      bsg_encode_one_hot
+       #(.width_p(els_p))
+       alloc_way_encoder
+        (.i(alloc_v_i)
+         ,.addr_o(alloc_way_li)
+         ,.v_o()
+         );
+
+      // Decides which way to update based on write MRU
+      logic [els_p-2:0] alloc_update_data_lo, alloc_update_mask_lo;
+      bsg_lru_pseudo_tree_decode
+       #(.ways_p(els_p))
+       alloc_decoder
+        (.way_id_i(alloc_way_li)
+         ,.data_o(alloc_update_data_lo)
+         ,.mask_o(alloc_update_mask_lo)
+         );
+
+      logic [els_p-2:0] alloc_update_lo;
+      logic [els_p-2:0] alloc_sel_lo;
+      bsg_mux_bitwise
+       #(.width_p(els_p-1))
+       alloc_update_mux
+        (.data0_i(read_update_lo)
+         ,.data1_i(alloc_update_data_lo)
+         ,.sel_i(alloc_sel_lo)
+         ,.data_o(alloc_update_lo)
+         );
+      assign alloc_sel_lo = alloc_update_mask_lo & {(els_p-1){alloc_v_li}};
+
+      assign lru_n = alloc_update_lo;
     end
 
   initial

@@ -52,7 +52,8 @@ module bsg_cam_1r1w
 
   // The replacement scheme for the CAM
   logic [els_p-1:0] repl_way_lo;
-  logic [els_p-1:0] clear_way_lo;
+  logic [els_p-1:0] read_v_li;
+  logic [els_p-1:0] alloc_v_li;
   bsg_cam_1r1w_replacement
    #(.els_p(els_p)
      ,.scheme_p(repl_scheme_p)
@@ -61,18 +62,16 @@ module bsg_cam_1r1w
     (.clk_i(clk_i)
      ,.reset_i(reset_i)
 
-     ,.r_v_i(r_v_o)
-     ,.r_way_one_hot_i(tag_r_match_lo)
+     ,.read_v_i(tag_r_match_lo & {els_p{r_v_i}})
 
-     ,.w_v_i(w_v_i)
-     ,.w_way_one_hot_i(tag_w_match_lo)
+     ,.alloc_v_i(tag_w_match_lo & {els_p{w_v_i & w_set_not_clear_i}})
 
      ,.empty_i(tag_empty_lo)
      ,.way_one_hot_o(repl_way_lo)
      );
 
   // The data storage for the CAM
-  logic [els_p-1:0] mem_w_v_li;
+  logic [els_p-1:0] mem_w_v_li, mem_r_v_li;
   bsg_mem_1r1w_one_hot
    #(.width_p(data_width_p)
      ,.els_p(els_p)
@@ -84,13 +83,20 @@ module bsg_cam_1r1w
      ,.w_v_i(mem_w_v_li)
      ,.w_data_i(w_data_i)
 
-     ,.r_v_i(tag_r_match_lo)
+     ,.r_v_i(mem_r_v_li)
      ,.r_data_o(r_data_o)
      );
 
+  logic [els_p-1:0] set_way_lo, clear_way_lo;
+
+  assign set_way_lo   = repl_way_lo    & {els_p{w_v_i &  w_set_not_clear_i}};
   assign clear_way_lo = tag_w_match_lo & {els_p{w_v_i & ~w_set_not_clear_i}};
-  assign mem_w_v_li   = repl_way_lo & {els_p{w_v_i & w_set_not_clear_i}};
-  assign tag_w_v_li   = w_set_not_clear_i ? mem_w_v_li : clear_way_lo;
+  assign read_v_li    = tag_r_match_lo & {els_p{r_v_i}};
+  assign alloc_v_li   = set_way_lo;
+
+  assign tag_w_v_li   = set_way_lo | clear_way_lo;
+  assign mem_w_v_li   = set_way_lo;
+  assign mem_r_v_li   = read_v_li;
 
   assign r_v_o = r_v_i & |tag_r_match_lo;
 
