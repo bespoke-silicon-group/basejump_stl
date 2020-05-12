@@ -14,7 +14,7 @@ module bsg_cam_1r1w_replacement
   (input                       clk_i
    , input                     reset_i
 
-   // Synchronous update
+   // Synchronous update (i.e. indicate that an entry was touched)
    , input                     v_i
    , input [els_p-1:0]         way_one_hot_i
 

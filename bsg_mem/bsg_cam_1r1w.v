@@ -1,7 +1,6 @@
 /*
  * Asynchronous read 1r1w content addressable memory module.
  * Each entry has a tag and a data associated with it, and can be independently cleared and set
- * Clients can use the (not one-hot) empty_o vector to determine their own replacement policy
  */
 
 module bsg_cam_1r1w
@@ -15,8 +14,9 @@ module bsg_cam_1r1w
   (input                             clk_i
    , input                           reset_i
 
-   // Synchronous write of a tag
+   // Synchronous write/invalidate of a tag
    , input                           w_v_i
+   , input                           w_set_not_clear_i
    // Tag/data to set on write
    , input [tag_width_p-1:0]         w_tag_i
    , input [data_width_p-1:0]        w_data_i
@@ -28,18 +28,20 @@ module bsg_cam_1r1w
    , output logic                    r_v_o
   );
 
-  logic [els_p-1:0] w_v_li;
   logic [els_p-1:0] cam_r_v_lo;
   logic [els_p-1:0] cam_empty_lo;
+  logic [els_p-1:0] repl_way_lo;
   bsg_cam_1r1w_tag_array
    #(.width_p(tag_width_p)
      ,.els_p(els_p)
      )
-   cam_decoder
+   cam_tag_array
     (.clk_i(clk_i)
      ,.reset_i(reset_i)
 
-     ,.w_v_i(w_v_li)
+     ,.w_v_i(w_v_i)
+     ,.w_set_not_clear_i(w_set_not_clear_i)
+     ,.w_repl_i(repl_way_lo)
      ,.w_tag_i(w_tag_i)
      ,.empty_o(cam_empty_lo)
 
@@ -48,7 +50,6 @@ module bsg_cam_1r1w
      ,.r_v_o(cam_r_v_lo)
      );
 
-  logic [els_p-1:0] repl_way_lo;
   bsg_cam_1r1w_replacement
    #(.els_p(els_p)
      ,.scheme_p(repl_scheme_p)
@@ -63,8 +64,8 @@ module bsg_cam_1r1w
      ,.empty_i(cam_empty_lo)
      ,.way_one_hot_o(repl_way_lo)
      );
-  assign w_v_li = repl_way_lo & {els_p{w_v_i}};
 
+  wire [els_p-1:0] w_v_li = repl_way_lo & {els_p{w_v_i & w_set_not_clear_i}};
   bsg_mem_1r1w_one_hot
    #(.width_p(data_width_p)
      ,.els_p(els_p)

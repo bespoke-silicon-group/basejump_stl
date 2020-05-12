@@ -24,6 +24,7 @@ module testbench;
   localparam data_width_lp = 16;
 
   logic w_v_li;
+  logic w_set_not_clear_li;
   logic [tag_width_lp-1:0] w_tag_li;
   logic [data_width_lp-1:0] w_data_li;
   logic [els_lp-1:0] empty_lo;
@@ -42,6 +43,7 @@ module testbench;
      ,.reset_i(reset)
 
      ,.w_v_i(w_v_li)
+     ,.w_set_not_clear_i(w_set_not_clear_li)
      ,.w_tag_i(w_tag_li)
      ,.w_data_i(w_data_li)
 
@@ -55,6 +57,7 @@ module testbench;
   initial
     begin
       w_v_li = '0;
+      w_set_not_clear_li = '0;
       w_tag_li = '0;
       w_data_li = '0;
 
@@ -66,17 +69,15 @@ module testbench;
       @(posedge clk);
 
       @(negedge clk);
-      //$display("Checking initial not empty");
-      //assert (empty_lo == 4'b1111);
-
-      @(posedge clk);
       $display("Writing data 1");
       w_v_li = 1'b1;
+      w_set_not_clear_li = 1'b1;
       w_tag_li = 8'h00;
       w_data_li = 16'hdead;
-      @(posedge clk);
+      @(negedge clk);
       $display("Writing data 2");
       w_v_li = 1'b1;
+      w_set_not_clear_li = 1'b1;
       w_tag_li = 8'h11;
       w_data_li = 16'hbeef;
 
@@ -106,17 +107,18 @@ module testbench;
       @(posedge clk);
       r_v_li = 1'b0;
       
-      //@(posedge clk);
-      //$display("Testing invalidate");
-      //w_v_li = 4'b0001;
-      //w_tag_li = 'X;
-      //w_data_li = 'X;
-      //@(posedge clk);
-      //w_v_li = 1'b0;
-      //r_v_li = 1'b1;
-      //r_tag_li = 8'h00;
-      //@(negedge clk);
-      //assert (~r_v_lo);
+      @(posedge clk);
+      $display("Testing invalidate");
+      w_v_li = 1'b1;
+      w_set_not_clear_li = 1'b0;
+      w_tag_li = 8'h11;
+      w_data_li = 'X;
+      @(posedge clk);
+      w_v_li = 1'b0;
+      r_v_li = 1'b1;
+      r_tag_li = 8'h11;
+      @(negedge clk);
+      assert (~r_v_lo);
 
       $finish();
     end

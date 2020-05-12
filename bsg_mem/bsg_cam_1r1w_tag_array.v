@@ -13,9 +13,12 @@ module bsg_cam_1r1w_tag_array
   (input                          clk_i
    , input                        reset_i
 
-   // one or zero-hot
-   , input [els_p-1:0]            w_v_i
-   // Tag to set on write
+   // Mutually exclusive set or clear
+   , input                        w_v_i
+   , input                        w_set_not_clear_i
+   // Replacement way for a set
+   , input [els_p-1:0]            w_repl_i
+   // Tag to set or clear
    , input [width_p-1:0]          w_tag_i
 
    // Vector of empty CAM entries
@@ -32,13 +35,16 @@ module bsg_cam_1r1w_tag_array
   
   for (genvar i = 0; i < els_p; i++)
     begin : tag_array
-      bsg_dff_reset_en
+      wire r_tag_match = v_r[i] & (tag_r[i] == r_tag_i);
+      wire w_tag_match = v_r[i] & (tag_r[i] == w_tag_i);
+
+      bsg_dff_reset_set_clear
        #(.width_p(1))
        v_reg
         (.clk_i(clk_i)
          ,.reset_i(reset_i)
-         ,.en_i(w_v_i[i])
-         ,.data_i(1'b1)
+         ,.set_i(w_v_i & w_set_not_clear_i & w_repl_i[i])
+         ,.clear_i(w_v_i & ~w_set_not_clear_i & w_tag_match)
 
          ,.data_o(v_r[i])
          );
@@ -48,12 +54,11 @@ module bsg_cam_1r1w_tag_array
        tag_r_reg
         (.clk_i(clk_i)
 
-         ,.en_i(w_v_i[i])
+         ,.en_i(w_v_i & w_set_not_clear_i & w_repl_i[i])
          ,.data_i(w_tag_i)
          ,.data_o(tag_r[i])
          );
-
-      assign r_v_o[i]   =  v_r[i] & (tag_r[i] == r_tag_i);
+      assign r_v_o[i]   =  r_tag_match;
 	  assign empty_o[i] = ~v_r[i];
     end
 

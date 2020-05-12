@@ -1,7 +1,6 @@
 /*
  * Synchnronous read 1r1w content addressable memory module.
  * Each entry has a tag and a data associated with it, and can be independently cleared and set
- * Clients can use the (not one-hot) empty_o vector to determine their own replacement policy
  */
 
 module bsg_cam_1r1w_sync
@@ -15,8 +14,9 @@ module bsg_cam_1r1w_sync
   (input                             clk_i
    , input                           reset_i
 
-   // Synchronous write of a tag
+   // Synchronous write/invalidate of a tag
    , input                           w_v_i
+   , input                           w_set_not_clear_i
    // Tag/data to set on write
    , input [tag_width_p-1:0]         w_tag_i
    , input [data_width_p-1:0]        w_data_i
@@ -51,6 +51,7 @@ module bsg_cam_1r1w_sync
      ,.reset_i(reset_i)
 
      ,.w_v_i(w_v_i)
+     ,.w_set_not_clear_i(w_set_not_clear_i)
      ,.w_tag_i(w_tag_i)
      ,.w_data_i(w_data_i)
 
