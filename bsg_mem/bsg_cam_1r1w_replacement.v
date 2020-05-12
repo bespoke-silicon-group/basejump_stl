@@ -14,9 +14,13 @@ module bsg_cam_1r1w_replacement
   (input                       clk_i
    , input                     reset_i
 
-   // Synchronous update (i.e. indicate that an entry was touched)
-   , input                     v_i
-   , input [els_p-1:0]         way_one_hot_i
+   // Synchronous update (i.e. indicate that an entry was read)
+   , input                     r_v_i
+   , input [els_p-1:0]         r_way_one_hot_i
+
+   // Synchronous update (i.e. indicate that an entry was written)
+   , input                     w_v_i
+   , input [els_p-1:0]         w_way_one_hot_i
 
    // May use combination of internal state and empty vector
    //   to determine replacement
@@ -29,6 +33,11 @@ module bsg_cam_1r1w_replacement
     begin : lru
       localparam lg_els_lp = `BSG_SAFE_CLOG2(els_p);
 
+      // This pseudo-LRU policy can only handle 1 update at a time. We
+      //   prioritize writes over reads, somewhat arbitrarily
+      wire                   touch_v_li = r_v_i | w_v_i;
+      wire [els_p-1:0] touch_one_hot_li = w_v_i ? w_way_one_hot_i : r_way_one_hot_i;
+
       // LRU storage
       logic [els_p-2:0] lru_n, lru_r;
       bsg_dff_reset_en
@@ -36,7 +45,7 @@ module bsg_cam_1r1w_replacement
        lru_reg
         (.clk_i(clk_i)
          ,.reset_i(reset_i)
-         ,.en_i(v_i)
+         ,.en_i(touch_v_li)
 
          ,.data_i(lru_n)
          ,.data_o(lru_r)
@@ -78,7 +87,7 @@ module bsg_cam_1r1w_replacement
       bsg_encode_one_hot
        #(.width_p(els_p))
        way_encoder
-        (.i(way_one_hot_i)
+        (.i(touch_one_hot_li)
          ,.addr_o(way_li)
          ,.v_o()
          );
