@@ -18,6 +18,8 @@ module bsg_mesh_router_buffered #(width_p        = -1
     , input  [dirs_lp-1:0][bsg_ready_and_link_sif_width_lp-1:0] link_i
     , output [dirs_lp-1:0][bsg_ready_and_link_sif_width_lp-1:0] link_o
 
+    , output [dirs_lp-1:0] credit_o // (optional) signals that the network has taken a packet out of the buffer.
+
     , input [x_cord_width_p-1:0] my_x_i
     , input [y_cord_width_p-1:0] my_y_i
     );
@@ -56,6 +58,8 @@ module bsg_mesh_router_buffered #(width_p        = -1
              // accept no data from outside of stubbed port
              assign link_o_cast[i].ready_and_rev = 1'b0;
 
+             assign credit_o[i] = 1'b0;
+
              // synopsys translate_off
              always @(negedge clk_i)
                if (link_o_cast[i].v)
@@ -77,6 +81,7 @@ module bsg_mesh_router_buffered #(width_p        = -1
                 ,.data_o  (fifo_data [i])
                 ,.yumi_i  (fifo_yumi [i])
                 );
+            assign credit_o[i] = fifo_yumi[i];
           end
      end
 
