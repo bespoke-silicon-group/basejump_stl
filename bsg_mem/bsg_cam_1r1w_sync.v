@@ -1,7 +1,10 @@
 /*
  * Synchnronous read 1r1w content addressable memory module.
- * Each entry has a tag and a data associated with it, and can be
- *   independently cleared and set
+ * Each entry has a tag and a data associated with it
+ * - Read searches the array for any data with r_tag_i
+ * - Write allocates a new entry, replacing an existing entry with replacement
+ *     scheme repl_scheme_p
+ * - Write with w_nuke_i flag invalidates the cam
  */
 
 module bsg_cam_1r1w_sync
@@ -17,7 +20,8 @@ module bsg_cam_1r1w_sync
 
    // Synchronous write/invalidate of a tag
    , input                           w_v_i
-   , input                           w_set_not_clear_i
+   // When w_v_i & w_nuke_i, the whole cam array is invalidated
+   , input                           w_nuke_i
    // Tag/data to set on write
    , input [tag_width_p-1:0]         w_tag_i
    , input [data_width_p-1:0]        w_data_i
@@ -54,7 +58,7 @@ module bsg_cam_1r1w_sync
      ,.reset_i(reset_i)
 
      ,.w_v_i(w_v_i)
-     ,.w_set_not_clear_i(w_set_not_clear_i)
+     ,.w_nuke_i(w_nuke_i)
      ,.w_tag_i(w_tag_i)
      ,.w_data_i(w_data_i)
 

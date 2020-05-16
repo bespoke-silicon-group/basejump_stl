@@ -53,6 +53,7 @@ module bsg_cam_1r1w_unmanaged
      ,.w_match_o(w_match_o)
      ,.w_empty_o(w_empty_o)
 
+     ,.r_v_i(r_v_i)
      ,.r_tag_i(r_tag_i)
      ,.r_match_o(tag_r_match_lo)
      );
@@ -74,7 +75,7 @@ module bsg_cam_1r1w_unmanaged
      ,.r_data_o(r_data_o)
      );
 
-  assign r_v_o = r_v_i & |tag_r_match_lo;
+  assign r_v_o = |tag_r_match_lo;
 
 endmodule
 

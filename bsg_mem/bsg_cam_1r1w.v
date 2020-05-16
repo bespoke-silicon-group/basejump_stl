@@ -1,6 +1,10 @@
 /*
  * Asynchronous read 1r1w content addressable memory module.
  * Each entry has a tag and a data associated with it, and can be independently cleared and set
+ * - Read searches the array for any data with r_tag_i
+ * - Write allocates a new entry, replacing an existing entry with replacement
+ *     scheme repl_scheme_p
+ * - Write with w_nuke_i flag invalidates the cam
  */
 
 module bsg_cam_1r1w
@@ -16,7 +20,8 @@ module bsg_cam_1r1w
 
    // Synchronous write/invalidate of a tag
    , input                           w_v_i
-   , input                           w_set_not_clear_i
+   // When w_v_i & w_nuke_i, the whole cam array is invalidated
+   , input                           w_nuke_i
    // Tag/data to set on write
    , input [tag_width_p-1:0]         w_tag_i
    , input [data_width_p-1:0]        w_data_i
@@ -31,7 +36,8 @@ module bsg_cam_1r1w
   // The tag storage for the CAM
   logic [els_p-1:0] tag_r_match_lo, tag_w_match_lo;
   logic [els_p-1:0] tag_empty_lo;
-  logic [els_p-1:0] tag_w_v_li;
+  logic [els_p-1:0] repl_way_lo;
+  wire [els_p-1:0] tag_w_v_li = repl_way_lo | {els_p{w_nuke_i}};
   bsg_cam_1r1w_tag_array
    #(.width_p(tag_width_p)
      ,.els_p(els_p)
@@ -41,19 +47,17 @@ module bsg_cam_1r1w
      ,.reset_i(reset_i)
 
      ,.w_v_i(tag_w_v_li)
-     ,.w_set_not_clear_i(w_set_not_clear_i)
+     ,.w_set_not_clear_i(w_v_i & ~w_nuke_i)
      ,.w_tag_i(w_tag_i)
-     ,.w_match_o(tag_w_match_lo)
+     ,.w_match_o()
      ,.w_empty_o(tag_empty_lo)
 
+     ,.r_v_i(r_v_i)
      ,.r_tag_i(r_tag_i)
      ,.r_match_o(tag_r_match_lo)
      );
 
   // The replacement scheme for the CAM
-  logic [els_p-1:0] repl_way_lo;
-  logic [els_p-1:0] read_v_li;
-  logic [els_p-1:0] alloc_v_li;
   bsg_cam_1r1w_replacement
    #(.els_p(els_p)
      ,.scheme_p(repl_scheme_p)
@@ -62,16 +66,15 @@ module bsg_cam_1r1w
     (.clk_i(clk_i)
      ,.reset_i(reset_i)
 
-     ,.read_v_i(tag_r_match_lo & {els_p{r_v_i}})
+     ,.read_v_i(tag_r_match_lo)
 
-     ,.alloc_v_i(tag_w_match_lo & {els_p{w_v_i & w_set_not_clear_i}})
-
+     ,.alloc_v_i(w_v_i)
      ,.empty_i(tag_empty_lo)
-     ,.way_one_hot_o(repl_way_lo)
+     ,.alloc_v_o(repl_way_lo)
      );
 
   // The data storage for the CAM
-  logic [els_p-1:0] mem_w_v_li, mem_r_v_li;
+  wire [els_p-1:0] mem_w_v_li = repl_way_lo;
   bsg_mem_1r1w_one_hot
    #(.width_p(data_width_p)
      ,.els_p(els_p)
@@ -83,22 +86,11 @@ module bsg_cam_1r1w
      ,.w_v_i(mem_w_v_li)
      ,.w_data_i(w_data_i)
 
-     ,.r_v_i(mem_r_v_li)
+     ,.r_v_i(tag_r_match_lo)
      ,.r_data_o(r_data_o)
      );
 
-  logic [els_p-1:0] set_way_lo, clear_way_lo;
-
-  assign set_way_lo   = repl_way_lo    & {els_p{w_v_i &  w_set_not_clear_i}};
-  assign clear_way_lo = tag_w_match_lo & {els_p{w_v_i & ~w_set_not_clear_i}};
-  assign read_v_li    = tag_r_match_lo & {els_p{r_v_i}};
-  assign alloc_v_li   = set_way_lo;
-
-  assign tag_w_v_li   = set_way_lo | clear_way_lo;
-  assign mem_w_v_li   = set_way_lo;
-  assign mem_r_v_li   = read_v_li;
-
-  assign r_v_o = r_v_i & |tag_r_match_lo;
+  assign r_v_o = |tag_r_match_lo;
 
 endmodule
 

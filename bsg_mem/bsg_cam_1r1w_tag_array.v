@@ -25,6 +25,8 @@ module bsg_cam_1r1w_tag_array
    // Vector of empty CAM entries
    , output logic [els_p-1:0]     w_empty_o
    
+   // Async read
+   , input                        r_v_i
    // Tag to match on read
    , input [width_p-1:0]          r_tag_i
    // one or zero-hot
@@ -57,7 +59,7 @@ module bsg_cam_1r1w_tag_array
          ,.data_o(tag_r[i])
          );
 
-      assign r_match_o[i] = v_r[i] & (tag_r[i] == r_tag_i);
+      assign r_match_o[i] = r_v_i & v_r[i] & (tag_r[i] == r_tag_i);
       assign w_match_o[i] = v_r[i] & (tag_r[i] == w_tag_i);
 	  assign w_empty_o[i] = ~v_r[i];
     end
@@ -69,7 +71,7 @@ module bsg_cam_1r1w_tag_array
                    %x while multiple_entries_p parameter is %d\n", r_match_o,
                    multiple_entries_p);       
 	
-	assert(reset_i || $countones(w_v_i) <= 1)
+	assert(reset_i || $countones(w_v_i & {els_p{w_set_not_clear_i}}) <= 1)
       else $error("Inv_r one-hot write address %b\n", w_v_i);
   end 
   //synopsys translate_on

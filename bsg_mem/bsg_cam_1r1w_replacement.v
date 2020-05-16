@@ -4,11 +4,15 @@
 // The scheme is synchronously updated when v_i goes high, and asynchronously
 //   outputs the selected way for replacement based on internal and emptiness
 //
+// Currently supported schemes
+//  LRU:
+//  - Both alloc and read operations update LRU in parallel
+//  - Allocation is performed logically before the read update
+//  - If the read and alloc refer to the same set, all is well,
+//       since the LRU update is idempotent.
 module bsg_cam_1r1w_replacement
  #(parameter els_p      = 2
    // Which replacement scheme to use
-   // Currently supported:
-   //   - LRU
    , parameter scheme_p = "lru"
    )
   (input                       clk_i
@@ -17,13 +21,12 @@ module bsg_cam_1r1w_replacement
    // Synchronous update (i.e. indicate that an entry was read)
    , input [els_p-1:0]         read_v_i
 
-   // Synchronous update (i.e. indicate that an entry was allocated)
-   , input [els_p-1:0]         alloc_v_i
-
    // May use combination of internal state and empty vector
    //   to determine replacement
+   // Synchronous update (i.e. indicate that an entry was allocated)
+   , input                     alloc_v_i
    , input [els_p-1:0]         empty_i
-   , output [els_p-1:0]        way_one_hot_o
+   , output [els_p-1:0]        alloc_v_o
    );
 
   // Standard tree-based pseudo-lru
@@ -32,8 +35,7 @@ module bsg_cam_1r1w_replacement
       localparam lg_els_lp = `BSG_SAFE_CLOG2(els_p);
 
       wire read_v_li    = |read_v_i;
-      wire alloc_v_li   = |alloc_v_i;
-      wire lru_touch_li = read_v_li | alloc_v_li;
+      wire lru_touch_li = read_v_li | alloc_v_i;
 
       // LRU storage
       logic [els_p-2:0] lru_n, lru_r;
@@ -79,7 +81,7 @@ module bsg_cam_1r1w_replacement
        #(.num_out_p(els_p))
        way_decoder
         (.i(way_lo)
-         ,.o(way_one_hot_o)
+         ,.o(alloc_v_o)
          );
 
       //
@@ -119,28 +121,18 @@ module bsg_cam_1r1w_replacement
          );
       assign read_sel_lo = read_update_mask_lo & {(els_p-1){read_v_li}};
 
-      // Encode the one-hot way write inputs to this module
-      logic [lg_els_lp-1:0] alloc_way_li;
-      bsg_encode_one_hot
-       #(.width_p(els_p))
-       alloc_way_encoder
-        (.i(alloc_v_i)
-         ,.addr_o(alloc_way_li)
-         ,.v_o()
-         );
-
       // Decides which way to update based on write MRU
       logic [els_p-2:0] alloc_update_data_lo, alloc_update_mask_lo;
       bsg_lru_pseudo_tree_decode
        #(.ways_p(els_p))
        alloc_decoder
-        (.way_id_i(alloc_way_li)
+        (.way_id_i(way_lo)
          ,.data_o(alloc_update_data_lo)
          ,.mask_o(alloc_update_mask_lo)
          );
 
       logic [els_p-2:0] alloc_update_lo;
-      logic [els_p-2:0] alloc_sel_lo;
+      wire [els_p-2:0] alloc_sel_lo = alloc_update_mask_lo & {(els_p-1){alloc_v_i}};
       bsg_mux_bitwise
        #(.width_p(els_p-1))
        alloc_update_mux
@@ -149,7 +141,6 @@ module bsg_cam_1r1w_replacement
          ,.sel_i(alloc_sel_lo)
          ,.data_o(alloc_update_lo)
          );
-      assign alloc_sel_lo = alloc_update_mask_lo & {(els_p-1){alloc_v_li}};
 
       assign lru_n = alloc_update_lo;
     end
