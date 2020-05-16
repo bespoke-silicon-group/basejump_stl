@@ -74,20 +74,20 @@ module testbench;
       $display("Checking initial not empty");
       assert (w_empty_lo == 4'b1111);
 
-      @(posedge clk);
+      @(negedge clk);
       $display("Writing data 1");
       w_v_li = 4'b0001;
       w_set_not_clear_li = 1'b1;
       w_tag_li = 8'h00;
       w_data_li = 16'hdead;
-      @(posedge clk);
+      @(negedge clk);
       $display("Writing data 2");
       w_v_li = 4'b0010;
       w_set_not_clear_li = 1'b1;
       w_tag_li = 8'h11;
       w_data_li = 16'hbeef;
 
-      @(posedge clk);
+      @(negedge clk);
       w_v_li = '0;
       
       @(negedge clk);

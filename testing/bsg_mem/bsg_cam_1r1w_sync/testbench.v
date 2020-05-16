@@ -81,7 +81,7 @@ module testbench;
       w_tag_li = 8'h11;
       w_data_li = 16'hbeef;
 
-      @(posedge clk);
+      @(negedge clk);
       w_v_li = 1'b0;
       
       @(negedge clk);

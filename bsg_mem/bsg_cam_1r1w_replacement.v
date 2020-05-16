@@ -110,7 +110,7 @@ module bsg_cam_1r1w_replacement
       // Muxes in the update data to compute the next LRU state
       // This doesn't get latched in unless there's an active use
       logic [els_p-2:0] read_update_lo;
-      logic [els_p-2:0] read_sel_lo;
+      wire [els_p-2:0] read_sel_lo = read_update_mask_lo & {(els_p-1){read_v_li}};
       bsg_mux_bitwise
        #(.width_p(els_p-1))
        read_update_mux
@@ -119,7 +119,6 @@ module bsg_cam_1r1w_replacement
          ,.sel_i(read_sel_lo)
          ,.data_o(read_update_lo)
          );
-      assign read_sel_lo = read_update_mask_lo & {(els_p-1){read_v_li}};
 
       // Decides which way to update based on write MRU
       logic [els_p-2:0] alloc_update_data_lo, alloc_update_mask_lo;
