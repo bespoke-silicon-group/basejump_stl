@@ -34,7 +34,7 @@ module bsg_cam_1r1w
   );
 
   // The tag storage for the CAM
-  logic [els_p-1:0] tag_r_match_lo, tag_w_match_lo;
+  logic [els_p-1:0] tag_r_match_lo;
   logic [els_p-1:0] tag_empty_lo;
   logic [els_p-1:0] repl_way_lo;
   wire [els_p-1:0] tag_w_v_li = repl_way_lo | {els_p{w_nuke_i}};
@@ -49,7 +49,6 @@ module bsg_cam_1r1w
      ,.w_v_i(tag_w_v_li)
      ,.w_set_not_clear_i(w_v_i & ~w_nuke_i)
      ,.w_tag_i(w_tag_i)
-     ,.w_match_o()
      ,.w_empty_o(tag_empty_lo)
 
      ,.r_v_i(r_v_i)

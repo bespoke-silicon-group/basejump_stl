@@ -19,9 +19,6 @@ module bsg_cam_1r1w_tag_array
    , input                        w_set_not_clear_i
    // Tag to set or clear
    , input [width_p-1:0]          w_tag_i
-
-   // Vector of write tag matches
-   , output logic [els_p-1:0]     w_match_o
    // Vector of empty CAM entries
    , output logic [els_p-1:0]     w_empty_o
    
@@ -60,7 +57,6 @@ module bsg_cam_1r1w_tag_array
          );
 
       assign r_match_o[i] = r_v_i & v_r[i] & (tag_r[i] == r_tag_i);
-      assign w_match_o[i] = v_r[i] & (tag_r[i] == w_tag_i);
 	  assign w_empty_o[i] = ~v_r[i];
     end
 

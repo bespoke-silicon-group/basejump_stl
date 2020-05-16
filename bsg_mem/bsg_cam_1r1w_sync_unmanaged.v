@@ -23,8 +23,6 @@ module bsg_cam_1r1w_sync_unmanaged
    , input [tag_width_p-1:0]         w_tag_i
    , input [data_width_p-1:0]        w_data_i
    // Metadata useful for an external replacement policy
-   // Whether write tag has a match
-   , output [els_p-1:0]              w_match_o
    // Whether there's an empty entry in the tag array
    , output [els_p-1:0]              w_empty_o
    
@@ -62,7 +60,6 @@ module bsg_cam_1r1w_sync_unmanaged
      ,.w_set_not_clear_i(w_set_not_clear_i)
      ,.w_tag_i(w_tag_i)
      ,.w_data_i(w_data_i)
-     ,.w_match_o(w_match_o)
      ,.w_empty_o(w_empty_o)    
 
      ,.r_v_i(r_v_r)

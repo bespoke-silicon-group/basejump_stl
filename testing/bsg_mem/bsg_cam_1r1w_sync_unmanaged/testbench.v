@@ -27,7 +27,7 @@ module testbench;
   logic w_set_not_clear_li;
   logic [tag_width_lp-1:0] w_tag_li;
   logic [data_width_lp-1:0] w_data_li;
-  logic [els_lp-1:0] w_match_lo, w_empty_lo;
+  logic [els_lp-1:0] w_empty_lo;
 
   logic r_v_li;
   logic [tag_width_lp-1:0] r_tag_li;
@@ -47,7 +47,6 @@ module testbench;
      ,.w_tag_i(w_tag_li)
      ,.w_data_i(w_data_li)
 
-     ,.w_match_o(w_match_lo)
      ,.w_empty_o(w_empty_lo)
 
      ,.r_v_i(r_v_li)
