@@ -1,140 +1,103 @@
 /*
-* 
-* Content Addressable Memory (CAM) module
-* The r_data_i is received as an input and is compared against all
-* the valid entries in the CAM. For each entery, if r_data_i is the same as
-* the stored pattern in that entery, the corresponding bit in match_array is
-* set. Based on the multiple_entries_p parameter, which indicates
-* whether multiple entries with the same key are allowed, the match_array is
-* sent to either a one_hot_encoder or a priority_encoder to generate
-* the address of the match location. Also by setting the find_empty_entry_p
-* parameter, if there is an empty entry in the memory, empty_v_o is raised and
-* the first empty entry's address is put on empty_addr_o. This can help other
-* modules interacting with CAM, to easily find an address to write to.
-*
-*/
+ * Asynchronous read 1r1w content addressable memory module.
+ * Each entry has a tag and a data associated with it, and can be
+ *   independently cleared and set
+ * - Read searches the array for any data with r_tag_i
+ * - Write allocates a new entry, replacing an existing entry with replacement
+ *     scheme repl_scheme_p
+ * - Write with w_nuke_i flag invalidates the cam
+ * - Allocation happens in parallel with read, so it is possible in an LRU
+ *     scheme for the currently-being-read item to be overwritten
+ * - There are no concerns about simultaneous reading and writing
+ * - It is generally discouraged to have multiple identical tags in the array,
+ *     i.e. you should read the array to see if anything is there before
+ *     writing; but if there are, then the data returned on read is the OR
+ *     of the data. If you find that functionality useful, let us know =)
+ */
 
 module bsg_cam_1r1w
-  #(parameter els_p               = "inv"
-    ,parameter width_p            = "inv"
-    ,parameter multiple_entries_p = "inv"
-	,parameter find_empty_entry_p = "inv"
-	
-	,localparam lg_els_lp         = `BSG_SAFE_CLOG2(els_p)
-  )
-  (input                          clk_i
-   , input                        reset_i
-   , input                        en_i
+ #(parameter els_p                = "inv"
+   , parameter tag_width_p        = "inv"
+   , parameter data_width_p       = "inv"
 
-   , input                        w_v_i
-   , input                        w_set_not_clear_i
-   , input [lg_els_lp-1:0]        w_addr_i
-   , input [width_p-1:0]          w_data_i
+   // The replacement scheme for the CAM
+   , parameter repl_scheme_p = "lru"
+   )
+  (input                             clk_i
+   , input                           reset_i
+
+   // Synchronous write/invalidate of a tag
+   , input                           w_v_i
+   // When w_v_i & w_nuke_i, the whole cam array is invalidated
+   , input                           w_nuke_i
+   // Tag/data to set on write
+   , input [tag_width_p-1:0]         w_tag_i
+   , input [data_width_p-1:0]        w_data_i
    
-   , input                        r_v_i
-   , input [width_p-1:0]          r_data_i
-   
-   , output logic                 r_v_o
-   , output logic [lg_els_lp-1:0] r_addr_o
-   
-   , output logic                 empty_v_o
-   , output logic [lg_els_lp-1:0] empty_addr_o
+   // Asynchronous read of a tag, if exists
+   , input                           r_v_i
+   , input [tag_width_p-1:0]         r_tag_i
+   , output logic [data_width_p-1:0] r_data_o
+   , output logic                    r_v_o
   );
 
-  
-  logic [width_p-1:0] mem [0:els_p-1];
-  logic [els_p-1:0]   match_array, empty_array;
-  logic [els_p-1:0]   valid;
-  logic               matched, empty_found;
-  
-  assign r_v_o     = en_i & r_v_i & matched;
-   
-  //write the input pattern into the cam and set the corresponding valid bit
-  always_ff @(posedge clk_i) begin
-    if (reset_i) begin: fi
-      valid <= '0;
-    end 
-    else if (en_i && w_v_i) begin: fi2
-      //w_set_not_clear_i=1 sets the valid bit and
-      //w_set_not_clear_i=0 makes the corresponding entry invalid
-      valid[w_addr_i] <= w_set_not_clear_i;
-      mem[w_addr_i]   <= w_data_i;
-    end
-  end
-  
-   
-  //compare the input pattern with all stored valid patterns inside
-  //the cam.In the case of a match, set the corresponding bit in
-  //match_array
-  genvar i;
-  for (i = 0; i < els_p; i++) begin: rof
-    assign  match_array[i] = ~reset_i & en_i & (mem[i] == r_data_i) & valid[i];
-	assign  empty_array[i] = ~reset_i & en_i & ~valid[i];
-  end
-  
-   
-  generate 
-    if(multiple_entries_p) begin: fi3
-      //If multiple_entries_p is 1, the match_array is sent to the
-      //priority encoder to select the match_address
-      bsg_priority_encode
-        #(.width_p (els_p)
-          ,.lo_to_hi_p (1)
-        ) pe
-        (.i (match_array)
-         ,.addr_o (r_addr_o)
-         ,.v_o (matched)
-        );
-    end
-    else begin: fi4
-      //If multiple_entries_p is 0, the match_array is sent to the
-      //one hot encoder to select the match_address
-      bsg_encode_one_hot
-        #(.width_p (els_p)
-          ,.lo_to_hi_p (1)
-        ) ohe
-        (.i (match_array)
-         ,.addr_o (r_addr_o)
-         ,.v_o (matched)
-        );
-    end 
-  endgenerate
-  
-  generate 
-    if(find_empty_entry_p) begin: fi5
-	// If find_empty_entry_p is 1, finds the first empty entry in the cam,
-    // and puts it on empty_addr_o and raises the empty_v_o
-      bsg_priority_encode
-        #(.width_p(els_p)
-          ,.lo_to_hi_p(1)
-        ) epe
-        (.i(empty_array)
-         ,.addr_o(empty_addr_o)
-         ,.v_o(empty_found)
-        );
-    
-      assign empty_v_o = en_i & empty_found;
-    end
-    else begin: fi6
-	// Otherwise, sets empty_v_o and empty_addr_o to zero	
-      assign empty_v_o    = 1'b0;
-      assign empty_addr_o = '0;
-    end
-  endgenerate
-  
-  
-  always_ff @(negedge clk_i) begin
-    if (~multiple_entries_p & ~reset_i & en_i & r_v_i) begin: fi_debug1
-      assert($countones(match_array) <= 1)
-        else $error("Multiple similar entries are found in match_array\
-                    %x while multiple_entries_p parameter is %d\n", match_array,
-                    multiple_entries_p);       
-    end
-	
-	if(~reset_i & en_i & w_v_i) begin: fi_debug2
-	  assert(w_addr_i < els_p)
-        else $error("Invalid address %x of size %x\n", w_addr_i, els_p);
-	end
-  end 
+  // The tag storage for the CAM
+  logic [els_p-1:0] tag_r_match_lo;
+  logic [els_p-1:0] tag_empty_lo;
+  logic [els_p-1:0] repl_way_lo;
+  wire [els_p-1:0] tag_w_v_li = repl_way_lo | {els_p{w_nuke_i}};
+  bsg_cam_1r1w_tag_array
+   #(.width_p(tag_width_p)
+     ,.els_p(els_p)
+     )
+   cam_tag_array
+    (.clk_i(clk_i)
+     ,.reset_i(reset_i)
+
+     ,.w_v_i(tag_w_v_li)
+     ,.w_set_not_clear_i(w_v_i & ~w_nuke_i)
+     ,.w_tag_i(w_tag_i)
+     ,.w_empty_o(tag_empty_lo)
+
+     ,.r_v_i(r_v_i)
+     ,.r_tag_i(r_tag_i)
+     ,.r_match_o(tag_r_match_lo)
+     );
+
+  // The replacement scheme for the CAM
+  bsg_cam_1r1w_replacement
+   #(.els_p(els_p)
+     ,.scheme_p(repl_scheme_p)
+     )
+   replacement
+    (.clk_i(clk_i)
+     ,.reset_i(reset_i)
+
+     ,.read_v_i(tag_r_match_lo)
+
+     ,.alloc_v_i(w_v_i)
+     ,.alloc_empty_i(tag_empty_lo)
+     ,.alloc_v_o(repl_way_lo)
+     );
+
+  // The data storage for the CAM
+  wire [els_p-1:0] mem_w_v_li = repl_way_lo;
+  bsg_mem_1r1w_one_hot
+   #(.width_p(data_width_p)
+     ,.els_p(els_p)
+     )
+   one_hot_mem
+    (.w_clk_i(clk_i)
+     ,.w_reset_i(reset_i)
+
+     ,.w_v_i(mem_w_v_li)
+     ,.w_data_i(w_data_i)
+
+     ,.r_v_i(tag_r_match_lo)
+     ,.r_data_o(r_data_o)
+     );
+
+  assign r_v_o = |tag_r_match_lo;
 
 endmodule
+
