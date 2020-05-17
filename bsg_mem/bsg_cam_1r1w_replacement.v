@@ -25,7 +25,7 @@ module bsg_cam_1r1w_replacement
    //   to determine replacement
    // Synchronous update (i.e. indicate that an entry was allocated)
    , input                     alloc_v_i
-   , input [els_p-1:0]         empty_i
+   , input [els_p-1:0]         alloc_empty_i
    , output [els_p-1:0]        alloc_v_o
    );
 
@@ -68,7 +68,7 @@ module bsg_cam_1r1w_replacement
       bsg_priority_encode
        #(.width_p(els_p), .lo_to_hi_p(1))
        empty_encoder
-        (.i(empty_i)
+        (.i(alloc_empty_i)
          ,.addr_o(empty_way_lo)
          ,.v_o(empty_way_v_lo)
          );

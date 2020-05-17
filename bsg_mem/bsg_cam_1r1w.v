@@ -1,10 +1,18 @@
 /*
  * Asynchronous read 1r1w content addressable memory module.
- * Each entry has a tag and a data associated with it, and can be independently cleared and set
+ * Each entry has a tag and a data associated with it, and can be
+ *   independently cleared and set
  * - Read searches the array for any data with r_tag_i
  * - Write allocates a new entry, replacing an existing entry with replacement
  *     scheme repl_scheme_p
  * - Write with w_nuke_i flag invalidates the cam
+ * - Allocation happens in parallel with read, so it is possible in an LRU
+ *     scheme for the currently-being-read item to be overwritten
+ * - There are no concerns about simultaneous reading and writing
+ * - It is generally discouraged to have multiple identical tags in the array,
+ *     i.e. you should read the array to see if anything is there before
+ *     writing; but if there are, then the data returned on read is the OR
+ *     of the data. If you find that functionality useful, let us know =)
  */
 
 module bsg_cam_1r1w
@@ -68,7 +76,7 @@ module bsg_cam_1r1w
      ,.read_v_i(tag_r_match_lo)
 
      ,.alloc_v_i(w_v_i)
-     ,.empty_i(tag_empty_lo)
+     ,.alloc_empty_i(tag_empty_lo)
      ,.alloc_v_o(repl_way_lo)
      );
 
