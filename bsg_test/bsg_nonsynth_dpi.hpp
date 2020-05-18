@@ -5,6 +5,13 @@
 #include <svdpi.h>
 #include <verilated.h>
 
+
+// These functions are provided by the SV Compiler. They are declared
+// at global scope but svSetScope MUST be called to set the scope
+// (verilog module instantiation) where the function are defined.
+// 
+// If the current scope does not contain these functions, calls to
+// these functions will fail in the simulator.
 extern "C" {
         extern void bsg_dpi_init();
         extern void bsg_dpi_fini();
