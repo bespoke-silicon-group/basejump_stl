@@ -103,6 +103,7 @@ module bsg_nonsynth_fifo_to_dpi
    export "DPI-C" function debug;
    export "DPI-C" function width;
    export "DPI-C" function rx;
+   export "DPI-C" function is_window;
 `endif // __BSG_PERMODULE_EXPORT
 
    // Set or unset the debug_o output bit. If a state change occurs
@@ -204,6 +205,12 @@ module bsg_nonsynth_fifo_to_dpi
                  name_p, $time, v_i, data_i);
 
       return (v_i === 1);
+   endfunction
+
+   // The function isWindow returns true if the interface is in a
+   // valid time-window to call rx()
+   function bit is_window();
+      return (~rx_r & clk_i & edgepol);
    endfunction
 
    // We set yumi_o to 0 on the positive edge of clk_i (after it has

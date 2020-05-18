@@ -73,10 +73,13 @@ namespace bsg_nonsynth_dpi{
         class fifo_to_dpi: public dpi_base, public dpi_width<T>{
                 unsigned char (*rx_f)(svLogicVecVal*) = nullptr;
         public:
+                unsigned char (*is_window)() = nullptr;
                 fifo_to_dpi(void (*init)(), void (*fini)(),
                             void(*debug)(unsigned char),
-                            int (*width)(), unsigned char (*rx_f)(svLogicVecVal*))
-                        : dpi_base(init, fini, debug), dpi_width<T>(width), rx_f(rx_f){
+                            int (*width)(), unsigned char (*rx_f)(svLogicVecVal*), 
+                            unsigned char (*is_window)())
+                        : dpi_base(init, fini, debug), dpi_width<T>(width), 
+                          rx_f(rx_f), is_window(is_window){
                 }
 
                 // rx wraps the rx(output logic [width_p-1:0] data_o)
@@ -119,10 +122,13 @@ namespace bsg_nonsynth_dpi{
         class dpi_to_fifo: public dpi_base, public dpi_width<T>{
                 unsigned char (*tx_f)(const svLogicVecVal*) = nullptr;
         public:
+                unsigned char (*is_window)() = nullptr;
                 dpi_to_fifo(void (*init)(), void (*fini)(),
                             void(*debug)(unsigned char),
-                            int (*width)(), unsigned char (*tx_f)(const svLogicVecVal*))
-                        : dpi_base(init, fini, debug), dpi_width<T>(width), tx_f(tx_f){
+                            int (*width)(), unsigned char (*tx_f)(const svLogicVecVal*),
+                            unsigned char (*is_window)())
+                        : dpi_base(init, fini, debug), dpi_width<T>(width), 
+                          tx_f(tx_f), is_window(is_window){
                 }
 
                 // tx wraps the tx(input logic [width_p-1:0] data_i)
