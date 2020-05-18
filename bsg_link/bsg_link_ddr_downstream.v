@@ -3,7 +3,10 @@
 //
 // This is the receiver part of bsg_link_ddr, a complete DDR communication 
 // endpoint over multiple source-synchronous channels.
-// ALWAYS use in pair with bsg_link_ddr_upstream
+//
+// * This module MUST be mirrored with bsg_link_ddr_upstream, which is
+//   instantiated on the source chip or FPGA. It is not a must to
+//   use upstream and downstream in pair on same chip or FPGA.
 // 
 // The purpose of bsg_link_ddr_downstream is to receive DDR data bits from 
 // physical IO pins, then reassemble to ready-valid interface in core clock domain.
