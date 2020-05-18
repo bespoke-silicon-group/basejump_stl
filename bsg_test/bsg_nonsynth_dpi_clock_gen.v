@@ -25,9 +25,7 @@
 // This drop-in replacement supports multiple clock generators and
 // can be embedded anywhere in the hierarchy.
 module bsg_nonsynth_dpi_clock_gen
-/*verilator lint_off WIDTH*/
   #(parameter longint cycle_time_p="inv"
-/*verilator lint_on WIDTH*/
     )
    (
     output bit o

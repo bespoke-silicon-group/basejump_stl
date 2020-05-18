@@ -2,10 +2,8 @@
 
 BASEJUMP_STL_DIR := $(abspath ../../../)
 
-#VERILATOR=/home/drichmond/Research/repositories/git/verilator/bin/verilator
-#VERILATOR_ROOT=/home/drichmond/Research/repositories/git/verilator
-VERILATOR_ROOT=/usr/share/verilator
-VERILATOR=verilator
+VERILATOR_ROOT ?= /usr/share/verilator
+VERILATOR = verilator
 VSOURCES += $(BASEJUMP_STL_DIR)/testing/bsg_test/bsg_nonsynth_dpi/top.v
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_defines.v
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_reset_gen.v
@@ -21,8 +19,6 @@ VINCLUDES += -I$(BASEJUMP_STL_DIR)/bsg_misc/
 
 CFLAGS += -CFLAGS -std=c++11
 CFLAGS +=-CFLAGS -I$(BASEJUMP_STL_DIR)/bsg_test/
-#CXXSOURCES += $(VERILATOR_ROOT)/include/verilated.cpp
-#CXXSOURCES += $(VERILATOR_ROOT)/include/verilated_dpi.cpp
 CXXSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_dpi_clock_gen.cpp
 CXXSOURCES += main.cpp
 
