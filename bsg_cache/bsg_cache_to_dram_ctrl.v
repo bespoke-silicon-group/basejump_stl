@@ -62,7 +62,13 @@ module bsg_cache_to_dram_ctrl
   `declare_bsg_cache_dma_pkt_s(addr_width_p);
 
   // dma_pkt input FIFO
-  //
+  // This converts valid-yumi interface of bsg_round_robin_n_to_1 to valid-ready interface.
+  // This gets rid of the long round trip the signal has to travel; therefore, making it better for physical design.
+  // It also avoid one-cycle bubble between receiving dma_pkt_i and dma_data_i, 
+  // because bsg_cache_dma engine has an output-two-fifo on dma_data_o but not on dma_pkt_o.
+  // Also, bsg_cache can send out up to two dma_pkts for a miss (refill and evict).
+  // This prevents the stall between sending the first and the second.
+
   logic [num_cache_p-1:0] dma_pkt_fifo_v_lo;
   logic [num_cache_p-1:0] dma_pkt_fifo_yumi_li;
   bsg_cache_dma_pkt_s [num_cache_p-1:0] dma_pkt_fifo_data_lo;
