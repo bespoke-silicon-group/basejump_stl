@@ -35,14 +35,6 @@ module testbench;
   logic [skinny_addr_width_lp-1:0] r_addr_li;
   logic [skinny_width_lp-1:0] r_data_lo;
 
-  logic fat_w_v_lo;
-  logic [fat_width_lp-1:0] fat_w_mask_lo;
-  logic [fat_addr_width_lp-1:0] fat_w_addr_lo;
-  logic [fat_width_lp-1:0] fat_w_data_lo;
-  logic fat_r_v_lo;
-  logic [fat_addr_width_lp-1:0] fat_r_addr_lo;
-  logic [fat_width_lp-1:0] fat_r_data_li;
-
   logic skinny_w_v_lo;
   logic [skinny_width_lp-1:0] skinny_w_mask_lo;
   logic [skinny_addr_width_lp-1:0] skinny_w_addr_lo;
@@ -69,36 +61,6 @@ module testbench;
      ,.r_addr_i(r_addr_li)
 
      ,.r_data_o(r_data_lo)
-
-     ,.w_v_o(fat_w_v_lo)
-     ,.w_mask_o(fat_w_mask_lo)
-     ,.w_addr_o(fat_w_addr_lo)
-     ,.w_data_o(fat_w_data_lo)
-
-     ,.r_v_o(fat_r_v_lo)
-     ,.r_addr_o(fat_r_addr_lo)
-
-     ,.r_data_i(fat_r_data_li)
-     );
-
-  bsg_mem_1r1w_sync_mask_write_bit
-   #(.width_p(fat_width_lp)
-     ,.els_p(fat_els_lp)
-     ,.read_write_same_addr_p(1)
-     )
-   fat_mem
-    (.clk_i(clk)
-     ,.reset_i(reset)
-
-     ,.w_v_i(fat_w_v_lo)
-     ,.w_mask_i(fat_w_mask_lo)
-     ,.w_addr_i(fat_w_addr_lo)
-     ,.w_data_i(fat_w_data_lo)
-
-     ,.r_v_i(fat_r_v_lo)
-     ,.r_addr_i(fat_r_addr_lo)
-
-     ,.r_data_o(fat_r_data_li)
      );
 
   assign skinny_w_v_lo = w_v_li;
@@ -152,7 +114,7 @@ module testbench;
       @(posedge clk);
       @(negedge clk);
 
-      for (integer i = 0; i < 10000; i++)
+      for (integer i = 0; i < 100000; i++)
         begin
           w_v_li = $random();
           w_mask_li = $random();
