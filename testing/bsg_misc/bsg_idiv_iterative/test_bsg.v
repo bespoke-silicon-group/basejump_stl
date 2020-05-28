@@ -8,6 +8,7 @@
 `define ITERS 10000
 `define SIGN			// test signed divide
 `define UNSIGN			// test unsigned divide
+`define WIDTH 64
 
 module test_bsg;
 
@@ -22,29 +23,28 @@ module test_bsg;
 
    integer i;
 
-   reg  [31:0] dividend;
-   reg  [31:0] divisor;
-   wire [31:0] quotient;
-   wire [31:0] remainder;
+   reg  [`WIDTH-1:0] dividend;
+   reg  [`WIDTH-1:0] divisor;
+   wire [`WIDTH-1:0] quotient;
+   wire [`WIDTH-1:0] remainder;
    
-   reg  [31:0] u_dividend;
-   reg  [31:0] u_divisor;   
-   reg  [31:0] u_quotient;
-   reg  [31:0] u_remainder;
+   reg  [`WIDTH-1:0] u_dividend;
+   reg  [`WIDTH-1:0] u_divisor;   
+   reg  [`WIDTH-1:0] u_quotient;
+   reg  [`WIDTH-1:0] u_remainder;
 
-   integer s_dividend;
-   integer s_divisor;
-   integer s_quotient;
-   integer s_remainder;
+   longint s_dividend;
+   longint s_divisor;
+   longint s_quotient;
+   longint s_remainder;
 
-   bsg_idiv_iterative dut (
+   bsg_idiv_iterative #(.width_p(`WIDTH)) dut (
            .dividend_i(dividend),
 	       .divisor_i(divisor),
 	       .v_i(div_req),
 	       .signed_div_i(signed_div),
 	       .quotient_o(quotient),
 	       .remainder_o(remainder),
-	       //.yumi_o(div_ack),
            .ready_o( ready_o ),
 	       .v_o(done),
            .yumi_i( done  ),
@@ -58,7 +58,7 @@ module test_bsg;
    always  #10 clk = ~clk;
    
    initial #25 begin
-      $init("divide.stim");
+      $init();
       for (i=0; i<`ITERS; i=i+1) begin
 	 $get_stim(dividend, divisor);
 
@@ -79,7 +79,7 @@ module test_bsg;
 	 s_remainder = remainder;	 
      //FIXME : when s_dividend == 32'h8000_0000 and s_divisor == 32'hffff_ffff
      //        the VCS crashs, may be the result overflowed !
-     if( s_dividend != 32'h8000_0000 && s_divisor != 32'hffff_ffff)  begin
+     if( s_dividend != (1 << `WIDTH) && s_divisor != '1)  begin
 	    if ((s_quotient  != s_dividend / s_divisor) ||
 	        (s_remainder != s_dividend % s_divisor)) begin
 	       $display("----------- ERROR in signed divide -----------");

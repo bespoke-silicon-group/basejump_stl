@@ -37,7 +37,7 @@ void init()
   delay.time.real = 0;
 
   /* open input file */
-  filename = tf_getcstringp(1);
+  filename = "divide.stim";//tf_getcstringp(1);
   in_file = fopen(filename, "r");
 
   /* end if file can't be opened */
