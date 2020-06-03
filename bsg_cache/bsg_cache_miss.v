@@ -130,8 +130,8 @@ module bsg_cache_miss
 
   miss_state_e miss_state_r;
   miss_state_e miss_state_n;
-  logic [lg_ways_lp-1:0] chosen_way_r;
-  logic [lg_ways_lp-1:0] chosen_way_n;
+  logic [lg_ways_lp-1:0] chosen_way_r, chosen_way_n;
+  logic [lg_ways_lp-1:0] flush_way_r, flush_way_n;
 
 
   // for flush/inv ops, go to FLUSH_OP.
@@ -161,7 +161,9 @@ module bsg_cache_miss
 
   assign chosen_way_o = chosen_way_n;
 
-  assign dma_way_o = chosen_way_r;
+  assign dma_way_o = goto_flush_op
+    ? flush_way_r
+    : chosen_way_r;
 
   // chosen way lru decode
   //
@@ -199,6 +201,20 @@ module bsg_cache_miss
     ,.o(chosen_way_decode)
   );
 
+  // flush way demux
+  logic [ways_p-1:0] addr_way_v_decode;
+  bsg_decode #(
+    .num_out_p(ways_p)
+  ) addr_way_v_demux (
+    .i(addr_way_v)
+    ,.o(addr_way_v_decode)
+  );
+  
+  logic [ways_p-1:0] flush_way_decode;
+  assign flush_way_decode =  decode_v_i.tagfl_op
+    ? addr_way_v_decode
+    : tag_hit_v_i;
+
   always_comb begin
 
     stat_mem_v_o = 1'b0;
@@ -212,6 +228,7 @@ module bsg_cache_miss
     tag_mem_w_mask_out = '0;
 
     chosen_way_n = chosen_way_r;
+    flush_way_n = flush_way_r;
 
     dma_addr_o = '0;
     dma_cmd_o = e_dma_nop;
@@ -296,7 +313,7 @@ module bsg_cache_miss
 
         // for TAGFL, pick whichever way set by the addr input.
         // Otherwise, pick the way with the tag hit.
-        chosen_way_n = decode_v_i.tagfl_op
+        flush_way_n = decode_v_i.tagfl_op
           ? addr_way_v 
           : tag_hit_way_id_i;
 
@@ -306,7 +323,7 @@ module bsg_cache_miss
         stat_mem_w_o = 1'b1;
         stat_mem_data_out.dirty = {ways_p{1'b0}};
         stat_mem_data_out.lru_bits = {(ways_p-1){1'b0}};
-        stat_mem_w_mask_out.dirty = chosen_way_decode;
+        stat_mem_w_mask_out.dirty = flush_way_decode;
         stat_mem_w_mask_out.lru_bits = {(ways_p-1){1'b0}};
 
         // If it's invalidate op, then clear the valid bit for the chosen way.
@@ -318,22 +335,20 @@ module bsg_cache_miss
           tag_mem_data_out[i].valid = 1'b0;
           tag_mem_data_out[i].lock = 1'b0;
           tag_mem_data_out[i].tag = {tag_width_lp{1'b0}};
-          tag_mem_w_mask_out[i].valid = (decode_v_i.ainv_op| decode_v_i.aflinv_op) & chosen_way_decode[i];
-          tag_mem_w_mask_out[i].lock = (decode_v_i.ainv_op| decode_v_i.aflinv_op) & chosen_way_decode[i];
+          tag_mem_w_mask_out[i].valid = (decode_v_i.ainv_op | decode_v_i.aflinv_op) & flush_way_decode[i];
+          tag_mem_w_mask_out[i].lock = (decode_v_i.ainv_op | decode_v_i.aflinv_op) & flush_way_decode[i];
           tag_mem_w_mask_out[i].tag =  {tag_width_lp{1'b0}};
         end
 
         // If it's not AINV, and the chosen set is dirty and valid, evict the
         // block.
-        miss_state_n = (~decode_v_i.ainv_op & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
+        miss_state_n = (~decode_v_i.ainv_op & stat_info_in.dirty[flush_way_n] & valid_v_i[flush_way_n])
           ? SEND_EVICT_ADDR
           : RECOVER;
       end
 
       // handling AUNLOCK, and ALOCK with line not missing.
       LOCK_OP: begin
-        //chosen_way_n = tag_hit_way_id_i;
-
         tag_mem_v_o = 1'b1;
         tag_mem_w_o = 1'b1;
 
@@ -353,7 +368,7 @@ module bsg_cache_miss
       SEND_EVICT_ADDR: begin
         dma_cmd_o = e_dma_send_evict_addr;
         dma_addr_o = {
-          tag_v_i[chosen_way_r],
+          tag_v_i[dma_way_o],
           addr_index_v,
           {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
         };
@@ -370,7 +385,7 @@ module bsg_cache_miss
           ? e_dma_send_evict_data
           : e_dma_nop;
         dma_addr_o = {
-          tag_v_i[chosen_way_r],
+          tag_v_i[dma_way_o],
           addr_index_v,
           {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
         };
@@ -425,12 +440,14 @@ module bsg_cache_miss
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       miss_state_r <= START;
-      chosen_way_r <= 1'b0;
+      chosen_way_r <= '0;
+      flush_way_r <= '0;
       // added to be a little more X pessimism conservative
     end
     else begin
       miss_state_r <= miss_state_n;
       chosen_way_r <= chosen_way_n;
+      flush_way_r <= flush_way_n;
     end
   end
 

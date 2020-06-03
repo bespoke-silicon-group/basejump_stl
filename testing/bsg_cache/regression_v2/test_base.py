@@ -92,6 +92,10 @@ class TestBase:
   def send_aunlock(self, addr):
     self.tg.send(AUNLOCK, addr)
 
+  # TAGFL
+  def send_tagfl(self, addr):
+    self.tg.send(TAGFL, addr)
+
   # nop
   def send_nop(self, n=1):
     for i in range(n):
