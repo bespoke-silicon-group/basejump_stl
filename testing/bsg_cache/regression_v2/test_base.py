@@ -79,9 +79,44 @@ class TestBase:
     self.tg.send(AMOSWAP_W, addr, self.curr_data)
     self.curr_data += 1
     
+  # AMOADD_W
+  def send_amoadd_w(self, addr):
+    self.tg.send(AMOADD_W, addr, self.curr_data)
+    self.curr_data += 1
+
+  # AMOXOR_W
+  def send_amoxor_w(self, addr):
+    self.tg.send(AMOXOR_W, addr, self.curr_data)
+    self.curr_data += 1
+
+  # AMOAND_W
+  def send_amoand_w(self, addr):
+    self.tg.send(AMOAND_W, addr, self.curr_data)
+    self.curr_data += 1
+
   # AMOOR_W
   def send_amoor_w(self, addr):
     self.tg.send(AMOOR_W, addr, self.curr_data)
+    self.curr_data += 1
+
+  # AMOMIN_W
+  def send_amomin_w(self, addr):
+    self.tg.send(AMOMIN_W, addr, self.curr_data)
+    self.curr_data += 1
+
+  # AMOMAX_W
+  def send_amomax_w(self, addr):
+    self.tg.send(AMOMAX_W, addr, self.curr_data)
+    self.curr_data += 1
+
+  # AMOMINU_W
+  def send_amominu_w(self, addr):
+    self.tg.send(AMOMINU_W, addr, self.curr_data)
+    self.curr_data += 1
+
+  # AMOMAXU_W
+  def send_amomaxu_w(self, addr):
+    self.tg.send(AMOMAXU_W, addr, self.curr_data)
     self.curr_data += 1
 
   # ALOCK

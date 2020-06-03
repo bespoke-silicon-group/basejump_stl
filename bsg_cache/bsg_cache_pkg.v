@@ -6,6 +6,29 @@
 
 package bsg_cache_pkg;
 
+  typedef enum logic [9:0] {
+    e_amo_swap        = 10'b0000000001
+    ,e_amo_add        = 10'b0000000010
+    ,e_amo_xor        = 10'b0000000100
+    ,e_amo_and        = 10'b0000001000
+    ,e_amo_or         = 10'b0000010000
+    ,e_amo_min        = 10'b0000100000
+    ,e_amo_max        = 10'b0001000000
+    ,e_amo_minu       = 10'b0010000000
+    ,e_amo_maxu       = 10'b0100000000
+
+    // Reserved
+    ,e_amo_lrsc       = 10'b1000000000
+  } amo_support_e;
+
+  localparam amo_support_level_none_lp       = '0;
+  localparam amo_support_level_swap_lp       = amo_support_level_none_lp
+    | e_amo_swap;
+  localparam amo_support_level_logical_lp    = amo_support_level_swap_lp
+    | e_amo_xor | e_amo_and | e_amo_or;
+  localparam amo_support_level_arithmetic_lp = amo_support_level_logical_lp
+    | e_amo_add | e_amo_min | e_amo_max | e_amo_minu | e_amo_maxu;
+
   // cache opcode
   //
   typedef enum logic [5:0] {
@@ -50,7 +73,7 @@ package bsg_cache_pkg;
     ,AMOMINU_W = 6'b100111    // atomic min unsigned
     ,AMOMAXU_W = 6'b101000    // atomic max unsigned
 
-    // 64-bit atomic (reserved)
+    // 64-bit atomic
     ,AMOSWAP_D = 6'b110000    // atomic swap
     ,AMOADD_D  = 6'b110001    // atomic add
     ,AMOXOR_D  = 6'b110010    // atomic xor 
@@ -101,7 +124,14 @@ package bsg_cache_pkg;
    
     logic atomic_op; 
     logic amoswap_op;
+    logic amoadd_op;
+    logic amoxor_op;
+    logic amoand_op;
     logic amoor_op;
+    logic amomin_op;
+    logic amomax_op;
+    logic amominu_op;
+    logic amomaxu_op;
   } bsg_cache_decode_s;
 
 
