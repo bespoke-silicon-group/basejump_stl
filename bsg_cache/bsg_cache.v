@@ -592,9 +592,36 @@ module bsg_cache
   );
 
   for (genvar i = 0; i < data_sel_mux_els_lp; i++) begin: sbuf_in_sel
+    localparam slice_width_lp = (8*(2**i));
 
-    assign sbuf_data_in_mux_li[i] = {(data_width_p/(8*(2**i))){data_v_r[0+:(8*(2**i))]}};
+    logic [slice_width_lp-1:0] slice_data;
 
+    // AMO computation
+    // Only word width AMOs are currently supported
+    if (i == 2'b10) begin
+      logic [slice_width_lp-1:0] atomic_reg_data, atomic_mem_data;
+
+      always_comb begin
+        atomic_reg_data = data_v_r[0+:slice_width_lp];
+        atomic_mem_data = snoop_or_ld_data[0+:slice_width_lp];
+
+        if (decode_v_r.amoswap_op) begin
+          slice_data = atomic_reg_data;
+        end 
+        else if (decode_v_r.amoor_op) begin
+          slice_data = atomic_reg_data | atomic_mem_data;
+        end 
+        else begin
+          // Normal data replication
+          slice_data = data_v_r[0+:slice_width_lp];
+        end
+      end
+    end 
+    else begin
+      assign slice_data = data_v_r[0+:slice_width_lp];
+    end
+
+    assign sbuf_data_in_mux_li[i] = {(data_width_p/slice_width_lp){slice_data}};
 
     if (i == data_sel_mux_els_lp-1) begin: max_size
 
@@ -628,14 +655,6 @@ module bsg_cache
     if (decode_v_r.mask_op) begin
       sbuf_entry_li.data = data_v_r;
       sbuf_entry_li.mask = mask_v_r;
-    end
-    else if (decode_v_r.amoswap_op) begin
-      sbuf_entry_li.data = data_v_r;
-      sbuf_entry_li.mask = {data_mask_width_lp{1'b1}};
-    end
-    else if (decode_v_r.amoor_op) begin
-      sbuf_entry_li.data = data_v_r | snoop_or_ld_data;
-      sbuf_entry_li.mask = {data_mask_width_lp{1'b1}};
     end
     else begin
       sbuf_entry_li.data = sbuf_data_in;
@@ -752,9 +771,6 @@ module bsg_cache
       end
       else if (decode_v_r.mask_op) begin
         data_o = ld_data_masked;
-      end
-      else if (decode_v_r.atomic_op) begin
-        data_o = snoop_or_ld_data;
       end
       else begin
         data_o = ld_data_final_lo;

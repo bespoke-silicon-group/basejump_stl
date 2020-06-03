@@ -17,6 +17,7 @@ module bsg_cache_decode
       // double
       LD, SD, LDU: decode_o.data_size_op = 2'b11;
       // word
+      AMOSWAP_W, AMOOR_W,
       LW, SW, LWU: decode_o.data_size_op = 2'b10;
       // half
       LH, SH, LHU: decode_o.data_size_op = 2'b01;
@@ -31,7 +32,9 @@ module bsg_cache_decode
   assign decode_o.sigext_op = (opcode_i == LB)
     | (opcode_i == LH)
     | (opcode_i == LW)
-    | (opcode_i == LD);
+    | (opcode_i == LD)
+    | (opcode_i == AMOSWAP_W)
+    | (opcode_i == AMOOR_W);
 
   assign decode_o.ld_op = (opcode_i == LB)
     | (opcode_i == LH)
