@@ -159,7 +159,7 @@ module bsg_cache_miss
   assign stat_mem_addr_o = addr_index_v;
   assign tag_mem_addr_o = addr_index_v;
 
-  assign chosen_way_o = chosen_way_n;
+  assign chosen_way_o = chosen_way_r;
 
   assign dma_way_o = goto_flush_op
     ? flush_way_r
@@ -173,7 +173,7 @@ module bsg_cache_miss
   bsg_lru_pseudo_tree_decode #(
     .ways_p(ways_p)
   ) chosen_way_lru_decode (
-    .way_id_i(chosen_way_n)
+    .way_id_i(chosen_way_r)
     ,.data_o(chosen_way_lru_data)
     ,.mask_o(chosen_way_lru_mask)
   );
@@ -274,31 +274,6 @@ module bsg_cache_miss
           {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
         };
 
-        // For store miss, set the dirty bit for the chosen way.
-        // For load miss, clear the dirty bit for the chosen way.
-        // Set the lru_bits, so that the chosen way is not the LRU.
-        // We are choosing a way to bring in a new block, which is technically
-        // the MRU. lru decode unit generates the next state LRU bits, so that
-        // the input way is "not" the LRU way.
-        stat_mem_v_o = dma_done_i;
-        stat_mem_w_o = dma_done_i;
-        stat_mem_data_out.dirty = {ways_p{decode_v_i.st_op | decode_v_i.atomic_op}};
-        stat_mem_data_out.lru_bits = chosen_way_lru_data;
-        stat_mem_w_mask_out.dirty = chosen_way_decode;
-        stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
-
-        // set the tag and the valid bit to 1'b1 for the chosen way.
-        tag_mem_v_o = dma_done_i;
-        tag_mem_w_o = dma_done_i;
-
-        for (integer i = 0; i < ways_p; i++) begin
-          tag_mem_data_out[i].tag = addr_tag_v;
-          tag_mem_data_out[i].lock = decode_v_i.alock_op;
-          tag_mem_data_out[i].valid = 1'b1; 
-          tag_mem_w_mask_out[i].tag = {tag_width_lp{chosen_way_decode[i]}};
-          tag_mem_w_mask_out[i].lock = chosen_way_decode[i];
-          tag_mem_w_mask_out[i].valid = chosen_way_decode[i];
-        end
 
         // if the chosen way is dirty and valid, then evict.
         miss_state_n = dma_done_i
@@ -407,6 +382,32 @@ module bsg_cache_miss
           addr_block_offset_v, // used for snoop data in dma.
           {(lg_data_mask_width_lp){1'b0}}
         };
+
+        // For store miss, set the dirty bit for the chosen way.
+        // For load miss, clear the dirty bit for the chosen way.
+        // Set the lru_bits, so that the chosen way is not the LRU.
+        // We are choosing a way to bring in a new block, which is technically
+        // the MRU. lru decode unit generates the next state LRU bits, so that
+        // the input way is "not" the LRU way.
+        stat_mem_v_o = dma_done_i;
+        stat_mem_w_o = dma_done_i;
+        stat_mem_data_out.dirty = {ways_p{decode_v_i.st_op | decode_v_i.atomic_op}};
+        stat_mem_data_out.lru_bits = chosen_way_lru_data;
+        stat_mem_w_mask_out.dirty = chosen_way_decode;
+        stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
+
+        // set the tag and the valid bit to 1'b1 for the chosen way.
+        tag_mem_v_o = dma_done_i;
+        tag_mem_w_o = dma_done_i;
+
+        for (integer i = 0; i < ways_p; i++) begin
+          tag_mem_data_out[i].tag = addr_tag_v;
+          tag_mem_data_out[i].lock = decode_v_i.alock_op;
+          tag_mem_data_out[i].valid = 1'b1; 
+          tag_mem_w_mask_out[i].tag = {tag_width_lp{chosen_way_decode[i]}};
+          tag_mem_w_mask_out[i].lock = chosen_way_decode[i];
+          tag_mem_w_mask_out[i].valid = chosen_way_decode[i];
+        end
 
         miss_state_n = dma_done_i
           ? RECOVER

@@ -96,6 +96,10 @@ class TestBase:
   def send_tagfl(self, addr):
     self.tg.send(TAGFL, addr)
 
+  # AFLINV
+  def send_aflinv(self, addr):
+    self.tg.send(AFLINV, addr)
+
   # nop
   def send_nop(self, n=1):
     for i in range(n):

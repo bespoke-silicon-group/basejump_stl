@@ -17,6 +17,8 @@ BASIC_TEST += test_block1
 BASIC_TEST += test_stride1
 BASIC_TEST += test_store_load test_store_load2
 BASIC_TEST += test_alock1
+BASIC_TEST += test_tagfl1
+BASIC_TEST += test_aflinv1
 
 
 ########################
