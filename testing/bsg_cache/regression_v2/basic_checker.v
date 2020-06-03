@@ -164,6 +164,10 @@ module basic_checker
               send_id <= send_id + 1;
               shadow_mem[cache_pkt_word_addr] <= cache_pkt.data | load_data;
             end
+            ALOCK, AUNLOCK: begin
+              result[send_id] = '0;
+              send_id++;
+            end
           endcase
         end
 

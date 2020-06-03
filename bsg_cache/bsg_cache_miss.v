@@ -34,6 +34,7 @@ module bsg_cache_miss
     ,input [ways_p-1:0][tag_width_lp-1:0] tag_v_i
     ,input [ways_p-1:0] valid_v_i
     ,input [ways_p-1:0] lock_v_i
+    ,input [ways_p-1:0] tag_hit_v_i
     ,input [lg_ways_lp-1:0] tag_hit_way_id_i
     ,input tag_hit_found_i
 
@@ -331,7 +332,7 @@ module bsg_cache_miss
 
       // handling AUNLOCK, and ALOCK with line not missing.
       LOCK_OP: begin
-        chosen_way_n = tag_hit_way_id_i;
+        //chosen_way_n = tag_hit_way_id_i;
 
         tag_mem_v_o = 1'b1;
         tag_mem_w_o = 1'b1;
@@ -341,7 +342,7 @@ module bsg_cache_miss
           tag_mem_data_out[i].lock = decode_v_i.alock_op;
           tag_mem_data_out[i].tag = {tag_width_lp{1'b0}};
           tag_mem_w_mask_out[i].valid = 1'b0;
-          tag_mem_w_mask_out[i].lock = chosen_way_decode[i];
+          tag_mem_w_mask_out[i].lock = tag_hit_v_i[i];
           tag_mem_w_mask_out[i].tag = {tag_width_lp{1'b0}};
         end
 

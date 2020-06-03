@@ -84,6 +84,14 @@ class TestBase:
     self.tg.send(AMOOR_W, addr, self.curr_data)
     self.curr_data += 1
 
+  # ALOCK
+  def send_alock(self, addr):
+    self.tg.send(ALOCK, addr)
+    
+  # AUNLOCK
+  def send_aunlock(self, addr):
+    self.tg.send(AUNLOCK, addr)
+
   # nop
   def send_nop(self, n=1):
     for i in range(n):
