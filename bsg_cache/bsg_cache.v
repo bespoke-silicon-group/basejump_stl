@@ -395,6 +395,7 @@ module bsg_cache
     ,.valid_v_i(valid_v_r)
     ,.lock_v_i(lock_v_r)
     ,.tag_hit_way_id_i(tag_hit_way_id)
+    ,.tag_hit_v_i(tag_hit_v)
     ,.tag_hit_found_i(tag_hit_found)
 
     ,.sbuf_empty_i(sbuf_empty_li)
