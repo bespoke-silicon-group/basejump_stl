@@ -15,9 +15,9 @@ module bsg_cache_decode
   always_comb begin
     case (opcode_i)
       // double
-      LD, SD, LDU: decode_o.data_size_op = 2'b11;
+      LD, SD, LDU, AMOSWAP_D, AMOOR_D: decode_o.data_size_op = 2'b11;
       // word
-      LW, SW, LWU: decode_o.data_size_op = 2'b10;
+      LW, SW, LWU, AMOSWAP_W, AMOOR_W: decode_o.data_size_op = 2'b10;
       // half
       LH, SH, LHU: decode_o.data_size_op = 2'b01;
       // byte
@@ -31,7 +31,8 @@ module bsg_cache_decode
   assign decode_o.sigext_op = (opcode_i == LB)
     | (opcode_i == LH)
     | (opcode_i == LW)
-    | (opcode_i == LD);
+    | (opcode_i == LD)
+    | decode_o.atomic_op;
 
   assign decode_o.ld_op = (opcode_i == LB)
     | (opcode_i == LH)
@@ -63,9 +64,11 @@ module bsg_cache_decode
 
   // atomic extension
   assign decode_o.atomic_op = (opcode_i == AMOSWAP_W)
-    | (opcode_i == AMOOR_W); 
-  assign decode_o.amoswap_op = (opcode_i == AMOSWAP_W);
-  assign decode_o.amoor_op = (opcode_i == AMOOR_W);
+    | (opcode_i == AMOOR_W)
+    | (opcode_i == AMOSWAP_D)
+    | (opcode_i == AMOOR_D);
+  assign decode_o.amoswap_op = (opcode_i == AMOSWAP_W) | (opcode_i == AMOSWAP_D);
+  assign decode_o.amoor_op = (opcode_i == AMOOR_W) | (opcode_i == AMOOR_D);
 
 
 

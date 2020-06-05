@@ -592,15 +592,26 @@ module bsg_cache
     ,.data_o(sbuf_mask_in)
   );
 
+  logic [data_width_p-1:0] write_pre_data;
+  logic [data_width_p-1:0] ld_data_final_lo;
+
+  // atomic operator
+  always_comb begin
+    if (decode_v_r.amoor_op) begin
+      write_pre_data = data_v_r | ld_data_final_lo;
+    end
+    else begin
+      write_pre_data = data_v_r;
+    end
+  end
+
+
   for (genvar i = 0; i < data_sel_mux_els_lp; i++) begin: sbuf_in_sel
 
-    assign sbuf_data_in_mux_li[i] = {(data_width_p/(8*(2**i))){data_v_r[0+:(8*(2**i))]}};
-
+    assign sbuf_data_in_mux_li[i] = {(data_width_p/(8*(2**i))){write_pre_data[0+:(8*(2**i))]}};
 
     if (i == data_sel_mux_els_lp-1) begin: max_size
-
       assign sbuf_mask_in_mux_li[i] = {data_mask_width_lp{1'b1}};    
-
     end 
     else begin: non_max_size
 
@@ -629,14 +640,6 @@ module bsg_cache
     if (decode_v_r.mask_op) begin
       sbuf_entry_li.data = data_v_r;
       sbuf_entry_li.mask = mask_v_r;
-    end
-    else if (decode_v_r.amoswap_op) begin
-      sbuf_entry_li.data = data_v_r;
-      sbuf_entry_li.mask = {data_mask_width_lp{1'b1}};
-    end
-    else if (decode_v_r.amoor_op) begin
-      sbuf_entry_li.data = data_v_r | snoop_or_ld_data;
-      sbuf_entry_li.mask = {data_mask_width_lp{1'b1}};
     end
     else begin
       sbuf_entry_li.data = sbuf_data_in;
@@ -701,15 +704,12 @@ module bsg_cache
   // select double/word/half/byte load data
   //
   logic [data_sel_mux_els_lp-1:0][data_width_p-1:0] ld_data_final_li;
-  logic [data_width_p-1:0] ld_data_final_lo;
   
 
   for (genvar i = 0; i < data_sel_mux_els_lp; i++) begin: ld_data_sel
 
     if (i == data_sel_mux_els_lp-1) begin: max_size
-
       assign ld_data_final_li[i] = snoop_or_ld_data;
-
     end
     else begin: non_max_size
 
@@ -753,9 +753,6 @@ module bsg_cache
       end
       else if (decode_v_r.mask_op) begin
         data_o = ld_data_masked;
-      end
-      else if (decode_v_r.atomic_op) begin
-        data_o = snoop_or_ld_data;
       end
       else begin
         data_o = ld_data_final_lo;
