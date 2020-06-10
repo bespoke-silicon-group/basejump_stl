@@ -175,8 +175,6 @@ module bsg_dmc_controller
   logic        push_ldst_cmd;
   logic [27:0] ldst_cmd;
 
-  logic  [3:0] tbl;
-
   logic [15:0] tick_refi;
   logic  [3:0] tick_mrd;
   logic  [3:0] tick_rfc;
@@ -194,8 +192,6 @@ module bsg_dmc_controller
   assign app_ref_ack_o = app_ref_req_i & ~app_wdf_end_i;
   assign app_zq_ack_o = app_zq_req_i;
   assign app_sr_active_o = app_sr_req_i;
-
-  assign tbl = 4'($clog2(dfi_burst_length_lp << 1));
 
   assign app_rdy_o = ~cmd_afifo_wfull;
 
@@ -316,7 +312,7 @@ module bsg_dmc_controller
                   end
         'd1:      begin
                     push_init_cmd = cmd_sfifo_ready;
-                    init_cmd = {4'h2, LMR, 4'h0, 4'h0, 4'h0, dmc_p_i.tcas, tbl};
+                    init_cmd = {4'h2, LMR, 4'h0, 4'h0, 4'h0, dmc_p_i.tcas, 4'($clog2(dfi_burst_length_lp << 1))};
                   end
         'd0:      begin
                     push_init_cmd = cmd_sfifo_ready;
@@ -479,23 +475,21 @@ module bsg_dmc_controller
 	ACT:   case(n_cmd)
                  PRE:     shoot = cmd_tick >= dmc_p_i.tras;
                  ACT:     shoot = cmd_tick >= dmc_p_i.trrd;
-                 WRITE:   shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_rd_tick >= dmc_p_i.tcas+tbl) & (&tx_sipo_valid_lo);
+                 WRITE:   shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_rd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
                  READ:    shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_wr_tick >= dmc_p_i.twtr);
 	         default: shoot = 1'b1;
                endcase
         WRITE: case(n_cmd)
                  PRE:     shoot = (cmd_tick >= dmc_p_i.twr) & (cmd_act_tick >= dmc_p_i.tras);
-                 WRITE:   shoot = (cmd_tick >= tbl) & (&tx_sipo_valid_lo);
+                 WRITE:   shoot = (cmd_tick >= dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
                  READ:    shoot = cmd_tick >= dmc_p_i.twtr;
-                 //ACT:     shoot = cmd_act_tick >= dmc_p_i.trc;
                  ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.twr + dmc_p_i.trp);
 	         default: shoot = 1'b1;
                endcase
         READ:  case(n_cmd)
                  PRE:     shoot = (cmd_tick >= dmc_p_i.trtp) & (cmd_act_tick >= dmc_p_i.tras);
-                 WRITE:   shoot = (cmd_tick >= tbl+dmc_p_i.tcas) & (&tx_sipo_valid_lo);
-                 READ:    shoot = cmd_tick >= tbl;
-                 //ACT:     shoot = cmd_act_tick >= dmc_p_i.trc;
+                 WRITE:   shoot = (cmd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
+                 READ:    shoot = cmd_tick >= dfi_burst_length_lp-1;
                  ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.trtp + dmc_p_i.trp);
 	         default: shoot = 1'b1;
                endcase
@@ -565,15 +559,8 @@ module bsg_dmc_controller
       wburst_tick <= 0;
       wburst_valid <= 0;
     end
-    //else if((shoot && cmd_sfifo_rdata[23:20] == WRITE) || (cwd_valid && cwd_tick == 0)) begin
     else if((shoot && cmd_sfifo_rdata[23:20] == WRITE) ) begin
-      case(tbl)
-        8'h01:   wburst_tick <= 0;
-        8'h02:   wburst_tick <= 1;
-        8'h03:   wburst_tick <= 3;
-        8'h04:   wburst_tick <= 7;
-        default: wburst_tick <= 0;
-      endcase
+      wburst_tick = dfi_burst_length_lp-1;
       wburst_valid <= 1;
     end
     else if(wburst_valid) begin
@@ -601,13 +588,7 @@ module bsg_dmc_controller
       dfi_rddata_en_o <= 0;
     end
     else if(cas_valid && cas_tick == 0) begin
-      case(tbl)
-        8'h01:   rburst_tick <= 0;
-        8'h02:   rburst_tick <= 1;
-        8'h03:   rburst_tick <= 3;
-        8'h04:   rburst_tick <= 7;
-        default: rburst_tick <= 0;
-      endcase
+      rburst_tick = dfi_burst_length_lp-1;
       dfi_rddata_en_o <= 1;
     end
     else if(dfi_rddata_en_o) begin
@@ -665,19 +646,6 @@ module bsg_dmc_controller
              end
       endcase
     end
-
-/*
-      if(cmd_sfifo_wdata[23:20] == ACT) begin
-        open_bank[cmd_sfifo_wdata[18:16]] <= 1'b1;
-        open_row[cmd_sfifo_wdata[18:16]] <= cmd_sfifo_wdata[15:0];
-      end
-      else if(cmd_sfifo_wdata[23:20] == PRE)
-        if(cmd_sfifo_wdata[10])
-          open_bank <= 0;
-        else
-          open_bank[cmd_sfifo_wdata[18:16]] <= 1'b0;
-*/
-
 
   for(k=0;k<ui_burst_length_lp;k++) begin: tx_flatten
     assign tx_data[k*ui_data_width_p+:ui_data_width_p]   = tx_sipo_data_lo[k][0+:ui_data_width_p];
