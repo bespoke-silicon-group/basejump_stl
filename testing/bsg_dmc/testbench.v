@@ -2,13 +2,15 @@
 `define READ  3'b001
 
 module testbench
+  import bsg_tag_pkg::bsg_tag_s;
   import bsg_dmc_pkg::bsg_dmc_s;
   ();
-  parameter ui_addr_width_p   = 28;
-  parameter ui_data_width_p   = 32;
-  parameter ui_burst_length_p = 8;
-  parameter dq_data_width_p   = 32;
-  parameter debug_p           = 1'b1;
+  parameter clk_gen_num_adgs_p = 1;
+  parameter ui_addr_width_p    = 28;
+  parameter ui_data_width_p    = 64;
+  parameter ui_burst_length_p  = 8;
+  parameter dq_data_width_p    = 32;
+  parameter debug_p            = 1'b1;
 
   localparam burst_data_width_lp = ui_data_width_p * ui_burst_length_p;
   localparam ui_mask_width_lp    = ui_data_width_p >> 3;
@@ -19,8 +21,14 @@ module testbench
 
   integer j,k;
 
+  wire bsg_tag_s        dmc_reset_tag_lines_lo;
+  wire bsg_tag_s  [3:0] dmc_dly_tag_lines_lo;
+  wire bsg_tag_s  [3:0] dmc_dly_trigger_tag_lines_lo;
+  wire bsg_tag_s        dmc_ds_tag_lines_lo;
+
   bsg_dmc_s                        dmc_p;
-  logic                            sys_rst;
+
+  logic                            sys_reset;
   // User interface signals
   logic      [ui_addr_width_p-1:0] app_addr;
   logic                      [2:0] app_cmd;
@@ -47,7 +55,7 @@ module testbench
 
   logic                            ui_clk;
   logic                            dfi_clk_2x;
-  logic                            dfi_clk;
+  wire                             dfi_clk_1x;
   wire                             ui_clk_sync_rst;
 
   wire                      [11:0] device_temp;
@@ -109,25 +117,43 @@ module testbench
     dmc_p.tras = 7;
     dmc_p.trrd = 1;
     dmc_p.trcd = 2;
-    dmc_p.twr = 7;
+    dmc_p.twr = 10;
     dmc_p.twtr = 7;
-    dmc_p.trtp = 3;
+    dmc_p.trtp = 10;
     dmc_p.tcas = 3;
     dmc_p.col_width = 11;
     dmc_p.row_width = 14;
     dmc_p.bank_width = 2;
     dmc_p.dqs_sel_cal = 1;
     dmc_p.init_cmd_cnt = 5;
+    dmc_p.bank_pos = 25;
+    force dmc_inst.dmc_clk_rst_gen.btc_async_reset.tag_data_reg.data_r = 0;
+    force dmc_inst.dmc_clk_rst_gen.dly_lines[0].dly_line_inst.ctrl_rrr = 31;
+    force dmc_inst.dmc_clk_rst_gen.dly_lines[1].dly_line_inst.ctrl_rrr = 31;
+    force dmc_inst.dmc_clk_rst_gen.dly_lines[2].dly_line_inst.ctrl_rrr = 31;
+    force dmc_inst.dmc_clk_rst_gen.dly_lines[3].dly_line_inst.ctrl_rrr = 31;
+    force dmc_inst.dmc_clk_rst_gen.clk_gen_ds_inst.reset_i = 1'b1;
+    force dmc_inst.dmc_clk_rst_gen.clk_gen_ds_inst.strobe_r = 1'b0;
+    #100;
+    force dmc_inst.dmc_clk_rst_gen.clk_gen_ds_inst.reset_i = 1'b0;
+    force dmc_inst.dmc_clk_rst_gen.clk_gen_ds_inst.strobe_r = 1'b1;
   end
 
   bsg_dmc #
-    (.ui_addr_width_p       ( ui_addr_width_p     )
+    (.num_adgs_p            ( clk_gen_num_adgs_p  )
+    ,.ui_addr_width_p       ( ui_addr_width_p     )
     ,.ui_data_width_p       ( ui_data_width_p     )
     ,.burst_data_width_p    ( burst_data_width_lp )
     ,.dq_data_width_p       ( dq_data_width_p     ))
   dmc_inst
-    (.dmc_p_i               ( dmc_p               )
-    ,.sys_rst_i             ( sys_rst             )
+    (.async_reset_tag_i     ( dmc_reset_tag_lines_lo       )
+    ,.bsg_dly_tag_i         ( dmc_dly_tag_lines_lo         )
+    ,.bsg_dly_trigger_tag_i ( dmc_dly_trigger_tag_lines_lo )
+    ,.bsg_ds_tag_i          ( dmc_ds_tag_lines_lo          )
+
+    ,.dmc_p_i               ( dmc_p               )
+
+    ,.sys_reset_i           ( sys_reset           )
 
     ,.app_addr_i            ( app_addr            )
     ,.app_cmd_i             ( app_cmd             )
@@ -178,17 +204,19 @@ module testbench
 
     ,.ui_clk_i              ( ui_clk              )
     ,.dfi_clk_2x_i          ( dfi_clk_2x          )
-    ,.dfi_clk_i             ( dfi_clk             )
+    ,.dfi_clk_1x_o          ( dfi_clk_1x          )
     ,.ui_clk_sync_rst_o     ( ui_clk_sync_rst     )
     ,.device_temp_o         ( device_temp         ));
 
   generate
-    for(i=0;i<dq_group_lp;i++) begin: dqs_dm_io
+    for(i=0;i<dq_group_lp;i++) begin: dm_io
       assign ddr_dm[i]       = !ddr_dm_oen_lo[i]? ddr_dm_lo[i]: 1'bz;
+    end
+    for(i=0;i<dq_group_lp;i++) begin: dqs_io
       assign ddr_dqs_p[i]    = !ddr_dqs_p_oen_lo[i]? ddr_dqs_p_lo[i]: 1'bz;
-      assign ddr_dqs_p_li[i] = !ddr_dqs_p_ien_lo[i]? ddr_dqs_p[i]: 1'b1;
+      assign ddr_dqs_p_li[i] = !ddr_dqs_p_ien_lo[i]? ddr_dqs_p[i]: 1'b0;
       assign ddr_dqs_n[i]    = !ddr_dqs_n_oen_lo[i]? ddr_dqs_n_lo[i]: 1'bz;
-      assign ddr_dqs_n_li[i] = !ddr_dqs_n_ien_lo[i]? ddr_dqs_n[i]: 1'b0;
+      assign ddr_dqs_n_li[i] = !ddr_dqs_n_ien_lo[i]? ddr_dqs_n[i]: 1'b1;
     end
     for(i=0;i<dq_data_width_p;i++) begin: dq_io
       assign ddr_dq[i]    = !ddr_dq_oen_lo[i]? ddr_dq_lo[i]: 1'bz;
@@ -215,11 +243,10 @@ module testbench
   endgenerate
 
   always #2.5 dfi_clk_2x = ~dfi_clk_2x;
-  always @(posedge dfi_clk_2x) dfi_clk = ~dfi_clk;
   always #0.625 ui_clk = ~ui_clk;
 
   initial begin
-    $vcdplusmemon();
+    //$vcdplusmemon();
     app_en = 0;
     app_wdf_wren = 0;
     app_wdf_end = 0;
@@ -227,11 +254,10 @@ module testbench
 
   initial begin
     $display("\n#### Regresstion test started ####");
-    sys_rst = 1'b1;
+    sys_reset = 1'b1;
     ui_clk = 1'b0;
     dfi_clk_2x = 1'b0;
-    dfi_clk = 1'b0;
-    #1000 sys_rst=1'b0;
+    #1000 sys_reset=1'b0;
     repeat(100) @(posedge ui_clk);
     for(k=0;k<256;k++) begin
       waddr = k*dq_burst_length_lp;
