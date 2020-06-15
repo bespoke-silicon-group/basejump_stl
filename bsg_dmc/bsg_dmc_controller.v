@@ -560,7 +560,7 @@ module bsg_dmc_controller
       wburst_valid <= 0;
     end
     else if((shoot && cmd_sfifo_rdata[23:20] == WRITE) ) begin
-      wburst_tick = dfi_burst_length_lp-1;
+      wburst_tick <= dfi_burst_length_lp-1;
       wburst_valid <= 1;
     end
     else if(wburst_valid) begin
@@ -588,7 +588,7 @@ module bsg_dmc_controller
       dfi_rddata_en_o <= 0;
     end
     else if(cas_valid && cas_tick == 0) begin
-      rburst_tick = dfi_burst_length_lp-1;
+      rburst_tick <= dfi_burst_length_lp-1;
       dfi_rddata_en_o <= 1;
     end
     else if(dfi_rddata_en_o) begin
