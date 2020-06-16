@@ -32,7 +32,7 @@ with open("miss_latency.txt", "r") as f:
   plt.xlabel("latency")
   plt.ylabel("frequency")
   plt.grid(True)
-  plt.show()
+  #plt.show()
 
 
   #keys = bucket.keys()

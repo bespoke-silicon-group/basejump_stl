@@ -11,10 +11,10 @@ if __name__ == "__main__":
   tg = TraceGen(num_subcache_p, block_size_in_words_p)
   tg.clear_tags()
 
-  words = (2**21)/num_cache_group_p # 8MB
-  #words = (2**20)/num_cache_p # 2MB
-  #words = 512/num_cache_p # 2KB (one page)
+  words = (2**18)/num_cache_group_p # 1MB
+  #words = (2**9)/num_cache_group_p # 2KB
   for i in range(words):
+    tg.send_read(i<<2)
     tg.send_write(i<<2)
 
   tg.done()
