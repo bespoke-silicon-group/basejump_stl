@@ -73,9 +73,10 @@ module bsg_nonsynth_dramsim3
   
   import "DPI-C" context function 
     void    bsg_dramsim3_exit();
+     bit    init;
 
   initial begin
-    bsg_dramsim3_init(num_channels_p, data_width_p, size_in_bits_p, config_p);
+    init = bsg_dramsim3_init(num_channels_p, data_width_p, size_in_bits_p, config_p);
   end
 
   // memory addr
@@ -152,13 +153,13 @@ module bsg_nonsynth_dramsim3
 
       // getting read/write done
       for (integer i = 0; i < num_channels_p; i++) begin
-        read_done[i] = bsg_dramsim3_get_read_done(i);
-        if (read_done[i])
-          read_done_addr[i] = bsg_dramsim3_get_read_done_addr(i);
+        read_done[i] <= bsg_dramsim3_get_read_done(i);
+        if (bsg_dramsim3_get_read_done(i))
+          read_done_addr[i] <= bsg_dramsim3_get_read_done_addr(i);
 
-        write_done_o[i] = bsg_dramsim3_get_write_done(i);
-        if (write_done_o[i])
-          write_done_addr[i] = bsg_dramsim3_get_write_done_addr(i);
+        write_done_o[i] <= bsg_dramsim3_get_write_done(i);
+        if (bsg_dramsim3_get_write_done(i))
+          write_done_addr[i] <= bsg_dramsim3_get_write_done_addr(i);
       end
 
       // tick
