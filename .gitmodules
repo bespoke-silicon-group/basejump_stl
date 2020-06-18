@@ -1,7 +1,3 @@
 [submodule "imports/ramulator"]
 	path = imports/ramulator
 	url = https://github.com/bespoke-silicon-group/ramulator
-[submodule "DRAMSim3"]
-	path = imports/DRAMSim3
-	url = git@github.com:bespoke-silicon-group/bsg_dramsim3
-        update = none
