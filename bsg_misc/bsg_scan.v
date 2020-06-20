@@ -3,6 +3,9 @@
 // note: this does a scan from hi bit to lo
 // so the high bit is always unchanged
 //
+// note: implements Kogge-Stone style prefix tree
+//
+//
 
 module bsg_scan #(parameter width_p = -1
                   , parameter xor_p = 0
