@@ -6,6 +6,8 @@ module bsg_dmc
   ,parameter  ui_data_width_p    = "inv"
   ,parameter  burst_data_width_p = "inv"
   ,parameter  dq_data_width_p    = "inv"
+  ,parameter  cmd_afifo_depth_p  = "inv"
+  ,parameter  cmd_sfifo_depth_p  = "inv"
   ,localparam ui_mask_width_lp   = ui_data_width_p >> 3
   ,localparam dfi_data_width_lp  = dq_data_width_p << 1
   ,localparam dfi_mask_width_lp  = (dq_data_width_p >> 3) << 1
@@ -140,7 +142,9 @@ module bsg_dmc
     (.ui_addr_width_p       ( ui_addr_width_p       )
     ,.ui_data_width_p       ( ui_data_width_p       )
     ,.burst_data_width_p    ( burst_data_width_p    )
-    ,.dfi_data_width_p      ( dfi_data_width_lp     ))
+    ,.dfi_data_width_p      ( dfi_data_width_lp     )
+    ,.cmd_afifo_depth_p     ( cmd_afifo_depth_p     )
+    ,.cmd_sfifo_depth_p     ( cmd_sfifo_depth_p     ))
   dmc_controller
     // User interface clock and reset
     (.ui_clk_i              ( ui_clk_i              )

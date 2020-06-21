@@ -10,6 +10,8 @@ module testbench
   parameter ui_data_width_p    = 64;
   parameter ui_burst_length_p  = 8;
   parameter dq_data_width_p    = 32;
+  parameter cmd_afifo_depth_p  = 4;
+  parameter cmd_sfifo_depth_p  = 4;
   parameter debug_p            = 1'b1;
 
   localparam burst_data_width_lp = ui_data_width_p * ui_burst_length_p;
@@ -144,7 +146,9 @@ module testbench
     ,.ui_addr_width_p       ( ui_addr_width_p     )
     ,.ui_data_width_p       ( ui_data_width_p     )
     ,.burst_data_width_p    ( burst_data_width_lp )
-    ,.dq_data_width_p       ( dq_data_width_p     ))
+    ,.dq_data_width_p       ( dq_data_width_p     )
+    ,.cmd_afifo_depth_p     ( cmd_afifo_depth_p   )
+    ,.cmd_sfifo_depth_p     ( cmd_sfifo_depth_p   ))
   dmc_inst
     (.async_reset_tag_i     ( dmc_reset_tag_lines_lo       )
     ,.bsg_dly_tag_i         ( dmc_dly_tag_lines_lo         )

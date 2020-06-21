@@ -4,6 +4,8 @@ module bsg_dmc_controller
   ,parameter  ui_data_width_p      = "inv"
   ,parameter  burst_data_width_p   = "inv"
   ,parameter  dfi_data_width_p     = "inv"
+  ,parameter  cmd_afifo_depth_p    = "inv"
+  ,parameter  cmd_sfifo_depth_p    = "inv"
   ,parameter  ui_burst_length_lp   = burst_data_width_p / ui_data_width_p
   ,localparam ui_mask_width_lp     = ui_data_width_p >> 3
   ,localparam dfi_mask_width_lp    = dfi_data_width_p >> 3
@@ -205,8 +207,8 @@ module bsg_dmc_controller
   assign cmd_afifo_rinc  = cmd_afifo_rvalid & cmd_sfifo_ready & (cstate == LDST && ldst_tick == 0);
 
   bsg_async_fifo #
-    (.width_p   ( ui_addr_width_p+3 )
-    ,.lg_size_p ( 3                 ))
+    (.width_p   ( ui_addr_width_p+3         )
+    ,.lg_size_p ( $clog2(cmd_afifo_depth_p) ))
   cmd_afifo
     (.r_data_o  ( cmd_afifo_rdata   )
     ,.w_full_o  ( cmd_afifo_wfull   )
@@ -230,8 +232,8 @@ module bsg_dmc_controller
   assign app_wdf_rdy_o = ~wrdata_afifo_wfull;
 
   bsg_async_fifo #
-    (.width_p   ( ui_data_width_p+ui_mask_width_lp )
-    ,.lg_size_p ( 6                                ))
+    (.width_p   ( ui_data_width_p+ui_mask_width_lp             )
+    ,.lg_size_p ( $clog2(cmd_afifo_depth_p*ui_burst_length_lp) ))
   wrdata_afifo
     (.r_data_o  ( wrdata_afifo_rdata               )
     ,.w_full_o  ( wrdata_afifo_wfull               )
@@ -454,7 +456,7 @@ module bsg_dmc_controller
 
   bsg_fifo_1r1w_small #
     (.width_p            ( 28                 )
-    ,.els_p              ( 4                  )
+    ,.els_p              ( cmd_sfifo_depth_p  )
     ,.ready_THEN_valid_p ( 1                  ))
   cmd_sfifo
     (.clk_i              ( dfi_clk_i          )
@@ -704,8 +706,8 @@ module bsg_dmc_controller
   assign rddata_afifo_rinc  = rx_sipo_ready_lo && rddata_afifo_rvalid;
 
   bsg_async_fifo #
-    (.width_p   ( dfi_data_width_p    )
-    ,.lg_size_p ( 6                   ))
+    (.width_p   ( dfi_data_width_p                             )
+    ,.lg_size_p ( $clog2(cmd_afifo_depth_p*ui_burst_length_lp) ))
   rddata_afifo
     (.r_data_o  ( rddata_afifo_rdata  )
     ,.w_full_o  ( rddata_afifo_wfull  )
