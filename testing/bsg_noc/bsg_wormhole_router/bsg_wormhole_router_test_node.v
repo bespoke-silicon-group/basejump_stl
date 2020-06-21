@@ -203,7 +203,7 @@ module bsg_wormhole_router_test_node
   ,.count_o(received_o)
   );
 
-  /********************* Slave node *********************/
+  /********************* Client node *********************/
 
   logic                           req_in_v;
   fwd_wormhole_router_test_node_s req_in_data;
