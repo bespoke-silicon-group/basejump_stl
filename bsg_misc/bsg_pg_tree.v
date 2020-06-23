@@ -3,8 +3,20 @@
 // bsg_pg_tree
 //
 // this code builds a PG (propagate generate) tree
-// the structure of the tree is given by the input parameters
-// reflects terminology of Harris & Weste 4th edition p 438
+// (although actually it is not a tree, it is a dag)
+//
+// The structure of the tree is given by the input parameters:
+//
+// input_width_p: # of input {p,g} pairs
+// nodes_p:       # of nodes in the tree.
+//
+// l_edge_p[i]:      # of {p,g} pair to connect the "left" (lsb) input edge of the node i
+// r_edge_p[i]:      # of {p,g} pair to connect the "right" (msb) input edge of the node i
+// o_edge_p[i]:      # of {p,g} pair to connect the output of the node i
+// node_type_p[i]:   the type of node (0: black, 1: grey, 2: black_buffer, 3: grey_buffer)
+// row_p[i]:         what row the node lives on. can be used for datapath layout or complementary logic
+//
+// These components reflect the structure of Harris & Weste 4th edition p 438
 //
 // it is typically used for constructing adders, multipliers, carry predictors, etc.
 //
