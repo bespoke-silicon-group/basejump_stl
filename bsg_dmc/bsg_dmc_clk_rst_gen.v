@@ -26,17 +26,15 @@ module bsg_dmc_clk_rst_gen
     ,.data_async_r_o ( async_reset_o     ));
 
   // Clock Generator (CG) Instance
-  generate
-    for(i=0;i<num_lines_p;i++) begin: dly_lines
-      bsg_dly_line #(.num_adgs_p(num_adgs_p)) dly_line_inst
-        (.bsg_tag_i         ( bsg_dly_tag_i[i]         )
-        ,.bsg_tag_trigger_i ( bsg_dly_trigger_tag_i[i] )
-        ,.async_reset_i     ( async_reset_o            )
-        ,.clk_i             ( clk_i[i]                 )
-        ,.clk_o             ( clk_o[i]                 ));
-        //,.fb_clk_o          (                          ));
-    end
-  endgenerate
+  for(i=0;i<num_lines_p;i++) begin: dly_lines
+    bsg_dly_line #(.num_adgs_p(num_adgs_p)) dly_line_inst
+      (.bsg_tag_i         ( bsg_dly_tag_i[i]         )
+      ,.bsg_tag_trigger_i ( bsg_dly_trigger_tag_i[i] )
+      ,.async_reset_i     ( async_reset_o            )
+      ,.clk_i             ( clk_i[i]                 )
+      ,.clk_o             ( clk_o[i]                 ));
+      //,.fb_clk_o          (                          ));
+  end
 
   `declare_bsg_clk_gen_ds_tag_payload_s(2)
 
@@ -59,9 +57,10 @@ module bsg_dmc_clk_rst_gen
     ,.recv_data_r_o ( ds_tag_payload_r     ));
 
   if (debug_level_lp > 1)
-  always @(negedge clk_2x_i)
+  always_ff @(negedge clk_2x_i) begin
     if (ds_tag_payload_new_r)
       $display("## bsg_clk_gen downsampler received configuration state: %b",ds_tag_payload_r);
+  end
 
   // clock downsampler
   //

@@ -16,7 +16,7 @@ module bsg_dmc_phy_tx_bit_slice
   wire clk_2x_n = ~clk_2x_i;
   logic odd;
 
-  always @(posedge clk_2x_n) begin
+  always_ff @(posedge clk_2x_n) begin
     if(wrdata_en_90_i) begin
       odd <= ~odd;
       if(odd) begin
@@ -53,7 +53,7 @@ module bsg_dmc_phy_rx_bit_slice
   logic [3:0] data_even, data_odd;
   wire        data_even_mux, data_odd_mux;
 
-  always @(posedge dqs_p_i) begin
+  always_ff @(posedge dqs_p_i) begin
     `rp_group (rpg_even) 
     `rp_fill (0 0 UX) 
     `rp_array_dir (up) 
@@ -61,7 +61,7 @@ module bsg_dmc_phy_rx_bit_slice
     data_even[write_pointer_i] <= dq_i;
   end
 
-  always @(posedge dqs_n_i) begin
+  always_ff @(posedge dqs_n_i) begin
     `rp_group (rpg_odd) 
     `rp_fill (0 0 UX) 
     `rp_array_dir (up) 
@@ -72,7 +72,7 @@ module bsg_dmc_phy_rx_bit_slice
   assign data_even_mux = data_even[read_pointer_i];
   assign data_odd_mux  = data_odd[read_pointer_i];
 
-  always @(posedge clk_1x_i) begin
+  always_ff @(posedge clk_1x_i) begin
     rddata_even_o <= data_even_mux;
     rddata_odd_o  <= data_odd_mux;
   end
@@ -147,21 +147,22 @@ module bsg_dmc_phy_byte_lane
 
   genvar i;
 
-  always @(posedge clk_2x_n) begin
+  always_ff @(posedge clk_2x_n) begin
     wrdata_en_90 <= wrdata_en_i;
     wrdata_90 <= wrdata_i;
     wrdata_mask_90 <= wrdata_mask_i;
   end
 
-  always @(posedge clk_2x_p)
+  always_ff @(posedge clk_2x_p) begin
     wrdata_en_180 <= wrdata_en_i;
+  end
 
-  always @(posedge clk_2x_p) begin
+  always_ff @(posedge clk_2x_p) begin
     dqs_p_oe_n_o <= ~(wrdata_en_i | wrdata_en_180);
     dqs_n_oe_n_o <= ~(wrdata_en_i | wrdata_en_180);
   end
 
-  always @(posedge clk_2x_p)
+  always_ff @(posedge clk_2x_p) begin
     if(wrdata_en_i || wrdata_en_180) begin
       dqs_p_o <= ~dqs_p_o;
       dqs_n_o <= ~dqs_n_o;
@@ -170,37 +171,38 @@ module bsg_dmc_phy_byte_lane
       dqs_p_o <= 1'b1;
       dqs_n_o <= 1'b0;
     end
+  end
 
-  always @(posedge dqs_n_i or posedge reset_i)
+  always_ff @(posedge dqs_n_i or posedge reset_i) begin
     if(reset_i)
       write_pointer <= 'b0;
     else
       write_pointer <= write_pointer + 1'b1;
+  end
 
-  always @(posedge clk_1x_p)
+  always_ff @(posedge clk_1x_p) begin
     if(reset_i)
       read_pointer <= 'b0;
     else if(rp_inc_i)
       read_pointer <= read_pointer + 1'b1;
+  end
 
-  generate
-    for(i=0;i<8;i++) begin: bs
-      bsg_dmc_phy_bit_slice dq_bit_slice
-        (.clk_1x_i        ( clk_1x_i      )
-        ,.clk_2x_i        ( clk_2x_i      )
-        ,.dqs_p_i         ( dqs_p_i       )
-        ,.dqs_n_i         ( dqs_n_i       )
-        ,.wrdata_en_90_i  ( wrdata_en_90  )
-        ,.wrdata_90_i     ( {wrdata_90[8+i], wrdata_90[i]} )
-        ,.dq_o            ( dq_o[i]       )
-        ,.dq_oe_n_o       ( dq_oe_n_o[i]  )
-        ,.dq_i            ( dq_i[i]       )
-        ,.write_pointer_i ( write_pointer )
-        ,.read_pointer_i  ( read_pointer  )
-        ,.rddata_even_o   ( rddata_o[i]   )
-        ,.rddata_odd_o    ( rddata_o[8+i] ));
-    end
-  endgenerate
+  for(i=0;i<8;i++) begin: bs
+    bsg_dmc_phy_bit_slice dq_bit_slice
+      (.clk_1x_i        ( clk_1x_i      )
+      ,.clk_2x_i        ( clk_2x_i      )
+      ,.dqs_p_i         ( dqs_p_i       )
+      ,.dqs_n_i         ( dqs_n_i       )
+      ,.wrdata_en_90_i  ( wrdata_en_90  )
+      ,.wrdata_90_i     ( {wrdata_90[8+i], wrdata_90[i]} )
+      ,.dq_o            ( dq_o[i]       )
+      ,.dq_oe_n_o       ( dq_oe_n_o[i]  )
+      ,.dq_i            ( dq_i[i]       )
+      ,.write_pointer_i ( write_pointer )
+      ,.read_pointer_i  ( read_pointer  )
+      ,.rddata_even_o   ( rddata_o[i]   )
+      ,.rddata_odd_o    ( rddata_o[8+i] ));
+  end
 
   bsg_dmc_phy_tx_bit_slice dm_bit_slice
     (.clk_2x_i       ( clk_2x_i       )
@@ -286,7 +288,7 @@ module bsg_dmc_phy #
 
   genvar i;
 
-  always @(posedge clk_1x_n) begin
+  always_ff @(posedge clk_1x_n) begin
     if(dfi_rst_i) begin
       cke_o   <= 1'b0;
       ba_o    <= 3'b000;
@@ -313,7 +315,7 @@ module bsg_dmc_phy #
 
   assign rddata_en[0] = dfi_rddata_en_i;
 
-  always @(posedge clk_2x_n)
+  always_ff @(posedge clk_2x_n) begin
     if(dfi_rst_i) begin
       rddata_en[1] <= 1'b0;
       rddata_en[3] <= 1'b0;
@@ -322,18 +324,21 @@ module bsg_dmc_phy #
       rddata_en[1] <= rddata_en[0];
       rddata_en[3] <= rddata_en[2];
     end
+  end
 
-  always @(posedge clk_2x_p)
+  always_ff @(posedge clk_2x_p) begin
     if(dfi_rst_i)
       rddata_en[2] <= 1'b0;
     else
       rddata_en[2] <= rddata_en[1];
+  end
 
-  always @(posedge clk_1x_p)
+  always_ff @(posedge clk_1x_p) begin
     if(dfi_rst_i)
       rp_inc <= 1'b0;
     else
       rp_inc <= dqs_select;
+  end
 
   bsg_mux #
     (.width_p ( 1 )
@@ -343,11 +348,12 @@ module bsg_dmc_phy #
     ,.sel_i   ( dqs_sel_cal )
     ,.data_o  ( dqs_select  ));
 
-  always @(posedge clk_1x_p)
+  always_ff @(posedge clk_1x_p) begin
     if(dfi_rst_i)
       dfi_rddata_valid_o <= 1'b0;
     else
       dfi_rddata_valid_o <= rp_inc;
+  end
 
   assign ck_p_o = clk_1x_p;
   assign ck_n_o = clk_1x_n;
@@ -375,29 +381,27 @@ module bsg_dmc_phy #
     (.i       (dfi_rddata_array)
     ,.o       (dfi_rddata_o));
 
-  generate
-    for(i=0;i<dq_group_lp;i=i+1) begin: lane
-      bsg_dmc_phy_byte_lane byte_lane
-        (.reset_i       ( dfi_rst_i                                                )
-        ,.clk_1x_i      ( clk_1x_p                                                 )
-        ,.clk_2x_i      ( clk_2x_p                                                 )
-        ,.wrdata_en_i   ( dfi_wrdata_en_i                                          )
-        ,.wrdata_i      ( {dfi_wrdata_array[dq_group_lp+i], dfi_wrdata_array[i]}   )
-        ,.wrdata_mask_i ( {dfi_wrdata_mask_i[dq_group_lp+i], dfi_wrdata_mask_i[i]} )
-        ,.dm_oe_n_o     ( dm_oe_n_o[i]                                             )
-        ,.dm_o          ( dm_o[i]                                                  )
-        ,.dq_oe_n_o     ( dq_oe_n_o[8*i+:8]                                        )
-        ,.dq_o          ( dq_o[8*i+:8]                                             )
-        ,.dqs_p_oe_n_o  ( dqs_p_oe_n_o[i]                                          )
-        ,.dqs_p_o       ( dqs_p_o[i]                                               )
-        ,.dqs_n_oe_n_o  ( dqs_n_oe_n_o[i]                                          )
-        ,.dqs_n_o       ( dqs_n_o[i]                                               )
-        ,.rp_inc_i      ( rp_inc                                                   )
-        ,.rddata_o      ( {dfi_rddata_array[dq_group_lp+i], dfi_rddata_array[i]}   )
-        ,.dq_i          ( dq_i[8*i+:8]                                             )
-        ,.dqs_p_i       ( dqs_p_i[i]                                               )
-        ,.dqs_n_i       ( dqs_n_i[i]                                               ));
-    end
-  endgenerate
+  for(i=0;i<dq_group_lp;i=i+1) begin: lane
+    bsg_dmc_phy_byte_lane byte_lane
+      (.reset_i       ( dfi_rst_i                                                )
+      ,.clk_1x_i      ( clk_1x_p                                                 )
+      ,.clk_2x_i      ( clk_2x_p                                                 )
+      ,.wrdata_en_i   ( dfi_wrdata_en_i                                          )
+      ,.wrdata_i      ( {dfi_wrdata_array[dq_group_lp+i], dfi_wrdata_array[i]}   )
+      ,.wrdata_mask_i ( {dfi_wrdata_mask_i[dq_group_lp+i], dfi_wrdata_mask_i[i]} )
+      ,.dm_oe_n_o     ( dm_oe_n_o[i]                                             )
+      ,.dm_o          ( dm_o[i]                                                  )
+      ,.dq_oe_n_o     ( dq_oe_n_o[8*i+:8]                                        )
+      ,.dq_o          ( dq_o[8*i+:8]                                             )
+      ,.dqs_p_oe_n_o  ( dqs_p_oe_n_o[i]                                          )
+      ,.dqs_p_o       ( dqs_p_o[i]                                               )
+      ,.dqs_n_oe_n_o  ( dqs_n_oe_n_o[i]                                          )
+      ,.dqs_n_o       ( dqs_n_o[i]                                               )
+      ,.rp_inc_i      ( rp_inc                                                   )
+      ,.rddata_o      ( {dfi_rddata_array[dq_group_lp+i], dfi_rddata_array[i]}   )
+      ,.dq_i          ( dq_i[8*i+:8]                                             )
+      ,.dqs_p_i       ( dqs_p_i[i]                                               )
+      ,.dqs_n_i       ( dqs_n_i[i]                                               ));
+  end
 
 endmodule

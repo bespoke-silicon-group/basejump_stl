@@ -273,27 +273,30 @@ module bsg_dmc_controller
   assign bank_addr    = 3'(((1 << dmc_p_i.bank_width) - 1) & (cmd_afifo_rdata[ui_addr_width_p-1:0] >> dmc_p_i.bank_pos));
   assign ap           = cmd_afifo_rdata[ui_addr_width_p+1];
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       init_calib_complete_o <= 0;
     else if(init_done)
       init_calib_complete_o <= 1;
+  end
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       init_tick <= 0;
     else if(cstate == IDLE && nstate == INIT)
       init_tick <= dmc_p_i.init_cmd_cnt;
     else if(cstate == INIT && init_tick != 0 && push_init_cmd)
       init_tick <= init_tick - 1;
+  end
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       init_done <= 0;
     else if(cstate == INIT && nstate == IDLE)
       init_done <= 1;
+  end
 
-  always @(*) begin
+  always_comb begin
     if(cstate == INIT)
       case(init_tick)
         'd5:      begin
@@ -331,38 +334,44 @@ module bsg_dmc_controller
     end
   end
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       ref_tick <= 0;
-    else if(init_done)
+    else if(init_done) begin
       if(ref_tick == dmc_p_i.trefi)
         ref_tick <= 0;
       else if(!refr_req)
         ref_tick <= ref_tick + 1;
+    end
+  end
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       refr_req <= 0;
-    else if(init_done)
+    else if(init_done) begin
       if(refr_ack)
         refr_req <= 0;
       else if(ref_tick == dmc_p_i.trefi)
         refr_req <= 1;
+    end
+  end
 
   assign refr_ack = (cstate == REFR) & push_refr_cmd & (refr_tick == 0);
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       refr_tick <= 0;
-    else if(cstate == IDLE && nstate == REFR)
+    else if(cstate == IDLE && nstate == REFR) begin
       if(|open_bank)
         refr_tick <= 1;
       else
         refr_tick <= 0;
+    end
     else if(cstate == REFR && refr_tick != 0 && push_refr_cmd)
       refr_tick <= refr_tick - 1;
+  end
 
-  always @(*) begin
+  always_comb begin
     if(cstate == REFR)
       case(refr_tick)
         'd1:      begin
@@ -384,7 +393,7 @@ module bsg_dmc_controller
     end
   end
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       ldst_tick <= 0;
     else if(cstate == IDLE && nstate == LDST) begin
@@ -397,8 +406,9 @@ module bsg_dmc_controller
     end
     else if(cstate == LDST && ldst_tick != 0 && push_ldst_cmd)
       ldst_tick <= ldst_tick - 1;
+  end
 
-  always @(*) begin
+  always_comb begin
     if(cstate == LDST)
       case(ldst_tick)
         'd2:     begin
@@ -427,7 +437,7 @@ module bsg_dmc_controller
     end
   end
 
-  always @(*) begin
+  always_comb begin
     nstate = IDLE;
     case(cstate)
       IDLE: if(!init_done)                      nstate = INIT;
@@ -444,11 +454,12 @@ module bsg_dmc_controller
     endcase
   end
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       cstate <= IDLE;
     else
       cstate <= nstate;
+  end
 
   assign cmd_sfifo_winc  = push_init_cmd | push_refr_cmd | push_ldst_cmd;
   assign cmd_sfifo_wdata = push_init_cmd? init_cmd: (push_refr_cmd? refr_cmd: (push_ldst_cmd? ldst_cmd: 28'hx));
@@ -468,7 +479,7 @@ module bsg_dmc_controller
     ,.data_o             ( cmd_sfifo_rdata    )
     ,.yumi_i             ( cmd_sfifo_rinc     ));
 
-  always @(*) begin
+  always_comb begin
     if(cmd_sfifo_valid)
       case(p_cmd)
 	LMR:   shoot = cmd_tick >= dmc_p_i.tmrd;
@@ -501,48 +512,53 @@ module bsg_dmc_controller
       shoot = 1'b0;
   end
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       cmd_tick <= 0;
     else if(shoot)
       cmd_tick <= 0;
     else if(cmd_tick != 8'hf)
       cmd_tick <= cmd_tick + 1;
+  end
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       cmd_act_tick <= 0;
     else if(shoot && n_cmd == ACT)
       cmd_act_tick <= 0;
     else if(cmd_act_tick != 8'hf)
       cmd_act_tick <= cmd_act_tick + 1;
+  end
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       cmd_wr_tick <= 0;
     else if(shoot && n_cmd == WRITE)
       cmd_wr_tick <= 0;
     else if(cmd_tick != 8'hf)
       cmd_wr_tick <= cmd_wr_tick + 1;
+  end
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       cmd_rd_tick <= 0;
     else if(shoot && n_cmd == READ)
       cmd_rd_tick <= 0;
     else if(cmd_tick != 8'hf)
       cmd_rd_tick <= cmd_rd_tick + 1;
+  end
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       p_cmd <= NOP;
     else if(shoot)
       p_cmd <= n_cmd;
+  end
 
   assign c_cmd = {dfi_cs_n_o, dfi_ras_n_o, dfi_cas_n_o, dfi_we_n_o};
   assign n_cmd = cmd_sfifo_rdata[23:20];
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i) begin
       cwd_tick <= 0;
       cwd_valid <= 0;
@@ -555,8 +571,9 @@ module bsg_dmc_controller
       cwd_tick <= cwd_tick - 1;
       if(cwd_tick == 0) cwd_valid <= 0;
     end
+  end
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i) begin
       wburst_tick <= 0;
       wburst_valid <= 0;
@@ -569,8 +586,9 @@ module bsg_dmc_controller
       wburst_tick <= wburst_tick - 1;
       if(wburst_tick == 0) wburst_valid <= 0;
     end
+  end
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i) begin
       cas_tick <= 0;
       cas_valid <= 0;
@@ -583,8 +601,9 @@ module bsg_dmc_controller
       cas_tick <= cas_tick - 1;
       if(cas_tick == 0) cas_valid <= 0;
     end
+  end
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i) begin
       rburst_tick <= 0;
       dfi_rddata_en_o <= 0;
@@ -597,8 +616,9 @@ module bsg_dmc_controller
       rburst_tick <= rburst_tick - 1;
       if(rburst_tick == 0) dfi_rddata_en_o <= 0;
     end
+  end
 
-  always @(posedge dfi_clk_i) begin
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i) begin
       dfi_bank_o <= 3'b000;
       dfi_address_o <= 16'h0000;
@@ -629,7 +649,7 @@ module bsg_dmc_controller
     end
   end
 
-  always @(posedge dfi_clk_i)
+  always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       open_bank <= 0;
     else if(cmd_sfifo_winc && cmd_sfifo_wdata[25]) begin
@@ -648,13 +668,14 @@ module bsg_dmc_controller
              end
       endcase
     end
+  end
 
   for(k=0;k<ui_burst_length_lp;k++) begin: tx_flatten
     assign tx_data[k*ui_data_width_p+:ui_data_width_p]   = tx_sipo_data_lo[k][0+:ui_data_width_p];
     assign tx_mask[k*ui_mask_width_lp+:ui_mask_width_lp] = tx_sipo_data_lo[k][ui_data_width_p+:ui_mask_width_lp];
   end
   for(k=0;k<dfi_burst_length_lp;k++) begin: tx_make
-    always @(posedge dfi_clk_i) begin
+    always_ff @(posedge dfi_clk_i) begin
       tx_data_piso_data_li[k] <= tx_data[k*dfi_data_width_p+:dfi_data_width_p];
       tx_mask_piso_data_li[k] <= tx_mask[k*dfi_mask_width_lp+:dfi_mask_width_lp];
     end
@@ -762,7 +783,7 @@ module bsg_dmc_controller
   //logic [$clog2(ui_burst_length_lp)-1:0] rd_cnt;
   logic [7:0] rd_cnt;
 
-  always @(posedge ui_clk_i)
+  always_ff @(posedge ui_clk_i) begin
     if(ui_clk_sync_rst_i)
       rd_cnt <= 0;
     else if(rx_piso_yumi_li) begin
@@ -771,6 +792,7 @@ module bsg_dmc_controller
       else
         rd_cnt <= rd_cnt + 1;
     end
+  end
 
   assign app_rd_data_valid_o = rx_piso_valid_lo;
   assign app_rd_data_o       = rx_piso_data_lo;
