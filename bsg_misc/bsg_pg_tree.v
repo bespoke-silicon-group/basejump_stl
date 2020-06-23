@@ -1,5 +1,3 @@
-// Code your design here
-
 // bsg_pg_tree
 //
 // this code builds a PG (propagate generate) tree
