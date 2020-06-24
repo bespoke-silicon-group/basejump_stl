@@ -10,7 +10,8 @@ module bsg_dmc_clk_rst_gen
   ,input bsg_tag_s                   bsg_ds_tag_i
   // asynchronous reset for dram controller
   ,output                            async_reset_o
-  // clock input and delayed clock output (for dqs)
+  // clock input and delayed clock output (for dqs), generating 90-degree phase
+  // shift
   ,input           [num_lines_p-1:0] clk_i
   ,output          [num_lines_p-1:0] clk_o
   // 2x clock input from clock generator and 1x clock output
@@ -33,7 +34,6 @@ module bsg_dmc_clk_rst_gen
       ,.async_reset_i     ( async_reset_o            )
       ,.clk_i             ( clk_i[i]                 )
       ,.clk_o             ( clk_o[i]                 ));
-      //,.fb_clk_o          (                          ));
   end
 
   `declare_bsg_clk_gen_ds_tag_payload_s(2)
@@ -73,7 +73,7 @@ module bsg_dmc_clk_rst_gen
   clk_gen_ds_inst
     (.clk_i   ( clk_2x_i               )
     ,.reset_i ( ds_tag_payload_r.reset )
-    ,.val_i   ( ds_tag_payload_r.val   )
+    ,.val_i   ( 'd2                    )
     ,.clk_r_o ( clk_1x_o               ));
 
 endmodule
