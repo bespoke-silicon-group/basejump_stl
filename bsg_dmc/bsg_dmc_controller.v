@@ -76,6 +76,7 @@ module bsg_dmc_controller
   logic                                                                cmd_afifo_wrst,     cmd_afifo_rrst;
   logic                                                                cmd_afifo_winc,     cmd_afifo_rinc;
   logic                                                                cmd_afifo_wfull,    cmd_afifo_rvalid;
+  // width of app_addr_i + width of app_cmd_i
   logic                                          [ui_addr_width_p+2:0] cmd_afifo_wdata,    cmd_afifo_rdata;
 
   logic                                                                cmd_sfifo_winc,     cmd_sfifo_rinc;

@@ -3,11 +3,11 @@ module bsg_dmc
   import bsg_dmc_pkg::bsg_dmc_s;
  #(parameter  num_adgs_p         = 1
   ,parameter  ui_addr_width_p    = "inv"
-  ,parameter  ui_data_width_p    = "inv"
-  ,parameter  burst_data_width_p = "inv"
-  ,parameter  dq_data_width_p    = "inv"
-  ,parameter  cmd_afifo_depth_p  = "inv"
-  ,parameter  cmd_sfifo_depth_p  = "inv"
+  ,parameter  ui_data_width_p    = "inv" // data width of UI interface, can be 2^n while n = [3, log2(burst_data_width_p)]
+  ,parameter  burst_data_width_p = "inv" // data width of an outstanding read/write transaction, typically data width of a cache line
+  ,parameter  dq_data_width_p    = "inv" // data width of DDR interface, consistent with packaging
+  ,parameter  cmd_afifo_depth_p  = "inv" // maximum number of outstanding read/write transactions can be queued when the controller is busy
+  ,parameter  cmd_sfifo_depth_p  = "inv" // maximum DRAM commands can be queued when the DDR interface is busy, no less than cmd_afifo_depth_p
   ,localparam ui_mask_width_lp   = ui_data_width_p >> 3
   ,localparam dfi_data_width_lp  = dq_data_width_p << 1
   ,localparam dfi_mask_width_lp  = (dq_data_width_p >> 3) << 1
@@ -19,7 +19,7 @@ module bsg_dmc
   ,input bsg_tag_s                   bsg_ds_tag_i
   // 
   ,input bsg_dmc_s                   dmc_p_i
-  //
+  // Global asynchronous reset input, will be synchronized to each clock domain
   ,input                             sys_reset_i
   // User interface signals
   ,input       [ui_addr_width_p-1:0] app_addr_i
