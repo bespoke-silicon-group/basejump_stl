@@ -272,14 +272,14 @@ module bsg_dmc_phy #
   ,output     [8*dq_group_lp-1:0] dq_o
   ,input      [8*dq_group_lp-1:0] dq_i
   // input dqs enable calibration signal (4 taps)
-  ,input                    [1:0] dqs_sel_cal);
+  ,input                    [3:0] dqs_sel_cal);
 
   wire clk_1x_p = dfi_clk_1x_i;
   wire clk_1x_n = ~dfi_clk_1x_i;
   wire clk_2x_p = dfi_clk_2x_i;
   wire clk_2x_n = ~dfi_clk_2x_i;
 
-  logic        [3:0][0:0] rddata_en;
+  logic        [7:0][0:0] rddata_en;
   logic                   dqs_select;
   logic                   rp_inc;
 
@@ -319,18 +319,28 @@ module bsg_dmc_phy #
     if(dfi_rst_i) begin
       rddata_en[1] <= 1'b0;
       rddata_en[3] <= 1'b0;
+      rddata_en[5] <= 1'b0;
+      rddata_en[7] <= 1'b0;
     end
     else begin
       rddata_en[1] <= rddata_en[0];
       rddata_en[3] <= rddata_en[2];
+      rddata_en[5] <= rddata_en[4];
+      rddata_en[7] <= rddata_en[6];
     end
   end
 
   always_ff @(posedge clk_2x_p) begin
-    if(dfi_rst_i)
+    if(dfi_rst_i) begin
       rddata_en[2] <= 1'b0;
-    else
+      rddata_en[4] <= 1'b0;
+      rddata_en[6] <= 1'b0;
+    end
+    else begin
       rddata_en[2] <= rddata_en[1];
+      rddata_en[4] <= rddata_en[3];
+      rddata_en[6] <= rddata_en[5];
+    end
   end
 
   always_ff @(posedge clk_1x_p) begin
@@ -342,7 +352,7 @@ module bsg_dmc_phy #
 
   bsg_mux #
     (.width_p ( 1 )
-    ,.els_p   ( 4 ))
+    ,.els_p   ( 8 ))
   mux
     (.data_i  ( rddata_en   )
     ,.sel_i   ( dqs_sel_cal )

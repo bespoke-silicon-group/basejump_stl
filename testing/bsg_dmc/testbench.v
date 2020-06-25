@@ -126,8 +126,8 @@ module testbench
     dmc_p.col_width = 11;
     dmc_p.row_width = 14;
     dmc_p.bank_width = 2;
-    dmc_p.dqs_sel_cal = 1;
-    dmc_p.init_cmd_cnt = 5;
+    dmc_p.dqs_sel_cal = 3;
+    dmc_p.init_cycles = 40010;
     dmc_p.bank_pos = 25;
     force dmc_inst.dmc_clk_rst_gen.btc_async_reset.tag_data_reg.data_r = 0;
     force dmc_inst.dmc_clk_rst_gen.dly_lines[0].dly_line_inst.ctrl_rrr = 31;
@@ -246,9 +246,9 @@ module testbench
     end
   endgenerate
 
-  always #2.5 dfi_clk_2x = ~dfi_clk_2x;
+  always #1.25 dfi_clk_2x = ~dfi_clk_2x;
   //always #0.625 ui_clk = ~ui_clk;
-  always #5.0 ui_clk = ~ui_clk;
+  always #2.5 ui_clk = ~ui_clk;
 
   initial begin
     //$vcdplusmemon();

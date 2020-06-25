@@ -15,9 +15,9 @@ package bsg_dmc_pkg;
     logic  [3:0] col_width;
     logic  [3:0] row_width;
     logic  [1:0] bank_width;
-    logic  [1:0] dqs_sel_cal;
-    logic  [3:0] init_cmd_cnt;
     logic  [5:0] bank_pos;
+    logic  [3:0] dqs_sel_cal;
+    logic [15:0] init_cycles;
   } bsg_dmc_s;
 
   typedef enum logic [2:0]
@@ -34,14 +34,15 @@ package bsg_dmc_pkg;
     } app_cmd_afifo_entry_s;
 
   typedef enum logic [3:0]
-    {LMR     = 4'b0000
-    ,REF     = 4'b0001
-    ,PRE     = 4'b0010
-    ,ACT     = 4'b0011
-    ,WRITE   = 4'b0100
-    ,READ    = 4'b0101
-    ,BST     = 4'b0110
-    ,NOP     = 4'b0111
+    {LMR      = 4'b0000
+    ,REF      = 4'b0001
+    ,PRE      = 4'b0010
+    ,ACT      = 4'b0011
+    ,WRITE    = 4'b0100
+    ,READ     = 4'b0101
+    ,BST      = 4'b0110
+    ,NOP      = 4'b0111
+    ,DESELECT = 4'b1xxx
   } dfi_cmd_e;
 
   typedef struct packed {

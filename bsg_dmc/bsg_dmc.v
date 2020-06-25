@@ -7,7 +7,7 @@ module bsg_dmc
   ,parameter  burst_data_width_p = "inv" // data width of an outstanding read/write transaction, typically data width of a cache line
   ,parameter  dq_data_width_p    = "inv" // data width of DDR interface, consistent with packaging
   ,parameter  cmd_afifo_depth_p  = "inv" // maximum number of outstanding read/write transactions can be queued when the controller is busy
-  ,parameter  cmd_sfifo_depth_p  = "inv" // maximum DRAM commands can be queued when the DDR interface is busy, no less than cmd_afifo_depth_p
+  ,parameter  cmd_sfifo_depth_p  = "inv" // maximum number of DRAM commands can be queued when the DDR interface is busy, no less than cmd_afifo_depth_p
   ,localparam ui_mask_width_lp   = ui_data_width_p >> 3
   ,localparam dfi_data_width_lp  = dq_data_width_p << 1
   ,localparam dfi_mask_width_lp  = (dq_data_width_p >> 3) << 1

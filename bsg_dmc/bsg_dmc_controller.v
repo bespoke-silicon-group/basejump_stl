@@ -153,7 +153,7 @@ module bsg_dmc_controller
 
   logic        push;
 
-  logic  [3:0] init_tick;
+  logic [15:0] init_tick;
   logic        init_done;
 
   logic [15:0] ref_tick;
@@ -266,7 +266,7 @@ module bsg_dmc_controller
     if(dfi_clk_sync_rst_i)
       init_tick <= 0;
     else if(cstate == IDLE && nstate == INIT)
-      init_tick <= dmc_p_i.init_cmd_cnt;
+      init_tick <= dmc_p_i.init_cycles;
     else if(cstate == INIT && init_tick != 0 && push)
       init_tick <= init_tick - 1;
   end
@@ -337,12 +337,12 @@ module bsg_dmc_controller
       INIT: begin
         push = cmd_sfifo_ready;
         case(init_tick)
-          'd5: begin cmd_sfifo_wdata.cmd = NOP; cmd_sfifo_wdata.addr = 16'h0; end
           'd4: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
           'd3: begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
           'd2: begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
           'd1: begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = {8'h0, dmc_p_i.tcas, 4'($clog2(dfi_burst_length_lp << 1))}; cmd_sfifo_wdata.ba = 4'h0; end
           'd0: begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = 16'h0; cmd_sfifo_wdata.ba = 4'h2; end
+          default: cmd_sfifo_wdata.cmd = DESELECT;
         endcase
       end
       REFR: begin
