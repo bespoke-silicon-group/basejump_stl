@@ -1,6 +1,6 @@
 module bsg_dmc
-  import bsg_tag_pkg::bsg_tag_s;
-  import bsg_dmc_pkg::bsg_dmc_s;
+  import bsg_tag_pkg::*;
+  import bsg_dmc_pkg::*;
  #(parameter  num_adgs_p         = 1
   ,parameter  ui_addr_width_p    = "inv"
   ,parameter  ui_data_width_p    = "inv" // data width of UI interface, can be 2^n while n = [3, log2(burst_data_width_p)]
@@ -23,7 +23,7 @@ module bsg_dmc
   ,input                             sys_reset_i
   // User interface signals
   ,input       [ui_addr_width_p-1:0] app_addr_i
-  ,input                       [2:0] app_cmd_i
+  ,input app_cmd_e                   app_cmd_i
   ,input                             app_en_i
   ,output                            app_rdy_o
   ,input                             app_wdf_wren_i

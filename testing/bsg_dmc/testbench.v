@@ -2,8 +2,8 @@
 `define READ  3'b001
 
 module testbench
-  import bsg_tag_pkg::bsg_tag_s;
-  import bsg_dmc_pkg::bsg_dmc_s;
+  import bsg_tag_pkg::*;
+  import bsg_dmc_pkg::*;
   ();
   parameter clk_gen_num_adgs_p = 1;
   parameter ui_addr_width_p    = 28;
@@ -33,7 +33,7 @@ module testbench
   logic                            sys_reset;
   // User interface signals
   logic      [ui_addr_width_p-1:0] app_addr;
-  logic                      [2:0] app_cmd;
+  app_cmd_e                        app_cmd;
   logic                            app_en;
   wire                             app_rdy;
   logic                            app_wdf_wren;
@@ -247,7 +247,8 @@ module testbench
   endgenerate
 
   always #2.5 dfi_clk_2x = ~dfi_clk_2x;
-  always #0.625 ui_clk = ~ui_clk;
+  //always #0.625 ui_clk = ~ui_clk;
+  always #5.0 ui_clk = ~ui_clk;
 
   initial begin
     //$vcdplusmemon();
