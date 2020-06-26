@@ -1,9 +1,9 @@
 // encodes a one hot signal into an address
-// 0001     --> 0, v=1	// 0001     --> 0, v=1
-// 0010     --> 1, v=1	// 0010     --> 1, v=1
-// 0100     --> 2, v=1	// 0100     --> 2, v=1
-// 1000     --> 3, v=1	// 1000     --> 3, v=1
-// 0000     --> 0, v=0	// 0000     --> 0, v=0
+// 0001     --> 0, v=1
+// 0010     --> 1, v=1
+// 0100     --> 2, v=1
+// 1000     --> 3, v=1
+// 0000     --> 0, v=0
 // O*1O*1O* --> undefined	// O*1O*1O* --> undefined
 	
 // we implement at this as a parallel prefix computation
