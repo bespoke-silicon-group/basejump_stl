@@ -125,6 +125,8 @@ module bsg_dmc_controller
 
   logic                     [dfi_data_width_p*dfi_burst_length_lp-1:0] rx_data;
 
+  logic                                  [$clog2(cmd_afifo_depth_p):0] rd_credit;
+
   logic [31:0] row_col_addr;
   logic [15:0] row_addr, col_addr;
   logic  [2:0] bank_addr;
@@ -180,7 +182,18 @@ module bsg_dmc_controller
   assign app_zq_ack_o = app_zq_req_i;
   assign app_sr_active_o = app_sr_req_i;
 
-  assign app_rdy_o = ~cmd_afifo_wfull;
+  always_ff @(posedge ui_clk_i) begin
+    if(ui_clk_sync_rst_i)
+      rd_credit <= cmd_afifo_depth_p;
+    else if(app_en_i && (app_cmd_i == RD || app_cmd_i == RP) && app_rdy_o) begin
+      if(!(app_rd_data_valid_o && app_rd_data_end_o))
+        rd_credit <= rd_credit - 1;
+    end
+    else if(app_rd_data_valid_o && app_rd_data_end_o)
+      rd_credit <= rd_credit + 1;
+  end
+
+  assign app_rdy_o = ~cmd_afifo_wfull & |rd_credit;
 
   assign cmd_afifo_wclk  = ui_clk_i;
   assign cmd_afifo_wrst  = ui_clk_sync_rst_i;
@@ -655,7 +668,7 @@ module bsg_dmc_controller
 
   bsg_async_fifo #
     (.width_p   ( dfi_data_width_p                             )
-    ,.lg_size_p ( $clog2(cmd_afifo_depth_p*ui_burst_length_lp) ))
+    ,.lg_size_p ( $clog2(cmd_afifo_depth_p*dfi_burst_length_lp) ))
   rddata_afifo
     (.r_data_o  ( rddata_afifo_rdata  )
     ,.w_full_o  ( rddata_afifo_wfull  )
