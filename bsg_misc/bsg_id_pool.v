@@ -50,6 +50,7 @@ module bsg_id_pool
   ) pe0 (
     .i(~allocated_r | dealloc_decode)
     ,.o(one_hot_out)
+    ,.v_o()
   );
 
   bsg_encode_one_hot #(
