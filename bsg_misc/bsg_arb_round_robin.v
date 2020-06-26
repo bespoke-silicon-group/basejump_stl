@@ -30,15 +30,15 @@ module bsg_arb_round_robin #(parameter width_p=-1)
     end
   else
     begin: fi2
-	  // the current start location is represented as a thermometer code
+      // the current start location is represented as a thermometer code
       logic [width_p-1-1:0] thermocode_r, thermocode_n;  
   
-	  always_ff @(posedge clk_i)
-    	if (reset_i)
-      	  thermocode_r <= '0; // initialize thermometer to all 0's
-  		else
+      always_ff @(posedge clk_i)
+        if (reset_i)
+          thermocode_r <= '0; // initialize thermometer to all 0's
+        else
           if (yumi_i)
-	        thermocode_r <= thermocode_n;
+            thermocode_r <= thermocode_n;
   
       // this is essentially implementing a cyclic scan
       wire [width_p*2-1:0] scan_li = { 1'b0, thermocode_r & reqs_i[width_p-1-1:0], reqs_i };
@@ -60,11 +60,11 @@ module bsg_arb_round_robin #(parameter width_p=-1)
       assign grants_o = edge_detect[width_p*2-1-:width_p] | edge_detect[width_p-1:0];
 
       always_comb
-      begin
-        if (|scan_li[width_p*2-1-:width_p]) // no wrap around
-          thermocode_n = scan_lo[width_p*2-1-:width_p-1];
-        else // wrap around
-          thermocode_n = scan_lo[width_p-1:1];
-      end  
+        begin
+          if (|scan_li[width_p*2-1-:width_p]) // no wrap around
+            thermocode_n = scan_lo[width_p*2-1-:width_p-1];
+          else // wrap around
+            thermocode_n = scan_lo[width_p-1:1];
+        end  
     end
 endmodule
