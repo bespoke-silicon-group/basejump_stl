@@ -1,96 +1,91 @@
-// MBT 10-26-2014
-//
-// bsg_encode_one_hot
-//
 // encodes a one hot signal into an address
-// 0001     --> 0, v=1
-// 0010     --> 1, v=1
-// 0100     --> 2, v=1
-// 1000     --> 3, v=1
-// 0000     --> 0, v=0
-// O*1O*1O* --> undefined
-
+// 0001     --> 0, v=1	// 0001     --> 0, v=1
+// 0010     --> 1, v=1	// 0010     --> 1, v=1
+// 0100     --> 2, v=1	// 0100     --> 2, v=1
+// 1000     --> 3, v=1	// 1000     --> 3, v=1
+// 0000     --> 0, v=0	// 0000     --> 0, v=0
+// O*1O*1O* --> undefined	// O*1O*1O* --> undefined
+	
 // we implement at this as a parallel prefix computation
 // it is basically a big, clever tree of OR's with a
-// certain structure.
-//
+// certain structure (see sample debug output).	
 
-module bsg_encode_one_hot #(parameter width_p=8, parameter lo_to_hi_p=1)
-   (input    [width_p-1:0]         i
-    , output [`BSG_SAFE_CLOG2(width_p)-1:0] addr_o  // feed 32 bits in, requires spots 32 to encode (0..31)
-    , output v_o                           // whether any bit was found
-    );
+module bsg_encode_one_hot #(parameter width_p=8, parameter lo_to_hi_p=1, parameter debug_p=0)
+(input [width_p-1:0] i
+ ,output [`BSG_SAFE_CLOG2(width_p)-1:0] addr_o
+ ,output v_o // whether any bits are set
+);
 
-   localparam half_width_lp    = width_p >> 1;
-   localparam aligned_width_lp = 1 << $clog2(width_p);
+  localparam levels_lp = $clog2(width_p);
+  // adjust for non-power of two input
+  localparam aligned_width_lp = 1 << $clog2(width_p);
+  
+  genvar level;
+  genvar segment;
+  
+  wire [levels_lp:0][aligned_width_lp-1:0] addr;
+  wire [levels_lp:0][aligned_width_lp-1:0] v; 
+  
+  // base case, also handle padding for non-power of two inputs
+  assign v   [0] = lo_to_hi_p ? ((aligned_width_lp) ' (i)) :  i << (aligned_width_lp - width_p);
+  assign addr[0] = 'X;
+  
+  for (level = 1; level < levels_lp+1; level=level+1)
+    begin : rof
+      localparam segments_lp = 2**(levels_lp-level);
+      localparam segment_slot_lp = aligned_width_lp/segments_lp;
+      localparam segment_width_lp = level; // how many bits are needed at each level
+      
+      for (segment = 0; segment < segments_lp; segment=segment+1)
+        begin : rof1
+          wire [1:0] vs = {
+                           v[level-1][segment*segment_slot_lp+(segment_slot_lp >> 1)] 
+                           , v[level-1][segment*segment_slot_lp]
+                          };
+          
+          assign v[level][segment*segment_slot_lp] = | vs;
 
-   logic [`BSG_SAFE_CLOG2(width_p)-1:0] addr_lo;
-   logic v_lo;
+          if (level == 1)
+            assign addr[level][(segment*segment_slot_lp)+:segment_width_lp] = { vs[lo_to_hi_p] };                   
+          else
+            begin : fi
+              assign addr[level][(segment*segment_slot_lp)+:segment_width_lp]
+              = { vs[lo_to_hi_p]
+                 , addr[level-1][segment*segment_slot_lp+:segment_width_lp-1]
+                 | addr[level-1][segment*segment_slot_lp+(segment_slot_lp >> 1)+:segment_width_lp-1]
+                };
+            end        
+        end  
+    end	
+  
+  assign v_o = v[levels_lp][0];
+  
+// BSG_SAFE_CLOG2 handles width_p = 1 case
+`ifdef SYNTHESIS
+  assign addr_o = addr[levels_lp][`BSG_SAFE_CLOG2(width_p)-1:0];
+`else
+  assign addr_o = (((i-1) & i) == '0) 
+                  ? addr[levels_lp][`BSG_SAFE_CLOG2(width_p)-1:0] 
+                  : { `BSG_SAFE_CLOG2(width_p){1'bx}};
 
-   if (width_p == 1)
-     begin : base
-       assign v_lo = i;
+// generates debug output that looks like this:
+//       (addr)                      (v)
+// xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 00000000000000000000000000000100
+// z0z0z0z0z0z0z0z0z0z0z0z0z0z0z0z0 z0z0z0z0z0z0z0z0z0z0z0z0z0z0z1z0
+// zz00zz00zz00zz00zz00zz00zz00zz10 zzz0zzz0zzz0zzz0zzz0zzz0zzz0zzz1
+// zzzzz000zzzzz000zzzzz000zzzzz010 zzzzzzz0zzzzzzz0zzzzzzz0zzzzzzz1
+// zzzzzzzzzzzz0000zzzzzzzzzzzz0010 zzzzzzzzzzzzzzz0zzzzzzzzzzzzzzz1
+// zzzzzzzzzzzzzzzzzzzzzzzzzzz00010 zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz1
+// addr_o=00010                     v_o=1 
+  
+  if (debug_p)
+    always @(addr_o or v_o)
+      begin
+        #1
+        for (integer k = 0; k <= $clog2(width_p); k=k+1)
+          $display("%b %b",addr[k], v[k]);
+        $display("addr_o=%b v_o=%b", addr_o, v_o);
+      end
+`endif
 
-       // should be ignored
-       assign addr_lo = 1'bX;
-     end
-   else
-     // align at the top; this should be more efficient
-     // than aligning at intermediate nodes
-     // e.g. 4 != (1 << 2)
-     if (width_p != aligned_width_lp)
-       begin : unaligned
-         wire [$clog2(aligned_width_lp)-1:0] aligned_addr;
-         wire [aligned_width_lp-width_p-1:0] zero_pad = { (aligned_width_lp-width_p) {1'b0} };
-         wire [aligned_width_lp-1:0]         padded = lo_to_hi_p ? { zero_pad, i } : { i, zero_pad };
-
-          bsg_encode_one_hot #(.width_p(aligned_width_lp))
-          align(.i      (padded      )
-                ,.addr_o(aligned_addr)
-                ,.v_o   (v_lo        )
-                );
-
-         assign addr_lo = aligned_addr[$clog2(width_p)-1:0];
-       end
-     else
-       begin: aligned
-         logic [width_p-1:0][`BSG_SAFE_CLOG2(width_p):0] prefix_addr;
-         logic [1:0][`BSG_SAFE_CLOG2(width_p)-1:0] half_addr;
-         logic [1:0] vs;
-         always_comb
-           begin
-             // Init the prefix address
-             for (integer k = 0; k < width_p; k++)
-               begin
-                 prefix_addr[k] = i[k];
-               end
-
-             // Perform parallel reduction
-             for (integer j = 1; j <= `BSG_SAFE_CLOG2(width_p); j++)
-               for (integer k = 0; k < width_p/(2**j); k++)
-                 begin
-                   half_addr[0] = prefix_addr[2*k];
-                   half_addr[1] = prefix_addr[2*k+1];
-
-                   vs[0] = |half_addr[0];
-                   vs[1] = |half_addr[1];
-
-                   prefix_addr[k] = (vs[lo_to_hi_p] << j) | half_addr[0] | half_addr[1];
-                 end
-
-             {addr_lo, v_lo} = prefix_addr[0];
-           end
-       end // block: aligned
-
-  `ifdef SYNTHESIS
-    assign addr_o = addr_lo;
-  `else
-    assign addr_o = (((i-1) & i) == '0)
-      ? addr_lo
-      : {`BSG_SAFE_CLOG2(width_p){1'bx}};
-  `endif
-    assign v_o = v_lo;
-
-
-endmodule // bsg_encode_one_hot
-
+endmodule
