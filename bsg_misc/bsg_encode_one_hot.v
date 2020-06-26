@@ -25,13 +25,14 @@ module bsg_encode_one_hot #(parameter width_p=8, parameter lo_to_hi_p=1)
    localparam aligned_width_lp = 1 << $clog2(width_p);
 
    logic [`BSG_SAFE_CLOG2(width_p)-1:0] addr_lo;
+   logic v_lo;
 
    if (width_p == 1)
      begin : base
-        assign v_o = i;
+       assign v_lo = i;
 
-	// should be ignored
-        assign addr_lo = 1'bX;
+       // should be ignored
+       assign addr_lo = 1'bX;
      end
    else
      // align at the top; this should be more efficient
@@ -39,40 +40,46 @@ module bsg_encode_one_hot #(parameter width_p=8, parameter lo_to_hi_p=1)
      // e.g. 4 != (1 << 2)
      if (width_p != aligned_width_lp)
        begin : unaligned
-	  wire [$clog2(aligned_width_lp)-1:0] aligned_addr;
-	  wire [aligned_width_lp-width_p-1:0] zero_pad = { (aligned_width_lp-width_p) {1'b0} };
-	  wire [aligned_width_lp-1:0] 	      padded = lo_to_hi_p ? { zero_pad, i } : { i, zero_pad };
-	  
+         wire [$clog2(aligned_width_lp)-1:0] aligned_addr;
+         wire [aligned_width_lp-width_p-1:0] zero_pad = { (aligned_width_lp-width_p) {1'b0} };
+         wire [aligned_width_lp-1:0]         padded = lo_to_hi_p ? { zero_pad, i } : { i, zero_pad };
+
           bsg_encode_one_hot #(.width_p(aligned_width_lp))
           align(.i      (padded      )
                 ,.addr_o(aligned_addr)
-                ,.v_o   (v_o         )
+                ,.v_o   (v_lo        )
                 );
 
-	  assign addr_lo = aligned_addr[$clog2(width_p)-1:0];
+         assign addr_lo = aligned_addr[$clog2(width_p)-1:0];
        end
      else
        begin: aligned
-          wire [1:0] [`BSG_SAFE_CLOG2(half_width_lp)-1:0] addrs;
-          wire [1:0]                     vs;
+         logic [width_p-1:0][`BSG_SAFE_CLOG2(width_p):0] prefix_addr;
+         logic [1:0][`BSG_SAFE_CLOG2(width_p)-1:0] half_addr;
+         logic [1:0] vs;
+         always_comb
+           begin
+             // Init the prefix address
+             for (integer k = 0; k < width_p; k++)
+               begin
+                 prefix_addr[k] = i[k];
+               end
 
-          bsg_encode_one_hot #(.width_p(half_width_lp)) left
-            (.i      (i    [0+:half_width_lp])
-             ,.addr_o(addrs[0]               )
-             ,.v_o   (vs   [0]               )
-             );
+             // Perform parallel reduction
+             for (integer j = 1; j <= `BSG_SAFE_CLOG2(width_p); j++)
+               for (integer k = 0; k < width_p/(2**j); k++)
+                 begin
+                   half_addr[0] = prefix_addr[2*k];
+                   half_addr[1] = prefix_addr[2*k+1];
 
-          bsg_encode_one_hot #(.width_p(half_width_lp)) right
-            (.i      (i[half_width_lp+:half_width_lp])
-             ,.addr_o(addrs[1]                       )
-             ,.v_o   (vs   [1]                       )
-             );
+                   vs[0] = |half_addr[0];
+                   vs[1] = |half_addr[1];
 
-          assign v_o     = | vs;
-	  if (width_p == 2)
-	    assign addr_lo = vs[lo_to_hi_p];
-	  else
-            assign addr_lo = { vs[lo_to_hi_p], (addrs[0] | addrs[1]) };
+                   prefix_addr[k] = (vs[lo_to_hi_p] << j) | half_addr[0] | half_addr[1];
+                 end
+
+             {addr_lo, v_lo} = prefix_addr[0];
+           end
        end // block: aligned
 
   `ifdef SYNTHESIS
@@ -82,6 +89,7 @@ module bsg_encode_one_hot #(parameter width_p=8, parameter lo_to_hi_p=1)
       ? addr_lo
       : {`BSG_SAFE_CLOG2(width_p){1'bx}};
   `endif
+    assign v_o = v_lo;
 
 
 endmodule // bsg_encode_one_hot

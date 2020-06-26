@@ -24,11 +24,14 @@ module bsg_priority_encode #(parameter   width_p    = "inv"
 
    logic [width_p-1:0] enc_lo;
 
+   // We use this v_o instead of the v_o of bsg_encode_one_hot
+   //   because it has better critical path
    bsg_priority_encode_one_hot_out #(.width_p(width_p)
                                      ,.lo_to_hi_p(lo_to_hi_p)
                                      ) a
      (.i(i)
       ,.o(enc_lo)
+      ,.v_o(v_o)
       );
 
    bsg_encode_one_hot #(.width_p(width_p)
@@ -36,7 +39,7 @@ module bsg_priority_encode #(parameter   width_p    = "inv"
                         ) b
      (.i      (enc_lo)
       ,.addr_o(addr_o)
-      ,.v_o   (v_o)
+      ,.v_o   ()
       );
 
 endmodule

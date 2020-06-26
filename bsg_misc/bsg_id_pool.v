@@ -44,12 +44,15 @@ module bsg_id_pool
   logic alloc_v_lo;
   logic [els_p-1:0] one_hot_out;
 
+   // We use this v_o instead of the v_o of bsg_encode_one_hot
+   //   because it has better critical path
   bsg_priority_encode_one_hot_out #(
     .width_p(els_p)
     ,.lo_to_hi_p(1)
   ) pe0 (
     .i(~allocated_r | dealloc_decode)
     ,.o(one_hot_out)
+    ,.v_o(alloc_v_lo)
   );
 
   bsg_encode_one_hot #(
@@ -58,7 +61,7 @@ module bsg_id_pool
   ) enc0 (
     .i(one_hot_out)
     ,.addr_o(alloc_id_lo)
-    ,.v_o(alloc_v_lo)
+    ,.v_o()
   );
 
   assign alloc_id_o = alloc_id_lo;

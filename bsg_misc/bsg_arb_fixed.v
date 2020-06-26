@@ -17,6 +17,7 @@ module bsg_arb_fixed #(parameter     inputs_p = "inv"
                                      ) enc
      (.i ( reqs_i            )
       ,.o( grants_unmasked_lo)
+      ,.v_o(                 )
       );
 
    // mask with ready bits
