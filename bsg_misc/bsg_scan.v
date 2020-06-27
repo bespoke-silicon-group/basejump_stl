@@ -42,11 +42,17 @@ module bsg_scan #(parameter width_p = -1
    //        1 2 3 4 5 6 7 8 9
    // clog2  0 1 2 2 3 3 3 3 4
 
+   genvar j;
+
+   wire [$clog2(width_p):0][width_p-1:0] t;
+
+   wire [width_p-1:0]                      fill;
+	
    // synopsys translate_off
    initial
       assert( $countones({xor_p[0], and_p[0], or_p[0]}) == 1)
         else $error("bsg_scan: only one function may be selected\n");
-  
+	
    if (debug_p)
     always @(o)
       begin
@@ -57,12 +63,6 @@ module bsg_scan #(parameter width_p = -1
       end
 	
    // synopsys translate_on
-
-   genvar j;
-
-   wire [$clog2(width_p):0][width_p-1:0] t;
-
-   wire [width_p-1:0]                      fill;
 
    // streaming operation; reverses bits
    if (lo_to_hi_p)
