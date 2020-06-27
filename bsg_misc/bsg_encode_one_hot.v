@@ -81,7 +81,7 @@ module bsg_encode_one_hot #(parameter width_p=8, parameter lo_to_hi_p=1, paramet
   if (debug_p)
     always @(addr_o or v_o)
       begin
-        #1
+        `BSG_HIDE_FROM_VERILATOR(#1)
         for (integer k = 0; k <= $clog2(width_p); k=k+1)
           $display("%b %b",addr[k], v[k]);
         $display("addr_o=%b v_o=%b", addr_o, v_o);
