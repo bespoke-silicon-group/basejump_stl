@@ -1,0 +1,126 @@
+/**
+ *    bsg_router_crossbar_o_by_i.v
+ *
+ */
+
+
+
+module bsg_router_crossbar_o_by_i
+  #(parameter i_els_p="inv"
+    , parameter o_els_p="inv"
+    , parameter i_width_p="inv"
+
+    , parameter logic [i_els_p-1:0] i_use_credits_p = {i_els_p{1'b0}}
+    , parameter i_num_credits_p = 2
+    , parameter drop_header_p   = 0
+    , parameter lg_o_els_lp = `BSG_SAFE_CLOG2(o_els_p)
+    , parameter o_width_lp = i_width_p-(drop_header_p*lg_o_els_lp)
+  )
+  (
+    input clk_i
+    , input reset_i
+
+    // fifo inputs
+    , input [i_els_p-1:0] valid_i
+    , input [i_els_p-1:0][i_width_p-1:0] data_i // lower bits = dest id.
+    , output [i_els_p-1:0] credit_ready_and_o // this can be either credits or ready_and_i on inputs based on i_use_credits_p
+
+    // crossbar output 
+    , output [o_els_p-1:0] valid_o
+    , output [o_els_p-1:0][o_width_lp-1:0] data_o
+    , input [o_els_p-1:0] ready_and_i
+  );
+
+
+  // input FIFO
+  logic [i_els_p-1:0] fifo_ready_lo;
+  logic [i_els_p-1:0] fifo_v_lo;
+  logic [i_els_p-1:0][i_width_p-1:0] fifo_data_lo;
+  logic [i_els_p-1:0] fifo_yumi_li;
+
+  for (genvar i = 0; i < i_els_p; i++) begin: fifo
+    bsg_fifo_1r1w_small #(
+      .width_p(i_width_p)
+      ,.els_p(i_num_credits_p+i_use_credits_p[i])
+    ) fifo0 (
+      .clk_i(clk_i)
+      ,.reset_i(reset_i)
+      
+      ,.v_i(valid_i[i])
+      ,.ready_o(fifo_ready_lo[i])
+      ,.data_i(data_i[i])
+    
+      ,.v_o(fifo_v_lo[i])
+      ,.data_o(fifo_data_lo[i])
+      ,.yumi_i(fifo_yumi_li[i])
+    );
+  end
+
+  for (genvar i = 0; i < i_els_p; i++) begin
+    if (i_use_credits_p[i]) begin
+      bsg_dff_reset #(
+        .width_p(1)
+        ,.reset_val_p(0)
+      ) dff0 (
+        .clk_i(clk_i)
+        ,.reset_i(reset_i)
+        ,.data_i(fifo_yumi_li[i])
+        ,.data_o(credit_ready_and_o[i])
+      );
+    end
+    else begin
+      assign credit_ready_and_o[i] = fifo_ready_lo[i];
+    end
+  end
+
+
+  // crossbar ctrl
+  logic [i_els_p-1:0][lg_o_els_lp-1:0] ctrl_sel_io_li;
+  logic [i_els_p-1:0] ctrl_yumi_lo;
+  logic [o_els_p-1:0][i_els_p-1:0] grants_lo;
+
+  bsg_crossbar_control_basic_o_by_i #(
+    .i_els_p(i_els_p)
+    ,.o_els_p(o_els_p)
+  ) ctrl0 (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+
+    ,.valid_i(fifo_v_lo)
+    ,.sel_io_i(ctrl_sel_io_li)
+    ,.yumi_o(fifo_yumi_li)
+
+    ,.ready_i(ready_and_i)
+    ,.valid_o(valid_o)
+    ,.grants_oi_one_hot_o(grants_lo)
+  );
+
+  for (genvar i = 0; i < i_els_p; i++)
+    assign ctrl_sel_io_li[i] = fifo_data_lo[0+:lg_o_els_lp];
+
+
+  // output mux
+  logic [i_els_p-1:0][o_width_lp-1:0] odata;
+
+  for (genvar i = 0; i < i_els_p; i++) begin
+    if (drop_header_p) begin
+      assign odata[i] = fifo_data_lo[i][i_width_p-1:lg_o_els_lp];
+    end
+    else begin
+      assign odata[i] = fifo_data_lo[i];
+    end
+  end
+
+  for (genvar i = 0; i < o_els_p; i++) begin: mux
+    bsg_mux_one_hot #(
+      .width_p(o_width_lp)
+      ,.els_p(i_els_p)
+    ) mux0 (
+      .data_i(odata)
+      ,.sel_one_hot_i(grants_lo[i])
+      ,.data_o(data_o[i])
+    );
+  end
+
+
+endmodule
