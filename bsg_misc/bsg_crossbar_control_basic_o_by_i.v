@@ -83,8 +83,9 @@ module bsg_crossbar_control_basic_o_by_i
   );
 
 
-  for (genvar i = 0; i < i_els_p; i++)
+  for (genvar i = 0; i < i_els_p; i++) begin
     assign yumi_o[i] = |rr_yumi_lo_t[i];
+  end
 
 
 

@@ -4,16 +4,17 @@
  */
 
 
-
 module bsg_router_crossbar_o_by_i
-  #(parameter i_els_p="inv"
+  #(parameter i_els_p=2
     , parameter o_els_p="inv"
     , parameter i_width_p="inv"
 
     , parameter logic [i_els_p-1:0] i_use_credits_p = {i_els_p{1'b0}}
-    , parameter i_num_credits_p = 2
-    , parameter drop_header_p   = 0
+    , parameter int i_num_credits_p[i_els_p-1:0] = '{2,2}
     , parameter lg_o_els_lp = `BSG_SAFE_CLOG2(o_els_p)
+
+    // drop_header_p drops the lower bits to select dest id from the datapath.
+    , parameter drop_header_p   = 0
     , parameter o_width_lp = i_width_p-(drop_header_p*lg_o_els_lp)
   )
   (
@@ -41,7 +42,7 @@ module bsg_router_crossbar_o_by_i
   for (genvar i = 0; i < i_els_p; i++) begin: fifo
     bsg_fifo_1r1w_small #(
       .width_p(i_width_p)
-      ,.els_p(i_num_credits_p+i_use_credits_p[i])
+      ,.els_p(i_num_credits_p[i])
     ) fifo0 (
       .clk_i(clk_i)
       ,.reset_i(reset_i)
@@ -56,8 +57,9 @@ module bsg_router_crossbar_o_by_i
     );
   end
 
-  for (genvar i = 0; i < i_els_p; i++) begin
-    if (i_use_credits_p[i]) begin
+  // credit or ready interface
+  for (genvar i = 0; i < i_els_p; i++) begin: intf
+    if (i_use_credits_p[i]) begin: cr
       bsg_dff_reset #(
         .width_p(1)
         ,.reset_val_p(0)
@@ -68,7 +70,7 @@ module bsg_router_crossbar_o_by_i
         ,.data_o(credit_ready_and_o[i])
       );
     end
-    else begin
+    else begin: rd
       assign credit_ready_and_o[i] = fifo_ready_lo[i];
     end
   end
@@ -95,8 +97,11 @@ module bsg_router_crossbar_o_by_i
     ,.grants_oi_one_hot_o(grants_lo)
   );
 
-  for (genvar i = 0; i < i_els_p; i++)
+
+  // lower bits encode the dest id.
+  for (genvar i = 0; i < i_els_p; i++) begin
     assign ctrl_sel_io_li[i] = fifo_data_lo[0+:lg_o_els_lp];
+  end
 
 
   // output mux
@@ -110,6 +115,7 @@ module bsg_router_crossbar_o_by_i
       assign odata[i] = fifo_data_lo[i];
     end
   end
+
 
   for (genvar i = 0; i < o_els_p; i++) begin: mux
     bsg_mux_one_hot #(
