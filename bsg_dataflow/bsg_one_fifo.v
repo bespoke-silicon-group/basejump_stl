@@ -45,7 +45,7 @@ module bsg_one_fifo #(parameter width_p="inv"
   bsg_dff_en #(.width_p(width_p), .harden_p(0)) dff
   (.clk_i
    ,.data_i
-   // although technically it is okay to just look at v_i
+   // although technically it is okay to just look at v_o
    // this will cause unnecessary toggling of flip flops
    ,.en_i(v_i & ready_o)
    ,.data_o
