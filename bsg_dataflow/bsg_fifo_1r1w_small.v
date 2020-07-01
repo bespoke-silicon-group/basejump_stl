@@ -36,11 +36,19 @@ module bsg_fifo_1r1w_small #( parameter width_p      = -1
     
   if (harden_p == 0)
     begin: unhardened
-      bsg_fifo_1r1w_small_unhardened #(.width_p(width_p)
-                                      ,.els_p(els_p)
-                                      ,.ready_THEN_valid_p(ready_THEN_valid_p)
-                                      ) fifo
-      (.*);
+      if (els_p == 2) begin:tf
+        bsg_two_fifo #(.width_p(width_p)
+                      ,.ready_THEN_valid_p(ready_THEN_valid_p)
+        ) twof
+        (.*);
+      end
+      else begin:un
+        bsg_fifo_1r1w_small_unhardened #(.width_p(width_p)
+                                        ,.els_p(els_p)
+                                        ,.ready_THEN_valid_p(ready_THEN_valid_p)
+                                        ) fifo
+        (.*);
+      end
     end
   else
     begin: hardened
