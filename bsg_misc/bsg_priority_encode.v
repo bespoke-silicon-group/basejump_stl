@@ -9,8 +9,6 @@
 //        0100 --> 2, v= 1
 //        0000 --> 0, v= 0
 //
-// with some updates to the bsg_encode_one_hot function,
-// should be able to support both directions
 //
 
 module bsg_priority_encode #(parameter   width_p    = "inv"
