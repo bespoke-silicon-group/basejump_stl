@@ -12,7 +12,7 @@ module bsg_mesh_router_buffered #(width_p        = -1
                                   ,repeater_output_p = { dirs_lp {1'b0}}  // SNEWP
                                   // credit interface
                                   , use_credits_p = {dirs_lp{1'b0}}
-                                  , num_credits_p = 2
+                                  ,parameter int  num_credits_p[dirs_lp-1:0] = '{2,2,2,2,2}
                                   )
    (
     input clk_i
@@ -20,8 +20,6 @@ module bsg_mesh_router_buffered #(width_p        = -1
 
     , input  [dirs_lp-1:0][bsg_ready_and_link_sif_width_lp-1:0] link_i
     , output [dirs_lp-1:0][bsg_ready_and_link_sif_width_lp-1:0] link_o
-
-    //, output [dirs_lp-1:0] credit_o // (optional) signals that the network has taken a packet out of the buffer.
 
     , input [x_cord_width_p-1:0] my_x_i
     , input [y_cord_width_p-1:0] my_y_i
@@ -70,7 +68,7 @@ module bsg_mesh_router_buffered #(width_p        = -1
 
       bsg_fifo_1r1w_small #(
         .width_p(width_p)
-        ,.els_p(num_credits_p+use_credits_p[i])
+        ,.els_p(num_credits_p[i])
       ) fifo (
         .clk_i(clk_i)
         ,.reset_i(reset_i)
@@ -78,7 +76,6 @@ module bsg_mesh_router_buffered #(width_p        = -1
         ,.v_i     (link_i_cast[i].v            )
         ,.data_i  (link_i_cast[i].data         )
         ,.ready_o (fifo_ready_lo)
-        //,.ready_o (link_o_cast[i].ready_and_rev)
 
         ,.v_o     (fifo_valid[i])
         ,.data_o  (fifo_data [i])
