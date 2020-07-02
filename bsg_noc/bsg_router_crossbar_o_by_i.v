@@ -1,6 +1,7 @@
 /**
  *    bsg_router_crossbar_o_by_i.v
  *
+ *    This module connects N inputs to M outputs with a crossbar network.
  */
 
 
@@ -31,6 +32,12 @@ module bsg_router_crossbar_o_by_i
     , output [o_els_p-1:0][o_width_lp-1:0] data_o
     , input [o_els_p-1:0] ready_and_i
   );
+
+
+  // parameter checking
+  initial begin
+    assert(o_els_p > 1) else $error("o_els_p needs to be greater than 1.");
+  end
 
 
   // input FIFO
