@@ -100,7 +100,7 @@ module bsg_router_crossbar_o_by_i
 
   // lower bits encode the dest id.
   for (genvar i = 0; i < i_els_p; i++) begin
-    assign ctrl_sel_io_li[i] = fifo_data_lo[0+:lg_o_els_lp];
+    assign ctrl_sel_io_li[i] = fifo_data_lo[i][0+:lg_o_els_lp];
   end
 
 
