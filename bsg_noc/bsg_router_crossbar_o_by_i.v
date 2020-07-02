@@ -15,6 +15,8 @@ module bsg_router_crossbar_o_by_i
     , parameter lg_o_els_lp = `BSG_SAFE_CLOG2(o_els_p)
 
     // drop_header_p drops the lower bits to select dest id from the datapath.
+    // The drop header parameter can be optionally used to combine multiple crossbars
+    // into a network and implement source routing.
     , parameter drop_header_p   = 0
     , parameter o_width_lp = i_width_p-(drop_header_p*lg_o_els_lp)
   )
@@ -36,6 +38,10 @@ module bsg_router_crossbar_o_by_i
 
   // parameter checking
   initial begin
+    // for now we leave this case unhandled
+    // awaiting an actual use case so we can
+    // determine whether the code is cleaner with
+    // 0-bit or 1-bit source routing.
     assert(o_els_p > 1) else $error("o_els_p needs to be greater than 1.");
   end
 
