@@ -105,7 +105,7 @@ module bsg_router_crossbar_o_by_i
     ,.sel_io_i(ctrl_sel_io_li)
     ,.yumi_o(fifo_yumi_li)
 
-    ,.ready_i(ready_and_i)
+    ,.ready_and_i(ready_and_i)
     ,.valid_o(valid_o)
     ,.grants_oi_one_hot_o(grants_lo)
   );

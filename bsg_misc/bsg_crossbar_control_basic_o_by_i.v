@@ -19,7 +19,7 @@ module bsg_crossbar_control_basic_o_by_i
     , output [i_els_p-1:0] yumi_o
 
     // crossbar outputs (ready & valid interface)
-    , input [o_els_p-1:0] ready_i
+    , input [o_els_p-1:0] ready_and_i
     , output [o_els_p-1:0] valid_o
     , output [o_els_p-1:0][i_els_p-1:0] grants_oi_one_hot_o
   );
@@ -56,7 +56,7 @@ module bsg_crossbar_control_basic_o_by_i
   for (genvar i = 0 ; i < o_els_p; i++) begin: rr
 
     assign valid_o[i] = |o_select_t[i];
-    assign rr_yumi_li[i] = valid_o[i] & ready_i[i];
+    assign rr_yumi_li[i] = valid_o[i] & ready_and_i[i];
 
     bsg_arb_round_robin #(
       .width_p(i_els_p)
