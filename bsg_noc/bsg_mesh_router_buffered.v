@@ -12,7 +12,7 @@ module bsg_mesh_router_buffered #(width_p        = -1
                                   ,repeater_output_p = { dirs_lp {1'b0}}  // SNEWP
                                   // credit interface
                                   , use_credits_p = {dirs_lp{1'b0}}
-                                  ,parameter int  num_credits_p[dirs_lp-1:0] = '{2,2,2,2,2}
+                                  ,parameter int fifo_els_p[dirs_lp-1:0] = '{2,2,2,2,2}
                                   )
    (
     input clk_i
@@ -68,7 +68,7 @@ module bsg_mesh_router_buffered #(width_p        = -1
 
       bsg_fifo_1r1w_small #(
         .width_p(width_p)
-        ,.els_p(num_credits_p[i])
+        ,.els_p(fifo_els_p[i])
       ) fifo (
         .clk_i(clk_i)
         ,.reset_i(reset_i)
