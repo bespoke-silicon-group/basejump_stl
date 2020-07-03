@@ -11,7 +11,7 @@ module bsg_router_crossbar_o_by_i
     , parameter i_width_p="inv"
 
     , parameter logic [i_els_p-1:0] i_use_credits_p = {i_els_p{1'b0}}
-    , parameter int i_num_credits_p[i_els_p-1:0] = '{2,2}
+    , parameter int i_fifo_els_p[i_els_p-1:0] = '{2,2}
     , parameter lg_o_els_lp = `BSG_SAFE_CLOG2(o_els_p)
 
     // drop_header_p drops the lower bits to select dest id from the datapath.
@@ -55,7 +55,7 @@ module bsg_router_crossbar_o_by_i
   for (genvar i = 0; i < i_els_p; i++) begin: fifo
     bsg_fifo_1r1w_small #(
       .width_p(i_width_p)
-      ,.els_p(i_num_credits_p[i])
+      ,.els_p(i_fifo_els_p[i])
     ) fifo0 (
       .clk_i(clk_i)
       ,.reset_i(reset_i)
