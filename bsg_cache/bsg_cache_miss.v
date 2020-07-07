@@ -68,7 +68,7 @@ module bsg_cache_miss
     ,output logic done_o
     ,output logic recover_o
     ,output logic [lg_ways_lp-1:0] chosen_way_o
-    ,output logic select_snoop_data_o
+    ,output logic select_snoop_data_r_o
 
     ,input ack_i
   );
@@ -217,7 +217,7 @@ module bsg_cache_miss
     ? addr_way_v_decode
     : tag_hit_v_i;
 
-  assign select_snoop_data_o = select_snoop_data_r;
+  assign select_snoop_data_r_o = select_snoop_data_r;
 
   always_comb begin
 
