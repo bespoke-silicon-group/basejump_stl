@@ -68,6 +68,7 @@ module bsg_cache_miss
     ,output logic done_o
     ,output logic recover_o
     ,output logic [lg_ways_lp-1:0] chosen_way_o
+    ,output logic select_snoop_data_o
 
     ,input ack_i
   );
@@ -132,6 +133,7 @@ module bsg_cache_miss
   miss_state_e miss_state_n;
   logic [lg_ways_lp-1:0] chosen_way_r, chosen_way_n;
   logic [lg_ways_lp-1:0] flush_way_r, flush_way_n;
+  logic select_snoop_data_r, select_snoop_data_n;
 
 
   // for flush/inv ops, go to FLUSH_OP.
@@ -215,6 +217,8 @@ module bsg_cache_miss
     ? addr_way_v_decode
     : tag_hit_v_i;
 
+  assign select_snoop_data_o = select_snoop_data_r;
+
   always_comb begin
 
     stat_mem_v_o = 1'b0;
@@ -235,6 +239,8 @@ module bsg_cache_miss
 
     recover_o = '0;
     done_o = '0;
+
+    select_snoop_data_n = select_snoop_data_r;
 
     case (miss_state_r)
 
@@ -409,6 +415,10 @@ module bsg_cache_miss
           tag_mem_w_mask_out[i].valid = chosen_way_decode[i];
         end
 
+        select_snoop_data_n = dma_done_i
+          ? 1'b1
+          : select_snoop_data_r;
+
         miss_state_n = dma_done_i
           ? RECOVER
           : GET_FILL_DATA;
@@ -427,6 +437,7 @@ module bsg_cache_miss
       DONE: begin
         done_o = 1'b1;
         miss_state_n = ack_i ? START : DONE;
+        select_snoop_data_n = ack_i ? 1'b0 : select_snoop_data_r;
       end
 
       // this should never happen, but if it does, go back to START;
@@ -443,12 +454,14 @@ module bsg_cache_miss
       miss_state_r <= START;
       chosen_way_r <= '0;
       flush_way_r <= '0;
+      select_snoop_data_r <= 1'b0;
       // added to be a little more X pessimism conservative
     end
     else begin
       miss_state_r <= miss_state_n;
       chosen_way_r <= chosen_way_n;
       flush_way_r <= flush_way_n;
+      select_snoop_data_r <= select_snoop_data_n;
     end
   end
 

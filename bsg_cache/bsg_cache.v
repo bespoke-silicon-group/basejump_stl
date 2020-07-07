@@ -376,6 +376,7 @@ module bsg_cache
 
   logic sbuf_empty_li;
   logic [lg_ways_lp-1:0] chosen_way_lo;
+  logic select_snoop_data_lo;
 
   bsg_cache_miss #(
     .addr_width_p(addr_width_p)
@@ -425,6 +426,7 @@ module bsg_cache
     ,.chosen_way_o(chosen_way_lo)
     
     ,.ack_i(v_o & yumi_i) 
+    ,.select_snoop_data_o(select_snoop_data_lo)
   );
 
   // dma
@@ -681,7 +683,7 @@ module bsg_cache
   );
   
 
-  assign snoop_or_ld_data = miss_v
+  assign snoop_or_ld_data = select_snoop_data_lo
     ? snoop_word_lo
     : bypass_data_masked;
 
