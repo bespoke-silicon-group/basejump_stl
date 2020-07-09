@@ -60,6 +60,10 @@ namespace bsg_nonsynth_dpi{
                 dpi_base(const std::string &hier):
                         scope(svGetScopeFromName(hier.c_str()))
                 {
+                        if(!scope){
+                                fprintf(stderr, "BSG ERROR: DPI Scope %s was not found\n", hier.c_str());
+                                exit(1);
+                        }
                         prev = svSetScope(scope);
                         bsg_dpi_init();
                         svSetScope(prev);
