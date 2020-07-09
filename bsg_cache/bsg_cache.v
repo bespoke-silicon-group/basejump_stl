@@ -20,7 +20,7 @@ module bsg_cache
     ,parameter sets_p="inv"
     ,parameter ways_p="inv"
 
-    ,parameter amo_support_p=(e_amo_swap | e_amo_or)
+    ,parameter amo_support_p=(e_cache_amo_swap | e_cache_amo_or)
 
     // dma burst width
     ,parameter dma_data_width_p=data_width_p // default value. it can also be pow2 multiple of data_width_p.
@@ -606,34 +606,37 @@ module bsg_cache
       logic [slice_width_lp-1:0] atomic_reg_data, atomic_mem_data;
 
       always_comb begin
+        // Data incoming from cache_pkt
         atomic_reg_data = data_v_r[0+:slice_width_lp];
+        // Data read from the cache line
         atomic_mem_data = atomic_mem_data_li[i][0+:slice_width_lp];
 
-        if ((amo_support_p & e_amo_swap) && decode_v_r.amoswap_op) begin
+        unique
+        if ((amo_support_p & e_cache_amo_swap) && decode_v_r.amoswap_op) begin
             slice_data = atomic_reg_data;
         end
-        else if ((amo_support_p & e_amo_and) && decode_v_r.amoand_op) begin
+        else if ((amo_support_p & e_cache_amo_and) && decode_v_r.amoand_op) begin
             slice_data = atomic_reg_data & atomic_mem_data;
         end
-        else if ((amo_support_p & e_amo_or) && decode_v_r.amoor_op) begin
+        else if ((amo_support_p & e_cache_amo_or) && decode_v_r.amoor_op) begin
           slice_data = atomic_reg_data | atomic_mem_data;
         end
-        else if ((amo_support_p & e_amo_xor) && decode_v_r.amoxor_op) begin
+        else if ((amo_support_p & e_cache_amo_xor) && decode_v_r.amoxor_op) begin
           slice_data = atomic_reg_data ^ atomic_mem_data;
         end
-        else if ((amo_support_p & e_amo_add) && decode_v_r.amoadd_op) begin
+        else if ((amo_support_p & e_cache_amo_add) && decode_v_r.amoadd_op) begin
           slice_data = atomic_reg_data + atomic_mem_data;
         end
-        else if ((amo_support_p & e_amo_min) && decode_v_r.amomin_op) begin
+        else if ((amo_support_p & e_cache_amo_min) && decode_v_r.amomin_op) begin
           slice_data = ($signed(atomic_reg_data) < $signed(atomic_mem_data)) ? atomic_reg_data : atomic_mem_data;
         end
-        else if ((amo_support_p & e_amo_max) && decode_v_r.amomax_op) begin
+        else if ((amo_support_p & e_cache_amo_max) && decode_v_r.amomax_op) begin
           slice_data = ($signed(atomic_reg_data) > $signed(atomic_mem_data)) ? atomic_reg_data : atomic_mem_data;
         end
-        else if ((amo_support_p & e_amo_minu) && decode_v_r.amominu_op) begin
+        else if ((amo_support_p & e_cache_amo_minu) && decode_v_r.amominu_op) begin
           slice_data = (atomic_reg_data < atomic_mem_data) ? atomic_reg_data : atomic_mem_data;
         end
-        else if ((amo_support_p & e_amo_maxu) && decode_v_r.amomaxu_op) begin
+        else if ((amo_support_p & e_cache_amo_maxu) && decode_v_r.amomaxu_op) begin
           slice_data = (atomic_reg_data > atomic_mem_data) ? atomic_reg_data : atomic_mem_data;
         end
         else begin
@@ -988,6 +991,26 @@ module bsg_cache
         // check that there is at least one unlocked way in a set.
         assert($countones(lock_v_r) < ways_p)
           else $error("[BSG_ERROR][BSG_CACHE] There should be at least one unlocked way in a set. %m, T=%t", $time);
+
+        // Check that client hasn't required unsupported AMO
+        assert(~decode_v_r.amoswap_op || (amo_support_p & e_cache_amo_swap))
+          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOSWAP received. %m, T=%t", $time);
+        assert(~decode_v_r.amoadd_op || (amo_support_p & e_cache_amo_add))
+          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOADD received. %m, T=%t", $time);
+        assert(~decode_v_r.amoxor_op || (amo_support_p & e_cache_amo_xor))
+          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOXOR received. %m, T=%t", $time);
+        assert(~decode_v_r.amoand_op || (amo_support_p & e_cache_amo_and))
+          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOAND received. %m, T=%t", $time);
+        assert(~decode_v_r.amoor_op || (amo_support_p & e_cache_amo_or))
+          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOOR received. %m, T=%t", $time);
+        assert(~decode_v_r.amomin_op || (amo_support_p & e_cache_amo_min))
+          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOMIN received. %m, T=%t", $time);
+        assert(~decode_v_r.amomax_op || (amo_support_p & e_cache_amo_max))
+          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOMAX received. %m, T=%t", $time);
+        assert(~decode_v_r.amominu_op || (amo_support_p & e_cache_amo_minu))
+          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOMINU received. %m, T=%t", $time);
+        assert(~decode_v_r.amomaxu_op || (amo_support_p & e_cache_amo_maxu))
+          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOMAXU received. %m, T=%t", $time);
       end
     end
   end

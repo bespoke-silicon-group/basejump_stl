@@ -41,7 +41,61 @@ module basic_checker
 
   always_comb begin
     case (cache_pkt.opcode)
-      AMOOR_D, AMOOR_W: begin
+      // Arithmetic ops need to be applied to individual segments
+      AMOADD_W: begin
+        store_pre_data = cache_pkt.data[0+:32] + load_data_final[0+:32];
+      end
+      AMOADD_D: begin
+        store_pre_data = cache_pkt.data[0+:64] + load_data_final[0+:64];
+      end
+      AMOMIN_W: begin
+        store_pre_data = (cache_pkt.data[0+:32] < load_data_final[0+:32])
+          ? cache_pkt.data[0+:32]
+          : load_data_final[0+:32];
+      end
+      AMOMIN_D: begin
+        store_pre_data = (cache_pkt.data[0+:64] < load_data_final[0+:64])
+          ? cache_pkt.data[0+:64]
+          : load_data_final[0+:64];
+      end
+      AMOMAX_W: begin
+        store_pre_data = (cache_pkt.data[0+:32] > load_data_final[0+:32])
+          ? cache_pkt.data[0+:32]
+          : load_data_final[0+:32];
+      end
+      AMOMAX_D: begin
+        store_pre_data = (cache_pkt.data[0+:64] > load_data_final[0+:64])
+          ? cache_pkt.data[0+:64]
+          : load_data_final[0+:64];
+      end
+      AMOMINU_W: begin
+        store_pre_data = ($unsigned(cache_pkt.data[0+:32]) < $unsigned(load_data_final[0+:32]))
+          ? cache_pkt.data[0+:32]
+          : load_data_final[0+:32];
+      end
+      AMOMINU_D: begin
+        store_pre_data = ($unsigned(cache_pkt.data[0+:64]) < $unsigned(load_data_final[0+:64]))
+          ? cache_pkt.data[0+:64]
+          : load_data_final[0+:64];
+      end
+      AMOMAXU_W: begin
+        store_pre_data = ($unsigned(cache_pkt.data[0+:32]) > $unsigned(load_data_final[0+:32]))
+          ? cache_pkt.data[0+:32]
+          : load_data_final[0+:32];
+      end
+      AMOMAXU_D: begin
+        store_pre_data = ($unsigned(cache_pkt.data[0+:64]) > $unsigned(load_data_final[0+:64]))
+          ? cache_pkt.data[0+:64]
+          : load_data_final[0+:64];
+      end
+
+      AMOXOR_W, AMOXOR_D: begin
+        store_pre_data = cache_pkt.data ^ load_data_final;
+      end
+      AMOAND_W, AMOAND_D: begin
+        store_pre_data = cache_pkt.data & load_data_final;
+      end
+      AMOOR_W, AMOOR_D: begin
         store_pre_data = cache_pkt.data | load_data_final;
       end
       default: begin
@@ -53,12 +107,16 @@ module basic_checker
   always_comb begin
     case (cache_pkt.opcode)
       
-      SD, AMOSWAP_D, AMOOR_D: begin
+      SD, AMOSWAP_D, AMOADD_D, AMOXOR_D
+      ,AMOAND_D, AMOOR_D, AMOMIN_D
+      ,AMOMAX_D, AMOMINU_D, AMOMAXU_D: begin
         store_data = store_pre_data;
         store_mask = 8'b1111_1111;
       end
 
-      SW, AMOSWAP_W, AMOOR_W: begin
+      SW, AMOSWAP_W, AMOADD_W, AMOXOR_W
+      ,AMOAND_W, AMOOR_W, AMOMIN_W
+      ,AMOMAX_W, AMOMINU_W, AMOMAXU_W: begin
         store_data = {2{store_pre_data[31:0]}};
         store_mask = {
           {4{ cache_pkt.addr[2]}},
@@ -139,8 +197,12 @@ module basic_checker
 
   always_comb begin
     case (cache_pkt.opcode)
-      LD, AMOSWAP_D, AMOOR_D: load_data_final = load_data;
-      LW, AMOSWAP_W, AMOOR_W: load_data_final = {{32{word_sel[31]}}, word_sel};
+      LD, AMOSWAP_D, AMOADD_D, AMOXOR_D
+      ,AMOAND_D, AMOOR_D, AMOMIN_D
+      ,AMOMAX_D, AMOMINU_D, AMOMAXU_D: load_data_final = load_data;
+      LW, AMOSWAP_W, AMOADD_W, AMOXOR_W
+      ,AMOAND_W, AMOOR_W, AMOMIN_W
+      ,AMOMAX_W, AMOMINU_W, AMOMAXU_W: load_data_final = {{32{word_sel[31]}}, word_sel};
       LH: load_data_final = {{48{half_sel[15]}}, half_sel};
       LB: load_data_final = {{56{byte_sel[7]}}, byte_sel};
       LWU: load_data_final = {{32{1'b0}}, word_sel};
@@ -187,8 +249,12 @@ module basic_checker
                   shadow_mem[cache_pkt_word_addr][8*i+:8] <= store_data[8*i+:8];
             end
 
-            AMOSWAP_W, AMOOR_W,
-            AMOSWAP_D, AMOOR_D: begin
+            AMOSWAP_W, AMOADD_W, AMOXOR_W,
+            AMOAND_W, AMOOR_W, AMOMIN_W,
+            AMOMAX_W, AMOMINU_W, AMOMAXU_W,
+            AMOSWAP_D, AMOADD_D, AMOXOR_D,
+            AMOAND_D, AMOOR_D, AMOMIN_D,
+            AMOMAX_D, AMOMINU_D, AMOMAXU_D: begin
               result[send_id] = load_data_final;
               send_id++;
               for (integer i = 0; i < data_mask_width_lp; i++)
@@ -196,6 +262,10 @@ module basic_checker
                   shadow_mem[cache_pkt_word_addr][8*i+:8] <= store_data[8*i+:8];
             end
 
+            ALOCK, AUNLOCK, TAGFL, AFLINV: begin
+              result[send_id] = '0;
+              send_id++;
+            end
           endcase
         end
 

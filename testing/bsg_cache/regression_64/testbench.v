@@ -72,6 +72,7 @@ module testbench();
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.sets_p(sets_p)
     ,.ways_p(ways_p)
+    ,.amo_support_p(amo_support_level_arithmetic_lp)
   ) DUT (
     .clk_i(clk)
     ,.reset_i(reset)
