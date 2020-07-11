@@ -20,6 +20,9 @@ extern "C" {
 namespace bsg_nonsynth_dpi{
         // dpi_gpio is the C++ wrapper class for the
         // bsg_nonsynth_dpi_gpio verilog module.
+        //
+        // This module provides a GPIO interface for C/C++ code, using
+        // DPI. This provides the ability to set/read pins from C/C++. 
         // 
         // Template Parameters:
         // 
