@@ -18,6 +18,12 @@
 `define BSG_UNDEFINED_IN_SIM(val) ('X)
 `endif
 
+`ifdef VERILATOR
+`define BSG_HIDE_FROM_VERILATOR(val)
+`else
+`define BSG_HIDE_FROM_VERILATOR(val) val
+`endif
+
 `ifdef SYNTHESIS
 `define BSG_DISCONNECTED_IN_SIM(val) (val)
 `elsif VERILATOR

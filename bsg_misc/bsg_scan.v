@@ -3,13 +3,17 @@
 // note: this does a scan from hi bit to lo
 // so the high bit is always unchanged
 //
+// note: implements Kogge-Stone style prefix tree
+//       which may have excessive wiring as width_p grows
+//
 
 module bsg_scan #(parameter width_p = -1
                   , parameter xor_p = 0
                   , parameter and_p = 0
                   , parameter or_p = 0
                   , parameter lo_to_hi_p = 0
-                  )
+                  , parameter debug_p = 0
+		 )
    (input    [width_p-1:0] i
     , output logic [width_p-1:0] o
     );
@@ -38,17 +42,27 @@ module bsg_scan #(parameter width_p = -1
    //        1 2 3 4 5 6 7 8 9
    // clog2  0 1 2 2 3 3 3 3 4
 
-   // synopsys translate_off
-   initial
-      assert( $countones({xor_p[0], and_p[0], or_p[0]}) == 1)
-        else $error("bsg_scan: only one function may be selected\n");
-   // synopsys translate_on
-
    genvar j;
 
    wire [$clog2(width_p):0][width_p-1:0] t;
 
    wire [width_p-1:0]                      fill;
+	
+   // synopsys translate_off
+   initial
+      assert( $countones({xor_p[0], and_p[0], or_p[0]}) == 1)
+        else $error("bsg_scan: only one function may be selected\n");
+	
+   if (debug_p)
+    always @(o)
+      begin
+        `BSG_HIDE_FROM_VERILATOR(#1)
+        for (integer k = 0; k <= $clog2(width_p); k=k+1)
+          $display("%b",t[k]);
+        $display("i=%b, o=%b",i, o);
+      end
+	
+   // synopsys translate_on
 
    // streaming operation; reverses bits
    if (lo_to_hi_p)

@@ -10,6 +10,9 @@ module bsg_mesh_router_buffered #(width_p        = -1
                                   ,bsg_ready_and_link_sif_width_lp=`bsg_ready_and_link_sif_width(width_p)
                                   // select whether to buffer the output
                                   ,repeater_output_p = { dirs_lp {1'b0}}  // SNEWP
+                                  // credit interface
+                                  , use_credits_p = {dirs_lp{1'b0}}
+                                  ,parameter int fifo_els_p[dirs_lp-1:0] = '{2,2,2,2,2}
                                   )
    (
     input clk_i
@@ -46,39 +49,68 @@ module bsg_mesh_router_buffered #(width_p        = -1
        end
    //synopsys translate_on
 
-   for (i = 0; i < dirs_lp; i=i+1)
-     begin: rof
-        if (stub_p[i])
-          begin: fi
-             assign fifo_data   [i] = width_p ' (0);
-             assign fifo_valid  [i] = 1'b0;
+  for (i = 0; i < dirs_lp; i=i+1) begin: rof
+    if (stub_p[i]) begin: fi
+      assign fifo_data   [i] = width_p ' (0);
+      assign fifo_valid  [i] = 1'b0;
 
-             // accept no data from outside of stubbed port
-             assign link_o_cast[i].ready_and_rev = 1'b0;
+      // accept no data from outside of stubbed port
+      assign link_o_cast[i].ready_and_rev = 1'b0;
 
-             // synopsys translate_off
-             always @(negedge clk_i)
-               if (link_o_cast[i].v)
-                 $display("## warning %m: stubbed port %x received word %x",i,link_i_cast[i].data);
-             // synopsys translate_on
+      // synopsys translate_off
+      always @(negedge clk_i)
+        if (link_o_cast[i].v)
+          $display("## warning %m: stubbed port %x received word %x",i,link_i_cast[i].data);
+      // synopsys translate_on
+    end
+    else begin: fi
+      logic fifo_ready_lo;
+
+      bsg_fifo_1r1w_small #(
+        .width_p(width_p)
+        ,.els_p(fifo_els_p[i])
+      ) fifo (
+        .clk_i(clk_i)
+        ,.reset_i(reset_i)
+
+        ,.v_i     (link_i_cast[i].v            )
+        ,.data_i  (link_i_cast[i].data         )
+        ,.ready_o (fifo_ready_lo)
+
+        ,.v_o     (fifo_valid[i])
+        ,.data_o  (fifo_data [i])
+        ,.yumi_i  (fifo_yumi [i])
+      );
+      
+      if (use_credits_p[i]) begin: cr
+        bsg_dff_reset #(
+          .width_p(1)
+          ,.reset_val_p(0)
+        ) dff0 (
+          .clk_i(clk_i)
+          ,.reset_i(reset_i)
+          ,.data_i(fifo_yumi[i])
+          ,.data_o(link_o_cast[i].ready_and_rev)
+        );
+        
+        // synopsys translate_off
+        always_ff @ (negedge clk_i) begin
+          if (~reset_i) begin
+            if (link_i_cast[i].v) begin
+              assert(fifo_ready_lo)
+                else $error("Trying to enque when there is no space in FIFO, while using credit interface. i =%d", i);
+            end
           end
-        else
-          begin: fi
-             bsg_two_fifo #(.width_p(width_p))
-             twofer
-               (.clk_i
-                ,.reset_i
+        end
+        // synopsys translate_on
 
-                ,.v_i     (link_i_cast[i].v            )
-                ,.data_i  (link_i_cast[i].data         )
-                ,.ready_o (link_o_cast[i].ready_and_rev)
+      end
+      else begin
+        assign link_o_cast[i].ready_and_rev = fifo_ready_lo;      
+      end
 
-                ,.v_o     (fifo_valid[i])
-                ,.data_o  (fifo_data [i])
-                ,.yumi_i  (fifo_yumi [i])
-                );
-          end
-     end
+    end
+  end
 
    // router does not have symmetric interfaces;
    // so we do not use bsg_ready_and_link_sif

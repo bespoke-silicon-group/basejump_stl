@@ -34,6 +34,7 @@ module bsg_cache_miss
     ,input [ways_p-1:0][tag_width_lp-1:0] tag_v_i
     ,input [ways_p-1:0] valid_v_i
     ,input [ways_p-1:0] lock_v_i
+    ,input [ways_p-1:0] tag_hit_v_i
     ,input [lg_ways_lp-1:0] tag_hit_way_id_i
     ,input tag_hit_found_i
 
@@ -67,6 +68,7 @@ module bsg_cache_miss
     ,output logic done_o
     ,output logic recover_o
     ,output logic [lg_ways_lp-1:0] chosen_way_o
+    ,output logic select_snoop_data_r_o
 
     ,input ack_i
   );
@@ -129,8 +131,9 @@ module bsg_cache_miss
 
   miss_state_e miss_state_r;
   miss_state_e miss_state_n;
-  logic [lg_ways_lp-1:0] chosen_way_r;
-  logic [lg_ways_lp-1:0] chosen_way_n;
+  logic [lg_ways_lp-1:0] chosen_way_r, chosen_way_n;
+  logic [lg_ways_lp-1:0] flush_way_r, flush_way_n;
+  logic select_snoop_data_r, select_snoop_data_n;
 
 
   // for flush/inv ops, go to FLUSH_OP.
@@ -158,9 +161,11 @@ module bsg_cache_miss
   assign stat_mem_addr_o = addr_index_v;
   assign tag_mem_addr_o = addr_index_v;
 
-  assign chosen_way_o = chosen_way_n;
+  assign chosen_way_o = chosen_way_r;
 
-  assign dma_way_o = chosen_way_r;
+  assign dma_way_o = goto_flush_op
+    ? flush_way_r
+    : chosen_way_r;
 
   // chosen way lru decode
   //
@@ -170,7 +175,7 @@ module bsg_cache_miss
   bsg_lru_pseudo_tree_decode #(
     .ways_p(ways_p)
   ) chosen_way_lru_decode (
-    .way_id_i(chosen_way_n)
+    .way_id_i(chosen_way_r)
     ,.data_o(chosen_way_lru_data)
     ,.mask_o(chosen_way_lru_mask)
   );
@@ -198,6 +203,22 @@ module bsg_cache_miss
     ,.o(chosen_way_decode)
   );
 
+  // flush way demux
+  logic [ways_p-1:0] addr_way_v_decode;
+  bsg_decode #(
+    .num_out_p(ways_p)
+  ) addr_way_v_demux (
+    .i(addr_way_v)
+    ,.o(addr_way_v_decode)
+  );
+  
+  logic [ways_p-1:0] flush_way_decode;
+  assign flush_way_decode =  decode_v_i.tagfl_op
+    ? addr_way_v_decode
+    : tag_hit_v_i;
+
+  assign select_snoop_data_r_o = select_snoop_data_r;
+
   always_comb begin
 
     stat_mem_v_o = 1'b0;
@@ -211,12 +232,15 @@ module bsg_cache_miss
     tag_mem_w_mask_out = '0;
 
     chosen_way_n = chosen_way_r;
+    flush_way_n = flush_way_r;
 
     dma_addr_o = '0;
     dma_cmd_o = e_dma_nop;
 
     recover_o = '0;
     done_o = '0;
+
+    select_snoop_data_n = select_snoop_data_r;
 
     case (miss_state_r)
 
@@ -256,6 +280,115 @@ module bsg_cache_miss
           {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
         };
 
+
+        // if the chosen way is dirty and valid, then evict.
+        miss_state_n = dma_done_i
+          ? ((stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
+            ? SEND_EVICT_ADDR
+            : GET_FILL_DATA)
+          : SEND_FILL_ADDR;
+      end
+
+      // Handling the cases for TAGFL, AINV, AFL, AFLINV.
+      FLUSH_OP: begin
+
+        // for TAGFL, pick whichever way set by the addr input.
+        // Otherwise, pick the way with the tag hit.
+        flush_way_n = decode_v_i.tagfl_op
+          ? addr_way_v 
+          : tag_hit_way_id_i;
+
+        // Clear the dirty bit for the chosen set.
+        // LRU bit does not need to be updated.
+        stat_mem_v_o = 1'b1;
+        stat_mem_w_o = 1'b1;
+        stat_mem_data_out.dirty = {ways_p{1'b0}};
+        stat_mem_data_out.lru_bits = {(ways_p-1){1'b0}};
+        stat_mem_w_mask_out.dirty = flush_way_decode;
+        stat_mem_w_mask_out.lru_bits = {(ways_p-1){1'b0}};
+
+        // If it's invalidate op, then clear the valid bit for the chosen way.
+        // Otherwise, do not touch the valid bits.
+        tag_mem_v_o = 1'b1;
+        tag_mem_w_o = 1'b1;
+
+        for (integer i = 0; i < ways_p; i++) begin
+          tag_mem_data_out[i].valid = 1'b0;
+          tag_mem_data_out[i].lock = 1'b0;
+          tag_mem_data_out[i].tag = {tag_width_lp{1'b0}};
+          tag_mem_w_mask_out[i].valid = (decode_v_i.ainv_op | decode_v_i.aflinv_op) & flush_way_decode[i];
+          tag_mem_w_mask_out[i].lock = (decode_v_i.ainv_op | decode_v_i.aflinv_op) & flush_way_decode[i];
+          tag_mem_w_mask_out[i].tag =  {tag_width_lp{1'b0}};
+        end
+
+        // If it's not AINV, and the chosen set is dirty and valid, evict the
+        // block.
+        miss_state_n = (~decode_v_i.ainv_op & stat_info_in.dirty[flush_way_n] & valid_v_i[flush_way_n])
+          ? SEND_EVICT_ADDR
+          : RECOVER;
+      end
+
+      // handling AUNLOCK, and ALOCK with line not missing.
+      LOCK_OP: begin
+        tag_mem_v_o = 1'b1;
+        tag_mem_w_o = 1'b1;
+
+        for (integer i = 0; i < ways_p; i++) begin
+          tag_mem_data_out[i].valid = 1'b0;
+          tag_mem_data_out[i].lock = decode_v_i.alock_op;
+          tag_mem_data_out[i].tag = {tag_width_lp{1'b0}};
+          tag_mem_w_mask_out[i].valid = 1'b0;
+          tag_mem_w_mask_out[i].lock = tag_hit_v_i[i];
+          tag_mem_w_mask_out[i].tag = {tag_width_lp{1'b0}};
+        end
+
+        miss_state_n = RECOVER;
+      end
+
+      // Send out the block addr for eviction, before initiating the eviction.
+      SEND_EVICT_ADDR: begin
+        dma_cmd_o = e_dma_send_evict_addr;
+        dma_addr_o = {
+          tag_v_i[dma_way_o],
+          addr_index_v,
+          {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
+        };
+
+        miss_state_n = dma_done_i
+          ? SEND_EVICT_DATA
+          : SEND_EVICT_ADDR;
+      end
+
+      // Set the DMA engine to evict the dirty block.
+      // For the flush ops, go straight to RECOVER.
+      SEND_EVICT_DATA: begin
+        dma_cmd_o = sbuf_empty_i
+          ? e_dma_send_evict_data
+          : e_dma_nop;
+        dma_addr_o = {
+          tag_v_i[dma_way_o],
+          addr_index_v,
+          {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
+        };
+
+        miss_state_n = dma_done_i
+          ? ((decode_v_i.tagfl_op| decode_v_i.aflinv_op| decode_v_i.afl_op) ? RECOVER : GET_FILL_DATA)
+          : SEND_EVICT_DATA;
+      end
+
+      // Set the DMA engine to start writing the new block to the data_mem.
+      // Do not start until the store buffer is empty.
+      GET_FILL_DATA: begin
+        dma_cmd_o = sbuf_empty_i
+          ? e_dma_get_fill_data
+          : e_dma_nop;
+        dma_addr_o = {
+          addr_tag_v,
+          addr_index_v,
+          addr_block_offset_v, // used for snoop data in dma.
+          {(lg_data_mask_width_lp){1'b0}}
+        };
+
         // For store miss, set the dirty bit for the chosen way.
         // For load miss, clear the dirty bit for the chosen way.
         // Set the lru_bits, so that the chosen way is not the LRU.
@@ -282,115 +415,9 @@ module bsg_cache_miss
           tag_mem_w_mask_out[i].valid = chosen_way_decode[i];
         end
 
-        // if the chosen way is dirty and valid, then evict.
-        miss_state_n = dma_done_i
-          ? ((stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
-            ? SEND_EVICT_ADDR
-            : GET_FILL_DATA)
-          : SEND_FILL_ADDR;
-      end
-
-      // Handling the cases for TAGFL, AINV, AFL, AFLINV.
-      FLUSH_OP: begin
-
-        // for TAGFL, pick whichever way set by the addr input.
-        // Otherwise, pick the way with the tag hit.
-        chosen_way_n = decode_v_i.tagfl_op
-          ? addr_way_v 
-          : tag_hit_way_id_i;
-
-        // Clear the dirty bit for the chosen set.
-        // LRU bit does not need to be updated.
-        stat_mem_v_o = 1'b1;
-        stat_mem_w_o = 1'b1;
-        stat_mem_data_out.dirty = {ways_p{1'b0}};
-        stat_mem_data_out.lru_bits = {(ways_p-1){1'b0}};
-        stat_mem_w_mask_out.dirty = chosen_way_decode;
-        stat_mem_w_mask_out.lru_bits = {(ways_p-1){1'b0}};
-
-        // If it's invalidate op, then clear the valid bit for the chosen way.
-        // Otherwise, do not touch the valid bits.
-        tag_mem_v_o = 1'b1;
-        tag_mem_w_o = 1'b1;
-
-        for (integer i = 0; i < ways_p; i++) begin
-          tag_mem_data_out[i].valid = 1'b0;
-          tag_mem_data_out[i].lock = 1'b0;
-          tag_mem_data_out[i].tag = {tag_width_lp{1'b0}};
-          tag_mem_w_mask_out[i].valid = (decode_v_i.ainv_op| decode_v_i.aflinv_op) & chosen_way_decode[i];
-          tag_mem_w_mask_out[i].lock = (decode_v_i.ainv_op| decode_v_i.aflinv_op) & chosen_way_decode[i];
-          tag_mem_w_mask_out[i].tag =  {tag_width_lp{1'b0}};
-        end
-
-        // If it's not AINV, and the chosen set is dirty and valid, evict the
-        // block.
-        miss_state_n = (~decode_v_i.ainv_op & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
-          ? SEND_EVICT_ADDR
-          : RECOVER;
-      end
-
-      // handling AUNLOCK, and ALOCK with line not missing.
-      LOCK_OP: begin
-        chosen_way_n = tag_hit_way_id_i;
-
-        tag_mem_v_o = 1'b1;
-        tag_mem_w_o = 1'b1;
-
-        for (integer i = 0; i < ways_p; i++) begin
-          tag_mem_data_out[i].valid = 1'b0;
-          tag_mem_data_out[i].lock = decode_v_i.alock_op;
-          tag_mem_data_out[i].tag = {tag_width_lp{1'b0}};
-          tag_mem_w_mask_out[i].valid = 1'b0;
-          tag_mem_w_mask_out[i].lock = chosen_way_decode[i];
-          tag_mem_w_mask_out[i].tag = {tag_width_lp{1'b0}};
-        end
-
-        miss_state_n = RECOVER;
-      end
-
-      // Send out the block addr for eviction, before initiating the eviction.
-      SEND_EVICT_ADDR: begin
-        dma_cmd_o = e_dma_send_evict_addr;
-        dma_addr_o = {
-          tag_v_i[chosen_way_r],
-          addr_index_v,
-          {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
-        };
-
-        miss_state_n = dma_done_i
-          ? SEND_EVICT_DATA
-          : SEND_EVICT_ADDR;
-      end
-
-      // Set the DMA engine to evict the dirty block.
-      // For the flush ops, go straight to RECOVER.
-      SEND_EVICT_DATA: begin
-        dma_cmd_o = sbuf_empty_i
-          ? e_dma_send_evict_data
-          : e_dma_nop;
-        dma_addr_o = {
-          tag_v_i[chosen_way_r],
-          addr_index_v,
-          {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
-        };
-
-        miss_state_n = dma_done_i
-          ? ((decode_v_i.tagfl_op| decode_v_i.aflinv_op| decode_v_i.afl_op) ? RECOVER : GET_FILL_DATA)
-          : SEND_EVICT_DATA;
-      end
-
-      // Set the DMA engine to start writing the new block to the data_mem.
-      // Do not start until the store buffer is empty.
-      GET_FILL_DATA: begin
-        dma_cmd_o = sbuf_empty_i
-          ? e_dma_get_fill_data
-          : e_dma_nop;
-        dma_addr_o = {
-          addr_tag_v,
-          addr_index_v,
-          addr_block_offset_v, // used for snoop data in dma.
-          {(lg_data_mask_width_lp){1'b0}}
-        };
+        select_snoop_data_n = dma_done_i
+          ? 1'b1
+          : select_snoop_data_r;
 
         miss_state_n = dma_done_i
           ? RECOVER
@@ -410,6 +437,7 @@ module bsg_cache_miss
       DONE: begin
         done_o = 1'b1;
         miss_state_n = ack_i ? START : DONE;
+        select_snoop_data_n = ack_i ? 1'b0 : select_snoop_data_r;
       end
 
       // this should never happen, but if it does, go back to START;
@@ -424,12 +452,16 @@ module bsg_cache_miss
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       miss_state_r <= START;
-      chosen_way_r <= 1'b0;
+      chosen_way_r <= '0;
+      flush_way_r <= '0;
+      select_snoop_data_r <= 1'b0;
       // added to be a little more X pessimism conservative
     end
     else begin
       miss_state_r <= miss_state_n;
       chosen_way_r <= chosen_way_n;
+      flush_way_r <= flush_way_n;
+      select_snoop_data_r <= select_snoop_data_n;
     end
   end
 

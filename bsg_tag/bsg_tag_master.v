@@ -8,7 +8,7 @@
 // ****************************************************************************
 // $clog2(els_p+1)      1        $clog2(max_payload_length+1)  (variable size)
 //
-// To reset slave nodes, set data_not_reset to 0, and payload to 1's.
+// To reset client nodes, set data_not_reset to 0, and payload to 1's.
 //
 //
 

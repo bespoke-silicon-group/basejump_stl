@@ -3,7 +3,6 @@
 #include <string>
 #include <cstdio>
 #include <svdpi.h>
-#include <verilated.h>
 
 
 // These functions are provided by the SV Compiler. They are declared
@@ -61,6 +60,10 @@ namespace bsg_nonsynth_dpi{
                 dpi_base(const std::string &hier):
                         scope(svGetScopeFromName(hier.c_str()))
                 {
+                        if(!scope){
+                                fprintf(stderr, "BSG ERROR: DPI Scope %s was not found\n", hier.c_str());
+                                exit(1);
+                        }
                         prev = svSetScope(scope);
                         bsg_dpi_init();
                         svSetScope(prev);
@@ -80,13 +83,6 @@ namespace bsg_nonsynth_dpi{
                 // It must be called before $finish is called in
                 // Verilog.
                 ~dpi_base(){
-                        if(Verilated::gotFinish()){
-                                // TODO: We should throw an exception here...
-                                fprintf(stderr, "BSG ERROR: $finish called before "
-                                        "bsg_dpi object was destructed");
-                                exit(1);
-                        }
-                        
                         prev = svSetScope(scope);
                         bsg_dpi_fini();
                         svSetScope(prev);

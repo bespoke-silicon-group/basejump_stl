@@ -3,18 +3,19 @@
 
 
 /*********************************
-* bsg_crossbar_control_o_by_i
+* bsg_mem_banked_crossbar_control_o_by_i 
 **********************************/
 
-module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
-                                      ,parameter o_els_p     = -1
-                                      // 0 = fixed hi,    1 = fixed lo,
-                                      // 2 = round robin, 3 = round robin hold
-                                      // 4 = round robin reset
-                                      // 5 = dynamic change on FIFO status
-                                      ,parameter rr_lo_hi_p  = "inv"
-                                      ,parameter lg_o_els_lp = `BSG_SAFE_CLOG2(o_els_p)
-                                      )
+module bsg_mem_banked_crossbar_control_o_by_i 
+  #( parameter i_els_p     = -1
+    ,parameter o_els_p     = -1
+     // 0 = fixed hi,    1 = fixed lo,
+     // 2 = round robin, 3 = round robin hold
+     // 4 = round robin reset
+     // 5 = dynamic change on FIFO status
+     ,parameter rr_lo_hi_p  = "inv"
+     ,parameter lg_o_els_lp = `BSG_SAFE_CLOG2(o_els_p)
+   )
   ( input                                clk_i
    ,input                                reset_i
 
@@ -51,7 +52,7 @@ module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
 
    for(i=0; i<o_els_p; i=i+1)
      begin: arb
-        if (rr_lo_hi_p == 3 || rr_lo_hi_p == 4 )
+       if (rr_lo_hi_p == 3 || rr_lo_hi_p == 4 || rr_lo_hi_p == 2 )
           begin: rr
             bsg_round_robin_arb #( .inputs_p    (i_els_p)
                                   ,.hold_on_sr_p(rr_lo_hi_p == 3)
@@ -118,7 +119,7 @@ module bsg_crossbar_control_o_by_i #( parameter i_els_p     = -1
   for(i=0; i<i_els_p; i=i+1)
     assign yumi_o[i] = valid_i[i] & (| grants_io_one_hot[i]);
 
-endmodule // bsg_crossbar_control_rr_o_by_i
+endmodule // bsg_mem_banked_crossbar_control_o_by_i
 
 
 
@@ -212,10 +213,11 @@ module bsg_mem_banked_crossbar #
                                             , bank_port_grants_one_hot_r;
    logic [num_banks_p-1:0]                  bank_v, bank_v_r;
 
-   bsg_crossbar_control_o_by_i #( .i_els_p(num_ports_p)
-                                  ,.o_els_p(num_banks_p)
-                                  ,.rr_lo_hi_p(rr_lo_hi_p)
-                                  ) crossbar_control
+   bsg_mem_banked_crossbar_control_o_by_i  
+  #( .i_els_p(num_ports_p)
+    ,.o_els_p(num_banks_p)
+    ,.rr_lo_hi_p(rr_lo_hi_p)
+    ) crossbar_control
      ( .clk_i              (clk_i)
        ,.reset_i            (reset_i)
        ,.reverse_pr_i       (reverse_pr_i)
