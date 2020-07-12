@@ -572,7 +572,6 @@ module bsg_cache
   //
   logic [data_sel_mux_els_lp-1:0][data_width_p-1:0] sbuf_data_in_mux_li;
   logic [data_sel_mux_els_lp-1:0][data_mask_width_lp-1:0] sbuf_mask_in_mux_li;
-  logic [data_sel_mux_els_lp-1:0][data_width_p-1:0] atomic_mem_data_li;
   logic [data_width_p-1:0] sbuf_data_in;
   logic [data_mask_width_lp-1:0] sbuf_mask_in;
   logic [data_width_p-1:0] snoop_or_ld_data;
@@ -808,7 +807,9 @@ module bsg_cache
   for (genvar i = 0; i < data_sel_mux_els_lp; i++) begin: ld_data_sel
 
     if (i == data_sel_mux_els_lp-1) begin: max_size
+
       assign ld_data_final_li[i] = snoop_or_ld_data;
+
     end
     else begin: non_max_size
 
@@ -1066,6 +1067,11 @@ module bsg_cache
           else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOMINU received. %m, T=%t", $time);
         assert(~decode_v_r.amomaxu_op || (amo_support_p & e_cache_amo_maxu))
           else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOMAXU received. %m, T=%t", $time);
+
+        assert(~decode_v_r.atomic_op || (data_width_p >= 64) || ~decode_v_r.data_size_op[0])
+          else $error("[BSG_ERROR][BSG_CACHE] AMO_D performed on data_width < 64. %m T=%t", $time);
+        assert(~decode_v_r.atomic_op || (data_width_p >= 32))
+          else $error("[BSG_ERROR][BSG_CACHE] AMO performed on data_width < 32. %m T=%t", $time);
       end
     end
   end
