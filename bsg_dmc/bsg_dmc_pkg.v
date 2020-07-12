@@ -16,7 +16,7 @@ package bsg_dmc_pkg;
     logic  [3:0] row_width;
     logic  [1:0] bank_width;
     logic  [5:0] bank_pos;
-    logic  [3:0] dqs_sel_cal;
+    logic  [2:0] dqs_sel_cal;
     logic [15:0] init_cycles;
   } bsg_dmc_s;
 

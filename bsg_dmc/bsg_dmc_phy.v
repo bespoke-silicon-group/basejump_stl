@@ -272,7 +272,7 @@ module bsg_dmc_phy #
   ,output     [8*dq_group_lp-1:0] dq_o
   ,input      [8*dq_group_lp-1:0] dq_i
   // input dqs enable calibration signal (4 taps)
-  ,input                    [3:0] dqs_sel_cal);
+  ,input                    [2:0] dqs_sel_cal);
 
   wire clk_1x_p = dfi_clk_1x_i;
   wire clk_1x_n = ~dfi_clk_1x_i;
