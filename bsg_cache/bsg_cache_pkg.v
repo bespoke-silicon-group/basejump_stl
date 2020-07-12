@@ -6,28 +6,34 @@
 
 package bsg_cache_pkg;
 
-  typedef enum logic [9:0] {
-    e_cache_amo_swap        = 10'b0000000001
-    ,e_cache_amo_add        = 10'b0000000010
-    ,e_cache_amo_xor        = 10'b0000000100
-    ,e_cache_amo_and        = 10'b0000001000
-    ,e_cache_amo_or         = 10'b0000010000
-    ,e_cache_amo_min        = 10'b0000100000
-    ,e_cache_amo_max        = 10'b0001000000
-    ,e_cache_amo_minu       = 10'b0010000000
-    ,e_cache_amo_maxu       = 10'b0100000000
+  typedef enum logic [3:0] {
+    e_cache_amo_swap        = 4'b0000
+    ,e_cache_amo_add        = 4'b0001
+    ,e_cache_amo_xor        = 4'b0010
+    ,e_cache_amo_and        = 4'b0011
+    ,e_cache_amo_or         = 4'b0100
+    ,e_cache_amo_min        = 4'b0101
+    ,e_cache_amo_max        = 4'b0110
+    ,e_cache_amo_minu       = 4'b0111
+    ,e_cache_amo_maxu       = 4'b1000
 
     // Reserved
-    ,e_cache_amo_lrsc       = 10'b1000000000
+    ,e_cache_amo_lrsc       = 4'b1001
   } amo_support_e;
 
   localparam amo_support_level_none_lp       = '0;
   localparam amo_support_level_swap_lp       = amo_support_level_none_lp
-    | e_cache_amo_swap;
+    | (1 << e_cache_amo_swap);
   localparam amo_support_level_logical_lp    = amo_support_level_swap_lp
-    | e_cache_amo_xor | e_cache_amo_and | e_cache_amo_or;
+    | (1 << e_cache_amo_xor)
+    | (1 << e_cache_amo_and)
+    | (1 << e_cache_amo_or);
   localparam amo_support_level_arithmetic_lp = amo_support_level_logical_lp
-    | e_cache_amo_add | e_cache_amo_min | e_cache_amo_max | e_cache_amo_minu | e_cache_amo_maxu;
+    | (1 << e_cache_amo_add)
+    | (1 << e_cache_amo_min)
+    | (1 << e_cache_amo_max)
+    | (1 << e_cache_amo_minu)
+    | (1 << e_cache_amo_maxu);
 
   // cache opcode
   //

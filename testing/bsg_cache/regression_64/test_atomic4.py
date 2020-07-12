@@ -11,9 +11,12 @@ class TestAtomic4(TestBase):
       tag = random.randint(0,9)
       index = random.randint(0,1)
       block_offset = random.randint(0, self.block_size_in_words_p-1)
-      byte_offset = 0
+      byte_offset = random.choice([0, 4])
       taddr = self.get_addr(tag, index, block_offset, byte_offset)
-      op = random.randint(0,10)
+      if byte_offset == 0:
+        op = random.randint(0, 10)
+      else:
+        op = random.randint(0,19)
       if op == 0:
         self.send_sd(taddr)
       elif op == 1:
@@ -36,6 +39,24 @@ class TestAtomic4(TestBase):
         self.send_amominu_d(taddr)
       elif op == 10:
         self.send_amomaxu_d(taddr)
+      elif op == 11:
+        self.send_amoswap_w(taddr)
+      elif op == 12:
+        self.send_amoadd_w(taddr)
+      elif op == 13:
+        self.send_amoxor_w(taddr)
+      elif op == 14:
+        self.send_amoand_w(taddr)
+      elif op == 15:
+        self.send_amoor_w(taddr)
+      elif op == 16:
+        self.send_amomin_w(taddr)
+      elif op == 17:
+        self.send_amomax_w(taddr)
+      elif op == 18:
+        self.send_amominu_w(taddr)
+      elif op == 19:
+        self.send_amomaxu_w(taddr)
 
     self.tg.done()
 
