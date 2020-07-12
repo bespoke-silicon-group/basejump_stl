@@ -576,6 +576,8 @@ module bsg_cache
   logic [data_width_p-1:0] sbuf_data_in;
   logic [data_mask_width_lp-1:0] sbuf_mask_in;
   logic [data_width_p-1:0] snoop_or_ld_data;
+  logic [data_sel_mux_els_lp-1:0][data_width_p-1:0] ld_data_final_li;
+  logic [data_width_p-1:0] ld_data_final_lo;
 
   bsg_mux #(
     .width_p(data_width_p)
@@ -595,6 +597,97 @@ module bsg_cache
     ,.data_o(sbuf_mask_in)
   );
 
+  //
+  // Atomic operations
+  //   Defined only for 32/64 operations
+  // Data incoming from cache_pkt
+  logic [`BSG_MIN(data_width_p, 64)-1:0] atomic_reg_data;
+  // Data read from the cache line
+  logic [`BSG_MIN(data_width_p, 64)-1:0] atomic_mem_data;
+  // Result of the atomic
+  logic [`BSG_MIN(data_width_p, 64)-1:0] atomic_alu_result;
+  // Final atomic data for store buffer
+  logic [`BSG_MIN(data_width_p, 64)-1:0] atomic_result;
+
+  // Shift data to high bits for operations less than 64-bits
+  // This allows us to share the arithmetic operators for 32/64 bit atomics
+  if (data_width_p >= 64) begin : atomic_64
+    wire [63:0] amo32_in = data_v_r[0+:32] << 32;
+    wire [63:0] amo64_in = data_v_r[0+:64];
+    bsg_mux #(
+      .width_p(64)
+      ,.els_p(2)
+    ) amo_shift_mux (
+      .data_i({amo64_in, amo32_in})
+      ,.sel_i(decode_v_r.data_size_op[0])
+      ,.data_o(atomic_reg_data)
+    );
+
+    bsg_mux #(
+      .width_p(64)
+      ,.els_p(2)
+    ) atomic_mem_data_mux (
+      .data_i(ld_data_final_li[3:2])
+      ,.sel_i(decode_v_r.data_size_op[0])
+      ,.data_o(atomic_mem_data)
+    );
+  end
+  else if (data_width_p >= 32) begin : atomic_32
+    assign atomic_reg_data = data_v_r[0+:32];
+    assign atomic_mem_data = ld_data_final_li[2];
+  end
+
+  // Atomic ALU
+  always_comb begin
+    unique
+    if ((amo_support_p & e_cache_amo_swap) && decode_v_r.amoswap_op) begin
+      atomic_alu_result = atomic_reg_data;
+    end
+    else if ((amo_support_p & e_cache_amo_and) && decode_v_r.amoand_op) begin
+      atomic_alu_result = atomic_reg_data & atomic_mem_data;
+    end
+    else if ((amo_support_p & e_cache_amo_or) && decode_v_r.amoor_op) begin
+      atomic_alu_result = atomic_reg_data | atomic_mem_data;
+    end
+    else if ((amo_support_p & e_cache_amo_xor) && decode_v_r.amoxor_op) begin
+      atomic_alu_result = atomic_reg_data ^ atomic_mem_data;
+    end
+    else if ((amo_support_p & e_cache_amo_add) && decode_v_r.amoadd_op) begin
+      atomic_alu_result = atomic_reg_data + atomic_mem_data;
+    end
+    else if ((amo_support_p & e_cache_amo_min) && decode_v_r.amomin_op) begin
+      atomic_alu_result = ($signed(atomic_reg_data) < $signed(atomic_mem_data)) ? atomic_reg_data : atomic_mem_data;
+    end
+    else if ((amo_support_p & e_cache_amo_max) && decode_v_r.amomax_op) begin
+      atomic_alu_result = ($signed(atomic_reg_data) > $signed(atomic_mem_data)) ? atomic_reg_data : atomic_mem_data;
+    end
+    else if ((amo_support_p & e_cache_amo_minu) && decode_v_r.amominu_op) begin
+      atomic_alu_result = (atomic_reg_data < atomic_mem_data) ? atomic_reg_data : atomic_mem_data;
+    end
+    else if ((amo_support_p & e_cache_amo_maxu) && decode_v_r.amomaxu_op) begin
+      atomic_alu_result = (atomic_reg_data > atomic_mem_data) ? atomic_reg_data : atomic_mem_data;
+    end else begin
+      atomic_alu_result = '0;
+    end
+  end
+
+  // Shift data from high bits for operations less than 64-bits
+  if (data_width_p >= 64) begin : fi
+    wire [63:0] amo32_out = atomic_alu_result >> 32;
+    wire [63:0] amo64_out = atomic_alu_result;
+    bsg_mux #(
+      .width_p(64)
+      ,.els_p(2)
+    ) amo_shift_mux (
+      .data_i({amo64_out, amo32_out})
+      ,.sel_i(decode_v_r.data_size_op[0])
+      ,.data_o(atomic_result)
+    );
+  end
+  else begin
+    assign atomic_result = atomic_alu_result;
+  end
+
   for (genvar i = 0; i < data_sel_mux_els_lp; i++) begin: sbuf_in_sel
     localparam slice_width_lp = (8*(2**i));
 
@@ -603,47 +696,14 @@ module bsg_cache
     // AMO computation
     // AMOs are only supported for words and double words
     if ((i == 2'b10) || (i == 2'b11)) begin
-      logic [slice_width_lp-1:0] atomic_reg_data, atomic_mem_data;
-
-      always_comb begin
-        // Data incoming from cache_pkt
-        atomic_reg_data = data_v_r[0+:slice_width_lp];
-        // Data read from the cache line
-        atomic_mem_data = atomic_mem_data_li[i][0+:slice_width_lp];
-
-        unique
-        if ((amo_support_p & e_cache_amo_swap) && decode_v_r.amoswap_op) begin
-            slice_data = atomic_reg_data;
-        end
-        else if ((amo_support_p & e_cache_amo_and) && decode_v_r.amoand_op) begin
-            slice_data = atomic_reg_data & atomic_mem_data;
-        end
-        else if ((amo_support_p & e_cache_amo_or) && decode_v_r.amoor_op) begin
-          slice_data = atomic_reg_data | atomic_mem_data;
-        end
-        else if ((amo_support_p & e_cache_amo_xor) && decode_v_r.amoxor_op) begin
-          slice_data = atomic_reg_data ^ atomic_mem_data;
-        end
-        else if ((amo_support_p & e_cache_amo_add) && decode_v_r.amoadd_op) begin
-          slice_data = atomic_reg_data + atomic_mem_data;
-        end
-        else if ((amo_support_p & e_cache_amo_min) && decode_v_r.amomin_op) begin
-          slice_data = ($signed(atomic_reg_data) < $signed(atomic_mem_data)) ? atomic_reg_data : atomic_mem_data;
-        end
-        else if ((amo_support_p & e_cache_amo_max) && decode_v_r.amomax_op) begin
-          slice_data = ($signed(atomic_reg_data) > $signed(atomic_mem_data)) ? atomic_reg_data : atomic_mem_data;
-        end
-        else if ((amo_support_p & e_cache_amo_minu) && decode_v_r.amominu_op) begin
-          slice_data = (atomic_reg_data < atomic_mem_data) ? atomic_reg_data : atomic_mem_data;
-        end
-        else if ((amo_support_p & e_cache_amo_maxu) && decode_v_r.amomaxu_op) begin
-          slice_data = (atomic_reg_data > atomic_mem_data) ? atomic_reg_data : atomic_mem_data;
-        end
-        else begin
-          // Normal data replication
-          slice_data = data_v_r[0+:slice_width_lp];
-        end
-      end
+      bsg_mux #(
+        .width_p(slice_width_lp)
+        ,.els_p(2)
+      ) atomic_mux (
+        .data_i({atomic_result[0+:slice_width_lp], data_v_r[0+:slice_width_lp]})
+        ,.sel_i(decode_v_r.atomic_op)
+        ,.data_o(slice_data)
+      );
     end 
     else begin
       assign slice_data = data_v_r[0+:slice_width_lp];
@@ -744,9 +804,6 @@ module bsg_cache
 
   // select double/word/half/byte load data
   //
-  logic [data_sel_mux_els_lp-1:0][data_width_p-1:0] ld_data_final_li;
-  logic [data_width_p-1:0] ld_data_final_lo;
-  
 
   for (genvar i = 0; i < data_sel_mux_els_lp; i++) begin: ld_data_sel
 
@@ -781,8 +838,6 @@ module bsg_cache
     ,.sel_i(decode_v_r.data_size_op[0+:lg_data_sel_mux_els_lp])
     ,.data_o(ld_data_final_lo)
   );
-
-  assign atomic_mem_data_li = ld_data_final_li;
 
   // final output mux
   always_comb begin
