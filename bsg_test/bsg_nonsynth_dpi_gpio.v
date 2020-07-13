@@ -22,6 +22,8 @@
 module bsg_nonsynth_dpi_gpio
    #(parameter int width_p = -1
      ,parameter bit [width_p-1:0] init_o_p = '0
+     ,parameter bit use_input_p = '0
+     ,parameter bit use_output_p = '0
      ,parameter bit debug_p = '0
      )
    (output bit [width_p-1:0] gpio_o
@@ -32,6 +34,9 @@ module bsg_nonsynth_dpi_gpio
 
    if(width_p <= 0)
      $fatal(1, "BSG ERROR (%M): width_p must be greater than 0");
+
+   if(~use_input_p & ~use_output_p)
+     $fatal(1, "BSG ERROR (%M): GPIO must be configured to use input, output, or both");
 
    // Print module parameters to the console and set the intial debug
    // value. We use init_b to track whether the module has been
@@ -45,6 +50,8 @@ module bsg_nonsynth_dpi_gpio
       $display("BSG INFO:     Instantiation: %M");
       $display("BSG INFO:     width_p:       %d", width_p);
       $display("BSG INFO:     init_o_p:      %b", init_o_p);
+      $display("BSG INFO:     use_input_p:   %b", use_input_p);
+      $display("BSG INFO:     use_output_p:  %b", use_output_p);
       $display("BSG INFO:     debug_p:       %d", debug_p);
 
    end
@@ -104,6 +111,9 @@ module bsg_nonsynth_dpi_gpio
       if(~init_b)
          $fatal(1, "BSG ERROR (%M): get() called before init()");
 
+      if(~use_input_p)
+         $fatal(1, "BSG ERROR (%M): get() called but use_input_p is 0");
+
       if(index >= width_p)
          $fatal(1, "BSG ERROR (%M): Invalid index %d", index);
 
@@ -120,6 +130,9 @@ module bsg_nonsynth_dpi_gpio
    function bit bsg_dpi_gpio_set(input int index, input bit value);
       if(~init_b)
          $fatal(1, "BSG ERROR (%M): get() called before init()");
+
+      if(~use_output_p)
+         $fatal(1, "BSG ERROR (%M): get() called but use_output_p is 0");
 
       if(index >= width_p)
          $fatal(1, "BSG ERROR (%M): Invalid index %d", index);
