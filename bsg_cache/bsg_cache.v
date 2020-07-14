@@ -642,7 +642,6 @@ module bsg_cache
   // Atomic ALU
   always_comb begin
     unique casez({amo_support_p[decode_v_r.amo_subop], decode_v_r.amo_subop})
-      {1'b1, e_cache_amo_swap}: atomic_alu_result = atomic_reg_data;
       {1'b1, e_cache_amo_and }: atomic_alu_result = atomic_reg_data & atomic_mem_data;
       {1'b1, e_cache_amo_or  }: atomic_alu_result = atomic_reg_data | atomic_mem_data;
       {1'b1, e_cache_amo_xor }: atomic_alu_result = atomic_reg_data ^ atomic_mem_data;
@@ -655,7 +654,8 @@ module bsg_cache
           (atomic_reg_data < atomic_mem_data) ? atomic_reg_data : atomic_mem_data;
       {1'b1, e_cache_amo_maxu}: atomic_alu_result =
           (atomic_reg_data > atomic_mem_data) ? atomic_reg_data : atomic_mem_data;
-      default: atomic_alu_result = '0;
+      // default is amo_swap
+      default: atomic_alu_result = atomic_reg_data;
     endcase
   end
 

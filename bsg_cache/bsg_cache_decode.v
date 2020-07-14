@@ -69,6 +69,7 @@ module bsg_cache_decode
   // atomic extension
   always_comb begin
     decode_o.atomic_op = 1'b1;
+    decode_o.amo_subop = e_cache_amo_swap;
 
     unique case (opcode_i)
       AMOSWAP_W, AMOSWAP_D: decode_o.amo_subop = e_cache_amo_swap;
