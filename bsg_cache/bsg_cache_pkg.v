@@ -19,7 +19,7 @@ package bsg_cache_pkg;
 
     // Reserved
     ,e_cache_amo_lrsc       = 4'b1001
-  } amo_support_e;
+  } bsg_cache_amo_subop_e;
 
   localparam amo_support_level_none_lp       = '0;
   localparam amo_support_level_swap_lp       = amo_support_level_none_lp
@@ -128,16 +128,8 @@ package bsg_cache_pkg;
     logic aunlock_op;
     logic tag_read_op;
    
-    logic atomic_op; 
-    logic amoswap_op;
-    logic amoadd_op;
-    logic amoxor_op;
-    logic amoand_op;
-    logic amoor_op;
-    logic amomin_op;
-    logic amomax_op;
-    logic amominu_op;
-    logic amomaxu_op;
+    logic atomic_op;
+    bsg_cache_amo_subop_e amo_subop;
   } bsg_cache_decode_s;
 
 

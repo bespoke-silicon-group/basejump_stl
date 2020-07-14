@@ -67,23 +67,21 @@ module bsg_cache_decode
   assign decode_o.tag_read_op = ~decode_o.tagst_op;
 
   // atomic extension
-  assign decode_o.amoswap_op = (opcode_i == AMOSWAP_W) | (opcode_i == AMOSWAP_D);
-  assign decode_o.amoadd_op = (opcode_i == AMOADD_W) | (opcode_i == AMOADD_D);
-  assign decode_o.amoxor_op = (opcode_i == AMOXOR_W) | (opcode_i == AMOXOR_D);
-  assign decode_o.amoand_op = (opcode_i == AMOAND_W) | (opcode_i == AMOAND_D);
-  assign decode_o.amoor_op = (opcode_i == AMOOR_W) | (opcode_i == AMOOR_D);
-  assign decode_o.amomin_op = (opcode_i == AMOMIN_W) | (opcode_i == AMOMIN_D);
-  assign decode_o.amomax_op = (opcode_i == AMOMAX_W) | (opcode_i == AMOMAX_D);
-  assign decode_o.amominu_op = (opcode_i == AMOMINU_W) | (opcode_i == AMOMINU_D);
-  assign decode_o.amomaxu_op = (opcode_i == AMOMAXU_W) | (opcode_i == AMOMAXU_D);
-  assign decode_o.atomic_op = decode_o.amoswap_op
-    | decode_o.amoadd_op
-    | decode_o.amoxor_op
-    | decode_o.amoand_op
-    | decode_o.amoor_op
-    | decode_o.amomin_op
-    | decode_o.amomax_op
-    | decode_o.amominu_op
-    | decode_o.amomaxu_op;
+  always_comb begin
+    decode_o.atomic_op = 1'b1;
+
+    unique case (opcode_i)
+      AMOSWAP_W, AMOSWAP_D: decode_o.amo_subop = e_cache_amo_swap;
+      AMOADD_W, AMOADD_D: decode_o.amo_subop = e_cache_amo_add;
+      AMOXOR_W, AMOXOR_D: decode_o.amo_subop = e_cache_amo_xor;
+      AMOAND_W, AMOAND_D: decode_o.amo_subop = e_cache_amo_and;
+      AMOOR_W, AMOOR_D: decode_o.amo_subop = e_cache_amo_or;
+      AMOMIN_W, AMOMIN_D: decode_o.amo_subop = e_cache_amo_min;
+      AMOMAX_W, AMOMAX_D: decode_o.amo_subop = e_cache_amo_max;
+      AMOMINU_W, AMOMINU_D: decode_o.amo_subop = e_cache_amo_minu;
+      AMOMAXU_W, AMOMAXU_D: decode_o.amo_subop = e_cache_amo_maxu;
+      default: decode_o.atomic_op = 1'b0;
+    endcase
+  end
 
 endmodule

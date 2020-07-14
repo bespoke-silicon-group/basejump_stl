@@ -641,36 +641,22 @@ module bsg_cache
 
   // Atomic ALU
   always_comb begin
-    unique
-    if (amo_support_p[e_cache_amo_swap] & decode_v_r.amoswap_op) begin
-      atomic_alu_result = atomic_reg_data;
-    end
-    else if (amo_support_p[e_cache_amo_and] & decode_v_r.amoand_op) begin
-      atomic_alu_result = atomic_reg_data & atomic_mem_data;
-    end
-    else if (amo_support_p[e_cache_amo_or] & decode_v_r.amoor_op) begin
-      atomic_alu_result = atomic_reg_data | atomic_mem_data;
-    end
-    else if (amo_support_p[e_cache_amo_xor] & decode_v_r.amoxor_op) begin
-      atomic_alu_result = atomic_reg_data ^ atomic_mem_data;
-    end
-    else if (amo_support_p[e_cache_amo_add] & decode_v_r.amoadd_op) begin
-      atomic_alu_result = atomic_reg_data + atomic_mem_data;
-    end
-    else if (amo_support_p[e_cache_amo_min] & decode_v_r.amomin_op) begin
-      atomic_alu_result = ($signed(atomic_reg_data) < $signed(atomic_mem_data)) ? atomic_reg_data : atomic_mem_data;
-    end
-    else if (amo_support_p[e_cache_amo_max] & decode_v_r.amomax_op) begin
-      atomic_alu_result = ($signed(atomic_reg_data) > $signed(atomic_mem_data)) ? atomic_reg_data : atomic_mem_data;
-    end
-    else if (amo_support_p[e_cache_amo_minu] & decode_v_r.amominu_op) begin
-      atomic_alu_result = (atomic_reg_data < atomic_mem_data) ? atomic_reg_data : atomic_mem_data;
-    end
-    else if (amo_support_p[e_cache_amo_maxu] & decode_v_r.amomaxu_op) begin
-      atomic_alu_result = (atomic_reg_data > atomic_mem_data) ? atomic_reg_data : atomic_mem_data;
-    end else begin
-      atomic_alu_result = '0;
-    end
+    unique casez({amo_support_p[decode_v_r.amo_subop], decode_v_r.amo_subop})
+      {1'b1, e_cache_amo_swap}: atomic_alu_result = atomic_reg_data;
+      {1'b1, e_cache_amo_and }: atomic_alu_result = atomic_reg_data & atomic_mem_data;
+      {1'b1, e_cache_amo_or  }: atomic_alu_result = atomic_reg_data | atomic_mem_data;
+      {1'b1, e_cache_amo_xor }: atomic_alu_result = atomic_reg_data ^ atomic_mem_data;
+      {1'b1, e_cache_amo_add }: atomic_alu_result = atomic_reg_data + atomic_mem_data;
+      {1'b1, e_cache_amo_min }: atomic_alu_result =
+          ($signed(atomic_reg_data) < $signed(atomic_mem_data)) ? atomic_reg_data : atomic_mem_data;
+      {1'b1, e_cache_amo_max }: atomic_alu_result =
+          ($signed(atomic_reg_data) > $signed(atomic_mem_data)) ? atomic_reg_data : atomic_mem_data;
+      {1'b1, e_cache_amo_minu}: atomic_alu_result =
+          (atomic_reg_data < atomic_mem_data) ? atomic_reg_data : atomic_mem_data;
+      {1'b1, e_cache_amo_maxu}: atomic_alu_result =
+          (atomic_reg_data > atomic_mem_data) ? atomic_reg_data : atomic_mem_data;
+      default: atomic_alu_result = '0;
+    endcase
   end
 
   // Shift data from high bits for operations less than 64-bits
@@ -1052,24 +1038,8 @@ module bsg_cache
           else $error("[BSG_ERROR][BSG_CACHE] There should be at least one unlocked way in a set. %m, T=%t", $time);
 
         // Check that client hasn't required unsupported AMO
-        assert(~decode_v_r.amoswap_op | amo_support_p[e_cache_amo_swap])
-          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOSWAP received. %m, T=%t", $time);
-        assert(~decode_v_r.amoadd_op | amo_support_p[e_cache_amo_add])
-          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOADD received. %m, T=%t", $time);
-        assert(~decode_v_r.amoxor_op | amo_support_p[e_cache_amo_xor])
-          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOXOR received. %m, T=%t", $time);
-        assert(~decode_v_r.amoand_op | amo_support_p[e_cache_amo_and])
-          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOAND received. %m, T=%t", $time);
-        assert(~decode_v_r.amoor_op | amo_support_p[e_cache_amo_or])
-          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOOR received. %m, T=%t", $time);
-        assert(~decode_v_r.amomin_op | amo_support_p[e_cache_amo_min])
-          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOMIN received. %m, T=%t", $time);
-        assert(~decode_v_r.amomax_op | amo_support_p[e_cache_amo_max])
-          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOMAX received. %m, T=%t", $time);
-        assert(~decode_v_r.amominu_op | amo_support_p[e_cache_amo_minu])
-          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOMINU received. %m, T=%t", $time);
-        assert(~decode_v_r.amomaxu_op | amo_support_p[e_cache_amo_maxu])
-          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMOMAXU received. %m, T=%t", $time);
+        assert(~decode_v_r.atomic_op | amo_support_p[decode_v_r.amo_subop])
+          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMO OP %d received. %m, T=%t", decode.amo_subop, $time);
 
         assert(~decode_v_r.atomic_op || (data_width_p >= 64) || ~decode_v_r.data_size_op[0])
           else $error("[BSG_ERROR][BSG_CACHE] AMO_D performed on data_width < 64. %m T=%t", $time);
