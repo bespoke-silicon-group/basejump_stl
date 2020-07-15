@@ -46,6 +46,7 @@ module bsg_mem_1r1w_sync
   );
 
 
+  `bsg_mem_1r1w_sync_macro(64,50,2) else
   `bsg_mem_1r1w_sync_macro(32,92,1) else
     begin: notmacro
     bsg_mem_1r1w_sync_synth #(
