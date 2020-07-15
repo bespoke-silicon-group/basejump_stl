@@ -667,14 +667,9 @@ module bsg_cache
     // AMO computation
     // AMOs are only supported for words and double words
     if ((i == 2'b10) || (i == 2'b11)) begin: atomic_in_sel
-      bsg_mux #(
-        .width_p(slice_width_lp)
-        ,.els_p(2)
-      ) atomic_mux (
-        .data_i({atomic_result[0+:slice_width_lp], data_v_r[0+:slice_width_lp]})
-        ,.sel_i(decode_v_r.atomic_op)
-        ,.data_o(slice_data)
-      );
+      assign slice_data = decode_v_r.atomic_op
+        ? atomic_result[0+:slice_width_lp]
+        : data_v_r[0+:slice_width_lp];
     end 
     else begin
       assign slice_data = data_v_r[0+:slice_width_lp];
