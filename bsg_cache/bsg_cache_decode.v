@@ -33,26 +33,26 @@ module bsg_cache_decode
   assign decode_o.mask_op = (opcode_i == LM) | (opcode_i == SM);
 
   assign decode_o.sigext_op = (opcode_i == LB)
-    | (opcode_i == LH)
-    | (opcode_i == LW)
-    | (opcode_i == LD)
-    | decode_o.atomic_op;
+    || (opcode_i == LH)
+    || (opcode_i == LW)
+    || (opcode_i == LD)
+    || decode_o.atomic_op;
 
   assign decode_o.ld_op = (opcode_i == LB)
-    | (opcode_i == LH)
-    | (opcode_i == LW)
-    | (opcode_i == LD)
-    | (opcode_i == LBU)
-    | (opcode_i == LHU)
-    | (opcode_i == LWU)
-    | (opcode_i == LDU)
-    | (opcode_i == LM);
+    || (opcode_i == LH)
+    || (opcode_i == LW)
+    || (opcode_i == LD)
+    || (opcode_i == LBU)
+    || (opcode_i == LHU)
+    || (opcode_i == LWU)
+    || (opcode_i == LDU)
+    || (opcode_i == LM);
 
   assign decode_o.st_op = (opcode_i == SB)
-    | (opcode_i == SH)
-    | (opcode_i == SW)
-    | (opcode_i == SD)
-    | (opcode_i == SM);
+    || (opcode_i == SH)
+    || (opcode_i == SW)
+    || (opcode_i == SD)
+    || (opcode_i == SM);
 
   assign decode_o.tagst_op = (opcode_i == TAGST);
   assign decode_o.tagfl_op = (opcode_i == TAGFL);
@@ -70,6 +70,8 @@ module bsg_cache_decode
   always_comb begin
     decode_o.atomic_op = 1'b1;
 
+    // These subopcodes are intended to match the low 4 bits of the
+    //   corresponding bsg_cache_pkt opcode, to simplify decoding
     unique case (opcode_i)
       AMOSWAP_W, AMOSWAP_D: decode_o.amo_subop = e_cache_amo_swap;
       AMOADD_W, AMOADD_D: decode_o.amo_subop = e_cache_amo_add;
