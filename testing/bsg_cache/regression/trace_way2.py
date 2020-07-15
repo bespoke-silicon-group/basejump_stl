@@ -786,6 +786,48 @@ if __name__ == "__main__":
   tg.recv(11)
   tg.recv(13)
 
+  # AMOADD
+  tg.send(SW, 0, 0x1234)
+  tg.recv(0)
+
+  tg.send(AMOADD_W, 0, 0x1000)
+  tg.recv(0x1234)
+
+  tg.send(AMOADD_W, 0, 0x2000)
+  tg.recv(0x2234)
+
+  tg.send(LW, 0)
+  tg.recv(0x4234)
+
+  # AMOXOR
+  tg.send(SW, 0, 0)
+  tg.recv(0)
+
+  tg.send(AMOXOR_W, 0, 0b1010)
+  tg.recv(0)
+
+  tg.send(AMOXOR_W, 0, 0b0101)
+  tg.recv(0b1010)
+
+  tg.send(AMOXOR_W, 0, 0b1111)
+  tg.recv(0b1111)
+
+  tg.send(LW, 0)
+  tg.recv(0b0000)
+
+  # AMOAND
+  tg.send(SW, 0, 0b1111)
+  tg.recv(0)
+
+  tg.send(AMOAND_W, 0, 0b0011)
+  tg.recv(0b1111)
+
+  tg.send(AMOAND_W, 0, 0b1100)
+  tg.recv(0b0011)
+
+  tg.send(LW, 0)
+  tg.recv(0b0000)
+
   # AMOOR
   tg.send(SW, 0, 0)
   tg.recv(0)
@@ -799,9 +841,81 @@ if __name__ == "__main__":
   tg.send(AMOOR_W, 0, 0b0)
   tg.recv(0b11111)
 
+  # AMOMIN
+  tg.send(SW, 0, 0x1234)
+  tg.recv(0)
 
+  tg.send(AMOMIN_W, 0, 0x9999)
+  tg.recv(0x1234)
 
+  tg.send(AMOMIN_W, 0, 0x1000)
+  tg.recv(0x1234)
 
+  tg.send(AMOMIN_W, 0, 0x0000)
+  tg.recv(0x1000)
+
+  tg.send(AMOMIN_W, 0, 0xffffffff)
+  tg.recv(0x0000)
+
+  tg.send(LW, 0)
+  tg.recv(0xffffffff)
+
+  # AMOMAX
+  tg.send(SW, 0, 0x1234)
+  tg.recv(0)
+
+  tg.send(AMOMAX_W, 0, 0x8888)
+  tg.recv(0x1234)
+
+  tg.send(AMOMAX_W, 0, 0x9999)
+  tg.recv(0x8888)
+
+  tg.send(AMOMAX_W, 0, 0x0000)
+  tg.recv(0x9999)
+
+  tg.send(AMOMAX_W, 0, 0xffffffff)
+  tg.recv(0x9999)
+
+  tg.send(LW, 0)
+  tg.recv(0x9999)
+
+  # AMOMINU
+  tg.send(SW, 0, 0x1234)
+  tg.recv(0)
+
+  tg.send(AMOMINU_W, 0, 0x9999)
+  tg.recv(0x1234)
+
+  tg.send(AMOMINU_W, 0, 0x1000)
+  tg.recv(0x1234)
+
+  tg.send(AMOMINU_W, 0, 0x0000)
+  tg.recv(0x1000)
+
+  tg.send(AMOMINU_W, 0, 0xffffffff)
+  tg.recv(0x0000)
+
+  tg.send(LW, 0)
+  tg.recv(0x0000)
+
+  # AMOMAXU
+  tg.send(SW, 0, 0x1234)
+  tg.recv(0)
+
+  tg.send(AMOMAXU_W, 0, 0x8888)
+  tg.recv(0x1234)
+
+  tg.send(AMOMAXU_W, 0, 0x9999)
+  tg.recv(0x8888)
+
+  tg.send(AMOMAXU_W, 0, 0x0000)
+  tg.recv(0x9999)
+
+  tg.send(AMOMAXU_W, 0, 0xffffffff)
+  tg.recv(0x9999)
+
+  tg.send(LW, 0)
+  tg.recv(0xffffffff)
 
   #### DONE ####
   tg.wait(16)
