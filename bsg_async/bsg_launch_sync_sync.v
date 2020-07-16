@@ -236,13 +236,16 @@ module bsg_launch_sync_sync #(parameter width_p="inv"
         $display("%m: instantiating blss of size %d",width_p);
      end
  */
+`ifndef VERILATOR
+   // The comparison to z makes verilator think that iclk_reset_i is a
+   // tri-state top-level (unsupported in Verilator v4.036)
    initial assert (iclk_reset_i !== 'z)
      else
        begin
           $error("%m iclk_reset should be connected");
           $finish();
        end
-
+`endif
 // synopsys translate_on
 
    genvar i;
