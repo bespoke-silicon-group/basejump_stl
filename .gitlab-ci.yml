@@ -1,0 +1,29 @@
+variables:
+    GIT_STRATEGY: fetch
+    GIT_SUBMODULE_STRATEGY: recursive
+
+stages:
+  - manual
+
+.job_template: &job_definition
+  when: manual
+  stage: manual
+  only:
+    refs:
+      - /^ci_.*$/
+      - master
+  artifacts:
+    when: always
+    paths:
+      - "*.log"
+  dependencies: []
+
+bsg_cache_job:
+  <<: *job_definition
+  tags:
+    - bsg
+    - vcs
+  script:
+    # TODO: Check for pass/fail
+    - make -C testing/bsg_cache/regression &> bsg_cache_regression.log
+
