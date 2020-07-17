@@ -226,18 +226,16 @@ module bsg_nonsynth_dramsim3
   
   end
 
-  // this register is needed because we use blocking assignment 
-  // for read_done which drives read_v_li.
-  // without this register data_v_o mirrors read_v_li instead
-  // of being its value from the previous cycle.
-  logic [num_channels_p-1:0] data_v_r;
-  logic [num_channels_p-1:0] [channel_addr_width_p-1:0] read_done_ch_addr_r;
-
+  // aligning valid and address with the output data
   always_ff @(posedge clk_i) begin
-    data_v_r <= read_v_li;
-    data_v_o <= data_v_r;
-    read_done_ch_addr_r <= read_done_ch_addr;
-    read_done_ch_addr_o <= read_done_ch_addr_r;
+    if (reset_i) begin
+      data_v_o <= '0;
+      read_done_ch_addr_o <= '0;
+    end
+    else begin
+      data_v_o <= read_v_li;
+      read_done_ch_addr_o <= read_done_ch_addr;
+    end
   end
 
   // debugging
