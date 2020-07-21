@@ -6,27 +6,22 @@ INCDIR =  +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access
 VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4
 
-
-##### Test Suite #######
-BASIC_TEST = test_random1 test_random2
-BASIC_TEST += test_byte1 test_byte2 test_byte3
-BASIC_TEST += test_mask1
-BASIC_TEST += test_atomic1 test_atomic2 test_atomic3 test_atomic4
-BASIC_TEST += test_store_buffer1 test_store_buffer2 test_store_buffer3
-BASIC_TEST += test_block1
+###### TEST SUITE ######
+BASIC_TEST += test_random1
+BASIC_TEST += test_random2
+BASIC_TEST += test_random3
+BASIC_TEST += test_atomic1
+BASIC_TEST += test_atomic2
+BASIC_TEST += test_atomic3
+BASIC_TEST += test_atomic4
 BASIC_TEST += test_stride1
-BASIC_TEST += test_store_load test_store_load2
-BASIC_TEST += test_alock1
-BASIC_TEST += test_tagfl1
-BASIC_TEST += test_aflinv1
-
 
 ########################
 
 HIGHLIGHT = grep --color -E '^|Fatal|Error|Warning|Implicit wire is used|Too few instance port connections|Port connection width mismatch|Width mismatch'
 
 
-### TEST parameters ####
+### Test parameters ###
 YUMI_MIN_DELAY_P  ?= 0
 YUMI_MAX_DELAY_P  ?= 0
 DMA_READ_DELAY_P  ?= 0
@@ -41,7 +36,7 @@ VCS_DEFINES += +define+DMA_READ_DELAY_P=$(DMA_READ_DELAY_P)
 VCS_DEFINES += +define+DMA_WRITE_DELAY_P=$(DMA_WRITE_DELAY_P)
 VCS_DEFINES += +define+DMA_REQ_DELAY_P=$(DMA_REQ_DELAY_P)
 VCS_DEFINES += +define+DMA_DATA_DELAY_P=$(DMA_DATA_DELAY_P)
-########################
+#######################
 
 
 SIMV = $(abspath simv)
@@ -51,7 +46,7 @@ BASIC_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BASIC_TEST)))
 
 .PRECIOUS: $(BASIC_TRACE_TR)
 
-all: basic_test 
+all: basic_test
 
 basic_test: $(addsuffix .basic.run, $(BASIC_TEST))
 
@@ -72,9 +67,7 @@ out/%/trace.tr:
 
 summary:
 	@$(foreach test, $(BASIC_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
-			-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
-
-
+		-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
 
 
 clean:

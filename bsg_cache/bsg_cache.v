@@ -20,6 +20,9 @@ module bsg_cache
     ,parameter sets_p="inv"
     ,parameter ways_p="inv"
 
+    ,parameter amo_support_p=(1 << e_cache_amo_swap)
+                             | (1 << e_cache_amo_or)
+
     // dma burst width
     ,parameter dma_data_width_p=data_width_p // default value. it can also be pow2 multiple of data_width_p.
 
@@ -575,6 +578,8 @@ module bsg_cache
   logic [data_width_p-1:0] sbuf_data_in;
   logic [data_mask_width_lp-1:0] sbuf_mask_in;
   logic [data_width_p-1:0] snoop_or_ld_data;
+  logic [data_sel_mux_els_lp-1:0][data_width_p-1:0] ld_data_final_li;
+  logic [data_width_p-1:0] ld_data_final_lo;
 
   bsg_mux #(
     .width_p(data_width_p)
@@ -594,29 +599,102 @@ module bsg_cache
     ,.data_o(sbuf_mask_in)
   );
 
+  //
+  // Atomic operations
+  //   Defined only for 32/64 operations
+  // Data incoming from cache_pkt
+  logic [`BSG_MIN(data_width_p, 64)-1:0] atomic_reg_data;
+  // Data read from the cache line
+  logic [`BSG_MIN(data_width_p, 64)-1:0] atomic_mem_data;
+  // Result of the atomic
+  logic [`BSG_MIN(data_width_p, 64)-1:0] atomic_alu_result;
+  // Final atomic data for store buffer
+  logic [`BSG_MIN(data_width_p, 64)-1:0] atomic_result;
+
+  // Shift data to high bits for operations less than 64-bits
+  // This allows us to share the arithmetic operators for 32/64 bit atomics
+  if (data_width_p >= 64) begin : atomic_64
+    wire [63:0] amo32_reg_in = data_v_r[0+:32] << 32;
+    wire [63:0] amo64_reg_in = data_v_r[0+:64];
+    assign atomic_reg_data = decode_v_r.data_size_op[0] ? amo64_reg_in : amo32_reg_in;
+
+    wire [63:0] amo32_mem_in = ld_data_final_li[2] << 32;
+    wire [63:0] amo64_mem_in = ld_data_final_li[3];
+    assign atomic_mem_data = decode_v_r.data_size_op[0] ? amo64_mem_in : amo32_mem_in;
+  end
+  else if (data_width_p >= 32) begin : atomic_32
+    assign atomic_reg_data = data_v_r[0+:32];
+    assign atomic_mem_data = ld_data_final_li[2];
+  end
+
+  // Atomic ALU
+  always_comb begin
+    // This logic was confirmed not to synthesize unsupported operators in
+    //   Synopsys DC O-2018.06-SP4
+    unique casez({amo_support_p[decode_v_r.amo_subop], decode_v_r.amo_subop})
+      {1'b1, e_cache_amo_swap}: atomic_alu_result = atomic_reg_data;
+      {1'b1, e_cache_amo_and }: atomic_alu_result = atomic_reg_data & atomic_mem_data;
+      {1'b1, e_cache_amo_or  }: atomic_alu_result = atomic_reg_data | atomic_mem_data;
+      {1'b1, e_cache_amo_xor }: atomic_alu_result = atomic_reg_data ^ atomic_mem_data;
+      {1'b1, e_cache_amo_add }: atomic_alu_result = atomic_reg_data + atomic_mem_data;
+      {1'b1, e_cache_amo_min }: atomic_alu_result =
+          ($signed(atomic_reg_data) < $signed(atomic_mem_data)) ? atomic_reg_data : atomic_mem_data;
+      {1'b1, e_cache_amo_max }: atomic_alu_result =
+          ($signed(atomic_reg_data) > $signed(atomic_mem_data)) ? atomic_reg_data : atomic_mem_data;
+      {1'b1, e_cache_amo_minu}: atomic_alu_result =
+          (atomic_reg_data < atomic_mem_data) ? atomic_reg_data : atomic_mem_data;
+      {1'b1, e_cache_amo_maxu}: atomic_alu_result =
+          (atomic_reg_data > atomic_mem_data) ? atomic_reg_data : atomic_mem_data;
+      // Noisily fail in simulation if an unsupported AMO operation is requested
+      {1'b0, 4'b????         }: atomic_alu_result = `BSG_UNDEFINED_IN_SIM(0);
+      default: atomic_alu_result = '0;
+    endcase
+  end
+
+  // Shift data from high bits for operations less than 64-bits
+  if (data_width_p >= 64) begin : fi
+    wire [63:0] amo32_out = atomic_alu_result >> 32;
+    wire [63:0] amo64_out = atomic_alu_result;
+    assign atomic_result = decode_v_r.data_size_op[0] ? amo64_out : amo32_out;
+  end
+  else begin
+    assign atomic_result = atomic_alu_result;
+  end
+
   for (genvar i = 0; i < data_sel_mux_els_lp; i++) begin: sbuf_in_sel
+    localparam slice_width_lp = (8*(2**i));
 
-    assign sbuf_data_in_mux_li[i] = {(data_width_p/(8*(2**i))){data_v_r[0+:(8*(2**i))]}};
+    logic [slice_width_lp-1:0] slice_data;
 
+    // AMO computation
+    // AMOs are only supported for words and double words
+    if ((i == 2'b10) || (i == 2'b11)) begin: atomic_in_sel
+      assign slice_data = decode_v_r.atomic_op
+        ? atomic_result[0+:slice_width_lp]
+        : data_v_r[0+:slice_width_lp];
+    end 
+    else begin
+      assign slice_data = data_v_r[0+:slice_width_lp];
+    end
+
+    assign sbuf_data_in_mux_li[i] = {(data_width_p/slice_width_lp){slice_data}};
 
     if (i == data_sel_mux_els_lp-1) begin: max_size
-
       assign sbuf_mask_in_mux_li[i] = {data_mask_width_lp{1'b1}};    
-
     end 
     else begin: non_max_size
 
-      logic [data_width_p/(8*(2**i))-1:0] decode_lo;
+      logic [(data_width_p/slice_width_lp)-1:0] decode_lo;
 
       bsg_decode #(
-        .num_out_p(data_width_p/(8*(2**i)))
+        .num_out_p(data_width_p/slice_width_lp)
       ) dec (
         .i(addr_v_r[i+:`BSG_MAX(lg_data_mask_width_lp-i,1)])
         ,.o(decode_lo)
       );
 
       bsg_expand_bitmask #(
-        .in_width_p(data_width_p/(8*(2**i)))
+        .in_width_p(data_width_p/slice_width_lp)
         ,.expand_p(2**i)
       ) exp (
         .i(decode_lo)
@@ -631,14 +709,6 @@ module bsg_cache
     if (decode_v_r.mask_op) begin
       sbuf_entry_li.data = data_v_r;
       sbuf_entry_li.mask = mask_v_r;
-    end
-    else if (decode_v_r.amoswap_op) begin
-      sbuf_entry_li.data = data_v_r;
-      sbuf_entry_li.mask = {data_mask_width_lp{1'b1}};
-    end
-    else if (decode_v_r.amoor_op) begin
-      sbuf_entry_li.data = data_v_r | snoop_or_ld_data;
-      sbuf_entry_li.mask = {data_mask_width_lp{1'b1}};
     end
     else begin
       sbuf_entry_li.data = sbuf_data_in;
@@ -702,9 +772,6 @@ module bsg_cache
 
   // select double/word/half/byte load data
   //
-  logic [data_sel_mux_els_lp-1:0][data_width_p-1:0] ld_data_final_li;
-  logic [data_width_p-1:0] ld_data_final_lo;
-  
 
   for (genvar i = 0; i < data_sel_mux_els_lp; i++) begin: ld_data_sel
 
@@ -755,9 +822,6 @@ module bsg_cache
       end
       else if (decode_v_r.mask_op) begin
         data_o = ld_data_masked;
-      end
-      else if (decode_v_r.atomic_op) begin
-        data_o = snoop_or_ld_data;
       end
       else begin
         data_o = ld_data_final_lo;
@@ -952,6 +1016,15 @@ module bsg_cache
         // check that there is at least one unlocked way in a set.
         assert($countones(lock_v_r) < ways_p)
           else $error("[BSG_ERROR][BSG_CACHE] There should be at least one unlocked way in a set. %m, T=%t", $time);
+
+        // Check that client hasn't required unsupported AMO
+        assert(~decode_v_r.atomic_op | amo_support_p[decode_v_r.amo_subop])
+          else $error("[BSG_ERROR][BSG_CACHE] Unsupported AMO OP %d received. %m, T=%t", decode.amo_subop, $time);
+
+        assert(~decode_v_r.atomic_op || (data_width_p >= 64) || ~decode_v_r.data_size_op[0])
+          else $error("[BSG_ERROR][BSG_CACHE] AMO_D performed on data_width < 64. %m T=%t", $time);
+        assert(~decode_v_r.atomic_op || (data_width_p >= 32))
+          else $error("[BSG_ERROR][BSG_CACHE] AMO performed on data_width < 32. %m T=%t", $time);
       end
     end
   end

@@ -6,6 +6,34 @@
 
 package bsg_cache_pkg;
 
+  // These subopcodes are intended to match the low 4 bits of the
+  //   corresponding bsg_cache_pkt opcode, to simplify decoding
+  typedef enum logic [3:0] {
+    e_cache_amo_swap        = 4'b0000
+    ,e_cache_amo_add        = 4'b0001
+    ,e_cache_amo_xor        = 4'b0010
+    ,e_cache_amo_and        = 4'b0011
+    ,e_cache_amo_or         = 4'b0100
+    ,e_cache_amo_min        = 4'b0101
+    ,e_cache_amo_max        = 4'b0110
+    ,e_cache_amo_minu       = 4'b0111
+    ,e_cache_amo_maxu       = 4'b1000
+  } bsg_cache_amo_subop_e;
+
+  localparam amo_support_level_none_lp       = '0;
+  localparam amo_support_level_swap_lp       = amo_support_level_none_lp
+    | (1 << e_cache_amo_swap);
+  localparam amo_support_level_logical_lp    = amo_support_level_swap_lp
+    | (1 << e_cache_amo_xor)
+    | (1 << e_cache_amo_and)
+    | (1 << e_cache_amo_or);
+  localparam amo_support_level_arithmetic_lp = amo_support_level_logical_lp
+    | (1 << e_cache_amo_add)
+    | (1 << e_cache_amo_min)
+    | (1 << e_cache_amo_max)
+    | (1 << e_cache_amo_minu)
+    | (1 << e_cache_amo_maxu);
+
   // cache opcode
   //
   typedef enum logic [5:0] {
@@ -50,7 +78,7 @@ package bsg_cache_pkg;
     ,AMOMINU_W = 6'b100111    // atomic min unsigned
     ,AMOMAXU_W = 6'b101000    // atomic max unsigned
 
-    // 64-bit atomic (reserved)
+    // 64-bit atomic
     ,AMOSWAP_D = 6'b110000    // atomic swap
     ,AMOADD_D  = 6'b110001    // atomic add
     ,AMOXOR_D  = 6'b110010    // atomic xor 
@@ -99,9 +127,8 @@ package bsg_cache_pkg;
     logic aunlock_op;
     logic tag_read_op;
    
-    logic atomic_op; 
-    logic amoswap_op;
-    logic amoor_op;
+    logic atomic_op;
+    bsg_cache_amo_subop_e amo_subop;
   } bsg_cache_decode_s;
 
 

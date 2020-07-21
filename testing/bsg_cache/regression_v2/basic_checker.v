@@ -159,10 +159,53 @@ module basic_checker
               send_id <= send_id + 1;
               shadow_mem[cache_pkt_word_addr] <= cache_pkt.data;
             end
+            AMOADD_W: begin
+              result[send_id] <= load_data;
+              send_id <= send_id + 1;
+              shadow_mem[cache_pkt_word_addr] <= cache_pkt.data + load_data;
+            end
+            AMOXOR_W: begin
+              result[send_id] <= load_data;
+              send_id <= send_id + 1;
+              shadow_mem[cache_pkt_word_addr] <= cache_pkt.data ^ load_data;
+            end
+            AMOAND_W: begin
+              result[send_id] <= load_data;
+              send_id <= send_id + 1;
+              shadow_mem[cache_pkt_word_addr] <= cache_pkt.data & load_data;
+            end
             AMOOR_W: begin
               result[send_id] <= load_data;
               send_id <= send_id + 1;
               shadow_mem[cache_pkt_word_addr] <= cache_pkt.data | load_data;
+            end
+            AMOMIN_W: begin
+              result[send_id] <= load_data;
+              send_id <= send_id + 1;
+              shadow_mem[cache_pkt_word_addr] <= ($signed(cache_pkt.data) < $signed(load_data))
+                ? cache_pkt.data
+                : load_data;
+            end
+            AMOMAX_W: begin
+              result[send_id] <= load_data;
+              send_id <= send_id + 1;
+              shadow_mem[cache_pkt_word_addr] <= ($signed(cache_pkt.data) > $signed(load_data))
+                ? cache_pkt.data
+                : load_data;
+            end
+            AMOMINU_W: begin
+              result[send_id] <= load_data;
+              send_id <= send_id + 1;
+              shadow_mem[cache_pkt_word_addr] <= (cache_pkt.data < load_data)
+                ? cache_pkt.data
+                : load_data;
+            end
+            AMOMAXU_W: begin
+              result[send_id] <= load_data;
+              send_id <= send_id + 1;
+              shadow_mem[cache_pkt_word_addr] <= (cache_pkt.data > load_data)
+                ? cache_pkt.data
+                : load_data;
             end
             ALOCK, AUNLOCK, TAGFL, AFLINV: begin
               result[send_id] = '0;
