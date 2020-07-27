@@ -274,9 +274,6 @@ module bsg_nonsynth_dramsim3
     end
   end
 
-  assert property (@(posedge mask_i, negedge mask_i) masked_p)
-    else $warning("Ignoring mask_i because masked_p is not set");
-
   // final
   final begin
     bsg_dramsim3_exit();
