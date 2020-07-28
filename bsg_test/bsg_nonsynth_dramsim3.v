@@ -225,7 +225,7 @@ module bsg_nonsynth_dramsim3
     assign read_v_li[i] = read_done[i];
     assign read_addr_li[i] = read_done_ch_addr[i];
 
-    assign mask_li[i] = masked_p ? mask_i[i] : data_mask_width_lp'($signed(1));
+    assign mask_li[i] = masked_p ? mask_i[i] : '1;
   
     assign write_v_li[i] = data_v_i[i] & v_i[i] & write_not_read_i[i] & yumi_o[i];
     assign data_yumi_o[i] = data_v_i[i] & write_not_read_i[i] & yumi_o[i];
@@ -273,9 +273,6 @@ module bsg_nonsynth_dramsim3
       end
     end
   end
-
-  assert property (@(posedge mask_i, negedge mask_i) masked_p)
-    else $warning("Ignoring mask_i because masked_p is not set");
 
   // final
   final begin
