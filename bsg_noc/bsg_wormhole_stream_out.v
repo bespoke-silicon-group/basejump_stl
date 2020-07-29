@@ -25,15 +25,18 @@
 module bsg_wormhole_stream_out
  #(// The wormhole router protocol information
    parameter flit_width_p      = "inv"
+   // Default to 0 for cord and cid, so that this can be used either
+   //   for concentrator or router
+   , parameter cord_width_p    = 0
    , parameter len_width_p     = "inv"
-   , parameter cord_width_p    = "inv"
+   , parameter cid_width_p     = 0
 
    // Higher level protocol information
    , parameter pr_hdr_width_p  = "inv"
    , parameter pr_data_width_p = "inv"
 
    // Derived size of the wormhole header
-   , parameter wh_hdr_width_lp = cord_width_p + len_width_p
+   , parameter wh_hdr_width_lp = cord_width_p + len_width_p + cid_width_p
    // Size of the wormhole header + the protocol header. The data starts afterwards
    , parameter hdr_width_lp = wh_hdr_width_lp + pr_hdr_width_p
    )
