@@ -22,6 +22,6 @@ $BASEJUMP_STL_DIR/bsg_dataflow/bsg_parallel_in_serial_out.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_serial_in_parallel_out_full.v
 $BASEJUMP_STL_DIR/bsg_test/test_bsg_data_gen.v
 
-./bsg_parallel_in_serial_out_test_node.v
-./bsg_parallel_in_serial_out_tester.v
+$TOP_DIR/bsg_parallel_in_serial_out_test_node.v
+$TOP_DIR/bsg_parallel_in_serial_out_tester.v
 
