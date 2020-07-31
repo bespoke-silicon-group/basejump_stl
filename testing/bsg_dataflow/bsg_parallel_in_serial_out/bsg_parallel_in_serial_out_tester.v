@@ -79,7 +79,7 @@ module bsg_parallel_in_serial_out_tester
 
   ,.valid_o(client_link_li.v)
   ,.data_o (client_link_li.data)
-  ,.yumi_i (client_link_lo.ready_and_rev)
+  ,.yumi_i (client_link_li.v & client_link_lo.ready_and_rev)
   );
   
   bsg_parallel_in_serial_out_test_node
