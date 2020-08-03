@@ -145,7 +145,7 @@ module bsg_dmc
     ,.dfi_data_width_p      ( dfi_data_width_lp     )
     ,.cmd_afifo_depth_p     ( cmd_afifo_depth_p     )
     ,.cmd_sfifo_depth_p     ( cmd_sfifo_depth_p     ))
-  dmc_controller
+  controller
     // User interface clock and reset
     (.ui_clk_i              ( ui_clk_i              )
     ,.ui_clk_sync_rst_i     ( ui_reset              )
@@ -192,7 +192,7 @@ module bsg_dmc
     //
     ,.init_calib_complete_o ( init_calib_complete_o ));
 
-  bsg_dmc_phy #(.dq_data_width_p(dq_data_width_p)) dmc_phy
+  bsg_dmc_phy #(.dq_data_width_p(dq_data_width_p)) phy
     // DDR PHY interface clock and reset
     (.dfi_clk_1x_i        ( dfi_clk_1x_lo       )
     ,.dfi_clk_2x_i        ( dfi_clk_2x_i        )
