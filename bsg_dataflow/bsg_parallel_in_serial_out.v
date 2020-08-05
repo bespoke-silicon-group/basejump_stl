@@ -118,9 +118,9 @@ module bsg_parallel_in_serial_out
      *
      * Single element buffering is sufficient for bubble-free transmission.
      *
-     * Output data of fifo1 is guaranteed to be valid if output data of 
-     * fifo0 is valid and PISO is not transmitting first data word. Therefore
-     * v_o signal of fifo1 is unused to minimize hardware utilization.
+     * Output data of fifo1 is guaranteed to be valid if output data of fifo0 is 
+     * valid and shift_ctr_r != 0 (Refer to Table 1 below for more information.) 
+     * Therefore v_o signal of fifo1 is unused to minimize hardware utilization.
      */
     logic fifo1_ready_lo, fifo1_v_li;
 
@@ -141,7 +141,7 @@ module bsg_parallel_in_serial_out
      * State machine on the input data side
      *
      * When 2 element buffer is used, and two parallel data arrive consecutively,
-     * the first word of second parallel data may be accepted by fifo0 repetitively.
+     * the first word of second parallel data may be accepted by fifo0 repeatedly.
      * A simple state machine is used to prevent this from happening.
      *
      * When 1 element buffer is used, hard-wire wait_fifo1_r to 1'b0 to minimize 
@@ -155,16 +155,26 @@ module bsg_parallel_in_serial_out
 
     if (use_minimal_buffering_p == 0)
       begin: twobuf
+      /**
+       * Table 1: Possible states of registers
+       * +---------------+----------------+--------------+---------+------------+
+       * |Fifo0-elements | Fifo1-elements | Wait_fifo1_r | Valid_i | shift_ctr_r|
+       * |       0       |        0       |      0       |   0/1   |      0     |
+       * |       0       |        1       |   INVALID    | INVALID |   INVALID  |
+       * |       1       |        0       |      1       |    1    |      0     |
+       * |       1       |        1       |      0       |   0/1   |     any    |
+       * |       2       |        0       |   INVALID    | INVALID |   INVALID  |
+       * |       2       |        1       |      1       |    1    |     any    |
+       * +---------------+----------------+--------------+---------+------------+
+       */
         bsg_dff_reset_set_clear
        #(.width_p         (1)
         ) wait_fifo1_dff
         (.clk_i           (clk_i)
         ,.reset_i         (reset_i)
         // fifo0_ready_lo is guaranteed to be 1'b1 when wait_fifo1_r == 1'b0
-        // No need to explicitly add to the condition below
         ,.set_i           (~wait_fifo1_r & valid_i & ~fifo1_ready_lo)
         // valid_i is guaranteed to be 1'b1 when when wait_fifo1_r == 1'b1
-        // No need to explicitly add to the condition below
         ,.clear_i         (wait_fifo1_r & fifo1_ready_lo)
         ,.data_o          (wait_fifo1_r)
         );
