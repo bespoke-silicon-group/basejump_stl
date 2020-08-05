@@ -155,19 +155,19 @@ module bsg_parallel_in_serial_out
 
     if (use_minimal_buffering_p == 0)
       begin: twobuf
-        // synopsys sync_set_reset "reset_i"
-        always_ff @(posedge clk_i)
-            if (reset_i)
-                wait_fifo1_r <= 1'b0;
-            else
-                // fifo0_ready_lo is guaranteed to be 1'b1 when wait_fifo1_r == 1'b0
-                // No need to explicitly add to the condition below
-                if (~wait_fifo1_r & valid_i & ~fifo1_ready_lo)
-                    wait_fifo1_r <= 1'b1;
-                // valid_i is guaranteed to be 1'b1 when when wait_fifo1_r == 1'b1
-                // No need to explicitly add to the condition below
-                else if (wait_fifo1_r & fifo1_ready_lo)
-                    wait_fifo1_r <= 1'b0;
+        bsg_dff_reset_set_clear
+       #(.width_p         (1)
+        ) wait_fifo1_dff
+        (.clk_i           (clk_i)
+        ,.reset_i         (reset_i)
+        // fifo0_ready_lo is guaranteed to be 1'b1 when wait_fifo1_r == 1'b0
+        // No need to explicitly add to the condition below
+        ,.set_i           (~wait_fifo1_r & valid_i & ~fifo1_ready_lo)
+        // valid_i is guaranteed to be 1'b1 when when wait_fifo1_r == 1'b1
+        // No need to explicitly add to the condition below
+        ,.clear_i         (wait_fifo1_r & fifo1_ready_lo)
+        ,.data_o          (wait_fifo1_r)
+        );
       end
     else
       begin: onebuf
@@ -182,10 +182,9 @@ module bsg_parallel_in_serial_out
      * both fifo0 and fifo1 simutanously. 
      */
     localparam clog2els_lp = $clog2(els_p);
-    logic [clog2els_lp-1:0] shift_ctr_r, shift_ctr_n;
+    logic [clog2els_lp-1:0] shift_ctr_r;
 
     assign fifo_yumi_li = fifo_v_lo && (shift_ctr_r == clog2els_lp ' (els_p-1)) && yumi_i;
-
 
     /**
      * Shift Counter Logic
@@ -195,22 +194,16 @@ module bsg_parallel_in_serial_out
      * When data fifo has valid data output, we will increment the register if 
      * the outside world is going to accept our data (ie. yumi_i).
      */
-
-    // synopsys sync_set_reset "reset_i"
-    always_ff @(posedge clk_i)
-      begin
-        if (reset_i)
-          shift_ctr_r <= '0;
-        else
-          if (fifo_yumi_li)
-            shift_ctr_r <= '0;
-          else
-            shift_ctr_r <= shift_ctr_n;
-      end
-
-    assign shift_ctr_n = (fifo_v_lo && yumi_i)
-                           ? shift_ctr_r + 1'b1
-                           : shift_ctr_r;
+    bsg_counter_clear_up
+   #(.max_val_p (els_p-1)
+    ,.init_val_p('0)
+    ) shift_ctr
+    (.clk_i     (clk_i)
+    ,.reset_i   (reset_i)
+    ,.clear_i   (fifo_yumi_li)
+    ,.up_i      (~fifo_yumi_li & fifo_v_lo & yumi_i)
+    ,.count_o   (shift_ctr_r)
+    );
 
     /**
      * Valid Output Signal
@@ -220,13 +213,19 @@ module bsg_parallel_in_serial_out
      */
     assign valid_o = fifo_v_lo;
 
-
     /**
      * Data Output Signal
      *
      * Assign data_o to the word that we have shifted to.
      */
-    assign data_o = fifo_data_lo[shift_ctr_r];
+    bsg_mux
+   #(.width_p(width_p)
+    ,.els_p  (els_p)
+    ) data_o_mux
+    (.data_i (fifo_data_lo)
+    ,.sel_i  (shift_ctr_r)
+    ,.data_o (data_o)
+    );
 
   end
 
