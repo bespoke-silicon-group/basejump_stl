@@ -35,10 +35,9 @@ module bsg_wormhole_stream_out
    , parameter pr_hdr_width_p  = "inv"
    , parameter pr_data_width_p = "inv"
 
-   // Derived size of the wormhole header
-   , parameter wh_hdr_width_lp = cord_width_p + len_width_p + cid_width_p
-   // Size of the wormhole header + the protocol header. The data starts afterwards
-   , parameter hdr_width_lp = wh_hdr_width_lp + pr_hdr_width_p
+   // Size of the wormhole header + the protocol header. The data starts afterwards.
+   // Users may set this directly rather than relying on the protocol header derived default
+   , parameter hdr_width_p = cord_width_p + len_width_p + cid_width_p + pr_hdr_width_p
    )
   (input                          clk_i
    , input                        reset_i
@@ -49,7 +48,7 @@ module bsg_wormhole_stream_out
    , output                       link_ready_o
 
    // The wormhole and protocol header information
-   , output [hdr_width_lp-1:0]    hdr_o
+   , output [hdr_width_p-1:0]     hdr_o
    , output                       hdr_v_o
    , input                        hdr_yumi_i
 
@@ -61,7 +60,7 @@ module bsg_wormhole_stream_out
 
   wire is_hdr, is_data;
   
-  localparam [len_width_p-1:0] hdr_len_lp = `BSG_CDIV(hdr_width_lp, flit_width_p);
+  localparam [len_width_p-1:0] hdr_len_lp = `BSG_CDIV(hdr_width_p, flit_width_p);
 
   wire link_accept = link_ready_o & link_v_i;
 
@@ -150,8 +149,8 @@ module bsg_wormhole_stream_out
 
   assign link_ready_o = is_hdr ? hdr_ready_lo : data_ready_lo;
 
-  if (hdr_width_lp % flit_width_p != 0)
-    $fatal("Header width: %d must be multiple of flit width: %d", hdr_width_lp, flit_width_p);
+  if (hdr_width_p % flit_width_p != 0)
+    $fatal("Header width: %d must be multiple of flit width: %d", hdr_width_p, flit_width_p);
 
   if ((pr_data_width_p % flit_width_p != 0) && (flit_width_p % pr_data_width_p != 0))
     $fatal("Protocol data width: %d must be multiple of flit width: %d", pr_data_width_p, flit_width_p);
