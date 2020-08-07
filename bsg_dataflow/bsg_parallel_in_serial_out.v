@@ -203,6 +203,13 @@ module bsg_parallel_in_serial_out
      * we reset or done transmitting data, we clear the shift_ctr_r register.
      * When data fifo has valid data output, we will increment the register if 
      * the outside world is going to accept our data (ie. yumi_i).
+     *
+     * Possible optimization
+     *
+     * Can instead use bsg_counter_clear_up_one_hot and one-hot mux down below
+     * for faster hardware by getting rid of a comparator and decoder on the paths.
+     * The downside is that there are more registers for counter (N vs lgN).
+     * Can do some PPA analysis for the tradeoff.
      */
     bsg_counter_clear_up
    #(.max_val_p (els_p-1)
