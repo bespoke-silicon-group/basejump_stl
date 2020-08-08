@@ -73,7 +73,7 @@ module bsg_dmc_clk_rst_gen
   clk_gen_ds_inst
     (.clk_i   ( clk_2x_i               )
     ,.reset_i ( ds_tag_payload_r.reset )
-    ,.val_i   ( 2'd2                    )
+    ,.val_i   ( 2'd0                   )
     ,.clk_r_o ( clk_1x_o               ));
 
 endmodule
