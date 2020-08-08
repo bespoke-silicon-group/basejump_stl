@@ -147,6 +147,7 @@ extern "C" bool bsg_dramsim3_init(
     int num_channels_p,
     int data_width_p,
     long long size_in_bits_p,
+    int num_columns_p,
     char *config_p)
 {
     string config_dir = stringify(BASEJUMP_STL_DIR) "/imports/DRAMSim3/configs/";
@@ -211,17 +212,22 @@ extern "C" bool bsg_dramsim3_init(
                num_channels_p, cfg->channels, config_p);
         bsg_dramsim3_exit();
         exit(1);
-    } else if (cfg->BL * cfg->device_width != data_width_p) {
-        pr_err("data_width_p (%d) does not match product of burst length (%d) and device width (%d) found in %s\n",
-               data_width_p, cfg->BL, cfg->device_width, config_p);
+    } else if (cfg->BL * cfg->bus_width != data_width_p) {
+        pr_err("data_width_p (%d) does not match product of burst length (%d) and bus width (%d) found in %s\n",
+               data_width_p, cfg->BL, cfg->bus_width, config_p);
         bsg_dramsim3_exit();
         exit(1);
     } else if (memory_size != size_in_bits_p) {
         pr_err("size_in_bits_p (%lld) does not match device size (%lld) found in %s\n",
                size_in_bits_p, memory_size, config_p);
+        bsg_dramsim3_exit();
+        exit(1);
+    } else if (cfg->columns / cfg->BL != num_columns_p) {
+       pr_err("num_columns_p (%d) does not match columns (%d) and burst length (%d) found in %s\n",
+               num_columns_p, cfg->columns, cfg->BL, config_p);
+        bsg_dramsim3_exit();
         exit(1);
     }
-    
     return true;
 }
 

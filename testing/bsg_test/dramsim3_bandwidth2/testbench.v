@@ -215,9 +215,14 @@ module testbench();
     ,.num_channels_p(num_channels_p)
 
     ,.num_columns_p(`dram_pkg::num_columns_p)
+    ,.num_rows_p(`dram_pkg::num_rows_p)
+    ,.num_ba_p(`dram_pkg::num_ba_p)
+    ,.num_bg_p(`dram_pkg::num_bg_p)
+    ,.num_ranks_p(`dram_pkg::num_ranks_p)
     ,.size_in_bits_p(`dram_pkg::size_in_bits_p)
     ,.address_mapping_p(`dram_pkg::address_mapping_p)
     ,.config_p(`dram_pkg::config_p)
+    ,.masked_p(0)
     ,.init_mem_p(1)
 
     ,.debug_p(1)
@@ -232,6 +237,7 @@ module testbench();
 
     ,.data_v_i(dramsim3_data_v_li)
     ,.data_i(dramsim3_data_li)
+    ,.mask_i('0)
     ,.data_yumi_o(dramsim3_data_yumi_lo)
 
     ,.data_v_o(dramsim3_data_v_lo)

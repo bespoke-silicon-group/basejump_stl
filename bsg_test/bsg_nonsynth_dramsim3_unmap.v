@@ -9,11 +9,19 @@ module bsg_nonsynth_dramsim3_unmap
     , parameter data_width_p="inv"
     , parameter num_channels_p="inv"
     , parameter num_columns_p="inv"
+    , parameter num_rows_p="inv"
+    , parameter num_ba_p="inv"
+    , parameter num_bg_p="inv"
+    , parameter num_ranks_p="inv"
     , parameter address_mapping_p="inv"
     , parameter channel_select_p="inv"
     , parameter debug_p=0
-    , parameter lg_num_channels_lp=`BSG_SAFE_CLOG2(num_channels_p)
-    , parameter lg_num_columns_lp=`BSG_SAFE_CLOG2(num_columns_p)
+    , parameter lg_num_channels_lp=$clog2(num_channels_p)
+    , parameter lg_num_columns_lp=$clog2(num_columns_p)
+    , parameter lg_num_rows_lp=$clog2(num_rows_p)
+    , parameter lg_num_ba_lp=$clog2(num_ba_p)
+    , parameter lg_num_bg_lp=$clog2(num_bg_p)
+    , parameter lg_num_ranks_lp=$clog2(num_ranks_p)
     , parameter data_mask_width_lp=(data_width_p>>3)
     , parameter byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
     , parameter addr_width_lp=lg_num_channels_lp+channel_addr_width_p
@@ -23,10 +31,16 @@ module bsg_nonsynth_dramsim3_unmap
     , output logic [channel_addr_width_p-1:0] ch_addr_o
     );
 
+    localparam co_pos_lp = byte_offset_width_lp;
+    localparam ba_pos_lp = co_pos_lp + lg_num_columns_lp;
+    localparam bg_pos_lp = ba_pos_lp + lg_num_ba_lp;
+    localparam ra_pos_lp = bg_pos_lp + lg_num_bg_lp;
+    localparam ro_pos_lp = ra_pos_lp + lg_num_ranks_lp;
+
     if (address_mapping_p == e_ro_ra_bg_ba_co_ch) begin
       assign ch_addr_o
         = {
-           mem_addr_i[channel_addr_width_p+lg_num_channels_lp-1:byte_offset_width_lp+lg_num_channels_lp],
+           mem_addr_i[addr_width_lp-1:byte_offset_width_lp+lg_num_channels_lp],
            {byte_offset_width_lp{1'b0}}
            };
     end
@@ -38,6 +52,30 @@ module bsg_nonsynth_dramsim3_unmap
            mem_addr_i[lg_num_columns_lp+byte_offset_width_lp-1:byte_offset_width_lp],
            {byte_offset_width_lp{1'b0}}
            };
+    end
+    else if (address_mapping_p == e_ro_ch_ra_ba_bg_co) begin
+
+      localparam mem_co_pos_lp = byte_offset_width_lp;
+      localparam mem_bg_pos_lp = mem_co_pos_lp + lg_num_columns_lp;
+      localparam mem_ba_pos_lp = mem_bg_pos_lp + lg_num_bg_lp;
+      localparam mem_ra_pos_lp = mem_ba_pos_lp + lg_num_ba_lp;
+      localparam mem_ch_pos_lp = mem_ra_pos_lp + lg_num_ranks_lp;
+      localparam mem_ro_pos_lp = mem_ch_pos_lp + lg_num_channels_lp;
+
+      for (genvar i=0; i < channel_addr_width_p; i++) begin
+        if (i >= ro_pos_lp)
+          assign ch_addr_o[i] = mem_addr_i[mem_ro_pos_lp+i-ro_pos_lp];
+        else if (i >= ra_pos_lp)
+          assign ch_addr_o[i] = mem_addr_i[mem_ra_pos_lp+i-ra_pos_lp];
+        else if (i >= bg_pos_lp)
+          assign ch_addr_o[i] = mem_addr_i[mem_bg_pos_lp+i-bg_pos_lp];
+        else if (i >= ba_pos_lp)
+          assign ch_addr_o[i] = mem_addr_i[mem_ba_pos_lp+i-ba_pos_lp];
+        else if (i >= co_pos_lp)
+          assign ch_addr_o[i] = mem_addr_i[mem_co_pos_lp+i-co_pos_lp];
+        else
+          assign ch_addr_o[i] = 1'b0;
+      end
     end
 
 endmodule // bsg_nonsynth_dramsim3_unmap
