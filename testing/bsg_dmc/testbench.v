@@ -258,7 +258,7 @@ module testbench
   end
 
   initial begin
-    $display("\n#### Regresstion test started ####");
+    $display("\n#### Regression test started ####");
     sys_reset = 1'b1;
     ui_clk = 1'b0;
     dfi_clk_2x = 1'b0;
@@ -283,7 +283,7 @@ module testbench
     end
     repeat(1000) @(posedge ui_clk);
     $display("\nRegression test passed!");
-    $display("\n#### Regresstion test ended ####");
+    $display("\n#### Regression test ended ####");
     $finish();
   end
 

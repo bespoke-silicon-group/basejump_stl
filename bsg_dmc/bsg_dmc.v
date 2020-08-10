@@ -20,6 +20,7 @@ module bsg_dmc
   // 
   ,input bsg_dmc_s                   dmc_p_i
   // Global asynchronous reset input, will be synchronized to each clock domain
+  // Consistent with the reset signal defined in Xilinx UI interface
   ,input                             sys_reset_i
   // User interface signals
   ,input       [ui_addr_width_p-1:0] app_addr_i
@@ -44,6 +45,8 @@ module bsg_dmc
   // Status signal
   ,output                            init_calib_complete_o
   // DDR interface signals
+  // Physically compatible with (LP)DDR3/DDR2/DDR, but only (LP)DDR
+  // protocal is logically implemented in the controller
   // Command and Address interface
   ,output                            ddr_ck_p_o
   ,output                            ddr_ck_n_o
@@ -86,6 +89,7 @@ module bsg_dmc
   wire                               ui_reset;
   wire                               dfi_reset;
 
+  // DFI 1.0 compatible
   wire                         [2:0] dfi_bank;
   wire                        [15:0] dfi_address;
   wire                               dfi_cke;
