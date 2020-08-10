@@ -16,7 +16,7 @@ task ui_write;
 endtask
 
 task ui_cmd;
-  input                 [2:0] cmd;
+  input app_cmd_e             cmd;
   input [ui_addr_width_p-1:0] addr;
   begin
     app_en <= 1'b1;

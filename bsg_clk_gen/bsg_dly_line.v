@@ -1,10 +1,10 @@
 `timescale 1ps/1ps
 
-// This module is a behavioral model of the clock generator delay
-// line. A TSMC 250nm hardened implementation of this module
+// This module is a behavioral model of the delay line.
+// A TSMC 40nm hardened implementation of this module
 // can be found at:
 //
-//      bsg_ip_cores/hard/bsg_clk_gen/bsg_dly_line.v
+//  basejump_stl/hard/tsmc_40/bsg_clk_gen/bsg_dly_line.v
 //
 // This module should be replaced by the hardened version
 // when being synthesized.
@@ -18,6 +18,7 @@ module bsg_dly_line
   (
    input async_reset_i
    ,input bsg_tag_s bsg_tag_i
+   ,input bsg_tag_s bsg_tag_trigger_i
    ,input clk_i
    ,output logic clk_o
    );
