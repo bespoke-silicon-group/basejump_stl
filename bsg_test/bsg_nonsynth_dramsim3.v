@@ -10,6 +10,7 @@ module bsg_nonsynth_dramsim3
     , parameter num_columns_p="inv"
     , parameter address_mapping_p="inv"
     , parameter size_in_bits_p=0
+    , parameter masked_p=0
     , parameter debug_p=0
     , parameter init_mem_p=0 // zero out values in memory at the beginning
     , parameter string config_p="inv"
@@ -30,6 +31,7 @@ module bsg_nonsynth_dramsim3
 
     , input [num_channels_p-1:0] data_v_i
     , input [num_channels_p-1:0][data_width_p-1:0] data_i
+    , input [num_channels_p-1:0][data_mask_width_lp-1:0] mask_i
     , output logic [num_channels_p-1:0] data_yumi_o 
 
     , output logic [num_channels_p-1:0] data_v_o
@@ -197,9 +199,10 @@ module bsg_nonsynth_dramsim3
   logic [num_channels_p-1:0] read_v_li;
   logic [num_channels_p-1:0][channel_addr_width_p-1:0] read_addr_li;
   logic [num_channels_p-1:0] write_v_li;
+  logic [num_channels_p-1:0][data_mask_width_lp-1:0] mask_li;
 
   for (genvar i = 0; i < num_channels_p; i++) begin: channels
-    bsg_nonsynth_mem_1r1w_sync_dma
+    bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma
       #(.width_p(data_width_p)
         ,.els_p((size_in_bits_p/num_channels_p)/data_width_p)
         ,.id_p(base_id_p+i)
@@ -207,37 +210,38 @@ module bsg_nonsynth_dramsim3
     channel
       (.clk_i(clk_i)
       ,.reset_i(reset_i)
-     
+
       ,.r_v_i(read_v_li[i])
       ,.r_addr_i(read_addr_li[i][channel_addr_width_p-1:byte_offset_width_lp])
 
-      ,.w_v_i(write_v_li[i])    
-      ,.w_addr_i(ch_addr_i[i][channel_addr_width_p-1:byte_offset_width_lp]) 
+      ,.w_v_i(write_v_li[i])
+      ,.w_addr_i(ch_addr_i[i][channel_addr_width_p-1:byte_offset_width_lp])
       ,.w_data_i(data_i[i])
+      ,.w_mask_i(mask_li[i])
 
       ,.data_o(data_o[i])
     );
 
     assign read_v_li[i] = read_done[i];
     assign read_addr_li[i] = read_done_ch_addr[i];
+
+    assign mask_li[i] = masked_p ? mask_i[i] : '1;
   
     assign write_v_li[i] = data_v_i[i] & v_i[i] & write_not_read_i[i] & yumi_o[i];
     assign data_yumi_o[i] = data_v_i[i] & write_not_read_i[i] & yumi_o[i];
   
   end
 
-  // this register is needed because we use blocking assignment 
-  // for read_done which drives read_v_li.
-  // without this register data_v_o mirrors read_v_li instead
-  // of being its value from the previous cycle.
-  logic [num_channels_p-1:0] data_v_r;
-  logic [num_channels_p-1:0] [channel_addr_width_p-1:0] read_done_ch_addr_r;
-
+  // aligning valid and address with the output data
   always_ff @(posedge clk_i) begin
-    data_v_r <= read_v_li;
-    data_v_o <= data_v_r;
-    read_done_ch_addr_r <= read_done_ch_addr;
-    read_done_ch_addr_o <= read_done_ch_addr_r;
+    if (reset_i) begin
+      data_v_o <= '0;
+      read_done_ch_addr_o <= '0;
+    end
+    else begin
+      data_v_o <= read_v_li;
+      read_done_ch_addr_o <= read_done_ch_addr;
+    end
   end
 
   // debugging
@@ -269,7 +273,6 @@ module bsg_nonsynth_dramsim3
       end
     end
   end
-
 
   // final
   final begin

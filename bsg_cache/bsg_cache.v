@@ -616,25 +616,11 @@ module bsg_cache
   if (data_width_p >= 64) begin : atomic_64
     wire [63:0] amo32_reg_in = data_v_r[0+:32] << 32;
     wire [63:0] amo64_reg_in = data_v_r[0+:64];
-    bsg_mux #(
-      .width_p(64)
-      ,.els_p(2)
-    ) amo_reg_shift_mux (
-      .data_i({amo64_reg_in, amo32_reg_in})
-      ,.sel_i(decode_v_r.data_size_op[0])
-      ,.data_o(atomic_reg_data)
-    );
+    assign atomic_reg_data = decode_v_r.data_size_op[0] ? amo64_reg_in : amo32_reg_in;
 
     wire [63:0] amo32_mem_in = ld_data_final_li[2] << 32;
     wire [63:0] amo64_mem_in = ld_data_final_li[3];
-    bsg_mux #(
-      .width_p(64)
-      ,.els_p(2)
-    ) amo_mem_shift_mux (
-      .data_i({amo64_mem_in, amo32_mem_in})
-      ,.sel_i(decode_v_r.data_size_op[0])
-      ,.data_o(atomic_mem_data)
-    );
+    assign atomic_mem_data = decode_v_r.data_size_op[0] ? amo64_mem_in : amo32_mem_in;
   end
   else if (data_width_p >= 32) begin : atomic_32
     assign atomic_reg_data = data_v_r[0+:32];
@@ -643,6 +629,8 @@ module bsg_cache
 
   // Atomic ALU
   always_comb begin
+    // This logic was confirmed not to synthesize unsupported operators in
+    //   Synopsys DC O-2018.06-SP4
     unique casez({amo_support_p[decode_v_r.amo_subop], decode_v_r.amo_subop})
       {1'b1, e_cache_amo_swap}: atomic_alu_result = atomic_reg_data;
       {1'b1, e_cache_amo_and }: atomic_alu_result = atomic_reg_data & atomic_mem_data;
@@ -657,6 +645,8 @@ module bsg_cache
           (atomic_reg_data < atomic_mem_data) ? atomic_reg_data : atomic_mem_data;
       {1'b1, e_cache_amo_maxu}: atomic_alu_result =
           (atomic_reg_data > atomic_mem_data) ? atomic_reg_data : atomic_mem_data;
+      // Noisily fail in simulation if an unsupported AMO operation is requested
+      {1'b0, 4'b????         }: atomic_alu_result = `BSG_UNDEFINED_IN_SIM(0);
       default: atomic_alu_result = '0;
     endcase
   end
@@ -665,14 +655,7 @@ module bsg_cache
   if (data_width_p >= 64) begin : fi
     wire [63:0] amo32_out = atomic_alu_result >> 32;
     wire [63:0] amo64_out = atomic_alu_result;
-    bsg_mux #(
-      .width_p(64)
-      ,.els_p(2)
-    ) amo_shift_mux (
-      .data_i({amo64_out, amo32_out})
-      ,.sel_i(decode_v_r.data_size_op[0])
-      ,.data_o(atomic_result)
-    );
+    assign atomic_result = decode_v_r.data_size_op[0] ? amo64_out : amo32_out;
   end
   else begin
     assign atomic_result = atomic_alu_result;
@@ -685,15 +668,10 @@ module bsg_cache
 
     // AMO computation
     // AMOs are only supported for words and double words
-    if ((i == 2'b10) || (i == 2'b11)) begin
-      bsg_mux #(
-        .width_p(slice_width_lp)
-        ,.els_p(2)
-      ) atomic_mux (
-        .data_i({atomic_result[0+:slice_width_lp], data_v_r[0+:slice_width_lp]})
-        ,.sel_i(decode_v_r.atomic_op)
-        ,.data_o(slice_data)
-      );
+    if ((i == 2'b10) || (i == 2'b11)) begin: atomic_in_sel
+      assign slice_data = decode_v_r.atomic_op
+        ? atomic_result[0+:slice_width_lp]
+        : data_v_r[0+:slice_width_lp];
     end 
     else begin
       assign slice_data = data_v_r[0+:slice_width_lp];

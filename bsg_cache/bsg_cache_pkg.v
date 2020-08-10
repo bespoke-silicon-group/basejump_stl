@@ -6,6 +6,8 @@
 
 package bsg_cache_pkg;
 
+  // These subopcodes are intended to match the low 4 bits of the
+  //   corresponding bsg_cache_pkt opcode, to simplify decoding
   typedef enum logic [3:0] {
     e_cache_amo_swap        = 4'b0000
     ,e_cache_amo_add        = 4'b0001
@@ -16,9 +18,6 @@ package bsg_cache_pkg;
     ,e_cache_amo_max        = 4'b0110
     ,e_cache_amo_minu       = 4'b0111
     ,e_cache_amo_maxu       = 4'b1000
-
-    // Reserved
-    ,e_cache_amo_lrsc       = 4'b1001
   } bsg_cache_amo_subop_e;
 
   localparam amo_support_level_none_lp       = '0;

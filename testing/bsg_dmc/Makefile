@@ -2,25 +2,34 @@ include ../../../bsg_cadenv/cadenv.mk
 
 ANALYSIS_OPTIONS = -full64
 ANALYSIS_OPTIONS += -sverilog
+ANALYSIS_OPTIONS += +incdir+../../bsg_clk_gen
 ANALYSIS_OPTIONS += +incdir+../../bsg_misc
 
-RUN_OPTIONS = -full64
-RUN_OPTIONS += -R
-RUN_OPTIONS += -debug_pp
-RUN_OPTIONS += -lca
-RUN_OPTIONS += +vcs+vcdpluson
-RUN_OPTIONS += +vcs+vcdplusmemon
+ELABORATE_OPTIONS = -full64
+ELABORATE_OPTIONS += -debug_pp
+ELABORATE_OPTIONS += -lca
+ELABORATE_OPTIONS += +vcs+vcdpluson
+ELABORATE_OPTIONS += +vcs+vcdplusmemon
+
+RUN_OPTIONS = 
 
 analyze:
-	vlogan $(ANALYSIS_OPTIONS) -timescale=1ns/1ps +incdir+lpddr_verilog_model+../../bsg_dmc +define+den2048Mb+sg5+x16+FULL_MEM -f filelist.lst -l $@.log
+	$(VCS_BIN)/vlogan $(ANALYSIS_OPTIONS) -timescale=1ns/1ps +incdir+lpddr_verilog_model+../../bsg_dmc +define+den2048Mb+sg5+x16+FULL_MEM -f filelist.lst -l $@.log
+	touch $@
 
-run:
-	vcs $(RUN_OPTIONS) -l $@.log testbench
+elaborate: analyze
+	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l $@.log testbench
+	touch $@
 
-dve:
-	dve -full64 -vpd vcdplus.vpd &
+run: elaborate
+	./simv $(RUN_OPTIONS) -l $@.log
+	touch $@
+
+dve: run
+	$(VCS_BIN)/dve -full64 -vpd vcdplus.vpd &
 
 clean:
+	rm analyze elaborate run
 	rm -rf *.log
 	rm -rf analyze_*
 	rm -rf *.vpd
