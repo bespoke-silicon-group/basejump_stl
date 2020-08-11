@@ -2,7 +2,6 @@
 #define __BSG_NONSYNTH_DPI_FIFO_HPP
 #include <cstring>
 #include <svdpi.h>
-#include <verilated.h>
 #include <bsg_nonsynth_dpi.hpp>
 #include <bsg_nonsynth_dpi_errno.hpp>
 
