@@ -86,7 +86,7 @@ module bsg_noc_performance_test_node_master
   
   bsg_fifo_1r1w_small
  #(.width_p(link_width_p)
-  ,.els_p  (8)
+  ,.els_p  (65536)
   ) queue_fifo
   (.clk_i  (link_clk_i)
   ,.reset_i(link_reset_i)
