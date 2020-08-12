@@ -89,6 +89,15 @@ module bsg_noc_performance_tester
   // Do not change
   ,parameter lg_credit_to_token_decimation_p = 3
   
+  
+  /*********************** Testbench Params ***********************/
+  ,parameter utilization_p = 40
+  ,parameter is_fast_to_slow_p = 1
+  
+  ,parameter io_clk_p = 4
+  ,parameter master_clk_p = io_clk_p*(2-is_fast_to_slow_p)
+  ,parameter client_clk_p = io_clk_p*(1+is_fast_to_slow_p)
+  ,parameter utilization_ratio_p = (link_width_p*ct_num_in_p)/(2*channel_width_p*num_channels_p)*(1+is_fast_to_slow_p)
   )
   
   ();
@@ -152,7 +161,8 @@ module bsg_noc_performance_tester
     bsg_noc_performance_test_node_master
    #(.link_width_p(flit_width_p)
     ,.node_id_p(i)
-    ,.utilization_p(100)
+    ,.utilization_p(utilization_p)
+    ,.utilization_ratio_p(utilization_ratio_p)
     ,.len_p(1)
     ) out_node
     (.link_clk_i  (router_clk_0)
@@ -382,10 +392,10 @@ module bsg_noc_performance_tester
   
 
   // Simulation of Clock
-  always #8 router_clk_0 = ~router_clk_0;
-  always #8 router_clk_1 = ~router_clk_1;
-  always #4 io_upstream_clk_0 = ~io_upstream_clk_0;
-  always #4 io_upstream_clk_1 = ~io_upstream_clk_1;
+  always #(master_clk_p) router_clk_0 = ~router_clk_0;
+  always #(client_clk_p) router_clk_1 = ~router_clk_1;
+  always #(io_clk_p)     io_upstream_clk_0 = ~io_upstream_clk_0;
+  always #(io_clk_p)     io_upstream_clk_1 = ~io_upstream_clk_1;
   
   always_ff @(posedge router_clk_1)
   begin

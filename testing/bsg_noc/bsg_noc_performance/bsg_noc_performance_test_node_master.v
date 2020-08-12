@@ -11,6 +11,7 @@ module bsg_noc_performance_test_node_master
  #(parameter link_width_p = "inv"
   ,parameter node_id_p = "inv"
   ,parameter utilization_p = "inv"
+  ,parameter utilization_ratio_p = "inv"
   ,parameter len_p = 1
   ,localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(link_width_p)  
   )
@@ -106,9 +107,9 @@ module bsg_noc_performance_test_node_master
       begin
         for (i = 0; i < node_id_p+1; i++)
           begin
-            random_number = $urandom_range(999);
+            random_number = $urandom_range(100*utilization_ratio_p);
           end
-        hit_r <= (random_number < utilization_p);
+        hit_r <= (random_number <= utilization_p);
       end
   end
   
