@@ -72,4 +72,5 @@ $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router.v
 ./bsg_noc_performance_tester.v
 ./bsg_noc_performance_test_node_master.v
 ./bsg_noc_performance_test_node_client.v
-
+./bsg_link_ddr_upstream_hard.v
+./bsg_link_oddr_phy_hard.v

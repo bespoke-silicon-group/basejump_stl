@@ -113,7 +113,10 @@ module bsg_noc_performance_tester
   logic core_upstream_downstream_reset_0, core_upstream_downstream_reset_1;
   
   // Link upstream io clock and reset
+  logic io_upstream_clk;
+  logic io_upstream_reset;
   logic io_upstream_clk_0, io_upstream_clk_1;
+  logic io_upstream_clk90_0, io_upstream_clk90_1;
   logic io_upstream_reset_0, io_upstream_reset_1;
   
   // Link upstream token async reset
@@ -228,6 +231,13 @@ module bsg_noc_performance_tester
   ,.v_o   (out_ct_fifo_valid_li)
   ,.yumi_i(out_ct_fifo_yumi_lo)
   );
+
+  if (is_fast_to_slow_p)
+  begin: f2s
+  
+    assign io_upstream_clk_0 = io_upstream_clk;
+    always @(posedge io_upstream_clk) if (io_upstream_reset) io_upstream_clk_1 <= 1'b0; else io_upstream_clk_1 <= ~io_upstream_clk_1;
+    always @(negedge io_upstream_clk) if (io_upstream_reset) io_upstream_clk90_1 <= 1'b0; else io_upstream_clk90_1 <= ~io_upstream_clk90_1;
   
   bsg_link_ddr_upstream
  #(.width_p        (link_width_p)
@@ -252,28 +262,61 @@ module bsg_noc_performance_tester
   ,.token_clk_i (edge_token_0)
   );
   
-  
-  bsg_link_ddr_downstream
+  bsg_link_ddr_upstream_hard
  #(.width_p        (link_width_p)
   ,.channel_width_p(channel_width_p)
   ,.num_channels_p (num_channels_p)
   ,.lg_fifo_depth_p(lg_fifo_depth_p)
   ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
-  ) link_downstream_0
-  (.core_clk_i       (router_clk_0)
-  ,.core_link_reset_i(core_upstream_downstream_reset_0)
-  ,.io_link_reset_i  (io_downstream_reset_0)
+  ) link_upstream_1
+  (.core_clk_i         (router_clk_1)
+  ,.io_clk_i           (io_upstream_clk_1)
+  ,.io_clk90_i         (io_upstream_clk90_1)
+  ,.core_link_reset_i  (core_upstream_downstream_reset_1)
+  ,.io_link_reset_i    (io_upstream_reset_1)
+  ,.async_token_reset_i(token_reset_1)
   
-  ,.core_data_o   (out_ct_data_li)
-  ,.core_valid_o  (out_ct_valid_li)
-  ,.core_yumi_i   (out_ct_yumi_lo)
+  ,.core_data_i (in_ct_data_lo)
+  ,.core_valid_i(in_ct_valid_lo)
+  ,.core_ready_o(in_ct_ready_li)
 
-  ,.io_clk_i      (edge_clk_1)
-  ,.io_data_i     (edge_data_1)
-  ,.io_valid_i    (edge_valid_1)
-  ,.core_token_r_o(edge_token_1)
+  ,.io_clk_r_o  (edge_clk_1)
+  ,.io_data_r_o (edge_data_1)
+  ,.io_valid_r_o(edge_valid_1)
+  ,.token_clk_i (edge_token_1)
   );
   
+  end
+  else
+  begin: s2f
+  
+    assign io_upstream_clk_1 = io_upstream_clk;
+    always @(posedge io_upstream_clk) if (io_upstream_reset) io_upstream_clk_0 <= 1'b0; else io_upstream_clk_0 <= ~io_upstream_clk_0;
+    always @(negedge io_upstream_clk) if (io_upstream_reset) io_upstream_clk90_0 <= 1'b0; else io_upstream_clk90_0 <= ~io_upstream_clk90_0;
+    
+  bsg_link_ddr_upstream_hard
+ #(.width_p        (link_width_p)
+  ,.channel_width_p(channel_width_p)
+  ,.num_channels_p (num_channels_p)
+  ,.lg_fifo_depth_p(lg_fifo_depth_p)
+  ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
+  ) link_upstream_0
+  (.core_clk_i         (router_clk_0)
+  ,.io_clk_i           (io_upstream_clk_0)
+  ,.io_clk90_i         (io_upstream_clk90_0)
+  ,.core_link_reset_i  (core_upstream_downstream_reset_0)
+  ,.io_link_reset_i    (io_upstream_reset_0)
+  ,.async_token_reset_i(token_reset_0)
+  
+  ,.core_data_i (out_ct_data_lo)
+  ,.core_valid_i(out_ct_valid_lo)
+  ,.core_ready_o(out_ct_ready_li)
+
+  ,.io_clk_r_o  (edge_clk_0)
+  ,.io_data_r_o (edge_data_0)
+  ,.io_valid_r_o(edge_valid_0)
+  ,.token_clk_i (edge_token_0)
+  );
   
   bsg_link_ddr_upstream
  #(.width_p        (link_width_p)
@@ -298,6 +341,28 @@ module bsg_noc_performance_tester
   ,.token_clk_i (edge_token_1)
   );
   
+  end
+  
+  bsg_link_ddr_downstream
+ #(.width_p        (link_width_p)
+  ,.channel_width_p(channel_width_p)
+  ,.num_channels_p (num_channels_p)
+  ,.lg_fifo_depth_p(lg_fifo_depth_p)
+  ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
+  ) link_downstream_0
+  (.core_clk_i       (router_clk_0)
+  ,.core_link_reset_i(core_upstream_downstream_reset_0)
+  ,.io_link_reset_i  (io_downstream_reset_0)
+  
+  ,.core_data_o   (out_ct_data_li)
+  ,.core_valid_o  (out_ct_valid_li)
+  ,.core_yumi_i   (out_ct_yumi_lo)
+
+  ,.io_clk_i      (edge_clk_1)
+  ,.io_data_i     (edge_data_1)
+  ,.io_valid_i    (edge_valid_1)
+  ,.core_token_r_o(edge_token_1)
+  );
   
   bsg_link_ddr_downstream
  #(.width_p        (link_width_p)
@@ -319,6 +384,7 @@ module bsg_noc_performance_tester
   ,.io_valid_i    (edge_valid_0)
   ,.core_token_r_o(edge_token_0)
   );
+  
 
   bsg_channel_tunnel 
  #(.width_p                (flit_width_p)
@@ -394,8 +460,7 @@ module bsg_noc_performance_tester
   // Simulation of Clock
   always #(master_clk_p) router_clk_0 = ~router_clk_0;
   always #(client_clk_p) router_clk_1 = ~router_clk_1;
-  always #(io_clk_p)     io_upstream_clk_0 = ~io_upstream_clk_0;
-  always #(io_clk_p)     io_upstream_clk_1 = ~io_upstream_clk_1;
+  always #(io_clk_p    ) io_upstream_clk = ~io_upstream_clk;
   
   always_ff @(posedge router_clk_1)
   begin
@@ -414,11 +479,11 @@ module bsg_noc_performance_tester
     $display("Start Simulation\n");
   
     // Init
-    router_clk_0 = 1;
-    router_clk_1 = 1;
-    io_upstream_clk_0 = 1;
-    io_upstream_clk_1 = 1;
+    router_clk_0        = 0;
+    router_clk_1        = 0;
+    io_upstream_clk     = 0;
     
+    io_upstream_reset   = 1;
     io_upstream_reset_0 = 1;
     io_upstream_reset_1 = 1;
     token_reset_0 = 0;
@@ -429,6 +494,11 @@ module bsg_noc_performance_tester
     router_reset_0 = 1;
     router_reset_1 = 1;
     router_en_0 = 0;
+    
+    #1000;
+    
+    @(posedge io_upstream_clk);
+    io_upstream_reset = 0;
     
     #1000;
     
