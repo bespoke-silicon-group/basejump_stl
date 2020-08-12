@@ -39,16 +39,10 @@ module bsg_noc_performance_test_node_master
   assign link_o_cast.ready_and_rev = 1'b1;
   
   logic [31:0] timestamp_r;
-  bsg_counter_clear_up
- #(.max_val_p(1<<32-1)
-  ,.init_val_p(0)
-  ) timestamp_count
-  (.clk_i  (link_clk_i)
-  ,.reset_i(~link_en_i)
-  ,.clear_i(1'b0)
-  ,.up_i   (1'b1)
-  ,.count_o(timestamp_r)
-  );
+  always_ff @(posedge link_clk_i)
+  begin
+    timestamp_r <= $time;
+  end
 
   logic req_out_v, req_out_ready;
   logic piso_v, piso_ready;

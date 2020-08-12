@@ -96,9 +96,9 @@ module bsg_noc_performance_tester
   `declare_bsg_ready_and_link_sif_s(flit_width_p,bsg_ready_and_link_sif_s);
   
   // Router clock and reset
-  logic router_clk;
-  logic router_reset;
-  logic router_en;
+  logic router_clk_0, router_clk_1;
+  logic router_reset_0, router_reset_1;
+  logic router_en_0;
   
   // Link upstream and downstream core reset
   logic core_upstream_downstream_reset_0, core_upstream_downstream_reset_1;
@@ -142,7 +142,7 @@ module bsg_noc_performance_tester
   bsg_ready_and_link_sif_s [ct_num_in_p-1:0] in_node_link_li;
   bsg_ready_and_link_sif_s [ct_num_in_p-1:0] in_node_link_lo;
   
-  logic [ct_num_in_p-1:0] link_done;
+  logic [ct_num_in_p-1:0] link_done_1;
   
   
   genvar i;
@@ -155,9 +155,9 @@ module bsg_noc_performance_tester
     ,.utilization_p(100)
     ,.len_p(1)
     ) out_node
-    (.link_clk_i  (router_clk)
-    ,.link_reset_i(router_reset)
-    ,.link_en_i   (router_en)
+    (.link_clk_i  (router_clk_0)
+    ,.link_reset_i(router_reset_0)
+    ,.link_en_i   (router_en_0)
    
     ,.link_i      (out_node_link_li[i])
     ,.link_o      (out_node_link_lo[i])
@@ -171,8 +171,8 @@ module bsg_noc_performance_tester
     bsg_two_fifo
    #(.width_p(flit_width_p))
     out_ct_fifo
-    (.clk_i  (router_clk  )
-    ,.reset_i(router_reset)
+    (.clk_i  (router_clk_0  )
+    ,.reset_i(router_reset_0)
     ,.ready_o(out_node_link_li[i].ready_and_rev)
     ,.data_i (out_node_link_lo[i].data         )
     ,.v_i    (out_node_link_lo[i].v            )
@@ -195,8 +195,8 @@ module bsg_noc_performance_tester
   ,.lg_credit_decimation_p (ct_lg_credit_decimation_p)
   )
   out_ct
-  (.clk_i  (router_clk)
-  ,.reset_i(router_reset)
+  (.clk_i  (router_clk_0)
+  ,.reset_i(router_reset_0)
 
   // incoming multiplexed data
   ,.multi_data_i(out_ct_data_li)
@@ -226,7 +226,7 @@ module bsg_noc_performance_tester
   ,.lg_fifo_depth_p(lg_fifo_depth_p)
   ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
   ) link_upstream_0
-  (.core_clk_i         (router_clk)
+  (.core_clk_i         (router_clk_0)
   ,.io_clk_i           (io_upstream_clk_0)
   ,.core_link_reset_i  (core_upstream_downstream_reset_0)
   ,.io_link_reset_i    (io_upstream_reset_0)
@@ -250,7 +250,7 @@ module bsg_noc_performance_tester
   ,.lg_fifo_depth_p(lg_fifo_depth_p)
   ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
   ) link_downstream_0
-  (.core_clk_i       (router_clk)
+  (.core_clk_i       (router_clk_0)
   ,.core_link_reset_i(core_upstream_downstream_reset_0)
   ,.io_link_reset_i  (io_downstream_reset_0)
   
@@ -272,7 +272,7 @@ module bsg_noc_performance_tester
   ,.lg_fifo_depth_p(lg_fifo_depth_p)
   ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
   ) link_upstream_1
-  (.core_clk_i         (router_clk)
+  (.core_clk_i         (router_clk_1)
   ,.io_clk_i           (io_upstream_clk_1)
   ,.core_link_reset_i  (core_upstream_downstream_reset_1)
   ,.io_link_reset_i    (io_upstream_reset_1)
@@ -296,7 +296,7 @@ module bsg_noc_performance_tester
   ,.lg_fifo_depth_p(lg_fifo_depth_p)
   ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
   ) link_downstream_1
-  (.core_clk_i       (router_clk)
+  (.core_clk_i       (router_clk_1)
   ,.core_link_reset_i(core_upstream_downstream_reset_1)
   ,.io_link_reset_i  (io_downstream_reset_1)
   
@@ -318,8 +318,8 @@ module bsg_noc_performance_tester
   ,.lg_credit_decimation_p (ct_lg_credit_decimation_p)
   )
   in_ct
-  (.clk_i  (router_clk)
-  ,.reset_i(router_reset)
+  (.clk_i  (router_clk_1)
+  ,.reset_i(router_reset_1)
 
   // incoming multiplexed data
   ,.multi_data_i(in_ct_data_li)
@@ -349,8 +349,8 @@ module bsg_noc_performance_tester
     bsg_two_fifo
    #(.width_p(flit_width_p))
     in_ct_fifo
-    (.clk_i  (router_clk  )
-    ,.reset_i(router_reset)
+    (.clk_i  (router_clk_1  )
+    ,.reset_i(router_reset_1)
     ,.ready_o(in_node_link_li[i].ready_and_rev)
     ,.data_i (in_node_link_lo[i].data         )
     ,.v_i    (in_node_link_lo[i].v            )
@@ -371,10 +371,9 @@ module bsg_noc_performance_tester
    #(.link_width_p(flit_width_p)
     ,.node_id_p   (i)
     ) in_node
-    (.link_clk_i  (router_clk)
-    ,.link_reset_i(router_reset)
-    ,.link_en_i   (router_en)
-    ,.link_done_o (link_done[i])
+    (.link_clk_i  (router_clk_1)
+    ,.link_reset_i(router_reset_1)
+    ,.link_done_o (link_done_1[i])
    
     ,.link_i      (in_node_link_li[i])
     ,.link_o      (in_node_link_lo[i])
@@ -383,15 +382,16 @@ module bsg_noc_performance_tester
   
 
   // Simulation of Clock
-  always #8 router_clk = ~router_clk;
+  always #8 router_clk_0 = ~router_clk_0;
+  always #8 router_clk_1 = ~router_clk_1;
   always #4 io_upstream_clk_0 = ~io_upstream_clk_0;
   always #4 io_upstream_clk_1 = ~io_upstream_clk_1;
   
-  always_ff @(posedge router_clk)
+  always_ff @(posedge router_clk_1)
   begin
-    if (~router_reset && (& link_done))
+    if (~router_reset_1 && (& link_done_1))
       begin
-        $display("\nFinished\n");
+        $display("\nTest Finished\n");
         $finish;
       end
   end
@@ -404,7 +404,8 @@ module bsg_noc_performance_tester
     $display("Start Simulation\n");
   
     // Init
-    router_clk = 1;
+    router_clk_0 = 1;
+    router_clk_1 = 1;
     io_upstream_clk_0 = 1;
     io_upstream_clk_1 = 1;
     
@@ -415,8 +416,9 @@ module bsg_noc_performance_tester
     
     core_upstream_downstream_reset_0 = 1;
     core_upstream_downstream_reset_1 = 1;
-    router_reset = 1;
-    router_en = 0;
+    router_reset_0 = 1;
+    router_reset_1 = 1;
+    router_en_0 = 0;
     
     #1000;
     
@@ -463,22 +465,24 @@ module bsg_noc_performance_tester
     #1000;
     
     // core link reset
-    @(posedge router_clk); #1;
+    @(posedge router_clk_0); #1;
     core_upstream_downstream_reset_0 = 0;
-    @(posedge router_clk); #1;
+    @(posedge router_clk_1); #1;
     core_upstream_downstream_reset_1 = 0;
     
     #1000;
     
     // chip reset
-    @(posedge router_clk); #1;
-    router_reset = 0;
+    @(posedge router_clk_0); #1;
+    router_reset_0 = 0;
+    @(posedge router_clk_1); #1;
+    router_reset_1 = 0;
     
     #1000;
     
     // node enable
-    @(posedge router_clk); #1;
-    router_en = 1;
+    @(posedge router_clk_0); #1;
+    router_en_0 = 1;
     
   end
 

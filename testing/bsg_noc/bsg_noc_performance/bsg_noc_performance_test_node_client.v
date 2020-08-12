@@ -15,7 +15,6 @@ module bsg_noc_performance_test_node_client
 
   (input link_clk_i
   ,input link_reset_i
-  ,input link_en_i
   ,output link_done_o
 
   ,input  [bsg_ready_and_link_sif_width_lp-1:0] link_i
@@ -38,16 +37,10 @@ module bsg_noc_performance_test_node_client
   assign link_o_cast.data = '0;
   
   logic [31:0] timestamp_r;
-  bsg_counter_clear_up
- #(.max_val_p(1<<32-1)
-  ,.init_val_p(0)
-  ) timestamp_count
-  (.clk_i  (link_clk_i)
-  ,.reset_i(~link_en_i)
-  ,.clear_i(1'b0)
-  ,.up_i   (1'b1)
-  ,.count_o(timestamp_r)
-  );
+  always_ff @(posedge link_clk_i)
+  begin
+    timestamp_r <= $time;
+  end
 
   logic [31:0] received_r;
   bsg_counter_clear_up
@@ -97,7 +90,7 @@ module bsg_noc_performance_test_node_client
             $display("Node %d finished\n", node_id_p);
             $display("Total received: %d\n", received_r);
             $display("Timestamp: %d\n", timestamp_r);
-            $display("Total delay cycles: %d\n", total_delay_r);
+            $display("Total delay time: %d\n", total_delay_r);
             
             $display("Average throughput: %f\n", received_f/timestamp_f);
             $display("Average delay: %f\n", total_delay_f/(received_f-10000));
