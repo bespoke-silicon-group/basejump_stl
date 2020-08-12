@@ -62,7 +62,7 @@ module bsg_noc_performance_test_node_client
   ) total_delay_count
   (.clk_i  (link_clk_i)
   ,.reset_i(link_reset_i)
-  ,.up_i   ((link_i_cast.v && (received_r >= 10000))? 16'(timestamp_r - 32'(link_i_cast.data)) : '0)
+  ,.up_i   ((link_i_cast.v && (received_r >= 8192))? 16'(timestamp_r - 32'(link_i_cast.data)) : '0)
   ,.down_i ('0)
   ,.count_o(total_delay_r)
   );
@@ -83,7 +83,7 @@ module bsg_noc_performance_test_node_client
       end
     else
       begin
-        if ((received_r == 50000) & ~done_r)
+        if ((received_r == 32768) & ~done_r)
           begin
             done_r <= 1'b1;
             $display("\n");
@@ -93,7 +93,7 @@ module bsg_noc_performance_test_node_client
             $display("Total delay time: %d\n", total_delay_r);
             
             $display("Average throughput: %f\n", received_f/timestamp_f);
-            $display("Average delay: %f\n", total_delay_f/(received_f-10000));
+            $display("Average delay: %f\n", total_delay_f/(received_f-8192));
           end
       end
   end

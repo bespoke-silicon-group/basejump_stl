@@ -45,9 +45,25 @@ module bsg_noc_performance_test_node_master
     timestamp_r <= $time;
   end
 
-  logic req_out_v, req_out_ready;
-  logic piso_v, piso_ready;
-  assign link_o_cast.data = (link_width_p)'(timestamp_r);
+  logic hit_r;
+  logic piso_v_li, piso_ready_lo;
+  logic piso_v_lo, piso_ready_li;
+
+  bsg_fifo_1r1w_small
+ #(.width_p(link_width_p)
+  ,.els_p  (65536)
+  ) queue_fifo
+  (.clk_i  (link_clk_i)
+  ,.reset_i(link_reset_i)
+
+  ,.ready_o(piso_ready_li)
+  ,.v_i    (piso_v_lo)
+  ,.data_i ((link_width_p)'(timestamp_r))
+
+  ,.v_o    (link_o_cast.v)
+  ,.data_o (link_o_cast.data)
+  ,.yumi_i (link_o_cast.v & link_i_cast.ready_and_rev)
+  );
 
   bsg_parallel_in_serial_out 
  #(.width_p(link_width_p)
@@ -55,12 +71,12 @@ module bsg_noc_performance_test_node_master
   ) piso
   (.clk_i  (link_clk_i)
   ,.reset_i(link_reset_i)
-  ,.valid_i(piso_v)
+  ,.valid_i(piso_v_li)
   ,.data_i ('0)
-  ,.ready_o(piso_ready)
-  ,.valid_o(link_o_cast.v)
+  ,.ready_o(piso_ready_lo)
+  ,.valid_o(piso_v_lo)
   ,.data_o ()
-  ,.yumi_i (link_o_cast.v & link_i_cast.ready_and_rev)
+  ,.yumi_i (piso_v_lo & piso_ready_li)
   );
   
   bsg_serial_in_parallel_out_full
@@ -69,30 +85,12 @@ module bsg_noc_performance_test_node_master
   ) sipof
   (.clk_i  (link_clk_i)
   ,.reset_i(link_reset_i)
-  ,.v_i    (req_out_v)
-  ,.ready_o(req_out_ready)
-  ,.data_i ('0)
-  ,.data_o ()
-  ,.v_o    (piso_v)
-  ,.yumi_i (piso_v & piso_ready)
-  );
-  
-  logic hit_r;
-  
-  bsg_fifo_1r1w_small
- #(.width_p(link_width_p)
-  ,.els_p  (65536)
-  ) queue_fifo
-  (.clk_i  (link_clk_i)
-  ,.reset_i(link_reset_i)
-
-  ,.ready_o()
   ,.v_i    (hit_r)
+  ,.ready_o()
   ,.data_i ('0)
-
-  ,.v_o    (req_out_v)
   ,.data_o ()
-  ,.yumi_i (req_out_v & req_out_ready)
+  ,.v_o    (piso_v_li)
+  ,.yumi_i (piso_v_li & piso_ready_lo)
   );
   
   int i, random_number;
@@ -107,9 +105,9 @@ module bsg_noc_performance_test_node_master
       begin
         for (i = 0; i < node_id_p+1; i++)
           begin
-            random_number = $urandom_range(100*utilization_ratio_p);
+            random_number = $urandom_range(100*utilization_ratio_p-1);
           end
-        hit_r <= (random_number <= utilization_p);
+        hit_r <= (random_number < utilization_p);
       end
   end
   
