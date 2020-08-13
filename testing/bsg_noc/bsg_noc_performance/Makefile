@@ -8,7 +8,7 @@ export BASEJUMP_STL_DIR = $(TOP_DIR)/../../..
 include $(BSG_CADENV_DIR)/cadenv.mk
 
 FAST_TO_SLOWS := 0 1
-UTILIZATIONS := 10 20 30 40 50 60 70 80 90 99
+UTILIZATIONS := 10 20 30 40 50 60 70 80 90 100
 
 RUNS := $(foreach FAST_TO_SLOW_P, $(FAST_TO_SLOWS), \
             $(foreach UTILIZATION_P, $(UTILIZATIONS), \
@@ -26,6 +26,10 @@ run-%:
 view-%:
 	cd run-$* && \
         $(VCS_BIN)/dve -full64 -vpd vcdplus.vpd &
+
+report-delay:
+	grep "Average delay: " */*.log > run-report-delay.log
+	python report_delay.py --file_name run-report-delay.log > run-report-delay.csv
 
 junk = csrc DVEfiles simv.daidir *.old *.vpd simv *.key run-*
 
