@@ -10,6 +10,7 @@ module bsg_noc_performance_test_node_client
 
  #(parameter link_width_p = "inv"
   ,parameter node_id_p = "inv"
+  ,parameter clk_period_p = "inv"
   ,localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(link_width_p)  
   )
 
@@ -70,10 +71,11 @@ module bsg_noc_performance_test_node_client
   logic done_r;
   assign link_done_o = done_r;
   
-  real timestamp_f, received_f, total_delay_f;
+  real timestamp_f, received_f, total_delay_f, clk_period_f;
   assign timestamp_f   = timestamp_r;
   assign received_f    = received_r;
   assign total_delay_f = total_delay_r;
+  assign clk_period_f  = clk_period_p;
   
   always_ff @(posedge link_clk_i)
   begin
@@ -93,7 +95,7 @@ module bsg_noc_performance_test_node_client
             $display("Total delay time: %d\n", total_delay_r);
             
             $display("Average throughput: %f\n", received_f/timestamp_f);
-            $display("Average delay: %f\n", total_delay_f/(received_f-8192));
+            $display("Average delay: %f\n", total_delay_f/(received_f-8192)/clk_period_f);
           end
       end
   end

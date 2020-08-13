@@ -96,8 +96,11 @@ module bsg_noc_performance_tester
   ,parameter top_is_fast_to_slow_p = 1
   
   ,parameter io_clk_p = 4
-  ,parameter master_clk_p = io_clk_p*(2-top_is_fast_to_slow_p)
-  ,parameter client_clk_p = io_clk_p*(1+top_is_fast_to_slow_p)
+  ,parameter fast_clk_p = io_clk_p
+  ,parameter slow_clk_p = io_clk_p*2
+  
+  ,parameter master_clk_p = top_is_fast_to_slow_p? fast_clk_p : slow_clk_p
+  ,parameter client_clk_p = top_is_fast_to_slow_p? slow_clk_p : fast_clk_p
   ,parameter utilization_ratio_p = (link_width_p*ct_num_in_p)/(2*channel_width_p*num_channels_p)*(1+top_is_fast_to_slow_p)
   )
   
@@ -447,6 +450,7 @@ module bsg_noc_performance_tester
     bsg_noc_performance_test_node_client
    #(.link_width_p(flit_width_p)
     ,.node_id_p   (i)
+    ,.clk_period_p(slow_clk_p<<1)
     ) in_node
     (.link_clk_i  (router_clk_1)
     ,.link_reset_i(router_reset_1)
