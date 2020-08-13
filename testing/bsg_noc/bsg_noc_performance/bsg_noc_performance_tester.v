@@ -14,7 +14,7 @@ module bsg_noc_performance_tester
   
   // How many streams of traffic are merged in channel tunnel
   // In this testbench the number of traffics is 2 (req and resp traffic)
-   parameter ct_num_in_p = 2
+   parameter ct_num_in_p = 1
   
   // Tag bits are for channel_tunnel_wormhole to mux and demux packets
   // If we are merging m traffics in channel tunnel, then tag bits shoule 
@@ -76,7 +76,8 @@ module bsg_noc_performance_tester
   /*********************** DRR link params ***********************/
   
   // Physical IO link configuration
-  ,parameter channel_width_p = 8
+  ,parameter top_channel_width_p = 8
+  ,parameter channel_width_p = top_channel_width_p
   
   // How many physical IO link channels do we have for each bsg_link
   ,parameter num_channels_p = 1
@@ -95,14 +96,14 @@ module bsg_noc_performance_tester
   ,parameter top_traffic_len_p = 1
   ,parameter top_is_fast_to_slow_p = 1
   
-  ,parameter io_clk_p = 4
+  ,parameter top_io_clk_p = 4
   ,parameter router_base_clk_p = 4
   ,parameter fast_clk_p = router_base_clk_p
   ,parameter slow_clk_p = router_base_clk_p*2
   
   ,parameter master_clk_p = top_is_fast_to_slow_p? fast_clk_p : slow_clk_p
   ,parameter client_clk_p = top_is_fast_to_slow_p? slow_clk_p : fast_clk_p
-  ,parameter utilization_ratio_p = (link_width_p*ct_num_in_p)/(2*channel_width_p*num_channels_p)*(1+top_is_fast_to_slow_p)*io_clk_p/router_base_clk_p
+  ,parameter utilization_ratio_p = (link_width_p*ct_num_in_p)/(2*channel_width_p*num_channels_p)*(1+top_is_fast_to_slow_p)*top_io_clk_p/router_base_clk_p
   )
   
   ();
@@ -466,7 +467,7 @@ module bsg_noc_performance_tester
   // Simulation of Clock
   always #(master_clk_p) router_clk_0 = ~router_clk_0;
   always #(client_clk_p) router_clk_1 = ~router_clk_1;
-  always #(io_clk_p    ) io_upstream_clk = ~io_upstream_clk;
+  always #(top_io_clk_p) io_upstream_clk = ~io_upstream_clk;
   
   always_ff @(posedge router_clk_1)
   begin

@@ -8,11 +8,16 @@ export BASEJUMP_STL_DIR = $(TOP_DIR)/../../..
 include $(BSG_CADENV_DIR)/cadenv.mk
 
 FAST_TO_SLOWS := 0 1
-UTILIZATIONS := 010 020 030 040 050 060 070 080 090 100
+#UTILIZATIONS := 010 020 030 040 050 060 070 080 090 100
+UTILIZATIONS := 100
+IO_CLKS := 04 08 16 32
+CHANNEL_WIDTHS := 02 04 08 16
 
 RUNS := $(foreach FAST_TO_SLOW_P, $(FAST_TO_SLOWS), \
             $(foreach UTILIZATION_P, $(UTILIZATIONS), \
-                run-$(FAST_TO_SLOW_P)-$(UTILIZATION_P)))
+                $(foreach IO_CLK_P, $(IO_CLKS), \
+                    $(foreach CHANNEL_WIDTH_P, $(CHANNEL_WIDTHS), \
+                        run-$(FAST_TO_SLOW_P)-$(UTILIZATION_P)-$(IO_CLK_P)-$(CHANNEL_WIDTH_P)))))
 
 run: $(RUNS)
 run-%:
@@ -21,6 +26,8 @@ run-%:
         $(VCS_BIN)/vcs -full64 -sverilog -timescale=1ps/1ps -f $(TOP_DIR)/filelist -debug_pp -R -top bsg_noc_performance_tester +vcs+vcdpluson \
         -pvalue+top_is_fast_to_slow_p=$(word 1, $(subst -, ,$*)) \
         -pvalue+top_utilization_p=$(word 2, $(subst -, ,$*)) \
+        -pvalue+top_io_clk_p=$(word 3, $(subst -, ,$*)) \
+        -pvalue+top_channel_width_p=$(word 4, $(subst -, ,$*)) \
         > run-$*.log
 
 view-%:
