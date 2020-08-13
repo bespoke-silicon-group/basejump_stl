@@ -2,6 +2,8 @@
 +incdir+$BASEJUMP_STL_DIR/bsg_misc
 +incdir+$BASEJUMP_STL_DIR/bsg_noc
 
+$BASEJUMP_STL_DIR/bsg_misc/bsg_defines.v
+
 $BASEJUMP_STL_DIR/bsg_async/bsg_async_fifo.v
 $BASEJUMP_STL_DIR/bsg_async/bsg_async_ptr_gray.v
 $BASEJUMP_STL_DIR/bsg_async/bsg_sync_sync.v
@@ -69,8 +71,8 @@ $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router_output_control.v
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router_pkg.v
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router.v
 
-./bsg_noc_performance_tester.v
-./bsg_noc_performance_test_node_master.v
-./bsg_noc_performance_test_node_client.v
-./bsg_link_ddr_upstream_hard.v
-./bsg_link_oddr_phy_hard.v
+$TOP_DIR/bsg_noc_performance_tester.v
+$TOP_DIR/bsg_noc_performance_test_node_master.v
+$TOP_DIR/bsg_noc_performance_test_node_client.v
+$TOP_DIR/bsg_link_ddr_upstream_hard.v
+$TOP_DIR/bsg_link_oddr_phy_hard.v

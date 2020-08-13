@@ -91,13 +91,14 @@ module bsg_noc_performance_tester
   
   
   /*********************** Testbench Params ***********************/
-  ,parameter utilization_p = 40
-  ,parameter is_fast_to_slow_p = 1
+  ,parameter top_utilization_p = 40
+  ,parameter top_traffic_len_p = 1
+  ,parameter top_is_fast_to_slow_p = 1
   
   ,parameter io_clk_p = 4
-  ,parameter master_clk_p = io_clk_p*(2-is_fast_to_slow_p)
-  ,parameter client_clk_p = io_clk_p*(1+is_fast_to_slow_p)
-  ,parameter utilization_ratio_p = (link_width_p*ct_num_in_p)/(2*channel_width_p*num_channels_p)*(1+is_fast_to_slow_p)
+  ,parameter master_clk_p = io_clk_p*(2-top_is_fast_to_slow_p)
+  ,parameter client_clk_p = io_clk_p*(1+top_is_fast_to_slow_p)
+  ,parameter utilization_ratio_p = (link_width_p*ct_num_in_p)/(2*channel_width_p*num_channels_p)*(1+top_is_fast_to_slow_p)
   )
   
   ();
@@ -164,9 +165,9 @@ module bsg_noc_performance_tester
     bsg_noc_performance_test_node_master
    #(.link_width_p(flit_width_p)
     ,.node_id_p(i)
-    ,.utilization_p(utilization_p)
+    ,.utilization_p(top_utilization_p)
     ,.utilization_ratio_p(utilization_ratio_p)
-    ,.len_p(1)
+    ,.len_p(top_traffic_len_p)
     ) out_node
     (.link_clk_i  (router_clk_0)
     ,.link_reset_i(router_reset_0)
@@ -232,7 +233,7 @@ module bsg_noc_performance_tester
   ,.yumi_i(out_ct_fifo_yumi_lo)
   );
 
-  if (is_fast_to_slow_p)
+  if (top_is_fast_to_slow_p)
   begin: f2s
   
     assign io_upstream_clk_0 = io_upstream_clk;
