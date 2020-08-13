@@ -94,20 +94,28 @@ module bsg_noc_performance_test_node_master
   );
   
   int i, random_number;
+  logic [7:0] ratio_counter_r;
   
   always_ff @(posedge link_clk_i)
   begin
     if (link_reset_i)
       begin
         hit_r <= 1'b0;
+        ratio_counter_r <= '0;
       end
-    else if (link_en_i)
+    else if (ratio_counter_r == utilization_ratio_p-1)
       begin
         for (i = 0; i < node_id_p+1; i++)
           begin
-            random_number = $urandom_range(100*utilization_ratio_p-1);
+            random_number = $urandom_range(100-1);
           end
-        hit_r <= (random_number < utilization_p);
+        hit_r <= (random_number < utilization_p) & link_en_i;
+        ratio_counter_r <= '0;
+      end
+    else
+      begin
+        hit_r <= 1'b0;
+        ratio_counter_r <= ratio_counter_r + 1'b1;
       end
   end
   
