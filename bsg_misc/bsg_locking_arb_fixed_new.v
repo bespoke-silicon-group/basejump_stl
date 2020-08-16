@@ -7,7 +7,7 @@ module bsg_locking_arb_fixed_new #( parameter inputs_p="inv"
   , input   reset_i
   , input   ready_i
 
-  , input        [inputs_p-1:0] lock_i
+  , input        [inputs_p-1:0] locks_i
 
   , input        [inputs_p-1:0] reqs_i
   , output logic [inputs_p-1:0] grants_o
@@ -19,7 +19,7 @@ module bsg_locking_arb_fixed_new #( parameter inputs_p="inv"
   wire lock_selected_lo, unlock;  
   bsg_mux_one_hot #(.width_p(1) ,.els_p(inputs_p) )
    lock_select
-   (.data_i(lock_i)
+   (.data_i(locks_i)
     ,.sel_one_hot_i(grants_o)
     ,.data_o(lock_selected_lo)
     );
