@@ -30,7 +30,7 @@ module bsg_locking_arb_fixed_new #( parameter inputs_p="inv"
     req_words_reg
       ( .clk_i  ( clk_i )
       , .reset_i( reset_i | unlock) 
-      , .en_i   ( (&req_mask_r) & (|grants_o) ) // update the lock when it is not locked & a req is updated
+      , .en_i   ( (&req_mask_r) & (|grants_o) ) // update the lock when it is not locked & a req is granted
       , .data_i ( ~grants_o )
       , .data_o ( not_req_mask_r )
       );
@@ -43,8 +43,9 @@ module bsg_locking_arb_fixed_new #( parameter inputs_p="inv"
       , .reqs_i  ( reqs_i & req_mask_r )
       , .grants_o( grants_o )
       );  
-
-  assign lock_o = lock_selected_lo;
+      
+  // lock_o signal keeps high as long as the arbiter is on lock
+  assign lock_o = (|grants_o) ? lock_selected_lo : |not_req_mask_r;
 
 endmodule
 
