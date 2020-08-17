@@ -123,7 +123,6 @@ module test_bsg;
           READY:
             begin
               yumi_from_dut = valid_to_dut;
-                    // TODO data_to_dut
               test_input_en = valid_to_dut;
               state_n = valid_to_dut ? GRANT : READY;
             end
