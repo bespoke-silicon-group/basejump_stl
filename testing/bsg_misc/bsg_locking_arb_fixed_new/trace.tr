@@ -7,54 +7,116 @@
 # xxxx  __000x _xxxx
 
 # Lock the highest channel
-# Send lock high, 1111
-0001__1000_1111
+# Send
+0001__1111_1111
 # Recv 
 0010__0001_1000
 
-# Unclock
-# Send lock low, 1111: unlock 
-0001__0000_1111
+# Send 
+0001__0111_0111
+# Recv nothing
+0010__0000_0000
+
+# Send 
+0001__1111_1111
+# Recv
+0010__0001_1000
+
+# Unclock the highest channel
+# Send 
+0001__0111_1111
 # Recv 
 0010__0000_1000
 
 # Lock the 2nd highest channel
-# Send lock high, 0111
-0001__0100_0111
+# Send
+0001__0111_0111
+# Recv 
+0010__0001_0100
+
+# Send
+0001__0011_0011
+# Recv nothing
+0010__0000_0000
+
+# Send
+0001__1011_1011
+# Recv nothing
+0010__0000_0000
+
+# Send
+0001__0111_0111
 # Recv 
 0010__0001_0100
 
 # Unlock
 # Send lock low, 0111
-0001__0000_0111
+0001__0011_0111
 # Recv 
 0010__0000_0100
 
 # Lock the 3rd highest channel
-# Send lock high, 0011
-0001__0010_0011
+# Send
+0001__0011_0011
+# Recv 
+0010__0001_0010
+
+# Send
+0001__0001_0001
+# Recv nothing
+0010__0000_0000
+
+# Send
+0001__1001_1001
+# Recv nothing
+0010__0000_0000
+
+# Send
+0001__0101_0101
+# Recv nothing
+0010__0000_0000
+
+# Send
+0001__0011_0011
 # Recv 
 0010__0001_0010
 
 # Unclock
 # Send lock low, 1111
-0001__0000_0011
+0001__0001_0011
 # Recv 
 0010__0000_0010
 
 # Lock the last channel
-# Send lock high, 0001
+# Send
 0001__0001_0001
 # Recv 
 0010__0001_0001
+
+# Send
+0001__0000_1000
+# Recv nothing
+0010__0000_0000
+
+# Send
+0001__0000_0100
+# Recv nothing
+0010__0000_0000
+
+# Send
+0001__0000_0010
+# Recv nothing
+0010__0000_0000
+
+# Send
+0001__0001_0001
+# Recv
+0010__0000_0001
 
 # Send lock low, 1111: unlock 
 0001__0000_00001
 # Recv 
 0010__0000_0001
-
-
-
 
 # Finish simulation
 0100__0000_0000

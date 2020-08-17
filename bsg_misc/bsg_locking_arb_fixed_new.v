@@ -31,7 +31,7 @@ module bsg_locking_arb_fixed_new #( parameter inputs_p="inv"
       ( .clk_i  ( clk_i )
       , .reset_i( reset_i | unlock) 
       , .en_i   ( (&req_mask_r) & (|grants_o) ) // update the lock when it is not locked & a req is updated
-      , .data_i ( ~grant_o )
+      , .data_i ( ~grants_o )
       , .data_o ( not_req_mask_r )
       );
 
