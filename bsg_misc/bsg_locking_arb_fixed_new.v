@@ -1,4 +1,5 @@
-`include "bsg_defines.v"
+// lock when lock and req
+// unlock when ~lock and req
 
 module bsg_locking_arb_fixed_new #( parameter inputs_p="inv"
                                  , parameter lo_to_hi_p=0

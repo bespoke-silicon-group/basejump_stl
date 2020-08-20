@@ -5,7 +5,7 @@ module test_bsg;
   localparam inputs_lp     = `INPUTS_P;
   localparam payload_width_lp = 2*inputs_lp;
   localparam rom_data_width_lp = payload_width_lp + 4;
-  localparam rom_addr_width_lp = 6
+  localparam rom_addr_width_lp = 6;
   localparam lo_to_hi_lp   = 0; // Priority Setting
 
   wire clk;
@@ -32,7 +32,7 @@ module test_bsg;
   logic [rom_addr_width_lp-1:0] addr_to_rom;
   logic [rom_data_width_lp-1:0] data_from_rom;
   logic [payload_width_lp-1:0] data_to_dut, data_from_dut;
-  logic valid_to_dut, yumi_from_dut
+  logic valid_to_dut, yumi_from_dut;
   logic valid_from_dut, ready_to_dut;
   logic result_true, result_false;
 
@@ -42,7 +42,7 @@ module test_bsg;
     $vcdplusautoflushon;
   end
 
-  trace_rom 
+  req_grant_trace_rom 
    #(.width_p(rom_data_width_lp)
    ,.addr_width_p(rom_addr_width_lp))
    the_trace_rom
@@ -74,7 +74,7 @@ module test_bsg;
       );
 
   bsg_dff_en
-   #(.width_p=(inputs_lp))
+   #(.width_p(inputs_lp))
    input_locks_register
     (.clk_i(clk)
     ,.data_i(data_to_dut[inputs_lp+:inputs_lp])
@@ -83,7 +83,7 @@ module test_bsg;
     );
 
   bsg_dff_en
-   #(.width_p=(inputs_lp))
+   #(.width_p(inputs_lp))
    input_reqs_register
     (.clk_i(clk)
     ,.data_i(data_to_dut[0+:inputs_lp])
@@ -111,7 +111,7 @@ module test_bsg;
 
         yumi_from_dut = '0; 
 
-        test_input_ready = '0
+        test_input_ready = '0;
         test_input_en = '0;
         
         state_n = state_r; 
@@ -131,8 +131,9 @@ module test_bsg;
               test_input_ready = 1'b1; // ready for the arbiter should keep high for a valid output
               valid_from_dut = ready_to_dut;
               data_from_dut    = {3'd0, test_output_lock, test_output_grants};
-              state_n = valid_from_dut ? READY : GRANT:
+              state_n = valid_from_dut ? READY : GRANT;
             end
+        endcase
      end
  
 
