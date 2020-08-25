@@ -1,5 +1,5 @@
 // lock when lock and req
-// unlock when ~lock and req
+// unlock when ~lock
 
 module bsg_locking_arb_fixed_new #( parameter inputs_p="inv"
                                  , parameter lo_to_hi_p=0
@@ -53,8 +53,8 @@ module bsg_locking_arb_fixed_new #( parameter inputs_p="inv"
     ,.sel_one_hot_i(grants_o)
     ,.data_o(lock_selected_lo)
     );
-  // lock_o signal keeps high as long as the arbiter is on lock
-  assign lock_o = (|grants_o) ? lock_selected_lo : is_locked;
+  // The lock_i can be passed to lock_o at the same cycle
+  assign lock_o = (is_locked) ? lock_onlocked_lo : lock_selected_lo;
 
 endmodule
 
