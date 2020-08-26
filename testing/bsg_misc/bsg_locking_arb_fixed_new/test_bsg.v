@@ -141,13 +141,15 @@ module test_bsg;
 
   bsg_locking_arb_fixed_new 
    #(.inputs_p(inputs_lp)
+   ,.unlock_type_p(0)
    ,.lo_to_hi_p(lo_to_hi_lp))
    DUT
     (.clk_i(clk)
     ,.reset_i(reset)
     ,.ready_i(test_input_ready)
 
-    ,.locks_i(test_input_locks_r)
+    ,.switch_lock_i(test_input_locks_r)
+    
     ,.reqs_i(test_input_reqs_r)
     ,.grants_o(test_output_grants)
     ,.lock_o(test_output_lock)
