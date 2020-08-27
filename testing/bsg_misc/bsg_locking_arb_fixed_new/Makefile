@@ -3,8 +3,15 @@ export BASEJUMP_STL_DIR = $(abspath ../../..)
 
 
 INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc/
-TRACE_ROM_V = req_grant_trace_rom.v
+DEFAULT_MODE = implicit
 
+ifeq ($(MODE),$(DEFAULT_MODE))
+	TRACE_ROM_V = implicit_trace_rom.v
+	UNLOCK_TYPE = 0
+else
+	TRACE_ROM_V = explicit_trace_rom.v
+	UNLOCK_TYPE = 1
+endif
 
 HIGHLIGHT = grep --color -E '^|Error|Warning|Implicit wire is used|Too few instance port connections|Port connection width mismatch|Width mismatch'
 
@@ -15,7 +22,7 @@ all: sim
 
 sim:
 	vcs +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
-		-sverilog -full64 -f sim.include $(INCDIR) $(TRACE_ROM_V) \
+		-sverilog +define+UNLOCK_TYPE_P=$(UNLOCK_TYPE) -full64 -f sim.include $(INCDIR) $(TRACE_ROM_V) \
 		-timescale=1ps/1ps +vcs+vcdpluson -l vcs.log \
 		| $(HIGHLIGHT)
 

@@ -22,7 +22,7 @@ module bsg_locking_arb_fixed_new #( parameter inputs_p="inv"
   wire [inputs_p-1:0] not_req_mask_r, req_mask_r;
   wire unlock;  
   
-  if (unlock_type_p == 0)
+  if (unlock_type_p == 0) // Implicit operating mode
     begin
       wire is_locked = |not_req_mask_r;
       wire lock_onlocked_lo, lock_selected_lo;
@@ -44,7 +44,7 @@ module bsg_locking_arb_fixed_new #( parameter inputs_p="inv"
       // The lock_i can be passed to lock_o at the same cycle
       assign lock_o = (is_locked) ? lock_onlocked_lo : lock_selected_lo;
     end
-  else
+  else  // Explicit operating mode
     begin
       assign unlock = switch_lock_i;
       assign lock_o = 1'b0;

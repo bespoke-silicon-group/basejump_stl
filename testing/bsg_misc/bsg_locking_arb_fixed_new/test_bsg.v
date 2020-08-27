@@ -1,9 +1,11 @@
-`define INPUTS_P 4
+`define UNLOCK_TYPE_P 0
 
 module test_bsg;
   localparam cycle_time_lp = 20;
-  localparam inputs_lp     = `INPUTS_P;
+  localparam inputs_lp     = 4;
+  localparam unlock_type_lp = `UNLOCK_TYPE_P;
   localparam payload_width_lp = 2*inputs_lp;
+  localparam num_locks_lp = (unlock_type_lp == 0) ? inputs_lp : 1;
   localparam rom_data_width_lp = payload_width_lp + 4;
   localparam rom_addr_width_lp = 6;
   localparam lo_to_hi_lp   = 0; // Priority Setting
@@ -26,7 +28,8 @@ module test_bsg;
     );
 
   logic test_input_ready, test_input_en;
-  logic [inputs_lp-1:0] test_input_reqs_r, test_input_locks_r, test_output_grants;
+  logic [inputs_lp-1:0] test_input_reqs_r, test_output_grants;
+  logic [num_locks_lp-1:0] test_input_locks_r;
   logic test_output_lock;
 
   logic [rom_addr_width_lp-1:0] addr_to_rom;
@@ -42,13 +45,26 @@ module test_bsg;
     $vcdplusautoflushon;
   end
 
-  req_grant_trace_rom 
-   #(.width_p(rom_data_width_lp)
-   ,.addr_width_p(rom_addr_width_lp))
-   the_trace_rom
-    (.addr_i(addr_to_rom)
-    ,.data_o(data_from_rom)
-    );
+  if (unlock_type_lp == 0)
+    begin: implicit
+    implicit_trace_rom 
+     #(.width_p(rom_data_width_lp)
+     ,.addr_width_p(rom_addr_width_lp))
+     the_trace_rom
+      (.addr_i(addr_to_rom)
+      ,.data_o(data_from_rom)
+      );
+    end
+  else
+    begin: explicit
+      explicit_trace_rom 
+      #(.width_p(rom_data_width_lp)
+      ,.addr_width_p(rom_addr_width_lp))
+      the_trace_rom
+        (.addr_i(addr_to_rom)
+        ,.data_o(data_from_rom)
+        );
+    end
 
   bsg_trace_replay
    #(.payload_width_p(payload_width_lp) 
@@ -74,10 +90,10 @@ module test_bsg;
       );
 
   bsg_dff_en
-   #(.width_p(inputs_lp))
+   #(.width_p(num_locks_lp))
    input_locks_register
     (.clk_i(clk)
-    ,.data_i(data_to_dut[inputs_lp+:inputs_lp])
+    ,.data_i(data_to_dut[inputs_lp+:num_locks_lp])
     ,.en_i(test_input_en)
     ,.data_o(test_input_locks_r)
     );
@@ -141,7 +157,7 @@ module test_bsg;
 
   bsg_locking_arb_fixed_new 
    #(.inputs_p(inputs_lp)
-   ,.unlock_type_p(0)
+   ,.unlock_type_p(unlock_type_lp)
    ,.lo_to_hi_p(lo_to_hi_lp))
    DUT
     (.clk_i(clk)

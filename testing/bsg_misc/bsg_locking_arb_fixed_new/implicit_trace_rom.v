@@ -1,4 +1,4 @@
-  module req_grant_trace_rom #( parameter width_p = "inv"
+  module implicit_trace_rom #( parameter width_p = "inv"
                              , parameter addr_width_p = 6
                              )
     ( input        [addr_width_p-1:0] addr_i
