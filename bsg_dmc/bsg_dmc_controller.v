@@ -480,7 +480,7 @@ module bsg_dmc_controller
       cmd_wr_tick <= 0;
     else if(shoot && n_cmd == WRITE)
       cmd_wr_tick <= 0;
-    else if(cmd_tick != 8'hf)
+    else if(cmd_wr_tick != 8'hf)
       cmd_wr_tick <= cmd_wr_tick + 1;
   end
 
@@ -489,7 +489,7 @@ module bsg_dmc_controller
       cmd_rd_tick <= 0;
     else if(shoot && n_cmd == READ)
       cmd_rd_tick <= 0;
-    else if(cmd_tick != 8'hf)
+    else if(cmd_rd_tick != 8'hf)
       cmd_rd_tick <= cmd_rd_tick + 1;
   end
 
