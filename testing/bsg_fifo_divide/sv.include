@@ -1,0 +1,17 @@
+../../bsg_dataflow/bsg_two_fifo.v
+../../bsg_mem/bsg_mem_1r1w.v
+../../bsg_mem/bsg_mem_1r1w_synth.v
+../../bsg_misc/bsg_counter_clear_up_one_hot.v
+../../bsg_misc/bsg_strobe.v
+../../bsg_misc/bsg_dff.v
+../../bsg_misc/bsg_xnor.v
+../../bsg_misc/bsg_muxi2_gatestack.v
+../../bsg_misc/bsg_nand.v
+../../bsg_misc/bsg_nor3.v
+../../bsg_misc/bsg_reduce.v
+../../bsg_misc/bsg_buf.v
+../../bsg_misc/bsg_counter_clock_downsample.v
+../../bsg_test/bsg_nonsynth_clock_gen.v
+../../bsg_test/bsg_nonsynth_reset_gen.v
+bsg_fifo_divide.v
+testbench.v
