@@ -1,4 +1,24 @@
 
+// This module is useful for connecting two clock domains where the faster is a
+//   synchronous multiple of the slower domain. This allows for maximum
+//   throughput between the domains i.e. 1 transaction per slow clock.
+// The interface is demanding on both sides. Most likely, this will connect
+//   to a fifo on either side, but in the case of connecting two already
+//   helpful modules, absorbing the fifos here would result in an additional
+//   two cycles of latency
+//
+// Parameters:
+//   - x_period_p: the clock period of each clock. Only the ratio is
+//       important, so this may be absolute or relative.
+//
+//  Notes:
+//    - Only a strict clock period multiple is currently supported. However,
+//        this module could be extended to use the LCM of the frequencies
+//    - This implementation leaves only a fast clock period of latency to
+//        actually complete the transaction. This should be acceptable for
+//        small multiples, but for large multiples, it may be desirable to
+//        latch the output signal to the faster clock, to give more slack.
+//        Another solution would be to set a false path on the data line
 module bsg_fifo_divide
  #(parameter a_period_p   = "inv"
    , parameter b_period_p = "inv"
