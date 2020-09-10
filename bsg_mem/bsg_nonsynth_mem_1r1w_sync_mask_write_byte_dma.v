@@ -5,6 +5,8 @@
  *
  */
 
+`include "bsg_defines.v"
+
 module bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma
   #(parameter width_p="inv"
     , parameter els_p=-1

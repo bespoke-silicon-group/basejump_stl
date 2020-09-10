@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_array_reverse 
   #(width_p="inv"
     , els_p="inv")

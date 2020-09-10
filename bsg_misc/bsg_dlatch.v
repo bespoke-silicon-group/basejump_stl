@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_dlatch #(parameter width_p="inv"
                    ,parameter i_know_this_is_a_bad_idea_p=0
                    )

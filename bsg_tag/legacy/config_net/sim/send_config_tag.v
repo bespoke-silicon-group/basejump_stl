@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 `ifndef CONFIG_DEFS_V
 `include config_defs.v
 `endif

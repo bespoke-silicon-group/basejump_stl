@@ -1,4 +1,6 @@
 
+`include "bsg_defines.v"
+
 module bsg_mux_one_hot #(parameter width_p="inv"
                          , els_p=1
 			 , harden_p=1

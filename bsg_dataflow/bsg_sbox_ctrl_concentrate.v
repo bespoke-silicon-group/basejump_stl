@@ -48,6 +48,8 @@
  *
  */
 
+`include "bsg_defines.v"
+
 module bsg_sbox_ctrl_concentrate #(parameter width_p=4, lg_width_p=$bits(width_p))
    (  input  [width_p-1:0] vec_i
       , output [lg_width_p-1:0] fwd_perm_o  [width_p-1:0]

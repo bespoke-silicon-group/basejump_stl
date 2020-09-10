@@ -39,6 +39,8 @@
 //
 
 
+`include "bsg_defines.v"
+
 module bsg_flow_convert
   #(parameter send_v_and_ready_p    = 0
     , parameter send_v_then_yumi_p  = 0

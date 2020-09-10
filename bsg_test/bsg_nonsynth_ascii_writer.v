@@ -2,6 +2,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 module bsg_nonsynth_ascii_writer
   #(parameter width_p      = "inv"
     , parameter values_p   = "inv"

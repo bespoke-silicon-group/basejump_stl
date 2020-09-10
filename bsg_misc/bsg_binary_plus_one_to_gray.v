@@ -40,6 +40,9 @@
  111  111       11     0111      0100              100
  */
 
+
+`include "bsg_defines.v"
+
 module bsg_binary_plus_one_to_gray #(parameter width_p = -1)
    (input [width_p-1:0] binary_i
     , output [width_p-1:0] gray_o

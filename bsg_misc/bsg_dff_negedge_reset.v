@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_dff_negedge_reset #(width_p=-1, harden_p=0)
    (input   clk_i
    ,input  reset_i

@@ -57,6 +57,8 @@
 // The parameter count_negedge_p determines whether we count
 // on negedge edge or positive edge of the clock.
 
+`include "bsg_defines.v"
+
 module bsg_async_credit_counter #(parameter max_tokens_p = "inv"
                                   , parameter lg_credit_to_token_decimation_p = "inv"
                                   , parameter count_negedge_p = 0

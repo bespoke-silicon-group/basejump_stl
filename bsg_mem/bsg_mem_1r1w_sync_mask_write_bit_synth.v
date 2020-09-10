@@ -8,6 +8,8 @@
 // they should use bsg_mem_1r1w_sync_mask_write_bit.
 
 
+`include "bsg_defines.v"
+
 module bsg_mem_1r1w_sync_mask_write_bit_synth #(parameter width_p=-1
 						, parameter els_p=-1
 						, parameter read_write_same_addr_p=0

@@ -17,6 +17,8 @@
  *
  */
 
+`include "bsg_defines.v"
+
 `include "bsg_fpu_defines.vh"
 
 module bsg_fpu_f2i

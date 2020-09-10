@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_transpose #(width_p="inv"
 		       ,els_p="inv"
 		       ) (input    [els_p-1:0  ][width_p-1:0] i

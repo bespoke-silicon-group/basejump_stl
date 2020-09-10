@@ -9,6 +9,8 @@
 //default: FSB  on Right, 
 //         NODE on Left
 
+`include "bsg_defines.v"
+
 `ifndef FSB_LEGACY 
 module  bsg_fsb_node_async_buffer 
   #(  parameter ring_width_p="inv"

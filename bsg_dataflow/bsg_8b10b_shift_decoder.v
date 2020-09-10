@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_8b10b_shift_decoder
   ( input   clk_i
   , input   data_i

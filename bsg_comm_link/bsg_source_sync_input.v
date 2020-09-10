@@ -46,6 +46,8 @@
 // may be on the core critical path.
 //
 
+`include "bsg_defines.v"
+
 module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
                                , parameter lg_credit_to_token_decimation_p=3
                                , parameter channel_width_p=8

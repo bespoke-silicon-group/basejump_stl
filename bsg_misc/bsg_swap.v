@@ -4,6 +4,8 @@
  *  @author tommy
  */
 
+`include "bsg_defines.v"
+
 module bsg_swap
   #(parameter width_p="inv")
   (

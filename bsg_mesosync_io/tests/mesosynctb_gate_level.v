@@ -6,6 +6,8 @@
 // on config tag, delays of values not multiple of clock cycles
 // are selected.
 
+`include "bsg_defines.v"
+
 `include "../src/definitions.v"
 `define half_period 16
 parameter bit_num_p = 6;

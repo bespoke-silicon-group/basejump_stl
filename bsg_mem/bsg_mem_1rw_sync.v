@@ -4,6 +4,8 @@
 // Only one read or one write may be done per cycle.
 //
 
+`include "bsg_defines.v"
+
 module bsg_mem_1rw_sync #(parameter width_p=-1
                           , parameter els_p=-1
                           , parameter latch_last_read_p=0

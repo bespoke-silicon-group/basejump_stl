@@ -11,6 +11,8 @@
 // value of default_clk_per_p.
 //
 
+`include "bsg_defines.v"
+
 module bsg_nonsynth_clock_gen_plusarg #( parameter default_clk_per_p="inv" )
 (
   output logic o

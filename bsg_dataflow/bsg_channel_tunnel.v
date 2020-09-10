@@ -59,6 +59,8 @@
 //    implementations of virtual fifos
 //
 
+`include "bsg_defines.v"
+
 module bsg_channel_tunnel #(parameter width_p        = 1
                             , num_in_p               = "inv"
                             , remote_credits_p       = "inv"

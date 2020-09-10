@@ -63,6 +63,8 @@
 
 // mbt: note bsg_fifo_two_port_bank code moved to bsg_fifo_1r1w_pseudo_large
 
+`include "bsg_defines.v"
+
 module bsg_fifo_1r1w_large_banked #(parameter width_p         = -1
 				    , parameter els_p         = -1
                                     )

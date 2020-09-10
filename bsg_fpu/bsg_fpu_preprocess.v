@@ -4,6 +4,8 @@
  *	@author Tommy Jung
  */
 
+`include "bsg_defines.v"
+
 module bsg_fpu_preprocess
   #(parameter e_p = "inv"
     , parameter m_p = "inv"

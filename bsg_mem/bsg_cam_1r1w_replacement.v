@@ -10,6 +10,8 @@
 //  - Allocation is performed logically before the read update
 //  - If the read and alloc refer to the same set, all is well,
 //       since the LRU update is idempotent.
+`include "bsg_defines.v"
+
 module bsg_cam_1r1w_replacement
  #(parameter els_p      = 2
    // Which replacement scheme to use

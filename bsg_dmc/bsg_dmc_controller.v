@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_dmc_controller
   import bsg_dmc_pkg::*;
  #(parameter  ui_addr_width_p      = "inv"

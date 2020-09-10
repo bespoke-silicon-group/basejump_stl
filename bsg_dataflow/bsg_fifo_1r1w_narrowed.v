@@ -6,6 +6,8 @@
 // of sending the data. ready_THEN_valid_p determined input
 // handshake protocol.
 
+`include "bsg_defines.v"
+
 module bsg_fifo_1r1w_narrowed 
                    #( parameter width_p            = -1
                     , parameter els_p              = -1 

@@ -18,6 +18,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 `ifndef BSG_NONSYNTH_MIXIN_MOTHERBOARD_module_name
 ERROR in bsg_nonsynth_mixin_motherboard.v: BSG_NONSYNTH_MIXIN_MOTHERBOARD_module_name must be defined
 `endif

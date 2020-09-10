@@ -1,6 +1,8 @@
 /////////////////////////////////
 // bsg_nonsynth_dramsim3_map.v //
 /////////////////////////////////
+`include "bsg_defines.v"
+
 module bsg_nonsynth_dramsim3_map
   import bsg_dramsim3_pkg::*;
   #(parameter channel_addr_width_p="inv"

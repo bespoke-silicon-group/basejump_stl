@@ -7,6 +7,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_dff_reset_set_clear
   #(parameter width_p="inv"
     , parameter clear_over_set_p=0 // if 1, clear overrides set.

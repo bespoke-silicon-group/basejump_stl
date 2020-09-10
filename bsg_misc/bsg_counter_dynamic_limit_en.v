@@ -7,6 +7,8 @@
 //
 // The counter outputs 0 ~ (limit-1) value
 //module renamed from bsg_counter_en_overflow
+`include "bsg_defines.v"
+
 module bsg_counter_dynamic_limit_en #(parameter width_p = -1)
 
             ( input                      clk_i

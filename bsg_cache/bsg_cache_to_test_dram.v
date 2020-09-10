@@ -8,6 +8,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_cache_to_test_dram 
   import bsg_cache_pkg::*;
   #(parameter num_cache_p="inv"

@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_fsb_to_htif_connector
   import bsg_fsb_pkg::RingPacketType;
 

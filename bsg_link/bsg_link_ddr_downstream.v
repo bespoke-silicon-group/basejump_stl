@@ -21,6 +21,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 module bsg_link_ddr_downstream
 
  #(// Core data width

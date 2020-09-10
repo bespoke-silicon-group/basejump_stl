@@ -21,6 +21,8 @@
 //`include "definitions.v"
 //`endif
 
+`include "bsg_defines.v"
+
 module bsg_mesosync_input
                   #( parameter cfg_tag_base_id_p = "inv"
                    , parameter ch1_width_p       = "inv"

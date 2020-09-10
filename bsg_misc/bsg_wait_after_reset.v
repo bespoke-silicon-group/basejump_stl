@@ -5,6 +5,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 module bsg_wait_after_reset  #(parameter lg_wait_cycles_p="inv")
    (input reset_i
     , input clk_i

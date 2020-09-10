@@ -3,6 +3,8 @@
 // MBT 7/7/16
 //
 
+`include "bsg_defines.v"
+
 module bsg_fifo_tracker #(parameter els_p           = -1
                           , ptr_width_lp = `BSG_SAFE_CLOG2(els_p)
                           )

@@ -6,6 +6,8 @@
  *  packet = {payload, length, cord}
  */
 
+`include "bsg_defines.v"
+
 `include "bsg_noc_links.vh"
 `include "bsg_wormhole_router.vh"
 

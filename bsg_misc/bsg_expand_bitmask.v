@@ -19,6 +19,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_expand_bitmask #(parameter in_width_p="inv", expand_p="inv")
 (
   input [in_width_p-1:0] i

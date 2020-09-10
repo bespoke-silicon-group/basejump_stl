@@ -7,6 +7,8 @@
 //
 
 
+`include "bsg_defines.v"
+
 module bsg_source_sync_channel_control_master_master
   #(parameter  link_channels_p  = "inv"
     , parameter tests_p          = "inv"

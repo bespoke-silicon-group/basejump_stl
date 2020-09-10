@@ -44,6 +44,8 @@
 // We add a one bit register to track whether the shifted out LSB of the result
 // are all zeros
 //
+`include "bsg_defines.v"
+
 module bsg_imul_iterative  #( width_p = 32)
     (input                  clk_i
 	,input                  reset_i

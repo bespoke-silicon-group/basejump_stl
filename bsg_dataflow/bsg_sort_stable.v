@@ -12,6 +12,8 @@
 // NOTE: This code is UNTESTED.
 //
 
+`include "bsg_defines.v"
+
 module bsg_sort_stable #(parameter width_p="inv",
                          items_p = "inv"
                          , t_p   = width_p-1

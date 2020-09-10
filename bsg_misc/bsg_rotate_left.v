@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_rotate_left #(width_p=-1)
    (input [width_p-1:0] data_i
     , input [`BSG_SAFE_CLOG2(width_p)-1:0] rot_i

@@ -17,6 +17,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 module bsg_assembler_in #(parameter width_p="inv"
                            ,parameter num_in_p="inv"
                            ,parameter num_out_p="inv"

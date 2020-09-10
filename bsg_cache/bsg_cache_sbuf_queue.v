@@ -9,6 +9,8 @@
  *  @author tommy
  */
 
+`include "bsg_defines.v"
+
 module bsg_cache_sbuf_queue
   #(parameter width_p="inv")
   (

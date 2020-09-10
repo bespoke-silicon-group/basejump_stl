@@ -11,6 +11,8 @@
 // clock domains.
 //
 
+`include "bsg_defines.v"
+
 module bsg_async_fifo #(parameter   lg_size_p = "inv"
                         , parameter   width_p = "inv"
                         // we allow the control bits to be separated from

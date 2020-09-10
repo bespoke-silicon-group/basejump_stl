@@ -7,6 +7,8 @@
 // all incoming packets.
 //
 
+`include "bsg_defines.v"
+
 module bsg_front_side_bus_hop_in_no_fc #(parameter width_p="inv")
   ( input   clk_i
   , input   reset_i

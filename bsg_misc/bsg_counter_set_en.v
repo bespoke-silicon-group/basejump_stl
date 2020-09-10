@@ -2,6 +2,8 @@
  *  bsg_counter_set_en.v
  */
 
+`include "bsg_defines.v"
+
 module bsg_counter_set_en
   #(parameter max_val_p="inv"
     , parameter lg_max_val_lp=`BSG_WIDTH(max_val_p)

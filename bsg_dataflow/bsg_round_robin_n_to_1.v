@@ -13,6 +13,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 module bsg_round_robin_n_to_1 #(parameter width_p = -1
                                 ,parameter num_in_p = -1
                                 ,parameter strict_p = "inv" 

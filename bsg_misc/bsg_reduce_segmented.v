@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_reduce_segmented #(parameter segments_p = "inv"
                               ,parameter segment_width_p = "inv"
 

@@ -18,6 +18,8 @@
 //
 // lg_start_credits_p should be consistent with the paired source_sync_output
 //
+`include "bsg_defines.v"
+
 module bsg_source_sync_output
      #(
        parameter   lg_start_credits_p              = 5

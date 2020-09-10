@@ -6,6 +6,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 module bsg_wormhole_router_decoder_dor
 #(parameter dims_p=2
   // cord_dims_p is normally the same as dims_p.  However, the override allows users to pass

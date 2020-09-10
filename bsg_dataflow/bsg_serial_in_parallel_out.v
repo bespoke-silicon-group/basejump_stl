@@ -15,6 +15,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 module bsg_serial_in_parallel_out #(parameter   width_p   = -1
                                     , parameter els_p     = -1
                                     , parameter out_els_p = els_p)

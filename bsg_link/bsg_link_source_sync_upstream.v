@@ -32,6 +32,8 @@
 //
 
 
+`include "bsg_defines.v"
+
 module bsg_link_source_sync_upstream
 
      #(  parameter channel_width_p                 = 16

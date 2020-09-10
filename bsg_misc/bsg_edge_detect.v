@@ -1,4 +1,6 @@
 
+`include "bsg_defines.v"
+
 module bsg_edge_detect
  #(parameter falling_not_rising_p = 0)
   (input     clk_i

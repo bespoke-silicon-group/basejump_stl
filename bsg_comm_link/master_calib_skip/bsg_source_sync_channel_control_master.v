@@ -14,6 +14,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
                                                  , parameter lg_token_width_p = 6
                                                  , parameter lg_out_prepare_hold_cycles_p = 6

@@ -32,6 +32,8 @@
 // fields correctly, then set the data to all 1's.
 //
 
+`include "bsg_defines.v"
+
 module bsg_tag_trace_replay
 
    #( parameter rom_addr_width_p    = -1

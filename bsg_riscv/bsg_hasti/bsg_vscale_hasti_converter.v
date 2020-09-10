@@ -1,5 +1,7 @@
 import bsg_vscale_pkg::*;
 
+`include "bsg_defines.v"
+
 module bsg_vscale_hasti_converter
   ( input clk_i
    ,input reset_i

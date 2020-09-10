@@ -1,4 +1,6 @@
 
+`include "bsg_defines.v"
+
 module bsg_fsb_to_nasti_master_connector
 import bsg_nasti_pkg::bsg_nasti_addr_channel_s;
 import bsg_nasti_pkg::bsg_nasti_write_data_channel_s;

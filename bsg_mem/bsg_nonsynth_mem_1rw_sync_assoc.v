@@ -8,6 +8,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_nonsynth_mem_1rw_sync_assoc
   #(parameter width_p="inv"
     , parameter addr_width_p="inv"

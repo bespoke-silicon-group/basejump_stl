@@ -25,6 +25,8 @@
 // Let the hardware designer beware.
 
 
+`include "bsg_defines.v"
+
 module bsg_front_side_bus_hop_in
 
   #(parameter     width_p="inv"

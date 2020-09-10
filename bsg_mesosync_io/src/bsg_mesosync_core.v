@@ -9,6 +9,8 @@
 // of mesosynchronous channel callibration. Operation mode is determined
 // by line_ready_i signal.
 
+`include "bsg_defines.v"
+
 module bsg_mesosync_core #( parameter width_p          = "inv"
                           , parameter els_p            = "inv"
                           , parameter credit_initial_p = "inv"

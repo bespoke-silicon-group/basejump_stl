@@ -4,6 +4,8 @@
  *  @param segment_width_p width of each segment.
  */
 
+`include "bsg_defines.v"
+
 module bsg_mux_segmented #(parameter segments_p="inv"
                           ,parameter segment_width_p="inv"
                           ,parameter data_width_lp=segments_p*segment_width_p)

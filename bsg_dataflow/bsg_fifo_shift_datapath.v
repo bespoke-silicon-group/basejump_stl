@@ -5,6 +5,8 @@
 //
 
 
+`include "bsg_defines.v"
+
 module bsg_fifo_shift_datapath #(parameter  width_p    = "inv"
                                  ,parameter els_p      = "inv"
                                  ,parameter default_p  = { (width_p) {1'b0} }

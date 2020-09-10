@@ -13,6 +13,8 @@
 // is retry->valid.
 //
 
+`include "bsg_defines.v"
+
 module bsg_murn_converter
   #(parameter nodes_p="inv"
     , parameter ring_width_p="inv"

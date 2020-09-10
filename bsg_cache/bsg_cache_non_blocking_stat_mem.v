@@ -8,6 +8,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_cache_non_blocking_stat_mem
   import bsg_cache_non_blocking_pkg::*;
   #(parameter ways_p="inv"

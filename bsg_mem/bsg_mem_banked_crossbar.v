@@ -6,6 +6,8 @@
 * bsg_mem_banked_crossbar_control_o_by_i 
 **********************************/
 
+`include "bsg_defines.v"
+
 module bsg_mem_banked_crossbar_control_o_by_i 
   #( parameter i_els_p     = -1
     ,parameter o_els_p     = -1

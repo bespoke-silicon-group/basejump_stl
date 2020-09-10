@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_flatten_2D_array #(parameter   width_p = -1
                               , parameter items_p = -1)
    (input [width_p-1:0]            i [items_p-1:0]
