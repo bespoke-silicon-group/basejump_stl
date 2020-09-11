@@ -11,6 +11,8 @@ Added the Hold logic by Shaolin Xie(shawnless.xie@gmail.com), 12/09/2016
     more priorities.
 """
 
+from __future__ import * 
+
 import sys, math
 
 def calculate_grants(last, reqs_w):
@@ -46,31 +48,31 @@ def print_hold_on_logic(last_w, reqs_w):
     """
     Print the logic of the hold on logic 
     """
-    print """
-if ( hold_on_sr_p ) begin """
-    print """   
+    print("""
+if ( hold_on_sr_p ) begin """)
+    print("""   
     always_comb begin
-        unique casez( last_r )"""           
+        unique casez( last_r )""")           
     for last_r in range(reqs_w ):
         last_r_str = bin(last_r)[2:].zfill(last_w);
         req_str    = get_single_request_str(last_r, reqs_w)
         #Full cases
         if( (last_r == ( (1<< last_w) -1 ) ) & (last_r == (reqs_w-1) ) ):
-            print """           default: hold_on_sr = ( reqs_i == %d'b%s );"""%( reqs_w, req_str)
+            print("""           default: hold_on_sr = ( reqs_i == %d'b%s );"""%( reqs_w, req_str))
         #Not Full cases
         else : 
-            print """           %d'b%s : hold_on_sr = ( reqs_i == %d'b%s );"""%( last_w, last_r_str, reqs_w, req_str)
+            print("""           %d'b%s : hold_on_sr = ( reqs_i == %d'b%s );"""%( last_w, last_r_str, reqs_w, req_str))
 
     #Not full cases
     if( (1<< last_w ) != reqs_w ):
-        print """           default : hold_on_sr = 1'b0;"""
+        print("""           default : hold_on_sr = 1'b0;""")
 
-    print """       endcase
+    print("""       endcase
     end //end of always_comb
 
 end else begin:not_hold_on_sr_p
     assign hold_on_sr = '0;
-end //end of hold_on_sr_p """ 
+end //end of hold_on_sr_p """) 
 
 ################################################################################
 #    Logic for priority reset logic
@@ -83,28 +85,28 @@ def print_reset_on_logic(reqs_w):
 
     req_str= get_single_request_str(0, reqs_w)
 
-    print """
+    print("""
 if ( reset_on_sr_p ) begin:reset_on_%d 
-    assign reset_on_sr = ( reqs_i == %d'b%s ) """%( reqs_w,reqs_w, req_str)
+    assign reset_on_sr = ( reqs_i == %d'b%s ) """%( reqs_w,reqs_w, req_str))
 
     for curr_r in range(1, reqs_w):
         req_str= get_single_request_str(curr_r, reqs_w)
-        print """                       | ( reqs_i == %d'b%s ) """ %(reqs_w, req_str )
+        print("""                       | ( reqs_i == %d'b%s ) """ %(reqs_w, req_str ))
     
-    print "                       ;"
-    print """
+    print("                       ;")
+    print("""
 end else begin:not_reset_on_sr_p
     assign reset_on_sr = '0;
-end //end of reset_on_sr_p """ 
+end //end of reset_on_sr_p """) 
 max_reqs = 0 # no. of inputs
 try:
     assert len(sys.argv) == 2
     max_reqs = int(sys.argv[1])
 except:
-    print "UsageError: bsg_round_robin_arb.py <max no. of channels>"
+    print("UsageError: bsg_round_robin_arb.py <max no. of channels>")
     sys.exit()
 
-print """// Round robin arbitration unit
+print("""// Round robin arbitration unit
 
 // Automatically generated using bsg_round_robin_arb.py
 // DO NOT MODIFY
@@ -118,14 +120,14 @@ print """// Round robin arbitration unit
 // yumi_i       - Whether to advance "least priority" pointer to the selected item
 //                in some typical use cases, grants_en_i comes from a downstream consumer to indicate readiness;
 //                this can be used with v_o to implement ready/valid protocol at both producer (fed into yumi_i) and consumer
-"""
+""")
 
-print """module bsg_round_robin_arb #(inputs_p      = %s
+print("""module bsg_round_robin_arb #(inputs_p      = %s
                                      ,lg_inputs_p   =`BSG_SAFE_CLOG2(inputs_p)
                                      ,reset_on_sr_p = 1'b0
-                                     ,hold_on_sr_p  = 1'b0 )""" % '''-1'''
+                                     ,hold_on_sr_p  = 1'b0 )""" % '''-1''')
 
-print """    (input clk_i
+print("""    (input clk_i
     , input reset_i
     , input grants_en_i // whether to suppress grants_o
 
@@ -146,10 +148,10 @@ print """    (input clk_i
 logic [lg_inputs_p-1:0] last, last_n, last_r;
 logic hold_on_sr, reset_on_sr;
 
-"""
+""")
 
 for reqs_w in range(1, max_reqs+1):
-    print """
+    print("""
 if(inputs_p == %d)
 begin: inputs_%d
 
@@ -157,15 +159,15 @@ logic [%d-1: 0 ] sel_one_hot_n;
 
 always_comb
 begin
-  unique casez({last_r, reqs_i})""" % (reqs_w, reqs_w, reqs_w)
+  unique casez({last_r, reqs_i})""" % (reqs_w, reqs_w, reqs_w))
 
     last_w = int(math.ceil(math.log(reqs_w)/math.log(2))) if (reqs_w!=1) else 1
 #    print "    %d'b"%(1+last_w+reqs_w) + "0" + "_" + "?"*last_w + "_" + "?"*reqs_w + ":"\
 #            , "begin sel_one_hot_n="\
 #            , "%d'b"%reqs_w + "0"*reqs_w + "; tag_o = (lg_inputs_p) ' (0); end // X"
-    print "    %d'b"%(last_w+reqs_w) + "?"*last_w + "_" + "0"*reqs_w + ":"\
+    print("    %d'b"%(last_w+reqs_w) + "?"*last_w + "_" + "0"*reqs_w + ":"\
             , "begin sel_one_hot_n ="\
-            , "%d'b"%reqs_w + "0"*reqs_w + "; tag_o = (lg_inputs_p) ' (0); end // X"
+            , "%d'b"%reqs_w + "0"*reqs_w + "; tag_o = (lg_inputs_p) ' (0); end // X")
     
     grants = {}
     for i in range(reqs_w):
@@ -173,29 +175,29 @@ begin
 
     for key in grants:
         for req in grants[key]:
-            print "    %d'b"%(last_w+reqs_w) + bin(key)[2:].zfill(last_w)\
+            print("    %d'b"%(last_w+reqs_w) + bin(key)[2:].zfill(last_w)\
                     + "_" + req[0] + ":"\
                     , "begin sel_one_hot_n="\
-                    , "%d'b"%reqs_w + req[1] + "; tag_o = (lg_inputs_p) ' ("+str(req[1][::-1].index('1'))+"); end"
+                    , "%d'b"%reqs_w + req[1] + "; tag_o = (lg_inputs_p) ' ("+str(req[1][::-1].index('1'))+"); end")
 
-    print """    default: begin sel_one_hot_n= {%d{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X 
+    print("""    default: begin sel_one_hot_n= {%d{1'bx}}; tag_o = (lg_inputs_p) ' (0); end // X 
   endcase
-end """% (reqs_w) 
+end """% (reqs_w)) 
     
-    print """
+    print("""
 assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {%d{grants_en_i}} ;   
-    """% (reqs_w)
+    """% (reqs_w))
 
     print_hold_on_logic(last_w, reqs_w)
 
     print_reset_on_logic(reqs_w)
 
 
-    print """
-end: inputs_%d""" % (reqs_w) 
+    print("""
+end: inputs_%d""" % (reqs_w)) 
 
-print """
+print("""
 
 assign v_o = | reqs_i ;
 
@@ -217,4 +219,4 @@ else
       last_r <= (reset_i) ? (lg_inputs_p)'(0):last_n;
   end
 
-endmodule"""
+endmodule""")
