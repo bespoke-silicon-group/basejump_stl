@@ -118,6 +118,9 @@ print """// Round robin arbitration unit
 // yumi_i       - Whether to advance "least priority" pointer to the selected item
 //                in some typical use cases, grants_en_i comes from a downstream consumer to indicate readiness;
 //                this can be used with v_o to implement ready/valid protocol at both producer (fed into yumi_i) and consumer
+
+`include "bsg_defines.v"
+
 """
 
 print """module bsg_round_robin_arb #(inputs_p      = %s
