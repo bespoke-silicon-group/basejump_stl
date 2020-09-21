@@ -149,11 +149,13 @@ module bsg_wormhole_stream_out
 
   assign link_ready_o = is_hdr ? hdr_ready_lo : data_ready_lo;
 
+  //synopsys translate_off
   if (hdr_width_p % flit_width_p != 0)
     $fatal("Header width: %d must be multiple of flit width: %d", hdr_width_p, flit_width_p);
 
   if ((pr_data_width_p % flit_width_p != 0) && (flit_width_p % pr_data_width_p != 0))
     $fatal("Protocol data width: %d must be multiple of flit width: %d", pr_data_width_p, flit_width_p);
+  //synopsys translate_on
 
 endmodule
 
