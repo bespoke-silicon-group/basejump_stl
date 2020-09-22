@@ -61,7 +61,7 @@ module testbench;
      );
   
   logic mid_v_li, mid_ready_lo;
-  bsg_fifo_divide
+  bsg_fifo_periodic
    #(.a_period_p(1), .b_period_p(4))
    input_divide
     (.a_clk_i(clk_1x)
