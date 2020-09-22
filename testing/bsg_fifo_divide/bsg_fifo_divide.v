@@ -6,10 +6,17 @@
 //   to a fifo on either side, but in the case of connecting two already
 //   helpful modules, absorbing the fifos here would result in an additional
 //   two cycles of latency
+// IMPORTANT: The 'a' and 'b' clocks are NOT asynchronous. One must be
+//   generated from the other. In Synopsys tools, the command is approximately
+//   create_generated_clock \
+//      -name "clk_2x" \
+//      -source [get_pins "clk_1x"] \
+//      -divide_by 2 \
+//      [get_pins "clk_2x"]
 //
 // Parameters:
-//   - x_period_p: the clock period of each clock. Only the ratio is
-//       important, so this may be absolute or relative.
+//   - x_period_p: the clock period of each clock. Only a relative (1:N) ratio
+//       is currently supported
 //
 //  Notes:
 //    - Only a strict clock period multiple is currently supported. However,
