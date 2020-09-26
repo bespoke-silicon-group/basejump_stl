@@ -5,6 +5,8 @@
 // 1000     --> 3, v=1
 // 0000     --> 0, v=0
 // O*1O*1O* --> undefined
+`include "bsg_defines.v"
+
 	
 // we implement at this as a parallel prefix computation
 // it is basically a big, clever tree of OR's with a

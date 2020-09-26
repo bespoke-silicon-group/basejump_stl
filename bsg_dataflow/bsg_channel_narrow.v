@@ -12,6 +12,8 @@
 // output_width, it would add the padding if necessary and
 // forward the deque signal
 
+`include "bsg_defines.v"
+
 module bsg_channel_narrow #( parameter width_in_p   = -1
                            , parameter width_out_p  = -1
                            , parameter lsb_to_msb_p = 1

@@ -20,6 +20,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 module bsg_two_buncher #(parameter width_p=-1)
    (input    clk_i
     , input  reset_i

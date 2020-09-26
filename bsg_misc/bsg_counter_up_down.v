@@ -21,6 +21,8 @@
 //
 // merged bsg_counter_up_down_variable into this module june 2018
 
+`include "bsg_defines.v"
+
 module bsg_counter_up_down #( parameter max_val_p    = -1
                                      , parameter init_val_p   = -1
                                      , parameter max_step_p   = -1

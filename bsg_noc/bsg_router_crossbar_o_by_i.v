@@ -5,6 +5,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_router_crossbar_o_by_i
   #(parameter i_els_p=2
     , parameter o_els_p="inv"

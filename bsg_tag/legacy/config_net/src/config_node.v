@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 `include "config_defs.v"
 
 // fixme: label all signals with clock prefix, and use bsg_ip_cores macros to hardplace CDC regions

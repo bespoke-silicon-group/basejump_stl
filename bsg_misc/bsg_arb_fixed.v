@@ -3,6 +3,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 module bsg_arb_fixed #(parameter     inputs_p = "inv"
                        , parameter lo_to_hi_p = "inv")
    ( input ready_i

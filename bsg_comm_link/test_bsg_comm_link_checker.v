@@ -18,6 +18,8 @@
    //
 
 
+`include "bsg_defines.v"
+
 module test_bsg_comm_link_checker #(parameter channel_width_p="inv"
                                     , parameter num_channels_p="inv"
                                     , parameter ring_bytes_p="inv"

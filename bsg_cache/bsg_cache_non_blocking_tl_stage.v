@@ -8,6 +8,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_cache_non_blocking_tl_stage
   import bsg_cache_non_blocking_pkg::*;
   #(parameter id_width_p="inv"

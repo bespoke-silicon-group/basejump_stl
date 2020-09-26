@@ -15,6 +15,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 module bsg_arb_round_robin #(parameter width_p=-1)
   (input          clk_i
    , input        reset_i

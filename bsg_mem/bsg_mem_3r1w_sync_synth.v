@@ -13,6 +13,8 @@
 // NOTE: Users of BaseJump STL should not instantiate this module directly
 // they should use bsg_mem_3r1w_sync.
 
+`include "bsg_defines.v"
+
 module bsg_mem_3r1w_sync_synth #(parameter width_p=-1
 				 , parameter els_p=-1
 				 , parameter read_write_same_addr_p=0

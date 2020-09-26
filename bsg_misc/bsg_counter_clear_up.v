@@ -3,6 +3,8 @@
 // clear occurs first, and then the up.
 //
 
+`include "bsg_defines.v"
+
 module bsg_counter_clear_up #(parameter max_val_p     = -1
 			      // this originally had an "invalid" default value of -1
 			      // which is a bad choice for a counter

@@ -4,6 +4,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_cache_decode
   import bsg_cache_pkg::*;
   (

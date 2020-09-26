@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_inv #(parameter width_p="inv"
                  , harden_p=1
 		 , vertical_p=1)

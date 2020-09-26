@@ -6,6 +6,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_cache_to_test_dram_rx_reorder
   #(parameter data_width_p="inv"
     , parameter dma_data_width_p="inv"

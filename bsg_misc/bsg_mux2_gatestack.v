@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_mux2_gatestack #(parameter width_p="inv", harden_p=1)
    (input [width_p-1:0] i0
     , input [width_p-1:0] i1

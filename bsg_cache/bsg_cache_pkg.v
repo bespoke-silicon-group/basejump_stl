@@ -4,6 +4,8 @@
  *  @author tommy
  */
 
+`include "bsg_defines.v"
+
 package bsg_cache_pkg;
 
   // These subopcodes are intended to match the low 4 bits of the

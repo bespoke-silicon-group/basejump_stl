@@ -4,6 +4,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_nonsynth_ramulator_hbm
   #(parameter channel_addr_width_p="inv"
     , parameter data_width_p="inv"

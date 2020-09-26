@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 `include "bsg_noc_links.vh"
 
 module bsg_mesh_router_buffered #(width_p        = -1

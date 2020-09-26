@@ -4,6 +4,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_dff_en_bypass
   #(parameter width_p="inv"
     , parameter harden_p=0

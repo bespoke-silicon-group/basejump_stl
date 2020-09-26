@@ -6,6 +6,8 @@
 // are returned in hor and ver arrays.
 //
 
+`include "bsg_defines.v"
+
 module bsg_mesh_stitch
   import bsg_noc_pkg::*; // P=0, W, E, N, S
   #(parameter width_p = "inv" // data width

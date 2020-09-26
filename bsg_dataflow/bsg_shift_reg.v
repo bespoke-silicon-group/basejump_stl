@@ -4,6 +4,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 module bsg_shift_reg #(parameter width_p = "inv"
                        , parameter stages_p = "inv"
                        )

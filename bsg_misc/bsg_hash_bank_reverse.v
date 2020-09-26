@@ -4,8 +4,11 @@
 // This module is the inverse; taking a bank number and an index, and producing the original address.
 //
 
+`include "bsg_defines.v"
+
 module bsg_hash_bank_reverse #(parameter banks_p="inv", width_p="inv", index_width_lp=$clog2((2**width_p+banks_p-1)/banks_p), lg_banks_lp=`BSG_SAFE_CLOG2(banks_p), debug_lp=0)
   (/* input clk,*/ 
+
    input [index_width_lp-1:0] index_i
    , input [lg_banks_lp-1:0] bank_i
    , output [width_p-1:0] o

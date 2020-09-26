@@ -1,4 +1,6 @@
 
+`include "bsg_defines.v"
+
 module bsg_tiehi #(parameter width_p="inv"
                    , parameter harden_p=1
                    )

@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_decode_with_v #(num_out_p=-1)
    (
 

@@ -50,6 +50,8 @@ data_o    |                        |  d0   |  d1   |  d0   |  d1   |  d0   |  d1
 //
 //
 
+`include "bsg_defines.v"
+
 module bsg_link_oddr_phy
 
  #(parameter width_p = "inv")

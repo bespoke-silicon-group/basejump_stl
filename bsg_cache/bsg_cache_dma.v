@@ -7,6 +7,8 @@
  *
  */
 
+`include "bsg_defines.v"
+
 module bsg_cache_dma
   import bsg_cache_pkg::*;
   #(parameter addr_width_p="inv"

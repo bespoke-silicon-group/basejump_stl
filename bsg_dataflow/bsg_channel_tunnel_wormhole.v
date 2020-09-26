@@ -64,7 +64,7 @@
   
 ****************************************************************************************/
 
-
+`include "bsg_defines.v"
 `include "bsg_noc_links.vh"
 
 module  bsg_channel_tunnel_wormhole

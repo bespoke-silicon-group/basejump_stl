@@ -28,6 +28,8 @@
 // FIXME (bug found by Yichao Wu): does not handle case of width_p=1
 //
 
+`include "bsg_defines.v"
+
 module bsg_strobe #(width_p="inv"
                     ,harden_p=0)
    (input clk_i

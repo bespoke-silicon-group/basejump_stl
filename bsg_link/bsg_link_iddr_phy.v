@@ -17,6 +17,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 module bsg_link_iddr_phy
 
  #(parameter width_p = "inv")

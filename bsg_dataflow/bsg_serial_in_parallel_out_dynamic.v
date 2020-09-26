@@ -5,6 +5,8 @@
  *
  */
 
+`include "bsg_defines.v"
+
 module bsg_serial_in_parallel_out_dynamic
                                
  #(parameter width_p          = "inv"

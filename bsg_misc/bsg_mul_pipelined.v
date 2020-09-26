@@ -46,6 +46,8 @@
 // nested module or augmented package interface.
 //
 
+`include "bsg_defines.v"
+
 `ifndef BSG_MUL_BOOTH_DOT_
 `define BSG_MUL_BOOTH_DOT_
 function automatic [0:0] bsg_mul_booth_dot([2:0] sdn, y0, ym1);

@@ -5,6 +5,8 @@
 // FIFO of 2 elements inside, and valid-credit protocol in
 // connection to raw network, with 4 credits. 
 
+`include "bsg_defines.v"
+
 module cfgtaggw #(parameter packet_ID_width_p = 4)
                      (input  clk
                      ,input  reset

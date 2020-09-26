@@ -29,6 +29,8 @@
 // Step 5: Deassert core_link_reset_i. 
 //
 
+`include "bsg_defines.v"
+
 module bsg_link_ddr_upstream
 
  #(// Core data width

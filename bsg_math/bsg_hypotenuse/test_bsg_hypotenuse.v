@@ -1,6 +1,8 @@
 
 
 
+`include "bsg_defines.v"
+
 module test_bsg_hypotenuse;
 
 //`include "test_bsg_clock_params.v"

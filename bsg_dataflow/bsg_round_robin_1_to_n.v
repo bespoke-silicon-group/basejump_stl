@@ -10,6 +10,8 @@
 // we omit the data part as it is just duplication.
 //
 
+`include "bsg_defines.v"
+
 module bsg_round_robin_1_to_n #(parameter width_p = "inv"
                                 ,parameter num_out_p = 2)
    (input  clk_i

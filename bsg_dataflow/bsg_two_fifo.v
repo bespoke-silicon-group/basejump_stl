@@ -23,6 +23,8 @@
 // note: ~v_o == fifo is empty.
 //
 
+`include "bsg_defines.v"
+
 module bsg_two_fifo #(parameter width_p="inv"
                       , parameter verbose_p=0
                       // whether we should allow simultaneous enque and deque on full

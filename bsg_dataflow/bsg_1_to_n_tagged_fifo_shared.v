@@ -29,6 +29,8 @@
 // because they can be consumed immediately.
 //
 
+`include "bsg_defines.v"
+
 module bsg_1_to_n_tagged_fifo_shared   #(parameter width_p              = "inv"
                                          ,parameter num_out_p           = "inv"
                                          ,parameter els_p               = "inv" // these are elements per channel

@@ -13,6 +13,8 @@
  *
  */
 
+`include "bsg_defines.v"
+
 module bsg_fpu_sticky
   #(parameter width_p="inv")
   (

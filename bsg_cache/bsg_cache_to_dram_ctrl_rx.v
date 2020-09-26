@@ -5,6 +5,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_cache_to_dram_ctrl_rx
   #(parameter num_cache_p="inv"
     , parameter data_width_p="inv"

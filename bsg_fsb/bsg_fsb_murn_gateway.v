@@ -9,6 +9,8 @@
 // Omitted: Power Enable/Disable
 //
 //
+`include "bsg_defines.v"
+
 `ifndef  FSB_LEGACY 
 `include "bsg_fsb_pkg.v"
 

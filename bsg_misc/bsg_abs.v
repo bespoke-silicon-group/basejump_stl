@@ -6,6 +6,8 @@
  *  @author Tommy Jung
  */
 
+`include "bsg_defines.v"
+
 module bsg_abs #( parameter width_p="inv" )
 (
   input [width_p-1:0] a_i

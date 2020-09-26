@@ -12,6 +12,8 @@
  *  @author tommy
  */
 
+`include "bsg_defines.v"
+
 module bsg_cache_sbuf
   import bsg_cache_pkg::*;
   #(parameter data_width_p="inv"

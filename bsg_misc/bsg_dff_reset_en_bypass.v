@@ -4,6 +4,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_dff_reset_en_bypass
   #(parameter width_p="inv"
     , parameter reset_val_p=0

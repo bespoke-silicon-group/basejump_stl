@@ -25,6 +25,8 @@
 //
 // that version would be helpful on output and demanding on input.
 
+`include "bsg_defines.v"
+
 module bsg_parallel_in_serial_out #( parameter width_p    = -1
                                    , parameter els_p      = -1
                                    , parameter hi_to_lo_p = 0

@@ -7,6 +7,8 @@
 // This module should be replaced by the hardened version
 // when being synthesized.
 //
+`include "bsg_defines.v"
+
 module bsg_edge_balanced_mux4
   (input        A
   ,input        B

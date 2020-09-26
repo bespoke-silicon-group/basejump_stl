@@ -1,4 +1,6 @@
 
+`include "bsg_defines.v"
+
 module bsg_fsb_to_nasti_slave_connector
 import bsg_fsb_pkg::RingPacketType;
 import bsg_nasti_pkg::bsg_nasti_addr_channel_s;

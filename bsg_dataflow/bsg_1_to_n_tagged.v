@@ -14,6 +14,8 @@
 // we do not include the data portion since it is just replicated
 //
 
+`include "bsg_defines.v"
+
 module bsg_1_to_n_tagged #(
                            parameter num_out_p    = -1
                            ,parameter tag_width_lp = `BSG_SAFE_CLOG2(num_out_p)

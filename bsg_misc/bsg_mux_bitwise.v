@@ -3,6 +3,8 @@
  *  @param width_p width of data
  */
 
+`include "bsg_defines.v"
+
 module bsg_mux_bitwise #(parameter width_p="inv")
 (
   input [width_p-1:0] data0_i

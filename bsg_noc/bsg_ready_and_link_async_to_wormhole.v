@@ -12,6 +12,8 @@
 // mean that it will not deadlock if traffic classes are not correctly separated.
 //
 
+`include "bsg_defines.v"
+
 `include "bsg_noc_links.vh"
 `include "bsg_wormhole_router.vh"
 

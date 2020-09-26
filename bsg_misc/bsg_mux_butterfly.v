@@ -29,6 +29,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_mux_butterfly
   #(parameter width_p="inv"
     , parameter els_p="inv"

@@ -6,6 +6,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_nonsynth_test_rom
   #(parameter filename_p="inv"
     , parameter data_width_p="inv"

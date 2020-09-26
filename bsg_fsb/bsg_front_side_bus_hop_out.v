@@ -9,6 +9,8 @@
 // and port 1, which is local.
 //
 
+`include "bsg_defines.v"
+
 module bsg_front_side_bus_hop_out #(parameter width_p="inv")
   (input clk_i
    , input  reset_i

@@ -5,6 +5,8 @@
 // what the lengths of each phase are
 //
 
+`include "bsg_defines.v"
+
 module bsg_nonsynth_clk_watcher #(tolerance_p=0)
   (input clk_i);
 

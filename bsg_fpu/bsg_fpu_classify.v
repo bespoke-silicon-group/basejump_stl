@@ -16,6 +16,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_fpu_classify
   #(parameter e_p="inv"
     , parameter m_p="inv"

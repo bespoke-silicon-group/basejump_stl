@@ -23,6 +23,8 @@
 //    is useful for a RISC ISA, in which only quotient or remainder is need in
 //    one instruction.
 // 2. usging data detection logic to reduce the iteration cycles.
+`include "bsg_defines.v"
+
 module bsg_idiv_iterative #(parameter width_p=32)
     (input                  clk_i
     ,input                  reset_i

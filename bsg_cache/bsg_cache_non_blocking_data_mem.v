@@ -8,6 +8,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_cache_non_blocking_data_mem
   import bsg_cache_non_blocking_pkg::*;
   #(parameter data_width_p="inv"

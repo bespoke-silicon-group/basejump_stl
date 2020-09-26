@@ -2,6 +2,8 @@
 // edges and also provides the registered version of them
 // it uses to flops for stabilizing the synchronized ones
 
+`include "bsg_defines.v"
+
 module bsg_ddr_sampler #(width_p = "inv")
     ( input                      clk
     , input                      reset

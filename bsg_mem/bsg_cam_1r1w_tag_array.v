@@ -4,6 +4,8 @@
  * This module does not protect against setting multiple entries to the same value -- this must be
  * prevented at a higher protocol level, if desired
  */
+`include "bsg_defines.v"
+
 module bsg_cam_1r1w_tag_array
  #(parameter width_p  = "inv"
    , parameter els_p      = "inv"

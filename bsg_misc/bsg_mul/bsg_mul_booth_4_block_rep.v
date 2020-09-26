@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_mul_booth_4_block_rep #(parameter [31:0] blocks_p=1
                                    ,parameter S_above_vec_p=0
                                    ,parameter dot_bar_vec_p=0

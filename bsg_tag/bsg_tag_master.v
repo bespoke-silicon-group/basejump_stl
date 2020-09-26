@@ -12,6 +12,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 `include "bsg_tag.vh"
 
 // will not build in verilator without this

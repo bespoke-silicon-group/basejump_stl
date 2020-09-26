@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 package bsg_wormhole_router_pkg;
   localparam  bit [1:0][2:0][2:0] StrictX
                              = {   // EWP (input)

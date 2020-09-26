@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_array_concentrate_static 
   #(parameter pattern_els_p="inv"
     , parameter width_p="inv"

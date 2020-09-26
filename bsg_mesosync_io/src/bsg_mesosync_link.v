@@ -31,6 +31,8 @@
 //
 // Most important feature of this IO is least latency.
 
+`include "bsg_defines.v"
+
 `ifndef DEFINITIONS_V
 `include "definitions.v"
 `endif

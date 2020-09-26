@@ -17,6 +17,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 module bsg_fifo_1r1w_small #( parameter width_p      = -1
                             , parameter els_p        = -1
                             , parameter harden_p     = 0

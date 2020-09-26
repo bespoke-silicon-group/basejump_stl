@@ -1,4 +1,6 @@
 //This module implements a simple adder with cin
+`include "bsg_defines.v"
+
 module bsg_adder_cin #(parameter width_p="inv"
                  , harden_p=1)
    ( input [width_p-1:0] a_i

@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_wait_cycles #(parameter cycles_p="inv")
    (
     input clk_i

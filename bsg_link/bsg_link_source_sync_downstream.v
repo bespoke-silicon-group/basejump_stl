@@ -39,6 +39,8 @@
 // core_*: signals synchronous to core_clk_i
 //
 
+`include "bsg_defines.v"
+
 module bsg_link_source_sync_downstream 
 
  #(parameter channel_width_p                 = 16
