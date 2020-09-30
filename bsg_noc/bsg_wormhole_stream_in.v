@@ -156,9 +156,6 @@ module bsg_wormhole_stream_in
       bsg_serial_in_parallel_out_full
        #(.width_p(pr_data_width_p)
          ,.els_p(data_len_lp)
-         // A wormhole network has a header flit come before data flits,
-         //   which makes room for a bubble between consecutive data packets.
-         ,.use_minimal_buffering_p(1)
          )
        data_sipo
         (.clk_i(clk_i)
