@@ -17,20 +17,25 @@
 //   | data   | data  | data  | data  | protocol info | len   cord |
 //   ---------------------------------------------------------------
 //
-//  Header and data can be sent at the same time, but only 1 message at a time 
-//    is supported. 
+//  Data can be sent the same or any cycle after header, but only 1 message at
+//    a time is supported.
 //  - Legal: H     H
 //             D-D   D-D
 //  - Legal: H   H
 //           D-D D-D
 //  - Illegal: H H
 //             D-D-D-D
+//    (Header sent too early)
 //
 module bsg_wormhole_stream_in
  #(// The wormhole router protocol information
-   parameter flit_width_p      = "inv"
-   // Default to 0 for cord and cid, so that this can be used either
+   // flit_width_p: number of physical data wires between links
+   // cord_width_p: the width of the {y,x} coordinate of the destination
+   // len_width_p : the width of the length field, denoting #flits+1
+   // cid_width   : the width of the concentrator id of the destination
+   // Default to 0 for cord and cid, so that this module can be used either
    //   for concentrator or router
+   parameter flit_width_p      = "inv"
    , parameter cord_width_p    = 0
    , parameter len_width_p     = "inv"
    , parameter cid_width_p     = 0
@@ -49,24 +54,24 @@ module bsg_wormhole_stream_in
    // The wormhole and protocol header information
    , input [hdr_width_p-1:0]     hdr_i
    , input                       hdr_v_i
-   , output                      hdr_ready_o
+   , output                      hdr_ready_and_o
 
    // The protocol data information
    , input [pr_data_width_p-1:0] data_i
    , input                       data_v_i
-   , output                      data_ready_o
+   , output                      data_ready_and_o
 
    // The input to a wormhole network
    , output [flit_width_p-1:0]   link_data_o
    , output                      link_v_o
-   , input                       link_ready_i
+   , input                       link_ready_and_i
    );
 
   wire is_hdr, is_data;
 
   localparam [len_width_p-1:0] hdr_len_lp = `BSG_CDIV(hdr_width_p, flit_width_p);
 
-  wire link_accept = link_ready_i & link_v_o;
+  wire link_accept = link_ready_and_i & link_v_o;
 
   // Header is input all at once and streamed out 1 flit at a time
   logic [flit_width_p-1:0] hdr_lo;
@@ -87,7 +92,7 @@ module bsg_wormhole_stream_in
      ,.valid_o(hdr_v_lo)
      ,.yumi_i(hdr_yumi_li)
      );
-  assign hdr_ready_o = hdr_ready_lo;
+  assign hdr_ready_and_o = hdr_ready_lo;
   assign hdr_yumi_li = is_hdr & link_accept;
 
   logic [flit_width_p-1:0] data_lo;
@@ -123,6 +128,8 @@ module bsg_wormhole_stream_in
       bsg_serial_in_parallel_out_full
        #(.width_p(pr_data_width_p)
          ,.els_p(data_len_lp)
+         // A wormhole network has a header flit come before data flits,
+         //   which makes room for a bubble between consecutive data packets.
          ,.use_minimal_buffering_p(1)
          )
        data_sipo
@@ -138,7 +145,7 @@ module bsg_wormhole_stream_in
          ,.yumi_i(data_yumi_li)
          );
     end
-  assign data_ready_o = data_ready_lo;
+  assign data_ready_and_o = data_ready_lo;
   assign data_yumi_li = is_data & link_accept;
   
   // Identifies which flits are header vs data flits
