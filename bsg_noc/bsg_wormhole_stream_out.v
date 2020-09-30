@@ -8,7 +8,18 @@
 //   It can also be used to forward data between wormholes on different 
 //   networks, or to convert between multiple protocol formats.
 //
+// Example use cases:
+//   - bsg_cache {dma_pkt, data/v/yumi} format <-> wormhole
+//   - SRAM read/write <-> bsg_wormhole_stream_in/out <-> Wormhole Network
+//   - Wide Network <-> bsg_wormhole_stream_in/out <-> Narrow Network
+//
 // Assumptions:
+//  Usage of this module requires correctly formed wormhole headers. The length
+//    field of the wormhole message determines how many protocol data beats are
+//    expected (some multiple or divisor of the flit_width). We expect most
+//    link and protocol data widths to be powers of 2 (32, 64, 512), so this
+//    length restriction is lenient.
+//
 //   - data width is a multiple of flit width (would be easy to add support)
 //   - header width is a multiple of flit width  (would be more challenging)
 //     - header width == wormhole header width + protocol header width
@@ -18,9 +29,9 @@
 //   ---------------------------------------------------------------
 //
 //  Header will arrive at or before data and either can be acked at any time.
-//  Typical users of this module will simply ack the header to learn the 
-//  protocol information of the impending transaction, begin the transaction,
-//  and then forward or accept all of the data serially.
+//    Typical users of this module will simply ack the header to learn the 
+//    protocol information of the impending transaction, begin the transaction,
+//    and then forward or accept all of the data serially.
 //
 module bsg_wormhole_stream_out
  #(// The wormhole router protocol information
