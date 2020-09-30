@@ -30,7 +30,7 @@ module bsg_parallel_in_serial_out
     // Data Input Channel (Ready and Valid)
     ,input                           valid_i
     ,input  [els_p-1:0][width_p-1:0] data_i
-    ,output                          ready_o
+    ,output                          ready_o // ready_and_o per updated SystemVerilog Coding guidelines
 
     // Data Output Channel (Valid then Yumi)
     ,output                          valid_o
