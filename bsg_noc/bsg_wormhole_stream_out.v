@@ -24,9 +24,13 @@
 //
 module bsg_wormhole_stream_out
  #(// The wormhole router protocol information
-   parameter flit_width_p      = "inv"
-   // Default to 0 for cord and cid, so that this can be used either
+   // flit_width_p: number of physical data wires between links
+   // cord_width_p: the width of the {y,x} coordinate of the destination
+   // len_width_p : the width of the length field, denoting #flits+1
+   // cid_width   : the width of the concentrator id of the destination
+   // Default to 0 for cord and cid, so that this module can be used either
    //   for concentrator or router
+   parameter flit_width_p      = "inv"
    , parameter cord_width_p    = 0
    , parameter len_width_p     = "inv"
    , parameter cid_width_p     = 0
@@ -45,7 +49,7 @@ module bsg_wormhole_stream_out
    // The output of a wormhole network
    , input [flit_width_p-1:0]     link_data_i
    , input                        link_v_i
-   , output                       link_ready_o
+   , output                       link_ready_and_o
 
    // The wormhole and protocol header information
    , output [hdr_width_p-1:0]     hdr_o
@@ -62,7 +66,7 @@ module bsg_wormhole_stream_out
   
   localparam [len_width_p-1:0] hdr_len_lp = `BSG_CDIV(hdr_width_p, flit_width_p);
 
-  wire link_accept = link_ready_o & link_v_i;
+  wire link_accept = link_ready_and_o & link_v_i;
 
   // Aggregate flits until we have a full header-worth of data, then let the
   //   client process it
@@ -147,7 +151,7 @@ module bsg_wormhole_stream_out
   ,.is_data_o    (is_data)
   );
 
-  assign link_ready_o = is_hdr ? hdr_ready_lo : data_ready_lo;
+  assign link_ready_and_o = is_hdr ? hdr_ready_lo : data_ready_lo;
 
   //synopsys translate_off
   if (hdr_width_p % flit_width_p != 0)

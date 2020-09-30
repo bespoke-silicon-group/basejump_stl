@@ -54,7 +54,7 @@ module testbench();
 
     ,.link_data_i(link_lo.data)
     ,.link_v_i(link_lo.v)
-    ,.link_ready_o(link_li.ready_and_rev)
+    ,.link_ready_and_o(link_li.ready_and_rev)
 
     ,.hdr_o(hdr_lo)
     ,.hdr_v_o(hdr_v_lo)

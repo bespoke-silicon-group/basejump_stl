@@ -54,15 +54,15 @@ module testbench();
 
     ,.hdr_i(hdr_li)
     ,.hdr_v_i(hdr_v_li)
-    ,.hdr_ready_o(hdr_ready_lo)
+    ,.hdr_ready_and_o(hdr_ready_lo)
 
     ,.data_i(data_li)
     ,.data_v_i(data_v_li)
-    ,.data_ready_o(data_ready_lo)
+    ,.data_ready_and_o(data_ready_lo)
 
     ,.link_data_o(link_li.data)
     ,.link_v_o(link_li.v)
-    ,.link_ready_i(link_lo.ready_and_rev)
+    ,.link_ready_and_i(link_lo.ready_and_rev)
      );
   wire [cord_width_p-1:0] cord_li = hdr_li[0+:cord_width_p];
   wire [len_width_p-1:0] len_li = hdr_li[cord_width_p+:len_width_p];
