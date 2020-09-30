@@ -159,6 +159,7 @@ module bsg_trace_replay
    always @(negedge clk_i) begin
         if (instr_completed & ~reset_i & ~done_r) begin
              case(op)
+               eNop: begin end
                eSend: begin
                     if (debug_p >= 2) begin
                          $display("### bsg_trace_replay SEND %d'b%b (%m)", payload_width_p,data_o);
