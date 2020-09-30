@@ -26,7 +26,7 @@ module bsg_wormhole_stream_control
    , output                  is_data_o
    );
 
-  enum logic [1:0] {e_hdr, e_data} state_n, state_r;
+  enum logic {e_hdr, e_data} state_n, state_r;
   wire is_hdr  = (state_r == e_hdr);
   wire is_data = (state_r == e_data);
   
