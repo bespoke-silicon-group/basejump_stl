@@ -75,7 +75,7 @@ module bsg_parallel_in_serial_out_tester
 
   ,.valid_i(master_link_lo.v)
   ,.data_i (master_link_lo.data)
-  ,.ready_o(master_link_li.ready_and_rev)
+  ,.ready_and_o(master_link_li.ready_and_rev)
 
   ,.valid_o(client_link_li.v)
   ,.data_o (client_link_li.data)

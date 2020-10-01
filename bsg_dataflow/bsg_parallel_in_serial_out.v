@@ -30,7 +30,7 @@ module bsg_parallel_in_serial_out
     // Data Input Channel (Ready and Valid)
     ,input                           valid_i
     ,input  [els_p-1:0][width_p-1:0] data_i
-    ,output                          ready_o // ready_and_o per updated SystemVerilog Coding guidelines
+    ,output                          ready_and_o
 
     // Data Output Channel (Valid then Yumi)
     ,output                          valid_o
@@ -103,7 +103,7 @@ module bsg_parallel_in_serial_out
     // Connect fifo0 signals directly to input/output ports
 
     assign fifo0_v_li   = valid_i;
-    assign ready_o      = fifo0_ready_lo;
+    assign ready_and_o  = fifo0_ready_lo;
 
     assign valid_o      = fifo_v_lo;
     assign data_o       = fifo_data_lo;
@@ -151,7 +151,7 @@ module bsg_parallel_in_serial_out
 
     assign fifo0_v_li = valid_i & ~wait_fifo1_r;
     assign fifo1_v_li = valid_i;
-    assign ready_o = fifo1_ready_lo;
+    assign ready_and_o = fifo1_ready_lo;
 
     if (use_minimal_buffering_p == 0)
       begin: twobuf
