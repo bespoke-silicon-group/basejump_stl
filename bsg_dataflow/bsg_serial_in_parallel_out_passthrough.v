@@ -48,16 +48,17 @@ module bsg_serial_in_parallel_out_passthrough
   // If send hi_to_lo, reverse the output data array
   logic [els_p-1:0][width_p-1:0] data_lo;
 
-  for (genvar i = 0; i < els_p; i++)
+  for (genvar i = 0; i < els_p-1; i++)
     begin: rof
       wire my_turn = v_i & (valid_r[i] | ((i == 0) & sending));
-      bsg_dff_en_bypass #(.width_p(width_p)) dff
+      bsg_dff_en #(.width_p(width_p)) dff
       (.clk_i
        ,.data_i
        ,.en_i   (my_turn)
        ,.data_o (data_lo [i])
       );
     end
+  assign data_lo[els_p-1] = data_i;
 
   if (hi_to_lo_p == 0)
     begin: lo2hi
