@@ -81,8 +81,11 @@ module bsg_parallel_in_serial_out_passthrough #( parameter width_p    = -1
   //synopsys translate_off
   always_ff @(negedge clk_i)
     begin
-      assert (v_i | (count_r == '0))
-        else $error("v_i must be held high during the entire PISO transaction");
+      if (~reset_i & (count_r[0] === 1'b0))
+        begin
+          assert (v_i)
+            else $error("v_i must be held high during the entire PISO transaction");
+        end
     end
   //synopsys translate_on
 
