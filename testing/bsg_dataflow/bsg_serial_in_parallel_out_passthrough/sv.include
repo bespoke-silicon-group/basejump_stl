@@ -7,9 +7,12 @@ $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1r1w_synth.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_counter_clear_up_one_hot.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_dff_en.v
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 $BASEJUMP_STL_DIR/bsg_misc/bsg_dff_en_bypass.v
 >>>>>>> Adding passthrough sipo
+=======
+>>>>>>> Removing unnecessary last word buffering
 $BASEJUMP_STL_DIR/bsg_misc/bsg_defines.v
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_clock_gen.v
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_reset_gen.v

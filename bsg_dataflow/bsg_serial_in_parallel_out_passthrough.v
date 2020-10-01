@@ -97,11 +97,15 @@ module bsg_serial_in_parallel_out_passthrough
   // If send hi_to_lo, reverse the output data array
   logic [els_p-1:0][width_p-1:0] data_lo;
 
-  for (genvar i = 0; i < els_p; i++)
+  for (genvar i = 0; i < els_p-1; i++)
     begin: rof
       wire my_turn = v_i & (valid_r[i] | ((i == 0) & sending));
+<<<<<<< HEAD
       bsg_dff_en_bypass #(.width_p(width_p)) dff
 >>>>>>> Adding passthrough sipo
+=======
+      bsg_dff_en #(.width_p(width_p)) dff
+>>>>>>> Removing unnecessary last word buffering
       (.clk_i
        ,.data_i
        ,.en_i   (my_turn)
@@ -109,10 +113,14 @@ module bsg_serial_in_parallel_out_passthrough
       );
     end
 <<<<<<< HEAD
+<<<<<<< HEAD
   assign data_lo[els_p-1] = data_i;
 
   // If send hi_to_lo, reverse the output data array
 =======
+=======
+  assign data_lo[els_p-1] = data_i;
+>>>>>>> Removing unnecessary last word buffering
 
 >>>>>>> Adding passthrough sipo
   if (hi_to_lo_p == 0)
