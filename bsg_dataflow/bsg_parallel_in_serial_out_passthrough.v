@@ -53,24 +53,6 @@ module bsg_parallel_in_serial_out_passthrough #( parameter width_p    = -1
 
       assign ready_and_o = ready_and_i & last_word;
     end
-=======
-  
-  logic [els_p-1:0] count_r;
-  logic last_word;
-  bsg_counter_clear_up_one_hot
-   #(.max_val_p(els_p-1), .init_val_p(1))
-   counter
-    (.clk_i(clk_i)
-     ,.reset_i(reset_i)
-
-     ,.clear_i(ready_and_o & v_i)
-     ,.up_i(v_o & ready_and_i & ~last_word)
-     ,.count_r_o(count_r)
-     );
-  assign last_word = count_r[els_p-1];
-
-  assign ready_and_o = ready_and_i & last_word;
->>>>>>> Adding passthrough PISO
 
   // If send hi_to_lo, reverse the input data array
   logic [els_p-1:0][width_p-1:0] data_li;
@@ -98,7 +80,6 @@ module bsg_parallel_in_serial_out_passthrough #( parameter width_p    = -1
      );
   assign v_o = v_i;
 
-<<<<<<< HEAD
   //synopsys translate_off
   logic [els_p-1:0][width_p-1:0] initial_data_r;
   bsg_dff_en
@@ -123,7 +104,5 @@ module bsg_parallel_in_serial_out_passthrough #( parameter width_p    = -1
     end
   //synopsys translate_on
 
-=======
->>>>>>> Adding passthrough PISO
 endmodule
 
