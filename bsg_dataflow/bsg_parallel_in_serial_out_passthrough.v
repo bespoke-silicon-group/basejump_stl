@@ -26,22 +26,31 @@ module bsg_parallel_in_serial_out_passthrough #( parameter width_p    = -1
     , output [width_p-1:0] data_o
     , input                ready_and_i
     );
-  
+ 
   logic [els_p-1:0] count_r;
-  logic last_word;
-  bsg_counter_clear_up_one_hot
-   #(.max_val_p(els_p-1), .init_val_p(1))
-   counter
-    (.clk_i(clk_i)
-     ,.reset_i(reset_i)
+  // For single word piso, we're just passing through the signals
+  if (els_p == 1)
+    begin : single_word
+      assign count_r = 1'b1;
+      assign ready_and_o = ready_and_i;
+    end
+  else
+    begin : multi_word
+      logic last_word;
+      bsg_counter_clear_up_one_hot
+       #(.max_val_p(els_p-1), .init_val_p(1))
+       counter
+        (.clk_i(clk_i)
+         ,.reset_i(reset_i)
 
-     ,.clear_i(ready_and_o & v_i)
-     ,.up_i(v_o & ready_and_i & ~last_word)
-     ,.count_r_o(count_r)
-     );
-  assign last_word = count_r[els_p-1];
+         ,.clear_i(ready_and_o & v_i)
+         ,.up_i(v_o & ready_and_i & ~last_word)
+         ,.count_r_o(count_r)
+         );
+      assign last_word = count_r[els_p-1];
 
-  assign ready_and_o = ready_and_i & last_word;
+      assign ready_and_o = ready_and_i & last_word;
+    end
 
   // If send hi_to_lo, reverse the input data array
   logic [els_p-1:0][width_p-1:0] data_li;
@@ -68,6 +77,14 @@ module bsg_parallel_in_serial_out_passthrough #( parameter width_p    = -1
      ,.data_o(data_o)
      );
   assign v_o = v_i;
+
+  //synopsys translate_off
+  always_ff @(negedge clk_i)
+    begin
+      assert (v_i | (count_r == '0))
+        else $error("v_i must be held high during the entire PISO transaction");
+    end
+  //synopsys translate_on
 
 endmodule
 
