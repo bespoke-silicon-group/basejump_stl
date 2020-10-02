@@ -59,7 +59,7 @@ module testbench;
 
      ,.data_i(out_data_li)
      ,.valid_i(out_v_li)
-     ,.ready_o(out_ready_lo)
+     ,.ready_and_o(out_ready_lo)
 
      ,.data_o(out_data_lo)
      ,.valid_o(out_v_lo)
