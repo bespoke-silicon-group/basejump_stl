@@ -7,15 +7,18 @@
 
     # List of RTL files.
     "filelist": [ 
-                  "bsg_misc/bsg_defines.v",
-                  "bsg_misc/bsg_mux_one_hot.v",
-                  "bsg_misc/bsg_round_robin_arb.v",
-                  "bsg_noc/bsg_noc_pkg.v",
-                  "bsg_noc/bsg_mesh_router.v"
+        "bsg_misc/bsg_defines.v",
+        "bsg_misc/bsg_mux_one_hot.v",
+        "bsg_misc/bsg_round_robin_arb.v",
+        "bsg_noc/bsg_noc_pkg.v",
+        "bsg_noc/bsg_mesh_router.v"
     ],
 
     # List of directories to search for include files.
-    "include": [ "bsg_noc/" ],
+    "include": [
+        "bsg_misc/",
+        "bsg_noc/"
+    ],
 
     # Simulator compilation parameters
     "compile_args": [ "-Wno-fatal"],
