@@ -34,13 +34,15 @@ COCOTB_VENV_ACTIVATE := source $(COCOTB_VENV_BUILD_DIR)/bin/activate
 
 build_tools: $(VERILATOR_BUILD_DIR) $(COCOTB_VENV_BUILD_DIR)
 
+VERILATOR_VERSION :=4.100
+
 $(VERILATOR_BUILD_DIR):
 	mkdir -p $@
-	cd $@ ; wget https://www.veripool.org/ftp/verilator-4.020.tgz
-	cd $@ ; tar xvf verilator-4.020.tgz
-	cd $@/verilator-4.020 ; ./configure --prefix=$@/install
-	cd $@/verilator-4.020 ; $(MAKE)
-	cd $@/verilator-4.020 ; $(MAKE) install
+	cd $@ ; wget https://www.veripool.org/ftp/verilator-$(VERILATOR_VERSION).tgz
+	cd $@ ; tar xvf verilator-$(VERILATOR_VERSION).tgz
+	cd $@/verilator-$(VERILATOR_VERSION) ; ./configure --prefix=$@/install
+	cd $@/verilator-$(VERILATOR_VERSION) ; $(MAKE)
+	cd $@/verilator-$(VERILATOR_VERSION) ; $(MAKE) install
 
 $(COCOTB_BUILD_DIR):
 	mkdir -p $(@D)
