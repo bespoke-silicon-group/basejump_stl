@@ -29,7 +29,7 @@ module bsg_wormhole_stream_test_node
 
   ,input  [hdr_width_lp-1:0]    hdr_i       
   ,input                        hdr_v_i     
-  ,output                       hdr_ready_o 
+  ,output                       hdr_ready_and_o 
   
   ,output [pr_data_width_p-1:0] data_o      
   ,output                       data_v_o    
@@ -37,7 +37,7 @@ module bsg_wormhole_stream_test_node
 
   ,input  [pr_data_width_p-1:0] data_i      
   ,input                        data_v_i    
-  ,output                       data_ready_o
+  ,output                       data_ready_and_o
   );
 
   // Async fifo signals
@@ -154,7 +154,7 @@ module bsg_wormhole_stream_test_node
 
   // Link side async fifo input
   logic  hdr_link_async_fifo_full_lo;
-  assign hdr_ready_o = ~hdr_link_async_fifo_full_lo;
+  assign hdr_ready_and_o = ~hdr_link_async_fifo_full_lo;
 
   bsg_async_fifo
  #(.lg_size_p(3)
@@ -162,7 +162,7 @@ module bsg_wormhole_stream_test_node
   ) hdr_in
   (.w_clk_i  (clk_i)
   ,.w_reset_i(reset_i)
-  ,.w_enq_i  (hdr_v_i & hdr_ready_o)
+  ,.w_enq_i  (hdr_v_i & hdr_ready_and_o)
   ,.w_data_i (hdr_i)
   ,.w_full_o (hdr_link_async_fifo_full_lo)
 
@@ -196,7 +196,7 @@ module bsg_wormhole_stream_test_node
 
   // Link side async fifo input
   logic  data_link_async_fifo_full_lo;
-  assign data_ready_o = ~data_link_async_fifo_full_lo;
+  assign data_ready_and_o = ~data_link_async_fifo_full_lo;
 
   bsg_async_fifo
  #(.lg_size_p(3)
@@ -204,7 +204,7 @@ module bsg_wormhole_stream_test_node
   ) data_in
   (.w_clk_i  (clk_i)
   ,.w_reset_i(reset_i)
-  ,.w_enq_i  (data_v_i & data_ready_o)
+  ,.w_enq_i  (data_v_i & data_ready_and_o)
   ,.w_data_i (data_i)
   ,.w_full_o (data_link_async_fifo_full_lo)
 

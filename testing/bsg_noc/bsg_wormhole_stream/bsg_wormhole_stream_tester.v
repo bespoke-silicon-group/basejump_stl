@@ -36,7 +36,7 @@ module bsg_wormhole_stream_tester
   logic link_v_lo, link_full_li;
   logic [flit_width_p-1:0] link_data_lo;
   
-  logic link_v_li, link_ready_lo;
+  logic link_v_li, link_ready_and_lo;
   logic [flit_width_p-1:0] link_data_li;
   
   logic hdr_v_lo, hdr_ready_li;
@@ -71,7 +71,7 @@ module bsg_wormhole_stream_tester
 
   ,.hdr_i           ('0)
   ,.hdr_v_i         (1'b0)
-  ,.hdr_ready_o     ()
+  ,.hdr_ready_and_o     ()
   
   ,.data_o          (data_li)
   ,.data_v_o        (data_v_li)
@@ -79,7 +79,7 @@ module bsg_wormhole_stream_tester
 
   ,.data_i          ('0)
   ,.data_v_i        (1'b0)
-  ,.data_ready_o    ()
+  ,.data_ready_and_o    ()
   );
   
   
@@ -95,15 +95,15 @@ module bsg_wormhole_stream_tester
 
   ,.hdr_i          (hdr_li)
   ,.hdr_v_i        (hdr_v_li)
-  ,.hdr_ready_o    (hdr_ready_lo)
+  ,.hdr_ready_and_o    (hdr_ready_lo)
 
   ,.data_i         (data_li)
   ,.data_v_i       (data_v_li)
-  ,.data_ready_o   (data_ready_lo)
+  ,.data_ready_and_o   (data_ready_lo)
 
   ,.link_data_o    (link_data_lo)
   ,.link_v_o       (link_v_lo)
-  ,.link_ready_i   (~link_full_li)
+  ,.link_ready_and_i   (~link_full_li)
   );
   
 
@@ -119,7 +119,7 @@ module bsg_wormhole_stream_tester
 
   ,.r_clk_i  (out_clk)
   ,.r_reset_i(out_reset)
-  ,.r_deq_i  (link_v_li & link_ready_lo)
+  ,.r_deq_i  (link_v_li & link_ready_and_lo)
   ,.r_data_o (link_data_li)
   ,.r_valid_o(link_v_li)
   );
@@ -137,7 +137,7 @@ module bsg_wormhole_stream_tester
 
   ,.link_data_i    (link_data_li)
   ,.link_v_i       (link_v_li)
-  ,.link_ready_o   (link_ready_lo)
+  ,.link_ready_and_o   (link_ready_and_lo)
 
   ,.hdr_o          (hdr_lo)
   ,.hdr_v_o        (hdr_v_lo)
@@ -174,7 +174,7 @@ module bsg_wormhole_stream_tester
 
   ,.hdr_i           (hdr_lo)
   ,.hdr_v_i         (hdr_v_lo)
-  ,.hdr_ready_o     (hdr_ready_li)
+  ,.hdr_ready_and_o     (hdr_ready_li)
   
   ,.data_o          ()
   ,.data_v_o        ()
@@ -182,7 +182,7 @@ module bsg_wormhole_stream_tester
 
   ,.data_i          (data_lo)
   ,.data_v_i        (data_v_lo)
-  ,.data_ready_o    (data_ready_li)
+  ,.data_ready_and_o    (data_ready_li)
   );
   
   

@@ -88,49 +88,34 @@ module bsg_wormhole_stream_in
   logic hdr_ready_lo, hdr_v_lo, hdr_yumi_li;
 
   // Header is input all at once and streamed out 1 flit at a time
-  if (hdr_width_p == flit_width_p)
-    begin : hdr_passthrough
-      assign hdr_lo = hdr_i;
-      assign hdr_v_lo = hdr_v_i;
-      assign hdr_ready_and_o = is_hdr & link_ready_and_i;
-    end
-  else
-    begin : piso
-      bsg_parallel_in_serial_out
-       #(.width_p(flit_width_p)
-         ,.els_p(hdr_len_lp)
-         )
-       hdr_piso
-        (.clk_i(clk_i)
-         ,.reset_i(reset_i)
+  bsg_parallel_in_serial_out_passthrough
+   #(.width_p(flit_width_p)
+     ,.els_p(hdr_len_lp)
+     )
+   hdr_piso
+    (.clk_i(clk_i)
+     ,.reset_i(reset_i)
 
-         ,.data_i(hdr_i)
-         ,.valid_i(hdr_v_i)
-         ,.ready_o(hdr_ready_lo)
+     ,.data_i(hdr_i)
+     ,.v_i(hdr_v_i)
+     ,.ready_and_o(hdr_ready_lo)
 
-         ,.data_o(hdr_lo)
-         ,.valid_o(hdr_v_lo)
-         ,.yumi_i(hdr_yumi_li)
-         );
-      assign hdr_ready_and_o = hdr_ready_lo;
-      assign hdr_yumi_li = is_hdr & link_accept;
-    end
+     ,.data_o(hdr_lo)
+     ,.v_o(hdr_v_lo)
+     ,.ready_and_i(hdr_yumi_li)
+     );
+  assign hdr_ready_and_o = hdr_ready_lo;
+  assign hdr_yumi_li = is_hdr & link_accept;
 
   logic [flit_width_p-1:0] data_lo;
   logic data_v_lo, data_yumi_li;
 
   // Protocol data is 1 or multiple flit-sized. We accept a large protocol data
   //   and then stream out 1 flit at a time
-  if (pr_data_width_p == flit_width_p)
-    begin : data_passthrough
-      assign data_lo = data_i;
-      assign data_v_lo = data_v_i;
-      assign data_ready_and_o = is_data & link_ready_and_i;
-    end
-  else if (pr_data_width_p >= flit_width_p)
+  if (pr_data_width_p >= flit_width_p)
     begin : wide
       localparam [len_width_p-1:0] data_len_lp = `BSG_CDIV(pr_data_width_p, flit_width_p);
-      bsg_parallel_in_serial_out
+      bsg_parallel_in_serial_out_passthrough
        #(.width_p(flit_width_p)
          ,.els_p(data_len_lp)
          )
@@ -139,12 +124,12 @@ module bsg_wormhole_stream_in
          ,.reset_i(reset_i)
 
          ,.data_i(data_i)
-         ,.valid_i(data_v_i)
-         ,.ready_o(data_ready_and_o)
+         ,.v_i(data_v_i)
+         ,.ready_and_o(data_ready_and_o)
 
          ,.data_o(data_lo)
-         ,.valid_o(data_v_lo)
-         ,.yumi_i(data_yumi_li)
+         ,.v_o(data_v_lo)
+         ,.ready_and_i(data_yumi_li)
          );
       assign data_yumi_li = is_data & link_accept;
     end
@@ -163,29 +148,30 @@ module bsg_wormhole_stream_in
 
          ,.data_i(data_i)
          ,.v_i(data_v_i)
-         ,.ready_o(data_ready_and_o)
+         ,.ready_and_o(data_ready_and_o)
 
          ,.data_o(data_lo)
          ,.v_o(data_v_lo)
-         ,.yumi_i(data_yumi_li)
+         ,.ready_and_i(data_yumi_li)
          );
       assign data_yumi_li = is_data & link_accept;
     end
   
   // Identifies which flits are header vs data flits
   bsg_wormhole_stream_control
- #(.len_width_p  (len_width_p)
-  ,.hdr_len_p    (hdr_len_lp)
-  ) stream_control
-  (.clk_i        (clk_i)
-  ,.reset_i      (reset_i)
+   #(.len_width_p(len_width_p)
+     ,.hdr_len_p(hdr_len_lp)
+     )
+   stream_control
+    (.clk_i(clk_i)
+     ,.reset_i(reset_i)
 
-  ,.len_i        (hdr_lo[cord_width_p+:len_width_p])
-  ,.link_accept_i(link_accept)
+     ,.len_i(hdr_lo[cord_width_p+:len_width_p])
+     ,.link_accept_i(link_accept)
 
-  ,.is_hdr_o     (is_hdr)
-  ,.is_data_o    (is_data)
-  );
+     ,.is_hdr_o(is_hdr)
+     ,.is_data_o(is_data)
+     );
 
   assign link_data_o = is_hdr ? hdr_lo   : data_lo;
   assign link_v_o    = is_hdr ? hdr_v_lo : data_v_lo;

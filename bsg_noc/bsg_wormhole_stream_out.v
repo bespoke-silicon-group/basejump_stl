@@ -83,47 +83,32 @@ module bsg_wormhole_stream_out
 
   // Aggregate flits until we have a full header-worth of data, then let the
   //   client process it
-  if (flit_width_p == hdr_width_p)
-    begin : hdr_passthrough
-      assign hdr_o = link_data_i;
-      assign hdr_v_o = is_hdr & link_v_i;
-      assign hdr_ready_lo = hdr_yumi_i;
-    end
-  else
-    begin : hdr_sipo
-      assign hdr_v_li = is_hdr & link_v_i;
-      bsg_serial_in_parallel_out_full
-       #(.width_p(flit_width_p)
-         ,.els_p(hdr_len_lp)
-         )
-       hdr_sipo
-        (.clk_i(clk_i)
-         ,.reset_i(reset_i)
+  assign hdr_v_li = is_hdr & link_v_i;
+  bsg_serial_in_parallel_out_passthrough
+   #(.width_p(flit_width_p)
+     ,.els_p(hdr_len_lp)
+     )
+   hdr_sipo
+    (.clk_i(clk_i)
+     ,.reset_i(reset_i)
 
-         ,.data_i(link_data_i)
-         ,.v_i(hdr_v_li)
-         ,.ready_o(hdr_ready_lo)
+     ,.data_i(link_data_i)
+     ,.v_i(hdr_v_li)
+     ,.ready_and_o(hdr_ready_lo)
 
-         ,.data_o(hdr_o)
-         ,.v_o(hdr_v_o)
-         ,.yumi_i(hdr_yumi_i)
-         );
-    end
+     ,.data_o(hdr_o)
+     ,.v_o(hdr_v_o)
+     ,.ready_and_i(hdr_yumi_i)
+     );
 
   logic data_v_li, data_ready_lo;
   assign data_v_li = is_data & link_v_i;
   // Protocol data is less than a single flit-sized. We accept a large
   //   wormhole flit, then let the client process it piecemeal
-  if (flit_width_p == pr_data_width_p)
-    begin : data_passthrough
-      assign data_o = link_data_i;
-      assign data_v_o = is_data & link_v_i;
-      assign data_ready_lo = data_yumi_i;
-    end
-  else if (flit_width_p >= pr_data_width_p)
+  if (flit_width_p >= pr_data_width_p)
     begin : narrow
       localparam [len_width_p-1:0] data_len_lp = `BSG_CDIV(flit_width_p, pr_data_width_p);
-      bsg_parallel_in_serial_out
+      bsg_parallel_in_serial_out_passthrough
        #(.width_p(pr_data_width_p)
          ,.els_p(data_len_lp)
          )
@@ -132,12 +117,12 @@ module bsg_wormhole_stream_out
          ,.reset_i(reset_i)
 
          ,.data_i(link_data_i)
-         ,.valid_i(data_v_li)
-         ,.ready_o(data_ready_lo)
+         ,.v_i(data_v_li)
+         ,.ready_and_o(data_ready_lo)
 
          ,.data_o(data_o)
-         ,.valid_o(data_v_o)
-         ,.yumi_i(data_yumi_i)
+         ,.v_o(data_v_o)
+         ,.ready_and_i(data_yumi_i)
          );
     end
   else
@@ -145,7 +130,7 @@ module bsg_wormhole_stream_out
     //   until we have a full protocol data and then let the client process it
     begin : narrow
       localparam [len_width_p-1:0] data_len_lp = `BSG_CDIV(pr_data_width_p, flit_width_p);
-      bsg_serial_in_parallel_out_full
+      bsg_serial_in_parallel_out_passthrough
        #(.width_p(flit_width_p)
          ,.els_p(data_len_lp)
          )
@@ -155,28 +140,29 @@ module bsg_wormhole_stream_out
 
          ,.data_i(link_data_i)
          ,.v_i(data_v_li)
-         ,.ready_o(data_ready_lo)
+         ,.ready_and_o(data_ready_lo)
 
          ,.data_o(data_o)
          ,.v_o(data_v_o)
-         ,.yumi_i(data_yumi_i)
+         ,.ready_and_i(data_yumi_i)
          );
     end
   
   // Identifies which flits are header vs data flits
   bsg_wormhole_stream_control
- #(.len_width_p  (len_width_p)
-  ,.hdr_len_p    (hdr_len_lp)
-  ) stream_control
-  (.clk_i        (clk_i)
-  ,.reset_i      (reset_i)
+   #(.len_width_p(len_width_p)
+     ,.hdr_len_p(hdr_len_lp)
+     )
+   stream_control
+    (.clk_i(clk_i)
+     ,.reset_i(reset_i)
 
-  ,.len_i        (link_data_i[cord_width_p+:len_width_p])
-  ,.link_accept_i(link_accept)
+     ,.len_i(link_data_i[cord_width_p+:len_width_p])
+     ,.link_accept_i(link_accept)
 
-  ,.is_hdr_o     (is_hdr)
-  ,.is_data_o    (is_data)
-  );
+     ,.is_hdr_o(is_hdr)
+     ,.is_data_o(is_data)
+     );
 
   assign link_ready_and_o = is_hdr ? hdr_ready_lo : data_ready_lo;
 
