@@ -2,10 +2,12 @@
 // This data structure takes in a multi-word data and serializes
 // it to a single word output. This module is helpful on both sides.
 // Note:
-//   A transaction starts when ready_and_o & v_i. The data input must
+//   A transaction starts when ready_and_o & v_i. data_i must
 //     stay constant for the entirety of the transaction until
 //     ready_and_o is asserted.
-//
+//   This may make the module incompatible with upstream modules that
+//     multiplex multiple inputs and can change which input they multiplex
+//     on the fly based on arrival of new inputs.
 
 `include "bsg_defines.v"
 
@@ -79,12 +81,25 @@ module bsg_parallel_in_serial_out_passthrough #( parameter width_p    = -1
   assign v_o = v_i;
 
   //synopsys translate_off
+  logic [els_p-1:0][width_p-1:0] initial_data_r;
+  bsg_dff_en
+   #(.width_p(width_p*els_p))
+   initial_data_reg
+    (.clk_i(clk_i)
+     ,.en_i(count_r[0] & v_i)
+
+     ,.data_i(data_i)
+     ,.data_o(initial_data_r)
+     );
+
   always_ff @(negedge clk_i)
     begin
       if (~reset_i & (count_r[0] === 1'b0))
         begin
           assert (v_i)
             else $error("v_i must be held high during the entire PISO transaction");
+          assert (data_i == initial_data_r)
+            else $error("data_i must be held constant during the entire PISO transaction");
         end
     end
   //synopsys translate_on
