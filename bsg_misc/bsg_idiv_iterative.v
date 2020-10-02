@@ -25,7 +25,7 @@
 // 2. usging data detection logic to reduce the iteration cycles.
 `include "bsg_defines.v"
 
-module bsg_idiv_iterative #(parameter width_p=32)
+module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
     (input                  clk_i
     ,input                  reset_i
 
@@ -44,10 +44,10 @@ module bsg_idiv_iterative #(parameter width_p=32)
 
 
    wire [width_p:0] opA;
-   bsg_buf #(.width_p(width_p)) remainder_buf (.i(opA[width_p-1:0]), .o(remainder_o));
+   assign remainder_o = opA[width_p-1:0];
 
    wire [width_p:0] opC;
-   bsg_buf #(.width_p(width_p)) quotient_buf  (.i(opC[width_p-1:0]), .o(quotient_o));
+   assign quotient_o = opC[width_p-1:0];
 
    wire         signed_div_r;
    wire [width_p-1:0]  dividend_r;
@@ -129,61 +129,61 @@ module bsg_idiv_iterative #(parameter width_p=32)
        ,.en_i   (opC_ld )
        ,.clk_i(clk_i)
        );
-   // this logic is sandwiched between bitstacks -- MBT
-   //   assign add_in0 = (opA ^ {width_p+1{opA_inv}}) & {width_p+1{opA_clr_l}};
-   //   assign add_in1 = (opB ^ {width_p+1{opB_inv}}) & {width_p+1{opB_clr_l}};
 
   wire        opA_inv;
-  wire [width_p:0] opA_inv_buf;
-  bsg_buf_ctrl #(.width_p( width_p+1)) buf_opA_inv( .i(opA_inv), .o(opA_inv_buf)) ;
-
   wire        opB_inv;
-  wire [width_p:0] opB_inv_buf;
-  bsg_buf_ctrl #(.width_p( width_p+1)) buf_opB_inv( .i(opB_inv), .o(opB_inv_buf)) ;
-
   wire        opA_clr_l;
-  wire [width_p:0] opA_clr_buf;
-  bsg_buf_ctrl #(.width_p( width_p+1)) buf_opA_clr( .i(~opA_clr_l), .o(opA_clr_buf)) ;
-
   wire        opB_clr_l;
-  wire [width_p:0] opB_clr_buf;
-  bsg_buf_ctrl #(.width_p( width_p+1)) buf_opB_clr( .i(~opB_clr_l), .o(opB_clr_buf)) ;
 
-  wire [width_p:0] opA_xnor;
-  bsg_xnor#(.width_p(width_p+1)) xnor_opA 
-        (.a_i(opA_inv_buf)
+  wire [width_p:0] add_in0;
+  wire [width_p:0] add_in1;
+
+
+  // this logic is sandwiched between bitstacks -- MBT
+  if (bitstack_p) begin: bs
+
+    wire [width_p:0] opA_xnor;
+    bsg_xnor#(.width_p(width_p+1)) xnor_opA 
+        (.a_i({(width_p+1){opA_inv}})
         ,.b_i(opA)
         ,.o  (opA_xnor)
         ); 
 
-  wire [width_p:0] opB_xnor;
-  bsg_xnor#(.width_p(width_p+1)) xnor_opB 
-        (.a_i(opB_inv_buf)
+    wire [width_p:0] opB_xnor;
+    bsg_xnor#(.width_p(width_p+1)) xnor_opB 
+        (.a_i({(width_p+1){opB_inv}})
         ,.b_i(opB)
         ,.o  (opB_xnor)
         ); 
 
-  wire [width_p:0] add_in0;
-  bsg_nor2 #(.width_p(width_p+1)) nor_opA 
+    bsg_nor2 #(.width_p(width_p+1)) nor_opA 
        ( .a_i( opA_xnor )
-        ,.b_i( opA_clr_buf)
+        ,.b_i({(width_p+1){~opA_clr_l}})
         ,.o  (add_in0)
         );
 
-  wire [width_p:0] add_in1;
-  bsg_nor2 #(.width_p(width_p+1)) nor_opB 
+    bsg_nor2 #(.width_p(width_p+1)) nor_opB 
        ( .a_i( opB_xnor )
-        ,.b_i( opB_clr_buf)
+        ,.b_i( {(width_p+1){~opB_clr_l}})
         ,.o  (add_in1)
         );
 
+  end
+  else begin: nbs
+
+    assign add_in0 = (opA ^ {width_p+1{opA_inv}}) & {width_p+1{opA_clr_l}};
+    assign add_in1 = (opB ^ {width_p+1{opB_inv}}) & {width_p+1{opB_clr_l}};
+
+  end
+
+
   wire adder_cin;
   bsg_adder_cin #(.width_p(width_p+1)) adder
-     (.a_i  (add_in0)
-     ,.b_i  (add_in1)
-     ,.cin_i(adder_cin)
-     ,.o    (add_out)
-     );
+   (.a_i  (add_in0)
+   ,.b_i  (add_in1)
+   ,.cin_i(adder_cin)
+   ,.o    (add_out)
+   );
 
   bsg_idiv_iterative_controller #(.width_p(width_p)) control 
      ( .reset_i                  (reset_i)
