@@ -78,9 +78,10 @@ else ifeq ($(SIM),verilator)
 
 # Install directory for verilator
 VERILATOR_ROOT ?= $(TESTING_COCOTB_DIR)/tools/verilator/install
+PATH := $(VERILATOR_ROOT)/bin/:$(PATH)
 
-# Enable vcd trace dump
-VERILATOR_TRACE ?= 1
+# Set time-precision for toplevel testbench
+COCOTB_HDL_TIMEPRECISION ?= 1ns
 
 # Any arguments or flags to pass to the compile stage of the simulation.
 COMPILE_ARGS ?= \
@@ -94,7 +95,7 @@ COMPILE_ARGS ?= \
 # Passed to both the compile and execute phases of simulators with two rules,
 # or passed to the single compile and run command for simulators which don’t
 # have a distinct compilation stage.
-#EXTRA_ARGS ?=
+EXTRA_ARGS ?= --trace --trace-structs --coverage
 
 # Use to add additional dependencies to the compilation target; useful for
 # defining additional rules to run pre-compilation or if the compilation phase
@@ -105,6 +106,5 @@ COMPILE_ARGS ?= \
 endif
 
 # Include standard cocotb makefile infrastructure
-include $(shell cocotb-config --makefiles)/Makefile.inc
 include $(shell cocotb-config --makefiles)/Makefile.sim
 

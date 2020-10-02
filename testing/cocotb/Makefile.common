@@ -44,16 +44,18 @@ $(VERILATOR_BUILD_DIR):
 	cd $@/verilator-$(VERILATOR_VERSION) ; $(MAKE)
 	cd $@/verilator-$(VERILATOR_VERSION) ; $(MAKE) install
 
+COCOTB_VERSION :=v1.4.0
+
 $(COCOTB_BUILD_DIR):
 	mkdir -p $(@D)
-	#git clone https://github.com/cocotb/cocotb.git $@
-	#cd $@ ; git checkout v1.2.0rc1
-	git clone https://github.com/wallento/cocotb-1.git $@ ;# Cocotb PR#943
-	cd $@ ; git checkout verilator
+	git clone https://github.com/cocotb/cocotb.git $@
+	cd $@ ; git checkout $(COCOTB_VERSION)
+
+PYTHON_VERSION :=3.6
 
 $(COCOTB_VENV_BUILD_DIR): $(COCOTB_BUILD_DIR)
 	mkdir -p $(@D)
-	virtualenv -p /usr/bin/python2.7 $@
+	virtualenv -p /usr/bin/python$(PYTHON_VERSION) $@
 	$(COCOTB_VENV_ACTIVATE) ; pip install $^
 
 clean_tools:
