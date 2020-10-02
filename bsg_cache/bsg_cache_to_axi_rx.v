@@ -119,7 +119,7 @@ module bsg_cache_to_axi_rx
 
     ,.valid_i(axi_rvalid_i)
     ,.data_i(axi_rdata_i)
-    ,.ready_o(axi_rready_o)
+    ,.ready_and_o(axi_rready_o)
 
     ,.valid_o(piso_v_lo)
     ,.data_o(piso_data_lo)

@@ -1,0 +1,11 @@
+First time run of test
+
+$ cd basejump_stl/testing/bsg_dataflow/bsg_parallel_in_serial_out
+$ git clone https://bitbucket.org/taylor-bsg/bsg_cadenv.git ../../../../bsg_cadenv
+$ make run (use -jN to speedup simulation)
+$ make view-<specific design>
+
+
+Clean generated files
+
+$ make clean

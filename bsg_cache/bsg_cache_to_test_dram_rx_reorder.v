@@ -48,7 +48,7 @@ module bsg_cache_to_test_dram_rx_reorder
     
     ,.valid_i(piso_v_li)
     ,.data_i(piso_data_li)
-    ,.ready_o(piso_ready_lo)
+    ,.ready_and_o(piso_ready_lo)
 
     ,.valid_o(dma_data_v_o)
     ,.data_o(dma_data_o)

@@ -637,7 +637,7 @@ module bsg_dmc_controller
     ,.reset_i ( dfi_clk_sync_rst_i    )
     ,.valid_i ( tx_data_piso_valid_li )
     ,.data_i  ( tx_data_piso_data_li  )
-    ,.ready_o ( tx_data_piso_ready_lo ) 
+    ,.ready_and_o ( tx_data_piso_ready_lo ) 
     ,.valid_o ( tx_data_piso_valid_lo )
     ,.data_o  ( tx_data_piso_data_lo  )
     ,.yumi_i  ( tx_data_piso_yumi_li  ));
@@ -650,7 +650,7 @@ module bsg_dmc_controller
     ,.reset_i ( dfi_clk_sync_rst_i    )
     ,.valid_i ( tx_mask_piso_valid_li )
     ,.data_i  ( tx_mask_piso_data_li  )
-    ,.ready_o ( tx_mask_piso_ready_lo ) 
+    ,.ready_and_o ( tx_mask_piso_ready_lo ) 
     ,.valid_o ( tx_mask_piso_valid_lo )
     ,.data_o  ( tx_mask_piso_data_lo  )
     ,.yumi_i  ( tx_mask_piso_yumi_li  ));
@@ -717,7 +717,7 @@ module bsg_dmc_controller
     ,.reset_i ( ui_clk_sync_rst_i  )
     ,.valid_i ( rx_piso_valid_li   )
     ,.data_i  ( rx_piso_data_li    )
-    ,.ready_o ( rx_piso_ready_lo   ) 
+    ,.ready_and_o ( rx_piso_ready_lo   ) 
     ,.valid_o ( rx_piso_valid_lo   )
     ,.data_o  ( rx_piso_data_lo    )
     ,.yumi_i  ( rx_piso_yumi_li    ));
