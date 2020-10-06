@@ -82,10 +82,8 @@ module bsg_wormhole_stream_in
 
   localparam [len_width_p-1:0] hdr_len_lp = `BSG_CDIV(hdr_width_p, flit_width_p);
 
-  wire link_accept = link_ready_and_i & link_v_o;
-
   logic [flit_width_p-1:0] hdr_lo;
-  logic hdr_ready_lo, hdr_v_lo, hdr_yumi_li;
+  logic hdr_ready_lo, hdr_v_lo, hdr_ready_and_li;
 
   // Header is input all at once and streamed out 1 flit at a time
   bsg_parallel_in_serial_out_passthrough
@@ -102,13 +100,13 @@ module bsg_wormhole_stream_in
 
      ,.data_o(hdr_lo)
      ,.v_o(hdr_v_lo)
-     ,.ready_and_i(hdr_yumi_li)
+     ,.ready_and_i(hdr_ready_and_li)
      );
   assign hdr_ready_and_o = hdr_ready_lo;
-  assign hdr_yumi_li = is_hdr & link_accept;
+  assign hdr_ready_and_li = is_hdr & link_ready_and_i;
 
   logic [flit_width_p-1:0] data_lo;
-  logic data_v_lo, data_yumi_li;
+  logic data_v_lo, data_ready_and_li;
 
   // Protocol data is 1 or multiple flit-sized. We accept a large protocol data
   //   and then stream out 1 flit at a time
@@ -129,9 +127,9 @@ module bsg_wormhole_stream_in
 
          ,.data_o(data_lo)
          ,.v_o(data_v_lo)
-         ,.ready_and_i(data_yumi_li)
+         ,.ready_and_i(data_ready_and_li)
          );
-      assign data_yumi_li = is_data & link_accept;
+      assign data_ready_and_li = is_data & link_ready_and_i;
     end
   else
     // Protocol data is less than a single flit-sized. We accept a small
@@ -152,9 +150,9 @@ module bsg_wormhole_stream_in
 
          ,.data_o(data_lo)
          ,.v_o(data_v_lo)
-         ,.ready_and_i(data_yumi_li)
+         ,.ready_and_i(data_ready_and_li)
          );
-      assign data_yumi_li = is_data & link_accept;
+      assign data_ready_and_li = is_data & link_ready_and_i;
     end
   
   // Identifies which flits are header vs data flits
@@ -167,7 +165,7 @@ module bsg_wormhole_stream_in
      ,.reset_i(reset_i)
 
      ,.len_i(hdr_lo[cord_width_p+:len_width_p])
-     ,.link_accept_i(link_accept)
+     ,.link_accept_i(link_ready_and_i & link_v_o)
 
      ,.is_hdr_o(is_hdr)
      ,.is_data_o(is_data)
