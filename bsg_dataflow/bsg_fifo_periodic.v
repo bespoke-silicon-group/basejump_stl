@@ -26,19 +26,19 @@
 //        small multiples, but for large multiples, it may be desirable to
 //        latch the output signal to the faster clock, to give more slack.
 //        Another solution would be to set a false path on the data line
-module bsg_fifo_divide
+module bsg_fifo_periodic
  #(parameter a_period_p   = "inv"
    , parameter b_period_p = "inv"
    )
   (input          a_clk_i
    , input        a_reset_i
    , input        a_v_i
-   , output logic a_yumi_o
+   , output logic a_ready_and_o
 
    , input        b_clk_i
    , input        b_reset_i
    , output logic b_v_o
-   , input        b_ready_i
+   , input        b_ready_and_i
    );
 
   localparam fast2slow_lp  = (a_period_p > b_period_p);
@@ -57,9 +57,8 @@ module bsg_fifo_divide
      ,.up_i(1'b1)
      ,.count_r_o(cnt_r)
      );
-  wire accept_input = cnt_r[ratio_lp-1] & b_ready_i & a_v_i & ~a_reset_i & ~b_reset_i;
-  assign b_v_o      = accept_input;
-  assign a_yumi_o   = accept_input;
+  assign b_v_o         = cnt_r[ratio_lp-1] & a_v_i & ~a_reset_i & ~b_reset_i;
+  assign a_ready_and_o = cnt_r[ratio_lp-1] & b_ready_and_i & ~a_reset_i & ~b_reset_i;
 
   //synopsys translate_off
   initial

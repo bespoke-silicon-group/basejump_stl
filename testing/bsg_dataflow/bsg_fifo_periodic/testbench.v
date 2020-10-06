@@ -44,7 +44,7 @@ module testbench;
   logic [width_p-1:0] in_data_li;
   logic in_v_li, in_ready_lo;
   logic [width_p-1:0] in_data_lo;
-  logic in_v_lo, in_yumi_li;
+  logic in_v_lo, in_ready_li;
   bsg_two_fifo
    #(.width_p(width_p))
    input_fifo
@@ -57,7 +57,7 @@ module testbench;
   
      ,.data_o(in_data_lo)
      ,.v_o(in_v_lo)
-     ,.yumi_i(in_yumi_li)
+     ,.yumi_i(in_ready_li & in_v_lo)
      );
   
   logic mid_v_li, mid_ready_lo;
@@ -67,15 +67,15 @@ module testbench;
     (.a_clk_i(clk_1x)
      ,.a_reset_i(reset_1x)
      ,.a_v_i(in_v_lo)
-     ,.a_yumi_o(in_yumi_li)
+     ,.a_ready_and_o(in_ready_li)
 
      ,.b_clk_i(clk_4x)
      ,.b_reset_i(reset_1x)
      ,.b_v_o(mid_v_li)
-     ,.b_ready_i(mid_ready_lo)
+     ,.b_ready_and_i(mid_ready_lo)
      );
 
-  logic mid_v_lo, mid_yumi_li;
+  logic mid_v_lo, mid_ready_li;
   logic [width_p-1:0] out_data_li;
   bsg_two_fifo
    #(.width_p(width_p))
@@ -89,22 +89,22 @@ module testbench;
 
      ,.data_o(out_data_li)
      ,.v_o(mid_v_lo)
-     ,.yumi_i(mid_yumi_li)
+     ,.yumi_i(mid_ready_li & mid_v_lo)
      );
 
   logic out_v_li, out_ready_lo;
-  bsg_fifo_divide
+  bsg_fifo_periodic
    #(.a_period_p(4), .b_period_p(1))
    output_divide
     (.a_clk_i(clk_4x)
      ,.a_reset_i(reset_1x)
      ,.a_v_i(mid_v_lo)
-     ,.a_yumi_o(mid_yumi_li)
+     ,.a_ready_and_o(mid_ready_li)
 
      ,.b_clk_i(clk_1x)
      ,.b_reset_i(reset_1x)
      ,.b_v_o(out_v_li)
-     ,.b_ready_i(out_ready_lo)
+     ,.b_ready_and_i(out_ready_lo)
      );
 
   logic [width_p-1:0] out_data_lo;
