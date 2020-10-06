@@ -137,15 +137,15 @@ module bsg_wormhole_stream_tester
 
   ,.link_data_i    (link_data_li)
   ,.link_v_i       (link_v_li)
-  ,.link_ready_and_o   (link_ready_and_lo)
+  ,.link_ready_and_o(link_ready_and_lo)
 
   ,.hdr_o          (hdr_lo)
   ,.hdr_v_o        (hdr_v_lo)
-  ,.hdr_yumi_i     (hdr_v_lo & hdr_ready_li)
+  ,.hdr_ready_and_i(hdr_ready_li)
 
   ,.data_o         (data_lo)
   ,.data_v_o       (data_v_lo)
-  ,.data_yumi_i    (data_v_lo & data_ready_li)
+  ,.data_ready_and_i(data_ready_li)
   );
   
   

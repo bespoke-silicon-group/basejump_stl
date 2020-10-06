@@ -65,19 +65,17 @@ module bsg_wormhole_stream_out
    // The wormhole and protocol header information
    , output [hdr_width_p-1:0]     hdr_o
    , output                       hdr_v_o
-   , input                        hdr_yumi_i
+   , input                        hdr_ready_and_i
 
    // The protocol data information
    , output [pr_data_width_p-1:0] data_o
    , output                       data_v_o
-   , input                        data_yumi_i
+   , input                        data_ready_and_i
    );
 
   wire is_hdr, is_data;
   
   localparam [len_width_p-1:0] hdr_len_lp = `BSG_CDIV(hdr_width_p, flit_width_p);
-
-  wire link_accept = link_ready_and_o & link_v_i;
 
   logic hdr_v_li, hdr_ready_lo;
 
@@ -98,7 +96,7 @@ module bsg_wormhole_stream_out
 
      ,.data_o(hdr_o)
      ,.v_o(hdr_v_o)
-     ,.ready_and_i(hdr_yumi_i)
+     ,.ready_and_i(hdr_ready_and_i)
      );
 
   logic data_v_li, data_ready_lo;
@@ -122,7 +120,7 @@ module bsg_wormhole_stream_out
 
          ,.data_o(data_o)
          ,.v_o(data_v_o)
-         ,.ready_and_i(data_yumi_i)
+         ,.ready_and_i(data_ready_and_i)
          );
     end
   else
@@ -144,7 +142,7 @@ module bsg_wormhole_stream_out
 
          ,.data_o(data_o)
          ,.v_o(data_v_o)
-         ,.ready_and_i(data_yumi_i)
+         ,.ready_and_i(data_ready_and_i)
          );
     end
   
@@ -158,7 +156,7 @@ module bsg_wormhole_stream_out
      ,.reset_i(reset_i)
 
      ,.len_i(link_data_i[cord_width_p+:len_width_p])
-     ,.link_accept_i(link_accept)
+     ,.link_accept_i(link_ready_and_o & link_v_i)
 
      ,.is_hdr_o(is_hdr)
      ,.is_data_o(is_data)

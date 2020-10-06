@@ -39,9 +39,9 @@ module testbench();
   bsg_ready_and_link_sif_s link_lo, link_li;
 
   logic [hdr_width_p-1:0] hdr_lo;
-  logic hdr_v_lo, hdr_yumi_li;
+  logic hdr_v_lo, hdr_ready_and_li;
   logic [pr_data_width_p-1:0] data_lo;
-  logic data_v_lo, data_yumi_li;
+  logic data_v_lo, data_ready_and_li;
   bsg_wormhole_stream_out #(
     .flit_width_p(flit_width_p)
     ,.cord_width_p(cord_width_p)
@@ -58,11 +58,11 @@ module testbench();
 
     ,.hdr_o(hdr_lo)
     ,.hdr_v_o(hdr_v_lo)
-    ,.hdr_yumi_i(hdr_yumi_li)
+    ,.hdr_ready_and_i(hdr_ready_and_li)
 
     ,.data_o(data_lo)
     ,.data_v_o(data_v_lo)
-    ,.data_yumi_i(data_yumi_li)
+    ,.data_ready_and_i(data_ready_and_li)
      );
   wire [cord_width_p-1:0] cord_lo = link_lo.data[0+:cord_width_p];
   wire [len_width_p-1:0] len_lo = link_lo.data[cord_width_p+:len_width_p];
@@ -72,8 +72,8 @@ module testbench();
 
   assign fifo_data_li = hdr_v_lo ? hdr_lo : data_lo;
   assign fifo_v_li = hdr_v_lo | data_v_lo;
-  assign hdr_yumi_li = hdr_v_lo & fifo_ready_lo;
-  assign data_yumi_li = data_v_lo & fifo_ready_lo;
+  assign hdr_ready_and_li = fifo_ready_lo;
+  assign data_ready_and_li = fifo_ready_lo;
 
   logic [ring_width_p-1:0] tr_data_li;
   logic tr_v_li, tr_ready_lo;
