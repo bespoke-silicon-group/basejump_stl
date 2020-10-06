@@ -1,7 +1,6 @@
 #ifndef __BSG_NONSYNTH_DPI_ROM_HPP
 #define __BSG_NONSYNTH_DPI_ROM_HPP
 #include <svdpi.h>
-#include <verilated.h>
 #include <bsg_nonsynth_dpi.hpp>
 #include <cstring>
 
