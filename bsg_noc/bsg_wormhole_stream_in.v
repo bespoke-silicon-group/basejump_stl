@@ -136,7 +136,7 @@ module bsg_wormhole_stream_in
     //   protocol data, aggregate it, and then send it out on the wormhole network
     begin : narrow
       localparam [len_width_p-1:0] data_len_lp = `BSG_CDIV(flit_width_p, pr_data_width_p);
-      bsg_serial_in_parallel_out_full
+      bsg_serial_in_parallel_out_passthrough
        #(.width_p(pr_data_width_p)
          ,.els_p(data_len_lp)
          )
