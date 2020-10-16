@@ -27,7 +27,7 @@
          ,.addr_in   ( addr_li[0] )         \
          ,.wd_in     ( w_data_i   )         \
          ,.w_mask_in ( '1         )         \
-         ,.rd_out    ( data_lo[1] )         \
+         ,.rd_out    ( data_lo[0] )         \
          );                                 \
                                             \
        free45_1rw_d``words``_w``bits`` mem1 \
@@ -57,8 +57,9 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
   );
 
   // TODO: ADD ANY NEW RAM CONFIGURATIONS HERE
-  `bsg_mem_1r1w_sync_macro    (64, 512) else
+  `bsg_mem_1r1w_sync_macro    (64, 50) else
   `bsg_mem_1r1w_sync_macro    (32, 64) else
+  `bsg_mem_1r1w_sync_macro    (32, 92) else
 
       begin: notmacro
 

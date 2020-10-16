@@ -4,38 +4,63 @@
 // Only one read or one write may be done per cycle.
 
 `define bsg_mem_1rw_sync_mask_write_bit_macro(words,bits)  \
-  if (els_p == words && width_p == bits)    \
-    begin: macro                            \
-       free45_1rw_d``words``_w``bits`` mem  \
-         (.clk       ( clk_i     )          \
-         ,.ce_in     (  v_i      )          \
-         ,.we_in     (  w_i      )          \
-         ,.addr_in   ( addr_i    )          \
-         ,.wd_in     ( data_i    )          \
-         ,.rd_out    ( data_o    )          \
-         ,.w_mask_in ( w_mask_i  )          \
-         );                                 \
+  if (els_p == words && width_p == bits)                   \
+    begin: macro                                           \
+       logic [width_p-1:0] data_out;                       \
+       free45_1rw_d``words``_w``bits`` mem                 \
+         (.clk       ( clk_i     )                         \
+         ,.ce_in     (  v_i      )                         \
+         ,.we_in     (  w_i      )                         \
+         ,.addr_in   ( addr_i    )                         \
+         ,.wd_in     ( data_i    )                         \
+         ,.rd_out    ( data_out  )                         \
+         ,.w_mask_in ( w_mask_i  )                         \
+         );                                                \
+       if (latch_last_read_p == 1)                         \
+         begin: llr                                        \
+           logic read_en_r;                                \
+           bsg_dff #(.width_p(1))                          \
+             read_en_dff                                   \
+             (.clk_i   ( clk_i      )                      \
+             ,.data_i  ( v_i & ~w_i )                      \
+             ,.data_o  ( read_en_r  )                      \
+             );                                            \
+                                                           \
+           bsg_dff_en_bypass #(.width_p(width_p))          \
+             data_dff                                      \
+             (.clk_i   ( clk_i     )                       \
+             ,.en_i    ( read_en_r )                       \
+             ,.data_i  ( data_out  )                       \
+             ,.data_o  ( data_o    )                       \
+             );                                            \
+         end                                               \
     end
 
-`define bsg_mem_1rw_sync_mask_write_bit_macro_banks(words,bits,banks)  \
-  if (els_p == words && width_p == banks*bits)                                   \
+`define bsg_mem_1rw_sync_mask_write_bit_banked_macro(words,bits,wbank,dbank)     \
+  if (els_p == words && width_p == bits)                                         \
     begin: macro                                                                 \
-      for (genvar i = 0; i < banks; i++)                                         \
-        begin: bank                                                              \
-          free45_1rw_d``words``_w``bits`` mem                                    \
-            (.clk       ( clk_i                                       )          \
-            ,.ce_in     ( v_i                                         )          \
-            ,.we_in     ( w_i                                         )          \
-            ,.addr_in   ( addr_i                                      )          \
-            ,.wd_in     ( data_i[i*(width_p/banks)+:width_p/banks]    )          \
-            ,.rd_out    ( data_o[i*(width_p/banks)+:width_p/banks]    )          \
-            ,.w_mask_in ( w_mask_i[i*(width_p/banks)+:width_p/banks]  )          \
-            );                                                                   \
-        end                                                                      \
+      bsg_mem_1rw_sync_mask_write_bit_banked                                     \
+        #(.width_p(width_p)                                                      \
+         ,.els_p(els_p)                                                          \
+         ,.latch_last_read_p(latch_last_read_p)                                  \
+         ,.num_width_bank_p(wbank)                                               \
+         ,.num_depth_bank_p(dbank)                                               \
+        )                                                                        \
+        bmem                                                                     \
+        (.clk_i(clk_i)                                                           \
+        ,.reset_i(reset_i)                                                       \
+        ,.v_i(v_i)                                                               \
+        ,.w_i(w_i)                                                               \
+        ,.addr_i(addr_i)                                                         \
+        ,.data_i(data_i)                                                         \
+        ,.w_mask_i(w_mask_i)                                                     \
+        ,.data_o(data_o)                                                         \
+        );                                                                       \
     end
 
 module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
                            , parameter els_p=-1
+                           , parameter latch_last_read_p=0
                            , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                            , parameter harden_p = 1
                            )
@@ -50,9 +75,30 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
     );
 
   // TODO: ADD ANY NEW RAM CONFIGURATIONS HERE
-  `bsg_mem_1rw_sync_mask_write_bit_macro (736, 64) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro_banks(64,124,2) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro_banks(64,62,8) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (256, 48) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (256, 30) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (256, 4) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (256, 34) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (512, 4) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (512, 32) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (128, 152) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (64, 58) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (128, 112) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (64, 124) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (64, 62) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (128, 116) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (32, 62) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (64, 15) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (64, 7) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (32, 124) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (128, 15) else
+  
+  `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,116,2,1) else
+  `bsg_mem_1rw_sync_mask_write_bit_banked_macro(256,112,1,2) else
+  `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,248,2,1) else
+  `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,496,8,1) else
+  `bsg_mem_1rw_sync_mask_write_bit_banked_macro(128,232,2,1) else
+  `bsg_mem_1rw_sync_mask_write_bit_banked_macro(32,496,4,1) else
 
   // no hardened version found
     begin: notmacro
@@ -60,6 +106,7 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
    bsg_mem_1rw_sync_mask_write_bit_synth
      #(.width_p(width_p)
        ,.els_p(els_p)
+       ,.latch_last_read_p(latch_last_read_p)
        ) synth
        (.*);
 
@@ -68,10 +115,10 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
 
    // synopsys translate_off
 
-   always_ff @(posedge clk_lo)
+   always_ff @(posedge clk_i)
      if (v_i === 1)
        assert ((reset_i === 'X) || (reset_i === 1'b1) || (addr_i < els_p))
-         else $error("Invalid address %x to %m of size %x (reset_i = %b, v_i = %b, clk_lo=%b)\n", addr_i, els_p, reset_i, v_i, clk_lo);
+         else $error("Invalid address %x to %m of size %x (reset_i = %b, v_i = %b, clk_i=%b)\n", addr_i, els_p, reset_i, v_i, clk_i);
 
    initial
      begin
