@@ -26,6 +26,14 @@ package bsg_dramsim3_hbm2_8gb_x128_pkg;
   parameter string config_p="HBM2_8Gb_x128.ini";
   parameter address_mapping_p=bsg_dramsim3_pkg::e_ro_ra_bg_ba_ch_co;
 
+  typedef struct packed {
+    logic [$clog2(num_rows_p)-1:0] ro;
+    logic [$clog2(num_bg_p)-1:0] bg;
+    logic [$clog2(num_ba_p)-1:0] ba;
+    logic [$clog2(num_columns_p)-1:0] co;
+    logic [$clog2(data_width_p>>3)-1:0] byte_offset;
+  } dram_ch_addr_s;
+
 endpackage // bsg_dramsim3_hbm2_8gb_x128_pkg
 
 package bsg_dramsim3_hbm2_4gb_x128_pkg;
@@ -41,6 +49,15 @@ package bsg_dramsim3_hbm2_4gb_x128_pkg;
   parameter longint size_in_bits_p=2**35; // 4GB (32Gb)
   parameter string config_p="HBM2_4Gb_x128.ini";
   parameter address_mapping_p=bsg_dramsim3_pkg::e_ro_ra_bg_ba_ch_co;
+
+  typedef struct packed {
+    logic [$clog2(num_rows_p)-1:0] ro;
+    logic [$clog2(num_bg_p)-1:0] bg;
+    logic [$clog2(num_ba_p)-1:0] ba;
+    logic [$clog2(num_columns_p)-1:0] co;
+    logic [$clog2(data_width_p>>3)-1:0] byte_offset;
+  } dram_ch_addr_s;
+
 endpackage // bsg_dramsim3_hbm2_8gb_x128_pkg
 
 package bsg_dramsim3_lpddr3_8gb_x32_1600_pkg;
@@ -56,6 +73,14 @@ package bsg_dramsim3_lpddr3_8gb_x32_1600_pkg;
   parameter longint size_in_bits_p=2**34; // 2GB (16Gb)
   parameter string config_p="LPDDR3_8Gb_x32_1600.ini";
   parameter address_mapping_p=bsg_dramsim3_pkg::e_ro_ch_ra_ba_bg_co;
+
+  typedef struct packed {
+    logic [$clog2(num_rows_p)-1:0] ro;
+    logic [$clog2(num_ba_p)-1:0] ba;
+    logic [$clog2(num_columns_p)-1:0] co;
+    logic [$clog2(data_width_p>>3)-1:0] byte_offset;
+  } dram_ch_addr_s;
+
 endpackage // bsg_dramsim3_lpddr3_8gb_x32_1600_pkg
 
 `define dramsim3_ba_width(num_ba_mp) $clog2(num_ba_mp)
