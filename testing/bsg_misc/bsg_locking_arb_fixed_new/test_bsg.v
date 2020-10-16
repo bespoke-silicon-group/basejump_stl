@@ -155,7 +155,7 @@ module test_bsg;
 
   wire unused = ready_to_dut;
 
-  bsg_locking_arb_fixed_new 
+  bsg_locking_arb_fixed 
    #(.inputs_p(inputs_lp)
    ,.unlock_type_p(unlock_type_lp)
    ,.lo_to_hi_p(lo_to_hi_lp))

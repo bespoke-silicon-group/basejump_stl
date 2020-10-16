@@ -6,7 +6,9 @@
     );
 
     always_comb 
-      case(addr_i)         
+      case(addr_i)
+        // send data format:      4-bit lock_i       + 4-bit requests
+        // received data format:  000 + 1-bit lock_o + 4-bit grants         
         0: data_o = width_p ' (12'b0001__1111_1111); // Lock the highest channel
         1: data_o = width_p ' (12'b0010__0001_1000);
 
