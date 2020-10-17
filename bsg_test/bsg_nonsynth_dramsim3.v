@@ -10,6 +10,10 @@ module bsg_nonsynth_dramsim3
     , parameter data_width_p="inv"
     , parameter num_channels_p="inv"
     , parameter num_columns_p="inv"
+    , parameter num_rows_p="inv"
+    , parameter num_ba_p="inv"
+    , parameter num_bg_p="inv"
+    , parameter num_ranks_p="inv"
     , parameter address_mapping_p="inv"
     , parameter size_in_bits_p=0
     , parameter masked_p=0
@@ -18,7 +22,7 @@ module bsg_nonsynth_dramsim3
     , parameter string config_p="inv"
     , parameter string trace_file_p="bsg_nonsynth_dramsim3_trace.txt"
     , parameter base_id_p=0 // use this for multiple instances of this module
-    , parameter lg_num_channels_lp=`BSG_SAFE_CLOG2(num_channels_p)
+    , parameter mem_addr_width_lp=$clog2(num_channels_p)+channel_addr_width_p
     , parameter data_mask_width_lp=(data_width_p>>3)
     , parameter byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
   )
@@ -52,6 +56,7 @@ module bsg_nonsynth_dramsim3
     bit     bsg_dramsim3_init(input int     num_channels,
                               input int     data_width,
                               input longint size,
+                              input int     num_columns,
                               string        config_file);
   
   import "DPI-C" context function 
@@ -80,11 +85,11 @@ module bsg_nonsynth_dramsim3
      bit    init;
 
   initial begin
-    init = bsg_dramsim3_init(num_channels_p, data_width_p, size_in_bits_p, config_p);
+    init = bsg_dramsim3_init(num_channels_p, data_width_p, size_in_bits_p, num_columns_p, config_p);
   end
 
   // memory addr
-  logic [num_channels_p-1:0][lg_num_channels_lp+channel_addr_width_p-1:0] mem_addr;
+  logic [num_channels_p-1:0][mem_addr_width_lp-1:0] mem_addr;
 
   for (genvar i = 0; i < num_channels_p; i++) begin
     bsg_nonsynth_dramsim3_map
@@ -92,6 +97,10 @@ module bsg_nonsynth_dramsim3
         ,.data_width_p(data_width_p)
         ,.num_channels_p(num_channels_p)
         ,.num_columns_p(num_columns_p)
+        ,.num_rows_p(num_rows_p)
+        ,.num_ba_p(num_ba_p)
+        ,.num_bg_p(num_bg_p)
+        ,.num_ranks_p(num_ranks_p)
         ,.address_mapping_p(address_mapping_p)
         ,.channel_select_p(i)
         ,.debug_p(debug_p))
@@ -108,7 +117,7 @@ module bsg_nonsynth_dramsim3
     
   // read channel signal
   logic [num_channels_p-1:0] read_done;
-  logic [num_channels_p-1:0][lg_num_channels_lp+channel_addr_width_p-1:0] read_done_addr;
+  logic [num_channels_p-1:0][mem_addr_width_lp-1:0] read_done_addr;
   logic [num_channels_p-1:0][channel_addr_width_p-1:0] read_done_ch_addr;
 
   for (genvar i = 0; i < num_channels_p; i++) begin
@@ -117,6 +126,10 @@ module bsg_nonsynth_dramsim3
        ,.data_width_p(data_width_p)
        ,.num_channels_p(num_channels_p)
        ,.num_columns_p(num_columns_p)
+       ,.num_rows_p(num_rows_p)
+       ,.num_ba_p(num_ba_p)
+       ,.num_bg_p(num_bg_p)
+       ,.num_ranks_p(num_ranks_p)
        ,.address_mapping_p(address_mapping_p)
        ,.channel_select_p(i)
        ,.debug_p(debug_p))
@@ -127,7 +140,7 @@ module bsg_nonsynth_dramsim3
   end
 
   // write channel signal
-  logic [num_channels_p-1:0][lg_num_channels_lp+channel_addr_width_p-1:0] write_done_addr;
+  logic [num_channels_p-1:0][mem_addr_width_lp-1:0] write_done_addr;
 
   for (genvar i = 0; i < num_channels_p; i++) begin
 
@@ -136,6 +149,10 @@ module bsg_nonsynth_dramsim3
        ,.data_width_p(data_width_p)
        ,.num_channels_p(num_channels_p)
        ,.num_columns_p(num_columns_p)
+       ,.num_rows_p(num_rows_p)
+       ,.num_ba_p(num_ba_p)
+       ,.num_bg_p(num_bg_p)
+       ,.num_ranks_p(num_ranks_p)
        ,.address_mapping_p(address_mapping_p)
        ,.channel_select_p(i)
        ,.debug_p(debug_p))

@@ -26,7 +26,6 @@ module testbench ();
   
   // dramsim3
   import `dram_pkg::*;
-  `declare_dramsim3_ch_addr_s_with_pkg(dram_ch_addr_s, `dram_pkg);
   
   logic [num_channels_p-1:0]                            dramsim3_v_li;
   logic [num_channels_p-1:0]                            dramsim3_write_not_read_li;
@@ -40,17 +39,22 @@ module testbench ();
   logic [num_channels_p-1:0]                            dramsim3_data_v_lo;
   logic [num_channels_p-1:0] [data_width_p-1:0]         dramsim3_data_lo;
 
-  dram_ch_addr_s dramsim3_ch_addr_li_cast;
+  `dram_pkg::dram_ch_addr_s dramsim3_ch_addr_li_cast;
   assign dramsim3_ch_addr_li_cast = dramsim3_ch_addr_li[0];
-  
+
   bsg_nonsynth_dramsim3
     #(.channel_addr_width_p(`dram_pkg::channel_addr_width_p)
       ,.data_width_p(`dram_pkg::data_width_p)
       ,.num_channels_p(`dram_pkg::num_channels_p)
       ,.num_columns_p(`dram_pkg::num_columns_p)
+      ,.num_rows_p(`dram_pkg::num_rows_p)
+      ,.num_ba_p(`dram_pkg::num_ba_p)
+      ,.num_bg_p(`dram_pkg::num_bg_p)
+      ,.num_ranks_p(`dram_pkg::num_ranks_p)
       ,.size_in_bits_p(`dram_pkg::size_in_bits_p)
       ,.address_mapping_p(`dram_pkg::address_mapping_p)
       ,.config_p(`dram_pkg::config_p)
+      ,.masked_p(0)
       ,.trace_file_p(`BSG_STRINGIFY(`trace_file))
       ,.debug_p(1))
     mem
@@ -64,6 +68,7 @@ module testbench ();
 
        ,.data_v_i(dramsim3_data_v_li)
        ,.data_i(dramsim3_data_li)
+       ,.mask_i('0)
        ,.data_yumi_o(dramsim3_data_yumi_lo)
       
        ,.data_v_o(dramsim3_data_v_lo)
@@ -154,7 +159,7 @@ module testbench ();
     if (~reset & dramsim3_v_li[0]) begin
       if (dramsim3_write_not_read_li[0])
         $display("write: 0x%08x {ro: %d, ba: %d, bg: %d, co: %d, byte: %d}",
-                 dramsim3_ch_addr_li[0], 
+                 dramsim3_ch_addr_li[0],
                  dramsim3_ch_addr_li_cast.ro,
                  dramsim3_ch_addr_li_cast.ba,
                  dramsim3_ch_addr_li_cast.bg,
@@ -162,7 +167,7 @@ module testbench ();
                  dramsim3_ch_addr_li_cast.byte_offset);
       else
         $display("read: 0x%08x {ro: %d, ba: %d, bg: %d, co: %d, byte: %d}",
-                 dramsim3_ch_addr_li[0], 
+                 dramsim3_ch_addr_li[0],
                  dramsim3_ch_addr_li_cast.ro,
                  dramsim3_ch_addr_li_cast.ba,
                  dramsim3_ch_addr_li_cast.bg,
