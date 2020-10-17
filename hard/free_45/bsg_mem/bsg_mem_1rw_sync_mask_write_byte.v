@@ -43,6 +43,10 @@
             ,.data_o ( data_o    )                          \
             );                                              \
         end                                                 \
+      else                                                  \
+      begin: no_llr                                         \
+        assign data_o = data_out;                           \
+      end                                                   \
     end
 
 `define bsg_mem_1rw_sync_mask_write_byte_banked_macro(words,bits,wbank,dbank)   \
@@ -55,7 +59,7 @@
          ,.num_depth_bank_p(dbank)                                              \
          ,.num_width_bank_p(wbank)                                              \
          )                                                                      \
-         bank                                                                   \
+         bmem                                                                   \
          (.clk_i(clk_i)                                                         \
          ,.reset_i(reset_i)                                                     \
          ,.v_i(v_i)                                                             \

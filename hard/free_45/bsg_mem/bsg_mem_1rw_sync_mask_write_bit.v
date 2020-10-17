@@ -34,6 +34,10 @@
              ,.data_o  ( data_o    )                       \
              );                                            \
          end                                               \
+       else                                                \
+         begin: no_llr                                     \
+           assign data_o = data_out;                       \
+         end                                               \
     end
 
 `define bsg_mem_1rw_sync_mask_write_bit_banked_macro(words,bits,wbank,dbank)     \
