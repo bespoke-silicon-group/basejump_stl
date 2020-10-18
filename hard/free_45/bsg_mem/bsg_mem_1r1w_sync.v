@@ -16,7 +16,7 @@
       wire [1:0] v_li    = {r_v_i | w_v_i, r_v_i | w_v_i};                                              \
       wire [1:0] w_li    = {w_v_i & ~v_r[w_addr_i], w_v_i & v_r[w_addr_i]};                             \
       wire [1:0][addr_width_lp-1:0]                                                                     \
-                 addr_li = {v_r[r_addr_i] ? r_addr_i : w_addr_i, ~v_r[r_addr_i] ? r_addr_i : w_addr_i}; \
+                 addr_li = {w_li[1] ? w_addr_i : r_addr_i, w_li[0] ? w_addr_i : r_addr_i};              \
       logic [1:0][width_p-1:0] data_lo;                                                                 \
       assign r_data_o    = v_r[r_addr_i] ? data_lo[1] : data_lo[0];                                     \
                                             \
@@ -43,7 +43,7 @@
 
 module bsg_mem_1r1w_sync #(parameter width_p=-1
                          ,parameter els_p=-1
-                         ,parameter addr_width_lp=$clog2(els_p)
+                         ,parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                          ,parameter harden_p = 1
                          )
   (input   clk_i
