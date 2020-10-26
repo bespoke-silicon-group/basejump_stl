@@ -1,5 +1,7 @@
 export BASEJUMP_STL_DIR = ../../..
 
+-include $(BASEJUMP_STL_DIR)/../bsg_cadenv/cadenv.mk
+
 INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_noc
 

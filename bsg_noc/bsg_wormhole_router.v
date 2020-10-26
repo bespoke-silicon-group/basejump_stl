@@ -17,7 +17,7 @@ module bsg_wormhole_router
    ,parameter bit [1:0][dirs_lp-1:0][dirs_lp-1:0] routing_matrix_p =  (dims_p == 2) ? StrictXY : StrictX
    ,parameter reverse_order_p       = 0
    ,parameter len_width_p           = "inv"
-   ,parameter debug_lp              = 0
+   ,parameter debug_lp              = 1
    )
 
   (input clk_i

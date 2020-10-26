@@ -5,11 +5,11 @@ from math import ceil
 from random import randint
 from random import getrandbits
 
-hdr_width = 16
+hdr_width = 32
 cord_width = 5
 len_width = 3
-link_width = 8
-pr_data_width = 16
+link_width = 32
+pr_data_width = 8
 
 wh_hdr_width = cord_width + len_width
 pr_hdr_width = hdr_width - wh_hdr_width
@@ -17,9 +17,10 @@ hdr_flits = hdr_width / link_width
 data_width = link_width*(2**len_width-hdr_flits+1)
 data_flits = data_width / link_width
 beats_per_flit = pr_data_width / link_width
+flits_per_beat = link_width / pr_data_width
 
 # First bit is header or data for send
-ring_width = 1+max(hdr_width, max(data_width, link_width))
+ring_width = 1+max(pr_hdr_width, max(pr_data_width, link_width))
 
 OP_WAIT = "0000_"
 OP_SEND = "0001_"
@@ -88,8 +89,11 @@ def send_packet(packet):
         print(OP_SEND + pad_string(flit, ring_width))
 
 def gen_packet():
-    cord = getrandbitstring(cord_width)
-    data_len = randint(0, data_flits) // beats_per_flit * beats_per_flit
+    cord = "0"*cord_width #getrandbitstring(cord_width)
+    if beats_per_flit > 0:
+      data_len = randint(0, data_flits) // beats_per_flit * beats_per_flit
+    else:
+      data_len = randint(0, 1)
     length = pad_string(bin(data_len + hdr_flits-1), len_width)
     #print("--------------")
     #print("GEN")
@@ -111,9 +115,10 @@ def gen_packet():
 if __name__ == "__main__":
     send_wait(10)
     # Stream in stream out test
-    for _ in range(30):
+    for _ in range(2000):
         packet = gen_packet()
         send_packet(packet)
+        send_wait(1)
         recv_packet(packet)
 
     send_finish();

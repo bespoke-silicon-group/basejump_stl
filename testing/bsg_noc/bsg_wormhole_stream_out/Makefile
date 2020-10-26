@@ -1,5 +1,7 @@
 export BASEJUMP_STL_DIR = ../../..
 
+-include $(BASEJUMP_STL_DIR)/../bsg_cadenv/cadenv.mk
+
 INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_noc
 
@@ -28,3 +30,4 @@ clean:
 	rm -rf simv.daidir simv.vdb
 	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz
 	rm -rf trace.tr
+	rm -rf bsg_trace_rom.v
