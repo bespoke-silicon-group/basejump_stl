@@ -2,19 +2,22 @@ module testbench();
  
   `include "bsg_noc_links.vh"
 
+  import bsg_noc_pkg::*;
+  import bsg_wormhole_router_pkg::*;
+
   // Sync with trace gen
-  localparam hdr_width_p = 16;
+  localparam hdr_width_p = 32;
   localparam cord_width_p = 5;
   localparam len_width_p = 3;
-  localparam flit_width_p = 8;
-  localparam pr_data_width_p = 16;
+  localparam flit_width_p = 32;
+  localparam pr_data_width_p = 8;
   localparam wh_hdr_width_p = cord_width_p + len_width_p;
   localparam pr_hdr_width_p = hdr_width_p - wh_hdr_width_p;
   localparam hdr_flits_p = hdr_width_p / flit_width_p;
   localparam data_width_p = flit_width_p*(2**len_width_p-hdr_flits_p+1);
   localparam data_flits_p = data_width_p / flit_width_p;
 
-  localparam ring_width_p = 1+`BSG_MAX(`BSG_MAX(hdr_width_p, data_width_p), flit_width_p);
+  localparam ring_width_p = 1+`BSG_MAX(`BSG_MAX(pr_hdr_width_p, pr_data_width_p), flit_width_p);
   localparam rom_data_width_p = 4 + ring_width_p;
   localparam rom_addr_width_p = 32;
 
@@ -52,9 +55,9 @@ module testbench();
     .clk_i(clk)
     ,.reset_i(reset)
 
-    ,.link_data_i(link_lo.data)
-    ,.link_v_i(link_lo.v)
-    ,.link_ready_and_o(link_li.ready_and_rev)
+    ,.link_data_i(link_li.data)
+    ,.link_v_i(link_li.v)
+    ,.link_ready_and_o(link_lo.ready_and_rev)
 
     ,.hdr_o(hdr_lo)
     ,.hdr_v_o(hdr_v_lo)
@@ -67,13 +70,40 @@ module testbench();
   wire [cord_width_p-1:0] cord_lo = link_lo.data[0+:cord_width_p];
   wire [len_width_p-1:0] len_lo = link_lo.data[cord_width_p+:len_width_p];
 
+  bsg_ready_and_link_sif_s [E:W] trace_link_li, trace_link_lo;
+  bsg_wormhole_router
+   #(.flit_width_p(flit_width_p)
+     ,.dims_p(1)
+     ,.cord_markers_pos_p('{5,0})
+     ,.len_width_p(len_width_p)
+     )
+   router
+    (.clk_i(clk)
+     ,.reset_i(reset)
+
+     ,.link_i({trace_link_li, link_lo})
+     ,.link_o({trace_link_lo, link_li})
+     ,.my_cord_i('0)
+     );
+
+  logic [10:0] backpressure_cnt;
+  always_ff @(posedge clk)
+    if (reset)
+      backpressure_cnt <= '0;
+    else
+      backpressure_cnt <= backpressure_cnt + 1'b1;
+
+  wire backpressure = |{backpressure_cnt[0+:4]};
+
   logic [ring_width_p-1:0] fifo_data_li;
-  logic fifo_v_li, fifo_ready_lo;
+  logic fifo_v_li, fifo_ready_lo, fifo_pressure_ready_lo;
+
+  assign fifo_pressure_ready_lo = ~backpressure & fifo_ready_lo;
 
   assign fifo_data_li = hdr_v_lo ? hdr_lo : data_lo;
   assign fifo_v_li = hdr_v_lo | data_v_lo;
-  assign hdr_ready_and_li = fifo_ready_lo;
-  assign data_ready_and_li = fifo_ready_lo;
+  assign hdr_ready_and_li = fifo_pressure_ready_lo;
+  assign data_ready_and_li = fifo_pressure_ready_lo;
 
   logic [ring_width_p-1:0] tr_data_li;
   logic tr_v_li, tr_ready_lo;
@@ -86,7 +116,7 @@ module testbench();
      ,.reset_i(reset)
 
      ,.data_i(fifo_data_li)
-     ,.v_i(fifo_v_li)
+     ,.v_i(fifo_pressure_ready_lo & fifo_v_li)
      ,.ready_o(fifo_ready_lo)
 
      ,.data_o(tr_data_li)
@@ -121,9 +151,6 @@ module testbench();
     ,.done_o(tr_done)
     ,.error_o()
     );
-  assign link_lo.v = tr_v_lo;
-  assign link_lo.data = tr_data_lo[0+:flit_width_p];
-  assign tr_yumi_li = link_lo.v & link_li.ready_and_rev;
 
   bsg_trace_rom #(
     .width_p(rom_data_width_p)
@@ -132,6 +159,38 @@ module testbench();
     .addr_i(rom_addr)
     ,.data_o(rom_data)
   );
+
+  logic [1:0] direction_hash;
+  always_ff @(posedge clk)
+    if (reset)
+      direction_hash <= '0;
+    else if (~|rom_data)
+      direction_hash <= direction_hash + 1'b1;
+
+  always_comb
+    begin
+      if (direction_hash % 2 == '0)
+        begin
+          trace_link_li[E].v = tr_v_lo;
+          trace_link_li[E].data = tr_data_lo[0+:flit_width_p];
+          trace_link_li[E].ready_and_rev = '0;
+          tr_yumi_li = trace_link_lo[E].ready_and_rev & trace_link_li[E].v;
+
+          trace_link_li[W] = '0;
+        end
+      else
+        begin
+          trace_link_li[W].v = tr_v_lo;
+          trace_link_li[W].data = tr_data_lo[0+:flit_width_p];
+          trace_link_li[W].ready_and_rev = '0;
+          tr_yumi_li = trace_link_lo[W].ready_and_rev & trace_link_li[W].v;
+
+          trace_link_li[E] = '0;
+        end
+    end
+
+  assign link_lo.v = 1'b0;
+  assign link_lo.data = '0;
 
 initial 
   begin

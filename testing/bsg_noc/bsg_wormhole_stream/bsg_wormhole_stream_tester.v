@@ -11,7 +11,7 @@ module bsg_wormhole_stream_tester
   
   // Adjust following 2 parameters to test different hardwares
   ,parameter hdr_width_p     = flit_width_p*1 // flit_wid_p*2
-  ,parameter pr_data_width_p = flit_width_p*1 // flit_width_p*2, flit_width_p/2
+  ,parameter pr_data_width_p = flit_width_p/2 // flit_width_p*2, flit_width_p/2
   
   ,parameter pr_hdr_width_p  = hdr_width_p - (len_width_p+cord_width_p)
   )
