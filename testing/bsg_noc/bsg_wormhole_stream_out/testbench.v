@@ -9,15 +9,15 @@ module testbench();
   localparam hdr_width_p = 32;
   localparam cord_width_p = 5;
   localparam len_width_p = 3;
-  localparam flit_width_p = 32;
-  localparam pr_data_width_p = 8;
+  localparam flit_width_p = 8;
+  localparam pr_data_width_p = 16;
   localparam wh_hdr_width_p = cord_width_p + len_width_p;
   localparam pr_hdr_width_p = hdr_width_p - wh_hdr_width_p;
   localparam hdr_flits_p = hdr_width_p / flit_width_p;
   localparam data_width_p = flit_width_p*(2**len_width_p-hdr_flits_p+1);
   localparam data_flits_p = data_width_p / flit_width_p;
 
-  localparam ring_width_p = 1+`BSG_MAX(`BSG_MAX(pr_hdr_width_p, pr_data_width_p), flit_width_p);
+  localparam ring_width_p = 1+`BSG_MAX(`BSG_MAX(hdr_width_p, pr_data_width_p), flit_width_p);
   localparam rom_data_width_p = 4 + ring_width_p;
   localparam rom_addr_width_p = 32;
 
