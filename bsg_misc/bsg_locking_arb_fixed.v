@@ -25,11 +25,11 @@ module bsg_locking_arb_fixed #( parameter inputs_p="inv"
   if (unlock_type_p == 0) // Implicit operating mode
     begin
       wire is_locked = |not_req_mask_r;
-      wire lock_onlocked_lo, lock_selected_lo;
-      assign lock_onlocked_lo = |(switch_lock_i & req_mask_r);
+      wire lock_onlocked_lo = |(switch_lock_i & req_mask_r);
       // unlock when the lock input on the locked channel is low
-      assign unlock = is_locked & ~lock_onlocked_lo;
+      assign unlock = is_locked & ~lock_onlocked_lo & ready_i;
 
+      wire lock_selected_lo;
       bsg_mux_one_hot #(.width_p(1) ,.els_p(inputs_p) )
       lock_output_mux
         (.data_i(switch_lock_i)
