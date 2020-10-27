@@ -8,6 +8,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_cache_non_blocking_miss_fifo
   import bsg_cache_non_blocking_pkg::*;
   #(parameter width_p="inv"

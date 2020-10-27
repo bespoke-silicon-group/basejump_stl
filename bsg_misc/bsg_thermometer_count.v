@@ -5,6 +5,8 @@
 // A thermometer code is of the form 0*1*.
 //
 
+`include "bsg_defines.v"
+
 module bsg_thermometer_count #(parameter width_p = -1)
    (input [width_p-1:0] i
     // we need to represent width_p+1 values (0..width_p), so

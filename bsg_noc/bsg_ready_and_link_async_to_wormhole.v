@@ -12,6 +12,8 @@
 // mean that it will not deadlock if traffic classes are not correctly separated.
 //
 
+`include "bsg_defines.v"
+
 `include "bsg_noc_links.vh"
 `include "bsg_wormhole_router.vh"
 
@@ -126,7 +128,7 @@ module bsg_ready_and_link_async_to_wormhole
   ,.reset_i(ral_reset_i)
   ,.valid_i(ral_link_i_cast.v            )
   ,.data_i (ral_piso_data_li             )
-  ,.ready_o(ral_link_o_cast.ready_and_rev)
+  ,.ready_and_o(ral_link_o_cast.ready_and_rev)
   ,.valid_o(ral_async_fifo_valid_li      )
   ,.data_o (ral_async_fifo_data_li       )
   ,.yumi_i (ral_async_fifo_yumi_lo       )

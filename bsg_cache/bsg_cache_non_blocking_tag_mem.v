@@ -7,6 +7,8 @@
 
 
 
+`include "bsg_defines.v"
+
 module bsg_cache_non_blocking_tag_mem 
   import bsg_cache_non_blocking_pkg::*;
   #(parameter sets_p="inv"

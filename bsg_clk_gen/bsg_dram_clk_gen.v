@@ -70,6 +70,8 @@
 // 3. Should be able to probe pin to see something (maybe very noisy because not 50 ohm terminated)
 //
 
+`include "bsg_defines.v"
+
 `include "bsg_clk_gen.vh"
 import bsg_tag_pkg::bsg_tag_s;
 module bsg_dram_clk_gen #

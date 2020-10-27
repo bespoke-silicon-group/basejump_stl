@@ -283,7 +283,7 @@ module bsg_wormhole_concentrator_test_node
   ,.reset_i(node_reset_i)
   ,.valid_i(node_piso_valid_li)
   ,.data_i (node_piso_data_li )
-  ,.ready_o(node_piso_ready_lo)
+  ,.ready_and_o(node_piso_ready_lo)
   ,.valid_o(node_async_fifo_valid_li)
   ,.data_o (node_async_fifo_data_li )
   ,.yumi_i (node_async_fifo_yumi_lo )

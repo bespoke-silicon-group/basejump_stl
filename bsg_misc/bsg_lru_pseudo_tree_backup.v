@@ -41,6 +41,8 @@
 
 
 
+`include "bsg_defines.v"
+
 module bsg_lru_pseudo_tree_backup
   #(parameter ways_p="inv"
     , parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)

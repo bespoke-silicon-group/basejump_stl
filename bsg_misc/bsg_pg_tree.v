@@ -19,6 +19,8 @@
 // it is typically used for constructing adders, multipliers, carry predictors, etc.
 //
 
+`include "bsg_defines.v"
+
 module bsg_pg_tree
 #(parameter input_width_p="inv"
   ,parameter output_width_p="inv"

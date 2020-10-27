@@ -6,6 +6,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_cache_non_blocking_decode
   import bsg_cache_non_blocking_pkg::*;
   (

@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 `include "bsg_clk_gen.vh"
 
 module bsg_dmc_clk_rst_gen

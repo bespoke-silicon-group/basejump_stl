@@ -7,6 +7,8 @@
 //
 //
 
+`include "bsg_defines.v"
+
 module bsg_channel_tunnel_out #(
                                 parameter  width_p = -1
                                 , num_in_p = "inv"

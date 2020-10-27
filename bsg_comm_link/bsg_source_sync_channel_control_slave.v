@@ -13,6 +13,8 @@
 //
 
 
+`include "bsg_defines.v"
+
 module  bsg_source_sync_channel_control_slave #( parameter width_p  = -1
                                                  , lg_token_width_p =  "inv")
    (// output channel

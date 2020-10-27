@@ -1,4 +1,6 @@
 
+`include "bsg_defines.v"
+
 `include "test_assembler_defines.v"
 
 module test_bsg_comm_link;

@@ -4,6 +4,8 @@
 // XY_order_p = 0 :  X then Y
 // XY_order_p = 1 :  Y then X
 
+`include "bsg_defines.v"
+
 module bsg_mesh_router_dor_decoder
 
 // import enum Dirs for directions

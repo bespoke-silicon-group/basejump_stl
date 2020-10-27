@@ -1,6 +1,8 @@
 // this is intended for round robining
 // on the input to a pair of fifos.
 
+`include "bsg_defines.v"
+
 module bsg_round_robin_2_to_2 #(parameter width_p = -1
 				)
    (input clk_i

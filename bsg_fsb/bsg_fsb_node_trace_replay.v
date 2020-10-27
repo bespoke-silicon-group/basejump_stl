@@ -43,6 +43,11 @@ module bsg_fsb_node_trace_replay
     , output logic error_o
     );
 
+  initial
+    begin
+      $display("## WARNING: bsg_fsb_node_trace_replay will be DEPRECATED soon; please discontinue use (%m).");
+    end 
+  
    // 0: wait one cycle
    // 1: send data
    // 2: receive data (and check its value)

@@ -1,6 +1,8 @@
 // This module converts between the valid-ready (input) and 
 // valid-credit (output) handshakes, by keeping the count of 
 // available credits
+`include "bsg_defines.v"
+
 module bsg_ready_to_credit_flow_converter #( parameter credit_initial_p = -1
                                            , parameter credit_max_val_p = -1
                                            , parameter decimation_p     =  1

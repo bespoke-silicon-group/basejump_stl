@@ -6,6 +6,8 @@
 // The controller of bsg_idiv_iterative module.
 // Code refactored based on Sam Larser's work
 
+`include "bsg_defines.v"
+
 module bsg_idiv_iterative_controller #(parameter width_p=32)
       (input               clk_i
       ,input               reset_i

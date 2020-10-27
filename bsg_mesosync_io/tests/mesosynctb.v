@@ -7,6 +7,8 @@
 // are selected.
 
 //`include "definitions.v"
+`include "bsg_defines.v"
+
 `define half_period 16
 parameter bit_num_p = 6;
 parameter send_division_lp    = 1;

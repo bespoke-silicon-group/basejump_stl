@@ -26,6 +26,8 @@
 //
 
 
+`include "bsg_defines.v"
+
 module bsg_scatter_gather #(parameter vec_size_lp="inv")
        (input [vec_size_lp-1:0] vec_i
        ,output reg [vec_size_lp*`BSG_SAFE_CLOG2(vec_size_lp)-1:0] fwd_o

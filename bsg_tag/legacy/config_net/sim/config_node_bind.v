@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 `include "config_defs.v"
 
 module config_node_bind

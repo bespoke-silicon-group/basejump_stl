@@ -5,6 +5,8 @@
 // reads are asynchronous
 //
 
+`include "bsg_defines.v"
+
 module bsg_mem_3r1w #(parameter width_p=-1
                       , parameter els_p=-1
                       , parameter read_write_same_addr_p=0

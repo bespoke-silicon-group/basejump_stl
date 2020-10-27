@@ -1,5 +1,7 @@
 // takes an input vector and spreads the elements according to a bit pattern
 // example width_p=3, pattern_els_p=5'b10101
+`include "bsg_defines.v"
+
 module bsg_unconcentrate_static #(pattern_els_p="inv"
                                   , width_lp=`BSG_COUNTONES_SYNTH(pattern_els_p)
                                  )

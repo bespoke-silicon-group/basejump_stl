@@ -8,6 +8,8 @@
  *	@author Tommy Jung
  */
 
+`include "bsg_defines.v"
+
 module bsg_mul_array #(parameter width_p="inv", pipeline_p="inv")
   (
     input clk_i

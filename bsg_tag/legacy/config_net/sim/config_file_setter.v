@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 `include "config_defs.v"
 
 // This module reads a stream of {0, 1}* bits from a file

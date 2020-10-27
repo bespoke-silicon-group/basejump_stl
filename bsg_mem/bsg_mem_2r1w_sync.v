@@ -10,6 +10,8 @@
 // to move to/from sync/async, and we want to reflect this.
 //
 
+`include "bsg_defines.v"
+
 module bsg_mem_2r1w_sync #(parameter width_p=-1
                            , parameter els_p=-1
                            , parameter read_write_same_addr_p=0

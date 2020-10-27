@@ -16,6 +16,8 @@
 // partial dequeuing from the wide channel.
 //
 
+`include "bsg_defines.v"
+
 module bsg_assembler_out #(parameter width_p    ="inv"
                            ,parameter num_in_p  ="inv"
                            ,parameter num_out_p ="inv"

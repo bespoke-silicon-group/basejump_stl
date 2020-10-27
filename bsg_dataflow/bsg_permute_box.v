@@ -2,6 +2,8 @@
 // FIXME: untested
 //
 
+`include "bsg_defines.v"
+
 module bsg_permute_box #(parameter width_p="inv"
 			 , parameter items_p="inv"
 			 , parameter lg_items_lp=$bits(items_p))

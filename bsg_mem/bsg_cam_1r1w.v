@@ -15,6 +15,8 @@
  *     of the data. If you find that functionality useful, let us know =)
  */
 
+`include "bsg_defines.v"
+
 module bsg_cam_1r1w
  #(parameter els_p                = "inv"
    , parameter tag_width_p        = "inv"

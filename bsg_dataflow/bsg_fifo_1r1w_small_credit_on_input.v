@@ -1,6 +1,8 @@
 // This module converts between the valid-credit (input) and 
 // valid-ready (output) handshakes, by using a fifo to keep
 // the data
+`include "bsg_defines.v"
+
 module bsg_fifo_1r1w_small_credit_on_input #( parameter width_p      = -1
                                             , parameter els_p        = -1
                                             )                           

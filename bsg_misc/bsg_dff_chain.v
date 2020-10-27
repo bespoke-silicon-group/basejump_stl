@@ -5,6 +5,8 @@
 //
 // Pass the input singal to a chainded  DFF registers
 
+`include "bsg_defines.v"
+
 module bsg_dff_chain #(
                  //the width of the input signal
                  parameter       width_p         =       -1

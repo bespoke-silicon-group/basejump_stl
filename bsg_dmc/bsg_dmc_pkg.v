@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 package bsg_dmc_pkg;
   typedef struct packed {
     logic [15:0] trefi;

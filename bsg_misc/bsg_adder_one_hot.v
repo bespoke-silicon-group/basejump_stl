@@ -8,6 +8,8 @@
 // if you don't want modulo, then make the output signal wide enough; i.e. set output_width_p>=2*width_p-1
 //
 
+`include "bsg_defines.v"
+
 module bsg_adder_one_hot #(parameter width_p=-1, parameter output_width_p=width_p)
    (input    [width_p-1:0] a_i
     , input  [width_p-1:0] b_i

@@ -1,4 +1,6 @@
 
+`include "bsg_defines.v"
+
 module bsg_fifo_bypass
  #(parameter width_p = "inv"
 

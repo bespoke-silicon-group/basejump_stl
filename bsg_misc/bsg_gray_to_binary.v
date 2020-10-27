@@ -4,6 +4,8 @@
 // p. 183.
 //
 
+`include "bsg_defines.v"
+
 module bsg_gray_to_binary #(parameter width_p = -1)
    (input    [width_p-1:0] gray_i
     , output [width_p-1:0] binary_o

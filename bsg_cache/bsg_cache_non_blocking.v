@@ -10,6 +10,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_cache_non_blocking 
   import bsg_cache_non_blocking_pkg::*;
   #(parameter id_width_p="inv"

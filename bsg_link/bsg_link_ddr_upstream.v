@@ -29,6 +29,8 @@
 // Step 5: Deassert core_link_reset_i. 
 //
 
+`include "bsg_defines.v"
+
 module bsg_link_ddr_upstream
 
  #(// Core data width
@@ -90,7 +92,7 @@ module bsg_link_ddr_upstream
   ,.reset_i(core_link_reset_i)
   ,.valid_i(core_valid_i)
   ,.data_i (core_data_i)
-  ,.ready_o(core_ready_o)
+  ,.ready_and_o(core_ready_o)
   ,.valid_o(core_piso_valid_lo)
   ,.data_o (core_piso_data_lo)
   ,.yumi_i (core_piso_yumi_li)

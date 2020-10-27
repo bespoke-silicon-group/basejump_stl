@@ -1,5 +1,7 @@
 // This modules defines a DPI interface for a counter that can be read
 // periodically using DPI
+`include "bsg_defines.v"
+
 module bsg_nonsynth_dpi_cycle_counter
   #(
     parameter int width_p = "inv"

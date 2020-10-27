@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_nonsynth_triwire #
   (parameter width_p="inv"
   ,parameter real transport_delay_p = 0.0)

@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_wormhole_router_output_control
   #(parameter input_dirs_p=-1)
    (input clk_i

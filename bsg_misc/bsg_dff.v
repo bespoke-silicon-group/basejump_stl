@@ -1,4 +1,6 @@
 
+`include "bsg_defines.v"
+
 module bsg_dff #(width_p=-1
 		 ,harden_p=0
 		 ,strength_p=1   // set drive strength

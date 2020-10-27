@@ -32,6 +32,8 @@
 // fields correctly, then set the data to all 1's.
 //
 
+`include "bsg_defines.v"
+
 module bsg_tag_trace_replay
 
    #( parameter rom_addr_width_p    = -1
@@ -127,7 +129,7 @@ module bsg_tag_trace_replay
         /* Data Input Channel (Valid then Yumi) */
         ,.valid_i (tr_valid_lo)
         ,.data_i  (data_n)
-        ,.ready_o (piso_ready_lo)
+        ,.ready_and_o (piso_ready_lo)
    
         /* Data Output Channel (Valid then Yumi) */
         ,.valid_o (valid_o)

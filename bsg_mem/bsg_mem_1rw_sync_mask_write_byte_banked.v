@@ -22,6 +22,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_mem_1rw_sync_mask_write_byte_banked
   #(parameter data_width_p="inv"
     , parameter els_p="inv"

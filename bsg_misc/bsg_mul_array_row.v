@@ -4,6 +4,8 @@
  *  @author Tommy Jung
  */
 
+`include "bsg_defines.v"
+
 module bsg_mul_array_row #(parameter width_p="inv"
                           , parameter row_idx_p="inv"
                           , parameter pipeline_p="inv")

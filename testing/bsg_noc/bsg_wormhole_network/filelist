@@ -2,6 +2,7 @@
 +incdir+$BASEJUMP_STL_DIR/bsg_misc
 +incdir+$BASEJUMP_STL_DIR/bsg_noc
 
+$BASEJUMP_STL_DIR/bsg_misc/bsg_defines.v
 $BASEJUMP_STL_DIR/bsg_async/bsg_async_fifo.v
 $BASEJUMP_STL_DIR/bsg_async/bsg_async_ptr_gray.v
 $BASEJUMP_STL_DIR/bsg_async/bsg_sync_sync.v
@@ -51,7 +52,6 @@ $BASEJUMP_STL_DIR/bsg_dataflow/bsg_parallel_in_serial_out.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_serial_in_parallel_out_full.v
 $BASEJUMP_STL_DIR/bsg_test/test_bsg_data_gen.v
 $BASEJUMP_STL_DIR/bsg_noc/bsg_noc_pkg.v
-$BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router.v
 $BASEJUMP_STL_DIR/bsg_link/bsg_link_source_sync_upstream.v
 $BASEJUMP_STL_DIR/bsg_link/bsg_link_source_sync_downstream.v
 $BASEJUMP_STL_DIR/bsg_link/bsg_link_ddr_upstream.v

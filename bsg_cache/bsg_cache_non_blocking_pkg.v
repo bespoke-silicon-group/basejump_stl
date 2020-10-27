@@ -4,6 +4,8 @@
  *  @author tommy
  */
 
+`include "bsg_defines.v"
+
 package bsg_cache_non_blocking_pkg;
 
 

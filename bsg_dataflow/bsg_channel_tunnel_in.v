@@ -7,6 +7,8 @@
 // SV_gripe "output parameters" would make this implementation nicer
 //           vector parameters would be very useful as well
 
+`include "bsg_defines.v"
+
 module bsg_channel_tunnel_in #(parameter width_p = -1
                                , num_in_p = "inv"
                                , remote_credits_p = "inv"

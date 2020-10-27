@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 module bsg_mem_1r1w_sync_mask_write_var #
   (parameter width_p=-1
   ,parameter mask_width_p=-1

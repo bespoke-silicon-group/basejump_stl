@@ -7,6 +7,8 @@
  *   external replacement scheme
  */
 
+`include "bsg_defines.v"
+
 module bsg_cam_1r1w_unmanaged
  #(parameter els_p                = "inv"
    , parameter tag_width_p        = "inv"

@@ -11,6 +11,8 @@ every reset signal the stream of random numbers is restarted.
 
 ***********************************************************************/
 
+`include "bsg_defines.v"
+
 module bsg_nonsynth_random_gen 
    #(  parameter width_p = 3
      , parameter seed_p  = 100

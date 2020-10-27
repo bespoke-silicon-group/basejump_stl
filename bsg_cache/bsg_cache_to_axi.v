@@ -4,6 +4,8 @@
  *  @author tommy
  */
 
+`include "bsg_defines.v"
+
 module bsg_cache_to_axi
   import bsg_cache_pkg::*;
   #(parameter addr_width_p="inv"

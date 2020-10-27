@@ -14,6 +14,8 @@
 // save area by using this module.
 //
 
+`include "bsg_defines.v"
+
 module bsg_one_fifo #(parameter width_p="inv"
                       )
    (input clk_i

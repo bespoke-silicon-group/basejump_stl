@@ -1,0 +1,12 @@
+
+$BASEJUMP_STL_DIR/bsg_dataflow/bsg_parallel_in_serial_out.v
+$BASEJUMP_STL_DIR/bsg_dataflow/bsg_serial_in_parallel_out_passthrough.v
+$BASEJUMP_STL_DIR/bsg_dataflow/bsg_two_fifo.v
+$BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1r1w.v
+$BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1r1w_synth.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_counter_clear_up_one_hot.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_dff_en.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_defines.v
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_clock_gen.v
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_reset_gen.v
+testbench.v

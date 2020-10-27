@@ -5,6 +5,8 @@
  */
 
 
+`include "bsg_defines.v"
+
 module bsg_crossbar_control_basic_o_by_i
   #(parameter i_els_p="inv"
     , parameter o_els_p="inv"

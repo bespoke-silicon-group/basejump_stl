@@ -11,6 +11,8 @@
 // Author: Scott Davidson
 // Date:   4-4-17
 //
+`include "bsg_defines.v"
+
 module bsg_level_shift_up_down_sink #(parameter width_p = "inv")
 (
   input        [width_p-1:0] v0_data_i,

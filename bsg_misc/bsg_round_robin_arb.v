@@ -13,6 +13,8 @@
 //                in some typical use cases, grants_en_i comes from a downstream consumer to indicate readiness;
 //                this can be used with v_o to implement ready/valid protocol at both producer (fed into yumi_i) and consumer
 
+`include "bsg_defines.v"
+
 module bsg_round_robin_arb #(inputs_p      = -1
                                      ,lg_inputs_p   =`BSG_SAFE_CLOG2(inputs_p)
                                      ,reset_on_sr_p = 1'b0
