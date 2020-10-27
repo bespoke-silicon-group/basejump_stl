@@ -8,8 +8,8 @@ from random import getrandbits
 hdr_width = 32
 cord_width = 5
 len_width = 3
-link_width = 32
-pr_data_width = 8
+link_width = 8
+pr_data_width = 16
 
 wh_hdr_width = cord_width + len_width
 pr_hdr_width = hdr_width - wh_hdr_width
@@ -20,7 +20,7 @@ beats_per_flit = pr_data_width / link_width
 flits_per_beat = link_width / pr_data_width
 
 # First bit is header or data for send
-ring_width = 1+max(pr_hdr_width, max(pr_data_width, link_width))
+ring_width = 1+max(hdr_width, max(pr_data_width, link_width))
 
 OP_WAIT = "0000_"
 OP_SEND = "0001_"
