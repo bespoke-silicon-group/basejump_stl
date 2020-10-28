@@ -6,6 +6,8 @@ module bsg_nonsynth_triwire #
   (inout [width_p-1:0] a
   ,inout [width_p-1:0] b);
 
+
+`ifndef VERILATOR
   // This initialization to z is important to prevent the signal from being
   // alway x
   logic [width_p-1:0] a_dly = 'bz;
@@ -15,5 +17,8 @@ module bsg_nonsynth_triwire #
   always@(b) b_dly <= #(transport_delay_p) a_dly==={width_p{1'bz}}? b: 'bz;
 
   assign b = a_dly, a = b_dly;
+`else
+  $fatal("Verilator 4.022 does not support delay statements");   
+`endif
 
 endmodule
