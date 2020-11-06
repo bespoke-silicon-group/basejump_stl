@@ -67,7 +67,7 @@ module bsg_nonsynth_dpi_from_fifo
    bit    rx_r = 0;
    
    // Check if width_p is a ctype width. call $fatal, if not.
-   if (!(width_p inside {32'd8, 32'd16, 32'd32, 32'd64, 32'd128})) begin
+   if (!(width_p == 32'd8 || width_p == 32'd16 || width_p == 32'd32 || width_p == 32'd64 || width_p == 32'd128)) begin
       $fatal(1, "BSG ERROR (%M): width_p of %d is not supported. Must be a power of 2 and divisible by 8", width_p);
    end
 
