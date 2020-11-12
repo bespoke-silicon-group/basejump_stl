@@ -8,6 +8,7 @@
 `define BSG_SAFE_CLOG2(x) ( ((x)==1) ? 1 : $clog2((x)))
 `define BSG_IS_POW2(x) ( (1 << $clog2(x)) == (x))
 `define BSG_WIDTH(x) ($clog2(x+1))
+`define BSG_SAFE_MINUS(x, y) (x - y < 0) ? 0 : (x - y)
 
 // calculate ceil(x/y) 
 `define BSG_CDIV(x,y) (((x)+(y)-1)/(y))
