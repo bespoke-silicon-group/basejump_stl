@@ -27,22 +27,22 @@ module bsg_lru_pseudo_tree_decode
       assign mask_o[0] = 1'b1;
       assign data_o[0] = 1'b0;
     end
-    else begin: lru 
-      for(i=0; i<ways_p-1; i++) begin: rof
-        // Mask generation
-	    if(i == 0) begin: fi
-	      assign mask_o[i] = 1'b1;
-	    end
-	    else if(i%2 == 1) begin: fi
-	      assign mask_o[i] = mask_o[(i-1)/2] & ~way_id_i[lg_ways_lp-`BSG_SAFE_CLOG2(i+2)+1];
-	    end
-	    else begin: fi
-	      assign mask_o[i] = mask_o[(i-2)/2] & way_id_i[lg_ways_lp-`BSG_SAFE_CLOG2(i+2)+1];
-	    end
+    else begin: lru
+    for(i=0; i<ways_p-1; i++) begin: rof
+      // Mask generation
+	  if(i == 0) begin: fi
+	    assign mask_o[i] = 1'b1;
+	  end
+	  else if(i%2 == 1) begin: fi
+	    assign mask_o[i] = mask_o[(i-1)/2] & ~way_id_i[lg_ways_lp-`BSG_SAFE_CLOG2(i+2)+1];
+	  end
+	  else begin: fi
+	    assign mask_o[i] = mask_o[(i-2)/2] & way_id_i[lg_ways_lp-`BSG_SAFE_CLOG2(i+2)+1];
+	  end
 	  
-	    // Data generation
-	    assign data_o[i] = mask_o[i] & ~way_id_i[lg_ways_lp-`BSG_SAFE_CLOG2(i+2)];
-      end
+	  // Data generation
+	  assign data_o[i] = mask_o[i] & ~way_id_i[lg_ways_lp-`BSG_SAFE_CLOG2(i+2)];
+    end
     end
   endgenerate
 
