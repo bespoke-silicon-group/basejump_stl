@@ -35,7 +35,7 @@ module bsg_mem_1r1w_synth #(parameter width_p=-1
 
   if (width_p == 0)
    begin: zero_width
-     wire unused2 = clk_i;
+     wire unused2 = w_clk_i;
      wire [addr_width_lp-1:0] unused3 = w_addr_i;
      wire unused4 = w_data_i;
      wire [addr_width_lp-1:0] unused5 = r_addr_i;
