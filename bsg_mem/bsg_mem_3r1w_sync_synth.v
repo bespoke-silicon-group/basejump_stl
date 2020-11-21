@@ -26,25 +26,45 @@ module bsg_mem_3r1w_sync_synth #(parameter width_p=-1
 
     , input                     w_v_i
     , input [addr_width_lp-1:0] w_addr_i
-    , input [width_p-1:0]       w_data_i
+    , input [`BSG_SAFE_MINUS(width_p, 1):0]       w_data_i
 
     // currently unused
     , input                      r0_v_i
     , input [addr_width_lp-1:0]  r0_addr_i
-    , output logic [width_p-1:0] r0_data_o
+    , output logic [`BSG_SAFE_MINUS(width_p, 1):0] r0_data_o
 
     , input                      r1_v_i
     , input [addr_width_lp-1:0]  r1_addr_i
-    , output logic [width_p-1:0] r1_data_o
+    , output logic [`BSG_SAFE_MINUS(width_p, 1):0] r1_data_o
 
     , input                      r2_v_i
     , input [addr_width_lp-1:0]  r2_addr_i
-    , output logic [width_p-1:0] r2_data_o
+    , output logic [`BSG_SAFE_MINUS(width_p, 1):0] r2_data_o
     );
 
-   logic [width_p-1:0]    mem [els_p-1:0];
-
    wire                   unused = reset_i;
+
+   if (width_p == 0)
+    begin: zero_width
+      wire unused0 = clk_i;
+      wire unused1 = w_v_i;
+      wire [addr_width_lp-1:0] unused2 = w_addr_i;
+      wire unused3 = w_data_i;
+      wire unused4 = r0_v_i;
+      wire [addr_width_lp-1:0] unused5 = r0_addr_i;
+      wire unused6 = r1_v_i;
+      wire [addr_width_lp-1:0] unused7 = r1_addr_i;
+      wire unused8 = r2_v_i;
+      wire [addr_width_lp-1:0] unused9 = r2_addr_i;
+
+      assign r0_data_o = '0;
+      assign r1_data_o = '0;
+      assign r2_data_o = '0;
+    end
+   else
+    begin: non_zero_width
+
+   logic [width_p-1:0]    mem [els_p-1:0];
 
    // keep consistent with bsg_ip_cores/bsg_mem/bsg_mem_3r1w_sync.v
    // keep consistent with bsg_ip_cores/hard/bsg_mem/bsg_mem_3r1w_sync.v
@@ -98,4 +118,5 @@ module bsg_mem_3r1w_sync_synth #(parameter width_p=-1
      if (w_v_i)
        mem[w_addr_i] <= w_data_i;
 
+    end
 endmodule

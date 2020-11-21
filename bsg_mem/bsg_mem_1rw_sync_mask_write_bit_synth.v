@@ -17,15 +17,29 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
    )
    (input   clk_i
     , input reset_i
-    , input [width_p-1:0] data_i
+    , input [`BSG_SAFE_MINUS(width_p, 1):0] data_i
     , input [addr_width_lp-1:0] addr_i
     , input v_i
-    , input [width_p-1:0] w_mask_i
+    , input [`BSG_SAFE_MINUS(width_p, 1):0] w_mask_i
     , input w_i
-    , output logic [width_p-1:0]  data_o
+    , output logic [`BSG_SAFE_MINUS(width_p, 1):0]  data_o
     );
 
    wire unused = reset_i;
+
+   if (width_p == 0)
+    begin: zero_width
+      wire unused0 = clk_i;
+      wire unused1 = data_i;
+      wire unused2 = addr_i;
+      wire unused3 = v_i;
+      wire unused4 = w_mask_i;
+      wire unused5 = w_i;
+
+      assign data_o = '0;
+    end
+   else
+    begin: non_zero_width
 
    logic [addr_width_lp-1:0] addr_r;
    logic [width_p-1:0] mem [els_p-1:0];
@@ -95,5 +109,5 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
          if (w_mask_i[i])
            mem[addr_i][i] <= data_i[i];
 `endif
-
+   end
 endmodule

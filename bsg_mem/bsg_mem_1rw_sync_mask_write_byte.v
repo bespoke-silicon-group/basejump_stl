@@ -15,11 +15,11 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
    ,input w_i
 
    ,input [addr_width_lp-1:0]       addr_i
-   ,input [data_width_p-1:0]        data_i
+   ,input [`BSG_SAFE_MINUS(data_width_p, 1):0]        data_i
     // for each bit set in the mask, a byte is written
-   ,input [write_mask_width_lp-1:0] write_mask_i
+   ,input [`BSG_SAFE_MINUS(write_mask_width_lp, 1):0] write_mask_i
 
-   ,output logic [data_width_p-1:0] data_o
+   ,output logic [`BSG_SAFE_MINUS(data_width_p, 1):0] data_o
   );
 
    wire clk_lo;

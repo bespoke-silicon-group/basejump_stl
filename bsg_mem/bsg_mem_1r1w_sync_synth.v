@@ -25,18 +25,31 @@ module bsg_mem_1r1w_sync_synth #(parameter width_p=-1
 
     , input                     w_v_i
     , input [addr_width_lp-1:0] w_addr_i
-    , input [width_p-1:0]       w_data_i
+    , input [`BSG_SAFE_MINUS(width_p, 1):0]       w_data_i
 
     // currently unused
     , input                      r_v_i
     , input [addr_width_lp-1:0]  r_addr_i
 
-    , output logic [width_p-1:0] r_data_o
+    , output logic [`BSG_SAFE_MINUS(width_p, 1):0] r_data_o
     );
 
-   logic [width_p-1:0]    mem [els_p-1:0];
-
    wire                   unused = reset_i;
+
+   if (width_p == 0)
+    begin: zero_width
+      wire unused0 = clk_i;
+      wire unused1 = w_v_i;
+      wire [addr_width_lp-1:0] unused2 = w_addr_i;
+      wire unused3 = r_v_i;
+      wire [addr_width_lp-1:0] unused4 = r_addr_i;
+
+      assign r_data_o = '0;
+    end
+   else
+    begin: non_zero_width
+
+   logic [width_p-1:0]    mem [els_p-1:0];
 
    // this treats the ram as an array of registers for which the
    // read addr is latched on the clock, the write
@@ -71,4 +84,5 @@ module bsg_mem_1r1w_sync_synth #(parameter width_p=-1
      if (w_v_i)
        mem[w_addr_i] <= w_data_i;
 
+   end
 endmodule

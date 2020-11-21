@@ -18,14 +18,29 @@ module bsg_mem_1rw_sync_mask_write_byte_synth
    ,input w_i
 
    ,input [addr_width_lp-1:0]       addr_i
-   ,input [data_width_p-1:0]        data_i
+   ,input [`BSG_SAFE_MINUS(data_width_p, 1):0]        data_i
     // for each bit set in the mask, a byte is written
-   ,input [write_mask_width_lp-1:0] write_mask_i
+   ,input [`BSG_SAFE_MINUS(write_mask_width_lp, 1):0] write_mask_i
 
-   ,output [data_width_p-1:0] data_o
+   ,output [`BSG_SAFE_MINUS(data_width_p, 1):0] data_o
   );
 
   genvar i;
+
+  if (data_width_p == 0)
+   begin: zero_width
+     wire unused0 = clk_i;
+     wire unused1 = reset_i;
+     wire unused2 = v_i;
+     wire unused3 = w_i;
+     wire [addr_width_lp-1:0] unused4 = addr_i;
+     wire unused4 = data_i;
+     wire unused5 = write_mask_i;
+
+     assign data_o = '0;
+   end
+  else
+   begin: non_zero_width
 
   for(i=0; i<write_mask_width_lp; i=i+1)
   begin: bk
@@ -43,5 +58,6 @@ module bsg_mem_1rw_sync_mask_write_byte_synth
                        ,.data_o (data_o[(i*8)+:8])
                       );
   end
+   end
 
 endmodule
