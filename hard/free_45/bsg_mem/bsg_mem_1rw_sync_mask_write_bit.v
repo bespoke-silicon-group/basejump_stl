@@ -79,28 +79,17 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
     );
 
   // TODO: ADD ANY NEW RAM CONFIGURATIONS HERE
-  `bsg_mem_1rw_sync_mask_write_bit_macro (256, 48) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro (256, 30) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro (256, 4) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (256, 34) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro (512, 4) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro (512, 32) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro (128, 152) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro (64, 58) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro (128, 112) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (64, 124) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (64, 62) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (128, 116) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro (32, 62) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (64, 15) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (64, 7) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (64, 3) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (64, 1) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (32, 124) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (128, 15) else
   
-  `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,116,2,1) else
-  `bsg_mem_1rw_sync_mask_write_bit_banked_macro(256,112,1,2) else
-  `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,248,2,1) else
-  `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,496,8,1) else
   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(128,232,2,1) else
   `bsg_mem_1rw_sync_mask_write_bit_banked_macro(32,496,4,1) else
 

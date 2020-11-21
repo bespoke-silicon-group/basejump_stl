@@ -68,7 +68,6 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
   // TODO: ADD ANY NEW RAM CONFIGURATIONS HERE
   `bsg_mem_1r1w_sync_macro    (64, 50) else
   `bsg_mem_1r1w_sync_macro    (32, 64) else
-  `bsg_mem_1r1w_sync_macro    (32, 92) else
 
       begin: notmacro
 
