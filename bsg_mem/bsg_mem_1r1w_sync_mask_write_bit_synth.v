@@ -35,18 +35,12 @@ module bsg_mem_1r1w_sync_mask_write_bit_synth #(parameter width_p=-1
    wire                   unused = reset_i;
 
    if (width_p == 0)
-    begin: zero_width
-      wire unused0 = clk_i;
-      wire unused1 = w_v_i;
-      wire unused2 = w_mask_i;
-      wire [addr_width_lp-1:0] unused3 = w_addr_i;
-      wire unused4 = r_v_i;
-      wire [addr_width_lp-1:0] unused5 = r_addr_i;
-
+    begin: z
+      wire unused0 = &{clk_i, w_v_i, w_mask_i, w_addr_i, r_v_i, r_addr_i};
       assign r_data_o = '0;
     end
    else
-    begin: non_zero_width
+    begin: nz
 
    logic [width_p-1:0]    mem [els_p-1:0];
 

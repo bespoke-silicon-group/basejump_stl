@@ -28,19 +28,12 @@ module bsg_mem_1rw_sync_mask_write_byte_synth
   genvar i;
 
   if (data_width_p == 0)
-   begin: zero_width
-     wire unused0 = clk_i;
-     wire unused1 = reset_i;
-     wire unused2 = v_i;
-     wire unused3 = w_i;
-     wire [addr_width_lp-1:0] unused4 = addr_i;
-     wire unused4 = data_i;
-     wire unused5 = write_mask_i;
-
+   begin: z
+     wire unused0 = &{clk_i, reset_i, v_i, w_i, addr_i, data_i, write_mask_i};
      assign data_o = '0;
    end
   else
-   begin: non_zero_width
+   begin: nz
 
   for(i=0; i<write_mask_width_lp; i=i+1)
   begin: bk
