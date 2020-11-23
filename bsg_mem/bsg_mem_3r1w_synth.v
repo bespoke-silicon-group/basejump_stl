@@ -21,20 +21,32 @@ module bsg_mem_3r1w_synth #(parameter width_p=-1
 
     , input                     w_v_i
     , input [addr_width_lp-1:0] w_addr_i
-    , input [width_p-1:0]       w_data_i
+    , input [`BSG_SAFE_MINUS(width_p, 1):0]       w_data_i
 
     , input                      r0_v_i
     , input [addr_width_lp-1:0]  r0_addr_i
-    , output logic [width_p-1:0] r0_data_o
+    , output logic [`BSG_SAFE_MINUS(width_p, 1):0] r0_data_o
 
     , input                      r1_v_i
     , input [addr_width_lp-1:0]  r1_addr_i
-    , output logic [width_p-1:0] r1_data_o
+    , output logic [`BSG_SAFE_MINUS(width_p, 1):0] r1_data_o
 
     , input                      r2_v_i
     , input [addr_width_lp-1:0]  r2_addr_i
-    , output logic [width_p-1:0] r2_data_o
+    , output logic [`BSG_SAFE_MINUS(width_p, 1):0] r2_data_o
     );
+
+   wire                   unused = w_reset_i;
+
+   if (width_p == 0)
+    begin: z
+      wire unused0 = &{w_clk_i, w_v_i, w_addr_i, w_data_i, r0_v_i, r0_addr_i, r1_v_i, r1_addr_i, r2_v_i, r2_addr_i};
+      assign r0_data_o = '0;
+      assign r1_data_o = '0;
+      assign r2_data_o = '0;
+    end
+   else
+    begin: nz
 
    logic [width_p-1:0]    mem [els_p-1:0];
 
@@ -50,5 +62,5 @@ module bsg_mem_3r1w_synth #(parameter width_p=-1
        begin
           mem[w_addr_i] <= w_data_i;
        end
-
+    end
 endmodule

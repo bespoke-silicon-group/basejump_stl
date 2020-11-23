@@ -21,30 +21,28 @@ module bsg_mem_3r1w #(parameter width_p=-1
 
     , input                      r0_v_i
     , input [addr_width_lp-1:0]  r0_addr_i
-    , output logic [width_p-1:0] r0_data_o
+    , output logic [`BSG_SAFE_MINUS(width_p, 1):0] r0_data_o
 
     , input                      r1_v_i
     , input [addr_width_lp-1:0]  r1_addr_i
-    , output logic [width_p-1:0] r1_data_o
+    , output logic [`BSG_SAFE_MINUS(width_p, 1):0] r1_data_o
 
     , input                      r2_v_i
     , input [addr_width_lp-1:0]  r2_addr_i
-    , output logic [width_p-1:0] r2_data_o
+    , output logic [`BSG_SAFE_MINUS(width_p, 1):0] r2_data_o
     );
 
-   logic [width_p-1:0]    mem [els_p-1:0];
+   bsg_mem_3r1w_synth
+    #(.width_p(width_p)
+     ,.els_p(els_p)
+     ,.read_write_same_addr_p(read_write_same_addr_p)
+     ) synth
+    (.*);
 
-   // this implementation ignores the r_v_i
-   assign r2_data_o = mem[r2_addr_i];
-   assign r1_data_o = mem[r1_addr_i];
-   assign r0_data_o = mem[r0_addr_i];
-
-   wire                   unused = w_reset_i;
-
+//synopsys translate_off
    always_ff @(negedge w_clk_i)
      if (w_v_i)
        begin
-//synopsys translate_off
           assert (w_addr_i < els_p)
             else $error("Invalid address %x to %m of size %x\n", w_addr_i, els_p);
 
@@ -56,16 +54,13 @@ module bsg_mem_3r1w #(parameter width_p=-1
 
           assert (!(r2_addr_i == w_addr_i && r2_v_i && !read_write_same_addr_p))
             else $error("%m: Attempt to read and write same address");
-//synopsys translate_on
 
-          mem[w_addr_i] <= w_data_i;
        end
-
 
    initial
      begin
         $display("## bsg_mem_3r1w: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d (%m)",width_p,els_p,read_write_same_addr_p);
      end
-
+//synopsys translate_on
 
 endmodule

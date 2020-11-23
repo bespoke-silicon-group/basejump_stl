@@ -17,13 +17,21 @@ module bsg_mem_1rw_sync_synth
    (input   clk_i
 	 	, input v_i
 		, input reset_i
-    , input [width_p-1:0] data_i
+    , input [`BSG_SAFE_MINUS(width_p, 1):0] data_i
     , input [addr_width_lp-1:0] addr_i
     , input w_i
-    , output logic [width_p-1:0]  data_o
+    , output logic [`BSG_SAFE_MINUS(width_p, 1):0]  data_o
     );
 
   wire unused = reset_i;
+
+  if (width_p == 0)
+   begin: z
+     wire unused0 = &{clk_i, v_i, data_i, addr_i, w_i};
+     assign data_o = '0;
+   end
+  else
+   begin: nz
 
   logic [addr_width_lp-1:0] addr_r;
   logic [width_p-1:0]    mem [els_p-1:0];
@@ -70,7 +78,7 @@ module bsg_mem_1rw_sync_synth
     if (v_i & w_i) 
       mem[addr_i] <= data_i;
 
-
+   end // non_zero_width
    // synopsys translate_off
    initial
      begin

@@ -22,14 +22,14 @@ module bsg_mem_1r1w_sync_mask_write_bit #(parameter width_p=-1
     , input reset_i
 
     , input                     w_v_i
-    , input [width_p-1:0]       w_mask_i
+    , input [`BSG_SAFE_MINUS(width_p, 1):0]       w_mask_i
     , input [addr_width_lp-1:0] w_addr_i
-    , input [width_p-1:0]       w_data_i
+    , input [`BSG_SAFE_MINUS(width_p, 1):0]       w_data_i
 
     , input                      r_v_i
     , input [addr_width_lp-1:0]  r_addr_i
 
-    , output logic [width_p-1:0] r_data_o
+    , output logic [`BSG_SAFE_MINUS(width_p, 1):0] r_data_o
     );
 
    wire clk_lo;

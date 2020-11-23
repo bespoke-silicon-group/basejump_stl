@@ -17,15 +17,15 @@ module bsg_mem_2r1w #(parameter width_p=-1
 
     , input                     w_v_i
     , input [addr_width_lp-1:0] w_addr_i
-    , input [width_p-1:0]       w_data_i
+    , input [`BSG_SAFE_MINUS(width_p, 1):0]       w_data_i
 
     , input                      r0_v_i
     , input [addr_width_lp-1:0]  r0_addr_i
-    , output logic [width_p-1:0] r0_data_o
+    , output logic [`BSG_SAFE_MINUS(width_p, 1):0] r0_data_o
 
     , input                      r1_v_i
     , input [addr_width_lp-1:0]  r1_addr_i
-    , output logic [width_p-1:0] r1_data_o
+    , output logic [`BSG_SAFE_MINUS(width_p, 1):0] r1_data_o
 
     );
 
