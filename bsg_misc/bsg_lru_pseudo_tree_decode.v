@@ -17,12 +17,17 @@ module bsg_lru_pseudo_tree_decode
     ,localparam lg_ways_lp = `BSG_SAFE_CLOG2(ways_p)
   )
   (input [lg_ways_lp-1:0]      way_id_i
-   , output logic [ways_p-2:0] data_o
-   , output logic [ways_p-2:0] mask_o
+   , output logic [`BSG_SAFE_MINUS(ways_p, 2):0] data_o
+   , output logic [`BSG_SAFE_MINUS(ways_p, 2):0] mask_o
   );
 
   genvar i;
-  generate 
+  generate
+    if (ways_p == 1) begin: no_lru
+      assign mask_o[0] = 1'b1;
+      assign data_o[0] = 1'b0;
+    end
+    else begin: lru
     for(i=0; i<ways_p-1; i++) begin: rof
       // Mask generation
 	  if(i == 0) begin: fi
@@ -37,6 +42,7 @@ module bsg_lru_pseudo_tree_decode
 	  
 	  // Data generation
 	  assign data_o[i] = mask_o[i] & ~way_id_i[lg_ways_lp-`BSG_SAFE_CLOG2(i+2)];
+    end
     end
   endgenerate
 

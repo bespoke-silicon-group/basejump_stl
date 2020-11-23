@@ -33,11 +33,14 @@ module bsg_lru_pseudo_tree_encode
     , parameter lg_ways_lp = `BSG_SAFE_CLOG2(ways_p)
   )
   (
-    input [ways_p-2:0] lru_i
+    input [`BSG_SAFE_MINUS(ways_p, 2):0] lru_i
     , output logic [lg_ways_lp-1:0] way_id_o
   );
 
-
+  if (ways_p == 1) begin: no_lru
+    assign way_id_o = 1'b0;
+  end
+  else begin: lru
   for (genvar i = 0; i < lg_ways_lp; i++) begin: rank
 
     if (i == 0) begin: z
@@ -59,6 +62,7 @@ module bsg_lru_pseudo_tree_encode
       );
 
     end
+  end
   end
 
 
