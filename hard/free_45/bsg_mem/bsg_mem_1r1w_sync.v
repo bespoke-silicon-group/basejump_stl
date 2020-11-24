@@ -3,53 +3,6 @@
 // Synchronous 1 read-port and 1 write port ram.
 //
 
-`define bsg_mem_1r1w_sync_macro(words,bits)                                                \
-  if (els_p == words && width_p == bits)                                                   \
-    begin: macro                                                                           \
-      logic [els_p-1:0] v_r;                                                               \
-      logic [addr_width_lp-1:0] r_addr_r;                                                  \
-      always_ff @(posedge clk_i)                                                           \
-        if (reset_i)                                                                       \
-          v_r <= '0;                                                                       \
-        else if (w_v_i)                                                                    \
-          v_r[w_addr_i] <= ~v_r[w_addr_i];                                                 \
-                                                                                           \
-      bsg_dff                                                                              \
-        #(.width_p(addr_width_lp))                                                         \
-        addr_reg                                                                           \
-        (.clk_i(clk_i)                                                                     \
-        ,.data_i(r_addr_i)                                                                 \
-        ,.data_o(r_addr_r)                                                                 \
-        );                                                                                 \
-                                                                                           \
-      wire [1:0] v_li    = {r_v_i | w_v_i, r_v_i | w_v_i};                                 \
-      wire [1:0] w_li    = {w_v_i & ~v_r[w_addr_i], w_v_i & v_r[w_addr_i]};                \
-      wire [1:0][addr_width_lp-1:0]                                                        \
-                 addr_li = {w_li[1] ? w_addr_i : r_addr_i, w_li[0] ? w_addr_i : r_addr_i}; \
-      logic [1:0][width_p-1:0] data_lo;                                                    \
-      assign r_data_o    = v_r[r_addr_r] ? data_lo[1] : data_lo[0];                        \
-                                                                                           \
-       free45_1rw_d``words``_w``bits`` mem0                                                \
-         (.clk       ( clk_i      )                                                        \
-         ,.ce_in     ( v_li[0]    )                                                        \
-         ,.we_in     ( w_li[0]    )                                                        \
-         ,.addr_in   ( addr_li[0] )                                                        \
-         ,.wd_in     ( w_data_i   )                                                        \
-         ,.w_mask_in ( '1         )                                                        \
-         ,.rd_out    ( data_lo[0] )                                                        \
-         );                                                                                \
-                                                                                           \
-       free45_1rw_d``words``_w``bits`` mem1                                                \
-         (.clk       ( clk_i      )                                                        \
-         ,.ce_in     ( v_li[1]    )                                                        \
-         ,.we_in     ( w_li[1]    )                                                        \
-         ,.addr_in   ( addr_li[1] )                                                        \
-         ,.wd_in     ( w_data_i   )                                                        \
-         ,.w_mask_in ( '1         )                                                        \
-         ,.rd_out    ( data_lo[1] )                                                        \
-         );                                                                                \
-    end
-
 module bsg_mem_1r1w_sync #(parameter width_p=-1
                          ,parameter els_p=-1
                          ,parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
@@ -65,18 +18,60 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
     , output logic [width_p-1:0] r_data_o
   );
 
-  // TODO: ADD ANY NEW RAM CONFIGURATIONS HERE
-  `bsg_mem_1r1w_sync_macro    (64, 50) else
-  `bsg_mem_1r1w_sync_macro    (32, 64) else
-  `bsg_mem_1r1w_sync_macro    (32, 66) else
+  logic [els_p-1:0] v_r;
+  logic mem_r;
+  always_ff @(posedge clk_i)
+    if (reset_i)
+      v_r <= '0;
+    else if (w_v_i)
+      v_r[w_addr_i] <= ~v_r[w_addr_i];
 
-      begin: notmacro
+  bsg_dff
+    #(.width_p(1))
+    mem_reg
+    (.clk_i(clk_i)
+    ,.data_i(v_r[r_addr_i])
+    ,.data_o(mem_r)
+    );
 
-        // Instantiate a synthesizable 1rw sync ram
-        bsg_mem_1r1w_sync_synth #(.width_p(width_p), .els_p(els_p)) synth
-          (.*);
+  wire [1:0] v_li    = {r_v_i | w_v_i, r_v_i | w_v_i};
+  wire [1:0] w_li    = {w_v_i & ~v_r[w_addr_i], w_v_i & v_r[w_addr_i]};
+  wire [1:0][addr_width_lp-1:0]
+             addr_li = {w_li[1] ? w_addr_i : r_addr_i, w_li[0] ? w_addr_i : r_addr_i};
+  logic [1:0][width_p-1:0] data_lo;
+  assign r_data_o    = mem_r ? data_lo[1] : data_lo[0];
 
-      end // block: notmacro
+   bsg_mem_1rw_sync_mask_write_bit
+    #(.width_p(width_p)
+     ,.els_p(els_p)
+     ,.harden_p(harden_p)
+     ) 
+    mem0
+     (.clk_i(clk_i)
+     ,.reset_i(reset_i)
+     ,.v_i(v_li[0])
+     ,.w_i(w_li[0])
+     ,.addr_i(addr_li[0])
+     ,.data_i(w_data_i)
+     ,.w_mask_i('1)
+     ,.data_o(data_lo[0])
+     );
+
+   bsg_mem_1rw_sync_mask_write_bit
+    #(.width_p(width_p)
+     ,.els_p(els_p)
+     ,.harden_p(harden_p)
+     )
+    mem1
+     (.clk_i(clk_i)
+     ,.reset_i(reset_i)
+     ,.v_i(v_li[1])
+     ,.w_i(w_li[1])
+     ,.addr_i(addr_li[1])
+     ,.data_i(w_data_i)
+     ,.w_mask_i('1)
+     ,.data_o(data_lo[1])
+     );
 
 endmodule
 

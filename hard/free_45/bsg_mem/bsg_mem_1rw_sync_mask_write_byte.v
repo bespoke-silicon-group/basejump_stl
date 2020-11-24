@@ -4,73 +4,6 @@
 // Only one read or one write may be done per cycle.
 //
 
-`define bsg_mem_1rw_sync_mask_write_byte_macro(words,bits)  \
-  if (els_p == words && data_width_p == bits)               \
-    begin: macro                                            \
-      logic [data_width_p-1:0] w_bmask_li;                  \
-      logic [data_width_p-1:0] data_out;                    \
-      always_comb                                           \
-        begin                                               \
-          for (integer k = 0; k < write_mask_width_lp; k++) \
-            begin                                           \
-              w_bmask_li[8*k+:8] = {8{write_mask_i[k]}};    \
-            end                                             \
-        end                                                 \
-       free45_1rw_d``words``_w``bits`` mem                  \
-         (.clk       ( clk_i       )                        \
-         ,.ce_in     ( v_i         )                        \
-         ,.we_in     ( w_i         )                        \
-         ,.addr_in   ( addr_i      )                        \
-         ,.wd_in     ( data_i      )                        \
-         ,.w_mask_in ( w_bmask_li  )                        \
-         ,.rd_out    ( data_out    )                        \
-         );                                                 \
-       if (latch_last_read_p == 1)                          \
-        begin: llr                                          \
-          logic read_en_r;                                  \
-          bsg_dff #(.width_p(1))                            \
-            read_en_dff                                     \
-            (.clk_i  ( clk_i      )                         \
-            ,.data_i ( v_i & ~w_i )                         \
-            ,.data_o ( read_en_r  )                         \
-            );                                              \
-                                                            \
-          bsg_dff_en_bypass #(.width_p(data_width_p))       \
-            data_dff                                        \
-            (.clk_i  ( clk_i     )                          \
-            ,.en_i   ( read_en_r )                          \
-            ,.data_i ( data_out  )                          \
-            ,.data_o ( data_o    )                          \
-            );                                              \
-        end                                                 \
-      else                                                  \
-      begin: no_llr                                         \
-        assign data_o = data_out;                           \
-      end                                                   \
-    end
-
-`define bsg_mem_1rw_sync_mask_write_byte_banked_macro(words,bits,wbank,dbank)   \
-  if (els_p == words && data_width_p == bits)                                   \
-    begin: macro                                                                \
-      bsg_mem_1rw_sync_mask_write_byte_banked                                   \
-        #(.data_width_p(data_width_p)                                           \
-         ,.els_p(els_p)                                                         \
-         ,.latch_last_read_p(latch_last_read_p)                                 \
-         ,.num_depth_bank_p(dbank)                                              \
-         ,.num_width_bank_p(wbank)                                              \
-         )                                                                      \
-         bmem                                                                   \
-         (.clk_i(clk_i)                                                         \
-         ,.reset_i(reset_i)                                                     \
-         ,.v_i(v_i)                                                             \
-         ,.w_i(w_i)                                                             \
-         ,.addr_i(addr_i)                                                       \
-         ,.data_i(data_i)                                                       \
-         ,.write_mask_i(write_mask_i)                                           \
-         ,.data_o(data_o)                                                       \
-         );                                                                     \
-    end
-
 module bsg_mem_1rw_sync_mask_write_byte #(parameter els_p = -1
                                          ,parameter data_width_p = -1
                                          ,parameter latch_last_read_p = 0
@@ -88,22 +21,34 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter els_p = -1
   ,output [data_width_p-1:0]       data_o
   );
 
-  // TODO: ADD ANY NEW RAM CONFIGURATIONS HERE
-  `bsg_mem_1rw_sync_mask_write_byte_macro(512, 64) else
-  `bsg_mem_1rw_sync_mask_write_byte_macro(128, 128) else
   
-  `bsg_mem_1rw_sync_mask_write_byte_banked_macro(256, 128, 1, 2) else
-  `bsg_mem_1rw_sync_mask_write_byte_banked_macro(128, 256, 2, 1) else
-  `bsg_mem_1rw_sync_mask_write_byte_banked_macro(1024, 512, 8, 2) else
-  
-  // no hardened version found
-    begin: notmacro
+  logic [data_width_p-1:0] w_bmask_li;
 
-      // Instantiate a synthesizale 1rw sync mask write byte
-      bsg_mem_1rw_sync_mask_write_byte_synth #(.els_p(els_p), .data_width_p(data_width_p), .latch_last_read_p(latch_last_read_p)) synth 
-       (.*);
+  bsg_expand_bitmask
+   #(.in_width_p(write_mask_width_lp)
+    ,.expand_p(8)
+    )
+   bitmask
+    (.i(write_mask_i)
+    ,.o(w_bmask_li)
+    );
 
-    end // block: notmacro
+  bsg_mem_1rw_sync_mask_write_bit
+   #(.width_p(data_width_p)
+    ,.els_p(els_p)
+    ,.latch_last_read_p(latch_last_read_p)
+    ,.harden_p(harden_p)
+    )
+   mem
+    (.clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.v_i(v_i)
+    ,.w_i(w_i)
+    ,.addr_i(addr_i)
+    ,.data_i(data_i)
+    ,.w_mask_i(w_bmask_li)
+    ,.data_o(data_o)
+    );
 
   // synopsys translate_off
   always_comb

@@ -24,8 +24,6 @@ module bsg_mem_3r1w_sync #( parameter width_p = -1
   , output logic [width_p-1:0] r2_data_o
   );
 
-  wire unused = reset_i;
-
   bsg_mem_1r1w_sync #(.width_p(width_p), .els_p(els_p), .harden_p(harden_p)) mem0
     (.clk_i(clk_i)
      ,.reset_i(reset_i)
