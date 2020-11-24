@@ -73,7 +73,7 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
 
   // no hardened version found
     begin : notmacro
-      bsg_mem_1rw_sync_mask_write_byte_synth #(.data_width_p(data_width_p), .els_p(els_p))
+      bsg_mem_1rw_sync_mask_write_byte_synth #(.data_width_p(data_width_p), .els_p(els_p), .latch_last_read_p(latch_last_read_p))
         synth
           (.*);
     end // block: notmacro

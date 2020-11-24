@@ -76,7 +76,7 @@ module bsg_mem_1rw_sync #( parameter width_p = -1
         end // block: s1r1w
       else
         begin: notmacro
-          bsg_mem_1rw_sync_synth # (.width_p(width_p), .els_p(els_p))
+          bsg_mem_1rw_sync_synth # (.width_p(width_p), .els_p(els_p), .latch_last_read_p(latch_last_read_p))
             synth
               (.*);
         end // block: notmacro
