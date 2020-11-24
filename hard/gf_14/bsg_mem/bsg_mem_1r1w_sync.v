@@ -46,6 +46,11 @@ module bsg_mem_1r1w_sync
   );
 
 
+  // TODO: Set hardened macro configs in this define
+  `ifdef BSG_MEM_HARD_1R1W_SYNC_MACROS
+  `BSG_MEM_HARD_1R1W_SYNC_MACROS
+  `endif
+  // or define them here
   `bsg_mem_1r1w_sync_macro(32,92,1) else
     begin: notmacro
     bsg_mem_1r1w_sync_synth #(

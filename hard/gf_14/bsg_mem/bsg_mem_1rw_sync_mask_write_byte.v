@@ -65,7 +65,11 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
 
   wire unused = reset_i;
 
-  // TODO: Define more hardened macro configs here
+  // TODO: Set hardened macro configs in this define
+  `ifdef BSG_MEM_HARD_1RW_SYNC_MASK_WRITE_BYTE_MACROS
+  `BSG_MEM_HARD_1RW_SYNC_MASK_WRITE_BYTE_MACROS
+  `endif
+  // or define them here
   `bsg_mem_1rw_sync_mask_write_byte_macro(512,64,2) else
   `bsg_mem_1rw_sync_mask_write_byte_macro(1024,32,4) else
   `bsg_mem_1rw_sync_mask_write_byte_macro(2048,64,4) else

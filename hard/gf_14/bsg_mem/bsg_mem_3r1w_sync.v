@@ -81,7 +81,11 @@ module bsg_mem_3r1w_sync #( parameter width_p = -1
 
   wire unused = reset_i;
 
-  // TODO: Define more hardened macro configs here
+  // TODO: Set hardened macro configs in this define
+  `ifdef BSG_MEM_HARD_3R1W_SYNC_MACROS
+  `BSG_MEM_HARD_3R1W_SYNC_MACROS
+  `endif
+  // or define them here
   `bsg_mem_3r1w_sync_macro(32,64,1) else
   //`bsg_mem_3r1w_sync_macro(32,32,2) else
 
