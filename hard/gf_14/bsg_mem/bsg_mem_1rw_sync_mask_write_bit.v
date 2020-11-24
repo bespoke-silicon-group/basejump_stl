@@ -64,18 +64,6 @@ module bsg_mem_1rw_sync_mask_write_bit #( parameter width_p = -1
   `BSG_MEM_HARD_1RW_SYNC_MASK_WRITE_BIT_MACROS
   `endif
   // or define them here
-  `bsg_mem_1rw_sync_mask_write_bit_macro( 64,15,4) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro( 64, 7,4) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro(256,48,2) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro(256,30,2) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro(256,4,2) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro(256,34,2) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro(512,4,2) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro(512,32,4) else
-  `bsg_mem_1rw_sync_mask_write_bit_macro(128,152,2) else
-
-  `bsg_mem_1rw_sync_mask_write_bit_macro(64,58,2) else
-  `bsg_mem_1rw_sync_mask_write_bit_banked_macro(64,116,2,1) else
   
     begin: notmacro
       bsg_mem_1rw_sync_mask_write_bit_synth #(.width_p(width_p), .els_p(els_p))

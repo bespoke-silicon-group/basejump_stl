@@ -86,8 +86,6 @@ module bsg_mem_3r1w_sync #( parameter width_p = -1
   `BSG_MEM_HARD_3R1W_SYNC_MACROS
   `endif
   // or define them here
-  `bsg_mem_3r1w_sync_macro(32,64,1) else
-  //`bsg_mem_3r1w_sync_macro(32,32,2) else
 
   // no hardened version found
    begin: notmacro

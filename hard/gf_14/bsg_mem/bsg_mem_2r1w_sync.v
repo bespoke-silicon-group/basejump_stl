@@ -67,11 +67,9 @@ module bsg_mem_2r1w_sync #( parameter width_p = -1
   `BSG_MEM_HARD_2R1W_SYNC_MACROS
   `endif
   // or define them here
-  `bsg_mem_2r1w_sync_macro(32,64,1) else
-  //`bsg_mem_2r1w_sync_macro(32,32,2) else
 
   // no hardened version found
-    begin : z
+   begin: notmacro
       if (substitute_2r1w_p)
         begin: s2r1w
           logic [width_p-1:0] r0_data_lo, r1_data_lo;

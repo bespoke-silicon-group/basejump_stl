@@ -51,7 +51,7 @@ module bsg_mem_1r1w_sync
   `BSG_MEM_HARD_1R1W_SYNC_MACROS
   `endif
   // or define them here
-  `bsg_mem_1r1w_sync_macro(32,92,1) else
+  //
     begin: notmacro
     bsg_mem_1r1w_sync_synth #(
       .width_p(width_p)

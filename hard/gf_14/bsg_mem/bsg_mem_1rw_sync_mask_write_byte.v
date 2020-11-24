@@ -70,12 +70,7 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter els_p = -1
   `BSG_MEM_HARD_1RW_SYNC_MASK_WRITE_BYTE_MACROS
   `endif
   // or define them here
-  `bsg_mem_1rw_sync_mask_write_byte_macro(512,64,2) else
-  `bsg_mem_1rw_sync_mask_write_byte_macro(1024,32,4) else
-  `bsg_mem_1rw_sync_mask_write_byte_macro(2048,64,4) else
-  `bsg_mem_1rw_sync_mask_write_byte_macro(4096,64,4) else
-  `bsg_mem_1rw_sync_mask_write_byte_macro(1024,32,4) else
-  `bsg_mem_1rw_sync_mask_write_byte_banked_macro(1024,256,8,1) else
+
   // no hardened version found
     begin : notmacro
       bsg_mem_1rw_sync_mask_write_byte_synth #(.data_width_p(data_width_p), .els_p(els_p))
