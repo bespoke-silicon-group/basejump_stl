@@ -1,4 +1,7 @@
 
+`ifndef BSG_MEM_1RW_SYNC_MACROS_VH
+`define BSG_MEM_1RW_SYNC_MACROS_VH
+
 `define bsg_mem_1rw_sync_macro(words,bits,mux)       \
   if (harden_p && els_p == words && width_p == bits) \
     begin: macro                                     \
@@ -17,4 +20,6 @@
           , .EMAS  ( 1'b0   )                        \
           );                                         \
     end: macro
+
+`endif
 

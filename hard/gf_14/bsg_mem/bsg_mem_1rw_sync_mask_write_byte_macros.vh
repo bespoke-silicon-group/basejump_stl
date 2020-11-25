@@ -1,4 +1,7 @@
 
+`ifndef BSG_MEM_1RW_SYNC_MASK_WRITE_BYTE_MACROS
+`define BSG_MEM_1RW_SYNC_MASK_WRITE_BYTE_MACROS
+
 `define bsg_mem_1rw_sync_mask_write_byte_macro(words,bits,mux) \
   if (harden_p && els_p == words && data_width_p == bits)      \
     begin: macro                                               \
@@ -43,4 +46,6 @@
         ,.data_o(data_o)                                                      \
       );                                                                      \
     end: macro
-  
+
+`endif
+

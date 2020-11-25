@@ -1,4 +1,7 @@
 
+`ifndef BSG_MEM_1RW_SYNC_MASK_WRITE_BIT_MACROS
+`define BSG_MEM_1RW_SYNC_MASK_WRITE_BIT_MACROS
+
 `define bsg_mem_1rw_sync_mask_write_bit_macro(words,bits,mux) \
   if (harden_p && els_p == words && width_p == bits)          \
     begin: macro                                              \
@@ -19,7 +22,7 @@
           );                                                  \
     end: macro
 
-`define bsg_mem_1rw_sync_mask_write_banked_macro(words,bits,wbank,dbank) \
+`define bsg_mem_1rw_sync_mask_write_bit_banked_macro(words,bits,wbank,dbank) \
   if (harden_p && els_p == words && width_p == bits) begin: macro \
     bsg_mem_1rw_sync_mask_write_bit_banked #(                     \
       .width_p(width_p)                                                     \
@@ -38,4 +41,6 @@
       ,.data_o(data_o)                                                      \
     );                                                                      \
   end: macro
+
+`endif
 
