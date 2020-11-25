@@ -1,23 +1,5 @@
 
-`define bsg_mem_1rw_sync_macro(words,bits,mux)       \
-  if (harden_p && els_p == words && width_p == bits) \
-    begin: macro                                     \
-      gf14_1rw_d``words``_w``bits``_m``mux           \
-        mem                                          \
-          ( .CLK   ( clk_i  )                        \
-          , .A     ( addr_i )                        \
-          , .D     ( data_i )                        \
-          , .Q     ( data_o )                        \
-          , .CEN   ( ~v_i   )                        \
-          , .GWEN  ( ~w_i   )                        \
-          , .RET1N ( 1'b1   )                        \
-          , .STOV  ( 1'b0   )                        \
-          , .EMA   ( 3'b011 )                        \
-          , .EMAW  ( 2'b01  )                        \
-          , .EMAS  ( 1'b0   )                        \
-          );                                         \
-    end: macro
-
+`include "bsg_mem_1rw_sync_macros.vh"
 
 module bsg_mem_1rw_sync #( parameter width_p = -1
                          , parameter els_p = -1
@@ -40,10 +22,7 @@ module bsg_mem_1rw_sync #( parameter width_p = -1
 
   wire unused = reset_i;
 
-  // TODO: Set hardened macro configs in this define
-  `ifdef BSG_MEM_HARD_1RW_SYNC_MACROS
-  `BSG_MEM_HARD_1RW_SYNC_MACROS
-  `endif
+  // TODO: Define more hardened macro configs here
   `bsg_mem_1rw_sync_macro(512,64,4) else
   `bsg_mem_1rw_sync_macro(256,96,2) else
   `bsg_mem_1rw_sync_macro(1024,46,4) else
@@ -81,7 +60,7 @@ module bsg_mem_1rw_sync #( parameter width_p = -1
         end // block: s1r1w
       else
         begin: notmacro
-          bsg_mem_1rw_sync_synth # (.width_p(width_p), .els_p(els_p))
+          bsg_mem_1rw_sync_synth # (.width_p(width_p), .els_p(els_p), .latch_last_read_p(latch_last_read_p))
             synth
               (.*);
         end // block: notmacro

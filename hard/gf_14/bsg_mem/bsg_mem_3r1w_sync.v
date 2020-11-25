@@ -1,63 +1,11 @@
 
-`define bsg_mem_3r1w_sync_macro(words,bits,mux)      \
-  if (harden_p && els_p == words && width_p == bits) \
-    begin: macro                                     \
-      gf14_1r1w_d``words``_w``bits``_m``mux          \
-        mem0                                         \
-          ( .CLKA  ( clk_i     )                     \
-          , .CLKB  ( clk_i     )                     \
-          , .CENA  ( ~r0_v_i   )                     \
-          , .AA    ( r0_addr_i )                     \
-          , .QA    ( r0_data_o )                     \
-          , .CENB  ( ~w_v_i    )                     \
-          , .AB    ( w_addr_i  )                     \
-          , .DB    ( w_data_i  )                     \
-          , .EMAA  ( 3'b011    )                     \
-          , .EMAB  ( 3'b011    )                     \
-          , .EMASA ( 1'b0      )                     \
-          , .STOV  ( 1'b0      )                     \
-          , .RET1N ( 1'b1      )                     \
-          );                                         \
-      gf14_1r1w_d``words``_w``bits``_m``mux          \
-        mem1                                         \
-          ( .CLKA  ( clk_i     )                     \
-          , .CLKB  ( clk_i     )                     \
-          , .CENA  ( ~r1_v_i   )                     \
-          , .AA    ( r1_addr_i )                     \
-          , .QA    ( r1_data_o )                     \
-          , .CENB  ( ~w_v_i    )                     \
-          , .AB    ( w_addr_i  )                     \
-          , .DB    ( w_data_i  )                     \
-          , .EMAA  ( 3'b011    )                     \
-          , .EMAB  ( 3'b011    )                     \
-          , .EMASA ( 1'b0      )                     \
-          , .STOV  ( 1'b0      )                     \
-          , .RET1N ( 1'b1      )                     \
-          );                                         \
-      gf14_1r1w_d``words``_w``bits``_m``mux          \
-        mem2                                         \
-          ( .CLKA  ( clk_i     )                     \
-          , .CLKB  ( clk_i     )                     \
-          , .CENA  ( ~r2_v_i   )                     \
-          , .AA    ( r2_addr_i )                     \
-          , .QA    ( r2_data_o )                     \
-          , .CENB  ( ~w_v_i    )                     \
-          , .AB    ( w_addr_i  )                     \
-          , .DB    ( w_data_i  )                     \
-          , .EMAA  ( 3'b011    )                     \
-          , .EMAB  ( 3'b011    )                     \
-          , .EMASA ( 1'b0      )                     \
-          , .STOV  ( 1'b0      )                     \
-          , .RET1N ( 1'b1      )                     \
-          );                                         \
-    end: macro
+`include "bsg_mem_3r1w_sync_macros.vh"
 
 module bsg_mem_3r1w_sync #( parameter width_p = -1
                           , parameter els_p = -1
                           , parameter read_write_same_addr_p = 0
                           , parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
                           , parameter harden_p = 1
-                          , parameter latch_last_read_p = 1
                           )
   ( input clk_i
   , input reset_i
@@ -81,17 +29,13 @@ module bsg_mem_3r1w_sync #( parameter width_p = -1
 
   wire unused = reset_i;
 
-  // TODO: Set hardened macro configs in this define
-  `ifdef BSG_MEM_HARD_3R1W_SYNC_MACROS
-  `BSG_MEM_HARD_3R1W_SYNC_MACROS
-  `endif
-  // or define them here
+  // TODO: Define more hardened macro configs here
   `bsg_mem_3r1w_sync_macro(32,64,1) else
   //`bsg_mem_3r1w_sync_macro(32,32,2) else
 
   // no hardened version found
    begin: notmacro
-     bsg_mem_3r1w_sync_synth #(.width_p(width_p), .els_p(els_p), .read_write_same_addr_p(read_write_same_addr_p), .harden_p(harden_p))
+     bsg_mem_3r1w_sync_synth #(.width_p(width_p), .els_p(els_p), .read_write_same_addr_p(read_write_same_addr_p))
       synth
        (.*);
    end // block: notmacro
