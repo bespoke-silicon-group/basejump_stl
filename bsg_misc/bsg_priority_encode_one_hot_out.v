@@ -21,9 +21,12 @@ module bsg_priority_encode_one_hot_out #(parameter width_p      = "inv"
    logic [width_p-1:0] scan_lo;
 
    if (width_p == 1)
-     assign o = i;
+     begin: w1
+      assign o = i;
+      assign v_o = i ? 1'b1 : 1'b0;
+     end
    else
-     begin
+     begin: nw1
        bsg_scan #(.width_p(width_p)
                   ,.or_p      (1)
                   ,.lo_to_hi_p(lo_to_hi_p)
