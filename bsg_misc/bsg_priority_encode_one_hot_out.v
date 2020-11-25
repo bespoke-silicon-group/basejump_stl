@@ -23,7 +23,7 @@ module bsg_priority_encode_one_hot_out #(parameter width_p      = "inv"
    if (width_p == 1)
      begin: w1
       assign o = i;
-      assign v_o = i ? 1'b1 : 1'b0;
+      assign v_o = i;
      end
    else
      begin: nw1
