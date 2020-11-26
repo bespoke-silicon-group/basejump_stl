@@ -1,0 +1,2840 @@
+{
+    "design_name": "bsg_link_ddr_upstream", 
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v", 
+        "basejump_stl/bsg_link/bsg_link_ddr_upstream.v", 
+        "basejump_stl/bsg_dataflow/bsg_parallel_in_serial_out.v", 
+        "basejump_stl/bsg_dataflow/bsg_two_fifo.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v", 
+        "basejump_stl/bsg_misc/bsg_array_reverse.v", 
+        "basejump_stl/bsg_link/bsg_link_source_sync_upstream.v", 
+        "basejump_stl/bsg_async/bsg_async_fifo.v", 
+        "basejump_stl/bsg_async/bsg_async_ptr_gray.v", 
+        "basejump_stl/bsg_async/bsg_launch_sync_sync.v", 
+        "basejump_stl/bsg_dataflow/bsg_two_fifo.v", 
+        "basejump_stl/bsg_misc/bsg_counter_clear_up.v", 
+        "basejump_stl/bsg_async/bsg_async_credit_counter.v", 
+        "basejump_stl/bsg_misc/bsg_gray_to_binary.v", 
+        "basejump_stl/bsg_misc/bsg_scan.v", 
+        "basejump_stl/bsg_link/bsg_link_oddr_phy.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_link_ddr_upstream_small_core_clk_30_FO4_io_clk_30_FO4", 
+            "parameters": [
+                "width_p=16", 
+                "channel_width_p=8", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_link_ddr_upstream_small_core_clk_30_FO4_io_clk_40_FO4", 
+            "parameters": [
+                "width_p=16", 
+                "channel_width_p=8", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_link_ddr_upstream_small_core_clk_30_FO4_io_clk_50_FO4", 
+            "parameters": [
+                "width_p=16", 
+                "channel_width_p=8", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_link_ddr_upstream_small_core_clk_30_FO4_io_clk_60_FO4", 
+            "parameters": [
+                "width_p=16", 
+                "channel_width_p=8", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_link_ddr_upstream_small_core_clk_40_FO4_io_clk_30_FO4", 
+            "parameters": [
+                "width_p=16", 
+                "channel_width_p=8", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_link_ddr_upstream_small_core_clk_40_FO4_io_clk_40_FO4", 
+            "parameters": [
+                "width_p=16", 
+                "channel_width_p=8", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_link_ddr_upstream_small_core_clk_40_FO4_io_clk_50_FO4", 
+            "parameters": [
+                "width_p=16", 
+                "channel_width_p=8", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_link_ddr_upstream_small_core_clk_40_FO4_io_clk_60_FO4", 
+            "parameters": [
+                "width_p=16", 
+                "channel_width_p=8", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_link_ddr_upstream_small_core_clk_50_FO4_io_clk_30_FO4", 
+            "parameters": [
+                "width_p=16", 
+                "channel_width_p=8", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_link_ddr_upstream_small_core_clk_50_FO4_io_clk_40_FO4", 
+            "parameters": [
+                "width_p=16", 
+                "channel_width_p=8", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_link_ddr_upstream_small_core_clk_50_FO4_io_clk_50_FO4", 
+            "parameters": [
+                "width_p=16", 
+                "channel_width_p=8", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_link_ddr_upstream_small_core_clk_50_FO4_io_clk_60_FO4", 
+            "parameters": [
+                "width_p=16", 
+                "channel_width_p=8", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_link_ddr_upstream_small_core_clk_60_FO4_io_clk_30_FO4", 
+            "parameters": [
+                "width_p=16", 
+                "channel_width_p=8", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_link_ddr_upstream_small_core_clk_60_FO4_io_clk_40_FO4", 
+            "parameters": [
+                "width_p=16", 
+                "channel_width_p=8", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_link_ddr_upstream_small_core_clk_60_FO4_io_clk_50_FO4", 
+            "parameters": [
+                "width_p=16", 
+                "channel_width_p=8", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_link_ddr_upstream_small_core_clk_60_FO4_io_clk_60_FO4", 
+            "parameters": [
+                "width_p=16", 
+                "channel_width_p=8", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_link_ddr_upstream_large_core_clk_30_FO4_io_clk_30_FO4", 
+            "parameters": [
+                "width_p=64", 
+                "channel_width_p=16", 
+                "num_channels_p=2"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_link_ddr_upstream_large_core_clk_30_FO4_io_clk_40_FO4", 
+            "parameters": [
+                "width_p=64", 
+                "channel_width_p=16", 
+                "num_channels_p=2"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_link_ddr_upstream_large_core_clk_30_FO4_io_clk_50_FO4", 
+            "parameters": [
+                "width_p=64", 
+                "channel_width_p=16", 
+                "num_channels_p=2"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_link_ddr_upstream_large_core_clk_30_FO4_io_clk_60_FO4", 
+            "parameters": [
+                "width_p=64", 
+                "channel_width_p=16", 
+                "num_channels_p=2"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_link_ddr_upstream_large_core_clk_40_FO4_io_clk_30_FO4", 
+            "parameters": [
+                "width_p=64", 
+                "channel_width_p=16", 
+                "num_channels_p=2"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_link_ddr_upstream_large_core_clk_40_FO4_io_clk_40_FO4", 
+            "parameters": [
+                "width_p=64", 
+                "channel_width_p=16", 
+                "num_channels_p=2"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_link_ddr_upstream_large_core_clk_40_FO4_io_clk_50_FO4", 
+            "parameters": [
+                "width_p=64", 
+                "channel_width_p=16", 
+                "num_channels_p=2"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_link_ddr_upstream_large_core_clk_40_FO4_io_clk_60_FO4", 
+            "parameters": [
+                "width_p=64", 
+                "channel_width_p=16", 
+                "num_channels_p=2"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_link_ddr_upstream_large_core_clk_50_FO4_io_clk_30_FO4", 
+            "parameters": [
+                "width_p=64", 
+                "channel_width_p=16", 
+                "num_channels_p=2"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_link_ddr_upstream_large_core_clk_50_FO4_io_clk_40_FO4", 
+            "parameters": [
+                "width_p=64", 
+                "channel_width_p=16", 
+                "num_channels_p=2"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_link_ddr_upstream_large_core_clk_50_FO4_io_clk_50_FO4", 
+            "parameters": [
+                "width_p=64", 
+                "channel_width_p=16", 
+                "num_channels_p=2"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_link_ddr_upstream_large_core_clk_50_FO4_io_clk_60_FO4", 
+            "parameters": [
+                "width_p=64", 
+                "channel_width_p=16", 
+                "num_channels_p=2"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_link_ddr_upstream_large_core_clk_60_FO4_io_clk_30_FO4", 
+            "parameters": [
+                "width_p=64", 
+                "channel_width_p=16", 
+                "num_channels_p=2"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_link_ddr_upstream_large_core_clk_60_FO4_io_clk_40_FO4", 
+            "parameters": [
+                "width_p=64", 
+                "channel_width_p=16", 
+                "num_channels_p=2"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_link_ddr_upstream_large_core_clk_60_FO4_io_clk_50_FO4", 
+            "parameters": [
+                "width_p=64", 
+                "channel_width_p=16", 
+                "num_channels_p=2"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_link_ddr_upstream_large_core_clk_60_FO4_io_clk_60_FO4", 
+            "parameters": [
+                "width_p=64", 
+                "channel_width_p=16", 
+                "num_channels_p=2"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_link_ddr_upstream_very_large_core_clk_30_FO4_io_clk_30_FO4", 
+            "parameters": [
+                "width_p=128", 
+                "channel_width_p=16", 
+                "num_channels_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_link_ddr_upstream_very_large_core_clk_30_FO4_io_clk_40_FO4", 
+            "parameters": [
+                "width_p=128", 
+                "channel_width_p=16", 
+                "num_channels_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_link_ddr_upstream_very_large_core_clk_30_FO4_io_clk_50_FO4", 
+            "parameters": [
+                "width_p=128", 
+                "channel_width_p=16", 
+                "num_channels_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_link_ddr_upstream_very_large_core_clk_30_FO4_io_clk_60_FO4", 
+            "parameters": [
+                "width_p=128", 
+                "channel_width_p=16", 
+                "num_channels_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_link_ddr_upstream_very_large_core_clk_40_FO4_io_clk_30_FO4", 
+            "parameters": [
+                "width_p=128", 
+                "channel_width_p=16", 
+                "num_channels_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_link_ddr_upstream_very_large_core_clk_40_FO4_io_clk_40_FO4", 
+            "parameters": [
+                "width_p=128", 
+                "channel_width_p=16", 
+                "num_channels_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_link_ddr_upstream_very_large_core_clk_40_FO4_io_clk_50_FO4", 
+            "parameters": [
+                "width_p=128", 
+                "channel_width_p=16", 
+                "num_channels_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_link_ddr_upstream_very_large_core_clk_40_FO4_io_clk_60_FO4", 
+            "parameters": [
+                "width_p=128", 
+                "channel_width_p=16", 
+                "num_channels_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_link_ddr_upstream_very_large_core_clk_50_FO4_io_clk_30_FO4", 
+            "parameters": [
+                "width_p=128", 
+                "channel_width_p=16", 
+                "num_channels_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_link_ddr_upstream_very_large_core_clk_50_FO4_io_clk_40_FO4", 
+            "parameters": [
+                "width_p=128", 
+                "channel_width_p=16", 
+                "num_channels_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_link_ddr_upstream_very_large_core_clk_50_FO4_io_clk_50_FO4", 
+            "parameters": [
+                "width_p=128", 
+                "channel_width_p=16", 
+                "num_channels_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_link_ddr_upstream_very_large_core_clk_50_FO4_io_clk_60_FO4", 
+            "parameters": [
+                "width_p=128", 
+                "channel_width_p=16", 
+                "num_channels_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_link_ddr_upstream_very_large_core_clk_60_FO4_io_clk_30_FO4", 
+            "parameters": [
+                "width_p=128", 
+                "channel_width_p=16", 
+                "num_channels_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_link_ddr_upstream_very_large_core_clk_60_FO4_io_clk_40_FO4", 
+            "parameters": [
+                "width_p=128", 
+                "channel_width_p=16", 
+                "num_channels_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_link_ddr_upstream_very_large_core_clk_60_FO4_io_clk_50_FO4", 
+            "parameters": [
+                "width_p=128", 
+                "channel_width_p=16", 
+                "num_channels_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_link_ddr_upstream_very_large_core_clk_60_FO4_io_clk_60_FO4", 
+            "parameters": [
+                "width_p=128", 
+                "channel_width_p=16", 
+                "num_channels_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_link_ddr_upstream_medium_core_clk_30_FO4_io_clk_30_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "channel_width_p=16", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_link_ddr_upstream_medium_core_clk_30_FO4_io_clk_40_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "channel_width_p=16", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_link_ddr_upstream_medium_core_clk_30_FO4_io_clk_50_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "channel_width_p=16", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_link_ddr_upstream_medium_core_clk_30_FO4_io_clk_60_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "channel_width_p=16", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_link_ddr_upstream_medium_core_clk_40_FO4_io_clk_30_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "channel_width_p=16", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_link_ddr_upstream_medium_core_clk_40_FO4_io_clk_40_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "channel_width_p=16", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_link_ddr_upstream_medium_core_clk_40_FO4_io_clk_50_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "channel_width_p=16", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_link_ddr_upstream_medium_core_clk_40_FO4_io_clk_60_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "channel_width_p=16", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_link_ddr_upstream_medium_core_clk_50_FO4_io_clk_30_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "channel_width_p=16", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_link_ddr_upstream_medium_core_clk_50_FO4_io_clk_40_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "channel_width_p=16", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_link_ddr_upstream_medium_core_clk_50_FO4_io_clk_50_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "channel_width_p=16", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_link_ddr_upstream_medium_core_clk_50_FO4_io_clk_60_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "channel_width_p=16", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_link_ddr_upstream_medium_core_clk_60_FO4_io_clk_30_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "channel_width_p=16", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_link_ddr_upstream_medium_core_clk_60_FO4_io_clk_40_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "channel_width_p=16", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_link_ddr_upstream_medium_core_clk_60_FO4_io_clk_50_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "channel_width_p=16", 
+                "num_channels_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_*_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "This is the sender part of bsg_link_ddr with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_link_ddr_upstream_medium_core_clk_60_FO4_io_clk_60_FO4", 
+            "parameters": [
+                "width_p=32", 
+                "channel_width_p=16", 
+                "num_channels_p=1"
+            ]
+        }
+    ]
+}

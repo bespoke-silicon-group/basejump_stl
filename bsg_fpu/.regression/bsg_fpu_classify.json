@@ -1,0 +1,969 @@
+{
+    "design_name": "bsg_fpu_classify", 
+    "filelist": [
+        "basejump_stl/bsg_fpu/bsg_fpu_classify.v", 
+        "basejump_stl/bsg_fpu/bsg_fpu_preprocess.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size small at a clock period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_fpu_classify_small_vclk_30_FO4", 
+            "parameters": [
+                "e_p=5", 
+                "m_p=10"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size small at a clock period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_fpu_classify_small_vclk_40_FO4", 
+            "parameters": [
+                "e_p=5", 
+                "m_p=10"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size small at a clock period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_fpu_classify_small_vclk_50_FO4", 
+            "parameters": [
+                "e_p=5", 
+                "m_p=10"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size small at a clock period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_fpu_classify_small_vclk_60_FO4", 
+            "parameters": [
+                "e_p=5", 
+                "m_p=10"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size small at a clock period (in num of FO4) = 70", 
+            "design_size": "small", 
+            "name": "bsg_fpu_classify_small_vclk_70_FO4", 
+            "parameters": [
+                "e_p=5", 
+                "m_p=10"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size small at a clock period (in num of FO4) = 80", 
+            "design_size": "small", 
+            "name": "bsg_fpu_classify_small_vclk_80_FO4", 
+            "parameters": [
+                "e_p=5", 
+                "m_p=10"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size small at a clock period (in num of FO4) = 90", 
+            "design_size": "small", 
+            "name": "bsg_fpu_classify_small_vclk_90_FO4", 
+            "parameters": [
+                "e_p=5", 
+                "m_p=10"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size small at a clock period (in num of FO4) = 100", 
+            "design_size": "small", 
+            "name": "bsg_fpu_classify_small_vclk_100_FO4", 
+            "parameters": [
+                "e_p=5", 
+                "m_p=10"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size large at a clock period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_fpu_classify_large_vclk_30_FO4", 
+            "parameters": [
+                "e_p=11", 
+                "m_p=52"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size large at a clock period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_fpu_classify_large_vclk_40_FO4", 
+            "parameters": [
+                "e_p=11", 
+                "m_p=52"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size large at a clock period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_fpu_classify_large_vclk_50_FO4", 
+            "parameters": [
+                "e_p=11", 
+                "m_p=52"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size large at a clock period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_fpu_classify_large_vclk_60_FO4", 
+            "parameters": [
+                "e_p=11", 
+                "m_p=52"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size large at a clock period (in num of FO4) = 70", 
+            "design_size": "large", 
+            "name": "bsg_fpu_classify_large_vclk_70_FO4", 
+            "parameters": [
+                "e_p=11", 
+                "m_p=52"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size large at a clock period (in num of FO4) = 80", 
+            "design_size": "large", 
+            "name": "bsg_fpu_classify_large_vclk_80_FO4", 
+            "parameters": [
+                "e_p=11", 
+                "m_p=52"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size large at a clock period (in num of FO4) = 90", 
+            "design_size": "large", 
+            "name": "bsg_fpu_classify_large_vclk_90_FO4", 
+            "parameters": [
+                "e_p=11", 
+                "m_p=52"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size large at a clock period (in num of FO4) = 100", 
+            "design_size": "large", 
+            "name": "bsg_fpu_classify_large_vclk_100_FO4", 
+            "parameters": [
+                "e_p=11", 
+                "m_p=52"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size very_large at a clock period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_fpu_classify_very_large_vclk_30_FO4", 
+            "parameters": [
+                "e_p=15", 
+                "m_p=112"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size very_large at a clock period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_fpu_classify_very_large_vclk_40_FO4", 
+            "parameters": [
+                "e_p=15", 
+                "m_p=112"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size very_large at a clock period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_fpu_classify_very_large_vclk_50_FO4", 
+            "parameters": [
+                "e_p=15", 
+                "m_p=112"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size very_large at a clock period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_fpu_classify_very_large_vclk_60_FO4", 
+            "parameters": [
+                "e_p=15", 
+                "m_p=112"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size very_large at a clock period (in num of FO4) = 70", 
+            "design_size": "very_large", 
+            "name": "bsg_fpu_classify_very_large_vclk_70_FO4", 
+            "parameters": [
+                "e_p=15", 
+                "m_p=112"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size very_large at a clock period (in num of FO4) = 80", 
+            "design_size": "very_large", 
+            "name": "bsg_fpu_classify_very_large_vclk_80_FO4", 
+            "parameters": [
+                "e_p=15", 
+                "m_p=112"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size very_large at a clock period (in num of FO4) = 90", 
+            "design_size": "very_large", 
+            "name": "bsg_fpu_classify_very_large_vclk_90_FO4", 
+            "parameters": [
+                "e_p=15", 
+                "m_p=112"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size very_large at a clock period (in num of FO4) = 100", 
+            "design_size": "very_large", 
+            "name": "bsg_fpu_classify_very_large_vclk_100_FO4", 
+            "parameters": [
+                "e_p=15", 
+                "m_p=112"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size medium at a clock period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_fpu_classify_medium_vclk_30_FO4", 
+            "parameters": [
+                "e_p=8", 
+                "m_p=23"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size medium at a clock period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_fpu_classify_medium_vclk_40_FO4", 
+            "parameters": [
+                "e_p=8", 
+                "m_p=23"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size medium at a clock period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_fpu_classify_medium_vclk_50_FO4", 
+            "parameters": [
+                "e_p=8", 
+                "m_p=23"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size medium at a clock period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_fpu_classify_medium_vclk_60_FO4", 
+            "parameters": [
+                "e_p=8", 
+                "m_p=23"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size medium at a clock period (in num of FO4) = 70", 
+            "design_size": "medium", 
+            "name": "bsg_fpu_classify_medium_vclk_70_FO4", 
+            "parameters": [
+                "e_p=8", 
+                "m_p=23"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size medium at a clock period (in num of FO4) = 80", 
+            "design_size": "medium", 
+            "name": "bsg_fpu_classify_medium_vclk_80_FO4", 
+            "parameters": [
+                "e_p=8", 
+                "m_p=23"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size medium at a clock period (in num of FO4) = 90", 
+            "design_size": "medium", 
+            "name": "bsg_fpu_classify_medium_vclk_90_FO4", 
+            "parameters": [
+                "e_p=8", 
+                "m_p=23"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "vclk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "vclk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "virtual", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "classifies the floating point result flag for RISC-V processors with size medium at a clock period (in num of FO4) = 100", 
+            "design_size": "medium", 
+            "name": "bsg_fpu_classify_medium_vclk_100_FO4", 
+            "parameters": [
+                "e_p=8", 
+                "m_p=23"
+            ]
+        }
+    ]
+}

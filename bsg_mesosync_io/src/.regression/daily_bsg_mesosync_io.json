@@ -1,0 +1,3 @@
+include bsg_ddr_sampler.json
+include bsg_logic_analyzer.json
+include bsg_mesosync_core.json

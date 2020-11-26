@@ -1,0 +1,3916 @@
+{
+    "design_name": "bsg_async_credit_counter", 
+    "filelist": [
+        "basejump_stl/bsg_async/bsg_async_credit_counter.v", 
+        "basejump_stl/bsg_async/bsg_async_ptr_gray.v", 
+        "basejump_stl/bsg_async/bsg_launch_sync_sync.v", 
+        "basejump_stl/bsg_misc/bsg_gray_to_binary.v", 
+        "basejump_stl/bsg_misc/bsg_scan.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_async_credit_counter_small_w_clk_30_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "max_tokens_p=2", 
+                "lg_credit_to_token_decimation_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_async_credit_counter_small_w_clk_30_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "max_tokens_p=2", 
+                "lg_credit_to_token_decimation_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_async_credit_counter_small_w_clk_30_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "max_tokens_p=2", 
+                "lg_credit_to_token_decimation_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_async_credit_counter_small_w_clk_30_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "max_tokens_p=2", 
+                "lg_credit_to_token_decimation_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_async_credit_counter_small_w_clk_40_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "max_tokens_p=2", 
+                "lg_credit_to_token_decimation_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_async_credit_counter_small_w_clk_40_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "max_tokens_p=2", 
+                "lg_credit_to_token_decimation_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_async_credit_counter_small_w_clk_40_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "max_tokens_p=2", 
+                "lg_credit_to_token_decimation_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_async_credit_counter_small_w_clk_40_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "max_tokens_p=2", 
+                "lg_credit_to_token_decimation_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_async_credit_counter_small_w_clk_50_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "max_tokens_p=2", 
+                "lg_credit_to_token_decimation_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_async_credit_counter_small_w_clk_50_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "max_tokens_p=2", 
+                "lg_credit_to_token_decimation_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_async_credit_counter_small_w_clk_50_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "max_tokens_p=2", 
+                "lg_credit_to_token_decimation_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_async_credit_counter_small_w_clk_50_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "max_tokens_p=2", 
+                "lg_credit_to_token_decimation_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_async_credit_counter_small_w_clk_60_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "max_tokens_p=2", 
+                "lg_credit_to_token_decimation_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_async_credit_counter_small_w_clk_60_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "max_tokens_p=2", 
+                "lg_credit_to_token_decimation_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_async_credit_counter_small_w_clk_60_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "max_tokens_p=2", 
+                "lg_credit_to_token_decimation_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_async_credit_counter_small_w_clk_60_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "max_tokens_p=2", 
+                "lg_credit_to_token_decimation_p=4"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_async_credit_counter_large_w_clk_30_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "max_tokens_p=4", 
+                "lg_credit_to_token_decimation_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_async_credit_counter_large_w_clk_30_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "max_tokens_p=4", 
+                "lg_credit_to_token_decimation_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_async_credit_counter_large_w_clk_30_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "max_tokens_p=4", 
+                "lg_credit_to_token_decimation_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_async_credit_counter_large_w_clk_30_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "max_tokens_p=4", 
+                "lg_credit_to_token_decimation_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_async_credit_counter_large_w_clk_40_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "max_tokens_p=4", 
+                "lg_credit_to_token_decimation_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_async_credit_counter_large_w_clk_40_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "max_tokens_p=4", 
+                "lg_credit_to_token_decimation_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_async_credit_counter_large_w_clk_40_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "max_tokens_p=4", 
+                "lg_credit_to_token_decimation_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_async_credit_counter_large_w_clk_40_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "max_tokens_p=4", 
+                "lg_credit_to_token_decimation_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_async_credit_counter_large_w_clk_50_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "max_tokens_p=4", 
+                "lg_credit_to_token_decimation_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_async_credit_counter_large_w_clk_50_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "max_tokens_p=4", 
+                "lg_credit_to_token_decimation_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_async_credit_counter_large_w_clk_50_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "max_tokens_p=4", 
+                "lg_credit_to_token_decimation_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_async_credit_counter_large_w_clk_50_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "max_tokens_p=4", 
+                "lg_credit_to_token_decimation_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_async_credit_counter_large_w_clk_60_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "max_tokens_p=4", 
+                "lg_credit_to_token_decimation_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_async_credit_counter_large_w_clk_60_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "max_tokens_p=4", 
+                "lg_credit_to_token_decimation_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_async_credit_counter_large_w_clk_60_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "max_tokens_p=4", 
+                "lg_credit_to_token_decimation_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_async_credit_counter_large_w_clk_60_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "max_tokens_p=4", 
+                "lg_credit_to_token_decimation_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_async_credit_counter_very_large_w_clk_30_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "max_tokens_p=5", 
+                "lg_credit_to_token_decimation_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_async_credit_counter_very_large_w_clk_30_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "max_tokens_p=5", 
+                "lg_credit_to_token_decimation_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_async_credit_counter_very_large_w_clk_30_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "max_tokens_p=5", 
+                "lg_credit_to_token_decimation_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_async_credit_counter_very_large_w_clk_30_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "max_tokens_p=5", 
+                "lg_credit_to_token_decimation_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_async_credit_counter_very_large_w_clk_40_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "max_tokens_p=5", 
+                "lg_credit_to_token_decimation_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_async_credit_counter_very_large_w_clk_40_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "max_tokens_p=5", 
+                "lg_credit_to_token_decimation_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_async_credit_counter_very_large_w_clk_40_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "max_tokens_p=5", 
+                "lg_credit_to_token_decimation_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_async_credit_counter_very_large_w_clk_40_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "max_tokens_p=5", 
+                "lg_credit_to_token_decimation_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_async_credit_counter_very_large_w_clk_50_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "max_tokens_p=5", 
+                "lg_credit_to_token_decimation_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_async_credit_counter_very_large_w_clk_50_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "max_tokens_p=5", 
+                "lg_credit_to_token_decimation_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_async_credit_counter_very_large_w_clk_50_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "max_tokens_p=5", 
+                "lg_credit_to_token_decimation_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_async_credit_counter_very_large_w_clk_50_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "max_tokens_p=5", 
+                "lg_credit_to_token_decimation_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_async_credit_counter_very_large_w_clk_60_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "max_tokens_p=5", 
+                "lg_credit_to_token_decimation_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_async_credit_counter_very_large_w_clk_60_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "max_tokens_p=5", 
+                "lg_credit_to_token_decimation_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_async_credit_counter_very_large_w_clk_60_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "max_tokens_p=5", 
+                "lg_credit_to_token_decimation_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_async_credit_counter_very_large_w_clk_60_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "max_tokens_p=5", 
+                "lg_credit_to_token_decimation_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_async_credit_counter_medium_w_clk_30_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "max_tokens_p=3", 
+                "lg_credit_to_token_decimation_p=8"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_async_credit_counter_medium_w_clk_30_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "max_tokens_p=3", 
+                "lg_credit_to_token_decimation_p=8"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_async_credit_counter_medium_w_clk_30_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "max_tokens_p=3", 
+                "lg_credit_to_token_decimation_p=8"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_async_credit_counter_medium_w_clk_30_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "max_tokens_p=3", 
+                "lg_credit_to_token_decimation_p=8"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_async_credit_counter_medium_w_clk_40_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "max_tokens_p=3", 
+                "lg_credit_to_token_decimation_p=8"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_async_credit_counter_medium_w_clk_40_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "max_tokens_p=3", 
+                "lg_credit_to_token_decimation_p=8"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_async_credit_counter_medium_w_clk_40_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "max_tokens_p=3", 
+                "lg_credit_to_token_decimation_p=8"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_async_credit_counter_medium_w_clk_40_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "max_tokens_p=3", 
+                "lg_credit_to_token_decimation_p=8"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_async_credit_counter_medium_w_clk_50_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "max_tokens_p=3", 
+                "lg_credit_to_token_decimation_p=8"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_async_credit_counter_medium_w_clk_50_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "max_tokens_p=3", 
+                "lg_credit_to_token_decimation_p=8"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_async_credit_counter_medium_w_clk_50_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "max_tokens_p=3", 
+                "lg_credit_to_token_decimation_p=8"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_async_credit_counter_medium_w_clk_50_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "max_tokens_p=3", 
+                "lg_credit_to_token_decimation_p=8"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_async_credit_counter_medium_w_clk_60_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "max_tokens_p=3", 
+                "lg_credit_to_token_decimation_p=8"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_async_credit_counter_medium_w_clk_60_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "max_tokens_p=3", 
+                "lg_credit_to_token_decimation_p=8"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_async_credit_counter_medium_w_clk_60_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "max_tokens_p=3", 
+                "lg_credit_to_token_decimation_p=8"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_token_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_dec_credit_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_infinite_credits_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "r_credits_avail_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async credit counter with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_async_credit_counter_medium_w_clk_60_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "max_tokens_p=3", 
+                "lg_credit_to_token_decimation_p=8"
+            ]
+        }
+    ]
+}
