@@ -8,8 +8,8 @@
 // handshakes.
 //
 // There are two options for this module:
-//     1) zero bubbles, no dependence, 2 element buffer for first data word
-//     2) one bubble, no dependence, 1 element buffer for first data word
+//     1) zero bubbles, no dependence, 2 element buffer for last data word
+//     2) one bubble, no dependence, 1 element buffer for last data word
 // By default option 1 is used, option 2 can be enabled by setting
 // use_minimal_buffering_p = 1
 //
@@ -56,13 +56,13 @@ module bsg_parallel_in_serial_out
       end
 
     /**
-     * Buffering the first input data word
+     * Buffering the LAST input data word
      *
      * By default a two-element fifo is used to eleminate bubbling.
      * One-element fifo is optional for minimal resource utilization.
      */
-    logic fifo0_ready_lo, fifo0_v_li;
-    logic fifo_v_lo, fifo_yumi_li;
+    logic fifo0_ready_lo, fifo_v_li;
+    logic fifo_v_lo, fifo0_yumi_li;
     logic [els_p-1:0][width_p-1:0] fifo_data_lo;
 
     if (use_minimal_buffering_p == 0)
@@ -73,11 +73,11 @@ module bsg_parallel_in_serial_out
         (.clk_i  (clk_i)
         ,.reset_i(reset_i)
         ,.ready_o(fifo0_ready_lo)
-        ,.data_i (data_li[0])
-        ,.v_i    (fifo0_v_li)
+        ,.data_i (data_li[els_p-1])
+        ,.v_i    (fifo_v_li)
         ,.v_o    (fifo_v_lo)
-        ,.data_o (fifo_data_lo[0])
-        ,.yumi_i (fifo_yumi_li)
+        ,.data_o (fifo_data_lo[els_p-1])
+        ,.yumi_i (fifo0_yumi_li)
         );
       end
     else
@@ -88,11 +88,11 @@ module bsg_parallel_in_serial_out
         (.clk_i  (clk_i)
         ,.reset_i(reset_i)
         ,.ready_o(fifo0_ready_lo)
-        ,.data_i (data_li[0])
-        ,.v_i    (fifo0_v_li)
+        ,.data_i (data_li[els_p-1])
+        ,.v_i    (fifo_v_li)
         ,.v_o    (fifo_v_lo)
-        ,.data_o (fifo_data_lo[0])
-        ,.yumi_i (fifo_yumi_li)
+        ,.data_o (fifo_data_lo[els_p-1])
+        ,.yumi_i (fifo0_yumi_li)
         );
       end
 
@@ -102,12 +102,12 @@ module bsg_parallel_in_serial_out
     // When conversion ratio is 1, only one data word exists
     // Connect fifo0 signals directly to input/output ports
 
-    assign fifo0_v_li   = valid_i;
-    assign ready_and_o  = fifo0_ready_lo;
+    assign fifo_v_li     = valid_i;
+    assign ready_and_o   = fifo0_ready_lo;
 
-    assign valid_o      = fifo_v_lo;
-    assign data_o       = fifo_data_lo;
-    assign fifo_yumi_li = yumi_i;
+    assign valid_o       = fifo_v_lo;
+    assign data_o        = fifo_data_lo;
+    assign fifo0_yumi_li = yumi_i;
 
   end 
   else 
@@ -119,10 +119,10 @@ module bsg_parallel_in_serial_out
      * Single element buffering is sufficient for bubble-free transmission.
      *
      * Output data of fifo1 is guaranteed to be valid if output data of fifo0 is 
-     * valid and shift_ctr_r != 0 (Refer to Table 1 below for more information.) 
+     * valid and shift_ctr_r != (els_p-1).
      * Therefore v_o signal of fifo1 is unused to minimize hardware utilization.
      */
-    logic fifo1_ready_lo, fifo1_v_li;
+    logic fifo1_ready_lo, fifo1_yumi_li;
 
     bsg_one_fifo
    #(.width_p((els_p-1)*width_p)
@@ -130,71 +130,32 @@ module bsg_parallel_in_serial_out
     (.clk_i  (clk_i)
     ,.reset_i(reset_i)
     ,.ready_o(fifo1_ready_lo)
-    ,.data_i (data_li[els_p-1:1])
-    ,.v_i    (fifo1_v_li)
-    ,.v_o    (/* Not used, guaranteed to be valid when needed*/)
-    ,.data_o (fifo_data_lo[els_p-1:1])
-    ,.yumi_i (fifo_yumi_li)
+    ,.data_i (data_li[els_p-2:0])
+    ,.v_i    (fifo_v_li)
+    ,.v_o    ()
+    ,.data_o (fifo_data_lo[els_p-2:0])
+    ,.yumi_i (fifo1_yumi_li)
     );
 
     /**
-     * State machine on the input data side
-     *
-     * When 2 element buffer is used, and two parallel data arrive consecutively,
-     * the first word of second parallel data may be accepted by fifo0 repeatedly.
-     * A simple state machine is used to prevent this from happening.
-     *
-     * When 1 element buffer is used, hard-wire wait_fifo1_r to 1'b0 to minimize 
-     * hardware utilization.
+     * Enqueue data into fifo iff both fifos are ready
      */
-    logic wait_fifo1_r;
-
-    assign fifo0_v_li = valid_i & ~wait_fifo1_r;
-    assign fifo1_v_li = valid_i;
-    assign ready_and_o = fifo1_ready_lo;
-
-    if (use_minimal_buffering_p == 0)
-      begin: twobuf
-      /**
-       * Table 1: Possible states of registers
-       * +---------------+----------------+--------------+---------+------------+
-       * |Fifo0-elements | Fifo1-elements | Wait_fifo1_r | Valid_i | shift_ctr_r|
-       * |       0       |        0       |      0       |   0/1   |      0     |
-       * |       0       |        1       |   INVALID    | INVALID |   INVALID  |
-       * |       1       |        0       |      1       |    1    |      0     |
-       * |       1       |        1       |      0       |   0/1   |     any    |
-       * |       2       |        0       |   INVALID    | INVALID |   INVALID  |
-       * |       2       |        1       |      1       |    1    |     any    |
-       * +---------------+----------------+--------------+---------+------------+
-       */
-        bsg_dff_reset_set_clear
-       #(.width_p         (1)
-        ) wait_fifo1_dff
-        (.clk_i           (clk_i)
-        ,.reset_i         (reset_i)
-        // fifo0_ready_lo is guaranteed to be 1'b1 when wait_fifo1_r == 1'b0
-        ,.set_i           (~wait_fifo1_r & valid_i & ~fifo1_ready_lo)
-        // valid_i is guaranteed to be 1'b1 when when wait_fifo1_r == 1'b1
-        ,.clear_i         (wait_fifo1_r & fifo1_ready_lo)
-        ,.data_o          (wait_fifo1_r)
-        );
-      end
-    else
-      begin: onebuf
-        assign wait_fifo1_r = 1'b0;
-      end
+    assign ready_and_o = fifo0_ready_lo & fifo1_ready_lo;
+    assign fifo_v_li = valid_i & ready_and_o;
 
     /**
-     * Data fifo yumi signal
+     * Data fifo yumi signals
      *
-     * When the piso has shifted to last data word and it is accepted by the outside, 
-     * assert fifo_yumi_li to indicate done of transmission, which pops data from 
-     * both fifo0 and fifo1 simutanously. 
+     * Dequeue from fifo1 when second-last data word has been sent out, freeing
+     * space for the following data words to avoid bubbling.
+     * Dequeue from fifo0 when last data word has been sent out, indicating
+     * done of transmission.
      */
     localparam clog2els_lp = $clog2(els_p);
     logic [clog2els_lp-1:0] shift_ctr_r;
 
-    assign fifo_yumi_li = fifo_v_lo && (shift_ctr_r == clog2els_lp ' (els_p-1)) && yumi_i;
+    assign fifo0_yumi_li = (shift_ctr_r == clog2els_lp ' (els_p-1)) && yumi_i;
+    assign fifo1_yumi_li = (shift_ctr_r == clog2els_lp ' (els_p-2)) && yumi_i;
 
     /**
      * Shift Counter Logic
@@ -217,8 +178,8 @@ module bsg_parallel_in_serial_out
     ) shift_ctr
     (.clk_i     (clk_i)
     ,.reset_i   (reset_i)
-    ,.clear_i   (fifo_yumi_li)
-    ,.up_i      (~fifo_yumi_li & fifo_v_lo & yumi_i)
+    ,.clear_i   (fifo0_yumi_li)
+    ,.up_i      (~fifo0_yumi_li & yumi_i)
     ,.count_o   (shift_ctr_r)
     );
 
