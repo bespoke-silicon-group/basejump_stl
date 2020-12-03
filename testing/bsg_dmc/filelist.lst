@@ -13,6 +13,8 @@
 ../../bsg_dataflow/bsg_make_2D_array.v
 ../../bsg_dataflow/bsg_parallel_in_serial_out.v
 ../../bsg_dataflow/bsg_serial_in_parallel_out.v
+../../bsg_dataflow/bsg_two_fifo.v
+../../bsg_dataflow/bsg_one_fifo.v
 ../../bsg_dmc/bsg_dmc.v
 ../../bsg_dmc/bsg_dmc_clk_rst_gen.v
 ../../bsg_dmc/bsg_dmc_controller.v
@@ -32,6 +34,9 @@
 ../../bsg_misc/bsg_reduce.v
 ../../bsg_misc/bsg_strobe.v
 ../../bsg_misc/bsg_xnor.v
+../../bsg_misc/bsg_counter_clear_up.v
+../../bsg_misc/bsg_dff_reset.v
+../../bsg_misc/bsg_dff_en.v
 ../../bsg_tag/bsg_tag_client.v
 ../../bsg_tag/bsg_tag_client_unsync.v
 lpddr_verilog_model/mobile_ddr.v
