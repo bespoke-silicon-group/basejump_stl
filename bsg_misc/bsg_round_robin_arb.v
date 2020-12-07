@@ -15,10 +15,12 @@
 
 `include "bsg_defines.v"
 
+
 module bsg_round_robin_arb #(inputs_p      = -1
                                      ,lg_inputs_p   =`BSG_SAFE_CLOG2(inputs_p)
                                      ,reset_on_sr_p = 1'b0
-                                     ,hold_on_sr_p  = 1'b0 )
+                                     ,hold_on_sr_p  = 1'b0
+                                     ,hold_on_valid_p = 1'b0)
     (input clk_i
     , input reset_i
     , input grants_en_i // whether to suppress grants_o
@@ -2428,6 +2430,8 @@ else
       end else if( reset_on_sr_p ) begin: reset_on_last_n_gen
         last_n = reset_on_sr? (inputs_p-2) :
                ( yumi_i     ?tag_o : last_r );  
+      end else if( hold_on_valid_p ) begin: hold_on_last_n_gen
+        last_n = yumi_i ? tag_o : v_o ? (tag_o-1'b1) : last_r;
       end else
         last_n = (yumi_i ? tag_o:last_r);
 
