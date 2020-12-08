@@ -51,6 +51,9 @@ module bsg_mesh_router_decoder_dor
     end
 
     assert($countones(from_p) == 1) else $fatal(1, "Must define from_p as one-hot value.");
+
+    assert(ruche_factor_X_p < (1<<x_cord_width_p)) else $fatal(1, "ruche factor in X direction is too large");
+    assert(ruche_factor_Y_p < (1<<y_cord_width_p)) else $fatal(1, "ruche factor in Y direction is too large");
   end
   // synopsys translate_on
 
@@ -79,7 +82,7 @@ module bsg_mesh_router_decoder_dor
     if (XY_order_p) begin
       // make sure there is no under/overflow.
       wire [x_cord_width_p:0] re_cord = (x_cord_width_p+1)'(my_x_i + ruche_factor_X_p);
-      wire send_rw = (my_x_i > ruche_factor_X_p) & (x_dirs_i < (my_x_i - ruche_factor_X_p));
+      wire send_rw = (my_x_i > (x_cord_width_p)'(ruche_factor_X_p)) & (x_dirs_i < (my_x_i - ruche_factor_X_p));
       wire send_re = ~re_cord[x_cord_width_p] & (x_dirs_i > re_cord[0+:x_cord_width_p]);
 
       assign req[W]  = x_lt & ~send_rw;
@@ -96,8 +99,8 @@ module bsg_mesh_router_decoder_dor
       end
       else if(from_p[W]) begin
         wire [x_cord_width_p-1:0] dx = (x_cord_width_p)'((x_dirs_i - my_x_i) % ruche_factor_X_p);
-        assign req[RE] = y_eq & x_gt & (dx == 'd0);
-        assign req[E]  = y_eq & x_gt & (dx != 'd0);
+        assign req[RE] = y_eq & x_gt & (dx == '0);
+        assign req[E]  = y_eq & x_gt & (dx != '0);
         assign req[RW] = 1'b0;
         assign req[W]  = 1'b0;
       end
@@ -105,8 +108,8 @@ module bsg_mesh_router_decoder_dor
         wire [x_cord_width_p-1:0] dx = (x_cord_width_p)'((my_x_i - x_dirs_i) % ruche_factor_X_p);
         assign req[RE] = 1'b0;
         assign req[E]  = 1'b0;
-        assign req[RW] = y_eq & x_lt & (dx == 'd0);
-        assign req[W]  = y_eq & x_lt & (dx != 'd0);
+        assign req[RW] = y_eq & x_lt & (dx == '0);
+        assign req[W]  = y_eq & x_lt & (dx != '0);
       end
       else if (from_p[RW]) begin
         assign req[RE] = y_eq & x_gt;
@@ -140,7 +143,7 @@ module bsg_mesh_router_decoder_dor
     if (XY_order_p == 0) begin
       // make sure there is no under/overflow.
       wire [y_cord_width_p:0] rs_cord = (y_cord_width_p+1)'(my_y_i + ruche_factor_Y_p);
-      wire send_rn = (my_y_i > ruche_factor_Y_p) & (y_dirs_i < (my_y_i - ruche_factor_Y_p));
+      wire send_rn = (my_y_i > (y_cord_width_p)'(ruche_factor_Y_p)) & (y_dirs_i < (my_y_i - ruche_factor_Y_p));
       wire send_rs = ~rs_cord[y_cord_width_p] & (y_dirs_i > rs_cord[0+:y_cord_width_p]);
 
       assign req[N]  = y_lt & ~send_rn;
@@ -157,8 +160,8 @@ module bsg_mesh_router_decoder_dor
       end
       else if (from_p[N]) begin
         wire [y_cord_width_p-1:0] dy = (y_cord_width_p)'((y_dirs_i - my_y_i) % ruche_factor_Y_p);
-        assign req[RS] = x_eq & y_gt & (dy == 'd0);
-        assign req[S]  = x_eq & y_gt & (dy != 'd0);
+        assign req[RS] = x_eq & y_gt & (dy == '0);
+        assign req[S]  = x_eq & y_gt & (dy != '0);
         assign req[RN] = 1'b0;
         assign req[N]  = 1'b0;
       end
@@ -166,8 +169,8 @@ module bsg_mesh_router_decoder_dor
         wire [y_cord_width_p-1:0] dy = (y_cord_width_p)'((my_y_i - y_dirs_i) % ruche_factor_Y_p);
         assign req[RS] = 1'b0;
         assign req[S]  = 1'b0;
-        assign req[RN] = x_eq & y_lt & (dy == 'd0);
-        assign req[N]  = x_eq & y_lt & (dy != 'd0);
+        assign req[RN] = x_eq & y_lt & (dy == '0);
+        assign req[N]  = x_eq & y_lt & (dy != '0);
       end
       else if (from_p[RN]) begin
         assign req[RS] = x_eq & y_gt;
