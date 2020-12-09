@@ -1,22 +1,33 @@
-`include "bsg_defines.v"
+/**
+ *    bsg_mesh_router_buffered.v
+ *
+ */
 
+
+`include "bsg_defines.v"
 `include "bsg_noc_links.vh"
 
-module bsg_mesh_router_buffered #(width_p        = -1
-                                  ,x_cord_width_p = -1
-                                  ,y_cord_width_p = -1
-                                  ,debug_p       = 0
-                                  ,dirs_lp       = 5
-                                  ,stub_p        = { dirs_lp {1'b0}}  // SNEWP
-                                  ,XY_order_p    = 1
-                                  ,bsg_ready_and_link_sif_width_lp=`bsg_ready_and_link_sif_width(width_p)
-                                  // select whether to buffer the output
-                                  ,repeater_output_p = { dirs_lp {1'b0}}  // SNEWP
-                                  // credit interface
-                                  , use_credits_p = {dirs_lp{1'b0}}
-                                  ,parameter int fifo_els_p[dirs_lp-1:0] = '{2,2,2,2,2}
-                                  )
-   (
+
+module bsg_mesh_router_buffered
+  import bsg_mesh_router_pkg::*;
+  #(parameter width_p        = -1
+    , parameter x_cord_width_p = -1
+    , parameter y_cord_width_p = -1
+    , parameter debug_p       = 0
+    , parameter ruche_factor_X_p = 0
+    , parameter ruche_factor_Y_p = 0
+    , parameter dims_p        = 2
+    , parameter dirs_lp       = (2*dims_p)+1
+    , parameter stub_p        = { dirs_lp {1'b0}}  // SNEWP
+    , parameter XY_order_p    = 1
+    , parameter bsg_ready_and_link_sif_width_lp=`bsg_ready_and_link_sif_width(width_p)
+    // select whether to buffer the output
+    , parameter repeater_output_p = { dirs_lp {1'b0}}  // SNEWP
+    // credit interface
+    , parameter use_credits_p = {dirs_lp{1'b0}}
+    , parameter int fifo_els_p[dirs_lp-1:0] = '{2,2,2,2,2}
+  )
+  (
     input clk_i
     , input reset_i
 
@@ -25,7 +36,7 @@ module bsg_mesh_router_buffered #(width_p        = -1
 
     , input [x_cord_width_p-1:0] my_x_i
     , input [y_cord_width_p-1:0] my_y_i
-    );
+  );
 
    `declare_bsg_ready_and_link_sif_s(width_p,bsg_ready_and_link_sif_s);
 
@@ -158,8 +169,9 @@ module bsg_mesh_router_buffered #(width_p        = -1
    bsg_mesh_router #( .width_p      (width_p      )
                       ,.x_cord_width_p(x_cord_width_p)
                       ,.y_cord_width_p(y_cord_width_p)
-                      ,.debug_p      (debug_p      )
-                      ,.stub_p       (stub_p       )
+                      ,.ruche_factor_X_p(ruche_factor_X_p)
+                      ,.ruche_factor_Y_p(ruche_factor_Y_p)
+                      ,.dims_p        (dims_p)
                       ,.XY_order_p   (XY_order_p   )
                       ) bmr
    (.clk_i
