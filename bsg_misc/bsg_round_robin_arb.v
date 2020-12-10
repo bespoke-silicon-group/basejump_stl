@@ -2431,7 +2431,7 @@ else
         last_n = reset_on_sr? (inputs_p-2) :
                ( yumi_i     ?tag_o : last_r );  
       end else if( hold_on_valid_p ) begin: hold_on_last_n_gen
-        last_n = yumi_i ? tag_o : v_o ? (tag_o-1'b1) : last_r;
+        last_n = yumi_i ? tag_o : v_o ? (tag_o == '0) ? (lg_inputs_p)'(inputs_p-1) : (tag_o-1'b1) : last_r;
       end else
         last_n = (yumi_i ? tag_o:last_r);
 
