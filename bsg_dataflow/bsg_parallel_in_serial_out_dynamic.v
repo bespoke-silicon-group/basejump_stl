@@ -1,7 +1,7 @@
 /**
  *  bsg_parallel_in_serial_out_dynamic.v
  *
- *  Paul Gao        06/2019
+ *  Paul Gao        12/2020
  *
  */
 
@@ -30,27 +30,28 @@ module bsg_parallel_in_serial_out_dynamic
   ,input                               yumi_i
   );
 
+  // Go fifo
+  // Store last data word of upcoming packet into the 2-element fifo
+
   logic                              go_fifo_v_li, go_fifo_ready_lo;
   logic                              go_fifo_v_lo, go_fifo_yumi_li
   logic [width_p-1:0]                go_fifo_data_li;
   logic [lg_max_els_lp-1:0]          len_lo;
   logic [max_els_p-1:0][width_p-1:0] fifo_data_lo;
 
-
-  // Go fifo
   bsg_two_fifo
- #(.width_p(lg_max_els_lp+width_p)
+ #(.width_p(lg_max_els_lp+width_p              )
   ) go_fifo
-  (.clk_i  (clk_i                    )
-  ,.reset_i(reset_i                  )
+  (.clk_i  (clk_i                              )
+  ,.reset_i(reset_i                            )
 
-  ,.ready_o(go_fifo_ready_lo         )
-  ,.data_i ({len_i, go_fifo_data_li})
-  ,.v_i    (go_fifo_v_li             )
+  ,.ready_o(go_fifo_ready_lo                   )
+  ,.data_i ({len_i, data_i[len_i]}             )
+  ,.v_i    (go_fifo_v_li                       )
 
-  ,.v_o    (go_fifo_v_lo             )
+  ,.v_o    (go_fifo_v_lo                       )
   ,.data_o ({len_lo, fifo_data_lo[max_els_p-1]})
-  ,.yumi_i (go_fifo_yumi_li          )
+  ,.yumi_i (go_fifo_yumi_li                    )
   );
   
   if (max_els_p == 1) 
@@ -60,7 +61,6 @@ module bsg_parallel_in_serial_out_dynamic
     // Connect go_fifo signals directly to input/output ports
 
     assign go_fifo_v_li    = v_i;
-    assign go_fifo_data_li = data_i;
     assign ready_o         = go_fifo_ready_lo;
 
     assign v_o             = go_fifo_v_lo;
@@ -70,17 +70,12 @@ module bsg_parallel_in_serial_out_dynamic
   end 
   else 
   begin: piso
-  
-    logic data_fifo_v_li, data_fifo_ready_lo;
-    logic data_fifo_v_lo, data_fifo_yumi_li;
-  
-    assign go_fifo_v_li    = v_i & ready_o;
-    assign go_fifo_data_li = data_i[len_i];
-    
-    assign data_fifo_v_li = v_i & ready_o & ~(len_i == (lg_max_els_lp)'(0));
-    assign ready_o        = go_fifo_ready_lo & data_fifo_ready_lo;
 
     // Data fifo
+    // Store the rest of the data words into one-element fifo
+    logic data_fifo_v_li, data_fifo_ready_lo;
+    logic data_fifo_v_lo, data_fifo_yumi_li;
+
     bsg_one_fifo
    #(.width_p((max_els_p-1)*width_p      )
     ) data_fifo
@@ -95,6 +90,13 @@ module bsg_parallel_in_serial_out_dynamic
     ,.data_o (fifo_data_lo[max_els_p-2:0])
     ,.yumi_i (data_fifo_yumi_li          )
     );
+
+    // Enqueue data packet when both fifos are ready
+    // To ensure continuous transmission, zero_length packets are not
+    // pushed into data_fifo
+    assign go_fifo_v_li   = v_i & ready_o;
+    assign data_fifo_v_li = v_i & ready_o & ~(len_i == (lg_max_els_lp)'(0));
+    assign ready_o        = go_fifo_ready_lo & data_fifo_ready_lo;
     
     logic [lg_max_els_lp-1:0] count_r, count_lo;
     logic clear_li, up_li;
@@ -102,12 +104,13 @@ module bsg_parallel_in_serial_out_dynamic
     
     // fix evaluate to Z problem in simulation
     assign count_lo = count_r;
-  
-    assign zero_len = go_fifo_v_lo & (len_lo == lg_max_els_lp'(0));
+
+    // When using len_lo signal, always AND with go_fifo_v_lo to eliminate
+    // possible zero-pessimism problem in simulation
     assign count_r_is_zero = (count_lo == lg_max_els_lp'(0));
     assign count_r_next_is_last = go_fifo_v_lo & (count_lo == (len_lo - lg_max_els_lp'(1));
-    assign count_r_is_last = zero_len | (go_fifo_v_lo & (count_lo == len_lo));
-    
+    assign count_r_is_last = go_fifo_v_lo & (count_lo == len_lo);
+
     // Indicate if output word is first word of packet
     assign len_v_o = count_r_is_zero;
     
@@ -117,6 +120,9 @@ module bsg_parallel_in_serial_out_dynamic
     // Clear counter when whole packet finish sending
     assign clear_li = yumi_i & count_r_is_last;
     
+    // Pop go_fifo after transmission of whole packet
+    // Pop data_fifo only for non-zero-length packet, after transmissing 
+    // second-last data word of packet
     assign go_fifo_yumi_li = clear_li;
     assign data_fifo_yumi_li = yumi_i & count_r_next_is_last;
     
@@ -132,7 +138,8 @@ module bsg_parallel_in_serial_out_dynamic
     ,.count_o   (count_r )
     );
     
-    // Output data
+    // Data output
+    // Last data word is stored in the two-element fifo
     assign v_o    = go_fifo_v_lo;
     assign data_o = count_r_is_last? fifo_data_lo[max_els_p-1] : fifo_data_lo[count_lo];
   
