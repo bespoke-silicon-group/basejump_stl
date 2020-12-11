@@ -32,12 +32,114 @@ module bsg_parallel_in_serial_out_dynamic
 
   logic                              go_fifo_v_li, go_fifo_ready_lo;
   logic                              go_fifo_v_lo, go_fifo_yumi_li
+  logic [width_p-1:0]                go_fifo_data_li;
   logic [lg_max_els_lp-1:0]          len_lo;
   logic [max_els_p-1:0][width_p-1:0] fifo_data_lo;
+
+
+  // Go fifo
+  bsg_two_fifo
+ #(.width_p(lg_max_els_lp+width_p)
+  ) go_fifo
+  (.clk_i  (clk_i                    )
+  ,.reset_i(reset_i                  )
+
+  ,.ready_o(go_fifo_ready_lo         )
+  ,.data_i ({len_i, go_fifo_data_li})
+  ,.v_i    (go_fifo_v_li             )
+
+  ,.v_o    (go_fifo_v_lo             )
+  ,.data_o ({len_lo, fifo_data_lo[max_els_p-1]})
+  ,.yumi_i (go_fifo_yumi_li          )
+  );
   
-  // Go fifo and data fifo share the same control logic
-  // They always contain same number of elements in memory
+  if (max_els_p == 1) 
+  begin: bypass
+
+    // When conversion ratio is 1, only one data word exists
+    // Connect go_fifo signals directly to input/output ports
+
+    assign go_fifo_v_li    = v_i;
+    assign go_fifo_data_li = data_i;
+    assign ready_o         = go_fifo_ready_lo;
+
+    assign v_o             = go_fifo_v_lo;
+    assign data_o          = fifo_data_lo;
+    assign go_fifo_yumi_li = yumi_i;
+
+  end 
+  else 
+  begin: piso
   
+    logic data_fifo_v_li, data_fifo_ready_lo;
+    logic data_fifo_v_lo, data_fifo_yumi_li;
+  
+    assign go_fifo_v_li    = v_i & ready_o;
+    assign go_fifo_data_li = data_i[len_i];
+    
+    assign data_fifo_v_li = v_i & ready_o & ~(len_i == (lg_max_els_lp)'(0));
+    assign ready_o        = go_fifo_ready_lo & data_fifo_ready_lo;
+
+    // Data fifo
+    bsg_one_fifo
+   #(.width_p((max_els_p-1)*width_p      )
+    ) data_fifo
+    (.clk_i  (clk_i                      )
+    ,.reset_i(reset_i                    )
+  
+    ,.ready_o(data_fifo_ready_lo         )
+    ,.data_i (data_i[max_els_p-2:0]      )
+    ,.v_i    (data_fifo_v_li             )
+  
+    ,.v_o    (data_fifo_v_lo             )
+    ,.data_o (fifo_data_lo[max_els_p-2:0])
+    ,.yumi_i (data_fifo_yumi_li          )
+    );
+    
+    logic [lg_max_els_lp-1:0] count_r, count_lo;
+    logic clear_li, up_li;
+    logic zero_len, count_r_is_zero, count_r_next_is_last, count_r_is_last;
+    
+    // fix evaluate to Z problem in simulation
+    assign count_lo = count_r;
+  
+    assign zero_len = go_fifo_v_lo & (len_lo == lg_max_els_lp'(0));
+    assign count_r_is_zero = (count_lo == lg_max_els_lp'(0));
+    assign count_r_next_is_last = go_fifo_v_lo & (count_lo == (len_lo - lg_max_els_lp'(1));
+    assign count_r_is_last = zero_len | (go_fifo_v_lo & (count_lo == len_lo));
+    
+    // Indicate if output word is first word of packet
+    assign len_v_o = count_r_is_zero;
+    
+    // Count up if current word is not last word of packet.
+    assign up_li = yumi_i & ~count_r_is_last;
+    
+    // Clear counter when whole packet finish sending
+    assign clear_li = yumi_i & count_r_is_last;
+    
+    assign go_fifo_yumi_li = clear_li;
+    assign data_fifo_yumi_li = yumi_i & count_r_next_is_last;
+    
+    // Length counter
+    bsg_counter_clear_up
+   #(.max_val_p (max_els_p-1)
+    ,.init_val_p(0)
+    ) ctr
+    (.clk_i     (clk_i   )
+    ,.reset_i   (reset_i )
+    ,.clear_i   (clear_li)
+    ,.up_i      (up_li   )
+    ,.count_o   (count_r )
+    );
+    
+    // Output data
+    assign v_o    = go_fifo_v_lo;
+    assign data_o = count_r_is_last? fifo_data_lo[max_els_p-1] : fifo_data_lo[count_lo];
+  
+  end
+
+
+/*
   // Go fifo
   bsg_two_fifo
  #(.width_p(lg_max_els_lp+width_p)
@@ -155,5 +257,5 @@ module bsg_parallel_in_serial_out_dynamic
     assign data_o = lastword_fifo_v_lo? lastword_fifo_data_lo : fifo_data_lo[count_lo];
   
   end
-
+*/
 endmodule
