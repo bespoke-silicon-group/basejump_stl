@@ -30,16 +30,10 @@ module bsg_parallel_in_serial_out_dynamic
   ,input                               yumi_i
   );
 
-  logic                              go_fifo_v_li, data_fifo_v_li;
-  logic                              go_fifo_ready_lo, data_fifo_ready_lo;
-
-  logic                              go_fifo_v_lo, data_fifo_v_lo;
-  logic                              go_fifo_yumi_li, data_fifo_yumi_li;
+  logic                              go_fifo_v_li, go_fifo_ready_lo;
+  logic                              go_fifo_v_lo, go_fifo_yumi_li
   logic [lg_max_els_lp-1:0]          len_lo;
   logic [max_els_p-1:0][width_p-1:0] fifo_data_lo;
-  
-  logic lastword_fifo_v_lo, lastword_fifo_yumi_li;
-  logic [width_p-1:0] lastword_fifo_data_lo;
   
   // Go fifo and data fifo share the same control logic
   // They always contain same number of elements in memory
@@ -76,6 +70,12 @@ module bsg_parallel_in_serial_out_dynamic
   end 
   else 
   begin: piso
+  
+    logic data_fifo_v_li, data_fifo_ready_lo;
+    logic data_fifo_v_lo, data_fifo_yumi_li;
+  
+    logic lastword_fifo_v_lo, lastword_fifo_yumi_li;
+    logic [width_p-1:0] lastword_fifo_data_lo;
   
     assign go_fifo_v_li   = v_i & ready_o;
     assign data_fifo_v_li = v_i & ready_o & ~(len_i == (lg_max_els_lp)'(0));
