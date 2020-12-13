@@ -12,6 +12,11 @@
 // len_i signal must be valid when ready_and_i and ready_and_o signals are 
 // asserted, together with the first data word of each transaction.
 //
+// By definition of ready-and handshaking, ready_and_o must be earlier than
+// v_i. Since ready_and_o depends on value of len_i, so len_i must not depend
+// on v_i. For this reason, len_i signal is on the serial data side of the
+// module and depends on ready_and_i.
+//
 
 `include "bsg_defines.v"
 
