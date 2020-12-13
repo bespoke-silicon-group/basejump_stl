@@ -9,8 +9,8 @@
 //     multiplex multiple inputs and can change which input they multiplex
 //     on the fly based on arrival of new inputs.
 //
-// len_i signal must be valid when read_and_i signal is asserted for the
-// first word of each transaction. 
+// len_i signal must be valid when ready_and_i and ready_and_o signals are 
+// asserted, together with the first data word of each transaction.
 //
 
 `include "bsg_defines.v"
@@ -33,6 +33,7 @@ module bsg_parallel_in_serial_out_passthrough_dynamic
   // Data Output Channel
   ,output                              v_o
   ,output [width_p-1:0]                data_o
+  ,output                              len_ready_o
   ,input  [lg_max_els_lp-1:0]          len_i
   ,input                               ready_and_i
   );
@@ -84,6 +85,7 @@ module bsg_parallel_in_serial_out_passthrough_dynamic
 
     assign v_o         = v_i;
     assign ready_and_o = (ready_and_i & is_last_cnt) | is_zero_len;
+    assign len_ready_o = is_zero_cnt;
 
     bsg_mux
    #(.width_p(width_p  )
