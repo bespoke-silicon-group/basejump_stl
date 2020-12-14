@@ -1,7 +1,7 @@
 /**
  * bsg_serial_in_parallel_out_passthrough_dynamic.v
  *
- * len_i signal must be valid when v_i and ready_and_o signals are asserted, 
+ * len_i signal must be valid when v_i and first_o signals are asserted, 
  * together with the first data word of each transaction.
  *
  */
@@ -22,7 +22,7 @@ module bsg_serial_in_parallel_out_passthrough_dynamic
   ,input  [width_p-1:0]                data_i
   ,input  [lg_max_els_lp-1:0]          len_i
   ,output                              ready_and_o
-  ,output                              len_ready_o
+  ,output                              first_o
 
   ,output                              v_o
   ,output [max_els_p-1:0][width_p-1:0] data_o
@@ -35,6 +35,7 @@ module bsg_serial_in_parallel_out_passthrough_dynamic
     assign v_o         = v_i;
     assign data_o      = data_i;
     assign ready_and_o = ready_and_i;
+    assign first_o     = 1'b1;
 
   end
   else
@@ -79,7 +80,7 @@ module bsg_serial_in_parallel_out_passthrough_dynamic
 
     assign v_o         = (v_i & is_last_cnt) | is_zero_len | is_waiting;
     assign ready_and_o = (ready_and_i | ~is_last_cnt) & ~is_waiting;
-    assign len_ready_o = is_zero_cnt;
+    assign first_o     = is_zero_cnt;
 
     bsg_decode_with_v
    #(.num_out_p(max_els_p        )
