@@ -68,10 +68,10 @@ module bsg_wormhole_stream_in
    , input [hdr_width_p-1:0]     hdr_i
    , input                       hdr_v_i
    , output                      hdr_ready_and_o
-   // number of protocol message data flits in arriving wormhole message
+   // number of protocol message data packets in arriving wormhole message
    // arrives late when hdr_v_i & hdr_ready_and_o
-   // value is flits-1 (i.e., zero based)
-   , input [pr_len_width_p-1:0]  pr_data_flits_i
+   // value is len-1 (i.e., zero based)
+   , input [pr_len_width_p-1:0]  pr_data_beats_i
 
    // The protocol data information
    , input [pr_data_width_p-1:0] data_i
@@ -140,10 +140,9 @@ module bsg_wormhole_stream_in
     //   protocol data, aggregate it, and then send it out on the wormhole network
     begin : narrow
       // flit_width_p > pr_data_width_p -> multiple protocol data per link flit
-      // and the protocol data may not completely fill the SIPO. Need to track how
-      // many protocol data flits remain for each SIPO transaction
+      // and the protocol data may not completely fill the SIPO.
 
-      // number of protocol data flits per full link flit
+      // number of protocol data per full link flit
       localparam [len_width_p-1:0] max_els_lp = `BSG_CDIV(flit_width_p, pr_data_width_p);
       localparam lg_max_els_lp = `BSG_SAFE_CLOG2(max_els_lp);
       // SIPO len_i is zero-based, i.e., input is len-1
@@ -153,11 +152,11 @@ module bsg_wormhole_stream_in
       logic sipo_first_lo;
       logic [lg_max_els_lp-1:0] sipo_len_li;
 
-      // count of protocol data flits to send
-      // last flit is consumed when pr_data_cnt is 0
+      // count of protocol data packets to send
+      // last data is consumed when pr_data_cnt is 0
       // set late when hdr_v_i & hdr_ready_and_o
       // set value is provided by input client
-      // set value is zero based and equal to (protocol flits - 1)
+      // set value is zero based and equal to (protocol beats - 1)
       // SIPO passthrough sends same cycle it receives last data input
       logic [pr_len_width_p-1:0] pr_data_cnt;
       wire pr_data_consumed = (pr_data_cnt == '0);
@@ -170,17 +169,15 @@ module bsg_wormhole_stream_in
         (.clk_i(clk_i)
          ,.reset_i(reset_i)
          ,.set_i(hdr_v_i & hdr_ready_and_o)
-         ,.val_i(pr_data_flits_i)
+         ,.val_i(pr_data_beats_i)
          ,.down_i(data_v_i & data_ready_and_o & ~pr_data_consumed)
          ,.count_r_o(pr_data_cnt)
          );
 
-      // for each SIPO transaction, provide number of protocol flits to expect
-      assign sipo_len_li = (data_v_i & sipo_first_lo)
-                           ? (pr_data_cnt >= sipo_full_len_lp)
-                             ? sipo_full_len_lp
-                             : lg_max_els_lp'(pr_data_cnt)
-                           : '0;
+      // for each SIPO transaction, provide number of protocol data to expect
+      assign sipo_len_li = (pr_data_cnt >= sipo_full_len_lp)
+                           ? sipo_full_len_lp
+                           : lg_max_els_lp'(pr_data_cnt);
 
       bsg_serial_in_parallel_out_passthrough_dynamic
        #(.width_p(pr_data_width_p)
