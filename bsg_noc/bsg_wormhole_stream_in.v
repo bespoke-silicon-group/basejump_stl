@@ -27,6 +27,7 @@
 //   ---------------------------------------------------------------
 //   | data   | data  | data  | data  | protocol info | len   cord |
 //   ---------------------------------------------------------------
+//   - header flits do not contain any data
 //
 // Data can be sent the same or any cycle after header, but only 1 message at
 //   a time is supported.
@@ -54,6 +55,7 @@ module bsg_wormhole_stream_in
    // Higher level protocol information
    , parameter pr_hdr_width_p  = "inv"
    , parameter pr_data_width_p = "inv"
+   , parameter pr_len_width_p  = "inv"
 
    // Size of the wormhole header + the protocol header. The data starts afterwards.
    // Users may set this directly rather than relying on the protocol header derived default
@@ -66,6 +68,10 @@ module bsg_wormhole_stream_in
    , input [hdr_width_p-1:0]     hdr_i
    , input                       hdr_v_i
    , output                      hdr_ready_and_o
+   // number of protocol message data flits in arriving wormhole message
+   // arrives late when hdr_v_i & hdr_ready_and_o
+   // value is flits-1 (i.e., zero based)
+   , input [pr_len_width_p-1:0]  pr_data_flits_i
 
    // The protocol data information
    , input [pr_data_width_p-1:0] data_i
@@ -83,7 +89,7 @@ module bsg_wormhole_stream_in
   localparam [len_width_p-1:0] hdr_len_lp = `BSG_CDIV(hdr_width_p, flit_width_p);
 
   logic [flit_width_p-1:0] hdr_lo;
-  logic hdr_ready_lo, hdr_v_lo, hdr_ready_and_li;
+  logic hdr_v_lo, hdr_ready_and_li;
 
   // Header is input all at once and streamed out 1 flit at a time
   bsg_parallel_in_serial_out_passthrough
@@ -96,13 +102,12 @@ module bsg_wormhole_stream_in
 
      ,.data_i(hdr_i)
      ,.v_i(hdr_v_i)
-     ,.ready_and_o(hdr_ready_lo)
+     ,.ready_and_o(hdr_ready_and_o)
 
      ,.data_o(hdr_lo)
      ,.v_o(hdr_v_lo)
      ,.ready_and_i(hdr_ready_and_li)
      );
-  assign hdr_ready_and_o = hdr_ready_lo;
   assign hdr_ready_and_li = is_hdr & link_ready_and_i;
 
   logic [flit_width_p-1:0] data_lo;
@@ -129,16 +134,57 @@ module bsg_wormhole_stream_in
          ,.v_o(data_v_lo)
          ,.ready_and_i(data_ready_and_li)
          );
-      assign data_ready_and_li = is_data & link_ready_and_i;
     end
   else
     // Protocol data is less than a single flit-sized. We accept a small
     //   protocol data, aggregate it, and then send it out on the wormhole network
     begin : narrow
-      localparam [len_width_p-1:0] data_len_lp = `BSG_CDIV(flit_width_p, pr_data_width_p);
-      bsg_serial_in_parallel_out_passthrough
+      // flit_width_p > pr_data_width_p -> multiple protocol data per link flit
+      // and the protocol data may not completely fill the SIPO. Need to track how
+      // many protocol data flits remain for each SIPO transaction
+
+      // number of protocol data flits per full link flit
+      localparam [len_width_p-1:0] max_els_lp = `BSG_CDIV(flit_width_p, pr_data_width_p);
+      localparam lg_max_els_lp = `BSG_SAFE_CLOG2(max_els_lp);
+      // SIPO len_i is zero-based, i.e., input is len-1
+      localparam [lg_max_els_lp-1:0] sipo_full_len_lp = max_els_lp - 1;
+
+      // SIPO inputs
+      logic sipo_first_lo;
+      logic [lg_max_els_lp-1:0] sipo_len_li;
+
+      // count of protocol data flits to send
+      // last flit is consumed when pr_data_cnt is 0
+      // set late when hdr_v_i & hdr_ready_and_o
+      // set value is provided by input client
+      // set value is zero based and equal to (protocol flits - 1)
+      // SIPO passthrough sends same cycle it receives last data input
+      logic [pr_len_width_p-1:0] pr_data_cnt;
+      wire pr_data_consumed = (pr_data_cnt == '0);
+      bsg_counter_set_down
+       #(.width_p(pr_len_width_p)
+         ,.init_val_p('0)
+         ,.set_and_down_exclusive_p(0)
+         )
+       pr_data_counter
+        (.clk_i(clk_i)
+         ,.reset_i(reset_i)
+         ,.set_i(hdr_v_i & hdr_ready_and_o)
+         ,.val_i(pr_data_flits_i)
+         ,.down_i(data_v_i & data_ready_and_o & ~pr_data_consumed)
+         ,.count_r_o(pr_data_cnt)
+         );
+
+      // for each SIPO transaction, provide number of protocol flits to expect
+      assign sipo_len_li = (data_v_i & sipo_first_lo)
+                           ? (pr_data_cnt >= sipo_full_len_lp)
+                             ? sipo_full_len_lp
+                             : lg_max_els_lp'(pr_data_cnt)
+                           : '0;
+
+      bsg_serial_in_parallel_out_passthrough_dynamic
        #(.width_p(pr_data_width_p)
-         ,.els_p(data_len_lp)
+         ,.max_els_p(max_els_lp)
          )
        data_sipo
         (.clk_i(clk_i)
@@ -148,12 +194,20 @@ module bsg_wormhole_stream_in
          ,.v_i(data_v_i)
          ,.ready_and_o(data_ready_and_o)
 
+         ,.first_o(sipo_first_lo)
+
+         // TODO: need sipo_len_li on data_v_i & first_o
+         // should this module provide any buffering for data arriving before
+         // header or sipo_len_li is valid?
+         ,.len_i(sipo_len_li)
+
          ,.data_o(data_lo)
          ,.v_o(data_v_lo)
          ,.ready_and_i(data_ready_and_li)
          );
-      assign data_ready_and_li = is_data & link_ready_and_i;
     end
+
+  assign data_ready_and_li = is_data & link_ready_and_i;
   
   // Identifies which flits are header vs data flits
   bsg_wormhole_stream_control
