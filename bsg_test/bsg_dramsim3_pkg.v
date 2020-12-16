@@ -24,7 +24,7 @@ package bsg_dramsim3_hbm2_8gb_x128_pkg;
   parameter int num_ranks_p=1;
   parameter longint size_in_bits_p=2**36; // 8GB (64Gb)
   parameter string config_p="HBM2_8Gb_x128.ini";
-  parameter address_mapping_p=bsg_dramsim3_pkg::e_ro_ra_bg_ba_ch_co;
+  parameter bsg_dramsim3_pkg::bsg_dramsim3_address_mapping_e address_mapping_p=bsg_dramsim3_pkg::e_ro_ra_bg_ba_ch_co;
 
   typedef struct packed {
     logic [$clog2(num_rows_p)-1:0] ro;
@@ -48,7 +48,7 @@ package bsg_dramsim3_hbm2_4gb_x128_pkg;
   parameter int num_ranks_p=1;
   parameter longint size_in_bits_p=2**35; // 4GB (32Gb)
   parameter string config_p="HBM2_4Gb_x128.ini";
-  parameter address_mapping_p=bsg_dramsim3_pkg::e_ro_ra_bg_ba_ch_co;
+  parameter bsg_dramsim3_pkg::bsg_dramsim3_address_mapping_e address_mapping_p=bsg_dramsim3_pkg::e_ro_ra_bg_ba_ch_co;
 
   typedef struct packed {
     logic [$clog2(num_rows_p)-1:0] ro;
@@ -72,7 +72,7 @@ package bsg_dramsim3_lpddr3_8gb_x32_1600_pkg;
   parameter int num_ranks_p=1;
   parameter longint size_in_bits_p=2**34; // 2GB (16Gb)
   parameter string config_p="LPDDR3_8Gb_x32_1600.ini";
-  parameter address_mapping_p=bsg_dramsim3_pkg::e_ro_ch_ra_ba_bg_co;
+  parameter bsg_dramsim3_pkg::bsg_dramsim3_address_mapping_e address_mapping_p=bsg_dramsim3_pkg::e_ro_ch_ra_ba_bg_co;
 
   typedef struct packed {
     logic [$clog2(num_rows_p)-1:0] ro;
