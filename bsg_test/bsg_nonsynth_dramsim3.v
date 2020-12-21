@@ -25,6 +25,7 @@ module bsg_nonsynth_dramsim3
     , parameter mem_addr_width_lp=$clog2(num_channels_p)+channel_addr_width_p
     , parameter data_mask_width_lp=(data_width_p>>3)
     , parameter byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
+    , parameter tag_width_p=32
   )
   (
     input clk_i
@@ -38,6 +39,11 @@ module bsg_nonsynth_dramsim3
     , input [num_channels_p-1:0] data_v_i
     , input [num_channels_p-1:0][data_width_p-1:0] data_i
     , input [num_channels_p-1:0][data_mask_width_lp-1:0] mask_i
+
+    //stats info
+    , input print_stat_v_i
+    , input [tag_width_p-1:0] print_stat_tag_i
+
     , output logic [num_channels_p-1:0] data_yumi_o 
 
     , output logic [num_channels_p-1:0] data_v_o
@@ -79,6 +85,9 @@ module bsg_nonsynth_dramsim3
   
   import "DPI-C" context function
     void    bsg_dramsim3_tick(input chandle dramsim3_handle);
+
+  import "DPI-C" context function
+    void    bsg_dramsim3_print_stats(input chandle dramsim3_handle, int unsigned tag);
   
   import "DPI-C" context function 
     void    bsg_dramsim3_exit(input chandle dramsim3_handle);
@@ -262,6 +271,13 @@ module bsg_nonsynth_dramsim3
     else begin
       data_v_o <= read_v_li;
       read_done_ch_addr_o <= read_done_ch_addr;
+    end
+  end
+
+  //print_stat
+  always_ff @ (negedge clk_i) begin
+    if ((reset_i === 0) & (print_stat_v_i === 1)) begin
+      bsg_dramsim3_print_stats(dramsim3_handle, print_stat_tag_i);
     end
   end
 

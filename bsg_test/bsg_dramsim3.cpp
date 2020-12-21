@@ -156,6 +156,17 @@ public:
         _memory_system->ClockTick();
     }
 
+    /////////////////
+    // Print Stats //
+    /////////////////
+    void printTagStats(uint32_t tag) {
+        _memory_system->PrintTagStats(tag);
+    }
+
+    void printFinalStats() {
+        _memory_system->PrintStats();
+    }
+
     //////////////////////////////
     // Query completed requests //
     //////////////////////////////
@@ -215,6 +226,15 @@ extern "C" void bsg_dramsim3_tick(BSGDRAMSim3 *dramsim3)
 }
 
 /**
+ * Print Stats
+ * @param[in] The tag to keep track of stats
+ */
+extern "C" void bsg_dramsim3_print_stats(BSGDRAMSim3 *dramsim3, uint32_t tag)
+{
+    dramsim3->printTagStats(tag);
+}
+
+/**
  * Check if the channel has complete a read request.
  * @param[in] ch The channel to check for completion.
  */
@@ -250,12 +270,12 @@ extern "C" addr_t bsg_dramsim3_get_write_done_addr(BSGDRAMSim3 *dramsim3, int ch
     return dramsim3->getWriteDoneAddr(ch);
 }
 
-
 /**
  * Cleanup code for the memory system.
  */
 extern "C" void bsg_dramsim3_exit(BSGDRAMSim3 *dramsim3)
 {
+    dramsim3->printFinalStats();
     delete dramsim3;
 }
 
