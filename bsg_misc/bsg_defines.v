@@ -4,6 +4,30 @@
 `define BSG_MAX(x,y) (((x)>(y)) ? (x) : (y))
 `define BSG_MIN(x,y) (((x)<(y)) ? (x) : (y))
 
+// place this macro at the end of a verilog module file if that module has invalid parameters
+// that must be specified by the user. this will prevent that module from becoming a top-level
+// module per the discussion here: https://github.com/SymbiFlow/sv-tests/issues/1160 and the
+// SystemVerilog Standard
+
+//    "Top-level modules are modules that are included in the SystemVerilog
+//    source text, but do not appear in any module instantiation statement, as
+//    described in 23.3.2. This applies even if the module instantiation appears
+//    in a generate block that is not itself instantiated (see 27.3). A design
+//    shall contain at least one top-level module. A top-level module is
+//    implicitly instantiated once, and its instance name is the same as the
+//    module name. Such an instance is called a top-level instance."
+//  
+
+`define BSG_ABSTRACT_MODULE(fn) module fn``__abstract(); if (0) fn not_used(); endmodule
+
+// macro for defining invalid parameter; with the abstract module declaration
+// it should be sufficient to omit the "inv" but we include this for tool portability
+// if later we find that all tools are compatible, we can remove the use of this from BaseJump STL
+
+//`define BSG_INV_PARAM(param) param = "inv" 
+`define BSG_INV_PARAM(param) param
+
+
 // maps 1 --> 1 instead of to 0
 `define BSG_SAFE_CLOG2(x) ( ((x)==1) ? 1 : $clog2((x)))
 `define BSG_IS_POW2(x) ( (1 << $clog2(x)) == (x))
