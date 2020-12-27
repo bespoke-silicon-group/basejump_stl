@@ -1,5 +1,5 @@
 `include "bsg_defines.v"
-module bsg_mux #(parameter width_p="inv"
+module bsg_mux #(`BSG_INV_PARAM(width_p)
                  , els_p=1
                  , harden_p = 0
                  , balanced_p = 0
@@ -26,4 +26,6 @@ module bsg_mux #(parameter width_p="inv"
    // synopsys translate_on
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mux)
 
