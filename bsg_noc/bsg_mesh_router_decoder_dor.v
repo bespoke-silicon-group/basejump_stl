@@ -204,7 +204,7 @@ module bsg_mesh_router_decoder_dor
     always_ff @ (negedge clk_i) begin
       if (~reset_i) begin
         assert($countones(req_o) < 2)
-          else $fatal(1, "multiple req_o detected. i=%d, %b", req_o);
+          else $fatal(1, "multiple req_o detected. %b", req_o);
       end
     end
   end
