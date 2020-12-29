@@ -29,15 +29,15 @@
 //   ---------------------------------------------------------------
 //   - header flits do not contain any data
 //
-// Data can be sent the same or any cycle after header, but only 1 message at
+// Data can be sent any cycle after header, but only 1 message at
 //   a time is supported.
 // - Legal: H     H
 //            D-D   D-D
-// - Legal: H   H
-//          D-D D-D
 // - Illegal: H H
 //            D-D-D-D
 //   (Header sent too early)
+//
+// This module does not accept data until the header sends
 //
 module bsg_wormhole_stream_in
  #(// The wormhole router protocol information
@@ -90,6 +90,9 @@ module bsg_wormhole_stream_in
 
   logic [flit_width_p-1:0] hdr_lo;
   logic hdr_v_lo, hdr_ready_and_li;
+  logic hdr_v_li, hdr_ready_and_lo;
+  assign hdr_v_li = is_hdr & hdr_v_i;
+  assign hdr_ready_and_o = is_hdr & hdr_ready_and_lo;
 
   // Header is input all at once and streamed out 1 flit at a time
   bsg_parallel_in_serial_out_passthrough
@@ -101,8 +104,8 @@ module bsg_wormhole_stream_in
      ,.reset_i(reset_i)
 
      ,.data_i(hdr_i)
-     ,.v_i(hdr_v_i)
-     ,.ready_and_o(hdr_ready_and_o)
+     ,.v_i(hdr_v_li)
+     ,.ready_and_o(hdr_ready_and_lo)
 
      ,.data_o(hdr_lo)
      ,.v_o(hdr_v_lo)
@@ -112,6 +115,9 @@ module bsg_wormhole_stream_in
 
   logic [flit_width_p-1:0] data_lo;
   logic data_v_lo, data_ready_and_li;
+  logic data_v_li, data_ready_and_lo;
+  assign data_ready_and_o = is_data & data_ready_and_lo;
+  assign data_v_li = is_data & data_v_i;
 
   // Protocol data is 1 or multiple flit-sized. We accept a large protocol data
   //   and then stream out 1 flit at a time
@@ -127,8 +133,8 @@ module bsg_wormhole_stream_in
          ,.reset_i(reset_i)
 
          ,.data_i(data_i)
-         ,.v_i(data_v_i)
-         ,.ready_and_o(data_ready_and_o)
+         ,.v_i(data_v_li)
+         ,.ready_and_o(data_ready_and_lo)
 
          ,.data_o(data_lo)
          ,.v_o(data_v_lo)
@@ -188,14 +194,12 @@ module bsg_wormhole_stream_in
          ,.reset_i(reset_i)
 
          ,.data_i(data_i)
-         ,.v_i(data_v_i)
-         ,.ready_and_o(data_ready_and_o)
+         ,.v_i(data_v_li)
+         ,.ready_and_o(data_ready_and_lo)
 
          ,.first_o(sipo_first_lo)
 
-         // TODO: need sipo_len_li on data_v_i & first_o
-         // should this module provide any buffering for data arriving before
-         // header or sipo_len_li is valid?
+         // len_i must be valid when v_i & first_o
          ,.len_i(sipo_len_li)
 
          ,.data_o(data_lo)
