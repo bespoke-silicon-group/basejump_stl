@@ -70,7 +70,7 @@ module bsg_cache
   localparam lg_sets_lp=`BSG_SAFE_CLOG2(sets_p);
   localparam data_mask_width_lp=(data_width_p>>3);
   localparam lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp);
-  localparam lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p);
+  localparam lg_block_size_in_words_lp= (block_size_in_words_p > 1) ? `BSG_SAFE_CLOG2(block_size_in_words_p) : 0;
   localparam tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp);
   localparam tag_info_width_lp=`bsg_cache_tag_info_width(tag_width_lp);
   localparam lg_ways_lp=`BSG_SAFE_CLOG2(ways_p);
@@ -91,7 +91,6 @@ module bsg_cache
   //
   logic [lg_ways_lp-1:0] addr_way;
   logic [lg_sets_lp-1:0] addr_index;
-  logic [lg_block_size_in_words_lp-1:0] addr_block_offset;
 
   `declare_bsg_cache_pkt_s(addr_width_p, data_width_p);
   bsg_cache_pkt_s cache_pkt;
@@ -109,8 +108,12 @@ module bsg_cache
     = cache_pkt.addr[lg_data_mask_width_lp+lg_block_size_in_words_lp+lg_sets_lp+:lg_ways_lp];
   assign addr_index
     = cache_pkt.addr[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
-  assign addr_block_offset
-    = cache_pkt.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
+  if (block_size_in_words_p > 1)
+    begin
+      logic [lg_block_size_in_words_lp-1:0] addr_block_offset;
+      assign addr_block_offset
+        = cache_pkt.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
+    end
 
   logic [lg_data_mem_els_lp-1:0] ld_data_mem_addr;
 
@@ -160,13 +163,16 @@ module bsg_cache
   end
 
   logic [lg_sets_lp-1:0] addr_index_tl;
-  logic [lg_block_size_in_words_lp-1:0] addr_block_offset_tl;
 
   assign addr_index_tl =
     addr_tl_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
 
-  assign addr_block_offset_tl =
-    addr_tl_r[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
+  if (block_size_in_words_p > 1)
+    begin
+      logic [lg_block_size_in_words_lp-1:0] addr_block_offset_tl;
+      assign addr_block_offset_tl =
+        addr_tl_r[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
+    end
 
   logic [lg_data_mem_els_lp-1:0] recover_data_mem_addr;
 
