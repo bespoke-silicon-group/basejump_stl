@@ -149,7 +149,7 @@ module bsg_cache_miss
   logic [tag_width_lp-1:0] addr_tag_v;
   logic [lg_sets_lp-1:0] addr_index_v;
   logic [lg_ways_lp-1:0] addr_way_v;
-  logic [`BSG_SAFE_CLOG2(block_size_in_words_p)-1:0] addr_block_offset_v;
+  logic [lg_block_size_in_words_lp-1:0] addr_block_offset_v;
 
   assign addr_index_v
     = addr_v_i[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
