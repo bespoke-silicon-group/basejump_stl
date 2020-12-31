@@ -69,37 +69,52 @@ module bsg_link_source_sync_downstream
    // ******************************************
    // clock-crossing async fifo (with DDR interface)
    //
-   // Note that this async fifo also serves as receive buffer
+   // The large fifo (with hardened memory) serves as receive buffer
    // The buffer size depends on lg_fifo_depth_p (must match bsg_link_source_sync_upstream)
+   // async fifo depth of 8 is enough for CDC
    //
-   // With token based flow control, fifo should never overflow
-   // io_async_fifo_full signal is only for debugging purposes
-   //
+   localparam lg_async_fifo_depth_lp = 3;
 
-   wire   io_async_fifo_full;
+   logic io_large_fifo_ready;
 
    // synopsys translate_off
-
    always_ff @(negedge io_clk_i)
-     assert(!(io_async_fifo_full===1 && io_valid_i===1))
+     assert(!(io_large_fifo_ready===0 && io_valid_i===1))
        else $error("attempt to enque on full async fifo");
-
    // synopsys translate_on
+   
+  logic io_async_fifo_full_lo, io_large_fifo_valid_lo;
+  logic [channel_width_p-1:0] io_large_fifo_data_lo;
 
+  logic core_async_fifo_deque, core_async_fifo_valid_lo;
+  logic [channel_width_p-1:0] core_async_fifo_data_lo;
+  
+  bsg_fifo_1r1w_large
+ #(.width_p(channel_width_p)
+  ,.els_p  (1<<lg_fifo_depth_p)
+  ) large_fifo
+  (.clk_i  (io_clk_i)
+  ,.reset_i(io_link_reset_i)
 
-   wire  core_async_fifo_deque, core_async_fifo_valid_lo;
-   logic [channel_width_p-1:0] core_async_fifo_data_lo;
+  ,.data_i (io_data_i)
+  ,.v_i    (io_valid_i)
+  ,.ready_o(io_large_fifo_ready)
 
-  bsg_async_fifo 
- #(.lg_size_p(lg_fifo_depth_p)
+  ,.v_o    (io_large_fifo_valid_lo)
+  ,.data_o (io_large_fifo_data_lo)
+  ,.yumi_i (io_large_fifo_valid_lo & ~io_async_fifo_full_lo)
+  );
+
+  bsg_async_fifo
+ #(.lg_size_p(lg_async_fifo_depth_lp)
   ,.width_p(channel_width_p)
   ) baf
   (.w_clk_i  (io_clk_i)
   ,.w_reset_i(io_link_reset_i)
   
-  ,.w_enq_i  (io_valid_i)
-  ,.w_data_i (io_data_i)
-  ,.w_full_o (io_async_fifo_full)
+  ,.w_enq_i  (io_large_fifo_valid_lo & ~io_async_fifo_full_lo)
+  ,.w_data_i (io_large_fifo_data_lo)
+  ,.w_full_o (io_async_fifo_full_lo)
 
   ,.r_clk_i  (core_clk_i)
   ,.r_reset_i(core_link_reset_i)
