@@ -70,8 +70,9 @@ module bsg_cache
   localparam lg_sets_lp=`BSG_SAFE_CLOG2(sets_p);
   localparam data_mask_width_lp=(data_width_p>>3);
   localparam lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp);
-  localparam lg_block_size_in_words_lp= (block_size_in_words_p > 1) ? `BSG_SAFE_CLOG2(block_size_in_words_p) : 0;
-  localparam tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp);
+  localparam lg_block_size_in_words_lp=(block_size_in_words_p > 1) ? $clog2(block_size_in_words_p) : 0;
+  localparam block_offset_width_lp=lg_data_mask_width_lp+lg_block_size_in_words_lp;
+  localparam tag_width_lp=(addr_width_p-lg_sets_lp-block_offset_width_lp);
   localparam tag_info_width_lp=`bsg_cache_tag_info_width(tag_width_lp);
   localparam lg_ways_lp=`BSG_SAFE_CLOG2(ways_p);
   localparam stat_info_width_lp = `bsg_cache_stat_info_width(ways_p);
@@ -105,9 +106,9 @@ module bsg_cache
   );
 
   assign addr_way
-    = cache_pkt.addr[lg_data_mask_width_lp+lg_block_size_in_words_lp+lg_sets_lp+:lg_ways_lp];
+    = cache_pkt.addr[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
   assign addr_index
-    = cache_pkt.addr[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
+    = cache_pkt.addr[block_offset_width_lp+:lg_sets_lp];
   if (block_size_in_words_p > 1)
     begin
       logic [lg_block_size_in_words_lp-1:0] addr_block_offset;
@@ -165,7 +166,7 @@ module bsg_cache
   logic [lg_sets_lp-1:0] addr_index_tl;
 
   assign addr_index_tl =
-    addr_tl_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
+    addr_tl_r[block_offset_width_lp+:lg_sets_lp];
 
   if (block_size_in_words_p > 1)
     begin
@@ -298,11 +299,11 @@ module bsg_cache
   logic [ways_p-1:0] tag_hit_v;
 
   assign addr_tag_v =
-    addr_v_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+lg_sets_lp+:tag_width_lp];
+    addr_v_r[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
   assign addr_index_v =
-    addr_v_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
+    addr_v_r[block_offset_width_lp+:lg_sets_lp];
   assign addr_way_v =
-    addr_v_r[lg_sets_lp+lg_block_size_in_words_lp+lg_data_mask_width_lp+:lg_ways_lp];
+    addr_v_r[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
 
   for (genvar i = 0; i < ways_p; i++) begin
     assign tag_hit_v[i] = (addr_tag_v == tag_v_r[i]) & valid_v_r[i];
@@ -569,7 +570,7 @@ module bsg_cache
       : '0;
   end
   if (burst_len_lp == 1) begin
-    assign sbuf_data_mem_addr = sbuf_entry_lo.addr[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
+    assign sbuf_data_mem_addr = sbuf_entry_lo.addr[block_offset_width_lp+:lg_sets_lp];
   end 
   else if (burst_len_lp == block_size_in_words_p) begin
     assign sbuf_data_mem_addr = sbuf_entry_lo.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp];
@@ -810,9 +811,7 @@ module bsg_cache
         data_o = {{(data_width_p-2){1'b0}}, lock_v_r[addr_way_v], valid_v_r[addr_way_v]};
       end
       else if (decode_v_r.tagla_op) begin
-        data_o = {tag_v_r[addr_way_v], addr_index_v,
-          {(lg_block_size_in_words_lp+lg_data_mask_width_lp){1'b0}}
-        };
+        data_o = {tag_v_r[addr_way_v], addr_index_v, {(block_offset_width_lp){1'b0}}};
       end
       else if (decode_v_r.mask_op) begin
         data_o = ld_data_masked;
