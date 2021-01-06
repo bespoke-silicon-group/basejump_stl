@@ -18,7 +18,7 @@ module bsg_cache_dma
     ,parameter ways_p="inv"
     ,parameter dma_data_width_p=data_width_p
 
-    ,parameter lg_block_size_in_words_lp=(block_size_in_words_p > 1) ? $clog2(block_size_in_words_p) : 0
+    ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p) 
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
     ,parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
     ,parameter data_mask_width_lp=(data_width_p>>3)
@@ -72,6 +72,7 @@ module bsg_cache_dma
   //
   localparam counter_width_lp=`BSG_SAFE_CLOG2(burst_len_lp+1);
   localparam byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3);
+  localparam block_offset_width_lp=(block_size_in_words_p > 1) ? byte_offset_width_lp+lg_block_size_in_words_lp : byte_offset_width_lp;
 
   // dma states
   //
@@ -171,17 +172,17 @@ module bsg_cache_dma
   );
 
   if (burst_len_lp == 1) begin
-    assign data_mem_addr_o = dma_addr_i[byte_offset_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
+    assign data_mem_addr_o = dma_addr_i[block_offset_width_lp+:lg_sets_lp];
   end
   //else if (burst_len_lp == block_size_in_words_p) begin
   //  assign data_mem_addr_o = {
-  //    dma_addr_i[byte_offset_width_lp+lg_block_size_in_words_lp+:lg_sets_lp],
+  //    dma_addr_i[block_offset_width_lp+:lg_sets_lp],
   //    counter_r[0+:lg_burst_len_lp]
   //  };
   //end
   else begin
     assign data_mem_addr_o = {
-      dma_addr_i[byte_offset_width_lp+lg_block_size_in_words_lp+:lg_sets_lp],
+      dma_addr_i[block_offset_width_lp+:lg_sets_lp],
       counter_r[0+:lg_burst_len_lp]
     };
   end
@@ -203,8 +204,8 @@ module bsg_cache_dma
     dma_pkt_v_o = 1'b0;
     dma_pkt.write_not_read = 1'b0;
     dma_pkt.addr = {
-      dma_addr_i[addr_width_p-1:byte_offset_width_lp+lg_block_size_in_words_lp],
-      {(byte_offset_width_lp+lg_block_size_in_words_lp){1'b0}}
+      dma_addr_i[addr_width_p-1:block_offset_width_lp],
+      {(block_offset_width_lp){1'b0}}
     };
 
     data_mem_v_o = 1'b0;
