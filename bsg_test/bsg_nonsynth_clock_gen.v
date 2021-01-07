@@ -13,6 +13,7 @@ module bsg_nonsynth_clock_gen
     $display("%m with cycle_time_p ",cycle_time_p);
     assert(cycle_time_p >= 2)
        else $error("cannot simulate cycle time less than 2");
+    o = 1;
   end
   
   always #(cycle_time_p/2.0) begin
