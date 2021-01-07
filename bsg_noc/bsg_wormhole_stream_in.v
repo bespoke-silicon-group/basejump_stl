@@ -165,7 +165,7 @@ module bsg_wormhole_stream_in
       // set value is zero based and equal to (protocol beats - 1)
       // SIPO passthrough sends same cycle it receives last data input
       logic [pr_len_width_p-1:0] pr_data_cnt;
-      wire pr_data_consumed = (pr_data_cnt == '0);
+      wire pr_data_last = (pr_data_cnt == '0);
       bsg_counter_set_down
        #(.width_p(pr_len_width_p)
          ,.init_val_p('0)
@@ -176,7 +176,7 @@ module bsg_wormhole_stream_in
          ,.reset_i(reset_i)
          ,.set_i(hdr_v_i & hdr_ready_and_o)
          ,.val_i(pr_data_beats_i)
-         ,.down_i(data_v_i & data_ready_and_o & ~pr_data_consumed)
+         ,.down_i(data_v_i & data_ready_and_o & ~pr_data_last)
          ,.count_r_o(pr_data_cnt)
          );
 
