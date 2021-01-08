@@ -681,7 +681,7 @@ module bsg_cache
 
     assign sbuf_data_in_mux_li[i] = {(data_width_p/slice_width_lp){slice_data}};
 
-    if (i == data_sel_mux_els_lp-1) begin: max_size
+    if (i == data_sel_mux_els_lp-1 && data_width_p <= 64) begin: max_size
       assign sbuf_mask_in_mux_li[i] = {data_mask_width_lp{1'b1}};    
     end 
     else begin: non_max_size
