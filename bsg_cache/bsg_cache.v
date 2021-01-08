@@ -681,29 +681,23 @@ module bsg_cache
 
     assign sbuf_data_in_mux_li[i] = {(data_width_p/slice_width_lp){slice_data}};
 
-    if (i == data_sel_mux_els_lp-1 && data_width_p <= 64) begin: max_size
-      assign sbuf_mask_in_mux_li[i] = {data_mask_width_lp{1'b1}};    
-    end 
-    else begin: non_max_size
+    logic [(data_width_p/slice_width_lp)-1:0] decode_lo;
 
-      logic [(data_width_p/slice_width_lp)-1:0] decode_lo;
+    bsg_decode #(
+      .num_out_p(data_width_p/slice_width_lp)
+    ) dec (
+      .i(addr_v_r[i+:`BSG_MAX(lg_data_mask_width_lp-i,1)])
+      ,.o(decode_lo)
+    );
 
-      bsg_decode #(
-        .num_out_p(data_width_p/slice_width_lp)
-      ) dec (
-        .i(addr_v_r[i+:`BSG_MAX(lg_data_mask_width_lp-i,1)])
-        ,.o(decode_lo)
-      );
+    bsg_expand_bitmask #(
+      .in_width_p(data_width_p/slice_width_lp)
+      ,.expand_p(2**i)
+    ) exp (
+      .i(decode_lo)
+      ,.o(sbuf_mask_in_mux_li[i])
+    );
 
-      bsg_expand_bitmask #(
-        .in_width_p(data_width_p/slice_width_lp)
-        ,.expand_p(2**i)
-      ) exp (
-        .i(decode_lo)
-        ,.o(sbuf_mask_in_mux_li[i])
-      );
-
-    end
   end
 
   // store buffer data,mask input
