@@ -15,8 +15,8 @@
 module bsg_nonsynth_reset_gen #(parameter num_clocks_p=1
                                 , parameter reset_cycles_lo_p="inv"
                                 , parameter reset_cycles_hi_p="inv")
-   (input [num_clocks_p-1:0] clk_i
-    , output logic           async_reset_o);
+   (input bit [num_clocks_p-1:0] clk_i
+    , output bit                 async_reset_o);
 
    genvar i;
 
