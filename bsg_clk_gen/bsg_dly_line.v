@@ -30,7 +30,7 @@ module bsg_dly_line
    bsg_clk_gen_osc_tag_payload_s fb_tag_r;
    wire  fb_we_r;
 
-   // note: oscillator has to be already working in order
+   // note: delay line has to be already working in order
    // for configuration state to pass through here
 
    bsg_tag_client #(.width_p($bits(bsg_clk_gen_osc_tag_payload_s))
@@ -47,12 +47,8 @@ module bsg_dly_line
    wire [num_adgs_p-1:0] adg_ctrl = fb_tag_r.adg;
 
    logic [4+num_adgs_p-1:0] ctrl_rrr;
-   always @(clk_o or async_reset_i)
-     if (async_reset_i)
-       ctrl_rrr <= '0;
-     else
-       if (fb_we_r)
-         ctrl_rrr <= {adg_ctrl, cdt, fdt};
+   always @(posedge fb_we_r)
+     ctrl_rrr <= {adg_ctrl, cdt, fdt};
 
    always
      begin
