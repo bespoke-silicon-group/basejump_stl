@@ -222,7 +222,10 @@ else
         last_n = reset_on_sr? (inputs_p-2) :
                ( yumi_i     ?tag_o : last_r );  
       end else if( hold_on_valid_p ) begin: hold_on_last_n_gen
-        last_n = yumi_i ? tag_o : v_o ? (tag_o == '0) ? (lg_inputs_p)'(inputs_p-1) : (tag_o-1'b1) : last_r;
+        // Need to manually handle wrap around on non-power of two case, else reuse subtraction
+        last_n = yumi_i ? tag_o
+               : v_o ? ((~`BSG_IS_POW2(inputs_p) && tag_o == '0) ? (lg_inputs_p)'(inputs_p-1) : (tag_o-1'b1))
+                     : last_r;
       end else
         last_n = (yumi_i ? tag_o:last_r);
 
