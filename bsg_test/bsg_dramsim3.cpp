@@ -177,7 +177,7 @@ public:
 
 
 private:
-    MemorySystem       *_memory_system;
+    std::unique_ptr<MemorySystem>       _memory_system;
     std::vector<bool>   _read_done;
     std::vector<addr_t> _read_done_addr;
     std::vector<bool>   _write_done;
