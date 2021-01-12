@@ -50,12 +50,13 @@ TESTS-multi  += $(foreach dram, $(DRAMS), $(dram).multi)
 TESTS := $(TESTS-single) $(TESTS-multi)
 get_dram = $(word 1,$(subst ., ,$(1)))
 
-all: $(DRAMS)
+all: $(TESTS)
 
 $(TESTS): $(VSOURCES)
 $(TESTS-single): %.single: %.tr
 $(TESTS-single): %.single: testbench.v
 $(TESTS-multi): %.multi:  %.tr
+$(TESTS-multi): %.multi:  %.tr_1
 $(TESTS-multi): %.multi:  testbench_multi.v
 $(TESTS):
 	vcs -R +v2k +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
@@ -64,11 +65,14 @@ $(TESTS):
 		+define+dram_pkg=bsg_dramsim3_$(call get_dram,$@)_pkg \
 		+define+trace_file=$@.trace \
 		+define+rom_file=$(call get_dram,$@).tr \
+		+define+rom_file_1=$(call get_dram,$@).tr_1 \
 		-sverilog -full64  -timescale=1ps/1ps +vcs+vcdpluson -l vcs.log $(VSOURCES) $(filter testbench%.v,$^)
 
 
-$(foreach dram, $(DRAMS), $(dram).tr): hbm_trace_gen.py
-	python hbm_trace_gen.py $(@:.tr=) > $@
+$(foreach dram, $(DRAMS), $(dram).tr_1): HBM_TRACE_GEN_ARGS:=--start=$(shell echo 2^12 | bc)
+$(foreach dram, $(DRAMS), $(dram).tr_1): HBM_TRACE_GEN_ARGS+=--stride=bank
+$(foreach dram, $(DRAMS), $(dram).tr) $(foreach dram, $(DRAMS), $(dram).tr_1): hbm_trace_gen.py
+	python hbm_trace_gen.py $(call get_dram$, $@) $(HBM_TRACE_GEN_ARGS) > $@
 
 dve:
 	dve -full64 -vpd vcdplus.vpd &
@@ -77,6 +81,6 @@ clean:
 	rm -f simv vcs.log vcdplus.vpd vc_hdrs.h ucli.key
 	rm -rf csrc simv.daidir DVEfiles
 	rm -rf stack.info.*
-	rm -f *.tr
+	rm -f *.tr *.tr_1
 	rm -f *.trace
 	rm -f *~

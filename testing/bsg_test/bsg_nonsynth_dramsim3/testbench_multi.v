@@ -130,15 +130,6 @@ module testbench ();
                                         ,.error_o()
                                         );
 
-      bsg_nonsynth_test_rom #(
-                              .data_width_p(ring_width_p+4)
-                              ,.addr_width_p(rom_addr_width_p)
-                              ,.filename_p(`BSG_STRINGIFY(`rom_file))
-                              ) rom0 (
-                                      .addr_i(rom_addr[dramsim_i][i])
-                                      ,.data_o(rom_data[dramsim_i][i])
-                                      );
-
       assign dramsim3_write_not_read_li[dramsim_i][i] = tr_data_lo[dramsim_i][i].write_not_read;
       assign dramsim3_ch_addr_li[dramsim_i][i] = tr_data_lo[dramsim_i][i].ch_addr;
       assign dramsim3_v_li[dramsim_i][i] = tr_v_lo[dramsim_i][i];
@@ -146,6 +137,25 @@ module testbench ();
 
     end // for (genvar i = 0; i < num_channels_p; i++)
   end // for (genvar dramsim_i = 0; dramsim_i < num_dramsim3_p; dramsim_i++)
+
+
+  for (genvar i = 0; i < num_channels_p; i++) begin
+    bsg_nonsynth_test_rom #(.data_width_p(ring_width_p+4)
+                            ,.addr_width_p(rom_addr_width_p)
+                            ,.filename_p(`BSG_STRINGIFY(`rom_file))
+                            ) rom0 (
+                                    .addr_i(rom_addr[0][i])
+                                    ,.data_o(rom_data[0][i])
+                                    );
+
+    bsg_nonsynth_test_rom #(.data_width_p(ring_width_p+4)
+                            ,.addr_width_p(rom_addr_width_p)
+                            ,.filename_p(`BSG_STRINGIFY(`rom_file_1))
+                            ) rom1 (
+                                    .addr_i(rom_addr[1][i])
+                                    ,.data_o(rom_data[1][i])
+                                    );
+  end // for (genvar i = 0; i < num_channels_p; i++)
 
 
 
