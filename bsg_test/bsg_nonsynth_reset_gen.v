@@ -15,10 +15,18 @@
 module bsg_nonsynth_reset_gen #(parameter num_clocks_p=1
                                 , parameter reset_cycles_lo_p="inv"
                                 , parameter reset_cycles_hi_p="inv")
-   (input [num_clocks_p-1:0] clk_i
-    , output logic           async_reset_o);
+   (input bit [num_clocks_p-1:0] clk_i
+    , output bit                 async_reset_o);
 
    genvar i;
+
+   // This module relies on the input clock wires starting at 0 at
+   // time 0 and not transitioning from X to 0 at time 0, and causing
+   // a spurious negedge. To accomplish this in > VCS 2020, the input
+   // must be declared as a bit. Moreover, the expectation is that
+   // this module's input comes from a clock generation module that
+   // uses bit, such as bsg_nonsynth_clk_gen, AND that the wire
+   // between them is a bit.
 
    // use bit instead of logic to default to 0 initialization value
    // this makes it non-synthesizeable, but also allows X prop mode to work
