@@ -68,7 +68,7 @@ public:
                 _write_done_addr[ch] = addr;
             };
 
-            _memory_system = new MemorySystem(config_file, output_dir, read_done, write_done);
+            _memory_system = std::unique_ptr<MemorySystem>(new MemorySystem(config_file, output_dir, read_done, write_done));
         }
 
     ////////////////
