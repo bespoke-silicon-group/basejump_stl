@@ -265,7 +265,7 @@ extern "C" void bsg_dramsim3_exit(BSGDRAMSim3 *dramsim3)
  * @param[in] data_width_p   RTL parameter for the expected data width of the memory system (BL * device width)
  * @param[in] size_p         RTL parameter for the exepected size of the memory system in bits
  * @param[in] config_p       The path to the configuration file for the memory system (.ini)
- * @return true if the system was succesfully initialized, otherwise false.
+ * @return A DRAMSim3 handle
  */
 extern "C" void* bsg_dramsim3_init(
     /* for sanity checking */
