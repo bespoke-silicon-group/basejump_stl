@@ -118,6 +118,10 @@ module bsg_tag_trace_replay
 
    wire 				 piso_ready_lo;
    assign tr_yumi_li = piso_ready_lo & tr_valid_lo;
+
+   // tag data is set low when not sending
+   wire tag_data_lo;
+   assign tag_data_o = valid_o & tag_data_lo;
    
     // Instantiate the paralle-in serial-out data structure.
     bsg_parallel_in_serial_out #( .width_p(1)
@@ -133,7 +137,7 @@ module bsg_tag_trace_replay
    
         /* Data Output Channel (Valid then Yumi) */
         ,.valid_o (valid_o)
-        ,.data_o  (tag_data_o)
+        ,.data_o  (tag_data_lo)
         ,.yumi_i  (yumi_i)
         );
 
