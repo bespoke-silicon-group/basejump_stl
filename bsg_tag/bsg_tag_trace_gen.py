@@ -1,6 +1,21 @@
 #
 #   bsg_tag_trace_gen.py
 #
+#
+#   example usage:
+#   tg = TagTraceGen(num_masters_p=2, num_clients_p=4, max_payload_width_p=6)
+#   tg.send(masters=0b10,client_id=0b01,data_not_reset=0b0,length=3,data=0b111)
+#   tg.send(masters=0b01,client_id=0b00,data_not_reset=0b1,length=6,data=0b111000)
+#   tg.wait(31)
+#   tg.done()
+#
+#   output:
+#   0001_10_01_0_011_000111
+#   0001_01_00_1_110_111000
+#   0110_00000000011111
+#   0101_00000000000000
+#   0011_00_00_0_000_000000
+
 
 import math
 
