@@ -21,8 +21,7 @@ class TestBase:
     self.curr_data = 1
     self.sets_p = 128
     self.ways_p = 8
-    self.block_size_in_words_p = 8
-
+    self.block_size_in_words_p = int(sys.argv[1])
 
   # TAGST
   def send_tagst(self, way, index, valid=0, lock=0, tag=0):

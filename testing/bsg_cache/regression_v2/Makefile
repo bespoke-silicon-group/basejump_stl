@@ -65,7 +65,7 @@ simv:
 out/%/trace.tr:
 	mkdir -p out/
 	mkdir -p out/$*
-	python $*.py > $@
+	python $*.py $(BLOCK_SIZE_IN_WORDS_P) > $@
 
 %.basic.run: simv out/%/trace.tr
 	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=basic -l simv.log)
