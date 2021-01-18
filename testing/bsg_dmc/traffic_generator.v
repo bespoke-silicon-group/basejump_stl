@@ -87,7 +87,7 @@ module traffic_generator
 
   //////////////////////////////////////////////////
   //
-  // BSG Tag Track Replay
+  // BSG Tag Trace Replay
   //
 
   localparam tag_trace_rom_addr_width_lp = 32;
