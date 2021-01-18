@@ -31,7 +31,7 @@
 # <4b>___<19b>
 #
 # There is one tagmaster driving 23 clients in the traffic_generator. The 1 bit
-# masterEn indicates wether the tag master is selected or not.
+# masterEn indicates whether the tag master is selected or not.
 #
 
 ################################################################################
