@@ -20,11 +20,13 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
 
   logic [els_p-1:0] v_r;
   logic mem_r;
+  wire v_r_wr_ptr = ~r_v_i | ~v_r[r_addr_i];
+  
   always_ff @(posedge clk_i)
     if (reset_i)
       v_r <= '0;
     else if (w_v_i)
-      v_r[w_addr_i] <= ~v_r[w_addr_i];
+      v_r[w_addr_i] <= v_r_wr_ptr;
 
   bsg_dff
     #(.width_p(1))
@@ -34,8 +36,8 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
     ,.data_o(mem_r)
     );
 
-  wire [1:0] v_li    = {r_v_i | w_v_i, r_v_i | w_v_i};
-  wire [1:0] w_li    = {w_v_i & ~v_r[w_addr_i], w_v_i & v_r[w_addr_i]};
+  wire [1:0] w_li    = {w_v_i & v_r_wr_ptr, w_v_i & ~v_r_wr_ptr};
+  wire [1:0] v_li    = {(r_v_i & v_r[r_addr_i]) | w_li[1], (r_v_i & ~v_r[r_addr_i]) | w_li[0]};
   wire [1:0][addr_width_lp-1:0]
              addr_li = {w_li[1] ? w_addr_i : r_addr_i, w_li[0] ? w_addr_i : r_addr_i};
   logic [1:0][width_p-1:0] data_lo;

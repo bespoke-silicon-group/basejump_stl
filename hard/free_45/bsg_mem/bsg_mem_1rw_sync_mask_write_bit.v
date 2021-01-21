@@ -87,10 +87,12 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter width_p=-1
   `bsg_mem_1rw_sync_mask_write_bit_macro (128, 128) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (64, 124) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (64, 62) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (64, 31) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (128, 116) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (64, 15) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (64, 7) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (64, 3) else
+  `bsg_mem_1rw_sync_mask_write_bit_macro (64, 2) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (64, 1) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (32, 124) else
   `bsg_mem_1rw_sync_mask_write_bit_macro (128, 15) else
