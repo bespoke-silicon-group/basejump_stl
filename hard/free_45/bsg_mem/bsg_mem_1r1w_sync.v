@@ -20,10 +20,7 @@ module bsg_mem_1r1w_sync #(parameter width_p=-1
 
   logic [els_p-1:0] v_r;
   logic mem_r;
-  wire v_r_wr_ptr = (r_v_i & w_v_i) ? (~v_r[w_addr_i] == v_r[r_addr_i])
-                                      ? v_r[w_addr_i]
-                                      : ~v_r[w_addr_i]
-                                    : ~v_r[w_addr_i];
+  wire v_r_wr_ptr = ~r_v_i | ~v_r[r_addr_i];
   
   always_ff @(posedge clk_i)
     if (reset_i)
