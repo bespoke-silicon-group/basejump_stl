@@ -57,8 +57,10 @@ module bsg_link_ddr_upstream
   // Set use_extra_data_bit_p=1 to utilize this extra bit
   // MUST MATCH paired bsg_link_ddr_downstream setting
   ,parameter use_extra_data_bit_p = 0
+  ,parameter use_encode_p = 0
   ,localparam ddr_width_lp  = channel_width_p*2 + use_extra_data_bit_p
   ,localparam piso_ratio_lp = width_p/(ddr_width_lp*num_channels_p)
+  ,localparam phy_width_lp  = channel_width_p+1
   )
 
   (// Core side
@@ -107,15 +109,46 @@ module bsg_link_ddr_upstream
   // multiple channels
   for (i = 0; i < num_channels_p; i++) 
   begin: ch
-    
+
+    // core side signals
+    logic core_ss_valid_li, core_ss_ready_lo, core_ss_data_nonzero;
+    logic [phy_width_lp-1:0] core_ss_data_top;
+    logic [1:0][channel_width_p/2-1:0] core_ss_data_bottom;
+
+    // io side signals
     logic io_oddr_valid_li, io_oddr_ready_lo;
-    // data_bottom width is fixed
-    logic [channel_width_p-1:0] io_oddr_data_bottom;
-    // data_top width is determined by use_extra_data_bit_p setting
-    logic [ddr_width_lp-1:channel_width_p] io_oddr_data_top;
+    logic [1:0][phy_width_lp-1:0] io_oddr_data_raw, io_oddr_data_final;
+
+    // connect to piso
+    assign core_ss_valid_li = core_piso_valid_lo;
+    assign core_piso_ready_li[i] = core_ss_ready_lo;
+    assign core_ss_data_top = (phy_width_lp)'(core_piso_data_lo[i][ddr_width_lp-1:channel_width_p]);
+
+    if (use_encode_p == 0)
+      begin
+        assign core_ss_data_nonzero = 1'b0; // unused
+        assign core_ss_data_bottom = core_piso_data_lo[i][channel_width_p-1:0];
+        assign io_oddr_data_final[1] = io_oddr_data_raw[1];
+        assign io_oddr_data_final[0] = {io_oddr_valid_li, io_oddr_data_raw[0][channel_width_p-1:0]};
+      end
+    else
+      begin
+        // channel encode
+        assign core_ss_data_nonzero = ~(core_piso_data_lo[i][channel_width_p/2-1:0] == '0);
+        assign core_ss_data_bottom[1] = (core_ss_data_nonzero)?
+              {      core_piso_data_lo[i][channel_width_p-0-1:channel_width_p/2]}
+            : {1'b1, core_piso_data_lo[i][channel_width_p-1-1:channel_width_p/2]};
+        assign core_ss_data_bottom[0] = (core_ss_data_nonzero)?
+              {core_piso_data_lo[i][channel_width_p/2-1:0]                          }
+            : {core_piso_data_lo[i][channel_width_p-1], (channel_width_p/2-1)'(1'b1)};
+        // When idle, assign certain bits to zero
+        assign io_oddr_data_final = (io_oddr_valid_li)?
+              io_oddr_data_raw
+            : {2{2'b00, (channel_width_p/2-1)'('1), (channel_width_p/2)'('0)}};
+      end
 
     bsg_link_source_sync_upstream
-   #(.channel_width_p(ddr_width_lp)
+   #(.channel_width_p(2*phy_width_lp)
     ,.lg_fifo_depth_p(lg_fifo_depth_p)
     ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
     ) sso
@@ -127,12 +160,12 @@ module bsg_link_ddr_upstream
     ,.async_token_reset_i   (async_token_reset_i)
 
     // Input from chip core
-    ,.core_data_i           (core_piso_data_lo[i])
-    ,.core_valid_i          (core_piso_yumi_li)
-    ,.core_ready_o          (core_piso_ready_li[i])
+    ,.core_data_i           ({core_ss_data_top, core_ss_data_nonzero, core_ss_data_bottom})
+    ,.core_valid_i          (core_ss_valid_li)
+    ,.core_ready_o          (core_ss_ready_lo)
 
     // source synchronous output channel; going to chip edge
-    ,.io_data_o             ({io_oddr_data_top, io_oddr_data_bottom})
+    ,.io_data_o             (io_oddr_data_raw)
     ,.io_valid_o            (io_oddr_valid_li)
     ,.io_ready_i            (io_oddr_ready_lo)
     ,.token_clk_i           (token_clk_i[i])
@@ -140,12 +173,11 @@ module bsg_link_ddr_upstream
     
     // valid and data signals are sent together
     bsg_link_oddr_phy
-   #(.width_p(channel_width_p+1)
+   #(.width_p(phy_width_lp)
     ) oddr_phy
     (.reset_i (io_link_reset_i)
     ,.clk_i   (io_clk_i)
-    ,.data_i  ({{(channel_width_p+1)'(io_oddr_data_top)},
-                {io_oddr_valid_li, io_oddr_data_bottom}}) // valid sent out in first cycle
+    ,.data_i  (io_oddr_data_final)
     ,.ready_o (io_oddr_ready_lo)
     ,.data_r_o({io_valid_r_o[i], io_data_r_o[i]})
     ,.clk_r_o (io_clk_r_o[i])

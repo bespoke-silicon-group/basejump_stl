@@ -49,8 +49,10 @@ module bsg_link_ddr_downstream
   // Set use_extra_data_bit_p=1 to utilize this extra bit
   // MUST MATCH paired bsg_link_ddr_upstream setting
   ,parameter use_extra_data_bit_p = 0
+  ,parameter use_encode_p = 0
   ,localparam ddr_width_lp  = channel_width_p*2 + use_extra_data_bit_p
   ,localparam sipo_ratio_lp = width_p/(ddr_width_lp*num_channels_p)
+  ,localparam phy_width_lp  = channel_width_p+1
   )
 
   (// All reset / control signals are synchronous to core_clk
@@ -85,25 +87,53 @@ module bsg_link_ddr_downstream
   // Multiple channels
   for (i = 0; i < num_channels_p; i++) 
   begin:ch
-    
-    logic io_iddr_v_lo;
-    logic [channel_width_p-1:0]   io_iddr_data_bottom;
-    // data_top has channel_width_p+1 bits
-    // When use_extra_data_bit_p==0, the extra high bit get ignored 
-    logic [channel_width_p+1-1:0] io_iddr_data_top;
-    
+
+    // io side signals
+    logic io_iddr_valid_lo, io_iddr_data_v;
+    logic [phy_width_lp-1:0] io_iddr_data_top;
+    logic [1:0][channel_width_p/2-1:0] io_iddr_data_bottom;
+
+    // core side signals
+    logic core_ss_valid_lo, core_ss_yumi_li, core_ss_data_nonzero;
+    logic [phy_width_lp-1:0] core_ss_data_top;
+    logic [1:0][channel_width_p/2-1:0] core_ss_data_bottom;
+
+    // connect to sipo
+    assign core_ss_yumi_li = core_sipo_yumi_lo;
+    assign core_sipo_valid_li[i] = core_ss_valid_lo;
+    assign core_sipo_data_li[i][ddr_width_lp-1:channel_width_p] = core_ss_data_top;
+
+    if (use_encode_p == 0)
+      begin
+        assign core_sipo_data_li[i][channel_width_p-1:0] = core_ss_data_bottom;
+        assign io_iddr_valid_lo = io_iddr_data_v;
+      end
+    else
+      begin
+        // channel decode
+        assign core_sipo_data_li[i][channel_width_p-1:channel_width_p/2] = 
+            (core_ss_data_nonzero)?
+              {core_ss_data_bottom[1]}
+            : {core_ss_data_bottom[0][channel_width_p/2-1], core_ss_data_bottom[1][channel_width_p/2-1-1:0]};
+        assign core_sipo_data_li[i][channel_width_p/2-1:0] = 
+            (core_ss_data_nonzero)?
+              {core_ss_data_bottom[0]}
+            : {'0};
+        // io side decode
+        assign io_iddr_valid_lo = io_iddr_data_v | io_iddr_data_bottom[1][channel_width_p/2-1];
+      end
+
     // valid and data signals are received together
     bsg_link_iddr_phy
-   #(.width_p(channel_width_p+1)
+   #(.width_p(phy_width_lp)
     ) iddr_data
     (.clk_i   (io_clk_i[i])
     ,.data_i  ({io_valid_i[i], io_data_i[i]})
-    ,.data_r_o({{              io_iddr_data_top},
-                {io_iddr_v_lo, io_iddr_data_bottom}})
+    ,.data_r_o({io_iddr_data_top, io_iddr_data_v, io_iddr_data_bottom})
     );
 
     bsg_link_source_sync_downstream
-   #(.channel_width_p(ddr_width_lp)
+   #(.channel_width_p(2*phy_width_lp)
     ,.lg_fifo_depth_p(lg_fifo_depth_p)
     ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
     ) downstream
@@ -113,14 +143,14 @@ module bsg_link_ddr_downstream
 
     // source synchronous input channel; coming from chip edge
     ,.io_clk_i         (io_clk_i[i])
-    ,.io_data_i        ({io_iddr_data_top[ddr_width_lp-channel_width_p-1:0],io_iddr_data_bottom})
-    ,.io_valid_i       (io_iddr_v_lo)
+    ,.io_data_i        ({io_iddr_data_top, io_iddr_data_v, io_iddr_data_bottom})
+    ,.io_valid_i       (io_iddr_valid_lo)
     ,.core_token_r_o   (core_token_r_o[i])
 
     // going into core; uses core clock
-    ,.core_data_o      (core_sipo_data_li[i])
-    ,.core_valid_o     (core_sipo_valid_li[i])
-    ,.core_yumi_i      (core_sipo_yumi_lo)
+    ,.core_data_o      ({core_ss_data_top, core_ss_data_nonzero, core_ss_data_bottom})
+    ,.core_valid_o     (core_ss_valid_lo)
+    ,.core_yumi_i      (core_ss_yumi_li)
     );
   
   end
