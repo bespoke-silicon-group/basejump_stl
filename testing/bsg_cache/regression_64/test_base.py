@@ -6,6 +6,7 @@
 #
 
 import sys
+import math
 sys.path.append("../common")
 from bsg_cache_trace_gen import *
 
@@ -16,12 +17,12 @@ class TestBase:
   # default constructor
   def __init__(self):
     addr_width_p = 30
-    data_width_p = 64
-    self.tg = BsgCacheTraceGen(addr_width_p,data_width_p)
+    self.data_width_p = 512/int(sys.argv[1])
+    self.tg = BsgCacheTraceGen(addr_width_p,self.data_width_p)
     self.curr_data = 1
     self.sets_p = 64
     self.ways_p = 8
-    self.block_size_in_words_p = 8
+    self.block_size_in_words_p = int(sys.argv[1])
 
 
   # TAGST
@@ -188,8 +189,9 @@ class TestBase:
   #                       #
 
   def get_addr(self, tag, index, block_offset=0, byte_offset=0):
+    lg_data_size_in_byte_lp = int(math.log(self.data_width_p/8, 2))
     addr = tag << 12
     addr += index << 6
-    addr += block_offset << 3
+    addr += block_offset << lg_data_size_in_byte_lp
     addr += byte_offset
     return addr

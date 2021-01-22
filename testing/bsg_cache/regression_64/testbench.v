@@ -23,8 +23,8 @@ module testbench();
 
   // parameters
   localparam addr_width_p = 30;
-  localparam data_width_p = 64;
-  localparam block_size_in_words_p = 8;
+  localparam data_width_p = 512/`BLOCK_SIZE_IN_WORDS_P;
+  localparam block_size_in_words_p = `BLOCK_SIZE_IN_WORDS_P;
   localparam sets_p = 64;
   localparam ways_p = 8;
   localparam mem_size_p = block_size_in_words_p*sets_p*ways_p*4;

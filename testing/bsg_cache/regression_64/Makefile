@@ -28,6 +28,7 @@ DMA_READ_DELAY_P  ?= 0
 DMA_WRITE_DELAY_P ?= 0
 DMA_REQ_DELAY_P   ?= 0
 DMA_DATA_DELAY_P  ?= 0
+BLOCK_SIZE_IN_WORDS_P ?= 8
 
 VCS_DEFINES += +define+YUMI_MIN_DELAY_P=$(YUMI_MIN_DELAY_P)
 VCS_DEFINES += +define+YUMI_MAX_DELAY_P=$(YUMI_MAX_DELAY_P)
@@ -36,6 +37,8 @@ VCS_DEFINES += +define+DMA_READ_DELAY_P=$(DMA_READ_DELAY_P)
 VCS_DEFINES += +define+DMA_WRITE_DELAY_P=$(DMA_WRITE_DELAY_P)
 VCS_DEFINES += +define+DMA_REQ_DELAY_P=$(DMA_REQ_DELAY_P)
 VCS_DEFINES += +define+DMA_DATA_DELAY_P=$(DMA_DATA_DELAY_P)
+
+VCS_DEFINES += +define+BLOCK_SIZE_IN_WORDS_P=$(BLOCK_SIZE_IN_WORDS_P)
 #######################
 
 
@@ -57,7 +60,7 @@ simv:
 out/%/trace.tr:
 	mkdir -p out/
 	mkdir -p out/$*
-	python $*.py > $@
+	python $*.py $(BLOCK_SIZE_IN_WORDS_P) > $@
 
 %.basic.run: simv out/%/trace.tr
 	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=basic -l simv.log)
