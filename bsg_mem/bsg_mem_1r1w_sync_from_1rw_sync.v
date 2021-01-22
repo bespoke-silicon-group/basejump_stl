@@ -4,7 +4,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_mem_1r1w_from_1rw_sync #(parameter width_p=-1
+module bsg_mem_1r1w_sync_from_1rw_sync #(parameter width_p=-1
                                         ,parameter els_p=-1
                                         ,parameter read_write_same_addr_p=0
                                         ,parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
