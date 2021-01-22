@@ -57,6 +57,20 @@ module bsg_link_ddr_upstream
   // Set use_extra_data_bit_p=1 to utilize this extra bit
   // MUST MATCH paired bsg_link_ddr_downstream setting
   ,parameter use_extra_data_bit_p = 0
+  // When channel_width_p is large, it might be hard to properly align source synchronous
+  // clock to all data wires. One option is to cut the channel in half and align to
+  // different clocks. Ecoding method below helps represent valid bit for bottom half data
+  // without adding an extra wire.
+  // +-------------+---------------+---------------------+
+  // |    v_top    |     bottom    |        Value        |
+  // | 0_0???_???? |   0000_0000   | no data (""comma"") |
+  // | 1_XXXX_XXXX |  YYYY_YYYY!=0 | XXXX_XXXX_YYYY_YYYY |
+  // | 0_1XXX_XXXX |   X000_0001   | XXXX_XXXX_0000_0000 |
+  // +-------------+---------------+---------------------+
+  // Physical bonding suggestion: Regard v bit and top bits of the channel as a group
+  // Regard bottom bits of the channel as another group
+  // Set use_encode_p=1 to enable this encoding feature
+  // MUST MATCH paired bsg_link_ddr_downstream setting
   ,parameter use_encode_p = 0
   ,localparam ddr_width_lp  = channel_width_p*2 + use_extra_data_bit_p
   ,localparam piso_ratio_lp = width_p/(ddr_width_lp*num_channels_p)
@@ -129,11 +143,12 @@ module bsg_link_ddr_upstream
         assign core_ss_data_nonzero = 1'b0; // unused
         assign core_ss_data_bottom = core_piso_data_lo[i][channel_width_p-1:0];
         assign io_oddr_data_final[1] = io_oddr_data_raw[1];
+        // valid sent out in first cycle
         assign io_oddr_data_final[0] = {io_oddr_valid_li, io_oddr_data_raw[0][channel_width_p-1:0]};
       end
     else
       begin
-        // channel encode
+        // core side encode
         assign core_ss_data_nonzero = ~(core_piso_data_lo[i][channel_width_p/2-1:0] == '0);
         assign core_ss_data_bottom[1] = (core_ss_data_nonzero)?
               {      core_piso_data_lo[i][channel_width_p-0-1:channel_width_p/2]}
@@ -141,7 +156,8 @@ module bsg_link_ddr_upstream
         assign core_ss_data_bottom[0] = (core_ss_data_nonzero)?
               {core_piso_data_lo[i][channel_width_p/2-1:0]                          }
             : {core_piso_data_lo[i][channel_width_p-1], (channel_width_p/2-1)'(1'b1)};
-        // When idle, assign certain bits to zero
+        // When idle, assign 1'b0 to certain wires to represent invalid state
+        // Assign 1'b1 to rest of the wires to balance hi / lo bits in each channel
         assign io_oddr_data_final = (io_oddr_valid_li)?
               io_oddr_data_raw
             : {2{2'b00, (channel_width_p/2-1)'('1), (channel_width_p/2)'('0)}};

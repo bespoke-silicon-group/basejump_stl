@@ -49,6 +49,20 @@ module bsg_link_ddr_downstream
   // Set use_extra_data_bit_p=1 to utilize this extra bit
   // MUST MATCH paired bsg_link_ddr_upstream setting
   ,parameter use_extra_data_bit_p = 0
+  // When channel_width_p is large, it might be hard to properly align source synchronous
+  // clock to all data wires. One option is to cut the channel in half and align to
+  // different clocks. Ecoding method below helps represent valid bit for bottom half data
+  // without adding an extra wire.
+  // +-------------+---------------+---------------------+
+  // |    v_top    |     bottom    |        Value        |
+  // | 0_0???_???? |   0000_0000   | no data (""comma"") |
+  // | 1_XXXX_XXXX |  YYYY_YYYY!=0 | XXXX_XXXX_YYYY_YYYY |
+  // | 0_1XXX_XXXX |   X000_0001   | XXXX_XXXX_0000_0000 |
+  // +-------------+---------------+---------------------+
+  // Physical bonding suggestion: Regard v bit and top bits of the channel as a group
+  // Regard bottom bits of the channel as another group
+  // Set use_encode_p=1 to enable this encoding feature
+  // MUST MATCH paired bsg_link_ddr_downstream setting
   ,parameter use_encode_p = 0
   ,localparam ddr_width_lp  = channel_width_p*2 + use_extra_data_bit_p
   ,localparam sipo_ratio_lp = width_p/(ddr_width_lp*num_channels_p)
@@ -110,7 +124,7 @@ module bsg_link_ddr_downstream
       end
     else
       begin
-        // channel decode
+        // core side decode
         assign core_sipo_data_li[i][channel_width_p-1:channel_width_p/2] = 
             (core_ss_data_nonzero)?
               {core_ss_data_bottom[1]}
