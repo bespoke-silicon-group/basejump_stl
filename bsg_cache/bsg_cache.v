@@ -771,13 +771,6 @@ module bsg_cache
 
   for (genvar i = 0; i < data_sel_mux_els_lp; i++) begin: ld_data_sel
 
-    if (i == data_sel_mux_els_lp-1) begin: max_size
-
-      assign ld_data_final_li[i] = snoop_or_ld_data;
-
-    end
-    else begin: non_max_size
-
       logic [(8*(2**i))-1:0] byte_sel;
 
       bsg_mux #(
@@ -792,7 +785,6 @@ module bsg_cache
       assign ld_data_final_li[i] = 
         {{(data_width_p-(8*(2**i))){decode_v_r.sigext_op & byte_sel[(8*(2**i))-1]}}, byte_sel};
 
-    end
 
   end
   
