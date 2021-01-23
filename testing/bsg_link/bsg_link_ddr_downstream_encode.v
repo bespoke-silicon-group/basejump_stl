@@ -111,22 +111,23 @@ module bsg_link_ddr_downstream_encode
     // core side signals
     logic [1:0] core_ss_valid_lo;
     logic core_ss_yumi_li, core_ss_data_nonzero;
-    logic [phy_width_lp-1:0] core_ss_data_top;
-    logic [1:0][channel_width_p/2-1:0] core_ss_data_bottom;
+    logic [1:0][channel_width_p/2+1-1:0] core_ss_data_hi;
+    logic [1:0][channel_width_p/2+0-1:0] core_ss_data_lo;
     
     // connect to sipo
     assign core_ss_yumi_li = core_sipo_yumi_lo;
     assign core_sipo_valid_li[i] = & core_ss_valid_lo;
-    assign core_sipo_data_li[i][ddr_width_lp-1:channel_width_p] = core_ss_data_top;
+    assign core_sipo_data_li[i][ddr_width_lp-1:channel_width_p] = {core_ss_data_hi[1], core_ss_data_lo[1]};
     
     // channel decode
+    assign core_ss_data_nonzero = core_ss_data_hi[0][channel_width_p/2];
     assign core_sipo_data_li[i][channel_width_p-1:channel_width_p/2] = 
         (core_ss_data_nonzero)?
-          {core_ss_data_bottom[1]}
-        : {core_ss_data_bottom[0][channel_width_p/2-1], core_ss_data_bottom[1][channel_width_p/2-1-1:0]};
+          {core_ss_data_hi[0]}
+        : {core_ss_data_lo[0][channel_width_p/2-1], core_ss_data_hi[0][channel_width_p/2-1-1:0]};
     assign core_sipo_data_li[i][channel_width_p/2-1:0] = 
         (core_ss_data_nonzero)?
-          {core_ss_data_bottom[0]}
+          {core_ss_data_lo[0]}
         : {'0};
     // io side decode
     assign io_iddr_valid_lo[1] = ~(io_iddr_data_hi[0][channel_width_p/2-1+:2] == '0);
@@ -150,7 +151,7 @@ module bsg_link_ddr_downstream_encode
     );
 
     bsg_link_source_sync_downstream
-   #(.channel_width_p(phy_width_lp)
+   #(.channel_width_p(channel_width_p+2)
     ,.lg_fifo_depth_p(lg_fifo_depth_p)
     ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
     ) downstream_top
@@ -160,18 +161,18 @@ module bsg_link_ddr_downstream_encode
 
     // source synchronous input channel; coming from chip edge
     ,.io_clk_i         (io_clk_i[i][1])
-    ,.io_data_i        ({io_iddr_data_hi[1], io_iddr_data_lo[1]})
+    ,.io_data_i        (io_iddr_data_hi)
     ,.io_valid_i       (io_iddr_valid_lo[1])
     ,.core_token_r_o   (core_token_r_o[i])
 
     // going into core; uses core clock
-    ,.core_data_o      (core_ss_data_top)
+    ,.core_data_o      (core_ss_data_hi)
     ,.core_valid_o     (core_ss_valid_lo[1])
     ,.core_yumi_i      (core_ss_yumi_li)
     );
 
     bsg_link_source_sync_downstream
-   #(.channel_width_p(phy_width_lp)
+   #(.channel_width_p(channel_width_p)
     ,.lg_fifo_depth_p(lg_fifo_depth_p)
     ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
     ) downstream_bot
@@ -181,12 +182,12 @@ module bsg_link_ddr_downstream_encode
 
     // source synchronous input channel; coming from chip edge
     ,.io_clk_i         (io_clk_i[i][0])
-    ,.io_data_i        ({io_iddr_data_hi[0], io_iddr_data_lo[0]})
+    ,.io_data_i        (io_iddr_data_lo)
     ,.io_valid_i       (io_iddr_valid_lo[0])
     ,.core_token_r_o   ()
 
     // going into core; uses core clock
-    ,.core_data_o      ({core_ss_data_nonzero, core_ss_data_bottom})
+    ,.core_data_o      (core_ss_data_lo)
     ,.core_valid_o     (core_ss_valid_lo[0])
     ,.core_yumi_i      (core_ss_yumi_li)
     );
