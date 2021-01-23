@@ -20,6 +20,8 @@ module bsg_nonsynth_dma_model
     ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_mask_width_lp)
     ,parameter lg_els_lp=`BSG_SAFE_CLOG2(els_p)
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
+    ,parameter block_offset_width_lp=(block_size_in_words_p>1) ? lg_data_mask_width_lp+lg_block_size_in_words_lp : lg_data_mask_width_lp
+    ,parameter upper_addr_width_lp=(block_size_in_words_p>1) ? lg_els_lp-lg_block_size_in_words_lp : lg_els_lp
     ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
   )
   (
@@ -70,9 +72,9 @@ module bsg_nonsynth_dma_model
   wire rd_req_delay_zero = rd_req_delay_r == 0;
   logic rd_req_ready;
 
-  logic [lg_els_lp-lg_block_size_in_words_lp-1:0] rd_upper_addr;
-  assign rd_upper_addr = rd_addr_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_els_lp-lg_block_size_in_words_lp];
-  assign dma_data_o = mem[{rd_upper_addr, rd_counter_r}];
+  logic [upper_addr_width_lp-1:0] rd_upper_addr;
+  assign rd_upper_addr = rd_addr_r[block_offset_width_lp+:upper_addr_width_lp];
+  assign dma_data_o = mem[{rd_upper_addr, {(block_size_in_words_p>1){rd_counter_r}}}];
 
   always_comb begin
     dma_data_v_o = 1'b0;
@@ -164,8 +166,8 @@ module bsg_nonsynth_dma_model
   wire wr_req_delay_zero = wr_req_delay_r == 0;
   logic wr_req_ready;
 
-  logic [lg_els_lp-lg_block_size_in_words_lp-1:0] wr_upper_addr;
-  assign wr_upper_addr = wr_addr_r[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_els_lp-lg_block_size_in_words_lp];
+  logic [upper_addr_width_lp-1:0] wr_upper_addr;
+  assign wr_upper_addr = wr_addr_r[block_offset_width_lp+:upper_addr_width_lp];
 
   always_comb begin
     wr_addr_n = wr_addr_r;
@@ -250,7 +252,7 @@ module bsg_nonsynth_dma_model
       wr_req_delay_r <= wr_req_delay_n;
     
       if ((wr_state_r == BUSY) & dma_data_v_i & dma_data_yumi_o) begin
-        mem[{wr_upper_addr, wr_counter_r}] <= dma_data_i;
+        mem[{wr_upper_addr, {(block_size_in_words_p>1){wr_counter_r}}}] <= dma_data_i;
       end
 
     end
