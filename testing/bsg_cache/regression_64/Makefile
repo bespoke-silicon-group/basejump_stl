@@ -15,6 +15,7 @@ BASIC_TEST += test_atomic2
 BASIC_TEST += test_atomic3
 BASIC_TEST += test_atomic4
 BASIC_TEST += test_stride1
+BASIC_TEST += test_mask1
 
 ########################
 
