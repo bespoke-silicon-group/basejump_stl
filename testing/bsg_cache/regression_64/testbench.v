@@ -27,7 +27,7 @@ module testbench();
   localparam block_size_in_words_p = `BLOCK_SIZE_IN_WORDS_P;
   localparam sets_p = 64;
   localparam ways_p = 8;
-  localparam mem_size_p = block_size_in_words_p*sets_p*ways_p*4;
+  localparam mem_size_p = 8*sets_p*ways_p*4;
 
 
   integer status;
@@ -143,7 +143,7 @@ module testbench();
 
 
   // trace replay
-  localparam rom_addr_width_lp = 26;
+  localparam rom_addr_width_lp = 23;
   localparam ring_width_lp = `bsg_cache_pkt_width(addr_width_p,data_width_p);
 
   logic [rom_addr_width_lp-1:0] trace_rom_addr;

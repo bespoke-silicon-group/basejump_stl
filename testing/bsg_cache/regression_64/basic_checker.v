@@ -25,10 +25,10 @@ module basic_checker
 
   `declare_bsg_cache_pkt_s(addr_width_p,data_width_p);
 
-  localparam data_size_in_bytes_lp = `BSG_SAFE_CLOG2(data_width_p/8);
-  localparam data_size_in_half_lp = `BSG_SAFE_CLOG2(data_width_p/16);
-  localparam data_size_in_words_lp = `BSG_SAFE_CLOG2(data_width_p/32);
-  localparam data_size_in_dwords_lp = `BSG_SAFE_CLOG2(data_width_p/64);
+  localparam lg_data_size_in_bytes_lp = `BSG_SAFE_CLOG2(data_width_p/8);
+  localparam lg_data_size_in_half_lp = `BSG_SAFE_CLOG2(data_width_p/16);
+  localparam lg_data_size_in_words_lp = `BSG_SAFE_CLOG2(data_width_p/32);
+  localparam lg_data_size_in_dwords_lp = `BSG_SAFE_CLOG2(data_width_p/64);
 
   bsg_cache_pkt_s cache_pkt;
   assign cache_pkt = cache_pkt_i;
@@ -109,49 +109,34 @@ module basic_checker
     endcase
   end
 
-  //TODO: generate the store_mask for variable data_width_p
   always_comb begin
     case (cache_pkt.opcode)
       
       SD, AMOSWAP_D, AMOADD_D, AMOXOR_D
       ,AMOAND_D, AMOOR_D, AMOMIN_D
       ,AMOMAX_D, AMOMINU_D, AMOMAXU_D: begin
-        store_data = {(data_width_p/64){store_pre_data}};
-        store_mask = 8'b1111_1111;
+        store_data = {(data_width_p/64){store_pre_data[63:0]}};
+        if (data_width_p > 64)
+          store_mask = 8'b1111_1111 << (cache_pkt.addr[3+:lg_data_size_in_dwords_lp]*8);
+        else
+          store_mask = 8'b1111_1111;
       end
 
       SW, AMOSWAP_W, AMOADD_W, AMOXOR_W
       ,AMOAND_W, AMOOR_W, AMOMIN_W
       ,AMOMAX_W, AMOMINU_W, AMOMAXU_W: begin
         store_data = {(data_width_p/32){store_pre_data[31:0]}};
-        store_mask = {
-          {4{ cache_pkt.addr[2]}},
-          {4{~cache_pkt.addr[2]}}
-        };
+        store_mask = 4'b1111 << (cache_pkt.addr[2+:lg_data_size_in_words_lp]*4);
       end
 
       SH: begin
         store_data = {(data_width_p/16){store_pre_data[15:0]}};
-        store_mask = {
-          {2{ cache_pkt.addr[2] &  cache_pkt.addr[1]}},
-          {2{ cache_pkt.addr[2] & ~cache_pkt.addr[1]}},
-          {2{~cache_pkt.addr[2] &  cache_pkt.addr[1]}},
-          {2{~cache_pkt.addr[2] & ~cache_pkt.addr[1]}}
-        };
+        store_mask = 2'b11 << (cache_pkt.addr[1+:lg_data_size_in_half_lp]*2);
       end
 
       SB: begin
         store_data = {(data_width_p/8){store_pre_data[7:0]}};
-        store_mask = {
-           { cache_pkt.addr[2] &  cache_pkt.addr[1] &   cache_pkt.addr[0]},
-           { cache_pkt.addr[2] &  cache_pkt.addr[1] &  ~cache_pkt.addr[0]},
-           { cache_pkt.addr[2] & ~cache_pkt.addr[1] &   cache_pkt.addr[0]},
-           { cache_pkt.addr[2] & ~cache_pkt.addr[1] &  ~cache_pkt.addr[0]},
-           {~cache_pkt.addr[2] &  cache_pkt.addr[1] &   cache_pkt.addr[0]},
-           {~cache_pkt.addr[2] &  cache_pkt.addr[1] &  ~cache_pkt.addr[0]},
-           {~cache_pkt.addr[2] & ~cache_pkt.addr[1] &   cache_pkt.addr[0]},
-           {~cache_pkt.addr[2] & ~cache_pkt.addr[1] &  ~cache_pkt.addr[0]}
-        };
+        store_mask = 1'b1 << cache_pkt.addr[0+:lg_data_size_in_bytes_lp];
       end
 
       SM: begin
@@ -179,7 +164,7 @@ module basic_checker
     ,.width_p(8)
   ) byte_mux (
     .data_i(load_data)
-    ,.sel_i(cache_pkt.addr[0+:data_size_in_bytes_lp]) 
+    ,.sel_i(cache_pkt.addr[0+:lg_data_size_in_bytes_lp])
     ,.data_o(byte_sel)
   );
 
@@ -188,7 +173,7 @@ module basic_checker
     ,.width_p(16)
   ) half_mux (
     .data_i(load_data)
-    ,.sel_i(cache_pkt.addr[1+:data_size_in_half_lp])
+    ,.sel_i(cache_pkt.addr[1+:lg_data_size_in_half_lp])
     ,.data_o(half_sel)
   );
 
@@ -197,7 +182,7 @@ module basic_checker
     ,.width_p(32)
   ) word_mux (
     .data_i(load_data)
-    ,.sel_i(cache_pkt.addr[2+:data_size_in_words_lp])
+    ,.sel_i(cache_pkt.addr[2+:lg_data_size_in_words_lp])
     ,.data_o(word_sel)
   );
 
@@ -206,7 +191,7 @@ module basic_checker
     ,.width_p(64)
   ) dword_mux (
     .data_i(load_data)
-    ,.sel_i(cache_pkt.addr[3+:data_size_in_dwords_lp])
+    ,.sel_i(cache_pkt.addr[3+:lg_data_size_in_dwords_lp])
     ,.data_o(dword_sel)
   );
 
