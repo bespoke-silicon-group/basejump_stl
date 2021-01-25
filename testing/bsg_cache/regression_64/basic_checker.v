@@ -36,7 +36,7 @@ module basic_checker
   logic [data_width_p-1:0] shadow_mem [mem_size_p-1:0];
   logic [data_width_p-1:0] result [*];
 
-  wire [addr_width_p-1:0] cache_pkt_word_addr = cache_pkt.addr[addr_width_p-1:3];
+  wire [addr_width_p-1:0] cache_pkt_word_addr = cache_pkt.addr[addr_width_p-1:lg_data_size_in_bytes_lp];
 
   // store logic
   logic [data_width_p-1:0] load_data, load_data_final;
