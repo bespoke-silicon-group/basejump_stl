@@ -27,7 +27,7 @@ module testbench();
   localparam block_size_in_words_p = `BLOCK_SIZE_IN_WORDS_P;
   localparam sets_p = 64;
   localparam ways_p = 8;
-  localparam mem_size_p = 2**17;
+  localparam mem_size_p = 2**(17-`BSG_SAFE_CLOG2(data_width_p/8));
 
 
   integer status;
