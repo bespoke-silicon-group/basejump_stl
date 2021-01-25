@@ -15,10 +15,19 @@
 
 `include "bsg_defines.v"
 
+
 module bsg_round_robin_arb #(inputs_p      = -1
                                      ,lg_inputs_p   =`BSG_SAFE_CLOG2(inputs_p)
                                      ,reset_on_sr_p = 1'b0
-                                     ,hold_on_sr_p  = 1'b0 )
+                                     ,hold_on_sr_p  = 1'b0
+                                     // Hold on valid sets the arbitration policy such that once
+                                     // a output tag is selected, it remains selected until it is
+                                     // acked. This is consistent with BaseJump STL handshake
+                                     // assumptions. Notably, this parameter is required to work
+                                     // with bsg_parallel_in_serial_out_passthrough. This policy
+                                     // has a slight throughput degradation but effectively
+                                     // arbitrates based on age, so minimizes worst case latency.
+                                     ,hold_on_valid_p = 1'b0)
     (input clk_i
     , input reset_i
     , input grants_en_i // whether to suppress grants_o
@@ -2428,6 +2437,11 @@ else
       end else if( reset_on_sr_p ) begin: reset_on_last_n_gen
         last_n = reset_on_sr? (inputs_p-2) :
                ( yumi_i     ?tag_o : last_r );  
+      end else if( hold_on_valid_p ) begin: hold_on_last_n_gen
+        // Need to manually handle wrap around on non-power of two case, else reuse subtraction
+        last_n = yumi_i ? tag_o
+               : v_o ? ((~`BSG_IS_POW2(inputs_p) && tag_o == '0) ? (lg_inputs_p)'(inputs_p-1) : (tag_o-1'b1))
+                     : last_r;
       end else
         last_n = (yumi_i ? tag_o:last_r);
 
