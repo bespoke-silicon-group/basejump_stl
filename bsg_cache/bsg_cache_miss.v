@@ -20,7 +20,8 @@ module bsg_cache_miss
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
     ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
-    ,parameter tag_width_lp=(addr_width_p-lg_data_mask_width_lp-lg_sets_lp-lg_block_size_in_words_lp)
+    ,parameter block_offset_width_lp=(block_size_in_words_p > 1) ? lg_data_mask_width_lp+lg_block_size_in_words_lp : lg_data_mask_width_lp
+    ,parameter tag_width_lp=(addr_width_p-lg_sets_lp-block_offset_width_lp)
     ,parameter tag_info_width_lp=`bsg_cache_tag_info_width(tag_width_lp)
     ,parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
     ,parameter stat_info_width_lp=`bsg_cache_stat_info_width(ways_p)
@@ -152,11 +153,11 @@ module bsg_cache_miss
   logic [lg_block_size_in_words_lp-1:0] addr_block_offset_v;
 
   assign addr_index_v
-    = addr_v_i[lg_data_mask_width_lp+lg_block_size_in_words_lp+:lg_sets_lp];
+    = addr_v_i[block_offset_width_lp+:lg_sets_lp];
   assign addr_tag_v
-    = addr_v_i[lg_data_mask_width_lp+lg_block_size_in_words_lp+lg_sets_lp+:tag_width_lp];
+    = addr_v_i[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
   assign addr_way_v
-    = addr_v_i[lg_sets_lp+lg_block_size_in_words_lp+lg_data_mask_width_lp+:lg_ways_lp];
+    = addr_v_i[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
   assign addr_block_offset_v
     = addr_v_i[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
 
@@ -279,7 +280,7 @@ module bsg_cache_miss
         dma_addr_o = {
           addr_tag_v,
           addr_index_v,
-          {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
+          {(block_offset_width_lp){1'b0}}
         };
 
 
@@ -353,7 +354,7 @@ module bsg_cache_miss
         dma_addr_o = {
           tag_v_i[dma_way_o],
           addr_index_v,
-          {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
+          {(block_offset_width_lp){1'b0}}
         };
 
         miss_state_n = dma_done_i
@@ -370,7 +371,7 @@ module bsg_cache_miss
         dma_addr_o = {
           tag_v_i[dma_way_o],
           addr_index_v,
-          {(lg_data_mask_width_lp+lg_block_size_in_words_lp){1'b0}}
+          {(block_offset_width_lp){1'b0}}
         };
 
         miss_state_n = dma_done_i
@@ -387,7 +388,7 @@ module bsg_cache_miss
         dma_addr_o = {
           addr_tag_v,
           addr_index_v,
-          addr_block_offset_v, // used for snoop data in dma.
+          {(block_size_in_words_p > 1){addr_block_offset_v}}, // used for snoop data in dma.
           {(lg_data_mask_width_lp){1'b0}}
         };
 

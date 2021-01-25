@@ -7,11 +7,12 @@ class TestRandom2(TestBase):
   def generate(self):
     self.clear_tag()
 
+    data_size_in_byte_lp = self.data_width_p/8
     for n in range(80000):
       tag = random.randint(0,15)
       index = random.randint(0,3)
       block_offset = random.randint(0, self.block_size_in_words_p-1)
-      byte_offset = random.randint(0, 7)
+      byte_offset = random.randint(0, data_size_in_byte_lp-1)
       taddr = self.get_addr(tag, index, block_offset, byte_offset)
       op = random.randint(0,10)
 
