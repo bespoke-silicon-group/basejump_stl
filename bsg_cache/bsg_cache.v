@@ -621,8 +621,8 @@ module bsg_cache
     wire [63:0] amo64_reg_in = data_v_r[0+:64];
     assign atomic_reg_data = decode_v_r.data_size_op[0] ? amo64_reg_in : amo32_reg_in;
 
-    wire [63:0] amo32_mem_in = ld_data_final_li[2] << 32;
-    wire [63:0] amo64_mem_in = ld_data_final_li[3];
+    wire [63:0] amo32_mem_in = ld_data_final_li[2][0+:32] << 32;
+    wire [63:0] amo64_mem_in = ld_data_final_li[3][0+:64];
     assign atomic_mem_data = decode_v_r.data_size_op[0] ? amo64_mem_in : amo32_mem_in;
   end
   else if (data_width_p >= 32) begin : atomic_32
