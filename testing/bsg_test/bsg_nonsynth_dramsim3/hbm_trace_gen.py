@@ -1,5 +1,6 @@
 from random import randrange
 import sys
+import argparse
 
 WRITE = 1
 READ  = 0
@@ -37,24 +38,37 @@ class HBMTraceGen:
 
 if __name__ == "__main__":
 
-  dram = sys.argv[1]
-  addr_width_p = {
+  addr_widths = {
     'hbm2_8gb_x128' : 30,
     'hbm2_4gb_x128' : 29,
     'gddr5x_8gb_x32' : 33,
-  } [dram]
+  }
+
+  parser = argparse.ArgumentParser()
+  parser.add_argument('dram')
+
+  parser.add_argument('--stride', default='col')
+  strides = {
+    'col'  : 32,
+    'row'  : 2048,
+    'bank' : 4 * 2048,
+    'bg'   : 16 * 2048,
+  }
+
+  parser.add_argument('--start', type=int, default=0)
+  parser.add_argument('--n_strides', type=int, default=1024)
+
+  args = parser.parse_args()
+
+  addr_width_p = addr_widths[args.dram]
+  stride = strides[args.stride]
+  start = args.start
+  n_strides = args.n_strides
 
   tg = HBMTraceGen(addr_width_p)
-  for i in range(1024):
+  for i in range(n_strides):
     # stride is by column
-    tg.send(READ, i * 32)
-    # stride is by row
-    #tg.send(READ, i * 2048)
-    # only using 1/4 banks (1 bank group)
-    #tg.send(READ, i * 4 * 2048)
-    # only using 1/16 banks (1 bank group)
-    #tg.send(READ, i * 16 * 2048)
+    tg.send(READ, start + i * stride)
     tg.wait_cycles(500)
-    #tg.wait_cycles(0)
 
   tg.done()

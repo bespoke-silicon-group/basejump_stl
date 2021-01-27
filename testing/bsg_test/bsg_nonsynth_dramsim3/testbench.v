@@ -140,16 +140,6 @@ module testbench ();
 
   end
 
-  
-   logic done;
-
-   bsg_reduce #(
-     .width_p(num_channels_p)
-     ,.and_p(1)
-   ) reduce_done (
-     .i(ch_done)
-     ,.o(done)
-   );
 
   initial begin
     # 10000000 $finish;
