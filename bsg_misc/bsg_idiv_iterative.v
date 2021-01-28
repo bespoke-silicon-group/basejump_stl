@@ -63,30 +63,30 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
    wire         zero_divisor_li   =  ~(| divisor_r);
    
    wire [width_p:0]  add_out;
-   wire [width_p:0]  opA_mux_in_1;
+   wire [width_p:0]  opA_mux_in_0;
    wire              latch_msb_divisor;
    
-   assign opA_mux_in_1[width_p-1:0] = add_out[width_p-1:0];
-   assign opA_mux_in_1[width_p] = (latch_msb_divisor & ~signed_div_r) ? 1’b0 : add_out[width_p];
+   assign opA_mux_in_0[width_p-1:0] = add_out[width_p-1:0];
+   assign opA_mux_in_0[width_p] = (latch_msb_divisor & ~signed_div_r) ? 1’b0 : add_out[width_p];
    
    wire         opA_sel;
    wire [width_p:0]  opA_mux;
    bsg_mux  #(.width_p(width_p+1), .els_p(2)) muxA
-          (.data_i({{divisor_i[width_p-1], divisor_i}, opA_mux_in_1} )
+          ( .data_i({{divisor_i[width_p-1], divisor_i}, opA_mux_in_0} )
            ,.data_o(opA_mux)
            ,.sel_i(opA_sel)
      );
 
-   wire [width_p:0]  opB_mux_in_2;
+   wire [width_p:0]  opB_mux_in_0;
    wire              latch_msb_dividend;
    
-   assign opB_mux_in_2[width_p:1] = add_out[width_p-1:0];
-   assign opB_mux_in_2[0] = (latch_msb_dividend & ~signed_div_r) ? 1’b0 : opC[width_p];
+   assign opB_mux_in_0[width_p:1] = add_out[width_p-1:0];
+   assign opB_mux_in_0[0] = (latch_msb_dividend & ~signed_div_r) ? 1’b0 : opC[width_p];
    
    wire [2:0]   opB_sel;
    wire [width_p:0]  opB_mux;
    bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxB
-          ( .data_i( {opC, add_out, opB_mux_in_2} )
+          ( .data_i( {opC, add_out, opB_mux_in_0} )
            ,.data_o(  opB_mux )
            ,.sel_one_hot_i(opB_sel)
      );
