@@ -15,6 +15,7 @@ module bsg_link_ddr_tester
   ,parameter lg_credit_to_token_decimation_p = 3
   ,parameter use_extra_data_bit_p            = 0
   ,parameter use_encode_p                    = 1
+  ,localparam wire_dly_lp                    = 13
   )
 
   ();
@@ -32,7 +33,6 @@ module bsg_link_ddr_tester
   logic downstream_v_lo, downstream_ready_li;
   logic [width_p-1:0] downstream_data_lo;
 
-  logic [num_channels_p-1:0] downlink_reset_sync;
   logic [num_channels_p-1:0] link_clk, link_v, link_tkn;
   logic [num_channels_p-1:0][channel_width_p-1:0] link_data;
 
@@ -84,37 +84,98 @@ module bsg_link_ddr_tester
   ,.token_clk_i        (link_tkn)
   );
 
-  for (genvar i = 0; i < num_channels_p; i++)
-  begin: down_reset
-    bsg_sync_sync #(.width_p(1)) bss
-    (.oclk_i     (link_clk           [i])
-    ,.iclk_data_i(downlink_reset        )
-    ,.oclk_data_o(downlink_reset_sync[i])
-    );
-  end
+  if (use_encode_p == 0)
+  begin: no_encode
 
-  bsg_link_ddr_downstream 
- #(.width_p                        (width_p)
-  ,.channel_width_p                (channel_width_p)
-  ,.num_channels_p                 (num_channels_p)
-  ,.lg_fifo_depth_p                (lg_fifo_depth_p)
-  ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
-  ,.use_extra_data_bit_p           (use_extra_data_bit_p)
-  ,.use_encode_p                   (use_encode_p)
-  ) downlink
-  (// Core side
-   .core_clk_i        (downstream_clk)
-  ,.core_link_reset_i (downstream_reset)
-  ,.core_data_o       (downstream_data_lo)
-  ,.core_valid_o      (downstream_v_lo)
-  ,.core_yumi_i       (downstream_v_lo & downstream_ready_li)
-  // IO side
-  ,.io_link_reset_i   (downlink_reset_sync)
-  ,.io_clk_i          (link_clk)
-  ,.io_data_i         (link_data)
-  ,.io_valid_i        (link_v)
-  ,.core_token_r_o    (link_tkn)
-  );
+    logic [num_channels_p-1:0] downlink_reset_sync;
+
+    for (genvar i = 0; i < num_channels_p; i++)
+    begin: down_reset
+      bsg_sync_sync #(.width_p(1)) bss
+      (.oclk_i     (link_clk           [i])
+      ,.iclk_data_i(downlink_reset        )
+      ,.oclk_data_o(downlink_reset_sync[i])
+      );
+    end
+
+    bsg_link_ddr_downstream 
+   #(.width_p                        (width_p)
+    ,.channel_width_p                (channel_width_p)
+    ,.num_channels_p                 (num_channels_p)
+    ,.lg_fifo_depth_p                (lg_fifo_depth_p)
+    ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
+    ,.use_extra_data_bit_p           (use_extra_data_bit_p)
+    ,.use_encode_p                   (use_encode_p)
+    ) downlink
+    (// Core side
+     .core_clk_i        (downstream_clk)
+    ,.core_link_reset_i (downstream_reset)
+    ,.core_data_o       (downstream_data_lo)
+    ,.core_valid_o      (downstream_v_lo)
+    ,.core_yumi_i       (downstream_v_lo & downstream_ready_li)
+    // IO side
+    ,.io_link_reset_i   (downlink_reset_sync)
+    ,.io_clk_i          (link_clk)
+    ,.io_data_i         (link_data)
+    ,.io_valid_i        (link_v)
+    ,.core_token_r_o    (link_tkn)
+    );
+
+  end
+  else
+  begin: encode
+
+    logic [num_channels_p-1:0][1:0] downlink_reset_sync, downlink_clk;
+    logic [num_channels_p-1:0] downlink_v, downlink_tkn;
+    logic [num_channels_p-1:0][channel_width_p-1:0] downlink_data;
+
+    for (genvar i = 0; i < num_channels_p; i++)
+      begin: dly
+        assign link_tkn[i] = downlink_tkn[i];
+        assign downlink_v[i] = link_v[i];
+        assign downlink_clk[i][1] = link_clk[i];
+        assign downlink_data[i][channel_width_p-1:channel_width_p/2] = link_data[i][channel_width_p-1:channel_width_p/2];
+        bsg_nonsynth_delay_line #(.width_p(1),.delay_p(wire_dly_lp)) clk_dly
+        (.i(link_clk[i]),.o(downlink_clk[i][0]));
+        bsg_nonsynth_delay_line #(.width_p(channel_width_p/2),.delay_p(wire_dly_lp)) data_dly
+        (.i(link_data[i][channel_width_p/2-1:0]),.o(downlink_data[i][channel_width_p/2-1:0]));
+      end
+
+    for (genvar i = 0; i < num_channels_p; i++)
+    begin: down_reset
+      for (genvar j = 0; j < 2; j++)
+        begin: dual
+          bsg_sync_sync #(.width_p(1)) bss
+          (.oclk_i     (downlink_clk       [i][j])
+          ,.iclk_data_i(downlink_reset           )
+          ,.oclk_data_o(downlink_reset_sync[i][j])
+          );
+        end
+    end
+
+    bsg_link_ddr_downstream_encode
+   #(.width_p                        (width_p)
+    ,.channel_width_p                (channel_width_p)
+    ,.num_channels_p                 (num_channels_p)
+    ,.lg_fifo_depth_p                (lg_fifo_depth_p)
+    ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
+    ,.use_extra_data_bit_p           (use_extra_data_bit_p)
+    ) downlink
+    (// Core side
+     .core_clk_i        (downstream_clk)
+    ,.core_link_reset_i (downstream_reset)
+    ,.core_data_o       (downstream_data_lo)
+    ,.core_valid_o      (downstream_v_lo)
+    ,.core_yumi_i       (downstream_v_lo & downstream_ready_li)
+    // IO side
+    ,.io_link_reset_i   (downlink_reset_sync)
+    ,.io_clk_i          (downlink_clk)
+    ,.io_data_i         (downlink_data)
+    ,.io_valid_i        (downlink_v)
+    ,.core_token_r_o    (downlink_tkn)
+    );
+
+  end
 
   bsg_link_ddr_test_node
  #(.num_channels_p      (width_p/channel_width_p)
