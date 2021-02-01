@@ -17,6 +17,9 @@
 // 39           negate remainder (if necessary)
 // 40           negate quotient (if necessary)
 // -------------------------------------------
+//
+// Schematic: https://docs.google.com/presentation/d/1F7Lam7fMCp-v9K1PsjTvypWHJFFXfqoX6pJrmgf-_JE/
+//
 // TODO
 // 1. added register to hold the previous operands, if the current operands
 //    are the same with prevous one, we can output the results instantly. This
