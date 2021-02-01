@@ -205,7 +205,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
       ,.opC_sel_o                (opC_sel)
       ,.opC_ld_o                 (opC_ld)
 
-      ,.latch_signed_div_o           (latch_signed_div)
+      ,.latch_signed_div_o       (latch_signed_div)
       ,.latch_msb_divisor_o      (latch_msb_divisor)
       ,.latch_msb_dividend_o     (latch_msb_dividend)
       ,.adder_cin_o              (adder_cin)
