@@ -60,7 +60,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
         );
 
    //if the divisor is zero
-   wire         zero_divisor_li   =  ~(| divisor_r);
+    wire         zero_divisor_li   =  ~(| opA);
    
    wire [width_p:0]  add_out;
    wire [width_p:0]  opA_mux_in_0;
