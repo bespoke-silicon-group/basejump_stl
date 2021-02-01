@@ -51,11 +51,11 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
 
    wire signed_div_r;
 
-   wire latch_inputs;
+   wire latch_signed_div;
    bsg_dff_en#(.width_p(1)) req_reg
        (.data_i (signed_div_i)
        ,.data_o (signed_div_r)
-       ,.en_i   (latch_inputs)
+       ,.en_i   (latch_signed_div)
        ,.clk_i(clk_i)
         );
 
@@ -205,7 +205,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
       ,.opC_sel_o                (opC_sel)
       ,.opC_ld_o                 (opC_ld)
 
-      ,.latch_inputs_o           (latch_inputs)
+      ,.latch_signed_div_o           (latch_signed_div)
       ,.latch_msb_divisor_o      (latch_msb_divisor)
       ,.latch_msb_dividend_o     (latch_msb_dividend)
       ,.adder_cin_o              (adder_cin)
