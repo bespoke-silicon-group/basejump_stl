@@ -91,7 +91,14 @@ module bsg_tag_client
    logic               tag_toggle_r;
 
    // shift in new state
-   assign tag_data_shift = { param_r, tag_data_r[width_p-1:1] };
+   if (width_p == 1)
+     begin : sb
+       assign tag_data_shift = { param_r };
+     end
+   else
+     begin : mb
+       assign tag_data_shift = { param_r, tag_data_r[width_p-1:1] };
+     end
 
    bsg_mux2_gatestack #(.width_p(width_p),.harden_p(harden_p)) tag_data_mux
      (.i0 (tag_data_r            ) // sel=0
