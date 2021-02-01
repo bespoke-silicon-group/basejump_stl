@@ -1,4 +1,4 @@
-module hit_checker
+module basic_checker
   import bsg_cache_pkg::*;
   #(parameter data_width_p="inv"
     , parameter addr_width_p="inv"

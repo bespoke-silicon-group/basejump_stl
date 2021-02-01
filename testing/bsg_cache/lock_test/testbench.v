@@ -190,14 +190,25 @@ module testbench();
   assign v_li = tr_v_lo;
   assign tr_yumi_li = tr_v_lo & ready_lo;
 
-  // hit checker is used to monitor which way is hitted
-  bind bsg_cache hit_checker #(
+  // basic checker is used to check correctness
+  bind bsg_cache basic_checker #(
     .data_width_p(data_width_p)
     ,.addr_width_p(addr_width_p)
     ,.mem_size_p($root.testbench.mem_size_p)
   ) hit_check (
     .*
     ,.en_i($root.testbench.checker == "basic")
+  );
+
+  // miss monitor is used to record the lru replacement behavior
+  bind DUT.miss miss_monitor  #(
+    .addr_width_p(addr_width_p)
+    ,.data_width_p(data_width_p)
+    ,.sets_p(sets_p)
+    ,.block_size_in_words_p(block_size_in_words_p)
+    ,.ways_p(ways_p)
+  ) miss_monitor (
+    .*
   );
 
   // wait for all responses to be received.
