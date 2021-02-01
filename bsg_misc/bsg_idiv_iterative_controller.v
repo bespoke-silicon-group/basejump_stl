@@ -123,6 +123,8 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
     START: begin
        next_state          = NEG0;
        opA_ld_o            = 1'b1;
+       opA_inv_o           = 1'b0;
+       opB_clr_o           = 1'b0;
        latch_msb_divisor_o = 1'b1;
        opC_ld_o            = 1'b0;
        opB_ld_o            = 1'b0;
