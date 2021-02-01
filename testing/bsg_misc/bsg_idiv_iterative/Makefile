@@ -15,3 +15,6 @@ clean:
 	$(RM) -r csrc simv.daidir vcs.key simv  ucli.key  vcdplus.vpd
 dve64:
 	$(VCS_BIN)/dve -full64
+gtk:
+	$(VCS_BIN)/vpd2vcd vcdplus.vpd vcd
+	gtkwave vcd
