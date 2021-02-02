@@ -23,6 +23,7 @@ module bsg_dff_reset_en_bypass
 
   bsg_dff_reset_en #(
     .width_p(width_p)
+    ,.reset_val_p(reset_val_p)
     ,.harden_p(harden_p)
   ) dff (
     .clk_i(clk_i)
