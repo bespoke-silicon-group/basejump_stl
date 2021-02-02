@@ -87,7 +87,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
    wire [2:0]   opC_sel;
    wire [width_p:0]  opC_mux;
    bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxC
-          ( .data_i( {{dividend_msb, dividend_r},add_out, {opC[width_p-1:0], ~add_out[width_p]}} )
+          ( .data_i( {{dividend_msb, dividend_i},add_out, {opC[width_p-1:0], ~add_out[width_p]}} )
            ,.data_o(  opC_mux )
            ,.sel_one_hot_i(opC_sel)
      );
