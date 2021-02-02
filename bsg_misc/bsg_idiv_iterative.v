@@ -198,7 +198,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
       ,.opC_sel_o                (opC_sel)
       ,.opC_ld_o                 (opC_ld)
 
-      ,.latch_inputs_o           (latch_inputs)
+      ,.latch_signed_div_o       (latch_signed_div)
       ,.adder_cin_o              (adder_cin)
 
       ,.v_o(v_o)
