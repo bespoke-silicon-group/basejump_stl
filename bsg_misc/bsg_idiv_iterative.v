@@ -17,6 +17,9 @@
 // 39           negate remainder (if necessary)
 // 40           negate quotient (if necessary)
 // -------------------------------------------
+//
+// Schematic: https://docs.google.com/presentation/d/1F7Lam7fMCp-v9K1PsjTvypWHJFFXfqoX6pJrmgf-_JE/
+//
 // TODO
 // 1. added register to hold the previous operands, if the current operands
 //    are the same with prevous one, we can output the results instantly. This
@@ -60,7 +63,11 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
         );
 
    //if the divisor is zero
+<<<<<<< HEAD
    wire         zero_divisor_li   =  ~(| opA);
+=======
+    wire         zero_divisor_li   =  ~(| opA);
+>>>>>>> cb0e6892893080fd599d3a959ab45eede93b78d8
    
    wire [width_p:0]  add_out;
    wire [width_p:0]  opA_mux_in_0;
@@ -205,7 +212,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
       ,.opC_sel_o                (opC_sel)
       ,.opC_ld_o                 (opC_ld)
 
-      ,.latch_signed_div_o           (latch_signed_div)
+      ,.latch_signed_div_o       (latch_signed_div)
       ,.latch_msb_divisor_o      (latch_msb_divisor)
       ,.latch_msb_dividend_o     (latch_msb_dividend)
       ,.adder_cin_o              (adder_cin)
