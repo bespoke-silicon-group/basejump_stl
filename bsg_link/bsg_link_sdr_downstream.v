@@ -45,6 +45,7 @@ module bsg_link_sdr_downstream
  #(.channel_width_p(width_p)
   ,.lg_fifo_depth_p(lg_fifo_depth_p)
   ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
+  ,.bypass_twofer_fifo_p(1)
   ) downstream
   (.core_clk_i       (core_clk_i)
   ,.core_link_reset_i(core_reset_i)

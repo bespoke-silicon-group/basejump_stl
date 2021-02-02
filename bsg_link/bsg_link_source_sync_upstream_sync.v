@@ -25,26 +25,10 @@ module bsg_link_source_sync_upstream_sync
   ,input                token_clk_i
   );
 
-  logic twofer_v_lo, twofer_yumi_li;
-  logic [width_p-1:0] twofer_data_lo;
-
-  bsg_two_fifo
- #(.width_p(width_p)
-  ) twofer_fifo
-  (.clk_i  (clk_i)
-  ,.reset_i(reset_i)
-  ,.v_i    (v_i)
-  ,.data_i (data_i)
-  ,.ready_o(ready_o)
-  ,.v_o    (twofer_v_lo)
-  ,.data_o (twofer_data_lo)
-  ,.yumi_i (twofer_yumi_li)
-  );
-
   // asserted when fifo has valid data and token credit is available
   logic v_n;
   assign v_o    = (reset_i)? '0 : v_n;
-  assign data_o = (reset_i)? '0 : twofer_data_lo;
+  assign data_o = (reset_i)? '0 : data_i;
 
   // we need to track whether the credits are coming from
   // posedge or negedge tokens.
@@ -62,7 +46,7 @@ module bsg_link_source_sync_upstream_sync
   (.clk_i  (clk_i)
   ,.reset_i(reset_i)
   ,.clear_i(1'b0)
-  ,.up_i   (twofer_yumi_li)
+  ,.up_i   (v_n)
   ,.count_o(token_alternator_r)
   );
 
@@ -77,12 +61,11 @@ module bsg_link_source_sync_upstream_sync
        : posedge_credits_avail;
 
   // we send if we have both data to send and credits to send with
-  assign v_n = credit_avail & twofer_v_lo;
-  // dequeue from fifo when needed
-  assign twofer_yumi_li = v_n;
+  assign v_n = credit_avail & v_i;
+  assign ready_o = (reset_i)? 1'b1 : credit_avail;
 
-  wire negedge_credits_deque = twofer_yumi_li & on_negedge_token;
-  wire posedge_credits_deque = twofer_yumi_li & ~on_negedge_token;
+  wire negedge_credits_deque = v_n & on_negedge_token;
+  wire posedge_credits_deque = v_n & ~on_negedge_token;
 
   // **********************************************
   // token channel
