@@ -74,6 +74,7 @@ $BASEJUMP_STL_DIR/bsg_link/bsg_link_sdr_downstream.v
 $BASEJUMP_STL_DIR/bsg_link/bsg_link_sdr_upstream.v
 $BASEJUMP_STL_DIR/bsg_link/bsg_link_isdr_phy.v
 $BASEJUMP_STL_DIR/bsg_link/bsg_link_osdr_phy.v
+$BASEJUMP_STL_DIR/bsg_link/bsg_link_osdr_phy_phase_align.v
 $BASEJUMP_STL_DIR/bsg_link/bsg_link_source_sync_downstream.v
 $BASEJUMP_STL_DIR/bsg_link/bsg_link_source_sync_upstream_sync.v
 

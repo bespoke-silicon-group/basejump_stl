@@ -2,7 +2,27 @@
 //
 // Paul Gao 02/2021
 //
+// This is an output SDR PHY
 //
+// clk_o is center-aligned to data_o and is inverted from clk_i
+// Waveform below shows the detailed behavior of the module
+//
+/****************************************************************************
+
+          +---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+
+clk_i         |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+              +---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+
+          -----------------+-------+-------+-------+-------+-------+-------
+data_i           D00       |  D01  |  D02  |  D03  |  D04  |  D05  |  D06
+          -----------------------------------------------------------------
+                       +---+   +---+   +---+   +---+   +---+   +---+   +--+
+clk_o                  |   |   |   |   |   |   |   |   |   |   |   |   |
+          +------------+   +---+   +---+   +---+   +---+   +---+   +---+
+          -----------------------------------------------------------------
+data_o               D00           |  D01  |  D02  |  D03  |  D04  |  D05
+          -------------------------+-------+-------+-------+-------+-------
+
+****************************************************************************/
 
 module bsg_link_osdr_phy
 
@@ -15,14 +35,11 @@ module bsg_link_osdr_phy
   ,output [width_p-1:0] data_o
   );
 
-  logic clk_r_p, clk_r_n;
-  assign clk_o = clk_r_p ^ clk_r_n;
-
-  bsg_dff_reset #(.width_p(1),.reset_val_p(0)) clk_ff_p
-  (.clk_i(clk_i),.reset_i(reset_i),.data_i(~clk_r_p),.data_o(clk_r_p));
-
-  bsg_dff_reset #(.width_p(1),.reset_val_p(0)) clk_ff_n
-  (.clk_i(~clk_i),.reset_i(reset_i),.data_i(~clk_r_n),.data_o(clk_r_n));
+  bsg_link_osdr_phy_phase_align clk_pa
+  (.clk_i  (clk_i)
+  ,.reset_i(reset_i)
+  ,.clk_o  (clk_o)
+  );
 
   bsg_dff #(.width_p(width_p)) data_ff 
   (.clk_i(clk_i),.data_i(data_i),.data_o(data_o));
