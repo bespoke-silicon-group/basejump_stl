@@ -8,7 +8,7 @@ VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4
 
 
 ##### Test Suite #######
-BASIC_TEST = test_lock1
+BASIC_TEST = test_lock1 test_lock2
 
 
 ########################
@@ -34,7 +34,7 @@ VCS_DEFINES += +define+DMA_DATA_DELAY_P=$(DMA_DATA_DELAY_P)
 ########################
 
 SIMV = $(abspath simv)
-WAVE ?= 0
+WAVE ?= 1
 
 BASIC_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BASIC_TEST)))
 
@@ -61,7 +61,7 @@ out/%/trace.tr:
 
 summary:
 	@$(foreach test, $(BASIC_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
-			-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
+			-e "Error" -e "BSG_ERROR" -e "Hit Statistic" -e "Hit counter" out/$(test)/simv.log;)
 
 
 

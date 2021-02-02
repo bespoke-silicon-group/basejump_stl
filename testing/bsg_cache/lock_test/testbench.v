@@ -200,21 +200,6 @@ module testbench();
     ,.en_i($root.testbench.checker == "basic")
   );
 
-  hit_stats  #(
-    .ways_p(ways_p)
-  ) hit_stats (
-    .clk_i(DUT.clk_i)
-    ,.reset_i(DUT.reset_i)
-    
-    ,.miss_v_i(DUT.miss_v)
-   
-    ,.stat_mem_v_i(DUT.miss_stat_mem_v_lo)
-    ,.stat_mem_w_i(DUT.miss_stat_mem_w_lo)
-    ,.chosen_way_i(DUT.chosen_way_lo)
-
-    ,.done_i(done)
-  );
-  
   // miss monitor is used to record the lru replacement behavior
   bind DUT.miss miss_monitor  #(
     .addr_width_p(addr_width_p)
@@ -229,6 +214,21 @@ module testbench();
   // wait for all responses to be received.
   integer sent_r, recv_r;
 
+  hit_stats  #(
+    .ways_p(ways_p)
+  ) hit_stats (
+    .clk_i(DUT.clk_i)
+    ,.reset_i(DUT.reset_i)
+    
+    ,.miss_v_i(DUT.miss_v)
+   
+    ,.stat_mem_v_i(DUT.miss_stat_mem_v_lo)
+    ,.stat_mem_w_i(DUT.miss_stat_mem_w_lo)
+    ,.chosen_way_i(DUT.chosen_way_lo)
+
+    ,.done_i(done & (sent_r == recv_r))
+  );
+  
   always_ff @ (posedge clk) begin
     if (reset) begin
       sent_r <= '0;
