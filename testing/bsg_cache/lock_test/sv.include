@@ -11,6 +11,7 @@ $BASEJUMP_STL_DIR/bsg_misc/bsg_dff_en.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_dff_en_bypass.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_counter_clear_up.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_decode.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_decode_with_v.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_priority_encode.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_lru_pseudo_tree_encode.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_lru_pseudo_tree_decode.v
@@ -41,5 +42,6 @@ $BASEJUMP_STL_DIR/bsg_cache/bsg_cache.v
 ../common/bsg_nonsynth_dma_model.v
 ../common/bsg_nonsynth_random_yumi_gen.v
 basic_checker.v
-miss_monitors.v
+miss_monitor.v
+hit_stats.v
 testbench.v

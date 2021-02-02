@@ -7,17 +7,17 @@ class TestLock1(TestBase):
   def generate(self):
     self.clear_tag()
 
-    # lock one way x of each set
-    for set_inedx in range(0, 127):
-        tag = 1 # set a specific tag will not be accessed later
-        taddr = self.get_addr(tag,set_inedx)
-        self.send_alock(taddr)
+    set_index = 0
 
-    for iteration in range(10000): 
-      tag = random.randint(0,7)
-      index = 0
-      block_offset = 0
-      taddr = self.get_addr(tag,index,block_offset)
+    # lock one way x of set 0
+    tag = random.randint(0,15) # set a specific tag will not be accessed later
+    taddr = self.get_addr(tag,set_index)
+    self.send_alock(taddr)
+
+    # Acces other ways in set 0
+    for iteration in range(20000): 
+      tag = random.randint(0,15)
+      taddr = self.get_addr(tag,set_index)
       op = random.randint(0,1)
       if op == 0:
         self.send_sw(taddr)
