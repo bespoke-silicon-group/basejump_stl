@@ -105,7 +105,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
       latch_msb_divisor_o  = 1'b0;
       latch_msb_dividend_o = 1'b0;
       latch_signed_div_o   = 1'b0;
-      next_state           = WAIT;
+      next_state    = WAIT;
 
     case (state)
 
