@@ -52,7 +52,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
    wire [width_p:0] opC;
    assign quotient_o = opC[width_p-1:0];
 
-   wire signed_div_r;
+   wire         signed_div_r;
 
    wire latch_signed_div;
    bsg_dff_en#(.width_p(1)) req_reg
@@ -93,7 +93,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
            ,.data_o(  opB_mux )
            ,.sel_one_hot_i(opB_sel)
      );
-   
+
    wire [2:0]   opC_sel;
    wire [width_p:0]  opC_mux;
    bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxC
