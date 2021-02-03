@@ -29,6 +29,7 @@ module bsg_fifo_reorder
     // dequeue written items in order
     , output fifo_deq_v_o
     , output [width_p-1:0] fifo_deq_data_o
+    , output [lg_els_lp-1:0] fifo_deq_id_o
     , input fifo_deq_yumi_i
 
     // this signals that the FIFO is empty
@@ -124,6 +125,7 @@ module bsg_fifo_reorder
     ,.r_addr_i(rptr_r)
     ,.r_data_o(fifo_deq_data_o)
   );
+  assign fifo_deq_id_o = rptr_r;
 
 
   // synopsys translate_off
