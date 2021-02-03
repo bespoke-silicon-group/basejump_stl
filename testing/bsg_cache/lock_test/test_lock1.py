@@ -9,7 +9,9 @@ class TestLock1(TestBase):
 
     set_index = 0
 
-    for iteration in range(random.randint(1,7)): 
+    ways_before_lock = random.randint(0,7)
+
+    for iteration in range(ways_before_lock): 
       tag = iteration
       taddr = self.get_addr(tag,set_index)
       op = random.randint(0,1)
@@ -17,7 +19,7 @@ class TestLock1(TestBase):
         self.send_sw(taddr)
       elif op == 1:
         self.send_lw(taddr)
-    print(iteration)
+    
     # lock way "iteration+1" of set 0
     tag = random.randint(0,15) # set a specific tag will not be accessed later
     taddr = self.get_addr(tag,set_index)
