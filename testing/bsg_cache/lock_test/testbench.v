@@ -214,9 +214,9 @@ module testbench();
   // wait for all responses to be received.
   integer sent_r, recv_r;
 
-  hit_stats  #(
+  lru_stats  #(
     .ways_p(ways_p)
-  ) hit_stats (
+  ) lru_stats (
     .clk_i(DUT.clk_i)
     ,.reset_i(DUT.reset_i)
     
@@ -228,7 +228,7 @@ module testbench();
 
     ,.done_i(done & (sent_r == recv_r))
   );
-  
+
   always_ff @ (posedge clk) begin
     if (reset) begin
       sent_r <= '0;

@@ -1,4 +1,4 @@
-module hit_stats
+module lru_stats
   import bsg_cache_pkg::*;
   #(parameter ways_p="inv"
     ,localparam lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
