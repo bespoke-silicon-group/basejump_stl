@@ -48,7 +48,7 @@ module lru_stats
         integer counter_index;
         if (done_i) 
           begin
-            $display("###### Hit Statistic:                  ######");
+            $display("######## Hit Statistic: ########");
             for (counter_index = 0; counter_index < ways_p; counter_index++)
               begin
                 $display("Hit counter[%d]: %d ", counter_index, hit_counter[counter_index]);
