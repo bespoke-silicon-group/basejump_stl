@@ -59,7 +59,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
    wire latch_signed_div_lo;
    bsg_dff_en#(.width_p(1)) req_reg
        (.data_i (signed_div_i)
-       ,.data_o (signed_div_r)
+        ,.data_o (signed_div_r_li)
        ,.en_i   (latch_signed_div_lo)
        ,.clk_i(clk_i)
         );
