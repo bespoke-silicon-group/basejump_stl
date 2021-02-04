@@ -2,6 +2,10 @@
 //
 // Paul Gao 02/2021
 //
+// This module handles the flow control (with incoming token clock) of
+// source-synchronous communication interface. 
+//
+// data_i and data_o are both synchronous to clk_i and have zero-cycle latency.
 //
 
 module bsg_link_source_sync_upstream_sync

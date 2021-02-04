@@ -2,6 +2,34 @@
 //
 // Paul Gao 03/2019
 //
+// This is the receiver part of bsg_link_sdr, an SDR communication endpoint 
+// over single source-synchronous channel.
+//
+// Typical usage: Communication between different hierarchical blocks in
+// different clock domains on ASIC. In this way the clock trees can be
+// fully independent in different hierarchical blocks.
+//
+//
+// General reset procedures:
+//
+// Step 1: Assert io_link_reset and core_link_reset.
+// Step 2: async_token_reset must be posedge/negedge toggled (0->1->0)
+//         at least once. token_clk_i cannot toggle during this step.
+// Step 3: io_clk_i posedge toggled at least four times after that.
+// Step 4: De-assert upstream_io_link_reset to generate io_clk_o.
+// Step 5: De-assert downstream_io_link_reset.
+// Step 6: De-assert downstream_core_link_reset.
+//
+// *************************************************************************
+//              async         upstream       downstream       downstream
+//           token_reset    io_link_reset   io_link_reset   core_link_reset
+//  Step 1        0               1               1                1
+//  Step 2        1               1               1                1
+//  Step 3        0               1               1                1
+//  Step 4        0               0               1                1
+//  Step 5        0               0               0                1
+//  Step 6        0               0               0                0
+// *************************************************************************
 //
 
 module bsg_link_sdr_downstream
