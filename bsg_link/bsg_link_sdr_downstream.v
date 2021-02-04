@@ -17,20 +17,20 @@ module bsg_link_sdr_downstream
 
   (// Core side
    input                core_clk_i
-  ,input                core_reset_i
+  ,input                core_link_reset_i
   ,output               core_v_o
   ,output [width_p-1:0] core_data_o
   ,input                core_yumi_i
   // IO side
-  ,input                io_reset_i
+  ,input                io_link_reset_i
   ,input                io_clk_i
   ,input                io_v_i
   ,input  [width_p-1:0] io_data_i
   ,output               core_token_r_o
   );
 
-  logic io_v_lo;
-  logic [width_p-1:0] io_data_lo;
+  logic isdr_v_lo;
+  logic [width_p-1:0] isdr_data_lo;
 
   // valid and data signals are received together
   bsg_link_isdr_phy
@@ -38,7 +38,7 @@ module bsg_link_sdr_downstream
   ) isdr_phy
   (.clk_i  (io_clk_i)
   ,.data_i ({io_v_i, io_data_i})
-  ,.data_o ({io_v_lo, io_data_lo})
+  ,.data_o ({isdr_v_lo, isdr_data_lo})
   );
 
   bsg_link_source_sync_downstream
@@ -48,12 +48,12 @@ module bsg_link_sdr_downstream
   ,.bypass_twofer_fifo_p(1)
   ) downstream
   (.core_clk_i       (core_clk_i)
-  ,.core_link_reset_i(core_reset_i)
-  ,.io_link_reset_i  (io_reset_i)
+  ,.core_link_reset_i(core_link_reset_i)
+  ,.io_link_reset_i  (io_link_reset_i)
   // source synchronous input channel
   ,.io_clk_i         (io_clk_i)
-  ,.io_data_i        (io_data_lo)
-  ,.io_valid_i       (io_v_lo)
+  ,.io_data_i        (isdr_data_lo)
+  ,.io_valid_i       (isdr_v_lo)
   ,.core_token_r_o   (core_token_r_o)
   // going into core
   ,.core_data_o      (core_data_o)

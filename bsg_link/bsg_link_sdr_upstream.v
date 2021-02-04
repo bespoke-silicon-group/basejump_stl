@@ -17,11 +17,11 @@ module bsg_link_sdr_upstream
 
   (// Core side
    input                io_clk_i
-  ,input                io_reset_i
+  ,input                io_link_reset_i
   ,input                async_token_reset_i
   ,input                io_v_i
   ,input  [width_p-1:0] io_data_i
-  ,output               io_ready_o
+  ,output               io_ready_and_o
   // IO side
   ,output               io_clk_o
   ,output               io_v_o
@@ -29,22 +29,22 @@ module bsg_link_sdr_upstream
   ,input                token_clk_i
   );
 
-  logic io_v_lo;
-  logic [width_p-1:0] io_data_lo;
+  logic osdr_v_li;
+  logic [width_p-1:0] osdr_data_li;
 
   bsg_link_source_sync_upstream_sync
  #(.width_p                        (width_p)
   ,.lg_fifo_depth_p                (lg_fifo_depth_p)
   ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
   ) sso
-  (.clk_i              (io_clk_i)
-  ,.reset_i            (io_reset_i)
+  (.io_clk_i           (io_clk_i)
+  ,.io_link_reset_i    (io_link_reset_i)
   ,.async_token_reset_i(async_token_reset_i)
-  ,.v_i                (io_v_i)
-  ,.data_i             (io_data_i)
-  ,.ready_o            (io_ready_o)
-  ,.v_o                (io_v_lo)
-  ,.data_o             (io_data_lo)
+  ,.io_v_i             (io_v_i)
+  ,.io_data_i          (io_data_i)
+  ,.io_ready_and_o     (io_ready_and_o)
+  ,.io_v_o             (osdr_v_li)
+  ,.io_data_o          (osdr_data_li)
   ,.token_clk_i        (token_clk_i)
   );
 
@@ -53,8 +53,8 @@ module bsg_link_sdr_upstream
  #(.width_p(width_p+1)
   ) osdr_phy
   (.clk_i  (io_clk_i)
-  ,.reset_i(io_reset_i)
-  ,.data_i ({io_v_lo, io_data_lo})
+  ,.reset_i(io_link_reset_i)
+  ,.data_i ({osdr_v_li, osdr_data_li})
   ,.clk_o  (io_clk_o)
   ,.data_o ({io_v_o, io_data_o})
   );

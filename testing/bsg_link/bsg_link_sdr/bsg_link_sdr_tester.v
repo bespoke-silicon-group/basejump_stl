@@ -60,11 +60,11 @@ module bsg_link_sdr_tester
   ) uplink
   (// Core side
    .io_clk_i           (uplink_clk)
-  ,.io_reset_i         (uplink_reset)
+  ,.io_link_reset_i    (uplink_reset)
   ,.async_token_reset_i(async_token_reset)
   ,.io_data_i          (uplink_data_li)
   ,.io_v_i             (uplink_v_li)
-  ,.io_ready_o         (uplink_ready_lo)
+  ,.io_ready_and_o     (uplink_ready_lo)
   // IO side
   ,.io_clk_o           (link_clk)
   ,.io_data_o          (link_data)
@@ -87,12 +87,12 @@ module bsg_link_sdr_tester
   ) downlink
   (// Core side
    .core_clk_i        (downstream_clk)
-  ,.core_reset_i      (downstream_reset)
+  ,.core_link_reset_i (downstream_reset)
   ,.core_data_o       (downstream_data_lo)
   ,.core_v_o          (downstream_v_lo)
   ,.core_yumi_i       (downstream_v_lo & downstream_ready_li)
   // IO side
-  ,.io_reset_i        (downlink_reset_sync)
+  ,.io_link_reset_i   (downlink_reset_sync)
   ,.io_clk_i          (link_clk)
   ,.io_data_i         (link_data)
   ,.io_v_i            (link_v)
