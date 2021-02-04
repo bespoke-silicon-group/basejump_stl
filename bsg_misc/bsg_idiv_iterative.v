@@ -59,7 +59,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
    wire latch_signed_div_lo;
    bsg_dff_en#(.width_p(1)) req_reg
        (.data_i (signed_div_i)
-        ,.data_o (signed_div_r_li)
+       ,.data_o (signed_div_r_li)
        ,.en_i   (latch_signed_div_lo)
        ,.clk_i(clk_i)
         );
@@ -131,14 +131,14 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
 
     wire [width_p:0] opA_xnor;
     bsg_xnor#(.width_p(width_p+1)) xnor_opA 
-      (.a_i({(width_p+1){opA_inv_lo}})
+        (.a_i({(width_p+1){opA_inv_lo}})
         ,.b_i(opA)
         ,.o  (opA_xnor)
         ); 
 
     wire [width_p:0] opB_xnor;
     bsg_xnor#(.width_p(width_p+1)) xnor_opB 
-      (.a_i({(width_p+1){opB_inv_lo}})
+        (.a_i({(width_p+1){opB_inv_lo}})
         ,.b_i(opB)
         ,.o  (opB_xnor)
         ); 
@@ -168,7 +168,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
   bsg_adder_cin #(.width_p(width_p+1)) adder
    (.a_i  (add_in0)
    ,.b_i  (add_in1)
-    ,.cin_i(adder_cin_lo)
+   ,.cin_i(adder_cin_lo)
    ,.o    (add_out)
    );
 
