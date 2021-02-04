@@ -110,6 +110,11 @@ module bsg_link_source_sync_downstream
   ,.r_valid_o(core_async_fifo_valid_lo));
 
 
+  if (bypass_twofer_fifo_p == 0)
+  begin
+
+   wire core_async_fifo_ready_li;
+
   // Oct 17, 2014
   // we insert a minimal fifo here for two purposes;
   // first, this reduces critical
@@ -119,26 +124,25 @@ module bsg_link_source_sync_downstream
   // and do not propogate out to other modules that may be attached, complicating
   // timing assertions.
   //
-  if (bypass_twofer_fifo_p == 0)
-  begin
-    wire core_async_fifo_ready_li;
-    bsg_two_fifo 
-   #(.width_p(channel_width_p)
-    ) twofer
-    (.clk_i  (core_clk_i)
-    ,.reset_i(core_link_reset_i)
-   
-    // we feed this into the local yumi, but only if it is valid
-    ,.ready_o(core_async_fifo_ready_li)
-    ,.data_i (core_async_fifo_data_lo)
-    ,.v_i    (core_async_fifo_valid_lo)
-   
-    ,.v_o    (core_valid_o)
-    ,.data_o (core_data_o)
-    ,.yumi_i (core_yumi_i)
-    );
-    // a word was transferred to fifo if ...
-    assign core_async_fifo_deque = core_async_fifo_valid_lo & core_async_fifo_ready_li;
+  bsg_two_fifo 
+ #(.width_p(channel_width_p)
+  ) twofer
+  (.clk_i  (core_clk_i)
+  ,.reset_i(core_link_reset_i)
+
+  // we feed this into the local yumi, but only if it is valid
+  ,.ready_o(core_async_fifo_ready_li)
+  ,.data_i (core_async_fifo_data_lo)
+  ,.v_i    (core_async_fifo_valid_lo)
+
+  ,.v_o    (core_valid_o)
+  ,.data_o (core_data_o)
+  ,.yumi_i (core_yumi_i)
+  );
+
+   // a word was transferred to fifo if ...
+   assign core_async_fifo_deque = core_async_fifo_valid_lo & core_async_fifo_ready_li;
+
   end
   else
   begin
