@@ -158,7 +158,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
   end
   else begin: nbs
 
-    assign add_in0 = (opA ^ {width_p+1{opA_inv}}) & {width_p+1{opA_clr_lo}};
+    assign add_in0 = (opA ^ {width_p+1{opA_inv_lo}}) & {width_p+1{opA_clr_lo}};
     assign add_in1 = (opB ^ {width_p+1{opB_inv_lo}}) & {width_p+1{opB_clr_lo}};
 
   end
