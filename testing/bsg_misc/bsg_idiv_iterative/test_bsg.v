@@ -5,10 +5,10 @@
 // Code refactored based on Sam Larserk's work
 //
 //`define ITERS   24000000
-`define ITERS 10000
+`define ITERS 256
 `define SIGN			// test signed divide
 `define UNSIGN			// test unsigned divide
-`define WIDTH 64
+`define WIDTH 4
 
 module test_bsg;
 
@@ -33,10 +33,10 @@ module test_bsg;
    reg  [`WIDTH-1:0] u_quotient;
    reg  [`WIDTH-1:0] u_remainder;
 
-   longint s_dividend;
-   longint s_divisor;
-   longint s_quotient;
-   longint s_remainder;
+   byte s_dividend;
+   byte s_divisor;
+   byte s_quotient;
+   byte s_remainder;
 
    bsg_idiv_iterative #(.width_p(`WIDTH)) dut (
            .dividend_i(dividend),
@@ -64,8 +64,8 @@ module test_bsg;
 
 	 // do the signed case
 	`ifdef SIGN
-	 s_dividend = dividend;
-	 s_divisor  = divisor;
+	 s_dividend = {{4{dividend[`WIDTH-1]}}, dividend[`WIDTH-1:0]};
+	 s_divisor  = {{4{divisor[`WIDTH-1]}}, divisor[`WIDTH-1:0]};
 
 	 signed_div = 1;
 	 
@@ -75,8 +75,11 @@ module test_bsg;
 	 div_req = 0;
 	 wait (done == 1);
 
-	 s_quotient  = quotient;
-	 s_remainder = remainder;	 
+	 s_quotient  = {{4{quotient[`WIDTH-1]}}, quotient[`WIDTH-1:0]};
+	 s_remainder = {{4{remainder[`WIDTH-1]}}, remainder[`WIDTH-1:0]};	
+
+         $display("dividend: %d    divisor: %d", s_dividend, s_divisor);
+
      //FIXME : when s_dividend == 32'h8000_0000 and s_divisor == 32'hffff_ffff
      //        the VCS crashs, may be the result overflowed !
      if( s_dividend != (1 << `WIDTH) && s_divisor != '1)  begin
