@@ -77,9 +77,6 @@ module test_bsg;
 
 	 s_quotient  = {{4{quotient[`WIDTH-1]}}, quotient[`WIDTH-1:0]};
 	 s_remainder = {{4{remainder[`WIDTH-1]}}, remainder[`WIDTH-1:0]};	
-
-         $display("dividend: %d    divisor: %d", s_dividend, s_divisor);
-
      //FIXME : when s_dividend == 32'h8000_0000 and s_divisor == 32'hffff_ffff
      //        the VCS crashs, may be the result overflowed !
      if( s_dividend != (1 << `WIDTH) && s_divisor != '1)  begin
