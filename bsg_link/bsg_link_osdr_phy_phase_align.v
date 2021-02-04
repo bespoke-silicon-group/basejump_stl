@@ -8,6 +8,8 @@
 // Output clock is generated with XOR logic
 // Waveform below shows the detailed behavior of the module
 //
+// THIS MODULE SHOULD BE HARDENED TO IMPROVE QUALITY OF CLK_O
+//
 /****************************************************************************
 
           +---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+
