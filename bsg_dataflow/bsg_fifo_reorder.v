@@ -29,6 +29,8 @@ module bsg_fifo_reorder
     // dequeue written items in order
     , output fifo_deq_v_o
     , output [width_p-1:0] fifo_deq_data_o
+    // id of the currently dequeueing fifo entry. This can be used to select
+    // metadata from a separate memory storage, written at a different time
     , output [lg_els_lp-1:0] fifo_deq_id_o
     , input fifo_deq_yumi_i
 
