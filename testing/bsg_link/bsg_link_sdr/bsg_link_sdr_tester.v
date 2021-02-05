@@ -10,7 +10,7 @@ module bsg_link_sdr_tester
 
  #(parameter width_p                         = 64
   ,parameter lg_fifo_depth_p                 = 3
-  ,parameter lg_credit_to_token_decimation_p = 1
+  ,parameter lg_credit_to_token_decimation_p = 0
   )
 
   ();

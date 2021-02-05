@@ -114,7 +114,11 @@ module bsg_async_credit_counter #(parameter max_tokens_p = "inv"
 */
 
    wire [w_counter_width_lp-1:0] r_counter_r_hi_bits         =   r_counter_r[lg_credit_to_token_decimation_p+:w_counter_width_lp];
-   wire                          r_counter_r_lo_bits_nonzero = | r_counter_r[0+:lg_credit_to_token_decimation_p];
+   wire                          r_counter_r_lo_bits_nonzero;
+   if (lg_credit_to_token_decimation_p == 0)
+     assign r_counter_r_lo_bits_nonzero = 1'b0;
+   else
+     assign r_counter_r_lo_bits_nonzero = | r_counter_r[0+:lg_credit_to_token_decimation_p];
    wire [w_counter_width_lp-1:0] r_counter_r_hi_bits_gray    = (r_counter_r_hi_bits >> 1) ^ r_counter_r_hi_bits;
 
    assign r_credits_avail_o = r_infinite_credits_i | r_counter_r_lo_bits_nonzero | (r_counter_r_hi_bits_gray != w_counter_gray_r_rsync);

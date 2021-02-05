@@ -12,7 +12,7 @@ module bsg_link_source_sync_upstream_sync
 
  #(parameter width_p                         = "inv"
   ,parameter lg_fifo_depth_p                 = 3
-  ,parameter lg_credit_to_token_decimation_p = 1
+  ,parameter lg_credit_to_token_decimation_p = 0
   )
 
   (// control signals  
@@ -96,7 +96,7 @@ module bsg_link_source_sync_upstream_sync
        ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
        ,.count_negedge_p(1'b0)
        // we enable extra margin in case downstream module wants more tokens
-       ,.extra_margin_p(2)
+       ,.extra_margin_p(0)
        ,.start_full_p(1)
        ,.use_async_w_reset_p(1'b1)
        ) pos_credit_ctr
@@ -119,7 +119,7 @@ module bsg_link_source_sync_upstream_sync
        ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
        ,.count_negedge_p(1'b1)
        // we enable extra margin in case downstream module wants more tokens
-       ,.extra_margin_p(2)
+       ,.extra_margin_p(0)
        ,.start_full_p(1)
        ,.use_async_w_reset_p(1'b1)
        ) neg_credit_ctr

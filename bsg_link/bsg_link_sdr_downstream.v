@@ -40,7 +40,7 @@ module bsg_link_sdr_downstream
   ,parameter lg_fifo_depth_p = 3
   // Token credit decimation
   // MUST MATCH paired bsg_link_ddr_upstream setting
-  ,parameter lg_credit_to_token_decimation_p = 1
+  ,parameter lg_credit_to_token_decimation_p = 0
   )
 
   (// Core side
