@@ -7,6 +7,11 @@
 // clk_o is center-aligned to data_o and is inverted from clk_i
 // Waveform below shows the detailed behavior of the module
 //
+// WARNING:
+// Source of clk_o is combinational logic instead of a register
+// Duty-cycle of clk_o may not be ideal under certain cirtumstances
+// Using negedge of clk_o may result in timing violation
+//
 /****************************************************************************
 
           +---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+
