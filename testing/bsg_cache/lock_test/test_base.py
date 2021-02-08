@@ -80,6 +80,10 @@ class TestBase:
   def send_tagfl(self, addr):
     self.tg.send(TAGFL, addr)
 
+  # AFL
+  def send_afl(self, addr):
+    self.tg.send(AFL, addr)
+
   # AFLINV
   def send_aflinv(self, addr):
     self.tg.send(AFLINV, addr)

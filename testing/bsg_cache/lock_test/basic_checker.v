@@ -152,7 +152,7 @@ module basic_checker
                 if (store_mask[i])
                   shadow_mem[cache_pkt_word_addr][8*i+:8] <= store_data[8*i+:8];
             end
-            ALOCK, AUNLOCK, TAGFL, AFLINV: begin
+            ALOCK, AUNLOCK, TAGFL, AFLINV, AFL: begin
               result[send_id] = '0;
               send_id++;
             end
