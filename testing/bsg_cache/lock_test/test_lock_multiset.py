@@ -2,27 +2,31 @@ import sys
 import random
 from test_base import *
 
-class TestLock1(TestBase):
+class TestLockMultiset(TestBase):
 
   def generate(self):
     self.clear_tag()
 
-    # lock one way x of each set
+    way_on_locked = random.randint(0,self.ways_p-1)
+    tag_on_locked = way_on_locked # set a specific tag will not be accessed later
+
+    # lock 'way_on_locked' x of each set
     for set_index in range(0, self.sets_p):
-      tag = random.randint(0,15) # set a specific tag will not be accessed later
-      taddr = self.get_addr(tag,set_index)
-      self.send_alock(taddr)
+      # Using tagst rather than alock set the lock without changing the LRU bits
+      #               way,           index,     valid,   lock, tag
+      self.send_tagst(way_on_locked, set_index, 0,       1,    tag_on_locked)
 
     # Acces other ways in a random set
     for iteration in range(50000): 
-      tag = random.randint(0,15)
-      set_index =  random.randint(0,self.sets_p-1)
-      taddr = self.get_addr(tag,set_index)
-      op = random.randint(0,1)
-      if op == 0:
-        self.send_sw(taddr)
-      elif op == 1:
-        self.send_lw(taddr)
+      tag = random.randint(0,31)
+      if tag != tag_on_locked:
+        set_index =  random.randint(0,self.sets_p-1)
+        taddr = self.get_addr(tag,set_index)
+        op = random.randint(0,1)
+        if op == 0:
+          self.send_sw(taddr)
+        elif op == 1:
+          self.send_lw(taddr)
          
     # done
     self.tg.done()
@@ -30,5 +34,5 @@ class TestLock1(TestBase):
 
 # main()
 if __name__ == "__main__":
-  t = TestLock1()
+  t = TestLockMultiset()
   t.generate()
