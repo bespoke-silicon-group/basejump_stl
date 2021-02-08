@@ -7,7 +7,7 @@ class TestLockMultiset(TestBase):
   def generate(self):
     self.clear_tag()
 
-    way_on_locked = random.randint(0,self.ways_p-1)
+    way_on_locked = self.ways_on_locked # random.randint(0,self.ways_p-1)
     tag_on_locked = way_on_locked # set a specific tag will not be accessed later
 
     # lock 'way_on_locked' x of each set

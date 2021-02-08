@@ -23,6 +23,7 @@ DMA_READ_DELAY_P  ?= 0
 DMA_WRITE_DELAY_P ?= 0
 DMA_REQ_DELAY_P   ?= 0
 DMA_DATA_DELAY_P  ?= 0
+WAY_ON_LOCKED_P   ?= 4
 
 VCS_DEFINES += +define+YUMI_MIN_DELAY_P=$(YUMI_MIN_DELAY_P)
 VCS_DEFINES += +define+YUMI_MAX_DELAY_P=$(YUMI_MAX_DELAY_P)
@@ -51,7 +52,7 @@ simv:
 out/%/trace.tr:
 	mkdir -p out/
 	mkdir -p out/$*
-	python $*.py > $@
+	python $*.py $(WAY_ON_LOCKED_P) > $@
 
 %.basic.run: simv out/%/trace.tr
 	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=basic -l simv.log)

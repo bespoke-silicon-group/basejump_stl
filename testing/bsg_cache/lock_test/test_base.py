@@ -16,6 +16,7 @@ class TestBase:
     self.sets_p = 128
     self.ways_p = 8
     self.block_size_in_words_p = 8
+    self.ways_on_locked = int(sys.argv[1])
 
 
   # TAGST
