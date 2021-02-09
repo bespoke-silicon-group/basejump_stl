@@ -185,7 +185,7 @@ module bsg_cache_miss
 
   // backup LRU
   // A slightly crude implementation. read the design doc for the better possibility.
-  logic [lg_ways_lp-1:0] backup_lru_way_id;
+  logic [lg_ways_lp-1:0] backup_lru_way_id, neighbor_lru_way_id;
   
   bsg_priority_encode #(
     .width_p(ways_p)
@@ -195,6 +195,9 @@ module bsg_cache_miss
     ,.addr_o(backup_lru_way_id)
     ,.v_o() // backup LRU has to exist, otherwise we are screwed.
   );
+
+  // The closet neighbor sibiling is a better option as backup lru
+  assign neighbor_lru_way_id = {lru_way_id[1+:lg_ways_lp-1], ~lru_way_id[0]};
 
   // chosen way demux
   //
@@ -273,7 +276,7 @@ module bsg_cache_miss
         chosen_way_n = invalid_exist
           ? invalid_way_id
           : (lock_v_i[lru_way_id]
-            ? backup_lru_way_id
+            ? (lock_v_i[neighbor_lru_way_id] ? backup_lru_way_id : neighbor_lru_way_id) 
             : lru_way_id);
 
         dma_cmd_o = e_dma_send_fill_addr;
