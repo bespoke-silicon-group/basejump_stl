@@ -28,26 +28,22 @@ class TestLock1(TestBase):
       # A general case: Randomly Acces unlocked ways in set 0
       for iteration in range(50000): 
         tag = random.randint(0,31)
-        # never access the lock way again
-        if tag != tag_locked:
+        taddr = self.get_addr(tag,set_index)
+        op = random.randint(0,1)
+        if op == 0:
+          self.send_sw(taddr)
+        elif op == 1:
+          self.send_lw(taddr)
+    else:
+      # An extreme case: always access evicted ways in set 0
+      for iteration in range(3000): 
+        for tag in range(16):
           taddr = self.get_addr(tag,set_index)
           op = random.randint(0,1)
           if op == 0:
             self.send_sw(taddr)
           elif op == 1:
             self.send_lw(taddr)
-    else:
-      # An extreme case: always access evicted ways in set 0
-      for iteration in range(3000): 
-        for tag in range(16):
-          # never access the lock way again
-          if tag != tag_locked:
-            taddr = self.get_addr(tag,set_index)
-            op = random.randint(0,1)
-            if op == 0:
-              self.send_sw(taddr)
-            elif op == 1:
-              self.send_lw(taddr)
          
     # done
     self.tg.done()
