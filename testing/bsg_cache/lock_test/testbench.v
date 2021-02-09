@@ -200,17 +200,6 @@ module testbench();
     ,.en_i($root.testbench.checker == "basic")
   );
 
-  // miss monitor is used to record the lru replacement behavior
-  bind DUT.miss miss_monitor  #(
-    .addr_width_p(addr_width_p)
-    ,.data_width_p(data_width_p)
-    ,.sets_p(sets_p)
-    ,.block_size_in_words_p(block_size_in_words_p)
-    ,.ways_p(ways_p)
-  ) miss_monitor (
-    .*
-  );
-
   // wait for all responses to be received.
   integer sent_r, recv_r;
 
