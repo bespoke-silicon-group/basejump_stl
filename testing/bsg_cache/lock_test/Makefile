@@ -23,7 +23,7 @@ DMA_READ_DELAY_P  ?= 0
 DMA_WRITE_DELAY_P ?= 0
 DMA_REQ_DELAY_P   ?= 0
 DMA_DATA_DELAY_P  ?= 0
-WAY_ON_LOCKED_P   ?= 4
+WAY_ON_LOCKED_P   ?= 0
 
 VCS_DEFINES += +define+YUMI_MIN_DELAY_P=$(YUMI_MIN_DELAY_P)
 VCS_DEFINES += +define+YUMI_MAX_DELAY_P=$(YUMI_MAX_DELAY_P)
@@ -35,7 +35,7 @@ VCS_DEFINES += +define+DMA_DATA_DELAY_P=$(DMA_DATA_DELAY_P)
 ########################
 
 SIMV = $(abspath simv)
-WAVE ?= 1
+WAVE ?= 0
 
 BASIC_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BASIC_TEST)))
 

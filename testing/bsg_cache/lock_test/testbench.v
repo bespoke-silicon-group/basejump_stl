@@ -27,7 +27,7 @@ module testbench();
   localparam block_size_in_words_p = 8;
   localparam sets_p = 128;
   localparam ways_p = 8;
-  localparam mem_size_p = block_size_in_words_p*sets_p*ways_p*4;
+  localparam mem_size_p = 2**17;
 
 
   integer status;
@@ -195,7 +195,7 @@ module testbench();
     .data_width_p(data_width_p)
     ,.addr_width_p(addr_width_p)
     ,.mem_size_p($root.testbench.mem_size_p)
-  ) hit_check (
+  ) basic_check (
     .*
     ,.en_i($root.testbench.checker == "basic")
   );
