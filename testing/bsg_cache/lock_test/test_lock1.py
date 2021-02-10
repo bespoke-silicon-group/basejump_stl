@@ -22,7 +22,7 @@ class TestLock1(TestBase):
     taddr = self.get_addr(tag_locked, set_index)
     self.send_alock(taddr)
 
-    is_always_miss = 0
+    is_always_miss = 1
 
     if not is_always_miss:
       # A general case: Randomly Acces unlocked ways in set 0

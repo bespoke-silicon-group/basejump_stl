@@ -16,18 +16,34 @@ class TestLockMultiset(TestBase):
       #               way,           index,     valid,   lock, tag
       self.send_tagst(way_on_locked, set_index, 0,       1,    tag_on_locked)
 
-    # Acces other ways in a random set
-    for iteration in range(50000): 
-      tag = random.randint(0,31)
-      if tag != tag_on_locked:
-        set_index =  random.randint(0,self.sets_p-1)
-        taddr = self.get_addr(tag,set_index)
-        op = random.randint(0,1)
-        if op == 0:
-          self.send_sw(taddr)
-        elif op == 1:
-          self.send_lw(taddr)
-         
+    is_always_miss = 1
+
+    if not is_always_miss:
+      # A general case: Randomly Acces unlocked ways in set 0
+      for iteration in range(50000):  
+        tag = random.randint(0,31)
+        # never access the lock way again
+        if tag != tag_on_locked:
+          set_index =  random.randint(0,self.sets_p-1)
+          taddr = self.get_addr(tag,set_index)
+          op = random.randint(0,1)
+          if op == 0:
+            self.send_sw(taddr)
+          elif op == 1:
+            self.send_lw(taddr)
+    else:
+      # An extreme case: always access evicted ways in set 0
+      for iteration in range(3000): 
+        for tag in range(16):
+          # never access the lock way again
+          if tag != tag_on_locked:
+            set_index =  random.randint(0,self.sets_p-1)
+            taddr = self.get_addr(tag,set_index)
+            op = random.randint(0,1)
+            if op == 0:
+              self.send_sw(taddr)
+            elif op == 1:
+              self.send_lw(taddr)
     # done
     self.tg.done()
 

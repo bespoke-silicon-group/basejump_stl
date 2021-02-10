@@ -42,6 +42,5 @@ $BASEJUMP_STL_DIR/bsg_cache/bsg_cache.v
 ../common/bsg_nonsynth_dma_model.v
 ../common/bsg_nonsynth_random_yumi_gen.v
 basic_checker.v
-miss_monitor.v
 lru_stats.v
 testbench.v
