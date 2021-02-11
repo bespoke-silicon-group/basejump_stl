@@ -41,6 +41,11 @@ module bsg_mem_1rw_sync_mask_write_bit #(
       data_r <= mem[addr_i];
   end
 
+  initial
+    begin
+      $display("BSG INFO: els_p=%d width_p=%d 1RW SRAM Mask Write ram will be inferred as distributed RAM.",els_p,width_p);
+    end
+  
   assign data_o = data_r;
 
   for (genvar i=0; i<width_p; i=i+1) begin
