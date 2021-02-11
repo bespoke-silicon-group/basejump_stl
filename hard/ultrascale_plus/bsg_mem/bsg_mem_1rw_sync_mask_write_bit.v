@@ -8,7 +8,7 @@
 * But none of them support bit-wise mask. They have Byte-wide write enable ports though.
 * So we use the RAM_STYLE attribute to instruct the tool to infer distributed LUT RAM instead.
 *
-* To save resources, the code is written to be inferred as Signle-port distributed ram RAM64X1S.
+* To save resources, the code is written to be inferred as Single-port distributed ram RAM64X1S.
 * https://www.xilinx.com/support/documentation/user_guides/ug574-ultrascale-clb.pdf
 *
 */
