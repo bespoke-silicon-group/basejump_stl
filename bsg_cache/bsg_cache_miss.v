@@ -187,22 +187,6 @@ module bsg_cache_miss
   // A slightly crude implementation. read the design doc for the better possibility.
   logic [lg_ways_lp-1:0] backup_lru_way_id;
 
-  // ***************  Solution 1: neighbor sibiling ***************/
-  // bsg_priority_encode #(
-  //   .width_p(ways_p)
-  //   ,.lo_to_hi_p(1)
-  // ) backup_lru_pe (
-  //   .i(~lock_v_i)
-  //   ,.addr_o(backup_lru_way_id)
-  //   ,.v_o() // backup LRU has to exist, otherwise we are screwed.
-  // );
-
-  // // The closet neighbor sibiling is a better option as backup lru
-  // logic [lg_ways_lp-1:0]  neighbor_lru_way_id;
-  // assign neighbor_lru_way_id = {lru_way_id[1+:lg_ways_lp-1], ~lru_way_id[0]};
-
-
-  // **********  Solution 2: bsg_lru_pseudo_tree_encode **********/
   logic [ways_p-2:0] modify_mask_lo;
   logic [ways_p-2:0] modify_data_lo;
   logic [ways_p-2:0] modified_lru_bits;
@@ -305,14 +289,6 @@ module bsg_cache_miss
         // if not, pick the LRU way. But if the LRU way is locked, then pick
         // the backup LRU (anything that's unlocked, assuming that we have at
         // least one unlocked way).
-        // ***************  Solution 1: neighbor sibiling ***************/
-        // chosen_way_n = invalid_exist
-        //   ? invalid_way_id
-        //   : (lock_v_i[lru_way_id]
-        //     ? (lock_v_i[neighbor_lru_way_id] ? backup_lru_way_id : neighbor_lru_way_id) 
-        //     : lru_way_id);
-
-        // **********  Solution 2: bsg_lru_pseudo_tree_encode **********/
         chosen_way_n = invalid_exist
           ? invalid_way_id
           : (lock_v_i[lru_way_id]
