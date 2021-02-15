@@ -21,7 +21,7 @@ module test_bsg;
    reg reset;
    reg clk;
 
-   integer i;
+   integer i, f1, f2;
 
    reg  [`WIDTH-1:0] dividend;
    reg  [`WIDTH-1:0] divisor;
