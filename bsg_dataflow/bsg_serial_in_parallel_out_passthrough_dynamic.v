@@ -89,13 +89,14 @@ module bsg_serial_in_parallel_out_passthrough_dynamic
     ,.count_o   (count_r    )
     );
 
+    // Set when all max_els_p registers are filled 
     bsg_dff_reset_set_clear
    #(.width_p(1)
    ,.clear_over_set_p(1))
     full_reg
     (.clk_i(clk_i)
     ,.reset_i(reset_i)
-    ,.set_i(is_last_cnt & v_i)
+    ,.set_i(is_last_cnt & v_i & ready_and_o)
     ,.clear_i(clear_li)
     ,.data_o(is_full_r)
     );
@@ -128,24 +129,27 @@ module bsg_serial_in_parallel_out_passthrough_dynamic
 
     // Output valid data after receiving all data words of each transaction
     // Also valid for special case of single word transation
-    assign v_o         = (v_i & is_last_cnt) | is_zero_len | is_waiting;
+    assign v_o         = (v_i & is_last_cnt) | is_full_r | is_zero_len | is_waiting;
     // Dequeue incoming serial data and store in registers. Last data word 
-    // of each transaction is not registered to minimize hardware. Accept no 
-    // data word when waiting to send previous single word transaction. 
-    assign ready_and_o = (ready_and_i | ~is_full_r) & ~is_waiting;
+    // of each transaction is registered to work together with demanding 
+    // "ready_and_i" from downstream and demanding "v_i" from upstream. 
+    // Accept no data word when 
+    // 1. all max_els_p registers are filled.
+    // 2. waiting to send previous single word transaction.
+    assign ready_and_o = ~is_full_r & ~is_waiting;
     assign first_o     = is_zero_cnt;
 
     // Decide when to update data registers
     bsg_decode_with_v
-   #(.num_out_p(max_els_p        )
+   #(.num_out_p(max_els_p                      )
     ) bdwv
-    (.i        (count_r          )
-    ,.v_i      (v_i & ~is_waiting)
-    ,.o        (data_en_li       )
+    (.i        (count_r                        )
+    ,.v_i      (ready_and_o & v_i & ~is_waiting)
+    ,.o        (data_en_li                     )
     );
 
     // Registered data words
-    for (genvar i = 0; i < max_els_p-1; i++)
+    for (genvar i = 0; i < max_els_p; i++)
       begin: rof
         bsg_dff_en_bypass
        #(.width_p(width_p      )
@@ -156,7 +160,6 @@ module bsg_serial_in_parallel_out_passthrough_dynamic
         ,.data_o (data_o    [i])
         );
       end
-    assign data_o[max_els_p-1] = data_i;
 
   end
 
