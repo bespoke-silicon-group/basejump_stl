@@ -59,6 +59,8 @@ module test_bsg;
    
    initial #25 begin
       $init();
+      f1 = $fopen("s_output.txt","w");
+      f2 = $fopen("u_output.txt","w");
       for (i=0; i<`ITERS; i=i+1) begin
 	 $get_stim(dividend, divisor);
 
@@ -77,15 +79,11 @@ module test_bsg;
 
 	 s_quotient  = {{4{quotient[`WIDTH-1]}}, quotient[`WIDTH-1:0]};
 	 s_remainder = {{4{remainder[`WIDTH-1]}}, remainder[`WIDTH-1:0]};
-	      
-	 f1 = $fopen("s_output.txt","w");
 	 
 	 $fwrite(f1,"%d ", s_dividend);
 	 $fwrite(f1,"%d ", s_divisor);
 	 $fwrite(f1,"%d ", s_quotient);
 	 $fwrite(f1,"%d\n", s_remainder);
-	 
-	 $fclose(f1);
      
 	`endif
 	 
@@ -105,19 +103,18 @@ module test_bsg;
 	 u_quotient  = quotient;
 	 u_remainder = remainder;
 	 
-	 f2 = $fopen("u_output.txt","w");
-	 
 	 $fwrite(f2,"%d ", u_dividend);
 	 $fwrite(f2,"%d ", u_divisor);     
 	 $fwrite(f2,"%d ", u_quotient);
 	 $fwrite(f2,"%d\n", u_remainder);
 	 
-	 $fclose(f2); 
-	 
 	`endif
 
       end
-	
+	   
+      $fclose(f1);
+      $fclose(f2); 
+	   
       $done;
       #80 $finish;
    end
