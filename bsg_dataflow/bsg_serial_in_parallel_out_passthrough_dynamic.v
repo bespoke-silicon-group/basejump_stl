@@ -61,7 +61,7 @@ module bsg_serial_in_parallel_out_passthrough_dynamic
 
     logic [lg_max_els_lp-1:0] count_r, len_r;
     logic is_zero_cnt, is_last_cnt, is_zero_len, is_waiting;
-    logic en_li, clear_li, up_li;
+    logic en_li, clear_li, up_li, is_full_r;
     logic [max_els_p-1:0] data_en_li;
 
     // Register the length of upcoming transaction
@@ -87,6 +87,17 @@ module bsg_serial_in_parallel_out_passthrough_dynamic
     ,.clear_i   (clear_li   )
     ,.up_i      (up_li      )
     ,.count_o   (count_r    )
+    );
+
+    bsg_dff_reset_set_clear
+   #(.width_p(1)
+   ,.clear_over_set_p(1))
+    full_reg
+    (.clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.set_i(is_last_cnt & v_i)
+    ,.clear_i(clear_li)
+    ,.data_o(is_full_r)
     );
 
     // Zero count means idle state, accepting new transaction
@@ -121,7 +132,7 @@ module bsg_serial_in_parallel_out_passthrough_dynamic
     // Dequeue incoming serial data and store in registers. Last data word 
     // of each transaction is not registered to minimize hardware. Accept no 
     // data word when waiting to send previous single word transaction. 
-    assign ready_and_o = (ready_and_i | ~is_last_cnt) & ~is_waiting;
+    assign ready_and_o = (ready_and_i | ~is_full_r) & ~is_waiting;
     assign first_o     = is_zero_cnt;
 
     // Decide when to update data registers
