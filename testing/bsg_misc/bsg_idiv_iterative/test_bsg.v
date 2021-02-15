@@ -76,19 +76,17 @@ module test_bsg;
 	 wait (done == 1);
 
 	 s_quotient  = {{4{quotient[`WIDTH-1]}}, quotient[`WIDTH-1:0]};
-	 s_remainder = {{4{remainder[`WIDTH-1]}}, remainder[`WIDTH-1:0]};	
-     //FIXME : when s_dividend == 32'h8000_0000 and s_divisor == 32'hffff_ffff
-     //        the VCS crashs, may be the result overflowed !
-     if( s_dividend != (1 << `WIDTH) && s_divisor != '1)  begin
-	    if ((s_quotient  != s_dividend / s_divisor) ||
-	        (s_remainder != s_dividend % s_divisor)) begin
-	       $display("----------- ERROR in signed divide -----------");
-	       $display("dividend:  0x%x  (%d)",   s_dividend, s_dividend);
-	       $display("divisor:   0x%x  (%d)",   s_divisor,  s_divisor);
-	       $display("quotient:  0x%x  (%d), except 0x%0x",   s_quotient, s_quotient, s_dividend/s_divisor);
-           $display("remainder: 0x%x  (%d), except 0x%0x\n", s_remainder,s_remainder,s_dividend%s_divisor);
-         end
-    end
+	 s_remainder = {{4{remainder[`WIDTH-1]}}, remainder[`WIDTH-1:0]};
+	      
+	 f1 = $fopen("s_output.txt","w");
+	 
+	 $fwrite(f1,"%d ", s_dividend);
+	 $fwrite(f1,"%d ", s_divisor);
+	 $fwrite(f1,"%d ", s_quotient);
+	 $fwrite(f1,"%d\n", s_remainder);
+	 
+	 $fclose(f1);
+     
 	`endif
 	 
 	 // do the unsigned case
@@ -106,14 +104,16 @@ module test_bsg;
 	 
 	 u_quotient  = quotient;
 	 u_remainder = remainder;
-	 if ((u_quotient  != u_dividend / u_divisor) ||
-	     (u_remainder != u_dividend % u_divisor)) begin
-	    $display("----------- ERROR in unsigned divide -----------");
-	    $display("dividend:  0x%x  (%d)",   u_dividend, u_dividend);
-	    $display("divisor:   0x%x  (%d)",   u_divisor,  u_divisor);
-	    $display("quotient:  0x%x  (%d),expect 0x%x",   u_quotient, u_quotient, u_dividend/u_divisor);
-        $display("remainder: 0x%x  (%d),expect 0x%x\n", u_remainder,u_remainder,u_dividend%u_divisor);
-	 end
+	 
+	 f2 = $fopen("u_output.txt","w");
+	 
+	 $fwrite(f2,"%d ", u_dividend);
+	 $fwrite(f2,"%d ", u_divisor);     
+	 $fwrite(f2,"%d ", u_quotient);
+	 $fwrite(f2,"%d\n", u_remainder);
+	 
+	 $fclose(f2); 
+	 
 	`endif
 
       end
