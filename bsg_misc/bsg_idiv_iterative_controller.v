@@ -117,7 +117,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
     end
     
     NEG0: begin
-       next_state = NEG1;
+       next_state = (opC_is_neg_i & signed_div_r_i) ? NEG1 : SHIFT;
        opA_inv_o    = 1'b1;
        opB_clr_l_o  = 1'b0;
        opB_sel_o    = 3'b100;
@@ -146,7 +146,13 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
 
     CALC: begin
        opB_sel_o  = calc_done ? 3'b010 : 3'b001;
-       next_state = calc_done ? REPAIR : CALC;
+       if (calc_done) begin
+          if (adder_result_is_neg_i)
+             next_state = REPAIR;
+          else
+             next_state = REMAIN;
+       end else
+          next_state = CALC;
     end
 
     REPAIR: begin
@@ -159,7 +165,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
     end
     
     REMAIN: begin
-       next_state = zero_divisor_i ? DONE: QUOT;
+       next_state = (zero_divisor_i | !q_neg) ? DONE: QUOT;
        opA_ld_o     = 1'b1;
        opA_clr_l_o  = 1'b0;
        opB_sel_o    = 3'b100;
