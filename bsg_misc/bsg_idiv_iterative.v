@@ -46,11 +46,11 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
     );
 
 
-   wire [width_p:0] opA;
-   assign remainder_o = opA[width_p-1:0];
+   wire [width_p:0] opA_r;
+   assign remainder_o = opA_r[width_p-1:0];
 
-   wire [width_p:0] opC;
-   assign quotient_o = opC[width_p-1:0];
+   wire [width_p:0] opC_r;
+   assign quotient_o = opC_r[width_p-1:0];
 
    wire         signed_div_r;
    wire divisor_msb  = signed_div_i & divisor_i[width_p-1];
@@ -65,7 +65,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
         );
 
    //if the divisor is zero
-   wire         zero_divisor_li   =  ~(| opA);
+   wire         zero_divisor_li   =  ~(| opA_r);
 
    wire         opA_sel_lo;
    wire [width_p:0]  opA_mux;
@@ -79,7 +79,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
    wire [2:0]   opB_sel_lo;
    wire [width_p:0]  opB_mux;
    bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxB
-          ( .data_i( {opC, add_out, {add_out[width_p-1:0], opC[width_p]}} )
+          ( .data_i( {opC_r, add_out, {add_out[width_p-1:0], opC_r[width_p]}} )
            ,.data_o(  opB_mux )
            ,.sel_one_hot_i(opB_sel_lo)
      );
@@ -87,7 +87,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
    wire [2:0]   opC_sel_lo;
    wire [width_p:0]  opC_mux;
    bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxC
-          ( .data_i( {{dividend_msb, dividend_i},add_out, {opC[width_p-1:0], ~add_out[width_p]}} )
+          ( .data_i( {{dividend_msb, dividend_i},add_out, {opC_r[width_p-1:0], ~add_out[width_p]}} )
            ,.data_o(  opC_mux )
            ,.sel_one_hot_i(opC_sel_lo)
      );
@@ -95,16 +95,16 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
    wire opA_ld_lo;
    bsg_dff_en#(.width_p(width_p+1)) opA_reg
        (.data_i (opA_mux)
-       ,.data_o (opA    )
+       ,.data_o (opA_r  )
        ,.en_i   (opA_ld_lo )
        ,.clk_i(clk_i)
        );
  
    wire         opB_ld_lo;
-   wire [width_p:0]  opB;
+   wire [width_p:0]  opB_r;
    bsg_dff_en#(.width_p(width_p+1)) opB_reg
        (.data_i (opB_mux)
-       ,.data_o (opB    )
+       ,.data_o (opB_r  )
        ,.en_i   (opB_ld_lo )
        ,.clk_i(clk_i)
        );
@@ -112,7 +112,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
    wire opC_ld_lo;
    bsg_dff_en#(.width_p(width_p+1)) opC_reg
        (.data_i (opC_mux)
-       ,.data_o (opC    )
+       ,.data_o (opC_r  )
        ,.en_i   (opC_ld_lo )
        ,.clk_i(clk_i)
        );
@@ -132,14 +132,14 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
     wire [width_p:0] opA_xnor;
     bsg_xnor#(.width_p(width_p+1)) xnor_opA 
         (.a_i({(width_p+1){opA_inv_lo}})
-        ,.b_i(opA)
+        ,.b_i(opA_r)
         ,.o  (opA_xnor)
         ); 
 
     wire [width_p:0] opB_xnor;
     bsg_xnor#(.width_p(width_p+1)) xnor_opB 
         (.a_i({(width_p+1){opB_inv_lo}})
-        ,.b_i(opB)
+        ,.b_i(opB_r)
         ,.o  (opB_xnor)
         ); 
 
@@ -158,8 +158,8 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
   end
   else begin: nbs
 
-    assign add_in0 = (opA ^ {width_p+1{opA_inv_lo}}) & {width_p+1{opA_clr_lo}};
-    assign add_in1 = (opB ^ {width_p+1{opB_inv_lo}}) & {width_p+1{opB_clr_lo}};
+    assign add_in0 = (opA_r ^ {width_p+1{opA_inv_lo}}) & {width_p+1{opA_clr_lo}};
+    assign add_in1 = (opB_r ^ {width_p+1{opB_inv_lo}}) & {width_p+1{opB_clr_lo}};
 
   end
 
@@ -182,8 +182,8 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
       ,.zero_divisor_i           (zero_divisor_li)
       ,.signed_div_r_i           (signed_div_r)
       ,.adder_result_is_neg_i    (add_out[width_p])
-      ,.opA_is_neg_i             (opA[width_p])
-      ,.opC_is_neg_i             (opC[width_p])
+      ,.opA_is_neg_i             (opA_r[width_p])
+      ,.opC_is_neg_i             (opC_r[width_p])
 
       ,.opA_sel_o                (opA_sel_lo)
       ,.opA_ld_o                 (opA_ld_lo)
