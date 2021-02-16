@@ -147,11 +147,9 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
     CALC: begin
        opB_sel_o  = calc_done ? 3'b010 : 3'b001;
        if (calc_done) begin
-          if (adder_result_is_neg_i)
-             next_state = REPAIR;
-          else
-             next_state = REMAIN;
-       end else
+          if (adder_result_is_neg_i) next_state = REPAIR;
+          else next_state = REMAIN;
+       end else 
           next_state = CALC;
     end
 
