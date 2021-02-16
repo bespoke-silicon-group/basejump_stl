@@ -1,14 +1,17 @@
 
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_parallel_in_serial_out.v
-$BASEJUMP_STL_DIR/bsg_dataflow/bsg_serial_in_parallel_out_passthrough.v
+$BASEJUMP_STL_DIR/bsg_dataflow/bsg_serial_in_parallel_out_passthrough_dynamic.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_two_fifo.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_one_fifo.v
 $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1r1w.v
 $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1r1w_synth.v
-$BASEJUMP_STL_DIR/bsg_misc/bsg_counter_clear_up_one_hot.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_counter_clear_up.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_decode.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_decode_with_v.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_dff_en.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_dff_en_bypass.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_dff_reset.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_dff_reset_en.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_defines.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_mux.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_dff_reset_set_clear.v

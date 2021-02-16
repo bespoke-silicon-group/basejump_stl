@@ -32,8 +32,8 @@ module testbench;
   logic [narrow_width_lp-1:0] out_data_lo;
   logic out_v_lo, out_ready_li;
 
-  bsg_serial_in_parallel_out_passthrough
-   #(.width_p(narrow_width_lp), .els_p(els_lp))
+  bsg_serial_in_parallel_out_passthrough_dynamic
+   #(.width_p(narrow_width_lp), .max_els_p(els_lp))
    DUT
     (.clk_i(clk)
      ,.reset_i(reset)
@@ -45,6 +45,9 @@ module testbench;
      ,.data_o(in_data_lo)
      ,.v_o(in_v_lo)
      ,.ready_and_i(in_yumi_li)
+
+     ,.len_i(els_lp-1)
+     ,.first_o(/* unused */)
      );
 
   assign out_data_li = in_data_lo;
