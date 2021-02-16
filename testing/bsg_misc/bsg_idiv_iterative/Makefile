@@ -18,7 +18,6 @@ dve64:
 gtk:
 	$(VCS_BIN)/vpd2vcd vcdplus.vpd vcd
 	gtkwave vcd
-
 verify:
 	gcc -std=c99 -Wall -o unsigned unsigned.c
 	gcc -std=c99 -Wall -o signed signed.c
@@ -26,6 +25,5 @@ verify:
 	./signed
 	diff -w u_output.txt u_expected.txt
 	diff -w s_output.txt s_expected.txt
-
 verify.clean:
 	$(RM) s_expected.txt signed u_expected.txt unsigned
