@@ -27,7 +27,7 @@ int rem(int a, int b){
 
 int main(){
   FILE *file_in, *file_out;
-  int dividend, divisor, remainder, quot;
+  int dividend, divisor, remain, quot;
   
   file_in = fopen("s.txt", "r");
   file_out = fopen("s_expected.txt", "w");
@@ -40,9 +40,9 @@ int main(){
     quot = quotient(dividend, divisor);
 
     //Calling function remainder()    
-    remainder = rem(dividend, divisor);
+    remain = rem(dividend, divisor);
 
-    fprintf(file_out, "%d %d %d %d\n", dividend, divisor, quot, remainder);
+    fprintf(file_out, "%d %d %d %d\n", dividend, divisor, quot, remain);
   }
 
   fclose(file_in);
