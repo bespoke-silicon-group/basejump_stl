@@ -2,7 +2,7 @@ import sys
 import random
 from test_base import *
 
-class TestLock2(TestBase):
+class TestLockMultiway(TestBase):
 
   def generate(self):
     self.clear_tag()
@@ -56,5 +56,5 @@ class TestLock2(TestBase):
 
 # main()
 if __name__ == "__main__":
-  t = TestLock2()
+  t = TestLockMultiway()
   t.generate()
