@@ -71,9 +71,9 @@ module test_bsg;
 
 	 signed_div = 1;
 	 
-	 wait (ready_o == 1);
+	 wait (ready_and_o == 1);
 	 div_req = 1; 
-	 wait (ready_o == 0);
+	 wait (ready_and_o == 0);
 	 div_req = 0;
 	 wait (done == 1);
 
@@ -94,9 +94,9 @@ module test_bsg;
 
 	 signed_div = 0;
 
-	 wait (ready_o == 1);
+	 wait (ready_and_o == 1);
 	 div_req = 1;
-	 wait (ready_o == 0);
+	 wait (ready_and_o == 0);
 	 div_req = 0;
 	 wait (done == 1);
 	 
