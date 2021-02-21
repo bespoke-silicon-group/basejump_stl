@@ -33,7 +33,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
     ,input                  reset_i
 
     ,input                  v_i      //there is a request
-    ,output                 ready_o  //idiv is idle 
+    ,output                 ready_and_o  //idiv is idle 
 
     ,input [width_p-1: 0]   dividend_i
     ,input [width_p-1: 0]   divisor_i
@@ -177,7 +177,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
       ,.clk_i                    (clk_i)
 
       ,.v_i                      (v_i)
-      ,.ready_o                  (ready_o)
+      ,.ready_and_o                  (ready_and_o)
 
       ,.zero_divisor_i           (zero_divisor_li)
       ,.signed_div_r_i           (signed_div_r)
