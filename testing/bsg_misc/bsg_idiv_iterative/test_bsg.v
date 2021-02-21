@@ -15,7 +15,7 @@ module test_bsg;
    reg div_req;
    reg signed_div;
    
-   wire ready_o;
+   wire ready_and_o;
    wire done;
    
    reg reset;
@@ -45,7 +45,7 @@ module test_bsg;
 	       .signed_div_i(signed_div),
 	       .quotient_o(quotient),
 	       .remainder_o(remainder),
-           .ready_o( ready_o ),
+	   .ready_and_o( ready_and_o ),
 	       .v_o(done),
            .yumi_i( done  ),
 	       .reset_i(reset),
