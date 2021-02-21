@@ -13,7 +13,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
       ,input               reset_i
 
       ,input               v_i
-      ,output              ready_o
+      ,output              ready_and_o
 
       ,input               zero_divisor_i
       ,input               signed_div_r_i
@@ -195,7 +195,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
     endcase
    end
 
-  assign ready_o  =  ( state == WAIT );
+  assign ready_and_o  =  ( state == WAIT );
   assign v_o      =  ( state == DONE );
 
 endmodule // divide_control 
