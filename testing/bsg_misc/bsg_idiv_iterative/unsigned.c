@@ -3,10 +3,13 @@
 // RISC-V ISA Manual: Section 7.2 - Division Operations
 
 #include <stdio.h>
+#include <math.h>
+#define WIDTH 4
+
 // Function to compute quotient
 int quotient(int a, int b){
   if (b == 0) { // RISC-V 7.2: Quotient of division by zero has all bits set 
-    return 15;
+    return (pow(2, WIDTH) - 1);
   } else { // Return integer division result when not a RISC-V edge case
     return a / b;
   }
