@@ -80,10 +80,7 @@ module test_bsg;
 	 s_quotient  = {{4{quotient[`WIDTH-1]}}, quotient[`WIDTH-1:0]};
 	 s_remainder = {{4{remainder[`WIDTH-1]}}, remainder[`WIDTH-1:0]};
 	 
-	 $fwrite(f1,"%d ", s_dividend);
-	 $fwrite(f1,"%d ", s_divisor);
-	 $fwrite(f1,"%d ", s_quotient);
-	 $fwrite(f1,"%d\n", s_remainder);
+	 $fwrite(f1,"%d %d %d %d\n", s_dividend, s_divisor, s_quotient, s_remainder);
      
 	`endif
 	 
@@ -103,10 +100,7 @@ module test_bsg;
 	 u_quotient  = quotient;
 	 u_remainder = remainder;
 	 
-	 $fwrite(f2,"%d ", u_dividend);
-	 $fwrite(f2,"%d ", u_divisor);     
-	 $fwrite(f2,"%d ", u_quotient);
-	 $fwrite(f2,"%d\n", u_remainder);
+	 $fwrite(f2,"%d %d %d %d\n", u_dividend, u_divisor, u_quotient, u_remainder);
 	 
 	`endif
 
