@@ -134,7 +134,6 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
        opB_ld_o     = 1'b0;
        opC_sel_o    = 3'b010;
        adder_cin_o  = 1'b1;
-       opC_ld_o     = opC_is_neg_i & signed_div_r_i;
     end
 
     SHIFT: begin
@@ -159,7 +158,6 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
        opB_sel_o    = 3'b010;
        opC_ld_o     = 1'b0;
        adder_cin_o    = 1'b0;
-       opB_ld_o     = add_neg_last;
     end
     
     REMAIN: begin
@@ -180,7 +178,6 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
        opB_ld_o     = 1'b0;
        opC_sel_o    = 3'b010;
        adder_cin_o  = 1'b1;
-       opC_ld_o     = q_neg;
     end
     
     DONE:begin
