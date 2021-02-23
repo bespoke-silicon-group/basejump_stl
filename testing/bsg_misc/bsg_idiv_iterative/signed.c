@@ -34,7 +34,7 @@ int main(){
   file_in = fopen("s.txt", "r");
   file_out = fopen("s_expected.txt", "w");
 
-  for (int i = 0; i < 256; i ++) {
+  for (int i = 0; i < pow(2, WIDTH * 2) ; i ++) {
     fscanf(file_in, "%d", &dividend);
     fscanf(file_in, "%d", &divisor);
     
