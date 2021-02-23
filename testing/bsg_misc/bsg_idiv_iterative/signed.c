@@ -2,12 +2,14 @@
 // for all possible inputs to a signed 4-bit divider pursuant to
 // RISC-V ISA Manual: Section 7.2 - Division Operations
 #include <stdio.h>
+#include <math.h>
+#define WIDTH 4
 
 // Function to compute quotient
 int quotient(int a, int b){
   if (b == 0) { // RISC-V 7.2: Quotient of division by zero has all bits set
     return -1;
-  } else if ((a == -8) & (b == -1)) { // RISC-V 7.2: Quotient=Dividend for signed div overflow
+  } else if ((a == (-pow(2, WIDTH - 1))) & (b == -1)) { // RISC-V 7.2: Quotient=Dividend for signed div overflow
     return a;
   } else { // Return integer division result when not a RISC-V edge case
     return a / b;
@@ -18,7 +20,7 @@ int quotient(int a, int b){
 int rem(int a, int b){
   if (b == 0) { // RISC-V 7.2: Remainder of division by zero equals the dividend
     return a;
-  } else if ((a == -8) & (b == -1)) { // RISC-V 7.2: Remainder is zero for signed div overflow
+  } else if ((a == (-pow(2, WIDTH - 1))) & (b == -1)) { // RISC-V 7.2: Remainder is zero for signed div overflow
     return 0;
   } else { // Return modulus when not a RISC-V edge case
     return a % b;
