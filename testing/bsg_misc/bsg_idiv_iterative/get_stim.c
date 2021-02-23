@@ -1,4 +1,4 @@
-/*===========================================================================
+//*===========================================================================
 //
 //   FILE: get_stim.c:
 //   
@@ -37,7 +37,7 @@ void init()
   delay.time.real = 0;
 
   /* open input file */
-  filename = "divide.stim";//tf_getcstringp(1);
+  filename = "divide_4.stim"; 
   in_file = fopen(filename, "r");
 
   /* end if file can't be opened */

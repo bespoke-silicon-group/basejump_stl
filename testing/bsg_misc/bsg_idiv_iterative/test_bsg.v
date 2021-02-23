@@ -8,7 +8,8 @@
 `define SIGN			// test signed divide
 `define UNSIGN			// test unsigned divide
 `define WIDTH 4
-`define ITERS `WIDTH ** 4
+`define ITERS 2 ** (`WIDTH * 2)
+// `define ITERS 24000000
 module test_bsg;
 
    reg div_req;
@@ -20,7 +21,7 @@ module test_bsg;
    reg reset;
    reg clk;
 
-   integer i, f1, f2;
+   integer i, f1, f2, f3, f4;
 
    reg  [`WIDTH-1:0] dividend;
    reg  [`WIDTH-1:0] divisor;
@@ -60,6 +61,9 @@ module test_bsg;
       $init();
       f1 = $fopen("s_output.txt","w");
       f2 = $fopen("u_output.txt","w");
+      f3 = $fopen("s.txt","w");
+      f4 = $fopen("u.txt","w");
+            
       for (i=0; i<`ITERS; i=i+1) begin
 	 $get_stim(dividend, divisor);
 
@@ -80,7 +84,8 @@ module test_bsg;
 	 s_remainder = {{(64 - `WIDTH){remainder[`WIDTH-1]}}, remainder[`WIDTH-1:0]};
 	 
 	 $fwrite(f1,"%d %d %d %d\n", s_dividend, s_divisor, s_quotient, s_remainder);
-     
+         $fwrite(f3,"%d %d\n", s_dividend, s_divisor);
+	 
 	`endif
 	 
 	 // do the unsigned case
@@ -100,13 +105,16 @@ module test_bsg;
 	 u_remainder = remainder;
 	 
 	 $fwrite(f2,"%d %d %d %d\n", u_dividend, u_divisor, u_quotient, u_remainder);
+	 $fwrite(f4,"%d %d\n", u_dividend, u_divisor);
 	 
 	`endif
 
       end
 	   
       $fclose(f1);
-      $fclose(f2); 
+      $fclose(f2);
+      $fclose(f3);
+      $fclose(f4); 
 	   
       $done;
       #80 $finish;
