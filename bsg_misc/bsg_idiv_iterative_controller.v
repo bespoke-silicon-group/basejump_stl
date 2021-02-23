@@ -171,6 +171,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
     end    
 
     QUOT: begin
+       next_state = DONE;
        opA_clr_l_o  = 1'b0;
        opB_inv_o    = 1'b1;
        opB_ld_o     = 1'b0;
