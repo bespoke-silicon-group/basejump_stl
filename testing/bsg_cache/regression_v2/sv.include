@@ -42,5 +42,5 @@ $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_sbuf_queue.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache.v
 ../common/bsg_nonsynth_dma_model.v
 ../common/bsg_nonsynth_random_yumi_gen.v
-basic_checker.v
+../common/basic_checker_32.v
 testbench.v

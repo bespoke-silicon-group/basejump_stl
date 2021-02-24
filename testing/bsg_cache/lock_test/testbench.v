@@ -191,7 +191,7 @@ module testbench();
   assign tr_yumi_li = tr_v_lo & ready_lo;
 
   // basic checker is used to check correctness
-  bind bsg_cache basic_checker #(
+  bind bsg_cache basic_checker_32 #(
     .data_width_p(data_width_p)
     ,.addr_width_p(addr_width_p)
     ,.mem_size_p($root.testbench.mem_size_p)
