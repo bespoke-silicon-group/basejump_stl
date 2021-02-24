@@ -10,8 +10,6 @@ module lru_stats
     ,input stat_mem_v_i
     ,input stat_mem_w_i
     ,input [lg_ways_lp-1:0] chosen_way_i
-    
-    ,input done_i
   );
 
   localparam ctr_width_lp = 17;
@@ -41,19 +39,14 @@ module lru_stats
         end
     end
 
-  always_comb 
+  final 
     begin
-       // display statistic
-        integer counter_index;
-        if (done_i) 
-          begin
-            $display("######## Hit Statistic: ########");
-            for (counter_index = 0; counter_index < ways_p; counter_index++)
-              begin
-                $display("Hit counter[%d]: %d ", counter_index, hit_counter[counter_index]);
-              end
+      // display statistic
+      $display("######## Hit Statistic: ########");
+      for (integer counter_index = 0; counter_index < ways_p; counter_index++)
+        begin
+          $display("Hit counter[%d]: %d ", counter_index, hit_counter[counter_index]);
         end
-    
     end
 
 endmodule

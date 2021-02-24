@@ -212,8 +212,6 @@ module testbench();
     ,.stat_mem_v_i(DUT.miss_stat_mem_v_lo)
     ,.stat_mem_w_i(DUT.miss_stat_mem_w_lo)
     ,.chosen_way_i(DUT.chosen_way_lo)
-
-    ,.done_i(done & (sent_r == recv_r))
   );
 
   always_ff @ (posedge clk) begin
