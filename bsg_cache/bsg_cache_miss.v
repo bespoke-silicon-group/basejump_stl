@@ -173,10 +173,10 @@ module bsg_cache_miss
   );
 
   // backup LRU
-  // When the LRU way designated by the stats_mem_info is locked, a backup way is chosen for 
+  // When the LRU way designated by the stats_mem_info is locked, a backup way is required for 
   // cache line replacement. In the current design, bsg_lru_pseudo_tree_backup takes the way with 
-  // the shortest distance from the LRU way in the tree, as the backup way, so that it avoids 
-  // "LRU trap" resulting from insufficient update on the LRU bits.
+  // the shortest distance from the locked LRU way in the tree, as the backup option by overriding
+  // some of the LRU bits, so that it avoids "LRU trap" from insufficient update on the LRU bits.
   // For now, there is not hardware logic to detect and handle the issue that all the ways in the
   // same set are lock. And it is a programmer's responsibility to make sure that there is at least 
   // one unlock way in a set at any time. 
@@ -284,8 +284,9 @@ module bsg_cache_miss
 
         // Replacement Policy:
         // if an invalid and unlocked way exists, pick that.
-        // if not, pick the LRU way. But if the real LRU way is locked,
-        // it will be overidden by the bsg_lru_pseudo_tree_backup
+        // if not, pick the LRU way. But if the LRU way designated 
+        // by stats_mem_info is locked, it will be overridden by 
+        // the bsg_lru_pseudo_tree_backup
         chosen_way_n = invalid_exist ? invalid_way_id : lru_way_id;
 
         dma_cmd_o = e_dma_send_fill_addr;
