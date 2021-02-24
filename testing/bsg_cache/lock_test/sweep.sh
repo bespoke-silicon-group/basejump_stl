@@ -5,20 +5,14 @@ echo "start test" > test_result.log
 run_test() {
   make clean
   echo "################" >> test_result.log
-
-  if [ $2 == 2 ]
+  if [ $2 == test_lock_multiway ]
     then
       echo WAY_ON_LOCKED_P = $1  `expr $1 + 1` >> test_result.log
-      make test_lock_multiway.basic.run WAY_ON_LOCKED_P=$1
-    elif [ $2 == 1 ]
-      then
-        echo WAY_ON_LOCKED_P = $1  >> test_result.log
-        make test_lock2.basic.run WAY_ON_LOCKED_P=$1
-      else
-        echo WAY_ON_LOCKED_P = $1  >> test_result.log
-        make test_lock1.basic.run WAY_ON_LOCKED_P=$1
+    else
+      echo WAY_ON_LOCKED_P = $1  >> test_result.log
   fi
-  make summary >> test_result.log
+  make $2.basic.run WAY_ON_LOCKED_P=$1
+  make $2.summary >> test_result.log
 }
 
 echo "################################################################" >> test_result.log
@@ -27,8 +21,8 @@ echo "################################################################" >> test_
 for ((locked_way = 0; locked_way < 8; locked_way++));  
   do   
     for((i = 0; i < 5; i++));  
-      do   
-        run_test $locked_way 0; 
+      do  
+        run_test $locked_way test_lock1;
       done 
   done 
 
@@ -39,7 +33,7 @@ for ((locked_way = 0; locked_way < 8; locked_way++));
   do   
     for((i = 0; i < 5; i++));  
       do   
-        run_test $locked_way 1; 
+        run_test $locked_way test_lock2
       done 
   done 
 
@@ -49,8 +43,8 @@ echo "################################################################" >> test_
 for ((locked_way = 0; locked_way < 7; locked_way++));  
   do   
     for((i = 0; i < 5; i++));  
-      do   
-        run_test $locked_way 2;
+      do
+        run_test $locked_way test_lock_multiway;
       done 
   done 
 
