@@ -4,9 +4,11 @@
 #include <stdio.h>
 #include <math.h>
 #define WIDTH 4
+#define ITERS 1 << (WIDTH * 2)
+// #define ITERS 10000
 
 // Function to compute quotient
-int quotient(int a, int b){
+long long int quotient(long long int a, long long int b){
   if (b == 0) { // RISC-V 7.2: Quotient of division by zero has all bits set
     return -1;
   } else if ((a == (-pow(2, WIDTH - 1))) & (b == -1)) { // RISC-V 7.2: Quotient=Dividend for signed div overflow
@@ -17,7 +19,7 @@ int quotient(int a, int b){
 }
 
 // Function to compute remainder
-int rem(int a, int b){
+long long int rem(long long int a, long long int b){
   if (b == 0) { // RISC-V 7.2: Remainder of division by zero equals the dividend
     return a;
   } else if ((a == (-pow(2, WIDTH - 1))) & (b == -1)) { // RISC-V 7.2: Remainder is zero for signed div overflow
@@ -29,14 +31,14 @@ int rem(int a, int b){
 
 int main(){
   FILE *file_in, *file_out;
-  int dividend, divisor, remain, quot;
+  long long int dividend, divisor, remain, quot;
   
   file_in = fopen("s.txt", "r");
   file_out = fopen("s_expected.txt", "w");
 
-  for (int i = 0; i < pow(2, WIDTH * 2) ; i ++) {
-    fscanf(file_in, "%d", &dividend);
-    fscanf(file_in, "%d", &divisor);
+  for (int i = 0; i < ITERS; i ++) {
+    fscanf(file_in, "%lld", &dividend);
+    fscanf(file_in, "%lld", &divisor);
     
     //Calling function quotient()    
     quot = quotient(dividend, divisor);
@@ -44,7 +46,7 @@ int main(){
     //Calling function remainder()    
     remain = rem(dividend, divisor);
 
-    fprintf(file_out, "%d %d %d %d\n", dividend, divisor, quot, remain);
+    fprintf(file_out, "%lld %lld %lld %lld\n", dividend, divisor, quot, remain);
   }
 
   fclose(file_in);

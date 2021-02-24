@@ -9,7 +9,8 @@
 `define UNSIGN			// test unsigned divide
 `define WIDTH 4
 `define ITERS 2 ** (`WIDTH * 2)
-// `define ITERS 24000000
+// `define ITERS 10000
+
 module test_bsg;
 
    reg div_req;
