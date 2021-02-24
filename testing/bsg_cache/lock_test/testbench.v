@@ -154,8 +154,8 @@ module testbench();
   logic tr_yumi_li;
   logic done;
 
-  bsg_fsb_node_trace_replay #(
-    .ring_width_p(ring_width_lp)
+  bsg_trace_replay #(  
+    .payload_width_p(ring_width_lp)
     ,.rom_addr_width_p(rom_addr_width_lp)
   ) trace_replay (
     .clk_i(clk)
