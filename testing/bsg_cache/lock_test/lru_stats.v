@@ -7,7 +7,6 @@ module lru_stats
     input clk_i
     ,input reset_i
 
-    ,input miss_v_i
     ,input stat_mem_v_i
     ,input stat_mem_w_i
     ,input [lg_ways_lp-1:0] chosen_way_i
@@ -18,7 +17,7 @@ module lru_stats
   localparam ctr_width_lp = 17;
   localparam max_ctr_lp = 2**ctr_width_lp; // Max amounts of traces used in python scripts
   // Statistic of lru_way picked
-  logic [ways_p-1:0][ctr_width_lp:0] hit_counter;
+  integer hit_counter [ways_p-1:0];
   logic [ways_p-1:0] counter_en_li;
   bsg_decode_with_v
    #(.num_out_p(ways_p)) 
@@ -29,17 +28,17 @@ module lru_stats
     );
   
   for (genvar i = 0; i < ways_p; i++)
-    begin:rof
-      bsg_counter_clear_up
-       #(.max_val_p (max_ctr_lp)
-       ,.init_val_p(0)) 
-        ctr
-        (.clk_i(clk_i)
-        ,.reset_i(reset_i)
-        ,.clear_i(1'b0)
-        ,.up_i(counter_en_li[i])
-        ,.count_o (hit_counter[i])
-        );      
+    begin
+      always_ff @(posedge clk_i) 
+        begin
+          if (reset_i)
+              hit_counter[i] <= 0;
+          else 
+            begin
+              if (counter_en_li[i])
+                  hit_counter[i] <= hit_counter[i] + 1;
+            end
+        end
     end
 
   always_comb 

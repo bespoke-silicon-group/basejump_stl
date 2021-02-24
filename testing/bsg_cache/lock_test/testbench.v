@@ -209,8 +209,6 @@ module testbench();
     .clk_i(DUT.clk_i)
     ,.reset_i(DUT.reset_i)
     
-    ,.miss_v_i(DUT.miss_v)
-   
     ,.stat_mem_v_i(DUT.miss_stat_mem_v_lo)
     ,.stat_mem_w_i(DUT.miss_stat_mem_w_lo)
     ,.chosen_way_i(DUT.chosen_way_lo)
