@@ -107,17 +107,6 @@ module bsg_cache_miss
     ,.v_o(invalid_exist)
   );
 
-  // Encode lru bits
-  //
-  logic [lg_ways_lp-1:0] lru_way_id;
-
-  bsg_lru_pseudo_tree_encode #(
-    .ways_p(ways_p)
-  ) lru_encode (
-    .lru_i(stat_info_in.lru_bits)
-    ,.way_id_o(lru_way_id)
-  );
-
   // miss handler FSM
   //
   typedef enum logic [3:0] {
@@ -194,14 +183,14 @@ module bsg_cache_miss
   // For future backup LRU enhancement project: For pseudo tree LRU algorithm, an efficient backup 
   // LRU algorithm should update the active LRU bits as much as possible, otherwise, it is very possible
   // that the LRU way falls back to the same locked way soon and then forms "LRU trap"
-  logic [lg_ways_lp-1:0] backup_lru_way_id;
+  logic [lg_ways_lp-1:0] lru_way_id;
 
   logic [ways_p-2:0] modify_mask_lo;
   logic [ways_p-2:0] modify_data_lo;
   logic [ways_p-2:0] modified_lru_bits;
 
-  bsg_lru_pseudo_tree_backup
-  #(.ways_p(ways_p)
+  bsg_lru_pseudo_tree_backup #(
+    .ways_p(ways_p)
   ) backup_lru (
     .disabled_ways_i(lock_v_i)
     ,.modify_mask_o(modify_mask_lo)
@@ -221,7 +210,7 @@ module bsg_cache_miss
     .ways_p(ways_p)
   ) backup_lru_encode (
     .lru_i(modified_lru_bits)
-    ,.way_id_o(backup_lru_way_id)
+    ,.way_id_o(lru_way_id)
   );
 
   // chosen way demux
@@ -295,14 +284,9 @@ module bsg_cache_miss
 
         // Replacement Policy:
         // if an invalid and unlocked way exists, pick that.
-        // if not, pick the LRU way. But if the LRU way is locked, then pick
-        // the backup LRU (anything that's unlocked, assuming that we have at
-        // least one unlocked way).
-        chosen_way_n = invalid_exist
-          ? invalid_way_id
-          : (lock_v_i[lru_way_id]
-            ? backup_lru_way_id
-            : lru_way_id);
+        // if not, pick the LRU way. But if the real LRU way is locked,
+        // it will be overidden by the bsg_lru_pseudo_tree_backup
+        chosen_way_n = invalid_exist ? invalid_way_id : lru_way_id;
 
         dma_cmd_o = e_dma_send_fill_addr;
         dma_addr_o = {
