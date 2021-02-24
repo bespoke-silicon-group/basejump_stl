@@ -30,44 +30,9 @@ class TestBase:
     self.tg.send(SW, addr, self.curr_data)
     self.curr_data += 1
 
-  # SH
-  def send_sh(self, addr):
-    self.tg.send(SH, addr, self.curr_data)
-    self.curr_data += 1
-
-  # SB
-  def send_sb(self, addr):
-    self.tg.send(SB, addr, self.curr_data)
-    self.curr_data += 1
-
-  # SM
-  def send_sm(self, addr, mask):
-    self.tg.send(SM, addr, self.curr_data, mask)
-    self.curr_data += 1
-   
-  # LM 
-  def send_lm(self, addr, mask):
-    self.tg.send(SM, addr, 0, mask)
-
   # LW
   def send_lw(self, addr):
     self.tg.send(LW, addr)
-
-  # LH
-  def send_lh(self, addr):
-    self.tg.send(LH, addr)
-  
-  # LB
-  def send_lb(self, addr):
-    self.tg.send(LB, addr)
-
-  # LHU
-  def send_lhu(self, addr):
-    self.tg.send(LHU, addr)
-  
-  # LBU
-  def send_lbu(self, addr):
-    self.tg.send(LBU, addr)
 
   # ALOCK
   def send_alock(self, addr):
