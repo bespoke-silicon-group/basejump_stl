@@ -184,7 +184,16 @@ module bsg_cache_miss
   );
 
   // backup LRU
-  // A slightly crude implementation. read the design doc for the better possibility.
+  // When the LRU way designated by the stats_mem_info is locked, a backup way is chosen for 
+  // cache line replacement. In the current design, bsg_lru_pseudo_tree_backup takes the way with 
+  // the shortest distance from the LRU way in the tree, as the backup way, so that it avoids 
+  // "LRU trap" resulting from insufficient update on the LRU bits.
+  // For now, there is not hardware logic to detect and handle the issue that all the ways in the
+  // same set are lock. And it is a programmer's responsibility to make sure that there is at least 
+  // one unlock way in a set at any time. 
+  // For future backup LRU enhancement project: For pseudo tree LRU algorithm, an efficient backup 
+  // LRU algorithm should update the active LRU bits as much as possible, otherwise, it is very possible
+  // that the LRU way falls back to the same locked way soon and then forms "LRU trap"
   logic [lg_ways_lp-1:0] backup_lru_way_id;
 
   logic [ways_p-2:0] modify_mask_lo;
