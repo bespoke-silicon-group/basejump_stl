@@ -210,7 +210,7 @@ module bsg_cache_miss
 
   bsg_mux_bitwise #(
     .width_p(ways_p-1)
-  ) mux (
+  ) lru_bit_mux (
     .data0_i(stat_info_in.lru_bits)
     ,.data1_i(modify_data_lo)
     ,.sel_i(modify_mask_lo)
