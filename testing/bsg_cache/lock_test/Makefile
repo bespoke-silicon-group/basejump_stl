@@ -4,7 +4,7 @@ export BASEJUMP_STL_DIR = $(abspath ../../..)
 INCDIR =  +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 
 VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access
-VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4
+VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4 -assert svaext
 
 
 ##### Test Suite #######

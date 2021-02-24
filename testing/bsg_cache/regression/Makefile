@@ -32,7 +32,7 @@ $(TRACE_ROM_V): $(TRACE_FILE)
 
 sim: $(TRACE_ROM_V)
 	vcs +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
-		-sverilog -full64 -f sv.include $(INCDIR) $(TRACE_ROM_V)\
+		-sverilog -full64 -assert svaext -f sv.include $(INCDIR) $(TRACE_ROM_V)\
 		-timescale=1ps/1ps +vcs+vcdpluson $(DEFINE) -l vcs.log\
 		| $(HIGHLIGHT)
 
