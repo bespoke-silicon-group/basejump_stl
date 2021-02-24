@@ -130,7 +130,7 @@ module bsg_two_fifo #(parameter width_p="inv"
    always_ff @(posedge clk_i)
      if (verbose_p)
        begin
-          if (v_i)
+	  if (enq_i)
             $display("### %m enq %x onto fifo",data_i);
 
           if (deq_i)
