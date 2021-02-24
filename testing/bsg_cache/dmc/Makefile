@@ -35,5 +35,5 @@ dve:
 clean:
 	rm -f simv
 	rm -rf simv.daidir csrc stack.info.* DVEfiles
-	rm -f vcs.log vcdplus.vpd ucli.key
+	rm -f vcs.log vcdplus.vpd ucli.key vc_hdrs.h
 	rm -f $(TRACE_ROMS) *.tr

@@ -46,7 +46,7 @@ axe: $(TRACE_AXE)
 clean:
 	rm -rf DVEfiles
 	rm -rf csrc
-	rm -rf simv.daidir simv.vdb
+	rm -rf simv.daidir simv.vdb vc_hdrs.h
 	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz $(VCS_LOG)
 	rm -rf stack.info.*
 	rm -f $(TRACE_AXE)

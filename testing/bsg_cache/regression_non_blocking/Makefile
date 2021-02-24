@@ -111,7 +111,7 @@ summary:
 clean:
 	rm -rf DVEfiles
 	rm -rf csrc
-	rm -rf simv.daidir simv.vdb vcs.log
+	rm -rf simv.daidir simv.vdb vcs.log vc_hdrs.h
 	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz
 	rm -rf stack.info.* *.pyc
 	rm -rf out
