@@ -1,15 +1,17 @@
 #!/bin/bash
 
 rm -rf test_result.log
+make clean
 echo "start test" > test_result.log
 run_test() {
-  ways_p=8
+  ways_p=8 
+  sample_cnt_p=3 
 
-  for ((locked_way=0; locked_way<ways_p; locked_way++));  
+  for ((locked_way=0; locked_way<$ways_p; locked_way++));  
     do   
-      for((iter=0; iter<5; iter++));  
+      for((iter=0; iter<$sample_cnt_p; iter++));  
         do  
-          make clean
+          make $1.trace_clean
           if [ $1 == test_lock_multiway ]
             then
               locked_way_plus1=`expr $locked_way + 1`
@@ -22,6 +24,7 @@ run_test() {
         done 
     done
 }
+export -f run_test
 
 run_test test_lock1
 run_test test_lock2

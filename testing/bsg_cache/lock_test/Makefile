@@ -68,6 +68,8 @@ summary:
 	@$(foreach test, $(BASIC_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
 			-e "Error" -e "BSG_ERROR" -e "Hit Statistic" -e "Hit counter" out/$(test)/simv.log;)
 
+%.trace_clean:
+	rm -rf out/$*/trace.tr
 
 
 

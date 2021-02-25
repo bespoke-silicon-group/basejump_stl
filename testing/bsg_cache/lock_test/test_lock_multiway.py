@@ -23,7 +23,7 @@ class TestLockMultiway(TestBase):
     way_on_locked = way_on_locked + 1
     self.send_tagst(way_on_locked, set_index, 0,       1,    tag_on_locked)
   
-    is_always_miss = 0
+    is_always_miss = 1
 
     if not is_always_miss:
       # A general case: Randomly Acces unlocked ways in set 0

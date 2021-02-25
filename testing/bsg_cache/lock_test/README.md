@@ -16,7 +16,7 @@ After each test is finished, `lru_stats` display how many times each way is chos
 
 The locked way is designated in the Makefile with the parameter, `WAY_ON_LOCKED_P`. 
 
-And a bash script, sweep.sh is added, which runs both test_lock1, test_lock2 and test_lock_multiway for multiple times with different ways on locked. To run this regression, simply run 
+And a shell script, sweep.sh is added, which runs both test_lock1, test_lock2 and test_lock_multiway for multiple times with different ways on locked. There are 2 parameters, ways_p which is identical with the one in the testbench, and sample_cnt_p which determines the number sample points for each locking pattern, in the script. To run this regression, simply run 
 ```
 $ ./sweep.sh
 ```
