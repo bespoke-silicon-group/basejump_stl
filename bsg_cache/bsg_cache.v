@@ -22,8 +22,9 @@ module bsg_cache
     ,parameter sets_p="inv"
     ,parameter ways_p="inv"
 
-    ,parameter amo_support_p=(1 << e_cache_amo_swap)
-                             | (1 << e_cache_amo_or)
+    // Explicit size prevents size inference and allows for ((foo == bar) << e_cache_amo_swap)
+    ,parameter [31:0] amo_support_p=(1 << e_cache_amo_swap)
+                                    | (1 << e_cache_amo_or)
 
     // dma burst width
     ,parameter dma_data_width_p=data_width_p // default value. it can also be pow2 multiple of data_width_p.
