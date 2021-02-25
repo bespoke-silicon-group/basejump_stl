@@ -203,7 +203,7 @@ module testbench();
   // wait for all responses to be received.
   integer sent_r, recv_r;
 
-  lru_stats  #(
+  bind DUT lru_stats  #(
     .ways_p(ways_p)
   ) lru_stats (
     .clk_i(DUT.clk_i)
