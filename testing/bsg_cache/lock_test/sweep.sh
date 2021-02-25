@@ -3,50 +3,29 @@
 rm -rf test_result.log
 echo "start test" > test_result.log
 run_test() {
-  make clean
-  echo "################" >> test_result.log
-  if [ $2 == test_lock_multiway ]
-    then
-      echo WAY_ON_LOCKED_P = $1  `expr $1 + 1` >> test_result.log
-    else
-      echo WAY_ON_LOCKED_P = $1  >> test_result.log
-  fi
-  make $2.basic.run WAY_ON_LOCKED_P=$1
-  make $2.summary >> test_result.log
+  ways_p=8
+
+  for ((locked_way=0; locked_way<ways_p; locked_way++));  
+    do   
+      for((iter=0; iter<5; iter++));  
+        do  
+          make clean
+          if [ $1 == test_lock_multiway ]
+            then
+              locked_way_plus1=`expr $locked_way + 1`
+              echo "######### Running" $1 WAY_ON_LOCKED_P = $locked_way  `expr $locked_way_plus1 % $ways_p` "#########">> test_result.log
+            else
+              echo "######### Running" $1 WAY_ON_LOCKED_P = $locked_way  "#########" >> test_result.log
+          fi
+          make $1.basic.run WAY_ON_LOCKED_P=$locked_way
+          make $1.summary >> test_result.log
+        done 
+    done
 }
 
-echo "################################################################" >> test_result.log
-echo "                        Running test_lock1 ...                  " >> test_result.log
-echo "################################################################" >> test_result.log
-for ((locked_way = 0; locked_way < 8; locked_way++));  
-  do   
-    for((i = 0; i < 5; i++));  
-      do  
-        run_test $locked_way test_lock1;
-      done 
-  done 
-
-echo "################################################################" >> test_result.log
-echo "                        Running test_lock2 ...                  " >> test_result.log
-echo "################################################################" >> test_result.log
-for ((locked_way = 0; locked_way < 8; locked_way++));  
-  do   
-    for((i = 0; i < 5; i++));  
-      do   
-        run_test $locked_way test_lock2
-      done 
-  done 
-
-echo "################################################################" >> test_result.log
-echo "                   Running test_lock_multiway ...               " >> test_result.log
-echo "################################################################" >> test_result.log
-for ((locked_way = 0; locked_way < 7; locked_way++));  
-  do   
-    for((i = 0; i < 5; i++));  
-      do
-        run_test $locked_way test_lock_multiway;
-      done 
-  done 
+run_test test_lock1
+run_test test_lock2
+run_test test_lock_multiway
 
 if grep -H --color -e "BSG_FATAL" -e "Error" -e "BSG_ERROR" test_result.log; then
   echo test failed.
