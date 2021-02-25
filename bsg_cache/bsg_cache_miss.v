@@ -208,7 +208,7 @@ module bsg_cache_miss
 
   bsg_lru_pseudo_tree_encode #(
     .ways_p(ways_p)
-  ) backup_lru_encode (
+  ) lru_encode (
     .lru_i(modified_lru_bits)
     ,.way_id_o(lru_way_id)
   );
