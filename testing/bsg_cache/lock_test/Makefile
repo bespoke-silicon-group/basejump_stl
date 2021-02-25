@@ -60,6 +60,10 @@ out/%/trace.tr:
 %.dve:
 	$(DVE) -full64 -vpd out/$*/vcdplus.vpd &
 
+%.summary:
+	@grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" -e "Error" -e "BSG_ERROR" \
+	-e "Hit Statistic" -e "Hit counter" out/$*/simv.log
+
 summary:
 	@$(foreach test, $(BASIC_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
 			-e "Error" -e "BSG_ERROR" -e "Hit Statistic" -e "Hit counter" out/$(test)/simv.log;)
