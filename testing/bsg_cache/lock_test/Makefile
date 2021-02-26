@@ -6,31 +6,24 @@ INCDIR =  +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access
 VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4 -assert svaext
 
-###### TEST SUITE ######
-BASIC_TEST += test_random1
-BASIC_TEST += test_random2
-BASIC_TEST += test_random3
-BASIC_TEST += test_atomic1
-BASIC_TEST += test_atomic2
-BASIC_TEST += test_atomic3
-BASIC_TEST += test_atomic4
-BASIC_TEST += test_stride1
-BASIC_TEST += test_stride2
-BASIC_TEST += test_mask1
+
+##### Test Suite #######
+BASIC_TEST = test_lock1 test_lock2 test_lock_multiset test_lock_multiway
+
 
 ########################
 
 HIGHLIGHT = grep --color -E '^|Fatal|Error|Warning|Implicit wire is used|Too few instance port connections|Port connection width mismatch|Width mismatch'
 
 
-### Test parameters ###
+### TEST parameters ####
 YUMI_MIN_DELAY_P  ?= 0
 YUMI_MAX_DELAY_P  ?= 0
 DMA_READ_DELAY_P  ?= 0
 DMA_WRITE_DELAY_P ?= 0
 DMA_REQ_DELAY_P   ?= 0
 DMA_DATA_DELAY_P  ?= 0
-BLOCK_SIZE_IN_WORDS_P ?= 8
+WAY_ON_LOCKED_P   ?= 0
 
 VCS_DEFINES += +define+YUMI_MIN_DELAY_P=$(YUMI_MIN_DELAY_P)
 VCS_DEFINES += +define+YUMI_MAX_DELAY_P=$(YUMI_MAX_DELAY_P)
@@ -39,10 +32,7 @@ VCS_DEFINES += +define+DMA_READ_DELAY_P=$(DMA_READ_DELAY_P)
 VCS_DEFINES += +define+DMA_WRITE_DELAY_P=$(DMA_WRITE_DELAY_P)
 VCS_DEFINES += +define+DMA_REQ_DELAY_P=$(DMA_REQ_DELAY_P)
 VCS_DEFINES += +define+DMA_DATA_DELAY_P=$(DMA_DATA_DELAY_P)
-
-VCS_DEFINES += +define+BLOCK_SIZE_IN_WORDS_P=$(BLOCK_SIZE_IN_WORDS_P)
-#######################
-
+########################
 
 SIMV = $(abspath simv)
 WAVE ?= 0
@@ -51,7 +41,7 @@ BASIC_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BASIC_TEST)))
 
 .PRECIOUS: $(BASIC_TRACE_TR)
 
-all: basic_test
+all: basic_test 
 
 basic_test: $(addsuffix .basic.run, $(BASIC_TEST))
 
@@ -62,7 +52,7 @@ simv:
 out/%/trace.tr:
 	mkdir -p out/
 	mkdir -p out/$*
-	python $*.py $(BLOCK_SIZE_IN_WORDS_P) > $@
+	python $*.py $(WAY_ON_LOCKED_P) > $@
 
 %.basic.run: simv out/%/trace.tr
 	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=basic -l simv.log)
@@ -70,9 +60,17 @@ out/%/trace.tr:
 %.dve:
 	$(DVE) -full64 -vpd out/$*/vcdplus.vpd &
 
+%.summary:
+	@grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" -e "Error" -e "BSG_ERROR" \
+	-e "Hit Statistic" -e "Hit counter" out/$*/simv.log
+
 summary:
 	@$(foreach test, $(BASIC_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
-		-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
+			-e "Error" -e "BSG_ERROR" -e "Hit Statistic" -e "Hit counter" out/$(test)/simv.log;)
+
+%.trace_clean:
+	rm -rf out/$*/trace.tr
+
 
 
 clean:

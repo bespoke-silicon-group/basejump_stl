@@ -1,3 +1,4 @@
 bsg_trace_rom.tr
 bsg_trace_rom.v
 bsg_cache.axe
+vc_hdrs.h
