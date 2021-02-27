@@ -41,6 +41,7 @@ module bsg_mem_1rw_sync_mask_write_byte_synth
                         ,.els_p        (els_p)
                         ,.addr_width_lp(addr_width_lp)
                         ,.latch_last_read_p(latch_last_read_p)
+			,.verbose_if_synth_p(0) // don't print out details of ram if breaks into synth srams
                       ) mem_1rw_sync
                       ( .clk_i  (clk_i)
                        ,.reset_i(reset_i)

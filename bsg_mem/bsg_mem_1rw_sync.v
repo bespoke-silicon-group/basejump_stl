@@ -11,6 +11,7 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
                           , parameter latch_last_read_p=0
                           , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                           , parameter enable_clock_gating_p=0
+			  , parameter verbose_if_synth_p=1
                           )
    (input   clk_i
     , input reset_i
@@ -41,6 +42,8 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
      #(.width_p(width_p)
        ,.els_p(els_p)
        ,.latch_last_read_p(latch_last_read_p)
+       ,.verbose_p(verbose_if_synth_p) // disables reprinting out a masked synth ram
+                                       //  that has been split into many synth rams
        ) synth
     (.clk_i( clk_lo )
     ,.reset_i

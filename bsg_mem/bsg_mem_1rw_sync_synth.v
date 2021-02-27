@@ -13,6 +13,7 @@ module bsg_mem_1rw_sync_synth
     , parameter els_p=-1
     , parameter latch_last_read_p=0
     , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+    , parameter verbose_p=1
    )
    (input   clk_i
 	 	, input v_i
@@ -82,7 +83,8 @@ module bsg_mem_1rw_sync_synth
    // synopsys translate_off
    initial
      begin
-        $display("## %L: instantiating width_p=%d, els_p=%d (%m)",width_p,els_p);
+        if (verbose_p)
+	  $display("## %L: instantiating width_p=%d, els_p=%d (%m)",width_p,els_p);
      end
 
    always_ff @(negedge clk_i)
