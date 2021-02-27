@@ -1,4 +1,4 @@
-module basic_checker
+module basic_checker_32
   import bsg_cache_pkg::*;
   #(parameter data_width_p="inv"
     , parameter addr_width_p="inv"
@@ -207,7 +207,7 @@ module basic_checker
                 ? cache_pkt.data
                 : load_data;
             end
-            ALOCK, AUNLOCK, TAGFL, AFLINV: begin
+            ALOCK, AUNLOCK, TAGFL, AFLINV, AFL: begin
               result[send_id] = '0;
               send_id++;
             end

@@ -107,17 +107,6 @@ module bsg_cache_miss
     ,.v_o(invalid_exist)
   );
 
-  // Encode lru bits
-  //
-  logic [lg_ways_lp-1:0] lru_way_id;
-
-  bsg_lru_pseudo_tree_encode #(
-    .ways_p(ways_p)
-  ) lru_encode (
-    .lru_i(stat_info_in.lru_bits)
-    ,.way_id_o(lru_way_id)
-  );
-
   // miss handler FSM
   //
   typedef enum logic [3:0] {
@@ -184,16 +173,44 @@ module bsg_cache_miss
   );
 
   // backup LRU
-  // A slightly crude implementation. read the design doc for the better possibility.
-  logic [lg_ways_lp-1:0] backup_lru_way_id;
-  
-  bsg_priority_encode #(
-    .width_p(ways_p)
-    ,.lo_to_hi_p(1)
-  ) backup_lru_pe (
-    .i(~lock_v_i)
-    ,.addr_o(backup_lru_way_id)
-    ,.v_o() // backup LRU has to exist, otherwise we are screwed.
+  // When the LRU way designated by the stats_mem_info is locked, a backup way is required for 
+  // cache line replacement. In the current design, bsg_lru_pseudo_tree_backup takes the way with 
+  // the shortest distance from the locked LRU way in the tree, as the backup option by overriding
+  // some of the LRU bits, so that it avoids "LRU trap" from insufficient update on the LRU bits.
+  // For now, there is not hardware logic to detect and handle the issue that all the ways in the
+  // same set are lock. And it is a programmer's responsibility to make sure that there is at least 
+  // one unlock way in a set at any time. 
+  // For future backup LRU enhancement project: For pseudo tree LRU algorithm, an efficient backup 
+  // LRU algorithm should update the active LRU bits as much as possible, otherwise, it is very possible
+  // that the LRU way falls back to the same locked way soon and then forms "LRU trap"
+  logic [lg_ways_lp-1:0] lru_way_id;
+
+  logic [ways_p-2:0] modify_mask_lo;
+  logic [ways_p-2:0] modify_data_lo;
+  logic [ways_p-2:0] modified_lru_bits;
+
+  bsg_lru_pseudo_tree_backup #(
+    .ways_p(ways_p)
+  ) backup_lru (
+    .disabled_ways_i(lock_v_i)
+    ,.modify_mask_o(modify_mask_lo)
+    ,.modify_data_o(modify_data_lo)
+  );
+
+  bsg_mux_bitwise #(
+    .width_p(ways_p-1)
+  ) lru_bit_mux (
+    .data0_i(stat_info_in.lru_bits)
+    ,.data1_i(modify_data_lo)
+    ,.sel_i(modify_mask_lo)
+    ,.data_o(modified_lru_bits)
+  );
+
+  bsg_lru_pseudo_tree_encode #(
+    .ways_p(ways_p)
+  ) lru_encode (
+    .lru_i(modified_lru_bits)
+    ,.way_id_o(lru_way_id)
   );
 
   // chosen way demux
@@ -267,14 +284,10 @@ module bsg_cache_miss
 
         // Replacement Policy:
         // if an invalid and unlocked way exists, pick that.
-        // if not, pick the LRU way. But if the LRU way is locked, then pick
-        // the backup LRU (anything that's unlocked, assuming that we have at
-        // least one unlocked way).
-        chosen_way_n = invalid_exist
-          ? invalid_way_id
-          : (lock_v_i[lru_way_id]
-            ? backup_lru_way_id
-            : lru_way_id);
+        // if not, pick the LRU way. But if the LRU way designated 
+        // by stats_mem_info is locked, it will be overridden by 
+        // the bsg_lru_pseudo_tree_backup
+        chosen_way_n = invalid_exist ? invalid_way_id : lru_way_id;
 
         dma_cmd_o = e_dma_send_fill_addr;
         dma_addr_o = {

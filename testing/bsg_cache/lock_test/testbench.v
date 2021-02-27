@@ -27,7 +27,7 @@ module testbench();
   localparam block_size_in_words_p = 8;
   localparam sets_p = 128;
   localparam ways_p = 8;
-  localparam mem_size_p = block_size_in_words_p*sets_p*ways_p*4;
+  localparam mem_size_p = 2**17;
 
 
   integer status;
@@ -154,8 +154,8 @@ module testbench();
   logic tr_yumi_li;
   logic done;
 
-  bsg_fsb_node_trace_replay #(
-    .ring_width_p(ring_width_lp)
+  bsg_trace_replay #(  
+    .payload_width_p(ring_width_lp)
     ,.rom_addr_width_p(rom_addr_width_lp)
   ) trace_replay (
     .clk_i(clk)
@@ -190,17 +190,29 @@ module testbench();
   assign v_li = tr_v_lo;
   assign tr_yumi_li = tr_v_lo & ready_lo;
 
+  // basic checker is used to check correctness
   bind bsg_cache basic_checker_32 #(
     .data_width_p(data_width_p)
     ,.addr_width_p(addr_width_p)
     ,.mem_size_p($root.testbench.mem_size_p)
-  ) bc (
+  ) basic_check (
     .*
     ,.en_i($root.testbench.checker == "basic")
   );
 
   // wait for all responses to be received.
   integer sent_r, recv_r;
+
+  bind DUT lru_stats  #(
+    .ways_p(ways_p)
+  ) lru_stats (
+    .clk_i(DUT.clk_i)
+    ,.reset_i(DUT.reset_i)
+    
+    ,.stat_mem_v_i(DUT.miss_stat_mem_v_lo)
+    ,.stat_mem_w_i(DUT.miss_stat_mem_w_lo)
+    ,.chosen_way_i(DUT.chosen_way_lo)
+  );
 
   always_ff @ (posedge clk) begin
     if (reset) begin

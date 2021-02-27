@@ -32,7 +32,7 @@ bsg_trace_rom.v: bsg_trace_rom.tr
 sim: bsg_trace_rom.v
 	vcs +v2k -R -sverilog -full64 \
 		+lint=all,noSVA-UA,noSVA-NSVU,noVCDE,noNS \
-		-timescale=1ns/1ps +vcs+vcdpluson \
+		-timescale=1ns/1ps +vcs+vcdpluson -assert svaext \
 		-f sv.include $(INCDIR) -l $(VCS_LOG) $(DEFINE)
 
 dve:
@@ -46,7 +46,7 @@ axe: $(TRACE_AXE)
 clean:
 	rm -rf DVEfiles
 	rm -rf csrc
-	rm -rf simv.daidir simv.vdb
+	rm -rf simv.daidir simv.vdb vc_hdrs.h
 	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz $(VCS_LOG)
 	rm -rf stack.info.*
 	rm -f $(TRACE_AXE)
