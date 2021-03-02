@@ -50,7 +50,7 @@ module bsg_link_sdr_downstream
   ,output [width_p-1:0] core_data_o
   ,input                core_yumi_i
   // IO side
-  ,input                io_link_reset_i
+  ,input                async_io_link_reset_i
   ,input                io_clk_i
   ,input                io_v_i
   ,input  [width_p-1:0] io_data_i
@@ -70,6 +70,13 @@ module bsg_link_sdr_downstream
   ,.data_o ({isdr_v_lo, isdr_data_lo})
   );
 
+  logic io_link_reset_sync;
+  bsg_sync_sync #(.width_p(1)) bss
+  (.oclk_i     (isdr_clk_lo          )
+  ,.iclk_data_i(async_io_link_reset_i)
+  ,.oclk_data_o(io_link_reset_sync   )
+  );
+
   bsg_link_source_sync_downstream
  #(.channel_width_p(width_p)
   ,.lg_fifo_depth_p(lg_fifo_depth_p)
@@ -78,7 +85,7 @@ module bsg_link_sdr_downstream
   ) downstream
   (.core_clk_i       (core_clk_i)
   ,.core_link_reset_i(core_link_reset_i)
-  ,.io_link_reset_i  (io_link_reset_i)
+  ,.io_link_reset_i  (io_link_reset_sync)
   // source synchronous input channel
   ,.io_clk_i         (isdr_clk_lo)
   ,.io_data_i        (isdr_data_lo)

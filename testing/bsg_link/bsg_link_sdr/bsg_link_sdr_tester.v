@@ -72,14 +72,6 @@ module bsg_link_sdr_tester
   ,.token_clk_i        (link_tkn)
   );
 
-  logic downlink_reset_sync;
-
-  bsg_sync_sync #(.width_p(1)) bss
-  (.oclk_i     (link_clk           )
-  ,.iclk_data_i(downlink_reset     )
-  ,.oclk_data_o(downlink_reset_sync)
-  );
-
   bsg_link_sdr_downstream
  #(.width_p                        (width_p)
   ,.lg_fifo_depth_p                (lg_fifo_depth_p)
@@ -92,7 +84,7 @@ module bsg_link_sdr_tester
   ,.core_v_o          (downstream_v_lo)
   ,.core_yumi_i       (downstream_v_lo & downstream_ready_li)
   // IO side
-  ,.io_link_reset_i   (downlink_reset_sync)
+  ,.async_io_link_reset_i(downlink_reset)
   ,.io_clk_i          (link_clk)
   ,.io_data_i         (link_data)
   ,.io_v_i            (link_v)
