@@ -31,8 +31,12 @@ module bsg_cam_1r1w_replacement
    , output [els_p-1:0]        alloc_v_o
    );
 
+  if (els_p == 1)
+    begin
+      assign alloc_v_o = 1'b1;
+    end
   // Standard tree-based pseudo-lru
-  if (scheme_p == "lru")
+  else if (scheme_p == "lru")
     begin : lru
       localparam lg_els_lp = `BSG_SAFE_CLOG2(els_p);
 
