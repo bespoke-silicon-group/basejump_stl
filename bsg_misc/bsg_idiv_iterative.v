@@ -177,7 +177,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
       ,.clk_i                    (clk_i)
 
       ,.v_i                      (v_i)
-      ,.ready_and_o                  (ready_and_o)
+      ,.ready_and_o              (ready_and_o)
 
       ,.zero_divisor_i           (zero_divisor_li)
       ,.signed_div_r_i           (signed_div_r)
