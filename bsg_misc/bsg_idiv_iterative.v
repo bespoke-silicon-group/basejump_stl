@@ -28,7 +28,7 @@
 // 2. usging data detection logic to reduce the iteration cycles.
 `include "bsg_defines.v"
 
-module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
+module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parameter bits_per_iter_p = 2)
     (input                  clk_i
     ,input                  reset_i
 
@@ -69,29 +69,47 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
 
    wire         opA_sel_lo;
    wire [width_p:0]  opA_mux;
-   wire [width_p:0]  add_out;
+   wire [width_p:0]  add1_out, add2_out;
    bsg_mux  #(.width_p(width_p+1), .els_p(2)) muxA
-       (.data_i({ {divisor_msb, divisor_i}, add_out } )
+       (.data_i({ {divisor_msb, divisor_i}, add1_out } )
        ,.data_o(opA_mux)
        ,.sel_i(opA_sel_lo)
      );
+   
+   wire [width_p:0]  opB_mux, opC_mux;
 
-   wire [2:0]   opB_sel_lo;
-   wire [width_p:0]  opB_mux;
-   bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxB
-          ( .data_i( {opC_r, add_out, {add_out[width_p-1:0], opC_r[width_p]}} )
+   if (bits_per_iter_p = 1) begin
+     wire [2:0] opB_sel_lo, opC_sel_lo;
+      
+     bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxB
+     ( .data_i( {opC_r, add1_out, {add1_out[width_p-1:0], opC_r[width_p]}} )
+     ,.data_o( opB_mux )
+     ,.sel_one_hot_i(opB_sel_lo)
+     );
+      
+     bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxC
+     ( .data_i( {{dividend_msb, dividend_i},add1_out, {opC_r[width_p-1:0], ~add1_out[width_p]}} )
+     ,.data_o( opC_mux )
+     ,.sel_one_hot_i(opC_sel_lo)
+     );
+      
+   end else begin
+     wire [3:0] opB_sel_lo, opC_sel_lo;
+      
+     bsg_mux_one_hot #(.width_p(width_p+1), .els_p(4)) muxB
+          ( .data_i( {opC_r, add_out, {add1_out[width_p-1:0], opC_r[width_p]}, {add2_out[width_-1:0], opC[width_p-1]}} )
            ,.data_o(  opB_mux )
            ,.sel_one_hot_i(opB_sel_lo)
      );
-
-   wire [2:0]   opC_sel_lo;
-   wire [width_p:0]  opC_mux;
-   bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxC
-          ( .data_i( {{dividend_msb, dividend_i},add_out, {opC_r[width_p-1:0], ~add_out[width_p]}} )
+      
+     bsg_mux_one_hot #(.width_p(width_p+1), .els_p(4)) muxC
+          ( .data_i( {{dividend_msb, dividend_i},add1_out, {opC_r[width_p-1:0], ~add1_out[width_p]}, {opC[width_p-2:0], ~add1_out[width_p], ~add2_out[width_p]}})
            ,.data_o(  opC_mux )
            ,.sel_one_hot_i(opC_sel_lo)
-     );
-
+     )
+       
+  end
+   
    wire opA_ld_lo;
    bsg_dff_en#(.width_p(width_p+1)) opA_reg
        (.data_i (opA_mux)
@@ -122,9 +140,13 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
   wire        opA_clr_lo;
   wire        opB_clr_lo;
 
-  wire [width_p:0] add_in0;
-  wire [width_p:0] add_in1;
-
+  wire [width_p:0] add1_in0;
+  wire [width_p:0] add1_in1;
+  
+  if (bits_per_iter_p) begin
+    wire [width_p:0] add2_in0;
+    wire [width_p:0] add2_in1;
+  end
 
   // this logic is sandwiched between bitstacks -- MBT
   if (bitstack_p) begin: bs
@@ -154,34 +176,58 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
         ,.b_i( {(width_p+1){~opB_clr_lo}})
         ,.o  (add_in1)
         );
-
+     
+    if (bits_per_iter = 2) begin 
+      bsg_xnor#(.width_p(width_p+1)) xnor_add1 
+          (.a_i({(width_p+1){~add1_out[width_p]}})
+          ,.b_i(opA_r)
+          ,.o  (add2_in0)
+          );
+      assign add2_in1 = {add1_out[width_p-1:0], opC[width_p]};
+    end
+ 
   end
   else begin: nbs
-
-    assign add_in0 = (opA_r ^ {width_p+1{opA_inv_lo}}) & {width_p+1{opA_clr_lo}};
-    assign add_in1 = (opB_r ^ {width_p+1{opB_inv_lo}}) & {width_p+1{opB_clr_lo}};
-
+    assign add1_in0 = (opA_r ^ {width_p+1{opA_inv_lo}}) & {width_p+1{opA_clr_lo}};
+    assign add1_in1 = (opB_r ^ {width_p+1{opB_inv_lo}}) & {width_p+1{opB_clr_lo}};
+    
+    if (bits_per_iter = 2) begin
+      assign add2_in0 = (opA_r ^ {width_p+1{~add1_out[width_p]}};
+      assign add2_in1 = {add1_out[width_p-1:0], opC[width_p]};
+    end
+			 
   end
 
 
-  wire adder_cin_lo;
-  bsg_adder_cin #(.width_p(width_p+1)) adder
-   (.a_i  (add_in0)
-   ,.b_i  (add_in1)
-   ,.cin_i(adder_cin_lo)
-   ,.o    (add_out)
+  wire adder1_cin_lo;
+  bsg_adder_cin #(.width_p(width_p+1)) adder1
+   (.a_i  (add1_in0)
+   ,.b_i  (add1_in1)
+   ,.cin_i(adder1_cin_lo)
+   ,.o    (add1_out)
    );
 
-  bsg_idiv_iterative_controller #(.width_p(width_p)) control 
+  if (bits_per_iter_p = 2) begin
+    wire adder2_cin;
+    assign adder2_cin = ~add1_out[width_p];
+    bsg_adder_cin #(.width_p(width_p+1)) adder2
+     (.a_i  (add2_in0)
+     ,.b_i  (add2_in1)
+     ,.cin_i(adder2_cin)
+     ,.o    (add2_out)
+     );
+  end
+
+  bsg_idiv_iterative_controller #(.width_p(width_p), .bits_per_iter_p(bits_per_iter_p)) control 
      ( .reset_i                  (reset_i)
       ,.clk_i                    (clk_i)
 
       ,.v_i                      (v_i)
-      ,.ready_and_o                  (ready_and_o)
+      ,.ready_and_o              (ready_and_o)
 
       ,.zero_divisor_i           (zero_divisor_li)
       ,.signed_div_r_i           (signed_div_r)
-      ,.adder_result_is_neg_i    (add_out[width_p])
+      ,.adder_result_is_neg_i    (add2_out[width_p])
       ,.opA_is_neg_i             (opA_r[width_p])
       ,.opC_is_neg_i             (opC_r[width_p])
 
@@ -199,7 +245,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
       ,.opC_ld_o                 (opC_ld_lo)
 
       ,.latch_signed_div_o       (latch_signed_div_lo)
-      ,.adder_cin_o              (adder_cin_lo)
+      ,.adder1_cin_o             (adder1_cin_lo)
 
       ,.v_o(v_o)
       ,.yumi_i(yumi_i)
