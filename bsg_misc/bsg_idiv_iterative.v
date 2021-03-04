@@ -78,35 +78,35 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
    
    wire [width_p:0]  opB_mux, opC_mux;
 
-   if (bits_per_iter_p = 1) begin
-     wire [2:0] opB_sel_lo, opC_sel_lo;
-      
-     bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxB
-     ( .data_i( {opC_r, add1_out, {add1_out[width_p-1:0], opC_r[width_p]}} )
-     ,.data_o( opB_mux )
-     ,.sel_one_hot_i(opB_sel_lo)
-     );
-      
-     bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxC
-     ( .data_i( {{dividend_msb, dividend_i},add1_out, {opC_r[width_p-1:0], ~add1_out[width_p]}} )
-     ,.data_o( opC_mux )
-     ,.sel_one_hot_i(opC_sel_lo)
-     );
+   if (bits_per_iter_p == 2) begin
+      wire [3:0] opB_sel_lo, opC_sel_lo;
+
+      bsg_mux_one_hot #(.width_p(width_p+1), .els_p(4)) muxB
+        (.data_i( {opC_r, add_out, {add1_out[width_p-1:0], opC_r[width_p]}, {add2_out[width_-1:0], opC[width_p-1]}} )
+	,.data_o(  opB_mux )
+	,.sel_one_hot_i(opB_sel_lo)
+	);
+
+      bsg_mux_one_hot #(.width_p(width_p+1), .els_p(4)) muxC
+        (.data_i( {{dividend_msb, dividend_i},add1_out, {opC_r[width_p-1:0], ~add1_out[width_p]}, {opC[width_p-2:0], ~add1_out[width_p], ~add2_out[width_p]}})
+        ,.data_o(  opC_mux )
+        ,.sel_one_hot_i(opC_sel_lo)
+        );
       
    end else begin
-     wire [3:0] opB_sel_lo, opC_sel_lo;
-      
-     bsg_mux_one_hot #(.width_p(width_p+1), .els_p(4)) muxB
-          ( .data_i( {opC_r, add_out, {add1_out[width_p-1:0], opC_r[width_p]}, {add2_out[width_-1:0], opC[width_p-1]}} )
-           ,.data_o(  opB_mux )
-           ,.sel_one_hot_i(opB_sel_lo)
-     );
-      
-     bsg_mux_one_hot #(.width_p(width_p+1), .els_p(4)) muxC
-          ( .data_i( {{dividend_msb, dividend_i},add1_out, {opC_r[width_p-1:0], ~add1_out[width_p]}, {opC[width_p-2:0], ~add1_out[width_p], ~add2_out[width_p]}})
-           ,.data_o(  opC_mux )
-           ,.sel_one_hot_i(opC_sel_lo)
-     )
+      wire [2:0] opB_sel_lo, opC_sel_lo;
+
+      bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxB
+        (.data_i( {opC_r, add1_out, {add1_out[width_p-1:0], opC_r[width_p]}} )
+        ,.data_o( opB_mux )
+        ,.sel_one_hot_i(opB_sel_lo)
+        );
+
+      bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxC
+        (.data_i( {{dividend_msb, dividend_i},add1_out, {opC_r[width_p-1:0], ~add1_out[width_p]}} )
+        ,.data_o( opC_mux )
+	,.sel_one_hot_i(opC_sel_lo)
+	);
        
   end
    
@@ -143,7 +143,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
   wire [width_p:0] add1_in0;
   wire [width_p:0] add1_in1;
   
-  if (bits_per_iter_p) begin
+  if (bits_per_iter_p == 2) begin
     wire [width_p:0] add2_in0;
     wire [width_p:0] add2_in1;
   end
@@ -177,7 +177,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
         ,.o  (add_in1)
         );
      
-    if (bits_per_iter = 2) begin 
+    if (bits_per_iter_p == 2) begin 
       bsg_xnor#(.width_p(width_p+1)) xnor_add1 
           (.a_i({(width_p+1){~add1_out[width_p]}})
           ,.b_i(opA_r)
@@ -191,7 +191,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
     assign add1_in0 = (opA_r ^ {width_p+1{opA_inv_lo}}) & {width_p+1{opA_clr_lo}};
     assign add1_in1 = (opB_r ^ {width_p+1{opB_inv_lo}}) & {width_p+1{opB_clr_lo}};
     
-    if (bits_per_iter = 2) begin
+    if (bits_per_iter_p = 2) begin
       assign add2_in0 = (opA_r ^ {width_p+1{~add1_out[width_p]}};
       assign add2_in1 = {add1_out[width_p-1:0], opC[width_p]};
     end
@@ -207,7 +207,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
    ,.o    (add1_out)
    );
 
-  if (bits_per_iter_p = 2) begin
+  if (bits_per_iter_p == 2) begin
     wire adder2_cin;
     assign adder2_cin = ~add1_out[width_p];
     bsg_adder_cin #(.width_p(width_p+1)) adder2
