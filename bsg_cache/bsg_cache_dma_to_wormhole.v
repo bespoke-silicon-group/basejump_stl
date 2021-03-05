@@ -12,7 +12,7 @@
 
 module bsg_cache_dma_to_wormhole
   import bsg_cache_pkg::*;
-  #(parameter addr_width_p="inv" // cache addr width (byte)
+  #(parameter addr_width_p="inv" // cache addr width (byte addr)
     , parameter data_width_p = "inv" // cache data width (bit)
     , parameter dma_data_width_p="inv"  // cache dma data width (bit)
     , parameter block_size_in_words_p = "inv" // cache block size (word)
