@@ -218,6 +218,8 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
      );
   end
 
+  assign adder_result_is_neg = (bits_per_iter_p == 2) ? add2_out[width_p] : add1_out[width_p];			 
+
   bsg_idiv_iterative_controller #(.width_p(width_p), .bits_per_iter_p(bits_per_iter_p)) control 
      ( .reset_i                  (reset_i)
       ,.clk_i                    (clk_i)
@@ -227,7 +229,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
 
       ,.zero_divisor_i           (zero_divisor_li)
       ,.signed_div_r_i           (signed_div_r)
-      ,.adder_result_is_neg_i    (add2_out[width_p])
+      ,.adder_result_is_neg_i    (adder_result_is_neg)
       ,.opA_is_neg_i             (opA_r[width_p])
       ,.opC_is_neg_i             (opC_r[width_p])
 
