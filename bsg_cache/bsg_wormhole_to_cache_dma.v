@@ -14,24 +14,26 @@
 
 module bsg_wormhole_to_cache_dma
   import bsg_cache_pkg::*;
-  #(parameter wh_flit_width_p="inv"
+  #(parameter addr_width_p="inv" // cache addr width (in bytes)
+    , parameter data_len_p="inv" // num of data beats in dma transfer
+    , parameter num_dma_p="inv"
+
+    // flit width should match the cache dma width.
+    , parameter wh_flit_width_p="inv"
     , parameter wh_cid_width_p="inv"
     , parameter wh_len_width_p="inv"
     , parameter wh_cord_width_p="inv"
 
-    , parameter num_dma_p="inv"
-    , parameter addr_width_p="inv"
-
     // FIFO parameters
-    , parameter in_fifo_els_p = 8
+    , parameter in_fifo_els_p=8
 
     , parameter lg_num_dma_lp=`BSG_SAFE_CLOG2(num_dma_p)
-    , parameter count_width_lp = `BSG_SAFE_CLOG2(wh_len_width_p)
+    , parameter count_width_lp=`BSG_SAFE_CLOG2(data_len_p)
 
     , parameter wh_link_sif_width_lp=`bsg_ready_and_link_sif_width(wh_flit_width_p)
     , parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
 
-    , parameter dma_data_width_p = wh_flit_width_p
+    , parameter dma_data_width_p=wh_flit_width_p
   )
   (
     input clk_i
@@ -39,8 +41,8 @@ module bsg_wormhole_to_cache_dma
 
 
     // wormhole link
-    , input [wh_link_sif_width_lp-1:0]        wh_link_sif_i
-    , input [lg_num_dma_lp-1:0]               wh_dma_id_i
+    , input [wh_link_sif_width_lp-1:0] wh_link_sif_i
+    , input [lg_num_dma_lp-1:0] wh_dma_id_i
     , output logic [wh_link_sif_width_lp-1:0] wh_link_sif_o
 
     // cache DMA
@@ -145,7 +147,7 @@ module bsg_wormhole_to_cache_dma
   logic send_up_li;
   logic [count_width_lp-1:0] send_count_lo;
   bsg_counter_clear_up #(
-    .max_val_p(wh_len_width_p-1)
+    .max_val_p(data_len_p-1)
     ,.init_val_p(0)
   ) send_count (
     .clk_i(clk_i)
@@ -216,9 +218,9 @@ module bsg_wormhole_to_cache_dma
         dma_data_o[send_cache_id_r] = in_fifo_data_lo;
         if (dma_data_yumi_i[send_cache_id_r]) begin
           in_fifo_yumi_li = 1'b1;
-          send_up_li = send_count_lo != wh_len_width_p-1;
-          send_clear_li = send_count_lo == wh_len_width_p-1;
-          send_state_n = (send_count_lo == wh_len_width_p-1)
+          send_up_li = send_count_lo != data_len_p-1;
+          send_clear_li = send_count_lo == data_len_p-1;
+          send_state_n = (send_count_lo == data_len_p-1)
             ? SEND_READY
             : SEND_EVICT_DATA;
         end
@@ -286,7 +288,7 @@ module bsg_wormhole_to_cache_dma
   logic recv_up_li;
   logic [count_width_lp-1:0] recv_count_lo;
   bsg_counter_clear_up #(
-    .max_val_p(wh_len_width_p-1)
+    .max_val_p(data_len_p-1)
     ,.init_val_p(0)
   ) recv_count (
     .clk_i(clk_i)
@@ -316,7 +318,7 @@ module bsg_wormhole_to_cache_dma
     header_flit_out.write_not_read = 1'b0; // dont matter
     header_flit_out.src_cord = '0; // dont matter
     header_flit_out.cid = cid_r[recv_cache_id_r];
-    header_flit_out.len = wh_len_width_p;
+    header_flit_out.len = data_len_p;
     header_flit_out.dest_cord = src_cord_r[recv_cache_id_r];
 
     dma_data_ready_o = '0;
@@ -354,9 +356,9 @@ module bsg_wormhole_to_cache_dma
         wh_link_sif_out.data = dma_data_i[recv_cache_id_r];
         dma_data_ready_o[recv_cache_id_r] = wh_link_sif_in.ready_and_rev;
         if (dma_data_v_i[recv_cache_id_r] & wh_link_sif_in.ready_and_rev) begin
-          recv_clear_li = (recv_count_lo == wh_len_width_p-1);
-          recv_up_li = (recv_count_lo != wh_len_width_p-1);
-          recv_state_n = (recv_count_lo == wh_len_width_p-1)
+          recv_clear_li = (recv_count_lo == data_len_p-1);
+          recv_up_li = (recv_count_lo != data_len_p-1);
+          recv_state_n = (recv_count_lo == data_len_p-1)
             ? RECV_READY
             : RECV_FILL_DATA;
         end
@@ -380,6 +382,10 @@ module bsg_wormhole_to_cache_dma
   //synopsys translate_off
   if (wh_flit_width_p != dma_data_width_p)
     $error("WH flit width must be equal to DMA data width");
+  if (wh_flit_width_p < addr_width_p)
+    $error("WH flit width must be larger than address width");
+  if ((2**wh_len_width_p-1) < data_len_p)
+    $error("WH len width must be large enough to hold the dma transfer size");
   //synopsys translate_on
 
 endmodule
