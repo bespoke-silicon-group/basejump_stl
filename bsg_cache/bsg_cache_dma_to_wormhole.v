@@ -48,6 +48,7 @@ module bsg_cache_dma_to_wormhole
     , input [wh_cord_width_p-1:0] my_wh_cord_i
     , input [wh_cord_width_p-1:0] dest_wh_cord_i
     , input [wh_cid_width_p-1:0] my_wh_cid_i
+    , input [wh_cid_width_p-1:0] dest_wh_cid_i
   );
 
   `declare_bsg_cache_dma_pkt_s(addr_width_p);
@@ -138,12 +139,13 @@ module bsg_cache_dma_to_wormhole
   bsg_cache_wh_header_flit_s header_flit;
   assign header_flit.unused = '0;
   assign header_flit.write_not_read = dma_pkt_lo.write_not_read;
+  assign header_flit.src_cid = my_wh_cid_i;
   assign header_flit.src_cord = my_wh_cord_i;
-  assign header_flit.cid = my_wh_cid_i;
   assign header_flit.len = dma_pkt_lo.write_not_read
     ? wh_len_width_p'(1+data_len_p)  // header + addr + data
     : wh_len_width_p'(1);  // header + addr
-  assign header_flit.dest_cord = dest_wh_cord_i;
+  assign header_flit.cord = dest_wh_cord_i;
+  assign header_flit.cid = dest_wh_cid_i;
 
 
   always_comb begin

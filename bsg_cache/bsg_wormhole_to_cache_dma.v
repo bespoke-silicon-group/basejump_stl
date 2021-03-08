@@ -42,8 +42,11 @@ module bsg_wormhole_to_cache_dma
 
     // wormhole link
     , input [wh_link_sif_width_lp-1:0] wh_link_sif_i
-    , input [lg_num_dma_lp-1:0] wh_dma_id_i
     , output logic [wh_link_sif_width_lp-1:0] wh_link_sif_o
+
+    , output logic [wh_cord_width_p-1:0] wh_header_src_cord_o
+    , output logic [wh_cid_width_p-1:0] wh_header_src_cid_o
+    , input [lg_num_dma_lp-1:0] wh_dma_id_i
 
     // cache DMA
     , output logic [num_dma_p-1:0][dma_pkt_width_lp-1:0] dma_pkt_o
@@ -105,24 +108,25 @@ module bsg_wormhole_to_cache_dma
   // header flits coming in and going out
   bsg_cache_wh_header_flit_s header_flit_in, header_flit_out;
   assign header_flit_in = in_fifo_data_lo;
-
+  assign wh_header_src_cord_o = header_flit_in.src_cord;
+  assign wh_header_src_cid_o = header_flit_in.src_cid;
 
   // cid, src_cord table
-  logic [num_dma_p-1:0][wh_cid_width_p-1:0] cid_r;
+  logic [num_dma_p-1:0][wh_cid_width_p-1:0] src_cid_r;
   logic [num_dma_p-1:0][wh_cord_width_p-1:0] src_cord_r;
-  logic [wh_cid_width_p-1:0] cid_n;
+  logic [wh_cid_width_p-1:0] src_cid_n;
   logic [wh_cord_width_p-1:0] src_cord_n;
   logic [lg_num_dma_lp-1:0] table_w_addr;
   logic table_we;
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      cid_r <= '0;
+      src_cid_r <= '0;
       src_cord_r <= '0;
     end
     else begin
       if (table_we) begin
-        cid_r[table_w_addr] <= cid_n;
+        src_cid_r[table_w_addr] <= src_cid_n;
         src_cord_r[table_w_addr] <= src_cord_n;
       end
     end
@@ -164,7 +168,7 @@ module bsg_wormhole_to_cache_dma
     table_we = 1'b0;
     table_w_addr = '0;
     src_cord_n = '0;
-    cid_n = '0;
+    src_cid_n = '0;
 
     in_fifo_yumi_li = 1'b0;
 
@@ -190,7 +194,7 @@ module bsg_wormhole_to_cache_dma
           in_fifo_yumi_li = 1'b1;
           write_not_read_n = header_flit_in.write_not_read;
           src_cord_n = header_flit_in.src_cord;
-          cid_n = header_flit_in.cid;
+          src_cid_n = header_flit_in.src_cid;
           table_w_addr = wh_dma_id_i;
           table_we = 1'b1;
           send_cache_id_n = wh_dma_id_i;
@@ -317,9 +321,10 @@ module bsg_wormhole_to_cache_dma
     header_flit_out.unused = '0;
     header_flit_out.write_not_read = 1'b0; // dont matter
     header_flit_out.src_cord = '0; // dont matter
-    header_flit_out.cid = cid_r[recv_cache_id_r];
+    header_flit_out.src_cid = '0; // don't matter
     header_flit_out.len = data_len_p;
-    header_flit_out.dest_cord = src_cord_r[recv_cache_id_r];
+    header_flit_out.cord = src_cord_r[recv_cache_id_r];
+    header_flit_out.cid = src_cid_r[recv_cache_id_r];
 
     dma_data_ready_o = '0;
 
