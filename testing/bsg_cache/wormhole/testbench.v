@@ -24,8 +24,8 @@ module testbench();
   );
 
   // DUT parameters
-  localparam num_dma_p=4; // 2+
-  localparam dma_data_width_p=32; // 32*X
+  localparam num_dma_p=2; // 2+
+  localparam dma_data_width_p=64; // 32*X
 
   localparam lg_num_dma_lp = `BSG_SAFE_CLOG2(num_dma_p);
 
@@ -238,7 +238,7 @@ module testbench();
       bsg_nonsynth_dma_model #(
         .addr_width_p(addr_width_p)
         ,.data_width_p(dma_data_width_p)
-        ,.block_size_in_words_p(block_size_in_words_p)
+        ,.block_size_in_words_p(data_len_p)
         ,.els_p(mem_size_p)
 
         ,.read_delay_p(`DMA_READ_DELAY_P)
