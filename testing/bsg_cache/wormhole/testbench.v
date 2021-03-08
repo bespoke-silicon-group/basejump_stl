@@ -24,8 +24,8 @@ module testbench();
   );
 
   // DUT parameters
-  localparam num_dma_p=2; // 2+
-  localparam dma_data_width_p=32;
+  localparam num_dma_p=4; // 2+
+  localparam dma_data_width_p=32; // 32*X
 
   localparam lg_num_dma_lp = `BSG_SAFE_CLOG2(num_dma_p);
 
@@ -39,8 +39,8 @@ module testbench();
   localparam block_offset_width_p = `BSG_SAFE_CLOG2(data_width_p*block_size_in_words_p/8);
   localparam data_len_p=block_size_in_words_p*data_width_p/dma_data_width_p;
   localparam wh_len_width_p=`BSG_WIDTH(data_len_p+1);
-  localparam wh_cid_width_p=2;
-  localparam wh_cord_width_p=2;
+  localparam wh_cid_width_p=3;
+  localparam wh_cord_width_p=3;
   localparam wh_flit_width_p=dma_data_width_p;
 
 
@@ -161,6 +161,7 @@ module testbench();
          ,.my_wh_cord_i('0)
          ,.dest_wh_cord_i('1)
          ,.my_wh_cid_i(wh_cid_width_p'(i))
+         ,.dest_wh_cid_i(wh_cid_width_p'(i))
          );
     end
 
@@ -193,7 +194,10 @@ module testbench();
   logic [num_dma_p-1:0] mem_dma_data_v_li, mem_dma_data_ready_lo;
   logic [num_dma_p-1:0][dma_data_width_p-1:0] mem_dma_data_lo;
   logic [num_dma_p-1:0] mem_dma_data_v_lo, mem_dma_data_yumi_li;
-  wire [lg_num_dma_lp-1:0] wh_dma_id_li = header_flit.cid[0+:lg_num_dma_lp];
+
+  logic [wh_cord_width_p-1:0] wh_header_cord_lo;
+  logic [wh_cid_width_p-1:0] wh_header_cid_lo;
+  wire [lg_num_dma_lp-1:0] wh_dma_id_li = wh_header_cid_lo[0+:lg_num_dma_lp];
 
   bsg_wormhole_to_cache_dma #(
      .addr_width_p(addr_width_p)
@@ -208,8 +212,11 @@ module testbench();
      ,.reset_i(reset)
 
      ,.wh_link_sif_i(wh_link_concentrated_lo)
-     ,.wh_dma_id_i(wh_dma_id_li)
      ,.wh_link_sif_o(wh_link_concentrated_li)
+
+     ,.wh_header_src_cord_o(wh_header_cord_lo)
+     ,.wh_header_src_cid_o(wh_header_cid_lo)
+     ,.wh_dma_id_i(wh_dma_id_li)
 
      ,.dma_pkt_o(mem_dma_pkt)
      ,.dma_pkt_v_o(mem_dma_pkt_v_lo)
@@ -327,11 +334,8 @@ module testbench();
       recv_r <= '0;
     end
     else begin
-      if (|(v_li & ready_lo))
-        sent_r <= sent_r + 1;
-
-      if (|(v_lo & yumi_li))
-        recv_r <= recv_r + 1;
+      sent_r <= sent_r + $countones(v_li & ready_lo);
+      recv_r <= recv_r + $countones(v_lo & yumi_li);
     end
   end
 
