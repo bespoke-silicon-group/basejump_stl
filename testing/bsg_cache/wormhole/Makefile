@@ -4,7 +4,7 @@ export BASEJUMP_STL_DIR = $(abspath ../../..)
 INCDIR =  +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_noc
 
-VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_all
+VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access
 VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4 -assert svaext
 
 
@@ -24,7 +24,8 @@ DMA_WRITE_DELAY_P ?= 0
 DMA_REQ_DELAY_P   ?= 0
 DMA_DATA_DELAY_P  ?= 0
 
-DMA_DATA_WIDTH_P  ?= 32
+NUM_DMA_P ?= 2 # 2-4
+DMA_RATIO_P ?= 1 # 1-4
 
 VCS_DEFINES += +define+YUMI_MIN_DELAY_P=$(YUMI_MIN_DELAY_P)
 VCS_DEFINES += +define+YUMI_MAX_DELAY_P=$(YUMI_MAX_DELAY_P)
@@ -33,11 +34,14 @@ VCS_DEFINES += +define+DMA_READ_DELAY_P=$(DMA_READ_DELAY_P)
 VCS_DEFINES += +define+DMA_WRITE_DELAY_P=$(DMA_WRITE_DELAY_P)
 VCS_DEFINES += +define+DMA_REQ_DELAY_P=$(DMA_REQ_DELAY_P)
 VCS_DEFINES += +define+DMA_DATA_DELAY_P=$(DMA_DATA_DELAY_P)
+
+VCS_DEFINES += +define+NUM_DMA_P=$(NUM_DMA_P)
+VCS_DEFINES += +define+DMA_RATIO_P=$(DMA_RATIO_P)
 ########################
 
 
 SIMV = $(abspath simv)
-WAVE ?= 1
+WAVE ?= 0
 
 BASIC_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BASIC_TEST)))
 
