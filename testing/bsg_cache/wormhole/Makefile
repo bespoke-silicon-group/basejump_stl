@@ -24,7 +24,7 @@ DMA_WRITE_DELAY_P ?= 0
 DMA_REQ_DELAY_P   ?= 0
 DMA_DATA_DELAY_P  ?= 0
 
-NUM_DMA_P ?= 2 # 2-4
+NUM_DMA_P ?= 3 # 2-4
 DMA_RATIO_P ?= 1 # 1-4
 
 VCS_DEFINES += +define+YUMI_MIN_DELAY_P=$(YUMI_MIN_DELAY_P)
@@ -41,7 +41,7 @@ VCS_DEFINES += +define+DMA_RATIO_P=$(DMA_RATIO_P)
 
 
 SIMV = $(abspath simv)
-WAVE ?= 0
+WAVE ?= 1
 
 BASIC_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BASIC_TEST)))
 
