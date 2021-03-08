@@ -319,9 +319,9 @@ module bsg_wormhole_to_cache_dma
     recv_up_li = 1'b0;
 
     header_flit_out.unused = '0;
-    header_flit_out.write_not_read = 1'b0; // dont matter
-    header_flit_out.src_cord = '0; // dont matter
-    header_flit_out.src_cid = '0; // don't matter
+    header_flit_out.write_not_read = 1'b0; // doesn't matter
+    header_flit_out.src_cord = '0; // doesn't matter
+    header_flit_out.src_cid = '0; // doesn't matter
     header_flit_out.len = data_len_p;
     header_flit_out.cord = src_cord_r[recv_cache_id_r];
     header_flit_out.cid = src_cid_r[recv_cache_id_r];
