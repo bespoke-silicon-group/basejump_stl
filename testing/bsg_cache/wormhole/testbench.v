@@ -24,9 +24,10 @@ module testbench();
   );
 
   // DUT parameters
-  localparam num_dma_p=2; // 2+
-  localparam dma_data_width_p=64; // 32*X
+  localparam num_dma_p=`NUM_DMA_P; // 2+
+  localparam dma_ratio_p=`DMA_RATIO_P; // 32*X
 
+  localparam dma_data_width_p=32*dma_ratio_p;
   localparam lg_num_dma_lp = `BSG_SAFE_CLOG2(num_dma_p);
 
   // TB parameters
