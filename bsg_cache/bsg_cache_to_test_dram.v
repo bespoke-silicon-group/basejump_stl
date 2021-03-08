@@ -80,29 +80,46 @@ module bsg_cache_to_test_dram
   //
   logic rr_v_lo;
   logic rr_yumi_li;
+  logic [num_cache_p-1:0] rr_grants_lo;
   bsg_cache_dma_pkt_s rr_dma_pkt_lo;
   logic [lg_num_cache_lp-1:0] rr_tag_lo;
 
   logic [lg_num_cache_lp-1:0] rr_tag_r, rr_tag_n;
   bsg_cache_dma_pkt_s dma_pkt_r, dma_pkt_n;
 
-  bsg_round_robin_n_to_1 #(
-    .width_p(dma_pkt_width_lp)
-    ,.num_in_p(num_cache_p)
-    ,.strict_p(0)
+  bsg_arb_round_robin #(
+    .width_p(num_cache_p)
   ) rr0 (
     .clk_i(core_clk_i)
     ,.reset_i(core_reset_i)
 
-    ,.data_i(dma_pkt)
-    ,.v_i(dma_pkt_v_i)
-    ,.yumi_o(dma_pkt_yumi_o)
-
-    ,.v_o(rr_v_lo)
-    ,.data_o(rr_dma_pkt_lo)
-    ,.tag_o(rr_tag_lo)
+    ,.reqs_i(dma_pkt_v_i)
+    ,.grants_o(rr_grants_lo)
     ,.yumi_i(rr_yumi_li)
   );
+
+  assign rr_v_lo = |dma_pkt_v_i;
+  assign dma_pkt_yumi_o = rr_grants_lo & {num_cache_p{rr_yumi_li}};
+
+  bsg_mux_one_hot #(
+    .width_p(dma_pkt_width_lp)
+    ,.els_p(num_cache_p)
+  ) rr_data_mux (
+    .data_i(dma_pkt)
+    ,.sel_one_hot_i(rr_grants_lo)
+    ,.data_o(rr_dma_pkt_lo)
+  );
+
+  bsg_encode_one_hot #(
+    .width_p(num_cache_p)
+  ) rr_eoh (
+    .i(dma_pkt_yumi_o)
+    ,.addr_o(rr_tag_lo)
+    ,.v_o()
+  );
+
+
+
 
   logic counter_clear;
   logic counter_up;
