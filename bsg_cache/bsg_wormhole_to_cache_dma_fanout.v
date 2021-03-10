@@ -1,18 +1,17 @@
 /**
  *    bsg_wormhole_to_cache_dma.v
  *
- *    This module converts a bsg_cache wormhole link to an array of cache dma interface
- *    this converts vcache wh link to an array of cache dma interface to that it can be interfaced to
- *    bsg_cache_to_test_dram.v
+ *    This module converts a bsg_cache_dma wormhole link to an array of bsg_cache_dma interfaces.
+ *    It can then be connected to other endpoints such as bsg_cache_to_axi or bsg_cache_to_test_dram.
  *
- *    Intended to be used for simulation only.
+ *    Caution: large fanouts may struggle with timing
  */
 
 
 `include "bsg_noc_links.vh"
 
 
-module bsg_wormhole_to_cache_dma
+module bsg_wormhole_to_cache_dma_fanout
   import bsg_cache_pkg::*;
   #(parameter num_dma_p="inv"
     , parameter dma_addr_width_p="inv" // cache addr width (in bytes)
@@ -38,7 +37,6 @@ module bsg_wormhole_to_cache_dma
     , input reset_i
 
 
-    // wormhole link
     // Incoming wormhole link is valid->ready, while outgoing is standard ready-valid-and
     // While one can functionally connect a valid->ready consumer to a ready-valid-and producer,
     //   it may be desirable for timing or congestion to buffer input flits
@@ -185,7 +183,7 @@ module bsg_wormhole_to_cache_dma
         dma_pkt_out.addr = dma_addr_width_p'(wh_link_sif_in.data);
 
         wh_link_sif_out.then_ready_rev = dma_pkt_yumi_i[send_cache_id_r];
-        send_state_n = dma_pkt_yumi_i[send_cache_id_r]
+        send_state_n = wh_link_sif_out.then_ready_rev
           ? (write_not_read_r ? SEND_EVICT_DATA : SEND_READY)
           : SEND_DMA_PKT;
       end
@@ -198,7 +196,7 @@ module bsg_wormhole_to_cache_dma
           wh_link_sif_out.then_ready_rev = 1'b1;
           send_up_li = send_count_lo != dma_burst_len_p-1;
           send_clear_li = send_count_lo == dma_burst_len_p-1;
-          send_state_n = (send_count_lo == dma_burst_len_p-1)
+          send_state_n = send_clear_li
             ? SEND_READY
             : SEND_EVICT_DATA;
         end
@@ -337,7 +335,7 @@ module bsg_wormhole_to_cache_dma
         if (dma_data_v_i[recv_cache_id_r] & wh_link_sif_in.ready_and_rev) begin
           recv_clear_li = (recv_count_lo == dma_burst_len_p-1);
           recv_up_li = (recv_count_lo != dma_burst_len_p-1);
-          recv_state_n = (recv_count_lo == dma_burst_len_p-1)
+          recv_state_n = recv_clear_li
             ? RECV_READY
             : RECV_FILL_DATA;
         end
