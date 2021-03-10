@@ -46,7 +46,7 @@
 //
 //
 // Context switching. The barrier is context switchable. To context switch the barrier, you interrupt all of the relevant tiles
-// and wait long enough for any successful barrier to fully propagate. At this point, you can determine if you are either barrier-completed
+// and wait long enough for any successful barrier to fully propagate. At this point, using BAR CSR, you can determine if you are either barrier-completed
 // (Pi = Po) for all tiles or barrier in progress (Pi != Po for some subset of nodes.) For barrier in progress, we can record all of the nodes
 // that have barrier in progress, and then reset the corresponding Pi bit to clear the in progress barrier.
 //
