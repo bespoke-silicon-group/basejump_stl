@@ -198,7 +198,7 @@ module testbench();
 
   logic [wh_cord_width_p-1:0] wh_header_cord_lo;
   logic [wh_cid_width_p-1:0] wh_header_cid_lo;
-  wire [lg_num_dma_lp-1:0] wh_dma_id_li = wh_header_cid_lo[0+:lg_num_dma_lp];
+  wire [lg_num_dma_lp-1:0] wh_dma_id_li = header_flit.cid[0+:lg_num_dma_lp];
 
   bsg_wormhole_to_cache_dma #(
      .num_dma_p(num_dma_p)
@@ -213,11 +213,8 @@ module testbench();
      ,.reset_i(reset)
 
      ,.wh_link_sif_i(wh_link_concentrated_lo)
-     ,.wh_link_sif_o(wh_link_concentrated_li)
-
-     ,.wh_header_src_cord_o(wh_header_cord_lo)
-     ,.wh_header_src_cid_o(wh_header_cid_lo)
      ,.wh_dma_id_i(wh_dma_id_li)
+     ,.wh_link_sif_o(wh_link_concentrated_li)
 
      ,.dma_pkt_o(mem_dma_pkt)
      ,.dma_pkt_v_o(mem_dma_pkt_v_lo)
