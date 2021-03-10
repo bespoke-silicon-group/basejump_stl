@@ -94,7 +94,7 @@ module testbench();
         ,.sets_p(sets_p)
         ,.ways_p(ways_p)
         ,.amo_support_p(amo_support_level_arithmetic_lp)
-      ) DUT (
+      ) cache (
         .clk_i(clk)
         ,.reset_i(reset)
 
@@ -134,8 +134,8 @@ module testbench();
       );
 
       bsg_cache_dma_to_wormhole #(
-         .addr_width_p(addr_width_p)
-         ,.data_len_p(data_len_p)
+         .dma_addr_width_p(addr_width_p)
+         ,.dma_burst_len_p(data_len_p)
          ,.wh_flit_width_p(wh_flit_width_p)
          ,.wh_cid_width_p(wh_cid_width_p)
          ,.wh_cord_width_p(wh_cord_width_p)
@@ -201,9 +201,9 @@ module testbench();
   wire [lg_num_dma_lp-1:0] wh_dma_id_li = wh_header_cid_lo[0+:lg_num_dma_lp];
 
   bsg_wormhole_to_cache_dma #(
-     .addr_width_p(addr_width_p)
-     ,.num_dma_p(num_dma_p)
-     ,.data_len_p(data_len_p)
+     .num_dma_p(num_dma_p)
+     ,.dma_addr_width_p(addr_width_p)
+     ,.dma_burst_len_p(data_len_p)
      ,.wh_flit_width_p(wh_flit_width_p)
      ,.wh_cid_width_p(wh_cid_width_p)
      ,.wh_cord_width_p(wh_cord_width_p)
