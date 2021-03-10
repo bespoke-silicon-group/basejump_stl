@@ -27,9 +27,8 @@
 // <execution>:
 //
 // memory fence   # if needed, stall until all memory operations done
-// csrxori BAR,1  # set Pi bit (note: Po bit is mapped to bit 2 of the register)
-// barrier fence  # stall in decode until Pi==Po
-//
+// barsend        # flip Pi bit (bit 1) of BAR csr (note: Po bit is mapped to bit 2 of the register)
+// barreceive     # stall in decode until Pi==Po
 //
 // Here is an example barrier for a Ruche factor 3 topology (you would configure the letters on the left of 
 // the -> as the input mask and the letter on the right as the output direction). Note R is the "Root".
