@@ -31,8 +31,8 @@
 // barrier fence  # stall in decode until Pi==Po
 //
 //
-// Here is an example barrier (you would configure the letters on the left of the -> as the input mask and the 
-// letter on the right as the output direction). Note R is the "Root".
+// Here is an example barrier for a Ruche factor 3 topology (you would configure the letters on the left of 
+// the -> as the input mask and the letter on the right as the output direction). Note R is the "Root".
 //
 //   0.    1.     2.     3.     4.     5.      6.     7.       8.       9.     10.    11.     12.   13.    14.   15.
 // P->E  P->E   P->E  PW->E   PW->E PW->E   PW->e  PWwE->S   PWEe->S    PW->w  PE->W   PE->W  PE->W  P->W  P->W  P->W  0
