@@ -25,13 +25,11 @@ module bsg_wormhole_to_cache_dma
     , parameter wh_cord_width_p="inv"
 
     // FIFO parameters
-    // Number of flits to buffer
-    , parameter in_fifo_els_p=8
-
     , parameter lg_num_dma_lp=`BSG_SAFE_CLOG2(num_dma_p)
     , parameter count_width_lp=`BSG_SAFE_CLOG2(dma_burst_len_p)
 
-    , parameter wh_link_sif_width_lp=`bsg_ready_and_link_sif_width(wh_flit_width_p)
+    , parameter wh_ready_and_link_sif_width_lp=`bsg_ready_and_link_sif_width(wh_flit_width_p)
+    , parameter wh_then_ready_link_sif_width_lp=`bsg_then_ready_link_sif_width(wh_flit_width_p)
     , parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(dma_addr_width_p)
     , parameter dma_data_width_p=wh_flit_width_p
   )
@@ -41,12 +39,12 @@ module bsg_wormhole_to_cache_dma
 
 
     // wormhole link
-    , input [wh_link_sif_width_lp-1:0] wh_link_sif_i
-    , output logic [wh_link_sif_width_lp-1:0] wh_link_sif_o
-
-    , output logic [wh_cord_width_p-1:0] wh_header_src_cord_o
-    , output logic [wh_cid_width_p-1:0] wh_header_src_cid_o
+    // Incoming wormhole link is valid->ready, while outgoing is standard ready-valid-and
+    // While one can functionally connect a valid->ready consumer to a ready-valid-and producer,
+    //   it may be desirable for timing or congestion to buffer input flits
+    , input [wh_ready_and_link_sif_width_lp-1:0] wh_link_sif_i
     , input [lg_num_dma_lp-1:0] wh_dma_id_i
+    , output logic [wh_then_ready_link_sif_width_lp-1:0] wh_link_sif_o
 
     // cache DMA
     , output logic [num_dma_p-1:0][dma_pkt_width_lp-1:0] dma_pkt_o
@@ -64,39 +62,17 @@ module bsg_wormhole_to_cache_dma
 
 
   // structs
-  `declare_bsg_ready_and_link_sif_s(wh_flit_width_p,wh_link_sif_s);
+  `declare_bsg_ready_and_link_sif_s(wh_flit_width_p,wh_ready_and_link_sif_s);
+  `declare_bsg_then_ready_link_sif_s(wh_flit_width_p,wh_then_ready_link_sif_s);
   `declare_bsg_cache_dma_pkt_s(dma_addr_width_p);
   `declare_bsg_cache_wh_header_flit_s(wh_flit_width_p,wh_cord_width_p,wh_len_width_p,wh_cid_width_p);
 
 
   // cast wormhole links
-  wh_link_sif_s wh_link_sif_in;
-  wh_link_sif_s wh_link_sif_out;
+  wh_ready_and_link_sif_s wh_link_sif_in;
+  wh_then_ready_link_sif_s wh_link_sif_out;
   assign wh_link_sif_in = wh_link_sif_i;
   assign wh_link_sif_o = wh_link_sif_out;
-
-
-  // Buffer incoming flits.
-  logic [wh_flit_width_p-1:0] in_fifo_data_lo;
-  logic in_fifo_yumi_li;
-  logic in_fifo_v_lo;
-
-  bsg_fifo_1r1w_small #(
-    .els_p(in_fifo_els_p)
-    ,.width_p(wh_flit_width_p)
-  ) in_fifo (
-    .clk_i    (clk_i)
-    ,.reset_i (reset_i)
-
-    ,.v_i     (wh_link_sif_in.v)
-    ,.data_i  (wh_link_sif_in.data)
-    ,.ready_o (wh_link_sif_out.ready_and_rev)
-
-    ,.v_o     (in_fifo_v_lo)
-    ,.data_o  (in_fifo_data_lo)
-    ,.yumi_i  (in_fifo_yumi_li)
-  );
-
 
   // DMA pkt going out
   bsg_cache_dma_pkt_s dma_pkt_out;
@@ -107,9 +83,7 @@ module bsg_wormhole_to_cache_dma
 
   // header flits coming in and going out
   bsg_cache_wh_header_flit_s header_flit_in, header_flit_out;
-  assign header_flit_in = in_fifo_data_lo;
-  assign wh_header_src_cord_o = header_flit_in.src_cord;
-  assign wh_header_src_cid_o = header_flit_in.src_cid;
+  assign header_flit_in = wh_link_sif_in.data;
 
   // cid, src_cord table
   logic [num_dma_p-1:0][wh_cid_width_p-1:0] src_cid_r;
@@ -170,7 +144,7 @@ module bsg_wormhole_to_cache_dma
     src_cord_n = '0;
     src_cid_n = '0;
 
-    in_fifo_yumi_li = 1'b0;
+    wh_link_sif_out.then_ready_rev = 1'b0;
 
     send_clear_li = 1'b0;
     send_up_li = 1'b0;
@@ -190,8 +164,8 @@ module bsg_wormhole_to_cache_dma
       // store the write_not_read, src_cord.
       // save the cid in a table.
       SEND_READY: begin
-        if (in_fifo_v_lo) begin
-          in_fifo_yumi_li = 1'b1;
+        if (wh_link_sif_in.v) begin
+          wh_link_sif_out.then_ready_rev = 1'b1;
           write_not_read_n = header_flit_in.write_not_read;
           src_cord_n = header_flit_in.src_cord;
           src_cid_n = header_flit_in.src_cid;
@@ -206,11 +180,11 @@ module bsg_wormhole_to_cache_dma
       // For read, return to SEND_READY.
       // For write, move to SEND_EVICT_DATA to pass the evict data.
       SEND_DMA_PKT: begin
-        dma_pkt_v_o[send_cache_id_r] = in_fifo_v_lo;
+        dma_pkt_v_o[send_cache_id_r] = wh_link_sif_in.v;
         dma_pkt_out.write_not_read = write_not_read_r;
-        dma_pkt_out.addr = dma_addr_width_p'(in_fifo_data_lo);
+        dma_pkt_out.addr = dma_addr_width_p'(wh_link_sif_in.data);
 
-        in_fifo_yumi_li = dma_pkt_yumi_i[send_cache_id_r];
+        wh_link_sif_out.then_ready_rev = dma_pkt_yumi_i[send_cache_id_r];
         send_state_n = dma_pkt_yumi_i[send_cache_id_r]
           ? (write_not_read_r ? SEND_EVICT_DATA : SEND_READY)
           : SEND_DMA_PKT;
@@ -218,10 +192,10 @@ module bsg_wormhole_to_cache_dma
 
       // once all evict data has been passed along return to SEND_READY
       SEND_EVICT_DATA: begin
-        dma_data_v_o[send_cache_id_r] = in_fifo_v_lo;
-        dma_data_o[send_cache_id_r] = in_fifo_data_lo;
+        dma_data_v_o[send_cache_id_r] = wh_link_sif_in.v;
+        dma_data_o[send_cache_id_r] = wh_link_sif_in.data;
         if (dma_data_yumi_i[send_cache_id_r]) begin
-          in_fifo_yumi_li = 1'b1;
+          wh_link_sif_out.then_ready_rev = 1'b1;
           send_up_li = send_count_lo != dma_burst_len_p-1;
           send_clear_li = send_count_lo == dma_burst_len_p-1;
           send_state_n = (send_count_lo == dma_burst_len_p-1)
