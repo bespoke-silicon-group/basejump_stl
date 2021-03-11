@@ -1,5 +1,5 @@
 // Round robin arbitration unit
-
+// NOTE: generally prefer https://github.com/bespoke-silicon-group/basejump_stl/blob/master/bsg_misc/bsg_arb_round_robin.v to this module.
 // Automatically generated using bsg_round_robin_arb.py
 // DO NOT MODIFY
 
