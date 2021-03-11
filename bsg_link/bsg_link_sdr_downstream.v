@@ -1,6 +1,6 @@
 
 //
-// Paul Gao 03/2019
+// Paul Gao 02/2021
 //
 // This is the receiver part of bsg_link_sdr, an SDR communication endpoint 
 // over single source-synchronous channel.

@@ -46,6 +46,8 @@ module bsg_link_source_sync_downstream
  #(parameter channel_width_p                 = 16
   ,parameter lg_fifo_depth_p                 = 6
   ,parameter lg_credit_to_token_decimation_p = 3
+  // When the async_fifo is not on critical path (e.g. when async_fifo size
+  // is small), bypass twofer fifo to minimize buffering and latency
   ,parameter bypass_twofer_fifo_p            = 0
   )
   
