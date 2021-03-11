@@ -1,6 +1,6 @@
 /**
  *  bsg_cache_pkg.v
- *
+ *  
  *  @author tommy
  */
 
@@ -68,11 +68,11 @@ package bsg_cache_pkg;
 
     ,ALOCK   = 6'b011011      // address lock
     ,AUNLOCK = 6'b011100      // address unlock
-
+   
     // 32-bit atomic
     ,AMOSWAP_W = 6'b100000    // atomic swap
     ,AMOADD_W  = 6'b100001    // atomic add
-    ,AMOXOR_W  = 6'b100010    // atomic xor
+    ,AMOXOR_W  = 6'b100010    // atomic xor 
     ,AMOAND_W  = 6'b100011    // atomic and
     ,AMOOR_W   = 6'b100100    // atomic or
     ,AMOMIN_W  = 6'b100101    // atomic min
@@ -83,7 +83,7 @@ package bsg_cache_pkg;
     // 64-bit atomic
     ,AMOSWAP_D = 6'b110000    // atomic swap
     ,AMOADD_D  = 6'b110001    // atomic add
-    ,AMOXOR_D  = 6'b110010    // atomic xor
+    ,AMOXOR_D  = 6'b110010    // atomic xor 
     ,AMOAND_D  = 6'b110011    // atomic and
     ,AMOOR_D   = 6'b110100    // atomic or
     ,AMOMIN_D  = 6'b110101    // atomic min
@@ -116,7 +116,7 @@ package bsg_cache_pkg;
     logic alock_op;
     logic aunlock_op;
     logic tag_read_op;
-
+   
     logic atomic_op;
     bsg_cache_amo_subop_e amo_subop;
   } bsg_cache_decode_s;
@@ -133,17 +133,5 @@ package bsg_cache_pkg;
     ,e_dma_send_evict_data  = 4'b1000
   } bsg_cache_dma_cmd_e;
 
-  // wormhole
-  //
-  `define declare_bsg_cache_wh_header_flit_s(wh_flit_width_mp,wh_cord_width_mp,wh_len_width_mp,wh_cid_width_mp) \
-    typedef struct packed { \
-      logic [wh_flit_width_mp-(wh_cord_width_mp*2)-1-wh_len_width_mp-(wh_cid_width_mp*2)-1:0] unused; \
-      logic write_not_read; \
-      logic [wh_cid_width_mp-1:0] src_cid; \
-      logic [wh_cord_width_mp-1:0] src_cord; \
-      logic [wh_cid_width_mp-1:0] cid; \
-      logic [wh_len_width_mp-1:0] len; \
-      logic [wh_cord_width_mp-1:0] cord; \
-    } bsg_cache_wh_header_flit_s
 
 endpackage
