@@ -40,7 +40,7 @@ module bsg_cache_dma_to_wormhole
 
     , output logic [dma_data_width_lp-1:0] dma_data_o
     , output logic dma_data_v_o
-    , input dma_data_ready_i
+    , input dma_data_ready_and_i
 
     , input [dma_data_width_lp-1:0] dma_data_i
     , input dma_data_v_i
@@ -92,7 +92,7 @@ module bsg_cache_dma_to_wormhole
   logic [wh_flit_width_p-1:0] return_fifo_data_lo;
   logic return_fifo_ready_li, return_fifo_yumi_li;
 
-  if (buffer return_p)
+  if (buffer_return_p)
     begin : br
       bsg_two_fifo #(
         .width_p(wh_flit_width_p)
@@ -263,8 +263,8 @@ module bsg_cache_dma_to_wormhole
       end
 
       RECV_DATA: begin
-        return_fifo_ready_li = dma_data_ready_i;
-        dma_data_v_o = return_fifo_yumi_li;
+        return_fifo_ready_li = dma_data_ready_and_i;
+        dma_data_v_o = return_fifo_v_lo;
         recv_up_li = return_fifo_yumi_li & (recv_count_lo != dma_burst_len_p-1);
         recv_clear_li = return_fifo_yumi_li & (recv_count_lo == dma_burst_len_p-1);
         recv_state_n = recv_clear_li

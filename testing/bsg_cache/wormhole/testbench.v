@@ -74,7 +74,7 @@ module testbench();
 
   logic [num_dma_p-1:0][dma_data_width_p-1:0] dma_data_li;
   logic [num_dma_p-1:0] dma_data_v_li;
-  logic [num_dma_p-1:0] dma_data_ready_lo;
+  logic [num_dma_p-1:0] dma_data_ready_and_lo;
 
   logic [num_dma_p-1:0][dma_data_width_p-1:0] dma_data_lo;
   logic [num_dma_p-1:0] dma_data_v_lo;
@@ -112,7 +112,7 @@ module testbench();
 
         ,.dma_data_i(dma_data_li[i])
         ,.dma_data_v_i(dma_data_v_li[i])
-        ,.dma_data_ready_o(dma_data_ready_lo[i])
+        ,.dma_data_ready_o(dma_data_ready_and_lo[i])
 
         ,.dma_data_o(dma_data_lo[i])
         ,.dma_data_v_o(dma_data_v_lo[i])
@@ -150,7 +150,7 @@ module testbench();
 
          ,.dma_data_o(dma_data_li[i])
          ,.dma_data_v_o(dma_data_v_li[i])
-         ,.dma_data_ready_i(dma_data_ready_lo[i])
+         ,.dma_data_ready_and_i(dma_data_ready_and_lo[i])
 
          ,.dma_data_i(dma_data_lo[i])
          ,.dma_data_v_i(dma_data_v_lo[i])
@@ -192,7 +192,7 @@ module testbench();
   bsg_cache_dma_pkt_s [num_dma_p-1:0] mem_dma_pkt;
   logic [num_dma_p-1:0] mem_dma_pkt_v_lo, mem_dma_pkt_yumi_li;
   logic [num_dma_p-1:0][wh_flit_width_p-1:0] mem_dma_data_li;
-  logic [num_dma_p-1:0] mem_dma_data_v_li, mem_dma_data_ready_lo;
+  logic [num_dma_p-1:0] mem_dma_data_v_li, mem_dma_data_ready_and_lo;
   logic [num_dma_p-1:0][dma_data_width_p-1:0] mem_dma_data_lo;
   logic [num_dma_p-1:0] mem_dma_data_v_lo, mem_dma_data_yumi_li;
 
@@ -222,7 +222,7 @@ module testbench();
 
      ,.dma_data_i(mem_dma_data_li)
      ,.dma_data_v_i(mem_dma_data_v_li)
-     ,.dma_data_ready_o(mem_dma_data_ready_lo)
+     ,.dma_data_ready_and_o(mem_dma_data_ready_and_lo)
 
      ,.dma_data_o(mem_dma_data_lo)
      ,.dma_data_v_o(mem_dma_data_v_lo)
@@ -254,7 +254,7 @@ module testbench();
 
         ,.dma_data_o(mem_dma_data_li[i])
         ,.dma_data_v_o(mem_dma_data_v_li[i])
-        ,.dma_data_ready_i(mem_dma_data_ready_lo[i])
+        ,.dma_data_ready_i(mem_dma_data_ready_and_lo[i])
 
         ,.dma_data_i(mem_dma_data_lo[i])
         ,.dma_data_v_i(mem_dma_data_v_lo[i])
