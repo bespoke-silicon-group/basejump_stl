@@ -18,6 +18,7 @@
 module bsg_round_robin_n_to_1 #(parameter width_p = -1
                                 ,parameter num_in_p = -1
                                 ,parameter strict_p = "inv" 
+                                ,parameter use_scan_p = 0
                                 ,parameter tag_width_lp = `BSG_SAFE_CLOG2(num_in_p)
                                 )
    (input  clk_i
@@ -69,6 +70,30 @@ module bsg_round_robin_n_to_1 #(parameter width_p = -1
 
         // assign v_o = | v_i;
 
+        if (use_scan_p) begin: scan1
+          // scan version
+          bsg_arb_round_robin #(
+            .width_p(num_in_p)
+          ) rr (
+            .clk_i      (clk_i)
+            ,.reset_i   (reset_i)
+            ,.reqs_i    (v_i)
+            ,.grants_o  (grants_lo)
+            ,.yumi_i    (yumi_i)
+          );
+
+          assign v_o = | v_i;
+
+          bsg_encode_one_hot #(
+            .width_p(num_in_p)
+          )  enc (
+            .i(grants_lo)
+            ,.addr_o(tag_o)
+            ,.v_o()
+          );
+
+        end
+        else begin: scan0
         bsg_round_robin_arb #(.inputs_p(num_in_p))
         rr_arb_ctrl
           (.clk_i
@@ -85,6 +110,8 @@ module bsg_round_robin_n_to_1 #(parameter width_p = -1
            ,.yumi_i  (yumi_i & v_o )  // based on v_o, downstream
                                   // node decides if it will accept
            );
+
+        end
 
         bsg_crossbar_o_by_i #(.i_els_p (num_in_p)
                               ,.o_els_p(1       )
