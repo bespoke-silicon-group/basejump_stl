@@ -43,7 +43,9 @@ module bsg_link_osdr_phy_phase_align
   );
 
   logic clk_r_p, clk_r_n;
-  assign clk_o = clk_r_p ^ clk_r_n;
+
+  bsg_xor #(.width_p(1)) clk_xor
+  (.a_i(clk_r_p),.b_i(clk_r_n),. o(clk_o));
 
   bsg_dff_reset #(.width_p(1),.reset_val_p(0)) clk_ff_p
   (.clk_i(clk_i),.reset_i(reset_i),.data_i(~clk_r_p),.data_o(clk_r_p));
