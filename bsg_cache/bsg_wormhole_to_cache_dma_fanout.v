@@ -17,7 +17,7 @@ module bsg_wormhole_to_cache_dma_fanout
     , parameter dma_addr_width_p="inv" // cache addr width (in bytes)
     , parameter dma_burst_len_p="inv" // num of data beats in dma transfer
 
-    // flit width should match the cache dma width.
+    // flit width must match the cache dma width.
     , parameter wh_flit_width_p="inv"
     , parameter wh_cid_width_p="inv"
     , parameter wh_len_width_p="inv"
@@ -74,10 +74,7 @@ module bsg_wormhole_to_cache_dma_fanout
 
   // DMA pkt going out
   bsg_cache_dma_pkt_s dma_pkt_out;
-  for (genvar i = 0; i < num_dma_p; i++) begin
-    assign dma_pkt_o[i] = dma_pkt_out;
-  end
-
+  assign dma_pkt_o = {num_dma_p{dma_pkt_out}};
 
   // header flits coming in and going out
   bsg_cache_wh_header_flit_s header_flit_in, header_flit_out;

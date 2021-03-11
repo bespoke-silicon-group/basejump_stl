@@ -1,10 +1,12 @@
 /**
  *    bsg_cache_dma_to_wormhole.v
  *
- *    this module interfaces cache DMA to wormhole router.
- *    when this module receives a write dma packet from the cache, it sends
- *    write header flit with evict data following.
- *    for read dma packets, it sends the read header flit, and receives the fill data asynchronously.
+ *    This module interfaces bsg_cache_dma to a wormhole link.
+ *    dma_pkts come in two flavors:
+ *      - Write packets send a wormhole header flit, then an address flit, then N data flits (the
+ *          evicted data)
+ *      - Read packets send a womrhole header flit, then an address flit, then recieve
+ *          N data flits (the fill data) asynchronously.
  */
 
 `include "bsg_noc_links.vh"
@@ -24,6 +26,9 @@ module bsg_cache_dma_to_wormhole
     , parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(dma_addr_width_p)
     , parameter wh_link_sif_width_lp=`bsg_ready_and_link_sif_width(wh_flit_width_p)
     , parameter dma_data_width_lp=wh_flit_width_p
+
+    // Whether to buffer the returning data flits. May be necessary for timing purposes
+    , parameter buffer_return_p = 1
   )
   (
     input clk_i
@@ -41,8 +46,8 @@ module bsg_cache_dma_to_wormhole
     , input dma_data_v_i
     , output logic dma_data_yumi_o
 
-    , input [wh_link_sif_width_lp-1:0] wh_link_sif_i
-    , output logic [wh_link_sif_width_lp-1:0] wh_link_sif_o
+    , input  [wh_link_sif_width_lp-1:0] wh_link_sif_i
+    , output [wh_link_sif_width_lp-1:0] wh_link_sif_o
 
     , input [wh_cord_width_p-1:0] my_wh_cord_i
     , input [wh_cord_width_p-1:0] dest_wh_cord_i
@@ -63,6 +68,8 @@ module bsg_cache_dma_to_wormhole
   logic dma_pkt_yumi_li;
   bsg_cache_dma_pkt_s dma_pkt_lo;
 
+  // two fifo is needed here to avoid bubble between consecutive dma_pkts,
+  //   which can occur with during a writeback->fill operation
   bsg_two_fifo #(
     .width_p(dma_pkt_width_lp)
   ) dma_pkt_fifo (
@@ -79,6 +86,38 @@ module bsg_cache_dma_to_wormhole
   );
 
   assign dma_pkt_yumi_o = dma_pkt_ready_lo & dma_pkt_v_i;
+
+  // FIFO for wormhole flits coming back to vcache.
+  logic return_fifo_v_lo;
+  logic [wh_flit_width_p-1:0] return_fifo_data_lo;
+  logic return_fifo_ready_li, return_fifo_yumi_li;
+
+  if (buffer return_p)
+    begin : br
+      bsg_two_fifo #(
+        .width_p(wh_flit_width_p)
+      ) return_fifo (
+        .clk_i      (clk_i)
+        ,.reset_i   (reset_i)
+
+        ,.v_i       (wh_link_sif_in.v)
+        ,.data_i    (wh_link_sif_in.data)
+        ,.ready_o   (wh_link_sif_out.ready_and_rev)
+
+        ,.v_o       (return_fifo_v_lo)
+        ,.data_o    (return_fifo_data_lo)
+        ,.yumi_i    (return_fifo_yumi_li)
+      );
+      assign return_fifo_yumi_li = return_fifo_ready_li & return_fifo_v_lo;
+    end
+  else
+    begin : nbr
+      assign return_fifo_v_lo = wh_link_sif_in.v;
+      assign return_fifo_data_lo = wh_link_sif_in.data;
+      assign wh_link_sif_out.ready_and_rev = return_fifo_ready_li;
+      assign return_fifo_yumi_li = wh_link_sif_out.ready_and_rev & wh_link_sif_in.v;
+    end
+
 
   // counter
   localparam count_width_lp = `BSG_SAFE_CLOG2(dma_burst_len_p);
@@ -138,7 +177,7 @@ module bsg_cache_dma_to_wormhole
         wh_link_sif_out.data = header_flit;
         if (dma_pkt_v_lo) begin
           wh_link_sif_out.v = 1'b1;
-          send_state_n = (wh_link_sif_in.ready_and_rev & wh_link_sif_out.v)
+          send_state_n = wh_link_sif_in.ready_and_rev
             ? SEND_ADDR
             : SEND_READY;
         end
@@ -148,7 +187,7 @@ module bsg_cache_dma_to_wormhole
         wh_link_sif_out.data = wh_flit_width_p'(dma_pkt_lo.addr);
         if (dma_pkt_v_lo) begin
           wh_link_sif_out.v = 1'b1;
-          dma_pkt_yumi_li = wh_link_sif_in.ready_and_rev & wh_link_sif_out.v;
+          dma_pkt_yumi_li = wh_link_sif_in.ready_and_rev;
           send_state_n = dma_pkt_yumi_li
             ? (dma_pkt_lo.write_not_read ? SEND_DATA : SEND_READY)
             : SEND_ADDR;
@@ -159,7 +198,7 @@ module bsg_cache_dma_to_wormhole
         wh_link_sif_out.data = dma_data_i;
         if (dma_data_v_i) begin
           wh_link_sif_out.v = 1'b1;
-          dma_data_yumi_o = wh_link_sif_in.ready_and_rev & wh_link_sif_out.v;
+          dma_data_yumi_o = wh_link_sif_in.ready_and_rev;
           send_up_li = dma_data_yumi_o & (send_count_lo != dma_burst_len_p-1);
           send_clear_li = dma_data_yumi_o & (send_count_lo == dma_burst_len_p-1);
           send_state_n = send_clear_li
@@ -207,9 +246,9 @@ module bsg_cache_dma_to_wormhole
     recv_state_n = recv_state_r;
     recv_clear_li = 1'b0;
     recv_up_li = 1'b0;
-    wh_link_sif_out.ready_and_rev = 1'b0;
+    return_fifo_ready_li = 1'b0;
     dma_data_v_o = 1'b0;
-    dma_data_o = wh_link_sif_in.data;
+    dma_data_o = return_fifo_data_lo;
 
     case (recv_state_r)
       RECV_RESET: begin
@@ -217,17 +256,17 @@ module bsg_cache_dma_to_wormhole
       end
 
       RECV_READY: begin
-        wh_link_sif_out.ready_and_rev = 1'b1;
-        recv_state_n = (wh_link_sif_out.ready_and_rev & wh_link_sif_in.v)
+        return_fifo_ready_li = 1'b1;
+        recv_state_n = return_fifo_yumi_li
           ? RECV_DATA
           : RECV_READY;
       end
 
       RECV_DATA: begin
-        wh_link_sif_out.ready_and_rev = dma_data_ready_i;
-        dma_data_v_o = wh_link_sif_out.ready_and_rev & wh_link_sif_in.v;
-        recv_up_li = dma_data_v_o & (recv_count_lo != dma_burst_len_p-1);
-        recv_clear_li = dma_data_v_o & (recv_count_lo == dma_burst_len_p-1);
+        return_fifo_ready_li = dma_data_ready_i;
+        dma_data_v_o = return_fifo_yumi_li;
+        recv_up_li = return_fifo_yumi_li & (recv_count_lo != dma_burst_len_p-1);
+        recv_clear_li = return_fifo_yumi_li & (recv_count_lo == dma_burst_len_p-1);
         recv_state_n = recv_clear_li
           ? RECV_READY
           : RECV_DATA;
@@ -261,6 +300,4 @@ module bsg_cache_dma_to_wormhole
     $error("WH flit width must be larger than address width");
   if (wh_len_width_p < `BSG_WIDTH(dma_burst_len_p+1))
     $error("WH len width %d must be large enough to hold the dma transfer size %d", wh_len_width_p, `BSG_WIDTH(dma_burst_len_p+1));
-  //synopsys translate_on
-
 endmodule
