@@ -36,6 +36,30 @@ package bsg_dramsim3_hbm2_8gb_x128_pkg;
 
 endpackage // bsg_dramsim3_hbm2_8gb_x128_pkg
 
+package bsg_dramsim3_hbm2_8gb_x128_ps_pkg;
+  parameter int tck_ps = 1000;
+  parameter int channel_addr_width_p = 30;
+  parameter int data_width_p=256;
+  parameter int num_channels_p=8;
+  parameter int num_columns_p=64;
+  parameter int num_rows_p=32768;
+  parameter int num_ba_p=4;
+  parameter int num_bg_p=4;
+  parameter int num_ranks_p=1;
+  parameter longint size_in_bits_p=2**36; // 8GB (64Gb)
+  parameter string config_p="HBM2_8Gb_x128_ps.ini";
+  parameter bsg_dramsim3_pkg::bsg_dramsim3_address_mapping_e address_mapping_p=bsg_dramsim3_pkg::e_ro_ra_bg_ba_ch_co;
+
+  typedef struct packed {
+    logic [$clog2(num_rows_p)-1:0] ro;
+    logic [$clog2(num_bg_p)-1:0] bg;
+    logic [$clog2(num_ba_p)-1:0] ba;
+    logic [$clog2(num_columns_p)-1:0] co;
+    logic [$clog2(data_width_p>>3)-1:0] byte_offset;
+  } dram_ch_addr_s;
+
+endpackage // bsg_dramsim3_hbm2_8gb_x128_pkg
+
 package bsg_dramsim3_hbm2_4gb_x128_pkg;
   parameter int tck_ps = 1000;
   parameter int channel_addr_width_p = 29;
