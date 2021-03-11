@@ -51,7 +51,7 @@ module bsg_wormhole_to_cache_dma_fanout
 
     , input [num_dma_p-1:0][dma_data_width_p-1:0] dma_data_i
     , input [num_dma_p-1:0] dma_data_v_i
-    , output logic [num_dma_p-1:0] dma_data_ready_o
+    , output logic [num_dma_p-1:0] dma_data_ready_and_o
 
     , output logic [num_dma_p-1:0][dma_data_width_p-1:0] dma_data_o
     , output logic [num_dma_p-1:0] dma_data_v_o
@@ -295,7 +295,7 @@ module bsg_wormhole_to_cache_dma_fanout
     header_flit_out.cord = src_cord_r[recv_cache_id_r];
     header_flit_out.cid = src_cid_r[recv_cache_id_r];
 
-    dma_data_ready_o = '0;
+    dma_data_ready_and_o = '0;
 
     case (recv_state_r)
 
@@ -328,8 +328,8 @@ module bsg_wormhole_to_cache_dma_fanout
       RECV_FILL_DATA: begin
         wh_link_sif_out.v = dma_data_v_i[recv_cache_id_r];
         wh_link_sif_out.data = dma_data_i[recv_cache_id_r];
-        dma_data_ready_o[recv_cache_id_r] = wh_link_sif_in.ready_and_rev;
-        if (dma_data_ready_o[recv_cache_id_r] & dma_data_v_i[recv_cache_id_r]) begin
+        dma_data_ready_and_o[recv_cache_id_r] = wh_link_sif_in.ready_and_rev;
+        if (dma_data_ready_and_o[recv_cache_id_r] & dma_data_v_i[recv_cache_id_r]) begin
           recv_clear_li = (recv_count_lo == dma_burst_len_p-1);
           recv_up_li = (recv_count_lo != dma_burst_len_p-1);
           recv_state_n = recv_clear_li
