@@ -52,12 +52,12 @@ proc bsg_link_sdr_constraints { \
   master_clk_port               \
   out_clk_name                  \
   out_clk_period                \
-  out_clk_skew                  \
+  out_clk_margin                \
   out_clk_port                  \
   out_dv_port                   \
   in_clk_name                   \
   in_clk_period                 \
-  in_clk_skew                   \
+  in_clk_margin                 \
   in_clk_port                   \
   in_dv_port                    \
   tkn_clk_name                  \
@@ -70,8 +70,8 @@ proc bsg_link_sdr_constraints { \
   set_clock_uncertainty $uncertainty [get_clocks $tkn_clk_name]
 
   # input
-  set max_input_delay        [expr ($in_clk_period)-$in_clk_skew]
-  set min_input_delay        [expr $in_clk_skew]
+  set max_input_delay        [expr ($in_clk_period)-$in_clk_margin]
+  set min_input_delay        [expr $in_clk_margin]
   create_clock -period $in_clk_period -name $in_clk_name $in_clk_port
   set_clock_uncertainty $uncertainty [get_clocks $in_clk_name]
   bsg_link_sdr_in_constraints $in_clk_name $in_dv_port $max_input_delay $min_input_delay
@@ -82,12 +82,12 @@ proc bsg_link_sdr_constraints { \
   global BSG_LINK_SDR_USE_GENERATED_CLOCK
   puts "BSG_LINK_SDR_USE_GENERATED_CLOCK = $BSG_LINK_SDR_USE_GENERATED_CLOCK"
   if {$BSG_LINK_SDR_USE_GENERATED_CLOCK == 0} {
-    set setup_time_output      [expr ($out_clk_period/2)-$out_clk_skew]
-    set hold_time_output       [expr ($out_clk_period/2)-$out_clk_skew]
+    set setup_time_output      [expr ($out_clk_period/2)-$out_clk_margin]
+    set hold_time_output       [expr ($out_clk_period/2)-$out_clk_margin]
     bsg_link_sdr_out_constraints $out_clk_port $out_dv_port $setup_time_output $hold_time_output
   } else {
-    set max_output_delay       [expr ($out_clk_period/2)-$out_clk_skew]
-    set min_output_delay       [expr $out_clk_skew-($out_clk_period/2)]
+    set max_output_delay       [expr ($out_clk_period/2)-$out_clk_margin]
+    set min_output_delay       [expr $out_clk_margin-($out_clk_period/2)]
     create_generated_clock -divide_by 1 -invert -master_clock $master_clk_name -source $master_clk_port -name $out_clk_name $out_clk_port
     bsg_link_sdr_out_generated_clock_constraints $out_clk_name $out_dv_port $max_output_delay $min_output_delay
   }
