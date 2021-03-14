@@ -8,6 +8,7 @@ module bsg_nonsynth_axi_mem
     , parameter axi_data_width_p="inv"
     , parameter axi_burst_len_p="inv"
     , parameter mem_els_p="inv"
+    , parameter init_data_p = 32'hdead_beef // 32 bits
 
     , parameter lg_mem_els_lp=`BSG_SAFE_CLOG2(mem_els_p)
     , parameter axi_strb_width_lp=(axi_data_width_p>>3)
@@ -123,7 +124,7 @@ module bsg_nonsynth_axi_mem
   // uninitialized data
   //
   logic [axi_data_width_p-1:0] uninit_data;
-  assign uninit_data = {(axi_data_width_p/32){32'hdead_beef}};
+  assign uninit_data = {(axi_data_width_p/32){init_data_p}};
 
   for (genvar i = 0; i < axi_data_width_p; i++) begin
     assign axi_rdata_o[i] = (ram[rd_ram_idx][i] === 1'bx)
