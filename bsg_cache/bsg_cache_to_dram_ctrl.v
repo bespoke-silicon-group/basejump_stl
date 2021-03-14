@@ -48,7 +48,7 @@ module bsg_cache_to_dram_ctrl
     // dmc side
     , output logic app_en_o
     , input app_rdy_i
-    , output logic app_cmd_e app_cmd_o
+    , output app_cmd_e app_cmd_o
     , output logic [dram_ctrl_addr_width_p-1:0] app_addr_o
 
     , output logic app_wdf_wren_o
