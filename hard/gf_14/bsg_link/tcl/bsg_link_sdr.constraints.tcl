@@ -35,8 +35,8 @@ proc bsg_link_sdr_in_constraints {clk_name ports max_delay min_delay} {
 
 proc bsg_link_sdr_out_constraints {clk_port ports setup_time hold_time} {
   foreach_in_collection obj $ports {
-    set_data_check -from $clk_port -to $obj -setup $setup_time
-    set_data_check -from $clk_port -to $obj -hold  $hold_time
+    set_data_check -rise_from $clk_port -to $obj -setup $setup_time
+    set_data_check -rise_from $clk_port -to $obj -hold  $hold_time
     set_multicycle_path -end   -setup 1 -to $obj
     set_multicycle_path -start -hold  0 -to $obj
   }
