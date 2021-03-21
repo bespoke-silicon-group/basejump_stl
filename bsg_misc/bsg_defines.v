@@ -60,7 +60,8 @@
 // Ufortunately per the Xilinx forums, Xilinx does not define
 // any variable that indicates that Vivado Synthesis is running
 // so as a result we identify Vivado merely as the exclusion of
-// Synopsys Design Compiler (DC)
+// Synopsys Design Compiler (DC). Support beyond DC and Vivado
+// will require modification of this macro.
 
 `ifdef SYNTHESIS
 `ifdef DC
