@@ -57,6 +57,21 @@
 `define BSG_DISCONNECTED_IN_SIM(val) ('z)
 `endif
 
+// Ufortunately per the Xilinx forums, Xilinx does not define
+// any variable that indicates that Vivado Synthesis is running
+// so as a result we identify Vivado merely as the exclusion of
+// Synopsys Design Compiler (DC)
+
+`ifdef SYNTHESIS
+`ifdef DC
+`define BSG_VIVADO_SYNTH_FAILS
+`else
+`define BSG_VIVADO_SYNTH_FAILS this_module_is_not_synthesizeable_in_vivado
+`endif
+`else
+`define BSG_VIVADO_SYNTH_FAILS
+`endif
+
 `define BSG_STRINGIFY(x) `"x`"
 
 // using C-style shifts instead of a[i] allows the parameter of BSG_GET_BIT to be a parameter subrange                                                                                                                                                                               
