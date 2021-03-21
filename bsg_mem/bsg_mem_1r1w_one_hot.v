@@ -10,21 +10,23 @@
 
 module bsg_mem_1r1w_one_hot #(parameter width_p=-1
                             , parameter els_p=-1
+
+                            , parameter safe_els_lp=`BSG_MAX(els_p,1)
                             )
    (input   w_clk_i
     // Currently unused
     , input w_reset_i
 
     // one or zero-hot
-    , input [els_p-1:0]          w_v_i
+    , input [safe_els_lp-1:0]          w_v_i
     , input [width_p-1:0]        w_data_i
 
     // one or zero-hot
-    , input [els_p-1:0]          r_v_i
+    , input [safe_els_lp-1:0]          r_v_i
     , output logic [width_p-1:0] r_data_o
     );
 
-  logic [els_p-1:0][width_p-1:0] data_r;
+  logic [safe_els_lp-1:0][width_p-1:0] data_r;
 
   wire unused0 = w_reset_i;
 
@@ -42,7 +44,7 @@ module bsg_mem_1r1w_one_hot #(parameter width_p=-1
 
   bsg_mux_one_hot
    #(.width_p(width_p)
-     ,.els_p(els_p)
+     ,.els_p(safe_els_lp)
      )
    one_hot_sel
     (.data_i(data_r)

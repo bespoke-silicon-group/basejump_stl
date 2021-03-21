@@ -13,20 +13,22 @@ module bsg_cam_1r1w_sync_unmanaged
  #(parameter els_p                = "inv"
    , parameter tag_width_p        = "inv"
    , parameter data_width_p       = "inv"
+
+   , parameter safe_els_lp = `BSG_MAX(els_p,1)
    )
   (input                             clk_i
    , input                           reset_i
 
    // Synchronous write/invalidate of a tag
    // one or zero-hot
-   , input [els_p-1:0]               w_v_i
+   , input [safe_els_lp-1:0]               w_v_i
    , input                           w_set_not_clear_i
    // Tag/data to set on write
    , input [tag_width_p-1:0]         w_tag_i
    , input [data_width_p-1:0]        w_data_i
    // Metadata useful for an external replacement policy
    // Whether there's an empty entry in the tag array
-   , output [els_p-1:0]              w_empty_o
+   , output [safe_els_lp-1:0]              w_empty_o
    
    // Asynchronous read of a tag, if exists
    , input                           r_v_i
@@ -50,7 +52,7 @@ module bsg_cam_1r1w_sync_unmanaged
 
   // Read from asynchronous unmanaged CAM
   bsg_cam_1r1w_unmanaged
-   #(.els_p(els_p)
+   #(.els_p(safe_els_lp)
      ,.tag_width_p(tag_width_p)
      ,.data_width_p(data_width_p)
      )

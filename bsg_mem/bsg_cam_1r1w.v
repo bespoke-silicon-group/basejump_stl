@@ -43,14 +43,16 @@ module bsg_cam_1r1w
    , output logic                    r_v_o
   );
 
+  localparam safe_els_lp = `BSG_MAX(els_p,1);
+
   // The tag storage for the CAM
-  logic [els_p-1:0] tag_r_match_lo;
-  logic [els_p-1:0] tag_empty_lo;
-  logic [els_p-1:0] repl_way_lo;
-  wire [els_p-1:0] tag_w_v_li = repl_way_lo | {els_p{w_nuke_i}};
+  logic [safe_els_lp-1:0] tag_r_match_lo;
+  logic [safe_els_lp-1:0] tag_empty_lo;
+  logic [safe_els_lp-1:0] repl_way_lo;
+  wire [safe_els_lp-1:0] tag_w_v_li = repl_way_lo | {safe_els_lp{w_nuke_i}};
   bsg_cam_1r1w_tag_array
    #(.width_p(tag_width_p)
-     ,.els_p(els_p)
+     ,.els_p(safe_els_lp)
      )
    cam_tag_array
     (.clk_i(clk_i)
@@ -68,7 +70,7 @@ module bsg_cam_1r1w
 
   // The replacement scheme for the CAM
   bsg_cam_1r1w_replacement
-   #(.els_p(els_p)
+   #(.els_p(safe_els_lp)
      ,.scheme_p(repl_scheme_p)
      )
    replacement
@@ -83,10 +85,10 @@ module bsg_cam_1r1w
      );
 
   // The data storage for the CAM
-  wire [els_p-1:0] mem_w_v_li = repl_way_lo;
+  wire [safe_els_lp-1:0] mem_w_v_li = repl_way_lo;
   bsg_mem_1r1w_one_hot
    #(.width_p(data_width_p)
-     ,.els_p(els_p)
+     ,.els_p(safe_els_lp)
      )
    one_hot_mem
     (.w_clk_i(clk_i)
