@@ -97,6 +97,12 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
        mem[addr_i] <= data_n;
 
 `else 
+ 
+// this code does not map correctly with Xilinx Ultrascale FPGAs 
+// in Vivado, substitute this file with hard/ultrascale_plus/bsg_mem/bsg_mem_1rw_sync_mask_write_bit.v
+      
+`BSG_VIVADO_SYNTH_FAILS
+      
    always_ff @(posedge clk_i)
      if (v_i & w_i)
        for (integer i = 0; i < width_p; i=i+1)
