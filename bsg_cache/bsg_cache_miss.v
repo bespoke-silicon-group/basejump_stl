@@ -113,6 +113,8 @@ module bsg_cache_miss
     START
     ,FLUSH_OP
     ,LOCK_OP
+    ,AALLOC_OP
+    ,UPDATE_LRU
     ,SEND_EVICT_ADDR
     ,SEND_FILL_ADDR
     ,SEND_EVICT_DATA
@@ -359,6 +361,43 @@ module bsg_cache_miss
         end
 
         miss_state_n = RECOVER;
+      end
+
+      AALLOC_OP: begin
+        // same replacement policy
+        chosen_way_n = invalid_exist ? invalid_way_id : lru_way_id;
+        
+        // Update tag mem info
+        tag_mem_v_o = 1'b1;
+        tag_mem_w_o = 1'b1;
+        for (integer i = 0; i < ways_p; i++) begin
+          tag_mem_data_out[i].tag = addr_tag_v;
+          tag_mem_data_out[i].lock = decode_v_i.alock_op;
+          tag_mem_data_out[i].valid = 1'b1; 
+          tag_mem_w_mask_out[i].tag = {tag_width_lp{chosen_way_decode[i]}};
+          tag_mem_w_mask_out[i].lock = chosen_way_decode[i];
+          tag_mem_w_mask_out[i].valid = chosen_way_decode[i];
+        end
+
+        // writeback dirty & valid data
+        miss_state_n = UPDATE_LRU;
+      end
+
+      UPDATE_LRU: begin
+        // This is separated out from ALLOC_OP because chosen_way_lru_data & chosen_way_lru_mask
+        // is generated at a cycle after the way is chosen
+        stat_mem_v_o = 1'b1;
+        stat_mem_w_o = 1'b1;
+
+        stat_mem_data_out.dirty = 1'b0; // Set dirty when the data is writtenback
+        stat_mem_data_out.lru_bits = chosen_way_lru_data;
+        stat_mem_w_mask_out.dirty = chosen_way_decode;
+        stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
+
+        // writeback dirty & valid data
+        miss_state_n = (stat_info_in.dirty[chosen_way_r] & valid_v_i[chosen_way_r])
+          ? SEND_EVICT_ADDR
+          : RECOVER;
       end
 
       // Send out the block addr for eviction, before initiating the eviction.
