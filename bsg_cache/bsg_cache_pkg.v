@@ -130,7 +130,7 @@ package bsg_cache_pkg;
     logic alock_op;
     logic aunlock_op;
     logic tag_read_op;
-    logic aalloc_op
+    logic aalloc_op;
    
     logic atomic_op;
     bsg_cache_amo_subop_e amo_subop;
