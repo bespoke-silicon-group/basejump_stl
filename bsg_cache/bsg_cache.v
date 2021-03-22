@@ -317,7 +317,7 @@ module bsg_cache
     ,.v_o(tag_hit_found)
   );
 
-  wire ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op);
+  wire ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op | decode_v_r.aalloc_op);
   wire tagfl_hit = decode_v_r.tagfl_op & valid_v_r[addr_way_v];
   wire aflinv_hit = (decode_v_r.afl_op | decode_v_r.aflinv_op| decode_v_r.ainv_op) & tag_hit_found;
   wire alock_miss = decode_v_r.alock_op & (tag_hit_found ? ~lock_v_r[tag_hit_way_id] : 1'b1);   // either the line is miss, or the line is unlocked.

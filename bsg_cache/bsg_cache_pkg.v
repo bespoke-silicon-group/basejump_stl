@@ -69,6 +69,8 @@ package bsg_cache_pkg;
     ,ALOCK   = 6'b011011      // address lock
     ,AUNLOCK = 6'b011100      // address unlock
    
+    ,AALLOC  = 6'b011101      // address allocate
+   
     // 32-bit atomic
     ,AMOSWAP_W = 6'b100000    // atomic swap
     ,AMOADD_W  = 6'b100001    // atomic add
@@ -128,6 +130,7 @@ package bsg_cache_pkg;
     logic alock_op;
     logic aunlock_op;
     logic tag_read_op;
+    logic aalloc_op
    
     logic atomic_op;
     bsg_cache_amo_subop_e amo_subop;
