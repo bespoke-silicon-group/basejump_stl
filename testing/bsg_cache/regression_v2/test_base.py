@@ -140,6 +140,27 @@ class TestBase:
     for i in range(n):
       self.tg.nop()
 
+  # AALLOC
+  def send_aalloc(self, addr):
+    self.tg.send(AALLOC, addr)
+
+  # load block based on data
+  def send_load_block(self, addr):
+    block_addr = addr
+    for i in range(self.block_size_in_words_p):
+      self.tg.send(LW, addr, self.curr_data)
+      self.curr_data += 1
+
+  # store block
+  def send_store_block(self, addr):
+    block_addr = addr
+    for i in range(self.block_size_in_words_p):
+      self.tg.send(SW, addr, self.curr_data)
+      self.curr_data += 1
+
+
+  # block load
+
   #                         #
   #   COMPOSITE FUNCTIONS   #
   #                         #
