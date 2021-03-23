@@ -134,9 +134,11 @@ module bsg_cache_miss
   // for AUNLOCK, or ALOCK with tag hit, to go LOCK_OP.
   logic goto_flush_op;
   logic goto_lock_op;
+  logic goto_aalloc_op;
 
   assign goto_flush_op = decode_v_i.tagfl_op| decode_v_i.ainv_op| decode_v_i.afl_op| decode_v_i.aflinv_op;
   assign goto_lock_op = decode_v_i.aunlock_op | (decode_v_i.alock_op & tag_hit_found_i);
+  assign goto_aalloc_op = decode_v_i.aalloc_op;
 
   logic [tag_width_lp-1:0] addr_tag_v;
   logic [lg_sets_lp-1:0] addr_index_v;
@@ -275,7 +277,9 @@ module bsg_cache_miss
             ? FLUSH_OP 
             : (goto_lock_op
               ? LOCK_OP
-              : SEND_FILL_ADDR))
+              : (goto_aalloc_op 
+                ? AALLOC_OP 
+                : SEND_FILL_ADDR)))
           : START;
       end
 
