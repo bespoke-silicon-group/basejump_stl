@@ -431,7 +431,7 @@ module bsg_cache_miss
         };
 
         miss_state_n = dma_done_i
-          ? ((decode_v_i.tagfl_op| decode_v_i.aflinv_op| decode_v_i.afl_op) ? RECOVER : GET_FILL_DATA)
+          ? ((decode_v_i.tagfl_op| decode_v_i.aflinv_op| decode_v_i.afl_op | decode_v_i.aalloc_op) ? RECOVER : GET_FILL_DATA)
           : SEND_EVICT_DATA;
       end
 
