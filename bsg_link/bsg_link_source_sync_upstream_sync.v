@@ -13,6 +13,7 @@ module bsg_link_source_sync_upstream_sync
  #(parameter width_p                         = "inv"
   ,parameter lg_fifo_depth_p                 = 3
   ,parameter lg_credit_to_token_decimation_p = 0
+  ,parameter bypass_twofer_fifo_p            = 0
   )
 
   (// control signals  
@@ -29,10 +30,43 @@ module bsg_link_source_sync_upstream_sync
   ,input                token_clk_i
   );
 
+  logic io_fifo_v, io_fifo_ready;
+  logic [width_p-1:0] io_fifo_data;
+
+  // MBT: we insert a two-element fifo here to
+  // decouple the async fifo logic which can be on the critical
+  // path in some cases. possibly this is being overly conservative
+  // and may introduce too much latency. but certainly in the
+  // case of the bsg_comm_link code, it is necessary.
+  // fixme: possibly make it a parameter as to whether we instantiate
+  // this fifo
+
+  if (bypass_twofer_fifo_p == 0)
+  begin: twofer
+    bsg_two_fifo
+   #(.width_p(width_p)
+    ) twofer_fifo
+    (.clk_i  (io_clk_i)
+    ,.reset_i(io_link_reset_i)
+    ,.ready_o(io_ready_and_o)
+    ,.data_i (io_data_i)
+    ,.v_i    (io_v_i)
+    ,.v_o    (io_fifo_v)
+    ,.data_o (io_fifo_data)
+    ,.yumi_i (io_fifo_v & io_fifo_ready)
+    );
+  end
+  else
+  begin: no_twofer
+    assign io_fifo_v = io_v_i;
+    assign io_fifo_data = io_data_i;
+    assign io_ready_and_o = io_fifo_ready;
+  end
+
   // asserted when fifo has valid data and token credit is available
   logic io_v_n;
   assign io_v_o    = (io_link_reset_i)? '0 : io_v_n;
-  assign io_data_o = (io_link_reset_i)? '0 : io_data_i;
+  assign io_data_o = (io_link_reset_i)? '0 : io_fifo_data;
 
   // we need to track whether the credits are coming from
   // posedge or negedge tokens.
@@ -65,8 +99,8 @@ module bsg_link_source_sync_upstream_sync
         : io_posedge_credits_avail;
 
   // we send if we have both data to send and credits to send with
-  assign io_v_n = io_credit_avail & io_v_i;
-  assign io_ready_and_o = (io_link_reset_i)? 1'b1 : io_credit_avail;
+  assign io_v_n = io_credit_avail & io_fifo_v;
+  assign io_fifo_ready = (io_link_reset_i)? 1'b1 : io_credit_avail;
 
   wire io_negedge_credits_deque = io_v_n & io_on_negedge_token;
   wire io_posedge_credits_deque = io_v_n & ~io_on_negedge_token;

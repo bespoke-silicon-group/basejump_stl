@@ -64,6 +64,7 @@ module bsg_link_sdr_upstream
  #(.width_p                        (width_p)
   ,.lg_fifo_depth_p                (lg_fifo_depth_p)
   ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
+  ,.bypass_twofer_fifo_p           (0)
   ) sso
   (.io_clk_i           (io_clk_i)
   ,.io_link_reset_i    (io_link_reset_i)
