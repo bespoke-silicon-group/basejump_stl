@@ -31,5 +31,11 @@ module bsg_mux_one_hot #(parameter width_p="inv"
 
         assign data_o[i] = | gather;
      end
+
+   if (els_p == 0)
+     begin : zero
+        assign data_o = '0;
+     end
+
 endmodule
 
