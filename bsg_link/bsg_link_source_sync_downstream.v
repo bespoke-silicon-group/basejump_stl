@@ -49,6 +49,7 @@ module bsg_link_source_sync_downstream
   // When the async_fifo is not on critical path (e.g. when async_fifo size
   // is small), bypass twofer fifo to minimize buffering and latency
   ,parameter bypass_twofer_fifo_p            = 0
+  ,parameter use_hardened_fifo_p             = 0
   )
   
   (// control signals
@@ -79,29 +80,55 @@ module bsg_link_source_sync_downstream
    // io_async_fifo_full signal is only for debugging purposes
    //
 
-   wire   io_async_fifo_full;
+   wire  io_async_fifo_full, io_async_fifo_enq;
+   logic io_fifo_valid_lo, io_fifo_ready_lo;
+   logic [channel_width_p-1:0] io_async_fifo_data;
 
    // synopsys translate_off
 
    always_ff @(negedge io_clk_i)
-     assert(!(io_async_fifo_full===1 && io_valid_i===1))
+     assert(!(io_fifo_ready_lo===0 && io_valid_i===1))
        else $error("attempt to enque on full async fifo");
 
    // synopsys translate_on
 
+  if (use_hardened_fifo_p == 0)
+  begin
+    assign io_async_fifo_enq  = io_valid_i;
+    assign io_async_fifo_data = io_data_i;
+    assign io_fifo_ready_lo   = ~io_async_fifo_full;
+  end
+  else
+  begin: harden
+    assign io_async_fifo_enq  = io_fifo_valid_lo & ~io_async_fifo_full;
+    bsg_fifo_1r1w_small
+   #(.width_p (channel_width_p)
+    ,.els_p   (1<<lg_fifo_depth_p)
+    ,.harden_p(1)
+    ) fifo
+    (.clk_i   (io_clk_i)
+    ,.reset_i (io_link_reset_i)
+    ,.v_i     (io_valid_i)
+    ,.ready_o (io_fifo_ready_lo)
+    ,.data_i  (io_data_i)
+    ,.v_o     (io_fifo_valid_lo)
+    ,.data_o  (io_async_fifo_data)
+    ,.yumi_i  (io_async_fifo_enq)
+    );
+  end
 
    wire  core_async_fifo_deque, core_async_fifo_valid_lo;
    logic [channel_width_p-1:0] core_async_fifo_data_lo;
 
   bsg_async_fifo 
- #(.lg_size_p(lg_fifo_depth_p)
+ #(.lg_size_p((use_hardened_fifo_p==0)?lg_fifo_depth_p:3)
   ,.width_p(channel_width_p)
   ) baf
   (.w_clk_i  (io_clk_i)
   ,.w_reset_i(io_link_reset_i)
   
-  ,.w_enq_i  (io_valid_i)
-  ,.w_data_i (io_data_i)
+  ,.w_enq_i  (io_async_fifo_enq)
+  ,.w_data_i (io_async_fifo_data)
   ,.w_full_o (io_async_fifo_full)
 
   ,.r_clk_i  (core_clk_i)
