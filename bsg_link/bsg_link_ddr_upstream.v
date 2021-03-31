@@ -73,6 +73,7 @@ module bsg_link_ddr_upstream
   // MUST MATCH paired bsg_link_ddr_downstream setting
   ,parameter use_encode_p = 0
   ,parameter bypass_twofer_fifo_p = 0
+  ,parameter bypass_gearbox_p = 0
   ,localparam ddr_width_lp  = channel_width_p*2 + use_extra_data_bit_p
   ,localparam piso_ratio_lp = width_p/(ddr_width_lp*num_channels_p)
   ,localparam phy_width_lp  = channel_width_p+1
@@ -101,23 +102,32 @@ module bsg_link_ddr_upstream
   logic core_piso_valid_lo, core_piso_yumi_li;
   logic [num_channels_p-1:0][ddr_width_lp-1:0] core_piso_data_lo;
 
-  bsg_parallel_in_serial_out 
- #(.width_p(ddr_width_lp*num_channels_p)
-  ,.els_p  (piso_ratio_lp)
-  ) out_piso
-  (.clk_i  (core_clk_i)
-  ,.reset_i(core_link_reset_i)
-  ,.valid_i(core_valid_i)
-  ,.data_i (core_data_i)
-  ,.ready_and_o(core_ready_o)
-  ,.valid_o(core_piso_valid_lo)
-  ,.data_o (core_piso_data_lo)
-  ,.yumi_i (core_piso_yumi_li)
-  );
-  
   // Dequeue from PISO when all channels are ready
   logic [num_channels_p-1:0] core_piso_ready_li;
-  assign core_piso_yumi_li = (& core_piso_ready_li) & core_piso_valid_lo;
+
+  if (piso_ratio_lp == 1 && bypass_gearbox_p != 0)
+  begin
+    assign core_piso_valid_lo = core_valid_i;
+    assign core_piso_data_lo  = core_data_i;
+    assign core_ready_o = (& core_piso_ready_li);
+  end
+  else
+  begin: piso
+    assign core_piso_yumi_li = (& core_piso_ready_li) & core_piso_valid_lo;
+    bsg_parallel_in_serial_out
+   #(.width_p(ddr_width_lp*num_channels_p)
+    ,.els_p  (piso_ratio_lp)
+    ) out_piso
+    (.clk_i  (core_clk_i)
+    ,.reset_i(core_link_reset_i)
+    ,.valid_i(core_valid_i)
+    ,.data_i (core_data_i)
+    ,.ready_and_o(core_ready_o)
+    ,.valid_o(core_piso_valid_lo)
+    ,.data_o (core_piso_data_lo)
+    ,.yumi_i (core_piso_yumi_li)
+    );
+  end
   
   genvar i;
   

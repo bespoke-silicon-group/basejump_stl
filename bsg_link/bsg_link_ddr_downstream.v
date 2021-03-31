@@ -65,6 +65,7 @@ module bsg_link_ddr_downstream
   // MUST MATCH paired bsg_link_ddr_downstream setting
   ,parameter use_encode_p = 0
   ,parameter bypass_twofer_fifo_p = 0
+  ,parameter bypass_gearbox_p = 0
   ,parameter use_hardened_fifo_p = 0
   ,localparam ddr_width_lp  = channel_width_p*2 + use_extra_data_bit_p
   ,localparam sipo_ratio_lp = width_p/(ddr_width_lp*num_channels_p)
@@ -96,7 +97,6 @@ module bsg_link_ddr_downstream
   
   // Dequeue when all channels have valid data coming in
   logic [num_channels_p-1:0] core_sipo_valid_li;
-  assign core_sipo_yumi_lo = (& core_sipo_valid_li) & core_sipo_ready_lo;
   
   genvar i;
   
@@ -174,20 +174,30 @@ module bsg_link_ddr_downstream
   
   end
 
-  // This sipof ensures no bubble cycle on receiving packets.
-  bsg_serial_in_parallel_out_full
- #(.width_p(ddr_width_lp*num_channels_p)
-  ,.els_p  (sipo_ratio_lp)
-  ) in_sipof
-  (.clk_i  (core_clk_i)
-  ,.reset_i(core_link_reset_i)
-  ,.v_i    (& core_sipo_valid_li)
-  ,.ready_o(core_sipo_ready_lo)
-  ,.data_i (core_sipo_data_li)
-  ,.data_o (core_data_o)
-  ,.v_o    (core_valid_o)
-  ,.yumi_i (core_yumi_i)
-  );
+  if (sipo_ratio_lp == 1 && bypass_gearbox_p != 0)
+  begin
+    assign core_valid_o = (& core_sipo_valid_li);
+    assign core_data_o  = core_sipo_data_li;
+    assign core_sipo_yumi_lo = core_yumi_i;
+  end
+  else
+  begin: sipo
+    assign core_sipo_yumi_lo = (& core_sipo_valid_li) & core_sipo_ready_lo;
+    // This sipof ensures no bubble cycle on receiving packets.
+    bsg_serial_in_parallel_out_full
+   #(.width_p(ddr_width_lp*num_channels_p)
+    ,.els_p  (sipo_ratio_lp)
+    ) in_sipof
+    (.clk_i  (core_clk_i)
+    ,.reset_i(core_link_reset_i)
+    ,.v_i    (& core_sipo_valid_li)
+    ,.ready_o(core_sipo_ready_lo)
+    ,.data_i (core_sipo_data_li)
+    ,.data_o (core_data_o)
+    ,.v_o    (core_valid_o)
+    ,.yumi_i (core_yumi_i)
+    );
+  end
   
   // synopsys translate_off
   initial 
