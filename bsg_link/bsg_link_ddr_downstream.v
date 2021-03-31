@@ -64,6 +64,7 @@ module bsg_link_ddr_downstream
   // Set use_encode_p=1 to enable this encoding feature
   // MUST MATCH paired bsg_link_ddr_downstream setting
   ,parameter use_encode_p = 0
+  ,parameter bypass_twofer_fifo_p = 0
   ,parameter use_hardened_fifo_p = 0
   ,localparam ddr_width_lp  = channel_width_p*2 + use_extra_data_bit_p
   ,localparam sipo_ratio_lp = width_p/(ddr_width_lp*num_channels_p)
@@ -152,6 +153,7 @@ module bsg_link_ddr_downstream
    #(.channel_width_p(2*phy_width_lp)
     ,.lg_fifo_depth_p(lg_fifo_depth_p)
     ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
+    ,.bypass_twofer_fifo_p(bypass_twofer_fifo_p)
     ,.use_hardened_fifo_p(use_hardened_fifo_p)
     ) downstream
     (.core_clk_i       (core_clk_i)
