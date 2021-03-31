@@ -142,7 +142,7 @@ module bsg_link_ddr_downstream
     // valid and data signals are received together
     bsg_link_iddr_phy
    #(.width_p(phy_width_lp)
-    ) iddr_data
+    ) iddr_phy
     (.clk_i   (io_clk_i[i])
     ,.clk_o   (io_iddr_clk_lo)
     ,.data_i  ({io_valid_i[i], io_data_i[i]})
