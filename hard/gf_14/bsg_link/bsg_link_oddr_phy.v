@@ -55,7 +55,7 @@ module bsg_link_oddr_phy
   end
 
   SC7P5T_CKBUFX2_SSC14R BSG_ODDR_CKBUF_DONT_TOUCH
-  (.CLK(clk_o_buf),.Z(clk_r_o));
+  (.CLK(clk_r_o_buf),.Z(clk_r_o));
   
   // data launch flops
   // odd_r is not a reset; should not need to put a reset in here
