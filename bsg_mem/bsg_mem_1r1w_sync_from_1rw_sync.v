@@ -22,31 +22,29 @@ module bsg_mem_1r1w_sync_from_1rw_sync #(parameter width_p=-1
   ,output logic [`BSG_SAFE_MINUS(width_p, 1):0] r_data_o
   );
 
-  logic [els_p-1:0] v_r;
-  logic [els_p_1:0] set_one_hot_li;
+  logic [els_p-1:0] v_r, v_n;
+  logic [els_p-1:0] w_addr_one_hot_lo;
   logic mem_select_r;
 
+  bsg_decode_with_v
+    #(num_out_p(els_p))
+    (.i(w_addr_i)
+    ,.v_i(w_v_i)
+    ,.o(w_addr_one_hot_lo)
+    );
+
   wire wr_ptr = ~r_v_i | ~v_r[r_addr_i];
-  always_comb
-    begin
-      set_one_hot_li = '0;
-      set_one_hot_li[0] = wr_ptr & w_v_i;
-      set_one_hot_li << w_addr_i;
-    end
-  
-  genvar i;
-  for(i = 0; i < els_p; i++)
-    begin: rof
-      bsg_dff_reset_set_clear
-        #(.width_p(els_p))
-        valid_reg
-        (.clk_i(clk_i)
-        ,.reset_i(reset_i)
-        ,.set_i(set_one_hot_li[i])
-        ,.clear_i('0)
-        ,.data_o(v_r[i])
-        );
-    end
+  assign v_n = {els_p{wr_ptr & w_v_i}} & w_addr_one_hot_lo;
+
+  bsg_dff_reset_set_clear
+    #(.width_p(els_p))
+    valid_reg
+    (.clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.set_i(v_n)
+    ,.clear_i('0)
+    ,.data_o(v_r)
+    );
 
   bsg_dff
     #(.width_p(1))
@@ -114,3 +112,4 @@ module bsg_mem_1r1w_sync_from_1rw_sync #(parameter width_p=-1
    //synopsys translate_on
 
 endmodule
+
