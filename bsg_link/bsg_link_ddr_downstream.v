@@ -105,7 +105,7 @@ module bsg_link_ddr_downstream
   begin:ch
 
     // io side signals
-    logic io_iddr_clk_lo, io_iddr_valid_lo, io_iddr_data_v;
+    logic io_iddr_valid_lo, io_iddr_data_v;
     logic [phy_width_lp-1:0] io_iddr_data_top;
     logic [1:0][channel_width_p/2-1:0] io_iddr_data_bottom;
 
@@ -144,7 +144,6 @@ module bsg_link_ddr_downstream
    #(.width_p(phy_width_lp)
     ) iddr_phy
     (.clk_i   (io_clk_i[i])
-    ,.clk_o   (io_iddr_clk_lo)
     ,.data_i  ({io_valid_i[i], io_data_i[i]})
     ,.data_r_o({io_iddr_data_top, io_iddr_data_v, io_iddr_data_bottom})
     );
@@ -161,7 +160,7 @@ module bsg_link_ddr_downstream
     ,.io_link_reset_i  (io_link_reset_i[i])
 
     // source synchronous input channel; coming from chip edge
-    ,.io_clk_i         (io_iddr_clk_lo)
+    ,.io_clk_i         (io_clk_i[i])
     ,.io_data_i        ({io_iddr_data_top, io_iddr_data_v, io_iddr_data_bottom})
     ,.io_valid_i       (io_iddr_valid_lo)
     ,.core_token_r_o   (core_token_r_o[i])

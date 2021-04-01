@@ -6,18 +6,6 @@
 puts "Info: Start script [info script]\n"
 set BSG_LINK_DDR_USE_GENERATED_CLOCK 0
 
-proc bsg_link_ddr_dont_touch_constraints {in_dv_port} {
-  # inputs
-  set_dont_touch_network -no_propagate $in_dv_port
-  # outputs
-  set_dont_touch_network -no_propagate [get_flat_pins -filter "full_name=~*BSG_ODDR_BUF_DONT_TOUCH/Z"]
-  global BSG_LINK_DDR_USE_GENERATED_CLOCK
-  puts "BSG_LINK_DDR_USE_GENERATED_CLOCK = $BSG_LINK_DDR_USE_GENERATED_CLOCK"
-  if {$BSG_LINK_DDR_USE_GENERATED_CLOCK == 0} {
-    set_dont_touch_network -no_propagate [get_flat_pins -filter "full_name=~*BSG_ODDR_CKBUF_DONT_TOUCH/Z"]
-  }
-}
-
 proc bsg_link_ddr_in_constraints {clk_name ports max_delay min_delay} {
   set_input_delay -max $max_delay -clock $clk_name -source_latency_included -network_latency_included $ports
   set_input_delay -max $max_delay -clock $clk_name -source_latency_included -network_latency_included $ports -add_delay -clock_fall
