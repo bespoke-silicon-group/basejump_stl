@@ -1,5 +1,4 @@
 #include <bsg_nonsynth_dpi_clock_gen.hpp>
-
 using namespace bsg_nonsynth_dpi;
 
 // Initializer for simuation time value in bsg_timekeeper
@@ -32,11 +31,12 @@ void bsg_timekeeper::next(){
         do {
                 next.tock();
 
+                temp.push(next);
+
                 pq.pop();
 
                 next = pq.top();
 
-                temp.push(next);
 
         } while(next_timeval == next.next_edge());
 
@@ -78,7 +78,7 @@ bsg_nonsynth_dpi_clock_gen::bsg_nonsynth_dpi_clock_gen(const long long cycle_tim
                                                        const char* hier) :
         clk(0),// To match the behavior of bsg_nonsynth_clock_gen, the
                // output clock is initially 0
-        cycle_time_p(cycle_time_p){ 
+        cycle_time_p(cycle_time_p){
 
         bool res;
         svScope prev;

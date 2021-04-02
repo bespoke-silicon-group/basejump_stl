@@ -6,7 +6,7 @@ module top();
    // modules. There may be a cleaner way to do this but I haven't
    // found it yet.
 
-   logic     ns_clk, ns_reset, debug_o;
+   logic     ns_clk, ns_by2_clk, ns_reset, debug_o;
    parameter lc_cycle_time_p = 1000000;
 
    bsg_nonsynth_dpi_clock_gen
@@ -19,7 +19,7 @@ module top();
      #(.cycle_time_p(lc_cycle_time_p/2)
        )
    core_clk_gen2
-     (.o(ns_clk));
+     (.o(ns_by2_clk));
 
    bsg_nonsynth_reset_gen 
      #(
@@ -35,10 +35,15 @@ module top();
    
    int           cycle = 0;
 
+   always @(posedge ns_by2_clk) begin
+      cycle <= cycle +1;
+      if(debug_o)
+        $display("BSG DBGINFO: top by2 -- Cycle %d", cycle);
+   end
+
    always @(posedge ns_clk) begin
-     cycle <= cycle +1;
-     if(debug_o)
-       $display("BSG DBGINFO: top -- Cycle %d", cycle);
+      if(debug_o)
+        $display("BSG DBGINFO: top -- Cycle %d", cycle);
    end
    
    logic [width_lp-1:0] data_i;
