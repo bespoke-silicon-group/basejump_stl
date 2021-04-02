@@ -22,29 +22,36 @@ module bsg_mem_1r1w_sync_from_1rw_sync #(parameter width_p=-1
   ,output logic [`BSG_SAFE_MINUS(width_p, 1):0] r_data_o
   );
 
-  logic [els_p-1:0] v_r, v_n;
+  logic [els_p-1:0] v_r;
+  logic [els_p-1:0] set, clear;
   logic [els_p-1:0] w_addr_one_hot_lo;
   logic mem_select_r;
 
   bsg_decode_with_v
-    #(num_out_p(els_p))
+    #(.num_out_p(els_p))
+    addr_decoder
     (.i(w_addr_i)
     ,.v_i(w_v_i)
     ,.o(w_addr_one_hot_lo)
     );
 
   wire wr_ptr = ~r_v_i | ~v_r[r_addr_i];
-  assign v_n = {els_p{wr_ptr & w_v_i}} & w_addr_one_hot_lo;
+  assign set = {els_p{wr_ptr & w_v_i}} & w_addr_one_hot_lo;
+  assign clear = {els_p{~wr_ptr & w_v_i}} & w_addr_one_hot_lo;
 
-  bsg_dff_reset_set_clear
-    #(.width_p(els_p))
-    valid_reg
-    (.clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.set_i(v_n)
-    ,.clear_i('0)
-    ,.data_o(v_r)
-    );
+  genvar i;
+  for (i = 0; i < els_p; i++)
+  begin: rof
+    bsg_dff_reset_set_clear
+      #(.width_p(1))
+      valid_reg
+      (.clk_i(clk_i)
+      ,.reset_i(reset_i)
+      ,.set_i(set[i])
+      ,.clear_i(clear[i])
+      ,.data_o(v_r[i])
+      );
+  end
 
   bsg_dff
     #(.width_p(1))
@@ -97,7 +104,7 @@ module bsg_mem_1r1w_sync_from_1rw_sync #(parameter width_p=-1
         $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d, harden_p=%d (%m)",width_p,els_p,read_write_same_addr_p,harden_p);
      end
 
-   always_ff @(posedge clk_lo)
+   always_ff @(posedge clk_i)
      if (w_v_i)
        begin
           assert ((reset_i === 'X) || (reset_i === 1'b1) || (w_addr_i < els_p))
