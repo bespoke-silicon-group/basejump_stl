@@ -120,6 +120,7 @@ module bsg_cache_miss
     ,SEND_FILL_ADDR
     ,SEND_EVICT_DATA
     ,GET_FILL_DATA
+    ,ZERO_OUT_DATA
     ,RECOVER
     ,DONE
   } miss_state_e;
@@ -129,10 +130,6 @@ module bsg_cache_miss
   logic [lg_ways_lp-1:0] chosen_way_r, chosen_way_n;
   logic [lg_ways_lp-1:0] flush_way_r, flush_way_n;
   logic select_snoop_data_r, select_snoop_data_n;
-
-  //for debugging
-  wire at_aalloc = miss_state_r inside {AALLOC_OP};
-  wire at_update_lru = miss_state_r inside {UPDATE_LRU};
 
   // for flush/inv ops, go to FLUSH_OP.
   // for AUNLOCK, or ALOCK with tag hit, to go LOCK_OP.
@@ -420,7 +417,7 @@ module bsg_cache_miss
         miss_state_n = dma_done_i
           ? ((decode_v_i.tagfl_op| decode_v_i.aflinv_op| decode_v_i.afl_op) 
             ? RECOVER 
-            : (decode_v_i.aalloc_op ? UPDATE_LRU : GET_FILL_DATA))
+            : (goto_aalloc_op ? UPDATE_LRU : GET_FILL_DATA))
           : SEND_EVICT_DATA;
       end
 
@@ -483,9 +480,20 @@ module bsg_cache_miss
         stat_mem_w_mask_out.dirty = chosen_way_decode;
         stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
 
-        //TODO: Zeroing out trash data mode
+        miss_state_n = alloc_zero_p ? ZERO_OUT_DATA : RECOVER;
+      end
 
-        miss_state_n = RECOVER;
+      ZERO_OUT_DATA: begin
+        // Dirty data is evicted already & store buffer is already empty
+        dma_cmd_o = e_dma_zero_out_data;
+        dma_addr_o = {
+          tag_v_i[dma_way_o],
+          addr_index_v,
+          {(block_offset_width_lp){1'b0}}
+        };
+        miss_state_n = dma_done_i
+          ? RECOVER
+          : ZERO_OUT_DATA;
       end
 
       // Spend one cycle to recover the tl stage.

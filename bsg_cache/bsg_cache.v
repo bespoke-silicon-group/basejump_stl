@@ -21,6 +21,7 @@ module bsg_cache
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
     ,parameter ways_p="inv"
+    ,parameter logic alloc_zero_p=0
 
     // Explicit size prevents size inference and allows for ((foo == bar) << e_cache_amo_swap)
     ,parameter [31:0] amo_support_p=(1 << e_cache_amo_swap)
@@ -391,6 +392,7 @@ module bsg_cache
     ,.sets_p(sets_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.ways_p(ways_p)
+    ,.alloc_zero_p(alloc_zero_p)
   ) miss (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -453,6 +455,7 @@ module bsg_cache
     ,.sets_p(sets_p)
     ,.ways_p(ways_p)
     ,.dma_data_width_p(dma_data_width_p)
+    ,.alloc_zero_p(alloc_zero_p)
     ,.debug_p(debug_p)
   ) dma (
     .clk_i(clk_i)

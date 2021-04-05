@@ -150,12 +150,13 @@ package bsg_cache_pkg;
 
   // dma opcode (one-hot)
   //
-  typedef enum logic [3:0] {
-    e_dma_nop               = 4'b0000
-    ,e_dma_send_fill_addr   = 4'b0001
-    ,e_dma_send_evict_addr  = 4'b0010
-    ,e_dma_get_fill_data    = 4'b0100
-    ,e_dma_send_evict_data  = 4'b1000
+  typedef enum logic [4:0] {
+    e_dma_nop               = 5'b00000
+    ,e_dma_send_fill_addr   = 5'b00001
+    ,e_dma_send_evict_addr  = 5'b00010
+    ,e_dma_get_fill_data    = 5'b00100
+    ,e_dma_send_evict_data  = 5'b01000
+    ,e_dma_zero_out_data    = 5'b10000
   } bsg_cache_dma_cmd_e;
 
   // tag info s
