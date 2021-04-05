@@ -16,6 +16,7 @@ module bsg_cache_miss
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
     ,parameter ways_p="inv"
+    ,parameter logic alloc_zero_p="inv"
 
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
@@ -129,6 +130,9 @@ module bsg_cache_miss
   logic [lg_ways_lp-1:0] flush_way_r, flush_way_n;
   logic select_snoop_data_r, select_snoop_data_n;
 
+  //for debugging
+  wire at_aalloc = miss_state_r inside {AALLOC_OP};
+  wire at_update_lru = miss_state_r inside {UPDATE_LRU};
 
   // for flush/inv ops, go to FLUSH_OP.
   // for AUNLOCK, or ALOCK with tag hit, to go LOCK_OP.
@@ -382,26 +386,9 @@ module bsg_cache_miss
           tag_mem_w_mask_out[i].lock = chosen_way_decode[i];
           tag_mem_w_mask_out[i].valid = chosen_way_decode[i];
         end
-
-        // writeback dirty & valid data
-        miss_state_n = UPDATE_LRU;
-      end
-
-      UPDATE_LRU: begin
-        // This is separated out from ALLOC_OP because chosen_way_lru_data & chosen_way_lru_mask
-        // is generated at a cycle after the way is chosen
-        stat_mem_v_o = 1'b1;
-        stat_mem_w_o = 1'b1;
-
-        stat_mem_data_out.dirty = 1'b0; // Set dirty when the data is writtenback
-        stat_mem_data_out.lru_bits = chosen_way_lru_data;
-        stat_mem_w_mask_out.dirty = chosen_way_decode;
-        stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
-
-        // writeback dirty & valid data
-        miss_state_n = (stat_info_in.dirty[chosen_way_r] & valid_v_i[chosen_way_r])
+        miss_state_n = (stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
           ? SEND_EVICT_ADDR
-          : RECOVER;
+          : UPDATE_LRU;
       end
 
       // Send out the block addr for eviction, before initiating the eviction.
@@ -431,7 +418,9 @@ module bsg_cache_miss
         };
 
         miss_state_n = dma_done_i
-          ? ((decode_v_i.tagfl_op| decode_v_i.aflinv_op| decode_v_i.afl_op | decode_v_i.aalloc_op) ? RECOVER : GET_FILL_DATA)
+          ? ((decode_v_i.tagfl_op| decode_v_i.aflinv_op| decode_v_i.afl_op) 
+            ? RECOVER 
+            : (decode_v_i.aalloc_op ? UPDATE_LRU : GET_FILL_DATA))
           : SEND_EVICT_DATA;
       end
 
@@ -481,6 +470,22 @@ module bsg_cache_miss
         miss_state_n = dma_done_i
           ? RECOVER
           : GET_FILL_DATA;
+      end
+
+      UPDATE_LRU: begin
+        // This is separated out from ALLOC_OP because chosen_way_lru_data & chosen_way_lru_mask
+        // is generated at a cycle after the way is chosen
+        stat_mem_v_o = 1'b1;
+        stat_mem_w_o = 1'b1;
+
+        stat_mem_data_out.dirty = 1'b0; // Set dirty when the data is writtenback
+        stat_mem_data_out.lru_bits = chosen_way_lru_data;
+        stat_mem_w_mask_out.dirty = chosen_way_decode;
+        stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
+
+        //TODO: Zeroing out trash data mode
+
+        miss_state_n = RECOVER;
       end
 
       // Spend one cycle to recover the tl stage.
