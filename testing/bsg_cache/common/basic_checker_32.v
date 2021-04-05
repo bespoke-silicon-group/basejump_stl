@@ -207,7 +207,7 @@ module basic_checker_32
                 ? cache_pkt.data
                 : load_data;
             end
-            ALOCK, AUNLOCK, TAGFL, AFLINV, AFL: begin
+            ALOCK, AUNLOCK, TAGFL, AFLINV, AFL, AALLOC: begin
               result[send_id] = '0;
               send_id++;
             end

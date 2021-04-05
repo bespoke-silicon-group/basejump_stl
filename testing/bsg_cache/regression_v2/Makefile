@@ -19,6 +19,7 @@ BASIC_TEST += test_store_load test_store_load2
 BASIC_TEST += test_alock1
 BASIC_TEST += test_tagfl1
 BASIC_TEST += test_aflinv1
+BASIC_TEST += test_aalloc1
 
 
 ########################
@@ -45,7 +46,7 @@ VCS_DEFINES += +define+DMA_DATA_DELAY_P=$(DMA_DATA_DELAY_P)
 
 
 SIMV = $(abspath simv)
-WAVE ?= 0
+WAVE ?= 1
 
 BASIC_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BASIC_TEST)))
 
