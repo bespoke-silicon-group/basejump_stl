@@ -3,6 +3,7 @@ module basic_checker_32
   #(parameter data_width_p="inv"
     , parameter addr_width_p="inv"
     , parameter mem_size_p="inv"
+    , parameter logic alloc_zero_p=1
 
     , parameter data_mask_width_lp=(data_width_p>>3)
     , parameter cache_pkt_width_lp= `bsg_cache_pkt_width(addr_width_p,data_width_p)
@@ -207,9 +208,16 @@ module basic_checker_32
                 ? cache_pkt.data
                 : load_data;
             end
-            ALOCK, AUNLOCK, TAGFL, AFLINV, AFL, AALLOC: begin
+            ALOCK, AUNLOCK, TAGFL, AFLINV, AFL: begin
               result[send_id] = '0;
               send_id++;
+            end
+            AALLOC: begin
+              result[send_id] = '0;
+              send_id++;
+              for (integer i = 0; i < data_mask_width_lp; i++)
+                if (alloc_zero_p & store_mask[i])
+                  shadow_mem[cache_pkt_word_addr][8*i+:8] <= {data_width_p'(0)};
             end
           endcase
         end
