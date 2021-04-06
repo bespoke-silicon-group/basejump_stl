@@ -2,7 +2,7 @@ import random
 from test_base import *
 
 class TestAallocZero(TestBase):
-  # This test make sure trash data in the cache line allocated is zeroed out.
+  # This test make sure the original data in the allocated cache line is zeroed out.
   # The test result makes sense only when parameter alloc_zero_p == 1,
   # and this test is not included in general all tests
 
