@@ -16,7 +16,6 @@ module bsg_cache_miss
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
     ,parameter ways_p="inv"
-    ,parameter logic alloc_zero_p="inv"
 
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
@@ -139,7 +138,7 @@ module bsg_cache_miss
 
   assign goto_flush_op = decode_v_i.tagfl_op| decode_v_i.ainv_op| decode_v_i.afl_op| decode_v_i.aflinv_op;
   assign goto_lock_op = decode_v_i.aunlock_op | (decode_v_i.alock_op & tag_hit_found_i);
-  assign goto_aalloc_op = decode_v_i.aalloc_op;
+  assign goto_aalloc_op = decode_v_i.aalloc_op | decode_v_i.aallocz_op;
 
   logic [tag_width_lp-1:0] addr_tag_v;
   logic [lg_sets_lp-1:0] addr_index_v;
@@ -480,7 +479,7 @@ module bsg_cache_miss
         stat_mem_w_mask_out.dirty = chosen_way_decode;
         stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
 
-        miss_state_n = alloc_zero_p ? ZERO_OUT_DATA : RECOVER;
+        miss_state_n = decode_v_i.aallocz_op ? ZERO_OUT_DATA : RECOVER;
       end
 
       ZERO_OUT_DATA: begin

@@ -17,7 +17,6 @@ module bsg_cache_dma
     ,parameter sets_p="inv"
     ,parameter ways_p="inv"
     ,parameter dma_data_width_p=data_width_p
-    ,parameter logic alloc_zero_p="inv"
 
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)

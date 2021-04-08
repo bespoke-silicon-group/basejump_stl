@@ -66,6 +66,7 @@ module bsg_cache_decode
   assign decode_o.alock_op = (opcode_i == ALOCK);
   assign decode_o.aunlock_op = (opcode_i == AUNLOCK);
   assign decode_o.aalloc_op = (opcode_i == AALLOC);
+  assign decode_o.aallocz_op = (opcode_i == AALLOCZ);
 
   assign decode_o.tag_read_op = ~decode_o.tagst_op;
 

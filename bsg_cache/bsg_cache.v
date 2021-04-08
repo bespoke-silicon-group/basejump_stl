@@ -21,7 +21,6 @@ module bsg_cache
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
     ,parameter ways_p="inv"
-    ,parameter logic alloc_zero_p=0
 
     // Explicit size prevents size inference and allows for ((foo == bar) << e_cache_amo_swap)
     ,parameter [31:0] amo_support_p=(1 << e_cache_amo_swap)
@@ -318,7 +317,7 @@ module bsg_cache
     ,.v_o(tag_hit_found)
   );
 
-  wire ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op | decode_v_r.aalloc_op);
+  wire ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op | decode_v_r.aalloc_op | decode_v_r.aallocz_op);
   wire tagfl_hit = decode_v_r.tagfl_op & valid_v_r[addr_way_v];
   wire aflinv_hit = (decode_v_r.afl_op | decode_v_r.aflinv_op| decode_v_r.ainv_op) & tag_hit_found;
   wire alock_miss = decode_v_r.alock_op & (tag_hit_found ? ~lock_v_r[tag_hit_way_id] : 1'b1);   // either the line is miss, or the line is unlocked.
@@ -392,7 +391,6 @@ module bsg_cache
     ,.sets_p(sets_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.ways_p(ways_p)
-    ,.alloc_zero_p(alloc_zero_p)
   ) miss (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -455,7 +453,6 @@ module bsg_cache
     ,.sets_p(sets_p)
     ,.ways_p(ways_p)
     ,.dma_data_width_p(dma_data_width_p)
-    ,.alloc_zero_p(alloc_zero_p)
     ,.debug_p(debug_p)
   ) dma (
     .clk_i(clk_i)
