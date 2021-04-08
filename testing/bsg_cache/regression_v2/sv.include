@@ -43,4 +43,5 @@ $BASEJUMP_STL_DIR/bsg_cache/bsg_cache.v
 ../common/bsg_nonsynth_dma_model.v
 ../common/bsg_nonsynth_random_yumi_gen.v
 ../common/basic_checker_32.v
+miss_penalty_stats.v
 testbench.v

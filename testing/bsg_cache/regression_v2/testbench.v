@@ -28,6 +28,7 @@ module testbench();
   localparam sets_p = 128;
   localparam ways_p = 8;
   localparam mem_size_p = block_size_in_words_p*sets_p*ways_p*4;
+  localparam get_miss_penalty_stats_lp = 0;
 
 
   integer status;
@@ -198,6 +199,19 @@ module testbench();
     .*
     ,.en_i($root.testbench.checker == "basic")
   );
+
+  if (get_miss_penalty_stats_lp == 1) begin
+    miss_penalty_stats
+      miss_penalty_tracker (
+      .clk_i(clk)
+      ,.reset_i(reset)
+
+      ,.miss_v_i(DUT.miss_v)
+      ,.decode_v_i(DUT.decode_v_r)
+
+      ,.done_o(DUT.miss_done_lo)
+    );
+  end
 
   // wait for all responses to be received.
   integer sent_r, recv_r;
