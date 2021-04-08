@@ -21,6 +21,7 @@ module bsg_cache
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
     ,parameter ways_p="inv"
+    ,parameter use_insecure_alloc_p=0
 
     // Explicit size prevents size inference and allows for ((foo == bar) << e_cache_amo_swap)
     ,parameter [31:0] amo_support_p=(1 << e_cache_amo_swap)
@@ -1013,6 +1014,10 @@ module bsg_cache
           else $error("[BSG_ERROR][BSG_CACHE] AMO_D performed on data_width < 64. %m T=%t", $time);
         assert(~decode_v_r.atomic_op || (data_width_p >= 32))
           else $error("[BSG_ERROR][BSG_CACHE] AMO performed on data_width < 32. %m T=%t", $time);
+
+        // Check that the cache is in use_insecure_alloc_p mode, to make sure cache allocation is not called by mistake
+        assert(~(decode_v_r.aalloc_op || decode_v_r.aallocz_op) || use_insecure_alloc_p)
+          else $error("[BSG_ERROR][BSG_CACHE] Cache allocation performed without use_insecure_alloc_p. %m T=%t", $time);
       end
     end
   end

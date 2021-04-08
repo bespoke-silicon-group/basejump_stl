@@ -74,6 +74,7 @@ module testbench();
     ,.sets_p(sets_p)
     ,.ways_p(ways_p)
     ,.amo_support_p(amo_support_level_arithmetic_lp)
+    ,.use_insecure_alloc_p(`USE_INSECURE_ALLOC_P)
   ) DUT (
     .clk_i(clk)
     ,.reset_i(reset)
@@ -194,6 +195,7 @@ module testbench();
   bind bsg_cache basic_checker_32 #(
     .data_width_p(data_width_p)
     ,.addr_width_p(addr_width_p)
+    ,.block_size_in_words_p(block_size_in_words_p)
     ,.mem_size_p($root.testbench.mem_size_p)
   ) bc (
     .*
