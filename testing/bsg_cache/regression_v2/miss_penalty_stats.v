@@ -20,7 +20,7 @@ module miss_penalty_stats
   localparam max_ctr_lp = 2**ctr_width_lp; // Max amounts of traces used in python scripts
 
   logic store_miss;
-  assign store_miss = miss_v_i & (decode_v_i.st_op || decode_v_i.aalloc_op);
+  assign store_miss = miss_v_i & (decode_v_i.st_op || decode_v_i.aalloc_op || decode_v_i.aallocz_op);
 
 
   integer store_miss_count, miss_cycle_counter, penalty_cycle_per_miss;

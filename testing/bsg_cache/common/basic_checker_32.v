@@ -2,8 +2,8 @@ module basic_checker_32
   import bsg_cache_pkg::*;
   #(parameter data_width_p="inv"
     , parameter addr_width_p="inv"
+    , parameter block_size_in_words_p = "inv"
     , parameter mem_size_p="inv"
-    , parameter logic alloc_zero_p=1
 
     , parameter data_mask_width_lp=(data_width_p>>3)
     , parameter cache_pkt_width_lp= `bsg_cache_pkt_width(addr_width_p,data_width_p)
@@ -33,6 +33,9 @@ module basic_checker_32
   logic [data_width_p-1:0] result [*];
 
   wire [addr_width_p-1:0] cache_pkt_word_addr = cache_pkt.addr[addr_width_p-1:2];
+  logic [block_size_in_words_p-1:0][addr_width_p-1:0] cache_pkt_word_addr_offset;
+  for (genvar i = 0; i < block_size_in_words_p; i++)
+    assign cache_pkt_word_addr_offset[i] = cache_pkt_word_addr + addr_width_p'(i);
 
   // store logic
   logic [data_width_p-1:0] store_data;
@@ -208,16 +211,16 @@ module basic_checker_32
                 ? cache_pkt.data
                 : load_data;
             end
-            ALOCK, AUNLOCK, TAGFL, AFLINV, AFL: begin
+            ALOCK, AUNLOCK, TAGFL, AFLINV, AFL, AALLOC: begin
               result[send_id] = '0;
               send_id++;
             end
-            AALLOC: begin
+            AALLOCZ: begin
               result[send_id] = '0;
               send_id++;
-              for (integer i = 0; i < data_mask_width_lp; i++)
-                if (alloc_zero_p & store_mask[i])
-                  shadow_mem[cache_pkt_word_addr][8*i+:8] <= {data_width_p'(0)};
+              // pending: zero-out only when allocate miss, for now, it does not know if it is hit or miss
+              // for (integer i = 0; i < block_size_in_words_p; i++)
+              //   shadow_mem[cache_pkt_word_addr_offset[i]] <= {data_width_p'(0)};
             end
           endcase
         end

@@ -144,6 +144,10 @@ class TestBase:
   def send_aalloc(self, addr):
     self.tg.send(AALLOC, addr)
 
+  # AALLOCZ
+  def send_aallocz(self, addr):
+    self.tg.send(AALLOCZ, addr)
+
   # load block 
   def send_load_block(self, addr):
     block_mask = 0x3FFFFFE0        # based on data_width_p = 32, block_size_in_words_p = 8 
