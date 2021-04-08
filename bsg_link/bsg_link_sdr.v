@@ -36,6 +36,8 @@ module bsg_link_sdr
  #(parameter width_p                         = "inv"
   ,parameter lg_fifo_depth_p                 = "inv"
   ,parameter lg_credit_to_token_decimation_p = "inv"
+  ,parameter bypass_upstream_twofer_fifo_p   = 0
+  ,parameter bypass_downstream_twofer_fifo_p = 1
   )
 
   (  input core_clk_i
@@ -67,6 +69,7 @@ module bsg_link_sdr
  #(.width_p                        (width_p)
   ,.lg_fifo_depth_p                (lg_fifo_depth_p)
   ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
+  ,.bypass_twofer_fifo_p           (bypass_upstream_twofer_fifo_p)
   ) uplink
   (// Core side
    .io_clk_i           (core_clk_i)
@@ -86,6 +89,7 @@ module bsg_link_sdr
  #(.width_p                        (width_p)
   ,.lg_fifo_depth_p                (lg_fifo_depth_p)
   ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
+  ,.bypass_twofer_fifo_p           (bypass_downstream_twofer_fifo_p)
   ) downlink
   (// Core side
    .core_clk_i           (core_clk_i)

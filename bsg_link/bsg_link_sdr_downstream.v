@@ -41,6 +41,7 @@ module bsg_link_sdr_downstream
   // Token credit decimation
   // MUST MATCH paired bsg_link_ddr_upstream setting
   ,parameter lg_credit_to_token_decimation_p = 0
+  ,parameter bypass_twofer_fifo_p = 0
   )
 
   (// Core side
@@ -81,7 +82,7 @@ module bsg_link_sdr_downstream
  #(.channel_width_p(width_p)
   ,.lg_fifo_depth_p(lg_fifo_depth_p)
   ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
-  ,.bypass_twofer_fifo_p(1)
+  ,.bypass_twofer_fifo_p(bypass_twofer_fifo_p)
   ) downstream
   (.core_clk_i       (core_clk_i)
   ,.core_link_reset_i(core_link_reset_i)
