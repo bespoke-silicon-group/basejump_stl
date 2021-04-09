@@ -318,7 +318,8 @@ module bsg_cache
     ,.v_o(tag_hit_found)
   );
 
-  wire ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op | decode_v_r.aalloc_op | decode_v_r.aallocz_op);
+  wire ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op);
+  wire aalloc_miss = ~tag_hit_found & (decode_v_r.aalloc_op | decode_v_r.aallocz_op);
   wire tagfl_hit = decode_v_r.tagfl_op & valid_v_r[addr_way_v];
   wire aflinv_hit = (decode_v_r.afl_op | decode_v_r.aflinv_op| decode_v_r.ainv_op) & tag_hit_found;
   wire alock_miss = decode_v_r.alock_op & (tag_hit_found ? ~lock_v_r[tag_hit_way_id] : 1'b1);   // either the line is miss, or the line is unlocked.
@@ -329,7 +330,7 @@ module bsg_cache
   // MBT: the ~decode_v_r.tagst_op is necessary at the top of this expression
   //      to avoid X-pessimism post synthesis due to X's coming out of the tags
   wire miss_v = (~decode_v_r.tagst_op) & v_v_r
-    & (ld_st_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit | atomic_miss);
+    & (ld_st_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit | atomic_miss | aalloc_miss);
   
   // ops that return some value other than '0.
   assign retval_op_v = decode_v_r.ld_op | decode_v_r.taglv_op | decode_v_r.tagla_op | decode_v_r.atomic_op; 
