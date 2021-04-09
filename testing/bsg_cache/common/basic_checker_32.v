@@ -21,6 +21,9 @@ module basic_checker_32
     , input [data_width_p-1:0] data_o
     , input v_o
     , input yumi_i
+
+    ,input miss_v_i
+    ,input done_o
   );
 
 
@@ -33,9 +36,6 @@ module basic_checker_32
   logic [data_width_p-1:0] result [*];
 
   wire [addr_width_p-1:0] cache_pkt_word_addr = cache_pkt.addr[addr_width_p-1:2];
-  logic [block_size_in_words_p-1:0][addr_width_p-1:0] cache_pkt_word_addr_offset;
-  for (genvar i = 0; i < block_size_in_words_p; i++)
-    assign cache_pkt_word_addr_offset[i] = cache_pkt_word_addr + addr_width_p'(i);
 
   // store logic
   logic [data_width_p-1:0] store_data;
@@ -125,7 +125,24 @@ module basic_checker_32
     endcase
   end
 
+  // Zero-out data logic for aallocz
+  // Wait 2 cycles for the miss_v signal at tv stage
+  logic [addr_width_p-1:0]  cache_pkt_word_addr_tl_r, cache_pkt_word_addr_tv_r;
+  bsg_cache_opcode_e cache_pkt_opcode_tl_r, cache_pkt_opcode_tv_r;
+  logic [block_size_in_words_p-1:0][addr_width_p-1:0] cache_pkt_words_addr_tv;
+  for (genvar i = 0; i < block_size_in_words_p; i++)
+    assign cache_pkt_words_addr_tv[i] = cache_pkt_word_addr_tv_r + addr_width_p'(i);
 
+  always_ff @ (posedge clk_i) begin
+    if (~miss_v_i | done_o) begin
+      cache_pkt_word_addr_tl_r <= cache_pkt_word_addr;
+      cache_pkt_word_addr_tv_r <= cache_pkt_word_addr_tl_r;
+
+      cache_pkt_opcode_tl_r <= cache_pkt.opcode;
+      cache_pkt_opcode_tv_r <=cache_pkt_opcode_tl_r;
+    end
+  end
+  wire zero_out_en = (cache_pkt_opcode_tv_r inside {AALLOCZ}) & miss_v_i & done_o;
 
   integer send_id, recv_id;
 
@@ -211,18 +228,16 @@ module basic_checker_32
                 ? cache_pkt.data
                 : load_data;
             end
-            ALOCK, AUNLOCK, TAGFL, AFLINV, AFL, AALLOC: begin
+            ALOCK, AUNLOCK, TAGFL, AFLINV, AFL, AALLOC, AALLOCZ: begin
               result[send_id] = '0;
               send_id++;
-            end
-            AALLOCZ: begin
-              result[send_id] = '0;
-              send_id++;
-              // pending: zero-out only when allocate miss, for now, it does not know if it is hit or miss
-              // for (integer i = 0; i < block_size_in_words_p; i++)
-              //   shadow_mem[cache_pkt_word_addr_offset[i]] <= {data_width_p'(0)};
             end
           endcase
+        end
+
+        if (zero_out_en) begin
+          for (integer i = 0; i < block_size_in_words_p; i++)
+            shadow_mem[cache_pkt_words_addr_tv[i]] <= {data_width_p'(0)};
         end
 
         // output checker

@@ -192,13 +192,27 @@ module testbench();
   assign v_li = tr_v_lo;
   assign tr_yumi_li = tr_v_lo & ready_lo;
 
-  bind bsg_cache basic_checker_32 #(
+  bind DUT basic_checker_32 #(
     .data_width_p(data_width_p)
     ,.addr_width_p(addr_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.mem_size_p($root.testbench.mem_size_p)
   ) bc (
     .*
+    // .clk_i(clk)
+    // ,.reset_i(reset)
+
+    // ,.cache_pkt_i(cache_pkt)
+    // ,.v_i(v_li)
+    // ,.ready_o(ready_lo)
+
+    // ,.data_o(cache_data_lo)
+    // ,.v_o(v_lo)
+    // ,.yumi_i(yumi_li)
+
+    ,.miss_v_i(DUT.miss_v)
+    ,.done_o(DUT.miss_done_lo)
+
     ,.en_i($root.testbench.checker == "basic")
   );
 
