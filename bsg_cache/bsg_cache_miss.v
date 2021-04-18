@@ -114,7 +114,7 @@ module bsg_cache_miss
     ,FLUSH_OP
     ,LOCK_OP
     ,AALLOC_OP
-    ,UPDATE_LRU
+    ,UPDATE_STAT
     ,SEND_EVICT_ADDR
     ,SEND_FILL_ADDR
     ,SEND_EVICT_DATA
@@ -384,7 +384,7 @@ module bsg_cache_miss
         end
         miss_state_n = (stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
           ? SEND_EVICT_ADDR
-          : UPDATE_LRU;
+          : UPDATE_STAT;
       end
 
       // Send out the block addr for eviction, before initiating the eviction.
@@ -416,7 +416,7 @@ module bsg_cache_miss
         miss_state_n = dma_done_i
           ? ((decode_v_i.tagfl_op| decode_v_i.aflinv_op| decode_v_i.afl_op) 
             ? RECOVER 
-            : (goto_aalloc_op ? UPDATE_LRU : GET_FILL_DATA))
+            : (goto_aalloc_op ? UPDATE_STAT : GET_FILL_DATA))
           : SEND_EVICT_DATA;
       end
 
@@ -468,9 +468,9 @@ module bsg_cache_miss
           : GET_FILL_DATA;
       end
 
-      UPDATE_LRU: begin
+      UPDATE_STAT: begin
         // This is separated out from ALLOC_OP because chosen_way_lru_data & chosen_way_lru_mask
-        // is generated at a cycle after the way is chosen
+        // is generated from chosen_way_r, a cycle after the way is chosen
         stat_mem_v_o = 1'b1;
         stat_mem_w_o = 1'b1;
 
@@ -479,12 +479,13 @@ module bsg_cache_miss
         stat_mem_w_mask_out.dirty = chosen_way_decode;
         stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
 
+        // Dirty data is evicted already & store buffer is already empty
+        dma_cmd_o = decode_v_i.aallocz_op ? e_dma_zero_out_data : e_dma_nop;
+
         miss_state_n = decode_v_i.aallocz_op ? ZERO_OUT_DATA : RECOVER;
       end
 
       ZERO_OUT_DATA: begin
-        // Dirty data is evicted already & store buffer is already empty
-        dma_cmd_o = e_dma_zero_out_data;
         dma_addr_o = {
           tag_v_i[dma_way_o],
           addr_index_v,
