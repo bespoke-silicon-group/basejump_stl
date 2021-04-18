@@ -126,13 +126,11 @@ module basic_checker_32
   end
 
   // Zero-out data logic for aallocz
-  // Wait 2 cycles for the miss_v signal at tv stage
+  // Since there is not hit/miss info stored in the checker, it has to wait until the tv stage comes in
+  // But the upcoming store op at the next cycle will be implemented immediately and cause a write-after-write harzard
+  // store_after_alloc_reg is used to prevent the hazard
   logic [addr_width_p-1:0]  cache_pkt_word_addr_tl_r, cache_pkt_word_addr_tv_r;
   bsg_cache_opcode_e cache_pkt_opcode_tl_r, cache_pkt_opcode_tv_r;
-  logic [block_size_in_words_p-1:0][addr_width_p-1:0] cache_pkt_words_addr_tv;
-  for (genvar i = 0; i < block_size_in_words_p; i++)
-    assign cache_pkt_words_addr_tv[i] = cache_pkt_word_addr_tv_r + addr_width_p'(i);
-
   always_ff @ (posedge clk_i) begin
     if (~miss_v_i | done_o) begin
       cache_pkt_word_addr_tl_r <= cache_pkt_word_addr;
@@ -142,7 +140,26 @@ module basic_checker_32
       cache_pkt_opcode_tv_r <=cache_pkt_opcode_tl_r;
     end
   end
-  wire zero_out_en = (cache_pkt_opcode_tv_r inside {AALLOCZ}) & miss_v_i & done_o;
+
+  logic [block_size_in_words_p-1:0][addr_width_p-1:0] cache_pkt_words_addr_tv;
+  for (genvar i = 0; i < block_size_in_words_p; i++)
+    assign cache_pkt_words_addr_tv[i] = cache_pkt_word_addr_tv_r + addr_width_p'(i);
+
+  logic store_after_alloc, store_after_alloc_r;
+  assign store_after_alloc = (cache_pkt_word_addr_tl_r == cache_pkt_word_addr) 
+    && (cache_pkt_opcode_tl_r inside {AALLOCZ})
+    && (cache_pkt.opcode inside {SB, SH, SW, SD, SM});
+  bsg_dff_reset_set_clear #(
+    .width_p(1)
+    ,.clear_over_set_p(1)
+  ) store_after_alloc_reg (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.set_i(store_after_alloc)
+    ,.clear_i(done_o)
+    ,.data_o(store_after_alloc_r)
+  );
+  wire zero_out_en = (cache_pkt_opcode_tv_r inside {AALLOCZ}) & miss_v_i & done_o & ~store_after_alloc_r;
 
   integer send_id, recv_id;
 
