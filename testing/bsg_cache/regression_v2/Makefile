@@ -20,6 +20,7 @@ BASIC_TEST += test_alock1
 BASIC_TEST += test_tagfl1
 BASIC_TEST += test_aflinv1
 BASIC_TEST += test_aalloc1 test_block_aalloc
+BASIC_TEST += test_aallocz1 test_aallocz2
 
 
 ########################
