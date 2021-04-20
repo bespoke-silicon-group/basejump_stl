@@ -1,7 +1,7 @@
 import random
 from test_base import *
 
-class TestAallocRandom(TestBase):
+class TestAallocStoreRandom(TestBase):
 
   def generate(self):
     self.clear_tag()
@@ -24,5 +24,5 @@ class TestAallocRandom(TestBase):
 
 # main()
 if __name__ == "__main__":
-  t = TestAallocRandom()
+  t = TestAallocStoreRandom()
   t.generate()
