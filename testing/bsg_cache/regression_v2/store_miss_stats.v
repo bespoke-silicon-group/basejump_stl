@@ -3,7 +3,7 @@
      due to store miss and cache line allocate miss 
   */
 
-module miss_penalty_stats
+module store_miss_stats 
   import bsg_cache_pkg::*;
   (
     input clk_i
@@ -11,9 +11,7 @@ module miss_penalty_stats
 
     ,input miss_v_i
     ,input bsg_cache_decode_s decode_v_i
-
     ,input logic done_o
-
   );
 
   localparam ctr_width_lp = 17;
@@ -47,10 +45,9 @@ module miss_penalty_stats
     begin
       // display statistic
       $display("######## Miss Penalty Statistic: ########");
-      $display("Store Miss Count %d ", store_miss_count);
+      $display("Store Miss Count: %d ", store_miss_count);
       $display("Miss Cycle Count: %d ", miss_cycle_counter);
       $display("Ave Miss Cycle: %d ", penalty_cycle_per_miss);
-
     end
 
 endmodule

@@ -28,7 +28,6 @@ module testbench();
   localparam sets_p = 128;
   localparam ways_p = 8;
   localparam mem_size_p = block_size_in_words_p*sets_p*ways_p*4;
-  localparam get_miss_penalty_stats_lp = 0;
 
 
   integer status;
@@ -199,32 +198,19 @@ module testbench();
     ,.mem_size_p($root.testbench.mem_size_p)
   ) bc (
     .*
-    // .clk_i(clk)
-    // ,.reset_i(reset)
-
-    // ,.cache_pkt_i(cache_pkt)
-    // ,.v_i(v_li)
-    // ,.ready_o(ready_lo)
-
-    // ,.data_o(cache_data_lo)
-    // ,.v_o(v_lo)
-    // ,.yumi_i(yumi_li)
-
     ,.miss_v_i(DUT.miss_v)
     ,.done_o(DUT.miss_done_lo)
 
     ,.en_i($root.testbench.checker == "basic")
   );
 
-  if (get_miss_penalty_stats_lp == 1) begin
-    miss_penalty_stats
-      miss_penalty_tracker (
-      .clk_i(clk)
-      ,.reset_i(reset)
+  if (`GET_MISS_STATS_P) begin
+    bind DUT store_miss_stats 
+      store_miss_tracker (
+      .*
 
       ,.miss_v_i(DUT.miss_v)
       ,.decode_v_i(DUT.decode_v_r)
-
       ,.done_o(DUT.miss_done_lo)
     );
   end
