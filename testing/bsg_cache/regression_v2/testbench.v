@@ -198,6 +198,12 @@ module testbench();
     ,.mem_size_p($root.testbench.mem_size_p)
   ) bc (
     .*
+
+    ,.decode_tl_i(DUT.decode_tl_r)
+    ,.decode_v_i(DUT.decode_v_r)
+    ,.addr_tl_i(DUT.addr_tl_r)
+    ,.addr_v_i(DUT.addr_v_r)
+    
     ,.miss_v_i(DUT.miss_v)
     ,.done_o(DUT.miss_done_lo)
 

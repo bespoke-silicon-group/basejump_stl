@@ -22,6 +22,11 @@ module basic_checker_32
     , input v_o
     , input yumi_i
 
+    ,input bsg_cache_decode_s decode_tl_i
+    ,input bsg_cache_decode_s decode_v_i
+    ,input [addr_width_p-1:0] addr_tl_i
+    ,input [addr_width_p-1:0] addr_v_i
+    
     ,input miss_v_i
     ,input done_o
   );
@@ -129,37 +134,17 @@ module basic_checker_32
   // Since there is not hit/miss info stored in the checker, it has to wait until the tv stage comes in
   // But the upcoming store op at the next cycle will be implemented immediately and cause a write-after-write harzard
   // store_after_alloc_reg is used to prevent the hazard
-  logic [addr_width_p-1:0]  cache_pkt_word_addr_tl_r, cache_pkt_word_addr_tv_r;
-  bsg_cache_opcode_e cache_pkt_opcode_tl_r, cache_pkt_opcode_tv_r;
-  always_ff @ (posedge clk_i) begin
-    if (~miss_v_i | done_o) begin
-      cache_pkt_word_addr_tl_r <= cache_pkt_word_addr;
-      cache_pkt_word_addr_tv_r <= cache_pkt_word_addr_tl_r;
+  logic [addr_width_p-1:0]  cache_pkt_word_addr_tl, cache_pkt_word_addr_v;
+  assign cache_pkt_word_addr_tl = addr_tl_i[addr_width_p-1:2];
+  assign cache_pkt_word_addr_v = addr_v_i[addr_width_p-1:2];
 
-      cache_pkt_opcode_tl_r <= cache_pkt.opcode;
-      cache_pkt_opcode_tv_r <=cache_pkt_opcode_tl_r;
-    end
-  end
-
-  logic [block_size_in_words_p-1:0][addr_width_p-1:0] cache_pkt_words_addr_tv;
+  logic [block_size_in_words_p-1:0][addr_width_p-1:0] cache_pkt_words_addr_v_li;
   for (genvar i = 0; i < block_size_in_words_p; i++)
-    assign cache_pkt_words_addr_tv[i] = cache_pkt_word_addr_tv_r + addr_width_p'(i);
+    assign cache_pkt_words_addr_v_li[i] = cache_pkt_word_addr_v + addr_width_p'(i);
 
-  logic store_after_alloc, store_after_alloc_r;
-  assign store_after_alloc = (cache_pkt_word_addr_tl_r == cache_pkt_word_addr) 
-    && (cache_pkt_opcode_tl_r inside {AALLOCZ})
-    && (cache_pkt.opcode inside {SB, SH, SW, SD, SM});
-  bsg_dff_reset_set_clear #(
-    .width_p(1)
-    ,.clear_over_set_p(1)
-  ) store_after_alloc_reg (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.set_i(store_after_alloc)
-    ,.clear_i(done_o)
-    ,.data_o(store_after_alloc_r)
-  );
-  wire zero_out_en = (cache_pkt_opcode_tv_r inside {AALLOCZ}) & miss_v_i & done_o & ~store_after_alloc_r;
+  wire store_after_alloc = (cache_pkt_word_addr_v == cache_pkt_word_addr_tl) 
+    && decode_v_i.aallocz_op && decode_tl_i.st_op;
+  wire zero_out_en = decode_v_i.aallocz_op & miss_v_i & done_o & ~store_after_alloc;
 
   integer send_id, recv_id;
 
@@ -254,7 +239,7 @@ module basic_checker_32
 
         if (zero_out_en) begin
           for (integer i = 0; i < block_size_in_words_p; i++)
-            shadow_mem[cache_pkt_words_addr_tv[i]] <= {data_width_p'(0)};
+            shadow_mem[cache_pkt_words_addr_v_li[i]] <= {data_width_p'(0)};
         end
 
         // output checker
