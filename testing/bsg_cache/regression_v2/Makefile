@@ -22,9 +22,9 @@ BASIC_TEST += test_aflinv1
 BASIC_TEST += test_aalloc1
 BASIC_TEST += test_aallocz1 test_aallocz2
 
-PERFORMANCE_MEAS = test_noaalloc_store_random 
-PERFORMANCE_MEAS += test_aalloc_store_random
-PERFORMANCE_MEAS += test_aallocz_store_random
+AALLOC_PERFORMANCE_MEAS = test_noaalloc_store_random 
+AALLOC_PERFORMANCE_MEAS += test_aalloc_store_random
+AALLOC_PERFORMANCE_MEAS += test_aallocz_store_random
 
 ########################
 
@@ -84,10 +84,10 @@ summary:
 	@$(foreach test, $(BASIC_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
 			-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
 
-perf_meas: $(addsuffix .basic.run, $(PERFORMANCE_MEAS))
+aalloc_perf_meas: $(addsuffix .basic.run, $(AALLOC_PERFORMANCE_MEAS))
 
-perf_summary:
-	@$(foreach test, $(PERFORMANCE_MEAS),                                                  \
+aalloc_perf_summary:
+	@$(foreach test, $(AALLOC_PERFORMANCE_MEAS),                                                  \
 		echo $(test);                                                                        \
 		grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" -e "Error" -e "BSG_ERROR"             \
 		-e "Store Miss Count" -e "Miss Cycle Count" -e "Ave Miss Cycle" out/$(test)/simv.log;)
