@@ -56,6 +56,7 @@ package bsg_cache_pkg;
 
     ,LM     = 6'b001100       // load mask
     ,SM     = 6'b001101       // store mask
+    ,SMC    = 6'B001111       // store mask clean
 
     ,TAGST   = 6'b010000      // tag store
     ,TAGFL   = 6'b010001      // tag flush
@@ -121,6 +122,7 @@ package bsg_cache_pkg;
     logic mask_op;
     logic ld_op;
     logic st_op;
+    logic stc_op;
     logic tagst_op;
     logic tagfl_op;
     logic taglv_op;

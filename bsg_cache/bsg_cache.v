@@ -318,7 +318,7 @@ module bsg_cache
     ,.v_o(tag_hit_found)
   );
 
-  wire ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op);
+  wire ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op | decode_v_r.stc_op);  // TOCHECK
   wire aalloc_miss = ~tag_hit_found & (decode_v_r.aalloc_op | decode_v_r.aallocz_op);
   wire tagfl_hit = decode_v_r.tagfl_op & valid_v_r[addr_way_v];
   wire aflinv_hit = (decode_v_r.afl_op | decode_v_r.aflinv_op| decode_v_r.ainv_op) & tag_hit_found;
@@ -834,7 +834,7 @@ module bsg_cache
 
   // when the store buffer is full, and the TV stage is inserting another entry,
   // load/atomic cannot enter tl stage.
-  assign sbuf_hazard = (sbuf_full_lo & (v_o & yumi_i & (decode_v_r.st_op | decode_v_r.atomic_op)))
+  assign sbuf_hazard = (sbuf_full_lo & (v_o & yumi_i & (decode_v_r.st_op | decode_v_r.stc_op | decode_v_r.atomic_op))) // TOCHECK
     & (v_i & (decode.ld_op | decode.atomic_op));
 
   // during miss, tl pipeline cannot take next instruction when
@@ -932,6 +932,8 @@ module bsg_cache
   // If it's load or store, and there is a hit, it updates the dirty bits and LRU.
   // If there is a miss, stat_mem may be modified by the miss handler.
 
+  // Pending: for store mask clean, we want to update the LRU but not the dirty bit in the stat mem
+
   logic [ways_p-2:0] plru_decode_data_lo;
   logic [ways_p-2:0] plru_decode_mask_lo;
   
@@ -952,8 +954,8 @@ module bsg_cache
       stat_mem_w_mask_li = miss_stat_mem_w_mask_lo;
     end
     else begin
-      stat_mem_v_li = ((decode_v_r.st_op | decode_v_r.ld_op | decode_v_r.tagst_op | decode_v_r.atomic_op) & v_o & yumi_i);
-      stat_mem_w_li = ((decode_v_r.st_op | decode_v_r.ld_op | decode_v_r.tagst_op | decode_v_r.atomic_op) & v_o & yumi_i);
+      stat_mem_v_li = ((decode_v_r.st_op | decode_v_r.stc_op | decode_v_r.ld_op | decode_v_r.tagst_op | decode_v_r.atomic_op) & v_o & yumi_i);
+      stat_mem_w_li = ((decode_v_r.st_op | decode_v_r.stc_op | decode_v_r.ld_op | decode_v_r.tagst_op | decode_v_r.atomic_op) & v_o & yumi_i);
       stat_mem_addr_li = addr_index_v;
 
       if (decode_v_r.tagst_op) begin
@@ -976,7 +978,7 @@ module bsg_cache
 
   // store buffer
   //
-  assign sbuf_v_li = (decode_v_r.st_op | decode_v_r.atomic_op) & v_o & yumi_i;
+  assign sbuf_v_li = (decode_v_r.st_op | decode_v_r.stc_op | decode_v_r.atomic_op) & v_o & yumi_i;
   assign sbuf_entry_li.way_id = miss_v ? chosen_way_lo : tag_hit_way_id;
   assign sbuf_entry_li.addr = addr_v_r;
   // store buffer can write to dmem when
@@ -1031,7 +1033,7 @@ module bsg_cache
           $display("<VCACHE> M[%4h] == %8h // %8t", addr_v_r, data_o, $time);
         end
         
-        if (decode_v_r.st_op) begin
+        if (decode_v_r.st_op | decode_v_r.stc_op) begin
           $display("<VCACHE> M[%4h] := %8h // %8t", addr_v_r, sbuf_entry_li.data, $time);
         end
 

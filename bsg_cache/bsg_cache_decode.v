@@ -32,7 +32,7 @@ module bsg_cache_decode
     endcase    
   end
 
-  assign decode_o.mask_op = (opcode_i == LM) | (opcode_i == SM);
+  assign decode_o.mask_op = (opcode_i == LM) | (opcode_i == SM) | (opcode_i == SMC);
 
   assign decode_o.sigext_op = (opcode_i == LB)
     || (opcode_i == LH)
@@ -55,6 +55,8 @@ module bsg_cache_decode
     || (opcode_i == SW)
     || (opcode_i == SD)
     || (opcode_i == SM);
+
+  assign decode_o.stc_op = (opcode_i == SMC);
 
   assign decode_o.tagst_op = (opcode_i == TAGST);
   assign decode_o.tagfl_op = (opcode_i == TAGFL);
