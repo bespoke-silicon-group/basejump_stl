@@ -75,6 +75,16 @@
 
 `define BSG_STRINGIFY(x) `"x`"
 
+// Slices an address from the start bit down, distributing among els elements
+// If there are 1 or fewer elements in the slice, return 0
+`define BSG_SAFE_HASH_BANK_DOWN(sig,start,els) \
+  (els > 1) ? sig[start-:`BSG_SAFE_CLOG2(`BSG_MAX(els,2))] : '0
+
+// Slices an address from the start bit up, distributing among els elements
+// If there are 1 or fewer elements in the slice, return 0
+`define BSG_SAFE_HASH_BANK_UP(sig,start,els) \
+  (els > 1) ? sig[start+:`BSG_SAFE_CLOG2(`BSG_MAX(els,2))] : '0
+
 // using C-style shifts instead of a[i] allows the parameter of BSG_GET_BIT to be a parameter subrange                                                                                                                                                                               
 // e.g., parameter[4:1][1], which DC 2016.12 does not allow                                                                                                                                                                                                                          
 
