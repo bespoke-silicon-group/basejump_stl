@@ -37,7 +37,8 @@
 module bsg_tag_trace_replay
 
    #( parameter rom_addr_width_p    = -1
-    , parameter rom_data_width_p    = -1
+    , parameter rom_data_width_p    =
+      (4+num_masters_p+`BSG_SAFE_CLOG2(num_clients_p)+1+$clog2(max_payload_width_p+1)+max_payload_width_p)
     , parameter num_masters_p       = 0
     , parameter num_clients_p       = -1
     , parameter max_payload_width_p = -1 )
