@@ -72,7 +72,7 @@ module basic_checker_32
         };
       end
 
-      SM: begin
+      SM, SMC: begin
         store_data = cache_pkt.data;
         store_mask = cache_pkt.mask;
       end
@@ -170,7 +170,7 @@ module basic_checker_32
               result[send_id] = load_data_final;
               send_id++;
             end
-            SW, SH, SB, SM: begin
+            SW, SH, SB, SM, SMC: begin
               result[send_id] = '0;
               send_id++;
               for (integer i = 0; i < data_mask_width_lp; i++)
