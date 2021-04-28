@@ -42,6 +42,7 @@ module bsg_link_sdr_upstream
   // MUST MATCH paired bsg_link_sdr_downstream setting
   ,parameter lg_credit_to_token_decimation_p = 0
   ,parameter bypass_twofer_fifo_p = 0
+  ,parameter strength_p = 0
   )
 
   (// Core side
@@ -81,6 +82,7 @@ module bsg_link_sdr_upstream
   // valid and data signals are sent together
   bsg_link_osdr_phy
  #(.width_p(width_p+1)
+  ,.strength_p(strength_p)
   ) osdr_phy
   (.clk_i  (io_clk_i)
   ,.reset_i(io_link_reset_i)

@@ -75,8 +75,8 @@ proc bsg_link_sdr_constraints { \
   create_clock -period $in_clk_period -name $in_clk_name $in_clk_port
   set_clock_uncertainty $uncertainty [get_clocks $in_clk_name]
   bsg_link_sdr_in_constraints $in_clk_name $in_dv_port $max_input_delay $min_input_delay
-  set_driving_cell -no_design_rule -lib_cell "SC7P5T_CKBUFX2_SSC14R" $in_clk_port
-  set_driving_cell -no_design_rule -lib_cell "SC7P5T_BUFX2_SSC14R" $in_dv_port
+  set_driving_cell -no_design_rule -lib_cell "SC7P5T_CKBUFX4_SSC14R" $in_clk_port
+  set_driving_cell -no_design_rule -lib_cell "SC7P5T_CKBUFX4_SSC14R" $in_dv_port
 
   # output
   global BSG_LINK_SDR_USE_GENERATED_CLOCK
@@ -91,8 +91,8 @@ proc bsg_link_sdr_constraints { \
     create_generated_clock -divide_by 1 -invert -master_clock $master_clk_name -source $master_clk_port -name $out_clk_name $out_clk_port
     bsg_link_sdr_out_generated_clock_constraints $out_clk_name $out_dv_port $max_output_delay $min_output_delay
   }
-  set_load [load_of [get_lib_pin "*/SC7P5T_CKBUFX2_SSC14R/CLK"]] $out_clk_port
-  set_load [load_of [get_lib_pin "*/SC7P5T_BUFX2_SSC14R/A"]] $out_dv_port
+  set_load [load_of [get_lib_pin "*/SC7P5T_CKBUFX4_SSC14R/CLK"]] $out_clk_port
+  set_load [load_of [get_lib_pin "*/SC7P5T_CKBUFX4_SSC14R/CLK"]] $out_dv_port
 }
 
 puts "Info: Completed script [info script]\n"
