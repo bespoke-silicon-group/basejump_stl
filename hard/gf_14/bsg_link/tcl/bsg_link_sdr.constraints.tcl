@@ -12,11 +12,11 @@ proc bsg_link_sdr_dont_touch_constraints {in_dv_port} {
   # inputs
   set_dont_touch_network -no_propagate $in_dv_port
   # outputs
-  set_dont_touch_network -no_propagate [get_flat_pins -filter "full_name=~*BSG_OSDR_BUF_DONT_TOUCH/Z"]
+  set_dont_touch_network -no_propagate [get_flat_pins -filter "full_name=~*BSG_OSDR_BUF_BSG_DONT_TOUCH/Z"]
   global BSG_LINK_SDR_USE_GENERATED_CLOCK
   puts "BSG_LINK_SDR_USE_GENERATED_CLOCK = $BSG_LINK_SDR_USE_GENERATED_CLOCK"
   if {$BSG_LINK_SDR_USE_GENERATED_CLOCK == 0} {
-    set_dont_touch_network -no_propagate [get_flat_pins -filter "full_name=~*BSG_OSDR_CKBUF_DONT_TOUCH/Z"]
+    set_dont_touch_network -no_propagate [get_flat_pins -filter "full_name=~*BSG_OSDR_CKBUF_BSG_DONT_TOUCH/Z"]
   }
 }
 
@@ -24,7 +24,7 @@ proc bsg_link_sdr_disable_timing_constraints {} {
   global BSG_LINK_SDR_USE_GENERATED_CLOCK
   puts "BSG_LINK_SDR_USE_GENERATED_CLOCK = $BSG_LINK_SDR_USE_GENERATED_CLOCK"
   if {$BSG_LINK_SDR_USE_GENERATED_CLOCK == 0} {
-    set_disable_timing [get_flat_pins -filter "full_name=~*BSG_OSDR_DFFPOS_DONT_TOUCH/Q"]
+    set_disable_timing [get_flat_pins -filter "full_name=~*BSG_OSDR_DFFPOS_BSG_DONT_TOUCH/Q"]
   }
 }
 
