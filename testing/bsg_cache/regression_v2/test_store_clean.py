@@ -6,20 +6,6 @@ class TestStoreBlockClean(TestBase):
 
   def generate(self):
     self.clear_tag()
- 
-    # k = 0
-    # for n in range(10000):
-    #   # tag = random.randint(0,16)
-    #   for tag in range(2*self.ways_p):
-    #     index = 0
-    #     block_addr = self.get_addr(tag,index)
-    #     # self.send_aalloc(block_addr)
-    #     if (k % 2 == 0):
-    #       self.send_store_block_clean(block_addr)
-    #     else: 
-    #       self.send_store_block(block_addr)
-    #     k = k + 1
-
 
     # write some initial data from index 0 - 64,
     # which might be evicted later
@@ -60,6 +46,7 @@ class TestStoreBlockClean(TestBase):
     # done
     self.tg.done()
 
+  # Eviction Count from store_stats should be 32*8=256 with GET_STORE_STATS_P set
 
 # main()
 if __name__ == "__main__":

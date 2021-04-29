@@ -210,14 +210,17 @@ module testbench();
     ,.en_i($root.testbench.checker == "basic")
   );
 
-  if (`GET_MISS_STATS_P) begin
-    bind DUT store_miss_stats 
-      store_miss_tracker (
+  if (`GET_STORE_STATS_P) begin
+    bind DUT store_stats 
+      store_stats_tracker (
       .*
 
       ,.miss_v_i(DUT.miss_v)
       ,.decode_v_i(DUT.decode_v_r)
       ,.done_o(DUT.miss_done_lo)
+
+      ,.dma_cmd_o(DUT.dma_cmd_lo)
+      ,.dma_done_i(DUT.dma_done_li)
     );
   end
 
