@@ -21,6 +21,7 @@ BASIC_TEST += test_tagfl1
 BASIC_TEST += test_aflinv1
 BASIC_TEST += test_aalloc1
 BASIC_TEST += test_aallocz1 test_aallocz2
+BASIC_TEST += test_store_clean1 test_store_clean2
 
 AALLOC_PERFORMANCE_MEAS = test_noaalloc_store_random 
 AALLOC_PERFORMANCE_MEAS += test_aalloc_store_random
@@ -38,8 +39,8 @@ DMA_READ_DELAY_P  ?= 0
 DMA_WRITE_DELAY_P ?= 0
 DMA_REQ_DELAY_P   ?= 0
 DMA_DATA_DELAY_P  ?= 0
-USE_INSECURE_ALLOC_P ?= 1
-GET_STORE_STATS_P ?= 0
+USE_INSECURE_ALLOC_P ?= 0
+GET_STORE_STATS_P ?= 1
 
 VCS_DEFINES += +define+YUMI_MIN_DELAY_P=$(YUMI_MIN_DELAY_P)
 VCS_DEFINES += +define+YUMI_MAX_DELAY_P=$(YUMI_MAX_DELAY_P)

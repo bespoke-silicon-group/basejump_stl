@@ -11,14 +11,13 @@ class TestStoreBlockClean(TestBase):
     # which might be evicted later
     for index_s in range(64):
       for tag_s in range(8):
-          taddr = self.get_addr(tag_s, index_s)
-          self.send_store_block(taddr)
+        taddr = self.get_addr(tag_s, index_s)
+        self.send_store_block(taddr)
 
     # 0   <= index_a <=  31: cache store_clean hit
     for index_s in range(32):
       for tag_s in range(8):
         taddr = self.get_addr(tag_s, index_s)
-        self.send_aalloc(taddr)
         self.send_store_block_clean(taddr)
     # 32  <= index_a <=  63: cache store_clean miss, with dirty data writeback
     # 64  <= index_a <= 127: cache store_clean miss, without dirty data writeback
@@ -30,8 +29,8 @@ class TestStoreBlockClean(TestBase):
     # read the data written by store_block_clean
     for index_l in range(32):
       for tag_l in range(8):
-          taddr = self.get_addr(tag_l, index_l)
-          self.send_load_block(taddr)
+        taddr = self.get_addr(tag_l, index_l)
+        self.send_load_block(taddr)
     for index_l in range(32,128):
       for tag_l in range(8,16):
         taddr = self.get_addr(tag_l, index_l)
@@ -40,8 +39,8 @@ class TestStoreBlockClean(TestBase):
     # Read the evicted data, make sure they are written back properly
     for index_l in range(32,64):
       for tag_l in range(8):
-          taddr = self.get_addr(tag_l, index_l)
-          self.send_load_block(taddr)
+        taddr = self.get_addr(tag_l, index_l)
+        self.send_load_block(taddr)
 
     # done
     self.tg.done()
