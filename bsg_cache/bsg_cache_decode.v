@@ -32,7 +32,7 @@ module bsg_cache_decode
     endcase    
   end
 
-  assign decode_o.mask_op = (opcode_i == LM) | (opcode_i == SM);
+  assign decode_o.mask_op = (opcode_i == LM) | (opcode_i == SM) | (opcode_i == SMC);
 
   assign decode_o.sigext_op = (opcode_i == LB)
     || (opcode_i == LH)
@@ -56,6 +56,8 @@ module bsg_cache_decode
     || (opcode_i == SD)
     || (opcode_i == SM);
 
+  assign decode_o.stc_op = (opcode_i == SMC);
+
   assign decode_o.tagst_op = (opcode_i == TAGST);
   assign decode_o.tagfl_op = (opcode_i == TAGFL);
   assign decode_o.taglv_op = (opcode_i == TAGLV);
@@ -65,6 +67,8 @@ module bsg_cache_decode
   assign decode_o.ainv_op = (opcode_i == AINV);
   assign decode_o.alock_op = (opcode_i == ALOCK);
   assign decode_o.aunlock_op = (opcode_i == AUNLOCK);
+  assign decode_o.aalloc_op = (opcode_i == AALLOC);
+  assign decode_o.aallocz_op = (opcode_i == AALLOCZ);
 
   assign decode_o.tag_read_op = ~decode_o.tagst_op;
 

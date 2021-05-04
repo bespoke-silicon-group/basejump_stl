@@ -50,6 +50,11 @@ class TestBase:
     self.tg.send(SM, addr, self.curr_data, mask)
     self.curr_data += 1
    
+  # SM
+  def send_smc(self, addr, mask):
+    self.tg.send(SMC, addr, self.curr_data, mask)
+
+   
   # LM 
   def send_lm(self, addr, mask):
     self.tg.send(SM, addr, 0, mask)
@@ -139,6 +144,42 @@ class TestBase:
   def send_nop(self, n=1):
     for i in range(n):
       self.tg.nop()
+
+  # AALLOC
+  def send_aalloc(self, addr):
+    self.tg.send(AALLOC, addr)
+
+  # AALLOCZ
+  def send_aallocz(self, addr):
+    self.tg.send(AALLOCZ, addr)
+
+  # load block 
+  def send_load_block(self, addr):
+    block_mask = 0x3FFFFFE0        # based on data_width_p = 32, block_size_in_words_p = 8 
+    block_addr = addr & block_mask # removing block offset
+    for i in range(self.block_size_in_words_p):
+      word_addr = block_addr + i*4 
+      self.tg.send(LW, word_addr, self.curr_data)
+      self.curr_data += 1
+
+  # store block
+  def send_store_block(self, addr):
+    block_mask = 0x3FFFFFE0        # based on data_width_p = 32, block_size_in_words_p = 8
+    block_addr = addr & block_mask # removing block offset
+    for i in range(self.block_size_in_words_p):
+      word_addr = block_addr + i*4
+      self.tg.send(SW, word_addr, self.curr_data)
+      self.curr_data += 1
+
+  # store block clean
+  def send_store_block_clean(self, addr):
+    block_mask = 0x3FFFFFE0        # based on data_width_p = 32, block_size_in_words_p = 8
+    block_addr = addr & block_mask # removing block offset
+    store_mask = 0xF               # 4-byte mask
+    for i in range(self.block_size_in_words_p):
+      word_addr = block_addr + i*4
+      self.tg.send(SMC, word_addr, self.curr_data, store_mask)
+      self.curr_data += 1
 
   #                         #
   #   COMPOSITE FUNCTIONS   #

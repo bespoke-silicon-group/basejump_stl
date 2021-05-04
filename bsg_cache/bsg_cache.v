@@ -21,6 +21,7 @@ module bsg_cache
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
     ,parameter ways_p="inv"
+    ,parameter use_insecure_alloc_p=0
 
     // Explicit size prevents size inference and allows for ((foo == bar) << e_cache_amo_swap)
     ,parameter [31:0] amo_support_p=(1 << e_cache_amo_swap)
@@ -317,7 +318,8 @@ module bsg_cache
     ,.v_o(tag_hit_found)
   );
 
-  wire ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op);
+  wire ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op | decode_v_r.stc_op);  // TOCHECK
+  wire aalloc_miss = ~tag_hit_found & (decode_v_r.aalloc_op | decode_v_r.aallocz_op);
   wire tagfl_hit = decode_v_r.tagfl_op & valid_v_r[addr_way_v];
   wire aflinv_hit = (decode_v_r.afl_op | decode_v_r.aflinv_op| decode_v_r.ainv_op) & tag_hit_found;
   wire alock_miss = decode_v_r.alock_op & (tag_hit_found ? ~lock_v_r[tag_hit_way_id] : 1'b1);   // either the line is miss, or the line is unlocked.
@@ -328,7 +330,7 @@ module bsg_cache
   // MBT: the ~decode_v_r.tagst_op is necessary at the top of this expression
   //      to avoid X-pessimism post synthesis due to X's coming out of the tags
   wire miss_v = (~decode_v_r.tagst_op) & v_v_r
-    & (ld_st_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit | atomic_miss);
+    & (ld_st_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit | atomic_miss | aalloc_miss);
   
   // ops that return some value other than '0.
   assign retval_op_v = decode_v_r.ld_op | decode_v_r.taglv_op | decode_v_r.tagla_op | decode_v_r.atomic_op; 
@@ -832,7 +834,7 @@ module bsg_cache
 
   // when the store buffer is full, and the TV stage is inserting another entry,
   // load/atomic cannot enter tl stage.
-  assign sbuf_hazard = (sbuf_full_lo & (v_o & yumi_i & (decode_v_r.st_op | decode_v_r.atomic_op)))
+  assign sbuf_hazard = (sbuf_full_lo & (v_o & yumi_i & (decode_v_r.st_op | decode_v_r.stc_op | decode_v_r.atomic_op))) // TOCHECK
     & (v_i & (decode.ld_op | decode.atomic_op));
 
   // during miss, tl pipeline cannot take next instruction when
@@ -930,6 +932,8 @@ module bsg_cache
   // If it's load or store, and there is a hit, it updates the dirty bits and LRU.
   // If there is a miss, stat_mem may be modified by the miss handler.
 
+  // Pending: for store mask clean, we want to update the LRU but not the dirty bit in the stat mem
+
   logic [ways_p-2:0] plru_decode_data_lo;
   logic [ways_p-2:0] plru_decode_mask_lo;
   
@@ -950,8 +954,8 @@ module bsg_cache
       stat_mem_w_mask_li = miss_stat_mem_w_mask_lo;
     end
     else begin
-      stat_mem_v_li = ((decode_v_r.st_op | decode_v_r.ld_op | decode_v_r.tagst_op | decode_v_r.atomic_op) & v_o & yumi_i);
-      stat_mem_w_li = ((decode_v_r.st_op | decode_v_r.ld_op | decode_v_r.tagst_op | decode_v_r.atomic_op) & v_o & yumi_i);
+      stat_mem_v_li = ((decode_v_r.st_op | decode_v_r.stc_op | decode_v_r.ld_op | decode_v_r.tagst_op | decode_v_r.atomic_op) & v_o & yumi_i);
+      stat_mem_w_li = ((decode_v_r.st_op | decode_v_r.stc_op | decode_v_r.ld_op | decode_v_r.tagst_op | decode_v_r.atomic_op) & v_o & yumi_i);
       stat_mem_addr_li = addr_index_v;
 
       if (decode_v_r.tagst_op) begin
@@ -974,7 +978,7 @@ module bsg_cache
 
   // store buffer
   //
-  assign sbuf_v_li = (decode_v_r.st_op | decode_v_r.atomic_op) & v_o & yumi_i;
+  assign sbuf_v_li = (decode_v_r.st_op | decode_v_r.stc_op | decode_v_r.atomic_op) & v_o & yumi_i;
   assign sbuf_entry_li.way_id = miss_v ? chosen_way_lo : tag_hit_way_id;
   assign sbuf_entry_li.addr = addr_v_r;
   // store buffer can write to dmem when
@@ -1013,6 +1017,10 @@ module bsg_cache
           else $error("[BSG_ERROR][BSG_CACHE] AMO_D performed on data_width < 64. %m T=%t", $time);
         assert(~decode_v_r.atomic_op || (data_width_p >= 32))
           else $error("[BSG_ERROR][BSG_CACHE] AMO performed on data_width < 32. %m T=%t", $time);
+
+        // Check that the cache is in use_insecure_alloc_p mode, to make sure cache allocation is not called by mistake
+        assert(~(decode_v_r.aalloc_op || decode_v_r.aallocz_op) || use_insecure_alloc_p)
+          else $error("[BSG_ERROR][BSG_CACHE] Cache allocation performed without use_insecure_alloc_p. %m T=%t", $time);
       end
     end
   end
@@ -1025,7 +1033,7 @@ module bsg_cache
           $display("<VCACHE> M[%4h] == %8h // %8t", addr_v_r, data_o, $time);
         end
         
-        if (decode_v_r.st_op) begin
+        if (decode_v_r.st_op | decode_v_r.stc_op) begin
           $display("<VCACHE> M[%4h] := %8h // %8t", addr_v_r, sbuf_entry_li.data, $time);
         end
 

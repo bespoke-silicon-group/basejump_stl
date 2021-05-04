@@ -113,10 +113,13 @@ module bsg_cache_miss
     START
     ,FLUSH_OP
     ,LOCK_OP
+    ,AALLOC_OP
+    ,UPDATE_STAT
     ,SEND_EVICT_ADDR
     ,SEND_FILL_ADDR
     ,SEND_EVICT_DATA
     ,GET_FILL_DATA
+    ,ZERO_OUT_DATA
     ,RECOVER
     ,DONE
   } miss_state_e;
@@ -127,14 +130,15 @@ module bsg_cache_miss
   logic [lg_ways_lp-1:0] flush_way_r, flush_way_n;
   logic select_snoop_data_r, select_snoop_data_n;
 
-
   // for flush/inv ops, go to FLUSH_OP.
   // for AUNLOCK, or ALOCK with tag hit, to go LOCK_OP.
   logic goto_flush_op;
   logic goto_lock_op;
+  logic goto_aalloc_op;
 
   assign goto_flush_op = decode_v_i.tagfl_op| decode_v_i.ainv_op| decode_v_i.afl_op| decode_v_i.aflinv_op;
   assign goto_lock_op = decode_v_i.aunlock_op | (decode_v_i.alock_op & tag_hit_found_i);
+  assign goto_aalloc_op = decode_v_i.aalloc_op | decode_v_i.aallocz_op;
 
   logic [tag_width_lp-1:0] addr_tag_v;
   logic [lg_sets_lp-1:0] addr_index_v;
@@ -273,7 +277,9 @@ module bsg_cache_miss
             ? FLUSH_OP 
             : (goto_lock_op
               ? LOCK_OP
-              : SEND_FILL_ADDR))
+              : (goto_aalloc_op 
+                ? AALLOC_OP 
+                : SEND_FILL_ADDR)))
           : START;
       end
 
@@ -361,6 +367,26 @@ module bsg_cache_miss
         miss_state_n = RECOVER;
       end
 
+      AALLOC_OP: begin
+        // same replacement policy
+        chosen_way_n = invalid_exist ? invalid_way_id : lru_way_id;
+        
+        // Update tag mem info
+        tag_mem_v_o = 1'b1;
+        tag_mem_w_o = 1'b1;
+        for (integer i = 0; i < ways_p; i++) begin
+          tag_mem_data_out[i].tag = addr_tag_v;
+          tag_mem_data_out[i].lock = decode_v_i.alock_op;
+          tag_mem_data_out[i].valid = 1'b1; 
+          tag_mem_w_mask_out[i].tag = {tag_width_lp{chosen_way_decode[i]}};
+          tag_mem_w_mask_out[i].lock = chosen_way_decode[i];
+          tag_mem_w_mask_out[i].valid = chosen_way_decode[i];
+        end
+        miss_state_n = (stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
+          ? SEND_EVICT_ADDR
+          : UPDATE_STAT;
+      end
+
       // Send out the block addr for eviction, before initiating the eviction.
       SEND_EVICT_ADDR: begin
         dma_cmd_o = e_dma_send_evict_addr;
@@ -388,7 +414,9 @@ module bsg_cache_miss
         };
 
         miss_state_n = dma_done_i
-          ? ((decode_v_i.tagfl_op| decode_v_i.aflinv_op| decode_v_i.afl_op) ? RECOVER : GET_FILL_DATA)
+          ? ((decode_v_i.tagfl_op| decode_v_i.aflinv_op| decode_v_i.afl_op) 
+            ? RECOVER 
+            : (goto_aalloc_op ? UPDATE_STAT : GET_FILL_DATA))
           : SEND_EVICT_DATA;
       end
 
@@ -438,6 +466,34 @@ module bsg_cache_miss
         miss_state_n = dma_done_i
           ? RECOVER
           : GET_FILL_DATA;
+      end
+
+      UPDATE_STAT: begin
+        // This is separated out from ALLOC_OP because chosen_way_lru_data & chosen_way_lru_mask
+        // is generated from chosen_way_r, a cycle after the way is chosen
+        stat_mem_v_o = 1'b1;
+        stat_mem_w_o = 1'b1;
+
+        stat_mem_data_out.dirty = 1'b0; // Set dirty when the data is writtenback
+        stat_mem_data_out.lru_bits = chosen_way_lru_data;
+        stat_mem_w_mask_out.dirty = chosen_way_decode;
+        stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
+
+        // Dirty data is evicted already & store buffer is already empty
+        dma_cmd_o = decode_v_i.aallocz_op ? e_dma_zero_out_data : e_dma_nop;
+
+        miss_state_n = decode_v_i.aallocz_op ? ZERO_OUT_DATA : RECOVER;
+      end
+
+      ZERO_OUT_DATA: begin
+        dma_addr_o = {
+          tag_v_i[dma_way_o],
+          addr_index_v,
+          {(block_offset_width_lp){1'b0}}
+        };
+        miss_state_n = dma_done_i
+          ? RECOVER
+          : ZERO_OUT_DATA;
       end
 
       // Spend one cycle to recover the tl stage.

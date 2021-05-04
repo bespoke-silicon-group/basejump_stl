@@ -1,4 +1,5 @@
 *.pyc
 out
 test_result.log
+aalloc_measure_result.log
 vc_hdrs.h

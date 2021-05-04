@@ -80,6 +80,7 @@ module bsg_cache_dma
     IDLE
     ,GET_FILL_DATA
     ,SEND_EVICT_DATA
+    ,ZERO_OUT_DATA
   } dma_state_e;
 
   dma_state_e dma_state_n;
@@ -187,8 +188,6 @@ module bsg_cache_dma
     };
   end
   
-  assign data_mem_data_o = {ways_p{in_fifo_data_lo}};
-
   bsg_mux #(
     .width_p(dma_data_width_p)
     ,.els_p(ways_p)
@@ -218,6 +217,8 @@ module bsg_cache_dma
     counter_up = 1'b0;
 
     dma_evict_o = 1'b0;
+
+    data_mem_data_o = {ways_p{in_fifo_data_lo}};
 
     case (dma_state_r)
 
@@ -260,6 +261,11 @@ module bsg_cache_dma
             counter_up = 1'b1;
             data_mem_v_o = 1'b1;
             dma_state_n = SEND_EVICT_DATA;
+          end
+
+          e_dma_zero_out_data: begin
+            counter_clear = 1'b1;
+            dma_state_n = ZERO_OUT_DATA;
           end
 
           e_dma_nop: begin
@@ -306,6 +312,19 @@ module bsg_cache_dma
         done_o = counter_evict_max & out_fifo_ready_lo;
 
         dma_evict_o = 1'b1;
+      end
+
+      ZERO_OUT_DATA: begin
+        data_mem_v_o = 1'b1;
+        data_mem_w_o = 1'b1;
+        data_mem_data_o = '0;
+        
+        counter_up = ~counter_fill_max;
+        counter_clear = counter_fill_max;
+
+        done_o = counter_fill_max;
+
+        dma_state_n = done_o ? IDLE : ZERO_OUT_DATA;
       end
 
       default: begin

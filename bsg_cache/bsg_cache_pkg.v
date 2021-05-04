@@ -56,6 +56,7 @@ package bsg_cache_pkg;
 
     ,LM     = 6'b001100       // load mask
     ,SM     = 6'b001101       // store mask
+    ,SMC    = 6'B001111       // store mask clean
 
     ,TAGST   = 6'b010000      // tag store
     ,TAGFL   = 6'b010001      // tag flush
@@ -68,6 +69,9 @@ package bsg_cache_pkg;
 
     ,ALOCK   = 6'b011011      // address lock
     ,AUNLOCK = 6'b011100      // address unlock
+   
+    ,AALLOC  = 6'b011101      // address allocate
+    ,AALLOCZ = 6'b011110      // address allocate & zero-out 
    
     // 32-bit atomic
     ,AMOSWAP_W = 6'b100000    // atomic swap
@@ -118,6 +122,7 @@ package bsg_cache_pkg;
     logic mask_op;
     logic ld_op;
     logic st_op;
+    logic stc_op;
     logic tagst_op;
     logic tagfl_op;
     logic taglv_op;
@@ -128,6 +133,8 @@ package bsg_cache_pkg;
     logic alock_op;
     logic aunlock_op;
     logic tag_read_op;
+    logic aalloc_op;
+    logic aallocz_op;
    
     logic atomic_op;
     bsg_cache_amo_subop_e amo_subop;
@@ -147,12 +154,13 @@ package bsg_cache_pkg;
 
   // dma opcode (one-hot)
   //
-  typedef enum logic [3:0] {
-    e_dma_nop               = 4'b0000
-    ,e_dma_send_fill_addr   = 4'b0001
-    ,e_dma_send_evict_addr  = 4'b0010
-    ,e_dma_get_fill_data    = 4'b0100
-    ,e_dma_send_evict_data  = 4'b1000
+  typedef enum logic [4:0] {
+    e_dma_nop               = 5'b00000
+    ,e_dma_send_fill_addr   = 5'b00001
+    ,e_dma_send_evict_addr  = 5'b00010
+    ,e_dma_get_fill_data    = 5'b00100
+    ,e_dma_send_evict_data  = 5'b01000
+    ,e_dma_zero_out_data    = 5'b10000
   } bsg_cache_dma_cmd_e;
 
   // tag info s
