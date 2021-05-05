@@ -58,9 +58,10 @@ module bsg_link_source_sync_upstream_sync
   end
   else
   begin: no_twofer
+    // keep async_fifo isolated when reset is asserted
     assign io_fifo_v = io_v_i;
     assign io_fifo_data = io_data_i;
-    assign io_ready_and_o = io_fifo_ready;
+    assign io_ready_and_o = (io_link_reset_i)? 1'b1 : io_fifo_ready;
   end
 
   // asserted when fifo has valid data and token credit is available

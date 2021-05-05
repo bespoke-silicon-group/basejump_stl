@@ -148,7 +148,8 @@ module bsg_link_source_sync_downstream
   end
   else
   begin
-    assign core_valid_o = core_async_fifo_valid_lo;
+    // keep async_fifo isolated when reset is asserted
+    assign core_valid_o = (core_link_reset_i)? 1'b0 : core_async_fifo_valid_lo;
     assign core_data_o = core_async_fifo_data_lo;
     assign core_async_fifo_deque = core_yumi_i;
   end
