@@ -43,7 +43,8 @@ extern "C" {
 #define BSG_NONSYNTH_DPI_NOT_READY     (-7)
 #define BSG_NONSYNTH_DPI_NOT_VALID     (-8)
 #define BSG_NONSYNTH_DPI_NO_CREDITS    (-9)
-#define BSG_NONSYNTH_DPI_UNALIGNED     (-10)
+#define BSG_NONSYNTH_DPI_NO_CAPACITY   (-10)
+#define BSG_NONSYNTH_DPI_UNALIGNED     (-11)
 
         static inline const char* bsg_nonsynth_dpi_strerror(int err)
         {
@@ -58,6 +59,7 @@ extern "C" {
                         [-BSG_NONSYNTH_DPI_NOT_READY]         = "Not ready",
                         [-BSG_NONSYNTH_DPI_NOT_VALID]         = "Not valid",
                         [-BSG_NONSYNTH_DPI_NO_CREDITS]        = "No credits",
+                        [-BSG_NONSYNTH_DPI_NO_CAPACITY]       = "No capacity",
                         [-BSG_NONSYNTH_DPI_UNALIGNED]         = "Unaligned memory request",
                 };
                 return strtab[-err];
