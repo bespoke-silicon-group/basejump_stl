@@ -116,9 +116,10 @@ module bsg_link_source_sync_upstream
   end
   else
   begin: no_twofer
+    // keep async_fifo isolated when reset is asserted
     assign core_fifo_valid = core_valid_i;
     assign core_fifo_data  = core_data_i;
-    assign core_ready_o    = ~core_async_fifo_full;
+    assign core_ready_o    = (core_link_reset_i)? 1'b1 : ~core_async_fifo_full;
   end
   
   logic io_async_fifo_valid, io_async_fifo_yumi;
