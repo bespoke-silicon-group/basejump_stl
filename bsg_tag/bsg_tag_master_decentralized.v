@@ -31,7 +31,7 @@ module bsg_tag_master_decentralized
    #(els_p="inv"
     ,local_els_p="inv"
     ,lg_width_p="inv"
-    ,debug_level_lp=2
+    ,debug_level_lp=1
     ,lg_els_lp=`BSG_SAFE_CLOG2(els_p)
     ,lg_local_els_lp=`BSG_SAFE_CLOG2(local_els_p)
     )
