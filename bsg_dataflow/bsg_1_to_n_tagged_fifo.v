@@ -18,6 +18,7 @@ module bsg_1_to_n_tagged_fifo   #(parameter width_p                   = "inv"
                                   ,parameter els_p                    = "inv" // these are elements per channel
                                   ,parameter unbuffered_mask_p        = 0
                                   ,parameter use_pseudo_large_fifo_p  = 0
+                                  ,parameter use_harden_small_fifo_p  = 0
                                   ,parameter tag_width_lp        = `BSG_SAFE_CLOG2(num_out_p)
                                   )
    (input  clk_i
@@ -81,6 +82,7 @@ module bsg_1_to_n_tagged_fifo   #(parameter width_p                   = "inv"
           begin: buff
              bsg_fifo_1r1w_small #(.width_p(width_p)
                                    ,.els_p (els_p  )
+                                   ,.harden_p(use_harden_small_fifo_p)
                                    ) fifo
                (.clk_i
                 ,.reset_i
