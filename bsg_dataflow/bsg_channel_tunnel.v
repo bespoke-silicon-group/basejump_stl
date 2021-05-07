@@ -65,7 +65,7 @@ module bsg_channel_tunnel #(parameter width_p        = 1
                             , num_in_p               = "inv"
                             , remote_credits_p       = "inv"
                             , use_pseudo_large_fifo_p = 0
-                            , use_harden_small_fifo_p = 0
+                            , harden_small_fifo_p    = 0
                             , lg_remote_credits_lp   = $clog2(remote_credits_p+1)
                             , lg_credit_decimation_p = `BSG_MIN(lg_remote_credits_lp,4)
                             , tag_width_lp           = $clog2(num_in_p+1)
@@ -149,7 +149,7 @@ module bsg_channel_tunnel #(parameter width_p        = 1
                            ,.num_in_p              (num_in_p )
                            ,.remote_credits_p      (remote_credits_p)
                            ,.use_pseudo_large_fifo_p(use_pseudo_large_fifo_p)
-                           ,.use_harden_small_fifo_p(use_harden_small_fifo_p)
+                           ,.harden_small_fifo_p   (harden_small_fifo_p)
                            ,.lg_credit_decimation_p(lg_credit_decimation_p)
                            ) bcti
      (.clk_i
