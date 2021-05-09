@@ -153,9 +153,11 @@ module bsg_link_ddr_upstream
       begin
         assign core_ss_data_nonzero = 1'b0; // unused
         assign core_ss_data_bottom = core_piso_data_lo[i][channel_width_p-1:0];
-        assign io_oddr_data_final[1] = io_oddr_data_raw[1];
         // valid sent out in first cycle
-        assign io_oddr_data_final[0] = {io_oddr_valid_li, io_oddr_data_raw[0][channel_width_p-1:0]};
+        // When idle, balance hi / lo bits in each channel
+        assign io_oddr_data_final = (io_oddr_valid_li)?
+              {io_oddr_data_raw[1], 1'b1, io_oddr_data_raw[0][channel_width_p-1:0]}
+            : {2{1'b0, {(channel_width_p/2){2'b10}}}};
       end
     else
       begin
