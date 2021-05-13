@@ -120,18 +120,24 @@ module bsg_link_ddr_downstream_encode
     assign core_sipo_data_li[i][ddr_width_lp-1:channel_width_p] = {core_ss_data_hi[1], core_ss_data_lo[1]};
     
     // channel decode
+    // non-synthesizable X-pessimism prevention logic, for testbench only
     assign core_ss_data_nonzero = core_ss_data_hi[0][channel_width_p/2];
     assign core_sipo_data_li[i][channel_width_p-1:channel_width_p/2] = 
-        (core_ss_data_nonzero)?
+        (core_ss_data_nonzero === 1'b1)?
           {core_ss_data_hi[0]}
-        : {core_ss_data_lo[0][channel_width_p/2-1], core_ss_data_hi[0][channel_width_p/2-1-1:0]};
+        : (core_ss_data_nonzero === 1'b0)?
+          {core_ss_data_lo[0][channel_width_p/2-1], core_ss_data_hi[0][channel_width_p/2-1-1:0]}
+          : {'X};
     assign core_sipo_data_li[i][channel_width_p/2-1:0] = 
-        (core_ss_data_nonzero)?
+        (core_ss_data_nonzero === 1'b1)?
           {core_ss_data_lo[0]}
-        : {'0};
+        : (core_ss_data_nonzero === 1'b0)?
+          {'0}
+          : {'X};
     // io side decode
-    assign io_iddr_valid_lo[1] = ~(io_iddr_data_hi[0][channel_width_p/2-1+:2] == '0);
-    assign io_iddr_valid_lo[0] = ~(io_iddr_data_lo[0] == '0);
+    // non-synthesizable X-pessimism prevention logic, for testbench only
+    assign io_iddr_valid_lo[1] = ~(io_iddr_data_hi[0][channel_width_p/2-1+:2] === '0);
+    assign io_iddr_valid_lo[0] = ~(io_iddr_data_lo[0] === '0);
 
     // valid and data signals are received together
     bsg_link_iddr_phy
