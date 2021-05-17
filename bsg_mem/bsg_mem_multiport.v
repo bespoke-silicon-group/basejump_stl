@@ -15,7 +15,7 @@ module bsg_mem_multiport #(parameter width_p=-1
                            , parameter read_ports_p  ="inv"
                            , parameter write_ports_p ="inv"
                            , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
-                           )
+                           , parameter harden_p=0)
    (input   w_clk_i
     , input w_reset_i
 
