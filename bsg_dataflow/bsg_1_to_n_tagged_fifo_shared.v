@@ -239,7 +239,7 @@ module bsg_1_to_n_tagged_fifo_shared   #(parameter width_p              = "inv"
 
    // if we have an unbuffered channel, we override the channel
    for (i = 0; i < num_out_p; i=i+1)
-     begin: rof
+     begin: rof2
         assign data_o [i]  = unbuffered_mask_p[i] ? data_i : data_o_tmp;
      end
 
