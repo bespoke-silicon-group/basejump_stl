@@ -235,7 +235,7 @@ module bsg_1_to_n_tagged_fifo_shared   #(parameter width_p              = "inv"
       ,.data_o (data_o_tmp )
       );
 
-   assign valid_o = valid_o_tmp | (unbuffered_mask_p[i] & tag_one_hot_or_not[i]);
+   assign valid_o = valid_o_tmp | (unbuffered_mask_p & tag_one_hot_or_not);
 
    // if we have an unbuffered channel, we override the channel
    for (i = 0; i < num_out_p; i=i+1)
