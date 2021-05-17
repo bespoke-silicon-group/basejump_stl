@@ -26,13 +26,13 @@ module bsg_pg_tree
   ,parameter output_width_p="inv"
   , parameter nodes_p=1         
   , parameter edges_lp=nodes_p*3
-  , parameter int l_edge_p [nodes_p-1:0]    = ' {0}
-  , parameter int r_edge_p [nodes_p-1:0]    = ' {0}
-  , parameter int o_edge_p [nodes_p-1:0]    = ' {0}
-  , parameter int node_type_p [nodes_p-1:0] = ' {0}
+  , parameter int l_edge_p [nodes_p-1:0]    = '{0}
+  , parameter int r_edge_p [nodes_p-1:0]    = '{0}
+  , parameter int o_edge_p [nodes_p-1:0]    = '{0}
+  , parameter int node_type_p [nodes_p-1:0] = '{0}
   // for physical placement or doing even/odd complementary logic per Fig 11.16b
   // currently unimplemented
-  , parameter int row_p    [nodes_p-1:0]     = ' {0}
+  , parameter int row_p    [nodes_p-1:0]     = '{0}
   )	
 
   (input  [input_width_p-1:0] p_i
