@@ -39,6 +39,7 @@ module bsg_link_source_sync_upstream
      #(  parameter channel_width_p                 = 16
        , parameter lg_fifo_depth_p                 = 6
        , parameter lg_credit_to_token_decimation_p = 3
+       , parameter bypass_twofer_fifo_p            = 0
 
        // we explicit set the "inactive pattern"
        // on data lines when valid bit is not set
@@ -87,6 +88,9 @@ module bsg_link_source_sync_upstream
   logic core_fifo_valid, core_fifo_yumi;
   logic [channel_width_p-1:0] core_fifo_data;
 
+  logic core_async_fifo_full;
+  assign core_fifo_yumi = core_fifo_valid & ~core_async_fifo_full;
+
   // MBT: we insert a two-element fifo here to
   // decouple the async fifo logic which can be on the critical
   // path in some cases. possibly this is being overly conservative
@@ -94,25 +98,29 @@ module bsg_link_source_sync_upstream
   // case of the bsg_comm_link code, it is necessary.
   // fixme: possibly make it a parameter as to whether we instantiate
   // this fifo
-   
-  bsg_two_fifo
- #(.width_p(channel_width_p)
-  ) core_fifo
-  (.clk_i  (core_clk_i)
-  ,.reset_i(core_link_reset_i)
-  
-  ,.ready_o(core_ready_o)
-  ,.data_i (core_data_i)
-  ,.v_i    (core_valid_i)
 
-  ,.v_o    (core_fifo_valid)
-  ,.data_o (core_fifo_data)
-  ,.yumi_i (core_fifo_yumi)
-  );
-  
-  
-  logic core_async_fifo_full;
-  assign core_fifo_yumi = core_fifo_valid & ~core_async_fifo_full;
+  if (bypass_twofer_fifo_p == 0)
+  begin: twofer
+    bsg_two_fifo
+   #(.width_p(channel_width_p)
+    ) fifo
+    (.clk_i  (core_clk_i)
+    ,.reset_i(core_link_reset_i)
+    ,.ready_o(core_ready_o)
+    ,.data_i (core_data_i)
+    ,.v_i    (core_valid_i)
+    ,.v_o    (core_fifo_valid)
+    ,.data_o (core_fifo_data)
+    ,.yumi_i (core_fifo_yumi)
+    );
+  end
+  else
+  begin: no_twofer
+    // keep async_fifo isolated when reset is asserted
+    assign core_fifo_valid = core_valid_i;
+    assign core_fifo_data  = core_data_i;
+    assign core_ready_o    = (core_link_reset_i)? 1'b1 : ~core_async_fifo_full;
+  end
   
   logic io_async_fifo_valid, io_async_fifo_yumi;
   logic [channel_width_p-1:0] io_async_fifo_data;

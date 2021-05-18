@@ -126,7 +126,16 @@ module bsg_clk_gen_osc
 
    // this adds some delay in the loop for RTL simulation
    // should be ignored in synthesis
-   assign #4000 fb_clk_del = fb_clk;
+   wire [15:0] fb_clk_dly_time;
+   assign #(fb_clk_dly_time) fb_clk_del = fb_clk;
+
+   // synopsys translate_off
+   bsg_clk_gen_osc_tag_payload_s tag_r_sync;
+   always @(posedge clk_o or posedge async_reset_i)
+     tag_r_sync <= (async_reset_i)? '0 :
+       ((tag_trigger_r_async)? tag_r_async : tag_r_sync);
+   assign fb_clk_dly_time = 125+((1<<$bits(tag_r_sync))-tag_r_sync)*5;
+   // synopsys translate_on
 
    bsg_rp_clk_gen_atomic_delay_tuner  adt_BSG_DONT_TOUCH
      (.i(fb_clk_del)
