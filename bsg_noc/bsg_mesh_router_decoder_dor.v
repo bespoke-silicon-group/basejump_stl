@@ -26,7 +26,7 @@ module bsg_mesh_router_decoder_dor
     input clk_i         // debug only
     , input reset_i     // debug only
 
-    , input v_i
+    //, input v_i
 
     , input [x_cord_width_p-1:0] x_dirs_i
     , input [y_cord_width_p-1:0] y_dirs_i
@@ -70,7 +70,7 @@ module bsg_mesh_router_decoder_dor
 
   // valid signal
   logic [dirs_lp-1:0] req;
-  assign req_o = {dirs_lp{v_i}} & req;
+  assign req_o = req;
 
 
   // P-port
