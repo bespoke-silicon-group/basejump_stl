@@ -20,22 +20,23 @@ module bsg_mem_1rw_sync_mask_write_bit #(
   , parameter latch_last_read_p=0
   , parameter enable_clock_gating_p=0
   , localparam addr_width_lp = `BSG_SAFE_CLOG2(els_p)
+  , localparam width_bit_pos_lp = `BSG_SAFE_MINUS(width_p,1)
 ) (
-  input                      clk_i
-  , input                      reset_i
-  , input  [      width_p-1:0] data_i
-  , input  [addr_width_lp-1:0] addr_i
-  , input                      v_i
-  , input  [      width_p-1:0] w_mask_i
-  , input                      w_i
-  , output [      width_p-1:0] data_o
+  input                         clk_i
+  , input                       reset_i
+  , input  [width_bit_pos_lp:0] data_i
+  , input  [ addr_width_lp-1:0] addr_i
+  , input                       v_i
+  , input  [width_bit_pos_lp:0] w_mask_i
+  , input                       w_i
+  , output [width_bit_pos_lp:0] data_o
 );
 
   wire unused = reset_i;
 
-  (* ram_style = "distributed" *) logic [width_p-1:0] mem [els_p-1:0];
+  (* ram_style = "distributed" *) logic [width_bit_pos_lp:0] mem [els_p-1:0];
 
-  logic [width_p-1:0] data_r;
+  logic [width_bit_pos_lp:0] data_r;
   always_ff @(posedge clk_i) begin
     if (v_i & ~w_i)
       data_r <= mem[addr_i];
