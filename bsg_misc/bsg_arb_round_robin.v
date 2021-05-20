@@ -17,7 +17,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_arb_round_robin #(parameter width_p=-1)
+module bsg_arb_round_robin #(`BSG_INV_PARAM(width_p))
   (input          clk_i
    , input        reset_i
 
@@ -70,3 +70,5 @@ module bsg_arb_round_robin #(parameter width_p=-1)
         end  
     end
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_arb_round_robin)

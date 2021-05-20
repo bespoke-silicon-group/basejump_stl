@@ -6,8 +6,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_mem_1rw_sync #(parameter width_p=-1
-                          , parameter els_p=-1
+module bsg_mem_1rw_sync #(`BSG_INV_PARAM(width_p)
+                          , `BSG_INV_PARAM(els_p)
                           , parameter latch_last_read_p=0
                           , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                           , parameter enable_clock_gating_p=0
@@ -55,3 +55,5 @@ module bsg_mem_1rw_sync #(parameter width_p=-1
     );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mem_1rw_sync)

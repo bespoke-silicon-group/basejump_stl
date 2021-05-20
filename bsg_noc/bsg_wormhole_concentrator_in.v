@@ -22,10 +22,10 @@
 
 module bsg_wormhole_concentrator_in
 
-  #(parameter flit_width_p        = "inv"
-   ,parameter len_width_p         = "inv"
-   ,parameter cid_width_p         = "inv"
-   ,parameter cord_width_p        = "inv"
+  #(`BSG_INV_PARAM(flit_width_p)
+    ,`BSG_INV_PARAM(len_width_p)
+    ,`BSG_INV_PARAM(cid_width_p)
+    ,`BSG_INV_PARAM(cord_width_p)
    ,parameter num_in_p            = 1
    ,parameter debug_lp            = 0
    )
@@ -132,4 +132,6 @@ module bsg_wormhole_concentrator_in
     ,.data_o       (concentrated_link_o_cast.data)
     );
 
-endmodule
+endmodule // bsg_wormhole_concentrator_in
+
+`BSG_ABSTRACT_MODULE(bsg_wormhole_concentrator_in)

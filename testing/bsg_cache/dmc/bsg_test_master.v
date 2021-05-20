@@ -1,3 +1,5 @@
+`include "bsg_cache.vh"
+
 module bsg_test_master
   import bsg_cache_pkg::*;
   #(parameter num_cache_p="inv"

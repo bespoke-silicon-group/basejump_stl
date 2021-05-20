@@ -9,7 +9,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_scan #(parameter width_p = -1
+module bsg_scan #(`BSG_INV_PARAM(width_p)
                   , parameter xor_p = 0
                   , parameter and_p = 0
                   , parameter or_p = 0
@@ -127,3 +127,5 @@ module bsg_scan #(parameter width_p = -1
    //  $display("bsg_scan (xor_p %b and_p %b  or_p %b) %b = %b",xor_p[0],and_p[0],or_p[0],i,o);
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_scan)

@@ -18,9 +18,9 @@
 `include "bsg_defines.v"
 
 module bsg_cam_1r1w
- #(parameter els_p                = "inv"
-   , parameter tag_width_p        = "inv"
-   , parameter data_width_p       = "inv"
+ #(`BSG_INV_PARAM(els_p)
+   , `BSG_INV_PARAM(tag_width_p)
+   , `BSG_INV_PARAM(data_width_p)
 
    // The replacement scheme for the CAM
    , parameter repl_scheme_p = "lru"
@@ -104,4 +104,6 @@ module bsg_cam_1r1w
   assign r_v_o = |tag_r_match_lo;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_cam_1r1w)
 

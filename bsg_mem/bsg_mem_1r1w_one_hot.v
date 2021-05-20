@@ -8,8 +8,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_mem_1r1w_one_hot #(parameter width_p=-1
-                            , parameter els_p=-1
+module bsg_mem_1r1w_one_hot #(`BSG_INV_PARAM(width_p)
+                            , `BSG_INV_PARAM(els_p)
 
                             , parameter safe_els_lp=`BSG_MAX(els_p,1)
                             )
@@ -72,3 +72,5 @@ module bsg_mem_1r1w_one_hot #(parameter width_p=-1
    //synopsys translate_on
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mem_1r1w_one_hot)

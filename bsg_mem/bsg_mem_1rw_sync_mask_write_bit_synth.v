@@ -10,8 +10,8 @@
 `include "bsg_defines.v"
 
 module bsg_mem_1rw_sync_mask_write_bit_synth
-  #(parameter width_p=-1
-    , parameter els_p=-1
+  #(`BSG_INV_PARAM(width_p)
+    , `BSG_INV_PARAM(els_p)
     , parameter latch_last_read_p=0
     , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
    )
@@ -111,3 +111,5 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
 `endif
    end
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mem_1rw_sync_mask_write_bit_synth)

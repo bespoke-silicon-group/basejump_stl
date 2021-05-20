@@ -10,6 +10,7 @@
 
 
 `include "bsg_defines.v"
+`include "bsg_cache.vh"
 
 module bsg_nonsynth_cache_axe_tracer
   import bsg_cache_pkg::*;

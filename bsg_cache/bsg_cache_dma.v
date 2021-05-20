@@ -8,6 +8,7 @@
  */
 
 `include "bsg_defines.v"
+`include "bsg_cache.vh"
 
 module bsg_cache_dma
   import bsg_cache_pkg::*;

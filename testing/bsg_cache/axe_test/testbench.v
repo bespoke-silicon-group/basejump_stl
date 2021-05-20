@@ -3,6 +3,8 @@
  *
  */
 
+`include "bsg_cache.vh"
+
 module testbench();
   import bsg_cache_pkg::*;
 

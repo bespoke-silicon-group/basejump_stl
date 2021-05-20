@@ -13,6 +13,7 @@
 *
 */
 
+`include "bsg_defines.v"
 
 module bsg_mem_1rw_sync_mask_write_bit #(
   parameter width_p = "inv"

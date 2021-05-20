@@ -10,9 +10,9 @@
 `include "bsg_defines.v"
 
 module bsg_channel_tunnel_out #(
-                                parameter  width_p = -1
-                                , num_in_p = "inv"
-                                , remote_credits_p = "inv"
+                                `BSG_INV_PARAM(width_p)
+                                ,`BSG_INV_PARAM(num_in_p)
+                                ,`BSG_INV_PARAM(remote_credits_p)
 
                                 // determines when we send out credits remotely
                                 , lg_credit_decimation_p = 4
@@ -120,3 +120,5 @@ module bsg_channel_tunnel_out #(
       );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_channel_tunnel_out)
