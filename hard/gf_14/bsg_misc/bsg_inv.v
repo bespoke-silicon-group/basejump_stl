@@ -30,7 +30,7 @@ module bsg_inv #( width_p    = "inv"
             SC7P5T_CKINVX4_SSC14R inv_BSG_DONT_TOUCH (.CLK(i[n]), .Z(o[n]));
           end else if (strength_p == 8 && clock_p == 1) begin: x8
             SC7P5T_CKINVX8_SSC14R inv_BSG_DONT_TOUCH (.CLK(i[n]), .Z(o[n]));
-          else begin
+          end else begin
             $fatal( 1, "Error: there is no hardened cell for strength_p=%d, clock_p=%d", strength_p, clock_p );
           end
         end: b
