@@ -20,12 +20,18 @@ namespace bsg_mem_dma {
             _id(id) {
 
             parameter_t bytes = (data_width_p/8) * mem_els_p;
+            printf("%s: id = %d: allocating %llu bytes\n", __FILE__, id, mem_els_p);
             _data.resize(bytes);
 	    if (init_mem_p != 0)
 	      std::memset(&_data[0], 0, _data.size());
         }
 
         byte_t get(address_t addr) const {
+            assert(addr < _data.size());
+            return _data[addr];
+        }
+
+        byte_t & get(address_t addr) {
             assert(addr < _data.size());
             return _data[addr];
         }
@@ -43,6 +49,10 @@ namespace bsg_mem_dma {
         byte_t operator[](address_t addr) const {
             assert(addr < _data.size());
             return _data[addr];
+        }
+
+        address_t size() const {
+            return _data.size();
         }
 
         std::vector<byte_t> _data;
