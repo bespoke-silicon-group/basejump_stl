@@ -2,6 +2,10 @@
 #include <vector>
 #include <cstring>
 #include <assert.h>
+#include <cstdlib>
+#include <cerrno>
+#include <sys/mman.h>
+
 namespace bsg_mem_dma {
     using parameter_t = unsigned long long;
     using byte_t = unsigned char;
@@ -19,52 +23,57 @@ namespace bsg_mem_dma {
             _mem_els_p(mem_els_p),
             _id(id) {
 
-            parameter_t bytes = (data_width_p/8) * mem_els_p;
-            printf("%s: id = %d: allocating %llu bytes\n", __FILE__, id, mem_els_p);
-            _data.resize(bytes);
+            _size = (data_width_p/8) * mem_els_p;
+            _data = reinterpret_cast<byte_t*>(mmap(nullptr, _size, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANON, -1, 0));
+            if (_data == MAP_FAILED) {
+                fprintf(stderr, "Memory::Memory(): cannot allocate memory: %s\n", std::strerror(errno));
+                std::exit(1);
+            }
+
 	    if (init_mem_p != 0)
-	      std::memset(&_data[0], 0, _data.size());
+	      std::memset(&_data[0], 0, _size);
         }
 
         byte_t get(address_t addr) const {
-            assert(addr < _data.size());
+            assert(addr < size());
             return _data[addr];
         }
 
         byte_t & get(address_t addr) {
-            assert(addr < _data.size());
+            assert(addr < size());
             return _data[addr];
         }
 
         byte_t *get_ptr(address_t addr) {
-            assert(addr < _data.size());
+            assert(addr < size());
             return &_data[addr];
         }
 
         void set(address_t addr, byte_t val) {
-            assert(addr < _data.size());
+            assert(addr < size());
             _data[addr] = val;
         }
 
         byte_t & operator[](address_t addr) {
-            assert(addr < _data.size());
+            assert(addr < size());
             return _data[addr];
         }
 
         byte_t operator[](address_t addr) const {
-            assert(addr < _data.size());
+            assert(addr < size());
             return _data[addr];
         }
 
         address_t size() const {
-            return _data.size();
+            return _size;
         }
 
-        std::vector<byte_t> _data;
+        byte_t     *_data;
         parameter_t _channel_addr_width_p;
         parameter_t _data_width_p;
         parameter_t _mem_els_p;
         parameter_t _id;
+        address_t   _size;
     };
 
     Memory *bsg_mem_dma_get_memory(parameter_t id);
