@@ -21,7 +21,8 @@ namespace bsg_mem_dma {
             _channel_addr_width_p(channel_addr_width_p),
             _data_width_p(data_width_p),
             _mem_els_p(mem_els_p),
-            _id(id) {
+            _id(id),
+            _data(nullptr){
 
             _size = (data_width_p/8) * mem_els_p;
             _data = reinterpret_cast<byte_t*>(mmap(nullptr, _size, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANON, -1, 0));
@@ -32,6 +33,11 @@ namespace bsg_mem_dma {
 
 	    if (init_mem_p != 0)
 	      std::memset(&_data[0], 0, _size);
+        }
+
+        virtual ~Memory() {
+            if (_data != nullptr)
+                munmap(_data, _size);
         }
 
         byte_t get(address_t addr) const {
@@ -68,13 +74,14 @@ namespace bsg_mem_dma {
             return _size;
         }
 
-        byte_t     *_data;
         parameter_t _channel_addr_width_p;
         parameter_t _data_width_p;
         parameter_t _mem_els_p;
         parameter_t _id;
         address_t   _size;
+        byte_t     *_data;
     };
 
     Memory *bsg_mem_dma_get_memory(parameter_t id);
+    void bsg_mem_dma_delete_memory(parameter_t id);
 }
