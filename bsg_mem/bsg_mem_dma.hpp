@@ -36,6 +36,11 @@ namespace bsg_mem_dma {
             return _data[addr];
         }
 
+        byte_t *get_ptr(address_t addr) {
+            assert(addr < _data.size());
+            return &_data[addr];
+        }
+
         void set(address_t addr, byte_t val) {
             assert(addr < _data.size());
             _data[addr] = val;
