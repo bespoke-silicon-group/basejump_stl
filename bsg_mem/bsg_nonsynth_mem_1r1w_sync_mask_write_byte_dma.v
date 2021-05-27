@@ -42,17 +42,24 @@ module bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma
 			     longint unsigned init_mem_fp);
 
   import "DPI-C" context function
+    void bsg_mem_dma_exit(longint unsigned id);
+
+  import "DPI-C" context function
     byte unsigned bsg_mem_dma_get(chandle handle, longint unsigned addr);
 
   import "DPI-C" context function
     void bsg_mem_dma_set(chandle handle, longint unsigned addr, byte val);
-
+  
   chandle memory;
 
 
   initial begin
     memory
       = bsg_mem_dma_init(id_p, addr_width_lp, width_p, els_p, init_mem_p);
+  end
+
+  final begin
+    bsg_mem_dma_exit(id_p);    
   end
 
   ////////////////

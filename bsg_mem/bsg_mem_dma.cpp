@@ -35,6 +35,13 @@ extern "C" void * bsg_mem_dma_init(
     return memory;
 }
 
+extern "C" void bsg_mem_dma_exit(
+    parameter_t id
+    )
+{
+    bsg_mem_dma_delete_memory(id);
+}
+
 extern "C" byte_t bsg_mem_dma_get(
     void *handle,
     address_t addr
@@ -64,6 +71,15 @@ namespace bsg_mem_dma {
             return m->second;
         } else {
             return nullptr;
+        }
+    }
+
+    void bsg_mem_dma_delete_memory(parameter_t id)
+    {
+        auto m = global_memories.find(id);
+        if (m != global_memories.end()) {
+            delete m->second;
+            global_memories.erase(m);
         }
     }
 }
