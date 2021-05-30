@@ -67,7 +67,7 @@ module bsg_link_source_sync_upstream_sync
   // asserted when fifo has valid data and token credit is available
   logic io_v_n;
   assign io_v_o    = (io_link_reset_i)? '0 : io_v_n;
-  assign io_data_o = (io_link_reset_i)? '0 : io_fifo_data;
+  assign io_data_o = (io_link_reset_i | ~io_v_n)? '0 : io_fifo_data;
 
   // we need to track whether the credits are coming from
   // posedge or negedge tokens.
