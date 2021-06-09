@@ -176,7 +176,16 @@ module bsg_fsb_node_trace_replay
         if (instr_completed & ~reset_i & ~done_r)
           begin
              case(op)
-               eSend: $display("### bsg_fsb_node_trace_replay SEND %d'b%b (%m)", ring_width_p,data_o);
+               eSend: begin
+                reg [63:0] t;
+                int fd;
+                t = 0;
+                $system("date +%s%3N > date_trace.txt");
+                fd = $fopen("date_trace.txt", "r");
+                $fscanf(fd, "%d", t);
+                $fclose(fd);
+                $display("### bsg_fsb_node_trace_replay SEND %d'b%b (%m) (sim_time=%t) (wall_time=%d)", ring_width_p,data_o, $time, t);
+               end
                eReceive:
                  begin
                     if (data_i !== data_o)
