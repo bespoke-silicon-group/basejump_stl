@@ -17,6 +17,7 @@ module bsg_fsb_node_trace_replay
   #(parameter   ring_width_p=80
     , parameter rom_addr_width_p=6
     , parameter counter_width_p=`BSG_MIN(ring_width_p,16)
+    , parameter uptime_p=0
     )
    (input clk_i
     , input reset_i
@@ -176,7 +177,22 @@ module bsg_fsb_node_trace_replay
         if (instr_completed & ~reset_i & ~done_r)
           begin
              case(op)
-               eSend: $display("### bsg_fsb_node_trace_replay SEND %d'b%b (%m)", ring_width_p,data_o);
+               eSend: 
+		 begin
+		    string localtime;
+		    if (uptime_p)
+		      begin
+			 int fd;
+
+			 fd=$fopen("/proc/uptime","r");
+			 void'($fscanf(fd,"%s",localtime));
+			 $fclose(fd);
+		      end
+		    else
+		      localtime = "";
+		    
+		    $display("### bsg_fsb_node_trace_replay SEND %d'b%b (%m), time=%t uptime=%s", ring_width_p,data_o,$time,localtime);
+		 end
                eReceive:
                  begin
                     if (data_i !== data_o)

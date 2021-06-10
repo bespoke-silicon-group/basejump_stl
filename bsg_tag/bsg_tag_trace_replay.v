@@ -40,7 +40,8 @@ module bsg_tag_trace_replay
     , parameter rom_data_width_p    = -1
     , parameter num_masters_p       = 0
     , parameter num_clients_p       = -1
-    , parameter max_payload_width_p = -1 )
+    , parameter max_payload_width_p = -1
+    , parameter uptime_p = 0)
 
     ( input clk_i
     , input reset_i
@@ -83,7 +84,8 @@ module bsg_tag_trace_replay
 
     // Instantiate the trace replay
     bsg_fsb_node_trace_replay #( .ring_width_p(trace_ring_width_lp)
-                               , .rom_addr_width_p(rom_addr_width_p) )
+                               , .rom_addr_width_p(rom_addr_width_p)
+			       , .uptime_p(uptime_p))
       trace_replay
         (.clk_i   (clk_i)
         ,.reset_i (reset_i)
