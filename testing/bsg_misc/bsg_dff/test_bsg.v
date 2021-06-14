@@ -1,5 +1,3 @@
-`define WIDTH_P 3
-
 /**************************** TEST RATIONALE *******************************
 
 1. STATE SPACE
@@ -25,6 +23,7 @@ module test_bsg
 
   wire clk;
   wire reset;
+<<<<<<< HEAD
 
 <<<<<<< HEAD
   bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
@@ -51,6 +50,25 @@ module test_bsg
     (.o(clk));
 >>>>>>> parameter name fix
 
+||||||| merged common ancestors
+  
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_lp)
+                          )  clock_gen
+                          (  .o(clk)
+                          );
+    
+=======
+
+  `ifdef VERILATOR
+    bsg_nonsynth_dpi_clock_gen
+  `else
+    bsg_nonsynth_clock_gen
+  `endif
+   #(.cycle_time_p(sim_clk_period))
+   clock_gen
+    (.o(clk));
+
+>>>>>>> bsg_dff verilatable testbench
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(reset_cycles_lo_p)
                            , .reset_cycles_hi_p(reset_cycles_hi_p)
