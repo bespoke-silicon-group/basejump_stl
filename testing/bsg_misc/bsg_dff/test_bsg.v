@@ -1,5 +1,3 @@
-`define WIDTH_P 3
-
 /**************************** TEST RATIONALE *******************************
 
 1. STATE SPACE
@@ -61,11 +59,13 @@ module test_bsg
     else
       begin  
         test_input <= (test_input<<1)+1;
-        assert(p_test_input == test_output)
-          else $error("mismatch on input %x", test_input);
+        if(p_test_input != test_output) 
+          $error("mismatch on input %x", p_test_input);
       end
     
     p_test_input <= test_input;
+    
+    // $display("clk=%d reset=%d input=%d output=%d p_test_input=%d",clk,reset,test_input,test_output,p_test_input);
 
     if(&p_test_input)
       finish_r <= 1'b1;
