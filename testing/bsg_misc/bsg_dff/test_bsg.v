@@ -1,5 +1,3 @@
-`define WIDTH_P 3
-
 /**************************** TEST RATIONALE *******************************
 
 1. STATE SPACE
@@ -16,22 +14,28 @@
 
 ***************************************************************************/
 
-module test_bsg;
+module test_bsg 
+#(parameter width_p=3,
+  parameter sim_clk_period=10,
+  parameter reset_cycles_lo_p=0,
+  parameter reset_cycles_hi_p=5
+  );
 
-  localparam cycle_time_lp = 20;
-  localparam width_lp      = `WIDTH_P;
-  
   wire clk;
   wire reset;
-  
-  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_lp)
-                          )  clock_gen
-                          (  .o(clk)
-                          );
-    
+
+  `ifdef VERILATOR
+    bsg_nonsynth_dpi_clock_gen
+  `else
+    bsg_nonsynth_clock_gen
+  `endif
+   #(.cycle_time_p(sim_clk_period))
+   clock_gen
+    (.o(clk));
+
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(1)
-                           , .reset_cycles_hi_p(5)
+                           , .reset_cycles_lo_p(reset_cycles_lo_p)
+                           , .reset_cycles_hi_p(reset_cycles_hi_p)
                           )  reset_gen
                           (  .clk_i        (clk) 
                            , .async_reset_o(reset)
@@ -42,29 +46,31 @@ module test_bsg;
     $display("\n\n\n");
     $display("============================================================\n");
     $display(  "testing with ...\n"
-             , "WIDTH_P: %d\n", width_lp
+             , "WIDTH_P: %d\n", width_p
             );
   end
-                          
-  logic [width_lp-1:0] p_test_input, test_input, test_output;
+
+  logic [width_p-1:0] p_test_input, test_input, test_output;
   logic finish_r;
-                          
+
   always_ff @(posedge clk)
   begin
     if(reset)
       begin
-        test_input <= width_lp'(1'b0);
-        finish_r     <= 1'b0;
+        test_input <= width_p'(1'b0);
+        finish_r   <= 1'b0;
       end
     else
       begin  
         test_input <= (test_input<<1)+1;
-        assert(p_test_input == test_output)
-          else $error("mismatch on input %x", test_input);
+        if(p_test_input != test_output) 
+          $error("mismatch on input %x", p_test_input);
       end
     
     p_test_input <= test_input;
-          
+    
+    // $display("clk=%d reset=%d input=%d output=%d p_test_input=%d",clk,reset,test_input,test_output,p_test_input);
+
     if(&p_test_input)
       finish_r <= 1'b1;
     if(finish_r)
@@ -74,9 +80,9 @@ module test_bsg;
       end
   end
     
-  bsg_dff #(  .width_p(width_lp)
+  bsg_dff #(  .width_p(width_p)
            )  DUT 
-           (  .clock_i(clk)
+           (  .clk_i(clk)
             , .data_i(test_input)
             , .data_o(test_output)
            );      
