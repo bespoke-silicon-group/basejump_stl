@@ -1,3 +1,5 @@
+`define WIDTH_P 3
+
 /**************************** TEST RATIONALE *******************************
 
 1. STATE SPACE
