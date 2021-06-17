@@ -18,7 +18,7 @@
 
 module test_bsg 
 #(parameter width_p=`WIDTH_P,
-  parameter sim_clk_period=10,
+  parameter sim_clk_period_p=10,
   parameter reset_cycles_lo_p=0,
   parameter reset_cycles_hi_p=5
   );
@@ -31,7 +31,7 @@ module test_bsg
   `else
     bsg_nonsynth_clock_gen
   `endif
-   #(.cycle_time_p(sim_clk_period))
+   #(.cycle_time_p(sim_clk_period_p))
    clock_gen
     (.o(clk));
 
