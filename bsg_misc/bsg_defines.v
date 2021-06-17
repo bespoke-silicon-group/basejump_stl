@@ -18,7 +18,10 @@
 //    module name. Such an instance is called a top-level instance."
 //  
 
-`define BSG_ABSTRACT_MODULE(fn) module fn``__abstract(); if (0) fn not_used(); endmodule
+`define BSG_ABSTRACT_MODULE(fn) \
+    /*verilator lint_off PINMISSING*/ \
+    module fn``__abstract(); if (0) fn not_used(); endmodule \
+    /*verilator lint_on PINMISSING*/
 
 // macro for defining invalid parameter; with the abstract module declaration
 // it should be sufficient to omit the "inv" but we include this for tool portability
