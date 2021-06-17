@@ -66,7 +66,7 @@ module test_bsg
   `else
     bsg_nonsynth_clock_gen
   `endif
-   #(.cycle_time_p(sim_clk_period))
+   #(.cycle_time_p(sim_clk_period_p))
    clock_gen
     (.o(clk));
 
