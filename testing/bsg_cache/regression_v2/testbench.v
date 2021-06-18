@@ -73,6 +73,7 @@ module testbench();
     ,.sets_p(sets_p)
     ,.ways_p(ways_p)
     ,.amo_support_p(amo_support_level_arithmetic_lp)
+    ,.use_insecure_alloc_p(`USE_INSECURE_ALLOC_P)
   ) DUT (
     .clk_i(clk)
     ,.reset_i(reset)
@@ -190,14 +191,35 @@ module testbench();
   assign v_li = tr_v_lo;
   assign tr_yumi_li = tr_v_lo & ready_lo;
 
-  bind bsg_cache basic_checker_32 #(
+  bind DUT basic_checker_32 #(
     .data_width_p(data_width_p)
     ,.addr_width_p(addr_width_p)
+    ,.block_size_in_words_p(block_size_in_words_p)
     ,.mem_size_p($root.testbench.mem_size_p)
   ) bc (
     .*
+
+    ,.decode_tl_i(DUT.decode_tl_r)
+    ,.decode_v_i(DUT.decode_v_r)
+    ,.addr_tl_i(DUT.addr_tl_r)
+    ,.addr_v_i(DUT.addr_v_r)
+    
+    ,.miss_v_i(DUT.miss_v)
+    ,.done_o(DUT.miss_done_lo)
+
     ,.en_i($root.testbench.checker == "basic")
   );
+
+  if (`GET_MISS_STATS_P) begin
+    bind DUT store_miss_stats 
+      store_miss_tracker (
+      .*
+
+      ,.miss_v_i(DUT.miss_v)
+      ,.decode_v_i(DUT.decode_v_r)
+      ,.done_o(DUT.miss_done_lo)
+    );
+  end
 
   // wait for all responses to be received.
   integer sent_r, recv_r;

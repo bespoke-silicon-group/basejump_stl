@@ -21,6 +21,7 @@ module bsg_cache
     ,parameter block_size_in_words_p="inv"
     ,parameter sets_p="inv"
     ,parameter ways_p="inv"
+    ,parameter use_insecure_alloc_p=0
 
     // Explicit size prevents size inference and allows for ((foo == bar) << e_cache_amo_swap)
     ,parameter [31:0] amo_support_p=(1 << e_cache_amo_swap)
@@ -318,6 +319,7 @@ module bsg_cache
   );
 
   wire ld_st_miss = ~tag_hit_found & (decode_v_r.ld_op | decode_v_r.st_op);
+  wire aalloc_miss = ~tag_hit_found & (decode_v_r.aalloc_op | decode_v_r.aallocz_op);
   wire tagfl_hit = decode_v_r.tagfl_op & valid_v_r[addr_way_v];
   wire aflinv_hit = (decode_v_r.afl_op | decode_v_r.aflinv_op| decode_v_r.ainv_op) & tag_hit_found;
   wire alock_miss = decode_v_r.alock_op & (tag_hit_found ? ~lock_v_r[tag_hit_way_id] : 1'b1);   // either the line is miss, or the line is unlocked.
@@ -328,7 +330,7 @@ module bsg_cache
   // MBT: the ~decode_v_r.tagst_op is necessary at the top of this expression
   //      to avoid X-pessimism post synthesis due to X's coming out of the tags
   wire miss_v = (~decode_v_r.tagst_op) & v_v_r
-    & (ld_st_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit | atomic_miss);
+    & (ld_st_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit | atomic_miss | aalloc_miss);
   
   // ops that return some value other than '0.
   assign retval_op_v = decode_v_r.ld_op | decode_v_r.taglv_op | decode_v_r.tagla_op | decode_v_r.atomic_op; 
@@ -1013,6 +1015,10 @@ module bsg_cache
           else $error("[BSG_ERROR][BSG_CACHE] AMO_D performed on data_width < 64. %m T=%t", $time);
         assert(~decode_v_r.atomic_op || (data_width_p >= 32))
           else $error("[BSG_ERROR][BSG_CACHE] AMO performed on data_width < 32. %m T=%t", $time);
+
+        // Check that the cache is in use_insecure_alloc_p mode, to make sure cache allocation is not called by mistake
+        assert(~(decode_v_r.aalloc_op || decode_v_r.aallocz_op) || use_insecure_alloc_p)
+          else $error("[BSG_ERROR][BSG_CACHE] Cache allocation performed without use_insecure_alloc_p. %m T=%t", $time);
       end
     end
   end

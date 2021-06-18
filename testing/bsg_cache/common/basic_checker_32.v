@@ -2,6 +2,7 @@ module basic_checker_32
   import bsg_cache_pkg::*;
   #(parameter data_width_p="inv"
     , parameter addr_width_p="inv"
+    , parameter block_size_in_words_p = "inv"
     , parameter mem_size_p="inv"
 
     , parameter data_mask_width_lp=(data_width_p>>3)
@@ -20,6 +21,14 @@ module basic_checker_32
     , input [data_width_p-1:0] data_o
     , input v_o
     , input yumi_i
+
+    ,input bsg_cache_decode_s decode_tl_i
+    ,input bsg_cache_decode_s decode_v_i
+    ,input [addr_width_p-1:0] addr_tl_i
+    ,input [addr_width_p-1:0] addr_v_i
+    
+    ,input miss_v_i
+    ,input done_o
   );
 
 
@@ -121,7 +130,21 @@ module basic_checker_32
     endcase
   end
 
+  // Zero-out data logic for aallocz
+  // Since there is not hit/miss info stored in the checker, it has to wait until the tv stage comes in
+  // But the upcoming store op at the next cycle will be implemented immediately and cause a write-after-write harzard
+  // store_after_alloc_reg is used to prevent the hazard
+  logic [addr_width_p-1:0]  cache_pkt_word_addr_tl, cache_pkt_word_addr_v;
+  assign cache_pkt_word_addr_tl = addr_tl_i[addr_width_p-1:2];
+  assign cache_pkt_word_addr_v = addr_v_i[addr_width_p-1:2];
 
+  logic [block_size_in_words_p-1:0][addr_width_p-1:0] cache_pkt_words_addr_v_li;
+  for (genvar i = 0; i < block_size_in_words_p; i++)
+    assign cache_pkt_words_addr_v_li[i] = cache_pkt_word_addr_v + addr_width_p'(i);
+
+  wire store_after_alloc = (cache_pkt_word_addr_v == cache_pkt_word_addr_tl) 
+    && decode_v_i.aallocz_op && decode_tl_i.st_op;
+  wire zero_out_en = decode_v_i.aallocz_op & miss_v_i & done_o & ~store_after_alloc;
 
   integer send_id, recv_id;
 
@@ -207,11 +230,16 @@ module basic_checker_32
                 ? cache_pkt.data
                 : load_data;
             end
-            ALOCK, AUNLOCK, TAGFL, AFLINV, AFL: begin
+            ALOCK, AUNLOCK, TAGFL, AFLINV, AFL, AALLOC, AALLOCZ: begin
               result[send_id] = '0;
               send_id++;
             end
           endcase
+        end
+
+        if (zero_out_en) begin
+          for (integer i = 0; i < block_size_in_words_p; i++)
+            shadow_mem[cache_pkt_words_addr_v_li[i]] <= {data_width_p'(0)};
         end
 
         // output checker
