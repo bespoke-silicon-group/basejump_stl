@@ -35,23 +35,20 @@ module bsg_mem_1r1w_sync_from_1rw_sync #(parameter width_p=-1
     ,.o(w_addr_one_hot_lo)
     );
 
+  // Use r_v_i as well to account for cases when r_addr_i is undefined/invalid
   wire wr_ptr = ~r_v_i | ~v_r[r_addr_i];
-  assign set = {els_p{wr_ptr & w_v_i}} & w_addr_one_hot_lo;
-  assign clear = {els_p{~wr_ptr & w_v_i}} & w_addr_one_hot_lo;
+  assign set   = {els_p { wr_ptr  & w_v_i}} & w_addr_one_hot_lo;
+  assign clear = {els_p {~wr_ptr  & w_v_i}} & w_addr_one_hot_lo;
 
-  genvar i;
-  for (i = 0; i < els_p; i++)
-  begin: rof
-    bsg_dff_reset_set_clear
-      #(.width_p(1))
-      valid_reg
-      (.clk_i(clk_i)
-      ,.reset_i(reset_i)
-      ,.set_i(set[i])
-      ,.clear_i(clear[i])
-      ,.data_o(v_r[i])
-      );
-  end
+  bsg_dff_reset_set_clear
+    #(.width_p(els_p))
+    valid_reg
+    (.clk_i(clk_i)
+    ,.reset_i(reset_i)
+    ,.set_i(set)
+    ,.clear_i(clear)
+    ,.data_o(v_r)
+    );
 
   bsg_dff
     #(.width_p(1))
@@ -61,10 +58,14 @@ module bsg_mem_1r1w_sync_from_1rw_sync #(parameter width_p=-1
     ,.data_o(mem_select_r)
     );
 
-  wire [1:0] w_li    = {w_v_i & wr_ptr, w_v_i & ~wr_ptr};
-  wire [1:0] v_li    = {(r_v_i & v_r[r_addr_i]) | w_li[1], (r_v_i & ~v_r[r_addr_i]) | w_li[0]};
-  wire [1:0][addr_width_lp-1:0]
-             addr_li = {w_li[1] ? w_addr_i : r_addr_i, w_li[0] ? w_addr_i : r_addr_i};
+  wire [1:0] w_li    = {w_v_i &  wr_ptr,
+                        w_v_i & ~wr_ptr};
+  wire [1:0] r_li    = {(r_v_i &  v_r[r_addr_i]),
+                        (r_v_i & ~v_r[r_addr_i])};
+  wire [1:0] v_li    = w_li | r_li;
+  wire [1:0][addr_width_lp-1:0] addr_li =
+                          {w_li[1] ? w_addr_i : r_addr_i,
+                           w_li[0] ? w_addr_i : r_addr_i};
   logic [1:0][width_p-1:0] data_lo;
   assign r_data_o    = mem_select_r ? data_lo[1] : data_lo[0];
 
