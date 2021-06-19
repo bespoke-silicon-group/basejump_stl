@@ -2,17 +2,13 @@
 
 /**************************** TEST RATIONALE *******************************
 1. STATE SPACE
-
   An internal counter keeps track of the count which is compared with the 
   output of the DUT. This test continues for 2**WIDTH_P cycles and hence 
   tests the DUT exhaustively.
-
 2. PARAMETERIZATION
-
   A minimum set of tests might be WIDTH_P=1,2,..,8. Since the number of test
   cases grows exponentially, tests with large WIDTH_P takes very long to
   finish.
-
 ***************************************************************************/
 
 module test_bsg
@@ -65,8 +61,8 @@ module test_bsg
   always_ff @(posedge clk)
   begin
     if(!reset)
-      assert(count == test_output)
-        else $error("mismatch on clock cycle %x", count);
+      if(count != test_output)
+        $error("mismatch on clock cycle %x", count);
     
     if(!(|count) & (&count_r)) // finish when count value returns to 0
       begin

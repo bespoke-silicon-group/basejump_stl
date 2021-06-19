@@ -2,19 +2,15 @@
 
 /**************************** TEST RATIONALE *******************************
 1. STATE SPACE
-
   The number of possible inputs for each WIDTH_P is very large and moreover,
   the implementation of the DUT itself is independent of the value of input.
   So thermometer codes are used as test inputs, thus limiting the
   number of test inputs to WIDTH_P+1. This module also tests enable and reset
   after completing tests with thermometer codes.
-
 2. PARAMETERIZATION
-
   DUT synthesizes a similar logic irrespective of the width. Hence an arbitrary
   set of tests including edge might be sufficient. So a minimum set of tests
   might be WIDTH_P = 1,2,3,4.
-
 ***************************************************************************/
 
 module test_bsg
@@ -78,9 +74,9 @@ module test_bsg
         if(test_input_en == 1'b0)
           test_input_en <= 1'b1;
         
-        assert(test_input_data_r == test_output)
-          else $error("mismatch on input %x; expected output: %x; output: %x"
-                        , test_input_data, test_input_data_r, test_output); 
+        if(test_input_data_r != test_output)
+          $error("mismatch on input %x; expected output: %x; output: %x"
+                      , test_input_data, test_input_data_r, test_output); 
       end
     
     /*$display("test_input_data_r: %b, test_output: %b\n"
