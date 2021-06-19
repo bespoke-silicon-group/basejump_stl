@@ -16,7 +16,12 @@
   cases would do the job. So a minimum set of tests might be MAX_VAL_P=1,2,
   3,4 with INIT_VAL_P=0,1,2,3. No need to worry about making parameters
   compatiable as those tests finish without instatiating DUT.
+<<<<<<< HEAD
   
+||||||| merged common ancestors
+
+=======
+>>>>>>> bsg_counter_up_down
 ***************************************************************************/
 
 module test_bsg
