@@ -5,16 +5,13 @@
 
 /**************************** TEST RATIONALE *******************************
 1. STATE SPACE
-
   This test module tests the outputs of DUT for a complete count-cycle i.e., 
   from 0 to OVERFLOW_P and 0 (restarts after overflow). Since the number of 
   unique counts becomes very large as WIDTH_P increases ( 2**(WIDTH_P) 
   possible counts), the test input, OVERFLOW_P, is defined as a macro which can 
   be varied in the Makefile. If the OVERFLOW_P is more than 2**WIDTH_P the 
   simulation simply finishes doing nothing.
-
 2. PARAMETERIZATION
-
   Since the DUT implements an algorithm that simply increments or decrements 
   the count an arbitrary set of tests that include that include the edge cases 
   would do the job. So a minimum set of tests might be WIDTH_P=1,2,3,4,8 and 
@@ -87,8 +84,8 @@ module testbench
 
     //$display("count: %d, test_output: %d\n", count, test_output); ///////////////////////////
     if(!reset)
-      assert (count == test_output)
-        else $error("error on count %x", count);
+      if(count != test_output)
+        $error("error on count %x", count);
     
     if(~(|count) & (prev_count == overflow_p))
       finish_r <= 1;
