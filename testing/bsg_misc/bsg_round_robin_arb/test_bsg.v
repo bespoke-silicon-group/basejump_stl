@@ -137,8 +137,8 @@ module test_bsg
             for(int i=0; i<inputs_p; ++i)
             begin
               if(!test_input_reqs[i])
-                assert(!(|grant_count[i]))
-                  else $error("Granted input is not requested");
+                if(|grant_count[i])
+                  $error("Granted input is not requested");
               else
                 assert(grant_count[i] <= (2*inputs_p/reqs_popcount)+1 
                         && grant_count[i] >= (2*inputs_p/reqs_popcount))
