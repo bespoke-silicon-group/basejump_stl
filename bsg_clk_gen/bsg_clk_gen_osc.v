@@ -20,6 +20,7 @@ module bsg_clk_gen_osc
   (
    input async_reset_i
    ,input bsg_tag_s bsg_tag_i
+   ,input bsg_tag_s bsg_tag_trigger_i
    ,output logic clk_o
    );
 
@@ -42,6 +43,15 @@ module bsg_clk_gen_osc
       ,.recv_data_r_o(fb_tag_r)
       );
 
+   logic trig_r;
+   bsg_tag_client_unsync
+    #(.width_p(1)
+     ,.harden_p(0)
+    ) btc_trigger
+     (.bsg_tag_i(bsg_tag_trigger_i)
+      ,.data_async_r_o(trig_r)
+      );
+
    wire [1:0] cdt = fb_tag_r.cdt;
    wire [1:0] fdt = fb_tag_r.fdt;
    wire [num_adgs_p-1:0] adg_ctrl = fb_tag_r.adg;
@@ -51,7 +61,7 @@ module bsg_clk_gen_osc
      if (async_reset_i)
        ctrl_rrr <= '0;
      else
-       if (fb_we_r)
+       if (trig_r)
          ctrl_rrr <= {adg_ctrl, cdt, fdt};
 
    always
