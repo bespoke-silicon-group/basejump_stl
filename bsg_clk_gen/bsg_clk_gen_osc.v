@@ -61,7 +61,7 @@ module bsg_clk_gen_osc
         #1000
         if (ctrl_rrr !== 'X)
           # (
-            ((1 << $bits(ctrl_rrr)) - ctrl_rrr)*100
+             ((1 << $bits(ctrl_rrr)) - ctrl_rrr)*100
             )
         clk_o <= ~(clk_o | async_reset_i);
 
