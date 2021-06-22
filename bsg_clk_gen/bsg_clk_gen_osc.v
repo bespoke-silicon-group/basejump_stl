@@ -1,3 +1,5 @@
+`include "bsg_defines.v"
+
 `timescale 1ps/1ps
 
 // This module is a behavioral model of the clock generator ring
