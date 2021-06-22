@@ -1,7 +1,10 @@
 `timescale 1ps/1ps
 
 // This module is a behavioral model of the clock generator ring
-// oscillator. Timing is based on GF14/12 node.
+// oscillator. A TSMC 250nm hardened implementation of this module
+// can be found at:
+//
+//      bsg_ip_cores/hard/bsg_clk_gen/bsg_clk_gen_osc.v
 //
 // This module should be replaced by the hardened version
 // when being synthesized.
