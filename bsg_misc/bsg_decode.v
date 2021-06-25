@@ -18,7 +18,7 @@ module bsg_decode #(parameter num_out_p="inv")
     assign o = 1'b1;
   end
   else begin
-    assign o = (num_out_p) ' (1'b1 << i);
+    assign o = (num_out_p) ' (num_out_p'(1) << i);
   end
 
 endmodule

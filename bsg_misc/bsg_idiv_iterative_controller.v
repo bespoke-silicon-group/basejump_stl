@@ -179,7 +179,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
        adder_cin_o  = 1'b1;
     end
     
-    DONE:begin
+    DONE: begin
         if( yumi_i ) next_state = WAIT;
         else         next_state = DONE;
 
@@ -187,7 +187,11 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
         opB_ld_o    = 1'b0;
         opC_ld_o    = 1'b0;
     end
-         
+
+    default: begin
+
+    end
+
     endcase
    end
 
