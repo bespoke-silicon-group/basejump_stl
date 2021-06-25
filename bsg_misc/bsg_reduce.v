@@ -6,9 +6,9 @@
 `include "bsg_defines.v"
 
 module bsg_reduce #(parameter width_p = "inv"
-                  , parameter xor_p = 0
-                  , parameter and_p = 0
-                  , parameter or_p = 0
+                  , parameter logic xor_p = 0
+                  , parameter logic and_p = 0
+                  , parameter logic or_p = 0
                   , parameter harden_p = 0
                   )
    (input    [width_p-1:0] i
