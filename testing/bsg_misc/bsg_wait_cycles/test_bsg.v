@@ -106,8 +106,8 @@ module test_bsg
                , ref_test_output, test_output);*/
 
     if(!reset)  
-      assert(ref_test_output == test_output)
-        else $error("mismatch at time %d", $time);
+      if(ref_test_output != test_output)
+        $error("mismatch at time %d", $time);
   end
 
   bsg_wait_cycles #(  .cycles_p(cycles_p)

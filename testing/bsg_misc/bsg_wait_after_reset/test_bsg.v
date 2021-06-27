@@ -71,8 +71,8 @@ module test_bsg
     /*$display("\ntest_output: %b @ time: %d", test_output, $time);*/ 
 
     if(!reset)  
-      assert (test_output == ref_test_output)
-        else $error("mismatch at time = %d", $time); 
+      if (test_output != ref_test_output)
+        $error("mismatch at time = %d", $time); 
     
     if(test_output_r)
       begin
