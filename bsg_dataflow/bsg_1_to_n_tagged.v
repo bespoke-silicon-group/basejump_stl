@@ -17,7 +17,7 @@
 `include "bsg_defines.v"
 
 module bsg_1_to_n_tagged #(
-                           parameter num_out_p    = -1
+                           `BSG_INV_PARAM(num_out_p)
                            ,parameter tag_width_lp = `BSG_SAFE_CLOG2(num_out_p)
                            )
    (input  clk_i
@@ -55,5 +55,6 @@ module bsg_1_to_n_tagged #(
         assign yumi_o = ready_i[tag_i] & v_i;
      end
 
-endmodule
+endmodule // bsg_1_to_n_tagged
 
+`BSG_ABSTRACT_MODULE(bsg_1_to_n_tagged)

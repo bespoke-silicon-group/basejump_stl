@@ -3,6 +3,7 @@
  *
  */
 
+`include "bsg_cache.vh"
 
 module bsg_nonsynth_dma_model
   import bsg_cache_pkg::*;

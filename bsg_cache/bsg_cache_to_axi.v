@@ -5,6 +5,7 @@
  */
 
 `include "bsg_defines.v"
+`include "bsg_cache.vh"
 
 module bsg_cache_to_axi
   import bsg_cache_pkg::*;

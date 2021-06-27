@@ -5,7 +5,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_counter_clear_up #(parameter max_val_p     = -1
+module bsg_counter_clear_up #(`BSG_INV_PARAM(max_val_p)
 			      // this originally had an "invalid" default value of -1
 			      // which is a bad choice for a counter
 			     ,parameter init_val_p   = `BSG_UNDEFINED_IN_SIM('0)

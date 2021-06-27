@@ -13,10 +13,10 @@
 
 `include "bsg_defines.v"
 
-module bsg_1_to_n_tagged_fifo   #(parameter width_p                   = "inv"
-                                  ,parameter num_out_p                = -1
-                                  ,parameter els_p                    = "inv" // these are elements per channel
-                                  ,parameter unbuffered_mask_p        = 0
+module bsg_1_to_n_tagged_fifo   #(`BSG_INV_PARAM(width_p)
+                                  ,`BSG_INV_PARAM(num_out_p)
+                                  ,`BSG_INV_PARAM(els_p) // these are elements per channel
+                                  ,parameter unbuffered_mask_p        = '0
                                   ,parameter use_pseudo_large_fifo_p  = 0
                                   ,parameter harden_small_fifo_p      = 0
                                   ,parameter tag_width_lp        = `BSG_SAFE_CLOG2(num_out_p)
@@ -99,3 +99,5 @@ module bsg_1_to_n_tagged_fifo   #(parameter width_p                   = "inv"
      end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_1_to_n_tagged_fifo)

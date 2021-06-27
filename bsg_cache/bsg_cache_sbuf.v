@@ -13,6 +13,7 @@
  */
 
 `include "bsg_defines.v"
+`include "bsg_cache.vh"
 
 module bsg_cache_sbuf
   import bsg_cache_pkg::*;

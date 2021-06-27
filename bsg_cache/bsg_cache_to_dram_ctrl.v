@@ -6,6 +6,7 @@
  */
 
 `include "bsg_defines.v"
+`include "bsg_cache.vh"
 
 module bsg_cache_to_dram_ctrl
   import bsg_cache_pkg::*;

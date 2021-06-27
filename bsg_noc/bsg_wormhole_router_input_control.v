@@ -1,6 +1,6 @@
 `include "bsg_defines.v"
 
-module bsg_wormhole_router_input_control #(parameter output_dirs_p=-1, parameter payload_len_bits_p=-1)
+module bsg_wormhole_router_input_control #(`BSG_INV_PARAM(output_dirs_p), `BSG_INV_PARAM(payload_len_bits_p))
    (input clk_i
     , input reset_i
     , input fifo_v_i
@@ -41,3 +41,5 @@ module bsg_wormhole_router_input_control #(parameter output_dirs_p=-1, parameter
    assign detected_header_o = fifo_has_hdr;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_wormhole_router_input_control)

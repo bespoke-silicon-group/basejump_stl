@@ -17,8 +17,8 @@
 
 module bsg_serial_in_parallel_out_full
 
- #(parameter width_p                 = "inv"
-  ,parameter els_p                   = "inv"
+ #(`BSG_INV_PARAM(width_p)
+   ,`BSG_INV_PARAM(els_p)
   ,parameter hi_to_lo_p              = 0
   ,parameter use_minimal_buffering_p = 0
   )
@@ -186,3 +186,4 @@ endmodule
 
 */
    
+`BSG_ABSTRACT_MODULE(bsg_serial_in_parallel_out_full)

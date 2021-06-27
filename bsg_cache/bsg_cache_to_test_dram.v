@@ -9,6 +9,7 @@
 
 
 `include "bsg_defines.v"
+`include "bsg_cache.vh"
 
 module bsg_cache_to_test_dram 
   import bsg_cache_pkg::*;
