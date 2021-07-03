@@ -32,10 +32,26 @@ module test_bsg;
   wire clk;
   wire reset;
 
+<<<<<<< HEAD
   bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
                           )  clock_gen
                           (  .o(clk)
                           );
+||||||| merged common ancestors
+  bsg_nonsynth_clock_gen #( .cycle_time_p(cycle_time_lp)
+                          ) clock_gen
+                          ( .o(clk)
+                          );
+=======
+  `ifdef VERILATOR
+    bsg_nonsynth_dpi_clock_gen
+  `else
+    bsg_nonsynth_clock_gen
+  `endif
+   #(.cycle_time_p(cycle_time_p))
+   clock_gen
+    (.o(clk));
+>>>>>>> bsg_mem
 
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(reset_cycles_lo_p)
@@ -185,8 +201,16 @@ module test_bsg;
       test_input_addr_r[i] <= test_input_addr[i];
 
       if(test_output_v[i] & ~reset)
+<<<<<<< HEAD
         assert(test_output_data[i] == {(data_width_p/8){4'(i), 4'(bank_num_r[i])}})
           else $error("Error while accessing %b from port: %0d, data was %b", test_input_addr_r[i], i, test_output_data[i]);
+||||||| merged common ancestors
+        assert(test_output_data[i] == {(data_width_lp/8){4'(i), 4'(bank_num_r[i])}})
+          else $error("Error while accessing %b from port: %0d, data was %b", test_input_addr_r[i], i, test_output_data[i]);
+=======
+        if(test_output_data[i] != {(data_width_p/8){4'(i), 4'(bank_num_r[i])}})
+          $error("Error while accessing %b from port: %0d, data was %b", test_input_addr_r[i], i, test_output_data[i]);
+>>>>>>> bsg_mem
     end
   end
 
