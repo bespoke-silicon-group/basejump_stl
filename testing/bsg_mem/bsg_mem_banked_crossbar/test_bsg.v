@@ -14,34 +14,38 @@
 
 
 module test_bsg;
-
-  localparam data_width_lp      = `DATA_WIDTH_P;
-  localparam bank_size_lp       = `BANK_SIZE_P;
-  localparam ports_lp           = `PORTS_P;
-  localparam banks_lp           = `BANKS_P;
-  localparam lg_banks_lp        = `BSG_SAFE_CLOG2(banks_lp);
-  localparam bank_addr_width_lp = `BSG_SAFE_CLOG2(bank_size_lp);
-  localparam addr_width_lp      = ((banks_lp == 1) ? 0 : lg_banks_lp)
-                                  + bank_addr_width_lp;
-
-  localparam cycle_time_lp = 20;
-
-
+#(
+  parameter data_width_p      = `DATA_WIDTH_P,
+  parameter bank_size_p       = `BANK_SIZE_P,
+  parameter ports_p           = `PORTS_P,
+  parameter banks_p           = `BANKS_P,
+  parameter lg_banks_p        = `BSG_SAFE_CLOG2(banks_p),
+  parameter bank_addr_width_p = `BSG_SAFE_CLOG2(bank_size_p),
+  parameter addr_width_p      = ((banks_p == 1) ? 0 : lg_banks_p)
+                                  + bank_addr_width_p,
+  parameter cycle_time_p = 20,
+  parameter reset_cycles_lo_p=1,
+  parameter reset_cycles_hi_p=5
+);
 
   // clock and reset generation
   wire clk;
   wire reset;
 
-  bsg_nonsynth_clock_gen #( .cycle_time_p(cycle_time_lp)
-                          ) clock_gen
-                          ( .o(clk)
-                          );
+  `ifdef VERILATOR
+    bsg_nonsynth_dpi_clock_gen
+  `else
+    bsg_nonsynth_clock_gen
+  `endif
+   #(.cycle_time_p(cycle_time_p))
+   clock_gen
+    (.o(clk));
 
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(1)
-                           , .reset_cycles_hi_p(5)
+                           , .reset_cycles_lo_p(reset_cycles_lo_p)
+                           , .reset_cycles_hi_p(reset_cycles_hi_p)
                           )  reset_gen
-                          (  .clk_i        (clk)
+                          (  .clk_i        (clk) 
                            , .async_reset_o(reset)
                           );
 
@@ -50,13 +54,13 @@ module test_bsg;
   /* TEST SIGNALS */
 
   // input
-  logic [ports_lp-1:0][0:0]                    test_input_v, test_input_w;
-  logic [ports_lp-1:0][addr_width_lp-1:0]      test_input_addr, test_input_addr_r;
-  logic [ports_lp-1:0][data_width_lp-1:0]      test_input_data;
-  logic [ports_lp-1:0][(data_width_lp>>3)-1:0] test_input_mask;
+  logic [ports_p-1:0][0:0]                    test_input_v, test_input_w;
+  logic [ports_p-1:0][addr_width_p-1:0]      test_input_addr, test_input_addr_r;
+  logic [ports_p-1:0][data_width_p-1:0]      test_input_data;
+  logic [ports_p-1:0][(data_width_p>>3)-1:0] test_input_mask;
   // output
-  logic [ports_lp-1:0][0:0]                    test_output_yumi, test_output_v;
-  logic [ports_lp-1:0][data_width_lp-1:0]      test_output_data;
+  logic [ports_p-1:0][0:0]                    test_output_yumi, test_output_v;
+  logic [ports_p-1:0][data_width_p-1:0]      test_output_data;
 
   /*always_ff @(negedge clk)
     $strobe("v_i:%0p w_i:%0p addr_i:%b data_i:%b mask_i:%b\n"
@@ -73,28 +77,28 @@ module test_bsg;
     $display("\n");
     $display("===========================================================");
     $display("testing bsg_mem_banked_crossbar with ...");
-    $display("DATA_WIDTH  : %0d", data_width_lp);
-    $display("ADDR_WIDTH  : %0d", addr_width_lp);
-    $display("BANKS       : %0d", banks_lp);
-    $display("PORTS       : %0d", ports_lp);
-    $display("BANK_SIZE   : %0d\n", bank_size_lp);
+    $display("DATA_WIDTH  : %0d", data_width_p);
+    $display("ADDR_WIDTH  : %0d", addr_width_p);
+    $display("BANKS       : %0d", banks_p);
+    $display("PORTS       : %0d", ports_p);
+    $display("BANK_SIZE   : %0d\n", bank_size_p);
   end
 
 
 
   /* TEST STIMULI */
 
-  logic [ports_lp-1:0] finish_main_r, finish_mask_r;
+  logic [ports_p-1:0] finish_main_r, finish_mask_r;
 
-  logic [ports_lp-1:0][lg_banks_lp-1:0]        bank_num, bank_num_r;
-  logic [ports_lp-1:0][bank_addr_width_lp-1:0] bank_addr;
+  logic [ports_p-1:0][lg_banks_p-1:0]        bank_num, bank_num_r;
+  logic [ports_p-1:0][bank_addr_width_p-1:0] bank_addr;
 
   genvar i;
 
-  for(i=0; i<ports_lp; i=i+1)
+  for(i=0; i<ports_p; i=i+1)
   begin
     // address and control
-    assign test_input_addr[i] = (banks_lp == 1) ?
+    assign test_input_addr[i] = (banks_p == 1) ?
                                  bank_addr[i]
                                  : {bank_num[i], bank_addr[i]};
 
@@ -106,21 +110,21 @@ module test_bsg;
           bank_addr[i]       <= i;
           test_input_v[i]    <= 1'b1;
           test_input_w[i]    <= 1'b1;
-          test_input_mask[i] <= {(data_width_lp>>3){1'b1}}; // MBT
+          test_input_mask[i] <= {(data_width_p>>3){1'b1}}; // MBT
         end
       else
         begin
           if(test_output_yumi[i])
             begin
-              if((bank_addr[i]+ports_lp) < bank_size_lp)
-                bank_addr[i] <= bank_addr[i] + ports_lp;
+              if((bank_addr[i]+ports_p) < bank_size_p)
+                bank_addr[i] <= bank_addr[i] + ports_p;
               else
                 begin
                   bank_addr[i] <= i;
                   bank_num[i]  <= bank_num[i] + 1;
                 end
 
-              if((bank_num[i]==banks_lp-1) & (bank_addr[i]+ports_lp >= bank_size_lp))
+              if((bank_num[i]==banks_p-1) & (bank_addr[i]+ports_p >= bank_size_p))
                 begin
                   test_input_v[i] <= test_input_w[i];
                   test_input_w[i] <= 1'b0;
@@ -141,8 +145,8 @@ module test_bsg;
 
     // data
     assign test_input_data[i] = (test_input_mask[i])?
-                                {(data_width_lp/8){4'(i), 4'(bank_num[i])}}
-                                :{data_width_lp{1'b1}};
+                                {(data_width_p/8){4'(i), 4'(bank_num[i])}}
+                                :{data_width_p{1'b1}};
    
   end
 
@@ -150,10 +154,10 @@ module test_bsg;
 
   /* UUT */
 
-  bsg_mem_banked_crossbar #( .bank_size_p  (bank_size_lp)
-                            ,.num_ports_p  (ports_lp)
-                            ,.num_banks_p  (banks_lp)
-                            ,.data_width_p (data_width_lp)
+  bsg_mem_banked_crossbar #( .bank_size_p  (bank_size_p)
+                            ,.num_ports_p  (ports_p)
+                            ,.num_banks_p  (banks_p)
+                            ,.data_width_p (data_width_p)
                            ) UUT
                            ( .clk_i   (clk)
                             ,.reset_i (reset)
@@ -174,10 +178,10 @@ module test_bsg;
 
   always_ff @(posedge clk)
     if(|test_input_v)
-      assert(|test_output_yumi)
-        else $error("Error at time: %d, no transaction in a cycle", $time);
+      if(~(|test_output_yumi))
+        $error("Error at time: %d, no transaction in a cycle", $time);
 
-  for(i=0; i<ports_lp; i=i+1)
+  for(i=0; i<ports_p; i=i+1)
   begin
     always_ff @(posedge clk)
     begin
@@ -185,8 +189,8 @@ module test_bsg;
       test_input_addr_r[i] <= test_input_addr[i];
 
       if(test_output_v[i] & ~reset)
-        assert(test_output_data[i] == {(data_width_lp/8){4'(i), 4'(bank_num_r[i])}})
-          else $error("Error while accessing %b from port: %0d, data was %b", test_input_addr_r[i], i, test_output_data[i]);
+        if(test_output_data[i] != {(data_width_p/8){4'(i), 4'(bank_num_r[i])}})
+          $error("Error while accessing %b from port: %0d, data was %b", test_input_addr_r[i], i, test_output_data[i]);
     end
   end
 
@@ -194,7 +198,7 @@ module test_bsg;
 
   /* FINISH */
 
-  for(i=0; i<ports_lp; i=i+1)
+  for(i=0; i<ports_p; i=i+1)
     always_ff @(posedge clk)
     begin
       if(reset)
