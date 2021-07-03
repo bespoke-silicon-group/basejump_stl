@@ -174,8 +174,8 @@ module test_bsg;
 
   always_ff @(posedge clk)
     if(|test_input_v)
-      assert(|test_output_yumi)
-        else $error("Error at time: %d, no transaction in a cycle", $time);
+      if(~(|test_output_yumi))
+        $error("Error at time: %d, no transaction in a cycle", $time);
 
   for(i=0; i<ports_p; i=i+1)
   begin

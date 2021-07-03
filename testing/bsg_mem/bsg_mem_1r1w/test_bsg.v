@@ -131,8 +131,8 @@ module test_bsg
     if(!reset)
       if(count <= els_p)
         // checks if data is not being written correctly
-        assert(test_output_rdata == test_input_wdata_r) 
-          else $error("mismatch on reading the address: %x\n", test_input_raddr);
+        if(test_output_rdata != test_input_wdata_r) 
+          $error("mismatch on reading the address: %x\n", test_input_raddr);
       else
         // checks if data is overwritten when w_v_i is asserted
         if(addr_width_p > 1) // does not work with els_p=1 i.e., one mem. element 
