@@ -140,8 +140,6 @@ module bsg_dmc_controller
 
   logic        cwd_valid;
   logic  [7:0] cwd_tick;
-  logic        wburst_valid;
-  logic  [7:0] wburst_tick;
 
   logic        cas_valid;
   logic  [7:0] cas_tick;
@@ -435,20 +433,20 @@ module bsg_dmc_controller
 	ACT:   case(n_cmd)
                  PRE:     shoot = cmd_tick >= dmc_p_i.tras;
                  ACT:     shoot = cmd_tick >= dmc_p_i.trrd;
-                 WRITE:   shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_rd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
+                 WRITE:   shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_rd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (&tx_sipo_valid_lo) & tx_data_piso_ready_lo;
                  READ:    shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_wr_tick >= dmc_p_i.twtr);
 	         default: shoot = 1'b1;
                endcase
         WRITE: case(n_cmd)
                  PRE:     shoot = (cmd_tick >= dmc_p_i.twr) & (cmd_act_tick >= dmc_p_i.tras);
-                 WRITE:   shoot = (cmd_tick >= dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
+                 WRITE:   shoot = (cmd_tick >= dfi_burst_length_lp-1) & (&tx_sipo_valid_lo) & tx_data_piso_ready_lo;
                  READ:    shoot = cmd_tick >= dmc_p_i.twtr;
                  ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.twr + dmc_p_i.trp);
 	         default: shoot = 1'b1;
                endcase
         READ:  case(n_cmd)
                  PRE:     shoot = (cmd_tick >= dmc_p_i.trtp) & (cmd_act_tick >= dmc_p_i.tras);
-                 WRITE:   shoot = (cmd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
+                 WRITE:   shoot = (cmd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (&tx_sipo_valid_lo) & tx_data_piso_ready_lo;
                  READ:    shoot = cmd_tick >= dfi_burst_length_lp-1;
                  ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.trtp + dmc_p_i.trp);
 	         default: shoot = 1'b1;
@@ -516,21 +514,6 @@ module bsg_dmc_controller
     else if(cwd_valid) begin
       cwd_tick <= cwd_tick - 1;
       if(cwd_tick == 0) cwd_valid <= 0;
-    end
-  end
-
-  always_ff @(posedge dfi_clk_i) begin
-    if(dfi_clk_sync_rst_i) begin
-      wburst_tick <= 0;
-      wburst_valid <= 0;
-    end
-    else if((shoot && cmd_sfifo_rdata[23:20] == WRITE) ) begin
-      wburst_tick <= dfi_burst_length_lp-1;
-      wburst_valid <= 1;
-    end
-    else if(wburst_valid) begin
-      wburst_tick <= wburst_tick - 1;
-      if(wburst_tick == 0) wburst_valid <= 0;
     end
   end
 
@@ -622,11 +605,12 @@ module bsg_dmc_controller
       tx_mask_piso_data_li[k] <= tx_mask[k*dfi_mask_width_lp+:dfi_mask_width_lp];
     end
   end
+  always_ff @(posedge dfi_clk_i) begin
+    tx_data_piso_valid_li <= (tx_sipo_yumi_cnt_li == ui_burst_length_lp);
+    tx_mask_piso_valid_li <= (tx_sipo_yumi_cnt_li == ui_burst_length_lp);
+  end
 
-  assign tx_data_piso_valid_li = wburst_valid;
   assign tx_data_piso_yumi_li  = tx_data_piso_valid_lo;
-
-  assign tx_mask_piso_valid_li = wburst_valid;
   assign tx_mask_piso_yumi_li  = tx_mask_piso_valid_lo;
 
   bsg_parallel_in_serial_out #
