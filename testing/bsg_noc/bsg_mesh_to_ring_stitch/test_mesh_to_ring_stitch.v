@@ -2,7 +2,7 @@
 // a few syntax error fixes.
 //
 
-module test_mesh_to_ring_stitch;
+module test_mesh_to_ring_stitch
 #(
   parameter cycle_time_p = 20,
   localparam num_tiles_x_p = 8,
