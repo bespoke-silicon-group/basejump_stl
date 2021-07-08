@@ -100,7 +100,7 @@ module bsg_regfile_latch
     wire [num_rs_p-1:0] unused0 = r_v_i;
 
     for (genvar i = 0; i < num_rs_p; i++) begin
-      assign r_data_o[i] = mem_r[r_addr_i[i]];
+      assign r_data_o[i] = mem_with_zero[r_addr_i[i]];
     end
 
   end
@@ -114,7 +114,7 @@ module bsg_regfile_latch
 
 
     for (genvar i = 0; i < num_rs_p; i++) begin
-      assign r_data_o[i] = mem_r[r_addr_r[i]];
+      assign r_data_o[i] = mem_with_zero[r_addr_r[i]];
     end
   end
 
