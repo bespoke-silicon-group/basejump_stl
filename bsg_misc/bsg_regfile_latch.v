@@ -11,6 +11,8 @@
  *    If x0_tied_to_zero_p = 1, then x0 becomes constant zero (can't be written).
  *    If async_read_p = 1, then read is asynchronous.
  *  
+ *    Schematic:
+ *    https://docs.google.com/presentation/d/1cM7tNi4jdQBDbLKx9V26n9nimqWHOmu6k8G7NUmvctY/edit#slide=id.ge3e59a77fd_0_47
  */
 
 
