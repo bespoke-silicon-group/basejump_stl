@@ -20,4 +20,4 @@ module bsg_decode_with_v #(`BSG_INV_PARAM(num_out_p))
 
 endmodule
 
-`BSG_ABSTRACT_MODULE(num_out_p)
+`BSG_ABSTRACT_MODULE(bsg_decode_with_v)
