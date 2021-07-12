@@ -8,6 +8,8 @@
  */
 
 
+`ifndef SYNTHESIS
+
 module bsg_icg 
   (
     input clk_i
@@ -25,3 +27,6 @@ module bsg_icg
 
 
 endmodule
+
+
+`endif
