@@ -29,7 +29,7 @@ module bsg_encode_one_hot #(parameter width_p=8, parameter lo_to_hi_p=1, paramet
   wire [levels_lp:0][aligned_width_lp-1:0] v; 
   
   // base case, also handle padding for non-power of two inputs
-  assign v   [0] = lo_to_hi_p ? ((aligned_width_lp) ' (i)) :  i << (aligned_width_lp - width_p);
+  assign v   [0] = lo_to_hi_p ? ((aligned_width_lp) ' (i)) :  (aligned_width_lp'(i) << (aligned_width_lp - width_p));
   assign addr[0] = (width_p == 1) ? '0 : `BSG_UNDEFINED_IN_SIM('0);
   
   for (level = 1; level < levels_lp+1; level=level+1)

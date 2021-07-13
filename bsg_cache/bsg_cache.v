@@ -24,8 +24,10 @@ module bsg_cache
     ,`BSG_INV_PARAM(ways_p)
 
     // Explicit size prevents size inference and allows for ((foo == bar) << e_cache_amo_swap)
+    /*verilator lint_off WIDTH*/
     ,parameter [31:0] amo_support_p=(1 << e_cache_amo_swap)
                                     | (1 << e_cache_amo_or)
+    /*verilator lint_on WIDTH*/
 
     // dma burst width
     ,parameter dma_data_width_p=data_width_p // default value. it can also be pow2 multiple of data_width_p.
@@ -881,6 +883,8 @@ module bsg_cache
     ? miss_tag_mem_w_lo
     : tagst_write_en;
 
+  // note: this logic is confirmed not to have latches, but verilator 4.111 believes it does
+  /*verilator lint_off LATCH */
   always_comb begin
     if (miss_v) begin
       tag_mem_addr_li = recover_lo
@@ -898,6 +902,7 @@ module bsg_cache
       end
     end
   end
+  /*verilator lint_on LATCH */
 
   // data_mem ctrl logic
   //
@@ -942,6 +947,8 @@ module bsg_cache
     ,.mask_o(plru_decode_mask_lo)
   );
 
+  // note: this logic is confirmed not to have latches, but verilator 4.111 believes it does
+  /*verilator lint_off LATCH */
   always_comb begin
     if (miss_v) begin
       stat_mem_v_li = miss_stat_mem_v_lo;
@@ -971,6 +978,7 @@ module bsg_cache
       end
     end
   end
+  /*verilator lint_on LATCH */
 
 
   // store buffer
