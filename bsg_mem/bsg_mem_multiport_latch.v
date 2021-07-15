@@ -1,5 +1,5 @@
 /**
- *    bsg_regfile_latch.v
+ *    bsg_mem_multiport_latch.v
  *
  *    @author tommy
  *
@@ -19,7 +19,7 @@
 `include "bsg_defines.v"
 
 
-module bsg_regfile_latch
+module bsg_mem_multiport_latch
   #(`BSG_INV_PARAM(width_p)
     , `BSG_INV_PARAM(els_p)
     , `BSG_INV_PARAM(num_rs_p)
@@ -50,7 +50,7 @@ module bsg_regfile_latch
 
   // write enable
   logic [els_p-1:0] w_v_onehot;
-  logic [els_p-1:start_idx_lp] mem_we; 
+  logic [els_p-1:start_idx_lp] mem_we_clk;
 
   bsg_decode_with_v #(
     .num_out_p(els_p)
@@ -64,7 +64,7 @@ module bsg_regfile_latch
     bsg_icg icg0 (
       .clk_i(clk_i)
       ,.en_i(w_v_onehot[i])
-      ,.clk_o(mem_we[i])
+      ,.clk_o(mem_we_clk[i])
     );
   end
 
@@ -80,10 +80,15 @@ module bsg_regfile_latch
   // latch file
   logic [els_p-1:start_idx_lp][width_p-1:0] mem_r;
 
-  for (genvar i = start_idx_lp; i < els_p; i++)
-    always_latch
-      if (mem_we[i])
-        mem_r[i] <= w_data_r;
+  for (genvar i = start_idx_lp; i < els_p; i++) begin: x
+    for (genvar j = 0; j < width_p; j++) begin: b
+      bsg_latch lat0 (
+        .clk_i(mem_we_clk[i])
+        ,.data_i(w_data_r[j])
+        ,.data_o(mem_r[i][j])
+      );
+    end
+  end
 
 
   // read ports
@@ -120,9 +125,7 @@ module bsg_regfile_latch
     end
   end
 
-
-
 endmodule
 
 
-`BSG_ABSTRACT_MODULE(bsg_regfile_latch)
+`BSG_ABSTRACT_MODULE(bsg_mem_multiport_latch)
