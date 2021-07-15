@@ -21,19 +21,30 @@
 
 // verilator lint_off BLKANDNBLK
 
-module bsg_tag_master
+module bsg_tag_master_decentralized
   import bsg_tag_pkg::bsg_tag_s;
 
-   // els_p is the number of clients to attach
+   // els_p is the maximum number of clients supported in system
+   // local_els_p is the number of clients to attach
    // lg_width_p is the number of bits used to describe the payload size
-   
-   #(els_p="inv", lg_width_p="inv", debug_level_lp=2)
+
+   #(els_p="inv"
+    ,local_els_p="inv"
+    ,lg_width_p="inv"
+    ,debug_level_lp=1
+    ,lg_els_lp=`BSG_SAFE_CLOG2(els_p)
+    ,lg_local_els_lp=`BSG_SAFE_CLOG2(local_els_p)
+    )
+
    (
     // from pins
     input clk_i
-    ,input en_i
     ,input data_i
-    , output bsg_tag_s [els_p-1:0] clients_r_o
+    // node_id_offset_i is used to filter incoming packets.
+    // packets with nodeID < node_id_offset_i or nodeID >= node_id_offset_i+local_els_p
+    // will be ignored.
+    ,input [lg_els_lp-1:0] node_id_offset_i
+    ,output bsg_tag_s [local_els_p-1:0] clients_o
     );
 
    `declare_bsg_tag_header_s(els_p,lg_width_p)
@@ -48,7 +59,7 @@ module bsg_tag_master
    // synopsys translate_off
    if (debug_level_lp > 2)
      always @(negedge clk_i)
-       $display("## bsg_tag_master clients=%b (%m)",clients_r_o);
+       $display("## bsg_tag_master clients=%b (%m)",clients_o);
    // synopsys translate_on
 
    logic  data_i_r;
@@ -85,8 +96,8 @@ module bsg_tag_master
    // veri lator doesn't support -d
    // synopsys translate_off
    initial
-        $display("## %m instantiating bsg_tag_master with els_p=%d, lg_width_p=%d, max_packet_len_lp=%d, reset_zero_len=%d"
-                 ,els_p,lg_width_p,max_packet_len_lp,reset_len_lp);
+        $display("## %m instantiating bsg_tag_master_decentralized with els_p=%d, local_els_p=%d, lg_width_p=%d, max_packet_len_lp=%d, reset_zero_len=%d"
+                 ,els_p,local_els_p,lg_width_p,max_packet_len_lp,reset_len_lp);
    // synopsys translate_on
 
    //
@@ -234,22 +245,27 @@ module bsg_tag_master
 
    genvar i;
 
+   // calculate local nodeID
+   // must have lg_els_lp bits to prevent overflow
+   // (underflow is okay in this case)
+   wire [lg_els_lp-1:0] local_node_id = hdr_r.nodeID - node_id_offset_i;
+
    // demultiplex the stream to the target node
+   // use only lg_local_els_lp bits to simplify decoder logic
+   wire [local_els_p-1:0] clients_decode = (v_n << local_node_id[lg_local_els_lp-1:0]);
 
-   wire [els_p-1:0] clients_decode = (v_n << hdr_r.nodeID);
+   // determine if incoming packet is within the nodeID range
+   wire node_id_above_offset = (hdr_r.nodeID >= node_id_offset_i);
+   wire local_node_id_below_limit = (local_node_id < local_els_p);
+   wire node_id_match = (node_id_above_offset && local_node_id_below_limit);
 
-
-   for (i = 0; i < els_p; i=i+1)
+   // output to bsg_tag_clients directly without flops
+   for (i = 0; i < local_els_p; i=i+1)
      begin: rof
-        always_ff @(posedge clk_i)
-          begin
-             clients_r_o[i].op    <= clients_decode[i] & bsg_tag_n.op;
-             clients_r_o[i].param <= clients_decode[i] & bsg_tag_n.param;
-          end
-
-
-        assign clients_r_o[i].clk = clk_i;
-        assign clients_r_o[i].en  = en_i;
+        assign clients_o[i].clk   = clk_i;
+        assign clients_o[i].op    = node_id_match & clients_decode[i] & bsg_tag_n.op;
+        assign clients_o[i].param = node_id_match & clients_decode[i] & bsg_tag_n.param;
+        assign clients_o[i].en    = 1'b1;
      end
 
    
