@@ -12,8 +12,8 @@
 
 module bsg_cache_non_blocking_miss_fifo
   import bsg_cache_non_blocking_pkg::*;
-  #(parameter width_p="inv"
-    ,parameter els_p="inv"
+  #(parameter `BSG_INV_PARAM(width_p)
+    ,parameter `BSG_INV_PARAM(els_p)
   )
   (
     input clk_i
@@ -378,3 +378,5 @@ module bsg_cache_non_blocking_miss_fifo
   // synopsys translate_on
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_cache_non_blocking_miss_fifo)

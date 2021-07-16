@@ -2,7 +2,7 @@
 // example width_p=3, pattern_els_p=5'b10101
 `include "bsg_defines.v"
 
-module bsg_unconcentrate_static #(pattern_els_p="inv"
+module bsg_unconcentrate_static #(`BSG_INV_PARAM(pattern_els_p)
                                   , width_lp=`BSG_COUNTONES_SYNTH(pattern_els_p)
                                   , unconnected_val_p=`BSG_DISCONNECTED_IN_SIM(1'b0)
                                  )
@@ -25,3 +25,6 @@ module bsg_unconcentrate_static #(pattern_els_p="inv"
      end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_unconcentrate_static)
+

@@ -1,7 +1,7 @@
 
 module bsg_dff_async_reset
 
- #(parameter width_p     = -1
+ #(parameter `BSG_INV_PARAM(width_p     )
   ,parameter reset_val_p = 0
   ,parameter harden_p    = 0
   )
@@ -23,3 +23,5 @@ module bsg_dff_async_reset
         data_r <= data_i;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_dff_async_reset)

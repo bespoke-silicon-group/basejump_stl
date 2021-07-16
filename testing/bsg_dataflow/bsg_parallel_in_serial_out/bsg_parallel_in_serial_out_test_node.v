@@ -8,10 +8,10 @@
 
 module bsg_parallel_in_serial_out_test_node
 
- #(parameter num_channels_p = "inv"
-  ,parameter channel_width_p = "inv"
+ #(parameter `BSG_INV_PARAM(num_channels_p )
+  ,parameter `BSG_INV_PARAM(channel_width_p )
   ,parameter hi_to_lo_p = 0
-  ,parameter link_width_p = "inv"
+  ,parameter `BSG_INV_PARAM(link_width_p )
   ,parameter is_client_node_p = 0
   
   ,localparam width_lp = num_channels_p * channel_width_p
@@ -218,3 +218,5 @@ module bsg_parallel_in_serial_out_test_node
   );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_parallel_in_serial_out_test_node)

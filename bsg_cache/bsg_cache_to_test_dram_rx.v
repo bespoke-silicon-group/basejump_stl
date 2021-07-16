@@ -7,13 +7,13 @@
 `include "bsg_defines.v"
 
 module bsg_cache_to_test_dram_rx
-  #(parameter num_cache_p="inv"
-    , parameter data_width_p="inv"
-    , parameter dma_data_width_p="inv"
-    , parameter block_size_in_words_p="inv"
+  #(parameter `BSG_INV_PARAM(num_cache_p)
+    , parameter `BSG_INV_PARAM(data_width_p)
+    , parameter `BSG_INV_PARAM(dma_data_width_p)
+    , parameter `BSG_INV_PARAM(block_size_in_words_p)
 
-    , parameter dram_data_width_p="inv"
-    , parameter dram_channel_addr_width_p="inv"
+    , parameter `BSG_INV_PARAM(dram_data_width_p)
+    , parameter `BSG_INV_PARAM(dram_channel_addr_width_p)
 
     , parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
     , parameter num_req_lp = (block_size_in_words_p*data_width_p/dram_data_width_p)
@@ -150,3 +150,5 @@ module bsg_cache_to_test_dram_rx
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_cache_to_test_dram_rx)

@@ -183,3 +183,5 @@ module bsg_dff #(width_p=-1, harden_p=1, strength_p=1)
           data_r <= data_i;
      end
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_dff)

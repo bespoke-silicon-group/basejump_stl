@@ -32,8 +32,8 @@
 `include "bsg_defines.v"
 
 module bsg_mux_butterfly
-  #(`BSG_INV_PARAM(width_p)
-    , `BSG_INV_PARAM(els_p)
+  #(parameter `BSG_INV_PARAM(width_p)
+    , parameter `BSG_INV_PARAM(els_p)
     , lg_els_lp=`BSG_SAFE_CLOG2(els_p)
   )
   (

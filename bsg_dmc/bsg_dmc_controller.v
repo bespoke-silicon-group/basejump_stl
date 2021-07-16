@@ -2,12 +2,12 @@
 
 module bsg_dmc_controller
   import bsg_dmc_pkg::*;
- #(parameter  ui_addr_width_p      = "inv"
-  ,parameter  ui_data_width_p      = "inv"
-  ,parameter  burst_data_width_p   = "inv"
-  ,parameter  dfi_data_width_p     = "inv"
-  ,parameter  cmd_afifo_depth_p    = "inv"
-  ,parameter  cmd_sfifo_depth_p    = "inv"
+ #(parameter `BSG_INV_PARAM( ui_addr_width_p      )
+  ,parameter `BSG_INV_PARAM( ui_data_width_p      )
+  ,parameter `BSG_INV_PARAM( burst_data_width_p   )
+  ,parameter `BSG_INV_PARAM( dfi_data_width_p     )
+  ,parameter `BSG_INV_PARAM( cmd_afifo_depth_p    )
+  ,parameter `BSG_INV_PARAM( cmd_sfifo_depth_p    )
   ,parameter  ui_burst_length_lp   = burst_data_width_p / ui_data_width_p
   ,localparam ui_mask_width_lp     = ui_data_width_p >> 3
   ,localparam dfi_mask_width_lp    = dfi_data_width_p >> 3
@@ -740,3 +740,5 @@ module bsg_dmc_controller
   assign app_rd_data_end_o   = rx_piso_valid_lo && (rd_cnt == ui_burst_length_lp - 1);
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_dmc_controller)

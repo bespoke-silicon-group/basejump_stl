@@ -9,13 +9,13 @@
 `include "bsg_defines.v"
 
 module bsg_mem_banked_crossbar_control_o_by_i 
-  #( parameter i_els_p     = -1
-    ,parameter o_els_p     = -1
+  #( parameter `BSG_INV_PARAM(i_els_p     )
+    ,parameter `BSG_INV_PARAM(o_els_p     )
      // 0 = fixed hi,    1 = fixed lo,
      // 2 = round robin, 3 = round robin hold
      // 4 = round robin reset
      // 5 = dynamic change on FIFO status
-     ,parameter rr_lo_hi_p  = "inv"
+     ,parameter `BSG_INV_PARAM(rr_lo_hi_p  )
      ,parameter lg_o_els_lp = `BSG_SAFE_CLOG2(o_els_p)
    )
   ( input                                clk_i
@@ -123,19 +123,19 @@ module bsg_mem_banked_crossbar_control_o_by_i
 
 endmodule // bsg_mem_banked_crossbar_control_o_by_i
 
-
+`BSG_ABSTRACT_MODULE(bsg_mem/bsg_mem_banked_crossbar)
 
 /*****************************************
 * banked memory crossbar
 ******************************************/
 
 module bsg_mem_banked_crossbar #
-  ( parameter num_ports_p  = -1
-   ,parameter num_banks_p  = -1
+  ( parameter `BSG_INV_PARAM(num_ports_p  )
+   ,parameter `BSG_INV_PARAM(num_banks_p  )
 
-   ,parameter bank_size_p        = -1 // power of 2
+   ,parameter `BSG_INV_PARAM(bank_size_p        ) // power of 2
     // fairness policy (2=round robin, 1=fixed lo, 0=fixed hi)
-   ,parameter rr_lo_hi_p         = "inv"
+   ,parameter `BSG_INV_PARAM(rr_lo_hi_p         )
    ,parameter addr_hash_width_lp = `BSG_SAFE_CLOG2(num_banks_p)
    ,parameter bank_addr_width_lp = `BSG_SAFE_CLOG2(bank_size_p)
     // fixme: this is a little weird as an interface.
@@ -143,7 +143,7 @@ module bsg_mem_banked_crossbar #
                                     bank_addr_width_lp
                                     : addr_hash_width_lp + bank_addr_width_lp
 
-   ,parameter data_width_p  = -1
+   ,parameter `BSG_INV_PARAM(data_width_p  )
    ,parameter debug_p = 0
    ,parameter debug_reads_p = debug_p
    ,parameter mask_width_lp = data_width_p >> 3
@@ -358,3 +358,5 @@ module bsg_mem_banked_crossbar #
                        );
 
 endmodule // bsg_mem_banked_crossbar
+
+`BSG_ABSTRACT_MODULE(bsg_mem_banked_crossbar)

@@ -8,7 +8,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_abs #( parameter width_p="inv" )
+module bsg_abs #( parameter `BSG_INV_PARAM(width_p) )
 (
   input [width_p-1:0] a_i
   ,output logic [width_p-1:0] o
@@ -19,3 +19,5 @@ module bsg_abs #( parameter width_p="inv" )
     : a_i;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_abs)

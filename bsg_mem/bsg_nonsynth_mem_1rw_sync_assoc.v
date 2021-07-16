@@ -11,8 +11,8 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_mem_1rw_sync_assoc
-  #(parameter width_p="inv"
-    , parameter addr_width_p="inv"
+  #(parameter `BSG_INV_PARAM(width_p)
+    , parameter `BSG_INV_PARAM(addr_width_p)
   )
   (
     input clk_i
@@ -56,3 +56,5 @@ module bsg_nonsynth_mem_1rw_sync_assoc
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_mem_1rw_sync_assoc)

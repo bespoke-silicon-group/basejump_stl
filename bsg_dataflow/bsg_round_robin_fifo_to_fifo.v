@@ -26,7 +26,7 @@
 
 //`include "bsg_defines.v"
 
-module bsg_rr_f2f_input #(parameter   width_p              = "inv"
+module bsg_rr_f2f_input #(parameter `BSG_INV_PARAM(  width_p              )
                           , parameter num_in_p             = 0
                           , parameter middle_meet_p        = 0
                           , parameter middle_meet_data_lp  = middle_meet_p * width_p
@@ -130,9 +130,9 @@ endmodule // bsg_rr_f2f_input
 // representation and shifts it to align with output channels
 // according to priority.
 
-module bsg_rr_f2f_output #(parameter width_p="inv"
-                           ,parameter num_out_p=0
-                           ,parameter middle_meet_p=-1
+module bsg_rr_f2f_output #(parameter `BSG_INV_PARAM(width_p)
+                           ,parameter `BSG_INV_PARAM(num_out_p)
+                           ,parameter `BSG_INV_PARAM(middle_meet_p)
                            ,parameter min_out_middle_meet_lp = `BSG_MIN(num_out_p,middle_meet_p)
                            )
    (input clk, input reset
@@ -226,7 +226,7 @@ endmodule
 // selected to "go", ensuring a true rigid round-robin priority
 // on both inputs and outputs.
 
-module bsg_rr_f2f_middle #(parameter width_p="inv"
+module bsg_rr_f2f_middle #(parameter `BSG_INV_PARAM(width_p)
                            , parameter middle_meet_p=1
                            , parameter use_popcount_p=0
                            )
@@ -287,8 +287,8 @@ endmodule
 //
 
 module bsg_round_robin_fifo_to_fifo
-  #(parameter width_p="inv"
-    ,parameter num_in_p=-1
+  #(parameter `BSG_INV_PARAM(width_p)
+    ,parameter `BSG_INV_PARAM(num_in_p)
     ,parameter num_out_p=1
 
     // bitvector; set bit "X" if you want to
@@ -456,4 +456,6 @@ module bsg_round_robin_fifo_to_fifo
 
 
 endmodule // bsg_assembler_out
+
+`BSG_ABSTRACT_MODULE(bsg_round_robin_fifo_to_fifo)
 

@@ -25,9 +25,9 @@
 //
 `ifndef FSB_LEGACY 
 `include "bsg_defines.v"
-module bsg_fsb #(parameter  width_p = "inv"
+module bsg_fsb #(parameter `BSG_INV_PARAM( width_p )
                  
-                 ,parameter nodes_p = "inv"
+                 ,parameter `BSG_INV_PARAM(nodes_p )
 
                  // bit vector of master nodes
                  , parameter enabled_at_start_vec_p = (nodes_p) ' (0)
@@ -206,9 +206,11 @@ module bsg_fsb #(parameter  width_p = "inv"
      end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fsb)
 `else
-module bsg_fsb #(parameter  width_p = "inv"
-                 ,parameter nodes_p = "inv"
+module bsg_fsb #(parameter `BSG_INV_PARAM( width_p )
+                 ,parameter `BSG_INV_PARAM(nodes_p )
 
                  // bit vector of master nodes
                  , parameter enabled_at_start_vec_p = (nodes_p) ' (0)
@@ -385,5 +387,7 @@ module bsg_fsb #(parameter  width_p = "inv"
      end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fsb)
 
 `endif

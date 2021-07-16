@@ -218,3 +218,4 @@ module bsg_trace_replay
    end // always @ (negedge clk_i)
 
 endmodule
+

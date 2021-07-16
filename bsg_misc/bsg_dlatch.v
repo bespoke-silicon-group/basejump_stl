@@ -1,6 +1,6 @@
 `include "bsg_defines.v"
 
-module bsg_dlatch #(parameter width_p="inv"
+module bsg_dlatch #(parameter `BSG_INV_PARAM(width_p)
                    ,parameter i_know_this_is_a_bad_idea_p=0
                    )
   (input               clk_i
@@ -18,4 +18,6 @@ module bsg_dlatch #(parameter width_p="inv"
     end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_dlatch)
 

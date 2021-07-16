@@ -110,8 +110,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_fifo_1r1w_large #(`BSG_INV_PARAM(width_p)
-                             , `BSG_INV_PARAM(els_p)
+module bsg_fifo_1r1w_large #(parameter `BSG_INV_PARAM(width_p)
+                             , parameter `BSG_INV_PARAM(els_p)
                              )
    (input                  clk_i
     , input                reset_i

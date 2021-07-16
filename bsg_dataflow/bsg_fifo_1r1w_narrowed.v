@@ -9,9 +9,9 @@
 `include "bsg_defines.v"
 
 module bsg_fifo_1r1w_narrowed 
-                   #( parameter width_p            = -1
-                    , parameter els_p              = -1 
-                    , parameter width_out_p        = -1
+                   #( parameter `BSG_INV_PARAM(width_p            )
+                    , parameter `BSG_INV_PARAM(els_p              )
+                    , parameter `BSG_INV_PARAM(width_out_p        )
 
                     , parameter lsb_to_msb_p       = 1
                     , parameter ready_THEN_valid_p = 0
@@ -70,3 +70,5 @@ module bsg_fifo_1r1w_narrowed
        );
   
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fifo_1r1w_narrowed)

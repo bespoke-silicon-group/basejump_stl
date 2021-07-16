@@ -29,7 +29,7 @@
 `include "bsg_defines.v"
 
 module bsg_lru_pseudo_tree_encode
-  #(`BSG_INV_PARAM(ways_p)
+  #(parameter `BSG_INV_PARAM(ways_p)
     , parameter lg_ways_lp = `BSG_SAFE_CLOG2(ways_p)
   )
   (

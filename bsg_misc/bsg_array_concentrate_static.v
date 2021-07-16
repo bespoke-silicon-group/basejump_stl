@@ -1,8 +1,8 @@
 `include "bsg_defines.v"
 
 module bsg_array_concentrate_static 
-  #(`BSG_INV_PARAM(pattern_els_p)
-    , `BSG_INV_PARAM(width_p)
+  #(parameter `BSG_INV_PARAM(pattern_els_p)
+    , parameter `BSG_INV_PARAM(width_p)
     , dense_els_lp=$bits(pattern_els_p)
     , sparse_els_lp=`BSG_COUNTONES_SYNTH(pattern_els_p))
   (input    [dense_els_lp-1:0][width_p-1:0] i

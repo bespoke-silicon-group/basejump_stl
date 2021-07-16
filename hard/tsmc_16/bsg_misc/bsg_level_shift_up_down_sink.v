@@ -7,7 +7,7 @@
 // Author: Scott Davidson
 // Date:   4-4-17
 //
-module bsg_level_shift_up_down_sink #(parameter width_p = "inv")
+module bsg_level_shift_up_down_sink #(parameter `BSG_INV_PARAM(width_p ))
 (
   input        [width_p-1:0] v0_data_i,
   input                      v1_en_i,
@@ -28,3 +28,5 @@ for (i = 0; i < width_p; i++)
   end : n
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_level_shift_up_down_sink)

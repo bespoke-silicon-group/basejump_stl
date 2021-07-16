@@ -24,8 +24,8 @@
 `include "bsg_defines.v"
 
 module bsg_mesosync_output
-                  #( parameter width_p           = "inv"
-                   , parameter cfg_tag_base_id_p = "inv"
+                  #( parameter `BSG_INV_PARAM(width_p           )
+                   , parameter `BSG_INV_PARAM(cfg_tag_base_id_p )
                    )
                    ( input                      clk
                    , input                      reset
@@ -271,3 +271,5 @@ assign ready_to_sync1 = output_ready & (mode_cfg.output_mode == SYNC1);
 assign ready_to_sync2 = output_ready & (mode_cfg.output_mode == SYNC2);
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mesosync_output)

@@ -26,8 +26,8 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_dpi_rom
-   #(parameter int els_p = -1
-     ,parameter int width_p = -1
+   #(parameter int els_p = 1
+     ,parameter int width_p = 1
      ,parameter bit [width_p-1:0] arr_p [els_p-1:0] = '{default:0}
      ,parameter bit debug_p = 0
      )
@@ -136,3 +136,4 @@ module bsg_nonsynth_dpi_rom
       return rom_l[idx];
    endfunction
 endmodule
+

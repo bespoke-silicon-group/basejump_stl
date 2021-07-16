@@ -11,8 +11,8 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_mem_1rw_sync_mask_write_byte_assoc
-  #(parameter data_width_p="inv"
-    , parameter addr_width_p="inv"
+  #(parameter `BSG_INV_PARAM(data_width_p)
+    , parameter `BSG_INV_PARAM(addr_width_p)
     , parameter write_mask_width_lp=(data_width_p>>3)
   )
   (
@@ -48,3 +48,5 @@ module bsg_nonsynth_mem_1rw_sync_mask_write_byte_assoc
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_mem_1rw_sync_mask_write_byte_assoc)

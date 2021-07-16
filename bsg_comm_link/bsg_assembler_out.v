@@ -18,9 +18,9 @@
 
 `include "bsg_defines.v"
 
-module bsg_assembler_out #(parameter width_p    ="inv"
-                           ,parameter num_in_p  ="inv"
-                           ,parameter num_out_p ="inv"
+module bsg_assembler_out #(parameter `BSG_INV_PARAM(width_p    )
+                           ,parameter `BSG_INV_PARAM(num_in_p  )
+                           ,parameter `BSG_INV_PARAM(num_out_p )
                            ,parameter out_channel_count_mask_p=(1 << (num_out_p-1)))
    (input clk
     , input  reset
@@ -89,4 +89,6 @@ module bsg_assembler_out #(parameter width_p    ="inv"
 
 
 endmodule // bsg_assembler_out
+
+`BSG_ABSTRACT_MODULE(bsg_assembler_out)
 

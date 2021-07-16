@@ -3,11 +3,11 @@
  */
 
 module bsg_nonsynth_axi_mem
-  #(parameter axi_id_width_p="inv"
-    , parameter axi_addr_width_p="inv"
-    , parameter axi_data_width_p="inv"
-    , parameter axi_burst_len_p="inv"
-    , parameter mem_els_p="inv"
+  #(parameter `BSG_INV_PARAM(axi_id_width_p)
+    , parameter `BSG_INV_PARAM(axi_addr_width_p)
+    , parameter `BSG_INV_PARAM(axi_data_width_p)
+    , parameter `BSG_INV_PARAM(axi_burst_len_p)
+    , parameter `BSG_INV_PARAM(mem_els_p)
     , parameter init_data_p = 32'hdead_beef // 32 bits
 
     , parameter lg_mem_els_lp=`BSG_SAFE_CLOG2(mem_els_p)
@@ -233,4 +233,6 @@ module bsg_nonsynth_axi_mem
   end
   
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_axi_mem)
 

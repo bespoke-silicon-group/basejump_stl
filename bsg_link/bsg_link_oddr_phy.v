@@ -54,7 +54,7 @@ data_o    |                        |  d0   |  d1   |  d0   |  d1   |  d0   |  d1
 
 module bsg_link_oddr_phy
 
- #(parameter width_p = "inv")
+ #(parameter `BSG_INV_PARAM(width_p ))
 
   (// reset, data and ready signals synchronous to clk_i
    // no valid signal required (assume valid_i is constant 1)
@@ -115,3 +115,5 @@ module bsg_link_oddr_phy
         data_r_o <= data_i_r[1];
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_link_oddr_phy)

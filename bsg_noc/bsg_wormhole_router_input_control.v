@@ -1,6 +1,6 @@
 `include "bsg_defines.v"
 
-module bsg_wormhole_router_input_control #(`BSG_INV_PARAM(output_dirs_p), `BSG_INV_PARAM(payload_len_bits_p))
+module bsg_wormhole_router_input_control #(parameter `BSG_INV_PARAM(output_dirs_p), parameter `BSG_INV_PARAM(payload_len_bits_p))
    (input clk_i
     , input reset_i
     , input fifo_v_i

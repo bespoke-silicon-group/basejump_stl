@@ -24,16 +24,16 @@ module bsg_wormhole_router_test_node
        , bsg_noc_pkg::S; // south
 
  #(// Wormhole link parameters
-   parameter flit_width_p = "inv"
+   parameter `BSG_INV_PARAM(flit_width_p )
   ,parameter dims_p = 2
   ,parameter int cord_markers_pos_p[dims_p:0] = '{5, 4, 0}
-  ,parameter reverse_order_p = "inv"
-  ,parameter len_width_p = "inv"
-  ,parameter node_idx = "inv"
+  ,parameter `BSG_INV_PARAM(reverse_order_p )
+  ,parameter `BSG_INV_PARAM(len_width_p )
+  ,parameter `BSG_INV_PARAM(node_idx )
 
-  ,parameter fwd_num_channels_p = "inv"
-  ,parameter rev_num_channels_p = "inv"
-  ,parameter channel_width_p = "inv"
+  ,parameter `BSG_INV_PARAM(fwd_num_channels_p )
+  ,parameter `BSG_INV_PARAM(rev_num_channels_p )
+  ,parameter `BSG_INV_PARAM(channel_width_p )
 
   ,localparam num_nets_lp = 2
   ,localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(flit_width_p)  
@@ -470,3 +470,5 @@ module bsg_wormhole_router_test_node
   end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_wormhole_router_test_node)

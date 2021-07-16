@@ -1,7 +1,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_dff #(`BSG_INV_PARAM(width_p)
+module bsg_dff #(parameter `BSG_INV_PARAM(width_p)
 		 ,harden_p=0
 		 ,strength_p=1   // set drive strength
 		 )

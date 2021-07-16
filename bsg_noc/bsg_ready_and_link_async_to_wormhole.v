@@ -20,13 +20,13 @@
 module bsg_ready_and_link_async_to_wormhole
 
  #(// ral link parameters
-   parameter ral_link_width_p = "inv"
+   parameter `BSG_INV_PARAM(ral_link_width_p )
   
   // Wormhole link parameters
-  ,parameter flit_width_p                     = "inv"
+  ,parameter `BSG_INV_PARAM(flit_width_p                     )
   ,parameter dims_p                           = 2
   ,parameter int cord_markers_pos_p[dims_p:0] = '{5, 4, 0}
-  ,parameter len_width_p                      = "inv"
+  ,parameter `BSG_INV_PARAM(len_width_p                      )
   
   ,localparam ral_link_sif_width_lp = `bsg_ready_and_link_sif_width(ral_link_width_p)
   ,localparam wormhole_link_sif_width_lp = `bsg_ready_and_link_sif_width(flit_width_p)
@@ -210,3 +210,4 @@ module bsg_ready_and_link_async_to_wormhole
   
 
 endmodule
+`BSG_ABSTRACT_MODULE(bsg_ready_and_link_async_to_wormhole)

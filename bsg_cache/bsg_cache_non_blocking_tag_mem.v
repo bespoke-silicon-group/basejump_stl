@@ -11,10 +11,10 @@
 
 module bsg_cache_non_blocking_tag_mem 
   import bsg_cache_non_blocking_pkg::*;
-  #(parameter sets_p="inv"
-    , parameter ways_p="inv"
-    , parameter tag_width_p="inv"
-    , parameter data_width_p="inv"
+  #(parameter `BSG_INV_PARAM(sets_p)
+    , parameter `BSG_INV_PARAM(ways_p)
+    , parameter `BSG_INV_PARAM(tag_width_p)
+    , parameter `BSG_INV_PARAM(data_width_p)
 
     , parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
     , parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
@@ -211,3 +211,5 @@ module bsg_cache_non_blocking_tag_mem
   // synopsys translate_on
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_cache_non_blocking_tag_mem)

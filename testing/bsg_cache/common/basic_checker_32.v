@@ -1,8 +1,8 @@
 module basic_checker_32
   import bsg_cache_pkg::*;
-  #(parameter data_width_p="inv"
-    , parameter addr_width_p="inv"
-    , parameter mem_size_p="inv"
+  #(parameter `BSG_INV_PARAM(data_width_p)
+    , parameter `BSG_INV_PARAM(addr_width_p)
+    , parameter `BSG_INV_PARAM(mem_size_p)
 
     , parameter data_mask_width_lp=(data_width_p>>3)
     , parameter cache_pkt_width_lp= `bsg_cache_pkt_width(addr_width_p,data_width_p)
@@ -227,3 +227,5 @@ module basic_checker_32
 
   
 endmodule
+
+`BSG_ABSTRACT_MODULE(basic_checker_32)

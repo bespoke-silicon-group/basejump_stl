@@ -6,7 +6,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_counting_leading_zeros #(parameter width_p="inv")
+module bsg_counting_leading_zeros #(parameter `BSG_INV_PARAM(width_p))
 (
   input [width_p-1:0] a_i
   ,output logic [`BSG_SAFE_CLOG2(width_p)-1:0] num_zero_o
@@ -29,3 +29,5 @@ module bsg_counting_leading_zeros #(parameter width_p="inv")
   );
   
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_counting_leading_zeros)

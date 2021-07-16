@@ -21,7 +21,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_expand_bitmask #(parameter in_width_p="inv", expand_p="inv"
+module bsg_expand_bitmask #(parameter `BSG_INV_PARAM(in_width_p)
+                           ,parameter `BSG_INV_PARAM(expand_p)
                            ,localparam safe_expand_lp = `BSG_MAX(expand_p, 1))
 (
   input [in_width_p-1:0] i
@@ -35,3 +36,5 @@ module bsg_expand_bitmask #(parameter in_width_p="inv", expand_p="inv"
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_expand_bitmask)

@@ -9,19 +9,19 @@
 
 module bsg_cache_to_axi
   import bsg_cache_pkg::*;
-  #(parameter addr_width_p="inv"
-    ,parameter block_size_in_words_p="inv"
-    ,parameter data_width_p="inv"
-    ,parameter num_cache_p="inv"
+  #(parameter `BSG_INV_PARAM(addr_width_p)
+    ,parameter `BSG_INV_PARAM(block_size_in_words_p)
+    ,parameter `BSG_INV_PARAM(data_width_p)
+    ,parameter `BSG_INV_PARAM(num_cache_p)
     
     // tag fifo size can be greater than number of cache dma interfaces
     // Set to maximum possible outstanding requests to avoid stalling
     ,parameter tag_fifo_els_p=num_cache_p
 
-    ,parameter axi_id_width_p="inv" // 6
-    ,parameter axi_addr_width_p="inv"
-    ,parameter axi_data_width_p="inv"
-    ,parameter axi_burst_len_p="inv"
+    ,parameter `BSG_INV_PARAM(axi_id_width_p) // 6
+    ,parameter `BSG_INV_PARAM(axi_addr_width_p)
+    ,parameter `BSG_INV_PARAM(axi_data_width_p)
+    ,parameter `BSG_INV_PARAM(axi_burst_len_p)
 
     ,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
     ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
@@ -284,3 +284,5 @@ module bsg_cache_to_axi
   // synopsys translate_on
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_cache_to_axi)

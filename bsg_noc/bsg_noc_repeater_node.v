@@ -14,7 +14,7 @@
 
 module bsg_noc_repeater_node
 
-#(parameter width_p = -1
+#(parameter `BSG_INV_PARAM(width_p )
 , parameter bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(width_p)
 )
 
@@ -70,3 +70,5 @@ module bsg_noc_repeater_node
      );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_noc_repeater_node)

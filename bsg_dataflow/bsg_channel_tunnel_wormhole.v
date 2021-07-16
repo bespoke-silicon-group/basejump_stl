@@ -71,24 +71,24 @@ module  bsg_channel_tunnel_wormhole
 
  #(// Wormhole packet configurations
    // These parameters are properties of wormhole network
-   `BSG_INV_PARAM(width_p)
-   ,`BSG_INV_PARAM(x_cord_width_p)
-   ,`BSG_INV_PARAM(y_cord_width_p)
-   ,`BSG_INV_PARAM(len_width_p)
-   ,`BSG_INV_PARAM(reserved_width_p)
+   parameter `BSG_INV_PARAM(width_p)
+   ,parameter `BSG_INV_PARAM(x_cord_width_p)
+   ,parameter `BSG_INV_PARAM(y_cord_width_p)
+   ,parameter `BSG_INV_PARAM(len_width_p)
+   ,parameter `BSG_INV_PARAM(reserved_width_p)
   
   // Total number of inputs multiplexed / demultiplexed within channel tunnel
   // Typically this should match number of wormhole traffic streams being merged
-  ,`BSG_INV_PARAM(num_in_p)
+  ,parameter `BSG_INV_PARAM(num_in_p)
   
   // Max number of wormhole packets buffer can store
   // This is independent of how many flits each wormhole packet has
-  ,`BSG_INV_PARAM(remote_credits_p)
+  ,parameter `BSG_INV_PARAM(remote_credits_p)
   
   // Max possible "wormhole packet payload length" setting
   // An n-flits wormhole packet has 1 header flit and (n-1) payload flits
   // This parameter determines the size of payload-flits buffer
-  ,`BSG_INV_PARAM(max_payload_flits_p)
+  ,parameter `BSG_INV_PARAM(max_payload_flits_p)
   
   // How often does channel tunnel return credits to sender
   // Default value matches child module bsg_channel_tunnel

@@ -36,7 +36,7 @@ module bsg_link_ddr_upstream
  #(// Core data width
   // MUST be multiple of (2*channel_width_p*num_channels_p) 
   // When use_extra_data_bit_p=1, must be multiple of ((2*channel_width_p+1)*num_channels_p) 
-   parameter width_p         = "inv"
+   parameter `BSG_INV_PARAM(width_p         )
   // Number of IO pins per physical IO channels
   ,parameter channel_width_p = 8
   // Number of physical IO channels
@@ -235,3 +235,4 @@ module bsg_link_ddr_upstream
   // synopsys translate_on
 
 endmodule
+`BSG_ABSTRACT_MODULE(bsg_link_ddr_upstream)

@@ -19,9 +19,9 @@
 
 `include "bsg_defines.v"
 
-module bsg_assembler_in #(parameter width_p="inv"
-                           ,parameter num_in_p="inv"
-                           ,parameter num_out_p="inv"
+module bsg_assembler_in #(parameter `BSG_INV_PARAM(width_p)
+                           ,parameter `BSG_INV_PARAM(num_in_p)
+                           ,parameter `BSG_INV_PARAM(num_out_p)
                            ,parameter in_channel_count_mask_p=(1 << (num_in_p-1)))
    (input clk
     , input  reset
@@ -87,4 +87,6 @@ module bsg_assembler_in #(parameter width_p="inv"
    assign valid_o = (& fifo_valid_vec) & calibration_done_i;
 
 endmodule // bsg_assembler_in
+
+`BSG_ABSTRACT_MODULE(bsg_assembler_in)
 

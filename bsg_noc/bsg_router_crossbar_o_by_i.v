@@ -9,8 +9,8 @@
 
 module bsg_router_crossbar_o_by_i
   #(parameter i_els_p=2
-    , parameter o_els_p="inv"
-    , parameter i_width_p="inv"
+    , parameter `BSG_INV_PARAM(o_els_p)
+    , parameter `BSG_INV_PARAM(i_width_p)
 
     , parameter logic [i_els_p-1:0] i_use_credits_p = {i_els_p{1'b0}}
     , parameter int i_fifo_els_p[i_els_p-1:0] = '{2,2}
@@ -154,3 +154,5 @@ module bsg_router_crossbar_o_by_i
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_router_crossbar_o_by_i)

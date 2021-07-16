@@ -11,7 +11,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_front_side_bus_hop_out #(parameter width_p="inv")
+module bsg_front_side_bus_hop_out #(parameter `BSG_INV_PARAM(width_p))
   (input clk_i
    , input  reset_i
 
@@ -80,3 +80,5 @@ module bsg_front_side_bus_hop_out #(parameter width_p="inv")
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_front_side_bus_hop_out)

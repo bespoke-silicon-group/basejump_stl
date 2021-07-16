@@ -1,6 +1,6 @@
 `include "bsg_defines.v"
 
-module bsg_dff_negedge_reset #(width_p=-1, harden_p=0)
+module bsg_dff_negedge_reset #(`BSG_INV_PARAM(width_p), harden_p=0)
    (input   clk_i
    ,input  reset_i
     ,input  [width_p-1:0] data_i
@@ -20,3 +20,6 @@ module bsg_dff_negedge_reset #(width_p=-1, harden_p=0)
      end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_dff_negedge_reset)
+

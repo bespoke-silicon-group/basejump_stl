@@ -31,10 +31,10 @@
 
 `include "bsg_defines.v"
 
-module bsg_1_to_n_tagged_fifo_shared   #(parameter width_p              = "inv"
-                                         ,parameter num_out_p           = "inv"
-                                         ,parameter els_p               = "inv" // these are elements per channel
-                                         ,parameter buffering_p         = "inv" // elements in small FIFOs
+module bsg_1_to_n_tagged_fifo_shared   #(parameter `BSG_INV_PARAM(width_p              )
+                                         ,parameter `BSG_INV_PARAM(num_out_p           )
+                                         ,parameter `BSG_INV_PARAM(els_p               ) // these are elements per channel
+                                         ,parameter `BSG_INV_PARAM(buffering_p         ) // elements in small FIFOs
                                                                                 // three is probably the minumum
                                                                                 // and more than that is probably advised
                                          ,parameter unbuffered_mask_p   = 0
@@ -248,3 +248,5 @@ module bsg_1_to_n_tagged_fifo_shared   #(parameter width_p              = "inv"
        else $error("%m error; unexpected full little FIFO; credit counters not working?");
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_1_to_n_tagged_fifo_shared)

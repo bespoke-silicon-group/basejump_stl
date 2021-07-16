@@ -23,7 +23,7 @@ data_o               D00                |  D01  |  D02  |  D03  |  D04  |
 
 module bsg_link_isdr_phy
 
- #(parameter width_p = "inv")
+ #(parameter `BSG_INV_PARAM(width_p ))
 
   (input                clk_i
   ,output               clk_o
@@ -37,3 +37,5 @@ module bsg_link_isdr_phy
   (.clk_i(clk_i),.data_i(data_i),.data_o(data_o));
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_link_isdr_phy)

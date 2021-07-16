@@ -126,4 +126,6 @@ module bsg_clk_gen_osc
 
 endmodule // bsg_clk_gen_osc
 
+`BSG_ABSTRACT_MODULE(bsg_clk_gen_osc)
+
 

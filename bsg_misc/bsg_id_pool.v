@@ -10,7 +10,7 @@
 `include "bsg_defines.v"
 
 module bsg_id_pool
-  #(parameter els_p="inv"
+  #(parameter `BSG_INV_PARAM(els_p)
     , parameter id_width_lp=`BSG_SAFE_CLOG2(els_p)
   ) 
   (
@@ -104,3 +104,5 @@ module bsg_id_pool
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_id_pool)

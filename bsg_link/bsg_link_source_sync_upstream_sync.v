@@ -10,7 +10,7 @@
 
 module bsg_link_source_sync_upstream_sync
 
- #(parameter width_p                         = "inv"
+ #(parameter `BSG_INV_PARAM(width_p                         )
   ,parameter lg_fifo_depth_p                 = 3
   ,parameter lg_credit_to_token_decimation_p = 0
   ,parameter bypass_twofer_fifo_p            = 0
@@ -172,3 +172,5 @@ module bsg_link_source_sync_upstream_sync
         );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_link_source_sync_upstream_sync)

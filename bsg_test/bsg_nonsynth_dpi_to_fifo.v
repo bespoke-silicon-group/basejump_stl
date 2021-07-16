@@ -52,7 +52,7 @@
 
 module bsg_nonsynth_dpi_to_fifo
   #(
-    parameter width_p = "inv"
+    parameter `BSG_INV_PARAM(width_p )
     ,parameter bit debug_p = 0
     )
    (
@@ -270,3 +270,5 @@ module bsg_nonsynth_dpi_to_fifo
    end
 
 endmodule // bsg_nonsynth_dpi_to_fifo
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_dpi_to_fifo)

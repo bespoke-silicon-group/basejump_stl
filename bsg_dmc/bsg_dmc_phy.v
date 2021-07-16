@@ -227,7 +227,7 @@ endmodule
  */
 
 module bsg_dmc_phy #
-  (parameter  dq_data_width_p = "inv"
+  (parameter `BSG_INV_PARAM( dq_data_width_p )
   ,localparam dq_group_lp     = dq_data_width_p >> 3)
   // dfi interface signals
   (input                          dfi_clk_1x_i
@@ -417,3 +417,5 @@ module bsg_dmc_phy #
   end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_dmc_phy)
