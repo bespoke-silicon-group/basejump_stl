@@ -23,12 +23,12 @@ module bsg_mem_1rw_sync_mask_write_bit #(
 ) (
   input                                     clk_i
   , input                                   reset_i
-  , input  [`BSG_SAFE_MINUS(width_p,1)-1:0] data_i
+  , input  [`BSG_SAFE_MINUS(width_p,1):0] data_i
   , input  [ addr_width_lp-1:0]             addr_i
   , input                                   v_i
-  , input  [`BSG_SAFE_MINUS(width_p,1)-1:0] w_mask_i
+  , input  [`BSG_SAFE_MINUS(width_p,1):0] w_mask_i
   , input                                   w_i
-  , output [`BSG_SAFE_MINUS(width_p,1)-1:0] data_o
+  , output [`BSG_SAFE_MINUS(width_p,1):0] data_o
 );
 
   wire unused = reset_i;
@@ -41,9 +41,9 @@ module bsg_mem_1rw_sync_mask_write_bit #(
   else
    begin: nz
 
-  (* ram_style = "distributed" *) logic [`BSG_SAFE_MINUS(width_p,1)-1:0] mem [els_p-1:0];
+  (* ram_style = "distributed" *) logic [`BSG_SAFE_MINUS(width_p,1):0] mem [els_p-1:0];
 
-  logic [`BSG_SAFE_MINUS(width_p,1)-1:0] data_r;
+  logic [`BSG_SAFE_MINUS(width_p,1):0] data_r;
   always_ff @(posedge clk_i) begin
     if (v_i & ~w_i)
       data_r <= mem[addr_i];
