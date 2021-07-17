@@ -17,7 +17,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_async_ptr_gray #(parameter lg_size_p = -1
+module bsg_async_ptr_gray #(parameter `BSG_INV_PARAM(lg_size_p )
                             ,parameter use_negedge_for_launch_p=0
                             ,parameter use_async_reset_p = 0)
    (
@@ -160,3 +160,5 @@ module bsg_async_ptr_gray #(parameter lg_size_p = -1
    assign w_ptr_gray_r_rsync_o = w_ptr_gray_r_rsync;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_async_ptr_gray)

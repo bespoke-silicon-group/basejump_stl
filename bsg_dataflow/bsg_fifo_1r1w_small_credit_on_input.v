@@ -3,8 +3,8 @@
 // the data
 `include "bsg_defines.v"
 
-module bsg_fifo_1r1w_small_credit_on_input #( parameter width_p      = -1
-                                            , parameter els_p        = -1
+module bsg_fifo_1r1w_small_credit_on_input #( parameter `BSG_INV_PARAM(width_p      )
+                                            , parameter `BSG_INV_PARAM(els_p        )
                                             )                           
                             
     ( input                clk_i
@@ -57,3 +57,5 @@ bsg_fifo_1r1w_small #( .width_p(width_p)
                      );
  
 endmodule 
+
+`BSG_ABSTRACT_MODULE(bsg_fifo_1r1w_small_credit_on_input)

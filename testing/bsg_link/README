@@ -1,0 +1,13 @@
+WARNING: DO NOT MODIFY BSG_LINK_DDR_DOWNSTREAM_ENCODE.V, WHICH IS USED IN ASIC DESIGN TESTBENCH
+
+First time run of test
+
+$ cd basejump_stl/testing/bsg_link
+$ git clone https://bitbucket.org/taylor-bsg/bsg_cadenv.git ../../../bsg_cadenv
+$ make run
+$ make view
+
+
+Clean generated files
+
+$ make clean

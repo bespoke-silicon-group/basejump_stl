@@ -13,7 +13,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
       ,input               reset_i
 
       ,input               v_i
-      ,output              ready_o
+      ,output              ready_and_o
 
       ,input               zero_divisor_i
       ,input               signed_div_r_i
@@ -34,7 +34,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
       ,output logic [2:0]  opC_sel_o
       ,output logic        opC_ld_o
 
-      ,output logic        latch_inputs_o
+      ,output logic        latch_signed_div_o
       ,output logic        adder_cin_o
 
       ,output logic        v_o
@@ -47,7 +47,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
    reg add_neg_last;
    
    typedef enum logic[5:0] 
-           {WAIT, START, NEG0, NEG1, SHIFT,
+           {WAIT, NEG0, NEG1, SHIFT,
             CALC,
             REPAIR, REMAIN, 
             QUOT,DONE } idiv_ctrl_stat;
@@ -100,27 +100,24 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
       opC_ld_o       = 1'b1;
       adder_cin_o    = !add_neg_last;
       neg_ld         = 1'b0;
-      latch_inputs_o = 1'b0;
+      latch_signed_div_o   = 1'b0;
       next_state    = WAIT;
 
     case (state)
 
     WAIT: begin
-       if (v_i) next_state = START;
-       latch_inputs_o = 1'b1;
-    end
-
-    START: begin
-       next_state = NEG0;
-       opA_ld_o     = 1'b1;
-       opC_ld_o     = 1'b1;
+       if (v_i) begin
+          opA_ld_o     = 1'b1;
+          opC_ld_o     = 1'b1;
+          latch_signed_div_o = 1'b1;
+          next_state   = NEG0;
+       end
        opA_sel_o    = 1'b1;
        opC_sel_o    = 3'b100;
-       opB_ld_o     = 1'b0;
     end
     
     NEG0: begin
-       next_state = NEG1;
+       next_state = (opC_is_neg_i & signed_div_r_i) ? NEG1 : SHIFT;
        opA_inv_o    = 1'b1;
        opB_clr_l_o  = 1'b0;
        opB_sel_o    = 3'b100;
@@ -137,7 +134,6 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
        opB_ld_o     = 1'b0;
        opC_sel_o    = 3'b010;
        adder_cin_o  = 1'b1;
-       opC_ld_o     = opC_is_neg_i & signed_div_r_i;
     end
 
     SHIFT: begin
@@ -149,7 +145,11 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
 
     CALC: begin
        opB_sel_o  = calc_done ? 3'b010 : 3'b001;
-       next_state = calc_done ? REPAIR : CALC;
+       if (calc_done) begin
+          if (adder_result_is_neg_i) next_state = REPAIR;
+          else next_state = REMAIN;
+       end else 
+          next_state = CALC;
     end
 
     REPAIR: begin
@@ -158,11 +158,10 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
        opB_sel_o    = 3'b010;
        opC_ld_o     = 1'b0;
        adder_cin_o    = 1'b0;
-       opB_ld_o     = add_neg_last;
     end
     
     REMAIN: begin
-       next_state = zero_divisor_i ? DONE: QUOT;
+       next_state = (zero_divisor_i | !q_neg) ? DONE: QUOT;
        opA_ld_o     = 1'b1;
        opA_clr_l_o  = 1'b0;
        opB_sel_o    = 3'b100;
@@ -172,14 +171,12 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
     end    
 
     QUOT: begin
-       if( yumi_i ) next_state = WAIT;
-       else         next_state = DONE;
+       next_state = DONE;
        opA_clr_l_o  = 1'b0;
        opB_inv_o    = 1'b1;
        opB_ld_o     = 1'b0;
        opC_sel_o    = 3'b010;
        adder_cin_o  = 1'b1;
-       opC_ld_o     = q_neg;
     end
     
     DONE:begin
@@ -194,7 +191,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
     endcase
    end
 
-  assign ready_o  =  ( state == WAIT );
+  assign ready_and_o  =  ( state == WAIT );
   assign v_o      =  ( state == DONE );
 
 endmodule // divide_control 

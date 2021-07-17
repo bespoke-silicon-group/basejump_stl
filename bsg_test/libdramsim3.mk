@@ -1,6 +1,6 @@
-BASEJUMP_STL_DIR :=$(shell git rev-parse --show-toplevel)
+BASEJUMP_STL_DIR ?=$(shell git rev-parse --show-toplevel)
 
-CXXFLAGS = -std=c++14 -D_GNU_SOURCE -Wall -fPIC -shared
+CXXFLAGS = -std=c++11 -D_GNU_SOURCE -Wall -fPIC -shared
 CXXFLAGS += -I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/src
 CXXFLAGS += -I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/ext/headers
 CXXFLAGS += -I$(BASEJUMP_STL_DIR)/imports/DRAMSim3/ext/fmt/include

@@ -12,12 +12,12 @@
 
 module bsg_cache_non_blocking_tl_stage
   import bsg_cache_non_blocking_pkg::*;
-  #(parameter id_width_p="inv"
-    , parameter addr_width_p="inv"
-    , parameter data_width_p="inv"
-    , parameter ways_p="inv"
-    , parameter sets_p="inv"
-    , parameter block_size_in_words_p="inv"
+  #(parameter `BSG_INV_PARAM(id_width_p)
+    , parameter `BSG_INV_PARAM(addr_width_p)
+    , parameter `BSG_INV_PARAM(data_width_p)
+    , parameter `BSG_INV_PARAM(ways_p)
+    , parameter `BSG_INV_PARAM(sets_p)
+    , parameter `BSG_INV_PARAM(block_size_in_words_p)
 
     , parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
     , parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
@@ -473,3 +473,5 @@ module bsg_cache_non_blocking_tl_stage
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_cache_non_blocking_tl_stage)

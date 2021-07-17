@@ -1,9 +1,9 @@
 `include "bsg_defines.v"
 
 module bsg_mem_1r1w_sync_mask_write_var #
-  (parameter width_p=-1
-  ,parameter mask_width_p=-1
-  ,parameter els_p=-1
+  (parameter `BSG_INV_PARAM(width_p)
+  ,parameter `BSG_INV_PARAM(mask_width_p)
+  ,parameter `BSG_INV_PARAM(els_p)
   ,parameter chunk_size_lp = width_p / mask_width_p
   ,parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
   ,parameter read_write_same_addr_p=0
@@ -48,3 +48,5 @@ module bsg_mem_1r1w_sync_mask_write_var #
   end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync_mask_write_var)

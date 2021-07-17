@@ -8,8 +8,8 @@
 // and points to slots_p slots.
 //
 
-module bsg_circular_ptr #(parameter slots_p     = -1
-                          , parameter max_add_p = -1
+module bsg_circular_ptr #(parameter `BSG_INV_PARAM(slots_p)
+                          , parameter `BSG_INV_PARAM(max_add_p)
                           // local param
                           , parameter ptr_width_lp = `BSG_SAFE_CLOG2(slots_p)
 			  )
@@ -75,3 +75,5 @@ module bsg_circular_ptr #(parameter slots_p     = -1
 	  // synopsys translate_on
 end
 endmodule // bsg_circular_ptr
+
+`BSG_ABSTRACT_MODULE(bsg_circular_ptr)

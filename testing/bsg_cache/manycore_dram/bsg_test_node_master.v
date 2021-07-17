@@ -5,15 +5,15 @@
 `include "bsg_manycore_packet.vh"
 
 module bsg_test_node_master
-  #(parameter id_p="inv"
-    ,parameter link_addr_width_p="inv"
-    ,parameter data_width_p="inv"
-    ,parameter x_cord_width_p="inv"
-    ,parameter y_cord_width_p="inv"
-    ,parameter sets_p="inv"
-    ,parameter block_size_in_words_p="inv"
-    ,parameter load_id_width_p="inv"
-    ,parameter num_test_word_p="inv"
+  #(parameter `BSG_INV_PARAM(id_p)
+    ,parameter `BSG_INV_PARAM(link_addr_width_p)
+    ,parameter `BSG_INV_PARAM(data_width_p)
+    ,parameter `BSG_INV_PARAM(x_cord_width_p)
+    ,parameter `BSG_INV_PARAM(y_cord_width_p)
+    ,parameter `BSG_INV_PARAM(sets_p)
+    ,parameter `BSG_INV_PARAM(block_size_in_words_p)
+    ,parameter `BSG_INV_PARAM(load_id_width_p)
+    ,parameter `BSG_INV_PARAM(num_test_word_p)
 
     ,parameter ways_p=2
 
@@ -221,3 +221,5 @@ module bsg_test_node_master
   assign done_o = (send_state_r == SEND_DONE) & (recv_state_r == RECV_DONE);
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_test_node_master)

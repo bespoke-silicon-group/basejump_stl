@@ -9,10 +9,11 @@
 
 `include "bsg_defines.v"
 
-module bsg_channel_tunnel_in #(parameter width_p = -1
-                               , num_in_p = "inv"
-                               , remote_credits_p = "inv"
+module bsg_channel_tunnel_in #(parameter `BSG_INV_PARAM(width_p)
+                               , parameter `BSG_INV_PARAM(num_in_p)
+                               , parameter `BSG_INV_PARAM(remote_credits_p)
                                , use_pseudo_large_fifo_p = 0
+                               , harden_small_fifo_p = 0
 
                                // determines when we send out credits remotely
                                // and consequently how much bandwidth is used on credits
@@ -59,6 +60,7 @@ module bsg_channel_tunnel_in #(parameter width_p = -1
                             // credit fifo is unbuffered
                             ,.unbuffered_mask_p (1 << num_in_p   )
                             ,.use_pseudo_large_fifo_p(use_pseudo_large_fifo_p)
+                            ,.harden_small_fifo_p(harden_small_fifo_p)
                             )
    b1_ntf
      (.clk_i
@@ -101,3 +103,5 @@ module bsg_channel_tunnel_in #(parameter width_p = -1
      end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_channel_tunnel_in)

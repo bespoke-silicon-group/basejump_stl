@@ -8,7 +8,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_counter_clock_downsample #(parameter width_p = "inv", parameter harden_p=0)
+module bsg_counter_clock_downsample #(parameter `BSG_INV_PARAM(width_p ), harden_p=0)
     (input                clk_i
     ,input                reset_i
     ,input  [width_p-1:0] val_i
@@ -35,3 +35,5 @@ module bsg_counter_clock_downsample #(parameter width_p = "inv", parameter harde
      end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_counter_clock_downsample)

@@ -76,7 +76,7 @@
 
 module bsg_clk_gen
   import bsg_tag_pkg::bsg_tag_s;
- #(parameter downsample_width_p = "inv"
+ #(parameter `BSG_INV_PARAM(downsample_width_p )
   ,          num_adgs_p         = 2
   ,          version_p          = 1  // alternative, use version_p = 2
   )
@@ -177,4 +177,6 @@ module bsg_clk_gen
      );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_clk_gen)
 

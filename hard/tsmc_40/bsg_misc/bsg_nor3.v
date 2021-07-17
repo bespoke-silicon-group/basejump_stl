@@ -4,7 +4,7 @@ if (harden_p && (width_p==bits))                \
      bsg_rp_tsmc_40_NR3D1BWP_b``bits nor3_gate (.i0(a_i),.i1(b_i),.i2(c_i),.o);    \
   end
 
-module bsg_nor3 #(parameter width_p="inv"
+module bsg_nor3 #(parameter `BSG_INV_PARAM(width_p)
                  , parameter harden_p=0
                  )
    (input    [width_p-1:0] a_i
@@ -53,3 +53,5 @@ module bsg_nor3 #(parameter width_p="inv"
           assign o = ~(a_i | b_i | c_i);
       end
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nor3)

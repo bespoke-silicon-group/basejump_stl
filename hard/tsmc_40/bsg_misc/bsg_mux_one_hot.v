@@ -6,7 +6,7 @@ begin: macro                                                    \
       );                                                        \
 end
 
-module bsg_mux_one_hot #(parameter width_p="inv"
+module bsg_mux_one_hot #(parameter `BSG_INV_PARAM(width_p)
                          , els_p=1
 			 , harden_p=1
                          )
@@ -41,5 +41,7 @@ else
        end
   end
 endmodule // bsg_mux_one_hot
+
+`BSG_ABSTRACT_MODULE(bsg_mux_one_hot)
 
 

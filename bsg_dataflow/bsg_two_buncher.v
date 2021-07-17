@@ -22,7 +22,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_two_buncher #(parameter width_p=-1)
+module bsg_two_buncher #(parameter `BSG_INV_PARAM(width_p))
    (input    clk_i
     , input  reset_i
     , input  [width_p-1:0]   data_i
@@ -106,3 +106,5 @@ module bsg_two_buncher #(parameter width_p=-1)
      end
 
 endmodule // bsg_two_buncher
+
+`BSG_ABSTRACT_MODULE(bsg_two_buncher)

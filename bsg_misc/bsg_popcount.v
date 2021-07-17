@@ -5,7 +5,7 @@
 // 10-24-14
 //
 
-module bsg_popcount #(parameter width_p="inv")
+module bsg_popcount #(parameter `BSG_INV_PARAM(width_p))
    (input [width_p-1:0] i
     , output [$clog2(width_p+1)-1:0] o
     );
@@ -74,3 +74,5 @@ module bsg_popcount #(parameter width_p="inv")
        end
 
 endmodule // bsg_popcount
+
+`BSG_ABSTRACT_MODULE(bsg_popcount)

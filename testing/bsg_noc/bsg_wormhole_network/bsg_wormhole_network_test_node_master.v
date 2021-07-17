@@ -10,13 +10,13 @@
 module bsg_wormhole_router_test_node_master
 
  #(// Wormhole link parameters
-   parameter flit_width_p = "inv"
+   parameter `BSG_INV_PARAM(flit_width_p )
   ,parameter dims_p = 2
   ,parameter int cord_markers_pos_p[dims_p:0] = '{5, 4, 0}
-  ,parameter len_width_p = "inv"
+  ,parameter `BSG_INV_PARAM(len_width_p )
 
-  ,parameter num_channels_p = "inv"
-  ,parameter channel_width_p = "inv"
+  ,parameter `BSG_INV_PARAM(num_channels_p )
+  ,parameter `BSG_INV_PARAM(channel_width_p )
 
   ,localparam num_nets_lp = 2
   ,localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(flit_width_p)  
@@ -184,3 +184,5 @@ module bsg_wormhole_router_test_node_master
   end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_wormhole_network_test_node_master)

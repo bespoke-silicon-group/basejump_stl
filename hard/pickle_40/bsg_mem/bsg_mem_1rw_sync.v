@@ -15,8 +15,8 @@
     end: macro
 
 
-module bsg_mem_1rw_sync #( parameter width_p = -1
-                         , parameter els_p = -1
+module bsg_mem_1rw_sync #( parameter `BSG_INV_PARAM(width_p )
+                         , parameter `BSG_INV_PARAM(els_p )
                          , parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
                          // whether to substitute a 1r1w
                          , parameter substitute_1r1w_p = 1
@@ -85,3 +85,5 @@ module bsg_mem_1rw_sync #( parameter width_p = -1
   // synopsys translate_on
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mem_1rw_sync)

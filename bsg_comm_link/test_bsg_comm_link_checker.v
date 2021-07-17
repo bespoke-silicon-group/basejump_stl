@@ -20,19 +20,19 @@
 
 `include "bsg_defines.v"
 
-module test_bsg_comm_link_checker #(parameter channel_width_p="inv"
-                                    , parameter num_channels_p="inv"
-                                    , parameter ring_bytes_p="inv"
-				    , parameter check_bytes_p="inv"
-                                    , parameter verbose_p="inv"
-                                    , parameter iterations_p="inv"
-                                    , parameter core_0_period_p="inv"
-                                    , parameter core_1_period_p="inv"
-                                    , parameter io_master_0_period_p="inv"
-                                    , parameter io_master_1_period_p="inv"
+module test_bsg_comm_link_checker #(parameter `BSG_INV_PARAM(channel_width_p)
+                                    , parameter `BSG_INV_PARAM(num_channels_p)
+                                    , parameter `BSG_INV_PARAM(ring_bytes_p)
+				    , parameter `BSG_INV_PARAM(check_bytes_p)
+                                    , parameter `BSG_INV_PARAM(verbose_p)
+                                    , parameter `BSG_INV_PARAM(iterations_p)
+                                    , parameter `BSG_INV_PARAM(core_0_period_p)
+                                    , parameter `BSG_INV_PARAM(core_1_period_p)
+                                    , parameter `BSG_INV_PARAM(io_master_0_period_p)
+                                    , parameter `BSG_INV_PARAM(io_master_1_period_p)
                                     , parameter chip_num_p=0
                                     , parameter node_num_p=0
-                                    , parameter cycle_counter_width_p="inv"
+                                    , parameter `BSG_INV_PARAM(cycle_counter_width_p)
 				    , parameter skip_checks_p=0
                                     )
 (input  clk
@@ -171,3 +171,5 @@ module test_bsg_comm_link_checker #(parameter channel_width_p="inv"
     end // for (j = 0; j < num_channels_p; j=j+1)
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(test_bsg_comm_link_checker)

@@ -13,10 +13,11 @@
 *
 */
 
+`include "bsg_defines.v"
 
 module bsg_mem_1rw_sync_mask_write_bit #(
-  parameter width_p = "inv"
-  , parameter els_p = "inv"
+  parameter `BSG_INV_PARAM(width_p )
+  , parameter `BSG_INV_PARAM(els_p )
   , parameter latch_last_read_p=0
   , parameter enable_clock_gating_p=0
   , localparam addr_width_lp = `BSG_SAFE_CLOG2(els_p)
@@ -66,3 +67,5 @@ module bsg_mem_1rw_sync_mask_write_bit #(
   end // non_zero_width
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mem_1rw_sync_mask_write_bit)

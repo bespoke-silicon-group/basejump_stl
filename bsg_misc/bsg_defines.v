@@ -18,14 +18,20 @@
 //    module name. Such an instance is called a top-level instance."
 //  
 
-`define BSG_ABSTRACT_MODULE(fn) module fn``__abstract(); if (0) fn not_used(); endmodule
+`define BSG_ABSTRACT_MODULE(fn) \
+    /*verilator lint_off PINMISSING*/ \
+    module fn``__abstract(); if (0) fn not_used(); endmodule \
+    /*verilator lint_on PINMISSING*/
 
 // macro for defining invalid parameter; with the abstract module declaration
 // it should be sufficient to omit the "inv" but we include this for tool portability
 // if later we find that all tools are compatible, we can remove the use of this from BaseJump STL
 
-//`define BSG_INV_PARAM(param) param = "inv" 
+`ifdef XCELIUM // Bare default parameters are incompatible as of 20.09.012
+`define BSG_INV_PARAM(param) param = "inv"
+`else // VIVADO, DC, VERILATOR, GENUS
 `define BSG_INV_PARAM(param) param
+`endif
 
 
 // maps 1 --> 1 instead of to 0

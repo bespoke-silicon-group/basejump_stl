@@ -17,8 +17,8 @@
 
 module bsg_serial_in_parallel_out_full
 
- #(parameter width_p                 = "inv"
-  ,parameter els_p                   = "inv"
+ #(parameter `BSG_INV_PARAM(width_p)
+   ,parameter `BSG_INV_PARAM(els_p)
   ,parameter hi_to_lo_p              = 0
   ,parameter use_minimal_buffering_p = 0
   )
@@ -121,6 +121,8 @@ module bsg_serial_in_parallel_out_full
 
 endmodule
 
+`BSG_ABSTRACT_MODULE(bsg_serial_in_parallel_out_full)
+
 /*
    MBT.  5/6/2019
    
@@ -133,8 +135,8 @@ endmodule
 // output pulls out a full width_p words at a time
 
 module bsg_serial_in_parallel_out_full
-  #(parameter width_p="inv"
-    , parameter els_p="inv"
+  #(parameter `BSG_INV_PARAM(width_p)
+    , parameter `BSG_INV_PARAM(els_p)
   )
   (
     input clk_i
@@ -185,4 +187,3 @@ module bsg_serial_in_parallel_out_full
 endmodule
 
 */
-   

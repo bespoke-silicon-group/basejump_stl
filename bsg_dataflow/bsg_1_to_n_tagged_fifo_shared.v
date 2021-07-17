@@ -31,10 +31,10 @@
 
 `include "bsg_defines.v"
 
-module bsg_1_to_n_tagged_fifo_shared   #(parameter width_p              = "inv"
-                                         ,parameter num_out_p           = "inv"
-                                         ,parameter els_p               = "inv" // these are elements per channel
-                                         ,parameter buffering_p         = "inv" // elements in small FIFOs
+module bsg_1_to_n_tagged_fifo_shared   #(parameter `BSG_INV_PARAM(width_p              )
+                                         ,parameter `BSG_INV_PARAM(num_out_p           )
+                                         ,parameter `BSG_INV_PARAM(els_p               ) // these are elements per channel
+                                         ,parameter `BSG_INV_PARAM(buffering_p         ) // elements in small FIFOs
                                                                                 // three is probably the minumum
                                                                                 // and more than that is probably advised
                                          ,parameter unbuffered_mask_p   = 0
@@ -235,11 +235,11 @@ module bsg_1_to_n_tagged_fifo_shared   #(parameter width_p              = "inv"
       ,.data_o (data_o_tmp )
       );
 
-   assign valid_o = valid_o_tmp | (unbuffered_mask_p[i] & tag_one_hot_or_not[i]);
+   assign valid_o = valid_o_tmp | (unbuffered_mask_p & tag_one_hot_or_not);
 
    // if we have an unbuffered channel, we override the channel
    for (i = 0; i < num_out_p; i=i+1)
-     begin: rof
+     begin: rof2
         assign data_o [i]  = unbuffered_mask_p[i] ? data_i : data_o_tmp;
      end
 
@@ -248,3 +248,5 @@ module bsg_1_to_n_tagged_fifo_shared   #(parameter width_p              = "inv"
        else $error("%m error; unexpected full little FIFO; credit counters not working?");
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_1_to_n_tagged_fifo_shared)

@@ -10,12 +10,13 @@
 
 
 `include "bsg_defines.v"
+`include "bsg_cache.vh"
 
 module bsg_nonsynth_cache_axe_tracer
   import bsg_cache_pkg::*;
-  #(parameter data_width_p="inv"
-    , parameter addr_width_p="inv"
-    , parameter ways_p="inv"
+  #(parameter `BSG_INV_PARAM(data_width_p)
+    , parameter `BSG_INV_PARAM(addr_width_p)
+    , parameter `BSG_INV_PARAM(ways_p)
     , parameter sbuf_entry_width_lp=`bsg_cache_sbuf_entry_width(addr_width_p,data_width_p,ways_p)
   )
   (
@@ -61,3 +62,5 @@ module bsg_nonsynth_cache_axe_tracer
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_cache_axe_tracer)

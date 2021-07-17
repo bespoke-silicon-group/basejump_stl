@@ -6,20 +6,20 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_dramsim3
-  #(parameter channel_addr_width_p="inv"
-    , parameter data_width_p="inv"
-    , parameter num_channels_p="inv"
-    , parameter num_columns_p="inv"
-    , parameter num_rows_p="inv"
-    , parameter num_ba_p="inv"
-    , parameter num_bg_p="inv"
-    , parameter num_ranks_p="inv"
-    , parameter address_mapping_p="inv"
+  #(parameter `BSG_INV_PARAM(channel_addr_width_p)
+    , parameter `BSG_INV_PARAM(data_width_p)
+    , parameter `BSG_INV_PARAM(num_channels_p)
+    , parameter `BSG_INV_PARAM(num_columns_p)
+    , parameter `BSG_INV_PARAM(num_rows_p)
+    , parameter `BSG_INV_PARAM(num_ba_p)
+    , parameter `BSG_INV_PARAM(num_bg_p)
+    , parameter `BSG_INV_PARAM(num_ranks_p)
+    , parameter `BSG_INV_PARAM(address_mapping_p)
     , parameter size_in_bits_p=0
     , parameter masked_p=0
     , parameter debug_p=0
     , parameter init_mem_p=0 // zero out values in memory at the beginning
-    , parameter string config_p="inv"
+    , parameter `BSG_INV_PARAM(string config_p)
     , parameter string trace_file_p="bsg_nonsynth_dramsim3_trace.txt"
     , parameter base_id_p=0 // use this for multiple instances of this module
     , parameter mem_addr_width_lp=$clog2(num_channels_p)+channel_addr_width_p
@@ -318,3 +318,5 @@ module bsg_nonsynth_dramsim3
   end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_dramsim3)

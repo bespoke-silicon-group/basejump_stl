@@ -12,8 +12,8 @@
 
 module bsg_cache_non_blocking_stat_mem
   import bsg_cache_non_blocking_pkg::*;
-  #(parameter ways_p="inv"
-    , parameter sets_p="inv"
+  #(parameter `BSG_INV_PARAM(ways_p)
+    , parameter `BSG_INV_PARAM(sets_p)
 
     , parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
 
@@ -171,3 +171,5 @@ module bsg_cache_non_blocking_stat_mem
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_cache_non_blocking_stat_mem)

@@ -1,4 +1,4 @@
-/*===========================================================================
+//*===========================================================================
 //
 //   FILE: get_stim.c:
 //   
@@ -6,7 +6,7 @@
 //   Date: Thu Sep 10 20:17:20 1998
 //
 //   Function:  PLI routine to get stimulus from an input data file,
-//		and apply the values to input signals of the testbench
+//and apply the values to input signals of the testbench
 //
 //=========================================================================*/
 
@@ -15,10 +15,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-FILE *in_file = NULL;		/* file to read in stimulus */
-char *filename;			/* file name of stimulus */
-s_setval_value value;		/* value of arguments */
-s_setval_delay delay;		/* delay (hardwired to "none") */
+FILE *in_file = NULL;/* file to read in stimulus */
+char *filename;/* file name of stimulus */
+s_setval_value value;/* value of arguments */
+s_setval_delay delay;/* delay (hardwired to "none") */
 
 
 void init()
@@ -37,7 +37,7 @@ void init()
   delay.time.real = 0;
 
   /* open input file */
-  filename = "divide.stim";//tf_getcstringp(1);
+  filename = "divide_4.stim"; 
   in_file = fopen(filename, "r");
 
   /* end if file can't be opened */
@@ -51,7 +51,7 @@ void init()
 
 int get_stim()
 {
-  handle signal;		/* handle to get_stim arguments */
+  handle signal;/* handle to get_stim arguments */
   int dividend;
   int divisor;
 

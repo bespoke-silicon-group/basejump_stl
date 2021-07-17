@@ -15,7 +15,7 @@
 
 `include "bsg_defines.v"
 
-module  bsg_source_sync_channel_control_slave #( parameter width_p  = -1
+module  bsg_source_sync_channel_control_slave #( parameter `BSG_INV_PARAM(width_p  )
                                                  , lg_token_width_p =  "inv")
    (// output channel
     input  out_clk_i
@@ -339,3 +339,5 @@ module  bsg_source_sync_channel_control_slave #( parameter width_p  = -1
      end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_source_sync_channel_control_slave)

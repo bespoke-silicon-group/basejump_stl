@@ -1,11 +1,11 @@
 module basic_checker 
   import bsg_cache_non_blocking_pkg::*;
-  #(parameter data_width_p="inv"
-    , parameter id_width_p="inv"
-    , parameter addr_width_p="inv"
-    , parameter cache_pkt_width_lp="inv"
+  #(parameter `BSG_INV_PARAM(data_width_p)
+    , parameter `BSG_INV_PARAM(id_width_p)
+    , parameter `BSG_INV_PARAM(addr_width_p)
+    , parameter `BSG_INV_PARAM(cache_pkt_width_lp)
     , parameter data_mask_width_lp=(data_width_p>>3)
-    , parameter mem_size_p="inv"
+    , parameter `BSG_INV_PARAM(mem_size_p)
   )
   (
     input clk_i
@@ -162,3 +162,5 @@ module basic_checker
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(basic_checker)

@@ -124,7 +124,7 @@ print """// Round robin arbitration unit
 
 """
 
-print """module bsg_round_robin_arb #(inputs_p      = %s
+print """module bsg_round_robin_arb #(`BSG_INV_PARAM(inputs_p)
                                      ,lg_inputs_p   =`BSG_SAFE_CLOG2(inputs_p)
                                      ,reset_on_sr_p = 1'b0
                                      ,hold_on_sr_p  = 1'b0
@@ -234,4 +234,8 @@ else
       last_r <= (reset_i) ? (lg_inputs_p)'(0):last_n;
   end
 
-endmodule"""
+endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_round_robin_arb)
+
+"""

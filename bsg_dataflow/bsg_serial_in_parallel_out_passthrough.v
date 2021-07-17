@@ -5,9 +5,9 @@
 `include "bsg_defines.v"
 
 module bsg_serial_in_parallel_out_passthrough
- #(parameter width_p      = "inv"
-   , parameter els_p      = "inv"
-   , parameter hi_to_lo_p = 0
+ #(parameter `BSG_INV_PARAM(width_p)
+   , parameter `BSG_INV_PARAM(els_p)
+   , hi_to_lo_p = 0
    )
   (input                                  clk_i
   , input                                 reset_i
@@ -84,3 +84,4 @@ module bsg_serial_in_parallel_out_passthrough
 
 endmodule
 
+`BSG_ABSTRACT_MODULE(bsg_serial_in_parallel_out_passthrough)

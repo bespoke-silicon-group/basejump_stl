@@ -4,24 +4,25 @@
 //====================================================================
 // Code refactored based on Sam Larserk's work
 //
-//`define ITERS   24000000
-`define ITERS 10000
+//
 `define SIGN			// test signed divide
 `define UNSIGN			// test unsigned divide
-`define WIDTH 64
+`define WIDTH 4
+`define ITERS 2 ** (`WIDTH * 2)
+// `define ITERS 10000
 
 module test_bsg;
 
    reg div_req;
    reg signed_div;
    
-   wire ready_o;
+   wire ready_and_o;
    wire done;
    
    reg reset;
    reg clk;
 
-   integer i;
+   integer i, f1, f2, f3, f4;
 
    reg  [`WIDTH-1:0] dividend;
    reg  [`WIDTH-1:0] divisor;
@@ -45,7 +46,7 @@ module test_bsg;
 	       .signed_div_i(signed_div),
 	       .quotient_o(quotient),
 	       .remainder_o(remainder),
-           .ready_o( ready_o ),
+	   .ready_and_o( ready_and_o ),
 	       .v_o(done),
            .yumi_i( done  ),
 	       .reset_i(reset),
@@ -59,36 +60,33 @@ module test_bsg;
    
    initial #25 begin
       $init();
+      f1 = $fopen("s_output.txt","w");
+      f2 = $fopen("u_output.txt","w");
+      f3 = $fopen("s.txt","w");
+      f4 = $fopen("u.txt","w");
+            
       for (i=0; i<`ITERS; i=i+1) begin
 	 $get_stim(dividend, divisor);
 
 	 // do the signed case
 	`ifdef SIGN
-	 s_dividend = dividend;
-	 s_divisor  = divisor;
+	 s_dividend = {{(64 - `WIDTH){dividend[`WIDTH-1]}}, dividend[`WIDTH-1:0]};
+	 s_divisor  = {{(64 - `WIDTH){divisor[`WIDTH-1]}}, divisor[`WIDTH-1:0]};
 
 	 signed_div = 1;
 	 
-	 wait (ready_o == 1);
+	 wait (ready_and_o == 1);
 	 div_req = 1; 
-	 wait (ready_o == 0);
+	 wait (ready_and_o == 0);
 	 div_req = 0;
 	 wait (done == 1);
 
-	 s_quotient  = quotient;
-	 s_remainder = remainder;	 
-     //FIXME : when s_dividend == 32'h8000_0000 and s_divisor == 32'hffff_ffff
-     //        the VCS crashs, may be the result overflowed !
-     if( s_dividend != (1 << `WIDTH) && s_divisor != '1)  begin
-	    if ((s_quotient  != s_dividend / s_divisor) ||
-	        (s_remainder != s_dividend % s_divisor)) begin
-	       $display("----------- ERROR in signed divide -----------");
-	       $display("dividend:  0x%x  (%d)",   s_dividend, s_dividend);
-	       $display("divisor:   0x%x  (%d)",   s_divisor,  s_divisor);
-	       $display("quotient:  0x%x  (%d), except 0x%0x",   s_quotient, s_quotient, s_dividend/s_divisor);
-           $display("remainder: 0x%x  (%d), except 0x%0x\n", s_remainder,s_remainder,s_dividend%s_divisor);
-         end
-    end
+	 s_quotient  = {{(64 - `WIDTH){quotient[`WIDTH-1]}}, quotient[`WIDTH-1:0]};
+	 s_remainder = {{(64 - `WIDTH){remainder[`WIDTH-1]}}, remainder[`WIDTH-1:0]};
+	 
+	 $fwrite(f1,"%d %d %d %d\n", s_dividend, s_divisor, s_quotient, s_remainder);
+         $fwrite(f3,"%d %d\n", s_dividend, s_divisor);
+	 
 	`endif
 	 
 	 // do the unsigned case
@@ -98,26 +96,27 @@ module test_bsg;
 
 	 signed_div = 0;
 
-	 wait (ready_o == 1);
+	 wait (ready_and_o == 1);
 	 div_req = 1;
-	 wait (ready_o == 0);
+	 wait (ready_and_o == 0);
 	 div_req = 0;
 	 wait (done == 1);
 	 
 	 u_quotient  = quotient;
 	 u_remainder = remainder;
-	 if ((u_quotient  != u_dividend / u_divisor) ||
-	     (u_remainder != u_dividend % u_divisor)) begin
-	    $display("----------- ERROR in unsigned divide -----------");
-	    $display("dividend:  0x%x  (%d)",   u_dividend, u_dividend);
-	    $display("divisor:   0x%x  (%d)",   u_divisor,  u_divisor);
-	    $display("quotient:  0x%x  (%d),expect 0x%x",   u_quotient, u_quotient, u_dividend/u_divisor);
-        $display("remainder: 0x%x  (%d),expect 0x%x\n", u_remainder,u_remainder,u_dividend%u_divisor);
-	 end
+	 
+	 $fwrite(f2,"%d %d %d %d\n", u_dividend, u_divisor, u_quotient, u_remainder);
+	 $fwrite(f4,"%d %d\n", u_dividend, u_divisor);
+	 
 	`endif
 
       end
-	
+	   
+      $fclose(f1);
+      $fclose(f2);
+      $fclose(f3);
+      $fclose(f4); 
+	   
       $done;
       #80 $finish;
    end

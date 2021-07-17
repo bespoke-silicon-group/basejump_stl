@@ -9,11 +9,11 @@
 `include "bsg_defines.v"
 
 module bsg_cache_to_dram_ctrl_tx
-  #(parameter num_cache_p="inv"
-    , parameter data_width_p="inv"
-    , parameter block_size_in_words_p="inv"
+  #(parameter `BSG_INV_PARAM(num_cache_p)
+    , parameter `BSG_INV_PARAM(data_width_p)
+    , parameter `BSG_INV_PARAM(block_size_in_words_p)
 
-    , parameter dram_ctrl_burst_len_p="inv"
+    , parameter `BSG_INV_PARAM(dram_ctrl_burst_len_p)
 
     , localparam mask_width_lp=(data_width_p>>3)
     , localparam num_req_lp=(block_size_in_words_p/dram_ctrl_burst_len_p)
@@ -119,3 +119,5 @@ module bsg_cache_to_dram_ctrl_tx
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_cache_to_dram_ctrl_tx)

@@ -1,6 +1,6 @@
 `include "bsg_defines.v"
 
-module bsg_rotate_left #(width_p=-1)
+module bsg_rotate_left #(parameter `BSG_INV_PARAM(width_p))
    (input [width_p-1:0] data_i
     , input [`BSG_SAFE_CLOG2(width_p)-1:0] rot_i
     , output [width_p-1:0] o
@@ -10,3 +10,5 @@ module bsg_rotate_left #(width_p=-1)
   assign o = temp[width_p*2-1:width_p];
    
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_rotate_left)

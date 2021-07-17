@@ -7,8 +7,8 @@
 `include "bsg_defines.v"
 
 module bsg_cam_1r1w_tag_array
- #(parameter width_p  = "inv"
-   , parameter els_p      = "inv"
+ #(parameter `BSG_INV_PARAM(width_p)
+   , parameter `BSG_INV_PARAM(els_p)
 
    , parameter multiple_entries_p = 0
 
@@ -86,3 +86,5 @@ module bsg_cam_1r1w_tag_array
   //synopsys translate_on
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_cam_1r1w_tag_array)

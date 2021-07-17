@@ -14,7 +14,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_sort_4 #(parameter width_p="inv",
+module bsg_sort_4 #(parameter `BSG_INV_PARAM(width_p),
                          items_p = 4
                          , t_p   = width_p-1
                          , b_p   = 0
@@ -70,4 +70,6 @@ module bsg_sort_4 #(parameter width_p="inv",
    assign o = s3;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_sort_4)
 

@@ -11,11 +11,11 @@
 
 `include "bsg_defines.v"
 
-module bsg_mesosync_core #( parameter width_p          = "inv"
-                          , parameter els_p            = "inv"
-                          , parameter credit_initial_p = "inv"
-                          , parameter credit_max_val_p = "inv"
-                          , parameter decimation_p     = "inv"
+module bsg_mesosync_core #( parameter `BSG_INV_PARAM(width_p          )
+                          , parameter `BSG_INV_PARAM(els_p            )
+                          , parameter `BSG_INV_PARAM(credit_initial_p )
+                          , parameter `BSG_INV_PARAM(credit_max_val_p )
+                          , parameter `BSG_INV_PARAM(decimation_p     )
                           )
     ( input                clk_i
     , input                reset_i
@@ -149,3 +149,5 @@ bsg_ready_to_credit_flow_converter #( .credit_initial_p(credit_initial_p)
     );
  
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mesosync_core)

@@ -104,8 +104,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_fifo_1r1w_pseudo_large #(parameter width_p = -1
-                                      , parameter els_p = -1
+module bsg_fifo_1r1w_pseudo_large #(parameter `BSG_INV_PARAM(width_p )
+                                      , parameter `BSG_INV_PARAM(els_p )
                                       // Future extensions: need to add max_conflict_run_p;
                                       // currently it is "1" and only if early_yumi_p = 1.
                                       // to implement this, we need to parameterize the fifo
@@ -263,4 +263,6 @@ module bsg_fifo_1r1w_pseudo_large #(parameter width_p = -1
       );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fifo_1r1w_pseudo_large)
 

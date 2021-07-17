@@ -5,7 +5,7 @@
 `timescale 1ps/1ps
 
 module bsg_nonsynth_clock_gen
-  #(parameter cycle_time_p="inv")
+  #(parameter `BSG_INV_PARAM(cycle_time_p))
    (output bit o);
 
 `ifndef VERILATOR
@@ -25,4 +25,6 @@ module bsg_nonsynth_clock_gen
 `endif
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_clock_gen)
 

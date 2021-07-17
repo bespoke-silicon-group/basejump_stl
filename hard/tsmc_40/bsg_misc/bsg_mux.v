@@ -29,7 +29,7 @@ end
      end
 
 
-module bsg_mux #(parameter width_p="inv"
+module bsg_mux #(parameter `BSG_INV_PARAM(width_p)
                  , els_p=1
                  , harden_p=1
                  , balanced_p=0
@@ -79,4 +79,6 @@ module bsg_mux #(parameter width_p="inv"
           end
       end
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mux)
 

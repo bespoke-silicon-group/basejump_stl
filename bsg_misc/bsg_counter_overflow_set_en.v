@@ -1,6 +1,6 @@
 `include "bsg_defines.v"
 
-module bsg_counter_overflow_set_en #( parameter max_val_p     = -1
+module bsg_counter_overflow_set_en #( parameter `BSG_INV_PARAM(max_val_p     )
                                     , parameter lg_max_val_lp = `BSG_SAFE_CLOG2(max_val_p+1)
                                     )
   ( input  clk_i
@@ -26,4 +26,6 @@ module bsg_counter_overflow_set_en #( parameter max_val_p     = -1
     end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_counter_overflow_set_en)
 

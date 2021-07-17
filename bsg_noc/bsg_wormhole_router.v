@@ -5,7 +5,7 @@
 module bsg_wormhole_router
      import bsg_wormhole_router_pkg::StrictXY;
      import bsg_wormhole_router_pkg::StrictX;
-  #(parameter flit_width_p        = "inv"
+  #(parameter `BSG_INV_PARAM(flit_width_p)
    ,parameter dims_p              = 2 // 1
    ,parameter dirs_lp         = dims_p*2+1
 
@@ -16,7 +16,7 @@ module bsg_wormhole_router
    ,parameter int cord_markers_pos_p[cord_dims_p:0] =   '{ 5, 4, 0 }  // '{5,0} //
    ,parameter bit [1:0][dirs_lp-1:0][dirs_lp-1:0] routing_matrix_p =  (dims_p == 2) ? StrictXY : StrictX
    ,parameter reverse_order_p       = 0
-   ,parameter len_width_p           = "inv"
+   ,parameter `BSG_INV_PARAM(len_width_p)
    ,parameter debug_lp              = 0
    )
 
@@ -256,3 +256,5 @@ module bsg_wormhole_router
    );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_wormhole_router)

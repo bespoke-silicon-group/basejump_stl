@@ -52,7 +52,7 @@
 
 module bsg_nonsynth_dpi_to_fifo
   #(
-    parameter width_p = "inv"
+    parameter `BSG_INV_PARAM(width_p )
     ,parameter bit debug_p = 0
     )
    (
@@ -180,7 +180,6 @@ module bsg_nonsynth_dpi_to_fifo
    end
 
 
-   // TODO: Check that tx isn't called multiple times in a cycle
    function bit bsg_dpi_fifo_tx(input bit [width_p-1:0] data_bi);
 
       if(init_r === 0) begin
@@ -257,17 +256,19 @@ module bsg_nonsynth_dpi_to_fifo
    end
 
    // Save the last ready_i and data_o values for protocol checking
-   // and reset tx_r to 0 to
+   // and reset tx_r to 0 to.
    always @(posedge clk_i) begin
       ready_i_r <= ready_i;
       data_o_r <= data_o;
 
+      // reset v_o to 0 so that negedge clk assertions aren't triggered.
+      v_o <= v_o_n;
       tx_r = 0;
       if(debug_o)
         $display("BSG DBGINFO (%M@%t): posedge clk_i -- reset_i: %b v_o: %b ready_i: %b data_i: 0x%x",
                  $time, reset_i, v_o, ready_i, data_o);
    end
-   
-   
 
 endmodule // bsg_nonsynth_dpi_to_fifo
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_dpi_to_fifo)

@@ -3,11 +3,11 @@
  */
 
 module bsg_nonsynth_axi_mem
-  #(parameter axi_id_width_p="inv"
-    , parameter axi_addr_width_p="inv"
-    , parameter axi_data_width_p="inv"
-    , parameter axi_burst_len_p="inv"
-    , parameter mem_els_p="inv"
+  #(parameter `BSG_INV_PARAM(axi_id_width_p)
+    , parameter `BSG_INV_PARAM(axi_addr_width_p)
+    , parameter `BSG_INV_PARAM(axi_data_width_p)
+    , parameter `BSG_INV_PARAM(axi_burst_len_p)
+    , parameter `BSG_INV_PARAM(mem_els_p)
     , parameter init_data_p = 32'hdead_beef // 32 bits
 
     , parameter lg_mem_els_lp=`BSG_SAFE_CLOG2(mem_els_p)
@@ -51,6 +51,7 @@ module bsg_nonsynth_axi_mem
   // write channel
   //
   typedef enum logic [1:0] {
+    WR_RESET,
     WR_WAIT_ADDR,
     WR_WAIT_DATA,
     WR_RESP
@@ -74,6 +75,12 @@ module bsg_nonsynth_axi_mem
     axi_bvalid_o = 1'b0;
 
     case (wr_state_r)
+      WR_RESET: begin
+        axi_awready_o = 1'b0;
+
+        wr_state_n = WR_WAIT_ADDR;
+      end
+
       WR_WAIT_ADDR: begin
         axi_awready_o = 1'b1;
         awid_n = axi_awvalid_i 
@@ -108,8 +115,9 @@ module bsg_nonsynth_axi_mem
 
   // read channel
   //
-  typedef enum logic {
-    RD_WAIT_ADDR
+  typedef enum logic [1:0] {
+    RD_RESET
+    ,RD_WAIT_ADDR
     ,RD_SEND_DATA
   } rd_state_e;
 
@@ -143,6 +151,12 @@ module bsg_nonsynth_axi_mem
     axi_arready_o = 1'b0;
 
     case (rd_state_r)
+      RD_RESET: begin
+        axi_arready_o = 1'b0;
+
+        rd_state_n = RD_WAIT_ADDR;
+      end
+
       RD_WAIT_ADDR: begin
         axi_arready_o = 1'b1;
 
@@ -188,11 +202,11 @@ module bsg_nonsynth_axi_mem
   //
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      wr_state_r <= WR_WAIT_ADDR;
+      wr_state_r <= WR_RESET;
       awid_r <= '0;
       awaddr_r <= '0;
 
-      rd_state_r <= RD_WAIT_ADDR;
+      rd_state_r <= RD_RESET;
       arid_r <= '0;
       araddr_r <= '0;
       rd_burst_r <= '0;
@@ -219,4 +233,6 @@ module bsg_nonsynth_axi_mem
   end
   
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_axi_mem)
 

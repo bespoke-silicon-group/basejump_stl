@@ -7,7 +7,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_thermometer_count #(parameter width_p = -1)
+module bsg_thermometer_count #(parameter `BSG_INV_PARAM(width_p ))
    (input [width_p-1:0] i
     // we need to represent width_p+1 values (0..width_p), so
     // we need the +1.
@@ -64,3 +64,5 @@ module bsg_thermometer_count #(parameter width_p = -1)
            end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_thermometer_count)

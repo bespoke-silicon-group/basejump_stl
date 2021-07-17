@@ -10,7 +10,7 @@
 
 module bsg_mesh_stitch
   import bsg_noc_pkg::*; // P=0, W, E, N, S
-  #(parameter width_p = "inv" // data width
+  #(parameter `BSG_INV_PARAM(width_p ) // data width
     , x_max_p = "inv"
     , y_max_p = "inv"
     , nets_p  = 1 // optional parameter that allows for multiple networks to be routed together
@@ -60,6 +60,8 @@ module bsg_mesh_stitch
      end // block: _n
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mesh_stitch)
 
 
 

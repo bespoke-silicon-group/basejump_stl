@@ -8,15 +8,15 @@
 `include "bsg_defines.v"
 
 module bsg_cache_to_axi_tx
-  #(parameter num_cache_p="inv"
-    ,parameter data_width_p="inv"
-    ,parameter block_size_in_words_p="inv"
+  #(parameter `BSG_INV_PARAM(num_cache_p)
+    ,parameter `BSG_INV_PARAM(data_width_p)
+    ,parameter `BSG_INV_PARAM(block_size_in_words_p)
     ,parameter tag_fifo_els_p=num_cache_p
     
-    ,parameter axi_id_width_p="inv"
-    ,parameter axi_addr_width_p="inv"
-    ,parameter axi_data_width_p="inv"
-    ,parameter axi_burst_len_p="inv"
+    ,parameter `BSG_INV_PARAM(axi_id_width_p)
+    ,parameter `BSG_INV_PARAM(axi_addr_width_p)
+    ,parameter `BSG_INV_PARAM(axi_data_width_p)
+    ,parameter `BSG_INV_PARAM(axi_burst_len_p)
 
     ,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
 
@@ -230,3 +230,5 @@ module bsg_cache_to_axi_tx
   
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_cache_to_axi_tx)

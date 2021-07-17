@@ -23,9 +23,9 @@
 
 `include "bsg_defines.v"
 
-module bsg_counter_up_down #( parameter max_val_p    = -1
-                                     , parameter init_val_p   = -1
-                                     , parameter max_step_p   = -1
+module bsg_counter_up_down #( parameter `BSG_INV_PARAM(max_val_p    )
+                                     , parameter `BSG_INV_PARAM(init_val_p   )
+                                     , parameter `BSG_INV_PARAM(max_step_p   )
 
                                      //localpara
                                      , parameter step_width_lp =
@@ -67,3 +67,5 @@ always_ff @(posedge clk_i)
 //synopsys translate_on
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_counter_up_down)

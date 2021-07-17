@@ -89,7 +89,6 @@ module bsg_launch_sync_sync_``EDGE``_``bits``_unit                      \
      end                                                                \
 endmodule
 
-
 `define bsg_launch_sync_sync_async_reset_unit(EDGE,bits)                \
                                                                         \
 module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
@@ -152,7 +151,6 @@ module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
           bsg_SYNC_2_r <= bsg_SYNC_1_r;                                 \
      end                                                                \
 endmodule
-
 
 // bsg_launch_sync_sync_posedge_1_unit
 `bsg_launch_sync_sync_unit(posedge,1)
@@ -220,7 +218,7 @@ endmodule
                                          ,.oclk_data_o(oclk_data_o[width_p-1-:num])  \
                                          ); end
 
-module bsg_launch_sync_sync #(parameter width_p="inv"
+module bsg_launch_sync_sync #(parameter `BSG_INV_PARAM(width_p)
                               , parameter use_negedge_for_launch_p = 0
                               , parameter use_async_reset_p = 0)
    (input iclk_i
@@ -350,3 +348,5 @@ module bsg_launch_sync_sync #(parameter width_p="inv"
    end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_launch_sync_sync)

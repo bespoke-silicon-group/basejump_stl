@@ -24,10 +24,10 @@
 `include "bsg_defines.v"
 
 module bsg_mesosync_input
-                  #( parameter cfg_tag_base_id_p = "inv"
-                   , parameter ch1_width_p       = "inv"
-                   , parameter ch2_width_p       = "inv"
-                   , parameter LA_els_p          = "inv"
+                  #( parameter `BSG_INV_PARAM(cfg_tag_base_id_p )
+                   , parameter `BSG_INV_PARAM(ch1_width_p       )
+                   , parameter `BSG_INV_PARAM(ch2_width_p       )
+                   , parameter `BSG_INV_PARAM(LA_els_p          )
                     
                    , parameter width_lp          = ch1_width_p + ch2_width_p
                    )
@@ -350,3 +350,5 @@ bsg_logic_analyzer #( .line_width_p(width_lp)
        );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mesosync_input)

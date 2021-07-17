@@ -25,7 +25,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_two_fifo #(parameter width_p="inv"
+module bsg_two_fifo #(parameter `BSG_INV_PARAM(width_p)
                       , parameter verbose_p=0
                       // whether we should allow simultaneous enque and deque on full
                       , parameter allow_enq_deq_on_full_p=0
@@ -143,3 +143,5 @@ module bsg_two_fifo #(parameter width_p="inv"
    // synopsys translate_on
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_two_fifo)
