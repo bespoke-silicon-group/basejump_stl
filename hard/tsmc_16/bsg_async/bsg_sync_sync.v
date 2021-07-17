@@ -35,6 +35,8 @@ module bsg_sync_sync_``width_p``_unit                                   \
                                                                         \
 endmodule
 
+`BSG_ABSTRACT_MODULE(bsg_sync_sync)
+
 `bsg_sync_sync_unit_hard(1)
 `bsg_sync_sync_unit_hard(2)
 `bsg_sync_sync_unit_hard(3)
@@ -57,7 +59,7 @@ endmodule
                                ); end
 
 
-module bsg_sync_sync #(parameter width_p = "inv")
+module bsg_sync_sync #(parameter `BSG_INV_PARAM(width_p ))
    (
       input oclk_i
     , input  [width_p-1:0] iclk_data_i
@@ -84,3 +86,5 @@ module bsg_sync_sync #(parameter width_p = "inv")
                `bss_if_clause(7)
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_sync_sync)

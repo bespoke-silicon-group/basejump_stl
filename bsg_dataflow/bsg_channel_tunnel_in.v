@@ -9,9 +9,9 @@
 
 `include "bsg_defines.v"
 
-module bsg_channel_tunnel_in #(`BSG_INV_PARAM(width_p)
-                               , `BSG_INV_PARAM(num_in_p)
-                               , `BSG_INV_PARAM(remote_credits_p)
+module bsg_channel_tunnel_in #(parameter `BSG_INV_PARAM(width_p)
+                               , parameter `BSG_INV_PARAM(num_in_p)
+                               , parameter `BSG_INV_PARAM(remote_credits_p)
                                , use_pseudo_large_fifo_p = 0
                                , harden_small_fifo_p = 0
 

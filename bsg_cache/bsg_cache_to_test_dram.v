@@ -13,14 +13,14 @@
 
 module bsg_cache_to_test_dram 
   import bsg_cache_pkg::*;
-  #(parameter num_cache_p="inv"
-    , parameter addr_width_p="inv" // cache addr (byte)
-    , parameter data_width_p="inv" // cache data width
-    , parameter block_size_in_words_p="inv" // cache block_size (word)
-    , parameter cache_bank_addr_width_p="inv" // actual number of bits used for address (byte)
+  #(parameter `BSG_INV_PARAM(num_cache_p)
+    , parameter `BSG_INV_PARAM(addr_width_p) // cache addr (byte)
+    , parameter `BSG_INV_PARAM(data_width_p) // cache data width
+    , parameter `BSG_INV_PARAM(block_size_in_words_p) // cache block_size (word)
+    , parameter `BSG_INV_PARAM(cache_bank_addr_width_p) // actual number of bits used for address (byte)
 
-    , parameter dram_channel_addr_width_p="inv" // dram channel addr
-    , parameter dram_data_width_p="inv" // dram channel data width
+    , parameter `BSG_INV_PARAM(dram_channel_addr_width_p) // dram channel addr
+    , parameter `BSG_INV_PARAM(dram_data_width_p) // dram channel data width
 
     , parameter dma_data_width_p=data_width_p // cache dma data width 
 
@@ -307,3 +307,5 @@ module bsg_cache_to_test_dram
   end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_cache_to_test_dram)

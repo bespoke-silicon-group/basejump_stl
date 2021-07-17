@@ -9,7 +9,7 @@
 //module renamed from bsg_counter_en_overflow
 `include "bsg_defines.v"
 
-module bsg_counter_dynamic_limit_en #(parameter width_p = -1)
+module bsg_counter_dynamic_limit_en #(parameter `BSG_INV_PARAM(width_p ))
 
             ( input                      clk_i
             , input                      reset_i
@@ -32,3 +32,5 @@ always_ff @ (posedge clk_i)
   end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_counter_dynamic_limit_en)

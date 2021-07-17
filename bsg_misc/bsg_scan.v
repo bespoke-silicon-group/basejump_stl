@@ -9,7 +9,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_scan #(`BSG_INV_PARAM(width_p)
+module bsg_scan #(parameter `BSG_INV_PARAM(width_p)
                   , parameter xor_p = 0
                   , parameter and_p = 0
                   , parameter or_p = 0

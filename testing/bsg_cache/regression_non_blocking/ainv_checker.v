@@ -1,5 +1,5 @@
 module ainv_checker
-  #(parameter data_width_p="inv")
+  #(parameter `BSG_INV_PARAM(data_width_p))
   (
     input clk_i
     , input reset_i
@@ -23,3 +23,5 @@ module ainv_checker
   end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(ainv_checker)

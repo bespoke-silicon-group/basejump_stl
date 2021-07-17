@@ -21,10 +21,10 @@ print "// run with topX=",topX," and topY=",topY
 print "// ";
 print '`include "bsg_defines.v"'
 
-print "module bsg_mesh_to_ring_stitch   #(parameter  y_max_p=-1"
-print "                                  ,parameter x_max_p=-1"
-print "                                  ,parameter width_back_p = -1"
-print "                                  ,parameter width_fwd_p  = -1"
+print "module bsg_mesh_to_ring_stitch   #(`BSG_INV_PARAM(y_max_p)"
+print "                                  ,`BSG_INV_PARAM(x_max_p)"
+print "                                  ,`BSG_INV_PARAM(width_back_p)"
+print "                                  ,`BSG_INV_PARAM(width_fwd_p)"
 print "                                  ,parameter b_lp = $clog2(x_max_p*y_max_p)"
 print "                                  ) (output  [x_max_p-1:0][y_max_p-1:0][b_lp-1:0] id_o"
 print "                                     ,output [x_max_p-1:0][y_max_p-1:0][width_back_p-1:0] back_data_in_o"
@@ -107,3 +107,5 @@ print "initial assert ((x_max_p <= " + str(topX) + ") && (y_max_p <= " + str(top
 
 
 print "endmodule"
+
+print "`BSG_ABSTRACT_MODULE(bsg_mesh_to_ring_stitch)"

@@ -18,13 +18,13 @@
 module bsg_wormhole_concentrator_test_node
 
  #(// Wormhole link parameters
-   parameter flit_width_p = "inv"
+   parameter `BSG_INV_PARAM(flit_width_p )
   ,parameter cord_width_p = 5
-  ,parameter len_width_p = "inv"
-  ,parameter cid_width_p = "inv"
+  ,parameter `BSG_INV_PARAM(len_width_p )
+  ,parameter `BSG_INV_PARAM(cid_width_p )
 
-  ,parameter num_channels_p = "inv"
-  ,parameter channel_width_p = "inv"
+  ,parameter `BSG_INV_PARAM(num_channels_p )
+  ,parameter `BSG_INV_PARAM(channel_width_p )
   ,parameter is_client_node_p = 0
 
   ,localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(flit_width_p)  
@@ -364,3 +364,5 @@ module bsg_wormhole_concentrator_test_node
   );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_wormhole_concentrator_test_node)

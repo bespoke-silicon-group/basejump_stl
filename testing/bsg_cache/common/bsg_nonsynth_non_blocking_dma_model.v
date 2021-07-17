@@ -9,10 +9,10 @@
 
 module bsg_nonsynth_non_blocking_dma_model
   import bsg_cache_non_blocking_pkg::*;
-  #(parameter addr_width_p="inv"
-    ,parameter data_width_p="inv"
-    ,parameter block_size_in_words_p="inv"
-    ,parameter els_p="inv"
+  #(parameter `BSG_INV_PARAM(addr_width_p)
+    ,parameter `BSG_INV_PARAM(data_width_p)
+    ,parameter `BSG_INV_PARAM(block_size_in_words_p)
+    ,parameter `BSG_INV_PARAM(els_p)
 
     ,parameter read_delay_p=16
     ,parameter write_delay_p=16
@@ -260,3 +260,5 @@ module bsg_nonsynth_non_blocking_dma_model
   end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_non_blocking_dma_model)

@@ -28,7 +28,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_scatter_gather #(parameter vec_size_lp="inv")
+module bsg_scatter_gather #(parameter `BSG_INV_PARAM(vec_size_lp))
        (input [vec_size_lp-1:0] vec_i
        ,output reg [vec_size_lp*`BSG_SAFE_CLOG2(vec_size_lp)-1:0] fwd_o
        ,output reg [vec_size_lp*`BSG_SAFE_CLOG2(vec_size_lp)-1:0] fwd_datapath_o
@@ -16713,3 +16713,5 @@ if (vec_size_lp == 11)
 initial assert (vec_size_lp <  12 ) else $error("bsg_scatter_gather: vec_size_lp too large %d", vec_size_lp);
 // synopsys translate_on
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_scatter_gather)

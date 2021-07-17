@@ -5,7 +5,7 @@
 `include "bsg_defines.v"
 
 module bsg_dff_reset_en
-  #(`BSG_INV_PARAM(width_p)
+  #(parameter `BSG_INV_PARAM(width_p)
     , parameter reset_val_p=0
     , parameter harden_p=0
   )

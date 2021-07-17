@@ -11,8 +11,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_parallel_in_serial_out_passthrough #( parameter width_p    = -1
-                                               , parameter els_p      = -1
+module bsg_parallel_in_serial_out_passthrough #( parameter `BSG_INV_PARAM(width_p    )
+                                               , parameter `BSG_INV_PARAM(els_p      )
                                                , parameter hi_to_lo_p = 0
                                                )
     ( input clk_i
@@ -105,4 +105,6 @@ module bsg_parallel_in_serial_out_passthrough #( parameter width_p    = -1
   //synopsys translate_on
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_parallel_in_serial_out_passthrough)
 

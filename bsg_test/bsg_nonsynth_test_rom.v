@@ -9,9 +9,9 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_test_rom
-  #(parameter filename_p="inv"
-    , parameter data_width_p="inv"
-    , parameter addr_width_p="inv"
+  #(parameter `BSG_INV_PARAM(filename_p)
+    , parameter `BSG_INV_PARAM(data_width_p)
+    , parameter `BSG_INV_PARAM(addr_width_p)
     , parameter hex_not_bin_p = 0
   )
   (
@@ -33,3 +33,5 @@ module bsg_nonsynth_test_rom
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_test_rom)

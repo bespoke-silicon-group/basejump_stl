@@ -16,7 +16,7 @@
 `include "bsg_defines.v"
 
 
-module bsg_round_robin_arb #(`BSG_INV_PARAM(inputs_p)
+module bsg_round_robin_arb #(parameter `BSG_INV_PARAM(inputs_p)
                                      ,lg_inputs_p   =`BSG_SAFE_CLOG2(inputs_p)
                                      ,reset_on_sr_p = 1'b0
                                      ,hold_on_sr_p  = 1'b0

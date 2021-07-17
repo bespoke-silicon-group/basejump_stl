@@ -15,3 +15,5 @@ module bsg_muxi2_gatestack #(width_p="inv", harden_p=1)
      end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_muxi2_gatestack)

@@ -31,7 +31,7 @@ data_o               D00           |  D01  |  D02  |  D03  |  D04  |  D05
 
 module bsg_link_osdr_phy
 
- #(parameter width_p = "inv"
+ #(parameter `BSG_INV_PARAM(width_p )
   ,parameter strength_p = 0)
 
   (input                clk_i
@@ -51,3 +51,5 @@ module bsg_link_osdr_phy
   (.clk_i(clk_i),.data_i(data_i),.data_o(data_o));
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_link_osdr_phy)

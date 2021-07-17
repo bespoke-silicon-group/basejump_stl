@@ -29,7 +29,7 @@
 
 module bsg_front_side_bus_hop_in
 
-  #(parameter     width_p="inv"
+  #(parameter `BSG_INV_PARAM(    width_p)
     , parameter fan_out_p=2
     )
 
@@ -97,4 +97,6 @@ module bsg_front_side_bus_hop_in
    assign fifo_yumi = & sent_n;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_front_side_bus_hop_in)
 

@@ -12,8 +12,8 @@
 `include "bsg_fpu_defines.vh"
 
 module bsg_fpu_add_sub
-  #(parameter e_p="inv"     // exponent width
-    , parameter m_p="inv"   // mantissa width
+  #(parameter `BSG_INV_PARAM(e_p)     // exponent width
+    , parameter `BSG_INV_PARAM(m_p)   // mantissa width
   )
   (
     input clk_i
@@ -457,3 +457,5 @@ module bsg_fpu_add_sub
   end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fpu_add_sub)

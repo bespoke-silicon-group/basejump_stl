@@ -12,7 +12,7 @@
 `include "bsg_defines.v"
 
 module bsg_cache_sbuf_queue
-  #(parameter width_p="inv")
+  #(parameter `BSG_INV_PARAM(width_p))
   (
     input clk_i
     ,input [width_p-1:0] data_i
@@ -43,3 +43,5 @@ module bsg_cache_sbuf_queue
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_cache_sbuf_queue)

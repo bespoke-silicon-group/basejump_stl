@@ -28,9 +28,9 @@ module bsg_tag_master_decentralized
    // local_els_p is the number of clients to attach
    // lg_width_p is the number of bits used to describe the payload size
 
-   #(els_p="inv"
-    ,local_els_p="inv"
-    ,lg_width_p="inv"
+   #(`BSG_INV_PARAM(els_p)
+    ,`BSG_INV_PARAM(local_els_p)
+    ,`BSG_INV_PARAM(lg_width_p)
     ,debug_level_lp=1
     ,lg_els_lp=`BSG_SAFE_CLOG2(els_p)
     ,lg_local_els_lp=`BSG_SAFE_CLOG2(local_els_p)
@@ -270,5 +270,7 @@ module bsg_tag_master_decentralized
 
    
 endmodule // bsg_tag_master
+
+`BSG_ABSTRACT_MODULE(bsg_tag_master_decentralized)
 
 // verilator lint_on BLKANDNBLK

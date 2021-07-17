@@ -15,9 +15,9 @@
 `include "bsg_fsb_pkg.v"
 
 module bsg_fsb_murn_gateway
-   #(parameter width_p="inv"
-   , parameter id_p="inv"
-   , parameter id_width_p="inv"
+   #(parameter `BSG_INV_PARAM(width_p)
+   , parameter `BSG_INV_PARAM(id_p)
+   , parameter `BSG_INV_PARAM(id_width_p)
    // resets with core reset
    // rather than by a command.
    , parameter enabled_at_start_p=0
@@ -130,6 +130,8 @@ module bsg_fsb_murn_gateway
 end // else: !if(snoop_p & enabled_at_start_p)
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fsb_murn_gateway)
 `else
 //  ______ _____ ____   _      ______ _____          _______     __ 
 // |  ____/ ____|  _ \ | |    |  ____/ ____|   /\   / ____\ \   / / 
@@ -142,8 +144,8 @@ endmodule
 
 module bsg_fsb_murn_gateway
    import bsg_fsb_pkg::*;
-   #(parameter width_p="inv"
-   , parameter id_p="inv"
+   #(parameter `BSG_INV_PARAM(width_p)
+   , parameter `BSG_INV_PARAM(id_p)
    // resets with core reset
    // rather than by a command.
    , parameter enabled_at_start_p=0
@@ -255,4 +257,6 @@ module bsg_fsb_murn_gateway
 end // else: !if(snoop_p & enabled_at_start_p)
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fsb_murn_gateway)
 `endif

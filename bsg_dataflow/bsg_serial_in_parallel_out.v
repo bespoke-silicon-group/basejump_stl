@@ -17,8 +17,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_serial_in_parallel_out #(`BSG_INV_PARAM(width_p)
-                                    , `BSG_INV_PARAM(els_p)
+module bsg_serial_in_parallel_out #(parameter `BSG_INV_PARAM(width_p)
+                                    , parameter `BSG_INV_PARAM(els_p)
                                     , parameter out_els_p = els_p)
    (input                 clk_i
     , input               reset_i

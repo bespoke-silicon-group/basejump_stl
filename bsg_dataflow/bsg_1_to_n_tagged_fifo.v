@@ -13,9 +13,9 @@
 
 `include "bsg_defines.v"
 
-module bsg_1_to_n_tagged_fifo   #(`BSG_INV_PARAM(width_p)
-                                  ,`BSG_INV_PARAM(num_out_p)
-                                  ,`BSG_INV_PARAM(els_p) // these are elements per channel
+module bsg_1_to_n_tagged_fifo   #(parameter `BSG_INV_PARAM(width_p)
+                                  ,parameter `BSG_INV_PARAM(num_out_p)
+                                  ,parameter `BSG_INV_PARAM(els_p) // these are elements per channel
                                   ,parameter unbuffered_mask_p        = '0
                                   ,parameter use_pseudo_large_fifo_p  = 0
                                   ,parameter harden_small_fifo_p      = 0

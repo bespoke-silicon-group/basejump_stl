@@ -4,7 +4,7 @@
 
 module bsg_nonsynth_dpi_cycle_counter
   #(
-    parameter int width_p = "inv"
+     parameter int width_p = 1
     ,parameter bit debug_p = 0
     )
    (
@@ -111,3 +111,4 @@ module bsg_nonsynth_dpi_cycle_counter
    endfunction
 
 endmodule
+

@@ -8,8 +8,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_mem_1r1w_one_hot #(`BSG_INV_PARAM(width_p)
-                            , `BSG_INV_PARAM(els_p)
+module bsg_mem_1r1w_one_hot #(parameter `BSG_INV_PARAM(width_p)
+                            , parameter `BSG_INV_PARAM(els_p)
 
                             , parameter safe_els_lp=`BSG_MAX(els_p,1)
                             )

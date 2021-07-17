@@ -7,7 +7,7 @@
 `include "bsg_defines.v"
 
 module bsg_swap
-  #(parameter width_p="inv")
+  #(parameter `BSG_INV_PARAM(width_p))
   (
     input [1:0][width_p-1:0] data_i
     , input swap_i
@@ -19,3 +19,5 @@ module bsg_swap
     : {data_i[1], data_i[0]};
   
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_swap)

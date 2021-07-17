@@ -13,8 +13,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_async_fifo #(parameter   lg_size_p = "inv"
-                        , parameter   width_p = "inv"
+module bsg_async_fifo #(parameter `BSG_INV_PARAM(  lg_size_p )
+                        , parameter `BSG_INV_PARAM(  width_p )
                         // we allow the control bits to be separated from
                         // the data bits to allow for better control optimization.
                         // control_width_p is how many of the width_p bits are control bits;
@@ -126,3 +126,5 @@ module bsg_async_fifo #(parameter   lg_size_p = "inv"
    // synopsys translate_on
 
 endmodule // bsg_async_fifo
+
+`BSG_ABSTRACT_MODULE(bsg_async_fifo)

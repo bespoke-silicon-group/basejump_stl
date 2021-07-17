@@ -22,9 +22,9 @@
 module bsg_mesh_router
   import bsg_noc_pkg::*;
   import bsg_mesh_router_pkg::*;
-  #(parameter width_p = -1
-    , parameter x_cord_width_p = -1
-    , parameter y_cord_width_p = -1
+  #(parameter `BSG_INV_PARAM(width_p )
+    , parameter `BSG_INV_PARAM(x_cord_width_p )
+    , parameter `BSG_INV_PARAM(y_cord_width_p )
     , parameter ruche_factor_X_p = 0
     , parameter ruche_factor_Y_p = 0
     , parameter dims_p = 2
@@ -200,3 +200,5 @@ module bsg_mesh_router
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mesh_router)

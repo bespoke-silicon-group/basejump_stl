@@ -36,11 +36,11 @@
 
 module bsg_tag_trace_replay
 
-   #( parameter rom_addr_width_p    = -1
-    , parameter rom_data_width_p    = -1
+   #( parameter `BSG_INV_PARAM(rom_addr_width_p    )
+    , parameter `BSG_INV_PARAM(rom_data_width_p    )
     , parameter num_masters_p       = 0
-    , parameter num_clients_p       = -1
-    , parameter max_payload_width_p = -1
+    , parameter `BSG_INV_PARAM(num_clients_p       )
+    , parameter `BSG_INV_PARAM(max_payload_width_p )
     , parameter uptime_p = 0)
 
     ( input clk_i
@@ -158,3 +158,5 @@ module bsg_tag_trace_replay
     end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_tag_trace_replay)

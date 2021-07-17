@@ -5,7 +5,7 @@ module bsg_fsb_to_htif_connector
 
    #(parameter htif_width_p
      ,parameter fsb_width_p=$size(RingPacketType)
-     ,parameter destid_p="inv"
+     ,parameter `BSG_INV_PARAM(destid_p)
      )
    (input clk_i
     ,input  reset_i
@@ -62,6 +62,8 @@ module bsg_fsb_to_htif_connector
    assign pkt_out.data[63:htif_width_p] = '0;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fsb_to_htif_connector)
 
 
 

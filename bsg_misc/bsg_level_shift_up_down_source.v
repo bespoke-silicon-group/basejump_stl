@@ -13,7 +13,7 @@
 //
 `include "bsg_defines.v"
 
-module bsg_level_shift_up_down_source #(parameter width_p = "inv")
+module bsg_level_shift_up_down_source #(parameter `BSG_INV_PARAM(width_p ))
 (
   input                      v0_en_i,
   input        [width_p-1:0] v0_data_i,
@@ -27,3 +27,5 @@ module bsg_level_shift_up_down_source #(parameter width_p = "inv")
   assign v1_data_o = v0_data_i & {width_p{v0_en_i}};
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_level_shift_up_down_source)

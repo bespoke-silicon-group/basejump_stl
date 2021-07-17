@@ -49,7 +49,7 @@
 
 module bsg_tag_client
    import bsg_tag_pkg::bsg_tag_s;
- #(width_p="inv", default_p="inv", harden_p=1)
+ #(parameter `BSG_INV_PARAM(width_p), `BSG_INV_PARAM(default_p), harden_p=1)
    (
     input bsg_tag_s bsg_tag_i
 
@@ -211,3 +211,5 @@ module bsg_tag_client
    assign recv_data_r_o   = recv_data_r;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_tag_client)

@@ -65,8 +65,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_fifo_1r1w_large_banked #(parameter width_p         = -1
-				    , parameter els_p         = -1
+module bsg_fifo_1r1w_large_banked #(parameter `BSG_INV_PARAM(width_p         )
+				    , parameter `BSG_INV_PARAM(els_p         )
                                     )
    (input                  clk_i
     , input                reset_i
@@ -149,4 +149,6 @@ module bsg_fifo_1r1w_large_banked #(parameter width_p         = -1
 
 
 endmodule // bsg_fifo_1r1w_large_banked
+
+`BSG_ABSTRACT_MODULE(bsg_fifo_1r1w_large_banked)
 

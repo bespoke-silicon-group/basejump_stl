@@ -1,7 +1,7 @@
 
 module bsg_link_osdr_phy
 
- #(parameter width_p    = "inv"
+ #(parameter `BSG_INV_PARAM(width_p    )
   ,parameter strength_p = 0)
 
   (input                clk_i
@@ -49,3 +49,4 @@ module bsg_link_osdr_phy
   end
 
 endmodule
+`BSG_ABSTRACT_MODULE(bsg_link_osdr_phy)

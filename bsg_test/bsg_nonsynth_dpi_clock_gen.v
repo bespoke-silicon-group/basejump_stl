@@ -27,7 +27,7 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_dpi_clock_gen
-  #(parameter longint cycle_time_p="inv"
+  #(parameter `BSG_INV_PARAM(longint cycle_time_p)
     )
    (
     output bit o
@@ -60,3 +60,5 @@ module bsg_nonsynth_dpi_clock_gen
       return o;
    endfunction;
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_dpi_clock_gen)

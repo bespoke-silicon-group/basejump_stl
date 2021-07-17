@@ -13,7 +13,7 @@
 
 `ifndef FSB_LEGACY 
 module  bsg_fsb_node_async_buffer 
-  #(  parameter ring_width_p="inv"
+  #(  parameter `BSG_INV_PARAM(ring_width_p)
      ,parameter fifo_els_p    = 2
     )
   (  
@@ -114,6 +114,8 @@ module  bsg_fsb_node_async_buffer
     );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fsb_node_async_buffer)
 `else
 // |  ____/ ____|  _ \ | |    |  ____/ ____|   /\   / ____\ \   / / 
 // | |__ | (___ | |_) || |    | |__ | |  __   /  \ | |     \ \_/ /  
@@ -125,7 +127,7 @@ endmodule
 
 module  bsg_fsb_node_async_buffer 
         import bsg_fsb_pkg::*;
-  #(  parameter ring_width_p="inv"
+  #(  parameter `BSG_INV_PARAM(ring_width_p)
      ,parameter fifo_els_p    = 2
     )
   (  
@@ -226,4 +228,6 @@ module  bsg_fsb_node_async_buffer
     );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fsb_node_async_buffer)
 `endif

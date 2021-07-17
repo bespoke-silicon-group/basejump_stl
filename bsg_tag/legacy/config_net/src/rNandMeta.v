@@ -2,7 +2,7 @@
 `include "bsg_defines.v"
 
 module rNandMeta
-  #(parameter width_p = -1)
+  #(parameter `BSG_INV_PARAM(width_p ))
    (input  [width_p - 1 : 0] data_a_i,
     input  [width_p - 1 : 0] data_b_i,
 
@@ -17,3 +17,5 @@ module rNandMeta
   endgenerate
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(rNandMeta)

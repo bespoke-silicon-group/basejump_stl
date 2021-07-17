@@ -6,8 +6,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_mem_1r1w_sync_mask_write_bit #(parameter width_p=-1
-                                        , parameter els_p=-1
+module bsg_mem_1r1w_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
+                                        , parameter `BSG_INV_PARAM(els_p)
                                         // semantics of "1" are write occurs, then read
                                         // the other semantics cannot be simulated on a hardened, non-simultaneous
                                         // 1r1w SRAM without changing timing.
@@ -99,3 +99,5 @@ module bsg_mem_1r1w_sync_mask_write_bit #(parameter width_p=-1
 
    
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync_mask_write_bit)

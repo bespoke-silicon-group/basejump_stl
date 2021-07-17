@@ -7,9 +7,9 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_ramulator_hbm
-  #(parameter channel_addr_width_p="inv"
-    , parameter data_width_p="inv"
-    , parameter num_channels_p="inv"
+  #(parameter `BSG_INV_PARAM(channel_addr_width_p)
+    , parameter `BSG_INV_PARAM(data_width_p)
+    , parameter `BSG_INV_PARAM(num_channels_p)
 
     , parameter debug_p=0
     , parameter init_mem_p=0 // zero out values in memory at the beginning
@@ -196,3 +196,5 @@ module bsg_nonsynth_ramulator_hbm
   end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_ramulator_hbm)

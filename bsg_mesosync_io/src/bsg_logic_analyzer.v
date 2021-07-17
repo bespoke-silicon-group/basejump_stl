@@ -12,8 +12,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_logic_analyzer #( parameter line_width_p = "inv"
-                           , parameter LA_els_p     = "inv"
+module bsg_logic_analyzer #( parameter `BSG_INV_PARAM(line_width_p )
+                           , parameter `BSG_INV_PARAM(LA_els_p     )
                            )
               ( input clk
               , input reset
@@ -86,3 +86,5 @@ bsg_fifo_1r1w_narrowed
              );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_logic_analyzer)

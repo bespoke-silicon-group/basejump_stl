@@ -5,7 +5,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_reduce #(parameter width_p = "inv"
+module bsg_reduce #(parameter `BSG_INV_PARAM(width_p )
                   , parameter xor_p = 0
                   , parameter and_p = 0
                   , parameter or_p = 0
@@ -29,3 +29,5 @@ module bsg_reduce #(parameter width_p = "inv"
      assign o = |i;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_reduce)

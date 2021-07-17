@@ -236,6 +236,6 @@ else
 
 endmodule
 
-`BSG_ABSTRACT_MODULE(bsg_round_robin_arb.v)
+`BSG_ABSTRACT_MODULE(bsg_round_robin_arb)
 
 """

@@ -3,9 +3,9 @@
 
 `include "bsg_defines.v"
 
-module bsg_crossbar_o_by_i #( `BSG_INV_PARAM(i_els_p)
-                             ,`BSG_INV_PARAM(o_els_p)
-                             ,`BSG_INV_PARAM(width_p)
+module bsg_crossbar_o_by_i #( parameter `BSG_INV_PARAM(i_els_p)
+                             ,parameter `BSG_INV_PARAM(o_els_p)
+                             ,parameter `BSG_INV_PARAM(width_p)
                             )
   ( input  [i_els_p-1:0][width_p-1:0] i
    ,input  [o_els_p-1:0][i_els_p-1:0] sel_oi_one_hot_i

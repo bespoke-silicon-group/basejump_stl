@@ -8,8 +8,8 @@
 `include "bsg_defines.v"
 
 module bsg_crossbar_control_basic_o_by_i
-  #(parameter i_els_p="inv"
-    , parameter o_els_p="inv"
+  #(parameter `BSG_INV_PARAM(i_els_p)
+    , parameter `BSG_INV_PARAM(o_els_p)
     , parameter lg_o_els_lp=`BSG_SAFE_CLOG2(o_els_p)
   )
   (
@@ -92,3 +92,5 @@ module bsg_crossbar_control_basic_o_by_i
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_crossbar_control_basic_o_by_i)

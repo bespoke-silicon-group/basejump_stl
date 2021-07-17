@@ -21,8 +21,8 @@
 
 module bsg_nonsynth_fsb_node_trace_replay
   #(parameter ring_width_p=80
-    , parameter master_id_p="inv"
-    , parameter slave_id_p="inv"
+    , parameter `BSG_INV_PARAM(master_id_p)
+    , parameter `BSG_INV_PARAM(slave_id_p)
     , parameter filename_p="trace.in"
     )
    (input clk_i
@@ -192,3 +192,5 @@ module bsg_nonsynth_fsb_node_trace_replay
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_fsb_node_trace_replay)

@@ -1,6 +1,6 @@
 module bsg_mux #(
-  parameter width_p    = "inv",
-  parameter els_p      = "inv",
+  parameter `BSG_INV_PARAM(width_p    ),
+  parameter `BSG_INV_PARAM(els_p      ),
   parameter harden_p   = 1,
   parameter balanced_p = 0,
   parameter lg_els_lp  = `BSG_SAFE_CLOG2(els_p)
@@ -40,4 +40,6 @@ module bsg_mux #(
       end: notmacro
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mux)
 

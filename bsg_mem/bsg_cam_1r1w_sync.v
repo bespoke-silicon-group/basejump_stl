@@ -10,9 +10,9 @@
 `include "bsg_defines.v"
 
 module bsg_cam_1r1w_sync
- #(`BSG_INV_PARAM(els_p)
-   ,`BSG_INV_PARAM(tag_width_p)
-   ,`BSG_INV_PARAM(data_width_p)
+ #(parameter `BSG_INV_PARAM(els_p)
+   ,parameter `BSG_INV_PARAM(tag_width_p)
+   ,parameter `BSG_INV_PARAM(data_width_p)
 
    // The replacement scheme for the CAM
    , parameter repl_scheme_p = "lru"
