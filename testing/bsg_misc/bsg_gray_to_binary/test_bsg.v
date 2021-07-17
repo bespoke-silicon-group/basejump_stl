@@ -75,8 +75,8 @@ module test_bsg
              , test_input, count, test_output);*/
     
     if(!reset)  
-      if(test_output != count)
-        $error("mismatch on input %x", test_input);
+      assert(test_output == count)
+        else $error("mismatch on input %x", test_input);
     
     if(!(|count) & (&count_r)) 
       begin

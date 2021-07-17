@@ -141,12 +141,12 @@ module test_bsg
             for(int i=0; i<inputs_p; ++i)
             begin
               if(!test_input_reqs[i])
-                if(|grant_count[i])
-                  $error("Granted input is not requested");
+                assert(!(|grant_count[i]))
+                  else $error("Granted input is not requested");
               else
-                if(grant_count[i] > (2*inputs_p/reqs_popcount)+1 
-                        || grant_count[i] < (2*inputs_p/reqs_popcount))
-                  $error("Arbitrer is unfair");
+                assert(grant_count[i] <= (2*inputs_p/reqs_popcount)+1 
+                        && grant_count[i] >= (2*inputs_p/reqs_popcount))
+                  else $error("Arbitrer is unfair");
             end
           end
       end

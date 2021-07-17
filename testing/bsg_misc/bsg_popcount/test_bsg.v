@@ -95,9 +95,9 @@ module test_bsg
              , count, test_input, test_output);*/
 
     if(!reset)  
-      if(test_output != popcount)
-        $error("mismatch on input %b, expected output: %b, test_output:%b"
-               , test_input, popcount, test_output);
+      assert(test_output == popcount)
+        else $error("mismatch on input %b, expected output: %b, test_output:%b"
+                    , test_input, popcount, test_output);
     
     if(&count)
       finish_r <= 1'b1;

@@ -65,8 +65,8 @@ module test_bsg
     else
       begin  
         test_input <= (test_input<<1)+1;
-        if(p_test_input != test_output) 
-          $error("mismatch on input %x", p_test_input);
+        assert(p_test_input == test_output)
+          else $error("mismatch on input %x", test_input);
       end
     
     p_test_input <= test_input;

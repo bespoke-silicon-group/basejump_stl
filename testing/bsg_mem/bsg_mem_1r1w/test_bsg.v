@@ -135,14 +135,14 @@ module test_bsg
     if(!reset)
       if(count <= els_p)
         // checks if data is not being written correctly
-        if(test_output_rdata != test_input_wdata_r) 
-          $error("mismatch on reading the address: %x\n", test_input_raddr);
+        assert(test_output_rdata == test_input_wdata_r) 
+          else $error("mismatch on reading the address: %x\n", test_input_raddr);
       else
         // checks if data is overwritten when w_v_i is asserted
         if(addr_width_p > 1) // does not work with els_p=1 i.e., one mem. element 
-          if(test_output_rdata != test_inputs[test_input_raddr]) 
-            $error("data may be overwritten when w_v_i is low at %x\n"
-                      , test_input_raddr);
+          assert(test_output_rdata == test_inputs[test_input_raddr]) 
+            else $error("data may be overwritten when w_v_i is low at %x\n"
+                        , test_input_raddr);
   end
 
   bsg_mem_1r1w #(  .width_p               (width_p)

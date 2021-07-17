@@ -102,9 +102,9 @@ module test_bsg
     /*$display("test_input: %b, count: %b, test_output: %b"
              , test_input, count, test_output);*/
     if(!reset)
-      if(count != test_output)
-          $error("mismatch on input %x;, expected output: %x;, test_output: %x"
-                    , test_input, count, test_output);
+      assert(count == test_output)
+          else $error("mismatch on input %x;, expected output: %x;, test_output: %x"
+                        , test_input, count, test_output);
   end
   
   bsg_thermometer_count #(  .width_p(width_p)

@@ -78,9 +78,9 @@ module test_bsg
         if(test_input_en == 1'b0)
           test_input_en <= 1'b1;
         
-        if(test_input_data_r != test_output)
-          $error("mismatch on input %x; expected output: %x; output: %x"
-                      , test_input_data, test_input_data_r, test_output); 
+        assert(test_input_data_r == test_output)
+          else $error("mismatch on input %x; expected output: %x; output: %x"
+                        , test_input_data, test_input_data_r, test_output); 
       end
     
     /*$display("test_input_data_r: %b, test_output: %b\n"

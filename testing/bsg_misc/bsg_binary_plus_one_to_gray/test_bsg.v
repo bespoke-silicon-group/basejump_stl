@@ -38,8 +38,8 @@ module test_bsg
 
    always_ff @(posedge clk)
      begin
-	if (test_output != (tip1>>1)^tip1)
-	  $error("mismatch on input %x",test_inputs);
+        assert (test_output == (tip1>>1)^tip1)
+        	else $error("mismatch on input %x",test_inputs);
 
         test_inputs_r <= test_inputs;
 

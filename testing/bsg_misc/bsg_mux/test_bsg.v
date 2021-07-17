@@ -84,8 +84,8 @@ module test_bsg
              , width_p'(test_input_sel), test_output);*////
     
     if(!reset)  
-      if (test_output!=width_p'(test_input_sel))
-        $error("mismatch on input %x", test_input_sel);
+      assert (test_output==width_p'(test_input_sel))
+        else $error("mismatch on input %x", test_input_sel);
     
     if(test_input_sel==(els_p-1))
       begin

@@ -121,13 +121,13 @@ module test_bsg
              , test_input, test_output_hilo, test_output_lohi);*/
     if(!reset)
       begin
-        if (ref_test_output_hilo != test_output_hilo)
-          $error("hi_to_lo_scan: mismatch on input %x; expected output: %x; "
-                 , test_input, ref_test_output_hilo, "test output: %x", test_output_hilo);
+        assert (ref_test_output_hilo == test_output_hilo)
+          else $error("hi_to_lo_scan: mismatch on input %x; expected output: %x; "
+                      , test_input, ref_test_output_hilo, "test output: %x", test_output_hilo);
 
-        if (ref_test_output_lohi != test_output_lohi)
-          $error("lo_to_hi_scan: mismatch on input %x; expected output: %x; "
-                 , test_input, ref_test_output_lohi, "test output: %x", test_output_lohi);
+        assert (ref_test_output_lohi == test_output_lohi)
+          else $error("lo_to_hi_scan: mismatch on input %x; expected output: %x; "
+                      , test_input, ref_test_output_lohi, "test output: %x", test_output_lohi);
       end
 
     if(finish_r)

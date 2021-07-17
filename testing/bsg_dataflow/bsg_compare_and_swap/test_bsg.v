@@ -65,12 +65,13 @@ module test_bsg
             );
     
     // finish if params are not compatible 
-    if(!((t_p <= width_p-1) & (0 <= b_p) & (b_p <= t_p)))
-      begin
-        $display("Incompatible params: %d, %d, %d, %d,\n" 
-  		          , width_p, t_p, b_p, cond_swap_on_equal_p);
-        $finish;
-      end
+    assert((t_p <= width_p-1) & (0 <= b_p) & (b_p <= t_p))
+      else 
+        begin
+          $display("Incompatible params: %d, %d, %d, %d,\n" 
+  		            , width_p, t_p, b_p, cond_swap_on_equal_p);
+          $finish;
+        end
     
   end
     
@@ -107,23 +108,23 @@ module test_bsg
   begin
     if(!reset)  
       begin
-        if(test_output_swapped != ((test_input[0][t_p:b_p] > test_input[1][t_p:b_p])
+        assert(test_output_swapped == ((test_input[0][t_p:b_p] > test_input[1][t_p:b_p])
                                        | ((cond_swap_on_equal_p & test_input_swap)
                                           & (test_input[0] == test_input[1])
                                          )
                                       )
-          )
-          $error("swapped_o: mismatch on input %x", test_input);
+              )
+          else $error("swapped_o: mismatch on input %x", test_input);
 
-        if(test_output != ((test_input[0][t_p:b_p] > test_input[1][t_p:b_p])
+        assert(test_output == ((test_input[0][t_p:b_p] > test_input[1][t_p:b_p])
                                | ((cond_swap_on_equal_p & test_input_swap)
                                   & (test_input[0] == test_input[1])
                                  )
                               )
                               ? {test_input[0], test_input[1]}
                               : test_input
-          )
-          $error("data_o: mismatch on input %x", test_input);
+              )
+          else $error("data_o: mismatch on input %x", test_input);
       end
   end
 

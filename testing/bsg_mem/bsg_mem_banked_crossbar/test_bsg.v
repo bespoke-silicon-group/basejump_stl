@@ -178,8 +178,8 @@ module test_bsg;
 
   always_ff @(posedge clk)
     if(|test_input_v)
-      if(~(|test_output_yumi))
-        $error("Error at time: %d, no transaction in a cycle", $time);
+      assert(|test_output_yumi)
+        else $error("Error at time: %d, no transaction in a cycle", $time);
 
   for(i=0; i<ports_p; i=i+1)
   begin
@@ -189,8 +189,8 @@ module test_bsg;
       test_input_addr_r[i] <= test_input_addr[i];
 
       if(test_output_v[i] & ~reset)
-        if(test_output_data[i] != {(data_width_p/8){4'(i), 4'(bank_num_r[i])}})
-          $error("Error while accessing %b from port: %0d, data was %b", test_input_addr_r[i], i, test_output_data[i]);
+        assert(test_output_data[i] == {(data_width_p/8){4'(i), 4'(bank_num_r[i])}})
+          else $error("Error while accessing %b from port: %0d, data was %b", test_input_addr_r[i], i, test_output_data[i]);
     end
   end
 

@@ -65,8 +65,8 @@ module test_bsg
   always_ff @(posedge clk)
   begin
     if(!reset)
-      if(count != test_output)
-        $error("mismatch on clock cycle %x", count);
+      assert(count == test_output)
+        else $error("mismatch on clock cycle %x", count);
     
     if(!(|count) & (&count_r)) // finish when count value returns to 0
       begin

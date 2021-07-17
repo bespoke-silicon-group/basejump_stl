@@ -89,8 +89,8 @@ module test_bsg
           end
         
         if(width_p != 1)
-          if((test_output_addr != count) | (v != test_output_v))
-            $error("mismatch on input %x", test_input);
+          assert((test_output_addr == count) & (v == test_output_v))
+            else $error("mismatch on input %x", test_input);
       end
     
     test_input   <= test_input_n;

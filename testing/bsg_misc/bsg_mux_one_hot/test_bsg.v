@@ -81,8 +81,8 @@ module test_bsg
             $finish;
           end
         
-        if (test_output!=width_p'(addr))
-          $error("mismatch on input %x", test_input_sel);
+        assert (test_output==width_p'(addr))
+          else $error("mismatch on input %x", test_input_sel);
       end
     
     /*$display("test_input_sel: %b, test_output: %b\n"

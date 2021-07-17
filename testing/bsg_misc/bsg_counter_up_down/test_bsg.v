@@ -53,12 +53,13 @@ module test_bsg
 
   initial
   begin
-    if(max_val_p < init_val_p) // checks if params are compatible
-      begin
-        $error(  "  Incompatible parameters"
-               , ": initial value greater than maximum value\n");
-        $finish;
-      end
+    assert(max_val_p >= init_val_p) // checks if params are compatible
+      else
+        begin
+          $error(  "  Incompatible parameters"
+                 , ": initial value greater than maximum value\n");
+          $finish;
+        end
 
     $display(  "\n\n\n"
              , "================================================================="
@@ -106,8 +107,8 @@ module test_bsg
     else
       begin
         //$display("count: %d, test_output: %d @  time: %d\n", count, test_output, $time);
-        if(count != test_output)
-          $error("mismatch on time %d\n", $time);
+        assert(count == test_output)
+          else $error("mismatch on time %d\n", $time);
 
         count      <= count + test_input_up - test_input_down;
         prev_count <= count;

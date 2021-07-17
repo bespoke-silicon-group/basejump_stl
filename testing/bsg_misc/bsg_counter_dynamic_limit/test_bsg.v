@@ -55,12 +55,13 @@ module testbench
              , "OVERFLOW_P: %d\n", overflow_p
             );
     
-    if(overflow_p >= 2**width_p)
-      begin
-        $display("skipping the test due to incompatible parameters\n");
-        $display("=========================================================\n");
-        $finish;
-      end
+    assert(overflow_p < 2**width_p)
+      else
+        begin
+          $display("skipping the test due to incompatible parameters\n");
+          $display("=========================================================\n");
+          $finish;
+        end
   end
                                         
   logic [width_p-1:0] test_input, test_output, prev_count, count;
@@ -87,8 +88,8 @@ module testbench
 
     //$display("count: %d, test_output: %d\n", count, test_output); ///////////////////////////
     if(!reset)
-      if(count != test_output)
-        $error("error on count %x", count);
+      assert (count == test_output)
+        else $error("error on count %x", count);
     
     if(~(|count) & (prev_count == overflow_p))
       finish_r <= 1;

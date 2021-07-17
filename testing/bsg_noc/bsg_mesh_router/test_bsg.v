@@ -315,14 +315,14 @@ module test_bsg
                     );
             test_output_data_r <= test_output_data[i][P];
             
-            if(test_output_data[i][P][0+:(lg_node_x_lp+lg_node_y_lp)] != i)
-              $error("received at tile: %0d, should go to tile: %0d"
-                     ,i
-                     ,test_output_data[i][P][0+:(lg_node_x_lp+lg_node_y_lp)]
-                    );
+            assert(test_output_data[i][P][0+:(lg_node_x_lp+lg_node_y_lp)] == i)
+              else $error("received at tile: %0d, should go to tile: %0d"
+                          ,i
+                          ,test_output_data[i][P][0+:(lg_node_x_lp+lg_node_y_lp)]
+                         );
 
-            if((test_output_data_r!=test_output_data[i][P]) | output_count[i]!=0)
-              $error("packet received at tile %d is not unique", i);
+            assert((test_output_data_r!=test_output_data[i][P]) | output_count[i]==0)
+              else $error("packet received at tile %d is not unique", i);
 
             output_count[i] <= output_count[i] + 1;
             
