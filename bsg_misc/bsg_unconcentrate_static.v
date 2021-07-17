@@ -27,4 +27,3 @@ module bsg_unconcentrate_static #(`BSG_INV_PARAM(pattern_els_p)
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_unconcentrate_static)
-

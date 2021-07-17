@@ -22,4 +22,3 @@ module bsg_dff_negedge_reset #(`BSG_INV_PARAM(width_p), harden_p=0)
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_dff_negedge_reset)
-

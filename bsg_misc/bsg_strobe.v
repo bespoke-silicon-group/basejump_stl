@@ -145,4 +145,3 @@ module bsg_strobe #(`BSG_INV_PARAM(width_p)
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_strobe)
-

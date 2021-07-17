@@ -132,4 +132,3 @@ module bsg_barrier
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_barrier);
-

@@ -22,4 +22,3 @@ module bsg_dff_reset #(`BSG_INV_PARAM(width_p), reset_val_p=0, harden_p=0)
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_dff_reset)
-

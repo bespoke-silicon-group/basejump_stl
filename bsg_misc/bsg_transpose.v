@@ -18,4 +18,3 @@ module bsg_transpose #(`BSG_INV_PARAM(width_p)
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_transpose)
-

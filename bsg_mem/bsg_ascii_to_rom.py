@@ -61,4 +61,3 @@ else :
 print "endcase"
 print "endmodule"
 print "`BSG_ABSTRACT_MODULE(" + sys.argv[2] + ")"
-

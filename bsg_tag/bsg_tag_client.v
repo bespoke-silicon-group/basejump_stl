@@ -213,4 +213,3 @@ module bsg_tag_client
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_tag_client)
-

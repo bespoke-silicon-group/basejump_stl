@@ -17,4 +17,3 @@ module bsg_dff_gatestack #(`BSG_INV_PARAM(width_p), harden_p=1)
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_dff_gatestack)
-
