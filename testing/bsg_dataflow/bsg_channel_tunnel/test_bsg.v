@@ -14,31 +14,38 @@
 
  ***************************************************************************/
 
-module test_bsg;
-
-   localparam width_lp                = `WIDTH_P;
-   localparam num_in_lp               = `NUM_IN_P;
-   localparam remote_credits_lp       = `REMOTE_CREDITS_P;
-   localparam lg_credit_decimation_lp = `LG_CREDIT_DECIMATION_P;
-   localparam asymmetric_lp           = `ASYMMETRIC_P;
-   localparam use_pseudo_large_fifo_lp = `USE_PSEUDO_LARGE_FIFO_P;
-
-   localparam cycle_time_lp = 20;
+module test_bsg
+#(
+   parameter width_p                = `WIDTH_P,
+   parameter num_in_p               = `NUM_IN_P,
+   parameter remote_credits_p       = `REMOTE_CREDITS_P,
+   parameter lg_credit_decimation_p = `LG_CREDIT_DECIMATION_P,
+   parameter asymmetric_p           = `ASYMMETRIC_P,
+   parameter use_pseudo_large_fifo_p = `USE_PSEUDO_LARGE_FIFO_P,
+   parameter cycle_time_p = 20,
+   parameter reset_cycles_lo_p=1,
+   parameter reset_cycles_hi_p=5
+);
 
    wire clk;
    wire reset;
 
-   bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_lp)
-                              )  clock_gen
-     (  .o(clk)  );
-
-   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                              , .reset_cycles_lo_p(1)
-                              , .reset_cycles_hi_p(5)
-                              )  reset_gen
-     (  .clk_i        (clk)
-        , .async_reset_o(reset)
-        );
+  `ifdef VERILATOR
+    bsg_nonsynth_dpi_clock_gen
+  `else
+    bsg_nonsynth_clock_gen
+  `endif
+   #(.cycle_time_p(cycle_time_p))
+   clock_gen
+    (.o(clk));
+    
+  bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
+                           , .reset_cycles_lo_p(reset_cycles_lo_p)
+                           , .reset_cycles_hi_p(reset_cycles_hi_p)
+                          )  reset_gen
+                          (  .clk_i        (clk) 
+                           , .async_reset_o(reset)
+                          );
 
    initial
      begin
@@ -51,25 +58,25 @@ module test_bsg;
         $display("\n\n\n");
         $display("===========================================================");
         $display("testing bsg_channel_tunnel with ...");
-        $display("WIDTH_LP :               %d", width_lp);
-        $display("NUM_IN_LP:               %d", num_in_lp);
-        $display("REMOTE_CREDITS_LP:       %d", remote_credits_lp);
-        $display("LG_CREDIT_DECIMATION_LP: %d", lg_credit_decimation_lp);
-        $display("ASYMMETRIC_LP: %d", asymmetric_lp);
-        $display("USE_PSEUDO_LARGE_FIFO_LP: %d", use_pseudo_large_fifo_lp);
+        $display("WIDTH_P :               %d", width_p);
+        $display("NUM_IN_P:               %d", num_in_p);
+        $display("REMOTE_CREDITS_P:       %d", remote_credits_p);
+        $display("LG_CREDIT_DECIMATION_P: %d", lg_credit_decimation_p);
+        $display("ASYMMETRIC_P: %d", asymmetric_p);
+        $display("USE_PSEUDO_LARGE_FIFO_P: %d", use_pseudo_large_fifo_p);
      end
 
-   localparam tag_width_lp = $clog2(num_in_lp+1);
-   localparam tagged_width_lp = tag_width_lp+width_lp;
+   localparam tag_width_lp = $clog2(num_in_p+1);
+   localparam tagged_width_lp = tag_width_lp+width_p;
 
    wire [1:0][tagged_width_lp-1:0] multi_data;
    wire [1:0]                      multi_valid;
    wire [1:0]                      multi_yumi;
 
    //   A B  i/o   channels
-   wire [1:0][1:0][num_in_lp-1:0][width_lp-1:0] data;
-   wire [1:0][1:0][num_in_lp-1:0]               valid;
-   wire [1:0][1:0][num_in_lp-1:0]               yumi;
+   wire [1:0][1:0][num_in_p-1:0][width_p-1:0] data;
+   wire [1:0][1:0][num_in_p-1:0]               valid;
+   wire [1:0][1:0][num_in_p-1:0]               yumi;
 
    // instantiate two connected tunnel ends.
    // fixme: add delay elements
@@ -79,11 +86,11 @@ module test_bsg;
    // AB
    for (i = 0; i < 2; i=i+1)
      begin: rof
-        bsg_channel_tunnel #(.width_p(width_lp)
-                             ,.num_in_p(num_in_lp)
-                             ,.remote_credits_p(remote_credits_lp)
-                             ,.lg_credit_decimation_p(lg_credit_decimation_lp)
-                             ,.use_pseudo_large_fifo_p(use_pseudo_large_fifo_lp)
+        bsg_channel_tunnel #(.width_p(width_p)
+                             ,.num_in_p(num_in_p)
+                             ,.remote_credits_p(remote_credits_p)
+                             ,.lg_credit_decimation_p(lg_credit_decimation_p)
+                             ,.use_pseudo_large_fifo_p(use_pseudo_large_fifo_p)
                              ) dut
             (.clk_i   (clk)
              ,.reset_i(reset)
@@ -110,9 +117,9 @@ module test_bsg;
    // and a counter checking the value on the way out.
 
    //    A B  i/o  channel
-   wire [1:0][1:0][num_in_lp-1:0] ctr_incr;
+   wire [1:0][1:0][num_in_p-1:0] ctr_incr;
    //    A B  i/o  channel
-   wire [1:0][1:0][num_in_lp-1:0] [width_lp-1:0] ctr_lo;
+   wire [1:0][1:0][num_in_p-1:0] [width_p-1:0] ctr_lo;
 
    genvar                      j,k;
 
@@ -130,7 +137,7 @@ module test_bsg;
       ,.count_o(words_received)
       );
 
-   wire        cred_send = multi_valid[0] & multi_data[0][width_lp+:tag_width_lp] == (tag_width_lp ' (num_in_lp));
+   wire        cred_send = multi_valid[0] & multi_data[0][width_p+:tag_width_lp] == (tag_width_lp ' (num_in_p));
 
    bsg_counter_clear_up #(.max_val_p({ 1'b0, { 32 { 1'b1 }}})
                           ,.init_val_p(0)
@@ -148,7 +155,7 @@ module test_bsg;
    always @(negedge clk)
      begin
 	if (show_values_lp)
-        for (a = 0; a < num_in_lp; a=a+1)
+        for (a = 0; a < num_in_p; a=a+1)
           for (b = 0; b < 2; b=b+1)
             for (c = 0; c < 2; c=c+1)
               $display("channel %d, %s %x ",a, (b ? (c ? "*<-" : "<-*") : (c ? "->*" : "*->"))
@@ -169,7 +176,7 @@ module test_bsg;
       );
 
    // generate some data
-   for (i = 0; i < num_in_lp; i++)
+   for (i = 0; i < num_in_p; i++)
      begin: rof2
         // j-> A B
         for (j = 0; j < 2; j++)
@@ -178,7 +185,7 @@ module test_bsg;
              for (k = 0; k < 2; k++)
                begin: rof4
                   bsg_counter_up_down
-                      #(.max_val_p({ 1'b0, { width_lp {1'b1} }} )
+                      #(.max_val_p({ 1'b0, { width_p {1'b1} }} )
                        ,.init_val_p( (i<<16)+i)
                        ) ctr
                       (.clk_i(clk)
@@ -197,16 +204,16 @@ module test_bsg;
              // * wire paired counter to output; we receive at different
              // rates based on channel number.
 
-             assign yumi[!j][1][i]     = valid[!j][1][i] & (~asymmetric_lp | (cycle[i:0]==0));
+             assign yumi[!j][1][i]     = valid[!j][1][i] & (~asymmetric_p | (cycle[i:0]==0));
              assign ctr_incr[!j][1][i] = yumi[!j][1][i];
 
              // check data on receiving end of channel
              always_ff @(negedge clk)
                assert(reset | ~valid[!j][1][i]
-                      | (data[!j][1][i] == ctr_lo[!j][1][i][width_lp-1:0]))
+                      | (data[!j][1][i] == ctr_lo[!j][1][i][width_p-1:0]))
                  else $error("%m mismatch (data=%x) (counter=%x)"
                              ,data   [!j][1][i]
-                             ,ctr_lo [!j][1][i][width_lp-1:0] // need to shorten value to compare to
+                             ,ctr_lo [!j][1][i][width_p-1:0] // need to shorten value to compare to
                              );
           end // block: rof3
      end // block: rof2
