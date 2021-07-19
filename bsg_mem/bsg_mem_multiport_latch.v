@@ -3,7 +3,8 @@
  *
  *    @author tommy
  *
- *    RISC-V Latch-based regfile.
+ *    Multiport synth memory.
+ *    it can be used as RISC-V Latch-based regfile.
  *
  *    width_p = data width.
  *    els_p = # of words in regfile.
@@ -73,7 +74,7 @@ module bsg_mem_multiport_latch
   logic [width_p-1:0] w_data_r;
 
   always_latch
-    if (~clk_i & w_v_i)
+    if (~clk_i)
       w_data_r <= w_data_i;
 
 
