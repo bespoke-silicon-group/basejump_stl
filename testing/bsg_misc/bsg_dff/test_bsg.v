@@ -26,14 +26,10 @@ module test_bsg
   wire clk;
   wire reset;
 
-  `ifdef VERILATOR
-    bsg_nonsynth_dpi_clock_gen
-  `else
-    bsg_nonsynth_clock_gen
-  `endif
-   #(.cycle_time_p(sim_clk_period_p))
-   clock_gen
-    (.o(clk));
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
+                          )  clock_gen
+                          (  .o(clk)
+                          );
 
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(reset_cycles_lo_p)
@@ -70,8 +66,6 @@ module test_bsg
       end
     
     p_test_input <= test_input;
-    
-    // $display("clk=%d reset=%d input=%d output=%d p_test_input=%d",clk,reset,test_input,test_output,p_test_input);
 
     if(&p_test_input)
       finish_r <= 1'b1;

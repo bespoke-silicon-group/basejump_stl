@@ -3,15 +3,19 @@
 
 /**************************** TEST RATIONALE *******************************
 1. STATE SPACE
+
   This module tests hi_to_lo and lo_to_hi simultaneously by instantiating
   two DUTs, DUT_hilo and DUT_lohi. Each unit is tested for entire state
   space of a binary number of WIDTH_P.
+
 2. PARAMETERIZATION
+
   DUT's implementation is not much influenced by WIDTH_P. CASE_P can have
   only one of the three values 100, 010 and 001. So a minimum set of test
   might be WIDTH_P = 1,2,3,4 and CASE_P = 100,010,001. Tests with a large
   WIDTH_P take long to finish because the number of test inputs grow
   exponentially with WIDTH_P.
+
 ***************************************************************************/
 
 module test_bsg
@@ -28,14 +32,10 @@ module test_bsg
   wire clk;
   wire reset;
 
-  `ifdef VERILATOR
-    bsg_nonsynth_dpi_clock_gen
-  `else
-    bsg_nonsynth_clock_gen
-  `endif
-   #(.cycle_time_p(cycle_time_p))
-   clock_gen
-    (.o(clk));
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
+                          )  clock_gen
+                          (  .o(clk)
+                          );
     
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(reset_cycles_lo_p)

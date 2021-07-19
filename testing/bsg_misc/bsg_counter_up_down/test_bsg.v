@@ -6,16 +6,20 @@
 
 /**************************** TEST RATIONALE *******************************
 1. STATE SPACE
+
   This test module tests the outputs of DUT for a complete count-cycle
   i.e., from INIT_VAL_P to MAX_VAL_P and then from MAX_VAL_P to INIT_VAL_P.
   If the MAX_VAL_P is less than INIT_VAL_P, simulation finishes
   without doing anything.
+
 2. PARAMETERIZATION
+
   Since the DUT implements an algorithm that simply increments or decrements
   the count, an arbitrary set of tests that include that include the edge
   cases would do the job. So a minimum set of tests might be MAX_VAL_P=1,2,
   3,4 with INIT_VAL_P=0,1,2,3. No need to worry about making parameters
   compatiable as those tests finish without instatiating DUT.
+  
 ***************************************************************************/
 
 module test_bsg
@@ -30,14 +34,10 @@ module test_bsg
   wire clk;
   wire reset;
 
-  `ifdef VERILATOR
-    bsg_nonsynth_dpi_clock_gen
-  `else
-    bsg_nonsynth_clock_gen
-  `endif
-   #(.cycle_time_p(cycle_time_p))
-   clock_gen
-    (.o(clk));
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
+                          )  clock_gen
+                          (  .o(clk)
+                          );
 
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(reset_cycles_lo_p)

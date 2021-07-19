@@ -2,13 +2,17 @@
 
 /**************************** TEST RATIONALE *******************************
 1. STATE SPACE
+
   An internal counter keeps track of the count which is compared with the 
   output of the DUT. This test continues for 2**WIDTH_P cycles and hence 
   tests the DUT exhaustively.
+
 2. PARAMETERIZATION
+
   A minimum set of tests might be WIDTH_P=1,2,..,8. Since the number of test
   cases grows exponentially, tests with large WIDTH_P takes very long to
   finish.
+
 ***************************************************************************/
 
 module test_bsg
@@ -22,14 +26,10 @@ module test_bsg
   wire clk;
   wire reset;
   
-  `ifdef VERILATOR
-    bsg_nonsynth_dpi_clock_gen
-  `else
-    bsg_nonsynth_clock_gen
-  `endif
-   #(.cycle_time_p(cycle_time_p))
-   clock_gen
-    (.o(clk));
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
+                          )  clock_gen
+                          (  .o(clk)
+                          );
     
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(reset_cycles_lo_p)

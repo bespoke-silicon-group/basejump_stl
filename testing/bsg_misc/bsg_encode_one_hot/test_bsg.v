@@ -4,13 +4,16 @@
 
 /**************************** TEST RATIONALE *******************************
 1. STATE SPACE
+
   The output of the function is undefined if there is more than a single 1 
   bit set in the function, so that fortunately limits the state space that 
   needs to be tested, and means that we can exhaustively test the function, 
   simply by testing the following inputs: all zeros, and the value 1 
   shifted from 0 to WIDTH_P bits. Clearly, we should test both outputs 
   values.
+
 2. PARAMETERIZATION
+
   The parameter WIDTH_P determines the behavior of the function in a 
   significant way, because it is written as a divide-and-conquer recursive 
   algorithm. Significantly, in the cost, the case (WIDTH_P=1) is a special 
@@ -19,6 +22,7 @@
   WIDTH_P=4, and WIDTH_P=5,6,7. However, since there are relatively few 
   cases, an alternative approach is to test WIDTH_P=1..512, 
   which gives us brute force assurance.
+
 ***************************************************************************/
 
 module test_bsg
@@ -32,14 +36,10 @@ module test_bsg
   wire clk;
   wire reset;
 
-  `ifdef VERILATOR
-    bsg_nonsynth_dpi_clock_gen
-  `else
-    bsg_nonsynth_clock_gen
-  `endif
-   #(.cycle_time_p(cycle_time_p))
-   clock_gen
-    (.o(clk));
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
+                          )  clock_gen
+                          (  .o(clk)
+                          );
     
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(reset_cycles_lo_p)

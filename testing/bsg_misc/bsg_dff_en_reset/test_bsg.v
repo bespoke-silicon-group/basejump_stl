@@ -2,15 +2,19 @@
 
 /**************************** TEST RATIONALE *******************************
 1. STATE SPACE
+
   The number of possible inputs for each WIDTH_P is very large and moreover,
   the implementation of the DUT itself is independent of the value of input.
   So thermometer codes are used as test inputs, thus limiting the
   number of test inputs to WIDTH_P+1. This module also tests enable and reset
   after completing tests with thermometer codes.
+
 2. PARAMETERIZATION
+
   DUT synthesizes a similar logic irrespective of the width. Hence an arbitrary
   set of tests including edge might be sufficient. So a minimum set of tests
   might be WIDTH_P = 1,2,3,4.
+
 ***************************************************************************/
 
 module test_bsg
@@ -24,14 +28,10 @@ module test_bsg
   wire clk;
   wire reset;
   
-  `ifdef VERILATOR
-    bsg_nonsynth_dpi_clock_gen
-  `else
-    bsg_nonsynth_clock_gen
-  `endif
-   #(.cycle_time_p(cycle_time_p))
-   clock_gen
-    (.o(clk));
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
+                          )  clock_gen
+                          (  .o(clk)
+                          );
     
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(reset_cycles_lo_p)
