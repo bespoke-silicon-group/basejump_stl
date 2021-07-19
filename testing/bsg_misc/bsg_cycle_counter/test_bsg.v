@@ -1,7 +1,6 @@
 `define WIDTH_P 2
 
 /**************************** TEST RATIONALE *******************************
-
 1. STATE SPACE
 
   An internal counter keeps track of the count which is compared with the 
@@ -16,24 +15,27 @@
 
 ***************************************************************************/
 
-module test_bsg;
-  
-  localparam cycle_time_lp = 20;
-  localparam width_lp = `WIDTH_P;
+module test_bsg
+#(  
+  parameter cycle_time_p = 20,
+  parameter width_p = `WIDTH_P,
+  parameter reset_cycles_lo_p=1,
+  parameter reset_cycles_hi_p=5
+);
 
   wire clk;
   wire reset;
   
-  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_lp)
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
                           )  clock_gen
                           (  .o(clk)
                           );
     
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(1)
-                           , .reset_cycles_hi_p(5)
+                           , .reset_cycles_lo_p(reset_cycles_lo_p)
+                           , .reset_cycles_hi_p(reset_cycles_lo_p)
                           )  reset_gen
-                          (  .clk_i        (clk) 
+                          (  .clk_i        (clk)
                            , .async_reset_o(reset)
                           );
 
@@ -42,12 +44,12 @@ module test_bsg;
     $display("\n\n\n");
     $display(  "=============================================================\n"
              , "testing with ...\n"
-             , "WIDTH_P: %d\n", width_lp
+             , "WIDTH_P: %d\n", width_p
             );
   end
                                         
-  logic [width_lp-1:0] count, count_r;
-  wire  [width_lp-1:0] test_output;
+  logic [width_p-1:0] count, count_r;
+  wire  [width_p-1:0] test_output;
   
   always_ff @(posedge clk)
   begin
@@ -73,14 +75,14 @@ module test_bsg;
       end
   end
   
-  bsg_cycle_counter #(  .width_p(width_lp)
+  bsg_cycle_counter #(  .width_p(width_p)
                      )  DUT
                      (  .clk_i    (clk)
                       , .reset_i(reset)
                       , .ctr_r_o(test_output)
                      );
                              
-  /*bsg_nonsynth_ascii_writer #(  .width_p      (width_lp)
+  /*bsg_nonsynth_ascii_writer #(  .width_p      (width_p)
                               , .values_p     (2)
                               , .filename_p   ("output.log")
                               , .fopen_param_p("a+")

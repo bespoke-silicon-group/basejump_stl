@@ -24,26 +24,28 @@
 ***************************************************************************/
 
 module test_bsg;
+#(
+  parameter width_p      = `WIDTH_P,
+  parameter els_p        = `ELS_P,
+  parameter addr_width_p = `BSG_SAFE_CLOG2(`ELS_P),
+  parameter cycle_time_p = 20,
+  parameter seed_p       = `SEED_P,
+  parameter reset_cycles_lo_p=1,
+  parameter reset_cycles_hi_p=5
+);
 
-  localparam width_lp      = `WIDTH_P;
-  localparam els_lp        = `ELS_P;
-  localparam addr_width_lp = `BSG_SAFE_CLOG2(`ELS_P);
-  
-  localparam cycle_time_lp = 20;
-  localparam seed_lp       = `SEED_P;
-  
   // clock and reset generation
   wire clk;
   wire reset;
   
-  bsg_nonsynth_clock_gen #( .cycle_time_p(cycle_time_lp)
-                          ) clock_gen
-                          ( .o(clk)
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
+                          )  clock_gen
+                          (  .o(clk)
                           );
-    
+
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(1)
-                           , .reset_cycles_hi_p(5)
+                           , .reset_cycles_lo_p(reset_cycles_lo_p)
+                           , .reset_cycles_hi_p(reset_cycles_hi_p)
                           )  reset_gen
                           (  .clk_i        (clk) 
                            , .async_reset_o(reset)
@@ -60,17 +62,17 @@ module test_bsg;
     $display("\n\n\n");
     $display("===========================================================");
     $display("testing bsg_mem_1rw_sync with ...");
-    $display("WIDTH_P: %0d", width_lp);
-    $display("ELS_P  : %0d\n", els_lp);
+    $display("WIDTH_P: %0d", width_p);
+    $display("ELS_P  : %0d\n", els_p);
   end
 
-  logic [width_lp-1:0] test_input_data, test_input_data_r
+  logic [width_p-1:0] test_input_data, test_input_data_r
                        , test_output_data, test_output_data_r;
-  logic [addr_width_lp-1:0] test_input_addr;
+  logic [addr_width_p-1:0] test_input_addr;
   logic test_input_w, test_input_v;
 
-  logic [`BSG_SAFE_CLOG2(3*els_lp):0] count;
-  bsg_cycle_counter #(  .width_p   (`BSG_SAFE_CLOG2(3*els_lp)+1)
+  logic [`BSG_SAFE_CLOG2(3*els_p):0] count;
+  bsg_cycle_counter #(  .width_p   (`BSG_SAFE_CLOG2(3*els_p)+1)
                       , .init_val_p()
                      )  cycle_counter
                      (  .clk_i    (clk)
@@ -80,8 +82,8 @@ module test_bsg;
 
   // random test data generation; 
   // generates a new random number after every +ve clock edge
-  bsg_nonsynth_random_gen #(  .width_p(width_lp)
-                            , .seed_p (seed_lp)
+  bsg_nonsynth_random_gen #(  .width_p(width_p)
+                            , .seed_p (seed_p)
                            )  random_gen
                            (  .clk_i  (clk)
                             , .reset_i(reset)
@@ -97,7 +99,7 @@ module test_bsg;
 
     if(reset)
       begin
-        test_input_addr <= addr_width_lp'(0);
+        test_input_addr <= addr_width_p'(0);
         test_input_w    <= 1'b1;
         test_input_v    <= 1'b1;
       end
@@ -106,9 +108,9 @@ module test_bsg;
         test_input_w    <= !(test_input_w);
         test_input_addr <= test_input_addr + !(test_input_w);
         
-        if(count < 2*els_lp-1) // first pass
+        if(count < 2*els_p-1) // first pass
           test_input_v <= 1'b1;
-        else if(count < 3*els_lp) // second pass, covers only a portion of mem.
+        else if(count < 3*els_p) // second pass, covers only a portion of mem.
           test_input_v <= 1'b0;
         else
           begin
@@ -126,7 +128,7 @@ module test_bsg;
     else
       begin
         // if w_i is low and v_i is high a new mem. location is read
-        if(count <= 2*els_lp-1)
+        if(count <= 2*els_p-1)
           begin
             if((!test_input_w) && test_input_v) 
               new_read <= 1'b1;
@@ -150,8 +152,8 @@ module test_bsg;
       end
   end
 
-  bsg_mem_1rw_sync #(  .width_p(width_lp)
-                     , .els_p  (els_lp)
+  bsg_mem_1rw_sync #(  .width_p(width_p)
+                     , .els_p  (els_p)
                     )  DUT
                     (  .clk_i  (clk)
                      , .reset_i(reset)
