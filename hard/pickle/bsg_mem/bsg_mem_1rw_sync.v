@@ -3,9 +3,10 @@
 
 module bsg_mem_1rw_sync #( parameter `BSG_INV_PARAM(width_p )
                          , parameter `BSG_INV_PARAM(els_p )
+                         , parameter latch_last_read_p = 0
                          , parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
-                         // whether to substitute a 1r1w
-                         , parameter substitute_1r1w_p = 1
+                         // NOTE: unused
+                         , parameter substitute_1r1w_p = 0
                          )
   ( input                     clk_i
   , input                     reset_i
@@ -26,41 +27,12 @@ module bsg_mem_1rw_sync #( parameter `BSG_INV_PARAM(width_p )
   `bsg_mem_1rw_sync_macro(256,96) else
 
   // no hardened version found
-    begin : z
-      // we substitute a 1r1w macro
-      // fixme: theoretically there may be
-      // a more efficient way to generate a 1rw synthesized ram
-      if (substitute_1r1w_p)
-        begin: s1r1w
-          logic [width_p-1:0] data_lo;
-        
-          bsg_mem_1r1w #( .width_p(width_p)
-                        , .els_p(els_p)
-                        , .read_write_same_addr_p(0)
-                        )
-            mem
-              (.w_clk_i   (clk_i)
-              ,.w_reset_i(reset_i)
-              ,.w_v_i    (v_i & w_i)
-              ,.w_addr_i (addr_i)
-              ,.w_data_i (data_i)
-              ,.r_addr_i (addr_i)
-              ,.r_v_i    (v_i & ~w_i)
-              ,.r_data_o (data_lo)
-              );
-          
-          // register output data to convert sync to async
-          always_ff @(posedge clk_i) begin
-            data_o <= data_lo;
-          end
-        end // block: s1r1w
-      else
-        begin: notmacro
-          bsg_mem_1rw_sync_synth # (.width_p(width_p), .els_p(els_p))
-            synth
-              (.*);
-        end // block: notmacro
-      end // block: z
+    begin : notmacro
+      initial if (substitute_1r1w_p != 0) $warning("substitute_1r1w_p will have no effect");
+      bsg_mem_1rw_sync_synth #(.width_p(width_p), .els_p(els_p), .latch_last_read_p(latch_last_read_p))
+        synth
+          (.*);
+    end // block: notmacro
 
 
   // synopsys translate_off
