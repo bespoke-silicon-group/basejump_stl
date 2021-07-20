@@ -1,5 +1,11 @@
-`include "bsg_defines.v"
+// A special module for use with HardFloat's mulAddRecFN for 
+// easy absorption of pipeline stages by the DSPs that get
+// synthesised in some FPGAs. This helps in retiming the 
+// paths in FPGA implementations as only immediate registers 
+// are absorbed, and global retiming does not seem to do this.
 
+`include "bsg_defines.v"
+  
 module bsg_mul_add #(
     parameter width_a_p = 4
     ,parameter width_b_p = 4
