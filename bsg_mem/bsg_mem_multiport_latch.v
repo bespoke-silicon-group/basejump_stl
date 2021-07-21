@@ -72,10 +72,13 @@ module bsg_mem_multiport_latch
 
   // write data latch 
   logic [width_p-1:0] w_data_r;
-
-  always_latch
-    if (~clk_i)
-      w_data_r <= w_data_i;
+  for (genvar i = 0; i < width_p; i++) begin:wl
+    bsg_latch wlat0 (
+      .clk_i(~clk_i)
+      ,.data_i(w_data_i[i])
+      ,.data_o(w_data_r[i])
+    );
+  end
 
 
   // latch file
