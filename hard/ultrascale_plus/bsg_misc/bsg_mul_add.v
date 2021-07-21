@@ -21,7 +21,7 @@ module bsg_mul_add_unsigned #(
     ,input [width_a_p-1 : 0] a_i
     ,input [width_b_p-1 : 0] b_i
     ,input [width_c_p-1 : 0] c_i
-    ,output [width_o_p : 0] o
+    ,output [width_o_p-1 : 0] o
     );
 
     initial assert (pipeline_p > 2) else $error ("pipeline stages may not be enough")
