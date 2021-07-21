@@ -4,6 +4,8 @@
 // synthesised in some FPGAs. This helps in retiming the 
 // paths in FPGA implementations as only immediate registers 
 // are absorbed, and global retiming does not seem to do this.
+//
+// For Zynq 7020, pipeline_p = 3
 
 `include "bsg_defines.v"
   
@@ -13,7 +15,7 @@ module bsg_mul_add_unsigned #(
     ,parameter width_c_p = width_a_p + width_b_p
     ,parameter width_o_p = `BSG_SAFE_CLOG2( ((1 << width_a_p) - 1) * ((1 << width_b_p) - 1) + 
                                                     ((1 << width_c_p)-1) + 1 )
-    ,parameter pipeline_p = 0
+    ,parameter pipeline_p = 3
   ) (
     input clk_i
     ,input [width_a_p-1 : 0] a_i
@@ -22,8 +24,9 @@ module bsg_mul_add_unsigned #(
     ,output [width_o_p : 0] o
     );
 
-    localparam pre_pipeline_lp = 0;
-    localparam post_pipeline_lp = pipeline_p;
+    initial assert (pipeline_p > 2) else $error ("pipeline stages may not be enough")
+    localparam pre_pipeline_lp = pipeline_p > 2 ? 1 : 0;
+    localparam post_pipeline_lp = pipeline_p > 2 ? pipeline_p -1 : pipeline_p; //for excess
 
     wire [width_a_p-1:0] a_r;
     wire [width_b_p-1:0] b_r;
