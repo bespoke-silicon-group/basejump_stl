@@ -51,6 +51,7 @@
 // that have barrier in progress, and then reset the corresponding Pi bit to clear the in progress barrier.
 //
 
+`include "bsg_defines.v"
 
 module bsg_barrier 
   #(`BSG_INV_PARAM(dirs_p),lg_dirs_lp=`BSG_SAFE_CLOG2(dirs_p+1))
@@ -123,11 +124,13 @@ module bsg_barrier
   
   assign activate_n = data_gather_out[dirs_p];
 
+  // synopsys translate_off
   localparam debug_p = 0;
   
   if (debug_p)
   always @(negedge clk_i)
     $display("%d: %m %b %b %b %b %b %b", $time, gather_and, gather_or, gather_out, sense_n, data_i, data_o);
+  // synopsys translate_on
   
 endmodule
 

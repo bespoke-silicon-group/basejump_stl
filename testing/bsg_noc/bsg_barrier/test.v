@@ -85,6 +85,7 @@ module test;
       reset_li = 0;
       #200
       #200
+      #200
       $finish();
     end
   
