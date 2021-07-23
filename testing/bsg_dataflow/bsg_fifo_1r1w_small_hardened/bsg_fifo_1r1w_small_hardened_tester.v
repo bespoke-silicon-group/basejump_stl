@@ -11,7 +11,12 @@
 module bsg_fifo_1r1w_small_hardened_tester
 
  #(
-   parameter width_p  = 64
+   // dynamic parameters
+   parameter top_master_clk_period_p     = 5
+  ,parameter top_fifo_clk_period_p       = 5
+  ,parameter top_client_clk_period_p     = 5
+   // static parameters
+  ,parameter width_p  = 64
   ,parameter els_p    = 16
   ,parameter channel_width_p = 8
   )
@@ -107,9 +112,9 @@ module bsg_fifo_1r1w_small_hardened_tester
   
   
   // Simulation of Clock
-  always #4 master_clk = ~master_clk;
-  always #4 fifo_clk   = ~fifo_clk;
-  always #16 client_clk = ~client_clk;
+  always #(top_master_clk_period_p) master_clk = ~master_clk;
+  always #(top_fifo_clk_period_p)   fifo_clk   = ~fifo_clk;
+  always #(top_client_clk_period_p) client_clk = ~client_clk;
   
   
   initial 
