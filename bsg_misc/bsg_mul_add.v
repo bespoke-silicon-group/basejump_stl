@@ -1,9 +1,11 @@
 // 21 Jul 2021
-// A special module for use with HardFloat's mulAddRecFN for 
-// easy absorption of pipeline stages by the DSPs that get
-// synthesised in some FPGAs. This helps in retiming the 
-// paths in FPGA implementations as only immediate registers 
-// are absorbed, and global retiming does not seem to do this.
+//
+// Multiply-add often takes more than one cycle of time.
+// This module provides a mechanism for indicating the degree
+// of pipelining required. The implementation still relies upon
+// retiming support from the cad tools. The basejump_stl
+// /hard mechanisms allows for platform-specific implementations
+// to be swapped in.
 
 `include "bsg_defines.v"
   
