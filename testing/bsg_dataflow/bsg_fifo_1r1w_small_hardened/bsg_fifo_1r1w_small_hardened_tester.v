@@ -109,7 +109,7 @@ module bsg_fifo_1r1w_small_hardened_tester
   // Simulation of Clock
   always #4 master_clk = ~master_clk;
   always #4 fifo_clk   = ~fifo_clk;
-  always #4 client_clk = ~client_clk;
+  always #16 client_clk = ~client_clk;
   
   
   initial 
