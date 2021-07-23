@@ -2,12 +2,16 @@
 // bsg_fifo_1r1w_small_hardened
 //
 // bsg_fifo with 1 read and 1 write, used for smaller fifos
-// No bubble between packets, has 1-cycle latency
+// No bubble between packets, has one-cycle latency
 //
 // This fifo instantiates bsg_mem_1r1w_sync memory, which has synchronous read
-// Data writes into both sync_mem and w_data_bypass_reg when sync_mem is empty, 
-// so that it can be available on read side in next cycle.
-// Only read from sync_mem when sync_mem is not empty
+// port with 1-cycle read-delay. It is possible to read/write same address when
+//   1. fifo is empty
+//   2. fifo has one element, and it enqueues / dequeues in same cycle
+// Read/write same address is usually not allowed. Whenever this happens, writing
+// is prioritized and reading is paused for current cycle. Write data is also stored
+// into bypass register so that it shows up on read side in the next cycle to make up
+// for the dropped read request.
 //
 // input handshake protocol (based on ready_THEN_valid_p parameter):
 //     valid-and-ready or
@@ -79,6 +83,7 @@ module bsg_fifo_1r1w_small_hardened #(parameter `BSG_INV_PARAM(width_p)
       );
 
    // sync read
+   // Prioritize write when reading/writing same address
    bsg_mem_1r1w_sync #(.width_p (width_p)
                       ,.els_p   (els_p  )
                       // MBT: this should be zero
@@ -96,7 +101,7 @@ module bsg_fifo_1r1w_small_hardened #(parameter `BSG_INV_PARAM(width_p)
       ,.r_data_o (data_o_mem)
       );
       
-   // w_data bypass register, avoid reading and writing same address in memory
+   // w_data bypass register, enable when read_write_same_addr happens
    bsg_dff_en #(.width_p(width_p)) bypass_reg
      (.clk_i
       ,.data_i(data_i)
@@ -104,15 +109,14 @@ module bsg_fifo_1r1w_small_hardened #(parameter `BSG_INV_PARAM(width_p)
       ,.data_o(data_o_reg)
       );
    
-   // Read from bypass register when read_write_same_addr happens last cycle
+   // Read from bypass register when read_write_same_addr happens in previous cycle
    assign data_o = (read_write_same_addr_r)? data_o_reg : data_o_mem;
-   
-   // When enque==1 and read/write address are same, write to bypass register
-   // A copy of data is written into mem_1r1w_sync in same cycle
-   assign read_write_same_addr_n = enque & (wptr_r == rptr_n);
-   
    always_ff @(posedge clk_i)
      read_write_same_addr_r <= read_write_same_addr_n;
+   
+   // When enque==1 and read/write address are same, stop reading
+   // A copy of data is written into bypass register in same cycle
+   assign read_write_same_addr_n = enque & (wptr_r == rptr_n);
 
    // during reset, we keep ready low
    // even though fifo is empty
