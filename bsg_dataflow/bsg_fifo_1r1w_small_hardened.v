@@ -63,8 +63,7 @@ module bsg_fifo_1r1w_small_hardened #(parameter `BSG_INV_PARAM(width_p)
    logic [ptr_width_lp-1:0] rptr_n;
    // avoid reading and writing same address in mem_1r1w_sync
    logic [width_p-1:0] data_o_mem, data_o_reg;
-   logic read_write_same_addr_n;
-   logic write_bypass_r, write_bypass_n;
+   logic read_write_same_addr_r, read_write_same_addr_n;
   
    bsg_fifo_tracker #(.els_p(els_p)
                           ) fts
@@ -101,28 +100,19 @@ module bsg_fifo_1r1w_small_hardened #(parameter `BSG_INV_PARAM(width_p)
    bsg_dff_en #(.width_p(width_p)) bypass_reg
      (.clk_i
       ,.data_i(data_i)
-      ,.en_i  (write_bypass_n)
+      ,.en_i  (read_write_same_addr_n)
       ,.data_o(data_o_reg)
       );
    
    // Read from bypass register when read_write_same_addr happens last cycle
-   assign data_o = (write_bypass_r)? data_o_reg : data_o_mem;
-   
-   // When fifo is empty, read_write_same_addr_n must be 1
-   //
-   // Proof: When empty==1, v_o==0, then yumi_i==0, deque==0, 
-   // then rptr_n==rptr_r. Since rptr_r==wprt_r (definition of empty),
-   // rptr_n==wptr_r, so read_write_same_addr_n==1.
-   //
-   // As a result, (v_o_tmp & ~read_write_same_addr_n) is equivalent to (~read_write_same_addr_n).
-   assign read_write_same_addr_n = (wptr_r == rptr_n);
+   assign data_o = (read_write_same_addr_r)? data_o_reg : data_o_mem;
    
    // When enque==1 and read/write address are same, write to bypass register
    // A copy of data is written into mem_1r1w_sync in same cycle
-   assign write_bypass_n = enque & read_write_same_addr_n;
+   assign read_write_same_addr_n = enque & (wptr_r == rptr_n);
    
    always_ff @(posedge clk_i)
-     write_bypass_r <= write_bypass_n;
+     read_write_same_addr_r <= read_write_same_addr_n;
 
    // during reset, we keep ready low
    // even though fifo is empty
