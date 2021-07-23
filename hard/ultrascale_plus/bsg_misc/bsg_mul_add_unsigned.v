@@ -24,7 +24,7 @@ module bsg_mul_add_unsigned #(
     ,output [width_o_p-1 : 0] o
     );
 
-    initial assert (pipeline_p > 2) else $error ("pipeline stages may not be enough")
+  initial assert (pipeline_p > 2) else $warning ("%m: pipeline_p is set quite low; most likely frequency will be impacted")
     localparam pre_pipeline_lp = pipeline_p > 2 ? 1 : 0;
     localparam post_pipeline_lp = pipeline_p > 2 ? pipeline_p -1 : pipeline_p; //for excess
 
