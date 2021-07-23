@@ -10,12 +10,12 @@
 `include "bsg_defines.v"
   
 module bsg_mul_add_unsigned #(
-    parameter width_a_p = 4
-    ,parameter width_b_p = 4
+    parameter  `BSG_INV_PARAM(width_a_p)
+    ,parameter `BSG_INV_PARAM(width_b_p)
     ,parameter width_c_p = width_a_p + width_b_p
     ,parameter width_o_p = `BSG_SAFE_CLOG2( ((1 << width_a_p) - 1) * ((1 << width_b_p) - 1) + 
                                                     ((1 << width_c_p)-1) + 1 )
-    ,parameter pipeline_p = 3
+    ,parameter pipeline_p = 0
   ) (
     input clk_i
     ,input [width_a_p-1 : 0] a_i
@@ -48,3 +48,5 @@ module bsg_mul_add_unsigned #(
             ,.data_o(o)
         );
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mul_add_unsigned)
