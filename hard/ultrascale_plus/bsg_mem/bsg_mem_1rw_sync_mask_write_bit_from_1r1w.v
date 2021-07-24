@@ -51,15 +51,14 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
   logic [width_lp:0]        w_mask_r;
   logic                     w_en_r;
   logic                     w_r;
- 
-  logic                     not_first_r; //for first r_en
 
   // Infers an SDP BRAM
   (* ram_style = "block" *) logic [width_lp:0] ram [els_p-1:0];
 
+  wire same_addr = addr_r == addr_i;
   wire masked   = (w_mask_i != '1) & w_i;
-  wire w_en     = v_i & (addr_r != addr_i) & w_en_r;
-  wire r_en     = v_i & (masked | !w_i) & ((addr_r != addr_i) | !not_first_r);
+  wire w_en     = v_i & !same_addr & w_en_r;
+  wire r_en     = v_i & (masked | !w_i) & !same_addr;
 
   always_ff @(posedge clk_i) begin
      if(r_en)
@@ -71,32 +70,20 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
 
   always_ff @(posedge clk_i) begin
     if(!reset_i) begin
-      not_first_r <= 1'b0;
       w_en_r   <= 1'b0;
       w_r      <= 1'b0;
-      w_data_r <= '0;
-      r_data_r <= '0;
-      w_mask_r <= '0;
-      addr_r   <= '0;
     end
 
     else
-      if(v_i) begin: v
-        w_r     <= w_i;
-        addr_r  <= addr_i;
-        w_mask_r <= ((addr_r == addr_i) & w_i == 1'b0) ? '0 : w_mask_i;
-        w_data_r <= ((addr_r == addr_i) & w_i == 1'b0) ? '0 : data_i;
-
-        if(!not_first_r)
-          not_first_r <= 1'b1;
-        else begin
-          w_en_r <= (addr_r == addr_i) ? 
-            (!w_i && !w_r) ? w_en_r : 1'b1 :
-            w_i;
-          if(addr_r == addr_i)
-            r_data_r <= w_r ? (r_data_r & ~w_mask_r | w_data_r & w_mask_r) : r_data_r;
-        end
-      end: v
+      if(v_i) begin
+        w_r      <= w_i;
+        addr_r   <= addr_i;
+        w_mask_r <= (same_addr & !w_i) ? '0 : w_mask_i;
+        w_data_r <= (same_addr & !w_i) ? '0 : data_i;
+        w_en_r   <= same_addr ? ((!w_i && !w_r) ? w_en_r : 1'b1) : w_i;
+        if(same_addr)
+          r_data_r <= w_r ? (r_data_r & ~w_mask_r | w_data_r & w_mask_r) : r_data_r;
+      end
   end
 
   always @(negedge clk_i)
