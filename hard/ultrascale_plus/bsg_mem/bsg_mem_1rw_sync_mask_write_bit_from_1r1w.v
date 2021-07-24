@@ -29,6 +29,7 @@
 module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
   parameter    `BSG_INV_PARAM(width_p)
   , parameter  `BSG_INV_PARAM(els_p)
+  , parameter  latch_last_read_p = 0
   , localparam addr_width_lp = `BSG_SAFE_CLOG2(els_p)
   , localparam width_lp = `BSG_SAFE_MINUS(width_p,1)
 ) (
@@ -44,24 +45,21 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
   , output [width_lp:0]          data_o
 );
   
-  initial assert(int'(addr_i) < els_p) else $warning("Accessing uninitialized address!");
-
   logic [addr_width_lp-1:0] addr_r;
   logic [width_lp:0]        r_data_r;
   logic [width_lp:0]        w_data_r;
   logic [width_lp:0]        w_mask_r;
   logic                     w_en_r;
   logic                     w_r;
-
-  //AM: may be skipped if it's guaranteed that the first operation to an uninitialized address is always a full write
-  logic                     not_first_r;
+ 
+  logic                     not_first_r; //for first r_en
 
   // Infers an SDP BRAM
   (* ram_style = "block" *) logic [width_lp:0] ram [els_p-1:0];
 
-  wire masked = (w_mask_i != '1) && w_i;
-  wire w_en   = v_i && (addr_r != addr_i) && w_en_r;
-  wire r_en   = v_i && (masked || !w_i) && ((addr_r != addr_i) || !not_first_r);
+  wire masked   = (w_mask_i != '1) & w_i;
+  wire w_en     = v_i & (addr_r != addr_i) & w_en_r;
+  wire r_en     = v_i & (masked | !w_i) & ((addr_r != addr_i) | !not_first_r);
 
   always_ff @(posedge clk_i) begin
      if(r_en)
@@ -70,15 +68,6 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
      if(w_en) 
         ram[addr_r] <= r_data_r & ~w_mask_r | w_data_r & w_mask_r;
   end
-
-  `ifndef SYNTHESIS
-  generate
-    integer ram_index;
-    initial
-      for (ram_index = 0; ram_index < els_p; ram_index = ram_index + 1)
-        ram[ram_index] = {(width_lp+1){1'b0}};
-  endgenerate
-  `endif
 
   always_ff @(posedge clk_i) begin
     if(!reset_i) begin
@@ -95,8 +84,8 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
       if(v_i) begin: v
         w_r     <= w_i;
         addr_r  <= addr_i;
-        w_mask_r <= ((addr_r == addr_i) && w_i == 1'b0) ? '0 : w_mask_i;
-        w_data_r <= ((addr_r == addr_i) && w_i == 1'b0) ? '0 : data_i;
+        w_mask_r <= ((addr_r == addr_i) & w_i == 1'b0) ? '0 : w_mask_i;
+        w_data_r <= ((addr_r == addr_i) & w_i == 1'b0) ? '0 : data_i;
 
         if(!not_first_r)
           not_first_r <= 1'b1;
@@ -110,5 +99,9 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
       end: v
   end
 
+  always @(negedge clk_i)
+    assert(int'(addr_i) < els_p) else $warning("Accessing uninitialized address!");
+
   assign data_o = r_data_r;
+
 endmodule
