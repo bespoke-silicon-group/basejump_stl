@@ -61,7 +61,6 @@ module test_bsg
             );
     
     // finish if params are not compatible 
-<<<<<<< HEAD
     assert((t_p <= width_p-1) & (0 <= b_p) & (b_p <= t_p))
       else 
         begin
@@ -69,22 +68,6 @@ module test_bsg
   		            , width_p, t_p, b_p, cond_swap_on_equal_p);
           $finish;
         end
-||||||| merged common ancestors
-    assert((t_lp <= width_lp-1) & (0 <= b_lp) & (b_lp <= t_lp))
-      else 
-        begin
-          $display("Incompatible params: %d, %d, %d, %d,\n" 
-  		            , width_lp, t_lp, b_lp, cond_swap_on_equal_lp);
-          $finish;
-        end
-=======
-    if(!((t_p <= width_p-1) & (0 <= b_p) & (b_p <= t_p)))
-      begin
-        $display("Incompatible params: %d, %d, %d, %d,\n" 
-  		          , width_p, t_p, b_p, cond_swap_on_equal_p);
-        $finish;
-      end
->>>>>>> bsg_dataflow
     
   end
     
@@ -126,8 +109,8 @@ module test_bsg
                                           & (test_input[0] == test_input[1])
                                          )
                                       )
-          )
-          $error("swapped_o: mismatch on input %x", test_input);
+              )
+          else $error("swapped_o: mismatch on input %x", test_input);
 
         assert(test_output == ((test_input[0][t_p:b_p] > test_input[1][t_p:b_p])
                                | ((cond_swap_on_equal_p & test_input_swap)
@@ -136,8 +119,8 @@ module test_bsg
                               )
                               ? {test_input[0], test_input[1]}
                               : test_input
-          )
-          $error("data_o: mismatch on input %x", test_input);
+              )
+          else $error("data_o: mismatch on input %x", test_input);
       end
   end
 

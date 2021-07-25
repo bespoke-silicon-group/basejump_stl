@@ -25,52 +25,12 @@ module test_bsg
 
   wire clk;
   wire reset;
-<<<<<<< HEAD
 
-<<<<<<< HEAD
   bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
                           )  clock_gen
                           (  .o(clk)
                           );
-||||||| merged common ancestors
-  `ifdef VERILATOR
-    bsg_nonsynth_dpi_clock_gen
-  `else
-    bsg_nonsynth_clock_gen
-  `endif
-   #(.cycle_time_p(sim_clk_period))
-   clock_gen
-    (.o(clk));
-=======
-  `ifdef VERILATOR
-    bsg_nonsynth_dpi_clock_gen
-  `else
-    bsg_nonsynth_clock_gen
-  `endif
-   #(.cycle_time_p(sim_clk_period_p))
-   clock_gen
-    (.o(clk));
->>>>>>> parameter name fix
 
-||||||| merged common ancestors
-  
-  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_lp)
-                          )  clock_gen
-                          (  .o(clk)
-                          );
-    
-=======
-
-  `ifdef VERILATOR
-    bsg_nonsynth_dpi_clock_gen
-  `else
-    bsg_nonsynth_clock_gen
-  `endif
-   #(.cycle_time_p(sim_clk_period_p))
-   clock_gen
-    (.o(clk));
-
->>>>>>> bsg_dff verilatable testbench
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(reset_cycles_lo_p)
                            , .reset_cycles_hi_p(reset_cycles_hi_p)
@@ -101,13 +61,11 @@ module test_bsg
     else
       begin  
         test_input <= (test_input<<1)+1;
-        if(p_test_input != test_output) 
-          $error("mismatch on input %x", p_test_input);
+        assert(p_test_input == test_output)
+          else $error("mismatch on input %x", test_input);
       end
     
     p_test_input <= test_input;
-    
-    // $display("clk=%d reset=%d input=%d output=%d p_test_input=%d",clk,reset,test_input,test_output,p_test_input);
 
     if(&p_test_input)
       finish_r <= 1'b1;

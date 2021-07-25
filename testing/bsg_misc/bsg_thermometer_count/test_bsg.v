@@ -33,32 +33,12 @@ module test_bsg
   
   wire clk;
   wire reset;
-<<<<<<< HEAD
 
   bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
                           )  clock_gen
                           (  .o(clk)
                           );
                                         
-||||||| merged common ancestors
-  
-  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_lp)
-                          )  clock_gen
-                          (  .o(clk)
-                          );
-    
-=======
-
-  `ifdef VERILATOR
-    bsg_nonsynth_dpi_clock_gen
-  `else
-    bsg_nonsynth_clock_gen
-  `endif
-   #(.cycle_time_p(cycle_time_p))
-   clock_gen
-    (.o(clk));
-                                        
->>>>>>> bsg_thermometer_count
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(1)
                            , .reset_cycles_hi_p(5)
@@ -118,9 +98,9 @@ module test_bsg
     /*$display("test_input: %b, count: %b, test_output: %b"
              , test_input, count, test_output);*/
     if(!reset)
-      if(count != test_output)
-          $error("mismatch on input %x;, expected output: %x;, test_output: %x"
-                    , test_input, count, test_output);
+      assert(count == test_output)
+          else $error("mismatch on input %x;, expected output: %x;, test_output: %x"
+                        , test_input, count, test_output);
   end
   
   bsg_thermometer_count #(  .width_p(width_p)

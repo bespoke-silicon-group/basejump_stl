@@ -6,22 +6,20 @@
 
 /**************************** TEST RATIONALE *******************************
 1. STATE SPACE
+
   This test module tests the outputs of DUT for a complete count-cycle
   i.e., from INIT_VAL_P to MAX_VAL_P and then from MAX_VAL_P to INIT_VAL_P.
   If the MAX_VAL_P is less than INIT_VAL_P, simulation finishes
   without doing anything.
+
 2. PARAMETERIZATION
+
   Since the DUT implements an algorithm that simply increments or decrements
   the count, an arbitrary set of tests that include that include the edge
   cases would do the job. So a minimum set of tests might be MAX_VAL_P=1,2,
   3,4 with INIT_VAL_P=0,1,2,3. No need to worry about making parameters
   compatiable as those tests finish without instatiating DUT.
-<<<<<<< HEAD
   
-||||||| merged common ancestors
-
-=======
->>>>>>> bsg_counter_up_down
 ***************************************************************************/
 
 module test_bsg
@@ -109,8 +107,8 @@ module test_bsg
     else
       begin
         //$display("count: %d, test_output: %d @  time: %d\n", count, test_output, $time);
-        if(count != test_output)
-          $error("mismatch on time %d\n", $time);
+        assert(count == test_output)
+          else $error("mismatch on time %d\n", $time);
 
         count      <= count + test_input_up - test_input_down;
         prev_count <= count;

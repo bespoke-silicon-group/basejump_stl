@@ -146,24 +146,24 @@ module test_bsg;
   begin
     if(count>=2 && count<=els_p)
       begin
-        if(test_output_rdata1 != prev_input)
-          $error("error in reading address: %b", test_input_raddr1);
-        if(test_output_rdata0 != prev_input_r)
-          $error("error in reading address: %b", test_input_raddr0);
+        assert(test_output_rdata1 == prev_input)
+          else $error("error in reading address: %b", test_input_raddr1);
+        assert(test_output_rdata0 == prev_input_r)
+          else $error("error in reading address: %b", test_input_raddr0);
       end
     if(count == els_p+1)
       begin
-        if(test_output_rdata1 != temp[test_input_raddr1])
-          $error("error in reading address: %b", test_input_raddr1);
-        if(test_output_rdata0 != prev_input_r)
-          $error("error in reading address: %b", test_input_raddr0);
+        assert(test_output_rdata1 == temp[test_input_raddr1])
+          else $error("error in reading address: %b", test_input_raddr1);
+        assert(test_output_rdata0 == prev_input_r)
+          else $error("error in reading address: %b", test_input_raddr0);
       end
     if(count > els_p+1)
       begin
-        if(test_output_rdata1 != temp[test_input_raddr1])
-          $error("error in reading address: %b", test_input_raddr1);
-        if(test_output_rdata0 != temp[test_input_raddr0])
-          $error("error in reading address: %b", test_input_raddr0);
+        assert(test_output_rdata1 == temp[test_input_raddr1])
+          else $error("error in reading address: %b", test_input_raddr1);
+        assert(test_output_rdata0 == temp[test_input_raddr0])
+          else $error("error in reading address: %b", test_input_raddr0);
       end
   end
 endmodule

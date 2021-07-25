@@ -34,29 +34,11 @@ module test_bsg
   wire clk;
   wire reset;
   
-<<<<<<< HEAD
   bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
                           )  clock_gen
                           (  .o(clk)
                           );
 
-||||||| merged common ancestors
-  bsg_nonsynth_clock_gen #( .cycle_time_p(cycle_time_lp)
-                          ) clock_gen
-                          ( .o(clk)
-                          );
-    
-=======
-  `ifdef VERILATOR
-    bsg_nonsynth_dpi_clock_gen
-  `else
-    bsg_nonsynth_clock_gen
-  `endif
-   #(.cycle_time_p(cycle_time_p))
-   clock_gen
-    (.o(clk));
-
->>>>>>> bsg_mem
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(reset_cycles_lo_p)
                            , .reset_cycles_hi_p(reset_cycles_hi_p)
@@ -149,8 +131,8 @@ module test_bsg
     if(!reset)
       if(count <= els_p)
         // checks if data is not being written correctly
-        if(test_output_rdata != test_input_wdata_r) 
-          $error("mismatch on reading the address: %x\n", test_input_raddr);
+        assert(test_output_rdata == test_input_wdata_r) 
+          else $error("mismatch on reading the address: %x\n", test_input_raddr);
       else
         // checks if data is overwritten when w_v_i is asserted
         if(addr_width_p > 1) // does not work with els_p=1 i.e., one mem. element 
