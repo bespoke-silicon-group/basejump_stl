@@ -57,12 +57,12 @@ module test_bsg;
 
   logic [`WIDTH_P-1:0] ram [0:`ELS_P-1];
   //For cleaner testing iteration, uncomment this and initialize DUT RAM as well
-  generate
-    integer ram_index;
-    initial
-      for (ram_index = 0; ram_index < `ELS_P; ram_index = ram_index + 1)
-        ram[ram_index] = {(`WIDTH_P){1'b0}};
-  endgenerate
+  //generate
+  //  integer ram_index;
+  //  initial
+  //    for (ram_index = 0; ram_index < `ELS_P; ram_index = ram_index + 1)
+  //      ram[ram_index] = {(`WIDTH_P){1'b0}};
+  //endgenerate
 
   bsg_mem_1rw_sync_mask_write_bit_from_1r1w 
   #(`WIDTH_P
