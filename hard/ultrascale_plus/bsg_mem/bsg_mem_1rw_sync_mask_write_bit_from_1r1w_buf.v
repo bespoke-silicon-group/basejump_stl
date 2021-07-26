@@ -24,7 +24,7 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w_buf #(
   , output [width_lp:0]          data_o
 );
   always @(negedge clk_i)
-    assert(int'(addr_i) < els_p) else $warning("Address out of range!");
+    assert(int'(addr_i) < els_p) else $warning("%m Address out of range!");
 
   logic [addr_width_lp-1:0]      addr_r;
   logic [width_lp:0]             w_data_r;
@@ -40,12 +40,6 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w_buf #(
   wire hit  = buf_addr_r == addr_r;
 
   logic [width_lp:0] ram [els_p-1:0];
-  generate
-    integer ram_index;
-    initial
-      for (ram_index = 0; ram_index < els_p; ram_index = ram_index + 1)
-        ram[ram_index] = {(width_p){1'b0}};
-  endgenerate
 
   wire [width_lp:0] r_data = ram[addr_r];
 
@@ -60,7 +54,7 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w_buf #(
       w_r         <= 1'b0;
     end
     else begin
-      w_r         <= w_i & v_i;
+      w_r         <= v_i & w_i;
       buf_en_r    <= w_r;
       same_addr_r <= addr_r == addr_i;
       if(v_i) begin
@@ -71,8 +65,8 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w_buf #(
         end
       end
 
-      buf_r <= ((hit & buf_en_r) ? buf_r : r_data) 
-                  & ~w_mask_r | w_data_r & w_mask_r;
+      buf_r <= (((hit & buf_en_r) ? buf_r : r_data) & ~w_mask_r)
+                | (w_data_r & w_mask_r);
       buf_addr_r <= addr_r;
     end
   end
