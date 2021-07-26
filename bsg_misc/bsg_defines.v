@@ -4,6 +4,11 @@
 `define BSG_MAX(x,y) (((x)>(y)) ? (x) : (y))
 `define BSG_MIN(x,y) (((x)<(y)) ? (x) : (y))
 
+`define BSG_SIGN_EXTEND(sig, width) \
+  ({{`BSG_MAX(width-$bits(sig),0){sig[$bits(sig)-1]}}, sig[0+:`BSG_MIN(width, $bits(sig))]})
+`define BSG_ZERO_EXTEND(sig, width) \
+  ({{`BSG_MAX(width-$bits(sig),0){1'b0}}, sig[0+:`BSG_MIN(width, $bits(sig))]})
+
 // place this macro at the end of a verilog module file if that module has invalid parameters
 // that must be specified by the user. this will prevent that module from becoming a top-level
 // module per the discussion here: https://github.com/SymbiFlow/sv-tests/issues/1160 and the
