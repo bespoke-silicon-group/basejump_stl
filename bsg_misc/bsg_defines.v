@@ -4,9 +4,9 @@
 `define BSG_MAX(x,y) (((x)>(y)) ? (x) : (y))
 `define BSG_MIN(x,y) (((x)<(y)) ? (x) : (y))
 
-`define BSG_SEXT(sig, width) \
+`define BSG_SIGN_EXTEND(sig, width) \
   ({{`BSG_MAX(width-$bits(sig),0){sig[$bits(sig)-1]}}, sig[0+:`BSG_MIN(width, $bits(sig))]})
-`define BSG_ZEXT(sig, width) \
+`define BSG_ZERO_EXTEND(sig, width) \
   ({{`BSG_MAX(width-$bits(sig),0){1'b0}}, sig[0+:`BSG_MIN(width, $bits(sig))]})
 
 // place this macro at the end of a verilog module file if that module has invalid parameters
