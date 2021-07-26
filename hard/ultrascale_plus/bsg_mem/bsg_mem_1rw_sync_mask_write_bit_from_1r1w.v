@@ -21,25 +21,26 @@
 //    - When a read request succeeds a write to the same address, 
 //        previously read data is bypassed to the read register with applicable update
 // This version does well with low input delay, but allows for longer output paths
-// Also infers Block RAM with permissive parameter values
+// Can infer Block RAM with permissive parameter values
 
 `include "bsg_defines.v"
 
 module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
   parameter    `BSG_INV_PARAM(width_p)
   , parameter  `BSG_INV_PARAM(els_p)
-  , parameter  latch_last_read_p = 0 // AM: unsupported
-  , localparam addr_width_lp     = `BSG_SAFE_CLOG2(els_p)
-  , localparam width_lp          = `BSG_SAFE_MINUS(width_p,1)
+  , parameter  latch_last_read_p     = 0
+  , parameter  enable_clock_gating_p = 0
+  , localparam addr_width_lp         = `BSG_SAFE_CLOG2(els_p)
+  , localparam width_lp              = `BSG_SAFE_MINUS(width_p,1)
 ) (
   input                          clk_i
   , input                        reset_i
 
-  , input                        v_i
-  , input  [ addr_width_lp-1:0]  addr_i
-  , input                        w_i
   , input  [width_lp:0]          data_i
+  , input  [ addr_width_lp-1:0]  addr_i
+  , input                        v_i
   , input  [width_lp:0]          w_mask_i
+  , input                        w_i
 
   , output [width_lp:0]          data_o
 );
@@ -54,8 +55,8 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
   logic [width_lp:0]             r_data_r;
   logic                          w_en_r;
 
-  // Infers Block RAM with permissive parameter values
-  (* ram_style = "block" *) logic [width_lp:0] ram [els_p-1:0];
+  logic [width_lp:0] ram [els_p-1:0];
+
   generate
     integer ram_index;
     initial
