@@ -22,7 +22,7 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_dpi_gpio
-   #(parameter int width_p = 1)
+   #(parameter int width_p = 1
      ,parameter bit [width_p-1:0] init_o_p = '0
      ,parameter bit use_input_p = '0
      ,parameter bit use_output_p = '0
