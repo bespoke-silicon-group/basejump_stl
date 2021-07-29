@@ -48,7 +48,7 @@ module bsg_nonsynth_dpi_gpio
       debug_b = debug_p;
       init_b = 0;
       gpio_o = init_o_p;
-      $display("BSG INFO: bsg_nonsynth_dpi_rom (initial begin)");
+      $display("BSG INFO: bsg_nonsynth_dpi_gpio (initial begin)");
       $display("BSG INFO:     Instantiation: %M");
       $display("BSG INFO:     width_p:       %d", width_p);
       $display("BSG INFO:     init_o_p:      %b", init_o_p);
