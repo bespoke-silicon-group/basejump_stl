@@ -9,6 +9,9 @@ module test_bsg
   parameter lg_credit_decimation_p = `BSG_MIN($clog2(remote_credits_p+1),4),
   parameter use_pseudo_large_fifo_p = 1,
   localparam bsg_ready_and_link_sif_width_lp = `bsg_ready_and_link_sif_width(width_p)
+  parameter sim_clk_period=10,
+  parameter reset_cycles_lo_p=-1,
+  parameter reset_cycles_hi_p=-1
   );
 
   wire clk_lo;
