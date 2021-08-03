@@ -27,7 +27,7 @@ module bsg_cache_to_axi_rx
 
     ,input v_i
     ,output logic yumi_o
-    ,input [lg_num_cache_lp-1:0] tag_i
+    ,input [lg_num_cache_lp-1:0] cache_id_i
     ,input [addr_width_p-1:0] addr_i
 
     // cache dma read channel
@@ -38,7 +38,7 @@ module bsg_cache_to_axi_rx
     // axi read address channel
     ,output logic [axi_id_width_p-1:0] axi_arid_o
     ,output logic [axi_addr_width_p-1:0] axi_araddr_addr_o
-    ,output logic [lg_num_cache_lp-1:0] axi_araddr_tag_o
+    ,output logic [lg_num_cache_lp-1:0] axi_araddr_cache_id_o
     ,output logic [7:0] axi_arlen_o
     ,output logic [2:0] axi_arsize_o
     ,output logic [1:0] axi_arburst_o
@@ -80,7 +80,7 @@ module bsg_cache_to_axi_rx
 
     ,.v_i(tag_fifo_v_li)
     ,.ready_o(tag_fifo_ready_lo)
-    ,.data_i(tag_i)
+    ,.data_i(cache_id_i)
 
     ,.v_o(tag_fifo_v_lo)
     ,.data_o(tag_lo)
@@ -96,7 +96,7 @@ module bsg_cache_to_axi_rx
   //
   assign axi_arid_o = {axi_id_width_p{1'b0}};
   assign axi_araddr_addr_o = addr_i;
-  assign axi_araddr_tag_o = tag_i;
+  assign axi_araddr_cache_id_o = cache_id_i;
   assign axi_arlen_o = (8)'(axi_burst_len_p-1); // burst length
   assign axi_arsize_o = (3)'(`BSG_SAFE_CLOG2(axi_data_width_p>>3));
   assign axi_arburst_o = 2'b01;   // incr
