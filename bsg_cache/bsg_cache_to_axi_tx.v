@@ -9,6 +9,7 @@
 
 module bsg_cache_to_axi_tx
   #(parameter `BSG_INV_PARAM(num_cache_p)
+    ,parameter `BSG_INV_PARAM(addr_width_p)
     ,parameter `BSG_INV_PARAM(data_width_p)
     ,parameter `BSG_INV_PARAM(block_size_in_words_p)
     ,parameter tag_fifo_els_p=num_cache_p
@@ -30,7 +31,7 @@ module bsg_cache_to_axi_tx
     ,input v_i
     ,output logic yumi_o
     ,input [lg_num_cache_lp-1:0] tag_i
-    ,input [axi_addr_width_p-1:0] axi_addr_i
+    ,input [addr_width_p-1:0] addr_i
 
     // cache dma write channel
     ,input  [num_cache_p-1:0][data_width_p-1:0] dma_data_i
@@ -39,7 +40,8 @@ module bsg_cache_to_axi_tx
 
     // axi write address channel
     ,output logic [axi_id_width_p-1:0] axi_awid_o
-    ,output logic [axi_addr_width_p-1:0] axi_awaddr_o
+    ,output logic [axi_addr_width_p-1:0] axi_awaddr_addr_o
+    ,output logic [lg_num_cache_lp-1:0] axi_awaddr_tag_o
     ,output logic [7:0] axi_awlen_o
     ,output logic [2:0] axi_awsize_o
     ,output logic [1:0] axi_awburst_o
@@ -104,7 +106,8 @@ module bsg_cache_to_axi_tx
   // axi write address channel
   //
   assign axi_awid_o = {axi_id_width_p{1'b0}};
-  assign axi_awaddr_o = axi_addr_i;
+  assign axi_awaddr_addr_o = addr_i;
+  assign axi_awaddr_tag_o = tag_i;
   assign axi_awlen_o = (8)'(axi_burst_len_p-1); // burst len
   assign axi_awsize_o = (3)'(`BSG_SAFE_CLOG2(axi_data_width_p>>3));
   assign axi_awburst_o = 2'b01;   // incr
