@@ -14,7 +14,6 @@ module bsg_cache_to_axi_rx
     ,parameter tag_fifo_els_p=num_cache_p
 
     ,parameter `BSG_INV_PARAM(axi_id_width_p)
-    ,parameter `BSG_INV_PARAM(axi_addr_width_p)
     ,parameter `BSG_INV_PARAM(axi_data_width_p)
     ,parameter `BSG_INV_PARAM(axi_burst_len_p)
 
@@ -37,7 +36,7 @@ module bsg_cache_to_axi_rx
 
     // axi read address channel
     ,output logic [axi_id_width_p-1:0] axi_arid_o
-    ,output logic [axi_addr_width_p-1:0] axi_araddr_addr_o
+    ,output logic [addr_width_p-1:0] axi_araddr_addr_o
     ,output logic [lg_num_cache_lp-1:0] axi_araddr_cache_id_o
     ,output logic [7:0] axi_arlen_o
     ,output logic [2:0] axi_arsize_o
@@ -95,7 +94,7 @@ module bsg_cache_to_axi_rx
   // axi read address channel
   //
   assign axi_arid_o = {axi_id_width_p{1'b0}};
-  assign axi_araddr_addr_o = axi_addr_width_p'(addr_i);
+  assign axi_araddr_addr_o = addr_i;
   assign axi_araddr_cache_id_o = cache_id_i;
   assign axi_arlen_o = (8)'(axi_burst_len_p-1); // burst length
   assign axi_arsize_o = (3)'(`BSG_SAFE_CLOG2(axi_data_width_p>>3));
