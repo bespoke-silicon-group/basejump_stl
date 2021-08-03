@@ -106,7 +106,7 @@ module bsg_cache_to_axi_tx
   // axi write address channel
   //
   assign axi_awid_o = {axi_id_width_p{1'b0}};
-  assign axi_awaddr_addr_o = addr_i;
+  assign axi_awaddr_addr_o = axi_addr_width_p'(addr_i);
   assign axi_awaddr_cache_id_o = cache_id_i;
   assign axi_awlen_o = (8)'(axi_burst_len_p-1); // burst len
   assign axi_awsize_o = (3)'(`BSG_SAFE_CLOG2(axi_data_width_p>>3));
