@@ -1,27 +1,19 @@
 // 23 July, 2021
 //
-// Essentially, a 1RW synchronous-read RAM supporting bit-wise masked writes.
-// Some FPGAs do not inherently support synthesising 1RW RAMs with bit-wise masked writes.
-// In such cases, where, also, a 1R1W RAM is on the offer, 
+// Some ASIC SRAM generators do not support bit-wise masked writes,
+// and many FPGAs do not inherently support synthesizing 1RW RAMs with bit-wise masked writes.
+// In such cases, where, also, a 1R1W RAM is on the offer,
 // we can use this module to mimic the required RAM.
 // 
 // Operation:
 //  * Writes:
-//    - If op is not masked, or byte-masked,
-//        Register the write data, mask (to avoid structural hazard)
-//      Else,
-//        Read the address in the 0th cycle
-//    - If there's a different address requested by an incoming op, only then:
-//        Apply the masked write to the read data in 1st cycle and write using write port of RAM
-//      Else,
-//        Delay the write until such time as a different address gets requested by a valid op
-//    - Data reflected in RAM (internally) in 2nd or later cycles
+//    - Register the write data, mask; read the address in the 0th cycle
+//    - Apply the masked write to the read data availble in 1st cycle; write using write port of RAM
+//    - Data reflected in RAM (internally) in 2nd clock
 //   
 //  * Reads: operationally unchanged, with one quirk:
 //    - When a read request succeeds a write to the same address, 
-//        previously read data is bypassed to the read register with applicable update
-// This version does well with low input delay, but allows for longer output paths
-// Can infer Block RAM with permissive parameter values
+//        previously read data with updates applied is wired to data_o
 
 `include "bsg_defines.v"
 
@@ -30,6 +22,7 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
   , parameter  `BSG_INV_PARAM(els_p)
   , parameter  latch_last_read_p     = 0
   , parameter  enable_clock_gating_p = 0
+  , parameter  verbose_p             = 0
   , localparam addr_width_lp         = `BSG_SAFE_CLOG2(els_p)
   , localparam width_lp              = `BSG_SAFE_MINUS(width_p,1)
 ) (
@@ -48,67 +41,70 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
   always @(negedge clk_i)
     assert(int'(addr_i) < els_p) else $warning("%m Accessing uninitialized address!");
 
-  logic [addr_width_lp-1:0]      addr_r;
   logic [width_lp:0]             w_data_r;
+  logic [addr_width_lp-1:0]      addr_r;
   logic [width_lp:0]             w_mask_r;
   logic                          w_r;
-  logic [width_lp:0]             r_data_r;
-  logic                          w_en_r;
 
-  logic [width_lp:0] ram [els_p-1:0];
+  logic [width_lp:0]             buf_r;
+  logic                          haz_r;
 
-  generate
-    integer ram_index;
-    initial
-      for (ram_index = 0; ram_index < els_p; ram_index = ram_index + 1)
-        ram[ram_index] = {(width_p){1'b0}};
-  endgenerate
+  wire  [width_lp:0] r_data_lo;
+  wire  [width_lp:0] w_data_li   = ((haz_r ? buf_r : r_data_lo) & ~w_mask_r) | (w_data_r & w_mask_r);
+  wire               haz         = w_r & (addr_r == addr_i);
+  wire               r_en_li     = v_i & !haz;
+  wire               w_en_li     = ~(v_i & w_i & addr_r == addr_i) & w_r;
 
-
-  wire same_addr = addr_r == addr_i;
-  wire masked    = w_i & (w_mask_i != '1);
-  wire w_en      = v_i & !same_addr & w_en_r;
-  wire r_en      = v_i & (masked | !w_i) & !same_addr;
+  bsg_mem_1r1w_sync
+    #(.width_p   (width_p)
+      ,.els_p    (els_p)
+      ) ram
+      (.clk_i    (clk_i)
+      ,.reset_i  (reset_i)
+      ,.w_v_i    (w_en_li)
+      ,.w_addr_i (addr_r)
+      ,.w_data_i (w_data_li)
+      ,.r_v_i    (r_en_li)
+      ,.r_addr_i (addr_i)
+      ,.r_data_o (r_data_lo)
+      );
 
   always_ff @(posedge clk_i) begin
-    if(reset_i) begin
-      w_en_r   <= 1'b0;
-      w_r      <= 1'b0;
-      r_data_r <= '0;
-    end
-    else begin
+    if(verbose_p==1)
+      $display("w_en %b | r_en %b | w_data %b | w_addr %06h| haz %b | buf_r %b |"
+              , w_en_li, r_en_li, w_data_li, addr_r, haz, buf_r);
+
+    if(~reset_i) begin
+      haz_r <= haz;
+      w_r   <= w_i & v_i;
       if(v_i) begin
-        w_r      <= w_i;
-        addr_r   <= addr_i;
-        w_mask_r <= (same_addr & !w_i) ? '0 : w_mask_i;
-        w_data_r <= (same_addr & !w_i) ? '0 : data_i;
-        w_en_r   <= same_addr ? ((w_i | w_r) ? 1'b1 : w_en_r) : w_i;
+        addr_r <= addr_i;
+        if(w_i) begin
+          w_mask_r <= w_mask_i;
+          w_data_r <= data_i;
+        end
       end
-      
-      if(r_en)
-        r_data_r <= ram[addr_i];
-      else if(v_i & w_r  & same_addr)
-        r_data_r <= (r_data_r & ~w_mask_r) | (w_data_r & w_mask_r);
-       
-      if(w_en) 
-        ram[addr_r] <= (r_data_r & ~w_mask_r) | (w_data_r & w_mask_r);
+      if(w_r)
+        buf_r <= w_data_li;
     end
   end
+
+  wire [width_lp:0] data_out = haz_r ? buf_r : r_data_lo;
 
   if (latch_last_read_p)
     begin: llr
       bsg_dff_en_bypass #(
-        .width_p(width_p)
+        .width_p (width_p)
       ) dff_bypass (
-        .clk_i(clk_i)
-        ,.en_i(~w_r)
-        ,.data_i(r_data_r)
-        ,.data_o(data_o)
+        .clk_i   (clk_i)
+        ,.en_i   (~w_r)
+        ,.data_i (data_out)
+        ,.data_o (data_o)
       );
     end
   else
     begin: no_llr
-      assign data_o = r_data_r;
+      assign data_o = data_out;
     end
 
 endmodule
