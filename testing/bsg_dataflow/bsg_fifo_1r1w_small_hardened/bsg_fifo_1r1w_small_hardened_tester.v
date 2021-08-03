@@ -89,7 +89,13 @@ module bsg_fifo_1r1w_small_hardened_tester
   ,.data_o (master_node_link_li.data)
   ,.yumi_i (master_node_link_li.v & master_node_link_lo.ready_and_rev)
   );
-  
+
+  bind bsg_fifo_1r1w_small_hardened bsg_fifo_1r1w_small_hardened_cov
+ #(.width_p(width_p)
+  ) pc_cov
+  (.*
+  );
+
   bsg_fifo_1r1w_small_hardened_test_node
  #(.num_channels_p(width_p/channel_width_p)
   ,.channel_width_p(channel_width_p)
