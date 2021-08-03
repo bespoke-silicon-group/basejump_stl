@@ -19,7 +19,6 @@ module bsg_cache_to_axi
     ,parameter tag_fifo_els_p=num_cache_p
 
     ,parameter `BSG_INV_PARAM(axi_id_width_p) // 6
-    ,parameter `BSG_INV_PARAM(axi_addr_width_p)
     ,parameter `BSG_INV_PARAM(axi_data_width_p)
     ,parameter `BSG_INV_PARAM(axi_burst_len_p)
 
@@ -47,7 +46,8 @@ module bsg_cache_to_axi
 
     // axi write address channel
     ,output logic [axi_id_width_p-1:0] axi_awid_o
-    ,output logic [axi_addr_width_p-1:0] axi_awaddr_o
+    ,output logic [addr_width_p-1:0] axi_awaddr_addr_o
+    ,output logic [lg_num_cache_lp-1:0] axi_awaddr_cache_id_o
     ,output logic [7:0] axi_awlen_o
     ,output logic [2:0] axi_awsize_o
     ,output logic [1:0] axi_awburst_o
@@ -72,7 +72,8 @@ module bsg_cache_to_axi
 
     // axi read address channel
     ,output logic [axi_id_width_p-1:0] axi_arid_o
-    ,output logic [axi_addr_width_p-1:0] axi_araddr_o
+    ,output logic [addr_width_p-1:0] axi_araddr_addr_o
+    ,output logic [lg_num_cache_lp-1:0] axi_araddr_cache_id_o
     ,output logic [7:0] axi_arlen_o
     ,output logic [2:0] axi_arsize_o
     ,output logic [1:0] axi_arburst_o
@@ -159,22 +160,22 @@ module bsg_cache_to_axi
     ,.yumi_i(write_rr_yumi_li)
   );
 
-  // address translation
+  // One example of address translation corresponding to tag and addr
   //
-  logic [axi_addr_width_p-1:0] rx_axi_addr;
-  logic [axi_addr_width_p-1:0] tx_axi_addr;
+  // logic [axi_addr_width_p-1:0] rx_axi_addr;
+  // logic [axi_addr_width_p-1:0] tx_axi_addr;
 
-  assign rx_axi_addr = {
-    {(axi_addr_width_p-lg_num_cache_lp-addr_width_p){1'b0}}
-    ,read_rr_tag_lo
-    ,read_rr_dma_pkt.addr
-  };  
+  // assign rx_axi_addr = {
+  //   {(axi_addr_width_p-lg_num_cache_lp-addr_width_p){1'b0}}
+  //   ,read_rr_tag_lo
+  //   ,read_rr_dma_pkt.addr
+  // };  
 
-  assign tx_axi_addr = {
-    {(axi_addr_width_p-lg_num_cache_lp-addr_width_p){1'b0}}
-    ,write_rr_tag_lo
-    ,write_rr_dma_pkt.addr
-  };  
+  // assign tx_axi_addr = {
+  //   {(axi_addr_width_p-lg_num_cache_lp-addr_width_p){1'b0}}
+  //   ,write_rr_tag_lo
+  //   ,write_rr_dma_pkt.addr
+  // };  
 
   // dma_pkt handshake
   //
@@ -188,11 +189,11 @@ module bsg_cache_to_axi
   //
   bsg_cache_to_axi_rx #(
     .num_cache_p(num_cache_p)
+    ,.addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.tag_fifo_els_p(tag_fifo_els_p)
     ,.axi_id_width_p(axi_id_width_p)
-    ,.axi_addr_width_p(axi_addr_width_p)
     ,.axi_data_width_p(axi_data_width_p)
     ,.axi_burst_len_p(axi_burst_len_p)
   ) axi_rx (
@@ -201,15 +202,16 @@ module bsg_cache_to_axi
 
     ,.v_i(read_rr_v_lo)
     ,.yumi_o(read_rr_yumi_li)
-    ,.tag_i(read_rr_tag_lo)
-    ,.axi_addr_i(rx_axi_addr)
+    ,.cache_id_i(read_rr_tag_lo)
+    ,.addr_i(read_rr_dma_pkt.addr)
 
     ,.dma_data_o(dma_data_o)
     ,.dma_data_v_o(dma_data_v_o)
     ,.dma_data_ready_i(dma_data_ready_i)
 
     ,.axi_arid_o(axi_arid_o)
-    ,.axi_araddr_o(axi_araddr_o)
+    ,.axi_araddr_addr_o(axi_araddr_addr_o)
+    ,.axi_araddr_cache_id_o(axi_araddr_cache_id_o)
     ,.axi_arlen_o(axi_arlen_o)
     ,.axi_arsize_o(axi_arsize_o)
     ,.axi_arburst_o(axi_arburst_o)
@@ -231,11 +233,11 @@ module bsg_cache_to_axi
   //
   bsg_cache_to_axi_tx #(
     .num_cache_p(num_cache_p)
+    ,.addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.tag_fifo_els_p(tag_fifo_els_p)
     ,.axi_id_width_p(axi_id_width_p)
-    ,.axi_addr_width_p(axi_addr_width_p)
     ,.axi_data_width_p(axi_data_width_p)
     ,.axi_burst_len_p(axi_burst_len_p)
   ) axi_tx (
@@ -244,15 +246,16 @@ module bsg_cache_to_axi
     
     ,.v_i(write_rr_v_lo)
     ,.yumi_o(write_rr_yumi_li)
-    ,.tag_i(write_rr_tag_lo)
-    ,.axi_addr_i(tx_axi_addr)
+    ,.cache_id_i(write_rr_tag_lo)
+    ,.addr_i(write_rr_dma_pkt.addr)
 
     ,.dma_data_i(dma_data_i)
     ,.dma_data_v_i(dma_data_v_i)
     ,.dma_data_yumi_o(dma_data_yumi_o)
 
     ,.axi_awid_o(axi_awid_o)
-    ,.axi_awaddr_o(axi_awaddr_o)
+    ,.axi_awaddr_addr_o(axi_awaddr_addr_o)
+    ,.axi_awaddr_cache_id_o(axi_awaddr_cache_id_o)
     ,.axi_awlen_o(axi_awlen_o)
     ,.axi_awsize_o(axi_awsize_o)
     ,.axi_awburst_o(axi_awburst_o)
