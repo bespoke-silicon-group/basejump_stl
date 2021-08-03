@@ -76,7 +76,7 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
 
     if(~reset_i) begin
       haz_r <= haz;
-      w_r   <= w_i & v_i;
+      w_r   <= v_i & w_i;
       if(v_i) begin
         addr_r <= addr_i;
         if(w_i) begin
