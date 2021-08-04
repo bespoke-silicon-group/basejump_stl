@@ -108,5 +108,9 @@ module test_bsg;
       $display("Ending tests");
       $finish;
     end
+    if(test_input_v & test_input_w)
+      $display("Essentially writing %b to %06h"
+        , ram[test_input_addr] & ~test_input_mask | test_input_data & test_input_mask
+        , test_input_addr);
   end
 endmodule

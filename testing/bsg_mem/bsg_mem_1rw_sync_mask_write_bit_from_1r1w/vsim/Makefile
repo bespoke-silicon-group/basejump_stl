@@ -87,7 +87,7 @@ all: clean $(foreach x,$(commands),run.$(x))
 	echo Number of writes performed:
 	grep "w_en 1" transcript | wc -l
 	echo Number of reads issued:
-	grep "| v | w" transcript | wc -l
+	grep "| v | r" transcript | wc -l
 	echo Number of reads performed:
 	grep "r_en 1" transcript | wc -l
 

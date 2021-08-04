@@ -7,13 +7,26 @@
 // 
 // Operation:
 //  * Writes:
-//    - Register the write data, mask; read the address in the 0th cycle
-//    - Apply the masked write to the read data availble in 1st cycle; write using write port of RAM
-//    - Data reflected in RAM (internally) in 2nd clock
+//    - Write match to a previous write:
+//        Skip previous write scheduled to happen in this cycle, and
+//        Register the previously updated write updated with 
+//              the current write into the buffer for subsequent write
+//    - Write no match to a previous write:
+//        Register the write data for subsequent masked write into RAM
+//    - Read match to previous write:
+//        Register the updated write into the buffer for subsequent access
+//          (To avoid read and write to same address)
+//    - Data reflected in RAM (internally) in the next clock if no hazard
 //   
 //  * Reads: operationally unchanged, with one quirk:
 //    - When a read request succeeds a write to the same address, 
-//        previously read data with updates applied is wired to data_o
+//        updated buffer is wired to data_o
+//
+// Design choice: Unoptimistic
+//   This version does not latch the read data from the instantiated RAM.
+//   Doing so, however, leads to slightly lower number of reads and writes overall,
+//   if the consecutive accesses repeat the addresses frequently, 
+//   as the previously read data can be reused without reaccessing RAM.
 
 `include "bsg_defines.v"
 
@@ -37,27 +50,31 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
 
   , output [width_lp:0]          data_o
 );
- 
+
+  // synopsys translate_off
   always @(negedge clk_i)
     assert(int'(addr_i) < els_p) else $warning("%m Accessing uninitialized address!");
+  // synopsys translate_on
 
-  logic [width_lp:0]             w_data_r;
   logic [addr_width_lp-1:0]      addr_r;
   logic [width_lp:0]             w_mask_r;
-  logic                          w_r;
-
   logic [width_lp:0]             buf_r;
-  logic                          haz_r;
+  logic                          w_next_r;
+  logic                          w_r;
+  logic                          r_match_r;
+  logic                          w_match_r;
 
   wire  [width_lp:0] r_data_lo;
-  wire  [width_lp:0] w_data_li   = ((haz_r ? buf_r : r_data_lo) & ~w_mask_r) | (w_data_r & w_mask_r);
-  wire               haz         = w_r & (addr_r == addr_i);
-  wire               r_en_li     = v_i & !haz;
-  wire               w_en_li     = ~(v_i & w_i & addr_r == addr_i) & w_r;
+  wire  [width_lp:0] w_data_li = w_match_r ? buf_r 
+                                : (r_data_lo & ~w_mask_r) | (buf_r & w_mask_r);
+  wire               haz       = addr_r == addr_i;
+  wire               r_en_li   = v_i & (haz & ~w_next_r | ~haz);
+  wire               w_en_li   = w_next_r & ~(v_i & w_i & haz);
 
   bsg_mem_1r1w_sync
     #(.width_p   (width_p)
       ,.els_p    (els_p)
+      ,.latch_last_read_p(0)
       ) ram
       (.clk_i    (clk_i)
       ,.reset_i  (reset_i)
@@ -70,26 +87,36 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
       );
 
   always_ff @(posedge clk_i) begin
-    if(verbose_p==1)
-      $display("w_en %b | r_en %b | w_data %b | w_addr %06h| haz %b | buf_r %b |"
-              , w_en_li, r_en_li, w_data_li, addr_r, haz, buf_r);
-
-    if(~reset_i) begin
-      haz_r <= haz;
-      w_r   <= v_i & w_i;
+    if(reset_i)
+      w_r <= 1'b0;
+    else begin
+      w_next_r     <= v_i & w_i;
       if(v_i) begin
-        addr_r <= addr_i;
-        if(w_i) begin
+        w_r        <= w_i;
+        addr_r     <= addr_i;
+        r_match_r  <= haz & w_next_r;
+        w_match_r  <= v_i & w_i & haz & w_next_r;
+        if(w_i)
           w_mask_r <= w_mask_i;
-          w_data_r <= data_i;
-        end
       end
-      if(w_r)
-        buf_r <= w_data_li;
+      buf_r <= (w_r & haz) 
+                 ? (w_i
+                   ? (w_data_li & ~w_mask_i) | (data_i & w_mask_i)
+                   : w_data_li)
+                 : data_i;
     end
   end
 
-  wire [width_lp:0] data_out = haz_r ? buf_r : r_data_lo;
+  wire [width_lp:0] data_out = r_match_r ? buf_r : r_data_lo;
+  
+  // synopsys translate_off
+  always_ff @(posedge clk_i)
+    if(verbose_p==1)
+      $display("w_en %b | r_en %b | w_data %b | r_data %b | w_addr %06h"
+              , w_en_li, r_en_li, w_data_li, r_data_lo, addr_r
+              , "| buf_r %b | r_match %b | w_match %b |"
+              , buf_r, r_match_r, w_match_r);
+  // synopsys translate_on
 
   if (latch_last_read_p)
     begin: llr

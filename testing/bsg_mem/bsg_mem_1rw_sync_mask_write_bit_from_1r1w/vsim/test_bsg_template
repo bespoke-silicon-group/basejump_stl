@@ -4,8 +4,7 @@
 `define CYCLES_P 100000
 
 // Test rationale:
-// Repeating addresses are a concern since there are bypass paths in the DUT.
-// And so, a randomly chosen "hazard" determines if the address repeats in the next cycle.
+// A randomly chosen "hazard" determines if the address repeats in the next cycle.
 // A copy of the DUT RAM is maintained, and kept up to date.
 // Following read requests to the DUT, the test verifies if the read data matches the local copy.
 
