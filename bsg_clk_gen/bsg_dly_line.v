@@ -35,11 +35,9 @@ module bsg_dly_line
 
    bsg_tag_client #(.width_p($bits(bsg_clk_gen_osc_tag_payload_s))
                     ,.harden_p(1)
-                    ,.default_p(0)
                     ) btc
      (.bsg_tag_i     (bsg_tag_i)
       ,.recv_clk_i   (clk_o)
-      ,.recv_reset_i (1'b0)     // no default value is loaded;
       ,.recv_new_r_o (fb_we_r)  // default is already in OSC flops
       ,.recv_data_r_o(fb_tag_r)
       );
