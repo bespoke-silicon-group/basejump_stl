@@ -74,7 +74,7 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
      else
        r_addr_r <= 'X;
 
-   wire [width_p-1:0] data_out = mem[r_addr_r];
+   wire [width_p-1:0] mem_out = mem[r_addr_r];
 
    always_ff @(posedge clk_i)
      if (w_v_i)
@@ -96,13 +96,13 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
      ) dff_bypass (
        .clk_i(clk_i)
        ,.en_i(read_en_r)
-       ,.data_i(data_out)
+       ,.data_i(mem_out)
        ,.data_o(r_data_o)
      );
    end
    else
      begin: no_llr
-        assign r_data_o = data_out;
+        assign r_data_o = mem_out;
      end
 
    end

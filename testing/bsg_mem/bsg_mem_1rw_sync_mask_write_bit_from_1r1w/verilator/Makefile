@@ -24,7 +24,7 @@ WIDTH = 16 7
 # Stream edition to change instance names in CPP testbench
 generate = cp test_bsg_template test_bsg.cpp &&	sed -i 's/REPLACE/$(REPLACE)/' test_bsg.cpp
 
-verilate = verilator -cc -Wall -Wno-DECLFILENAME \
+verilate = verilator -cc -Wall -Wno-DECLFILENAME -Wno-UNUSED \
   $(TOP_FILE) $(INCLUDES) \
 	-Gwidth_p=$(WIDTH_P) -Gels_p=$(ELS_P) -Gverbose_p=1
 
