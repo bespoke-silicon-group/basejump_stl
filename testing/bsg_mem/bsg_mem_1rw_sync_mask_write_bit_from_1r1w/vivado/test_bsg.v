@@ -56,16 +56,17 @@ module test_bsg;
 
   logic [`WIDTH_P-1:0] ram [0:`ELS_P-1];
   //For cleaner testing iteration, uncomment this and initialize DUT RAM as well
-  generate
-    integer ram_index;
-    initial
-      for (ram_index = 0; ram_index < `ELS_P; ram_index = ram_index + 1)
-        ram[ram_index] = {(`WIDTH_P){1'b0}};
-  endgenerate
+  //generate
+  //  integer ram_index;
+  //  initial
+  //    for (ram_index = 0; ram_index < `ELS_P; ram_index = ram_index + 1)
+  //      ram[ram_index] = {(`WIDTH_P){1'b0}};
+  //endgenerate
 
-  bsg_mem_1rw_sync_mask_write_bit_from_1r1w 
-  #(`WIDTH_P
-    , `ELS_P
+  bsg_mem_1rw_sync_mask_write_bit_from_1r1w
+  #(.width_p(`WIDTH_P)
+    , .els_p(`ELS_P)
+    , .verbose_p(1)
   ) inst
   ( .clk_i(clk)
     , .reset_i(reset)
@@ -80,14 +81,13 @@ module test_bsg;
   initial begin
     test_input_v_r = 0;
     counter_r = 0;
-    $monitor(  "count:%06h | ", counter_r
-      , " %s | %s | addr:%06h | data:%06h | mask:%6h"
+    $monitor("%06h |", counter_r
+      , " %s | %s | addr:%06h | data:%06h | mask:%6h | "
       , test_input_v ? "v" : "", test_input_w ? "w" : "r"
       , test_input_addr, test_input_data, test_input_mask
-      , "| data_o:%06h | expected:%06h | %s"
+      , "data_o: %b | expected: %b | %s"
       , data_o, ram[test_input_addr_r]
-      , (test_input_v_r && !test_input_w_r) ? "Verify now;" : "" 
-     );
+      , (test_input_v_r && !test_input_w_r) ? "Check" : "");
   end
   
   always @(posedge clk) begin

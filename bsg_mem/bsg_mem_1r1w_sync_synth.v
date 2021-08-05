@@ -19,7 +19,6 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
 				 , parameter read_write_same_addr_p=0
 				 , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
 				 , parameter harden_p=0
-				 , parameter latch_last_read_p = 0
 				 )
    (input   clk_i
     , input reset_i
@@ -74,36 +73,11 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
      else
        r_addr_r <= 'X;
 
-   wire [width_p-1:0] mem_out = mem[r_addr_r];
+   assign r_data_o = mem[r_addr_r];
 
    always_ff @(posedge clk_i)
      if (w_v_i)
        mem[w_addr_i] <= w_data_i;
-
-   if(latch_last_read_p) begin: llr
-     logic read_en_r;
-
-     bsg_dff #(
-       .width_p(1)
-     ) read_en_dff (
-       .clk_i(clk_i)
-       ,.data_i(r_v_i)
-       ,.data_o(read_en_r)
-     );
-
-     bsg_dff_en_bypass #(
-       .width_p(width_p)
-     ) dff_bypass (
-       .clk_i(clk_i)
-       ,.en_i(read_en_r)
-       ,.data_i(mem_out)
-       ,.data_o(r_data_o)
-     );
-   end
-   else
-     begin: no_llr
-        assign r_data_o = mem_out;
-     end
 
    end
 endmodule

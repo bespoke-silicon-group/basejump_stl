@@ -19,7 +19,6 @@ module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
                            , parameter harden_p=0
                            , parameter disable_collision_warning_p=0
                            , parameter enable_clock_gating_p=0
-                           , parameter latch_last_read_p = 0
                            )
    (input   clk_i
     , input reset_i
@@ -56,7 +55,6 @@ module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
        ,.els_p(els_p)
        ,.read_write_same_addr_p(read_write_same_addr_p)
        ,.harden_p(harden_p)
-       ,.latch_last_read_p(latch_last_read_p)
        ) synth
        (.clk_i( clk_lo )
        ,.reset_i

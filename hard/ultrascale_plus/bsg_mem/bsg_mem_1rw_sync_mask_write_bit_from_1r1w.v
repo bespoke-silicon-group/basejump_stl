@@ -61,7 +61,7 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
 
   bsg_dff
     #(.width_p(1))
-    common_next_pipe
+    common_next_regs
     (.clk_i  (clk_i)
     ,.data_i (v_i & w_i)
     ,.data_o (v_and_w_r)
@@ -74,7 +74,7 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
 
   bsg_dff_en
     #(.width_p(addr_width_lp+1))
-    common_pipe
+    common_regs
     (.clk_i  (clk_i)
     ,.en_i   (v_i)
     ,.data_i ({addr_i, bypass_n})
@@ -86,7 +86,7 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
 
   bsg_dff_reset_en
     #(.width_p(1))
-    common_reset_pipe
+    common_reset_regs
     (.clk_i  (clk_i)
     ,.reset_i(reset_i)
     ,.en_i   (v_i)
@@ -96,7 +96,7 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
 
   bsg_dff_en 
     #(.width_p(width_p))
-    write_pipe
+    write_regs
     (.clk_i  (clk_i)
     ,.en_i   (v_i & w_i)
     ,.data_i (w_mask_i)
@@ -118,8 +118,7 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
 
   bsg_mem_1r1w_sync
     #(.width_p (width_p)
-    ,.els_p    (els_p)
-    ,.latch_last_read_p(0))
+    ,.els_p    (els_p))
     ram
     (.clk_i    (clk_i)
     ,.reset_i  (reset_i)

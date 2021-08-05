@@ -8,13 +8,10 @@
 # Edited to test bsg_mem_1rw_sync_mask_write_bit_from_1r1w
 
 TOP = ../../../..
-REPLACE = bsg_mem_1rw_sync_mask_write_bit_from_1r1w
-
-generate = cp test_bsg_template test_bsg.v && sed -i 's/REPLACE/$(REPLACE)/' test_bsg.v
 
 ########################### SIMULATION PARAMETERS ##########################
 # place the parameters you want to scan here.
-BSG_TESTME_FILES    =  $(REPLACE).v
+BSG_TESTME_FILES    =  bsg_mem_1rw_sync_mask_write_bit_from_1r1w.v
 BSG_TESTME_DIR      =  $(TOP)/hard/ultrascale_plus/bsg_mem/
 BSG_MISC_FILES      =  bsg_defines.v bsg_cycle_counter.v bsg_dff.v bsg_dff_en_bypass.v bsg_dff_en.v bsg_dff_reset_en.v
 BSG_ASYNC_FILES     = 
@@ -96,9 +93,8 @@ all: clean $(foreach x,$(commands),run.$(x))
 # command line options
 
 run.%:
-	$(generate)
 	$(BSG_IP_CORES_COMP) $(subst @, ,$*)
 	$(BSG_IP_CORES_SIM) >> transcript
   
 clean:
-	rm -rf transcript work test_bsg.v
+	rm -rf transcript work

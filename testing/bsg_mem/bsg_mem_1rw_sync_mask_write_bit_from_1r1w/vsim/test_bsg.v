@@ -63,7 +63,7 @@ module test_bsg;
   //      ram[ram_index] = {(`WIDTH_P){1'b0}};
   //endgenerate
 
-  REPLACE
+  bsg_mem_1rw_sync_mask_write_bit_from_1r1w
   #(.width_p(`WIDTH_P)
     , .els_p(`ELS_P)
     , .verbose_p(1)
