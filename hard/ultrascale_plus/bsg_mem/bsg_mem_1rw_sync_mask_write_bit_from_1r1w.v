@@ -99,12 +99,11 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
           ? bypass_data_r : (mem_data_lo & ~w_mask_r) | (bypass_data_r & w_mask_r);
 
   always_ff @(posedge clk_i)
-    if(~reset_i)
-      bypass_data_r <= (v_and_w_r & bypass_n)
+    bypass_data_r <= bypass_n
                  ? (w_i
-                   ? (w_data_li & ~w_mask_i) | (data_i & w_mask_i)
-                   : w_data_li)
-                 : data_i;
+                   ? (w_data_li & ~w_mask_i) | (data_i & w_mask_i) // WAW
+                   : w_data_li) // RAW
+                 : data_i; // No hazard
 
   // Read if either RAR/WAR hazard or not a hazard
   // Write previous if not a write hazard currently
