@@ -27,24 +27,13 @@ module input_side_tester
   assign data_o = data_r;
 
   // valid gen
-  integer count_r;
   logic v_r;
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       v_r <= 1'b0;
-      count_r <= 0;
     end
     else begin
-      if (count_r == 0) begin
-        v_r <= ~v_r;
-        if (v_r)
-          count_r <=  $urandom_range(0,32);
-        else
-          count_r <=  $urandom_range(0,4);
-      end
-      else begin
-        count_r <= count_r - 1;
-      end
+      v_r <= ($urandom_range(0,32) < 16);
     end
   end
 

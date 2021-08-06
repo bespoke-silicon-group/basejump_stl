@@ -11,25 +11,18 @@ module output_side_tester
 
   
   // yumi random gen
-  integer count_r;
+  logic ready_r;
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      count_r <= $urandom_range(0, 32);
+      ready_r <= 1'b1;
     end
     else begin
-      if (v_i) begin
-        if (count_r == 0) begin
-          count_r <= $urandom_range(0, 32);
-        end
-        else begin
-          count_r <= count_r - 1;
-        end
-      end
+      ready_r <= ($urandom_range(0,32) < 16);
     end
   end
 
-  assign yumi_o = v_i & (count_r == 0);
+  assign yumi_o = v_i & ready_r;
 
   always @ (posedge clk_i) begin
     if (yumi_o & v_i) begin

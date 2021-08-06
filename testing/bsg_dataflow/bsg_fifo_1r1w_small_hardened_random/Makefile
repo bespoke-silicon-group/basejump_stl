@@ -24,3 +24,4 @@ clean:
 	rm -rf simv.daidir simv.vdb
 	rm -f ucli.key vcdplus.vpd simv *.tar.gz
 	rm -f simv.log vcs.log vc_hdrs.h
+	rm -f cov.log
