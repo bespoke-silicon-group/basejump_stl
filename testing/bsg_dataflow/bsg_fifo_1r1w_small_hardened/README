@@ -2,8 +2,7 @@ First time run of test
 
 $ cd basejump_stl/testing/bsg_dataflow/bsg_fifo_1r1w_small_hardened
 $ git clone https://github.com/bespoke-silicon-group/bsg_cadenv.git ../../../../bsg_cadenv
-$ make -j125
-$ make check
+$ make run
 
 
 Clean generated files

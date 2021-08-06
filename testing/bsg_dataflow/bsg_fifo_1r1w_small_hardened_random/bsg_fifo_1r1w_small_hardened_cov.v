@@ -97,6 +97,7 @@ module bsg_fifo_1r1w_small_hardened_cov
   final
   begin
     $display("");
+    $display("Instance: %m");
     $display("---------------------- Functional Coverage Results ----------------------");
     $display("Reset       functional coverage is %f%%",cov_reset.get_coverage());
     $display("Fifo empty  functional coverage is %f%%",cov_empty.get_coverage());

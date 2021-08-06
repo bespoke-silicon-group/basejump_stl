@@ -11,12 +11,7 @@
 module bsg_fifo_1r1w_small_hardened_tester
 
  #(
-   // dynamic parameters
-   parameter top_master_clk_period_p     = 5
-  ,parameter top_fifo_clk_period_p       = 5
-  ,parameter top_client_clk_period_p     = 5
-   // static parameters
-  ,parameter width_p  = 64
+   parameter width_p  = 64
   ,parameter els_p    = 4
   ,parameter channel_width_p = 8
   )

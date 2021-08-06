@@ -7,40 +7,16 @@ export BASEJUMP_STL_DIR = $(TOP_DIR)/../../..
 # Environment
 include $(BSG_CADENV_DIR)/cadenv.mk
 
-PERIODS := 5
-CLK_SPEEDS := $(foreach MASTER, $(PERIODS), \
-                  $(foreach FIFO, $(PERIODS), \
-                      $(foreach CLIENT, $(PERIODS), \
-                          $(MASTER)-$(FIFO)-$(CLIENT))))
+run:
+	$(VCS_BIN)/vcs -full64 -sverilog -timescale=1ps/1ps -f $(TOP_DIR)/filelist -debug_pp -R -top bsg_fifo_1r1w_small_hardened_tester +vcs+vcdpluson -assert svaext +vcs+lic+wait -cm line+fsm+branch+cond+tgl
 
-RUNS := $(foreach CLK_SPEED_P, $(CLK_SPEEDS), \
-            run-$(CLK_SPEED_P))
+view:
+	$(VCS_BIN)/dve -full64 -vpd vcdplus.vpd &
 
-run: $(RUNS)
-run-%:
-	mkdir run-$*;
-	cd run-$* && \
-        $(VCS_BIN)/vcs -full64 -sverilog -timescale=1ps/1ps -f $(TOP_DIR)/filelist -debug_pp -R -top bsg_fifo_1r1w_small_hardened_tester +vcs+vcdpluson -assert svaext +vcs+lic+wait -cm line+fsm+branch+cond+tgl \
-        -pvalue+top_master_clk_period_p=$(word 1, $(subst -, ,$*)) \
-        -pvalue+top_fifo_clk_period_p=$(word 2, $(subst -, ,$*)) \
-        -pvalue+top_client_clk_period_p=$(word 3, $(subst -, ,$*)) \
-        > run-$*.log
+cov:
+	$(VCS_BIN)/dve -full64 -cov -covdir simv.vdb &
 
-view-%:
-	cd run-$* && \
-        $(VCS_BIN)/dve -full64 -vpd vcdplus.vpd &
-
-cov-%:
-	cd run-$* && \
-        $(VCS_BIN)/dve -full64 -cov -covdir simv.vdb &
-
-check:
-	@echo 'Number of tests passed:'
-	@grep -r PASS */*.log | wc -l
-	@echo 'Number of tests failed:'
-	@grep -r FAIL */*.log | wc -l
-
-junk = csrc DVEfiles simv.daidir *.old *.vpd simv *.key vc_hdrs.h run-*
+junk = csrc DVEfiles simv.daidir *.old *.vpd simv *.key vc_hdrs.h cm.log simv.vdb
 
 clean:
 	rm -rf $(junk)
