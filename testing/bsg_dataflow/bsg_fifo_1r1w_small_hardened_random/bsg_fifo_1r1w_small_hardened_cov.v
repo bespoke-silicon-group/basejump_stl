@@ -35,7 +35,9 @@ module bsg_fifo_1r1w_small_hardened_cov
     cp_yumi: coverpoint yumi_i {ignore_bins ig = {1};}
     cp_rptr: coverpoint rptr_r;
     cp_wptr: coverpoint wptr_r;
-    // fifo cannot be empty if write happened in previous cycle
+    // If read write same address happened in previous cycle, fifo should
+    // have one element in current cycle, which contradicts with the
+    // condition that fifo is empty.
     cp_rwsa: coverpoint read_write_same_addr_r {ignore_bins ig = {1};}
 
     cross_all: cross cp_v, cp_yumi, cp_rptr, cp_wptr, cp_rwsa {
@@ -74,8 +76,8 @@ module bsg_fifo_1r1w_small_hardened_cov
     cross_all: cross cp_v, cp_yumi, cp_rptr, cp_wptr, cp_rwsa {
       ignore_bins ig0 = cross_all with (cp_rptr == cp_wptr);
       // If read write same address happened in previous cycle, fifo should
-      // only have one element in current cycle. Write pointer should be read
-      // pointer plus one (or wrapped-around).
+      // only have one element in current cycle. Write-pointer should be
+      // read-pointer plus one (or wrapped-around).
       ignore_bins ig1 = cross_all with (
         (cp_rwsa == 1)
         && (cp_wptr - cp_rptr != 1)
@@ -85,17 +87,23 @@ module bsg_fifo_1r1w_small_hardened_cov
 
   endgroup
 
+  // create cover groups
   cg_reset cov_reset = new;
   cg_empty cov_empty = new;
   cg_full cov_full = new;
   cg_normal cov_normal = new;
 
+  // print coverages when simulation is done
   final
   begin
-    $display("Reset functional coverage is %e",cov_reset.get_coverage());
-    $display("Fifo empty functional coverage is %e",cov_empty.get_coverage());
-    $display("Fifo full functional coverage is %e",cov_full.get_coverage());
-    $display("Fifo normal functional coverage is %e",cov_normal.get_coverage());
+    $display("");
+    $display("---------------------- Functional Coverage Results ----------------------");
+    $display("Reset       functional coverage is %f%%",cov_reset.get_coverage());
+    $display("Fifo empty  functional coverage is %f%%",cov_empty.get_coverage());
+    $display("Fifo full   functional coverage is %f%%",cov_full.get_coverage());
+    $display("Fifo normal functional coverage is %f%%",cov_normal.get_coverage());
+    $display("-------------------------------------------------------------------------");
+    $display("");
   end
 
 endmodule
