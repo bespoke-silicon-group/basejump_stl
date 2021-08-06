@@ -55,18 +55,20 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
     assert(int'(addr_i) < els_p) else $warning("%m Accessing uninitialized address!");
   // synopsys translate_on
 
+  wire                      v_and_w_n = v_i & w_i;
   wire                      v_and_w_r;
 
   bsg_dff
     #(.width_p(1))
     common_next_regs
     (.clk_i  (clk_i)
-    ,.data_i (v_i & w_i)
+    ,.data_i (v_and_w_n)
     ,.data_o (v_and_w_r)
     );
 
   wire [addr_width_lp-1:0]  w_addr_r;
-  wire                      bypass_n = v_and_w_r & (w_addr_r == addr_i);
+  wire                      addr_match = w_addr_r == addr_i;
+  wire                      bypass_n = v_and_w_r & addr_match;
   wire                      bypass_r;
 
   bsg_dff_en
@@ -91,6 +93,9 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
 
   wire  [width_m1_lp:0]     mem_data_lo;
 
+  // If there are no back-to-back RAW or WAW dependence, then bypass_data_r contains the
+  // data to write. If there is a back-to-back dependence, then this contains the latest
+  // running value of this memory address
   logic [width_m1_lp:0]     bypass_data_r;
 
   // If WAW, write bypass_data_r which incorporates both updates
@@ -107,8 +112,8 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
 
   // Read if either RAR/WAR hazard or not a hazard
   // Write previous if not a write hazard currently
-  wire r_en_li = v_i & ~bypass_n;
-  wire w_en_li = v_and_w_r;
+  wire r_en_li = v_i & (addr_match & ~v_and_w_r | ~addr_match);
+  wire w_en_li = v_and_w_r & ~(v_and_w_n & addr_match);
 
   bsg_mem_1r1w_sync
     #(.width_p (width_p)
@@ -162,4 +167,4 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
 
 endmodule
 
-`BSG_ABSTRACT_MODULE(bsg_mem_1rw_sync_mask_write_bit_from_1r1w)
+//`BSG_ABSTRACT_MODULE(bsg_mem_1rw_sync_mask_write_bit_from_1r1w)
