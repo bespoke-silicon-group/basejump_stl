@@ -21,11 +21,6 @@
 //    - When a read request succeeds a write to the same address, 
 //        updated buffer is wired out
 //      Otherwise expect read data in next cycle
-//
-// Design choice: Unoptimistic
-//   This version does not latch the read data from the instantiated RAM.
-//   Doing so, however, leads to slightly lower number of reads and writes overall,
-//   if the consecutive accesses repeat the addresses frequently.
 
 `include "bsg_defines.v"
 
@@ -110,9 +105,9 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
                    : w_data_li) // RAW
                  : data_i; // No hazard
 
-  // Read if either RAR/WAR hazard or not a hazard
+  // Read if not a hazard with next pipeline stage write
   // Write previous if not a write hazard currently
-  wire r_en_li = v_i & (addr_match & ~v_and_w_r | ~addr_match);
+  wire r_en_li = v_i & ~bypass_n;
   wire w_en_li = v_and_w_r & ~(v_and_w_n & addr_match);
 
   bsg_mem_1r1w_sync
