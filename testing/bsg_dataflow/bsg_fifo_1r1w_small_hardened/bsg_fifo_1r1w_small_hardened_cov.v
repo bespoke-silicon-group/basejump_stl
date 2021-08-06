@@ -85,12 +85,17 @@ module bsg_fifo_1r1w_small_hardened_cov
 
   endgroup
 
-  initial
+  cg_reset cov_reset = new;
+  cg_empty cov_empty = new;
+  cg_full cov_full = new;
+  cg_normal cov_normal = new;
+
+  final
   begin
-    cg_reset reset = new;
-    cg_empty empty = new;
-    cg_full full = new;
-    cg_normal normal = new;
+    $display("Reset functional coverage is %e",cov_reset.get_coverage());
+    $display("Fifo empty functional coverage is %e",cov_empty.get_coverage());
+    $display("Fifo full functional coverage is %e",cov_full.get_coverage());
+    $display("Fifo normal functional coverage is %e",cov_normal.get_coverage());
   end
 
 endmodule
