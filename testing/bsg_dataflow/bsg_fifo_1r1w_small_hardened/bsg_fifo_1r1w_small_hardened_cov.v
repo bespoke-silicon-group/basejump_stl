@@ -51,11 +51,9 @@ module bsg_fifo_1r1w_small_hardened_cov
     cp_yumi: coverpoint yumi_i;
     cp_rptr: coverpoint rptr_r;
     cp_wptr: coverpoint wptr_r;
-    // read write same address happened in previous cycle only when
-    //   1. fifo was empty
-    //   2. enque and deque happened in the same cycle
-    // if any of them was true, fifo cannot be full in current cycle
-    // since fifo is full, it was not reading and writing same address in last cycle
+    // If read write same address happened in previous cycle, fifo should
+    // only have one element in current cycle, which contradicts with the
+    // condition that fifo is full.
     cp_rwsa: coverpoint read_write_same_addr_r {ignore_bins ig = {1};}
 
     cross_all: cross cp_v, cp_yumi, cp_rptr, cp_wptr, cp_rwsa {
@@ -75,6 +73,14 @@ module bsg_fifo_1r1w_small_hardened_cov
 
     cross_all: cross cp_v, cp_yumi, cp_rptr, cp_wptr, cp_rwsa {
       ignore_bins ig0 = cross_all with (cp_rptr == cp_wptr);
+      // If read write same address happened in previous cycle, fifo should
+      // only have one element in current cycle. Write pointer should be read
+      // pointer plus one (or wrapped-around).
+      ignore_bins ig1 = cross_all with (
+        (cp_rwsa == 1)
+        && (cp_wptr - cp_rptr != 1)
+        && (cp_wptr - cp_rptr != 1-els_p)
+        );
     }
 
   endgroup
