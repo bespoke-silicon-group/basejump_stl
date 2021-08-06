@@ -17,7 +17,7 @@ module bsg_fifo_1r1w_small_hardened_tester
   ,parameter top_client_clk_period_p     = 5
    // static parameters
   ,parameter width_p  = 64
-  ,parameter els_p    = 16
+  ,parameter els_p    = 4
   ,parameter channel_width_p = 8
   )
   
@@ -91,7 +91,7 @@ module bsg_fifo_1r1w_small_hardened_tester
   );
 
   bind bsg_fifo_1r1w_small_hardened bsg_fifo_1r1w_small_hardened_cov
- #(.width_p(width_p)
+ #(.els_p(els_p)
   ) pc_cov
   (.*
   );
