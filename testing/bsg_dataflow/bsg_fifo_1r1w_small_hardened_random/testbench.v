@@ -1,7 +1,7 @@
 module testbench();
 
   parameter width_p = 32;  
-  parameter els_p = 8;
+  parameter els_p = 4;
   parameter test_els_p = 100000;
 
   // clock and reset
@@ -41,6 +41,11 @@ module testbench();
     ,.yumi_i(yumi_li)
   );
 
+  bind bsg_fifo_1r1w_small_hardened bsg_fifo_1r1w_small_hardened_cov
+ #(.els_p(els_p)
+  ) pc_cov
+  (.*
+  );
 
 
   // Input side tester
