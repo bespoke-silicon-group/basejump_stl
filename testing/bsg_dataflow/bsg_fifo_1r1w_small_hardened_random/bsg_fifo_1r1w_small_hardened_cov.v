@@ -27,6 +27,8 @@ module bsg_fifo_1r1w_small_hardened_cov
     coverpoint reset_i;
   endgroup
 
+  // Partitioning covergroup into smaller ones
+
   // empty
   covergroup cg_empty @ (negedge clk_i iff ~reset_i & empty & ~full);
 
@@ -41,6 +43,7 @@ module bsg_fifo_1r1w_small_hardened_cov
     cp_rwsa: coverpoint read_write_same_addr_r {ignore_bins ig = {1};}
 
     cross_all: cross cp_v, cp_yumi, cp_rptr, cp_wptr, cp_rwsa {
+      // by definition, fifo empty means r/w pointers are the same
       ignore_bins ig0 = cross_all with (cp_rptr != cp_wptr);
     }
 
@@ -56,6 +59,8 @@ module bsg_fifo_1r1w_small_hardened_cov
     // If read write same address happened in previous cycle, fifo should
     // only have one element in current cycle, which contradicts with the
     // condition that fifo is full.
+
+    // TODO: illegal_bins
     cp_rwsa: coverpoint read_write_same_addr_r {ignore_bins ig = {1};}
 
     cross_all: cross cp_v, cp_yumi, cp_rptr, cp_wptr, cp_rwsa {

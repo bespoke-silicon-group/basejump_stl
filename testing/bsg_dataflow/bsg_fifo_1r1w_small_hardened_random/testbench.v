@@ -41,6 +41,7 @@ module testbench();
     ,.yumi_i(yumi_li)
   );
 
+  // could use hierarchical bind in order to do more whitebox internal testing
   bind bsg_fifo_1r1w_small_hardened bsg_fifo_1r1w_small_hardened_cov
  #(.els_p(els_p)
   ) pc_cov
