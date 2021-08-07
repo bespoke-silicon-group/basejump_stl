@@ -34,6 +34,8 @@
 
 `ifdef XCELIUM // Bare default parameters are incompatible as of 20.09.012
 `define BSG_INV_PARAM(param) param = "inv"
+`elsif YOSYS // Bare default parameters are incompatible as of 0.9
+`define BSG_INV_PARAM(param) param = "inv"
 `else // VIVADO, DC, VERILATOR, GENUS
 `define BSG_INV_PARAM(param) param
 `endif
