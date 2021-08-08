@@ -10,7 +10,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_mul_array #(parameter `BSG_INV_PARAM(width_p), pipeline_p))
+module bsg_mul_array #(parameter `BSG_INV_PARAM(width_p), `BSG_INV_PARAM(pipeline_p))
   (
     input clk_i
     ,	input rst_i
