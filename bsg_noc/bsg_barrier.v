@@ -50,6 +50,8 @@
 // (Pi = Po) for all tiles or barrier in progress (Pi != Po for some subset of nodes.) For barrier in progress, we can record all of the nodes
 // that have barrier in progress, and then reset the corresponding Pi bit to clear the in progress barrier.
 //
+//  Link to Schematic:
+//  https://docs.google.com/presentation/d/1LkmpxLuo4vvxT_m_Ww6FkqnFa1y8ePmZIGdC5xIN26w/edit#slide=id.p
 
 `include "bsg_defines.v"
 
