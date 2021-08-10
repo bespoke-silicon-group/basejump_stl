@@ -1,3 +1,9 @@
+//
+// Paul Gao   08/2021
+//
+// This module defines functional coverages of module bsg_fifo_1r1w_small_hardened
+//
+//
 
 `include "bsg_defines.v"
 
@@ -17,8 +23,8 @@ module bsg_fifo_1r1w_small_hardened_cov
   // internal registers
   ,input [ptr_width_lp-1:0] rptr_r
   ,input [ptr_width_lp-1:0] wptr_r
-  ,input full
-  ,input empty
+  ,input full  // registered in sub-module bsg_fifo_tracker
+  ,input empty // registered in sub-module bsg_fifo_tracker
   ,input read_write_same_addr_r
   );
 
@@ -28,13 +34,12 @@ module bsg_fifo_1r1w_small_hardened_cov
   endgroup
 
   // Partitioning covergroup into smaller ones
-
   // empty
   covergroup cg_empty @ (negedge clk_i iff ~reset_i & empty & ~full);
 
     cp_v: coverpoint v_i;
     // cannot deque when empty
-    cp_yumi: coverpoint yumi_i {ignore_bins ig = {1};}
+    cp_yumi: coverpoint yumi_i {illegal_bins ig = {1};}
     cp_rptr: coverpoint rptr_r;
     cp_wptr: coverpoint wptr_r;
     // If read write same address happened in previous cycle, fifo should
@@ -59,11 +64,10 @@ module bsg_fifo_1r1w_small_hardened_cov
     // If read write same address happened in previous cycle, fifo should
     // only have one element in current cycle, which contradicts with the
     // condition that fifo is full.
-
-    // TODO: illegal_bins
     cp_rwsa: coverpoint read_write_same_addr_r {ignore_bins ig = {1};}
 
     cross_all: cross cp_v, cp_yumi, cp_rptr, cp_wptr, cp_rwsa {
+      // by definition, fifo full means r/w pointers are the same
       ignore_bins ig0 = cross_all with (cp_rptr != cp_wptr);
     }
 
@@ -79,6 +83,7 @@ module bsg_fifo_1r1w_small_hardened_cov
     cp_rwsa: coverpoint read_write_same_addr_r;
 
     cross_all: cross cp_v, cp_yumi, cp_rptr, cp_wptr, cp_rwsa {
+      // by definition, r/w pointers are different when fifo is non-empty & non-full
       ignore_bins ig0 = cross_all with (cp_rptr == cp_wptr);
       // If read write same address happened in previous cycle, fifo should
       // only have one element in current cycle. Write-pointer should be

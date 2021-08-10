@@ -19,7 +19,7 @@ module input_side_tester
     else begin
       if (v_o & ready_i) begin
         data_r <= data_r + 1;
-        $display("[INPUT] data=%d",data_r);
+        //$display("[INPUT] data=%d",data_r);
       end
     end
   end
@@ -33,7 +33,7 @@ module input_side_tester
       v_r <= 1'b0;
     end
     else begin
-      v_r <= ($urandom_range(0,32) < 16);
+      v_r <= ($urandom_range(0,31) < 16);
     end
   end
 
