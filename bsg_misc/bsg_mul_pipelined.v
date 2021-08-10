@@ -50,7 +50,7 @@
 
 `ifndef BSG_MUL_BOOTH_DOT_
 `define BSG_MUL_BOOTH_DOT_
-function automatic [0:0] bsg_mul_booth_dot([2:0] sdn, y0, ym1);
+function automatic [0:0] bsg_mul_booth_dot([2:0] sdn, [0:0] y0, [0:0] ym1);
   return ((sdn[2] & y0) | (sdn[1] & ym1)) ^ sdn[0];
 endfunction
 `endif
