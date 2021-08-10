@@ -10,8 +10,8 @@
 
 module bsg_fifo_1r1w_small_hardened_tester
 
- #(
-   parameter width_p  = 64
+ #(parameter top_num_clocks_p = 3
+  ,parameter width_p  = 64
   ,parameter els_p    = 4
   ,parameter channel_width_p = 8
   )
@@ -113,7 +113,7 @@ module bsg_fifo_1r1w_small_hardened_tester
   
   
   // Simulation of Clock
-  localparam num_clocks_lp = 3;
+  localparam num_clocks_lp = top_num_clocks_p;
   wire [num_clocks_lp-1:0][31:0] clk_period_lo = {32'd7, 32'd5, 32'd3};
 
   logic [num_clocks_lp-1:0] master_clks, fifo_clks, client_clks;
