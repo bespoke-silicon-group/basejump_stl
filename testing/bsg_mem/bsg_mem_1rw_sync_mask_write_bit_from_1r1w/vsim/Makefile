@@ -12,14 +12,14 @@ TOP = ../../../..
 ########################### SIMULATION PARAMETERS ##########################
 # place the parameters you want to scan here.
 BSG_TESTME_FILES    =  bsg_mem_1rw_sync_mask_write_bit_from_1r1w.v
-BSG_TESTME_DIR      =  $(TOP)/hard/ultrascale_plus/bsg_mem/
+BSG_TESTME_DIR      =  $(TOP)/bsg_mem/
 BSG_MISC_FILES      =  bsg_defines.v bsg_cycle_counter.v bsg_dff.v bsg_dff_en_bypass.v bsg_dff_en.v bsg_dff_reset_en.v
 BSG_ASYNC_FILES     = 
 BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  = 
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
-BSG_MEM_FILES       =  bsg_mem_1r1w.v bsg_mem_1r1w_synth.v bsg_mem_1r1w_sync.v bsg_mem_1r1w_sync_synth.v
+BSG_MEM_FILES       =  bsg_mem_1r1w_sync.v bsg_mem_1r1w_sync_synth.v
 
 BSG_TEST_FILES      =  bsg_nonsynth_reset_gen.v \
                        bsg_nonsynth_clock_gen.v \

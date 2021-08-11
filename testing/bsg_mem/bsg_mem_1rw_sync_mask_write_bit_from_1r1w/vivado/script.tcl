@@ -12,7 +12,7 @@ add_files -norecurse -scan_for_includes ${TOP}/bsg_misc/bsg_dff_en_bypass.v
 add_files -norecurse -scan_for_includes ${TOP}/bsg_misc/bsg_dff_en.v
 add_files -norecurse -scan_for_includes ${TOP}/bsg_misc/bsg_dff.v
 add_files -norecurse -scan_for_includes test_bsg.v
-add_files -norecurse -scan_for_includes ${TOP}/hard/ultrascale_plus/bsg_mem/bsg_mem_1rw_sync_mask_write_bit_from_1r1w.v
+add_files -norecurse -scan_for_includes ${TOP}/bsg_mem/bsg_mem_1rw_sync_mask_write_bit_from_1r1w.v
 set_property file_type SystemVerilog [get_files {bsg_mem_1rw_sync_mask_write_bit_from_1r1w.v bsg_nonsynth_clock_gen.v bsg_nonsynth_random_gen.v test_bsg.v}]
 set_property file_type SystemVerilog [get_files {bsg_mem_1r1w_sync.v bsg_mem_1r1w_sync_synth.v}]
 set_property file_type SystemVerilog [get_files {bsg_dff.v bsg_dff_en.v bsg_dff_en_bypass.v}]
