@@ -30,7 +30,7 @@ module bsg_nonsynth_mem_1rw_sync_assoc
   // associative array
   //
   `ifdef VERILATOR
-    // Verilator 4.024 supports associative array, but not wildcard indexed.
+    // version 4.024 supports associative array, but not wildcard indexed.
     logic [width_p-1:0] mem [longint];
   `else
     logic [width_p-1:0] mem [*];
