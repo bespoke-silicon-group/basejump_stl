@@ -45,11 +45,11 @@ module bsg_fifo_1r1w_small_hardened_cov
     // If read write same address happened in previous cycle, fifo should
     // have one element in current cycle, which contradicts with the
     // condition that fifo is empty.
-    cp_rwsa: coverpoint read_write_same_addr_r {ignore_bins ig = {1};}
+    cp_rwsa: coverpoint read_write_same_addr_r {illegal_bins ig = {1};}
 
     cross_all: cross cp_v, cp_yumi, cp_rptr, cp_wptr, cp_rwsa {
       // by definition, fifo empty means r/w pointers are the same
-      ignore_bins ig0 = cross_all with (cp_rptr != cp_wptr);
+      illegal_bins ig0 = cross_all with (cp_rptr != cp_wptr);
     }
 
   endgroup
@@ -64,11 +64,11 @@ module bsg_fifo_1r1w_small_hardened_cov
     // If read write same address happened in previous cycle, fifo should
     // only have one element in current cycle, which contradicts with the
     // condition that fifo is full.
-    cp_rwsa: coverpoint read_write_same_addr_r {ignore_bins ig = {1};}
+    cp_rwsa: coverpoint read_write_same_addr_r {illegal_bins ig = {1};}
 
     cross_all: cross cp_v, cp_yumi, cp_rptr, cp_wptr, cp_rwsa {
       // by definition, fifo full means r/w pointers are the same
-      ignore_bins ig0 = cross_all with (cp_rptr != cp_wptr);
+      illegal_bins ig0 = cross_all with (cp_rptr != cp_wptr);
     }
 
   endgroup
@@ -84,11 +84,11 @@ module bsg_fifo_1r1w_small_hardened_cov
 
     cross_all: cross cp_v, cp_yumi, cp_rptr, cp_wptr, cp_rwsa {
       // by definition, r/w pointers are different when fifo is non-empty & non-full
-      ignore_bins ig0 = cross_all with (cp_rptr == cp_wptr);
+      illegal_bins ig0 = cross_all with (cp_rptr == cp_wptr);
       // If read write same address happened in previous cycle, fifo should
       // only have one element in current cycle. Write-pointer should be
       // read-pointer plus one (or wrapped-around).
-      ignore_bins ig1 = cross_all with (
+      illegal_bins ig1 = cross_all with (
         (cp_rwsa == 1)
         && (cp_wptr - cp_rptr != 1)
         && (cp_wptr - cp_rptr != 1-els_p)
@@ -109,10 +109,10 @@ module bsg_fifo_1r1w_small_hardened_cov
     $display("");
     $display("Instance: %m");
     $display("---------------------- Functional Coverage Results ----------------------");
-    $display("Reset       functional coverage is %f%%",cov_reset.get_coverage());
-    $display("Fifo empty  functional coverage is %f%%",cov_empty.get_coverage());
-    $display("Fifo full   functional coverage is %f%%",cov_full.get_coverage());
-    $display("Fifo normal functional coverage is %f%%",cov_normal.get_coverage());
+    $display("Reset       functional coverage is %f%%", cov_reset.get_coverage());
+    $display("Fifo empty  functional coverage is %f%%", cov_empty.cross_all.get_coverage());
+    $display("Fifo full   functional coverage is %f%%", cov_full.cross_all.get_coverage());
+    $display("Fifo normal functional coverage is %f%%", cov_normal.cross_all.get_coverage());
     $display("-------------------------------------------------------------------------");
     $display("");
   end
