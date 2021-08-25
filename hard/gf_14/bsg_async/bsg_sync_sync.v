@@ -53,7 +53,6 @@ module bsg_sync_sync_``width_p``_unit                           \
                                                                 \
 endmodule
 
-`BSG_ABSTRACT_MODULE(bsg_sync_sync)
 
 `bsg_sync_sync_unit(1)
 `bsg_sync_sync_unit(2)
