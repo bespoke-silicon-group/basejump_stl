@@ -21,6 +21,7 @@
 //
 
 // ASYNC RESET: iclk cannot toggle at deassertion of reset
+`include "bsg_defines.v"
 
 `ifndef rp_group
  `define rp_group(x)
