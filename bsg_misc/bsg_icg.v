@@ -17,13 +17,13 @@ module bsg_icg
     , output clk_o
   );
 
-  logic clk_en;
+  logic clk_en_r;
 
   always_latch
     if (clk_i == 1'b0)
-      clk_en <= en_i;
+      clk_en_r <= en_i;
 
-  assign clk_o = clk_en & clk_i;
+  assign clk_o = clk_en_r & clk_i;
 
 
 endmodule
