@@ -7,8 +7,9 @@
  *    Instead use a hardened version of this module for synthesis.
  */
 
+`include "bsg_defines.v"
 
-`ifndef SYNTHESIS
+`BSG_SYNTH_MUST_HARDEN
 
 module bsg_icg 
   (
@@ -27,6 +28,3 @@ module bsg_icg
 
 
 endmodule
-
-
-`endif
