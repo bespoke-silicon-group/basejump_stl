@@ -88,6 +88,15 @@
 
 `define BSG_STRINGIFY(x) `"x`"
 
+
+// For the modules that must be hardened, add this macro at the top.
+`ifdef SYNTHESIS
+`define BSG_SYNTH_MUST_HARDEN this_module_must_be_hardened
+`else
+`define BSG_SYNTH_MUST_HARDEN
+`endif
+
+
 // using C-style shifts instead of a[i] allows the parameter of BSG_GET_BIT to be a parameter subrange                                                                                                                                                                               
 // e.g., parameter[4:1][1], which DC 2016.12 does not allow                                                                                                                                                                                                                          
 
