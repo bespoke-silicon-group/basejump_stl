@@ -31,6 +31,8 @@ module bsg_mem_multiport_latch
     , parameter start_idx_lp = (x0_tied_to_zero_p ? 1 : 0)
     
     , parameter async_read_p = 0
+
+    , parameter w_data_clk_gate_p=1
   )
   (
     input clk_i
@@ -71,10 +73,18 @@ module bsg_mem_multiport_latch
 
 
   // write data latch 
+  logic w_data_clk;
+  if (w_data_clk_gate_p) begin
+    assign w_data_clk = ~clk_i & w_v_i;
+  end
+  else begin
+    assign w_data_clk = ~clk_i;
+  end
+
   logic [width_p-1:0] w_data_r;
   for (genvar i = 0; i < width_p; i++) begin:wl
     bsg_latch wlat0 (
-      .clk_i(~clk_i)
+      .clk_i(w_data_clk)
       ,.data_i(w_data_i[i])
       ,.data_o(w_data_r[i])
     );
