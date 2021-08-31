@@ -74,27 +74,27 @@ module bsg_mem_multiport_latch
 
   // write data latch 
   // write data is latched by the front latch, when the clock is low.
+  logic w_v_clk;
   logic [width_p-1:0] w_data_r;
 
   if (w_data_clk_gate_p) begin: wcg1
-    for (genvar i = 0; i < width_p; i++) begin:b
-      bsg_icg wicg0 (
-        .clk_i(clk_i)
-        ,.en_i(w_data_i[i])
-        ,.clk_o(w_data_r[i])
-      );
-    end
+    bsg_icg_pos wicg0 (
+      .clk_i(clk_i)
+      ,.en_i(w_v_i)
+      ,.clk_o(w_v_clk)
+    );
   end
   else begin: wcg0
-    for (genvar i = 0; i < width_p; i++) begin:b
-      bsg_latch wlat0 (
-        .clk_i(~clk_i)
-        ,.data_i(w_data_i[i])
-        ,.data_o(w_data_r[i])
-      );
-    end
+    assign w_v_clk = ~clk_i;
   end
 
+  for (genvar i = 0; i < width_p; i++) begin: wb
+    bsg_latch wlat0 (
+      .clk_i(~w_v_clk)
+      ,.data_i(w_data_i[i])
+      ,.data_o(w_data_r[i])
+    );
+  end
 
   // latch file
   logic [els_p-1:start_idx_lp][width_p-1:0] mem_r;
