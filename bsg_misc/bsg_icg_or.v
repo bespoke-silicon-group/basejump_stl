@@ -1,5 +1,5 @@
 /**
- *    bsg_icg_pos.v
+ *    bsg_icg_or.v
  *  
  *    integrated clock gating cell
  *    (using OR gate with high EN)  
@@ -12,7 +12,7 @@
 
 `BSG_SYNTH_MUST_HARDEN
 
-module bsg_icg_pos
+module bsg_icg_or
   (
     input clk_i
     , input en_i

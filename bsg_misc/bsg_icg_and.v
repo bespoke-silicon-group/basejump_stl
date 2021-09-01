@@ -1,5 +1,5 @@
 /**
- *    bsg_icg.v
+ *    bsg_icg_and.v
  *  
  *    integrated clock gating cell
  *    (using AND gate with hign EN)
@@ -12,7 +12,7 @@
 
 `BSG_SYNTH_MUST_HARDEN
 
-module bsg_icg 
+module bsg_icg_and
   (
     input clk_i
     , input en_i

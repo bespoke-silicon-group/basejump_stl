@@ -64,7 +64,7 @@ module bsg_mem_multiport_latch
   ); 
   
   for (genvar i = start_idx_lp; i < els_p; i++) begin: we_icg
-    bsg_icg icg0 (
+    bsg_icg_and icg0 (
       .clk_i(clk_i)
       ,.en_i(w_v_onehot[i])
       ,.clk_o(mem_we_clk[i])
@@ -78,7 +78,9 @@ module bsg_mem_multiport_latch
   logic [width_p-1:0] w_data_r;
 
   if (w_data_clk_gate_p) begin: wcg1
-    bsg_icg_pos wicg0 (
+    // Adding this clock gate implies that w_v_i needs to settle
+    // before the negedge of the clock. It effectively adds half cycle of setup time.
+    bsg_icg_or wicg0 (
       .clk_i(clk_i)
       ,.en_i(w_v_i)
       ,.clk_o(w_v_clk)
