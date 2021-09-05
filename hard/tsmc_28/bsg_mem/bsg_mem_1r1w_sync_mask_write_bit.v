@@ -6,14 +6,15 @@
 // twrcc, otherwise will incur indeterminate result. 
 //
 
-`define bsg_mem_1r1w_sync_2rf_macro(words,bits,mux) \
+`define bsg_mem_1r1w_sync_mask_write_2rf_bit_macro(words,bits,mux) \
 if (els_p == words && width_p == bits)                          \
   begin: macro                                                  \
-          tsmc28_1r1w_d``words``_w``bits``_m``mux``_2rf mem \
+          tsmc28_1r1w_d``words``_w``bits``_m``mux``_2rf_bit mem \
             (                                                   \
               .AA       ( w_addr_i      )                       \
              ,.D        ( w_data_i      )                       \
              ,.WEB      ( ~w_v_i        )                       \
+             ,.BWEB     ( w_mask_i      )                       \
              ,.CLKW     ( clk_i         )                       \
                                                                 \
              ,.AB       ( r_addr_i      )                       \
@@ -46,7 +47,7 @@ module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
 
      `bsg_mem_1r1w_sync_2rf_macro(128, 64, 2) else
        begin: notmacro
-         bsg_mem_1r1w_sync_synth
+         bsg_mem_1r1w_sync_mask_write_bit_synth
            #(.width_p(width_p), .els_p(els_p)) synth
             (.*);
        end // block: notmacro
@@ -65,4 +66,4 @@ module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
 
 endmodule
 
-`BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync)
+`BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync_mask_write_bit)
