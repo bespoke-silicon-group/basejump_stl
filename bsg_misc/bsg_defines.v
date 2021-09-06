@@ -77,11 +77,13 @@
 // will require modification of this macro.
 
 `ifdef SYNTHESIS
-`ifdef DC
-`define BSG_VIVADO_SYNTH_FAILS
-`else
-`define BSG_VIVADO_SYNTH_FAILS this_module_is_not_synthesizeable_in_vivado
-`endif
+  `ifdef DC
+  `define BSG_VIVADO_SYNTH_FAILS
+  `elsif GENUS
+  `define BSG_VIVADO_SYNTH_FAILS
+  `else
+  `define BSG_VIVADO_SYNTH_FAILS this_module_is_not_synthesizeable_in_vivado
+  `endif
 `else
 `define BSG_VIVADO_SYNTH_FAILS
 `endif
