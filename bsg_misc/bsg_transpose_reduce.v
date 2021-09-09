@@ -3,6 +3,19 @@
 // transpose a 2D array and reduce it 
 // using Verilog reduction operators
 //
+// Example:
+
+// els_p = 3, width_p = 4
+//
+// { {1 0 1 0 },
+//   {0 0 1 0 },
+//   {1 0 0 1 } }
+//
+// --->
+//
+// { 1 0 1 1 }
+//
+
 
 module bsg_transpose_reduce #(`BSG_INV_PARAM(els_p)
                               ,`BSG_INV_PARAM(width_p)
