@@ -11,6 +11,7 @@
  *    num_rs_p = # of read ports.
  *    If x0_tied_to_zero_p = 1, then x0 becomes constant zero (can't be written).
  *    If async_read_p = 1, then read is asynchronous.
+ *    When w_data_clk_gate_p = 1, the write data latch is clock gated.
  *  
  *    Schematic:
  *    https://docs.google.com/presentation/d/1cM7tNi4jdQBDbLKx9V26n9nimqWHOmu6k8G7NUmvctY/edit#slide=id.ge3e59a77fd_0_47
@@ -28,9 +29,8 @@ module bsg_mem_multiport_latch
     , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
 
     , parameter x0_tied_to_zero_p = 0
-    , parameter start_idx_lp = (x0_tied_to_zero_p ? 1 : 0)
-    
     , parameter async_read_p = 0
+    , parameter w_data_clk_gate_p=1
   )
   (
     input clk_i
@@ -45,6 +45,8 @@ module bsg_mem_multiport_latch
     , output logic [num_rs_p-1:0][width_p-1:0] r_data_o
   );
 
+
+  localparam start_idx_lp = (x0_tied_to_zero_p ? 1 : 0);
 
   wire unused =  reset_i;
 
@@ -62,7 +64,7 @@ module bsg_mem_multiport_latch
   ); 
   
   for (genvar i = start_idx_lp; i < els_p; i++) begin: we_icg
-    bsg_icg icg0 (
+    bsg_icg_and icg0 (
       .clk_i(clk_i)
       ,.en_i(w_v_onehot[i])
       ,.clk_o(mem_we_clk[i])
@@ -71,15 +73,30 @@ module bsg_mem_multiport_latch
 
 
   // write data latch 
+  // write data is latched by the front latch, when the clock is low.
+  logic w_v_clk;
   logic [width_p-1:0] w_data_r;
-  for (genvar i = 0; i < width_p; i++) begin:wl
+
+  if (w_data_clk_gate_p) begin: wcg1
+    // Adding this clock gate implies that w_v_i needs to settle
+    // before the negedge of the clock. It effectively adds half cycle of setup time.
+    bsg_icg_or wicg0 (
+      .clk_i(clk_i)
+      ,.en_i(w_v_i)
+      ,.clk_o(w_v_clk)
+    );
+  end
+  else begin: wcg0
+    assign w_v_clk = ~clk_i;
+  end
+
+  for (genvar i = 0; i < width_p; i++) begin: wb
     bsg_latch wlat0 (
-      .clk_i(~clk_i)
+      .clk_i(~w_v_clk)
       ,.data_i(w_data_i[i])
       ,.data_o(w_data_r[i])
     );
   end
-
 
   // latch file
   logic [els_p-1:start_idx_lp][width_p-1:0] mem_r;
