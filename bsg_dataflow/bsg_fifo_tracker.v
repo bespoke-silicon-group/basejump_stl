@@ -59,6 +59,7 @@ module bsg_fifo_tracker #(parameter `BSG_INV_PARAM(els_p           )
    // for reset, last op is deque, so
    // equal w and r pointers signal empty FIFO
 
+   // synopsys sync_set_reset "reset_i"
    always_ff @(posedge clk_i)
      if (reset_i)
        begin
