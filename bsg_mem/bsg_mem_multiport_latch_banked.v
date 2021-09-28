@@ -39,7 +39,7 @@ module bsg_mem_multiport_latch_banked
   // parameter checking
   // synopsys translate_off
   initial begin
-    assert(els_p%num_banks_p == 0) else $error("els_p should be multiples of num_banks_p.");
+    assert((els_p%num_banks_p) == 0) else $error("els_p should be multiples of num_banks_p.");
   end
   // synopsys translate_off
 
@@ -170,8 +170,10 @@ module bsg_mem_multiport_latch_banked
 
   // synopsys translate_off
   always_ff @ (negedge clk_i) begin
-    for (integer i = 0; i < num_banks_p; i++) begin
-      assert(~(bank_w_v_i[i] & global_w_v_decoded[i])) else $error("Bank write conflict. i=%d", i);
+    if (~reset_i) begin
+      for (integer i = 0; i < num_banks_p; i++) begin
+        assert(~(bank_w_v_i[i] & global_w_v_decoded[i])) else $error("Bank write conflict. i=%d", i);
+      end
     end
   end
   // synopsys translate_on
