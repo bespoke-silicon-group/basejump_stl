@@ -10,7 +10,6 @@
 module bsg_mem_multiport_latch_banked 
   #(`BSG_INV_PARAM(width_p)
     , `BSG_INV_PARAM(els_p)
-    , `BSG_INV_PARAM(num_rd_p)
     , `BSG_INV_PARAM(num_rs_p)
     , `BSG_INV_PARAM(num_banks_p)
     , parameter async_read_p = 0
