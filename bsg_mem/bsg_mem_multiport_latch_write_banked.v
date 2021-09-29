@@ -74,7 +74,7 @@ module bsg_mem_multiport_latch_write_banked
   for (genvar i = start_idx_lp; i < els_p; i++) begin: x
     for (genvar j = 0; j < width_p; j++) begin: b
       bsg_latch lat0 (
-        .clk_i(mem_we_clk[i/bank_els_lp])
+        .clk_i(mem_we_clk[i/bank_els_lp][i%bank_els_lp])
         ,.data_i(w_data_r[i/bank_els_lp][j])
         ,.data_o(mem_r[i][j])
       );
