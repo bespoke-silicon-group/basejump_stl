@@ -1,9 +1,8 @@
 /**
  *    bsg_mem_multiport_latch_write_banked.v
  *
- *    this latch file is divided into banks. Read ports can read from any of the banks.
- *    There are a number of write ports equal to the number of banks.
- *    Each write port can only write into its corresponding bank.
+ *    This latch file is divided into banks (num_banks_p). Read ports can read from any of the banks.
+ *    Each bank has a write port, and each write port can only write into its corresponding bank.
  */
 
 
