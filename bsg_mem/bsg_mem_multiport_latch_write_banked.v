@@ -1,3 +1,13 @@
+/**
+ *    bsg_mem_multiport_latch_write_banked.v
+ *
+ *    this latch file is divided into banks. Read ports can read from any of the banks.
+ *    There are a number of write ports equal to the number of banks.
+ *    Each write port can only write into its corresponding bank.
+ */
+
+
+
 `include "bsg_defines.v"
 
 
@@ -25,6 +35,13 @@ module bsg_mem_multiport_latch_write_banked
     , input [num_rs_p-1:0][addr_width_lp-1:0] r_addr_i
     , output logic [num_rs_p-1:0][width_p-1:0] r_data_o
   );
+
+  // parameter checking
+  // synopsys translate_off
+  initial begin
+    assert((els_p%num_banks_p) == 0) else $error("els_p has to be multiples of num_banks_p.");
+  end
+  // synopsys translate_on
 
 
   wire unused = reset_i;
