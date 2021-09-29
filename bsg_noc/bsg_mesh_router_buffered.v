@@ -72,8 +72,8 @@ module bsg_mesh_router_buffered
 
       // synopsys translate_off
       always @(negedge clk_i)
-        if (link_o_cast[i].v)
-          $display("## warning %m: stubbed port %x received word %x",i,link_i_cast[i].data);
+        assert (~link_o_cast[i].v)
+          $warning("## stubbed port %x received word %x",i,link_i_cast[i].data);
       // synopsys translate_on
     end
     else begin: fi
