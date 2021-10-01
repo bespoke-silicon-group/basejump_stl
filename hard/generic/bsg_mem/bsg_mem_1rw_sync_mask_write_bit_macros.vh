@@ -5,11 +5,7 @@
 `define bsg_mem_1rw_sync_mask_write_bit_macro(words,bits,mux) \
   if (harden_p && els_p == words && width_p == bits)          \
     begin: macro                                              \
-      bsg_mem_1rw_sync_mask_write_bit_synth #(
-        .width_p(width_p)
-        ,.els_p(els_p)
-        ,.latch_last_read_p(latch_last_read_p)
-      ) synth (.*);
+      bsg_mem_1rw_sync_mask_write_bit_w``bits``_d``words``_m``mux``_hard mem (.*); \
     end: macro
 
 `define bsg_mem_1rw_sync_mask_write_bit_banked_macro(words,bits,wbank,dbank) \
