@@ -19,6 +19,7 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
                           , parameter latch_last_read_p=0
                           , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                           , parameter enable_clock_gating_p=0
+                          , parameter harden_p=1
                           )
    (input   clk_i
     , input reset_i
@@ -51,7 +52,7 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
     //synopsys translate_off
       initial
         begin
-           $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p)
+           $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p);
         end
     //synopsys translate_on
 
@@ -90,10 +91,10 @@ def create_cfg(memgen_json):
         if c["mask"] != 1 or c["ports"] != "1rw":
             continue
         if c["adbanks"] != 1 or c["awbanks"] != 1:
-            memgen_cfg += "\t`bsg_mem_1rw_sync_mask_write_bit_banked_macro({depth},{width},{mux})\n".format(
-                depth=c["depth"], width=c["width"], mux=c["mux"]
+            memgen_cfg += "\t`bsg_mem_1rw_sync_mask_write_bit_banked_macro({depth},{width},{awbanks},{adbanks}) else\n".format(
+                depth=c["depth"], width=c["width"], awbanks=c["awbanks"], adbanks=c["adbanks"]
             )
-        memgen_cfg += "\t`bsg_mem_1rw_sync_mask_write_bit_{_type}_macro({depth},{width},{mux})\n".format(
+        memgen_cfg += "\t`bsg_mem_1rw_sync_mask_write_bit_{_type}_macro({depth},{width},{mux}) else\n".format(
             depth=c["depth"] / c["adbanks"],
             width=c["width"] / c["awbanks"],
             mux=c["mux"],

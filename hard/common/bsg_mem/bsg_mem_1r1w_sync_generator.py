@@ -61,7 +61,7 @@ def print_ram(
     //synopsys translate_off
       initial
         begin
-           $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p)
+           $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p);
         end
     //synopsys translate_on
 
@@ -104,7 +104,7 @@ def create_cfg(memgen_json):
         if c["adbanks"] != 1 or c["awbanks"] != 1:
             print("Banking is not currently supported for 2r1w");
             exit()
-        memgen_cfg += "\t`bsg_mem_1r1w_sync_{_type}_macro({depth},{width},{mux})\n".format(
+        memgen_cfg += "\t`bsg_mem_1r1w_sync_{_type}_macro({depth},{width},{mux}) else\n".format(
             depth=c["depth"] / c["adbanks"],
             width=c["width"] / c["awbanks"],
             mux=c["mux"],

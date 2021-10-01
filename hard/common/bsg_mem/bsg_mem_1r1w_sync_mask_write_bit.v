@@ -27,17 +27,17 @@
   
     initial begin
       if (read_write_same_addr_p && !0)
-        $error("BSG ERROR: read_write_same_addr_p is set but unsupported")
+        $error("BSG ERROR: read_write_same_addr_p is set but unsupported");
       if (enable_clock_gating_p && !0)
-        $error("BSG ERROR: enable_clock_gating_p is set but unsupported")
+        $error("BSG ERROR: enable_clock_gating_p is set but unsupported");
       if (disable_collision_warning_p && !0)
         $warning("BSG ERROR: disable_collision_warning_p is set but unsupported");
     end
   
     if (0) begin end else
     // Hardened macro selections
-    	`bsg_mem_1r1w_sync_mask_write_bit_2rf_macro(512,64,2)
-	`bsg_mem_1r1w_sync_mask_write_bit_2sram_macro(1024,32,2)
+    	`bsg_mem_1r1w_sync_mask_write_bit_2rf_macro(512,64,2) else
+	`bsg_mem_1r1w_sync_mask_write_bit_2sram_macro(1024,32,2) else
 
       begin: notmacro
       bsg_mem_1r1w_sync_mask_write_bit_synth #(
@@ -50,7 +50,7 @@
     //synopsys translate_off
       initial
         begin
-           $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p)
+           $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p);
         end
     //synopsys translate_on
 

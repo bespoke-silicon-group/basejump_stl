@@ -41,9 +41,9 @@ def print_ram(
   
     initial begin
       if (read_write_same_addr_p && !{read_write_same_addr_en})
-        $error("BSG ERROR: read_write_same_addr_p is set but unsupported")
+        $error("BSG ERROR: read_write_same_addr_p is set but unsupported");
       if (enable_clock_gating_p && !{enable_clock_gating_en})
-        $error("BSG ERROR: enable_clock_gating_p is set but unsupported")
+        $error("BSG ERROR: enable_clock_gating_p is set but unsupported");
     end
   
     if (0) begin end else
@@ -60,7 +60,7 @@ def print_ram(
     //synopsys translate_off
       initial
         begin
-           $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p)
+           $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p);
         end
     //synopsys translate_on
 
@@ -99,10 +99,13 @@ def create_cfg(memgen_json):
         c.update(m)
         if c["mask"] != 0 or c["ports"] != "2r1w":
             continue
+        if c["type"] != "2rf":
+            print("Only 2rf composition is supported")
+            exit()
         if c["adbanks"] != 1 or c["awbanks"] != 1:
             print("Banking is not currently supported for 2r1w");
             exit()
-        memgen_cfg += "\t`bsg_mem_2r1w_sync_{_type}_macro({depth},{width},{mux})\n".format(
+        memgen_cfg += "\t`bsg_mem_2r1w_sync_{_type}_macro({depth},{width},{mux}) else\n".format(
             depth=c["depth"] / c["adbanks"],
             width=c["width"] / c["awbanks"],
             mux=c["mux"],
