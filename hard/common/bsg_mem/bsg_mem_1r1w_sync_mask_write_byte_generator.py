@@ -13,13 +13,14 @@ def print_ram(
 ):
     print(
         """
-  `include "bsg_mem_1r1w_sync_macros.vh"
+  `include "bsg_mem_1r1w_sync_mask_write_byte_macros.vh"
   
-  module bsg_mem_1r1w_sync
+  module bsg_mem_1r1w_sync_mask_write_byte
     #(parameter `BSG_INV_PARAM(width_p)
       , parameter `BSG_INV_PARAM(els_p)
       , parameter read_write_same_addr_p=0
       , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+      , parameter write_mask_width_lp=width_p>>3
       , parameter harden_p=1
       , parameter disable_collision_warning_p=0
       , parameter enable_clock_gating_p=0
@@ -29,6 +30,7 @@ def print_ram(
       , input reset_i
       
       , input w_v_i
+      , input [`BSG_SAFE_MINUS(write_mask_width_lp,1):0] w_mask_i
       , input [addr_width_lp-1:0] w_addr_i
       , input [`BSG_SAFE_MINUS(width_p,1):0] w_data_i
   
@@ -51,7 +53,7 @@ def print_ram(
     // Hardened macro selections
     {sram_cfg}
       begin: notmacro
-      bsg_mem_1r1w_sync_synth #(
+      bsg_mem_1r1w_sync_mask_write_byte_synth #(
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
@@ -67,7 +69,7 @@ def print_ram(
 
   endmodule
   
-  `BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync)
+  `BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync_mask_write_byte)
   """.format(
             sram_cfg=memgen_cfg,
             read_write_same_addr_en=0,
@@ -102,10 +104,10 @@ def create_cfg(memgen_json):
         if c["mask"] != 0 or c["ports"] != "1r1w":
             continue
         if c["adbanks"] != 1 or c["awbanks"] != 1:
-            memgen_cfg += "\t`bsg_mem_1r1w_sync_banked_macro({depth},{width},{mux})\n".format(
+            memgen_cfg += "\t`bsg_mem_1r1w_sync_mask_write_byte_banked_macro({depth},{width},{mux})\n".format(
                 depth=c["depth"], width=c["width"], mux=c["mux"]
             )
-        memgen_cfg += "\t`bsg_mem_1r1w_sync_{_type}_macro({depth},{width},{mux})\n".format(
+        memgen_cfg += "\t`bsg_mem_1r1w_sync_mask_write_byte_{_type}_macro({depth},{width},{mux})\n".format(
             depth=c["depth"] / c["adbanks"],
             width=c["width"] / c["awbanks"],
             mux=c["mux"],

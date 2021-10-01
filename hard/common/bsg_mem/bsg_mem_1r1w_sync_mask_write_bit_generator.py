@@ -13,9 +13,9 @@ def print_ram(
 ):
     print(
         """
-  `include "bsg_mem_1r1w_sync_macros.vh"
+  `include "bsg_mem_1r1w_sync_mask_write_bit_macros.vh"
   
-  module bsg_mem_1r1w_sync
+  module bsg_mem_1r1w_sync_mask_write_bit
     #(parameter `BSG_INV_PARAM(width_p)
       , parameter `BSG_INV_PARAM(els_p)
       , parameter read_write_same_addr_p=0
@@ -29,6 +29,7 @@ def print_ram(
       , input reset_i
       
       , input w_v_i
+      , input [`BSG_SAFE_MINUS(width_p,1):0] w_mask_i
       , input [addr_width_lp-1:0] w_addr_i
       , input [`BSG_SAFE_MINUS(width_p,1):0] w_data_i
   
@@ -51,7 +52,7 @@ def print_ram(
     // Hardened macro selections
     {sram_cfg}
       begin: notmacro
-      bsg_mem_1r1w_sync_synth #(
+      bsg_mem_1r1w_sync_mask_write_bit_synth #(
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
@@ -67,7 +68,7 @@ def print_ram(
 
   endmodule
   
-  `BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync)
+  `BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync_mask_write_bit)
   """.format(
             sram_cfg=memgen_cfg,
             read_write_same_addr_en=0,
@@ -102,10 +103,10 @@ def create_cfg(memgen_json):
         if c["mask"] != 0 or c["ports"] != "1r1w":
             continue
         if c["adbanks"] != 1 or c["awbanks"] != 1:
-            memgen_cfg += "\t`bsg_mem_1r1w_sync_banked_macro({depth},{width},{mux})\n".format(
+            memgen_cfg += "\t`bsg_mem_1r1w_sync_mask_write_bit_banked_macro({depth},{width},{mux})\n".format(
                 depth=c["depth"], width=c["width"], mux=c["mux"]
             )
-        memgen_cfg += "\t`bsg_mem_1r1w_sync_{_type}_macro({depth},{width},{mux})\n".format(
+        memgen_cfg += "\t`bsg_mem_1r1w_sync_mask_write_bit_{_type}_macro({depth},{width},{mux})\n".format(
             depth=c["depth"] / c["adbanks"],
             width=c["width"] / c["awbanks"],
             mux=c["mux"],

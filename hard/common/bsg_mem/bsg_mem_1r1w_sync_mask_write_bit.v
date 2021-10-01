@@ -1,7 +1,7 @@
 
-  `include "bsg_mem_1r1w_sync_macros.vh"
+  `include "bsg_mem_1r1w_sync_mask_write_bit_macros.vh"
   
-  module bsg_mem_1r1w_sync
+  module bsg_mem_1r1w_sync_mask_write_bit
     #(parameter `BSG_INV_PARAM(width_p)
       , parameter `BSG_INV_PARAM(els_p)
       , parameter read_write_same_addr_p=0
@@ -15,6 +15,7 @@
       , input reset_i
       
       , input w_v_i
+      , input [`BSG_SAFE_MINUS(width_p,1):0] w_mask_i
       , input [addr_width_lp-1:0] w_addr_i
       , input [`BSG_SAFE_MINUS(width_p,1):0] w_data_i
   
@@ -35,11 +36,11 @@
   
     if (0) begin end else
     // Hardened macro selections
-    	`bsg_mem_1r1w_sync_2rf_macro(512,64,2)
-	`bsg_mem_1r1w_sync_2sram_macro(1024,32,2)
+    	`bsg_mem_1r1w_sync_mask_write_bit_2rf_macro(512,64,2)
+	`bsg_mem_1r1w_sync_mask_write_bit_2sram_macro(1024,32,2)
 
       begin: notmacro
-      bsg_mem_1r1w_sync_synth #(
+      bsg_mem_1r1w_sync_mask_write_bit_synth #(
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
@@ -55,5 +56,5 @@
 
   endmodule
   
-  `BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync)
+  `BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync_mask_write_bit)
   
