@@ -42,9 +42,9 @@ def print_ram(
   
     initial begin
       if (read_write_same_addr_p && !{read_write_same_addr_en})
-        $error("BSG ERROR: read_write_same_addr_p is set but unsupported")
+        $error("BSG ERROR: read_write_same_addr_p is set but unsupported");
       if (enable_clock_gating_p && !{enable_clock_gating_en})
-        $error("BSG ERROR: enable_clock_gating_p is set but unsupported")
+        $error("BSG ERROR: enable_clock_gating_p is set but unsupported");
       if (disable_collision_warning_p && !{disable_collision_warning_en})
         $warning("BSG ERROR: disable_collision_warning_p is set but unsupported");
     end

@@ -31,9 +31,9 @@ module bsg_mem_1rw_sync #(parameter `BSG_INV_PARAM(width_p)
 
     initial begin
       if (latch_last_read_p && !{latch_last_read_en})
-        $error("BSG ERROR: latch_last_read_p is set but unsupported")
+        $error("BSG ERROR: latch_last_read_p is set but unsupported");
       if (enable_clock_gating_p && !{enable_clock_gating_en})
-        $error("BSG ERROR: enable_clock_gating_p is set but unsupported")
+        $error("BSG ERROR: enable_clock_gating_p is set but unsupported");
     end
 
     if (0) begin end else
