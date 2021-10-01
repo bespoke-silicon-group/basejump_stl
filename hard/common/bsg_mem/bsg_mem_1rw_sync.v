@@ -39,6 +39,13 @@ module bsg_mem_1rw_sync #(parameter `BSG_INV_PARAM(width_p)
       ) synth (.*);
     end
 
+    //synopsys translate_off
+      initial
+        begin
+           $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p)
+        end
+    //synopsys translate_on
+
 endmodule
   
   

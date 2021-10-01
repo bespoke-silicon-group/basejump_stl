@@ -51,7 +51,7 @@
     //synopsys translate_off
       initial
         begin
-           $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d, harden_p=%d (%m)",width_p,els_p,read_write_same_addr_p,harden_p);
+           $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p)
         end
     //synopsys translate_on
 

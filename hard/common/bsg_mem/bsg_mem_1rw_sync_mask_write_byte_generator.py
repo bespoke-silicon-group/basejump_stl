@@ -49,6 +49,13 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(width_p)
       ) synth (.*);
     end
 
+    //synopsys translate_off
+      initial
+        begin
+           $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p)
+        end
+    //synopsys translate_on
+
 endmodule
   
   """.format(
@@ -81,7 +88,7 @@ def create_cfg(memgen_json):
     for m in memgen_json["memories"]:
         c = memgen_defaults.copy()
         c.update(m)
-        if c["mask"] != 0 or c["ports"] != "1rw":
+        if c["mask"] != 8 or c["ports"] != "1rw":
             continue
         if c["adbanks"] != 1 or c["awbanks"] != 1:
             memgen_cfg += "\t`bsg_mem_1rw_sync_mask_write_byte_banked_macro({depth},{width},{mux})\n".format(

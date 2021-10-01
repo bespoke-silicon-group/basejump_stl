@@ -63,7 +63,7 @@ def print_ram(
     //synopsys translate_off
       initial
         begin
-           $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d, harden_p=%d (%m)",width_p,els_p,read_write_same_addr_p,harden_p);
+           $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p)
         end
     //synopsys translate_on
 
@@ -87,6 +87,7 @@ def create_cfg(memgen_json):
     memgen_defaults = {
         # Necessary
         "ports": "xrxw",
+        "type": "xrf",
         "width": -1,
         "depth": -1,
         "mux": -1,
@@ -94,19 +95,17 @@ def create_cfg(memgen_json):
         "mask": 0,
         "adbanks": 1,
         "awbanks": 1,
-        "type": "1rf",
     }
 
     memgen_cfg = ""
     for m in memgen_json["memories"]:
         c = memgen_defaults.copy()
         c.update(m)
-        if c["mask"] != 0 or c["ports"] != "1r1w":
+        if c["mask"] != 8 or c["ports"] != "1r1w":
             continue
         if c["adbanks"] != 1 or c["awbanks"] != 1:
-            memgen_cfg += "\t`bsg_mem_1r1w_sync_mask_write_byte_banked_macro({depth},{width},{mux})\n".format(
-                depth=c["depth"], width=c["width"], mux=c["mux"]
-            )
+            print("Banking is not currently supported for 2r1w");
+            exit()
         memgen_cfg += "\t`bsg_mem_1r1w_sync_mask_write_byte_{_type}_macro({depth},{width},{mux})\n".format(
             depth=c["depth"] / c["adbanks"],
             width=c["width"] / c["awbanks"],

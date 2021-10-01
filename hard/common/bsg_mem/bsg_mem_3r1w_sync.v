@@ -1,13 +1,12 @@
 
-  `include "bsg_mem_1r1w_sync_macros.vh"
+  `include "bsg_mem_3r1w_sync_macros.vh"
   
-  module bsg_mem_1r1w_sync
+  module bsg_mem_3r1w_sync
     #(parameter `BSG_INV_PARAM(width_p)
       , parameter `BSG_INV_PARAM(els_p)
       , parameter read_write_same_addr_p=0
       , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
       , parameter harden_p=1
-      , parameter disable_collision_warning_p=0
       , parameter enable_clock_gating_p=0
     )
     (
@@ -18,10 +17,17 @@
       , input [addr_width_lp-1:0] w_addr_i
       , input [`BSG_SAFE_MINUS(width_p,1):0] w_data_i
   
-      , input r_v_i
-      , input [addr_width_lp-1:0] r_addr_i
-      
-      , output logic [`BSG_SAFE_MINUS(width_p,1):0] r_data_o
+      , input r0_v_i
+      , input [addr_width_lp-1:0] r0_addr_i
+      , output logic [`BSG_SAFE_MINUS(width_p,1):0] r0_data_o
+
+      , input r1_v_i
+      , input [addr_width_lp-1:0] r1_addr_i
+      , output logic [`BSG_SAFE_MINUS(width_p,1):0] r1_data_o
+
+      , input r2_v_i
+      , input [addr_width_lp-1:0] r2_addr_i
+      , output logic [`BSG_SAFE_MINUS(width_p,1):0] r2_data_o
     );
   
     initial begin
@@ -29,23 +35,20 @@
         $error("BSG ERROR: read_write_same_addr_p is set but unsupported")
       if (enable_clock_gating_p && !0)
         $error("BSG ERROR: enable_clock_gating_p is set but unsupported")
-      if (disable_collision_warning_p && !0)
-        $warning("BSG ERROR: disable_collision_warning_p is set but unsupported");
     end
   
     if (0) begin end else
     // Hardened macro selections
-    	`bsg_mem_1r1w_sync_2rf_macro(512,64,2)
-	`bsg_mem_1r1w_sync_2rf_macro(1024,32,2)
+    	`bsg_mem_3r1w_sync_2sram_macro(32,66,2)
 
       begin: notmacro
-      bsg_mem_1r1w_sync_synth #(
+      bsg_mem_3r1w_sync_synth #(
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
       ) synth (.*); 
     end
-  
+
     //synopsys translate_off
       initial
         begin
@@ -55,5 +58,5 @@
 
   endmodule
   
-  `BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync)
+  `BSG_ABSTRACT_MODULE(bsg_mem_3r1w_sync)
   
