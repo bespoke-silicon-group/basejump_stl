@@ -1,4 +1,4 @@
-* MBT 10/5/2016
+
 * note: this spice file is only for verifying the frequency of the different 
 * settings of the oscillator. it does not model the atomic update of new
 * settings or the downsampler.
