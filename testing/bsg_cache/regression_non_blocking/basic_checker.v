@@ -1,3 +1,6 @@
+
+`include "bsg_cache_non_blocking.vh"
+
 module basic_checker 
   import bsg_cache_non_blocking_pkg::*;
   #(parameter `BSG_INV_PARAM(data_width_p)

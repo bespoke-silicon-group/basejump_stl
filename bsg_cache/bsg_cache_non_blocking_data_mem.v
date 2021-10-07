@@ -8,7 +8,7 @@
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_cache_non_blocking.vh"
 
 module bsg_cache_non_blocking_data_mem
   import bsg_cache_non_blocking_pkg::*;
