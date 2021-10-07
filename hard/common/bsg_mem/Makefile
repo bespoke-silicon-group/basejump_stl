@@ -9,3 +9,6 @@ all:
 	python bsg_mem_2r1w_sync_generator.py memgen.json > bsg_mem_2r1w_sync.v
 	python bsg_mem_3r1w_sync_generator.py memgen.json > bsg_mem_3r1w_sync.v
 
+clean:
+	rm *.v
+
