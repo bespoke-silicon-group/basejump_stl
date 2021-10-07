@@ -1,0 +1,4 @@
+//README: BSG DRAM CONTROLLER TB TESTS AREA
+//AUTHOR: AKASH S (akashs3@uw.edu)
+
+Directory contains tests that will be spawned by the TB top. These tests will instantiate the TB environment and call various sequences of stimuli to be triggered.

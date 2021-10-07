@@ -1,0 +1,4 @@
+//README: BSG DRAM CONTROLLER TB VIP AREA
+//AUTHOR: AKASH S (akashs3@uw.edu)
+
+Directory contains DDR monitor used by the TB and LPDDR BFM files interfaced with DMC DFI RTL.

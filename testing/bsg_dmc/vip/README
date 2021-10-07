@@ -1,0 +1,5 @@
+//README: BSG DRAM CONTROLLER TB VIP AREA
+//AUTHOR: AKASH S (akashs3@uw.edu)
+
+This directory contains all the verification IP developed for the DMC TB.
+Components inside this directory will be instantiated in the environment at basejump_stl/testing/bsg_dmc/env.

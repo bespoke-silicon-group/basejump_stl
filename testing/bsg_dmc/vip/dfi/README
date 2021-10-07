@@ -1,0 +1,4 @@
+//README: BSG DRAM CONTROLLER TB VIP AREA
+//AUTHOR: AKASH S (akashs3@uw.edu)
+
+Directory contains code to monitor signals between DMC CONTROLLER AND DMC DFI MODULES of the DUT.

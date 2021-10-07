@@ -1,0 +1,4 @@
+//README: BSG DRAM CONTROLLER TB ENV AREA
+//AUTHOR: AKASH S (akashs3@uw.edu)
+
+Directory contains the TB environment instanciated in the tests. The test is at /basejump_stl/testing/bsg_dmc/tests

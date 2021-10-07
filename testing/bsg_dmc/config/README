@@ -1,0 +1,4 @@
+//README: BSG DRAM CONTROLLER TB CONFIG AREA
+//AUTHOR: AKASH S (akashs3@uw.edu)
+
+One place definition for all parameters, `defines and other config items in the TB.

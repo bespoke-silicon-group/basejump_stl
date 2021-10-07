@@ -1,0 +1,4 @@
+//README: BSG DRAM CONTROLLER TB SEQUENCES AREA
+//AUTHOR: AKASH S (akashs3@uw.edu)
+
+Directory contains sequences that will trigger various stimuli to the DUT through the components coded inside /basejump_stl/testing/bsg_dmc/vip
