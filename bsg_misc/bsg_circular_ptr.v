@@ -27,7 +27,9 @@ module bsg_circular_ptr #(parameter `BSG_INV_PARAM(slots_p)
    assign n_o = ptr_n;
 
    // increment round robin pointers
-   always @(posedge clk)
+
+   // synopsys sync_set_reset "reset_i"
+   always_ff @(posedge clk)
      if (reset_i) ptr_r <= 0;
      else       ptr_r <= ptr_n;
 
