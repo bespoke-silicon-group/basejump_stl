@@ -1,13 +1,15 @@
 /**
- *    bsg_mem_multiport_latch_write_banked_negphase.v
+ *    bsg_mem_multiport_latch_write_banked_bypassing.v
  *
+ *    Data latches are transparent when the clock is low, and the write data can be bypassed to the read outputs.
+ *    Write enable signal needs to arrive before the negedge of the clock. 
  */
 
 
 ~`include "bsg_defines.v"
 
 
-module bsg_mem_multiport_latch_write_banked_negphase
+module bsg_mem_multiport_latch_write_banked_bypassing
   #(`BSG_INV_PARAM(els_p)
     , `BSG_INV_PARAM(width_p)
     , `BSG_INV_PARAM(num_rs_p)
@@ -30,15 +32,12 @@ module bsg_mem_multiport_latch_write_banked_negphase
   );
 
 
-
-
   // parameter checking
   // synopsys translate_off
   initial begin
     assert((els_p%num_banks_p) == 0) else $error("els_p has to be multiples of num_banks_p.");
   end
   // synopsys translate_on
-
 
 
   wire unused = reset_i;
@@ -75,9 +74,11 @@ module bsg_mem_multiport_latch_write_banked_negphase
   logic [els_p-1:0][width_p-1:0] mem_r; 
 
   for (genvar i = 0; i < els_p; i++) begin: x
+    wire clk_neg = ~mem_we_clk[i/bank_els_lp][i%bank_els_lp];
+
     for (genvar j = 0; j < width_p; j++) begin: b
       bsg_latch lat0 (
-        .clk_i(~mem_we_clk[i/bank_els_lp][i%bank_els_lp])
+        .clk_i(clk_neg)
         ,.data_i(w_data_i[i/bank_els_lp][j])
         ,.data_o(mem_r[i][j])
       );
@@ -112,5 +113,4 @@ module bsg_mem_multiport_latch_write_banked_negphase
 endmodule
 
 
-
-`BSG_ABSTRACT_MODULE(bsg_mem_multiport_latch_write_banked_negphase)
+`BSG_ABSTRACT_MODULE(bsg_mem_multiport_latch_write_banked_bypassing)
