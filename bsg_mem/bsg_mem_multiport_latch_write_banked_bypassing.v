@@ -74,12 +74,16 @@ module bsg_mem_multiport_latch_write_banked_bypassing
   logic [els_p-1:0][width_p-1:0] mem_r; 
 
   for (genvar i = 0; i < els_p; i++) begin: x
-    wire clk_neg = ~mem_we_clk[i/bank_els_lp][i%bank_els_lp];
+    // address is striped with banks.
+    localparam bank_id_lp = (i%num_banks_p);
+    localparam bank_addr_lp = (i/num_banks_p);
+
+    wire clk_neg = ~mem_we_clk[bank_id_lp][bank_addr_lp];
 
     for (genvar j = 0; j < width_p; j++) begin: b
       bsg_latch lat0 (
         .clk_i(clk_neg)
-        ,.data_i(w_data_i[i/bank_els_lp][j])
+        ,.data_i(w_data_i[bank_id_lp][j])
         ,.data_o(mem_r[i][j])
       );
     end
