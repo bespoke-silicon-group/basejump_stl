@@ -21,11 +21,11 @@
   wire       [ui_data_width_p-1:0] app_rd_data;
   wire                             app_rd_data_end;
 
-  wire                             app_ref_req;
+  logic                            app_ref_req;
   wire                             app_ref_ack;
-  wire                             app_zq_req;
+  logic                            app_zq_req;
   wire                             app_zq_ack;
-  wire                             app_sr_req;
+  logic                            app_sr_req;
   wire                             app_sr_active;
   // Status signal
   wire                             init_calib_complete;

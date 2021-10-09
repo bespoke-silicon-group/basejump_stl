@@ -3,6 +3,10 @@
 +incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/vip/ddr/lpddr_verilog_model/
 +incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/tb_top/
 +incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/config
++incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/env
++incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/tests
++incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/sequences
++incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/vip/asic
 
 $BASEJUMP_STL_DIR/bsg_misc/bsg_defines.v
 $BASEJUMP_STL_DIR/bsg_dmc/bsg_dmc_pkg.v
@@ -46,4 +50,7 @@ $BASEJUMP_STL_DIR/bsg_misc/bsg_dff_en.v
 $BASEJUMP_STL_DIR/bsg_tag/bsg_tag_client.v
 $BASEJUMP_STL_DIR/bsg_tag/bsg_tag_client_unsync.v
 
+$BASEJUMP_STL_DIR/testing/bsg_dmc/config/bsg_dmc_params_pkg.sv
+$BASEJUMP_STL_DIR/testing/bsg_dmc/vip/asic/bsg_dmc_asic_pkg.sv
+$BASEJUMP_STL_DIR/testing/bsg_dmc/tests/bsg_dmc_tests_pkg.sv
 $BASEJUMP_STL_DIR/testing/bsg_dmc/vip/ddr/lpddr_verilog_model/mobile_ddr.v
