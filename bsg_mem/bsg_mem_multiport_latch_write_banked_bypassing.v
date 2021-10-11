@@ -6,7 +6,7 @@
  */
 
 
-~`include "bsg_defines.v"
+`include "bsg_defines.v"
 
 
 module bsg_mem_multiport_latch_write_banked_bypassing
