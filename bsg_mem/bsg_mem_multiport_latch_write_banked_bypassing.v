@@ -26,7 +26,7 @@ module bsg_mem_multiport_latch_write_banked_bypassing
     , input [num_banks_p-1:0][bank_addr_width_lp-1:0] w_addr_i
     , input [num_banks_p-1:0][width_p-1:0] w_data_i
 
-    , input [num_rs_p-1:0] r_v_i
+    // async read
     , input [num_rs_p-1:0][addr_width_lp-1:0] r_addr_i
     , output logic [num_rs_p-1:0][width_p-1:0] r_data_o
   );
@@ -91,24 +91,13 @@ module bsg_mem_multiport_latch_write_banked_bypassing
 
 
   // read ports
-  logic [num_rs_p-1:0][addr_width_lp-1:0] r_addr_r;
-
   for (genvar i = 0; i < num_rs_p; i++) begin: rs
-    bsg_dff_en #(
-      .width_p(addr_width_lp)
-    ) r_addr_dff (
-      .clk_i(clk_i)
-      ,.en_i(r_v_i[i])
-      ,.data_i(r_addr_i[i])
-      ,.data_o(r_addr_r[i])
-    );
-
     bsg_mux #(
       .width_p(width_p)
       ,.els_p(els_p)
     ) rmux0 (
       .data_i(mem_r)
-      ,.sel_i(r_addr_r[i])
+      ,.sel_i(r_addr_i[i])
       ,.data_o(r_data_o[i])
     );
   end
