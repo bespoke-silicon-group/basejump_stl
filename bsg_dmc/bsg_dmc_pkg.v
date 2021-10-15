@@ -1,4 +1,3 @@
-`include "bsg_defines.v"
 
 package bsg_dmc_pkg;
   typedef struct packed {
@@ -28,12 +27,6 @@ package bsg_dmc_pkg;
     ,RD = 3'b001 // read
     ,WR = 3'b000 // write
   } app_cmd_e;
-
-  `define declare_app_cmd_afifo_entry_s(addr_width_mp) \
-    typedef struct packed {           \
-      app_cmd_e cmd;                  \
-      logic [addr_width_mp-1:0] addr; \
-    } app_cmd_afifo_entry_s;
 
   typedef enum logic [3:0]
     {LMR      = 4'b0000

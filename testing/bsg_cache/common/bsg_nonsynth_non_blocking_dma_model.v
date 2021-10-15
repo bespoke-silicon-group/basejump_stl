@@ -6,6 +6,7 @@
  *
  */
 
+`include "bsg_cache_non_blocking.vh"
 
 module bsg_nonsynth_non_blocking_dma_model
   import bsg_cache_non_blocking_pkg::*;

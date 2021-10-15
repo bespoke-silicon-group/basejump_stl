@@ -1,3 +1,6 @@
+
+`include "bsg_cache_non_blocking.vh"
+
 module cov_mhu
   import bsg_cache_non_blocking_pkg::*;
   (

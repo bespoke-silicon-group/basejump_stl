@@ -6,6 +6,8 @@
  *    depopulated ruche router.
  */
 
+`include "bsg_defines.v"
+
 module bsg_mesh_router_decoder_dor
   import bsg_noc_pkg::*;
   import bsg_mesh_router_pkg::*;
