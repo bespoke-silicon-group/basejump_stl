@@ -62,7 +62,7 @@ module bsg_mem_multiport_latch
   ); 
   
   for (genvar i = start_idx_lp; i < els_p; i++) begin: we_icg
-    bsg_icg icg0 (
+    bsg_icg_pos icg0 (
       .clk_i(clk_i)
       ,.en_i(w_v_onehot[i])
       ,.clk_o(mem_we_clk[i])
