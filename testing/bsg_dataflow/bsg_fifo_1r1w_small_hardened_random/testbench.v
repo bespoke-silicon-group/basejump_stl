@@ -1,8 +1,8 @@
 module testbench();
 
   parameter width_p = 32;  
-  parameter els_p = 8;
-  parameter test_els_p = 100000;
+  parameter els_p = 4;
+  parameter test_els_p = 350;
 
   // clock and reset
   bit clk, reset;
@@ -41,6 +41,12 @@ module testbench();
     ,.yumi_i(yumi_li)
   );
 
+  // could use hierarchical bind in order to do more whitebox internal testing
+  bind bsg_fifo_1r1w_small_hardened bsg_fifo_1r1w_small_hardened_cov
+ #(.els_p(els_p)
+  ) pc_cov
+  (.*
+  );
 
 
   // Input side tester

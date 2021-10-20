@@ -71,5 +71,5 @@ $BASEJUMP_STL_DIR/bsg_fsb/bsg_fsb_pkg.v
 
 $TOP_DIR/bsg_fifo_1r1w_small_hardened_tester.v
 $TOP_DIR/bsg_fifo_1r1w_small_hardened_test_node.v
-
+$TOP_DIR/bsg_fifo_1r1w_small_hardened_cov.v
 

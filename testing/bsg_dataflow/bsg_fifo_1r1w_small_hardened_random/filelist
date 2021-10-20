@@ -1,6 +1,7 @@
 testbench.v
 input_side_tester.v
 output_side_tester.v
+bsg_fifo_1r1w_small_hardened_cov.v
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_clock_gen.v
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_reset_gen.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1r1w_small_hardened.v

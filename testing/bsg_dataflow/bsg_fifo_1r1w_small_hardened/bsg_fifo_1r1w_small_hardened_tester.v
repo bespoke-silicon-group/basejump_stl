@@ -10,14 +10,9 @@
 
 module bsg_fifo_1r1w_small_hardened_tester
 
- #(
-   // dynamic parameters
-   parameter top_master_clk_period_p     = 5
-  ,parameter top_fifo_clk_period_p       = 5
-  ,parameter top_client_clk_period_p     = 5
-   // static parameters
+ #(parameter top_num_clocks_p = 3
   ,parameter width_p  = 64
-  ,parameter els_p    = 16
+  ,parameter els_p    = 4
   ,parameter channel_width_p = 8
   )
   
@@ -89,7 +84,13 @@ module bsg_fifo_1r1w_small_hardened_tester
   ,.data_o (master_node_link_li.data)
   ,.yumi_i (master_node_link_li.v & master_node_link_lo.ready_and_rev)
   );
-  
+
+  bind bsg_fifo_1r1w_small_hardened bsg_fifo_1r1w_small_hardened_cov
+ #(.els_p(els_p)
+  ) pc_cov
+  (.*
+  );
+
   bsg_fifo_1r1w_small_hardened_test_node
  #(.num_channels_p(width_p/channel_width_p)
   ,.channel_width_p(channel_width_p)
@@ -112,29 +113,53 @@ module bsg_fifo_1r1w_small_hardened_tester
   
   
   // Simulation of Clock
-  always #(top_master_clk_period_p) master_clk = ~master_clk;
-  always #(top_fifo_clk_period_p)   fifo_clk   = ~fifo_clk;
-  always #(top_client_clk_period_p) client_clk = ~client_clk;
-  
-  
+  localparam num_clocks_lp = top_num_clocks_p;
+  wire [num_clocks_lp-1:0][31:0] clk_period_lo = {32'd7, 32'd5, 32'd3};
+
+  logic [num_clocks_lp-1:0] master_clks, fifo_clks, client_clks;
+  for (genvar i = 0; i < num_clocks_lp; i++)
+  begin
+    always #(clk_period_lo[i]) master_clks[i] = ~master_clks[i];
+    always #(clk_period_lo[i])   fifo_clks[i]   = ~fifo_clks[i];
+    always #(clk_period_lo[i]) client_clks[i] = ~client_clks[i];
+  end
+
+  logic [3:0] master_sel, fifo_sel, client_sel;
+  assign master_clk = master_clks[master_sel];
+  assign fifo_clk = fifo_clks[fifo_sel];
+  assign client_clk = client_clks[client_sel];
+
   initial 
   begin
 
     $display("Start Simulation\n");
   
     // Init
-    master_clk = 1;
-    fifo_clk = 1;
-    client_clk = 1;
+    master_clks = '1;
+    fifo_clks = '1;
+    client_clks = '1;
     
+    #500;
+
+    for (integer i = 0; i < num_clocks_lp; i++)
+      begin
+    for (integer j = 0; j < num_clocks_lp; j++)
+      begin
+    for (integer k = 0; k < num_clocks_lp; k++)
+      begin
+
+    master_sel = i;
+    fifo_sel = j;
+    client_sel = k;
+
     master_reset = 1;
     fifo_reset = 1;
     client_reset = 1;
     
     master_en = 0;
-    
+
     #500;
-    
+
     // fifo reset
     @(posedge fifo_clk); #1;
     fifo_reset = 0;
@@ -178,7 +203,11 @@ module bsg_fifo_1r1w_small_hardened_tester
         $error("\nFAIL... Loopback node sent %d packets but received only %d\n", master_sent, master_received);
         $finish;
       end
-    
+
+    end
+    end
+    end
+
     $display("\nPASS!\n");
     
     $display("Loopback node sent and received %d packets\n", master_sent);

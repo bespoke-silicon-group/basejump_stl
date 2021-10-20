@@ -11,44 +11,46 @@ module output_side_tester
 
   
   // yumi random gen
-  integer count_r;
+  logic ready_r;
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      count_r <= $urandom_range(0, 32);
+      ready_r <= 1'b1;
     end
     else begin
-      if (v_i) begin
-        if (count_r == 0) begin
-          count_r <= $urandom_range(0, 32);
-        end
-        else begin
-          count_r <= count_r - 1;
-        end
-      end
+      ready_r <= ($urandom_range(0,31) < 16);
     end
   end
 
-  assign yumi_o = v_i & (count_r == 0);
+  assign yumi_o = v_i & ready_r;
 
   always @ (posedge clk_i) begin
     if (yumi_o & v_i) begin
-      $display("[OUTPUT] data = %d", data_i);
+      //$display("[OUTPUT] data = %d", data_i);
     end
   end
 
   // curr data
   logic [width_p-1:0] curr_data_r;
+  logic error_r;
   always @ (negedge clk_i) begin
     if (reset_i) begin
       curr_data_r <= 0;
+      error_r <= 0;
     end
     else begin
       if (v_i & yumi_o) begin
-        assert(curr_data_r == data_i) else $error("[Error] expected: %d, actual: %d", curr_data_r, data_i);
+        assert(curr_data_r == data_i) else begin
+          $error("[Error] expected: %d, actual: %d", curr_data_r, data_i);
+          error_r <= 1;
+        end
         curr_data_r <= curr_data_r + 1;
       end
-      if (curr_data_r == test_els_p) $finish();
+      if (curr_data_r == test_els_p) begin
+        if (error_r) $error("\nFAIL...\n");
+        else $display("\nPASS!\n");
+        $finish();
+      end
     end
   end
   
