@@ -12,6 +12,7 @@ package bsg_dramsim3_pkg;
 
 endpackage // bsg_dramsim3_pkg
 
+// this models 8 legacy-mode channels of an 8gb chip
 package bsg_dramsim3_hbm2_8gb_x128_pkg;
   parameter int tck_ps = 1000;
   parameter int channel_addr_width_p = 30;
@@ -36,6 +37,8 @@ package bsg_dramsim3_hbm2_8gb_x128_pkg;
 
 endpackage // bsg_dramsim3_hbm2_8gb_x128_pkg
 
+// this models 16 pseudo-channels of an 8gb chip
+// with 32 banks (4 bank groups, 8 banks per group)
 package bsg_dramsim3_hbm2_8gb_x64_32ba_pkg;
   parameter int tck_ps = 1000;
   parameter int channel_addr_width_p = 29;
@@ -61,6 +64,8 @@ package bsg_dramsim3_hbm2_8gb_x64_32ba_pkg;
 endpackage
 
 // this models a single pseudo-channel of the 16gb chip
+// this lets us model a scaled-down version of the larger chip
+// and reduce simulations memory footprint  
 package bsg_dramsim3_hbm2_16gb_x64_pkg;
   parameter int tck_ps = 1000;
   parameter int channel_addr_width_p = 30;
@@ -85,6 +90,7 @@ package bsg_dramsim3_hbm2_16gb_x64_pkg;
 
 endpackage
 
+// this 16 pseudo-channels of the 16gb chip
 package bsg_dramsim3_hbm2_16gb_x64_pkg;
   parameter int tck_ps = 1000;
   parameter int channel_addr_width_p = 30;
@@ -109,6 +115,7 @@ package bsg_dramsim3_hbm2_16gb_x64_pkg;
 
 endpackage
 
+// this models 8 legacy-mode channels of the 4gb chip
 package bsg_dramsim3_hbm2_4gb_x128_pkg;
   parameter int tck_ps = 1000;
   parameter int channel_addr_width_p = 29;
