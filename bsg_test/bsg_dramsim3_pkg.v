@@ -66,7 +66,7 @@ endpackage
 // this models a single pseudo-channel of the 16gb chip
 // this lets us model a scaled-down version of the larger chip
 // and reduce simulations memory footprint  
-package bsg_dramsim3_hbm2_16gb_x64_pkg;
+package bsg_dramsim3_hbm2_1gb_x64_pkg;
   parameter int tck_ps = 1000;
   parameter int channel_addr_width_p = 30;
   parameter int data_width_p=256;
@@ -77,7 +77,7 @@ package bsg_dramsim3_hbm2_16gb_x64_pkg;
   parameter int num_bg_p=4;
   parameter int num_ranks_p=1;
   parameter longint size_in_bits_p=2**33; // 1GB (8Gb)
-  parameter string config_p="HBM2_16Gb_x64.ini";
+  parameter string config_p="HBM2_1Gb_x64.ini";
   parameter bsg_dramsim3_pkg::bsg_dramsim3_address_mapping_e address_mapping_p=bsg_dramsim3_pkg::e_ro_ra_bg_ba_ch_co;
 
   typedef struct packed {
