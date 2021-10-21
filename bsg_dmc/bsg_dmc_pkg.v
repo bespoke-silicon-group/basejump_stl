@@ -31,7 +31,7 @@ package bsg_dmc_pkg;
     ,WR = 3'b000 // write
   } app_cmd_e;
 
-  // This enum holds various commands that are passed by the DMC controller to DDR via DFI. As per JEDEC LPDDR SDRAM spec Table-5, page 21
+  //This enum holds various commands that are passed by the DMC controller to DDR via DFI. As per JEDEC LPDDR SDRAM spec Table-5, page 21
   typedef enum logic [3:0] 
     {LMR      = 4'b0000	//mode register set
     ,REF      = 4'b0001	//auto refresh
