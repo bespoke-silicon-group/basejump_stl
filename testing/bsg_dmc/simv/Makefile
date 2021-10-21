@@ -53,3 +53,4 @@ clean:
 	rm -rf ucli.key
 	rm -rf DVEfiles
 	rm -rf AN.DB
+	rm vc_hdrs.h

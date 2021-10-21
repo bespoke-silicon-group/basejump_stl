@@ -176,6 +176,7 @@ module testbench();
 	
 	initial begin
 		sys_reset = 1;
+		//sync initiation delay.
 		#200;
 		//deassert active low reset
 		sys_reset = 0;
@@ -184,11 +185,6 @@ module testbench();
 	initial begin
 		init_configuration_values(); 
 	end
-
-    initial begin
-      $dumpfile("dump.vcd");
-      $dumpvars;
-    end
 
 	initial begin
 	  app_en = 0;
