@@ -49,8 +49,8 @@ package bsg_dramsim3_hbm2_8gb_x64_32ba_pkg;
   parameter int num_channels_p=16;
   parameter int num_columns_p=32;
   parameter int num_rows_p=16384;
-  parameter int num_ba_p=8;
-  parameter int num_bg_p=4;
+  parameter int num_ba_p=4;
+  parameter int num_bg_p=8;
   parameter int num_ranks_p=1;
   parameter longint size_in_bits_p=2**36; // 8GB (64Gb)
   parameter string config_p="HBM2_8Gb_x64_32ba.ini";
@@ -78,8 +78,8 @@ package bsg_dramsim3_hbm2_1gb_x64_32ba_pkg;
   parameter int num_channels_p=1;
   parameter int num_columns_p=32;
   parameter int num_rows_p=32768;
-  parameter int num_ba_p=8;
-  parameter int num_bg_p=4;
+  parameter int num_ba_p=4;
+  parameter int num_bg_p=8;
   parameter int num_ranks_p=1;
   parameter longint size_in_bits_p=2**33; // 1GB (8Gb)
   parameter string config_p="HBM2_1Gb_x64_32ba.ini";
@@ -105,8 +105,8 @@ package bsg_dramsim3_hbm2_16gb_x64_pkg;
   parameter int num_channels_p=16;
   parameter int num_columns_p=32;
   parameter int num_rows_p=32768;
-  parameter int num_ba_p=8;
-  parameter int num_bg_p=4;
+  parameter int num_ba_p=4;
+  parameter int num_bg_p=8;
   parameter int num_ranks_p=1;
   parameter longint size_in_bits_p=2**37; // 16GB (128Gb)
   parameter string config_p="HBM2_16Gb_x64.ini";
