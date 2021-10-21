@@ -6,6 +6,8 @@ export BSG_CADENV_DIR = $(BASEJUMP_STL_DIR)/../bsg_cadenv
 # Environment
 include $(BSG_CADENV_DIR)/cadenv.mk
 
+export VCS_HOME = $(VCS_RELEASE)
+
 #TODO akashs3 commented: Why is this needed?
 #ANALYSIS_OPTIONS = -full64
 #ANALYSIS_OPTIONS += -sverilog
@@ -18,7 +20,7 @@ ELABORATE_OPTIONS += -debug_pp
 ELABORATE_OPTIONS += -lca
 ELABORATE_OPTIONS += +vcs+vcdpluson
 ELABORATE_OPTIONS += +vcs+vcdplusmemon
-ELABORATE_OPTIONS += -timescale=1ps/1ps
+ELABORATE_OPTIONS += -timescale=1ns/100ps
 ELABORATE_OPTIONS += -assert svaext
 #TODO: akashs3 randomise the BFM to be fetched over time for below define.
 ELABORATE_OPTIONS += +define+den2048Mb+sg5+x16+FULL_MEM
@@ -28,7 +30,8 @@ RUN_OPTIONS =
 #analyze:
 #	$(VCS_BIN)/vlogan $(ANALYSIS_OPTIONS) -timescale=1ns/1ps +incdir+lpddr_verilog_model+../../bsg_dmc +define+den2048Mb+sg5+x16+FULL_MEM -f filelist.lst -l  $@.log
 #	touch $@
-
+#ech: 
+#	echo $(VCS_RELEASE)
 elaborate: 
 	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -f filelist.lst -l $@.log $(BASEJUMP_STL_DIR)/testing/bsg_dmc/tb_top/testbench.sv
 	touch $@
@@ -41,9 +44,9 @@ dve: run
 	$(VCS_BIN)/dve -full64 -vpd vcdplus.vpd &
 
 clean:
-	rm analyze elaborate run
+	rm elaborate run
 	rm -rf *.log
-	rm -rf analyze_*
+	rm -rf elaborate_*
 	rm -rf *.vpd
 	rm -rf simv*
 	rm -rf csrc

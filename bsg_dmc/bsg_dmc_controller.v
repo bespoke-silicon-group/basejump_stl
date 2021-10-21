@@ -2,6 +2,7 @@
 
 module bsg_dmc_controller
   import bsg_dmc_pkg::*;
+
  #(parameter `BSG_INV_PARAM( ui_addr_width_p      )
   ,parameter `BSG_INV_PARAM( ui_data_width_p      )
   ,parameter `BSG_INV_PARAM( burst_data_width_p   )
@@ -59,7 +60,7 @@ module bsg_dmc_controller
   ,input bsg_dmc_s                      dmc_p_i);
 
   typedef enum logic [1:0] {IDLE, INIT, REFR, LDST} state;
-
+  
   integer i;
   genvar k;
 
@@ -151,7 +152,7 @@ module bsg_dmc_controller
 
   dfi_cmd_e    c_cmd, n_cmd;
 
-  logic        shoot;
+  logic        shoot;	// flag to point that the a particular timing parameter between operations is met
   logic  [7:0] open_bank;
   logic [15:0] open_row [0:7];
 
@@ -163,7 +164,7 @@ module bsg_dmc_controller
   logic [15:0] ref_tick;
   logic  [1:0] refr_tick;
   logic        refr_req;
-  logic        refr_ack;
+  logic        refr_ack; //current state is refresh, start tick tock for t-refi 
 
   logic  [1:0] ldst_tick;
 
@@ -277,6 +278,7 @@ module bsg_dmc_controller
       init_calib_complete_o <= 1;
   end
 
+  //tick-tock for time taken in the initialisation state
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       init_tick <= 0;
@@ -349,14 +351,29 @@ module bsg_dmc_controller
     push = 1'b0;
     cmd_sfifo_wdata = {$bits(cmd_sfifo_wdata){1'b1}};
     case(cstate)
+	  //INIT is as per JEDEC LPDDR SRAM spec Figure 4
       INIT: begin
         push = cmd_sfifo_ready;
         case(init_tick)
+
+		  //T minus 4: Precharge ALL : deactivate rows in all banks
           'd4: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
+
+		  //T minus 3: AUTO REFRESH iteration 1
           'd3: begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
+
+		  // T minus 2: AUTO REFRESH iteration 2
           'd2: begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
+
+		  //T minus 1: MODE REGISTER SET
           'd1: begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = {8'h0, dmc_p_i.tcas, 4'($clog2(dfi_burst_length_lp << 1))}; cmd_sfifo_wdata.ba = 4'h0; end
+
+		  //T minus 0: EXTENDED MODE REGISTER SET - initialising PASR, TCSR and drive strength to 0 (JEDEC LPDDR SDRAM spec Figure-7)
           'd0: begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = 16'h0; cmd_sfifo_wdata.ba = 4'h2; end
+		  
+		  //DMC is initiated post this and can take up read/write commands.
+
+		  //default case: wait for T-MRD to start doing above operations in order
           default: cmd_sfifo_wdata.cmd = DESELECT;
         endcase
       end
@@ -385,6 +402,7 @@ module bsg_dmc_controller
     endcase
   end
 
+  //DMC internal FSM transitions
   always_comb begin
     nstate = IDLE;
     case(cstate)
@@ -426,6 +444,7 @@ module bsg_dmc_controller
     ,.data_o             ( cmd_sfifo_rdata    )
     ,.yumi_i             ( cmd_sfifo_rinc     ));
 
+  //Move to next command when the timing parameters required for the previous cmd are met.
   always_comb begin
     if(cmd_sfifo_valid)
       case(c_cmd)
@@ -459,6 +478,7 @@ module bsg_dmc_controller
       shoot = 1'b0;
   end
 
+  //tick-tock for sticking to various spec stipulated timing parameters between commands.  
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       cmd_tick <= 0;
@@ -468,6 +488,7 @@ module bsg_dmc_controller
       cmd_tick <= cmd_tick + 1;
   end
 
+  //tick-tock for sticking to spec stipulated timing parameters between commands when next command is ACTIVE
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       cmd_act_tick <= 0;
@@ -477,6 +498,7 @@ module bsg_dmc_controller
       cmd_act_tick <= cmd_act_tick + 1;
   end
 
+  //wait for t-wtr time before starting the next cmd as WRITE
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       cmd_wr_tick <= 0;
@@ -486,6 +508,7 @@ module bsg_dmc_controller
       cmd_wr_tick <= cmd_wr_tick + 1;
   end
 
+  //tick tock for CAS latency before getting a valid read data
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       cmd_rd_tick <= 0;

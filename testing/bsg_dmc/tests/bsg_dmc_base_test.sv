@@ -12,6 +12,7 @@ class bsg_dmc_base_test extends uvm_test;
 
 	//Register with factory
   	`uvm_component_utils(bsg_dmc_base_test);
+	`bsg_log_utils("TEST/BASE")
 
 	bsg_dmc_env env;
 
@@ -30,6 +31,13 @@ endfunction
 
 task bsg_dmc_base_test::run_phase(uvm_phase phase)  ;
     phase.raise_objection( this, "Starting DMC test run phase" );
-
+	//uvm_top.print_topology();  	
+	
+	//Wait for initialisation to complete
+	`uvm_info(msg_id, "Starting DMC BASE TEST. Waiting for initialisation to complete", UVM_NONE)
+	wait(testbench.init_calib_complete);
+	uvm_top.print_topology();
+	`uvm_info(msg_id, "Initialisation complete and the DUT is up. Will trigger scenarios now", UVM_NONE)
+	
     phase.drop_objection( this , "Finished DMC test run phase" );
 endtask		

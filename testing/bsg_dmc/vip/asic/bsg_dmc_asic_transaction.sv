@@ -2,7 +2,7 @@
 //    		BASEJUMP STL
 //
 //        CLASS: bsg_dmc_asic_transaction
-//  DESCRIPTION: Transaction packet for driving down signals on the ASIC interface
+//  DESCRIPTION: Transaction packet for driving down signals on the ASIC data interface
 //       AUTHOR: Akash Suresh, akashs3@uw.edu
 // ORGANIZATION: Bespoke Silicon Group, University of Washington
 //      CREATED: 10/08/21
@@ -16,9 +16,6 @@ class bsg_dmc_asic_transaction extends uvm_sequence_item;
 	function new(string name= "bsg_dmc_asic_transaction");
 		super.new(name);
 	endfunction
-
-	// Config interface paremeters
-	bsg_dmc_s bsg_dmc_config_s;
 
 	//Data interface signals	
 	bit      [ui_addr_width_p-1:0] app_addr;

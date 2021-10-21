@@ -10,8 +10,13 @@
 
 import uvm_pkg::*;
 import bsg_dmc_params_pkg::*;
+import uvm_pkg::*;
+import bsg_dmc_pkg::*;
+import bsg_dmc_asic_pkg::*;
 
 `include "uvm_macros.svh"
+`include "../env/bsg_dmc_env.sv"
+`include "bsg_dmc_base_test.sv"
 
 module testbench();
 	import bsg_tag_pkg::*;
@@ -29,10 +34,6 @@ module testbench();
 	integer read_transactions;
 
 	bsg_dmc_asic_interface asic_if();
-
-	initial begin
-		init_configuration_values(); 
-	end
 
 	//TB TOP to TB connection for ASIC - DMC controller interface
 	initial begin
@@ -163,14 +164,33 @@ module testbench();
 	      ,.Dm    (ddr_dm[2*i+1:2*i]));
 	  end
 	endgenerate
-	
+
+	initial begin
+		dfi_clk_2x = 0;
+		ui_clk = 0;
+	end	
 	//TODO: akashs3 : no hardcoded clk period vals.
 	always #1.25 dfi_clk_2x = ~dfi_clk_2x;
 	//always #0.625 ui_clk = ~ui_clk;
 	always #2.5 ui_clk = ~ui_clk;
 	
 	initial begin
-	  //$vcdplusmemon();
+		sys_reset = 1;
+		#200;
+		//deassert active low reset
+		sys_reset = 0;
+	end
+
+	initial begin
+		init_configuration_values(); 
+	end
+
+    initial begin
+      $dumpfile("dump.vcd");
+      $dumpvars;
+    end
+
+	initial begin
 	  app_en = 0;
 	  app_wdf_wren = 0;
 	  app_wdf_end = 0;
@@ -181,11 +201,10 @@ module testbench();
 		//We set and get objects and variables from across the testbench based on access rules configured through arguments of set method while storing it.
 		//Here, we pass pointers (virtual interface) of physical interfaces to all components below this hierarchy (* denotes all components). Tthese will be used by components to interact with the DUT.
     	uvm_config_db#(virtual bsg_dmc_asic_interface)::set(null, "*", "asic_if", asic_if);
-
     	//Call the test - by passing run_test argument as test class name
     	//Another option is to not pass any test argument and use +UVM_TEST on command line to specify which test to run
     	run_test("bsg_dmc_base_test");
-  	end
+	end
 	
 	task init_configuration_values();
 
