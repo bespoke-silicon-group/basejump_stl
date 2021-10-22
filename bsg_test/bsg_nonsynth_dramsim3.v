@@ -41,6 +41,9 @@ module bsg_nonsynth_dramsim3
     , input [num_channels_p-1:0][data_mask_width_lp-1:0] mask_i
 
     //stats info
+    // print_stat clk can be asynchronous to the dram clk.
+    , input print_stat_clk_i
+    , input print_stat_reset_i
     , input print_stat_v_i
     , input [tag_width_p-1:0] print_stat_tag_i
 
@@ -275,8 +278,8 @@ module bsg_nonsynth_dramsim3
   end
 
   //print_stat
-  always_ff @ (negedge clk_i) begin
-    if ((reset_i === 0) & (print_stat_v_i === 1)) begin
+  always @ (negedge print_stat_clk_i) begin
+    if ((print_stat_reset_i === 0) & (print_stat_v_i === 1)) begin
       bsg_dramsim3_print_stats(dramsim3_handle, print_stat_tag_i);
     end
   end
