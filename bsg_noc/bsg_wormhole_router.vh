@@ -32,6 +32,12 @@ typedef struct packed {                 \
   logic [cord_width_mp-1:0]    cord;    \
 } struct_name_mp
 
+`define bsg_wormhole_router_header_width(cord_width_mp, len_width_mp) \
+  (cord_width_mp + len_width_mp)
+
+`define bsg_wormhole_concentrator_header_width(cord_width_mp, len_width_mp, cid_width_mp) \
+  (cord_width_mp + len_width_mp + cid_width_mp)
+
 `define bsg_wormhole_concentrator_packet_width(cord_width_mp, len_width_mp, cid_width_mp, payload_width_mp) \
   (cord_width_mp + len_width_mp + cid_width_mp + payload_width_mp)
 
