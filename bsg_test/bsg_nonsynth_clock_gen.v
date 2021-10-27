@@ -5,7 +5,7 @@
 `timescale 1ps/1ps
 
 module bsg_nonsynth_clock_gen
-  #(parameter cycle_time_p="inv")
+  #(parameter `BSG_INV_PARAM(cycle_time_p))
    (output bit o);
 
 `ifndef VERILATOR
@@ -20,9 +20,13 @@ module bsg_nonsynth_clock_gen
   end
 `else
   initial begin
-    $error("bsg_nonsynth_clock_gen is not supported in Verilator due to delay statement (#)");
+    $info("[BSG INFO]: bsg_nonsynth_clock_gen is not supported in Verilator due to delay statement (#)");
+    $info("[BSG INFO]: Falling back to bsg_nonsynth_dpi_clock_gen");
   end
+  bsg_nonsynth_dpi_clock_gen #(.cycle_time_p(cycle_time_p)) bcg (.*);
 `endif
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_clock_gen)
 

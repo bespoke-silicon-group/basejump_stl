@@ -1,7 +1,7 @@
 `include "bsg_defines.v"
 
 module bsg_wormhole_router_output_control
-  #(parameter input_dirs_p=-1)
+  #(parameter `BSG_INV_PARAM(input_dirs_p))
    (input clk_i
     , input reset_i
 
@@ -50,6 +50,8 @@ module bsg_wormhole_router_output_control
    assign valid_o = (|(scheduled_n & valid_i));
    assign yumi_o  = ready_i ? (scheduled_n & valid_i) : '0;
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_wormhole_router_output_control)
 
 
 

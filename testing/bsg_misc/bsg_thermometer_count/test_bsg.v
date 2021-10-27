@@ -23,20 +23,22 @@
   force assurance.
 
 ***************************************************************************/
-module test_bsg;
-  
-  // clock and reset generation
-  localparam cycle_time_lp = 20;
-  localparam width_lp      = `WIDTH_P; // width of test input
+module test_bsg
+#(
+  parameter cycle_time_p = 20,
+  parameter width_p       = `WIDTH_P,
+  parameter reset_cycles_lo_p=1,
+  parameter reset_cycles_hi_p=5
+  );
   
   wire clk;
   wire reset;
-  
-  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_lp)
+
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
                           )  clock_gen
                           (  .o(clk)
                           );
-    
+                                        
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(1)
                            , .reset_cycles_hi_p(5)
@@ -45,23 +47,22 @@ module test_bsg;
                            , .async_reset_o(reset)
                           );
                                         
-  
   initial
   begin
     $display("\n\n\n");
     $display("===========================================================");
     $display("testing with ...");
-    $display("WIDTH_P: %d\n", width_lp);
+    $display("WIDTH_P: %d\n", width_p);
   end 
   
-  logic [width_lp-1:0] test_input; // input therm code
-  wire  [$clog2(width_lp+1)-1:0] test_output; // value of input therm code 
+  logic [width_p-1:0] test_input; // input therm code
+  wire  [$clog2(width_p+1)-1:0] test_output; // value of input therm code 
                                               // (output of DUT)
   
-  logic [$clog2(width_lp+1):0]   count;     // number of clock cycles after reset
+  logic [$clog2(width_p+1):0]   count;     // number of clock cycles after reset
   logic finish_r;
   
-  bsg_cycle_counter #(  .width_p($clog2(width_lp+1)+1)
+  bsg_cycle_counter #(  .width_p($clog2(width_p+1)+1)
                      )  bcc
                      (  .clk_i    (clk)
                       , .reset_i(reset)
@@ -74,7 +75,7 @@ module test_bsg;
   // cycle 2: (000) << 1 + 1 = 001, 2 
   // cycle 3: (001) << 1 + 1 = 011, 3
   // cycle 3: (011) << 1 + 1 = 111, 4
-  assign test_input = width_lp'((1 << count) - 1);
+  assign test_input = width_p'((1 << count) - 1);
   
   always_ff @(posedge clk)
     begin
@@ -102,7 +103,7 @@ module test_bsg;
                         , test_input, count, test_output);
   end
   
-  bsg_thermometer_count #(  .width_p(width_lp)
+  bsg_thermometer_count #(  .width_p(width_p)
                          )  DUT
                          (  .i(test_input)
                           , .o(test_output)

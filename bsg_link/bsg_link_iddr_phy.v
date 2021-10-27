@@ -21,7 +21,7 @@
 
 module bsg_link_iddr_phy
 
- #(parameter width_p = "inv")
+ #(parameter `BSG_INV_PARAM(width_p ))
 
   (input                  clk_i
   ,input  [width_p-1:0]   data_i
@@ -47,3 +47,4 @@ module bsg_link_iddr_phy
     data_rr <= {data_n_r, data_p_r};
 
 endmodule
+`BSG_ABSTRACT_MODULE(bsg_link_iddr_phy)

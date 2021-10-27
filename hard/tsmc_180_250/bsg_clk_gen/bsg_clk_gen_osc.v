@@ -69,11 +69,9 @@ module bsg_clk_gen_osc
 
    bsg_tag_client #(.width_p($bits(bsg_clk_gen_osc_tag_payload_s))
                     ,.harden_p(1)
-                    ,.default_p(0)
                     ) btc
      (.bsg_tag_i     (bsg_tag_i)
       ,.recv_clk_i   (fb_btc_clk)
-      ,.recv_reset_i (1'b0)     // no default value is loaded;
       ,.recv_new_r_o (fb_we_r)  // default is already in OSC flops
       ,.recv_data_r_o(fb_tag_r)
       );
@@ -125,5 +123,7 @@ module bsg_clk_gen_osc
    //           async_reset_neg,fb_clk,adg_int,fb_tag_r,fb_we_r);
 
 endmodule // bsg_clk_gen_osc
+
+`BSG_ABSTRACT_MODULE(bsg_clk_gen_osc)
 
 

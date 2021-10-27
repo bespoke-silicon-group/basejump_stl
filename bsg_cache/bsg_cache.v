@@ -13,14 +13,15 @@
 
 
 `include "bsg_defines.v"
+`include "bsg_cache.vh"
 
 module bsg_cache
   import bsg_cache_pkg::*;
-  #(parameter addr_width_p="inv"  // byte addr
-    ,parameter data_width_p="inv" // word size
-    ,parameter block_size_in_words_p="inv"
-    ,parameter sets_p="inv"
-    ,parameter ways_p="inv"
+  #(parameter `BSG_INV_PARAM(addr_width_p) // byte addr
+    ,parameter `BSG_INV_PARAM(data_width_p)  // word size
+    ,parameter `BSG_INV_PARAM(block_size_in_words_p)
+    ,parameter `BSG_INV_PARAM(sets_p)
+    ,parameter `BSG_INV_PARAM(ways_p)
 
     // Explicit size prevents size inference and allows for ((foo == bar) << e_cache_amo_swap)
     ,parameter [31:0] amo_support_p=(1 << e_cache_amo_swap)
@@ -1047,3 +1048,5 @@ module bsg_cache
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_cache)

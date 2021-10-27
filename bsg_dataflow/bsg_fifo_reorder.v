@@ -7,8 +7,8 @@
 `include "bsg_defines.v"
 
 module bsg_fifo_reorder
-  #(parameter width_p="inv"
-    , parameter els_p="inv"
+  #(parameter `BSG_INV_PARAM(width_p)
+    , parameter `BSG_INV_PARAM(els_p)
     , parameter lg_els_lp=`BSG_SAFE_CLOG2(els_p)
   )
   (
@@ -151,3 +151,5 @@ module bsg_fifo_reorder
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fifo_reorder)

@@ -7,4 +7,6 @@ help:
 
 DRAMSim3: UPDATE_FLAGS+=--rebase
 $(IMPORTS):
-	git submodule init && git submodule update $(UPDATE_FLAGS) $@
+	# expanded out to support git < 1.8.4
+	cd ..; git submodule init
+	cd ..; git submodule update $(UPDATE_FLAGS) imports/$@

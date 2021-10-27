@@ -22,9 +22,9 @@
 module bsg_mesh_router
   import bsg_noc_pkg::*;
   import bsg_mesh_router_pkg::*;
-  #(parameter width_p = -1
-    , parameter x_cord_width_p = -1
-    , parameter y_cord_width_p = -1
+  #(parameter `BSG_INV_PARAM(width_p )
+    , parameter `BSG_INV_PARAM(x_cord_width_p )
+    , parameter `BSG_INV_PARAM(y_cord_width_p )
     , parameter ruche_factor_X_p = 0
     , parameter ruche_factor_Y_p = 0
     , parameter dims_p = 2
@@ -69,6 +69,8 @@ module bsg_mesh_router
   logic [dirs_lp-1:0][dirs_lp-1:0] req, req_t;
 
   for (genvar i = 0; i < dirs_lp; i++) begin: dor
+    logic [dirs_lp-1:0] temp_req;
+
     bsg_mesh_router_decoder_dor #(
       .x_cord_width_p(x_cord_width_p)
       ,.y_cord_width_p(y_cord_width_p)
@@ -81,14 +83,15 @@ module bsg_mesh_router
     ) dor_decoder (
       .clk_i(clk_i)
       ,.reset_i(reset_i)
-      ,.v_i(v_i[i])
       ,.x_dirs_i(x_dirs[i])
       ,.y_dirs_i(y_dirs[i])
       ,.my_x_i(my_x_i)
       ,.my_y_i(my_y_i)
 
-      ,.req_o(req[i])
+      ,.req_o(temp_req)
     );
+    
+    assign req[i] = {dirs_lp{v_i[i]}} & temp_req;
   end
 
   bsg_transpose #(
@@ -197,3 +200,5 @@ module bsg_mesh_router
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mesh_router)

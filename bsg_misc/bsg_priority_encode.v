@@ -13,8 +13,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_priority_encode #(parameter   width_p    = "inv"
-                             , parameter lo_to_hi_p = "inv"
+module bsg_priority_encode #(parameter `BSG_INV_PARAM(  width_p    )
+                             , parameter `BSG_INV_PARAM(lo_to_hi_p )
                              )
 
    (input    [width_p-1:0] i
@@ -43,3 +43,5 @@ module bsg_priority_encode #(parameter   width_p    = "inv"
       );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_priority_encode)

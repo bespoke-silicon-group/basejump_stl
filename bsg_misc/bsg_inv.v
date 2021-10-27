@@ -1,6 +1,6 @@
 `include "bsg_defines.v"
 
-module bsg_inv #(parameter width_p="inv"
+module bsg_inv #(parameter `BSG_INV_PARAM(width_p)
                  , harden_p=1
 		 , vertical_p=1)
    (input [width_p-1:0] i
@@ -10,3 +10,5 @@ module bsg_inv #(parameter width_p="inv"
    assign o = ~i;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_inv)

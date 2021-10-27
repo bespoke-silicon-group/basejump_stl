@@ -22,7 +22,7 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_dpi_gpio
-   #(parameter int width_p = -1
+   #(parameter int width_p = 1
      ,parameter bit [width_p-1:0] init_o_p = '0
      ,parameter bit use_input_p = '0
      ,parameter bit use_output_p = '0
@@ -48,7 +48,7 @@ module bsg_nonsynth_dpi_gpio
       debug_b = debug_p;
       init_b = 0;
       gpio_o = init_o_p;
-      $display("BSG INFO: bsg_nonsynth_dpi_rom (initial begin)");
+      $display("BSG INFO: bsg_nonsynth_dpi_gpio (initial begin)");
       $display("BSG INFO:     Instantiation: %M");
       $display("BSG INFO:     width_p:       %d", width_p);
       $display("BSG INFO:     init_o_p:      %b", init_o_p);
@@ -146,3 +146,5 @@ module bsg_nonsynth_dpi_gpio
       return gpio_o[index];
    endfunction
 endmodule
+
+

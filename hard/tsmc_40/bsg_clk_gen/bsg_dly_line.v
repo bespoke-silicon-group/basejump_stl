@@ -174,4 +174,6 @@ module bsg_dly_line
 
 endmodule // bsg_clk_gen_osc
 
+`BSG_ABSTRACT_MODULE(bsg_dly_line)
+
 

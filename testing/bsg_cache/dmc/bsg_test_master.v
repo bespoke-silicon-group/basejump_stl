@@ -1,11 +1,13 @@
+`include "bsg_cache.vh"
+
 module bsg_test_master
   import bsg_cache_pkg::*;
-  #(parameter num_cache_p="inv"
-    , parameter data_width_p="inv"
-    , parameter addr_width_p="inv"
-    , parameter block_size_in_words_p="inv"
-    , parameter sets_p="inv"
-    , parameter ways_p="inv"
+  #(parameter `BSG_INV_PARAM(num_cache_p)
+    , parameter `BSG_INV_PARAM(data_width_p)
+    , parameter `BSG_INV_PARAM(addr_width_p)
+    , parameter `BSG_INV_PARAM(block_size_in_words_p)
+    , parameter `BSG_INV_PARAM(sets_p)
+    , parameter `BSG_INV_PARAM(ways_p)
   
     , localparam dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
     , localparam ring_width_lp=`bsg_cache_pkt_width(addr_width_p, data_width_p)
@@ -148,3 +150,5 @@ module bsg_test_master
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_test_master)

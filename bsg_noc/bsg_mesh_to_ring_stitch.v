@@ -3,10 +3,10 @@
 // 
 `include "bsg_defines.v"
 
-module bsg_mesh_to_ring_stitch   #(parameter  y_max_p=-1
-                                  ,parameter x_max_p=-1
-                                  ,parameter width_back_p = -1
-                                  ,parameter width_fwd_p  = -1
+module bsg_mesh_to_ring_stitch   #(parameter `BSG_INV_PARAM(y_max_p)
+                                  ,parameter `BSG_INV_PARAM(x_max_p)
+                                  ,parameter `BSG_INV_PARAM(width_back_p)
+                                  ,parameter `BSG_INV_PARAM(width_fwd_p)
                                   ,parameter b_lp = $clog2(x_max_p*y_max_p)
                                   ) (output  [x_max_p-1:0][y_max_p-1:0][b_lp-1:0] id_o
                                      ,output [x_max_p-1:0][y_max_p-1:0][width_back_p-1:0] back_data_in_o
@@ -2691,3 +2691,5 @@ end
 
 initial assert ((x_max_p <= 8) && (y_max_p <= 8)) else begin $error("%m x_max_p %d or y_max_p %d too large; rerun generator with larger size than %d/%d",x_max_p,y_max_p,8,8); $finish(); end 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mesh_to_ring_stitch)

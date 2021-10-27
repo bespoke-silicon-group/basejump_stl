@@ -32,9 +32,9 @@
 `include "bsg_defines.v"
 
 module bsg_mux_butterfly
-  #(parameter width_p="inv"
-    , parameter els_p="inv"
-    , localparam lg_els_lp=`BSG_SAFE_CLOG2(els_p)
+  #(parameter `BSG_INV_PARAM(width_p)
+    , parameter `BSG_INV_PARAM(els_p)
+    , lg_els_lp=`BSG_SAFE_CLOG2(els_p)
   )
   (
     input [els_p-1:0][width_p-1:0] data_i
@@ -63,3 +63,5 @@ module bsg_mux_butterfly
   assign data_o = data_stage[lg_els_lp];
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mux_butterfly)

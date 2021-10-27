@@ -132,12 +132,10 @@ module bsg_dram_clk_gen #
   // downsampler bsg_tag interface
   bsg_tag_client #
     (.width_p       ( $bits(bsg_clk_gen_ds_tag_payload_s) )
-    ,.default_p     ( 0                                   )
     ,.harden_p      ( 1                                   ))
   btc_ds
     (.bsg_tag_i(bsg_ds_tag_i)
     ,.recv_clk_i    ( osc_clk_o            )
-    ,.recv_reset_i  ( 1'b0                 )   // node must be programmed by bsg tag
     ,.recv_new_r_o  ( ds_tag_payload_new_r )   // we don't require notification
     ,.recv_data_r_o ( ds_tag_payload_r     ));
 

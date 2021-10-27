@@ -1,11 +1,14 @@
+
+`include "bsg_cache_non_blocking.vh"
+
 module block_ld_checker
   import bsg_cache_non_blocking_pkg::*;
-  #(parameter data_width_p="inv"
-    , parameter id_width_p="inv"
-    , parameter addr_width_p="inv"
-    , parameter block_size_in_words_p="inv"
-    , parameter cache_pkt_width_lp="inv"
-    , parameter mem_size_p="inv"
+  #(parameter `BSG_INV_PARAM(data_width_p)
+    , parameter `BSG_INV_PARAM(id_width_p)
+    , parameter `BSG_INV_PARAM(addr_width_p)
+    , parameter `BSG_INV_PARAM(block_size_in_words_p)
+    , parameter `BSG_INV_PARAM(cache_pkt_width_lp)
+    , parameter `BSG_INV_PARAM(mem_size_p)
   )
   (
     input clk_i
@@ -85,3 +88,5 @@ module block_ld_checker
   end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(block_ld_checker)

@@ -6,9 +6,9 @@
 
 `include "bsg_defines.v"
 
-module bsg_mul_array_row #(parameter width_p="inv"
-                          , parameter row_idx_p="inv"
-                          , parameter pipeline_p="inv")
+module bsg_mul_array_row #(parameter `BSG_INV_PARAM(width_p)
+                          , parameter `BSG_INV_PARAM(row_idx_p)
+                          , parameter `BSG_INV_PARAM(pipeline_p))
   ( 
     input clk_i
     , input rst_i
@@ -109,3 +109,5 @@ module bsg_mul_array_row #(parameter width_p="inv"
   end
   
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mul_array_row)

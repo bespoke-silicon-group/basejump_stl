@@ -10,9 +10,9 @@
 `include "bsg_defines.v"
 
 module bsg_cam_1r1w_unmanaged
- #(parameter els_p                = "inv"
-   , parameter tag_width_p        = "inv"
-   , parameter data_width_p       = "inv"
+ #(parameter `BSG_INV_PARAM(els_p)
+   , parameter `BSG_INV_PARAM(tag_width_p)
+   , parameter `BSG_INV_PARAM(data_width_p)
 
    , parameter safe_els_lp = `BSG_MAX(els_p,1)
    )
@@ -79,4 +79,6 @@ module bsg_cam_1r1w_unmanaged
   assign r_v_o = |tag_r_match_lo;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_cam_1r1w_unmanaged)
 

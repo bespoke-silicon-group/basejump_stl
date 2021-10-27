@@ -10,7 +10,7 @@
 // we use sed to substitute parameters because the netlist reader
 // does not like them, and we need the netlist reader for rp_groups
 //
-// module bsg_clk_gen_coarse_delay_element #(parameter start_tap_p="inv")
+// module bsg_clk_gen_coarse_delay_element #(parameter `BSG_INV_PARAM(start_tap_p))
 //
 
 module bsg_rp_clk_gen_atomic_delay_tuner
@@ -85,3 +85,5 @@ module bsg_rp_clk_gen_atomic_delay_tuner
    // synopsys rp_endgroup (bsg_clk_gen_adt)
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_rp_clk_gen_atomic_delay_tuner)

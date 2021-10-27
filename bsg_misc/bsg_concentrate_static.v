@@ -6,7 +6,7 @@
 // example: pattern_els_p = 5'b11101
 //
 
-module bsg_concentrate_static #(parameter pattern_els_p="inv", width_lp=$bits(pattern_els_p), set_els_lp=`BSG_COUNTONES_SYNTH(pattern_els_p))
+module bsg_concentrate_static #(parameter `BSG_INV_PARAM(pattern_els_p), width_lp=$bits(pattern_els_p), set_els_lp=`BSG_COUNTONES_SYNTH(pattern_els_p))
 (input [width_lp-1:0] i
  ,output [set_els_lp-1:0] o
 );
@@ -22,4 +22,6 @@ module bsg_concentrate_static #(parameter pattern_els_p="inv", width_lp=$bits(pa
      end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_concentrate_static)
 

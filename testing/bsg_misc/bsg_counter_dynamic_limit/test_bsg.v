@@ -1,8 +1,9 @@
 `define WIDTH_P    4
 `define OVERFLOW_P (2**(`WIDTH_P)-1)
 
-/**************************** TEST RATIONALE *******************************
+`include "bsg_defines.v"
 
+/**************************** TEST RATIONALE *******************************
 1. STATE SPACE
 
   This test module tests the outputs of DUT for a complete count-cycle i.e., 
@@ -22,16 +23,16 @@
   
 ***************************************************************************/
 
-module test_bsg;
-  
-  localparam cycle_time_lp = 20;
-  localparam width_lp      = `WIDTH_P;
-  localparam overflow_lp   = `OVERFLOW_P;
+module testbench 
+#(parameter width_p=`WIDTH_P,
+  parameter cycle_time_p=20,
+  parameter overflow_p=`OVERFLOW_P
+  );
   
   wire clk;
   wire reset;
   
-  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_lp)
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
                           )  clock_gen
                           (  .o(clk)
                           );
@@ -49,11 +50,11 @@ module test_bsg;
     $display(  "\n\n\n"
              , "============================================================\n"
              , "testing with ...\n"
-             , "WIDTH_P   : %d\n", width_lp
-             , "OVERFLOW_P: %d\n", overflow_lp
+             , "WIDTH_P   : %d\n", width_p
+             , "OVERFLOW_P: %d\n", overflow_p
             );
     
-    assert(overflow_lp < 2**width_lp)
+    assert(overflow_p < 2**width_p)
       else
         begin
           $display("skipping the test due to incompatible parameters\n");
@@ -62,13 +63,13 @@ module test_bsg;
         end
   end
                                         
-  logic [width_lp-1:0] test_input, test_output, prev_count, count;
-  logic [`BSG_SAFE_CLOG2(overflow_lp+1)-1:0] circular_ptr;
+  logic [width_p-1:0] test_input, test_output, prev_count, count;
+  logic [`BSG_SAFE_CLOG2(overflow_p+1)-1:0] circular_ptr;
   logic finish_r;
   
-  assign test_input = overflow_lp;
+  assign test_input = overflow_p;
   
-  bsg_circular_ptr #(  .slots_p     (overflow_lp+1)
+  bsg_circular_ptr #(  .slots_p     (overflow_p+1)
                      , .max_add_p   (1)
                      , .ptr_width_lp()
                     )  c_ptr
@@ -78,7 +79,7 @@ module test_bsg;
                      , .o      (circular_ptr)
                     );
                                      
-  assign count = width_lp ' (circular_ptr);
+  assign count = width_p ' (circular_ptr);
                                      
   always_ff @(posedge clk)
   begin
@@ -89,7 +90,7 @@ module test_bsg;
       assert (count == test_output)
         else $error("error on count %x", count);
     
-    if(~(|count) & (prev_count == overflow_lp))
+    if(~(|count) & (prev_count == overflow_p))
       finish_r <= 1;
     if(finish_r)
       begin
@@ -98,7 +99,7 @@ module test_bsg;
       end
   end
                                         
-  bsg_counter_dynamic_limit #(  .width_p(width_lp)
+  bsg_counter_dynamic_limit #(  .width_p(width_p)
                       )  DUT
                       (  .clk_i       (clk)
                        , .reset_i     (reset)
@@ -106,7 +107,7 @@ module test_bsg;
                        , .counter_o (test_output)
                       );
                                                  
-  /*bsg_nonsynth_ascii_writer #(  .width_p      (width_lp)
+  /*bsg_nonsynth_ascii_writer #(  .width_p      (width_p)
                               , .values_p     (3)
                               , .filename_p   ("output.log")
                               , .fopen_param_p("a+")

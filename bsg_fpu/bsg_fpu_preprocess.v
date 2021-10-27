@@ -7,8 +7,8 @@
 `include "bsg_defines.v"
 
 module bsg_fpu_preprocess
-  #(parameter e_p = "inv"
-    , parameter m_p = "inv"
+  #(parameter `BSG_INV_PARAM(e_p )
+    , parameter `BSG_INV_PARAM(m_p )
   )
   (
     input [e_p+m_p:0] a_i
@@ -46,3 +46,5 @@ module bsg_fpu_preprocess
   assign denormal_o = exp_zero & ~mantissa_zero;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fpu_preprocess)

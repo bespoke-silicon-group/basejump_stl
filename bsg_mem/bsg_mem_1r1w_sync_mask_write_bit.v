@@ -6,8 +6,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_mem_1r1w_sync_mask_write_bit #(parameter width_p=-1
-                                        , parameter els_p=-1
+module bsg_mem_1r1w_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
+                                        , parameter `BSG_INV_PARAM(els_p)
                                         // semantics of "1" are write occurs, then read
                                         // the other semantics cannot be simulated on a hardened, non-simultaneous
                                         // 1r1w SRAM without changing timing.
@@ -15,7 +15,7 @@ module bsg_mem_1r1w_sync_mask_write_bit #(parameter width_p=-1
                                         , parameter read_write_same_addr_p=0
                                         , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                                         , parameter harden_p=0
-                                        , parameter disable_collision_warning_p=1
+                                        , parameter disable_collision_warning_p=0
                                         , parameter enable_clock_gating_p=0
                                         )
    (input   clk_i
@@ -93,9 +93,14 @@ module bsg_mem_1r1w_sync_mask_write_bit #(parameter width_p=-1
    initial
      begin
         $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d harden_p=%d (%m)",width_p,els_p,read_write_same_addr_p, harden_p);
+
+       	if (disable_collision_warning_p)
+          $display("## %m %L: disable_collision_warning_p is set; you should not have this on unless you have broken code. fix it!\n");
      end
 
    //synopsys translate_on
 
    
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync_mask_write_bit)

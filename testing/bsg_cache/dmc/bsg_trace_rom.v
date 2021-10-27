@@ -15,9 +15,9 @@
 `endif
 
 module bsg_trace_rom 
-  #(parameter rom_addr_width_p="inv"
-    , parameter rom_data_width_p="inv"
-    , parameter id_p = "inv"
+  #(parameter `BSG_INV_PARAM(rom_addr_width_p)
+    , parameter `BSG_INV_PARAM(rom_data_width_p)
+    , parameter `BSG_INV_PARAM(id_p )
   )
   (
     input [rom_addr_width_p-1:0] rom_addr_i
@@ -32,3 +32,5 @@ module bsg_trace_rom
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_trace_rom)

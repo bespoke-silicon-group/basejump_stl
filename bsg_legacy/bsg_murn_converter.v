@@ -16,8 +16,8 @@
 `include "bsg_defines.v"
 
 module bsg_murn_converter
-  #(parameter nodes_p="inv"
-    , parameter ring_width_p="inv"
+  #(parameter `BSG_INV_PARAM(nodes_p)
+    , parameter `BSG_INV_PARAM(ring_width_p)
     )
    (
     input clk_i
@@ -96,3 +96,5 @@ module bsg_murn_converter
      end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_murn_converter)

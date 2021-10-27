@@ -9,7 +9,7 @@ if (harden_p && (width_p==bits) && ~vertical_p)               \
      bsg_rp_tsmc_250_BUFX8_horiz_b``bits buf_gate (.i0(i),.o);\
    end
 
-module bsg_buf #(parameter width_p="inv"
+module bsg_buf #(parameter `BSG_INV_PARAM(width_p)
                  , parameter harden_p=1
 		 , parameter vertical_p=1
                  )
@@ -112,3 +112,5 @@ module bsg_buf #(parameter width_p="inv"
              assign o = i;
       end
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_buf)

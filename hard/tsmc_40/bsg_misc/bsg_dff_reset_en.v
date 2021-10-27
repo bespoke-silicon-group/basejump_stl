@@ -68,3 +68,5 @@ module bsg_dff_reset_en #(width_p=-1, harden_p=1)
           end
      end
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_dff_reset_en)

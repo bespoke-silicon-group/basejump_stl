@@ -5,8 +5,8 @@
 //
 //
 
-module bsg_mem_2r1w_sync #(parameter width_p=-1
-                           , parameter els_p=-1
+module bsg_mem_2r1w_sync #(parameter `BSG_INV_PARAM(width_p)
+                           , parameter `BSG_INV_PARAM(els_p)
                            , parameter read_write_same_addr_p=0
                            , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                            , parameter harden_p=0
@@ -153,3 +153,5 @@ module bsg_mem_2r1w_sync #(parameter width_p=-1
    
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mem_2r1w_sync)

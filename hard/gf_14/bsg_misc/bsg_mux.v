@@ -1,6 +1,6 @@
 `include "bsg_defines.v"
 
-module bsg_mux #(parameter width_p="inv"
+module bsg_mux #(parameter `BSG_INV_PARAM(width_p)
                  , els_p=1
                  , harden_p = 0
                  , balanced_p = 0
@@ -19,7 +19,7 @@ module bsg_mux #(parameter width_p="inv"
         for (j = 0; j < width_p; j=j+1)
           begin: rof
              // fast, but not too extreme
-             SC7P5T_MUX4X4_SSC16L BSG_BAL41MUX_DONT_TOUCH (.D0(data_i[0][j]), .D1(data_i[1][j]), .D2(data_i[2][j]), .D3(data_i[3][j]), .S0(sel_i[0]), .S1(sel_i[1]), .Z(data_o[j]));
+             SC7P5T_MUX4X4_SSC16L BSG_BAL41MUX_BSG_DONT_TOUCH (.D0(data_i[0][j]), .D1(data_i[1][j]), .D2(data_i[2][j]), .D3(data_i[3][j]), .S0(sel_i[0]), .S1(sel_i[1]), .Z(data_o[j]));
           end
      end
    else
@@ -42,6 +42,8 @@ module bsg_mux #(parameter width_p="inv"
      end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mux)
 
 
 

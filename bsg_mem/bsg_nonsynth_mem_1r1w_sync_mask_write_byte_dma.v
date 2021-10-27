@@ -8,9 +8,9 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma
-  #(parameter width_p="inv"
-    , parameter els_p=-1
-    , parameter id_p="inv"
+  #(parameter `BSG_INV_PARAM(width_p)
+    , parameter `BSG_INV_PARAM(els_p)
+    , parameter `BSG_INV_PARAM(id_p)
     , parameter data_width_in_bytes_lp=(width_p>>3)
     , parameter write_mask_width_lp=data_width_in_bytes_lp
     , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
@@ -42,17 +42,24 @@ module bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma
 			     longint unsigned init_mem_fp);
 
   import "DPI-C" context function
+    void bsg_mem_dma_exit(longint unsigned id);
+
+  import "DPI-C" context function
     byte unsigned bsg_mem_dma_get(chandle handle, longint unsigned addr);
 
   import "DPI-C" context function
     void bsg_mem_dma_set(chandle handle, longint unsigned addr, byte val);
-
+  
   chandle memory;
 
 
   initial begin
     memory
       = bsg_mem_dma_init(id_p, addr_width_lp, width_p, els_p, init_mem_p);
+  end
+
+  final begin
+    bsg_mem_dma_exit(id_p);    
   end
 
   ////////////////
@@ -100,3 +107,5 @@ module bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma
    end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma)

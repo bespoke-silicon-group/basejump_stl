@@ -42,7 +42,7 @@ libdmamem.so: $(CXXSOURCES)
 
 $(TESTS): %: %.tr
 $(TESTS): libdmamem.so $(VSOURCES)
-	vcs +v2k +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
+	$(VCS) +v2k +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
 		+define+DATA_WIDTH=$(call data_width_from_test_basename,$@) \
 		+define+ADDR_WIDTH=$(call addr_width_from_test_basename,$@) \
 		+define+ROM_FILE=$(filter %.tr, $^) \

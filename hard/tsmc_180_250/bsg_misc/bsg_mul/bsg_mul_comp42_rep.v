@@ -5,7 +5,7 @@ if (   blocks == blocks_p )                                                     
   end
 
 
-module bsg_mul_comp42_rep #(parameter blocks_p="inv")
+module bsg_mul_comp42_rep #(parameter `BSG_INV_PARAM(blocks_p))
    (input [3:0][blocks_p-1:0] i
     ,input cr_i
     ,output cl_o
@@ -21,3 +21,5 @@ else
   initial assert(blocks_p==-1) else $error("all case should be handled by this module %m");
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mul_comp42_rep)

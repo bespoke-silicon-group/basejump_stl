@@ -57,7 +57,7 @@ report_timing -from clk_gen_core_inst/clk_gen_osc_inst/adt/I1/I -through clk_gen
 
 
 module bsg_nonsynth_clk_gen_tester
-  #(parameter fast_sim_p="inv"
+  #(parameter `BSG_INV_PARAM(fast_sim_p)
     , num_adgs_p="inv"
     , ds_width_p="inv"
     , tag_els_p="inv"
@@ -639,3 +639,5 @@ module bsg_nonsynth_clk_gen_tester
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_clk_gen_tester)

@@ -4,11 +4,11 @@
 `include "bsg_defines.v"
 
 module bsg_mem_1rw_sync_mask_write_byte_synth
-  #(parameter els_p = -1
+  #(parameter `BSG_INV_PARAM(els_p)
     , parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
     , parameter latch_last_read_p=0
 
-    , parameter data_width_p = -1
+    , parameter `BSG_INV_PARAM(data_width_p )
     , parameter write_mask_width_lp = data_width_p>>3
   )
   ( input clk_i
@@ -55,3 +55,5 @@ module bsg_mem_1rw_sync_mask_write_byte_synth
    end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mem_1rw_sync_mask_write_byte_synth)

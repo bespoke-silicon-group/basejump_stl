@@ -6,7 +6,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_gray_to_binary #(parameter width_p = -1)
+module bsg_gray_to_binary #(parameter `BSG_INV_PARAM(width_p ))
    (input    [width_p-1:0] gray_i
     , output [width_p-1:0] binary_o
     );
@@ -38,3 +38,5 @@ module bsg_gray_to_binary #(parameter width_p = -1)
         ,.o(binary_o));
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_gray_to_binary)

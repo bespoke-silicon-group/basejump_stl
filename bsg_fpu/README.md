@@ -1,5 +1,10 @@
 ```
 
+Note: We currently use https://github.com/bsg-external/HardFloat
+instead of these modules for our processor cores, because they handle more of the weird IEEE 754
+denormal cases for better compatibility. These modules may still be useful for standalone
+accelerators or other cases.
+
 ██████╗ ███████╗ ██████╗         ███████╗██████╗ ██╗   ██╗
 ██╔══██╗██╔════╝██╔════╝         ██╔════╝██╔══██╗██║   ██║
 ██████╔╝███████╗██║  ███╗        █████╗  ██████╔╝██║   ██║

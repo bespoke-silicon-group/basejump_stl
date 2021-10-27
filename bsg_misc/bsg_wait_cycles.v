@@ -1,6 +1,6 @@
 `include "bsg_defines.v"
 
-module bsg_wait_cycles #(parameter cycles_p="inv")
+module bsg_wait_cycles #(parameter `BSG_INV_PARAM(cycles_p))
    (
     input clk_i
     , input reset_i
@@ -31,3 +31,5 @@ module bsg_wait_cycles #(parameter cycles_p="inv")
      end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_wait_cycles)

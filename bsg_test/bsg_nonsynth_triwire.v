@@ -1,7 +1,7 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_triwire #
-  (parameter width_p="inv"
+  (parameter `BSG_INV_PARAM(width_p)
   ,parameter real transport_delay_p = 0.0)
   (inout [width_p-1:0] a
   ,inout [width_p-1:0] b);
@@ -17,3 +17,5 @@ module bsg_nonsynth_triwire #
   assign b = a_dly, a = b_dly;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_triwire)

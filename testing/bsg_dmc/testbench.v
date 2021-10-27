@@ -1,6 +1,8 @@
 `define WRITE 3'b000
 `define READ  3'b001
 
+`include "bsg_dmc.vh"
+
 module testbench
   import bsg_tag_pkg::*;
   import bsg_dmc_pkg::*;
@@ -322,3 +324,4 @@ module testbench
   end
 
 endmodule
+

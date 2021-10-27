@@ -110,8 +110,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_fifo_1r1w_large #(parameter width_p           = -1
-                             , parameter els_p           = -1
+module bsg_fifo_1r1w_large #(parameter `BSG_INV_PARAM(width_p)
+                             , parameter `BSG_INV_PARAM(els_p)
                              )
    (input                  clk_i
     , input                reset_i
@@ -125,8 +125,10 @@ module bsg_fifo_1r1w_large #(parameter width_p           = -1
     , input                yumi_i
     );
 
+   // synopsys translate_off
    initial assert ((els_p & 1) == 0) else
      $error("odd number of elements for two port fifo not handled.");
+   // synopsys translate_on
 
    wire [width_p*2-1:0] data_sipo;
    wire [1:0]          valid_sipo;
@@ -304,3 +306,5 @@ module bsg_fifo_1r1w_large #(parameter width_p           = -1
 
 endmodule
 
+
+`BSG_ABSTRACT_MODULE(bsg_fifo_1r1w_large)

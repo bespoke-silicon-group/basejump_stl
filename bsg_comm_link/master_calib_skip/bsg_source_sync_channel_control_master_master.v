@@ -10,10 +10,10 @@
 `include "bsg_defines.v"
 
 module bsg_source_sync_channel_control_master_master
-  #(parameter  link_channels_p  = "inv"
-    , parameter tests_p          = "inv"
-    , parameter prepare_cycles_p = "inv"   // ignored
-    , parameter timeout_cycles_p = "inv")  // ignored
+  #(parameter `BSG_INV_PARAM( link_channels_p  )
+    , parameter `BSG_INV_PARAM(tests_p          )
+    , parameter `BSG_INV_PARAM(prepare_cycles_p )   // ignored
+    , parameter `BSG_INV_PARAM(timeout_cycles_p ))  // ignored
   (input clk_i   // from io_master_clk_i
    , input reset_i // from im_reset_i
 
@@ -84,3 +84,5 @@ module bsg_source_sync_channel_control_master_master
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_source_sync_channel_control_master_master)

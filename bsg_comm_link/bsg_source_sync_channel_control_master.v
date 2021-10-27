@@ -16,7 +16,7 @@
 
 `include "bsg_defines.v"
 
-module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
+module  bsg_source_sync_channel_control_master #(parameter `BSG_INV_PARAM(  width_p  )
                                                  , parameter lg_token_width_p = 6
                                                  , parameter lg_out_prepare_hold_cycles_p = 6
                                                  // bit vector
@@ -453,3 +453,5 @@ module  bsg_source_sync_channel_control_master #(parameter   width_p  = -1
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_source_sync_channel_control_master)

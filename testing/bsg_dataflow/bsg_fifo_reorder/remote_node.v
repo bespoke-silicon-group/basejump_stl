@@ -1,9 +1,9 @@
 // take some random amount of time before taking and returning data.
 
 module remote_node 
-  #(parameter width_p="inv"
-    , parameter max_delay_p="inv"
-    , parameter id_p="inv"
+  #(parameter `BSG_INV_PARAM(width_p)
+    , parameter `BSG_INV_PARAM(max_delay_p)
+    , parameter `BSG_INV_PARAM(id_p)
   )
   (
     input clk_i
@@ -65,3 +65,5 @@ module remote_node
   assign v_o = v_r & (return_count_r == 0);
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(remote_node)

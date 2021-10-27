@@ -8,8 +8,8 @@
 // NOTE: read results appear on next cycle
 //
 
-module bsg_fifo_1rw_large #(parameter width_p         = -1
-                          , parameter els_p           = -1
+module bsg_fifo_1rw_large #(parameter `BSG_INV_PARAM(width_p         )
+                          , parameter `BSG_INV_PARAM(els_p           )
 			  , parameter verbose_p       = 0
                           )
    (input                  clk_i
@@ -123,3 +123,5 @@ module bsg_fifo_1rw_large #(parameter width_p         = -1
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fifo_1rw_large)

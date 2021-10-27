@@ -5,8 +5,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_credit_to_token #( parameter decimation_p = -1
-                            , parameter max_val_p    = -1
+module bsg_credit_to_token #( parameter `BSG_INV_PARAM(decimation_p )
+                            , parameter `BSG_INV_PARAM(max_val_p    )
                             )
        ( input clk_i
        , input reset_i
@@ -52,3 +52,5 @@ assign token_almost_ready = (count >= $unsigned(decimation_p-1));
 assign token_o = ready_i & (token_ready | (token_almost_ready & credit_i));
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_credit_to_token)

@@ -16,7 +16,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_compare_and_swap #(parameter width_p="inv"
+module bsg_compare_and_swap #(parameter `BSG_INV_PARAM(width_p)
                              , parameter t_p = width_p-1
                              , parameter b_p = 0
                              , parameter cond_swap_on_equal_p=0)
@@ -45,3 +45,5 @@ module bsg_compare_and_swap #(parameter width_p="inv"
      end
 
 endmodule // bsg_compare_and_swap
+
+`BSG_ABSTRACT_MODULE(bsg_compare_and_swap)

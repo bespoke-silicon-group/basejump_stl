@@ -5,7 +5,7 @@
 module bsg_dmc_clk_rst_gen
   import bsg_tag_pkg::bsg_tag_s;
  #(parameter num_adgs_p         = 2
-  ,parameter num_lines_p        = "inv")
+  ,parameter `BSG_INV_PARAM(num_lines_p        ))
   (input bsg_tag_s                   async_reset_tag_i
   ,input bsg_tag_s [num_lines_p-1:0] bsg_dly_tag_i
   ,input bsg_tag_s [num_lines_p-1:0] bsg_dly_trigger_tag_i
@@ -48,13 +48,11 @@ module bsg_dmc_clk_rst_gen
   // downsampler bsg_tag interface
   bsg_tag_client #
     (.width_p   ( $bits(bsg_clk_gen_ds_tag_payload_s) )
-    ,.default_p ( 0                                   )
     ,.harden_p  ( 1                                   ))
   btc_ds
     (.bsg_tag_i     ( bsg_ds_tag_i         )
 
     ,.recv_clk_i    ( clk_2x_i             )
-    ,.recv_reset_i  ( 1'b0                 )   // node must be programmed by bsg tag
     ,.recv_new_r_o  ( ds_tag_payload_new_r )   // we don't require notification
     ,.recv_data_r_o ( ds_tag_payload_r     ));
 
@@ -79,4 +77,6 @@ module bsg_dmc_clk_rst_gen
     ,.clk_r_o ( clk_1x_o               ));
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_dmc_clk_rst_gen)
 

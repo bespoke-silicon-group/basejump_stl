@@ -10,7 +10,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_adder_one_hot #(parameter width_p=-1, parameter output_width_p=width_p)
+module bsg_adder_one_hot #(parameter `BSG_INV_PARAM(width_p), parameter output_width_p=width_p)
    (input    [width_p-1:0] a_i
     , input  [width_p-1:0] b_i
     , output [output_width_p-1:0] o
@@ -52,3 +52,5 @@ module bsg_adder_one_hot #(parameter width_p=-1, parameter output_width_p=width_
      end // block: rof
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_adder_one_hot)

@@ -5,7 +5,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_mux_bitwise #(parameter width_p="inv")
+module bsg_mux_bitwise #(parameter `BSG_INV_PARAM(width_p))
 (
   input [width_p-1:0] data0_i
   ,input [width_p-1:0] data1_i
@@ -24,3 +24,5 @@ module bsg_mux_bitwise #(parameter width_p="inv")
   );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mux_bitwise)

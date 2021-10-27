@@ -10,9 +10,9 @@
 
 module bsg_mesh_router_buffered
   import bsg_mesh_router_pkg::*;
-  #(parameter width_p        = -1
-    , parameter x_cord_width_p = -1
-    , parameter y_cord_width_p = -1
+  #(parameter `BSG_INV_PARAM(width_p        )
+    , parameter `BSG_INV_PARAM(x_cord_width_p )
+    , parameter `BSG_INV_PARAM(y_cord_width_p )
     , parameter debug_p       = 0
     , parameter ruche_factor_X_p = 0
     , parameter ruche_factor_Y_p = 0
@@ -72,8 +72,8 @@ module bsg_mesh_router_buffered
 
       // synopsys translate_off
       always @(negedge clk_i)
-        if (link_o_cast[i].v)
-          $display("## warning %m: stubbed port %x received word %x",i,link_i_cast[i].data);
+        assert (reset_i !== '0 || ~link_o_cast[i].v) else
+          $warning("## stubbed port %x received word %x",i,link_i_cast[i].data);
       // synopsys translate_on
     end
     else begin: fi
@@ -194,4 +194,6 @@ module bsg_mesh_router_buffered
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mesh_router_buffered)
 

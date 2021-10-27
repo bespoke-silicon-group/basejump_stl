@@ -9,8 +9,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_priority_encode_one_hot_out #(parameter width_p      = "inv"
-                                         , parameter lo_to_hi_p = "inv"
+module bsg_priority_encode_one_hot_out #(parameter `BSG_INV_PARAM(width_p      )
+                                         , parameter `BSG_INV_PARAM(lo_to_hi_p )
                                          )
 
    (input    [width_p-1:0] i
@@ -47,3 +47,5 @@ module bsg_priority_encode_one_hot_out #(parameter width_p      = "inv"
          end
      end
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_priority_encode_one_hot_out)

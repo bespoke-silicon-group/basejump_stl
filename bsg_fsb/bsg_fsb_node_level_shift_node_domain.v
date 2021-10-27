@@ -24,7 +24,7 @@
 //
 `include "bsg_defines.v"
 
-module bsg_fsb_node_level_shift_node_domain #(parameter ring_width_p = "inv")
+module bsg_fsb_node_level_shift_node_domain #(parameter `BSG_INV_PARAM(ring_width_p ))
 (
   input  en_ls_i,
 
@@ -118,3 +118,5 @@ bsg_level_shift_up_down_source #(.width_p(1)) n2f_ready_ls_inst
 );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fsb_node_level_shift_node_domain)

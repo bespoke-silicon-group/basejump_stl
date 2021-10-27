@@ -7,8 +7,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_fifo_shift_datapath #(parameter  width_p    = "inv"
-                                 ,parameter els_p      = "inv"
+module bsg_fifo_shift_datapath #(parameter `BSG_INV_PARAM( width_p    )
+                                 ,parameter `BSG_INV_PARAM(els_p      )
                                  ,parameter default_p  = { (width_p) {1'b0} }
                                  )
    (input   clk_i
@@ -44,3 +44,5 @@ module bsg_fifo_shift_datapath #(parameter  width_p    = "inv"
    assign data_o = r[0];
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fifo_shift_datapath)

@@ -1,6 +1,6 @@
 `include "bsg_defines.v"
 
-module bsg_decode_with_v #(num_out_p=-1)
+module bsg_decode_with_v #(parameter `BSG_INV_PARAM(num_out_p))
    (
 
     input [`BSG_SAFE_CLOG2(num_out_p)-1:0] i
@@ -19,3 +19,5 @@ module bsg_decode_with_v #(num_out_p=-1)
    assign o = { (num_out_p) { v_i } } & lo;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_decode_with_v)

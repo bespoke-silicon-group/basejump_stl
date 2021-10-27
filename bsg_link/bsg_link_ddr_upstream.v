@@ -36,7 +36,7 @@ module bsg_link_ddr_upstream
  #(// Core data width
   // MUST be multiple of (2*channel_width_p*num_channels_p) 
   // When use_extra_data_bit_p=1, must be multiple of ((2*channel_width_p+1)*num_channels_p) 
-   parameter width_p         = "inv"
+   parameter `BSG_INV_PARAM(width_p         )
   // Number of IO pins per physical IO channels
   ,parameter channel_width_p = 8
   // Number of physical IO channels
@@ -57,8 +57,26 @@ module bsg_link_ddr_upstream
   // Set use_extra_data_bit_p=1 to utilize this extra bit
   // MUST MATCH paired bsg_link_ddr_downstream setting
   ,parameter use_extra_data_bit_p = 0
+  // When channel_width_p is large, it might be hard to properly align source synchronous
+  // clock to all data wires. One option is to cut the channel in half and align to
+  // different clocks. Ecoding method below helps represent valid bit for bottom half data
+  // without adding an extra wire.
+  // +-------------+---------------+---------------------+
+  // |    v_top    |     bottom    |        Value        |
+  // | 0_0???_???? |   0000_0000   | no data (""comma"") |
+  // | 1_XXXX_XXXX |  YYYY_YYYY!=0 | XXXX_XXXX_YYYY_YYYY |
+  // | 0_1XXX_XXXX |   X000_0001   | XXXX_XXXX_0000_0000 |
+  // +-------------+---------------+---------------------+
+  // Physical bonding suggestion: Regard v bit and top bits of the channel as a group
+  // Regard bottom bits of the channel as another group
+  // Set use_encode_p=1 to enable this encoding feature
+  // MUST MATCH paired bsg_link_ddr_downstream setting
+  ,parameter use_encode_p = 0
+  ,parameter bypass_twofer_fifo_p = 0
+  ,parameter bypass_gearbox_p = 0
   ,localparam ddr_width_lp  = channel_width_p*2 + use_extra_data_bit_p
   ,localparam piso_ratio_lp = width_p/(ddr_width_lp*num_channels_p)
+  ,localparam phy_width_lp  = channel_width_p+1
   )
 
   (// Core side
@@ -84,40 +102,85 @@ module bsg_link_ddr_upstream
   logic core_piso_valid_lo, core_piso_yumi_li;
   logic [num_channels_p-1:0][ddr_width_lp-1:0] core_piso_data_lo;
 
-  bsg_parallel_in_serial_out 
- #(.width_p(ddr_width_lp*num_channels_p)
-  ,.els_p  (piso_ratio_lp)
-  ) out_piso
-  (.clk_i  (core_clk_i)
-  ,.reset_i(core_link_reset_i)
-  ,.valid_i(core_valid_i)
-  ,.data_i (core_data_i)
-  ,.ready_and_o(core_ready_o)
-  ,.valid_o(core_piso_valid_lo)
-  ,.data_o (core_piso_data_lo)
-  ,.yumi_i (core_piso_yumi_li)
-  );
-  
   // Dequeue from PISO when all channels are ready
   logic [num_channels_p-1:0] core_piso_ready_li;
-  assign core_piso_yumi_li = (& core_piso_ready_li) & core_piso_valid_lo;
+
+  if (piso_ratio_lp == 1 && bypass_gearbox_p != 0)
+  begin
+    assign core_piso_valid_lo = core_valid_i;
+    assign core_piso_data_lo  = core_data_i;
+    assign core_ready_o = (& core_piso_ready_li);
+  end
+  else
+  begin: piso
+    assign core_piso_yumi_li = (& core_piso_ready_li) & core_piso_valid_lo;
+    bsg_parallel_in_serial_out
+   #(.width_p(ddr_width_lp*num_channels_p)
+    ,.els_p  (piso_ratio_lp)
+    ) out_piso
+    (.clk_i  (core_clk_i)
+    ,.reset_i(core_link_reset_i)
+    ,.valid_i(core_valid_i)
+    ,.data_i (core_data_i)
+    ,.ready_and_o(core_ready_o)
+    ,.valid_o(core_piso_valid_lo)
+    ,.data_o (core_piso_data_lo)
+    ,.yumi_i (core_piso_yumi_li)
+    );
+  end
   
   genvar i;
   
   // multiple channels
   for (i = 0; i < num_channels_p; i++) 
   begin: ch
-    
+
+    // core side signals
+    logic core_ss_valid_li, core_ss_ready_lo, core_ss_data_nonzero;
+    logic [phy_width_lp-1:0] core_ss_data_top;
+    logic [1:0][channel_width_p/2-1:0] core_ss_data_bottom;
+
+    // io side signals
     logic io_oddr_valid_li, io_oddr_ready_lo;
-    // data_bottom width is fixed
-    logic [channel_width_p-1:0] io_oddr_data_bottom;
-    // data_top width is determined by use_extra_data_bit_p setting
-    logic [ddr_width_lp-1:channel_width_p] io_oddr_data_top;
+    logic [1:0][phy_width_lp-1:0] io_oddr_data_raw, io_oddr_data_final;
+
+    // connect to piso
+    assign core_ss_valid_li = core_piso_valid_lo;
+    assign core_piso_ready_li[i] = core_ss_ready_lo;
+    assign core_ss_data_top = (phy_width_lp)'(core_piso_data_lo[i][ddr_width_lp-1:channel_width_p]);
+
+    if (use_encode_p == 0)
+      begin
+        assign core_ss_data_nonzero = 1'b0; // unused
+        assign core_ss_data_bottom = core_piso_data_lo[i][channel_width_p-1:0];
+        // valid sent out in first cycle
+        // When idle, balance hi / lo bits in each channel
+        assign io_oddr_data_final = (io_oddr_valid_li)?
+              {io_oddr_data_raw[1], 1'b1, io_oddr_data_raw[0][channel_width_p-1:0]}
+            : {2{1'b0, {(channel_width_p/2){2'b10}}}};
+      end
+    else
+      begin
+        // core side encode
+        assign core_ss_data_nonzero = ~(core_piso_data_lo[i][channel_width_p/2-1:0] == '0);
+        assign core_ss_data_bottom[1] = (core_ss_data_nonzero)?
+              {      core_piso_data_lo[i][channel_width_p-0-1:channel_width_p/2]}
+            : {1'b1, core_piso_data_lo[i][channel_width_p-1-1:channel_width_p/2]};
+        assign core_ss_data_bottom[0] = (core_ss_data_nonzero)?
+              {core_piso_data_lo[i][channel_width_p/2-1:0]                          }
+            : {core_piso_data_lo[i][channel_width_p-1], (channel_width_p/2-1)'(1'b1)};
+        // When idle, assign 1'b0 to certain wires to represent invalid state
+        // Assign 1'b1 to rest of the wires to balance hi / lo bits in each channel
+        assign io_oddr_data_final = (io_oddr_valid_li)?
+              io_oddr_data_raw
+            : {2{2'b00, (channel_width_p/2-1)'('1), (channel_width_p/2)'('0)}};
+      end
 
     bsg_link_source_sync_upstream
-   #(.channel_width_p(ddr_width_lp)
+   #(.channel_width_p(2*phy_width_lp)
     ,.lg_fifo_depth_p(lg_fifo_depth_p)
     ,.lg_credit_to_token_decimation_p(lg_credit_to_token_decimation_p)
+    ,.bypass_twofer_fifo_p(bypass_twofer_fifo_p)
     ) sso
     (// control signals  
      .core_clk_i            (core_clk_i)
@@ -127,12 +190,12 @@ module bsg_link_ddr_upstream
     ,.async_token_reset_i   (async_token_reset_i)
 
     // Input from chip core
-    ,.core_data_i           (core_piso_data_lo[i])
-    ,.core_valid_i          (core_piso_yumi_li)
-    ,.core_ready_o          (core_piso_ready_li[i])
+    ,.core_data_i           ({core_ss_data_top, core_ss_data_nonzero, core_ss_data_bottom})
+    ,.core_valid_i          (core_ss_valid_li)
+    ,.core_ready_o          (core_ss_ready_lo)
 
     // source synchronous output channel; going to chip edge
-    ,.io_data_o             ({io_oddr_data_top, io_oddr_data_bottom})
+    ,.io_data_o             (io_oddr_data_raw)
     ,.io_valid_o            (io_oddr_valid_li)
     ,.io_ready_i            (io_oddr_ready_lo)
     ,.token_clk_i           (token_clk_i[i])
@@ -140,12 +203,11 @@ module bsg_link_ddr_upstream
     
     // valid and data signals are sent together
     bsg_link_oddr_phy
-   #(.width_p(channel_width_p+1)
+   #(.width_p(phy_width_lp)
     ) oddr_phy
     (.reset_i (io_link_reset_i)
     ,.clk_i   (io_clk_i)
-    ,.data_i  ({{(channel_width_p+1)'(io_oddr_data_top)},
-                {io_oddr_valid_li, io_oddr_data_bottom}}) // valid sent out in first cycle
+    ,.data_i  (io_oddr_data_final)
     ,.ready_o (io_oddr_ready_lo)
     ,.data_r_o({io_valid_r_o[i], io_data_r_o[i]})
     ,.clk_r_o (io_clk_r_o[i])
@@ -173,3 +235,4 @@ module bsg_link_ddr_upstream
   // synopsys translate_on
 
 endmodule
+`BSG_ABSTRACT_MODULE(bsg_link_ddr_upstream)
