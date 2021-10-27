@@ -16,23 +16,33 @@ module bsg_cam_1r1w_replacement
  #(parameter els_p      = 2
    // Which replacement scheme to use
    , parameter scheme_p = "lru"
+
+   , parameter safe_els_lp = `BSG_MAX(els_p,1)
    )
   (input                       clk_i
    , input                     reset_i
 
    // Synchronous update (i.e. indicate that an entry was read)
-   , input [els_p-1:0]         read_v_i
+   , input [safe_els_lp-1:0]         read_v_i
 
    // May use combination of internal state and empty vector
    //   to determine replacement
    // Synchronous update (i.e. indicate that an entry was allocated)
    , input                     alloc_v_i
-   , input [els_p-1:0]         alloc_empty_i
-   , output [els_p-1:0]        alloc_v_o
+   , input [safe_els_lp-1:0]         alloc_empty_i
+   , output [safe_els_lp-1:0]        alloc_v_o
    );
 
+  if (els_p == 0)
+    begin : zero
+      assign alloc_v_o = 1'b0;
+    end
+  else if (els_p == 1)
+    begin : one
+      assign alloc_v_o = 1'b1;
+    end
   // Standard tree-based pseudo-lru
-  if (scheme_p == "lru")
+  else if (scheme_p == "lru")
     begin : lru
       localparam lg_els_lp = `BSG_SAFE_CLOG2(els_p);
 

@@ -23,7 +23,7 @@ all: sim
 
 sim:
 	vcs +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -sverilog -full64 -f sv.include $(INCDIR) \
-		-debug_pp -timescale=1ps/1ps +vcs+vcdpluson $(VCS_DEFINES) -l vcs.log\
+		-debug_pp -timescale=1ps/1ps -assert svaext +vcs+vcdpluson $(VCS_DEFINES) -l vcs.log\
 		| $(HIGHLIGHT)
 
 dve:

@@ -4,7 +4,7 @@ export BASEJUMP_STL_DIR = $(abspath ../../..)
 INCDIR =  +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 
 VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access
-VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4
+VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4 -assert svaext
 
 ###### TEST SUITE ######
 BASIC_TEST += test_random1
@@ -78,7 +78,7 @@ summary:
 clean:
 	rm -rf DVEfiles
 	rm -rf csrc simv
-	rm -rf simv.daidir simv.vdb vcs.log
+	rm -rf simv.daidir simv.vdb vcs.log vc_hdrs.h
 	rm -rf ucli.key vcdplus.vpd simv cm.log *.tar.gz
 	rm -rf stack.info.* *.pyc
 	rm -rf out

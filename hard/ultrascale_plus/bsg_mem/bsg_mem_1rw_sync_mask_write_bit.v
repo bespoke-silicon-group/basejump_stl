@@ -8,7 +8,7 @@
 * But none of them support bit-wise mask. They have Byte-wide write enable ports though.
 * So we use the RAM_STYLE attribute to instruct the tool to infer distributed LUT RAM instead.
 *
-* To save resources, the code is written to be inferred as Signle-port distributed ram RAM64X1S.
+* To save resources, the code is written to be inferred as Single-port distributed ram RAM64X1S.
 * https://www.xilinx.com/support/documentation/user_guides/ug574-ultrascale-clb.pdf
 *
 */
@@ -41,6 +41,11 @@ module bsg_mem_1rw_sync_mask_write_bit #(
       data_r <= mem[addr_i];
   end
 
+  initial
+    begin
+      $display("BSG INFO: els_p=%d width_p=%d 1RW SRAM Mask Write ram will be inferred as distributed RAM.",els_p,width_p);
+    end
+  
   assign data_o = data_r;
 
   for (genvar i=0; i<width_p; i=i+1) begin

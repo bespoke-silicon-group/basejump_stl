@@ -90,6 +90,7 @@ module bsg_cache_to_test_dram
     .width_p(dma_pkt_width_lp)
     ,.num_in_p(num_cache_p)
     ,.strict_p(0)
+    ,.use_scan_p(1)
   ) rr0 (
     .clk_i(core_clk_i)
     ,.reset_i(core_reset_i)
@@ -103,6 +104,8 @@ module bsg_cache_to_test_dram
     ,.tag_o(rr_tag_lo)
     ,.yumi_i(rr_yumi_li)
   );
+
+
 
   logic counter_clear;
   logic counter_up;

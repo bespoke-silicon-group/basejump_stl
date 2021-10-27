@@ -2,3 +2,4 @@ trace.tr
 trace_rom.v
 *.pyc
 out/
+vc_hdrs.h

@@ -32,7 +32,7 @@ $(TRACE_ROM_V): $(TRACE_FILE)
 
 sim: $(TRACE_ROM_V)
 	vcs +v2k -R +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
-		-sverilog -full64 -f sv.include $(INCDIR) $(TRACE_ROM_V)\
+		-sverilog -full64 -assert svaext -f sv.include $(INCDIR) $(TRACE_ROM_V)\
 		-timescale=1ps/1ps +vcs+vcdpluson $(DEFINE) -l vcs.log\
 		| $(HIGHLIGHT)
 
@@ -44,7 +44,7 @@ clean:
 	rm -rf csrc
 	rm -f $(TRACE_ROM)*.v
 	rm -rf simv.daidir simv.vdb
-	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz vcs.log
+	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz vcs.log vc_hdrs.h
 	rm -rf stack.info.*
 	rm -f *.tr
 

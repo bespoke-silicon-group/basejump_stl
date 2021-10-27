@@ -9,6 +9,7 @@
 
 module bsg_cache_to_dram_ctrl
   import bsg_cache_pkg::*;
+  import bsg_dmc_pkg::*;
   #(parameter num_cache_p="inv"
     , parameter addr_width_p="inv"
     , parameter data_width_p="inv"
@@ -47,7 +48,7 @@ module bsg_cache_to_dram_ctrl
     // dmc side
     , output logic app_en_o
     , input app_rdy_i
-    , output logic [2:0] app_cmd_o
+    , output app_cmd_e app_cmd_o
     , output logic [dram_ctrl_addr_width_p-1:0] app_addr_o
 
     , output logic app_wdf_wren_o
@@ -154,7 +155,7 @@ module bsg_cache_to_dram_ctrl
 
   always_comb begin
     app_en_o = 1'b0;
-    app_cmd_o = 3'b000;
+    app_cmd_o = WR;
     rr_yumi_li = 1'b0;
     tag_n = tag_r;
     write_not_read_n = write_not_read_r;
@@ -181,8 +182,8 @@ module bsg_cache_to_dram_ctrl
           ? tx_ready_lo
           : rx_ready_lo);
         app_cmd_o = write_not_read_r
-          ? 3'b000
-          : 3'b001;
+          ? WR
+          : RD;
 
         rx_v_li = ~write_not_read_r & rx_ready_lo & app_rdy_i;
         tx_v_li = write_not_read_r & tx_ready_lo & app_rdy_i;

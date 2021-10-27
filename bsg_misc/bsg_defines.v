@@ -32,7 +32,7 @@
 `define BSG_SAFE_CLOG2(x) ( ((x)==1) ? 1 : $clog2((x)))
 `define BSG_IS_POW2(x) ( (1 << $clog2(x)) == (x))
 `define BSG_WIDTH(x) ($clog2(x+1))
-`define BSG_SAFE_MINUS(x, y) (((x)-(y)) < 0) ? 0 : ((x)-(y))
+`define BSG_SAFE_MINUS(x, y) (((x)<(y))) ? 0 : ((x)-(y))
 
 // calculate ceil(x/y) 
 `define BSG_CDIV(x,y) (((x)+(y)-1)/(y))
@@ -55,6 +55,22 @@
 `define BSG_DISCONNECTED_IN_SIM(val) (val)
 `else
 `define BSG_DISCONNECTED_IN_SIM(val) ('z)
+`endif
+
+// Ufortunately per the Xilinx forums, Xilinx does not define
+// any variable that indicates that Vivado Synthesis is running
+// so as a result we identify Vivado merely as the exclusion of
+// Synopsys Design Compiler (DC). Support beyond DC and Vivado
+// will require modification of this macro.
+
+`ifdef SYNTHESIS
+`ifdef DC
+`define BSG_VIVADO_SYNTH_FAILS
+`else
+`define BSG_VIVADO_SYNTH_FAILS this_module_is_not_synthesizeable_in_vivado
+`endif
+`else
+`define BSG_VIVADO_SYNTH_FAILS
 `endif
 
 `define BSG_STRINGIFY(x) `"x`"

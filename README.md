@@ -6,9 +6,7 @@ contain all of the commonly used HW primitives.
 See this paper [docs/BaseJump_STL_DAC_2018_Camera_Ready.pdf](https://github.com/bespoke-silicon-group/basejump_stl/blob/master/docs/BaseJump_STL_DAC_2018_Camera_Ready.pdf)
 which describes the design and usage.
 
-To use BaseJump STL, you currently need to specify [bsg_misc/bsg_defines.v](https://github.com/bespoke-silicon-group/basejump_stl/blob/master/bsg_misc/bsg_defines.v) as a pre include file for your simulation or simulation toolsuite.
-
-It defines a bunch of macros that are used across BaseJump STL.
+Please also see the [BSG SystemVerilog Style Guide](https://docs.google.com/document/d/1xA5XUzBtz_D6aSyIBQUwFk_kSUdckrfxa2uzGjMgmCU/edit#) which describes many of the conventions used in this library, including the variants of the valid/ready handshaking protocols.
 
 ## Contents
 

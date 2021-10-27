@@ -39,7 +39,7 @@ module bsg_mem_1r1w #(parameter width_p=-1
 
    initial
      begin
-	if (read_write_same_addr_p || (width_p*els_p >= 64))
+	if (width_p*els_p > 256)
           $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d, harden_p=%d (%m)"
                    ,width_p,els_p,read_write_same_addr_p,harden_p);
      end
