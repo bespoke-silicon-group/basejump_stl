@@ -46,6 +46,13 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
    reg neg_ld;
    reg add_neg_last;
    
+   typedef enum logic[5:0] 
+           {WAIT, NEG0, NEG1, SHIFT,
+            CALC,
+            REPAIR, REMAIN, 
+            QUOT,DONE } idiv_ctrl_stat;
+   idiv_ctrl_stat state, next_state;
+      
    always @(posedge clk_i) begin
       add_neg_last <= adder_result_is_neg_i;
 
