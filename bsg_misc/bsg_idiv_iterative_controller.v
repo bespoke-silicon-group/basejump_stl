@@ -52,7 +52,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
             REPAIR, REMAIN, 
             QUOT,DONE } idiv_ctrl_stat;
    idiv_ctrl_stat state, next_state;
-      
+
    always @(posedge clk_i) begin
       add_neg_last <= adder_result_is_neg_i;
 
