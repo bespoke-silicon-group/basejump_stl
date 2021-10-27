@@ -93,11 +93,11 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
       opA_inv_o      = !add_neg_last;
       opA_clr_l_o    = 1'b1;
       opB_sel_o      = 3'b001;
-      opB_ld_o       = 1'b1;
+      opB_ld_o       = 1'b0;
       opB_inv_o      = 1'b0;
       opB_clr_l_o    = 1'b1;
       opC_sel_o      = 3'b001;
-      opC_ld_o       = 1'b1;
+      opC_ld_o       = 1'b0;
       adder_cin_o    = !add_neg_last;
       neg_ld         = 1'b0;
       latch_signed_div_o   = 1'b0;
@@ -121,6 +121,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
        opA_inv_o    = 1'b1;
        opB_clr_l_o  = 1'b0;
        opB_sel_o    = 3'b100;
+       opB_ld_o     = 1'b1;
        opC_ld_o     = 1'b0;
        neg_ld       = 1'b1;
        adder_cin_o  = 1'b1;
@@ -132,12 +133,15 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
        opA_clr_l_o  = 1'b0;
        opB_inv_o    = 1'b1;
        opB_ld_o     = 1'b0;
+       opC_ld_o     = 1'b1;
        opC_sel_o    = 3'b010;
        adder_cin_o  = 1'b1;
     end
 
     SHIFT: begin
        next_state   = CALC;
+       opB_ld_o     = 1'b1;
+       opC_ld_o     = 1'b1;
        opA_clr_l_o  = 1'b0;
        opB_clr_l_o  = 1'b0;
        adder_cin_o  = 1'b0;
@@ -145,6 +149,8 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
 
     CALC: begin
        opB_sel_o  = calc_done ? 3'b010 : 3'b001;
+       opB_ld_o     = 1'b1;
+       opC_ld_o     = 1'b1;
        if (calc_done) begin
           if (adder_result_is_neg_i) next_state = REPAIR;
           else next_state = REMAIN;
@@ -156,6 +162,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
        next_state = REMAIN;
        opA_inv_o    = 1'b0;
        opB_sel_o    = 3'b010;
+       opB_ld_o     = 1'b1;
        opC_ld_o     = 1'b0;
        adder_cin_o    = 1'b0;
     end
@@ -165,6 +172,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
        opA_ld_o     = 1'b1;
        opA_clr_l_o  = 1'b0;
        opB_sel_o    = 3'b100;
+       opB_ld_o     = 1'b1;
        opC_ld_o     = 1'b0;
        opB_inv_o    = r_neg;
        adder_cin_o    = r_neg;
@@ -175,6 +183,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
        opA_clr_l_o  = 1'b0;
        opB_inv_o    = 1'b1;
        opB_ld_o     = 1'b0;
+       opC_ld_o     = 1'b1;
        opC_sel_o    = 3'b010;
        adder_cin_o  = 1'b1;
     end
