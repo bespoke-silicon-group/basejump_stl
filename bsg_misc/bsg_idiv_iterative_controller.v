@@ -44,6 +44,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
    reg q_neg;
    reg r_neg;
    reg neg_ld;
+   reg add_ld;
    reg add_neg_last;
    
    typedef enum logic[5:0] 
@@ -53,17 +54,26 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
             QUOT,DONE } idiv_ctrl_stat;
    idiv_ctrl_stat state, next_state;
 
-   always @(posedge clk_i) begin
-      add_neg_last <= adder_result_is_neg_i;
+bsg_dff_en#(.width_p(1)) add_result_reg
+      (.data_i (adder_result_is_neg_i)
+       ,.data_o (add_neg_last  )
+       ,.en_i   (add_ld )
+       ,.clk_i(clk_i)
+       );
 
-      if (neg_ld) begin
-        // the quotient is negated if the signs of the operands differ
-        q_neg <= (opA_is_neg_i ^ opC_is_neg_i) & signed_div_r_i;
+bsg_dff_en#(.width_p(1)) q_reg
+       (.data_i ((opA_is_neg_i ^ opC_is_neg_i) & signed_div_r_i)
+        ,.data_o (q_neg  )
+        ,.en_i   (neg_ld )
+       ,.clk_i(clk_i)
+       );
 
-        // the remainder is negated if the dividend is negative
-        r_neg <= opC_is_neg_i & signed_div_r_i;
-      end 
-   end
+bsg_dff_en#(.width_p(1)) r_reg
+       (.data_i (opC_is_neg_i & signed_div_r_i)
+        ,.data_o (r_neg  )
+        ,.en_i   (neg_ld )
+       ,.clk_i(clk_i)
+       );
 
   logic [`BSG_SAFE_CLOG2(width_p+1)-1:0] calc_cnt;
   wire calc_up_li = (state == CALC) && (calc_cnt < width_p);
@@ -100,6 +110,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
       opC_ld_o       = 1'b0;
       adder_cin_o    = !add_neg_last;
       neg_ld         = 1'b0;
+      add_ld         = 1'b0;
       latch_signed_div_o   = 1'b0;
       next_state    = WAIT;
 
@@ -144,6 +155,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
        opC_ld_o     = 1'b1;
        opA_clr_l_o  = 1'b0;
        opB_clr_l_o  = 1'b0;
+       add_ld       = 1'b1;
        adder_cin_o  = 1'b0;
     end
 
@@ -151,6 +163,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
        opB_sel_o  = calc_done ? 3'b010 : 3'b001;
        opB_ld_o     = 1'b1;
        opC_ld_o     = 1'b1;
+       add_ld       = 1'b1;
        if (calc_done) begin
           if (adder_result_is_neg_i) next_state = REPAIR;
           else next_state = REMAIN;
