@@ -171,7 +171,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
     
     REMAIN: begin
        next_state = (zero_divisor_i | !q_neg) ? DONE: QUOT;
-       opA_sel_lo   = 2'b01;
+       opA_sel_o   = 2'b01;
        opA_ld_o     = 1'b1;
        opA_clr_l_o  = 1'b0;
        opB_sel_o    = 3'b100;
