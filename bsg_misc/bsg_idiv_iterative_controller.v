@@ -119,7 +119,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
     
     NEG0: begin
        next_state = (opC_is_neg_i & signed_div_r_i) ? NEG1 : SHIFT;
-       opA_sel_0    = 2'b01;
+       opA_sel_o    = 2'b01;
        opA_inv_o    = 1'b1;
        opB_clr_l_o  = 1'b0;
        opB_sel_o    = 3'b100;
