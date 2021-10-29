@@ -114,7 +114,6 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
           opA_sel_o    = 2'b10;
           opC_sel_o    = 3'b100;
        end
-       opC_sel_o    = 3'b000;
     end
     
     NEG0: begin
