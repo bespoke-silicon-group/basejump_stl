@@ -111,11 +111,9 @@ module bsg_idiv_iterative_controller #(parameter width_p=32)
           opC_ld_o     = 1'b1;
           latch_signed_div_o = 1'b1;
           next_state   = NEG0;
-          
-          opC_sel_o    = 3'b100;
        end
        opA_sel_o    = 2'b10;
-       opC_sel_o    = 3'b000;
+       opC_sel_o    = 3'b100;
     end
     
     NEG0: begin
