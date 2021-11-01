@@ -22,6 +22,26 @@
           );                                                  \
     end: macro
 
+`define bsg_mem_1rw_sync_mask_write_bit_1sram_macro(words,bits,mux) \
+  if (harden_p && els_p == words && width_p == bits)          \
+    begin: macro                                              \
+      gf14_1rw_d``words``_w``bits``_m``mux``_bit_1sram        \
+        mem                                                   \
+          ( .CLK   ( clk_i     )                              \
+          , .A     ( addr_i    )                              \
+          , .D     ( data_i    )                              \
+          , .Q     ( data_o    )                              \
+          , .CEN   ( ~v_i      )                              \
+          , .GWEN  ( ~w_i      )                              \
+          , .WEN   ( ~w_mask_i )                              \
+          , .RET1N ( 1'b1      )                              \
+          , .STOV  ( 1'b0      )                              \
+          , .EMA   ( 3'b011    )                              \
+          , .EMAW  ( 2'b01     )                              \
+          , .EMAS  ( 1'b0      )                              \
+          );                                                  \
+    end: macro
+
 `define bsg_mem_1rw_sync_mask_write_bit_banked_macro(words,bits,wbank,dbank) \
   if (harden_p && els_p == words && width_p == bits) begin: macro \
     bsg_mem_1rw_sync_mask_write_bit_banked #(                     \
