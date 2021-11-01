@@ -26,12 +26,6 @@ ELABORATE_OPTIONS += -assert svaext
 ELABORATE_OPTIONS += +define+den2048Mb+sg5+x16+FULL_MEM
 RUN_OPTIONS = 
 
-#TODO akashs3 commented: Why is this needed?
-#analyze:
-#	$(VCS_BIN)/vlogan $(ANALYSIS_OPTIONS) -timescale=1ns/1ps +incdir+lpddr_verilog_model+../../bsg_dmc +define+den2048Mb+sg5+x16+FULL_MEM -f filelist.lst -l  $@.log
-#	touch $@
-#ech: 
-#	echo $(VCS_RELEASE)
 elaborate: 
 	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -f filelist.lst -l $@.log $(BASEJUMP_STL_DIR)/testing/bsg_dmc/tb_top/testbench.sv
 	touch $@

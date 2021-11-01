@@ -351,7 +351,7 @@ module bsg_dmc_controller
     push = 1'b0;
     cmd_sfifo_wdata = {$bits(cmd_sfifo_wdata){1'b1}};
     case(cstate)
-	  //INIT is as per JEDEC LPDDR SRAM spec Figure 4
+	  //INIT is as per JEDEC LPDDR SRAM spec (https://www.jedec.org/system/files/docs/JESD209B.pdf) Figure 4
       INIT: begin
         push = cmd_sfifo_ready;
         case(init_tick)

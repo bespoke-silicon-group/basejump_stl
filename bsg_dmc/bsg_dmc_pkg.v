@@ -2,7 +2,7 @@
 
 package bsg_dmc_pkg;
 
-  //Following struct passes on configuration parameters from TB top to DMC RTL.
+  // Following struct passes on configuration parameters from TB top to DMC RTL.
   typedef struct packed {
     logic [15:0] trefi;
     logic  [3:0] tmrd;
@@ -24,7 +24,7 @@ package bsg_dmc_pkg;
     logic [15:0] init_cycles;
   } bsg_dmc_s;
 
-  //Following enum holds commands that are sent by ASIC to the DMC
+  // Following enum holds commands that are sent by ASIC to the DMC
   typedef enum logic [2:0]
     {RP = 3'b011 // read with auto precharge
     ,WP = 3'b010 // write with auto precharge
@@ -38,7 +38,7 @@ package bsg_dmc_pkg;
       logic [addr_width_mp-1:0] addr; \
     } app_cmd_afifo_entry_s;
 
-  //This enum holds various commands that are passed by the DMC controller to DDR via DFI. As per JEDEC LPDDR SDRAM spec Table-5, page 21
+  // This enum holds various commands that are passed by the DMC controller to DDR via DFI. As per JEDEC LPDDR SDRAM spec Table-5, page 21
   typedef enum logic [3:0] 
     {LMR      = 4'b0000	//mode register set
     ,REF      = 4'b0001	//auto refresh
