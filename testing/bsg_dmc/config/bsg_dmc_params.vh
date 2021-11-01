@@ -11,5 +11,3 @@
   localparam ui_mask_width_lp    = ui_data_width_p >> 3;
   localparam dq_group_lp         = dq_data_width_p >> 3;
   localparam dq_burst_length_lp  = burst_data_width_lp / dq_data_width_p;
-
-

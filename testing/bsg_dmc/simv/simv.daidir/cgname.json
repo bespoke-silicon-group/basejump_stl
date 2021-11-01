@@ -1,0 +1,312 @@
+{
+    "bsg_dff_en__abstract": [
+        "bsg_dff_en__abstract",
+        "SRa2k",
+        "module"
+    ],
+    "bsg_fifo_1r1w_small__abstract": [
+        "bsg_fifo_1r1w_small__abstract",
+        "VvJev",
+        "module"
+    ],
+    "bsg_serial_in_parallel_out_0000": [
+        "bsg_serial_in_parallel_out_0000",
+        "JSHP8",
+        "module"
+    ],
+    "bsg_parallel_in_serial_out_0001": [
+        "bsg_parallel_in_serial_out_0001",
+        "TzW83",
+        "module"
+    ],
+    "bsg_dff__abstract": [
+        "bsg_dff__abstract",
+        "LKq1Y",
+        "module"
+    ],
+    "vcs_paramclassrepository": [
+        "vcs_paramclassrepository",
+        "hEeZs",
+        "module"
+    ],
+    "bsg_mux__abstract": [
+        "bsg_mux__abstract",
+        "Cqtcz",
+        "module"
+    ],
+    "_vcs_unit__379959227": [
+        "_vcs_unit__379959227",
+        "B60Rs",
+        "module"
+    ],
+    "bsg_async_ptr_gray_0000": [
+        "bsg_async_ptr_gray_0000",
+        "GFzYS",
+        "module"
+    ],
+    "bsg_async_fifo_0000_0001": [
+        "bsg_async_fifo_0000_0001",
+        "ekni5",
+        "module"
+    ],
+    "bsg_dmc__abstract": [
+        "bsg_dmc__abstract",
+        "NIHQD",
+        "module"
+    ],
+    "bsg_fifo_1r1w_small_unhardened__abstract": [
+        "bsg_fifo_1r1w_small_unhardened__abstract",
+        "bnbfC",
+        "module"
+    ],
+    "bsg_async_ptr_gray__abstract": [
+        "bsg_async_ptr_gray__abstract",
+        "m8yeZ",
+        "module"
+    ],
+    "std": [
+        "std",
+        "reYIK",
+        "module"
+    ],
+    "bsg_nor3__abstract": [
+        "bsg_nor3__abstract",
+        "fz7Ti",
+        "module"
+    ],
+    "bsg_dmc_pkg": [
+        "bsg_dmc_pkg",
+        "dQmi7",
+        "module"
+    ],
+    "bsg_launch_sync_sync__abstract": [
+        "bsg_launch_sync_sync__abstract",
+        "pRZyE",
+        "module"
+    ],
+    "bsg_tag_pkg": [
+        "bsg_tag_pkg",
+        "u0tJu",
+        "module"
+    ],
+    "bsg_fifo_1r1w_small_0000": [
+        "bsg_fifo_1r1w_small_0000",
+        "Z8086",
+        "module"
+    ],
+    "bsg_two_fifo__abstract": [
+        "bsg_two_fifo__abstract",
+        "LF9Ez",
+        "module"
+    ],
+    "bsg_async_fifo__abstract": [
+        "bsg_async_fifo__abstract",
+        "vVzUc",
+        "module"
+    ],
+    "mobile_ddr": [
+        "mobile_ddr",
+        "H7WaC",
+        "module"
+    ],
+    "bsg_mem_1r1w__abstract": [
+        "bsg_mem_1r1w__abstract",
+        "mFDkA",
+        "module"
+    ],
+    "bsg_dmc_phy_byte_lane_0000": [
+        "bsg_dmc_phy_byte_lane_0000",
+        "TP7EF",
+        "module"
+    ],
+    "bsg_strobe__abstract": [
+        "bsg_strobe__abstract",
+        "UN9K1",
+        "module"
+    ],
+    "bsg_async_ptr_gray_0000_0000": [
+        "bsg_async_ptr_gray_0000_0000",
+        "GLhg4",
+        "module"
+    ],
+    "bsg_make_2D_array__abstract": [
+        "bsg_make_2D_array__abstract",
+        "DPide",
+        "module"
+    ],
+    "bsg_parallel_in_serial_out_0000": [
+        "bsg_parallel_in_serial_out_0000",
+        "vf7zy",
+        "module"
+    ],
+    "bsg_counter_clock_downsample__abstract": [
+        "bsg_counter_clock_downsample__abstract",
+        "vzPix",
+        "module"
+    ],
+    "bsg_dmc_clk_rst_gen__abstract": [
+        "bsg_dmc_clk_rst_gen__abstract",
+        "DMHHG",
+        "module"
+    ],
+    "bsg_launch_sync_sync_0000": [
+        "bsg_launch_sync_sync_0000",
+        "yyzap",
+        "module"
+    ],
+    "bsg_sync_sync__abstract": [
+        "bsg_sync_sync__abstract",
+        "fneIE",
+        "module"
+    ],
+    "bsg_fifo_tracker__abstract": [
+        "bsg_fifo_tracker__abstract",
+        "yP1VE",
+        "module"
+    ],
+    "bsg_nand__abstract": [
+        "bsg_nand__abstract",
+        "Adbrr",
+        "module"
+    ],
+    "bsg_flatten_2D_array__abstract": [
+        "bsg_flatten_2D_array__abstract",
+        "tFLkg",
+        "module"
+    ],
+    "bsg_dmc_phy__abstract": [
+        "bsg_dmc_phy__abstract",
+        "vsUrF",
+        "module"
+    ],
+    "bsg_parallel_in_serial_out__abstract": [
+        "bsg_parallel_in_serial_out__abstract",
+        "Mk419",
+        "module"
+    ],
+    "bsg_serial_in_parallel_out": [
+        "bsg_serial_in_parallel_out",
+        "esk8F",
+        "module"
+    ],
+    "bsg_serial_in_parallel_out__abstract": [
+        "bsg_serial_in_parallel_out__abstract",
+        "BHZvq",
+        "module"
+    ],
+    "bsg_one_fifo__abstract": [
+        "bsg_one_fifo__abstract",
+        "wvt65",
+        "module"
+    ],
+    "bsg_dmc_controller__abstract": [
+        "bsg_dmc_controller__abstract",
+        "zJxse",
+        "module"
+    ],
+    "bsg_dmc_phy_bit_slice": [
+        "bsg_dmc_phy_bit_slice",
+        "wP5SJ",
+        "module"
+    ],
+    "bsg_dmc_phy_0000": [
+        "bsg_dmc_phy_0000",
+        "GzH9V",
+        "module"
+    ],
+    "bsg_mem_1r1w_synth__abstract": [
+        "bsg_mem_1r1w_synth__abstract",
+        "QBYcV",
+        "module"
+    ],
+    "bsg_buf__abstract": [
+        "bsg_buf__abstract",
+        "Qdv6j",
+        "module"
+    ],
+    "bsg_circular_ptr__abstract": [
+        "bsg_circular_ptr__abstract",
+        "Y8LcE",
+        "module"
+    ],
+    "bsg_dff_reset_en__abstract": [
+        "bsg_dff_reset_en__abstract",
+        "uhiVk",
+        "module"
+    ],
+    "bsg_mux2_gatestack__abstract": [
+        "bsg_mux2_gatestack__abstract",
+        "Q6Le3",
+        "module"
+    ],
+    "bsg_muxi2_gatestack__abstract": [
+        "bsg_muxi2_gatestack__abstract",
+        "GWmBK",
+        "module"
+    ],
+    "bsg_reduce__abstract": [
+        "bsg_reduce__abstract",
+        "GIVnT",
+        "module"
+    ],
+    "bsg_counter_clear_up__abstract": [
+        "bsg_counter_clear_up__abstract",
+        "GpINz",
+        "module"
+    ],
+    "bsg_xnor__abstract": [
+        "bsg_xnor__abstract",
+        "I4Y9z",
+        "module"
+    ],
+    "bsg_dff_reset__abstract": [
+        "bsg_dff_reset__abstract",
+        "hnUAQ",
+        "module"
+    ],
+    "bsg_tag_client__abstract": [
+        "bsg_tag_client__abstract",
+        "FJPte",
+        "module"
+    ],
+    "bsg_dmc_params_pkg": [
+        "bsg_dmc_params_pkg",
+        "BeJiq",
+        "module"
+    ],
+    "bsg_tag_client_unsync__abstract": [
+        "bsg_tag_client_unsync__abstract",
+        "SNNQy",
+        "module"
+    ],
+    "uvm_pkg": [
+        "uvm_pkg",
+        "zr7M1",
+        "module"
+    ],
+    "bsg_dmc_asic_interface": [
+        "bsg_dmc_asic_interface",
+        "Puxp5",
+        "module"
+    ],
+    "bsg_dmc_asic_pkg": [
+        "bsg_dmc_asic_pkg",
+        "IxyKJ",
+        "module"
+    ],
+    "bsg_dmc_seq_pkg": [
+        "bsg_dmc_seq_pkg",
+        "Dyr0w",
+        "module"
+    ],
+    "testbench": [
+        "testbench",
+        "iAVhC",
+        "module"
+    ],
+    "...MASTER...": [
+        "SIM",
+        "amcQw",
+        "module"
+    ]
+}

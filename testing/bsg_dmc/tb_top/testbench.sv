@@ -13,6 +13,7 @@ import bsg_dmc_params_pkg::*;
 import uvm_pkg::*;
 import bsg_dmc_pkg::*;
 import bsg_dmc_asic_pkg::*;
+import bsg_dmc_seq_pkg::*;
 
 `include "uvm_macros.svh"
 
@@ -37,28 +38,26 @@ module testbench();
 	bsg_dmc_asic_interface asic_if();
 
 	//TB TOP to TB connection for ASIC - DMC controller interface
-	initial begin
-		app_addr 					= asic_if.app_addr;
-  		app_cmd 					= asic_if.app_cmd;
-  		app_en 						= asic_if.app_en;
-  		asic_if.app_rdy				= app_rdy;
-  		app_wdf_wren				= asic_if.app_wdf_wren;
-  		app_wdf_data				= asic_if.app_wdf_data;
-  		app_wdf_mask				= asic_if.app_wdf_mask;
-  		app_wdf_end					= asic_if.app_wdf_end;
-  		asic_if.app_wdf_rdy			= app_wdf_rdy;
+	assign app_addr 					= asic_if.app_addr;
+	assign app_cmd 						= asic_if.app_cmd;
+	assign app_en 						= asic_if.app_en;
+	assign asic_if.app_rdy				= app_rdy;
+	assign app_wdf_wren					= asic_if.app_wdf_wren;
+	assign app_wdf_data					= asic_if.app_wdf_data;
+	assign app_wdf_mask					= asic_if.app_wdf_mask;
+	assign app_wdf_end					= asic_if.app_wdf_end;
+	assign asic_if.app_wdf_rdy			= app_wdf_rdy;
 
-  		asic_if.app_rd_data_valid	= app_rd_data_valid;
-  		asic_if.app_rd_data			= app_rd_data;
-  		asic_if.app_rd_data_end		= app_rd_data_end;
+	assign asic_if.app_rd_data_valid	= app_rd_data_valid;
+	assign asic_if.app_rd_data			= app_rd_data;
+	assign asic_if.app_rd_data_end		= app_rd_data_end;
 
-  		app_ref_req					= asic_if.app_ref_req;
-  		asic_if.app_ref_ack			= app_ref_ack;
-  		app_zq_req					= asic_if.app_zq_req;
-  		asic_if.app_zq_ack			= app_zq_ack;
-  		app_sr_req					= asic_if.app_sr_req;
-  		asic_if.app_sr_active		= app_sr_active;
-	end		
+	assign app_ref_req					= asic_if.app_ref_req;
+	assign asic_if.app_ref_ack			= app_ref_ack;
+	assign app_zq_req					= asic_if.app_zq_req;
+	assign asic_if.app_zq_ack			= app_zq_ack;
+	assign app_sr_req					= asic_if.app_sr_req;
+	assign asic_if.app_sr_active		= app_sr_active;
 	
 	//TB TOP to DUT connection
 	bsg_dmc #
@@ -183,14 +182,19 @@ module testbench();
 		sys_reset = 0;
 	end
 
+	assign asic_if.ui_clk				= ui_clk;
+	assign asic_if.ui_clk_sync_rst		= ui_clk_sync_rst;
+
 	initial begin
 		init_configuration_values(); 
 	end
 
 	initial begin
-	  app_en = 0;
-	  app_wdf_wren = 0;
-	  app_wdf_end = 0;
+	  asic_if.app_cmd = 0;
+	  asic_if.app_addr = 0;
+	  asic_if.app_en = 0;
+	  asic_if.app_wdf_wren = 0;
+	  asic_if.app_wdf_end = 0;
 	end
 	
 	initial begin

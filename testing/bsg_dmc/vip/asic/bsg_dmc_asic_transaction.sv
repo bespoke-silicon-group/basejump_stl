@@ -17,26 +17,27 @@ class bsg_dmc_asic_transaction extends uvm_sequence_item;
 		super.new(name);
 	endfunction
 
-	//Data interface signals	
-	bit      [ui_addr_width_p-1:0] app_addr;
-  	app_cmd_e                      app_cmd;
-  	bit                            app_en;
-  	bit                            app_rdy;
-  	bit                            app_wdf_wren;
-  	bit      [ui_data_width_p-1:0] app_wdf_data;
-  	bit [(ui_data_width_p>>3)-1:0] app_wdf_mask;
-  	bit                            app_wdf_end;
-  	bit                            app_wdf_rdy;
+	//Data interface signals
+	asic_txn_type_t					txn_type;	
+	bit      [ui_addr_width_p-1:0] 	app_addr;
+  	app_cmd_e                      	app_cmd;
+  	bit                            	app_en;
+  	bit                            	app_rdy;
+  	bit                            	app_wdf_wren;
+  	bit      [ui_data_width_p-1:0] 	app_wdf_data;
+  	bit [(ui_data_width_p>>3)-1:0] 	app_wdf_mask;
+  	bit                            	app_wdf_end;
+  	bit                            	app_wdf_rdy;
 
-  	bit                            app_rd_data_valid;
-  	bit       [ui_data_width_p-1:0]app_rd_data;
-  	bit                            app_rd_data_end;
+  	bit                            	app_rd_data_valid;
+  	bit       [ui_data_width_p-1:0]	app_rd_data;
+  	bit                            	app_rd_data_end;
 
-  	bit                            app_ref_req;
-  	bit                            app_ref_ack;
-  	bit                            app_zq_req;
-  	bit                            app_zq_ack;
-  	bit                            app_sr_req;
-  	bit                            app_sr_active;
+  	bit                            	app_ref_req;
+  	bit                            	app_ref_ack;
+  	bit                            	app_zq_req;
+  	bit                            	app_zq_ack;
+  	bit                            	app_sr_req;
+  	bit                            	app_sr_active;
 
 endclass: bsg_dmc_asic_transaction

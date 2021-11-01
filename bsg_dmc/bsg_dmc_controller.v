@@ -3,6 +3,7 @@
 module bsg_dmc_controller
   import bsg_dmc_pkg::*;
 
+//TODO: akashs3: Parameters are restrictive for verification: see how to circumvent that.
  #(parameter `BSG_INV_PARAM( ui_addr_width_p      )
   ,parameter `BSG_INV_PARAM( ui_data_width_p      )
   ,parameter `BSG_INV_PARAM( burst_data_width_p   )
@@ -17,30 +18,37 @@ module bsg_dmc_controller
   (input                                ui_clk_i
   ,input                                ui_clk_sync_rst_i
   // User interface signals
+  // signals to issue commands thru UI
   ,input          [ui_addr_width_p-1:0] app_addr_i
   ,input app_cmd_e                      app_cmd_i
   ,input                                app_en_i
   ,output                               app_rdy_o
+
+  //signals to issue write thru UI
   ,input                                app_wdf_wren_i
   ,input          [ui_data_width_p-1:0] app_wdf_data_i
   ,input         [ui_mask_width_lp-1:0] app_wdf_mask_i
   ,input                                app_wdf_end_i
   ,output                               app_wdf_rdy_o
+
+  //signals to issue read thru UI
   ,output                               app_rd_data_valid_o
   ,output         [ui_data_width_p-1:0] app_rd_data_o
   ,output logic                         app_rd_data_end_o
+
   ,input                                app_ref_req_i
   ,output                               app_ref_ack_o
   ,input                                app_zq_req_i
   ,output                               app_zq_ack_o
   ,input                                app_sr_req_i
   ,output                               app_sr_active_o
-  // Status signal
+  // Status signal: is the DDR initialisation process complete?
   ,output logic                         init_calib_complete_o
   // DDR PHY interface clock and reset
   ,input                                dfi_clk_i
   ,input                                dfi_clk_sync_rst_i
   // DDR PHY interface signals
+  //DFI control interface signals
   ,output logic                   [2:0] dfi_bank_o
   ,output logic                  [15:0] dfi_address_o
   ,output logic                         dfi_cke_o
@@ -50,13 +58,20 @@ module bsg_dmc_controller
   ,output logic                         dfi_we_n_o
   ,output logic                         dfi_reset_n_o
   ,output logic                         dfi_odt_o
+
+  //DFI write interface signals
   ,output logic                         dfi_wrdata_en_o
   ,output logic  [dfi_data_width_p-1:0] dfi_wrdata_o
   ,output logic [dfi_mask_width_lp-1:0] dfi_wrdata_mask_o
+
+  //DFI read interface signals
   ,output logic                         dfi_rddata_en_o
   ,input         [dfi_data_width_p-1:0] dfi_rddata_i
   ,input                                dfi_rddata_valid_i
-  // Control and Status Registers
+
+//NOTE: DFI status and update interfaces are not supported yet.
+  
+  // Control and Status parameters
   ,input bsg_dmc_s                      dmc_p_i);
 
   typedef enum logic [1:0] {IDLE, INIT, REFR, LDST} state;
@@ -64,6 +79,9 @@ module bsg_dmc_controller
   integer i;
   genvar k;
 
+// Command Async FIFO signals between external chip and DMC
+// Signal sender: external chip
+// Receiver: DMC controller
   logic                                                                cmd_afifo_wclk,     cmd_afifo_rclk;
   logic                                                                cmd_afifo_wrst,     cmd_afifo_rrst;
   logic                                                                cmd_afifo_winc,     cmd_afifo_rinc;
@@ -71,22 +89,34 @@ module bsg_dmc_controller
   `declare_app_cmd_afifo_entry_s(ui_addr_width_p);
   app_cmd_afifo_entry_s                                                cmd_afifo_wdata,    cmd_afifo_rdata;
 
+// Command synchronous FIFO signals between external chip and DMC
+// Signal sender: DMC
+// Receiver: DFI
   logic                                                                cmd_sfifo_winc,     cmd_sfifo_rinc;
   logic                                                                cmd_sfifo_ready,    cmd_sfifo_valid;
   dfi_cmd_sfifo_entry_s                                                cmd_sfifo_wdata,    cmd_sfifo_rdata;
 
+// WRITE Async FIFO signals between external chip and DMC
+// Signal sender: external chip
+// Receiver: DMC controller-passed onto DDR via DFI
   logic                                                                wrdata_afifo_wclk,  wrdata_afifo_rclk;
   logic                                                                wrdata_afifo_wrst,  wrdata_afifo_rrst;
   logic                                                                wrdata_afifo_winc,  wrdata_afifo_rinc;
   logic                                                                wrdata_afifo_wfull, wrdata_afifo_rvalid;
   logic                         [ui_data_width_p+ui_mask_width_lp-1:0] wrdata_afifo_wdata, wrdata_afifo_rdata;
 
+// READ Async FIFO signals between external chip and DMC
+// Signal sender: DFI
+// Receiver: DMC controller - passed onto external chip
   logic                                                                rddata_afifo_wclk,  rddata_afifo_rclk;
   logic                                                                rddata_afifo_wrst,  rddata_afifo_rrst;
   logic                                                                rddata_afifo_winc,  rddata_afifo_rinc;
   logic                                                                rddata_afifo_wfull, rddata_afifo_rvalid;
   logic                                         [dfi_data_width_p-1:0] rddata_afifo_wdata, rddata_afifo_rdata;
 
+  //Write path serial in - parallel out signals
+  //Input: O/P from Async write FIFO
+  //Output go to TX PISO  
   logic                                                                tx_sipo_valid_li;
   logic                         [ui_mask_width_lp+ui_data_width_p-1:0] tx_sipo_data_li;
   logic                                                                tx_sipo_ready_lo;
@@ -94,6 +124,9 @@ module bsg_dmc_controller
   logic [ui_burst_length_lp-1:0][ui_mask_width_lp+ui_data_width_p-1:0] tx_sipo_data_lo;
   logic                                 [$clog2(ui_burst_length_lp):0] tx_sipo_yumi_cnt_li;
 
+//Write path parallel in-serial out signals
+// Input: O/P from TX SIPO
+//Output: DFI write interface signals
   logic                                                                tx_data_piso_valid_li;
   logic                [dfi_burst_length_lp-1:0][dfi_data_width_p-1:0] tx_data_piso_data_li;
   logic                                                                tx_data_piso_ready_lo;
@@ -112,6 +145,9 @@ module bsg_dmc_controller
   logic                     [dfi_data_width_p*dfi_burst_length_lp-1:0] tx_data;
   logic                    [dfi_mask_width_lp*dfi_burst_length_lp-1:0] tx_mask;
 
+// SISO signals for read path similar to the write path
+//Input: O/P from async fifo
+//Output : RX PISO
   logic                                                                rx_piso_valid_li;
   logic                  [ui_burst_length_lp-1:0][ui_data_width_p-1:0] rx_piso_data_li;
   logic                                                                rx_piso_ready_lo;
@@ -119,6 +155,9 @@ module bsg_dmc_controller
   logic                                          [ui_data_width_p-1:0] rx_piso_data_lo;
   logic                                                                rx_piso_yumi_li;
 
+// PISO signals for read path similar to the write path
+//Input: O/P from RX SIPO
+//Output : Xinlinx UI
   logic                                                                rx_sipo_valid_li;
   logic                                         [dfi_data_width_p-1:0] rx_sipo_data_li;
   logic                                                                rx_sipo_ready_lo;
@@ -152,11 +191,11 @@ module bsg_dmc_controller
 
   dfi_cmd_e    c_cmd, n_cmd;
 
-  logic        shoot;	// flag to point that the a particular timing parameter between operations is met
+  logic        shoot;	// flag to point that the a particular timing parameter between operations is met and to forward a cmd from DMC controller to DFI
   logic  [7:0] open_bank;
   logic [15:0] open_row [0:7];
 
-  logic        push;
+  logic        push; //flag to accumulate commands into synchronous FIFO between DMC and DFI modules.
 
   logic [15:0] init_tick;
   logic        init_done;
@@ -168,6 +207,7 @@ module bsg_dmc_controller
 
   logic  [1:0] ldst_tick;
 
+//TODO: akashs3: below signals not used. Check and remove if unnecessary.
   logic [15:0] tick_refi;
   logic  [3:0] tick_mrd;
   logic  [3:0] tick_rfc;
@@ -185,6 +225,7 @@ module bsg_dmc_controller
   assign app_zq_ack_o = app_zq_req_i;
   assign app_sr_active_o = app_sr_req_i;
 
+  //used for checking the residual number of reads possible
   always_ff @(posedge ui_clk_i) begin
     if(ui_clk_sync_rst_i)
       rd_credit <= cmd_afifo_depth_p;
@@ -196,11 +237,13 @@ module bsg_dmc_controller
       rd_credit <= rd_credit + 1;
   end
 
+  //FIFO can eat until its plate is not full
   assign app_rdy_o = ~cmd_afifo_wfull & |rd_credit;
 
   assign cmd_afifo_wclk  = ui_clk_i;
   assign cmd_afifo_wrst  = ui_clk_sync_rst_i;
   assign cmd_afifo_winc  = app_en_i & app_rdy_o;
+  
   assign cmd_afifo_wdata.cmd = app_cmd_i;
   assign cmd_afifo_wdata.addr = app_addr_i;
 
@@ -208,6 +251,9 @@ module bsg_dmc_controller
   assign cmd_afifo_rrst  = dfi_clk_sync_rst_i;
   assign cmd_afifo_rinc  = cmd_afifo_rvalid & cmd_sfifo_ready & (cstate == LDST && ldst_tick == 0);
 
+// Command Async FIFO signals between external chip and DMC
+// Signal sender: external chip
+// Receiver: DMC controller
   bsg_async_fifo #
     (.width_p   ( $bits(cmd_afifo_wdata)    )
     ,.lg_size_p ( $clog2(cmd_afifo_depth_p) ))
@@ -231,6 +277,7 @@ module bsg_dmc_controller
   assign wrdata_afifo_rrst  = dfi_clk_sync_rst_i;
   assign wrdata_afifo_rinc  = tx_sipo_ready_lo & wrdata_afifo_rvalid;
 
+  //FIFO can eat until its plate is not full
   assign app_wdf_rdy_o = ~wrdata_afifo_wfull;
 
   bsg_async_fifo #
@@ -351,7 +398,7 @@ module bsg_dmc_controller
     push = 1'b0;
     cmd_sfifo_wdata = {$bits(cmd_sfifo_wdata){1'b1}};
     case(cstate)
-	  //INIT is as per JEDEC LPDDR SRAM spec (https://www.jedec.org/system/files/docs/JESD209B.pdf) Figure 4
+	  //INIT is as per JEDEC LPDDR SRAM spec (link: https://www.jedec.org/system/files/docs/JESD209B.pdf) Figure 4
       INIT: begin
         push = cmd_sfifo_ready;
         case(init_tick)
@@ -430,6 +477,9 @@ module bsg_dmc_controller
   assign cmd_sfifo_winc  = push;
   assign cmd_sfifo_rinc  = shoot;
 
+  //Synchronous FIFO between DMC and DFI. 
+  // Source: cmd_afifo 
+  // Receiver: DFI
   bsg_fifo_1r1w_small #
     (.width_p            ( $bits(cmd_sfifo_wdata) )
     ,.els_p              ( cmd_sfifo_depth_p      )
@@ -635,6 +685,8 @@ module bsg_dmc_controller
     end
   end
 
+
+//TX SIPO AND PISO MODULE INSTANCES AND ASSIGNMENTS
   for(k=0;k<ui_burst_length_lp;k++) begin: tx_flatten
     assign tx_data[k*ui_data_width_p+:ui_data_width_p]   = tx_sipo_data_lo[k][0+:ui_data_width_p];
     assign tx_mask[k*ui_mask_width_lp+:ui_mask_width_lp] = tx_sipo_data_lo[k][ui_data_width_p+:ui_mask_width_lp];
@@ -682,6 +734,7 @@ module bsg_dmc_controller
   assign dfi_wrdata_en_o   = tx_data_piso_valid_lo;
   assign dfi_wrdata_mask_o = tx_mask_piso_data_lo;
 
+//RX ASYNC FIFO SIPO AND PISO MODULE INSTANCES AND ASSIGNMENTS
   assign rddata_afifo_wclk  = dfi_clk_i;
   assign rddata_afifo_wrst  = dfi_clk_sync_rst_i;
   assign rddata_afifo_winc  = dfi_rddata_valid_i;

@@ -1,0 +1,588 @@
+Command: vcs -full64 -sverilog -debug_pp -lca +vcs+vcdpluson +vcs+vcdplusmemon -timescale=1ns/100ps \
+-assert svaext +define+den2048Mb+sg5+x16+FULL_MEM -f filelist.lst -l elaborate.log \
+../../../testing/bsg_dmc/tb_top/testbench.sv
+                         Chronologic VCS (TM)
+     Version L-2016.06-SP2-15_Full64 -- Sun Oct 31 21:40:59 2021
+               Copyright (c) 1991-2016 by Synopsys Inc.
+                         ALL RIGHTS RESERVED
+
+This program is proprietary and confidential information of Synopsys Inc.
+and may be used and disclosed only as authorized in a license agreement
+controlling such use and disclosure.
+
+
+Warning-[LCA_FEATURES_ENABLED] Usage warning
+  LCA features enabled by '-lca' argument on the command line.  For more 
+  information regarding list of LCA features please refer to Chapter "LCA 
+  features" in the VCS/VCS-MX Release Notes
+
+
+Warning-[UNK_COMP_ARG] Unknown compile time plus argument used
+  Unknown compile time plus argument 'vcs+vcdplusmemon' is ignored.
+
+ + use `+plusarg_save' to bind in runtime plusargs;
+ + use `+plusarg_ignore' to suppress this message.
+Parsing design file '../../../bsg_misc/bsg_defines.v'
+Parsing design file '../../../bsg_dmc/bsg_dmc_pkg.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_dmc/bsg_dmc_pkg.v'.
+Parsing design file '../../../bsg_tag/bsg_tag_pkg.v'
+Parsing design file '../../../bsg_async/bsg_async_fifo.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_async/bsg_async_fifo.v'.
+Parsing design file '../../../bsg_async/bsg_async_ptr_gray.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_async/bsg_async_ptr_gray.v'.
+Parsing design file '../../../bsg_async/bsg_launch_sync_sync.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_async/bsg_launch_sync_sync.v'.
+Parsing design file '../../../bsg_async/bsg_sync_sync.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_async/bsg_sync_sync.v'.
+Parsing design file '../../../bsg_clk_gen/bsg_dly_line.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_clk_gen/bsg_dly_line.v'.
+Parsing included file '../../../bsg_clk_gen/bsg_clk_gen.vh'.
+Back to file '../../../bsg_clk_gen/bsg_dly_line.v'.
+Parsing design file '../../../bsg_dataflow/bsg_fifo_1r1w_small.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_dataflow/bsg_fifo_1r1w_small.v'.
+Parsing design file '../../../bsg_dataflow/bsg_fifo_1r1w_small_unhardened.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_dataflow/bsg_fifo_1r1w_small_unhardened.v'.
+Parsing design file '../../../bsg_dataflow/bsg_fifo_tracker.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_dataflow/bsg_fifo_tracker.v'.
+Parsing design file '../../../bsg_dataflow/bsg_flatten_2D_array.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_dataflow/bsg_flatten_2D_array.v'.
+Parsing design file '../../../bsg_dataflow/bsg_make_2D_array.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_dataflow/bsg_make_2D_array.v'.
+Parsing design file '../../../bsg_dataflow/bsg_parallel_in_serial_out.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_dataflow/bsg_parallel_in_serial_out.v'.
+Parsing design file '../../../bsg_dataflow/bsg_serial_in_parallel_out.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_dataflow/bsg_serial_in_parallel_out.v'.
+Parsing design file '../../../bsg_dataflow/bsg_two_fifo.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_dataflow/bsg_two_fifo.v'.
+Parsing design file '../../../bsg_dataflow/bsg_one_fifo.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_dataflow/bsg_one_fifo.v'.
+Parsing design file '../../../bsg_dmc/bsg_dmc.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_dmc/bsg_dmc.v'.
+Parsing design file '../../../bsg_dmc/bsg_dmc_clk_rst_gen.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_dmc/bsg_dmc_clk_rst_gen.v'.
+Parsing included file '../../../bsg_clk_gen/bsg_clk_gen.vh'.
+Back to file '../../../bsg_dmc/bsg_dmc_clk_rst_gen.v'.
+Parsing design file '../../../bsg_dmc/bsg_dmc_controller.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_dmc/bsg_dmc_controller.v'.
+Parsing design file '../../../bsg_dmc/bsg_dmc_phy.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_dmc/bsg_dmc_phy.v'.
+Parsing design file '../../../bsg_mem/bsg_mem_1r1w.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_mem/bsg_mem_1r1w.v'.
+Parsing design file '../../../bsg_mem/bsg_mem_1r1w_synth.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_mem/bsg_mem_1r1w_synth.v'.
+Parsing design file '../../../bsg_misc/bsg_buf.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_misc/bsg_buf.v'.
+Parsing design file '../../../bsg_misc/bsg_circular_ptr.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_misc/bsg_circular_ptr.v'.
+Parsing design file '../../../bsg_misc/bsg_counter_clock_downsample.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_misc/bsg_counter_clock_downsample.v'.
+Parsing design file '../../../bsg_misc/bsg_dff.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_misc/bsg_dff.v'.
+Parsing design file '../../../bsg_misc/bsg_dff_reset_en.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_misc/bsg_dff_reset_en.v'.
+Parsing design file '../../../bsg_misc/bsg_mux.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_misc/bsg_mux.v'.
+Parsing design file '../../../bsg_misc/bsg_mux2_gatestack.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_misc/bsg_mux2_gatestack.v'.
+Parsing design file '../../../bsg_misc/bsg_muxi2_gatestack.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_misc/bsg_muxi2_gatestack.v'.
+Parsing design file '../../../bsg_misc/bsg_nand.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_misc/bsg_nand.v'.
+Parsing design file '../../../bsg_misc/bsg_nor3.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_misc/bsg_nor3.v'.
+Parsing design file '../../../bsg_misc/bsg_reduce.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_misc/bsg_reduce.v'.
+Parsing design file '../../../bsg_misc/bsg_strobe.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_misc/bsg_strobe.v'.
+Parsing design file '../../../bsg_misc/bsg_xnor.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_misc/bsg_xnor.v'.
+Parsing design file '../../../bsg_misc/bsg_counter_clear_up.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_misc/bsg_counter_clear_up.v'.
+Parsing design file '../../../bsg_misc/bsg_dff_reset.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_misc/bsg_dff_reset.v'.
+Parsing design file '../../../bsg_misc/bsg_dff_en.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_misc/bsg_dff_en.v'.
+Parsing design file '../../../bsg_tag/bsg_tag_client.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_tag/bsg_tag_client.v'.
+Parsing design file '../../../bsg_tag/bsg_tag_client_unsync.v'
+Parsing included file '../../../bsg_misc/bsg_defines.v'.
+Back to file '../../../bsg_tag/bsg_tag_client_unsync.v'.
+Parsing design file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_pkg.sv'
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_macros.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/macros/uvm_version_defines.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_macros.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/macros/uvm_message_defines.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_macros.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/macros/uvm_phase_defines.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_macros.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/macros/uvm_object_defines.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_macros.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/macros/uvm_printer_defines.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_macros.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/macros/uvm_tlm_defines.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm_imps.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/macros/uvm_tlm_defines.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_macros.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/macros/uvm_sequence_defines.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_macros.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/macros/uvm_callback_defines.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_macros.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/macros/uvm_reg_defines.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_macros.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/macros/uvm_deprecated_defines.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_macros.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_pkg.sv'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/dpi/uvm_dpi.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/dpi/uvm_hdl.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/dpi/uvm_dpi.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/dpi/uvm_svcmd_dpi.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/dpi/uvm_dpi.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/dpi/uvm_regex.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/dpi/uvm_dpi.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_pkg.sv'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_version.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_object_globals.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_misc.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_object.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_pool.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_queue.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_factory.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_registry.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_spell_chkr.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_resource.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/deprecated/uvm_resource_converter.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_resource_specializations.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_resource_db.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_config_db.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_printer.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_comparer.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_packer.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_recorder.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_event_callback.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_event.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_barrier.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_callback.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_macros.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_callback.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_report_catcher.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_report_server.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_report_handler.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_report_object.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_transaction.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_phase.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_domain.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_bottomup_phase.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_topdown_phase.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_task_phase.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_common_phases.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_runtime_phases.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_component.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_root.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_component.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_objection.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_heartbeat.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_globals.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_cmdline_processor.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_base.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_pkg.sv'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm_ifs.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_sqr_ifs.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/base/uvm_port_base.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm_imps.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_imps.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_ports.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_exports.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_analysis_port.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm_fifo_base.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm_fifos.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm_req_rsp.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_sqr_connections.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm1/uvm_tlm.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_pkg.sv'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_comps.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_pair.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_comps.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_policies.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_comps.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_in_order_comparator.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_comps.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_algorithmic_comparator.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_comps.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_random_stimulus.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_comps.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_subscriber.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_comps.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_monitor.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_comps.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_driver.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_comps.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_push_driver.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_comps.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_scoreboard.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_comps.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_agent.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_comps.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_env.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_comps.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_test.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/comps/uvm_comps.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_pkg.sv'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_seq.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_sequence_item.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_seq.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_sequencer_base.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_seq.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_sequencer_analysis_fifo.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_seq.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_sequencer_param_base.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_seq.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_sequencer.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_seq.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_push_sequencer.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_seq.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_sequence_base.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_seq.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_sequence.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_seq.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_sequence_library.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_seq.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_sequence_builtin.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/seq/uvm_seq.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_pkg.sv'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2_defines.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2_time.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2_generic_payload.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2_ifs.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2_imps.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2_ports.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2_exports.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2_sockets_base.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2_sockets.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/tlm2/uvm_tlm2.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_pkg.sv'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_item.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_adapter.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_predictor.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_sequence.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_cbs.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_backdoor.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_field.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_vreg_field.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_indirect.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_fifo.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_file.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_mem_mam.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_vreg.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_mem.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_map.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_block.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/sequences/uvm_reg_hw_reset_seq.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/sequences/uvm_reg_bit_bash_seq.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/sequences/uvm_mem_walk_seq.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/sequences/uvm_mem_access_seq.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/sequences/uvm_reg_access_seq.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/sequences/uvm_reg_mem_shared_access_seq.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/sequences/uvm_reg_mem_built_in_seq.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/sequences/uvm_reg_mem_hdl_paths_seq.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/snps_uvm_reg_bank.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/reg/uvm_reg_model.svh'.
+Back to file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_pkg.sv'.
+Parsing design file '../../../testing/bsg_dmc/config/bsg_dmc_macros.sv'
+Parsing design file '../../../testing/bsg_dmc/config/bsg_dmc_params_pkg.sv'
+Parsing included file '../../../testing/bsg_dmc/config/bsg_dmc_defines.vh'.
+Back to file '../../../testing/bsg_dmc/config/bsg_dmc_params_pkg.sv'.
+Parsing included file '../../../testing/bsg_dmc/config/bsg_dmc_params.vh'.
+Back to file '../../../testing/bsg_dmc/config/bsg_dmc_params_pkg.sv'.
+Parsing included file '../../../testing/bsg_dmc/config/bsg_dmc_macros.sv'.
+Back to file '../../../testing/bsg_dmc/config/bsg_dmc_params_pkg.sv'.
+Parsing design file '../../../testing/bsg_dmc/vip/asic/bsg_dmc_asic_pkg.sv'
+Parsing included file '../../../testing/bsg_dmc/vip/asic/bsg_dmc_asic_interface.sv'.
+Back to file '../../../testing/bsg_dmc/vip/asic/bsg_dmc_asic_pkg.sv'.
+Parsing included file '../../../testing/bsg_dmc/vip/asic/bsg_dmc_asic_transaction.sv'.
+Back to file '../../../testing/bsg_dmc/vip/asic/bsg_dmc_asic_pkg.sv'.
+Parsing included file '../../../testing/bsg_dmc/vip/asic/bsg_dmc_asic_driver.sv'.
+Back to file '../../../testing/bsg_dmc/vip/asic/bsg_dmc_asic_pkg.sv'.
+Parsing included file '../../../testing/bsg_dmc/vip/asic/bsg_dmc_asic_agent.sv'.
+Back to file '../../../testing/bsg_dmc/vip/asic/bsg_dmc_asic_pkg.sv'.
+Parsing design file '../../../testing/bsg_dmc/sequences/bsg_dmc_seq_pkg.sv'
+Parsing included file '../../../testing/bsg_dmc/sequences/bsg_dmc_cmd_seq.sv'.
+Back to file '../../../testing/bsg_dmc/sequences/bsg_dmc_seq_pkg.sv'.
+Parsing included file '../../../testing/bsg_dmc/sequences/bsg_dmc_write_seq.sv'.
+Back to file '../../../testing/bsg_dmc/sequences/bsg_dmc_seq_pkg.sv'.
+Parsing included file '../../../testing/bsg_dmc/sequences/bsg_dmc_read_seq.sv'.
+Back to file '../../../testing/bsg_dmc/sequences/bsg_dmc_seq_pkg.sv'.
+Parsing design file '../../../testing/bsg_dmc/vip/ddr/lpddr_verilog_model/mobile_ddr.v'
+Parsing included file '../../../testing/bsg_dmc/vip/ddr/lpddr_verilog_model/2048Mb_mobile_ddr_parameters.vh'.
+Back to file '../../../testing/bsg_dmc/vip/ddr/lpddr_verilog_model/mobile_ddr.v'.
+Parsing design file '../../../testing/bsg_dmc/tb_top/testbench.sv'
+
+Note-[SV-LCM-PPWI] Package previously wildcard imported
+../../../testing/bsg_dmc/tb_top/testbench.sv, 13
+$unit
+  Package 'uvm_pkg' already wildcard imported. 
+  Ignoring uvm_pkg::*
+  See the System Verilog LRM(1800-2005), section 18.1.
+
+Parsing included file '/gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/uvm_macros.svh'.
+Back to file '../../../testing/bsg_dmc/tb_top/testbench.sv'.
+Parsing included file '../env/bsg_dmc_env.sv'.
+Back to file '../../../testing/bsg_dmc/tb_top/testbench.sv'.
+Parsing included file '../../../testing/bsg_dmc/tests/bsg_dmc_base_test.sv'.
+Back to file '../../../testing/bsg_dmc/tb_top/testbench.sv'.
+Parsing included file '../../../testing/bsg_dmc/tb_top/bsg_dmc_tb_top_signals.vh'.
+Back to file '../../../testing/bsg_dmc/tb_top/testbench.sv'.
+Top Level Modules:
+       bsg_async_fifo__abstract
+       bsg_async_ptr_gray__abstract
+       bsg_launch_sync_sync__abstract
+       bsg_sync_sync__abstract
+       bsg_fifo_1r1w_small__abstract
+       bsg_fifo_1r1w_small_unhardened__abstract
+       bsg_fifo_tracker__abstract
+       bsg_flatten_2D_array__abstract
+       bsg_make_2D_array__abstract
+       bsg_parallel_in_serial_out__abstract
+       bsg_serial_in_parallel_out__abstract
+       bsg_two_fifo__abstract
+       bsg_one_fifo__abstract
+       bsg_dmc__abstract
+       bsg_dmc_clk_rst_gen__abstract
+       bsg_dmc_controller__abstract
+       bsg_dmc_phy__abstract
+       bsg_mem_1r1w__abstract
+       bsg_mem_1r1w_synth__abstract
+       bsg_buf__abstract
+       bsg_circular_ptr__abstract
+       bsg_counter_clock_downsample__abstract
+       bsg_dff__abstract
+       bsg_dff_reset_en__abstract
+       bsg_mux__abstract
+       bsg_mux2_gatestack__abstract
+       bsg_muxi2_gatestack__abstract
+       bsg_nand__abstract
+       bsg_nor3__abstract
+       bsg_reduce__abstract
+       bsg_strobe__abstract
+       bsg_xnor__abstract
+       bsg_counter_clear_up__abstract
+       bsg_dff_reset__abstract
+       bsg_dff_en__abstract
+       bsg_tag_client__abstract
+       bsg_tag_client_unsync__abstract
+       testbench
+TimeScale is 1 ps / 1 ps
+
+Warning-[ENUMASSIGN] Illegal assignment to enum variable
+../../../testing/bsg_dmc/tb_top/testbench.sv, 192
+"testbench.asic_if.app_cmd = 0;"
+  Only expressions of the enum type can be assigned to an enum variable. 
+  The type int is incompatible with the enum 'app_cmd_e'
+  Expression: 0
+  Use the static cast operator to convert the expression to enum type.
+
+Starting vcs inline pass...
+56 unique modules to generate
+recompiling package vcs_paramclassrepository
+recompiling package bsg_dmc_pkg
+recompiling package bsg_tag_pkg
+recompiling module bsg_async_fifo
+recompiling module bsg_async_fifo__abstract
+recompiling module bsg_async_ptr_gray
+recompiling module bsg_async_ptr_gray__abstract
+recompiling module bsg_launch_sync_sync
+recompiling module bsg_launch_sync_sync__abstract
+recompiling module bsg_sync_sync__abstract
+recompiling module bsg_fifo_1r1w_small
+recompiling module bsg_fifo_1r1w_small__abstract
+recompiling module bsg_fifo_1r1w_small_unhardened__abstract
+recompiling module bsg_fifo_tracker__abstract
+recompiling module bsg_flatten_2D_array__abstract
+recompiling module bsg_make_2D_array__abstract
+recompiling module bsg_parallel_in_serial_out
+recompiling module bsg_parallel_in_serial_out__abstract
+recompiling module bsg_serial_in_parallel_out
+recompiling module bsg_serial_in_parallel_out__abstract
+recompiling module bsg_two_fifo__abstract
+recompiling module bsg_one_fifo__abstract
+recompiling module bsg_dmc__abstract
+recompiling module bsg_dmc_clk_rst_gen__abstract
+recompiling module bsg_dmc_controller__abstract
+recompiling module bsg_dmc_phy_bit_slice
+recompiling module bsg_dmc_phy_byte_lane
+recompiling module bsg_dmc_phy
+recompiling module bsg_dmc_phy__abstract
+recompiling module bsg_mem_1r1w__abstract
+recompiling module bsg_mem_1r1w_synth__abstract
+recompiling module bsg_buf__abstract
+recompiling module bsg_circular_ptr__abstract
+recompiling module bsg_counter_clock_downsample__abstract
+recompiling module bsg_dff__abstract
+recompiling module bsg_dff_reset_en__abstract
+recompiling module bsg_mux__abstract
+recompiling module bsg_mux2_gatestack__abstract
+recompiling module bsg_muxi2_gatestack__abstract
+recompiling module bsg_nand__abstract
+recompiling module bsg_nor3__abstract
+recompiling module bsg_reduce__abstract
+recompiling module bsg_strobe__abstract
+recompiling module bsg_xnor__abstract
+recompiling module bsg_counter_clear_up__abstract
+recompiling module bsg_dff_reset__abstract
+recompiling module bsg_dff_en__abstract
+recompiling module bsg_tag_client__abstract
+recompiling module bsg_tag_client_unsync__abstract
+recompiling package uvm_pkg
+50 of 56 modules done
+recompiling package bsg_dmc_params_pkg
+recompiling module bsg_dmc_asic_interface
+recompiling package bsg_dmc_asic_pkg
+recompiling package bsg_dmc_seq_pkg
+recompiling module mobile_ddr
+recompiling module testbench
+All of 56 modules done
+make[1]: Entering directory `/mnt/users/ssd1/homes/akashs3/basejump_stl/testing/bsg_dmc/simv/csrc' \
+
+rm -f _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
+g++ -w  -pipe -fPIC -O -I/gro/cad/synopsys/vcs/L-2016.06-SP2-15/include    -c /gro/cad/synopsys/vcs/L-2016.06-SP2-15/etc/uvm/src/dpi/uvm_dpi.cc \
+
+if [ -x ../simv ]; then chmod -x ../simv; fi
+g++  -o ../simv   -Wl,-rpath-link=./ -Wl,-rpath='$ORIGIN'/simv.daidir/ -Wl,-rpath=./simv.daidir/ \
+-Wl,-rpath='$ORIGIN'/simv.daidir//scsim.db.dir  -rdynamic  uvm_dpi.o   objs/amcQw_d.o \
+_29369_archive_1.so  SIM_l.o      rmapats_mop.o rmapats.o rmar.o  rmar_llvm_0_1.o \
+rmar_llvm_0_0.o          /gro/cad/synopsys/vcs/L-2016.06-SP2-15/linux64/lib/libzerosoft_rt_stubs.so \
+/gro/cad/synopsys/vcs/L-2016.06-SP2-15/linux64/lib/libvirsim.so /gro/cad/synopsys/vcs/L-2016.06-SP2-15/linux64/lib/liberrorinf.so \
+/gro/cad/synopsys/vcs/L-2016.06-SP2-15/linux64/lib/libsnpsmalloc.so /gro/cad/synopsys/vcs/L-2016.06-SP2-15/linux64/lib/libvfs.so \
+/gro/cad/synopsys/vcs/L-2016.06-SP2-15/linux64/lib/libvcsnew.so /gro/cad/synopsys/vcs/L-2016.06-SP2-15/linux64/lib/libsimprofile.so \
+/gro/cad/synopsys/vcs/L-2016.06-SP2-15/linux64/lib/libuclinative.so   -Wl,-whole-archive \
+/gro/cad/synopsys/vcs/L-2016.06-SP2-15/linux64/lib/libvcsucli.so -Wl,-no-whole-archive \
+./../simv.daidir/vc_hdrs.o    /gro/cad/synopsys/vcs/L-2016.06-SP2-15/linux64/lib/vcs_save_restore_new.o \
+-ldl  -lc -lm -lpthread -ldl 
+../simv up to date
+make[1]: Leaving directory `/mnt/users/ssd1/homes/akashs3/basejump_stl/testing/bsg_dmc/simv/csrc' \
+
+CPU time: 5.304 seconds to compile + .379 seconds to elab + .284 seconds to link

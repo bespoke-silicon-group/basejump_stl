@@ -16,7 +16,7 @@ class bsg_dmc_asic_agent extends uvm_agent;
 	//Register with factory
   	`uvm_component_utils(bsg_dmc_asic_agent);
 
-	//bsg_dmc_asic_driver asic_driver;
+	bsg_dmc_asic_driver asic_driver;
 	bsg_dmc_asic_sequencer asic_sequencer;
 	//bsg_dmc_asic_monitor asic_monitor;
 	
@@ -31,13 +31,13 @@ endclass: bsg_dmc_asic_agent
 
 function void bsg_dmc_asic_agent::build_phase (uvm_phase phase);
 
-	//asic_driver = bsg_dmc_asic_driver::type_id::create("asic_driver", this);
+	asic_driver = bsg_dmc_asic_driver::type_id::create("asic_driver", this);
 	asic_sequencer = bsg_dmc_asic_sequencer::type_id::create("asic_sequencer", this);
 
 endfunction
 
 function void bsg_dmc_asic_agent::connect_phase (uvm_phase phase);
 	//Connect sequencer to driver for transmitting transaction packets.
-    //asic_driver.seq_item_port.connect(asic_sequencer.seq_item_export);
+    asic_driver.seq_item_port.connect(asic_sequencer.seq_item_export);
 	
 endfunction

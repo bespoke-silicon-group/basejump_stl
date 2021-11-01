@@ -1,0 +1,54 @@
+Name:	dve.exe
+Umask:	0002
+State:	S (sleeping)
+Tgid:	36154
+Ngid:	36154
+Pid:	36154
+PPid:	35945
+TracerPid:	0
+Uid:	1044	1044	1044	1044
+Gid:	1053	1053	1053	1053
+FDSize:	256
+Groups:	1002 1053 
+NStgid:	36154
+NSpid:	36154
+NSpgid:	35939
+NSsid:	89477
+VmPeak:	  460856 kB
+VmSize:	  396532 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  115672 kB
+VmRSS:	  115184 kB
+RssAnon:	   54440 kB
+RssFile:	   60744 kB
+RssShmem:	       0 kB
+VmData:	   90464 kB
+VmStk:	     828 kB
+VmExe:	   58028 kB
+VmLib:	   30592 kB
+VmPTE:	     496 kB
+VmSwap:	       0 kB
+HugetlbPages:	       0 kB
+CoreDumping:	0
+Threads:	2
+SigQ:	0/3089985
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000000010400
+SigIgn:	0000000000001006
+SigCgt:	00000001c3b06ef9
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	0000003fffffffff
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	0
+Speculation_Store_Bypass:	thread vulnerable
+Cpus_allowed:	ffff,ffffffff,ffffffff,ffffffff,ffffffff
+Cpus_allowed_list:	0-143
+Mems_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,0000000f
+Mems_allowed_list:	0-3
+voluntary_ctxt_switches:	11749
+nonvoluntary_ctxt_switches:	78
