@@ -39,7 +39,6 @@ bsg_mem_1r1w_sync_template = """
         $error("BSG ERROR: enable_clock_gating_p is set but unsupported");
       if (disable_collision_warning_p && !{disable_collision_warning_en})
         $warning("BSG ERROR: disable_collision_warning_p is set but unsupported");
-      // {latch_last_read_en} is not supported in any configuration
     end
     // synopsys translate_on
 
@@ -101,7 +100,6 @@ bsg_mem_1r1w_sync_mask_write_bit_template = """
         $error("BSG ERROR: enable_clock_gating_p is set but unsupported");
       if (disable_collision_warning_p && !{disable_collision_warning_en})
         $warning("BSG ERROR: disable_collision_warning_p is set but unsupported");
-      // {latch_last_read_en} is not supported in any configuration
     end
     // synopsys translate_on
 
@@ -164,7 +162,6 @@ bsg_mem_1r1w_sync_mask_write_byte_template = """
         $error("BSG ERROR: enable_clock_gating_p is set but unsupported");
       if (disable_collision_warning_p && !{disable_collision_warning_en})
         $warning("BSG ERROR: disable_collision_warning_p is set but unsupported");
-      // {latch_last_read_en} is not supported in any configuration
     end
     // synopsys translate_on
 
@@ -667,8 +664,6 @@ bsg_mem_3r1w_sync_template = """
 
 def print_ram(
     memgen_json,
-    filename,
-    template,
     ports,
     mask,
     read_write_same_addr_en,
@@ -693,12 +688,16 @@ def print_ram(
         "awbanks": 1,
     }
 
-    if mask == 0:
+    if int(mask) == 0:
         maskstr = ""
-    elif mask == 1:
+    elif int(mask) == 1:
         maskstr = "_mask_write_bit"
-    elif mask == 8:
+    elif int(mask) == 8:
         maskstr = "_mask_write_byte"
+
+    template = globals()[
+        "bsg_mem_{ports}_sync{maskstr}_template".format(ports=ports, maskstr=maskstr)
+    ]
 
     memgen_cfg = ""
     for m in memgen_json["memories"]:
@@ -708,9 +707,9 @@ def print_ram(
         if c["ports"] != ports:
             continue
 
-        if c["adbanks"] != 1 or c["awbanks"] != 1:
+        if int(c["adbanks"]) != 1 or int(c["awbanks"]) != 1:
             memgen_cfg += "\t`bsg_mem_{ports}{maskstr}_sync_banked_macro({depth},{width},{awbanks},{adbanks}) else\n".format(
-                ports=c["ports"],
+                ports=ports,
                 maskstr=maskstr,
                 depth=c["depth"],
                 width=c["width"],
@@ -719,7 +718,7 @@ def print_ram(
             )
 
         memgen_cfg += "\t`bsg_mem_{ports}_sync{maskstr}_{_type}_macro({depth},{width},{mux}) else\n".format(
-            ports=c["ports"],
+            ports=ports,
             maskstr=maskstr,
             depth=c["depth"] / c["adbanks"],
             width=c["width"] / c["awbanks"],
@@ -727,26 +726,22 @@ def print_ram(
             _type=c["type"],
         )
 
-
-    with open(filename, "w+") as f:
-        print(
-            template.format(
-                sram_cfg=memgen_cfg,
-                read_write_same_addr_en=read_write_same_addr_en,
-                enable_clock_gating_en=enable_clock_gating_en,
-                disable_collision_warning_en=disable_collision_warning_en,
-                latch_last_read_en=latch_last_read_en,
-            ), file=f
+    print(
+        template.format(
+            sram_cfg=memgen_cfg,
+            read_write_same_addr_en=read_write_same_addr_en,
+            enable_clock_gating_en=enable_clock_gating_en,
+            disable_collision_warning_en=disable_collision_warning_en,
+            latch_last_read_en=latch_last_read_en,
         )
+    )
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("memgen_json", help="The memgen.json file to parse")
-    parser.add_argument(
-        "directory", metavar="d", 
-        help="The output directory for the hardened SRAM wrappers"
-    )
+    parser.add_argument("ports", help="The xryw port configuration for the SRAM")
+    parser.add_argument("mask", help="The SRAM mask")
     parser.add_argument(
         "--read_write_same_addr_en",
         action="store_true",
@@ -771,123 +766,10 @@ if __name__ == "__main__":
 
     print_ram(
         args.memgen_json,
-        os.path.join(args.directory, "bsg_mem_1rw_sync.v"),
-        bsg_mem_1rw_sync_template,
-        "1rw",
-        0,
+        args.ports,
+        args.mask,
         args.read_write_same_addr_en,
         args.enable_clock_gating_en,
         args.disable_collision_warning_en,
         args.latch_last_read_en,
     )
-    print_ram(
-        args.memgen_json,
-        os.path.join(args.directory, "bsg_mem_1rw_sync_mask_write_bit.v"),
-        bsg_mem_1rw_sync_mask_write_bit_template,
-        "1rw",
-        1,
-        args.read_write_same_addr_en,
-        args.enable_clock_gating_en,
-        args.disable_collision_warning_en,
-        args.latch_last_read_en,
-    )
-    print_ram(
-        args.memgen_json,
-        os.path.join(args.directory, "bsg_mem_1rw_sync_mask_write_byte.v"),
-        bsg_mem_1rw_sync_mask_write_byte_template,
-        "1rw",
-        8,
-        args.read_write_same_addr_en,
-        args.enable_clock_gating_en,
-        args.disable_collision_warning_en,
-        args.latch_last_read_en,
-    )
-    print_ram(
-        args.memgen_json,
-        os.path.join(args.directory, "bsg_mem_2rw_sync_mask_write_byte.v"),
-        bsg_mem_2rw_sync_mask_write_byte_template,
-        "2rw",
-        0,
-        args.read_write_same_addr_en,
-        args.enable_clock_gating_en,
-        args.disable_collision_warning_en,
-        args.latch_last_read_en,
-    )
-    print_ram(
-        args.memgen_json,
-        os.path.join(args.directory, "bsg_mem_2rw_sync_mask_write_bit.v"),
-        bsg_mem_2rw_sync_mask_write_bit_template,
-        "2rw",
-        1,
-        args.read_write_same_addr_en,
-        args.enable_clock_gating_en,
-        args.disable_collision_warning_en,
-        args.latch_last_read_en,
-    )
-    print_ram(
-        args.memgen_json,
-        os.path.join(args.directory, "bsg_mem_2rw_sync_mask_write_byte.v"),
-        bsg_mem_2rw_sync_mask_write_byte_template,
-        "2rw",
-        8,
-        args.read_write_same_addr_en,
-        args.enable_clock_gating_en,
-        args.disable_collision_warning_en,
-        args.latch_last_read_en,
-    )
-    print_ram(
-        args.memgen_json,
-        os.path.join(args.directory, "bsg_mem_1r1w_sync.v"),
-        bsg_mem_1r1w_sync_template,
-        "1r1w",
-        0,
-        args.read_write_same_addr_en,
-        args.enable_clock_gating_en,
-        args.disable_collision_warning_en,
-        args.latch_last_read_en,
-    )
-    print_ram(
-        args.memgen_json,
-        os.path.join(args.directory, "bsg_mem_1r1w_sync_mask_write_bit.v"),
-        bsg_mem_1r1w_sync_mask_write_bit_template,
-        "1r1w",
-        1,
-        args.read_write_same_addr_en,
-        args.enable_clock_gating_en,
-        args.disable_collision_warning_en,
-        args.latch_last_read_en,
-    )
-    print_ram(
-        args.memgen_json,
-        os.path.join(args.directory, "bsg_mem_1r1w_sync_mask_write_byte.v"),
-        bsg_mem_1r1w_sync_mask_write_byte_template,
-        "1r1w",
-        8,
-        args.read_write_same_addr_en,
-        args.enable_clock_gating_en,
-        args.disable_collision_warning_en,
-        args.latch_last_read_en,
-    )
-    print_ram(
-        args.memgen_json,
-        os.path.join(args.directory, "bsg_mem_2r1w_sync.v"),
-        bsg_mem_2r1w_sync_template,
-        "2r1w",
-        0,
-        args.read_write_same_addr_en,
-        args.enable_clock_gating_en,
-        args.disable_collision_warning_en,
-        args.latch_last_read_en,
-    )
-    print_ram(
-        args.memgen_json,
-        os.path.join(args.directory, "bsg_mem_1rw_sync_mask.v"),
-        bsg_mem_3r1w_sync_template,
-        "3r1w",
-        0,
-        args.read_write_same_addr_en,
-        args.enable_clock_gating_en,
-        args.disable_collision_warning_en,
-        args.latch_last_read_en,
-    )
-
