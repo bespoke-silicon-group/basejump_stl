@@ -708,7 +708,7 @@ def print_ram(
             continue
 
         if int(c["adbanks"]) != 1 or int(c["awbanks"]) != 1:
-            memgen_cfg += "\t`bsg_mem_{ports}{maskstr}_sync_banked_macro({depth},{width},{awbanks},{adbanks}) else\n".format(
+            memgen_cfg += "\t`bsg_mem_{ports}_sync{maskstr}_banked_macro({depth},{width},{awbanks},{adbanks}) else\n".format(
                 ports=ports,
                 maskstr=maskstr,
                 depth=c["depth"],
