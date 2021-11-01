@@ -223,13 +223,13 @@ def create_cfg(memgen_json):
 
     if c["mask"] == 0:
         template = nomask_template
-        maskstr = ""
+        c["maskstr"] = ""
     elif c["mask"] == 1:
         template = bitmask_template
-        maskstr = "_mask_write_bit"
+        c["maskstr"] = "_mask_write_bit"
     elif c["mask"] == 8:
         template = bytemask_template
-        maskstr = "_mask_write_byte"
+        c["maskstr"] = "_mask_write_byte"
 
     memgen_cfg = ""
     for m in memgen_json["memories"]:
@@ -238,18 +238,12 @@ def create_cfg(memgen_json):
         if c["ports"] != "1r1w":
             continue
         if c["adbanks"] != 1 or c["awbanks"] != 1:
-            memgen_cfg += "\t`bsg_mem_{ports}{maskstr}_sync_banked_macro({depth},{width},{awbanks},{adbanks}) else\n".format(
-                ports=c["ports"],
-                maskstr=maskstr,
-                depth=c["depth"],
-                width=c["width"],
-                awbanks=c["awbanks"],
-                adbanks=c["adbanks"],
-            )
+            print("Banking is not currently supported for 1r1w");
+            exit()
 
         memgen_cfg += "\t`bsg_mem_{ports}_sync{maskstr}_{_type}_macro({depth},{width},{mux}) else\n".format(
             ports=c["ports"]
-            maskstr=maskstr,
+            maskstr=c["maskstr"],
             depth=c["depth"] / c["adbanks"],
             width=c["width"] / c["awbanks"],
             mux=c["mux"],

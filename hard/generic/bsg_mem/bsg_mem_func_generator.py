@@ -8,8 +8,8 @@ import json
 def print_hard(cfg,):
     print(
         """
-  module bsg_mem_{ports}_sync{mask_str}_w{width_p}_d{depth_p}_m{mux_p}_hard;
-      bsg_mem_{ports}_sync{mask_str}_synth #(
+  module bsg_mem_{ports}_sync{maskstr}_w{width_p}_d{depth_p}_m{mux_p}_hard;
+      bsg_mem_{ports}_sync{maskstr}_synth #(
         .width_p({width_p})
         ,.els_p({depth_p})
       ) func (.*);
@@ -17,10 +17,10 @@ def print_hard(cfg,):
   
   """.format(
             ports=cfg["ports"],
+            maskstr=cfg["maskstr"],
             width_p=cfg["width"] / cfg["awbanks"],
             depth_p=cfg["depth"] / cfg["adbanks"],
             mux_p=cfg["mux"],
-            mask_str=cfg["mask_str"],
         )
     )
 
@@ -48,11 +48,11 @@ def create_rams(memgen_json):
         c = memgen_defaults.copy()
         c.update(m)
         if c["mask"] == 8:
-            c["mask_str"] = "_mask_write_byte"
+            c["maskstr"] = "_mask_write_byte"
         elif c["mask"] == 1:
-            c["mask_str"] = "_mask_write_bit"
+            c["maskstr"] = "_mask_write_bit"
         else:
-            c["mask_str"] = ""
+            c["maskstr"] = ""
         print_hard(c)
 
     return memgen_cfg

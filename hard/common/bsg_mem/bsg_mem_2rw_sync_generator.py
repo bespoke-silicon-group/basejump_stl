@@ -234,13 +234,13 @@ def create_cfg(memgen_json):
 
     if c["mask"] == 0:
         template = nomask_template
-        maskstr = ""
+        c["maskstr"] = ""
     elif c["mask"] == 1:
         template = bitmask_template
-        maskstr = "_mask_write_bit"
+        c["maskstr"] = "_mask_write_bit"
     elif c["mask"] == 8:
         template = bytemask_template
-        maskstr = "_mask_write_byte"
+        c["maskstr"] = "_mask_write_byte"
 
     memgen_cfg = ""
     for m in memgen_json["memories"]:
@@ -253,7 +253,7 @@ def create_cfg(memgen_json):
             exit()
         memgen_cfg += "\t`bsg_mem_{ports}_sync{maskstr}_{_type}_macro({depth},{width},{mux}) else\n".format(
             ports=c["ports"],
-            maskstr=maskstr,
+            maskstr=c["maskstr"],
             depth=c["depth"] / c["adbanks"],
             width=c["width"] / c["awbanks"],
             mux=c["mux"],
