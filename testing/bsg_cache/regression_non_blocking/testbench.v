@@ -2,6 +2,7 @@
  *  testbench.v
  */
 
+`include "bsg_cache_non_blocking.vh"
 
 module testbench();
   import bsg_cache_non_blocking_pkg::*;

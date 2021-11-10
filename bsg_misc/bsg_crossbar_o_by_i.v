@@ -14,8 +14,7 @@ module bsg_crossbar_o_by_i #( parameter `BSG_INV_PARAM(i_els_p)
 
   genvar lineout;
 
-  for(lineout=0; lineout<o_els_p; lineout++)
-  begin
+  for(lineout=0; lineout<o_els_p; lineout++) begin: l
     bsg_mux_one_hot #( .width_p(width_p)
                       ,.els_p  (i_els_p)
                      ) mux_one_hot
