@@ -67,15 +67,15 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0)
    //if the divisor is zero
    wire         zero_divisor_li   =  ~(| opA_r);
 
-   wire         opA_sel_lo;
+   wire [1:0]   opA_sel_lo;
    wire [width_p:0]  opA_mux;
    wire [width_p:0]  add_out;
-   bsg_mux  #(.width_p(width_p+1), .els_p(2)) muxA
-       (.data_i({ {divisor_msb, divisor_i}, add_out } )
-       ,.data_o(opA_mux)
-       ,.sel_i(opA_sel_lo)
+   bsg_mux_one_hot #(.width_p(width_p+1), .els_p(2)) muxA
+          ( .data_i({ {divisor_msb, divisor_i}, add_out } )
+           ,.data_o(  opA_mux )
+           ,.sel_one_hot_i(opA_sel_lo)
      );
-
+    
    wire [2:0]   opB_sel_lo;
    wire [width_p:0]  opB_mux;
    bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxB
