@@ -221,12 +221,14 @@ module testbench();
 	    dmc_p.twtr = 7;
 	    dmc_p.trtp = 10;
 	    dmc_p.tcas = 3;
+		// TODO: akashs3: bank/row/col widths are specific to x16 DDR. Randomise them while verifying for various mem configurations.
 	    dmc_p.col_width = 11;
 	    dmc_p.row_width = 14;
 	    dmc_p.bank_width = 2;
+	    dmc_p.bank_pos = 25;// col_width + row_width
+
 	    dmc_p.dqs_sel_cal = 3;
 	    dmc_p.init_cycles = 40010;
-	    dmc_p.bank_pos = 25;
 	    force dmc_inst.dmc_clk_rst_gen.btc_async_reset.tag_data_reg.data_r = 0;
 	    force dmc_inst.dmc_clk_rst_gen.dly_lines[0].dly_line_inst.ctrl_rrr = 31;
 	    force dmc_inst.dmc_clk_rst_gen.dly_lines[1].dly_line_inst.ctrl_rrr = 31;

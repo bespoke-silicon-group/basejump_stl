@@ -9,7 +9,7 @@ package bsg_dmc_asic_pkg;
 
 	`include "bsg_dmc_asic_transaction.sv"
 	`include "bsg_dmc_asic_driver.sv"
-	//`include "bsg_dmc_asic_monitor.sv"
+	`include "bsg_dmc_asic_monitor.sv"
 	`include "bsg_dmc_asic_agent.sv"
 
 endpackage: bsg_dmc_asic_pkg

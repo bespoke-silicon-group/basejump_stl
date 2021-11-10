@@ -18,14 +18,22 @@ ELABORATE_OPTIONS += -timescale=1ns/100ps
 ELABORATE_OPTIONS += -assert svaext
 #TODO: akashs3 randomise the BFM to be fetched over time for below define.
 ELABORATE_OPTIONS += +define+den2048Mb+sg5+x16+FULL_MEM
-RUN_OPTIONS = 
+
+ifdef scenario
+		RUN_OPTIONS += +scenario=$(scenario)
+endif
+
+ifdef addr
+		RUN_OPTIONS += +addr=$(addr)
+endif
 
 elaborate: 
+	echo " scenario=$(scenario)"
 	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -f filelist.lst -l $@.log $(BASEJUMP_STL_DIR)/testing/bsg_dmc/tb_top/testbench.sv
 	touch $@
 
 run:
-	./simv $(RUN_OPTIONS) -l $@.log
+	./simv $(RUN_OPTIONS) -l $@.log +scenario=$(scenario)
 	touch $@
 
 dve:

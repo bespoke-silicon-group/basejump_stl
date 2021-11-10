@@ -1,6 +1,7 @@
   parameter clk_gen_num_adgs_p = 1;
+  //address format: {bank_addr, row_addr, col_addr}
   parameter ui_addr_width_p    = 28;
-  parameter ui_data_width_p    = 64;
+  parameter ui_data_width_p    = 32;
   parameter ui_burst_length_p  = 8;
   parameter dq_data_width_p    = 32;
   parameter cmd_afifo_depth_p  = 4;

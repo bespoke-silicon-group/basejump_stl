@@ -7,7 +7,6 @@
 // ORGANIZATION: Bespoke Silicon Group, University of Washington
 //      CREATED: 10/08/21
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
 class bsg_dmc_base_test extends uvm_test;
 
 	//Register with factory
@@ -15,14 +14,18 @@ class bsg_dmc_base_test extends uvm_test;
 	`bsg_log_utils("TEST/BASE")
 
 	bsg_dmc_env env;
-	bsg_dmc_write_seq write_seq;
-	bsg_dmc_read_seq read_seq;
+
+	local bit [ui_addr_width_p - 1 : 0] addr;
+	local bit rand_addr=1;
+	local string scenario="write";
 
 	function new(string name = "bsg_dmc_base_test", uvm_component parent = null);
     	super.new(name, parent);
   	endfunction
 
+	extern virtual function read_plusargs();
 	extern virtual function void build_phase(uvm_phase phase);
+
 	extern virtual task run_phase(uvm_phase phase);
 
 endclass: bsg_dmc_base_test
@@ -31,7 +34,9 @@ function void bsg_dmc_base_test::build_phase(uvm_phase phase);
 	env = bsg_dmc_env::type_id::create("bsg_dmc_base_test", this);
 endfunction
 
-task bsg_dmc_base_test::run_phase(uvm_phase phase)  ;
+task bsg_dmc_base_test::run_phase(uvm_phase phase);
+	bsg_dmc_top_seq top_seq;
+
     phase.raise_objection( this, "Starting DMC test run phase" );
 	
 	//Wait for initialisation to complete
@@ -39,20 +44,26 @@ task bsg_dmc_base_test::run_phase(uvm_phase phase)  ;
 	wait(testbench.init_calib_complete);
 	uvm_top.print_topology();
 	`uvm_info(msg_id, "Initialisation complete and the DUT is up. Will trigger scenarios now", UVM_NONE)
+	read_plusargs();
 
-	write_seq = bsg_dmc_write_seq::type_id::create("write_seq");
-	//write_seq.set_params(.cmd(WR), .addr(8));
-	write_seq.set_burst_length(ui_burst_length_p);
-	write_seq.sqr = env.asic_agent.asic_sequencer;
-	write_seq.start(env.asic_agent.asic_sequencer);
+	top_seq = bsg_dmc_top_seq::type_id::create("top_seq");
+	top_seq.rand_addr = rand_addr;
+	top_seq.addr =  addr;
+	top_seq.scenario = scenario;
+	top_seq.sqr = env.asic_agent.asic_sequencer;
+	top_seq.set_addr_params(.row_width(testbench.dmc_p.row_width), .col_width(testbench.dmc_p.col_width), .bank_width(testbench.dmc_p.bank_width));
+	top_seq.start(null);
 
-	//temp delay. will remove once stimulus gen is better setup.
-	#1us;
-
-	read_seq = bsg_dmc_read_seq::type_id::create("read_seq");
-	//write_seq.set_params(.cmd(WR), .addr(8));
-	read_seq.set_burst_length(ui_burst_length_p);
-	read_seq.sqr = env.asic_agent.asic_sequencer;
-	read_seq.start(env.asic_agent.asic_sequencer);
     phase.drop_objection( this , "Finished DMC test run phase" );
-endtask		
+endtask
+
+function bsg_dmc_base_test::read_plusargs();
+	if($value$plusargs("addr=%d", addr)) begin
+		rand_addr = 0;
+		`uvm_info(get_full_name(), $sformatf("Plusarg received: addr= %d", addr), UVM_MEDIUM)
+	end
+
+	if($value$plusargs("scenario=%s", scenario)) begin
+		`uvm_info(get_full_name(), $sformatf("Plusarg received: Scenario= %s", scenario), UVM_MEDIUM)
+	end
+endfunction

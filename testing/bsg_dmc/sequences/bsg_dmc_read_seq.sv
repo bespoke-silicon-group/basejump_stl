@@ -13,18 +13,14 @@ class bsg_dmc_read_seq extends uvm_sequence;
 	`uvm_object_utils(bsg_dmc_read_seq)
 
 	bsg_dmc_asic_transaction txn;
-	bsg_dmc_asic_sequencer sqr;
 
-	local bit [ui_burst_length_p-1:0][ui_mask_width_lp -1 :0] wmask;
-	local bit [ui_burst_length_p-1:0][ui_data_width_p-1:0] wdata;
 	local int unsigned burst_length;
 
-	function new(string name = "bsg_dmc_cmd_seq");
+	function new(string name = "bsg_dmc_read_seq");
 		super.new(name);
 	endfunction: new
 
 	extern virtual function set_burst_length (int unsigned burst_length);
-	extern virtual task start_cmd_seq();
 	extern virtual task start_reading( bit last_packet=0);
 	extern virtual task body();
 
@@ -37,7 +33,6 @@ endfunction
 task bsg_dmc_read_seq::body();
 
 	`uvm_info(get_full_name(), "Starting read sequence", UVM_MEDIUM)
-	start_cmd_seq();
 	
 	for(int i=0;i< burst_length; i++) begin
 		bit last_packet;
@@ -51,13 +46,6 @@ task bsg_dmc_read_seq::body();
 	`uvm_info(get_full_name(), "Exiting read sequence", UVM_MEDIUM)
 
 endtask:body
-
-task bsg_dmc_read_seq::start_cmd_seq();
-	bsg_dmc_cmd_seq cmd_seq;
-	cmd_seq = bsg_dmc_cmd_seq::type_id::create("cmd_seq");
-	cmd_seq.set_params(.cmd(RD), .addr(8));
-	cmd_seq.start(sqr);
-endtask
 
 task bsg_dmc_read_seq::start_reading(bit last_packet=0);
 	
