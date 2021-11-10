@@ -144,7 +144,7 @@ module bsg_fifo_1r1w_small_hardened_test_node
         if (node_reset_i)
             error_o <= 0;
         else
-            if (resp_in_v && data_check != resp_in_data)
+            if (resp_in_v && data_check !== resp_in_data)
               begin
                 $error("%m mismatched resp data %x %x",data_check, resp_in_data);
                 error_o <= 1;

@@ -1,9 +1,10 @@
 First time run of test
 
 $ cd basejump_stl/testing/bsg_dataflow/bsg_fifo_1r1w_small_hardened
-$ git clone https://bitbucket.org/taylor-bsg/bsg_cadenv.git ../../../../bsg_cadenv
+$ git clone https://github.com/bespoke-silicon-group/bsg_cadenv.git ../../../../bsg_cadenv
 $ make run
-$ make view
+$ make clean
+$ make run-one-clock
 
 
 Clean generated files

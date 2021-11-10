@@ -1,3 +1,6 @@
+
+`include "bsg_cache_non_blocking.vh"
+
 module tag_checker 
   import bsg_cache_non_blocking_pkg::*;
   #(parameter `BSG_INV_PARAM(id_width_p)

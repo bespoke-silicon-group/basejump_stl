@@ -10,7 +10,7 @@
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_cache_non_blocking.vh"
 
 module bsg_cache_non_blocking 
   import bsg_cache_non_blocking_pkg::*;
