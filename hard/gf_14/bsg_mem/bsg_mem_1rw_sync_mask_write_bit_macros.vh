@@ -2,10 +2,10 @@
 `ifndef BSG_MEM_1RW_SYNC_MASK_WRITE_BIT_MACROS
 `define BSG_MEM_1RW_SYNC_MASK_WRITE_BIT_MACROS
 
-`define bsg_mem_1rw_sync_mask_write_bit_1rf_macro(words,bits,mux) \
+`define bsg_mem_1rw_sync_mask_write_bit_1rf_macro(words,bits,tag) \
   if (harden_p && els_p == words && width_p == bits)          \
     begin: macro                                              \
-      gf14_1rw_d``words``_w``bits``_m``mux``_bit_1rf          \
+      gf14_1rw_d``words``_w``bits``_``tag``_bit_1rf          \
         mem                                                   \
           ( .CLK   ( clk_i     )                              \
           , .A     ( addr_i    )                              \
@@ -22,10 +22,10 @@
           );                                                  \
     end: macro
 
-`define bsg_mem_1rw_sync_mask_write_bit_1sram_macro(words,bits,mux) \
+`define bsg_mem_1rw_sync_mask_write_bit_1sram_macro(words,bits,tag) \
   if (harden_p && els_p == words && width_p == bits)          \
     begin: macro                                              \
-      gf14_1rw_d``words``_w``bits``_m``mux``_bit_1sram        \
+      gf14_1rw_d``words``_w``bits``_``tag``_bit_1sram        \
         mem                                                   \
           ( .CLK   ( clk_i     )                              \
           , .A     ( addr_i    )                              \

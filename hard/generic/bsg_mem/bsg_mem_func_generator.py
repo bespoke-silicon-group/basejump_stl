@@ -8,7 +8,7 @@ import json
 def print_hard(cfg,):
     print(
         """
-  module bsg_mem_{ports}_sync{maskstr}_w{width_p}_d{depth_p}_m{mux_p}_hard;
+  module bsg_mem_{ports}_sync{maskstr}_w{width_p}_d{depth_p}_m{tag_p}_hard;
       bsg_mem_{ports}_sync{maskstr}_synth #(
         .width_p({width_p})
         ,.els_p({depth_p})
@@ -20,7 +20,7 @@ def print_hard(cfg,):
             maskstr=cfg["maskstr"],
             width_p=cfg["width"] / cfg["awbanks"],
             depth_p=cfg["depth"] / cfg["adbanks"],
-            mux_p=cfg["mux"],
+            tag_p=cfg["tag"],
         )
     )
 
@@ -36,7 +36,7 @@ def create_rams(memgen_json):
         "type": "xrf",
         "width": -1,
         "depth": -1,
-        "mux": -1,
+        "tag": -1,
         # Defaults
         "mask": 0,
         "adbanks": 1,

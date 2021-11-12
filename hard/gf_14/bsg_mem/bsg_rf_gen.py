@@ -92,7 +92,7 @@ fab = "gf_14"
 #nand2 = "NAND2X2 #0 (.A (#1), .B (#2), .Y (#3)                  );"
 #inv   = "INVX8   #0 (.A (#1), .Y(#2)                            );"
 #invx3 = "INVX3   #0 (.A (#1), .Y(#2)                            );"
-dffe = "wire tmp_bsg_dffe1_#0;\n SC7P5T_MUX2X1_SSC14SL #0_bsg_mux (.S(#2), .D0(#4), .D1(#1), .Z(tmp_bsg_dffre1_#0)); SC7P5T_DFFQX1_SSC14SL #0 (.D(tmp_bsg_dffre1_#0), .CLK(#3) .Q(#4));"
+dffe = "wire tmp_bsg_dffe1_#0;\n SC7P5T_MUX2X1_SSC14SL #0_bsg_tag (.S(#2), .D0(#4), .D1(#1), .Z(tmp_bsg_dffre1_#0)); SC7P5T_DFFQX1_SSC14SL #0 (.D(tmp_bsg_dffre1_#0), .CLK(#3) .Q(#4));"
 aoi22 = "SC7P5T_AOI22X1_SSC14SL #0 (.A1(#1), .A2(#2), .B1(#3), .B2(#4), .Z(#5));"
 nand4 = "SC7P5T_ND4X2_SSC14SL #0 (.A(#1), .B(#2), .C(#3), .D(#4), .Z(#5));"
 nor2 = "SC7P5T_NR2X2_SSC14SL #0 (.A(#1), .B(#2), .Z(#3));"
@@ -251,7 +251,7 @@ def generate_Nr1w_array ( words, bits, readports) :
     assert (words == 32 or words == 16 or words == 8), "only words == 32,16, and 8 is currently handled";
 
     # get the maximum width of a cell that is not the dffe
-    # mux_width = max([v for k,v in width.iteritems() if k not in ('dffe')])
+    # tag_width = max([v for k,v in width.iteritems() if k not in ('dffe')])
 
     module_name = ident_name_word_bit("bsg_rp_"+fab+"_rf",words,bits) + "_" + str(readports) + "r1w";
 
@@ -283,7 +283,7 @@ def generate_Nr1w_array ( words, bits, readports) :
         column=column+1
 
 
-        # then muxes, one for each port
+        # then tages, one for each port
         for p in range(0,readports) :
             gate_dict = {};
 
