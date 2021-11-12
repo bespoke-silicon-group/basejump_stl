@@ -2,10 +2,10 @@
 `ifndef BSG_MEM_1R1W_SYNC_MACROS_VH
 `define BSG_MEM_1R1W_SYNC_MACROS_VH
 
-`define bsg_mem_1r1w_sync_2rf_macro(words,bits,mux)\
+`define bsg_mem_1r1w_sync_2rf_macro(words,bits,tag)\
   if (harden_p && els_p == words && width_p == bits)          \
     begin: macro                                              \
-    gf14_1r1w_d``words``_w``bits``_m``mux``_2rf               \
+    gf14_1r1w_d``words``_w``bits``_``tag``_2rf               \
       mem (                                                   \
       .CLKA   (clk_i)                                         \
       ,.CLKB  (clk_i)                                         \
@@ -23,10 +23,10 @@
     );                                                        \
   end
 
-`define bsg_mem_1r1w_sync_2sram_macro(words,bits,mux)\
+`define bsg_mem_1r1w_sync_2sram_macro(words,bits,tag)\
   if (harden_p && els_p == words && width_p == bits)          \
     begin: macro                                              \
-    gf14_1r1w_d``words``_w``bits``_m``mux``_2sram             \
+    gf14_1r1w_d``words``_w``bits``_``tag``_2sram             \
       mem (                                                   \
       .CLKA   (clk_i)                                         \
       ,.CLKB  (clk_i)                                         \

@@ -688,11 +688,13 @@ def print_ram(
         "type": "xrf",
         "width": -1,
         "depth": -1,
-        "mux": -1,
         # Defaults
         "mask": 0,
         "adbanks": 1,
         "awbanks": 1,
+        "mux": "",
+        "seg": "",
+        "tag": "",
     }
 
     if int(mask) == 0:
@@ -714,6 +716,13 @@ def print_ram(
         if c["ports"] != ports:
             continue
 
+        # Default tag is m<mux><seg> e.g. m2s, m2f
+        if c["tag"] == "":
+            if c["mux"] != "":
+                c["tag"] += "m{mux}".format(mux=c["mux"])
+            if c["seg"] != "":
+                c["tag"] += "s{seg}".format(seg=c["seg"])
+
         if int(c["adbanks"]) != 1 or int(c["awbanks"]) != 1:
             memgen_cfg += "\t`bsg_mem_{ports}_sync{maskstr}_banked_macro({depth},{width},{awbanks},{adbanks}) else\n".format(
                 ports=ports,
@@ -724,12 +733,12 @@ def print_ram(
                 adbanks=c["adbanks"],
             )
 
-        memgen_cfg += "\t`bsg_mem_{ports}_sync{maskstr}_{_type}_macro({depth},{width},{mux}) else\n".format(
+        memgen_cfg += "\t`bsg_mem_{ports}_sync{maskstr}_{_type}_macro({depth},{width},{tag}) else\n".format(
             ports=ports,
             maskstr=maskstr,
             depth=c["depth"] / c["adbanks"],
             width=c["width"] / c["awbanks"],
-            mux=c["mux"],
+            tag=c["tag"],
             _type=c["type"],
         )
 
