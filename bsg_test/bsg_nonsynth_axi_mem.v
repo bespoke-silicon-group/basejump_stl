@@ -22,6 +22,7 @@ module bsg_nonsynth_axi_mem
     , input [axi_id_width_p-1:0] axi_awid_i
     , input [axi_addr_width_p-1:0] axi_awaddr_i
     , input [axi_len_width_p-1:0] axi_awlen_i
+    , input [1:0] axi_awburst_i
     , input axi_awvalid_i
     , output logic axi_awready_o 
 
@@ -39,6 +40,7 @@ module bsg_nonsynth_axi_mem
     , input [axi_id_width_p-1:0] axi_arid_i
     , input [axi_addr_width_p-1:0] axi_araddr_i
     , input [axi_len_width_p-1:0] axi_arlen_i
+    , input [1:0] axi_arburst_i
     , input axi_arvalid_i
     , output logic axi_arready_o
   
@@ -65,8 +67,13 @@ module bsg_nonsynth_axi_mem
   logic [axi_id_width_p-1:0] awid_r, awid_n;
   logic [axi_addr_width_p-1:0] awaddr_r, awaddr_n;
   logic [lg_mem_els_lp-1:0] wr_ram_idx;
+  logic [1:0] awburst_r, awburst_n;
 
-  assign wr_ram_idx = awaddr_r[`BSG_SAFE_CLOG2(axi_data_width_p>>3)+:lg_mem_els_lp];
+  localparam bytes_in_burst_lp = (axi_data_width_p>>3) * axi_burst_len_p;
+  wire [axi_addr_width_p-1:0] awaddr_wrap_top = (awaddr_r/bytes_in_burst_lp+1)*bytes_in_burst_lp;
+  wire [axi_addr_width_p-1:0] awaddr_n_incr = (awaddr_r+ (1 << $clog2(axi_data_width_p>>3)));
+  wire [axi_addr_width_p-1:0] awaddr_n_wrap = awaddr_n_incr < awaddr_wrap_top ? awaddr_n_incr : (awaddr_n_incr-bytes_in_burst_lp);
+  assign wr_ram_idx = awaddr_r[$clog2(axi_data_width_p>>3)+:lg_mem_els_lp];
 
   always_comb begin
 
@@ -96,6 +103,9 @@ module bsg_nonsynth_axi_mem
         awaddr_n = axi_awvalid_i
           ? axi_awaddr_i
           : awaddr_r;
+        awburst_n = axi_awvalid_i
+          ? axi_awburst_i
+          : awburst_r;
         wr_state_n = axi_awvalid_i
           ? WR_WAIT_DATA
           : WR_WAIT_ADDR;
@@ -104,7 +114,7 @@ module bsg_nonsynth_axi_mem
       WR_WAIT_DATA: begin
         axi_wready_o = 1'b1;
         awaddr_n = axi_wvalid_i
-          ? awaddr_r + (1 << `BSG_SAFE_CLOG2(axi_data_width_p>>3))
+          ? (awburst_r == 2'b01) ? awaddr_n_incr : (awburst_r == 2'b10) ? awaddr_n_wrap : awaddr_r
           : awaddr_r;
         wr_state_n = axi_wvalid_i & axi_wlast_i
           ? WR_RESP
@@ -132,14 +142,15 @@ module bsg_nonsynth_axi_mem
   logic [axi_id_width_p-1:0] arid_r, arid_n;
   logic [axi_addr_width_p-1:0] araddr_r, araddr_n;
   logic [axi_len_width_p-1:0] rd_burst_r, rd_burst_n;
+  logic [1:0] arburst_r, arburst_n;
 
   logic [lg_mem_els_lp-1:0] rd_ram_idx;
-  assign rd_ram_idx = araddr_r[`BSG_SAFE_CLOG2(axi_data_width_p>>3)+:lg_mem_els_lp];
+  assign rd_ram_idx = araddr_r[$clog2(axi_data_width_p>>3)+:lg_mem_els_lp];
 
   // uninitialized data
   //
   logic [axi_data_width_p-1:0] uninit_data;
-  assign uninit_data = {(axi_data_width_p/32){init_data_p}};
+  assign uninit_data = {(`BSG_MAX(1, axi_data_width_p/32)){init_data_p}};
 
   for (genvar i = 0; i < axi_data_width_p; i++) begin
     assign axi_rdata_o[i] = (ram[rd_ram_idx][i] === 1'bx)
@@ -147,8 +158,10 @@ module bsg_nonsynth_axi_mem
       : ram[rd_ram_idx][i];
   end
 
-  //assign axi_rdata_o = ram[rd_ram_idx];
- 
+  wire [axi_addr_width_p-1:0] araddr_wrap_top = (araddr_r/bytes_in_burst_lp+1)*bytes_in_burst_lp;
+  wire [axi_addr_width_p-1:0] araddr_n_incr = (araddr_r+(1 << $clog2(axi_data_width_p>>3)));
+  wire [axi_addr_width_p-1:0] araddr_n_wrap = araddr_n_incr < araddr_wrap_top ? araddr_n_incr : (araddr_n_incr-bytes_in_burst_lp);
+
   always_comb begin
 
     axi_rvalid_o = 1'b0;
@@ -174,6 +187,9 @@ module bsg_nonsynth_axi_mem
         araddr_n = axi_arvalid_i
           ? axi_araddr_i
           : araddr_r;
+        arburst_n = axi_arvalid_i
+          ? axi_arburst_i
+          : arburst_r;
     
         rd_burst_n = axi_arvalid_i
           ? '0
@@ -198,7 +214,7 @@ module bsg_nonsynth_axi_mem
           : RD_SEND_DATA;
       
         araddr_n = axi_rready_i
-          ? araddr_r + (1 << `BSG_SAFE_CLOG2(axi_data_width_p>>3))
+          ? (arburst_r == 2'b01) ? araddr_n_incr : (arburst_r == 2'b10) ? araddr_n_wrap : araddr_r
           : araddr_r;
 
       end
@@ -212,16 +228,19 @@ module bsg_nonsynth_axi_mem
       wr_state_r <= WR_RESET;
       awid_r <= '0;
       awaddr_r <= '0;
+      awburst_r <= '0;
 
       rd_state_r <= RD_RESET;
       arid_r <= '0;
       araddr_r <= '0;
+      arburst_r <= '0;
       rd_burst_r <= '0;
     end
     else begin
       wr_state_r <= wr_state_n;
       awid_r <= awid_n;
       awaddr_r <= awaddr_n;
+      awburst_r <= awburst_n;
 
       if ((wr_state_r == WR_WAIT_DATA) & axi_wvalid_i) begin
         for (integer i = 0; i < axi_strb_width_lp; i++) begin
@@ -234,6 +253,7 @@ module bsg_nonsynth_axi_mem
       rd_state_r <= rd_state_n;
       arid_r <= arid_n;
       araddr_r <= araddr_n;
+      arburst_r <= arburst_n;
       rd_burst_r <= rd_burst_n;
       
     end

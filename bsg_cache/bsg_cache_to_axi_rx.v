@@ -16,6 +16,7 @@ module bsg_cache_to_axi_rx
     ,parameter `BSG_INV_PARAM(axi_id_width_p)
     ,parameter `BSG_INV_PARAM(axi_data_width_p)
     ,parameter `BSG_INV_PARAM(axi_burst_len_p)
+    ,parameter `BSG_INV_PARAM(axi_burst_type_p)
 
     ,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
     ,parameter data_width_ratio_lp=(axi_data_width_p/data_width_p)
@@ -98,7 +99,7 @@ module bsg_cache_to_axi_rx
   assign axi_araddr_cache_id_o = cache_id_i;
   assign axi_arlen_o = (8)'(axi_burst_len_p-1); // burst length
   assign axi_arsize_o = (3)'(`BSG_SAFE_CLOG2(axi_data_width_p>>3));
-  assign axi_arburst_o = 2'b01;   // incr
+  assign axi_arburst_o = 2'(axi_burst_type_p);   // fixed, incr or wrap
   assign axi_arcache_o = 4'b0000; // non-bufferable
   assign axi_arprot_o = 2'b00;    // unprivileged
   assign axi_arlock_o = 1'b0;    // normal access
