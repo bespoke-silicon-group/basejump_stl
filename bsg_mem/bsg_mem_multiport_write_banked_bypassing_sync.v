@@ -1,11 +1,11 @@
 `include "bsg_defines.v"
 
-module bsg_mem_multiport_latch_write_banked_bypassing_sync
+module bsg_mem_multiport_write_banked_bypassing_sync
   #(`BSG_INV_PARAM(els_p)
     , `BSG_INV_PARAM(width_p)
     , `BSG_INV_PARAM(num_rs_p)
     , `BSG_INV_PARAM(num_banks_p)
-    
+    , parameter latch_not_ff_p=0
     , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
     , parameter bank_addr_width_lp=`BSG_SAFE_CLOG2(els_p/num_banks_p)
   )
@@ -36,11 +36,12 @@ module bsg_mem_multiport_latch_write_banked_bypassing_sync
     );
   end
 
-  bsg_mem_multiport_latch_write_banked_bypassing #(
+  bsg_mem_multiport_write_banked_bypassing #(
     .els_p(els_p)
     ,.width_p(width_p)
     ,.num_rs_p(num_rs_p)
     ,.num_banks_p(num_banks_p)
+    ,.latch_not_ff_p(latch_not_ff_p)
   ) mem (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -57,4 +58,4 @@ endmodule
 
 
 
-`BSG_ABSTRACT_MODULE(bsg_mem_multiport_latch_write_banked_bypassing_sync)
+`BSG_ABSTRACT_MODULE(bsg_mem_multiport_write_banked_bypassing_sync)
