@@ -21,7 +21,7 @@ module bsg_counting_leading_zeros #(
   for (i = 0; i < width_p; i++) begin
     assign reversed[i] = a_i[width_p-1-i];
   end
-  assign reversed[width_p] = 1'b1
+  assign reversed[width_p] = 1'b1;
 
   bsg_priority_encode #(
     .width_p(width_p+1)
