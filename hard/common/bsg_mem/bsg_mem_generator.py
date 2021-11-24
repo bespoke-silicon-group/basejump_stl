@@ -779,13 +779,17 @@ if __name__ == "__main__":
         help="Whether to enable latch_last_read_p",
     )
     args = parser.parse_args()
+    read_write_same_addr_en = "(1'b1)" if args.read_write_same_addr_en else "(1'b0)"
+    enable_clock_gating_en = "(1'b1)" if args.enable_clock_gating_en else "(1'b0)"
+    disable_collision_warning_en = "(1'b1)" if args.disable_collision_warning_en else "(1'b0)"
+    latch_last_read_en = "(1'b1)" if args.latch_last_read_en else "(1'b0)"
 
     print_ram(
         args.memgen_json,
         args.ports,
         args.mask,
-        args.read_write_same_addr_en,
-        args.enable_clock_gating_en,
-        args.disable_collision_warning_en,
-        args.latch_last_read_en,
+        read_write_same_addr_en,
+        enable_clock_gating_en,
+        disable_collision_warning_en,
+        latch_last_read_en,
     )
