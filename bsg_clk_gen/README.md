@@ -5,7 +5,7 @@ Note A: the bsg_nonsynth_clk_watcher module is very useful for monitoring the fr
 
 Note B: TESTING
 
-In addition to doing SDF annotated post-APR simulation; or spice-extracted simulation of the clock generator, you can also use static timing analysis. Here are some some copy-and-paste of some timing checks we have used in previous tapeouts:
+In addition to doing SDF annotated post-APR simulation; or spice-extracted simulation of the clock generator, you can also use static timing analysis to see what the delay of one oscillator traversal is (corresponding to one phase of the clock period). Here are some some copy-and-paste of some timing checks we have used in previous tapeouts:
 ```
 In IC compiler (or possibly Primetime), here is a different way to time these paths instead
   of running with SDF annotation.
