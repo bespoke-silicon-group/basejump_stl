@@ -105,6 +105,8 @@
           , .EMASA ( 1'b0      )                     \
           , .STOV  ( 1'b0      )                     \
           , .RET1N ( 1'b1      )                     \
+          );                                         \
+    end: macro
 
 `endif
 
