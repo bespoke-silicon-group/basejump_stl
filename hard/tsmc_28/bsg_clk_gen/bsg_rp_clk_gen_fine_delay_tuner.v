@@ -4,7 +4,7 @@
 //
 // o is delayed signal, non-inverted
 //
-// DWP 10/6/2021: Ported to TSMC28 by reusing cells and appending 30P140 for the specific cell lib
+// DWP 10/6/2021: Ported to TSMC28 by reusing cells and appending 7T40P140 for the specific cell lib
 
 module bsg_rp_clk_gen_fine_delay_tuner
   (input i
