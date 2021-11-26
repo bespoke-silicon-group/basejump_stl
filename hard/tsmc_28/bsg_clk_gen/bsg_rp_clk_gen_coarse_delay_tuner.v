@@ -12,7 +12,7 @@
 //
 // module bsg_clk_gen_coarse_delay_element #(parameter `BSG_INV_PARAM(start_tap_p))
 //
-// DWP 10/6/2021: Ported to TSMC28 by reusing cells and appending 7T40P140 for the specific cell lib
+// DWP 10/6/2021: Ported from TSMC40 to TSMC28 by reusing cells and appending 7T40P140 for the specific cell lib
 
 module bsg_rp_clk_gen_coarse_delay_tuner
   (input i
