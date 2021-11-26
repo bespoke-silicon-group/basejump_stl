@@ -75,8 +75,6 @@ module bsg_rp_clk_gen_atomic_delay_tuner
    DFCND4BWP7T40P140 sel_r_reg_0 (.D(mux_lo[0]), .CP(o)      ,.CDN(async_reset_neg_i), .Q(sel_r[0]), .QN());
    //LHCND4BWP7T40P140 sel_r_latch_0 (.D(mux_lo[0]), .E(o)      ,.CDN(async_reset_neg_i), .Q(sel_r[0]), .QN());
 
-   // 40nm: non-inverting mux 32.5ps + load S->Z
-   // 40nm: inverting     mux 43ps + load  S->ZN
    // inputs are reversed because select is inverted
    // we_i&we_inited_i=1 -> new value  (I0)
    // we_i&we_inited-i=0 -> use value in register (I1)
