@@ -1,10 +1,12 @@
 `include "bsg_defines.v"
-module bsg_clkmux #(`BSG_INV_PARAM(els_p)
+module bsg_clkmux #(`BSG_INV_PARAM(width_p)
+                 , `BSG_INV_PARAM(els_p)
                  , harden_p = 0
+                 , script_p = 0
                  , lg_els_lp=`BSG_SAFE_CLOG2(els_p)
                  )
    (
-    input [els_p-1:0] data_i
+    input [els_p-1:0][width_p-1:0] data_i
     ,input [lg_els_lp-1:0] sel_i
     ,output data_o
     );
