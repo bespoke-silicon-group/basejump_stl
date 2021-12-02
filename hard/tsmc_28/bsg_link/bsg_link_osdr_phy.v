@@ -34,8 +34,8 @@ module bsg_link_osdr_phy
   (.Z(clk_o_buf),.A1(clk_r_p),.A2(clk_r_n));
   `BSG_LINK_OSDR_PHY_CKBUF_MACRO(BSG_OSDR_CKBUF_BSG_DONT_TOUCH, clk_o_buf, clk_o)
 
-  DFQD2BWP7T40P140 BSG_OSDR_DFFPOS_BSG_DONT_TOUCH
-  (.D(~(clk_r_p|reset_i)),.CP(clk_i),.Q(clk_r_p));
+  DFD2BWP7T40P140 BSG_OSDR_DFFPOS_BSG_DONT_TOUCH
+  (.D(~(clk_r_p|reset_i)),.CP(clk_i),.Q(clk_r_p), .QN());
   DFND2BWP7T40P140 BSG_OSDR_DFFNEG_BSG_DONT_TOUCH
   (.D(~(clk_r_n|reset_i)),.CPN(clk_i),.Q(clk_r_n),.QN());
 
