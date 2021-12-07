@@ -12,6 +12,7 @@
 module bsg_channel_tunnel_in #(parameter `BSG_INV_PARAM(width_p)
                                , parameter `BSG_INV_PARAM(num_in_p)
                                , parameter `BSG_INV_PARAM(remote_credits_p)
+                                ,parameter num_credit_channels_p = 1
                                , use_pseudo_large_fifo_p = 0
                                , harden_small_fifo_p = 0
 
@@ -19,9 +20,10 @@ module bsg_channel_tunnel_in #(parameter `BSG_INV_PARAM(width_p)
                                // and consequently how much bandwidth is used on credits
                                , lg_credit_decimation_p = 4
 
-                               , tag_width_lp           = $clog2(num_in_p+1)
+                               , tag_width_lp           = $clog2(num_in_p+num_credit_channels_p)
                                , tagged_width_lp        = tag_width_lp+width_p
                                , lg_remote_credits_lp   = $clog2(remote_credits_p+1)
+                               , credit_channel_width_lp = lg_remote_credits_lp * `BSG_CDIV(num_in_p, num_credit_channels_p)
                                )
    (input  clk_i
     , input  reset_i
@@ -37,28 +39,28 @@ module bsg_channel_tunnel_in #(parameter `BSG_INV_PARAM(width_p)
     , input  [num_in_p-1:0]              yumi_i
 
     // to bsg_channel_tunnel_out; returning credits to them; they always accept
-    , output [num_in_p-1:0][lg_remote_credits_lp-1:0] credit_local_return_data_o
-    , output credit_local_return_v_o
+    , output [num_credit_channels_p-1:0][credit_channel_width_lp-1:0] credit_local_return_data_o
+    , output [num_credit_channels_p-1:0] credit_local_return_v_o
 
     // to bsg_channel_tunnel_out; return credits to remote side
     // always v
 
-    , output [num_in_p-1:0][lg_remote_credits_lp-1:0] credit_remote_return_data_o
+    , output [num_credit_channels_p-1:0][credit_channel_width_lp-1:0] credit_remote_return_data_o
 
     // bsg_channel_tunnel sent all of the pending credits out
-    , input credit_remote_return_yumi_i
+    , input [num_credit_channels_p-1:0] credit_remote_return_yumi_i
     );
 
    // always ready to deque credit_ready
-   logic credit_v_lo;
-   logic [width_p-1:0] credit_data_lo;
+   logic [num_credit_channels_p-1:0] credit_v_lo;
+   logic [num_credit_channels_p-1:0][width_p-1:0] credit_data_lo;
 
    // demultiplex the packets.
    bsg_1_to_n_tagged_fifo #(.width_p            (width_p)
-                            ,.num_out_p          (num_in_p+1      )
+                            ,.num_out_p          (num_in_p+num_credit_channels_p)
                             ,.els_p             (remote_credits_p)
                             // credit fifo is unbuffered
-                            ,.unbuffered_mask_p (1 << num_in_p   )
+                            ,.unbuffered_mask_p ({num_credit_channels_p{1'b1}} << num_in_p   )
                             ,.use_pseudo_large_fifo_p(use_pseudo_large_fifo_p)
                             ,.harden_small_fifo_p(harden_small_fifo_p)
                             )
@@ -76,29 +78,33 @@ module bsg_channel_tunnel_in #(parameter `BSG_INV_PARAM(width_p)
       ,.data_o  ( {credit_data_lo , data_o  } )
 
       // credit fifo is unbuffered, so no yumi signal
-      ,.yumi_i  ( { 1'b0, yumi_i }            )
+      ,.yumi_i  ( { {num_credit_channels_p{1'b0}}, yumi_i }            )
       );
 
    // route local credit return to bsg_channel_tunnel_out module
-   assign credit_local_return_data_o = credit_data_lo[0+:num_in_p*lg_remote_credits_lp];
-   assign credit_local_return_v_o    = credit_v_lo;
+   for (genvar i = 0; i < num_credit_channels_p; i++)
+     begin : c
+       assign credit_local_return_data_o[i] = credit_data_lo[i][0+:credit_channel_width_lp];
+       assign credit_local_return_v_o[i]    = credit_v_lo[i];
+     end
 
    // compute remote credit arithmetic
    wire [num_in_p-1:0] sent = v_o & yumi_i;
 
-   genvar              i;
-
    // keep track of how many credits need to be send back
-   for (i = 0; i < num_in_p; i=i+1)
+   logic [num_in_p-1:0][lg_remote_credits_lp-1:0] credits_remote_return_data_lo;
+   for (genvar i = 0; i < num_in_p; i=i+1)
      begin: rof
+        localparam ch = i / (credit_channel_width_lp/lg_remote_credits_lp);
+        localparam b  = i % (credit_channel_width_lp/lg_remote_credits_lp);
         bsg_counter_clear_up #(.max_val_p  (remote_credits_p)
                                ,.init_val_p(0)
                                ) ctr
             (.clk_i
              ,.reset_i
-             ,.clear_i (credit_remote_return_yumi_i   )
+             ,.clear_i (credit_remote_return_yumi_i[ch])
              ,.up_i    (sent[i]                       )
-             ,.count_o (credit_remote_return_data_o[i])
+             ,.count_o (credit_remote_return_data_o[ch][b*lg_remote_credits_lp+:lg_remote_credits_lp])
              );
      end
 

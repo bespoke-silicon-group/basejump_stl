@@ -64,13 +64,14 @@
 module bsg_channel_tunnel #(parameter width_p        = 1
                             , parameter `BSG_INV_PARAM(num_in_p)
                             , parameter `BSG_INV_PARAM(remote_credits_p)
+                            , parameter num_credit_channels_p = 1
                             , use_pseudo_large_fifo_p = 0
                             , harden_small_fifo_p    = 0
                             , lg_remote_credits_lp   = $clog2(remote_credits_p+1)
                             , lg_credit_decimation_p = `BSG_MIN(lg_remote_credits_lp,4)
                             , tag_width_lp           = $clog2(num_in_p+1)
                             , tagged_width_lp        = tag_width_lp + width_p
-
+                            , credit_channel_width_lp = lg_remote_credits_lp * `BSG_CDIV(num_in_p, num_credit_channels_p)
                             )
    (input clk_i
     ,input reset_i
@@ -105,26 +106,17 @@ module bsg_channel_tunnel #(parameter width_p        = 1
                    ,lg_remote_credits_lp,lg_credit_decimation_p);
             $finish;
          end
-   initial
-     assert(width_p >= num_in_p*lg_remote_credits_lp)
-       else
-         begin
-            $error("%m bad params; channel width (%d) must be at least wide enough to route back credits (%d)"
-                   ,width_p
-                   ,num_in_p*lg_remote_credits_lp);
-            $finish;
-         end
    // synopsys translate_on
 
-   wire [num_in_p-1:0][lg_remote_credits_lp-1:0] credit_local_return_data_oi;
-   wire                                          credit_local_return_v_oi;
+   wire [num_credit_channels_p-1:0][credit_channel_width_lp-1:0] credit_local_return_data_oi;
+   wire [num_credit_channels_p-1:0]                              credit_local_return_v_oi;
 
-   wire [num_in_p-1:0][lg_remote_credits_lp-1:0] credit_remote_return_data_oi;
-   wire                                          credit_remote_return_yumi_io;
-
+   wire [num_credit_channels_p-1:0][credit_channel_width_lp-1:0] credit_remote_return_data_oi;
+   wire [num_credit_channels_p-1:0]                              credit_remote_return_yumi_io;
 
    bsg_channel_tunnel_out #(.width_p                (width_p)
                             ,.num_in_p              (num_in_p)
+                            ,.num_credit_channels_p (num_credit_channels_p)
                             ,.remote_credits_p      (remote_credits_p)
                             ,.lg_credit_decimation_p(lg_credit_decimation_p)
                             ) bcto
@@ -147,6 +139,7 @@ module bsg_channel_tunnel #(parameter width_p        = 1
 
    bsg_channel_tunnel_in #(.width_p                (width_p  )
                            ,.num_in_p              (num_in_p )
+                           ,.num_credit_channels_p (num_credit_channels_p)
                            ,.remote_credits_p      (remote_credits_p)
                            ,.use_pseudo_large_fifo_p(use_pseudo_large_fifo_p)
                            ,.harden_small_fifo_p   (harden_small_fifo_p)
