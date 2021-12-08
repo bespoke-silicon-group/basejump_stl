@@ -27,6 +27,7 @@ $BASEJUMP_STL_DIR/bsg_dataflow/bsg_parallel_in_serial_out.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_serial_in_parallel_out.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_two_fifo.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_one_fifo.v
+$BASEJUMP_STL_DIR/bsg_dmc/bsg_dmc.vh
 $BASEJUMP_STL_DIR/bsg_dmc/bsg_dmc.v
 $BASEJUMP_STL_DIR/bsg_dmc/bsg_dmc_clk_rst_gen.v
 $BASEJUMP_STL_DIR/bsg_dmc/bsg_dmc_controller.v

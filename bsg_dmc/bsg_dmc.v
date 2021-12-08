@@ -1,4 +1,4 @@
-`include "bsg_dmc.vh"
+`include "../../../bsg_dmc/bsg_dmc.vh"
 
 module bsg_dmc
   import bsg_tag_pkg::*;

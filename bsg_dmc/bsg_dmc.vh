@@ -1,4 +1,3 @@
-
 `ifndef BSG_DMC_VH
 `define BSG_DMC_VH
 
@@ -11,4 +10,3 @@
     } app_cmd_afifo_entry_s;
 
 `endif
-
