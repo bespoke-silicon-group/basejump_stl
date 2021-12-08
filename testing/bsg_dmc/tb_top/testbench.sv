@@ -19,9 +19,6 @@ import bsg_dmc_asic_pkg::*;
 `include "../env/bsg_dmc_env.sv"
 `include "bsg_dmc_base_test.sv"
 
-`include "../env/bsg_dmc_env.sv"
-`include "bsg_dmc_base_test.sv"
-
 module testbench();
 	import bsg_tag_pkg::*;
 	import bsg_dmc_pkg::*;
@@ -308,6 +305,8 @@ module testbench();
 	    dmc_p.dqs_sel_cal = 3;
 	    dmc_p.init_cycles = 40010;
 	    dmc_p.bank_pos = 25;
+
+		// TODO: akashs3: use bsg_tag_trace_replay to set the below values
 	    force dmc_inst.dmc_clk_rst_gen.btc_async_reset.tag_data_reg.data_r = 0;
 	    force dmc_inst.dmc_clk_rst_gen.dly_lines[0].dly_line_inst.ctrl_rrr = 31;
 	    force dmc_inst.dmc_clk_rst_gen.dly_lines[1].dly_line_inst.ctrl_rrr = 31;
