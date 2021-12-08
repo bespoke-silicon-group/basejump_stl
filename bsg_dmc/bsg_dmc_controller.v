@@ -1,4 +1,4 @@
-`include "bsg_dmc.vh"
+//`include "bsg_dmc.vh"
 
 module bsg_dmc_controller
   import bsg_dmc_pkg::*;
@@ -445,7 +445,9 @@ module bsg_dmc_controller
       REFR: begin
         push = cmd_sfifo_ready;
         case(refr_tick)
+		  // If there are open banks, precharge them before refreshing
           'd1: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
+		  // If there are no open banks, issue refresh right away
           'd0: begin cmd_sfifo_wdata.cmd = REF; end
         endcase
       end
@@ -519,31 +521,31 @@ module bsg_dmc_controller
   always_comb begin
     if(cmd_sfifo_valid)
       case(c_cmd)
-	LMR:   shoot = cmd_tick >= dmc_p_i.tmrd;
-	REF:   shoot = cmd_tick >= dmc_p_i.trfc;
-	PRE:   shoot = (n_cmd==ACT)? (cmd_tick >= dmc_p_i.trp && cmd_act_tick >= dmc_p_i.tras): cmd_tick >= dmc_p_i.trp;
-	ACT:   case(n_cmd)
-                 PRE:     shoot = cmd_tick >= dmc_p_i.tras;
-                 ACT:     shoot = cmd_tick >= dmc_p_i.trrd;
-                 WRITE:   shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_rd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
-                 READ:    shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_wr_tick >= dmc_p_i.twtr);
-	         default: shoot = 1'b1;
-               endcase
-        WRITE: case(n_cmd)
-                 PRE:     shoot = (cmd_tick >= dmc_p_i.twr) & (cmd_act_tick >= dmc_p_i.tras);
-                 WRITE:   shoot = (cmd_tick >= dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
-                 READ:    shoot = cmd_tick >= dmc_p_i.twtr;
-                 ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.twr + dmc_p_i.trp);
-	         default: shoot = 1'b1;
-               endcase
-        READ:  case(n_cmd)
-                 PRE:     shoot = (cmd_tick >= dmc_p_i.trtp) & (cmd_act_tick >= dmc_p_i.tras);
-                 WRITE:   shoot = (cmd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
-                 READ:    shoot = cmd_tick >= dfi_burst_length_lp-1;
-                 ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.trtp + dmc_p_i.trp);
-	         default: shoot = 1'b1;
-               endcase
-	default: shoot = 1'b1;
+		LMR:   shoot = cmd_tick >= dmc_p_i.tmrd;
+		REF:   shoot = cmd_tick >= dmc_p_i.trfc;
+		PRE:   shoot = (n_cmd==ACT)? (cmd_tick >= dmc_p_i.trp && cmd_act_tick >= dmc_p_i.tras): cmd_tick >= dmc_p_i.trp;
+		ACT:   case(n_cmd)
+    	             PRE:     shoot = cmd_tick >= dmc_p_i.tras;
+    	             ACT:     shoot = cmd_tick >= dmc_p_i.trrd;
+    	             WRITE:   shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_rd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
+    	             READ:    shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_wr_tick >= dmc_p_i.twtr);
+		         	 default: shoot = 1'b1;
+    	         endcase
+    	WRITE: case(n_cmd)
+    	             PRE:     shoot = (cmd_tick >= dmc_p_i.twr) & (cmd_act_tick >= dmc_p_i.tras);
+    	             WRITE:   shoot = (cmd_tick >= dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
+    	             READ:    shoot = cmd_tick >= dmc_p_i.twtr;
+    	             ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.twr + dmc_p_i.trp);
+		             default: shoot = 1'b1;
+    	           endcase
+    	READ:  case(n_cmd)
+    	             PRE:     shoot = (cmd_tick >= dmc_p_i.trtp) & (cmd_act_tick >= dmc_p_i.tras);
+    	             WRITE:   shoot = (cmd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
+    	             READ:    shoot = cmd_tick >= dfi_burst_length_lp-1;
+    	             ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.trtp + dmc_p_i.trp);
+		             default: shoot = 1'b1;
+    	           endcase
+		default: shoot = 1'b1;
       endcase
     else
       shoot = 1'b0;
@@ -628,6 +630,7 @@ module bsg_dmc_controller
     end
   end
 
+  // CAS latency after READ
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i) begin
       cas_tick <= 0;

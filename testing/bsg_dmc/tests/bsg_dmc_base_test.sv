@@ -18,6 +18,7 @@ class bsg_dmc_base_test extends uvm_test;
 	local bit [ui_addr_width_p - 1 : 0] addr;
 	local bit rand_addr=1;
 	local string scenario="write";
+	local int unsigned read_write_iter = 1;
 
 	function new(string name = "bsg_dmc_base_test", uvm_component parent = null);
     	super.new(name, parent);
@@ -48,8 +49,9 @@ task bsg_dmc_base_test::run_phase(uvm_phase phase);
 
 	top_seq = bsg_dmc_top_seq::type_id::create("top_seq");
 	top_seq.rand_addr = rand_addr;
-	top_seq.addr =  addr;
+	top_seq.set_addr(addr);
 	top_seq.scenario = scenario;
+	top_seq.read_write_iter = read_write_iter;
 	top_seq.sqr = env.asic_agent.asic_sequencer;
 	top_seq.set_addr_params(.row_width(testbench.dmc_p.row_width), .col_width(testbench.dmc_p.col_width), .bank_width(testbench.dmc_p.bank_width));
 	top_seq.start(null);
@@ -65,5 +67,8 @@ function bsg_dmc_base_test::read_plusargs();
 
 	if($value$plusargs("scenario=%s", scenario)) begin
 		`uvm_info(get_full_name(), $sformatf("Plusarg received: Scenario= %s", scenario), UVM_MEDIUM)
+	end
+	if($value$plusargs("read_write_iter=%d", read_write_iter)) begin
+		`uvm_info(get_full_name(), $sformatf("Plusarg received: number of read/writes= %d", read_write_iter ), UVM_MEDIUM)
 	end
 endfunction

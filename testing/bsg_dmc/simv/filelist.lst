@@ -10,7 +10,7 @@
 +incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/config
 +incdir+$VCS_HOME/etc/uvm
 
-$BASEJUMP_STL_DIR/bsg_misc/bsg_defines.v
+$BASEJUMP_STL_DIR/bsg_dmc/bsg_dmc.vh
 $BASEJUMP_STL_DIR/bsg_dmc/bsg_dmc_pkg.v
 $BASEJUMP_STL_DIR/bsg_tag/bsg_tag_pkg.v
 $BASEJUMP_STL_DIR/bsg_async/bsg_async_fifo.v

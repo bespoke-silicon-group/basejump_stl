@@ -1,0 +1,45 @@
+#simple_write:
+#      desc: "Does a single write to a random location in the DDR"
+#      tags: "sanity"
+#      args: " +scenario=write "
+#      seed_count: 5
+#simple_read:
+#      desc: "Does a single write to a random location in the DDR and reads from the same addr"
+#      tags: "sanity"
+#      args: " +scenario=write_read_same_addr "
+#      seed_count: 5
+#write_with_auto_precharge:
+#      desc: "Does a single write with auto precharge enabled to a random location in the DDR"
+#      tags: "sanity"
+#      args: " +scenario=write_auto_precharge "
+#      seed_count: 5
+#simple_read:
+#      desc: "Does a single write with auto precharge enabled to a random location in the DDR and reads with auto precharge enabled from the same addr"
+#      tags: "sanity"
+#      args: " +scenario=write_read_same_addr_auto_precharge "
+#      seed_count: 5
+#multiple_writes:
+#      desc: "Does a 10 writes to random locations in the DDR"
+#      tags: 
+#      args: " +scenario=write_n_times +read_write_iter=10 "
+#      seed_count: 5
+#multiple_writes_rand_auto_precharge:
+#      desc: "Does 10 writes to random locations and auto precharge randomly enabled in the DDR"
+#      tags: 
+#      args: " +scenario=write_n_times_rand_auto_precharge +read_write_iter=10 "
+#      seed_count: 5
+#multiple_writes_reads:
+#      desc: "Does 10 writes to random locations and reads from those locations in the DDR"
+#      tags: 
+#      args: " +scenario=write_n_times_read_n_times +read_write_iter=10 "
+#      seed_count: 5
+#multiple_writes_reads_rand_auto_precharge:
+#      desc: "Does 10 writes to random locations and reads from those locations with auto precharge randomly enabled in the DDR"
+#      tags: 
+#      args: " +scenario=write_n_times_read_n_times_rand_auto_precharge +read_write_iter=10 "
+#      seed_count: 5
+multiple_writes_followed_by_multiple_reads_or_writes_rand_auto_precharge:
+      desc: "Truly random R/W test that does 20 writes to random locations and reads or writed to/from those locations with auto precharge randomly enabled in the DDR"
+      tags: 
+      args: " +scenario=write_n_times_read_or_write_n_times_rand_auto_precharge +read_write_iter=20 "
+      seed_count: 5

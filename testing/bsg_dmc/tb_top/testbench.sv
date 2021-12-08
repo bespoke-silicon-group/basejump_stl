@@ -218,6 +218,7 @@ module testbench();
 	    dmc_p.trrd = 1;
 	    dmc_p.trcd = 2;
 	    dmc_p.twr = 10;
+		//TODO: akashs3: randomise below val.
 	    dmc_p.twtr = 7;
 	    dmc_p.trtp = 10;
 	    dmc_p.tcas = 3;
