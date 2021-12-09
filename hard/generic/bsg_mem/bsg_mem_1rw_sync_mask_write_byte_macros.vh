@@ -2,6 +2,13 @@
 `ifndef BSG_MEM_1RW_SYNC_MASK_WRITE_BYTE_MACROS
 `define BSG_MEM_1RW_SYNC_MASK_WRITE_BYTE_MACROS
 
+`define bsg_mem_1rw_sync_mask_write_byte_2rf_macro(words,bits,tag) \
+  `bsg_mem_1rw_sync_mask_write_byte_macro(words,bits,tag)
+`define bsg_mem_1rw_sync_mask_write_byte_2sram_macro(words,bits,tag) \
+  `bsg_mem_1rw_sync_mask_write_byte_macro(words,bits,tag)
+`define bsg_mem_1rw_sync_mask_write_byte_2hdsram_macro(words,bits,tag) \
+  `bsg_mem_1rw_sync_mask_write_byte_macro(words,bits,tag)
+
 `define bsg_mem_1rw_sync_mask_write_byte_macro(words,bits,tag) \
   if (harden_p && els_p == words && data_width_p == bits)      \
     begin: macro                                               \
