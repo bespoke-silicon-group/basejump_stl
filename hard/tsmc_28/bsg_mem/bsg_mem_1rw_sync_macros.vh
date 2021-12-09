@@ -40,6 +40,7 @@
              ,.A        ( addr_i        )                       \
              ,.D        ( data_i        )                       \
              ,.Q        ( data_o        )                       \
+             /* According to TSMC, other settings are for debug only */ \
              ,.RTSEL    ( 2'b01         )                       \
              ,.WTSEL    ( 2'b00         )                       \
             );                                                  \
