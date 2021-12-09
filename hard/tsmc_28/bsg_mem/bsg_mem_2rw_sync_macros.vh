@@ -18,6 +18,7 @@
              ,.AB       ( b_addr_i      )                       \
              ,.DB       ( b_data_i      )                       \
              ,.QB       ( b_data_o      )                       \
+             /* According to TSMC, other settings are for debug only */ \
              ,.WTSEL    ( 2'b01         )                       \
              ,.RTSEL    ( 2'b01         )                       \
              ,.VG       ( 1'b1          )                       \
@@ -43,6 +44,7 @@
              ,.AB       ( b_addr_i      )                       \
              ,.DB       ( b_data_i      )                       \
              ,.QB       ( b_data_o      )                       \
+             /* According to TSMC, other settings are for debug only */ \
              ,.WTSEL    ( 2'b00         )                       \
              ,.RTSEL    ( 2'b00         )                       \
              ,.PTSEL    ( 2'b00         )                       \            
