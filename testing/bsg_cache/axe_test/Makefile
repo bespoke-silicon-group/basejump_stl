@@ -6,6 +6,7 @@
 include ../../../../bsg_cadenv/cadenv.mk
 export BASEJUMP_STL_DIR=$(abspath ../../..)
 INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
+INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_cache
 
 VCS_LOG = vcs.log
 TRACE_AXE = bsg_cache.axe

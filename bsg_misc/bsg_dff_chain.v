@@ -22,6 +22,7 @@ module bsg_dff_chain #(
         );
 
         if( num_stages_p == 0) begin:pass_through
+                wire unused = clk_i;
                 assign data_o   = data_i;
         end:pass_through
 

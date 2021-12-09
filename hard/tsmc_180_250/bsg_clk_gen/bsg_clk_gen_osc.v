@@ -1,4 +1,4 @@
-// bsg_clk_gen_osc
+// bsg_clk_gen_osc (NOTE THIS IS A GEN 1 OSCILLATOR; IN OTHER NODES WE ARE ON GEN 2)
 //
 // new settings are delivered via bsg_tag_i
 //
