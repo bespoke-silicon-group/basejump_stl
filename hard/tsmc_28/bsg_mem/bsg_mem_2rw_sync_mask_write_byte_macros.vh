@@ -1,14 +1,14 @@
 `ifndef BSG_MEM_2RW_SYNC_MASK_WRITE_BYTE_MACROS_VH
 `define BSG_MEM_2RW_SYNC_MASK_WRITE_BYTE_MACROS_VH
 
-`define bsg_mem_2rw_sync_mask_write_2rf_byte_macro(words,bits,tag) \
+`define bsg_mem_2rw_sync_mask_write_byte_2rf_macro(words,bits,tag) \
   `bsg_mem_2rw_sync_mask_write_byte_macro(words,bits)
-`define bsg_mem_2rw_sync_mask_write_2sram_byte_macro(words,bits,tag) \
+`define bsg_mem_2rw_sync_mask_write_byte_2sram_macro(words,bits,tag) \
   `bsg_mem_2rw_sync_mask_write_byte_macro(words,bits)
-`define bsg_mem_2rw_sync_mask_write_2hdsram_byte_macro(words,bits,tag) \
+`define bsg_mem_2rw_sync_mask_write_byte_2hdsram_macro(words,bits,tag) \
   `bsg_mem_2rw_sync_mask_write_byte_macro(words,bits)
 
-`define bsg_mem_2rw_sync_mask_write_2hdsram_byte_macro(words,bits) \
+`define bsg_mem_2rw_sync_mask_write_byte_macro(words,bits) \
 if (els_p == words && width_p == bits)                          \
   begin: wrap                                                   \
   logic [width_p-1:0] a_w_mask_li;                              \
