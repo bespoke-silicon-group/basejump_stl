@@ -9,11 +9,11 @@
 // twrcc, otherwise will incur indeterminate result. 
 //
 
-`define bsg_mem_1r1w_sync_mask_write_2rf_byte_macro(words,bits,tag) \
+`define bsg_mem_1r1w_sync_mask_write_byte_2rf_macro(words,bits,tag) \
   `bsg_mem_1r1w_sync_mask_write_byte_macro(words,bits)
-`define bsg_mem_1r1w_sync_mask_write_2sram_byte_macro(words,bits,tag) \
+`define bsg_mem_1r1w_sync_mask_write_byte_2sram_macro(words,bits,tag) \
   `bsg_mem_1r1w_sync_mask_write_byte_macro(words,bits)
-`define bsg_mem_1r1w_sync_mask_write_2hdsram_byte_macro(words,bits,tag) \
+`define bsg_mem_1r1w_sync_mask_write_byte_2hdsram_macro(words,bits,tag) \
   `bsg_mem_1r1w_sync_mask_write_byte_macro(words,bits)
 
 `define bsg_mem_1r1w_sync_mask_write_byte_macro(words,bits) \
