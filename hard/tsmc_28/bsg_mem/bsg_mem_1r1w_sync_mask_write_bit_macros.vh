@@ -40,6 +40,7 @@ if (els_p == words && width_p == bits)                          \
              ,.CLKB     ( clk_i         )                       \
              ,.QB       ( r_data_o      )                       \
                                                                 \
+             /* According to TSMC, other settings are for debug only */ \
              ,.WTSEL    ( 2'b01         )                       \
              ,.RTSEL    ( 2'b01         )                       \
              ,.VG       ( 1'b1          )                       \
@@ -68,6 +69,7 @@ if (els_p == words && width_p == bits)                          \
              ,.CLKB     ( clk_i         )                       \
              ,.QB       ( r_data_o      )                       \
                                                                 \
+             /* According to TSMC, other settings are for debug only */ \
              ,.WTSEL    ( 2'b00         )                       \
              ,.RTSEL    ( 2'b00         )                       \
              ,.PTSEL    ( 2'b00         )                       \
