@@ -44,7 +44,11 @@ module bsg_counter_up_down #( parameter `BSG_INV_PARAM(max_val_p    )
 // keeping track of number of entries and updating read and
 // write pointers, and displaying errors in case of overflow
 // or underflow
+logic cout;
+logic [ptr_width_lp-1:0] count_n;
 
+assign {cout, count_n} = count_o - down_i + up_i;
+  
 always_ff @(posedge clk_i)
   begin
     if (reset_i)
@@ -54,15 +58,15 @@ always_ff @(posedge clk_i)
       // simple minus and plus operation results in smaller
       // design, rather than using xor or other ideas
       // between down_i and up_i
-      count_o <= count_o - down_i + up_i;
+      count_o <= count_n;
   end
 
 //synopsys translate_off
   always_ff @ (negedge clk_i) begin
-	  if ((count_o==max_val_p) & up_i & ~down_i  & (reset_i === 1'b0))
-		  $display("%m error: counter overflow at time %t", $time);
-	  if ((count_o==0)          & down_i & ~up_i & (reset_i === 1'b0))
-		  $display("%m error: counter underflow at time %t", $time);
+    if (reset_i === 1'b0) begin
+      assert((count_n <= max_val_p) && ~cout)
+        else $error("%m error: counter overflow/underflow at time %t, max_val_p=%d, count_o=%d, up_i=%d, down_i=%d", $time, max_val_p, count_o, up_i, down_i);
+    end
   end
 //synopsys translate_on
 
