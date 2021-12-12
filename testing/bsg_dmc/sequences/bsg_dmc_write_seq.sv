@@ -12,13 +12,15 @@ class bsg_dmc_write_seq extends uvm_sequence;
 	//Register with the factory
 	`uvm_object_utils(bsg_dmc_write_seq)
 
-	local int unsigned burst_length; 
+	local int unsigned burst_length;
+	local bit [1:0] delay;
 
 	function new(string name = "bsg_dmc_cmd_seq");
 		super.new(name);
 	endfunction: new
 
 	extern virtual function set_burst_length(int unsigned burst_length);
+	extern virtual function set_delay(bit [1:0] delay);
 	extern virtual task start_writing(bit[ui_data_width_p-1:0] pkt_number, bit last_packet=0);
 	extern virtual task body();
 
@@ -45,6 +47,7 @@ task bsg_dmc_write_seq::start_writing(bit[ui_data_width_p-1:0] pkt_number, bit l
 	bsg_dmc_asic_transaction txn;
 	txn = bsg_dmc_asic_transaction::type_id::create("write_txn");
 	txn.txn_type = ASIC_WRITE;
+	txn.delay = delay;
 
 	if(last_packet) begin
 		txn.app_wdf_end = 1;
@@ -58,4 +61,8 @@ endtask
 
 function bsg_dmc_write_seq::set_burst_length(int unsigned burst_length);
 	this.burst_length = burst_length;
+endfunction
+
+function bsg_dmc_write_seq::set_delay(bit [1:0] delay);
+	this.delay = delay;
 endfunction

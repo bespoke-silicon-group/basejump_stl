@@ -16,6 +16,7 @@ class bsg_dmc_cmd_seq extends uvm_sequence;
 	local bit [ui_addr_width_p-1:0] addr;
 	local bit rand_addr;
 	local int unsigned row_width, col_width, bank_width;
+	local int unsigned delay;
 
 	function new(string name = "bsg_dmc_cmd_seq");
 		super.new(name);
@@ -23,6 +24,8 @@ class bsg_dmc_cmd_seq extends uvm_sequence;
 
 	extern virtual function set_params(app_cmd_e cmd, bit [ui_addr_width_p-1:0] addr=0, bit rand_addr=1);
 	extern virtual function set_addr_params(int unsigned row_width, int unsigned col_width, int unsigned bank_width);
+	extern virtual function set_delay(int unsigned delay);
+
 	extern virtual function int unsigned get_addr();
 
 	extern virtual task body();
@@ -46,6 +49,10 @@ function bsg_dmc_cmd_seq::set_addr_params(int unsigned row_width, int unsigned c
 	this.bank_width = bank_width;
 endfunction
 
+function bsg_dmc_cmd_seq::set_delay(int unsigned delay);
+	this.delay = delay;
+endfunction
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //  TASK: body
 //  PARAMETERS: 
@@ -59,6 +66,7 @@ task bsg_dmc_cmd_seq::body();
 	cmd_txn.rand_addr = this.rand_addr;
 	cmd_txn.app_cmd = cmd;
 	cmd_txn.app_addr = this.addr;
+	cmd_txn.delay = delay;
 	
 	cmd_txn.set_params(.row_width(row_width), .col_width(col_width), .bank_width(bank_width));
 	start_item(cmd_txn);

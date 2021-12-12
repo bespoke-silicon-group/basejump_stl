@@ -45,6 +45,9 @@ class bsg_dmc_asic_transaction extends uvm_sequence_item;
   	bit [ui_data_width_p-1:0]				app_rd_data;
   	bit                            			app_rd_data_end;
 
+	//delay after which packet has to be driven
+	bit [1:0]								delay;
+
 	constraint legal_row_col_bank_addr {
 		row_addr inside {[0:(2**row_width -1)]};
 		col_addr inside {[0:(2**col_width -1)]};
