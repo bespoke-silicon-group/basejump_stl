@@ -11,7 +11,7 @@ package bsg_link_pkg;
     bsg_tag_s token_reset;
   }  bsg_link_sdr_client_tag_lines_s;
   localparam bsg_link_sdr_client_tag_local_els_gp =
-	$bits(bsg_link_sdr_tag_lines_s) / $bits(bsg_tag_s);
+	$bits(bsg_link_sdr_client_tag_lines_s) / $bits(bsg_tag_s);
 
   typedef struct packed
   {
@@ -22,7 +22,7 @@ package bsg_link_pkg;
     bsg_tag_s token_reset;
   }  bsg_link_sdr_master_tag_lines_s;
   localparam bsg_link_sdr_master_tag_local_els_gp =
-	$bits(bsg_link_sdr_tag_lines_s) / $bits(bsg_tag_s);
+	$bits(bsg_link_sdr_master_tag_lines_s) / $bits(bsg_tag_s);
 
 endpackage
 
