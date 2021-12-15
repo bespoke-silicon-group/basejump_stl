@@ -13,7 +13,6 @@
              ,.A        ( addr_i        )                       \
              ,.D        ( data_i        )                       \
              ,.Q        ( data_o        )                       \
-             ,.CLKW     ( clk_i         )                       \
             );                                                  \
     end
 
@@ -29,7 +28,6 @@
              ,.A        ( addr_i        )                       \
              ,.D        ( data_i        )                       \
              ,.Q        ( data_o        )                       \
-             ,.CLKW     ( clk_i         )                       \
             );                                                  \
     end
 
