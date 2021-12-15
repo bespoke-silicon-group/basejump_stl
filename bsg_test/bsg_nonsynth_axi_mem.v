@@ -5,6 +5,7 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_axi_mem
+  import bsg_axi_pkg::*;
   #(parameter `BSG_INV_PARAM(axi_id_width_p)
     , parameter `BSG_INV_PARAM(axi_addr_width_p)
     , parameter `BSG_INV_PARAM(axi_data_width_p)
@@ -114,7 +115,7 @@ module bsg_nonsynth_axi_mem
       WR_WAIT_DATA: begin
         axi_wready_o = 1'b1;
         awaddr_n = axi_wvalid_i
-          ? (awburst_r == 2'b01) ? awaddr_n_incr : (awburst_r == 2'b10) ? awaddr_n_wrap : awaddr_r
+          ? (awburst_r == e_axi_burst_incr) ? awaddr_n_incr : (awburst_r == e_axi_burst_wrap) ? awaddr_n_wrap : awaddr_r
           : awaddr_r;
         wr_state_n = axi_wvalid_i & axi_wlast_i
           ? WR_RESP
@@ -214,7 +215,7 @@ module bsg_nonsynth_axi_mem
           : RD_SEND_DATA;
       
         araddr_n = axi_rready_i
-          ? (arburst_r == 2'b01) ? araddr_n_incr : (arburst_r == 2'b10) ? araddr_n_wrap : araddr_r
+          ? (arburst_r == e_axi_burst_incr) ? araddr_n_incr : (arburst_r == e_axi_burst_wrap) ? araddr_n_wrap : araddr_r
           : araddr_r;
 
       end

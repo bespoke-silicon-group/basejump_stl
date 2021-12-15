@@ -8,6 +8,7 @@
 `include "bsg_cache.vh"
 
 module bsg_cache_to_axi
+  import bsg_axi_pkg::*;
   import bsg_cache_pkg::*;
   #(parameter `BSG_INV_PARAM(addr_width_p)
     ,parameter `BSG_INV_PARAM(block_size_in_words_p)

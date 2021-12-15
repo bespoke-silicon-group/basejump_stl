@@ -8,6 +8,7 @@
 `include "bsg_defines.v"
 
 module bsg_cache_to_axi_tx
+ import bsg_axi_pkg::*;
   #(parameter `BSG_INV_PARAM(num_cache_p)
     ,parameter `BSG_INV_PARAM(addr_width_p)
     ,parameter `BSG_INV_PARAM(data_width_p)
@@ -115,8 +116,8 @@ module bsg_cache_to_axi_tx
   assign axi_awlen_o = (8)'(axi_burst_len_p-1); // burst len
   assign axi_awsize_o = (3)'(`BSG_SAFE_CLOG2(axi_data_width_p>>3));
   assign axi_awburst_o = 2'b10;   // fixed, incr or wrap
-  assign axi_awcache_o = 4'b0000; // non-bufferable
-  assign axi_awprot_o = 2'b00;    // unprivileged
+  assign axi_awcache_o = e_axi_cache_wnarnanmnb; // non-bufferable
+  assign axi_awprot_o = e_axi_prot_dsn;    // unprivileged
   assign axi_awlock_o = 1'b0;    // normal access
   // axi_aw is valid when tag_fifo is ready
   assign axi_awvalid_o = v_i & tag_fifo_ready_lo;

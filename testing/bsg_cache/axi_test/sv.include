@@ -1,3 +1,6 @@
+
+$BASEJUMP_STL_DIR/bsg_axi/bsg_axi_pkg.v
+$BASEJUMP_STL_DIR/bsg_cache/bsg_cache_pkg.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_defines.v
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_clock_gen.v
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_reset_gen.v
@@ -35,7 +38,6 @@ $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1r1w_small.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1r1w_small_unhardened.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_tracker.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_parallel_in_serial_out.v
-$BASEJUMP_STL_DIR/bsg_cache/bsg_cache_pkg.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_decode.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_dma.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_to_axi.v

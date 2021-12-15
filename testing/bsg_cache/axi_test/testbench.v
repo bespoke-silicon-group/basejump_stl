@@ -6,6 +6,7 @@
 
 module testbench();
   import bsg_cache_pkg::*;
+  import bsg_axi_pkg::*;
 
   // parameters
   //
@@ -16,6 +17,8 @@ module testbench();
 
   parameter ring_width_p = data_width_p;
   parameter rom_addr_width_p = 32;
+
+  parameter wrap_type_p = e_axi_burst_wrap;
 
   // clock and reset
   //
@@ -143,7 +146,7 @@ module testbench();
      ,.axi_id_width_p(6)
      ,.axi_data_width_p(data_width_p)
      ,.axi_burst_len_p(block_width_p/data_width_p)
-     ,.axi_burst_type_p(2'b10)
+     ,.axi_burst_type_p(wrap_type_p)
      )
   cache2axi
     (.clk_i(clk)
