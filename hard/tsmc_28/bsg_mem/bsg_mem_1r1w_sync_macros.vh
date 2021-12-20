@@ -44,6 +44,7 @@ if (els_p == words && width_p == bits)                          \
              ,.CEBB     ( ~r_v_i        )                       \
              ,.CLKB     ( clk_i         )                       \
              ,.QB       ( r_data_o      )                       \
+                                                                \
              /* According to TSMC, other settings are for debug only */ \
              ,.WTSEL    ( 2'b01         )                       \
              ,.RTSEL    ( 2'b01         )                       \
@@ -61,14 +62,13 @@ if (els_p == words && width_p == bits)                          \
              ,.DA       ( w_data_i      )                       \
              ,.WEBA     ( ~w_v_i        )                       \
              ,.CEBA     ( ~w_v_i        )                       \
-             ,.CLKA     ( clk_i         )                       \
+             ,.CLK      ( clk_i         )                       \
              ,.QA       (               )                       \
                                                                 \
              ,.AB       ( r_addr_i      )                       \
              ,.DB       ( '1            )                       \
              ,.WEBB     ( '1            )                       \
              ,.CEBB     ( ~r_v_i        )                       \
-             ,.CLKB     ( clk_i         )                       \
              ,.QB       ( r_data_o      )                       \
                                                                 \
              /* According to TSMC, other settings are for debug only */ \
