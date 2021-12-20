@@ -32,13 +32,12 @@
     begin: macro                                     \
           tsmc28_2rw_d``words``_w``bits``_``tag``_2hdsram mem  \
             (                                                   \
-              .CLKA     ( clk_i         )                       \
+              .CLK      ( clk_i         )                       \
              ,.CEBA     ( ~a_v_i        )                       \
              ,.WEBA     ( ~a_w_i        )                       \
              ,.AA       ( a_addr_i      )                       \
              ,.DA       ( a_data_i      )                       \
              ,.QA       ( a_data_o      )                       \
-             ,.CLKB     ( clk_i         )                       \
              ,.CEBB     ( ~b_v_i        )                       \
              ,.WEBB     ( ~b_w_i        )                       \
              ,.AB       ( b_addr_i      )                       \
