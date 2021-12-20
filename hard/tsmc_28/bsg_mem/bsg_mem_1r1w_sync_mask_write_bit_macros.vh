@@ -58,7 +58,7 @@ if (els_p == words && width_p == bits)                          \
              ,.BWEBA    ( ~w_mask_i     )                       \
              ,.WEBA     ( ~w_v_i        )                       \
              ,.CEBA     ( ~w_v_i        )                       \
-             ,.CLKA     ( clk_i         )                       \
+             ,.CLK      ( clk_i         )                       \
              ,.QA       (               )                       \
                                                                 \
              ,.AB       ( r_addr_i      )                       \
@@ -66,7 +66,6 @@ if (els_p == words && width_p == bits)                          \
              ,.BWEBB    ( '1            )                       \
              ,.WEBB     ( '1            )                       \
              ,.CEBB     ( ~r_v_i        )                       \
-             ,.CLKB     ( clk_i         )                       \
              ,.QB       ( r_data_o      )                       \
                                                                 \
              /* According to TSMC, other settings are for debug only */ \
