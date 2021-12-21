@@ -10,9 +10,9 @@
 //
 
 `define bsg_mem_1r1w_sync_2rf_macro(words,bits,tag) \
-if (els_p == words && width_p == bits)                          \
+if (harden_p && els_p == words && width_p == bits)              \
   begin: macro                                                  \
-          tsmc28_1r1w_d``words``_w``bits``_``tag``_2rf mem \
+          tsmc28_1r1w_d``words``_w``bits``_``tag``_2rf mem      \
             (                                                   \
               .AA       ( w_addr_i      )                       \
              ,.D        ( w_data_i      )                       \
@@ -27,9 +27,9 @@ if (els_p == words && width_p == bits)                          \
   end
 
 `define bsg_mem_1r1w_sync_2sram_macro(words,bits,tag) \
-if (els_p == words && width_p == bits)                          \
+if (harden_p && els_p == words && width_p == bits)              \
   begin: macro                                                  \
-          tsmc28_2rw_d``words``_w``bits``_``tag``_2sram mem \
+          tsmc28_2rw_d``words``_w``bits``_``tag``_2sram mem     \
             (                                                   \
               .AA       ( w_addr_i      )                       \
              ,.DA       ( w_data_i      )                       \
@@ -54,9 +54,9 @@ if (els_p == words && width_p == bits)                          \
   end
 
 `define bsg_mem_1r1w_sync_2hdsram_macro(words,bits,tag) \
-if (els_p == words && width_p == bits)                          \
+if (harden_p && els_p == words && width_p == bits)              \
   begin: macro                                                  \
-          tsmc28_2rw_d``words``_w``bits``_``tag``_2hdsram mem  \
+          tsmc28_2rw_d``words``_w``bits``_``tag``_2hdsram mem   \
             (                                                   \
               .AA       ( w_addr_i      )                       \
              ,.DA       ( w_data_i      )                       \
