@@ -9,7 +9,7 @@
   `bsg_mem_1rw_sync_mask_write_byte_macro(words,bits)
 
 `define bsg_mem_1rw_sync_mask_write_byte_macro(words,bits) \
-if (els_p == words && data_width_p == bits)                     \
+if (harden_p && els_p == words && data_width_p == bits)         \
   begin: wrap                                                   \
     logic [data_width_p-1:0] w_mask_li;                         \
     bsg_expand_bitmask                                          \
