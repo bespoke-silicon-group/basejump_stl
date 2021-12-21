@@ -51,6 +51,9 @@ bsg_mem_1r1w_sync_template = """
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
+        ,.harden_p(harden_p)
+        ,.disable_colision_warning_p(disable_collision_warning_p)
+        ,.enable_clock_gating_p(enable_clock_gating_p)
       ) synth (.*);
     end
 
@@ -113,6 +116,9 @@ bsg_mem_1r1w_sync_mask_write_bit_template = """
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
+        ,.harden_p(harden_p)
+        ,.disable_colision_warning_p(disable_collision_warning_p)
+        ,.enable_clock_gating_p(enable_clock_gating_p)
       ) synth (.*);
     end
 
@@ -176,6 +182,9 @@ bsg_mem_1r1w_sync_mask_write_byte_template = """
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
+        ,.harden_p(harden_p)
+        ,.disable_colision_warning_p(disable_collision_warning_p)
+        ,.enable_clock_gating_p(enable_clock_gating_p)
       ) synth (.*);
     end
 
@@ -229,6 +238,9 @@ module bsg_mem_1rw_sync #(parameter `BSG_INV_PARAM(width_p)
         .width_p(width_p)
         ,.els_p(els_p)
         ,.latch_last_read_p(latch_last_read_p)
+        ,.verbose_if_synth_p(verbose_if_synth_p)
+        ,.enable_clock_gating_p(enable_clock_gating_p)
+        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -281,6 +293,8 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
         .width_p(width_p)
         ,.els_p(els_p)
         ,.latch_last_read_p(latch_last_read_p)
+        ,.enable_clock_gating_p(enable_clock_gating_p)
+        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -334,6 +348,8 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(data_width_p)
         .data_width_p(data_width_p)
         ,.els_p(els_p)
         ,.latch_last_read_p(latch_last_read_p)
+        ,.enable_clock_gating_p(enable_clock_gating_p)
+        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -392,6 +408,8 @@ bsg_mem_2r1w_sync_template = """
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
+        ,.enable_clock_gating_p(enable_clock_gating_p)
+        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -456,6 +474,9 @@ bsg_mem_2rw_sync_template = """
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
+        ,.disable_collision_warning_p(disable_collision_warning_p)
+        ,.enable_clock_gating_p(enable_clock_gating_p)
+        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -522,6 +543,9 @@ bsg_mem_2rw_sync_mask_write_bit_template = """
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
+        ,.disable_collision_warning_p(disable_collision_warning_p)
+        ,.enable_clock_gating_p(enable_clock_gating_p)
+        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -546,7 +570,7 @@ bsg_mem_2rw_sync_mask_write_byte_template = """
       , parameter `BSG_INV_PARAM(els_p)
       , parameter read_write_same_addr_p=0
       , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
-      , parameter write_mask_width_lp=data_width_p>>3
+      , parameter write_mask_width_lp=width_p>>3
       , parameter harden_p=1
       , parameter disable_collision_warning_p=0
       , parameter enable_clock_gating_p=0
@@ -589,6 +613,9 @@ bsg_mem_2rw_sync_mask_write_byte_template = """
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
+        ,.disable_collision_warning_p(disable_collision_warning_p)
+        ,.enable_clock_gating_p(enable_clock_gating_p)
+        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -654,6 +681,8 @@ bsg_mem_3r1w_sync_template = """
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
+        ,.enable_clock_gating_p(enable_clock_gating_p)
+        ,.harden_p(harden_p)
       ) synth (.*);
     end
 

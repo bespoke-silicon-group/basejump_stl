@@ -2,11 +2,11 @@
 `ifndef BSG_MEM_1RW_SYNC_MASK_WRITE_BIT_MACROS
 `define BSG_MEM_1RW_SYNC_MASK_WRITE_BIT_MACROS
 
-`define bsg_mem_1rw_sync_mask_write_bit_2rf_macro(words,bits,tag) \
+`define bsg_mem_1rw_sync_mask_write_bit_1rf_macro(words,bits,tag) \
   `bsg_mem_1rw_sync_mask_write_bit_macro(words,bits,tag)
-`define bsg_mem_1rw_sync_mask_write_bit_2sram_macro(words,bits,tag) \
+`define bsg_mem_1rw_sync_mask_write_bit_1sram_macro(words,bits,tag) \
   `bsg_mem_1rw_sync_mask_write_bit_macro(words,bits,tag)
-`define bsg_mem_1rw_sync_mask_write_bit_2hdsram_macro(words,bits,tag) \
+`define bsg_mem_1rw_sync_mask_write_bit_1hdsram_macro(words,bits,tag) \
   `bsg_mem_1rw_sync_mask_write_bit_macro(words,bits,tag)
 
 `define bsg_mem_1rw_sync_mask_write_bit_macro(words,bits,tag) \
