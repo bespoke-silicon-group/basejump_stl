@@ -21,7 +21,7 @@ ELABORATE_OPTIONS += +define+den2048Mb+sg5+x16+FULL_MEM
 
 ifdef coverage
 	ELABORATE_OPTIONS += -cm line+cond+fsm+tgl -cm path
-	DVE_OPTIONS += -cov -dir simv.vdb
+	DVE_OPTIONS += -cov -dir simv.vdb 
 endif
 
 ifdef scenario

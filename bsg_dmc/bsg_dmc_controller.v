@@ -213,24 +213,9 @@ module bsg_dmc_controller
 	0			Perform R/W
 	1			Activate bank - post activation, decrement ldst_tick to perform R/W
 	2			Precharge bank: if the row in latest cmd is different from previous cmd, precharge the previous bank, decrement ldst_tick to 1 ( to activate this bank), then decrement again to do R/W
-
   */ 
 
   logic  [1:0] ldst_tick;
-
-// TODO: akashs3: below signals not used. Check and remove if unnecessary.
-  logic [15:0] tick_refi;
-  logic  [3:0] tick_mrd;
-  logic  [3:0] tick_rfc;
-  logic  [3:0] tick_rc;
-  logic  [3:0] tick_rp;
-  logic  [3:0] tick_ras;
-  logic  [3:0] tick_rrd;
-  logic  [3:0] tick_rcd;
-  logic  [3:0] tick_wr;
-  logic  [3:0] tick_wtr;
-  logic  [3:0] tick_rtp;
-  logic  [3:0] tick_cas;
 
   assign app_ref_ack_o = app_ref_req_i & ~app_wdf_end_i;
   assign app_zq_ack_o = app_zq_req_i;

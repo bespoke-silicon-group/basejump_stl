@@ -18,7 +18,7 @@ class bsg_dmc_asic_agent extends uvm_agent;
 
 	bsg_dmc_asic_driver asic_driver;
 	bsg_dmc_asic_sequencer asic_sequencer;
-	//bsg_dmc_asic_monitor asic_monitor;
+	bsg_dmc_asic_monitor asic_monitor;
 	
 	function new(string name = "bsg_dmc_asic_agent", uvm_component parent = null);
     	super.new(name, parent);
@@ -33,6 +33,7 @@ function void bsg_dmc_asic_agent::build_phase (uvm_phase phase);
 
 	asic_driver = bsg_dmc_asic_driver::type_id::create("asic_driver", this);
 	asic_sequencer = bsg_dmc_asic_sequencer::type_id::create("asic_sequencer", this);
+	asic_monitor = bsg_dmc_asic_monitor::type_id::create("asic_monitor", this);
 
 endfunction
 

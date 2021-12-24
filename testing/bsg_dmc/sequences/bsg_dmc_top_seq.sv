@@ -20,7 +20,7 @@ class bsg_dmc_top_seq extends uvm_sequence;
 	string scenario;
 	bit rand_addr;
 	int unsigned read_write_iter;
-	bit enable_random_delay=1;
+	bit enable_random_delay=0;
 	bsg_dmc_asic_sequencer sqr;
 
 	local int unsigned addr_queue[$];
@@ -54,12 +54,21 @@ task bsg_dmc_top_seq::body();
 		end
 		"write_read_same_addr": begin
 				do_write_read(.read_auto_precharge(0), .write_auto_precharge(0), .same_addr(1));
+				#1us;
 		end
 		"write_read_same_addr_auto_precharge": begin
 				do_write_read(.read_auto_precharge(1), .write_auto_precharge(1), .same_addr(1));					
 		end
 		"write_consecutive_addresses": begin
-
+			int unsigned address;
+			rand_addr=0;
+			for(int i=0; i<read_write_iter; i++) begin
+				addr_queue.push_back(address);
+				address++;
+			end
+			for(int i=0; i<read_write_iter; i++) begin
+				do_write();
+			end			
 		end
 		"write_n_times": begin
 			for(int i=0; i<read_write_iter; i++) begin
@@ -73,6 +82,19 @@ task bsg_dmc_top_seq::body();
 				do_write();
 			end
 			rand_addr = 0;
+			for(int i=0; i<read_write_iter; i++) begin
+				random_delay();				
+				do_read();
+			end
+			#1us;
+		end
+		"write_n_times_read_n_times_same_addr": begin
+			do_write();
+			rand_addr = 0;			
+			for(int i=0; i<read_write_iter-1; i++) begin
+				random_delay();				
+				do_write();
+			end
 			for(int i=0; i<read_write_iter; i++) begin
 				random_delay();				
 				do_read();
@@ -189,9 +211,11 @@ endtask
 
 task bsg_dmc_top_seq::random_delay();
 	// delay = rand_delay*100ps
-	int unsigned rand_delay = $urandom_range(30000, 20000);
-	`uvm_info(get_full_name, $sformatf("Generating delay of %d * 100ps", rand_delay), UVM_MEDIUM)
-	#(rand_delay);
+	if(enable_random_delay) begin
+		int unsigned rand_delay = $urandom_range(30000, 20000);
+		`uvm_info(get_full_name, $sformatf("Generating delay of %d * 100ps", rand_delay), UVM_MEDIUM)
+		#(rand_delay);
+	end
 endtask
 
 function bsg_dmc_top_seq::set_addr_params(int unsigned row_width, int unsigned col_width, int unsigned bank_width);

@@ -48,16 +48,21 @@
 #      tags: 
 #      args: " +scenario=write_n_times_read_or_write_n_times_rand_auto_precharge +read_write_iter=20 "
 #      seed_count: 20
-multiple_writes_followed_by_multiple_reads_or_writes_rand_auto_precharge_long:
-      desc: "Long, truly random R/W test that does 20 writes to random locations and reads or writed to/from those locations with auto precharge randomly enabled in the DDR"
+#multiple_writes_followed_by_multiple_reads_or_writes_rand_auto_precharge_long:
+#      desc: "Long, truly random R/W test that does 20 writes to random locations and reads or writed to/from those locations with auto precharge randomly enabled in the DDR"
+#      tags: 
+#      args: " +scenario=write_n_times_read_or_write_n_times_rand_auto_precharge +read_write_iter=300 "
+#      seed_count: 20
+multiple_writes_consecutive:
+      desc: "Does 300  writes to consecutive locations in the DDR"
       tags: 
-      args: " +scenario=write_n_times_read_or_write_n_times_rand_auto_precharge +read_write_iter=300 "
-      seed_count: 20
+      args: " +scenario=write_consecutive_addresses +read_write_iter=300 "
+      seed_count: 10
 #multiple_writes_long:
 #      desc: "Does 300 writes to random locations in the DDR"
 #      tags: 
 #      args: " +scenario=write_n_times +read_write_iter=300 "
-#      seed_count: 20 
+#      seed_count: 20
 #multiple_writes_reads_long:
 #      desc: "Does 300 writes to random locations and reads from those locations in the DDR"
 #      tags: 

@@ -3,7 +3,7 @@
 # - Add code to check if a test has passed or not; 
 # - add regression statistics
 # - add support to compile and launch DVE as well
-# Author/Point of contact: Akash S (akashs3@uw.edu)
+# Point of contact: Akash S (akashs3@uw.edu)
 
 import yaml, getopt, sys, io, os, random
 
