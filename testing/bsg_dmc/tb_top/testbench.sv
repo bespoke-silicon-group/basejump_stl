@@ -13,6 +13,7 @@ import bsg_dmc_params_pkg::*;
 import uvm_pkg::*;
 import bsg_dmc_pkg::*;
 import bsg_dmc_asic_pkg::*;
+import bsg_dmc_ddr_pkg::*;
 import bsg_dmc_seq_pkg::*;
 
 `include "uvm_macros.svh"
@@ -36,6 +37,7 @@ module testbench();
 	integer read_transactions;
 
 	bsg_dmc_asic_interface asic_if();
+	bsg_dmc_ddr_interface ddr_if();
 
 	//TB TOP to TB connection for ASIC - DMC controller interface
 	assign app_addr 					= asic_if.app_addr;
@@ -58,8 +60,23 @@ module testbench();
 	assign asic_if.app_zq_ack			= app_zq_ack;
 	assign app_sr_req					= asic_if.app_sr_req;
 	assign asic_if.app_sr_active		= app_sr_active;
-	
-	//TB TOP to DUT connection
+
+	// DDR interface signals
+	assign ddr_if.ddr_dq			= ddr_dq; 
+	assign ddr_if.ddr_dqs_p			= ddr_dqs_p;
+	assign ddr_if.ddr_addr			= ddr_addr;
+	assign ddr_if.ddr_ba			= ddr_ba;  
+	assign ddr_if.ddr_ck_p			= ddr_ck_p;
+	assign ddr_if.ddr_ck_n			= ddr_ck_n;
+	assign ddr_if.ddr_cke			= ddr_cke; ;
+	assign ddr_if.ddr_cs_n			= ddr_cs_n;
+	assign ddr_if.ddr_ras_n			= ddr_ras_n;
+	assign ddr_if.ddr_cas_n			= ddr_cas_n;
+	assign ddr_if.ddr_we_n			= ddr_we_n;
+	assign ddr_if.ddr_dm			= ddr_dm;
+	assign ddr_if.ui_clk_sync_rst	= ui_clk_sync_rst;
+
+	// TB TOP to DUT connection
 	bsg_dmc #
 	  (.num_adgs_p            ( clk_gen_num_adgs_p  )
 	  ,.ui_addr_width_p       ( ui_addr_width_p     )
@@ -202,6 +219,8 @@ module testbench();
 		//We set and get objects and variables from across the testbench based on access rules configured through arguments of set method while storing it.
 		//Here, we pass pointers (virtual interface) of physical interfaces to all components below this hierarchy (* denotes all components). Tthese will be used by components to interact with the DUT.
     	uvm_config_db#(virtual bsg_dmc_asic_interface)::set(null, "*", "asic_if", asic_if);
+    	uvm_config_db#(virtual bsg_dmc_ddr_interface)::set(null, "*", "ddr_if", ddr_if);
+
     	//Call the test - by passing run_test argument as test class name
     	//Another option is to not pass any test argument and use +UVM_TEST on command line to specify which test to run
     	run_test("bsg_dmc_base_test");

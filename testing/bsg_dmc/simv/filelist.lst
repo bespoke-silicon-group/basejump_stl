@@ -7,6 +7,7 @@
 +incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/tests
 +incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/sequences
 +incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/vip/asic
++incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/vip/ddr
 +incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/config
 +incdir+$VCS_HOME/etc/uvm
 
@@ -57,5 +58,6 @@ $VCS_HOME/etc/uvm/src/dpi/uvm_dpi.cc
 $BASEJUMP_STL_DIR/testing/bsg_dmc/config/bsg_dmc_macros.sv
 $BASEJUMP_STL_DIR/testing/bsg_dmc/config/bsg_dmc_params_pkg.sv
 $BASEJUMP_STL_DIR/testing/bsg_dmc/vip/asic/bsg_dmc_asic_pkg.sv
+$BASEJUMP_STL_DIR/testing/bsg_dmc/vip/ddr/bsg_dmc_ddr_pkg.sv
 $BASEJUMP_STL_DIR/testing/bsg_dmc/sequences/bsg_dmc_seq_pkg.sv
 $BASEJUMP_STL_DIR/testing/bsg_dmc/vip/ddr/lpddr_verilog_model/mobile_ddr.v
