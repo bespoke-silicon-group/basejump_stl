@@ -10,7 +10,7 @@
 
 class bsg_dmc_asic_transaction extends uvm_sequence_item;
 
-	//Register with factory
+	// Register with factory
   	`uvm_object_utils(bsg_dmc_asic_transaction)
 
 	function new(string name= "bsg_dmc_asic_transaction");
@@ -26,13 +26,13 @@ class bsg_dmc_asic_transaction extends uvm_sequence_item;
 	rand bit [15:0] row_addr, col_addr;
 	rand bit [2:0] bank_addr;
 
-	//cmd interface signals
+	// cmd interface signals
 	bit      [ui_addr_width_p-1:0] 			app_addr;
   	app_cmd_e                      			app_cmd;
   	bit                            			app_en;
   	bit                            			app_rdy;
 
-	//write interface signals
+	// write interface signals
   	rand bit [ui_data_width_p-1:0] 			app_wdf_data;
   	rand bit [(ui_data_width_p>>3)-1:0] 	app_wdf_mask;
 
@@ -40,12 +40,12 @@ class bsg_dmc_asic_transaction extends uvm_sequence_item;
   	bit                            			app_wdf_end;
   	bit                            			app_wdf_rdy;
 
-	//Read interface signals
+	// Read interface signals
   	bit                            			app_rd_data_valid;
   	bit [ui_data_width_p-1:0]				app_rd_data;
   	bit                            			app_rd_data_end;
 
-	//delay after which packet has to be driven
+	// delay after which packet has to be driven
 	bit [1:0]								delay;
 
 	constraint legal_row_col_bank_addr {
@@ -53,10 +53,6 @@ class bsg_dmc_asic_transaction extends uvm_sequence_item;
 		col_addr inside {[0:(2**col_width -1)]};
 		bank_addr inside {[0:(2**bank_width -1)]};						
 	}
-
-	//constraint legal_app_addr {
-	//	app_addr == {bank_addr[bank_width-1 +:0], row_addr[row_width-1 +:0], col_addr[col_width-1 +:0]};
-	//}
 
 	function void pre_randomize();
 		if(rand_addr) begin

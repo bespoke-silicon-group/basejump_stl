@@ -19,9 +19,12 @@ class bsg_dmc_asic_agent extends uvm_agent;
 	bsg_dmc_asic_driver asic_driver;
 	bsg_dmc_asic_sequencer asic_sequencer;
 	bsg_dmc_asic_monitor asic_monitor;
+
+	uvm_analysis_port#(bsg_dmc_asic_transaction) asic_agent_analysis_port;
 	
 	function new(string name = "bsg_dmc_asic_agent", uvm_component parent = null);
     	super.new(name, parent);
+		asic_agent_analysis_port = new("asic_agent_analysis_port", this);
   	endfunction
 
 	extern virtual function void build_phase (uvm_phase phase);
@@ -40,5 +43,5 @@ endfunction
 function void bsg_dmc_asic_agent::connect_phase (uvm_phase phase);
 	//Connect sequencer to driver for transmitting transaction packets.
     asic_driver.seq_item_port.connect(asic_sequencer.seq_item_export);
-	
+	asic_monitor.asic_mon_analysis_port.connect(asic_agent_analysis_port);
 endfunction

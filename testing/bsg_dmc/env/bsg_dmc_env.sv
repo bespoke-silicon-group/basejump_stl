@@ -32,4 +32,5 @@ endfunction : build_phase
 
 function void bsg_dmc_env::connect_phase(uvm_phase phase);
 	ddr_monitor.ddr_mon_analysis_port.connect(scoreboard.ddr_imp);
+	asic_agent.asic_agent_analysis_port.connect(scoreboard.asic_imp);
 endfunction : connect_phase

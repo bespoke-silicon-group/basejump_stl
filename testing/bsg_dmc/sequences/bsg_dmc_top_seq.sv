@@ -141,7 +141,7 @@ task bsg_dmc_top_seq::body();
 			end
 		end
 		default: begin
-			`uvm_fatal(get_full_name(), $sformatf(" Scenario: %s not recognised", scenario))
+			`uvm_fatal(get_full_name(), $sformatf("Scenario: %s not recognised", scenario))
 		end
 	endcase
 endtask

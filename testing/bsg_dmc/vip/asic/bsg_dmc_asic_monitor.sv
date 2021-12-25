@@ -18,7 +18,8 @@ class bsg_dmc_asic_monitor extends uvm_monitor #(bsg_dmc_asic_transaction);
 
 	virtual bsg_dmc_asic_interface 	vif;
 
-	local bit reset_triggered;
+	local bit reset_triggered, cmd_recd;
+	local bsg_dmc_asic_transaction buffer_txn;
 
 	extern virtual function void build_phase(uvm_phase phase);
 
@@ -28,6 +29,7 @@ class bsg_dmc_asic_monitor extends uvm_monitor #(bsg_dmc_asic_transaction);
 
 	function new(string name, uvm_component parent);
     	super.new(name,parent);
+		asic_mon_analysis_port = new("asic_mon_analysis_port", this);
   	endfunction
 
 endclass: bsg_dmc_asic_monitor
@@ -73,26 +75,56 @@ task bsg_dmc_asic_monitor::capture_signals();
 			txn.app_addr = vif.app_addr;
 			txn.app_cmd = vif.app_cmd;
 			txn.app_rdy = vif.app_rdy;
+			cmd_recd = 1;
 			`uvm_info(get_full_name(), $sformatf("got cmd %s to addr %h at ASIC monitor", txn.app_cmd, txn.app_addr), UVM_MEDIUM)
 		end
 		begin
 			@(posedge vif.app_wdf_wren);
-			txn = bsg_dmc_asic_transaction::type_id::create("txn");
-			txn.app_wdf_data = vif.app_wdf_data;
-			txn.app_wdf_mask = vif.app_wdf_mask;
-			txn.app_wdf_end = txn.app_wdf_end;
-			`uvm_info(get_full_name(), $sformatf("got wdata %h and wmask %h wdf_end %d at ASIC monitor", txn.app_wdf_data, txn.app_wdf_mask, txn.app_wdf_end ), UVM_MEDIUM)			
+			if(!cmd_recd) begin
+				$display("cmd not recd");
+				buffer_txn = bsg_dmc_asic_transaction::type_id::create("txn");
+				buffer_txn.txn_type = ASIC_WRITE;
+				buffer_txn.app_wdf_data = vif.app_wdf_data;
+				buffer_txn.app_wdf_mask = vif.app_wdf_mask;
+				buffer_txn.app_wdf_end = vif.app_wdf_end;
+			end
+			if(cmd_recd) begin
+				txn = bsg_dmc_asic_transaction::type_id::create("txn");
+				txn.txn_type = ASIC_WRITE;
+				txn.app_addr = vif.app_addr;					
+				txn.app_wdf_data = vif.app_wdf_data;
+				txn.app_wdf_mask = vif.app_wdf_mask;
+				txn.app_wdf_end = vif.app_wdf_end;
+
+				if(buffer_txn != null) begin
+					buffer_txn.app_addr = vif.app_addr;
+					asic_mon_analysis_port.write(buffer_txn);
+					`uvm_info(get_full_name(), $sformatf("got buffer wdata %h and wmask %h wdf_end %d at addr %h at ASIC monitor", buffer_txn.app_wdf_data, buffer_txn.app_wdf_mask, buffer_txn.app_wdf_end, buffer_txn.app_addr ), UVM_MEDIUM)			
+
+					buffer_txn = null;
+				end
+
+				if(txn.app_wdf_end)
+					cmd_recd=0;
+				`uvm_info(get_full_name(), $sformatf("got wdata %h and wmask %h wdf_end %d at addr %h at ASIC monitor", txn.app_wdf_data, txn.app_wdf_mask, txn.app_wdf_end, txn.app_addr ), UVM_MEDIUM)			
+
+			end
 		end
 		begin 
 			wait(vif.app_rd_data_valid);
 			@(vif.app_rd_data);
-
-			txn = bsg_dmc_asic_transaction::type_id::create("txn");
-			txn.app_rd_data = vif.app_rd_data;
-			txn.app_rd_data_end = vif.app_rd_data_end;
-			`uvm_info(get_full_name(), $sformatf("got rdata %h and rdata_end %h at ASIC monitor", txn.app_rd_data, txn.app_rd_data_valid ), UVM_MEDIUM)			
+			if(vif.app_rd_data_valid) begin
+				txn = bsg_dmc_asic_transaction::type_id::create("txn");
+				txn.txn_type = ASIC_READ;						
+				txn.app_addr = vif.app_addr;			
+				txn.app_rd_data = vif.app_rd_data;
+				txn.app_rd_data_end = vif.app_rd_data_end;
+				cmd_recd=0;			
+				`uvm_info(get_full_name(), $sformatf("got rdata %h and rdata_end %h at ASIC monitor", txn.app_rd_data, txn.app_rd_data_valid ), UVM_MEDIUM)	
+			end		
 		end					
 	join_any
 	disable fork;
-	//asic_mon_analysis_port.write(txn);
+	if(txn != null )
+		asic_mon_analysis_port.write(txn);
 endtask

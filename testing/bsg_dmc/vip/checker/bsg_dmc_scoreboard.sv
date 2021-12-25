@@ -12,6 +12,7 @@ class bsg_dmc_scoreboard extends uvm_scoreboard;
 
 	local dfi_cmd_e current_cmd, prev_cmd;
 	local bit auto_precharge;
+	local bit [ui_data_width_p-1:0] data[int unsigned][$];
 
 	`uvm_analysis_imp_decl(_ddr)
 	`uvm_analysis_imp_decl(_asic)
@@ -22,6 +23,7 @@ class bsg_dmc_scoreboard extends uvm_scoreboard;
 	function new(string name, uvm_component parent);
 		super.new("bsg_dmc_scoreboard", parent);
 		ddr_imp = new("ddr_imp", this);
+		asic_imp = new("asic_imp", this);		
 	endfunction: new
 
 	extern virtual function write_ddr(bsg_dmc_ddr_transaction txn);
@@ -38,7 +40,26 @@ class bsg_dmc_scoreboard extends uvm_scoreboard;
 endclass: bsg_dmc_scoreboard
 
 function bsg_dmc_scoreboard::write_asic(bsg_dmc_asic_transaction txn);
+	if(txn.txn_type == ASIC_WRITE) begin
+		bit [ui_data_width_p-1:0] masked_data = txn.app_wdf_data;
+		foreach(txn.app_wdf_mask[i]) begin
+			if(txn.app_wdf_mask[i]) begin
+				masked_data [8*i + 7 -: 8] = {8{0}};
+			end
+		end
 
+		`uvm_info(get_full_name(), $sformatf("Received wdata %h wmask %h masked data %h  to addr %h at scoreboard", txn.app_wdf_data, txn.app_wdf_mask, masked_data, txn.app_addr ), UVM_NONE)
+		data[txn.app_addr].push_back(masked_data);
+	end
+	if(txn.txn_type == ASIC_READ) begin
+		bit [ui_data_width_p-1:0] local_data = data[txn.app_addr].pop_front();
+		if(local_data != txn.app_rd_data) begin
+			`uvm_error(get_full_name(), $sformatf("Data mismatch at scoreboard: local_data: %h received data: %h for address %h", local_data, txn.app_rd_data, txn.app_addr))
+		end
+		else begin
+			`uvm_info(get_full_name(), $sformatf("Data match at scoreboard: local_data: %h received data: %h for address %h", local_data, txn.app_rd_data, txn.app_addr), UVM_NONE)
+		end			
+	end
 endfunction
 
 function bsg_dmc_scoreboard::write_ddr (bsg_dmc_ddr_transaction txn);
