@@ -28,6 +28,7 @@ class bsg_dmc_ddr_monitor extends uvm_monitor #(bsg_dmc_ddr_transaction);
 
 	function new(string name, uvm_component parent);
     	super.new(name,parent);
+		ddr_mon_analysis_port = new("ddr_mon_analysis_port", this);
   	endfunction
 
 endclass: bsg_dmc_ddr_monitor
@@ -72,6 +73,8 @@ task bsg_dmc_ddr_monitor::capture_signals();
 	txn.ddr_we_n = vif.ddr_we_n;
 	txn.ddr_ba = vif.ddr_ba;
 	txn.ddr_addr = vif.ddr_addr;
+	txn.command = {vif.ddr_ras_n, vif.ddr_cas_n,vif.ddr_we_n };
 	`uvm_info(get_full_name(), $sformatf("got cmd %d to addr %h and bank addr %d at DDR monitor", {txn.ddr_ras_n,txn.ddr_cas_n, txn.ddr_we_n}, txn.ddr_addr, txn.ddr_ba), UVM_MEDIUM)
-//ddr_mon_analysis_port.write(txn);
+
+	ddr_mon_analysis_port.write(txn);
 endtask

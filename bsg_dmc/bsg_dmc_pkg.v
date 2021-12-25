@@ -1,4 +1,3 @@
-
 package bsg_dmc_pkg;
 
   // Following struct passes on configuration parameters from TB top to DMC RTL.

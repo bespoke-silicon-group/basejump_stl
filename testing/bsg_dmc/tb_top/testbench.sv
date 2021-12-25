@@ -18,6 +18,7 @@ import bsg_dmc_seq_pkg::*;
 
 `include "uvm_macros.svh"
 
+`include "../vip/checker/bsg_dmc_scoreboard.sv"
 `include "../env/bsg_dmc_env.sv"
 `include "bsg_dmc_base_test.sv"
 

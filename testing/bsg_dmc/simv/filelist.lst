@@ -3,6 +3,7 @@
 +incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/vip/ddr/lpddr_verilog_model/
 +incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/tb_top/
 +incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/config
++incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/vip/checker
 +incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/env
 +incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/tests
 +incdir+$BASEJUMP_STL_DIR/testing/bsg_dmc/sequences
