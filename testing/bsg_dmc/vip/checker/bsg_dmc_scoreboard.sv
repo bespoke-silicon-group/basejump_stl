@@ -29,36 +29,35 @@ class bsg_dmc_scoreboard extends uvm_scoreboard;
 	extern virtual function write_ddr(bsg_dmc_ddr_transaction txn);
 	extern virtual function write_asic(bsg_dmc_asic_transaction txn);
 
-	//extern virtual function void build_phase(uvm_phase phase);
-	//extern virtual task run_phase(uvm_phase phase);
-	//extern virtual task get_write_data();
-	//extern virtual task get_read_data();
-	//extern virtual function compare_read_write_data();
 	extern virtual function check_legal_transition();
 	extern virtual function print_error_transition();
 
 endclass: bsg_dmc_scoreboard
 
 function bsg_dmc_scoreboard::write_asic(bsg_dmc_asic_transaction txn);
-	if(txn.txn_type == ASIC_WRITE) begin
-		bit [ui_data_width_p-1:0] masked_data = txn.app_wdf_data;
-		foreach(txn.app_wdf_mask[i]) begin
-			if(txn.app_wdf_mask[i]) begin
-				masked_data [8*i + 7 -: 8] = {8{0}};
+	if(txn.txn_type inside {ASIC_WRITE, ASIC_CMD} ) begin
+		if(txn.app_wdf_wren) begin
+			bit [ui_data_width_p-1:0] masked_data = txn.app_wdf_data;
+			foreach(txn.app_wdf_mask[i]) begin
+				if(txn.app_wdf_mask[i]) begin
+					masked_data [8*i + 7 -: 8] = {8{0}};
+				end
 			end
-		end
 
-		`uvm_info(get_full_name(), $sformatf("Received wdata %h wmask %h masked data %h  to addr %h at scoreboard", txn.app_wdf_data, txn.app_wdf_mask, masked_data, txn.app_addr ), UVM_NONE)
-		data[txn.app_addr].push_back(masked_data);
+			`uvm_info(get_full_name(), $sformatf("Received wdata %h wmask %h masked data %h  to addr %h at scoreboard", txn.app_wdf_data, txn.app_wdf_mask, masked_data, txn.app_addr ), UVM_NONE)
+			data[txn.app_addr].push_back(masked_data);
+		end
 	end
 	if(txn.txn_type == ASIC_READ) begin
-		bit [ui_data_width_p-1:0] local_data = data[txn.app_addr].pop_front();
-		if(local_data != txn.app_rd_data) begin
-			`uvm_error(get_full_name(), $sformatf("Data mismatch at scoreboard: local_data: %h received data: %h for address %h", local_data, txn.app_rd_data, txn.app_addr))
-		end
-		else begin
-			`uvm_info(get_full_name(), $sformatf("Data match at scoreboard: local_data: %h received data: %h for address %h", local_data, txn.app_rd_data, txn.app_addr), UVM_NONE)
-		end			
+		if(txn.app_rd_data_valid) begin
+			bit [ui_data_width_p-1:0] local_data = data[txn.app_addr].pop_front();
+			if(local_data != txn.app_rd_data) begin
+				`uvm_error(get_full_name(), $sformatf("Data mismatch at scoreboard: local_data: %h received data: %h for address %h", local_data, txn.app_rd_data, txn.app_addr))
+			end
+			else begin
+				`uvm_info(get_full_name(), $sformatf("Data match at scoreboard: local_data: %h received data: %h for address %h", local_data, txn.app_rd_data, txn.app_addr), UVM_NONE)
+			end
+		end		
 	end
 endfunction
 

@@ -20,6 +20,7 @@ class bsg_dmc_asic_monitor extends uvm_monitor #(bsg_dmc_asic_transaction);
 
 	local bit reset_triggered, cmd_recd;
 	local bsg_dmc_asic_transaction buffer_txn;
+	local int unsigned prev_addr;
 
 	extern virtual function void build_phase(uvm_phase phase);
 
@@ -75,8 +76,14 @@ task bsg_dmc_asic_monitor::capture_signals();
 			txn.app_addr = vif.app_addr;
 			txn.app_cmd = vif.app_cmd;
 			txn.app_rdy = vif.app_rdy;
+			txn.app_wdf_wren = vif.app_wdf_wren;
+			txn.app_wdf_data = vif.app_wdf_data;
+			txn.app_wdf_mask = vif.app_wdf_mask;
+			txn.app_wdf_end = vif.app_wdf_end;
+			asic_mon_analysis_port.write(txn);
+
 			cmd_recd = 1;
-			`uvm_info(get_full_name(), $sformatf("got cmd %s to addr %h at ASIC monitor", txn.app_cmd, txn.app_addr), UVM_MEDIUM)
+			`uvm_info(get_full_name(), $sformatf("got cmd %s to addr %h wren %d at ASIC monitor", txn.app_cmd, txn.app_addr, txn.app_wdf_wren), UVM_MEDIUM)
 		end
 		begin
 			@(posedge vif.app_wdf_wren);
@@ -84,6 +91,7 @@ task bsg_dmc_asic_monitor::capture_signals();
 				$display("cmd not recd");
 				buffer_txn = bsg_dmc_asic_transaction::type_id::create("txn");
 				buffer_txn.txn_type = ASIC_WRITE;
+				buffer_txn.app_wdf_wren = vif.app_wdf_wren;
 				buffer_txn.app_wdf_data = vif.app_wdf_data;
 				buffer_txn.app_wdf_mask = vif.app_wdf_mask;
 				buffer_txn.app_wdf_end = vif.app_wdf_end;
@@ -91,7 +99,8 @@ task bsg_dmc_asic_monitor::capture_signals();
 			if(cmd_recd) begin
 				txn = bsg_dmc_asic_transaction::type_id::create("txn");
 				txn.txn_type = ASIC_WRITE;
-				txn.app_addr = vif.app_addr;					
+				txn.app_wdf_wren = vif.app_wdf_wren;
+				txn.app_addr = vif.app_addr;				
 				txn.app_wdf_data = vif.app_wdf_data;
 				txn.app_wdf_mask = vif.app_wdf_mask;
 				txn.app_wdf_end = vif.app_wdf_end;
@@ -99,7 +108,7 @@ task bsg_dmc_asic_monitor::capture_signals();
 				if(buffer_txn != null) begin
 					buffer_txn.app_addr = vif.app_addr;
 					asic_mon_analysis_port.write(buffer_txn);
-					`uvm_info(get_full_name(), $sformatf("got buffer wdata %h and wmask %h wdf_end %d at addr %h at ASIC monitor", buffer_txn.app_wdf_data, buffer_txn.app_wdf_mask, buffer_txn.app_wdf_end, buffer_txn.app_addr ), UVM_MEDIUM)			
+					`uvm_info(get_full_name(), $sformatf("got buffer wdata %h and wmask %h wdf_end %d at addr %h wren %d at ASIC monitor", buffer_txn.app_wdf_data, buffer_txn.app_wdf_mask, buffer_txn.app_wdf_end, buffer_txn.app_addr, buffer_txn.app_wdf_wren ), UVM_MEDIUM)			
 
 					buffer_txn = null;
 				end
@@ -107,24 +116,33 @@ task bsg_dmc_asic_monitor::capture_signals();
 				if(txn.app_wdf_end)
 					cmd_recd=0;
 				`uvm_info(get_full_name(), $sformatf("got wdata %h and wmask %h wdf_end %d at addr %h at ASIC monitor", txn.app_wdf_data, txn.app_wdf_mask, txn.app_wdf_end, txn.app_addr ), UVM_MEDIUM)			
+				asic_mon_analysis_port.write(txn);
 
 			end
 		end
 		begin 
 			wait(vif.app_rd_data_valid);
-			@(vif.app_rd_data);
+			@(posedge vif.ui_clk);
 			if(vif.app_rd_data_valid) begin
 				txn = bsg_dmc_asic_transaction::type_id::create("txn");
-				txn.txn_type = ASIC_READ;						
-				txn.app_addr = vif.app_addr;			
+				txn.txn_type = ASIC_READ;
+				txn.app_rd_data_valid = vif.app_rd_data_valid;
+				// last packet can coincide with next command - leading to the last packet getting accounted for address of new command. By doing below, we ensure that the last packet always gets the address of packet preceding it.
+				if(vif.app_rd_data_end) begin
+					txn.app_addr = prev_addr;			
+				end
+				else begin				
+					txn.app_addr = vif.app_addr;
+				end
+
 				txn.app_rd_data = vif.app_rd_data;
 				txn.app_rd_data_end = vif.app_rd_data_end;
-				cmd_recd=0;			
-				`uvm_info(get_full_name(), $sformatf("got rdata %h and rdata_end %h at ASIC monitor", txn.app_rd_data, txn.app_rd_data_valid ), UVM_MEDIUM)	
+				cmd_recd=0;
+				prev_addr = vif.app_addr;	
+				`uvm_info(get_full_name(), $sformatf("got rdata %h and rdata_end %h at ASIC monitor", txn.app_rd_data, txn.app_rd_data_end ), UVM_MEDIUM)	
+				asic_mon_analysis_port.write(txn);
 			end		
 		end					
 	join_any
 	disable fork;
-	if(txn != null )
-		asic_mon_analysis_port.write(txn);
 endtask
