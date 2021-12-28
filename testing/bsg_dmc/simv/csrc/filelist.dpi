@@ -1,3 +1,0 @@
-DPI_STUB_OBJS += ./../simv.daidir/vc_hdrs.o
-./../simv.daidir/vc_hdrs.o: ./../simv.daidir/vc_hdrs.c
-	@$(CC) -I/gro/cad/synopsys/vcs/L-2016.06-SP2-15/include  -pipe -fPIC    -I/gro/cad/synopsys/vcs/L-2016.06-SP2-15/include  -fPIC -c -o ./../simv.daidir/vc_hdrs.o ./../simv.daidir/vc_hdrs.c
