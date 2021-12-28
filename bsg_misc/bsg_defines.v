@@ -35,7 +35,8 @@
 // if later we find that all tools are compatible, we can remove the use of this from BaseJump STL
 
 `ifdef XCELIUM // Bare default parameters are incompatible as of 20.09.012
-`define BSG_INV_PARAM(param) param = "inv"
+               // = "inv" causes type inference mismatch as of 20.09.012
+`define BSG_INV_PARAM(param) param = -1
 `elsif YOSYS // Bare default parameters are incompatible as of 0.9
 `define BSG_INV_PARAM(param) param = "inv"
 `else // VIVADO, DC, VERILATOR, GENUS
