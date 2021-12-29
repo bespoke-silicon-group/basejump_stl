@@ -2,16 +2,17 @@
 module bsg_fifo_1r1w_periodic
  #(parameter `BSG_INV_PARAM(a_period_p)
    , parameter `BSG_INV_PARAM(b_period_p)
+   , parameter num_hs_p = 1
    )
-  (input          a_clk_i
-   , input        a_reset_i
-   , input        a_v_i
-   , output logic a_yumi_o
+  (input                         a_clk_i
+   , input                       a_reset_i
+   , input [num_hs_p-1:0]        a_v_i
+   , output logic                a_yumi_o
 
-   , input        b_clk_i
-   , input        b_reset_i
-   , output logic b_v_o
-   , input        b_ready_then_i
+   , input                       b_clk_i
+   , input                       b_reset_i
+   , output logic [num_hs_p-1:0] b_v_o
+   , input [num_hs_p-1:0]        b_ready_then_i
    );
 
   localparam fast2slow_lp  = (a_period_p > b_period_p);
@@ -30,7 +31,7 @@ module bsg_fifo_1r1w_periodic
      ,.up_i(1'b1)
      ,.count_r_o(cnt_r)
      );
-  wire accept_input = cnt_r[ratio_lp-1] & b_ready_then_i & a_v_i & ~a_reset_i & ~b_reset_i;
+  wire [num_hs_p-1:0] accept_input = {num_hs_p{cnt_r[ratio_lp-1]}} & b_ready_then_i & a_v_i;
   assign b_v_o      = accept_input;
   assign a_yumi_o   = accept_input;
 
