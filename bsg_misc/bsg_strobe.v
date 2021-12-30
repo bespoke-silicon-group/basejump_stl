@@ -40,6 +40,12 @@ module bsg_strobe #(`BSG_INV_PARAM(width_p)
 
    localparam debug_lp = 0;
 
+   if (width_p < 2)
+     begin : z
+      assign strobe_r_o = 1'b1;
+     end
+   else
+     begin : nz
    logic strobe_n, strobe_n_buf;
 
    logic [width_p-1:0  ] S_r, S_n, S_n_n,C_n_prereset;
@@ -141,6 +147,7 @@ module bsg_strobe #(`BSG_INV_PARAM(width_p)
      assert((strobe_n === 'X) || strobe_n == & ((C_r << 1) ^ S_r))
        else $error("## faulty assumption about strobe signal in %m (C_r=%b, S_r=%b, strobe_n=%b)", C_r,S_r, strobe_n);
    // synopsys translate_on
+  end
 
 endmodule
 
