@@ -18,6 +18,7 @@ def main(argv):
 	launch_regression(regression_dict, output_dir)
 
 	if errors != '':
+		print ' ERRORS found in the regression. Check error.log in the regression directory!\n'
 		f = open(output_dir + "/errors.log", "w")
 		f.write(errors)
 

@@ -87,7 +87,7 @@ task bsg_dmc_asic_monitor::capture_signals();
 		end
 		begin
 			@(posedge vif.app_wdf_wren);
-			if(!cmd_recd) begin
+			if(!cmd_recd && vif.app_wdf_rdy) begin
 				$display("cmd not recd");
 				buffer_txn = bsg_dmc_asic_transaction::type_id::create("txn");
 				buffer_txn.txn_type = ASIC_WRITE;

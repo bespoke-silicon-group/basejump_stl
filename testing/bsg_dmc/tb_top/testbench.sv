@@ -187,10 +187,22 @@ module testbench();
 		dfi_clk_2x = 0;
 		ui_clk = 0;
 	end	
-	//TODO: akashs3 : no hardcoded clk period vals.
-	always #1.25 dfi_clk_2x = ~dfi_clk_2x;
-	//always #0.625 ui_clk = ~ui_clk;
-	always #2.5 ui_clk = ~ui_clk;
+	`ifdef sg75
+		always #1.875 dfi_clk_2x = ~dfi_clk_2x;
+		always #3.75 ui_clk = ~ui_clk;
+	`else `ifdef sg54
+		always #1.35 dfi_clk_2x = ~dfi_clk_2x;
+		always #2.7 ui_clk = ~ui_clk;
+	`else `ifdef sg6
+		always #1.5 dfi_clk_2x = ~dfi_clk_2x;
+		always #3 ui_clk = ~ui_clk;
+	`else
+		always #1.2 dfi_clk_2x = ~dfi_clk_2x;
+		always #2.4 ui_clk = ~ui_clk;
+	 `endif
+	 `endif
+	 `endif
+	
 	
 	initial begin
 		sys_reset = 1;
@@ -228,21 +240,59 @@ module testbench();
 	end
 	
 	task init_configuration_values();
-
 		dmc_p.trefi = 1023;
-	    dmc_p.tmrd = 1;
-	    dmc_p.trfc = 15;
-	    dmc_p.trc = 10;
-	    dmc_p.trp = 2;
-	    dmc_p.tras = 9;
-	    dmc_p.trrd = 1;
-	    dmc_p.trcd = 2;
-	    dmc_p.twr = 10;
-		//TODO: akashs3: randomise below val.
-	    dmc_p.twtr = 7;
-	    dmc_p.trtp = 10;
-	    dmc_p.tcas = 3;
-		// TODO: akashs3: bank/row/col widths are specific to x16 DDR. Randomise them while verifying for various mem configurations.
+	   	dmc_p.tmrd = 2;
+	   	dmc_p.tcas = 3;
+	    dmc_p.trtp = 10; // CAS + read burst = 3+8 
+
+		// All of below values taken from 2048Mb_mobile_ddr_parameters.vh in basejump_stl/testing/bsg_dmc/vip/ddr/lpddr_verilog_model
+		`ifdef sg75
+			$display("BFM selected: SG75");
+	    	dmc_p.trfc = 9; // 72ns/7.5 = 9.6
+	    	dmc_p.trc = 8; // 67.5ns/7.5 = 9
+	    	dmc_p.trp = 2; // 22.5/7.5 = 3
+	    	dmc_p.tras = 5; // 45ns/7.5 = 6
+	    	dmc_p.trrd = 1; //15ns/7.5 = 2
+	    	dmc_p.trcd = 2; // 22.5ns/7.5 = 3
+	    	dmc_p.twr = 9; // 15/7.5 + 8 cycles to complete burst 
+	    	dmc_p.twtr = 8; // 1 + 8 cycles to complete burst
+		`else `ifdef sg54
+			$display("BFM selected: SG54");			
+	    	dmc_p.trfc = 13; // 72ns/5.4 = 14
+	    	dmc_p.trc = 10; // 58.2/5.4 = 10.7
+	    	dmc_p.trp = 2; // 16.2/5.4 = 3
+	    	dmc_p.tras = 7; // 41.8/5.4 = 7.74 
+	    	dmc_p.trrd = 1; // 10.8/5.4 = 2
+	    	dmc_p.trcd = 2; // 16.2/5.4 = 3
+	    	dmc_p.twr = 9; // 15.0/5.4 = 2.7 + 8 cycles to complete burst
+	    	dmc_p.twtr = 9; // 2 + 8 cycles to complete burst
+		`else `ifdef sg6
+			$display("BFM selected: SG6");						
+	    	dmc_p.trfc = 11; // 72/6 = 12
+	    	dmc_p.trc = 9; // 60/6 = 10
+	    	dmc_p.trp = 2; // 18/6 = 3
+	    	dmc_p.tras = 7; // 41.8/6 = 6.9
+	    	dmc_p.trrd = 1; // 12/6 = 2
+	    	dmc_p.trcd = 2; //18/6 = 3
+	    	dmc_p.twr = 10; // 15/6 = 2.5 + 8 cycles to complete burst
+	    	dmc_p.twtr = 7; // 1 + 8 cycles to complete burst
+		`else
+			// SG5 by default
+			$display("DEFAULT BFM selected: SG5");			
+
+	    	dmc_p.trfc = 14; // 72/4.8=14.4
+	    	dmc_p.trc = 11; // 55/4.8=11.4
+	    	dmc_p.trp = 2; // 14.4/4.8 = 2.88
+	    	dmc_p.tras = 8; // 40/4.8 = 8.33
+	    	dmc_p.trrd = 2; // 10/4.8 2.08
+	    	dmc_p.trcd = 2; // 14.4/4.8
+	    	dmc_p.twr = 10; // 14.4/4.8 + 8 cycles to complete burst
+	    	dmc_p.twtr = 9; // 2 + 8 cycles to complete burst
+		`endif
+		`endif
+		`endif
+		
+
 	    dmc_p.col_width = 11;
 	    dmc_p.row_width = 14;
 	    dmc_p.bank_width = 2;

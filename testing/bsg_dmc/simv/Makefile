@@ -17,11 +17,11 @@ ELABORATE_OPTIONS += +vcs+vcdplusmemon
 ELABORATE_OPTIONS += -timescale=1ns/100ps
 ELABORATE_OPTIONS += -assert svaext
 #TODO: akashs3 randomise the BFM to be fetched over time for below define.
-ELABORATE_OPTIONS += +define+den2048Mb+sg5+x16+FULL_MEM
+ELABORATE_OPTIONS += +define+den2048Mb+sg75+x16+FULL_MEM
 
 ifdef coverage
 	ELABORATE_OPTIONS += -cm line+cond+fsm+tgl -cm path
-	DVE_OPTIONS += -cov -dir simv.vdb 
+	DVE_OPTIONS += -cov -dir consecutive_writes.vdb -dir rand_cov.vdb 
 endif
 
 ifdef scenario

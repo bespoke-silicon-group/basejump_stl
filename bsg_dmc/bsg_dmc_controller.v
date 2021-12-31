@@ -512,24 +512,26 @@ module bsg_dmc_controller
 		ACT:   case(n_cmd)
     	             PRE:     shoot = cmd_tick >= dmc_p_i.tras;
     	             ACT:     shoot = cmd_tick >= dmc_p_i.trrd;
-    	             WRITE:   shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_rd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
-    	             READ:    shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_wr_tick >= dmc_p_i.twtr);
+    	             WRITE:   shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_rd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (cmd_act_tick >= dmc_p_i.tras) & (&tx_sipo_valid_lo);
+    	             READ:    shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_wr_tick >= dmc_p_i.twtr) & (cmd_act_tick >= dmc_p_i.tras);
 		         	 default: shoot = 1'b1;
     	         endcase
     	WRITE: case(n_cmd)
-					// if write is followed by refresh, it means we are writing with auto precharge. But we still have to wait for twr after write and tras after activate. So timing condition below applies for either n_cmd = precharge or refresh
-    	             PRE, REF:     shoot = (cmd_tick >= dmc_p_i.twr) & (cmd_act_tick >= dmc_p_i.tras);
-    	             WRITE:   shoot = (cmd_tick >= dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
-    	             READ:    shoot = cmd_tick >= dmc_p_i.twtr;
-    	             ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.twr + dmc_p_i.trp);
+    	             PRE:     shoot = (cmd_tick >= dmc_p_i.twr) & (cmd_act_tick >= dmc_p_i.tras);
+					 // if write is followed by refresh, it means we are writing with auto precharge. But we still have to wait for tras after activate and (twr + trp) for internal precharge to have completed. So timing condition below applies for either n_cmd = precharge or refresh			
+    	             REF:     shoot = (cmd_tick >= dmc_p_i.twr + dmc_p_i.trp) & (cmd_act_tick >= dmc_p_i.tras) ;			
+    	             WRITE:   shoot = (ap) ? ((cmd_tick >= dfi_burst_length_lp-1) & (&tx_sipo_valid_lo) && cmd_tick >= dmc_p_i.trp) : ((cmd_tick >= dfi_burst_length_lp-1) & (&tx_sipo_valid_lo)) ;
+    	             READ:    shoot = (ap) ? (cmd_tick >= dmc_p_i.twtr && cmd_tick >= dmc_p_i.trp) : cmd_tick >= dmc_p_i.twtr ;
+    	             ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.twr + dmc_p_i.trp) & (cmd_tick >= dmc_p_i.trrd);
 		             default: shoot = 1'b1;
     	           endcase
     	READ:  case(n_cmd)
-					// if read is followed by refresh, it means we are reading with auto precharge. But we still have to wait for trtp after read and tras after activate. So timing condition below applies for either n_cmd = precharge or refresh
-    	             PRE, REF:     shoot = (cmd_tick >= dmc_p_i.trtp) & (cmd_act_tick >= dmc_p_i.tras);
-    	             WRITE:   shoot = (cmd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
+    	             PRE:     shoot = (cmd_tick >= dmc_p_i.trtp) & (cmd_act_tick >= dmc_p_i.tras);
+					 // if read is followed by refresh, it means we are reading with auto precharge. But we still have to wait for trtp after read and tras after activate. So timing condition below applies for either n_cmd = precharge or refresh			
+    	             REF:     shoot = (cmd_tick >= dmc_p_i.trtp + dmc_p_i.trp) & (cmd_act_tick >= dmc_p_i.tras);			
+    	             WRITE:   shoot = (ap) ?  ( (cmd_tick >= dmc_p_i.tcas + dmc_p_i.trp + dfi_burst_length_lp-1) & (&tx_sipo_valid_lo) ): ((cmd_tick >= dmc_p_i.tcas + dfi_burst_length_lp-1) & (&tx_sipo_valid_lo));
     	             READ:    shoot = cmd_tick >= dfi_burst_length_lp-1;
-    	             ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.trtp + dmc_p_i.trp);
+    	             ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.trtp + dmc_p_i.trp) & (cmd_tick >= dmc_p_i.trrd) & (cmd_tick >= dmc_p_i.trrd);
 		             default: shoot = 1'b1;
     	           endcase
 		default: shoot = 1'b1;
