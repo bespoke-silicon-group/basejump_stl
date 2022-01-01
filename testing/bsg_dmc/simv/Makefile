@@ -17,7 +17,7 @@ ELABORATE_OPTIONS += +vcs+vcdplusmemon
 ELABORATE_OPTIONS += -timescale=1ns/100ps
 ELABORATE_OPTIONS += -assert svaext
 #TODO: akashs3 randomise the BFM to be fetched over time for below define.
-ELABORATE_OPTIONS += +define+den2048Mb+sg75+x16+FULL_MEM
+ELABORATE_OPTIONS += +define+den2048Mb+x16+FULL_MEM
 
 ifdef coverage
 	ELABORATE_OPTIONS += -cm line+cond+fsm+tgl -cm path
@@ -47,6 +47,12 @@ ifndef coverage
 		DVE_OPTIONS+= -vpd vcdplus.vpd
 	endif
 endif
+
+ifdef bfm
+	ELABORATE_OPTIONS += "+define$(bfm)" 
+else
+	ELABORATE_OPTIONS += +define+sg5
+endif	
 
 elaborate: 
 	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -f filelist.lst -l $@.log $(BASEJUMP_STL_DIR)/testing/bsg_dmc/tb_top/testbench.sv
