@@ -18,6 +18,7 @@ module test_bsg
 #(
    parameter width_p                = `WIDTH_P,
    parameter num_in_p               = `NUM_IN_P,
+   parameter num_credit_channels_p  = `NUM_CREDIT_CHANNELS_P,
    parameter remote_credits_p       = `REMOTE_CREDITS_P,
    parameter lg_credit_decimation_p = `LG_CREDIT_DECIMATION_P,
    parameter asymmetric_p           = `ASYMMETRIC_P,
@@ -56,6 +57,7 @@ module test_bsg
         $display("testing bsg_channel_tunnel with ...");
         $display("WIDTH_P :               %d", width_p);
         $display("NUM_IN_P:               %d", num_in_p);
+        $display("NUM_CREDIT_CHANNELS_P:  %d", num_credit_channels_p);
         $display("REMOTE_CREDITS_P:       %d", remote_credits_p);
         $display("LG_CREDIT_DECIMATION_P: %d", lg_credit_decimation_p);
         $display("ASYMMETRIC_P: %d", asymmetric_p);
@@ -66,12 +68,12 @@ module test_bsg
    localparam tagged_width_lp = tag_width_lp+width_p;
 
    wire [1:0][tagged_width_lp-1:0] multi_data;
-   wire [1:0]                      multi_valid;
+   wire [1:0]                      multi_v;
    wire [1:0]                      multi_yumi;
 
    //   A B  i/o   channels
    wire [1:0][1:0][num_in_p-1:0][width_p-1:0] data;
-   wire [1:0][1:0][num_in_p-1:0]               valid;
+   wire [1:0][1:0][num_in_p-1:0]               v;
    wire [1:0][1:0][num_in_p-1:0]               yumi;
 
    // instantiate two connected tunnel ends.
@@ -84,6 +86,7 @@ module test_bsg
      begin: rof
         bsg_channel_tunnel #(.width_p(width_p)
                              ,.num_in_p(num_in_p)
+                             ,.num_credit_channels_p(num_credit_channels_p)
                              ,.remote_credits_p(remote_credits_p)
                              ,.lg_credit_decimation_p(lg_credit_decimation_p)
                              ,.use_pseudo_large_fifo_p(use_pseudo_large_fifo_p)
@@ -91,20 +94,20 @@ module test_bsg
             (.clk_i   (clk)
              ,.reset_i(reset)
              ,.multi_data_i (multi_data [i])
-             ,.multi_valid_i(multi_valid[i])
+             ,.multi_v_i    (multi_v[i])
              ,.multi_yumi_o (multi_yumi [i])
 
              ,.multi_data_o (multi_data [!i])
-             ,.multi_valid_o(multi_valid[!i])
+             ,.multi_v_o    (multi_v[!i])
              ,.multi_yumi_i (multi_yumi [!i])
 
              //             AB  I/O
              ,.data_i (data [i][0])
-             ,.valid_i(valid[i][0])
+             ,.v_i    (v[i][0])
              ,.yumi_o (yumi [i][0])
 
              ,.data_o (data [i][1])
-             ,.valid_o(valid[i][1])
+             ,.v_o    (v[i][1])
              ,.yumi_i (yumi [i][1])
              );
      end
@@ -133,7 +136,7 @@ module test_bsg
       ,.count_o(words_received)
       );
 
-   wire        cred_send = multi_valid[0] & multi_data[0][width_p+:tag_width_lp] == (tag_width_lp ' (num_in_p));
+   wire        cred_send = multi_v[0] & multi_data[0][width_p+:tag_width_lp] == (tag_width_lp ' (num_in_p));
 
    bsg_counter_clear_up #(.max_val_p({ 1'b0, { 32 { 1'b1 }}})
                           ,.init_val_p(0)
@@ -141,7 +144,7 @@ module test_bsg
      (.clk_i(clk)
       ,.reset_i(reset)
       ,.clear_i(1'b0)
-      ,.up_i(multi_valid[0] & (cred_send))
+      ,.up_i(multi_v[0] & (cred_send))
       ,.count_o(credits)
       );
 
@@ -180,32 +183,33 @@ module test_bsg
              // k -> I/O
              for (k = 0; k < 2; k++)
                begin: rof4
-                  bsg_counter_up_down
+                  bsg_counter_clear_up
                       #(.max_val_p({ 1'b0, { width_p {1'b1} }} )
                        ,.init_val_p( (i<<16)+i)
+                       ,.disable_overflow_warning_p(1)
                        ) ctr
                       (.clk_i(clk)
                        ,.reset_i(reset   )
+                       ,.clear_i(1'b0)
                        ,.up_i   (ctr_incr[j][k][i])
-                       ,.down_i (1'b0    )
                        ,.count_o(ctr_lo  [j][k][i])
                        );
                end
 
              // * wire counter to input; this is always ready to send
              assign data [j][0][i]    = ctr_lo[j][0][i];
-             assign valid[j][0][i]    = 1'b1;
+             assign v[j][0][i]    = 1'b1;
              assign ctr_incr[j][0][i]  = yumi[j][0][i];
 
              // * wire paired counter to output; we receive at different
              // rates based on channel number.
 
-             assign yumi[!j][1][i]     = valid[!j][1][i] & (~asymmetric_p | (cycle[i:0]==0));
+             assign yumi[!j][1][i]     = v[!j][1][i] & (~asymmetric_p | (cycle[i:0]==0));
              assign ctr_incr[!j][1][i] = yumi[!j][1][i];
 
              // check data on receiving end of channel
              always_ff @(negedge clk)
-               assert(reset | ~valid[!j][1][i]
+               assert(reset | ~v[!j][1][i]
                       | (data[!j][1][i] == ctr_lo[!j][1][i][width_p-1:0]))
                  else $error("%m mismatch (data=%x) (counter=%x)"
                              ,data   [!j][1][i]
