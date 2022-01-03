@@ -1,7 +1,13 @@
+
+`include "bsg_defines.v"
+
 module bsg_mem_2rw_sync_mask_write_bit #( parameter `BSG_INV_PARAM(width_p )
                          , parameter `BSG_INV_PARAM(els_p )
+                         , parameter read_write_same_addr_p=0
                          , parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
-                         , parameter harden_p = 1
+                         , parameter harden_p=1
+                         , parameter disable_collision_warning_p=0
+                         , parameter enable_clock_gating_p=0
                          )
   ( input                      clk_i
   , input                      reset_i
@@ -28,7 +34,7 @@ module bsg_mem_2rw_sync_mask_write_bit #( parameter `BSG_INV_PARAM(width_p )
      begin
        bsg_clkgate_optional icg
          (.clk_i( clk_i )
-         ,.en_i( v_i )
+         ,.en_i( a_v_i | b_v_i )
          ,.bypass_i( 1'b0 )
          ,.gated_clock_o( clk_lo )
          );
@@ -61,15 +67,19 @@ module bsg_mem_2rw_sync_mask_write_bit #( parameter `BSG_INV_PARAM(width_p )
    // synopsys translate_off
 
    always_ff @(negedge clk_lo)
-     if (v_i === 1)
-       assert ((reset_i === 'X) || (reset_i === 1'b1) || (addr_i < els_p))
-         else $error("Invalid address %x to %m of size %x (reset_i = %b, v_i = %b, clk_lo=%b)\n", addr_i, els_p, reset_i, v_i, clk_lo);
+     if (a_v_i | b_v_i) begin
+       assert ((reset_i === 'X) || (reset_i === 1'b1) || (a_addr_i < els_p))
+         else $error("Invalid address %x to %m of size %x (reset_i = %b, v_i = %b, clk_lo=%b)\n", a_addr_i, els_p, reset_i, a_v_i, clk_lo);
 
-       assert ((reset_i === 'X) || (reset_i === 1'b1) || (~(a_addr_i == b_addr_i && a_v_i && b_v_i && (a_w_i ^ b_w_i))) && !read_write_same_addr_p && !disable_collision_warning_p))))
-         else $error("%m: Attempt to read and write same address reset_i %b, %x <= %x (mask %x)",reset_i, w_addr_i,w_data_i,w_mask_i);
+       assert ((reset_i === 'X) || (reset_i === 1'b1) || (b_addr_i < els_p))
+         else $error("Invalid address %x to %m of size %x (reset_i = %b, v_i = %b, clk_lo=%b)\n", b_addr_i, els_p, reset_i, b_v_i, clk_lo);
+
+       assert ((reset_i === 'X) || (reset_i === 1'b1) || (~(a_addr_i == b_addr_i && a_v_i && b_v_i && (a_w_i ^ b_w_i))) && !read_write_same_addr_p && !disable_collision_warning_p)
+         else $error("%m: Attempt to read and write same address reset_i %b, %x <= %x (mask %x), %x <= %x (mask %x)",reset_i, a_addr_i,a_data_i,a_w_mask_i, b_addr_i, b_data_i, b_w_mask_i);
 
        assert ((reset_i === 'X) || (reset_i === 1'b1) || (~(a_addr_i == b_addr_i && a_v_i && b_v_i && (a_w_i & b_w_i))))
-         else $error("%m: Attempt to write and write same address reset_i %b, %x <= %x (mask %x)",reset_i, w_addr_i,w_data_i,w_mask_i);
+         else $error("%m: Attempt to write and write same address reset_i %b, %x <= %x (mask %x), %x <= %x (mask %x)",reset_i, a_addr_i,a_data_i,a_w_mask_i, b_addr_i, b_data_i, b_w_mask_i);
+     end
 
    initial
      begin

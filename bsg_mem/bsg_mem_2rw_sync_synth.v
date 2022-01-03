@@ -1,7 +1,12 @@
-module bsg_mem_2rw_sync #( parameter `BSG_INV_PARAM(width_p )
+
+`include "bsg_defines.v"
+
+module bsg_mem_2rw_sync_synth #( parameter `BSG_INV_PARAM(width_p )
                          , parameter `BSG_INV_PARAM(els_p )
+                         , parameter read_write_same_addr_p=0
                          , parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
                          , parameter harden_p = 1
+                         , parameter disable_collision_warning_p=0                   
                          )
   ( input                      clk_i
   , input                      reset_i
@@ -57,25 +62,24 @@ module bsg_mem_2rw_sync #( parameter `BSG_INV_PARAM(width_p )
 
    always_ff @(posedge clk_i)
      begin
-        if (r_v_i)
-          begin
+        if (a_v_i)
             a_addr_r <= a_addr_i;
-            b_addr_r <= b_addr_i;
-          end
-        // synopsys translate_off
         else
-          begin
             a_addr_r <= 'X;
+          
+        if (b_v_i)
+            b_addr_r <= b_addr_i;
+        else
             b_addr_r <= 'X;
-          end
 
+        // synopsys translate_off
         // if addresses match and this is forbidden, then nuke the read address
 
         if (a_addr_i == b_addr_i && a_v_i && b_v_i && (a_w_i || b_w_i) && !read_write_same_addr_p)
           begin
              if (!disable_collision_warning_p)
                begin
-                 $error("X'ing matched read address %x (%m)",r_addr_i);
+                 $error("X'ing matched read address %x (%m)",a_addr_i);
                end
              a_addr_r <= 'X;
              b_addr_r <= 'X;
@@ -88,13 +92,14 @@ module bsg_mem_2rw_sync #( parameter `BSG_INV_PARAM(width_p )
    assign b_data_o = mem[b_addr_r];
 
 	always_ff @(posedge clk_i)
-
+    begin
 	  if (a_v_i & a_w_i)
             mem[a_addr_i] <= a_data_i;
 	  if (b_v_i & b_w_i)
             mem[b_addr_i] <= b_data_i;
-     end
+    end
+  end
 endmodule
 
-`BSG_ABSTRACT_MODULE(bsg_mem_2rw_sync_mask)
+`BSG_ABSTRACT_MODULE(bsg_mem_2rw_sync_synth)
 

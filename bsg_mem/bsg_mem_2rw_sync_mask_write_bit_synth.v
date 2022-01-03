@@ -1,5 +1,10 @@
-module bsg_mem_2rw_sync_mask_write_bit #( parameter `BSG_INV_PARAM(width_p )
+
+`include "bsg_defines.v"
+
+module bsg_mem_2rw_sync_mask_write_bit_synth #( parameter `BSG_INV_PARAM(width_p )
                          , parameter `BSG_INV_PARAM(els_p )
+                         , parameter read_write_same_addr_p = 0
+                         , parameter disable_collision_warning_p = 0
                          , parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
                          , parameter harden_p = 1
                          )
@@ -59,17 +64,15 @@ module bsg_mem_2rw_sync_mask_write_bit #( parameter `BSG_INV_PARAM(width_p )
 
    always_ff @(posedge clk_i)
      begin
-        if (r_v_i)
-          begin
+        if (a_v_i)
             a_addr_r <= a_addr_i;
-            b_addr_r <= b_addr_i;
-          end
-        // synopsys translate_off
         else
-          begin
             a_addr_r <= 'X;
+          
+        if (b_v_i)
+            b_addr_r <= b_addr_i;
+        else
             b_addr_r <= 'X;
-          end
 
         // if addresses match and this is forbidden, then nuke the read address
 
@@ -77,7 +80,7 @@ module bsg_mem_2rw_sync_mask_write_bit #( parameter `BSG_INV_PARAM(width_p )
           begin
              if (!disable_collision_warning_p)
                begin
-                 $error("X'ing matched read address %x (%m)",r_addr_i);
+                 $error("X'ing matched read addresses %x %x (%m)",a_addr_i, b_addr_i);
                end
              a_addr_r <= 'X;
              b_addr_r <= 'X;
@@ -94,11 +97,13 @@ module bsg_mem_2rw_sync_mask_write_bit #( parameter `BSG_INV_PARAM(width_p )
    for (i = 0; i < width_p; i=i+1)
      begin
 	always_ff @(posedge clk_i)
+      begin
 
 	  if (a_v_i & a_w_i && a_w_mask_i[i])
             mem[a_addr_i][i] <= a_data_i[i];
 	  if (b_v_i & b_w_i && b_w_mask_i[i])
             mem[b_addr_i][i] <= b_data_i[i];
+      end
      end
   end
 endmodule
