@@ -22,7 +22,7 @@
              ,.WTSEL    ( 2'b01         )                       \
              ,.RTSEL    ( 2'b01         )                       \
              ,.VG       ( 1'b1          )                       \
-             ,.VS       ( 1'b1          )                       \             
+             ,.VS       ( 1'b1          )                       \
             );                                                  \
     end
 
@@ -46,7 +46,7 @@
              /* According to TSMC, other settings are for debug only */ \
              ,.WTSEL    ( 2'b00         )                       \
              ,.RTSEL    ( 2'b00         )                       \
-             ,.PTSEL    ( 2'b00         )                       \            
+             ,.PTSEL    ( 2'b00         )                       \
             );                                                  \
     end
 
