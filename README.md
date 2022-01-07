@@ -10,6 +10,10 @@ Please also see the [BSG SystemVerilog Style Guide](https://docs.google.com/docu
 
 ## Contents
 
+* bsg_link
+
+High speed off-chip communication link (over LVCMOS I/Os, can hit 1.2 Gbps per pin to FPGA)
+
 * bsg_misc
 
 Small, miscellaneous building blocks, like counters, reset timers, gray to binary coders, etc.
@@ -17,10 +21,6 @@ Small, miscellaneous building blocks, like counters, reset timers, gray to binar
 * bsg_async
 
 This is for asynchronous building blocks, like the bsg_async_fifo, synchronizers, and credit counters.
-
-* bsg_fsb
-
-Bsg front side bus modules; also murn interfacing code.
 
 * bsg_noc
 
