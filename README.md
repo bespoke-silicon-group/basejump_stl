@@ -22,6 +22,14 @@ This is for asynchronous building blocks, like the bsg_async_fifo, synchronizers
 
 Bsg front side bus modules; also murn interfacing code.
 
+* bsg_noc
+
+Network on chip implementations
+
+* bsg_cache
+
+Reusable Cache implementation
+
 * bsg_link
 
 Unidirectional off-chip high-speed source synchronous communication interface. (also used as FPGA bridge).
