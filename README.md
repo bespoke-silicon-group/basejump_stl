@@ -55,6 +55,10 @@ Mirrors the other directories, with tests.
 
 Mirrors other directories, contains replacement files for specific process technologies.
 
+* bsg_mem
+
+Portable SRAM and RF interfaces.
+
 ## Contact
 
 Email: taylor-bsg@googlegroups.com
