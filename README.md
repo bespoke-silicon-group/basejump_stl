@@ -14,6 +14,10 @@ Please also see the [BSG SystemVerilog Style Guide](https://docs.google.com/docu
 
 High speed off-chip communication link (over LVCMOS I/Os, can hit 1.2 Gbps per pin to FPGA)
 
+* bsg_clk_gen
+
+Open source portable clock generator (all-standard cell)
+
 * bsg_misc
 
 Small, miscellaneous building blocks, like counters, reset timers, gray to binary coders, etc.
