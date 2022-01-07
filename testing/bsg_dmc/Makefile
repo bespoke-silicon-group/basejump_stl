@@ -1,16 +1,20 @@
 include ../../../bsg_cadenv/cadenv.mk
 
-ANALYSIS_OPTIONS = -full64
-ANALYSIS_OPTIONS += -sverilog
-ANALYSIS_OPTIONS += +incdir+../../bsg_clk_gen
-ANALYSIS_OPTIONS += +incdir+../../bsg_misc
-ANALYSIS_OPTIONS += +incdir+../../bsg_tag
+ELABORATE_OPTIONS = -full64
+ELABORATE_OPTIONS += -sverilog
+ELABORATE_OPTIONS += +incdir+../../bsg_clk_gen/
+ELABORATE_OPTIONS += +incdir+../../bsg_misc/
+ELABORATE_OPTIONS += +incdir+../../bsg_tag/
 
 ELABORATE_OPTIONS = -full64
 ELABORATE_OPTIONS += -debug_pp
+ELABORATE_OPTIONS += -sverilog
 ELABORATE_OPTIONS += -lca
 ELABORATE_OPTIONS += +vcs+vcdpluson
 ELABORATE_OPTIONS += +vcs+vcdplusmemon
+ELABORATE_OPTIONS += -timescale=1ns/100ps
+ELABORATE_OPTIONS += -assert svaext
+ELABORATE_OPTIONS += +define+den2048Mb+sg5+x16+FULL_MEM
 
 RUN_OPTIONS = 
 
@@ -24,8 +28,9 @@ analyze: $(BSG_TRACE_ROMS)
 	$(VCS_BIN)/vlogan $(ANALYSIS_OPTIONS) -timescale=1ns/1ps +incdir+lpddr_verilog_model+../../bsg_dmc +define+den2048Mb+sg5+x16+FULL_MEM -f filelist.lst -l $@.log
 	touch $@
 
-elaborate: analyze
-	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l $@.log testbench
+elaborate: 
+	#analyze
+	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -f filelist.lst -l $@.log testbench.v
 	touch $@
 
 run: elaborate

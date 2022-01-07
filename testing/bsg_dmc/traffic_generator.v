@@ -275,44 +275,6 @@ module traffic_generator
   //  $finish();
   //end
 
-  localparam cmd_trace_rom_addr_width_lp = 32;
-  localparam cmd_trace_rom_data_width_lp = ui_addr_width_p + ui_data_width_p;
-
-  logic [cmd_trace_rom_addr_width_lp-1:0] cmd_rom_addr;
-  logic [cmd_trace_rom_data_width_lp-1:0] cmd_rom_data;
-
-    bsg_fsb_node_trace_replay #(
-      .ring_width_p(ring_width_lp)
-      ,.rom_addr_width_p(rom_addr_width_lp)
-    ) cmd_trace (
-      .clk_i(clk_i)
-      ,.reset_i(reset_i)
-      ,.en_i(tag_trace_done_lo)
-
-	  //not used
-      ,.v_i()
-      ,.data_i()
-      ,.ready_o()
-
-      ,.v_o(tr_v_lo)
-      ,.data_o(tr_data_lo)
-      ,.yumi_i(tr_yumi_li)
-
-      ,.rom_addr_o(rom_addr)
-      ,.rom_data_i(rom_data)
-
-      ,.done_o(tr_done_lo)
-      ,.error_o()
-    );
-
-    bsg_cmd_trace_rom #(
-      .rom_addr_width_p(rom_addr_width_lp)
-      ,.rom_data_width_p(+4)
-      ,.id_p(i)
-    ) cmd_trace_rom (
-      .rom_addr_i(rom_addr)
-      ,.rom_data_o(rom_data)
-    );
 
   for(i=0;i<ui_burst_length_lp;i++) begin
     assign sipo_data[ui_data_width_p*i+:ui_data_width_p] = sipo_data_lo[i];

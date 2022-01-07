@@ -1,3 +1,9 @@
++incdir+../../bsg_misc
++incdir+../../bsg_clk_gen
++incdir+../../bsg_tag/
++incdir+../../bsg_dmc/
++incdir+lpddr_verilog_model
+
 ../../bsg_misc/bsg_defines.v
 ../../bsg_dmc/bsg_dmc_pkg.v
 ../../bsg_tag/bsg_tag_pkg.v
@@ -45,6 +51,8 @@
 ../../bsg_test/bsg_nonsynth_clock_gen.v
 ../../bsg_test/bsg_nonsynth_reset_gen.v
 bsg_tag_boot_rom.v
-traffic_generator.v
-testbench.v
+#traffic_generator.v
+
+bsg_dmc_trace_rom.v
+bsg_dmc_tester.v
 lpddr_verilog_model/mobile_ddr.v
