@@ -29,7 +29,7 @@
              ,.CLKR     ( clk_i         )                       \
              ,.Q        ( r1_data_o     )                       \
             );                                                  \
-          tsmc28_3r1w_d``words``_w``bits``_``tag``_2rf mem2     \
+          tsmc28_1r1w_d``words``_w``bits``_``tag``_2rf mem2     \
             (                                                   \
               .AA       ( w_addr_i      )                       \
              ,.D        ( w_data_i      )                       \
