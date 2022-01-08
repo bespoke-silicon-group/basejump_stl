@@ -78,4 +78,24 @@ if (harden_p && els_p == words && width_p == bits)              \
             );                                                  \
   end
 
+`define bsg_mem_1r1w_sync_banked_macro(words,bits,wbank,dbank) \
+  if (harden_p && els_p == words && width_p == bits) begin: macro \
+    bsg_mem_1r1w_sync_banked #(                                             \
+      .width_p(width_p)                                                     \
+      ,.els_p(els_p)                                                        \
+      ,.read_write_same_addr_p(read_write_same_addr_p)                      \
+      ,.num_width_bank_p(wbank)                                             \
+      ,.num_depth_bank_p(dbank)                                             \
+    ) bmem (                                                                \
+      .clk_i(clk_i)                                                         \
+      ,.reset_i(reset_i)                                                    \
+      ,.w_v_i(w_v_i)                                                        \
+      ,.w_addr_i(w_addr_i)                                                  \
+      ,.w_data_i(data_i)                                                    \
+      ,.r_v_i(r_v_i)                                                        \
+      ,.r_addr_i(r_addr_i)                                                  \
+      ,.r_data_o(data_o)                                                    \
+    );                                                                      \
+  end: macro
+
 `endif
