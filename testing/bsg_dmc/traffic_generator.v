@@ -248,32 +248,32 @@ module traffic_generator
     app_wdf_end = 0;
   end
 
-  //initial begin
-  //  $display("\n#### Regression test started ####");
-  //  @(posedge tag_trace_done_lo);
-  //  repeat(100) @(posedge ui_clk);
-  //  for(k=0;k<256;k++) begin
-  //    waddr = k*dq_burst_length_lp;
-  //    wdata = 0;
-  //    for(j=0;j<ui_burst_length_lp;j++)
-  //      wdata = (wdata << ui_data_width_p) + waddr + j;
-  //    wdata_array[waddr] = wdata;
-  //    $display("Time: %8d ns, Write %x to %x", $time(), wdata, waddr);
-  //    fork
-  //      ui_cmd(`WRITE, waddr);
-  //      ui_write(0, wdata);
-  //    join
-  //  end
-  //  for(k=0;k<256;k++) begin
-  //    raddr = k*dq_burst_length_lp;
-  //    raddr_queue.push_front(raddr);
-  //    ui_cmd(`READ, raddr);
-  //  end
-  //  repeat(1000) @(posedge ui_clk);
-  //  $display("\nRegression test passed!");
-  //  $display("\n#### Regression test ended ####");
-  //  $finish();
-  //end
+  initial begin
+    $display("\n#### Regression test started ####");
+    @(posedge tag_trace_done_lo);
+    repeat(100) @(posedge ui_clk);
+    for(k=0;k<256;k++) begin
+      waddr = k*dq_burst_length_lp;
+      wdata = 0;
+      for(j=0;j<ui_burst_length_lp;j++)
+        wdata = (wdata << ui_data_width_p) + waddr + j;
+      wdata_array[waddr] = wdata;
+      $display("Time: %8d ns, Write %x to %x", $time(), wdata, waddr);
+      fork
+        ui_cmd(`WRITE, waddr);
+        ui_write(0, wdata);
+      join
+    end
+    for(k=0;k<256;k++) begin
+      raddr = k*dq_burst_length_lp;
+      raddr_queue.push_front(raddr);
+      ui_cmd(`READ, raddr);
+    end
+    repeat(1000) @(posedge ui_clk);
+    $display("\nRegression test passed!");
+    $display("\n#### Regression test ended ####");
+    $finish();
+  end
 
 
   for(i=0;i<ui_burst_length_lp;i++) begin
