@@ -30,24 +30,25 @@ analyze: $(BSG_TRACE_ROMS)
 
 elaborate: 
 	#analyze
-	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -f filelist.lst -l $@.log testbench.v
+	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -f filelist.lst -l $@.log bsg_dmc_tester.v
 	touch $@
 
 run: elaborate
 	./simv $(RUN_OPTIONS) -l $@.log
 	touch $@
 
-dve: run
+dve: 
+	#run
 	$(VCS_BIN)/dve -full64 -vpd vcdplus.vpd &
 
 clean:
 	rm -rf analyze elaborate run
-	rm -rf $(BSG_TRACE_ROMS)
+	#rm -rf $(BSG_TRACE_ROMS)
 	rm -rf *.log
 	rm -rf analyze_*
-	rm -rf *.vpd
+	#rm -rf *.vpd
 	rm -rf simv*
 	rm -rf csrc
 	rm -rf ucli.key
-	rm -rf DVEfiles
+	#rm -rf DVEfiles
 	rm -rf AN.DB
