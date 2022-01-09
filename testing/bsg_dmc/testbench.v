@@ -1,7 +1,7 @@
-module testbench
+module testbench();
   import bsg_tag_pkg::*;
   import bsg_dmc_pkg::*;
-  ();
+ 
   parameter clk_gen_num_adgs_p = 1;
   parameter ui_addr_width_p    = 28;
   parameter ui_data_width_p    = 64;

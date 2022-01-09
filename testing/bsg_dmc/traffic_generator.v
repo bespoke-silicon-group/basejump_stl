@@ -177,11 +177,10 @@ module traffic_generator
   genvar idx;
   generate
     for(idx=0;idx<13;idx++) begin: dmc_cfg
-      bsg_tag_client #(.width_p( 8 ), .default_p( 0 ))
+      bsg_tag_client #(.width_p( 8 ))
         btc
           (.bsg_tag_i     ( dmc_cfg_tag_lines_lo[idx] )
           ,.recv_clk_i    ( dfi_clk_1x_i )
-          ,.recv_reset_i  ( 1'b0 )
           ,.recv_new_r_o  ( dmc_cfg_tag_new_data_lo[idx] )
           ,.recv_data_r_o ( dmc_cfg_tag_data_lo[idx] )
           );
