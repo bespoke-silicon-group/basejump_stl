@@ -61,8 +61,8 @@ module testbench;
      );
   
   logic mid_v_li, mid_ready_lo;
-  bsg_fifo_1r1w_periodic
-   #(.a_period_p(1), .b_period_p(4))
+  bsg_flow_control_periodic
+   #(.fast_to_slow_p(1), .ratio_p(4))
    input_periodic
     (.a_clk_i(clk_1x)
      ,.a_reset_i(reset_1x)
@@ -93,8 +93,8 @@ module testbench;
      );
 
   logic out_v_li, out_ready_and_lo;
-  bsg_fifo_1r1w_periodic
-   #(.a_period_p(4), .b_period_p(1))
+  bsg_flow_control_periodic
+   #(.fast_to_slow_p(0), .ratio_p(4))
    output_periodic
     (.a_clk_i(clk_4x)
      ,.a_reset_i(reset_1x)
