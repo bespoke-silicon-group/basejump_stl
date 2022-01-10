@@ -120,7 +120,7 @@ module bsg_cache
   if (burst_len_lp == 1) begin
     assign ld_data_mem_addr = addr_index;
   end
-  else if (burst_len_lp == block_size_in_words_p) begin
+  else if (burst_len_lp == block_size_in_words_p) begin : fi1 // Required for Verilator 4.213
     assign ld_data_mem_addr = {addr_index, cache_pkt.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp]};
   end
   else begin
@@ -568,7 +568,7 @@ module bsg_cache
   if (burst_len_lp == 1) begin
     assign sbuf_data_mem_addr = sbuf_entry_lo.addr[block_offset_width_lp+:lg_sets_lp];
   end 
-  else if (burst_len_lp == block_size_in_words_p) begin
+  else if (burst_len_lp == block_size_in_words_p) begin : fi2 // Required for Verilator 4.213
     assign sbuf_data_mem_addr = sbuf_entry_lo.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp];
   end
   else begin
