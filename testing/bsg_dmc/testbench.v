@@ -90,6 +90,9 @@ module testbench();
   wire  [(dq_data_width_p>>3)-1:0] ddr_dqs_n;
   wire       [dq_data_width_p-1:0] ddr_dq;
 
+  // All tag lines from the btm
+  bsg_tag_s [22:0] tag_lines_lo;
+
   traffic_generator #
     (.num_adgs_p         ( clk_gen_num_adgs_p  )
     ,.ui_addr_width_p    ( ui_addr_width_p     )
@@ -100,17 +103,10 @@ module testbench();
     ,.cmd_sfifo_depth_p  ( cmd_sfifo_depth_p   ))
     // Tag lines
   traffic_generator_inst
-    (.async_reset_tag_o     ( dmc_reset_tag_lines       )
-    ,.bsg_dly_tag_o         ( dmc_dly_tag_lines         )
-    ,.bsg_dly_trigger_tag_o ( dmc_dly_trigger_tag_lines )
-    ,.bsg_ds_tag_o          ( dmc_ds_tag_lines          )
-    // 
-    ,.dmc_p_o               ( dmc_p               )
     // Global asynchronous reset input, will be synchronized to each clock domain
     // Consistent with the reset signal defined in Xilinx UI interface
-    ,.sys_reset_o           ( sys_reset           )
     // User interface signals
-    ,.app_addr_o            ( app_addr            )
+    (.app_addr_o            ( app_addr            )
     ,.app_cmd_o             ( app_cmd             )
     ,.app_en_o              ( app_en              )
     ,.app_rdy_i             ( app_rdy             )
@@ -134,9 +130,55 @@ module testbench();
     //
     ,.ui_clk_o              ( ui_clk              )
     ,.dfi_clk_2x_o          ( dfi_clk_2x          )
-    ,.dfi_clk_1x_i          ( dfi_clk_1x          )
     //
-    ,.ui_clk_sync_rst_i     ( ui_clk_sync_rst     ));
+    ,.ui_clk_sync_rst_i     ( ui_clk_sync_rst     )
+	,.tag_lines_o			(tag_lines_lo));
+
+ // Tag payload for bsg_dmc control signals
+  logic [12:0][7:0] 	dmc_cfg_tag_data_lo;
+  logic [12:0]      	dmc_cfg_tag_new_data_lo;
+  logic 				dmc_reset_tag_lines;
+
+  assign dmc_reset_tag_lines	   = tag_lines_lo[0];
+  assign dmc_dly_tag_lines         = tag_lines_lo[1+:dq_group_lp];
+  assign dmc_dly_trigger_tag_lines = tag_lines_lo[1+dq_group_lp+:4];
+  assign dmc_ds_tag_lines          = tag_lines_lo[1+2*dq_group_lp];
+
+  wire bsg_tag_s [12:0] dmc_cfg_tag_lines_lo = tag_lines_lo[2+2*dq_group_lp+:13];
+
+  genvar idx;
+  generate
+    for(idx=0;idx<13;idx++) begin: dmc_cfg
+      bsg_tag_client #(.width_p( 8 ))
+        btc
+          (.bsg_tag_i     ( dmc_cfg_tag_lines_lo[idx] )
+          ,.recv_clk_i    ( dfi_clk_1x )
+          ,.recv_new_r_o  ( dmc_cfg_tag_new_data_lo[idx] )
+          ,.recv_data_r_o ( dmc_cfg_tag_data_lo[idx] )
+          );
+    end
+  endgenerate
+
+  assign dmc_p.trefi        = {dmc_cfg_tag_data_lo[1], dmc_cfg_tag_data_lo[0]};
+  assign dmc_p.tmrd         = dmc_cfg_tag_data_lo[2][3:0];
+  assign dmc_p.trfc         = dmc_cfg_tag_data_lo[2][7:4];
+  assign dmc_p.trc          = dmc_cfg_tag_data_lo[3][3:0];
+  assign dmc_p.trp          = dmc_cfg_tag_data_lo[3][7:4];
+  assign dmc_p.tras         = dmc_cfg_tag_data_lo[4][3:0];
+  assign dmc_p.trrd         = dmc_cfg_tag_data_lo[4][7:4];
+  assign dmc_p.trcd         = dmc_cfg_tag_data_lo[5][3:0];
+  assign dmc_p.twr          = dmc_cfg_tag_data_lo[5][7:4];
+  assign dmc_p.twtr         = dmc_cfg_tag_data_lo[6][3:0];
+  assign dmc_p.trtp         = dmc_cfg_tag_data_lo[6][7:4];
+  assign dmc_p.tcas         = dmc_cfg_tag_data_lo[7][3:0];
+  assign dmc_p.col_width    = dmc_cfg_tag_data_lo[8][3:0];
+  assign dmc_p.row_width    = dmc_cfg_tag_data_lo[8][7:4];
+  assign dmc_p.bank_width   = dmc_cfg_tag_data_lo[9][1:0];
+  assign dmc_p.bank_pos     = dmc_cfg_tag_data_lo[9][7:2];
+  assign dmc_p.dqs_sel_cal  = dmc_cfg_tag_data_lo[7][6:4];
+  assign dmc_p.init_cycles  = {dmc_cfg_tag_data_lo[11], dmc_cfg_tag_data_lo[10]};
+  assign sys_reset          = dmc_cfg_tag_data_lo[12][0];
+
 
   bsg_dmc #
     (.num_adgs_p            ( clk_gen_num_adgs_p  )
