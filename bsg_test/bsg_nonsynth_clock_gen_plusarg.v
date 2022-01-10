@@ -13,7 +13,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_nonsynth_clock_gen_plusarg #( parameter default_clk_per_p="inv" )
+module bsg_nonsynth_clock_gen_plusarg #( parameter `BSG_INV_PARAM(default_clk_per_p) )
 (
   output logic o
 );
@@ -42,4 +42,6 @@ module bsg_nonsynth_clock_gen_plusarg #( parameter default_clk_per_p="inv" )
 `endif
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_clock_gen_plusarg)
 

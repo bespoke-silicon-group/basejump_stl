@@ -27,7 +27,7 @@ module bsg_tag_master
    // els_p is the number of clients to attach
    // lg_width_p is the number of bits used to describe the payload size
    
-   #(els_p="inv", lg_width_p="inv", debug_level_lp=2)
+   #(parameter `BSG_INV_PARAM(els_p), `BSG_INV_PARAM(lg_width_p), debug_level_lp=2)
    (
     // from pins
     input clk_i
@@ -254,5 +254,7 @@ module bsg_tag_master
 
    
 endmodule // bsg_tag_master
+
+`BSG_ABSTRACT_MODULE(bsg_tag_master)
 
 // verilator lint_on BLKANDNBLK

@@ -22,10 +22,10 @@
 
 module bsg_wormhole_concentrator
 
-  #(`BSG_INV_PARAM(flit_width_p)
-    ,`BSG_INV_PARAM(len_width_p)
-    ,`BSG_INV_PARAM(cid_width_p)
-    ,`BSG_INV_PARAM(cord_width_p)
+  #(parameter `BSG_INV_PARAM(flit_width_p)
+    ,parameter `BSG_INV_PARAM(len_width_p)
+    ,parameter `BSG_INV_PARAM(cid_width_p)
+    ,parameter `BSG_INV_PARAM(cord_width_p)
    ,parameter num_in_p            = 1
    ,parameter debug_lp            = 0
    ,parameter link_width_lp       = `bsg_ready_and_link_sif_width(flit_width_p)

@@ -16,7 +16,7 @@
 `include "bsg_defines.v"
 
 module bsg_fpu_sticky
-  #(parameter width_p="inv")
+  #(parameter `BSG_INV_PARAM(width_p))
   (
     input [width_p-1:0] i // input
     , input [`BSG_WIDTH(width_p)-1:0] shamt_i // shift amount
@@ -44,3 +44,5 @@ module bsg_fpu_sticky
     : answer[shamt_i];
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fpu_sticky)

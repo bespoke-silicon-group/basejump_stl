@@ -7,20 +7,21 @@
 
 `include "bsg_defines.v"
 `include "bsg_cache.vh"
+`include "bsg_dmc.vh"
 
 module bsg_cache_to_dram_ctrl
   import bsg_cache_pkg::*;
   import bsg_dmc_pkg::*;
-  #(parameter num_cache_p="inv"
-    , parameter addr_width_p="inv"
-    , parameter data_width_p="inv"
-    , parameter block_size_in_words_p="inv"
+  #(parameter `BSG_INV_PARAM(num_cache_p)
+    , parameter `BSG_INV_PARAM(addr_width_p)
+    , parameter `BSG_INV_PARAM(data_width_p)
+    , parameter `BSG_INV_PARAM(block_size_in_words_p)
     
     , localparam mask_width_lp=(data_width_p>>3)
     , localparam lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
     , localparam dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
 
-    , parameter dram_ctrl_burst_len_p="inv"
+    , parameter `BSG_INV_PARAM(dram_ctrl_burst_len_p)
     , parameter dram_ctrl_addr_width_p=(addr_width_p+lg_num_cache_lp)
 
     , localparam num_req_lp=(block_size_in_words_p/dram_ctrl_burst_len_p)
@@ -235,3 +236,5 @@ module bsg_cache_to_dram_ctrl
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_cache_to_dram_ctrl)

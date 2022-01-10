@@ -5,9 +5,9 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_ascii_writer
-  #(parameter width_p      = "inv"
-    , parameter values_p   = "inv"
-    , parameter filename_p = -1
+  #(parameter `BSG_INV_PARAM(width_p      )
+    , parameter `BSG_INV_PARAM(values_p   )
+    , parameter `BSG_INV_PARAM(filename_p )
     , parameter fopen_param_p = "w"
     , parameter format_p   = "%x ")
    (input clk
@@ -51,4 +51,6 @@ module bsg_nonsynth_ascii_writer
        end
    
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_ascii_writer)
 

@@ -11,8 +11,8 @@
 `include "bsg_defines.v"
 
 module bsg_fpu_i2f
-  #(parameter e_p="inv"
-    , parameter m_p="inv"
+  #(parameter `BSG_INV_PARAM(e_p)
+    , parameter `BSG_INV_PARAM(m_p)
     
     , localparam width_lp = (e_p+m_p+1)
     , localparam bias_lp = {1'b0, {(e_p-1){1'b1}}}
@@ -146,3 +146,5 @@ module bsg_fpu_i2f
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fpu_i2f)

@@ -1,15 +1,15 @@
-`include "bsg_defines.v"
+`include "bsg_dmc.vh"
 
 module bsg_dmc
   import bsg_tag_pkg::*;
   import bsg_dmc_pkg::*;
  #(parameter  num_adgs_p         = 1
-  ,parameter  ui_addr_width_p    = "inv"
-  ,parameter  ui_data_width_p    = "inv" // data width of UI interface, can be 2^n while n = [3, log2(burst_data_width_p)]
-  ,parameter  burst_data_width_p = "inv" // data width of an outstanding read/write transaction, typically data width of a cache line
-  ,parameter  dq_data_width_p    = "inv" // data width of DDR interface, consistent with packaging
-  ,parameter  cmd_afifo_depth_p  = "inv" // maximum number of outstanding read/write transactions can be queued when the controller is busy
-  ,parameter  cmd_sfifo_depth_p  = "inv" // maximum number of DRAM commands can be queued when the DDR interface is busy, no less than cmd_afifo_depth_p
+  ,parameter `BSG_INV_PARAM( ui_addr_width_p    )
+  ,parameter `BSG_INV_PARAM( ui_data_width_p    ) // data width of UI interface, can be 2^n while n = [3, log2(burst_data_width_p)]
+  ,parameter `BSG_INV_PARAM( burst_data_width_p ) // data width of an outstanding read/write transaction, typically data width of a cache line
+  ,parameter `BSG_INV_PARAM( dq_data_width_p    ) // data width of DDR interface, consistent with packaging
+  ,parameter `BSG_INV_PARAM( cmd_afifo_depth_p  ) // maximum number of outstanding read/write transactions can be queued when the controller is busy
+  ,parameter `BSG_INV_PARAM( cmd_sfifo_depth_p  ) // maximum number of DRAM commands can be queued when the DDR interface is busy, no less than cmd_afifo_depth_p
   ,localparam ui_mask_width_lp   = ui_data_width_p >> 3
   ,localparam dfi_data_width_lp  = dq_data_width_p << 1
   ,localparam dfi_mask_width_lp  = (dq_data_width_p >> 3) << 1
@@ -248,3 +248,5 @@ module bsg_dmc
     ,.dqs_sel_cal         ( dmc_p_i.dqs_sel_cal ));
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_dmc)

@@ -189,7 +189,7 @@ print """
 //
 
 
-module bsg_scatter_gather #(parameter vec_size_lp="inv")
+module bsg_scatter_gather #(`BSG_INV_PARAM(vec_size_lp))
        (input [vec_size_lp-1:0] vec_i
        ,output reg [vec_size_lp*`BSG_SAFE_CLOG2(vec_size_lp)-1:0] fwd_o
        ,output reg [vec_size_lp*`BSG_SAFE_CLOG2(vec_size_lp)-1:0] fwd_datapath_o
@@ -207,6 +207,8 @@ print "initial assert (vec_size_lp < ",max_channel,") else $error(\"bsg_scatter_
 print "// synopsys translate_on";
 
 print "endmodule";
+
+print "`BSG_ABSTRACT_MODULE(bsg_scatter_gather)"
 
 #for i in range(1,10) :
 #    print i,bits_to_rep(i)

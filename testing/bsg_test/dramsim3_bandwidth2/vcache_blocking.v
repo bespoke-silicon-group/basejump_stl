@@ -1,12 +1,12 @@
 module vcache_blocking
   import bsg_cache_pkg::*;
-  #(parameter id_p="inv"
-    , parameter addr_width_p="inv"
-    , parameter data_width_p="inv"
-    , parameter block_size_in_words_p="inv"
-    , parameter sets_p="inv"
-    , parameter ways_p="inv"
-    , parameter dma_data_width_p="inv"
+  #(parameter `BSG_INV_PARAM(id_p)
+    , parameter `BSG_INV_PARAM(addr_width_p)
+    , parameter `BSG_INV_PARAM(data_width_p)
+    , parameter `BSG_INV_PARAM(block_size_in_words_p)
+    , parameter `BSG_INV_PARAM(sets_p)
+    , parameter `BSG_INV_PARAM(ways_p)
+    , parameter `BSG_INV_PARAM(dma_data_width_p)
 
     //, parameter string rom_filename_lp = 
     , parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
@@ -188,3 +188,5 @@ module vcache_blocking
   
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(vcache_blocking)

@@ -59,8 +59,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_async_credit_counter #(parameter max_tokens_p = "inv"
-                                  , parameter lg_credit_to_token_decimation_p = "inv"
+module bsg_async_credit_counter #(parameter `BSG_INV_PARAM(max_tokens_p )
+                                  , parameter `BSG_INV_PARAM(lg_credit_to_token_decimation_p )
                                   , parameter count_negedge_p = 0
                                   , parameter extra_margin_p = 0
                                   , parameter check_excess_credits_p = 1
@@ -168,3 +168,5 @@ module bsg_async_credit_counter #(parameter max_tokens_p = "inv"
    // ****************************************
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_async_credit_counter)

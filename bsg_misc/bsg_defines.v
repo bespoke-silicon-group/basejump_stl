@@ -4,6 +4,11 @@
 `define BSG_MAX(x,y) (((x)>(y)) ? (x) : (y))
 `define BSG_MIN(x,y) (((x)<(y)) ? (x) : (y))
 
+`define BSG_SIGN_EXTEND(sig, width) \
+  ({{`BSG_MAX(width-$bits(sig),0){sig[$bits(sig)-1]}}, sig[0+:`BSG_MIN(width, $bits(sig))]})
+`define BSG_ZERO_EXTEND(sig, width) \
+  ({{`BSG_MAX(width-$bits(sig),0){1'b0}}, sig[0+:`BSG_MIN(width, $bits(sig))]})
+
 // place this macro at the end of a verilog module file if that module has invalid parameters
 // that must be specified by the user. this will prevent that module from becoming a top-level
 // module per the discussion here: https://github.com/SymbiFlow/sv-tests/issues/1160 and the
@@ -19,16 +24,24 @@
 //  
 
 `define BSG_ABSTRACT_MODULE(fn) \
+    /*verilator lint_off DECLFILENAME*/ \
     /*verilator lint_off PINMISSING*/ \
     module fn``__abstract(); if (0) fn not_used(); endmodule \
-    /*verilator lint_on PINMISSING*/
+    /*verilator lint_on PINMISSING*/ \
+    /*verilator lint_on DECLFILENAME*/
 
 // macro for defining invalid parameter; with the abstract module declaration
 // it should be sufficient to omit the "inv" but we include this for tool portability
 // if later we find that all tools are compatible, we can remove the use of this from BaseJump STL
 
-//`define BSG_INV_PARAM(param) param = "inv" 
+`ifdef XCELIUM // Bare default parameters are incompatible as of 20.09.012
+               // = "inv" causes type inference mismatch as of 20.09.012
+`define BSG_INV_PARAM(param) param = -1
+`elsif YOSYS // Bare default parameters are incompatible as of 0.9
+`define BSG_INV_PARAM(param) param = "inv"
+`else // VIVADO, DC, VERILATOR, GENUS
 `define BSG_INV_PARAM(param) param
+`endif
 
 
 // maps 1 --> 1 instead of to 0
@@ -67,16 +80,27 @@
 // will require modification of this macro.
 
 `ifdef SYNTHESIS
-`ifdef DC
-`define BSG_VIVADO_SYNTH_FAILS
-`else
-`define BSG_VIVADO_SYNTH_FAILS this_module_is_not_synthesizeable_in_vivado
-`endif
+  `ifdef DC
+  `define BSG_VIVADO_SYNTH_FAILS
+  `elsif CDS_TOOL_DEFINE
+  `define BSG_VIVADO_SYNTH_FAILS
+  `else
+  `define BSG_VIVADO_SYNTH_FAILS this_module_is_not_synthesizeable_in_vivado
+  `endif
 `else
 `define BSG_VIVADO_SYNTH_FAILS
 `endif
 
 `define BSG_STRINGIFY(x) `"x`"
+
+
+// For the modules that must be hardened, add this macro at the top.
+`ifdef SYNTHESIS
+`define BSG_SYNTH_MUST_HARDEN this_module_must_be_hardened
+`else
+`define BSG_SYNTH_MUST_HARDEN
+`endif
+
 
 // using C-style shifts instead of a[i] allows the parameter of BSG_GET_BIT to be a parameter subrange                                                                                                                                                                               
 // e.g., parameter[4:1][1], which DC 2016.12 does not allow                                                                                                                                                                                                                          

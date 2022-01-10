@@ -1,8 +1,8 @@
-* FO4 measurement circuit
-* Rise             Fall           Average
-* 2.8071627e-11    2.7804428e-11  2.79380275  (7 stages)
-* 2.7988202e-11    2.7759264e-11  2.78737330  (5 stages)
-* 3 stages does not go rail-to-rail
+* FO4 measurement circuit (fills in this table)
+* Rise    (ps)       Fall           Average
+*      X              Y                Z      (7 stages)
+*      Q              R                S      (5 stages)
+* 3 stages usually does not go rail-to-rail
 
 * Initial value for n0, this starts the osc
 .ic v(clk0_o)=0.9V

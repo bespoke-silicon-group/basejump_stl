@@ -1,4 +1,6 @@
 
+`include "bsg_dmc.vh"
+
 module testbench
   import bsg_dmc_pkg::*;
   import bsg_cache_pkg::*;

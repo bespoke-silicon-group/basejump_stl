@@ -19,22 +19,24 @@
 
 ***************************************************************************/
 
-module test_bsg;
-  
-  localparam cycle_time_lp = 20;
-  localparam cycles_lp     = `CYCLES_P;
+module test_bsg
+#(parameter cycle_time_p = 20,
+  parameter cycles_p     = `CYCLES_P,
+  parameter reset_cycles_lo_p=1,
+  parameter reset_cycles_hi_p=5
+  );
   
   wire clk;
   wire reset;
   
-  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_lp)
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
                           )  clock_gen
                           (  .o(clk)
                           );
     
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(1)
-                           , .reset_cycles_hi_p(5)
+                           , .reset_cycles_lo_p(reset_cycles_lo_p)
+                           , .reset_cycles_hi_p(reset_cycles_hi_p)
                           )  reset_gen
                           (  .clk_i        (clk) 
                            , .async_reset_o(reset)
@@ -45,7 +47,7 @@ module test_bsg;
     $display("\n\n\n");
     $display("===========================================================");
     $display("testing with ...");
-    $display("CYCLES_P         : %d", cycles_lp);
+    $display("CYCLES_P         : %d", cycles_p);
     $display("WAIT_AFTER_REST_P: %d\n", `WAIT_AFTER_RESET_P);
   end 
   
@@ -63,7 +65,7 @@ module test_bsg;
     
   always_ff @(posedge activate)
   begin  
-    active_time <= ($time + cycle_time_lp); // test_input_activate is ON for 1 clock cycle
+    active_time <= ($time + cycle_time_p); // test_input_activate is ON for 1 clock cycle
                                             // after posedge of activate
     test_input_activate  <= 1'b1;
   end
@@ -83,7 +85,7 @@ module test_bsg;
           test_input_activate <= 1'b0;
         
         if(activate)
-          ref_test_output <= ($time >= (active_time + cycles_lp*cycle_time_lp));
+          ref_test_output <= ($time >= (active_time + cycles_p*cycle_time_p));
         else if (active_time == 0)
           ref_test_output <= 1'b1; // bsg_wait_cycles 's output is initially high
                                    // until activate_i becomes high
@@ -108,7 +110,7 @@ module test_bsg;
         else $error("mismatch at time %d", $time);
   end
 
-  bsg_wait_cycles #(  .cycles_p(cycles_lp)
+  bsg_wait_cycles #(  .cycles_p(cycles_p)
                    )  DUT
                    (  .clk_i     (clk)
                     , .reset_i   (reset)

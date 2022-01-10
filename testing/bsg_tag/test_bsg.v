@@ -30,7 +30,6 @@ module test_bsg;
    bsg_nonsynth_clock_gen #(100) cfg_clk_gen (TCK);
 
    bsg_tag_s [bsg_tag_els_lp-1:0] clients_lo;
-   logic [bsg_tag_els_lp-1:0] clients_reset;
    wire [bsg_tag_els_lp-1:0] clients_new;
    wire [bsg_tag_els_lp-1:0][bsg_tag_els_lp*8+5-1:0] clients_data;
 
@@ -52,11 +51,9 @@ module test_bsg;
      begin: rof2
 
         bsg_tag_client #(.width_p(5+i*8)
-                         ,.default_p(i)
                          ) btc
             (.bsg_tag_i     (clients_lo      [i])
              ,.recv_clk_i   (bsg_recv_clocks [i])
-             ,.recv_reset_i (clients_reset   [i])
              ,.recv_new_r_o (clients_new     [i])
              ,.recv_data_r_o(clients_data    [i][0+:5+i*8])
              );
@@ -85,12 +82,9 @@ module test_bsg;
 	
         @(negedge TCK);
 
-        clients_reset[0] = 1;
-
         // clear reset counter going
         @(negedge TCK);
         TDI = 1'b1;
-        clients_reset[0] = 0;
 
         // start reset counter going
         @(negedge TCK);
@@ -198,3 +192,4 @@ module test_bsg;
         $finish;
      end
 endmodule
+

@@ -1,5 +1,5 @@
 `include "bsg_defines.v"
-module bsg_mux #(`BSG_INV_PARAM(width_p)
+module bsg_mux #(parameter `BSG_INV_PARAM(width_p)
                  , els_p=1
                  , harden_p = 0
                  , balanced_p = 0

@@ -2,7 +2,7 @@
 `include "bsg_defines.v"
 
 module bsg_fifo_bypass
- #(parameter width_p = "inv"
+ #(parameter `BSG_INV_PARAM(width_p )
 
    , parameter logic ready_THEN_valid_p = 0
    )
@@ -34,4 +34,6 @@ module bsg_fifo_bypass
   assign fifo_yumi_o = fifo_v_i & yumi_i;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fifo_bypass)
 

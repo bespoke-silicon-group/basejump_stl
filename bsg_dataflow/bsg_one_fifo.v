@@ -16,7 +16,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_one_fifo #(`BSG_INV_PARAM(width_p)
+module bsg_one_fifo #(parameter `BSG_INV_PARAM(width_p)
                       )
    (input clk_i
     , input reset_i

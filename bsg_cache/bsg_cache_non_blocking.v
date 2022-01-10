@@ -10,17 +10,17 @@
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_cache_non_blocking.vh"
 
 module bsg_cache_non_blocking 
   import bsg_cache_non_blocking_pkg::*;
-  #(parameter id_width_p="inv"
-    , parameter addr_width_p="inv"
-    , parameter data_width_p="inv"
-    , parameter sets_p="inv"
-    , parameter ways_p="inv"
-    , parameter block_size_in_words_p="inv"
-    , parameter miss_fifo_els_p="inv"
+  #(parameter `BSG_INV_PARAM(id_width_p)
+    , parameter `BSG_INV_PARAM(addr_width_p)
+    , parameter `BSG_INV_PARAM(data_width_p)
+    , parameter `BSG_INV_PARAM(sets_p)
+    , parameter `BSG_INV_PARAM(ways_p)
+    , parameter `BSG_INV_PARAM(block_size_in_words_p)
+    , parameter `BSG_INV_PARAM(miss_fifo_els_p)
     
     , parameter cache_pkt_width_lp=`bsg_cache_non_blocking_pkt_width(id_width_p,addr_width_p,data_width_p)
     , parameter dma_pkt_width_lp=`bsg_cache_non_blocking_dma_pkt_width(addr_width_p)
@@ -609,3 +609,5 @@ module bsg_cache_non_blocking
 
  
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_cache_non_blocking)

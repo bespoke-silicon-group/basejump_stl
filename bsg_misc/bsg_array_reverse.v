@@ -1,8 +1,8 @@
 `include "bsg_defines.v"
 
 module bsg_array_reverse 
-  #(width_p="inv"
-    , els_p="inv")
+  #(parameter `BSG_INV_PARAM(width_p)
+    , parameter `BSG_INV_PARAM(els_p))
   (input    [els_p-1:0][width_p-1:0] i
    , output [els_p-1:0][width_p-1:0] o
   );
@@ -16,3 +16,6 @@ module bsg_array_reverse
     end
   
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_array_reverse)
+

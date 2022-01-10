@@ -132,11 +132,11 @@ ASIC:
 `include "bsg_defines.v"
 
 module bsg_comm_link
-  #(parameter channel_width_p   = "inv"
-    , parameter core_channels_p = "inv"
-    , parameter link_channels_p = "inv"
-    , parameter nodes_p         = "inv" // how many nodes on the FSB
-    , parameter master_p        = "inv" // 1=FPGA,0=ASIC
+  #(parameter `BSG_INV_PARAM(channel_width_p   )
+    , parameter `BSG_INV_PARAM(core_channels_p )
+    , parameter `BSG_INV_PARAM(link_channels_p )
+    , parameter `BSG_INV_PARAM(nodes_p         ) // how many nodes on the FSB
+    , parameter `BSG_INV_PARAM(master_p        ) // 1=FPGA,0=ASIC
 
     // e.g if you have four channels, and you wanted any
     // subset of them to be supported, you would
@@ -905,3 +905,5 @@ module bsg_comm_link
       );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_comm_link)

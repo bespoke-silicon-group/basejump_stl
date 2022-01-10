@@ -6,8 +6,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_shift_reg #(parameter width_p = "inv"
-                       , parameter stages_p = "inv"
+module bsg_shift_reg #(parameter `BSG_INV_PARAM(width_p )
+                       , parameter `BSG_INV_PARAM(stages_p )
                        )
    (input clk
     , input reset_i
@@ -31,3 +31,5 @@ module bsg_shift_reg #(parameter width_p = "inv"
    assign { valid_o, data_o } = shift_r[stages_p-1];
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_shift_reg)

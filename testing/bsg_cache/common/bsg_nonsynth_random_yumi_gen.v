@@ -1,6 +1,6 @@
 module bsg_nonsynth_random_yumi_gen 
-  #(parameter yumi_min_delay_p="inv"
-    , parameter yumi_max_delay_p="inv"
+  #(parameter `BSG_INV_PARAM(yumi_min_delay_p)
+    , parameter `BSG_INV_PARAM(yumi_max_delay_p)
   )
   (
     input clk_i
@@ -31,3 +31,5 @@ module bsg_nonsynth_random_yumi_gen
   
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_random_yumi_gen)

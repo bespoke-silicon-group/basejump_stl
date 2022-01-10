@@ -150,3 +150,5 @@ module bsg_dff_en #(width_p="inv"
           data_r <= data_i;
    end
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_dff_en)

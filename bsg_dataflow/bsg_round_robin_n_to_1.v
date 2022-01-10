@@ -15,9 +15,9 @@
 
 `include "bsg_defines.v"
 
-module bsg_round_robin_n_to_1 #(parameter width_p = -1
-                                ,parameter num_in_p = -1
-                                ,parameter strict_p = "inv" 
+module bsg_round_robin_n_to_1 #(parameter `BSG_INV_PARAM(width_p )
+                                ,parameter `BSG_INV_PARAM(num_in_p )
+                                ,parameter `BSG_INV_PARAM(strict_p )
                                 ,parameter use_scan_p = 0
                                 ,parameter tag_width_lp = `BSG_SAFE_CLOG2(num_in_p)
                                 )
@@ -129,4 +129,6 @@ module bsg_round_robin_n_to_1 #(parameter width_p = -1
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_round_robin_n_to_1)
 

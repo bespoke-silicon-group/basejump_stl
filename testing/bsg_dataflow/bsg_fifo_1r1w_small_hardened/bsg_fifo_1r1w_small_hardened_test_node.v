@@ -8,8 +8,8 @@
 
 module bsg_fifo_1r1w_small_hardened_test_node
 
- #(parameter num_channels_p = "inv"
-  ,parameter channel_width_p = "inv"
+ #(parameter `BSG_INV_PARAM(num_channels_p )
+  ,parameter `BSG_INV_PARAM(channel_width_p )
   ,parameter is_client_node_p = 0
   
   ,localparam width_lp = num_channels_p * channel_width_p
@@ -144,7 +144,7 @@ module bsg_fifo_1r1w_small_hardened_test_node
         if (node_reset_i)
             error_o <= 0;
         else
-            if (resp_in_v && data_check != resp_in_data)
+            if (resp_in_v && data_check !== resp_in_data)
               begin
                 $error("%m mismatched resp data %x %x",data_check, resp_in_data);
                 error_o <= 1;
@@ -257,3 +257,5 @@ module bsg_fifo_1r1w_small_hardened_test_node
   );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fifo_1r1w_small_hardened_test_node)

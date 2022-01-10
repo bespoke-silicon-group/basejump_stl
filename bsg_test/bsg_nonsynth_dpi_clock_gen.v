@@ -27,7 +27,7 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_dpi_clock_gen
-  #(parameter longint cycle_time_p="inv"
+  #(parameter `BSG_INV_PARAM(longint cycle_time_p)
     )
    (
     output bit o
@@ -39,7 +39,7 @@ module bsg_nonsynth_dpi_clock_gen
    import "DPI-C" function int bsg_dpi_clock_gen_register(input longint cycle_time_p, input string hierarchy);
    localparam longint cycle_time_lp = {32'b0, cycle_time_p[31:0]};
    
-   if(cycle_time_p % 2)
+   if(cycle_time_p % 2 != 0)
      $fatal(1, "BSG ERROR (%M): cycle_time_p must be divisible by 2");
    
    if(cycle_time_p <= 0)
@@ -60,3 +60,5 @@ module bsg_nonsynth_dpi_clock_gen
       return o;
    endfunction;
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_dpi_clock_gen)

@@ -34,7 +34,7 @@
 
 module bsg_link_sdr_upstream
 
- #(parameter width_p = "inv"
+ #(parameter `BSG_INV_PARAM(width_p )
   // Receive fifo depth 
   // MUST MATCH paired bsg_link_sdr_downstream setting
   ,parameter lg_fifo_depth_p = 3
@@ -92,3 +92,5 @@ module bsg_link_sdr_upstream
   );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_link_sdr_upstream)

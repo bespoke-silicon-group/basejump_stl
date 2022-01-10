@@ -5,16 +5,16 @@
 
 module bsg_nonsynth_dramsim3_unmap
   import bsg_dramsim3_pkg::*;
-  #(parameter channel_addr_width_p="inv"
-    , parameter data_width_p="inv"
-    , parameter num_channels_p="inv"
-    , parameter num_columns_p="inv"
-    , parameter num_rows_p="inv"
-    , parameter num_ba_p="inv"
-    , parameter num_bg_p="inv"
-    , parameter num_ranks_p="inv"
-    , parameter address_mapping_p="inv"
-    , parameter channel_select_p="inv"
+  #(parameter `BSG_INV_PARAM(channel_addr_width_p)
+    , parameter `BSG_INV_PARAM(data_width_p)
+    , parameter `BSG_INV_PARAM(num_channels_p)
+    , parameter `BSG_INV_PARAM(num_columns_p)
+    , parameter `BSG_INV_PARAM(num_rows_p)
+    , parameter `BSG_INV_PARAM(num_ba_p)
+    , parameter `BSG_INV_PARAM(num_bg_p)
+    , parameter `BSG_INV_PARAM(num_ranks_p)
+    , parameter `BSG_INV_PARAM(address_mapping_p)
+    , parameter `BSG_INV_PARAM(channel_select_p)
     , parameter debug_p=0
     , parameter lg_num_channels_lp=$clog2(num_channels_p)
     , parameter lg_num_columns_lp=$clog2(num_columns_p)
@@ -68,3 +68,5 @@ module bsg_nonsynth_dramsim3_unmap
     end
 
 endmodule // bsg_nonsynth_dramsim3_unmap
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_dramsim3_unmap)

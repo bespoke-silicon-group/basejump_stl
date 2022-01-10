@@ -1,7 +1,7 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_delay_line # (parameter width_p=1
-				  ,parameter delay_p=-1)
+				  ,parameter `BSG_INV_PARAM(delay_p))
 
    (input  [width_p-1:0]   i
     , output logic [width_p-1:0] o
@@ -11,3 +11,5 @@ module bsg_nonsynth_delay_line # (parameter width_p=1
      o <=  #(delay_p) i;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_delay_line)

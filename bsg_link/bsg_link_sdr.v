@@ -33,9 +33,9 @@
 
 module bsg_link_sdr
 
- #(parameter width_p                         = "inv"
-  ,parameter lg_fifo_depth_p                 = "inv"
-  ,parameter lg_credit_to_token_decimation_p = "inv"
+ #(parameter `BSG_INV_PARAM(width_p                         )
+  ,parameter `BSG_INV_PARAM(lg_fifo_depth_p                 )
+  ,parameter `BSG_INV_PARAM(lg_credit_to_token_decimation_p )
   ,parameter bypass_upstream_twofer_fifo_p   = 0
   ,parameter bypass_downstream_twofer_fifo_p = 1
   ,parameter strength_p                      = 0
@@ -108,3 +108,5 @@ module bsg_link_sdr
   );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_link_sdr)

@@ -4,7 +4,7 @@ if (harden_p && (width_p==bits))                \
      bsg_rp_tsmc_250_XNOR2X1_b``bits xnor_gate (.i0(a_i),.i1(b_i),.o);    \
   end
 
-module bsg_xnor #(parameter width_p="inv"
+module bsg_xnor #(parameter `BSG_INV_PARAM(width_p)
                  , parameter harden_p=0
                  )
    (input    [width_p-1:0] a_i
@@ -52,3 +52,5 @@ module bsg_xnor #(parameter width_p="inv"
           assign o = ~(a_i ^ b_i);
       end
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_xnor)

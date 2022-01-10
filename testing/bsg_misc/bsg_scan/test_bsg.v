@@ -2,7 +2,6 @@
 `define CASE_P  1 // XOR:1, AND:2, OR:3
 
 /**************************** TEST RATIONALE *******************************
-
 1. STATE SPACE
 
   This module tests hi_to_lo and lo_to_hi simultaneously by instantiating
@@ -19,27 +18,30 @@
 
 ***************************************************************************/
 
-module test_bsg;
-
-  localparam cycle_time_lp = 20;
-  localparam width_lp      = `WIDTH_P; // width of test input
-  localparam xor_lp        = (`CASE_P==1);
-  localparam and_lp        = (`CASE_P==2);
-  localparam or_lp         = (`CASE_P==3);
+module test_bsg
+#(
+  parameter cycle_time_p = 20,
+  parameter width_p      = `WIDTH_P, // width of test input
+  parameter xor_p        = (`CASE_P==1),
+  parameter and_p        = (`CASE_P==2),
+  parameter or_p         = (`CASE_P==3),
+  parameter reset_cycles_lo_p=0,
+  parameter reset_cycles_hi_p=5
+);
 
   wire clk;
   wire reset;
 
-  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_lp)
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
                           )  clock_gen
                           (  .o(clk)
                           );
-
+    
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(1)
-                           , .reset_cycles_hi_p(5)
+                           , .reset_cycles_lo_p(reset_cycles_lo_p)
+                           , .reset_cycles_hi_p(reset_cycles_hi_p)
                           )  reset_gen
-                          (  .clk_i        (clk)
+                          (  .clk_i        (clk) 
                            , .async_reset_o(reset)
                           );
 
@@ -52,49 +54,49 @@ module test_bsg;
     $display("CASE_P : %d\n", `CASE_P);
   end
 
-  logic [width_lp-1:0] test_input, test_output_hilo, test_output_lohi;
-  logic [width_lp-1:0] ref_test_output_hilo, ref_test_output_lohi;
+  logic [width_p-1:0] test_input, test_output_hilo, test_output_lohi;
+  logic [width_p-1:0] ref_test_output_hilo, ref_test_output_lohi;
   logic finish_r;
 
   always_comb
   begin
     // hi to lo
-    if(xor_lp == 1)
+    if(xor_p == 1)
       begin
-        ref_test_output_hilo[width_lp-1] = 0 ^ test_input[width_lp-1];
-        for(int i=width_lp-2; i>=0; --i)
+        ref_test_output_hilo[width_p-1] = 0 ^ test_input[width_p-1];
+        for(int i=width_p-2; i>=0; --i)
           ref_test_output_hilo[i] = ref_test_output_hilo[i+1] ^ test_input[i];
       end
-    else if(and_lp == 1)
+    else if(and_p == 1)
       begin
-        ref_test_output_hilo[width_lp-1] = 1 & test_input[width_lp-1];
-        for(int i=width_lp-2; i>=0; --i)
+        ref_test_output_hilo[width_p-1] = 1 & test_input[width_p-1];
+        for(int i=width_p-2; i>=0; --i)
           ref_test_output_hilo[i] = ref_test_output_hilo[i+1] & test_input[i];
       end
-    else if(or_lp == 1)
+    else if(or_p == 1)
       begin
-        ref_test_output_hilo[width_lp-1] = 0 | test_input[width_lp-1];
-        for(int i=width_lp-2; i>=0; --i)
+        ref_test_output_hilo[width_p-1] = 0 | test_input[width_p-1];
+        for(int i=width_p-2; i>=0; --i)
           ref_test_output_hilo[i] = ref_test_output_hilo[i+1] | test_input[i];
       end
 
     // lo to hi
-    if(xor_lp == 1)
+    if(xor_p == 1)
       begin
         ref_test_output_lohi[0] = 0 ^ test_input[0];
-        for(int i=1; i<width_lp; ++i)
+        for(int i=1; i<width_p; ++i)
           ref_test_output_lohi[i] = ref_test_output_lohi[i-1] ^ test_input[i];
       end
-    else if(and_lp == 1)
+    else if(and_p == 1)
       begin
         ref_test_output_lohi[0] = 1 & test_input[0];
-        for(int i=1; i<width_lp; ++i)
+        for(int i=1; i<width_p; ++i)
           ref_test_output_lohi[i] = ref_test_output_lohi[i-1] & test_input[i];
       end
-    else if(or_lp == 1)
+    else if(or_p == 1)
       begin
         ref_test_output_lohi[0] = 0 | test_input[0];
-        for(int i=1; i<width_lp; ++i)
+        for(int i=1; i<width_p; ++i)
           ref_test_output_lohi[i] = ref_test_output_lohi[i-1] | test_input[i];
       end
   end
@@ -135,30 +137,30 @@ module test_bsg;
       end
   end
 
-  bsg_scan #(  .width_p   (width_lp)
-             , .xor_p     (xor_lp)
-             , .and_p     (and_lp)
-             , .or_p      (or_lp)
+  bsg_scan #(  .width_p   (width_p)
+             , .xor_p     (xor_p)
+             , .and_p     (and_p)
+             , .or_p      (or_p)
              , .lo_to_hi_p(0)
             )  DUT_hilo
             (  .i(test_input)
              , .o(test_output_hilo)
             );
 
-  bsg_scan #(  .width_p   (width_lp)
-             , .xor_p     (xor_lp)
-             , .and_p     (and_lp)
-             , .or_p      (or_lp)
+  bsg_scan #(  .width_p   (width_p)
+             , .xor_p     (xor_p)
+             , .and_p     (and_p)
+             , .or_p      (or_p)
              , .lo_to_hi_p(1)
             )  DUT_lohi
             (  .i(test_input)
              , .o(test_output_lohi)
             );
 
-  /*logic [(5*width_lp)-1:0] log;
+  /*logic [(5*width_p)-1:0] log;
   assign log = {test_output_lohi, test_output_hilo, ref_test_output_lohi
                   , ref_test_output_hilo, test_input};
-  bsg_nonsynth_ascii_writer #(  .width_p      (width_lp)
+  bsg_nonsynth_ascii_writer #(  .width_p      (width_p)
                               , .values_p     (5)
                               , .filename_p   ("output.log")
                               , .fopen_param_p("a+")

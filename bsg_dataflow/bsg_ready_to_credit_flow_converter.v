@@ -3,8 +3,8 @@
 // available credits
 `include "bsg_defines.v"
 
-module bsg_ready_to_credit_flow_converter #( parameter credit_initial_p = -1
-                                           , parameter credit_max_val_p = -1
+module bsg_ready_to_credit_flow_converter #( parameter `BSG_INV_PARAM(credit_initial_p )
+                                           , parameter `BSG_INV_PARAM(credit_max_val_p )
                                            , parameter decimation_p     =  1
 
                                            //local parameter 
@@ -58,3 +58,5 @@ bsg_counter_up_down_variable #( .max_val_p(credit_max_val_p)
     );
 
 endmodule 
+
+`BSG_ABSTRACT_MODULE(bsg_ready_to_credit_flow_converter)

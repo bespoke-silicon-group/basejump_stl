@@ -12,12 +12,12 @@
 
 `include "bsg_defines.v"
 
-module bsg_mem_1r1w_sync #(`BSG_INV_PARAM(width_p)
-                           , `BSG_INV_PARAM(els_p)
+module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
+                           , parameter `BSG_INV_PARAM(els_p)
                            , parameter read_write_same_addr_p=0
                            , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                            , parameter harden_p=0
-                           , parameter disable_collision_warning_p=1
+                           , parameter disable_collision_warning_p=0
                            , parameter enable_clock_gating_p=0
                            )
    (input   clk_i
@@ -73,9 +73,12 @@ module bsg_mem_1r1w_sync #(`BSG_INV_PARAM(width_p)
 	// and we warn for width_p >= 128 because this starts to add up to some real memory
 	if ((els_p >= 16) || (width_p >= 128) || (width_p*els_p > 256))
           $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d, harden_p=%d (%m)",width_p,els_p,read_write_same_addr_p,harden_p);
+
+	if (disable_collision_warning_p)
+	  $display("## %L: disable_collision_warning_p is set; you should not have this on unless you have broken code. fix it!\n");
      end
 
-   always_ff @(posedge clk_lo)
+	always_ff @(negedge clk_lo)
      if (w_v_i)
        begin
           assert ((reset_i === 'X) || (reset_i === 1'b1) || (w_addr_i < els_p))
@@ -90,3 +93,5 @@ module bsg_mem_1r1w_sync #(`BSG_INV_PARAM(width_p)
    //synopsys translate_on
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync)

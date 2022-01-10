@@ -10,7 +10,7 @@ if (harden_p && (width_p<=bits))                             \
      bsg_rp_tsmc_40_reduce_and_b``bits andr(.i(widen),.o);  \
   end
 
-module bsg_reduce #(parameter width_p = -1
+module bsg_reduce #(parameter `BSG_INV_PARAM(width_p )
                   , parameter xor_p = 0
                   , parameter and_p = 0
                   , parameter or_p = 0
@@ -55,3 +55,5 @@ module bsg_reduce #(parameter width_p = -1
      end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_reduce)

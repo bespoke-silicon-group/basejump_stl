@@ -2,12 +2,16 @@
 // bsg_fifo_1r1w_small_hardened
 //
 // bsg_fifo with 1 read and 1 write, used for smaller fifos
-// No bubble between packets, has 1-cycle latency
+// No bubble between packets, has one-cycle latency
 //
 // This fifo instantiates bsg_mem_1r1w_sync memory, which has synchronous read
-// Data writes into both sync_mem and w_data_bypass_reg when sync_mem is empty, 
-// so that it can be available on read side in next cycle.
-// Only read from sync_mem when sync_mem is not empty
+// port with 1-cycle read-delay. It is possible to read/write same address when
+//   1. fifo is empty
+//   2. fifo has one element, and it enqueues / dequeues in same cycle
+// Read/write same address is usually not allowed. Whenever this happens, writing
+// is prioritized and reading is paused for current cycle. Write data is also stored
+// into bypass register so that it shows up on read side in the next cycle to make up
+// for the dropped read request.
 //
 // input handshake protocol (based on ready_THEN_valid_p parameter):
 //     valid-and-ready or
@@ -20,8 +24,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_fifo_1r1w_small_hardened #(`BSG_INV_PARAM(width_p)
-                            , `BSG_INV_PARAM(els_p)
+module bsg_fifo_1r1w_small_hardened #(parameter `BSG_INV_PARAM(width_p)
+                            , parameter `BSG_INV_PARAM(els_p)
                             , parameter ready_THEN_valid_p = 0
                             )
     ( input                clk_i
@@ -63,8 +67,7 @@ module bsg_fifo_1r1w_small_hardened #(`BSG_INV_PARAM(width_p)
    logic [ptr_width_lp-1:0] rptr_n;
    // avoid reading and writing same address in mem_1r1w_sync
    logic [width_p-1:0] data_o_mem, data_o_reg;
-   logic read_write_same_addr_n;
-   logic write_bypass_r, write_bypass_n;
+   logic read_write_same_addr_r, read_write_same_addr_n;
   
    bsg_fifo_tracker #(.els_p(els_p)
                           ) fts
@@ -80,6 +83,7 @@ module bsg_fifo_1r1w_small_hardened #(`BSG_INV_PARAM(width_p)
       );
 
    // sync read
+   // Prioritize write when reading/writing same address
    bsg_mem_1r1w_sync #(.width_p (width_p)
                       ,.els_p   (els_p  )
                       // MBT: this should be zero
@@ -97,32 +101,22 @@ module bsg_fifo_1r1w_small_hardened #(`BSG_INV_PARAM(width_p)
       ,.r_data_o (data_o_mem)
       );
       
-   // w_data bypass register, avoid reading and writing same address in memory
+   // w_data bypass register, enable when read_write_same_addr happens
    bsg_dff_en #(.width_p(width_p)) bypass_reg
      (.clk_i
       ,.data_i(data_i)
-      ,.en_i  (write_bypass_n)
+      ,.en_i  (read_write_same_addr_n)
       ,.data_o(data_o_reg)
       );
    
-   // Read from bypass register when read_write_same_addr happens last cycle
-   assign data_o = (write_bypass_r)? data_o_reg : data_o_mem;
-   
-   // When fifo is empty, read_write_same_addr_n must be 1
-   //
-   // Proof: When empty==1, v_o==0, then yumi_i==0, deque==0, 
-   // then rptr_n==rptr_r. Since rptr_r==wprt_r (definition of empty),
-   // rptr_n==wptr_r, so read_write_same_addr_n==1.
-   //
-   // As a result, (v_o_tmp & ~read_write_same_addr_n) is equivalent to (~read_write_same_addr_n).
-   assign read_write_same_addr_n = (wptr_r == rptr_n);
-   
-   // When enque==1 and read/write address are same, write to bypass register
-   // A copy of data is written into mem_1r1w_sync in same cycle
-   assign write_bypass_n = enque & read_write_same_addr_n;
-   
+   // Read from bypass register when read_write_same_addr happens in previous cycle
+   assign data_o = (read_write_same_addr_r)? data_o_reg : data_o_mem;
    always_ff @(posedge clk_i)
-     write_bypass_r <= write_bypass_n;
+     read_write_same_addr_r <= read_write_same_addr_n;
+   
+   // When enque==1 and read/write address are same, stop reading
+   // A copy of data is written into bypass register in same cycle
+   assign read_write_same_addr_n = enque & (wptr_r == rptr_n);
 
    // during reset, we keep ready low
    // even though fifo is empty

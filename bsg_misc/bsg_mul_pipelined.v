@@ -50,7 +50,7 @@
 
 `ifndef BSG_MUL_BOOTH_DOT_
 `define BSG_MUL_BOOTH_DOT_
-function automatic [0:0] bsg_mul_booth_dot([2:0] sdn, y0, ym1);
+function automatic [0:0] bsg_mul_booth_dot([2:0] sdn, [0:0] y0, [0:0] ym1);
   return ((sdn[2] & y0) | (sdn[1] & ym1)) ^ sdn[0];
 endfunction
 `endif
@@ -60,7 +60,7 @@ endfunction
 
 // pass in 0 for pipeline_ if you want unpipelined.
 
-module bsg_mul_pipelined #(parameter width_p="inv"
+module bsg_mul_pipelined #(parameter `BSG_INV_PARAM(width_p)
                            , parameter pipeline_p=1
                            , parameter harden_p  =1
                            )
@@ -83,6 +83,8 @@ module bsg_mul_pipelined #(parameter width_p="inv"
    else initial assert ("width" == "unhandled") else $error("unhandled case for %m");
 
 endmodule // bsg_mul
+
+`BSG_ABSTRACT_MODULE(bsg_mul_pipelined)
 
 module bsg_mul_32_32 #(parameter harden_p=0, pipeline_p=0)
    (  input clk_i
@@ -651,7 +653,7 @@ module bsg_mul_B4B_rep_rep
   #(parameter blocks_p      =  1
     , parameter width_p     =  0
     , parameter group_vec_p =  0
-    , parameter y_p         = "inv"
+    , parameter `BSG_INV_PARAM(y_p         )
     , parameter y_size_p    = 16
     , parameter S_above_vec_p = 0
     , parameter dot_bar_vec_p = 0
@@ -705,7 +707,7 @@ module bsg_mul_B4B_rep_rep
 endmodule
 
 module bsg_mul_B4B_rep #(parameter [31:0] blocks_p=1
-                         ,parameter y_p      = "inv"
+                         ,parameter `BSG_INV_PARAM(y_p      )
                          // size is required so VCS does not freak out
                          ,parameter [31:0] y_size_p = 16
                          ,parameter S_above_vec_p=0
@@ -786,7 +788,7 @@ module bsg_mul_B4B_rep #(parameter [31:0] blocks_p=1
 endmodule // bsg_mul_B4B_rep
 
 
-module bsg_mul_csa_rep #(parameter width_p="inv"
+module bsg_mul_csa_rep #(parameter `BSG_INV_PARAM(width_p)
                          , blocks_p="inv"
                          , group_vec_p="inv"
                          , harden_p=0)
@@ -813,7 +815,7 @@ module bsg_mul_csa_rep #(parameter width_p="inv"
 
 endmodule // bsg_mul_green_block
 
-module bsg_mul_green_booth_dots #(parameter width_p="inv"
+module bsg_mul_green_booth_dots #(parameter `BSG_INV_PARAM(width_p)
                                   , harden_p=0
                                   , blocks_p="inv"
                                   , group_vec_p="inv"

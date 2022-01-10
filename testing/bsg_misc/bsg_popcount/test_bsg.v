@@ -18,22 +18,25 @@
 
 ***************************************************************************/
 
-module test_bsg;
+module test_bsg
+#(
+  parameter width_p      = `WIDTH_P,
+  parameter cycle_time_p = 20,
+  parameter reset_cycles_lo_p=0,
+  parameter reset_cycles_hi_p=5
+);
 
-  localparam width_lp      = `WIDTH_P;
-  localparam cycle_time_lp = 20;
-  
   wire clk;
   wire reset;
   
-  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_lp)
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
                           )  clock_gen
                           (  .o(clk)
                           );
     
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(1)
-                           , .reset_cycles_hi_p(5)
+                           , .reset_cycles_lo_p(reset_cycles_lo_p)
+                           , .reset_cycles_hi_p(reset_cycles_hi_p)
                           )  reset_gen
                           (  .clk_i        (clk) 
                            , .async_reset_o(reset)
@@ -44,20 +47,20 @@ module test_bsg;
     $display("\n\n\n");
     $display("===========================================================");
     $display("testing with ...");
-    $display("WIDTH_P: %d\n", width_lp);
+    $display("WIDTH_P: %d\n", width_p);
   end 
                           
-  logic [width_lp-1:0]           test_input, test_input_n;
-  logic [width_lp-1:0]           count;
-  logic [$clog2(width_lp+1)-1:0] test_output, popcount; //popcount is expected output
+  logic [width_p-1:0]           test_input, test_input_n;
+  logic [width_p-1:0]           count;
+  logic [$clog2(width_p+1)-1:0] test_output, popcount; //popcount is expected output
   logic finish_r;  
   
   // Gray codes are used as test inputs since pop code of gray code of every 
   // next number is incremented/decremented only once.  
-  if(width_lp > 1)
-    bsg_binary_plus_one_to_gray #(  .width_p(width_lp)
+  if(width_p > 1)
+    bsg_binary_plus_one_to_gray #(  .width_p(width_p)
                                  )  binary_pone_gray
-                                 (  .binary_i(width_lp'(count-1))
+                                 (  .binary_i(width_p'(count-1))
                                   , .gray_o  (test_input_n)
                                  );
   else
@@ -101,17 +104,17 @@ module test_bsg;
       end
   end 
   
-  bsg_popcount #(  .width_p(width_lp)
+  bsg_popcount #(  .width_p(width_p)
                 )  DUT
                 (  .i(test_input)
                  , .o(test_output)
                 );
                 
-  /*logic [(3*width_lp)-1:0] log;
-  assign log = {  width_lp'(test_output)
-                , width_lp'(popcount)
+  /*logic [(3*width_p)-1:0] log;
+  assign log = {  width_p'(test_output)
+                , width_p'(popcount)
                 , test_input};
-  bsg_nonsynth_ascii_writer #(  .width_p      (width_lp)
+  bsg_nonsynth_ascii_writer #(  .width_p      (width_p)
                               , .values_p     (3)
                               , .filename_p   ("output.log")
                               , .fopen_param_p("a+")

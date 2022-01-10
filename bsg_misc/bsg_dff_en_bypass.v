@@ -7,7 +7,7 @@
 `include "bsg_defines.v"
 
 module bsg_dff_en_bypass
-  #(`BSG_INV_PARAM(width_p)
+  #(parameter `BSG_INV_PARAM(width_p)
     , parameter harden_p=0
     , parameter strength_p=0
   )

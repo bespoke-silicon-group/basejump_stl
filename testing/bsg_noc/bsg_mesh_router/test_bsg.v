@@ -26,21 +26,25 @@ import bsg_noc_pkg::Dirs
        , bsg_noc_pkg::S; // south
 
 
-module test_bsg;
-  
+module test_bsg
+#(
+  parameter cycle_time_p = 20,
+  parameter reset_cycles_lo_p=1,
+  parameter reset_cycles_hi_p=5
+);
+
   // clock and reset generation
-  localparam cycle_time_lp = 20; 
   wire clk;
   wire reset;
 
-  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_lp)
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
                           )  clock_gen
                           (  .o(clk)
                           );
     
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(1)
-                           , .reset_cycles_hi_p(5)
+                           , .reset_cycles_lo_p(reset_cycles_lo_p)
+                           , .reset_cycles_hi_p(reset_cycles_hi_p)
                           )  reset_gen
                           (  .clk_i        (clk) 
                            , .async_reset_o(reset)

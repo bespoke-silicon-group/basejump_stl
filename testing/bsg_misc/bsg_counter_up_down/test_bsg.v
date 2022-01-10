@@ -1,8 +1,10 @@
 `define MAX_VAL_P  7
 `define INIT_VAL_P 0
+`define MAX_STEP_P 1
+
+`include "bsg_defines.v"
 
 /**************************** TEST RATIONALE *******************************
-
 1. STATE SPACE
 
   This test module tests the outputs of DUT for a complete count-cycle
@@ -17,40 +19,41 @@
   cases would do the job. So a minimum set of tests might be MAX_VAL_P=1,2,
   3,4 with INIT_VAL_P=0,1,2,3. No need to worry about making parameters
   compatiable as those tests finish without instatiating DUT.
-
+  
 ***************************************************************************/
 
-module test_bsg;
-
-  localparam cycle_time_lp = 20;
-  localparam max_val_lp    = `MAX_VAL_P;
-  localparam init_val_lp   = `INIT_VAL_P;
-  localparam max_step_lp   = `MAX_STEP_P;
-
+module test_bsg
+#(parameter cycle_time_p = 20,
+  parameter max_val_p    = `MAX_VAL_P,
+  parameter init_val_p   = `INIT_VAL_P,
+  parameter max_step_p   = `MAX_STEP_P,
+  parameter reset_cycles_lo_p=1,
+  parameter reset_cycles_hi_p=5
+  );
 
   wire clk;
   wire reset;
 
-  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_lp)
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
                           )  clock_gen
                           (  .o(clk)
                           );
 
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(1)
-                           , .reset_cycles_hi_p(5)
+                           , .reset_cycles_lo_p(reset_cycles_lo_p)
+                           , .reset_cycles_hi_p(reset_cycles_lo_p)
                           )  reset_gen
                           (  .clk_i        (clk)
                            , .async_reset_o(reset)
                           );
 
   logic test_input_up, test_input_down, finish_r;
-  logic [`BSG_WIDTH(max_val_lp)-1:0] test_output;
-  logic [`BSG_SAFE_CLOG2(max_val_lp):0] prev_count, count;
+  logic [`BSG_WIDTH(max_val_p)-1:0] test_output;
+  logic [`BSG_SAFE_CLOG2(max_val_p):0] prev_count, count;
 
   initial
   begin
-    assert(max_val_lp >= init_val_lp) // checks if params are compatible
+    assert(max_val_p >= init_val_p) // checks if params are compatible
       else
         begin
           $error(  "  Incompatible parameters"
@@ -72,14 +75,14 @@ module test_bsg;
     if(reset)
       begin
         finish_r <= 0;
-        if(init_val_lp < max_val_lp)
+        if(init_val_p < max_val_p)
           {test_input_up, test_input_down} <= 2'b10;
         else
           {test_input_up, test_input_down} <= 2'b01;
       end
     else
       begin
-        if((count == max_val_lp-1) & test_input_up) // prevents overflow
+        if((count == max_val_p-1) & test_input_up) // prevents overflow
           {test_input_up, test_input_down} <= 2'b01;
         else if((count == 1) & test_input_down)     // prevents underflow
           {test_input_up, test_input_down} <= 2'b10;
@@ -98,8 +101,8 @@ module test_bsg;
   begin
     if(reset)
       begin
-        count      <= init_val_lp;
-        prev_count <= init_val_lp;
+        count      <= init_val_p;
+        prev_count <= init_val_p;
       end
     else
       begin
@@ -112,10 +115,10 @@ module test_bsg;
       end
   end
 
-  if(max_val_lp >= init_val_lp) // instantiates only if params are comaptible
-    bsg_counter_up_down #(  .max_val_p   (max_val_lp)
-                          , .init_val_p  (init_val_lp)
-                          , .max_step_p (max_step_lp)
+  if(max_val_p >= init_val_p) // instantiates only if params are comaptible
+    bsg_counter_up_down #(  .max_val_p   (max_val_p)
+                          , .init_val_p  (init_val_p)
+                          , .max_step_p (max_step_p)
                           , .ptr_width_lp()
                          )  DUT
                          (  .clk_i  (clk)

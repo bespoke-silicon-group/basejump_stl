@@ -17,8 +17,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_fifo_1r1w_small_unhardened #( parameter width_p      = -1
-                            , parameter els_p        = -1
+module bsg_fifo_1r1w_small_unhardened #( parameter `BSG_INV_PARAM(width_p      )
+                            , parameter `BSG_INV_PARAM(els_p        )
                             , parameter ready_THEN_valid_p = 0
                             )
     ( input                clk_i
@@ -111,3 +111,5 @@ module bsg_fifo_1r1w_small_unhardened #( parameter width_p      = -1
      end
  */
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_fifo_1r1w_small_unhardened)

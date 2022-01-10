@@ -4,7 +4,7 @@ if (harden_p && (width_p==bits))                    \
      bsg_rp_tsmc_250_TIEHI_b``bits tiehi (.o);      \
   end
 
-module bsg_tiehi #(parameter width_p="inv"
+module bsg_tiehi #(parameter `BSG_INV_PARAM(width_p)
                  , parameter harden_p=1
                  )
    (output [width_p-1:0] o
@@ -53,3 +53,5 @@ module bsg_tiehi #(parameter width_p="inv"
 
       end
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_tiehi)

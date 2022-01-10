@@ -7,7 +7,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_flow_counter #(parameter els_p              = -1
+module bsg_flow_counter #(parameter `BSG_INV_PARAM(els_p              )
                         , parameter count_free_p       = 0
                         , parameter ready_THEN_valid_p = 0
                         
@@ -75,3 +75,5 @@ generate
 endgenerate
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_flow_counter)

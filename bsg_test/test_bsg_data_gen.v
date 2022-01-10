@@ -1,7 +1,7 @@
 `include "bsg_defines.v"
 
-module test_bsg_data_gen #(parameter   channel_width_p ="inv"
-                           , parameter num_channels_p  = -1
+module test_bsg_data_gen #(parameter `BSG_INV_PARAM(  channel_width_p )
+                           , parameter `BSG_INV_PARAM(num_channels_p  )
                            , parameter debug_p = 0
                            )
    (input clk_i
@@ -51,3 +51,5 @@ module test_bsg_data_gen #(parameter   channel_width_p ="inv"
        $display("## test_bsg_data_gen %m %x",o);
 
 endmodule // test_bsg_data_gen
+
+`BSG_ABSTRACT_MODULE(test_bsg_data_gen)

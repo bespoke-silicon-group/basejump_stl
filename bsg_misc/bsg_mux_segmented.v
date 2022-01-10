@@ -6,8 +6,8 @@
 
 `include "bsg_defines.v"
 
-module bsg_mux_segmented #(`BSG_INV_PARAM(segments_p)
-                          ,`BSG_INV_PARAM(segment_width_p)
+module bsg_mux_segmented #(parameter `BSG_INV_PARAM(segments_p)
+                          ,parameter `BSG_INV_PARAM(segment_width_p)
                           ,parameter data_width_lp=segments_p*segment_width_p)
 (
   input [data_width_lp-1:0] data0_i

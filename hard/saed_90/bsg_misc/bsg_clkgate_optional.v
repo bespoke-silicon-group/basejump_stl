@@ -14,3 +14,5 @@ module bsg_clkgate_optional  (input  clk_i
 
 endmodule
 
+`BSG_ABSTRACT_MODULE(bsg_clkgate_optional)
+

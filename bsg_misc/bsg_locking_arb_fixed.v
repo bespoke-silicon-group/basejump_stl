@@ -1,6 +1,6 @@
 `include "bsg_defines.v"
 
-module bsg_locking_arb_fixed #( parameter inputs_p="inv"
+module bsg_locking_arb_fixed #( parameter `BSG_INV_PARAM(inputs_p)
                              , parameter lo_to_hi_p=0
                              )
   ( input   clk_i
@@ -33,4 +33,6 @@ module bsg_locking_arb_fixed #( parameter inputs_p="inv"
       );  
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_locking_arb_fixed)
 

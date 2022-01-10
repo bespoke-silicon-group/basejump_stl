@@ -79,3 +79,5 @@ module bsg_rp_clk_gen_atomic_delay_tuner
 
 endmodule
 
+`BSG_ABSTRACT_MODULE(bsg_rp_clk_gen_atomic_delay_tuner)
+

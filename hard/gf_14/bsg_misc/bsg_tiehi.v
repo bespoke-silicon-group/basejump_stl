@@ -22,3 +22,5 @@ module bsg_tiehi
     end: syn
    
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_tiehi)

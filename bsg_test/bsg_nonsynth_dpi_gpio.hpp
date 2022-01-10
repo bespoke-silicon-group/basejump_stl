@@ -7,11 +7,11 @@
 extern "C" {
         // DPI Export function: Get the value at an index in the
         // gpio. Calls $fatal if an invalid index is accessed.
-        extern bool bsg_dpi_gpio_get(int);
+        extern svBit bsg_dpi_gpio_get(int);
 
         // DPI Export function: Set the value at an index in the
         // gpio. Calls $fatal if an invalid index is accessed.
-        extern bool bsg_dpi_gpio_set(int, bool);
+        extern svBit bsg_dpi_gpio_set(int, svBit);
 
         // Returns the width_p of the parameterized HDL module
         extern int bsg_dpi_width();
@@ -61,14 +61,14 @@ namespace bsg_nonsynth_dpi{
 
                 }
 
-                // bool get(unsigned int index, bool value): Get the value
+                // bool get(unsigned int index, svBit value): Get the value
                 // of the output pin at the given index
                 // 
                 // Arguments: 
                 //   unsigned int index: The index to read
                 // Returns:
                 //   The value read
-                bool get(unsigned int index){
+                svBit get(unsigned int index){
                         bool retval;
                         prev = svSetScope(scope);
                         retval = bsg_dpi_gpio_get(index);
@@ -76,7 +76,7 @@ namespace bsg_nonsynth_dpi{
                         return retval;
                 }
 
-                // bool set(unsigned int index, bool value): Set the value
+                // bool set(unsigned int index, svBit value): Set the value
                 // of the output pin at the given index
                 // 
                 // Arguments: 
@@ -84,7 +84,7 @@ namespace bsg_nonsynth_dpi{
                 //   bool value: The value to write
                 // Returns:
                 //   The value that the output pin was set to
-                bool set(unsigned int index, bool value){
+                svBit set(unsigned int index, svBit value){
                         bool retval;
                         prev = svSetScope(scope);
                         retval = bsg_dpi_gpio_set(index, value);

@@ -6,9 +6,9 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_mem_1r1w_sync_dma
-  #(parameter width_p="inv"
-    , parameter els_p=-1
-    , parameter id_p="inv"
+  #(parameter `BSG_INV_PARAM(width_p)
+    , parameter `BSG_INV_PARAM(els_p)
+    , parameter `BSG_INV_PARAM(id_p)
     , parameter data_width_in_bytes_lp=(width_p>>3)
     , parameter write_mask_width_lp=data_width_in_bytes_lp
     , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
@@ -41,3 +41,5 @@ module bsg_nonsynth_mem_1r1w_sync_dma
      ,.w_mask_i('1));  
   
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_mem_1r1w_sync_dma)

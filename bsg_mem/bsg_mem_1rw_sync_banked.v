@@ -25,8 +25,8 @@
 `include "bsg_defines.v"
 
 module bsg_mem_1rw_sync_banked 
-  #(`BSG_INV_PARAM(width_p)
-    , `BSG_INV_PARAM(els_p)
+  #(parameter `BSG_INV_PARAM(width_p)
+    , parameter `BSG_INV_PARAM(els_p)
     , parameter latch_last_read_p=0
 
     , parameter num_width_bank_p=1

@@ -22,8 +22,8 @@
 `include "bsg_defines.v"
 
 module bsg_pg_tree
-#(parameter input_width_p="inv"
-  ,parameter output_width_p="inv"
+#(parameter `BSG_INV_PARAM(input_width_p)
+  ,parameter `BSG_INV_PARAM(output_width_p)
   , parameter nodes_p=1         
   , parameter edges_lp=nodes_p*3
   , parameter int l_edge_p [nodes_p-1:0]    = '{0}
@@ -83,3 +83,5 @@ module bsg_pg_tree
   end
   
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_pg_tree)

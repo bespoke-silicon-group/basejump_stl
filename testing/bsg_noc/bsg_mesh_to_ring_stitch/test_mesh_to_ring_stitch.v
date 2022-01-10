@@ -2,36 +2,38 @@
 // a few syntax error fixes.
 //
 
-module test_mesh_to_ring_stitch;
+module test_mesh_to_ring_stitch
+#(
+  parameter cycle_time_p = 20,
+  localparam num_tiles_x_p = 8,
+  localparam num_tiles_y_p = 8,
+  parameter reset_cycles_lo_p=1,
+  parameter reset_cycles_hi_p=5
+  );
 
    import bsg_noc_pkg   ::*; // {P=0, W, E, N, S}
-
-   localparam num_tiles_x_lp = 8;
-   localparam num_tiles_y_lp = 8;
-   
-   localparam cycle_time_lp   = 20;
 
   // clock and reset generation
   wire clk;
   wire reset;
 
-  bsg_nonsynth_clock_gen #( .cycle_time_p(cycle_time_lp)
-                          ) clock_gen
-                          ( .o(clk)
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
+                          )  clock_gen
+                          (  .o(clk)
                           );
 
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(1)
-                           , .reset_cycles_hi_p(10)
+                           , .reset_cycles_lo_p(reset_cycles_lo_p)
+                           , .reset_cycles_hi_p(reset_cycles_hi_p)
                           )  reset_gen
-                          (  .clk_i        (clk)
+                          (  .clk_i        (clk) 
                            , .async_reset_o(reset)
                           );
 
    localparam b_lp = 1;
    localparam f_lp = 1;
-   localparam x_lp = (num_tiles_x_lp);
-   localparam y_lp = (num_tiles_y_lp);
+   localparam x_lp = (num_tiles_x_p);
+   localparam y_lp = (num_tiles_y_p);
 
    logic [x_lp-1:0][y_lp-1:0][$clog2(x_lp*y_lp)-1:0] ids;
    logic [x_lp-1:0][y_lp-1:0][b_lp-1:0] back_in, back_out;

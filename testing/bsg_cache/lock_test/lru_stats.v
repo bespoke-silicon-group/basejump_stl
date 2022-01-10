@@ -1,6 +1,6 @@
 module lru_stats
   import bsg_cache_pkg::*;
-  #(parameter ways_p="inv"
+  #(parameter `BSG_INV_PARAM(ways_p)
     ,localparam lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
     )
   (
@@ -50,3 +50,4 @@ module lru_stats
     end
 
 endmodule
+`BSG_ABSTRACT_MODULE(lru_stats)

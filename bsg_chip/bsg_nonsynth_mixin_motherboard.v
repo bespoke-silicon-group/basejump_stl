@@ -39,8 +39,8 @@ ERROR in bsg_nonsynth_mixin_motherboard.v: BSG_NONSYNTH_MIXIN_MOTHERBOARD_chip_s
 // note: this module is non-synthesizable
 
 module `BSG_NONSYNTH_MOTHERBOARD_MIXIN_module_name
- #( parameter tile_x_max_p    = "inv"
-  , parameter tile_y_max_p    = "inv"
+ #( parameter `BSG_INV_PARAM(tile_x_max_p    )
+  , parameter `BSG_INV_PARAM(tile_y_max_p    )
   , parameter asic_core_period_p         = 5ns
   , parameter chipset_core_period_p      = 6ns
   , parameter asic_io_master_period_p    = 7ns
@@ -232,3 +232,5 @@ module `BSG_NONSYNTH_MOTHERBOARD_MIXIN_module_name
       );
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_mixin_motherboard)

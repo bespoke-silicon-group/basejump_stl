@@ -32,3 +32,5 @@ module bsg_clkbuf #(parameter width_p=1
 
       end
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_clkbuf)

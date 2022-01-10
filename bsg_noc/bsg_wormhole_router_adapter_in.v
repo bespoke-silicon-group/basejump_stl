@@ -10,10 +10,10 @@
 `include "bsg_wormhole_router.vh"
 
 module bsg_wormhole_router_adapter_in
-  #(parameter max_payload_width_p = "inv"
-    , parameter len_width_p       = "inv"
-    , parameter cord_width_p      = "inv"
-    , parameter flit_width_p      = "inv"
+  #(parameter `BSG_INV_PARAM(max_payload_width_p )
+    , parameter `BSG_INV_PARAM(len_width_p       )
+    , parameter `BSG_INV_PARAM(cord_width_p      )
+    , parameter `BSG_INV_PARAM(flit_width_p      )
 
     , localparam bsg_ready_and_link_sif_width_lp =
         `bsg_ready_and_link_sif_width(flit_width_p)
@@ -76,4 +76,6 @@ module bsg_wormhole_router_adapter_in
 `endif
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_wormhole_router_adapter_in)
 

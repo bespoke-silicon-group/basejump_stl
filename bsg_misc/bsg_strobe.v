@@ -30,7 +30,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_strobe #(width_p="inv"
+module bsg_strobe #(`BSG_INV_PARAM(width_p)
                     ,harden_p=0)
    (input clk_i
     , input                reset_r_i
@@ -143,3 +143,5 @@ module bsg_strobe #(width_p="inv"
    // synopsys translate_on
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_strobe)

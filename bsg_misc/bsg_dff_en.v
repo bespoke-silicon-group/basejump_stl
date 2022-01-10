@@ -5,7 +5,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_dff_en #(`BSG_INV_PARAM(width_p)
+module bsg_dff_en #(parameter `BSG_INV_PARAM(width_p)
                    ,parameter harden_p=1   // mbt fixme: maybe this should not be a default
                    ,parameter strength_p=1)
 (

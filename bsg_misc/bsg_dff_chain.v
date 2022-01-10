@@ -9,7 +9,7 @@
 
 module bsg_dff_chain #(
                  //the width of the input signal
-                 parameter       width_p         =       -1
+                 parameter `BSG_INV_PARAM(      width_p         )
 
                  //the stages of the chained DFF register
                  //can be 0
@@ -22,6 +22,7 @@ module bsg_dff_chain #(
         );
 
         if( num_stages_p == 0) begin:pass_through
+                wire unused = clk_i;
                 assign data_o   = data_i;
         end:pass_through
 
@@ -47,3 +48,5 @@ module bsg_dff_chain #(
         end:chained
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_dff_chain)

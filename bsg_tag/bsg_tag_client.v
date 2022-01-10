@@ -15,14 +15,8 @@
 // 1. assert reset on the send side of the module for at least one cycle (via bsg_tag_i)
 // 2. clock the send side for one cycle.
 // 3. clock the recv side for several cycles (for values to flush through synchronizers)
-// 4. assert reset on the recv side of the module (to set default on receive side value)
 // 5. after resets are dropped, optionally start updating values on bsg_tag_s bus.
 //
-// * FAILSAFE
-//
-// 0. wire bsg_tag_i.en low to disconnect bsg_tag
-// 1. assert recv_reset_i on the recv side of the module to install defaults
-// 2. proceed without use of bsg_tag
 //
 // * CLOCK GENERATOR NORMAL
 //
@@ -49,19 +43,11 @@
 
 module bsg_tag_client
    import bsg_tag_pkg::bsg_tag_s;
- #(width_p="inv", default_p="inv", harden_p=1)
+ #(parameter `BSG_INV_PARAM(width_p), harden_p=1)
    (
     input bsg_tag_s bsg_tag_i
 
     , input                recv_clk_i
-
-    , input                recv_reset_i   // default: wired to 0
-                                          // use to reset output data to a known state
-                                          // can we be used either to avoid having
-                                          // to send data on the bsg_tag_chain
-                                          // or in conjunction with recv_en_i
-                                          // to allow the data to be set without
-                                          // an operational bsg_tag
 
     , output               recv_new_r_o   // optional; notifies of new value
     , output [width_p-1:0] recv_data_r_o
@@ -106,24 +92,12 @@ module bsg_tag_client
       ,.i2({ width_p {shift_op} }) // sel var
       ,.o (tag_data_n)
       );
-
-  // Veri lator did not like bsg_dff_gatestack with the replicated clock signal
-   // hopefully this replacement does not cause inordinate problems =)
    
    bsg_dff #(.width_p(width_p), .harden_p(harden_p)) tag_data_reg
 	     (.clk_i(bsg_tag_i.clk)
 	      ,.data_i(tag_data_n)
 	      ,.data_o(tag_data_r)
 	      );
-   
-/*
-    bsg_dff_gatestack #(.width_p(width_p),.harden_p(harden_p)) tag_data_reg
-     (
-      .i0 (tag_data_n                    )
-      ,.i1( { width_p { bsg_tag_i.clk } })
-      ,.o (tag_data_r                    )
-      );
-*/
    
    // synopsys translate_off
    if (debug_level_lp > 1)
@@ -165,44 +139,16 @@ module bsg_tag_client
    always_ff @(posedge recv_clk_i)
      begin
         recv_toggle_r <= recv_toggle_n;
-
         recv_new_r    <= recv_new;
-        // goes high for one cycle after reset (en is high)
-        recv_new_r_r  <= recv_new_r | recv_reset_i;
+        recv_new_r_r  <= recv_new_r;
      end
 
-   if (default_p == 0)
-     begin: z
-        bsg_dff_reset_en #(.width_p(width_p),.harden_p(harden_p)) recv
+   bsg_dff_en #(.width_p(width_p),.harden_p(harden_p)) recv
         (.clk_i(recv_clk_i)
-         ,.reset_i(recv_reset_i)
          ,.en_i(recv_new_r)
          ,.data_i(tag_data_r)
          ,.data_o(recv_data_r)
          );
-     end
-   else
-     begin: z
-        always_ff @(posedge recv_clk_i)
-          begin
-             if (recv_reset_i)
-               begin
-                  recv_data_r   <= width_p ' (default_p);
-                    // synopsys translate_off
-                  if (debug_level_lp > 1) $display("## bsg_tag_client (recv) RESET (%m)");
-                    // synopsys translate_on
-               end
-             else
-               // CDC (fixme use RPG groups)
-               if (recv_new_r)
-                 begin
-                    recv_data_r <= tag_data_r;
-                    // synopsys translate_off
-                    if (debug_level_lp > 1) $display("## bsg_tag_client (recv) RECEIVING %b (%m)",tag_data_r);
-                    // synopsys translate_on
-                 end
-          end
-      end // block: z
 
    // the recv_en_i signal has to come after the flop
    // so this works even when the clock is not working
@@ -211,3 +157,5 @@ module bsg_tag_client
    assign recv_data_r_o   = recv_data_r;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_tag_client)

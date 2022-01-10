@@ -1,0 +1,1 @@
+../bsg_fifo_1r1w_small_hardened_random/bsg_fifo_1r1w_small_hardened_cov.v

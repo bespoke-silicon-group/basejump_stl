@@ -6,11 +6,13 @@
  *    depopulated ruche router.
  */
 
+`include "bsg_defines.v"
+
 module bsg_mesh_router_decoder_dor
   import bsg_noc_pkg::*;
   import bsg_mesh_router_pkg::*;
-  #(parameter x_cord_width_p = -1
-    , parameter y_cord_width_p = -1
+  #(parameter `BSG_INV_PARAM(x_cord_width_p )
+    , parameter `BSG_INV_PARAM(y_cord_width_p )
     , parameter dims_p = 2
     , parameter dirs_lp = (2*dims_p)+1
     , parameter ruche_factor_X_p=0
@@ -218,4 +220,6 @@ module bsg_mesh_router_decoder_dor
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mesh_router_decoder_dor)
 

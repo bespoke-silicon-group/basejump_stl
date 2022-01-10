@@ -11,8 +11,8 @@
 `include "bsg_defines.v"
 
 module bsg_nonsynth_mem_1rw_sync_assoc
-  #(parameter width_p="inv"
-    , parameter addr_width_p="inv"
+  #(parameter `BSG_INV_PARAM(width_p)
+    , parameter `BSG_INV_PARAM(addr_width_p)
   )
   (
     input clk_i
@@ -30,7 +30,7 @@ module bsg_nonsynth_mem_1rw_sync_assoc
   // associative array
   //
   `ifdef VERILATOR
-    // Verilator 4.024 supports associative array, but not wildcard indexed.
+    // version 4.024 supports associative array, but not wildcard indexed.
     logic [width_p-1:0] mem [longint];
   `else
     logic [width_p-1:0] mem [*];
@@ -56,3 +56,5 @@ module bsg_nonsynth_mem_1rw_sync_assoc
 
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_mem_1rw_sync_assoc)

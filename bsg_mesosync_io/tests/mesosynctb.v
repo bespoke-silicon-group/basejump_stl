@@ -516,3 +516,4 @@ function mode_cfg_s create_cfg(input input_mode_e in_mode,
 endfunction
 
 endmodule
+

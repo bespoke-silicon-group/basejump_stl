@@ -75,8 +75,8 @@ if (els_p == 2*``words`` && data_width_p == bits)               \
 
 module bsg_mem_1rw_sync_mask_write_byte
 
- #(parameter els_p = -1
-  ,parameter data_width_p = -1
+ #(parameter `BSG_INV_PARAM(els_p )
+  ,parameter `BSG_INV_PARAM(data_width_p )
   ,parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
   ,parameter write_mask_width_lp = data_width_p>>3
   )
@@ -127,3 +127,5 @@ module bsg_mem_1rw_sync_mask_write_byte
   // synopsys translate_on
    
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mem_1rw_sync_mask_write_byte)

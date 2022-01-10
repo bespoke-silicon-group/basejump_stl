@@ -2,7 +2,7 @@
 //
 // o       contains controllably delayed signal
 //
-// module bsg_clk_gen_coarse_delay_element #(parameter start_tap_p="inv")
+// module bsg_clk_gen_coarse_delay_element #(parameter `BSG_INV_PARAM(start_tap_p))
 //
 
 module bsg_rp_clk_gen_atomic_delay_tuner
@@ -95,3 +95,5 @@ module bsg_rp_clk_gen_atomic_delay_tuner
    // synopsys rp_endgroup (bsg_clk_gen_adt)
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_rp_clk_gen_atomic_delay_tuner)
