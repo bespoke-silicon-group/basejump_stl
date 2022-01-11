@@ -1,3 +1,6 @@
+`include "bsg_defines.v"
+
+>>>>>>> 8345b2827b2e9911794567f412039076df65da8a
 `define WRITE 3'b000
 `define READ  3'b001
 
@@ -17,12 +20,12 @@ module traffic_generator
   import bsg_tag_pkg::*;
   import bsg_dmc_pkg::*;
  #(parameter  num_adgs_p         = 1
-  ,parameter  ui_addr_width_p    = "inv"
-  ,parameter  ui_data_width_p    = "inv" // data width of UI interface, can be 2^n while n = [3, log2(burst_data_width_p)]
-  ,parameter  burst_data_width_p = "inv" // data width of an outstanding read/write transaction, typically data width of a cache line
-  ,parameter  dq_data_width_p    = "inv" // data width of DDR interface, consistent with packaging
-  ,parameter  cmd_afifo_depth_p  = "inv" // maximum number of outstanding read/write transactions can be queued when the controller is busy
-  ,parameter  cmd_sfifo_depth_p  = "inv" // maximum number of DRAM commands can be queued when the DDR interface is busy, no less than cmd_afifo_depth_p
+  ,parameter `BSG_INV_PARAM(ui_addr_width_p)
+  ,parameter `BSG_INV_PARAM(ui_data_width_p) // data width of UI interface, can be 2^n while n = [3, log2(burst_data_width_p)]
+  ,parameter `BSG_INV_PARAM(burst_data_width_p) // data width of an outstanding read/write transaction, typically data width of a cache line
+  ,parameter `BSG_INV_PARAM( dq_data_width_p) // data width of DDR interface, consistent with packaging
+  ,parameter `BSG_INV_PARAM(cmd_afifo_depth_p) // maximum number of outstanding read/write transactions can be queued when the controller is busy
+  ,parameter `BSG_INV_PARAM(cmd_sfifo_depth_p) // maximum number of DRAM commands can be queued when the DDR interface is busy, no less than cmd_afifo_depth_p
   ,localparam ui_mask_width_lp   = ui_data_width_p >> 3
   ,localparam dfi_data_width_lp  = dq_data_width_p << 1
   ,localparam dfi_mask_width_lp  = (dq_data_width_p >> 3) << 1
@@ -30,15 +33,10 @@ module traffic_generator
   ,localparam ui_burst_length_lp = burst_data_width_p / ui_data_width_p
   ,localparam dq_burst_length_lp = burst_data_width_p / dq_data_width_p)
   // Tag lines
-  (output bsg_tag_s                   async_reset_tag_o
-  ,output bsg_tag_s [dq_group_lp-1:0] bsg_dly_tag_o
-  ,output bsg_tag_s [dq_group_lp-1:0] bsg_dly_trigger_tag_o
-  ,output bsg_tag_s                   bsg_ds_tag_o
+  (output bsg_tag_s [22:0] 			  tag_lines_o
   //
-  ,output bsg_dmc_s                   dmc_p_o
   // Global asynchronous reset input, will be synchronized to each clock domain
   // Consistent with the reset signal defined in Xilinx UI interface
-  ,output                             sys_reset_o
   // User interface signals
   ,output       [ui_addr_width_p-1:0] app_addr_o
   ,output app_cmd_e                   app_cmd_o
@@ -64,7 +62,6 @@ module traffic_generator
   //
   ,output                             ui_clk_o
   ,output                             dfi_clk_2x_o
-  ,input                              dfi_clk_1x_i
   //
   ,input                              ui_clk_sync_rst_i);
 
@@ -93,8 +90,8 @@ module traffic_generator
   localparam tag_trace_rom_addr_width_lp = 32;
   localparam tag_trace_rom_data_width_lp = 23;
 
-  logic [tag_trace_rom_addr_width_lp-1:0] tag_rom_addr_li;
-  logic [tag_trace_rom_data_width_lp-1:0] tag_rom_data_lo;
+  logic [tag_trace_rom_addr_width_lp-1:0] rom_addr_li;
+  logic [tag_trace_rom_data_width_lp-1:0] rom_data_lo;
 
   logic tag_trace_en_r_lo;
   logic tag_trace_done_lo;
@@ -104,8 +101,8 @@ module traffic_generator
                     ,.addr_width_p( tag_trace_rom_addr_width_lp )
                     )
     tag_trace_rom
-      (.addr_i( tag_rom_addr_li )
-      ,.data_o( tag_rom_data_lo )
+      (.addr_i( rom_addr_li )
+      ,.data_o( rom_data_lo )
       );
 
   logic tag_reset;
@@ -127,9 +124,8 @@ module traffic_generator
       (.clk_i   ( tag_clk )
       ,.reset_i ( tag_reset    )
       ,.en_i    ( 1'b1            )
-
-      ,.rom_addr_o( tag_rom_addr_li )
-      ,.rom_data_i( tag_rom_data_lo )
+      ,.rom_addr_o( rom_addr_li )
+      ,.rom_data_i( rom_data_lo )
 
       ,.valid_i ( 1'b0 )
       ,.data_i  ( '0 )
@@ -150,14 +146,7 @@ module traffic_generator
   //
 
   // All tag lines from the btm
-  bsg_tag_s [22:0] tag_lines_lo;
 
-  assign async_reset_tag_o     = tag_lines_lo[0];
-  assign bsg_dly_tag_o         = tag_lines_lo[1+:dq_group_lp];
-  assign bsg_dly_trigger_tag_o = tag_lines_lo[1+dq_group_lp+:4];
-  assign bsg_ds_tag_o          = tag_lines_lo[1+2*dq_group_lp];
-
-  wire bsg_tag_s [12:0] dmc_cfg_tag_lines_lo = tag_lines_lo[2+2*dq_group_lp+:13];
 
   // BSG tag master instance
   bsg_tag_master #(.els_p( 23 )
@@ -167,48 +156,10 @@ module traffic_generator
       (.clk_i      ( tag_clk )
       ,.data_i     ( tag_trace_valid_lo? bsg_tag_data: 1'b0 )
       ,.en_i       ( 1'b1 )
-      ,.clients_r_o( tag_lines_lo )
+      ,.clients_r_o( tag_lines_o )
       );
 
-  // Tag payload for bsg_dmc control signals
-  logic [12:0][7:0] dmc_cfg_tag_data_lo;
-  logic [12:0]      dmc_cfg_tag_new_data_lo;
-
-  genvar idx;
-  generate
-    for(idx=0;idx<13;idx++) begin: dmc_cfg
-      bsg_tag_client #(.width_p( 8 ), .default_p( 0 ))
-        btc
-          (.bsg_tag_i     ( dmc_cfg_tag_lines_lo[idx] )
-          ,.recv_clk_i    ( dfi_clk_1x_i )
-          ,.recv_reset_i  ( 1'b0 )
-          ,.recv_new_r_o  ( dmc_cfg_tag_new_data_lo[idx] )
-          ,.recv_data_r_o ( dmc_cfg_tag_data_lo[idx] )
-          );
-    end
-  endgenerate
-
-  assign dmc_p_o.trefi        = {dmc_cfg_tag_data_lo[1], dmc_cfg_tag_data_lo[0]};
-  assign dmc_p_o.tmrd         = dmc_cfg_tag_data_lo[2][3:0];
-  assign dmc_p_o.trfc         = dmc_cfg_tag_data_lo[2][7:4];
-  assign dmc_p_o.trc          = dmc_cfg_tag_data_lo[3][3:0];
-  assign dmc_p_o.trp          = dmc_cfg_tag_data_lo[3][7:4];
-  assign dmc_p_o.tras         = dmc_cfg_tag_data_lo[4][3:0];
-  assign dmc_p_o.trrd         = dmc_cfg_tag_data_lo[4][7:4];
-  assign dmc_p_o.trcd         = dmc_cfg_tag_data_lo[5][3:0];
-  assign dmc_p_o.twr          = dmc_cfg_tag_data_lo[5][7:4];
-  assign dmc_p_o.twtr         = dmc_cfg_tag_data_lo[6][3:0];
-  assign dmc_p_o.trtp         = dmc_cfg_tag_data_lo[6][7:4];
-  assign dmc_p_o.tcas         = dmc_cfg_tag_data_lo[7][3:0];
-  assign dmc_p_o.col_width    = dmc_cfg_tag_data_lo[8][3:0];
-  assign dmc_p_o.row_width    = dmc_cfg_tag_data_lo[8][7:4];
-  assign dmc_p_o.bank_width   = dmc_cfg_tag_data_lo[9][1:0];
-  assign dmc_p_o.bank_pos     = dmc_cfg_tag_data_lo[9][7:2];
-  assign dmc_p_o.dqs_sel_cal  = dmc_cfg_tag_data_lo[7][6:4];
-  assign dmc_p_o.init_cycles  = {dmc_cfg_tag_data_lo[11], dmc_cfg_tag_data_lo[10]};
-  assign sys_reset_o          = dmc_cfg_tag_data_lo[12][0];
-
-  logic      [ui_addr_width_p-1:0] app_addr;
+   logic      [ui_addr_width_p-1:0] app_addr;
   app_cmd_e                        app_cmd;
   logic                            app_en;
   wire                             app_rdy;
@@ -274,7 +225,6 @@ module traffic_generator
     $display("\n#### Regression test ended ####");
     $finish();
   end
-
 
   for(i=0;i<ui_burst_length_lp;i++) begin
     assign sipo_data[ui_data_width_p*i+:ui_data_width_p] = sipo_data_lo[i];
