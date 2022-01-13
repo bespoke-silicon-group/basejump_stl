@@ -25,7 +25,7 @@ class TraceGen:
   def send_write(self, addr, data, mask):
 	trace = "0001_"
 	precharge = random.randint(0,1)
-	trace += "00" + format(precharge, str(1)+"b") + "1_"
+	trace += "00" + format(precharge, str(1)+"b") + "0_"
 	trace += format(addr, "0"+str(self.addr_width_p)+"b") + "_"
 
 	for i in range(self.burst_length_p):
@@ -93,6 +93,7 @@ if __name__ == "__main__":
 
   for i in range(10):
 	addr = (random.randint(0, 2**22) << 6)
+	#delay = 0;
 	delay = random.randint(0,100)
 	mask_val = random.randint(0, 2^(tg.mask_width_lp))
 

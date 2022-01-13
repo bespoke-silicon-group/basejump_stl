@@ -1,6 +1,5 @@
 `include "bsg_defines.v"
 
->>>>>>> 8345b2827b2e9911794567f412039076df65da8a
 `define WRITE 3'b000
 `define READ  3'b001
 
@@ -16,6 +15,10 @@
   `define TAG_CLK_PERIOD 10000.0
 `endif
 
+`ifndef FPGA_LINK_IO_CLK_PERIOD
+  `define FPGA_LINK_IO_CLK_PERIOD 1000.0
+`endif
+
 module traffic_generator
   import bsg_tag_pkg::*;
   import bsg_dmc_pkg::*;
@@ -26,12 +29,15 @@ module traffic_generator
   ,parameter `BSG_INV_PARAM( dq_data_width_p) // data width of DDR interface, consistent with packaging
   ,parameter `BSG_INV_PARAM(cmd_afifo_depth_p) // maximum number of outstanding read/write transactions can be queued when the controller is busy
   ,parameter `BSG_INV_PARAM(cmd_sfifo_depth_p) // maximum number of DRAM commands can be queued when the DDR interface is busy, no less than cmd_afifo_depth_p
+  , parameter ui_cmd_width_p	 = 4
   ,localparam ui_mask_width_lp   = ui_data_width_p >> 3
   ,localparam dfi_data_width_lp  = dq_data_width_p << 1
   ,localparam dfi_mask_width_lp  = (dq_data_width_p >> 3) << 1
   ,localparam dq_group_lp        = dq_data_width_p >> 3
   ,localparam ui_burst_length_lp = burst_data_width_p / ui_data_width_p
-  ,localparam dq_burst_length_lp = burst_data_width_p / dq_data_width_p)
+  ,localparam dq_burst_length_lp = burst_data_width_p / dq_data_width_p
+  ,localparam payload_width_lp 	 = ui_addr_width_p + ui_cmd_width_p + ui_burst_length_lp*(ui_data_width_p + ui_mask_width_lp)
+  )
   // Tag lines
   (output bsg_tag_s [22:0] 			  tag_lines_o
   //
@@ -63,7 +69,10 @@ module traffic_generator
   ,output                             ui_clk_o
   ,output                             dfi_clk_2x_o
   //
-  ,input                              ui_clk_sync_rst_i);
+  ,input                              ui_clk_sync_rst_i
+
+  
+  );
 
   // Total number of clients the master will be driving.
   localparam tag_num_clients_gp = 23;
@@ -72,8 +81,15 @@ module traffic_generator
   localparam tag_lg_max_payload_width_gp = `BSG_SAFE_CLOG2(tag_max_payload_width_gp + 1);
 
   logic ui_clk;
+
   assign ui_clk_o = ui_clk;
   bsg_nonsynth_clock_gen #(.cycle_time_p(`UI_CLK_PERIOD)) ui_clk_gen (.o(ui_clk));
+	
+  logic fpga_link_clk;
+  bsg_nonsynth_clock_gen #(.cycle_time_p(`UI_CLK_PERIOD)) fpga_link_clk_gen (.o(fpga_link_clk));
+
+  logic fpga_link_io_clk_li;
+  bsg_nonsynth_clock_gen #(.cycle_time_p(`FPGA_LINK_IO_CLK_PERIOD)) fpga_link_io_clk_gen (.o(fpga_link_io_clk_li));
 
   logic dfi_clk_2x;
   assign dfi_clk_2x_o = dfi_clk_2x;
@@ -86,7 +102,6 @@ module traffic_generator
   //
   // BSG Tag Trace Replay
   //
-
   localparam tag_trace_rom_addr_width_lp = 32;
   localparam tag_trace_rom_data_width_lp = 23;
 
@@ -159,7 +174,7 @@ module traffic_generator
       ,.clients_r_o( tag_lines_o )
       );
 
-   logic      [ui_addr_width_p-1:0] app_addr;
+   logic     [ui_addr_width_p-1:0] app_addr;
   app_cmd_e                        app_cmd;
   logic                            app_en;
   wire                             app_rdy;
@@ -190,75 +205,235 @@ module traffic_generator
   int read_transactions;
   int j,k;
 
-`include "tasks.v"
+`ifndef BRINGUP
+	`include "tasks.v"
 
-  initial begin
-    //$vcdplusmemon();
-    app_en = 0;
-    app_wdf_wren = 0;
-    app_wdf_end = 0;
-  end
+  	  initial begin
+  	      //$vcdplusmemon();
+  	      app_en = 0;
+  	      app_wdf_wren = 0;
+  	      app_wdf_end = 0;
+  	  end
 
-  initial begin
-    $display("\n#### Regression test started ####");
-    @(posedge tag_trace_done_lo);
-    repeat(100) @(posedge ui_clk);
-    for(k=0;k<256;k++) begin
-      waddr = k*dq_burst_length_lp;
-      wdata = 0;
-      for(j=0;j<ui_burst_length_lp;j++)
-        wdata = (wdata << ui_data_width_p) + waddr + j;
-      wdata_array[waddr] = wdata;
-      $display("Time: %8d ns, Write %x to %x", $time(), wdata, waddr);
-      fork
-        ui_cmd(`WRITE, waddr);
-        ui_write(0, wdata);
-      join
-    end
-    for(k=0;k<256;k++) begin
-      raddr = k*dq_burst_length_lp;
-      raddr_queue.push_front(raddr);
-      ui_cmd(`READ, raddr);
-    end
-    repeat(1000) @(posedge ui_clk);
-    $display("\nRegression test passed!");
-    $display("\n#### Regression test ended ####");
-    $finish();
-  end
+	  initial begin
+	    $display("\n#### Regression test started ####");
+	    @(posedge tag_trace_done_lo);
+	    repeat(100) @(posedge ui_clk);
+	    for(k=0;k<256;k++) begin
+	      waddr = k*dq_burst_length_lp;
+	      wdata = 0;
+	      for(j=0;j<ui_burst_length_lp;j++)
+	        wdata = (wdata << ui_data_width_p) + waddr + j;
+	      wdata_array[waddr] = wdata;
+	      $display("Time: %8d ns, Write %x to %x", $time(), wdata, waddr);
+	      fork
+	        ui_cmd(`WRITE, waddr);
+	        ui_write(0, wdata);
+	      join
+	    end
+	    for(k=0;k<256;k++) begin
+	      raddr = k*dq_burst_length_lp;
+	      raddr_queue.push_front(raddr);
+	      ui_cmd(`READ, raddr);
+	    end
+	    repeat(1000) @(posedge ui_clk);
+	    $display("\nRegression test passed!");
+	    $display("\n#### Regression test ended ####");
+	    $finish();
+	  end
+	
+	  for(i=0;i<ui_burst_length_lp;i++) begin
+	    assign sipo_data[ui_data_width_p*i+:ui_data_width_p] = sipo_data_lo[i];
+	  end
+	
+	  bsg_serial_in_parallel_out #
+	    (.width_p    ( ui_data_width_p    )
+	    ,.els_p      ( ui_burst_length_lp ))
+	  sipo
+	    (.clk_i      ( ui_clk            )
+	    ,.reset_i    ( ui_clk_sync_rst_i )
+	    ,.valid_i    ( app_rd_data_valid )
+	    ,.data_i     ( app_rd_data       )
+	    ,.ready_o    (                   )
+	    ,.valid_o    ( sipo_valid_lo     )
+	    ,.data_o     ( sipo_data_lo      )
+	    ,.yumi_cnt_i ( sipo_yumi_cnt_li  ));
+	
+	  assign sipo_yumi_cnt_li = ($clog2(ui_burst_length_lp)+1)'(&sipo_valid_lo? ui_burst_length_lp: 0);
+	
+	  always @(posedge ui_clk) begin
+	    if(&sipo_valid_lo) begin
+	      read_transactions = read_transactions + 1;
+	      rx_addr = raddr_queue.pop_back();
+	      tx_data = wdata_array[rx_addr];
+	      rx_data = sipo_data;
+	      $display("Time: %8d ns, Read %x from %x", $time(), rx_data, rx_addr);
+	      if(tx_data != rx_data) begin
+	        $display("Error: Data expected to be %x, but %x received", tx_data, rx_data);
+	        $display("\nRegression test failed!");
+	        $finish();
+	      end
+	    end
+	  end
+`else
+	logic en_trace_reading_li;
+	
+	logic fpga_link_upstream_edge_clk_lo;
+	logic [payload_width_lp/2-1:0] fpga_link_upstream_edge_data_lo;
+	logic fpga_link_upstream_edge_valid_lo;
 
-  for(i=0;i<ui_burst_length_lp;i++) begin
-    assign sipo_data[ui_data_width_p*i+:ui_data_width_p] = sipo_data_lo[i];
-  end
+	logic fpga_link_reset_li, asic_link_reset;
+  	logic fpga_link_io_reset_li, asic_link_io_reset;
+	logic fpga_link_token_reset_li, asic_link_token_reset;
 
-  bsg_serial_in_parallel_out #
-    (.width_p    ( ui_data_width_p    )
-    ,.els_p      ( ui_burst_length_lp ))
-  sipo
-    (.clk_i      ( ui_clk            )
-    ,.reset_i    ( ui_clk_sync_rst_i )
-    ,.valid_i    ( app_rd_data_valid )
-    ,.data_i     ( app_rd_data       )
-    ,.ready_o    (                   )
-    ,.valid_o    ( sipo_valid_lo     )
-    ,.data_o     ( sipo_data_lo      )
-    ,.yumi_cnt_i ( sipo_yumi_cnt_li  ));
+    // ASIC SIDE LINK EDGE SIGNALS
+  	//logic [payload_width_lp/2-1:0] asic_link_downstream_edge_data;
+  	//logic asic_link_downstream_edge_valid;
+  	logic asic_link_downstream_edge_token_li;
+  	//logic asic_link_downstream_edge_clk;
+  	//logic asic_link_downstream_core_ready_li;
+  	
+  	logic [payload_width_lp-1:0] asic_link_core_data_lo;
+  	logic asic_link_core_valid_lo;
+  	logic asic_link_core_yumi_lo;
+  	
+  	// DMC input FIFO related signals
+  	logic [payload_width_lp - 1:0] dmc_adapter_input_data_lo;
+  	logic dmc_adapter_input_valid_lo;
+  	logic dmc_adapter_yumi_lo;
+  	logic dmc_input_fifo_ready_lo;	
+  	
+  	logic dmc_adapter_ready_lo;
 
-  assign sipo_yumi_cnt_li = ($clog2(ui_burst_length_lp)+1)'(&sipo_valid_lo? ui_burst_length_lp: 0);
+	logic asic_link_io_clk;
+  	bsg_nonsynth_clock_gen #(.cycle_time_p(`UI_CLK_PERIOD)) asic_link_io_clk_gen (.o(asic_link_io_clk));
 
-  always @(posedge ui_clk) begin
-    if(&sipo_valid_lo) begin
-      read_transactions = read_transactions + 1;
-      rx_addr = raddr_queue.pop_back();
-      tx_data = wdata_array[rx_addr];
-      rx_data = sipo_data;
-      $display("Time: %8d ns, Read %x from %x", $time(), rx_data, rx_addr);
-      if(tx_data != rx_data) begin
-        $display("Error: Data expected to be %x, but %x received", tx_data, rx_data);
-        $display("\nRegression test failed!");
-        $finish();
-      end
-    end
-  end
+	initial begin
+		fpga_link_reset_li = 1;
+		asic_link_reset = 1;
+
+		fpga_link_io_reset_li = 1;
+		asic_link_io_reset = 1;
+
+		#1000;
+
+		fpga_link_token_reset_li = 1;
+
+		#1000;
+
+		fpga_link_token_reset_li = 0;
+
+		#1000;
+
+		@(posedge fpga_link_io_clk_li); #1;
+  		  	fpga_link_io_reset_li = 0;
+
+		@(posedge fpga_link_upstream_edge_clk_lo); #1;
+  		  	asic_link_io_reset = 1;
+		#1000;
+
+		@(posedge asic_link_io_clk); #1;
+  		  	asic_link_io_reset = 0;
+
+		#1000;
+  	  	
+  	  	// core link reset
+  	  	@(posedge fpga_link_clk); #1;
+  	  	fpga_link_reset_li = 0;
+
+  	  	@(posedge ui_clk); #1;
+  	  	asic_link_reset = 0;
+	end
+
+	assign en_trace_reading_li = init_calib_complete_i & tag_trace_done_lo ;
+	bsg_dmc_tester
+				#(	.data_width_p(ui_data_width_p),
+					.addr_width_p(ui_addr_width_p),
+					.cmd_width_p(4),
+					.burst_width_p(ui_burst_length_lp)
+				) dmc_tester
+				(	.fpga_link_clk_i(fpga_link_clk),
+					.fpga_link_io_clk_i(fpga_link_io_clk_li),
+					.fpga_link_reset_i(fpga_link_reset_li),
+					.fpga_link_io_reset_i(fpga_link_io_reset_li),
+					.fpga_link_token_reset_i(fpga_link_token_reset_li),
+					.fpga_link_upstream_edge_clk_o(fpga_link_upstream_edge_clk_lo),
+					.asic_link_downstream_edge_token_i(asic_link_downstream_edge_token_li),
+					.fpga_link_upstream_edge_data_o(fpga_link_upstream_edge_data_lo),
+					.fpga_link_upstream_edge_valid_o(fpga_link_upstream_edge_valid_lo),
+					.en_trace_reading_i(en_trace_reading_li)
+				);
+
+  	assign asic_link_core_yumi_lo = asic_link_core_valid_lo & dmc_input_fifo_ready_lo;
+
+  	  // ASIC SIDE LINKS START
+  	bsg_link_ddr_downstream
+  	#(.width_p        (payload_width_lp)
+  	 ,.channel_width_p(payload_width_lp/2)
+  	 ,.num_channels_p (1)
+  	 ) asic_link_downstream
+  	 (.core_clk_i       (ui_clk)
+  	 ,.core_link_reset_i(asic_link_reset)
+  	 ,.io_link_reset_i  (asic_link_io_reset)
+  	 
+  	 ,.core_data_o   (asic_link_core_data_lo)
+  	 ,.core_valid_o  (asic_link_core_valid_lo)
+  	 ,.core_yumi_i   (asic_link_core_yumi_lo)
+  	
+  	 ,.io_clk_i      (fpga_link_upstream_edge_clk_lo)
+  	 ,.io_data_i     (fpga_link_upstream_edge_data_lo)
+  	 ,.io_valid_i    (fpga_link_upstream_edge_valid_lo)
+  	 ,.core_token_r_o(asic_link_downstream_edge_token_li)
+  	 );
+  	// ASIC SIDE LINKS END
+				
+	assign dmc_adapter_yumi_lo = dmc_adapter_ready_lo & dmc_adapter_input_valid_lo;
+		//asic_link_core_valid_lo & dmc_adapter_ready_lo;
+  	
+  	bsg_fifo_1r1w_small 
+  	#(.width_p(payload_width_lp)
+  	,.els_p(10)
+  	) dmc_input_fifo
+  	(.clk_i  (ui_clk)
+  	,.reset_i(asic_link_reset)
+  	
+  	,.ready_o(dmc_input_fifo_ready_lo)
+  	,.data_i (asic_link_core_data_lo)
+  	,.v_i    (asic_link_core_valid_lo)
+  	
+  	,.v_o    (dmc_adapter_input_valid_lo)
+  	,.data_o (dmc_adapter_input_data_lo)
+  	,.yumi_i (dmc_adapter_yumi_lo)
+  	);
+
+  	bsg_dmc_trace_to_xilinx_ui_adapter 
+  						#(	.data_width_p(ui_data_width_p),
+  							.addr_width_p(ui_addr_width_p),
+  							.cmd_width_p(ui_cmd_width_p),
+  							.burst_width_p(ui_burst_length_lp)
+  						) trace_to_dmc_ui
+  						(	.core_clk_i(ui_clk),
+  							.core_reset_i(asic_link_reset),
+  							.trace_data_i(dmc_adapter_input_data_lo),
+  						 	.trace_data_valid_i(dmc_adapter_input_valid_lo),
+  						 	.adapter_ready_o(dmc_adapter_ready_lo),
+  	
+  						    // XILINX UI signals	
+  							.app_addr_o(app_addr),
+  							.app_cmd_o(app_cmd),
+  							.app_en_o(app_en),
+  							.app_rdy_i(app_rdy),
+  							.app_wdf_wren_o(app_wdf_wren),
+  							.app_wdf_data_o(app_wdf_data),
+  							.app_wdf_mask_o(app_wdf_mask),
+  							.app_wdf_end_o(app_wdf_end),
+  							.app_wdf_rdy_i(app_wdf_rdy),
+  							.app_rd_data_valid_i(app_rd_data_valid),
+  							.app_rd_data_i(app_rd_data),
+  							.app_rd_data_end_i(app_rd_data_end)
+  						 );
+
+`endif
 
   assign app_addr_o          = app_addr;
   assign app_cmd_o           = app_cmd;

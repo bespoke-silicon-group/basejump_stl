@@ -16,6 +16,7 @@ ELABORATE_OPTIONS += +vcs+vcdplusmemon
 ELABORATE_OPTIONS += +define+den2048Mb+sg5+x16+FULL_MEM
 ELABORATE_OPTIONS += -timescale=1ns/1ps
 ELABORATE_OPTIONS += -assert svaext
+ELABORATE_OPTIONS += +define+BRINGUP
 RUN_OPTIONS = 
 
 BSG_TRACE_FILES := $(notdir $(wildcard *.tr))
