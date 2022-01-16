@@ -2,8 +2,6 @@
 // this helps with x prop mode in VCS
 `include "bsg_defines.v"
 
-`timescale 1ps/1ps
-
 module bsg_nonsynth_clock_gen
   #(parameter `BSG_INV_PARAM(cycle_time_p))
    (output bit o);
