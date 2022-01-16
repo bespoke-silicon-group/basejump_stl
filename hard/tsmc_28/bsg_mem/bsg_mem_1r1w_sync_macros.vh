@@ -91,10 +91,10 @@ if (harden_p && els_p == words && width_p == bits)              \
       ,.reset_i(reset_i)                                                    \
       ,.w_v_i(w_v_i)                                                        \
       ,.w_addr_i(w_addr_i)                                                  \
-      ,.w_data_i(data_i)                                                    \
+      ,.w_data_i(w_data_i)                                                  \
       ,.r_v_i(r_v_i)                                                        \
       ,.r_addr_i(r_addr_i)                                                  \
-      ,.r_data_o(data_o)                                                    \
+      ,.r_data_o(r_data_o)                                                  \
     );                                                                      \
   end: macro
 
