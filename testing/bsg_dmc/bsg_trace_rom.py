@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
 	if addr in mem_dict:
 	  write_not_read = random.randint(0,1)
-	  if write_not_read == 1:
+	  if write_not_read == 0:
 		tg.send_read(addr)
 		#tg.recv_data(mem_dict[addr])
 	  else:

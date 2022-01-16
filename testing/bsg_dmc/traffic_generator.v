@@ -15,8 +15,12 @@
   `define TAG_CLK_PERIOD 10000.0
 `endif
 
-`ifndef FPGA_LINK_IO_CLK_PERIOD
-  `define FPGA_LINK_IO_CLK_PERIOD 1000.0
+`ifndef LINK_IO_CLK_PERIOD
+  `define LINK_IO_CLK_PERIOD 1000.0
+`endif
+
+`ifndef FPGA_CLK_PERIOD
+  `define FPGA_CLK_PERIOD 2500.0
 `endif
 
 module traffic_generator
@@ -86,10 +90,13 @@ module traffic_generator
   bsg_nonsynth_clock_gen #(.cycle_time_p(`UI_CLK_PERIOD)) ui_clk_gen (.o(ui_clk));
 	
   logic fpga_link_clk;
-  bsg_nonsynth_clock_gen #(.cycle_time_p(`UI_CLK_PERIOD)) fpga_link_clk_gen (.o(fpga_link_clk));
+  bsg_nonsynth_clock_gen #(.cycle_time_p(`FPGA_CLK_PERIOD)) fpga_link_clk_gen (.o(fpga_link_clk));
 
   logic fpga_link_io_clk_li;
-  bsg_nonsynth_clock_gen #(.cycle_time_p(`FPGA_LINK_IO_CLK_PERIOD)) fpga_link_io_clk_gen (.o(fpga_link_io_clk_li));
+  bsg_nonsynth_clock_gen #(.cycle_time_p(`LINK_IO_CLK_PERIOD)) fpga_link_io_clk_gen (.o(fpga_link_io_clk_li));
+
+  logic asic_link_io_clk;
+  bsg_nonsynth_clock_gen #(.cycle_time_p(`LINK_IO_CLK_PERIOD)) asic_link_io_clk_gen (.o(asic_link_io_clk));
 
   logic dfi_clk_2x;
   assign dfi_clk_2x_o = dfi_clk_2x;
@@ -111,6 +118,8 @@ module traffic_generator
   logic tag_trace_en_r_lo;
   logic tag_trace_done_lo;
 
+  logic en_trace_reading_li;
+
   // TAG TRACE ROM
   bsg_tag_boot_rom #(.width_p( tag_trace_rom_data_width_lp )
                     ,.addr_width_p( tag_trace_rom_addr_width_lp )
@@ -126,6 +135,9 @@ module traffic_generator
       (.clk_i(tag_clk)
       ,.async_reset_o(tag_reset)
       );
+	
+
+  assign en_trace_reading_li = init_calib_complete_i & tag_trace_done_lo ;
 
   wire tag_trace_valid_lo;
   // TAG TRACE REPLAY
@@ -206,6 +218,7 @@ module traffic_generator
   int j,k;
 
 `ifndef BRINGUP
+	// non-synthesisable testing
 	`include "tasks.v"
 
   	  initial begin
@@ -276,27 +289,57 @@ module traffic_generator
 	    end
 	  end
 `else
-	logic en_trace_reading_li;
 	
+	// Synthesisable testing below:
+	// Topology:
+	// * BSG TRACE ROM contains command, address, write data and write mask
+	// * BSG TRACE REPLAY used to 
+	// 		** read TRACE ROM and transmit cmd, addr, write data mask forward
+	// 		** receive read data from DMC and compare with data that was already written to that address
+	// * FPGA SIDE DDR LINKS:
+	// 		** BSG DDR UPSTREAM LINK to tranmsit command, address, write data and write mask to ASIC
+	// 		** BSG DDR DOWNSTREAM LINK to get read data from ASIC
+	// * ASIC SIDE DDR LINKS:
+	// 		** BSG DDR DOWNSTREAM LINK to tranmsit command, address, write data and write mask to DMC
+	// 		** BSG DDR UPSTREAM LINK to pass read data from DMC to FPGA
+	// * STORE FORWARD FIFO to collect command, address, write data and write mask from DDR LINK and forward
+	// * TRACE TO DMC UI ADAPTER to convert :
+	// 		** trace packet to XILINX UI command and write interfaces
+	// 		** XILINX UI interface read interface signals to trace packet
+	// * BSG DRAM CONTROLLER
+	//
 	logic fpga_link_upstream_edge_clk_lo;
 	logic [payload_width_lp/2-1:0] fpga_link_upstream_edge_data_lo;
 	logic fpga_link_upstream_edge_valid_lo;
 
-	logic fpga_link_reset_li, asic_link_reset;
-  	logic fpga_link_io_reset_li, asic_link_io_reset;
-	logic fpga_link_token_reset_li, asic_link_token_reset;
+	logic fpga_link_reset_li, asic_link_reset_li;
+  	logic fpga_link_upstream_io_reset_li, asic_link_downstream_io_reset;
+	logic fpga_link_downstream_io_reset_li, asic_link_upstream_io_reset;
 
-    // ASIC SIDE LINK EDGE SIGNALS
-  	//logic [payload_width_lp/2-1:0] asic_link_downstream_edge_data;
-  	//logic asic_link_downstream_edge_valid;
+	logic fpga_link_token_reset_li, asic_link_token_reset_li;
+
+    // ASIC SIDE LINK SIGNALS
+  	logic [payload_width_lp/2-1:0] asic_link_downstream_edge_data;
+  	logic asic_link_downstream_edge_valid;
   	logic asic_link_downstream_edge_token_li;
-  	//logic asic_link_downstream_edge_clk;
-  	//logic asic_link_downstream_core_ready_li;
-  	
-  	logic [payload_width_lp-1:0] asic_link_core_data_lo;
-  	logic asic_link_core_valid_lo;
-  	logic asic_link_core_yumi_lo;
-  	
+  	logic asic_link_downstream_edge_clk;
+  	logic asic_link_downstream_core_ready_li;
+	logic asic_link_upstream_core_ready_lo;
+
+
+  	logic [payload_width_lp-1:0] asic_link_downstream_core_data_lo;
+  	logic asic_link_downstream_core_valid_lo;
+  	logic asic_link_downstream_core_yumi_lo;
+
+	logic [payload_width_lp-1:0] asic_link_upstream_core_data_lo;
+  	logic asic_link_upstream_core_valid_lo;
+  	logic asic_link_upstream_core_yumi_lo;
+
+	logic [payload_width_lp/2 - 1:0] asic_link_upstream_edge_data_li;
+	logic asic_link_upstream_edge_clk_li;
+	logic asic_link_upstream_edge_valid_li;
+	logic fpga_link_downstream_edge_token_li;
+
   	// DMC input FIFO related signals
   	logic [payload_width_lp - 1:0] dmc_adapter_input_data_lo;
   	logic dmc_adapter_input_valid_lo;
@@ -305,47 +348,7 @@ module traffic_generator
   	
   	logic dmc_adapter_ready_lo;
 
-	logic asic_link_io_clk;
-  	bsg_nonsynth_clock_gen #(.cycle_time_p(`UI_CLK_PERIOD)) asic_link_io_clk_gen (.o(asic_link_io_clk));
-
-	initial begin
-		fpga_link_reset_li = 1;
-		asic_link_reset = 1;
-
-		fpga_link_io_reset_li = 1;
-		asic_link_io_reset = 1;
-
-		#1000;
-
-		fpga_link_token_reset_li = 1;
-
-		#1000;
-
-		fpga_link_token_reset_li = 0;
-
-		#1000;
-
-		@(posedge fpga_link_io_clk_li); #1;
-  		  	fpga_link_io_reset_li = 0;
-
-		@(posedge fpga_link_upstream_edge_clk_lo); #1;
-  		  	asic_link_io_reset = 1;
-		#1000;
-
-		@(posedge asic_link_io_clk); #1;
-  		  	asic_link_io_reset = 0;
-
-		#1000;
-  	  	
-  	  	// core link reset
-  	  	@(posedge fpga_link_clk); #1;
-  	  	fpga_link_reset_li = 0;
-
-  	  	@(posedge ui_clk); #1;
-  	  	asic_link_reset = 0;
-	end
-
-	assign en_trace_reading_li = init_calib_complete_i & tag_trace_done_lo ;
+	// Whatever testing environment that goes into the FPGA: trace ROM, trace replay, FPGA side DDR upstream and downstream links
 	bsg_dmc_tester
 				#(	.data_width_p(ui_data_width_p),
 					.addr_width_p(ui_addr_width_p),
@@ -355,57 +358,87 @@ module traffic_generator
 				(	.fpga_link_clk_i(fpga_link_clk),
 					.fpga_link_io_clk_i(fpga_link_io_clk_li),
 					.fpga_link_reset_i(fpga_link_reset_li),
-					.fpga_link_io_reset_i(fpga_link_io_reset_li),
+					.fpga_link_upstream_io_reset_i(fpga_link_upstream_io_reset_li),
+					.fpga_link_downstream_io_reset_i(fpga_link_downstream_io_reset_li),
 					.fpga_link_token_reset_i(fpga_link_token_reset_li),
 					.fpga_link_upstream_edge_clk_o(fpga_link_upstream_edge_clk_lo),
 					.asic_link_downstream_edge_token_i(asic_link_downstream_edge_token_li),
 					.fpga_link_upstream_edge_data_o(fpga_link_upstream_edge_data_lo),
 					.fpga_link_upstream_edge_valid_o(fpga_link_upstream_edge_valid_lo),
+
+					.asic_link_upstream_edge_clk_i(asic_link_upstream_edge_clk_li),
+					.asic_link_upstream_edge_data_i(asic_link_upstream_edge_data_li),
+					.asic_link_upstream_edge_valid_i(asic_link_upstream_edge_valid_li),
+					.fpga_link_downstream_edge_token_o(fpga_link_downstream_edge_token_li),
+
 					.en_trace_reading_i(en_trace_reading_li)
 				);
 
-  	assign asic_link_core_yumi_lo = asic_link_core_valid_lo & dmc_input_fifo_ready_lo;
+  	assign asic_link_downstream_core_yumi_lo = asic_link_downstream_core_valid_lo & dmc_input_fifo_ready_lo;
 
   	  // ASIC SIDE LINKS START
   	bsg_link_ddr_downstream
-  	#(.width_p        (payload_width_lp)
-  	 ,.channel_width_p(payload_width_lp/2)
-  	 ,.num_channels_p (1)
-  	 ) asic_link_downstream
-  	 (.core_clk_i       (ui_clk)
-  	 ,.core_link_reset_i(asic_link_reset)
-  	 ,.io_link_reset_i  (asic_link_io_reset)
-  	 
-  	 ,.core_data_o   (asic_link_core_data_lo)
-  	 ,.core_valid_o  (asic_link_core_valid_lo)
-  	 ,.core_yumi_i   (asic_link_core_yumi_lo)
-  	
-  	 ,.io_clk_i      (fpga_link_upstream_edge_clk_lo)
-  	 ,.io_data_i     (fpga_link_upstream_edge_data_lo)
-  	 ,.io_valid_i    (fpga_link_upstream_edge_valid_lo)
-  	 ,.core_token_r_o(asic_link_downstream_edge_token_li)
-  	 );
-  	// ASIC SIDE LINKS END
-				
-	assign dmc_adapter_yumi_lo = dmc_adapter_ready_lo & dmc_adapter_input_valid_lo;
-		//asic_link_core_valid_lo & dmc_adapter_ready_lo;
-  	
-  	bsg_fifo_1r1w_small 
-  	#(.width_p(payload_width_lp)
-  	,.els_p(10)
-  	) dmc_input_fifo
-  	(.clk_i  (ui_clk)
-  	,.reset_i(asic_link_reset)
-  	
-  	,.ready_o(dmc_input_fifo_ready_lo)
-  	,.data_i (asic_link_core_data_lo)
-  	,.v_i    (asic_link_core_valid_lo)
-  	
-  	,.v_o    (dmc_adapter_input_valid_lo)
-  	,.data_o (dmc_adapter_input_data_lo)
-  	,.yumi_i (dmc_adapter_yumi_lo)
-  	);
+  					#(.width_p        (payload_width_lp)
+  					 ,.channel_width_p(payload_width_lp/2)
+  					 ,.num_channels_p (1)
+  					 ) asic_link_downstream
+  					 (.core_clk_i       (ui_clk)
+  					 ,.core_link_reset_i(asic_link_reset_li)
+  					 ,.io_link_reset_i  (asic_link_downstream_io_reset)
+  					 
+  					 ,.core_data_o   (asic_link_downstream_core_data_lo)
+  					 ,.core_valid_o  (asic_link_downstream_core_valid_lo)
+  					 ,.core_yumi_i   (asic_link_downstream_core_yumi_lo)
+  					
+  					 ,.io_clk_i      (fpga_link_upstream_edge_clk_lo)
+  					 ,.io_data_i     (fpga_link_upstream_edge_data_lo)
+  					 ,.io_valid_i    (fpga_link_upstream_edge_valid_lo)
+  					 ,.core_token_r_o(asic_link_downstream_edge_token_li)
+  					 );
 
+	bsg_link_ddr_upstream
+ 					#(.width_p        (payload_width_lp)
+ 					 ,.channel_width_p(payload_width_lp/2)
+ 					 ,.num_channels_p (1)
+ 					 ) asic_link_upstream
+ 					 (.core_clk_i         (ui_clk)
+ 					 ,.io_clk_i           (asic_link_io_clk)
+ 					 ,.core_link_reset_i  (asic_link_reset_li)
+ 					 ,.io_link_reset_i    (asic_link_upstream_io_reset)
+ 					 ,.async_token_reset_i(asic_link_token_reset_li)
+ 					 
+ 					 ,.core_data_i (asic_link_upstream_core_data_lo)
+ 					 ,.core_valid_i(asic_link_upstream_core_valid_lo)
+ 					 ,.core_ready_o(asic_link_upstream_core_ready_lo)
+
+ 					 ,.io_clk_r_o  (asic_link_upstream_edge_clk_li)
+ 					 ,.io_data_r_o (asic_link_upstream_edge_data_li)
+ 					 ,.io_valid_r_o(asic_link_upstream_edge_valid_li)
+ 					 ,.token_clk_i (fpga_link_downstream_edge_token_li)
+ 					 );
+
+  	// ASIC SIDE LINKS END
+	assign dmc_adapter_yumi_lo = dmc_adapter_ready_lo & dmc_adapter_input_valid_lo;
+  	
+	// Trace packets going towards DMC
+  	bsg_fifo_1r1w_small 
+  						#(.width_p(payload_width_lp)
+  						,.els_p(10)
+  						) dmc_input_fifo
+  						(.clk_i  (ui_clk)
+  						,.reset_i(asic_link_reset_li)
+  						
+  						,.ready_o(dmc_input_fifo_ready_lo)
+  						,.data_i (asic_link_downstream_core_data_lo)
+  						,.v_i    (asic_link_downstream_core_valid_lo)
+  						
+  						,.v_o    (dmc_adapter_input_valid_lo)
+  						,.data_o (dmc_adapter_input_data_lo)
+  						,.yumi_i (dmc_adapter_yumi_lo)
+  						);
+
+	// Receive trace packet - convert it to XILINX UI command and write interface signals
+	// Receive read signals in XILINX UI interface and convert it to trace packet
   	bsg_dmc_trace_to_xilinx_ui_adapter 
   						#(	.data_width_p(ui_data_width_p),
   							.addr_width_p(ui_addr_width_p),
@@ -413,9 +446,14 @@ module traffic_generator
   							.burst_width_p(ui_burst_length_lp)
   						) trace_to_dmc_ui
   						(	.core_clk_i(ui_clk),
-  							.core_reset_i(asic_link_reset),
+  							.core_reset_i(ui_clk_sync_rst_i),
+							//.ui_clk_sync_rst_i(ui_clk_sync_rst_i),
   							.trace_data_i(dmc_adapter_input_data_lo),
   						 	.trace_data_valid_i(dmc_adapter_input_valid_lo),
+
+							.read_data_to_fpga_valid_o(asic_link_upstream_core_valid_lo),
+							.read_data_to_fpga_o(asic_link_upstream_core_data_lo),
+
   						 	.adapter_ready_o(dmc_adapter_ready_lo),
   	
   						    // XILINX UI signals	
@@ -432,6 +470,59 @@ module traffic_generator
   							.app_rd_data_i(app_rd_data),
   							.app_rd_data_end_i(app_rd_data_end)
   						 );
+	initial begin
+
+		//@(negedge ui_clk_sync_rst_i);
+
+		fpga_link_reset_li = 1;
+		asic_link_reset_li = 1;
+
+		fpga_link_upstream_io_reset_li = 1;
+		asic_link_upstream_io_reset = 1;
+
+		#1000;
+
+		fpga_link_token_reset_li = 1;
+		asic_link_token_reset_li = 1;
+
+		#1000;
+
+		fpga_link_token_reset_li = 0;
+		asic_link_token_reset_li = 0;
+
+		#1000;
+
+		@(posedge fpga_link_io_clk_li); #1;
+  		  	fpga_link_upstream_io_reset_li = 0;
+
+		@(posedge asic_link_io_clk); #1;
+  		  	asic_link_upstream_io_reset = 0;
+
+		#100;
+
+		@(posedge fpga_link_upstream_edge_clk_lo); #1;
+  		  	asic_link_downstream_io_reset = 1;
+
+		@(posedge asic_link_upstream_edge_clk_li); #1;
+			fpga_link_downstream_io_reset_li = 1;
+
+		#1000;
+  	  	@(posedge fpga_link_upstream_edge_clk_lo); #1;
+  		  	asic_link_downstream_io_reset = 0;
+
+		@(posedge asic_link_upstream_edge_clk_li); #1;
+			fpga_link_downstream_io_reset_li = 0;
+
+		#1000;	
+  	  	// core link reset
+  	  	@(posedge fpga_link_clk); #1;
+  	  		fpga_link_reset_li = 0;
+		@(posedge ui_clk); #1;
+			asic_link_reset_li = 0;
+
+		@(posedge trace_reading_done_lo); #1000;
+		$finish();
+	end
 
 `endif
 
