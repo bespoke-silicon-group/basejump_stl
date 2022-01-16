@@ -22,8 +22,11 @@ RUN_OPTIONS =
 BSG_TRACE_FILES := $(notdir $(wildcard *.tr))
 BSG_TRACE_ROMS  := ${BSG_TRACE_FILES:.tr=_rom.v}
 
-%_rom.v: %.tr
-	../../bsg_mem/bsg_ascii_to_rom.py $< $*_rom > $@
+bsg_dmc_trace_rom_%.tr:
+	python bsg_dmc_trace_rom.py $* > $@
+
+%.v: %.tr
+	../../bsg_mem/bsg_ascii_to_rom.py $< $* > $@
 
 elaborate: 
 	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l $@.log -f filelist.lst testbench.v
@@ -34,12 +37,10 @@ run: elaborate
 	touch $@
 
 dve: 
-	#run
 	$(VCS_BIN)/dve -full64 -vpd vcdplus.vpd &
 
 clean:
 	rm -rf analyze elaborate run
-	#rm -rf $(BSG_TRACE_ROMS)
 	rm -rf *.log
 	rm -rf analyze_*
 	#rm -rf *.vpd
