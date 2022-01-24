@@ -15,14 +15,16 @@ module bsg_nonsynth_random_yumi_gen
   
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
-      yumi_count_r <= $urandom_range(yumi_max_delay_p,yumi_min_delay_p);
+      yumi_count_r <= $urandom() % (yumi_max_delay_p-yumi_min_delay_p) + yumi_min_delay_p;
     end
     else begin
       if (v_i) begin
-        if (yumi_count_r == 0)
-          yumi_count_r <= $urandom_range(yumi_max_delay_p,yumi_min_delay_p);
-        else
+        if (yumi_count_r <= 0) begin
+          yumi_count_r <= $urandom() % (yumi_max_delay_p-yumi_min_delay_p) + yumi_min_delay_p;
+        end
+        else begin
           yumi_count_r <= yumi_count_r - 1;
+        end
       end
     end
   end
