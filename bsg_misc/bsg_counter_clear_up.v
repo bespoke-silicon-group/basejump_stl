@@ -29,10 +29,17 @@ module bsg_counter_clear_up #(parameter `BSG_INV_PARAM(max_val_p)
 
    always_ff @(posedge clk_i)
      begin
-        if (reset_i)
+        if (reset_i) begin
           count_o <= init_val_p;
-        else
-	  count_o <= clear_i ? (ptr_width_lp ' (up_i) ) : (count_o+(ptr_width_lp ' (up_i)));
+        end
+        else begin
+          if (clear_i) begin
+            count_o <=  ptr_width_lp'(up_i);
+          end
+          else if (up_i) begin
+            count_o <= count_o + 1'b1;
+          end
+        end
      end
 
 //synopsys translate_off
