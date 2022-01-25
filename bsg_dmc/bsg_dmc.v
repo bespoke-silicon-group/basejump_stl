@@ -19,7 +19,10 @@ module bsg_dmc
   ,input bsg_tag_s [dq_group_lp-1:0] bsg_dly_tag_i
   ,input bsg_tag_s [dq_group_lp-1:0] bsg_dly_trigger_tag_i
   ,input bsg_tag_s                   bsg_ds_tag_i
-  // 
+  //
+  ,input 							 stall_transmission_i
+  ,output logic						 refresh_in_progress_o
+  
   ,input bsg_dmc_s                   dmc_p_i
   // Global asynchronous reset input, will be synchronized to each clock domain
   // Consistent with the reset signal defined in Xilinx UI interface
@@ -155,6 +158,8 @@ module bsg_dmc
     // User interface clock and reset
     (.ui_clk_i              ( ui_clk_i              )
     ,.ui_clk_sync_rst_i     ( ui_reset              )
+	,.stall_transmission_i  (stall_transmission_i   )
+	,.refresh_in_progress_o (refresh_in_progress_o  )
     // User interface signals
     ,.app_addr_i            ( app_addr_i            )
     ,.app_cmd_i             ( app_cmd_i             )

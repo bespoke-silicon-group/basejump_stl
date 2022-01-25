@@ -8,7 +8,7 @@ module testbench();
 `ifndef BRINGUP
   parameter ui_burst_length_p  = 8;
 `else
-	parameter ui_burst_length_p  = 2;
+  parameter ui_burst_length_p  = 2;
 `endif
   parameter dq_data_width_p    = 32;
   parameter cmd_afifo_depth_p  = 4;
@@ -30,6 +30,9 @@ module testbench();
   wire bsg_tag_s        dmc_ds_tag_lines;
 
   bsg_dmc_s                        dmc_p;
+
+  logic 						   stall_transmission_li;
+  logic							   refresh_in_progress_lo;
 
   logic                            sys_reset;
   // User interface signals
@@ -136,7 +139,8 @@ module testbench();
     ,.dfi_clk_2x_o          ( dfi_clk_2x          )
     //
     ,.ui_clk_sync_rst_i     ( ui_clk_sync_rst     )
-	,.tag_lines_o			(tag_lines_lo));
+	,.tag_lines_o			(tag_lines_lo)
+	,.stall_trace_reading_i (stall_transmission_li));
 
  // Tag payload for bsg_dmc control signals
   logic [12:0][7:0] 	dmc_cfg_tag_data_lo;
@@ -163,26 +167,34 @@ module testbench();
     end
   endgenerate
 
-  assign dmc_p.trefi        = {dmc_cfg_tag_data_lo[1], dmc_cfg_tag_data_lo[0]};
-  assign dmc_p.tmrd         = dmc_cfg_tag_data_lo[2][3:0];
-  assign dmc_p.trfc         = dmc_cfg_tag_data_lo[2][7:4];
-  assign dmc_p.trc          = dmc_cfg_tag_data_lo[3][3:0];
-  assign dmc_p.trp          = dmc_cfg_tag_data_lo[3][7:4];
-  assign dmc_p.tras         = dmc_cfg_tag_data_lo[4][3:0];
-  assign dmc_p.trrd         = dmc_cfg_tag_data_lo[4][7:4];
-  assign dmc_p.trcd         = dmc_cfg_tag_data_lo[5][3:0];
-  assign dmc_p.twr          = dmc_cfg_tag_data_lo[5][7:4];
-  assign dmc_p.twtr         = dmc_cfg_tag_data_lo[6][3:0];
-  assign dmc_p.trtp         = dmc_cfg_tag_data_lo[6][7:4];
-  assign dmc_p.tcas         = dmc_cfg_tag_data_lo[7][3:0];
-  assign dmc_p.col_width    = dmc_cfg_tag_data_lo[8][3:0];
-  assign dmc_p.row_width    = dmc_cfg_tag_data_lo[8][7:4];
-  assign dmc_p.bank_width   = dmc_cfg_tag_data_lo[9][1:0];
-  assign dmc_p.bank_pos     = dmc_cfg_tag_data_lo[9][7:2];
-  assign dmc_p.dqs_sel_cal  = dmc_cfg_tag_data_lo[7][6:4];
-  assign dmc_p.init_cycles  = {dmc_cfg_tag_data_lo[11], dmc_cfg_tag_data_lo[10]};
-  assign sys_reset          = dmc_cfg_tag_data_lo[12][0];
+  assign dmc_p.trefi        	= {dmc_cfg_tag_data_lo[1], dmc_cfg_tag_data_lo[0]};
+  assign dmc_p.tmrd         	= dmc_cfg_tag_data_lo[2][3:0];
+  assign dmc_p.trfc         	= dmc_cfg_tag_data_lo[2][7:4];
+  assign dmc_p.trc          	= dmc_cfg_tag_data_lo[3][3:0];
+  assign dmc_p.trp          	= dmc_cfg_tag_data_lo[3][7:4];
+  assign dmc_p.tras         	= dmc_cfg_tag_data_lo[4][3:0];
+  assign dmc_p.trrd         	= dmc_cfg_tag_data_lo[4][7:4];
+  assign dmc_p.trcd         	= dmc_cfg_tag_data_lo[5][3:0];
+  assign dmc_p.twr          	= dmc_cfg_tag_data_lo[5][7:4];
+  assign dmc_p.twtr         	= dmc_cfg_tag_data_lo[6][3:0];
+  assign dmc_p.trtp         	= dmc_cfg_tag_data_lo[6][7:4];
+  assign dmc_p.tcas         	= dmc_cfg_tag_data_lo[7][3:0];
+  assign dmc_p.col_width    	= dmc_cfg_tag_data_lo[8][3:0];
+  assign dmc_p.row_width    	= dmc_cfg_tag_data_lo[8][7:4];
+  assign dmc_p.bank_width   	= dmc_cfg_tag_data_lo[9][1:0];
+  assign dmc_p.bank_pos     	= dmc_cfg_tag_data_lo[9][7:2];
+  assign dmc_p.dqs_sel_cal  	= dmc_cfg_tag_data_lo[7][6:4];
+  assign dmc_p.init_cycles  	= {dmc_cfg_tag_data_lo[11], dmc_cfg_tag_data_lo[10]};
+  assign sys_reset          	= dmc_cfg_tag_data_lo[12][0];
 
+  //always @(posedge dfi_clk_1x) begin
+  //    	if(ui_clk_sync_rst) begin
+  //  	  	stall_transmission_li <= 0;
+  //    	end
+  //    	else if(dmc_cfg_tag_new_data_lo[13]) begin
+  //  		stall_transmission_li <= dmc_cfg_tag_data_lo[13][0];
+  //  	end
+  //end
 
   bsg_dmc #
     (.num_adgs_p            ( clk_gen_num_adgs_p  )
@@ -197,6 +209,9 @@ module testbench();
     ,.bsg_dly_tag_i         ( dmc_dly_tag_lines         )
     ,.bsg_dly_trigger_tag_i ( dmc_dly_trigger_tag_lines )
     ,.bsg_ds_tag_i          ( dmc_ds_tag_lines          )
+
+	,.stall_transmission_i  (stall_transmission_li )
+	,.refresh_in_progress_o (refresh_in_progress_lo)
 
     ,.dmc_p_i               ( dmc_p               )
 

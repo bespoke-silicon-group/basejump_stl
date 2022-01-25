@@ -15,6 +15,9 @@ module bsg_dmc_controller
   // User interface clock and reset
   (input                                ui_clk_i
   ,input                                ui_clk_sync_rst_i
+
+  ,input								stall_transmission_i
+  ,output logic							refresh_in_progress_o
   // User interface signals
   ,input          [ui_addr_width_p-1:0] app_addr_i
   ,input app_cmd_e                      app_cmd_i
@@ -426,8 +429,10 @@ module bsg_dmc_controller
     ,.data_o             ( cmd_sfifo_rdata    )
     ,.yumi_i             ( cmd_sfifo_rinc     ));
 
+  assign refresh_in_progress_o = (c_cmd == REF);
+
   always_comb begin
-    if(cmd_sfifo_valid)
+    if(cmd_sfifo_valid && !stall_transmission_i)
       case(c_cmd)
 		LMR:   shoot = cmd_tick >= dmc_p_i.tmrd;
 		REF:   shoot = cmd_tick >= dmc_p_i.trfc;

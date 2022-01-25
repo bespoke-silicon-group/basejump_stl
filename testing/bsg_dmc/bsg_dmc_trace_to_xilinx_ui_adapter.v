@@ -11,12 +11,12 @@
 
 module bsg_dmc_trace_to_xilinx_ui_adapter
 	import bsg_dmc_pkg::*;
-	#(	parameter data_width_p = 32,
-		parameter addr_width_p = 28,
-		parameter cmd_width_p = 4,
-	    parameter burst_width_p = 2,
+	#(	parameter `BSG_INV_PARAM( data_width_p),
+		parameter `BSG_INV_PARAM( addr_width_p),
+		parameter `BSG_INV_PARAM( cmd_width_p),
+		parameter `BSG_INV_PARAM( burst_width_p),
+
 		localparam payload_width_lp = burst_width_p*(data_width_p + (data_width_p>>3)) + addr_width_p + cmd_width_p,
-		localparam data_and_mask_width_lp = burst_width_p*(data_width_p + data_width_p>>3),
 		localparam mask_width_lp = data_width_p>>3
 	)
 	( 	input 									core_clk_i,
@@ -46,12 +46,12 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 
 	import bsg_dmc_pkg::*;
 
-	typedef struct packed {
-	  	app_cmd_e cmd;
-	  	logic [addr_width_p - 1:0] addr;
-		logic [burst_width_p*data_width_p -1 :0] data;
-		logic [(burst_width_p*data_width_p>>3) - 1 :0] mask;
-	} dmc_trace_entry_s;
+    typedef struct packed {
+  		app_cmd_e cmd;
+    	logic [addr_width_p - 1:0] addr;
+  		logic [burst_width_p*data_width_p -1 :0] data;
+  		logic [(burst_width_p*data_width_p>>3) - 1 :0] mask;
+    } dmc_trace_entry_s;
 
 
 	// counter to load one packet per burst per cycle onto app_wdata and app_wmask

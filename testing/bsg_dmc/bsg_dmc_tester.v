@@ -38,7 +38,8 @@ module bsg_dmc_tester
 			input 							asic_link_upstream_edge_clk_i,
 			input [payload_width_lp/2-1:0]	asic_link_upstream_edge_data_i,
 			input							asic_link_upstream_edge_valid_i,
-			output							fpga_link_downstream_edge_token_o		
+			output							fpga_link_downstream_edge_token_o
+
 		);
 
 

@@ -69,6 +69,7 @@ module traffic_generator
   ,input                              app_sr_active_i
   // Status signal
   ,input                              init_calib_complete_i
+  ,input							  stall_trace_reading_i
   //
   ,output                             ui_clk_o
   ,output                             dfi_clk_2x_o
@@ -137,7 +138,7 @@ module traffic_generator
       );
 	
 
-  assign en_trace_reading_li = init_calib_complete_i & tag_trace_done_lo ;
+  assign en_trace_reading_li = init_calib_complete_i & tag_trace_done_lo & (~stall_trace_reading_i);
 
   wire tag_trace_valid_lo;
   // TAG TRACE REPLAY
@@ -472,8 +473,6 @@ module traffic_generator
   						 );
 	initial begin
 
-		//@(negedge ui_clk_sync_rst_i);
-
 		fpga_link_reset_li = 1;
 		asic_link_reset_li = 1;
 
@@ -520,8 +519,8 @@ module traffic_generator
 		@(posedge ui_clk); #1;
 			asic_link_reset_li = 0;
 
-		@(posedge trace_reading_done_lo); #1000;
-		$finish();
+		//@(posedge trace_reading_done_lo); #1000;
+		//$finish();
 	end
 
 `endif

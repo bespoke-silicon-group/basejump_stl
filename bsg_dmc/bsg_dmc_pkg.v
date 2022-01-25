@@ -46,4 +46,6 @@ package bsg_dmc_pkg;
     logic [2:0] ba;
     logic [15:0] addr;
   } dfi_cmd_sfifo_entry_s;
+
+
 endpackage // bsg_dmc_pkg
