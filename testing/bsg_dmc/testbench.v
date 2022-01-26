@@ -98,7 +98,9 @@ module testbench();
   wire       [dq_data_width_p-1:0] ddr_dq;
 
   // All tag lines from the btm
-  bsg_tag_s [22:0] tag_lines_lo;
+  bsg_tag_s [23:0] tag_lines_lo;
+
+  logic send_dynamic_tag;
 
   traffic_generator #
     (.num_adgs_p         ( clk_gen_num_adgs_p  )
@@ -140,11 +142,11 @@ module testbench();
     //
     ,.ui_clk_sync_rst_i     ( ui_clk_sync_rst     )
 	,.tag_lines_o			(tag_lines_lo)
-	,.stall_trace_reading_i (stall_transmission_li));
+	,.stall_trace_reading_i (send_dynamic_tag));
 
  // Tag payload for bsg_dmc control signals
-  logic [12:0][7:0] 	dmc_cfg_tag_data_lo;
-  logic [12:0]      	dmc_cfg_tag_new_data_lo;
+  logic [13:0][7:0] 	dmc_cfg_tag_data_lo;
+  logic [13:0]      	dmc_cfg_tag_new_data_lo;
   logic 				dmc_reset_tag_lines;
 
   assign dmc_reset_tag_lines	   = tag_lines_lo[0];
@@ -152,11 +154,11 @@ module testbench();
   assign dmc_dly_trigger_tag_lines = tag_lines_lo[1+dq_group_lp+:4];
   assign dmc_ds_tag_lines          = tag_lines_lo[1+2*dq_group_lp];
 
-  wire bsg_tag_s [12:0] dmc_cfg_tag_lines_lo = tag_lines_lo[2+2*dq_group_lp+:13];
+  wire bsg_tag_s [13:0] dmc_cfg_tag_lines_lo = tag_lines_lo[2+2*dq_group_lp+:14];
 
   genvar idx;
   generate
-    for(idx=0;idx<13;idx++) begin: dmc_cfg
+    for(idx=0;idx<14;idx++) begin: dmc_cfg
       bsg_tag_client #(.width_p( 8 ))
         btc
           (.bsg_tag_i     ( dmc_cfg_tag_lines_lo[idx] )
@@ -187,14 +189,14 @@ module testbench();
   assign dmc_p.init_cycles  	= {dmc_cfg_tag_data_lo[11], dmc_cfg_tag_data_lo[10]};
   assign sys_reset          	= dmc_cfg_tag_data_lo[12][0];
 
-  //always @(posedge dfi_clk_1x) begin
-  //    	if(ui_clk_sync_rst) begin
-  //  	  	stall_transmission_li <= 0;
-  //    	end
-  //    	else if(dmc_cfg_tag_new_data_lo[13]) begin
-  //  		stall_transmission_li <= dmc_cfg_tag_data_lo[13][0];
-  //  	end
-  //end
+  always @(posedge dfi_clk_1x) begin
+      	if(ui_clk_sync_rst) begin
+    	  	stall_transmission_li <= 0;
+      	end
+      	else if(dmc_cfg_tag_data_lo[13]) begin
+    		stall_transmission_li <= dmc_cfg_tag_data_lo[13][0];
+    	end
+  end
 
   bsg_dmc #
     (.num_adgs_p            ( clk_gen_num_adgs_p  )
@@ -304,4 +306,10 @@ module testbench();
     end
   endgenerate
 
+  //initial begin
+  //    //stall_transmission_li=0;
+  //    send_dynamic_tag = 0;
+  //    #214us;
+  //    send_dynamic_tag = 1;
+  //end
 endmodule

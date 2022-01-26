@@ -25,8 +25,8 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 		input [payload_width_lp -1 :0] 			trace_data_i,
 		input 									trace_data_valid_i,
 
-		output logic [payload_width_lp -1 :0]	read_data_to_fpga_o,
-		output logic							read_data_to_fpga_valid_o,
+		output logic [payload_width_lp -1 :0]	read_data_to_consumer_o,
+		output logic							read_data_to_consumer_valid_o,
 
 		output logic							adapter_ready_o,
    		// xilinx user interface
@@ -46,13 +46,7 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 
 	import bsg_dmc_pkg::*;
 
-    typedef struct packed {
-  		app_cmd_e cmd;
-    	logic [addr_width_p - 1:0] addr;
-  		logic [burst_width_p*data_width_p -1 :0] data;
-  		logic [(burst_width_p*data_width_p>>3) - 1 :0] mask;
-    } dmc_trace_entry_s;
-
+	`declare_dmc_trace_entry_s(addr_width_p, burst_width_p, data_width_p)
 
 	// counter to load one packet per burst per cycle onto app_wdata and app_wmask
 	logic [$clog2(burst_width_p)-1:0] write_count;
@@ -156,12 +150,12 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 
 	always_ff @(posedge core_clk_i) begin
 		if(&read_data_sipo_valid_lo) begin
-			read_data_to_fpga_o <= read_data_sipo_data_lo;
-			read_data_to_fpga_valid_o <= 1;
+			read_data_to_consumer_o <= read_data_sipo_data_lo;
+			read_data_to_consumer_valid_o <= 1;
 		end
 		else begin
-			read_data_to_fpga_o <= 0;
-			read_data_to_fpga_valid_o <= 0;
+			read_data_to_consumer_o <= 0;
+			read_data_to_consumer_valid_o <= 0;
 		end
 	end
 

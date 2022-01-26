@@ -43,7 +43,7 @@ module traffic_generator
   ,localparam payload_width_lp 	 = ui_addr_width_p + ui_cmd_width_p + ui_burst_length_lp*(ui_data_width_p + ui_mask_width_lp)
   )
   // Tag lines
-  (output bsg_tag_s [22:0] 			  tag_lines_o
+  (output bsg_tag_s [23:0] 			  tag_lines_o
   //
   // Global asynchronous reset input, will be synchronized to each clock domain
   // Consistent with the reset signal defined in Xilinx UI interface
@@ -76,7 +76,7 @@ module traffic_generator
   //
   ,input                              ui_clk_sync_rst_i
 
-  
+  //,input							  send_dynamic_tag_i
   );
 
   // Total number of clients the master will be driving.
@@ -141,6 +141,7 @@ module traffic_generator
   assign en_trace_reading_li = init_calib_complete_i & tag_trace_done_lo & (~stall_trace_reading_i);
 
   wire tag_trace_valid_lo;
+
   // TAG TRACE REPLAY
   bsg_tag_trace_replay #(.rom_addr_width_p( tag_trace_rom_addr_width_lp )
                         ,.rom_data_width_p( tag_trace_rom_data_width_lp )
@@ -175,19 +176,47 @@ module traffic_generator
 
   // All tag lines from the btm
 
+  logic tag_master_data_li;
+  logic [4:0] dynamic_tag_index;	
+  logic [24:0] stall_dmc_tag_reg;
+
+//  logic test;
+//	assign test = (dynamic_tag_index < 5'd23);
+  assign stall_dmc_tag_reg = 23'b0000000010001110111110001;
+
+  always_comb begin
+     if(tag_trace_done_lo && stall_trace_reading_i && (dynamic_tag_index <=24)) begin
+   	  	tag_master_data_li = stall_dmc_tag_reg[dynamic_tag_index];
+     end
+     else if(tag_trace_valid_lo) begin
+   	  	tag_master_data_li = bsg_tag_data;
+     end
+     else begin
+     	tag_master_data_li = 0;
+     end
+  end
+
+  always @(posedge tag_clk) begin
+      if(tag_reset) begin
+    	  dynamic_tag_index <= 0;
+      end
+      else if (stall_trace_reading_i && (dynamic_tag_index <= 24)) begin
+    	  dynamic_tag_index <= dynamic_tag_index + 1;
+      end
+  end
 
   // BSG tag master instance
-  bsg_tag_master #(.els_p( 23 )
+  bsg_tag_master #(.els_p( 24 )
                   ,.lg_width_p( tag_lg_max_payload_width_gp )
                   )
     btm
       (.clk_i      ( tag_clk )
-      ,.data_i     ( tag_trace_valid_lo? bsg_tag_data: 1'b0 )
+      ,.data_i     ( tag_master_data_li )
       ,.en_i       ( 1'b1 )
       ,.clients_r_o( tag_lines_o )
       );
 
-   logic     [ui_addr_width_p-1:0] app_addr;
+  logic     [ui_addr_width_p-1:0]  app_addr;
   app_cmd_e                        app_cmd;
   logic                            app_en;
   wire                             app_rdy;
@@ -452,8 +481,8 @@ module traffic_generator
   							.trace_data_i(dmc_adapter_input_data_lo),
   						 	.trace_data_valid_i(dmc_adapter_input_valid_lo),
 
-							.read_data_to_fpga_valid_o(asic_link_upstream_core_valid_lo),
-							.read_data_to_fpga_o(asic_link_upstream_core_data_lo),
+							.read_data_to_consumer_valid_o(asic_link_upstream_core_valid_lo),
+							.read_data_to_consumer_o(asic_link_upstream_core_data_lo),
 
   						 	.adapter_ready_o(dmc_adapter_ready_lo),
   	

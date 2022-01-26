@@ -124,6 +124,8 @@ always_comb case(addr_i)
         24: data_o = width_p ' (23'b0001___1___10101_0_1000___11111111); // 0x0EA8FF
                                  // #SEND  en   id=22  r l=8
         25: data_o = width_p ' (23'b0001___1___10110_0_1000___11111111); // 0x0EC8FF
+                                 // #SEND  en   id=23  r l=8
+        26: data_o = width_p ' (23'b0001___1___10111_0_1001___11111111); // 0x0EE9FF
                                  // ################################################################################
                                  // #
                                  // # START CONFIGURATION
@@ -131,73 +133,75 @@ always_comb case(addr_i)
                                  // # The bsg tag network is now live! We can begin our configuration.
                                  // ### Set delay line triggers low
                                  // #SEND  en   id=5  d l=1    {trigger}
-        26: data_o = width_p ' (23'b0001___1___00101_1_0001___00000000); // 0x0CB100
+        27: data_o = width_p ' (23'b0001___1___00101_1_0001___00000000); // 0x0CB100
                                  // #SEND  en   id=6  d l=1    {trigger}
-        27: data_o = width_p ' (23'b0001___1___00110_1_0001___00000000); // 0x0CD100
+        28: data_o = width_p ' (23'b0001___1___00110_1_0001___00000000); // 0x0CD100
                                  // #SEND  en   id=7  d l=1    {trigger}
-        28: data_o = width_p ' (23'b0001___1___00111_1_0001___00000000); // 0x0CF100
+        29: data_o = width_p ' (23'b0001___1___00111_1_0001___00000000); // 0x0CF100
                                  // #SEND  en   id=8  d l=1    {trigger}
-        29: data_o = width_p ' (23'b0001___1___01000_1_0001___00000000); // 0x0D1100
+        30: data_o = width_p ' (23'b0001___1___01000_1_0001___00000000); // 0x0D1100
                                  // ### Program the delay lines
                                  // #SEND  en   id=1  d l=5    {adt, cdt, fdt}
-        30: data_o = width_p ' (23'b0001___1___00001_1_0101___00011111); // 0x0C351F
+        31: data_o = width_p ' (23'b0001___1___00001_1_0101___00011111); // 0x0C351F
                                  // #SEND  en   id=2  d l=5    {adt, cdt, fdt}
-        31: data_o = width_p ' (23'b0001___1___00010_1_0101___00011111); // 0x0C551F
+        32: data_o = width_p ' (23'b0001___1___00010_1_0101___00011111); // 0x0C551F
                                  // #SEND  en   id=3  d l=5    {adt, cdt, fdt}
-        32: data_o = width_p ' (23'b0001___1___00011_1_0101___00011111); // 0x0C751F
+        33: data_o = width_p ' (23'b0001___1___00011_1_0101___00011111); // 0x0C751F
                                  // #SEND  en   id=4  d l=5    {adt, cdt, fdt}
-        33: data_o = width_p ' (23'b0001___1___00100_1_0101___00011111); // 0x0C951F
+        34: data_o = width_p ' (23'b0001___1___00100_1_0101___00011111); // 0x0C951F
                                  // ### Trigger delay lines
                                  // #SEND  en   id=5  d l=1    {trigger}
-        34: data_o = width_p ' (23'b0001___1___00101_1_0001___00000001); // 0x0CB101
-        35: data_o = width_p ' (23'b0001___1___00101_1_0001___00000000); // 0x0CB100
+        35: data_o = width_p ' (23'b0001___1___00101_1_0001___00000001); // 0x0CB101
+        36: data_o = width_p ' (23'b0001___1___00101_1_0001___00000000); // 0x0CB100
                                  // #SEND  en   id=6  d l=1    {trigger}
-        36: data_o = width_p ' (23'b0001___1___00110_1_0001___00000001); // 0x0CD101
-        37: data_o = width_p ' (23'b0001___1___00110_1_0001___00000000); // 0x0CD100
+        37: data_o = width_p ' (23'b0001___1___00110_1_0001___00000001); // 0x0CD101
+        38: data_o = width_p ' (23'b0001___1___00110_1_0001___00000000); // 0x0CD100
                                  // #SEND  en   id=7  d l=1    {trigger}
-        38: data_o = width_p ' (23'b0001___1___00111_1_0001___00000001); // 0x0CF101
-        39: data_o = width_p ' (23'b0001___1___00111_1_0001___00000000); // 0x0CF100
+        39: data_o = width_p ' (23'b0001___1___00111_1_0001___00000001); // 0x0CF101
+        40: data_o = width_p ' (23'b0001___1___00111_1_0001___00000000); // 0x0CF100
                                  // #SEND  en   id=8  d l=1    {trigger}
-        40: data_o = width_p ' (23'b0001___1___01000_1_0001___00000001); // 0x0D1101
-        41: data_o = width_p ' (23'b0001___1___01000_1_0001___00000000); // 0x0D1100
+        41: data_o = width_p ' (23'b0001___1___01000_1_0001___00000001); // 0x0D1101
+        42: data_o = width_p ' (23'b0001___1___01000_1_0001___00000000); // 0x0D1100
                                  // ### Async delay line reset to get things moving
                                  // #SEND  en   id=0  d l=1    {async_reset}
-        42: data_o = width_p ' (23'b0001___1___00000_1_0001___00000000); // 0x0C1100
-        43: data_o = width_p ' (23'b0001___1___00000_1_0001___00000001); // 0x0C1101
-        44: data_o = width_p ' (23'b0001___1___00000_1_0001___00000000); // 0x0C1100
+        43: data_o = width_p ' (23'b0001___1___00000_1_0001___00000000); // 0x0C1100
+        44: data_o = width_p ' (23'b0001___1___00000_1_0001___00000001); // 0x0C1101
+        45: data_o = width_p ' (23'b0001___1___00000_1_0001___00000000); // 0x0C1100
                                  // ### Set downsamples and reset
                                  // #
                                  // #SEND  en   id=9  d l=2    {ds_val, reset}
-        45: data_o = width_p ' (23'b0001___1___01001_1_0011___00000001); // 0x0D3301
-        46: data_o = width_p ' (23'b0001___1___01001_1_0011___00000000); // 0x0D3300
+        46: data_o = width_p ' (23'b0001___1___01001_1_0011___00000001); // 0x0D3301
+        47: data_o = width_p ' (23'b0001___1___01001_1_0011___00000000); // 0x0D3300
                                  // # Reset DMC configs and set dmc_p
                                  // #SEND  en   id=10  d l=8    {trefi[7:0]}
-        47: data_o = width_p ' (23'b0001___1___01010_1_1000___11111111); // 0x0D58FF
+        48: data_o = width_p ' (23'b0001___1___01010_1_1000___11111111); // 0x0D58FF
                                  // #SEND  en   id=11  d l=8    {trefi[15:8]}
-        48: data_o = width_p ' (23'b0001___1___01011_1_1000___00000011); // 0x0D7803
+        49: data_o = width_p ' (23'b0001___1___01011_1_1000___00000011); // 0x0D7803
                                  // #SEND  en   id=12  d l=8    {trfc, tmrd}
-        49: data_o = width_p ' (23'b0001___1___01100_1_1000___11110001); // 0x0D98F1
+        50: data_o = width_p ' (23'b0001___1___01100_1_1000___11110001); // 0x0D98F1
                                  // #SEND  en   id=13  d l=8    {trp, trc}
-        50: data_o = width_p ' (23'b0001___1___01101_1_1000___00111010); // 0x0DB83A
+        51: data_o = width_p ' (23'b0001___1___01101_1_1000___00111011); // 0x0DB83B
                                  // #SEND  en   id=14  d l=8    {trrd, tras}
-        51: data_o = width_p ' (23'b0001___1___01110_1_1000___00010111); // 0x0DD817
+        52: data_o = width_p ' (23'b0001___1___01110_1_1000___00101000); // 0x0DD828
                                  // #SEND  en   id=15  d l=8    {twr, trcd}
-        52: data_o = width_p ' (23'b0001___1___01111_1_1000___10110010); // 0x0DF8B2
+        53: data_o = width_p ' (23'b0001___1___01111_1_1000___10110010); // 0x0DF8B2
                                  // #SEND  en   id=16  d l=8    {trtp, twtr}
-        53: data_o = width_p ' (23'b0001___1___10000_1_1000___10000111); // 0x0E1887
+        54: data_o = width_p ' (23'b0001___1___10000_1_1000___10101001); // 0x0E18A9
                                  // #SEND  en   id=17  d l=8    {dqs_sel_cal, cas}
-        54: data_o = width_p ' (23'b0001___1___10001_1_1000___00110011); // 0x0E3833
+        55: data_o = width_p ' (23'b0001___1___10001_1_1000___00110011); // 0x0E3833
                                  // #SEND  en   id=18  d l=8    {row_width, col_width}
-        55: data_o = width_p ' (23'b0001___1___10010_1_1000___11101011); // 0x0E58EB
+        56: data_o = width_p ' (23'b0001___1___10010_1_1000___11101011); // 0x0E58EB
                                  // #SEND  en   id=19  d l=8    {bank_pos, bank_width}
-        56: data_o = width_p ' (23'b0001___1___10011_1_1000___01100110); // 0x0E7866
+        57: data_o = width_p ' (23'b0001___1___10011_1_1000___01100110); // 0x0E7866
                                  // #SEND  en   id=20  d l=8    {init_cycles[7:0]}
-        57: data_o = width_p ' (23'b0001___1___10100_1_1000___01001010); // 0x0E984A
+        58: data_o = width_p ' (23'b0001___1___10100_1_1000___01001010); // 0x0E984A
                                  // #SEND  en   id=21  d l=8    {init_cycles[15:8]}
-        58: data_o = width_p ' (23'b0001___1___10101_1_1000___10011100); // 0x0EB89C
+        59: data_o = width_p ' (23'b0001___1___10101_1_1000___10011100); // 0x0EB89C
                                  // #SEND  en   id=22  d l=8    {reset}
-        59: data_o = width_p ' (23'b0001___1___10110_1_1000___00000001); // 0x0ED801
-        60: data_o = width_p ' (23'b0001___1___10110_1_1000___00000000); // 0x0ED800
+        60: data_o = width_p ' (23'b0001___1___10110_1_1000___00000001); // 0x0ED801
+        61: data_o = width_p ' (23'b0001___1___10110_1_1000___00000000); // 0x0ED800
+                                 // # SEND en  id=23 d l=8     {stall_transmission}
+                                 // #0001___1___10111_1_1000___00000000
                                  // ################################################################################
                                  // #
                                  // # Done!
@@ -205,7 +209,7 @@ always_comb case(addr_i)
                                  // # Configuration is complete and we are out of reset. We should indicate we are
                                  // # done to allow the next part of the testbench to come alive.
                                  // # Assert done_o
-        61: data_o = width_p ' (23'b0011___0000000000000000000); // 0x180000
+        62: data_o = width_p ' (23'b0011___0000000000000000000); // 0x180000
    default: data_o = 'X;
 endcase
 endmodule

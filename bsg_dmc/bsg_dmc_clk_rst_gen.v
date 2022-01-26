@@ -79,4 +79,3 @@ module bsg_dmc_clk_rst_gen
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_dmc_clk_rst_gen)
-
