@@ -43,7 +43,7 @@ module traffic_generator
   ,localparam payload_width_lp 	 = ui_addr_width_p + ui_cmd_width_p + ui_burst_length_lp*(ui_data_width_p + ui_mask_width_lp)
   )
   // Tag lines
-  (output bsg_tag_s [23:0] 			  tag_lines_o
+  (output bsg_tag_s [27:0] 			  tag_lines_o
   //
   // Global asynchronous reset input, will be synchronized to each clock domain
   // Consistent with the reset signal defined in Xilinx UI interface
@@ -72,7 +72,7 @@ module traffic_generator
   ,input							  stall_trace_reading_i
   //
   ,output                             ui_clk_o
-  ,output                             dfi_clk_2x_o
+  //,output                             dfi_clk_2x_o
   //
   ,input                              ui_clk_sync_rst_i
 
@@ -99,9 +99,9 @@ module traffic_generator
   logic asic_link_io_clk;
   bsg_nonsynth_clock_gen #(.cycle_time_p(`LINK_IO_CLK_PERIOD)) asic_link_io_clk_gen (.o(asic_link_io_clk));
 
-  logic dfi_clk_2x;
-  assign dfi_clk_2x_o = dfi_clk_2x;
-  bsg_nonsynth_clock_gen #(.cycle_time_p(`DFI_CLK_PERIOD/2)) dfi_clk_2x_gen (.o(dfi_clk_2x));
+  //logic dfi_clk_2x;
+  //assign dfi_clk_2x_o = dfi_clk_2x;
+  //bsg_nonsynth_clock_gen #(.cycle_time_p(`DFI_CLK_PERIOD/2)) dfi_clk_2x_gen (.o(dfi_clk_2x));
 
   logic tag_clk;
   bsg_nonsynth_clock_gen #(.cycle_time_p(`TAG_CLK_PERIOD)) tag_clk_gen (.o(tag_clk));
@@ -206,7 +206,7 @@ module traffic_generator
   end
 
   // BSG tag master instance
-  bsg_tag_master #(.els_p( 24 )
+  bsg_tag_master #(.els_p( 28 )
                   ,.lg_width_p( tag_lg_max_payload_width_gp )
                   )
     btm

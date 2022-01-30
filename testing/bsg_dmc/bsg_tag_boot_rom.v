@@ -13,7 +13,7 @@ always_comb case(addr_i)
                                  // #     0  | Delay Line Async Reset            | 1-bit
                                  // #   4-1  | Delay Line Ctrl Bits              | 8-bits
                                  // #   8-5  | Delay Line Trigger                | 1-bit
-                                 // #   9-7  | 2x-to-1x Clock Downsampoler Reset | 1-bit
+                                 // #   9-7  | 2x-to-1x Clock Downsampler Reset  | 1-bit
                                  // # 11-10  | DMC trefi                         | 8-bits
                                  // #    12  | DMC tmrd trfc                     | 8-bits
                                  // #    13  | DMC trc trp                       | 8-bits
@@ -25,6 +25,11 @@ always_comb case(addr_i)
                                  // #    19  | DMC bank position width           | 8-bits
                                  // # 21-20  | DMC initialization cycles         | 8-bits
                                  // #    22  | DMC Async Reset                   | 1-bit
+                                 // #	 23  | DMC stall_transmission			 | 1-bit
+                                 // #	 24	 | Clkgen Async Reset				 | 1-bit
+                                 // #	 25  | Clkgen Oscillator      			 | 5-bits
+                                 // #    26  | Clkgen Osc Trigger     			 | 1-bit
+                                 // #    27  | Clkgen Downsampler    			 | 7-bits
                                  // #
                                  // #
                                  // # Number of masters = 1
@@ -124,82 +129,112 @@ always_comb case(addr_i)
         24: data_o = width_p ' (23'b0001___1___10101_0_1000___11111111); // 0x0EA8FF
                                  // #SEND  en   id=22  r l=8
         25: data_o = width_p ' (23'b0001___1___10110_0_1000___11111111); // 0x0EC8FF
-                                 // #SEND  en   id=23  r l=8
-        26: data_o = width_p ' (23'b0001___1___10111_0_1001___11111111); // 0x0EE9FF
+                                 // #SEND  en   id=23  r l=1
+        26: data_o = width_p ' (23'b0001___1___10111_0_0001___00000001); // 0x0EE101
+                                 // #SEND  en   id=24  r l=1
+        27: data_o = width_p ' (23'b0001___1___11000_0_0001___00000001); // 0x0F0101
+                                 // #SEND  en   id=25  r l=5
+        28: data_o = width_p ' (23'b0001___1___11001_0_0101___00011111); // 0x0F251F
+                                 // #SEND  en   id=26  r l=1
+        29: data_o = width_p ' (23'b0001___1___11010_0_0001___00000001); // 0x0F4101
+                                 // #SEND  en   id=27  r l=7
+        30: data_o = width_p ' (23'b0001___1___11011_0_0111___01111111); // 0x0F677F
                                  // ################################################################################
                                  // #
                                  // # START CONFIGURATION
                                  // #
                                  // # The bsg tag network is now live! We can begin our configuration.
+                                 // #	 24	 | Clkgen Async Reset				 | 1-bit
+                                 // #	 25  | Clkgen Oscillator      			 | 5-bits
+                                 // #    26  | Clkgen Osc Trigger     			 | 1-bit
+                                 // #    27  | Clkgen Downsampler    			 | 7-bits
+                                 // ### Set osc triggers low
+                                 // #SEND  en   id=26   d l=1    {trigger}
+        31: data_o = width_p ' (25'b0001___1___11010_1_0001___00000000); // 0x02EA200
+                                 // ### Program the raw oscillators speed
+                                 // #SEND  en   id=25   d l=5    {adt, cdt, fdt}
+        32: data_o = width_p ' (25'b0001___1___11001_1_0101___00000000); // 0x02E6A00
+                                 // ### Trigger oscillators
+                                 // #SEND  en   id=26   d l=1    {trigger}
+        33: data_o = width_p ' (25'b0001___1___11010_1_0001___00000001); // 0x02EA201
+        34: data_o = width_p ' (25'b0001___1___11010_1_0001___00000000); // 0x02EA200
+                                 // ### Async clk-gen reset to get things moving
+                                 // #SEND  en   id=24   d l=1    {async_reset}
+        35: data_o = width_p ' (25'b0001___1___11000_1_0001___00000000); // 0x02E2200
+        36: data_o = width_p ' (25'b0001___1___11000_1_0001___00000001); // 0x02E2201
+        37: data_o = width_p ' (25'b0001___1___11000_1_0001___00000000); // 0x02E2200
+                                 // #SEND  en   id=27   d l=7    {ds_val, reset}
+        38: data_o = width_p ' (25'b0001___1___11011_1_0111___00000001); // 0x02EEE01
+        39: data_o = width_p ' (25'b0001___1___11011_1_0111___00000000); // 0x02EEE00
                                  // ### Set delay line triggers low
                                  // #SEND  en   id=5  d l=1    {trigger}
-        27: data_o = width_p ' (23'b0001___1___00101_1_0001___00000000); // 0x0CB100
+        40: data_o = width_p ' (23'b0001___1___00101_1_0001___00000000); // 0x0CB100
                                  // #SEND  en   id=6  d l=1    {trigger}
-        28: data_o = width_p ' (23'b0001___1___00110_1_0001___00000000); // 0x0CD100
+        41: data_o = width_p ' (23'b0001___1___00110_1_0001___00000000); // 0x0CD100
                                  // #SEND  en   id=7  d l=1    {trigger}
-        29: data_o = width_p ' (23'b0001___1___00111_1_0001___00000000); // 0x0CF100
+        42: data_o = width_p ' (23'b0001___1___00111_1_0001___00000000); // 0x0CF100
                                  // #SEND  en   id=8  d l=1    {trigger}
-        30: data_o = width_p ' (23'b0001___1___01000_1_0001___00000000); // 0x0D1100
+        43: data_o = width_p ' (23'b0001___1___01000_1_0001___00000000); // 0x0D1100
                                  // ### Program the delay lines
                                  // #SEND  en   id=1  d l=5    {adt, cdt, fdt}
-        31: data_o = width_p ' (23'b0001___1___00001_1_0101___00011111); // 0x0C351F
+        44: data_o = width_p ' (23'b0001___1___00001_1_0101___00011111); // 0x0C351F
                                  // #SEND  en   id=2  d l=5    {adt, cdt, fdt}
-        32: data_o = width_p ' (23'b0001___1___00010_1_0101___00011111); // 0x0C551F
+        45: data_o = width_p ' (23'b0001___1___00010_1_0101___00011111); // 0x0C551F
                                  // #SEND  en   id=3  d l=5    {adt, cdt, fdt}
-        33: data_o = width_p ' (23'b0001___1___00011_1_0101___00011111); // 0x0C751F
+        46: data_o = width_p ' (23'b0001___1___00011_1_0101___00011111); // 0x0C751F
                                  // #SEND  en   id=4  d l=5    {adt, cdt, fdt}
-        34: data_o = width_p ' (23'b0001___1___00100_1_0101___00011111); // 0x0C951F
+        47: data_o = width_p ' (23'b0001___1___00100_1_0101___00011111); // 0x0C951F
                                  // ### Trigger delay lines
                                  // #SEND  en   id=5  d l=1    {trigger}
-        35: data_o = width_p ' (23'b0001___1___00101_1_0001___00000001); // 0x0CB101
-        36: data_o = width_p ' (23'b0001___1___00101_1_0001___00000000); // 0x0CB100
+        48: data_o = width_p ' (23'b0001___1___00101_1_0001___00000001); // 0x0CB101
+        49: data_o = width_p ' (23'b0001___1___00101_1_0001___00000000); // 0x0CB100
                                  // #SEND  en   id=6  d l=1    {trigger}
-        37: data_o = width_p ' (23'b0001___1___00110_1_0001___00000001); // 0x0CD101
-        38: data_o = width_p ' (23'b0001___1___00110_1_0001___00000000); // 0x0CD100
+        50: data_o = width_p ' (23'b0001___1___00110_1_0001___00000001); // 0x0CD101
+        51: data_o = width_p ' (23'b0001___1___00110_1_0001___00000000); // 0x0CD100
                                  // #SEND  en   id=7  d l=1    {trigger}
-        39: data_o = width_p ' (23'b0001___1___00111_1_0001___00000001); // 0x0CF101
-        40: data_o = width_p ' (23'b0001___1___00111_1_0001___00000000); // 0x0CF100
+        52: data_o = width_p ' (23'b0001___1___00111_1_0001___00000001); // 0x0CF101
+        53: data_o = width_p ' (23'b0001___1___00111_1_0001___00000000); // 0x0CF100
                                  // #SEND  en   id=8  d l=1    {trigger}
-        41: data_o = width_p ' (23'b0001___1___01000_1_0001___00000001); // 0x0D1101
-        42: data_o = width_p ' (23'b0001___1___01000_1_0001___00000000); // 0x0D1100
+        54: data_o = width_p ' (23'b0001___1___01000_1_0001___00000001); // 0x0D1101
+        55: data_o = width_p ' (23'b0001___1___01000_1_0001___00000000); // 0x0D1100
                                  // ### Async delay line reset to get things moving
                                  // #SEND  en   id=0  d l=1    {async_reset}
-        43: data_o = width_p ' (23'b0001___1___00000_1_0001___00000000); // 0x0C1100
-        44: data_o = width_p ' (23'b0001___1___00000_1_0001___00000001); // 0x0C1101
-        45: data_o = width_p ' (23'b0001___1___00000_1_0001___00000000); // 0x0C1100
+        56: data_o = width_p ' (23'b0001___1___00000_1_0001___00000000); // 0x0C1100
+        57: data_o = width_p ' (23'b0001___1___00000_1_0001___00000001); // 0x0C1101
+        58: data_o = width_p ' (23'b0001___1___00000_1_0001___00000000); // 0x0C1100
                                  // ### Set downsamples and reset
                                  // #
                                  // #SEND  en   id=9  d l=2    {ds_val, reset}
-        46: data_o = width_p ' (23'b0001___1___01001_1_0011___00000001); // 0x0D3301
-        47: data_o = width_p ' (23'b0001___1___01001_1_0011___00000000); // 0x0D3300
+        59: data_o = width_p ' (23'b0001___1___01001_1_0011___00000001); // 0x0D3301
+        60: data_o = width_p ' (23'b0001___1___01001_1_0011___00000000); // 0x0D3300
                                  // # Reset DMC configs and set dmc_p
                                  // #SEND  en   id=10  d l=8    {trefi[7:0]}
-        48: data_o = width_p ' (23'b0001___1___01010_1_1000___11111111); // 0x0D58FF
+        61: data_o = width_p ' (23'b0001___1___01010_1_1000___11111111); // 0x0D58FF
                                  // #SEND  en   id=11  d l=8    {trefi[15:8]}
-        49: data_o = width_p ' (23'b0001___1___01011_1_1000___00000011); // 0x0D7803
+        62: data_o = width_p ' (23'b0001___1___01011_1_1000___00000011); // 0x0D7803
                                  // #SEND  en   id=12  d l=8    {trfc, tmrd}
-        50: data_o = width_p ' (23'b0001___1___01100_1_1000___11110001); // 0x0D98F1
+        63: data_o = width_p ' (23'b0001___1___01100_1_1000___11110001); // 0x0D98F1
                                  // #SEND  en   id=13  d l=8    {trp, trc}
-        51: data_o = width_p ' (23'b0001___1___01101_1_1000___00111011); // 0x0DB83B
+        64: data_o = width_p ' (23'b0001___1___01101_1_1000___00111011); // 0x0DB83B
                                  // #SEND  en   id=14  d l=8    {trrd, tras}
-        52: data_o = width_p ' (23'b0001___1___01110_1_1000___00101000); // 0x0DD828
+        65: data_o = width_p ' (23'b0001___1___01110_1_1000___00101000); // 0x0DD828
                                  // #SEND  en   id=15  d l=8    {twr, trcd}
-        53: data_o = width_p ' (23'b0001___1___01111_1_1000___10110010); // 0x0DF8B2
+        66: data_o = width_p ' (23'b0001___1___01111_1_1000___10110010); // 0x0DF8B2
                                  // #SEND  en   id=16  d l=8    {trtp, twtr}
-        54: data_o = width_p ' (23'b0001___1___10000_1_1000___10101001); // 0x0E18A9
+        67: data_o = width_p ' (23'b0001___1___10000_1_1000___10101001); // 0x0E18A9
                                  // #SEND  en   id=17  d l=8    {dqs_sel_cal, cas}
-        55: data_o = width_p ' (23'b0001___1___10001_1_1000___00110011); // 0x0E3833
+        68: data_o = width_p ' (23'b0001___1___10001_1_1000___00110011); // 0x0E3833
                                  // #SEND  en   id=18  d l=8    {row_width, col_width}
-        56: data_o = width_p ' (23'b0001___1___10010_1_1000___11101011); // 0x0E58EB
+        69: data_o = width_p ' (23'b0001___1___10010_1_1000___11101011); // 0x0E58EB
                                  // #SEND  en   id=19  d l=8    {bank_pos, bank_width}
-        57: data_o = width_p ' (23'b0001___1___10011_1_1000___01100110); // 0x0E7866
+        70: data_o = width_p ' (23'b0001___1___10011_1_1000___01100110); // 0x0E7866
                                  // #SEND  en   id=20  d l=8    {init_cycles[7:0]}
-        58: data_o = width_p ' (23'b0001___1___10100_1_1000___01001010); // 0x0E984A
+        71: data_o = width_p ' (23'b0001___1___10100_1_1000___01001010); // 0x0E984A
                                  // #SEND  en   id=21  d l=8    {init_cycles[15:8]}
-        59: data_o = width_p ' (23'b0001___1___10101_1_1000___10011100); // 0x0EB89C
+        72: data_o = width_p ' (23'b0001___1___10101_1_1000___10011100); // 0x0EB89C
                                  // #SEND  en   id=22  d l=8    {reset}
-        60: data_o = width_p ' (23'b0001___1___10110_1_1000___00000001); // 0x0ED801
-        61: data_o = width_p ' (23'b0001___1___10110_1_1000___00000000); // 0x0ED800
+        73: data_o = width_p ' (23'b0001___1___10110_1_1000___00000001); // 0x0ED801
+        74: data_o = width_p ' (23'b0001___1___10110_1_1000___00000000); // 0x0ED800
                                  // # SEND en  id=23 d l=8     {stall_transmission}
                                  // #0001___1___10111_1_1000___00000000
                                  // ################################################################################
@@ -209,7 +244,7 @@ always_comb case(addr_i)
                                  // # Configuration is complete and we are out of reset. We should indicate we are
                                  // # done to allow the next part of the testbench to come alive.
                                  // # Assert done_o
-        62: data_o = width_p ' (23'b0011___0000000000000000000); // 0x180000
+        75: data_o = width_p ' (23'b0011___0000000000000000000); // 0x180000
    default: data_o = 'X;
 endcase
 endmodule

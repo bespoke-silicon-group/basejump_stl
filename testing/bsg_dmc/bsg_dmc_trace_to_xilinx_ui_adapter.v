@@ -56,7 +56,6 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 	logic [(data_width_p>>3)*burst_width_p - 1:0] feed_to_app_wmask;	
 
 	logic burst_done;
-	logic transaction_in_progress;
 
 	dmc_trace_entry_s trace_data;
 

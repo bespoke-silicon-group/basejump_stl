@@ -24,10 +24,10 @@ module testbench();
 
   integer j,k;
 
-  wire bsg_tag_s        dmc_reset_tag_lines;
-  wire bsg_tag_s  [3:0] dmc_dly_tag_lines;
-  wire bsg_tag_s  [3:0] dmc_dly_trigger_tag_lines;
-  wire bsg_tag_s        dmc_ds_tag_lines;
+  //wire bsg_tag_s        dmc_reset_tag_lines;
+  //wire bsg_tag_s  [3:0] dmc_dly_tag_lines;
+  //wire bsg_tag_s  [3:0] dmc_dly_trigger_tag_lines;
+  //wire bsg_tag_s        dmc_ds_tag_lines;
 
   bsg_dmc_s                        dmc_p;
 
@@ -60,8 +60,8 @@ module testbench();
   wire                             init_calib_complete;
 
   logic                            ui_clk;
-  logic                            dfi_clk_2x;
-  wire                             dfi_clk_1x;
+  //logic                            dfi_clk_2x;
+  //wire                             dfi_clk_1x;
   wire                             ui_clk_sync_rst;
 
   wire                      [11:0] device_temp;
@@ -98,7 +98,7 @@ module testbench();
   wire       [dq_data_width_p-1:0] ddr_dq;
 
   // All tag lines from the btm
-  bsg_tag_s [23:0] tag_lines_lo;
+  bsg_tag_s [27:0] tag_lines_lo;
 
   logic send_dynamic_tag;
 
@@ -138,65 +138,65 @@ module testbench();
     ,.init_calib_complete_i ( init_calib_complete )
     //
     ,.ui_clk_o              ( ui_clk              )
-    ,.dfi_clk_2x_o          ( dfi_clk_2x          )
+    //,.dfi_clk_2x_o          ( dfi_clk_2x          )
     //
     ,.ui_clk_sync_rst_i     ( ui_clk_sync_rst     )
 	,.tag_lines_o			(tag_lines_lo)
 	,.stall_trace_reading_i (send_dynamic_tag));
 
  // Tag payload for bsg_dmc control signals
-  logic [13:0][7:0] 	dmc_cfg_tag_data_lo;
-  logic [13:0]      	dmc_cfg_tag_new_data_lo;
-  logic 				dmc_reset_tag_lines;
+  //logic [13:0][7:0] 	dmc_cfg_tag_data_lo;
+  //logic [13:0]      	dmc_cfg_tag_new_data_lo;
+  //logic 				dmc_reset_tag_lines;
 
-  assign dmc_reset_tag_lines	   = tag_lines_lo[0];
-  assign dmc_dly_tag_lines         = tag_lines_lo[1+:dq_group_lp];
-  assign dmc_dly_trigger_tag_lines = tag_lines_lo[1+dq_group_lp+:4];
-  assign dmc_ds_tag_lines          = tag_lines_lo[1+2*dq_group_lp];
+  //assign dmc_reset_tag_lines	   = tag_lines_lo[0];
+  //assign dmc_dly_tag_lines         = tag_lines_lo[1+:dq_group_lp];
+  //assign dmc_dly_trigger_tag_lines = tag_lines_lo[1+dq_group_lp+:4];
+  //assign dmc_ds_tag_lines          = tag_lines_lo[1+2*dq_group_lp];
 
-  wire bsg_tag_s [13:0] dmc_cfg_tag_lines_lo = tag_lines_lo[2+2*dq_group_lp+:14];
+  //wire bsg_tag_s [13:0] dmc_cfg_tag_lines_lo = tag_lines_lo[2+2*dq_group_lp+:14];
 
-  genvar idx;
-  generate
-    for(idx=0;idx<14;idx++) begin: dmc_cfg
-      bsg_tag_client #(.width_p( 8 ))
-        btc
-          (.bsg_tag_i     ( dmc_cfg_tag_lines_lo[idx] )
-          ,.recv_clk_i    ( dfi_clk_1x )
-          ,.recv_new_r_o  ( dmc_cfg_tag_new_data_lo[idx] )
-          ,.recv_data_r_o ( dmc_cfg_tag_data_lo[idx] )
-          );
-    end
-  endgenerate
+  //genvar idx;
+  //generate
+  //  for(idx=0;idx<14;idx++) begin: dmc_cfg
+  //    bsg_tag_client #(.width_p( 8 ))
+  //      btc
+  //        (.bsg_tag_i     ( dmc_cfg_tag_lines_lo[idx] )
+  //        ,.recv_clk_i    ( dfi_clk_1x )
+  //        ,.recv_new_r_o  ( dmc_cfg_tag_new_data_lo[idx] )
+  //        ,.recv_data_r_o ( dmc_cfg_tag_data_lo[idx] )
+  //        );
+  //  end
+  //endgenerate
 
-  assign dmc_p.trefi        	= {dmc_cfg_tag_data_lo[1], dmc_cfg_tag_data_lo[0]};
-  assign dmc_p.tmrd         	= dmc_cfg_tag_data_lo[2][3:0];
-  assign dmc_p.trfc         	= dmc_cfg_tag_data_lo[2][7:4];
-  assign dmc_p.trc          	= dmc_cfg_tag_data_lo[3][3:0];
-  assign dmc_p.trp          	= dmc_cfg_tag_data_lo[3][7:4];
-  assign dmc_p.tras         	= dmc_cfg_tag_data_lo[4][3:0];
-  assign dmc_p.trrd         	= dmc_cfg_tag_data_lo[4][7:4];
-  assign dmc_p.trcd         	= dmc_cfg_tag_data_lo[5][3:0];
-  assign dmc_p.twr          	= dmc_cfg_tag_data_lo[5][7:4];
-  assign dmc_p.twtr         	= dmc_cfg_tag_data_lo[6][3:0];
-  assign dmc_p.trtp         	= dmc_cfg_tag_data_lo[6][7:4];
-  assign dmc_p.tcas         	= dmc_cfg_tag_data_lo[7][3:0];
-  assign dmc_p.col_width    	= dmc_cfg_tag_data_lo[8][3:0];
-  assign dmc_p.row_width    	= dmc_cfg_tag_data_lo[8][7:4];
-  assign dmc_p.bank_width   	= dmc_cfg_tag_data_lo[9][1:0];
-  assign dmc_p.bank_pos     	= dmc_cfg_tag_data_lo[9][7:2];
-  assign dmc_p.dqs_sel_cal  	= dmc_cfg_tag_data_lo[7][6:4];
-  assign dmc_p.init_cycles  	= {dmc_cfg_tag_data_lo[11], dmc_cfg_tag_data_lo[10]};
-  assign sys_reset          	= dmc_cfg_tag_data_lo[12][0];
+  //assign dmc_p.trefi        	= {dmc_cfg_tag_data_lo[1], dmc_cfg_tag_data_lo[0]};
+  //assign dmc_p.tmrd         	= dmc_cfg_tag_data_lo[2][3:0];
+  //assign dmc_p.trfc         	= dmc_cfg_tag_data_lo[2][7:4];
+  //assign dmc_p.trc          	= dmc_cfg_tag_data_lo[3][3:0];
+  //assign dmc_p.trp          	= dmc_cfg_tag_data_lo[3][7:4];
+  //assign dmc_p.tras         	= dmc_cfg_tag_data_lo[4][3:0];
+  //assign dmc_p.trrd         	= dmc_cfg_tag_data_lo[4][7:4];
+  //assign dmc_p.trcd         	= dmc_cfg_tag_data_lo[5][3:0];
+  //assign dmc_p.twr          	= dmc_cfg_tag_data_lo[5][7:4];
+  //assign dmc_p.twtr         	= dmc_cfg_tag_data_lo[6][3:0];
+  //assign dmc_p.trtp         	= dmc_cfg_tag_data_lo[6][7:4];
+  //assign dmc_p.tcas         	= dmc_cfg_tag_data_lo[7][3:0];
+  //assign dmc_p.col_width    	= dmc_cfg_tag_data_lo[8][3:0];
+  //assign dmc_p.row_width    	= dmc_cfg_tag_data_lo[8][7:4];
+  //assign dmc_p.bank_width   	= dmc_cfg_tag_data_lo[9][1:0];
+  //assign dmc_p.bank_pos     	= dmc_cfg_tag_data_lo[9][7:2];
+  //assign dmc_p.dqs_sel_cal  	= dmc_cfg_tag_data_lo[7][6:4];
+  //assign dmc_p.init_cycles  	= {dmc_cfg_tag_data_lo[11], dmc_cfg_tag_data_lo[10]};
+  //assign sys_reset          	= dmc_cfg_tag_data_lo[12][0];
 
-  always @(posedge dfi_clk_1x) begin
-      	if(ui_clk_sync_rst) begin
-    	  	stall_transmission_li <= 0;
-      	end
-      	else if(dmc_cfg_tag_data_lo[13]) begin
-    		stall_transmission_li <= dmc_cfg_tag_data_lo[13][0];
-    	end
-  end
+  //always @(posedge dfi_clk_1x) begin
+  //    	if(ui_clk_sync_rst) begin
+  //  	  	stall_transmission_li <= 0;
+  //    	end
+  //    	else if(dmc_cfg_tag_data_lo[13]) begin
+  //  		stall_transmission_li <= dmc_cfg_tag_data_lo[13][0];
+  //  	end
+  //end
 
   bsg_dmc #
     (.num_adgs_p            ( clk_gen_num_adgs_p  )
@@ -207,17 +207,19 @@ module testbench();
     ,.cmd_afifo_depth_p     ( cmd_afifo_depth_p   )
     ,.cmd_sfifo_depth_p     ( cmd_sfifo_depth_p   ))
   dmc_inst
-    (.async_reset_tag_i     ( dmc_reset_tag_lines       )
-    ,.bsg_dly_tag_i         ( dmc_dly_tag_lines         )
-    ,.bsg_dly_trigger_tag_i ( dmc_dly_trigger_tag_lines )
-    ,.bsg_ds_tag_i          ( dmc_ds_tag_lines          )
+    (
+	//.async_reset_tag_i     ( dmc_reset_tag_lines       )
+    //,.bsg_dly_tag_i         ( dmc_dly_tag_lines         )
+    //,.bsg_dly_trigger_tag_i ( dmc_dly_trigger_tag_lines )
+    //,.bsg_ds_tag_i          ( dmc_ds_tag_lines          )
 
-	,.stall_transmission_i  (stall_transmission_li )
-	,.refresh_in_progress_o (refresh_in_progress_lo)
+	//.stall_transmission_i  (stall_transmission_li )
+	.refresh_in_progress_o (refresh_in_progress_lo)
+	,.tag_lines_i (tag_lines_lo)
 
-    ,.dmc_p_i               ( dmc_p               )
+    //,.dmc_p_i               ( dmc_p               )
 
-    ,.sys_reset_i           ( sys_reset           )
+    //,.sys_reset_i           ( sys_reset           )
 
     ,.app_addr_i            ( app_addr            )
     ,.app_cmd_i             ( app_cmd             )
@@ -267,8 +269,8 @@ module testbench();
     ,.ddr_dq_i              ( ddr_dq_li           )
 
     ,.ui_clk_i              ( ui_clk              )
-    ,.dfi_clk_2x_i          ( dfi_clk_2x          )
-    ,.dfi_clk_1x_o          ( dfi_clk_1x          )
+    //,.dfi_clk_2x_i          ( dfi_clk_2x          )
+    //,.dfi_clk_1x_o          ( dfi_clk_1x          )
     ,.ui_clk_sync_rst_o     ( ui_clk_sync_rst     )
     ,.device_temp_o         ( device_temp         ));
 

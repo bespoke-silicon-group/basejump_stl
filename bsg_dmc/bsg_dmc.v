@@ -15,18 +15,19 @@ module bsg_dmc
   ,localparam dfi_mask_width_lp  = (dq_data_width_p >> 3) << 1
   ,localparam dq_group_lp        = dq_data_width_p >> 3)
   // Tag lines
-  (input bsg_tag_s                   async_reset_tag_i
-  ,input bsg_tag_s [dq_group_lp-1:0] bsg_dly_tag_i
-  ,input bsg_tag_s [dq_group_lp-1:0] bsg_dly_trigger_tag_i
-  ,input bsg_tag_s                   bsg_ds_tag_i
+  (
+  //input bsg_tag_s                   async_reset_tag_i
+  //,input bsg_tag_s [dq_group_lp-1:0] bsg_dly_tag_i
+  //,input bsg_tag_s [dq_group_lp-1:0] bsg_dly_trigger_tag_i
+  //,input bsg_tag_s                   bsg_ds_tag_i
   //
-  ,input 							 stall_transmission_i
-  ,output logic						 refresh_in_progress_o
-  
-  ,input bsg_dmc_s                   dmc_p_i
+  //input 							 stall_transmission_i
+  output logic						 refresh_in_progress_o
+  ,input bsg_tag_s [27:0] 			 tag_lines_i
+  //,input bsg_dmc_s                   dmc_p_i
   // Global asynchronous reset input, will be synchronized to each clock domain
   // Consistent with the reset signal defined in Xilinx UI interface
-  ,input                             sys_reset_i
+  //,input                             sys_reset_i
   // User interface signals
   ,input       [ui_addr_width_p-1:0] app_addr_i
   ,input app_cmd_e                   app_cmd_i
@@ -80,8 +81,8 @@ module bsg_dmc
   ,input       [dq_data_width_p-1:0] ddr_dq_i
   // Clock interface signals
   ,input                             ui_clk_i
-  ,input                             dfi_clk_2x_i
-  ,output                            dfi_clk_1x_o
+  //,input                             dfi_clk_2x_i
+  //,output                            dfi_clk_1x_o
   //
   ,output                            ui_clk_sync_rst_o
   // Reserved to be compatible with Xilinx IPs
@@ -89,6 +90,9 @@ module bsg_dmc
 );
 
   wire                               dfi_clk_1x_lo;
+  bsg_tag_s							 async_reset_tag_lo;
+  logic								 sys_reset_lo;
+  logic								 dfi_clk_2x_lo;
 
   wire                               sys_reset;
   wire                               ui_reset;
@@ -113,36 +117,60 @@ module bsg_dmc
 
   wire             [dq_group_lp-1:0] dqs_p_li;
 
+  bsg_dmc_s 						 dmc_p_lo;
   assign device_temp_o = 12'd0;
 
+  bsg_tag_s dmc_ds_tag_lines_lo;
+  bsg_tag_s [3:0] dmc_dly_tag_lines_lo;
+  bsg_tag_s [3:0] dmc_dly_trigger_tag_lines_lo;
+  logic stall_transmission_lo;
+
+  bsg_dmc_tag_clients
+					#(.dq_group_lp(dq_group_lp)
+					)
+					dmc_tag_clients
+					(.tag_lines_i(tag_lines_i)
+					,.ext_clk_i(ui_clk_i)
+					,.dfi_clk_1x_i(dfi_clk_1x_lo)
+					,.ui_clk_sync_rst_i(ui_clk_sync_rst_o)
+					,.dmc_reset_tag_lines_o(async_reset_tag_lo)
+					,.dmc_dly_tag_lines_o(dmc_dly_tag_lines_lo)
+					,.dmc_dly_trigger_tag_lines_o(dmc_dly_trigger_tag_lines_lo)
+					,.dmc_ds_tag_lines_o(dmc_ds_tag_lines_lo)
+					,.dmc_p_o(dmc_p_lo)
+					,.dfi_clk_2x_o(dfi_clk_2x_lo)
+					,.sys_reset_o(sys_reset_lo)
+					,.stall_transmission_o(stall_transmission_lo)
+					);
+					 
   bsg_dmc_clk_rst_gen #
     (.num_adgs_p  ( num_adgs_p  )
     ,.num_lines_p ( dq_group_lp ))
   dmc_clk_rst_gen
     // tag lines
-    (.async_reset_tag_i     ( async_reset_tag_i     )
-    ,.bsg_dly_tag_i         ( bsg_dly_tag_i         )
-    ,.bsg_dly_trigger_tag_i ( bsg_dly_trigger_tag_i )
-    ,.bsg_ds_tag_i          ( bsg_ds_tag_i          )
+    (.async_reset_tag_i     ( async_reset_tag_lo    )
+    ,.bsg_dly_tag_i         ( dmc_dly_tag_lines_lo  )
+    ,.bsg_dly_trigger_tag_i ( dmc_dly_trigger_tag_lines_lo )
+    ,.bsg_ds_tag_i          ( dmc_ds_tag_lines_lo   )
 
     ,.async_reset_o         ( sys_reset             )
 
     ,.clk_i                 ( ddr_dqs_p_i           )
     ,.clk_o                 ( dqs_p_li              )
 
-    ,.clk_2x_i              ( dfi_clk_2x_i          )
+    ,.clk_2x_i              ( dfi_clk_2x_lo          )
     ,.clk_1x_o              ( dfi_clk_1x_lo         ));
 
-  assign dfi_clk_1x_o = dfi_clk_1x_lo;
+  //assign dfi_clk_1x_o = dfi_clk_1x_lo;
 
   bsg_sync_sync #(.width_p(1)) ui_reset_inst
     (.oclk_i      ( ui_clk_i    )
-    ,.iclk_data_i ( sys_reset_i )
+    ,.iclk_data_i ( sys_reset_lo )
     ,.oclk_data_o ( ui_reset    ));
 
   bsg_sync_sync #(.width_p(1)) dfi_reset_inst
     (.oclk_i      ( dfi_clk_1x_lo   )
-    ,.iclk_data_i ( sys_reset_i     )
+    ,.iclk_data_i ( sys_reset_lo    )
     ,.oclk_data_o ( dfi_reset       ));
 
   assign ui_clk_sync_rst_o = ui_reset;
@@ -158,7 +186,7 @@ module bsg_dmc
     // User interface clock and reset
     (.ui_clk_i              ( ui_clk_i              )
     ,.ui_clk_sync_rst_i     ( ui_reset              )
-	,.stall_transmission_i  (stall_transmission_i   )
+	,.stall_transmission_i  (stall_transmission_lo  )
 	,.refresh_in_progress_o (refresh_in_progress_o  )
     // User interface signals
     ,.app_addr_i            ( app_addr_i            )
@@ -199,14 +227,14 @@ module bsg_dmc
     ,.dfi_rddata_i          ( dfi_rddata            )
     ,.dfi_rddata_valid_i    ( dfi_rddata_valid      )
     // Control and Status Registers
-    ,.dmc_p_i               ( dmc_p_i               )
+    ,.dmc_p_i               ( dmc_p_lo               )
     //
     ,.init_calib_complete_o ( init_calib_complete_o ));
 
   bsg_dmc_phy #(.dq_data_width_p(dq_data_width_p)) phy
     // DDR PHY interface clock and reset
     (.dfi_clk_1x_i        ( dfi_clk_1x_lo       )
-    ,.dfi_clk_2x_i        ( dfi_clk_2x_i        )
+    ,.dfi_clk_2x_i        ( dfi_clk_2x_lo        )
     ,.dfi_rst_i           ( dfi_reset           )
     // DFI interface signals
     ,.dfi_bank_i          ( dfi_bank            )
@@ -250,7 +278,7 @@ module bsg_dmc
     ,.dq_o                ( ddr_dq_o            )
     ,.dq_i                ( ddr_dq_i            )
     // Control and Status Registers
-    ,.dqs_sel_cal         ( dmc_p_i.dqs_sel_cal ));
+    ,.dqs_sel_cal         ( dmc_p_lo.dqs_sel_cal ));
 
 endmodule
 

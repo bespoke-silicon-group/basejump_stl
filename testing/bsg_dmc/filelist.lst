@@ -13,6 +13,8 @@
 ../../bsg_async/bsg_launch_sync_sync.v
 ../../bsg_async/bsg_sync_sync.v
 ../../bsg_clk_gen/bsg_dly_line.v
+../../bsg_clk_gen/bsg_clk_gen.v
+../../bsg_clk_gen/bsg_clk_gen_osc.v
 ../../bsg_dataflow/bsg_fifo_1r1w_small.v
 ../../bsg_dataflow/bsg_fifo_1r1w_small_unhardened.v
 ../../bsg_dataflow/bsg_fifo_tracker.v
@@ -67,6 +69,7 @@
 bsg_dmc_trace_rom.v
 bsg_dmc_trace_to_xilinx_ui_adapter.v
 bsg_dmc_tester.v
+bsg_dmc_tag_clients.v
 
 bsg_tag_boot_rom.v
 traffic_generator.v
