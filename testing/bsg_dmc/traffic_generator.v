@@ -99,9 +99,9 @@ module traffic_generator
   logic asic_link_io_clk;
   bsg_nonsynth_clock_gen #(.cycle_time_p(`LINK_IO_CLK_PERIOD)) asic_link_io_clk_gen (.o(asic_link_io_clk));
 
-  //logic dfi_clk_2x;
+  logic dfi_clk_2x;
   //assign dfi_clk_2x_o = dfi_clk_2x;
-  //bsg_nonsynth_clock_gen #(.cycle_time_p(`DFI_CLK_PERIOD/2)) dfi_clk_2x_gen (.o(dfi_clk_2x));
+  bsg_nonsynth_clock_gen #(.cycle_time_p(`DFI_CLK_PERIOD/2)) dfi_clk_2x_gen (.o(dfi_clk_2x));
 
   logic tag_clk;
   bsg_nonsynth_clock_gen #(.cycle_time_p(`TAG_CLK_PERIOD)) tag_clk_gen (.o(tag_clk));

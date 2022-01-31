@@ -148,24 +148,24 @@ always_comb case(addr_i)
                                  // #	 25  | Clkgen Oscillator      			 | 5-bits
                                  // #    26  | Clkgen Osc Trigger     			 | 1-bit
                                  // #    27  | Clkgen Downsampler    			 | 7-bits
-                                 // ### Set osc triggers low
-                                 // #SEND  en   id=26   d l=1    {trigger}
-        31: data_o = width_p ' (25'b0001___1___11010_1_0001___00000000); // 0x02EA200
-                                 // ### Program the raw oscillators speed
-                                 // #SEND  en   id=25   d l=5    {adt, cdt, fdt}
-        32: data_o = width_p ' (25'b0001___1___11001_1_0101___00000000); // 0x02E6A00
-                                 // ### Trigger oscillators
-                                 // #SEND  en   id=26   d l=1    {trigger}
-        33: data_o = width_p ' (25'b0001___1___11010_1_0001___00000001); // 0x02EA201
-        34: data_o = width_p ' (25'b0001___1___11010_1_0001___00000000); // 0x02EA200
                                  // ### Async clk-gen reset to get things moving
                                  // #SEND  en   id=24   d l=1    {async_reset}
-        35: data_o = width_p ' (25'b0001___1___11000_1_0001___00000000); // 0x02E2200
-        36: data_o = width_p ' (25'b0001___1___11000_1_0001___00000001); // 0x02E2201
-        37: data_o = width_p ' (25'b0001___1___11000_1_0001___00000000); // 0x02E2200
+        31: data_o = width_p ' (23'b0001___1___11000_1_0001___00000000); // 0x0F1100
+        32: data_o = width_p ' (23'b0001___1___11000_1_0001___00000001); // 0x0F1101
+        33: data_o = width_p ' (23'b0001___1___11000_1_0001___00000000); // 0x0F1100
+                                 // ### Set osc triggers low
+                                 // #SEND  en   id=26   d l=1    {trigger}
+        34: data_o = width_p ' (23'b0001___1___11010_1_0001___00000000); // 0x0F5100
+                                 // ### Program the raw oscillators speed
+                                 // #SEND  en   id=25   d l=5    {adt, cdt, fdt}
+        35: data_o = width_p ' (23'b0001___1___11001_1_0101___00011011); // 0x0F3500
+                                 // ### Trigger oscillators
+                                 // #SEND  en   id=26   d l=1    {trigger}
+        36: data_o = width_p ' (23'b0001___1___11010_1_0001___00000001); // 0x0F5101
+        37: data_o = width_p ' (23'b0001___1___11010_1_0001___00000000); // 0x0F5100
                                  // #SEND  en   id=27   d l=7    {ds_val, reset}
-        38: data_o = width_p ' (25'b0001___1___11011_1_0111___00000001); // 0x02EEE01
-        39: data_o = width_p ' (25'b0001___1___11011_1_0111___00000000); // 0x02EEE00
+        38: data_o = width_p ' (23'b0001___1___11011_1_0111___00000001); // 0x0F7701
+        39: data_o = width_p ' (23'b0001___1___11011_1_0111___00000000); // 0x0F7700
                                  // ### Set delay line triggers low
                                  // #SEND  en   id=5  d l=1    {trigger}
         40: data_o = width_p ' (23'b0001___1___00101_1_0001___00000000); // 0x0CB100

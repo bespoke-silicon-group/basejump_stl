@@ -308,10 +308,10 @@ module testbench();
     end
   endgenerate
 
-  //initial begin
-  //    //stall_transmission_li=0;
-  //    send_dynamic_tag = 0;
+  initial begin
+      //stall_transmission_li=0;
+      send_dynamic_tag = 0;
   //    #214us;
   //    send_dynamic_tag = 1;
-  //end
+  end
 endmodule

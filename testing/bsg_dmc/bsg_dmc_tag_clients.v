@@ -73,7 +73,7 @@ module bsg_dmc_tag_clients
 	assign dmc_p_o.bank_pos     	= dmc_cfg_tag_data_lo[9][7:2];
 	assign dmc_p_o.dqs_sel_cal  	= dmc_cfg_tag_data_lo[7][6:4];
 	assign dmc_p_o.init_cycles  	= {dmc_cfg_tag_data_lo[11], dmc_cfg_tag_data_lo[10]};
-	assign sys_reset          	= dmc_cfg_tag_data_lo[12][0];
+	assign sys_reset_o          	= dmc_cfg_tag_data_lo[12][0];
 	
 	always @(posedge dfi_clk_1x_i) begin
 	   	if(ui_clk_sync_rst_i) begin
@@ -104,6 +104,7 @@ module bsg_dmc_tag_clients
 	bsg_clk_gen #(.downsample_width_p(ds_width_p)
 	             ,.num_adgs_p(num_adgs_p)
 	             ,.version_p(2)
+				 ,.nonsynth_sim_osc_mul_factor_p(50)
 	             )
 	  clk_gen_inst
 	    (.async_osc_reset_i     (async_reset_lo)
