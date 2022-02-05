@@ -1,3 +1,4 @@
+
 // MBT 7/24/2014
 //
 // bsg_sync_sync
@@ -7,8 +8,9 @@
 // We use the rp placement flop from synopsys.
 // Fixme: move this into asic-specific components.
 //
-
-`include "bsg_defines.v"
+// DWP 02/09/2022
+//   Ported from hard/gf_14/bsg_async/bsg_sync_sync.v
+//
 
 `ifndef rp_group
  `define rp_group(x)
@@ -27,33 +29,29 @@ module bsg_sync_sync_``width_p``_unit                           \
    , output [width_p-1:0] oclk_data_o // after sync flops       \
    );                                                           \
                                                                 \
+  genvar i;                                                     \
                                                                 \
-   `rp_group (bss_bank)                                         \
-   `rp_place (hier bss_1 0 0)                                   \
-   `rp_place (hier bss_2 1 0)                                   \
-   `rp_endgroup (bss_bank)                                      \
-                                                                \
-   logic [width_p-1:0] bsg_SYNC_1_r;                            \
-   logic [width_p-1:0] bsg_SYNC_2_r;                            \
+   logic [width_p-1:0] bsg_SYNC_1_r, bsg_SYNC_2_r;              \
                                                                 \
    assign oclk_data_o = bsg_SYNC_2_r;                           \
                                                                 \
-        `rp_group(bss_1)                                        \
-        `rp_fill(0 0 UX)                                        \
-        `rp_array_dir(up)                                       \
-        `rp_endgroup(bss_1)                                     \
-        bsg_SYNC_1_r <= iclk_data_i;                            \
-  for (genvar i = 0; i < bits; i++)                             \
-    DFQD4BWP7T40P140LVT (.CP(oclk_i), .D(iclk_data_i[i]), .Q(bsg_SYNC_1_r[i])); \
+   for (i = 0; i < width_p; i = i + 1)                          \
+     begin : bss_unit                                           \
+       DFQD4BWP7T40P140LVT hard_sync_int1                       \
+        (.CP(oclk_i)                                            \
+        ,.D(iclk_data_i[i])                                     \
+        ,.Q(bsg_SYNC_1_r[i])                                    \
+        );                                                      \
                                                                 \
-        `rp_group(bss_2)                                        \
-        `rp_fill(0 0 UX)                                        \
-        `rp_array_dir(up)                                       \
-        `rp_endgroup(bss_2)                                     \
-  for (genvar i = 0; i < bits; i++)                             \
-    DFQD4BWP7T40P140LVT (.CP(oclk_i), .D(bsg_SYNC_1_r[i]), .Q(bsg_SYNC_2_r[i])); \
+       DFQD4BWP7T40P140LVT hard_sync_int2                       \
+        (.CP(oclk_i)                                            \
+        ,.D(bsg_SYNC_1_r[i])                                    \
+        ,.Q(bsg_SYNC_2_r[i])                                    \
+        );                                                      \
+     end                                                        \
                                                                 \
 endmodule
+
 
 `bsg_sync_sync_unit(1)
 `bsg_sync_sync_unit(2)

@@ -19,9 +19,10 @@
 // in order to abut the three registers, which
 // have two different clocks.
 //
+// DWP 02/09/2022
+//   Ported from hard/gf_14/bsg_async/bsg_sync_sync.v
 
 // ASYNC RESET: iclk cannot toggle at deassertion of reset
-
 `include "bsg_defines.v"
 
 `ifndef rp_group
@@ -32,9 +33,9 @@
  `define rp_array_dir(up)
 `endif
 
-`define bsg_launch_sync_sync_posedge_unit(bits)                         \
+`define bsg_launch_sync_sync_unit(EDGE,bits)                            \
                                                                         \
-module bsg_launch_sync_sync_posedge_``bits``_unit                       \
+module bsg_launch_sync_sync_``EDGE``_``bits``_unit                      \
   (input iclk_i                                                         \
    , input iclk_reset_i                                                 \
    , input oclk_i                                                       \
@@ -43,45 +44,42 @@ module bsg_launch_sync_sync_posedge_``bits``_unit                       \
    , output [bits-1:0] oclk_data_o                                      \
    );                                                                   \
                                                                         \
- `rp_group    (blss_bank)                                               \
- `rp_place    (hier blss_launch_1 0 0)                                  \
- `rp_place    (hier blss_1   1 0)                                       \
- `rp_place    (hier blss_2   2 0)                                       \
- `rp_endgroup (blss_bank)                                               \
+   genvar i;                                                            \
                                                                         \
    logic [bits-1:0] bsg_SYNC_LNCH_r;                                    \
    assign iclk_data_o = bsg_SYNC_LNCH_r;                                \
                                                                         \
-        `rp_group(blss_launch_1)                                        \
-        `rp_fill(0 0 UX)                                                \
-        `rp_array_dir(up)                                               \
-        `rp_endgroup(blss_launch_1)                                     \
-  for (genvar i = 0; i < bits; i++)                                     \
-    DFKCNQD4BWP7T40P140LVT (.CP(iclk_i), .CN(~iclk_reset_i), .D(iclk_data_i[i]), .Q(bsg_SYNC_LNCH_r[i])); \
+   always_ff @(EDGE iclk_i)                                             \
+     begin                                                              \
+        if (iclk_reset_i)                                               \
+          bsg_SYNC_LNCH_r <= {bits{1'b0}};                              \
+        else                                                            \
+          bsg_SYNC_LNCH_r <= iclk_data_i;                               \
+     end                                                                \
                                                                         \
-   logic [bits-1:0] bsg_SYNC_1_r;                                       \
-   logic [bits-1:0] bsg_SYNC_2_r;                                       \
+   logic [bits-1:0] bsg_SYNC_1_r, bsg_SYNC_2_r;                         \
                                                                         \
    assign oclk_data_o = bsg_SYNC_2_r;                                   \
                                                                         \
-        `rp_group(blss_1)                                               \
-        `rp_fill(0 0 UX)                                                \
-        `rp_array_dir(up)                                               \
-        `rp_endgroup(blss_1)                                            \
-  for (genvar i = 0; i < bits; i++)                                     \
-    DFQD4BWP7T40P140LVT (.CP(oclk_i), .D(bsg_SYNC_LNCH_r[i]), .Q(bsg_SYNC_1_r[i])); \
+   for (i = 0; i < bits; i++)                                           \
+     begin                                                              \
+       DFQD4BWP7T40P140LVT hard_sync_int1                               \
+        (.CP(oclk_i)                                                    \
+         ,.D(bsg_SYNC_LNCH_r[i])                                        \
+         ,.Q(bsg_SYNC_1_r[i])                                           \
+         );                                                             \
                                                                         \
-        `rp_group(blss_2)                                               \
-        `rp_fill(0 0 UX)                                                \
-        `rp_array_dir(up)                                               \
-        `rp_endgroup(blss_2)                                            \
-  for (genvar i = 0; i < bits; i++)                                     \
-    DFQD4BWP7T40P140LVT (.CP(oclk_i), .D(bsg_SYNC_1_r[i]), .Q(bsg_SYNC_2_r[i])); \
+       DFQD4BWP7T40P140LVT hard_sync_int2                               \
+        (.CP(oclk_i)                                                    \
+         ,.D(bsg_SYNC_1_r[i])                                           \
+         ,.Q(bsg_SYNC_2_r[i])                                           \
+         );                                                             \
+      end                                                               \
 endmodule
 
-`define bsg_launch_sync_sync_negedge_unit(bits)                         \
+`define bsg_launch_sync_sync_async_reset_unit(EDGE,bits)                \
                                                                         \
-module bsg_launch_sync_sync_negedge_``bits``_unit                       \
+module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
   (input iclk_i                                                         \
    , input iclk_reset_i                                                 \
    , input oclk_i                                                       \
@@ -90,134 +88,45 @@ module bsg_launch_sync_sync_negedge_``bits``_unit                       \
    , output [bits-1:0] oclk_data_o                                      \
    );                                                                   \
                                                                         \
- `rp_group    (blss_bank)                                               \
- `rp_place    (hier blss_launch_1 0 0)                                  \
- `rp_place    (hier blss_1   1 0)                                       \
- `rp_place    (hier blss_2   2 0)                                       \
- `rp_endgroup (blss_bank)                                               \
+   `rp_group    (blss_bank)                                             \
+   `rp_place    (hier blss_launch_1 0 0)                                \
+   `rp_place    (hier blss_1   1 0)                                     \
+   `rp_endgroup (blss_bank)                                             \
+                                                                        \
+   genvar i;                                                            \
                                                                         \
    logic [bits-1:0] bsg_SYNC_LNCH_r;                                    \
    assign iclk_data_o = bsg_SYNC_LNCH_r;                                \
                                                                         \
-        `rp_group(blss_launch_1)                                        \
-        `rp_fill(0 0 UX)                                                \
-        `rp_array_dir(up)                                               \
-        `rp_endgroup(blss_launch_1)                                     \
-  for (genvar i = 0; i < bits; i++)                                     \
-    DFKCNQD4BWP7T40P140LVT (.CP(~iclk_i), .CN(~iclk_reset_i), .D(iclk_data_i[i]), .Q(bsg_SYNC_LNCH_r[i])); \
+   always_ff @(EDGE iclk_i or posedge iclk_reset_i)                     \
+     begin : BSG_NO_CLOCK_GATE_1                                        \
+        if (iclk_reset_i)                                               \
+          bsg_SYNC_LNCH_r <= {bits{1'b0}};                              \
+        else                                                            \
+          bsg_SYNC_LNCH_r <= iclk_data_i;                               \
+     end                                                                \
                                                                         \
    logic [bits-1:0] bsg_SYNC_1_r;                                       \
    logic [bits-1:0] bsg_SYNC_2_r;                                       \
                                                                         \
    assign oclk_data_o = bsg_SYNC_2_r;                                   \
                                                                         \
-        `rp_group(blss_1)                                               \
-        `rp_fill(0 0 UX)                                                \
-        `rp_array_dir(up)                                               \
-        `rp_endgroup(blss_1)                                            \
-  for (genvar i = 0; i < bits; i++)                                     \
-    DFQD4BWP7T40P140LVT (.CP(oclk_i), .D(bsg_SYNC_LNCH_r[i]), .Q(bsg_SYNC_1_r[i])); \
+   for (i = 0; i < bits; i++)                                           \
+     begin : BSG_NO_CLOCK_GATE_2                                        \
+      DFCNQD4BWP7T40P140LVT hard_sync_int1                              \
+       (.CP(oclk_i)                                                     \
+        ,.CDN(oclk_reset_i)                                             \
+        ,.D(bsg_SYNC_LNCH_r[i])                                         \
+        ,.Q(bsg_SYNC_1_r[i])                                            \
+        );                                                              \
                                                                         \
-        `rp_group(blss_2)                                               \
-        `rp_fill(0 0 UX)                                                \
-        `rp_array_dir(up)                                               \
-        `rp_endgroup(blss_2)                                            \
-  for (genvar i = 0; i < bits; i++)                                     \
-    DFQD4BWP7T40P140LVT (.CP(oclk_i), .D(bsg_SYNC_1_r[i]), .Q(bsg_SYNC_2_r[i])); \
-endmodule
-
-`define bsg_launch_sync_sync_async_reset_posedge_unit(bits)             \
-                                                                        \
-module bsg_launch_sync_sync_async_reset_posedge_``bits``_unit           \
-  (input iclk_i                                                         \
-   , input iclk_reset_i                                                 \
-   , input oclk_i                                                       \
-   , input  [bits-1:0] iclk_data_i                                      \
-   , output [bits-1:0] iclk_data_o                                      \
-   , output [bits-1:0] oclk_data_o                                      \
-   );                                                                   \
-                                                                        \
- `rp_group    (blss_bank)                                               \
- `rp_place    (hier blss_launch_1 0 0)                                  \
- `rp_place    (hier blss_1   1 0)                                       \
- `rp_place    (hier blss_2   2 0)                                       \
- `rp_endgroup (blss_bank)                                               \
-                                                                        \
-   logic [bits-1:0] bsg_SYNC_LNCH_r;                                    \
-   assign iclk_data_o = bsg_SYNC_LNCH_r;                                \
-                                                                        \
-        `rp_group(blss_launch_1)                                        \
-        `rp_fill(0 0 UX)                                                \
-        `rp_array_dir(up)                                               \
-        `rp_endgroup(blss_launch_1)                                     \
-  for (genvar i = 0; i < bits; i++)                                     \
-    DFCNQD4BWP7T40P140LVT (.CP(iclk_i), .CDN(~iclk_reset_i), .D(iclk_data_i[i]), .Q(bsg_SYNC_LNCH_r[i])); \
-                                                                         \
-   logic [bits-1:0] bsg_SYNC_1_r;                                       \
-   logic [bits-1:0] bsg_SYNC_2_r;                                       \
-                                                                        \
-   assign oclk_data_o = bsg_SYNC_2_r;                                   \
-                                                                        \
-        `rp_group(blss_1)                                               \
-        `rp_fill(0 0 UX)                                                \
-        `rp_array_dir(up)                                               \
-        `rp_endgroup(blss_1)                                            \  
-  for (genvar i = 0; i < bits; i++)                                     \
-    DFCNQD4BWP7T40P140LVT (.CP(oclk_i), .CDN(~iclk_reset_i), .D(bsg_SYNC_LNCH_r[i]), .Q(bsg_SYNC_1_r[i])); \                                                          \
-                                                                        \
-        `rp_group(blss_2)                                               \
-        `rp_fill(0 0 UX)                                                \
-        `rp_array_dir(up)                                               \
-        `rp_endgroup(blss_2)                                            \
-  for (genvar i = 0; i < bits; i++)                                     \
-    DFCNQD4BWP7T40P140LVT (.CP(oclk_i), .CDN(~iclk_reset_i), .D(bsg_SYNC_1_r[i]), .Q(bsg_SYNC_2_r[i])); \                                                          \
-                                                                        \
-endmodule
-
-module bsg_launch_sync_sync_async_reset_negedge_``bits``_unit           \
-  (input iclk_i                                                         \
-   , input iclk_reset_i                                                 \
-   , input oclk_i                                                       \
-   , input  [bits-1:0] iclk_data_i                                      \
-   , output [bits-1:0] iclk_data_o                                      \
-   , output [bits-1:0] oclk_data_o                                      \
-   );                                                                   \
-                                                                        \
- `rp_group    (blss_bank)                                               \
- `rp_place    (hier blss_launch_1 0 0)                                  \
- `rp_place    (hier blss_1   1 0)                                       \
- `rp_place    (hier blss_2   2 0)                                       \
- `rp_endgroup (blss_bank)                                               \
-                                                                        \
-   logic [bits-1:0] bsg_SYNC_LNCH_r;                                    \
-   assign iclk_data_o = bsg_SYNC_LNCH_r;                                \
-                                                                        \
-        `rp_group(blss_launch_1)                                        \
-        `rp_fill(0 0 UX)                                                \
-        `rp_array_dir(up)                                               \
-        `rp_endgroup(blss_launch_1)                                     \
-  for (genvar i = 0; i < bits; i++)                                     \
-    DFCNQD4BWP7T40P140LVT (.CP(~iclk_i), .CDN(~iclk_reset_i), .D(iclk_data_i[i]), .Q(bsg_SYNC_LNCH_r[i])); \
-                                                                         \
-   logic [bits-1:0] bsg_SYNC_1_r;                                       \
-   logic [bits-1:0] bsg_SYNC_2_r;                                       \
-                                                                        \
-   assign oclk_data_o = bsg_SYNC_2_r;                                   \
-                                                                        \
-        `rp_group(blss_1)                                               \
-        `rp_fill(0 0 UX)                                                \
-        `rp_array_dir(up)                                               \
-        `rp_endgroup(blss_1)                                            \    
-  for (genvar i = 0; i < bits; i++)                                     \
-    DFCNQD4BWP7T40P140LVT (.CP(oclk_i), .CDN(~iclk_reset_i), .D(bsg_SYNC_LNCH_r[i]), .Q(bsg_SYNC_1_r[i])); \                                                          \
-                                                                        \
-        `rp_group(blss_2)                                               \
-        `rp_fill(0 0 UX)                                                \
-        `rp_array_dir(up)                                               \
-        `rp_endgroup(blss_2)                                            \
-  for (genvar i = 0; i < bits; i++)                                     \
-    DFCNQD4BWP7T40P140LVT (.CP(oclk_i), .CDN(~iclk_reset_i), .D(bsg_SYNC_1_r[i]), .Q(bsg_SYNC_2_r[i])); \
-                                                                        \
+      DFCNQD4BWP7T40P140LVT hard_sync_int2                              \
+       (.CP(oclk_i)                                                     \
+        ,.CDN(oclk_reset_i)                                             \
+        ,.D(bsg_SYNC_1_r[i])                                            \
+        ,.Q(bsg_SYNC_2_r[i])                                            \
+        );                                                              \
+      end                                                               \
 endmodule
 
 // bsg_launch_sync_sync_posedge_1_unit
@@ -304,16 +213,13 @@ module bsg_launch_sync_sync #(parameter `BSG_INV_PARAM(width_p)
         $display("%m: instantiating blss of size %d",width_p);
      end
  */
-`ifndef VERILATOR
-   // The comparison to z makes verilator think that iclk_reset_i is a
-   // tri-state top-level (unsupported in Verilator v4.036)
    initial assert (iclk_reset_i !== 'z)
      else
        begin
           $error("%m iclk_reset should be connected");
           $finish();
        end
-`endif
+
 // synopsys translate_on
 
    genvar i;
@@ -418,3 +324,4 @@ module bsg_launch_sync_sync #(parameter `BSG_INV_PARAM(width_p)
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_launch_sync_sync)
+
