@@ -72,11 +72,13 @@ module traffic_generator
   ,input							  stall_trace_reading_i
   //
   ,output                             ui_clk_o
-  //,output                             dfi_clk_2x_o
   //
   ,input                              ui_clk_sync_rst_i
-
-  //,input							  send_dynamic_tag_i
+  ,input							  irritate_clock_i
+  ,input							  refresh_in_progress_i
+  ,input							  clock_monitor_clk_i
+  ,output							  frequency_mismatch_o
+  ,output							  clock_correction_done_o
   );
 
   // Total number of clients the master will be driving.
@@ -98,10 +100,6 @@ module traffic_generator
 
   logic asic_link_io_clk;
   bsg_nonsynth_clock_gen #(.cycle_time_p(`LINK_IO_CLK_PERIOD)) asic_link_io_clk_gen (.o(asic_link_io_clk));
-
-  logic dfi_clk_2x;
-  //assign dfi_clk_2x_o = dfi_clk_2x;
-  bsg_nonsynth_clock_gen #(.cycle_time_p(`DFI_CLK_PERIOD/2)) dfi_clk_2x_gen (.o(dfi_clk_2x));
 
   logic tag_clk;
   bsg_nonsynth_clock_gen #(.cycle_time_p(`TAG_CLK_PERIOD)) tag_clk_gen (.o(tag_clk));
@@ -177,17 +175,52 @@ module traffic_generator
   // All tag lines from the btm
 
   logic tag_master_data_li;
-  logic [4:0] dynamic_tag_index;	
-  logic [24:0] stall_dmc_tag_reg;
+  logic [6:0] clock_update_tag_index, wrong_clock_tag_index;
+  logic [4:0] stall_transmission_tag_index, re_enable_transmission_tag_index;
 
-//  logic test;
-//	assign test = (dynamic_tag_index < 5'd23);
-  assign stall_dmc_tag_reg = 23'b0000000010001110111110001;
+  logic update_clock_freq;
+  assign update_clock_freq = stall_trace_reading_i & ~(refresh_in_progress_i);
+
+  logic [20:0] stall_dmc_tag_reg;
+  logic [20:0] no_stall_dmc_tag_reg;
+
+  logic [20:0] clock_period_tag_reg;
+  logic [20:0] clock_period_change_set_tag_reg;
+  logic [20:0] clock_period_change_reset_tag_reg;  
+  logic [62:0] tag_data_clock_period_and_trigger;
+
+  logic [20:0] wrong_clock_period_tag_reg;
+  logic [62:0] tag_data_wrong_clk_period_and_trigger;
+
+  logic clock_correction_done;
+  assign clock_correction_done_o = (re_enable_transmission_tag_index > 20);
+
+  //Tag format: {2'b0, 8'1 (tag data), 5'<client_id>, 1'<data_or_reset>, 4'<payload_length>, 1'b1}
+  assign stall_dmc_tag_reg = 21'b00_00000001_10111_1_1000_1;
+  assign no_stall_dmc_tag_reg = 21'b00_00000000_10111_1_1000_1;
+
+  assign clock_period_tag_reg = 21'b00_00011011_11001_1_0101_1;
+  assign clock_period_change_set_tag_reg = 21'b00_00000001_11010_1_0001_1;
+  assign clock_period_change_reset_tag_reg = 21'b00_00000000_11010_1_0001_1;
+  
+  assign tag_data_clock_period_and_trigger = {clock_period_change_reset_tag_reg, clock_period_change_set_tag_reg, clock_period_tag_reg};
+
+  assign wrong_clock_period_tag_reg = 21'b00_00011010_11001_1_0101_1;
+  assign tag_data_wrong_clk_period_and_trigger = {clock_period_change_reset_tag_reg, clock_period_change_set_tag_reg, wrong_clock_period_tag_reg};
 
   always_comb begin
-     if(tag_trace_done_lo && stall_trace_reading_i && (dynamic_tag_index <=24)) begin
-   	  	tag_master_data_li = stall_dmc_tag_reg[dynamic_tag_index];
+	 if(tag_trace_done_lo && irritate_clock_i &&  (wrong_clock_tag_index <=61 )) begin
+		 tag_master_data_li = tag_data_wrong_clk_period_and_trigger[wrong_clock_tag_index];
+	 end
+     else if(tag_trace_done_lo && stall_trace_reading_i && (stall_transmission_tag_index <=19)) begin
+   	  	tag_master_data_li = stall_dmc_tag_reg[stall_transmission_tag_index];
      end
+	 else if(tag_trace_done_lo && update_clock_freq && (clock_update_tag_index <= 61 )) begin
+		 tag_master_data_li = tag_data_clock_period_and_trigger[clock_update_tag_index];
+	 end
+	 else if(stall_trace_reading_i && (re_enable_transmission_tag_index <= 20)) begin
+		 tag_master_data_li = no_stall_dmc_tag_reg[re_enable_transmission_tag_index];		
+	 end
      else if(tag_trace_valid_lo) begin
    	  	tag_master_data_li = bsg_tag_data;
      end
@@ -198,12 +231,36 @@ module traffic_generator
 
   always @(posedge tag_clk) begin
       if(tag_reset) begin
-    	  dynamic_tag_index <= 0;
+		  stall_transmission_tag_index <= 0;
+		  clock_update_tag_index <= 0;
+		  wrong_clock_tag_index <= 0;
+		  re_enable_transmission_tag_index <= 0;
       end
-      else if (stall_trace_reading_i && (dynamic_tag_index <= 24)) begin
-    	  dynamic_tag_index <= dynamic_tag_index + 1;
+      else if (stall_trace_reading_i && (stall_transmission_tag_index <= 19)) begin
+    	  stall_transmission_tag_index <= stall_transmission_tag_index + 1;
+      end
+	  else if (update_clock_freq && (clock_update_tag_index <= 61)) begin
+    	 clock_update_tag_index  <= clock_update_tag_index + 1;
+      end
+	  else if (stall_trace_reading_i && (re_enable_transmission_tag_index <= 20)) begin
+		re_enable_transmission_tag_index <= re_enable_transmission_tag_index + 1;
+	  end
+	  else if (irritate_clock_i && (wrong_clock_tag_index <= 61)) begin
+    	 wrong_clock_tag_index  <= wrong_clock_tag_index + 1;
       end
   end
+
+  ddr_clock_monitor
+	#(.max_fpga_count(10)
+	  ,.expected_ddr_period_ns_p(10)
+	  ,.fpga_clk_period_ns_p(10)
+	)	
+	ddr_clock_mon
+	(	.fpga_clk(tag_clk)
+		,.fpga_reset(ui_clk_sync_rst_i)
+		,.ddr_clk_i(clock_monitor_clk_i)
+		,.frequency_mismatch_o(frequency_mismatch_o)
+	);
 
   // BSG tag master instance
   bsg_tag_master #(.els_p( 28 )

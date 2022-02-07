@@ -10,6 +10,7 @@ module bsg_dmc_clk_rst_gen
   ,input bsg_tag_s [num_lines_p-1:0] bsg_dly_tag_i
   ,input bsg_tag_s [num_lines_p-1:0] bsg_dly_trigger_tag_i
   ,input bsg_tag_s                   bsg_ds_tag_i
+  ,input bsg_tag_s					 bsg_clk_monitor_ds_tag_i
   // asynchronous reset for dram controller
   ,output                            async_reset_o
   // clock input and delayed clock output (for dqs), generating 90-degree phase
@@ -18,7 +19,8 @@ module bsg_dmc_clk_rst_gen
   ,output          [num_lines_p-1:0] clk_o
   // 2x clock input from clock generator and 1x clock output
   ,input                             clk_2x_i
-  ,output                            clk_1x_o);
+  ,output                            clk_1x_o
+  ,output							 clock_monitor_clk_o);
 
   localparam debug_level_lp = 0;
 
@@ -42,6 +44,8 @@ module bsg_dmc_clk_rst_gen
 
   bsg_clk_gen_ds_tag_payload_s ds_tag_payload_r;
 
+  bsg_clk_gen_ds_tag_payload_s clk_monitor_ds_tag_payload_r;
+
   wire  ds_tag_payload_new_r;
 
   // fixme: maybe wire up a default and deal with reset issue?
@@ -55,6 +59,16 @@ module bsg_dmc_clk_rst_gen
     ,.recv_clk_i    ( clk_2x_i             )
     ,.recv_new_r_o  ( ds_tag_payload_new_r )   // we don't require notification
     ,.recv_data_r_o ( ds_tag_payload_r     ));
+
+  bsg_tag_client #
+    (.width_p   ( $bits(bsg_clk_gen_ds_tag_payload_s) )
+    ,.harden_p  ( 1                                   ))
+  btc_clk_monitor_ds
+    (.bsg_tag_i     (bsg_clk_monitor_ds_tag_i)
+
+    ,.recv_clk_i    ( clk_2x_i             )
+    ,.recv_new_r_o  (  )   // we don't require notification
+    ,.recv_data_r_o ( clk_monitor_ds_tag_payload_r     ));
 
   if (debug_level_lp > 1)
   always_ff @(negedge clk_2x_i) begin
@@ -75,6 +89,16 @@ module bsg_dmc_clk_rst_gen
     ,.reset_i ( ds_tag_payload_r.reset )
     ,.val_i   ( 2'd0                   )
     ,.clk_r_o ( clk_1x_o               ));
+
+  bsg_counter_clock_downsample #
+    (.width_p  ( 2 )
+    ,.harden_p ( 1 ))
+  clk_monitor_clk_gen
+    (.clk_i   ( clk_2x_i               )
+    ,.reset_i ( ds_tag_payload_r.reset )
+    //,.val_i   ( clk_monitor_ds_tag_payload_r.value )
+    ,.val_i   ( 2'b1 )	
+    ,.clk_r_o (clock_monitor_clk_o	   ));
 
 endmodule
 

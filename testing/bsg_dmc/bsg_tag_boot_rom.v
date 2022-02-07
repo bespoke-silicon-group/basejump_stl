@@ -130,7 +130,7 @@ always_comb case(addr_i)
                                  // #SEND  en   id=22  r l=8
         25: data_o = width_p ' (23'b0001___1___10110_0_1000___11111111); // 0x0EC8FF
                                  // #SEND  en   id=23  r l=1
-        26: data_o = width_p ' (23'b0001___1___10111_0_0001___00000001); // 0x0EE101
+        26: data_o = width_p ' (23'b0001___1___10111_0_1000___00000001); // 0x0EE101
                                  // #SEND  en   id=24  r l=1
         27: data_o = width_p ' (23'b0001___1___11000_0_0001___00000001); // 0x0F0101
                                  // #SEND  en   id=25  r l=5

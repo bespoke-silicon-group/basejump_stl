@@ -7,32 +7,28 @@
 // ORGANIZATION: Bespoke Silicon Group, University of Washington
 //      CREATED: 01/23/22
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
 module ddr_clock_monitor 
-				#(  parameter counter_width_p = 1024,
-					parameter sampling_period_ns_p = 100,
-					`BSG_INV_PARAM(max_fpga_count),
-					`BSG_INV_PARAM(expected_ddr_period_p),
-			   		parameter period_tolerance_p = 0	)
+				#(  parameter counter_width_p = 1024
+					,parameter sampling_period_ns_p = 100
+					,`BSG_INV_PARAM(max_fpga_count)
+					,`BSG_INV_PARAM(expected_ddr_period_ns_p)
+					,`BSG_INV_PARAM(fpga_clk_period_ns_p)
+				)
+			   		//parameter period_tolerance_p = 0	)
 				(input fpga_clk,
 				 input fpga_reset,
 				 input ddr_clk_i,
 				 output logic frequency_mismatch_o
 				);
 
-	localparam max_ddr_period_lp =  expected_ddr_period_p *( 1 + period_tolerance_p);
-	localparam min_ddr_period_lp =  expected_ddr_period_p *( 1 - period_tolerance_p);
-
 	logic [$clog2(counter_width_p) - 1 : 0] fpga_counter_lo;
-	logic fpga_counter_clear_li;
-	logic fpga_counter_up_li;
+	bit fpga_counter_clear_li, ddr_counter_clear_li, tally_freq;
 	logic [$clog2(counter_width_p) - 1 : 0] ddr_clock_gray_count_lo;
-	logic [$clog2(counter_width_p) - 1 : 0] ddr_clock_binary_count_lo;
+	logic [$clog2(counter_width_p) - 1 : 0] ddr_clock_binary_count_lo, prev_ddr_binary_count;
 
 	logic reset_async_gray_counter;
 
-	real count_start_time, cycle_time;
-	int prev_count;
+	real ddr_count_start_time, ddr_cycle_time, fpga_count_start_time, fpga_cycle_time ;
 
 	// counter to clock 100 ns on fpga clock
 	bsg_counter_clear_up 
@@ -53,7 +49,7 @@ module ddr_clock_monitor
 				#(.lg_size_p($clog2(counter_width_p)))
 				ddr_clk_async_gray_counter
 			    (.w_clk_i(ddr_clk_i),
-				 .w_reset_i(fpga_counter_clear_li),
+				 .w_reset_i(fpga_counter_clear_li | fpga_reset),
 				 .w_inc_i(1'b1),
 				 .r_clk_i(fpga_clk),
 				 .w_ptr_gray_r_rsync_o(ddr_clock_gray_count_lo)
@@ -69,34 +65,44 @@ module ddr_clock_monitor
 	
 	// non-synthesisable for now
 	always_comb begin
-		fpga_counter_clear_li = 0;
 		frequency_mismatch_o = 0;
-		//
-		if(ddr_clock_binary_count_lo ==0) begin
-			count_start_time = $time;
-		end
+		if(ddr_clock_binary_count_lo == 0) begin
+			ddr_cycle_time = $realtime - ddr_count_start_time;			
+			ddr_count_start_time = $time;
 
-		if(ddr_clock_binary_count_lo == max_fpga_count*4) begin
-			cycle_time = $realtime - count_start_time;
-			//fpga_counter_clear_li = 1;
-			$display("cycle period: %d", cycle_time);
-		end
-
-		if(fpga_counter_lo == max_fpga_count + 1) begin
-			fpga_counter_clear_li = 1;
-			
-			if( ((ddr_clock_binary_count_lo * max_ddr_period_lp) >  sampling_period_ns_p ) && 
-		   		((ddr_clock_binary_count_lo * min_ddr_period_lp) <  sampling_period_ns_p )	) begin
-					$display("Time period seen %d within limits of %d and %d ns", (sampling_period_ns_p/ddr_clock_binary_count_lo), max_ddr_period_lp, min_ddr_period_lp);
+			//$display("fpga time: %d ddr time: %d previous binary count: %d",fpga_cycle_time , ddr_cycle_time, prev_ddr_binary_count);
+			if(prev_ddr_binary_count >= ((max_fpga_count-1)*fpga_clk_period_ns_p/expected_ddr_period_ns_p)) begin
+				//$display("success");
+				frequency_mismatch_o = 1;
 			end
 			//else begin
-			//	$display("Time period seen %d exceeds limit of %d and %d ns", (sampling_period_ns_p/ddr_clock_binary_count_lo), max_ddr_period_lp, min_ddr_period_lp);
-			//	frequency_mismatch_o = 1;
+			//	//$display("fail");
+			//	frequency_mismatch_o = 0;
 			//end
+
 		end
-			
+		prev_ddr_binary_count = ddr_clock_binary_count_lo;
+		if((ddr_clock_binary_count_lo >= ((max_fpga_count )*fpga_clk_period_ns_p/expected_ddr_period_ns_p)) && (!ddr_counter_clear_li) ) begin
+			ddr_counter_clear_li = 1;
+		end
+		else begin
+			ddr_counter_clear_li = 0;
+		end
 	end
 
+	always_comb begin
+		if(fpga_counter_lo == 1) begin
+			fpga_cycle_time = $realtime - fpga_count_start_time;																
+			fpga_count_start_time = $realtime;
+		end
+		if(fpga_counter_lo >= max_fpga_count ) begin
+			fpga_counter_clear_li = 1;
+		end
+		else begin
+			fpga_counter_clear_li = 0;
+		end
+	end
+	
 endmodule: ddr_clock_monitor
 
 module ddr_clock_monitor_tb;
@@ -107,8 +113,9 @@ module ddr_clock_monitor_tb;
 	logic frequency_mismatch;
 
 	ddr_clock_monitor
-   					#(.max_fpga_count(25)
-					  ,.expected_ddr_period_p(1)
+   					#(.max_fpga_count(20)
+					  ,.expected_ddr_period_ns_p(2.5)
+					  ,.fpga_clk_period_ns_p(5)
 					)	
 					ddr_clock_mon
 					(	.fpga_clk(fpga_clk)
@@ -124,8 +131,8 @@ module ddr_clock_monitor_tb;
 		#100;
 		fpga_reset = 0;
 	end
-	always #2ns fpga_clk = ~fpga_clk;
-	always #0.5ns ddr_clk = ~ddr_clk;
 
+	always #2.5ns fpga_clk = ~fpga_clk;
+	always #1.25ns ddr_clk = ~ddr_clk;
 
 endmodule: ddr_clock_monitor_tb

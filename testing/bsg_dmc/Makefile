@@ -16,7 +16,7 @@ ELABORATE_OPTIONS += +vcs+vcdplusmemon
 ELABORATE_OPTIONS += +define+den2048Mb+sg5+x16+FULL_MEM
 ELABORATE_OPTIONS += -timescale=1ns/1ps
 ELABORATE_OPTIONS += -assert svaext
-ELABORATE_OPTIONS += +define+BRINGUP
+ELABORATE_OPTIONS += +define+BRINGUP +lint=TFIPC-L
 RUN_OPTIONS = 
 
 BSG_TRACE_FILES := $(notdir $(wildcard *.tr))
@@ -29,7 +29,7 @@ bsg_dmc_trace_rom_%.tr:
 	../../bsg_mem/bsg_ascii_to_rom.py $< $* > $@
 
 elaborate: 
-	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l $@.log -f filelist.lst testbench.v
+	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l $@.log -f filelist.lst ddr_clock_monitor.v testbench.v
 	touch $@
 
 run: elaborate

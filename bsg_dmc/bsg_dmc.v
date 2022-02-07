@@ -16,18 +16,11 @@ module bsg_dmc
   ,localparam dq_group_lp        = dq_data_width_p >> 3)
   // Tag lines
   (
-  //input bsg_tag_s                   async_reset_tag_i
-  //,input bsg_tag_s [dq_group_lp-1:0] bsg_dly_tag_i
-  //,input bsg_tag_s [dq_group_lp-1:0] bsg_dly_trigger_tag_i
-  //,input bsg_tag_s                   bsg_ds_tag_i
-  //
-  //input 							 stall_transmission_i
   output logic						 refresh_in_progress_o
   ,input bsg_tag_s [27:0] 			 tag_lines_i
-  //,input bsg_dmc_s                   dmc_p_i
+  , output							 clock_monitor_clk_o
   // Global asynchronous reset input, will be synchronized to each clock domain
   // Consistent with the reset signal defined in Xilinx UI interface
-  //,input                             sys_reset_i
   // User interface signals
   ,input       [ui_addr_width_p-1:0] app_addr_i
   ,input app_cmd_e                   app_cmd_i
@@ -81,8 +74,6 @@ module bsg_dmc
   ,input       [dq_data_width_p-1:0] ddr_dq_i
   // Clock interface signals
   ,input                             ui_clk_i
-  //,input                             dfi_clk_2x_i
-  //,output                            dfi_clk_1x_o
   //
   ,output                            ui_clk_sync_rst_o
   // Reserved to be compatible with Xilinx IPs
@@ -159,9 +150,8 @@ module bsg_dmc
     ,.clk_o                 ( dqs_p_li              )
 
     ,.clk_2x_i              ( dfi_clk_2x_lo          )
-    ,.clk_1x_o              ( dfi_clk_1x_lo         ));
-
-  //assign dfi_clk_1x_o = dfi_clk_1x_lo;
+    ,.clk_1x_o              ( dfi_clk_1x_lo         )
+	,.clock_monitor_clk_o	(clock_monitor_clk_o));
 
   bsg_sync_sync #(.width_p(1)) ui_reset_inst
     (.oclk_i      ( ui_clk_i    )
