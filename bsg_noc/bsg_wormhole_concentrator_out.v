@@ -63,7 +63,7 @@ module bsg_wormhole_concentrator_out
     end
 
   assign concentrated_link_o_cast.v    = 1'b0;
-  assign concentrated_link_o_cast.data = 1'b0;
+  assign concentrated_link_o_cast.data = '0;
 
   /********** From concentrated side to unconcentrated side **********/
   
