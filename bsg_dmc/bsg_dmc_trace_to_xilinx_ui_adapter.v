@@ -49,7 +49,7 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 	`declare_dmc_trace_entry_s(addr_width_p, burst_width_p, data_width_p)
 
 	// counter to load one packet per burst per cycle onto app_wdata and app_wmask
-	logic [$clog2(burst_width_p)-1:0] write_count;
+	logic [$clog2(burst_width_p) - 1:0] write_count;
 
 	logic transaction_in_progress;
 	logic [data_width_p*burst_width_p - 1:0] feed_to_app_wdata;
@@ -63,7 +63,7 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 
 	assign adapter_ready_o =  ~transaction_in_progress & app_rdy_i ;
 
-	assign burst_done =  (write_count == burst_width_p - 1);
+	assign burst_done =  (write_count == burst_width_p  - 1);
 
 	assign is_write = trace_data_valid_i ? ((trace_data.cmd == WP || trace_data.cmd == WR) )  : 0;
 
@@ -74,13 +74,26 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 	assign {feed_to_app_wdata, feed_to_app_wmask} = trace_data_i;
 	
 	// counting write_count per burst
+	
+	//bsg_counter_clear_up
+	//				#(.max_val_p(burst_width_p )
+	//				,.init_val_p(0))
+	//				write_counter
+	//				(.clk_i(core_clk_i)
+	//				,.reset_i(core_reset_i)
+	//				,.clear_i((write_count == (burst_width_p ) ))
+	//				,.up_i(1'b1)
+	//				,.count_o(write_count)
+	//				);
+	
+
 	always_ff @(posedge core_clk_i) begin
 		if(core_reset_i) begin
 			write_count <= 0;
 		end
 		else if(app_wdf_wren_o) begin
-			if(write_count == (burst_width_p -1)) begin
-				write_count <= write_count + 1;
+			if(write_count == (burst_width_p - 1)) begin
+				write_count	<= 0;
 			end
 			else begin
 				write_count <= write_count + 1;
@@ -89,19 +102,9 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 	end
 
 	// Convert UI command and addr
-	always_ff @(posedge core_clk_i) begin
-		if(core_reset_i) begin
-			app_en_o <= 0;
-		end
-		else if(adapter_ready_o & trace_data_valid_i) begin
-			app_cmd_o <= trace_data.cmd;
-			app_addr_o <= trace_data.addr;
-			app_en_o <= 1;
-		end
-		else begin
-			app_en_o <= 0;
-		end
-	end
+	assign app_en_o = (adapter_ready_o & trace_data_valid_i) ? 1 : 0;
+	assign app_cmd_o = (adapter_ready_o & trace_data_valid_i) ? trace_data.cmd : 0;
+	assign app_addr_o = (adapter_ready_o & trace_data_valid_i) ? trace_data.addr : 0;
 
 	logic tx_data_piso_ready_lo, tx_mask_piso_ready_lo;
 
@@ -147,16 +150,8 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 
 	assign read_data_sipo_yumi_cnt_li = ($clog2(burst_width_p)+1)'(&read_data_sipo_valid_lo? burst_width_p: 0);
 
-	always_ff @(posedge core_clk_i) begin
-		if(&read_data_sipo_valid_lo) begin
-			read_data_to_consumer_o <= read_data_sipo_data_lo;
-			read_data_to_consumer_valid_o <= 1;
-		end
-		else begin
-			read_data_to_consumer_o <= 0;
-			read_data_to_consumer_valid_o <= 0;
-		end
-	end
+	assign read_data_to_consumer_o = (&read_data_sipo_valid_lo) ? read_data_sipo_data_lo : 0;
+	assign read_data_to_consumer_valid_o = (&read_data_sipo_valid_lo) ? 1 : 0;
 
 	logic read_data_sipo_input_valid;
 

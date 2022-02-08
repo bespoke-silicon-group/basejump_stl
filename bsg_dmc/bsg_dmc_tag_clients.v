@@ -121,11 +121,4 @@ module bsg_dmc_tag_clients
 	    ,.clk_o                 (dfi_clk_2x_o)
 	    );
 
-  // clock downsampler
-  //bsg_counter_clock_downsample #(.width_p(3),. harden_p(1)) clk_gen_ds_inst
-  //  (.clk_i(dfi_clk_2x_o)
-  //  ,.reset_i(async_reset_lo)
-  //  ,.val_i(3'b001)
-  //  ,.clk_r_o(clk_monitor_clk)
-  //  );
 endmodule

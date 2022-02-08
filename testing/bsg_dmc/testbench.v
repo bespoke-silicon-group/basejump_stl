@@ -244,13 +244,15 @@ module testbench();
   initial begin
 	  irritate_clock = 0;
       send_dynamic_tag = 0;
-      #212us;
-	  irritate_clock = 1;
-	  #1us;
-	  irritate_clock = 0;
-	  @(frequency_mismatch_lo);
-      send_dynamic_tag = 1;
-	  @(clock_correction_done_lo);
-	  send_dynamic_tag = 0;
+	  if($test$plusargs("irritate_clk")) begin
+      	#212us;
+	  	irritate_clock = 1;
+	  	#1us;
+	  	irritate_clock = 0;
+	  	@(frequency_mismatch_lo);
+      	send_dynamic_tag = 1;
+	  	@(clock_correction_done_lo);
+	  	send_dynamic_tag = 0;
+	 end
   end
 endmodule

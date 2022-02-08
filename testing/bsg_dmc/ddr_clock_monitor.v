@@ -75,10 +75,6 @@ module ddr_clock_monitor
 				//$display("success");
 				frequency_mismatch_o = 1;
 			end
-			//else begin
-			//	//$display("fail");
-			//	frequency_mismatch_o = 0;
-			//end
 
 		end
 		prev_ddr_binary_count = ddr_clock_binary_count_lo;
