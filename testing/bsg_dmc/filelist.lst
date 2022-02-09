@@ -6,8 +6,8 @@
 +incdir+lpddr_verilog_model
 
 ../../bsg_misc/bsg_defines.v
-../../bsg_dmc/bsg_dmc_pkg.v
 ../../bsg_tag/bsg_tag_pkg.v
+../../bsg_dmc/bsg_dmc_pkg.v
 ../../bsg_async/bsg_async_fifo.v
 ../../bsg_async/bsg_async_ptr_gray.v
 ../../bsg_async/bsg_launch_sync_sync.v

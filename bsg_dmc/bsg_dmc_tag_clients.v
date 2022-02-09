@@ -15,14 +15,11 @@ module bsg_dmc_tag_clients
 						,parameter num_adgs_p         = 1
 						)
 						(
-						input bsg_tag_s [27:0] tag_lines_i
+						input bsg_tag_s [28:0] tag_lines_i
 						,input ext_clk_i
 						,input dfi_clk_1x_i
 						,input ui_clk_sync_rst_i
-						,output bsg_tag_s dmc_reset_tag_lines_o
-						,output bsg_tag_s [3:0] dmc_dly_tag_lines_o
-						,output bsg_tag_s [3:0] dmc_dly_trigger_tag_lines_o
-						,output bsg_tag_s dmc_ds_tag_lines_o
+						,output  bsg_tag_lines_s dmc_tag_lines_s_o							
 						,output bsg_dmc_s dmc_p_o
 						,output dfi_clk_2x_o
 						,output sys_reset_o
@@ -31,10 +28,11 @@ module bsg_dmc_tag_clients
 
 							 
 
-  	assign dmc_reset_tag_lines_o	    = tag_lines_i[0];
-  	assign dmc_dly_tag_lines_o         	= tag_lines_i[1+:dq_group_lp];
-  	assign dmc_dly_trigger_tag_lines_o 	= tag_lines_i[1+dq_group_lp+:4];
-  	assign dmc_ds_tag_lines_o         	= tag_lines_i[1+2*dq_group_lp];
+  	assign dmc_tag_lines_s_o.async_reset_tag	    	= tag_lines_i[0];
+  	assign dmc_tag_lines_s_o.bsg_dly_tag         		= tag_lines_i[1+:dq_group_lp];
+  	assign dmc_tag_lines_s_o.bsg_dly_trigger_tag 		= tag_lines_i[1+dq_group_lp+:4];
+  	assign dmc_tag_lines_s_o.bsg_ds_tag         		= tag_lines_i[1+2*dq_group_lp];
+	assign dmc_tag_lines_s_o.bsg_clk_monitor_ds_tag   	= tag_lines_i[28];
 
 	logic [14:0][7:0] 	dmc_cfg_tag_data_lo;
 	logic [14:0]      	dmc_cfg_tag_new_data_lo;
