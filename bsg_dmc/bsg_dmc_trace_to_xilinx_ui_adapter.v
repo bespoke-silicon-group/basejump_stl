@@ -67,6 +67,11 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 
 	assign is_write = trace_data_valid_i ? ((trace_data.cmd == WP || trace_data.cmd == WR) )  : 0;
 
+    /*
+    This module is at a level above the dmc_controller where we stall transactions. So this module issues transactions to the dmc_controller which decides whether to forward it to DRAM or not.
+    So this transaction_in_progress is between the adapter and dmc_controller.
+    For the case of clock change happening right when a read is in progress, the time for tag value to reflect on the chip side will sufficient to cover the previous read/write transaction.
+    */
 	assign transaction_in_progress = app_wdf_wren_o | app_rd_data_valid_i; 
 
 	assign app_wdf_end_o = burst_done & app_wdf_wren_o;
@@ -75,32 +80,18 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 	
 	// counting write_count per burst
 	
-	//bsg_counter_clear_up
-	//				#(.max_val_p(burst_width_p )
-	//				,.init_val_p(0))
-	//				write_counter
-	//				(.clk_i(core_clk_i)
-	//				,.reset_i(core_reset_i)
-	//				,.clear_i((write_count == (burst_width_p ) ))
-	//				,.up_i(1'b1)
-	//				,.count_o(write_count)
-	//				);
+	bsg_counter_clear_up
+					#(.max_val_p(burst_width_p - 1)
+					,.init_val_p(0)
+                    ,.disable_overflow_warning_p(1))
+					write_counter
+					(.clk_i(core_clk_i)
+					,.reset_i(core_reset_i)
+					,.clear_i(1'b0)                        
+					,.up_i(app_wdf_wren_o)
+					,.count_o(write_count)
+					);
 	
-
-	always_ff @(posedge core_clk_i) begin
-		if(core_reset_i) begin
-			write_count <= 0;
-		end
-		else if(app_wdf_wren_o) begin
-			if(write_count == (burst_width_p - 1)) begin
-				write_count	<= 0;
-			end
-			else begin
-				write_count <= write_count + 1;
-			end
-		end
-	end
-
 	// Convert UI command and addr
 	assign app_en_o = (adapter_ready_o & trace_data_valid_i) ? 1 : 0;
 	assign app_cmd_o = (adapter_ready_o & trace_data_valid_i) ? trace_data.cmd : 0;
@@ -169,4 +160,4 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 	  ,.data_o     ( read_data_sipo_data_lo      )
 	  ,.yumi_cnt_i ( read_data_sipo_yumi_cnt_li  ));
 
-endmodule: bsg_dmc_trace_to_xilinx_ui_adapter
+endmodule

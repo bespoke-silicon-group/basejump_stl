@@ -25,6 +25,7 @@
 #	 25  | Clkgen Oscillator      			 | 5-bits
 #    26  | Clkgen Osc Trigger     			 | 1-bit
 #    27  | Clkgen Downsampler    			 | 7-bits
+#    28  | clock monitor downsampler         | 2 bits
 #
 #
 # Number of masters = 1

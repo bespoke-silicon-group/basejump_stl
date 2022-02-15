@@ -10,39 +10,34 @@
 module bsg_dmc_tag_clients
 						import bsg_tag_pkg::*;
 						import bsg_dmc_pkg::*;
-						#(parameter `BSG_INV_PARAM(dq_group_lp)
+						#(parameter `BSG_INV_PARAM(dq_group_p)
 						,parameter ds_width_p         = 8
 						,parameter num_adgs_p         = 1
 						)
 						(
-						input bsg_tag_s [28:0] tag_lines_i
+						input  bsg_tag_lines_s tag_lines_i
 						,input ext_clk_i
 						,input dfi_clk_1x_i
 						,input ui_clk_sync_rst_i
-						,output  bsg_tag_lines_s dmc_tag_lines_s_o							
+						,output bsg_dmc_tag_lines_s dmc_tag_lines_s_o
+                        ,output bsg_osc_tag_lines_s osc_tag_lines_o                            
 						,output bsg_dmc_s dmc_p_o
-						,output dfi_clk_2x_o
 						,output sys_reset_o
 						,output logic stall_transmission_o
 						);
 
 							 
 
-  	assign dmc_tag_lines_s_o.async_reset_tag	    	= tag_lines_i[0];
-  	assign dmc_tag_lines_s_o.bsg_dly_tag         		= tag_lines_i[1+:dq_group_lp];
-  	assign dmc_tag_lines_s_o.bsg_dly_trigger_tag 		= tag_lines_i[1+dq_group_lp+:4];
-  	assign dmc_tag_lines_s_o.bsg_ds_tag         		= tag_lines_i[1+2*dq_group_lp];
-	assign dmc_tag_lines_s_o.bsg_clk_monitor_ds_tag   	= tag_lines_i[28];
+  	assign dmc_tag_lines_s_o.async_reset_tag	    	= tag_lines_i.tag_lines[0];
+  	assign dmc_tag_lines_s_o.bsg_dly_tag         		= tag_lines_i.tag_lines[1+:dq_group_p];
+  	assign dmc_tag_lines_s_o.bsg_dly_trigger_tag 		= tag_lines_i.tag_lines[1+dq_group_p+:4];
+  	assign dmc_tag_lines_s_o.bsg_ds_tag         		= tag_lines_i.tag_lines[1+2*dq_group_p];
 
 	logic [14:0][7:0] 	dmc_cfg_tag_data_lo;
 	logic [14:0]      	dmc_cfg_tag_new_data_lo;
 
-	`declare_bsg_clk_gen_ds_tag_payload_s(3)
-
-  	bsg_clk_gen_ds_tag_payload_s clock_monitor_clock_downsample;
-
 	bsg_tag_s [13:0] dmc_cfg_tag_lines_lo;
-	assign dmc_cfg_tag_lines_lo = tag_lines_i[2+2*dq_group_lp+:14];
+	assign dmc_cfg_tag_lines_lo = tag_lines_i.tag_lines[2+2*dq_group_p+:14];
 
   	genvar idx;
   	generate
@@ -76,7 +71,6 @@ module bsg_dmc_tag_clients
 	assign dmc_p_o.dqs_sel_cal  			= dmc_cfg_tag_data_lo[7][6:4];
 	assign dmc_p_o.init_cycles  			= {dmc_cfg_tag_data_lo[11], dmc_cfg_tag_data_lo[10]};
 	assign sys_reset_o          			= dmc_cfg_tag_data_lo[12][0];
-	//assign clock_monitor_clock_downsample 	= dmc_cfg_tag_data_lo[12][2:0];
 
 	always @(posedge dfi_clk_1x_i) begin
 	   	if(ui_clk_sync_rst_i) begin
@@ -87,36 +81,10 @@ module bsg_dmc_tag_clients
 	  	end
 	end
 
-	bsg_tag_s osc_tag_lines_li;
-	bsg_tag_s osc_trigger_tag_lines_li;
-	bsg_tag_s ds_tag_lines_li;
-	logic async_reset_lo;
-	bsg_tag_s async_reset_tag_lines_li;
-	
-	bsg_tag_client_unsync #( .width_p(1) )
-	  btc_async_reset
-	    (.bsg_tag_i(async_reset_tag_lines_li)
-	    ,.data_async_r_o(async_reset_lo)
-	    );
-
-	assign async_reset_tag_lines_li 	= tag_lines_i[24];
-	assign osc_tag_lines_li         	= tag_lines_i[25];
-	assign osc_trigger_tag_lines_li 	= tag_lines_i[26];
-	assign ds_tag_lines_li         		= tag_lines_i[27];
-
-	bsg_clk_gen #(.downsample_width_p(ds_width_p)
-	             ,.num_adgs_p(num_adgs_p)
-	             ,.version_p(2)
-				 ,.nonsynth_sim_osc_mul_factor_p(50)
-	             )
-	  clk_gen_inst
-	    (.async_osc_reset_i     (async_reset_lo)
-	    ,.bsg_osc_tag_i         (osc_tag_lines_li)
-	    ,.bsg_osc_trigger_tag_i (osc_trigger_tag_lines_li)
-	    ,.bsg_ds_tag_i          (ds_tag_lines_li)
-	    ,.ext_clk_i             (ext_clk_i)
-	    ,.select_i              (2'b00)
-	    ,.clk_o                 (dfi_clk_2x_o)
-	    );
+	assign osc_tag_lines_o.async_reset_tag_lines 	= tag_lines_i.tag_lines[24];
+	assign osc_tag_lines_o.osc_tag_lines         	= tag_lines_i.tag_lines[25];
+	assign osc_tag_lines_o.osc_trigger_tag_lines 	= tag_lines_i.tag_lines[26];
+	assign osc_tag_lines_o.ds_tag_lines         	= tag_lines_i.tag_lines[27];
+	assign osc_tag_lines_o.bsg_clk_monitor_ds_tag  	= tag_lines_i.tag_lines[28];
 
 endmodule
