@@ -16,7 +16,9 @@
 module bsg_clk_gen_osc
   import bsg_tag_pkg::bsg_tag_s;
 
-    #(parameter num_adgs_p=1)
+    #(parameter num_adgs_p=1
+	 ,parameter osc_mul_factor_p = 100
+	 ,parameter osc_base_delay_p = 1000)
   (
    input async_reset_i
    ,input bsg_tag_s bsg_tag_i
@@ -61,7 +63,7 @@ module bsg_clk_gen_osc
         #1000
         if (ctrl_rrr !== 'X)
           # (
-             ((1 << $bits(ctrl_rrr)) - ctrl_rrr)*100
+             ((1 << $bits(ctrl_rrr)) - ctrl_rrr)*osc_mul_factor_p
             )
         clk_o <= ~(clk_o | async_reset_i);
 

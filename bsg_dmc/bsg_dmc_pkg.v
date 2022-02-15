@@ -1,5 +1,7 @@
 
 package bsg_dmc_pkg;
+  import bsg_tag_pkg::*;
+
   typedef struct packed {
     logic [15:0] trefi;
     logic  [3:0] tmrd;
@@ -46,4 +48,12 @@ package bsg_dmc_pkg;
     logic [2:0] ba;
     logic [15:0] addr;
   } dfi_cmd_sfifo_entry_s;
+
+  typedef struct packed {
+	  bsg_tag_s                   async_reset_tag;
+	  bsg_tag_s [3:0] 			  bsg_dly_tag;
+	  bsg_tag_s [3:0] 			  bsg_dly_trigger_tag;
+	  bsg_tag_s                   bsg_ds_tag;
+	  bsg_tag_s					  bsg_clk_monitor_ds_tag;
+  } bsg_tag_lines_s;
 endpackage // bsg_dmc_pkg
