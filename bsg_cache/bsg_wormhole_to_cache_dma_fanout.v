@@ -343,6 +343,7 @@ module bsg_wormhole_to_cache_dma_fanout
   end
 
 
+  // synopsys sync_set_reset "reset_i"
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       recv_state_r <= RECV_RESET;
