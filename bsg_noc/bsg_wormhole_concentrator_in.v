@@ -60,7 +60,7 @@ module bsg_wormhole_concentrator_in
   for (i = 0; i < num_in_p; i++)
     begin : stub
       assign links_o_cast[i].v    = 1'b0;
-      assign links_o_cast[i].data = 1'b0;
+      assign links_o_cast[i].data = '0;
     end
     
   assign concentrated_link_o_cast.ready_and_rev = 1'b0;

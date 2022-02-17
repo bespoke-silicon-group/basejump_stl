@@ -281,6 +281,7 @@ module bsg_cache_dma_to_wormhole
 
 
   // sequential logic
+  // synopsys sync_set_reset "reset_i"
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       send_state_r <= SEND_RESET;

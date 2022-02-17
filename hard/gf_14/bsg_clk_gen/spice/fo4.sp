@@ -1,11 +1,11 @@
 
 * Initial value for n0, this starts the osc
-.ic v(clk0_o)=0.8V
-.ic v(clk_o)=0.8V
-.ic v(clk1_o)=0.8V
-.ic v(clk2_o)=0.8V
+.ic v(clk0_o)='SUPPLY'
+.ic v(clk_o)='SUPPLY'
+.ic v(clk1_o)='SUPPLY'
+.ic v(clk2_o)='SUPPLY'
 
-Vrst reset_i 0 0.8
+Vrst reset_i 0 'SUPPLY'
 
 * A VSS VDD Z VNW VPW
 .subckt stage IN OUT VDD VSS
