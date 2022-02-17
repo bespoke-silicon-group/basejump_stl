@@ -1,9 +1,8 @@
-// This counter will counter down from val_i to 0. When the counter
-// hits 0, the output clk_r_o will invert. The number of bits wide
-// the counter is can be set with the width_p parameter.
-//
-// Random ideas: could have a variant of this that takes two inputs
-// one for the high duty cycle and one for the low duty cycle.
+// This counter will count down from low_val_i to 0. When the counter
+// hits 0, the clock output will go high. Then the counter will count down
+// from high_val_i to 0. When the counter hits 0 again, the clock output will
+// go low. In this way, we can generate a clock with an an arbitrary duty cycle.
+// The number of bits wide the counter is can be set with the width_p parameter.
 //
 
 `include "bsg_defines.v"
@@ -50,3 +49,4 @@ module bsg_counter_clock_downsample_unbalanced #(parameter `BSG_INV_PARAM(width_
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_counter_clock_downsample_unbalanced)
+
