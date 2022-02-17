@@ -12,14 +12,6 @@
 //   Ported from hard/gf_14/bsg_async/bsg_sync_sync.v
 //
 
-`ifndef rp_group
- `define rp_group(x)
- `define rp_place(x)
- `define rp_endgroup(x)
- `define rp_fill(x)
- `define rp_array_dir(up)
-`endif
-
 `define bsg_sync_sync_unit(width_p)                             \
                                                                 \
 module bsg_sync_sync_``width_p``_unit                           \
@@ -31,23 +23,13 @@ module bsg_sync_sync_``width_p``_unit                           \
                                                                 \
   genvar i;                                                     \
                                                                 \
-   logic [width_p-1:0] bsg_SYNC_1_r, bsg_SYNC_2_r;              \
-                                                                \
-   assign oclk_data_o = bsg_SYNC_2_r;                           \
-                                                                \
    for (i = 0; i < width_p; i = i + 1)                          \
      begin : bss_unit                                           \
-       DFQD4BWP7T40P140LVT hard_sync_int1                       \
-        (.CP(oclk_i)                                            \
-        ,.D(iclk_data_i[i])                                     \
-        ,.Q(bsg_SYNC_1_r[i])                                    \
-        );                                                      \
-                                                                \
-       DFQD4BWP7T40P140LVT hard_sync_int2                       \
-        (.CP(oclk_i)                                            \
-        ,.D(bsg_SYNC_1_r[i])                                    \
-        ,.Q(bsg_SYNC_2_r[i])                                    \
-        );                                                      \
+       bsg_sync_sync_1_unit bss1                                \
+        (.oclk_i(oclk_i)                                        \
+         ,.iclk_data_i(iclk_data_i[i])                          \
+         ,.oclk_data_o(oclk_data_o[i])                          \
+         );                                                     \
      end                                                        \
                                                                 \
 endmodule

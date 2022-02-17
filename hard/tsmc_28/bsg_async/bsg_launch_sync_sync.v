@@ -25,14 +25,6 @@
 // ASYNC RESET: iclk cannot toggle at deassertion of reset
 `include "bsg_defines.v"
 
-`ifndef rp_group
- `define rp_group(x)
- `define rp_place(x)
- `define rp_endgroup(x)
- `define rp_fill(x)
- `define rp_array_dir(up)
-`endif
-
 `define bsg_launch_sync_sync_unit(EDGE,bits)                            \
                                                                         \
 module bsg_launch_sync_sync_``EDGE``_``bits``_unit                      \
@@ -57,24 +49,14 @@ module bsg_launch_sync_sync_``EDGE``_``bits``_unit                      \
           bsg_SYNC_LNCH_r <= iclk_data_i;                               \
      end                                                                \
                                                                         \
-   logic [bits-1:0] bsg_SYNC_1_r, bsg_SYNC_2_r;                         \
-                                                                        \
-   assign oclk_data_o = bsg_SYNC_2_r;                                   \
-                                                                        \
-   for (i = 0; i < bits; i++)                                           \
-     begin                                                              \
-       DFQD4BWP7T40P140LVT hard_sync_int1                               \
-        (.CP(oclk_i)                                                    \
-         ,.D(bsg_SYNC_LNCH_r[i])                                        \
-         ,.Q(bsg_SYNC_1_r[i])                                           \
+   for (i = 0; i < width_p; i = i + 1)                                  \
+     begin : bss_unit                                                   \
+       bsg_sync_sync_1_unit bss1                                        \
+        (.oclk_i(oclk_i)                                                \
+         ,.iclk_data_i(iclk_data_i[i])                                  \
+         ,.oclk_data_o(oclk_data_o[i])                                  \
          );                                                             \
-                                                                        \
-       DFQD4BWP7T40P140LVT hard_sync_int2                               \
-        (.CP(oclk_i)                                                    \
-         ,.D(bsg_SYNC_1_r[i])                                           \
-         ,.Q(bsg_SYNC_2_r[i])                                           \
-         );                                                             \
-      end                                                               \
+     end                                                                \
 endmodule
 
 `define bsg_launch_sync_sync_async_reset_unit(EDGE,bits)                \
@@ -87,11 +69,6 @@ module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
    , output [bits-1:0] iclk_data_o                                      \
    , output [bits-1:0] oclk_data_o                                      \
    );                                                                   \
-                                                                        \
-   `rp_group    (blss_bank)                                             \
-   `rp_place    (hier blss_launch_1 0 0)                                \
-   `rp_place    (hier blss_1   1 0)                                     \
-   `rp_endgroup (blss_bank)                                             \
                                                                         \
    genvar i;                                                            \
                                                                         \
@@ -113,20 +90,13 @@ module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
                                                                         \
    for (i = 0; i < bits; i++)                                           \
      begin : BSG_NO_CLOCK_GATE_2                                        \
-      DFCNQD4BWP7T40P140LVT hard_sync_int1                              \
-       (.CP(oclk_i)                                                     \
-        ,.CDN(oclk_reset_i)                                             \
-        ,.D(bsg_SYNC_LNCH_r[i])                                         \
-        ,.Q(bsg_SYNC_1_r[i])                                            \
-        );                                                              \
-                                                                        \
-      DFCNQD4BWP7T40P140LVT hard_sync_int2                              \
-       (.CP(oclk_i)                                                     \
-        ,.CDN(oclk_reset_i)                                             \
-        ,.D(bsg_SYNC_1_r[i])                                            \
-        ,.Q(bsg_SYNC_2_r[i])                                            \
-        );                                                              \
-      end                                                               \
+       bsg_sync_sync_async_reset_1_unit bss1                            \
+        (.oclk_i(oclk_i)                                                \
+         ,.iclk_reset_i(iclk_reset_i)                                   \
+         ,.iclk_data_i(iclk_data_i)                                     \
+         ,.oclk_data_o(oclk_data_o)                                     \
+         );                                                             \
+     end                                                                \
 endmodule
 
 // bsg_launch_sync_sync_posedge_1_unit
