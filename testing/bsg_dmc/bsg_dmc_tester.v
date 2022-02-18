@@ -19,7 +19,7 @@ module bsg_dmc_tester
 			localparam rom_addr_width_lp=32,
 			localparam cmd_plus_address_width_lp = addr_width_p + cmd_width_p,
 			localparam data_mask_width_lp = data_width_p>>3,
-			localparam payload_width_lp = addr_width_p + cmd_width_p + burst_width_p*(data_width_p + data_mask_width_lp)
+			localparam payload_width_lp = data_width_p + data_mask_width_lp + 4
 		 )
 		(	input 							fpga_link_clk_i,
 			input 							fpga_link_io_clk_i,
@@ -68,7 +68,7 @@ module bsg_dmc_tester
 
 	bsg_trace_replay
   					#(  .payload_width_p(payload_width_lp),
-  					  	.rom_addr_width_p(6)
+  					  	.rom_addr_width_p(rom_addr_width_lp)
   					) trace_replay
     				(.clk_i(fpga_link_clk_i),
     				.reset_i(fpga_link_reset_i),

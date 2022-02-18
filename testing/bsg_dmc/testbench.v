@@ -8,7 +8,7 @@ module testbench();
 `ifndef BRINGUP
   parameter ui_burst_length_p  = 8;
 `else
-  parameter ui_burst_length_p  = 2;
+  parameter ui_burst_length_p  = 8;
 `endif
   parameter dq_data_width_p    = 32;
   parameter cmd_afifo_depth_p  = 4;

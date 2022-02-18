@@ -60,7 +60,7 @@ module bsg_clk_gen_osc
 
    always
      begin
-        #1000
+         #(osc_base_delay_p*1ps);
         if (ctrl_rrr !== 'X)
           # (
              ((1 << $bits(ctrl_rrr)) - ctrl_rrr)*osc_granularity_p

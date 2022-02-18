@@ -76,6 +76,8 @@ module bsg_dmc
   ,input                             ui_clk_i
   //
   ,output                            ui_clk_sync_rst_o
+  ,output                            dfi_clk_2x_o
+  ,output                            dfi_clk_1x_o
   // Reserved to be compatible with Xilinx IPs
   ,output                     [11:0] device_temp_o
 );
@@ -114,6 +116,9 @@ module bsg_dmc
   bsg_osc_tag_lines_s osc_tag_lines_lo;
 
   logic stall_transmission_lo;
+
+  assign dfi_clk_2x_o = dfi_clk_2x_lo;
+  assign dfi_clk_1x_o = dfi_clk_1x_lo;
 
   bsg_dmc_tag_clients
 					#(.dq_group_p(dq_group_lp)

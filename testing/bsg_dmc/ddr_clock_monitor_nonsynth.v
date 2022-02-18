@@ -7,7 +7,7 @@
 // ORGANIZATION: Bespoke Silicon Group, University of Washington
 //      CREATED: 01/23/22
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-module ddr_clock_monitor 
+module ddr_clock_monitor_nonsynth
 				#(  parameter counter_width_p = 1024
 					,parameter sampling_period_ns_p = 100
 					,`BSG_INV_PARAM(max_fpga_count)
@@ -99,7 +99,7 @@ module ddr_clock_monitor
 		end
 	end
 	
-endmodule: ddr_clock_monitor
+endmodule
 
 module ddr_clock_monitor_tb;
 
@@ -108,7 +108,7 @@ module ddr_clock_monitor_tb;
 	logic ddr_clk;
 	logic frequency_mismatch;
 
-	ddr_clock_monitor
+	ddr_clock_monitor_nonsynth
    					#(.max_fpga_count(20)
 					  ,.expected_ddr_period_ns_p(2.5)
 					  ,.fpga_clk_period_ns_p(5)
@@ -131,4 +131,4 @@ module ddr_clock_monitor_tb;
 	always #2.5ns fpga_clk = ~fpga_clk;
 	always #1.25ns ddr_clk = ~ddr_clk;
 
-endmodule: ddr_clock_monitor_tb
+endmodule

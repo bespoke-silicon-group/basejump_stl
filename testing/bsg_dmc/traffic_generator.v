@@ -7,10 +7,6 @@
   `define UI_CLK_PERIOD 2500.0
 `endif
 
-`ifndef DFI_CLK_PERIOD
-  `define DFI_CLK_PERIOD 5000.0
-`endif
-
 `ifndef TAG_CLK_PERIOD
   `define TAG_CLK_PERIOD 10000.0
 `endif
@@ -40,7 +36,7 @@ module traffic_generator
   ,localparam dq_group_lp        = dq_data_width_p >> 3
   ,localparam ui_burst_length_lp = burst_data_width_p / ui_data_width_p
   ,localparam dq_burst_length_lp = burst_data_width_p / dq_data_width_p
-  ,localparam payload_width_lp 	 = ui_addr_width_p + ui_cmd_width_p + ui_burst_length_lp*(ui_data_width_p + ui_mask_width_lp)
+  ,localparam payload_width_lp 	 = ui_data_width_p + ui_mask_width_lp + 4
   )
   // Tag lines
   (output  bsg_tag_lines_s			  tag_lines_o
@@ -250,7 +246,7 @@ module traffic_generator
       end
   end
 
-  ddr_clock_monitor
+  ddr_clock_monitor_nonsynth
 	#(.max_fpga_count(10)
 	  ,.expected_ddr_period_ns_p(10)
 	  ,.fpga_clk_period_ns_p(10)
@@ -304,7 +300,7 @@ module traffic_generator
   int read_transactions;
   int j,k;
 
-`ifndef BRINGUP
+`ifdef NONSYNTH_TB
 	// non-synthesisable testing
 	`include "tasks.v"
 
@@ -418,8 +414,8 @@ module traffic_generator
   	logic asic_link_downstream_core_valid_lo;
   	logic asic_link_downstream_core_yumi_lo;
 
-	logic [payload_width_lp-1:0] asic_link_upstream_core_data_lo;
-  	logic asic_link_upstream_core_valid_lo;
+	logic [payload_width_lp-1:0] asic_link_upstream_core_data_li;
+  	logic asic_link_upstream_core_valid_li;
   	logic asic_link_upstream_core_yumi_lo;
 
 	logic [payload_width_lp/2 - 1:0] asic_link_upstream_edge_data_li;
@@ -461,7 +457,7 @@ module traffic_generator
 					.en_trace_reading_i(en_trace_reading_li)
 				);
 
-  	assign asic_link_downstream_core_yumi_lo = asic_link_downstream_core_valid_lo & dmc_input_fifo_ready_lo;
+  	assign asic_link_downstream_core_yumi_lo = asic_link_downstream_core_valid_lo & dmc_input_fifo_ready_lo ;
 
   	  // ASIC SIDE LINKS START
   	bsg_link_ddr_downstream
@@ -483,6 +479,20 @@ module traffic_generator
   					 ,.core_token_r_o(asic_link_downstream_edge_token_li)
   					 );
 
+    logic read_data_to_consumer_valid_lo;
+	logic [payload_width_lp-1:0] read_data_to_consumer_lo;
+
+    always@(posedge ui_clk) begin
+        if(asic_link_reset_li) begin
+            asic_link_upstream_core_valid_li <= 0;
+            asic_link_upstream_core_data_li <= 0; 
+        end
+        else if(read_data_to_consumer_valid_lo) begin
+            asic_link_upstream_core_valid_li <= 1;
+            asic_link_upstream_core_data_li <= read_data_to_consumer_lo;
+        end
+    end
+
 	bsg_link_ddr_upstream
  					#(.width_p        (payload_width_lp)
  					 ,.channel_width_p(payload_width_lp/2)
@@ -494,8 +504,8 @@ module traffic_generator
  					 ,.io_link_reset_i    (asic_link_upstream_io_reset)
  					 ,.async_token_reset_i(asic_link_token_reset_li)
  					 
- 					 ,.core_data_i (asic_link_upstream_core_data_lo)
- 					 ,.core_valid_i(asic_link_upstream_core_valid_lo)
+ 					 ,.core_data_i (asic_link_upstream_core_data_li)
+ 					 ,.core_valid_i(asic_link_upstream_core_valid_li)
  					 ,.core_ready_o(asic_link_upstream_core_ready_lo)
 
  					 ,.io_clk_r_o  (asic_link_upstream_edge_clk_li)
@@ -538,10 +548,10 @@ module traffic_generator
   							.trace_data_i(dmc_adapter_input_data_lo),
   						 	.trace_data_valid_i(dmc_adapter_input_valid_lo),
 
-							.read_data_to_consumer_valid_o(asic_link_upstream_core_valid_lo),
-							.read_data_to_consumer_o(asic_link_upstream_core_data_lo),
+							.read_data_to_consumer_valid_o(read_data_to_consumer_valid_lo),
+							.read_data_to_consumer_o(read_data_to_consumer_lo),
 
-  						 	.adapter_ready_o(dmc_adapter_ready_lo),
+  						 	.ready_o(dmc_adapter_ready_lo),
   	
   						    // XILINX UI signals	
   							.app_addr_o(app_addr),

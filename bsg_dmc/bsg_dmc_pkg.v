@@ -23,11 +23,11 @@ package bsg_dmc_pkg;
     logic [15:0] init_cycles;
   } bsg_dmc_s;
 
-  typedef enum logic [2:0]
-    {RP = 3'b011 // read with auto precharge
-    ,WP = 3'b010 // write with auto precharge
-    ,RD = 3'b001 // read
-    ,WR = 3'b000 // write
+  typedef enum logic [3:0]
+    {RP = 3'b0011 // read with auto precharge
+    ,WP = 3'b0010 // write with auto precharge
+    ,RD = 3'b0001 // read
+    ,WR = 3'b0000 // write
   } app_cmd_e;
 
   typedef enum logic [3:0]
