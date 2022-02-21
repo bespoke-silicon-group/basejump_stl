@@ -17,6 +17,7 @@ module bsg_dmc_clk_rst_gen
   ,input           [num_lines_p-1:0] clk_i
   ,output          [num_lines_p-1:0] clk_o
   // 2x clock input from clock generator and 1x clock output
+  ,input                             ext_dfi_clk_2x_i
   ,output                            dfi_clk_2x_o
   ,output                            clk_1x_o
   ,output							 clock_monitor_clk_o);
@@ -117,7 +118,7 @@ module bsg_dmc_clk_rst_gen
       ,.bsg_osc_tag_i         (osc_tag_lines_i.osc_tag_lines)
       ,.bsg_osc_trigger_tag_i (osc_tag_lines_i.osc_trigger_tag_lines)
       ,.bsg_ds_tag_i          (osc_tag_lines_i.ds_tag_lines)
-      ,.ext_clk_i             (ext_clk_i)
+      ,.ext_clk_i             (ext_dfi_clk_2x_i)
       ,.select_i              (2'b00)
       ,.clk_o                 (dfi_clk_2x_o)
       );

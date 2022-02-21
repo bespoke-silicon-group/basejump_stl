@@ -97,7 +97,7 @@ class TraceGen:
       print(new_data)
 
 if __name__ == "__main__":
-  tg = TraceGen(addr_width_p=28, data_width_p=32, cmd_width_p=4, burst_length_p = 8 )
+  tg = TraceGen(addr_width_p=28, data_width_p=32, cmd_width_p=3, burst_length_p = 8 )
   id_p = int(sys.argv[1])
   random.seed(time.time())
 

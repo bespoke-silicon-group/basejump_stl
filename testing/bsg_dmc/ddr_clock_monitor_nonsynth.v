@@ -32,7 +32,7 @@ module ddr_clock_monitor_nonsynth
 
 	// counter to clock 100 ns on fpga clock
 	bsg_counter_clear_up 
-				#(.max_val_p(counter_width_p),
+				#(.max_val_p(counter_width_p-1),
 				  .init_val_p(0))
 				fpga_clock_counter
 				(.clk_i(fpga_clk),
@@ -51,6 +51,8 @@ module ddr_clock_monitor_nonsynth
 			    (.w_clk_i(ddr_clk_i),
 				 .w_reset_i(fpga_counter_clear_li | fpga_reset),
 				 .w_inc_i(1'b1),
+                 .w_ptr_binary_r_o(),
+                 .w_ptr_gray_r_o(),
 				 .r_clk_i(fpga_clk),
 				 .w_ptr_gray_r_rsync_o(ddr_clock_gray_count_lo)
 				);

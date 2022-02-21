@@ -76,6 +76,7 @@ module bsg_dmc
   ,input                             ui_clk_i
   //
   ,output                            ui_clk_sync_rst_o
+  ,input                             ext_dfi_clk_2x_i
   ,output                            dfi_clk_2x_o
   ,output                            dfi_clk_1x_o
   // Reserved to be compatible with Xilinx IPs
@@ -125,7 +126,6 @@ module bsg_dmc
 					)
 					dmc_tag_clients
 					(.tag_lines_i(tag_lines_i)
-					,.ext_clk_i(ui_clk_i)
 					,.dfi_clk_1x_i(dfi_clk_1x_lo)
 					,.ui_clk_sync_rst_i(ui_clk_sync_rst_o)
 					,.dmc_tag_lines_s_o(dmc_tag_lines_s_lo)
@@ -147,6 +147,8 @@ module bsg_dmc
 
     ,.clk_i                 ( ddr_dqs_p_i           )
     ,.clk_o                 ( dqs_p_li              )
+
+    ,.ext_dfi_clk_2x_i      ( ext_dfi_clk_2x_i      )
     ,.dfi_clk_2x_o          ( dfi_clk_2x_lo         )
     ,.clk_1x_o              ( dfi_clk_1x_lo         )
 	,.clock_monitor_clk_o	(clock_monitor_clk_o));

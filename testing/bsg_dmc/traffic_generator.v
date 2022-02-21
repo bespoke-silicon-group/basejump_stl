@@ -7,6 +7,10 @@
   `define UI_CLK_PERIOD 2500.0
 `endif
 
+`ifndef DFI_CLK_2X_PERIOD
+  `define DFI_CLK_2X_PERIOD 10000.0
+`endif
+
 `ifndef TAG_CLK_PERIOD
   `define TAG_CLK_PERIOD 10000.0
 `endif
@@ -70,6 +74,7 @@ module traffic_generator
   ,output                             ui_clk_o
   //
   ,input                              ui_clk_sync_rst_i
+  ,output                             dfi_clk_2x_o
   ,input							  irritate_clock_i
   ,input							  refresh_in_progress_i
   ,input							  clock_monitor_clk_i
@@ -87,6 +92,11 @@ module traffic_generator
 
   assign ui_clk_o = ui_clk;
   bsg_nonsynth_clock_gen #(.cycle_time_p(`UI_CLK_PERIOD)) ui_clk_gen (.o(ui_clk));
+
+  logic dfi_clk_2x;
+
+  assign dfi_clk_2x_o = dfi_clk_2x;
+  bsg_nonsynth_clock_gen #(.cycle_time_p(`DFI_CLK_2X_PERIOD)) dfi_clk_2x_gen (.o(dfi_clk_2x));
 	
   logic fpga_link_clk;
   bsg_nonsynth_clock_gen #(.cycle_time_p(`FPGA_CLK_PERIOD)) fpga_link_clk_gen (.o(fpga_link_clk));

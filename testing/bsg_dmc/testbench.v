@@ -59,6 +59,8 @@ module testbench();
   logic                            ui_clk;
   wire                             ui_clk_sync_rst;
 
+  logic                            dfi_clk_2x;
+
   wire                      [11:0] device_temp;
 
   wire                             ddr_ck_p, ddr_ck_n;
@@ -133,6 +135,7 @@ module testbench();
     ,.init_calib_complete_i ( init_calib_complete )
     ,.ui_clk_o              ( ui_clk              )
     ,.ui_clk_sync_rst_i     ( ui_clk_sync_rst     )
+    ,.dfi_clk_2x_o          ( dfi_clk_2x          )
 	,.tag_lines_o			(tag_lines_lo)
 	,.stall_trace_reading_i (send_dynamic_tag)
 	,.irritate_clock_i		(irritate_clock)
@@ -204,6 +207,10 @@ module testbench();
 
     ,.ui_clk_i              ( ui_clk              )
     ,.ui_clk_sync_rst_o     ( ui_clk_sync_rst     )
+
+    ,.ext_dfi_clk_2x_i      ( dfi_clk_2x          )
+    ,.dfi_clk_2x_o          (                     )
+    ,.dfi_clk_1x_o          (                     )
     ,.device_temp_o         ( device_temp         )
 	,.clock_monitor_clk_o	(clock_monitor_clk_lo));
 

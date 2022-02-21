@@ -91,8 +91,8 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 	
 	// Convert UI command and addr
 	assign app_en_o = (trace_data_valid_i &   app_rdy_i) ? (trace_data.wdata_cmd_n) : 0;
-	assign app_cmd_o = (trace_data_valid_i &   trace_data.wdata_cmd_n & app_rdy_i) ? trace_data.cmd : 0;
-	assign app_addr_o = (trace_data_valid_i &   trace_data.wdata_cmd_n & app_rdy_i) ? trace_data.addr : 0;
+	assign app_cmd_o = trace_data.cmd;
+	assign app_addr_o = trace_data.addr;
 
     always @(posedge core_clk_i) begin
         if(core_reset_i) begin

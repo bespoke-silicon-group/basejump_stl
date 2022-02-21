@@ -16,7 +16,6 @@ module bsg_dmc_tag_clients
 						)
 						(
 						input  bsg_tag_lines_s tag_lines_i
-						,input ext_clk_i
 						,input dfi_clk_1x_i
 						,input ui_clk_sync_rst_i
 						,output bsg_dmc_tag_lines_s dmc_tag_lines_s_o
