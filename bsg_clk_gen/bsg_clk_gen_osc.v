@@ -69,5 +69,4 @@ module bsg_clk_gen_osc
 
      end
 
-
 endmodule

@@ -93,7 +93,7 @@ module testbench();
   wire       [dq_data_width_p-1:0] ddr_dq;
 
   // All tag lines from the btm
-  bsg_tag_lines_s tag_lines_lo;
+  bsg_dmc_tag_lines_s tag_lines_lo;
 
   logic send_dynamic_tag, irritate_clock, clock_correction_done_lo;
 
@@ -141,6 +141,7 @@ module testbench();
 	,.frequency_mismatch_o	(frequency_mismatch_lo)
 	,.clock_correction_done_o(clock_correction_done_lo)
 	);
+
 
   bsg_dmc #
     (.num_adgs_p            ( clk_gen_num_adgs_p  )

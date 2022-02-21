@@ -8,32 +8,32 @@ module bsg_dmc_clk_rst_gen
  #(parameter num_adgs_p         = 2
   ,parameter `BSG_INV_PARAM(num_lines_p        ))
   (
-  input bsg_dmc_tag_lines_s          bsg_dmc_tag_lines_s_i
-  ,input bsg_osc_tag_lines_s          osc_tag_lines_i    
+  input bsg_dmc_delay_tag_lines_s        bsg_dmc_delay_tag_lines_s_i
+  ,input bsg_dmc_clk_gen_tag_lines_s     clk_gen_tag_lines_i    
   // asynchronous reset for dram controller
-  ,output                            async_reset_o
+  ,output                               async_reset_o
   // clock input and delayed clock output (for dqs), generating 90-degree phase
   // shift
-  ,input           [num_lines_p-1:0] clk_i
-  ,output          [num_lines_p-1:0] clk_o
+  ,input           [num_lines_p-1:0]    clk_i
+  ,output          [num_lines_p-1:0]    clk_o
   // 2x clock input from clock generator and 1x clock output
-  ,output                            dfi_clk_2x_o
-  ,output                            clk_1x_o
-  ,output							 clock_monitor_clk_o);
+  ,output                               dfi_clk_2x_o
+  ,output                               clk_1x_o
+  ,output							    clock_monitor_clk_o);
 
   localparam debug_level_lp = 0;
 
   genvar i;
 
   bsg_tag_client_unsync #(.width_p(1)) btc_async_reset
-    (.bsg_tag_i      ( bsg_dmc_tag_lines_s_i.async_reset_tag )
+    (.bsg_tag_i      ( bsg_dmc_delay_tag_lines_s_i.async_reset_tag )
     ,.data_async_r_o ( async_reset_o     ));
 
   // Clock Generator (CG) Instance
   for(i=0;i<num_lines_p;i++) begin: dly_lines
     bsg_dly_line #(.num_adgs_p(num_adgs_p)) dly_line_inst
-      (.bsg_tag_i         ( bsg_dmc_tag_lines_s_i.bsg_dly_tag[i]         )
-      ,.bsg_tag_trigger_i ( bsg_dmc_tag_lines_s_i.bsg_dly_trigger_tag[i] )
+      (.bsg_tag_i         ( bsg_dmc_delay_tag_lines_s_i.bsg_dly_tag[i]         )
+      ,.bsg_tag_trigger_i ( bsg_dmc_delay_tag_lines_s_i.bsg_dly_trigger_tag[i] )
       ,.async_reset_i     ( async_reset_o            )
       ,.clk_i             ( clk_i[i]                 )
       ,.clk_o             ( clk_o[i]                 ));
@@ -53,7 +53,7 @@ module bsg_dmc_clk_rst_gen
     (.width_p   ( $bits(bsg_clk_gen_ds_tag_payload_s) )
     ,.harden_p  ( 1                                   ))
   btc_ds
-    (.bsg_tag_i     ( bsg_dmc_tag_lines_s_i.bsg_ds_tag         )
+    (.bsg_tag_i     ( bsg_dmc_delay_tag_lines_s_i.bsg_ds_tag         )
 
     ,.recv_clk_i    ( dfi_clk_2x_o             )
     ,.recv_new_r_o  ( ds_tag_payload_new_r )   // we don't require notification
@@ -63,7 +63,7 @@ module bsg_dmc_clk_rst_gen
     (.width_p   ( $bits(bsg_clk_gen_ds_tag_payload_s) )
     ,.harden_p  ( 1                                   ))
   btc_clk_monitor_ds
-    (.bsg_tag_i     (osc_tag_lines_i.bsg_clk_monitor_ds_tag)
+    (.bsg_tag_i     (clk_gen_tag_lines_i.bsg_clk_monitor_ds_tag)
 
     ,.recv_clk_i    ( dfi_clk_2x_o             )
     ,.recv_new_r_o  (  )   // we don't require notification
@@ -103,7 +103,7 @@ module bsg_dmc_clk_rst_gen
 
   bsg_tag_client_unsync #( .width_p(1) )
     osc_async_reset
-      (.bsg_tag_i(osc_tag_lines_i.async_reset_tag_lines)
+      (.bsg_tag_i(clk_gen_tag_lines_i.async_reset_tag_lines)
       ,.data_async_r_o(async_reset_lo)
       );
 
@@ -114,9 +114,9 @@ module bsg_dmc_clk_rst_gen
                )
   clk_gen_inst
       (.async_osc_reset_i     (async_reset_lo)
-      ,.bsg_osc_tag_i         (osc_tag_lines_i.osc_tag_lines)
-      ,.bsg_osc_trigger_tag_i (osc_tag_lines_i.osc_trigger_tag_lines)
-      ,.bsg_ds_tag_i          (osc_tag_lines_i.ds_tag_lines)
+      ,.bsg_osc_tag_i         (clk_gen_tag_lines_i.osc_tag_lines)
+      ,.bsg_osc_trigger_tag_i (clk_gen_tag_lines_i.osc_trigger_tag_lines)
+      ,.bsg_ds_tag_i          (clk_gen_tag_lines_i.ds_tag_lines)
       ,.ext_clk_i             (ext_clk_i)
       ,.select_i              (2'b00)
       ,.clk_o                 (dfi_clk_2x_o)

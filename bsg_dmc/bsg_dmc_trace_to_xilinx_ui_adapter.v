@@ -8,7 +8,6 @@
 // ORGANIZATION: Bespoke Silicon Group, University of Washington
 //      CREATED: 01/07/22
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
 module bsg_dmc_trace_to_xilinx_ui_adapter
 	import bsg_dmc_pkg::*;
 	#(	parameter `BSG_INV_PARAM( data_width_p),
@@ -46,7 +45,8 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 
 	import bsg_dmc_pkg::*;
 
-	`declare_dmc_trace_entry_s(addr_width_p, burst_width_p, data_width_p)
+    localparam cmd_trace_zero_padding_width_lp = data_width_p + (data_width_p << 3) - cmd_width_p - addr_width_p;
+	`declare_dmc_cmd_trace_entry_s(addr_width_p)
 
 	// counter to load one packet per burst per cycle onto app_wdata and app_wmask
 	logic [$clog2(burst_width_p) - 1:0] write_count;
