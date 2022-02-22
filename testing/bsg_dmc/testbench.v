@@ -1,16 +1,15 @@
-`define WRITE 3'b000
-`define READ  3'b001
-
-`include "bsg_dmc.vh"
-
-module testbench
+module testbench();
   import bsg_tag_pkg::*;
   import bsg_dmc_pkg::*;
-  ();
+ 
   parameter clk_gen_num_adgs_p = 1;
   parameter ui_addr_width_p    = 28;
-  parameter ui_data_width_p    = 64;
+  parameter ui_data_width_p    = 32;
+`ifndef BRINGUP
   parameter ui_burst_length_p  = 8;
+`else
+  parameter ui_burst_length_p  = 8;
+`endif
   parameter dq_data_width_p    = 32;
   parameter cmd_afifo_depth_p  = 4;
   parameter cmd_sfifo_depth_p  = 4;
@@ -25,14 +24,13 @@ module testbench
 
   integer j,k;
 
-  wire bsg_tag_s        dmc_reset_tag_lines_lo;
-  wire bsg_tag_s  [3:0] dmc_dly_tag_lines_lo;
-  wire bsg_tag_s  [3:0] dmc_dly_trigger_tag_lines_lo;
-  wire bsg_tag_s        dmc_ds_tag_lines_lo;
-
   bsg_dmc_s                        dmc_p;
 
+  logic							   refresh_in_progress_lo;
+
   logic                            sys_reset;
+  logic							   clock_monitor_clk_lo;
+
   // User interface signals
   logic      [ui_addr_width_p-1:0] app_addr;
   app_cmd_e                        app_cmd;
@@ -56,10 +54,9 @@ module testbench
   wire                             app_sr_active;
   // Status signal
   wire                             init_calib_complete;
+  logic							   frequency_mismatch_lo;
 
   logic                            ui_clk;
-  logic                            dfi_clk_2x;
-  wire                             dfi_clk_1x;
   wire                             ui_clk_sync_rst;
 
   wire                      [11:0] device_temp;
@@ -95,53 +92,56 @@ module testbench
   wire  [(dq_data_width_p>>3)-1:0] ddr_dqs_n;
   wire       [dq_data_width_p-1:0] ddr_dq;
 
-  logic [burst_data_width_lp-1] wdata_array[integer];
-  logic [ui_addr_width_p] waddr_queue, raddr_queue[$];
-  logic [ui_addr_width_p] waddr, raddr;
-  logic [burst_data_width_lp-1] wdata, rdata;
+  // All tag lines from the btm
+  bsg_dmc_tag_lines_s tag_lines_lo;
 
-  wire [ui_burst_length_p-1:0] sipo_valid_lo;
-  wire [ui_burst_length_p-1:0][ui_data_width_p-1:0] sipo_data_lo;
-  wire [$clog2(ui_burst_length_p):0] sipo_yumi_cnt_li;
-  wire [burst_data_width_lp-1:0] sipo_data;
+  logic send_dynamic_tag, irritate_clock, clock_correction_done_lo;
 
-  logic [ui_addr_width_p] rx_addr;
-  logic [burst_data_width_lp-1:0] tx_data, rx_data;
+  traffic_generator #
+    (.num_adgs_p         ( clk_gen_num_adgs_p  )
+    ,.ui_addr_width_p    ( ui_addr_width_p     )
+    ,.ui_data_width_p    ( ui_data_width_p     )
+    ,.burst_data_width_p ( burst_data_width_lp )
+    ,.dq_data_width_p    ( dq_data_width_p     )
+    ,.cmd_afifo_depth_p  ( cmd_afifo_depth_p   )
+    ,.cmd_sfifo_depth_p  ( cmd_sfifo_depth_p   ))
+    // Tag lines
+  traffic_generator_inst
+    // Global asynchronous reset input, will be synchronized to each clock domain
+    // Consistent with the reset signal defined in Xilinx UI interface
+    // User interface signals
+    (.app_addr_o            ( app_addr            )
+    ,.app_cmd_o             ( app_cmd             )
+    ,.app_en_o              ( app_en              )
+    ,.app_rdy_i             ( app_rdy             )
+    ,.app_wdf_wren_o        ( app_wdf_wren        )
+    ,.app_wdf_data_o        ( app_wdf_data        )
+    ,.app_wdf_mask_o        ( app_wdf_mask        )
+    ,.app_wdf_end_o         ( app_wdf_end         )
+    ,.app_wdf_rdy_i         ( app_wdf_rdy         )
+    ,.app_rd_data_valid_i   ( app_rd_data_valid   )
+    ,.app_rd_data_i         ( app_rd_data         )
+    ,.app_rd_data_end_i     ( app_rd_data_end     )
+    // Reserved to be compatible with Xilinx IPs
+    ,.app_ref_req_o         ( app_ref_req         )
+    ,.app_ref_ack_i         ( app_ref_ack         )
+    ,.app_zq_req_o          ( app_zq_req          )
+    ,.app_zq_ack_i          ( app_zq_ack          )
+    ,.app_sr_req_o          ( app_sr_req          )
+    ,.app_sr_active_i       ( app_sr_active       )
+    // Status signal
+    ,.init_calib_complete_i ( init_calib_complete )
+    ,.ui_clk_o              ( ui_clk              )
+    ,.ui_clk_sync_rst_i     ( ui_clk_sync_rst     )
+	,.tag_lines_o			(tag_lines_lo)
+	,.stall_trace_reading_i (send_dynamic_tag)
+	,.irritate_clock_i		(irritate_clock)
+	,.refresh_in_progress_i (refresh_in_progress_lo)
+	,.clock_monitor_clk_i	(clock_monitor_clk_lo)
+	,.frequency_mismatch_o	(frequency_mismatch_lo)
+	,.clock_correction_done_o(clock_correction_done_lo)
+	);
 
-  integer read_transactions;
-
-`include "tasks.v"
-
-  initial begin
-    dmc_p.trefi = 1023;
-    dmc_p.tmrd = 1;
-    dmc_p.trfc = 15;
-    dmc_p.trc = 10;
-    dmc_p.trp = 2;
-    dmc_p.tras = 7;
-    dmc_p.trrd = 1;
-    dmc_p.trcd = 2;
-    dmc_p.twr = 10;
-    dmc_p.twtr = 7;
-    dmc_p.trtp = 10;
-    dmc_p.tcas = 3;
-    dmc_p.col_width = 11;
-    dmc_p.row_width = 14;
-    dmc_p.bank_width = 2;
-    dmc_p.dqs_sel_cal = 3;
-    dmc_p.init_cycles = 40010;
-    dmc_p.bank_pos = 25;
-    force dmc_inst.dmc_clk_rst_gen.btc_async_reset.tag_data_reg.data_r = 0;
-    force dmc_inst.dmc_clk_rst_gen.dly_lines[0].dly_line_inst.ctrl_rrr = 31;
-    force dmc_inst.dmc_clk_rst_gen.dly_lines[1].dly_line_inst.ctrl_rrr = 31;
-    force dmc_inst.dmc_clk_rst_gen.dly_lines[2].dly_line_inst.ctrl_rrr = 31;
-    force dmc_inst.dmc_clk_rst_gen.dly_lines[3].dly_line_inst.ctrl_rrr = 31;
-    force dmc_inst.dmc_clk_rst_gen.clk_gen_ds_inst.reset_i = 1'b1;
-    force dmc_inst.dmc_clk_rst_gen.clk_gen_ds_inst.strobe_r = 1'b0;
-    #100;
-    force dmc_inst.dmc_clk_rst_gen.clk_gen_ds_inst.reset_i = 1'b0;
-    force dmc_inst.dmc_clk_rst_gen.clk_gen_ds_inst.strobe_r = 1'b1;
-  end
 
   bsg_dmc #
     (.num_adgs_p            ( clk_gen_num_adgs_p  )
@@ -152,15 +152,10 @@ module testbench
     ,.cmd_afifo_depth_p     ( cmd_afifo_depth_p   )
     ,.cmd_sfifo_depth_p     ( cmd_sfifo_depth_p   ))
   dmc_inst
-    (.async_reset_tag_i     ( dmc_reset_tag_lines_lo       )
-    ,.bsg_dly_tag_i         ( dmc_dly_tag_lines_lo         )
-    ,.bsg_dly_trigger_tag_i ( dmc_dly_trigger_tag_lines_lo )
-    ,.bsg_ds_tag_i          ( dmc_ds_tag_lines_lo          )
+    (
 
-    ,.dmc_p_i               ( dmc_p               )
-
-    ,.sys_reset_i           ( sys_reset           )
-
+	.refresh_in_progress_o (refresh_in_progress_lo)
+	,.tag_lines_i (tag_lines_lo)
     ,.app_addr_i            ( app_addr            )
     ,.app_cmd_i             ( app_cmd             )
     ,.app_en_i              ( app_en              )
@@ -173,11 +168,11 @@ module testbench
     ,.app_rd_data_valid_o   ( app_rd_data_valid   )
     ,.app_rd_data_o         ( app_rd_data         )
     ,.app_rd_data_end_o     ( app_rd_data_end     )
-    ,.app_ref_req_i         ( 1'b0                )
+    ,.app_ref_req_i         ( app_ref_req         )
     ,.app_ref_ack_o         ( app_ref_ack         )
-    ,.app_zq_req_i          ( 1'b0                )
+    ,.app_zq_req_i          ( app_zq_req          )
     ,.app_zq_ack_o          ( app_zq_ack          )
-    ,.app_sr_req_i          ( 1'b0                )
+    ,.app_sr_req_i          ( app_sr_req          )
     ,.app_sr_active_o       ( app_sr_active       )
 
     ,.init_calib_complete_o ( init_calib_complete )
@@ -209,10 +204,9 @@ module testbench
     ,.ddr_dq_i              ( ddr_dq_li           )
 
     ,.ui_clk_i              ( ui_clk              )
-    ,.dfi_clk_2x_i          ( dfi_clk_2x          )
-    ,.dfi_clk_1x_o          ( dfi_clk_1x          )
     ,.ui_clk_sync_rst_o     ( ui_clk_sync_rst     )
-    ,.device_temp_o         ( device_temp         ));
+    ,.device_temp_o         ( device_temp         )
+	,.clock_monitor_clk_o	(clock_monitor_clk_lo));
 
   generate
     for(i=0;i<dq_group_lp;i++) begin: dm_io
@@ -248,80 +242,18 @@ module testbench
     end
   endgenerate
 
-  always #1.25 dfi_clk_2x = ~dfi_clk_2x;
-  //always #0.625 ui_clk = ~ui_clk;
-  always #2.5 ui_clk = ~ui_clk;
-
   initial begin
-    //$vcdplusmemon();
-    app_en = 0;
-    app_wdf_wren = 0;
-    app_wdf_end = 0;
+	  irritate_clock = 0;
+      send_dynamic_tag = 0;
+	  if($test$plusargs("irritate_clk")) begin
+      	#212us;
+	  	irritate_clock = 1;
+	  	#1us;
+	  	irritate_clock = 0;
+	  	@(frequency_mismatch_lo);
+      	send_dynamic_tag = 1;
+	  	@(clock_correction_done_lo);
+	  	send_dynamic_tag = 0;
+	 end
   end
-
-  initial begin
-    $display("\n#### Regression test started ####");
-    sys_reset = 1'b1;
-    ui_clk = 1'b0;
-    dfi_clk_2x = 1'b0;
-    #1000 sys_reset=1'b0;
-    repeat(100) @(posedge ui_clk);
-    for(k=0;k<256;k++) begin
-      waddr = k*dq_burst_length_lp;
-      wdata = 0;
-      for(j=0;j<ui_burst_length_p;j++)
-        wdata = (wdata << ui_data_width_p) + waddr + j;
-      wdata_array[waddr] = wdata;
-      $display("Time: %8d ns, Write %x to %x", $time(), wdata, waddr);
-      fork
-        ui_cmd(`WRITE, waddr);
-        ui_write(0, wdata);
-      join
-    end
-    for(k=0;k<256;k++) begin
-      raddr = k*dq_burst_length_lp;
-      raddr_queue.push_front(raddr);
-      ui_cmd(`READ, raddr);
-    end
-    repeat(1000) @(posedge ui_clk);
-    $display("\nRegression test passed!");
-    $display("\n#### Regression test ended ####");
-    $finish();
-  end
-
-  for(i=0;i<ui_burst_length_p;i++) begin
-    assign sipo_data[ui_data_width_p*i+:ui_data_width_p] = sipo_data_lo[i];
-  end
-
-  bsg_serial_in_parallel_out #
-    (.width_p    ( ui_data_width_p   )
-    ,.els_p      ( ui_burst_length_p ))
-  sipo
-    (.clk_i      ( ui_clk            )
-    ,.reset_i    ( ui_clk_sync_rst   )
-    ,.valid_i    ( app_rd_data_valid )
-    ,.data_i     ( app_rd_data       )
-    ,.ready_o    (                   ) 
-    ,.valid_o    ( sipo_valid_lo     )
-    ,.data_o     ( sipo_data_lo      )
-    ,.yumi_cnt_i ( sipo_yumi_cnt_li  ));
-
-  assign sipo_yumi_cnt_li = ($clog2(ui_burst_length_p)+1)'(&sipo_valid_lo? ui_burst_length_p: 0);
-
-  always @(posedge ui_clk) begin
-    if(&sipo_valid_lo) begin
-      read_transactions = read_transactions + 1;
-      rx_addr = raddr_queue.pop_back();
-      tx_data = wdata_array[rx_addr];
-      rx_data = sipo_data;
-      $display("Time: %8d ns, Read %x from %x", $time(), rx_data, rx_addr);
-      if(tx_data != rx_data) begin
-        $display("Error: Data expected to be %x, but %x received", tx_data, rx_data);
-        $display("\nRegression test failed!");
-        $finish();
-      end
-    end
-  end
-
 endmodule
-

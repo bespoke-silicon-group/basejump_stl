@@ -1,5 +1,6 @@
-
 package bsg_dmc_pkg;
+  import bsg_tag_pkg::*;
+
   typedef struct packed {
     logic [15:0] trefi;
     logic  [3:0] tmrd;
@@ -21,11 +22,11 @@ package bsg_dmc_pkg;
     logic [15:0] init_cycles;
   } bsg_dmc_s;
 
-  typedef enum logic [2:0]
-    {RP = 3'b011 // read with auto precharge
-    ,WP = 3'b010 // write with auto precharge
-    ,RD = 3'b001 // read
-    ,WR = 3'b000 // write
+  typedef enum logic [3:0]
+    {RP = 3'b0011 // read with auto precharge
+    ,WP = 3'b0010 // write with auto precharge
+    ,RD = 3'b0001 // read
+    ,WR = 3'b0000 // write
   } app_cmd_e;
 
   typedef enum logic [3:0]
@@ -46,4 +47,31 @@ package bsg_dmc_pkg;
     logic [2:0] ba;
     logic [15:0] addr;
   } dfi_cmd_sfifo_entry_s;
+
+  typedef struct packed {
+    bsg_tag_s         bsg_ds_tag;
+    bsg_tag_s [3:0]   bsg_dly_trigger_tag;
+    bsg_tag_s [3:0]   bsg_dly_tag;    
+    bsg_tag_s         async_reset_tag;
+  } bsg_dmc_delay_tag_lines_s;
+
+  typedef struct packed {
+    bsg_tag_s [13:0] tag_lines;
+  } bsg_dmc_cfg_tag_lines_s;
+
+  typedef struct packed {
+    bsg_tag_s bsg_clk_monitor_ds_tag;
+    bsg_tag_s ds_tag_lines;
+    bsg_tag_s osc_trigger_tag_lines;
+    bsg_tag_s osc_tag_lines;
+    bsg_tag_s async_reset_tag_lines;
+  } bsg_dmc_clk_gen_tag_lines_s;
+
+  typedef struct packed {
+    bsg_dmc_clk_gen_tag_lines_s clk_gen_tag_lines;
+    bsg_dmc_cfg_tag_lines_s cfg_tag_lines;
+    bsg_dmc_delay_tag_lines_s delay_tag_lines;
+  } bsg_dmc_tag_lines_s;
+
+
 endpackage // bsg_dmc_pkg

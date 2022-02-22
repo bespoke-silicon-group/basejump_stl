@@ -1,40 +1,54 @@
 include ../../../bsg_cadenv/cadenv.mk
 
-ANALYSIS_OPTIONS = -full64
-ANALYSIS_OPTIONS += -sverilog
-ANALYSIS_OPTIONS += +incdir+../../bsg_clk_gen
-ANALYSIS_OPTIONS += +incdir+../../bsg_misc
 
 ELABORATE_OPTIONS = -full64
+ELABORATE_OPTIONS += -sverilog
+ELABORATE_OPTIONS += +incdir+../../bsg_clk_gen
+ELABORATE_OPTIONS += +incdir+../../bsg_misc
+ELABORATE_OPTIONS += +incdir+../../bsg_tag
+ELABORATE_OPTIONS += +incdir+../../bsg_dmc
+ELABORATE_OPTIONS += +incdir+lpddr_verilog_model
 ELABORATE_OPTIONS += -debug_pp
+ELABORATE_OPTIONS += -sverilog
 ELABORATE_OPTIONS += -lca
 ELABORATE_OPTIONS += +vcs+vcdpluson
 ELABORATE_OPTIONS += +vcs+vcdplusmemon
+ELABORATE_OPTIONS += +define+den2048Mb+sg5+x16+FULL_MEM
+ELABORATE_OPTIONS += -timescale=1ns/1ps
+ELABORATE_OPTIONS += -assert svaext
+#Enable below line for using non-synthesisable UVM TB
+#ELABORATE_OPTIONS += +define+NONSYNTH_TB
+ELABORATE_OPTIONS += +lint=TFIPC-L
 
 RUN_OPTIONS = 
 
-analyze:
-	$(VCS_BIN)/vlogan $(ANALYSIS_OPTIONS) -timescale=1ns/1ps +incdir+lpddr_verilog_model+../../bsg_dmc +define+den2048Mb+sg5+x16+FULL_MEM -f filelist.lst -l $@.log
-	touch $@
+BSG_TRACE_FILES := $(notdir $(wildcard *.tr))
+BSG_TRACE_ROMS  := ${BSG_TRACE_FILES:.tr=_rom.v}
 
-elaborate: analyze
-	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l $@.log testbench
+bsg_dmc_trace_rom_%.tr:
+	python bsg_dmc_trace_rom.py $* > $@
+
+%.v: %.tr
+	../../bsg_mem/bsg_ascii_to_rom.py $< $* > $@
+
+elaborate: 
+	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l $@.log -f filelist.lst ddr_clock_monitor_nonsynth.v testbench.v
 	touch $@
 
 run: elaborate
 	./simv $(RUN_OPTIONS) -l $@.log
 	touch $@
 
-dve: run
+dve: 
 	$(VCS_BIN)/dve -full64 -vpd vcdplus.vpd &
 
 clean:
-	rm analyze elaborate run
+	rm -rf analyze elaborate run
 	rm -rf *.log
 	rm -rf analyze_*
-	rm -rf *.vpd
+	#rm -rf *.vpd
 	rm -rf simv*
 	rm -rf csrc
 	rm -rf ucli.key
-	rm -rf DVEfiles
+	#rm -rf DVEfiles
 	rm -rf AN.DB
