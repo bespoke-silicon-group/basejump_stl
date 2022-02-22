@@ -45,11 +45,11 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 
 	import bsg_dmc_pkg::*;
 
-    localparam cmd_trace_zero_padding_width_lp = data_width_p + (data_width_p << 3) - cmd_width_p - addr_width_p;
-	`declare_dmc_cmd_trace_entry_s(addr_width_p)
+    localparam cmd_trace_zero_padding_width_lp = data_width_p + mask_width_lp - cmd_width_p - addr_width_p;
+	`declare_dmc_cmd_trace_entry_s(addr_width_p, cmd_trace_zero_padding_width_lp)
 
 	// counter to load one packet per burst per cycle onto app_wdata and app_wmask
-	logic [$clog2(burst_width_p) - 1:0] write_count;
+	logic [`BSG_SAFE_CLOG2(burst_width_p) - 1:0] write_count;
 
 	logic transaction_in_progress;
 
@@ -106,9 +106,9 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
         end
     end
 
-    assign app_wdf_data_o = ( trace_data_valid_i & ~trace_data.wdata_cmd_n) ? trace_data_i[35:4] : 0;
-    assign app_wdf_mask_o = ( trace_data_valid_i & ~trace_data.wdata_cmd_n) ? trace_data_i[3:0] : 0;
+    assign app_wdf_data_o = ( trace_data_valid_i & ~trace_data.wdata_cmd_n & app_wdf_rdy_i) ? trace_data_i[35:4] : 0;
+    assign app_wdf_mask_o = ( trace_data_valid_i & ~trace_data.wdata_cmd_n & app_wdf_rdy_i) ? trace_data_i[3:0] : 0;
 
-	assign read_data_to_consumer_o = (app_rd_data_valid_i) ? app_rd_data_i : 0;
+	assign read_data_to_consumer_o =  app_rd_data_i;
 	assign read_data_to_consumer_valid_o = app_rd_data_valid_i ? 1 : 0;
 endmodule

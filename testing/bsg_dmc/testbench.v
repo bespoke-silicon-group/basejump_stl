@@ -5,11 +5,7 @@ module testbench();
   parameter clk_gen_num_adgs_p = 1;
   parameter ui_addr_width_p    = 28;
   parameter ui_data_width_p    = 32;
-`ifndef BRINGUP
   parameter ui_burst_length_p  = 8;
-`else
-  parameter ui_burst_length_p  = 8;
-`endif
   parameter dq_data_width_p    = 32;
   parameter cmd_afifo_depth_p  = 4;
   parameter cmd_sfifo_depth_p  = 4;
