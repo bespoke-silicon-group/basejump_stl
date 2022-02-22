@@ -63,7 +63,7 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 
 	assign burst_done =  (write_count == burst_width_p  - 1);
 
-	assign is_write = (trace_data_valid_i && trace_data.wdata_cmd_n) ? ((trace_data.cmd == WP) || (trace_data.cmd == WR) )  : 0;
+	assign is_write = (trace_data_valid_i && trace_data.cmd_wdata_n) ? ((trace_data.cmd == WP) || (trace_data.cmd == WR) )  : 0;
 
     /*
     This module is at a level above the dmc_controller where we stall transactions. So this module issues transactions to the dmc_controller which decides whether to forward it to DRAM or not.
@@ -90,9 +90,22 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 					);
 	
 	// Convert UI command and addr
-	assign app_en_o = (trace_data_valid_i &   app_rdy_i) ? (trace_data.wdata_cmd_n) : 0;
-	assign app_cmd_o = (trace_data_valid_i &   trace_data.wdata_cmd_n & app_rdy_i) ? trace_data.cmd : 0;
-	assign app_addr_o = (trace_data_valid_i &   trace_data.wdata_cmd_n & app_rdy_i) ? trace_data.addr : 0;
+    always_comb begin
+        if(trace_data_valid_i &&   app_rdy_i && trace_data.cmd_wdata_n ) begin
+            if((trace_data.cmd == WR) || (trace_data.cmd == WP) && app_wdf_rdy_i) begin
+                app_en_o = 1;
+            end
+            else if((trace_data.cmd == RD) || (trace_data.cmd == RP)) begin
+                app_en_o = 1;
+            end
+        end
+        else begin
+            app_en_o = 0;
+        end
+    end
+
+	assign app_cmd_o = (trace_data_valid_i &   trace_data.cmd_wdata_n & app_rdy_i) ? trace_data.cmd : 0;
+	assign app_addr_o = (trace_data_valid_i &   trace_data.cmd_wdata_n & app_rdy_i) ? trace_data.addr : 0;
 
     always @(posedge core_clk_i) begin
         if(core_reset_i) begin
@@ -106,8 +119,8 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
         end
     end
 
-    assign app_wdf_data_o = ( trace_data_valid_i & ~trace_data.wdata_cmd_n & app_wdf_rdy_i) ? trace_data_i[35:4] : 0;
-    assign app_wdf_mask_o = ( trace_data_valid_i & ~trace_data.wdata_cmd_n & app_wdf_rdy_i) ? trace_data_i[3:0] : 0;
+    assign app_wdf_data_o = ( trace_data_valid_i & ~trace_data.cmd_wdata_n & app_wdf_rdy_i) ? trace_data_i[35:4] : 0;
+    assign app_wdf_mask_o = ( trace_data_valid_i & ~trace_data.cmd_wdata_n & app_wdf_rdy_i) ? trace_data_i[3:0] : 0;
 
 	assign read_data_to_consumer_o =  app_rd_data_i;
 	assign read_data_to_consumer_valid_o = app_rd_data_valid_i ? 1 : 0;
