@@ -20,10 +20,8 @@ class TraceGen:
     trace += "00"  + format(precharge, str(1)+"b") + "1_"
     trace += format(addr, "0"+str(self.addr_width_p)+"b") 
     #+ "_"
-    #for i in range(self.burst_length_p):
-    #    trace += (self.mask_width_lp)*"0" + "_"
-    #    trace += (self.data_width_p)*"0" + "_"
     self.print_trace(trace)
+
 
   def send_write(self, addr, data, mask):
     trace = "0001_"
@@ -49,33 +47,31 @@ class TraceGen:
     #    trace += format(mask, "0"+str(self.mask_width_lp)+"b") + "_"        
 
   def recv_data(self, data):
-    trace = "0010_"
-    trace += "1111_"
-    trace += (self.addr_width_p)*"0" + "_"
-    for i in range(self.burst_length_p):
-        trace += format(data, "0"+str(self.data_width_p)+"b") + "_"
 
     for i in range(self.burst_length_p):
-        trace += (self.mask_width_lp)*"0" + "_"        
-    self.print_trace(trace)
+        trace = "0010_"
+        trace += "0000_"
+        trace += (self.mask_width_lp)*"0" + "_"
+        trace += format(data, "0"+str(self.data_width_p)+"b")
+        self.print_trace(trace)
+
+    #for i in range(self.burst_length_p):
+    #    trace += format(data, "0"+str(self.data_width_p)+"b") + "_"
+
+    #for i in range(self.burst_length_p):
+    #    trace += (self.mask_width_lp)*"0" + "_"        
 
   def test_done(self):
     print("#### DONE ####")
     trace = "0011_"
     trace += "1111_"    
     trace += (self.data_width_p + self.mask_width_lp)*"0"
-    #for i in range(self.burst_length_p):
-    #    trace += (self.data_width_p)*"0" + "_"            
-    #    trace += (self.mask_width_lp)*"0" + "_"        
     self.print_trace(trace)
 
   def nop(self):
     trace = "0000_"
     trace += "1111_"    
     trace += (self.data_width_p + self.mask_width_lp)*"0" 
-    #for i in range(self.burst_length_p):
-    #    trace += (self.data_width_p)*"0" + "_"            
-    #    trace += (self.mask_width_lp)*"0" + "_"            
     self.print_trace(trace)
 
   def wait(self, num_cycle):
@@ -87,9 +83,6 @@ class TraceGen:
     trace = "0101_"
     trace += "1111_"        
     trace += (self.data_width_p + self.mask_width_lp)*"0" 
-    #for i in range(self.burst_length_p):
-    #    trace += (self.data_width_p)*"0" + "_"            
-    #    trace += (self.mask_width_lp)*"0" + "_"            
     self.print_trace(trace)
 
   def print_trace(self, data):
@@ -111,8 +104,8 @@ if __name__ == "__main__":
     delay = random.randint(0,10)
 
 
-    #mask_val = 0
-    mask_val = random.randint(0, 2^(tg.mask_width_lp))
+    mask_val = 0
+    #mask_val = random.randint(0, 2^(tg.mask_width_lp))
 
     if delay == 0:
       pass
@@ -125,7 +118,7 @@ if __name__ == "__main__":
       write_not_read = random.randint(0,1)
       if write_not_read == 0:
         tg.send_read(addr)
-        #tg.recv_data(mem_dict[addr])
+        tg.recv_data(mem_dict[addr])
       else:
         tg.send_write(addr, write_val, mask_val)
         #tg.recv_data(0)
@@ -137,6 +130,7 @@ if __name__ == "__main__":
       mem_dict[addr] = write_val
       write_val += 4
 
+  #tg.wait(500)
 
   # read back everything
   for tu in mem_dict.items():
@@ -150,5 +144,5 @@ if __name__ == "__main__":
       tg.wait(delay)
 
     tg.send_read(tu[0])
-    #tg.recv_data(tu[1])  
+    tg.recv_data(tu[1])  
   tg.test_done()

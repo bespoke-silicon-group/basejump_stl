@@ -431,6 +431,7 @@ module traffic_generator
   	
   	logic dmc_adapter_ready_lo;
 
+    logic trace_reading_done_lo;
 	// Whatever testing environment that goes into the FPGA: trace ROM, trace replay, FPGA side DDR upstream and downstream links
 	bsg_dmc_tester
 				#(	.data_width_p(ui_data_width_p),
@@ -454,7 +455,8 @@ module traffic_generator
 					.asic_link_upstream_edge_valid_i(asic_link_upstream_edge_valid_li),
 					.fpga_link_downstream_edge_token_o(fpga_link_downstream_edge_token_li),
 
-					.en_trace_reading_i(en_trace_reading_li)
+					.en_trace_reading_i(en_trace_reading_li),
+                    .trace_reading_done_o(trace_reading_done_lo)
 				);
 
   	assign asic_link_downstream_core_yumi_lo = asic_link_downstream_core_valid_lo & dmc_input_fifo_ready_lo ;
@@ -490,6 +492,9 @@ module traffic_generator
         else if(read_data_to_consumer_valid_lo) begin
             asic_link_upstream_core_valid_li <= 1;
             asic_link_upstream_core_data_li <= read_data_to_consumer_lo;
+        end
+        else begin
+            asic_link_upstream_core_valid_li <= 0;
         end
     end
 
@@ -615,8 +620,8 @@ module traffic_generator
 		@(posedge ui_clk); #1;
 			asic_link_reset_li = 0;
 
-		//@(posedge trace_reading_done_lo); #1000;
-		//$finish();
+		@(posedge trace_reading_done_lo); #1000;
+		$finish();
 	end
 
 `endif

@@ -38,7 +38,8 @@ module bsg_dmc_tester
 			input 							asic_link_upstream_edge_clk_i,
 			input [payload_width_lp/2-1:0]	asic_link_upstream_edge_data_i,
 			input							asic_link_upstream_edge_valid_i,
-			output							fpga_link_downstream_edge_token_o
+			output							fpga_link_downstream_edge_token_o,
+            output                          trace_reading_done_o
 
 		);
 
@@ -59,16 +60,15 @@ module bsg_dmc_tester
 	logic read_data_to_trace_replay_valid;
 	logic trace_replay_ready_to_read;
 
-  	logic trace_reading_done_lo;
-
 	// FPGA SIDE LINK EDGE SIGNALS
 	logic fpga_link_upstream_edge_token;
 	logic fpga_link_upstream_edge_clk;
 	logic fpga_link_upstream_core_ready_lo;
 
 	bsg_trace_replay
-  					#(  .payload_width_p(payload_width_lp),
-  					  	.rom_addr_width_p(rom_addr_width_lp)
+  					#(  .payload_width_p(payload_width_lp)
+  					  	,.rom_addr_width_p(rom_addr_width_lp)
+                        ,.debug_p(2)
   					) trace_replay
     				(.clk_i(fpga_link_clk_i),
     				.reset_i(fpga_link_reset_i),
@@ -85,7 +85,7 @@ module bsg_dmc_tester
     				.rom_addr_o(trace_rom_addr_lo),
     				.rom_data_i(trace_rom_data_lo),
 
-    				.done_o(trace_reading_done_lo),
+    				.done_o(trace_reading_done_o),
     				.error_o()
   					);
 
