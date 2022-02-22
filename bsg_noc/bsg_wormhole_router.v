@@ -18,6 +18,9 @@ module bsg_wormhole_router
    ,parameter reverse_order_p       = 0
    ,parameter `BSG_INV_PARAM(len_width_p)
    ,parameter debug_lp              = 0
+   // hold router_output_control input selection until consumed
+   // See bsg_wormhole_router_output_control and bsg_round_robin_arb.v for details
+   ,parameter hold_on_valid_p       = 0
    )
 
   (input clk_i
@@ -206,7 +209,8 @@ module bsg_wormhole_router
       bsg_array_concentrate_static #(.width_p(flit_width_p), .pattern_els_p(routing_matrix_p[1][i])) conc4
       (.i(fifo_data_lo),.o(fifo_data_sparse_lo));
 
-      bsg_wormhole_router_output_control #(.input_dirs_p(input_dirs_sparse_lp)) woc
+      bsg_wormhole_router_output_control
+      #(.input_dirs_p(input_dirs_sparse_lp), .hold_on_valid_p(hold_on_valid_p)) woc
       (.clk_i
       ,.reset_i
       ,.reqs_i    (reqs_li   )

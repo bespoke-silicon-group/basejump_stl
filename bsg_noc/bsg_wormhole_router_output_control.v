@@ -1,7 +1,16 @@
 `include "bsg_defines.v"
 
 module bsg_wormhole_router_output_control
-  #(parameter `BSG_INV_PARAM(input_dirs_p))
+  #(parameter `BSG_INV_PARAM(input_dirs_p)
+    // Hold on valid sets the arbitration policy such that once
+    // a output tag is selected, it remains selected until it is
+    // acked. This is consistent with BaseJump STL handshake
+    // assumptions. Notably, this parameter is required to work
+    // with bsg_parallel_in_serial_out_passthrough. This policy
+    // has a slight throughput degradation but effectively
+    // arbitrates based on age, so minimizes worst case latency.
+    , parameter hold_on_valid_p = 0
+    )
    (input clk_i
     , input reset_i
 
@@ -31,7 +40,8 @@ module bsg_wormhole_router_output_control
    wire                     free_to_schedule = !scheduled_with_release;
 
    bsg_round_robin_arb
-     #(.inputs_p(input_dirs_p)) brr
+     #(.inputs_p(input_dirs_p), .hold_on_valid_p(hold_on_valid_p))
+   brr
    (.clk_i
     ,.reset_i
     ,.grants_en_i  (free_to_schedule)      // ports are all free
