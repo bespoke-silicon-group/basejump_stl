@@ -23,17 +23,17 @@ ELABORATE_OPTIONS += +lint=TFIPC-L
 RUN_OPTIONS =
 #RUN_OPTIONS += +irritate_clk
 
-BSG_TRACE_FILES := $(notdir $(wildcard *.tr))
+BSG_TRACE_FILES := bsg_dmc_trace_rom.tr bsg_tag_boot_rom.tr
 BSG_TRACE_ROMS  := ${BSG_TRACE_FILES:.tr=_rom.v}
 
-bsg_dmc_trace_rom_%.tr:
-	python bsg_dmc_trace_rom.py $* > $@
+bsg_dmc_trace_rom.tr:
+	python bsg_dmc_trace_rom.py 0 > $@
 
 %.v: %.tr
 	../../bsg_mem/bsg_ascii_to_rom.py $< $* > $@
 
-elaborate: 
-	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l $@.log -f filelist.lst ddr_clock_monitor_nonsynth.v testbench.v
+elaborate: bsg_dmc_trace_rom.v bsg_tag_boot_rom.v
+	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l $@.log -f filelist.lst
 	touch $@
 
 run: elaborate
@@ -47,7 +47,10 @@ clean:
 	rm -rf analyze elaborate run
 	rm -rf *.log
 	rm -rf analyze_*
-	#rm -rf *.vpd
+	rm -rf bsg_dmc_trace_rom.tr
+	rm -rf *_rom.v
+	rm -rf *.vpd
+	rm -rf vc_hdrs.h
 	rm -rf simv*
 	rm -rf csrc
 	rm -rf ucli.key

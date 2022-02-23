@@ -7,6 +7,10 @@
   `define UI_CLK_PERIOD 2500.0
 `endif
 
+`ifndef DFI_CLK_PERIOD
+  `define DFI_CLK_PERIOD 2500.0
+`endif
+
 `ifndef TAG_CLK_PERIOD
   `define TAG_CLK_PERIOD 10000.0
 `endif
@@ -70,6 +74,7 @@ module traffic_generator
   ,output                             ui_clk_o
   //
   ,input                              ui_clk_sync_rst_i
+  ,output                             dfi_clk_o
   ,input							  irritate_clock_i
   ,input							  refresh_in_progress_i
   ,input							  clock_monitor_clk_i
@@ -88,6 +93,11 @@ module traffic_generator
   assign ui_clk_o = ui_clk;
   bsg_nonsynth_clock_gen #(.cycle_time_p(`UI_CLK_PERIOD)) ui_clk_gen (.o(ui_clk));
 	
+  logic dfi_clk;
+
+  assign dfi_clk_o = dfi_clk;
+  bsg_nonsynth_clock_gen #(.cycle_time_p(`DFI_CLK_PERIOD)) dfi_clk_gen (.o(dfi_clk));
+
   logic fpga_link_clk;
   bsg_nonsynth_clock_gen #(.cycle_time_p(`FPGA_CLK_PERIOD)) fpga_link_clk_gen (.o(fpga_link_clk));
 
@@ -246,7 +256,7 @@ module traffic_generator
       end
   end
 
-  ddr_clock_monitor_nonsynth
+  bsg_nonsynth_dmc_clock_monitor
 	#(.max_fpga_count(10)
 	  ,.expected_ddr_period_ns_p(10)
 	  ,.fpga_clk_period_ns_p(10)
@@ -550,11 +560,11 @@ module traffic_generator
   						(	.core_clk_i(ui_clk),
   							.core_reset_i(ui_clk_sync_rst_i),
 							//.ui_clk_sync_rst_i(ui_clk_sync_rst_i),
-  							.trace_data_i(dmc_adapter_input_data_lo),
-  						 	.trace_data_valid_i(dmc_adapter_input_valid_lo),
+  							.data_i(dmc_adapter_input_data_lo),
+  						 	.v_i(dmc_adapter_input_valid_lo),
 
-							.read_data_to_consumer_valid_o(read_data_to_consumer_valid_lo),
-							.read_data_to_consumer_o(read_data_to_consumer_lo),
+							.v_o(read_data_to_consumer_valid_lo),
+							.data_o(read_data_to_consumer_lo),
 
   						 	.ready_o(dmc_adapter_ready_lo),
   	

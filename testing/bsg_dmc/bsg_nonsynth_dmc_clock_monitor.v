@@ -1,13 +1,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //    		BASEJUMP STL
 //
-//       MODULE: ddr_clock_monitor
+//       MODULE: bsg_nonsynth_dmc_clock_monitor
 //  DESCRIPTION: Monitors DDR clock frequency with respect to the FPGA clock frequency.
 //    AUTHOR(S): Akash Suresh, akashs3@uw.edu
 // ORGANIZATION: Bespoke Silicon Group, University of Washington
 //      CREATED: 01/23/22
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-module ddr_clock_monitor_nonsynth
+module bsg_nonsynth_dmc_clock_monitor
 				#(  parameter counter_width_p = 1024
 					,parameter sampling_period_ns_p = 100
 					,`BSG_INV_PARAM(max_fpga_count)
@@ -32,7 +32,7 @@ module ddr_clock_monitor_nonsynth
 
 	// counter to clock 100 ns on fpga clock
 	bsg_counter_clear_up 
-				#(.max_val_p(counter_width_p),
+				#(.max_val_p(counter_width_p-1),
 				  .init_val_p(0))
 				fpga_clock_counter
 				(.clk_i(fpga_clk),
@@ -52,6 +52,8 @@ module ddr_clock_monitor_nonsynth
 				 .w_reset_i(fpga_counter_clear_li | fpga_reset),
 				 .w_inc_i(1'b1),
 				 .r_clk_i(fpga_clk),
+                 .w_ptr_binary_r_o(),
+                 .w_ptr_gray_r_o(),
 				 .w_ptr_gray_r_rsync_o(ddr_clock_gray_count_lo)
 				);
 
@@ -108,7 +110,7 @@ module ddr_clock_monitor_tb;
 	logic ddr_clk;
 	logic frequency_mismatch;
 
-	ddr_clock_monitor_nonsynth
+	bsg_nonsynth_dmc_clock_monitor
    					#(.max_fpga_count(20)
 					  ,.expected_ddr_period_ns_p(2.5)
 					  ,.fpga_clk_period_ns_p(5)
