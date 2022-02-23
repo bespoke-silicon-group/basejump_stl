@@ -6,7 +6,7 @@ module bsg_dmc_clk_rst_gen
   import bsg_tag_pkg::bsg_tag_s;
   import bsg_dmc_pkg::*;
  #(parameter num_adgs_p         = 2
-  ,parameter `BSG_INV_PARAM(num_lines_p        ))
+  ,parameter `BSG_INV_PARAM(dq_groups_p        ))
   (
   input bsg_dmc_dly_tag_lines_s         dly_tag_lines_i
   ,input bsg_dmc_osc_tag_lines_s        osc_tag_lines_i    
@@ -14,8 +14,8 @@ module bsg_dmc_clk_rst_gen
   ,output                               async_reset_o
   // clock input and delayed clock output (for dqs), generating 90-degree phase
   // shift
-  ,input           [num_lines_p-1:0]    clk_i
-  ,output          [num_lines_p-1:0]    clk_o
+  ,input           [dq_groups_p-1:0]    dqs_clk_i
+  ,output          [dq_groups_p-1:0]    dqs_clk_o
   // 2x clock input from clock generator and 1x clock output
   //
   ,input                                ext_clk_i
@@ -31,13 +31,13 @@ module bsg_dmc_clk_rst_gen
     ,.data_async_r_o ( async_reset_o     ));
 
   // Clock Generator (CG) Instance
-  for(i=0;i<num_lines_p;i++) begin: dly_lines
+  for(i=0;i<dq_groups_p;i++) begin: dly_lines
     bsg_dly_line #(.num_adgs_p(num_adgs_p)) dly_line_inst
       (.bsg_tag_i         ( dly_tag_lines_i.dly[i]         )
       ,.bsg_tag_trigger_i ( dly_tag_lines_i.dly_trigger[i] )
-      ,.async_reset_i     ( async_reset_o            )
-      ,.clk_i             ( clk_i[i]                 )
-      ,.clk_o             ( clk_o[i]                 ));
+      ,.async_reset_i     ( async_reset_o                )
+      ,.clk_i             ( dqs_clk_i[i]                 )
+      ,.clk_o             ( dqs_clk_o[i]                 ));
   end
 
   `declare_bsg_clk_gen_ds_tag_payload_s(2)
@@ -75,7 +75,7 @@ module bsg_dmc_clk_rst_gen
   clk_gen_ds_inst
     (.clk_i   ( dfi_clk_2x_o               )
     ,.reset_i ( ds_tag_payload_r.reset )
-    ,.val_i   ( 2'd0                   )
+    ,.val_i   ( ds_tag_payload_r.val   )
     ,.clk_r_o ( dfi_clk_1x_o               ));
 
   logic async_reset_lo;

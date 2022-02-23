@@ -132,15 +132,15 @@ module bsg_dmc
 					 
   bsg_dmc_clk_rst_gen #
     (.num_adgs_p  ( num_adgs_p  )
-    ,.num_lines_p ( dq_group_lp ))
+    ,.dq_groups_p ( dq_group_lp ))
   dmc_clk_rst_gen
     // tag lines
     (
     .async_reset_o          ( sys_reset             )
     ,.dly_tag_lines_i       ( dly_tag_lines_i       )
     ,.osc_tag_lines_i       ( osc_tag_lines_i       )
-    ,.clk_i                 ( ddr_dqs_p_i           )
-    ,.clk_o                 ( dqs_p_li              )
+    ,.dqs_clk_i             ( ddr_dqs_p_i           )
+    ,.dqs_clk_o             ( dqs_p_li              )
     ,.ext_clk_i             ( ext_clk_i             )
     ,.dfi_clk_2x_o          ( dfi_clk_2x_lo         )
     ,.dfi_clk_1x_o          ( dfi_clk_1x_lo         ));
