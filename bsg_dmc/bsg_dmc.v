@@ -17,7 +17,8 @@ module bsg_dmc
   ,localparam dq_group_lp        = dq_data_width_p >> 3)
   // Tag lines
   (
-  output logic						 refresh_in_progress_o
+  output logic                       transaction_in_progress_o
+  ,output logic						 refresh_in_progress_o
   ,input bsg_dmc_dly_tag_lines_s 	 dly_tag_lines_i
   ,input bsg_dmc_cfg_tag_lines_s 	 cfg_tag_lines_i
   ,input bsg_dmc_osc_tag_lines_s 	 osc_tag_lines_i
@@ -170,6 +171,7 @@ module bsg_dmc
     ,.ui_clk_sync_rst_i     ( ui_reset              )
 	,.stall_transmission_i  (stall_transmission_lo  )
 	,.refresh_in_progress_o (refresh_in_progress_o  )
+	,.transaction_in_progress_o (transaction_in_progress_o )
     // User interface signals
     ,.app_addr_i            ( app_addr_i            )
     ,.app_cmd_i             ( app_cmd_i             )

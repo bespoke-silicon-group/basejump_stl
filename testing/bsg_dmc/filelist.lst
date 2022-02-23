@@ -34,6 +34,7 @@
 ../../bsg_misc/bsg_buf.v
 ../../bsg_misc/bsg_circular_ptr.v
 ../../bsg_misc/bsg_counter_clock_downsample.v
+../../bsg_misc/bsg_counter_up_down.v
 ../../bsg_misc/bsg_dff.v
 ../../bsg_misc/bsg_dff_reset_en.v
 ../../bsg_misc/bsg_mux.v

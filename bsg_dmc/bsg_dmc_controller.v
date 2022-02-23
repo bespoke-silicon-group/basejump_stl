@@ -18,6 +18,7 @@ module bsg_dmc_controller
 
   ,input								stall_transmission_i
   ,output logic							refresh_in_progress_o
+  ,output logic                         transaction_in_progress_o
   // User interface signals
   ,input          [ui_addr_width_p-1:0] app_addr_i
   ,input app_cmd_e                      app_cmd_i
@@ -429,7 +430,7 @@ module bsg_dmc_controller
     ,.data_o             ( cmd_sfifo_rdata    )
     ,.yumi_i             ( cmd_sfifo_rinc     ));
 
-  assign refresh_in_progress_o = (c_cmd == REF);
+  assign refresh_in_progress_o = (cstate == REFR);
 
   always_comb begin
     if(cmd_sfifo_valid && !stall_transmission_i)
@@ -743,6 +744,22 @@ module bsg_dmc_controller
         rd_cnt <= rd_cnt + 1;
     end
   end
+
+  logic [`BSG_WIDTH(cmd_sfifo_depth_p)-1:0] txn_cnt;
+  bsg_counter_up_down #
+    (.max_val_p(cmd_sfifo_depth_p)
+    ,.init_val_p(0)
+    ,.max_step_p(1)
+    ,.disable_overflow_warning_p(1))
+  txn_counter
+    (.clk_i(ui_clk_i)
+     ,.reset_i(ui_clk_sync_rst_i)
+     ,.up_i(app_en_i)
+     ,.down_i((app_wdf_end_i & app_wdf_rdy_o) || (app_rd_data_end_o))
+     ,.count_o(txn_cnt)
+     );
+  assign transaction_in_progress_o = (txn_cnt != '0);
+     
 
   assign app_rd_data_valid_o = rx_piso_valid_lo;
   assign app_rd_data_o       = rx_piso_data_lo;

@@ -54,8 +54,6 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 	// counter to load one packet per burst per cycle onto app_wdata and app_wmask
 	logic [`BSG_SAFE_CLOG2(burst_width_p) - 1:0] write_count;
 
-	logic transaction_in_progress;
-
 	logic burst_done;
     logic read_data_valid_li, read_data_fifo_ready_lo;
     logic [`BSG_SAFE_CLOG2(read_data_buffer_size_lp) -1 :0] read_credit;
@@ -66,18 +64,11 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 	assign cmd_trace_data = data_i;
     assign wdata_trace_data = data_i;
 
-	assign ready_o =  ~transaction_in_progress & app_rdy_i ;
+	assign ready_o =  app_rdy_i;
 
 	assign burst_done =  (write_count == burst_width_p  - 1);
 
 	assign is_write = (v_i && cmd_trace_data.cmd_wdata_n) ? ((cmd_trace_data.cmd == WP) || (cmd_trace_data.cmd == WR) )  : 0;
-
-    /*
-    This module is at a level above the dmc_controller where we stall transactions. So this module issues transactions to the dmc_controller which decides whether to forward it to DRAM or not.
-    So this transaction_in_progress is between the adapter and dmc_controller.
-    For the case of clock change happening right when a read is in progress, the time for tag value to reflect on the chip side will sufficient to cover the previous read/write transaction.
-    */
-	assign transaction_in_progress = app_wdf_wren_o | app_rd_data_valid_i; 
 
 	assign app_wdf_end_o = burst_done & app_wdf_wren_o;
 

@@ -22,6 +22,7 @@ module testbench();
 
   bsg_dmc_s                        dmc_p;
 
+  logic							   transaction_in_progress_lo;
   logic							   refresh_in_progress_lo;
 
   logic                            sys_reset;
@@ -155,7 +156,8 @@ module testbench();
   dmc_inst
     (
 
-	.refresh_in_progress_o (refresh_in_progress_lo)
+	.transaction_in_progress_o(transaction_in_progress_lo)
+	,.refresh_in_progress_o(refresh_in_progress_lo)
 	,.dly_tag_lines_i      (tag_lines_lo[0+:tag_dmc_dly_local_els_gp] )
 	,.cfg_tag_lines_i      (tag_lines_lo[tag_dmc_dly_local_els_gp+:tag_dmc_cfg_local_els_gp] )
 	,.osc_tag_lines_i      (tag_lines_lo[tag_dmc_dly_local_els_gp+tag_dmc_cfg_local_els_gp+:tag_dmc_osc_local_els_gp] )
