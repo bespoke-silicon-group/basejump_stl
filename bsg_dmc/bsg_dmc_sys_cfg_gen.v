@@ -1,13 +1,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //    		BASEJUMP STL
 //
-//       MODULE: bsg_dmc_tag_clients
+//       MODULE: bsg_dmc_sys_cfg_gen
 //  DESCRIPTION: Part of the bsg_dmc hierarchy. Input: chip side tag liens, Output: decoded tag values, DFI 2x clock
 //    AUTHOR(S): Akash Suresh, akashs3@uw.edu
 // ORGANIZATION: Bespoke Silicon Group, University of Washington
 //      CREATED: 01/26/22
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-module bsg_dmc_tag_clients
+module bsg_dmc_sys_cfg_gen
 						import bsg_tag_pkg::*;
 						import bsg_dmc_pkg::*;
 						(

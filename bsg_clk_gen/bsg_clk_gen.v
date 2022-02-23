@@ -1,4 +1,3 @@
-
 // This is the toplevel module for the clock generator. The clock generator
 // internally contains a bsg_tag node, a ring oscillator, and a clock
 // downsampler as well as a external clock pass through. The ring oscillator
@@ -114,9 +113,7 @@ module bsg_clk_gen
   else
     begin: v2
  */
-       bsg_clk_gen_osc 
-				#(.num_adgs_p(num_adgs_p))
-		clk_gen_osc_inst
+       bsg_clk_gen_osc #(.num_adgs_p(num_adgs_p))  clk_gen_osc_inst
          (
           .bsg_tag_i          (bsg_osc_tag_i        )
           ,.bsg_tag_trigger_i  (bsg_osc_trigger_tag_i)
@@ -180,3 +177,4 @@ module bsg_clk_gen
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_clk_gen)
+

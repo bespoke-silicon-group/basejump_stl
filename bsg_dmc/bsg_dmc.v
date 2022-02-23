@@ -122,8 +122,8 @@ module bsg_dmc
   assign dfi_clk_1x_o = dfi_clk_1x_lo;
 
   
-  bsg_dmc_tag_clients
-					dmc_tag_clients
+  bsg_dmc_sys_cfg_gen
+					dmc_sys_cfg_gen
 					(
                     .cfg_tag_lines_i(cfg_tag_lines_i)
                     ,.sys_tag_lines_i(sys_tag_lines_i)

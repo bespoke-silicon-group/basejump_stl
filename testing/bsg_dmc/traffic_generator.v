@@ -554,7 +554,7 @@ module traffic_generator
 
 	// Receive trace packet - convert it to XILINX UI command and write interface signals
 	// Receive read signals in XILINX UI interface and convert it to trace packet
-  	bsg_dmc_trace_to_xilinx_ui_adapter 
+  	bsg_dmc_xilinx_ui_trace_replay
   						#(	.data_width_p(ui_data_width_p),
   							.addr_width_p(ui_addr_width_p),
   							.burst_width_p(ui_burst_length_lp),

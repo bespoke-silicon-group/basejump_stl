@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //    		BASEJUMP STL
 //
-//       MODULE: bsg_dmc_trace_to_xilinx_ui_adapter
+//       MODULE: bsg_dmc_xilinx_ui_trace_replay
 //  DESCRIPTION: Takes the DMC cmd, addr, wdata, wmask trace packet and converts into XILINX UI interface to feed to DMC;
 //  			 And converts UI read interface signals to trace packet to forward to FPGA
 //    AUTHOR(S): Akash Suresh, akashs3@uw.edu
@@ -11,7 +11,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_dmc_trace_to_xilinx_ui_adapter
+module bsg_dmc_xilinx_ui_trace_replay
 	import bsg_dmc_pkg::*;
 	#(	parameter `BSG_INV_PARAM( data_width_p),
 		parameter `BSG_INV_PARAM( addr_width_p),
