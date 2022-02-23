@@ -244,7 +244,7 @@ module testbench();
 	  if($test$plusargs("irritate_clk")) begin
       	#212us;
 	  	irritate_clock = 1;
-	  	#1us;
+	  	#0.5us;
 	  	irritate_clock = 0;
 	  	@(frequency_mismatch_lo);
       	send_dynamic_tag = 1;

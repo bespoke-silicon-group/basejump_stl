@@ -57,14 +57,5 @@ module bsg_dmc_tag_clients
 	assign dmc_p_o.dqs_sel_cal  			= dmc_cfg_tag_data_lo[7][6:4];
 	assign dmc_p_o.init_cycles  			= {dmc_cfg_tag_data_lo[11], dmc_cfg_tag_data_lo[10]};
 	assign sys_reset_o          			= dmc_cfg_tag_data_lo[12][0];
-
-	always @(posedge dfi_clk_1x_i) begin
-	   	if(ui_clk_sync_rst_i) begin
-	  	  	stall_transmission_o <= 0;
-	    end
-		else begin
-	  		stall_transmission_o <= dmc_cfg_tag_data_lo[13][0];
-	  	end
-	end
-
+    assign stall_transmission_o             = dmc_cfg_tag_data_lo[13][0];
 endmodule

@@ -122,6 +122,22 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
     assign app_wdf_data_o = ( trace_data_valid_i & ~trace_data.cmd_wdata_n & app_wdf_rdy_i) ? trace_data_i[35:4] : 0;
     assign app_wdf_mask_o = ( trace_data_valid_i & ~trace_data.cmd_wdata_n & app_wdf_rdy_i) ? trace_data_i[3:0] : 0;
 
+    bsg_fifo_1r1w_small 
+    				#(.width_p(payload_width_lp)
+    				,.els_p(10)
+    				) dmc_output_fifo
+    				(.clk_i  (ui_clk)
+    				,.reset_i(asic_link_reset_li)
+    				
+    				,.ready_o(dmc_input_fifo_ready_lo)
+    				,.data_i (asic_link_downstream_core_data_lo)
+    				,.v_i    (asic_link_downstream_core_valid_lo)
+    				
+    				,.v_o    (dmc_adapter_input_valid_lo)
+    				,.data_o (dmc_adapter_input_data_lo)
+    				,.yumi_i (dmc_adapter_yumi_lo)
+    				);
+
 	assign read_data_to_consumer_o =  app_rd_data_i;
 	assign read_data_to_consumer_valid_o = app_rd_data_valid_i ? 1 : 0;
 endmodule

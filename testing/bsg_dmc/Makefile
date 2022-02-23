@@ -20,7 +20,8 @@ ELABORATE_OPTIONS += -assert svaext
 #ELABORATE_OPTIONS += +define+NONSYNTH_TB
 ELABORATE_OPTIONS += +lint=TFIPC-L
 
-RUN_OPTIONS = 
+RUN_OPTIONS =
+#RUN_OPTIONS += +irritate_clk
 
 BSG_TRACE_FILES := $(notdir $(wildcard *.tr))
 BSG_TRACE_ROMS  := ${BSG_TRACE_FILES:.tr=_rom.v}
@@ -36,7 +37,7 @@ elaborate:
 	touch $@
 
 run: elaborate
-	./simv $(RUN_OPTIONS) -l $@.log
+	./simv $(RUN_OPTIONS)  -l $@.log
 	touch $@
 
 dve: 

@@ -142,9 +142,7 @@ module bsg_dmc
   dmc_clk_rst_gen
     // tag lines
     (
-	.bsg_dmc_delay_tag_lines_s_i  ()
-    ,.clk_gen_tag_lines_i       ()
-    ,.async_reset_o         ( sys_reset             )
+    .async_reset_o         ( sys_reset             )
     ,.bsg_dmc_delay_tag_lines_s_i ( tag_lines_i.delay_tag_lines )
     ,.clk_gen_tag_lines_i   ( tag_lines_i.clk_gen_tag_lines)
     ,.clk_i                 ( ddr_dqs_p_i           )

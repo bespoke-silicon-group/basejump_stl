@@ -201,7 +201,7 @@ module traffic_generator
   
   assign tag_data_clock_period_and_trigger = {clock_period_change_reset_tag_reg, clock_period_change_set_tag_reg, clock_period_tag_reg};
 
-  assign wrong_clock_period_tag_reg = 21'b00_00011010_11001_1_0101_1;
+  assign wrong_clock_period_tag_reg = 21'b00_00011000_11001_1_0101_1;
   assign tag_data_wrong_clk_period_and_trigger = {clock_period_change_reset_tag_reg, clock_period_change_set_tag_reg, wrong_clock_period_tag_reg};
 
   always_comb begin
