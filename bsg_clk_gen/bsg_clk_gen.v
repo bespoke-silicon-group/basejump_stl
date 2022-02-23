@@ -80,8 +80,6 @@ module bsg_clk_gen
  #(parameter `BSG_INV_PARAM(downsample_width_p )
   ,          num_adgs_p         = 2
   ,          version_p          = 1  // alternative, use version_p = 2
-  , parameter nonsynth_sim_osc_granularity_p = 100
-  , parameter nonsynth_sim_osc_base_delay_p = 1000
   )
   (input  bsg_tag_s         bsg_osc_tag_i
   ,input  bsg_tag_s         bsg_osc_trigger_tag_i // used only by version_p = 2
@@ -117,9 +115,7 @@ module bsg_clk_gen
     begin: v2
  */
        bsg_clk_gen_osc 
-				#(.num_adgs_p(num_adgs_p)
-	   			,.osc_granularity_p(nonsynth_sim_osc_granularity_p)
-				,.osc_base_delay_p(nonsynth_sim_osc_base_delay_p))  
+				#(.num_adgs_p(num_adgs_p))
 		clk_gen_osc_inst
          (
           .bsg_tag_i          (bsg_osc_tag_i        )

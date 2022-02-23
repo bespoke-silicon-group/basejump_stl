@@ -8,7 +8,7 @@
 `endif
 
 `ifndef DFI_CLK_PERIOD
-  `define DFI_CLK_PERIOD 2500.0
+  `define DFI_CLK_PERIOD 1250.0
 `endif
 
 `ifndef TAG_CLK_PERIOD

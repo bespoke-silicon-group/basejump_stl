@@ -8,7 +8,7 @@
 #     0  | Delay Line Async Reset            | 1-bit
 #   4-1  | Delay Line Ctrl Bits              | 8-bits
 #   8-5  | Delay Line Trigger                | 1-bit
-#   9-7  | 2x-to-1x Clock Downsampler Reset  | 1-bit
+#   9-7  | 2x-to-1x Clock Downsampler Reset  | 3-bit
 # 11-10  | DMC trefi                         | 8-bits
 #    12  | DMC tmrd trfc                     | 8-bits
 #    13  | DMC trc trp                       | 8-bits
@@ -168,7 +168,7 @@
 ### Program the raw oscillators speed
 
 #SEND  en   id=25   d l=5    {adt, cdt, fdt}
-0001___1___11001_1_0101___00011011
+0001___1___11001_1_0101___00011101
 
 ### Trigger oscillators
 
@@ -176,12 +176,12 @@
 0001___1___11010_1_0001___00000001
 0001___1___11010_1_0001___00000000
 
-#SEND  en   id=27   d l=2    {ds_val, reset}
-0001___1___11011_1_0010___00000001
-0001___1___11011_1_0010___00000000
+#SEND  en   id=27   d l=3    {ds_val, reset}
+0001___1___11011_1_0011___00000001
+0001___1___11011_1_0011___00000000
 
 #SEND  en   id=28   d l=2    {sel}
-0001___1___11100_1_0010___00000000
+0001___1___11100_1_0010___00000001
 
 ### Set delay line triggers low
 
@@ -197,13 +197,13 @@
 ### Program the delay lines
 
 #SEND  en   id=1  d l=5    {adt, cdt, fdt}
-0001___1___00001_1_0101___00011111
+0001___1___00001_1_0101___00011101
 #SEND  en   id=2  d l=5    {adt, cdt, fdt}
-0001___1___00010_1_0101___00011111
+0001___1___00010_1_0101___00011101
 #SEND  en   id=3  d l=5    {adt, cdt, fdt}
-0001___1___00011_1_0101___00011111
+0001___1___00011_1_0101___00011101
 #SEND  en   id=4  d l=5    {adt, cdt, fdt}
-0001___1___00100_1_0101___00011111
+0001___1___00100_1_0101___00011101
 
 ### Trigger delay lines
 
@@ -232,10 +232,6 @@
 #SEND  en   id=9  d l=3    {ds_val, reset}
 0001___1___01001_1_0011___00000001
 0001___1___01001_1_0011___00000000
-
-#SEND  en   id=28   d l=3    {clk_monitor_ds_val, reset}
-0001___1___11100_1_0011___00000011
-0001___1___11100_1_0011___00000010
 
 # Reset DMC configs and set dmc_p
 #SEND  en   id=10  d l=8    {trefi[7:0]}

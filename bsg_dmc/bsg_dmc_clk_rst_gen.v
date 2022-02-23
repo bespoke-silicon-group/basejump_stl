@@ -25,17 +25,17 @@ module bsg_dmc_clk_rst_gen
 
   genvar i;
 
-  logic dly_async_reset_lo;
+  logic dly_async_reset_r;
   bsg_tag_client_unsync #(.width_p(1)) btc_async_reset
     (.bsg_tag_i      ( dly_tag_lines_i.async_reset )
-    ,.data_async_r_o ( dly_async_reset_lo     ));
+    ,.data_async_r_o ( dly_async_reset_r     ));
 
   // Clock Generator (CG) Instance
   for(i=0;i<dq_groups_p;i++) begin: dly_lines
     bsg_dly_line #(.num_adgs_p(num_adgs_p)) dly_line_inst
       (.bsg_tag_i         ( dly_tag_lines_i.dly[i]         )
       ,.bsg_tag_trigger_i ( dly_tag_lines_i.dly_trigger[i] )
-      ,.async_reset_i     ( dly_async_reset_lo           )
+      ,.async_reset_i     ( dly_async_reset_r            )
       ,.clk_i             ( dqs_clk_i[i]                 )
       ,.clk_o             ( dqs_clk_o[i]                 ));
   end
@@ -70,7 +70,7 @@ module bsg_dmc_clk_rst_gen
   // we can turn it off by holding reset high to save power.
   //
   bsg_counter_clock_downsample #
-    (.width_p  ( 2 )
+    (.width_p  ( ds_width_p )
     ,.harden_p ( 1 ))
   clk_gen_ds_inst
     (.clk_i   ( dfi_clk_2x_o               )
@@ -78,26 +78,33 @@ module bsg_dmc_clk_rst_gen
     ,.val_i   ( ds_tag_payload_r.val   )
     ,.clk_r_o ( dfi_clk_1x_o               ));
 
-  logic osc_async_reset_lo;
+  logic osc_async_reset_r;
 
   bsg_tag_client_unsync #( .width_p(1) )
     osc_async_reset
       (.bsg_tag_i(osc_tag_lines_i.async_reset)
-      ,.data_async_r_o(osc_async_reset_lo)
+      ,.data_async_r_o(osc_async_reset_r)
       );
 
-  bsg_clk_gen #(.downsample_width_p(2)
+  logic [1:0] sel_tag_payload_r;
+
+  bsg_tag_client_unsync #( .width_p(2) )
+    osc_sel
+      (.bsg_tag_i(osc_tag_lines_i.sel)
+      ,.data_async_r_o(sel_tag_payload_r)
+      );
+
+  bsg_clk_gen #(.downsample_width_p(ds_width_p)
                ,.num_adgs_p(num_adgs_p)
                ,.version_p(2)
-  			 ,.nonsynth_sim_osc_granularity_p(50)
                )
   clk_gen_inst
-      (.async_osc_reset_i     (osc_async_reset_lo)
+      (.async_osc_reset_i     (osc_async_reset_r)
       ,.bsg_osc_tag_i         (osc_tag_lines_i.osc)
       ,.bsg_osc_trigger_tag_i (osc_tag_lines_i.osc_trigger)
       ,.bsg_ds_tag_i          (osc_tag_lines_i.ds)
       ,.ext_clk_i             (ext_clk_i)
-      ,.select_i              (2'b00)
+      ,.select_i              (sel_tag_payload_r)
       ,.clk_o                 (dfi_clk_2x_o)
       );
 

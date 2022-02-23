@@ -14,7 +14,9 @@ ELABORATE_OPTIONS += -lca
 ELABORATE_OPTIONS += +vcs+vcdpluson
 ELABORATE_OPTIONS += +vcs+vcdplusmemon
 ELABORATE_OPTIONS += +define+den2048Mb+sg5+x16+FULL_MEM
-ELABORATE_OPTIONS += -timescale=1ns/1ps
+ELABORATE_OPTIONS += +define+BSG_OSC_BASE_DELAY=500
+ELABORATE_OPTIONS += +define+BSG_OSC_GRANULARITY=100
+ELABORATE_OPTIONS += -timescale=1ps/1ps
 ELABORATE_OPTIONS += -assert svaext
 #Enable below line for using non-synthesisable UVM TB
 #ELABORATE_OPTIONS += +define+NONSYNTH_TB
