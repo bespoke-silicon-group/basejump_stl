@@ -121,13 +121,10 @@ module bsg_dmc
 
   
   bsg_dmc_tag_clients
-					#(.dq_group_p(dq_group_lp)
-					)
 					dmc_tag_clients
 					(
-                    .cfg_tag_lines_i(cfg_tag_lines_i)
+                    .tag_lines_i(cfg_tag_lines_i)
 					,.dfi_clk_1x_i(dfi_clk_1x_lo)
-					,.ui_clk_sync_rst_i(ui_clk_sync_rst_o)
 					,.dmc_p_o(dmc_p_lo)
 					,.sys_reset_o(sys_reset_lo)
 					,.stall_transmission_o(stall_transmission_lo)
