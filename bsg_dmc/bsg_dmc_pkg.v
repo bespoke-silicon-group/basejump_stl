@@ -1,3 +1,4 @@
+
 package bsg_dmc_pkg;
   import bsg_tag_pkg::*;
 
@@ -48,30 +49,39 @@ package bsg_dmc_pkg;
     logic [15:0] addr;
   } dfi_cmd_sfifo_entry_s;
 
-  typedef struct packed {
-    bsg_tag_s         bsg_ds_tag;
-    bsg_tag_s [3:0]   bsg_dly_trigger_tag;
-    bsg_tag_s [3:0]   bsg_dly_tag;    
-    bsg_tag_s         async_reset_tag;
-  } bsg_dmc_delay_tag_lines_s;
+  localparam bsg_dmc_tag_client_width_gp = 8;
 
   typedef struct packed {
-    bsg_tag_s [13:0] tag_lines;
+    bsg_tag_s         ds;
+    bsg_tag_s [3:0]   dly_trigger;
+    bsg_tag_s [3:0]   dly;
+    bsg_tag_s         async_reset;
+  } bsg_dmc_dly_tag_lines_s;
+  localparam tag_dmc_dly_local_els_gp = $bits(bsg_dmc_dly_tag_lines_s)/$bits(bsg_tag_s);
+
+  typedef struct packed {
+    bsg_tag_s stall_transmission;
+    bsg_tag_s sys_reset;
+    bsg_tag_s [1:0] init_cycles;
+    bsg_tag_s bank_pos_bank_width;
+    bsg_tag_s row_width_col_width;
+    bsg_tag_s dqs_sel_cal_tcas;
+    bsg_tag_s trtp_twtr;
+    bsg_tag_s twr_trcd;
+    bsg_tag_s trrd_tras;
+    bsg_tag_s trp_trc;
+    bsg_tag_s trfc_tmrd;
+    bsg_tag_s [1:0] trefi;
   } bsg_dmc_cfg_tag_lines_s;
+  localparam tag_dmc_cfg_local_els_gp = $bits(bsg_dmc_cfg_tag_lines_s)/$bits(bsg_tag_s);
 
+  // TODO: Align with clk gen lines
   typedef struct packed {
-    bsg_tag_s bsg_clk_monitor_ds_tag;
-    bsg_tag_s ds_tag_lines;
-    bsg_tag_s osc_trigger_tag_lines;
-    bsg_tag_s osc_tag_lines;
-    bsg_tag_s async_reset_tag_lines;
-  } bsg_dmc_clk_gen_tag_lines_s;
-
-  typedef struct packed {
-    bsg_dmc_clk_gen_tag_lines_s clk_gen_tag_lines;
-    bsg_dmc_cfg_tag_lines_s cfg_tag_lines;
-    bsg_dmc_delay_tag_lines_s delay_tag_lines;
-  } bsg_dmc_tag_lines_s;
-
+    bsg_tag_s ds;
+    bsg_tag_s osc_trigger;
+    bsg_tag_s osc;
+    bsg_tag_s async_reset;
+  } bsg_dmc_osc_tag_lines_s;
+  localparam tag_dmc_osc_local_els_gp = $bits(bsg_dmc_osc_tag_lines_s)/$bits(bsg_tag_s);
 
 endpackage // bsg_dmc_pkg

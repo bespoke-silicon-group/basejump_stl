@@ -92,7 +92,8 @@ module testbench();
   wire       [dq_data_width_p-1:0] ddr_dq;
 
   // All tag lines from the btm
-  bsg_dmc_tag_lines_s tag_lines_lo;
+  localparam tag_dmc_local_els_lp = tag_dmc_dly_local_els_gp+tag_dmc_cfg_local_els_gp+tag_dmc_osc_local_els_gp;
+  bsg_tag_s [tag_dmc_local_els_lp-1:0] tag_lines_lo;
 
   logic send_dynamic_tag, irritate_clock, clock_correction_done_lo;
 
@@ -155,7 +156,9 @@ module testbench();
     (
 
 	.refresh_in_progress_o (refresh_in_progress_lo)
-	,.tag_lines_i (tag_lines_lo)
+	,.dly_tag_lines_i      (tag_lines_lo[0+:tag_dmc_dly_local_els_gp] )
+	,.cfg_tag_lines_i      (tag_lines_lo[tag_dmc_dly_local_els_gp+:tag_dmc_cfg_local_els_gp] )
+	,.osc_tag_lines_i      (tag_lines_lo[tag_dmc_dly_local_els_gp+tag_dmc_cfg_local_els_gp+:tag_dmc_osc_local_els_gp] )
     ,.app_addr_i            ( app_addr            )
     ,.app_cmd_i             ( app_cmd             )
     ,.app_en_i              ( app_en              )

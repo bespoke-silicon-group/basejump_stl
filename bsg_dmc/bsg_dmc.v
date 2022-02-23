@@ -17,7 +17,9 @@ module bsg_dmc
   // Tag lines
   (
   output logic						 refresh_in_progress_o
-  ,input bsg_dmc_tag_lines_s 	     tag_lines_i
+  ,input bsg_dmc_dly_tag_lines_s 	 dly_tag_lines_i
+  ,input bsg_dmc_cfg_tag_lines_s 	 cfg_tag_lines_i
+  ,input bsg_dmc_osc_tag_lines_s 	 osc_tag_lines_i
   // Global asynchronous reset input, will be synchronized to each clock domain
   // Consistent with the reset signal defined in Xilinx UI interface
   // User interface signals
@@ -112,9 +114,6 @@ module bsg_dmc
   bsg_dmc_s 						 dmc_p_lo;
   assign device_temp_o = 12'd0;
 
-  bsg_dmc_delay_tag_lines_s dmc_delay_tag_lines_s_lo;
-  bsg_dmc_clk_gen_tag_lines_s clk_gen_tag_lines_lo;
-
   logic stall_transmission_lo;
 
   assign dfi_clk_2x_o = dfi_clk_2x_lo;
@@ -126,9 +125,7 @@ module bsg_dmc
 					)
 					dmc_tag_clients
 					(
-                        //.tag_lines_i(tag_lines_i)
-                    .cfg_tag_lines_i(tag_lines_i.cfg_tag_lines)
-					,.ext_clk_i(ui_clk_i)
+                    .cfg_tag_lines_i(cfg_tag_lines_i)
 					,.dfi_clk_1x_i(dfi_clk_1x_lo)
 					,.ui_clk_sync_rst_i(ui_clk_sync_rst_o)
 					,.dmc_p_o(dmc_p_lo)
@@ -143,8 +140,8 @@ module bsg_dmc
     // tag lines
     (
     .async_reset_o          ( sys_reset             )
-    ,.bsg_dmc_delay_tag_lines_s_i ( tag_lines_i.delay_tag_lines )
-    ,.clk_gen_tag_lines_i   ( tag_lines_i.clk_gen_tag_lines)
+    ,.dly_tag_lines_i       ( dly_tag_lines_i       )
+    ,.osc_tag_lines_i       ( osc_tag_lines_i       )
     ,.clk_i                 ( ddr_dqs_p_i           )
     ,.clk_o                 ( dqs_p_li              )
     ,.ext_clk_i             ( ext_clk_i             )

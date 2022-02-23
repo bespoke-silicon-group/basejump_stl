@@ -16,13 +16,15 @@ module bsg_dmc_tag_clients
 						)
 						(
 						input  bsg_dmc_cfg_tag_lines_s cfg_tag_lines_i 
-						,input ext_clk_i
 						,input dfi_clk_1x_i
 						,input ui_clk_sync_rst_i
                         ,output bsg_dmc_s dmc_p_o
 						,output sys_reset_o
 						,output logic stall_transmission_o
 						);
+
+    bsg_tag_s [14:0] cfg_tag_lines_li;
+    assign cfg_tag_lines_li = cfg_tag_lines_i;
 
     logic [14:0][7:0] 	dmc_cfg_tag_data_lo;
 	logic [14:0]      	dmc_cfg_tag_new_data_lo;
@@ -31,7 +33,7 @@ module bsg_dmc_tag_clients
     for(idx=0;idx<14;idx++) begin: dmc_cfg
       bsg_tag_client #(.width_p( 8 ))
         btc
-          (.bsg_tag_i     ( cfg_tag_lines_i.tag_lines[idx] )
+          (.bsg_tag_i     ( cfg_tag_lines_li[idx] )
           ,.recv_clk_i    (  dfi_clk_1x_i)
           ,.recv_new_r_o  ( dmc_cfg_tag_new_data_lo[idx] )
           ,.recv_data_r_o ( dmc_cfg_tag_data_lo[idx] )
