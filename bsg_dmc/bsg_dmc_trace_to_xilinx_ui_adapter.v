@@ -8,23 +8,25 @@
 // ORGANIZATION: Bespoke Silicon Group, University of Washington
 //      CREATED: 01/07/22
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+`include "bsg_defines.v"
+
 module bsg_dmc_trace_to_xilinx_ui_adapter
 	import bsg_dmc_pkg::*;
 	#(	parameter `BSG_INV_PARAM( data_width_p),
 		parameter `BSG_INV_PARAM( addr_width_p),
-		parameter `BSG_INV_PARAM( cmd_width_p),
 		parameter `BSG_INV_PARAM( burst_width_p),
+        parameter `BSG_INV_PARAM( cmd_tfifo_depth_p),
+        parameter `BSG_INV_PARAM( cmd_rfifo_depth_p),
 
-		localparam payload_width_lp = data_width_p + (data_width_p>>3) + 4,
-		localparam mask_width_lp = data_width_p>>3,
-        localparam read_data_buffer_size_lp = burst_width_p*2
+		localparam trace_data_width_lp = `bsg_dmc_trace_entry_width(data_width_p, addr_width_p)
 	)
-	( 	input 									core_clk_i,
-		input									core_reset_i,
+	( 	input 									clk_i,
+		input									reset_i,
 
         // Trace data from producer
-		output      							ready_o,
-		input [payload_width_lp -1 :0] 			data_i,
+		output logic     					    ready_o,
+		input [trace_data_width_lp -1 :0] 		data_i,
 		input 									v_i,
 
         // Read data to consumer
@@ -47,107 +49,115 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
    		input                              		app_rd_data_end_i
 	);
 
-    localparam cmd_trace_zero_padding_width_lp = data_width_p + mask_width_lp - cmd_width_p - addr_width_p;
-	`declare_dmc_cmd_trace_entry_s(addr_width_p, cmd_trace_zero_padding_width_lp)
-	`declare_dmc_wdata_trace_entry_s(data_width_p, mask_width_lp)
+    enum {e_fill, e_drain} state_n, state_r;
+    wire is_fill = (state_r == e_fill);
+    wire is_drain = (state_r == e_drain);
 
-	// counter to load one packet per burst per cycle onto app_wdata and app_wmask
-	logic [`BSG_SAFE_CLOG2(burst_width_p) - 1:0] write_count;
+    `declare_bsg_dmc_trace_entry_s(data_width_p, addr_width_p);
 
-	logic burst_done;
-    logic read_data_valid_li, read_data_fifo_ready_lo;
-    logic [`BSG_SAFE_CLOG2(read_data_buffer_size_lp) -1 :0] read_credit;
-
-	dmc_cmd_trace_entry_s cmd_trace_data;
-	dmc_data_trace_entry_s wdata_trace_data;
-
-	assign cmd_trace_data = data_i;
-    assign wdata_trace_data = data_i;
-
-	assign ready_o =  app_rdy_i;
-
-	assign burst_done =  (write_count == burst_width_p  - 1);
-
-	assign is_write = (v_i && cmd_trace_data.cmd_wdata_n) ? ((cmd_trace_data.cmd == WP) || (cmd_trace_data.cmd == WR) )  : 0;
-
-	assign app_wdf_end_o = burst_done & app_wdf_wren_o;
-
-	assign {feed_to_app_wdata, feed_to_app_wmask} = data_i;
-	
-	// counting write_count per burst
-	bsg_counter_clear_up
-					#(.max_val_p(burst_width_p - 1)
-					,.init_val_p(0)
-                    ,.disable_overflow_warning_p(1))
-					write_counter
-					(.clk_i(core_clk_i)
-					,.reset_i(core_reset_i)
-					,.clear_i(1'b0)                        
-					,.up_i(app_wdf_wren_o & app_wdf_rdy_i )
-					,.count_o(write_count)
-					);
-	
-	// Convert UI command and addr
-    always_comb begin
-        if(v_i &&   app_rdy_i && cmd_trace_data.cmd_wdata_n ) begin
-            if((cmd_trace_data.cmd == WR) || (cmd_trace_data.cmd == WP) && app_wdf_rdy_i) begin
-                app_en_o = 1;
-            end
-            else if((cmd_trace_data.cmd == RD) || (cmd_trace_data.cmd == RP) && (read_credit >= burst_width_p)) begin
-                app_en_o = 1;
-            end
-        end
-        else begin
-            app_en_o = 0;
-        end
-    end
-
-	assign app_cmd_o = cmd_trace_data.cmd;
-	assign app_addr_o = cmd_trace_data.addr;
-
-    always @(posedge core_clk_i) begin
-        if(core_reset_i) begin
-            app_wdf_wren_o <= 0;
-        end
-        else if(is_write && app_wdf_rdy_i & v_i) begin
-            app_wdf_wren_o <= 1;
-        end
-        else if(burst_done) begin
-            app_wdf_wren_o <= 0;
-        end
-    end
-
-    assign app_wdf_data_o = wdata_trace_data.data;
-    assign app_wdf_mask_o = wdata_trace_data.mask;
-
-    assign read_data_valid_li = app_rd_data_valid_i & read_data_fifo_ready_lo; 
-
-    bsg_fifo_1r1w_small 
-    				#(.width_p(data_width_p)
-    				,.els_p(read_data_buffer_size_lp)
-    				) read_data_fifo
-    				(.clk_i  (core_clk_i)
-    				,.reset_i(core_reset_i)
+    // Only enqueue onto fifo if it's an app_cmd
+    bsg_dmc_trace_entry_s trace_data_li;
+    logic trace_ready_lo, trace_v_li;
+    bsg_dmc_trace_entry_s trace_data_lo;
+    logic trace_v_lo, trace_yumi_li;
+	assign trace_data_li = data_i;
+    bsg_fifo_1r1w_small
+    				#(.width_p($bits(bsg_dmc_trace_entry_s))
+    				,.els_p(cmd_tfifo_depth_p)
+    				) trace_fifo
+    				(.clk_i  (clk_i)
+    				,.reset_i(reset_i)
     				
-    				,.ready_o(read_data_fifo_ready_lo)
-    				,.data_i (app_rd_data_i)
-    				,.v_i    (app_rd_data_valid_i)
+    				,.data_i (trace_data_li)
+    				,.v_i    (trace_v_li)
+    				,.ready_o(trace_ready_lo)
     				
-    				,.v_o    (v_o)
-    				,.data_o (data_o)
-    				,.yumi_i (v_o & yumi_i)
+    				,.v_o    (trace_v_lo)
+    				,.data_o (trace_data_lo)
+    				,.yumi_i (trace_yumi_li)
     				);
 
-    always@(posedge core_clk_i) begin
-        if(core_reset_i) begin
-            read_credit <= read_data_buffer_size_lp -1 ;
+    logic read_data_credit;
+    bsg_fifo_1r1w_small_credit_on_input
+                    #(.width_p(data_width_p)
+                    ,.els_p(cmd_rfifo_depth_p)
+                    ) read_data_fifo
+                    (.clk_i  (clk_i)
+                    ,.reset_i(reset_i)
+
+                    ,.data_i (app_rd_data_i)
+                    ,.v_i    (app_rd_data_valid_i)
+                    ,.credit_o(read_data_credit)
+
+                    ,.v_o    (v_o)
+                    ,.data_o (data_o)
+                    ,.yumi_i (yumi_i)
+                    );
+
+    logic [`BSG_WIDTH(cmd_rfifo_depth_p)-1:0] read_credit;
+    bsg_flow_counter #(.els_p(cmd_rfifo_depth_p), .count_free_p(1)) fc
+      (.clk_i(clk_i)
+       ,.reset_i(reset_i)
+
+       ,.v_i(app_rd_data_valid_i)
+       ,.ready_i(1'b1)
+       ,.yumi_i(read_data_credit)
+
+       ,.count_o(read_credit)
+       );
+    wire read_avail = (read_credit >= burst_width_p);
+
+    wire trace_is_write = trace_data_lo.app_cmd inside {WP, WR};
+    wire trace_is_wdata = trace_data_lo.app_cmd inside {TWD, TWT};
+    wire trace_is_wdone = trace_data_lo.app_cmd inside {TWT};
+    wire trace_is_read = trace_data_lo.app_cmd inside {RP, RD};
+    wire trace_is_nop = trace_data_lo.app_cmd inside {TNP};
+    always_comb begin
+      state_n = state_r;
+
+      ready_o = '0;
+
+      app_en_o = '0;
+      app_cmd_o = trace_data_lo.app_cmd;
+      app_addr_o = trace_data_lo.payload.cmd.addr;
+      app_wdf_data_o = trace_data_lo.payload.wdata.data;
+      app_wdf_mask_o = trace_data_lo.payload.wdata.mask;
+      app_wdf_wren_o = '0;
+      app_wdf_end_o = '0;
+
+      trace_v_li = '0;
+      trace_yumi_li = '0;
+
+      // TODO: If trace fifo is full before drain command, we can get into a bad state.
+      //   How to recover?
+      case(state_r)
+        e_fill: begin
+          ready_o = trace_ready_lo;
+          trace_v_li = v_i & (trace_data_li.app_cmd != TEX);
+
+          state_n = (v_i & (trace_data_li.app_cmd == TEX)) ? e_drain : e_fill;
         end
-        if(app_rd_data_valid_i && !app_rd_data_end_i) begin
-            read_credit <= read_credit - 1;
+        e_drain: begin
+          app_en_o = trace_v_lo & (trace_is_write | (trace_is_read & read_avail));
+
+          app_wdf_wren_o = trace_v_lo & trace_is_wdata;
+          app_wdf_end_o = trace_v_lo & trace_is_wdone;
+
+          trace_yumi_li = trace_v_lo & ((app_rdy_i & app_en_o) || (app_wdf_wren_o & app_wdf_rdy_i) || (trace_is_nop));
+
+          // Transition to fill once the fifo is empty
+          state_n = (trace_v_lo == '0) ? e_fill : e_drain;
         end
-        else if(app_rd_data_end_i) begin
-            read_credit <= read_credit + burst_width_p - 1;
-        end
+        default: begin end
+      endcase
+    end
+
+    // synopsys sync_set_reset "reset_i"
+    always_ff @(posedge clk_i) begin
+      if (reset_i)
+        state_r <= e_fill;
+      else
+        state_r <= state_n;
     end
 
 endmodule

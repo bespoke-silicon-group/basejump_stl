@@ -40,7 +40,7 @@ module traffic_generator
   ,localparam dq_group_lp        = dq_data_width_p >> 3
   ,localparam ui_burst_length_lp = burst_data_width_p / ui_data_width_p
   ,localparam dq_burst_length_lp = burst_data_width_p / dq_data_width_p
-  ,localparam payload_width_lp 	 = ui_data_width_p + ui_mask_width_lp + 4
+  ,localparam payload_width_lp 	 = `bsg_dmc_trace_entry_width(ui_data_width_p, ui_addr_width_p)
   ,localparam tag_dmc_local_els_lp = tag_dmc_dly_local_els_gp+tag_dmc_cfg_local_els_gp+tag_dmc_osc_local_els_gp
   )
   // Tag lines
@@ -447,7 +447,6 @@ module traffic_generator
 	bsg_dmc_tester
 				#(	.data_width_p(ui_data_width_p),
 					.addr_width_p(ui_addr_width_p),
-					.cmd_width_p(4),
 					.burst_width_p(ui_burst_length_lp)
 				) dmc_tester
 				(	.fpga_link_clk_i(fpga_link_clk),
@@ -558,18 +557,20 @@ module traffic_generator
   	bsg_dmc_trace_to_xilinx_ui_adapter 
   						#(	.data_width_p(ui_data_width_p),
   							.addr_width_p(ui_addr_width_p),
-  							.cmd_width_p(ui_cmd_width_p),
-  							.burst_width_p(ui_burst_length_lp)
+  							.burst_width_p(ui_burst_length_lp),
+                            // Arbitrary for now, just make sure the trace correlates
+                            .cmd_tfifo_depth_p(3*ui_burst_length_lp),
+                            .cmd_rfifo_depth_p(2*ui_burst_length_lp)
   						) trace_to_dmc_ui
-  						(	.core_clk_i(ui_clk),
-  							.core_reset_i(ui_clk_sync_rst_i),
+  						(	.clk_i(ui_clk),
+  							.reset_i(ui_clk_sync_rst_i),
 							//.ui_clk_sync_rst_i(ui_clk_sync_rst_i),
   							.data_i(dmc_adapter_input_data_lo),
   						 	.v_i(dmc_adapter_input_valid_lo),
 
 							.v_o(read_data_to_consumer_valid_lo),
 							.data_o(rdata_from_adapter_lo),
-                            .yumi_i(asic_link_upstream_core_ready_lo),
+                            .yumi_i(asic_link_upstream_core_ready_lo & read_data_to_consumer_valid_lo),
 
   						 	.ready_o(dmc_adapter_ready_lo),
   	

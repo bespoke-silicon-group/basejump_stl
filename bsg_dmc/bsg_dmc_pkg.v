@@ -23,11 +23,17 @@ package bsg_dmc_pkg;
     logic [15:0] init_cycles;
   } bsg_dmc_s;
 
-  typedef enum logic [2:0]
-    {RP = 3'b011 // read with auto precharge
-    ,WP = 3'b010 // write with auto precharge
-    ,RD = 3'b001 // read
-    ,WR = 3'b000 // write
+  typedef enum logic [3:0]
+    {RP = 4'b0011 // read with auto precharge
+    ,WP = 4'b0010 // write with auto precharge
+    ,RD = 4'b0001 // read
+    ,WR = 4'b0000 // write
+
+    // Only used in trace debug module
+    ,TEX = 4'b1000 // execute commands in trace fifo
+    ,TWD = 4'b1001 // write data, non-terminating
+    ,TWT = 4'b1010 // write data, terminating
+    ,TNP = 4'b1111 // NOP, do nothing
   } app_cmd_e;
 
   typedef enum logic [3:0]

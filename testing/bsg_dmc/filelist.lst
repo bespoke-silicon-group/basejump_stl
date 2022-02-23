@@ -17,7 +17,9 @@
 ../../bsg_clk_gen/bsg_clk_gen_osc.v
 ../../bsg_dataflow/bsg_fifo_1r1w_small.v
 ../../bsg_dataflow/bsg_fifo_1r1w_small_unhardened.v
+../../bsg_dataflow/bsg_fifo_1r1w_small_credit_on_input.v
 ../../bsg_dataflow/bsg_fifo_tracker.v
+../../bsg_dataflow/bsg_flow_counter.v
 ../../bsg_dataflow/bsg_flatten_2D_array.v
 ../../bsg_dataflow/bsg_make_2D_array.v
 ../../bsg_dataflow/bsg_parallel_in_serial_out.v

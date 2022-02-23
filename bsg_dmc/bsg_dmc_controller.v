@@ -732,7 +732,7 @@ module bsg_dmc_controller
     ,.data_o  ( rx_piso_data_lo    )
     ,.yumi_i  ( rx_piso_yumi_li    ));
 
-  logic [7:0] rd_cnt;
+  logic [`BSG_WIDTH(ui_burst_length_lp)-1:0] rd_cnt;
 
   always_ff @(posedge ui_clk_i) begin
     if(ui_clk_sync_rst_i)

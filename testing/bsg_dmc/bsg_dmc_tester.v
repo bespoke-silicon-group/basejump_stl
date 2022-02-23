@@ -8,18 +8,19 @@
 //      CREATED: 01/04/22
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+`include "bsg_defines.v"
+`include "bsg_dmc.vh"
+
 module bsg_dmc_tester
 	  	import bsg_dmc_pkg::*;
 		#(	parameter data_width_p=32,
 		  	parameter addr_width_p = 28,
-			parameter cmd_width_p = 4,
 			parameter burst_width_p = 2,
 
   			localparam mask_width_lp   = data_width_p >> 3,
 			localparam rom_addr_width_lp=32,
-			localparam cmd_plus_address_width_lp = addr_width_p + cmd_width_p,
 			localparam data_mask_width_lp = data_width_p>>3,
-			localparam payload_width_lp = data_width_p + data_mask_width_lp + 4
+			localparam payload_width_lp = `bsg_dmc_trace_entry_width(data_width_p, addr_width_p)
 		 )
 		(	input 							fpga_link_clk_i,
 			input 							fpga_link_io_clk_i,

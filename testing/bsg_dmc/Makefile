@@ -27,7 +27,7 @@ BSG_TRACE_FILES := bsg_dmc_trace_rom.tr bsg_tag_boot_rom.tr
 BSG_TRACE_ROMS  := ${BSG_TRACE_FILES:.tr=_rom.v}
 
 bsg_dmc_trace_rom.tr:
-	python bsg_dmc_trace_rom.py 201 > $@
+	python bsg_dmc_trace_rom.py 0 > $@
 
 %.v: %.tr
 	../../bsg_mem/bsg_ascii_to_rom.py $< $* > $@
@@ -44,9 +44,8 @@ dve:
 	$(VCS_BIN)/dve -full64 -vpd vcdplus.vpd &
 
 clean:
-	rm -rf analyze elaborate run
+	rm -rf elaborate run
 	rm -rf *.log
-	rm -rf analyze_*
 	rm -rf bsg_dmc_trace_rom.tr
 	rm -rf *_rom.v
 	rm -rf *.vpd
