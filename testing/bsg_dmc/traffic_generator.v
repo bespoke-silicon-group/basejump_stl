@@ -493,6 +493,9 @@ module traffic_generator
 
     logic read_data_to_consumer_valid_lo;
 	logic [payload_width_lp-1:0] read_data_to_consumer_lo;
+    logic [ui_data_width_p-1:0] rdata_from_adapter_lo;
+
+    assign read_data_to_consumer_lo = {{ui_mask_width_lp{1'b0}}, rdata_from_adapter_lo};
 
     always@(posedge ui_clk) begin
         if(asic_link_reset_li) begin
@@ -564,7 +567,7 @@ module traffic_generator
   						 	.v_i(dmc_adapter_input_valid_lo),
 
 							.v_o(read_data_to_consumer_valid_lo),
-							.data_o(read_data_to_consumer_lo),
+							.data_o(rdata_from_adapter_lo),
                             .yumi_i(asic_link_upstream_core_ready_lo),
 
   						 	.ready_o(dmc_adapter_ready_lo),
