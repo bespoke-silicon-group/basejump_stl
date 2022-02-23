@@ -565,6 +565,7 @@ module traffic_generator
 
 							.v_o(read_data_to_consumer_valid_lo),
 							.data_o(read_data_to_consumer_lo),
+                            .yumi_i(asic_link_upstream_core_ready_lo),
 
   						 	.ready_o(dmc_adapter_ready_lo),
   	

@@ -51,26 +51,6 @@ module bsg_dmc_tag_clients
            );
       end
 
-	//assign dmc_p_o.trefi        			= {dmc_cfg_tag_data_lo[1], dmc_cfg_tag_data_lo[0]};
-	//assign dmc_p_o.tmrd         			= dmc_cfg_tag_data_lo[2][3:0];
-	//assign dmc_p_o.trfc         			= dmc_cfg_tag_data_lo[2][7:4];
-	//assign dmc_p_o.trc          			= dmc_cfg_tag_data_lo[3][3:0];
-	//assign dmc_p_o.trp          			= dmc_cfg_tag_data_lo[3][7:4];
-	//assign dmc_p_o.tras         			= dmc_cfg_tag_data_lo[4][3:0];
-	//assign dmc_p_o.trrd         			= dmc_cfg_tag_data_lo[4][7:4];
-	//assign dmc_p_o.trcd         			= dmc_cfg_tag_data_lo[5][3:0];
-	//assign dmc_p_o.twr          			= dmc_cfg_tag_data_lo[5][7:4];
-	//assign dmc_p_o.twtr         			= dmc_cfg_tag_data_lo[6][3:0];
-	//assign dmc_p_o.trtp         			= dmc_cfg_tag_data_lo[6][7:4];
-	//assign dmc_p_o.tcas         			= dmc_cfg_tag_data_lo[7][3:0];
-	//assign dmc_p_o.col_width    			= dmc_cfg_tag_data_lo[8][3:0];
-	//assign dmc_p_o.row_width    			= dmc_cfg_tag_data_lo[8][7:4];
-	//assign dmc_p_o.bank_width   			= dmc_cfg_tag_data_lo[9][1:0];
-	//assign dmc_p_o.bank_pos     			= dmc_cfg_tag_data_lo[9][7:2];
-	//assign dmc_p_o.dqs_sel_cal  			= dmc_cfg_tag_data_lo[7][6:4];
-	//assign dmc_p_o.init_cycles  			= {dmc_cfg_tag_data_lo[11], dmc_cfg_tag_data_lo[10]};
-	//assign sys_reset_o          			= dmc_cfg_tag_data_lo[12][0];
-    //assign stall_transmission_o             = dmc_cfg_tag_data_lo[13][0];
     for (genvar i = 0; i < 1; i++)
       begin : trrd_tras
         bsg_tag_client #(.width_p(bsg_dmc_tag_client_width_gp))

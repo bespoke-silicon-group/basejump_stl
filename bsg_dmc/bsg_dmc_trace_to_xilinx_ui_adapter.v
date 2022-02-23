@@ -16,7 +16,8 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 		parameter `BSG_INV_PARAM( burst_width_p),
 
 		localparam payload_width_lp = data_width_p + (data_width_p>>3) + 4,
-		localparam mask_width_lp = data_width_p>>3
+		localparam mask_width_lp = data_width_p>>3,
+        localparam read_data_buffer_size_lp = burst_width_p*2
 	)
 	( 	input 									core_clk_i,
 		input									core_reset_i,
@@ -27,8 +28,9 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 		input 									v_i,
 
         // Read data to consumer
-		output logic [payload_width_lp -1 :0]	data_o,
+		output logic [data_width_p -1 :0]	    data_o,
 		output logic							v_o,
+        input                                   yumi_i,
 
    		// xilinx user interface
    		output logic [addr_width_p-1:0]        	app_addr_o,
@@ -47,6 +49,7 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 
     localparam cmd_trace_zero_padding_width_lp = data_width_p + mask_width_lp - cmd_width_p - addr_width_p;
 	`declare_dmc_cmd_trace_entry_s(addr_width_p, cmd_trace_zero_padding_width_lp)
+	`declare_dmc_wdata_trace_entry_s(data_width_p, mask_width_lp)
 
 	// counter to load one packet per burst per cycle onto app_wdata and app_wmask
 	logic [`BSG_SAFE_CLOG2(burst_width_p) - 1:0] write_count;
@@ -54,16 +57,20 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 	logic transaction_in_progress;
 
 	logic burst_done;
+    logic read_data_valid_li, read_data_fifo_ready_lo;
+    logic [`BSG_SAFE_CLOG2(read_data_buffer_size_lp) -1 :0] read_credit;
 
-	dmc_trace_entry_s trace_data;
+	dmc_cmd_trace_entry_s cmd_trace_data;
+	dmc_data_trace_entry_s wdata_trace_data;
 
-	assign trace_data = data_i;
+	assign cmd_trace_data = data_i;
+    assign wdata_trace_data = data_i;
 
 	assign ready_o =  ~transaction_in_progress & app_rdy_i ;
 
 	assign burst_done =  (write_count == burst_width_p  - 1);
 
-	assign is_write = (v_i && trace_data.cmd_wdata_n) ? ((trace_data.cmd == WP) || (trace_data.cmd == WR) )  : 0;
+	assign is_write = (v_i && cmd_trace_data.cmd_wdata_n) ? ((cmd_trace_data.cmd == WP) || (cmd_trace_data.cmd == WR) )  : 0;
 
     /*
     This module is at a level above the dmc_controller where we stall transactions. So this module issues transactions to the dmc_controller which decides whether to forward it to DRAM or not.
@@ -91,11 +98,11 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
 	
 	// Convert UI command and addr
     always_comb begin
-        if(v_i &&   app_rdy_i && trace_data.cmd_wdata_n ) begin
-            if((trace_data.cmd == WR) || (trace_data.cmd == WP) && app_wdf_rdy_i) begin
+        if(v_i &&   app_rdy_i && cmd_trace_data.cmd_wdata_n ) begin
+            if((cmd_trace_data.cmd == WR) || (cmd_trace_data.cmd == WP) && app_wdf_rdy_i) begin
                 app_en_o = 1;
             end
-            else if((trace_data.cmd == RD) || (trace_data.cmd == RP)) begin
+            else if((cmd_trace_data.cmd == RD) || (cmd_trace_data.cmd == RP) && (read_credit >= burst_width_p)) begin
                 app_en_o = 1;
             end
         end
@@ -104,8 +111,8 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
         end
     end
 
-	assign app_cmd_o = trace_data.cmd;
-	assign app_addr_o = trace_data.addr;
+	assign app_cmd_o = cmd_trace_data.cmd;
+	assign app_addr_o = cmd_trace_data.addr;
 
     always @(posedge core_clk_i) begin
         if(core_reset_i) begin
@@ -119,25 +126,37 @@ module bsg_dmc_trace_to_xilinx_ui_adapter
         end
     end
 
-    assign app_wdf_data_o = data_i[35:4];
-    assign app_wdf_mask_o = data_i[3:0];
+    assign app_wdf_data_o = wdata_trace_data.data;
+    assign app_wdf_mask_o = wdata_trace_data.mask;
+
+    assign read_data_valid_li = app_rd_data_valid_i & read_data_fifo_ready_lo; 
 
     bsg_fifo_1r1w_small 
-    				#(.width_p(payload_width_lp)
-    				,.els_p(10)
-    				) dmc_output_fifo
-    				(.clk_i  (ui_clk)
-    				,.reset_i(asic_link_reset_li)
+    				#(.width_p(data_width_p)
+    				,.els_p(read_data_buffer_size_lp)
+    				) read_data_fifo
+    				(.clk_i  (core_clk_i)
+    				,.reset_i(core_reset_i)
     				
-    				,.ready_o(dmc_input_fifo_ready_lo)
-    				,.data_i (asic_link_downstream_core_data_lo)
-    				,.v_i    (asic_link_downstream_core_valid_lo)
+    				,.ready_o(read_data_fifo_ready_lo)
+    				,.data_i (app_rd_data_i)
+    				,.v_i    (app_rd_data_valid_i)
     				
-    				,.v_o    (dmc_adapter_input_valid_lo)
-    				,.data_o (dmc_adapter_input_data_lo)
-    				,.yumi_i (dmc_adapter_yumi_lo)
+    				,.v_o    (v_o)
+    				,.data_o (data_o)
+    				,.yumi_i (v_o & yumi_i)
     				);
 
-	assign data_o =  app_rd_data_i;
-	assign v_o = app_rd_data_valid_i ? 1 : 0;
+    always@(posedge core_clk_i) begin
+        if(core_reset_i) begin
+            read_credit <= read_data_buffer_size_lp -1 ;
+        end
+        if(app_rd_data_valid_i && !app_rd_data_end_i) begin
+            read_credit <= read_credit - 1;
+        end
+        else if(app_rd_data_end_i) begin
+            read_credit <= read_credit + burst_width_p - 1;
+        end
+    end
+
 endmodule
