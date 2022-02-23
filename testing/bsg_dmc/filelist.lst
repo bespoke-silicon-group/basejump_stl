@@ -73,5 +73,7 @@ bsg_dmc_tester.v
 
 bsg_tag_boot_rom.v
 traffic_generator.v
+bsg_nonsynth_dmc_clock_monitor.v
+testbench.v
 
 lpddr_verilog_model/mobile_ddr.v

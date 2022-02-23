@@ -55,6 +55,9 @@ module testbench();
   logic                            ui_clk;
   wire                             ui_clk_sync_rst;
 
+  logic                            dfi_clk_2x;
+  logic                            dfi_clk_1x;
+
   wire                      [11:0] device_temp;
 
   wire                             ddr_ck_p, ddr_ck_n;
@@ -129,6 +132,7 @@ module testbench();
     ,.init_calib_complete_i ( init_calib_complete )
     ,.ui_clk_o              ( ui_clk              )
     ,.ui_clk_sync_rst_i     ( ui_clk_sync_rst     )
+    ,.dfi_clk_o             ( dfi_clk              )
 	,.tag_lines_o			(tag_lines_lo)
 	,.stall_trace_reading_i (send_dynamic_tag)
 	,.irritate_clock_i		(irritate_clock)
@@ -202,7 +206,19 @@ module testbench();
     ,.ui_clk_i              ( ui_clk              )
     ,.ui_clk_sync_rst_o     ( ui_clk_sync_rst     )
     ,.device_temp_o         ( device_temp         )
-	,.clock_monitor_clk_o	(clock_monitor_clk_lo));
+    ,.ext_clk_i             ( dfi_clk             )
+    ,.dfi_clk_1x_o          ( dfi_clk_1x          )
+    ,.dfi_clk_2x_o          ( dfi_clk_2x          ));
+
+  bsg_counter_clock_downsample #
+    (.width_p  ( 2 )
+    ,.harden_p ( 1 ))
+  clk_monitor_clk_gen
+    (.clk_i   ( dfi_clk_2x               )
+    ,.reset_i ( ui_clk_sync_rst          )
+    ,.val_i   ( 2'b01 )
+    ,.clk_r_o (clock_monitor_clk_lo	   ));
+
 
   generate
     for(i=0;i<dq_group_lp;i++) begin: dm_io

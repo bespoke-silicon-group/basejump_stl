@@ -17,9 +17,10 @@ module bsg_dmc_clk_rst_gen
   ,input           [num_lines_p-1:0]    clk_i
   ,output          [num_lines_p-1:0]    clk_o
   // 2x clock input from clock generator and 1x clock output
+  //
+  ,input                                ext_clk_i
   ,output                               dfi_clk_2x_o
-  ,output                               clk_1x_o
-  ,output							    clock_monitor_clk_o);
+  ,output                               dfi_clk_1x_o);
 
   localparam debug_level_lp = 0;
 
@@ -87,17 +88,7 @@ module bsg_dmc_clk_rst_gen
     (.clk_i   ( dfi_clk_2x_o               )
     ,.reset_i ( ds_tag_payload_r.reset )
     ,.val_i   ( 2'd0                   )
-    ,.clk_r_o ( clk_1x_o               ));
-
-  bsg_counter_clock_downsample #
-    (.width_p  ( 2 )
-    ,.harden_p ( 1 ))
-  clk_monitor_clk_gen
-    (.clk_i   ( dfi_clk_2x_o               )
-    ,.reset_i ( clk_monitor_ds_tag_payload_r.reset )
-    ,.val_i   ( clk_monitor_ds_tag_payload_r.val )
-    //,.val_i   ( 2'b1 )	
-    ,.clk_r_o (clock_monitor_clk_o	   ));
+    ,.clk_r_o ( dfi_clk_1x_o               ));
 
   logic async_reset_lo;
 
