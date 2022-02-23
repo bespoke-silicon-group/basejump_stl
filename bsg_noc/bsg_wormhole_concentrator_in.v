@@ -26,8 +26,9 @@ module bsg_wormhole_concentrator_in
     ,parameter `BSG_INV_PARAM(len_width_p)
     ,parameter `BSG_INV_PARAM(cid_width_p)
     ,parameter `BSG_INV_PARAM(cord_width_p)
-   ,parameter num_in_p            = 1
-   ,parameter debug_lp            = 0
+    ,parameter num_in_p            = 1
+    ,parameter debug_lp            = 0
+    ,parameter hold_on_valid_p     = 0
    )
 
   (input clk_i
@@ -112,7 +113,8 @@ module bsg_wormhole_concentrator_in
 
   wire [num_in_p-1:0] data_sel_lo;
 
-  bsg_wormhole_router_output_control #(.input_dirs_p(num_in_p)) woc
+  bsg_wormhole_router_output_control
+  #(.input_dirs_p(num_in_p), .hold_on_valid_p(hold_on_valid_p)) woc
     (.clk_i
     ,.reset_i
     ,.reqs_i    (reqs         )
