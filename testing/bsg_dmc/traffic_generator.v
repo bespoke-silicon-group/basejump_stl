@@ -41,7 +41,7 @@ module traffic_generator
   ,localparam ui_burst_length_lp = burst_data_width_p / ui_data_width_p
   ,localparam dq_burst_length_lp = burst_data_width_p / dq_data_width_p
   ,localparam payload_width_lp 	 = `bsg_dmc_trace_entry_width(ui_data_width_p, ui_addr_width_p)
-  ,localparam tag_dmc_local_els_lp = tag_dmc_dly_local_els_gp+tag_dmc_cfg_local_els_gp+tag_dmc_osc_local_els_gp
+  ,localparam tag_dmc_local_els_lp = tag_dmc_dly_local_els_gp+tag_dmc_cfg_local_els_gp+tag_dmc_sys_local_els_gp+tag_dmc_osc_local_els_gp
   )
   // Tag lines
   (output  bsg_tag_s [tag_dmc_local_els_lp-1:0]	tag_lines_o

@@ -16,7 +16,7 @@ module bsg_dmc_controller
   (input                                ui_clk_i
   ,input                                ui_clk_sync_rst_i
 
-  ,input								stall_transmission_i
+  ,input								stall_transactions_i
   ,output logic							refresh_in_progress_o
   ,output logic                         transaction_in_progress_o
   // User interface signals
@@ -433,7 +433,7 @@ module bsg_dmc_controller
   assign refresh_in_progress_o = (cstate == REFR);
 
   always_comb begin
-    if(cmd_sfifo_valid && !stall_transmission_i)
+    if(cmd_sfifo_valid && !stall_transactions_i)
       case(c_cmd)
 	LMR:   shoot = cmd_tick >= dmc_p_i.tmrd;
 	REF:   shoot = cmd_tick >= dmc_p_i.trfc;

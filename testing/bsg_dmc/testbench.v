@@ -23,7 +23,9 @@ module testbench();
 
   bsg_dmc_s                        dmc_p;
 
+  logic							   stall_transactions_lo;
   logic							   transaction_in_progress_lo;
+  logic							   test_mode_lo;
   logic							   refresh_in_progress_lo;
 
   logic                            sys_reset;
@@ -94,7 +96,7 @@ module testbench();
   wire       [dq_data_width_p-1:0] ddr_dq;
 
   // All tag lines from the btm
-  localparam tag_dmc_local_els_lp = tag_dmc_dly_local_els_gp+tag_dmc_cfg_local_els_gp+tag_dmc_osc_local_els_gp;
+  localparam tag_dmc_local_els_lp = tag_dmc_dly_local_els_gp+tag_dmc_cfg_local_els_gp+tag_dmc_sys_local_els_gp+tag_dmc_osc_local_els_gp;
   bsg_tag_s [tag_dmc_local_els_lp-1:0] tag_lines_lo;
 
   logic send_dynamic_tag, irritate_clock, clock_correction_done_lo;
@@ -157,11 +159,10 @@ module testbench();
   dmc_inst
     (
 
-	.transaction_in_progress_o(transaction_in_progress_lo)
-	,.refresh_in_progress_o(refresh_in_progress_lo)
-	,.dly_tag_lines_i      (tag_lines_lo[0+:tag_dmc_dly_local_els_gp] )
+	.dly_tag_lines_i       (tag_lines_lo[0+:tag_dmc_dly_local_els_gp] )
 	,.cfg_tag_lines_i      (tag_lines_lo[tag_dmc_dly_local_els_gp+:tag_dmc_cfg_local_els_gp] )
-	,.osc_tag_lines_i      (tag_lines_lo[tag_dmc_dly_local_els_gp+tag_dmc_cfg_local_els_gp+:tag_dmc_osc_local_els_gp] )
+	,.sys_tag_lines_i      (tag_lines_lo[tag_dmc_dly_local_els_gp+tag_dmc_cfg_local_els_gp+:tag_dmc_sys_local_els_gp] )
+	,.osc_tag_lines_i      (tag_lines_lo[tag_dmc_dly_local_els_gp+tag_dmc_cfg_local_els_gp+tag_dmc_sys_local_els_gp+:tag_dmc_osc_local_els_gp] )
     ,.app_addr_i            ( app_addr            )
     ,.app_cmd_i             ( app_cmd             )
     ,.app_en_i              ( app_en              )
@@ -182,6 +183,10 @@ module testbench();
     ,.app_sr_active_o       ( app_sr_active       )
 
     ,.init_calib_complete_o ( init_calib_complete )
+	,.stall_transactions_o(stall_transactions_lo)
+	,.transaction_in_progress_o(transaction_in_progress_lo)
+	,.test_mode_o(test_mode_lo)
+	,.refresh_in_progress_o(refresh_in_progress_lo)
 
     ,.ddr_ck_p_o            ( ddr_ck_p            )
     ,.ddr_ck_n_o            ( ddr_ck_n            )
@@ -212,7 +217,7 @@ module testbench();
     ,.ui_clk_i              ( ui_clk              )
     ,.ui_clk_sync_rst_o     ( ui_clk_sync_rst     )
     ,.device_temp_o         ( device_temp         )
-    ,.ext_clk_i             ( dfi_clk             )
+    ,.ext_dfi_clk_i         ( dfi_clk             )
     ,.dfi_clk_1x_o          ( dfi_clk_1x          )
     ,.dfi_clk_2x_o          ( dfi_clk_2x          ));
 

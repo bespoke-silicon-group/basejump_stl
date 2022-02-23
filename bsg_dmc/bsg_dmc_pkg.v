@@ -66,8 +66,6 @@ package bsg_dmc_pkg;
   localparam tag_dmc_dly_local_els_gp = $bits(bsg_dmc_dly_tag_lines_s)/$bits(bsg_tag_s);
 
   typedef struct packed {
-    bsg_tag_s stall_transmission;
-    bsg_tag_s sys_reset;
     bsg_tag_s [1:0] init_cycles;
     bsg_tag_s bank_pos_bank_width;
     bsg_tag_s row_width_col_width;
@@ -80,6 +78,13 @@ package bsg_dmc_pkg;
     bsg_tag_s [1:0] trefi;
   } bsg_dmc_cfg_tag_lines_s;
   localparam tag_dmc_cfg_local_els_gp = $bits(bsg_dmc_cfg_tag_lines_s)/$bits(bsg_tag_s);
+
+  typedef struct packed {
+    bsg_tag_s test_mode;
+    bsg_tag_s stall_transactions;
+    bsg_tag_s async_reset;
+  } bsg_dmc_sys_tag_lines_s;
+  localparam tag_dmc_sys_local_els_gp = $bits(bsg_dmc_sys_tag_lines_s)/$bits(bsg_tag_s);
 
   // TODO: Align with clk gen lines
   typedef struct packed {

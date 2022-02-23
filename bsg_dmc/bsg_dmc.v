@@ -17,10 +17,9 @@ module bsg_dmc
   ,localparam dq_group_lp        = dq_data_width_p >> 3)
   // Tag lines
   (
-  output logic                       transaction_in_progress_o
-  ,output logic						 refresh_in_progress_o
-  ,input bsg_dmc_dly_tag_lines_s 	 dly_tag_lines_i
+  input bsg_dmc_dly_tag_lines_s 	 dly_tag_lines_i
   ,input bsg_dmc_cfg_tag_lines_s 	 cfg_tag_lines_i
+  ,input bsg_dmc_sys_tag_lines_s 	 sys_tag_lines_i
   ,input bsg_dmc_osc_tag_lines_s 	 osc_tag_lines_i
   // Global asynchronous reset input, will be synchronized to each clock domain
   // Consistent with the reset signal defined in Xilinx UI interface
@@ -46,6 +45,10 @@ module bsg_dmc
   ,output                            app_sr_active_o
   // Status signal
   ,output                            init_calib_complete_o
+  ,output logic                      transaction_in_progress_o
+  ,output logic                      stall_transactions_o
+  ,output logic						 refresh_in_progress_o
+  ,output logic                      test_mode_o
   // DDR interface signals
   // Physically compatible with (LP)DDR3/DDR2/DDR, but only (LP)DDR
   // protocal is logically implemented in the controller
@@ -79,7 +82,7 @@ module bsg_dmc
   ,input                             ui_clk_i
   //
   ,output                            ui_clk_sync_rst_o
-  ,input                             ext_clk_i
+  ,input                             ext_dfi_clk_i
   ,output                            dfi_clk_2x_o
   ,output                            dfi_clk_1x_o
   // Reserved to be compatible with Xilinx IPs
@@ -87,8 +90,8 @@ module bsg_dmc
 );
 
   wire                               dfi_clk_1x_lo;
-  logic								 sys_reset_lo;
-  logic								 dfi_clk_2x_lo;
+  wire								 async_reset;
+  wire								 dfi_clk_2x_lo;
 
   wire                               ui_reset;
   wire                               dfi_reset;
@@ -115,8 +118,6 @@ module bsg_dmc
   bsg_dmc_s 						 dmc_p_lo;
   assign device_temp_o = 12'd0;
 
-  logic stall_transmission_lo;
-
   assign dfi_clk_2x_o = dfi_clk_2x_lo;
   assign dfi_clk_1x_o = dfi_clk_1x_lo;
 
@@ -124,11 +125,13 @@ module bsg_dmc
   bsg_dmc_tag_clients
 					dmc_tag_clients
 					(
-                    .tag_lines_i(cfg_tag_lines_i)
+                    .cfg_tag_lines_i(cfg_tag_lines_i)
+                    ,.sys_tag_lines_i(sys_tag_lines_i)
 					,.dfi_clk_1x_i(dfi_clk_1x_lo)
 					,.dmc_p_o(dmc_p_lo)
-					,.sys_reset_o(sys_reset_lo)
-					,.stall_transmission_o(stall_transmission_lo)
+					,.async_reset_o(async_reset)
+					,.stall_transactions_o(stall_transactions_o)
+					,.test_mode_o(test_mode_o)
 					);
 					 
   bsg_dmc_clk_rst_gen #
@@ -142,19 +145,13 @@ module bsg_dmc
     ,.osc_tag_lines_i       ( osc_tag_lines_i       )
     ,.dqs_clk_i             ( ddr_dqs_p_i           )
     ,.dqs_clk_o             ( dqs_p_li              )
-    ,.ext_clk_i             ( ext_clk_i             )
+    ,.ext_dfi_clk_i         ( ext_dfi_clk_i         )
+    ,.ui_clk_i              ( ui_clk_i              )
+    ,.ui_reset_o            ( ui_reset              )
+    ,.async_reset_i         ( async_reset           )
+    ,.dfi_reset_o           ( dfi_reset             )
     ,.dfi_clk_2x_o          ( dfi_clk_2x_lo         )
     ,.dfi_clk_1x_o          ( dfi_clk_1x_lo         ));
-
-  bsg_sync_sync #(.width_p(1)) ui_reset_inst
-    (.oclk_i      ( ui_clk_i    )
-    ,.iclk_data_i ( sys_reset_lo )
-    ,.oclk_data_o ( ui_reset    ));
-
-  bsg_sync_sync #(.width_p(1)) dfi_reset_inst
-    (.oclk_i      ( dfi_clk_1x_lo   )
-    ,.iclk_data_i ( sys_reset_lo    )
-    ,.oclk_data_o ( dfi_reset       ));
 
   assign ui_clk_sync_rst_o = ui_reset;
 
@@ -169,7 +166,7 @@ module bsg_dmc
     // User interface clock and reset
     (.ui_clk_i              ( ui_clk_i              )
     ,.ui_clk_sync_rst_i     ( ui_reset              )
-	,.stall_transmission_i  (stall_transmission_lo  )
+	,.stall_transactions_i  (stall_transactions_o   )
 	,.refresh_in_progress_o (refresh_in_progress_o  )
 	,.transaction_in_progress_o (transaction_in_progress_o )
     // User interface signals

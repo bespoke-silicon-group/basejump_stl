@@ -20,23 +20,24 @@
 #    19  | DMC bank position width           | 8-bits
 # 21-20  | DMC initialization cycles         | 8-bits
 #    22  | DMC Async Reset                   | 1-bit
-#    23  | DMC stall_transmission            | 1-bit
-#    24  | Clkgen Async Reset                | 1-bit
-#    25  | Clkgen Oscillator                 | 5-bits
-#    26  | Clkgen Osc Trigger                | 1-bit
-#    27  | Clkgen Downsampler                | 2-bits
-#    28  | Clkgen Select                     | 2 bits
+#    23  | DMC stall_transactions            | 1-bit
+#    24  | DMC test_mode                     | 1-bit
+#    25  | Clkgen Async Reset                | 1-bit
+#    26  | Clkgen Oscillator                 | 5-bits
+#    27  | Clkgen Osc Trigger                | 1-bit
+#    28  | Clkgen Downsampler                | 2-bits
+#    29  | Clkgen Select                     | 2 bits
 #
 #
 # Number of masters = 1
-# Number of clients = 23
+# Number of clients = 29
 # Max data width = 8
 #
 # Packet lengths
 # <4b>___<1b>___<5b>_1b_<4b>___<8b>
 # <4b>___<19b>
 #
-# There is one tagmaster driving 23 clients in the traffic_generator. The 1 bit
+# There is one tagmaster driving 29 clients in the traffic_generator. The 1 bit
 # masterEn indicates whether the tag master is selected or not.
 #
 
@@ -135,53 +136,55 @@
 0001___1___10111_0_0001___00000001
 #SEND  en   id=24  r l=1
 0001___1___11000_0_0001___00000001
-#SEND  en   id=25  r l=5
-0001___1___11001_0_0101___00011111
-#SEND  en   id=26  r l=1
-0001___1___11010_0_0001___00000001
-#SEND  en   id=27  r l=2
-0001___1___11011_0_0010___00000011
+#SEND  en   id=25  r l=1
+0001___1___11001_0_0001___00000001
+#SEND  en   id=26  r l=5
+0001___1___11010_0_0101___00011111
+#SEND  en   id=27  r l=1
+0001___1___11011_0_0001___00000001
 #SEND  en   id=28  r l=2
 0001___1___11100_0_0010___00000011
+#SEND  en   id=29  r l=2
+0001___1___11101_0_0010___00000011
 ################################################################################
 #
 # START CONFIGURATION
 #
 # The bsg tag network is now live! We can begin our configuration.
-#    24  | Clkgen Async Reset                 | 1-bit
-#    25  | Clkgen Oscillator                  | 5-bits
-#    26  | Clkgen Osc Trigger                 | 1-bit
-#    27  | Clkgen Downsampler                 | 2-bits
-#    28  | Clkgen Select                      | 2-bits
+#    25  | Clkgen Async Reset                 | 1-bit
+#    26  | Clkgen Oscillator                  | 5-bits
+#    27  | Clkgen Osc Trigger                 | 1-bit
+#    28  | Clkgen Downsampler                 | 2-bits
+#    29  | Clkgen Select                      | 2-bits
 ### Async clk-gen reset to get things moving
 
-#SEND  en   id=24   d l=1    {async_reset}
-0001___1___11000_1_0001___00000000
-0001___1___11000_1_0001___00000001
-0001___1___11000_1_0001___00000000
+#SEND  en   id=25   d l=1    {async_reset}
+0001___1___11001_1_0001___00000000
+0001___1___11001_1_0001___00000001
+0001___1___11001_1_0001___00000000
 
 ### Set osc triggers low
 
-#SEND  en   id=26   d l=1    {trigger}
-0001___1___11010_1_0001___00000000
+#SEND  en   id=27   d l=1    {trigger}
+0001___1___11011_1_0001___00000000
 
 ### Program the raw oscillators speed
 
-#SEND  en   id=25   d l=5    {adt, cdt, fdt}
-0001___1___11001_1_0101___00011101
+#SEND  en   id=26   d l=5    {adt, cdt, fdt}
+0001___1___11010_1_0101___00011101
 
 ### Trigger oscillators
 
-#SEND  en   id=26   d l=1    {trigger}
-0001___1___11010_1_0001___00000001
-0001___1___11010_1_0001___00000000
+#SEND  en   id=27   d l=1    {trigger}
+0001___1___11011_1_0001___00000001
+0001___1___11011_1_0001___00000000
 
-#SEND  en   id=27   d l=3    {ds_val, reset}
-0001___1___11011_1_0011___00000001
-0001___1___11011_1_0011___00000000
+#SEND  en   id=28   d l=3    {ds_val, reset}
+0001___1___11100_1_0011___00000001
+0001___1___11100_1_0011___00000000
 
-#SEND  en   id=28   d l=2    {sel}
-0001___1___11100_1_0010___00000001
+#SEND  en   id=29   d l=2    {sel}
+0001___1___11101_1_0010___00000001
 
 ### Set delay line triggers low
 
@@ -262,8 +265,10 @@
 0001___1___10110_1_0001___00000001
 0001___1___10110_1_0001___00000000
 
-# SEND en  id=23 d l=8     {stall_transmission}
-0001___1___10111_1_1000___00000000
+# SEND en  id=23 d l=1     {stall_transactions}
+0001___1___10111_1_0001___00000000
+# SEND en  id=24 d l=1     {test_mode}
+0001___1___10111_1_0001___00000000
 ################################################################################
 #
 # Done!
