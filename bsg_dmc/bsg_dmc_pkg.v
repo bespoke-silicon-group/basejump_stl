@@ -77,6 +77,7 @@ package bsg_dmc_pkg;
 
   // TODO: Align with clk gen lines
   typedef struct packed {
+    bsg_tag_s sel;
     bsg_tag_s ds;
     bsg_tag_s osc_trigger;
     bsg_tag_s osc;

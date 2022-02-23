@@ -4,6 +4,7 @@ module bsg_dmc
   import bsg_tag_pkg::*;
   import bsg_dmc_pkg::*;
  #(parameter  num_adgs_p         = 1
+  ,parameter  ds_width_p         = 2
   ,parameter `BSG_INV_PARAM( ui_addr_width_p    )
   ,parameter `BSG_INV_PARAM( ui_data_width_p    ) // data width of UI interface, can be 2^n while n = [3, log2(burst_data_width_p)]
   ,parameter `BSG_INV_PARAM( burst_data_width_p ) // data width of an outstanding read/write transaction, typically data width of a cache line
@@ -88,7 +89,6 @@ module bsg_dmc
   logic								 sys_reset_lo;
   logic								 dfi_clk_2x_lo;
 
-  wire                               sys_reset;
   wire                               ui_reset;
   wire                               dfi_reset;
 
@@ -132,12 +132,12 @@ module bsg_dmc
 					 
   bsg_dmc_clk_rst_gen #
     (.num_adgs_p  ( num_adgs_p  )
+    ,.ds_width_p  ( ds_width_p  )
     ,.dq_groups_p ( dq_group_lp ))
   dmc_clk_rst_gen
     // tag lines
     (
-    .async_reset_o          ( sys_reset             )
-    ,.dly_tag_lines_i       ( dly_tag_lines_i       )
+     .dly_tag_lines_i       ( dly_tag_lines_i       )
     ,.osc_tag_lines_i       ( osc_tag_lines_i       )
     ,.dqs_clk_i             ( ddr_dqs_p_i           )
     ,.dqs_clk_o             ( dqs_p_li              )

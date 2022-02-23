@@ -20,12 +20,12 @@
 #    19  | DMC bank position width           | 8-bits
 # 21-20  | DMC initialization cycles         | 8-bits
 #    22  | DMC Async Reset                   | 1-bit
-#	 23  | DMC stall_transmission			 | 1-bit
-#	 24	 | Clkgen Async Reset				 | 1-bit
-#	 25  | Clkgen Oscillator      			 | 5-bits
-#    26  | Clkgen Osc Trigger     			 | 1-bit
-#    27  | Clkgen Downsampler    			 | 7-bits
-#    28  | clock monitor downsampler         | 2 bits
+#    23  | DMC stall_transmission            | 1-bit
+#    24  | Clkgen Async Reset                | 1-bit
+#    25  | Clkgen Oscillator                 | 5-bits
+#    26  | Clkgen Osc Trigger                | 1-bit
+#    27  | Clkgen Downsampler                | 2-bits
+#    28  | Clkgen Select                     | 2 bits
 #
 #
 # Number of masters = 1
@@ -139,19 +139,20 @@
 0001___1___11001_0_0101___00011111
 #SEND  en   id=26  r l=1
 0001___1___11010_0_0001___00000001
-#SEND  en   id=27  r l=7
-0001___1___11011_0_0111___01111111
-#SEND  en   id=28  r l=3
-0001___1___11100_0_0111___00000111
+#SEND  en   id=27  r l=2
+0001___1___11011_0_0010___00000011
+#SEND  en   id=28  r l=2
+0001___1___11100_0_0010___00000011
 ################################################################################
 #
 # START CONFIGURATION
 #
 # The bsg tag network is now live! We can begin our configuration.
-#	 24	 | Clkgen Async Reset				 | 1-bit
-#	 25  | Clkgen Oscillator      			 | 5-bits
-#    26  | Clkgen Osc Trigger     			 | 1-bit
-#    27  | Clkgen Downsampler    			 | 7-bits
+#    24  | Clkgen Async Reset                 | 1-bit
+#    25  | Clkgen Oscillator                  | 5-bits
+#    26  | Clkgen Osc Trigger                 | 1-bit
+#    27  | Clkgen Downsampler                 | 2-bits
+#    28  | Clkgen Select                      | 2-bits
 ### Async clk-gen reset to get things moving
 
 #SEND  en   id=24   d l=1    {async_reset}
@@ -175,9 +176,12 @@
 0001___1___11010_1_0001___00000001
 0001___1___11010_1_0001___00000000
 
-#SEND  en   id=27   d l=7    {ds_val, reset}
-0001___1___11011_1_0111___00000001
-0001___1___11011_1_0111___00000000
+#SEND  en   id=27   d l=2    {ds_val, reset}
+0001___1___11011_1_0010___00000001
+0001___1___11011_1_0010___00000000
+
+#SEND  en   id=28   d l=2    {sel}
+0001___1___11100_1_0010___00000000
 
 ### Set delay line triggers low
 

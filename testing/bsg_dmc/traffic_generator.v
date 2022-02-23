@@ -41,9 +41,10 @@ module traffic_generator
   ,localparam ui_burst_length_lp = burst_data_width_p / ui_data_width_p
   ,localparam dq_burst_length_lp = burst_data_width_p / dq_data_width_p
   ,localparam payload_width_lp 	 = ui_data_width_p + ui_mask_width_lp + 4
+  ,localparam tag_dmc_local_els_lp = tag_dmc_dly_local_els_gp+tag_dmc_cfg_local_els_gp+tag_dmc_osc_local_els_gp
   )
   // Tag lines
-  (output  bsg_tag_s [27:0]	          tag_lines_o
+  (output  bsg_tag_s [tag_dmc_local_els_lp-1:0]	tag_lines_o
   //
   // Global asynchronous reset input, will be synchronized to each clock domain
   // Consistent with the reset signal defined in Xilinx UI interface
@@ -83,7 +84,7 @@ module traffic_generator
   );
 
   // Total number of clients the master will be driving.
-  localparam tag_num_clients_gp = 23;
+  localparam tag_num_clients_gp = tag_dmc_local_els_lp;
   // The number of bits required to represent the max payload width
   localparam tag_max_payload_width_gp = 8;
   localparam tag_lg_max_payload_width_gp = `BSG_SAFE_CLOG2(tag_max_payload_width_gp + 1);
@@ -269,7 +270,7 @@ module traffic_generator
 	);
 
   // BSG tag master instance
-  bsg_tag_master #(.els_p( 28 )
+  bsg_tag_master #(.els_p( tag_dmc_local_els_lp )
                   ,.lg_width_p( tag_lg_max_payload_width_gp )
                   )
     btm
