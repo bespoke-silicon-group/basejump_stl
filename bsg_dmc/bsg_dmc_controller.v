@@ -430,8 +430,6 @@ module bsg_dmc_controller
     ,.data_o             ( cmd_sfifo_rdata    )
     ,.yumi_i             ( cmd_sfifo_rinc     ));
 
-  assign refresh_in_progress_o = (c_cmd == REF);
-
   always_comb begin
     if(cmd_sfifo_valid && !stall_transactions_i)
       case(c_cmd)
@@ -760,6 +758,7 @@ module bsg_dmc_controller
      );
   assign transaction_in_progress_o = (txn_cnt != '0);
      
+  assign refresh_in_progress_o = (c_cmd == REF);
 
   assign app_rd_data_valid_o = rx_piso_valid_lo;
   assign app_rd_data_o       = rx_piso_data_lo;
