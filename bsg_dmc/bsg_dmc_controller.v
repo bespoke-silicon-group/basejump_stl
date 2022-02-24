@@ -414,7 +414,7 @@ module bsg_dmc_controller
   end
 
   assign cmd_sfifo_winc  = push;
-  assign cmd_sfifo_rinc  = shoot;
+  assign cmd_sfifo_rinc  = cmd_sfifo_valid & shoot;
 
   bsg_fifo_1r1w_small #
     (.width_p            ( $bits(cmd_sfifo_wdata) )
@@ -431,7 +431,7 @@ module bsg_dmc_controller
     ,.yumi_i             ( cmd_sfifo_rinc     ));
 
   always_comb begin
-    if(cmd_sfifo_valid && !stall_transactions_i)
+    if(!stall_transactions_i)
       case(c_cmd)
 	LMR:   shoot = cmd_tick >= dmc_p_i.tmrd;
 	REF:   shoot = cmd_tick >= dmc_p_i.trfc;
@@ -510,7 +510,7 @@ module bsg_dmc_controller
       c_cmd <= n_cmd;
   end
 
-  assign n_cmd = cmd_sfifo_rdata.cmd;
+  assign n_cmd = cmd_sfifo_valid ? cmd_sfifo_rdata.cmd : NOP;
 
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i) begin
@@ -758,7 +758,7 @@ module bsg_dmc_controller
      );
   assign transaction_in_progress_o = (txn_cnt != '0);
      
-  assign refresh_in_progress_o = cmd_sfifo_valid & (c_cmd == REF);
+  assign refresh_in_progress_o = (c_cmd == REF);
 
   assign app_rd_data_valid_o = rx_piso_valid_lo;
   assign app_rd_data_o       = rx_piso_data_lo;
