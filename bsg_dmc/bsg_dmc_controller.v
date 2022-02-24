@@ -758,7 +758,7 @@ module bsg_dmc_controller
      );
   assign transaction_in_progress_o = (txn_cnt != '0);
      
-  assign refresh_in_progress_o = (c_cmd == REF);
+  assign refresh_in_progress_o = cmd_sfifo_valid & (c_cmd == REF);
 
   assign app_rd_data_valid_o = rx_piso_valid_lo;
   assign app_rd_data_o       = rx_piso_data_lo;
