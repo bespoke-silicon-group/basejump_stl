@@ -15,9 +15,9 @@ module bsg_dmc_xilinx_ui_trace_replay
 	import bsg_dmc_pkg::*;
 	#(	parameter `BSG_INV_PARAM( data_width_p),
 		parameter `BSG_INV_PARAM( addr_width_p),
-		parameter `BSG_INV_PARAM( burst_width_p),
-        parameter `BSG_INV_PARAM( cmd_tfifo_depth_p),
-        parameter `BSG_INV_PARAM( cmd_rfifo_depth_p),
+		parameter `BSG_INV_PARAM( burst_len_p),
+        parameter `BSG_INV_PARAM( tfifo_depth_p),
+        parameter `BSG_INV_PARAM( rfifo_depth_p),
 
 		localparam trace_data_width_lp = `bsg_dmc_trace_entry_width(data_width_p, addr_width_p)
 	)
@@ -63,7 +63,11 @@ module bsg_dmc_xilinx_ui_trace_replay
 	assign trace_data_li = data_i;
     bsg_fifo_1r1w_small
     				#(.width_p($bits(bsg_dmc_trace_entry_s))
+<<<<<<< HEAD
     				,.els_p(cmd_tfifo_depth_p)
+=======
+    				,.els_p(tfifo_depth_p)
+>>>>>>> dmc_bringup
     				) trace_fifo
     				(.clk_i  (clk_i)
     				,.reset_i(reset_i)
@@ -80,7 +84,7 @@ module bsg_dmc_xilinx_ui_trace_replay
     logic read_data_credit;
     bsg_fifo_1r1w_small_credit_on_input
                     #(.width_p(data_width_p)
-                    ,.els_p(cmd_rfifo_depth_p)
+                    ,.els_p(rfifo_depth_p)
                     ) read_data_fifo
                     (.clk_i  (clk_i)
                     ,.reset_i(reset_i)
@@ -94,8 +98,8 @@ module bsg_dmc_xilinx_ui_trace_replay
                     ,.yumi_i (yumi_i)
                     );
 
-    logic [`BSG_WIDTH(cmd_rfifo_depth_p)-1:0] read_credit;
-    bsg_flow_counter #(.els_p(cmd_rfifo_depth_p), .count_free_p(1)) fc
+    logic [`BSG_WIDTH(rfifo_depth_p)-1:0] read_credit;
+    bsg_flow_counter #(.els_p(rfifo_depth_p), .count_free_p(1)) fc
       (.clk_i(clk_i)
        ,.reset_i(reset_i)
 
@@ -105,7 +109,7 @@ module bsg_dmc_xilinx_ui_trace_replay
 
        ,.count_o(read_credit)
        );
-    wire read_avail = (read_credit >= burst_width_p);
+    wire read_avail = (read_credit >= burst_len_p);
 
     wire trace_is_write = trace_data_lo.app_cmd inside {WP, WR};
     wire trace_is_wdata = trace_data_lo.app_cmd inside {TWD, TWT};

@@ -557,7 +557,7 @@ module traffic_generator
   	bsg_dmc_xilinx_ui_trace_replay
   						#(	.data_width_p(ui_data_width_p),
   							.addr_width_p(ui_addr_width_p),
-  							.burst_width_p(ui_burst_length_lp),
+  							.burst_len_p(ui_burst_length_lp),
                             // Arbitrary for now, just make sure the trace correlates
                             .cmd_tfifo_depth_p(3*ui_burst_length_lp),
                             .cmd_rfifo_depth_p(2*ui_burst_length_lp)
