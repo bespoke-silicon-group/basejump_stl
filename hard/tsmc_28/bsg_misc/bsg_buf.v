@@ -3,7 +3,7 @@ if (harden_p && (width_p==bits))                              \
   begin: macro                                                \
     for (genvar j = 0; j < width_p; j++)                      \
       begin : b                                               \
-        BUFFD8BWP7T40P b (.I(i[j]), .Z(o[j]));                \
+        BUFFD8BWP7T40P140 b (.I(i[j]), .Z(o[j]));             \
       end                                                     \
   end
 
