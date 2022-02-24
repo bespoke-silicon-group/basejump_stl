@@ -132,7 +132,7 @@ module bsg_dly_line
   wire clk_inv;
   assign clk_inv = ~clk_i;
 
-   bsg_rp_clk_gen_atomic_delay_tuner  adt
+   bsg_rp_clk_gen_atomic_delay_tuner  adt_BSG_DONT_TOUCH
      (.i(clk_inv)
       ,.we_async_i (tag_trigger_r_async   )
       ,.we_inited_i(bsg_tag_trigger_i.en  )
@@ -146,7 +146,7 @@ module bsg_dly_line
    // this one inverts the output
    // captures config state on negative edge of input clock
 
-   bsg_rp_clk_gen_coarse_delay_tuner cdt
+   bsg_rp_clk_gen_coarse_delay_tuner cdt_BSG_DONT_TOUCH
      (.i                 (adt_lo)
       ,.we_i             (adt_to_cdt_trigger_lo)
       ,.async_reset_neg_i(async_reset_neg      )
@@ -159,7 +159,7 @@ module bsg_dly_line
    // captures config state on positive edge of (inverted) input clk
    // non-inverting
 
-   bsg_rp_clk_gen_fine_delay_tuner fdt
+   bsg_rp_clk_gen_fine_delay_tuner fdt_BSG_DONT_TOUCH
      (.i                 (cdt_lo)
       ,.we_i             (cdt_to_fdt_trigger_lo)
       ,.async_reset_neg_i(async_reset_neg)
@@ -172,7 +172,7 @@ module bsg_dly_line
    //  $display("%m async_reset_neg=%b fb_clk=%b adg_int=%b fb_tag_r=%b fb_we_r=%b",
    //           async_reset_neg,fb_clk,adg_int,fb_tag_r,fb_we_r);
 
-endmodule // bsg_clk_gen_osc
+endmodule // bsg_dly_line
 
 `BSG_ABSTRACT_MODULE(bsg_dly_line)
 
