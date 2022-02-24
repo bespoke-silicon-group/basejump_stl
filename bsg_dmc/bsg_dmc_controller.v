@@ -326,9 +326,9 @@ module bsg_dmc_controller
       refr_tick <= 0;
     else if(cstate == IDLE && nstate == REFR) begin
       if(|open_bank)
-        refr_tick <= 1;
+        refr_tick <= 2;
       else
-        refr_tick <= 0;
+        refr_tick <= 1;
     end
     else if(cstate == REFR && refr_tick != 0 && push)
       refr_tick <= refr_tick - 1;
@@ -339,11 +339,11 @@ module bsg_dmc_controller
       ldst_tick <= 0;
     else if(cstate == IDLE && nstate == LDST) begin
       if(open_bank[bank_addr] && open_row[bank_addr] == row_addr)
-        ldst_tick <= 0;
-      else if(open_bank[bank_addr])
-        ldst_tick <= 2;
-      else
         ldst_tick <= 1;
+      else if(open_bank[bank_addr])
+        ldst_tick <= 3;
+      else
+        ldst_tick <= 2;
     end
     else if(cstate == LDST && ldst_tick != 0 && push)
       ldst_tick <= ldst_tick - 1;
@@ -356,27 +356,29 @@ module bsg_dmc_controller
       INIT: begin
         push = cmd_sfifo_ready;
         case(init_tick)
-          'd4: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
+          'd5: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
+          'd4: begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
           'd3: begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
-          'd2: begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
-          'd1: begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = {8'h0, dmc_p_i.tcas, 4'($clog2(dfi_burst_length_lp << 1))}; cmd_sfifo_wdata.ba = 4'h0; end
-          'd0: begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = 16'h0; cmd_sfifo_wdata.ba = 4'h2; end
+          'd2: begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = {8'h0, dmc_p_i.tcas, 4'($clog2(dfi_burst_length_lp << 1))}; cmd_sfifo_wdata.ba = 4'h0; end
+          'd1: begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = 16'h0; cmd_sfifo_wdata.ba = 4'h2; end
+          'd0: begin cmd_sfifo_wdata.cmd = NOP; end
           default: cmd_sfifo_wdata.cmd = DESELECT;
         endcase
       end
       REFR: begin
         push = cmd_sfifo_ready;
         case(refr_tick)
-          'd1: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
-          'd0: begin cmd_sfifo_wdata.cmd = REF; end
+          'd2: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
+          'd1: begin cmd_sfifo_wdata.cmd = REF; end
+          'd0: begin cmd_sfifo_wdata.cmd = NOP; end
         endcase
       end
       LDST: begin
         push = cmd_sfifo_ready;
         case(ldst_tick)
-          'd2: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.ba = bank_addr; cmd_sfifo_wdata.addr = open_row[bank_addr]; end
-          'd1: begin cmd_sfifo_wdata.cmd = ACT; cmd_sfifo_wdata.ba = bank_addr; cmd_sfifo_wdata.addr = row_addr; end
-          'd0: begin
+          'd3: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.ba = bank_addr; cmd_sfifo_wdata.addr = open_row[bank_addr]; end
+          'd2: begin cmd_sfifo_wdata.cmd = ACT; cmd_sfifo_wdata.ba = bank_addr; cmd_sfifo_wdata.addr = row_addr; end
+          'd1: begin
                  cmd_sfifo_wdata.ba = bank_addr;
                  cmd_sfifo_wdata.addr = {col_addr[14:10], ap, col_addr[9:0]};
                  if(cmd_afifo_rdata.cmd[0])
@@ -384,6 +386,7 @@ module bsg_dmc_controller
                  else
                    cmd_sfifo_wdata.cmd = WRITE;
                end
+          'd0: begin cmd_sfifo_wdata.cmd = NOP; end
         endcase
       end
     endcase
@@ -757,8 +760,8 @@ module bsg_dmc_controller
      ,.count_o(txn_cnt)
      );
   assign transaction_in_progress_o = (txn_cnt != '0);
-     
-  assign refresh_in_progress_o = cmd_sfifo_valid & (c_cmd == REF);
+
+  assign refresh_in_progress_o = (c_cmd == REF);
 
   assign app_rd_data_valid_o = rx_piso_valid_lo;
   assign app_rd_data_o       = rx_piso_data_lo;

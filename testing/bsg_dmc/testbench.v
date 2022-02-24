@@ -8,8 +8,8 @@ module testbench();
   parameter ui_data_width_p    = 32;
   parameter ui_burst_length_p  = 8;
   parameter dq_data_width_p    = 32;
-  parameter cmd_afifo_depth_p  = 4;
-  parameter cmd_sfifo_depth_p  = 4;
+  parameter cmd_afifo_depth_p  = 6;
+  parameter cmd_sfifo_depth_p  = 6;
   parameter debug_p            = 1'b1;
 
   localparam burst_data_width_lp = ui_data_width_p * ui_burst_length_p;
