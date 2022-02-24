@@ -4,7 +4,7 @@ if (harden_p && (width_p==bits))                  \
   begin: macro                                    \
     for (genvar j = 0; j < width_p; j++)          \
       begin : x                                   \
-        XNR2D4BWP7T40P x (.A1(a_i[j]), .A2(b_i[j]), .ZN(o[j])); \
+        XNR2D4BWP7T40P140 x (.A1(a_i[j]), .A2(b_i[j]), .ZN(o[j])); \
       end                                                     \
   end
 
