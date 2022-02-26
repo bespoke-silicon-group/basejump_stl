@@ -60,11 +60,11 @@ module bsg_rp_dly_line_coarse_delay_tuner
 
    // synopsys rp_fill (0 2 RX)
 
-   DFNCND4BWP sel_r_reg_0 (.D(sel_i[0]), .CPN(we_i), .CDN(async_reset_neg_i), .Q(sel_r[0]), .QN());
+   DFCND4BWP sel_r_reg_0 (.D(sel_i[0]), .CP(we_i), .CDN(async_reset_neg_i), .Q(sel_r[0]), .QN());
 
    // synopsys rp_fill (0 3 RX)
 
-   DFNCND4BWP sel_r_reg_1 (.D(sel_i[1]), .CPN(we_i), .CDN(async_reset_neg_i), .Q(sel_r[1]), .QN());
+   DFCND4BWP sel_r_reg_1 (.D(sel_i[1]), .CP(we_i), .CDN(async_reset_neg_i), .Q(sel_r[1]), .QN());
 
    // synopsys rp_fill (0 4 RX)
    BUFFD4BWP we_o_buf (.I(we_i), .Z(we_o));
