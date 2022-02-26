@@ -147,7 +147,7 @@ module bsg_dly_line
 
    bsg_rp_clk_gen_coarse_delay_tuner cdt
      (.i                 (adt_lo)
-      ,.we_i             (tag_trigger_r_async)
+      ,.we_i             (adt_to_cdt_trigger_lo)
       ,.async_reset_neg_i(async_reset_neg      )
       ,.sel_i            (tag_r_async.cdt      )
       ,.we_o             (cdt_to_fdt_trigger_lo)
@@ -160,7 +160,7 @@ module bsg_dly_line
 
    bsg_rp_clk_gen_fine_delay_tuner fdt
      (.i                 (cdt_lo)
-      ,.we_i             (tag_trigger_r_async)
+      ,.we_i             (cdt_to_fdt_trigger_lo)
       ,.async_reset_neg_i(async_reset_neg)
       ,.sel_i            (tag_r_async.fdt)
       ,.o                (fb_clk)     // in the actual critical loop

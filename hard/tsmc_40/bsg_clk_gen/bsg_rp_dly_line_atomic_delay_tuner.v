@@ -69,7 +69,7 @@ module bsg_rp_dly_line_atomic_delay_tuner
    //LHCND4BWP sel_r_latch_0 (.D(mux_lo[0]), .E(o)      ,.CDN(async_reset_neg_i), .Q(sel_r[0]), .QN());
 
    // drive we signal to next CDT; minimize capacitive load on critical we_i path
-   INVD0BWP we_o_pre      (.I(we_i), .ZN(we_o_pre_buf));
+   BUFFD0BWP we_o_pre     (.I(we_i), .Z(we_o_pre_buf));
    BUFFD4BWP we_o_buf     (.I(we_o_pre_buf),. Z(we_o));
 
    // synopsys rp_endgroup (bsg_clk_gen_adt)

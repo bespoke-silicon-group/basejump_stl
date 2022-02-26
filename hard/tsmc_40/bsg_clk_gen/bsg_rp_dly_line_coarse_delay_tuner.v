@@ -25,6 +25,7 @@ module bsg_rp_dly_line_coarse_delay_tuner
 
    wire [1:0] sel_r;
    wire [8:0] signal;
+   wire       we_o_pre_buf;
 
    assign signal[0] = i;
 
@@ -67,7 +68,9 @@ module bsg_rp_dly_line_coarse_delay_tuner
    DFCND4BWP sel_r_reg_1 (.D(sel_i[1]), .CP(we_i), .CDN(async_reset_neg_i), .Q(sel_r[1]), .QN());
 
    // synopsys rp_fill (0 4 RX)
-   BUFFD4BWP we_o_buf (.I(we_i), .Z(we_o));
+   // drive we signal to next FDT; minimize capacitive load on critical we_i path
+   BUFFD0BWP we_o_pre (.I(we_i), .Z(we_o_pre_buf));
+   BUFFD4BWP we_o_buf (.I(we_o_pre_buf), .Z(we_o));
 
    // synopsys rp_endgroup (bsg_clk_gen_cdt)
 
