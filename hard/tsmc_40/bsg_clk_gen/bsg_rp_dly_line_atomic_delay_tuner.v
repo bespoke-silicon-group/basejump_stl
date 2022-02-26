@@ -19,7 +19,7 @@ module bsg_rp_dly_line_atomic_delay_tuner
    wire [8:0] signal;
    wire       we_o_pre_buf;
 
-   assign signal[0] = i;
+   INVD4BWP i_inv (.I(i), .ZN(signal[0]));
 
    // synopsys rp_group (bsg_clk_gen_adt)
    // synopsys rp_fill (13 2 LX)

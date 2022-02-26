@@ -129,11 +129,8 @@ module bsg_dly_line
    // should be ignored in synthesis
    assign #4000 fb_clk_del = fb_clk;
 
-  wire clk_inv;
-  assign clk_inv = ~clk_i;
-
    bsg_rp_clk_gen_atomic_delay_tuner  adt
-     (.i(clk_inv)
+     (.i(clk_i)
       ,.we_i (tag_trigger_r_async   )
       ,.async_reset_neg_i(async_reset_neg )
       ,.sel_i(tag_r_async.adg[0]          )
