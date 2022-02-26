@@ -15,7 +15,6 @@ module bsg_rp_dly_line_fine_delay_tuner
    );
 
    wire [1:0] sel_r;
-   wire [1:0] mux_lo;
 
    // if wen, capture the select line shortly after a transition
    // from 1 to 0 of the input i
@@ -52,8 +51,7 @@ module bsg_rp_dly_line_fine_delay_tuner
    // flops catch on positive edge of inverted clock
 
    // synopsys rp_fill (2 0 UX)
-   MUX2D1BWP   MX1    (.I0(sel_r [0]),.I1  (sel_i[0]), .S(we_i)    ,.Z(mux_lo[0]         ));
-   DFCND4BWP DFFR1 (.D(mux_lo[0]),.CP(o), .Q (sel_r[0]), .QN(), .CDN(async_reset_neg_i));
+   DFCND4BWP DFFR1 (.D(sel_i[0]),.CP(we_i), .Q (sel_r[0]), .QN(), .CDN(async_reset_neg_i));
 
    MUX4ND4BWP M2 (.I0(ft[3]), .I1(ft[2]), .I2(ft[1]), .I3(ft[0])
               ,.S0(sel_r[0]), .S1(sel_r[1])
@@ -61,8 +59,7 @@ module bsg_rp_dly_line_fine_delay_tuner
               );
 
    // capture on positive edge
-   DFCND4BWP DFFR2 (.D(mux_lo[1]),.CP(o), .Q (sel_r[1]), .QN(), .CDN(async_reset_neg_i));
-   MUX2D1BWP   MX2    (.I0(sel_r [1]),.I1  (sel_i[1]), .S(we_i)    ,.Z(mux_lo[1]         ));
+   DFCND4BWP DFFR2 (.D(sel_i[1]),.CP(we_i), .Q (sel_r[1]), .QN(), .CDN(async_reset_neg_i));
 
    // synopsys rp_fill (3 2 UX)
 

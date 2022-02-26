@@ -58,17 +58,13 @@ module bsg_rp_dly_line_coarse_delay_tuner
                   ,.ZN (o   )
                    );
 
-   wire [1:0] mux_lo;
-
    // synopsys rp_fill (0 2 RX)
 
-   DFNCND4BWP sel_r_reg_0 (.D(mux_lo[0]), .CPN(o), .CDN(async_reset_neg_i), .Q(sel_r[0]), .QN());
-   MUX2D1BWP MX1 (.I0(sel_r[0]),.I1(sel_i[0]),.S(we_i), .Z(mux_lo[0]));
+   DFNCND4BWP sel_r_reg_0 (.D(sel_i[0]), .CPN(we_i), .CDN(async_reset_neg_i), .Q(sel_r[0]), .QN());
 
    // synopsys rp_fill (0 3 RX)
 
-   DFNCND4BWP sel_r_reg_1 (.D(mux_lo[1]), .CPN(o), .CDN(async_reset_neg_i), .Q(sel_r[1]), .QN());
-   MUX2D1BWP MX2 (.I0(sel_r[1]),.I1(sel_i[1]),.S(we_i), .Z(mux_lo[1]));
+   DFNCND4BWP sel_r_reg_1 (.D(sel_i[1]), .CPN(we_i), .CDN(async_reset_neg_i), .Q(sel_r[1]), .QN());
 
    // synopsys rp_fill (0 4 RX)
    BUFFD4BWP we_o_buf (.I(we_i), .Z(we_o));
