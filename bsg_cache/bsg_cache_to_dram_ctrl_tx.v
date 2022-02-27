@@ -24,9 +24,6 @@ module bsg_cache_to_dram_ctrl_tx
     input clk_i
     , input reset_i
 
-    , input v_i
-    , output logic ready_o
-
     , input [dma_data_width_p-1:0] dma_data_i
     , input dma_data_v_i
     , output logic dma_data_yumi_o
