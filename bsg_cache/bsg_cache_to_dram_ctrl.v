@@ -50,7 +50,7 @@ module bsg_cache_to_dram_ctrl
     , output logic app_en_o
     , input app_rdy_i
     , output app_cmd_e app_cmd_o
-    , output logic [addr_width_p-1:0] raw_app_addr_o
+    , output logic [addr_width_p-1:0] app_addr_raw_o
 
     , output logic app_wdf_wren_o
     , input app_wdf_rdy_i
@@ -185,7 +185,7 @@ module bsg_cache_to_dram_ctrl
     endcase
   end
 
-  assign raw_app_addr_o = addr_r;
+  assign app_addr_raw_o = addr_r;
 
   // sequential
   //
