@@ -47,6 +47,7 @@ module bsg_wormhole_to_cache_dma_stream
     , output logic [dma_pkt_width_lp-1:0] dma_pkt_o
     , output logic dma_pkt_v_o
     , input dma_pkt_yumi_i
+    , output logic [lg_num_dma_lp-1:0] dma_pkt_id_o
 
     , input [dma_data_width_p-1:0] dma_data_i
     , input dma_data_v_i
@@ -144,6 +145,7 @@ module bsg_wormhole_to_cache_dma_stream
     send_up_li = 1'b0;
     dma_pkt_v_o = '0;
     dma_pkt_out = '0;
+    dma_pkt_id_o = '0;
 
     dma_data_v_o = '0;
     dma_data_o = '0;
@@ -177,6 +179,7 @@ module bsg_wormhole_to_cache_dma_stream
         dma_pkt_v_o = wh_link_sif_in.v;
         dma_pkt_out.write_not_read = write_not_read_r;
         dma_pkt_out.addr = dma_addr_width_p'(wh_link_sif_in.data);
+        dma_pkt_id_o = send_cache_id_r;
 
         wh_link_sif_out.then_ready_rev = dma_pkt_yumi_i;
         send_state_n = wh_link_sif_out.then_ready_rev
