@@ -17,7 +17,8 @@ module bsg_cache_to_dram_ctrl
     , parameter `BSG_INV_PARAM(data_width_p)
     , parameter `BSG_INV_PARAM(block_size_in_words_p)
     , parameter `BSG_INV_PARAM(dram_ctrl_burst_len_p)
-    
+ 
+    , localparam lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
     , localparam mask_width_lp=(data_width_p>>3)
     , localparam dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
 
@@ -35,6 +36,7 @@ module bsg_cache_to_dram_ctrl
     , input [dma_pkt_width_lp-1:0] dma_pkt_i
     , input dma_pkt_v_i
     , output logic dma_pkt_yumi_o
+    , input [lg_num_cache_lp-1:0] dma_pkt_id_i
 
     , output logic [data_width_p-1:0] dma_data_o
     , output logic dma_data_v_o
@@ -49,6 +51,7 @@ module bsg_cache_to_dram_ctrl
     , input app_rdy_i
     , output app_cmd_e app_cmd_o
     , output logic [addr_width_p-1:0] app_addr_raw_o
+    , output logic [lg_num_cache_lp-1:0] app_addr_id_o
 
     , output logic app_wdf_wren_o
     , input app_wdf_rdy_i
@@ -129,6 +132,7 @@ module bsg_cache_to_dram_ctrl
   logic [addr_width_p-1:0] addr_r, addr_n;
   logic write_not_read_r, write_not_read_n;
   logic [`BSG_SAFE_CLOG2(num_req_lp)-1:0] req_cnt_r, req_cnt_n;
+  logic [lg_num_cache_lp-1:0] tag_r, tag_n;
 
   always_comb begin
     app_en_o = 1'b0;
@@ -140,12 +144,14 @@ module bsg_cache_to_dram_ctrl
     req_state_n = req_state_r;
     req_cnt_n = req_cnt_r;
     addr_n = addr_r;
+    tag_n = tag_r;
     
     case (req_state_r)
       WAIT: begin
         if (dma_pkt_v_i) begin
           dma_pkt_yumi_o = 1'b1;
           addr_n = dma_pkt.addr;
+          tag_n = dma_pkt_id_i;
           write_not_read_n = dma_pkt.write_not_read;
           req_cnt_n = '0;
           req_state_n = SEND_REQ;
@@ -177,6 +183,7 @@ module bsg_cache_to_dram_ctrl
   end
 
   assign app_addr_raw_o = addr_r;
+  assign app_addr_id_o = tag_r;
 
   // sequential
   //
@@ -184,12 +191,14 @@ module bsg_cache_to_dram_ctrl
     if (reset_i) begin
       req_state_r <= WAIT;
       addr_r <= '0;
+      tag_r <= '0;
       req_cnt_r <= '0;
       write_not_read_r <= 1'b0;
     end
     else begin
       req_state_r <= req_state_n;
       addr_r <= addr_n;
+      tag_r <= tag_n;
       req_cnt_r <= req_cnt_n;
       write_not_read_r <= write_not_read_n;
     end
