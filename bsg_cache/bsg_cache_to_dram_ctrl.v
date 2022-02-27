@@ -72,8 +72,6 @@ module bsg_cache_to_dram_ctrl
 
   // rx module
   //
-  logic rx_v_li;
-  logic rx_ready_lo;
 
   bsg_cache_to_dram_ctrl_rx #(
     .num_dma_p(num_dma_p)
@@ -83,9 +81,6 @@ module bsg_cache_to_dram_ctrl
   ) rx (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
-
-    ,.v_i(rx_v_li)
-    ,.ready_o(rx_ready_lo)
 
     ,.dma_data_o(dma_data_o)
     ,.dma_data_v_o(dma_data_v_o)
@@ -98,8 +93,6 @@ module bsg_cache_to_dram_ctrl
 
   // tx module
   //
-  logic tx_v_li;
-  logic tx_ready_lo;
 
   bsg_cache_to_dram_ctrl_tx #(
     .num_dma_p(num_dma_p)
@@ -110,9 +103,7 @@ module bsg_cache_to_dram_ctrl
   ) tx (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
-    ,.v_i(tx_v_li)
-    ,.mask_i(mask_r)
-    ,.ready_o(tx_ready_lo)
+    ,.dma_mask_i(mask_r)
     ,.dma_data_i(dma_data_i)
     ,.dma_data_v_i(dma_data_v_i)
     ,.dma_data_yumi_o(dma_data_yumi_o)
@@ -141,8 +132,6 @@ module bsg_cache_to_dram_ctrl
     app_cmd_o = WR;
     dma_pkt_yumi_o = 1'b0;
     write_not_read_n = write_not_read_r;
-    rx_v_li = 1'b0;
-    tx_v_li = 1'b0;
     req_state_n = req_state_r;
     req_cnt_n = req_cnt_r;
     addr_n = addr_r;
@@ -163,15 +152,10 @@ module bsg_cache_to_dram_ctrl
       end
 
       SEND_REQ: begin
-        app_en_o = (write_not_read_r
-          ? tx_ready_lo
-          : rx_ready_lo);
+        app_en_o = 1'b1;
         app_cmd_o = write_not_read_r
           ? WR
           : RD;
-
-        rx_v_li = ~write_not_read_r & rx_ready_lo & app_rdy_i;
-        tx_v_li = write_not_read_r & tx_ready_lo & app_rdy_i;
 
         addr_n = (app_rdy_i & app_en_o)
           ? addr_r + (1 << `BSG_SAFE_CLOG2(dram_ctrl_burst_len_p*dma_data_width_p/8))

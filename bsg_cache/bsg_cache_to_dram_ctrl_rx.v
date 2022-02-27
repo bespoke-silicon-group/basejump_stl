@@ -22,9 +22,6 @@ module bsg_cache_to_dram_ctrl_rx
     input clk_i
     , input reset_i
 
-    , input v_i
-    , output logic ready_o
-  
     , output logic [dma_data_width_p-1:0] dma_data_o
     , output logic dma_data_v_o
     , input dma_data_ready_i

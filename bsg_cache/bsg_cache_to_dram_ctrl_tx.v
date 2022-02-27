@@ -26,10 +26,7 @@ module bsg_cache_to_dram_ctrl_tx
     input clk_i
     , input reset_i
 
-    , input v_i
-    , input [dma_mask_width_p-1:0] mask_i
-    , output logic ready_o
-
+    , input [dma_mask_width_p-1:0] dma_mask_i
     , input [dma_data_width_p-1:0] dma_data_i
     , input dma_data_v_i
     , output logic dma_data_yumi_o
@@ -39,28 +36,6 @@ module bsg_cache_to_dram_ctrl_tx
     , output logic [mask_width_lp-1:0] app_wdf_mask_o
     , output logic app_wdf_end_o
     , input app_wdf_rdy_i
-  );
-
-  // mask FIFO
-  //
-  logic [dma_mask_width_p-1:0] mask_lo;
-  logic tag_fifo_v_lo;
-  logic tag_fifo_yumi_li;
-
-  bsg_fifo_1r1w_small #(
-    .width_p(dma_mask_width_p)
-    ,.els_p(num_cache_p*num_req_lp)
-  ) tag_fifo (
-    .clk_i(clk_i)
-    ,.reset_i(reset_i)
-    
-    ,.v_i(v_i)
-    ,.data_i(mask_i)
-    ,.ready_o(ready_o)
-
-    ,.v_o(tag_fifo_v_lo)
-    ,.data_o(mask_lo)
-    ,.yumi_i(tag_fifo_yumi_li)
   );
 
   assign dma_data_yumi_o = dma_data_v_i & app_wdf_rdy_i;
@@ -90,7 +65,7 @@ module bsg_cache_to_dram_ctrl_tx
     .in_width_p(dma_mask_width_p)
     ,.expand_p(dma_byte_mask_width_lp/dma_mask_width_p)
   ) expand (
-    .i(mask_lo)
+    .i(dma_mask_i)
     ,.o(byte_mask_lo)
   );
 
@@ -110,13 +85,11 @@ module bsg_cache_to_dram_ctrl_tx
       clear_li = take_word;
       up_li = 1'b0;
       app_wdf_end_o = take_word;
-      tag_fifo_yumi_li = take_word;
     end
     else begin
       clear_li = 1'b0;
       up_li = take_word;
       app_wdf_end_o = 1'b0;
-      tag_fifo_yumi_li = 1'b0;
     end
   end
 
