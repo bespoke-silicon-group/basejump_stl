@@ -102,13 +102,13 @@ module bsg_wormhole_to_cache_dma_stream
     ,.count_o(send_count_lo)
   );
 
-  logic [wh_cord_width_p-1:0] src_cord_li, src_cord_lo;
-  logic [wh_cid_width_p-1:0] src_cid_li, src_cid_lo;
-  logic src_fifo_ready_lo, src_fifo_v_li, src_fifo_yumi_li;
+  logic [wh_cord_width_p-1:0] src_cord_li, src_cid_li;
+  logic src_fifo_ready_lo, src_fifo_v_li;
+  logic [wh_cid_width_p-1:0] src_cord_lo, src_cid_lo;
+  logic src_fifo_v_lo, src_fifo_yumi_li;
   bsg_fifo_1r1w_small #(
     .width_p(wh_cord_width_p+wh_cid_width_p)
     ,.els_p(num_dma_p)
-    ,.ready_THEN_valid_p(1)
   ) src_fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -118,10 +118,8 @@ module bsg_wormhole_to_cache_dma_stream
     ,.ready_o(src_fifo_ready_lo)
 
     ,.data_o({src_cid_lo, src_cord_lo})
+    ,.v_o(src_fifo_v_lo)
     ,.yumi_i(src_fifo_yumi_li)
-
-    // Unused by construction
-    ,.v_o()
   );
 
   always_comb begin
@@ -275,9 +273,10 @@ module bsg_wormhole_to_cache_dma_stream
       // Wait for dma_data_v_i to be 1.
       // send out header to dest vcache
       RECV_HEADER: begin
-        wh_link_sif_out.v = dma_data_v_i;
+        wh_link_sif_out.v = dma_data_v_i & src_fifo_v_lo;
         wh_link_sif_out.data = header_flit_out;
         if (wh_link_sif_in.ready_and_rev & wh_link_sif_out.v) begin
+          src_fifo_yumi_li = 1'b1;
           recv_state_n = RECV_FILL_DATA;
         end
       end
