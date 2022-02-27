@@ -64,6 +64,7 @@ module bsg_dmc_xilinx_ui_trace_replay
     bsg_fifo_1r1w_small
     				#(.width_p($bits(bsg_dmc_trace_entry_s))
     				,.els_p(tfifo_depth_p)
+                    ,.harden_p(1)
     				) trace_fifo
     				(.clk_i  (clk_i)
     				,.reset_i(reset_i)
@@ -81,6 +82,7 @@ module bsg_dmc_xilinx_ui_trace_replay
     bsg_fifo_1r1w_small_credit_on_input
                     #(.width_p(data_width_p)
                     ,.els_p(rfifo_depth_p)
+                    ,.harden_p(1)
                     ) read_data_fifo
                     (.clk_i  (clk_i)
                     ,.reset_i(reset_i)
