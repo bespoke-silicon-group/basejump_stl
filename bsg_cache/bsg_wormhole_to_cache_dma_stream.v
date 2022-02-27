@@ -147,7 +147,6 @@ module bsg_wormhole_to_cache_dma_stream
 
     dma_data_v_o = '0;
     dma_data_o = '0;
-    dma_data_id_o = '0;
 
     case (send_state_r)
       // coming out of reset
@@ -189,7 +188,6 @@ module bsg_wormhole_to_cache_dma_stream
       SEND_EVICT_DATA: begin
         dma_data_v_o = wh_link_sif_in.v;
         dma_data_o = wh_link_sif_in.data;
-        dma_data_id_o = send_cache_id_r;
         if (dma_data_yumi_i) begin
           wh_link_sif_out.then_ready_rev = 1'b1;
           send_up_li = send_count_lo != dma_burst_len_p-1;
