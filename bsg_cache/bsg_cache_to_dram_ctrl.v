@@ -12,18 +12,17 @@
 module bsg_cache_to_dram_ctrl
   import bsg_cache_pkg::*;
   import bsg_dmc_pkg::*;
-  #(parameter `BSG_INV_PARAM(num_cache_p)
-    , parameter `BSG_INV_PARAM(addr_width_p)
-    , parameter `BSG_INV_PARAM(data_width_p)
-    , parameter `BSG_INV_PARAM(block_size_in_words_p)
+  #(parameter `BSG_INV_PARAM(num_dma_p)
+    , parameter `BSG_INV_PARAM(dma_addr_width_p)
+    , parameter `BSG_INV_PARAM(dma_data_width_p)
+    , parameter `BSG_INV_PARAM(dma_burst_len_p)
     , parameter `BSG_INV_PARAM(dram_ctrl_burst_len_p)
     , parameter `BSG_INV_PARAM(dma_mask_width_p)
     
-    , localparam mask_width_lp=(data_width_p>>3)
-    , localparam lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
+    , localparam lg_num_dma_lp=`BSG_SAFE_CLOG2(num_dma_p)
+    , localparam mask_width_lp=(dma_data_width_p>>3)
     , localparam dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p,dma_mask_width_p)
-
-    , localparam num_req_lp=(block_size_in_words_p/dram_ctrl_burst_len_p)
+    , localparam num_req_lp=(dma_burst_len_p/dram_ctrl_burst_len_p)
   )
   (
     input clk_i
@@ -37,13 +36,13 @@ module bsg_cache_to_dram_ctrl
     , input [dma_pkt_width_lp-1:0] dma_pkt_i
     , input dma_pkt_v_i
     , output logic dma_pkt_yumi_o
-    , input [lg_num_cache_lp-1:0] dma_pkt_id_i
+    , input [lg_num_dma_lp-1:0] dma_pkt_id_i
 
-    , output logic [data_width_p-1:0] dma_data_o
+    , output logic [dma_data_width_p-1:0] dma_data_o
     , output logic dma_data_v_o
     , input dma_data_ready_i
 
-    , input [data_width_p-1:0] dma_data_i
+    , input [dma_data_width_p-1:0] dma_data_i
     , input dma_data_v_i
     , output logic dma_data_yumi_o
 
@@ -51,17 +50,17 @@ module bsg_cache_to_dram_ctrl
     , output logic app_en_o
     , input app_rdy_i
     , output app_cmd_e app_cmd_o
-    , output logic [addr_width_p-1:0] app_addr_raw_o
-    , output logic [lg_num_cache_lp-1:0] app_addr_id_o
+    , output logic [dma_addr_width_p-1:0] app_addr_raw_o
+    , output logic [lg_num_dma_lp-1:0] app_addr_id_o
 
     , output logic app_wdf_wren_o
     , input app_wdf_rdy_i
-    , output logic [data_width_p-1:0] app_wdf_data_o
+    , output logic [dma_data_width_p-1:0] app_wdf_data_o
     , output logic [mask_width_lp-1:0] app_wdf_mask_o
     , output logic app_wdf_end_o
 
     , input app_rd_data_valid_i
-    , input [data_width_p-1:0] app_rd_data_i
+    , input [dma_data_width_p-1:0] app_rd_data_i
     , input app_rd_data_end_i
   );
 
@@ -77,9 +76,9 @@ module bsg_cache_to_dram_ctrl
   logic rx_ready_lo;
 
   bsg_cache_to_dram_ctrl_rx #(
-    .num_cache_p(num_cache_p)
-    ,.data_width_p(data_width_p)
-    ,.block_size_in_words_p(block_size_in_words_p)
+    .num_dma_p(num_dma_p)
+    ,.dma_data_width_p(dma_data_width_p)
+    ,.dma_burst_len_p(dma_burst_len_p)
     ,.dram_ctrl_burst_len_p(dram_ctrl_burst_len_p)
   ) rx (
     .clk_i(clk_i)
@@ -103,9 +102,9 @@ module bsg_cache_to_dram_ctrl
   logic tx_ready_lo;
 
   bsg_cache_to_dram_ctrl_tx #(
-    .num_cache_p(num_cache_p)
-    ,.data_width_p(data_width_p)
-    ,.block_size_in_words_p(block_size_in_words_p)
+    .num_dma_p(num_dma_p)
+    ,.dma_data_width_p(dma_data_width_p)
+    ,.dma_burst_len_p(dma_burst_len_p)
     ,.dma_mask_width_p(dma_mask_width_p)
     ,.dram_ctrl_burst_len_p(dram_ctrl_burst_len_p)
   ) tx (
@@ -132,10 +131,10 @@ module bsg_cache_to_dram_ctrl
   } req_state_e;
 
   req_state_e req_state_r, req_state_n;
-  logic [addr_width_p-1:0] addr_r, addr_n;
+  logic [dma_addr_width_p-1:0] addr_r, addr_n;
   logic write_not_read_r, write_not_read_n;
   logic [`BSG_SAFE_CLOG2(num_req_lp)-1:0] req_cnt_r, req_cnt_n;
-  logic [lg_num_cache_lp-1:0] tag_r, tag_n;
+  logic [lg_num_dma_lp-1:0] tag_r, tag_n;
 
   always_comb begin
     app_en_o = 1'b0;
@@ -175,7 +174,7 @@ module bsg_cache_to_dram_ctrl
         tx_v_li = write_not_read_r & tx_ready_lo & app_rdy_i;
 
         addr_n = (app_rdy_i & app_en_o)
-          ? addr_r + (1 << `BSG_SAFE_CLOG2(dram_ctrl_burst_len_p*data_width_p/8))
+          ? addr_r + (1 << `BSG_SAFE_CLOG2(dram_ctrl_burst_len_p*dma_data_width_p/8))
           : addr_r;
         mask_n = (app_rdy_i & app_en_o)
           ? (mask_r >> (dma_mask_width_p/num_req_lp))

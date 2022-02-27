@@ -9,16 +9,17 @@
 `include "bsg_defines.v"
 
 module bsg_cache_to_dram_ctrl_tx
-  #(parameter `BSG_INV_PARAM(num_cache_p)
-    , parameter `BSG_INV_PARAM(data_width_p)
-    , parameter `BSG_INV_PARAM(block_size_in_words_p)
+  #(parameter `BSG_INV_PARAM(num_dma_p)
+    , parameter `BSG_INV_PARAM(dma_data_width_p)
+    , parameter `BSG_INV_PARAM(dma_burst_len_p)
+    , parameter `BSG_INV_PARAM(dram_ctrl_burst_len_p)
     , parameter `BSG_INV_PARAM(dma_mask_width_p)
     , parameter `BSG_INV_PARAM(dram_ctrl_burst_len_p)
 
-    , localparam mask_width_lp=(data_width_p>>3)
-    , localparam dma_byte_mask_width_lp=(block_size_in_words_p*mask_width_lp)
-    , localparam num_req_lp=(block_size_in_words_p/dram_ctrl_burst_len_p)
-    , localparam lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
+    , localparam mask_width_lp=(dma_data_width_p>>3)
+    , localparam dma_byte_mask_width_lp=(dma_burst_len_p*mask_width_lp)
+    , localparam num_req_lp=(dma_burst_len_p/dram_ctrl_burst_len_p)
+    , localparam lg_num_dma_lp=`BSG_SAFE_CLOG2(num_dma_p)
     , localparam lg_dram_ctrl_burst_len_lp=`BSG_SAFE_CLOG2(dram_ctrl_burst_len_p)
   )
   (
@@ -29,12 +30,12 @@ module bsg_cache_to_dram_ctrl_tx
     , input [dma_mask_width_p-1:0] mask_i
     , output logic ready_o
 
-    , input [data_width_p-1:0] dma_data_i
+    , input [dma_data_width_p-1:0] dma_data_i
     , input dma_data_v_i
     , output logic dma_data_yumi_o
 
     , output logic app_wdf_wren_o
-    , output logic [data_width_p-1:0] app_wdf_data_o
+    , output logic [dma_data_width_p-1:0] app_wdf_data_o
     , output logic [mask_width_lp-1:0] app_wdf_mask_o
     , output logic app_wdf_end_o
     , input app_wdf_rdy_i
