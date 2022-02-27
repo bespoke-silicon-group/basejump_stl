@@ -8,15 +8,15 @@
 `include "bsg_defines.v"
 
 module bsg_cache_to_dram_ctrl_rx
-  #(parameter `BSG_INV_PARAM(num_cache_p)
-    , parameter `BSG_INV_PARAM(data_width_p)
-    , parameter `BSG_INV_PARAM(block_size_in_words_p)
+  #(parameter `BSG_INV_PARAM(num_dma_p)
+    , parameter `BSG_INV_PARAM(dma_data_width_p)
+    , parameter `BSG_INV_PARAM(dma_burst_len_p)
 
     , parameter `BSG_INV_PARAM(dram_ctrl_burst_len_p)
     
-    , localparam lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
+    , localparam lg_num_dma_lp=`BSG_SAFE_CLOG2(num_dma_p)
     , localparam lg_dram_ctrl_burst_len_lp=`BSG_SAFE_CLOG2(dram_ctrl_burst_len_p)
-    , localparam num_req_lp=(block_size_in_words_p/dram_ctrl_burst_len_p)
+    , localparam num_req_lp=(dma_burst_len_p/dram_ctrl_burst_len_p)
   )
   (
     input clk_i
@@ -25,13 +25,13 @@ module bsg_cache_to_dram_ctrl_rx
     , input v_i
     , output logic ready_o
   
-    , output logic [data_width_p-1:0] dma_data_o
+    , output logic [dma_data_width_p-1:0] dma_data_o
     , output logic dma_data_v_o
     , input dma_data_ready_i
 
     , input app_rd_data_valid_i
     , input app_rd_data_end_i
-    , input [data_width_p-1:0] app_rd_data_i
+    , input [dma_data_width_p-1:0] app_rd_data_i
   );
 
   wire unused = app_rd_data_end_i;
@@ -42,11 +42,11 @@ module bsg_cache_to_dram_ctrl_rx
   //
   logic fifo_v_lo;
   logic fifo_yumi_li;
-  logic [data_width_p-1:0] fifo_data_lo;
+  logic [dma_data_width_p-1:0] fifo_data_lo;
 
   bsg_fifo_1r1w_large #(
-    .width_p(data_width_p)
-    ,.els_p(num_cache_p*dram_ctrl_burst_len_p)
+    .width_p(dma_data_width_p)
+    ,.els_p(num_dma_p*dram_ctrl_burst_len_p)
   ) fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
