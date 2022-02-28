@@ -1,7 +1,5 @@
 `include "bsg_defines.v"
-
-`define WRITE 3'b000
-`define READ  3'b001
+`include "bsg_dmc.vh"
 
 `ifndef UI_CLK_PERIOD
   `define UI_CLK_PERIOD 2500.0
@@ -334,14 +332,14 @@ module traffic_generator
 	      wdata_array[waddr] = wdata;
 	      $display("Time: %8d ns, Write %x to %x", $time(), wdata, waddr);
 	      fork
-	        ui_cmd(`WRITE, waddr);
+	        ui_cmd(WR, waddr);
 	        ui_write(0, wdata);
 	      join
 	    end
 	    for(k=0;k<256;k++) begin
 	      raddr = k*dq_burst_length_lp;
 	      raddr_queue.push_front(raddr);
-	      ui_cmd(`READ, raddr);
+	      ui_cmd(RD, raddr);
 	    end
 	    repeat(1000) @(posedge ui_clk);
 	    $display("\nRegression test passed!");

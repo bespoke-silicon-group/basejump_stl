@@ -161,3 +161,6 @@ module bsg_dmc_xilinx_ui_trace_replay
     end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_dmc_xilinx_ui_trace_replay)
+
