@@ -19,7 +19,7 @@ ELABORATE_OPTIONS += +define+BSG_OSC_GRANULARITY=100
 ELABORATE_OPTIONS += -timescale=1ps/1ps
 ELABORATE_OPTIONS += -assert svaext
 #Enable below line for using non-synthesisable UVM TB
-#ELABORATE_OPTIONS += +define+NONSYNTH_TB
+ELABORATE_OPTIONS += +define+NONSYNTH_TB
 ELABORATE_OPTIONS += +lint=TFIPC-L
 
 RUN_OPTIONS =

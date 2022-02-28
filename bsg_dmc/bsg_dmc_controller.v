@@ -509,26 +509,11 @@ module bsg_dmc_controller
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       c_cmd <= NOP;
-    else if(shoot)
+    else if(shoot && n_cmd != NOP)
       c_cmd <= n_cmd;
   end
 
   assign n_cmd = cmd_sfifo_rdata.cmd;
-
-  always_ff @(posedge dfi_clk_i) begin
-    if(dfi_clk_sync_rst_i) begin
-      cwd_tick <= 0;
-      cwd_valid <= 0;
-    end
-    else if(shoot && cmd_sfifo_rdata[23:20] == WRITE) begin
-      cwd_tick <= dmc_p_i.tcas - 2;
-      cwd_valid <= 1;
-    end
-    else if(cwd_valid) begin
-      cwd_tick <= cwd_tick - 1;
-      if(cwd_tick == 0) cwd_valid <= 0;
-    end
-  end
 
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i) begin
