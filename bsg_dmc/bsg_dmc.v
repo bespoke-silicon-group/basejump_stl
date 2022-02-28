@@ -82,7 +82,7 @@ module bsg_dmc
   ,input                             ui_clk_i
   //
   ,output                            ui_clk_sync_rst_o
-  ,input                             ext_dfi_clk_i
+  ,input                             ext_dfi_clk_2x_i
   ,output                            dfi_clk_2x_o
   ,output                            dfi_clk_1x_o
   // Reserved to be compatible with Xilinx IPs
@@ -145,7 +145,7 @@ module bsg_dmc
     ,.osc_tag_lines_i       ( osc_tag_lines_i       )
     ,.dqs_clk_i             ( ddr_dqs_p_i           )
     ,.dqs_clk_o             ( dqs_p_li              )
-    ,.ext_dfi_clk_i         ( ext_dfi_clk_i         )
+    ,.ext_dfi_clk_2x_i      ( ext_dfi_clk_2x_i      )
     ,.ui_clk_i              ( ui_clk_i              )
     ,.ui_reset_o            ( ui_reset              )
     ,.async_reset_i         ( async_reset           )
