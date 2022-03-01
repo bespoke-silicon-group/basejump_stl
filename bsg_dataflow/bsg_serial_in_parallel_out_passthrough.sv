@@ -67,7 +67,7 @@ module bsg_serial_in_parallel_out_passthrough
   for (genvar i = 0; i < els_p-1; i++)
     begin: rof
       wire my_turn = v_i & count_r[i];
-      bsg_dff_en #(.width_p(width_p)) dff
+      bsg_dff_en_bypass #(.width_p(width_p)) dff
       (.clk_i
        ,.data_i
        ,.en_i   (my_turn)
