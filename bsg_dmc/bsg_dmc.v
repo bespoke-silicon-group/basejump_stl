@@ -85,6 +85,8 @@ module bsg_dmc
   ,input                             ext_dfi_clk_2x_i
   ,output                            dfi_clk_2x_o
   ,output                            dfi_clk_1x_o
+  ,output          [dq_group_lp-1:0] dqs_clk_o
+  ,output          [dq_group_lp-1:0] dqs_clk_dly_o
   // Reserved to be compatible with Xilinx IPs
   ,output                     [11:0] device_temp_o
 );
@@ -118,9 +120,10 @@ module bsg_dmc
   bsg_dmc_s 						 dmc_p_lo;
   assign device_temp_o = 12'd0;
 
-  assign dfi_clk_2x_o = dfi_clk_2x_lo;
-  assign dfi_clk_1x_o = dfi_clk_1x_lo;
-
+  assign dfi_clk_2x_o  = dfi_clk_2x_lo;
+  assign dfi_clk_1x_o  = dfi_clk_1x_lo;
+  assign dqs_clk_o     = ddr_dqs_p_i;
+  assign dqs_clk_dly_o = dqs_p_li;
   
   bsg_dmc_sys_cfg_gen
 					dmc_sys_cfg_gen
