@@ -31,6 +31,7 @@ module bsg_rp_clk_gen_atomic_delay_tuner
    CKND2BWP7T40P140 I1  (.I(signal[0]), .ZN(signal[1]) );
    CKND2BWP7T40P140 I2  (.I(signal[1]), .ZN(signal[2]) );
    CKND4BWP7T40P140 I2a (.I(signal[1]), .ZN()          );
+   CKND4BWP7T40P140 I2b (.I(signal[1]), .ZN()          );
 
    CKND2BWP7T40P140 I3  (.I(signal[2]), .ZN(signal[3]) );
    CKND2BWP7T40P140 I4  (.I(signal[3]), .ZN(signal[4]) );
@@ -41,10 +42,10 @@ module bsg_rp_clk_gen_atomic_delay_tuner
    CKND2BWP7T40P140 I5  (.I(signal[4]), .ZN(signal[5]) );
    CKND2BWP7T40P140 I6  (.I(signal[5]), .ZN(signal[6]) );
    CKND4BWP7T40P140 I6a (.I(signal[5]), .ZN()          );
+   CKND4BWP7T40P140 I6b (.I(signal[5]), .ZN()          );
 
    CKND2BWP7T40P140 I7  (.I(signal[6]), .ZN(signal[7]) );
    CKND2BWP7T40P140 I8  (.I(signal[7]), .ZN(signal[8]) );
-
    CKND4BWP7T40P140 I8a (.I(signal[7]), .ZN()          );
    CKND3BWP7T40P140 I8b (.I(signal[7]), .ZN()          ); // fudge factor capacitance
 
