@@ -122,7 +122,7 @@ module bsg_dram_clk_gen #
     ,.clk_o             ( osc_clk_o             ));
 /*    end */
 
-  `declare_bsg_clk_gen_ds_tag_payload_s(downsample_width_p)
+  `declare_bsg_clk_gen_ds_tag_payload_s(downsample_width_p);
 
   bsg_clk_gen_ds_tag_payload_s ds_tag_payload_r;
 

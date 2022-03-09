@@ -78,7 +78,9 @@ module bsg_clk_gen
   import bsg_tag_pkg::bsg_tag_s;
  #(parameter `BSG_INV_PARAM(downsample_width_p )
   ,          num_adgs_p         = 2
-  ,          version_p          = 1  // alternative, use version_p = 2
+  ,          num_rows_p         = 2 // used only by version_p = 3
+  ,          num_cols_p         = 2 // used only by version_p = 3
+  ,          version_p          = 1  // alternative, use version_p = 2 or version_p = 3
   )
   (input  bsg_tag_s         bsg_osc_tag_i
   ,input  bsg_tag_s         bsg_osc_trigger_tag_i // used only by version_p = 2
@@ -110,9 +112,8 @@ module bsg_clk_gen
           ,.clk_o             (osc_clk_out      )
           );
     end
-  else
+  else if (version_p == 2)
     begin: v2
- */
        bsg_clk_gen_osc #(.num_adgs_p(num_adgs_p))  clk_gen_osc_inst
          (
           .bsg_tag_i          (bsg_osc_tag_i        )
@@ -120,9 +121,17 @@ module bsg_clk_gen
           ,.async_reset_i     (async_osc_reset_i    )
           ,.clk_o             (osc_clk_out          )
           );
+ */
+       bsg_clk_gen_osc #(.num_rows_p(num_rows_p), .num_cols_p(num_cols_p)) clk_gen_osc_inst
+        (.bsg_tag_i(bsg_osc_tag_i)
+         ,.bsg_tag_trigger_i(bsg_osc_trigger_tag_i)
+         ,.async_reset_i(async_osc_reset_i)
+         ,.clk_o(osc_clk_out)
+         );
+
 /*    end */
 
-   `declare_bsg_clk_gen_ds_tag_payload_s(downsample_width_p)
+   `declare_bsg_clk_gen_ds_tag_payload_s(downsample_width_p);
 
    bsg_clk_gen_ds_tag_payload_s ds_tag_payload_r;
 

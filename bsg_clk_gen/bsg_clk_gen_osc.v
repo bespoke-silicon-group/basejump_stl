@@ -16,7 +16,7 @@
 module bsg_clk_gen_osc
   import bsg_tag_pkg::bsg_tag_s;
 
-    #(parameter num_adgs_p=1)
+    #(parameter num_rows_p=2, num_cols_p=2)
   (
    input async_reset_i
    ,input bsg_tag_s bsg_tag_i
@@ -24,7 +24,7 @@ module bsg_clk_gen_osc
    ,output logic clk_o
    );
 
-   `declare_bsg_clk_gen_osc_tag_payload_s(num_adgs_p)
+   `declare_bsg_clk_gen_osc_tag_payload_s(num_rows_p, num_cols_p);
 
    bsg_clk_gen_osc_tag_payload_s fb_tag_r;
    bsg_tag_client_unsync
@@ -44,17 +44,14 @@ module bsg_clk_gen_osc
    ,.data_async_r_o(trig_r)
    );
 
-   wire [1:0] cdt = fb_tag_r.cdt;
-   wire [1:0] fdt = fb_tag_r.fdt;
-   wire [num_adgs_p-1:0] adg_ctrl = fb_tag_r.adg;
 
-   logic [4+num_adgs_p-1:0] ctrl_rrr;
+   logic [num_cols_p*num_rows_p-1:0] ctrl_rrr;
    always @(clk_o or async_reset_i)
      if (async_reset_i)
        ctrl_rrr <= '0;
      else
        if (trig_r)
-         ctrl_rrr <= {adg_ctrl, cdt, fdt};
+         ctrl_rrr <= fb_tag_r;
 
    always
      begin

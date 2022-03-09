@@ -38,7 +38,7 @@ module bsg_dmc_clk_rst_gen
       ,.clk_o             ( clk_o[i]                 ));
   end
 
-  `declare_bsg_clk_gen_ds_tag_payload_s(2)
+  `declare_bsg_clk_gen_ds_tag_payload_s(2);
 
   bsg_clk_gen_ds_tag_payload_s ds_tag_payload_r;
 
