@@ -315,7 +315,7 @@ module bsg_dmc_controller
     if(dfi_clk_sync_rst_i)
       rd_calib_tick <= 0;
     else if(init_done) begin
-      if(rd_calib_tick == dmc_p_i.rd_calib_cycles)
+      if((rd_calib_tick == dmc_p_i.rd_calib_cycles) ||  (cmd_afifo_rdata.cmd[0]))
         rd_calib_tick <= 0;
       else if(!rd_calib_req)
         rd_calib_tick <= rd_calib_tick + 1;
