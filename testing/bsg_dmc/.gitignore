@@ -1,0 +1,6 @@
+elaborate
+run
+vc_hdrs.h
+bsg_dmc_trace_rom.tr
+bsg_dmc_trace_rom.v
+bsg_tag_boot_rom.v
