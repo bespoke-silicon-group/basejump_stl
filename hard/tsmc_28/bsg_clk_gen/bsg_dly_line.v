@@ -100,6 +100,7 @@ module bsg_dly_line
    bsg_clk_gen_osc_tag_payload_s tag_r_async;
    wire       tag_trigger_r_async;
    wire       adt_to_cdt_trigger_lo, cdt_to_fdt_trigger_lo;
+   wire [num_adgs_p:0] adt_to_adt_trigger_lo;
 
    // this is a raw interface; and wires will toggle
    // as the bits shift in. the wires are also
@@ -121,33 +122,33 @@ module bsg_dly_line
         ,.data_async_r_o(tag_trigger_r_async)
         );
 
-   wire adt_lo, cdt_lo;
-
-   wire fb_clk_del;
-
-   // this adds some delay in the loop for RTL simulation
-   // should be ignored in synthesis
-   assign #4000 fb_clk_del = fb_clk;
+   wire [num_adgs_p:0] adt_lo;
+   wire cdt_lo;
 
   wire clk_inv;
   assign clk_inv = ~clk_i;
-
-   bsg_rp_clk_gen_atomic_delay_tuner  adt_BSG_DONT_TOUCH
-     (.i(clk_inv)
-      ,.we_async_i (tag_trigger_r_async   )
-      ,.we_inited_i(bsg_tag_trigger_i.en  )
-      ,.async_reset_neg_i(async_reset_neg )
-      ,.sel_i(tag_r_async.adg[0]          )
-      ,.we_o(adt_to_cdt_trigger_lo        )
-      ,.o(adt_lo                          )
-      );
+  assign adt_lo[num_adgs_p] = (num_adgs_p[0]) ? clk_inv : clk_i;
+  assign adt_to_adt_trigger_lo[num_adgs_p] = tag_trigger_r_async;
+  for (genvar i = num_adgs_p-1; i >= 0; i--)
+    begin : a
+      bsg_rp_clk_gen_atomic_delay_tuner  adt_BSG_DONT_TOUCH
+        (.i                 (adt_lo[i+1]               )
+         ,.we_async_i       (adt_to_adt_trigger_lo[i+1])
+         ,.we_inited_i      (bsg_tag_trigger_i.en      )
+         ,.async_reset_neg_i(async_reset_neg           )
+         ,.sel_i            (tag_r_async.adg[i]        )
+         ,.we_o             (adt_to_adt_trigger_lo[i]  )
+         ,.o                (adt_lo[i]                 )
+         );
+    end
+   assign adt_to_cdt_trigger_lo = adt_to_adt_trigger_lo[0];
 
    // instantatiate CDT (coarse delay tuner)
    // this one inverts the output
    // captures config state on negative edge of input clock
 
    bsg_rp_clk_gen_coarse_delay_tuner cdt_BSG_DONT_TOUCH
-     (.i                 (adt_lo)
+     (.i                 (adt_lo[0])
       ,.we_i             (adt_to_cdt_trigger_lo)
       ,.async_reset_neg_i(async_reset_neg      )
       ,.sel_i            (tag_r_async.cdt      )
