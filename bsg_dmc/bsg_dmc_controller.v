@@ -168,6 +168,9 @@ module bsg_dmc_controller
   logic  [1:0] refr_tick;
   logic        refr_req;
   logic        refr_ack;
+  logic [15:0] rd_calib_tick;    
+  logic        rd_calib_req;
+  logic        rd_calib_ack;
 
   logic  [1:0] ldst_tick;
 
@@ -269,10 +272,10 @@ module bsg_dmc_controller
     ,.yumi_cnt_i ( tx_sipo_yumi_cnt_li              ));
 
   assign row_col_addr = ((cmd_afifo_rdata.addr >> (dmc_p_i.bank_pos + dmc_p_i.bank_width)) << dmc_p_i.bank_pos) | (((1 << dmc_p_i.bank_pos) - 1) & cmd_afifo_rdata.addr);
-  assign col_addr     = 16'(((1 << dmc_p_i.col_width) - 1) & row_col_addr[ui_addr_width_p-1:0]);
-  assign row_addr     = 16'(((1 << dmc_p_i.row_width) - 1) & (row_col_addr >> dmc_p_i.col_width));
-  assign bank_addr    = 3'(((1 << dmc_p_i.bank_width) - 1) & (cmd_afifo_rdata.addr >> dmc_p_i.bank_pos));
-  assign ap           = cmd_afifo_rdata.cmd[1];
+  assign col_addr     = (rd_calib_req) ? 0 : 16'(((1 << dmc_p_i.col_width) - 1) & row_col_addr[ui_addr_width_p-1:0]);
+  assign row_addr     = (rd_calib_req) ? 0 : 16'(((1 << dmc_p_i.row_width) - 1) & (row_col_addr >> dmc_p_i.col_width));
+  assign bank_addr    = (rd_calib_req) ? 0 : 3'(((1 << dmc_p_i.bank_width) - 1) & (cmd_afifo_rdata.addr >> dmc_p_i.bank_pos));
+  assign ap           = (rd_calib_req) ? 0 : cmd_afifo_rdata.cmd[1];
 
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
@@ -310,6 +313,17 @@ module bsg_dmc_controller
 
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
+      rd_calib_tick <= 0;
+    else if(init_done) begin
+      if(rd_calib_tick == dmc_p_i.rd_calib_cycles)
+        rd_calib_tick <= 0;
+      else if(!rd_calib_req)
+        rd_calib_tick <= rd_calib_tick + 1;
+    end
+  end
+
+  always_ff @(posedge dfi_clk_i) begin
+    if(dfi_clk_sync_rst_i)
       refr_req <= 0;
     else if(init_done) begin
       if(refr_ack)
@@ -320,6 +334,19 @@ module bsg_dmc_controller
   end
 
   assign refr_ack = (cstate == REFR) & push & (refr_tick == 0);
+
+  always_ff @(posedge dfi_clk_i) begin
+    if(dfi_clk_sync_rst_i)
+      rd_calib_req <= 0;
+    else if(init_done) begin
+      if(rd_calib_ack)
+        rd_calib_req <= 0;
+      else if(rd_calib_tick == dmc_p_i.rd_calib_cycles)
+        rd_calib_req <= 1;
+    end
+  end
+
+  assign rd_calib_ack = (cstate == LDST) & rd_calib_req & push & (ldst_tick==0);
 
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
@@ -381,12 +408,19 @@ module bsg_dmc_controller
           'd1: begin
                  cmd_sfifo_wdata.ba = bank_addr;
                  cmd_sfifo_wdata.addr = {col_addr[14:10], ap, col_addr[9:0]};
-                 if(cmd_afifo_rdata.cmd[0])
-                   cmd_sfifo_wdata.cmd = READ;
-                 else
-                   cmd_sfifo_wdata.cmd = WRITE;
+                 if(rd_calib_req) begin
+                     cmd_sfifo_wdata.cmd = READ;
+                 end
+                 else begin
+                    if(cmd_afifo_rdata.cmd[0])
+                        cmd_sfifo_wdata.cmd = READ;
+                    else
+                        cmd_sfifo_wdata.cmd = WRITE;
+                 end
                end
-          'd0: begin cmd_sfifo_wdata.cmd = NOP; end
+          'd0: begin 
+                    cmd_sfifo_wdata.cmd = NOP; 
+               end
         endcase
       end
     endcase
@@ -397,6 +431,7 @@ module bsg_dmc_controller
     case(cstate)
       IDLE: if(!init_done)             nstate = INIT;
             else if(refr_req)          nstate = REFR;
+            else if(rd_calib_req)      nstate = LDST;
             else if(cmd_afifo_rvalid)  nstate = LDST;
             else                       nstate = cstate;
       INIT: if(init_tick == 0 && push) nstate = IDLE;
@@ -588,8 +623,9 @@ module bsg_dmc_controller
   end
 
   always_ff @(posedge dfi_clk_i) begin
-    if(dfi_clk_sync_rst_i)
+    if(dfi_clk_sync_rst_i) begin
       open_bank <= 0;
+    end
     else if(cmd_sfifo_winc) begin
       case(cmd_sfifo_wdata[23:20])
         ACT: begin
