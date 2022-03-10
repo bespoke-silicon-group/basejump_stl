@@ -131,18 +131,18 @@ module bsg_clk_gen_osc
    // should be ignored in synthesis
    assign #4000 fb_clk_del = fb_clk;
 
-   assign adt_lo[num_adgs_p] = fb_clk_del;
+   assign adt_lo[num_adgs_p] = (num_adgs_p[0]) ? fb_clk_del : ~fb_clk_del;
    assign adt_to_adt_trigger_lo[num_adgs_p] = tag_trigger_r_async;
    for (genvar i = num_adgs_p-1; i >= 0; i--)
      begin : a
-       bsg_rp_clk_gen_atomic_delay_tuner  adt_BSG_DONT_TOUCH
-         (.i                 (adt_lo[i+1]              )
-          ,.we_async_i       (adt_to_adt_trigger_lo[i] )
-          ,.we_inited_i      (bsg_tag_trigger_i.en     )
-          ,.async_reset_neg_i(async_reset_neg          )
-          ,.sel_i            (tag_r_async.adg[i]       )
-          ,.we_o             (adt_to_adt_trigger_lo[i] )
-          ,.o                (adt_lo[i]                )
+       bsg_rp_clk_gen_atomic_delay_tuner adt_BSG_DONT_TOUCH
+         (.i                 (~adt_lo[i+1]                )
+          ,.we_async_i       (adt_to_adt_trigger_lo[i+1]  )
+          ,.we_inited_i      (bsg_tag_trigger_i.en        )
+          ,.async_reset_neg_i(async_reset_neg             )
+          ,.sel_i            (tag_r_async.adg[i]          )
+          ,.we_o             (adt_to_adt_trigger_lo[i]    )
+          ,.o                (adt_lo[i]                   )
           );
      end
    assign adt_to_cdt_trigger_lo = adt_to_adt_trigger_lo[0];
