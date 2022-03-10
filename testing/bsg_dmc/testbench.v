@@ -17,6 +17,9 @@ module testbench();
   localparam ui_mask_width_lp    = ui_data_width_p >> 3;
   localparam dq_group_lp         = dq_data_width_p >> 3;
   localparam dq_burst_length_lp  = burst_data_width_lp / dq_data_width_p;
+  // The number of bits required to represent the max payload width
+  localparam tag_max_payload_width_gp = 8;
+  localparam tag_lg_max_payload_width_gp = `BSG_SAFE_CLOG2(tag_max_payload_width_gp + 1);
 
   genvar i;
 
