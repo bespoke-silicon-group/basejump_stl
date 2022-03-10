@@ -78,65 +78,48 @@
 
 `timescale 1ps/1ps
 
-module bsg_dly_line
+`include "bsg_clk_gen.vh"
+
+module bsg_clk_gen_osc
  import bsg_tag_pkg::*;
  #(parameter `BSG_INV_PARAM(num_rows_p)
    , parameter `BSG_INV_PARAM(num_cols_p)
    )
-  (input async_reset_i
-   , input clk_i
+  (input bsg_tag_s bsg_tag_trigger_i
+   , input bsg_tag_s bsg_tag_i
+   , input async_reset_i
    , output logic clk_o
    );
 
   localparam ctl_width_lp = `BSG_SAFE_CLOG2(num_rows_p*num_cols_p);
 
-  // TODO: When to trigger? After clock has finished toggling?
-  wire trigger_r = 1'b0;
+  logic trigger_r;
+  bsg_tag_client_unsync #(.width_p(1))
+   btc_clkgate
+    (.bsg_tag_i(bsg_tag_trigger_i)
+     ,.data_async_r_o(trigger_r)
+     );
 
-  // bsg_counter_set_up_down
-  logic [ctl_width_lp-1:0] ctl_n, ctl_r;
+  logic [ctl_width_lp-1:0] ctl_r;
+  bsg_tag_client_unsync
+   #(.width_p(ctl_width_lp))
+   btc_ctl
+    (.bsg_tag_i(bsg_tag_i)
+     ,.data_async_r_o(ctl_r)
+     );
+
   logic [num_cols_p-1:0][num_rows_p-1:0] ctl_one_hot_lo;
   bsg_decode #(.num_out_p(num_cols_p*num_rows_p)) decode
    (.i(ctl_r)
     ,.o(ctl_one_hot_lo)
     );
 
-  logic clk_90;
-  bsg_rp_dly_line dly90
+  bsg_rp_clk_gen_osc
    (.async_reset_i(async_reset_i)
      ,.trigger_i(trigger_r)
      ,.ctl_one_hot_i(ctl_one_hot_lo)
-     ,.clk_i(clk_i)
-     ,.clk_o(clk_90)
+     ,.clk_o(clk_o)
      );
-  assign clk_o = clk_90;
-
-  logic clk_180;
-  bsg_rp_dly_line dly180
-   (.async_reset_i(async_reset_i)
-     ,.trigger_i(trigger_r)
-     ,.ctl_one_hot_i(ctl_one_hot_lo)
-     ,.clk_i(clk_90)
-     ,.clk_o(clk_180)
-     );
-
-  // 90 degree DLL
-  wire clk_inv = ~clk_i;
-  logic meta_r;
-  bsg_dff_async_reset #(.width_p(1)) meta_reg
-   (.clk_i(clk_inv)
-    ,.async_reset_i(async_reset_i)
-    ,.data_i(clk_180)
-    ,.data_o(meta_r)
-    );
-
-  assign ctl_n = meta_r ? ctl_r - 1'b1 : ctl_r + 1'b1;
-  bsg_dff_async_reset #(.width_p(ctl_width_lp)) ctl_reg
-   (.clk_i(clk_i)
-    ,.async_reset_i(async_reset_i)
-    ,.data_i(ctl_n)
-    ,.data_o(ctl_r)
-    );
 
 endmodule
 

@@ -16,7 +16,7 @@
 module bsg_dly_line
   import bsg_tag_pkg::bsg_tag_s;
 
-    #(parameter num_rows_p=2, num_cols_p=2)
+    #(parameter num_adgs_p=1)
   (
    input async_reset_i
    ,input bsg_tag_s bsg_tag_i
@@ -25,7 +25,7 @@ module bsg_dly_line
    ,output logic clk_o
    );
 
-   `declare_bsg_clk_gen_osc_tag_payload_s(num_rows_p, num_cols_p);
+   `declare_bsg_clk_gen_osc_tag_payload_s(num_adgs_p)
 
    bsg_clk_gen_osc_tag_payload_s fb_tag_r;
    wire  fb_we_r;
@@ -42,13 +42,17 @@ module bsg_dly_line
       ,.recv_data_r_o(fb_tag_r)
       );
 
-   logic [`BSG_SAFE_CLOG2(num_rows_p*num_cols_p)-1:0] ctrl_rrr;
+   wire [1:0] cdt = fb_tag_r.cdt;
+   wire [1:0] fdt = fb_tag_r.fdt;
+   wire [num_adgs_p-1:0] adg_ctrl = fb_tag_r.adg;
+
+   logic [4+num_adgs_p-1:0] ctrl_rrr;
    always @(clk_o or async_reset_i)
      if (async_reset_i)
        ctrl_rrr <= '0;
      else
        if (fb_we_r)
-         ctrl_rrr <= fb_tag_r;
+         ctrl_rrr <= {adg_ctrl, cdt, fdt};
 
    always
      begin
