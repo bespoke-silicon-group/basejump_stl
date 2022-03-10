@@ -49,9 +49,9 @@ module bsg_launch_sync_sync_``EDGE``_``bits``_unit                      \
           bsg_SYNC_LNCH_r <= iclk_data_i;                               \
      end                                                                \
                                                                         \
-   for (i = 0; i < width_p; i = i + 1)                                  \
+   for (i = 0; i < bits; i = i + 1)                                  \
      begin : bss_unit                                                   \
-       bsg_sync_sync_1_unit bss1                                        \
+       bsg_sync_sync_unit bss1                                          \
         (.oclk_i(oclk_i)                                                \
          ,.iclk_data_i(iclk_data_i[i])                                  \
          ,.oclk_data_o(oclk_data_o[i])                                  \
@@ -90,7 +90,7 @@ module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
                                                                         \
    for (i = 0; i < bits; i++)                                           \
      begin : BSG_NO_CLOCK_GATE_2                                        \
-       bsg_sync_sync_async_reset_1_unit bss1                            \
+       bsg_sync_sync_async_reset_unit bss1                              \
         (.oclk_i(oclk_i)                                                \
          ,.iclk_reset_i(iclk_reset_i)                                   \
          ,.iclk_data_i(iclk_data_i)                                     \
