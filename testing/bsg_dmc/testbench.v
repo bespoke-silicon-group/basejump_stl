@@ -217,7 +217,7 @@ module testbench();
     ,.ui_clk_i              ( ui_clk              )
     ,.ui_clk_sync_rst_o     ( ui_clk_sync_rst     )
     ,.device_temp_o         ( device_temp         )
-    ,.ext_dfi_clk_i         ( dfi_clk             )
+    ,.ext_dfi_clk_2x_i      ( dfi_clk             )
     ,.dfi_clk_1x_o          ( dfi_clk_1x          )
     ,.dfi_clk_2x_o          ( dfi_clk_2x          ));
 
