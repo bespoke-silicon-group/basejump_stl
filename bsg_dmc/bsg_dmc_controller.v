@@ -15,6 +15,10 @@ module bsg_dmc_controller
   // User interface clock and reset
   (input                                ui_clk_i
   ,input                                ui_clk_sync_rst_i
+
+  ,input								stall_transactions_i
+  ,output logic							refresh_in_progress_o
+  ,output logic                         transaction_in_progress_o
   // User interface signals
   ,input          [ui_addr_width_p-1:0] app_addr_i
   ,input app_cmd_e                      app_cmd_i
@@ -322,9 +326,9 @@ module bsg_dmc_controller
       refr_tick <= 0;
     else if(cstate == IDLE && nstate == REFR) begin
       if(|open_bank)
-        refr_tick <= 1;
+        refr_tick <= 2;
       else
-        refr_tick <= 0;
+        refr_tick <= 1;
     end
     else if(cstate == REFR && refr_tick != 0 && push)
       refr_tick <= refr_tick - 1;
@@ -335,11 +339,11 @@ module bsg_dmc_controller
       ldst_tick <= 0;
     else if(cstate == IDLE && nstate == LDST) begin
       if(open_bank[bank_addr] && open_row[bank_addr] == row_addr)
-        ldst_tick <= 0;
-      else if(open_bank[bank_addr])
-        ldst_tick <= 2;
-      else
         ldst_tick <= 1;
+      else if(open_bank[bank_addr])
+        ldst_tick <= 3;
+      else
+        ldst_tick <= 2;
     end
     else if(cstate == LDST && ldst_tick != 0 && push)
       ldst_tick <= ldst_tick - 1;
@@ -352,27 +356,29 @@ module bsg_dmc_controller
       INIT: begin
         push = cmd_sfifo_ready;
         case(init_tick)
-          'd4: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
+          'd5: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
+          'd4: begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
           'd3: begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
-          'd2: begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
-          'd1: begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = {8'h0, dmc_p_i.tcas, 4'($clog2(dfi_burst_length_lp << 1))}; cmd_sfifo_wdata.ba = 4'h0; end
-          'd0: begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = 16'h0; cmd_sfifo_wdata.ba = 4'h2; end
+          'd2: begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = {8'h0, dmc_p_i.tcas, 4'($clog2(dfi_burst_length_lp << 1))}; cmd_sfifo_wdata.ba = 4'h0; end
+          'd1: begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = 16'h0; cmd_sfifo_wdata.ba = 4'h2; end
+          'd0: begin cmd_sfifo_wdata.cmd = NOP; end
           default: cmd_sfifo_wdata.cmd = DESELECT;
         endcase
       end
       REFR: begin
         push = cmd_sfifo_ready;
         case(refr_tick)
-          'd1: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
-          'd0: begin cmd_sfifo_wdata.cmd = REF; end
+          'd2: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
+          'd1: begin cmd_sfifo_wdata.cmd = REF; end
+          'd0: begin cmd_sfifo_wdata.cmd = NOP; end
         endcase
       end
       LDST: begin
         push = cmd_sfifo_ready;
         case(ldst_tick)
-          'd2: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.ba = bank_addr; cmd_sfifo_wdata.addr = open_row[bank_addr]; end
-          'd1: begin cmd_sfifo_wdata.cmd = ACT; cmd_sfifo_wdata.ba = bank_addr; cmd_sfifo_wdata.addr = row_addr; end
-          'd0: begin
+          'd3: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.ba = bank_addr; cmd_sfifo_wdata.addr = open_row[bank_addr]; end
+          'd2: begin cmd_sfifo_wdata.cmd = ACT; cmd_sfifo_wdata.ba = bank_addr; cmd_sfifo_wdata.addr = row_addr; end
+          'd1: begin
                  cmd_sfifo_wdata.ba = bank_addr;
                  cmd_sfifo_wdata.addr = {col_addr[14:10], ap, col_addr[9:0]};
                  if(cmd_afifo_rdata.cmd[0])
@@ -380,6 +386,7 @@ module bsg_dmc_controller
                  else
                    cmd_sfifo_wdata.cmd = WRITE;
                end
+          'd0: begin cmd_sfifo_wdata.cmd = NOP; end
         endcase
       end
     endcase
@@ -427,7 +434,7 @@ module bsg_dmc_controller
     ,.yumi_i             ( cmd_sfifo_rinc     ));
 
   always_comb begin
-    if(cmd_sfifo_valid)
+    if(cmd_sfifo_valid && !stall_transactions_i)
       case(c_cmd)
 	LMR:   shoot = cmd_tick >= dmc_p_i.tmrd;
 	REF:   shoot = cmd_tick >= dmc_p_i.trfc;
@@ -435,23 +442,27 @@ module bsg_dmc_controller
 	ACT:   case(n_cmd)
                  PRE:     shoot = cmd_tick >= dmc_p_i.tras;
                  ACT:     shoot = cmd_tick >= dmc_p_i.trrd;
-                 WRITE:   shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_rd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
-                 READ:    shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_wr_tick >= dmc_p_i.twtr);
-	         default: shoot = 1'b1;
-               endcase
-        WRITE: case(n_cmd)
+                 WRITE:   shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_rd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (cmd_act_tick >= dmc_p_i.tras) & (&tx_sipo_valid_lo);
+                 READ:    shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_wr_tick >= dmc_p_i.twtr) & (cmd_act_tick >= dmc_p_i.tras);
+	         	 default: shoot = 1'b1;
+             endcase
+    WRITE: case(n_cmd)
                  PRE:     shoot = (cmd_tick >= dmc_p_i.twr) & (cmd_act_tick >= dmc_p_i.tras);
-                 WRITE:   shoot = (cmd_tick >= dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
-                 READ:    shoot = cmd_tick >= dmc_p_i.twtr;
-                 ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.twr + dmc_p_i.trp);
-	         default: shoot = 1'b1;
+				 // if write is followed by refresh, it means we are writing with auto precharge. But we still have to wait for tras after activate and (twr + trp) for internal precharge to have completed. So timing condition below applies for either n_cmd = precharge or refresh			
+                 REF:     shoot = (cmd_tick >= dmc_p_i.twr + dmc_p_i.trp) & (cmd_act_tick >= dmc_p_i.tras) ;			
+                 WRITE:   shoot = (ap) ? ((cmd_tick >= dfi_burst_length_lp-1) & (&tx_sipo_valid_lo) && cmd_tick >= dmc_p_i.trp) : ((cmd_tick >= dfi_burst_length_lp-1) & (&tx_sipo_valid_lo)) ;
+                 READ:    shoot = (ap) ? (cmd_tick >= dmc_p_i.twtr && cmd_tick >= dmc_p_i.trp) : cmd_tick >= dmc_p_i.twtr ;
+                 ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.twr + dmc_p_i.trp) & (cmd_tick >= dmc_p_i.trrd);
+	             default: shoot = 1'b1;
                endcase
-        READ:  case(n_cmd)
+    READ:  case(n_cmd)
                  PRE:     shoot = (cmd_tick >= dmc_p_i.trtp) & (cmd_act_tick >= dmc_p_i.tras);
-                 WRITE:   shoot = (cmd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (&tx_sipo_valid_lo);
+				 // if read is followed by refresh, it means we are reading with auto precharge. But we still have to wait for trtp after read and tras after activate. So timing condition below applies for either n_cmd = precharge or refresh			
+                 REF:     shoot = (cmd_tick >= dmc_p_i.trtp + dmc_p_i.trp) & (cmd_act_tick >= dmc_p_i.tras);			
+                 WRITE:   shoot = (ap) ?  ( (cmd_tick >= dmc_p_i.tcas + dmc_p_i.trp + dfi_burst_length_lp-1) & (&tx_sipo_valid_lo) ): ((cmd_tick >= dmc_p_i.tcas + dfi_burst_length_lp-1) & (&tx_sipo_valid_lo));
                  READ:    shoot = cmd_tick >= dfi_burst_length_lp-1;
-                 ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.trtp + dmc_p_i.trp);
-	         default: shoot = 1'b1;
+                 ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.trtp + dmc_p_i.trp) & (cmd_tick >= dmc_p_i.trrd) & (cmd_tick >= dmc_p_i.trrd);
+	             default: shoot = 1'b1;
                endcase
 	default: shoot = 1'b1;
       endcase
@@ -498,26 +509,11 @@ module bsg_dmc_controller
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       c_cmd <= NOP;
-    else if(shoot)
+    else if(shoot && n_cmd != NOP)
       c_cmd <= n_cmd;
   end
 
   assign n_cmd = cmd_sfifo_rdata.cmd;
-
-  always_ff @(posedge dfi_clk_i) begin
-    if(dfi_clk_sync_rst_i) begin
-      cwd_tick <= 0;
-      cwd_valid <= 0;
-    end
-    else if(shoot && cmd_sfifo_rdata[23:20] == WRITE) begin
-      cwd_tick <= dmc_p_i.tcas - 2;
-      cwd_valid <= 1;
-    end
-    else if(cwd_valid) begin
-      cwd_tick <= cwd_tick - 1;
-      if(cwd_tick == 0) cwd_valid <= 0;
-    end
-  end
 
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i) begin
@@ -722,7 +718,7 @@ module bsg_dmc_controller
     ,.data_o  ( rx_piso_data_lo    )
     ,.yumi_i  ( rx_piso_yumi_li    ));
 
-  logic [7:0] rd_cnt;
+  logic [`BSG_WIDTH(ui_burst_length_lp)-1:0] rd_cnt;
 
   always_ff @(posedge ui_clk_i) begin
     if(ui_clk_sync_rst_i)
@@ -734,6 +730,23 @@ module bsg_dmc_controller
         rd_cnt <= rd_cnt + 1;
     end
   end
+
+  logic [`BSG_WIDTH(cmd_sfifo_depth_p)-1:0] txn_cnt;
+  bsg_counter_up_down #
+    (.max_val_p(cmd_sfifo_depth_p)
+    ,.init_val_p(0)
+    ,.max_step_p(1)
+    ,.disable_overflow_warning_p(1))
+  txn_counter
+    (.clk_i(ui_clk_i)
+     ,.reset_i(ui_clk_sync_rst_i)
+     ,.up_i((app_rdy_o & app_en_i))
+     ,.down_i((app_wdf_end_i & app_wdf_rdy_o) || (app_rd_data_end_o))
+     ,.count_o(txn_cnt)
+     );
+  assign transaction_in_progress_o = (txn_cnt != '0);
+
+  assign refresh_in_progress_o = (c_cmd == REF);
 
   assign app_rd_data_valid_o = rx_piso_valid_lo;
   assign app_rd_data_o       = rx_piso_data_lo;
