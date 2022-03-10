@@ -45,7 +45,7 @@ module bsg_clk_gen_osc
    );
 
 
-   logic [num_cols_p*num_rows_p-1:0] ctrl_rrr;
+   logic [`BSG_SAFE_CLOG2(num_cols_p*num_rows_p)-1:0] ctrl_rrr;
    always @(clk_o or async_reset_i)
      if (async_reset_i)
        ctrl_rrr <= '0;

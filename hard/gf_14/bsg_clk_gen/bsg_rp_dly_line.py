@@ -14,7 +14,7 @@ print("""
 """.format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, num_dly_p=num_dly_p))
 
 print("""
-module bsg_rp_clk_gen_osc_row_first
+module bsg_rp_dly_line_row_first
  (input    async_reset_i
   , input  clkgate_i
   , input  clkdly_i
@@ -42,7 +42,7 @@ endmodule
       
 
 print("""
-module bsg_rp_clk_gen_osc_row
+module bsg_rp_dly_line_row
  (input    async_reset_i
   , input  clkgate_i
   , input  clkdly_i
@@ -68,7 +68,7 @@ endmodule
 """)
 
 print("""
-module bsg_rp_clk_gen_osc_column_first
+module bsg_rp_dly_line_column_first
   (input async_reset_i
    , input clkgate_i
    , input clkdly_i
@@ -86,7 +86,7 @@ module bsg_rp_clk_gen_osc_column_first
   SC7P5T_CKINVX8_SSC14SL I2 (.Z(async_reset_neg), .CLK(async_reset_i));
 
   wire [{num_rows_p}:1] clkfb;
-  bsg_rp_clk_gen_osc_row_first row_0
+  bsg_rp_dly_line_row_first row_0
     (.async_reset_i(async_reset_neg)
      ,.clkgate_i(clkgate_inv)
      ,.clkdly_i(clkdly_inv)
@@ -97,7 +97,7 @@ module bsg_rp_clk_gen_osc_column_first
 
 for i in range(1, num_rows_p):
     print("""
-      bsg_rp_clk_gen_osc_row row_{i}
+      bsg_rp_dly_line_row row_{i}
         (.async_reset_i(async_reset_neg)
          ,.clkgate_i(clkgate_inv)
          ,.clkdly_i(clkdly_inv)
@@ -114,7 +114,7 @@ endmodule
 """.format(num_rows_p=num_rows_p))
 
 print("""
-module bsg_rp_clk_gen_osc_column
+module bsg_rp_dly_line_column
   (input async_reset_i
    , input clkgate_i
    , input clkdly_i
@@ -138,7 +138,7 @@ module bsg_rp_clk_gen_osc_column
 
 for i in range(0, num_rows_p):
     print("""
-      bsg_rp_clk_gen_osc_row row_{i}
+      bsg_rp_dly_line_row row_{i}
         (.async_reset_i(async_reset_neg)
          ,.clkgate_i(clkgate_inv)
          ,.clkdly_i(clkdly_inv)
@@ -155,10 +155,11 @@ endmodule
 """.format(num_rows_p=num_rows_p))
 
 print("""
-module bsg_rp_clk_gen_osc
+module bsg_rp_dly_line
   (input async_reset_i
    , input trigger_i
    , input [{ctl_width_p_m1}:0] ctl_one_hot_i
+   , input clk_i
    , output clk_o
    );
 
@@ -181,7 +182,7 @@ print("""
   assign fb_dly = n[{num_dly_p}];
 
   wire fb_inv;
-  SC7P5T_CKINVX8_SSC14SL I0 (.Z(fb_inv), .CLK(fb_dly));
+  SC7P5T_CKINVX8_SSC14SL I0 (.Z(fb_inv), .CLK(clk_i));
   SC7P5T_CKINVX8_SSC14SL I1 (.Z(clk_o ), .CLK(fb_dly));
 
   wire gate_en_sync_r;
@@ -191,7 +192,7 @@ print("""
   SC7P5T_CKGPRELATNX24_SSC14SL CG0 (.Z(fb_gated), .CLK(fb_inv), .E(gate_en_sync_r), .TE(lobit));
 
   wire [{num_cols_p}:1] fb_col;
-  bsg_rp_clk_gen_osc_column_first col_0
+  bsg_rp_dly_line_column_first col_0
    (.async_reset_i(async_reset_i)
     ,.clkgate_i(fb_gated)
     ,.clkdly_i(fb_dly)
@@ -202,7 +203,7 @@ print("""
 
 for i in range(1, num_cols_p):
     print("""
-      bsg_rp_clk_gen_osc_column col_{i}
+      bsg_rp_dly_line_column col_{i}
        (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_dly)

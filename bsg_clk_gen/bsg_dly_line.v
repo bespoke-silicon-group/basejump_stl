@@ -16,7 +16,7 @@
 module bsg_dly_line
   import bsg_tag_pkg::bsg_tag_s;
 
-    #(parameter num_adgs_p=1, num_rows_p=2, num_cols_p=2)
+    #(parameter num_rows_p=2, num_cols_p=2)
   (
    input async_reset_i
    ,input bsg_tag_s bsg_tag_i
@@ -42,7 +42,7 @@ module bsg_dly_line
       ,.recv_data_r_o(fb_tag_r)
       );
 
-   logic [4+num_adgs_p-1:0] ctrl_rrr;
+   logic [`BSG_SAFE_CLOG2(num_rows_p*num_cols_p)-1:0] ctrl_rrr;
    always @(clk_o or async_reset_i)
      if (async_reset_i)
        ctrl_rrr <= '0;
