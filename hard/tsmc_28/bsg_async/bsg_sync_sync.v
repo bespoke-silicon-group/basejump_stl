@@ -25,7 +25,7 @@ module bsg_sync_sync_``width_p``_unit                           \
                                                                 \
    for (i = 0; i < width_p; i = i + 1)                          \
      begin : bss_unit                                           \
-       bsg_sync_sync_1_unit bss1                                \
+       bsg_sync_sync_unit bss1                                  \
         (.oclk_i(oclk_i)                                        \
          ,.iclk_data_i(iclk_data_i[i])                          \
          ,.oclk_data_o(oclk_data_o[i])                          \
