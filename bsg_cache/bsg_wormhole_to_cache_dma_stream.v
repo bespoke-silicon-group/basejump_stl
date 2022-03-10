@@ -321,5 +321,5 @@ module bsg_wormhole_to_cache_dma_stream
 
 endmodule
 
-`BSG_ABSTRACT_MODULE(bsg_wormhole_to_cache_dma_fanout)
+`BSG_ABSTRACT_MODULE(bsg_wormhole_to_cache_dma_stream)
 
