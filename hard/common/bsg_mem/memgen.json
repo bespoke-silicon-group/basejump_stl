@@ -1,0 +1,17 @@
+{ "memories": [
+  {"ports": "1r1w", "width":   64, "depth":  512, "mux": 2, "type": "2rf"  },
+  {"ports": "1r1w", "width":   32, "depth": 1024, "mux": 2, "type": "2rf"  },
+  {"ports": "1r1w", "width":   64, "depth":  512, "mux": 2, "type": "2rf"   , "mask": 1},
+  {"ports": "1r1w", "width":   32, "depth": 1024, "mux": 2, "type": "2sram" , "mask": 1},
+  {"ports": "1r1w", "width":   64, "depth":  512, "mux": 2, "type": "2rf"   , "mask": 8},
+  {"ports": "1r1w", "width":   32, "depth": 1024, "mux": 2, "type": "2sram" , "mask": 8},
+  {"ports": "1rw" , "width":  128, "depth": 1024, "mux": 2, "type": "1rf"   , "adbanks": 2, "awbanks": 2},
+  {"ports": "1rw" , "width":   32, "depth":  128, "mux": 2, "type": "1sram"},
+  {"ports": "1rw" , "width":  128, "depth": 1024, "mux": 2, "type": "1rf"   , "mask": 1 , "adbanks": 2, "awbanks": 2},
+  {"ports": "1rw" , "width":   32, "depth":  128, "mux": 2, "type": "1sram" , "mask": 1},
+  {"ports": "1rw" , "width":  128, "depth": 1024, "mux": 2, "type": "1rf"   , "mask": 8 , "adbanks": 2, "awbanks": 2},
+  {"ports": "1rw" , "width":   32, "depth":  128, "mux": 2, "type": "1sram" , "mask": 8},
+  {"ports": "2r1w", "width":   64, "depth":   32, "mux": 2, "type": "2sram"},
+  {"ports": "3r1w", "width":   66, "depth":   32, "mux": 2, "type": "2sram"}
+  ]
+}
