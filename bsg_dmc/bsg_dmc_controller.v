@@ -392,7 +392,7 @@ module bsg_dmc_controller
       ldst_tick <= ldst_tick - 1;
   end
 
-  assign init_read_calib_in_progress = (init_tick >= 0) && (init_tick <= dmc_p_i.init_read_count - 1) && (cstate == INIT) );
+  assign init_read_calib_in_progress = (init_tick >= 0) && (init_tick <= dmc_p_i.init_read_count - 1) && (cstate == INIT) ;
 
   always_comb begin
     push = 1'b0;
@@ -407,8 +407,8 @@ module bsg_dmc_controller
           dmc_p_i.init_read_count + 'd2        : begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = {8'h0, dmc_p_i.tcas, 4'($clog2(dfi_burst_length_lp << 1))}; cmd_sfifo_wdata.ba = 4'h0; end
           dmc_p_i.init_read_count + 'd1        : begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = 16'h0; cmd_sfifo_wdata.ba = 4'h2; end
           dmc_p_i.init_read_count              : begin cmd_sfifo_wdata.cmd = NOP; end
-          [0 : (dmc_p_i.init_read_count - 1)]  : begin cmd_sfifo_wdata.cmd = READ; end 
-          //[0:9]                                : begin cmd_sfifo_wdata.cmd = NOP; end
+          [20 : (dmc_p_i.init_read_count - 1)]  : begin cmd_sfifo_wdata.cmd = READ; end 
+          [0:19]                                : begin cmd_sfifo_wdata.cmd = NOP; end
           default                              : cmd_sfifo_wdata.cmd = DESELECT;
         endcase
       end
@@ -806,9 +806,9 @@ module bsg_dmc_controller
 
   assign refresh_in_progress_o = (c_cmd == REF);
 
-  assign app_rd_data_valid_o = mask_reads ? 0 : rx_piso_valid_lo ;
-  assign app_rd_data_o       = mask_reads ? 0 : rx_piso_data_lo;
-  assign app_rd_data_end_o   = mask_reads ? 0 : (rx_piso_valid_lo && (rd_cnt == ui_burst_length_lp - 1));
+  assign app_rd_data_valid_o = (mask_reads || init_read_calib_in_progress) ? 0 : rx_piso_valid_lo ;
+  assign app_rd_data_o       = (mask_reads || init_read_calib_in_progress) ? 0 : rx_piso_data_lo;
+  assign app_rd_data_end_o   = (mask_reads || init_read_calib_in_progress) ? 0 : (rx_piso_valid_lo && (rd_cnt == ui_burst_length_lp - 1));
 
 endmodule
 
