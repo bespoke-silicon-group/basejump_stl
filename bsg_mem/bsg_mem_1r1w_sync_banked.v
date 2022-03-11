@@ -28,6 +28,7 @@ module bsg_mem_1r1w_sync_banked
   #(parameter `BSG_INV_PARAM(width_p)
     , parameter `BSG_INV_PARAM(els_p)
     , parameter read_write_same_addr_p=0
+    , parameter latch_last_read_p=0
 
     , parameter num_width_bank_p=1
     , parameter num_depth_bank_p=1
@@ -61,6 +62,7 @@ module bsg_mem_1r1w_sync_banked
         .width_p(bank_width_lp)
         ,.els_p(bank_depth_lp)
         ,.read_write_same_addr_p(read_write_same_addr_p)
+        ,.latch_last_read_p(latch_last_read_p)
       ) bank (
         .clk_i(clk_i)
         ,.reset_i(reset_i)
