@@ -22,6 +22,7 @@ package bsg_dmc_pkg;
     logic  [2:0] dqs_sel_cal;
     logic [15:0] init_cycles;
     logic [15:0] rd_calib_cycles;
+    logic [15:0] init_read_count;
   } bsg_dmc_s;
 
   typedef enum logic [3:0]

@@ -132,6 +132,7 @@ module bsg_dmc_controller
   logic                     [dfi_data_width_p*dfi_burst_length_lp-1:0] rx_data;
 
   logic                                  [$clog2(cmd_afifo_depth_p):0] rd_credit;
+  logic                           [`BSG_WIDTH(ui_burst_length_lp)-1:0] rd_cnt;
 
   logic [31:0] row_col_addr;
   logic [15:0] row_addr, col_addr;
@@ -171,6 +172,8 @@ module bsg_dmc_controller
   logic [15:0] rd_calib_tick;    
   logic        rd_calib_req;
   logic        rd_calib_ack;
+  logic        mask_reads;
+  logic        init_read_calib_in_progress;
 
   logic  [1:0] ldst_tick;
 
@@ -272,10 +275,10 @@ module bsg_dmc_controller
     ,.yumi_i     ( tx_sipo_yumi_li                  ));
 
   assign row_col_addr = ((cmd_afifo_rdata.addr >> (dmc_p_i.bank_pos + dmc_p_i.bank_width)) << dmc_p_i.bank_pos) | (((1 << dmc_p_i.bank_pos) - 1) & cmd_afifo_rdata.addr);
-  assign col_addr     = (rd_calib_req) ? 0 : 16'(((1 << dmc_p_i.col_width) - 1) & row_col_addr[ui_addr_width_p-1:0]);
-  assign row_addr     = (rd_calib_req) ? 0 : 16'(((1 << dmc_p_i.row_width) - 1) & (row_col_addr >> dmc_p_i.col_width));
-  assign bank_addr    = (rd_calib_req) ? 0 : 3'(((1 << dmc_p_i.bank_width) - 1) & (cmd_afifo_rdata.addr >> dmc_p_i.bank_pos));
-  assign ap           = (rd_calib_req) ? 0 : cmd_afifo_rdata.cmd[1];
+  assign col_addr     = (rd_calib_req || init_read_calib_in_progress) ? 0 : 16'(((1 << dmc_p_i.col_width) - 1) & row_col_addr[ui_addr_width_p-1:0]);
+  assign row_addr     = (rd_calib_req || init_read_calib_in_progress) ? 0 : 16'(((1 << dmc_p_i.row_width) - 1) & (row_col_addr >> dmc_p_i.col_width));
+  assign bank_addr    = (rd_calib_req || init_read_calib_in_progress) ? 0 : 3'(((1 << dmc_p_i.bank_width) - 1) & (cmd_afifo_rdata.addr >> dmc_p_i.bank_pos));
+  assign ap           = (rd_calib_req || init_read_calib_in_progress) ? 0 : cmd_afifo_rdata.cmd[1];
 
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
@@ -288,7 +291,7 @@ module bsg_dmc_controller
     if(dfi_clk_sync_rst_i)
       init_tick <= 0;
     else if(cstate == IDLE && nstate == INIT)
-      init_tick <= dmc_p_i.init_cycles;
+      init_tick <= dmc_p_i.init_cycles + dmc_p_i.init_read_count;
     else if(cstate == INIT && init_tick != 0 && push)
       init_tick <= init_tick - 1;
   end
@@ -348,6 +351,19 @@ module bsg_dmc_controller
 
   assign rd_calib_ack = (cstate == LDST) & rd_calib_req & push & (ldst_tick==0);
 
+
+  always_ff @(posedge ui_clk_i) begin
+    if(ui_clk_sync_rst_i) begin
+      mask_reads <= 0;
+    end
+    else if(rd_calib_ack) begin
+      mask_reads <= 1;
+    end
+    else if(mask_reads && rx_piso_valid_lo && (rd_cnt == ui_burst_length_lp - 1)) begin
+      mask_reads <= 0;
+    end
+  end
+
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       refr_tick <= 0;
@@ -376,20 +392,24 @@ module bsg_dmc_controller
       ldst_tick <= ldst_tick - 1;
   end
 
+  assign init_read_calib_in_progress = (init_tick >= 0) && (init_tick <= dmc_p_i.init_read_count - 1) && (cstate == INIT) );
+
   always_comb begin
     push = 1'b0;
     cmd_sfifo_wdata = {$bits(cmd_sfifo_wdata){1'b1}};
     case(cstate)
       INIT: begin
         push = cmd_sfifo_ready;
-        case(init_tick)
-          'd5: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
-          'd4: begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
-          'd3: begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
-          'd2: begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = {8'h0, dmc_p_i.tcas, 4'($clog2(dfi_burst_length_lp << 1))}; cmd_sfifo_wdata.ba = 4'h0; end
-          'd1: begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = 16'h0; cmd_sfifo_wdata.ba = 4'h2; end
-          'd0: begin cmd_sfifo_wdata.cmd = NOP; end
-          default: cmd_sfifo_wdata.cmd = DESELECT;
+        case(init_tick) inside
+          dmc_p_i.init_read_count + 'd5        : begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
+          dmc_p_i.init_read_count + 'd4        : begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
+          dmc_p_i.init_read_count + 'd3        : begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
+          dmc_p_i.init_read_count + 'd2        : begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = {8'h0, dmc_p_i.tcas, 4'($clog2(dfi_burst_length_lp << 1))}; cmd_sfifo_wdata.ba = 4'h0; end
+          dmc_p_i.init_read_count + 'd1        : begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = 16'h0; cmd_sfifo_wdata.ba = 4'h2; end
+          dmc_p_i.init_read_count              : begin cmd_sfifo_wdata.cmd = NOP; end
+          [0 : (dmc_p_i.init_read_count - 1)]  : begin cmd_sfifo_wdata.cmd = READ; end 
+          //[0:9]                                : begin cmd_sfifo_wdata.cmd = NOP; end
+          default                              : cmd_sfifo_wdata.cmd = DESELECT;
         endcase
       end
       REFR: begin
@@ -445,10 +465,13 @@ module bsg_dmc_controller
   end
 
   always_ff @(posedge dfi_clk_i) begin
-    if(dfi_clk_sync_rst_i)
+    if(dfi_clk_sync_rst_i) begin
       cstate <= IDLE;
-    else
+    end
+    else begin
       cstate <= nstate;
+    end
+
   end
 
   assign cmd_sfifo_winc  = push;
@@ -755,8 +778,6 @@ module bsg_dmc_controller
     ,.data_o  ( rx_piso_data_lo    )
     ,.yumi_i  ( rx_piso_yumi_li    ));
 
-  logic [`BSG_WIDTH(ui_burst_length_lp)-1:0] rd_cnt;
-
   always_ff @(posedge ui_clk_i) begin
     if(ui_clk_sync_rst_i)
       rd_cnt <= 0;
@@ -785,9 +806,9 @@ module bsg_dmc_controller
 
   assign refresh_in_progress_o = (c_cmd == REF);
 
-  assign app_rd_data_valid_o = rx_piso_valid_lo;
-  assign app_rd_data_o       = rx_piso_data_lo;
-  assign app_rd_data_end_o   = rx_piso_valid_lo && (rd_cnt == ui_burst_length_lp - 1);
+  assign app_rd_data_valid_o = mask_reads ? 0 : rx_piso_valid_lo ;
+  assign app_rd_data_o       = mask_reads ? 0 : rx_piso_data_lo;
+  assign app_rd_data_end_o   = mask_reads ? 0 : (rx_piso_valid_lo && (rd_cnt == ui_burst_length_lp - 1));
 
 endmodule
 
