@@ -175,4 +175,5 @@ module bsg_dmc_sys_cfg_gen
            );
       end
 
+    assign dmc_p_o.init_read_count = 100;
 endmodule
