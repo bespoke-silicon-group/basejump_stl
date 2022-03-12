@@ -31,7 +31,7 @@ module bsg_rp_clk_gen_osc_row_first
   wire hibit;
   SC7P5T_TIEHIX2_SSC14SL T0 (.Z(hibit));
   wire lobit;
-  SC7P5T_TIEHIX2_SSC14SL T1 (.Z(lobit));
+  SC7P5T_TIELOX2_SSC14SL T1 (.Z(lobit));
 
   wire fb;
   SC7P5T_CKND2X2_SSC14SL N1 (.Z(fb), .CLK(lobit), .EN(hibit));
