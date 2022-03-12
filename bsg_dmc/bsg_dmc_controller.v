@@ -215,7 +215,7 @@ module bsg_dmc_controller
 
   assign cmd_afifo_rclk  = dfi_clk_i;
   assign cmd_afifo_rrst  = dfi_clk_sync_rst_i;
-  assign cmd_afifo_rinc  = cmd_afifo_rvalid & cmd_sfifo_ready & (cstate == LDST && ldst_tick == 0);
+  assign cmd_afifo_rinc  = cmd_afifo_rvalid & cmd_sfifo_ready & (cstate == LDST && ldst_tick == 0) & (~rd_calib_req);
 
   bsg_async_fifo #
     (.width_p   ( $bits(cmd_afifo_wdata)    )
@@ -318,9 +318,9 @@ module bsg_dmc_controller
     if(dfi_clk_sync_rst_i)
       rd_calib_tick <= 0;
     else if(init_done) begin
-      if((rd_calib_tick == dmc_p_i.rd_calib_cycles) ||  (cmd_afifo_rdata.cmd[0]))
+      if(((rd_calib_tick == dmc_p_i.rd_calib_cycles) && (cstate == IDLE)) ||  (cmd_afifo_rdata.cmd[0]))
         rd_calib_tick <= 0;
-      else if(!rd_calib_req)
+      else if(!rd_calib_req && (rd_calib_tick != dmc_p_i.rd_calib_cycles))
         rd_calib_tick <= rd_calib_tick + 1;
     end
   end
@@ -344,7 +344,7 @@ module bsg_dmc_controller
     else if(init_done) begin
       if(rd_calib_ack)
         rd_calib_req <= 0;
-      else if(rd_calib_tick == dmc_p_i.rd_calib_cycles)
+      else if(((rd_calib_tick == dmc_p_i.rd_calib_cycles) && (cstate == IDLE)))
         rd_calib_req <= 1;
     end
   end
