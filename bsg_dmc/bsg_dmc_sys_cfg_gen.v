@@ -142,6 +142,17 @@ module bsg_dmc_sys_cfg_gen
            );
     end
 
+    for (genvar i = 0; i < 2; i++)
+      begin : init_read_count
+        bsg_tag_client #(.width_p(bsg_dmc_tag_client_width_gp))
+         btc
+          (.bsg_tag_i      ( cfg_tag_lines_i.init_read_count[i]         )
+           ,.recv_clk_i    ( dfi_clk_1x_i                           )
+           ,.recv_new_r_o  (                                        )
+           ,.recv_data_r_o ( dmc_p_o.init_read_count[i*bsg_dmc_tag_client_width_gp+:bsg_dmc_tag_client_width_gp] )
+           );
+    end
+
     for (genvar i = 0; i < 1; i++)
       begin : async_reset
         bsg_tag_client #(.width_p(1))
@@ -175,5 +186,5 @@ module bsg_dmc_sys_cfg_gen
            );
       end
 
-    assign dmc_p_o.init_read_count = 100;
+    //assign dmc_p_o.init_read_count = 21;
 endmodule
