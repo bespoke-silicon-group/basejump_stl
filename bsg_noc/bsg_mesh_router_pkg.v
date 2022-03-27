@@ -122,5 +122,39 @@ package bsg_mesh_router_pkg;
    };
 
 
+  // Half Ruche (ruche network in X-direction)
+  // fully populated router
+  // YX retraces XY.
+
+  // dims_p = 3
+  // XY_order_p = 1
+  // depopulated_p = 0
+  localparam bit [6:0][6:0] HalfRucheX_FullyPopulated_StrictXY = {
+    //  RE,RW,SNEWP (input)
+     7'b0100001  // RE
+    ,7'b1000001  // RW
+    ,7'b1101111  // S
+    ,7'b1110111  // N
+    ,7'b0100011  // E
+    ,7'b1000101  // W
+    ,7'b1111111  // P (output)
+   };
+
+
+  // dims_p = 3
+  // XY_order_p = 0
+  // depopulated_p = 0
+  localparam bit [6:0][6:0] HalfRucheX_FullyPopulated_StrictYX = {
+    //  RE,RW,SNEWP (input)
+     7'b0111011  // RE
+    ,7'b1011101  // RW
+    ,7'b0001001  // S
+    ,7'b0010001  // N
+    ,7'b0011011  // E
+    ,7'b0011101  // W
+    ,7'b1111111  // P (output)
+  };
+
+
 
 endpackage

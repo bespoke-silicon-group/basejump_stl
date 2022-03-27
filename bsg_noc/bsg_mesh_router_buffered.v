@@ -20,6 +20,7 @@ module bsg_mesh_router_buffered
     , parameter dirs_lp       = (2*dims_p)+1
     , parameter stub_p        = { dirs_lp {1'b0}}  // SNEWP
     , parameter XY_order_p    = 1
+    , parameter depopulated_p = 1
     , parameter bsg_ready_and_link_sif_width_lp=`bsg_ready_and_link_sif_width(width_p)
     // select whether to buffer the output
     , parameter repeater_output_p = { dirs_lp {1'b0}}  // SNEWP
@@ -173,6 +174,7 @@ module bsg_mesh_router_buffered
                       ,.ruche_factor_Y_p(ruche_factor_Y_p)
                       ,.dims_p        (dims_p)
                       ,.XY_order_p   (XY_order_p   )
+                      ,.depopulated_p  (depopulated_p   )
                       ) bmr
    (.clk_i
     ,.reset_i
