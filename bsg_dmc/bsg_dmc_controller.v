@@ -304,7 +304,8 @@ module bsg_dmc_controller
     if(dfi_clk_sync_rst_i)
       calr_tick <= 0;
     else if(cstate == IDLE && nstate == CALR)
-      calr_tick <= dmc_p_i.init_read_cycles ;
+      // init_read_cycles number of reads and 1 cycle to push activate command
+      calr_tick <= dmc_p_i.init_read_cycles + 1;
     else if(cstate == CALR && calr_tick != 0 && push)
       calr_tick <= calr_tick - 1;
   end
@@ -411,7 +412,7 @@ module bsg_dmc_controller
       ldst_tick <= ldst_tick - 1;
   end
 
-  assign init_read_calib_in_progress = (calr_tick >= 0) && (calr_tick <= dmc_p_i.init_read_cycles - 1) && (cstate == CALR) ;
+  assign init_read_calib_in_progress = (calr_tick >= 0) && (calr_tick <= dmc_p_i.init_read_cycles+1) && (cstate == CALR) ;
 
   always_comb begin
     push = 1'b0;
@@ -431,7 +432,14 @@ module bsg_dmc_controller
       end
       CALR: begin
         push = cmd_sfifo_ready;
-        if(calr_tick != 0 ) cmd_sfifo_wdata.cmd = READ; 
+        if(calr_tick == dmc_p_i.init_read_cycles+1) begin
+            cmd_sfifo_wdata.cmd = ACT; cmd_sfifo_wdata.ba = bank_addr; cmd_sfifo_wdata.addr = row_addr;
+        end
+        else if(calr_tick != 0 ) begin
+            cmd_sfifo_wdata.ba = bank_addr;
+            cmd_sfifo_wdata.addr = {col_addr[14:10], ap, col_addr[9:0]};
+            cmd_sfifo_wdata.cmd = READ;
+        end
       end          
       REFR: begin
         push = cmd_sfifo_ready;
