@@ -95,8 +95,6 @@ module bsg_clk_gen_osc_v3
 
   localparam ctl_width_lp = `BSG_SAFE_CLOG2(num_rows_p*num_cols_p);
 
-  wire async_reset_neg = ~async_reset_i;
-
   logic trigger_r;
   bsg_tag_client_unsync #(.width_p(1))
    btc_clkgate
@@ -118,8 +116,8 @@ module bsg_clk_gen_osc_v3
     ,.o(ctl_one_hot_lo)
     );
 
-  bsg_rp_clk_gen_osc_v3 osc
-   (.async_reset_neg_i(async_reset_neg)
+  bsg_rp_clk_gen_osc_v3 osc_BSG_DONT_TOUCH
+   (.async_reset_i(async_reset_i)
      ,.trigger_i(trigger_r)
      ,.ctl_one_hot_i(ctl_one_hot_lo)
      ,.clk_o(clk_o)
