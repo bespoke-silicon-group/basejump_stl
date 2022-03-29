@@ -47,7 +47,7 @@ module bsg_rp_clk_gen_osc_v3
     CKBD8BWP7T30P140ULVT B7 (.Z(n[8]), .I(n[7]));
 
 
-  assign #1000 fb_dly = n[8];
+  assign fb_dly = n[8];
   assign clk_o = n[8];
   wire fb_inv;
   CKND8BWP7T30P140ULVT I0 (.ZN(fb_inv), .I(fb_dly));
@@ -140,6 +140,6 @@ module bsg_rp_clk_gen_osc_v3
         );
 
 
-  assign fb = fb_dly;
+  assign fb = fb_col[8];
 endmodule
 

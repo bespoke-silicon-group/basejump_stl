@@ -61,6 +61,6 @@ for i in range(0, num_cols_p):
         );
 """.format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, i=i, ip1=i+1, i_num_rows_p=i*num_rows_p, ip1_num_rows_p=(i+1)*num_rows_p-1, num_rows_p_m1=num_rows_p-1))
 print("""
-  assign fb = fb_dly;
+  assign fb = fb_col[{num_cols_p}];
 endmodule
 """.format(num_cols_p=num_cols_p))
