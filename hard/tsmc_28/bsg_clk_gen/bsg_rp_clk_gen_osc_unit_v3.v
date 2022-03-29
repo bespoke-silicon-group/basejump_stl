@@ -62,8 +62,8 @@ module bsg_rp_clk_gen_osc_v3_col
   wire [8-1:0] async_reset_neg_li, async_set_neg_li;
 
 
-      assign async_reset_neg_li[0] = async_reset_neg;
-      assign async_set_neg_li[0]   = hibit;
+      assign async_reset_neg_li[0] = hibit;
+      assign async_set_neg_li[0]   = async_reset_neg;
     
 
       bsg_rp_clk_gen_osc_v3_row row_0
@@ -77,8 +77,8 @@ module bsg_rp_clk_gen_osc_v3_col
          );
 
 
-      assign async_reset_neg_li[1] = hibit;
-      assign async_set_neg_li[1]   = async_reset_neg;
+      assign async_reset_neg_li[1] = async_reset_neg;
+      assign async_set_neg_li[1]   = hibit;
     
 
       bsg_rp_clk_gen_osc_v3_row row_1
@@ -92,8 +92,8 @@ module bsg_rp_clk_gen_osc_v3_col
          );
 
 
-      assign async_reset_neg_li[2] = hibit;
-      assign async_set_neg_li[2]   = async_reset_neg;
+      assign async_reset_neg_li[2] = async_reset_neg;
+      assign async_set_neg_li[2]   = hibit;
     
 
       bsg_rp_clk_gen_osc_v3_row row_2
@@ -107,8 +107,8 @@ module bsg_rp_clk_gen_osc_v3_col
          );
 
 
-      assign async_reset_neg_li[3] = hibit;
-      assign async_set_neg_li[3]   = async_reset_neg;
+      assign async_reset_neg_li[3] = async_reset_neg;
+      assign async_set_neg_li[3]   = hibit;
     
 
       bsg_rp_clk_gen_osc_v3_row row_3
@@ -122,8 +122,8 @@ module bsg_rp_clk_gen_osc_v3_col
          );
 
 
-      assign async_reset_neg_li[4] = hibit;
-      assign async_set_neg_li[4]   = async_reset_neg;
+      assign async_reset_neg_li[4] = async_reset_neg;
+      assign async_set_neg_li[4]   = hibit;
     
 
       bsg_rp_clk_gen_osc_v3_row row_4
@@ -137,8 +137,8 @@ module bsg_rp_clk_gen_osc_v3_col
          );
 
 
-      assign async_reset_neg_li[5] = hibit;
-      assign async_set_neg_li[5]   = async_reset_neg;
+      assign async_reset_neg_li[5] = async_reset_neg;
+      assign async_set_neg_li[5]   = hibit;
     
 
       bsg_rp_clk_gen_osc_v3_row row_5
@@ -152,8 +152,8 @@ module bsg_rp_clk_gen_osc_v3_col
          );
 
 
-      assign async_reset_neg_li[6] = hibit;
-      assign async_set_neg_li[6]   = async_reset_neg;
+      assign async_reset_neg_li[6] = async_reset_neg;
+      assign async_set_neg_li[6]   = hibit;
     
 
       bsg_rp_clk_gen_osc_v3_row row_6
@@ -167,8 +167,8 @@ module bsg_rp_clk_gen_osc_v3_col
          );
 
 
-      assign async_reset_neg_li[7] = hibit;
-      assign async_set_neg_li[7]   = async_reset_neg;
+      assign async_reset_neg_li[7] = async_reset_neg;
+      assign async_set_neg_li[7]   = hibit;
     
 
       bsg_rp_clk_gen_osc_v3_row row_7
