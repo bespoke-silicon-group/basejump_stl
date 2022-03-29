@@ -1,4 +1,4 @@
-// bsg_delay_line
+// bsg_clk_gen_osc
 //
 // new settings are delivered via bsg_tag_i
 //
@@ -76,104 +76,54 @@
 //
 //
 
+`ifndef BSG_NO_TIMESCALE
 `timescale 1ps/1ps
+`endif
 
 `include "bsg_clk_gen.vh"
 
-module bsg_dly_line
-   import bsg_tag_pkg::bsg_tag_s;
- #(parameter num_adgs_p=1)
-  (
-   input bsg_tag_s bsg_tag_i
-   ,input bsg_tag_s bsg_tag_trigger_i
-
-   ,input async_reset_i
-   ,input clk_i
-   ,output clk_o
+module bsg_clk_gen_osc_v3
+ import bsg_tag_pkg::*;
+ #(parameter `BSG_INV_PARAM(num_rows_p)
+   , parameter `BSG_INV_PARAM(num_cols_p)
+   )
+  (input bsg_tag_s bsg_tag_trigger_i
+   , input bsg_tag_s bsg_tag_i
+   , input async_reset_i
+   , output logic clk_o
    );
 
-   wire  fb_clk;
-   wire       async_reset_neg = ~async_reset_i;
+  localparam ctl_width_lp = `BSG_SAFE_CLOG2(num_rows_p*num_cols_p);
 
-   `declare_bsg_clk_gen_osc_tag_payload_s(num_adgs_p)
+  wire async_reset_neg = ~async_reset_i;
 
-   bsg_clk_gen_osc_tag_payload_s tag_r_async;
-   wire       tag_trigger_r_async;
-   wire       adt_to_cdt_trigger_lo, cdt_to_fdt_trigger_lo;
+  logic trigger_r;
+  bsg_tag_client_unsync #(.width_p(1))
+   btc_clkgate
+    (.bsg_tag_i(bsg_tag_trigger_i)
+     ,.data_async_r_o(trigger_r)
+     );
 
-   // this is a raw interface; and wires will toggle
-   // as the bits shift in. the wires are also
-   // unsynchronized with respect to the target domain.
+  logic [ctl_width_lp-1:0] ctl_r;
+  bsg_tag_client_unsync
+   #(.width_p(ctl_width_lp))
+   btc_ctl
+    (.bsg_tag_i(bsg_tag_i)
+     ,.data_async_r_o(ctl_r)
+     );
 
-   bsg_tag_client_unsync
-     #(.width_p($bits(bsg_clk_gen_osc_tag_payload_s))
-       ,.harden_p(1)
-       ) btc
-       (.bsg_tag_i(bsg_tag_i)
-        ,.data_async_r_o(tag_r_async)
-        );
+  logic [num_cols_p-1:0][num_rows_p-1:0] ctl_one_hot_lo;
+  bsg_decode #(.num_out_p(num_cols_p*num_rows_p)) decode
+   (.i(ctl_r)
+    ,.o(ctl_one_hot_lo)
+    );
 
-   bsg_tag_client_unsync
-     #(.width_p(1)
-       ,.harden_p(1)
-       ) btc_trigger
-       (.bsg_tag_i(bsg_tag_trigger_i)
-        ,.data_async_r_o(tag_trigger_r_async)
-        );
+  bsg_rp_clk_gen_osc_v3 osc
+   (.async_reset_neg_i(async_reset_neg)
+     ,.trigger_i(trigger_r)
+     ,.ctl_one_hot_i(ctl_one_hot_lo)
+     ,.clk_o(clk_o)
+     );
 
-   wire adt_lo, cdt_lo;
-
-   wire fb_clk_del;
-
-   // this adds some delay in the loop for RTL simulation
-   // should be ignored in synthesis
-   assign #4000 fb_clk_del = fb_clk;
-
-  wire clk_inv;
-  assign clk_inv = ~clk_i;
-
-   bsg_rp_clk_gen_atomic_delay_tuner  adt_BSG_DONT_TOUCH
-     (.i(clk_inv)
-      ,.we_async_i (tag_trigger_r_async   )
-      ,.we_inited_i(bsg_tag_trigger_i.en  )
-      ,.async_reset_neg_i(async_reset_neg )
-      ,.sel_i(tag_r_async.adg[0]          )
-      ,.we_o(adt_to_cdt_trigger_lo        )
-      ,.o(adt_lo                          )
-      );
-
-   // instantatiate CDT (coarse delay tuner)
-   // this one inverts the output
-   // captures config state on negative edge of input clock
-
-   bsg_rp_clk_gen_coarse_delay_tuner cdt_BSG_DONT_TOUCH
-     (.i                 (adt_lo)
-      ,.we_i             (adt_to_cdt_trigger_lo)
-      ,.async_reset_neg_i(async_reset_neg      )
-      ,.sel_i            (tag_r_async.cdt      )
-      ,.we_o             (cdt_to_fdt_trigger_lo)
-      ,.o                (cdt_lo)
-      );
-
-   // instantiate FDT (fine delay tuner)
-   // captures config state on positive edge of (inverted) input clk
-   // non-inverting
-
-   bsg_rp_clk_gen_fine_delay_tuner fdt_BSG_DONT_TOUCH
-     (.i                 (cdt_lo)
-      ,.we_i             (cdt_to_fdt_trigger_lo)
-      ,.async_reset_neg_i(async_reset_neg)
-      ,.sel_i            (tag_r_async.fdt)
-      ,.o                (fb_clk)     // in the actual critical loop
-      ,.buf_o            (clk_o)     // outside this module
-      );
-
-   //always @(*)
-   //  $display("%m async_reset_neg=%b fb_clk=%b adg_int=%b fb_tag_r=%b fb_we_r=%b",
-   //           async_reset_neg,fb_clk,adg_int,fb_tag_r,fb_we_r);
-
-endmodule // bsg_dly_line
-
-`BSG_ABSTRACT_MODULE(bsg_dly_line)
-
+endmodule
 
