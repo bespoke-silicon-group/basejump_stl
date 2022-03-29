@@ -6,7 +6,7 @@
 
 
 module bsg_rp_clk_gen_osc_v3
-  (input async_reset_neg_i
+  (input async_reset_i
    , input trigger_i
    , input [63:0] ctl_one_hot_i
    , output clk_o
@@ -15,34 +15,36 @@ module bsg_rp_clk_gen_osc_v3
   TIELBWP7T30P140ULVT T0 (.ZN(lobit));
   wire hibit;
   TIEHBWP7T30P140ULVT T1 (.Z(hibit));
+  wire async_reset_neg;
+  INVD8BWP7T30P140ULVT I2 (.ZN(async_reset_neg), .I(async_reset_i));
   wire fb, fb_dly, fb_rst;
-  CKND2D2BWP7T30P140ULVT N0 (.ZN(fb_rst), .A1(fb), .A2(async_reset_neg_i));
+  CKND2D8BWP7T30P140ULVT N0 (.ZN(fb_rst), .A1(fb), .A2(async_reset_neg));
   wire [8:0] n;
   assign n[0] = fb_rst;
 
 
-    CKBD2BWP7T30P140ULVT B0 (.Z(n[1]), .I(n[0]));
+    CKBD8BWP7T30P140ULVT B0 (.Z(n[1]), .I(n[0]));
 
 
-    CKBD2BWP7T30P140ULVT B1 (.Z(n[2]), .I(n[1]));
+    CKBD8BWP7T30P140ULVT B1 (.Z(n[2]), .I(n[1]));
 
 
-    CKBD2BWP7T30P140ULVT B2 (.Z(n[3]), .I(n[2]));
+    CKBD8BWP7T30P140ULVT B2 (.Z(n[3]), .I(n[2]));
 
 
-    CKBD2BWP7T30P140ULVT B3 (.Z(n[4]), .I(n[3]));
+    CKBD8BWP7T30P140ULVT B3 (.Z(n[4]), .I(n[3]));
 
 
-    CKBD2BWP7T30P140ULVT B4 (.Z(n[5]), .I(n[4]));
+    CKBD8BWP7T30P140ULVT B4 (.Z(n[5]), .I(n[4]));
 
 
-    CKBD2BWP7T30P140ULVT B5 (.Z(n[6]), .I(n[5]));
+    CKBD8BWP7T30P140ULVT B5 (.Z(n[6]), .I(n[5]));
 
 
-    CKBD2BWP7T30P140ULVT B6 (.Z(n[7]), .I(n[6]));
+    CKBD8BWP7T30P140ULVT B6 (.Z(n[7]), .I(n[6]));
 
 
-    CKBD2BWP7T30P140ULVT B7 (.Z(n[8]), .I(n[7]));
+    CKBD8BWP7T30P140ULVT B7 (.Z(n[8]), .I(n[7]));
 
 
   assign #1000 fb_dly = n[8];
@@ -50,8 +52,8 @@ module bsg_rp_clk_gen_osc_v3
   wire fb_inv;
   CKND8BWP7T30P140ULVT I0 (.ZN(fb_inv), .I(fb_dly));
   wire gate_en_sync_1_r, gate_en_sync_2_r;
-  DFQD4BWP7T30P140ULVT S1 (.D(trigger_i), .CP(fb_inv), .Q(gate_en_sync_1_r));
-  DFQD4BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(fb_inv), .Q(gate_en_sync_2_r));
+  DFQD2BWP7T30P140ULVT S1 (.D(trigger_i), .CP(fb_inv), .Q(gate_en_sync_1_r));
+  DFQD2BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(fb_inv), .Q(gate_en_sync_2_r));
   wire fb_gated;
   CKLNQD20BWP7T30P140ULVT CG0 (.Q(fb_gated), .CP(fb_inv), .E(gate_en_sync_2_r), .TE(lobit));
   wire [8:0] fb_col;
@@ -59,7 +61,7 @@ module bsg_rp_clk_gen_osc_v3
 
 
       bsg_rp_clk_gen_osc_v3_col col_0
-       (.async_reset_neg_i(async_reset_neg_i)
+       (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_dly)
         ,.clkfb_i(fb_col[0])
@@ -69,7 +71,7 @@ module bsg_rp_clk_gen_osc_v3
 
 
       bsg_rp_clk_gen_osc_v3_col col_1
-       (.async_reset_neg_i(async_reset_neg_i)
+       (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_dly)
         ,.clkfb_i(fb_col[1])
@@ -79,7 +81,7 @@ module bsg_rp_clk_gen_osc_v3
 
 
       bsg_rp_clk_gen_osc_v3_col col_2
-       (.async_reset_neg_i(async_reset_neg_i)
+       (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_dly)
         ,.clkfb_i(fb_col[2])
@@ -89,7 +91,7 @@ module bsg_rp_clk_gen_osc_v3
 
 
       bsg_rp_clk_gen_osc_v3_col col_3
-       (.async_reset_neg_i(async_reset_neg_i)
+       (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_dly)
         ,.clkfb_i(fb_col[3])
@@ -99,7 +101,7 @@ module bsg_rp_clk_gen_osc_v3
 
 
       bsg_rp_clk_gen_osc_v3_col col_4
-       (.async_reset_neg_i(async_reset_neg_i)
+       (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_dly)
         ,.clkfb_i(fb_col[4])
@@ -109,7 +111,7 @@ module bsg_rp_clk_gen_osc_v3
 
 
       bsg_rp_clk_gen_osc_v3_col col_5
-       (.async_reset_neg_i(async_reset_neg_i)
+       (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_dly)
         ,.clkfb_i(fb_col[5])
@@ -119,7 +121,7 @@ module bsg_rp_clk_gen_osc_v3
 
 
       bsg_rp_clk_gen_osc_v3_col col_6
-       (.async_reset_neg_i(async_reset_neg_i)
+       (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_dly)
         ,.clkfb_i(fb_col[6])
@@ -129,7 +131,7 @@ module bsg_rp_clk_gen_osc_v3
 
 
       bsg_rp_clk_gen_osc_v3_col col_7
-       (.async_reset_neg_i(async_reset_neg_i)
+       (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_dly)
         ,.clkfb_i(fb_col[7])

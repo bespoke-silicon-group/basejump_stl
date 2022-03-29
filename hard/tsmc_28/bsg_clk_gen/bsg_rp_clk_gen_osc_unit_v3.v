@@ -19,7 +19,7 @@ module bsg_rp_clk_gen_osc_v3_row
   DFCSNQD2BWP7T30P140ULVT D0 (.Q(ctl_r), .CP(clkgate_i), .D(ctl_i), .CDN(async_reset_neg_i), .SDN(async_set_neg_i));
 
   wire ctl_en;
-  CKND2D2BWP7T30P140ULVT N0 (.ZN(ctl_en), .A1(clkdly_i), .A2(ctl_r));
+  CKND2D8BWP7T30P140ULVT N0 (.ZN(ctl_en), .A1(clkdly_i), .A2(ctl_r));
 
   wire hibit;
   TIEHBWP7T30P140ULVT T0 (.Z(hibit));
@@ -27,14 +27,14 @@ module bsg_rp_clk_gen_osc_v3_row
   TIELBWP7T30P140ULVT T1 (.ZN(lobit));
 
   wire fb;
-  CKND2D2BWP7T30P140ULVT N1 (.ZN(fb), .A1(clkfb_i), .A2(hibit));
-  CKND2D2BWP7T30P140ULVT N2 (.ZN(clk_o), .A1(fb), .A2(ctl_en));
+  CKND2D8BWP7T30P140ULVT N1 (.ZN(fb), .A1(clkfb_i), .A2(hibit));
+  CKND2D8BWP7T30P140ULVT N2 (.ZN(clk_o), .A1(fb), .A2(ctl_en));
 
 endmodule
 
 
 module bsg_rp_clk_gen_osc_v3_col
-  (input async_reset_neg_i
+  (input async_reset_i
    , input clkgate_i
    , input clkdly_i
    , input clkfb_i
@@ -54,7 +54,7 @@ module bsg_rp_clk_gen_osc_v3_col
   CKND8BWP7T30P140ULVT I1 (.ZN(clkdly_inv), .I(clkdly_i));
 
   wire async_reset_neg;
-  INVD8BWP7T30P140ULVT I2 (.ZN(async_reset_neg), .I(async_reset_neg_i));
+  INVD8BWP7T30P140ULVT I2 (.ZN(async_reset_neg), .I(async_reset_i));
 
   wire [8:0] clkfb;
   assign clkfb[0] = clkfb_i;

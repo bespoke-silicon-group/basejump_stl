@@ -16,7 +16,7 @@ print("""
 
 print("""
 module bsg_rp_clk_gen_osc_v3
-  (input async_reset_neg_i
+  (input async_reset_i
    , input trigger_i
    , input [{ctl_width_p_m1}:0] ctl_one_hot_i
    , output clk_o
@@ -25,8 +25,10 @@ module bsg_rp_clk_gen_osc_v3
   TIELBWP7T30P140ULVT T0 (.ZN(lobit));
   wire hibit;
   TIEHBWP7T30P140ULVT T1 (.Z(hibit));
+  wire async_reset_neg;
+  INVD8BWP7T30P140ULVT I2 (.ZN(async_reset_neg), .I(async_reset_i));
   wire fb, fb_dly, fb_rst;
-  CKND2D8BWP7T30P140ULVT N0 (.ZN(fb_rst), .A1(fb), .A2(async_reset_neg_i));
+  CKND2D8BWP7T30P140ULVT N0 (.ZN(fb_rst), .A1(fb), .A2(async_reset_neg));
   wire [{num_dly_p}:0] n;
   assign n[0] = fb_rst;
 """.format(ctl_width_p_m1=num_cols_p*num_rows_p-1, num_dly_p=num_dly_p))
@@ -40,8 +42,8 @@ print("""
   wire fb_inv;
   CKND8BWP7T30P140ULVT I0 (.ZN(fb_inv), .I(fb_dly));
   wire gate_en_sync_1_r, gate_en_sync_2_r;
-  DFQD8BWP7T30P140ULVT S1 (.D(trigger_i), .CP(fb_inv), .Q(gate_en_sync_1_r));
-  DFQD8BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(fb_inv), .Q(gate_en_sync_2_r));
+  DFQD2BWP7T30P140ULVT S1 (.D(trigger_i), .CP(fb_inv), .Q(gate_en_sync_1_r));
+  DFQD2BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(fb_inv), .Q(gate_en_sync_2_r));
   wire fb_gated;
   CKLNQD20BWP7T30P140ULVT CG0 (.Q(fb_gated), .CP(fb_inv), .E(gate_en_sync_2_r), .TE(lobit));
   wire [{num_cols_p}:0] fb_col;
@@ -50,7 +52,7 @@ print("""
 for i in range(0, num_cols_p):
     print("""
       bsg_rp_clk_gen_osc_v3_col col_{i}
-       (.async_reset_neg_i(async_reset_neg_i)
+       (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_dly)
         ,.clkfb_i(fb_col[{i}])
