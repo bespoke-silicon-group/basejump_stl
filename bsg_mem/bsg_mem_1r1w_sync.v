@@ -20,6 +20,7 @@ module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
                            , parameter harden_p=0
                            , parameter disable_collision_warning_p=0
                            , parameter enable_clock_gating_p=0
+                           , parameter verbose_if_synth_p=0
                            )
    (input   clk_i
     , input reset_i
@@ -56,7 +57,8 @@ module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
        ,.els_p(els_p)
        ,.read_write_same_addr_p(read_write_same_addr_p)
        ,.latch_last_read_p(latch_last_read_p)
-       ,.harden_p(harden_p)
+       ,.verbose_p(verbose_if_synth_p) // disables reprinting out a masked synth ram
+                                       //  that has been split into many synth rams
        ) synth
        (.clk_i( clk_lo )
        ,.reset_i

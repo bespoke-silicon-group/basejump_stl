@@ -19,7 +19,8 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
 				 , parameter read_write_same_addr_p=0
 				 , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                                  , parameter latch_last_read_p=0
-				 , parameter harden_p=0
+                 , parameter verbose_p=0
+                 , parameter harden_p=0
 				 )
    (input   clk_i
     , input reset_i
@@ -110,6 +111,15 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
        mem[w_addr_i] <= w_data_i;
 
    end
+
+   // synopsys translate_off
+   initial
+     begin
+        if (verbose_p)
+      $display("## %L: instantiating width_p=%d, els_p=%d (%m)",width_p,els_p);
+     end
+   // synopsys translate_on
+
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync_synth)
