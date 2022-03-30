@@ -115,7 +115,7 @@ module bsg_mem_1r1w_sync_banked
           .clk_i(clk_i)
           ,.reset_i(reset_i)
 
-          ,.w_v_i(bank_w_v_li)
+          ,.w_v_i(bank_w_v_li[j])
           ,.w_addr_i(bank_w_addr_li)
           ,.w_data_i(w_data_i[i*bank_width_lp+:bank_width_lp])
           ,.r_v_i(bank_r_v_li[j])
