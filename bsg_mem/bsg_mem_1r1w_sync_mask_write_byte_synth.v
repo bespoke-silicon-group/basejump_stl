@@ -10,7 +10,7 @@
 
 `include "bsg_defines.v"
 
-module bsg_mem_1r1w_sync_mask_write_bit_synth #(parameter `BSG_INV_PARAM(width_p)
+module bsg_mem_1r1w_sync_mask_write_byte_synth #(parameter `BSG_INV_PARAM(width_p)
 						, parameter `BSG_INV_PARAM(els_p)
 						, parameter read_write_same_addr_p=0
 						, parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
@@ -45,7 +45,7 @@ module bsg_mem_1r1w_sync_mask_write_bit_synth #(parameter `BSG_INV_PARAM(width_p
    else
     begin: nz
 
-  for(i=0; i<write_mask_width_lp; i=i+1)
+  for(genvar i=0; i<write_mask_width_lp; i=i+1)
   begin: bk
     bsg_mem_1r1w_sync #( .width_p      (8)
                         ,.els_p        (els_p)
@@ -60,10 +60,12 @@ module bsg_mem_1r1w_sync_mask_write_bit_synth #(parameter `BSG_INV_PARAM(width_p
                        ,.w_addr_i (w_addr_i)
                        ,.r_v_i    (r_v_i)
                        ,.r_addr_i (r_addr_i)
-                       ,.r_data_o (data_o[(i*8)+:8])
+                       ,.r_data_o (r_data_o[(i*8)+:8])
                       );
   end
    end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync_mask_write_byte_synth)
 

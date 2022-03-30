@@ -51,7 +51,7 @@ module bsg_mem_1r1w_sync_mask_write_byte #(parameter `BSG_INV_PARAM(width_p)
        assign clk_lo = clk_i;
      end
 
-   bsg_mem_1r1w_sync_mask_write_bit_synth
+   bsg_mem_1r1w_sync_mask_write_byte_synth
      #(.width_p(width_p)
        ,.els_p (els_p  )
        ,.read_write_same_addr_p(read_write_same_addr_p)
@@ -107,4 +107,5 @@ module bsg_mem_1r1w_sync_mask_write_byte #(parameter `BSG_INV_PARAM(width_p)
    
 endmodule
 
-`BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync_mask_write_bit)
+`BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync_mask_write_byte)
+
