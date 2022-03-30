@@ -16,46 +16,48 @@ module bsg_rp_clk_gen_osc_v3
   wire hibit;
   TIEHBWP7T30P140ULVT T1 (.Z(hibit));
   wire async_reset_neg;
-  INVD8BWP7T30P140ULVT I2 (.ZN(async_reset_neg), .I(async_reset_i));
-  wire fb, fb_dly, fb_rst;
-  CKND2D8BWP7T30P140ULVT N0 (.ZN(fb_rst), .A1(fb), .A2(async_reset_neg));
+  INVD1BWP7T30P140ULVT I0 (.ZN(async_reset_neg), .I(async_reset_i));
+  wire fb_inv, fb, fb_dly, fb_rst;
+  CKND1BWP7T30P140ULVT I1 (.ZN(fb_inv), .I(fb));
+  CKND2D1BWP7T30P140ULVT N0 (.ZN(fb_rst), .A1(fb_inv), .A2(async_reset_neg));
   wire [8:0] n;
   assign n[0] = fb_rst;
 
 
-    CKBD8BWP7T30P140ULVT B0 (.Z(n[1]), .I(n[0]));
+    CKBD1BWP7T30P140ULVT B0 (.Z(n[1]), .I(n[0]));
 
 
-    CKBD8BWP7T30P140ULVT B1 (.Z(n[2]), .I(n[1]));
+    CKBD1BWP7T30P140ULVT B1 (.Z(n[2]), .I(n[1]));
 
 
-    CKBD8BWP7T30P140ULVT B2 (.Z(n[3]), .I(n[2]));
+    CKBD1BWP7T30P140ULVT B2 (.Z(n[3]), .I(n[2]));
 
 
-    CKBD8BWP7T30P140ULVT B3 (.Z(n[4]), .I(n[3]));
+    CKBD1BWP7T30P140ULVT B3 (.Z(n[4]), .I(n[3]));
 
 
-    CKBD8BWP7T30P140ULVT B4 (.Z(n[5]), .I(n[4]));
+    CKBD1BWP7T30P140ULVT B4 (.Z(n[5]), .I(n[4]));
 
 
-    CKBD8BWP7T30P140ULVT B5 (.Z(n[6]), .I(n[5]));
+    CKBD1BWP7T30P140ULVT B5 (.Z(n[6]), .I(n[5]));
 
 
-    CKBD8BWP7T30P140ULVT B6 (.Z(n[7]), .I(n[6]));
+    CKBD1BWP7T30P140ULVT B6 (.Z(n[7]), .I(n[6]));
 
 
-    CKBD8BWP7T30P140ULVT B7 (.Z(n[8]), .I(n[7]));
+    CKBD1BWP7T30P140ULVT B7 (.Z(n[8]), .I(n[7]));
 
 
-  assign fb_dly = n[8];
-  assign clk_o = n[8];
-  wire fb_inv;
-  CKND8BWP7T30P140ULVT I0 (.ZN(fb_inv), .I(fb_dly));
+  // Delay value ignored in synthesis
+  assign #100 fb_dly = n[8];
+  CKND1BWP7T30P140ULVT I2 (.ZN(clk_o), .I(fb_dly));
+  wire fb_gate;
+  CKND1BWP7T30P140ULVT I3 (.ZN(fb_gate), .I(fb_dly));
   wire gate_en_sync_1_r, gate_en_sync_2_r;
-  DFQD2BWP7T30P140ULVT S1 (.D(trigger_i), .CP(fb_inv), .Q(gate_en_sync_1_r));
-  DFQD2BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(fb_inv), .Q(gate_en_sync_2_r));
+  DFQD1BWP7T30P140ULVT S1 (.D(trigger_i), .CP(fb_gate), .Q(gate_en_sync_1_r));
+  DFQD1BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(fb_gate), .Q(gate_en_sync_2_r));
   wire fb_gated;
-  CKLNQD20BWP7T30P140ULVT CG0 (.Q(fb_gated), .CP(fb_inv), .E(gate_en_sync_2_r), .TE(lobit));
+  CKLNQD20BWP7T30P140ULVT CG0 (.Q(fb_gated), .CP(fb_gate), .E(gate_en_sync_2_r), .TE(lobit));
   wire [8:0] fb_col;
   assign fb_col[0] = 1'b0;
 
