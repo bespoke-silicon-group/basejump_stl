@@ -62,7 +62,6 @@ module bsg_mem_1r1w_sync_banked
         .width_p(bank_width_lp)
         ,.els_p(bank_depth_lp)
         ,.read_write_same_addr_p(read_write_same_addr_p)
-        ,.latch_last_read_p(latch_last_read_p)
       ) bank (
         .clk_i(clk_i)
         ,.reset_i(reset_i)
@@ -99,7 +98,7 @@ module bsg_mem_1r1w_sync_banked
     bsg_decode_with_v #(
       .num_out_p(num_depth_bank_p)
     ) demux_w_v (
-      .i(w_depth_bank_w_idx_li)
+      .i(depth_bank_w_idx_li)
       ,.v_i(w_v_i)
       ,.o(bank_w_v_li)
     );
@@ -111,11 +110,12 @@ module bsg_mem_1r1w_sync_banked
           .width_p(bank_width_lp)
           ,.els_p(bank_depth_lp)
           ,.read_write_same_addr_p(read_write_same_addr_p)
+          ,.latch_last_read_p(latch_last_read_p)
         ) bank (
           .clk_i(clk_i)
           ,.reset_i(reset_i)
 
-          ,.w_v_i(w_v_i)
+          ,.w_v_i(bank_w_v_li[j])
           ,.w_addr_i(bank_w_addr_li)
           ,.w_data_i(w_data_i[i*bank_width_lp+:bank_width_lp])
           ,.r_v_i(bank_r_v_li[j])
