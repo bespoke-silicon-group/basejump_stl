@@ -20,7 +20,7 @@ module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
                            , parameter harden_p=0
                            , parameter disable_collision_warning_p=0
                            , parameter enable_clock_gating_p=0
-                           , parameter verbose_if_synth_p=0
+                           , parameter verbose_if_synth_p=1
                            )
    (input   clk_i
     , input reset_i
