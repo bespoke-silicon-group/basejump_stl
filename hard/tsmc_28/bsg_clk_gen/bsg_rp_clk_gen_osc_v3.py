@@ -26,29 +26,31 @@ module bsg_rp_clk_gen_osc_v3
   wire hibit;
   TIEHBWP7T30P140ULVT T1 (.Z(hibit));
   wire async_reset_neg;
-  INVD8BWP7T30P140ULVT I2 (.ZN(async_reset_neg), .I(async_reset_i));
-  wire fb, fb_dly, fb_rst;
-  CKND2D8BWP7T30P140ULVT N0 (.ZN(fb_rst), .A1(fb), .A2(async_reset_neg));
+  INVD1BWP7T30P140ULVT I0 (.ZN(async_reset_neg), .I(async_reset_i));
+  wire fb_inv, fb, fb_dly, fb_rst;
+  CKND1BWP7T30P140ULVT I1 (.ZN(fb_inv), .I(fb));
+  CKND2D1BWP7T30P140ULVT N0 (.ZN(fb_rst), .A1(fb_inv), .A2(async_reset_neg));
   wire [{num_dly_p}:0] n;
   assign n[0] = fb_rst;
 """.format(ctl_width_p_m1=num_cols_p*num_rows_p-1, num_dly_p=num_dly_p))
 for i in range(0, num_dly_p):
     print("""
-    CKBD8BWP7T30P140ULVT B{i} (.Z(n[{ip1}]), .I(n[{i}]));
+    CKBD1BWP7T30P140ULVT B{i} (.Z(n[{ip1}]), .I(n[{i}]));
 """.format(i=i, ip1=i+1))
 print("""
-  assign fb_dly = n[{num_dly_p}];
-  assign clk_o = n[{num_dly_p}];
-  wire fb_inv;
-  CKND8BWP7T30P140ULVT I0 (.ZN(fb_inv), .I(fb_dly));
+  // Delay value ignored in synthesis
+  assign #100 fb_dly = n[{num_dly_p}];
+  CKND1BWP7T30P140ULVT I2 (.ZN(clk_o), .I(fb_dly));
+  wire fb_gate;
+  CKND1BWP7T30P140ULVT I3 (.ZN(fb_gate), .I(fb_dly));
   wire gate_en_sync_1_r, gate_en_sync_2_r;
-  DFQD2BWP7T30P140ULVT S1 (.D(trigger_i), .CP(fb_inv), .Q(gate_en_sync_1_r));
-  DFQD2BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(fb_inv), .Q(gate_en_sync_2_r));
+  DFQD1BWP7T30P140ULVT S1 (.D(trigger_i), .CP(fb_gate), .Q(gate_en_sync_1_r));
+  DFQD1BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(fb_gate), .Q(gate_en_sync_2_r));
   wire fb_gated;
-  CKLNQD20BWP7T30P140ULVT CG0 (.Q(fb_gated), .CP(fb_inv), .E(gate_en_sync_2_r), .TE(lobit));
+  CKLNQD20BWP7T30P140ULVT CG0 (.Q(fb_gated), .CP(fb_gate), .E(gate_en_sync_2_r), .TE(lobit));
   wire [{num_cols_p}:0] fb_col;
   assign fb_col[0] = 1'b0;
-""".format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, num_dly_p=num_dly_p, num_rows_p_m1=num_rows_p-1))
+""".format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, num_dly_p=num_dly_p))
 for i in range(0, num_cols_p):
     print("""
       bsg_rp_clk_gen_osc_v3_col col_{i}
@@ -59,7 +61,7 @@ for i in range(0, num_cols_p):
         ,.ctl_one_hot_i(ctl_one_hot_i[{ip1_num_rows_p}:{i_num_rows_p}])
         ,.clk_o(fb_col[{ip1}])
         );
-""".format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, i=i, ip1=i+1, i_num_rows_p=i*num_rows_p, ip1_num_rows_p=(i+1)*num_rows_p-1, num_rows_p_m1=num_rows_p-1))
+""".format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, i=i, ip1=i+1, i_num_rows_p=i*num_rows_p, ip1_num_rows_p=(i+1)*num_rows_p-1))
 print("""
   assign fb = fb_col[{num_cols_p}];
 endmodule
