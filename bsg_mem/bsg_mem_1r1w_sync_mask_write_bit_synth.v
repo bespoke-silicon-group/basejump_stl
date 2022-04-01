@@ -14,7 +14,6 @@ module bsg_mem_1r1w_sync_mask_write_bit_synth #(parameter `BSG_INV_PARAM(width_p
 						, parameter `BSG_INV_PARAM(els_p)
 						, parameter read_write_same_addr_p=0
 						, parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
-						, parameter harden_p=0
                                                 , parameter disable_collision_warning_p=1
                                         )
    (input   clk_i
