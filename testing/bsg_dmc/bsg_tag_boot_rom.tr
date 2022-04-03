@@ -8,7 +8,7 @@
 #     0  | Delay Line Async Reset            | 1-bit
 #   4-1  | Delay Line Ctrl Bits              | 8-bits
 #   8-5  | Delay Line Trigger                | 1-bit
-#   9-7  | 2x-to-1x Clock Downsampler Reset  | 3-bit
+#   9    | 2x-to-1x Clock Downsampler Reset  | 3-bit
 # 11-10  | DMC trefi                         | 8-bits
 #    12  | DMC tmrd trfc                     | 8-bits
 #    13  | DMC trc trp                       | 8-bits

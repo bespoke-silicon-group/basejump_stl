@@ -173,9 +173,14 @@ module bsg_dmc_controller
   logic  [1:0] refr_tick;
   logic        refr_req;
   logic        refr_ack;
+
   logic [15:0] rd_calib_tick;    
   logic        rd_calib_req;
   logic        rd_calib_ack;
+  logic [3:0]  rd_calib_rd_count;
+  logic        rd_calib_done;
+  logic [3:0]  rd_calib_num_reads_todo; 
+
   logic        mask_reads;
   logic        init_read_calib_in_progress;
 
@@ -193,6 +198,9 @@ module bsg_dmc_controller
   logic  [3:0] tick_wtr;
   logic  [3:0] tick_rtp;
   logic  [3:0] tick_cas;
+
+  // This is the number of times read commands will be issued to DMC. TODO: should we make this programmable?
+  assign rd_calib_num_reads_todo = 2;
 
   assign app_ref_ack_o = app_ref_req_i & ~app_wdf_end_i;
   assign app_zq_ack_o = app_zq_req_i;
@@ -304,8 +312,8 @@ module bsg_dmc_controller
     if(dfi_clk_sync_rst_i)
       calr_tick <= 0;
     else if(cstate == IDLE && nstate == CALR)
-      // init_read_cycles number of reads and 1 cycle to push activate command
-      calr_tick <= dmc_p_i.init_read_cycles + 1;
+      // init_calib_reads number of reads and 1 cycle to push activate command
+      calr_tick <= dmc_p_i.init_calib_reads + 1;
     else if(cstate == CALR && calr_tick != 0 && push)
       calr_tick <= calr_tick - 1;
   end
@@ -339,7 +347,8 @@ module bsg_dmc_controller
     if(dfi_clk_sync_rst_i)
       rd_calib_tick <= 0;
     else if(calr_done) begin
-      if(((rd_calib_tick == dmc_p_i.rd_calib_cycles) && (cstate == IDLE)) ||  (cmd_afifo_rdata.cmd[0]))
+      // reset rd_calib_tick counter when we hit the max value AND have moved to the IDLE state from LDST state or when a read command is issued through the UI.
+      if(((rd_calib_tick >= dmc_p_i.rd_calib_cycles) && (cstate == IDLE)) ||  (cmd_afifo_rdata.cmd[0]))
         rd_calib_tick <= 0;
       else if(!rd_calib_req && (rd_calib_tick != dmc_p_i.rd_calib_cycles))
         rd_calib_tick <= rd_calib_tick + 1;
@@ -363,8 +372,9 @@ module bsg_dmc_controller
     if(dfi_clk_sync_rst_i)
       rd_calib_req <= 0;
     else if(calr_done) begin
-      if(rd_calib_ack)
+      if(rd_calib_done)
         rd_calib_req <= 0;
+      //issue rd_calib_req when the previous R/W commands have been issued and we are back to idle state
       else if(((rd_calib_tick == dmc_p_i.rd_calib_cycles) && (cstate == IDLE)))
         rd_calib_req <= 1;
     end
@@ -372,16 +382,18 @@ module bsg_dmc_controller
 
   assign rd_calib_ack = (cstate == LDST) & rd_calib_req & push & (ldst_tick==0);
 
-  always_ff @(posedge ui_clk_i) begin
-    if(ui_clk_sync_rst_i) begin
-      mask_reads <= 0;
-    end
-    else if(rd_calib_ack) begin
-      mask_reads <= 1;
-    end
-    else if(mask_reads && rx_piso_valid_lo && (rd_cnt == ui_burst_length_lp - 1)) begin
-      mask_reads <= 0;
-    end
+  assign rd_calib_done = (rd_calib_rd_count == rd_calib_num_reads_todo);
+
+  always_ff @(posedge dfi_clk_i) begin
+      if(dfi_clk_sync_rst_i) begin
+          rd_calib_rd_count <= 0;
+      end
+      else if(rd_calib_done) begin
+          rd_calib_rd_count <= 0;
+      end
+      else if(rd_calib_ack) begin
+          rd_calib_rd_count <= rd_calib_rd_count +  1;
+      end
   end
 
   always_ff @(posedge dfi_clk_i) begin
@@ -412,7 +424,7 @@ module bsg_dmc_controller
       ldst_tick <= ldst_tick - 1;
   end
 
-  assign init_read_calib_in_progress = (calr_tick >= 0) && (calr_tick <= dmc_p_i.init_read_cycles+1) && (cstate == CALR) ;
+  assign init_read_calib_in_progress = (calr_tick >= 0) && (calr_tick <= dmc_p_i.init_calib_reads+1) && (cstate == CALR) ;
 
   always_comb begin
     push = 1'b0;
@@ -432,7 +444,7 @@ module bsg_dmc_controller
       end
       CALR: begin
         push = cmd_sfifo_ready;
-        if(calr_tick == dmc_p_i.init_read_cycles+1) begin
+        if(calr_tick == dmc_p_i.init_calib_reads+1) begin
             cmd_sfifo_wdata.cmd = ACT; cmd_sfifo_wdata.ba = bank_addr; cmd_sfifo_wdata.addr = row_addr;
         end
         else if(calr_tick != 0 ) begin
@@ -486,7 +498,7 @@ module bsg_dmc_controller
             else                                                 nstate = cstate;
       INIT: if(init_tick == 0 && push)                           nstate = IDLE;
             else                                                 nstate = cstate;
-      CALR: if(num_calib_reads_done == dmc_p_i.init_read_cycles) nstate = IDLE;
+      CALR: if(num_calib_reads_done == dmc_p_i.init_calib_reads) nstate = IDLE;
             else                                                 nstate = cstate;
       REFR: if(refr_tick == 0 && push)                           nstate = IDLE;
             else                                                 nstate = cstate;
@@ -793,7 +805,7 @@ module bsg_dmc_controller
     assign rx_piso_data_li[k] = rx_data[k*ui_data_width_p+:ui_data_width_p];
   end
 
-  assign rx_piso_valid_li =  rx_sipo_valid_lo;
+  assign rx_piso_valid_li = (mask_reads || init_read_calib_in_progress) ? 0 : rx_sipo_valid_lo;
   assign rx_piso_yumi_li = rx_piso_valid_lo;
 
   bsg_parallel_in_serial_out #
@@ -823,9 +835,23 @@ module bsg_dmc_controller
   always_ff @(posedge ui_clk_i) begin
     if(ui_clk_sync_rst_i)
       num_calib_reads_done <= 0;
-    else if(rx_piso_yumi_li) begin
-      if(rd_cnt == ui_burst_length_lp - 1)
-        num_calib_reads_done <= num_calib_reads_done + 1;
+    else if( rd_calib_req) begin
+        num_calib_reads_done <= 0;
+    end
+    else if(rx_sipo_yumi_cnt_li == dfi_burst_length_lp) begin
+      num_calib_reads_done <= num_calib_reads_done + 1;
+    end
+  end
+
+  always_ff @(posedge ui_clk_i) begin
+    if(ui_clk_sync_rst_i) begin
+      mask_reads <= 0;
+    end
+    else if(rd_calib_done) begin
+      mask_reads <= 1;
+    end
+    else if(mask_reads && (num_calib_reads_done == rd_calib_num_reads_todo)) begin
+      mask_reads <= 0;
     end
   end
 
@@ -846,10 +872,9 @@ module bsg_dmc_controller
 
   assign refresh_in_progress_o = (c_cmd == REF);
 
-  assign app_rd_data_valid_o = (mask_reads || init_read_calib_in_progress) ? 0 : rx_piso_valid_lo ;
-  assign app_rd_data_o       = (mask_reads || init_read_calib_in_progress) ? 0 : rx_piso_data_lo;
-  assign app_rd_data_end_o   = (mask_reads || init_read_calib_in_progress) ? 0 : (rx_piso_valid_lo && (rd_cnt == ui_burst_length_lp - 1));
-
+  assign app_rd_data_valid_o =  rx_piso_valid_lo ;
+  assign app_rd_data_o       =  rx_piso_data_lo;
+  assign app_rd_data_end_o   =  (rx_piso_valid_lo && (rd_cnt == ui_burst_length_lp - 1));
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_dmc_controller)

@@ -335,6 +335,7 @@ module traffic_generator
 	        ui_write(0, wdata);
 	      join
 	    end
+        #1;
 	    for(k=0;k<256;k++) begin
 	      raddr = k*dq_burst_length_lp;
 	      raddr_queue.push_front(raddr);
