@@ -40,7 +40,7 @@ print("""
 """.format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, num_dly_p=num_dly_p, num_rows_p_m1=num_rows_p-1))
 for i in range(0, num_cols_p):
     print("""
-      bsg_rp_clk_gen_osc_v3_col col_{i}
+      bsg_rp_clk_gen_osc_v3_col col_{i}_BSG_DONT_TOUCH
        (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_inv)
@@ -75,14 +75,14 @@ print("""
   DFCNQD1BWP7T30P140ULVT D3 (.Q(trigger_on), .CP(clk_i), .D(pause), .CDN(async_reset_neg));
   wire [{num_els_p}-1:0] ctl_n, ctl_r;
   wire clk_90;
-  bsg_rp_dly_line_unit_v3 d90
+  bsg_rp_dly_line_unit_v3 d90_BSG_DONT_TOUCH
    (.async_reset_i(async_reset_i)
     ,.trigger_i(trigger_on)
     ,.ctl_one_hot_i(ctl_r[{num_els_m1}:0])
     ,.clk_i(clk_i)
     ,.clk_o(clk_90)
     );
-  bsg_rp_dly_line_unit_v3 d180
+  bsg_rp_dly_line_unit_v3 d180_BSG_DONT_TOUCH
    (.async_reset_i(async_reset_i)
     ,.trigger_i(trigger_on)
     ,.ctl_one_hot_i(ctl_r[{num_els_m1}:0])
