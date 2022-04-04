@@ -29,7 +29,7 @@
   assign fb_col[0] = 1'b0;
 
 
-      bsg_rp_clk_gen_osc_v3_col col_0
+      bsg_rp_clk_gen_osc_v3_col col_0_BSG_DONT_TOUCH
        (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_inv)
@@ -39,7 +39,7 @@
         );
 
 
-      bsg_rp_clk_gen_osc_v3_col col_1
+      bsg_rp_clk_gen_osc_v3_col col_1_BSG_DONT_TOUCH
        (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_inv)
@@ -49,7 +49,7 @@
         );
 
 
-      bsg_rp_clk_gen_osc_v3_col col_2
+      bsg_rp_clk_gen_osc_v3_col col_2_BSG_DONT_TOUCH
        (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_inv)
@@ -59,7 +59,7 @@
         );
 
 
-      bsg_rp_clk_gen_osc_v3_col col_3
+      bsg_rp_clk_gen_osc_v3_col col_3_BSG_DONT_TOUCH
        (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_inv)
@@ -69,7 +69,7 @@
         );
 
 
-      bsg_rp_clk_gen_osc_v3_col col_4
+      bsg_rp_clk_gen_osc_v3_col col_4_BSG_DONT_TOUCH
        (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_inv)
@@ -79,7 +79,7 @@
         );
 
 
-      bsg_rp_clk_gen_osc_v3_col col_5
+      bsg_rp_clk_gen_osc_v3_col col_5_BSG_DONT_TOUCH
        (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_inv)
@@ -89,7 +89,7 @@
         );
 
 
-      bsg_rp_clk_gen_osc_v3_col col_6
+      bsg_rp_clk_gen_osc_v3_col col_6_BSG_DONT_TOUCH
        (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_inv)
@@ -99,7 +99,7 @@
         );
 
 
-      bsg_rp_clk_gen_osc_v3_col col_7
+      bsg_rp_clk_gen_osc_v3_col col_7_BSG_DONT_TOUCH
        (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_inv)
@@ -134,14 +134,14 @@ endmodule
   DFCNQD1BWP7T30P140ULVT D3 (.Q(trigger_on), .CP(clk_i), .D(pause), .CDN(async_reset_neg));
   wire [64-1:0] ctl_n, ctl_r;
   wire clk_90;
-  bsg_rp_dly_line_unit_v3 d90
+  bsg_rp_dly_line_unit_v3 d90_BSG_DONT_TOUCH
    (.async_reset_i(async_reset_i)
     ,.trigger_i(trigger_on)
     ,.ctl_one_hot_i(ctl_r[63:0])
     ,.clk_i(clk_i)
     ,.clk_o(clk_90)
     );
-  bsg_rp_dly_line_unit_v3 d180
+  bsg_rp_dly_line_unit_v3 d180_BSG_DONT_TOUCH
    (.async_reset_i(async_reset_i)
     ,.trigger_i(trigger_on)
     ,.ctl_one_hot_i(ctl_r[63:0])
