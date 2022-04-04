@@ -159,7 +159,7 @@ endmodule
 
 
     AN2D1BWP7T30P140ULVT A01 (.A1(shift_left), .A2(ctl_r[0]), .Z(set_left[0]));
-    TIELBWP7T30P140ULVT T1 (.ZN(set_right[0]));
+    AN2D1BWP7T30P140ULVT A02 (.A1(shift_left), .A2(ctl_r[1]), .Z(set_right[0]));
     OR2D1BWP7T30P140ULVT O01 (.A1(set_left[0]), .A2(set_right[0]), .Z(set[0]));
     MUX2D1BWP7T30P140ULVT M0 (.Z(ctl_n[0]), .S(counter_en), .I0(ctl_r[0]), .I1(set[0]));
     DFCNQD1BWP7T30P140ULVT ctl_reg_0 (.Q(ctl_r[0]), .CP(clk_i), .D(ctl_n[0]), .CDN(async_reset_neg));
@@ -599,7 +599,7 @@ endmodule
     DFCNQD1BWP7T30P140ULVT ctl_reg_62 (.Q(ctl_r[62]), .CP(clk_i), .D(ctl_n[62]), .CDN(async_reset_neg));
   
 
-    TIELBWP7T30P140ULVT T63 (.ZN(set_left[63]));
+    AN2D1BWP7T30P140ULVT A631 (.A1(shift_right), .A2(ctl_r[62]), .Z(set_left[63]));
     AN2D1BWP7T30P140ULVT A632 (.A1(shift_right), .A2(ctl_r[63]), .Z(set_right[63]));
     OR2D1BWP7T30P140ULVT O631 (.A1(set_left[63]), .A2(set_right[63]), .Z(set[63]));
     MUX2D1BWP7T30P140ULVT M63 (.Z(ctl_n[63]), .S(counter_en), .I0(ctl_r[63]), .I1(set[63]));

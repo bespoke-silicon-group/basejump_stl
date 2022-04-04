@@ -102,7 +102,7 @@ print("""
 
 print("""
     AN2D1BWP7T30P140ULVT A01 (.A1(shift_left), .A2(ctl_r[0]), .Z(set_left[0]));
-    TIELBWP7T30P140ULVT T1 (.ZN(set_right[0]));
+    AN2D1BWP7T30P140ULVT A02 (.A1(shift_left), .A2(ctl_r[1]), .Z(set_right[0]));
     OR2D1BWP7T30P140ULVT O01 (.A1(set_left[0]), .A2(set_right[0]), .Z(set[0]));
     MUX2D1BWP7T30P140ULVT M0 (.Z(ctl_n[0]), .S(counter_en), .I0(ctl_r[0]), .I1(set[0]));
     DFCNQD1BWP7T30P140ULVT ctl_reg_0 (.Q(ctl_r[0]), .CP(clk_i), .D(ctl_n[0]), .CDN(async_reset_neg));
@@ -118,12 +118,12 @@ for i in range(1, num_els_p-1):
   """.format(i=i, ip1=(i+1), im1=(i-1)))
 
 print("""
-    TIELBWP7T30P140ULVT T{num_els_p_m1} (.ZN(set_left[{num_els_p_m1}]));
+    AN2D1BWP7T30P140ULVT A{num_els_p_m1}1 (.A1(shift_right), .A2(ctl_r[{num_els_p_m2}]), .Z(set_left[{num_els_p_m1}]));
     AN2D1BWP7T30P140ULVT A{num_els_p_m1}2 (.A1(shift_right), .A2(ctl_r[{num_els_p_m1}]), .Z(set_right[{num_els_p_m1}]));
     OR2D1BWP7T30P140ULVT O{num_els_p_m1}1 (.A1(set_left[{num_els_p_m1}]), .A2(set_right[{num_els_p_m1}]), .Z(set[{num_els_p_m1}]));
     MUX2D1BWP7T30P140ULVT M{num_els_p_m1} (.Z(ctl_n[{num_els_p_m1}]), .S(counter_en), .I0(ctl_r[{num_els_p_m1}]), .I1(set[{num_els_p_m1}]));
     DFSNQD1BWP7T30P140ULVT ctl_reg_{num_els_p_m1} (.Q(ctl_r[{num_els_p_m1}]), .CP(clk_i), .D(ctl_n[{num_els_p_m1}]), .SDN(async_reset_neg));
-""".format(num_els_p_m1=num_els_p-1))
+""".format(num_els_p_m1=num_els_p-1, num_els_p_m2=num_els_p-2))
 
 print("""
     assign clk_o = clk_90;
