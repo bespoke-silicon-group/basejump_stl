@@ -29,12 +29,12 @@ print("""
   """.format(ctl_width_p_m1=num_cols_p*num_rows_p-1, num_dly_p=num_dly_p))
 print("""
   wire fb_inv;
-  CKND1BWP7T30P140ULVT I0 (.ZN(fb_inv), .I(clk_i));
+  CKND4BWP7T30P140ULVT I0 (.ZN(fb_inv), .I(clk_i));
   wire gate_en_sync_1_r, gate_en_sync_2_r;
-  DFQD1BWP7T30P140ULVT S1 (.D(trigger_i), .CP(fb_inv), .Q(gate_en_sync_1_r));
-  DFQD1BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(fb_inv), .Q(gate_en_sync_2_r));
+  DFQD1BWP7T30P140ULVT S1 (.D(trigger_i), .CP(clk_i), .Q(gate_en_sync_1_r));
+  DFQD1BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(clk_i), .Q(gate_en_sync_2_r));
   wire fb_gated;
-  CKLNQD20BWP7T30P140ULVT CG0 (.Q(fb_gated), .CP(fb_inv), .E(gate_en_sync_2_r), .TE(lobit));
+  CKLNQD20BWP7T30P140ULVT CG0 (.Q(fb_gated), .CP(clk_i), .E(gate_en_sync_2_r), .TE(lobit));
   wire [{num_cols_p}:0] fb_col;
   assign fb_col[0] = 1'b0;
 """.format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, num_dly_p=num_dly_p, num_rows_p_m1=num_rows_p-1))
