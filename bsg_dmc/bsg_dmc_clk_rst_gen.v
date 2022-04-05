@@ -5,7 +5,8 @@
 module bsg_dmc_clk_rst_gen
   import bsg_tag_pkg::bsg_tag_s;
   import bsg_dmc_pkg::*;
- #(parameter num_adgs_p         = 2
+ #(parameter num_rows_p         = 2
+  ,parameter num_cols_p         = 2
   ,parameter ds_width_p         = 2
   ,parameter `BSG_INV_PARAM(dq_groups_p        ))
   (
@@ -36,12 +37,11 @@ module bsg_dmc_clk_rst_gen
 
   // Clock Generator (CG) Instance
   for(i=0;i<dq_groups_p;i++) begin: dly_lines
-    bsg_dly_line #(.num_adgs_p(num_adgs_p)) dly_line_inst
-      (.bsg_tag_i         ( dly_tag_lines_i.dly[i]         )
-      ,.bsg_tag_trigger_i ( dly_tag_lines_i.dly_trigger[i] )
-      ,.async_reset_i     ( dly_async_reset_r            )
-      ,.clk_i             ( dqs_clk_i[i]                 )
-      ,.clk_o             ( dqs_clk_o[i]                 ));
+    bsg_dmc_dly_line_v3 #(.num_rows_p(num_rows_p), .num_cols_p(num_cols_p)) dly_line_inst
+      (.clk_i(dqs_clk_i[i])
+       ,.async_reset_i(dly_async_reset_r)
+       ,.clk_o(dqs_clk_o[i])
+       );
   end
 
   `declare_bsg_clk_gen_ds_tag_payload_s(ds_width_p)
@@ -98,19 +98,24 @@ module bsg_dmc_clk_rst_gen
       ,.data_async_r_o(sel_tag_payload_r)
       );
 
-  bsg_clk_gen #(.downsample_width_p(ds_width_p)
-               ,.num_adgs_p(num_adgs_p)
-               ,.version_p(2)
-               )
-  clk_gen_inst
-      (.async_osc_reset_i     (osc_async_reset_r)
-      ,.bsg_osc_tag_i         (osc_tag_lines_i.osc)
-      ,.bsg_osc_trigger_tag_i (osc_tag_lines_i.osc_trigger)
-      ,.bsg_ds_tag_i          (osc_tag_lines_i.ds)
-      ,.ext_clk_i             (ext_dfi_clk_2x_i)
-      ,.select_i              (sel_tag_payload_r)
-      ,.clk_o                 (dfi_clk_2x_o)
-      );
+  // Rely on true 400 MHz signal. Leaving the clock gen here for
+  //   posterity. It should be possible to monitor this signal
+  //   that we dynamically adjust the frequency and stay within
+  //   tolerance without an external crystal
+  assign dfi_clk_2x_o = ext_dfi_clk_2x_i;
+  //bsg_clk_gen #(.downsample_width_p(ds_width_p)
+  //             ,.num_adgs_p(num_adgs_p)
+  //             ,.version_p(2)
+  //             )
+  //clk_gen_inst
+  //    (.async_osc_reset_i     (osc_async_reset_r)
+  //    ,.bsg_osc_tag_i         (osc_tag_lines_i.osc)
+  //    ,.bsg_osc_trigger_tag_i (osc_tag_lines_i.osc_trigger)
+  //    ,.bsg_ds_tag_i          (osc_tag_lines_i.ds)
+  //    ,.ext_clk_i             (ext_dfi_clk_2x_i)
+  //    ,.select_i              (sel_tag_payload_r)
+  //    ,.clk_o                 (dfi_clk_2x_o)
+  //    );
 
   bsg_sync_sync #(.width_p(1)) ui_reset_inst
     (.oclk_i      ( ui_clk_i      )
