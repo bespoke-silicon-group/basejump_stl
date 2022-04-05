@@ -57,8 +57,8 @@ module bsg_mem_1rw_sync_mask_write_bit #(
   
   assign data_o = data_r;
 
-  for (genvar i=0; i<width_p; i=i+1) begin
-    always_ff @(posedge clk_i) begin
+  always_ff @(posedge clk_i) begin
+    for (integer i=0; i<width_p; i=i+1) begin
       if (v_i)
         if (w_i & w_mask_i[i])
           mem[addr_i][i] <= data_i[i];
