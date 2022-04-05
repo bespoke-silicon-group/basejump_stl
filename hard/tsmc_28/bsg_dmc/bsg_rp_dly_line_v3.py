@@ -29,12 +29,12 @@ print("""
   """.format(ctl_width_p_m1=num_cols_p*num_rows_p-1, num_dly_p=num_dly_p))
 print("""
   wire fb_inv;
-  CKND1BWP7T30P140ULVT I0 (.ZN(fb_inv), .I(clk_i));
+  CKND4BWP7T30P140ULVT I0 (.ZN(fb_inv), .I(clk_i));
   wire gate_en_sync_1_r, gate_en_sync_2_r;
-  DFQD1BWP7T30P140ULVT S1 (.D(trigger_i), .CP(fb_inv), .Q(gate_en_sync_1_r));
-  DFQD1BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(fb_inv), .Q(gate_en_sync_2_r));
+  DFQD1BWP7T30P140ULVT S1 (.D(trigger_i), .CP(clk_i), .Q(gate_en_sync_1_r));
+  DFQD1BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(clk_i), .Q(gate_en_sync_2_r));
   wire fb_gated;
-  CKLNQD20BWP7T30P140ULVT CG0 (.Q(fb_gated), .CP(fb_inv), .E(gate_en_sync_2_r), .TE(lobit));
+  CKLNQD20BWP7T30P140ULVT CG0 (.Q(fb_gated), .CP(clk_i), .E(gate_en_sync_2_r), .TE(lobit));
   wire [{num_cols_p}:0] fb_col;
   assign fb_col[0] = 1'b0;
 """.format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, num_dly_p=num_dly_p, num_rows_p_m1=num_rows_p-1))
@@ -50,7 +50,7 @@ for i in range(0, num_cols_p):
         );
 """.format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, i=i, ip1=i+1, i_num_rows_p=i*num_rows_p, ip1_num_rows_p=(i+1)*num_rows_p-1, num_rows_p_m1=num_rows_p-1))
 print("""
-  assign clk_o = fb_col[{num_cols_p}];
+  CKBD4BWP7T30P140ULVT B0 (.Z(clk_o), .I(fb_col[{num_cols_p}]));
 endmodule
 """.format(num_cols_p=num_cols_p))
 print("""
@@ -89,20 +89,33 @@ print("""
     ,.clk_i(clk_90)
     ,.clk_o(clk_180)
     );
+  wire [{num_dly_p}:0] n;
+  assign n[0] = clk_180;
+""".format(num_els_p=num_els_p, num_els_m1=(num_els_p-1), num_dly_p=num_dly_p))
+
+for i in range(num_dly_p):
+  print("""
+    CKBD8BWP7T30P140ULVT B{i} (.Z(n[{ip1}]), .I(n[{i}]));
+""".format(i=i, ip1=i+1))
+
+print("""
+  // Delay value ignored in synthesis
+  wire #100 clk_dly = n[{num_dly_p}];
+
   wire meta;
-  DFNCND1BWP7T30P140ULVT meta_r (.Q(meta), .QN(), .CPN(clk_i), .CDN(async_reset_neg), .D(clk_180));
+  DFNCND1BWP7T30P140ULVT meta_r (.Q(meta), .QN(), .CPN(clk_i), .CDN(async_reset_neg), .D(clk_dly));
   wire meta_sync, meta_sync_sync, meta_sync_sync_inv;
   DFCND1BWP7T30P140ULVT bsg_SYNC_1_r (.Q(meta_sync), .QN(), .CP(clk_i), .D(meta), .CDN(async_reset_neg));
   DFCND1BWP7T30P140ULVT bsg_SYNC_2_r (.Q(meta_sync_sync), .QN(meta_sync_sync_inv), .CP(clk_i), .D(meta_sync), .CDN(async_reset_neg));
   wire shift_left = meta_sync_sync;
   wire shift_right = meta_sync_sync_inv;
   wire [{num_els_p}-1:0] set_right, set_left, set;
-""".format(num_els_p=num_els_p, num_els_m1=(num_els_p-1)))
+""".format(num_els_p=num_els_p, num_els_m1=(num_els_p-1), num_dly_p=num_dly_p))
 
 
 print("""
     AN2D1BWP7T30P140ULVT A01 (.A1(shift_left), .A2(ctl_r[0]), .Z(set_left[0]));
-    TIELBWP7T30P140ULVT T1 (.ZN(set_right[0]));
+    AN2D1BWP7T30P140ULVT A02 (.A1(shift_left), .A2(ctl_r[1]), .Z(set_right[0]));
     OR2D1BWP7T30P140ULVT O01 (.A1(set_left[0]), .A2(set_right[0]), .Z(set[0]));
     MUX2D1BWP7T30P140ULVT M0 (.Z(ctl_n[0]), .S(counter_en), .I0(ctl_r[0]), .I1(set[0]));
     DFCNQD1BWP7T30P140ULVT ctl_reg_0 (.Q(ctl_r[0]), .CP(clk_i), .D(ctl_n[0]), .CDN(async_reset_neg));
@@ -118,12 +131,12 @@ for i in range(1, num_els_p-1):
   """.format(i=i, ip1=(i+1), im1=(i-1)))
 
 print("""
-    TIELBWP7T30P140ULVT T{num_els_p_m1} (.ZN(set_left[{num_els_p_m1}]));
+    AN2D1BWP7T30P140ULVT A{num_els_p_m1}1 (.A1(shift_right), .A2(ctl_r[{num_els_p_m2}]), .Z(set_left[{num_els_p_m1}]));
     AN2D1BWP7T30P140ULVT A{num_els_p_m1}2 (.A1(shift_right), .A2(ctl_r[{num_els_p_m1}]), .Z(set_right[{num_els_p_m1}]));
     OR2D1BWP7T30P140ULVT O{num_els_p_m1}1 (.A1(set_left[{num_els_p_m1}]), .A2(set_right[{num_els_p_m1}]), .Z(set[{num_els_p_m1}]));
     MUX2D1BWP7T30P140ULVT M{num_els_p_m1} (.Z(ctl_n[{num_els_p_m1}]), .S(counter_en), .I0(ctl_r[{num_els_p_m1}]), .I1(set[{num_els_p_m1}]));
     DFSNQD1BWP7T30P140ULVT ctl_reg_{num_els_p_m1} (.Q(ctl_r[{num_els_p_m1}]), .CP(clk_i), .D(ctl_n[{num_els_p_m1}]), .SDN(async_reset_neg));
-""".format(num_els_p_m1=num_els_p-1))
+""".format(num_els_p_m1=num_els_p-1, num_els_p_m2=num_els_p-2))
 
 print("""
     assign clk_o = clk_90;
