@@ -322,7 +322,7 @@ module traffic_generator
 
 	  initial begin
 	    $display("\n#### Regression test started ####");
-	    @(posedge tag_trace_done_lo);
+	    @(posedge init_calib_complete_i);
 	    repeat(1000) @(posedge ui_clk);
 	    for(k=0;k<256;k++) begin
 	      waddr = k*dq_burst_length_lp;
