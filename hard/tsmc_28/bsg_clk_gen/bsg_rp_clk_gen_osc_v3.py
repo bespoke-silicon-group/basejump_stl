@@ -35,12 +35,12 @@ module bsg_rp_clk_gen_osc_v3
 """.format(ctl_width_p_m1=num_cols_p*num_rows_p-1, num_dly_p=num_dly_p))
 for i in range(0, num_dly_p):
     print("""
-    CKBD1BWP7T30P140ULVT B{i} (.Z(n[{ip1}]), .I(n[{i}]));
+    CKBD4BWP7T30P140ULVT B{i} (.Z(n[{ip1}]), .I(n[{i}]));
 """.format(i=i, ip1=i+1))
 print("""
   // Delay value ignored in synthesis
   assign #100 fb_dly = n[{num_dly_p}];
-  CKND1BWP7T30P140ULVT I2 (.ZN(clk_o), .I(fb_dly));
+  CKND4BWP7T30P140ULVT I2 (.ZN(clk_o), .I(fb_dly));
   wire fb_gate;
   CKND1BWP7T30P140ULVT I3 (.ZN(fb_gate), .I(fb_dly));
   wire gate_en_sync_1_r, gate_en_sync_2_r;
@@ -53,7 +53,7 @@ print("""
 """.format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, num_dly_p=num_dly_p))
 for i in range(0, num_cols_p):
     print("""
-      bsg_rp_clk_gen_osc_v3_col col_{i}
+      bsg_rp_clk_gen_osc_v3_col col_{i}_BSG_DONT_TOUCH
        (.async_reset_i(async_reset_i)
         ,.clkgate_i(fb_gated)
         ,.clkdly_i(fb_dly)

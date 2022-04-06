@@ -15,6 +15,34 @@ print("""
 """.format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, num_dly_p=num_dly_p))
 
 print("""
+  module bsg_rp_dly_line_ctl_reg
+    (input clk_i
+     , input async_reset_neg
+     , input async_set_neg
+     , input shift_right
+     , input shift_left
+     , input counter_en
+     , input ctl_m1
+     , input ctl_p1
+     , output ctl_o
+     );
+
+    wire set_left, set_right, set;
+    wire ctl_n, ctl_r;
+
+    AN2D1BWP7T30P140ULVT A0 (.A1(shift_right), .A2(ctl_m1), .Z(set_right));
+    AN2D1BWP7T30P140ULVT A1 (.A1(shift_left), .A2(ctl_p1), .Z(set_left));
+    OR2D1BWP7T30P140ULVT O0 (.A1(set_left), .A2(set_right), .Z(set));
+    MUX2D1BWP7T30P140ULVT M0 (.Z(ctl_n), .S(counter_en), .I0(ctl_r), .I1(set));
+    DFCSNQD1BWP7T30P140ULVT D0 (.Q(ctl_r), .CP(clk_i), .D(ctl_n), .CDN(async_reset_neg), .SDN(async_set_neg));
+
+    assign ctl_o = ctl_r;
+
+endmodule
+
+""")
+
+print("""
   module bsg_rp_dly_line_unit_v3
       (input async_reset_i
       , input trigger_i
@@ -29,7 +57,7 @@ print("""
   """.format(ctl_width_p_m1=num_cols_p*num_rows_p-1, num_dly_p=num_dly_p))
 print("""
   wire fb_inv;
-  CKND4BWP7T30P140ULVT I0 (.ZN(fb_inv), .I(clk_i));
+  CKND1BWP7T30P140ULVT I0 (.ZN(fb_inv), .I(clk_i));
   wire gate_en_sync_1_r, gate_en_sync_2_r;
   DFQD1BWP7T30P140ULVT S1 (.D(trigger_i), .CP(clk_i), .Q(gate_en_sync_1_r));
   DFQD1BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(clk_i), .Q(gate_en_sync_2_r));
@@ -59,6 +87,11 @@ print("""
     , input clk_i
     , output clk_o
     );
+
+  wire lobit;
+  TIELBWP7T30P140ULVT T0 (.ZN(lobit));
+  wire hibit;
+  TIEHBWP7T30P140ULVT T1 (.Z(hibit));
   wire async_reset_neg;
   INVD1BWP7T30P140ULVT I0 (.ZN(async_reset_neg), .I(async_reset_i));
   // State machine
@@ -95,7 +128,7 @@ print("""
 
 for i in range(num_dly_p):
   print("""
-    CKBD8BWP7T30P140ULVT B{i} (.Z(n[{ip1}]), .I(n[{i}]));
+    CKBD4BWP7T30P140ULVT B{i} (.Z(n[{ip1}]), .I(n[{i}]));
 """.format(i=i, ip1=i+1))
 
 print("""
@@ -114,28 +147,50 @@ print("""
 
 
 print("""
-    AN2D1BWP7T30P140ULVT A01 (.A1(shift_left), .A2(ctl_r[0]), .Z(set_left[0]));
-    AN2D1BWP7T30P140ULVT A02 (.A1(shift_left), .A2(ctl_r[1]), .Z(set_right[0]));
-    OR2D1BWP7T30P140ULVT O01 (.A1(set_left[0]), .A2(set_right[0]), .Z(set[0]));
-    MUX2D1BWP7T30P140ULVT M0 (.Z(ctl_n[0]), .S(counter_en), .I0(ctl_r[0]), .I1(set[0]));
-    DFCNQD1BWP7T30P140ULVT ctl_reg_0 (.Q(ctl_r[0]), .CP(clk_i), .D(ctl_n[0]), .CDN(async_reset_neg));
+    bsg_rp_dly_line_ctl_reg ctl_0
+     (.clk_i(clk_i)
+      ,.async_reset_neg(async_reset_neg)
+      ,.async_set_neg(hibit)
+      ,.shift_right(shift_left)
+      ,.shift_left(shift_left)
+      ,.counter_en(counter_en)
+
+      ,.ctl_m1(ctl_r[0])
+      ,.ctl_p1(ctl_r[1])
+      ,.ctl_o(ctl_r[0])
+      );
 """)
 
 for i in range(1, num_els_p-1):
   print("""
-    AN2D1BWP7T30P140ULVT A{i}1 (.A1(shift_right), .A2(ctl_r[{im1}]), .Z(set_right[{i}]));
-    AN2D1BWP7T30P140ULVT A{i}2 (.A1(shift_left), .A2(ctl_r[{ip1}]), .Z(set_left[{i}]));
-    OR2D1BWP7T30P140ULVT O{i}1 (.A1(set_left[{i}]), .A2(set_right[{i}]), .Z(set[{i}]));
-    MUX2D1BWP7T30P140ULVT M{i} (.Z(ctl_n[{i}]), .S(counter_en), .I0(ctl_r[{i}]), .I1(set[{i}]));
-    DFCNQD1BWP7T30P140ULVT ctl_reg_{i} (.Q(ctl_r[{i}]), .CP(clk_i), .D(ctl_n[{i}]), .CDN(async_reset_neg));
+    bsg_rp_dly_line_ctl_reg ctl_{i}
+     (.clk_i(clk_i)
+      ,.async_reset_neg(async_reset_neg)
+      ,.async_set_neg(hibit)
+      ,.shift_right(shift_right)
+      ,.shift_left(shift_left)
+      ,.counter_en(counter_en)
+
+      ,.ctl_m1(ctl_r[{im1}])
+      ,.ctl_p1(ctl_r[{ip1}])
+      ,.ctl_o(ctl_r[{i}])
+      );
   """.format(i=i, ip1=(i+1), im1=(i-1)))
 
+
 print("""
-    AN2D1BWP7T30P140ULVT A{num_els_p_m1}1 (.A1(shift_right), .A2(ctl_r[{num_els_p_m2}]), .Z(set_left[{num_els_p_m1}]));
-    AN2D1BWP7T30P140ULVT A{num_els_p_m1}2 (.A1(shift_right), .A2(ctl_r[{num_els_p_m1}]), .Z(set_right[{num_els_p_m1}]));
-    OR2D1BWP7T30P140ULVT O{num_els_p_m1}1 (.A1(set_left[{num_els_p_m1}]), .A2(set_right[{num_els_p_m1}]), .Z(set[{num_els_p_m1}]));
-    MUX2D1BWP7T30P140ULVT M{num_els_p_m1} (.Z(ctl_n[{num_els_p_m1}]), .S(counter_en), .I0(ctl_r[{num_els_p_m1}]), .I1(set[{num_els_p_m1}]));
-    DFSNQD1BWP7T30P140ULVT ctl_reg_{num_els_p_m1} (.Q(ctl_r[{num_els_p_m1}]), .CP(clk_i), .D(ctl_n[{num_els_p_m1}]), .SDN(async_reset_neg));
+    bsg_rp_dly_line_ctl_reg ctl_{num_els_p_m1}
+     (.clk_i(clk_i)
+      ,.async_reset_neg(hibit)
+      ,.async_set_neg(async_reset_neg)
+      ,.shift_right(shift_right)
+      ,.shift_left(shift_right)
+      ,.counter_en(counter_en)
+
+      ,.ctl_m1(ctl_r[{num_els_p_m2}])
+      ,.ctl_p1(ctl_r[{num_els_p_m1}])
+      ,.ctl_o(ctl_r[{num_els_p_m1}])
+      );
 """.format(num_els_p_m1=num_els_p-1, num_els_p_m2=num_els_p-2))
 
 print("""
