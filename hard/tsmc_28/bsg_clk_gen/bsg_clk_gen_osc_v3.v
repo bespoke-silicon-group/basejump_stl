@@ -84,8 +84,7 @@
 
 module bsg_clk_gen_osc_v3
  import bsg_tag_pkg::*;
- #(parameter `BSG_INV_PARAM(num_rows_p)
-   , parameter `BSG_INV_PARAM(num_cols_p)
+ #(parameter `BSG_INV_PARAM(num_taps_p)
    )
   (input bsg_tag_s bsg_tag_trigger_i
    , input bsg_tag_s bsg_tag_i
@@ -93,7 +92,7 @@ module bsg_clk_gen_osc_v3
    , output logic clk_o
    );
 
-  localparam ctl_width_lp = `BSG_SAFE_CLOG2(num_rows_p*num_cols_p);
+  localparam ctl_width_lp = `BSG_SAFE_CLOG2(num_taps_p);
 
   logic trigger_r;
   bsg_tag_client_unsync #(.width_p(1))
@@ -110,8 +109,8 @@ module bsg_clk_gen_osc_v3
      ,.data_async_r_o(ctl_r)
      );
 
-  logic [num_cols_p-1:0][num_rows_p-1:0] ctl_one_hot_lo;
-  bsg_decode #(.num_out_p(num_cols_p*num_rows_p)) decode
+  logic [num_taps_p-1:0] ctl_one_hot_lo;
+  bsg_decode #(.num_out_p(num_taps_p)) decode
    (.i(ctl_r)
     ,.o(ctl_one_hot_lo)
     );

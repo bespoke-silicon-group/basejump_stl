@@ -16,7 +16,7 @@
 module bsg_clk_gen_osc_v3
   import bsg_tag_pkg::bsg_tag_s;
 
-    #(parameter num_rows_p=2, num_cols_p=2)
+    #(parameter num_taps_p=2)
   (
    input async_reset_i
    ,input bsg_tag_s bsg_tag_i
@@ -24,7 +24,7 @@ module bsg_clk_gen_osc_v3
    ,output logic clk_o
    );
 
-  localparam ctl_width_lp = `BSG_SAFE_CLOG2(num_cols_p*num_rows_p);
+  localparam ctl_width_lp = `BSG_SAFE_CLOG2(num_taps)
 
    logic [ctl_width_lp-1:0] fb_tag_r;
    bsg_tag_client_unsync

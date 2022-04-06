@@ -59,11 +59,12 @@ module bsg_rp_clk_gen_osc_v3_col
   wire lobit;
   TIELBWP7T30P140ULVT T1 (.ZN(lobit));
 
+  // Size to 1/4 of column load 
   wire clkgate_inv;
-  CKND1BWP7T30P140ULVT I0 (.ZN(clkgate_inv), .I(clkgate_i));
+  CKND2BWP7T30P140ULVT I0 (.ZN(clkgate_inv), .I(clkgate_i));
 
   wire clkdly_inv;
-  CKND1BWP7T30P140ULVT I1 (.ZN(clkdly_inv), .I(clkdly_i));
+  CKND2BWP7T30P140ULVT I1 (.ZN(clkdly_inv), .I(clkdly_i));
 
   wire async_reset_neg;
   INVD1BWP7T30P140ULVT I2 (.ZN(async_reset_neg), .I(async_reset_i));
