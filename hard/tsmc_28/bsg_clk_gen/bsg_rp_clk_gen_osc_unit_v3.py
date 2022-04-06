@@ -87,7 +87,7 @@ for i in range(0, num_rows_p):
     """.format(i=i))
 
   print("""
-      bsg_rp_clk_gen_osc_v3_row row_{i}
+      bsg_rp_clk_gen_osc_v3_row row_{i}_BSG_DONT_TOUCH
         (.async_reset_neg_i(async_reset_neg_li[{i}])
          ,.async_set_neg_i(async_set_neg_li[{i}])
          ,.clkgate_i(clkgate_inv)
