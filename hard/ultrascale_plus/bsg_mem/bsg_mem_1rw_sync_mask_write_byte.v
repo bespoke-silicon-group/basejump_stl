@@ -61,4 +61,4 @@ module bsg_mem_1rw_sync_mask_write_byte #(
 
 endmodule
 
-`BSG_ABSTRACT_MODULE(bsg_mem_1rw_sync_mask_write_bit)
+`BSG_ABSTRACT_MODULE(bsg_mem_1rw_sync_mask_write_byte)
