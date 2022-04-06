@@ -77,8 +77,7 @@
 module bsg_clk_gen_v3
   import bsg_tag_pkg::bsg_tag_s;
  #(parameter `BSG_INV_PARAM(downsample_width_p )
-  ,          num_rows_p         = 4 
-  ,          num_cols_p         = 2 
+  ,          num_taps_p         = 4 
   ,          version_p          = 1  // alternative, use version_p = 2 or version_p = 3
   )
   (input  bsg_tag_s         bsg_osc_tag_i
@@ -121,7 +120,7 @@ module bsg_clk_gen_v3
           ,.clk_o             (osc_clk_out          )
           );
  */
-       bsg_clk_gen_osc_v3 #(.num_rows_p(num_rows_p), .num_cols_p(num_cols_p)) clk_gen_osc_inst
+       bsg_clk_gen_osc_v3 #(.num_taps_p(num_taps_p)) clk_gen_osc_inst
         (.bsg_tag_i(bsg_osc_tag_i)
          ,.bsg_tag_trigger_i(bsg_osc_trigger_tag_i)
          ,.async_reset_i(async_osc_reset_i)

@@ -1,7 +1,6 @@
 
 module bsg_dmc_dly_line_v3
- #(parameter `BSG_INV_PARAM(num_rows_p)
-   , parameter `BSG_INV_PARAM(num_cols_p)
+ #(parameter `BSG_INV_PARAM(num_taps_p)
    )
   (input clk_i
    , input async_reset_i
