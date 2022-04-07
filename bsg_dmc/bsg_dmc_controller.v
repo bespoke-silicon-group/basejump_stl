@@ -289,10 +289,10 @@ module bsg_dmc_controller
     ,.yumi_cnt_i ( tx_sipo_yumi_cnt_li              ));
 
   assign row_col_addr = ((cmd_afifo_rdata.addr >> (dmc_p_i.bank_pos + dmc_p_i.bank_width)) << dmc_p_i.bank_pos) | (((1 << dmc_p_i.bank_pos) - 1) & cmd_afifo_rdata.addr);
-  assign col_addr     = (cstate == CALR) ? 0 : 16'(((1 << dmc_p_i.col_width) - 1) & row_col_addr[ui_addr_width_p-1:0]);
-  assign row_addr     = (cstate == CALR) ? 0 : 16'(((1 << dmc_p_i.row_width) - 1) & (row_col_addr >> dmc_p_i.col_width));
-  assign bank_addr    = (cstate == CALR) ? 0 : 3'(((1 << dmc_p_i.bank_width) - 1) & (cmd_afifo_rdata.addr >> dmc_p_i.bank_pos));
-  assign ap           = (cstate == CALR) ? 0 : cmd_afifo_rdata.cmd[1];
+  assign col_addr     = 16'(((1 << dmc_p_i.col_width) - 1) & row_col_addr[ui_addr_width_p-1:0]);
+  assign row_addr     = 16'(((1 << dmc_p_i.row_width) - 1) & (row_col_addr >> dmc_p_i.col_width));
+  assign bank_addr    = 3'(((1 << dmc_p_i.bank_width) - 1) & (cmd_afifo_rdata.addr >> dmc_p_i.bank_pos));
+  assign ap           = cmd_afifo_rdata.cmd[1];
 
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
@@ -450,31 +450,25 @@ module bsg_dmc_controller
       //    3. While any previous read for calibration transaction was not completed (ie. complete here means until we receive read data from DFI for the read for calibration command)
       //    NOTE: We will be cycling between IDLE and CALR for rd_calib_num_reads_todo number of times. For example, the transition for rd_calib_num_reads_todo =2 would be LDST -> IDLE -> CALR (first calibration read) -> IDLE -> CALR(second calib read) -> IDLE -> CALR (pending calib reads) -> IDLE (pending calib reads done, can move to normal operation)
       CALR: begin
+        // TODO: Should rotate to wear evenly?
+        cmd_sfifo_wdata.ba = '0; cmd_sfifo_wdata.addr = '0;
         push = cmd_sfifo_ready;
         // Initial calibration reads
         if(!init_calr_done) begin
             if(calr_tick == dmc_p_i.init_calib_reads) begin
-                cmd_sfifo_wdata.cmd = ACT; cmd_sfifo_wdata.ba = bank_addr; cmd_sfifo_wdata.addr = row_addr;
+                cmd_sfifo_wdata.cmd = ACT;
             end
             else if(calr_tick != 0 ) begin
-                cmd_sfifo_wdata.ba = bank_addr;
-                cmd_sfifo_wdata.addr = {col_addr[14:10], ap, col_addr[9:0]};
                 cmd_sfifo_wdata.cmd = READ;
             end
         end
         // Periodic calibration reads
         else if(rd_calib_req) begin
             case(ldst_tick)
-              'd3: begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.ba = bank_addr; cmd_sfifo_wdata.addr = open_row[bank_addr]; end
-              'd2: begin cmd_sfifo_wdata.cmd = ACT; cmd_sfifo_wdata.ba = bank_addr; cmd_sfifo_wdata.addr = row_addr; end
-              'd1: begin
-                     cmd_sfifo_wdata.ba = bank_addr;
-                     cmd_sfifo_wdata.addr = {col_addr[14:10], ap, col_addr[9:0]};
-                     cmd_sfifo_wdata.cmd = READ;
-                   end
-              'd0: begin 
-                        cmd_sfifo_wdata.cmd = NOP; 
-                   end
+              'd3: begin cmd_sfifo_wdata.cmd = PRE; end
+              'd2: begin cmd_sfifo_wdata.cmd = ACT; end
+              'd1: begin cmd_sfifo_wdata.cmd = READ; end
+              'd0: begin cmd_sfifo_wdata.cmd = NOP; end
             endcase
         end
       end          
