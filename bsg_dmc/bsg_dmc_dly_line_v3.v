@@ -7,9 +7,7 @@
 //   90 degree delay line, useful for LPDDR
 
 module bsg_dmc_dly_line_v3
- #(parameter `BSG_INV_PARAM(num_rows_p)
-   , parameter `BSG_INV_PARAM(num_cols_p)
-   )
+ #(parameter `BSG_INV_PARAM(num_taps_p))
   (input clk_i
    , input async_reset_i
    , output logic clk_o
@@ -21,8 +19,7 @@ module bsg_dmc_dly_line_v3
   localparam osc_granularity_lp = 100;
 `endif
 
-  localparam num_els_lp = num_rows_p * num_cols_p;
-  logic [num_els_lp-1:0] ctl_n, ctl_r;
+  logic [`BSG_SAFE_CLOG2(num_taps_p)-1:0] ctl_n, ctl_r;
   logic clk_0, clk_90, clk_180;
 
   assign #((1        )*osc_granularity_lp) clk_0   = clk_i;

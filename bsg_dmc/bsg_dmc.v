@@ -3,8 +3,7 @@
 module bsg_dmc
   import bsg_tag_pkg::*;
   import bsg_dmc_pkg::*;
- #(parameter  num_rows_p         = 2
-  ,parameter  num_cols_p         = 2
+ #(parameter  num_taps_p         = 4
   ,parameter  ds_width_p         = 2
   ,parameter `BSG_INV_PARAM( ui_addr_width_p    )
   ,parameter `BSG_INV_PARAM( ui_data_width_p    ) // data width of UI interface, can be 2^n while n = [3, log2(burst_data_width_p)]
@@ -139,8 +138,7 @@ module bsg_dmc
 					);
 					 
   bsg_dmc_clk_rst_gen #
-    (.num_rows_p  ( num_rows_p  )
-    ,.num_cols_p  ( num_cols_p  )
+    (.num_taps_p  ( num_taps_p  )
     ,.ds_width_p  ( ds_width_p  )
     ,.dq_groups_p ( dq_group_lp ))
   dmc_clk_rst_gen

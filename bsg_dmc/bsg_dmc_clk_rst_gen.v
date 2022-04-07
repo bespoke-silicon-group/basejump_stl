@@ -5,8 +5,7 @@
 module bsg_dmc_clk_rst_gen
   import bsg_tag_pkg::bsg_tag_s;
   import bsg_dmc_pkg::*;
- #(parameter num_rows_p         = 2
-  ,parameter num_cols_p         = 2
+ #(parameter num_taps_p         = 4
   ,parameter ds_width_p         = 2
   ,parameter `BSG_INV_PARAM(dq_groups_p        ))
   (
@@ -37,7 +36,7 @@ module bsg_dmc_clk_rst_gen
 
   // Clock Generator (CG) Instance
   for(i=0;i<dq_groups_p;i++) begin: dly_lines
-    bsg_dmc_dly_line_v3 #(.num_rows_p(num_rows_p), .num_cols_p(num_cols_p)) dly_line_inst
+    bsg_dmc_dly_line_v3 #(.num_taps_p(num_taps_p)) dly_line_inst
       (.clk_i(dqs_clk_i[i])
        ,.async_reset_i(dly_async_reset_r)
        ,.clk_o(dqs_clk_o[i])
