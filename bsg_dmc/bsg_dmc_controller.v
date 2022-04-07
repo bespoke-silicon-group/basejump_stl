@@ -202,7 +202,7 @@ module bsg_dmc_controller
   logic  [3:0] tick_cas;
 
   // This is the number of times read commands will be issued to DMC. TODO: should we make this programmable?
-  assign rd_calib_num_reads_todo = 2;
+  assign rd_calib_num_reads_todo = 5;
 
   assign app_ref_ack_o = app_ref_req_i & ~app_wdf_end_i;
   assign app_zq_ack_o = app_zq_req_i;
@@ -810,9 +810,9 @@ module bsg_dmc_controller
   always_ff @(posedge ui_clk_i) begin
     if(ui_clk_sync_rst_i)
       calib_rd_cnt <= 0;
-    if(calib_rd_cnt == dfi_burst_length_lp || (cstate == IDLE) && (nstate == CALR))
+    if(calib_rd_cnt == dfi_burst_length_lp )
       calib_rd_cnt <= '0;
-    else if(rddata_afifo_rvalid && (cstate == CALR)) begin
+    else if(rddata_afifo_rvalid ) begin
       calib_rd_cnt <= calib_rd_cnt + 1;
     end
   end
@@ -820,10 +820,10 @@ module bsg_dmc_controller
   always_ff @(posedge ui_clk_i) begin
     if(ui_clk_sync_rst_i)
       num_calib_reads_done <= 0;
-    else if( rd_calib_req) begin
+    else if((!init_calib_complete_o && (num_calib_reads_done==dmc_p_i.init_calib_reads) ) || (init_calib_complete_o && (num_calib_reads_done==rd_calib_num_reads_todo)) ) begin
         num_calib_reads_done <= 0;
     end
-    else if((calib_rd_cnt == dfi_burst_length_lp) && (cstate == CALR) ) begin
+    else if((calib_rd_cnt == dfi_burst_length_lp) ) begin
       num_calib_reads_done <= num_calib_reads_done + 1;
     end
   end
@@ -832,7 +832,10 @@ module bsg_dmc_controller
     if(ui_clk_sync_rst_i) begin
       mask_reads <= 0;
     end
-    else if(rd_calib_pushed) begin
+    //else if(init_calr_done) begin
+
+    //end
+    else if(rd_calib_req) begin
       mask_reads <= 1;
     end
     else if(mask_reads && (num_calib_reads_done == rd_calib_num_reads_todo)) begin
@@ -840,7 +843,7 @@ module bsg_dmc_controller
     end
   end
 
-  assign rx_sipo_valid_li = (cstate == CALR) ? 0 :rddata_afifo_rvalid;
+  assign rx_sipo_valid_li = (cstate == CALR || mask_reads) ? 0 :rddata_afifo_rvalid;
   assign rx_sipo_data_li = rddata_afifo_rdata;
   assign rx_sipo_yumi_li = rx_sipo_valid_lo;
 
