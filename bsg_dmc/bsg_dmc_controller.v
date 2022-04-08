@@ -182,7 +182,7 @@ module bsg_dmc_controller
   logic        rd_calib_ack;
   // number of calib reads pushed onto the cmd_sfifo. This does not mean that the transactions are issued to the DDR - that has to be monitored at the DDR/DFI interface; num_calib_reads_done tracks that count.
   logic        rd_calib_pushed;
-  logic [3:0]  rd_calib_num_reads_todo; 
+  logic [7:0]  rd_calib_num_reads_todo; 
 
   logic        mask_reads;
 
@@ -202,7 +202,7 @@ module bsg_dmc_controller
   logic  [3:0] tick_cas;
 
   // This is the number of times read commands will be issued to DMC. TODO: should we make this programmable?
-  assign rd_calib_num_reads_todo = 5;
+  assign rd_calib_num_reads_todo = dmc_p_i.periodic_calib_num_reads_todo;
 
   assign app_ref_ack_o = app_ref_req_i & ~app_wdf_end_i;
   assign app_zq_ack_o = app_zq_req_i;
