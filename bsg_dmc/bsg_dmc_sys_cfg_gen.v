@@ -135,7 +135,7 @@ module bsg_dmc_sys_cfg_gen
       begin : rd_calib_cycles
         bsg_tag_client #(.width_p(bsg_dmc_tag_client_width_gp))
          btc
-          (.bsg_tag_i      ( cfg_tag_lines_i.rd_calib_cycles[i]         )
+          (.bsg_tag_i      ( cfg_tag_lines_i.rd_calib_cycles[i]     )
            ,.recv_clk_i    ( dfi_clk_1x_i                           )
            ,.recv_new_r_o  (                                        )
            ,.recv_data_r_o ( dmc_p_o.rd_calib_cycles[i*bsg_dmc_tag_client_width_gp+:bsg_dmc_tag_client_width_gp] )
@@ -146,7 +146,7 @@ module bsg_dmc_sys_cfg_gen
       begin : init_calib_reads
         bsg_tag_client #(.width_p(bsg_dmc_tag_client_width_gp))
          btc
-          (.bsg_tag_i      ( cfg_tag_lines_i.init_calib_reads[i]         )
+          (.bsg_tag_i      ( cfg_tag_lines_i.init_calib_reads[i]    )
            ,.recv_clk_i    ( dfi_clk_1x_i                           )
            ,.recv_new_r_o  (                                        )
            ,.recv_data_r_o ( dmc_p_o.init_calib_reads[i*bsg_dmc_tag_client_width_gp+:bsg_dmc_tag_client_width_gp] )
@@ -154,13 +154,13 @@ module bsg_dmc_sys_cfg_gen
     end
 
     for (genvar i = 0; i < 1; i++)
-      begin : periodic_calib_num_reads_todo
+      begin : calib_num_reads
         bsg_tag_client #(.width_p(bsg_dmc_tag_client_width_gp))
          btc
-          (.bsg_tag_i      ( cfg_tag_lines_i.periodic_calib_num_reads_todo)
-           ,.recv_clk_i    ( dfi_clk_1x_i                           )
-           ,.recv_new_r_o  (                                        )
-           ,.recv_data_r_o ( dmc_p_o.periodic_calib_num_reads_todo )
+          (.bsg_tag_i      ( cfg_tag_lines_i.calib_num_reads)
+           ,.recv_clk_i    ( dfi_clk_1x_i                   )
+           ,.recv_new_r_o  (                                )
+           ,.recv_data_r_o ( dmc_p_o.calib_num_reads        )
            );
     end
 
