@@ -93,9 +93,9 @@ module bsg_dmc_controller
   logic                                                                tx_sipo_valid_li;
   logic                         [ui_mask_width_lp+ui_data_width_p-1:0] tx_sipo_data_li;
   logic                                                                tx_sipo_ready_lo;
-  logic                                       [ui_burst_length_lp-1:0] tx_sipo_valid_lo;
+  logic                                                                tx_sipo_valid_lo;
   logic [ui_burst_length_lp-1:0][ui_mask_width_lp+ui_data_width_p-1:0] tx_sipo_data_lo;
-  logic                                 [$clog2(ui_burst_length_lp):0] tx_sipo_yumi_cnt_li;
+  logic                                                                tx_sipo_yumi_li;
 
   logic                                                                tx_data_piso_valid_li;
   logic                [dfi_burst_length_lp-1:0][dfi_data_width_p-1:0] tx_data_piso_data_li;
@@ -125,9 +125,9 @@ module bsg_dmc_controller
   logic                                                                rx_sipo_valid_li;
   logic                                         [dfi_data_width_p-1:0] rx_sipo_data_li;
   logic                                                                rx_sipo_ready_lo;
-  logic                                      [dfi_burst_length_lp-1:0] rx_sipo_valid_lo;
+  logic                                                                rx_sipo_valid_lo;
   logic                [dfi_burst_length_lp-1:0][dfi_data_width_p-1:0] rx_sipo_data_lo;
-  logic                                [$clog2(dfi_burst_length_lp):0] rx_sipo_yumi_cnt_li;
+  logic                                                                rx_sipo_yumi_li;
 
   logic                     [dfi_data_width_p*dfi_burst_length_lp-1:0] rx_data;
 
@@ -268,20 +268,20 @@ module bsg_dmc_controller
 
   assign tx_sipo_valid_li = wrdata_afifo_rvalid;
   assign tx_sipo_data_li = wrdata_afifo_rdata;
-  assign tx_sipo_yumi_cnt_li = ($clog2(ui_burst_length_lp)+1)'((shoot&&cmd_sfifo_rdata[23:20]==WRITE)? ui_burst_length_lp: 0);
+  assign tx_sipo_yumi_li = shoot && cmd_sfifo_rdata[23:20]==WRITE;
 
-  bsg_serial_in_parallel_out #
+  bsg_serial_in_parallel_out_full #
     (.width_p    ( ui_data_width_p+ui_mask_width_lp )
     ,.els_p      ( ui_burst_length_lp               ))
   tx_sipo
     (.clk_i      ( dfi_clk_i                        )
     ,.reset_i    ( dfi_clk_sync_rst_i               )
-    ,.valid_i    ( tx_sipo_valid_li                 )
+    ,.v_i        ( tx_sipo_valid_li                 )
     ,.data_i     ( tx_sipo_data_li                  )
     ,.ready_o    ( tx_sipo_ready_lo                 ) 
-    ,.valid_o    ( tx_sipo_valid_lo                 )
+    ,.v_o        ( tx_sipo_valid_lo                 )
     ,.data_o     ( tx_sipo_data_lo                  )
-    ,.yumi_cnt_i ( tx_sipo_yumi_cnt_li              ));
+    ,.yumi_i     ( tx_sipo_yumi_li                  ));
 
   assign row_col_addr = ((cmd_afifo_rdata.addr >> (dmc_p_i.bank_pos + dmc_p_i.bank_width)) << dmc_p_i.bank_pos) | (((1 << dmc_p_i.bank_pos) - 1) & cmd_afifo_rdata.addr);
   assign col_addr     = 16'(((1 << dmc_p_i.col_width) - 1) & row_col_addr[ui_addr_width_p-1:0]);
@@ -558,7 +558,7 @@ module bsg_dmc_controller
 	ACT:   case(n_cmd)
                  PRE:     shoot = cmd_tick >= dmc_p_i.tras;
                  ACT:     shoot = cmd_tick >= dmc_p_i.trrd;
-                 WRITE:   shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_rd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (cmd_act_tick >= dmc_p_i.tras) & (&tx_sipo_valid_lo);
+                 WRITE:   shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_rd_tick >= dmc_p_i.tcas+dfi_burst_length_lp-1) & (cmd_act_tick >= dmc_p_i.tras) & tx_sipo_valid_lo;
                  READ:    shoot = (cmd_tick >= dmc_p_i.trcd) & (cmd_wr_tick >= dmc_p_i.twtr) & (cmd_act_tick >= dmc_p_i.tras);
 	         	 default: shoot = 1'b1;
              endcase
@@ -566,7 +566,7 @@ module bsg_dmc_controller
                  PRE:     shoot = (cmd_tick >= dmc_p_i.twr) & (cmd_act_tick >= dmc_p_i.tras);
 				 // if write is followed by refresh, it means we are writing with auto precharge. But we still have to wait for tras after activate and (twr + trp) for internal precharge to have completed. So timing condition below applies for either n_cmd = precharge or refresh			
                  REF:     shoot = (cmd_tick >= dmc_p_i.twr + dmc_p_i.trp) & (cmd_act_tick >= dmc_p_i.tras) ;			
-                 WRITE:   shoot = (ap) ? ((cmd_tick >= dfi_burst_length_lp-1) & (&tx_sipo_valid_lo) && cmd_tick >= dmc_p_i.trp) : ((cmd_tick >= dfi_burst_length_lp-1) & (&tx_sipo_valid_lo)) ;
+                 WRITE:   shoot = (ap) ? ((cmd_tick >= dfi_burst_length_lp-1) & tx_sipo_valid_lo && cmd_tick >= dmc_p_i.trp) : ((cmd_tick >= dfi_burst_length_lp-1) & tx_sipo_valid_lo) ;
                  READ:    shoot = (ap) ? (cmd_tick >= dmc_p_i.twtr && cmd_tick >= dmc_p_i.trp) : cmd_tick >= dmc_p_i.twtr ;
                  ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.twr + dmc_p_i.trp) & (cmd_tick >= dmc_p_i.trrd);
 	             default: shoot = 1'b1;
@@ -575,7 +575,7 @@ module bsg_dmc_controller
                  PRE:     shoot = (cmd_tick >= dmc_p_i.trtp) & (cmd_act_tick >= dmc_p_i.tras);
 				 // if read is followed by refresh, it means we are reading with auto precharge. But we still have to wait for trtp after read and tras after activate. So timing condition below applies for either n_cmd = precharge or refresh			
                  REF:     shoot = (cmd_tick >= dmc_p_i.trtp + dmc_p_i.trp) & (cmd_act_tick >= dmc_p_i.tras);			
-                 WRITE:   shoot = (ap) ?  ( (cmd_tick >= dmc_p_i.tcas + dmc_p_i.trp + dfi_burst_length_lp-1) & (&tx_sipo_valid_lo) ): ((cmd_tick >= dmc_p_i.tcas + dfi_burst_length_lp-1) & (&tx_sipo_valid_lo));
+                 WRITE:   shoot = (ap) ?  ( (cmd_tick >= dmc_p_i.tcas + dmc_p_i.trp + dfi_burst_length_lp-1) & tx_sipo_valid_lo ): ((cmd_tick >= dmc_p_i.tcas + dfi_burst_length_lp-1) & tx_sipo_valid_lo);
                  READ:    shoot = cmd_tick >= dfi_burst_length_lp-1;
                  ACT:     shoot = (cmd_act_tick >= dmc_p_i.trc) & (cmd_tick >= dmc_p_i.trtp + dmc_p_i.trp) & (cmd_tick >= dmc_p_i.trrd) & (cmd_tick >= dmc_p_i.trrd);
 	             default: shoot = 1'b1;
@@ -821,9 +821,6 @@ module bsg_dmc_controller
     if(ui_clk_sync_rst_i) begin
       mask_reads <= 0;
     end
-    //else if(init_calr_done) begin
-
-    //end
     else if(rd_calib_req) begin
       mask_reads <= 1;
     end
@@ -834,20 +831,20 @@ module bsg_dmc_controller
 
   assign rx_sipo_valid_li = (cstate == CALR || mask_reads) ? 0 :rddata_afifo_rvalid;
   assign rx_sipo_data_li = rddata_afifo_rdata;
-  assign rx_sipo_yumi_cnt_li = ($clog2(dfi_burst_length_lp)+1)'(&rx_sipo_valid_lo? dfi_burst_length_lp: 0);
+  assign rx_sipo_yumi_li = rx_sipo_valid_lo;
 
-  bsg_serial_in_parallel_out #
+  bsg_serial_in_parallel_out_full #
     (.width_p    ( dfi_data_width_p    )
     ,.els_p      ( dfi_burst_length_lp ))
   rx_sipo
     (.clk_i      ( ui_clk_i            )
     ,.reset_i    ( ui_clk_sync_rst_i   )
-    ,.valid_i    ( rx_sipo_valid_li    )
+    ,.v_i        ( rx_sipo_valid_li    )
     ,.data_i     ( rx_sipo_data_li     )
     ,.ready_o    ( rx_sipo_ready_lo    ) 
-    ,.valid_o    ( rx_sipo_valid_lo    )
+    ,.v_o        ( rx_sipo_valid_lo    )
     ,.data_o     ( rx_sipo_data_lo     )
-    ,.yumi_cnt_i ( rx_sipo_yumi_cnt_li ));
+    ,.yumi_i     ( rx_sipo_yumi_li     ));
 
   for(k=0;k<dfi_burst_length_lp;k++) begin: rx_flatten
     assign rx_data[k*dfi_data_width_p+:dfi_data_width_p] = rx_sipo_data_lo[k];
@@ -855,8 +852,7 @@ module bsg_dmc_controller
   for(k=0;k<ui_burst_length_lp;k++) begin: rx_make
     assign rx_piso_data_li[k] = rx_data[k*ui_data_width_p+:ui_data_width_p];
   end
-  assign rx_piso_valid_li =  &rx_sipo_valid_lo;
-
+  assign rx_piso_valid_li =  rx_sipo_valid_lo;
   assign rx_piso_yumi_li = rx_piso_valid_lo;
 
   bsg_parallel_in_serial_out #
