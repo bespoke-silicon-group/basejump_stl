@@ -821,9 +821,6 @@ module bsg_dmc_controller
     if(ui_clk_sync_rst_i) begin
       mask_reads <= 0;
     end
-    //else if(init_calr_done) begin
-
-    //end
     else if(rd_calib_req) begin
       mask_reads <= 1;
     end
@@ -856,7 +853,7 @@ module bsg_dmc_controller
     assign rx_piso_data_li[k] = rx_data[k*ui_data_width_p+:ui_data_width_p];
   end
 
-  assign rx_piso_valid_li = (mask_reads || init_read_calib_in_progress) ? 0 : rx_sipo_valid_lo;
+  assign rx_piso_valid_li = rx_sipo_valid_lo;
   assign rx_piso_yumi_li = rx_piso_valid_lo;
 
   bsg_parallel_in_serial_out #
