@@ -308,16 +308,9 @@ module bsg_dmc_controller
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       calr_tick <= 0;
-    else if(!init_calr_done) begin
-        if(cstate == IDLE && nstate == CALR)
-          // init_calib_reads number of reads and 1 cycle to push activate command
-          calr_tick <= dmc_p_i.init_calib_reads + 1;
-        else if(cstate == CALR && calr_tick != 0 && push)
-          calr_tick <= calr_tick - 1;
-    end
     else begin
         // Reset the count to 0 once the periodic calib reads have been pushed to 
-        if(rd_calib_pushed) begin
+        if(rd_calib_ack && calr_tick == dmc_p_i.calib_num_reads) begin
             calr_tick <= 0;
         end
         else if(rd_calib_ack) begin
@@ -325,6 +318,8 @@ module bsg_dmc_controller
         end
     end
   end
+
+  wire is_calr = (cstate == CALR);
 
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
@@ -336,7 +331,7 @@ module bsg_dmc_controller
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       init_calr_done <= 0;
-    else if(cstate == CALR && nstate == IDLE )
+    else if(cstate == INIT && nstate == IDLE )
       init_calr_done <= 1;
   end
 
@@ -430,42 +425,34 @@ module bsg_dmc_controller
       INIT: begin
         push = cmd_sfifo_ready;
         case(init_tick) inside
-          'd5        : begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
-          'd4        : begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
-          'd3        : begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
-          'd2        : begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = {8'h0, dmc_p_i.tcas, 4'($clog2(dfi_burst_length_lp << 1))}; cmd_sfifo_wdata.ba = 4'h0; end
-          'd1        : begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = 16'h0; cmd_sfifo_wdata.ba = 4'h2; end
-          'd0        : begin cmd_sfifo_wdata.cmd = NOP; end
+          dmc_p_i.init_calib_reads + 'd6  : begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
+          dmc_p_i.init_calib_reads + 'd5  : begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
+          dmc_p_i.init_calib_reads + 'd4  : begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
+          dmc_p_i.init_calib_reads + 'd3  : begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = {8'h0, dmc_p_i.tcas, 4'($clog2(dfi_burst_length_lp << 1))}; cmd_sfifo_wdata.ba = 4'h0; end
+          dmc_p_i.init_calib_reads + 'd2  : begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = 16'h0; cmd_sfifo_wdata.ba = 4'h2; end
+          dmc_p_i.init_calib_reads + 'd1  : begin cmd_sfifo_wdata.cmd = NOP; end
+          dmc_p_i.init_calib_reads + 'd0  : begin cmd_sfifo_wdata.cmd = ACT; end
+          [dmc_p_i.init_calib_reads - 1:1]: begin cmd_sfifo_wdata.cmd = READ; end
+          '0                              : begin cmd_sfifo_wdata.cmd = NOP; end
           default    : cmd_sfifo_wdata.cmd = DESELECT;
         endcase
       end
-      // We will be in CALR during 3 phases:
-      //    1. While doing initial calibration reads
-      //    2. While issuing doing periodic read calibration:
-      //    3. While any previous read for calibration transaction was not completed (ie. complete here means until we receive read data from DFI for the read for calibration command)
+      // We will be in CALR during 2 phases:
+      //    1. While issuing doing periodic read calibration:
+      //    2. While any previous read for calibration transaction was not completed (ie. complete here means until we receive read data from DFI for the read for calibration command)
       //    NOTE: We will be cycling between IDLE and CALR for dmc_p_i.calib_num_reads number of times. For example, the transition for dmc_p_i.calib_num_reads =2 would be LDST -> IDLE -> CALR (first calibration read) -> IDLE -> CALR(second calib read) -> IDLE -> CALR (pending calib reads) -> IDLE (pending calib reads done, can move to normal operation)
       CALR: begin
         // TODO: Should rotate to wear evenly?
-        cmd_sfifo_wdata.ba = '0; cmd_sfifo_wdata.addr = '0;
+        cmd_sfifo_wdata.addr = '0; cmd_sfifo_wdata.ba = '0;
         push = cmd_sfifo_ready;
-        // Initial calibration reads
-        if(!init_calr_done) begin
-            if(calr_tick == dmc_p_i.init_calib_reads) begin
-                cmd_sfifo_wdata.cmd = ACT;
-            end
-            else if(calr_tick != 0 ) begin
-                cmd_sfifo_wdata.cmd = READ;
-            end
-        end
         // Periodic calibration reads
-        else if(rd_calib_req) begin
-            case(ldst_tick)
-              'd3: begin cmd_sfifo_wdata.cmd = PRE; end
-              'd2: begin cmd_sfifo_wdata.cmd = ACT; end
-              'd1: begin cmd_sfifo_wdata.cmd = READ; end
-              'd0: begin cmd_sfifo_wdata.cmd = NOP; end
-            endcase
-        end
+        if (rd_calib_req)
+        case(ldst_tick)
+          'd3: begin cmd_sfifo_wdata.cmd = PRE; end
+          'd2: begin cmd_sfifo_wdata.cmd = ACT; end
+          'd1: begin cmd_sfifo_wdata.cmd = READ; end
+          'd0: begin cmd_sfifo_wdata.cmd = NOP; end
+        endcase
       end          
       REFR: begin
         push = cmd_sfifo_ready;
@@ -504,8 +491,6 @@ module bsg_dmc_controller
     case(cstate)
       IDLE: if(!init_done)                                                          nstate = INIT;
             else if(refr_req)                                                       nstate = REFR;
-            // for initial calibration reads
-            else if(init_done && !init_calr_done)                                   nstate = CALR;
             // for periodic read calibrations that happen in between normal operation
             else if(rd_calib_req)                                                   nstate = CALR;
             else if(cmd_afifo_rvalid)                                               nstate = LDST;
