@@ -3,7 +3,7 @@ module testbench();
   import bsg_tag_pkg::*;
   import bsg_dmc_pkg::*;
  
-  parameter clk_gen_num_adgs_p = 1;
+  parameter clk_gen_num_taps_p = 64;
   parameter ui_addr_width_p    = 28;
   parameter ui_data_width_p    = 32;
   parameter ui_burst_length_p  = 8;
@@ -16,6 +16,9 @@ module testbench();
   localparam ui_mask_width_lp    = ui_data_width_p >> 3;
   localparam dq_group_lp         = dq_data_width_p >> 3;
   localparam dq_burst_length_lp  = burst_data_width_lp / dq_data_width_p;
+  // The number of bits required to represent the max payload width
+  localparam tag_max_payload_width_gp = 8;
+  localparam tag_lg_max_payload_width_gp = `BSG_SAFE_CLOG2(tag_max_payload_width_gp + 1);
 
   genvar i;
 
@@ -102,8 +105,7 @@ module testbench();
   logic send_dynamic_tag, irritate_clock, clock_correction_done_lo;
 
   traffic_generator #
-    (.num_adgs_p         ( clk_gen_num_adgs_p  )
-    ,.ui_addr_width_p    ( ui_addr_width_p     )
+    (.ui_addr_width_p    ( ui_addr_width_p     )
     ,.ui_data_width_p    ( ui_data_width_p     )
     ,.burst_data_width_p ( burst_data_width_lp )
     ,.dq_data_width_p    ( dq_data_width_p     )
@@ -149,7 +151,7 @@ module testbench();
 
 
   bsg_dmc #
-    (.num_adgs_p            ( clk_gen_num_adgs_p  )
+    (.num_taps_p            ( clk_gen_num_taps_p  )
     ,.ui_addr_width_p       ( ui_addr_width_p     )
     ,.ui_data_width_p       ( ui_data_width_p     )
     ,.burst_data_width_p    ( burst_data_width_lp )
@@ -218,6 +220,8 @@ module testbench();
     ,.ui_clk_sync_rst_o     ( ui_clk_sync_rst     )
     ,.device_temp_o         ( device_temp         )
     ,.ext_dfi_clk_2x_i      ( dfi_clk             )
+    ,.dqs_clk_o             (                     )
+    ,.dqs_clk_dly_o         (                     )
     ,.dfi_clk_1x_o          ( dfi_clk_1x          )
     ,.dfi_clk_2x_o          ( dfi_clk_2x          ));
 

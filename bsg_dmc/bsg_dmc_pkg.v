@@ -21,6 +21,9 @@ package bsg_dmc_pkg;
     logic  [5:0] bank_pos;
     logic  [2:0] dqs_sel_cal;
     logic [15:0] init_cycles;
+    logic [15:0] tcalr;
+    logic [15:0] init_calib_reads;
+    logic  [7:0] calib_num_reads;
   } bsg_dmc_s;
 
   typedef enum logic [3:0]
@@ -66,6 +69,9 @@ package bsg_dmc_pkg;
   localparam tag_dmc_dly_local_els_gp = $bits(bsg_dmc_dly_tag_lines_s)/$bits(bsg_tag_s);
 
   typedef struct packed {
+    bsg_tag_s calib_num_reads;
+    bsg_tag_s [1:0] init_calib_reads;
+    bsg_tag_s [1:0] tcalr;
     bsg_tag_s [1:0] init_cycles;
     bsg_tag_s bank_pos_bank_width;
     bsg_tag_s row_width_col_width;

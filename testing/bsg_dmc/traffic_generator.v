@@ -6,7 +6,7 @@
 `endif
 
 `ifndef DFI_CLK_PERIOD
-  `define DFI_CLK_PERIOD 1250.0
+  `define DFI_CLK_PERIOD 2500.0
 `endif
 
 `ifndef TAG_CLK_PERIOD
@@ -24,8 +24,7 @@
 module traffic_generator
   import bsg_tag_pkg::*;
   import bsg_dmc_pkg::*;
- #(parameter  num_adgs_p         = 1
-  ,parameter `BSG_INV_PARAM(ui_addr_width_p)
+ #(parameter `BSG_INV_PARAM(ui_addr_width_p)
   ,parameter `BSG_INV_PARAM(ui_data_width_p) // data width of UI interface, can be 2^n while n = [3, log2(burst_data_width_p)]
   ,parameter `BSG_INV_PARAM(burst_data_width_p) // data width of an outstanding read/write transaction, typically data width of a cache line
   ,parameter `BSG_INV_PARAM( dq_data_width_p) // data width of DDR interface, consistent with packaging
@@ -114,7 +113,7 @@ module traffic_generator
   // BSG Tag Trace Replay
   //
   localparam tag_trace_rom_addr_width_lp = 32;
-  localparam tag_trace_rom_data_width_lp = 23;
+  localparam tag_trace_rom_data_width_lp = 24;
 
   logic [tag_trace_rom_addr_width_lp-1:0] rom_addr_li;
   logic [tag_trace_rom_data_width_lp-1:0] rom_data_lo;
@@ -322,8 +321,8 @@ module traffic_generator
 
 	  initial begin
 	    $display("\n#### Regression test started ####");
-	    @(posedge tag_trace_done_lo);
-	    repeat(100) @(posedge ui_clk);
+	    @(posedge init_calib_complete_i);
+	    repeat(1000) @(posedge ui_clk);
 	    for(k=0;k<256;k++) begin
 	      waddr = k*dq_burst_length_lp;
 	      wdata = 0;
@@ -336,6 +335,7 @@ module traffic_generator
 	        ui_write(0, wdata);
 	      join
 	    end
+        #1;
 	    for(k=0;k<256;k++) begin
 	      raddr = k*dq_burst_length_lp;
 	      raddr_queue.push_front(raddr);
