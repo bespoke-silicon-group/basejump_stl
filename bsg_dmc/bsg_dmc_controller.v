@@ -380,7 +380,7 @@ module bsg_dmc_controller
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       ldst_tick <= 0;
-    else if(cstate == IDLE && (nstate == LDST || (nstate == CALR && rd_calib_req))) begin
+    else if(cstate == IDLE && (nstate == LDST || nstate == CALR)) begin
       if(open_bank[bank_addr] && open_row[bank_addr] == row_addr)
         ldst_tick <= 1;
       else if(open_bank[bank_addr])
@@ -388,7 +388,7 @@ module bsg_dmc_controller
       else
         ldst_tick <= 2;
     end
-    else if((cstate == LDST || (cstate == CALR && rd_calib_req))  && ldst_tick != 0 && push)
+    else if((cstate == LDST || cstate == CALR)  && ldst_tick != 0 && push)
       ldst_tick <= ldst_tick - 1;
   end
 
