@@ -3,8 +3,7 @@ module testbench();
   import bsg_tag_pkg::*;
   import bsg_dmc_pkg::*;
  
-  parameter clk_gen_num_rows_p = 8;
-  parameter clk_gen_num_cols_p = 8;
+  parameter clk_gen_num_taps_p = 64;
   parameter ui_addr_width_p    = 28;
   parameter ui_data_width_p    = 32;
   parameter ui_burst_length_p  = 8;
@@ -152,8 +151,7 @@ module testbench();
 
 
   bsg_dmc #
-    (.num_rows_p            ( clk_gen_num_rows_p  )
-    ,.num_cols_p            ( clk_gen_num_cols_p  )
+    (.num_taps_p            ( clk_gen_num_taps_p  )
     ,.ui_addr_width_p       ( ui_addr_width_p     )
     ,.ui_data_width_p       ( ui_data_width_p     )
     ,.burst_data_width_p    ( burst_data_width_lp )
