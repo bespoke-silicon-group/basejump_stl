@@ -22,6 +22,8 @@ package bsg_dmc_pkg;
     logic  [2:0] dqs_sel_cal;
     logic [15:0] init_cycles;
     logic [15:0] tcalr;
+    // Init calib read timing should not exceed refresh timing
+    // Ideally, we would set this to ticks.
     logic [15:0] init_calib_reads;
     logic  [7:0] calib_num_reads;
   } bsg_dmc_s;
