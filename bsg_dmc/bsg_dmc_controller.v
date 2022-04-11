@@ -333,7 +333,7 @@ module bsg_dmc_controller
       // reset rd_calib_tick counter when we transition to calr or when a read command is issued through the UI.
       if((cstate == IDLE && nstate == CALR) ||  (cmd_afifo_rdata.cmd[0]))
         rd_calib_tick <= 0;
-      else if(rd_calib_tick < dmc_p_i.rd_calib_cycles)
+      else if(rd_calib_tick < dmc_p_i.tcalr)
         rd_calib_tick <= rd_calib_tick + 1;
     end
   end
@@ -357,7 +357,7 @@ module bsg_dmc_controller
     // reset rd_calib_req to 0 when we are done issuing dmc_p_i.calib_num_reads number of read commands.
     else if (rd_calib_ack && (calr_tick == dmc_p_i.calib_num_reads))
       rd_calib_req <= 0;
-    else if(rd_calib_tick == dmc_p_i.rd_calib_cycles)
+    else if(rd_calib_tick == dmc_p_i.tcalr)
       rd_calib_req <= 1;
   end
 
