@@ -281,7 +281,9 @@ module bsg_dmc_controller
   assign col_addr     = 16'(((1 << dmc_p_i.col_width) - 1) & row_col_addr[ui_addr_width_p-1:0]);
   assign row_addr     = 16'(((1 << dmc_p_i.row_width) - 1) & (row_col_addr >> dmc_p_i.col_width));
   assign bank_addr    = 3'(((1 << dmc_p_i.bank_width) - 1) & (cmd_afifo_rdata.addr >> dmc_p_i.bank_pos));
-  assign ap           = cmd_afifo_rdata.cmd[1];
+  // AP comes from UI command when necessary. Internal commands such as calibration reads do not
+  //   generate AP
+  assign ap           = (cstate == LDST) && cmd_afifo_rdata.cmd[1];
 
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
@@ -398,22 +400,32 @@ module bsg_dmc_controller
     case(cstate)
       INIT: begin
         push = cmd_sfifo_ready;
-        case(init_tick) inside
-          dmc_p_i.init_calib_reads + 'd6  : begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
+        case(init_tick)
+          dmc_p_i.init_calib_reads + 'd7  : begin cmd_sfifo_wdata.cmd = PRE; cmd_sfifo_wdata.addr = 16'h400; end
+          dmc_p_i.init_calib_reads + 'd6  : begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
           dmc_p_i.init_calib_reads + 'd5  : begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
-          dmc_p_i.init_calib_reads + 'd4  : begin cmd_sfifo_wdata.cmd = REF; cmd_sfifo_wdata.addr = 16'h0; end
-          dmc_p_i.init_calib_reads + 'd3  : begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = {8'h0, dmc_p_i.tcas, 4'($clog2(dfi_burst_length_lp << 1))}; cmd_sfifo_wdata.ba = 4'h0; end
-          dmc_p_i.init_calib_reads + 'd2  : begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = 16'h0; cmd_sfifo_wdata.ba = 4'h2; end
-          dmc_p_i.init_calib_reads + 'd1  : begin cmd_sfifo_wdata.cmd = NOP; end
-          dmc_p_i.init_calib_reads + 'd0  : begin cmd_sfifo_wdata.cmd = ACT; end
-          [dmc_p_i.init_calib_reads - 1:1]: begin cmd_sfifo_wdata.cmd = READ; end
+          dmc_p_i.init_calib_reads + 'd4  : begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = {8'h0, dmc_p_i.tcas, 4'($clog2(dfi_burst_length_lp << 1))}; cmd_sfifo_wdata.ba = 4'h0; end
+          dmc_p_i.init_calib_reads + 'd3  : begin cmd_sfifo_wdata.cmd = LMR; cmd_sfifo_wdata.addr = 16'h0; cmd_sfifo_wdata.ba = 4'h2; end
+          dmc_p_i.init_calib_reads + 'd2  : begin cmd_sfifo_wdata.cmd = NOP; end
+          dmc_p_i.init_calib_reads + 'd1  : begin cmd_sfifo_wdata.cmd = ACT; cmd_sfifo_wdata.addr = '0; cmd_sfifo_wdata.ba = '0; end
           '0                              : begin cmd_sfifo_wdata.cmd = NOP; end
-          default    : cmd_sfifo_wdata.cmd = DESELECT;
+          // Tools like genus have a problem with case inside syntax with non-constants
+          // Replace when tool support becomes better
+          // NOTE: LSB to MSB
+          //[1:dmc_p_i.init_calib_reads]    : begin cmd_sfifo_wdata.cmd = READ; cmd_sfifo_wdata.ba = '0; end
+          default : begin
+            if (init_tick <= dmc_p_i.init_calib_reads && init_tick >= 1) begin
+              cmd_sfifo_wdata.cmd = READ; cmd_sfifo_wdata.addr = '0; cmd_sfifo_wdata.ba = '0;
+            end else begin
+              cmd_sfifo_wdata.cmd = DESELECT;
+            end
+          end
         endcase
       end
       //    NOTE: We will be cycling between IDLE and CALR for dmc_p_i.calib_num_reads number of times. For example, the transition for dmc_p_i.calib_num_reads = 2 would be LDST -> IDLE -> CALR (first calibration read) -> IDLE -> CALR(second calib read) -> IDLE -> CALR (pending calib reads) -> IDLE (pending calib reads done, can move to normal operation)
       CALR: begin
         push = cmd_sfifo_ready;
+        cmd_sfifo_wdata.addr = '0; cmd_sfifo_wdata.ba = '0;
         // Periodic calibration reads
         case(ldst_tick)
           'd3: begin cmd_sfifo_wdata.cmd = PRE; end
@@ -460,7 +472,7 @@ module bsg_dmc_controller
             else if(rd_calib_req)                                                   nstate = CALR;
             else if(cmd_afifo_rvalid)                                               nstate = LDST;
             else                                                                    nstate = cstate;
-      INIT: if(init_tick == 0 && push)                                              nstate = IDLE;
+      INIT: if(calr_cnt == 0)                                                       nstate = IDLE;
             else                                                                    nstate = cstate;
       CALR: if(ldst_tick == 0 && push)                                              nstate = IDLE;
             else                                                                    nstate = cstate;
@@ -748,6 +760,8 @@ module bsg_dmc_controller
   always_ff @(posedge ui_clk_i) begin
     if(ui_clk_sync_rst_i)
       calr_cnt <= '0;
+    else if(cstate == IDLE && nstate == INIT && calr_cnt == 0)
+      calr_cnt <= dmc_p_i.init_calib_reads;
     else if(cstate == IDLE && nstate == CALR && calr_cnt == 0)
       calr_cnt <= dmc_p_i.calib_num_reads;
     else if(calr_cnt > 0 && rx_sipo_valid_lo) begin
