@@ -26,9 +26,16 @@ module bsg_wormhole_concentrator
     ,parameter `BSG_INV_PARAM(len_width_p)
     ,parameter `BSG_INV_PARAM(cid_width_p)
     ,parameter `BSG_INV_PARAM(cord_width_p)
-   ,parameter num_in_p            = 1
-   ,parameter debug_lp            = 0
-   ,parameter link_width_lp       = `bsg_ready_and_link_sif_width(flit_width_p)
+    ,parameter num_in_p            = 1
+    ,parameter debug_lp            = 0
+    ,parameter link_width_lp       = `bsg_ready_and_link_sif_width(flit_width_p)
+    // Hold on valid sets the arbitration policy such that once an output tag is selected, it
+    // remains selected until it is acked, then the round-robin scheduler continues cycling
+    // from the selected tag. This is consistent with BaseJump STL handshake assumptions.
+    // Notably, this parameter is required to work with bsg_parallel_in_serial_out_passthrough.
+    // This policy has a slight throughput degradation but effectively arbitrates based on age,
+    // so minimizes worst case latency.
+    ,parameter hold_on_valid_p     = 0
    )
 
   (input clk_i
@@ -75,6 +82,7 @@ module bsg_wormhole_concentrator
      ,.num_in_p(num_in_p)
      ,.cord_width_p(cord_width_p)
      ,.debug_lp(debug_lp)
+     ,.hold_on_valid_p(hold_on_valid_p)
      )
    concentrator_in
     (.clk_i(clk_i)
@@ -94,6 +102,7 @@ module bsg_wormhole_concentrator
      ,.num_in_p(num_in_p)
      ,.cord_width_p(cord_width_p)
      ,.debug_lp(debug_lp)
+     ,.hold_on_valid_p(hold_on_valid_p)
      )
    concentrator_out
     (.clk_i(clk_i)
