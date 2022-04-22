@@ -53,7 +53,7 @@ module bsg_launch_sync_sync_``EDGE``_``bits``_unit                      \
      begin : bss_unit                                                   \
        bsg_sync_sync_unit bss1                                          \
         (.oclk_i(oclk_i)                                                \
-         ,.iclk_data_i(iclk_data_i[i])                                  \
+         ,.iclk_data_i(bsg_SYNC_LNCH_r[i])                                  \
          ,.oclk_data_o(oclk_data_o[i])                                  \
          );                                                             \
      end                                                                \
@@ -83,18 +83,13 @@ module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
           bsg_SYNC_LNCH_r <= iclk_data_i;                               \
      end                                                                \
                                                                         \
-   logic [bits-1:0] bsg_SYNC_1_r;                                       \
-   logic [bits-1:0] bsg_SYNC_2_r;                                       \
-                                                                        \
-   assign oclk_data_o = bsg_SYNC_2_r;                                   \
-                                                                        \
    for (i = 0; i < bits; i++)                                           \
      begin : BSG_NO_CLOCK_GATE_2                                        \
        bsg_sync_sync_async_reset_unit bss1                              \
         (.oclk_i(oclk_i)                                                \
          ,.iclk_reset_i(iclk_reset_i)                                   \
-         ,.iclk_data_i(iclk_data_i)                                     \
-         ,.oclk_data_o(oclk_data_o)                                     \
+         ,.iclk_data_i(bsg_SYNC_LNCH_r[i])                              \
+         ,.oclk_data_o(oclk_data_o[i])                                  \
          );                                                             \
      end                                                                \
 endmodule
