@@ -8,14 +8,14 @@ module bsg_sync_sync_async_reset_unit
 
   logic bsg_SYNC_1_r, bsg_SYNC_2_r;
 
-  DFCNQD4BWP7T30P140ULVT hard_sync_int1
+  DFCNQD4BWP7T30P140ULVT hard_sync_int1_BSG_SYNC
    (.CP(oclk_i)
    ,.CDN(~iclk_reset_i)
    ,.D(iclk_data_i)
    ,.Q(bsg_SYNC_1_r)
    );
 
-  DFCNQD4BWP7T30P140ULVT hard_sync_int2
+  DFCNQD4BWP7T30P140ULVT hard_sync_int2_BSG_SYNC
    (.CP(oclk_i)
    ,.CDN(~iclk_reset_i)
    ,.D(bsg_SYNC_1_r)
