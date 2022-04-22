@@ -1,3 +1,6 @@
+
+`include "bsg_defines.v"
+
 `define bsg_dff_macro(bits,strength)                      \
 if (harden_p && (width_p==bits) && (strength_p==strength)) \
   begin: macro                                                \
