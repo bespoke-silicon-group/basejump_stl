@@ -24,7 +24,7 @@ module bsg_clk_gen_osc_v3
    ,output logic clk_o
    );
 
-  localparam ctl_width_lp = `BSG_SAFE_CLOG2(num_taps)
+  localparam ctl_width_lp = `BSG_SAFE_CLOG2(num_taps_p)
 
    logic [ctl_width_lp-1:0] fb_tag_r;
    bsg_tag_client_unsync
