@@ -1,4 +1,6 @@
 
+`include "bsg_defines.v"
+
 `define bsg_nor3_macro(bits)                      \
 if (harden_p && (width_p==bits))                  \
   begin: macro                                    \
