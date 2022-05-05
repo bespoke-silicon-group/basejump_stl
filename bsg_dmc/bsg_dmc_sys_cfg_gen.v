@@ -86,15 +86,16 @@ module bsg_dmc_sys_cfg_gen
            );
       end
 
+    // DQS sel cal is only 3 bits so we pad to make this 8
+    logic pad;
     for (genvar i = 0; i < 1; i++)
       begin : dqs_sel_cal_tcas
-        // DQS sel cal is only 3 bits
-        bsg_tag_client #(.width_p(bsg_dmc_tag_client_width_gp-1))
+        bsg_tag_client #(.width_p(bsg_dmc_tag_client_width_gp))
          btc
           (.bsg_tag_i      ( cfg_tag_lines_i.dqs_sel_cal_tcas    )
            ,.recv_clk_i    ( dfi_clk_1x_i                        )
            ,.recv_new_r_o  (                                     )
-           ,.recv_data_r_o ( {dmc_p_o.dqs_sel_cal, dmc_p_o.tcas} )
+           ,.recv_data_r_o ( {dmc_p_o.dqs_sel_cal, pad, dmc_p_o.tcas} )
            );
       end
 

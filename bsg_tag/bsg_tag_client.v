@@ -53,7 +53,7 @@ module bsg_tag_client
     , output [width_p-1:0] recv_data_r_o
     );
 
-   localparam debug_level_lp = 1;
+   localparam debug_level_lp = 2;
 
    logic   op_r, op_r_r, param_r;
 

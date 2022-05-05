@@ -31,8 +31,7 @@ module bsg_tag_master_decentralized
    #(`BSG_INV_PARAM(els_p)
     ,`BSG_INV_PARAM(local_els_p)
     ,`BSG_INV_PARAM(lg_width_p)
-    ,debug_level_lp=1
-    ,lg_els_lp=`BSG_SAFE_CLOG2(els_p)
+    ,debug_level_lp=2    ,lg_els_lp=`BSG_SAFE_CLOG2(els_p)
     ,lg_local_els_lp=`BSG_SAFE_CLOG2(local_els_p)
     )
 

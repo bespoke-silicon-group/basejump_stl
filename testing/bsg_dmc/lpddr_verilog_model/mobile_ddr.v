@@ -378,7 +378,7 @@ module mobile_ddr (Dq, Dqs, Addr, Ba, Clk, Clk_n, Cke, Cs_n, Ras_n, Cas_n, We_n,
     assign    Dq  = (Dq_out_en ) ? Dq_out              : 'bz;
 
     // Debug message
-    wire      Debug = 1'b0;
+    wire      Debug = 1'b1;
 
     // Timing Check
     realtime      MRD_chk;

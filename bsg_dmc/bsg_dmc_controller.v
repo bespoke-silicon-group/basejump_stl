@@ -277,13 +277,15 @@ module bsg_dmc_controller
     ,.data_o     ( tx_sipo_data_lo                  )
     ,.yumi_i     ( tx_sipo_yumi_li                  ));
 
-  assign row_col_addr = ((cmd_afifo_rdata.addr >> (dmc_p_i.bank_pos + dmc_p_i.bank_width)) << dmc_p_i.bank_pos) | (((1 << dmc_p_i.bank_pos) - 1) & cmd_afifo_rdata.addr);
+  // Gate the address
+  assign full_addr    = (nstate inside {INIT, CALR}) ? '0 : cmd_afifo_rdata.addr;
+  assign row_col_addr = ((full_addr >> (dmc_p_i.bank_pos + dmc_p_i.bank_width)) << dmc_p_i.bank_pos) | (((1 << dmc_p_i.bank_pos) - 1) & full_addr);
   assign col_addr     = 16'(((1 << dmc_p_i.col_width) - 1) & row_col_addr[ui_addr_width_p-1:0]);
   assign row_addr     = 16'(((1 << dmc_p_i.row_width) - 1) & (row_col_addr >> dmc_p_i.col_width));
-  assign bank_addr    = 3'(((1 << dmc_p_i.bank_width) - 1) & (cmd_afifo_rdata.addr >> dmc_p_i.bank_pos));
-  // AP comes from UI command when necessary. Internal commands such as calibration reads do not
-  //   generate AP
-  assign ap           = (cstate == LDST) && cmd_afifo_rdata.cmd[1];
+  assign bank_addr    = 3'(((1 << dmc_p_i.bank_width) - 1) & (full_addr >> dmc_p_i.bank_pos));
+  assign ap           = (nstate == LDST) &&  cmd_afifo_rdata.cmd[1];
+  assign rd           = (nstate == LDST) &&  cmd_afifo_rdata.cmd[0];
+  assign wr           = (nstate == LDST) && ~cmd_afifo_rdata.cmd[0];
 
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
@@ -333,7 +335,7 @@ module bsg_dmc_controller
       rd_calib_tick <= 0;
     else if(init_done) begin
       // reset rd_calib_tick counter when we transition to calr or when a read command is issued through the UI.
-      if((cstate == IDLE && nstate == CALR) ||  (cmd_afifo_rdata.cmd[0]))
+      if(cstate == IDLE && (nstate == CALR || rd))
         rd_calib_tick <= 0;
       else if(rd_calib_tick < dmc_p_i.tcalr)
         rd_calib_tick <= rd_calib_tick + 1;
@@ -450,10 +452,10 @@ module bsg_dmc_controller
           'd1: begin
                  cmd_sfifo_wdata.ba = bank_addr;
                  cmd_sfifo_wdata.addr = {col_addr[14:10], ap, col_addr[9:0]};
-                 if(cmd_afifo_rdata.cmd[0])
-                     cmd_sfifo_wdata.cmd = READ;
-                 else
+                 if(wr)
                      cmd_sfifo_wdata.cmd = WRITE;
+                 else
+                     cmd_sfifo_wdata.cmd = READ;
                end
           'd0: begin 
                     cmd_sfifo_wdata.cmd = NOP; 
