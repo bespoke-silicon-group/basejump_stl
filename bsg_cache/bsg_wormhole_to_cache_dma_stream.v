@@ -102,9 +102,9 @@ module bsg_wormhole_to_cache_dma_stream
     ,.count_o(send_count_lo)
   );
 
-  logic [wh_cord_width_p-1:0] src_cord_li, src_cid_li;
+  logic [wh_cord_width_p-1:0] src_cord_li, src_cord_lo;
   logic src_fifo_ready_lo, src_fifo_v_li;
-  logic [wh_cid_width_p-1:0] src_cord_lo, src_cid_lo;
+  logic [wh_cid_width_p-1:0] src_cid_li, src_cid_lo;
   logic src_fifo_v_lo, src_fifo_yumi_li;
   bsg_fifo_1r1w_small #(
     .width_p(wh_cord_width_p+wh_cid_width_p)
