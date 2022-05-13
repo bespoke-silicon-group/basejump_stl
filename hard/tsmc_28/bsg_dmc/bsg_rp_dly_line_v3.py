@@ -43,108 +43,43 @@ endmodule
 """)
 
 print("""
-  module bsg_rp_dly_line_unit_v3
-      (input async_reset_i
-      , input trigger_i
-      , input [{ctl_width_p_m1}:0] ctl_one_hot_i
-      , input  clk_i
-      , output clk_o
-      );
-      wire lobit;
-      TIELBWP7T30P140ULVT T0 (.ZN(lobit));
-      wire hibit;
-      TIEHBWP7T30P140ULVT T1 (.Z(hibit));
-  """.format(ctl_width_p_m1=num_cols_p*num_rows_p-1, num_dly_p=num_dly_p))
-print("""
-  wire fb_inv;
-  CKND1BWP7T30P140ULVT I0 (.ZN(fb_inv), .I(clk_i));
-  wire gate_en_sync_1_r, gate_en_sync_2_r;
-  DFQD1BWP7T30P140ULVT S1 (.D(trigger_i), .CP(clk_i), .Q(gate_en_sync_1_r));
-  DFQD1BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(clk_i), .Q(gate_en_sync_2_r));
-  wire fb_gated;
-  CKLNQD20BWP7T30P140ULVT CG0 (.Q(fb_gated), .CP(clk_i), .E(gate_en_sync_2_r), .TE(lobit));
-  wire [{num_cols_p}:0] fb_col;
-  assign fb_col[0] = 1'b0;
-""".format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, num_dly_p=num_dly_p, num_rows_p_m1=num_rows_p-1))
-for i in range(0, num_cols_p):
-    print("""
-      bsg_rp_clk_gen_osc_v3_col col_{i}_BSG_DONT_TOUCH
-       (.async_reset_i(async_reset_i)
-        ,.clkgate_i(fb_gated)
-        ,.clkdly_i(fb_inv)
-        ,.clkfb_i(fb_col[{i}])
-        ,.ctl_one_hot_i(ctl_one_hot_i[{ip1_num_rows_p}:{i_num_rows_p}])
-        ,.clk_o(fb_col[{ip1}])
-        );
-""".format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, i=i, ip1=i+1, i_num_rows_p=i*num_rows_p, ip1_num_rows_p=(i+1)*num_rows_p-1, num_rows_p_m1=num_rows_p-1))
-print("""
-  CKBD4BWP7T30P140ULVT B0 (.Z(clk_o), .I(fb_col[{num_cols_p}]));
-endmodule
-""".format(num_cols_p=num_cols_p))
-print("""
-  module bsg_rp_dly_line_v3
-   (input async_reset_i
-    , input clk_i
-    , output clk_o
+  module bsg_rp_dly_line_ctl
+   (input clk_i
+    , input async_reset_neg
+    , input meta
+    , output trigger_on
+    , output [{num_els_p}-1:0] ctl_r
     );
 
   wire lobit;
   TIELBWP7T30P140ULVT T0 (.ZN(lobit));
   wire hibit;
   TIEHBWP7T30P140ULVT T1 (.Z(hibit));
-  wire async_reset_neg;
-  INVD1BWP7T30P140ULVT I0 (.ZN(async_reset_neg), .I(async_reset_i));
+
   // State machine
+  wire _trigger_off, trigger_off;
+  wire _counter_en;
+  wire _pause, pause;
+  wire _trigger_on;
   // Trigger off
-  wire trigger_off, trigger_on;
-  DFSNQD1BWP7T30P140ULVT D0 (.Q(trigger_off), .CP(clk_i), .D(trigger_on), .SDN(async_reset_neg));
+  DFSNQD1BWP7T30P140ULVT D0 (.Q(_trigger_off), .CP(clk_i), .D(trigger_on), .SDN(async_reset_neg));
+  DEL025D1BWP7T30P140ULVT H0 (.Z(trigger_off), .I(_trigger_off));
   // Change counter
-  wire counter_en;
-  DFCNQD1BWP7T30P140ULVT D1 (.Q(counter_en), .CP(clk_i), .D(trigger_off), .CDN(async_reset_neg));
+  DFCNQD1BWP7T30P140ULVT D1 (.Q(_counter_en), .CP(clk_i), .D(trigger_off), .CDN(async_reset_neg));
+  DEL025D1BWP7T30P140ULVT H1 (.Z(counter_en), .I(_counter_en));
   // Pause
-  wire pause;
-  DFCNQD1BWP7T30P140ULVT D2 (.Q(pause), .CP(clk_i), .D(counter_en), .CDN(async_reset_neg));
+  DFCNQD1BWP7T30P140ULVT D2 (.Q(_pause), .CP(clk_i), .D(counter_en), .CDN(async_reset_neg));
+  DEL025D1BWP7T30P140ULVT H2 (.Z(pause), .I(_pause));
   // Trigger on
-  DFCNQD1BWP7T30P140ULVT D3 (.Q(trigger_on), .CP(clk_i), .D(pause), .CDN(async_reset_neg));
-  wire [{num_els_p}-1:0] ctl_n, ctl_r;
-  wire clk_90;
-  bsg_rp_dly_line_unit_v3 d90_BSG_DONT_TOUCH
-   (.async_reset_i(async_reset_i)
-    ,.trigger_i(trigger_on)
-    ,.ctl_one_hot_i(ctl_r[{num_els_m1}:0])
-    ,.clk_i(clk_i)
-    ,.clk_o(clk_90)
-    );
-  bsg_rp_dly_line_unit_v3 d180_BSG_DONT_TOUCH
-   (.async_reset_i(async_reset_i)
-    ,.trigger_i(trigger_on)
-    ,.ctl_one_hot_i(ctl_r[{num_els_m1}:0])
-    ,.clk_i(clk_90)
-    ,.clk_o(clk_180)
-    );
-  wire [{num_dly_p}:0] n;
-  assign n[0] = clk_180;
-""".format(num_els_p=num_els_p, num_els_m1=(num_els_p-1), num_dly_p=num_dly_p))
+  DFCNQD1BWP7T30P140ULVT D3 (.Q(_trigger_on), .CP(clk_i), .D(pause), .CDN(async_reset_neg));
+  DEL025D1BWP7T30P140ULVT H3 (.Z(trigger_on), .I(_trigger_on));
 
-for i in range(num_dly_p):
-  print("""
-    CKBD4BWP7T30P140ULVT B{i} (.Z(n[{ip1}]), .I(n[{i}]));
-""".format(i=i, ip1=i+1))
-
-print("""
-  // Delay value ignored in synthesis
-  wire #100 clk_dly = n[{num_dly_p}];
-
-  wire meta;
-  DFNCND1BWP7T30P140ULVT meta_r (.Q(meta), .QN(), .CPN(clk_i), .CDN(async_reset_neg), .D(clk_dly));
   wire meta_sync, meta_sync_sync, meta_sync_sync_inv;
   DFCND1BWP7T30P140ULVT bsg_SYNC_1_r (.Q(meta_sync), .QN(), .CP(clk_i), .D(meta), .CDN(async_reset_neg));
   DFCND1BWP7T30P140ULVT bsg_SYNC_2_r (.Q(meta_sync_sync), .QN(meta_sync_sync_inv), .CP(clk_i), .D(meta_sync), .CDN(async_reset_neg));
   wire shift_left = meta_sync_sync;
   wire shift_right = meta_sync_sync_inv;
-  wire [{num_els_p}-1:0] set_right, set_left, set;
-""".format(num_els_p=num_els_p, num_els_m1=(num_els_p-1), num_dly_p=num_dly_p))
-
+""".format(num_els_p=num_els_p))
 
 print("""
     bsg_rp_dly_line_ctl_reg ctl_0
@@ -191,9 +126,115 @@ print("""
       ,.ctl_p1(ctl_r[{num_els_p_m1}])
       ,.ctl_o(ctl_r[{num_els_p_m1}])
       );
+
+endmodule
 """.format(num_els_p_m1=num_els_p-1, num_els_p_m2=num_els_p-2))
 
 print("""
+  module bsg_rp_dly_line_unit_v3
+      (input async_reset_i
+      , input trigger_i
+      , input [{ctl_width_p_m1}:0] ctl_one_hot_i
+      , input  clk_i
+      , output clk_o
+      );
+      wire lobit;
+      TIELBWP7T30P140ULVT T0 (.ZN(lobit));
+      wire hibit;
+      TIEHBWP7T30P140ULVT T1 (.Z(hibit));
+  """.format(ctl_width_p_m1=num_cols_p*num_rows_p-1, num_dly_p=num_dly_p))
+print("""
+  wire fb_inv;
+  CKND1BWP7T30P140ULVT I0 (.ZN(fb_inv), .I(clk_i));
+  wire gate_en_sync_1_r, gate_en_sync_2_r;
+  DFQD1BWP7T30P140ULVT S1 (.D(trigger_i), .CP(clk_i), .Q(gate_en_sync_1_r));
+  DFQD1BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(clk_i), .Q(gate_en_sync_2_r));
+  wire fb_gated;
+  CKLNQD20BWP7T30P140ULVT CG0 (.Q(fb_gated), .CP(clk_i), .E(gate_en_sync_2_r), .TE(lobit));
+  wire [{num_cols_p}:0] fb_col;
+  assign fb_col[0] = 1'b0;
+""".format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, num_dly_p=num_dly_p, num_rows_p_m1=num_rows_p-1))
+for i in range(0, num_cols_p):
+    print("""
+      bsg_rp_clk_gen_osc_v3_col col_{i}_BSG_DONT_TOUCH
+       (.async_reset_i(async_reset_i)
+        ,.clkgate_i(fb_gated)
+        ,.clkdly_i(fb_inv)
+        ,.clkfb_i(fb_col[{i}])
+        ,.ctl_one_hot_i(ctl_one_hot_i[{ip1_num_rows_p}:{i_num_rows_p}])
+        ,.clk_o(fb_col[{ip1}])
+        );
+""".format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, i=i, ip1=i+1, i_num_rows_p=i*num_rows_p, ip1_num_rows_p=(i+1)*num_rows_p-1, num_rows_p_m1=num_rows_p-1))
+print("""
+  CKBD4BWP7T30P140ULVT B0 (.Z(clk_o), .I(fb_col[{num_cols_p}]));
+endmodule
+""".format(num_cols_p=num_cols_p))
+print("""
+  module bsg_rp_dly_line_v3
+   (input async_reset_i
+    , input clk_i
+    , output clk_o
+    );
+
+  wire async_reset_neg;
+  INVD16BWP7T30P140ULVT I0 (.ZN(async_reset_neg), .I(async_reset_i));
+
+  wire clk_90, clk_180;
+  wire trigger_90, trigger_180;
+
+  wire [{num_els_p}-1:0] ctl_90_r;
+  bsg_rp_dly_line_unit_v3 d90_BSG_DONT_TOUCH
+   (.async_reset_i(async_reset_i)
+    ,.trigger_i(trigger_90)
+    ,.ctl_one_hot_i(ctl_90_r)
+    ,.clk_i(clk_i)
+    ,.clk_o(clk_90)
+    );
+
+  wire [{num_els_p}-1:0] ctl_180_r;
+  bsg_rp_dly_line_unit_v3 d180_BSG_DONT_TOUCH
+   (.async_reset_i(async_reset_i)
+    ,.trigger_i(trigger_180)
+    ,.ctl_one_hot_i(ctl_180_r)
+    ,.clk_i(clk_90)
+    ,.clk_o(clk_180)
+    );
+
+  wire [{num_dly_p}:0] n;
+  assign n[0] = clk_180;
+""".format(num_els_p=num_els_p, num_els_m1=(num_els_p-1), num_dly_p=num_dly_p))
+
+for i in range(num_dly_p):
+  print("""
+    CKBD4BWP7T30P140ULVT B{i} (.Z(n[{ip1}]), .I(n[{i}]));
+""".format(i=i, ip1=i+1))
+
+print("""
+  // Delay value ignored in synthesis
+  wire #100 clk_dly = n[{num_dly_p}];
+
+  wire meta;
+  DFNCND1BWP7T30P140ULVT meta_r (.Q(meta), .QN(), .CPN(clk_i), .CDN(async_reset_neg), .D(clk_dly));
+""".format(num_els_p=num_els_p, num_els_m1=(num_els_p-1), num_dly_p=num_dly_p))
+
+print("""
+
+  bsg_rp_dly_line_ctl ctl_90
+   (.clk_i(clk_90)
+    ,.async_reset_neg(async_reset_neg)
+    ,.meta(meta)
+    ,.trigger_on(trigger_90)
+    ,.ctl_r(ctl_90_r)
+    );
+
+  bsg_rp_dly_line_ctl ctl_180
+   (.clk_i(clk_180)
+    ,.async_reset_neg(async_reset_neg)
+    ,.meta(meta)
+    ,.trigger_on(trigger_180)
+    ,.ctl_r(ctl_180_r)
+    );
+
     assign clk_o = clk_90;
 
   endmodule
