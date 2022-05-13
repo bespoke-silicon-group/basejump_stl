@@ -418,8 +418,6 @@ module bsg_dmc_controller
           default : begin
             if (init_tick <= dmc_p_i.init_calib_reads && init_tick >= 1) begin
               cmd_sfifo_wdata.cmd = READ; cmd_sfifo_wdata.addr = '0; cmd_sfifo_wdata.ba = '0;
-            end else begin
-              cmd_sfifo_wdata.cmd = DESELECT;
             end
           end
         endcase
