@@ -50,6 +50,16 @@ module bsg_dmc
   // Physically compatible with (LP)DDR3/DDR2/DDR, but only (LP)DDR
   // protocal is logically implemented in the controller
   // Command and Address interface
+  //
+  // General LPDDR routing (length-matching) rules:
+  //
+  // 1. Match trace lengths for the data group (DQ/DQS/DM) within ±50 mil.
+  // 2. Match CK to CK# trace length ±20 mil, and CK/CK# to DQS trace length ±500 mil.
+  // 3. Match CK/CK# traces to all other address and command traces within ±400 mil.
+  //
+  // Refer to Micron TN4619 for more layout and routing tips:
+  // https://www.micron.com/-/media/client/global/documents/products/technical-note/dram/tn4619.pdf
+  //
   ,output                            ddr_ck_p_o
   ,output                            ddr_ck_n_o
   ,output                            ddr_cke_o
