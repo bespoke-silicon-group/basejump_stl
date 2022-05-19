@@ -57,6 +57,12 @@ module bsg_dmc
   // 2. Match CK to CK# trace length ±20 mil, and CK/CK# to DQS trace length ±500 mil.
   // 3. Match CK/CK# traces to all other address and command traces within ±400 mil.
   //
+  // General LPDDR trace impedance rules:
+  //
+  // 1. Standard characteristic impedance of 50–60 ohm is recommended for all traces.
+  // 2. CK and CK# traces should have differential characteristic impedance of 100–120 ohm.
+  // 3. DQS# is unused for LPDDR, route DQS as single-ended signal.
+  //
   // Refer to Micron TN4619 for more layout and routing tips:
   // https://www.micron.com/-/media/client/global/documents/products/technical-note/dram/tn4619.pdf
   //
