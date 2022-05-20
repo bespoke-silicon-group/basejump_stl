@@ -33,7 +33,10 @@
 
 `define bsg_mem_1rw_sync_mask_write_bit_1hdsram_macro(words,bits,tag)       \
   if (harden_p && els_p == words && width_p == bits) \
-    begin: macro                                     \
+    begin: macro                                                    \
+      wire [1:0] m1ss_rtsel = 2'b10; wire [1:0] m1ss_wtsel = 2'b00; \
+      wire [1:0] m2ss_rtsel = 2'b10; wire [1:0] m2ss_wtsel = 2'b00; \
+      wire [1:0] m4ss_rtsel = 2'b00; wire [1:0] m4ss_wtsel = 2'b00; \
           tsmc28_1rw_d``words``_w``bits``_``tag``_bit_1hdsram mem  \
             (                                                   \
               .CLK      ( clk_i         )                       \
@@ -44,8 +47,8 @@
              ,.D        ( data_i        )                       \
              ,.Q        ( data_o        )                       \
              /* According to TSMC, other settings are for debug only */ \
-             ,.RTSEL    ( 2'b01         )                       \
-             ,.WTSEL    ( 2'b00         )                       \
+             ,.RTSEL    ( ``tag``_rtsel )                       \
+             ,.WTSEL    ( ``tag``_wtsel )                       \
             );                                                  \
     end
 
