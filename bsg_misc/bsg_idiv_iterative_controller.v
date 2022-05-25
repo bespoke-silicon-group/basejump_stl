@@ -96,7 +96,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
       if (bits_per_iter_p == 2)
         opA_inv_o    = !add2_neg_last;
       else
-	      opA_inv_o    = !add1_neg_last;
+	opA_inv_o    = !add1_neg_last;
       
       opA_clr_l_o    = 1'b1;
       opB_sel_o      = 3'b001;
