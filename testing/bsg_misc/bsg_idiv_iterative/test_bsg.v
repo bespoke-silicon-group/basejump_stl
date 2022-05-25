@@ -8,6 +8,7 @@
 `define SIGN			// test signed divide
 `define UNSIGN			// test unsigned divide
 `define WIDTH 4
+`define BITS_PER_ITER 2
 `define ITERS 2 ** (`WIDTH * 2)
 // `define ITERS 10000
 
@@ -39,7 +40,7 @@ module test_bsg;
    longint s_quotient;
    longint s_remainder;
 
-   bsg_idiv_iterative #(.width_p(`WIDTH)) dut (
+   bsg_idiv_iterative #(.width_p(`WIDTH), .bits_per_iter_p(`BITS_PER_ITER)) dut (
            .dividend_i(dividend),
 	       .divisor_i(divisor),
 	       .v_i(div_req),
