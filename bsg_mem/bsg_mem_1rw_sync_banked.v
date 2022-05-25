@@ -38,6 +38,7 @@ module bsg_mem_1rw_sync_banked
     , parameter bank_addr_width_lp=`BSG_SAFE_CLOG2(bank_depth_lp)
     , parameter depth_bank_idx_width_lp=`BSG_SAFE_CLOG2(num_depth_bank_p)
     , parameter bank_width_lp=(width_p/num_width_bank_p)
+    , parameter harden_p=0
   )
   (
     input clk_i
@@ -60,6 +61,7 @@ module bsg_mem_1rw_sync_banked
         .width_p(bank_width_lp)
         ,.els_p(bank_depth_lp)
         ,.latch_last_read_p(latch_last_read_p)
+        ,.harden_p(harden_p)
       ) bank (
         .clk_i(clk_i)
         ,.reset_i(reset_i)

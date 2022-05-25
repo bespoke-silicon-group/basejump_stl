@@ -1,6 +1,8 @@
 `include "bsg_defines.v"
 
+`ifndef BSG_NO_TIMESCALE
 `timescale 1ps/1ps
+`endif
 
 // This module is a behavioral model of the delay line.
 // A TSMC 40nm hardened implementation of this module
@@ -24,6 +26,18 @@ module bsg_dly_line
    ,input clk_i
    ,output logic clk_o
    );
+
+`ifdef BSG_OSC_BASE_DELAY
+   localparam osc_base_delay_lp = `BSG_OSC_BASE_DELAY;
+`else
+   localparam osc_base_delay_lp = 1000;
+`endif
+
+`ifdef BSG_OSC_GRANULARITY
+   localparam osc_granularity_lp = `BSG_OSC_GRANULARITY;
+`else
+   localparam osc_granularity_lp = 100;
+`endif
 
    `declare_bsg_clk_gen_osc_tag_payload_s(num_adgs_p)
 
@@ -56,10 +70,10 @@ module bsg_dly_line
 
    always
      begin
-        #1000
+        #(osc_base_delay_lp);
         if (ctrl_rrr !== 'X)
           # (
-             ((1 << $bits(ctrl_rrr)) - ctrl_rrr)*100
+             ((1 << $bits(ctrl_rrr)) - ctrl_rrr)*osc_granularity_lp
             )
         clk_o <= (clk_i | async_reset_i);
 

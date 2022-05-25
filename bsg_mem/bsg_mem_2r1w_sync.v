@@ -56,7 +56,6 @@ module bsg_mem_2r1w_sync #(parameter `BSG_INV_PARAM(width_p)
      #(.width_p(width_p)
        ,.els_p(els_p)
        ,.read_write_same_addr_p(read_write_same_addr_p)
-       ,.harden_p(harden_p)
        ) synth
     (.clk_i( clk_lo )
     ,.reset_i

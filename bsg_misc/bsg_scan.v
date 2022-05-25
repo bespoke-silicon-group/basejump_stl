@@ -47,8 +47,6 @@ module bsg_scan #(parameter `BSG_INV_PARAM(width_p)
    genvar j;
 
    wire [$clog2(width_p):0][width_p-1:0] t;
-
-   wire [width_p-1:0]                      fill;
 	
    // synopsys translate_off
    initial
@@ -93,6 +91,7 @@ module bsg_scan #(parameter `BSG_INV_PARAM(width_p)
      begin : scanN
 	for (j = 0; j < $clog2(width_p); j = j + 1)
 	  begin : row
+             wire [width_p-1:0]                      fill;		  
              wire [width_p-1:0] shifted = width_p ' ({fill, t[j]} >> (1 << j));
 
              if (xor_p)

@@ -12,7 +12,7 @@ TRACE_ROM = bsg_trace_master_rom
 TRACE_ROM_V = bsg_trace_master_rom_way$(WAYS_P).v
 
 INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc/
-#INCDIR += +incdir+$(BSG_IP_CORES_DIR)/bsg_cache/
+INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_cache
 
 DEFINE += +define+WAYS_P=$(WAYS_P)
 

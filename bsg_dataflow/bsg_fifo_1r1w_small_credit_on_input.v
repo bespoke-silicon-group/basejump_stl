@@ -5,6 +5,7 @@
 
 module bsg_fifo_1r1w_small_credit_on_input #( parameter `BSG_INV_PARAM(width_p      )
                                             , parameter `BSG_INV_PARAM(els_p        )
+                                            , parameter harden_p = 0
                                             )                           
                             
     ( input                clk_i
@@ -41,6 +42,7 @@ always_ff @ (posedge clk_i)
 bsg_fifo_1r1w_small #( .width_p(width_p)
                      , .els_p(els_p) 
                      , .ready_THEN_valid_p(1)
+                     , .harden_p(harden_p)
                      ) fifo
 
                      ( .clk_i(clk_i)
