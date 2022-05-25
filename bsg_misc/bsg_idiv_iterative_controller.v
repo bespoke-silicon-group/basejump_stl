@@ -128,7 +128,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
           if (bits_per_iter_p == 2) 
             opC_sel_o = 4'b1000;
           else
-	          opC_sel_o = 3'b100;
+	    opC_sel_o = 3'b100;
        end
       
     end
@@ -160,7 +160,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
        adder1_cin_o = 1'b1;
       
        if (bits_per_iter_p == 2)
-	       opC_sel_o = 4'b0100;
+	 opC_sel_o = 4'b0100;
        else
          opC_sel_o = 3'b010;
     end
@@ -174,10 +174,10 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
        adder1_cin_o  = 1'b0;
        
        if (bits_per_iter_p == 2) begin
-	       opC_sel_o = 4'b0010;
+	 opC_sel_o = 4'b0010;
          opB_sel_o = 4'b0010;
        end else begin
-	       opC_sel_o = 3'b001;
+	 opC_sel_o = 3'b001;
          opB_sel_o = 3'b001;
        end
     end
@@ -187,10 +187,10 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
        opC_ld_o     = 1'b1;
        if (bits_per_iter_p == 2) begin
          opB_sel_o  = calc_done ? 4'b0100 : 4'b0001;
-	       opC_sel_o  = calc_done ? 4'b0010 : 4'b0001;
+	 opC_sel_o  = calc_done ? 4'b0010 : 4'b0001;
          if (calc_cnt == 0) begin
-	         opA_inv_o    = !add1_neg_last;
-	         adder1_cin_o = !add1_neg_last;
+	   opA_inv_o    = !add1_neg_last;
+	   adder1_cin_o = !add1_neg_last;
          end
        end else
          opB_sel_o  = calc_done ? 3'b010 : 3'b001;
@@ -210,9 +210,9 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
        adder1_cin_o    = 1'b0;
        
        if (bits_per_iter_p == 2)
-	       opB_sel_o = 4'b0100;
+         opB_sel_o = 4'b0100;
        else
-	       opB_sel_o = 3'b010;
+	 opB_sel_o = 3'b010;
     end
     
     REMAIN: begin
@@ -226,9 +226,9 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
        adder1_cin_o    = r_neg;
 
        if (bits_per_iter_p == 2)
-	       opB_sel_o = 4'b1000;
+         opB_sel_o = 4'b1000;
        else
-	       opB_sel_o = 3'b100;
+	 opB_sel_o = 3'b100;
     end    
 
     QUOT: begin
@@ -240,9 +240,9 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
        adder1_cin_o  = 1'b1;
 
        if (bits_per_iter_p == 2)
-	       opC_sel_o = 4'b0100;
+	 opC_sel_o = 4'b0100;
        else
-	       opC_sel_o = 3'b010;
+	 opC_sel_o = 3'b010;
     end
     
     DONE:begin
