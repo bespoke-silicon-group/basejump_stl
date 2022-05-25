@@ -175,7 +175,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
         );
      
     if (bits_per_iter_p == 2) begin 
-      bsg_xnor#(.width_p(width_p+1)) xnor_add1 
+      bsg_xor#(.width_p(width_p+1)) xor_add1 
           (.a_i({(width_p+1){~add1_out[width_p]}})
           ,.b_i(opA_r)
           ,.o  (add2_in0)
