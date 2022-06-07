@@ -420,7 +420,7 @@ module bsg_cache_miss
         // set stat mem entry on store tag miss.
         stat_mem_v_o = dma_done_i & st_tag_miss_op;
         stat_mem_w_o = dma_done_i & st_tag_miss_op;
-        stat_mem_data_out.dirty = {ways_p{decode_v_i.st_op | decode_v_i.atomic_op}};
+        stat_mem_data_out.dirty = {ways_p{1'b1}};
         stat_mem_data_out.lru_bits = chosen_way_lru_data;
         stat_mem_w_mask_out.dirty = chosen_way_decode;
         stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
@@ -462,8 +462,9 @@ module bsg_cache_miss
           {(lg_data_mask_width_lp){1'b0}}
         };
 
-        // For store miss, set the dirty bit for the chosen way.
-        // For load miss, clear the dirty bit for the chosen way.
+        // For store tag miss, set the dirty bit for the chosen way.
+        // For load tag miss, clear the dirty bit for the chosen way.
+        // For track miss, do not touch the dirty bit for the chosen way.
         // Set the lru_bits, so that the chosen way is not the LRU.
         // We are choosing a way to bring in a new block, which is technically
         // the MRU. lru decode unit generates the next state LRU bits, so that
@@ -472,7 +473,7 @@ module bsg_cache_miss
         stat_mem_w_o = dma_done_i;
         stat_mem_data_out.dirty = {ways_p{decode_v_i.st_op | decode_v_i.atomic_op}};
         stat_mem_data_out.lru_bits = chosen_way_lru_data;
-        stat_mem_w_mask_out.dirty = chosen_way_decode;
+        stat_mem_w_mask_out.dirty = track_miss_i ? {ways_p{1'b0}} : chosen_way_decode;
         stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
 
         // set the tag and the valid bit to 1'b1 for the chosen way.
@@ -522,7 +523,7 @@ module bsg_cache_miss
       STORE_TAG_MISS_ALLOCATE: begin
         stat_mem_v_o = 1'b1;
         stat_mem_w_o = 1'b1;
-        stat_mem_data_out.dirty = {ways_p{decode_v_i.st_op | decode_v_i.atomic_op}};
+        stat_mem_data_out.dirty = {ways_p{1'b1}};
         stat_mem_data_out.lru_bits = chosen_way_lru_data;
         stat_mem_w_mask_out.dirty = chosen_way_decode;
         stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
