@@ -9,6 +9,7 @@ module bsg_nonsynth_dma_model
   import bsg_cache_pkg::*;
   #(parameter `BSG_INV_PARAM(addr_width_p)
     ,parameter `BSG_INV_PARAM(data_width_p)
+    ,parameter `BSG_INV_PARAM(mask_width_p)
     ,parameter `BSG_INV_PARAM(block_size_in_words_p)
     ,parameter `BSG_INV_PARAM(els_p)
 
@@ -24,6 +25,7 @@ module bsg_nonsynth_dma_model
     ,parameter block_offset_width_lp=(block_size_in_words_p>1) ? lg_data_mask_width_lp+lg_block_size_in_words_lp : lg_data_mask_width_lp
     ,parameter upper_addr_width_lp=(block_size_in_words_p>1) ? lg_els_lp-lg_block_size_in_words_lp : lg_els_lp
     ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    ,parameter word_width_lp=data_width_p/mask_width_p
   )
   (
     input clk_i
@@ -38,6 +40,7 @@ module bsg_nonsynth_dma_model
     ,input dma_data_ready_i
 
     ,input [data_width_p-1:0] dma_data_i
+    ,input [mask_width_p-1:0] dma_wmask_i
     ,input dma_data_v_i
     ,output logic dma_data_yumi_o
   );
@@ -253,7 +256,11 @@ module bsg_nonsynth_dma_model
       wr_req_delay_r <= wr_req_delay_n;
     
       if ((wr_state_r == BUSY) & dma_data_v_i & dma_data_yumi_o) begin
-        mem[{wr_upper_addr, {(block_size_in_words_p>1){wr_counter_r}}}] <= dma_data_i;
+        for (integer i = 0; i < mask_width_p; i++) begin
+          if (dma_wmask_i[i]) begin
+            mem[{wr_upper_addr, {(block_size_in_words_p>1){wr_counter_r}}}][i*word_width_lp+:word_width_lp] <= dma_data_i[i*word_width_lp+:word_width_lp];
+          end
+        end
       end
 
     end
