@@ -56,6 +56,8 @@ module bsg_cache_miss
     ,output logic [addr_width_p-1:0] dma_addr_o
     ,input dma_done_i
 
+    ,output logic track_data_we_o
+
     // from stat_mem
     ,input [stat_info_width_lp-1:0] stat_info_i
 
@@ -581,12 +583,14 @@ module bsg_cache_miss
       flush_way_r <= '0;
       select_snoop_data_r <= 1'b0;
       // added to be a little more X pessimism conservative
+      track_data_we_o <= 1'b0;
     end
     else begin
       miss_state_r <= miss_state_n;
       chosen_way_r <= chosen_way_n;
       flush_way_r <= flush_way_n;
       select_snoop_data_r <= select_snoop_data_n;
+      track_data_we_o <= track_mem_v_o & ~track_mem_w_o;
     end
   end
 

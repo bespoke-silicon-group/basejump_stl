@@ -303,7 +303,8 @@ end
       ,data_v_r
       ,valid_v_r
       ,lock_v_r
-      ,tag_v_r} <= '0;
+      ,tag_v_r
+      ,track_data_v_r} <= '0;
     end
     else begin
       if (v_we) begin
@@ -437,6 +438,7 @@ end
   logic sbuf_empty_lo, tbuf_empty_lo;
   logic [lg_ways_lp-1:0] chosen_way_lo;
   logic select_snoop_data_r_lo;
+  logic miss_track_data_we_lo;
 
   bsg_cache_miss #(
     .addr_width_p(addr_width_p)
@@ -468,6 +470,8 @@ end
     ,.dma_way_o(dma_way_lo)
     ,.dma_addr_o(dma_addr_lo)
     ,.dma_done_i(dma_done_li)
+
+    ,.track_data_we_o(miss_track_data_we_lo)
 
     ,.stat_info_i(stat_mem_data_lo)
 
@@ -525,6 +529,8 @@ end
     ,.dma_way_i(dma_way_lo)
     ,.dma_addr_i(dma_addr_lo)
     ,.done_o(dma_done_li)
+
+    ,.track_data_we_i(miss_track_data_we_lo)
 
     ,.snoop_word_o(snoop_word_lo)
     

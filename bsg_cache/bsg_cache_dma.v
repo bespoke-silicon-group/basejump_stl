@@ -46,6 +46,8 @@ module bsg_cache_dma
     ,input [addr_width_p-1:0] dma_addr_i
     ,output logic done_o
 
+    ,input track_data_we_i
+
     ,output logic [data_width_p-1:0] snoop_word_o
 
     ,output logic [bsg_cache_dma_pkt_width_lp-1:0] dma_pkt_o
@@ -162,7 +164,6 @@ module bsg_cache_dma
   assign dma_pkt_o = dma_pkt;
 
   // track bits
-  logic track_mem_data_we;
   logic [ways_p-1:0][block_size_in_words_p-1:0] track_mem_data_r;
   logic [block_size_in_words_p-1:0] track_data_way_picked;
   logic [block_size_in_words_p-1:0] track_bits;
@@ -284,8 +285,6 @@ end
 
     dma_evict_o = 1'b0;
 
-    track_mem_data_we = 1'b0;
-
     case (dma_state_r)
 
       // wait for dma_cmd from bsg_cache_miss.
@@ -309,7 +308,6 @@ end
           end
 
           e_dma_send_evict_addr: begin
-            track_mem_data_we = 1'b1;
             dma_pkt_v_o = 1'b1;
             dma_pkt.write_not_read = 1'b1;
             done_o = dma_pkt_yumi_i;
@@ -317,7 +315,6 @@ end
           end
 
           e_dma_get_fill_data: begin
-            track_mem_data_we = 1'b1;
             counter_clear = 1'b1;
             dma_state_n = GET_FILL_DATA;
           end
@@ -429,7 +426,7 @@ end
         snoop_word_o <= snoop_word_n;
       end 
 
-      if (track_mem_data_we) begin
+      if (track_data_we_i) begin
         track_mem_data_r <= track_mem_data_i;
       end
 

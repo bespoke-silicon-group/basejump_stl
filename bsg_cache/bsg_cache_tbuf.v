@@ -156,13 +156,13 @@ module bsg_cache_tbuf
   assign tag_hit1 = tag_hit1_n & el1_valid;
   assign tag_hit2 = tag_hit2_n & v_i;
 
-  assign bypass_track_n = bypass_v_i & (tag_hit0 | tag_hit1 | tag_hit2);
+  assign bypass_track_n = (tag_hit0 | tag_hit1 | tag_hit2);
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       bypass_track_o <= '0;
     end
-    else begin
+    else if (bypass_v_i) begin
       bypass_track_o <= bypass_track_n;
     end
   end
