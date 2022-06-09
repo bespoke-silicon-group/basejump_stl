@@ -205,8 +205,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
    );
 
   if (bits_per_iter_p == 2) begin
-    wire adder2_cin;
-    assign adder2_cin = ~add1_out[width_p];
+    wire adder2_cin = ~add1_out[width_p];
     bsg_adder_cin #(.width_p(width_p+1)) adder2
      (.a_i  (add2_in0)
      ,.b_i  (add2_in1)
