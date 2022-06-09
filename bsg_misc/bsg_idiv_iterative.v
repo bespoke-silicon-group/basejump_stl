@@ -28,7 +28,7 @@
 // 2. usging data detection logic to reduce the iteration cycles.
 `include "bsg_defines.v"
 
-module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parameter bits_per_iter_p = 2)
+module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parameter bits_per_iter_p = 1)
     (input                  clk_i
     ,input                  reset_i
 
