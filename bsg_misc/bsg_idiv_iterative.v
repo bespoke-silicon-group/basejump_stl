@@ -45,14 +45,16 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
     ,input                  yumi_i
     );
 
+   // synopsys translate_off
    initial begin
         assert (bits_per_iter_p == 1 || bits_per_iter_p == 2)
-        else $error($sformatf("Illegal value for parameters bits_per_iter_p given: (%0d). Legal values are 1 or 2.", bits_per_iter_p));
+        else $error("Illegal value for parameters bits_per_iter_p given: (%0d). Legal values are 1 or 2.", bits_per_iter_p);
 	   
 	assert (bits_per_iter_p == 1 || (bits_per_iter_p == 2 && (width_p % 2 == 0)))
-	else $error($sformatf("Illegal value for parameter width_p: (%0d) given bits_per_iter_p: (%0d). Width must be even when resolving 2 bits per iteration", width_p, bits_per_iter_p));
+	else $error("Illegal value for parameter width_p: (%0d) given bits_per_iter_p: (%0d). Width must be even when resolving 2 bits per iteration", width_p, bits_per_iter_p);
    end
-
+   // synopsys translate_on
+   
    wire [width_p:0] opA_r;
    assign remainder_o = opA_r[width_p-1:0];
 
