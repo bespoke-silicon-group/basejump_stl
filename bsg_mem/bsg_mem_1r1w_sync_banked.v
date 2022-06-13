@@ -10,6 +10,11 @@
  *  It is also useful for power and delay perspective, since only one depth
  *  bank is activated while reading or writing.
  *
+ * if the desired banking is decided by node-specific (e.g. TSMC 28) SRAM 
+ * generator characteristics then the preferred methodology is to invoke this
+ * from the /hard SRAM macro, rather than to instantiate it in the RTL.
+ * However, in some cases, for example, for research infrastructures exploring
+ * a pareto design space, it may be desirable to directly use this interface.
  *
  *  - width_p : width of the total memory
  *  - els_p : depth of the total memory
