@@ -293,8 +293,9 @@ module bsg_cache_miss
       // miss handler waits in this state, until the miss is detected in tv
       // stage.
       START: begin
-        stat_mem_v_o = miss_v_i;
-        miss_state_n = miss_v_i
+        stat_mem_v_o = (miss_v_i & sbuf_empty_i & tbuf_empty_i);
+        track_mem_v_o = word_tracking_p ? (miss_v_i & sbuf_empty_i & tbuf_empty_i) : 1'b0;
+        miss_state_n = (miss_v_i & sbuf_empty_i & tbuf_empty_i)
           ? (goto_flush_op
             ? FLUSH_OP 
             : (goto_lock_op
@@ -318,15 +319,12 @@ module bsg_cache_miss
         // On track miss, the chosen way is the tag hit way.
         chosen_way_n = track_miss_i ? tag_hit_way_id_i : (invalid_exist ? invalid_way_id : lru_way_id);
 
-        dma_cmd_o = (sbuf_empty_i & tbuf_empty_i) ? e_dma_send_fill_addr : e_dma_nop;
+        dma_cmd_o = e_dma_send_fill_addr;
         dma_addr_o = {
           addr_tag_v,
           addr_index_v,
           {(block_offset_width_lp){1'b0}}
         };
-
-        // Read track mem for track miss or eviction.
-        track_mem_v_o = word_tracking_p ? (dma_done_i & (track_miss_i | (stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n]))) : 1'b0;
 
         // if the chosen way is dirty and valid, then evict.
         miss_state_n = dma_done_i
@@ -367,9 +365,6 @@ module bsg_cache_miss
           tag_mem_w_mask_out[i].lock = (decode_v_i.ainv_op | decode_v_i.aflinv_op) & flush_way_decode[i];
           tag_mem_w_mask_out[i].tag =  {tag_width_lp{1'b0}};
         end
-
-        // Read track mem for eviction
-        track_mem_v_o = word_tracking_p ? (~decode_v_i.ainv_op & stat_info_in.dirty[flush_way_n] & valid_v_i[flush_way_n]) : 1'b0;
 
         // If it's not AINV, and the chosen set is dirty and valid, evict the
         // block.
@@ -511,15 +506,10 @@ module bsg_cache_miss
       STORE_TAG_MISS: begin
         chosen_way_n = invalid_exist ? invalid_way_id : lru_way_id;
 
-        // Read track mem for eviction.
-        track_mem_v_o = sbuf_empty_i & tbuf_empty_i & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n];
-
         // if the chosen way is dirty and valid, then evict.
-        miss_state_n = (sbuf_empty_i & tbuf_empty_i)
-          ? ((stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
-            ? SEND_EVICT_ADDR
-            : STORE_TAG_MISS_ALLOCATE)
-          : STORE_TAG_MISS;
+        miss_state_n = (stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
+          ? SEND_EVICT_ADDR
+          : STORE_TAG_MISS_ALLOCATE;
       end
 
       STORE_TAG_MISS_ALLOCATE: begin

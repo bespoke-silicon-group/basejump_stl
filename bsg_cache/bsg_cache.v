@@ -32,7 +32,7 @@ module bsg_cache
     ,parameter dma_data_width_p=data_width_p // default value. it can also be pow2 multiple of data_width_p.
 
     ,localparam bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,data_width_p)
-    ,localparam bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    ,localparam bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p, block_size_in_words_p)
     ,localparam burst_size_in_words_lp=(dma_data_width_p/data_width_p)
 
     ,parameter debug_p=0
@@ -58,7 +58,6 @@ module bsg_cache
     ,output logic dma_data_ready_o
 
     ,output logic [dma_data_width_p-1:0] dma_data_o
-    ,output logic [burst_size_in_words_lp-1:0] dma_wmask_o
     ,output logic dma_data_v_o
     ,input dma_data_yumi_i
 
@@ -543,7 +542,6 @@ end
     ,.dma_data_ready_o(dma_data_ready_o)
     
     ,.dma_data_o(dma_data_o)
-    ,.dma_wmask_o(dma_wmask_o)
     ,.dma_data_v_o(dma_data_v_o)
     ,.dma_data_yumi_i(dma_data_yumi_i)
 

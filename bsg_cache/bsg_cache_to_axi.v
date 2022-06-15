@@ -12,6 +12,7 @@ module bsg_cache_to_axi
   #(parameter `BSG_INV_PARAM(addr_width_p)
     ,parameter `BSG_INV_PARAM(block_size_in_words_p)
     ,parameter `BSG_INV_PARAM(data_width_p)
+    ,parameter `BSG_INV_PARAM(mask_width_p)
     ,parameter `BSG_INV_PARAM(num_cache_p)
     
     // tag fifo size can be greater than number of cache dma interfaces
@@ -23,7 +24,7 @@ module bsg_cache_to_axi
     ,parameter `BSG_INV_PARAM(axi_burst_len_p)
 
     ,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
-    ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p, mask_width_p)
 
     ,parameter axi_strb_width_lp=(axi_data_width_p>>3)
   )
@@ -94,7 +95,7 @@ module bsg_cache_to_axi
 
   // dma packets from caches
   //
-  `declare_bsg_cache_dma_pkt_s(addr_width_p);
+  `declare_bsg_cache_dma_pkt_s(addr_width_p, mask_width_p);
   bsg_cache_dma_pkt_s [num_cache_p-1:0] dma_pkt;
   assign dma_pkt = dma_pkt_i;
 
@@ -235,6 +236,7 @@ module bsg_cache_to_axi
     .num_cache_p(num_cache_p)
     ,.addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
+    ,.mask_width_p(mask_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.tag_fifo_els_p(tag_fifo_els_p)
     ,.axi_id_width_p(axi_id_width_p)
@@ -248,6 +250,7 @@ module bsg_cache_to_axi
     ,.yumi_o(write_rr_yumi_li)
     ,.cache_id_i(write_rr_tag_lo)
     ,.addr_i(write_rr_dma_pkt.addr)
+    ,.mask_i(write_rr_dma_pkt.mask)
 
     ,.dma_data_i(dma_data_i)
     ,.dma_data_v_i(dma_data_v_i)
