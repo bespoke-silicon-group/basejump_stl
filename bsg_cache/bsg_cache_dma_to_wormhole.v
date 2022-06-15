@@ -17,6 +17,7 @@ module bsg_cache_dma_to_wormhole
  import bsg_noc_pkg::*;
  import bsg_cache_pkg::*;
  #(parameter `BSG_INV_PARAM(dma_addr_width_p) // cache addr width (byte addr)
+   , parameter `BSG_INV_PARAM(dma_mask_width_p)
    , parameter `BSG_INV_PARAM(dma_burst_len_p) // num of data beats in dma transfer
 
    // flit width should match the cache dma width.
@@ -25,7 +26,7 @@ module bsg_cache_dma_to_wormhole
    , parameter `BSG_INV_PARAM(wh_len_width_p)
    , parameter `BSG_INV_PARAM(wh_cord_width_p)
 
-   , parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(dma_addr_width_p)
+   , parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(dma_addr_width_p,dma_mask_width_p)
    , parameter wh_link_sif_width_lp=`bsg_ready_and_link_sif_width(wh_flit_width_p)
    , parameter dma_data_width_lp=wh_flit_width_p
 
@@ -57,7 +58,7 @@ module bsg_cache_dma_to_wormhole
    , input [wh_cid_width_p-1:0] dest_wh_cid_i
    );
 
-  `declare_bsg_cache_dma_pkt_s(dma_addr_width_p);
+  `declare_bsg_cache_dma_pkt_s(dma_addr_width_p, dma_mask_width_p);
   `declare_bsg_ready_and_link_sif_s(wh_flit_width_p, wh_link_sif_s);
   wh_link_sif_s wh_link_sif_in;
   wh_link_sif_s wh_link_sif_out;

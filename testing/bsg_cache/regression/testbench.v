@@ -51,7 +51,7 @@ module testbench();
   logic cache_v_lo;
   logic cache_yumi_li;
 
-  `declare_bsg_cache_dma_pkt_s(addr_width_p);
+  `declare_bsg_cache_dma_pkt_s(addr_width_p, block_size_in_words_p);
   bsg_cache_dma_pkt_s dma_pkt;
   logic dma_pkt_v_lo;
   logic dma_pkt_yumi_li;
@@ -61,7 +61,6 @@ module testbench();
   logic dma_data_ready_lo;
 
   logic [data_width_p-1:0] dma_data_lo;
-  logic dma_wmask_lo;
   logic dma_data_v_lo;
   logic dma_data_yumi_li;
 
@@ -94,7 +93,6 @@ module testbench();
     ,.dma_data_ready_o(dma_data_ready_lo)
 
     ,.dma_data_o(dma_data_lo)
-    ,.dma_wmask_o(dma_wmask_lo)
     ,.dma_data_v_o(dma_data_v_lo)
     ,.dma_data_yumi_i(dma_data_yumi_li)
 
@@ -185,7 +183,7 @@ module testbench();
   bsg_nonsynth_dma_model #(
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
-    ,.mask_width_p(1)
+    ,.mask_width_p(block_size_in_words_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.els_p(2**18)
   ) dma (
@@ -201,7 +199,6 @@ module testbench();
     ,.dma_data_ready_i(dma_data_ready_lo)
 
     ,.dma_data_i(dma_data_lo)
-    ,.dma_wmask_i(dma_wmask_lo)
     ,.dma_data_v_i(dma_data_v_lo)
     ,.dma_data_yumi_o(dma_data_yumi_li)
   );

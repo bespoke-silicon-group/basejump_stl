@@ -33,7 +33,7 @@ module bsg_cache_dma
     ,parameter data_mem_els_lp=(sets_p*burst_len_lp)
     ,parameter lg_data_mem_els_lp=`BSG_SAFE_CLOG2(data_mem_els_lp)
 
-    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p, block_size_in_words_p)
   
     ,parameter debug_p=0
   )
@@ -59,7 +59,6 @@ module bsg_cache_dma
     ,output logic dma_data_ready_o
 
     ,output logic [dma_data_width_p-1:0] dma_data_o
-    ,output logic [burst_size_in_words_lp-1:0] dma_wmask_o
     ,output logic dma_data_v_o
     ,input dma_data_yumi_i
 
@@ -116,7 +115,7 @@ module bsg_cache_dma
 
   // dma packet
   //
-  `declare_bsg_cache_dma_pkt_s(addr_width_p);
+  `declare_bsg_cache_dma_pkt_s(addr_width_p, block_size_in_words_p);
   bsg_cache_dma_pkt_s dma_pkt;
 
   // in fifo
@@ -144,46 +143,29 @@ module bsg_cache_dma
   logic out_fifo_v_li;
   logic out_fifo_ready_lo;
   logic [dma_data_width_p-1:0] out_fifo_data_li;
-  logic [burst_size_in_words_lp-1:0] out_fifo_wmask_li;
 
   bsg_two_fifo #(
-    .width_p(dma_data_width_p+burst_size_in_words_lp)
+    .width_p(dma_data_width_p)
   ) out_fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
 
     ,.v_i(out_fifo_v_li)
-    ,.data_i({out_fifo_data_li, out_fifo_wmask_li})
+    ,.data_i(out_fifo_data_li)
     ,.ready_o(out_fifo_ready_lo)
 
     ,.v_o(dma_data_v_o)
-    ,.data_o({dma_data_o, dma_wmask_o})
+    ,.data_o(dma_data_o)
     ,.yumi_i(dma_data_yumi_i)
   );
 
   assign dma_pkt_o = dma_pkt;
 
-  // track bits
-  logic [ways_p-1:0][block_size_in_words_p-1:0] track_mem_data_r;
-  logic [block_size_in_words_p-1:0] track_data_way_picked;
-  logic [block_size_in_words_p-1:0] track_bits;
-
-  assign track_bits = track_miss_i ? track_data_way_picked : {block_size_in_words_p{1'b0}};
-
-  bsg_mux #(
-    .width_p(block_size_in_words_p)
-    ,.els_p(ways_p)
-  ) track_data_mux (
-    .data_i(track_mem_data_r)
-    ,.sel_i(dma_way_i)
-    ,.data_o(track_data_way_picked)
-  );
-
   logic [ways_p-1:0] dma_way_mask;
   logic [ways_p-1:0][dma_data_mask_width_lp-1:0] dma_way_mask_expanded;
   logic [burst_size_in_words_lp-1:0] track_bits_offset_picked;
   logic [dma_data_mask_width_lp-1:0] track_bits_offset_picked_expanded;
-  logic [dma_data_mask_width_lp-1:0] data_mem_track_mask_way_picked;
+  logic [dma_data_mask_width_lp-1:0] data_mem_w_mask_way_picked;
 
   bsg_decode #(
     .num_out_p(ways_p)
@@ -200,10 +182,23 @@ module bsg_cache_dma
     ,.o(dma_way_mask_expanded)
   );
 
+  logic [ways_p-1:0][block_size_in_words_p-1:0] track_mem_data_r;
+  logic [block_size_in_words_p-1:0] track_data_way_picked;
+  logic [block_size_in_words_p-1:0] track_bits;
+
+  bsg_mux #(
+    .width_p(block_size_in_words_p)
+    ,.els_p(ways_p)
+  ) track_way_mux (
+    .data_i(track_mem_data_r)
+    ,.sel_i(dma_way_i)
+    ,.data_o(track_data_way_picked)
+  );
+
   bsg_mux #(
     .width_p(burst_size_in_words_lp)
     ,.els_p(burst_len_lp)
-  ) read_mask_mux (
+  ) track_offset_mux (
     .data_i(track_bits)
     ,.sel_i(counter_r[0+:lg_burst_len_lp])
     ,.data_o(track_bits_offset_picked)
@@ -217,7 +212,8 @@ module bsg_cache_dma
     ,.o(track_bits_offset_picked_expanded)
   );
 
-  assign data_mem_track_mask_way_picked = word_tracking_p ? ~track_bits_offset_picked_expanded : {dma_data_mask_width_lp{1'b1}};
+  assign track_bits = track_miss_i ? track_data_way_picked : {block_size_in_words_p{1'b0}};
+  assign data_mem_w_mask_way_picked = word_tracking_p ? ~track_bits_offset_picked_expanded : {dma_data_mask_width_lp{1'b1}};
 
   if (burst_len_lp == 1) begin
     assign data_mem_addr_o = dma_addr_i[block_offset_width_lp+:lg_sets_lp];
@@ -236,7 +232,7 @@ module bsg_cache_dma
   end
   
   assign data_mem_data_o = {ways_p{in_fifo_data_lo}};
-  assign data_mem_w_mask_o = dma_way_mask_expanded & {ways_p{data_mem_track_mask_way_picked}};
+  assign data_mem_w_mask_o = dma_way_mask_expanded & {ways_p{data_mem_w_mask_way_picked}};
 
   bsg_mux #(
     .width_p(dma_data_width_p)
@@ -247,23 +243,6 @@ module bsg_cache_dma
     ,.data_o(out_fifo_data_li)
   );
 
-  logic [lg_burst_len_lp-1:0] track_sel_li;
-  assign track_sel_li = lg_burst_len_lp'(counter_r - 1'b1);
-
-if (word_tracking_p) begin
-  bsg_mux #(
-    .width_p(burst_size_in_words_lp)
-    ,.els_p(burst_len_lp)
-  ) write_mask_mux (
-    .data_i(track_data_way_picked)
-    ,.sel_i(track_sel_li)
-    ,.data_o(out_fifo_wmask_li)
-  );
-end
-else begin
-  assign out_fifo_wmask_li = {burst_size_in_words_lp{1'b1}};
-end
-
   always_comb begin
     done_o = 1'b0;
 
@@ -273,6 +252,7 @@ end
       dma_addr_i[addr_width_p-1:block_offset_width_lp],
       {(block_offset_width_lp){1'b0}}
     };
+    dma_pkt.mask = {block_size_in_words_p{1'b0}};
 
     data_mem_v_o = 1'b0;
     data_mem_w_o = 1'b0;
@@ -310,6 +290,7 @@ end
           e_dma_send_evict_addr: begin
             dma_pkt_v_o = 1'b1;
             dma_pkt.write_not_read = 1'b1;
+            dma_pkt.mask = word_tracking_p ? track_data_way_picked : {block_size_in_words_p{1'b1}};
             done_o = dma_pkt_yumi_i;
             dma_state_n = IDLE;
           end
