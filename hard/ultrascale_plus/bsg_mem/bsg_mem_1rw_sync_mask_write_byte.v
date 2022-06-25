@@ -36,9 +36,11 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p)
    ,output logic [`BSG_SAFE_MINUS(data_width_p, 1):0] data_o
   );
 
+  wire unused = reset_i;
+
   if (data_width_p == 0)
   begin: z
-    wire unused0 = &{clk_i, reset_i, v_i, w_i, addr_i, data_i, write_mask_i};
+    wire unused0 = &{clk_i, v_i, w_i, addr_i, data_i, write_mask_i};
     assign data_o = '0;
   end
   else
