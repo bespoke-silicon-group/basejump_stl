@@ -54,10 +54,8 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p)
       end
 
     always_ff @(posedge clk_i)
-      begin: read
         if(v_i & ~w_i)
             data_o <= mem[addr_i];
-      end
 
   end
 
