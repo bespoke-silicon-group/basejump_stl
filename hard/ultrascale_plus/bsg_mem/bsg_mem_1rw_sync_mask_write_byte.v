@@ -55,17 +55,21 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p)
    */
 
     logic [data_width_p-1:0] mem [els_p-1:0];
+    logic [write_mask_width_lp-1:0] write_enable;
 
     for(genvar i = 0; i < write_mask_width_lp; i++)
       begin: write
+        assign write_enable[i] = w_i & write_mask_i[i];
         always_ff @(posedge clk_i)
-            if(v_i & w_i & write_mask_i[i])
-                mem[addr_i][i*8+:8] <= data_i[i*8+:8];
+            if(v_i)
+                if(write_enable[i])
+                    mem[addr_i][i*8+:8] <= data_i[i*8+:8];
       end
 
     always_ff @(posedge clk_i)
-        if(v_i & ~w_i)
-            data_o <= mem[addr_i];
+        if(v_i)
+            if(~|write_enable)
+                data_o <= mem[addr_i];
 
   end
 
