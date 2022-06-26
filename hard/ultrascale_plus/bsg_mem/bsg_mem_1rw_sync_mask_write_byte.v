@@ -46,6 +46,14 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p)
   else
   begin: nz
 
+  /* WARNING: This implementation will use BRAM inference.
+   *
+   * We also can support URAM inference
+   * (https://github.com/bespoke-silicon-group/basejump_stl/pull/564/files)
+   * if we provide a hardened switch file which can choose between
+   * BRAM and URAM inference based on depth and width parameterizations.
+   */
+
     logic [data_width_p-1:0] mem [els_p-1:0];
 
     for(genvar i = 0; i < write_mask_width_lp; i++)
