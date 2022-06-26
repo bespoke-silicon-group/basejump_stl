@@ -46,7 +46,7 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p)
   else
   begin: nz
 
-  /* WARNING: This implementation will use BRAM inference.
+  /* WARNING: This implementation will use BRAM/URAM inference.
    *
    * We also can support URAM inference
    * (https://github.com/bespoke-silicon-group/basejump_stl/pull/564/files)
