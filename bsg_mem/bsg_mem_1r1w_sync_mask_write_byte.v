@@ -6,24 +6,26 @@
 
 `include "bsg_defines.v"
 
-module bsg_mem_1r1w_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
-                                        , parameter `BSG_INV_PARAM(els_p)
-                                        // semantics of "1" are write occurs, then read
-                                        // the other semantics cannot be simulated on a hardened, non-simultaneous
-                                        // 1r1w SRAM without changing timing.
-                                        // fixme: change to write_then_read_same_addr_p
-                                        , parameter read_write_same_addr_p=0
-                                        , parameter latch_last_read_p=0 
-                                        , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
-                                        , parameter harden_p=0
-                                        , parameter disable_collision_warning_p=0
-                                        , parameter enable_clock_gating_p=0
-                                        )
+module bsg_mem_1r1w_sync_mask_write_byte #(parameter `BSG_INV_PARAM(width_p)
+                                         , parameter `BSG_INV_PARAM(els_p)
+                                         // semantics of "1" are write occurs, then read
+                                         // the other semantics cannot be simulated on a hardened, non-simultaneous
+                                         // 1r1w SRAM without changing timing.
+                                         // fixme: change to write_then_read_same_addr_p
+                                         , parameter read_write_same_addr_p=0
+                                         , parameter latch_last_read_p=0 
+                                         , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+                                         , parameter harden_p=0
+                                         , parameter disable_collision_warning_p=0
+                                         , parameter write_mask_width_lp = width_p>>3
+                                         , parameter enable_clock_gating_p=0
+                                         )
    (input   clk_i
     , input reset_i
 
     , input                     w_v_i
-    , input [`BSG_SAFE_MINUS(width_p, 1):0]       w_mask_i
+    // for each bit set in the mask, a byte is written
+   ,input [`BSG_SAFE_MINUS(write_mask_width_lp, 1):0] w_mask_i
     , input [addr_width_lp-1:0] w_addr_i
     , input [`BSG_SAFE_MINUS(width_p, 1):0]       w_data_i
 
@@ -49,11 +51,12 @@ module bsg_mem_1r1w_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
        assign clk_lo = clk_i;
      end
 
-   bsg_mem_1r1w_sync_mask_write_bit_synth
+   bsg_mem_1r1w_sync_mask_write_byte_synth
      #(.width_p(width_p)
        ,.els_p (els_p  )
        ,.read_write_same_addr_p(read_write_same_addr_p)
        ,.latch_last_read_p(latch_last_read_p)
+       ,.harden_p(harden_p)
        ,.disable_collision_warning_p(disable_collision_warning_p)
        ) synth
        (.clk_i(clk_lo)
@@ -104,4 +107,5 @@ module bsg_mem_1r1w_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
    
 endmodule
 
-`BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync_mask_write_bit)
+`BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync_mask_write_byte)
+

@@ -15,6 +15,7 @@ bsg_mem_1r1w_sync_template = """
       , parameter read_write_same_addr_p=0
       , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
       , parameter harden_p=1
+      , parameter latch_last_read_p=0
       , parameter disable_collision_warning_p=0
       , parameter enable_clock_gating_p=0
     )
@@ -34,6 +35,8 @@ bsg_mem_1r1w_sync_template = """
 
     // synopsys translate_off
     initial begin
+      if (latch_last_read_p && !{latch_last_read_en})
+        $error("BSG ERROR: latch_last_read_p is set but unsupported");
       if (read_write_same_addr_p && !{read_write_same_addr_en})
         $error("BSG ERROR: read_write_same_addr_p is set but unsupported");
       if (enable_clock_gating_p && !{enable_clock_gating_en})
@@ -51,6 +54,7 @@ bsg_mem_1r1w_sync_template = """
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
+        ,.latch_last_read_p(latch_last_read_p)
       ) synth (.*);
     end
 
@@ -75,6 +79,7 @@ bsg_mem_1r1w_sync_mask_write_bit_template = """
       , parameter `BSG_INV_PARAM(els_p)
       , parameter read_write_same_addr_p=0
       , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+      , parameter latch_last_read_p=0
       , parameter harden_p=1
       , parameter disable_collision_warning_p=0
       , parameter enable_clock_gating_p=0
@@ -96,6 +101,8 @@ bsg_mem_1r1w_sync_mask_write_bit_template = """
 
     // synopsys translate_off
     initial begin
+      if (latch_last_read_p && !{latch_last_read_en})
+        $error("BSG ERROR: latch_last_read_p is set but unsupported");
       if (read_write_same_addr_p && !{read_write_same_addr_en})
         $error("BSG ERROR: read_write_same_addr_p is set but unsupported");
       if (enable_clock_gating_p && !{enable_clock_gating_en})
@@ -113,6 +120,7 @@ bsg_mem_1r1w_sync_mask_write_bit_template = """
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
+        ,.latch_last_read_p(latch_last_read_p)
       ) synth (.*);
     end
 
@@ -138,6 +146,7 @@ bsg_mem_1r1w_sync_mask_write_byte_template = """
       , parameter read_write_same_addr_p=0
       , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
       , parameter write_mask_width_lp=width_p>>3
+      , parameter latch_last_read_p=0
       , parameter harden_p=1
       , parameter disable_collision_warning_p=0
       , parameter enable_clock_gating_p=0
@@ -159,6 +168,8 @@ bsg_mem_1r1w_sync_mask_write_byte_template = """
 
     // synopsys translate_off
     initial begin
+      if (latch_last_read_p && !{latch_last_read_en})
+        $error("BSG ERROR: latch_last_read_p is set but unsupported");
       if (read_write_same_addr_p && !{read_write_same_addr_en})
         $error("BSG ERROR: read_write_same_addr_p is set but unsupported");
       if (enable_clock_gating_p && !{enable_clock_gating_en})
@@ -176,6 +187,7 @@ bsg_mem_1r1w_sync_mask_write_byte_template = """
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
+        ,.latch_last_read_p(latch_last_read_p)
       ) synth (.*);
     end
 
