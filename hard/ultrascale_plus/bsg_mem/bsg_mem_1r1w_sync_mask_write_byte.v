@@ -65,6 +65,12 @@ module bsg_mem_1r1w_sync_mask_write_byte #(parameter `BSG_INV_PARAM(width_p)
 
     logic [width_p-1:0] mem [els_p-1:0];
 
+  /* In order to synthesize into a byte masked BRAM/URAM, follow instruction in
+   * Xilinx doc "UG901", Section "Byte Write Enable (Block RAM)"
+   *
+   * Note: must follow the example code line-to-line, Vivado is very inflexible on this
+   */
+
     for(genvar i = 0; i < write_mask_width_lp; i++)
       begin: write
         always_ff @(posedge clk_i)
