@@ -26,7 +26,7 @@ module bsg_async_fifo #(parameter `BSG_INV_PARAM(  lg_size_p )
                         // considering the enable signal. This parameter zeros out data when
                         // the fifo is empty to avoid these glitches. If receiving logic uses 
                         // the rvalid signal, this extra hardware is unnecessary
-                        , parameter   glitchless_p = 1)
+                        , parameter   and_data_with_valid_p = 0)
    (
     input    w_clk_i
     , input  w_reset_i
@@ -55,7 +55,19 @@ module bsg_async_fifo #(parameter `BSG_INV_PARAM(  lg_size_p )
    assign r_valid_o = r_valid_o_tmp;
 
    wire [width_p-1:0] r_data_o_tmp;
-   assign r_data_o = (glitchless_p & ~r_valid_o_tmp) ? '0 : r_data_o_tmp;
+   if (and_data_with_valid_p)
+     begin : fi
+       wire [width_p-1:0] r_valid_o_exp = { width_p { r_valid_o_tmp } };
+       bsg_and #(.width_p(width_p), .harden_p(1)) ba
+         (.a_i  (r_data_o_tmp)
+          ,.b_i (r_valid_o_exp)
+          ,.o   (r_data_o)
+          );
+     end
+   else
+     begin : fi
+       assign r_data_o = r_data_o_tmp;
+     end
 
    bsg_mem_1r1w #(.width_p(width_p-control_width_p)
                   ,.els_p(size_lp)
