@@ -5,7 +5,8 @@
 * Write mode: No-change | Read mode: No-change
 * Note:
 * There are 2 basic BRAM library primitives, RAMB18E2 and RAMB36E2 in Vivado
-* Both of them support byte write enable
+* There is 1 URAM library primitive, URAM288 in Vivado
+* All of them support byte write enable
 *
 * Refer to Vivado Design Suite User Guide: Synthesis (UG901), Byte Write Enable (Block RAM)
 * https://docs.xilinx.com/v/u/2019.1-English/ug901-vivado-synthesis
@@ -55,9 +56,9 @@ module bsg_mem_1r1w_sync_mask_write_byte #(parameter `BSG_INV_PARAM(width_p)
   else
   begin: nz
 
-  /* WARNING: This implementation will use BRAM/URAM inference.
+  /* WARNING: Vivado will automatically choose between BRAM and URAM.
    *
-   * We also can support URAM inference
+   * We also can support URAM-only inference
    * (https://github.com/bespoke-silicon-group/basejump_stl/pull/564/files)
    * if we provide a hardened switch file which can choose between
    * BRAM and URAM inference based on depth and width parameterizations.
