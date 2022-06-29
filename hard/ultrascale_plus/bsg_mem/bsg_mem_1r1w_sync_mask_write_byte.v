@@ -12,6 +12,29 @@
 * https://docs.xilinx.com/v/u/2019.1-English/ug901-vivado-synthesis
 *
 * reads are synchronous
+*
+*
+* By default, the tool selects which type of RAM to infer based upon heuristics
+* that give the best results for most designs. Possible RAM mappings are:
+*
+* ┌───────────┬──────────┬──────┬─────┬─────┬─────┬──────────────────────────────┐
+* │ RAM Type  │Primitives│ Size │PortA│PortB│wb_en│           Mapping            │
+* ├───────────┼──────────┼──────┼─────┼─────┼─────┼──────────────────────────────┤
+* │Distributed│  LUTRAM  │ N/A  │ N/A │ N/A │ N/A │Memory with small depth       │
+* ├───────────┼──────────┼──────┼─────┼─────┼─────┼──────────────────────────────┤
+* │           │ RAMB18E2 │ 18Kb │  W  │  R  │  Y  │Width narrower than 2 bytes   │
+* │ Block RAM ├──────────┼──────┼─────┼─────┼─────┼──────────────────────────────┤
+* │           │ RAMB36E2 │ 36Kb │  W  │  R  │  Y  │Width narrower than 4 bytes   │
+* ├───────────┼──────────┼──────┼─────┼─────┼─────┼──────────────────────────────┤
+* │ Ultra RAM │ URAM288  │288Kb │  W  │  R  │  Y  │Width wider than 4 bytes      │
+* └───────────┴──────────┴──────┴─────┴─────┴─────┴──────────────────────────────┘
+*
+* To force the RAM into a specific type, use the RAM_STYLE attribute to tell
+* Vivado synthesis to infer the target primitives:
+*
+* (* ram_style = "x" *) logic [data_size-1:0] mem [2**addr_size-1:0];
+* Where x = [block, distributed, registers, ultra]
+*
 */
 
 `include "bsg_defines.v"
