@@ -55,7 +55,6 @@ bsg_mem_1r1w_sync_template = """
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
         ,.latch_last_read_p(latch_last_read_p)
-        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -122,7 +121,6 @@ bsg_mem_1r1w_sync_mask_write_bit_template = """
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
         ,.latch_last_read_p(latch_last_read_p)
-        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -190,7 +188,6 @@ bsg_mem_1r1w_sync_mask_write_byte_template = """
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
         ,.latch_last_read_p(latch_last_read_p)
-        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -244,7 +241,6 @@ module bsg_mem_1rw_sync #(parameter `BSG_INV_PARAM(width_p)
         .width_p(width_p)
         ,.els_p(els_p)
         ,.latch_last_read_p(latch_last_read_p)
-        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -297,7 +293,6 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
         .width_p(width_p)
         ,.els_p(els_p)
         ,.latch_last_read_p(latch_last_read_p)
-        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -351,7 +346,6 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(data_width_p)
         .data_width_p(data_width_p)
         ,.els_p(els_p)
         ,.latch_last_read_p(latch_last_read_p)
-        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -410,7 +404,6 @@ bsg_mem_2r1w_sync_template = """
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
-        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -475,7 +468,6 @@ bsg_mem_2rw_sync_template = """
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
-        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -542,7 +534,6 @@ bsg_mem_2rw_sync_mask_write_bit_template = """
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
-        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -610,7 +601,6 @@ bsg_mem_2rw_sync_mask_write_byte_template = """
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
-        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
@@ -676,7 +666,6 @@ bsg_mem_3r1w_sync_template = """
         .width_p(width_p)
         ,.els_p(els_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
-        ,.harden_p(harden_p)
       ) synth (.*);
     end
 
