@@ -37,10 +37,6 @@ module bsg_mem_1rw_sync_mask_write_byte_synth
 
   for(i=0; i<write_mask_width_lp; i=i+1)
   begin: bk
-    // this code causes inefficient block ram mapping with Xilinx Ultrascale FPGAs 
-    // in Vivado, substitute this file with hard/ultrascale_plus/bsg_mem/bsg_mem_1rw_sync_mask_write_byte.v
-    //`BSG_VIVADO_SYNTH_FAILS
-
     bsg_mem_1rw_sync #( .width_p      (8)
                         ,.els_p        (els_p)
                         ,.addr_width_lp(addr_width_lp)
