@@ -14,7 +14,7 @@
 
 module bsg_mem_2r1w_sync #(parameter `BSG_INV_PARAM(width_p)
                            , parameter `BSG_INV_PARAM(els_p)
-                           , parameter read_write_same_addr_p=0
+                           , parameter read_write_same_addr_p=0 // specifically write_then_read_p
                            , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                            , parameter harden_p=0
                            , parameter enable_clock_gating_p=0
