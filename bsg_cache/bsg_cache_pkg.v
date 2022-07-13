@@ -134,4 +134,20 @@ package bsg_cache_pkg;
   } bsg_cache_dma_cmd_e;
 
 
+  // cache dma wormhole opcode
+  // This opcode is included in the cache DMA wormhole header flit.
+  typedef enum logic [1:0] {
+    // len = 1
+    // header + addr
+    e_cache_wh_read = 2'b00
+
+    // len = 1 + (# data flits)
+    // header + addr + data
+    ,e_cache_wh_write_non_masked = 2'b10
+
+    // len = 2 + (# data flits)
+    // header + addr + mask + data
+    ,e_cache_wh_write_masked = 2'b11
+  } bsg_cache_wh_opcode_e;
+
 endpackage

@@ -2,6 +2,9 @@
  *    bsg_cache_to_test_dram.v
  *
  *    multiple caches can attach here and connect to one test dram channel.
+ *    
+ *    cache block size must be greater or equal to the dram_data_width_p.
+ *    If the cache block size is greater, this module issues multiple dram commands per one dma_pkt.
  *
  *    @author tommy
  *
@@ -29,7 +32,7 @@ module bsg_cache_to_test_dram
     , parameter dram_byte_offset_width_lp = `BSG_SAFE_CLOG2(dram_data_width_p>>3)
 
     , parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
-    , parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    , parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p, block_size_in_words_p)
   )
   (
     // vcache dma interface
@@ -61,6 +64,7 @@ module bsg_cache_to_test_dram
     // dram write data channel (valid-yumi)
     , output logic dram_data_v_o
     , output logic [dram_data_width_p-1:0] dram_data_o
+    , output logic [(dram_data_width_p>>3)-1:0] dram_mask_o
     , input dram_data_yumi_i
 
     // dram read data channel (valid-only)
@@ -72,7 +76,7 @@ module bsg_cache_to_test_dram
 
   // dma pkt
   //
-  `declare_bsg_cache_dma_pkt_s(addr_width_p);
+  `declare_bsg_cache_dma_pkt_s(addr_width_p, block_size_in_words_p);
   bsg_cache_dma_pkt_s [num_cache_p-1:0] dma_pkt;
   assign dma_pkt = dma_pkt_i;
 
@@ -179,6 +183,7 @@ module bsg_cache_to_test_dram
   //
   logic tx_v_li;
   logic tx_ready_lo;
+  logic [(block_size_in_words_p/num_req_lp)-1:0] tx_mask_li;
 
   bsg_cache_to_test_dram_tx #(
     .num_cache_p(num_cache_p)
@@ -192,6 +197,7 @@ module bsg_cache_to_test_dram
 
     ,.v_i(tx_v_li)
     ,.tag_i(rr_tag_n)
+    ,.mask_i(tx_mask_li)
     ,.ready_o(tx_ready_lo)
 
     ,.dma_data_i(dma_data_i)
@@ -203,11 +209,12 @@ module bsg_cache_to_test_dram
 
     ,.dram_data_v_o(dram_data_v_o)
     ,.dram_data_o(dram_data_o)
+    ,.dram_mask_o(dram_mask_o)
     ,.dram_data_yumi_i(dram_data_yumi_i)
   );
  
-
-  if (num_req_lp == 1) begin
+  
+  if (num_req_lp == 1) begin: req1
     assign counter_up = 1'b0;
     assign counter_clear = 1'b0;
     assign rr_yumi_li = rr_v_lo & ~req_afifo_full & (rr_dma_pkt_lo.write_not_read ? tx_ready_lo : 1'b1);
@@ -215,9 +222,10 @@ module bsg_cache_to_test_dram
     assign tx_v_li = rr_v_lo & ~req_afifo_full & rr_dma_pkt_lo.write_not_read & tx_ready_lo;
     assign rr_tag_n = rr_tag_lo;
     assign dma_pkt_n = rr_dma_pkt_lo;
+    assign tx_mask_li = rr_dma_pkt_lo.mask;
   end
-  else begin
-
+  else begin: reqn
+    
     always_comb begin
       counter_up = 1'b0;
       counter_clear = 1'b0;
@@ -226,7 +234,6 @@ module bsg_cache_to_test_dram
       tx_v_li = 1'b0;
       rr_tag_n = rr_tag_r;
       dma_pkt_n = dma_pkt_r;
-
 
       if (count_r == 0) begin
         if (rr_v_lo & ~req_afifo_full & (rr_dma_pkt_lo.write_not_read ? tx_ready_lo : 1'b1)) begin
@@ -253,6 +260,15 @@ module bsg_cache_to_test_dram
         end
       end      
     end
+
+    bsg_mux #(
+      .els_p(num_req_lp)
+      ,.width_p(block_size_in_words_p/num_req_lp)
+    ) mask_mux (
+      .data_i(dma_pkt_n.mask)
+      ,.sel_i(count_r)
+      ,.data_o(tx_mask_li)
+    );
 
   end
 

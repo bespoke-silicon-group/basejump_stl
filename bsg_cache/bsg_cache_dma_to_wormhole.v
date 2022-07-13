@@ -3,9 +3,9 @@
  *
  *    This module interfaces bsg_cache_dma to a wormhole link.
  *    dma_pkts come in two flavors:
- *      - Write packets send a wormhole header flit, then an address flit, then N data flits (the
+ *      - Write packets send a wormhole header flit, then an address flit, a mask flit, then N data flits (the
  *          evicted data)
- *      - Read packets send a womrhole header flit, then an address flit, then recieve
+ *      - Read packets send a wormhole header flit, then an address flit, then receive
  *          N data flits (the fill data) asynchronously.
  */
 
@@ -18,6 +18,7 @@ module bsg_cache_dma_to_wormhole
  import bsg_cache_pkg::*;
  #(parameter `BSG_INV_PARAM(dma_addr_width_p) // cache addr width (byte addr)
    , parameter `BSG_INV_PARAM(dma_burst_len_p) // num of data beats in dma transfer
+   , parameter `BSG_INV_PARAM(dma_mask_width_p) // mask width in the bsg_cache_dma_pkt_s. This should equal to the block_size_in_words_p set for bsg_cache.
 
    // flit width should match the cache dma width.
    , parameter `BSG_INV_PARAM(wh_flit_width_p)
@@ -25,7 +26,7 @@ module bsg_cache_dma_to_wormhole
    , parameter `BSG_INV_PARAM(wh_len_width_p)
    , parameter `BSG_INV_PARAM(wh_cord_width_p)
 
-   , parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(dma_addr_width_p)
+   , parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(dma_addr_width_p, dma_mask_width_p)
    , parameter wh_link_sif_width_lp=`bsg_ready_and_link_sif_width(wh_flit_width_p)
    , parameter dma_data_width_lp=wh_flit_width_p
 
@@ -57,7 +58,7 @@ module bsg_cache_dma_to_wormhole
    , input [wh_cid_width_p-1:0] dest_wh_cid_i
    );
 
-  `declare_bsg_cache_dma_pkt_s(dma_addr_width_p);
+  `declare_bsg_cache_dma_pkt_s(dma_addr_width_p, dma_mask_width_p);
   `declare_bsg_ready_and_link_sif_s(wh_flit_width_p, wh_link_sif_s);
   wh_link_sif_s wh_link_sif_in;
   wh_link_sif_s wh_link_sif_out;
@@ -136,22 +137,34 @@ module bsg_cache_dma_to_wormhole
   );
 
   // send FSM
-  enum logic [1:0] {
+  enum logic [2:0] {
     SEND_RESET
     , SEND_READY
     , SEND_ADDR
+    , SEND_MASK
     , SEND_DATA
   } send_state_n, send_state_r;
 
+
+  // Check if mask bits are all 1.
+  wire mask_all_one = &dma_pkt_lo.mask;
+
+  // Make a header flit.
   `declare_bsg_cache_wh_header_flit_s(wh_flit_width_p,wh_cord_width_p,wh_len_width_p,wh_cid_width_p);
 
   bsg_cache_wh_header_flit_s header_flit;
   assign header_flit.unused = '0;
-  assign header_flit.write_not_read = dma_pkt_lo.write_not_read;
+  assign header_flit.opcode = dma_pkt_lo.write_not_read
+    ? (mask_all_one 
+      ? e_cache_wh_write_non_masked 
+      : e_cache_wh_write_masked)
+    : e_cache_wh_read;
   assign header_flit.src_cid = my_wh_cid_i;
   assign header_flit.src_cord = my_wh_cord_i;
   assign header_flit.len = dma_pkt_lo.write_not_read
-    ? wh_len_width_p'(1+dma_burst_len_p)  // header + addr + data
+    ? (mask_all_one 
+      ? wh_len_width_p'(1+dma_burst_len_p) // header + addr + data
+      : wh_len_width_p'(2+dma_burst_len_p)) // header + addr + mask + data
     : wh_len_width_p'(1);  // header + addr
   assign header_flit.cord = dest_wh_cord_i;
   assign header_flit.cid = dest_wh_cid_i;
@@ -173,10 +186,11 @@ module bsg_cache_dma_to_wormhole
       end
 
       SEND_READY: begin
+        // send header
         wh_link_sif_out.data = header_flit;
         if (dma_pkt_v_lo) begin
           wh_link_sif_out.v = 1'b1;
-          send_state_n = (wh_link_sif_in.ready_and_rev & wh_link_sif_out.v)
+          send_state_n = (wh_link_sif_in.ready_and_rev)
             ? SEND_ADDR
             : SEND_READY;
         end
@@ -186,10 +200,32 @@ module bsg_cache_dma_to_wormhole
         wh_link_sif_out.data = wh_flit_width_p'(dma_pkt_lo.addr);
         if (dma_pkt_v_lo) begin
           wh_link_sif_out.v = 1'b1;
-          dma_pkt_yumi_li = wh_link_sif_in.ready_and_rev & wh_link_sif_out.v;
-          send_state_n = dma_pkt_yumi_li
-            ? (dma_pkt_lo.write_not_read ? SEND_DATA : SEND_READY)
+ 
+          // If it's read, dequeue dma_pkt.
+          // If it's masked write, don't dequeue yet, because it still needs to send the mask flit.
+          // If it's non-masked write, dequeue it .
+          dma_pkt_yumi_li = dma_pkt_lo.write_not_read
+            ? (mask_all_one
+              ? wh_link_sif_in.ready_and_rev  // non-masked write
+              : 1'b0)  // masked write
+            : wh_link_sif_in.ready_and_rev;
+
+          send_state_n = wh_link_sif_in.ready_and_rev
+            ? (dma_pkt_lo.write_not_read 
+              ? (mask_all_one ? SEND_DATA : SEND_MASK)
+              : SEND_READY)
             : SEND_ADDR;
+        end
+      end
+    
+      SEND_MASK: begin
+        wh_link_sif_out.data = wh_flit_width_p'(dma_pkt_lo.mask);
+        if (dma_pkt_v_lo) begin
+          wh_link_sif_out.v = 1'b1;
+          dma_pkt_yumi_li = wh_link_sif_in.ready_and_rev;
+          send_state_n = wh_link_sif_in.ready_and_rev
+            ? SEND_DATA
+            : SEND_MASK;
         end
       end
 

@@ -17,6 +17,7 @@ module bsg_wormhole_to_cache_dma_fanout
  #(parameter `BSG_INV_PARAM(num_dma_p)
    , parameter `BSG_INV_PARAM(dma_addr_width_p) // cache addr width (in bytes)
    , parameter `BSG_INV_PARAM(dma_burst_len_p) // num of data beats in dma transfer
+   , parameter `BSG_INV_PARAM(dma_mask_width_p) // mask width in the bsg_cache_dma_pkt_s. This should equal to the block_size_in_words_p set for bsg_cache.
 
    // flit width must match the cache dma width.
    , parameter `BSG_INV_PARAM(wh_flit_width_p)
@@ -30,7 +31,7 @@ module bsg_wormhole_to_cache_dma_fanout
 
    , parameter wh_ready_and_link_sif_width_lp=`bsg_ready_and_link_sif_width(wh_flit_width_p)
    , parameter wh_then_ready_link_sif_width_lp=`bsg_then_ready_link_sif_width(wh_flit_width_p)
-   , parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(dma_addr_width_p)
+   , parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(dma_addr_width_p, dma_mask_width_p)
    , parameter dma_data_width_p=wh_flit_width_p
    )
   (
@@ -63,7 +64,7 @@ module bsg_wormhole_to_cache_dma_fanout
   // structs
   `declare_bsg_ready_and_link_sif_s(wh_flit_width_p,wh_ready_and_link_sif_s);
   `declare_bsg_then_ready_link_sif_s(wh_flit_width_p,wh_then_ready_link_sif_s);
-  `declare_bsg_cache_dma_pkt_s(dma_addr_width_p);
+  `declare_bsg_cache_dma_pkt_s(dma_addr_width_p, dma_mask_width_p);
   `declare_bsg_cache_wh_header_flit_s(wh_flit_width_p,wh_cord_width_p,wh_len_width_p,wh_cid_width_p);
 
 
@@ -105,17 +106,19 @@ module bsg_wormhole_to_cache_dma_fanout
 
 
   // send FSM
-  // receives wh packets and cache dma pkts.
-  typedef enum logic [1:0] {
+  // receives wh packets and send cache dma pkts, and evict data.
+  typedef enum logic [2:0] {
     SEND_RESET,
     SEND_READY,
     SEND_DMA_PKT,
+    SEND_DMA_PKT_WITH_MASK,
     SEND_EVICT_DATA
   } send_state_e;
 
   send_state_e send_state_r, send_state_n;
-  logic write_not_read_r, write_not_read_n;
+  bsg_cache_wh_opcode_e opcode_r, opcode_n;
   logic [lg_num_dma_lp-1:0] send_cache_id_r, send_cache_id_n;
+  logic [dma_addr_width_p-1:0] addr_r, addr_n;
 
   logic send_clear_li;
   logic send_up_li;
@@ -133,8 +136,9 @@ module bsg_wormhole_to_cache_dma_fanout
 
   always_comb begin
     send_state_n = send_state_r;
-    write_not_read_n = write_not_read_r;
+    opcode_n = opcode_r;
     send_cache_id_n = send_cache_id_r;
+    addr_n = addr_r;
     table_we = 1'b0;
     table_w_addr = '0;
     src_cord_n = '0;
@@ -157,12 +161,12 @@ module bsg_wormhole_to_cache_dma_fanout
       end
 
       // wait for a header flit.
-      // store the write_not_read, src_cord.
+      // store the opcode, src_cord.
       // save the cid in a table.
       SEND_READY: begin
         if (wh_link_sif_in.v) begin
           wh_link_sif_out.then_ready_rev = 1'b1;
-          write_not_read_n = header_flit_in.write_not_read;
+          opcode_n = header_flit_in.opcode;
           src_cord_n = header_flit_in.src_cord;
           src_cid_n = header_flit_in.src_cid;
           table_w_addr = wh_dma_id_i;
@@ -171,20 +175,59 @@ module bsg_wormhole_to_cache_dma_fanout
           send_state_n = SEND_DMA_PKT;
         end
       end
-
-      // take the addr flit and send out the dma pkt.
-      // For read, return to SEND_READY.
-      // For write, move to SEND_EVICT_DATA to pass the evict data.
+    
+      // take the addr flit and send out the dma pkt (for read, non-mask write).
+      // For read and non-mask write, return to SEND_READY.
+      // For mask write, flop the addr flit, and move to SEND_DMA_PKT_WITH_MASK.
       SEND_DMA_PKT: begin
-        dma_pkt_v_o[send_cache_id_r] = wh_link_sif_in.v;
-        dma_pkt_out.write_not_read = write_not_read_r;
+        dma_pkt_v_o[send_cache_id_r] = wh_link_sif_in.v & (opcode_r != e_cache_wh_write_masked);
+        dma_pkt_out.write_not_read = (opcode_r != e_cache_wh_read);
         dma_pkt_out.addr = dma_addr_width_p'(wh_link_sif_in.data);
+        dma_pkt_out.mask = '1;  // Don't care for read. This is for non-masked write.
+
+        wh_link_sif_out.then_ready_rev = dma_pkt_yumi_i[send_cache_id_r] | (opcode_r == e_cache_wh_write_masked);
+        addr_n = (wh_link_sif_in.v & (opcode_r == e_cache_wh_write_masked))
+          ? dma_addr_width_p'(wh_link_sif_in.data)
+          : addr_r;
+
+        case (opcode_r)
+          e_cache_wh_read: begin
+            send_state_n = dma_pkt_yumi_i[send_cache_id_r] 
+              ? SEND_READY
+              : SEND_DMA_PKT;
+          end
+          e_cache_wh_write_non_masked: begin
+            send_state_n = dma_pkt_yumi_i[send_cache_id_r] 
+              ? SEND_EVICT_DATA
+              : SEND_DMA_PKT;
+          end
+          e_cache_wh_write_masked: begin
+            send_state_n = wh_link_sif_in.v
+              ? SEND_DMA_PKT_WITH_MASK
+              : SEND_DMA_PKT;
+          end
+          // never happens:
+          default: begin
+            send_state_n = SEND_READY;
+          end
+        endcase
+
+      end
+
+      // Take mask flit, and send the dma pkt (for write).
+      SEND_DMA_PKT_WITH_MASK: begin
+        dma_pkt_v_o[send_cache_id_r] = wh_link_sif_in.v;
+        dma_pkt_out.write_not_read = 1'b1;
+        dma_pkt_out.addr = addr_r;
+        dma_pkt_out.mask = dma_mask_width_p'(wh_link_sif_in.data);
 
         wh_link_sif_out.then_ready_rev = dma_pkt_yumi_i[send_cache_id_r];
-        send_state_n = wh_link_sif_out.then_ready_rev
-          ? (write_not_read_r ? SEND_EVICT_DATA : SEND_READY)
-          : SEND_DMA_PKT;
+
+        send_state_n = dma_pkt_yumi_i[send_cache_id_r]
+          ? SEND_EVICT_DATA
+          : SEND_DMA_PKT_WITH_MASK;
       end
+      
 
       // once all evict data has been passed along return to SEND_READY
       SEND_EVICT_DATA: begin
@@ -200,6 +243,11 @@ module bsg_wormhole_to_cache_dma_fanout
         end
       end
 
+      default: begin
+        // this should never happen.
+        send_state_n = SEND_READY;
+      end
+
     endcase
 
   end
@@ -209,13 +257,15 @@ module bsg_wormhole_to_cache_dma_fanout
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       send_state_r <= SEND_RESET;
-      write_not_read_r <= 1'b0;
+      opcode_r <= e_cache_wh_read;
       send_cache_id_r <= '0;
+      addr_r <= '0;
     end
     else begin
       send_state_r <= send_state_n;
-      write_not_read_r <= write_not_read_n;
+      opcode_r <= opcode_n;
       send_cache_id_r <= send_cache_id_n;
+      addr_r <= addr_n;
     end
   end
 
@@ -289,7 +339,7 @@ module bsg_wormhole_to_cache_dma_fanout
     recv_up_li = 1'b0;
 
     header_flit_out.unused = '0;
-    header_flit_out.write_not_read = 1'b0; // doesn't matter
+    header_flit_out.opcode = e_cache_wh_read; // doesn't matter
     header_flit_out.src_cord = '0; // doesn't matter
     header_flit_out.src_cid = '0; // doesn't matter
     header_flit_out.len = dma_burst_len_p;

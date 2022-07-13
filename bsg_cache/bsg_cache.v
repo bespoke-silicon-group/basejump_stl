@@ -359,9 +359,18 @@ end
 
   logic bypass_track_lo;
 
-  wire partial_st    = decode.st_op & (decode.data_size_op < lg_data_mask_width_lp);
-  wire partial_st_tl = decode_tl_r.st_op & (decode_tl_r.data_size_op < lg_data_mask_width_lp);
-  wire partial_st_v  = decode_v_r.st_op & (decode_v_r.data_size_op < lg_data_mask_width_lp);
+  //wire partial_st    = decode.st_op & (decode.data_size_op < lg_data_mask_width_lp);
+  //wire partial_st_tl = decode_tl_r.st_op & (decode_tl_r.data_size_op < lg_data_mask_width_lp);
+  //wire partial_st_v  = decode_v_r.st_op & (decode_v_r.data_size_op < lg_data_mask_width_lp);
+  wire partial_st    = decode.st_op & (decode.mask_op
+                                        ? ~(&cache_pkt.mask)
+                                        : (decode.data_size_op < lg_data_mask_width_lp));
+  wire partial_st_tl = decode_tl_r.st_op & (decode_tl_r.mask_op
+                                        ? ~(&mask_tl_r)
+                                        : (decode_tl_r.data_size_op < lg_data_mask_width_lp));
+  wire partial_st_v  = decode_v_r.st_op & (decode_v_r.mask_op
+                                        ? ~(&mask_v_r)
+                                        : (decode_v_r.data_size_op < lg_data_mask_width_lp));
 
   wire ld_st_amo_tag_miss = (decode_v_r.ld_op | decode_v_r.st_op | decode_v_r.atomic_op) & ~tag_hit_found;
   wire track_miss = (decode_v_r.ld_op | decode_v_r.atomic_op | partial_st_v)
@@ -454,6 +463,7 @@ end
     ,.track_miss_i(track_miss)
     ,.decode_v_i(decode_v_r)
     ,.addr_v_i(addr_v_r)
+    ,.mask_v_i(mask_v_r)
 
     ,.tag_v_i(tag_v_r)
     ,.valid_v_i(valid_v_r)
