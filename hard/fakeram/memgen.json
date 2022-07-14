@@ -1,0 +1,5 @@
+{ "memories": [
+    {"ports": "1rw" , "width":   512, "depth":  512, "mux": 1, "type": "1sram"},
+    {"ports": "1rw" , "width":    64, "depth": 1024, "mux": 1, "type": "1sram"}
+  ]
+}
