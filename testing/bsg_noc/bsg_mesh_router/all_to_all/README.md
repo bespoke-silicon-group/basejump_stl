@@ -18,5 +18,5 @@ HOW TO RUN
   e.g.) make DIMS_P=3 RUCHE_X=3 XY_ORDER=0
   e.g.) make DIMS_P=2 XY_ORDER=1
 
-- run "./test.sh" to run a set of test parameters.
+- run "./sweep.sh" to run an essential set of test parameters. Check the results in "results.txt".
 ```
