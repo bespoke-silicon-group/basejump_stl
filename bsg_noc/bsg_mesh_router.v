@@ -35,7 +35,9 @@ module bsg_mesh_router
       (dims_p == 2) ? (XY_order_p ? StrictXY : StrictYX) : (
       (dims_p == 3) ? (depopulated_p ? (XY_order_p ? HalfRucheX_StrictXY : HalfRucheX_StrictYX) 
                                      : (XY_order_p ? HalfRucheX_FullyPopulated_StrictXY : HalfRucheX_FullyPopulated_StrictYX)) : (
-      (dims_p == 4) ? (XY_order_p ? FullRuche_StrictXY : FullRuche_StrictYX) : "inv"))
+      (dims_p == 4) ? (depopulated_p ? (XY_order_p ? FullRuche_StrictXY : FullRuche_StrictYX)
+                                     : (XY_order_p ? FullRuche_FullyPopulated_StrictXY : FullRuche_FullyPopulated_StrictYX))
+                    : "inv"))
 
     , parameter debug_p = 0
   )

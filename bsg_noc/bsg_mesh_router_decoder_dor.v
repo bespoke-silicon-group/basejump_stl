@@ -145,6 +145,23 @@ module bsg_mesh_router_decoder_dor
         assign req[RW] = y_eq & x_lt;
         assign req[W]  = 1'b0;
       end
+      else if (from_p[RN] | from_p[RS]) begin
+        if (depopulated_p) begin
+          // If depopulated, there wouldn't be these paths.
+          assign req[RE] = 1'b0;
+          assign req[E]  = 1'b0;
+          assign req[RW] = 1'b0;
+          assign req[W]  = 1'b0;
+        end
+        else begin
+          wire [x_cord_width_p-1:0] dxp = (x_cord_width_p)'((x_dirs_i - my_x_i) % ruche_factor_X_p);
+          wire [x_cord_width_p-1:0] dxn = (x_cord_width_p)'((my_x_i - x_dirs_i) % ruche_factor_X_p);
+          assign req[W]  = y_eq & x_lt & (dxn != '0);
+          assign req[RW] = y_eq & x_lt & (dxn == '0);
+          assign req[E]  = y_eq & x_gt & (dxp != '0);
+          assign req[RE] = y_eq & x_gt & (dxp == '0);
+        end
+      end
     end
   end
   else begin
@@ -171,7 +188,7 @@ module bsg_mesh_router_decoder_dor
         assign send_rs = ~rs_cord[y_cord_width_p] & (y_dirs_i > rs_cord[0+:y_cord_width_p]);
       end
       else begin
-        assign send_rn = (my_y_i > (y_cord_width_p)'(ruche_factor_Y_p)) & (y_dirs_i < (my_y_i - (y_cord_width_p)'(ruche_factor_Y_p)));
+        assign send_rn = (my_y_i >= (y_cord_width_p)'(ruche_factor_Y_p)) & (y_dirs_i <= (my_y_i - (y_cord_width_p)'(ruche_factor_Y_p)));
         assign send_rs = ~rs_cord[y_cord_width_p] & (y_dirs_i > rs_cord[0+:y_cord_width_p]);
       end
 
@@ -222,6 +239,23 @@ module bsg_mesh_router_decoder_dor
         assign req[S]  = 1'b0;
         assign req[RN] = x_eq & y_lt;
         assign req[N]  = 1'b0;
+      end
+      else if (from_p[RW] | from_p[RE]) begin
+        if (depopulated_p) begin
+          // If depopulated, there wouldn't be these paths.
+          assign req[RS] = 1'b0;
+          assign req[S]  = 1'b0;
+          assign req[RN] = 1'b0;
+          assign req[N]  = 1'b0;
+        end
+        else begin
+          wire [y_cord_width_p-1:0] dyp = (y_cord_width_p)'((y_dirs_i - my_y_i) % ruche_factor_Y_p);
+          wire [y_cord_width_p-1:0] dyn = (y_cord_width_p)'((my_y_i - y_dirs_i) % ruche_factor_Y_p);
+          assign req[N]  = x_eq & y_lt & (dyn != '0);
+          assign req[RN] = x_eq & y_lt & (dyn == '0);
+          assign req[S]  = x_eq & y_gt & (dyp != '0);
+          assign req[RS] = x_eq & y_gt & (dyp == '0);
+        end
       end
     end
 
