@@ -32,9 +32,21 @@ module testbench();
   localparam XY_order_p = `XY_ORDER;
   localparam dirs_lp = (dims_p*2)+1;
   localparam data_width_p = 32;
+  localparam depopulated_p = `DEPOPULATED;
   localparam x_cord_width_lp = `BSG_SAFE_CLOG2(num_tiles_x_p);
   localparam y_cord_width_lp = `BSG_SAFE_CLOG2(num_tiles_y_p);
 
+  // Print out test configurations
+  initial begin
+    $display("TEST CONFIGURATIONS:");
+    $display("num_tiles_x_p = %d", num_tiles_x_p);
+    $display("num_tiles_y_p = %d", num_tiles_y_p);
+    $display("dims_p = %d", dims_p);
+    $display("ruche_factor_X_p = %d", ruche_factor_X_p);
+    $display("ruche_factor_Y_p = %d", ruche_factor_Y_p);
+    $display("XY_order_p = %d", XY_order_p);
+    $display("depopulated_p = %d", depopulated_p);
+  end
 
 
   `declare_test_link_sif_s(data_width_p,x_cord_width_lp,y_cord_width_lp);
@@ -55,6 +67,7 @@ module testbench();
         ,.ruche_factor_X_p(ruche_factor_X_p)
         ,.ruche_factor_Y_p(ruche_factor_Y_p)
         ,.XY_order_p(XY_order_p)
+        ,.depopulated_p(depopulated_p)
       ) tile (
         .clk_i(clk)
         ,.reset_i(reset)
