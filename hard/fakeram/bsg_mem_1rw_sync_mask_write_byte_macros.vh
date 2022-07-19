@@ -2,17 +2,25 @@
 `ifndef BSG_MEM_1RW_SYNC_MASK_WRITE_BYTE_MACROS
 `define BSG_MEM_1RW_SYNC_MASK_WRITE_BYTE_MACROS
 
+`define bsg_mem_1rw_sync_mask_write_byte_1rf_macro(words,bits,tag) \
+  `bsg_mem_1rw_sync_mask_write_byte_1sram_macro(words,bits)
+`define bsg_mem_1rw_sync_mask_write_byte_1hdsram_macro(words,bits,tag) \
+  `bsg_mem_1rw_sync_mask_write_byte_1sram_macro(words,bits)
+
 `define bsg_mem_1rw_sync_mask_write_byte_1sram_macro(words,bits,tag) \
   if (els_p == words && data_width_p == bits)                        \
     begin: macro                                                     \
-       wire [data_width_p-1:0]w_mask_lo;                             \
-       genvar i;                                                     \
-       for(i=0; i<data_width_p; i++)                                 \
-          assign w_mask_lo[i] = write_mask_i[i>>3];                  \
+       logic [data_width_p-1:0] w_mask_lo;                           \
+       bsg_expand_bitmask                                            \
+        #(.in_width_p(write_mask_width_lp), .expand_p(8))            \
+        wmask_expand                                                 \
+         (.i(write_mask_i)                                           \
+          ,.o(w_mask_lo)                                             \
+          );                                                         \
                                                                      \
        fakeram_d``words``_w``bits`` mem                              \
-         (.clk(i_clk)                                                \
-         ,.ce_in(clk_en_lo)                                          \
+         (.clk(clk_i)                                                \
+         ,.ce_in(1'b1)                                               \
          ,.we_in(w_i)                                                \
          ,.wd_in(data_i)                                             \
          ,.w_mask_in(w_mask_lo)                                      \
