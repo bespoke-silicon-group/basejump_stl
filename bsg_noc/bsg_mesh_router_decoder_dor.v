@@ -88,12 +88,12 @@ module bsg_mesh_router_decoder_dor
       wire send_rw, send_re;
 
       if (depopulated_p) begin
-        assign send_rw = (my_x_i > (x_cord_width_p)'(ruche_factor_X_p)) & (x_dirs_i < (my_x_i - (x_cord_width_p)'(ruche_factor_X_p)));
-        assign send_re = ~re_cord[x_cord_width_p] & (x_dirs_i > re_cord[0+:x_cord_width_p]);
+        assign send_rw = (my_x_i > (x_cord_width_p)'(ruche_factor_X_p)) && (x_dirs_i < (my_x_i - (x_cord_width_p)'(ruche_factor_X_p)));
+        assign send_re = !re_cord[x_cord_width_p] && (x_dirs_i > re_cord[0+:x_cord_width_p]);
       end
       else begin
-        assign send_rw = (my_x_i >= (x_cord_width_p)'(ruche_factor_X_p)) & (x_dirs_i <= (my_x_i - (x_cord_width_p)'(ruche_factor_X_p)));
-        assign send_re = ~re_cord[x_cord_width_p] & (x_dirs_i >= re_cord[0+:x_cord_width_p]); // check no overflow
+        assign send_rw = (my_x_i >= (x_cord_width_p)'(ruche_factor_X_p)) && (x_dirs_i <= (my_x_i - (x_cord_width_p)'(ruche_factor_X_p)));
+        assign send_re = !re_cord[x_cord_width_p] && (x_dirs_i >= re_cord[0+:x_cord_width_p]); // check no overflow
       end
 
       assign req[W]  = x_lt & ~send_rw;
@@ -181,12 +181,12 @@ module bsg_mesh_router_decoder_dor
       wire send_rn, send_rs;
 
       if (depopulated_p) begin
-        assign send_rn = (my_y_i > (y_cord_width_p)'(ruche_factor_Y_p)) & (y_dirs_i < (my_y_i - (y_cord_width_p)'(ruche_factor_Y_p)));
-        assign send_rs = ~rs_cord[y_cord_width_p] & (y_dirs_i > rs_cord[0+:y_cord_width_p]);
+        assign send_rn = (my_y_i > (y_cord_width_p)'(ruche_factor_Y_p)) && (y_dirs_i < (my_y_i - (y_cord_width_p)'(ruche_factor_Y_p)));
+        assign send_rs = !rs_cord[y_cord_width_p] && (y_dirs_i > rs_cord[0+:y_cord_width_p]);
       end
       else begin
-        assign send_rn = (my_y_i >= (y_cord_width_p)'(ruche_factor_Y_p)) & (y_dirs_i <= (my_y_i - (y_cord_width_p)'(ruche_factor_Y_p)));
-        assign send_rs = ~rs_cord[y_cord_width_p] & (y_dirs_i >= rs_cord[0+:y_cord_width_p]);
+        assign send_rn = (my_y_i >= (y_cord_width_p)'(ruche_factor_Y_p)) && (y_dirs_i <= (my_y_i - (y_cord_width_p)'(ruche_factor_Y_p)));
+        assign send_rs = !rs_cord[y_cord_width_p] && (y_dirs_i >= rs_cord[0+:y_cord_width_p]);
       end
 
       assign req[N]  = y_lt & ~send_rn;
