@@ -89,7 +89,7 @@ package bsg_mesh_router_pkg;
 
 
   // dims_p = 4
-  // XY_order_p = 0
+  // XY_order_p = 1
   localparam bit [8:0][8:0] FullRuche_StrictXY = {
     //  RS,RN,RE,RW,SNEWP (input)
      9'b010001000  // RS
@@ -107,7 +107,7 @@ package bsg_mesh_router_pkg;
 
 
   // dims_p = 4
-  // XY_order_p = 1
+  // XY_order_p = 0
   localparam bit [8:0][8:0] FullRuche_StrictYX = {
     //  RS,RN,RE,RW,SNEWP (input)
      9'b010000001  // RS
@@ -177,8 +177,8 @@ package bsg_mesh_router_pkg;
 
 
   // dims_p = 4
-  // XY_order_p = 1
-  // depopulated_p = 1
+  // XY_order_p = 0
+  // depopulated_p = 0
   localparam bit [8:0][8:0] FullRuche_FullyPopulated_StrictYX = {
     //  RS,RN,RE,RW,SNEWP (input)
      9'b010000001  // RS
