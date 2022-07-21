@@ -39,6 +39,10 @@
 `define BSG_INV_PARAM(param) param = -1
 `elsif YOSYS // Bare default parameters are incompatible as of 0.9
 `define BSG_INV_PARAM(param) param = "inv"
+`elsif XILINX_SIMULATOR // XSIM
+                        // = -1 causes crashes and "inv" causes hangs.
+                        // = 2 seems likely to compile to sane hardware
+`define BSG_INV_PARAM(param) param = 2
 `else // VIVADO, DC, VERILATOR, GENUS
 `define BSG_INV_PARAM(param) param
 `endif
