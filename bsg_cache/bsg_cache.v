@@ -359,9 +359,6 @@ end
 
   logic bypass_track_lo;
 
-  //wire partial_st    = decode.st_op & (decode.data_size_op < lg_data_mask_width_lp);
-  //wire partial_st_tl = decode_tl_r.st_op & (decode_tl_r.data_size_op < lg_data_mask_width_lp);
-  //wire partial_st_v  = decode_v_r.st_op & (decode_v_r.data_size_op < lg_data_mask_width_lp);
   wire partial_st    = decode.st_op & (decode.mask_op
                                         ? ~(&cache_pkt.mask)
                                         : (decode.data_size_op < lg_data_mask_width_lp));
