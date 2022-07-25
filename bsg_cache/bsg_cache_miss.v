@@ -417,7 +417,7 @@ module bsg_cache_miss
 
         // set stat mem entry on store tag miss.
         stat_mem_v_o = dma_done_i & st_tag_miss_op;
-        stat_mem_w_o = dma_done_i & st_tag_miss_op;
+        stat_mem_w_o = 1'b1;
         stat_mem_data_out.dirty = {ways_p{1'b1}};
         stat_mem_data_out.lru_bits = chosen_way_lru_data;
         stat_mem_w_mask_out.dirty = chosen_way_decode;
@@ -425,7 +425,7 @@ module bsg_cache_miss
 
         // set the tag and the valid bit to 1'b1 for the chosen way on store tag miss.
         tag_mem_v_o = dma_done_i & st_tag_miss_op;
-        tag_mem_w_o = dma_done_i & st_tag_miss_op;
+        tag_mem_w_o = 1'b1;
 
         for (integer i = 0; i < ways_p; i++) begin
           tag_mem_data_out[i].tag = addr_tag_v;
@@ -438,7 +438,7 @@ module bsg_cache_miss
 
         // set track bits to zero for the chosen way on store tag miss.
         track_mem_v_o = dma_done_i & st_tag_miss_op;
-        track_mem_w_o = dma_done_i & st_tag_miss_op;
+        track_mem_w_o = 1'b1;
         for (integer i = 0; i < ways_p; i++) begin
           track_mem_data_o[i] = {block_size_in_words_p{1'b0}};
           track_mem_w_mask_o[i] = {block_size_in_words_p{chosen_way_decode[i]}};
@@ -468,7 +468,7 @@ module bsg_cache_miss
         // the MRU. lru decode unit generates the next state LRU bits, so that
         // the input way is "not" the LRU way.
         stat_mem_v_o = dma_done_i;
-        stat_mem_w_o = dma_done_i;
+        stat_mem_w_o = 1'b1;
         stat_mem_data_out.dirty = {ways_p{decode_v_i.st_op | decode_v_i.atomic_op}};
         stat_mem_data_out.lru_bits = chosen_way_lru_data;
         stat_mem_w_mask_out.dirty = track_miss_i ? {ways_p{1'b0}} : chosen_way_decode;
@@ -476,7 +476,7 @@ module bsg_cache_miss
 
         // set the tag and the valid bit to 1'b1 for the chosen way.
         tag_mem_v_o = dma_done_i;
-        tag_mem_w_o = dma_done_i;
+        tag_mem_w_o = 1'b1;
 
         for (integer i = 0; i < ways_p; i++) begin
           tag_mem_data_out[i].tag = addr_tag_v;
@@ -489,7 +489,7 @@ module bsg_cache_miss
 
         // set track bits to one for the chosen way on store tag miss.
         track_mem_v_o = word_tracking_p ? dma_done_i : 1'b0;
-        track_mem_w_o = dma_done_i;
+        track_mem_w_o = 1'b1;
         for (integer i = 0; i < ways_p; i++) begin
           track_mem_data_o[i] = {block_size_in_words_p{1'b1}};
           track_mem_w_mask_o[i] = {block_size_in_words_p{chosen_way_decode[i]}};

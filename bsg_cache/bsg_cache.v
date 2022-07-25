@@ -256,7 +256,7 @@ module bsg_cache
   logic [ways_p-1:0][block_size_in_words_p-1:0] track_mem_w_mask_li;
   logic [ways_p-1:0][block_size_in_words_p-1:0] track_mem_data_lo;
 
-if (word_tracking_p) begin
+if (word_tracking_p) begin : track_mem_gen
   bsg_mem_1rw_sync_mask_write_bit #(
     .width_p(block_size_in_words_p*ways_p)
     ,.els_p(sets_p)
@@ -807,7 +807,7 @@ end
   logic tbuf_bypass_v_li;
   logic tbuf_full_lo;
 
-if (word_tracking_p) begin
+if (word_tracking_p) begin : tbuf_gen
   bsg_cache_tbuf #(
     .data_width_p(data_width_p)
     ,.addr_width_p(addr_width_p)
@@ -1028,7 +1028,7 @@ end
     | (decode.tagst_op & ready_o & v_i); 
   
   assign tag_mem_w_li = miss_v
-    ? miss_tag_mem_w_lo
+    ? (miss_tag_mem_v_lo & miss_tag_mem_w_lo)
     : tagst_write_en;
 
   always_comb begin
@@ -1084,7 +1084,9 @@ end
     | (tbuf_v_lo & tbuf_yumi_li)
   );
 
-  assign track_mem_w_li = miss_track_mem_w_lo | (tbuf_v_lo & tbuf_yumi_li);
+  assign track_mem_w_li = miss_track_mem_v_lo
+    ? miss_track_mem_w_lo
+    : (tbuf_v_lo & tbuf_yumi_li);
 
   assign track_mem_data_li = miss_track_mem_v_lo
     ? miss_track_mem_data_lo
