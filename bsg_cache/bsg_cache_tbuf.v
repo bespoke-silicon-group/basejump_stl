@@ -50,93 +50,30 @@ module bsg_cache_tbuf
 
   logic [addr_width_p-1:0] el0_addr, el1_addr;
   logic [way_id_width_lp-1:0] el0_way, el1_way;
+  logic el0_valid, el1_valid;
 
-  logic [1:0] num_els_r;
-
-  logic el0_valid;
-  logic el1_valid;
-  logic mux1_sel;
-  logic mux0_sel;
-  logic el0_enable;
-  logic el1_enable;
-
-  always_comb begin
-    case (num_els_r) 
-      0: begin
-        v_o = v_i;
-        empty_o = 1;
-        full_o = 0;
-        el0_valid = 0;
-        el1_valid = 0;
-        el0_enable = 0;
-        el1_enable = v_i & ~yumi_i;
-        mux0_sel = 0;
-        mux1_sel = 0;
-      end
-      
-      1: begin
-        v_o = 1;
-        empty_o = 0;
-        full_o = 0;
-        el0_valid = 0;
-        el1_valid = 1;
-        el0_enable = v_i & ~yumi_i;
-        el1_enable = v_i & yumi_i;
-        mux0_sel = 0;
-        mux1_sel = 1;
-      end
-
-      2: begin
-        v_o = 1;
-        empty_o = 0;
-        full_o = 1;
-        el0_valid = 1;
-        el1_valid = 1;
-        el0_enable = v_i & yumi_i;
-        el1_enable = yumi_i;
-        mux0_sel = 1;
-        mux1_sel = 1;
-      end
-      default: begin
-        // this would never happen.
-        v_o = 0;
-        empty_o = 0;
-        full_o = 0;
-        el0_valid = 0;
-        el1_valid = 0;
-        el0_enable = 0;
-        el1_enable = 0;
-        mux0_sel = 0;
-        mux1_sel = 0;
-      end
-    endcase
-  end
-
-  always_ff @ (posedge clk_i) begin
-    if (reset_i) begin
-      num_els_r <= 2'b0;
-    end
-    else begin
-      num_els_r <= num_els_r + v_i - (v_o & yumi_i);
-    end
-  end
-
-  // tbuf queues 
-  // 
-  bsg_cache_sbuf_queue #(
+  // buffer queue
+  bsg_cache_buffer_queue #(
     .width_p(addr_width_p+way_id_width_lp)
-  ) sbq (
+  ) q0 (
     .clk_i(clk_i)
-    ,.data_i({way_i, addr_i})
-    ,.el0_en_i(el0_enable)
-    ,.el1_en_i(el1_enable)
-    ,.mux0_sel_i(mux0_sel)
-    ,.mux1_sel_i(mux1_sel)
-    ,.el0_snoop_o({el0_way, el0_addr})
-    ,.el1_snoop_o({el1_way, el1_addr})
-    ,.data_o({way_o, addr_o})
-  );
+    ,.reset_i(reset_i)
 
+    ,.v_i(v_i)
+    ,.data_i({addr_i, way_i})
+
+    ,.v_o(v_o)
+    ,.data_o({addr_o, way_o})
+    ,.yumi_i(yumi_i)
+
+    ,.el0_valid_o(el0_valid)
+    ,.el1_valid_o(el1_valid)
+    ,.el0_snoop_o({el0_addr, el0_way})
+    ,.el1_snoop_o({el1_addr, el1_way})
+
+    ,.empty_o(empty_o)
+    ,.full_o(full_o)
+  );
 
 
   // bypassing
@@ -167,13 +104,6 @@ module bsg_cache_tbuf
     end
   end
 
-  // synopsys translate_off
-  always_ff @ (negedge clk_i) begin
-    if (~reset_i & num_els_r !== 2'bx) 
-      assert(num_els_r != 3) else $error("track buffer cannot hold more than 2 entries.");
-
-  end
-  // synopsys translate_on
 
 endmodule
 
