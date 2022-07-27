@@ -20,9 +20,10 @@ module bsg_mesh_router_decoder_dor
     // XY_order_p = 1 :  X then Y
     // XY_order_p = 0 :  Y then X
     , parameter XY_order_p = 1
+    , parameter depopulated_p = 1
     , parameter from_p = {dirs_lp{1'b0}}  // one-hot, indicates which direction is the input coming from.
 
-    , parameter debug_p = 0
+    , parameter debug_p = 1
   )
   (
     input clk_i         // debug only
@@ -84,8 +85,16 @@ module bsg_mesh_router_decoder_dor
     if (XY_order_p) begin
       // make sure there is no under/overflow.
       wire [x_cord_width_p:0] re_cord = (x_cord_width_p+1)'(my_x_i + ruche_factor_X_p);
-      wire send_rw = (my_x_i > (x_cord_width_p)'(ruche_factor_X_p)) & (x_dirs_i < (my_x_i - (x_cord_width_p)'(ruche_factor_X_p)));
-      wire send_re = ~re_cord[x_cord_width_p] & (x_dirs_i > re_cord[0+:x_cord_width_p]);
+      wire send_rw, send_re;
+
+      if (depopulated_p) begin
+        assign send_rw = (my_x_i > (x_cord_width_p)'(ruche_factor_X_p)) && (x_dirs_i < (my_x_i - (x_cord_width_p)'(ruche_factor_X_p)));
+        assign send_re = !re_cord[x_cord_width_p] && (x_dirs_i > re_cord[0+:x_cord_width_p]);
+      end
+      else begin
+        assign send_rw = (my_x_i >= (x_cord_width_p)'(ruche_factor_X_p)) && (x_dirs_i <= (my_x_i - (x_cord_width_p)'(ruche_factor_X_p)));
+        assign send_re = !re_cord[x_cord_width_p] && (x_dirs_i >= re_cord[0+:x_cord_width_p]); // check no overflow
+      end
 
       assign req[W]  = x_lt & ~send_rw;
       assign req[RW] = send_rw;
@@ -93,25 +102,35 @@ module bsg_mesh_router_decoder_dor
       assign req[RE] = send_re;
     end
     else begin
+
+      wire [x_cord_width_p-1:0] dxp = (x_cord_width_p)'((x_dirs_i - my_x_i) % ruche_factor_X_p);
+      wire [x_cord_width_p-1:0] dxn = (x_cord_width_p)'((my_x_i - x_dirs_i) % ruche_factor_X_p);
+
       if (from_p[S] | from_p[N] | from_p[P]) begin
-        assign req[W]  = y_eq & x_lt;
-        assign req[RW] = 1'b0;
-        assign req[E]  = y_eq & x_gt;
-        assign req[RE] = 1'b0;
+        if (depopulated_p) begin
+          assign req[W]  = y_eq & x_lt;
+          assign req[RW] = 1'b0;
+          assign req[E]  = y_eq & x_gt;
+          assign req[RE] = 1'b0;
+        end
+        else begin
+          assign req[W]  = y_eq & x_lt & (dxn != '0);
+          assign req[RW] = y_eq & x_lt & (dxn == '0);
+          assign req[E]  = y_eq & x_gt & (dxp != '0);
+          assign req[RE] = y_eq & x_gt & (dxp == '0);
+        end
       end
       else if(from_p[W]) begin
-        wire [x_cord_width_p-1:0] dx = (x_cord_width_p)'((x_dirs_i - my_x_i) % ruche_factor_X_p);
-        assign req[RE] = y_eq & x_gt & (dx == '0);
-        assign req[E]  = y_eq & x_gt & (dx != '0);
+        assign req[RE] = y_eq & x_gt & (dxp == '0);
+        assign req[E]  = y_eq & x_gt & (dxp != '0);
         assign req[RW] = 1'b0;
         assign req[W]  = 1'b0;
       end
       else if (from_p[E]) begin
-        wire [x_cord_width_p-1:0] dx = (x_cord_width_p)'((my_x_i - x_dirs_i) % ruche_factor_X_p);
         assign req[RE] = 1'b0;
         assign req[E]  = 1'b0;
-        assign req[RW] = y_eq & x_lt & (dx == '0);
-        assign req[W]  = y_eq & x_lt & (dx != '0);
+        assign req[RW] = y_eq & x_lt & (dxn == '0);
+        assign req[W]  = y_eq & x_lt & (dxn != '0);
       end
       else if (from_p[RW]) begin
         assign req[RE] = y_eq & x_gt;
@@ -125,8 +144,22 @@ module bsg_mesh_router_decoder_dor
         assign req[RW] = y_eq & x_lt;
         assign req[W]  = 1'b0;
       end
+      else if (from_p[RN] | from_p[RS]) begin
+        if (depopulated_p) begin
+          // If depopulated, there wouldn't be these paths.
+          assign req[RE] = 1'b0;
+          assign req[E]  = 1'b0;
+          assign req[RW] = 1'b0;
+          assign req[W]  = 1'b0;
+        end
+        else begin
+          assign req[W]  = y_eq & x_lt & (dxn != '0);
+          assign req[RW] = y_eq & x_lt & (dxn == '0);
+          assign req[E]  = y_eq & x_gt & (dxp != '0);
+          assign req[RE] = y_eq & x_gt & (dxp == '0);
+        end
+      end
     end
-
   end
   else begin
     if (XY_order_p) begin
@@ -145,8 +178,16 @@ module bsg_mesh_router_decoder_dor
     if (XY_order_p == 0) begin
       // make sure there is no under/overflow.
       wire [y_cord_width_p:0] rs_cord = (y_cord_width_p+1)'(my_y_i + ruche_factor_Y_p);
-      wire send_rn = (my_y_i > (y_cord_width_p)'(ruche_factor_Y_p)) & (y_dirs_i < (my_y_i - (y_cord_width_p)'(ruche_factor_Y_p)));
-      wire send_rs = ~rs_cord[y_cord_width_p] & (y_dirs_i > rs_cord[0+:y_cord_width_p]);
+      wire send_rn, send_rs;
+
+      if (depopulated_p) begin
+        assign send_rn = (my_y_i > (y_cord_width_p)'(ruche_factor_Y_p)) && (y_dirs_i < (my_y_i - (y_cord_width_p)'(ruche_factor_Y_p)));
+        assign send_rs = !rs_cord[y_cord_width_p] && (y_dirs_i > rs_cord[0+:y_cord_width_p]);
+      end
+      else begin
+        assign send_rn = (my_y_i >= (y_cord_width_p)'(ruche_factor_Y_p)) && (y_dirs_i <= (my_y_i - (y_cord_width_p)'(ruche_factor_Y_p)));
+        assign send_rs = !rs_cord[y_cord_width_p] && (y_dirs_i >= rs_cord[0+:y_cord_width_p]);
+      end
 
       assign req[N]  = y_lt & ~send_rn;
       assign req[RN] = send_rn;
@@ -154,25 +195,35 @@ module bsg_mesh_router_decoder_dor
       assign req[RS] = send_rs;
     end
     else begin
+
+      wire [y_cord_width_p-1:0] dyp = (y_cord_width_p)'((y_dirs_i - my_y_i) % ruche_factor_Y_p);
+      wire [y_cord_width_p-1:0] dyn = (y_cord_width_p)'((my_y_i - y_dirs_i) % ruche_factor_Y_p);
+
       if (from_p[E] | from_p[W] | from_p[P]) begin
-        assign req[N]  = x_eq & y_lt;
-        assign req[RN] = 1'b0;
-        assign req[S]  = x_eq & y_gt;
-        assign req[RS] = 1'b0;
+        if (depopulated_p) begin
+          assign req[N]  = x_eq & y_lt;
+          assign req[RN] = 1'b0;
+          assign req[S]  = x_eq & y_gt;
+          assign req[RS] = 1'b0;
+        end
+        else begin
+          assign req[N]  = x_eq & y_lt & (dyn != '0);
+          assign req[RN] = x_eq & y_lt & (dyn == '0);
+          assign req[S]  = x_eq & y_gt & (dyp != '0);
+          assign req[RS] = x_eq & y_gt & (dyp == '0);
+        end
       end
       else if (from_p[N]) begin
-        wire [y_cord_width_p-1:0] dy = (y_cord_width_p)'((y_dirs_i - my_y_i) % ruche_factor_Y_p);
-        assign req[RS] = x_eq & y_gt & (dy == '0);
-        assign req[S]  = x_eq & y_gt & (dy != '0);
+        assign req[RS] = x_eq & y_gt & (dyp == '0);
+        assign req[S]  = x_eq & y_gt & (dyp != '0);
         assign req[RN] = 1'b0;
         assign req[N]  = 1'b0;
       end
       else if (from_p[S]) begin
-        wire [y_cord_width_p-1:0] dy = (y_cord_width_p)'((my_y_i - y_dirs_i) % ruche_factor_Y_p);
         assign req[RS] = 1'b0;
         assign req[S]  = 1'b0;
-        assign req[RN] = x_eq & y_lt & (dy == '0);
-        assign req[N]  = x_eq & y_lt & (dy != '0);
+        assign req[RN] = x_eq & y_lt & (dyn == '0);
+        assign req[N]  = x_eq & y_lt & (dyn != '0);
       end
       else if (from_p[RN]) begin
         assign req[RS] = x_eq & y_gt;
@@ -185,6 +236,21 @@ module bsg_mesh_router_decoder_dor
         assign req[S]  = 1'b0;
         assign req[RN] = x_eq & y_lt;
         assign req[N]  = 1'b0;
+      end
+      else if (from_p[RW] | from_p[RE]) begin
+        if (depopulated_p) begin
+          // If depopulated, there wouldn't be these paths.
+          assign req[RS] = 1'b0;
+          assign req[S]  = 1'b0;
+          assign req[RN] = 1'b0;
+          assign req[N]  = 1'b0;
+        end
+        else begin
+          assign req[N]  = x_eq & y_lt & (dyn != '0);
+          assign req[RN] = x_eq & y_lt & (dyn == '0);
+          assign req[S]  = x_eq & y_gt & (dyp != '0);
+          assign req[RS] = x_eq & y_gt & (dyp == '0);
+        end
       end
     end
 

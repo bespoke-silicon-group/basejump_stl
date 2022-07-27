@@ -30,10 +30,14 @@ module bsg_mesh_router
     , parameter dims_p = 2
     , parameter dirs_lp = (2*dims_p)+1
     , parameter XY_order_p = 1
+    , parameter depopulated_p = 1
     , parameter bit [dirs_lp-1:0][dirs_lp-1:0]  routing_matrix_p = 
       (dims_p == 2) ? (XY_order_p ? StrictXY : StrictYX) : (
-      (dims_p == 3) ? (XY_order_p ? HalfRucheX_StrictXY : HalfRucheX_StrictYX) : (
-      (dims_p == 4) ? (XY_order_p ? FullRuche_StrictXY : FullRuche_StrictYX) : "inv"))
+      (dims_p == 3) ? (depopulated_p ? (XY_order_p ? HalfRucheX_StrictXY : HalfRucheX_StrictYX) 
+                                     : (XY_order_p ? HalfRucheX_FullyPopulated_StrictXY : HalfRucheX_FullyPopulated_StrictYX)) : (
+      (dims_p == 4) ? (depopulated_p ? (XY_order_p ? FullRuche_StrictXY : FullRuche_StrictYX)
+                                     : (XY_order_p ? FullRuche_FullyPopulated_StrictXY : FullRuche_FullyPopulated_StrictYX))
+                    : "inv"))
 
     , parameter debug_p = 0
   )
@@ -79,6 +83,7 @@ module bsg_mesh_router
       ,.dims_p(dims_p)
       ,.XY_order_p(XY_order_p)
       ,.from_p((dirs_lp)'(1 << i))
+      ,.depopulated_p(depopulated_p)
       ,.debug_p(debug_p)
     ) dor_decoder (
       .clk_i(clk_i)

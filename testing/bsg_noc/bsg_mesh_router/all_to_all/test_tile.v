@@ -15,6 +15,7 @@ module test_tile
     , parameter ruche_factor_Y_p=0
     , parameter XY_order_p=1
     , parameter dirs_lp=(dims_p*2)+1
+    , parameter depopulated_p=1
 
     , parameter link_sif_width_lp = `test_link_sif_width(data_width_p,x_cord_width_p,y_cord_width_p)
   )
@@ -67,6 +68,7 @@ module test_tile
     ,.dims_p(dims_p)
     ,.fifo_els_p(get_fifo_els())
     ,.XY_order_p(XY_order_p)
+    ,.depopulated_p(depopulated_p)
   ) router (
     .clk_i(clk_i)
     ,.reset_i(reset_i)

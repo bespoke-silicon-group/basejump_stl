@@ -89,7 +89,7 @@ package bsg_mesh_router_pkg;
 
 
   // dims_p = 4
-  // XY_order_p = 0
+  // XY_order_p = 1
   localparam bit [8:0][8:0] FullRuche_StrictXY = {
     //  RS,RN,RE,RW,SNEWP (input)
      9'b010001000  // RS
@@ -107,7 +107,7 @@ package bsg_mesh_router_pkg;
 
 
   // dims_p = 4
-  // XY_order_p = 1
+  // XY_order_p = 0
   localparam bit [8:0][8:0] FullRuche_StrictYX = {
     //  RS,RN,RE,RW,SNEWP (input)
      9'b010000001  // RS
@@ -122,5 +122,74 @@ package bsg_mesh_router_pkg;
    };
 
 
+  // Half Ruche (ruche network in X-direction)
+  // fully populated router
+  // YX retraces XY.
+
+  // dims_p = 3
+  // XY_order_p = 1
+  // depopulated_p = 0
+  localparam bit [6:0][6:0] HalfRucheX_FullyPopulated_StrictXY = {
+    //  RE,RW,SNEWP (input)
+     7'b0100001  // RE
+    ,7'b1000001  // RW
+    ,7'b1101111  // S
+    ,7'b1110111  // N
+    ,7'b0100011  // E
+    ,7'b1000101  // W
+    ,7'b1111111  // P (output)
+   };
+
+
+  // dims_p = 3
+  // XY_order_p = 0
+  // depopulated_p = 0
+  localparam bit [6:0][6:0] HalfRucheX_FullyPopulated_StrictYX = {
+    //  RE,RW,SNEWP (input)
+     7'b0111011  // RE
+    ,7'b1011101  // RW
+    ,7'b0001001  // S
+    ,7'b0010001  // N
+    ,7'b0011011  // E
+    ,7'b0011101  // W
+    ,7'b1111111  // P (output)
+  };
+
+
+  // Full Ruche
+  // Fully populated router
+  
+  // dims_p = 4
+  // XY_order_p = 1
+  // depopulated_p = 0
+  localparam bit [8:0][8:0] FullRuche_FullyPopulated_StrictXY = {
+    //  RS,RN,RE,RW,SNEWP (input)
+     9'b011101111  // RS
+    ,9'b101110111  // RN
+    ,9'b000100001  // RE
+    ,9'b001000001  // RW
+    ,9'b001101111  // S
+    ,9'b001110111  // N
+    ,9'b000100011  // E
+    ,9'b001000101  // W
+    ,9'b111111111  // P (output)
+   };
+
+
+  // dims_p = 4
+  // XY_order_p = 0
+  // depopulated_p = 0
+  localparam bit [8:0][8:0] FullRuche_FullyPopulated_StrictYX = {
+    //  RS,RN,RE,RW,SNEWP (input)
+     9'b010000001  // RS
+    ,9'b100000001  // RN
+    ,9'b110111011  // RE
+    ,9'b111011101  // RW
+    ,9'b010001001  // S
+    ,9'b100010001  // N
+    ,9'b110011011  // E
+    ,9'b110011101  // W
+    ,9'b111111111  // P (output)
+   };
 
 endpackage
