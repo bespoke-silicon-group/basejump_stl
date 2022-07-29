@@ -12,7 +12,7 @@
     begin: macro                                     \
        fakeram_d``words``_w``bits`` mem              \
          (.clk(clk_i)                                \
-         ,.ce_in(1'b1)                               \
+         ,.ce_in(v_i)                                \
          ,.we_in(w_i)                                \
          ,.wd_in(data_i)                             \
          ,.w_mask_in('1)                             \
