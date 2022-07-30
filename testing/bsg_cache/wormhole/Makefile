@@ -3,6 +3,7 @@ export BASEJUMP_STL_DIR = $(abspath ../../..)
 
 INCDIR =  +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_noc
+INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_cache
 
 VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access
 VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4 -assert svaext
@@ -41,7 +42,7 @@ VCS_DEFINES += +define+DMA_RATIO_P=$(DMA_RATIO_P)
 
 
 SIMV = $(abspath simv)
-WAVE ?= 1
+WAVE ?= 0
 
 BASIC_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BASIC_TEST)))
 
