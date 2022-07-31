@@ -16,10 +16,11 @@ module bsg_cache_to_dram_ctrl
     , parameter `BSG_INV_PARAM(addr_width_p)
     , parameter `BSG_INV_PARAM(data_width_p)
     , parameter `BSG_INV_PARAM(block_size_in_words_p)
+    , parameter `BSG_INV_PARAM(dma_mask_width_p)
     
     , localparam mask_width_lp=(data_width_p>>3)
     , localparam lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
-    , localparam dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    , localparam dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p,dma_mask_width_p)
 
     , parameter `BSG_INV_PARAM(dram_ctrl_burst_len_p)
     , parameter dram_ctrl_addr_width_p=(addr_width_p+lg_num_cache_lp)
@@ -66,7 +67,7 @@ module bsg_cache_to_dram_ctrl
 
   // round robin for dma pkts
   //
-  `declare_bsg_cache_dma_pkt_s(addr_width_p);
+  `declare_bsg_cache_dma_pkt_s(addr_width_p,dma_mask_width_p);
   bsg_cache_dma_pkt_s dma_pkt;
   logic rr_v_lo;
   logic [lg_num_cache_lp-1:0] rr_tag_lo;
@@ -89,6 +90,7 @@ module bsg_cache_to_dram_ctrl
   );
 
   logic [lg_num_cache_lp-1:0] tag_r, tag_n;
+  logic [dma_mask_width_p-1:0] mask_r, mask_n;
 
   // rx module
   //
@@ -126,12 +128,14 @@ module bsg_cache_to_dram_ctrl
     .num_cache_p(num_cache_p)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
+    ,.dma_mask_width_p(dma_mask_width_p)
     ,.dram_ctrl_burst_len_p(dram_ctrl_burst_len_p)
   ) tx (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
     ,.v_i(tx_v_li)
     ,.tag_i(tag_r)
+    ,.mask_i(mask_r)
     ,.ready_o(tx_ready_lo)
     ,.dma_data_i(dma_data_i)
     ,.dma_data_v_i(dma_data_v_i)
@@ -166,6 +170,7 @@ module bsg_cache_to_dram_ctrl
     req_state_n = req_state_r;
     req_cnt_n = req_cnt_r;
     addr_n = addr_r;
+    mask_n = mask_r;
     
     case (req_state_r)
       WAIT: begin
@@ -173,6 +178,7 @@ module bsg_cache_to_dram_ctrl
           rr_yumi_li = 1'b1;
           tag_n = rr_tag_lo;
           addr_n = dma_pkt.addr;
+          mask_n = dma_pkt.mask;
           write_not_read_n = dma_pkt.write_not_read;
           req_cnt_n = '0;
           req_state_n = SEND_REQ;
@@ -193,6 +199,9 @@ module bsg_cache_to_dram_ctrl
         addr_n = (app_rdy_i & app_en_o)
           ? addr_r + (1 << `BSG_SAFE_CLOG2(dram_ctrl_burst_len_p*data_width_p/8))
           : addr_r;
+        mask_n = (app_rdy_i & app_en_o)
+          ? (mask_r >> (dma_mask_width_p/num_req_lp))
+          : mask_r;
         req_cnt_n = (app_rdy_i & app_en_o)
           ? req_cnt_r + 1
           : req_cnt_r;
@@ -222,6 +231,7 @@ module bsg_cache_to_dram_ctrl
       req_state_r <= WAIT;
       tag_r <= '0;
       addr_r <= '0;
+      mask_r <= '0;
       req_cnt_r <= '0;
       write_not_read_r <= 1'b0;
     end
@@ -229,6 +239,7 @@ module bsg_cache_to_dram_ctrl
       req_state_r <= req_state_n;
       tag_r <= tag_n;
       addr_r <= addr_n;
+      mask_r <= mask_n;
       req_cnt_r <= req_cnt_n;
       write_not_read_r <= write_not_read_n;
     end
