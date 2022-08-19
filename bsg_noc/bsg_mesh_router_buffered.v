@@ -19,6 +19,7 @@ module bsg_mesh_router_buffered
     , parameter dims_p        = 2
     , parameter dirs_lp       = (2*dims_p)+1
     , parameter stub_p        = { dirs_lp {1'b0}}  // SNEWP
+    , parameter instantiate_fifo_p = {dirs_lp{1'b1}}
     , parameter XY_order_p    = 1
     , parameter depopulated_p = 1
     , parameter bsg_ready_and_link_sif_width_lp=`bsg_ready_and_link_sif_width(width_p)
@@ -78,51 +79,58 @@ module bsg_mesh_router_buffered
       // synopsys translate_on
     end
     else begin: fi
-      logic fifo_ready_lo;
-
-      bsg_fifo_1r1w_small #(
-        .width_p(width_p)
-        ,.els_p(fifo_els_p[i])
-      ) fifo (
-        .clk_i(clk_i)
-        ,.reset_i(reset_i)
-
-        ,.v_i     (link_i_cast[i].v            )
-        ,.data_i  (link_i_cast[i].data         )
-        ,.ready_o (fifo_ready_lo)
-
-        ,.v_o     (fifo_valid[i])
-        ,.data_o  (fifo_data [i])
-        ,.yumi_i  (fifo_yumi [i])
-      );
-      
-      if (use_credits_p[i]) begin: cr
-        bsg_dff_reset #(
-          .width_p(1)
-          ,.reset_val_p(0)
-        ) dff0 (
+      if (instantiate_fifo_p[i]) begin: inst
+        logic fifo_ready_lo;
+        bsg_fifo_1r1w_small #(
+          .width_p(width_p)
+          ,.els_p(fifo_els_p[i])
+        ) fifo (
           .clk_i(clk_i)
           ,.reset_i(reset_i)
-          ,.data_i(fifo_yumi[i])
-          ,.data_o(link_o_cast[i].ready_and_rev)
+
+          ,.v_i     (link_i_cast[i].v            )
+          ,.data_i  (link_i_cast[i].data         )
+          ,.ready_o (fifo_ready_lo)
+
+          ,.v_o     (fifo_valid[i])
+          ,.data_o  (fifo_data [i])
+          ,.yumi_i  (fifo_yumi [i])
         );
+      
+        if (use_credits_p[i]) begin: cr
+          bsg_dff_reset #(
+            .width_p(1)
+            ,.reset_val_p(0)
+          ) dff0 (
+            .clk_i(clk_i)
+            ,.reset_i(reset_i)
+            ,.data_i(fifo_yumi[i])
+            ,.data_o(link_o_cast[i].ready_and_rev)
+          );
         
-        // synopsys translate_off
-        always_ff @ (negedge clk_i) begin
-          if (~reset_i) begin
-            if (link_i_cast[i].v) begin
-              assert(fifo_ready_lo)
-                else $error("Trying to enque when there is no space in FIFO, while using credit interface. i =%d", i);
+          // synopsys translate_off
+          always_ff @ (negedge clk_i) begin
+            if (~reset_i) begin
+              if (link_i_cast[i].v) begin
+                assert(fifo_ready_lo)
+                  else $error("Trying to enque when there is no space in FIFO, while using credit interface. i =%d", i);
+              end
             end
           end
+          // synopsys translate_on
+
         end
-        // synopsys translate_on
+        else begin
+          assign link_o_cast[i].ready_and_rev = fifo_ready_lo;      
+        end
 
       end
-      else begin
-        assign link_o_cast[i].ready_and_rev = fifo_ready_lo;      
+      else begin: noinst
+        // If the input FIFO is not instantiated, the interface of that port  becomes valid-yumi.
+        assign fifo_valid[i] = link_i_cast[i].v;
+        assign fifo_data[i] = link_i_cast[i].data;
+        assign link_o_cast[i].ready_and_rev = fifo_yumi[i];
       end
-
     end
   end
 
