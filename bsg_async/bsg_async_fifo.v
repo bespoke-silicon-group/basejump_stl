@@ -19,7 +19,14 @@ module bsg_async_fifo #(parameter `BSG_INV_PARAM(  lg_size_p )
                         // the data bits to allow for better control optimization.
                         // control_width_p is how many of the width_p bits are control bits;
                         // these bits should be at the top of the array
-                        , parameter   control_width_p = 0)
+                        , parameter   control_width_p = 0
+                        // When the fifo is empty, the rdata output of this fifo changes based
+                        // on wvalid, while rvalid is synchronized to the rclk. This can cause
+                        // timing violations on flops which directly latch the rdata without
+                        // considering the enable signal. This parameter zeros out data when
+                        // the fifo is empty to avoid these glitches. If receiving logic uses 
+                        // the rvalid signal, this extra hardware is unnecessary
+                        , parameter   and_data_with_valid_p = 0)
    (
     input    w_clk_i
     , input  w_reset_i
@@ -47,6 +54,21 @@ module bsg_async_fifo #(parameter `BSG_INV_PARAM(  lg_size_p )
    wire               r_valid_o_tmp; // remove inout warning from Lint
    assign r_valid_o = r_valid_o_tmp;
 
+   wire [width_p-1:0] r_data_o_tmp;
+   if (and_data_with_valid_p)
+     begin : fi
+       wire [width_p-1:0] r_valid_o_exp = { width_p { r_valid_o_tmp } };
+       bsg_and #(.width_p(width_p), .harden_p(1)) ba
+         (.a_i  (r_data_o_tmp)
+          ,.b_i (r_valid_o_exp)
+          ,.o   (r_data_o)
+          );
+     end
+   else
+     begin : fi
+       assign r_data_o = r_data_o_tmp;
+     end
+
    bsg_mem_1r1w #(.width_p(width_p-control_width_p)
                   ,.els_p(size_lp)
 		  ,.read_write_same_addr_p(0)
@@ -60,7 +82,7 @@ module bsg_async_fifo #(parameter `BSG_INV_PARAM(  lg_size_p )
 
       ,.r_v_i   (r_valid_o_tmp                            )
       ,.r_addr_i(r_ptr_binary_r[0+:lg_size_p]             )
-      ,.r_data_o(r_data_o[0+:(width_p - control_width_p)] )
+      ,.r_data_o(r_data_o_tmp[0+:(width_p - control_width_p)] )
       );
 
    if (control_width_p > 0)
@@ -78,7 +100,7 @@ module bsg_async_fifo #(parameter `BSG_INV_PARAM(  lg_size_p )
 
            ,.r_v_i    (r_valid_o_tmp                     )
            ,.r_addr_i (r_ptr_binary_r[0+:lg_size_p]      )
-           ,.r_data_o (r_data_o[(width_p-1)-:control_width_p])
+           ,.r_data_o (r_data_o_tmp[(width_p-1)-:control_width_p])
            );
      end
 
