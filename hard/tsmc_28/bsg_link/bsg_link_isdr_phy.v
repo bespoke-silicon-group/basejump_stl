@@ -1,4 +1,6 @@
 
+`include "bsg_defines.v"
+
 module bsg_link_isdr_phy
 
  #(parameter `BSG_INV_PARAM(width_p ))
