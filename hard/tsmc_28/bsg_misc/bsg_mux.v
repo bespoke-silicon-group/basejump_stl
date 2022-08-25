@@ -1,7 +1,7 @@
 `include "bsg_defines.v"
 
 module bsg_mux #(parameter `BSG_INV_PARAM(width_p)
-                 , els_p=1
+                 , `BSG_INV_PARAM(els_p)
                  , harden_p = 0
                  , balanced_p = 0
                  , lg_els_lp=`BSG_SAFE_CLOG2(els_p)
