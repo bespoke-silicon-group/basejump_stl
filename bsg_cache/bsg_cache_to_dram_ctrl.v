@@ -37,7 +37,7 @@ module bsg_cache_to_dram_ctrl
     // cache side
     , input [num_cache_p-1:0][dma_pkt_width_lp-1:0] dma_pkt_i
     , input [num_cache_p-1:0] dma_pkt_v_i
-    , output logic [num_cache_p-1:0] dma_pkt_yumi_o
+    , output logic [num_cache_p-1:0] dma_pkt_ready_o
 
     , output logic [num_cache_p-1:0][data_width_p-1:0] dma_data_o
     , output logic [num_cache_p-1:0] dma_data_v_o
@@ -64,9 +64,39 @@ module bsg_cache_to_dram_ctrl
     , input app_rd_data_end_i
   );
 
+  `declare_bsg_cache_dma_pkt_s(addr_width_p);
+
+  // dma_pkt input FIFO
+  // This converts valid-yumi interface of bsg_round_robin_n_to_1 to valid-ready interface.
+  // This gets rid of the long round trip the signal has to travel; therefore, making it better for physical design.
+  // It also avoid one-cycle bubble between receiving dma_pkt_i and dma_data_i, 
+  // because bsg_cache_dma engine has an output-two-fifo on dma_data_o but not on dma_pkt_o.
+  // Also, bsg_cache can send out up to two dma_pkts for a miss (refill and evict).
+  // This prevents the stall between sending the first and the second.
+
+  logic [num_cache_p-1:0] dma_pkt_fifo_v_lo;
+  logic [num_cache_p-1:0] dma_pkt_fifo_yumi_li;
+  bsg_cache_dma_pkt_s [num_cache_p-1:0] dma_pkt_fifo_data_lo;
+
+  for (genvar i = 0; i < num_cache_p; i++) begin: dma_pkt_tf
+    bsg_two_fifo #(
+      .width_p(dma_pkt_width_lp)
+    ) dma_pkt_tf0 (
+      .clk_i(clk_i)
+      ,.reset_i(reset_i)
+    
+      ,.v_i(dma_pkt_v_i[i])
+      ,.data_i(dma_pkt_i[i])
+      ,.ready_o(dma_pkt_ready_o[i])
+
+      ,.v_o(dma_pkt_fifo_v_lo[i])
+      ,.data_o(dma_pkt_fifo_data_lo[i])
+      ,.yumi_i(dma_pkt_fifo_yumi_li[i])
+    );
+  end
+
   // round robin for dma pkts
   //
-  `declare_bsg_cache_dma_pkt_s(addr_width_p);
   bsg_cache_dma_pkt_s dma_pkt;
   logic rr_v_lo;
   logic [lg_num_cache_lp-1:0] rr_tag_lo;
@@ -79,9 +109,9 @@ module bsg_cache_to_dram_ctrl
   ) cache_rr (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
-    ,.data_i(dma_pkt_i)
-    ,.v_i(dma_pkt_v_i)
-    ,.yumi_o(dma_pkt_yumi_o)
+    ,.data_i(dma_pkt_fifo_data_lo)
+    ,.v_i(dma_pkt_fifo_v_lo)
+    ,.yumi_o(dma_pkt_fifo_yumi_li)
     ,.v_o(rr_v_lo)
     ,.data_o(dma_pkt)
     ,.tag_o(rr_tag_lo)
