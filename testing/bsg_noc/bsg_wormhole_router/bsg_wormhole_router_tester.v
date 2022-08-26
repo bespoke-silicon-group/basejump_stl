@@ -54,6 +54,11 @@ module bsg_wormhole_router_tester
                                              : StrictXY|XY_Allow_S|XY_Allow_N
   
   ,parameter cord_width_p = cord_markers_pos_p[dims_p]
+  
+  // Hold on valid sets the arbitration policy such that once an output tag is selected, it
+  // remains selected until it is acked, then the round-robin scheduler continues cycling
+  // from the selected tag.
+  ,parameter hold_on_valid_p = 0
   )
   
   ();
@@ -121,6 +126,7 @@ module bsg_wormhole_router_tester
        ,.routing_matrix_p(routing_matrix_p)
        ,.reverse_order_p(reverse_order_p)
        ,.len_width_p(len_width_p)
+       ,.hold_on_valid_p(hold_on_valid_p)
        ) wr_fwd
        (.clk_i(clk)
 	,.reset_i(reset)
@@ -136,6 +142,7 @@ module bsg_wormhole_router_tester
        ,.routing_matrix_p(routing_matrix_p)
        ,.reverse_order_p(reverse_order_p)
        ,.len_width_p(len_width_p)
+       ,.hold_on_valid_p(hold_on_valid_p)
        ) wr_rev
        (.clk_i(clk)
 	,.reset_i(reset)
@@ -316,8 +323,11 @@ module bsg_wormhole_router_tester
         #500;
         
         // mc enable
-        @(posedge mc_clk); #1;
-        mc_en = '1;
+        for (j = dirs_p-1; j >= 0; j--)
+          begin
+            @(posedge mc_clk); #1;
+            mc_en[j] = 1'b1;
+          end
      $display("mc en HI");
         
         #10000;
