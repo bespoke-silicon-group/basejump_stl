@@ -44,8 +44,8 @@ if (harden_p && els_p == words && width_p == bits)              \
              ,.QA       (               )                       \
                                                                 \
              ,.AB       ( r0_addr_i     )                       \
-             ,.DB       ( '1            )                       \
-             ,.WEBB     ( '1            )                       \
+             ,.DB       ( {bits{1'b1}   )                       \
+             ,.WEBB     ( 1'b1          )                       \
              ,.CEBB     ( ~r0_v_i       )                       \
              ,.CLKB     ( clk_i         )                       \
              ,.QB       ( r0_data_o     )                       \
@@ -66,8 +66,8 @@ if (harden_p && els_p == words && width_p == bits)              \
              ,.QA       (               )                       \
                                                                 \
              ,.AB       ( r1_addr_i     )                       \
-             ,.DB       ( '1            )                       \
-             ,.WEBB     ( '1            )                       \
+             ,.DB       ( {bits{1'b1}}  )                       \
+             ,.WEBB     ( 1'b1          )                       \
              ,.CEBB     ( ~r1_v_i       )                       \
              ,.CLKB     ( clk_i         )                       \
              ,.QB       ( r1_data_o     )                       \
@@ -93,8 +93,8 @@ if (harden_p && els_p == words && width_p == bits)              \
              ,.QA       (               )                       \
                                                                 \
              ,.AB       ( r0_addr_i     )                       \
-             ,.DB       ( '1            )                       \
-             ,.WEBB     ( '1            )                       \
+             ,.DB       ( {bits{1'b1}}  )                       \
+             ,.WEBB     ( 1'b1          )                       \
              ,.CEBB     ( ~r0_v_i       )                       \
              ,.QB       ( r0_data_o     )                       \
                                                                 \
@@ -113,8 +113,8 @@ if (harden_p && els_p == words && width_p == bits)              \
              ,.QA       (               )                       \
                                                                 \
              ,.AB       ( r1_addr_i     )                       \
-             ,.DB       ( '1            )                       \
-             ,.WEBB     ( '1            )                       \
+             ,.DB       ( {bits{1'b1}}  )                       \
+             ,.WEBB     ( 1'b1          )                       \
              ,.CEBB     ( ~r1_v_i       )                       \
              ,.QB       ( r1_data_o     )                       \
                                                                 \
