@@ -24,6 +24,11 @@ module bsg_crossbar_control_locking_o_by_i
     , output [i_els_p-1:0] yumi_o
 
     // crossbar outputs (ready & valid interface)
+    // unlock is expected 1 cycle before the next head flit
+    //   (or equivalently with the tail of a previous message)
+    // The crossbar will stay locked until unlocked ("hold-on-valid" mode)
+    // To unlock whenever there is an available slot, a user could set
+    //   unlock_i = (valid & is_tail) | (valid & is_head & ~ready)
     , input [o_els_p-1:0] unlock_i
     , input [o_els_p-1:0] ready_and_i
     , output [o_els_p-1:0] valid_o
