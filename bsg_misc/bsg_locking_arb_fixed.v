@@ -6,6 +6,8 @@ module bsg_locking_arb_fixed #( parameter `BSG_INV_PARAM(inputs_p)
   ( input   clk_i
   , input   ready_i
 
+   // to have continuous throughput, you will need to unlock on the same cycle
+   // as the last word of a packet going through
   , input   unlock_i
 
   , input        [inputs_p-1:0] reqs_i
