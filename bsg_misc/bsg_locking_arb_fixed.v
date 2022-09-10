@@ -18,6 +18,8 @@ module bsg_locking_arb_fixed #( parameter `BSG_INV_PARAM(inputs_p)
     req_words_reg
       ( .clk_i  ( clk_i )
       , .reset_i( unlock_i )
+       // lock in a request mask, if the current request mask is "everybody"
+       // and somebody was granted their request.
       , .en_i   ( (&req_mask_r) & (|grants_o) )
       , .data_i ( ~grants_o )
       , .data_o ( not_req_mask_r )
