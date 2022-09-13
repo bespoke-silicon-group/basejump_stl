@@ -1,13 +1,14 @@
 module test_bsg
-#(parameter width_p=4, 
-  parameter output_width_p=2*width_p-1,
+#(parameter width_p=-1,
+  parameter init_val_p='0,
+  parameter set_and_down_exclusive_p=0,
   parameter cycle_time_p=10,
   parameter reset_cycles_lo_p=-1,
   parameter reset_cycles_hi_p=-1
   );
-  
-  wire clk_lo;
-  logic reset;
+
+  wire clk;
+  wire reset;
 
   bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
                           )  clock_gen
@@ -18,28 +19,23 @@ module test_bsg
                            , .reset_cycles_lo_p(reset_cycles_lo_p)
                            , .reset_cycles_hi_p(reset_cycles_hi_p)
                           )  reset_gen
-                          (  .clk_i        (clk_lo) 
+                          (  .clk_i        (clk) 
                            , .async_reset_o(reset)
                           );
 
-  logic [31:0] ctr;
+  initial begin
+    $display("[BSG_PASS] Empty testbench");
+    $finish();
+  end
   
-  always @(posedge clk_lo)
-    if (reset)
-      ctr <= '0;
-  else	
-      ctr <= ctr + 1'b1;
+  wire [width_p-1:0] a_i;
+  wire [`BSG_SAFE_CLOG2(width_p)-1:0] num_zero_o;
 
-  wire [output_width_p-1:0] res;
+  bsg_counting_leading_zeros #(
+    .width_p(width_p))
+    DUT (
+    .a_i(a_i),
+    .num_zero_o(num_zero_o)
+  );
 
-  bsg_adder_one_hot #(.width_p(width_p),.output_width_p(output_width_p))
-  foo (.a_i(1'b1 << ctr[1:0]), .b_i(1'b1 << ctr[3:2]), .o(res));
-  
-  always @(negedge clk_lo)
-    begin
-      $display("%b %b -> %b\n", 1 << ctr[1:0], 1 << ctr[3:2], res);
-      if (ctr == 5'b10000)
-        $finish();
-    end	
-  
 endmodule

@@ -18,7 +18,7 @@
 
 module test_bsg 
 #(parameter width_p=`WIDTH_P,
-  parameter sim_clk_period_p=10,
+  parameter cycle_time_p=10,
   parameter reset_cycles_lo_p=0,
   parameter reset_cycles_hi_p=5
   );

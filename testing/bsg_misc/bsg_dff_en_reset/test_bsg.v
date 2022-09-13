@@ -80,7 +80,7 @@ module test_bsg
         
         assert(test_input_data_r == test_output)
           else $error("mismatch on input %x; expected output: %x; output: %x"
-                        , test_input_data, test_input_data_r, test_output); 
+                        , test_input_data, test_input_data_r, test_output);  
       end
     
     /*$display("test_input_data_r: %b, test_output: %b\n"

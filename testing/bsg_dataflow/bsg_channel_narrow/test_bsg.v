@@ -126,18 +126,18 @@ module test_bsg
                        );
 
          temp = (test_output_data_0 ==
-                 width_out_lp ' (test_input_data >> (width_out_lp*(divisions_lp - count_r - 1))));
+                 width_out_p ' (test_input_data >> (width_out_p*(divisions_p - count_r - 1))));
 
          assert(temp)
            else $error("2 msb_to_lsb_data: mismatch on input %x ", test_input_data
                        , "division %x", count_r);
 
-         temp = (test_output_deque_1 == (count_r == divisions_lp-1));
+         temp = (test_output_deque_1 == (count_r == divisions_p-1));
          assert(temp)
            else $error("3 lsb_to_msb_deque: mismatch on input %x ", test_input_data
                        , "division %x", count_r);
 
-         temp = (test_output_deque_0 == (count_r == divisions_lp-1));
+         temp = (test_output_deque_0 == (count_r == divisions_p-1));
          assert(temp)
           else $error("4 msb_to_lsb_deque: mismatch on input %x ", test_input_data
                          , "division %x", count_r);
