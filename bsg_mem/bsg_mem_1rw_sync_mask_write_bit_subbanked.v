@@ -38,7 +38,7 @@ module bsg_mem_1rw_sync_mask_write_bit_subbanked
     	, output logic [num_subbank_p-1:0][subbank_width_lp-1:0] data_o
     );
 
-    logic [width_p-1:0] bank_data_lo [num_subbank_p-1:0];
+    logic [width_p-1:0] bank_data_lo [els_lp-1:0];
 		wire [width_p-1:0] w_mask_expand;
     wire read_en;
 
