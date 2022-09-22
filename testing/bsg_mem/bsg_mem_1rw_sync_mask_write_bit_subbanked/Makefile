@@ -29,8 +29,10 @@ ALL_FILES = $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x)) \
               $(TEST_MAIN)
 
 verilator_build: clean
-	verilator --Wall --trace --cc -CFLAGS -std=c++11 --build -I${TOP}/bsg_misc -I${TOP}/bsg_mem -I${TOP}/bsg_test -CFLAGS "-I$(TOP)/bsg_test" ${ALL_FILES} --top-module test_bsg \
-	-Wno-TIMESCALEMOD -Wno-UNUSED -Wno-WIDTH -Wno-UNDRIVEN -Wno-PINCONNECTEMPTY -Wno-PINMISSING -exe test_bsg.cpp
+	verilator --Wall --trace --cc --assert -CFLAGS -std=c++11 --build \
+      -I${TOP}/bsg_misc -I${TOP}/bsg_mem -I${TOP}/bsg_test \
+      -CFLAGS "-I$(TOP)/bsg_test" ${ALL_FILES} --top-module test_bsg \
+	 -Wno-WIDTH -Wno-UNUSED -exe test_bsg.cpp
 
 clean:
 	rm -rf obj_dir 
