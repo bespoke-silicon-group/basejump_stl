@@ -1,28 +1,28 @@
-`define WIDTH_P 32
-`define ELS_P   32
+`define WIDTH_P 4
+`define ELS_P   8
 `define SEED_P  10000
 
 `include "bsg_defines.v"
 
 module test_bsg
 #(
-  parameter width_p          = `WIDTH_P
-  ,parameter els_p            = `ELS_P
-  ,parameter num_subbank_p    =  4
-  ,parameter reset_cycles_lo_p=  1
-  ,parameter reset_cycles_hi_p=  10
-  ,parameter cycle_time_p = 20
+  parameter width_p            = `WIDTH_P
+  ,parameter els_p             = `ELS_P
+  ,parameter seed_p            = `SEED_P
+  ,parameter num_subbank_p     =  1
+  ,parameter reset_cycles_lo_p =  1
+  ,parameter reset_cycles_hi_p =  10
 ) 
-( input wire clk
+( input wire clk,
+  input wire v_i,
+  input wire w_i
 ) ;
 
   wire reset ;
-  //wire [width_p-1:0] data_i; 
-  wire [`BSG_SAFE_CLOG2(els_p)-1:0] addr_i; 
-  wire v_i   ; 
-  wire w_i   ; 
+  logic [width_p-1:0] w_mask_i;
   wire [width_p-1:0] data_o; 
   wire [width_p-1:0] test_input_data;
+  wire [`BSG_SAFE_CLOG2(els_p)-1:0] test_input_addr;
   
   initial
   begin
@@ -36,7 +36,7 @@ module test_bsg
     $display("NUM_SUBBANK_P : %0d", num_subbank_p);
   end
 
-  assign addr_i = (`BSG_SAFE_CLOG2(els_p))'(0);
+  assign w_mask_i = 32'h1;
 
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(reset_cycles_lo_p)
@@ -49,12 +49,21 @@ module test_bsg
   // random test data generation; 
   // generates a new random number after every +ve clock edge
   bsg_nonsynth_random_gen #(  .width_p(width_p)
-                            , .seed_p (10000)
-                           )  random_gen
+                            , .seed_p (seed_p)
+                           )  random_data_gen
                            (  .clk_i  (clk)
                             , .reset_i(reset)
                             , .yumi_i (1'b1)
                             , .data_o (test_input_data)
+                           );
+  
+  bsg_nonsynth_random_gen #(  .width_p(`BSG_SAFE_CLOG2(els_p))
+                            , .seed_p (seed_p)
+                           )  random_addr_gen
+                           (  .clk_i  (clk)
+                            , .reset_i(reset)
+                            , .yumi_i (1'b1)
+                            , .data_o (test_input_addr)
                            );
 
   bsg_mem_1rw_sync_mask_write_bit_subbanked #( .width_p(width_p)
@@ -64,7 +73,8 @@ module test_bsg
                                              (  .clk_i    (clk)
                                                 , .reset_i(reset)
                                                 , .data_i (test_input_data)
-                                                , .addr_i (addr_i)
+                                                , .w_mask_i(w_mask_i)
+                                                , .addr_i (test_input_addr)
                                                 , .v_i    (v_i)
                                                 , .w_i    (w_i)
                                                 , .data_o (data_o)
