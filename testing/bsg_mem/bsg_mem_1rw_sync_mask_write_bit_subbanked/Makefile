@@ -30,9 +30,9 @@ ALL_FILES = $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x)) \
 
 verilator_build: clean
 	verilator --Wall --trace --cc --assert --prof-cfuncs -CFLAGS -std=c++11 --build \
-      -I${TOP}/bsg_misc -I${TOP}/bsg_mem -I${TOP}/bsg_test \
-      -CFLAGS "-I$(TOP)/bsg_test" ${ALL_FILES} --top-module test_bsg \
-	 -Wno-WIDTH -Wno-UNUSED -Wno-LITENDIAN -exe test_bsg.cpp
+       -I${TOP}/bsg_misc -I${TOP}/bsg_mem -I${TOP}/bsg_test \
+       -CFLAGS "-I$(TOP)/bsg_test" ${ALL_FILES} --top-module test_bsg \
+	 -Wno-WIDTH -Wno-UNUSED -exe test_bsg.cpp
 
 clean:
 	rm -rf obj_dir 
