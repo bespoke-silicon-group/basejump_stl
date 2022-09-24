@@ -71,14 +71,14 @@ module test_bsg
                                               , .els_p  (els_p)
                                               , .num_subbank_p (num_subbank_p)
                                             )  DUT
-                                            (  .clk_i    (clk)
-                                               , .reset_i(reset)
-                                               , .data_i (test_input_data)
-                                               , .w_mask_i(w_mask_i)
-                                               , .addr_i (test_input_addr)
-                                               , .v_i    (v_i)
-                                               , .w_i    (w_i)
-                                               , .data_o (actual_data)
+                                            ( .clk_i    (clk)
+                                              , .reset_i(reset)
+                                              , .data_i (test_input_data)
+                                              , .w_mask_i(w_mask_i)
+                                              , .addr_i (test_input_addr)
+                                              , .v_i    (v_i)
+                                              , .w_i    (w_i)
+                                              , .data_o (actual_data)
                                             );
 
   //Reference Model
