@@ -58,6 +58,5 @@ int main (int argc, char **argv) {
 
     delete top;
 
-    std::cout << "\nVerilatorTB: End of sim" << std::endl;
     exit(0);
 }
