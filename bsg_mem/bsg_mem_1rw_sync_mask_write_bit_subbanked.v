@@ -36,52 +36,21 @@ module bsg_mem_1rw_sync_mask_write_bit_subbanked
   	, output logic [num_subbank_p-1:0][subbank_width_lp-1:0] data_o
   );
 
-	wire [width_p-1:0] w_mask_expand;
-
-  for (genvar i=0 ; i<num_subbank_p  ; i++) begin: bitmask_per_subbank
-  	bsg_expand_bitmask #(
-  		.in_width_p(mask_granularity_p)
-    	,.expand_p(mask_width_lp)
-    )
-     w_mask_expanded
-    (
-  	 .i(w_mask_i[i])
-     ,.o(w_mask_expand[i*subbank_width_lp+:subbank_width_lp])
-    );
-  end
-
-  logic [width_p-1:0] data_r;
-
-  for (genvar i=0 ; i<num_subbank_p  ; i++) 
-  begin : sub_banks
     bsg_mem_1rw_sync_mask_write_bit #(
-      .width_p(subbank_width_lp)
+      .width_p(width_p)
       ,.els_p(els_p)
       ,.latch_last_read_p(latch_last_read_p)
     ) 
     subbanks 
     ( .clk_i(clk_i)
       ,.reset_i(reset_i)
-      ,.v_i(v_i[i])
-      ,.w_i(w_i[i])
+      ,.v_i(|v_i)
+      ,.w_i(|w_i)
       ,.addr_i(addr_i)
-      ,.data_i(data_i[i])
-      ,.w_mask_i(w_mask_i[i])
-      ,.data_o(data_r[i*subbank_width_lp+:subbank_width_lp])
+      ,.data_i(data_i)
+      ,.w_mask_i(w_mask_i)
+      ,.data_o(data_o)
     );
-  end
-
-  logic [width_p-1:0] data_n;
-  logic [width_p-1:0] mem [els_p-1:0];
-
-  for (genvar i = 0; i < width_p; i++)
-    assign data_n[i] = w_mask_expand[i] ? data_r[i] : mem[addr_i][i]; 
-
-  always@(posedge clk_i)
-    if (v_i & w_i)
-      mem[addr_i] <= data_n;
-
-  assign data_o = mem[addr_i];
 
   always@(*) begin
     assert (`BSG_IS_POW2(width_p) && `BSG_IS_POW2(els_p));
