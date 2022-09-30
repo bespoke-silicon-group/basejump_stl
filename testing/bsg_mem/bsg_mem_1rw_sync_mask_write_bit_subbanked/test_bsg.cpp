@@ -39,8 +39,8 @@ int main (int argc, char **argv) {
         top->eval();
 
         if(main_time == 16) {
-          top -> v_i = 1;
-          top -> w_i = 1;
+          top -> v_i = 0xf;
+          top -> w_i = 0xf;
          } 
 
         if(main_time == 200) {
