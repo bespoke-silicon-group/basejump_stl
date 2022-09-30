@@ -27,7 +27,7 @@ module bsg_nonsynth_random_gen
   always_ff @(posedge clk_i)
   begin
     if(reset_i)
-      data_o <= $random(seed_p);
+      data_o <= $urandom(seed_p);
     else
       if(yumi_i)
         data_o <= $random();
