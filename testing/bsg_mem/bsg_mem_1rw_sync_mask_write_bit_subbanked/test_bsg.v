@@ -1,5 +1,5 @@
 `define WIDTH_P 32
-`define ELS_P   32
+`define ELS_P   16
 `define SEED_P  10000
 
 `include "bsg_defines.v"
@@ -9,20 +9,22 @@ module test_bsg
   parameter width_p             = `WIDTH_P
   ,parameter els_p              = `ELS_P
   ,parameter seed_p             = `SEED_P
-  ,parameter num_subbank_p      =  32
+  ,parameter num_subbank_p      =  2
   ,parameter latch_last_read_p  =  1
   ,parameter reset_cycles_lo_p  =  1
   ,parameter reset_cycles_hi_p  =  10
+  ,parameter mask_granularity_p =  1
   ,localparam subbank_width_lp  =  width_p/num_subbank_p
+  ,localparam mask_width_lp     =  subbank_width_lp/mask_granularity_p
   ,localparam els_lp            = `BSG_SAFE_CLOG2(els_p)
 ) 
 ( input wire clk,
-  input wire v_i,
-  input wire w_i
+  input wire [num_subbank_p-1:0] v_i,
+  input wire [num_subbank_p-1:0] w_i
 ) ;
 
   wire reset ;
-  wire [num_subbank_p-1:0][subbank_width_lp-1:0] w_mask_i;
+  wire [num_subbank_p-1:0][mask_width_lp-1:0] w_mask_i;
   wire [num_subbank_p-1:0][subbank_width_lp-1:0] test_input_data;
 	wire [num_subbank_p-1:0][subbank_width_lp-1:0] actual_data;
   wire [els_lp-1:0] test_input_addr ;
@@ -58,7 +60,7 @@ module test_bsg
                             , .data_o (test_input_data)
                            );
   
-  bsg_nonsynth_random_gen #(  .width_p(`BSG_SAFE_CLOG2(els_p))
+  bsg_nonsynth_random_gen #(  .width_p(els_lp)
                             , .seed_p (seed_p)
                            )  random_addr_gen
                            (  .clk_i  (clk)
@@ -76,13 +78,12 @@ module test_bsg
                                               , .data_i (test_input_data)
                                               , .w_mask_i(w_mask_i)
                                               , .addr_i (test_input_addr)
-                                              , .v_i    (v_i)
-                                              , .w_i    (w_i)
+                                              , .v_i    (|v_i)
+                                              , .w_i    (|w_i)
                                               , .data_o (actual_data)
                                             );
 
   //Reference Model
-
   bsg_mem_1rw_sync_mask_write_bit #(
                                     .width_p(subbank_width_lp)
                                     ,.els_p(els_p)
