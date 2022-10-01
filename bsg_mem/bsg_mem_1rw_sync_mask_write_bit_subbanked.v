@@ -36,6 +36,13 @@ module bsg_mem_1rw_sync_mask_write_bit_subbanked
   	, output logic [num_subbank_p-1:0][subbank_width_lp-1:0] data_o
   );
 
+    wire [num_subbank_p-1:0][mask_width_lp-1:0] w_mask_lo;
+
+    for (genvar i = 0; i < num_subbank_p; i++) begin
+      for (genvar j = 0; j < mask_width_lp; j++) 
+        assign w_mask_lo[i][j] = w_mask_i[i][j] & v_i[i] & w_i[i];
+    end
+
     bsg_mem_1rw_sync_mask_write_bit #(
       .width_p(width_p)
       ,.els_p(els_p)
@@ -48,13 +55,13 @@ module bsg_mem_1rw_sync_mask_write_bit_subbanked
       ,.w_i(|w_i)
       ,.addr_i(addr_i)
       ,.data_i(data_i)
-      ,.w_mask_i(w_mask_i)
+      ,.w_mask_i(w_mask_lo)
       ,.data_o(data_o)
     );
 
-  always@(*) begin
-    assert (`BSG_IS_POW2(width_p) && `BSG_IS_POW2(els_p));
-    assert (width_p%num_subbank_p == 0);
-  end
+    always@(*) begin
+      assert (`BSG_IS_POW2(width_p) && `BSG_IS_POW2(els_p));
+      assert (width_p%num_subbank_p == 0);
+    end
 
 endmodule
