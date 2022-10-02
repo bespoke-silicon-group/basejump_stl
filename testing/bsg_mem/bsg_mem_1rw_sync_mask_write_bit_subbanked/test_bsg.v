@@ -1,6 +1,6 @@
 `define WIDTH_P 32
 `define ELS_P   16
-`define SEED_P  10000
+`define SEED_P  255
 
 `include "bsg_defines.v"
 
@@ -9,22 +9,20 @@ module test_bsg
   parameter width_p             = `WIDTH_P
   ,parameter els_p              = `ELS_P
   ,parameter seed_p             = `SEED_P
-  ,parameter num_subbank_p      =  2
+  ,parameter num_subbank_p      =  4
   ,parameter latch_last_read_p  =  1
   ,parameter reset_cycles_lo_p  =  1
   ,parameter reset_cycles_hi_p  =  10
-  ,parameter mask_granularity_p =  1
   ,localparam subbank_width_lp  =  width_p/num_subbank_p
-  ,localparam mask_width_lp     =  subbank_width_lp/mask_granularity_p
   ,localparam els_lp            = `BSG_SAFE_CLOG2(els_p)
 ) 
 ( input wire clk,
   input wire [num_subbank_p-1:0] v_i,
-  input wire [num_subbank_p-1:0] w_i
+  input wire  w_i
 ) ;
 
   wire reset ;
-  wire [num_subbank_p-1:0][mask_width_lp-1:0] w_mask_i;
+  wire [num_subbank_p-1:0][subbank_width_lp-1:0] w_mask_i;
   wire [num_subbank_p-1:0][subbank_width_lp-1:0] test_input_data;
 	wire [num_subbank_p-1:0][subbank_width_lp-1:0] actual_data;
   wire [els_lp-1:0] test_input_addr ;
@@ -39,7 +37,7 @@ module test_bsg
     $display("NUM_SUBBANK_P : %0d", num_subbank_p);
   end
 
-  assign w_mask_i = 32'hffffffff;
+  assign w_mask_i = 32'hfff000f0;
 
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(reset_cycles_lo_p)
@@ -72,14 +70,15 @@ module test_bsg
   bsg_mem_1rw_sync_mask_write_bit_subbanked #( .width_p(width_p)
                                               , .els_p  (els_p)
                                               , .num_subbank_p (num_subbank_p)
+                                              , .latch_last_read_p(latch_last_read_p)
                                             )  DUT
                                             ( .clk_i    (clk)
                                               , .reset_i(reset)
                                               , .data_i (test_input_data)
                                               , .w_mask_i(w_mask_i)
                                               , .addr_i (test_input_addr)
-                                              , .v_i    (|v_i)
-                                              , .w_i    (|w_i)
+                                              , .v_i    (v_i)
+                                              , .w_i    (w_i)
                                               , .data_o (actual_data)
                                             );
 
@@ -87,6 +86,7 @@ module test_bsg
   bsg_mem_1rw_sync_mask_write_bit #(
                                     .width_p(subbank_width_lp)
                                     ,.els_p(els_p)
+                                    ,.latch_last_read_p(latch_last_read_p)
                                   ) 
                                    bank [num_subbank_p-1:0]
                                   ( .clk_i(clk)
@@ -99,6 +99,11 @@ module test_bsg
                                     ,.data_o(expected_data)
                                   );
 
+  integer 	f = 0;
+
+  initial 
+    f = $fopen("output.log","w");
+
   always@(posedge clk) begin
 		if (v_i && !w_i) begin
 			if(expected_data == actual_data)  
@@ -107,11 +112,6 @@ module test_bsg
         $error("\n[FOUND MISMATCH] At time %0t --> expected_data : 0x%0h | actual_data : 0x%0h",$realtime,expected_data,actual_data);
     end
   end
-
-  integer 	f = 0;
-
-  initial 
-    f = $fopen("output.log","w");
 
   final 
     $display("\nSimulation Ended! You can see results in output.log\n"); 
