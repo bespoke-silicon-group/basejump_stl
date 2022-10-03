@@ -46,7 +46,7 @@ module bsg_mem_1rw_sync_mask_write_bit_subbanked
     bsg_mem_1rw_sync_mask_write_bit #(
       .width_p(width_p)
       ,.els_p(els_p)
-      ,.latch_last_read_p(latch_last_read_p)
+      ,.latch_last_read_p(0)
     ) 
     bank 
     ( .clk_i(clk_i)
@@ -89,7 +89,7 @@ module bsg_mem_1rw_sync_mask_write_bit_subbanked
         assign data_o = data_lo;
       end
     
-    end // or (genvar i = 0; i < num_subbank_p; i++)
+    end // for (genvar i = 0; i < num_subbank_p; i++)
 
     always@(*) begin
       assert (`BSG_IS_POW2(width_p) && `BSG_IS_POW2(els_p));
