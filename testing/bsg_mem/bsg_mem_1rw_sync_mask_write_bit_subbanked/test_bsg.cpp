@@ -7,11 +7,9 @@
 #include "verilated_vcd_c.h"
 
 unsigned int main_time = 0;
-// or
-//vluint64_t main_time = 0;
 
 double sc_time_stamp () {
-    return main_time;
+   return main_time;
 }
 
 int main (int argc, char **argv) {
@@ -39,12 +37,26 @@ int main (int argc, char **argv) {
         top->eval();
 
         if(main_time == 16) {
-          top -> v_i = 0xf;
-          top -> w_i = 0xf;
+          top -> v_i = 0x1;
+          top -> w_i = 0x1;
          } 
 
-        if(main_time == 200) {
+        if(main_time >= 200) {
            top -> w_i = 0;
+        }
+
+        if(main_time >= 500) {
+           top -> v_i = 0x2;
+           top -> w_i = 0x1;
+        }
+    
+        if(main_time >= 750) {
+           top -> w_i = 0x0;
+        }
+
+        if(main_time >= 950) {
+           top -> v_i = 0x3;
+           top -> w_i = 0x0;
         }
 
         if (tfp) tfp -> dump(main_time);
