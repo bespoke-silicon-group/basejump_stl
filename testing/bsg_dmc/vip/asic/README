@@ -1,0 +1,4 @@
+//README: BSG DRAM CONTROLLER TB ASIC AREA
+//AUTHOR: AKASH S (akashs3@uw.edu)
+
+This direcory contains ASIC components that will drive and monitor signals at the TB_TOP <-> DMC CONTROLLER interface.

@@ -1,0 +1,6 @@
+//README: BSG DRAM CONTROLLER TB CHECKER VIP AREA
+//AUTHOR: AKASH S (akashs3@uw.edu)
+
+Directory contains the DMC checker that does the following:
+    * checks the data integrity between the 3 interfaces: ASIC - DMC CONTROLLER, DMC CONTROLLER - DFI, DFI - LPDDR BFM
+    * checks the adherence to timing mentioned in the JEDEC SDRAM and DFI specifications

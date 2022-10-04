@@ -1,0 +1,4 @@
+//README: BSG DRAM CONTROLLER TB TOP AREA
+//AUTHOR: AKASH S (akashs3@uw.edu)
+
+Directory contains the testbench top that instantiates the DUT, connects TB and DUT, and initiates the tests.

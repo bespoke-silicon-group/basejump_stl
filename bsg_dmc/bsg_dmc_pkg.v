@@ -1,5 +1,6 @@
-
 package bsg_dmc_pkg;
+
+  // Following struct passes on configuration parameters from TB top to DMC RTL.
   typedef struct packed {
     logic [15:0] trefi;
     logic  [3:0] tmrd;
@@ -21,6 +22,7 @@ package bsg_dmc_pkg;
     logic [15:0] init_cycles;
   } bsg_dmc_s;
 
+  // Following enum holds commands that are sent by ASIC to the DMC
   typedef enum logic [2:0]
     {RP = 3'b011 // read with auto precharge
     ,WP = 3'b010 // write with auto precharge
@@ -28,15 +30,16 @@ package bsg_dmc_pkg;
     ,WR = 3'b000 // write
   } app_cmd_e;
 
-  typedef enum logic [3:0]
-    {LMR      = 4'b0000
-    ,REF      = 4'b0001
-    ,PRE      = 4'b0010
-    ,ACT      = 4'b0011
-    ,WRITE    = 4'b0100
-    ,READ     = 4'b0101
-    ,BST      = 4'b0110
-    ,NOP      = 4'b0111
+  // This enum holds various commands that are passed by the DMC controller to DDR via DFI. As per JEDEC LPDDR SDRAM spec Table-5, page 21
+  typedef enum logic [3:0] 
+    {LMR      = 4'b0000	//mode register set
+    ,REF      = 4'b0001	//auto refresh
+    ,PRE      = 4'b0010	//precharge
+    ,ACT      = 4'b0011	//activate selected row
+    ,WRITE    = 4'b0100	//Write
+    ,READ     = 4'b0101	//Read 
+    ,BST      = 4'b0110	// burst terminate or deep power down
+    ,NOP      = 4'b0111	// No operation
     ,DESELECT = 4'b1xxx
   } dfi_cmd_e;
 
