@@ -10,7 +10,7 @@ module test_bsg
   ,parameter els_p              = `ELS_P
   ,parameter seed_p             = `SEED_P
   ,parameter num_subbank_p      =  4
-  ,parameter latch_last_read_p  =  1
+  ,parameter latch_last_read_p  =  0
   ,parameter reset_cycles_lo_p  =  1
   ,parameter reset_cycles_hi_p  =  10
   ,localparam subbank_width_lp  =  width_p/num_subbank_p
@@ -37,7 +37,7 @@ module test_bsg
     $display("NUM_SUBBANK_P : %0d", num_subbank_p);
   end
 
-  assign w_mask_i = 32'hfff000f0;
+  assign w_mask_i = 32'hffffffff;
 
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(reset_cycles_lo_p)
@@ -82,7 +82,9 @@ module test_bsg
                                               , .data_o (actual_data)
                                             );
 
-  //Reference Model
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------Reference Model---------------------------------------------//
+
   bsg_mem_1rw_sync_mask_write_bit #(
                                     .width_p(subbank_width_lp)
                                     ,.els_p(els_p)
@@ -104,13 +106,69 @@ module test_bsg
   initial 
     f = $fopen("output.log","w");
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------[LLR]---------------------------------------------------//
+
   always@(posedge clk) begin
-		if (v_i && !w_i) begin
-			if(expected_data == actual_data)  
-        $fdisplay(f,"[FOUND MATCH] At time %t --> expected_data : 0x%h | actual_data : 0x%h",$realtime,expected_data,actual_data);
-			else 
-        $error("\n[FOUND MISMATCH] At time %0t --> expected_data : 0x%0h | actual_data : 0x%0h",$realtime,expected_data,actual_data);
+    if (latch_last_read_p) begin
+		  if (v_i && !w_i) begin
+		  	if(expected_data == actual_data)  
+          $fdisplay(f,"[FOUND MATCH][LLR] At time %t --> expected_data : 0x%h | actual_data : 0x%h",$realtime,expected_data,actual_data);
+		  	else 
+          $error("\n[FOUND MISMATCH][LLR] At time %0t --> expected_data : 0x%0h | actual_data : 0x%0h",$realtime,expected_data,actual_data);
+      end // (v_i && !w_i)
+    end // (latch_last_read_p)
+  end
+
+  logic [num_subbank_p-1:0] read_en, read_en_r;
+  
+    for(genvar i=0; i<num_subbank_p; i++) 
+      assign read_en[i] = v_i[i] & !w_i;
+
+  logic [1:0] count;
+  
+  //The below block is use to write only at r_v_i+1 cycle when latch_last_read_p=0
+
+  always @(posedge clk) begin
+    if(|read_en) begin
+      if (count<2) begin
+        if(!read_en_r) begin
+          read_en_r<=read_en;
+          count<=count+1;
+        end
+        else
+          read_en_r<=0;
+          count<=count+1;
+      end
     end
+    else
+      count<=0;
+  end
+
+  logic [num_subbank_p-1:0][subbank_width_lp-1:0] actual_data_lo;
+
+  /*Since we are ORing the v_i while instantiating backing SRAM in the design, we tend to read an invalid subbank when 
+    latch_last_read_p=0. This will break our checker logic ending up with a simulation failure. When latch_last_read_p
+    is 0, we will only check the valid portions of the output.*/
+
+  for(genvar i=0; i<num_subbank_p; i++) begin
+    for(genvar j=0; j<subbank_width_lp; j++) begin
+      assign actual_data_lo[i][j] = (v_i[i])?actual_data[i][j]:expected_data[i][j];
+    end
+  end
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------[NO LLR]------------------------------------------------//
+
+  always@(posedge clk) begin 
+    if(latch_last_read_p==0) begin
+      if(|read_en_r)begin 
+        if(expected_data == actual_data_lo)
+          $fdisplay(f,"[FOUND MATCH][NO LLR] At time %t --> expected_data : 0x%h | actual_data : 0x%h",$realtime,expected_data,actual_data_lo);
+        else
+          $error("\n[FOUND MISMATCH][NO LLR] At time %0t --> expected_data : 0x%0h | actual_data : 0x%0h",$realtime,expected_data,actual_data);
+      end
+    end //(latch_last_read_p==0)
   end
 
   final 
