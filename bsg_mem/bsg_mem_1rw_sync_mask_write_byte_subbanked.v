@@ -56,7 +56,7 @@ module bsg_mem_1rw_sync_mask_write_byte_subbanked
     ( .clk_i(clk_i)
       ,.reset_i(reset_i)
       ,.v_i(|v_i)
-      ,.w_i(|w_i)
+      ,.w_i(w_i)
       ,.addr_i(addr_i)
       ,.data_i(data_i)
       ,.write_mask_i(w_mask_lo)
