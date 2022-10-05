@@ -9,7 +9,7 @@ module test_bsg
   parameter width_p             = `WIDTH_P
   ,parameter els_p              = `ELS_P
   ,parameter seed_p             = `SEED_P
-  ,parameter num_subbank_p      =  4
+  ,parameter num_subbank_p      =  2
   ,parameter latch_last_read_p  =  0
   ,parameter reset_cycles_lo_p  =  1
   ,parameter reset_cycles_hi_p  =  10
@@ -126,7 +126,7 @@ module test_bsg
   logic [num_subbank_p-1:0] read_en, read_en_r;
   
     for(genvar i=0; i<num_subbank_p; i++) 
-      assign read_en[i] = v_i[i] & !w_i;
+      assign read_en[i] = v_i[i] & ~w_i;
 
   logic [1:0] count;
   
