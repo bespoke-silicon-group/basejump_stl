@@ -1,4 +1,4 @@
-`define WIDTH_P 32
+`define WIDTH_P 16
 `define ELS_P   128
 `define SEED_P  255
 
@@ -9,8 +9,8 @@ module test_bsg
   parameter width_p             = `WIDTH_P
   ,parameter els_p              = `ELS_P
   ,parameter seed_p             = `SEED_P
-  ,parameter num_subbank_p      =  4
-  ,parameter latch_last_read_p  =  0
+  ,parameter num_subbank_p      =  2
+  ,parameter latch_last_read_p  =  1
   ,parameter reset_cycles_lo_p  =  1
   ,parameter reset_cycles_hi_p  =  10
   ,localparam subbank_width_lp  =  width_p/num_subbank_p
@@ -38,7 +38,7 @@ module test_bsg
     $display("NUM_SUBBANK_P : %0d", num_subbank_p);
   end
 
-  assign w_mask_i = 32'he;
+  assign w_mask_i = 32'hffffffff;
 
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(reset_cycles_lo_p)
@@ -125,7 +125,7 @@ module test_bsg
   logic [num_subbank_p-1:0] read_en, read_en_r;
   
     for(genvar i=0; i<num_subbank_p; i++) 
-      assign read_en[i] = v_i[i] & !w_i;
+      assign read_en[i] = v_i[i] & ~w_i;
 
   logic [1:0] count;
   
