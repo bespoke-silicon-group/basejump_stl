@@ -12,13 +12,17 @@
  *
  */
 
+  // For subbanked SRAMs, all subbanks must either read or write from the same address at once. 
+  // There could be an implementation to support independent subbank r/w by using a 1r1w backing SRAM. 
+  // This may make sense in an FPGA environment, but we leave this to future work.
+
 `include "bsg_defines.v"
 
 module bsg_mem_1rw_sync_mask_write_byte_subbanked
   #(parameter `BSG_INV_PARAM(width_p)
     , parameter `BSG_INV_PARAM(els_p)
-    , parameter latch_last_read_p = 0
-    , parameter num_subbank_p = 4
+    , parameter `BSG_INV_PARAM(latch_last_read_p)
+    , parameter `BSG_INV_PARAM(num_subbank_p)
 
       // Don't support depth subbanks due to conflicts
     , localparam subbank_width_lp = width_p/num_subbank_p
@@ -91,9 +95,11 @@ module bsg_mem_1rw_sync_mask_write_byte_subbanked
     
     end // for (genvar i = 0; i < num_subbank_p; i++)
 
-    always@(*) begin
-      assert (`BSG_IS_POW2(width_p) && `BSG_IS_POW2(els_p));
-      assert (width_p%num_subbank_p == 0);
-    end
+    if (!(`BSG_IS_POW2(width_p) && `BSG_IS_POW2(els_p)))
+      $error("width_p and els_p should be power of 2");
+      
+    if (!(width_p%num_subbank_p == 0))
+      $error("The remainder for the factor -> (width_p/num_subbank_p) should be equal to 0");
+    
 
 endmodule
