@@ -1,4 +1,4 @@
-`define WIDTH_P 16
+`define WIDTH_P 32
 `define ELS_P   16
 `define SEED_P  255
 
@@ -9,13 +9,13 @@ module test_bsg
   parameter width_p             = `WIDTH_P
   ,parameter els_p              = `ELS_P
   ,parameter seed_p             = `SEED_P
-  ,parameter num_subbank_p      =  2
+  ,parameter num_subbank_p      =  4
   ,parameter latch_last_read_p  =  0
   ,parameter reset_cycles_lo_p  =  1
   ,parameter reset_cycles_hi_p  =  10
   ,localparam subbank_width_lp  =  width_p/num_subbank_p
   ,localparam mask_width_lp     =  subbank_width_lp >>3
-  ,localparam els_lp            = `BSG_SAFE_CLOG2(els_p)
+  ,localparam lg_els_lp         = `BSG_SAFE_CLOG2(els_p)
 ) 
 ( input wire clk,
   input wire [num_subbank_p-1:0] v_i,
@@ -26,13 +26,13 @@ module test_bsg
   wire [num_subbank_p-1:0][mask_width_lp-1:0] w_mask_i;
   wire [num_subbank_p-1:0][subbank_width_lp-1:0] test_input_data;
 	wire [num_subbank_p-1:0][subbank_width_lp-1:0] actual_data;
-  wire [els_lp-1:0] test_input_addr ;
+  wire [lg_els_lp-1:0] test_input_addr ;
 	wire [num_subbank_p-1:0][subbank_width_lp-1:0] expected_data;
 
   initial
   begin
     $display("===========================================================");
-    $display("testing bsg_mem_1rw_sync_mask_write_bit_subbanked with ...");
+    $display("testing bsg_mem_1rw_sync_subbanked with ...");
     $display("WIDTH_P       : %0d", width_p);
     $display("ELS_P         : %0d", els_p);
     $display("NUM_SUBBANK_P : %0d", num_subbank_p);
@@ -59,7 +59,7 @@ module test_bsg
                             , .data_o (test_input_data)
                            );
   
-  bsg_nonsynth_random_gen #(  .width_p(els_lp)
+  bsg_nonsynth_random_gen #(  .width_p(lg_els_lp)
                             , .seed_p (seed_p)
                            )  random_addr_gen
                            (  .clk_i  (clk)
@@ -104,7 +104,7 @@ module test_bsg
   
   end // no_mask_sram
 
-  if (num_subbank_p > 1) begin: byte_mask_sram
+  else begin: byte_mask_sram
 
     bsg_mem_1rw_sync_mask_write_byte #(
                                         .data_width_p(subbank_width_lp)
