@@ -1,6 +1,6 @@
 `define WIDTH_P 32
-`define ELS_P   16
-`define SEED_P  255
+`define ELS_P   4
+`define SEED_P  25550
 
 `include "bsg_defines.v"
 
@@ -14,7 +14,7 @@ module test_bsg
   ,parameter reset_cycles_lo_p  =  1
   ,parameter reset_cycles_hi_p  =  10
   ,localparam subbank_width_lp  =  width_p/num_subbank_p
-  ,localparam els_lp            = `BSG_SAFE_CLOG2(els_p)
+  ,localparam lg_els_lp         = `BSG_SAFE_CLOG2(els_p)
 ) 
 ( input wire clk,
   input wire [num_subbank_p-1:0] v_i,
@@ -25,7 +25,7 @@ module test_bsg
   wire [num_subbank_p-1:0][subbank_width_lp-1:0] w_mask_i;
   wire [num_subbank_p-1:0][subbank_width_lp-1:0] test_input_data;
 	wire [num_subbank_p-1:0][subbank_width_lp-1:0] actual_data;
-  wire [els_lp-1:0] test_input_addr ;
+  wire [lg_els_lp-1:0] test_input_addr ;
 	wire [num_subbank_p-1:0][subbank_width_lp-1:0] expected_data;
 
   initial
@@ -35,9 +35,10 @@ module test_bsg
     $display("WIDTH_P       : %0d", width_p);
     $display("ELS_P         : %0d", els_p);
     $display("NUM_SUBBANK_P : %0d", num_subbank_p);
+    $display("subbank_Width_lp : %0d", subbank_width_lp);
   end
 
-  assign w_mask_i = 32'hffffffff;
+  assign w_mask_i = 32'habcdef11;
 
   bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
                            , .reset_cycles_lo_p(reset_cycles_lo_p)
@@ -58,7 +59,7 @@ module test_bsg
                             , .data_o (test_input_data)
                            );
   
-  bsg_nonsynth_random_gen #(  .width_p(els_lp)
+  bsg_nonsynth_random_gen #(  .width_p(lg_els_lp)
                             , .seed_p (seed_p)
                            )  random_addr_gen
                            (  .clk_i  (clk)
