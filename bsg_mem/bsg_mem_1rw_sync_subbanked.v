@@ -1,8 +1,9 @@
 /*
  *  bsg_mem_1rw_sync_subbanked.v
  *
- *  This module has the same interface/functionality as
-    bsg_mem_1rw_sync.
+ *  This module has the same interface/functionality as bsg_mem_1rw_sync
+    when num_subbank_p = 1. When num_subbank_p > 1, it has the similar
+    functionality as bsg_mem_1rw_sync_mask_write_byte
  *
  *  - width_p : width of the total memory
  *  - els_p   : depth of the total memory
@@ -27,7 +28,7 @@ module bsg_mem_1rw_sync_subbanked
       // Don't support depth subbanks due to conflicts
     , localparam subbank_width_lp = width_p/num_subbank_p
     , localparam mask_width_lp     = subbank_width_lp >>3
-    , localparam els_lp = `BSG_SAFE_CLOG2(els_p)
+    , localparam lg_els_lp = `BSG_SAFE_CLOG2(els_p)
   )
   (   input clk_i
   	, input reset_i
@@ -35,7 +36,7 @@ module bsg_mem_1rw_sync_subbanked
   	, input w_i
     , input [num_subbank_p-1:0][mask_width_lp-1:0] w_mask_i
   	, input [num_subbank_p-1:0][subbank_width_lp-1:0] data_i
-  	, input [els_lp-1:0] addr_i
+  	, input [lg_els_lp-1:0] addr_i
   	, output logic [num_subbank_p-1:0][subbank_width_lp-1:0] data_o
   );
 
@@ -52,7 +53,7 @@ module bsg_mem_1rw_sync_subbanked
       ( .clk_i(clk_i)
         ,.reset_i(reset_i)
         ,.v_i(|v_i)
-        ,.w_i(|w_i)
+        ,.w_i(w_i)
         ,.addr_i(addr_i)
         ,.data_i(data_i)
         ,.data_o(data_lo)
@@ -60,7 +61,7 @@ module bsg_mem_1rw_sync_subbanked
 
     end //no_mask_sram
 
-    if (num_subbank_p > 1) begin: byte_mask_sram
+    else begin: byte_mask_sram
 
       logic [num_subbank_p-1:0][mask_width_lp-1:0] w_mask_lo;
 
@@ -78,7 +79,7 @@ module bsg_mem_1rw_sync_subbanked
       ( .clk_i(clk_i)
         ,.reset_i(reset_i)
         ,.v_i(|v_i)
-        ,.w_i(|w_i)
+        ,.w_i(w_i)
         ,.addr_i(addr_i)
         ,.data_i(data_i)
         ,.write_mask_i(w_mask_lo)
@@ -87,13 +88,14 @@ module bsg_mem_1rw_sync_subbanked
     
     end //byte_mask_sram
 
-    wire [num_subbank_p-1:0] read_en;
+    if (latch_last_read_p) begin: llr
 
-    for (genvar i = 0; i < num_subbank_p; i++) begin 
-      assign read_en[i] = v_i[i] & ~w_i;
+      wire [num_subbank_p-1:0] read_en;
+      wire [num_subbank_p-1:0] read_en_r;
 
-      if (latch_last_read_p) begin: llr
-        logic [num_subbank_p-1:0] read_en_r; 
+      for (genvar i = 0; i < num_subbank_p; i++) begin: bk1
+
+        assign read_en[i] = v_i[i] & ~w_i; 
 
         bsg_dff #(
           .width_p(1)
@@ -111,15 +113,22 @@ module bsg_mem_1rw_sync_subbanked
           ,.data_i(data_lo[i])
           ,.data_o(data_o[i])
         );
-      end // (latch_last_read_p):llr
+
+      end // for (genvar i = 0; i < num_subbank_p; i++)
+
+    end // if (latch_last_read_p)
       
-      else begin: no_llr
-        assign data_o = data_lo;
-      end
-    
-    end // for (genvar i = 0; i < num_subbank_p; i++)
+    else begin: no_llr
+      assign data_o = data_lo;
+    end
 
     if (!(`BSG_IS_POW2(width_p) && `BSG_IS_POW2(els_p)))
-      $error("width_p and els_p should be power of 2");      
+      $error("width_p and els_p should be power of 2"); 
+
+    if (num_subbank_p == 0)
+      $error("Number of subbanks should not be equal to 0");     
+
+    if (!(num_subbank_p > 1) && !(subbank_width_lp%8 == 0))
+      $error("For byte-mask SRAM, subbank_width_lp should be a multiple of 8");
 
 endmodule
