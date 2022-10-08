@@ -47,7 +47,21 @@ module mobile_ddr_mcp (
     Dm          
 );
 
-    `include "mobile_ddr_parameters.vh"
+    `ifdef den128Mb
+        `include "128Mb_mobile_ddr_parameters.vh"
+    `elsif den256Mb
+        `include "256Mb_mobile_ddr_parameters.vh"
+    `elsif den512Mb
+        `include "512Mb_mobile_ddr_parameters.vh"
+    `elsif den1024Mb
+        `include "1024Mb_mobile_ddr_parameters.vh"
+    `elsif den2048Mb
+        `include "2048Mb_mobile_ddr_parameters.vh"
+    `else
+        // NOTE: Intentionally cause a compile fail here to force the users
+        //       to select the correct component density before continuing
+        ERROR: You must specify component density with +define+den____Mb.
+    `endif
 
     // Declare Ports
     input                         Clk   ;
