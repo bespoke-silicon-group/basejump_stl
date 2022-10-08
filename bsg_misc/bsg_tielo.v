@@ -2,7 +2,6 @@
 `include "bsg_defines.v"
 
 module bsg_tielo #(parameter `BSG_INV_PARAM(width_p)
-                 , parameter harden_p=1
                  )
    (output [width_p-1:0] o
     );
