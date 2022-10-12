@@ -29,9 +29,10 @@ module bsg_fsb_to_htif_connector
     ,input  htif_ready_i
     );
 
-   RingPacketType pkt_in = fsb_data_i;
+   RingPacketType pkt_in;
    RingPacketType pkt_out;
 
+   assign pkt_in     = fsb_data_i;
    assign fsb_data_o = pkt_out;
 
    assign htif_v_o    = fsb_v_i;
