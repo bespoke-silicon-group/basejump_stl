@@ -21,6 +21,8 @@ data_o               D00                |  D01  |  D02  |  D03  |  D04  |
 
 ****************************************************************************/
 
+`include "bsg_defines.v"
+
 module bsg_link_isdr_phy
 
  #(parameter `BSG_INV_PARAM(width_p ))

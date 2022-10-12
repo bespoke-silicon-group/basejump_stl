@@ -16,6 +16,7 @@
 // { 1 0 1 1 }
 //
 
+`include "bsg_defines.v"
 
 module bsg_transpose_reduce #(`BSG_INV_PARAM(els_p)
                               ,`BSG_INV_PARAM(width_p)

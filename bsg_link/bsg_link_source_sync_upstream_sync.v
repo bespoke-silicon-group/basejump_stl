@@ -8,6 +8,8 @@
 // data_i and data_o are both synchronous to clk_i and have zero-cycle latency.
 //
 
+`include "bsg_defines.v"
+
 module bsg_link_source_sync_upstream_sync
 
  #(parameter `BSG_INV_PARAM(width_p                         )
