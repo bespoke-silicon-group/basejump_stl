@@ -28,6 +28,7 @@ sbox units, compare_and_swap, and array pack/unpack.
 * bsg_async
 
 This is for asynchronous building blocks, like the bsg_async_fifo, synchronizers, and credit counters.
+
 Note: for tapeouts, you will need to pay attention to the physical design and timing constraints for these components.
 
 * bsg_noc
@@ -40,7 +41,8 @@ Reusable Cache implementation
 
 * bsg_link
 
-High speed off-chip communication link (over LVCMOS I/Os, can hit 1.2 Gbps per pin to FPGA)
+High speed off-chip communication link (over LVCMOS I/Os, can hit 1.2 Gbps per pin to FPGA).
+
 Unidirectional off-chip high-speed source synchronous communication interface. (also used as FPGA bridge).
 
 * bsg_clk_gen
