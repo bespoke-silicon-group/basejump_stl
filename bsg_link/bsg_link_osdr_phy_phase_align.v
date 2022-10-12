@@ -35,6 +35,8 @@ clk_o                  |   |   |   |   |   |   |   |   |   |   |   |   |
 
 ****************************************************************************/
 
+`include "bsg_defines.v"
+
 module bsg_link_osdr_phy_phase_align
 
   (input  clk_i
