@@ -49,8 +49,8 @@ module bsg_sparse_to_dense_boolean #(`BSG_INV_PARAM (els_p)
       dec
       (
         .v_i(  val_i[j])
-        .i  (index_i[j])
-        .o  (matrix [j])
+       ,.i  (index_i[j])
+       ,.o  (matrix [j])
       );
     end	
 
