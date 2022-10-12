@@ -11,6 +11,7 @@ module bsg_cache_to_axi_tx
   #(parameter `BSG_INV_PARAM(num_cache_p)
     ,parameter `BSG_INV_PARAM(addr_width_p)
     ,parameter `BSG_INV_PARAM(data_width_p)
+    ,parameter `BSG_INV_PARAM(mask_width_p)
     ,parameter `BSG_INV_PARAM(block_size_in_words_p)
     ,parameter tag_fifo_els_p=num_cache_p
     
@@ -20,8 +21,10 @@ module bsg_cache_to_axi_tx
 
     ,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
 
+    ,parameter strb_width_lp=(data_width_p>>3)
     ,parameter axi_strb_width_lp=(axi_data_width_p>>3)
     ,parameter data_width_ratio_lp=(axi_data_width_p/data_width_p)
+    ,parameter byte_mask_width_lp=(block_size_in_words_p*strb_width_lp)
   )
   (
     input clk_i
@@ -31,9 +34,10 @@ module bsg_cache_to_axi_tx
     ,output logic yumi_o
     ,input [lg_num_cache_lp-1:0] cache_id_i
     ,input [addr_width_p-1:0] addr_i
+    ,input [mask_width_p-1:0] mask_i
 
     // cache dma write channel
-    ,input  [num_cache_p-1:0][data_width_p-1:0] dma_data_i
+    ,input [num_cache_p-1:0][data_width_p-1:0] dma_data_i
     ,input [num_cache_p-1:0] dma_data_v_i
     ,output logic [num_cache_p-1:0] dma_data_yumi_o
 
@@ -121,9 +125,11 @@ module bsg_cache_to_axi_tx
   logic sipo_v_li;
   logic sipo_ready_lo;
   logic [data_width_p-1:0] sipo_data_li;
+  logic [strb_width_lp-1:0] sipo_strb_li;
   logic [$clog2(data_width_ratio_lp+1)-1:0] sipo_yumi_cnt_li;
   logic [data_width_ratio_lp-1:0] sipo_v_lo;
   logic [num_cache_p-1:0] cache_sel;
+  logic [byte_mask_width_lp-1:0] byte_mask_lo;
   
   bsg_decode_with_v #(
     .num_out_p(num_cache_p)
@@ -133,22 +139,30 @@ module bsg_cache_to_axi_tx
     ,.o(cache_sel)
   );
 
+  bsg_expand_bitmask #(
+    .in_width_p(mask_width_p)
+    ,.expand_p(byte_mask_width_lp/mask_width_p)
+  ) expand (
+    .i(mask_i)
+    ,.o(byte_mask_lo)
+  );
+
   assign sipo_data_li = dma_data_i[tag_lo];
   assign dma_data_yumi_o = cache_sel & dma_data_v_i & {num_cache_p{sipo_ready_lo}};
  
   bsg_serial_in_parallel_out #(
-    .width_p(data_width_p)
+    .width_p(data_width_p+strb_width_lp)
     ,.els_p(data_width_ratio_lp)
   ) sipo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
 
     ,.valid_i(sipo_v_li)
-    ,.data_i(sipo_data_li)
+    ,.data_i({sipo_strb_li, sipo_data_li})
     ,.ready_o(sipo_ready_lo)
 
     ,.valid_o(sipo_v_lo)
-    ,.data_o(axi_wdata_o)
+    ,.data_o({axi_wstrb_o, axi_wdata_o})
     ,.yumi_cnt_i(sipo_yumi_cnt_li)
   );
 
@@ -158,8 +172,6 @@ module bsg_cache_to_axi_tx
     ? ($clog2(data_width_ratio_lp+1))'(data_width_ratio_lp)
     : '0;
  
-  assign axi_wstrb_o = {axi_strb_width_lp{1'b1}};
-
   // word counter
   //
   logic [`BSG_SAFE_CLOG2(block_size_in_words_p)-1:0] word_count_lo;
@@ -177,7 +189,14 @@ module bsg_cache_to_axi_tx
     ,.count_o(word_count_lo)
   );
   
-
+  bsg_mux #(
+    .width_p(strb_width_lp)
+    ,.els_p(block_size_in_words_p)
+  ) wstrb_mux (
+    .data_i(byte_mask_lo)
+    ,.sel_i(word_count_lo)
+    ,.data_o(sipo_strb_li)
+  );
 
   logic pop_word;
   assign pop_word = dma_data_v_i[tag_lo] & dma_data_yumi_o[tag_lo] & tag_fifo_v_lo;

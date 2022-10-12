@@ -30,7 +30,7 @@ module testbench();
   localparam sets_p = 128;
   localparam ways_p = 8;
   localparam mem_size_p = block_size_in_words_p*sets_p*ways_p*4;
-
+  localparam word_tracking_p = 1;
 
   integer status;
   integer wave;
@@ -45,7 +45,7 @@ module testbench();
 
 
   `declare_bsg_cache_pkt_s(addr_width_p,data_width_p);
-  `declare_bsg_cache_dma_pkt_s(addr_width_p);
+  `declare_bsg_cache_dma_pkt_s(addr_width_p,block_size_in_words_p);
 
   bsg_cache_pkt_s cache_pkt;
   logic v_li;
@@ -75,6 +75,7 @@ module testbench();
     ,.sets_p(sets_p)
     ,.ways_p(ways_p)
     ,.amo_support_p(amo_support_level_arithmetic_lp)
+    ,.word_tracking_p(word_tracking_p)
   ) DUT (
     .clk_i(clk)
     ,.reset_i(reset)
@@ -118,6 +119,7 @@ module testbench();
   bsg_nonsynth_dma_model #(
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
+    ,.mask_width_p(block_size_in_words_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.els_p(mem_size_p)
 

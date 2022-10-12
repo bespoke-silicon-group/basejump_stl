@@ -17,9 +17,11 @@ module bsg_cache_miss
     ,parameter `BSG_INV_PARAM(block_size_in_words_p)
     ,parameter `BSG_INV_PARAM(sets_p)
     ,parameter `BSG_INV_PARAM(ways_p)
+    ,parameter `BSG_INV_PARAM(word_tracking_p)
 
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,parameter data_mask_width_lp=(data_width_p>>3)
     ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
     ,parameter block_offset_width_lp=(block_size_in_words_p > 1) ? lg_data_mask_width_lp+lg_block_size_in_words_lp : lg_data_mask_width_lp
     ,parameter tag_width_lp=(addr_width_p-lg_sets_lp-block_offset_width_lp)
@@ -33,8 +35,10 @@ module bsg_cache_miss
 
     // from tv stage
     ,input miss_v_i
+    ,input track_miss_i
     ,input bsg_cache_decode_s decode_v_i
     ,input [addr_width_p-1:0] addr_v_i
+    ,input [data_mask_width_lp-1:0] mask_v_i
     ,input [ways_p-1:0][tag_width_lp-1:0] tag_v_i
     ,input [ways_p-1:0] valid_v_i
     ,input [ways_p-1:0] lock_v_i
@@ -45,11 +49,18 @@ module bsg_cache_miss
     // from store buffer
     ,input sbuf_empty_i
 
+    // from track buffer
+    ,input tbuf_empty_i
+
     // to dma engine
     ,output bsg_cache_dma_cmd_e dma_cmd_o
     ,output logic [lg_ways_lp-1:0] dma_way_o
     ,output logic [addr_width_p-1:0] dma_addr_o
     ,input dma_done_i
+
+    // to dma engine for flopping track_mem's read data
+    // used to avoid clk-to-q timing from memory
+    ,output logic track_data_we_o
 
     // from stat_mem
     ,input [stat_info_width_lp-1:0] stat_info_i
@@ -67,6 +78,13 @@ module bsg_cache_miss
     ,output logic [lg_sets_lp-1:0] tag_mem_addr_o
     ,output logic [ways_p-1:0][tag_info_width_lp-1:0] tag_mem_data_o
     ,output logic [ways_p-1:0][tag_info_width_lp-1:0] tag_mem_w_mask_o
+
+    // to track mem
+    ,output logic track_mem_v_o
+    ,output logic track_mem_w_o
+    ,output logic [lg_sets_lp-1:0] track_mem_addr_o
+    ,output logic [ways_p-1:0][block_size_in_words_p-1:0] track_mem_w_mask_o
+    ,output logic [ways_p-1:0][block_size_in_words_p-1:0] track_mem_data_o
 
     // to pipeline
     ,output logic done_o
@@ -118,6 +136,8 @@ module bsg_cache_miss
     ,SEND_FILL_ADDR
     ,SEND_EVICT_DATA
     ,GET_FILL_DATA
+    ,STORE_TAG_MISS
+    ,STORE_TAG_MISS_ALLOCATE
     ,RECOVER
     ,DONE
   } miss_state_e;
@@ -131,11 +151,13 @@ module bsg_cache_miss
 
   // for flush/inv ops, go to FLUSH_OP.
   // for AUNLOCK, or ALOCK with tag hit, to go LOCK_OP.
-  logic goto_flush_op;
-  logic goto_lock_op;
-
-  assign goto_flush_op = decode_v_i.tagfl_op| decode_v_i.ainv_op| decode_v_i.afl_op| decode_v_i.aflinv_op;
-  assign goto_lock_op = decode_v_i.aunlock_op | (decode_v_i.alock_op & tag_hit_found_i);
+  // for store tag miss with data size equal or bigger than a word, do not fetch cache line word tracking is enables
+  wire goto_flush_op = decode_v_i.tagfl_op| decode_v_i.ainv_op| decode_v_i.afl_op| decode_v_i.aflinv_op;
+  wire goto_lock_op = decode_v_i.aunlock_op | (decode_v_i.alock_op & tag_hit_found_i);
+  wire full_word_op = decode_v_i.mask_op
+    ? (&mask_v_i)
+    : (decode_v_i.data_size_op >= lg_data_mask_width_lp);
+  wire st_tag_miss_op = word_tracking_p ? (decode_v_i.st_op & full_word_op & ~tag_hit_found_i) : 1'b0;
 
   logic [tag_width_lp-1:0] addr_tag_v;
   logic [lg_sets_lp-1:0] addr_index_v;
@@ -153,6 +175,7 @@ module bsg_cache_miss
 
   assign stat_mem_addr_o = addr_index_v;
   assign tag_mem_addr_o = addr_index_v;
+  assign track_mem_addr_o = addr_index_v;
 
   assign chosen_way_o = chosen_way_r;
 
@@ -252,6 +275,11 @@ module bsg_cache_miss
     tag_mem_data_out = '0;
     tag_mem_w_mask_out = '0;
 
+    track_mem_v_o = 1'b0;
+    track_mem_w_o = 1'b0;
+    track_mem_data_o = '0;
+    track_mem_w_mask_o = '0;
+
     chosen_way_n = chosen_way_r;
     flush_way_n = flush_way_r;
 
@@ -268,13 +296,16 @@ module bsg_cache_miss
       // miss handler waits in this state, until the miss is detected in tv
       // stage.
       START: begin
-        stat_mem_v_o = miss_v_i;
-        miss_state_n = miss_v_i
+        stat_mem_v_o = (miss_v_i & sbuf_empty_i & tbuf_empty_i);
+        track_mem_v_o = word_tracking_p ? (miss_v_i & sbuf_empty_i & tbuf_empty_i) : 1'b0;
+        miss_state_n = (miss_v_i & sbuf_empty_i & tbuf_empty_i)
           ? (goto_flush_op
             ? FLUSH_OP 
             : (goto_lock_op
               ? LOCK_OP
-              : SEND_FILL_ADDR))
+              : (st_tag_miss_op
+                ? STORE_TAG_MISS
+                : SEND_FILL_ADDR)))
           : START;
       end
 
@@ -284,11 +315,12 @@ module bsg_cache_miss
       SEND_FILL_ADDR: begin
 
         // Replacement Policy:
-        // if an invalid and unlocked way exists, pick that.
-        // if not, pick the LRU way. But if the LRU way designated 
+        // If an invalid and unlocked way exists, pick that.
+        // If not, pick the LRU way. But if the LRU way designated 
         // by stats_mem_info is locked, it will be overridden by 
-        // the bsg_lru_pseudo_tree_backup
-        chosen_way_n = invalid_exist ? invalid_way_id : lru_way_id;
+        // the bsg_lru_pseudo_tree_backup.
+        // On track miss, the chosen way is the tag hit way.
+        chosen_way_n = track_miss_i ? tag_hit_way_id_i : (invalid_exist ? invalid_way_id : lru_way_id);
 
         dma_cmd_o = e_dma_send_fill_addr;
         dma_addr_o = {
@@ -297,10 +329,9 @@ module bsg_cache_miss
           {(block_offset_width_lp){1'b0}}
         };
 
-
         // if the chosen way is dirty and valid, then evict.
         miss_state_n = dma_done_i
-          ? ((stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
+          ? ((~track_miss_i & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
             ? SEND_EVICT_ADDR
             : GET_FILL_DATA)
           : SEND_FILL_ADDR;
@@ -379,26 +410,51 @@ module bsg_cache_miss
       // Set the DMA engine to evict the dirty block.
       // For the flush ops, go straight to RECOVER.
       SEND_EVICT_DATA: begin
-        dma_cmd_o = sbuf_empty_i
-          ? e_dma_send_evict_data
-          : e_dma_nop;
+        dma_cmd_o = e_dma_send_evict_data;
         dma_addr_o = {
           tag_v_i[dma_way_o],
           addr_index_v,
           {(block_offset_width_lp){1'b0}}
         };
 
+        // set stat mem entry on store tag miss.
+        stat_mem_v_o = dma_done_i & st_tag_miss_op;
+        stat_mem_w_o = 1'b1;
+        stat_mem_data_out.dirty = {ways_p{1'b1}};
+        stat_mem_data_out.lru_bits = chosen_way_lru_data;
+        stat_mem_w_mask_out.dirty = chosen_way_decode;
+        stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
+
+        // set the tag and the valid bit to 1'b1 for the chosen way on store tag miss.
+        tag_mem_v_o = dma_done_i & st_tag_miss_op;
+        tag_mem_w_o = 1'b1;
+
+        for (integer i = 0; i < ways_p; i++) begin
+          tag_mem_data_out[i].tag = addr_tag_v;
+          tag_mem_data_out[i].lock = decode_v_i.alock_op;
+          tag_mem_data_out[i].valid = 1'b1;
+          tag_mem_w_mask_out[i].tag = {tag_width_lp{chosen_way_decode[i]}};
+          tag_mem_w_mask_out[i].lock = chosen_way_decode[i];
+          tag_mem_w_mask_out[i].valid = chosen_way_decode[i];
+        end
+
+        // set track bits to zero for the chosen way on store tag miss.
+        track_mem_v_o = dma_done_i & st_tag_miss_op;
+        track_mem_w_o = 1'b1;
+        for (integer i = 0; i < ways_p; i++) begin
+          track_mem_data_o[i] = {block_size_in_words_p{1'b0}};
+          track_mem_w_mask_o[i] = {block_size_in_words_p{chosen_way_decode[i]}};
+        end
+
         miss_state_n = dma_done_i
-          ? ((decode_v_i.tagfl_op| decode_v_i.aflinv_op| decode_v_i.afl_op) ? RECOVER : GET_FILL_DATA)
+          ? ((decode_v_i.tagfl_op| decode_v_i.aflinv_op| decode_v_i.afl_op | st_tag_miss_op) ? RECOVER : GET_FILL_DATA)
           : SEND_EVICT_DATA;
       end
 
       // Set the DMA engine to start writing the new block to the data_mem.
       // Do not start until the store buffer is empty.
       GET_FILL_DATA: begin
-        dma_cmd_o = sbuf_empty_i
-          ? e_dma_get_fill_data
-          : e_dma_nop;
+        dma_cmd_o = e_dma_get_fill_data;
         dma_addr_o = {
           addr_tag_v,
           addr_index_v,
@@ -406,22 +462,23 @@ module bsg_cache_miss
           {(lg_data_mask_width_lp){1'b0}}
         };
 
-        // For store miss, set the dirty bit for the chosen way.
-        // For load miss, clear the dirty bit for the chosen way.
+        // For store tag miss, set the dirty bit for the chosen way.
+        // For load tag miss, clear the dirty bit for the chosen way.
+        // For track miss, do not touch the dirty bit for the chosen way.
         // Set the lru_bits, so that the chosen way is not the LRU.
         // We are choosing a way to bring in a new block, which is technically
         // the MRU. lru decode unit generates the next state LRU bits, so that
         // the input way is "not" the LRU way.
         stat_mem_v_o = dma_done_i;
-        stat_mem_w_o = dma_done_i;
+        stat_mem_w_o = 1'b1;
         stat_mem_data_out.dirty = {ways_p{decode_v_i.st_op | decode_v_i.atomic_op}};
         stat_mem_data_out.lru_bits = chosen_way_lru_data;
-        stat_mem_w_mask_out.dirty = chosen_way_decode;
+        stat_mem_w_mask_out.dirty = track_miss_i ? {ways_p{1'b0}} : chosen_way_decode;
         stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
 
         // set the tag and the valid bit to 1'b1 for the chosen way.
         tag_mem_v_o = dma_done_i;
-        tag_mem_w_o = dma_done_i;
+        tag_mem_w_o = 1'b1;
 
         for (integer i = 0; i < ways_p; i++) begin
           tag_mem_data_out[i].tag = addr_tag_v;
@@ -432,6 +489,14 @@ module bsg_cache_miss
           tag_mem_w_mask_out[i].valid = chosen_way_decode[i];
         end
 
+        // set track bits to one for the chosen way on store tag miss.
+        track_mem_v_o = word_tracking_p ? dma_done_i : 1'b0;
+        track_mem_w_o = 1'b1;
+        for (integer i = 0; i < ways_p; i++) begin
+          track_mem_data_o[i] = {block_size_in_words_p{1'b1}};
+          track_mem_w_mask_o[i] = {block_size_in_words_p{chosen_way_decode[i]}};
+        end
+
         select_snoop_data_n = dma_done_i
           ? 1'b1
           : select_snoop_data_r;
@@ -439,6 +504,44 @@ module bsg_cache_miss
         miss_state_n = dma_done_i
           ? RECOVER
           : GET_FILL_DATA;
+      end
+
+      STORE_TAG_MISS: begin
+        chosen_way_n = invalid_exist ? invalid_way_id : lru_way_id;
+
+        // if the chosen way is dirty and valid, then evict.
+        miss_state_n = (stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
+          ? SEND_EVICT_ADDR
+          : STORE_TAG_MISS_ALLOCATE;
+      end
+
+      STORE_TAG_MISS_ALLOCATE: begin
+        stat_mem_v_o = 1'b1;
+        stat_mem_w_o = 1'b1;
+        stat_mem_data_out.dirty = {ways_p{1'b1}};
+        stat_mem_data_out.lru_bits = chosen_way_lru_data;
+        stat_mem_w_mask_out.dirty = chosen_way_decode;
+        stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
+
+        tag_mem_v_o = 1'b1;
+        tag_mem_w_o = 1'b1;
+        for (integer i = 0; i < ways_p; i++) begin
+          tag_mem_data_out[i].tag = addr_tag_v;
+          tag_mem_data_out[i].lock = decode_v_i.alock_op;
+          tag_mem_data_out[i].valid = 1'b1;
+          tag_mem_w_mask_out[i].tag = {tag_width_lp{chosen_way_decode[i]}};
+          tag_mem_w_mask_out[i].lock = chosen_way_decode[i];
+          tag_mem_w_mask_out[i].valid = chosen_way_decode[i];
+        end
+
+        track_mem_v_o = 1'b1;
+        track_mem_w_o = 1'b1;
+        for (integer i = 0; i < ways_p; i++) begin
+          track_mem_data_o[i] = {block_size_in_words_p{1'b0}};
+          track_mem_w_mask_o[i] = {block_size_in_words_p{chosen_way_decode[i]}};
+        end
+
+        miss_state_n = RECOVER;
       end
 
       // Spend one cycle to recover the tl stage.
@@ -473,12 +576,14 @@ module bsg_cache_miss
       flush_way_r <= '0;
       select_snoop_data_r <= 1'b0;
       // added to be a little more X pessimism conservative
+      track_data_we_o <= 1'b0;
     end
     else begin
       miss_state_r <= miss_state_n;
       chosen_way_r <= chosen_way_n;
       flush_way_r <= flush_way_n;
       select_snoop_data_r <= select_snoop_data_n;
+      track_data_we_o <= track_mem_v_o & ~track_mem_w_o;
     end
   end
 
