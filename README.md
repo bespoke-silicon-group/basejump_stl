@@ -51,7 +51,8 @@ Open source portable clock generator (all-standard cell)
 
 * bsg_dmc
 
-LPDDR1 Dram Controller and PHY
+LPDDR1 Dram Controller and PHY.
+Requires advanced knowledge to tapeout.
  
 * bsg_test
 
