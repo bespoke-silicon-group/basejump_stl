@@ -12,21 +12,18 @@ Note: bsg_misc/bsg_defines.v contains many macros used by BaseJump STL. Make sur
 
 ## Contents
 
-* bsg_link
-
-High speed off-chip communication link (over LVCMOS I/Os, can hit 1.2 Gbps per pin to FPGA)
-
-* bsg_clk_gen
-
-Open source portable clock generator (all-standard cell)
-
-* bsg_dmc
-
-LPDDR1 Dram Controller and PHY
-
 * bsg_misc
 
-Small, miscellaneous building blocks, like counters, reset timers, gray to binary coders, etc.
+ Lots of digital building blocks, like counters, reset timers, gray to binary coders, etc.
+ 
+* bsg_mem
+
+Portable SRAM and RF interfaces.
+
+* bsg_dataflow
+
+For standalone modules involved in data plumbing. E.g. two-element fifos, fifo-to-fifo transfer engines,
+sbox units, compare_and_swap, and array pack/unpack.
 
 * bsg_async
 
@@ -42,13 +39,17 @@ Reusable Cache implementation
 
 * bsg_link
 
+High speed off-chip communication link (over LVCMOS I/Os, can hit 1.2 Gbps per pin to FPGA)
 Unidirectional off-chip high-speed source synchronous communication interface. (also used as FPGA bridge).
+
+* bsg_clk_gen
+
+Open source portable clock generator (all-standard cell)
+
+* bsg_dmc
+
+LPDDR1 Dram Controller and PHY
  
-* bsg_dataflow
-
-For standalone modules involved in data plumbing. E.g. two-element fifos, fifo-to-fifo transfer engines,
-sbox units, compare_and_swap, and array pack/unpack.
-
 * bsg_test
 
 Data, clock, and reset generator for test benches.
@@ -60,10 +61,6 @@ Mirrors the other directories, with tests.
 * hard
 
 Mirrors other directories, contains replacement files for specific process technologies.
-
-* bsg_mem
-
-Portable SRAM and RF interfaces.
 
 ## Contact
 
