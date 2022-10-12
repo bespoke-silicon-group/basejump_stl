@@ -1,0 +1,1 @@
+These files are here for backwards compatibility; we don't recommend starting a new design using these files. Instead, look at bsg_noc and bsg_link.
