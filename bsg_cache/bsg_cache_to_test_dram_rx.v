@@ -141,8 +141,8 @@ module bsg_cache_to_test_dram_rx
   
   always_ff @ (negedge dram_clk_i) begin
     if (~dram_reset_i & dram_data_v_i) begin
-      assert(~data_afifo_full) else $fatal("data async_fifo full!");
-      assert(~ch_addr_afifo_full) else $fatal("ch_addr async_fifo full!");
+      assert(~data_afifo_full) else $fatal(1, "data async_fifo full!");
+      assert(~ch_addr_afifo_full) else $fatal(1, "ch_addr async_fifo full!");
     end
   end
 

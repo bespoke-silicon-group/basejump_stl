@@ -204,7 +204,7 @@ module testbench();
 
         assert(shadow_mem[read_done_col_addr] == dramsim3_data_lo[0][0+:32])
           //$display("[BSG_INFO] output matched. Id=%d, Expected=%x, Actual=%x", recv_id, result[recv_id], dramsim3_data_lo[0][0+:32]);
-          else $fatal("[BSG_FATAL] output does not match expected result for 0x%x. Expected=%x, Actual=%x",
+          else $fatal(1, "[BSG_FATAL] output does not match expected result for 0x%x. Expected=%x, Actual=%x",
                       dramsim3_read_done_ch_addr_lo[0], shadow_mem[read_done_col_addr], dramsim3_data_lo[0][0+:32]);
       end
 
