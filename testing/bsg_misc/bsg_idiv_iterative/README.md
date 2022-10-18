@@ -1,6 +1,11 @@
 Testbench:
 
-- Set design parameters for design like bits/iteration and design width in test_bsg.v
+- Set design parameters for design like bits/iteration and design width in the make command
+UNSIGN - Test unsigned (default don't test)
+SIGN - Test signed (default don't test)
+WIDTH - design width
+BITS_PER_ITER - 1 or 2 bits per iteration generated (different hardware designs)
+ITERS - Number of simulation iterations (inputs tested)
 
 - Test_bsg.v gets inputs from get_stim function from get_stim.c
 
