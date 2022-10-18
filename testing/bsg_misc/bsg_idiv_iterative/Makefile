@@ -6,15 +6,15 @@ VCS_OP     +=  +vcs+vcdpluson -debug_access+all
 VCS_DEFINES =
 
 vcs:
-	ifdef($SIGN)
+	ifdef SIGN
 	VCS_DEFINES += +define+SIGN=$(SIGN)
-	ifdef($UNSIGN)
+	ifdef UNSIGN
 	VCS_DEFINES += +define+UNSIGN=$(UNSIGN)
-	ifdef($WIDTH)
+	ifdef WIDTH
 	VCS_DEFINES += +define+WIDTH=$(WIDTH)
-	ifdef($BITS_PER_ITER)
+	ifdef BITS_PER_ITER
 	VCS_DEFINES += +define+BITS_PER_ITER=$(BITS_PER_ITER)
-	ifdef($ITERS)
+	ifdef ITERS
 	VCS_DEFINES += +define+ITERS=$(ITERS)
 	
 	$(VCS) -full64 -sverilog $(VCS_OP)  -Mupdate -f divide.files $(LIB_OPTS) $(PLI_OPTS) $(VCS_DEFINES)
