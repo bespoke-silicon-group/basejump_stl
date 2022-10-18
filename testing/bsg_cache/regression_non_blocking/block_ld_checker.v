@@ -74,13 +74,13 @@ module block_ld_checker
 
       if (load_idx.exists(id_o)) begin
         assert(result[id_o][load_idx[id_o]] == data_o)
-          else $fatal("Output does not match expected result. Id= %d, Expected: %x. Actual: %x",
+          else $fatal(1, "Output does not match expected result. Id= %d, Expected: %x. Actual: %x",
                 id_o, result[id_o][load_idx[id_o]], data_o);
         load_idx[id_o]++;
       end
       else begin
         assert(result[id_o][0] == data_o)
-          else $fatal("Output does not match expected result. Id= %d, Expected: %x. Actual: %x",
+          else $fatal(1, "Output does not match expected result. Id= %d, Expected: %x. Actual: %x",
                 id_o, result[id_o][0], data_o);
       end
     end

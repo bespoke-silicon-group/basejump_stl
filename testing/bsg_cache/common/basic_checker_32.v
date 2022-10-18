@@ -217,7 +217,7 @@ module basic_checker_32
         // output checker
         if (v_o & yumi_i) begin
           assert(result[recv_id] == data_o)
-            else $fatal("[BSG_FATAL] output does not match expected result. Id=%d, Expected: %x. Actual: %x.",
+            else $fatal(1, "[BSG_FATAL] output does not match expected result. Id=%d, Expected: %x. Actual: %x.",
                     recv_id, result[recv_id], data_o);
           recv_id++;
         end

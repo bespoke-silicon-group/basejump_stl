@@ -89,7 +89,7 @@ module tag_checker
     if (~reset_i & v_o & yumi_i & en_i) begin
       $display("id=%d, data=%x", id_o, data_o);
       assert(result[id_o] == data_o)
-        else $fatal("[BSG_FATAL] Output does not match expected result. Id= %d, Expected: %x. Actual: %x",
+        else $fatal(1, "[BSG_FATAL] Output does not match expected result. Id= %d, Expected: %x. Actual: %x",
               id_o, result[id_o], data_o);
     end
 

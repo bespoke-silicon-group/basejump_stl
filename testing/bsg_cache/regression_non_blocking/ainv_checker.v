@@ -18,7 +18,7 @@ module ainv_checker
   
     if (~reset_i & en_i & v_o & yumi_i)
       assert(data_o == '0)
-        else $fatal("zero output expected.");
+        else $fatal(1, "zero output expected.");
 
   end
 
