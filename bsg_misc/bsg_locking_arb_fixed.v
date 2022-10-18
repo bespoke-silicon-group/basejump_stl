@@ -6,6 +6,8 @@ module bsg_locking_arb_fixed #( parameter `BSG_INV_PARAM(inputs_p)
   ( input   clk_i
   , input   ready_i
 
+   // to have continuous throughput, you will need to unlock on the same cycle
+   // as the last word of a packet going through
   , input   unlock_i
 
   , input        [inputs_p-1:0] reqs_i
@@ -18,6 +20,8 @@ module bsg_locking_arb_fixed #( parameter `BSG_INV_PARAM(inputs_p)
     req_words_reg
       ( .clk_i  ( clk_i )
       , .reset_i( unlock_i )
+       // lock in a request mask, if the current request mask is "everybody"
+       // and somebody was granted their request.
       , .en_i   ( (&req_mask_r) & (|grants_o) )
       , .data_i ( ~grants_o )
       , .data_o ( not_req_mask_r )

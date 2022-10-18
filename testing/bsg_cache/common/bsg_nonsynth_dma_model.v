@@ -9,6 +9,7 @@ module bsg_nonsynth_dma_model
   import bsg_cache_pkg::*;
   #(parameter `BSG_INV_PARAM(addr_width_p)
     ,parameter `BSG_INV_PARAM(data_width_p)
+    ,parameter `BSG_INV_PARAM(mask_width_p)
     ,parameter `BSG_INV_PARAM(block_size_in_words_p)
     ,parameter `BSG_INV_PARAM(els_p)
 
@@ -23,7 +24,9 @@ module bsg_nonsynth_dma_model
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter block_offset_width_lp=(block_size_in_words_p>1) ? lg_data_mask_width_lp+lg_block_size_in_words_lp : lg_data_mask_width_lp
     ,parameter upper_addr_width_lp=(block_size_in_words_p>1) ? lg_els_lp-lg_block_size_in_words_lp : lg_els_lp
-    ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p, mask_width_p)
+    ,parameter word_width_lp=(block_size_in_words_p*data_width_p)/mask_width_p
+    ,parameter dma_ratio_lp=(mask_width_p/block_size_in_words_p)
   )
   (
     input clk_i
@@ -45,7 +48,7 @@ module bsg_nonsynth_dma_model
   logic [data_width_p-1:0] mem [els_p-1:0];
   
   
-  `declare_bsg_cache_dma_pkt_s(addr_width_p);
+  `declare_bsg_cache_dma_pkt_s(addr_width_p, mask_width_p);
   bsg_cache_dma_pkt_s dma_pkt;
   assign dma_pkt = dma_pkt_i;
 
@@ -156,10 +159,12 @@ module bsg_nonsynth_dma_model
   // write channel
   //
   logic [addr_width_p-1:0] wr_addr_r, wr_addr_n;
+  logic [mask_width_p-1:0] wr_mask_r, wr_mask_n;
   state_e wr_state_r, wr_state_n;
   logic [lg_block_size_in_words_lp-1:0] wr_counter_r, wr_counter_n;
   integer wr_delay_r, wr_delay_n;
   integer wr_data_delay_r, wr_data_delay_n;
+  logic [dma_ratio_lp-1:0] dma_mask_li;
   
   wire wr_data_delay_zero = wr_data_delay_r == 0;
 
@@ -170,8 +175,18 @@ module bsg_nonsynth_dma_model
   logic [upper_addr_width_lp-1:0] wr_upper_addr;
   assign wr_upper_addr = wr_addr_r[block_offset_width_lp+:upper_addr_width_lp];
 
+  bsg_mux #(
+    .width_p(dma_ratio_lp)
+    ,.els_p(block_size_in_words_p)
+  ) mux (
+    .data_i(wr_mask_r)
+    ,.sel_i(wr_counter_r)
+    ,.data_o(dma_mask_li)
+  );
+
   always_comb begin
     wr_addr_n = wr_addr_r;
+    wr_mask_n = wr_mask_r;
     wr_data_delay_n = wr_data_delay_r;
     wr_req_delay_n = wr_req_delay_r;
     wr_req_ready = 1'b0;
@@ -188,6 +203,9 @@ module bsg_nonsynth_dma_model
         wr_addr_n = start_write & wr_req_delay_zero
           ? dma_pkt.addr
           : wr_addr_r;
+        wr_mask_n = start_write & wr_req_delay_zero
+          ? dma_pkt.mask
+          : wr_mask_r;
         wr_counter_n = start_write & wr_req_delay_zero
           ? '0
           : wr_counter_r;
@@ -247,13 +265,18 @@ module bsg_nonsynth_dma_model
     else begin
       wr_state_r <= wr_state_n;
       wr_addr_r <= wr_addr_n;
+      wr_mask_r <= wr_mask_n;
       wr_counter_r <= wr_counter_n;
       wr_delay_r <= wr_delay_n;
       wr_data_delay_r <= wr_data_delay_n;
       wr_req_delay_r <= wr_req_delay_n;
     
       if ((wr_state_r == BUSY) & dma_data_v_i & dma_data_yumi_o) begin
-        mem[{wr_upper_addr, {(block_size_in_words_p>1){wr_counter_r}}}] <= dma_data_i;
+        for (integer i = 0; i < dma_ratio_lp; i++) begin
+          if (dma_mask_li[i]) begin
+            mem[{wr_upper_addr, {(block_size_in_words_p>1){wr_counter_r}}}][i*word_width_lp+:word_width_lp] <= dma_data_i[i*word_width_lp+:word_width_lp];
+          end
+        end
       end
 
     end

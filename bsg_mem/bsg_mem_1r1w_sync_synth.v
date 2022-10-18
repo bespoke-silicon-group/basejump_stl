@@ -18,6 +18,8 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
 				 , parameter `BSG_INV_PARAM(els_p)
 				 , parameter read_write_same_addr_p=0
 				 , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+                                 , parameter latch_last_read_p=0
+                 , parameter verbose_p=1
 				 )
    (input   clk_i
     , input reset_i
@@ -44,6 +46,8 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
     begin: nz
 
    logic [width_p-1:0]    mem [els_p-1:0];
+   logic read_en;
+   logic [width_p-1:0] data_out;
 
    // this treats the ram as an array of registers for which the
    // read addr is latched on the clock, the write
@@ -66,19 +70,55 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
 
    logic [addr_width_lp-1:0] r_addr_r;
 
+   assign read_en = r_v_i;
+   assign data_out = mem[r_addr_r];
+
    always_ff @(posedge clk_i)
      if (r_v_i)
        r_addr_r <= r_addr_i;
      else
        r_addr_r <= 'X;
 
-   assign r_data_o = mem[r_addr_r];
+  if (latch_last_read_p)
+    begin: llr
+      logic read_en_r; 
+
+      bsg_dff #(
+        .width_p(1)
+      ) read_en_dff (
+        .clk_i(clk_i)
+        ,.data_i(read_en)
+        ,.data_o(read_en_r)
+      );
+
+      bsg_dff_en_bypass #(
+        .width_p(width_p)
+      ) dff_bypass (
+        .clk_i(clk_i)
+        ,.en_i(read_en_r)
+        ,.data_i(data_out)
+        ,.data_o(r_data_o)
+      );
+    end
+  else
+    begin: no_llr
+      assign r_data_o = data_out;
+    end
 
    always_ff @(posedge clk_i)
      if (w_v_i)
        mem[w_addr_i] <= w_data_i;
 
    end
+
+   // synopsys translate_off
+   initial
+     begin
+        if (verbose_p)
+      $display("## %L: instantiating width_p=%d, els_p=%d (%m)",width_p,els_p);
+     end
+   // synopsys translate_on
+
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_mem_1r1w_sync_synth)

@@ -21,7 +21,7 @@ module testbench();
     lru_li = lru;
     #10;
     assert(expected == way_id_lo) else
-      $fatal("[BSG_FATAL] expected: %b, actual: %b", expected, way_id_lo);
+      $fatal(1, "[BSG_FATAL] expected: %b, actual: %b", expected, way_id_lo);
     #10;
 
   endtask

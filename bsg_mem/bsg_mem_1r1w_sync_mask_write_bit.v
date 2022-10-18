@@ -13,6 +13,7 @@ module bsg_mem_1r1w_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
                                         // 1r1w SRAM without changing timing.
                                         // fixme: change to write_then_read_same_addr_p
                                         , parameter read_write_same_addr_p=0
+                                        , parameter latch_last_read_p=0 
                                         , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                                         , parameter harden_p=0
                                         , parameter disable_collision_warning_p=0
@@ -52,6 +53,7 @@ module bsg_mem_1r1w_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
      #(.width_p(width_p)
        ,.els_p (els_p  )
        ,.read_write_same_addr_p(read_write_same_addr_p)
+       ,.latch_last_read_p(latch_last_read_p)
        ,.disable_collision_warning_p(disable_collision_warning_p)
        ) synth
        (.clk_i(clk_lo)

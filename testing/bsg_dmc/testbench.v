@@ -95,17 +95,17 @@ module testbench
   wire  [(dq_data_width_p>>3)-1:0] ddr_dqs_n;
   wire       [dq_data_width_p-1:0] ddr_dq;
 
-  logic [burst_data_width_lp-1] wdata_array[integer];
-  logic [ui_addr_width_p] waddr_queue, raddr_queue[$];
-  logic [ui_addr_width_p] waddr, raddr;
-  logic [burst_data_width_lp-1] wdata, rdata;
+  logic [burst_data_width_lp-2:0] wdata_array[integer];
+  logic [ui_addr_width_p-1:0] waddr_queue, raddr_queue[$];
+  logic [ui_addr_width_p-1:0] waddr, raddr;
+  logic [burst_data_width_lp-2:0] wdata, rdata;
 
   wire [ui_burst_length_p-1:0] sipo_valid_lo;
   wire [ui_burst_length_p-1:0][ui_data_width_p-1:0] sipo_data_lo;
   wire [$clog2(ui_burst_length_p):0] sipo_yumi_cnt_li;
   wire [burst_data_width_lp-1:0] sipo_data;
 
-  logic [ui_addr_width_p] rx_addr;
+  logic [ui_addr_width_p-1:0] rx_addr;
   logic [burst_data_width_lp-1:0] tx_data, rx_data;
 
   integer read_transactions;

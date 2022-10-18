@@ -95,6 +95,35 @@ package bsg_dramsim3_hbm2_1gb_x64_32ba_pkg;
 
 endpackage
 
+// this models two pseudo-channels of the 16gb chip
+// this lets us model a scaled-down version of the larger chip
+// and reduce simulations memory footprint
+// x64 is due to the halved data width of a pseudo-channel
+// from a 128-bit legacy mode channel
+package bsg_dramsim3_hbm2_2gb_x64_32ba_pkg;
+  parameter int tck_ps = 1000;
+  parameter int channel_addr_width_p = 30;
+  parameter int data_width_p=256;
+  parameter int num_channels_p=2;
+  parameter int num_columns_p=32;
+  parameter int num_rows_p=32768;
+  parameter int num_ba_p=4;
+  parameter int num_bg_p=8;
+  parameter int num_ranks_p=1;
+  parameter longint size_in_bits_p=2**34; // 2GB (16Gb)
+  parameter string config_p="HBM2_2Gb_x64_32ba.ini";
+  parameter bsg_dramsim3_pkg::bsg_dramsim3_address_mapping_e address_mapping_p=bsg_dramsim3_pkg::e_ro_ra_bg_ba_ch_co;
+
+  typedef struct packed {
+    logic [$clog2(num_rows_p)-1:0] ro;
+    logic [$clog2(num_bg_p)-1:0] bg;
+    logic [$clog2(num_ba_p)-1:0] ba;
+    logic [$clog2(num_columns_p)-1:0] co;
+    logic [$clog2(data_width_p>>3)-1:0] byte_offset;
+  } dram_ch_addr_s;
+
+endpackage
+
 // this 16 pseudo-channels of the 16gb chip
 // x64 is due to the halved data width of a pseudo-channel
 // from a 128-bit legacy mode channel

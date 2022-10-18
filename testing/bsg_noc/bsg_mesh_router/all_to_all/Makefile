@@ -13,7 +13,7 @@ XY_ORDER ?= 1
 DIMS_P   ?= 2
 RUCHE_X  ?= 0
 RUCHE_Y  ?= 0
-
+DEPOPULATED ?= 1
 
 VCS_DEFINE =  +define+NUM_X=${NUM_X}
 VCS_DEFINE += +define+NUM_Y=${NUM_Y}
@@ -21,6 +21,8 @@ VCS_DEFINE += +define+XY_ORDER=${XY_ORDER}
 VCS_DEFINE += +define+DIMS_P=${DIMS_P}
 VCS_DEFINE += +define+RUCHE_X=${RUCHE_X}
 VCS_DEFINE += +define+RUCHE_Y=${RUCHE_Y}
+VCS_DEFINE += +define+DEPOPULATED=${DEPOPULATED}
+
 
 run:
 	vcs -R +v2k -sverilog -full64 -f sv.include -l vcs.log $(VCS_DEFINE)\
@@ -28,7 +30,6 @@ run:
 		+lint=all,noSVA-UA,noSVA-NSVU,noVCDE,noNS \
 		$(VCS_INCDIR) \
 		$(VCS_DEFINE)
-
 
 dve:
 	dve -full64 -vpd vcdplus.vpd &

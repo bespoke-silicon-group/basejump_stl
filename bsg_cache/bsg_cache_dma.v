@@ -17,6 +17,7 @@ module bsg_cache_dma
     ,parameter `BSG_INV_PARAM(block_size_in_words_p)
     ,parameter `BSG_INV_PARAM(sets_p)
     ,parameter `BSG_INV_PARAM(ways_p)
+    ,parameter `BSG_INV_PARAM(word_tracking_p)
     ,parameter dma_data_width_p=data_width_p
 
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
@@ -32,7 +33,7 @@ module bsg_cache_dma
     ,parameter data_mem_els_lp=(sets_p*burst_len_lp)
     ,parameter lg_data_mem_els_lp=`BSG_SAFE_CLOG2(data_mem_els_lp)
 
-    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p)
+    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p, block_size_in_words_p)
   
     ,parameter debug_p=0
   )
@@ -44,6 +45,8 @@ module bsg_cache_dma
     ,input [lg_ways_lp-1:0] dma_way_i
     ,input [addr_width_p-1:0] dma_addr_i
     ,output logic done_o
+
+    ,input track_data_we_i
 
     ,output logic [data_width_p-1:0] snoop_word_o
 
@@ -66,6 +69,9 @@ module bsg_cache_dma
     ,output logic [ways_p-1:0][dma_data_width_p-1:0] data_mem_data_o
     ,input [ways_p-1:0][dma_data_width_p-1:0] data_mem_data_i
 
+    ,input track_miss_i
+    ,input [ways_p-1:0][block_size_in_words_p-1:0] track_mem_data_i
+
     ,output logic dma_evict_o // data eviction in progress
   );
 
@@ -86,7 +92,6 @@ module bsg_cache_dma
   dma_state_e dma_state_n;
   dma_state_e dma_state_r;
 
-
   // dma counter
   //
   logic counter_clear;
@@ -95,6 +100,7 @@ module bsg_cache_dma
 
   bsg_counter_clear_up #(
     .max_val_p(burst_len_lp)
+   ,.init_val_p('0)
   ) dma_counter (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -109,7 +115,7 @@ module bsg_cache_dma
 
   // dma packet
   //
-  `declare_bsg_cache_dma_pkt_s(addr_width_p);
+  `declare_bsg_cache_dma_pkt_s(addr_width_p, block_size_in_words_p);
   bsg_cache_dma_pkt_s dma_pkt;
 
   // in fifo
@@ -156,6 +162,10 @@ module bsg_cache_dma
   assign dma_pkt_o = dma_pkt;
 
   logic [ways_p-1:0] dma_way_mask;
+  logic [ways_p-1:0][dma_data_mask_width_lp-1:0] dma_way_mask_expanded;
+  logic [burst_size_in_words_lp-1:0] track_bits_offset_picked;
+  logic [dma_data_mask_width_lp-1:0] track_bits_offset_picked_expanded;
+  logic [dma_data_mask_width_lp-1:0] data_mem_w_mask_way_picked;
 
   bsg_decode #(
     .num_out_p(ways_p)
@@ -169,8 +179,39 @@ module bsg_cache_dma
     ,.expand_p(dma_data_mask_width_lp)
   ) expand0 (
     .i(dma_way_mask)
-    ,.o(data_mem_w_mask_o)
+    ,.o(dma_way_mask_expanded)
   );
+
+  logic [ways_p-1:0][block_size_in_words_p-1:0] track_mem_data_r;
+  logic [block_size_in_words_p-1:0] track_data_way_picked;
+
+  bsg_mux #(
+    .width_p(block_size_in_words_p)
+    ,.els_p(ways_p)
+  ) track_way_mux (
+    .data_i(track_mem_data_r)
+    ,.sel_i(dma_way_i)
+    ,.data_o(track_data_way_picked)
+  );
+
+  bsg_mux #(
+    .width_p(burst_size_in_words_lp)
+    ,.els_p(burst_len_lp)
+  ) track_offset_mux (
+    .data_i(track_data_way_picked)
+    ,.sel_i(counter_r[0+:lg_burst_len_lp])
+    ,.data_o(track_bits_offset_picked)
+  );
+
+  bsg_expand_bitmask #(
+    .in_width_p(burst_size_in_words_lp)
+    ,.expand_p(data_mask_width_lp)
+  ) expand1 (
+    .i(track_bits_offset_picked)
+    ,.o(track_bits_offset_picked_expanded)
+  );
+
+  assign data_mem_w_mask_way_picked = (word_tracking_p & track_miss_i) ? ~track_bits_offset_picked_expanded : {dma_data_mask_width_lp{1'b1}};
 
   if (burst_len_lp == 1) begin
     assign data_mem_addr_o = dma_addr_i[block_offset_width_lp+:lg_sets_lp];
@@ -189,6 +230,7 @@ module bsg_cache_dma
   end
   
   assign data_mem_data_o = {ways_p{in_fifo_data_lo}};
+  assign data_mem_w_mask_o = dma_way_mask_expanded & {ways_p{data_mem_w_mask_way_picked}};
 
   bsg_mux #(
     .width_p(dma_data_width_p)
@@ -208,6 +250,7 @@ module bsg_cache_dma
       dma_addr_i[addr_width_p-1:block_offset_width_lp],
       {(block_offset_width_lp){1'b0}}
     };
+    dma_pkt.mask = '0;
 
     data_mem_v_o = 1'b0;
     data_mem_w_o = 1'b0;
@@ -245,6 +288,7 @@ module bsg_cache_dma
           e_dma_send_evict_addr: begin
             dma_pkt_v_o = 1'b1;
             dma_pkt.write_not_read = 1'b1;
+            dma_pkt.mask = word_tracking_p ? track_data_way_picked : {block_size_in_words_p{1'b1}};
             done_o = dma_pkt_yumi_i;
             dma_state_n = IDLE;
           end
@@ -259,7 +303,7 @@ module bsg_cache_dma
             // so the counter is incremented to 1.
             counter_clear = 1'b1;
             counter_up = 1'b1;
-            data_mem_v_o = 1'b1;
+            data_mem_v_o = (|track_bits_offset_picked);
             dma_state_n = SEND_EVICT_DATA;
           end
 
@@ -302,7 +346,9 @@ module bsg_cache_dma
 
         out_fifo_v_li = 1'b1;
 
-        data_mem_v_o = out_fifo_ready_lo & ~counter_evict_max;
+        // we only need to read words that have valid data
+        // for invalid words we just send the previously read word from data_mem
+        data_mem_v_o = out_fifo_ready_lo & ~counter_evict_max & (|track_bits_offset_picked);
 
         done_o = counter_evict_max & out_fifo_ready_lo;
 
@@ -361,6 +407,9 @@ module bsg_cache_dma
         snoop_word_o <= snoop_word_n;
       end 
 
+      if (track_data_we_i) begin
+        track_mem_data_r <= track_mem_data_i;
+      end
     end
   end
 

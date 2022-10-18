@@ -13,9 +13,10 @@ HOW TO RUN
   DIMS_P    = dimension of router   (default: 2)
   RUCHE_X   = ruche factor in X     (default: 0)
   RUCHE_Y   = ruche factor in Y     (default: 0)
+  DEPOPULATED = depopulated or fully_populated (default: 1)
 
   e.g.) make DIMS_P=3 RUCHE_X=3 XY_ORDER=0
   e.g.) make DIMS_P=2 XY_ORDER=1
 
-- run "./test.sh" to run a set of test parameters.
+- run "./sweep.sh" to run an essential set of test parameters. Check the results in "results.txt".
 ```

@@ -44,6 +44,11 @@ module bsg_wormhole_concentrator_tester
                                              : StrictXY|XY_Allow_S|XY_Allow_N
   
   ,parameter cord_width_p = cord_markers_pos_p[dims_p]
+  
+  // Hold on valid sets the arbitration policy such that once an output tag is selected, it
+  // remains selected until it is acked, then the round-robin scheduler continues cycling
+  // from the selected tag.
+  ,parameter hold_on_valid_p = 0
   )
   
   ();
@@ -126,6 +131,7 @@ module bsg_wormhole_concentrator_tester
    ,.cord_width_p(cord_markers_pos_p[dims_p])
    ,.len_width_p(len_width_p)
    ,.cid_width_p(cid_width_p)
+   ,.hold_on_valid_p(hold_on_valid_p)
    ) master_concentrator
   (.clk_i(clk)
   ,.reset_i(reset)
@@ -190,6 +196,7 @@ module bsg_wormhole_concentrator_tester
    ,.cord_width_p(cord_markers_pos_p[dims_p])
    ,.len_width_p(len_width_p)
    ,.cid_width_p(cid_width_p)
+   ,.hold_on_valid_p(hold_on_valid_p)
    ) client_concentrator
   (.clk_i(clk)
   ,.reset_i(reset)
@@ -343,8 +350,11 @@ module bsg_wormhole_concentrator_tester
         #500;
         
         // node enable
-        @(posedge node_clk); #1;
-        node_en = '1;
+        for (j = num_in_p-1; j >= 0; j--)
+          begin
+            @(posedge node_clk); #1;
+            node_en[j] = 1'b1;
+          end
 	    $display("node en HI");
         
         #10000;

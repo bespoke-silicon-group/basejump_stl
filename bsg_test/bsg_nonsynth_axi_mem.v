@@ -2,6 +2,8 @@
  *  bsg_nonsynth_axi_mem.v
  */
 
+`include "bsg_defines.v"
+
 module bsg_nonsynth_axi_mem
   #(parameter `BSG_INV_PARAM(axi_id_width_p)
     , parameter `BSG_INV_PARAM(axi_addr_width_p)
@@ -73,6 +75,9 @@ module bsg_nonsynth_axi_mem
     axi_bid_o = awid_r;
     axi_bresp_o = '0;
     axi_bvalid_o = 1'b0;
+
+    awaddr_n = awaddr_r;
+    awid_n = awid_r;
 
     case (wr_state_r)
       WR_RESET: begin
@@ -219,7 +224,7 @@ module bsg_nonsynth_axi_mem
       if ((wr_state_r == WR_WAIT_DATA) & axi_wvalid_i) begin
         for (integer i = 0; i < axi_strb_width_lp; i++) begin
           if (axi_wstrb_i[i]) begin
-            ram[wr_ram_idx][i*8+:8] = axi_wdata_i[i*8+:8];
+            ram[wr_ram_idx][i*8+:8] <= axi_wdata_i[i*8+:8];
           end
         end
       end

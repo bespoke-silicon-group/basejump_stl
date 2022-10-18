@@ -1,3 +1,5 @@
+ // Enum values in the structs come from bsg_cache_pkg.v
+
 `ifndef BSG_CACHE_VH
 `define BSG_CACHE_VH
   // bsg_cache_pkt_s
@@ -15,14 +17,15 @@
 
   // bsg_cache_dma_pkt_s
   //
-  `define declare_bsg_cache_dma_pkt_s(addr_width_mp) \
-    typedef struct packed {                          \
-      logic write_not_read;                          \
-      logic [addr_width_mp-1:0] addr;                \
+  `define declare_bsg_cache_dma_pkt_s(addr_width_mp, mask_width_mp) \
+    typedef struct packed {                                         \
+      logic write_not_read;                                         \
+      logic [addr_width_mp-1:0] addr;                               \
+      logic [mask_width_mp-1:0] mask;                               \
     } bsg_cache_dma_pkt_s
 
-  `define bsg_cache_dma_pkt_width(addr_width_mp)     \
-    (1+addr_width_mp)
+  `define bsg_cache_dma_pkt_width(addr_width_mp, mask_width_mp)     \
+    (1+addr_width_mp+mask_width_mp)
 
   // tag info s
   //
@@ -63,8 +66,8 @@
   //
   `define declare_bsg_cache_wh_header_flit_s(wh_flit_width_mp,wh_cord_width_mp,wh_len_width_mp,wh_cid_width_mp) \
     typedef struct packed { \
-      logic [wh_flit_width_mp-(wh_cord_width_mp*2)-1-wh_len_width_mp-(wh_cid_width_mp*2)-1:0] unused; \
-      logic write_not_read; \
+      logic [wh_flit_width_mp-(wh_cord_width_mp*2)-$bits(bsg_cache_wh_opcode_e)-wh_len_width_mp-(wh_cid_width_mp*2)-1:0] unused; \
+      bsg_cache_wh_opcode_e opcode; \
       logic [wh_cid_width_mp-1:0] src_cid; \
       logic [wh_cord_width_mp-1:0] src_cord; \
       logic [wh_cid_width_mp-1:0] cid; \

@@ -14,6 +14,7 @@ module bsg_mem_1r1w_sync_mask_write_bit_synth #(parameter `BSG_INV_PARAM(width_p
 						, parameter `BSG_INV_PARAM(els_p)
 						, parameter read_write_same_addr_p=0
 						, parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+                                                , parameter latch_last_read_p=0
                                                 , parameter disable_collision_warning_p=1
                                         )
    (input   clk_i
@@ -42,6 +43,8 @@ module bsg_mem_1r1w_sync_mask_write_bit_synth #(parameter `BSG_INV_PARAM(width_p
     begin: nz
 
    logic [width_p-1:0]    mem [els_p-1:0];
+   logic read_en;
+   logic [width_p-1:0] data_out;
 
    // this treats the ram as an array of registers for which the
    // read addr is latched on the clock, the write
@@ -63,6 +66,10 @@ module bsg_mem_1r1w_sync_mask_write_bit_synth #(parameter `BSG_INV_PARAM(width_p
    // that would never correspond to that of a hardened ram.
 
    logic [addr_width_lp-1:0] r_addr_r;
+
+   assign read_en = r_v_i;
+   assign data_out = mem[r_addr_r];
+
 
    always_ff @(posedge clk_i)
      begin
@@ -87,8 +94,31 @@ module bsg_mem_1r1w_sync_mask_write_bit_synth #(parameter `BSG_INV_PARAM(width_p
 
      end
 
-   assign r_data_o = mem[r_addr_r];
+  if (latch_last_read_p)
+    begin: llr
+      logic read_en_r; 
 
+      bsg_dff #(
+        .width_p(1)
+      ) read_en_dff (
+        .clk_i(clk_i)
+        ,.data_i(read_en)
+        ,.data_o(read_en_r)
+      );
+
+      bsg_dff_en_bypass #(
+        .width_p(width_p)
+      ) dff_bypass (
+        .clk_i(clk_i)
+        ,.en_i(read_en_r)
+        ,.data_i(data_out)
+        ,.data_o(r_data_o)
+      );
+    end
+  else
+    begin: no_llr
+      assign r_data_o = data_out;
+    end
 
    genvar                       i;
    for (i = 0; i < width_p; i=i+1)

@@ -32,6 +32,8 @@
 // *************************************************************************
 //
 
+`include "bsg_defines.v"
+
 module bsg_link_sdr_downstream
 
  #(parameter `BSG_INV_PARAM(width_p )
