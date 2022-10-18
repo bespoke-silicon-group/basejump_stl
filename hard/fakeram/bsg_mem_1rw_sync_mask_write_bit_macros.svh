@@ -8,7 +8,7 @@
   `bsg_mem_1rw_sync_mask_write_bit_1sram_macro(words,bits)
 
 `define bsg_mem_1rw_sync_mask_write_bit_1sram_macro(words,bits,tag) \
-  if (els_p == words && width_p == bits)                            \
+  if (harden_p && els_p == words && width_p == bits)                \
     begin: macro                                                    \
        fakeram_d``words``_w``bits`` mem                             \
          (.clk(clk_i)                                               \

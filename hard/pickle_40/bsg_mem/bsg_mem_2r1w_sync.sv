@@ -91,7 +91,7 @@ module bsg_mem_2r1w_sync #( parameter `BSG_INV_PARAM(width_p )
         end // block: s1r1w
       else
         begin: notmacro
-          bsg_mem_2r1w_sync_synth #(.width_p(width_p), .els_p(els_p), .read_write_same_addr_p(read_write_same_addr_p), .harden_p(harden_p))
+          bsg_mem_2r1w_sync_synth #(.width_p(width_p), .els_p(els_p), .read_write_same_addr_p(read_write_same_addr_p))
             synth
               (.*);
         end // block: notmacro

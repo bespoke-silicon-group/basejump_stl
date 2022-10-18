@@ -5,6 +5,7 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p)
 
                                           ,parameter `BSG_INV_PARAM(data_width_p )
                                           ,parameter latch_last_read_p=0
+                                          ,parameter harden_p=0
                                           ,parameter write_mask_width_lp = data_width_p>>3
                                           ,parameter enable_clock_gating_p=0
                                          )

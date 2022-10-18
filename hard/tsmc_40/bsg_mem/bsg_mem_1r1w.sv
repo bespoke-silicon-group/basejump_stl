@@ -156,7 +156,6 @@ module bsg_mem_1r1w
 		  #(.width_p(width_p)
 		    ,.els_p(els_p)
 		    ,.read_write_same_addr_p(read_write_same_addr_p)
-		    ,.harden_p(harden_p)
 		    ) synth
 		    (.*);
 	     end
