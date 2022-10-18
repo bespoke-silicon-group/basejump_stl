@@ -4,7 +4,8 @@ include ../../../../bsg_cadenv/cadenv.mk
 PLI_OPTS = -P mypli.tab get_stim.c +acc
 VCS_OP     +=  +vcs+vcdpluson -debug_access+all
 vcs:
-	$(VCS) -full64 -sverilog $(VCS_OP)  -Mupdate -f divide.files $(LIB_OPTS) $(PLI_OPTS) +define+SIGN=$(sign) \
+	ifdef
+	$(VCS) -full64 -sverilog $(VCS_OP)  -Mupdate -f divide.files $(LIB_OPTS) $(PLI_OPTS) +define+SIGN=$(SIGN) \
 	+define+UNSIGN=$(UNSIGN) +define+WIDTH=$(WIDTH) +define+BITS_PER_ITER=$(BITS_PER_ITER) +define+ITERS=$(ITERS)
 	#./simv +vcs+stop+232100
 	./simv
