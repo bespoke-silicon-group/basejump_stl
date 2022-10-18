@@ -8,14 +8,19 @@ VCS_DEFINES =
 vcs:
 	ifdef SIGN
 	VCS_DEFINES += +define+SIGN=$(SIGN)
+	endif
 	ifdef UNSIGN
 	VCS_DEFINES += +define+UNSIGN=$(UNSIGN)
+	endif
 	ifdef WIDTH
 	VCS_DEFINES += +define+WIDTH=$(WIDTH)
+	endif
 	ifdef BITS_PER_ITER
 	VCS_DEFINES += +define+BITS_PER_ITER=$(BITS_PER_ITER)
+	endif
 	ifdef ITERS
 	VCS_DEFINES += +define+ITERS=$(ITERS)
+	endif
 	
 	$(VCS) -full64 -sverilog $(VCS_OP)  -Mupdate -f divide.files $(LIB_OPTS) $(PLI_OPTS) $(VCS_DEFINES)
 	#./simv +vcs+stop+232100
