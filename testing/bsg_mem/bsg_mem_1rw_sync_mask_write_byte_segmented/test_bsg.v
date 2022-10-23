@@ -9,8 +9,8 @@ module test_bsg
   parameter width_p             = `WIDTH_P
   ,parameter els_p              = `ELS_P
   ,parameter seed_p             = `SEED_P
-  ,parameter num_subbank_p      =  4
-  ,parameter latch_last_read_p  =  0
+  ,parameter num_subbank_p      =  1
+  ,parameter latch_last_read_p  =  1
   ,parameter reset_cycles_lo_p  =  1
   ,parameter reset_cycles_hi_p  =  10
   ,localparam subbank_width_lp  =  width_p/num_subbank_p
@@ -68,7 +68,7 @@ module test_bsg
                             , .data_o (test_input_addr)
                            );
 
-  bsg_mem_1rw_sync_mask_write_byte_subbanked #( .width_p(width_p)
+  bsg_mem_1rw_sync_mask_write_byte_segmented #( .width_p(width_p)
                                               , .els_p  (els_p)
                                               , .num_subbank_p (num_subbank_p)
                                               , .latch_last_read_p(latch_last_read_p)
