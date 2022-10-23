@@ -1,3 +1,4 @@
+`include "bsg_defines.v"
 
 module bsg_dff_async_reset
 

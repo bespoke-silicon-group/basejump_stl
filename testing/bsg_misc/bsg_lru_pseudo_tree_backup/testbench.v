@@ -44,7 +44,7 @@ module testbench();
     disabled_ways_li = disabled_ways;
     #10; 
     assert(lru_way_id_lo == expected)
-      else $fatal("Expected: %b, Actual: %b", expected, lru_way_id_lo);
+      else $fatal(1, "Expected: %b, Actual: %b", expected, lru_way_id_lo);
     #10; 
 
   endtask

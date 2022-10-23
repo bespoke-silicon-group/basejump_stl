@@ -188,7 +188,7 @@ module testbench();
       if (fifo_deq_yumi_li) begin
         check_count_r <= check_count_r + 1;
         $display("data out: %d", fifo_deq_data_lo);
-        assert(check_count_r == fifo_deq_data_lo) else $fatal("fail");
+        assert(check_count_r == fifo_deq_data_lo) else $fatal(1, "fail");
       end
 
     end
@@ -199,7 +199,7 @@ module testbench();
   initial begin
     wait((check_count_r == num_test_p) & (sent_r == num_test_p));
     #100000;
-    assert(empty_lo) else $fatal("[BSG_FAIL] FIFO is not empty.");
+    assert(empty_lo) else $fatal(1, "[BSG_FAIL] FIFO is not empty.");
     $finish();
   end
   

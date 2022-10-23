@@ -65,7 +65,7 @@ module bsg_cache_to_test_dram_rx_reorder
     // synopsys translate_off 
     always_ff @ (negedge core_clk_i) begin
       if (~core_reset_i & dram_v_i) begin
-        assert(piso_ready_lo) else $fatal("piso is not ready!");
+        assert(piso_ready_lo) else $fatal(1, "piso is not ready!");
       end
     end
     // synopsys translate_on

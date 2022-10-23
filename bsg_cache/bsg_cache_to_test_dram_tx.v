@@ -23,6 +23,7 @@ module bsg_cache_to_test_dram_tx
 
     , input v_i
     , input [lg_num_cache_lp-1:0] tag_i
+    , input [(block_size_in_words_p/num_req_lp)-1:0] mask_i // one bit per data_width_p
     , output logic ready_o
       
     , input [num_cache_p-1:0][dma_data_width_p-1:0] dma_data_i
@@ -34,18 +35,20 @@ module bsg_cache_to_test_dram_tx
 
     , output logic dram_data_v_o
     , output logic [dram_data_width_p-1:0] dram_data_o
+    , output logic [(dram_data_width_p>>3)-1:0] dram_mask_o // one bit per byte
     , input dram_data_yumi_i
   );
 
   
-  //  tag fifo
+  //  tag + mask fifo
   //
   logic tag_v_lo;
   logic [lg_num_cache_lp-1:0] tag_lo;
+  logic [(block_size_in_words_p/num_req_lp)-1:0] mask_lo;
   logic tag_yumi_li;  
 
   bsg_fifo_1r1w_small #(
-    .width_p(lg_num_cache_lp)
+    .width_p(lg_num_cache_lp+(block_size_in_words_p/num_req_lp))
     ,.els_p(num_cache_p*num_req_lp)
   ) tag_fifo (
     .clk_i(core_clk_i)
@@ -53,21 +56,13 @@ module bsg_cache_to_test_dram_tx
 
     ,.v_i(v_i)
     ,.ready_o(ready_o)
-    ,.data_i(tag_i)
+    ,.data_i({tag_i, mask_i})
 
     ,.v_o(tag_v_lo)
-    ,.data_o(tag_lo)
+    ,.data_o({tag_lo, mask_lo})
     ,.yumi_i(tag_yumi_li)
   );
 
-  logic [num_cache_p-1:0] cache_sel;
-  bsg_decode_with_v #(
-    .num_out_p(num_cache_p)
-  ) demux (
-    .i(tag_lo)
-    ,.v_i(tag_v_lo)
-    ,.o(cache_sel)
-  );
 
   //  de-serialization
   //
@@ -131,26 +126,27 @@ module bsg_cache_to_test_dram_tx
   end 
 
  
-  // async fifo
+  // async fifo (data + mask)
   //
   logic afifo_full;
   logic [dram_data_width_p-1:0] afifo_data_li;
   logic afifo_enq;
+  logic [(block_size_in_words_p/num_req_lp)-1:0] afifo_mask_lo;
 
   bsg_async_fifo #(
     .lg_size_p(`BSG_SAFE_CLOG2(`BSG_MAX(num_cache_p*num_req_lp,4)))
-    ,.width_p(dram_data_width_p)
+    ,.width_p(dram_data_width_p+(block_size_in_words_p/num_req_lp))
   ) data_afifo (
     .w_clk_i(core_clk_i)
     ,.w_reset_i(core_reset_i)
     ,.w_enq_i(afifo_enq)
-    ,.w_data_i(afifo_data_li)
+    ,.w_data_i({mask_lo, afifo_data_li})
     ,.w_full_o(afifo_full)
   
     ,.r_clk_i(dram_clk_i) 
     ,.r_reset_i(dram_reset_i)
     ,.r_deq_i(dram_data_yumi_i)
-    ,.r_data_o(dram_data_o)
+    ,.r_data_o({afifo_mask_lo, dram_data_o})
     ,.r_valid_o(dram_data_v_o)
   );
 
@@ -167,6 +163,13 @@ module bsg_cache_to_test_dram_tx
     ,.o(sipo_yumi_li)
   );
 
+  bsg_expand_bitmask #(
+    .in_width_p(block_size_in_words_p/num_req_lp)
+    ,.expand_p(data_width_p>>3)
+  ) expand0 (
+    .i(afifo_mask_lo)
+    ,.o(dram_mask_o)
+  );
 
 
 endmodule

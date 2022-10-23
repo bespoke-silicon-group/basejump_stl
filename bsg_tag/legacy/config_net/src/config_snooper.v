@@ -23,6 +23,8 @@ module config_snooper
 
   localparam header_len_lp = (shift_width_lp - data_rx_len_lp);
 
+   
+   // sync_len_lp is defined in https://github.com/bespoke-silicon-group/basejump_stl/blob/7a0596160ddc42ad08bfde78fa78cf1408f8fa23/bsg_tag/legacy/config_net/tests/cfgtaggw_test/config_defs.v
   localparam sync_shift_len_lp = sync_len_lp + 2;  // + 2 is to integrate the two edge detecting flip-flops
 
   /* The communication packet is defined as follows:

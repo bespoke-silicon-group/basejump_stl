@@ -2,6 +2,8 @@
  *  bsg_nonsynth_axi_mem.v
  */
 
+`include "bsg_defines.v"
+
 module bsg_nonsynth_axi_mem
   #(parameter `BSG_INV_PARAM(axi_id_width_p)
     , parameter `BSG_INV_PARAM(axi_addr_width_p)

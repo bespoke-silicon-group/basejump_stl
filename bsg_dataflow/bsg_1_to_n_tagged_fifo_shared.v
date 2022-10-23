@@ -180,7 +180,7 @@ module bsg_1_to_n_tagged_fifo_shared   #(parameter `BSG_INV_PARAM(width_p       
    else
      begin : _1r1w
         assign big_ram_we = write_req & ~tag_i_is_unbuffered;
-        assign big_ram_re = ready_req;
+        assign big_ram_re = read_req;
 
         // we should never read and write the same address
         // at the same time, since we would not read data
