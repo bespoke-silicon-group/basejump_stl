@@ -4,7 +4,7 @@ TOP = ../../..
 
 ########################### SIMULATION PARAMETERS ##########################
 # place the parameters you want to scan here.
-BSG_TESTME_FILES    =   bsg_mem_1rw_sync_subbanked.v
+BSG_TESTME_FILES    =   bsg_mem_1rw_sync_segmented.v
 BSG_TESTME_DIR      =   
 BSG_MISC_FILES      =   
 BSG_ASYNC_FILES     = 
