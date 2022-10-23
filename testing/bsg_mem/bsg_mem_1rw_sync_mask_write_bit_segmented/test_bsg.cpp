@@ -46,7 +46,7 @@ int main (int argc, char **argv) {
         }
 
         if(main_time >= 500) {
-           top -> v_i = 0x2;
+           top -> v_i = 0x1;
            top -> w_i = 0x1;
         }
     
@@ -55,8 +55,8 @@ int main (int argc, char **argv) {
         }
 
         if(main_time >= 950) {
-           top -> v_i = 0x3;
-           top -> w_i = 0x0;
+           top -> v_i = 0x1;
+           top -> w_i = 0x1;
         }
 
         if (tfp) tfp -> dump(main_time);
