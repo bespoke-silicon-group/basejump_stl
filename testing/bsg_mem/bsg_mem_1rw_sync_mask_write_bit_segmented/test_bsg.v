@@ -1,6 +1,6 @@
 `define WIDTH_P 32
 `define ELS_P   4
-`define SEED_P  25550
+`define SEED_P  20
 
 `include "bsg_defines.v"
 
@@ -10,7 +10,7 @@ module test_bsg
   ,parameter els_p              = `ELS_P
   ,parameter seed_p             = `SEED_P
   ,parameter num_subbank_p      =  2
-  ,parameter latch_last_read_p  =  0
+  ,parameter latch_last_read_p  =  1
   ,parameter reset_cycles_lo_p  =  1
   ,parameter reset_cycles_hi_p  =  10
   ,localparam subbank_width_lp  =  width_p/num_subbank_p
@@ -68,7 +68,7 @@ module test_bsg
                             , .data_o (test_input_addr)
                            );
 
-  bsg_mem_1rw_sync_mask_write_bit_subbanked #( .width_p(width_p)
+  bsg_mem_1rw_sync_mask_write_bit_segmented #( .width_p(width_p)
                                               , .els_p  (els_p)
                                               , .num_subbank_p (num_subbank_p)
                                               , .latch_last_read_p(latch_last_read_p)
