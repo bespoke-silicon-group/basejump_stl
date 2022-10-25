@@ -30,7 +30,7 @@ module testbench();
   localparam sets_p = 128;
   localparam ways_p = 8;
   localparam mem_size_p = block_size_in_words_p*sets_p*ways_p*4;
-  localparam word_tracking_p = 1;
+  localparam word_tracking_p = `WORD_TRACKING_P;
 
   integer status;
   integer wave;

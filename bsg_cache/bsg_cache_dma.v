@@ -303,7 +303,11 @@ module bsg_cache_dma
             // so the counter is incremented to 1.
             counter_clear = 1'b1;
             counter_up = 1'b1;
-            data_mem_v_o = (|track_bits_offset_picked);
+            // When word_tracking_p is off, track_data_we_i is always zero, which means track_mem_data_r will always be 'X;
+            // So if word_tracking_p is off, we tie this to constant 1.
+            data_mem_v_o = word_tracking_p 
+              ?(|track_bits_offset_picked)
+              : 1'b1;
             dma_state_n = SEND_EVICT_DATA;
           end
 
@@ -348,7 +352,10 @@ module bsg_cache_dma
 
         // we only need to read words that have valid data
         // for invalid words we just send the previously read word from data_mem
-        data_mem_v_o = out_fifo_ready_lo & ~counter_evict_max & (|track_bits_offset_picked);
+        data_mem_v_o = out_fifo_ready_lo & ~counter_evict_max 
+                      & (word_tracking_p 
+                        ? (|track_bits_offset_picked)
+                        : 1'b1);
 
         done_o = counter_evict_max & out_fifo_ready_lo;
 

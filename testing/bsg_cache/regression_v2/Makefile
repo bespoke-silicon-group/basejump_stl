@@ -26,7 +26,6 @@ BASIC_TEST += test_aflinv1
 
 HIGHLIGHT = grep --color -E '^|Fatal|Error|Warning|Implicit wire is used|Too few instance port connections|Port connection width mismatch|Width mismatch'
 
-
 ### TEST parameters ####
 YUMI_MIN_DELAY_P  ?= 0
 YUMI_MAX_DELAY_P  ?= 0
@@ -34,6 +33,8 @@ DMA_READ_DELAY_P  ?= 0
 DMA_WRITE_DELAY_P ?= 0
 DMA_REQ_DELAY_P   ?= 0
 DMA_DATA_DELAY_P  ?= 0
+WORD_TRACKING_P   ?= 1
+
 
 VCS_DEFINES += +define+YUMI_MIN_DELAY_P=$(YUMI_MIN_DELAY_P)
 VCS_DEFINES += +define+YUMI_MAX_DELAY_P=$(YUMI_MAX_DELAY_P)
@@ -42,6 +43,7 @@ VCS_DEFINES += +define+DMA_READ_DELAY_P=$(DMA_READ_DELAY_P)
 VCS_DEFINES += +define+DMA_WRITE_DELAY_P=$(DMA_WRITE_DELAY_P)
 VCS_DEFINES += +define+DMA_REQ_DELAY_P=$(DMA_REQ_DELAY_P)
 VCS_DEFINES += +define+DMA_DATA_DELAY_P=$(DMA_DATA_DELAY_P)
+VCS_DEFINES += +define+WORD_TRACKING_P=$(WORD_TRACKING_P)
 ########################
 
 
