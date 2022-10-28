@@ -30,7 +30,7 @@ module testbench();
   localparam sets_p = 128;
   localparam ways_p = 8;
   localparam mem_size_p = block_size_in_words_p*sets_p*ways_p*4;
-  localparam word_tracking_p = 1;
+  localparam word_tracking_p = `WORD_TRACKING_P;
 
   integer status;
   integer wave;
@@ -226,5 +226,14 @@ module testbench();
     #500;
     $finish;
   end
+
+  // check for X in handshaking signals
+  always @ (negedge clk) begin
+    if (reset !== 1'b1) begin
+      assert (ready_lo !== 1'bx) else $fatal(1, "[BSG_FATAL]  ready_o == x");
+      assert (v_lo !== 1'bx) else $fatal(1, "[BSG_FATAL]  v_o == x");
+    end
+  end
+
 
 endmodule
