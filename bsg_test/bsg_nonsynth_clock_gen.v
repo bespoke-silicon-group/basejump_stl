@@ -6,11 +6,13 @@
  `timescale 1ps/1ps
 `endif
 
+`BSG_DEFIF_NOT_A_OR_B(VERILATOR, VERILATOR_TIMING, USE_DELAY_CLOCK_GEN)
+
 module bsg_nonsynth_clock_gen
   #(parameter `BSG_INV_PARAM(cycle_time_p))
    (output bit o);
 
-`ifndef VERILATOR
+`ifdef USE_DELAY_CLOCK_GEN
   initial begin
     $display("%m with cycle_time_p ",cycle_time_p);
     assert(cycle_time_p >= 2)
