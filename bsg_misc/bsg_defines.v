@@ -124,4 +124,67 @@
 `define rpgroup(x)
 `endif
 
+// verilog preprocessing -> if defined(A) && defined(B) then define C
+`define BSG_DEFIF_A_AND_B(A,B,C) \
+    `undef C \
+    `ifdef A \
+        `ifdef B \
+            `define C \
+        `endif \
+    `endif
+
+// verilog preprocessing -> if defined(A) && !defined(B) then define C
+`define BSG_DEFIF_A_AND_NOT_B(A,B,C) \
+    `undef C \
+    `ifdef A \
+        `ifndef B \
+            `define C \
+        `endif \
+    `endif
+
+// verilog preprocessing -> if !defined(A) && defined(B) then define C
+`define BSG_DEFIF_NOT_A_AND_B(A,B,C) `BSG_DEFIF_A_AND_NOT_B(B,A,C)
+
+// verilog preprocessing -> if !defined(A) && !defined(B) then define C
+`define BSG_DEFIF_NOT_A_AND_NOT_B(A,B,C) \
+    `undef C \
+    `ifndef A \
+        `ifndef B \
+            `define C \
+        `endif \
+    `endif
+
+// verilog preprocessing -> if defined(A) || defined(B) then define C
+`define BSG_DEFIF_A_OR_B(A,B,C) \
+    `undef C \
+    `ifdef A \
+        `define C \
+    `endif \
+    `ifdef B \
+        `define C \
+    `endif
+
+// verilog preprocessing -> if defined(A) || !defined(B) then define C
+`define BSG_DEFIF_A_OR_NOT_B(A,B,C) \
+    `undef C \
+    `ifdef A \
+        `define C \
+    `endif \
+    `ifndef B \
+        `define C \
+    `endif
+
+// verilog preprocessing -> if !defined(A) || defined(B) then define C
+`define BSG_DEFIF_NOT_A_OR_B(A,B,C) `BSG_DEFIF_A_OR_NOT_B(B,A,C)
+
+// verilog preprocessing -> if !defined(A) || !defined(B) then define C
+`define BSG_DEFIF_NOT_A_OR_NOT_B(A,B,C) \
+    `undef C \
+    `ifndef A \
+        `define C \
+    `endif \
+    `ifndef B \
+        `define C \
+    `endif
+
 `endif
