@@ -5,22 +5,21 @@
     bsg_mem_1rw_sync_mask_write_byte.
 
  *  This module behaves like an N bsg_mem_1rw_sync_mask_write_byte 
-    memories in parallel. This module is useful when we have a big
+    memories in parallel.This module is useful when we have a big
     SRAM, but we want a functionality of partial SRAM by creating
-    N logical SRAMs. Since v_i is independent per logical subbank,
+    N logical SRAMs. Since v_i is independent per logical SRAM,
     we can either perform read or write at a time patially from the
-    big SRAM. 
+    big SRAM.
 
  *
  *  - width_p : width of the total memory
  *  - els_p   : depth of the total memory
  *
- *  - num_subbank_p : Number of banks for the memory's width. width_p has
+ *  - num_subbank_p : Number of logical banks for the memory's width. width_p has
  *                    to be a multiple of this number.
- *
  */
 
-  // For segmented SRAMs, all subbanks must either read or write from the same address at once. 
+  // For segmented SRAMs, all logical SRAMs must either read or write from the same address at once. 
   // There could be an implementation to support independent subbank r/w by using a 1r1w backing SRAM. 
   // This may make sense in an FPGA environment, but we leave this to future work.
 
@@ -71,45 +70,38 @@ module bsg_mem_1rw_sync_mask_write_byte_segmented
       ,.data_o(data_lo)
     );
 
-    if (num_subbank_p == 1)
-      assign data_o = data_lo;
+    if (latch_last_read_p && num_subbank_p > 1) begin: llr
+  
+      wire [num_subbank_p-1:0] read_en;
+      wire [num_subbank_p-1:0] read_en_r;
 
-    else begin:bk1
+      for (genvar i = 0; i < num_subbank_p; i++) begin: bk1
 
-      if (latch_last_read_p) begin: llr
-  
-        wire [num_subbank_p-1:0] read_en;
-        wire [num_subbank_p-1:0] read_en_r;
-  
-        for (genvar i = 0; i < num_subbank_p; i++) begin: bk2
-  
-          assign read_en[i] = v_i[i] & ~w_i; 
-  
-          bsg_dff #(
-            .width_p(1)
-          ) read_en_dff (
-            .clk_i(clk_i)
-            ,.data_i(read_en[i])
-            ,.data_o(read_en_r[i])
-          );
-          
-          bsg_dff_en_bypass #(
-            .width_p(subbank_width_lp)
-          ) dff_bypass (
-            .clk_i(clk_i)
-            ,.en_i(read_en_r[i])
-            ,.data_i(data_lo[i])
-            ,.data_o(data_o[i])
-          );
-  
-        end // for (genvar i = 0; i < num_subbank_p; i++)
-  
-      end // if (latch_last_read_p)
+        assign read_en[i] = v_i[i] & ~w_i; 
+
+        bsg_dff #(
+          .width_p(1)
+        ) read_en_dff (
+          .clk_i(clk_i)
+          ,.data_i(read_en[i])
+          ,.data_o(read_en_r[i])
+        );
         
-      else begin: no_llr
-        assign data_o = data_lo;
-      end
+        bsg_dff_en_bypass #(
+          .width_p(subbank_width_lp)
+        ) dff_bypass (
+          .clk_i(clk_i)
+          ,.en_i(read_en_r[i])
+          ,.data_i(data_lo[i])
+          ,.data_o(data_o[i])
+        );
 
+      end // for (genvar i = 0; i < num_subbank_p; i++)
+
+    end // (latch_last_read_p && num_subbank_p > 1)
+        
+    else begin: no_llr
+      assign data_o = data_lo;
     end
     
     if (!(`BSG_IS_POW2(width_p) && `BSG_IS_POW2(els_p)))
