@@ -9,6 +9,7 @@ module bsg_mem_1rw_sync_mask_write_bit #(
   parameter `BSG_INV_PARAM(width_p)
   , parameter `BSG_INV_PARAM(els_p)
   , parameter latch_last_read_p=0
+  , parameter harden_p=0
   , parameter enable_clock_gating_p=0
   , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
 ) (input   clk_i

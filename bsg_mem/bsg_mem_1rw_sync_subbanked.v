@@ -22,8 +22,9 @@
 module bsg_mem_1rw_sync_subbanked
   #(parameter `BSG_INV_PARAM(width_p)
     , parameter `BSG_INV_PARAM(els_p)
-    , parameter `BSG_INV_PARAM(latch_last_read_p)
     , parameter `BSG_INV_PARAM(num_subbank_p)
+    , parameter latch_last_read_p = 0
+    , parameter harden_p = 0
 
       // Don't support depth subbanks due to conflicts
     , localparam subbank_width_lp = width_p/num_subbank_p
@@ -48,6 +49,7 @@ module bsg_mem_1rw_sync_subbanked
         .width_p(width_p)
         ,.els_p(els_p)
         ,.latch_last_read_p(0)
+        ,.harden_p(harden_p)
       ) 
       bank 
       ( .clk_i(clk_i)
@@ -82,7 +84,7 @@ module bsg_mem_1rw_sync_subbanked
         ,.w_i(w_i)
         ,.addr_i(addr_i)
         ,.data_i(data_i)
-        ,.write_mask_i(w_mask_lo)
+        ,.w_mask_i(w_mask_lo)
         ,.data_o(data_lo)
       );
     

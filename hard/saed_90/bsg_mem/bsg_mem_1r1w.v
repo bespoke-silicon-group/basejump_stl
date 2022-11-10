@@ -24,7 +24,7 @@ module bsg_mem_1r1w #(parameter `BSG_INV_PARAM(width_p)
                       , parameter `BSG_INV_PARAM(els_p)
                       , parameter read_write_same_addr_p=0
                       , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
-                      , parameter harden_p=0
+                      , parameter harden_p=1
                       )
    (input   w_clk_i
     , input w_reset_i
@@ -49,7 +49,6 @@ module bsg_mem_1r1w #(parameter `BSG_INV_PARAM(width_p)
      #(.width_p(width_p)
        ,.els_p(els_p)
        ,.read_write_same_addr_p(read_write_same_addr_p)
-       ,.harden_p(harden_p)
        ) synth
        (.*);
 
