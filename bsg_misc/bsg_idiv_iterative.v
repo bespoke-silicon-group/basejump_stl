@@ -174,13 +174,13 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
     bsg_nor2 #(.width_p(width_p+1)) nor_opA 
        ( .a_i( opA_xnor )
         ,.b_i({(width_p+1){~opA_clr_lo}})
-        ,.o  (add_in0)
+        ,.o  (add1_in0)
         );
 
     bsg_nor2 #(.width_p(width_p+1)) nor_opB 
        ( .a_i( opB_xnor )
         ,.b_i( {(width_p+1){~opB_clr_lo}})
-        ,.o  (add_in1)
+        ,.o  (add1_in1)
         );
      
     if (bits_per_iter_p == 2) begin 
@@ -221,6 +221,9 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
      ,.cin_i(adder2_cin)
      ,.o    (add2_out)
      );
+  end
+  else begin
+    assign add2_out = '0;
   end
    
   bsg_idiv_iterative_controller #(.width_p(width_p), .bits_per_iter_p(bits_per_iter_p)) control 
