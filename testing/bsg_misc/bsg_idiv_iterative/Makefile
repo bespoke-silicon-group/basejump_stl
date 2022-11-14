@@ -8,9 +8,6 @@ VCS_DEFINES =
 ifdef SIGN
 VCS_DEFINES += +define+SIGN=$(SIGN)
 endif
-ifdef UNSIGN
-VCS_DEFINES += +define+UNSIGN=$(UNSIGN)
-endif
 ifdef WIDTH
 VCS_DEFINES += +define+WIDTH=$(WIDTH)
 endif
