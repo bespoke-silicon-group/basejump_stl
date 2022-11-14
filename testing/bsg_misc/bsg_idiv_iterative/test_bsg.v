@@ -95,10 +95,8 @@ module test_bsg;
 	 $fwrite(f1,"%d %d %d %d\n", s_dividend, s_divisor, s_quotient, s_remainder);
          $fwrite(f3,"%d %d\n", s_dividend, s_divisor);
 	 
-	`endif
-	 
 	 // do the unsigned case
-	`ifdef UNSIGN
+     `else
 	 u_dividend = dividend;
 	 u_divisor  = divisor;
 
