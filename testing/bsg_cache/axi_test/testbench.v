@@ -83,7 +83,7 @@ module testbench();
 
   // cache dma
   //
-  `declare_bsg_cache_dma_pkt_s(addr_width_p);
+  `declare_bsg_cache_dma_pkt_s(addr_width_p, block_width_p/data_width_p);
   bsg_cache_dma_pkt_s dma_pkt_lo;
   logic dma_pkt_v_lo, dma_pkt_yumi_li;
 
@@ -97,7 +97,7 @@ module testbench();
   wire               wr_not_rd = tr_data_lo[addr_width_p];
   wire [addr_width_p-1:0] addr = tr_data_lo[0+:addr_width_p];
 
-  assign dma_pkt_lo    = '{write_not_read: wr_not_rd, addr: addr};
+  assign dma_pkt_lo    = '{write_not_read: wr_not_rd, addr: addr, mask: '1};
   assign dma_data_lo   = tr_data_lo;
   assign dma_pkt_v_lo  = tr_v_lo & pkt_not_data;
   assign dma_data_v_lo = tr_v_lo & ~pkt_not_data;
@@ -142,6 +142,7 @@ module testbench();
    #(.addr_width_p(addr_width_p)
      ,.data_width_p(data_width_p)
      ,.block_size_in_words_p(block_width_p/data_width_p)
+     ,.mask_width_p(block_width_p/data_width_p)
      ,.num_cache_p(1)
      ,.axi_id_width_p(6)
      ,.axi_data_width_p(data_width_p)

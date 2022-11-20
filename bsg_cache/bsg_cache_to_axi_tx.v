@@ -141,11 +141,21 @@ module bsg_cache_to_axi_tx
     ,.o(cache_sel)
   );
 
+  logic [mask_width_p-1:0] mask_r;
+  bsg_dff_en #(
+    .width_p(mask_width_p)
+  ) mask_reg (
+    .clk_i(clk_i)
+    ,.en_i(yumi_o)
+    ,.data_i(mask_i)
+    ,.data_o(mask_r)
+  );
+
   bsg_expand_bitmask #(
     .in_width_p(mask_width_p)
     ,.expand_p(byte_mask_width_lp/mask_width_p)
   ) expand (
-    .i(mask_i)
+    .i(mask_r)
     ,.o(byte_mask_lo)
   );
 
