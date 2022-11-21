@@ -115,7 +115,7 @@ module bsg_cache_to_axi_tx
   assign axi_awaddr_cache_id_o = cache_id_i;
   assign axi_awlen_o = (8)'(axi_burst_len_p-1); // burst len
   assign axi_awsize_o = (3)'(`BSG_SAFE_CLOG2(axi_data_width_p>>3));
-  assign axi_awburst_o = 2'b10;   // fixed, incr or wrap
+  assign axi_awburst_o = (2)'(axi_burst_type_p);   // fixed, incr or wrap
   assign axi_awcache_o = e_axi_cache_wnarnanmnb; // non-bufferable
   assign axi_awprot_o = e_axi_prot_dsn;    // unprivileged
   assign axi_awlock_o = 1'b0;    // normal access
