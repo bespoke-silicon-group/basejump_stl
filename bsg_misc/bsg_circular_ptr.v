@@ -71,7 +71,8 @@ module bsg_circular_ptr #(parameter `BSG_INV_PARAM(slots_p)
 	  // synopsys translate_off
           always_comb
             begin
-              assert final( (ptr_n < slots_p) || (|ptr_n === 'X) || reset_i || (add_i > slots_p))
+              // assert final( (ptr_n < slots_p) || (|ptr_n === 'X) || reset_i || (add_i > slots_p))
+              assert ( (ptr_n < slots_p) || (|ptr_n === 'X) || reset_i || (add_i > slots_p))
                 else $error("bsg_circular_ptr counter overflow (ptr_r=%b/add_i=%b/ptr_wrap=%b/ptr_n=%b)",ptr_r,add_i,ptr_wrap,ptr_n, slots_p);
             end
 	  // synopsys translate_on
