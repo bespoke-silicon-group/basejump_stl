@@ -1,3 +1,7 @@
+## To be included in other makefiles, pass arguments via
+## setting scan_params and set files by setting BSG_*_FILES
+
+## Environment Setup
 
 export BSG_CADENV_DIR = $(abspath .)/../../../../bsg_cadenv
 
