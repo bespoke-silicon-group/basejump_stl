@@ -31,9 +31,7 @@ TEST_MAIN   = test_bsg.v
 TEST_MODULE = test_bsg
 
 # this is a list of all variables you want to vary for the simulation
-scan_params  = WIDTH_P T_P BITS_P COND_SWAP_ON_EQUAL_P # first two params here
-# scan_params1 = $(scan_params) BITS_P
-# scan_params2 = $(scan_params1) COND_SWAP_ON_EQUAL_P
+scan_params  = WIDTH_P T_P BITS_P COND_SWAP_ON_EQUAL_P
 
 # this is a list of all values for each variable in the scan_params list
 # note; if you leave out values for a variable, then the product of the
