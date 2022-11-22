@@ -40,8 +40,6 @@ LG_CREDIT_DECIMATION_P = 0 1 2 3
 USE_PSEUDO_LARGE_FIFO_P = 0 1
 # whether to have receive rates; or 2^n declining receive rates on each channel
 ASYMMETRIC_P = 0
-# Synthesis option
-# BSG_NO_TIMESCALE = 1
 ############################################################################
 
 # this is a list of all variables you want to vary for the simulation
