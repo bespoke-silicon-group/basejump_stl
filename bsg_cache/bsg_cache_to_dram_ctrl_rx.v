@@ -54,7 +54,7 @@ module bsg_cache_to_dram_ctrl_rx
 
     ,.v_i(app_rd_data_valid_i)
     ,.data_i(app_rd_data_i)
-    ,.ready_o()
+    ,.ready_and_o()
 
     ,.v_o(fifo_v_lo)
     ,.data_o(fifo_data_lo)

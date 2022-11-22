@@ -26,7 +26,7 @@ module testbench;
       );
 
    logic [width_lp-1:0] test_data_in, test_data_out, test_data_check;
-   wire test_valid_in, test_valid_out, test_ready_out, test_ready_in;
+   wire test_valid_in, test_valid_out, test_ready_and_out, test_ready_in;
 
    logic [31:0] ctr;
 
@@ -49,6 +49,7 @@ module testbench;
       ,.reset_i(reset)
       ,.add_i  (pattern_bit == (pattern_width_lp-1))
       ,.o      (test_pattern)
+      ,.n_o    ()
       );
 
    // cycles through each bit of the battern
@@ -59,6 +60,7 @@ module testbench;
       ,.reset_i(reset)
       ,.add_i  (1'b1)
       ,.o      (pattern_bit)
+      ,.n_o    ()
       );
 
    assign test_valid_in = test_pattern[pattern_bit];
@@ -77,8 +79,9 @@ module testbench;
                       ) gen
    (.clk(clk)
     ,.reset_i(reset)
-    ,.add_i  (test_valid_in & test_ready_out)
+    ,.add_i  (test_valid_in & test_ready_and_out)
     ,.o      (test_data_in)
+    ,.n_o    ()
     );
 
 
@@ -89,7 +92,7 @@ module testbench;
 
    always @(posedge clk)
      begin
-        if (test_valid_in & test_ready_out & verbose_lp)
+        if (test_valid_in & test_ready_and_out & verbose_lp)
           $display("### %x sent     %x (1rw r=%x w=%x f=%x e=%x) bypass_mode=%x storage=%d",ctr, test_data_in
 		   , fifo.big1p.rd_ptr, fifo.big1p.wr_ptr, fifo.big1p.fifo_full, fifo.big1p.fifo_empty
 		   , fifo.bypass_mode, fifo.num_elements_debug);
@@ -105,13 +108,13 @@ module testbench;
      (.clk_i(clk)
       ,.reset_i(reset      )
 
-      ,.data_i (test_data_in)
-      ,.v_i    (test_valid_in)
-      ,.ready_o(test_ready_out)
+      ,.data_i     (test_data_in)
+      ,.v_i        (test_valid_in)
+      ,.ready_and_o(test_ready_and_out)
 
-      ,.v_o    (test_valid_out)
-      ,.data_o (test_data_out)
-      ,.yumi_i (test_yumi_in) // recycle
+      ,.v_o        (test_valid_out)
+      ,.data_o     (test_data_out)
+      ,.yumi_i     (test_yumi_in) // recycle
       );
 
    bsg_circular_ptr #(.slots_p   (1 << width_lp)
@@ -121,6 +124,7 @@ module testbench;
     ,.reset_i(reset)
     ,.add_i  (test_yumi_in)
     ,.o      (test_data_check)
+    ,.n_o    ()
     );
 
    always_ff @(posedge clk)
@@ -155,7 +159,7 @@ module testbench;
         // IMPORTANT TEST: test that the fifo will never register full with less than els_lp
         // elements actually stored.
 
-        if (~test_ready_out & test_valid_in)
+        if (~test_ready_and_out & test_valid_in)
           if (fifo.num_elements_debug < els_lp)
             begin
                $display("### %x FAIL BAD FULL %x (1rw r=%x w=%x f=%x e=%x) pattern=%b storage=%d"

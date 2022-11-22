@@ -113,7 +113,7 @@ module bsg_parallel_in_serial_out_test_node
       (.clk_i  (node_clk_i)
       ,.reset_i(node_reset_i)
 
-      ,.ready_o(node_async_fifo_ready_li)
+      ,.ready_and_o(node_async_fifo_ready_li)
       ,.v_i    (node_async_fifo_valid_lo)
       ,.data_i (node_async_fifo_data_lo)
 

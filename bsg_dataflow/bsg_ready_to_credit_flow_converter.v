@@ -16,7 +16,7 @@ module bsg_ready_to_credit_flow_converter #( parameter `BSG_INV_PARAM(credit_ini
     , input  reset_i
 
     , input  v_i
-    , output ready_o
+    , output ready_and_o
 
     , output v_o
     , input  credit_i
@@ -34,8 +34,8 @@ logic [ptr_width_lp-1:0] credit_cnt;
 // conversion between valid-credit and valid-credit protocols
 // in case of reset, credit_cnt is not zero, so the ready
 // and valid signals
-assign ready_o = (credit_cnt!=0);
-assign v_o     = v_i & ready_o;
+assign ready_and_o = (credit_cnt!=0);
+assign v_o     = v_i & ready_and_o;
 assign up      = credit_i ? step_width_lp'($unsigned(decimation_p)) : step_width_lp'(0);
 assign down    = {{(step_width_lp-1){1'b0}},v_o};
 

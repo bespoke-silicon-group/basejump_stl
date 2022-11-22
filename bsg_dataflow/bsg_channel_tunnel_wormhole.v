@@ -115,7 +115,7 @@ module  bsg_channel_tunnel_wormhole
   // incoming multiplexed data
   ,input  [width_p-1:0] multi_data_i
   ,input                multi_v_i
-  ,output               multi_ready_o
+  ,output               multi_ready_and_o
 
   // outgoing multiplexed data
   ,output [width_p-1:0] multi_data_o
@@ -439,7 +439,7 @@ module  bsg_channel_tunnel_wormhole
   
 /*************************** Channel Tunnel Input ****************************/
   
-  logic [mux_num_in_lp-1:0] ififo_valid_li, ififo_ready_lo; 
+  logic [mux_num_in_lp-1:0] ififo_valid_li, ififo_ready_and_lo; 
   
   // Channel Tunnel Multiplexed Input Demux
   
@@ -464,8 +464,8 @@ module  bsg_channel_tunnel_wormhole
   
   // Update counter only when packet flit accepted to fifo
   // and upcoming packet is not for credit returning
-  assign istate_down_lo     = multi_v_i & multi_ready_o & ~istate_r_is_min_lo;
-  assign istate_set_lo      = multi_v_i & multi_ready_o & istate_r_is_min_lo 
+  assign istate_down_lo     = multi_v_i & multi_ready_and_o & ~istate_r_is_min_lo;
+  assign istate_set_lo      = multi_v_i & multi_ready_and_o & istate_r_is_min_lo 
                              & ~multi_data_i_is_credit;
   assign istate_r_is_min_lo = (istate_r == counter_min_value_lp);
   
@@ -507,9 +507,9 @@ module  bsg_channel_tunnel_wormhole
  #(.width_p(1)
   ,.els_p(mux_num_in_lp)
   ) in_ready_mux
-  (.data_i(ififo_ready_lo)
+  (.data_i(ififo_ready_and_lo)
   ,.sel_i (imux_sel_lo)
-  ,.data_o(multi_ready_o)
+  ,.data_o(multi_ready_and_o)
   );
   
   // valid selection
@@ -530,7 +530,7 @@ module  bsg_channel_tunnel_wormhole
   (.clk_i  (clk_i)
   ,.reset_i(reset_i)
 
-  ,.ready_o(ififo_ready_lo[num_in_p])
+  ,.ready_o(ififo_ready_and_lo[num_in_p])
   ,.data_i (multi_data_i)
   ,.v_i    (ififo_valid_li[num_in_p])
 
@@ -558,36 +558,36 @@ module  bsg_channel_tunnel_wormhole
       begin: use_large
         bsg_fifo_1r1w_large 
        #(.width_p(width_p)
-        ,.els_p(remote_credits_p*max_payload_flits_p)
+        ,.els_p  (remote_credits_p*max_payload_flits_p)
         ) ififo
-        (.clk_i  (clk_i)
-        ,.reset_i(reset_i)
+        (.clk_i      (clk_i)
+        ,.reset_i    (reset_i)
 
-        ,.ready_o(ififo_ready_lo[i])
-        ,.data_i (multi_data_i)
-        ,.v_i    (ififo_valid_li[i])
+        ,.ready_and_o(ififo_ready_and_lo[i])
+        ,.data_i     (multi_data_i)
+        ,.v_i        (ififo_valid_li[i])
 
-        ,.v_o    (ififo_valid_lo)
-        ,.data_o (ififo_data_lo)
-        ,.yumi_i (ififo_yumi_li)
+        ,.v_o        (ififo_valid_lo)
+        ,.data_o     (ififo_data_lo)
+        ,.yumi_i     (ififo_yumi_li)
         );
       end
     else
       begin: pseudo_large
         bsg_fifo_1r1w_pseudo_large 
-       #(.width_p(width_p)
-        ,.els_p(remote_credits_p*max_payload_flits_p)
+       #(.width_p (width_p)
+        ,.els_p   (remote_credits_p*max_payload_flits_p)
         ) ififo
-        (.clk_i  (clk_i)
-        ,.reset_i(reset_i)
+        (.clk_i      (clk_i)
+        ,.reset_i    (reset_i)
 
-        ,.ready_o(ififo_ready_lo[i])
-        ,.data_i (multi_data_i)
-        ,.v_i    (ififo_valid_li[i])
+        ,.ready_and_o(ififo_ready_and_lo[i])
+        ,.data_i     (multi_data_i)
+        ,.v_i        (ififo_valid_li[i])
 
-        ,.v_o    (ififo_valid_lo)
-        ,.data_o (ififo_data_lo)
-        ,.yumi_i (ififo_yumi_li)
+        ,.v_o        (ififo_valid_lo)
+        ,.data_o     (ififo_data_lo)
+        ,.yumi_i     (ififo_yumi_li)
         );
       end
     

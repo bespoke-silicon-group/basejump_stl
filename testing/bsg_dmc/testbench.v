@@ -301,7 +301,7 @@ module testbench
     ,.reset_i    ( ui_clk_sync_rst   )
     ,.valid_i    ( app_rd_data_valid )
     ,.data_i     ( app_rd_data       )
-    ,.ready_o    (                   ) 
+    ,.ready_and_o(                   ) 
     ,.valid_o    ( sipo_valid_lo     )
     ,.data_o     ( sipo_data_lo      )
     ,.yumi_cnt_i ( sipo_yumi_cnt_li  ));

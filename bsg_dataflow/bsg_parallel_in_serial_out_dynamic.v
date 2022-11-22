@@ -21,7 +21,7 @@ module bsg_parallel_in_serial_out_dynamic
   ,input                               v_i
   ,input  [lg_max_els_lp-1:0]          len_i
   ,input  [max_els_p-1:0][width_p-1:0] data_i
-  ,output                              ready_o
+  ,output                              ready_and_o
   
   // Output side
   ,output                              v_o
@@ -44,7 +44,7 @@ module bsg_parallel_in_serial_out_dynamic
   (.clk_i  (clk_i          )
   ,.reset_i(reset_i        )
   
-  ,.ready_o(ready_o        )
+  ,.ready_o(ready_and_o    )
   ,.data_i (len_i          )
   ,.v_i    (v_i            )
   
@@ -59,7 +59,7 @@ module bsg_parallel_in_serial_out_dynamic
   ) data_fifo
   (.clk_i  (clk_i            )
   ,.reset_i(reset_i          )
-                             
+
   ,.ready_o(                 )
   ,.data_i (data_i           )
   ,.v_i    (v_i              )
