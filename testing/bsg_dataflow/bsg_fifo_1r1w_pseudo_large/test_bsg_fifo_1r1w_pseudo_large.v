@@ -49,6 +49,7 @@ module testbench;
       ,.reset_i(reset)
       ,.add_i  (pattern_bit == (pattern_width_lp-1))
       ,.o      (test_pattern)
+      ,.n_o    ()
       );
 
    // cycles through each bit of the battern
@@ -59,6 +60,7 @@ module testbench;
       ,.reset_i(reset)
       ,.add_i  (1'b1)
       ,.o      (pattern_bit)
+      ,.n_o    ()
       );
 
    assign test_valid_in = test_pattern[pattern_bit];
@@ -79,6 +81,7 @@ module testbench;
     ,.reset_i(reset)
     ,.add_i  (test_valid_in & test_ready_out)
     ,.o      (test_data_in)
+    ,.n_o    ()
     );
 
 
@@ -121,6 +124,7 @@ module testbench;
     ,.reset_i(reset)
     ,.add_i  (test_yumi_in)
     ,.o      (test_data_check)
+    ,.n_o    ()
     );
 
    always_ff @(posedge clk)

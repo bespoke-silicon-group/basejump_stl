@@ -1,5 +1,9 @@
 export BASEJUMP_STL_DIR = ../../..
 
+export BSG_CADENV_DIR = $(abspath .)/../../../../bsg_cadenv
+
+include $(BSG_CADENV_DIR)/cadenv.mk
+
 INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_noc
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_dataflow
@@ -20,5 +24,7 @@ clean:
 	rm -rf DVEfiles
 	rm -rf csrc
 	rm -rf simv.daidir simv.vdb
-	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz
+	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz vc_hdrs.h
 	rm -rf trace.tr
+	rm -rf cov.vdb
+	rm -rf urgReport
