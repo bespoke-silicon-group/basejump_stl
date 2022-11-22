@@ -128,8 +128,8 @@ module bsg_cache_to_axi_tx
   logic sipo_ready_lo;
   logic [data_width_p-1:0] sipo_data_li;
   logic [strb_width_lp-1:0] sipo_strb_li;
-  logic [$clog2(data_width_ratio_lp+1)-1:0] sipo_yumi_cnt_li;
-  logic [data_width_ratio_lp-1:0] sipo_v_lo;
+  logic sipo_yumi_li;
+  logic sipo_v_lo;
   logic [num_cache_p-1:0] cache_sel;
   logic [byte_mask_width_lp-1:0] byte_mask_lo;
   
@@ -161,28 +161,47 @@ module bsg_cache_to_axi_tx
 
   assign sipo_data_li = dma_data_i[tag_lo];
   assign dma_data_yumi_o = cache_sel & dma_data_v_i & {num_cache_p{sipo_ready_lo}};
- 
-  bsg_serial_in_parallel_out #(
-    .width_p(data_width_p+strb_width_lp)
+
+  logic [data_width_ratio_lp-1:0][data_width_p-1:0] sipo_data_lo;
+  bsg_serial_in_parallel_out_full #(
+    .width_p(data_width_p)
     ,.els_p(data_width_ratio_lp)
   ) sipo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
 
-    ,.valid_i(sipo_v_li)
-    ,.data_i({sipo_strb_li, sipo_data_li})
+    ,.v_i(sipo_v_li)
+    ,.data_i(sipo_data_li)
     ,.ready_o(sipo_ready_lo)
 
-    ,.valid_o(sipo_v_lo)
-    ,.data_o({axi_wstrb_o, axi_wdata_o})
-    ,.yumi_cnt_i(sipo_yumi_cnt_li)
+    ,.v_o(sipo_v_lo)
+    ,.data_o(sipo_data_lo)
+    ,.yumi_i(sipo_yumi_li)
   );
+
+  logic [data_width_ratio_lp-1:0][strb_width_lp-1:0] sipo_strb_lo;
+  bsg_serial_in_parallel_out_full #(
+    .width_p(strb_width_lp)
+    ,.els_p(data_width_ratio_lp)
+  ) strb_sipo (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+
+    ,.v_i(sipo_v_li)
+    ,.data_i(sipo_strb_li)
+    ,.ready_o(/* Tracks data sipo */)
+
+    ,.v_o(/* Tracks data sipo */)
+    ,.data_o(sipo_strb_lo)
+    ,.yumi_i(sipo_yumi_li)
+  );
+
+  assign axi_wstrb_o = sipo_strb_lo;
+  assign axi_wdata_o = sipo_data_lo;
 
   assign axi_wvalid_o = &sipo_v_lo;
   assign sipo_v_li = tag_fifo_v_lo & dma_data_v_i[tag_lo];
-  assign sipo_yumi_cnt_li = axi_wvalid_o & axi_wready_i
-    ? ($clog2(data_width_ratio_lp+1))'(data_width_ratio_lp)
-    : '0;
+  assign sipo_yumi_li = axi_wvalid_o & axi_wready_i;
  
   // word counter
   //
