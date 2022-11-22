@@ -86,7 +86,7 @@ module bsg_1_to_n_tagged_fifo_shared   #(parameter `BSG_INV_PARAM(width_p       
       ,.yumi_o
 
       ,.valid_o(tag_one_hot_or_not)
-      ,.ready_i(~full)
+      ,.ready_and_i(~full)
       );
 
    assign enque = (~full)

@@ -122,7 +122,7 @@ module bsg_fifo_1r1w_pseudo_large #(parameter `BSG_INV_PARAM(width_p )
 
     , input [width_p-1:0] data_i
     , input v_i
-    , output ready_o
+    , output ready_and_o
 
     , output v_o
     , output [width_p-1:0] data_o
@@ -152,8 +152,8 @@ module bsg_fifo_1r1w_pseudo_large #(parameter `BSG_INV_PARAM(width_p )
        big_deq_r <= big_deq;
 
    // if the big fifo is not full, then we can take more data
-   wire ready_o_int = ~big_full_lo;
-   assign ready_o   = ready_o_int;
+   wire ready_and_o_int = ~big_full_lo;
+   assign ready_and_o   = ready_and_o_int;
 
    // ***** DEBUG ******
    // for debugging; whether we are bypassing the big fifo

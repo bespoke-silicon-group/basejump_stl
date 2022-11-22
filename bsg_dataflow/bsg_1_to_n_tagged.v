@@ -28,7 +28,7 @@ module bsg_1_to_n_tagged #(
     , output                   yumi_o
 
     , output [num_out_p-1:0]   v_o
-    , input  [num_out_p-1:0]   ready_i
+    , input  [num_out_p-1:0]   ready_and_i
 
     // to downstream
     );
@@ -39,7 +39,7 @@ module bsg_1_to_n_tagged #(
    if (num_out_p == 1)
      begin : one
         assign v_o = v_i;
-        assign yumi_o  = ready_i & v_i;
+        assign yumi_o  = ready_and_i & v_i;
      end
    else
      begin: many
@@ -52,7 +52,7 @@ module bsg_1_to_n_tagged #(
            ,.o(v_o)
            );
 
-        assign yumi_o = ready_i[tag_i] & v_i;
+        assign yumi_o = ready_and_i[tag_i] & v_i;
      end
 
 endmodule // bsg_1_to_n_tagged

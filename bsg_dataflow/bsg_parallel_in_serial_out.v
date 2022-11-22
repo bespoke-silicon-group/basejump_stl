@@ -61,7 +61,7 @@ module bsg_parallel_in_serial_out
      * By default a two-element fifo is used to eleminate bubbling.
      * One-element fifo is optional for minimal resource utilization.
      */
-    logic fifo0_ready_lo, fifo_v_li;
+    logic fifo0_ready_and_lo, fifo_v_li;
     logic fifo_v_lo, fifo0_yumi_li;
     logic [els_p-1:0][width_p-1:0] fifo_data_lo;
 
@@ -72,7 +72,7 @@ module bsg_parallel_in_serial_out
         ) fifo0
         (.clk_i  (clk_i)
         ,.reset_i(reset_i)
-        ,.ready_o(fifo0_ready_lo)
+        ,.ready_o(fifo0_ready_and_lo)
         ,.data_i (data_li[els_p-1])
         ,.v_i    (fifo_v_li)
         ,.v_o    (fifo_v_lo)
@@ -85,14 +85,14 @@ module bsg_parallel_in_serial_out
         bsg_one_fifo
        #(.width_p(width_p)
         ) fifo0
-        (.clk_i  (clk_i)
-        ,.reset_i(reset_i)
-        ,.ready_o(fifo0_ready_lo)
-        ,.data_i (data_li[els_p-1])
-        ,.v_i    (fifo_v_li)
-        ,.v_o    (fifo_v_lo)
-        ,.data_o (fifo_data_lo[els_p-1])
-        ,.yumi_i (fifo0_yumi_li)
+        (.clk_i      (clk_i)
+        ,.reset_i    (reset_i)
+        ,.ready_and_o(fifo0_ready_and_lo)
+        ,.data_i     (data_li[els_p-1])
+        ,.v_i        (fifo_v_li)
+        ,.v_o        (fifo_v_lo)
+        ,.data_o     (fifo_data_lo[els_p-1])
+        ,.yumi_i     (fifo0_yumi_li)
         );
       end
 
@@ -103,7 +103,7 @@ module bsg_parallel_in_serial_out
     // Connect fifo0 signals directly to input/output ports
 
     assign fifo_v_li     = valid_i;
-    assign ready_and_o   = fifo0_ready_lo;
+    assign ready_and_o   = fifo0_ready_and_lo;
 
     assign valid_o       = fifo_v_lo;
     assign data_o        = fifo_data_lo;
@@ -122,25 +122,25 @@ module bsg_parallel_in_serial_out
      * valid and shift_ctr_r != (els_p-1).
      * Therefore v_o signal of fifo1 is unused to minimize hardware utilization.
      */
-    logic fifo1_ready_lo, fifo1_yumi_li;
+    logic fifo1_ready_and_lo, fifo1_yumi_li;
 
     bsg_one_fifo
    #(.width_p((els_p-1)*width_p)
     ) fifo1
-    (.clk_i  (clk_i)
-    ,.reset_i(reset_i)
-    ,.ready_o(fifo1_ready_lo)
-    ,.data_i (data_li[els_p-2:0])
-    ,.v_i    (fifo_v_li)
-    ,.v_o    ()
-    ,.data_o (fifo_data_lo[els_p-2:0])
-    ,.yumi_i (fifo1_yumi_li)
+    (.clk_i      (clk_i)
+    ,.reset_i    (reset_i)
+    ,.ready_and_o(fifo1_ready_and_lo)
+    ,.data_i     (data_li[els_p-2:0])
+    ,.v_i        (fifo_v_li)
+    ,.v_o        ()
+    ,.data_o     (fifo_data_lo[els_p-2:0])
+    ,.yumi_i     (fifo1_yumi_li)
     );
 
     /**
      * Enqueue data into fifo iff both fifos are ready
      */
-    assign ready_and_o = fifo0_ready_lo & fifo1_ready_lo;
+    assign ready_and_o = fifo0_ready_and_lo & fifo1_ready_and_lo;
     assign fifo_v_li = valid_i & ready_and_o;
 
     /**

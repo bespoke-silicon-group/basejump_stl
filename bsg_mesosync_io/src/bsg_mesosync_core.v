@@ -77,7 +77,7 @@ bsg_relay_fifo #(.width_p(width_p)) output_relay
 // internal signals
 logic yumi_to_fifo, ready_to_fifo;
 logic fifo_valid, ready, valid;
-logic valid_to_credit_counter, credit_counter_ready;
+logic valid_to_credit_counter, credit_counter_ready_and;
 logic [width_p-1:0] fifo_data;
 
 // Muxes for mode selection, between loopback or normal mode
@@ -91,7 +91,7 @@ assign ready_o_r      = loopback_en_i ? 0          : ready;
 
 // Adding ready signal from bsg_mesosync_output module, line_ready_i
 assign valid_to_credit_counter = line_ready_i & valid;
-assign ready                   = line_ready_i & credit_counter_ready;
+assign ready                   = line_ready_i & credit_counter_ready_and;
 
 // converting from raedy to yumi protocol
 assign yumi_to_fifo = ready_to_fifo & fifo_valid;
@@ -116,7 +116,7 @@ bsg_credit_to_token #( .decimation_p(decimation_p)
 bsg_fifo_1r1w_small_credit_on_input #( .width_p(width_p)
                                      , .els_p(els_p) 
                                      ) input_fifo
-                            
+
     ( .clk_i(clk_i)
     , .reset_i(reset_i)
 
@@ -141,7 +141,7 @@ bsg_ready_to_credit_flow_converter #( .credit_initial_p(credit_initial_p)
     , .reset_i(reset_i)
 
     , .v_i(valid_to_credit_counter)
-    , .ready_o(credit_counter_ready)
+    , .ready_and_o(credit_counter_ready_and)
 
     , .v_o(meso_v_o)
     , .credit_i(meso_token_i)

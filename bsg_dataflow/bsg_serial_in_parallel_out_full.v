@@ -25,9 +25,9 @@ module bsg_serial_in_parallel_out_full
   
   (input clk_i
   ,input reset_i
-    
+
   ,input                                 v_i
-  ,output logic                          ready_o
+  ,output logic                          ready_and_o
   ,input [width_p-1:0]                   data_i
 
   ,output logic [els_p-1:0][width_p-1:0] data_o
@@ -56,7 +56,7 @@ module bsg_serial_in_parallel_out_full
     end
     
 
-  logic [els_p-1:0] fifo_valid_li, fifo_ready_lo;
+  logic [els_p-1:0] fifo_valid_li, fifo_ready_and_lo;
   logic [els_p-1:0] fifo_valid_lo;
 
   // Full array is valid when all fifos have valid data
@@ -67,12 +67,12 @@ module bsg_serial_in_parallel_out_full
  #(.width_p(width_p)
   ,.num_out_p(els_p)
   ) brr
-  (.clk_i  (clk_i)
-  ,.reset_i(reset_i)
-  ,.valid_i(v_i)
-  ,.ready_o(ready_o)
-  ,.valid_o(fifo_valid_li)
-  ,.ready_i(fifo_ready_lo)
+  (.clk_i      (clk_i)
+  ,.reset_i    (reset_i)
+  ,.valid_i    (v_i)
+  ,.ready_and_o(ready_and_o)
+  ,.valid_o    (fifo_valid_li)
+  ,.ready_and_i(fifo_ready_and_lo)
   );
 
   // Data fifos
@@ -90,7 +90,7 @@ module bsg_serial_in_parallel_out_full
         (.clk_i  (clk_i)
         ,.reset_i(reset_i)
 
-        ,.ready_o(fifo_ready_lo[i])
+        ,.ready_o(fifo_ready_and_lo[i])
         ,.data_i (data_i)
         ,.v_i    (fifo_valid_li[i])
 
@@ -105,16 +105,16 @@ module bsg_serial_in_parallel_out_full
         bsg_one_fifo
         #(.width_p(width_p)
         ) fifo
-        (.clk_i  (clk_i)
-        ,.reset_i(reset_i)
+        (.clk_i      (clk_i)
+        ,.reset_i    (reset_i)
 
-        ,.ready_o(fifo_ready_lo[i])
-        ,.data_i (data_i)
-        ,.v_i    (fifo_valid_li[i])
+        ,.ready_and_o(fifo_ready_and_lo[i])
+        ,.data_i     (data_i)
+        ,.v_i        (fifo_valid_li[i])
 
-        ,.v_o    (fifo_valid_lo[i])
-        ,.data_o (data_lo[i])
-        ,.yumi_i (yumi_i)
+        ,.v_o        (fifo_valid_lo[i])
+        ,.data_o     (data_lo[i])
+        ,.yumi_i     (yumi_i)
         );
       end
   end

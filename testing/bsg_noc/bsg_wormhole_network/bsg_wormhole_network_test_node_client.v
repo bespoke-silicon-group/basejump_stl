@@ -66,38 +66,38 @@ module bsg_wormhole_router_test_node_client
     wormhole_network_header_flit_s req_in_data;
     logic                          req_in_yumi;
 
-    logic                          resp_out_ready;
+    logic                          resp_out_ready_and;
     wormhole_network_header_flit_s resp_out_data;
     logic                          resp_out_v;
 
     bsg_one_fifo
    #(.width_p(flit_width_p)
     ) req_in_fifo
-    (.clk_i  (clk_i)
-    ,.reset_i(reset_i)
+    (.clk_i      (clk_i)
+    ,.reset_i    (reset_i)
 
-    ,.ready_o(link_o_cast[i].ready_and_rev)
-    ,.v_i    (link_i_cast[i].v)
-    ,.data_i (link_i_cast[i].data)
+    ,.ready_and_o(link_o_cast[i].ready_and_rev)
+    ,.v_i        (link_i_cast[i].v)
+    ,.data_i     (link_i_cast[i].data)
 
-    ,.v_o    (req_in_v)
-    ,.data_o (req_in_data)
-    ,.yumi_i (req_in_yumi)
+    ,.v_o        (req_in_v)
+    ,.data_o     (req_in_data)
+    ,.yumi_i     (req_in_yumi)
     );
 
     bsg_one_fifo
    #(.width_p(flit_width_p)
     ) resp_out_fifo
-    (.clk_i  (clk_i)
-    ,.reset_i(reset_i)
+    (.clk_i      (clk_i)
+    ,.reset_i    (reset_i)
 
-    ,.ready_o(resp_out_ready)
-    ,.v_i    (resp_out_v)
-    ,.data_i (resp_out_data)
+    ,.ready_and_o(resp_out_ready_and)
+    ,.v_i        (resp_out_v)
+    ,.data_i     (resp_out_data)
 
-    ,.v_o    (link_o_cast[i].v)
-    ,.data_o (link_o_cast[i].data)
-    ,.yumi_i (link_o_cast[i].v & link_i_cast[i].ready_and_rev)
+    ,.v_o        (link_o_cast[i].v)
+    ,.data_o     (link_o_cast[i].data)
+    ,.yumi_i     (link_o_cast[i].v & link_i_cast[i].ready_and_rev)
     );
 
     // loopback any data received, replace cord in flit hdr
@@ -106,7 +106,7 @@ module bsg_wormhole_router_test_node_client
     assign resp_out_data.data       = req_in_data.data;
 
     assign resp_out_v  = req_in_v;
-    assign req_in_yumi = resp_out_v & resp_out_ready;
+    assign req_in_yumi = resp_out_v & resp_out_ready_and;
   
   end  
 
