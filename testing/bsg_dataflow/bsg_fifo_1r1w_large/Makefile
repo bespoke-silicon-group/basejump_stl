@@ -25,8 +25,6 @@ BSG_CADENV_DIR ?= $(TOP)/../bsg_cadenv
 
 include $(BSG_CADENV_DIR)/cadenv.mk
 
-TOP = ../../..
-
 DESIGNWARE_DIR = $(SYNOPSYS_DIR)/$(DC_RELEASE)/dw/sim_ver
 DESIGNWARE_FLAGS = -y $(DESIGNWARE_DIR) +incdir+$(DESIGNWARE_DIR) +incdir+$(TOP)/bsg_test +incdir+$(TOP)/bsg_misc +libext+.v
 
