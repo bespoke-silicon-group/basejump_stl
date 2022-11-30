@@ -6,6 +6,8 @@
 TOP ?= $(shell git rev-parse --show-toplevel)
 BSG_CADENV_DIR ?= $(TOP)/../bsg_cadenv
 
+include $(BSG_CADENV_DIR)/cadenv.mk
+
 ##########
 # settings for Xilinx Vivado
 BSG_IP_CORES_COMP = xvlog --sv
