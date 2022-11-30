@@ -29,14 +29,13 @@ TEST_MAIN   = test_bsg.v
 TEST_MODULE = test_bsg
 
 # this is a list of all variables you want to vary for the simulation
-scan_params = WIDTH_IN_P WIDTH_OUT_P BSG_NO_TIMESCALE
+scan_params = WIDTH_IN_P WIDTH_OUT_P
 
 # this is a list of all values for each variable in the scan_params list
 # note; if you leave out values for a variable, then the product of the
 # sets is null, and nothing will run.
 WIDTH_IN_P  = 1 2 3 4 5 8
 WIDTH_OUT_P = 1 2 3 4 5 8
-BSG_NO_TIMESCALE = 1
 ############################################################################
 
 include ../../Makefile.sim
