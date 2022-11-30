@@ -1,6 +1,7 @@
 export BASEJUMP_STL_DIR = ../../..
 
-export BSG_CADENV_DIR = $(abspath .)/../../../../bsg_cadenv
+TOP ?= $(shell git rev-parse --show-toplevel)
+BSG_CADENV_DIR ?= $(TOP)/../bsg_cadenv
 
 include $(BSG_CADENV_DIR)/cadenv.mk
 

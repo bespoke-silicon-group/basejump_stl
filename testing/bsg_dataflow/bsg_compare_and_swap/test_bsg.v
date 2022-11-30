@@ -24,7 +24,7 @@ module test_bsg
   parameter b_p                  = (`T_P - `BITS_P + 1),
   parameter cond_swap_on_equal_p = `COND_SWAP_ON_EQUAL_P,
   parameter cycle_time_p = 20,
-  parameter reset_cycles_lo_p=0,
+  parameter reset_cycles_lo_p=1,
   parameter reset_cycles_hi_p=5
 );
 

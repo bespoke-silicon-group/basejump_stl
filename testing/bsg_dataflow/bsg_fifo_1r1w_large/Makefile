@@ -20,7 +20,8 @@ IO_MASTER_1_PERIOD =   2
 CORE_1_PERIOD      =   1
 endif
 
-export BSG_CADENV_DIR = $(abspath .)/../../../../bsg_cadenv
+TOP ?= $(shell git rev-parse --show-toplevel)
+BSG_CADENV_DIR ?= $(TOP)/../bsg_cadenv
 
 include $(BSG_CADENV_DIR)/cadenv.mk
 

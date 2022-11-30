@@ -27,7 +27,7 @@ module test_bsg
                              ? (width_in_p / width_out_p)
                              : (width_in_p / width_out_p) + 1,
   parameter cycle_time_p = 20,
-  parameter reset_cycles_lo_p=0,
+  parameter reset_cycles_lo_p=1,
   parameter reset_cycles_hi_p=5
 );
 
