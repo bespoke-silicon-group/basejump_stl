@@ -34,9 +34,7 @@ module test_bsg
 );
 
   wire clk;
-  wire reset_lo;
-  logic reset;
-  logic reset_prev_high;
+  wire reset;
 
   bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
                           )  clock_gen
