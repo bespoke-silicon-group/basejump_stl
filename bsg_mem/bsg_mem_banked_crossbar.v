@@ -123,7 +123,7 @@ module bsg_mem_banked_crossbar_control_o_by_i
 
 endmodule // bsg_mem_banked_crossbar_control_o_by_i
 
-`BSG_ABSTRACT_MODULE(bsg_mem/bsg_mem_banked_crossbar)
+// `BSG_ABSTRACT_MODULE(bsg_mem/bsg_mem_banked_crossbar)
 
 /*****************************************
 * banked memory crossbar
