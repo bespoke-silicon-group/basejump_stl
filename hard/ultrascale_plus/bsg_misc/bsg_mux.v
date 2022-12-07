@@ -98,7 +98,7 @@ module bsg_mux #(parameter `BSG_INV_PARAM(width_p)
       // synopsys translate_off
       initial
         assert(balanced_p == 0)
-          else $error("%m warning: synthesizable implementation of bsg_mux does not support balanced_p");
+          else $error("%m warning: synthesizable implementation of bsg_mux does not support width_p, els_p or balanced_p");
       // synopsys translate_on
     end
 
