@@ -156,11 +156,11 @@ bsg_mesosync_core #( .width_p(width_lp-2)
     // connection to core
     , .data_i(data_i)
     , .v_i(v_i)
-    , .ready_o(ready_o)
+    , .ready_and_o(ready_o)
 
     , .v_o(v_o)
     , .data_o(data_o)
-    , .ready_i(ready_i)
+    , .ready_and_i(ready_i)
   
     );
 

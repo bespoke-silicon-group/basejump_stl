@@ -53,11 +53,11 @@ bsg_relay_fifo #(.width_p(width_p)) input_relay
 
     ,.v_i(v_i)
     ,.data_i(data_i)
-    ,.ready_o(ready_o)
+    ,.ready_and_o(ready_o)
 
     ,.v_o(v_i_r)
     ,.data_o(data_i_r)
-    ,.ready_i(ready_o_r)
+    ,.ready_and_i(ready_o_r)
     );
 
 bsg_relay_fifo #(.width_p(width_p)) output_relay
@@ -66,11 +66,11 @@ bsg_relay_fifo #(.width_p(width_p)) output_relay
 
     ,.v_i(v_o_r)
     ,.data_i(data_o_r)
-    ,.ready_o(ready_i_r)
+    ,.ready_and_o(ready_i_r)
 
     ,.v_o(v_o)
     ,.data_o(data_o)
-    ,.ready_i (ready_i)
+    ,.ready_and_i (ready_i)
     );
 
 
