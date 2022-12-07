@@ -34,9 +34,11 @@ module bsg_mux #(parameter `BSG_INV_PARAM(width_p)
     ,input [lg_els_lp-1:0] sel_i
     ,output [width_p-1:0] data_o
     );
-   
+  
+  // the following macro is for clock muxing only
   if((harden_p == 1) && (balanced_p == 1)
-        && els_p != 1)
+        && (width_p == 1)
+        && (els_p > 1) && (els_p < 5))
     begin: macro
       if(els_p == 2)
         begin: mux2
@@ -45,17 +47,14 @@ module bsg_mux #(parameter `BSG_INV_PARAM(width_p)
 
       else if(els_p == 3)
         begin: mux3
-          if(sel_i == 2'h3)
-            $error("invalid select value\n");
-
           wire data_1_0, data_3_2;
           bsg_macro_clk_mux_2_1 d_1_0
-            (.data_i(data[1:0])
+            (.data_i(data_i[1:0])
             ,.sel_i(sel_i[0])
             ,.data_o(data_1_0)
             );
           bsg_macro_clk_mux_2_1 d_3_2
-            (.data_i({1'b0, data[2]})
+            (.data_i({1'b0, data_i[2]})
             ,.sel_i(sel_i[0])
             ,.data_o(data_3_2)
             );
@@ -66,13 +65,13 @@ module bsg_mux #(parameter `BSG_INV_PARAM(width_p)
             );
         end
 
-      else if(els_p == 4)
+      else
         begin: mux4
           wire data_1_0, data_3_2;
           bsg_macro_clk_mux_2_1 d_1_0
             (.data_i(data_i[1:0])
             ,.sel_i(sel_i[0])
-            ,.data_o(data_1_2)
+            ,.data_o(data_1_0)
             );
           bsg_macro_clk_mux_2_1 d_3_2
             (.data_i(data_i[3:2])
@@ -85,11 +84,7 @@ module bsg_mux #(parameter `BSG_INV_PARAM(width_p)
             ,.data_o(data_o)
             );
         end
-
-      else 
-        $error("macro not instantiated; create one from 2/3/4:1 by referring to the Xilinx recommendations\n");
-
-    end
+    end: macro
   else
     begin: notmacro
       if (els_p == 1)
