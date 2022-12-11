@@ -77,7 +77,7 @@ module bsg_nonsynth_axi_mem
     axi_bid_o = awid_r;
     axi_bresp_o = '0;
     axi_bvalid_o = 1'b0;
-    
+
     awaddr_n = awaddr_r;
     awid_n = awid_r;
 
