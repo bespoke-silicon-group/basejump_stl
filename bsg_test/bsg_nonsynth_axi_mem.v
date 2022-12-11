@@ -2,13 +2,11 @@
  *  bsg_nonsynth_axi_mem.v
  */
 
-`include "bsg_defines.v"
-
 module bsg_nonsynth_axi_mem
   #(parameter `BSG_INV_PARAM(axi_id_width_p)
     , parameter `BSG_INV_PARAM(axi_addr_width_p)
     , parameter `BSG_INV_PARAM(axi_data_width_p)
-    , parameter `BSG_INV_PARAM(axi_burst_len_p)
+    , parameter `BSG_INV_PARAM(axi_len_width_p)
     , parameter `BSG_INV_PARAM(mem_els_p)
     , parameter init_data_p = 32'hdead_beef // 32 bits
 
@@ -21,6 +19,7 @@ module bsg_nonsynth_axi_mem
   
     , input [axi_id_width_p-1:0] axi_awid_i
     , input [axi_addr_width_p-1:0] axi_awaddr_i
+    , input [axi_len_width_p-1:0] axi_awlen_i
     , input axi_awvalid_i
     , output logic axi_awready_o 
 
@@ -37,6 +36,7 @@ module bsg_nonsynth_axi_mem
 
     , input [axi_id_width_p-1:0] axi_arid_i
     , input [axi_addr_width_p-1:0] axi_araddr_i
+    , input [axi_len_width_p-1:0] axi_arlen_i
     , input axi_arvalid_i
     , output logic axi_arready_o
   
@@ -75,9 +75,6 @@ module bsg_nonsynth_axi_mem
     axi_bid_o = awid_r;
     axi_bresp_o = '0;
     axi_bvalid_o = 1'b0;
-
-    awaddr_n = awaddr_r;
-    awid_n = awid_r;
 
     case (wr_state_r)
       WR_RESET: begin
@@ -129,7 +126,7 @@ module bsg_nonsynth_axi_mem
   rd_state_e rd_state_r, rd_state_n;
   logic [axi_id_width_p-1:0] arid_r, arid_n;
   logic [axi_addr_width_p-1:0] araddr_r, araddr_n;
-  logic [`BSG_SAFE_CLOG2(axi_burst_len_p)-1:0] rd_burst_r, rd_burst_n;
+  logic [axi_len_width_p-1:0] rd_burst_r, rd_burst_n;
 
   logic [lg_mem_els_lp-1:0] rd_ram_idx;
   assign rd_ram_idx = araddr_r[`BSG_SAFE_CLOG2(axi_data_width_p>>3)+:lg_mem_els_lp];
@@ -185,13 +182,13 @@ module bsg_nonsynth_axi_mem
       RD_SEND_DATA: begin
         axi_rvalid_o = 1'b1;
 
-        axi_rlast_o = (rd_burst_r == axi_burst_len_p-1);
+        axi_rlast_o = (rd_burst_r == axi_arlen_i);
 
         rd_burst_n = axi_rready_i
           ? rd_burst_r + 1
           : rd_burst_r;
     
-        rd_state_n = ((rd_burst_r == axi_burst_len_p-1) & axi_rready_i)
+        rd_state_n = ((rd_burst_r == axi_arlen_i) & axi_rready_i)
           ? RD_WAIT_ADDR
           : RD_SEND_DATA;
       
@@ -224,7 +221,7 @@ module bsg_nonsynth_axi_mem
       if ((wr_state_r == WR_WAIT_DATA) & axi_wvalid_i) begin
         for (integer i = 0; i < axi_strb_width_lp; i++) begin
           if (axi_wstrb_i[i]) begin
-            ram[wr_ram_idx][i*8+:8] <= axi_wdata_i[i*8+:8];
+            ram[wr_ram_idx][i*8+:8] = axi_wdata_i[i*8+:8];
           end
         end
       end
@@ -240,4 +237,3 @@ module bsg_nonsynth_axi_mem
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_nonsynth_axi_mem)
-
