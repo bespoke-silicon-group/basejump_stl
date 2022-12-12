@@ -54,7 +54,7 @@ module bsg_mem_1rw_sync_segmented
       bsg_mem_1rw_sync #(
         .width_p(width_p)
         ,.els_p(els_p)
-        ,.latch_last_read_p(latch_last_read_p == num_subbank_p)
+        ,.latch_last_read_p(latch_last_read_p && num_subbank_p == 1)
       ) 
       bank 
       ( .clk_i(clk_i)
@@ -130,10 +130,7 @@ module bsg_mem_1rw_sync_segmented
     end
 
     if (!(`BSG_IS_POW2(width_p) && `BSG_IS_POW2(els_p)))
-      $error("width_p and els_p should be power of 2"); 
-
-    if (num_subbank_p == 0)
-      $error("Number of subbanks should not be equal to 0");     
+      $error("width_p and els_p should be power of 2");      
 
     if (!(num_subbank_p > 1) && !(subbank_width_lp%8 == 0))
       $error("For byte-mask SRAM, subbank_width_lp should be a multiple of 8");
