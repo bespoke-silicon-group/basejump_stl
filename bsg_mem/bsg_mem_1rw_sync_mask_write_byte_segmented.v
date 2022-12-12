@@ -57,7 +57,7 @@ module bsg_mem_1rw_sync_mask_write_byte_segmented
     bsg_mem_1rw_sync_mask_write_byte #(
       .data_width_p(width_p)
       ,.els_p(els_p)
-      ,.latch_last_read_p(latch_last_read_p == num_subbank_p)
+      ,.latch_last_read_p(latch_last_read_p && num_subbank_p == 1)
     ) 
     bank 
     ( .clk_i(clk_i)
