@@ -6,7 +6,7 @@
 // oscillator. A TSMC 250nm hardened implementation of this module
 // can be found at:
 //
-//      bsg_ip_cores/hard/bsg_clk_gen/bsg_clk_gen_osc.v
+//      basejump_stl/hard/tsmc_28/bsg_clk_gen/bsg_clk_gen_osc_v3.v
 //
 // This module should be replaced by the hardened version
 // when being synthesized.
