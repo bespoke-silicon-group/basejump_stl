@@ -5,7 +5,7 @@
 // the clock is designed to be atomically updated
 // between any of its values without glitching.
 //
-// We have verified this in TSMC 40 by running with sdf annotations.
+// We have verified this in TSMC 28 by running with sdf annotations.
 //
 
 `ifndef BSG_NO_TIMESCALE
