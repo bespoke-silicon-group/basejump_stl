@@ -2,8 +2,12 @@
 `include "bsg_defines.v"
 
 /*
- * When a new data arrives, tag_clk_r_o will toggle once and then be held
- *   high until the next new data comes in.
+ * This module takes 1 bit of data and send it out along with a clock pulse.
+ *
+ * When this module receives a bit, tag_clk_r_o becomes low and the
+ *   received data is put on tag_data_r_o on the current cycle. On next cycle,
+ *   tag_clk_r_o will become high and generate a posetive clock edge. The clock
+ *   signal will remain high until the next data comes in.
  *
  *                -----+
  * v_i:                |
@@ -20,6 +24,10 @@
  *                     +-----------------------+
  * tag_data_r_o:       |                       |
  *                -----+                       +-----
+ *
+ * One use case is to write sequence of data from software through bsg_tag_bitbang
+ *   to bsg tag master. This eliminates the need of dedicated hardware, like a ROM
+ *   and a tag trace replay module.
  *
  */                                        
 
