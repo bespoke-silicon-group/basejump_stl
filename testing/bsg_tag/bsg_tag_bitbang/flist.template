@@ -1,0 +1,16 @@
+$BASEJUMP_STL_DIR/bsg_tag/bsg_tag_pkg.v
+$CUR_DIR/top.sv
+$CUR_DIR/testbench.sv
+$CUR_DIR/bsg_tag_bitbang.sv
+$BASEJUMP_STL_DIR/bsg_tag/bsg_tag_master.v
+$BASEJUMP_STL_DIR/bsg_tag/bsg_tag_client.v
+$BASEJUMP_STL_DIR/bsg_async/bsg_async_fifo.v
+$BASEJUMP_STL_DIR/bsg_async/bsg_async_ptr_gray.v
+$BASEJUMP_STL_DIR/bsg_async/bsg_launch_sync_sync.v
+$BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1r1w.v
+$BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1r1w_synth.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_dff_reset.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_dff_en.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_dff.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_mux2_gatestack.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_counter_clear_up.v
