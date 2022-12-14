@@ -1,4 +1,4 @@
-# Edited to test bsg_mem_1rw_sync_mask_write_bit_subbanked.v
+# Edited to test bsg_mem_1rw_sync_mask_write_bit_segmented.v
 
 TOP = ../../..
 
@@ -34,7 +34,7 @@ verilator_sim: verilator_build
 verilator_build: clean
 	verilator --Wall --trace --cc --assert --prof-cfuncs -CFLAGS -std=c++11 --build \
     -I${TOP}/bsg_misc -I${TOP}/bsg_mem -I${TOP}/bsg_test \
-    -CFLAGS "-I$(TOP)/bsg_test" ${ALL_FILES} --top-module test_bsg \
+    ${ALL_FILES} --top-module test_bsg \
 	  -Wno-WIDTH -Wno-UNUSED -exe test_bsg.cpp
 
 clean:
