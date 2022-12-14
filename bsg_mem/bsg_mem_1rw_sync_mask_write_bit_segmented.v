@@ -15,12 +15,12 @@
  *  - width_p : width of the total memory
  *  - els_p   : depth of the total memory
  *
- *  - num_subbank_p : Number of logical banks for the memory's width. width_p has
+ *  - num_segments_p : Number of logical banks for the memory's width. width_p has
  *                    to be a multiple of this number.
  */
 
   // For segmented SRAMs, all logical SRAMs must either read or write from the same address at once. 
-  // There could be an implementation to support independent subbank r/w by using a 1r1w backing SRAM. 
+  // There could be an implementation to support independent segment r/w by using a 1r1w backing SRAM. 
   // This may make sense in an FPGA environment, but we leave this to future work.
 
 `include "bsg_defines.v"
@@ -29,35 +29,35 @@ module bsg_mem_1rw_sync_mask_write_bit_segmented
   #(parameter `BSG_INV_PARAM(width_p)
     , parameter `BSG_INV_PARAM(els_p)
     , parameter `BSG_INV_PARAM(latch_last_read_p)
-    , parameter `BSG_INV_PARAM(num_subbank_p)
+    , parameter `BSG_INV_PARAM(num_segments_p)
 
-      // Don't support depth subbanks due to conflicts
-    , localparam subbank_width_lp = width_p/num_subbank_p
+      // Don't support depth segments due to conflicts
+    , localparam segment_width_lp = width_p/num_segments_p
     , localparam lg_els_lp = `BSG_SAFE_CLOG2(els_p)
   )
   (   input clk_i
   	, input reset_i
-   	, input [num_subbank_p-1:0] v_i
+   	, input [num_segments_p-1:0] v_i
   	, input w_i
-  	, input [num_subbank_p-1:0][subbank_width_lp-1:0] w_mask_i
-  	, input [num_subbank_p-1:0][subbank_width_lp-1:0] data_i
+  	, input [num_segments_p-1:0][segment_width_lp-1:0] w_mask_i
+  	, input [num_segments_p-1:0][segment_width_lp-1:0] data_i
   	, input [lg_els_lp-1:0] addr_i
-  	, output logic [num_subbank_p-1:0][subbank_width_lp-1:0] data_o
+  	, output logic [num_segments_p-1:0][segment_width_lp-1:0] data_o
   );
 
-    wire [num_subbank_p-1:0][subbank_width_lp-1:0] w_mask_lo;
+    wire [num_segments_p-1:0][segment_width_lp-1:0] w_mask_lo;
 
-    for (genvar i = 0; i < num_subbank_p; i++) begin
-      for (genvar j = 0; j < subbank_width_lp; j++) 
+    for (genvar i = 0; i < num_segments_p; i++) begin
+      for (genvar j = 0; j < segment_width_lp; j++) 
         assign w_mask_lo[i][j] = w_mask_i[i][j] & v_i[i];
-    end // for (genvar i = 0; i < num_subbank_p; i++)
+    end // for (genvar i = 0; i < num_segments_p; i++)
 
-    logic [num_subbank_p-1:0][subbank_width_lp-1:0] data_lo;
+    logic [num_segments_p-1:0][segment_width_lp-1:0] data_lo;
 
     bsg_mem_1rw_sync_mask_write_bit #(
       .width_p(width_p)
       ,.els_p(els_p)
-      ,.latch_last_read_p(latch_last_read_p && num_subbank_p == 1)
+      ,.latch_last_read_p(latch_last_read_p && num_segments_p == 1)
     ) 
     bank 
     ( .clk_i(clk_i)
@@ -70,12 +70,12 @@ module bsg_mem_1rw_sync_mask_write_bit_segmented
       ,.data_o(data_lo)
     );
 
-    if (latch_last_read_p && num_subbank_p > 1) begin: llr
+    if (latch_last_read_p && num_segments_p > 1) begin: llr
   
-      wire [num_subbank_p-1:0] read_en;
-      wire [num_subbank_p-1:0] read_en_r;
+      wire [num_segments_p-1:0] read_en;
+      wire [num_segments_p-1:0] read_en_r;
 
-      for (genvar i = 0; i < num_subbank_p; i++) begin: bk1
+      for (genvar i = 0; i < num_segments_p; i++) begin: bk1
 
         assign read_en[i] = v_i[i] & ~w_i; 
 
@@ -88,7 +88,7 @@ module bsg_mem_1rw_sync_mask_write_bit_segmented
         );
         
         bsg_dff_en_bypass #(
-          .width_p(subbank_width_lp)
+          .width_p(segment_width_lp)
         ) dff_bypass (
           .clk_i(clk_i)
           ,.en_i(read_en_r[i])
@@ -96,9 +96,9 @@ module bsg_mem_1rw_sync_mask_write_bit_segmented
           ,.data_o(data_o[i])
         );
 
-      end // for (genvar i = 0; i < num_subbank_p; i++)
+      end // for (genvar i = 0; i < num_segments_p; i++)
 
-    end // (latch_last_read_p && num_subbank_p > 1)
+    end // (latch_last_read_p && num_segments_p > 1)
         
     else begin: no_llr
       assign data_o = data_lo;
@@ -107,7 +107,7 @@ module bsg_mem_1rw_sync_mask_write_bit_segmented
   if (!(`BSG_IS_POW2(width_p) && `BSG_IS_POW2(els_p)))
     $error("width_p and els_p should be power of 2");
   
-  if (!(width_p%num_subbank_p == 0)) 
-    $error("The remainder for the factor -> (width_p/num_subbank_p) should be equal to 0");
+  if (!(width_p%num_segments_p == 0)) 
+    $error("The remainder for the factor -> (width_p/num_segments_p) should be equal to 0");
 
 endmodule
