@@ -9,33 +9,33 @@ module test_bsg
   parameter width_p             = `WIDTH_P
   ,parameter els_p              = `ELS_P
   ,parameter seed_p             = `SEED_P
-  ,parameter num_subbank_p      =  4
-  ,parameter latch_last_read_p  =  1
+  ,parameter num_segments_p     =  8
+  ,parameter latch_last_read_p  =  0
   ,parameter reset_cycles_lo_p  =  1
   ,parameter reset_cycles_hi_p  =  10
-  ,localparam subbank_width_lp  =  width_p/num_subbank_p
-  ,localparam mask_width_lp     =  subbank_width_lp >>3
+  ,localparam segment_width_lp  =  width_p/num_segments_p
+  ,localparam mask_width_lp     =  segment_width_lp >>3
   ,localparam lg_els_lp         = `BSG_SAFE_CLOG2(els_p)
 ) 
 ( input wire clk,
-  input wire [num_subbank_p-1:0] v_i,
+  input wire [num_segments_p-1:0] v_i,
   input wire  w_i
 ) ;
 
   wire reset ;
-  wire [num_subbank_p-1:0][mask_width_lp-1:0] w_mask_i;
-  wire [num_subbank_p-1:0][subbank_width_lp-1:0] test_input_data;
-	wire [num_subbank_p-1:0][subbank_width_lp-1:0] actual_data;
+  wire [num_segments_p-1:0][mask_width_lp-1:0] w_mask_i;
+  wire [num_segments_p-1:0][segment_width_lp-1:0] test_input_data;
+	wire [num_segments_p-1:0][segment_width_lp-1:0] actual_data;
   wire [lg_els_lp-1:0] test_input_addr ;
-	wire [num_subbank_p-1:0][subbank_width_lp-1:0] expected_data;
+	wire [num_segments_p-1:0][segment_width_lp-1:0] expected_data;
 
   initial
   begin
     $display("===========================================================");
-    $display("testing bsg_mem_1rw_sync_subbanked with ...");
+    $display("testing bsg_mem_1rw_sync_segmented with ...");
     $display("WIDTH_P       : %0d", width_p);
     $display("ELS_P         : %0d", els_p);
-    $display("NUM_SUBBANK_P : %0d", num_subbank_p);
+    $display("num_segments_p : %0d", num_segments_p);
   end
 
   assign w_mask_i = 32'hffffffff;
@@ -70,7 +70,7 @@ module test_bsg
 
   bsg_mem_1rw_sync_segmented #( .width_p(width_p)
                                 , .els_p  (els_p)
-                                , .num_subbank_p (num_subbank_p)
+                                , .num_segments_p (num_segments_p)
                                 , .latch_last_read_p(latch_last_read_p)
                               )  DUT
                               ( .clk_i    (clk)
@@ -85,14 +85,14 @@ module test_bsg
 
   //Reference Model
 
-  if (num_subbank_p == 1) begin: no_mask_sram
+  if (num_segments_p == 1) begin: no_mask_sram
 
     bsg_mem_1rw_sync #(
-                        .width_p(subbank_width_lp)
+                        .width_p(segment_width_lp)
                         ,.els_p(els_p)
                         ,.latch_last_read_p(latch_last_read_p)
                       ) 
-                       bank [num_subbank_p-1:0]
+                       bank [num_segments_p-1:0]
                       ( .clk_i(clk)
                         ,.reset_i(reset)
                         ,.v_i(v_i)
@@ -107,11 +107,11 @@ module test_bsg
   else begin: byte_mask_sram
 
     bsg_mem_1rw_sync_mask_write_byte #(
-                                        .data_width_p(subbank_width_lp)
+                                        .data_width_p(segment_width_lp)
                                         ,.els_p(els_p)
                                         ,.latch_last_read_p(latch_last_read_p)
                                       ) 
-                                      bank [num_subbank_p-1:0] 
+                                      bank [num_segments_p-1:0] 
                                       ( .clk_i(clk)
                                         ,.reset_i(reset)
                                         ,.v_i(v_i)
@@ -134,7 +134,7 @@ module test_bsg
 
   always@(posedge clk) begin
     if (latch_last_read_p) begin
-		  if (v_i && !w_i) begin
+		  if (|v_i && !w_i) begin
 		  	if(expected_data == actual_data)  
           $fdisplay(f,"[FOUND MATCH][LLR] At time %t --> expected_data : 0x%h | actual_data : 0x%h",$realtime,expected_data,actual_data);
 		  	else 
@@ -146,9 +146,9 @@ module test_bsg
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 //--------------------------------------------[NO LLR]------------------------------------------------//
 
-  logic [num_subbank_p-1:0] read_en, read_en_r;
+  logic [num_segments_p-1:0] read_en, read_en_r;
   
-    for(genvar i=0; i<num_subbank_p; i++) 
+    for(genvar i=0; i<num_segments_p; i++) 
       assign read_en[i] = v_i[i] & ~w_i;
 
   logic [1:0] count;
@@ -171,14 +171,14 @@ module test_bsg
       count<=0;
   end
 
-  logic [num_subbank_p-1:0][subbank_width_lp-1:0] actual_data_lo;
+  logic [num_segments_p-1:0][segment_width_lp-1:0] actual_data_lo;
 
-  /*Since we are ORing the v_i while instantiating backing SRAM in the design, we tend to read an invalid subbank when 
+  /*Since we are ORing the v_i while instantiating backing SRAM in the design, we tend to read an invalid segment when 
     latch_last_read_p=0. This will break our checker logic ending up with a simulation failure. When latch_last_read_p
     is 0, we will only check the valid portions of the output.*/
 
-  for(genvar i=0; i<num_subbank_p; i++) begin
-    for(genvar j=0; j<subbank_width_lp; j++) begin
+  for(genvar i=0; i<num_segments_p; i++) begin
+    for(genvar j=0; j<segment_width_lp; j++) begin
       assign actual_data_lo[i][j] = (v_i[i])?actual_data[i][j]:expected_data[i][j];
     end
   end
