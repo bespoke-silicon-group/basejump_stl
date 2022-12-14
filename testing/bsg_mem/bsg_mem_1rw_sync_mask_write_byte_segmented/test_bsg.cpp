@@ -37,7 +37,7 @@ int main (int argc, char **argv) {
         top->eval();
 
         if(main_time == 16) {
-          top -> v_i = 0x3;
+          top -> v_i = 0x1;
           top -> w_i = 0x1;
          } 
 
