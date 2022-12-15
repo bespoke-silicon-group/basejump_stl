@@ -36,9 +36,9 @@ public:
     static constexpr bool READ  = false;
 
     BSGDRAMSim3(int num_channels_p, char *config_p):
-        _read_done(num_channels_p, 0),
+        _read_done(num_channels_p, false),
         _read_done_addr(num_channels_p, 0),
-        _write_done(num_channels_p, 0),
+        _write_done(num_channels_p, false),
         _write_done_addr(num_channels_p, 0)
         {
 
@@ -54,9 +54,9 @@ public:
                 int ch = _memory_system->GetConfig()->AddressMapping(addr).channel;
                 pr_dbg("read_done called: ch=%d, addr=0x%010" PRIx64 "\n", ch, addr);
                 if (_read_done[ch]) {
-                    pr_dbg("WARNING: read done called twice in the same cycle. ch=%d\n", ch);
+                    pr_dbg("ERROR: read done called twice in the same cycle. ch=%d\n", ch);
                 }
-                _read_done[ch]++;
+                _read_done[ch] = true;
                 _read_done_addr[ch] = addr;
             };
 
@@ -150,8 +150,8 @@ public:
     ////////////////
     void clockTick() {
         for (int ch = 0; ch < _memory_system->GetConfig()->channels; ch++) {
-            if (_read_done[ch] > 0) _read_done[ch]--;
-            if (_write_done[ch] > 0) _write_done[ch]--;
+            _read_done[ch] = false;
+            _write_done[ch] = false;
         }
         _memory_system->ClockTick();
     }
@@ -171,11 +171,11 @@ public:
     // Query completed requests //
     //////////////////////////////
     bool getReadDone(int channel) const {
-        return _read_done[channel] > 0;
+        return _read_done[channel];
     }
 
     bool getWriteDone(int channel) const {
-        return _write_done[channel] > 0;
+        return _write_done[channel];
     }
 
     addr_t getReadDoneAddr(int channel) const {
@@ -189,9 +189,9 @@ public:
 
 private:
     std::unique_ptr<MemorySystem>       _memory_system;
-    std::vector<uint8_t> _read_done;
+    std::vector<bool>   _read_done;
     std::vector<addr_t> _read_done_addr;
-    std::vector<uint8_t> _write_done;
+    std::vector<bool>   _write_done;
     std::vector<addr_t> _write_done_addr;
 };
 
