@@ -58,7 +58,7 @@ module testbench();
 
 
   `declare_bsg_cache_pkt_s(addr_width_p,data_width_p);
-  `declare_bsg_cache_dma_pkt_s(addr_width_p);
+  `declare_bsg_cache_dma_pkt_s(addr_width_p,block_size_in_words_p);
 
   bsg_cache_pkt_s [num_dma_p-1:0] cache_pkt;
   logic [num_dma_p-1:0] v_li;
@@ -94,6 +94,7 @@ module testbench();
         ,.sets_p(sets_p)
         ,.ways_p(ways_p)
         ,.amo_support_p(amo_support_level_arithmetic_lp)
+        ,.word_tracking_p(1)
       ) cache (
         .clk_i(clk)
         ,.reset_i(reset)
@@ -136,6 +137,7 @@ module testbench();
       bsg_cache_dma_to_wormhole #(
          .dma_addr_width_p(addr_width_p)
          ,.dma_burst_len_p(data_len_p)
+         ,.dma_mask_width_p(block_size_in_words_p)
          ,.wh_flit_width_p(wh_flit_width_p)
          ,.wh_cid_width_p(wh_cid_width_p)
          ,.wh_cord_width_p(wh_cord_width_p)
@@ -204,6 +206,7 @@ module testbench();
      .num_dma_p(num_dma_p)
      ,.dma_addr_width_p(addr_width_p)
      ,.dma_burst_len_p(data_len_p)
+     ,.dma_mask_width_p(block_size_in_words_p)
      ,.wh_flit_width_p(wh_flit_width_p)
      ,.wh_cid_width_p(wh_cid_width_p)
      ,.wh_cord_width_p(wh_cord_width_p)
@@ -236,6 +239,7 @@ module testbench();
       bsg_nonsynth_dma_model #(
         .addr_width_p(addr_width_p)
         ,.data_width_p(dma_data_width_p)
+        ,.mask_width_p(block_size_in_words_p)
         ,.block_size_in_words_p(data_len_p)
         ,.els_p(mem_size_p)
 
