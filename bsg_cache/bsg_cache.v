@@ -95,7 +95,6 @@ module bsg_cache
   //
   logic [lg_ways_lp-1:0] addr_way;
   logic [lg_sets_lp-1:0] addr_index;
-  logic [lg_block_size_in_words_lp-1:0] addr_block_offset;
 
   `declare_bsg_cache_pkt_s(addr_width_p, data_width_p);
   bsg_cache_pkt_s cache_pkt;
@@ -113,8 +112,6 @@ module bsg_cache
     = cache_pkt.addr[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
   assign addr_index
     = cache_pkt.addr[block_offset_width_lp+:lg_sets_lp];
-  assign addr_block_offset
-    = cache_pkt.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
 
   logic [lg_data_mem_els_lp-1:0] ld_data_mem_addr;
 
@@ -164,13 +161,9 @@ module bsg_cache
   end
 
   logic [lg_sets_lp-1:0] addr_index_tl;
-  logic [lg_block_size_in_words_lp-1:0] addr_block_offset_tl;
 
   assign addr_index_tl =
     addr_tl_r[block_offset_width_lp+:lg_sets_lp];
-
-  assign addr_block_offset_tl =
-    addr_tl_r[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
 
   logic [lg_data_mem_els_lp-1:0] recover_data_mem_addr;
 
@@ -256,7 +249,7 @@ module bsg_cache
   logic [ways_p-1:0][block_size_in_words_p-1:0] track_mem_w_mask_li;
   logic [ways_p-1:0][block_size_in_words_p-1:0] track_mem_data_lo;
 
-if (word_tracking_p) begin
+if (word_tracking_p) begin : track_mem_gen
   bsg_mem_1rw_sync_mask_write_bit #(
     .width_p(block_size_in_words_p*ways_p)
     ,.els_p(sets_p)
@@ -337,8 +330,9 @@ end
     addr_v_r[block_offset_width_lp+:lg_sets_lp];
   assign addr_way_v =
     addr_v_r[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
-  assign addr_block_offset_v =
-    addr_v_r[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
+  assign addr_block_offset_v = (block_size_in_words_p > 1)
+    ? addr_v_r[lg_data_mask_width_lp+:lg_block_size_in_words_lp]
+    : 1'b0;
 
   for (genvar i = 0; i < ways_p; i++) begin
     assign tag_hit_v[i] = (addr_tag_v == tag_v_r[i]) & valid_v_r[i];
@@ -359,9 +353,15 @@ end
 
   logic bypass_track_lo;
 
-  wire partial_st    = decode.st_op & (decode.data_size_op < lg_data_mask_width_lp);
-  wire partial_st_tl = decode_tl_r.st_op & (decode_tl_r.data_size_op < lg_data_mask_width_lp);
-  wire partial_st_v  = decode_v_r.st_op & (decode_v_r.data_size_op < lg_data_mask_width_lp);
+  wire partial_st    = decode.st_op & (decode.mask_op
+                                        ? ~(&cache_pkt.mask)
+                                        : (decode.data_size_op < lg_data_mask_width_lp));
+  wire partial_st_tl = decode_tl_r.st_op & (decode_tl_r.mask_op
+                                        ? ~(&mask_tl_r)
+                                        : (decode_tl_r.data_size_op < lg_data_mask_width_lp));
+  wire partial_st_v  = decode_v_r.st_op & (decode_v_r.mask_op
+                                        ? ~(&mask_v_r)
+                                        : (decode_v_r.data_size_op < lg_data_mask_width_lp));
 
   wire ld_st_amo_tag_miss = (decode_v_r.ld_op | decode_v_r.st_op | decode_v_r.atomic_op) & ~tag_hit_found;
   wire track_miss = (decode_v_r.ld_op | decode_v_r.atomic_op | partial_st_v)
@@ -454,6 +454,7 @@ end
     ,.track_miss_i(track_miss)
     ,.decode_v_i(decode_v_r)
     ,.addr_v_i(addr_v_r)
+    ,.mask_v_i(mask_v_r)
 
     ,.tag_v_i(tag_v_r)
     ,.valid_v_i(valid_v_r)
@@ -800,7 +801,7 @@ end
   logic tbuf_bypass_v_li;
   logic tbuf_full_lo;
 
-if (word_tracking_p) begin
+if (word_tracking_p) begin : tbuf_gen
   bsg_cache_tbuf #(
     .data_width_p(data_width_p)
     ,.addr_width_p(addr_width_p)
@@ -1021,7 +1022,7 @@ end
     | (decode.tagst_op & ready_o & v_i); 
   
   assign tag_mem_w_li = miss_v
-    ? miss_tag_mem_w_lo
+    ? (miss_tag_mem_v_lo & miss_tag_mem_w_lo)
     : tagst_write_en;
 
   always_comb begin
@@ -1077,7 +1078,9 @@ end
     | (tbuf_v_lo & tbuf_yumi_li)
   );
 
-  assign track_mem_w_li = miss_track_mem_w_lo | (tbuf_v_lo & tbuf_yumi_li);
+  assign track_mem_w_li = miss_track_mem_v_lo
+    ? miss_track_mem_w_lo
+    : (tbuf_v_lo & tbuf_yumi_li);
 
   assign track_mem_data_li = miss_track_mem_v_lo
     ? miss_track_mem_data_lo

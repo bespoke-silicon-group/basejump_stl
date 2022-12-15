@@ -184,7 +184,6 @@ module bsg_cache_dma
 
   logic [ways_p-1:0][block_size_in_words_p-1:0] track_mem_data_r;
   logic [block_size_in_words_p-1:0] track_data_way_picked;
-  logic [block_size_in_words_p-1:0] track_bits;
 
   bsg_mux #(
     .width_p(block_size_in_words_p)
@@ -199,7 +198,7 @@ module bsg_cache_dma
     .width_p(burst_size_in_words_lp)
     ,.els_p(burst_len_lp)
   ) track_offset_mux (
-    .data_i(track_bits)
+    .data_i(track_data_way_picked)
     ,.sel_i(counter_r[0+:lg_burst_len_lp])
     ,.data_o(track_bits_offset_picked)
   );
@@ -212,8 +211,7 @@ module bsg_cache_dma
     ,.o(track_bits_offset_picked_expanded)
   );
 
-  assign track_bits = track_miss_i ? track_data_way_picked : {block_size_in_words_p{1'b0}};
-  assign data_mem_w_mask_way_picked = word_tracking_p ? ~track_bits_offset_picked_expanded : {dma_data_mask_width_lp{1'b1}};
+  assign data_mem_w_mask_way_picked = (word_tracking_p & track_miss_i) ? ~track_bits_offset_picked_expanded : {dma_data_mask_width_lp{1'b1}};
 
   if (burst_len_lp == 1) begin
     assign data_mem_addr_o = dma_addr_i[block_offset_width_lp+:lg_sets_lp];
@@ -252,7 +250,7 @@ module bsg_cache_dma
       dma_addr_i[addr_width_p-1:block_offset_width_lp],
       {(block_offset_width_lp){1'b0}}
     };
-    dma_pkt.mask = {block_size_in_words_p{1'b0}};
+    dma_pkt.mask = '0;
 
     data_mem_v_o = 1'b0;
     data_mem_w_o = 1'b0;
@@ -305,7 +303,7 @@ module bsg_cache_dma
             // so the counter is incremented to 1.
             counter_clear = 1'b1;
             counter_up = 1'b1;
-            data_mem_v_o = 1'b1;
+            data_mem_v_o = (|track_bits_offset_picked);
             dma_state_n = SEND_EVICT_DATA;
           end
 
@@ -348,7 +346,9 @@ module bsg_cache_dma
 
         out_fifo_v_li = 1'b1;
 
-        data_mem_v_o = out_fifo_ready_lo & ~counter_evict_max;
+        // we only need to read words that have valid data
+        // for invalid words we just send the previously read word from data_mem
+        data_mem_v_o = out_fifo_ready_lo & ~counter_evict_max & (|track_bits_offset_picked);
 
         done_o = counter_evict_max & out_fifo_ready_lo;
 
@@ -410,7 +410,6 @@ module bsg_cache_dma
       if (track_data_we_i) begin
         track_mem_data_r <= track_mem_data_i;
       end
-
     end
   end
 

@@ -21,6 +21,7 @@ module bsg_cache_miss
 
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
+    ,parameter data_mask_width_lp=(data_width_p>>3)
     ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
     ,parameter block_offset_width_lp=(block_size_in_words_p > 1) ? lg_data_mask_width_lp+lg_block_size_in_words_lp : lg_data_mask_width_lp
     ,parameter tag_width_lp=(addr_width_p-lg_sets_lp-block_offset_width_lp)
@@ -37,6 +38,7 @@ module bsg_cache_miss
     ,input track_miss_i
     ,input bsg_cache_decode_s decode_v_i
     ,input [addr_width_p-1:0] addr_v_i
+    ,input [data_mask_width_lp-1:0] mask_v_i
     ,input [ways_p-1:0][tag_width_lp-1:0] tag_v_i
     ,input [ways_p-1:0] valid_v_i
     ,input [ways_p-1:0] lock_v_i
@@ -56,6 +58,8 @@ module bsg_cache_miss
     ,output logic [addr_width_p-1:0] dma_addr_o
     ,input dma_done_i
 
+    // to dma engine for flopping track_mem's read data
+    // used to avoid clk-to-q timing from memory
     ,output logic track_data_we_o
 
     // from stat_mem
@@ -148,13 +152,12 @@ module bsg_cache_miss
   // for flush/inv ops, go to FLUSH_OP.
   // for AUNLOCK, or ALOCK with tag hit, to go LOCK_OP.
   // for store tag miss with data size equal or bigger than a word, do not fetch cache line word tracking is enables
-  logic goto_flush_op;
-  logic goto_lock_op;
-  logic st_tag_miss_op;
-
-  assign goto_flush_op = decode_v_i.tagfl_op| decode_v_i.ainv_op| decode_v_i.afl_op| decode_v_i.aflinv_op;
-  assign goto_lock_op = decode_v_i.aunlock_op | (decode_v_i.alock_op & tag_hit_found_i);
-  assign st_tag_miss_op = word_tracking_p ? (decode_v_i.st_op & (decode_v_i.data_size_op >= lg_data_mask_width_lp) & ~tag_hit_found_i) : 1'b0;
+  wire goto_flush_op = decode_v_i.tagfl_op| decode_v_i.ainv_op| decode_v_i.afl_op| decode_v_i.aflinv_op;
+  wire goto_lock_op = decode_v_i.aunlock_op | (decode_v_i.alock_op & tag_hit_found_i);
+  wire full_word_op = decode_v_i.mask_op
+    ? (&mask_v_i)
+    : (decode_v_i.data_size_op >= lg_data_mask_width_lp);
+  wire st_tag_miss_op = word_tracking_p ? (decode_v_i.st_op & full_word_op & ~tag_hit_found_i) : 1'b0;
 
   logic [tag_width_lp-1:0] addr_tag_v;
   logic [lg_sets_lp-1:0] addr_index_v;
@@ -416,7 +419,7 @@ module bsg_cache_miss
 
         // set stat mem entry on store tag miss.
         stat_mem_v_o = dma_done_i & st_tag_miss_op;
-        stat_mem_w_o = dma_done_i & st_tag_miss_op;
+        stat_mem_w_o = 1'b1;
         stat_mem_data_out.dirty = {ways_p{1'b1}};
         stat_mem_data_out.lru_bits = chosen_way_lru_data;
         stat_mem_w_mask_out.dirty = chosen_way_decode;
@@ -424,7 +427,7 @@ module bsg_cache_miss
 
         // set the tag and the valid bit to 1'b1 for the chosen way on store tag miss.
         tag_mem_v_o = dma_done_i & st_tag_miss_op;
-        tag_mem_w_o = dma_done_i & st_tag_miss_op;
+        tag_mem_w_o = 1'b1;
 
         for (integer i = 0; i < ways_p; i++) begin
           tag_mem_data_out[i].tag = addr_tag_v;
@@ -437,7 +440,7 @@ module bsg_cache_miss
 
         // set track bits to zero for the chosen way on store tag miss.
         track_mem_v_o = dma_done_i & st_tag_miss_op;
-        track_mem_w_o = dma_done_i & st_tag_miss_op;
+        track_mem_w_o = 1'b1;
         for (integer i = 0; i < ways_p; i++) begin
           track_mem_data_o[i] = {block_size_in_words_p{1'b0}};
           track_mem_w_mask_o[i] = {block_size_in_words_p{chosen_way_decode[i]}};
@@ -467,7 +470,7 @@ module bsg_cache_miss
         // the MRU. lru decode unit generates the next state LRU bits, so that
         // the input way is "not" the LRU way.
         stat_mem_v_o = dma_done_i;
-        stat_mem_w_o = dma_done_i;
+        stat_mem_w_o = 1'b1;
         stat_mem_data_out.dirty = {ways_p{decode_v_i.st_op | decode_v_i.atomic_op}};
         stat_mem_data_out.lru_bits = chosen_way_lru_data;
         stat_mem_w_mask_out.dirty = track_miss_i ? {ways_p{1'b0}} : chosen_way_decode;
@@ -475,7 +478,7 @@ module bsg_cache_miss
 
         // set the tag and the valid bit to 1'b1 for the chosen way.
         tag_mem_v_o = dma_done_i;
-        tag_mem_w_o = dma_done_i;
+        tag_mem_w_o = 1'b1;
 
         for (integer i = 0; i < ways_p; i++) begin
           tag_mem_data_out[i].tag = addr_tag_v;
@@ -488,7 +491,7 @@ module bsg_cache_miss
 
         // set track bits to one for the chosen way on store tag miss.
         track_mem_v_o = word_tracking_p ? dma_done_i : 1'b0;
-        track_mem_w_o = dma_done_i;
+        track_mem_w_o = 1'b1;
         for (integer i = 0; i < ways_p; i++) begin
           track_mem_data_o[i] = {block_size_in_words_p{1'b1}};
           track_mem_w_mask_o[i] = {block_size_in_words_p{chosen_way_decode[i]}};
