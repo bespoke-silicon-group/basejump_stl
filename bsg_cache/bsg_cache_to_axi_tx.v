@@ -77,9 +77,10 @@ module bsg_cache_to_axi_tx
   logic tag_fifo_v_lo;
   logic tag_fifo_yumi_li;
   logic [lg_num_cache_lp-1:0] tag_lo;
+  logic [mask_width_p-1:0] mask_lo;
 
   bsg_fifo_1r1w_small #(
-    .width_p(lg_num_cache_lp)
+    .width_p(lg_num_cache_lp+mask_width_p)
     ,.els_p(tag_fifo_els_p)
   ) tag_fifo (
     .clk_i(clk_i)
@@ -87,10 +88,10 @@ module bsg_cache_to_axi_tx
 
     ,.v_i(tag_fifo_v_li)
     ,.ready_o(tag_fifo_ready_lo)
-    ,.data_i(cache_id_i)
+    ,.data_i({mask_i, cache_id_i})
 
     ,.v_o(tag_fifo_v_lo)
-    ,.data_o(tag_lo)
+    ,.data_o({mask_lo, tag_lo})
     ,.yumi_i(tag_fifo_yumi_li)
   );
 
@@ -141,21 +142,11 @@ module bsg_cache_to_axi_tx
     ,.o(cache_sel)
   );
 
-  logic [mask_width_p-1:0] mask_r;
-  bsg_dff_en #(
-    .width_p(mask_width_p)
-  ) mask_reg (
-    .clk_i(clk_i)
-    ,.en_i(yumi_o)
-    ,.data_i(mask_i)
-    ,.data_o(mask_r)
-  );
-
   bsg_expand_bitmask #(
     .in_width_p(mask_width_p)
     ,.expand_p(byte_mask_width_lp/mask_width_p)
   ) expand (
-    .i(mask_r)
+    .i(mask_lo)
     ,.o(byte_mask_lo)
   );
 
