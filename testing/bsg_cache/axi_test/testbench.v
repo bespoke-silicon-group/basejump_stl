@@ -213,7 +213,7 @@ module testbench();
    #(.axi_id_width_p(6)
      ,.axi_addr_width_p(addr_width_p)
      ,.axi_data_width_p(data_width_p)
-     ,.axi_burst_len_p(block_width_p/data_width_p)
+     ,.axi_len_width_p(8)
      ,.mem_els_p(32)
      ,.init_data_p('0)
      )
@@ -226,6 +226,7 @@ module testbench();
      ,.axi_awvalid_i(axi_awvalid)
      ,.axi_awready_o(axi_awready)
      ,.axi_awburst_i(axi_awburst)
+     ,.axi_awlen_i(axi_awlen)
 
      ,.axi_wdata_i(axi_wdata)
      ,.axi_wstrb_i(axi_wstrb)
@@ -241,6 +242,7 @@ module testbench();
      ,.axi_arid_i(axi_arid)
      ,.axi_araddr_i(axi_araddr)
      ,.axi_arburst_i(axi_arburst)
+     ,.axi_arlen_i(axi_arlen)
      ,.axi_arvalid_i(axi_arvalid)
      ,.axi_arready_o(axi_arready)
 
