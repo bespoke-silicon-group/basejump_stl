@@ -3,8 +3,16 @@
 `timescale 1ps/1ps
 `endif
 
-// This module is a non-synthesizable version of a
-//   90 degree delay line, useful for LPDDR
+// This module is a behavioral model of the DMC delay line,
+// which provides adaptive 90 degree phase shift to an input clock
+// as required by LPDDR1, for example. 
+// A TSMC 28nm hardened implementation of this module
+// can be found at:
+//
+//      basejump_stl/hard/tsmc_28/bsg_dmc/bsg_dmc_dly_line_v3.v
+//
+// This module should be replaced by the hardened version
+// when being synthesized.
 
 module bsg_dmc_dly_line_v3
  #(parameter `BSG_INV_PARAM(num_taps_p)
