@@ -42,7 +42,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
       ,output logic        latch_signed_div_o
       ,output logic        adder1_cin_o
 
-      ,output logic [$clog2(width_p)-1:0] div_shift
+      ,output [$clog2(width_p)-1:0] div_shift
 
       ,output logic        v_o
       ,input               yumi_i
@@ -96,7 +96,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
         ,.num_zero_o(clz_a_result)
     );
 
-  assign div_shift = clz_a_result - clz_c_result;
+  assign div_shift = (zero_divisor_i) ? width_p-1 : clz_a_result - clz_c_result;
 
   logic [`BSG_WIDTH(width_p/bits_per_iter_p)-1:0] calc_cnt;
   wire calc_up_li = (state == CALC) && (calc_cnt < div_shift);
