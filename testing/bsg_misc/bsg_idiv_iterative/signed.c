@@ -3,8 +3,12 @@
 // RISC-V ISA Manual: Section 7.2 - Division Operations
 #include <stdio.h>
 #include <math.h>
+#ifndef WIDTH 
 #define WIDTH 4
+#endif
+#ifndef ITERS
 #define ITERS 1 << (WIDTH * 2)
+#endif
 // #define ITERS 10000
 
 // Function to compute quotient

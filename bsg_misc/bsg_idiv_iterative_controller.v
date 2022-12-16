@@ -56,7 +56,6 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
 
    logic [width_p-1:0] clz_dividend_input, clz_divisor_input;
    logic [$clog2(width_p)-1:0] clz_c_result, clz_a_result;
-   //wire [$clog2(width_p)-1:0] div_shift;
    
    typedef enum logic[5:0] 
            {WAIT, NEG0, NEG1, SHIFT,
@@ -97,10 +96,14 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
     );
 
   assign div_shift = (zero_divisor_i) ? width_p-1 : clz_a_result - clz_c_result;
+  logic [`BSG_WIDTH(width_p/bits_per_iter_p)-1:0] calc_cyc = width_p/bits_per_iter_p;
+  if (!(signed_div_r_i) && (bits_per_iter_p==1)) begin
+    assign calc_cyc = div_shift;
+  end
 
   logic [`BSG_WIDTH(width_p/bits_per_iter_p)-1:0] calc_cnt;
-  wire calc_up_li = (state == CALC) && (calc_cnt < div_shift);
-  wire calc_done  = (calc_cnt == div_shift);
+  wire calc_up_li = (state == CALC) && (calc_cnt < calc_cyc);
+  wire calc_done  = (calc_cnt == calc_cyc);
   bsg_counter_clear_up#(.max_val_p(width_p/bits_per_iter_p)
                        ,.init_val_p(0)
                        ,.disable_overflow_warning_p(1)) calc_counter
