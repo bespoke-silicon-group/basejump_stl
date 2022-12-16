@@ -1,12 +1,16 @@
-// Program to produce a file with the expected output
+//jl Program to produce a file with the expected output
 // for all possible inputs to an unsigned 4-bit divider pursuant to
 // RISC-V ISA Manual: Section 7.2 - Division Operations
 
 #include <stdio.h>
 #include <math.h>
 #include <limits.h>
+#ifndef WIDTH 
 #define WIDTH 4
+#endif
+#ifndef ITERS
 #define ITERS 1 << (WIDTH*2)
+#endif
 // #define ITERS 10000
 
 // Function to compute quotient

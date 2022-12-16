@@ -1,0 +1,5 @@
+$BASEJUMP_STL_DIR/bsg_misc/bsg_counting_leading_zeros.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_priority_encode.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_priority_encode_one_hot_out.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_encode_one_hot.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_scan.v
