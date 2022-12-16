@@ -11,7 +11,7 @@
  *
  */
 
-
+`include "bsg_defines.v"
 
 module bsg_cache_buffer_queue
   #(parameter `BSG_INV_PARAM(width_p))
