@@ -44,7 +44,7 @@ $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_sbuf.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_tbuf.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache.v
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_dma_to_wormhole.v
-$BASEJUMP_STL_DIR/bsg_cache/bsg_wormhole_to_cache_dma_stream.v
+$BASEJUMP_STL_DIR/bsg_cache/bsg_wormhole_to_cache_dma_inorder.v
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_concentrator.v
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_concentrator_in.v
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_concentrator_out.v

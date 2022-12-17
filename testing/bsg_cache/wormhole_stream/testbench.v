@@ -202,7 +202,7 @@ module testbench();
   logic [wh_cid_width_p-1:0] wh_header_cid_lo;
   wire [lg_num_dma_lp-1:0] wh_dma_id_li = header_flit.src_cid[0+:lg_num_dma_lp];
 
-  bsg_wormhole_to_cache_dma_stream #(
+  bsg_wormhole_to_cache_dma_inorder #(
      .num_dma_p(num_dma_p)
      ,.dma_addr_width_p(addr_width_p)
      ,.dma_burst_len_p(data_len_p)

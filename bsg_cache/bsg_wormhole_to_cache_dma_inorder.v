@@ -1,7 +1,7 @@
 /**
- *    bsg_wormhole_to_cache_stream.v
+ *    bsg_wormhole_to_cache_inorder.v
  *
- *    This module converts a bsg_cache_dma wormhole link to an array of bsg_cache_dma interfaces.
+ *    This module converts a bsg_cache_dma wormhole link to a series of bsg_cache_dma requests.
  *    It can then be connected to other endpoints such as bsg_cache_to_axi or bsg_cache_to_test_dram.
  *
  */
@@ -10,7 +10,7 @@
 `include "bsg_noc_links.vh"
 `include "bsg_cache.vh"
 
-module bsg_wormhole_to_cache_dma_stream
+module bsg_wormhole_to_cache_dma_inorder
  import bsg_noc_pkg::*;
  import bsg_cache_pkg::*;
  #(parameter `BSG_INV_PARAM(num_dma_p)
@@ -113,7 +113,7 @@ module bsg_wormhole_to_cache_dma_stream
   logic src_fifo_v_lo, src_fifo_yumi_li;
   bsg_fifo_1r1w_small #(
     .width_p(wh_cord_width_p+wh_cid_width_p)
-    ,.els_p(num_dma_p)
+    ,.els_p(`BSG_MAX(2,num_dma_p)) // To allow for contiguous streams if num_dma == 1
   ) src_fifo (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -126,14 +126,14 @@ module bsg_wormhole_to_cache_dma_stream
     ,.v_o(src_fifo_v_lo)
     ,.yumi_i(src_fifo_yumi_li)
   );
+  assign src_cid_li = header_flit_in.src_cid;
+  assign src_cord_li = header_flit_in.src_cord;
 
   always_comb begin
     send_state_n = send_state_r;
     opcode_n = opcode_r;
     send_cache_id_n = send_cache_id_r;
     addr_n = addr_r;
-    src_cord_li = '0;
-    src_cid_li = '0;
     src_fifo_v_li = '0;
 
     wh_link_sif_out.then_ready_rev = 1'b0;
@@ -157,12 +157,10 @@ module bsg_wormhole_to_cache_dma_stream
       // store the write_not_read, src_cord.
       // save the cord and cid in a fifo.
       SEND_READY: begin
-        wh_link_sif_out.then_ready_rev = wh_link_sif_in.v & src_fifo_ready_lo;
+        wh_link_sif_out.then_ready_rev = wh_link_sif_in.v & (src_fifo_ready_lo || (header_flit_in.opcode != e_cache_wh_read));
         if (wh_link_sif_out.then_ready_rev) begin
           opcode_n = header_flit_in.opcode;
-          src_cord_li = header_flit_in.src_cord;
-          src_cid_li = header_flit_in.src_cid;
-          src_fifo_v_li = (header_flit_in.len == 1'b1); // Read
+          src_fifo_v_li = (header_flit_in.opcode == e_cache_wh_read);
           send_cache_id_n = wh_dma_id_i;
           send_state_n = SEND_DMA_PKT;
         end
@@ -234,6 +232,10 @@ module bsg_wormhole_to_cache_dma_stream
         end
       end
 
+      default: begin
+        // Never happens
+        send_state_n = send_state_r;
+      end
     endcase
 
   end
@@ -341,6 +343,10 @@ module bsg_wormhole_to_cache_dma_stream
         end
       end
 
+      default: begin
+        // Never happens
+        recv_state_n = recv_state_r;
+      end
     endcase
   end
 
@@ -366,5 +372,5 @@ module bsg_wormhole_to_cache_dma_stream
 
 endmodule
 
-`BSG_ABSTRACT_MODULE(bsg_wormhole_to_cache_dma_stream)
+`BSG_ABSTRACT_MODULE(bsg_wormhole_to_cache_dma_inorder)
 
