@@ -36,58 +36,9 @@ TEST_MODULE = test_bsg
 PORTS_P = 1 2 3 4
 BANKS_P = 1 2 3 4
 BANK_SIZE_P = 4 16 64 256
+RR_LO_HI_P  = 0  1  2
 
 # this is a list of all variables you want to vary for the simulation
-scan_params = PORTS_P BANKS_P
+scan_params = PORTS_P BANKS_P BANK_SIZE_P RR_LO_HI_P
 
-
-############################################################################
-
-############################# SIMULATOR COMMANDS ###########################
-BSG_IP_CORES_COMP = vlog -sv -mfcu -work ./work $(ALL_FILES) -quiet
-
-BSG_IP_CORES_SIM  = vsim -batch -lib ./work $(TEST_MODULE) -do "run -all; quit -f"
-############################################################################
-
-
-
-
-ALL_FILES = $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x)) \
-              $(foreach x,$(BSG_ASYNC_FILES),$(TOP)/bsg_async/$(x)) \
-              $(foreach x,$(BSG_FSB_FILES),$(TOP)/bsg_fsb/$(x)) \
-              $(foreach x,$(BSG_GUTS_FILES),$(TOP)/bsg_guts/$(x)) \
-              $(foreach x,$(BSG_COMM_LINK_FILES),$(TOP)/bsg_comm_link/$(x)) \
-              $(foreach x,$(BSG_DATAFLOW_FILES),$(TOP)/bsg_dataflow/$(x)) \
-              $(foreach x,$(BSG_MEM_FILES),$(TOP)/bsg_mem/$(x)) \
-              $(foreach x,$(BSG_TEST_FILES),$(TOP)/bsg_test/$(x)) \
-              $(foreach x,$(BSG_TESTME_FILES),$(BSG_TESTME_DIR)/$(x)) \
-              $(TEST_MAIN)
-
-# function that generates a string for each combination of the parameters;
-# spaces separated by "@" signs.
-bsg_param_scan = $(if $(1),$(foreach v__,$($(firstword $(1))),\
-                    $(call bsg_param_scan,$(filter-out $(firstword $(1)),\
-                    $(1)),$(2),$(3),$(4)@$(2)$(firstword $(1))$(3)$(v__))),\
-                    $(4))
-
-# this takes the parameters and creates a set of make targets, one for every
-# combination of the parameters
-commands = $(call bsg_param_scan,$(scan_params),+define+,=)
-
-$(warning bsg_param_scan: $(commands))
-
-
-# default rule: run all of the targets.
-all: initial $(foreach x,$(commands),run.$(x))
-
-# this runs an individual target
-# we replace the @ with a space so that the parameters are used as
-# command line options
-
-run.%:
-	$(BSG_IP_CORES_COMP) $(subst @, ,$*)
-	$(BSG_IP_CORES_SIM) >> outfile
-
-initial:
-	@echo removing outfile
-	rm -f outfile
+include ../../Makefile.sim
