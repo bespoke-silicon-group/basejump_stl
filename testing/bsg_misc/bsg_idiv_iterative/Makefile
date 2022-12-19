@@ -9,7 +9,7 @@ VCS_DEFINES =
 CC = gcc
 CFLAGS = -g
 SRC=unsigned.c
-OUT=unsigned.o
+SRC1=signed.c
 
 ifdef SIGN
 VCS_DEFINES += +define+SIGN=$(SIGN)
@@ -33,9 +33,14 @@ xvcs:
 	$(VCS) -full64 -sverilog -Mupdate -RI -line -f divide.files $(LIB_OPTS) $(PLI_OPTS)
 
 test: $(SRC)
-	$(CC) -o unsigned.o -c $^ $(CFLAGS) -lm -std=c99 -D ITERS=$(ITERS)
+	$(CC) -o unsigned.o -c $^ $(CFLAGS) -lm -std=c99 -D ITERS=$(ITERS) -D WIDTH=$(WIDTH)
 	$(CC) unsigned.o -o test
 	./test
+
+test1: $(SRC1)
+	$(CC) -o signed.o -c $^ $(CFLAGS) -lm -std=c99 -D ITERS=$(ITERS) -D WIDTH=$(WIDTH)
+	$(CC) signed.o -o test1
+	./test1
 
 clean:
 	$(RM) -r csrc simv.daidir vcs.key simv  ucli.key  vcdplus.vpd s_output.txt u_output.txt u.txt s.txt

@@ -94,8 +94,6 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
 
    wire [$clog2(width_p)-1:0] div_shift;
 
-   let mask(value, select, lsb) = ((2**select-1) & (value >> lsb));
-   
    if (bits_per_iter_p == 2) begin
 
       bsg_mux_one_hot #(.width_p(width_p+1), .els_p(4)) muxB
@@ -272,4 +270,8 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
       ,.v_o(v_o)
       ,.yumi_i(yumi_i)
      );
+
+function automatic [width_p:0] mask ( [width_p:0] value, [$clog2(width_p)+1:0] select, [$clog2(width_p)+1:0] lsb );
+  mask = ((2**select-1) & (value >> lsb));
+endfunction
 endmodule // divide

@@ -53,8 +53,6 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
    logic neg_ld;
    logic add1_neg_last_r, add2_neg_last_r;
 
-
-   logic [width_p-1:0] clz_dividend_input, clz_divisor_input;
    logic [$clog2(width_p)-1:0] clz_c_result, clz_a_result;
    
    typedef enum logic[5:0] 
@@ -77,29 +75,23 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
       end 
    end
 
-
-   assign clz_dividend_input = dividend_i;
-   assign clz_divisor_input  = divisor_i;
-
    bsg_counting_leading_zeros #(
      .width_p(width_p)
      ) clz_c (
-       .a_i(clz_dividend_input)
+       .a_i(dividend_i)
        ,.num_zero_o(clz_c_result)
    );
 
     bsg_counting_leading_zeros #(
       .width_p(width_p)
       ) clz_a (
-        .a_i(clz_divisor_input) 
+        .a_i(divisor_i) 
         ,.num_zero_o(clz_a_result)
     );
 
-  assign div_shift = (zero_divisor_i) ? width_p-1 : clz_a_result - clz_c_result;
-  logic [`BSG_WIDTH(width_p/bits_per_iter_p)-1:0] calc_cyc = width_p/bits_per_iter_p;
-  if (!(signed_div_r_i) && (bits_per_iter_p==1)) begin
-    assign calc_cyc = div_shift;
-  end
+  assign div_shift = zero_divisor_i ? width_p-1 : clz_a_result - clz_c_result;
+  wire [`BSG_WIDTH(width_p/bits_per_iter_p)-1:0] calc_cyc;
+  assign calc_cyc = ((!signed_div_r_i) && (bits_per_iter_p==1)) ? div_shift : width_p/bits_per_iter_p;
 
   logic [`BSG_WIDTH(width_p/bits_per_iter_p)-1:0] calc_cnt;
   wire calc_up_li = (state == CALC) && (calc_cnt < calc_cyc);
@@ -214,6 +206,9 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
        if (bits_per_iter_p == 2) begin
 	 opC_sel_o = 4'b0010;
          opB_sel_o = 4'b0010;
+       end else if (signed_div_r_i) begin
+         opC_sel_o = 3'b001;
+         opB_sel_o = 3'b001; 
        end else begin
 	 opC_sel_o = 4'b1000;
          opB_sel_o = 4'b1000;
