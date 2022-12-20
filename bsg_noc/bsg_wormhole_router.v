@@ -217,13 +217,13 @@ module bsg_wormhole_router
       #(.input_dirs_p(input_dirs_sparse_lp), .hold_on_valid_p(hold_on_valid_p)) woc
       (.clk_i
       ,.reset_i
-      ,.reqs_i    (reqs_li   )
-      ,.release_i (release_li)
-      ,.valid_i   (valids_li )
-      ,.yumi_o    (yumis_lo  )
-      ,.ready_i   (link_i_cast[i].ready_and_rev)
-      ,.valid_o   (link_o_cast[i].v)
-      ,.data_sel_o(data_sel_lo)
+      ,.reqs_i      (reqs_li   )
+      ,.release_i   (release_li)
+      ,.valid_i     (valids_li )
+      ,.yumi_o      (yumis_lo  )
+      ,.ready_and_i (link_i_cast[i].ready_and_rev)
+      ,.valid_o     (link_o_cast[i].v)
+      ,.data_sel_o  (data_sel_lo)
       );
 
 `ifndef SYNTHESIS

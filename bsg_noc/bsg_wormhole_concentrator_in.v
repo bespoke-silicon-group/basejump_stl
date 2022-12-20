@@ -117,13 +117,13 @@ module bsg_wormhole_concentrator_in
   #(.input_dirs_p(num_in_p), .hold_on_valid_p(hold_on_valid_p)) woc
     (.clk_i
     ,.reset_i
-    ,.reqs_i    (reqs         )
-    ,.release_i (releases     )
-    ,.valid_i   (fifo_valid_lo)
-    ,.yumi_o    (yumis        )
-    ,.ready_i   (concentrated_link_i_cast.ready_and_rev)
-    ,.valid_o   (concentrated_link_o_cast.v)
-    ,.data_sel_o(data_sel_lo)
+    ,.reqs_i      (reqs         )
+    ,.release_i   (releases     )
+    ,.valid_i     (fifo_valid_lo)
+    ,.yumi_o      (yumis        )
+    ,.ready_and_i (concentrated_link_i_cast.ready_and_rev)
+    ,.valid_o     (concentrated_link_o_cast.v)
+    ,.data_sel_o  (data_sel_lo)
     );
   
   bsg_mux_one_hot #(.width_p(flit_width_p)

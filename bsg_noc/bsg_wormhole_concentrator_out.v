@@ -126,7 +126,7 @@ module bsg_wormhole_concentrator_out
         ,.release_i (concentrated_releases)
         ,.valid_i   (concentrated_fifo_valid_lo)
         ,.yumi_o    (concentrated_yumis[i])
-        ,.ready_i   (links_i_cast[i].ready_and_rev)
+        ,.ready_and_i   (links_i_cast[i].ready_and_rev)
         ,.valid_o   (links_o_cast[i].v)
         ,.data_sel_o()
         );
