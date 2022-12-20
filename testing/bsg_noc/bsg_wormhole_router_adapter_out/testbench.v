@@ -42,10 +42,10 @@ module testbench();
   assign ready_lo = link_lo.ready_and_rev;
 
   bsg_wormhole_router_adapter_out #(
-    .max_num_flit_p(max_num_flit_p)
+    .flit_width_p(flit_width_lp)
     ,.max_payload_width_p(max_payload_width_p)
-    ,.x_cord_width_p(x_cord_width_p)
-    ,.y_cord_width_p(y_cord_width_p) 
+    ,.cord_width_p(x_cord_width_p + y_cord_width_p)
+    ,.len_width_p(len_width_lp) 
   ) adapter (
     .clk_i(clk)
     ,.reset_i(reset)
@@ -53,9 +53,9 @@ module testbench();
     ,.link_i(link_li)
     ,.link_o(link_lo)
 
-    ,.data_o(data_lo)
+    ,.packet_o(data_lo)
     ,.v_o(v_lo)
-    ,.ready_i(ready_li)
+    ,.yumi_i(v_lo & ready_li)
   );
 
   parameter rom_addr_width_p = 10;
