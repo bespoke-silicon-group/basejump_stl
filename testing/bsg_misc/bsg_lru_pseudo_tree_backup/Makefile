@@ -31,4 +31,3 @@ clean:
 	rm -rf simv.daidir simv.vdb
 	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz vcs.log
 	rm -rf stack.info.*
-
