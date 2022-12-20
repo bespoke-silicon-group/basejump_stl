@@ -3,7 +3,7 @@
 module bsg_clkgate_optional
     (input  clk_i
      ,input  en_i
-     ,input  bypass_i
+     ,input  bypass_i // unused
      ,output gated_clock_o
      );
 
