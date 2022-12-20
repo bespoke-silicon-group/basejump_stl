@@ -29,16 +29,18 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
       ,output logic        opA_inv_o
       ,output logic        opA_clr_l_o
 
-      ,output logic [3:0]  opB_sel_o
+      ,output logic [bits_per_iter_p + 1:0]  opB_sel_o
       ,output logic        opB_ld_o
       ,output logic        opB_inv_o
       ,output logic        opB_clr_l_o
 
-      ,output logic [3:0]  opC_sel_o
+      ,output logic [bits_per_iter_p + 1:0]  opC_sel_o
       ,output logic        opC_ld_o
 
       ,output logic        latch_signed_div_o
       ,output logic        adder1_cin_o
+
+      ,output logic [`BSG_WIDTH(width_p):0] shift_val
 
       ,output logic        v_o
       ,input               yumi_i
@@ -71,7 +73,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
 
   wire [`BSG_WIDTH(width_p/bits_per_iter_p)-1:0] calc_cyc;
   assign calc_cyc = ((!signed_div_r_i) && (bits_per_iter_p==1)) ? div_shift : width_p/bits_per_iter_p;
-  wire [`BSG_WIDTH(width_p):0] shift_val = (state == SHIFT) && ((!signed_div_r_i) && (bits_per_iter_p==1)) ? div_shift : width_p;
+  assign shift_val = (state == SHIFT) && ((!signed_div_r_i) && (bits_per_iter_p==1)) ? div_shift : width_p;
 
   logic [`BSG_WIDTH(width_p/bits_per_iter_p)-1:0] calc_cnt;
   wire calc_up_li = (state == CALC) && (calc_cnt < calc_cyc);
@@ -186,12 +188,9 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
        if (bits_per_iter_p == 2) begin
 	 opC_sel_o = 4'b0010;
          opB_sel_o = 4'b0010;
-       end else if (signed_div_r_i) begin
-         opC_sel_o = 3'b001;
-         opB_sel_o = 3'b001; 
        end else begin
-	 opC_sel_o = 4'b1000;
-         opB_sel_o = 4'b1000;
+	 opC_sel_o = 3'b001;
+         opB_sel_o = 3'b001;
        end
     end
 
