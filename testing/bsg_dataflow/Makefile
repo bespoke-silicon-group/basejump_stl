@@ -8,7 +8,7 @@
 TEST_DIRS = $(wildcard ./*/)
 
 all:
-	$(foreach x,$(TEST_DIRS), cd $(x) && make && cd ../;)
+	$(foreach x,$(TEST_DIRS), $(MAKE) -C $(x);)
 
 clean:
-	$(foreach x,$(TEST_DIRS), cd $(x) && make clean && cd ../;)
+	$(foreach x,$(TEST_DIRS), $(MAKE) -C $(x) clean;)
