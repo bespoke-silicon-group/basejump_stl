@@ -103,7 +103,7 @@ module test_bsg
 
                       ,.data_o (test_output_data[i])
                       ,.valid_o(test_output_valid[i])
-                      ,.ready_i(test_input_ready[i])
+                      ,.ready_and_i(test_input_ready[i])
 
                       ,.my_x_i(lg_node_x_lp'(i%medge_lp))
                       ,.my_y_i(lg_node_y_lp'(i/medge_lp))

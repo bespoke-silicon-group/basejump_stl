@@ -27,7 +27,7 @@ module bsg_wormhole_router_adapter
 
     , input [bsg_wormhole_packet_width_lp-1:0]     packet_i
     , input                                        v_i
-    , output                                       ready_o
+    , output                                       ready_and_o
  
     // From the wormhole router
     , input [bsg_ready_and_link_sif_width_lp-1:0]  link_i 
@@ -67,7 +67,7 @@ module bsg_wormhole_router_adapter
 
      ,.packet_i(packet_li)
      ,.v_i(v_i)
-     ,.ready_o(ready_o)
+     ,.ready_and_o(ready_and_o)
 
      ,.link_i(link_i)
      ,.link_o(link_o_stubbed_ready)

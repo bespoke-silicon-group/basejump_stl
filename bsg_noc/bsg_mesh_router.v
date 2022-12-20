@@ -49,7 +49,7 @@ module bsg_mesh_router
     , input [dirs_lp-1:0]              v_i
     , output logic [dirs_lp-1:0]       yumi_o
 
-    , input   [dirs_lp-1:0]               ready_i
+    , input   [dirs_lp-1:0]               ready_and_i
     , output  [dirs_lp-1:0][width_p-1:0]  data_o
     , output logic [dirs_lp-1:0]          v_o
 
@@ -145,7 +145,7 @@ module bsg_mesh_router
 
       ,.reqs_i(conc_req)
       ,.grants_o(grants)
-      ,.yumi_i(v_o[i] & ready_i[i])
+      ,.yumi_i(v_o[i] & ready_and_i[i])
     );
 
     bsg_mux_one_hot #(
@@ -161,7 +161,7 @@ module bsg_mesh_router
       .pattern_els_p(routing_matrix_p[i])
       ,.unconnected_val_p(1'b0)
     ) unconc0 (
-      .i(grants & {input_els_lp{ready_i[i]}})
+      .i(grants & {input_els_lp{ready_and_i[i]}})
       ,.o(yumi_lo[i])
     );
 

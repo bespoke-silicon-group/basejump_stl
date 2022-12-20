@@ -25,7 +25,7 @@ module bsg_wormhole_router_adapter_in
 
     , input [bsg_wormhole_packet_width_lp-1:0]     packet_i
     , input                                        v_i
-    , output                                       ready_o
+    , output                                       ready_and_o
 
     , output [bsg_ready_and_link_sif_width_lp-1:0] link_o
     , input [bsg_ready_and_link_sif_width_lp-1:0]  link_i 
@@ -57,7 +57,7 @@ module bsg_wormhole_router_adapter_in
      ,.v_i(v_i)
      ,.len_i(protocol_len_lp'(packet_cast_i.len))
      ,.data_i(packet_padded_li)
-     ,.ready_o(ready_o)
+     ,.ready_o(ready_and_o)
 
      ,.v_o(link_cast_o.v)
      ,.len_v_o(/* unused */)
