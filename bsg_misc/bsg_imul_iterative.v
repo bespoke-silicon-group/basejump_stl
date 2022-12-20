@@ -48,20 +48,20 @@
 
 module bsg_imul_iterative  #( width_p = 32)
     (input                  clk_i
-	,input                  reset_i
+    ,input                  reset_i
 
-	,input                  v_i      //there is a request
-    ,output                 ready_o  //idiv is idle
+    ,input                  v_i      //there is a request
+    ,output                 ready_and_o  //idiv is idle
 
     ,input [width_p-1: 0]   opA_i
-	,input                  signed_opA_i
-	,input [width_p-1: 0]   opB_i
-	,input                  signed_opB_i
+    ,input                  signed_opA_i
+    ,input [width_p-1: 0]   opB_i
+    ,input                  signed_opB_i
     //needs the high part result or low part result
     ,input                  gets_high_part_i
 
-	,output                 v_o      //result is valid
-	,output [width_p-1: 0]  result_o
+    ,output                 v_o      //result is valid
+    ,output [width_p-1: 0]  result_o
     ,input                  yumi_i
     );
 
@@ -148,7 +148,7 @@ module bsg_imul_iterative  #( width_p = 32)
 ///////////////////////////////////////////////////////////////////////////////
 // control register  update logic
 
-  wire latch_input = v_i & ready_o;
+  wire latch_input = v_i & ready_and_o;
   logic signed_opA_r, signed_opB_r, need_neg_result_r;
 
   wire  signed_opA = signed_opA_i & opA_i[width_p-1];
@@ -239,7 +239,7 @@ module bsg_imul_iterative  #( width_p = 32)
 ///////////////////////////////////////////////////////////////////////////////
 //   the output logic
 
-  assign ready_o    =  ( curr_state_r == IDLE );
+  assign ready_and_o    =  ( curr_state_r == IDLE );
   assign result_o   =    result_r;
   assign v_o        =  ( curr_state_r == DONE );
 endmodule

@@ -43,8 +43,8 @@ module bsg_scheduler_dataflow_entry #(`BSG_INV_PARAM(tag_width_p)
     , input [wakeup_tags_p-1:0] wakeup_tags_v_i
     , input [wakeup_tags_p-1:0][tag_width_p-1:0] wakeup_tags_i
     
-    // operation is not waiting on anything
-    , output ready_o
+    // operation is waiting on something
+    , output busy_o
     
     // strobe that indicates an input that was just woken up
     // useful for bypassing; can be input to 1-hot bypass mux
@@ -67,8 +67,8 @@ module bsg_scheduler_dataflow_entry #(`BSG_INV_PARAM(tag_width_p)
   genvar i,j;
 
   always @(negedge clk_i)
-    $display("%m: entry we_i=%b src_tags_v_r=%b src_tags_r=%b wakeup_tags_i=%b ready_o=%b"
-             , we_i, src_tags_v_r, src_tags_r, wakeup_tags_i, ready_o);
+    $display("%m: entry we_i=%b src_tags_v_r=%b src_tags_r=%b wakeup_tags_i=%b busy_o=%b"
+             , we_i, src_tags_v_r, src_tags_r, wakeup_tags_i, busy_o);
 
   
   for (i = 0; i < src_tags_p; i=i+1)
@@ -105,7 +105,7 @@ module bsg_scheduler_dataflow_entry #(`BSG_INV_PARAM(tag_width_p)
         end
     end
   
-  assign ready_o = ~(| src_tags_v_r);
+  assign busy_o = ~(| src_tags_v_r);
   
 endmodule
 
@@ -153,7 +153,7 @@ module bsg_scheduler_dataflow #(`BSG_INV_PARAM(els_p)
 
   genvar i;
   
-  wire [els_p-1:0] readies_lo, active_r_lo;
+  wire [els_p-1:0] busies_lo, active_r_lo;
   wire [els_p-1:0][src_tags_p-1:0][wakeup_tags_p-1:0] selected_bypass_lo;
   
   for (i = 0; i < els_p; i++)
@@ -172,7 +172,7 @@ module bsg_scheduler_dataflow #(`BSG_INV_PARAM(els_p)
        ,.src_tags_i     (insert_src_tags_i     )
        ,.wakeup_tags_v_i(wakeup_tags_v_i)
        ,.wakeup_tags_i  (wakeup_tags_i  )
-       ,.ready_o        (readies_lo[i])
+       ,.busy_o        (busies_lo[i])
        
        // bypass logic
        ,.bypass_o    (selected_bypass_lo [i])
@@ -181,14 +181,14 @@ module bsg_scheduler_dataflow #(`BSG_INV_PARAM(els_p)
   
   // select among available entries for dispatch
 
-  wire [els_p-1:0] ready_to_issue = readies_lo & active_r_lo;
+  wire [els_p-1:0] ready_to_issue = ~busies_lo & active_r_lo;
   
   
     always @(negedge clk_i)
     begin
-      $display("reset_i=%b insert_v_i=%b insert_src_tags_v_i=%b insert_src_tags_i=%b insert_src_yumi=%b insert_allocated_id_one_hot_o=%b wakeup_tags_v_i=%b wakeup_tags_i=%b selected_operation_one_hot_o=%b select_operation_v_o=%b readies_lo=%b, active_r_lo=%b ready_to_issue=%b bypass_lo=%b"
+      $display("reset_i=%b insert_v_i=%b insert_src_tags_v_i=%b insert_src_tags_i=%b insert_src_yumi=%b insert_allocated_id_one_hot_o=%b wakeup_tags_v_i=%b wakeup_tags_i=%b selected_operation_one_hot_o=%b select_operation_v_o=%b busies_lo=%b, active_r_lo=%b ready_to_issue=%b bypass_lo=%b"
                , reset_i, insert_v_i, insert_src_tags_v_i, insert_src_tags_i, insert_src_yumi_o, insert_allocated_id_one_hot_o, wakeup_tags_v_i, wakeup_tags_i
-               , selected_operation_one_hot_o, selected_operation_v_o, readies_lo, active_r_lo, ready_to_issue, bypass_lo);
+               , selected_operation_one_hot_o, selected_operation_v_o, busies_lo, active_r_lo, ready_to_issue, bypass_lo);
     end
   
   bsg_priority_encode_one_hot_out #(
