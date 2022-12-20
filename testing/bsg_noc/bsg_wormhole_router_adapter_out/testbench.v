@@ -31,15 +31,15 @@ module testbench();
   bsg_ready_and_link_sif_s link_lo, link_li;
 
   logic [max_packet_width_lp-1:0] data_li;
-  logic v_li, ready_lo;
+  logic v_li, ready_and_lo;
   logic [max_packet_width_lp-1:0] data_lo;
-  logic v_lo, ready_li;
+  logic v_lo, ready_and_li;
  
   assign link_li.data = data_li[0+:flit_width_lp];
   assign link_li.v    = v_li;
   assign link_li.ready_and_rev = 1'b0;
 
-  assign ready_lo = link_lo.ready_and_rev;
+  assign ready_and_lo = link_lo.ready_and_rev;
 
   bsg_wormhole_router_adapter_out #(
     .max_num_flit_p(max_num_flit_p)
@@ -55,7 +55,7 @@ module testbench();
 
     ,.data_o(data_lo)
     ,.v_o(v_lo)
-    ,.ready_i(ready_li)
+    ,.ready_and_i(ready_and_li)
   );
 
   parameter rom_addr_width_p = 10;
@@ -73,11 +73,11 @@ module testbench();
 
     ,.v_i(v_lo)
     ,.data_i(data_lo)
-    ,.ready_o(ready_li)
+    ,.ready_and_o(ready_and_li)
 
     ,.v_o(v_li)
     ,.data_o(data_li)
-    ,.yumi_i(v_li & ready_lo)
+    ,.yumi_i(v_li & ready_and_lo)
 
     ,.rom_addr_o(rom_addr)
     ,.rom_data_i(rom_data)

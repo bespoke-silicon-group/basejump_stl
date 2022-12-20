@@ -32,7 +32,7 @@ module testbench();
   );
 
   logic [max_packet_width_lp-1:0] data_li;
-  logic v_li, ready_lo;
+  logic v_li, ready_and_lo;
   logic [flit_width_lp-1:0] data_lo;
   logic v_lo, ready_li;
 
@@ -57,7 +57,7 @@ module testbench();
     
     ,.data_i(data_li)
     ,.v_i(v_li)
-    ,.ready_o(ready_lo)
+    ,.ready_and_o(ready_and_lo)
 
     ,.link_o(link_lo)
     ,.link_i(link_li)
@@ -123,11 +123,11 @@ module testbench();
 
     ,.v_i(fifo_v_lo)
     ,.data_i({{(max_packet_width_lp-flit_width_lp){1'b0}}, fifo_data_lo})
-    ,.ready_o(tr_ready_lo)
+    ,.ready_and_o(tr_ready_lo)
   
     ,.v_o(v_li)
     ,.data_o(data_li)
-    ,.yumi_i(v_li & ready_lo)
+    ,.yumi_i(v_li & ready_and_lo)
 
     ,.rom_addr_o(rom_addr)
     ,.rom_data_i(rom_data)
