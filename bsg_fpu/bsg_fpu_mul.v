@@ -23,7 +23,7 @@ module bsg_fpu_mul
     , input v_i
     , input [e_p+m_p:0] a_i
     , input [e_p+m_p:0] b_i
-    , output logic ready_o
+    , output logic ready_and_o
 
     , output logic v_o
     , output logic [e_p+m_p:0] z_o
@@ -40,7 +40,7 @@ module bsg_fpu_mul
 
   assign stall = v_3_r & ~yumi_i;
   assign v_o = v_3_r;
-  assign ready_o = ~stall & en_i;
+  assign ready_and_o = ~stall & en_i;
 
   // preprocessors
   logic a_zero, a_nan, a_sig_nan, a_infty, exp_a_zero, man_a_zero,
