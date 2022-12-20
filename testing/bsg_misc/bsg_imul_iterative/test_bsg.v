@@ -21,7 +21,7 @@ module test_bsg;
 
    integer i,j;
 
-   logic v_i, ready_o, v_o;
+   logic v_i, ready_and_o, v_o;
    logic gets_high_part;
    logic signed_opA,signed_opB;
 
@@ -44,7 +44,7 @@ module test_bsg;
     ,.reset_i    ( reset  )
 
     ,.v_i      ( v_i  )//there is a request
-    ,.ready_o  ( ready_o)//idiv is idle
+    ,.ready_and_o  ( ready_and_o)//idiv is idle
 
     ,.opA_i    ( opA_i )
     ,.opB_i    ( opB_i )
@@ -71,7 +71,7 @@ module test_bsg;
       for (i=0; i<`NUM; i=i+1) begin
              // do the signed case
              `ifdef SIGN
-             wait (ready_o == 1);
+             wait (ready_and_o == 1);
                 `ifdef RANDOM_TEST
                     opA_i  = $random;
                     opB_i  = $random;
@@ -83,7 +83,7 @@ module test_bsg;
              signed_opB = 1'b1;
 
              v_i    = 1;
-             wait (ready_o == 0);
+             wait (ready_and_o == 0);
              v_i    = 0;
              wait (v_o     == 1);
 
@@ -104,7 +104,7 @@ module test_bsg;
 
              // do the unsigned case
             `ifdef UNSIGN
-             wait (ready_o == 1);
+             wait (ready_and_o == 1);
                 `ifdef RANDOM_TEST
                     opA_i  = $random;
                     opB_i  = $random;
@@ -116,7 +116,7 @@ module test_bsg;
              signed_opB = 1'b0;
 
              v_i    = 1;
-             wait (ready_o == 0);
+             wait (ready_and_o == 0);
              v_i    = 0;
              wait (v_o     == 1);
 
