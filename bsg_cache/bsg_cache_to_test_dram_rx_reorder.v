@@ -32,7 +32,7 @@ module bsg_cache_to_test_dram_rx_reorder
 
     , output logic [dma_data_width_p-1:0] dma_data_o
     , output logic dma_data_v_o
-    , input dma_data_ready_i
+    , input dma_data_ready_and_i
   );
 
   logic piso_ready_lo;
@@ -52,7 +52,7 @@ module bsg_cache_to_test_dram_rx_reorder
 
     ,.valid_o(dma_data_v_o)
     ,.data_o(dma_data_o)
-    ,.yumi_i(dma_data_v_o & dma_data_ready_i)
+    ,.yumi_i(dma_data_v_o & dma_data_ready_and_i)
   );
   
   if (num_req_lp == 1) begin: req1
