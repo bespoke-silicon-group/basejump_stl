@@ -85,7 +85,7 @@ module bsg_cache_to_test_dram_tx
 
       ,.v_i(sipo_v_li[i])
       ,.data_i(sipo_data_li[i])
-      ,.ready_o(sipo_ready_lo[i])
+      ,.ready_and_o(sipo_ready_lo[i])
 
       ,.v_o(sipo_v_lo[i])
       ,.data_o(sipo_data_lo[i])
