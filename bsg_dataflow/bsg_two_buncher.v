@@ -15,8 +15,8 @@
 // is this what they call a gearbox?
 //
 // note that the interface has double ready lines
-// and it is an error to assert ready_i[1] without
-// asserting ready_i[0]
+// and it is an error to assert ready_and_i[1] without
+// asserting ready_and_i[0]
 //
 //
 
@@ -27,11 +27,11 @@ module bsg_two_buncher #(parameter `BSG_INV_PARAM(width_p))
     , input  reset_i
     , input  [width_p-1:0]   data_i
     , input                  v_i
-    , output                 ready_o
+    , output                 yumi_o
 
     , output [width_p*2-1:0] data_o
     , output [1:0]           v_o
-    , input  [1:0]           ready_i
+    , input  [1:0]           ready_and_i
     );
 
    logic [width_p-1:0] data_r,   data_n;
@@ -39,7 +39,7 @@ module bsg_two_buncher #(parameter `BSG_INV_PARAM(width_p))
 
    // synopsys translate_off
    always @(posedge clk_i)
-     assert (  (ready_i[1] !== 1'b1) | ready_i[0])
+     assert (  (ready_and_i[1] !== 1'b1) | ready_and_i[0])
        else $error("potentially invalid ready pattern\n");
 
    always @(posedge clk_i)
@@ -65,7 +65,7 @@ module bsg_two_buncher #(parameter `BSG_INV_PARAM(width_p))
    // and we move forward on at least one elements
    // or, if we are empty
 
-   assign ready_o = (ready_i[0] & v_i) | ~data_v_r;
+   assign yumi_o = (ready_and_i[0] & v_i) | ~data_v_r;
 
    // determine if we will latch data next cycle
    always_comb
@@ -80,23 +80,23 @@ module bsg_two_buncher #(parameter `BSG_INV_PARAM(width_p))
              // we grab it
              if (v_i)
                begin
-                  data_v_n = ~ready_i[0];
-                  data_en  = ~ready_i[0];
+                  data_v_n = ~ready_and_i[0];
+                  data_en  = ~ready_and_i[0];
                end
           end
         // or if we are not empty
         else
           begin
              // if we are going to send data
-             if (ready_i[0])
+             if (ready_and_i[0])
                begin
                   // but there is new data
                   // and we are not going to
                   // send it too
                   if (v_i)
                     begin
-                       data_v_n = ~ready_i[1];
-                       data_en  = ~ready_i[1];
+                       data_v_n = ~ready_and_i[1];
+                       data_en  = ~ready_and_i[1];
                     end
                   else
                     // oops, we send the new data too
