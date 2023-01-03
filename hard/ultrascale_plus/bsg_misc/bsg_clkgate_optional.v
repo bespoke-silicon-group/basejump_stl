@@ -1,6 +1,9 @@
 `include "bsg_defines.v"
 
 module bsg_clkgate_optional
+    #( parameter is_ce_inverted = 1'b0
+       , parameter is_i_inverted  = 1'b0
+     )
     (input  clk_i
      ,input  en_i
      ,input  bypass_i // unused
@@ -13,8 +16,8 @@ module bsg_clkgate_optional
 
   BUFGCE #(
      .CE_TYPE("SYNC"),
-     .IS_CE_INVERTED(1'b0),
-     .IS_I_INVERTED(1'b0),
+     .IS_CE_INVERTED(is_ce_inverted),
+     .IS_I_INVERTED(is_i_inverted),
      .SIM_DEVICE("ULTRASCALE_PLUS")
   )
   BUFGCE_inst (
