@@ -34,11 +34,11 @@ module bsg_mesosync_core #( parameter `BSG_INV_PARAM(width_p          )
     // connection to core
     , input [width_p-1:0]  data_i
     , input                v_i
-    , output logic         ready_o
+    , output logic         ready_and_o
 
     , output               v_o
     , output [width_p-1:0] data_o
-    , input                ready_i
+    , input                ready_and_i
     
     );
 
@@ -53,7 +53,7 @@ bsg_relay_fifo #(.width_p(width_p)) input_relay
 
     ,.v_i(v_i)
     ,.data_i(data_i)
-    ,.ready_o(ready_o)
+    ,.ready_o(ready_and_o)
 
     ,.v_o(v_i_r)
     ,.data_o(data_i_r)
@@ -70,7 +70,7 @@ bsg_relay_fifo #(.width_p(width_p)) output_relay
 
     ,.v_o(v_o)
     ,.data_o(data_o)
-    ,.ready_i (ready_i)
+    ,.ready_i (ready_and_i)
     );
 
 
