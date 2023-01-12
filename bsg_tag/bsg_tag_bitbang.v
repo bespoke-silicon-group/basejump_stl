@@ -2,11 +2,11 @@
 `include "bsg_defines.v"
 
 /*
- * This module takes 1 bit of data and send it out along with a clock pulse.
+ * This module takes 1 bit of data and sends it out along with a clock pulse.
  *
  * When this module receives a bit, tag_clk_r_o becomes low and the
  *   received data is put on tag_data_r_o on the current cycle. On next cycle,
- *   tag_clk_r_o will become high and generate a posetive clock edge. The clock
+ *   tag_clk_r_o will become high and generate a positive clock edge. The clock
  *   signal will remain high until the next data comes in.
  *
  *                -----+
@@ -38,6 +38,8 @@ module bsg_tag_bitbang(
   , input v_i
   , output logic ready_then_o // throughput: clk_i / 2
 
+  // tag clock is a synchronously generated variable frequency clock that toggles
+  //   once for every data bit that is transmitted.
   , output logic tag_clk_r_o
   , output logic tag_data_r_o
 );
