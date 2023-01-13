@@ -86,7 +86,8 @@ program testbench #(
     // We need at least 4 additional toggles (regardless of width_p and els_p):
     repeat (4) tag_write_bit(1'b0);
     repeat (32) @(posedge clk_i);
-    assert(client[0].client.recv_data_r_o == 'h2);
+    assert(client[0].client.recv_data_r_o == 'h2) $display("Simulation Passed");
+      else $display("Simulation Failed");
   end
 
 endprogram
