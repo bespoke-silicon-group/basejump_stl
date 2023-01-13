@@ -36,7 +36,7 @@ module bsg_tag_bitbang(
   , input reset_i
   , input data_i
   , input v_i
-  , output logic ready_then_o // throughput: clk_i / 2
+  , output logic ready_and_o // throughput: clk_i / 2
 
   // tag clock is a synchronously generated variable frequency clock that toggles
   //   once for every data bit that is transmitted.
@@ -44,31 +44,31 @@ module bsg_tag_bitbang(
   , output logic tag_data_r_o
 );
 
-  logic tag_data_valid_r;
+  logic tag_clk_r;
   logic tag_data_r;
-  wire tag_data_valid_n = ~tag_data_valid_r | ~v_i;
+  wire tag_clk_n = ~ready_and_o | ~v_i;
 
   bsg_dff_reset #(
      .width_p(1)
     ,.reset_val_p(1)
-  ) tag_data_valid_reg (
+  ) tag_clk_reg (
      .clk_i(clk_i)
     ,.reset_i(reset_i)
-    ,.data_i(tag_data_valid_n)
-    ,.data_o(tag_data_valid_r)
+    ,.data_i(tag_clk_n)
+    ,.data_o(tag_clk_r)
   );
 
   bsg_dff_en #(.width_p(1)
   ) tag_data_reg (
      .clk_i(clk_i)
     ,.data_i(data_i)
-    ,.en_i(~tag_data_valid_n)
+    ,.en_i(~tag_clk_n)
     ,.data_o(tag_data_r)
   );
 
   assign tag_data_r_o = tag_data_r;
-  assign tag_clk_r_o = tag_data_valid_r;
-  assign ready_then_o = tag_data_valid_r;
+  assign tag_clk_r_o = tag_clk_r;
+  assign ready_and_o = tag_clk_r;
 
 endmodule
 

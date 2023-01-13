@@ -21,7 +21,7 @@ bit master_clk, client_clk;
 logic reset_li;
 logic data_li;
 logic v_li;
-logic ready_then_lo;
+logic ready_and_lo;
 
 logic tag_clk_r_lo;
 logic tag_data_r_lo;
@@ -42,7 +42,7 @@ testbench #(
   ,.reset_o(reset_li)
   ,.data_o(data_li)
   ,.v_o(v_li)
-  ,.ready_then_i(ready_then_lo)
+  ,.ready_and_i(ready_and_lo)
 
   ,.en_o(en_li)
 );
@@ -55,7 +55,7 @@ bsg_tag_bitbang bsg_tag_bitbang (
   ,.reset_i(reset_li)
   ,.data_i(data_li)
   ,.v_i(v_li)
-  ,.ready_then_o(ready_then_lo)
+  ,.ready_and_o(ready_and_lo)
 
   ,.tag_clk_r_o(tag_clk_r_lo)
   ,.tag_data_r_o(tag_data_r_lo)

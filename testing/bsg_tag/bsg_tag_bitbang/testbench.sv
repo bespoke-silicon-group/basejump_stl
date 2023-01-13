@@ -12,13 +12,11 @@ program testbench #(
   , output logic reset_o
   , output logic data_o
   , output logic v_o
-  , input        ready_then_i
+  , input        ready_and_i
 
   , output logic en_o
 );
-  logic v_lo;
   assign en_o = 1'b1;
-  assign v_o = v_lo & ready_then_i;
 
   `declare_bsg_tag_header_s(els_p,lg_width_lp)
 
@@ -27,12 +25,12 @@ program testbench #(
   task automatic tag_write_bit (
       input next_bit_i
   );
-    wait(ready_then_i == 1'b1);
+    wait(ready_and_i == 1'b1);
 
-    v_lo = 1'b1;
+    v_o = 1'b1;
     data_o = next_bit_i;
     @(posedge clk_i)
-    v_lo = 1'b0;
+    v_o = 1'b0;
   endtask
 
   task automatic tag_write_packet (
@@ -62,7 +60,7 @@ program testbench #(
 
   initial begin
     reset_o = 1'b1;
-    v_lo = 1'b0;
+    v_o = 1'b0;
     @(posedge clk_i);
     reset_o = 1'b0;
 
