@@ -76,7 +76,7 @@ module bsg_cache_to_dram_ctrl_rx
     ,.reset_i(reset_i)
 
     ,.v_i(v_i)
-    ,.ready_o(ready_o)
+    ,.ready_param_o(ready_o)
     ,.data_i(tag_i)
 
     ,.v_o(tag_fifo_v_lo)

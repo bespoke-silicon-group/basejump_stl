@@ -120,7 +120,7 @@ bsg_flow_counter #(.els_p(72)
     , .reset_i(reset_r)
 
     , .v_i(DUT.mesosync_input.logic_analyzer.narrowed_fifo.v_i)
-    , .ready_i(DUT.mesosync_input.logic_analyzer.narrowed_fifo.ready_o)
+    , .ready_param_i(DUT.mesosync_input.logic_analyzer.narrowed_fifo.ready_o)
     , .yumi_i(DUT.mesosync_input.logic_analyzer.narrowed_fifo.yumi)
 
     , .count_o(LA_count)

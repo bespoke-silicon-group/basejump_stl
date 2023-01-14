@@ -80,7 +80,7 @@ module bsg_cache_to_axi_rx
     ,.reset_i(reset_i)
 
     ,.v_i(tag_fifo_v_li)
-    ,.ready_o(tag_fifo_ready_lo)
+    ,.ready_param_o(tag_fifo_ready_lo)
     ,.data_i(cache_id_i)
 
     ,.v_o(tag_fifo_v_lo)

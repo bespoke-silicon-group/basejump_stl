@@ -58,7 +58,7 @@ module bsg_cache_to_dram_ctrl_tx
     
     ,.v_i(v_i)
     ,.data_i({tag_i, mask_i})
-    ,.ready_o(ready_o)
+    ,.ready_param_o(ready_o)
 
     ,.v_o(tag_fifo_v_lo)
     ,.data_o({tag_lo, mask_lo})

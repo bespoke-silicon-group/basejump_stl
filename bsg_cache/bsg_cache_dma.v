@@ -132,7 +132,7 @@ module bsg_cache_dma
     ,.reset_i(reset_i)
     ,.data_i(dma_data_i)
     ,.v_i(dma_data_v_i)
-    ,.ready_o(dma_data_ready_o)
+    ,.ready_param_o(dma_data_ready_o)
     ,.v_o(in_fifo_v_lo)
     ,.data_o(in_fifo_data_lo)
     ,.yumi_i(in_fifo_yumi_li)
@@ -152,7 +152,7 @@ module bsg_cache_dma
 
     ,.v_i(out_fifo_v_li)
     ,.data_i(out_fifo_data_li)
-    ,.ready_o(out_fifo_ready_lo)
+    ,.ready_param_o(out_fifo_ready_lo)
 
     ,.v_o(dma_data_v_o)
     ,.data_o(dma_data_o)

@@ -37,7 +37,7 @@ module bsg_two_fifo #(parameter `BSG_INV_PARAM(width_p)
     , input reset_i
 
     // input side
-    , output              ready_o // early
+    , output              ready_param_o // early
     , input [width_p-1:0] data_i  // late
     , input               v_i     // late
 

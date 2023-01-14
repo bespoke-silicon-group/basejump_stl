@@ -50,7 +50,7 @@ bsg_fifo_1r1w_small #( .width_p(width_p)
 
                      , .data_i(data_i)
                      , .v_i(v_i)
-                     , .ready_o(ready)
+                     , .ready_param_o(ready)
 
                      , .v_o(v_o)
                      , .data_o(data_o)

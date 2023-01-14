@@ -142,7 +142,7 @@ module bsg_sbox
              (.clk_i(clk_i)
               ,.reset_i(reset_i)
 
-              ,.ready_o(ready_int)
+              ,.ready_param_o(ready_int)
               ,.data_i(in_data_o_int[i])
               ,.v_i   (in_v_o_int   [i] & calibration_done_i)
               ,.v_o   (in_v_o       [i])

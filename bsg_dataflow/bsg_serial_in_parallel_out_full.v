@@ -87,16 +87,16 @@ module bsg_serial_in_parallel_out_full
         bsg_two_fifo
         #(.width_p(width_p)
         ) fifo
-        (.clk_i  (clk_i)
-        ,.reset_i(reset_i)
+        (.clk_i         (clk_i)
+        ,.reset_i       (reset_i)
 
-        ,.ready_o(fifo_ready_lo[i])
-        ,.data_i (data_i)
-        ,.v_i    (fifo_valid_li[i])
+        ,.ready_param_o (fifo_ready_lo[i])
+        ,.data_i        (data_i)
+        ,.v_i           (fifo_valid_li[i])
 
-        ,.v_o    (fifo_valid_lo[i])
-        ,.data_o (data_lo[i])
-        ,.yumi_i (yumi_i)
+        ,.v_o           (fifo_valid_lo[i])
+        ,.data_o        (data_lo[i])
+        ,.yumi_i        (yumi_i)
         );
       end
     else

@@ -109,7 +109,7 @@ module bsg_link_source_sync_downstream
     (.clk_i   (io_clk_i)
     ,.reset_i (io_link_reset_i)
     ,.v_i     (io_valid_i)
-    ,.ready_o (io_fifo_ready_lo)
+    ,.ready_param_o (io_fifo_ready_lo)
     ,.data_i  (io_data_i)
     ,.v_o     (io_fifo_valid_lo)
     ,.data_o  (io_async_fifo_data)

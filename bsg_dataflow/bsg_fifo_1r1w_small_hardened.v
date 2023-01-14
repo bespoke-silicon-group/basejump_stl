@@ -32,7 +32,7 @@ module bsg_fifo_1r1w_small_hardened #(parameter `BSG_INV_PARAM(width_p)
     , input                reset_i
 
     , input                v_i
-    , output               ready_o
+    , output               ready_param_o
     , input [width_p-1:0]  data_i
 
     , output               v_o

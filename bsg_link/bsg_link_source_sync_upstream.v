@@ -104,14 +104,14 @@ module bsg_link_source_sync_upstream
     bsg_two_fifo
    #(.width_p(channel_width_p)
     ) fifo
-    (.clk_i  (core_clk_i)
-    ,.reset_i(core_link_reset_i)
-    ,.ready_o(core_ready_o)
-    ,.data_i (core_data_i)
-    ,.v_i    (core_valid_i)
-    ,.v_o    (core_fifo_valid)
-    ,.data_o (core_fifo_data)
-    ,.yumi_i (core_fifo_yumi)
+    (.clk_i         (core_clk_i)
+    ,.reset_i       (core_link_reset_i)
+    ,.ready_param_o (core_ready_o)
+    ,.data_i        (core_data_i)
+    ,.v_i           (core_valid_i)
+    ,.v_o           (core_fifo_valid)
+    ,.data_o        (core_fifo_data)
+    ,.yumi_i        (core_fifo_yumi)
     );
   end
   else

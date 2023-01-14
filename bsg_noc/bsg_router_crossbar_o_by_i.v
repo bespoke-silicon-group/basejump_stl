@@ -63,7 +63,7 @@ module bsg_router_crossbar_o_by_i
       ,.reset_i(reset_i)
       
       ,.v_i(valid_i[i])
-      ,.ready_o(fifo_ready_lo[i])
+      ,.ready_param_o(fifo_ready_lo[i])
       ,.data_i(data_i[i])
     
       ,.v_o(fifo_v_lo[i])

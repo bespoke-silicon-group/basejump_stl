@@ -35,7 +35,7 @@ module testbench;
    DUT
     (.data_i(test_data_li)
      ,.v_i(test_v_li)
-     ,.ready_o(test_ready_lo)
+     ,.ready_param_o(test_ready_lo)
 
      ,.data_o(test_data_lo)
      ,.v_o(test_v_lo)
@@ -43,7 +43,7 @@ module testbench;
 
      ,.fifo_data_o(fifo_data_li)
      ,.fifo_v_o(fifo_v_li)
-     ,.fifo_ready_i(fifo_ready_lo)
+     ,.fifo_ready_param_i(fifo_ready_lo)
 
      ,.fifo_data_i(fifo_data_lo)
      ,.fifo_v_i(fifo_v_lo)
@@ -60,7 +60,7 @@ module testbench;
 
      ,.data_i(fifo_data_li)
      ,.v_i(fifo_v_li)
-     ,.ready_o(fifo_ready_lo)
+     ,.ready_param_o(fifo_ready_lo)
 
      ,.data_o(fifo_data_lo)
      ,.v_o(fifo_v_lo)
