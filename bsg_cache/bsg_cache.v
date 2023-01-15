@@ -43,7 +43,7 @@ module bsg_cache
 
     ,input [bsg_cache_pkt_width_lp-1:0] cache_pkt_i
     ,input v_i
-    ,output logic ready_o
+    ,output logic yumi_o
     
     ,output logic [data_width_p-1:0] data_o
     ,output logic v_o
@@ -128,6 +128,7 @@ module bsg_cache
 
   // tl_stage
   //
+  logic tl_we;
   logic v_tl_r;
   bsg_cache_decode_s decode_tl_r;
   logic [data_mask_width_lp-1:0] mask_tl_r;
@@ -144,7 +145,7 @@ module bsg_cache
       ,decode_tl_r} <= '0;
     end
     else begin
-      if (ready_o) begin
+      if (tl_we) begin
         v_tl_r <= v_i;
         if (v_i) begin
           mask_tl_r <= cache_pkt.mask;
@@ -154,8 +155,9 @@ module bsg_cache
         end
       end
       else begin
-        if (sbuf_hazard)
+        if (sbuf_hazard) begin
           v_tl_r <= 1'b0;
+        end
       end
     end
   end
@@ -989,11 +991,8 @@ end
   wire tl_ready = (miss_v
     ? (~(decode.tagst_op & v_i) & ~miss_tag_mem_v_lo & ~miss_track_mem_v_lo & ~dma_data_mem_v_lo & ~recover_lo & ~dma_evict_lo)
     : 1'b1) & ~sbuf_hazard;
-
-  assign ready_o = v_tl_r
-    ? (v_we & tl_ready)
-    : tl_ready;
-
+  assign tl_we =  (v_tl_r ? (v_we & tl_ready) : tl_ready);
+  assign yumi_o = v_i & tl_we;
 
   // tag_mem
   // values written by tagst command
@@ -1006,7 +1005,7 @@ end
   assign tagst_valid = cache_pkt.data[data_width_p-1];
   assign tagst_lock = cache_pkt.data[data_width_p-2];
   assign tagst_tag = cache_pkt.data[0+:tag_width_lp];
-  assign tagst_write_en = decode.tagst_op & ready_o & v_i;
+  assign tagst_write_en = decode.tagst_op & yumi_o;
 
   logic [ways_p-1:0] addr_way_decode;
   bsg_decode #(
@@ -1016,10 +1015,10 @@ end
     ,.o(addr_way_decode)
   );
 
-  assign tag_mem_v_li = (decode.tag_read_op & ready_o & v_i)
+  assign tag_mem_v_li = (decode.tag_read_op & yumi_o)
     | (recover_lo & decode_tl_r.tag_read_op & v_tl_r)
     | miss_tag_mem_v_lo
-    | (decode.tagst_op & ready_o & v_i); 
+    | (decode.tagst_op & yumi_o); 
   
   assign tag_mem_w_li = miss_v
     ? (miss_tag_mem_v_lo & miss_tag_mem_w_lo)
@@ -1045,7 +1044,7 @@ end
 
   // data_mem ctrl logic
   //
-  assign data_mem_v_li = ((v_i & ready_o & (decode.ld_op | decode.atomic_op))
+  assign data_mem_v_li = ((yumi_o & (decode.ld_op | decode.atomic_op))
     | (v_tl_r & recover_lo & (decode_tl_r.ld_op | decode_tl_r.atomic_op)) 
     | dma_data_mem_v_lo
     | (sbuf_v_lo & sbuf_yumi_li)
@@ -1061,7 +1060,7 @@ end
     ? recover_data_mem_addr
     : (dma_data_mem_v_lo
       ? dma_data_mem_addr_lo
-      : (((decode.ld_op | decode.atomic_op) & v_i & ready_o) 
+      : (((decode.ld_op | decode.atomic_op) & yumi_o) 
         ? ld_data_mem_addr
         : sbuf_data_mem_addr));
 
@@ -1071,8 +1070,7 @@ end
 
 
   // track_mem ctrl logic
-  //
-  assign track_mem_v_li = ((v_i & ready_o & (decode.ld_op | decode.atomic_op | partial_st))
+  assign track_mem_v_li = ((yumi_o & (decode.ld_op | decode.atomic_op | partial_st))
     | (v_tl_r & recover_lo & (decode_tl_r.ld_op | decode_tl_r.atomic_op | partial_st_tl))
     | miss_track_mem_v_lo
     | (tbuf_v_lo & tbuf_yumi_li)
@@ -1094,7 +1092,7 @@ end
     ? addr_index_tl
     : (miss_track_mem_v_lo
       ? miss_track_mem_addr_lo
-      : (((decode.ld_op | decode.atomic_op | partial_st) & v_i & ready_o)
+      : (((decode.ld_op | decode.atomic_op | partial_st) & yumi_o)
         ? addr_index
         : tbuf_track_mem_addr));
 
@@ -1157,7 +1155,7 @@ end
   // 4) TL read DMEM (and bypass from sbuf), and TV is not stalled (v_we).
   //    During miss, the store buffer can be drained.
   assign sbuf_yumi_li = sbuf_v_lo
-    & ~((decode.ld_op | decode.atomic_op) & v_i & ready_o)
+    & ~((decode.ld_op | decode.atomic_op) & yumi_o)
     & (~dma_data_mem_v_lo)
     & ~(v_tl_r & (decode_tl_r.ld_op | decode_tl_r.atomic_op) & (~v_we) & (~miss_v)); 
 
@@ -1176,7 +1174,7 @@ end
   // 4) TL read track mem (and bypass from tbuf), and TV is not stalled (v_we).
   //    During miss, the track buffer can be drained.
   assign tbuf_yumi_li = tbuf_v_lo
-    & ~((decode.ld_op | decode.atomic_op | partial_st) & v_i & ready_o)
+    & ~((decode.ld_op | decode.atomic_op | partial_st) & yumi_o)
     & (~miss_track_mem_v_lo)
     & ~(v_tl_r & (decode_tl_r.ld_op | decode_tl_r.atomic_op | partial_st_tl) & (~v_we) & (~miss_v));
 
