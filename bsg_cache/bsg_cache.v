@@ -991,7 +991,7 @@ end
   wire tl_ready = (miss_v
     ? (~(decode.tagst_op & v_i) & ~miss_tag_mem_v_lo & ~miss_track_mem_v_lo & ~dma_data_mem_v_lo & ~recover_lo & ~dma_evict_lo)
     : 1'b1) & ~sbuf_hazard;
-  assign tl_we =  (v_tl_r ? (v_we & tl_ready) : tl_ready);
+  assign tl_we =  tl_ready & (v_tl_r ? v_we : 1'b1);
   assign yumi_o = v_i & tl_we;
 
   // tag_mem
