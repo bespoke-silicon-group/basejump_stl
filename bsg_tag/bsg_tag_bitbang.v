@@ -46,7 +46,8 @@ module bsg_tag_bitbang(
 
   logic tag_clk_r;
   logic tag_data_r;
-  wire tag_clk_n = ~ready_and_o | ~v_i;
+  // Lower tag clock for one cycle upon a successful handshake
+  wire tag_clk_n = ~(ready_and_o & v_i);
 
   bsg_dff_reset #(
      .width_p(1)
