@@ -28,7 +28,7 @@ module testbench;
   logic in_v_lo, in_yumi_li;
 
   logic [wide_width_lp-1:0] out_data_li;
-  logic out_v_li, out_ready_lo;
+  logic out_v_li, out_ready_and_lo;
   logic [narrow_width_lp-1:0] out_data_lo;
   logic out_v_lo, out_ready_li;
 
@@ -49,7 +49,7 @@ module testbench;
 
   assign out_data_li = in_data_lo;
   assign out_v_li = in_v_lo;
-  assign in_yumi_li = out_ready_lo & out_v_li;
+  assign in_yumi_li = out_ready_and_lo & out_v_li;
 
   bsg_parallel_in_serial_out
    #(.width_p(narrow_width_lp), .els_p(els_lp))
@@ -59,7 +59,7 @@ module testbench;
 
      ,.data_i(out_data_li)
      ,.valid_i(out_v_li)
-     ,.ready_o(out_ready_lo)
+     ,.ready_and_o(out_ready_and_lo)
 
      ,.data_o(out_data_lo)
      ,.valid_o(out_v_lo)
