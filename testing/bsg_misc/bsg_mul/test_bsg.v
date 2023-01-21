@@ -263,7 +263,7 @@ module test_bsg;
                        ,.harden_p(1'b1)
                        ,.pipeline_p(pipeline_lp)
                        ) dut
-     ( .clock_i(clk)
+     ( .clk_i(clk)
        ,.en_i(1'b1)
        ,.x_i(test_inputs[          0+:in_width_lp])
        ,.y_i(test_inputs[in_width_lp+:in_width_lp])
