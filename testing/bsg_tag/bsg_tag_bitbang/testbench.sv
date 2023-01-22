@@ -13,11 +13,7 @@ program testbench #(
   , output logic data_o
   , output logic v_o
   , input        ready_and_i
-
-  , output logic en_o
 );
-  assign en_o = 1'b1;
-
   `declare_bsg_tag_header_s(els_p,lg_width_lp)
 
   localparam max_packet_len_lp = `bsg_tag_max_packet_len(els_p,lg_width_lp);

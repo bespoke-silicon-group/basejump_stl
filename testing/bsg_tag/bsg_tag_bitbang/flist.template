@@ -2,7 +2,7 @@ $BASEJUMP_STL_DIR/bsg_tag/bsg_tag_pkg.v
 $CUR_DIR/top.sv
 $CUR_DIR/testbench.sv
 $BASEJUMP_STL_DIR/bsg_tag/bsg_tag_bitbang.v
-$BASEJUMP_STL_DIR/bsg_tag/bsg_tag_master.v
+$BASEJUMP_STL_DIR/bsg_tag/bsg_tag_master_decentralized.v
 $BASEJUMP_STL_DIR/bsg_tag/bsg_tag_client.v
 $BASEJUMP_STL_DIR/bsg_async/bsg_async_fifo.v
 $BASEJUMP_STL_DIR/bsg_async/bsg_async_ptr_gray.v

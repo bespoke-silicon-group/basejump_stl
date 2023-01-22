@@ -25,7 +25,6 @@ logic ready_and_lo;
 
 logic tag_clk_r_lo;
 logic tag_data_r_lo;
-logic en_li;
 
 // Any clock freq works as long as master clock freq <= client clock freq
 always #4 master_clk = ~master_clk;
@@ -43,8 +42,6 @@ testbench #(
   ,.data_o(data_li)
   ,.v_o(v_li)
   ,.ready_and_i(ready_and_lo)
-
-  ,.en_o(en_li)
 );
 
 bsg_tag_s [els_p-1:0] tag;
@@ -61,14 +58,15 @@ bsg_tag_bitbang bsg_tag_bitbang (
   ,.tag_data_r_o(tag_data_r_lo)
 );
 
-bsg_tag_master #(
+bsg_tag_master_decentralized #(
    .els_p(els_p)
+  ,.local_els_p(els_p)
   ,.lg_width_p(lg_width_lp)
 ) master (
    .clk_i(tag_clk_r_lo)
-  ,.en_i(en_li)
   ,.data_i(tag_data_r_lo)
-  ,.clients_r_o(tag)
+  ,.node_id_offset_i(0)
+  ,.clients_o(tag)
 );
 
 for(genvar i = 0;i < els_p;i++) begin: client
