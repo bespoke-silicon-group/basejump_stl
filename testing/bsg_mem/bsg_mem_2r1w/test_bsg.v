@@ -20,7 +20,7 @@
 
 ***************************************************************************/
 
-module test_bsg;
+module test_bsg
 #(  
   parameter width_p      = `WIDTH_P,
   parameter els_p        = `ELS_P,

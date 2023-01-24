@@ -26,7 +26,7 @@ module test_bsg
   wire clk;
   wire reset;
 
-  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
+  bsg_nonsynth_clock_gen #(  .cycle_time_p(sim_clk_period_p)
                           )  clock_gen
                           (  .o(clk)
                           );

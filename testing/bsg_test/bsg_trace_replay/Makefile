@@ -1,7 +1,6 @@
 ###########################################
 # DEFINE THE PATHS
-BSG_IP_CORES_DIR=$(abspath  ../../../../bsg_ip_cores)
-BSG_MANYCORE_DIR=$(abspath  ../../../../bsg_manycore)
+BASEJUMP_STL_DIR=$(abspath  ../../../)
 
 CADENV_DIR=$(abspath ../../../../bsg_cadenv)
 
@@ -11,13 +10,13 @@ include $(CADENV_DIR)/cadenv.mk
 
 #############################################
 # SETUP THE INCLUDE PATH and SEARCH PATH
-INC_DIRS	+= $(BSG_IP_CORES_DIR)/bsg_misc
+INC_DIRS	+= $(BASEJUMP_STL_DIR)/bsg_misc
 
-SRC_DIRS	+= $(BSG_IP_CORES_DIR)/bsg_misc
-SRC_DIRS	+= $(BSG_IP_CORES_DIR)/bsg_test
+SRC_DIRS	+= $(BASEJUMP_STL_DIR)/bsg_misc
+SRC_DIRS	+= $(BASEJUMP_STL_DIR)/bsg_test
 SRC_DIRS	+= ./
 
-PKG_FILES	+= $(BSG_IP_CORES_DIR)/bsg_misc/bsg_defines.v
+PKG_FILES	+= $(BASEJUMP_STL_DIR)/bsg_misc/bsg_defines.v
 
 ###########################################
 # DEFINE THE VCS OPTIONS
@@ -39,10 +38,10 @@ run: stimulus_rom.v response_rom.v
 	test_bench.v -top test_bench
 
 stimulus_rom.v:
-	$(BSG_IP_CORES_DIR)/bsg_mem/bsg_ascii_to_rom.py stimulus.trace.in stimulus_rom > $@
+	$(BASEJUMP_STL_DIR)/bsg_mem/bsg_ascii_to_rom.py stimulus.trace.in stimulus_rom > $@
 
 response_rom.v:
-	$(BSG_IP_CORES_DIR)/bsg_mem/bsg_ascii_to_rom.py response.trace.out response_rom > $@
+	$(BASEJUMP_STL_DIR)/bsg_mem/bsg_ascii_to_rom.py response.trace.out response_rom > $@
 
 dve:
 	$(VCS_BIN)/dve -full64 -vpd vcdplus.vpd &

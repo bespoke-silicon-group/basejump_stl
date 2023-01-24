@@ -8,5 +8,3 @@ all:
 
 clean:
 	rm -rf obj_dir out.log
-
- 
