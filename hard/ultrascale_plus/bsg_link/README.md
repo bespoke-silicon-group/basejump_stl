@@ -10,9 +10,14 @@ Also good would be a link to a google doc that contains advice for PCB stackup /
 2. Add source codes in this directory to the Vivado project.
 3. Generate a 90-degree phase delayed clock using the on-FPGA MMCM, connect CLK90 to the bsg_link_ddr_upstream module.
 
-## How to use the constraints
+## How to use the XDC constraints
 
-1. Copy-n-paste contents in tcl/bsg_link_ddr.sample_constraints.tcl into the .xdc file of the Vivado project.
+1. Copy-n-paste contents in tcl/bsg_link_ddr.sample_constraints.xdc into the .xdc file of the Vivado project.
 2. Modify the periods, names, ports, pins, and margins based on the target application.
 
 Note: Xilinx .xdc file does not go through regular tcl parser, some tcl commands (like for-loop) are not supported. As a result, **user should copy-n-paste these constraints for each bsg_link channel**.
+
+## How to use the TCL constrains
+
+1. In the Vivado synthesis flow, avoid using "read_xdc" with constraints spec'd in a tcl file.
+2. Include tcl/bsg_link_ddr.sample_constraints.tcl, call the tcl function with parameters based on user application.
