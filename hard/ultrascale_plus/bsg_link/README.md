@@ -15,4 +15,4 @@ Also good would be a link to a google doc that contains advice for PCB stackup /
 1. Copy-n-paste contents in tcl/bsg_link_ddr.sample_constraints.tcl into the .xdc file of the Vivado project.
 2. Modify the periods, names, ports, pins, and margins based on the target application.
 
-Note: Xilinx .xdc file does not go through regular tcl parser, some tcl commands (like for-loop) are not supported.
+Note: Xilinx .xdc file does not go through regular tcl parser, some tcl commands (like for-loop) are not supported. As a result, **user should copy-n-paste these constraints for each bsg_link channel**.
