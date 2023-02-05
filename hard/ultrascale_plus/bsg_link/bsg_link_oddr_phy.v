@@ -30,11 +30,11 @@ module bsg_link_oddr_phy
   // ODDR PHY is always ready for incoming data
   assign ready_o = 1'b1;
   
-  logic [1:0][width_p-1:0] data_li;  
+  logic [1:0][width_p-1:0] data_r;  
   bsg_dff #(.width_p(width_p*2)) dff_oddr
   (.clk_i (clk_i)
   ,.data_i(data_i)
-  ,.data_o(data_li));
+  ,.data_o(data_r));
   
   for (genvar i = 0; i < width_p; i++)
   begin
@@ -47,8 +47,8 @@ module bsg_link_oddr_phy
     ) ODDRE1_inst 
     (.Q             (data_r_o[i])
     ,.C             (clk_i)
-    ,.D1            (data_li[0][i])
-    ,.D2            (data_li[1][i])
+    ,.D1            (data_r[0][i])
+    ,.D2            (data_r[1][i])
     ,.SR            (reset_i)
     );
   end
