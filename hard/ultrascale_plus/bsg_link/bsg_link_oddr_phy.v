@@ -9,45 +9,6 @@
 // has 90-degree phase delay to posedge of clk_i.
 // Need output delay constraint(s) to ensure clock and data delay are same
 //
-// Waveform of all signals when going out of reset:
-/******************************************************************************************
-
-          +---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+
-clk_i         |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-              +---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+   +---+
-          +--------+
-reset_i            |
-                   +----------------------------------------------------------------------+
-          +----------------+
-reset_i_r                  |
-                           +--------------------------------------------------------------+
-                               +-------+       +-------+       +-------+       +-------+
-clk_r                          |       |       |       |       |       |       |       |
-          +--------------------+       +-------+       +-------+       +-------+       +---
-                           +-------+       +-------+       +-------+       +-------+
-odd_r                      |       |       |       |       |       |       |       |
-          +----------------+       +-------+       +-------+       +-------+       +-------
-          +----------------+       +-------+       +-------+       +-------+       +-------
-ready_o                    |       |       |       |       |       |       |       |
-                           +-------+       +-------+       +-------+       +-------+
-          +--------+-----------------------------------------------------------------------
-data_i    |        | d1d0  |       | d1d0  |       | d1d0  |       | d1d0  |       | d1d0
-          +--------------------------------------------------------------------------------
-          +--------------------------------------------------------------------------------
-data_i_r  |                |     d1d0      |     d1d0      |     d1d0      |     d1d0
-          +----------------+---------------------------------------------------------------
-                                       +-------+       +-------+       +-------+       +---
-clk_o                                  |       |       |       |       |       |       |
-          +----------------------------+       +-------+       +-------+       +-------+
-          +--------------------------------+---------------+---------------+---------------
-data_o    |                        |  d0   |  d1   |  d0   |  d1   |  d0   |  d1   |  d0
-          +------------------------+-------+-------+-------+-------+-------+-------+-------
-
-******************************************************************************************/
-//
-// Schematic and more information: (Google Doc) 
-// https://docs.google.com/document/d/1lmkOxvlAvxrk_MM5W8xv3ho2DS26xbOMTCqUIyS6di8/edit?ts=5cf76063#heading=h.o6ptt6mn49us
-//
 //
 
 module bsg_link_oddr_phy
@@ -65,10 +26,9 @@ module bsg_link_oddr_phy
   ,output logic [width_p-1:0] data_r_o
   ,output logic               clk_r_o
   );
-  
+
+  // ODDR PHY is always ready for incoming data
   assign ready_o = 1'b1;
-  //logic [width_p-1:0] data_r_lo;
-  //logic clk_r_lo;
   
   logic [1:0][width_p-1:0] data_li;  
   bsg_dff #(.width_p(width_p*2)) dff_oddr
@@ -91,35 +51,6 @@ module bsg_link_oddr_phy
     ,.D2            (data_li[1][i])
     ,.SR            (reset_i)
     );
-/*    
-    ODELAYE3 
-   #(.CASCADE         ("NONE")
-    ,.DELAY_FORMAT    ("COUNT")
-    ,.DELAY_TYPE      ("FIXED")
-    //,.DELAY_VALUE     (144)
-    ,.DELAY_VALUE     (64)
-    ,.IS_CLK_INVERTED (1'b0)
-    ,.IS_RST_INVERTED (1'b0)
-    ,.REFCLK_FREQUENCY(300.0)
-    ,.SIM_DEVICE      ("ULTRASCALE_PLUS")
-    ,.UPDATE_MODE     ("ASYNC")
-    )
-    ODELAYE3_inst 
-    (.CASC_OUT        ()
-    ,.CNTVALUEOUT     ()
-    ,.DATAOUT         (data_r_o[i])
-    ,.CASC_IN         (1'b0)
-    ,.CASC_RETURN     (1'b0)
-    ,.CE              (1'b0)
-    ,.CLK             (1'b0)
-    ,.CNTVALUEIN      ('0)
-    ,.EN_VTC          (1'b0)
-    ,.INC             (1'b0)
-    ,.LOAD            (1'b0)
-    ,.ODATAIN         (data_r_lo[i])
-    ,.RST             (1'b0)
-    );
-*/
   end
   
     ODDRE1 
@@ -135,33 +66,5 @@ module bsg_link_oddr_phy
     ,.D2            (1'b0)
     ,.SR            (reset_i)
     );
-/*    
-    ODELAYE3 
-   #(.CASCADE         ("NONE")
-    ,.DELAY_FORMAT    ("COUNT")
-    ,.DELAY_TYPE      ("FIXED")
-    //,.DELAY_VALUE     (144)
-    ,.DELAY_VALUE     (8)
-    ,.IS_CLK_INVERTED (1'b0)
-    ,.IS_RST_INVERTED (1'b0)
-    ,.REFCLK_FREQUENCY(300.0)
-    ,.SIM_DEVICE      ("ULTRASCALE_PLUS")
-    ,.UPDATE_MODE     ("ASYNC")
-    )
-    ODELAYE3_clk 
-    (.CASC_OUT        ()
-    ,.CNTVALUEOUT     ()
-    ,.DATAOUT         (clk_r_o)
-    ,.CASC_IN         (1'b0)
-    ,.CASC_RETURN     (1'b0)
-    ,.CE              (1'b0)
-    ,.CLK             (1'b0)
-    ,.CNTVALUEIN      ('0)
-    ,.EN_VTC          (1'b0)
-    ,.INC             (1'b0)
-    ,.LOAD            (1'b0)
-    ,.ODATAIN         (clk_r_lo)
-    ,.RST             (1'b0)
-    );
-*/  
+
 endmodule
