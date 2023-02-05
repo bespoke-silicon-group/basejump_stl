@@ -12,9 +12,6 @@
 // Note that input clock edges must be center-aligned to input data signals
 // Need input delay constraint(s) to ensure clock and data delay are same
 //
-// Schematic and more information: (Google Doc) 
-// https://docs.google.com/document/d/1lmkOxvlAvxrk_MM5W8xv3ho2DS26xbOMTCqUIyS6di8/edit?ts=5cf76063#heading=h.o6ptt6mn49us
-//
 //
 
 module bsg_link_iddr_phy
@@ -33,12 +30,12 @@ module bsg_link_iddr_phy
     IDELAYE3 
    #(.CASCADE         ("NONE")
     ,.DELAY_FORMAT    ("COUNT")
-    //,.DELAY_FORMAT    ("TIME")
     ,.DELAY_SRC       ("IDATAIN")
     ,.DELAY_TYPE      ("FIXED")
-    //,.DELAY_VALUE     (160)
+    // DELAY_VALUE should be configured based on FPGA's input clock tree delay
+    // Delay time for each count (tap) can be found in Xilinx Doc
+    // "FPGA Data Sheet: DC and AC Switching Characteristics" (Search IDELAY_RESOLUTION)
     ,.DELAY_VALUE     (192)
-    //,.DELAY_VALUE     (400)
     ,.IS_CLK_INVERTED (1'b0)
     ,.IS_RST_INVERTED (1'b0)
     ,.REFCLK_FREQUENCY(500.0)
@@ -55,12 +52,10 @@ module bsg_link_iddr_phy
     ,.CNTVALUEIN      ('0)
     ,.DATAIN          (1'b0)
     ,.EN_VTC          (1'b0)
-    //,.EN_VTC          (1'b1)
     ,.IDATAIN         (data_i[i])
     ,.INC             (1'b0)
     ,.LOAD            (1'b0)
     ,.RST             (1'b0)
-    //,.RST             (reset_i)
     );
   
     IDDRE1 
