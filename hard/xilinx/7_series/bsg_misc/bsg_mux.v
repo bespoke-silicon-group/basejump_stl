@@ -25,22 +25,22 @@ if ((harden_p == 1) && (balanced_p == 1)) begin : fi
       );
     end
     else if (els_p == 4) begin : els4
-      logic [1:0][width_p-1:0] data_int;
+      logic [1:0] data_int;
       BUFGMUX_CTRL bufgmux_ctrl1 (
         .I0(data_i[0][j])
         ,.I1(data_i[1][j])
-        ,.O(data_int[0][j])
+        ,.O(data_int[0])
         ,.S(sel_i[0])
       );
       BUFGMUX_CTRL bufgmux_ctrl2 (
         .I0(data_i[2][j])
         ,.I1(data_i[3][j])
-        ,.O(data_int[1][j])
+        ,.O(data_int[1])
         ,.S(sel_i[0])
       );
       BUFGMUX_CTRL bufgmux_ctrl3 (
-        .I0(data_int[0][j])
-        ,.I1(data_int[1][j])
+        .I0(data_int[0])
+        ,.I1(data_int[1])
         ,.O(data_o[j])
         ,.S(sel_i[1])
       );

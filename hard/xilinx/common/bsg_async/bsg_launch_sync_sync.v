@@ -49,7 +49,7 @@ module bsg_launch_sync_sync_``EDGE``_``bits``_unit                      \
  `rp_place    (hier blss_2   2 0)                                       \
  `rp_endgroup (blss_bank)                                               \
                                                                         \
-   (* ASYNC_REG = "TRUE" *)                                             \
+   (* DONT_TOUCH = "TRUE" *)                                            \
    logic [bits-1:0] bsg_SYNC_LNCH_r;                                    \
    assign iclk_data_o = bsg_SYNC_LNCH_r;                                \
                                                                         \
@@ -109,7 +109,7 @@ module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
  `rp_place    (hier blss_2   2 0)                                       \
  `rp_endgroup (blss_bank)                                               \
                                                                         \
-   (* ASYNC_REG = "TRUE" *)                                             \
+   (* DONT_TOUCH = "TRUE" *)                                            \
    logic [bits-1:0] bsg_SYNC_LNCH_r;                                    \
    assign iclk_data_o = bsg_SYNC_LNCH_r;                                \
                                                                         \
