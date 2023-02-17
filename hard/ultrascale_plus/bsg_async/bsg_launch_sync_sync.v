@@ -213,7 +213,7 @@ endmodule
                                          ,.iclk_data_o(iclk_data_o[width_p-1-:num])  \
                                          ,.oclk_data_o(oclk_data_o[width_p-1-:num])  \
                                          ); end
-										 
+
 `define blssar_if_clause(EDGE,num) if ((width_p % `blss_max_block) == num) begin: z          \
                          bsg_launch_sync_sync_async_reset_``EDGE``_``num``_unit blss \
                                         (.iclk_i                                     \
@@ -303,7 +303,7 @@ module bsg_launch_sync_sync #(parameter `BSG_INV_PARAM(width_p)
                     `blss_if_clause(posedge,7)
      end
 
-   end 
+   end
    else begin: async
 
    if (use_negedge_for_launch_p)
