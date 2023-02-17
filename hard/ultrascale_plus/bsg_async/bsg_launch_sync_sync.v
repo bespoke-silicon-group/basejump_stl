@@ -67,11 +67,11 @@ module bsg_launch_sync_sync_``EDGE``_``bits``_unit                      \
      end                                                                \
                                                                         \
    (* ASYNC_REG = "TRUE" *)                                             \
-   logic [bits-1:0] bsg_SYNC_1_r;                                       \
+   logic [bits-1:0] hard_sync_int1_r;                                   \
    (* ASYNC_REG = "TRUE" *)                                             \
-   logic [bits-1:0] bsg_SYNC_2_r;                                       \
+   logic [bits-1:0] hard_sync_int2_r;                                   \
                                                                         \
-   assign oclk_data_o = bsg_SYNC_2_r;                                   \
+   assign oclk_data_o = hard_sync_int2_r;                               \
                                                                         \
    always_ff @(posedge oclk_i)                                          \
      begin                                                              \
@@ -79,7 +79,7 @@ module bsg_launch_sync_sync_``EDGE``_``bits``_unit                      \
         `rp_fill(0 0 UX)                                                \
         `rp_array_dir(up)                                               \
         `rp_endgroup(blss_1)                                            \
-        bsg_SYNC_1_r <= bsg_SYNC_LNCH_r;                                \
+        hard_sync_int1_r <= bsg_SYNC_LNCH_r;                            \
      end                                                                \
                                                                         \
    always_ff @(posedge oclk_i)                                          \
@@ -88,7 +88,7 @@ module bsg_launch_sync_sync_``EDGE``_``bits``_unit                      \
         `rp_fill(0 0 UX)                                                \
         `rp_array_dir(up)                                               \
         `rp_endgroup(blss_2)                                            \
-        bsg_SYNC_2_r <= bsg_SYNC_1_r;                                   \
+        hard_sync_int2_r <= hard_sync_int1_r;                           \
      end                                                                \
 endmodule
 
@@ -127,11 +127,11 @@ module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
      end                                                                \
                                                                         \
    (* ASYNC_REG = "TRUE" *)                                             \
-   logic [bits-1:0] bsg_SYNC_1_r;                                       \
+   logic [bits-1:0] hard_sync_int1_r;                                   \
    (* ASYNC_REG = "TRUE" *)                                             \
-   logic [bits-1:0] bsg_SYNC_2_r;                                       \
+   logic [bits-1:0] hard_sync_int2_r;                                   \
                                                                         \
-   assign oclk_data_o = bsg_SYNC_2_r;                                   \
+   assign oclk_data_o = hard_sync_int2_r;                               \
                                                                         \
    always_ff @(posedge oclk_i or posedge iclk_reset_i)                  \
      begin                                                              \
@@ -140,9 +140,9 @@ module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
         `rp_array_dir(up)                                               \
         `rp_endgroup(blss_1)                                            \
         if (iclk_reset_i)                                               \
-          bsg_SYNC_1_r <= {bits{1'b0}};                                 \
+          hard_sync_int1_r <= {bits{1'b0}};                             \
         else                                                            \
-          bsg_SYNC_1_r <= bsg_SYNC_LNCH_r;                              \
+          hard_sync_int1_r <= bsg_SYNC_LNCH_r;                          \
      end                                                                \
                                                                         \
    always_ff @(posedge oclk_i or posedge iclk_reset_i)                  \
@@ -152,9 +152,9 @@ module bsg_launch_sync_sync_async_reset_``EDGE``_``bits``_unit          \
         `rp_array_dir(up)                                               \
         `rp_endgroup(blss_2)                                            \
         if (iclk_reset_i)                                               \
-          bsg_SYNC_2_r <= {bits{1'b0}};                                 \
+          hard_sync_int2_r <= {bits{1'b0}};                             \
         else                                                            \
-          bsg_SYNC_2_r <= bsg_SYNC_1_r;                                 \
+          hard_sync_int2_r <= hard_sync_int1_r;                         \
      end                                                                \
 endmodule
 
