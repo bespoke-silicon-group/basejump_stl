@@ -13,8 +13,8 @@ module bsg_clkgate_optional
 
   BUFGCE #(
      .CE_TYPE("SYNC"),
-     .IS_CE_INVERTED(1'b0)
-     .IS_I_INVERTED(1'b0)
+     .IS_CE_INVERTED(1'b0),
+     .IS_I_INVERTED(1'b0),
      .SIM_DEVICE("ULTRASCALE_PLUS")
   )
   BUFGCE_inst (
