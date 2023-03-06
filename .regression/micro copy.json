@@ -1,0 +1,7 @@
+include bsg_async/micro_bsg_async.json
+include bsg_cache/micro_bsg_cache.json
+include bsg_comm_link/micro_bsg_comm_link.json
+include bsg_dataflow/micro_bsg_dataflow.json
+include bsg_fpu/micro_bsg_fpu.json
+include bsg_link/micro_bsg_link.json
+include bsg_misc/micro_bsg_misc.json

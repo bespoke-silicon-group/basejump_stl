@@ -1,0 +1,2 @@
+include bsg_link_iddr_phy.json
+include bsg_link_oddr_phy.json
