@@ -1,1484 +1,1484 @@
 {
-    "design_name": "bsg_source_sync_channel_control_master", 
+    "design_name": "bsg_source_sync_channel_control_master",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v", 
-        "basejump_stl/bsg_comm_link/bsg_source_sync_channel_control_master", 
+        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_comm_link/bsg_source_sync_channel_control_master",
         "basejump_stl/bsg_async/bsg_launch_sync_sync.v"
-    ], 
+    ],
     "include_path": [
         "basejump_stl/bsg_misc"
-    ], 
+    ],
     "run_config": [
         {
             "constraints": [
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_reset_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calibration_state_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calibration_state_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calib_prepare_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calib_prepare_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_channel_blessed_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_channel_blessed_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_is_posedge_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_is_posedge_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_reset_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_neg_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_neg_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_pos_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_pos_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_en_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_en_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_valid_data_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_valid_data_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_test_pass_r_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_test_pass_r_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_infinite_credits_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_infinite_credits_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "name": "out_clk", 
-                    "period_in_num_of_FO4": "30", 
-                    "port": "out_clk_i", 
-                    "type": "clock", 
+                    "name": "out_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "out_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
-                }, 
+                },
                 {
-                    "name": "in_clk", 
-                    "period_in_num_of_FO4": "30", 
-                    "port": "in_clk_i", 
-                    "type": "clock", 
+                    "name": "in_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "in_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
                 }
-            ], 
-            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            ],
+            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30",
             "name": "bsg_source_sync_channel_control_master_out_clk_30_FO4_in_clk_30_FO4"
-        }, 
+        },
         {
             "constraints": [
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_reset_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calibration_state_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calibration_state_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calib_prepare_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calib_prepare_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_channel_blessed_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_channel_blessed_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_is_posedge_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_is_posedge_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_reset_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_neg_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_neg_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_pos_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_pos_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_en_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_en_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_valid_data_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_valid_data_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_test_pass_r_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_test_pass_r_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_infinite_credits_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_infinite_credits_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "name": "out_clk", 
-                    "period_in_num_of_FO4": "30", 
-                    "port": "out_clk_i", 
-                    "type": "clock", 
+                    "name": "out_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "out_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
-                }, 
+                },
                 {
-                    "name": "in_clk", 
-                    "period_in_num_of_FO4": "40", 
-                    "port": "in_clk_i", 
-                    "type": "clock", 
+                    "name": "in_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "in_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
                 }
-            ], 
-            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            ],
+            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40",
             "name": "bsg_source_sync_channel_control_master_out_clk_30_FO4_in_clk_40_FO4"
-        }, 
+        },
         {
             "constraints": [
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_reset_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calibration_state_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calibration_state_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calib_prepare_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calib_prepare_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_channel_blessed_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_channel_blessed_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_is_posedge_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_is_posedge_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_reset_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_neg_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_neg_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_pos_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_pos_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_en_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_en_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_valid_data_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_valid_data_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_test_pass_r_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_test_pass_r_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_infinite_credits_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_infinite_credits_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "name": "out_clk", 
-                    "period_in_num_of_FO4": "30", 
-                    "port": "out_clk_i", 
-                    "type": "clock", 
+                    "name": "out_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "out_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
-                }, 
+                },
                 {
-                    "name": "in_clk", 
-                    "period_in_num_of_FO4": "50", 
-                    "port": "in_clk_i", 
-                    "type": "clock", 
+                    "name": "in_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "in_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
                 }
-            ], 
-            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            ],
+            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50",
             "name": "bsg_source_sync_channel_control_master_out_clk_30_FO4_in_clk_50_FO4"
-        }, 
+        },
         {
             "constraints": [
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_reset_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calibration_state_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calibration_state_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calib_prepare_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calib_prepare_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_channel_blessed_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_channel_blessed_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_is_posedge_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_is_posedge_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_reset_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_neg_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_neg_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_pos_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_pos_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_en_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_en_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_valid_data_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_valid_data_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_test_pass_r_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_test_pass_r_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_infinite_credits_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_infinite_credits_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "name": "out_clk", 
-                    "period_in_num_of_FO4": "30", 
-                    "port": "out_clk_i", 
-                    "type": "clock", 
+                    "name": "out_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "out_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
-                }, 
+                },
                 {
-                    "name": "in_clk", 
-                    "period_in_num_of_FO4": "60", 
-                    "port": "in_clk_i", 
-                    "type": "clock", 
+                    "name": "in_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "in_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
                 }
-            ], 
-            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            ],
+            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60",
             "name": "bsg_source_sync_channel_control_master_out_clk_30_FO4_in_clk_60_FO4"
-        }, 
+        },
         {
             "constraints": [
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_reset_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calibration_state_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calibration_state_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calib_prepare_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calib_prepare_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_channel_blessed_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_channel_blessed_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_is_posedge_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_is_posedge_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_reset_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_neg_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_neg_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_pos_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_pos_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_en_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_en_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_valid_data_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_valid_data_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_test_pass_r_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_test_pass_r_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_infinite_credits_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_infinite_credits_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "name": "out_clk", 
-                    "period_in_num_of_FO4": "40", 
-                    "port": "out_clk_i", 
-                    "type": "clock", 
+                    "name": "out_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "out_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
-                }, 
+                },
                 {
-                    "name": "in_clk", 
-                    "period_in_num_of_FO4": "30", 
-                    "port": "in_clk_i", 
-                    "type": "clock", 
+                    "name": "in_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "in_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
                 }
-            ], 
-            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            ],
+            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30",
             "name": "bsg_source_sync_channel_control_master_out_clk_40_FO4_in_clk_30_FO4"
-        }, 
+        },
         {
             "constraints": [
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_reset_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calibration_state_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calibration_state_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calib_prepare_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calib_prepare_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_channel_blessed_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_channel_blessed_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_is_posedge_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_is_posedge_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_reset_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_neg_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_neg_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_pos_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_pos_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_en_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_en_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_valid_data_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_valid_data_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_test_pass_r_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_test_pass_r_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_infinite_credits_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_infinite_credits_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "name": "out_clk", 
-                    "period_in_num_of_FO4": "40", 
-                    "port": "out_clk_i", 
-                    "type": "clock", 
+                    "name": "out_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "out_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
-                }, 
+                },
                 {
-                    "name": "in_clk", 
-                    "period_in_num_of_FO4": "40", 
-                    "port": "in_clk_i", 
-                    "type": "clock", 
+                    "name": "in_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "in_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
                 }
-            ], 
-            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            ],
+            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40",
             "name": "bsg_source_sync_channel_control_master_out_clk_40_FO4_in_clk_40_FO4"
-        }, 
+        },
         {
             "constraints": [
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_reset_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calibration_state_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calibration_state_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calib_prepare_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calib_prepare_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_channel_blessed_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_channel_blessed_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_is_posedge_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_is_posedge_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_reset_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_neg_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_neg_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_pos_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_pos_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_en_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_en_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_valid_data_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_valid_data_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_test_pass_r_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_test_pass_r_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_infinite_credits_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_infinite_credits_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "name": "out_clk", 
-                    "period_in_num_of_FO4": "40", 
-                    "port": "out_clk_i", 
-                    "type": "clock", 
+                    "name": "out_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "out_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
-                }, 
+                },
                 {
-                    "name": "in_clk", 
-                    "period_in_num_of_FO4": "50", 
-                    "port": "in_clk_i", 
-                    "type": "clock", 
+                    "name": "in_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "in_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
                 }
-            ], 
-            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            ],
+            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50",
             "name": "bsg_source_sync_channel_control_master_out_clk_40_FO4_in_clk_50_FO4"
-        }, 
+        },
         {
             "constraints": [
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_reset_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calibration_state_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calibration_state_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calib_prepare_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calib_prepare_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_channel_blessed_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_channel_blessed_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_is_posedge_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_is_posedge_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_reset_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_neg_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_neg_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_pos_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_pos_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_en_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_en_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_valid_data_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_valid_data_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_test_pass_r_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_test_pass_r_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_infinite_credits_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_infinite_credits_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "name": "out_clk", 
-                    "period_in_num_of_FO4": "40", 
-                    "port": "out_clk_i", 
-                    "type": "clock", 
+                    "name": "out_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "out_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
-                }, 
+                },
                 {
-                    "name": "in_clk", 
-                    "period_in_num_of_FO4": "60", 
-                    "port": "in_clk_i", 
-                    "type": "clock", 
+                    "name": "in_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "in_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
                 }
-            ], 
-            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            ],
+            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60",
             "name": "bsg_source_sync_channel_control_master_out_clk_40_FO4_in_clk_60_FO4"
-        }, 
+        },
         {
             "constraints": [
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_reset_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calibration_state_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calibration_state_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calib_prepare_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calib_prepare_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_channel_blessed_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_channel_blessed_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_is_posedge_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_is_posedge_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_reset_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_neg_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_neg_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_pos_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_pos_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_en_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_en_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_valid_data_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_valid_data_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_test_pass_r_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_test_pass_r_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_infinite_credits_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_infinite_credits_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "name": "out_clk", 
-                    "period_in_num_of_FO4": "50", 
-                    "port": "out_clk_i", 
-                    "type": "clock", 
+                    "name": "out_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "out_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
-                }, 
+                },
                 {
-                    "name": "in_clk", 
-                    "period_in_num_of_FO4": "30", 
-                    "port": "in_clk_i", 
-                    "type": "clock", 
+                    "name": "in_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "in_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
                 }
-            ], 
-            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            ],
+            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30",
             "name": "bsg_source_sync_channel_control_master_out_clk_50_FO4_in_clk_30_FO4"
-        }, 
+        },
         {
             "constraints": [
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_reset_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calibration_state_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calibration_state_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calib_prepare_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calib_prepare_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_channel_blessed_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_channel_blessed_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_is_posedge_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_is_posedge_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_reset_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_neg_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_neg_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_pos_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_pos_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_en_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_en_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_valid_data_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_valid_data_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_test_pass_r_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_test_pass_r_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_infinite_credits_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_infinite_credits_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "name": "out_clk", 
-                    "period_in_num_of_FO4": "50", 
-                    "port": "out_clk_i", 
-                    "type": "clock", 
+                    "name": "out_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "out_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
-                }, 
+                },
                 {
-                    "name": "in_clk", 
-                    "period_in_num_of_FO4": "40", 
-                    "port": "in_clk_i", 
-                    "type": "clock", 
+                    "name": "in_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "in_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
                 }
-            ], 
-            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            ],
+            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40",
             "name": "bsg_source_sync_channel_control_master_out_clk_50_FO4_in_clk_40_FO4"
-        }, 
+        },
         {
             "constraints": [
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_reset_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calibration_state_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calibration_state_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calib_prepare_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calib_prepare_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_channel_blessed_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_channel_blessed_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_is_posedge_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_is_posedge_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_reset_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_neg_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_neg_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_pos_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_pos_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_en_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_en_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_valid_data_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_valid_data_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_test_pass_r_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_test_pass_r_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_infinite_credits_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_infinite_credits_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "name": "out_clk", 
-                    "period_in_num_of_FO4": "50", 
-                    "port": "out_clk_i", 
-                    "type": "clock", 
+                    "name": "out_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "out_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
-                }, 
+                },
                 {
-                    "name": "in_clk", 
-                    "period_in_num_of_FO4": "50", 
-                    "port": "in_clk_i", 
-                    "type": "clock", 
+                    "name": "in_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "in_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
                 }
-            ], 
-            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            ],
+            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50",
             "name": "bsg_source_sync_channel_control_master_out_clk_50_FO4_in_clk_50_FO4"
-        }, 
+        },
         {
             "constraints": [
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_reset_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calibration_state_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calibration_state_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calib_prepare_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calib_prepare_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_channel_blessed_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_channel_blessed_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_is_posedge_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_is_posedge_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_reset_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_neg_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_neg_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_pos_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_pos_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_en_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_en_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_valid_data_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_valid_data_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_test_pass_r_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_test_pass_r_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_infinite_credits_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_infinite_credits_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "name": "out_clk", 
-                    "period_in_num_of_FO4": "50", 
-                    "port": "out_clk_i", 
-                    "type": "clock", 
+                    "name": "out_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "out_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
-                }, 
+                },
                 {
-                    "name": "in_clk", 
-                    "period_in_num_of_FO4": "60", 
-                    "port": "in_clk_i", 
-                    "type": "clock", 
+                    "name": "in_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "in_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
                 }
-            ], 
-            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            ],
+            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60",
             "name": "bsg_source_sync_channel_control_master_out_clk_50_FO4_in_clk_60_FO4"
-        }, 
+        },
         {
             "constraints": [
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_reset_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calibration_state_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calibration_state_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calib_prepare_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calib_prepare_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_channel_blessed_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_channel_blessed_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_is_posedge_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_is_posedge_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_reset_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_neg_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_neg_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_pos_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_pos_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_en_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_en_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_valid_data_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_valid_data_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_test_pass_r_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_test_pass_r_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_infinite_credits_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_infinite_credits_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "name": "out_clk", 
-                    "period_in_num_of_FO4": "60", 
-                    "port": "out_clk_i", 
-                    "type": "clock", 
+                    "name": "out_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "out_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
-                }, 
+                },
                 {
-                    "name": "in_clk", 
-                    "period_in_num_of_FO4": "30", 
-                    "port": "in_clk_i", 
-                    "type": "clock", 
+                    "name": "in_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "in_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
                 }
-            ], 
-            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            ],
+            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30",
             "name": "bsg_source_sync_channel_control_master_out_clk_60_FO4_in_clk_30_FO4"
-        }, 
+        },
         {
             "constraints": [
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_reset_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calibration_state_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calibration_state_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calib_prepare_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calib_prepare_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_channel_blessed_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_channel_blessed_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_is_posedge_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_is_posedge_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_reset_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_neg_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_neg_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_pos_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_pos_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_en_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_en_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_valid_data_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_valid_data_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_test_pass_r_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_test_pass_r_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_infinite_credits_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_infinite_credits_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "name": "out_clk", 
-                    "period_in_num_of_FO4": "60", 
-                    "port": "out_clk_i", 
-                    "type": "clock", 
+                    "name": "out_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "out_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
-                }, 
+                },
                 {
-                    "name": "in_clk", 
-                    "period_in_num_of_FO4": "40", 
-                    "port": "in_clk_i", 
-                    "type": "clock", 
+                    "name": "in_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "in_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
                 }
-            ], 
-            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            ],
+            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40",
             "name": "bsg_source_sync_channel_control_master_out_clk_60_FO4_in_clk_40_FO4"
-        }, 
+        },
         {
             "constraints": [
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_reset_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calibration_state_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calibration_state_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calib_prepare_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calib_prepare_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_channel_blessed_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_channel_blessed_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_is_posedge_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_is_posedge_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_reset_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_neg_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_neg_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_pos_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_pos_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_en_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_en_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_valid_data_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_valid_data_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_test_pass_r_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_test_pass_r_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_infinite_credits_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_infinite_credits_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "name": "out_clk", 
-                    "period_in_num_of_FO4": "60", 
-                    "port": "out_clk_i", 
-                    "type": "clock", 
+                    "name": "out_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "out_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
-                }, 
+                },
                 {
-                    "name": "in_clk", 
-                    "period_in_num_of_FO4": "50", 
-                    "port": "in_clk_i", 
-                    "type": "clock", 
+                    "name": "in_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "in_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
                 }
-            ], 
-            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            ],
+            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50",
             "name": "bsg_source_sync_channel_control_master_out_clk_60_FO4_in_clk_50_FO4"
-        }, 
+        },
         {
             "constraints": [
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_reset_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calibration_state_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calibration_state_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_calib_prepare_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_calib_prepare_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_channel_blessed_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_channel_blessed_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_is_posedge_i", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_is_posedge_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_reset_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_reset_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_neg_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_neg_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "in_clk", 
-                    "delay": "0", 
-                    "port": "in_snoop_valid_data_pos_i", 
+                    "clock": "in_clk",
+                    "delay": "0",
+                    "port": "in_snoop_valid_data_pos_i",
                     "type": "input"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_en_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_en_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_override_valid_data_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_override_valid_data_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_test_pass_r_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_test_pass_r_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "clock": "out_clk", 
-                    "delay": "0", 
-                    "port": "out_infinite_credits_o", 
+                    "clock": "out_clk",
+                    "delay": "0",
+                    "port": "out_infinite_credits_o",
                     "type": "output"
-                }, 
+                },
                 {
-                    "name": "out_clk", 
-                    "period_in_num_of_FO4": "60", 
-                    "port": "out_clk_i", 
-                    "type": "clock", 
+                    "name": "out_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "out_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
-                }, 
+                },
                 {
-                    "name": "in_clk", 
-                    "period_in_num_of_FO4": "60", 
-                    "port": "in_clk_i", 
-                    "type": "clock", 
+                    "name": "in_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "in_clk_i",
+                    "type": "clock",
                     "uncertainty": "0"
                 }
-            ], 
-            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            ],
+            "description": "a FPGA calibration module with size  at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60",
             "name": "bsg_source_sync_channel_control_master_out_clk_60_FO4_in_clk_60_FO4"
         }
     ]

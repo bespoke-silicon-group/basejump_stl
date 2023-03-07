@@ -976,6 +976,6 @@
         }
     ],
     "include_path": [
-        "basejump_stl/bsg_misc/bsg_defines.v"
+        "basejump_stl/bsg_misc/"
     ]
 }
