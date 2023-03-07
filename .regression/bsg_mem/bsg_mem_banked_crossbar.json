@@ -1,6 +1,6 @@
 {
-    "design_name":"bsg_mem_banked_crossbar",
-    "filelist":[
+    "design_name": "bsg_mem_banked_crossbar",
+    "filelist": [
         "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_mem/bsg_mem_banked_crossbar.v",
         "basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_byte.v",
@@ -19,33 +19,33 @@
         "basejump_stl/bsg_misc/bsg_crossbar_o_by_i.v",
         "basejump_stl/bsg_misc/bsg_mux_one_hot.v"
     ],
-    "run_config":[
+    "run_config": [
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"30",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with small size at a clock period (in num of FO4) = 30",
-            "design_size":"small",
-            "name":"bsg_mem_banked_crossbar_small_clk_30_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with small size at a clock period (in num of FO4) = 30",
+            "design_size": "small",
+            "name": "bsg_mem_banked_crossbar_small_clk_30_FO4",
+            "parameters": [
                 "data_width_p=16",
                 "num_ports_p=2",
                 "num_banks_p=2",
@@ -53,31 +53,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"40",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with small size at a clock period (in num of FO4) = 40",
-            "design_size":"small",
-            "name":"bsg_mem_banked_crossbar_small_clk_40_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with small size at a clock period (in num of FO4) = 40",
+            "design_size": "small",
+            "name": "bsg_mem_banked_crossbar_small_clk_40_FO4",
+            "parameters": [
                 "data_width_p=16",
                 "num_ports_p=2",
                 "num_banks_p=2",
@@ -85,31 +85,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"50",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with small size at a clock period (in num of FO4) = 50",
-            "design_size":"small",
-            "name":"bsg_mem_banked_crossbar_small_clk_50_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with small size at a clock period (in num of FO4) = 50",
+            "design_size": "small",
+            "name": "bsg_mem_banked_crossbar_small_clk_50_FO4",
+            "parameters": [
                 "data_width_p=16",
                 "num_ports_p=2",
                 "num_banks_p=2",
@@ -117,31 +117,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"60",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with small size at a clock period (in num of FO4) = 60",
-            "design_size":"small",
-            "name":"bsg_mem_banked_crossbar_small_clk_60_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with small size at a clock period (in num of FO4) = 60",
+            "design_size": "small",
+            "name": "bsg_mem_banked_crossbar_small_clk_60_FO4",
+            "parameters": [
                 "data_width_p=16",
                 "num_ports_p=2",
                 "num_banks_p=2",
@@ -149,31 +149,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"70",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "70",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with small size at a clock period (in num of FO4) = 70",
-            "design_size":"small",
-            "name":"bsg_mem_banked_crossbar_small_clk_70_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with small size at a clock period (in num of FO4) = 70",
+            "design_size": "small",
+            "name": "bsg_mem_banked_crossbar_small_clk_70_FO4",
+            "parameters": [
                 "data_width_p=16",
                 "num_ports_p=2",
                 "num_banks_p=2",
@@ -181,31 +181,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"80",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "80",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with small size at a clock period (in num of FO4) = 80",
-            "design_size":"small",
-            "name":"bsg_mem_banked_crossbar_small_clk_80_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with small size at a clock period (in num of FO4) = 80",
+            "design_size": "small",
+            "name": "bsg_mem_banked_crossbar_small_clk_80_FO4",
+            "parameters": [
                 "data_width_p=16",
                 "num_ports_p=2",
                 "num_banks_p=2",
@@ -213,31 +213,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"90",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "90",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with small size at a clock period (in num of FO4) = 90",
-            "design_size":"small",
-            "name":"bsg_mem_banked_crossbar_small_clk_90_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with small size at a clock period (in num of FO4) = 90",
+            "design_size": "small",
+            "name": "bsg_mem_banked_crossbar_small_clk_90_FO4",
+            "parameters": [
                 "data_width_p=16",
                 "num_ports_p=2",
                 "num_banks_p=2",
@@ -245,31 +245,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"100",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "100",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with small size at a clock period (in num of FO4) = 100",
-            "design_size":"small",
-            "name":"bsg_mem_banked_crossbar_small_clk_100_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with small size at a clock period (in num of FO4) = 100",
+            "design_size": "small",
+            "name": "bsg_mem_banked_crossbar_small_clk_100_FO4",
+            "parameters": [
                 "data_width_p=16",
                 "num_ports_p=2",
                 "num_banks_p=2",
@@ -277,31 +277,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"30",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with large size at a clock period (in num of FO4) = 30",
-            "design_size":"large",
-            "name":"bsg_mem_banked_crossbar_large_clk_30_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with large size at a clock period (in num of FO4) = 30",
+            "design_size": "large",
+            "name": "bsg_mem_banked_crossbar_large_clk_30_FO4",
+            "parameters": [
                 "data_width_p=64",
                 "num_ports_p=4",
                 "num_banks_p=8",
@@ -309,31 +309,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"40",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with large size at a clock period (in num of FO4) = 40",
-            "design_size":"large",
-            "name":"bsg_mem_banked_crossbar_large_clk_40_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with large size at a clock period (in num of FO4) = 40",
+            "design_size": "large",
+            "name": "bsg_mem_banked_crossbar_large_clk_40_FO4",
+            "parameters": [
                 "data_width_p=64",
                 "num_ports_p=4",
                 "num_banks_p=8",
@@ -341,31 +341,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"50",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with large size at a clock period (in num of FO4) = 50",
-            "design_size":"large",
-            "name":"bsg_mem_banked_crossbar_large_clk_50_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with large size at a clock period (in num of FO4) = 50",
+            "design_size": "large",
+            "name": "bsg_mem_banked_crossbar_large_clk_50_FO4",
+            "parameters": [
                 "data_width_p=64",
                 "num_ports_p=4",
                 "num_banks_p=8",
@@ -373,31 +373,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"60",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with large size at a clock period (in num of FO4) = 60",
-            "design_size":"large",
-            "name":"bsg_mem_banked_crossbar_large_clk_60_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with large size at a clock period (in num of FO4) = 60",
+            "design_size": "large",
+            "name": "bsg_mem_banked_crossbar_large_clk_60_FO4",
+            "parameters": [
                 "data_width_p=64",
                 "num_ports_p=4",
                 "num_banks_p=8",
@@ -405,31 +405,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"70",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "70",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with large size at a clock period (in num of FO4) = 70",
-            "design_size":"large",
-            "name":"bsg_mem_banked_crossbar_large_clk_70_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with large size at a clock period (in num of FO4) = 70",
+            "design_size": "large",
+            "name": "bsg_mem_banked_crossbar_large_clk_70_FO4",
+            "parameters": [
                 "data_width_p=64",
                 "num_ports_p=4",
                 "num_banks_p=8",
@@ -437,31 +437,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"80",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "80",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with large size at a clock period (in num of FO4) = 80",
-            "design_size":"large",
-            "name":"bsg_mem_banked_crossbar_large_clk_80_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with large size at a clock period (in num of FO4) = 80",
+            "design_size": "large",
+            "name": "bsg_mem_banked_crossbar_large_clk_80_FO4",
+            "parameters": [
                 "data_width_p=64",
                 "num_ports_p=4",
                 "num_banks_p=8",
@@ -469,31 +469,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"90",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "90",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with large size at a clock period (in num of FO4) = 90",
-            "design_size":"large",
-            "name":"bsg_mem_banked_crossbar_large_clk_90_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with large size at a clock period (in num of FO4) = 90",
+            "design_size": "large",
+            "name": "bsg_mem_banked_crossbar_large_clk_90_FO4",
+            "parameters": [
                 "data_width_p=64",
                 "num_ports_p=4",
                 "num_banks_p=8",
@@ -501,31 +501,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"100",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "100",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with large size at a clock period (in num of FO4) = 100",
-            "design_size":"large",
-            "name":"bsg_mem_banked_crossbar_large_clk_100_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with large size at a clock period (in num of FO4) = 100",
+            "design_size": "large",
+            "name": "bsg_mem_banked_crossbar_large_clk_100_FO4",
+            "parameters": [
                 "data_width_p=64",
                 "num_ports_p=4",
                 "num_banks_p=8",
@@ -533,31 +533,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"30",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with very_large size at a clock period (in num of FO4) = 30",
-            "design_size":"very_large",
-            "name":"bsg_mem_banked_crossbar_very_large_clk_30_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with very_large size at a clock period (in num of FO4) = 30",
+            "design_size": "very_large",
+            "name": "bsg_mem_banked_crossbar_very_large_clk_30_FO4",
+            "parameters": [
                 "data_width_p=128",
                 "num_ports_p=4",
                 "num_banks_p=8",
@@ -565,31 +565,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"40",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with very_large size at a clock period (in num of FO4) = 40",
-            "design_size":"very_large",
-            "name":"bsg_mem_banked_crossbar_very_large_clk_40_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with very_large size at a clock period (in num of FO4) = 40",
+            "design_size": "very_large",
+            "name": "bsg_mem_banked_crossbar_very_large_clk_40_FO4",
+            "parameters": [
                 "data_width_p=128",
                 "num_ports_p=4",
                 "num_banks_p=8",
@@ -597,31 +597,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"50",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with very_large size at a clock period (in num of FO4) = 50",
-            "design_size":"very_large",
-            "name":"bsg_mem_banked_crossbar_very_large_clk_50_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with very_large size at a clock period (in num of FO4) = 50",
+            "design_size": "very_large",
+            "name": "bsg_mem_banked_crossbar_very_large_clk_50_FO4",
+            "parameters": [
                 "data_width_p=128",
                 "num_ports_p=4",
                 "num_banks_p=8",
@@ -629,31 +629,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"60",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with very_large size at a clock period (in num of FO4) = 60",
-            "design_size":"very_large",
-            "name":"bsg_mem_banked_crossbar_very_large_clk_60_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with very_large size at a clock period (in num of FO4) = 60",
+            "design_size": "very_large",
+            "name": "bsg_mem_banked_crossbar_very_large_clk_60_FO4",
+            "parameters": [
                 "data_width_p=128",
                 "num_ports_p=4",
                 "num_banks_p=8",
@@ -661,31 +661,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"70",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "70",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with very_large size at a clock period (in num of FO4) = 70",
-            "design_size":"very_large",
-            "name":"bsg_mem_banked_crossbar_very_large_clk_70_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with very_large size at a clock period (in num of FO4) = 70",
+            "design_size": "very_large",
+            "name": "bsg_mem_banked_crossbar_very_large_clk_70_FO4",
+            "parameters": [
                 "data_width_p=128",
                 "num_ports_p=4",
                 "num_banks_p=8",
@@ -693,31 +693,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"80",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "80",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with very_large size at a clock period (in num of FO4) = 80",
-            "design_size":"very_large",
-            "name":"bsg_mem_banked_crossbar_very_large_clk_80_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with very_large size at a clock period (in num of FO4) = 80",
+            "design_size": "very_large",
+            "name": "bsg_mem_banked_crossbar_very_large_clk_80_FO4",
+            "parameters": [
                 "data_width_p=128",
                 "num_ports_p=4",
                 "num_banks_p=8",
@@ -725,31 +725,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"90",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "90",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with very_large size at a clock period (in num of FO4) = 90",
-            "design_size":"very_large",
-            "name":"bsg_mem_banked_crossbar_very_large_clk_90_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with very_large size at a clock period (in num of FO4) = 90",
+            "design_size": "very_large",
+            "name": "bsg_mem_banked_crossbar_very_large_clk_90_FO4",
+            "parameters": [
                 "data_width_p=128",
                 "num_ports_p=4",
                 "num_banks_p=8",
@@ -757,31 +757,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"100",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "100",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with very_large size at a clock period (in num of FO4) = 100",
-            "design_size":"very_large",
-            "name":"bsg_mem_banked_crossbar_very_large_clk_100_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with very_large size at a clock period (in num of FO4) = 100",
+            "design_size": "very_large",
+            "name": "bsg_mem_banked_crossbar_very_large_clk_100_FO4",
+            "parameters": [
                 "data_width_p=128",
                 "num_ports_p=4",
                 "num_banks_p=8",
@@ -789,31 +789,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"30",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with medium size at a clock period (in num of FO4) = 30",
-            "design_size":"medium",
-            "name":"bsg_mem_banked_crossbar_medium_clk_30_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with medium size at a clock period (in num of FO4) = 30",
+            "design_size": "medium",
+            "name": "bsg_mem_banked_crossbar_medium_clk_30_FO4",
+            "parameters": [
                 "data_width_p=32",
                 "num_ports_p=2",
                 "num_banks_p=2",
@@ -821,31 +821,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"40",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with medium size at a clock period (in num of FO4) = 40",
-            "design_size":"medium",
-            "name":"bsg_mem_banked_crossbar_medium_clk_40_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with medium size at a clock period (in num of FO4) = 40",
+            "design_size": "medium",
+            "name": "bsg_mem_banked_crossbar_medium_clk_40_FO4",
+            "parameters": [
                 "data_width_p=32",
                 "num_ports_p=2",
                 "num_banks_p=2",
@@ -853,31 +853,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"50",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with medium size at a clock period (in num of FO4) = 50",
-            "design_size":"medium",
-            "name":"bsg_mem_banked_crossbar_medium_clk_50_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with medium size at a clock period (in num of FO4) = 50",
+            "design_size": "medium",
+            "name": "bsg_mem_banked_crossbar_medium_clk_50_FO4",
+            "parameters": [
                 "data_width_p=32",
                 "num_ports_p=2",
                 "num_banks_p=2",
@@ -885,31 +885,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"60",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with medium size at a clock period (in num of FO4) = 60",
-            "design_size":"medium",
-            "name":"bsg_mem_banked_crossbar_medium_clk_60_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with medium size at a clock period (in num of FO4) = 60",
+            "design_size": "medium",
+            "name": "bsg_mem_banked_crossbar_medium_clk_60_FO4",
+            "parameters": [
                 "data_width_p=32",
                 "num_ports_p=2",
                 "num_banks_p=2",
@@ -917,31 +917,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"70",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "70",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with medium size at a clock period (in num of FO4) = 70",
-            "design_size":"medium",
-            "name":"bsg_mem_banked_crossbar_medium_clk_70_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with medium size at a clock period (in num of FO4) = 70",
+            "design_size": "medium",
+            "name": "bsg_mem_banked_crossbar_medium_clk_70_FO4",
+            "parameters": [
                 "data_width_p=32",
                 "num_ports_p=2",
                 "num_banks_p=2",
@@ -949,31 +949,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"80",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "80",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with medium size at a clock period (in num of FO4) = 80",
-            "design_size":"medium",
-            "name":"bsg_mem_banked_crossbar_medium_clk_80_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with medium size at a clock period (in num of FO4) = 80",
+            "design_size": "medium",
+            "name": "bsg_mem_banked_crossbar_medium_clk_80_FO4",
+            "parameters": [
                 "data_width_p=32",
                 "num_ports_p=2",
                 "num_banks_p=2",
@@ -981,31 +981,31 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"90",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "90",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with medium size at a clock period (in num of FO4) = 90",
-            "design_size":"medium",
-            "name":"bsg_mem_banked_crossbar_medium_clk_90_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with medium size at a clock period (in num of FO4) = 90",
+            "design_size": "medium",
+            "name": "bsg_mem_banked_crossbar_medium_clk_90_FO4",
+            "parameters": [
                 "data_width_p=32",
                 "num_ports_p=2",
                 "num_banks_p=2",
@@ -1013,36 +1013,39 @@
             ]
         },
         {
-            "constraints":[
+            "constraints": [
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"input"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
                 },
                 {
-                    "clock":"clk",
-                    "delay":"0",
-                    "port":"all",
-                    "type":"output"
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
                 },
                 {
-                    "name":"clk",
-                    "period_in_num_of_FO4":"100",
-                    "port":"clk_i",
-                    "type":"clock",
-                    "uncertainty":"0"
+                    "name": "clk",
+                    "period_in_num_of_FO4": "100",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
                 }
             ],
-            "description":"bank mem banked crossbar with medium size at a clock period (in num of FO4) = 100",
-            "design_size":"medium",
-            "name":"bsg_mem_banked_crossbar_medium_clk_100_FO4",
-            "parameters":[
+            "description": "bank mem banked crossbar with medium size at a clock period (in num of FO4) = 100",
+            "design_size": "medium",
+            "name": "bsg_mem_banked_crossbar_medium_clk_100_FO4",
+            "parameters": [
                 "data_width_p=32",
                 "num_ports_p=2",
                 "num_banks_p=2",
                 "rr_lo_hi_p=1"
             ]
         }
+    ],
+    "include_path": [
+        "basejump_stl/bsg_misc/bsg_defines.v"
     ]
 }

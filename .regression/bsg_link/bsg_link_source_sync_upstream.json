@@ -1,18 +1,21 @@
 {
-    "design_name": "bsg_link_source_sync_upstream", 
+    "design_name": "bsg_link_source_sync_upstream",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v", 
-        "basejump_stl/bsg_link/bsg_link_source_sync_upstream.v", 
-        "basejump_stl/bsg_async/bsg_async_fifo.v", 
-        "basejump_stl/bsg_mem/bsg_mem_1r1w.v", 
-        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v", 
-        "basejump_stl/bsg_async/bsg_async_ptr_gray.v", 
-        "basejump_stl/bsg_async/bsg_launch_sync_sync.v", 
-        "basejump_stl/bsg_dataflow/bsg_two_fifo.v", 
-        "basejump_stl/bsg_misc/bsg_counter_clear_up.v", 
-        "basejump_stl/bsg_async/bsg_async_credit_counter.v", 
-        "basejump_stl/bsg_misc/bsg_gray_to_binary.v", 
+        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_link/bsg_link_source_sync_upstream.v",
+        "basejump_stl/bsg_async/bsg_async_fifo.v",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w.v",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v",
+        "basejump_stl/bsg_async/bsg_async_ptr_gray.v",
+        "basejump_stl/bsg_async/bsg_launch_sync_sync.v",
+        "basejump_stl/bsg_dataflow/bsg_two_fifo.v",
+        "basejump_stl/bsg_misc/bsg_counter_clear_up.v",
+        "basejump_stl/bsg_async/bsg_async_credit_counter.v",
+        "basejump_stl/bsg_misc/bsg_gray_to_binary.v",
         "basejump_stl/bsg_misc/bsg_scan.v"
-    ], 
-    "run_config": []
+    ],
+    "run_config": [],
+    "include_path": [
+        "basejump_stl/bsg_misc/bsg_defines.v"
+    ]
 }

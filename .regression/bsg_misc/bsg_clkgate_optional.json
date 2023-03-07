@@ -1,8 +1,11 @@
 {
-    "design_name": "bsg_clkgate_optional", 
+    "design_name": "bsg_clkgate_optional",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_clkgate_optional.v", 
+        "basejump_stl/bsg_misc/bsg_clkgate_optional.v",
         "basejump_stl/bsg_misc/bsg_dlatch.v"
-    ], 
-    "run_config": []
+    ],
+    "run_config": [],
+    "include_path": [
+        "basejump_stl/bsg_misc/bsg_defines.v"
+    ]
 }
