@@ -3,7 +3,6 @@
     "filelist": [
         "basejump_stl/bsg_fpu/bsg_fpu_defines.vh",
         "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_fpu/bsg_fpu_pkg.v",
         "basejump_stl/bsg_fpu/bsg_fpu_cmp.v",
         "basejump_stl/bsg_fpu/bsg_fpu_preprocess.v",
         "basejump_stl/bsg_misc/bsg_less_than.v"

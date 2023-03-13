@@ -1,7 +1,6 @@
 {
     "design_name": "bsg_fpu_i2f",
     "filelist": [
-        "basejump_stl/bsg_fpu/bsg_fpu_pkg.v",
         "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_fpu/bsg_fpu_i2f.v",
         "basejump_stl/bsg_fpu/bsg_fpu_preprocess.v",
