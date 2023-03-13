@@ -31,7 +31,7 @@
             "design_size": "small",
             "name": "bsg_scatter_gather_small_vclk_30_FO4",
             "parameters": [
-                "vec_size_lp=16"
+                "vec_size_lp=4"
             ]
         },
         {
@@ -60,7 +60,7 @@
             "design_size": "small",
             "name": "bsg_scatter_gather_small_vclk_40_FO4",
             "parameters": [
-                "vec_size_lp=16"
+                "vec_size_lp=4"
             ]
         },
         {
@@ -89,7 +89,7 @@
             "design_size": "small",
             "name": "bsg_scatter_gather_small_vclk_50_FO4",
             "parameters": [
-                "vec_size_lp=16"
+                "vec_size_lp=4"
             ]
         },
         {
@@ -118,7 +118,7 @@
             "design_size": "small",
             "name": "bsg_scatter_gather_small_vclk_60_FO4",
             "parameters": [
-                "vec_size_lp=16"
+                "vec_size_lp=4"
             ]
         },
         {
@@ -147,7 +147,7 @@
             "design_size": "small",
             "name": "bsg_scatter_gather_small_vclk_70_FO4",
             "parameters": [
-                "vec_size_lp=16"
+                "vec_size_lp=4"
             ]
         },
         {
@@ -176,7 +176,7 @@
             "design_size": "small",
             "name": "bsg_scatter_gather_small_vclk_80_FO4",
             "parameters": [
-                "vec_size_lp=16"
+                "vec_size_lp=4"
             ]
         },
         {
@@ -205,7 +205,7 @@
             "design_size": "small",
             "name": "bsg_scatter_gather_small_vclk_90_FO4",
             "parameters": [
-                "vec_size_lp=16"
+                "vec_size_lp=4"
             ]
         },
         {
@@ -234,7 +234,7 @@
             "design_size": "small",
             "name": "bsg_scatter_gather_small_vclk_100_FO4",
             "parameters": [
-                "vec_size_lp=16"
+                "vec_size_lp=4"
             ]
         },
         {
@@ -263,7 +263,7 @@
             "design_size": "large",
             "name": "bsg_scatter_gather_large_vclk_30_FO4",
             "parameters": [
-                "vec_size_lp=64"
+                "vec_size_lp=11"
             ]
         },
         {
@@ -292,7 +292,7 @@
             "design_size": "large",
             "name": "bsg_scatter_gather_large_vclk_40_FO4",
             "parameters": [
-                "vec_size_lp=64"
+                "vec_size_lp=11"
             ]
         },
         {
@@ -321,7 +321,7 @@
             "design_size": "large",
             "name": "bsg_scatter_gather_large_vclk_50_FO4",
             "parameters": [
-                "vec_size_lp=64"
+                "vec_size_lp=11"
             ]
         },
         {
@@ -350,7 +350,7 @@
             "design_size": "large",
             "name": "bsg_scatter_gather_large_vclk_60_FO4",
             "parameters": [
-                "vec_size_lp=64"
+                "vec_size_lp=11"
             ]
         },
         {
@@ -379,7 +379,7 @@
             "design_size": "large",
             "name": "bsg_scatter_gather_large_vclk_70_FO4",
             "parameters": [
-                "vec_size_lp=64"
+                "vec_size_lp=11"
             ]
         },
         {
@@ -408,7 +408,7 @@
             "design_size": "large",
             "name": "bsg_scatter_gather_large_vclk_80_FO4",
             "parameters": [
-                "vec_size_lp=64"
+                "vec_size_lp=11"
             ]
         },
         {
@@ -437,7 +437,7 @@
             "design_size": "large",
             "name": "bsg_scatter_gather_large_vclk_90_FO4",
             "parameters": [
-                "vec_size_lp=64"
+                "vec_size_lp=11"
             ]
         },
         {
@@ -466,239 +466,7 @@
             "design_size": "large",
             "name": "bsg_scatter_gather_large_vclk_100_FO4",
             "parameters": [
-                "vec_size_lp=64"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "clock": "vclk",
-                    "delay": "0",
-                    "port": "all",
-                    "type": "input"
-                },
-                {
-                    "clock": "vclk",
-                    "delay": "0",
-                    "port": "all",
-                    "type": "output"
-                },
-                {
-                    "name": "vclk",
-                    "period_in_num_of_FO4": "30",
-                    "port": "virtual",
-                    "type": "clock",
-                    "uncertainty": "0"
-                }
-            ],
-            "description": "Given a bit vector, generate permutation vectors that perform concentration with very_large size at a clock period (in num of FO4) = 30",
-            "design_size": "very_large",
-            "name": "bsg_scatter_gather_very_large_vclk_30_FO4",
-            "parameters": [
-                "vec_size_lp=128"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "clock": "vclk",
-                    "delay": "0",
-                    "port": "all",
-                    "type": "input"
-                },
-                {
-                    "clock": "vclk",
-                    "delay": "0",
-                    "port": "all",
-                    "type": "output"
-                },
-                {
-                    "name": "vclk",
-                    "period_in_num_of_FO4": "40",
-                    "port": "virtual",
-                    "type": "clock",
-                    "uncertainty": "0"
-                }
-            ],
-            "description": "Given a bit vector, generate permutation vectors that perform concentration with very_large size at a clock period (in num of FO4) = 40",
-            "design_size": "very_large",
-            "name": "bsg_scatter_gather_very_large_vclk_40_FO4",
-            "parameters": [
-                "vec_size_lp=128"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "clock": "vclk",
-                    "delay": "0",
-                    "port": "all",
-                    "type": "input"
-                },
-                {
-                    "clock": "vclk",
-                    "delay": "0",
-                    "port": "all",
-                    "type": "output"
-                },
-                {
-                    "name": "vclk",
-                    "period_in_num_of_FO4": "50",
-                    "port": "virtual",
-                    "type": "clock",
-                    "uncertainty": "0"
-                }
-            ],
-            "description": "Given a bit vector, generate permutation vectors that perform concentration with very_large size at a clock period (in num of FO4) = 50",
-            "design_size": "very_large",
-            "name": "bsg_scatter_gather_very_large_vclk_50_FO4",
-            "parameters": [
-                "vec_size_lp=128"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "clock": "vclk",
-                    "delay": "0",
-                    "port": "all",
-                    "type": "input"
-                },
-                {
-                    "clock": "vclk",
-                    "delay": "0",
-                    "port": "all",
-                    "type": "output"
-                },
-                {
-                    "name": "vclk",
-                    "period_in_num_of_FO4": "60",
-                    "port": "virtual",
-                    "type": "clock",
-                    "uncertainty": "0"
-                }
-            ],
-            "description": "Given a bit vector, generate permutation vectors that perform concentration with very_large size at a clock period (in num of FO4) = 60",
-            "design_size": "very_large",
-            "name": "bsg_scatter_gather_very_large_vclk_60_FO4",
-            "parameters": [
-                "vec_size_lp=128"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "clock": "vclk",
-                    "delay": "0",
-                    "port": "all",
-                    "type": "input"
-                },
-                {
-                    "clock": "vclk",
-                    "delay": "0",
-                    "port": "all",
-                    "type": "output"
-                },
-                {
-                    "name": "vclk",
-                    "period_in_num_of_FO4": "70",
-                    "port": "virtual",
-                    "type": "clock",
-                    "uncertainty": "0"
-                }
-            ],
-            "description": "Given a bit vector, generate permutation vectors that perform concentration with very_large size at a clock period (in num of FO4) = 70",
-            "design_size": "very_large",
-            "name": "bsg_scatter_gather_very_large_vclk_70_FO4",
-            "parameters": [
-                "vec_size_lp=128"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "clock": "vclk",
-                    "delay": "0",
-                    "port": "all",
-                    "type": "input"
-                },
-                {
-                    "clock": "vclk",
-                    "delay": "0",
-                    "port": "all",
-                    "type": "output"
-                },
-                {
-                    "name": "vclk",
-                    "period_in_num_of_FO4": "80",
-                    "port": "virtual",
-                    "type": "clock",
-                    "uncertainty": "0"
-                }
-            ],
-            "description": "Given a bit vector, generate permutation vectors that perform concentration with very_large size at a clock period (in num of FO4) = 80",
-            "design_size": "very_large",
-            "name": "bsg_scatter_gather_very_large_vclk_80_FO4",
-            "parameters": [
-                "vec_size_lp=128"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "clock": "vclk",
-                    "delay": "0",
-                    "port": "all",
-                    "type": "input"
-                },
-                {
-                    "clock": "vclk",
-                    "delay": "0",
-                    "port": "all",
-                    "type": "output"
-                },
-                {
-                    "name": "vclk",
-                    "period_in_num_of_FO4": "90",
-                    "port": "virtual",
-                    "type": "clock",
-                    "uncertainty": "0"
-                }
-            ],
-            "description": "Given a bit vector, generate permutation vectors that perform concentration with very_large size at a clock period (in num of FO4) = 90",
-            "design_size": "very_large",
-            "name": "bsg_scatter_gather_very_large_vclk_90_FO4",
-            "parameters": [
-                "vec_size_lp=128"
-            ]
-        },
-        {
-            "constraints": [
-                {
-                    "clock": "vclk",
-                    "delay": "0",
-                    "port": "all",
-                    "type": "input"
-                },
-                {
-                    "clock": "vclk",
-                    "delay": "0",
-                    "port": "all",
-                    "type": "output"
-                },
-                {
-                    "name": "vclk",
-                    "period_in_num_of_FO4": "100",
-                    "port": "virtual",
-                    "type": "clock",
-                    "uncertainty": "0"
-                }
-            ],
-            "description": "Given a bit vector, generate permutation vectors that perform concentration with very_large size at a clock period (in num of FO4) = 100",
-            "design_size": "very_large",
-            "name": "bsg_scatter_gather_very_large_vclk_100_FO4",
-            "parameters": [
-                "vec_size_lp=128"
+                "vec_size_lp=11"
             ]
         },
         {
@@ -727,7 +495,7 @@
             "design_size": "medium",
             "name": "bsg_scatter_gather_medium_vclk_30_FO4",
             "parameters": [
-                "vec_size_lp=32"
+                "vec_size_lp=8"
             ]
         },
         {
@@ -756,7 +524,7 @@
             "design_size": "medium",
             "name": "bsg_scatter_gather_medium_vclk_40_FO4",
             "parameters": [
-                "vec_size_lp=32"
+                "vec_size_lp=8"
             ]
         },
         {
@@ -785,7 +553,7 @@
             "design_size": "medium",
             "name": "bsg_scatter_gather_medium_vclk_50_FO4",
             "parameters": [
-                "vec_size_lp=32"
+                "vec_size_lp=8"
             ]
         },
         {
@@ -814,7 +582,7 @@
             "design_size": "medium",
             "name": "bsg_scatter_gather_medium_vclk_60_FO4",
             "parameters": [
-                "vec_size_lp=32"
+                "vec_size_lp=8"
             ]
         },
         {
@@ -843,7 +611,7 @@
             "design_size": "medium",
             "name": "bsg_scatter_gather_medium_vclk_70_FO4",
             "parameters": [
-                "vec_size_lp=32"
+                "vec_size_lp=8"
             ]
         },
         {
@@ -872,7 +640,7 @@
             "design_size": "medium",
             "name": "bsg_scatter_gather_medium_vclk_80_FO4",
             "parameters": [
-                "vec_size_lp=32"
+                "vec_size_lp=8"
             ]
         },
         {
@@ -901,7 +669,7 @@
             "design_size": "medium",
             "name": "bsg_scatter_gather_medium_vclk_90_FO4",
             "parameters": [
-                "vec_size_lp=32"
+                "vec_size_lp=8"
             ]
         },
         {
@@ -930,7 +698,7 @@
             "design_size": "medium",
             "name": "bsg_scatter_gather_medium_vclk_100_FO4",
             "parameters": [
-                "vec_size_lp=32"
+                "vec_size_lp=8"
             ]
         }
     ],
