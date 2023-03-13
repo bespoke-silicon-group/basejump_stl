@@ -1,7 +1,7 @@
 {
     "design_name": "bsg_encode_one_hot",
     "include_path": [
-        "basejump_stl/bsg_misc"
+        "basejump_stl/bsg_misc/"
     ],
     "filelist": [
         "basejump_stl/bsg_misc/bsg_defines.v",

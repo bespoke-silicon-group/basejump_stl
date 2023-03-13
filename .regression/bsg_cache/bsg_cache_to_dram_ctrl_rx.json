@@ -1,7 +1,7 @@
 {
     "design_name": "bsg_cache_to_dram_ctrl_rx",
     "include_path": [
-        "basejump_stl/bsg_misc"
+        "basejump_stl/bsg_misc/"
     ],
     "filelist": [
         "basejump_stl/bsg_misc/bsg_defines.v",

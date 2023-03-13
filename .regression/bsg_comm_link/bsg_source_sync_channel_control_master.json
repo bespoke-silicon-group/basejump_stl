@@ -6,7 +6,7 @@
         "basejump_stl/bsg_async/bsg_launch_sync_sync.v"
     ],
     "include_path": [
-        "basejump_stl/bsg_misc"
+        "basejump_stl/bsg_misc/"
     ],
     "run_config": [
         {

@@ -14,8 +14,8 @@
         "basejump_stl/bsg_misc/bsg_mux_one_hot.v"
     ],
     "include_path": [
-        "basejump_stl/bsg_noc",
-        "basejump_stl/bsg_noc/"
+        "basejump_stl/bsg_noc/",
+        "basejump_stl/bsg_misc/"
     ],
     "run_config": [
         {

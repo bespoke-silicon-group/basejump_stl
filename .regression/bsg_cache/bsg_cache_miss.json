@@ -7,7 +7,7 @@
         "basejump_stl/bsg_cache/bsg_cache_miss.v"
     ],
     "include_path": [
-        "basejump_stl/bsg_misc",
+        "basejump_stl/bsg_misc/",
         "basejump_stl/bsg_cache/"
     ],
     "run_config": [

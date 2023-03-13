@@ -935,7 +935,6 @@
         }
     ],
     "include_path": [
-        "basejump_stl/bsg_misc/",
-        "basejump_stl/bsg_misc"
+        "basejump_stl/bsg_misc/"
     ]
 }

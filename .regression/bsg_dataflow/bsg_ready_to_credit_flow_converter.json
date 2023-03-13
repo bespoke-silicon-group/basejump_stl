@@ -1,7 +1,7 @@
 {
     "design_name": "bsg_ready_to_credit_flow_converter",
     "include_path": [
-        "basejump_stl/bsg_misc"
+        "basejump_stl/bsg_misc/"
     ],
     "filelist": [
         "basejump_stl/bsg_misc/bsg_defines.v",
