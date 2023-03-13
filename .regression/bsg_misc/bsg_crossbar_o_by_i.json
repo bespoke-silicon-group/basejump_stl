@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_crossbar_o_by_i",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_crossbar_o_by_i.v",
         "basejump_stl/bsg_misc/bsg_mux_one_hot.v"
     ],

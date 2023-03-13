@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_dff_en",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_dff_en.v"
     ],
     "run_config": [

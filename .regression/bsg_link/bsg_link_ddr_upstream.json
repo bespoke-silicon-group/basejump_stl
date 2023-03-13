@@ -12,7 +12,6 @@
         "basejump_stl/bsg_async/bsg_async_fifo.v",
         "basejump_stl/bsg_async/bsg_async_ptr_gray.v",
         "basejump_stl/bsg_async/bsg_launch_sync_sync.v",
-        "basejump_stl/bsg_dataflow/bsg_two_fifo.v",
         "basejump_stl/bsg_misc/bsg_counter_clear_up.v",
         "basejump_stl/bsg_async/bsg_async_credit_counter.v",
         "basejump_stl/bsg_misc/bsg_gray_to_binary.v",

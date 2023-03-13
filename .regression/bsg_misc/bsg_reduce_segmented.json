@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_reduce_segmented",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_reduce_segmented.v"
     ],
     "run_config": [

@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_mesh_router_buffered",
     "filelist": [
+        "basejump_stl/bsg_noc/bsg_noc_links.vh",
         "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_noc/bsg_mesh_router_buffered.v",
         "basejump_stl/bsg_noc/bsg_mesh_router.v",
@@ -13,7 +14,8 @@
         "basejump_stl/bsg_misc/bsg_mux_one_hot.v"
     ],
     "include_path": [
-        "basejump_stl/bsg_noc"
+        "basejump_stl/bsg_noc",
+        "basejump_stl/bsg_noc/"
     ],
     "run_config": [
         {

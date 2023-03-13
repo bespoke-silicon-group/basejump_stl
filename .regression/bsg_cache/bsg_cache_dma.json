@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_cache_dma",
     "filelist": [
+        "basejump_stl/bsg_cache/bsg_cache.vh",
         "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_cache/bsg_cache_pkg.v",
         "basejump_stl/bsg_cache/bsg_cache.v",
@@ -25,7 +26,8 @@
         "basejump_stl/bsg_misc/bsg_dff_en.v"
     ],
     "include_path": [
-        "basejump_stl/bsg_misc"
+        "basejump_stl/bsg_misc",
+        "basejump_stl/bsg_cache/"
     ],
     "run_config": [
         {

@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_level_shift_up_down_sink",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_level_shift_up_down_sink.v"
     ],
     "run_config": [

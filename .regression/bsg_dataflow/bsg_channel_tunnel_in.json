@@ -25,8 +25,7 @@
         "basejump_stl/bsg_dataflow/bsg_fifo_1r1w_small_hardened.v",
         "basejump_stl/bsg_dataflow/bsg_fifo_1r1w_small_unhardened.v",
         "basejump_stl/bsg_mem/bsg_mem_1r1w_sync.v",
-        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync_synth.v",
-        "basejump_stl/bsg_misc/bsg_dff_en.v"
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_sync_synth.v"
     ],
     "run_config": [
         {

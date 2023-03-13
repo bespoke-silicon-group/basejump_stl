@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_expand_bitmask",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_expand_bitmask.v"
     ],
     "run_config": [

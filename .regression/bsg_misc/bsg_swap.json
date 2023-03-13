@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_swap",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_swap.v"
     ],
     "run_config": [

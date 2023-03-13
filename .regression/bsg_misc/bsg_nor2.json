@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_nor2",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_nor2.v"
     ],
     "run_config": [

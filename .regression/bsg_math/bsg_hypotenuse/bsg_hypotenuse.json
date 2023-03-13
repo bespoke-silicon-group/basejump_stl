@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_hypotenuse",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_math/bsg_hypotenuse/bsg_hypotenuse.v"
     ],
     "run_config": [

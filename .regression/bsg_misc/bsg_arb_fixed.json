@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_arb_fixed",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_arb_fixed.v",
         "basejump_stl/bsg_misc/bsg_priority_encode_one_hot_out.v",
         "basejump_stl/bsg_misc/bsg_scan.v"

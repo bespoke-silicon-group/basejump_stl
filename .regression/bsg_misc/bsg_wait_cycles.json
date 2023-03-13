@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_wait_cycles",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_wait_cycles.v"
     ],
     "run_config": [

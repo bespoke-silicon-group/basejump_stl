@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_permute_box",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_dataflow/bsg_permute_box.v"
     ],
     "run_config": [

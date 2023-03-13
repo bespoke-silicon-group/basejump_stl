@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_counter_set_down",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_counter_set_down.v"
     ],
     "run_config": [

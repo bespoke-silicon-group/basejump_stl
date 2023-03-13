@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_tielo",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_tielo.v"
     ],
     "run_config": [

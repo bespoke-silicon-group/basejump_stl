@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_locking_arb_fixed",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_locking_arb_fixed.v",
         "basejump_stl/bsg_misc/bsg_dff_reset_en.v",
         "basejump_stl/bsg_misc/bsg_arb_fixed.v",

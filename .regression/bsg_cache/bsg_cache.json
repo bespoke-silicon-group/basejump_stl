@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_cache",
     "filelist": [
+        "basejump_stl/bsg_cache/bsg_cache.vh",
         "basejump_stl/bsg_cache/bsg_cache_pkg.v",
         "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_cache/bsg_cache.v",
@@ -1099,6 +1100,7 @@
         }
     ],
     "include_path": [
-        "basejump_stl/bsg_misc/"
+        "basejump_stl/bsg_misc/",
+        "basejump_stl/bsg_cache/"
     ]
 }

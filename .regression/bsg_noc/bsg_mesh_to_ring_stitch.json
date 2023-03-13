@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_mesh_to_ring_stitch",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_noc/bsg_mesh_to_ring_stitch.v"
     ],
     "run_config": [

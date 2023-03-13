@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_gray_to_binary",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_gray_to_binary.v",
         "basejump_stl/bsg_misc/bsg_scan.v"
     ],

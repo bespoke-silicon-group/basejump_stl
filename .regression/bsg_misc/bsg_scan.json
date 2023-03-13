@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_scan",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_scan.v"
     ],
     "run_config": [

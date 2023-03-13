@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_compare_and_swap",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_dataflow/bsg_compare_and_swap.v"
     ],
     "run_config": [
@@ -934,6 +935,7 @@
         }
     ],
     "include_path": [
-        "basejump_stl/bsg_misc/"
+        "basejump_stl/bsg_misc/",
+        "basejump_stl/bsg_misc"
     ]
 }

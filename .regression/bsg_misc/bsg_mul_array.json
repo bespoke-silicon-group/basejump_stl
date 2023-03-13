@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_mul_array",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_misc/bsg_mul_array.v",
         "basejump_stl/bsg_misc/bsg_mul_array_row.v",
         "basejump_stl/bsg_misc/bsg_and.v",

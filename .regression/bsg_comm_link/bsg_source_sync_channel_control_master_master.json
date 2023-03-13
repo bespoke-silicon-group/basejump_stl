@@ -1,6 +1,7 @@
 {
     "design_name": "bsg_source_sync_channel_control_master_master",
     "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_comm_link/bsg_source_sync_channel_control_master_master.v",
         "basejump_stl/bsg_misc/bsg_wait_cycles.v"
     ],
