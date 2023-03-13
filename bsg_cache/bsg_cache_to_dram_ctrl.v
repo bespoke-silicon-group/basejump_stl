@@ -21,7 +21,7 @@ module bsg_cache_to_dram_ctrl
     
     , localparam lg_num_dma_lp=`BSG_SAFE_CLOG2(num_dma_p)
     , localparam mask_width_lp=(dma_data_width_p>>3)
-    , localparam dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p,dma_mask_width_p)
+    , localparam dma_pkt_width_lp=`bsg_cache_dma_pkt_width(dma_addr_width_p,dma_mask_width_p)
     , localparam num_req_lp=(dma_burst_len_p/dram_ctrl_burst_len_p)
   )
   (
@@ -66,7 +66,7 @@ module bsg_cache_to_dram_ctrl
 
   // round robin for dma pkts
   //
-  `declare_bsg_cache_dma_pkt_s(addr_width_p,dma_mask_width_p);
+  `declare_bsg_cache_dma_pkt_s(dma_addr_width_p,dma_mask_width_p);
   bsg_cache_dma_pkt_s dma_pkt;
   assign dma_pkt = dma_pkt_i;
 
