@@ -8,6 +8,7 @@
     "filelist": [
         "basejump_stl/bsg_dmc/bsg_dmc.vh",
         "basejump_stl/bsg_cache/bsg_cache.vh",
+        "basejump_stl/bsg_dmc/bsg_dmc_pkg.v",
         "basejump_stl/bsg_cache/bsg_cache_pkg.v",
         "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_cache/bsg_cache_to_dram_ctrl.v",

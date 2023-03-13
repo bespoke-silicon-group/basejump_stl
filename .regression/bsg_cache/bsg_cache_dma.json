@@ -60,7 +60,8 @@
                 "addr_width_p=28",
                 "data_width_p=32",
                 "block_size_in_words_p=4",
-                "sets_p=64"
+                "sets_p=64",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -93,7 +94,8 @@
                 "addr_width_p=28",
                 "data_width_p=32",
                 "block_size_in_words_p=4",
-                "sets_p=64"
+                "sets_p=64",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -126,7 +128,8 @@
                 "addr_width_p=28",
                 "data_width_p=32",
                 "block_size_in_words_p=4",
-                "sets_p=64"
+                "sets_p=64",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -159,7 +162,8 @@
                 "addr_width_p=28",
                 "data_width_p=32",
                 "block_size_in_words_p=4",
-                "sets_p=64"
+                "sets_p=64",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -192,7 +196,8 @@
                 "addr_width_p=28",
                 "data_width_p=32",
                 "block_size_in_words_p=4",
-                "sets_p=64"
+                "sets_p=64",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -225,7 +230,8 @@
                 "addr_width_p=28",
                 "data_width_p=32",
                 "block_size_in_words_p=4",
-                "sets_p=64"
+                "sets_p=64",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -258,7 +264,8 @@
                 "addr_width_p=28",
                 "data_width_p=32",
                 "block_size_in_words_p=4",
-                "sets_p=64"
+                "sets_p=64",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -291,7 +298,8 @@
                 "addr_width_p=28",
                 "data_width_p=32",
                 "block_size_in_words_p=4",
-                "sets_p=64"
+                "sets_p=64",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -324,7 +332,8 @@
                 "addr_width_p=32",
                 "data_width_p=32",
                 "block_size_in_words_p=8",
-                "sets_p=128"
+                "sets_p=128",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -357,7 +366,8 @@
                 "addr_width_p=32",
                 "data_width_p=32",
                 "block_size_in_words_p=8",
-                "sets_p=128"
+                "sets_p=128",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -390,7 +400,8 @@
                 "addr_width_p=32",
                 "data_width_p=32",
                 "block_size_in_words_p=8",
-                "sets_p=128"
+                "sets_p=128",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -423,7 +434,8 @@
                 "addr_width_p=32",
                 "data_width_p=32",
                 "block_size_in_words_p=8",
-                "sets_p=128"
+                "sets_p=128",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -456,7 +468,8 @@
                 "addr_width_p=32",
                 "data_width_p=32",
                 "block_size_in_words_p=8",
-                "sets_p=128"
+                "sets_p=128",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -489,7 +502,8 @@
                 "addr_width_p=32",
                 "data_width_p=32",
                 "block_size_in_words_p=8",
-                "sets_p=128"
+                "sets_p=128",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -522,7 +536,8 @@
                 "addr_width_p=32",
                 "data_width_p=32",
                 "block_size_in_words_p=8",
-                "sets_p=128"
+                "sets_p=128",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -555,7 +570,8 @@
                 "addr_width_p=32",
                 "data_width_p=32",
                 "block_size_in_words_p=8",
-                "sets_p=128"
+                "sets_p=128",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -588,7 +604,8 @@
                 "addr_width_p=39",
                 "data_width_p=64",
                 "block_size_in_words_p=8",
-                "sets_p=256"
+                "sets_p=256",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -621,7 +638,8 @@
                 "addr_width_p=39",
                 "data_width_p=64",
                 "block_size_in_words_p=8",
-                "sets_p=256"
+                "sets_p=256",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -654,7 +672,8 @@
                 "addr_width_p=39",
                 "data_width_p=64",
                 "block_size_in_words_p=8",
-                "sets_p=256"
+                "sets_p=256",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -687,7 +706,8 @@
                 "addr_width_p=39",
                 "data_width_p=64",
                 "block_size_in_words_p=8",
-                "sets_p=256"
+                "sets_p=256",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -720,7 +740,8 @@
                 "addr_width_p=39",
                 "data_width_p=64",
                 "block_size_in_words_p=8",
-                "sets_p=256"
+                "sets_p=256",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -753,7 +774,8 @@
                 "addr_width_p=39",
                 "data_width_p=64",
                 "block_size_in_words_p=8",
-                "sets_p=256"
+                "sets_p=256",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -786,7 +808,8 @@
                 "addr_width_p=39",
                 "data_width_p=64",
                 "block_size_in_words_p=8",
-                "sets_p=256"
+                "sets_p=256",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -819,7 +842,8 @@
                 "addr_width_p=39",
                 "data_width_p=64",
                 "block_size_in_words_p=8",
-                "sets_p=256"
+                "sets_p=256",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -852,7 +876,8 @@
                 "addr_width_p=28",
                 "data_width_p=32",
                 "block_size_in_words_p=4",
-                "sets_p=64"
+                "sets_p=64",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -885,7 +910,8 @@
                 "addr_width_p=28",
                 "data_width_p=32",
                 "block_size_in_words_p=4",
-                "sets_p=64"
+                "sets_p=64",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -918,7 +944,8 @@
                 "addr_width_p=28",
                 "data_width_p=32",
                 "block_size_in_words_p=4",
-                "sets_p=64"
+                "sets_p=64",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -951,7 +978,8 @@
                 "addr_width_p=28",
                 "data_width_p=32",
                 "block_size_in_words_p=4",
-                "sets_p=64"
+                "sets_p=64",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -984,7 +1012,8 @@
                 "addr_width_p=28",
                 "data_width_p=32",
                 "block_size_in_words_p=4",
-                "sets_p=64"
+                "sets_p=64",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -1017,7 +1046,8 @@
                 "addr_width_p=28",
                 "data_width_p=32",
                 "block_size_in_words_p=4",
-                "sets_p=64"
+                "sets_p=64",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -1050,7 +1080,8 @@
                 "addr_width_p=28",
                 "data_width_p=32",
                 "block_size_in_words_p=4",
-                "sets_p=64"
+                "sets_p=64",
+                "word_tracking_p=1"
             ]
         },
         {
@@ -1083,7 +1114,8 @@
                 "addr_width_p=28",
                 "data_width_p=32",
                 "block_size_in_words_p=4",
-                "sets_p=64"
+                "sets_p=64",
+                "word_tracking_p=1"
             ]
         }
     ]
