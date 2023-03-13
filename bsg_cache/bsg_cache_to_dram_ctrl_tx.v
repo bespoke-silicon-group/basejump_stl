@@ -14,7 +14,6 @@ module bsg_cache_to_dram_ctrl_tx
     , parameter `BSG_INV_PARAM(dma_burst_len_p)
     , parameter `BSG_INV_PARAM(dram_ctrl_burst_len_p)
     , parameter `BSG_INV_PARAM(dma_mask_width_p)
-    , parameter `BSG_INV_PARAM(dram_ctrl_burst_len_p)
 
     , localparam mask_width_lp=(dma_data_width_p>>3)
     , localparam dma_byte_mask_width_lp=(dma_burst_len_p*mask_width_lp)
