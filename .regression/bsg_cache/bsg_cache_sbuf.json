@@ -5,7 +5,7 @@
         "basejump_stl/bsg_cache/bsg_cache_pkg.v",
         "basejump_stl/bsg_misc/bsg_defines.v",
         "basejump_stl/bsg_cache/bsg_cache_sbuf.v",
-        "basejump_stl/bsg_cache/bsg_cache_sbuf_queue.v",
+        "basejump_stl/bsg_cache/bsg_cache_buffer_queue.v",
         "basejump_stl/bsg_misc/bsg_mux_segmented.v"
     ],
     "run_config": [

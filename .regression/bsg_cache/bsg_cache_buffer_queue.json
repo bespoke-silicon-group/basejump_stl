@@ -1,7 +1,7 @@
 {
-    "design_name": "bsg_cache_sbuf_queue", 
+    "design_name": "bsg_cache_buffer_queue", 
     "filelist": [
-        "basejump_stl/bsg_cache/bsg_cache_sbuf_queue.v"
+        "basejump_stl/bsg_cache/bsg_cache_buffer_queue.v"
     ], 
     "run_config": [
         {
@@ -28,7 +28,7 @@
             ], 
             "description": "a store/write buffer queue with size small at a clock period (in num of FO4) = 30", 
             "design_size": "small", 
-            "name": "bsg_cache_sbuf_queue_small_clk_30_FO4", 
+            "name": "bsg_cache_buffer_queue_small_clk_30_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -57,7 +57,7 @@
             ], 
             "description": "a store/write buffer queue with size small at a clock period (in num of FO4) = 40", 
             "design_size": "small", 
-            "name": "bsg_cache_sbuf_queue_small_clk_40_FO4", 
+            "name": "bsg_cache_buffer_queue_small_clk_40_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -86,7 +86,7 @@
             ], 
             "description": "a store/write buffer queue with size small at a clock period (in num of FO4) = 50", 
             "design_size": "small", 
-            "name": "bsg_cache_sbuf_queue_small_clk_50_FO4", 
+            "name": "bsg_cache_buffer_queue_small_clk_50_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -115,7 +115,7 @@
             ], 
             "description": "a store/write buffer queue with size small at a clock period (in num of FO4) = 60", 
             "design_size": "small", 
-            "name": "bsg_cache_sbuf_queue_small_clk_60_FO4", 
+            "name": "bsg_cache_buffer_queue_small_clk_60_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -144,7 +144,7 @@
             ], 
             "description": "a store/write buffer queue with size small at a clock period (in num of FO4) = 70", 
             "design_size": "small", 
-            "name": "bsg_cache_sbuf_queue_small_clk_70_FO4", 
+            "name": "bsg_cache_buffer_queue_small_clk_70_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -173,7 +173,7 @@
             ], 
             "description": "a store/write buffer queue with size small at a clock period (in num of FO4) = 80", 
             "design_size": "small", 
-            "name": "bsg_cache_sbuf_queue_small_clk_80_FO4", 
+            "name": "bsg_cache_buffer_queue_small_clk_80_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -202,7 +202,7 @@
             ], 
             "description": "a store/write buffer queue with size small at a clock period (in num of FO4) = 90", 
             "design_size": "small", 
-            "name": "bsg_cache_sbuf_queue_small_clk_90_FO4", 
+            "name": "bsg_cache_buffer_queue_small_clk_90_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -231,7 +231,7 @@
             ], 
             "description": "a store/write buffer queue with size small at a clock period (in num of FO4) = 100", 
             "design_size": "small", 
-            "name": "bsg_cache_sbuf_queue_small_clk_100_FO4", 
+            "name": "bsg_cache_buffer_queue_small_clk_100_FO4", 
             "parameters": [
                 "width_p=16"
             ]
@@ -260,7 +260,7 @@
             ], 
             "description": "a store/write buffer queue with size large at a clock period (in num of FO4) = 30", 
             "design_size": "large", 
-            "name": "bsg_cache_sbuf_queue_large_clk_30_FO4", 
+            "name": "bsg_cache_buffer_queue_large_clk_30_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -289,7 +289,7 @@
             ], 
             "description": "a store/write buffer queue with size large at a clock period (in num of FO4) = 40", 
             "design_size": "large", 
-            "name": "bsg_cache_sbuf_queue_large_clk_40_FO4", 
+            "name": "bsg_cache_buffer_queue_large_clk_40_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -318,7 +318,7 @@
             ], 
             "description": "a store/write buffer queue with size large at a clock period (in num of FO4) = 50", 
             "design_size": "large", 
-            "name": "bsg_cache_sbuf_queue_large_clk_50_FO4", 
+            "name": "bsg_cache_buffer_queue_large_clk_50_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -347,7 +347,7 @@
             ], 
             "description": "a store/write buffer queue with size large at a clock period (in num of FO4) = 60", 
             "design_size": "large", 
-            "name": "bsg_cache_sbuf_queue_large_clk_60_FO4", 
+            "name": "bsg_cache_buffer_queue_large_clk_60_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -376,7 +376,7 @@
             ], 
             "description": "a store/write buffer queue with size large at a clock period (in num of FO4) = 70", 
             "design_size": "large", 
-            "name": "bsg_cache_sbuf_queue_large_clk_70_FO4", 
+            "name": "bsg_cache_buffer_queue_large_clk_70_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -405,7 +405,7 @@
             ], 
             "description": "a store/write buffer queue with size large at a clock period (in num of FO4) = 80", 
             "design_size": "large", 
-            "name": "bsg_cache_sbuf_queue_large_clk_80_FO4", 
+            "name": "bsg_cache_buffer_queue_large_clk_80_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -434,7 +434,7 @@
             ], 
             "description": "a store/write buffer queue with size large at a clock period (in num of FO4) = 90", 
             "design_size": "large", 
-            "name": "bsg_cache_sbuf_queue_large_clk_90_FO4", 
+            "name": "bsg_cache_buffer_queue_large_clk_90_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -463,7 +463,7 @@
             ], 
             "description": "a store/write buffer queue with size large at a clock period (in num of FO4) = 100", 
             "design_size": "large", 
-            "name": "bsg_cache_sbuf_queue_large_clk_100_FO4", 
+            "name": "bsg_cache_buffer_queue_large_clk_100_FO4", 
             "parameters": [
                 "width_p=64"
             ]
@@ -492,7 +492,7 @@
             ], 
             "description": "a store/write buffer queue with size very_large at a clock period (in num of FO4) = 30", 
             "design_size": "very_large", 
-            "name": "bsg_cache_sbuf_queue_very_large_clk_30_FO4", 
+            "name": "bsg_cache_buffer_queue_very_large_clk_30_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -521,7 +521,7 @@
             ], 
             "description": "a store/write buffer queue with size very_large at a clock period (in num of FO4) = 40", 
             "design_size": "very_large", 
-            "name": "bsg_cache_sbuf_queue_very_large_clk_40_FO4", 
+            "name": "bsg_cache_buffer_queue_very_large_clk_40_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -550,7 +550,7 @@
             ], 
             "description": "a store/write buffer queue with size very_large at a clock period (in num of FO4) = 50", 
             "design_size": "very_large", 
-            "name": "bsg_cache_sbuf_queue_very_large_clk_50_FO4", 
+            "name": "bsg_cache_buffer_queue_very_large_clk_50_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -579,7 +579,7 @@
             ], 
             "description": "a store/write buffer queue with size very_large at a clock period (in num of FO4) = 60", 
             "design_size": "very_large", 
-            "name": "bsg_cache_sbuf_queue_very_large_clk_60_FO4", 
+            "name": "bsg_cache_buffer_queue_very_large_clk_60_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -608,7 +608,7 @@
             ], 
             "description": "a store/write buffer queue with size very_large at a clock period (in num of FO4) = 70", 
             "design_size": "very_large", 
-            "name": "bsg_cache_sbuf_queue_very_large_clk_70_FO4", 
+            "name": "bsg_cache_buffer_queue_very_large_clk_70_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -637,7 +637,7 @@
             ], 
             "description": "a store/write buffer queue with size very_large at a clock period (in num of FO4) = 80", 
             "design_size": "very_large", 
-            "name": "bsg_cache_sbuf_queue_very_large_clk_80_FO4", 
+            "name": "bsg_cache_buffer_queue_very_large_clk_80_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -666,7 +666,7 @@
             ], 
             "description": "a store/write buffer queue with size very_large at a clock period (in num of FO4) = 90", 
             "design_size": "very_large", 
-            "name": "bsg_cache_sbuf_queue_very_large_clk_90_FO4", 
+            "name": "bsg_cache_buffer_queue_very_large_clk_90_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -695,7 +695,7 @@
             ], 
             "description": "a store/write buffer queue with size very_large at a clock period (in num of FO4) = 100", 
             "design_size": "very_large", 
-            "name": "bsg_cache_sbuf_queue_very_large_clk_100_FO4", 
+            "name": "bsg_cache_buffer_queue_very_large_clk_100_FO4", 
             "parameters": [
                 "width_p=128"
             ]
@@ -724,7 +724,7 @@
             ], 
             "description": "a store/write buffer queue with size medium at a clock period (in num of FO4) = 30", 
             "design_size": "medium", 
-            "name": "bsg_cache_sbuf_queue_medium_clk_30_FO4", 
+            "name": "bsg_cache_buffer_queue_medium_clk_30_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -753,7 +753,7 @@
             ], 
             "description": "a store/write buffer queue with size medium at a clock period (in num of FO4) = 40", 
             "design_size": "medium", 
-            "name": "bsg_cache_sbuf_queue_medium_clk_40_FO4", 
+            "name": "bsg_cache_buffer_queue_medium_clk_40_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -782,7 +782,7 @@
             ], 
             "description": "a store/write buffer queue with size medium at a clock period (in num of FO4) = 50", 
             "design_size": "medium", 
-            "name": "bsg_cache_sbuf_queue_medium_clk_50_FO4", 
+            "name": "bsg_cache_buffer_queue_medium_clk_50_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -811,7 +811,7 @@
             ], 
             "description": "a store/write buffer queue with size medium at a clock period (in num of FO4) = 60", 
             "design_size": "medium", 
-            "name": "bsg_cache_sbuf_queue_medium_clk_60_FO4", 
+            "name": "bsg_cache_buffer_queue_medium_clk_60_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -840,7 +840,7 @@
             ], 
             "description": "a store/write buffer queue with size medium at a clock period (in num of FO4) = 70", 
             "design_size": "medium", 
-            "name": "bsg_cache_sbuf_queue_medium_clk_70_FO4", 
+            "name": "bsg_cache_buffer_queue_medium_clk_70_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -869,7 +869,7 @@
             ], 
             "description": "a store/write buffer queue with size medium at a clock period (in num of FO4) = 80", 
             "design_size": "medium", 
-            "name": "bsg_cache_sbuf_queue_medium_clk_80_FO4", 
+            "name": "bsg_cache_buffer_queue_medium_clk_80_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -898,7 +898,7 @@
             ], 
             "description": "a store/write buffer queue with size medium at a clock period (in num of FO4) = 90", 
             "design_size": "medium", 
-            "name": "bsg_cache_sbuf_queue_medium_clk_90_FO4", 
+            "name": "bsg_cache_buffer_queue_medium_clk_90_FO4", 
             "parameters": [
                 "width_p=32"
             ]
@@ -927,7 +927,7 @@
             ], 
             "description": "a store/write buffer queue with size medium at a clock period (in num of FO4) = 100", 
             "design_size": "medium", 
-            "name": "bsg_cache_sbuf_queue_medium_clk_100_FO4", 
+            "name": "bsg_cache_buffer_queue_medium_clk_100_FO4", 
             "parameters": [
                 "width_p=32"
             ]

@@ -33,7 +33,7 @@
         "basejump_stl/bsg_dataflow/bsg_two_fifo.v",
         "basejump_stl/bsg_misc/bsg_mux.v",
         "basejump_stl/bsg_cache/bsg_cache_sbuf.v",
-        "basejump_stl/bsg_cache/bsg_cache_sbuf_queue.v",
+        "basejump_stl/bsg_cache/bsg_cache_buffer_queue.v",
         "basejump_stl/bsg_misc/bsg_mux_segmented.v",
         "basejump_stl/bsg_dataflow/bsg_fifo_1r1w_small_hardened.v",
         "basejump_stl/bsg_dataflow/bsg_fifo_1r1w_small_unhardened.v",
