@@ -146,7 +146,6 @@ module bsg_dmc_controller
   logic        cwd_valid;
   logic  [7:0] cwd_tick;
   logic        wburst_valid;
-  logic  [7:0] wburst_tick;
 
   logic        cas_valid;
   logic  [7:0] cas_tick;
@@ -594,16 +593,13 @@ module bsg_dmc_controller
 
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i) begin
-      wburst_tick <= 0;
       wburst_valid <= 0;
     end
     else if((shoot && cmd_sfifo_rdata[23:20] == WRITE) ) begin
-      wburst_tick <= dfi_burst_length_lp-1;
       wburst_valid <= 1;
     end
-    else if(wburst_valid) begin
-      wburst_tick <= wburst_tick - 1;
-      if(wburst_tick == 0) wburst_valid <= 0;
+    else begin 
+          wburst_valid <= 0;
     end
   end
 
