@@ -26,7 +26,7 @@
 module bsg_counter_up_down #( parameter `BSG_INV_PARAM(max_val_p    )
                                      , parameter `BSG_INV_PARAM(init_val_p   )
                                      , parameter `BSG_INV_PARAM(max_step_p   )
-                                     , disable_overflow_warning_p = 0
+                                     , parameter disable_overflow_warning_p = 0
 
                                      //localpara
                                      , parameter step_width_lp =
