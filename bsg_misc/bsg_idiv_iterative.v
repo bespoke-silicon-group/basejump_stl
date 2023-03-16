@@ -112,13 +112,13 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
    if (bits_per_iter_p == 2) begin
 
       bsg_mux_one_hot #(.width_p(width_p+1), .els_p(4)) muxB
-        (.data_i( {opC_r, add1_out, {add1_out[width_p-1:0], opC_r[width_p]}, {add2_out[width_p-1:0], opC_r[width_p-1]}} )
+        (.data_i( {opC_r, add1_out, {(add1_out << (width_p-shift_val+1)) | opC_r >> (shift_val)}, {add2_out[width_p-1:0], opC_r[width_p-1]}} )
 	      ,.data_o(  opB_mux )
 	      ,.sel_one_hot_i(opB_sel_lo)
 	      );
 
       bsg_mux_one_hot #(.width_p(width_p+1), .els_p(4)) muxC
-        (.data_i( {{dividend_msb, dividend_i},add1_out, {opC_r[width_p-1:0], ~add1_out[width_p]}, {opC_r[width_p-2:0], ~add1_out[width_p], ~add2_out[width_p]}})
+        (.data_i( {{dividend_msb, dividend_i},add1_out, {(opC_r << (width_p-shift_val+1)) | ((~add1_out >> width_p) << (width_p-shift_val))}, {opC_r[width_p-2:0], ~add1_out[width_p], ~add2_out[width_p]}})
         ,.data_o(  opC_mux )
         ,.sel_one_hot_i(opC_sel_lo)
         );

@@ -72,8 +72,8 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
    end
 
   wire [`BSG_WIDTH(width_p/bits_per_iter_p)-1:0] calc_cyc;
-  assign calc_cyc = ((!signed_div_r_i) && (bits_per_iter_p==1)) ? div_shift : width_p/bits_per_iter_p;
-  assign shift_val = (state == SHIFT) && ((!signed_div_r_i) && (bits_per_iter_p==1)) ? div_shift : width_p;
+  assign calc_cyc = ((!signed_div_r_i)) ? ((bits_per_iter_p==1)?div_shift:(div_shift+1)/2) : width_p/bits_per_iter_p;
+  assign shift_val = ((state == SHIFT) && ((!signed_div_r_i))) ? ((bits_per_iter_p==1)?div_shift:(calc_cyc*2)) : width_p;
 
   logic [`BSG_WIDTH(width_p/bits_per_iter_p)-1:0] calc_cnt;
   wire calc_up_li = (state == CALC) && (calc_cnt < calc_cyc);
