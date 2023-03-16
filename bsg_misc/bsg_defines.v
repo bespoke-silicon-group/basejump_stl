@@ -103,6 +103,8 @@
 `define BSG_SYNTH_MUST_HARDEN
 `endif
 
+`define BSG_ALIGN(addr_mp, nb_mp) \
+  ({addr_mp[$bits(addr_mp)-1:$clog2(nb_mp)], {$clog2(nb_mp){1'b0}}}) 
 
 // using C-style shifts instead of a[i] allows the parameter of BSG_GET_BIT to be a parameter subrange                                                                                                                                                                               
 // e.g., parameter[4:1][1], which DC 2016.12 does not allow                                                                                                                                                                                                                          
