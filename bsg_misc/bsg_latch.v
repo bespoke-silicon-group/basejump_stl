@@ -3,14 +3,17 @@
  *
  */
 
+`include "bsg_defines.v"
+
 module bsg_latch
+ #(parameter `BSG_INV_PARAM(width_p)
   (
     input clk_i
-    , input data_i
-    , output logic data_o
+    , input [width_p-1:0] data_i
+    , output logic [width_p-1:0] data_o
   );
 
-  logic data_r;
+  logic [width_p-1:0] data_r;
   
   always_latch
     if (clk_i)
@@ -21,3 +24,6 @@ module bsg_latch
   assign data_o = data_r;
   
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_latch)
+
