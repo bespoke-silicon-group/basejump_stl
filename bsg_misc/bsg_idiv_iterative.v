@@ -125,13 +125,13 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
       
    end else begin
 
-      bsg_mux_one_hot #(.width_p(width_p+1), .els_p(4)) muxB
+      bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxB
         (.data_i( {opC_r, add1_out, {(add1_out << (width_p-shift_val+1)) | opC_r >> shift_val}} )
         ,.data_o( opB_mux )
         ,.sel_one_hot_i(opB_sel_lo)
         );
 
-      bsg_mux_one_hot #(.width_p(width_p+1), .els_p(4)) muxC
+      bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxC
         (.data_i( {{dividend_msb, dividend_i},add1_out, {(opC_r << (width_p-shift_val+1)) | ((~add1_out >> width_p) << (width_p-shift_val))}} )
         ,.data_o( opC_mux )
 	,.sel_one_hot_i(opC_sel_lo)
