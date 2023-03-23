@@ -40,6 +40,7 @@ module bsg_tag_master_decentralized
     // from pins
     input clk_i
     ,input data_i
+    ,input en_i
     // node_id_offset_i is used to filter incoming packets.
     // packets with nodeID < node_id_offset_i or nodeID >= node_id_offset_i+local_els_p
     // will be ignored.
@@ -265,7 +266,7 @@ module bsg_tag_master_decentralized
         assign clients_o[i].clk   = clk_i;
         assign clients_o[i].op    = node_id_match & clients_decode[i] & bsg_tag_n.op;
         assign clients_o[i].param = node_id_match & clients_decode[i] & bsg_tag_n.param;
-        assign clients_o[i].en    = 1'b1;
+        assign clients_o[i].en    = en_i;
      end
 
    
