@@ -196,7 +196,7 @@ module bsg_nonsynth_axi_mem
     (araddr_incr == araddr_wrap_upper)
     ? araddr_wrap_boundary
     : (araddr_incr > araddr_wrap_upper)
-      ? araddr_r + ((rd_burst_r-arlen_r)<<$clog2(axi_data_width_p>>3))
+      ? araddr_r + ((rd_burst_r-(arlen_r+1))<<$clog2(axi_data_width_p>>3))
       : araddr_incr;
 
   always_comb begin
