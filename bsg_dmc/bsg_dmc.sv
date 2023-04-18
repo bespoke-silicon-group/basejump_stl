@@ -133,7 +133,7 @@ module bsg_dmc
 
   wire             [dq_group_lp-1:0] dqs_p_li;
 
-  bsg_dmc_s 						 dmc_p_lo;
+  bsg_dmc_s 						 dfi_dmc_p_lo;
   assign device_temp_o = 12'd0;
 
   assign dfi_clk_2x_o  = dfi_clk_2x_lo;
@@ -147,7 +147,7 @@ module bsg_dmc
                     .cfg_tag_lines_i(cfg_tag_lines_i)
                     ,.sys_tag_lines_i(sys_tag_lines_i)
 					,.dfi_clk_1x_i(dfi_clk_1x_lo)
-					,.dmc_p_o(dmc_p_lo)
+					,.dmc_p_o(dfi_dmc_p_lo)
 					,.async_reset_o(async_reset)
 					,.dfi_stall_transactions_o(dfi_stall_transactions_o)
 					,.dfi_test_mode_o(dfi_test_mode_o)
@@ -185,7 +185,7 @@ module bsg_dmc
     // User interface clock and reset
     (.ui_clk_i              ( ui_clk_i              )
     ,.ui_clk_sync_rst_i     ( ui_reset              )
-	,.stall_transactions_i  (dfi_stall_transactions_o   )
+	,.dfi_stall_transactions_i  (dfi_stall_transactions_o   )
 	,.dfi_refresh_in_progress_o (dfi_refresh_in_progress_o  )
 	,.ui_transaction_in_progress_o (ui_transaction_in_progress_o )
     // User interface signals
@@ -227,7 +227,7 @@ module bsg_dmc
     ,.dfi_rddata_i          ( dfi_rddata            )
     ,.dfi_rddata_valid_i    ( dfi_rddata_valid      )
     // Control and Status Registers
-    ,.dmc_dfi_p_i               ( dmc_p_lo               )
+    ,.dfi_dmc_p_i               ( dfi_dmc_p_lo               )
     //
     ,.dfi_init_calib_complete_o ( dfi_init_calib_complete_o ));
 
@@ -278,7 +278,7 @@ module bsg_dmc
     ,.dq_o                ( ddr_dq_o            )
     ,.dq_i                ( ddr_dq_i            )
     // Control and Status Registers
-    ,.dqs_sel_cal         ( dmc_p_lo.dqs_sel_cal ));
+    ,.dqs_sel_cal         ( dfi_dmc_p_lo.dqs_sel_cal ));
 
 endmodule
 
