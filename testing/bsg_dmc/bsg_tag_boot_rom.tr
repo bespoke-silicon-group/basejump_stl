@@ -278,6 +278,7 @@
 #SEND  en   id=21  d l=8    {init_cycles[15:8]}
 0001___1___010101_1_1000___10111100
 
+#rd_calib_cycles is with respect to ui_clk frequency. So, the cycle count have to be adjusted according to the ui_clock period. Better to have a conservative count here.
 #SEND  en   id=22  d l=8    {rd_calib_cycles[7:0]}
 0001___1___010110_1_1000___11111111
 #SEND  en   id=23  d l=8    {rd_calib_cycles[15:8]}

@@ -767,7 +767,7 @@ module bsg_dmc_controller
 
   assign rx_sipo_valid_li = rddata_afifo_rvalid;
   assign rx_sipo_data_li = rddata_afifo_rdata;
-  assign rx_sipo_yumi_li = rx_sipo_valid_lo;
+  assign rx_sipo_yumi_li = rx_sipo_valid_lo & rx_piso_ready_lo;
 
   bsg_serial_in_parallel_out_full #
     (.width_p    ( dfi_data_width_p    )
