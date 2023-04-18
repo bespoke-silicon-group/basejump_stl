@@ -8,6 +8,78 @@
 `include "bsg_noc_links.vh"
 
 
+
+module throttler
+  (
+    input clk_i
+    , input reset_i
+
+    , input v_i
+    , output logic ready_o
+
+    , output logic v_o
+    , input ready_i
+  );
+
+  logic [2:0] state_r;
+  typedef enum logic [2:0] {
+    RESET
+    , WAIT0
+    , WAIT1
+    , GO
+  } state_e;
+
+  state_e state_r, state_n;
+
+
+  always_comb begin
+    v_o = 1'b0;
+    ready_o = 1'b0;
+
+    case (state_r)
+      RESET: begin
+        state_n = WAIT0;
+      end
+
+      WAIT0: begin
+        state_n = v_i
+          ? WAIT1
+          : WAIT0;
+      end
+
+      WAIT1: begin
+        state_n = GO;
+      end
+
+      GO: begin
+        v_o = 1'b1;
+        state_n = ready_i
+          ? WAIT0
+          : GO;
+        ready_o = ready_i;
+      end
+
+      default: begin
+        state_n = WAIT0;
+      end
+    endcase
+  end
+
+
+  always_ff @ (posedge clk_i) begin
+    if (reset_i) begin
+      state_r <= RESET;
+    end
+    else begin
+      state_r <= state_n;
+    end
+  end
+
+endmodule
+
+
+
+
 module bsg_mesh_router_buffered
   import bsg_mesh_router_pkg::*;
   #(parameter `BSG_INV_PARAM(width_p        )
@@ -136,36 +208,21 @@ module bsg_mesh_router_buffered
    logic [dirs_lp-1:0][width_p-1:0] data_lo;
    logic [dirs_lp-1:0]              ready_li;
 
-   for (i = 0; i < dirs_lp; i=i+1)
-     begin: rof2
-        assign link_o_cast[i].v    = valid_lo[i];
+   for (i = 0; i < dirs_lp; i=i+1) begin
+  
+      throttler th0 (
+        .clk_i(clk_i)
+        ,.reset_i(reset_i)
 
-        if (repeater_output_p[i] & ~stub_p[i])
-          begin : macro
-	     wire [width_p-1:0] tmp;
-
-            // synopsys translate_off
-            initial
-               begin
-                  $display("%m with buffers on %d",i);
-               end
-            // synopsys translate_on
-             bsg_inv #(.width_p(width_p),.vertical_p(i < 3)) data_lo_inv
-               (.i (data_lo[i]         )
-                ,.o(tmp)
-                );
-
-             bsg_inv #(.width_p(width_p),.vertical_p(i < 3)) data_lo_rep
-               (.i (tmp)
-                ,.o(link_o_cast[i].data)
-                );
-
-          end
-        else
-          assign link_o_cast[i].data = data_lo [i];
-
-        assign ready_li[i] = link_i_cast[i].ready_and_rev;
-     end
+        ,.v_i     (valid_lo[i])
+        ,.ready_o (ready_li[i])
+    
+        ,.v_o     (link_o_cast[i].v)
+        ,.ready_i (link_i_cast[i].ready_and_rev)
+      );
+      
+      assign link_o_cast[i].data = data_lo[i];
+   end
 
    bsg_mesh_router #( .width_p      (width_p      )
                       ,.x_cord_width_p(x_cord_width_p)
