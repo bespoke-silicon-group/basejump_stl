@@ -88,6 +88,9 @@ module traffic_generator
 
   logic ui_clk;
 
+  logic stall_trace_reading_tag_clk_synced;
+  logic refresh_in_progress_tag_clk_synced;
+
   assign ui_clk_o = ui_clk;
   bsg_nonsynth_clock_gen #(.cycle_time_p(`UI_CLK_PERIOD)) ui_clk_gen (.o(ui_clk));
 	
@@ -122,6 +125,7 @@ module traffic_generator
   logic tag_trace_done_lo;
 
   logic en_trace_reading_li;
+  logic en_trace_reading_fpga_clk_synced_li;
 
   // TAG TRACE ROM
   bsg_tag_boot_rom #(.width_p( tag_trace_rom_data_width_lp )
@@ -140,7 +144,22 @@ module traffic_generator
       );
 	
 
-  assign en_trace_reading_li = dfi_init_calib_complete_i & tag_trace_done_lo & (~stall_trace_reading_i);
+  assign en_trace_reading_li = dfi_init_calib_complete_i & tag_trace_done_lo & (~stall_trace_reading_tag_clk_synced);
+
+  bsg_sync_sync #(.width_p(1)) en_trace_fpga_clk_sync_inst
+    (.oclk_i      ( fpga_link_clk      )
+    ,.iclk_data_i ( en_trace_reading_li )
+    ,.oclk_data_o ( en_trace_reading_fpga_clk_synced_li    ));
+
+  bsg_sync_sync #(.width_p(1)) stall_trace_read_tag_clk_sync_inst
+    (.oclk_i      ( tag_clk      )
+    ,.iclk_data_i ( stall_trace_reading_i )
+    ,.oclk_data_o ( stall_trace_reading_tag_clk_synced    ));
+   
+  bsg_sync_sync #(.width_p(1)) refresh_in_progress_tag_clk_inst
+    (.oclk_i      ( tag_clk      )
+    ,.iclk_data_i ( dfi_refresh_in_progress_i )
+    ,.oclk_data_o ( refresh_in_progress_tag_clk_synced   ));
 
   wire tag_trace_valid_lo;
 
@@ -183,7 +202,7 @@ module traffic_generator
   logic [4:0] stall_transmission_tag_index, re_enable_transmission_tag_index;
 
   logic update_clock_freq;
-  assign update_clock_freq = stall_trace_reading_i & ~(dfi_refresh_in_progress_i);
+  assign update_clock_freq = stall_trace_reading_tag_clk_synced & ~(refresh_in_progress_tag_clk_synced);
 
   logic [20:0] stall_dmc_tag_reg;
   logic [20:0] no_stall_dmc_tag_reg;
@@ -216,13 +235,13 @@ module traffic_generator
 	 if(tag_trace_done_lo && irritate_clock_i &&  (wrong_clock_tag_index <=61 )) begin
 		 tag_master_data_li = tag_data_wrong_clk_period_and_trigger[wrong_clock_tag_index];
 	 end
-     else if(tag_trace_done_lo && stall_trace_reading_i && (stall_transmission_tag_index <=19)) begin
+     else if(tag_trace_done_lo && stall_trace_reading_tag_clk_synced && (stall_transmission_tag_index <=19)) begin
    	  	tag_master_data_li = stall_dmc_tag_reg[stall_transmission_tag_index];
      end
 	 else if(tag_trace_done_lo && update_clock_freq && (clock_update_tag_index <= 61 )) begin
 		 tag_master_data_li = tag_data_clock_period_and_trigger[clock_update_tag_index];
 	 end
-	 else if(stall_trace_reading_i && (re_enable_transmission_tag_index <= 20)) begin
+	 else if(stall_trace_reading_tag_clk_synced && (re_enable_transmission_tag_index <= 20)) begin
 		 tag_master_data_li = no_stall_dmc_tag_reg[re_enable_transmission_tag_index];		
 	 end
      else if(tag_trace_valid_lo) begin
@@ -240,13 +259,13 @@ module traffic_generator
 		  wrong_clock_tag_index <= 0;
 		  re_enable_transmission_tag_index <= 0;
       end
-      else if (stall_trace_reading_i && (stall_transmission_tag_index <= 19)) begin
+      else if (stall_trace_reading_tag_clk_synced && (stall_transmission_tag_index <= 19)) begin
     	  stall_transmission_tag_index <= stall_transmission_tag_index + 1;
       end
 	  else if (update_clock_freq && (clock_update_tag_index <= 61)) begin
     	 clock_update_tag_index  <= clock_update_tag_index + 1;
       end
-	  else if (stall_trace_reading_i && (re_enable_transmission_tag_index <= 20)) begin
+	  else if (stall_trace_reading_tag_clk_synced && (re_enable_transmission_tag_index <= 20)) begin
 		re_enable_transmission_tag_index <= re_enable_transmission_tag_index + 1;
 	  end
 	  else if (irritate_clock_i && (wrong_clock_tag_index <= 61)) begin
@@ -463,7 +482,7 @@ module traffic_generator
 					.asic_link_upstream_edge_valid_i(asic_link_upstream_edge_valid_li),
 					.fpga_link_downstream_edge_token_o(fpga_link_downstream_edge_token_li),
 
-					.en_trace_reading_i(en_trace_reading_li),
+					.en_trace_reading_i(en_trace_reading_fpga_clk_synced_li),
                     .trace_reading_done_o(trace_reading_done_lo)
 				);
 
