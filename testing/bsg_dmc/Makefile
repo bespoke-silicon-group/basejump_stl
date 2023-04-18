@@ -22,6 +22,12 @@ ELABORATE_OPTIONS += -assert svaext
 ELABORATE_OPTIONS += +define+NONSYNTH_TB
 ELABORATE_OPTIONS += +lint=TFIPC-L
 
+# ui_clk period
+# how to use: make elaborate UI_CLK_PRD=<desired clock period value>
+# Note unit is in ps and default is 400MHz as seen below
+UI_CLK_PRD = 2500
+ELABORATE_OPTIONS += +define+UI_CLK_PERIOD=$(UI_CLK_PRD)
+
 RUN_OPTIONS =
 #RUN_OPTIONS += +irritate_clk
 
