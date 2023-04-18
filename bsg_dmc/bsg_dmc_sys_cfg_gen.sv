@@ -16,8 +16,8 @@ module bsg_dmc_sys_cfg_gen
 						,input dfi_clk_1x_i
 						,output bsg_dmc_s dmc_p_o
 						,output async_reset_o
-						,output logic stall_transactions_o
-						,output logic test_mode_o
+						,output logic dfi_stall_transactions_o
+						,output logic dfi_test_mode_o
 						);
 
     for (genvar i = 0; i < 2; i++)
@@ -182,18 +182,18 @@ module bsg_dmc_sys_cfg_gen
           (.bsg_tag_i      ( sys_tag_lines_i.stall_transactions     )
            ,.recv_clk_i    ( dfi_clk_1x_i                           )
            ,.recv_new_r_o  (                                        )
-           ,.recv_data_r_o ( stall_transactions_o                   )
+           ,.recv_data_r_o ( dfi_stall_transactions_o                   )
            );
        end
 
     for (genvar i = 0; i < 1; i++)
-      begin : test_mode
+      begin : dfi_test_mode
         bsg_tag_client #(.width_p(1))
          btc
           (.bsg_tag_i      ( sys_tag_lines_i.test_mode     )
            ,.recv_clk_i    ( dfi_clk_1x_i                  )
            ,.recv_new_r_o  (                               )
-           ,.recv_data_r_o ( test_mode_o                   )
+           ,.recv_data_r_o ( dfi_test_mode_o                   )
            );
       end
 

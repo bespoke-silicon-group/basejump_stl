@@ -66,7 +66,7 @@ module traffic_generator
   ,output                             app_sr_req_o
   ,input                              app_sr_active_i
   // Status signal
-  ,input                              init_calib_complete_i
+  ,input                              dfi_init_calib_complete_i
   ,input							  stall_trace_reading_i
   //
   ,output                             ui_clk_o
@@ -74,7 +74,7 @@ module traffic_generator
   ,input                              ui_clk_sync_rst_i
   ,output                             dfi_clk_o
   ,input							  irritate_clock_i
-  ,input							  refresh_in_progress_i
+  ,input							  dfi_refresh_in_progress_i
   ,input							  clock_monitor_clk_i
   ,output							  frequency_mismatch_o
   ,output							  clock_correction_done_o
@@ -140,7 +140,7 @@ module traffic_generator
       );
 	
 
-  assign en_trace_reading_li = init_calib_complete_i & tag_trace_done_lo & (~stall_trace_reading_i);
+  assign en_trace_reading_li = dfi_init_calib_complete_i & tag_trace_done_lo & (~stall_trace_reading_i);
 
   wire tag_trace_valid_lo;
 
@@ -183,7 +183,7 @@ module traffic_generator
   logic [4:0] stall_transmission_tag_index, re_enable_transmission_tag_index;
 
   logic update_clock_freq;
-  assign update_clock_freq = stall_trace_reading_i & ~(refresh_in_progress_i);
+  assign update_clock_freq = stall_trace_reading_i & ~(dfi_refresh_in_progress_i);
 
   logic [20:0] stall_dmc_tag_reg;
   logic [20:0] no_stall_dmc_tag_reg;
@@ -321,7 +321,7 @@ module traffic_generator
 
 	  initial begin
 	    $display("\n#### Regression test started ####");
-	    @(posedge init_calib_complete_i);
+	    @(posedge dfi_init_calib_complete_i);
 	    repeat(1000) @(posedge ui_clk);
 	    for(k=0;k<256;k++) begin
 	      waddr = k*dq_burst_length_lp;

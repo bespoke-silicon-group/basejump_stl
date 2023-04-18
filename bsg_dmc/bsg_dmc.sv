@@ -44,11 +44,11 @@ module bsg_dmc
   ,input                             app_sr_req_i
   ,output                            app_sr_active_o
   // Status signal
-  ,output                            init_calib_complete_o
-  ,output logic                      transaction_in_progress_o
-  ,output logic                      stall_transactions_o
-  ,output logic						 refresh_in_progress_o
-  ,output logic                      test_mode_o
+  ,output                            dfi_init_calib_complete_o
+  ,output logic                      ui_transaction_in_progress_o
+  ,output logic                      dfi_stall_transactions_o
+  ,output logic						 dfi_refresh_in_progress_o
+  ,output logic                      dfi_test_mode_o
   // DDR interface signals
   // Physically compatible with (LP)DDR3/DDR2/DDR, but only (LP)DDR
   // protocal is logically implemented in the controller
@@ -149,8 +149,8 @@ module bsg_dmc
 					,.dfi_clk_1x_i(dfi_clk_1x_lo)
 					,.dmc_p_o(dmc_p_lo)
 					,.async_reset_o(async_reset)
-					,.stall_transactions_o(stall_transactions_o)
-					,.test_mode_o(test_mode_o)
+					,.dfi_stall_transactions_o(dfi_stall_transactions_o)
+					,.dfi_test_mode_o(dfi_test_mode_o)
 					);
 					 
   bsg_dmc_clk_rst_gen #
@@ -185,9 +185,9 @@ module bsg_dmc
     // User interface clock and reset
     (.ui_clk_i              ( ui_clk_i              )
     ,.ui_clk_sync_rst_i     ( ui_reset              )
-	,.stall_transactions_i  (stall_transactions_o   )
-	,.refresh_in_progress_o (refresh_in_progress_o  )
-	,.transaction_in_progress_o (transaction_in_progress_o )
+	,.stall_transactions_i  (dfi_stall_transactions_o   )
+	,.dfi_refresh_in_progress_o (dfi_refresh_in_progress_o  )
+	,.ui_transaction_in_progress_o (ui_transaction_in_progress_o )
     // User interface signals
     ,.app_addr_i            ( app_addr_i            )
     ,.app_cmd_i             ( app_cmd_i             )
@@ -227,9 +227,9 @@ module bsg_dmc
     ,.dfi_rddata_i          ( dfi_rddata            )
     ,.dfi_rddata_valid_i    ( dfi_rddata_valid      )
     // Control and Status Registers
-    ,.dmc_p_i               ( dmc_p_lo               )
+    ,.dmc_dfi_p_i               ( dmc_p_lo               )
     //
-    ,.init_calib_complete_o ( init_calib_complete_o ));
+    ,.dfi_init_calib_complete_o ( dfi_init_calib_complete_o ));
 
   bsg_dmc_phy #(.dq_data_width_p(dq_data_width_p)) phy
     // DDR PHY interface clock and reset
