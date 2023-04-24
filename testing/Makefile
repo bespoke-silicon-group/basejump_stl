@@ -7,8 +7,5 @@
 
 TEST_DIRS = $(filter-out %common/,$(wildcard ./*/))
 
-all:
-	$(foreach x,$(TEST_DIRS), $(MAKE) -C $(x); if [ -f $(x)/app ]; then ./$(x)/app; fi;)
-
 clean:
-	$(foreach x,$(TEST_DIRS), $(MAKE) -C $(x) clean;)
+	$(foreach x,$(TEST_DIRS), if [ -f $(x)/Makefile ]; then $(MAKE) -C $(x) clean; fi;)
