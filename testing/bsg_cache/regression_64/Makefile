@@ -2,6 +2,17 @@
 #include ../../../../bsg_cadenv/cadenv.mk
 export BASEJUMP_STL_DIR = $(abspath ../../..)
 
+export LM_LICENSE_FILE=27008@synopsysls.s.uw.edu
+export VCS_RELEASE=/home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1
+export VCS_BIN=$(VCS_RELEASE)/bin
+export VCS=vcs
+export _DVE=dve
+export PATH:=$(VCS_BIN):$(PATH)
+
+export VCS_HOME=$(VCS_RELEASE)
+
+# $(error $(VCS_HOME))
+
 INCDIR =  +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_cache
 
@@ -70,7 +81,7 @@ out/%/trace.tr:
 	(cd out/$*; $(SIMV) -reportstats +vcs+nostdout +wave=$(WAVE) +checker=basic -l simv.log)
 
 %.dve:
-	$(DVE) -full64 -vpd out/$*/vcdplus.vpd &
+	$(_DVE) -full64 -vpd out/$*/vcdplus.vpd &
 
 summary:
 	@$(foreach test, $(BASIC_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
