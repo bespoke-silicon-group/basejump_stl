@@ -21,7 +21,7 @@ INCLUDES += -I$(BASEJUMP_STL_DIR)/bsg_test/
 INCLUDES += -Iobj_dir
 
 obj_dir/Vtop.mk: $(VSOURCES) 
-	$(VERILATOR) -cc $^ -Wno-lint $(VINCLUDES) $(CFLAGS) $(CXXSOURCES) -o test_rom
+	$(VERILATOR) -cc $^ -Wno-lint -Wno-MULTITOP -Wno-MULTIDRIVEN $(VINCLUDES) $(CFLAGS) $(CXXSOURCES) -o test_rom
 
 %__ALL.a: %.mk
 	$(MAKE) -j -C $(dir $@) -f $(notdir $<) default

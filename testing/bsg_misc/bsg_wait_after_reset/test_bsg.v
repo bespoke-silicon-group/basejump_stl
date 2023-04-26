@@ -58,14 +58,18 @@ module test_bsg
   begin
     reset_time <= $time - (cycle_time_p / 2); // the test reset becomes 0 
                                                // on negedge
-    ready_time <= 0;
+    // ready_time <= 0;
   end
   
-  always_ff @(posedge test_output)
-    ready_time <= $time;
+  // always_ff @(posedge test_output)
+  //   ready_time <= $time;
   
   always_ff @(posedge clk)
   begin
+    if (reset) begin 
+      ready_time <= 0;
+    end
+    else if (test_output) ready_time <= $time;
     test_output_r <= test_output;
     
     /*$display("\ntest_output: %b @ time: %d", test_output, $time);*/ 

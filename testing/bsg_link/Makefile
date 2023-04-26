@@ -17,4 +17,3 @@ junk = csrc DVEfiles simv.daidir *.old *.vpd simv *.key vc_hdrs.h
 
 clean:
 	rm -rf $(junk)
-

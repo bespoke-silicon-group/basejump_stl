@@ -1,5 +1,10 @@
+TOP ?= $(shell git rev-parse --show-toplevel)
+BSG_CADENV_DIR ?= $(TOP)/../bsg_cadenv
+
+include $(BSG_CADENV_DIR)/cadenv.mk
+
 run:
-	vcs -f sv.include +v2k -R +lint=all -sverilog -full64 \
+	vcs -f sv.include +incdir+$(TOP)/bsg_misc +v2k -R +lint=all -sverilog -full64 \
 		-debug_pp -timescale=1ns/10ps -l sim.log
 
 dve:

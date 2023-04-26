@@ -1,4 +1,6 @@
 $BASEJUMP_STL_DIR/bsg_noc/bsg_noc_pkg.v
+$BASEJUMP_STL_DIR/bsg_noc/bsg_mesh_router_pkg.v
+$BASEJUMP_STL_DIR/bsg_noc/bsg_mesh_router_decoder_dor.v
 $BASEJUMP_STL_DIR/bsg_noc/bsg_mesh_router.v
 $BASEJUMP_STL_DIR/bsg_noc/bsg_mesh_router_buffered.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_mux_one_hot.v
@@ -11,6 +13,12 @@ $BASEJUMP_STL_DIR/bsg_dataflow/bsg_parallel_in_serial_out_passthrough.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_serial_in_parallel_out_passthrough.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_counter_clear_up_one_hot.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_dff_en.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_transpose.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_array_concentrate_static.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_concentrate_static.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_unconcentrate_static.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_arb_round_robin.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_scan.v
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_clock_gen.v
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_reset_gen.v
 testbench.v
