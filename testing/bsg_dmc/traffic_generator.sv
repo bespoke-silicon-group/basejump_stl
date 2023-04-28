@@ -88,7 +88,6 @@ module traffic_generator
 
   logic ui_clk;
 
-  logic stall_trace_reading_tag_clk_synced;
   logic refresh_in_progress_tag_clk_synced;
 
   assign ui_clk_o = ui_clk;
@@ -144,17 +143,12 @@ module traffic_generator
       );
 	
 
-  assign en_trace_reading_li = dfi_init_calib_complete_i & tag_trace_done_lo & (~stall_trace_reading_tag_clk_synced);
+  assign en_trace_reading_li = dfi_init_calib_complete_i & tag_trace_done_lo & (~stall_trace_reading_i);
 
   bsg_sync_sync #(.width_p(1)) en_trace_fpga_clk_sync_inst
     (.oclk_i      ( fpga_link_clk      )
     ,.iclk_data_i ( en_trace_reading_li )
     ,.oclk_data_o ( en_trace_reading_fpga_clk_synced_li    ));
-
-  bsg_sync_sync #(.width_p(1)) stall_trace_read_tag_clk_sync_inst
-    (.oclk_i      ( tag_clk      )
-    ,.iclk_data_i ( stall_trace_reading_i )
-    ,.oclk_data_o ( stall_trace_reading_tag_clk_synced    ));
    
   bsg_sync_sync #(.width_p(1)) refresh_in_progress_tag_clk_inst
     (.oclk_i      ( tag_clk      )
@@ -202,7 +196,7 @@ module traffic_generator
   logic [4:0] stall_transmission_tag_index, re_enable_transmission_tag_index;
 
   logic update_clock_freq;
-  assign update_clock_freq = stall_trace_reading_tag_clk_synced & ~(refresh_in_progress_tag_clk_synced);
+  assign update_clock_freq = stall_trace_reading_i & ~(refresh_in_progress_tag_clk_synced);
 
   logic [20:0] stall_dmc_tag_reg;
   logic [20:0] no_stall_dmc_tag_reg;
@@ -235,13 +229,13 @@ module traffic_generator
 	 if(tag_trace_done_lo && irritate_clock_i &&  (wrong_clock_tag_index <=61 )) begin
 		 tag_master_data_li = tag_data_wrong_clk_period_and_trigger[wrong_clock_tag_index];
 	 end
-     else if(tag_trace_done_lo && stall_trace_reading_tag_clk_synced && (stall_transmission_tag_index <=19)) begin
+     else if(tag_trace_done_lo && stall_trace_reading_i && (stall_transmission_tag_index <=19)) begin
    	  	tag_master_data_li = stall_dmc_tag_reg[stall_transmission_tag_index];
      end
 	 else if(tag_trace_done_lo && update_clock_freq && (clock_update_tag_index <= 61 )) begin
 		 tag_master_data_li = tag_data_clock_period_and_trigger[clock_update_tag_index];
 	 end
-	 else if(stall_trace_reading_tag_clk_synced && (re_enable_transmission_tag_index <= 20)) begin
+	 else if(stall_trace_reading_i && (re_enable_transmission_tag_index <= 20)) begin
 		 tag_master_data_li = no_stall_dmc_tag_reg[re_enable_transmission_tag_index];		
 	 end
      else if(tag_trace_valid_lo) begin
@@ -259,13 +253,13 @@ module traffic_generator
 		  wrong_clock_tag_index <= 0;
 		  re_enable_transmission_tag_index <= 0;
       end
-      else if (stall_trace_reading_tag_clk_synced && (stall_transmission_tag_index <= 19)) begin
+      else if (stall_trace_reading_i && (stall_transmission_tag_index <= 19)) begin
     	  stall_transmission_tag_index <= stall_transmission_tag_index + 1;
       end
 	  else if (update_clock_freq && (clock_update_tag_index <= 61)) begin
     	 clock_update_tag_index  <= clock_update_tag_index + 1;
       end
-	  else if (stall_trace_reading_tag_clk_synced && (re_enable_transmission_tag_index <= 20)) begin
+	  else if (stall_trace_reading_i && (re_enable_transmission_tag_index <= 20)) begin
 		re_enable_transmission_tag_index <= re_enable_transmission_tag_index + 1;
 	  end
 	  else if (irritate_clock_i && (wrong_clock_tag_index <= 61)) begin
@@ -342,7 +336,7 @@ module traffic_generator
 	    $display("\n#### Regression test started ####");
 	    @(posedge dfi_init_calib_complete_i);
 	    repeat(1000) @(posedge ui_clk);
-	    for(k=0;k<256;k++) begin
+	    for(k=0;k<512;k++) begin
 	      waddr = k*dq_burst_length_lp;
 	      wdata = 0;
 	      for(j=0;j<ui_burst_length_lp;j++)
@@ -355,7 +349,7 @@ module traffic_generator
 	      join
 	    end
         #1;
-	    for(k=0;k<256;k++) begin
+	    for(k=0;k<512;k++) begin
 	      raddr = k*dq_burst_length_lp;
 	      raddr_queue.push_front(raddr);
 	      ui_cmd(RD, raddr);

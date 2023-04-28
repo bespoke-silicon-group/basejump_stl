@@ -40,22 +40,22 @@ bsg_dmc_trace_rom.tr:
 %.v: %.tr
 	../../bsg_mem/bsg_ascii_to_rom.py $< $* > $@
 
-elaborate: bsg_dmc_trace_rom.v bsg_tag_boot_rom.v
-	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l $@.log -f filelist.lst
+elaborate : bsg_dmc_trace_rom.v bsg_tag_boot_rom.v
+	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l $@.$(UI_CLK_PRD).log -f filelist.lst
 	touch $@
 
 run: elaborate
-	./simv $(RUN_OPTIONS)  -l $@.log
+	./simv $(RUN_OPTIONS)  -l $@.$(UI_CLK_PRD).log
 	touch $@
 
 dve: 
 	$(VCS_BIN)/dve -full64 -vpd vcdplus.vpd &
 
 clean:
-	rm -rf elaborate run
+	rm -rf elaborate* run*
 	rm -rf *.log
-	rm -rf bsg_dmc_trace_rom.tr
-	rm -rf *_rom.v
+	#rm -rf bsg_dmc_trace_rom.tr
+	#rm -rf *_rom.v
 	rm -rf *.vpd
 	rm -rf vc_hdrs.h
 	rm -rf simv*
@@ -63,3 +63,8 @@ clean:
 	rm -rf ucli.key
 	#rm -rf DVEfiles
 	rm -rf AN.DB
+
+CLK_SPEEDS := 100000 2500 1000
+
+regression:
+	$(foreach CLK_SPD, $(CLK_SPEEDS), make elaborate UI_CLK_PRD=$(CLK_SPD); make run UI_CLK_PRD=$(CLK_SPD); make clean)

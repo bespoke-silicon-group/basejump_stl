@@ -359,7 +359,7 @@ module bsg_dmc_controller
     // reset rd_calib_req to 0 when we are done issuing dfi_dmc_p_i.calib_num_reads number of read commands.
     else if (rd_calib_ack && (calr_tick == dfi_dmc_p_i.calib_num_reads))
       rd_calib_req <= 0;
-    else if(rd_calib_tick == dfi_dmc_p_i.tcalr)
+    else if(rd_calib_tick == dfi_dmc_p_i.tcalr & calr_cnt == 0)
       rd_calib_req <= 1;
   end
 
@@ -821,7 +821,7 @@ module bsg_dmc_controller
   logic [`BSG_WIDTH(cmd_sfifo_depth_p)-1:0] txn_cnt;
   bsg_counter_up_down #
     (.max_val_p(cmd_sfifo_depth_p)
-    ,.init_val_p(0)
+    ,.init_val_p(1)
     ,.max_step_p(1))
   txn_counter
     (.clk_i(ui_clk_i)
