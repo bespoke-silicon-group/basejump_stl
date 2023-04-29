@@ -7,9 +7,18 @@ export VCS_RELEASE=/home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1
 export VCS_BIN=$(VCS_RELEASE)/bin
 export VCS=vcs
 export _DVE=dve
+export VERDI_HOME :=/home/projects/ee477.2023wtr/cad/synopsys/verdi/Q-2020.03-SP2-8
+export VERDI := $(VERDI_HOME)/bin/verdi
 export PATH:=$(VCS_BIN):$(PATH)
 
 export VCS_HOME=$(VCS_RELEASE)
+
+# export LM_LICENSE_FILE := 27020@localhost
+# export VCS_HOME := /gro/cad/synopsys/vcs/Q-2020.03-SP1
+# export UVM_HOME := $(VCS_HOME)/etc/uvm-1.2
+# export VERDI_HOME := /gro/cad/synopsys/verdi/Q-2020.03-SP2-8
+# export VERDI := $(VERDI_HOME)/bin/verdi
+# export VCS := $(VCS_HOME)/bin/vcss
 
 # $(error $(VCS_HOME))
 
@@ -58,7 +67,7 @@ VCS_DEFINES += +define+BLOCK_SIZE_IN_WORDS_P=$(BLOCK_SIZE_IN_WORDS_P)
 
 
 SIMV = $(abspath simv)
-WAVE ?= 0
+WAVE ?= 1
 
 BASIC_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BASIC_TEST)))
 
@@ -83,6 +92,9 @@ out/%/trace.tr:
 %.dve:
 	$(_DVE) -full64 -vpd out/$*/vcdplus.vpd &
 
+%.verdi:
+	$(VERDI) -ssf out/$*/waveform.fsdb &
+
 summary:
 	@$(foreach test, $(BASIC_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
 		-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
@@ -96,3 +108,4 @@ clean:
 	rm -rf stack.info.* *.pyc
 	rm -rf out
 	rm -f ../common/*.pyc
+
