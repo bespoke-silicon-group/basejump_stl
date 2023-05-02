@@ -27,11 +27,14 @@ fdb_tool =
 [hb]
 postSimFile = /home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/out/test_random1/waveform.fsdb
 syncTime = 0
-viewport = 20 31 900 700 0 0 236 898
+viewport = 250 197 1440 723 0 0 92 1438
+activeNode = "bsg_nonsynth_clock_gen__abstract"
+activeScope = "bsg_nonsynth_clock_gen__abstract"
+activeFile = "/home/rcrist/bsg_cache_research/basejump_stl/bsg_test/bsg_nonsynth_clock_gen.v"
 interactiveMode = False
 viewType = Source
 simulatorMode = False
-sourceBeginLine = 0
+sourceBeginLine = 27
 baMode = False
 srcLineNum = True
 AutoWrap = True
@@ -49,14 +52,23 @@ traceIncTopPort = False
 leadingZero = False
 signalPane = False
 SourceVerticalScrollLines = 1
+Scope1 = "bsg_nonsynth_clock_gen__abstract"
+rangeSelection = 35 35 1 34 1 1
 sdfCheckUndef = FALSE
 simFlow = FALSE
+[hb.design]
+importCmd = "-dbdir" "/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/simv.daidir" 
+invokeDir = /home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64
+[hb.sourceTab.1]
+scope = bsg_nonsynth_clock_gen__abstract
+File = /home/rcrist/bsg_cache_research/basejump_stl/bsg_test/bsg_nonsynth_clock_gen.v
+Line = 28
 [nMemoryManager]
 WaveformFile = /home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/out/test_random1/waveform.fsdb
 UserActionNum = 0
 nMemWindowNum = 0
 [wave.0]
-viewPort = 0 25 900 264 100 63
+viewPort = 0 25 1440 181 100 63
 primaryWindow = TRUE
 SessionFile = /home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/verdiLog/novas_autosave.ses.wave.0
 displayGrid = FALSE
