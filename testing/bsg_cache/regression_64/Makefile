@@ -25,8 +25,13 @@ export VCS_HOME=$(VCS_RELEASE)
 INCDIR =  +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_cache
 
-VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access
-VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4 -assert svaext
+# VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access+all
+# VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4 -assert svaext 
+# VCS_FlAGS += +vcs+flush+all -kdb
+
+VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access+all
+VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4 -assert svaext -kdb
+VCS_FLAGS += +vcs+flush+all
 
 ###### TEST SUITE ######
 BASIC_TEST += test_random1
@@ -87,7 +92,7 @@ out/%/trace.tr:
 	python $*.py $(BLOCK_SIZE_IN_WORDS_P) > $@
 
 %.basic.run: simv out/%/trace.tr
-	(cd out/$*; $(SIMV) -reportstats +vcs+nostdout +wave=$(WAVE) +checker=basic -l simv.log)
+	(cd out/$*; $(SIMV) -reportstats +wave=$(WAVE) +checker=basic -l simv.log)
 
 %.dve:
 	$(_DVE) -full64 -vpd out/$*/vcdplus.vpd &
