@@ -18,7 +18,7 @@ ELABORATE_OPTIONS += +define+BSG_OSC_BASE_DELAY=1000
 ELABORATE_OPTIONS += +define+BSG_OSC_GRANULARITY=50
 ELABORATE_OPTIONS += -timescale=1ps/1ps
 ELABORATE_OPTIONS += -assert svaext
-#Enable below line for using non-synthesisable UVM TB
+#Enable below line for using non-synthesisable TB
 ELABORATE_OPTIONS += +define+NONSYNTH_TB
 ELABORATE_OPTIONS += +lint=TFIPC-L
 
@@ -27,6 +27,8 @@ ELABORATE_OPTIONS += +lint=TFIPC-L
 # Note unit is in ps and default is 400MHz as seen below
 UI_CLK_PRD = 2500
 ELABORATE_OPTIONS += +define+UI_CLK_PERIOD=$(UI_CLK_PRD)
+
+ELABORATE_OPTIONS += +define+WRITE_GAP_CYCLES=400 +define+CMD_GAP_CYCLES=400
 
 RUN_OPTIONS =
 #RUN_OPTIONS += +irritate_clk
@@ -64,7 +66,7 @@ clean:
 	#rm -rf DVEfiles
 	rm -rf AN.DB
 
-CLK_SPEEDS := 100000 2500 1000
+CLK_SPEEDS := 100000 5000 2500 1250 1000
 
 regression:
-	$(foreach CLK_SPD, $(CLK_SPEEDS), make elaborate UI_CLK_PRD=$(CLK_SPD); make run UI_CLK_PRD=$(CLK_SPD); make clean)
+	$(foreach CLK_SPD, $(CLK_SPEEDS), make -B elaborate UI_CLK_PRD=$(CLK_SPD); make run UI_CLK_PRD=$(CLK_SPD))

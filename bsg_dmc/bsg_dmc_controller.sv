@@ -818,10 +818,10 @@ module bsg_dmc_controller
     end
   end
 
-  logic [`BSG_WIDTH(cmd_sfifo_depth_p)-1:0] txn_cnt;
+  logic [`BSG_WIDTH(2*cmd_sfifo_depth_p)-1:0] txn_cnt;
   bsg_counter_up_down #
-    (.max_val_p(cmd_sfifo_depth_p)
-    ,.init_val_p(1)
+    (.max_val_p(2*cmd_sfifo_depth_p)
+    ,.init_val_p(cmd_sfifo_depth_p)
     ,.max_step_p(1))
   txn_counter
     (.clk_i(ui_clk_i)
@@ -830,7 +830,7 @@ module bsg_dmc_controller
      ,.down_i((app_wdf_end_i & app_wdf_rdy_o) || (app_rd_data_end_o))
      ,.count_o(txn_cnt)
      );
-  assign ui_transaction_in_progress_o = (txn_cnt != '0);
+  assign ui_transaction_in_progress_o = (txn_cnt != cmd_sfifo_depth_p);
 
   assign dfi_refresh_in_progress_o = (c_cmd == REF);
 

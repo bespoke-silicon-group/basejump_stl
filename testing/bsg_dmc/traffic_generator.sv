@@ -570,8 +570,8 @@ module traffic_generator
   							.addr_width_p(ui_addr_width_p),
   							.burst_len_p(ui_burst_length_lp),
                             // Arbitrary for now, just make sure the trace correlates
-                            .cmd_tfifo_depth_p(3*ui_burst_length_lp),
-                            .cmd_rfifo_depth_p(2*ui_burst_length_lp)
+                            .tfifo_depth_p(3*ui_burst_length_lp),
+                            .rfifo_depth_p(2*ui_burst_length_lp)
   						) trace_to_dmc_ui
   						(	.clk_i(ui_clk),
   							.reset_i(ui_clk_sync_rst_i),
