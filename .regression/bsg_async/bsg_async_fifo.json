@@ -6,7 +6,8 @@
         "basejump_stl/bsg_mem/bsg_mem_1r1w.v",
         "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v",
         "basejump_stl/bsg_async/bsg_async_ptr_gray.v",
-        "basejump_stl/bsg_async/bsg_launch_sync_sync.v"
+        "basejump_stl/bsg_async/bsg_launch_sync_sync.v",
+        "basejump_stl/bsg_misc/bsg_and.v"
     ],
     "run_config": [
         {
