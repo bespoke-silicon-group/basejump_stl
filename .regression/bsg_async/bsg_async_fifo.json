@@ -12,49 +12,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -85,49 +85,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -158,49 +158,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -231,49 +231,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -304,49 +304,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -377,49 +377,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -450,49 +450,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -523,49 +523,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -596,49 +596,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -669,49 +669,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -742,49 +742,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -815,49 +815,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -888,49 +888,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -961,49 +961,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -1034,49 +1034,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -1107,49 +1107,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -1180,49 +1180,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -1253,49 +1253,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -1326,49 +1326,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -1399,49 +1399,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -1472,49 +1472,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -1545,49 +1545,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -1618,49 +1618,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -1691,49 +1691,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -1764,49 +1764,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -1837,49 +1837,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -1910,49 +1910,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -1983,49 +1983,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -2056,49 +2056,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -2129,49 +2129,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -2202,49 +2202,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -2275,49 +2275,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -2348,49 +2348,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -2421,49 +2421,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -2494,49 +2494,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -2567,49 +2567,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -2640,49 +2640,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -2713,49 +2713,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -2786,49 +2786,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -2859,49 +2859,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -2932,49 +2932,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -3005,49 +3005,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -3078,49 +3078,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -3151,49 +3151,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -3224,49 +3224,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -3297,49 +3297,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -3370,49 +3370,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -3443,49 +3443,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -3516,49 +3516,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -3589,49 +3589,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -3662,49 +3662,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -3735,49 +3735,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -3808,49 +3808,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -3881,49 +3881,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -3954,49 +3954,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -4027,49 +4027,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -4100,49 +4100,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -4173,49 +4173,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -4246,49 +4246,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -4319,49 +4319,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -4392,49 +4392,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -4465,49 +4465,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -4538,49 +4538,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
@@ -4611,49 +4611,49 @@
         {
             "constraints": [
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_enq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_data_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_reset_i",
                     "type": "input"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_deq_i",
                     "type": "input"
                 },
                 {
-                    "clock": "wclk",
+                    "clock": "w_clk",
                     "delay": "0",
                     "port": "w_full_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_data_o",
                     "type": "output"
                 },
                 {
-                    "clock": "rclk",
+                    "clock": "r_clk",
                     "delay": "0",
                     "port": "r_valid_o",
                     "type": "output"
