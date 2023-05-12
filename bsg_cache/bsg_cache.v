@@ -1037,17 +1037,32 @@ end
     ? (miss_tag_mem_v_lo & miss_tag_mem_w_lo)
     : tagst_write_en;
 
+  // Hardcoding tag mem address if single set
+  if(sets_p == 1) begin
+    assign tag_mem_addr_li = 1'b0;
+  end else begin
+    always_comb begin
+      if(miss_v) begin
+        tag_mem_addr_li = recover_lo
+          ? addr_index_tl
+          : (miss_tag_mem_v_lo ? miss_tag_mem_addr_lo : addr_index);
+      end else begin
+        tag_mem_addr_li = addr_index;
+      end
+    end
+  end
+
   always_comb begin
     if (miss_v) begin
-      tag_mem_addr_li = recover_lo
-        ? addr_index_tl
-        : (miss_tag_mem_v_lo ? miss_tag_mem_addr_lo : addr_index);
+      // tag_mem_addr_li = recover_lo
+      //     ? addr_index_tl
+      //     : (miss_tag_mem_v_lo ? miss_tag_mem_addr_lo : addr_index);
       tag_mem_data_li = miss_tag_mem_data_lo;
       tag_mem_w_mask_li = miss_tag_mem_w_mask_lo;
     end
     else begin
       // for TAGST
-      tag_mem_addr_li = addr_index;
+      // tag_mem_addr_li = addr_index;
       for (integer i = 0; i < ways_p; i++) begin
         tag_mem_data_li[i] = {tagst_valid, tagst_lock, tagst_tag};
         tag_mem_w_mask_li[i] = {tag_info_width_lp{addr_way_decode[i]}};
@@ -1101,13 +1116,19 @@ end
     ? miss_track_mem_w_mask_lo
     : tbuf_track_mem_w_mask;
 
-  assign track_mem_addr_li = recover_lo
+  if(sets_p == 1) begin
+    assign track_mem_addr_li = 0;
+  end
+  else begin
+    assign track_mem_addr_li = recover_lo
     ? addr_index_tl
     : (miss_track_mem_v_lo
       ? miss_track_mem_addr_lo
       : (((decode.ld_op | decode.atomic_op | partial_st) & yumi_o)
         ? addr_index
         : tbuf_track_mem_addr));
+  end
+  
 
   // stat_mem ctrl logic
   // TAGST clears the stat_info as it exits tv stage.
@@ -1125,18 +1146,31 @@ end
     ,.mask_o(plru_decode_mask_lo)
   );
 
+  // hardcode stat mem address if single set
+  if(sets_p == 1) begin
+    assign stat_mem_addr_li = 1'b0;
+  end else begin
+    always_comb begin
+      if(miss_v) begin
+        stat_mem_addr_li = miss_stat_mem_addr_lo; // essentially same as addr_index_v
+      end else begin 
+        stat_mem_addr_li = addr_index_v;
+      end
+    end 
+  end
+
   always_comb begin
     if (miss_v) begin
       stat_mem_v_li = miss_stat_mem_v_lo;
       stat_mem_w_li = miss_stat_mem_w_lo;
-      stat_mem_addr_li = miss_stat_mem_addr_lo; // essentially same as addr_index_v
+      // stat_mem_addr_li = miss_stat_mem_addr_lo; // essentially same as addr_index_v
       stat_mem_data_li = miss_stat_mem_data_lo;
       stat_mem_w_mask_li = miss_stat_mem_w_mask_lo;
     end
     else begin
       stat_mem_v_li = ((decode_v_r.st_op | decode_v_r.ld_op | decode_v_r.tagst_op | decode_v_r.atomic_op) & v_o & yumi_i);
       stat_mem_w_li = ((decode_v_r.st_op | decode_v_r.ld_op | decode_v_r.tagst_op | decode_v_r.atomic_op) & v_o & yumi_i);
-      stat_mem_addr_li = addr_index_v;
+      // stat_mem_addr_li = addr_index_v;
 
       if (decode_v_r.tagst_op) begin
         // for TAGST
