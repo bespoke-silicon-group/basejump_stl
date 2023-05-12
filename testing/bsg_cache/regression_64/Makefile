@@ -92,7 +92,10 @@ out/%/trace.tr:
 	python $*.py $(BLOCK_SIZE_IN_WORDS_P) > $@
 
 %.basic.run: simv out/%/trace.tr
-	(cd out/$*; $(SIMV) -reportstats +wave=$(WAVE) +checker=basic -l simv.log)
+	(cd out/$*; $(SIMV) -reportstats +wave=$(WAVE) +fsdb+struct=on +checker=basic -l simv.log) 
+
+basic: simv out/test_random1/trace.tr
+	(cd out/test_random1; $(SIMV) -reportstats +wave=$(WAVE) +checker=basic -l simv.log)
 
 %.dve:
 	$(_DVE) -full64 -vpd out/$*/vcdplus.vpd &
@@ -100,11 +103,13 @@ out/%/trace.tr:
 %.verdi:
 	$(VERDI) -ssf out/$*/waveform.fsdb &
 
+openRef:
+	$(VERDI) -ssf ref/out/test_random1/waveform.fsdb &
 summary:
 	@$(foreach test, $(BASIC_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
 		-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
 
-
+	
 clean:
 	rm -rf DVEfiles
 	rm -rf csrc simv

@@ -1,6 +1,6 @@
-vcs -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access +v2k -sverilog -timescale=1ps/1ps -O4 -assert svaext -f sv.include +incdir+/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc +incdir+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache +define+YUMI_MIN_DELAY_P=0 +define+YUMI_MAX_DELAY_P=0 +define+DMA_READ_DELAY_P=0 +define+DMA_WRITE_DELAY_P=0 +define+DMA_REQ_DELAY_P=0 +define+DMA_DATA_DELAY_P=0 +define+BLOCK_SIZE_IN_WORDS_P=8 -l vcs.log | grep --color -E '^|Fatal|Error|Warning|Implicit wire is used|Too few instance port connections|Port connection width mismatch|Width mismatch'
+vcs -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access+all +v2k -sverilog -timescale=1ps/1ps -O4 -assert svaext -kdb +vcs+flush+all +fsdb+struct=on -f sv.include +incdir+/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc +incdir+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache +define+YUMI_MIN_DELAY_P=0 +define+YUMI_MAX_DELAY_P=0 +define+DMA_READ_DELAY_P=0 +define+DMA_WRITE_DELAY_P=0 +define+DMA_REQ_DELAY_P=0 +define+DMA_DATA_DELAY_P=0 +define+BLOCK_SIZE_IN_WORDS_P=8 -l vcs.log | grep --color -E '^|Fatal|Error|Warning|Implicit wire is used|Too few instance port connections|Port connection width mismatch|Width mismatch'
                          Chronologic VCS (TM)
-       Version Q-2020.03-SP1_Full64 -- Tue Apr 25 13:30:29 2023
+       Version Q-2020.03-SP1_Full64 -- Tue May  9 13:11:38 2023
                Copyright (c) 1991-2020 by Synopsys Inc.
                          ALL RIGHTS RESERVED
 
@@ -8,6 +8,12 @@ This program is proprietary and confidential information of Synopsys Inc.
 and may be used and disclosed only as authorized in a license agreement
 controlling such use and disclosure.
 
+
+Warning-[UNK_COMP_ARG] Unknown compile time plus argument used
+  Unknown compile time plus argument 'fsdb+struct=on' is ignored.
+
+ + use `+plusarg_save' to bind in runtime plusargs;
+ + use `+plusarg_ignore' to suppress this message.
 Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'
 Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_test/bsg_nonsynth_clock_gen.v'
 Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
@@ -122,17 +128,11 @@ Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_d
 Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_miss.v'
 Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
 Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_miss.v'.
-Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.vh'.
-Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_miss.v'.
 Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_tbuf.v'
 Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
 Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_tbuf.v'.
-Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.vh'.
-Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_tbuf.v'.
 Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_sbuf.v'
 Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
-Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_sbuf.v'.
-Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.vh'.
 Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_sbuf.v'.
 Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_buffer_queue.v'
 Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
@@ -140,23 +140,19 @@ Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_b
 Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v'
 Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
 Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v'.
-Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.vh'.
-Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v'.
 Parsing design file '../common/bsg_nonsynth_dma_model.v'
-Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.vh'.
-Back to file '../common/bsg_nonsynth_dma_model.v'.
 Parsing design file '../common/bsg_nonsynth_random_yumi_gen.v'
 Parsing design file 'basic_checker.v'
 Parsing design file 'testbench.v'
 
 Lint-[NS] Null statement
-testbench.v, 222
+testbench.v, 232
   Null statement is used in following verilog source.
   Source info:     wait(done & (sent_r == recv_r));
 
 
 Lint-[NS] Null statement
-testbench.v, 224
+testbench.v, 234
   Null statement is used in following verilog source.
   Source info:     #500;
 
@@ -448,22 +444,6 @@ Lint-[WMIA-L] Width mismatch in assignment
 
 
 
-Lint-[ULCO] Unequal length in comparison operator
-/home/rcrist/bsg_cache_research/basejump_stl/bsg_test/bsg_nonsynth_reset_gen.v, 45
-bsg_nonsynth_reset_gen, "(ctr_lo_r[i] == reset_cycles_lo_p)"
-  A left 2-bit expression is compared to a right 32-bit expression.
-  Comparing 'ctr_lo_r[i]' of type bit [-1:0]
-  with 'reset_cycles_lo_p' of type int.
-
-
-Lint-[ULCO] Unequal length in comparison operator
-/home/rcrist/bsg_cache_research/basejump_stl/bsg_test/bsg_nonsynth_reset_gen.v, 46
-bsg_nonsynth_reset_gen, "(ctr_hi_r[i] == reset_cycles_hi_p)"
-  A left 4-bit expression is compared to a right 32-bit expression.
-  Comparing 'ctr_hi_r[i]' of type bit [3:0]
-  with 'reset_cycles_hi_p' of type int.
-
-
 Lint-[WMIA-L] Width mismatch in assignment
 /home/rcrist/bsg_cache_research/basejump_stl/bsg_test/bsg_nonsynth_reset_gen.v, 50
   Width mismatch between LHS and RHS is found in assignment:
@@ -546,6 +526,13 @@ Lint-[CAWM-L] Width mismatch
   lg_sets_lp)];  
 
 
+Lint-[CAWM-L] Width mismatch
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 1107
+  Continuous assignment width mismatch
+  1 bits (lhs) versus 32 bits (rhs).
+  Source info: assign track_mem_addr_li = 0;  
+
+
 Lint-[ULCO] Unequal length in comparison operator
 /home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_dma.v, 112
 bsg_cache_dma, "(counter_r == (burst_len_lp - 1))"
@@ -620,7 +607,8 @@ bsg_mem_1rw_sync_mask_write_bit, "(addr_i < els_p)"
 
 Starting vcs inline pass...
 
-58 modules and 0 UDP read.
+60 modules and 0 UDP read.
+recompiling module bsg_nonsynth_clock_gen
 recompiling module bsg_nonsynth_clock_gen__abstract
 recompiling module bsg_nonsynth_reset_gen__abstract
 recompiling module bsg_nonsynth_test_rom
@@ -657,21 +645,22 @@ recompiling module bsg_mem_1rw_sync_mask_write_bit_synth__abstract
 recompiling module bsg_mem_1rw_sync_mask_write_byte_synth__abstract
 recompiling module bsg_mem_1rw_sync_mask_write_bit
 recompiling module bsg_mem_1rw_sync_mask_write_bit__abstract
+recompiling module bsg_mem_1rw_sync_mask_write_byte
 recompiling module bsg_mem_1rw_sync_mask_write_byte__abstract
 recompiling module bsg_two_fifo__abstract
 recompiling module bsg_fifo_1r1w_small__abstract
 recompiling module bsg_fifo_1r1w_small_unhardened__abstract
 recompiling module bsg_fifo_tracker__abstract
 recompiling package bsg_cache_pkg
-recompiling module bsg_cache_dma
+recompiling module bsg_cache_decode
 recompiling module bsg_cache_dma__abstract
 recompiling module bsg_cache_miss
 recompiling module bsg_cache_miss__abstract
 recompiling module bsg_cache_tbuf
 recompiling module bsg_cache_tbuf__abstract
+50 of 60 modules done
 recompiling module bsg_cache_sbuf
 recompiling module bsg_cache_sbuf__abstract
-50 of 58 modules done
 recompiling module bsg_cache_buffer_queue__abstract
 recompiling module bsg_cache__abstract
 recompiling module bsg_nonsynth_dma_model
@@ -680,13 +669,14 @@ recompiling module bsg_nonsynth_random_yumi_gen__abstract
 recompiling module basic_checker
 recompiling module basic_checker__abstract
 recompiling module testbench
-All of 58 modules done
+All of 60 modules done
 make[1]: Entering directory `/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/csrc'
 make[1]: Leaving directory `/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/csrc'
 make[1]: Entering directory `/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/csrc'
 rm -f _cuarc*.so _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
 if [ -x ../simv ]; then chmod a-x ../simv; fi
-g++  -o ../simv    -rdynamic  -Wl,-rpath='$ORIGIN'/simv.daidir -Wl,-rpath=./simv.daidir -Wl,-rpath=/home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1/linux64/lib -L/home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1/linux64/lib  -Wl,-rpath-link=./  /usr/lib64/libnuma.so.1   objs/amcQw_d.o   _8356_archive_1.so  SIM_l.o      rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o          -lvirsim -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile -luclinative /home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1/linux64/lib/vcs_tls.o   -Wl,-whole-archive -lvcsucli -Wl,-no-whole-archive       ./../simv.daidir/vc_hdrs.o    /home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1/linux64/lib/vcs_save_restore_new.o -ldl  -lc -lm -lpthread -ldl 
+g++  -o ../simv    -rdynamic  -Wl,-rpath='$ORIGIN'/simv.daidir -Wl,-rpath=./simv.daidir -Wl,-rpath=/home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1/linux64/lib -L/home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1/linux64/lib  -Wl,-rpath-link=./  /usr/lib64/libnuma.so.1   objs/amcQw_d.o   _7111_archive_1.so  SIM_l.o      rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o          -lvirsim -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile -luclinative /home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1/linux64/lib/vcs_tls.o   -Wl,-whole-archive -lvcsucli -Wl,-no-whole-archive       ./../simv.daidir/vc_hdrs.o  _vcs_pli_stub_.o   /home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1/linux64/lib/vcs_save_restore_new.o /home/projects/ee477.2023wtr/cad/synopsys/verdi/Q-2020.03-SP2-8/share/PLI/VCS/LINUX64/pli.a -ldl  -lc -lm -lpthread -ldl 
 ../simv up to date
 make[1]: Leaving directory `/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/csrc'
-CPU time: .895 seconds to compile + .345 seconds to elab + .366 seconds to link
+CPU time: 1.236 seconds to compile + .279 seconds to elab + .433 seconds to link
+Verdi KDB elaboration done and the database successfully generated: 0 error(s), 0 warning(s)
