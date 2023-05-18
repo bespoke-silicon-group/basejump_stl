@@ -313,7 +313,7 @@ initial begin
   $display({"cycle\t to_chip\t from_chip from_meso,v\t to_meso,",
             "rdy crdt_counter elem_in_fifo"});
   $monitor("@%t %b\t  %b    %b, %b\t %b, %b\t %d\t %d",$time,to_meso
-      ,from_meso_fixed,DUT.from_meso_input,DUT.valid,DUT.to_meso_output,DUT.ready,
+      ,from_meso_fixed,DUT.from_meso_input,DUT.valid,DUT.to_meso_output,DUT.ready_and_o,
       DUT.mesosync_core.output_credit_counter.credit_cnt,
       DUT.mesosync_core.input_fifo.fifo.wptr_r-DUT.mesosync_core.input_fifo.fifo.rptr_r);
   
