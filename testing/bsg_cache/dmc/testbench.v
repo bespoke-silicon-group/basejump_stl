@@ -132,7 +132,7 @@ bsg_cache_to_dram_ctrl #(
 
   ,.dma_data_o(dma_data_li)
   ,.dma_data_v_o(dma_data_v_li)
-  ,.dma_data_ready_i(dma_data_ready_lo)
+  ,.dma_data_ready_and_i(dma_data_ready_lo)
 
   ,.dma_data_i(dma_data_lo)
   ,.dma_data_v_i(dma_data_v_lo)
