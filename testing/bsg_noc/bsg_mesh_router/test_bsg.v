@@ -52,13 +52,14 @@ module test_bsg
 
   localparam medge_lp     = 2**(`MESH_EDGE_P);         // edge length of the mesh 
   localparam msize_lp     = (medge_lp)**2;             // area (total no. of routers)
-  localparam lg_node_x_lp = `BSG_SAFE_CLOG2(medge_lp); // width of x coordinate
-  localparam lg_node_y_lp = `BSG_SAFE_CLOG2(medge_lp); // width of y coordinate
+  localparam x_cord_width_lp = `BSG_SAFE_CLOG2(medge_lp); // width of x coordinate
+  localparam y_cord_width_lp = `BSG_SAFE_CLOG2(medge_lp); // width of y coordinate
   
   // data width including embedded coordinates
-  localparam width_lp = (`DATA_WIDTH_P) + lg_node_x_lp + lg_node_y_lp;
+  localparam width_lp = (`DATA_WIDTH_P) + x_cord_width_lp + y_cord_width_lp;
   
-  localparam dirs_lp = 5;
+  localparam dims_lp = 2;
+  localparam dirs_lp = (dims_lp*2)+1;
   
   initial
   begin
@@ -89,24 +90,24 @@ module test_bsg
   genvar i, j; 
   
   for(i=0; i<msize_lp; i=i+1)
-    bsg_mesh_router #( .dirs_p     (dirs_lp)
+    bsg_mesh_router #( .dims_p     (dims_lp)
                       ,.width_p    (width_lp)
-                      ,.lg_node_x_p(lg_node_x_lp)
-                      ,.lg_node_y_p(lg_node_y_lp)
+                      ,.x_cord_width_p(x_cord_width_lp)
+                      ,.y_cord_width_p(y_cord_width_lp)
                      ) uut
                      ( .clk_i  (clk)
                       ,.reset_i(reset)
                       
                       ,.data_i (test_input_data[i])
-                      ,.valid_i(test_input_valid[i])
+                      ,.v_i    (test_input_valid[i])
                       ,.yumi_o (test_output_yumi[i])
 
                       ,.data_o (test_output_data[i])
                       ,.valid_o(test_output_valid[i])
                       ,.ready_and_i(test_input_ready[i])
 
-                      ,.my_x_i(lg_node_x_lp'(i%medge_lp))
-                      ,.my_y_i(lg_node_y_lp'(i/medge_lp))
+                      ,.my_x_i(x_cord_width_lp'(i%medge_lp))
+                      ,.my_y_i(y_cord_width_lp'(i/medge_lp))
                      );
 
   // disables the peripheral ports of the mesh
@@ -253,14 +254,14 @@ module test_bsg
   * Test stimuli
   ***************************************************/
   
-  logic [msize_lp-1:0][lg_node_x_lp+lg_node_y_lp-1:0] count;
+  logic [msize_lp-1:0][x_cord_width_lp+y_cord_width_lp-1:0] count;
   logic [msize_lp-1:0] finish_input; // if high, data input to mesh is finished
   
   for(i=0; i<msize_lp; i=i+1)
   begin
     assign test_input_ready[i][P] = 1'b1;
-    assign test_stim_data_in[i] = {(width_lp-lg_node_x_lp-lg_node_x_lp)'(i)
-                                  ,((lg_node_x_lp+lg_node_y_lp)'(i))^count[i]
+    assign test_stim_data_in[i] = {(width_lp-x_cord_width_lp-x_cord_width_lp)'(i)
+                                  ,((x_cord_width_lp+y_cord_width_lp)'(i))^count[i]
                                   };
     assign test_stim_valid_in[i] = ~(finish_input[i]);
     
@@ -288,7 +289,7 @@ module test_bsg
   * Verification
   ***************************************************/
 
-  logic [msize_lp-1:0][lg_node_x_lp+lg_node_y_lp-1:0] output_count;
+  logic [msize_lp-1:0][x_cord_width_lp+y_cord_width_lp-1:0] output_count;
   logic [msize_lp-1:0][width_lp-1:0] test_output_data_r;
   logic [msize_lp-1:0] finish;
 
@@ -311,10 +312,10 @@ module test_bsg
                     );
             test_output_data_r <= test_output_data[i][P];
             
-            assert(test_output_data[i][P][0+:(lg_node_x_lp+lg_node_y_lp)] == i)
+            assert(test_output_data[i][P][0+:(x_cord_width_lp+y_cord_width_lp)] == i)
               else $error("received at tile: %0d, should go to tile: %0d"
                           ,i
-                          ,test_output_data[i][P][0+:(lg_node_x_lp+lg_node_y_lp)]
+                          ,test_output_data[i][P][0+:(x_cord_width_lp+y_cord_width_lp)]
                          );
 
             assert((test_output_data_r!=test_output_data[i][P]) | output_count[i]==0)

@@ -5,28 +5,25 @@
 #
 # MBT 5/12/2015
 #
-# Edited to test bsg_mux_bitwise.v
-# Bandhav Veluri 5/28/2015
+# Edited to test bsg_thermometer_count.v
+# Bandhav Veluri 5/18/2015
 
 TOP = ../../..
 
-######################## SIMULATION PARAMETERS ################################
+########################### SIMULATION PARAMETERS ##########################
 # place the parameters you want to scan here.
-BSG_TESTME_FILES    =   bsg_mux_bitwise.v
+BSG_TESTME_FILES    =   bsg_dff_reset_en.v
 BSG_TESTME_DIR      =   $(TOP)/bsg_misc
-BSG_MISC_FILES      =   bsg_defines.v bsg_mux_segmented.v
+BSG_MISC_FILES      =   bsg_defines.v bsg_cycle_counter.v
 BSG_ASYNC_FILES     = 
 BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  = 
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
 
-BSG_TEST_FILES =  bsg_nonsynth_reset_gen.v \
-                  bsg_nonsynth_clock_gen.v \
-                  bsg_nonsynth_ascii_writer.v
-
-#TEST_FILES = test_assembler.v
-#TEST_MAIN = test_bsg_comm_link.v
+BSG_TEST_FILES      =  bsg_nonsynth_reset_gen.v \
+                       bsg_nonsynth_clock_gen.v \
+                       bsg_nonsynth_ascii_writer.v
 
 TEST_MAIN   = test_bsg.v
 TEST_MODULE = test_bsg

@@ -1,21 +1,33 @@
+## To be included in other makefiles, pass arguments via
+## setting scan_params and set files by setting BSG_*_FILES
+
+## Environment Setup
+
+TOP ?= $(shell git rev-parse --show-toplevel)
+BSG_CADENV_DIR ?= $(TOP)/../bsg_cadenv
+
+include $(BSG_CADENV_DIR)/cadenv.mk
+
 ##########
 # settings for Xilinx Vivado
 BSG_IP_CORES_COMP = xvlog --sv
-BSG_IP_CORES_ELAB = xelab -debug typical -s top_sim
+BSG_IP_CORES_ELAB = xelab -debug typical -s top_sim -timescale=1ps/1ps
 BSG_IP_CORES_SIM  = xsim --runall top_sim
 BSG_IP_CORES_SIM_DEFINE_PARAM =-d@
 BSG_IP_CORES_SIM_INCLUDE_DIRS = -i $(TOP)/bsg_test -i $(TOP)/bsg_misc -i $(TOP)/bsg_dataflow
-BSG_IP_CORES_SIM_CLEAN_FILES = xvlog* xelab* webtalk* xsim* *.wdb
+BSG_IP_CORES_SIM_CLEAN_FILES = xvlog* xelab* webtalk* xsim* *.wdb .Xil
 #
 ##########
 
 ALL_FILES = $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x))     \
               $(foreach x,$(BSG_ASYNC_FILES),$(TOP)/bsg_async/$(x)) \
+              $(foreach x,$(BSG_NOC_FILES),$(TOP)/bsg_noc/$(x)) \
               $(foreach x,$(BSG_FSB_FILES),$(TOP)/bsg_fsb/$(x))     \
               $(foreach x,$(BSG_MEM_FILES),$(TOP)/bsg_mem/$(x))     \
               $(foreach x,$(BSG_GUTS_FILES),$(TOP)/bsg_guts/$(x))   \
               $(foreach x,$(BSG_COMM_LINK_FILES),$(TOP)/bsg_comm_link/$(x)) \
               $(foreach x,$(BSG_DATAFLOW_FILES),$(TOP)/bsg_dataflow/$(x))   \
+              $(foreach x,$(ADDITIONAL_FILES),./$(x))                       \
               $(foreach x,$(BSG_TEST_FILES),$(TOP)/bsg_test/$(x))           \
               $(foreach x,$(BSG_TESTME_FILES),$(BSG_TESTME_DIR)/$(x))       \
               $(TEST_MAIN)
@@ -47,5 +59,5 @@ run.%:
   
 clean:
 	@echo removing outfile
-	rm -f outfile
+	rm -f outfile output.log
 	rm -rf $(BSG_IP_CORES_SIM_CLEAN_FILES)
