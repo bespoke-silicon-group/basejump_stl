@@ -70,25 +70,14 @@ module bsg_parallel_in_serial_out
         bsg_two_fifo
        #(.width_p       (width_p)
         ) fifo0
-<<<<<<< Updated upstream
-        (.clk_i  (clk_i)
-        ,.reset_i(reset_i)
-        ,.ready_param_o(fifo0_ready_lo)
-        ,.data_i (data_li[els_p-1])
-        ,.v_i    (fifo_v_li)
-        ,.v_o    (fifo_v_lo)
-        ,.data_o (fifo_data_lo[els_p-1])
-        ,.yumi_i (fifo0_yumi_li)
-=======
         (.clk_i         (clk_i)
         ,.reset_i       (reset_i)
-        ,.ready_param_o (fifo0_ready_and_lo)
+        ,.ready_param_o (fifo0_ready_lo)
         ,.data_i        (data_li[els_p-1])
         ,.v_i           (fifo_v_li)
         ,.v_o           (fifo_v_lo)
         ,.data_o        (fifo_data_lo[els_p-1])
         ,.yumi_i        (fifo0_yumi_li)
->>>>>>> Stashed changes
         );
       end
     else

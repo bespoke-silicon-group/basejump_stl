@@ -273,7 +273,7 @@ module bsg_wormhole_network_tester
     out_ct_fifo
     (.clk_i  (router_clk_0  )
     ,.reset_i(router_reset_0)
-    ,.ready_o(out_router_link_li[i][E].ready_and_rev)
+    ,.ready_param_o(out_router_link_li[i][E].ready_and_rev)
     ,.data_i (out_router_link_lo[i][E].data         )
     ,.v_i    (out_router_link_lo[i][E].v            )
     ,.v_o    (out_ct_fifo_valid_lo[i])
@@ -473,7 +473,7 @@ module bsg_wormhole_network_tester
     in_ct_fifo
     (.clk_i  (router_clk_1  )
     ,.reset_i(router_reset_1)
-    ,.ready_o(in_router_link_li[i][W].ready_and_rev)
+    ,.ready_param_o(in_router_link_li[i][W].ready_and_rev)
     ,.data_i (in_router_link_lo[i][W].data         )
     ,.v_i    (in_router_link_lo[i][W].v            )
     ,.v_o    (in_ct_fifo_valid_lo[i])
