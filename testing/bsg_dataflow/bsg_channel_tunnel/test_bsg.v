@@ -91,20 +91,20 @@ module test_bsg
             (.clk_i   (clk)
              ,.reset_i(reset)
              ,.multi_data_i (multi_data [i])
-             ,.multi_valid_i(multi_valid[i])
+             ,.multi_v_i(multi_valid[i])
              ,.multi_yumi_o (multi_yumi [i])
 
              ,.multi_data_o (multi_data [!i])
-             ,.multi_valid_o(multi_valid[!i])
+             ,.multi_v_o(multi_valid[!i])
              ,.multi_yumi_i (multi_yumi [!i])
 
              //             AB  I/O
              ,.data_i (data [i][0])
-             ,.valid_i(valid[i][0])
+             ,.v_i(valid[i][0])
              ,.yumi_o (yumi [i][0])
 
              ,.data_o (data [i][1])
-             ,.valid_o(valid[i][1])
+             ,.v_o(valid[i][1])
              ,.yumi_i (yumi [i][1])
              );
      end
@@ -183,6 +183,7 @@ module test_bsg
                   bsg_counter_up_down
                       #(.max_val_p({ 1'b0, { width_p {1'b1} }} )
                        ,.init_val_p( (i<<16)+i)
+                       ,.max_step_p(1'b1)
                        ) ctr
                       (.clk_i(clk)
                        ,.reset_i(reset   )

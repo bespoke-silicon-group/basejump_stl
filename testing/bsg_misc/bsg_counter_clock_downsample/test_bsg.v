@@ -3,13 +3,6 @@
 
 module test_bsg;
 
-  // Enable VPD file dump
-  initial
-    begin
-      $vcdpluson;
-      $vcdplusmemon;
-    end
-
   longint ticks = 0;
   longint t1 = 0;
   longint t2 = 0;

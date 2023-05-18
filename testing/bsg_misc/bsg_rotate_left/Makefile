@@ -5,16 +5,16 @@
 #
 # MBT 5/12/2015
 #
-# Edited to test bsg_mux_bitwise.v
-# Bandhav Veluri 5/28/2015
+# Edited to test bsg_mux_one_hot.v
+# Bandhav Veluri 5/30/2015
 
 TOP = ../../..
 
-######################## SIMULATION PARAMETERS ################################
+######################### SIMULATION PARAMETERS ############################
 # place the parameters you want to scan here.
-BSG_TESTME_FILES    =   bsg_mux_bitwise.v
+BSG_TESTME_FILES    =   bsg_rotate_left.v
 BSG_TESTME_DIR      =   $(TOP)/bsg_misc
-BSG_MISC_FILES      =   bsg_defines.v bsg_mux_segmented.v
+BSG_MISC_FILES      =   bsg_defines.v bsg_encode_one_hot.v
 BSG_ASYNC_FILES     = 
 BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  = 
@@ -22,23 +22,18 @@ BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
 
 BSG_TEST_FILES =  bsg_nonsynth_reset_gen.v \
-                  bsg_nonsynth_clock_gen.v \
-                  bsg_nonsynth_ascii_writer.v
+                  bsg_nonsynth_clock_gen.v
 
-#TEST_FILES = test_assembler.v
-#TEST_MAIN = test_bsg_comm_link.v
-
-TEST_MAIN   = test_bsg.v
-TEST_MODULE = test_bsg
+TEST_MAIN   = main.v
+TEST_MODULE = main
 
 # this is a list of all variables you want to vary for the simulation
-scan_params = WIDTH_P OTHER_P
+scan_params = DUMMY
 
 # this is a list of all values for each variable in the scan_params list
 # note; if you leave out values for a variable, then the product of the
 # sets is null, and nothing will run.
-WIDTH_P = 1 2 3 4
-OTHER_P = 1
+DUMMY = 0
 ############################################################################
 
 include ../../Makefile.sim
