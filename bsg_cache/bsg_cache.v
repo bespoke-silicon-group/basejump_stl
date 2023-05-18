@@ -55,7 +55,7 @@ module bsg_cache
 
     ,input [dma_data_width_p-1:0] dma_data_i
     ,input dma_data_v_i
-    ,output logic dma_data_ready_o
+    ,output logic dma_data_ready_and_o
 
     ,output logic [dma_data_width_p-1:0] dma_data_o
     ,output logic dma_data_v_o
@@ -540,7 +540,7 @@ end
 
     ,.dma_data_i(dma_data_i)
     ,.dma_data_v_i(dma_data_v_i)
-    ,.dma_data_ready_o(dma_data_ready_o)
+    ,.dma_data_ready_and_o(dma_data_ready_and_o)
     
     ,.dma_data_o(dma_data_o)
     ,.dma_data_v_o(dma_data_v_o)

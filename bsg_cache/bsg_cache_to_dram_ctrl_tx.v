@@ -28,7 +28,7 @@ module bsg_cache_to_dram_ctrl_tx
     , input v_i
     , input [lg_num_cache_lp-1:0] tag_i
     , input [dma_mask_width_p-1:0] mask_i
-    , output logic ready_o
+    , output logic ready_and_o
 
     , input [num_cache_p-1:0][data_width_p-1:0] dma_data_i
     , input [num_cache_p-1:0] dma_data_v_i
@@ -58,7 +58,7 @@ module bsg_cache_to_dram_ctrl_tx
     
     ,.v_i(v_i)
     ,.data_i({tag_i, mask_i})
-    ,.ready_o(ready_o)
+    ,.ready_o(ready_and_o)
 
     ,.v_o(tag_fifo_v_lo)
     ,.data_o({tag_lo, mask_lo})
