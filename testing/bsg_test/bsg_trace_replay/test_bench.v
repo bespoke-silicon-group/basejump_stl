@@ -101,7 +101,7 @@ response_rom  #( .width_p       ( 32 + 4)
           ,.data_o (res_rom_data_li )
         );
 
-dut #(  .payload_width_p ( 80 ) ) dut_inst 
+dut #(  .payload_width_p ( payload_width_lp ) ) dut_inst 
      (  .v_i     (sti_v_lo       )
        ,.data_i  (sti_data_lo    )
        ,.ready_o (dut_ready_lo   )

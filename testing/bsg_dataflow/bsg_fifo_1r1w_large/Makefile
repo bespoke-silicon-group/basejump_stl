@@ -20,16 +20,10 @@ IO_MASTER_1_PERIOD =   2
 CORE_1_PERIOD      =   1
 endif
 
+TOP ?= $(shell git rev-parse --show-toplevel)
+BSG_CADENV_DIR ?= $(TOP)/../bsg_cadenv
 
-export LM_LICENSE_FILE = 27000@bbfs-00.calit2.net
-export SYNOPSYS_DIR=/gro/cad/synopsys
-export VCS_RELEASE=vcs/G-2012.09-SP1
-export VCS_HOME = $(SYNOPSYS_DIR)/$(VCS_RELEASE)
-export VCS_BIN = $(VCS_HOME)/bin
-export DVE_BIN = $(VCS_HOME)/bin
-export DC_RELEASE    = syn/G-2012.06-SP5-4
-
-TOP = ../../..
+include $(BSG_CADENV_DIR)/cadenv.mk
 
 DESIGNWARE_DIR = $(SYNOPSYS_DIR)/$(DC_RELEASE)/dw/sim_ver
 DESIGNWARE_FLAGS = -y $(DESIGNWARE_DIR) +incdir+$(DESIGNWARE_DIR) +incdir+$(TOP)/bsg_test +incdir+$(TOP)/bsg_misc +libext+.v
@@ -43,7 +37,7 @@ BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  =  bsg_fifo_1r1w_large.v bsg_fifo_1rw_large.v bsg_round_robin_2_to_2.v bsg_two_fifo.v bsg_round_robin_n_to_1.v bsg_serial_in_parallel_out.v
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
-BSG_MEM_FILES       = bsg_mem_1r1w.v bsg_mem_1rw_sync.v
+BSG_MEM_FILES       = bsg_mem_1r1w.v bsg_mem_1rw_sync.v bsg_mem_1r1w_synth.v bsg_mem_1rw_sync_synth.v
 
 BSG_TEST_FILES =  bsg_nonsynth_reset_gen.v bsg_nonsynth_clock_gen.v
 
@@ -75,7 +69,7 @@ all: $(ALL_ALL_ALL_ALL)
 log@%: $(ALL_FILES)
 	@echo $*
 	- rm -rf simv csrc simv.daidir
-	$(VCS_BIN)/vcs $(DESIGNWARE_FLAGS) -PP -notice -full64 +lint=all,noVCDE +v2k -sverilog -timescale=100ps/10ps $(filter-out small-clean,$^) $(subst @, ,$*) +vcs+loopreport +define+BSG_IP_CORES_UNIT_TEST
+	$(VCS_BIN)/vcs $(DESIGNWARE_FLAGS) -PP -notice -full64 -assert svaext +lint=all,noVCDE +v2k -sverilog -timescale=100ps/10ps $(filter-out small-clean,$^) $(subst @, ,$*) +vcs+loopreport +define+BSG_IP_CORES_UNIT_TEST
 	./simv # | tee $@
 
 log@%: small_clean
@@ -89,6 +83,7 @@ dve:
 clean:
 	-rm log@*
 	- rm -rf simv csrc simv.daidir DVEfiles vcdplus.vpd ucli.key
+	-rm vc_hdrs.h
 
 small-clean:
 	- rm -rf simv csrc simv.daidir

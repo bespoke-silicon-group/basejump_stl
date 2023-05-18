@@ -1,0 +1,7 @@
+See this LatchUp 2023 slide deck for a detailed rational and description of bsg_tag:
+
+https://docs.google.com/presentation/d/18ILrko9kOfioF4d6rrcotiHvpBK8Bl3xfFB93Xv0of4/edit#slide=id.p
+
+bsg_tag is quite fast (400 mbps) for many configuration tasks, but for gate-level sims of large chips, it can be helpful to accelerate evermore. 
+One approach is to directly manipulate the lines coming out of bsg_tag master. Partial orders between tag addresses can be encoded in a file, and
+then a scheduler can derive the maximally parallel bsg_tag sequence that can boot the chip through a SystemVerilog testbench.

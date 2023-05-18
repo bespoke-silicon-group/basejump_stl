@@ -38,4 +38,4 @@ verilator_build: clean
 	  -Wno-WIDTH -Wno-UNUSED -exe test_bsg.cpp
 
 clean:
-	rm -rf obj_dir waveform
+	rm -rf obj_dir waveform gmon.out output.log
