@@ -30,7 +30,7 @@ bsg_nonsynth_reset_gen #(
 logic v_li;
 logic [width_p-1:0] a_li;
 logic signed_li;
-logic ready_lo;
+logic ready_and_lo;
 
 logic v_lo;
 logic [width_p-1:0] z_lo;
@@ -47,7 +47,7 @@ bsg_fpu_i2f #(
   ,.v_i(v_li)
   ,.a_i(a_li)
   ,.signed_i(signed_li)
-  ,.ready_o(ready_lo)
+  ,.ready_and_o(ready_and_lo)
 
   ,.v_o(v_lo)
   ,.z_o(z_lo)
@@ -56,7 +56,7 @@ bsg_fpu_i2f #(
 
 logic tr_v_li;
 logic [ring_width_p-1:0] tr_data_li;
-logic tr_ready_lo;
+logic tr_ready_and_lo;
 
 logic tr_v_lo;
 logic [ring_width_p-1:0] tr_data_lo;
@@ -77,7 +77,7 @@ bsg_fsb_node_trace_replay #(
 
   ,.v_i(tr_v_li)
   ,.data_i(tr_data_li)
-  ,.ready_o(tr_ready_lo)
+  ,.ready_and_o(tr_ready_and_lo)
 
   ,.v_o(tr_v_lo)
   ,.data_o(tr_data_lo)
@@ -106,10 +106,10 @@ assign tr_data_li = {
 };
 
 assign v_li = tr_v_lo;
-assign tr_yumi_li = tr_v_lo & ready_lo;
+assign tr_yumi_li = tr_v_lo & ready_and_lo;
 
 assign tr_v_li = v_lo;
-assign yumi_li = v_lo & tr_ready_lo;
+assign yumi_li = v_lo & tr_ready_and_lo;
 
 initial begin
   wait(done_lo);

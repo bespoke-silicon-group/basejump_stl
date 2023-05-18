@@ -25,7 +25,7 @@ module bsg_fpu_i2f
     , input v_i
     , input signed_i
     , input [width_lp-1:0] a_i
-    , output logic ready_o
+    , output logic ready_and_o
 
     , output logic v_o
     , output logic [width_lp-1:0] z_o
@@ -40,7 +40,7 @@ module bsg_fpu_i2f
 
   assign v_o = v_1_r;
   assign stall = v_1_r & ~yumi_i;
-  assign ready_o = ~stall & en_i;
+  assign ready_and_o = ~stall & en_i;
 
   // sign bit
   //
