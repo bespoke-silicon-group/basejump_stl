@@ -188,7 +188,7 @@ module bsg_mesh_router_buffered
     // this will be hardwired to 1 by inside of this module
     // if port is stubbed
 
-    ,.ready_i(ready_li)
+    ,.ready_and_i(ready_li)
 
     ,.my_x_i
     ,.my_y_i
