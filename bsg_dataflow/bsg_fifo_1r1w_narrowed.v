@@ -45,7 +45,7 @@ module bsg_fifo_1r1w_narrowed
 
     , .data_i(data_i)
     , .v_i(v_i)
-    , .ready_param_o(ready_o)
+    , .ready_param_o(ready_param_o)
 
     , .v_o(v_o)
     , .data_o(data)

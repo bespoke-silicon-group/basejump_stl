@@ -22,7 +22,7 @@ module bsg_fifo_1r1w_small_credit_on_input #( parameter `BSG_INV_PARAM(width_p  
     );
 
 // internal signal for assert
-logic ready;
+logic ready_then;
 
 // Yumi can be asserted during clock period, but credit must
 // be asserted at the beginning of a cycle
@@ -50,7 +50,7 @@ bsg_fifo_1r1w_small #( .width_p(width_p)
 
                      , .data_i(data_i)
                      , .v_i(v_i)
-                     , .ready_param_o(ready)
+                     , .ready_param_o(ready_then)
 
                      , .v_o(v_o)
                      , .data_o(data_o)

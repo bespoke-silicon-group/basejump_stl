@@ -40,7 +40,7 @@ module bsg_fifo_1r1w_small_unhardened #( parameter `BSG_INV_PARAM(width_p      )
 
    // vivado bug prohibits declaring wire inside of generate block
    wire enque;
-   logic ready_lo;
+   logic ready_param_lo;
 
    if (ready_THEN_valid_p)
      begin: rtv
@@ -48,7 +48,7 @@ module bsg_fifo_1r1w_small_unhardened #( parameter `BSG_INV_PARAM(width_p      )
      end
    else
      begin: rav
-        assign enque = v_i & ready_lo;
+        assign enque = v_i & ready_param_lo;
      end
 
    localparam ptr_width_lp = `BSG_SAFE_CLOG2(els_p);
@@ -89,9 +89,9 @@ module bsg_fifo_1r1w_small_unhardened #( parameter `BSG_INV_PARAM(width_p      )
    // during reset, we keep ready low
    // even though fifo is empty
 
-   //assign ready_lo = ~full & ~reset_i;
-   assign ready_lo = ~full;
-   assign ready_o = ready_lo;
+   //assign ready_param_lo = ~full & ~reset_i;
+   assign ready_param_lo = ~full;
+   assign ready_param_o = ready_param_lo;
    assign v_o_tmp = ~empty;
 
    //synopsys translate_off
@@ -107,7 +107,7 @@ module bsg_fifo_1r1w_small_unhardened #( parameter `BSG_INV_PARAM(width_p      )
 /*
    always_ff @(negedge clk_i)
      begin
-        $display("%m v_i=%x yumi_i=%x wptr=%b rptr=%b enque=%b full=%d empty=%d ready_o=%d",v_i,yumi_i,wptr_r, rptr_r, enque, full,empty,ready_o);
+        $display("%m v_i=%x yumi_i=%x wptr=%b rptr=%b enque=%b full=%d empty=%d ready_param_o=%d",v_i,yumi_i,wptr_r, rptr_r, enque, full,empty,ready_param_o);
      end
  */
 endmodule
