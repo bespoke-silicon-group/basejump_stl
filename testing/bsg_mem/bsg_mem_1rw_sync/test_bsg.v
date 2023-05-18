@@ -23,7 +23,7 @@
 
 ***************************************************************************/
 
-module test_bsg;
+module test_bsg
 #(
   parameter width_p      = `WIDTH_P,
   parameter els_p        = `ELS_P,
@@ -140,7 +140,7 @@ module test_bsg;
 
         if(count >= 2)
           begin
-            if(count <= 2*els_lp && new_read) // new read in first pass
+            if(count <= 2*els_p && new_read) // new read in first pass
               assert(test_output_data == test_input_data_r)
                 else $error("output=%b expected_output:%b\n"
                             , test_output_data, test_input_data_r);

@@ -2,6 +2,7 @@
 `define BANKS_P        3
 `define BANK_SIZE_P    1024
 `define DATA_WIDTH_P   32   // multiple of 8
+`define RR_LO_HI_P     0
 
 /*************************** TEST RATIONALE **********************************
 
@@ -13,12 +14,13 @@
 ******************************************************************************/
 
 
-module test_bsg;
+module test_bsg
 #(
   parameter data_width_p      = `DATA_WIDTH_P,
   parameter bank_size_p       = `BANK_SIZE_P,
   parameter ports_p           = `PORTS_P,
   parameter banks_p           = `BANKS_P,
+  parameter rr_lo_hi_p        = `RR_LO_HI_P,
   parameter lg_banks_p        = `BSG_SAFE_CLOG2(banks_p),
   parameter bank_addr_width_p = `BSG_SAFE_CLOG2(bank_size_p),
   parameter addr_width_p      = ((banks_p == 1) ? 0 : lg_banks_p)
@@ -77,6 +79,7 @@ module test_bsg;
     $display("ADDR_WIDTH  : %0d", addr_width_p);
     $display("BANKS       : %0d", banks_p);
     $display("PORTS       : %0d", ports_p);
+    $display("RR_LO_HI    : %0d", rr_lo_hi_p);
     $display("BANK_SIZE   : %0d\n", bank_size_p);
   end
 
@@ -154,6 +157,7 @@ module test_bsg;
                             ,.num_ports_p  (ports_p)
                             ,.num_banks_p  (banks_p)
                             ,.data_width_p (data_width_p)
+                            ,.rr_lo_hi_p   (rr_lo_hi_p)
                            ) UUT
                            ( .clk_i   (clk)
                             ,.reset_i (reset)

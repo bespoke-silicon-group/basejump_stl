@@ -34,18 +34,20 @@ module test_bsg
   wire clk;
   wire reset;
 
-  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
-                          )  clock_gen
-                          (  .o(clk)
-                          );
+  bsg_nonsynth_clock_gen
+    #(.cycle_time_p(cycle_time_p))
+    clock_gen
+      (.o(clk));
     
-  bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(reset_cycles_lo_p)
-                           , .reset_cycles_hi_p(reset_cycles_hi_p)
-                          )  reset_gen
-                          (  .clk_i        (clk) 
-                           , .async_reset_o(reset)
-                          );
+  bsg_nonsynth_reset_gen
+    #(.num_clocks_p     (1)
+     ,.reset_cycles_lo_p(reset_cycles_lo_p)
+     ,.reset_cycles_hi_p(reset_cycles_hi_p)
+     )
+    reset_gen
+     (.clk_i        (clk) 
+     ,.async_reset_o(reset)
+     );
 
   initial
   begin
@@ -126,18 +128,18 @@ module test_bsg
                        );
 
          temp = (test_output_data_0 ==
-                 width_out_lp ' (test_input_data >> (width_out_lp*(divisions_lp - count_r - 1))));
+                 width_out_p ' (test_input_data >> (width_out_p*(divisions_p - count_r - 1))));
 
          assert(temp)
            else $error("2 msb_to_lsb_data: mismatch on input %x ", test_input_data
                        , "division %x", count_r);
 
-         temp = (test_output_deque_1 == (count_r == divisions_lp-1));
+         temp = (test_output_deque_1 == (count_r == divisions_p-1));
          assert(temp)
            else $error("3 lsb_to_msb_deque: mismatch on input %x ", test_input_data
                        , "division %x", count_r);
 
-         temp = (test_output_deque_0 == (count_r == divisions_lp-1));
+         temp = (test_output_deque_0 == (count_r == divisions_p-1));
          assert(temp)
           else $error("4 msb_to_lsb_deque: mismatch on input %x ", test_input_data
                          , "division %x", count_r);
