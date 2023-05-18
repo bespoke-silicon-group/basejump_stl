@@ -180,7 +180,7 @@ module bsg_cache_to_axi_tx
 
     ,.v_i(sipo_v_li)
     ,.data_i(sipo_strb_li)
-    ,.ready_o(/* Tracks data sipo */)
+    ,.ready_and_o(/* Tracks data sipo */)
 
     ,.v_o(/* Tracks data sipo */)
     ,.data_o(sipo_strb_lo)

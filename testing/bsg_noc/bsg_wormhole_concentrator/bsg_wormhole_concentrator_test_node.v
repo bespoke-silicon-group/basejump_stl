@@ -296,7 +296,7 @@ module bsg_wormhole_concentrator_test_node
   (.clk_i  (node_clk_i  )
   ,.reset_i(node_reset_i)
   ,.v_i    (node_async_fifo_valid_lo)
-  ,.ready_o(node_async_fifo_ready_li)
+  ,.ready_and_o(node_async_fifo_ready_li)
   ,.data_i (node_async_fifo_data_lo )
   ,.data_o (node_sipof_data_lo )
   ,.v_o    (node_sipof_valid_lo)
