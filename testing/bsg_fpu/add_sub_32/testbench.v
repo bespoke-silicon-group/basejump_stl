@@ -54,7 +54,7 @@ bsg_fpu_add_sub #(
   ,.a_i(a_li)
   ,.b_i(b_li)
   ,.sub_i(sub_li)
-  ,.ready_o(ready_lo)
+  ,.ready_and_o(ready_lo)
   
   ,.v_o(v_lo)
   ,.z_o(z_lo)
