@@ -1,0 +1,212 @@
+VERSION 1
+
+define ctl_reg {
+  column col_0 {
+    justifyBy NE
+    row row_0 {
+      inst A0
+      inst A1
+      inst O0
+      inst M0
+    }
+    inst D0
+  }
+}
+
+define ctl_plane {
+  column col_0 {
+    justifyBy NE
+    row row_0 {
+      justifyBy NE
+      inst T0
+      inst T1
+      inst D0
+      inst H0
+      inst D1
+      inst H1
+      inst D2
+      inst H2
+      inst D3
+      inst H3
+      inst bsg_SYNC_1_r
+      inst bsg_SYNC_2_r
+    }
+    row ctl_banks {
+      justifyBy NW
+      column ctl_bank_0 {
+        justifyBy NW
+        use ctl_reg c0 ctl_0
+        use ctl_reg c1 ctl_1
+        use ctl_reg c2 ctl_2
+        use ctl_reg c3 ctl_3
+        use ctl_reg c4 ctl_4
+        use ctl_reg c5 ctl_5
+        use ctl_reg c6 ctl_6
+        use ctl_reg c7 ctl_7
+      }
+      column ctl_bank_1 {
+        justifyBy SW
+        use ctl_reg c8 ctl_8
+        use ctl_reg c9 ctl_9
+        use ctl_reg c10 ctl_10
+        use ctl_reg c11 ctl_11
+        use ctl_reg c12 ctl_12
+        use ctl_reg c13 ctl_13
+        use ctl_reg c14 ctl_14
+        use ctl_reg c15 ctl_15
+      }
+      column ctl_bank_2 {
+        justifyBy NW
+        use ctl_reg c16 ctl_16
+        use ctl_reg c17 ctl_17
+        use ctl_reg c18 ctl_18
+        use ctl_reg c19 ctl_19
+        use ctl_reg c20 ctl_20
+        use ctl_reg c21 ctl_21
+        use ctl_reg c22 ctl_22
+        use ctl_reg c23 ctl_23
+      }
+      column ctl_bank_3 {
+        justifyBy SW
+        use ctl_reg c24 ctl_24
+        use ctl_reg c25 ctl_25
+        use ctl_reg c26 ctl_26
+        use ctl_reg c27 ctl_27
+        use ctl_reg c28 ctl_28
+        use ctl_reg c29 ctl_29
+        use ctl_reg c30 ctl_30
+        use ctl_reg c31 ctl_31
+      }
+      column ctl_bank_4 {
+        justifyBy NW
+        use ctl_reg c32 ctl_32
+        use ctl_reg c33 ctl_33
+        use ctl_reg c34 ctl_34
+        use ctl_reg c35 ctl_35
+        use ctl_reg c36 ctl_36
+        use ctl_reg c37 ctl_37
+        use ctl_reg c38 ctl_38
+        use ctl_reg c39 ctl_39
+      }
+      column ctl_bank_5 {
+        justifyBy SW
+        use ctl_reg c40 ctl_40
+        use ctl_reg c41 ctl_41
+        use ctl_reg c42 ctl_42
+        use ctl_reg c43 ctl_43
+        use ctl_reg c44 ctl_44
+        use ctl_reg c45 ctl_45
+        use ctl_reg c46 ctl_46
+        use ctl_reg c47 ctl_47
+      }
+      column ctl_bank_6 {
+        justifyBy NW
+        use ctl_reg c48 ctl_48
+        use ctl_reg c49 ctl_49
+        use ctl_reg c50 ctl_50
+        use ctl_reg c51 ctl_51
+        use ctl_reg c52 ctl_52
+        use ctl_reg c53 ctl_53
+        use ctl_reg c54 ctl_54
+        use ctl_reg c55 ctl_55
+      }
+      column ctl_bank_7 {
+        justifyBy SW
+        use ctl_reg c56 ctl_56
+        use ctl_reg c57 ctl_57
+        use ctl_reg c58 ctl_58
+        use ctl_reg c59 ctl_59
+        use ctl_reg c60 ctl_60
+        use ctl_reg c61 ctl_61
+        use ctl_reg c62 ctl_62
+        use ctl_reg c63 ctl_63
+      }
+    }
+  }
+}
+
+define dly_row {
+  column col_0 {
+    inst D0
+    row row_0 {
+      inst N2
+      inst N0
+      inst N1
+      inst T0
+      inst T1
+    }
+  }
+}
+
+define dly_col {
+  column col_0 {
+    row inv {
+      justifyBy NW
+      inst T0
+      inst T1
+      inst I0
+      inst I1
+      inst I2
+    }
+    use dly_row r0 row_0_BSG_DONT_TOUCH
+    use dly_row r1 row_1_BSG_DONT_TOUCH
+    use dly_row r2 row_2_BSG_DONT_TOUCH
+    use dly_row r3 row_3_BSG_DONT_TOUCH
+    use dly_row r4 row_4_BSG_DONT_TOUCH
+    use dly_row r5 row_5_BSG_DONT_TOUCH
+    use dly_row r6 row_6_BSG_DONT_TOUCH
+    use dly_row r7 row_7_BSG_DONT_TOUCH
+  }
+}
+
+define dly_unit {
+  column osc {
+    justifyBy NE
+    row gate {
+      justifyBy NE
+      inst B0
+      inst T0
+      inst T1
+      inst I0
+      inst S1
+      inst S2
+      inst CG0
+    }
+    row loop {
+      justifyBy NW
+      use dly_col c0 col_0_BSG_DONT_TOUCH flip X
+      use dly_col c1 col_1_BSG_DONT_TOUCH
+      use dly_col c2 col_2_BSG_DONT_TOUCH flip X
+      use dly_col c3 col_3_BSG_DONT_TOUCH
+      use dly_col c4 col_4_BSG_DONT_TOUCH flip X
+      use dly_col c5 col_5_BSG_DONT_TOUCH
+      use dly_col c6 col_6_BSG_DONT_TOUCH flip X
+      use dly_col c7 col_7_BSG_DONT_TOUCH
+    }
+  }
+}
+
+datapath dly_line {
+  row line {
+    justifyBy NW
+    column unit90 {
+      justifyBy NE
+      row reset {
+        justifyBy NE
+        inst I0
+      }
+      use ctl_plane ctl_90 ctl_90
+      use dly_unit d90 d90_BSG_DONT_TOUCH
+    }
+    column unit180 {
+      justifyBy NE
+      row meta {
+        justifyBy NE
+        inst B<0:7>
+        inst meta_r
+      }
+      use ctl_plane ctl_180 ctl_180
+      use dly_unit d180 d180_BSG_DONT_TOUCH
+    }
+  }
+}

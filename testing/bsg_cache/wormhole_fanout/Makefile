@@ -42,7 +42,7 @@ VCS_DEFINES += +define+DMA_RATIO_P=$(DMA_RATIO_P)
 
 
 SIMV = $(abspath simv)
-WAVE ?= 0
+WAVE ?= 1
 
 BASIC_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BASIC_TEST)))
 
