@@ -121,7 +121,7 @@ module vcache_blocking
 
     ,.dma_data_i(dma_data_i)
     ,.dma_data_v_i(dma_data_v_i)
-    ,.dma_data_ready_o(dma_data_ready_o)
+    ,.dma_data_ready_and_o(dma_data_ready_o)
 
     ,.dma_data_o(dma_data_o)
     ,.dma_data_v_o(dma_data_v_o)
