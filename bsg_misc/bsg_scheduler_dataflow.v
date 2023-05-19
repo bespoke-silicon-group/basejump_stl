@@ -105,7 +105,7 @@ module bsg_scheduler_dataflow_entry #(`BSG_INV_PARAM(tag_width_p)
         end
     end
   
-  assign busy_o = ~(| src_tags_v_r);
+  assign busy_o = (| src_tags_v_r);
   
 endmodule
 
