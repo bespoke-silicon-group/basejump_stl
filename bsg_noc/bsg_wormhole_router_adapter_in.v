@@ -24,8 +24,8 @@ module bsg_wormhole_router_adapter_in
     , input                                        reset_i
 
     , input [bsg_wormhole_packet_width_lp-1:0]     packet_i
-    , input                                        v_i
-    , output                                       ready_and_o
+    , input                                        link_v_i
+    , output                                       link_ready_and_o
 
     , output [bsg_ready_and_link_sif_width_lp-1:0] link_o
     , input [bsg_ready_and_link_sif_width_lp-1:0]  link_i 
@@ -54,10 +54,10 @@ module bsg_wormhole_router_adapter_in
     (.clk_i(clk_i)
      ,.reset_i(reset_i)
 
-     ,.v_i(v_i)
+     ,.v_i(link_v_i)
      ,.len_i(protocol_len_lp'(packet_cast_i.len))
      ,.data_i(packet_padded_li)
-     ,.ready_o(ready_and_o)
+     ,.ready_o(link_ready_and_o)
 
      ,.v_o(link_cast_o.v)
      ,.len_v_o(/* unused */)
@@ -70,7 +70,7 @@ module bsg_wormhole_router_adapter_in
 
 `ifndef SYNTHESIS
   always_ff @(negedge clk_i)
-    assert(reset_i || ~v_i || (packet_cast_i.len <= max_num_flits_lp))
+    assert(reset_i || ~link_v_i || (packet_cast_i.len <= max_num_flits_lp))
       else 
         $error("Packet received with len: %x > max_num_flits: %x", packet_cast_i.len, max_num_flits_lp);
 `endif

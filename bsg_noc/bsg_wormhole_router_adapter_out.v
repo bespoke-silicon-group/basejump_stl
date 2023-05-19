@@ -27,8 +27,8 @@ module bsg_wormhole_router_adapter_out
     , output [bsg_ready_and_link_sif_width_lp-1:0] link_o
 
     , output [bsg_wormhole_packet_width_lp-1:0]    packet_o
-    , output                                       v_o
-    , input                                        yumi_i
+    , output                                       link_v_o
+    , input                                        link_yumi_i
     );
 
   // Casting ports
@@ -61,9 +61,9 @@ module bsg_wormhole_router_adapter_out
      ,.len_ready_o(/* unused */)
      ,.v_i(link_cast_i.v)
 
-     ,.v_o(v_o)
+     ,.v_o(link_v_o)
      ,.data_o(packet_padded_lo)
-     ,.yumi_i(yumi_i)
+     ,.yumi_i(link_yumi_i)
      );
   assign packet_o = packet_padded_lo[0+:bsg_wormhole_packet_width_lp];
 
@@ -78,7 +78,7 @@ module bsg_wormhole_router_adapter_out
    recv_reg
     (.clk_i(clk_i)
      ,.reset_i(reset_i)
-     ,.en_i(link_cast_i.v || yumi_i)
+     ,.en_i(link_cast_i.v || link_yumi_i)
 
      ,.data_i(link_cast_i.v)
      ,.data_o(recv_r)

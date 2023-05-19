@@ -54,8 +54,8 @@ module testbench();
     ,.reset_i(reset)
     
     ,.packet_i(data_li)
-    ,.v_i(v_li)
-    ,.ready_and_o(ready_and_lo)
+    ,.link_v_i(v_li)
+    ,.link_ready_and_o(ready_and_lo)
 
     ,.link_o(link_lo)
     ,.link_i(link_li)
