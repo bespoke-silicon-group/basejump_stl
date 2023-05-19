@@ -24,7 +24,7 @@ module bsg_cache_to_test_dram_tx
     , input v_i
     , input [lg_num_cache_lp-1:0] tag_i
     , input [(block_size_in_words_p/num_req_lp)-1:0] mask_i // one bit per data_width_p
-    , output logic ready_o
+    , output logic ready_and_o
       
     , input [num_cache_p-1:0][dma_data_width_p-1:0] dma_data_i
     , input [num_cache_p-1:0] dma_data_v_i
@@ -55,7 +55,7 @@ module bsg_cache_to_test_dram_tx
     ,.reset_i(core_reset_i)
 
     ,.v_i(v_i)
-    ,.ready_param_o(ready_o)
+    ,.ready_param_o(ready_and_o)
     ,.data_i({tag_i, mask_i})
 
     ,.v_o(tag_v_lo)

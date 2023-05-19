@@ -25,7 +25,7 @@ module bsg_cache_to_test_dram_rx
 
     , output logic [num_cache_p-1:0][dma_data_width_p-1:0] dma_data_o
     , output logic [num_cache_p-1:0] dma_data_v_o
-    , input [num_cache_p-1:0] dma_data_ready_i
+    , input [num_cache_p-1:0] dma_data_ready_and_i
 
     , input dram_clk_i
     , input dram_reset_i
@@ -109,7 +109,7 @@ module bsg_cache_to_test_dram_rx
 
       ,.dma_data_o(dma_data_o[i])
       ,.dma_data_v_o(dma_data_v_o[i])
-      ,.dma_data_ready_i(dma_data_ready_i[i])
+      ,.dma_data_ready_and_i(dma_data_ready_and_i[i])
     );
   end
 

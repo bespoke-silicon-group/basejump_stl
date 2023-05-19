@@ -41,7 +41,7 @@ module bsg_cache_to_axi
 
     ,output logic [num_cache_p-1:0][data_width_p-1:0] dma_data_o
     ,output logic [num_cache_p-1:0] dma_data_v_o
-    ,input [num_cache_p-1:0] dma_data_ready_i
+    ,input [num_cache_p-1:0] dma_data_ready_and_i
 
     ,input [num_cache_p-1:0][data_width_p-1:0] dma_data_i
     ,input [num_cache_p-1:0] dma_data_v_i
@@ -211,7 +211,7 @@ module bsg_cache_to_axi
 
     ,.dma_data_o(dma_data_o)
     ,.dma_data_v_o(dma_data_v_o)
-    ,.dma_data_ready_i(dma_data_ready_i)
+    ,.dma_data_ready_and_i(dma_data_ready_and_i)
 
     ,.axi_arid_o(axi_arid_o)
     ,.axi_araddr_addr_o(axi_araddr_addr_o)

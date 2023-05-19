@@ -60,7 +60,7 @@ module bsg_cache_non_blocking_dma
     // DMA data in
     , input [data_width_p-1:0] dma_data_i
     , input dma_data_v_i
-    , output logic dma_data_ready_o    
+    , output logic dma_data_ready_and_o    
 
     // DMA data out
     , output logic [data_width_p-1:0] dma_data_o
@@ -161,7 +161,7 @@ module bsg_cache_non_blocking_dma
 
     ,.data_i(dma_data_i)
     ,.v_i(dma_data_v_i)
-    ,.ready_param_o(dma_data_ready_o)
+    ,.ready_param_o(dma_data_ready_and_o)
 
     ,.data_o(in_fifo_data_lo)
     ,.v_o(in_fifo_v_lo)
