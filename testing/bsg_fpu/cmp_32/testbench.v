@@ -57,7 +57,7 @@ bsg_fpu_cmp #(
 );
 
 logic [ring_width_p-1:0] tr_data_li;
-logic tr_ready_lo;
+logic tr_ready_and_lo;
 
 logic tr_v_lo;
 logic [ring_width_p-1:0] tr_data_lo;
@@ -78,7 +78,7 @@ bsg_fsb_node_trace_replay #(
 
   ,.v_i(v_r)
   ,.data_i(tr_data_li)
-  ,.ready_o(tr_ready_lo)
+  ,.ready_and_o(tr_ready_and_lo)
 
   ,.v_o(tr_v_lo)
   ,.data_o(tr_data_lo)
@@ -120,7 +120,7 @@ always_comb begin
   end
   else begin
     tr_yumi_li = 1'b0;
-    v_n = tr_ready_lo
+    v_n = tr_ready_and_lo
       ? 1'b0
       : v_r;
     {a_n, b_n} = {a_r, b_r};

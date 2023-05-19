@@ -44,7 +44,7 @@ module bsg_cache_non_blocking
 
     , input [data_width_p-1:0] dma_data_i
     , input dma_data_v_i
-    , output logic dma_data_ready_o
+    , output logic dma_data_ready_and_o
 
     , output logic [data_width_p-1:0] dma_data_o
     , output logic dma_data_v_o
@@ -198,7 +198,7 @@ module bsg_cache_non_blocking
   //
   bsg_cache_non_blocking_miss_fifo_entry_s miss_fifo_data_li;
   logic miss_fifo_v_li;
-  logic miss_fifo_ready_lo;
+  logic miss_fifo_ready_and_lo;
 
   bsg_cache_non_blocking_miss_fifo_entry_s miss_fifo_data_lo;
   logic miss_fifo_v_lo;
@@ -218,7 +218,7 @@ module bsg_cache_non_blocking
 
     ,.v_i(miss_fifo_v_li)
     ,.data_i(miss_fifo_data_li)
-    ,.ready_o(miss_fifo_ready_lo)
+    ,.ready_and_o(miss_fifo_ready_and_lo)
 
     ,.v_o(miss_fifo_v_lo)
     ,.data_o(miss_fifo_data_lo)
@@ -232,7 +232,7 @@ module bsg_cache_non_blocking
 
   assign miss_fifo_v_li = tl_miss_fifo_v_lo;
   assign miss_fifo_data_li = tl_miss_fifo_entry_lo;
-  assign tl_miss_fifo_ready_li = miss_fifo_ready_lo;
+  assign tl_miss_fifo_ready_li = miss_fifo_ready_and_lo;
 
 
   // data_mem
@@ -454,7 +454,7 @@ module bsg_cache_non_blocking
 
     ,.dma_data_i(dma_data_i)
     ,.dma_data_v_i(dma_data_v_i)
-    ,.dma_data_ready_o(dma_data_ready_o)
+    ,.dma_data_ready_and_o(dma_data_ready_and_o)
     
     ,.dma_data_o(dma_data_o)
     ,.dma_data_v_o(dma_data_v_o)

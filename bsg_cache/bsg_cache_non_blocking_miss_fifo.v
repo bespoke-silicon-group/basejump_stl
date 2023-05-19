@@ -21,7 +21,7 @@ module bsg_cache_non_blocking_miss_fifo
 
     , input [width_p-1:0] data_i
     , input v_i
-    , output logic ready_o
+    , output logic ready_and_o
 
     , output logic v_o
     , output logic [width_p-1:0] data_o
@@ -240,9 +240,9 @@ module bsg_cache_non_blocking_miss_fifo
   wire empty = deque_r & (rptr_r == wptr_r);
 
   assign empty_o = empty;
-  assign ready_o = ~full;
+  assign ready_and_o = ~full;
 
-  assign enque = ready_o & v_i;
+  assign enque = ready_and_o & v_i;
   assign wptr_inc = enque; 
 
 
