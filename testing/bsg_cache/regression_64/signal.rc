@@ -2,11 +2,11 @@ Magic 271485
 Revision Verdi_Q-2020.03-SP2-8
 
 ; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
-viewPort 0 25 1920 394 226 63
+viewPort 0 25 1920 481 226 63
 
 ; File list:
 ; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
-openDirFile -d / "" "/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/out/test_random1/waveform.fsdb"
+openDirFile -d / "" "/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64_working/out/test_random1/waveform.fsdb"
 
 ; file time scale:
 ; fileTimeScale ### s|ms|us|ns|ps
@@ -16,8 +16,8 @@ signalSpacing 5
 
 ; windowTimeUnit is used for zoom, cursor & marker
 ; waveform viewport range
-zoom 3486100.416631 3487746.355108
-cursor 3486637.78221389512
+zoom 2397035.769775 2397988.335693
+cursor 2397759.83857245883
 marker 0.000000
 
 ; user define markers
@@ -25,7 +25,7 @@ marker 0.000000
 ; visible top row signal index
 top 0
 ; marker line index
-markerPos 5
+markerPos 12
 
 ; event list
 ; addEvent event_name event_expression
@@ -74,13 +74,31 @@ nalias DELAY		2'b01		NULL
 nalias BUSY		2'b10		NULL
 
 addGroup "G1"
-activeDirFile "" "/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/out/test_random1/waveform.fsdb"
+activeDirFile "" "/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64_working/out/test_random1/waveform.fsdb"
 addSignal -h 15 -UNSIGNED /testbench/DUT/cache_pkt.opcode[5:0]
 addSignal -h 15 -holdScope clk_i
-addSignal -h 15 -holdScope data_o[63:0]
-addSignal -h 15 -holdScope cache_pkt.data[63:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[63:0]
+addSignal -h 15 -holdScope v_o
+addSignal -h 15 -holdScope yumi_i
+addSignal -h 15 -holdScope yumi_o
+addSignal -h 15 -holdScope miss_v
+addSignal -h 15 -UNSIGNED -HEX -holdScope cache_pkt.data[63:0]
 addSignal -h 15 -holdScope cache_pkt.addr[29:0]
-addGroup "G2" -e FALSE
+addGroup "G2"
+addSignal -h 15 /testbench/DUT/dma/snoop_word_n[63:0]
+addSignal -h 15 -holdScope snoop_word_o[63:0]
+addSignal -h 15 -holdScope snoop_word_we
+addSignal -h 15 -holdScope dma_data_i[63:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope in_fifo_data_lo[63:0]
+addSignal -expanded -h 15 -UNSIGNED -HEX /testbench/dma_pkt
+addSignal -h 15 -UNSIGNED -HEX -holdScope dma_pkt.write_not_read
+addSignal -h 15 -UNSIGNED -HEX -holdScope dma_pkt.addr[29:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope dma_pkt.mask[7:0]
+addSignal -h 15 -UNSIGNED -HEX /testbench/dma0/dma_data_o[63:0]
+addSignal -h 15 -holdScope dma_data_v_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope dma_data_i[63:0]
+addSignal -h 15 /testbench/DUT/dma/dma_evict_o
+addGroup "G3"
 
 ; getSignalForm Scope Hierarchy Status
 ; active file of getSignalForm

@@ -1,0 +1,682 @@
+vcs -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access+all +v2k -sverilog -timescale=1ps/1ps -O4 -assert svaext -kdb +vcs+flush+all +fsdb+struct=on -f sv.include +incdir+/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc +incdir+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache +define+YUMI_MIN_DELAY_P=0 +define+YUMI_MAX_DELAY_P=0 +define+DMA_READ_DELAY_P=0 +define+DMA_WRITE_DELAY_P=0 +define+DMA_REQ_DELAY_P=0 +define+DMA_DATA_DELAY_P=0 +define+BLOCK_SIZE_IN_WORDS_P=8 -l vcs.log | grep --color -E '^|Fatal|Error|Warning|Implicit wire is used|Too few instance port connections|Port connection width mismatch|Width mismatch'
+                         Chronologic VCS (TM)
+       Version Q-2020.03-SP1_Full64 -- Tue May  9 13:11:38 2023
+               Copyright (c) 1991-2020 by Synopsys Inc.
+                         ALL RIGHTS RESERVED
+
+This program is proprietary and confidential information of Synopsys Inc.
+and may be used and disclosed only as authorized in a license agreement
+controlling such use and disclosure.
+
+
+Warning-[UNK_COMP_ARG] Unknown compile time plus argument used
+  Unknown compile time plus argument 'fsdb+struct=on' is ignored.
+
+ + use `+plusarg_save' to bind in runtime plusargs;
+ + use `+plusarg_ignore' to suppress this message.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_test/bsg_nonsynth_clock_gen.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_test/bsg_nonsynth_clock_gen.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_test/bsg_nonsynth_reset_gen.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_test/bsg_nonsynth_reset_gen.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_test/bsg_nonsynth_test_rom.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_test/bsg_nonsynth_test_rom.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_mux.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_mux.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_mux_segmented.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_mux_segmented.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_circular_ptr.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_circular_ptr.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_dff.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_dff.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_dff_en.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_dff_en.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_dff_en_bypass.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_dff_en_bypass.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_counter_clear_up.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_counter_clear_up.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_decode.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_decode.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_priority_encode.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_priority_encode.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_lru_pseudo_tree_encode.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_lru_pseudo_tree_encode.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_lru_pseudo_tree_decode.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_lru_pseudo_tree_decode.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_lru_pseudo_tree_backup.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_lru_pseudo_tree_backup.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_mux_bitwise.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_mux_bitwise.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_priority_encode_one_hot_out.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_priority_encode_one_hot_out.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_encode_one_hot.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_encode_one_hot.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_scan.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_scan.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_expand_bitmask.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_expand_bitmask.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_fsb/bsg_fsb_node_trace_replay.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_fsb/bsg_fsb_node_trace_replay.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1r1w.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1r1w.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1rw_sync.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1rw_sync.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1rw_sync_synth.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1rw_sync_synth.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_bit_synth.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_bit_synth.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_byte_synth.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_byte_synth.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_bit.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_bit.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_byte.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_byte.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_dataflow/bsg_two_fifo.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_dataflow/bsg_two_fifo.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_dataflow/bsg_fifo_1r1w_small.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_dataflow/bsg_fifo_1r1w_small.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_dataflow/bsg_fifo_1r1w_small_unhardened.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_dataflow/bsg_fifo_1r1w_small_unhardened.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_dataflow/bsg_fifo_tracker.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_dataflow/bsg_fifo_tracker.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_pkg.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_pkg.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_decode.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_decode.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_dma.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_dma.v'.
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.vh'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_dma.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_miss.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_miss.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_tbuf.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_tbuf.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_sbuf.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_sbuf.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_buffer_queue.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_buffer_queue.v'.
+Parsing design file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v'
+Parsing included file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_defines.v'.
+Back to file '/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v'.
+Parsing design file '../common/bsg_nonsynth_dma_model.v'
+Parsing design file '../common/bsg_nonsynth_random_yumi_gen.v'
+Parsing design file 'basic_checker.v'
+Parsing design file 'testbench.v'
+
+Lint-[NS] Null statement
+testbench.v, 232
+  Null statement is used in following verilog source.
+  Source info:     wait(done & (sent_r == recv_r));
+
+
+Lint-[NS] Null statement
+testbench.v, 234
+  Null statement is used in following verilog source.
+  Source info:     #500;
+
+
+Lint-[SV-PIU] Package import statement in $unit scope.
+/home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1/etc/sva/rec_ltl_classes_package.svp, 2
+
+
+Top Level Modules:
+       bsg_nonsynth_clock_gen__abstract
+       bsg_nonsynth_reset_gen__abstract
+       bsg_nonsynth_test_rom__abstract
+       bsg_mux__abstract
+       bsg_mux_segmented__abstract
+       bsg_circular_ptr__abstract
+       bsg_dff__abstract
+       bsg_dff_en__abstract
+       bsg_dff_en_bypass__abstract
+       bsg_counter_clear_up__abstract
+       bsg_decode__abstract
+       bsg_priority_encode__abstract
+       bsg_lru_psuedo_tree_encode__abstract
+       bsg_lru_pseudo_tree_decode__abstract
+       bsg_lru_pseudo_tree_backup__abstract
+       bsg_mux_bitwise__abstract
+       bsg_priority_encode_one_hot_out__abstract
+       bsg_scan__abstract
+       bsg_expand_bitmask__abstract
+       bsg_mem_1r1w_synth__abstract
+       bsg_mem_1r1w__abstract
+       bsg_mem_1rw_sync__abstract
+       bsg_mem_1rw_sync_synth__abstract
+       bsg_mem_1rw_sync_mask_write_bit_synth__abstract
+       bsg_mem_1rw_sync_mask_write_byte_synth__abstract
+       bsg_mem_1rw_sync_mask_write_bit__abstract
+       bsg_mem_1rw_sync_mask_write_byte__abstract
+       bsg_two_fifo__abstract
+       bsg_fifo_1r1w_small__abstract
+       bsg_fifo_1r1w_small_unhardened__abstract
+       bsg_fifo_tracker__abstract
+       bsg_cache_dma__abstract
+       bsg_cache_miss__abstract
+       bsg_cache_tbuf__abstract
+       bsg_cache_sbuf__abstract
+       bsg_cache_buffer_queue__abstract
+       bsg_cache__abstract
+       bsg_nonsynth_dma_model__abstract
+       bsg_nonsynth_random_yumi_gen__abstract
+       basic_checker__abstract
+       testbench
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 749
+bsg_cache, "(0 == 2'b10)"
+  A left 32-bit expression is compared to a right 2-bit expression.
+  Comparing '0' of type int
+  with '2'b10' of type bit [1:0].
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 749
+bsg_cache, "(0 == 2'b11)"
+  A left 32-bit expression is compared to a right 2-bit expression.
+  Comparing '0' of type int
+  with '2'b11' of type bit [1:0].
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 749
+bsg_cache, "(1 == 2'b10)"
+  A left 32-bit expression is compared to a right 2-bit expression.
+  Comparing '1' of type int
+  with '2'b10' of type bit [1:0].
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 749
+bsg_cache, "(1 == 2'b11)"
+  A left 32-bit expression is compared to a right 2-bit expression.
+  Comparing '1' of type int
+  with '2'b11' of type bit [1:0].
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 749
+bsg_cache, "(2 == 2'b10)"
+  A left 32-bit expression is compared to a right 2-bit expression.
+  Comparing '2' of type int
+  with '2'b10' of type bit [1:0].
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 749
+bsg_cache, "(2 == 2'b11)"
+  A left 32-bit expression is compared to a right 2-bit expression.
+  Comparing '2' of type int
+  with '2'b11' of type bit [1:0].
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 749
+bsg_cache, "(3 == 2'b10)"
+  A left 32-bit expression is compared to a right 2-bit expression.
+  Comparing '3' of type int
+  with '2'b10' of type bit [1:0].
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 749
+bsg_cache, "(3 == 2'b11)"
+  A left 32-bit expression is compared to a right 2-bit expression.
+  Comparing '3' of type int
+  with '2'b11' of type bit [1:0].
+
+TimeScale is 1 ps / 1 ps
+
+Lint-[WMIA-L] Width mismatch in assignment
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_counter_clear_up.v, 33
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 1-bit wide expression is assigned to a 4-bit LHS target:
+  Source info: count_o <= init_val_p;
+  Expression: count_o
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_fsb/bsg_fsb_node_trace_replay.v, 88
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 32-bit wide expression is assigned to a 23-bit LHS target:
+  Source info: addr_r <= 0;
+  Expression: addr_r
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_fsb/bsg_fsb_node_trace_replay.v, 89
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 32-bit wide expression is assigned to a 1-bit LHS target:
+  Source info: done_r <= 0;
+  Expression: done_r
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_fsb/bsg_fsb_node_trace_replay.v, 90
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 32-bit wide expression is assigned to a 1-bit LHS target:
+  Source info: error_r <= 0;
+  Expression: error_r
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_fsb/bsg_fsb_node_trace_replay.v, 165
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 32-bit wide expression is assigned to a 1-bit LHS target:
+  Source info: instr_completed = 1;
+  Expression: instr_completed
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1r1w.v, 49
+bsg_mem_1r1w, "(w_addr_i < els_p)"
+  A left 3-bit expression is compared to a right 32-bit expression.
+  Comparing 'w_addr_i' of type wire [(addr_width_lp - 1):0]
+  with 'els_p' of type int.
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_miss.v, 157
+bsg_cache_miss, "(decode_v_i.data_size_op >= lg_data_mask_width_lp)"
+  A left 2-bit expression is compared to a right 32-bit expression.
+  Comparing 'decode_v_i.data_size_op' of type logic [1:0]
+  with 'lg_data_mask_width_lp' of type int.
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+../common/bsg_nonsynth_dma_model.v, 130
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 32-bit wide expression is assigned to a 3-bit LHS target:
+  Source info: rd_counter_n = ((rd_data_delay_zero & dma_data_ready_i) ? 
+  (rd_counter_r + 1) : rd_counter_r);
+  Expression: rd_counter_n
+
+
+Lint-[ULCO] Unequal length in comparison operator
+../common/bsg_nonsynth_dma_model.v, 133
+bsg_nonsynth_dma_model, "(rd_counter_r == (block_size_in_words_p - 1))"
+  A left 3-bit expression is compared to a right 32-bit expression.
+  Comparing 'rd_counter_r' of type logic [(lg_block_size_in_words_lp - 1):0]
+  with '(block_size_in_words_p - 1)' of type int.
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+../common/bsg_nonsynth_dma_model.v, 236
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 32-bit wide expression is assigned to a 3-bit LHS target:
+  Source info: wr_counter_n = ((dma_data_v_i & wr_data_delay_zero) ? 
+  (wr_counter_r + 1) : wr_counter_r);
+  Expression: wr_counter_n
+
+
+Lint-[ULCO] Unequal length in comparison operator
+../common/bsg_nonsynth_dma_model.v, 239
+bsg_nonsynth_dma_model, "(wr_counter_r == (block_size_in_words_p - 1))"
+  A left 3-bit expression is compared to a right 32-bit expression.
+  Comparing 'wr_counter_r' of type logic [(lg_block_size_in_words_lp - 1):0]
+  with '(block_size_in_words_p - 1)' of type int.
+
+
+Lint-[UI] Unused input
+basic_checker.v, 17
+  Following is an unused input.
+  Source info: v_i
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+basic_checker.v, 51
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 32-bit wide expression is assigned to a 64-bit LHS target:
+  Source info: store_pre_data = (cache_pkt.data[0+:32] + 
+  load_data_final[0+:32]);
+  Expression: store_pre_data
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+basic_checker.v, 57
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 32-bit wide expression is assigned to a 64-bit LHS target:
+  Source info: store_pre_data = ((cache_pkt.data[0+:32] < 
+  load_data_final[0+:32]) ? cache_pkt.data[0+:32] : load_data_final[0+:32]);
+  Expression: store_pre_data
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+basic_checker.v, 67
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 32-bit wide expression is assigned to a 64-bit LHS target:
+  Source info: store_pre_data = ((cache_pkt.data[0+:32] > 
+  load_data_final[0+:32]) ? cache_pkt.data[0+:32] : load_data_final[0+:32]);
+  Expression: store_pre_data
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+basic_checker.v, 77
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 32-bit wide expression is assigned to a 64-bit LHS target:
+  Source info: store_pre_data = (($unsigned(cache_pkt.data[0+:32]) < 
+  $unsigned(load_data_final[0+:32])) ? cache_pkt.data[0+:32] : 
+  load_data_final[0+:32]);
+  Expression: store_pre_data
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+basic_checker.v, 87
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 32-bit wide expression is assigned to a 64-bit LHS target:
+  Source info: store_pre_data = (($unsigned(cache_pkt.data[0+:32]) > 
+  $unsigned(load_data_final[0+:32])) ? cache_pkt.data[0+:32] : 
+  load_data_final[0+:32]);
+  Expression: store_pre_data
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+basic_checker.v, 129
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 4-bit wide expression is assigned to a 8-bit LHS target:
+  Source info: store_mask = (4'b1111 << 
+  (cache_pkt.addr[2+:lg_data_size_in_words_lp] * 4));
+  Expression: store_mask
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+basic_checker.v, 134
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 2-bit wide expression is assigned to a 8-bit LHS target:
+  Source info: store_mask = (2'b11 << 
+  (cache_pkt.addr[1+:lg_data_size_in_half_lp] * 2));
+  Expression: store_mask
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+basic_checker.v, 139
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 1-bit wide expression is assigned to a 8-bit LHS target:
+  Source info: store_mask = (1'b1 << 
+  cache_pkt.addr[0+:lg_data_size_in_bytes_lp]);
+  Expression: store_mask
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+/home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1/etc/sva/rec_ltl_classes_package.svp, 2
+
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_test/bsg_nonsynth_reset_gen.v, 50
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 32-bit wide expression is assigned to a 2-bit LHS target:
+  Source info: ctr_lo_r[0] <= (ctr_lo_r[0] + 1);
+  Expression: ctr_lo_r[0]
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_test/bsg_nonsynth_reset_gen.v, 45
+bsg_nonsynth_reset_gen, "(ctr_lo_r[0] == reset_cycles_lo_p)"
+  A left 2-bit expression is compared to a right 32-bit expression.
+  Comparing 'ctr_lo_r[0]' of type bit [-1:0]
+  with 'reset_cycles_lo_p' of type int.
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_test/bsg_nonsynth_reset_gen.v, 46
+bsg_nonsynth_reset_gen, "(ctr_hi_r[0] == reset_cycles_hi_p)"
+  A left 4-bit expression is compared to a right 32-bit expression.
+  Comparing 'ctr_hi_r[0]' of type bit [3:0]
+  with 'reset_cycles_hi_p' of type int.
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 956
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 30-bit wide expression is assigned to a 64-bit LHS target:
+  Source info: data_o = {tag_v_r[addr_way_v], addr_index_v, 
+  {block_offset_width_lp {1'b0}}};
+  Expression: data_o
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 358
+bsg_cache, "(decode.data_size_op < lg_data_mask_width_lp)"
+  A left 2-bit expression is compared to a right 32-bit expression.
+  Comparing 'decode.data_size_op' of type logic [1:0]
+  with 'lg_data_mask_width_lp' of type int.
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 361
+bsg_cache, "(decode_tl_r.data_size_op < lg_data_mask_width_lp)"
+  A left 2-bit expression is compared to a right 32-bit expression.
+  Comparing 'decode_tl_r.data_size_op' of type logic [1:0]
+  with 'lg_data_mask_width_lp' of type int.
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 364
+bsg_cache, "(decode_v_r.data_size_op < lg_data_mask_width_lp)"
+  A left 2-bit expression is compared to a right 32-bit expression.
+  Comparing 'decode_v_r.data_size_op' of type logic [1:0]
+  with 'lg_data_mask_width_lp' of type int.
+
+
+Lint-[CAWM-L] Width mismatch
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 122
+  Continuous assignment width mismatch
+  3 bits (lhs) versus 4 bits (rhs).
+  Source info: assign ld_data_mem_addr = {addr_index, 
+  cache_pkt.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp]};  
+
+
+Lint-[CAWM-L] Width mismatch
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 176
+  Continuous assignment width mismatch
+  3 bits (lhs) versus 4 bits (rhs).
+  Source info: assign recover_data_mem_addr = {addr_index_tl, 
+  addr_tl_r[lg_data_mask_width_lp+:lg_block_size_in_words_lp]};  
+
+
+Lint-[CAWM-L] Width mismatch
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 645
+  Continuous assignment width mismatch
+  3 bits (lhs) versus 4 bits (rhs).
+  Source info: assign sbuf_data_mem_addr = 
+  sbuf_entry_lo.addr[lg_data_mask_width_lp+:(lg_block_size_in_words_lp + 
+  lg_sets_lp)];  
+
+
+Lint-[CAWM-L] Width mismatch
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v, 1107
+  Continuous assignment width mismatch
+  1 bits (lhs) versus 32 bits (rhs).
+  Source info: assign track_mem_addr_li = 0;  
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_dma.v, 112
+bsg_cache_dma, "(counter_r == (burst_len_lp - 1))"
+  A left 4-bit expression is compared to a right 32-bit expression.
+  Comparing 'counter_r' of type logic [(counter_width_lp - 1):0]
+  with '(burst_len_lp - 1)' of type int.
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_dma.v, 113
+bsg_cache_dma, "(counter_r == burst_len_lp)"
+  A left 4-bit expression is compared to a right 32-bit expression.
+  Comparing 'counter_r' of type logic [(counter_width_lp - 1):0]
+  with 'burst_len_lp' of type int.
+
+
+Lint-[CAWM-L] Width mismatch
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache_dma.v, 226
+  Continuous assignment width mismatch
+  3 bits (lhs) versus 4 bits (rhs).
+  Source info: assign data_mem_addr_o = 
+  {dma_addr_i[block_offset_width_lp+:lg_sets_lp], 
+  counter_r[0+:lg_burst_len_lp]};  
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_bit.v, 60
+bsg_mem_1rw_sync_mask_write_bit, "(addr_i < els_p)"
+  A left 1-bit expression is compared to a right 32-bit expression.
+  Comparing 'addr_i' of type wire [(addr_width_lp - 1):0]
+  with 'els_p' of type int.
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1rw_sync_synth.v, 92
+bsg_mem_1rw_sync_synth, "(addr_i < els_p)"
+  A left 3-bit expression is compared to a right 32-bit expression.
+  Comparing 'addr_i' of type wire [(addr_width_lp - 1):0]
+  with 'els_p' of type int.
+
+
+Lint-[WMIA-L] Width mismatch in assignment
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_misc/bsg_circular_ptr.v, 33
+  Width mismatch between LHS and RHS is found in assignment:
+  The following 32-bit wide expression is assigned to a 3-bit LHS target:
+  Source info: ptr_r <= 0;
+  Expression: ptr_r
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1r1w.v, 49
+bsg_mem_1r1w, "(w_addr_i < els_p)"
+  A left 1-bit expression is compared to a right 32-bit expression.
+  Comparing 'w_addr_i' of type wire [(addr_width_lp - 1):0]
+  with 'els_p' of type int.
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_bit.v, 60
+bsg_mem_1rw_sync_mask_write_bit, "(addr_i < els_p)"
+  A left 1-bit expression is compared to a right 32-bit expression.
+  Comparing 'addr_i' of type wire [(addr_width_lp - 1):0]
+  with 'els_p' of type int.
+
+
+Lint-[ULCO] Unequal length in comparison operator
+/home/rcrist/bsg_cache_research/basejump_stl/bsg_mem/bsg_mem_1rw_sync_mask_write_bit.v, 60
+bsg_mem_1rw_sync_mask_write_bit, "(addr_i < els_p)"
+  A left 1-bit expression is compared to a right 32-bit expression.
+  Comparing 'addr_i' of type wire [(addr_width_lp - 1):0]
+  with 'els_p' of type int.
+
+Starting vcs inline pass...
+
+60 modules and 0 UDP read.
+recompiling module bsg_nonsynth_clock_gen
+recompiling module bsg_nonsynth_clock_gen__abstract
+recompiling module bsg_nonsynth_reset_gen__abstract
+recompiling module bsg_nonsynth_test_rom
+recompiling module bsg_nonsynth_test_rom__abstract
+recompiling module bsg_mux
+recompiling module bsg_mux__abstract
+recompiling module bsg_mux_segmented
+recompiling module bsg_mux_segmented__abstract
+recompiling module bsg_circular_ptr__abstract
+recompiling module bsg_dff__abstract
+recompiling module bsg_dff_en__abstract
+recompiling module bsg_dff_en_bypass__abstract
+recompiling module bsg_counter_clear_up__abstract
+recompiling module bsg_decode
+recompiling module bsg_decode__abstract
+recompiling module bsg_priority_encode
+recompiling module bsg_priority_encode__abstract
+recompiling module bsg_lru_psuedo_tree_encode__abstract
+recompiling module bsg_lru_pseudo_tree_decode
+recompiling module bsg_lru_pseudo_tree_decode__abstract
+recompiling module bsg_lru_pseudo_tree_backup__abstract
+recompiling module bsg_mux_bitwise__abstract
+recompiling module bsg_priority_encode_one_hot_out__abstract
+recompiling module bsg_scan__abstract
+recompiling module bsg_expand_bitmask
+recompiling module bsg_expand_bitmask__abstract
+recompiling module bsg_fsb_node_trace_replay
+recompiling module bsg_mem_1r1w_synth__abstract
+recompiling module bsg_mem_1r1w__abstract
+recompiling module bsg_mem_1rw_sync
+recompiling module bsg_mem_1rw_sync__abstract
+recompiling module bsg_mem_1rw_sync_synth__abstract
+recompiling module bsg_mem_1rw_sync_mask_write_bit_synth__abstract
+recompiling module bsg_mem_1rw_sync_mask_write_byte_synth__abstract
+recompiling module bsg_mem_1rw_sync_mask_write_bit
+recompiling module bsg_mem_1rw_sync_mask_write_bit__abstract
+recompiling module bsg_mem_1rw_sync_mask_write_byte
+recompiling module bsg_mem_1rw_sync_mask_write_byte__abstract
+recompiling module bsg_two_fifo__abstract
+recompiling module bsg_fifo_1r1w_small__abstract
+recompiling module bsg_fifo_1r1w_small_unhardened__abstract
+recompiling module bsg_fifo_tracker__abstract
+recompiling package bsg_cache_pkg
+recompiling module bsg_cache_decode
+recompiling module bsg_cache_dma__abstract
+recompiling module bsg_cache_miss
+recompiling module bsg_cache_miss__abstract
+recompiling module bsg_cache_tbuf
+recompiling module bsg_cache_tbuf__abstract
+50 of 60 modules done
+recompiling module bsg_cache_sbuf
+recompiling module bsg_cache_sbuf__abstract
+recompiling module bsg_cache_buffer_queue__abstract
+recompiling module bsg_cache__abstract
+recompiling module bsg_nonsynth_dma_model
+recompiling module bsg_nonsynth_dma_model__abstract
+recompiling module bsg_nonsynth_random_yumi_gen__abstract
+recompiling module basic_checker
+recompiling module basic_checker__abstract
+recompiling module testbench
+All of 60 modules done
+make[1]: Entering directory `/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/csrc'
+make[1]: Leaving directory `/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/csrc'
+make[1]: Entering directory `/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/csrc'
+rm -f _cuarc*.so _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
+if [ -x ../simv ]; then chmod a-x ../simv; fi
+g++  -o ../simv    -rdynamic  -Wl,-rpath='$ORIGIN'/simv.daidir -Wl,-rpath=./simv.daidir -Wl,-rpath=/home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1/linux64/lib -L/home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1/linux64/lib  -Wl,-rpath-link=./  /usr/lib64/libnuma.so.1   objs/amcQw_d.o   _7111_archive_1.so  SIM_l.o      rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o          -lvirsim -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile -luclinative /home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1/linux64/lib/vcs_tls.o   -Wl,-whole-archive -lvcsucli -Wl,-no-whole-archive       ./../simv.daidir/vc_hdrs.o  _vcs_pli_stub_.o   /home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1/linux64/lib/vcs_save_restore_new.o /home/projects/ee477.2023wtr/cad/synopsys/verdi/Q-2020.03-SP2-8/share/PLI/VCS/LINUX64/pli.a -ldl  -lc -lm -lpthread -ldl 
+../simv up to date
+make[1]: Leaving directory `/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/csrc'
+CPU time: 1.236 seconds to compile + .279 seconds to elab + .433 seconds to link
+Verdi KDB elaboration done and the database successfully generated: 0 error(s), 0 warning(s)
