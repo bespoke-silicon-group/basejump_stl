@@ -1,0 +1,9 @@
+
+User Marker Report:
+Reference	Hidden	Name              	Time      	Delta to Cursor	Delta to Marker	Delta to Ref.	Color   	Line Style
+N     	N     	dma_data_i        	3337176.962	0         	3337176.962	0         	ID_RED5 	long_dashed
+N     	N     	LOAD              	3516030   	178853.038	3516030   	178853.038	ID_GREEN5	long_dashed
+N     	N     	EVICT             	3246690   	-90486.962	3246690   	-90486.962	ID_ORANGE5	long_dashed
+N     	N     	OP                	3242714.006	-94462.956	3242714.006	-94462.956	ID_CYAN5	long_dashed
+N     	N     	FAIL              	3517422.599	180245.637	3517422.599	180245.637	ID_RED5 	long_dashed
+

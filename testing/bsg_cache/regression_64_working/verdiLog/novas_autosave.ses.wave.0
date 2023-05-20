@@ -2,7 +2,7 @@ Magic 271485
 Revision Verdi_Q-2020.03-SP2-8
 
 ; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
-viewPort 0 25 1920 370 226 63
+viewPort 0 25 1920 260 226 63
 
 ; File list:
 ; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
@@ -16,18 +16,18 @@ signalSpacing 5
 
 ; windowTimeUnit is used for zoom, cursor & marker
 ; waveform viewport range
-zoom 3434110.954865 3442355.639688
-cursor 3439470.000000
+zoom 3507553.751629 3507919.820730
+cursor 3507778.12575859763
 marker 0.000000
 
 ; user define markers
 ; userMarker time_pos marker_name color linestyle
-userMarker 3439470 dma_addr ID_ORANGE5 long_dashed
+userMarker 3120030 M1 ID_GREEN5 long_dashed
 
 ; visible top row signal index
-top 1
+top 8
 ; marker line index
-markerPos 16
+markerPos 6
 
 ; event list
 ; addEvent event_name event_expression
@@ -81,17 +81,11 @@ addSignal -h 15 -UNSIGNED /testbench/DUT/cache_pkt.opcode[5:0]
 addSignal -h 15 -holdScope clk_i
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[63:0]
 addSignal -h 15 -holdScope v_o
-addSignal -h 15 -holdScope yumi_i
-addSignal -h 15 -holdScope yumi_o
 addSignal -h 15 -holdScope miss_v
+addSignal -h 15 -holdScope ld_data_final_lo[63:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope cache_pkt.data[63:0]
 addSignal -h 15 -holdScope cache_pkt.addr[29:0]
 addGroup "G2"
-addSignal -h 15 /testbench/DUT/dma_addr_lo[29:0]
-addSignal -expanded -h 15 /testbench/DUT/dma/dma_pkt
-addSignal -h 15 -holdScope dma_pkt.write_not_read
-addSignal -h 15 -UNSIGNED -HEX -holdScope dma_pkt.addr[29:0]
-addSignal -h 15 -holdScope dma_pkt.mask[7:0]
 addSignal -h 15 -UNSIGNED -HEX /testbench/dma0/dma_data_o[63:0]
 addSignal -h 15 -holdScope dma_data_v_o
 addSignal -h 15 -UNSIGNED -HEX -holdScope dma_data_i[63:0]

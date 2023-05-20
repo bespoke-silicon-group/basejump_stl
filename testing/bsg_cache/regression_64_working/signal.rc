@@ -16,18 +16,16 @@ signalSpacing 5
 
 ; windowTimeUnit is used for zoom, cursor & marker
 ; waveform viewport range
-zoom 3434110.954865 3442355.639688
-cursor 3439470.000000
+zoom 3527273.611997 3528006.652000
+cursor 3527970.000000
 marker 0.000000
 
 ; user define markers
 ; userMarker time_pos marker_name color linestyle
-userMarker 3439470 dma_addr ID_ORANGE5 long_dashed
-
 ; visible top row signal index
-top 1
+top 3
 ; marker line index
-markerPos 16
+markerPos 11
 
 ; event list
 ; addEvent event_name event_expression
@@ -87,11 +85,7 @@ addSignal -h 15 -holdScope miss_v
 addSignal -h 15 -UNSIGNED -HEX -holdScope cache_pkt.data[63:0]
 addSignal -h 15 -holdScope cache_pkt.addr[29:0]
 addGroup "G2"
-addSignal -h 15 /testbench/DUT/dma_addr_lo[29:0]
-addSignal -expanded -h 15 /testbench/DUT/dma/dma_pkt
-addSignal -h 15 -holdScope dma_pkt.write_not_read
-addSignal -h 15 -UNSIGNED -HEX -holdScope dma_pkt.addr[29:0]
-addSignal -h 15 -holdScope dma_pkt.mask[7:0]
+addSignal -h 15 -UNSIGNED -HEX /testbench/dma_pkt
 addSignal -h 15 -UNSIGNED -HEX /testbench/dma0/dma_data_o[63:0]
 addSignal -h 15 -holdScope dma_data_v_o
 addSignal -h 15 -UNSIGNED -HEX -holdScope dma_data_i[63:0]
