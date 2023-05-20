@@ -222,6 +222,8 @@ Selection-LineColor = ID_BLUE2
 Selection-LineWidth = 1
 [FSM_Dlg-Print]
 Orientation = Landscape
+[FileBrowser]
+nWaveRestoreRCDirHistory = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/signal.rc\""
 [Form]
 version = Verdi_Q-2020.03-SP2-8
 wave/unknownSave.fm = 1006,636,520,275
@@ -230,9 +232,10 @@ autoSaveSession = FALSE
 TclAutoSource = 
 cmd_enter_form = FALSE
 SyncBrowserDir = TRUE
-version = Verdi_Q-2020.03-SP2-8
 SignalCaseInSensitive = FALSE
 ShowWndCtntDuringResizing = FALSE
+version = Verdi_Q-2020.03-SP2-8
+verdiAppFont = "Bitstream Vera Sans,-1,10,5,50,0,0,0,0,0", ""
 [GlobalProp]
 ErrWindow_Font = Helvetica_M_R_12
 [Globals]
@@ -376,8 +379,16 @@ saveWaveformStat = TRUE
 savePropStat = FALSE
 savePropDtl = TRUE
 [QtDialog]
-QwWarnMsgDlg = 311,792,600,250
+EventWindow = 544,351,829,402
+openFileDlg = 658,311,602,483
+saveSigDlg = 683,359,551,386
+sglUsrMarkerDialog = 784,342,350,420
 QwUserAskDlg = 798,489,324,130
+restoreSigDlg = 683,333,551,438
+usrMarkerDialog_RestoreMarkerReport = 664,382,590,340
+usrMarkerDialog_SaveMarkerReport = 604,112,590,340
+usrMarkerDialog = 459,65,800,300
+QwWarnMsgDlg = 311,792,600,250
 [Relationship]
 hideRecursiceNode = FALSE
 [Session Cache]
@@ -655,9 +666,9 @@ Button1 = "Dump All Signals" "$fsdbDumpvars;\n"
 [VIA]
 viaLogViewerDefaultRuleOneSearchForm = "share/VIA/Apps/PredefinedRules/Misc/Onesearch_rule.rc"
 [VIA.oneSearch.preference]
+isOneSearchVisible = TRUE
 DefaultDisplayTimeUnit = "1.000000ns"
 DefaultLogTimeUnit = "1.000000ns"
-isOneSearchVisible = TRUE
 [VIA.oneSearch.preference.vgifColumnSettingRC]
 [VIA.oneSearch.preference.vgifColumnSettingRC.setting0]
 parRuleSets = ""
@@ -711,7 +722,7 @@ scope_to_save_with_macro
 open_file_dir
 open_rc_file_dir
 getSignalForm = 0 0 800 479 100 30 100 30
-viewPort = 0 25 1920 181 100 63
+viewPort = 0 25 1920 370 226 63
 signalSpacing = 5
 digitalSignalHeight = 15
 analogSignalHeight = 98
@@ -984,9 +995,10 @@ curveWindow_Drag&Drop_Mode = TRUE
 hspiceIncOpenMode = TRUE
 pcSelectMode = TRUE
 hierarchyDelimiter = /
-RecentFile1 = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/out/test_random1/waveform.fsdb\""
-RecentFile2 = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/ref/out/test_random1/waveform.fsdb\""
-RecentFile3 = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/ref/waveform.fsdb\""
+RecentFile1 = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/signal.rc\""
+RecentFile2 = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/out/test_random1/waveform.fsdb\""
+RecentFile3 = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/ref/out/test_random1/waveform.fsdb\""
+RecentFile4 = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/ref/waveform.fsdb\""
 open_file_time_range = FALSE
 value_window_aligment = Right
 signal_window_alignment = Auto
@@ -1206,7 +1218,6 @@ plan_fillColor_error = red
 plan_fillColor_invalid = #F0DCDB
 plan_fillColor_subplan = lightGray
 [schematics]
-viewport = 178 262 638 516
 schBackgroundColor = black lineSolid
 schBackgroundColor_qt = #000000 qt_solidLine 1
 schBodyColor = ID_ORANGE6 lineSolid
@@ -1279,6 +1290,7 @@ schFillCmtColor = ID_YELLOW4 fill_solid
 pre_select = True
 ShowPassThroughNet = False
 ComputedAnnotColor = ID_PURPLE5
+viewport = 0 25 918 405
 [schematics_print]
 Signature = FALSE
 DesignName = PCU
@@ -1354,7 +1366,7 @@ AddImportArgument = FALSE
 LineBreakWithScope = TRUE
 StopAfterCompileOption = -s
 [wave.0]
-viewPort = 0 25 1920 181 100 63
+viewPort = 0 25 1920 370 226 63
 [wave.1]
 viewPort = 0 25 900 258 100 65
 [wave.2]
