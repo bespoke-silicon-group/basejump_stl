@@ -79,7 +79,7 @@ module bsg_mem_banked_crossbar_control_o_by_i
              bsg_arb_fixed #(.inputs_p(i_els_p)
                              ,.lo_to_hi_p( 1'b0 )
                              ) fixed_arb_low
-              (.ready_i (ready_i[i])
+              (.ready_then_i (ready_i[i])
                ,.reqs_i  (sel_oi_one_hot[i])
                ,.grants_o( grants_oi_one_hot[0] )
                );
@@ -87,7 +87,7 @@ module bsg_mem_banked_crossbar_control_o_by_i
              bsg_arb_fixed #(.inputs_p(i_els_p)
                              ,.lo_to_hi_p( 1'b1 )
                              ) fixed_arb_high
-              (.ready_i (ready_i[i])
+              (.ready_then_i (ready_i[i])
                ,.reqs_i  (sel_oi_one_hot[i])
                ,.grants_o( grants_oi_one_hot[1] )
                );
@@ -102,7 +102,7 @@ module bsg_mem_banked_crossbar_control_o_by_i
              bsg_arb_fixed #(.inputs_p(i_els_p)
                              ,.lo_to_hi_p(rr_lo_hi_p&1'b1)
                              ) fixed_arb
-              (.ready_i (ready_i[i])
+              (.ready_then_i (ready_i[i])
                ,.reqs_i  (sel_oi_one_hot[i])
                ,.grants_o(grants_oi_one_hot_o[i])
                );
