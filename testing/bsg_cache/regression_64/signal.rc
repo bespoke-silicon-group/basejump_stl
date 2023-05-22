@@ -2,11 +2,11 @@ Magic 271485
 Revision Verdi_Q-2020.03-SP2-8
 
 ; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
-viewPort 0 25 1920 481 226 63
+viewPort 0 25 1920 380 226 63
 
 ; File list:
 ; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
-openDirFile -d / "" "/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64_working/out/test_random1/waveform.fsdb"
+openDirFile -d / "" "/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/out/test_random1/waveform.fsdb"
 
 ; file time scale:
 ; fileTimeScale ### s|ms|us|ns|ps
@@ -16,16 +16,20 @@ signalSpacing 5
 
 ; windowTimeUnit is used for zoom, cursor & marker
 ; waveform viewport range
-zoom 2397035.769775 2397988.335693
-cursor 2397759.83857245883
+zoom 4217563.676596 4218347.586483
+cursor 4218230.000000
 marker 0.000000
 
 ; user define markers
 ; userMarker time_pos marker_name color linestyle
+userMarker 4212955.276 OP ID_GREEN5 long_dashed
+userMarker 4472666.495 FAIL ID_RED5 long_dashed
+userMarker 4424780 ERROR ID_RED5 long_dashed
+
 ; visible top row signal index
-top 0
+top 10
 ; marker line index
-markerPos 12
+markerPos 14
 
 ; event list
 ; addEvent event_name event_expression
@@ -52,15 +56,15 @@ nalias SEND_EVICT_DATA		2'b10		NULL
 
 aliasmapname bsg_cache_miss.miss_state_r
 nalias START		4'b0000		NULL
-nalias SEND_FILL_ADDR		4'b0100		NULL
 nalias FLUSH_OP		4'b0001		NULL
-nalias DONE		4'b1010		NULL
+nalias SEND_FILL_ADDR		4'b0100		NULL
 nalias SEND_EVICT_DATA		4'b0101		NULL
-nalias STORE_TAG_MISS_ALLOCATE		4'b1000		NULL
+nalias DONE		4'b1010		NULL
 nalias LOCK_OP		4'b0010		NULL
-nalias RECOVER		4'b1001		NULL
-nalias GET_FILL_DATA		4'b0110		NULL
+nalias STORE_TAG_MISS_ALLOCATE		4'b1000		NULL
 nalias SEND_EVICT_ADDR		4'b0011		NULL
+nalias GET_FILL_DATA		4'b0110		NULL
+nalias RECOVER		4'b1001		NULL
 nalias STORE_TAG_MISS		4'b0111		NULL
 
 aliasmapname bsg_nonsynth_dma_model.rd_state_r
@@ -74,30 +78,28 @@ nalias DELAY		2'b01		NULL
 nalias BUSY		2'b10		NULL
 
 addGroup "G1"
-activeDirFile "" "/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64_working/out/test_random1/waveform.fsdb"
+activeDirFile "" "/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/out/test_random1/waveform.fsdb"
 addSignal -h 15 -UNSIGNED /testbench/DUT/cache_pkt.opcode[5:0]
 addSignal -h 15 -holdScope clk_i
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[63:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope cache_pkt.data[63:0]
+addSignal -h 15 -holdScope cache_pkt.addr[29:0]
 addSignal -h 15 -holdScope v_o
 addSignal -h 15 -holdScope yumi_i
 addSignal -h 15 -holdScope yumi_o
-addSignal -h 15 -holdScope miss_v
-addSignal -h 15 -UNSIGNED -HEX -holdScope cache_pkt.data[63:0]
-addSignal -h 15 -holdScope cache_pkt.addr[29:0]
+addSignal -h 15 -holdScope valid_v_r[0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope tag_hit_v[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope miss_v
 addGroup "G2"
-addSignal -h 15 /testbench/DUT/dma/snoop_word_n[63:0]
-addSignal -h 15 -holdScope snoop_word_o[63:0]
-addSignal -h 15 -holdScope snoop_word_we
-addSignal -h 15 -holdScope dma_data_i[63:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope in_fifo_data_lo[63:0]
-addSignal -expanded -h 15 -UNSIGNED -HEX /testbench/dma_pkt
+addSignal -h 15 -UNSIGNED -HEX /testbench/dma_pkt.addr[29:0]
+addSignal -expanded -h 15 -UNSIGNED -HEX -holdScope dma_pkt
 addSignal -h 15 -UNSIGNED -HEX -holdScope dma_pkt.write_not_read
-addSignal -h 15 -UNSIGNED -HEX -holdScope dma_pkt.addr[29:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope dma_pkt.mask[7:0]
+addSignal -h 15 -UNSIGNED -HEX /testbench/dma0/dma_data_i[63:0]
+addSignal -h 15 /testbench/dma_data_v_lo
 addSignal -h 15 -UNSIGNED -HEX /testbench/dma0/dma_data_o[63:0]
 addSignal -h 15 -holdScope dma_data_v_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope dma_data_i[63:0]
-addSignal -h 15 /testbench/DUT/dma/dma_evict_o
+addSignal -h 15 -UNSIGNED -HEX /testbench/DUT/dma/snoop_word_n[63:0]
+addSignal -h 15 -holdScope snoop_word_we
 addGroup "G3"
 
 ; getSignalForm Scope Hierarchy Status
