@@ -232,10 +232,10 @@ autoSaveSession = FALSE
 TclAutoSource = 
 cmd_enter_form = FALSE
 SyncBrowserDir = TRUE
+verdiAppFont = "Bitstream Vera Sans,-1,10,5,50,0,0,0,0,0", ""
+version = Verdi_Q-2020.03-SP2-8
 SignalCaseInSensitive = FALSE
 ShowWndCtntDuringResizing = FALSE
-version = Verdi_Q-2020.03-SP2-8
-verdiAppFont = "Bitstream Vera Sans,-1,10,5,50,0,0,0,0,0", ""
 [GlobalProp]
 ErrWindow_Font = Helvetica_M_R_12
 [Globals]
@@ -381,14 +381,15 @@ savePropDtl = TRUE
 [QtDialog]
 EventWindow = 544,351,829,402
 openFileDlg = 658,311,602,483
-saveSigDlg = 683,359,551,386
 sglUsrMarkerDialog = 784,342,350,420
-QwUserAskDlg = 798,489,324,130
+QwInfoMsgDlg = 584,409,750,250
+usrMarkerDialog_SaveMarkerReport = 654,337,590,340
+QwWarnMsgDlg = 311,792,600,250
 restoreSigDlg = 683,333,551,438
 usrMarkerDialog_RestoreMarkerReport = 664,382,590,340
-usrMarkerDialog_SaveMarkerReport = 604,112,590,340
-usrMarkerDialog = 459,65,800,300
-QwWarnMsgDlg = 311,792,600,250
+saveSigDlg = 683,359,551,386
+usrMarkerDialog = 559,402,800,300
+QwUserAskDlg = 798,490,324,128
 [Relationship]
 hideRecursiceNode = FALSE
 [Session Cache]
@@ -666,17 +667,17 @@ Button1 = "Dump All Signals" "$fsdbDumpvars;\n"
 [VIA]
 viaLogViewerDefaultRuleOneSearchForm = "share/VIA/Apps/PredefinedRules/Misc/Onesearch_rule.rc"
 [VIA.oneSearch.preference]
-isOneSearchVisible = TRUE
 DefaultDisplayTimeUnit = "1.000000ns"
 DefaultLogTimeUnit = "1.000000ns"
+isOneSearchVisible = TRUE
 [VIA.oneSearch.preference.vgifColumnSettingRC]
 [VIA.oneSearch.preference.vgifColumnSettingRC.setting0]
 parRuleSets = ""
 [VIA.oneSearch.preference.vgifColumnSettingRC.setting0.column0]
-name = Message
-width = 2000
-visualIndex = 4
-isHidden = FALSE
+name = Severity
+width = 60
+visualIndex = 1
+isHidden = TRUE
 isUserChangeColumnVisible = FALSE
 [VIA.oneSearch.preference.vgifColumnSettingRC.setting0.column1]
 name = Time
@@ -697,10 +698,10 @@ visualIndex = 3
 isHidden = TRUE
 isUserChangeColumnVisible = FALSE
 [VIA.oneSearch.preference.vgifColumnSettingRC.setting0.column4]
-name = Severity
-width = 60
-visualIndex = 1
-isHidden = TRUE
+name = Message
+width = 2000
+visualIndex = 4
+isHidden = FALSE
 isUserChangeColumnVisible = FALSE
 [Vi]
 ViFont = "Clean 14"
@@ -722,7 +723,7 @@ scope_to_save_with_macro
 open_file_dir
 open_rc_file_dir
 getSignalForm = 0 0 800 479 100 30 100 30
-viewPort = 0 25 1920 370 226 63
+viewPort = 0 25 1920 380 226 63
 signalSpacing = 5
 digitalSignalHeight = 15
 analogSignalHeight = 98
@@ -1366,7 +1367,7 @@ AddImportArgument = FALSE
 LineBreakWithScope = TRUE
 StopAfterCompileOption = -s
 [wave.0]
-viewPort = 0 25 1920 370 226 63
+viewPort = 0 25 1920 380 226 63
 [wave.1]
 viewPort = 0 25 900 258 100 65
 [wave.2]
