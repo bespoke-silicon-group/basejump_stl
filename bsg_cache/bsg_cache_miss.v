@@ -165,18 +165,21 @@ module bsg_cache_miss
   logic [lg_ways_lp-1:0] addr_way_v;
   logic [lg_block_size_in_words_lp-1:0] addr_block_offset_v;
 
-  assign addr_index_v
-    = addr_v_i[block_offset_width_lp+:lg_sets_lp];
-  assign addr_tag_v
-    = addr_v_i[tag_offset_lp+:tag_width_lp];
-
-  if (ways_p == 1) begin
-    assign addr_way_v = '0;
-  end else begin 
+  if(sets_p == 1) begin
+    assign addr_index_v = 0;
+    assign addr_tag_v
+      = addr_v_i[block_offset_width_lp+:tag_width_lp];
     assign addr_way_v
-      = addr_v_i[tag_offset_lp+:lg_ways_lp];
+      = addr_v_i[block_offset_width_lp+:lg_ways_lp];
+  end else begin
+    assign addr_index_v
+      = addr_v_i[block_offset_width_lp+:lg_sets_lp];
+    assign addr_tag_v
+      = addr_v_i[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
+    assign addr_way_v
+      = addr_v_i[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
   end
-
+  
   assign addr_block_offset_v
     = addr_v_i[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
 

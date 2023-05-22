@@ -114,6 +114,7 @@ IfShowModule = {TRUE, FALSE}
 [DisabledMessages]
 version = Verdi_Q-2020.03-SP2-8
 184615126 = disabled
+50528765 = disabled
 [Editor]
 editorName = TurboEditor
 [Emacs]
@@ -232,9 +233,9 @@ autoSaveSession = FALSE
 TclAutoSource = 
 cmd_enter_form = FALSE
 SyncBrowserDir = TRUE
-version = Verdi_Q-2020.03-SP2-8
 SignalCaseInSensitive = FALSE
 ShowWndCtntDuringResizing = FALSE
+version = Verdi_Q-2020.03-SP2-8
 [GlobalProp]
 ErrWindow_Font = Helvetica_M_R_12
 [Globals]
@@ -380,11 +381,11 @@ savePropDtl = TRUE
 [QtDialog]
 EventWindow = 544,351,829,402
 openFileDlg = 658,311,602,483
-saveSigDlg = 683,359,551,386
 usrMarkerDialog = 559,402,800,300
-QwWarnMsgDlg = 311,792,600,250
 restoreSigDlg = 683,333,551,438
-QwUserAskDlg = 798,489,324,130
+QwUserAskDlg = 798,480,324,148
+saveSigDlg = 683,359,551,386
+QwWarnMsgDlg = 311,792,600,250
 [Relationship]
 hideRecursiceNode = FALSE
 [Session Cache]
@@ -460,7 +461,7 @@ bSVTBMode = TRUE
 SimMode = TRUE
 interactiveDebugging = TRUE
 KeepBreakPoints = FALSE
-vcs_svPath = /home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/simv
+vcs_svPath = /home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64_working/simv
 vcs_svOption = -reportstats +wave=1 +checker=basic
 [SimulationPlus2]
 eventDumpUnfinish = FALSE
@@ -662,41 +663,41 @@ Button1 = "Dump All Signals" "$fsdbDumpvars;\n"
 [VIA]
 viaLogViewerDefaultRuleOneSearchForm = "share/VIA/Apps/PredefinedRules/Misc/Onesearch_rule.rc"
 [VIA.oneSearch.preference]
+isOneSearchVisible = TRUE
 DefaultDisplayTimeUnit = "1.000000ns"
 DefaultLogTimeUnit = "1.000000ns"
-isOneSearchVisible = TRUE
 [VIA.oneSearch.preference.vgifColumnSettingRC]
 [VIA.oneSearch.preference.vgifColumnSettingRC.setting0]
 parRuleSets = ""
 [VIA.oneSearch.preference.vgifColumnSettingRC.setting0.column0]
-name = Type
+name = Severity
 width = 60
-visualIndex = 3
+visualIndex = 1
 isHidden = TRUE
 isUserChangeColumnVisible = FALSE
 [VIA.oneSearch.preference.vgifColumnSettingRC.setting0.column1]
-name = Message
-width = 2000
-visualIndex = 4
-isHidden = FALSE
-isUserChangeColumnVisible = FALSE
-[VIA.oneSearch.preference.vgifColumnSettingRC.setting0.column2]
 name = Time
 width = 60
 visualIndex = 0
 isHidden = TRUE
 isUserChangeColumnVisible = FALSE
-[VIA.oneSearch.preference.vgifColumnSettingRC.setting0.column3]
+[VIA.oneSearch.preference.vgifColumnSettingRC.setting0.column2]
 name = Code
 width = 60
 visualIndex = 2
 isHidden = TRUE
 isUserChangeColumnVisible = FALSE
-[VIA.oneSearch.preference.vgifColumnSettingRC.setting0.column4]
-name = Severity
+[VIA.oneSearch.preference.vgifColumnSettingRC.setting0.column3]
+name = Type
 width = 60
-visualIndex = 1
+visualIndex = 3
 isHidden = TRUE
+isUserChangeColumnVisible = FALSE
+[VIA.oneSearch.preference.vgifColumnSettingRC.setting0.column4]
+name = Message
+width = 2000
+visualIndex = 4
+isHidden = FALSE
 isUserChangeColumnVisible = FALSE
 [Vi]
 ViFont = "Clean 14"
