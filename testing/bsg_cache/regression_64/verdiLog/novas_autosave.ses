@@ -19,8 +19,6 @@ FSDBMsgShow = 0
 AnnotationShow = 0
 Console = FALSE
 powerDumped = 0
-[ba]
-options = "-incr -clockSkew 0 -loopUnroll 0 -bboxEmptyModule 0 -bboxIgnoreProtected 0 -cellModel 0 -cont_ba_err 0 "
 [fusa]
 fdb_server = 
 fdb_proj = 
@@ -28,15 +26,15 @@ fdb_campaign =
 fdb_tool = 
 [hb]
 postSimFile = /home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/out/test_random1/waveform.fsdb
-syncTime = 3439470
-viewport = 0 27 1920 977 0 0 100 1918
+syncTime = 186120
+viewport = 0 27 1920 977 0 0 221 1918
 activeNode = "testbench.DUT"
 activeScope = "testbench.DUT"
 activeFile = "/home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v"
 interactiveMode = False
 viewType = Source
 simulatorMode = False
-sourceBeginLine = 203
+sourceBeginLine = 321
 baMode = False
 srcLineNum = True
 AutoWrap = True
@@ -55,16 +53,12 @@ leadingZero = False
 signalPane = True
 SourceVerticalScrollLines = 1
 Scope1 = "testbench.DUT"
-Scope2 = "testbench.DUT.miss"
-Scope3 = "testbench.DUT.dma"
-Scope4 = "testbench"
-Scope5 = "bsg_two_fifo__abstract"
-Scope6 = "testbench.dma0"
-Scope7 = "testbench.DUT.addr_way_demux"
-Scope8 = "testbench.DUT.bypass_mux_segmented.genblk1[0]"
-Scope9 = "testbench.DUT.mux00.genblk1"
-Scope10 = "testbench.DUT.ld_data_mux.genblk1"
-multipleSelection = 1 224 18 0 0
+Scope2 = "testbench.DUT.genblk5[2]"
+Scope3 = "testbench"
+Scope4 = "testbench.DUT.miss"
+Scope5 = "testbench.DUT.dma"
+Scope6 = "bsg_nonsynth_clock_gen__abstract"
+multipleSelection = 1 328 3 0 0
 sdfCheckUndef = FALSE
 simFlow = FALSE
 [hb.design]
@@ -73,13 +67,13 @@ invokeDir = /home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regre
 [hb.sourceTab.1]
 scope = testbench.DUT
 File = /home/rcrist/bsg_cache_research/basejump_stl/bsg_cache/bsg_cache.v
-Line = 204
+Line = 322
 [nMemoryManager]
 WaveformFile = /home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/out/test_random1/waveform.fsdb
 UserActionNum = 0
 nMemWindowNum = 0
 [wave.0]
-viewPort = 0 25 1920 370 226 63
+viewPort = 0 25 1920 343 226 63
 primaryWindow = TRUE
 SessionFile = /home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/verdiLog/novas_autosave.ses.wave.0
 displayGrid = FALSE
