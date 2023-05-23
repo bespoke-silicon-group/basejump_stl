@@ -82,7 +82,7 @@ module bsg_nonsynth_axi_mem
     (awaddr_incr == awaddr_wrap_upper)
     ? awaddr_wrap_boundary
     : (awaddr_incr > awaddr_wrap_upper)
-      ? awaddr_r + ((wr_burst_r-awlen_r)<<$clog2(axi_data_width_p>>3))
+      ? awaddr_r + ((wr_burst_r-(awlen_r+1))<<$clog2(axi_data_width_p>>3))
       : awaddr_incr;
 
   always_comb begin
