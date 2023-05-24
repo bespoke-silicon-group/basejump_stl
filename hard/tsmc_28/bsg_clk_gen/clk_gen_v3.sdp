@@ -1,0 +1,72 @@
+VERSION 1
+
+define dly_row {
+  column col_0 {
+    inst D0
+    row row_0 {
+      inst N2
+      inst N0
+      inst N1
+      inst T0
+      inst T1
+    }
+  }
+}
+
+define dly_col {
+  column col_0 {
+    row inv {
+      justifyBy NW
+      inst T0
+      inst T1
+      inst I0
+      inst I1
+      inst I2
+    }
+    use dly_row r0 row_0_BSG_DONT_TOUCH
+    use dly_row r1 row_1_BSG_DONT_TOUCH
+    use dly_row r2 row_2_BSG_DONT_TOUCH
+    use dly_row r3 row_3_BSG_DONT_TOUCH
+    use dly_row r4 row_4_BSG_DONT_TOUCH
+    use dly_row r5 row_5_BSG_DONT_TOUCH
+    use dly_row r6 row_6_BSG_DONT_TOUCH
+    use dly_row r7 row_7_BSG_DONT_TOUCH
+  }
+}
+
+datapath bsg_clk_gen_osc {
+  column col_0 {
+    justifyBy NE
+    row rst {
+      inst I0
+      inst I1
+      inst N0
+      inst T0
+      inst T1
+    }
+    row gate {
+      justifyBy NE
+      inst I2
+      inst I3
+      inst S1
+      inst S2
+      inst CG0
+    }
+    row dly {
+      justifyBy NE
+      inst B<0:7>
+    }
+    row loop {
+      justifyBy NW
+      use dly_col c0 col_0_BSG_DONT_TOUCH flip X
+      use dly_col c1 col_1_BSG_DONT_TOUCH
+      use dly_col c2 col_2_BSG_DONT_TOUCH flip X
+      use dly_col c3 col_3_BSG_DONT_TOUCH
+      use dly_col c4 col_4_BSG_DONT_TOUCH flip X
+      use dly_col c5 col_5_BSG_DONT_TOUCH
+      use dly_col c6 col_6_BSG_DONT_TOUCH flip X
+      use dly_col c7 col_7_BSG_DONT_TOUCH
+    }
+  }
+}
+

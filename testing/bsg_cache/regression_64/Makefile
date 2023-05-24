@@ -66,7 +66,7 @@ out/%/trace.tr:
 	python $*.py $(BLOCK_SIZE_IN_WORDS_P) > $@
 
 %.basic.run: simv out/%/trace.tr
-	(cd out/$*; $(SIMV) +wave=$(WAVE) +checker=basic -l simv.log)
+	(cd out/$*; $(SIMV) -reportstats +vcs+nostdout +wave=$(WAVE) +checker=basic -l simv.log)
 
 %.dve:
 	$(DVE) -full64 -vpd out/$*/vcdplus.vpd &

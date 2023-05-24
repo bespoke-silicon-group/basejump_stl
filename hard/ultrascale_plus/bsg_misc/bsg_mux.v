@@ -33,16 +33,16 @@ module bsg_mux #(parameter `BSG_INV_PARAM(width_p)
   else if((harden_p == 1) && (balanced_p == 1) && (width_p == 1) && (els_p == 3))
     begin: macro
       wire data_1_0, data_3_2;
-      `bsg_macro_clk_mux(m_1_0, data_i[1], data_i[0], sel_i[0], data_1_0)
-      `bsg_macro_clk_mux(m_3_2, 1'b0     , data_i[2], sel_i[0], data_3_2)
-      `bsg_macro_clk_mux(m,     data_3_2 , data_1_0 , sel_i[1], data_o  )
+      `bsg_macro_clk_mux(m_1_0, data_1_0, data_i[1], data_i[0], sel_i[0])
+      `bsg_macro_clk_mux(m_3_2, data_3_2, 1'b0     , data_i[2], sel_i[0])
+      `bsg_macro_clk_mux(m    , data_o  , data_3_2 , data_1_0 , sel_i[1])
     end
   else if((harden_p == 1) && (balanced_p == 1) && (width_p == 1) && (els_p == 4))
     begin: macro
       wire data_1_0, data_3_2;
-      `bsg_macro_clk_mux(m_1_0, data_i[1], data_i[0], sel_i[0], data_1_0)
-      `bsg_macro_clk_mux(m_3_2, data_i[3], data_i[2], sel_i[0], data_3_2)
-      `bsg_macro_clk_mux(m,     data_3_2 , data_1_0 , sel_i[1], data_o  )
+      `bsg_macro_clk_mux(m_1_0, data_1_0, data_i[1], data_i[0], sel_i[0])
+      `bsg_macro_clk_mux(m_3_2, data_3_2, data_i[3], data_i[2], sel_i[0])
+      `bsg_macro_clk_mux(m    , data_o  , data_3_2 , data_1_0 , sel_i[1])
     end
   else
     begin: notmacro
