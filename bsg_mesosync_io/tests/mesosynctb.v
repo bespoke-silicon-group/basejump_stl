@@ -78,8 +78,8 @@ assign bit_cfg_ch1 = bit_cfg [(bit_num_p/2)-1:0];
 assign bit_cfg_ch2 = bit_cfg [bit_num_p-1:(bit_num_p/2)];
 
 // external loopback
-logic valid_to_core, ready_to_core;
-logic valid_from_core, ready_from_core;
+logic valid_to_core, ready_and_to_core;
+logic valid_from_core, ready_and_from_core;
 logic [bit_num_p-3:0] data_to_core, data_from_core;
 logic [bit_num_p-3:0] example_data;
 
@@ -109,11 +109,11 @@ bsg_mesosync_link
              // connection to core, 2 bits are used for handshake
              , .data_i(data_from_core)
              , .v_i(valid_from_core)
-             , .ready_o(ready_to_core)
+             , .ready_and_o(ready_and_to_core)
 
              , .v_o(valid_to_core)
              , .data_o(data_to_core)
-             , .ready_i(ready_from_core)
+             , .ready_and_i(ready_and_from_core)
      
             );
 
@@ -139,12 +139,12 @@ bsg_flow_counter #(.els_p(72)
 always_ff @ (posedge clk or posedge reset) begin
   if (reset)
     example_data <= 0;
-  else if (ready_to_core)
+  else if (ready_and_to_core)
     example_data <= example_data + 1;
 end
 
 assign valid_from_core = 1;
-assign ready_from_core = 1;
+assign ready_and_from_core = 1;
 assign data_from_core  = example_data;
 
 // -------------------------------------------------------------//
@@ -356,8 +356,8 @@ initial begin
   $monitor("@%t %b\t  %b\t %d\t %d\t\t %b,%b,%b  %b,%b,%b",$time,to_meso
       ,from_meso_fixed, DUT.mesosync_core.output_credit_counter.credit_cnt,
       DUT.mesosync_core.input_fifo.fifo.wptr_r-DUT.mesosync_core.input_fifo.fifo.rptr_r,
-      data_to_core,valid_to_core,ready_from_core,
-      data_from_core,valid_from_core,ready_to_core);
+      data_to_core,valid_to_core,ready_and_from_core,
+      data_from_core,valid_from_core,ready_and_to_core);
   
    // Outer loop simulation same as internal one, with loopback disabled
   mode_cfg = create_cfg (LA_STOP,1'b0,STOP);

@@ -24,7 +24,7 @@ module bsg_logic_analyzer #( parameter `BSG_INV_PARAM(line_width_p )
               , input [`BSG_SAFE_CLOG2(line_width_p)-1:0] input_bit_selector_i
               
               , input                                     start_i
-              , output                                    ready_o
+              , output                                    ready_then_o
               
               , output                                    logic_analyzer_data_o
               , output                                    v_o
@@ -48,7 +48,7 @@ always_ff @ (posedge clk)
 // valid_and_read protocol, in case of fifo becoming full it would stop
 // enqueing until deque is asserted, and as stated there would be no 
 // more enquing on that time.
-assign enque = (start_i | enque_r) & ready_o; 
+assign enque = (start_i | enque_r) & ready_then_o; 
 
 // Select one bit of input signal for Logic Analyzer
 // LSB is posedge and MSB is negedge
@@ -77,7 +77,7 @@ bsg_fifo_1r1w_narrowed
          
              , .data_i(LA_selected_line)
              , .v_i(enque)
-             , .ready_param_o(ready_o)
+             , .ready_param_o(ready_then_o)
          
              , .v_o(valid)
              , .data_o(logic_analyzer_data_o)

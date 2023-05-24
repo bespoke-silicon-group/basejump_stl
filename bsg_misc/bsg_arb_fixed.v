@@ -7,7 +7,7 @@
 
 module bsg_arb_fixed #(parameter `BSG_INV_PARAM(    inputs_p )
                        , parameter `BSG_INV_PARAM(lo_to_hi_p ))
-   ( input ready_i
+   ( input ready_then_i
      , input  [inputs_p-1:0] reqs_i
      , output [inputs_p-1:0] grants_o
      );
@@ -23,7 +23,7 @@ module bsg_arb_fixed #(parameter `BSG_INV_PARAM(    inputs_p )
       );
 
    // mask with ready bits
-   assign grants_o = grants_unmasked_lo & { (inputs_p) { ready_i } };
+   assign grants_o = grants_unmasked_lo & { (inputs_p) { ready_then_i } };
 
 endmodule
 

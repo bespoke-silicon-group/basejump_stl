@@ -4,7 +4,7 @@ module bsg_locking_arb_fixed #( parameter `BSG_INV_PARAM(inputs_p)
                              , parameter lo_to_hi_p=0
                              )
   ( input   clk_i
-  , input   ready_i
+  , input   ready_then_i
 
    // to have continuous throughput, you will need to unlock on the same cycle
    // as the last word of a packet going through
@@ -31,7 +31,7 @@ module bsg_locking_arb_fixed #( parameter `BSG_INV_PARAM(inputs_p)
 
   bsg_arb_fixed #( .inputs_p(inputs_p), .lo_to_hi_p(lo_to_hi_p) )
     fixed_arb
-      ( .ready_i ( ready_i )
+      ( .ready_then_i ( ready_then_i )
       , .reqs_i  ( reqs_i & req_mask_r )
       , .grants_o( grants_o )
       );  
