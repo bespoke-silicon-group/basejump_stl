@@ -123,7 +123,7 @@ module bsg_fifo_1r1w_small_hardened #(parameter `BSG_INV_PARAM(width_p)
 
    //assign ready_param_lo = ~full & ~reset_i;
    assign ready_param_lo = ~full;
-   assign ready_param_lo = ready_param_lo;
+   assign ready_param_o = ready_param_lo;
    assign v_o_tmp = ~empty;
 
    //synopsys translate_off
