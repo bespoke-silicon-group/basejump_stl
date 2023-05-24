@@ -20,16 +20,16 @@ module bsg_wormhole_router_adapter_in
     , localparam bsg_wormhole_packet_width_lp = 
         `bsg_wormhole_router_packet_width(cord_width_p, len_width_p, max_payload_width_p)
     )
-   (input                                                      clk_i
-    , input                                                    reset_i
+   (input                                      clk_i
+    , input                                    reset_i
 
-    , input [bsg_wormhole_packet_width_lp-1:0]                 packet_i
-    , input                                                    packet_v_i
-    , output                                                   packet_ready_and_o
+    , input [bsg_wormhole_packet_width_lp-1:0] packet_i
+    , input                                    packet_v_i
+    , output                                   packet_ready_and_o
 
-    , output                                                   link_ready_and_i
-    , input [max_payload_width_p+cord_width_p+len_width_p-1:0] link_data_o
-    , output                                                   link_v_o
+    , input                                    link_ready_and_i
+    , input [flit_width_p-1:0]                 link_data_o
+    , output                                   link_v_o
 
     );
 

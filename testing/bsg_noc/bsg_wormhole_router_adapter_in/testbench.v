@@ -32,7 +32,7 @@ module testbench();
   logic [max_packet_width_lp-1:0] data_li;
   logic v_li, ready_and_lo;
   logic [flit_width_lp-1:0] data_lo;
-  logic v_lo, ready_li;
+  logic v_lo, fifo_ready_lo;
 
   bsg_wormhole_router_adapter_in #(
     .flit_width_p(flit_width_lp)
@@ -49,13 +49,12 @@ module testbench();
 
     ,.link_data_o(data_lo)
     ,.link_v_o(v_lo)
-    ,.link_ready_and_i(ready_li)
+    ,.link_ready_and_i(fifo_ready_lo)
   );
 
   logic [flit_width_lp-1:0] fifo_data_lo;
   logic fifo_yumi_li;
   logic fifo_v_lo;
-  logic fifo_ready_lo;
 
   bsg_fifo_1r1w_small #(
     .width_p(flit_width_lp)
@@ -72,7 +71,6 @@ module testbench();
     ,.v_o(fifo_v_lo)
     ,.yumi_i(fifo_yumi_li)
   );
-  assign ready_li = fifo_ready_lo;
 
   parameter rom_addr_width_p = 10;
   logic [rom_addr_width_p-1:0] rom_addr;
@@ -90,7 +88,7 @@ module testbench();
 
     ,.v_i(fifo_v_lo)
     ,.data_i({{(max_packet_width_lp-flit_width_lp){1'b0}}, fifo_data_lo})
-    ,.ready_and_o(tr_ready_lo)
+    ,.ready_o(tr_ready_lo)
   
     ,.v_o(v_li)
     ,.data_o(data_li)
