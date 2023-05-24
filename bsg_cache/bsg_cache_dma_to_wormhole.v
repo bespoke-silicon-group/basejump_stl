@@ -81,7 +81,7 @@ module bsg_cache_dma_to_wormhole
 
     ,.v_i(dma_pkt_v_i)
     ,.data_i(dma_pkt_i)
-    ,.ready_o(dma_pkt_ready_lo)
+    ,.ready_param_o(dma_pkt_ready_lo)
 
     ,.v_o(dma_pkt_v_lo)
     ,.data_o(dma_pkt_lo)
@@ -99,16 +99,16 @@ module bsg_cache_dma_to_wormhole
     bsg_two_fifo #(
       .width_p(wh_flit_width_p)
     ) return_fifo (
-      .clk_i      (clk_i)
-      ,.reset_i   (reset_i)
+      .clk_i          (clk_i)
+      ,.reset_i       (reset_i)
 
-      ,.v_i       (wh_link_sif_in.v)
-      ,.data_i    (wh_link_sif_in.data)
-      ,.ready_o   (wh_link_sif_out.ready_and_rev)
+      ,.v_i           (wh_link_sif_in.v)
+      ,.data_i        (wh_link_sif_in.data)
+      ,.ready_param_o (wh_link_sif_out.ready_and_rev)
 
-      ,.v_o       (return_fifo_v_lo)
-      ,.data_o    (return_fifo_data_lo)
-      ,.yumi_i    (return_fifo_yumi_li)
+      ,.v_o           (return_fifo_v_lo)
+      ,.data_o        (return_fifo_data_lo)
+      ,.yumi_i        (return_fifo_yumi_li)
     );
     assign return_fifo_yumi_li = return_fifo_ready_li & return_fifo_v_lo;
   end else begin : nbr

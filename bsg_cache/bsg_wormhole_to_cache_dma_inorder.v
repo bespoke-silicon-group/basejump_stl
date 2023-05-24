@@ -120,7 +120,7 @@ module bsg_wormhole_to_cache_dma_inorder
 
     ,.data_i({src_cid_li, src_cord_li})
     ,.v_i(src_fifo_v_li)
-    ,.ready_o(src_fifo_ready_lo)
+    ,.ready_param_o(src_fifo_ready_lo)
 
     ,.data_o({src_cid_lo, src_cord_lo})
     ,.v_o(src_fifo_v_lo)

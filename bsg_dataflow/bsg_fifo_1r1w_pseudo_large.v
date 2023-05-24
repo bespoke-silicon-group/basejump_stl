@@ -251,15 +251,15 @@ module bsg_fifo_1r1w_pseudo_large #(parameter `BSG_INV_PARAM(width_p )
    bsg_two_fifo #(.width_p(width_p)
                   ,. verbose_p(verbose_p)
                   ,. allow_enq_deq_on_full_p(early_yumi_p)) little2p
-     (.clk_i   (clk_i)
-      ,.reset_i(reset_i)
-      ,.ready_o(little_ready_lo)
-      ,.data_i (little_data)
-      ,.v_i    (little_valid)
+     (.clk_i          (clk_i)
+      ,.reset_i       (reset_i)
+      ,.ready_param_o (little_ready_lo)
+      ,.data_i        (little_data)
+      ,.v_i           (little_valid)
 
-      ,.v_o    (v_o)
-      ,.data_o (data_o)
-      ,.yumi_i (yumi_i)
+      ,.v_o           (v_o)
+      ,.data_o        (data_o)
+      ,.yumi_i        (yumi_i)
       );
 
 endmodule

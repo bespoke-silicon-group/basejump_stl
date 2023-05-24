@@ -112,7 +112,7 @@ module bsg_source_sync_output
    bsg_two_fifo #(.width_p(channel_width_p)) twofer
      (.clk_i(core_clk_i)
       ,.reset_i(core_reset_i)
-      ,.ready_o(core_ready_o)
+      ,.ready_param_o(core_ready_o)
       ,.data_i (core_data_i)
       ,.v_i    (core_valid_i)
 

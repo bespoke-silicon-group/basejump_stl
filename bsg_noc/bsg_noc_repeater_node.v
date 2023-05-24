@@ -43,30 +43,30 @@ module bsg_noc_repeater_node
 
   bsg_two_fifo #(.width_p(width_p))
    A_to_B
-    (.clk_i    ( clk_i   )
-     ,.reset_i ( reset_i )
+    (.clk_i           ( clk_i   )
+     ,.reset_i        ( reset_i )
 
-     ,.v_i     ( links_A_cast_i.v    )
-     ,.data_i  ( links_A_cast_i.data )
-     ,.ready_o ( links_A_cast_o.ready_and_rev )
+     ,.v_i            ( links_A_cast_i.v    )
+     ,.data_i         ( links_A_cast_i.data )
+     ,.ready_param_o  ( links_A_cast_o.ready_and_rev )
 
-     ,.v_o     ( links_B_cast_o.v    )
-     ,.data_o  ( links_B_cast_o.data )
-     ,.yumi_i  ( links_B_cast_i.ready_and_rev & links_B_cast_o.v )
+     ,.v_o            ( links_B_cast_o.v    )
+     ,.data_o         ( links_B_cast_o.data )
+     ,.yumi_i         ( links_B_cast_i.ready_and_rev & links_B_cast_o.v )
      );
 
   bsg_two_fifo #(.width_p(width_p))
    B_to_A
-    (.clk_i    ( clk_i   )
-     ,.reset_i ( reset_i )
+    (.clk_i           ( clk_i   )
+     ,.reset_i        ( reset_i )
 
-     ,.v_i     ( links_B_cast_i.v    )
-     ,.data_i  ( links_B_cast_i.data )
-     ,.ready_o ( links_B_cast_o.ready_and_rev )
+     ,.v_i            ( links_B_cast_i.v    )
+     ,.data_i         ( links_B_cast_i.data )
+     ,.ready_param_o  ( links_B_cast_o.ready_and_rev )
 
-     ,.v_o     ( links_A_cast_o.v    )
-     ,.data_o  ( links_A_cast_o.data )
-     ,.yumi_i  ( links_A_cast_i.ready_and_rev & links_A_cast_o.v )
+     ,.v_o            ( links_A_cast_o.v    )
+     ,.data_o         ( links_A_cast_o.data )
+     ,.yumi_i         ( links_A_cast_i.ready_and_rev & links_A_cast_o.v )
      );
 
 endmodule

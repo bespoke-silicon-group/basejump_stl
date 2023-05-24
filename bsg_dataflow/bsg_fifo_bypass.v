@@ -8,7 +8,7 @@ module bsg_fifo_bypass
    )
   (input [width_p-1:0]          data_i  // late
    , input                      v_i     // late
-   , output logic               ready_o // early
+   , output logic               ready_param_o // early
 
    , output logic [width_p-1:0] data_o // late
    , output logic               v_o    // late
@@ -23,9 +23,9 @@ module bsg_fifo_bypass
    , output                     fifo_yumi_o  // late
    );
 
-  wire enq = ready_THEN_valid_p ? v_i : (ready_o & v_i);
+  wire enq = ready_THEN_valid_p ? v_i : (ready_param_o & v_i);
 
-  assign ready_o     = fifo_ready_i;
+  assign ready_param_o     = fifo_ready_param_i;
   assign fifo_data_o = data_i;
   assign fifo_v_o    = enq & (fifo_v_i | ~yumi_i);
 
@@ -36,4 +36,3 @@ module bsg_fifo_bypass
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_fifo_bypass)
-

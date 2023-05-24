@@ -77,7 +77,7 @@ bsg_fifo_1r1w_narrowed
          
              , .data_i(LA_selected_line)
              , .v_i(enque)
-             , .ready_o(ready_then_o)
+             , .ready_param_o(ready_then_o)
          
              , .v_o(valid)
              , .data_o(logic_analyzer_data_o)

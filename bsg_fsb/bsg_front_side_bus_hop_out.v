@@ -57,14 +57,14 @@ module bsg_front_side_bus_hop_out #(parameter `BSG_INV_PARAM(width_p))
                         );
 
    bsg_two_fifo #(.width_p(width_p)) fifo
-     (.clk_i    (clk_i)
-      ,.reset_i (reset_i)
-      ,.data_i  (data_i[source_sel])
-      ,.data_o  (data_o)
-      ,.v_o     (fifo_v)
-      ,.yumi_i  (fifo_v & ready_i)
-      ,.ready_o (fifo_ready)
-      ,.v_i     (| v_i)
+     (.clk_i          (clk_i)
+      ,.reset_i       (reset_i)
+      ,.data_i        (data_i[source_sel])
+      ,.data_o        (data_o)
+      ,.v_o           (fifo_v)
+      ,.yumi_i        (fifo_v & ready_i)
+      ,.ready_param_o (fifo_ready)
+      ,.v_i           (| v_i)
       );
 
    assign v_o     =  fifo_v;
