@@ -34,16 +34,6 @@ module testbench();
   logic [flit_width_lp-1:0] data_lo;
   logic v_lo, ready_li;
 
-  `declare_bsg_ready_and_link_sif_s(flit_width_lp, bsg_ready_and_link_sif_s);
-  bsg_ready_and_link_sif_s link_lo, link_li;
-
-  assign data_lo = link_lo.data;
-  assign v_lo    = link_lo.v;
-
-  assign link_li.v = '0;
-  assign link_li.data = '0;
-  assign link_li.ready_and_rev = ready_li;
-
   bsg_wormhole_router_adapter_in #(
     .flit_width_p(flit_width_lp)
     ,.max_payload_width_p(max_payload_width_p)
@@ -54,11 +44,12 @@ module testbench();
     ,.reset_i(reset)
     
     ,.packet_i(data_li)
-    ,.link_v_i(v_li)
-    ,.link_ready_and_o(ready_and_lo)
+    ,.packet_v_i(v_li)
+    ,.packet_ready_and_o(ready_and_lo)
 
-    ,.link_o(link_lo)
-    ,.link_i(link_li)
+    ,.link_data_o(data_lo)
+    ,.link_v_o(v_lo)
+    ,.link_ready_and_i(ready_li)
   );
 
   logic [flit_width_lp-1:0] fifo_data_lo;
