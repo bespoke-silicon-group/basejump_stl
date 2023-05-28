@@ -214,7 +214,11 @@ module bsg_cache_dma
   assign data_mem_w_mask_way_picked = (word_tracking_p & track_miss_i) ? ~track_bits_offset_picked_expanded : {dma_data_mask_width_lp{1'b1}};
 
   if (burst_len_lp == 1) begin
-    assign data_mem_addr_o = dma_addr_i[block_offset_width_lp+:lg_sets_lp];
+    if(sets_p == 1) begin
+      assign data_mem_addr_o = 0;
+    end else begin
+      assign data_mem_addr_o = dma_addr_i[block_offset_width_lp+:lg_sets_lp];
+    end
   end
   //else if (burst_len_lp == block_size_in_words_p) begin
   //  assign data_mem_addr_o = {
@@ -223,10 +227,19 @@ module bsg_cache_dma
   //  };
   //end
   else begin
-    assign data_mem_addr_o = {
-      dma_addr_i[block_offset_width_lp+:lg_sets_lp],
-      counter_r[0+:lg_burst_len_lp]
-    };
+    
+    if(sets_p == 1) begin
+      assign data_mem_addr_o = {
+        1'b0,
+        counter_r[0+:lg_burst_len_lp]
+      };
+    end else begin
+      assign data_mem_addr_o = {
+        dma_addr_i[block_offset_width_lp+:lg_sets_lp],
+        counter_r[0+:lg_burst_len_lp]
+      };
+    end
+      
   end
   
   assign data_mem_data_o = {ways_p{in_fifo_data_lo}};
