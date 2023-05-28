@@ -12,6 +12,7 @@ $BASEJUMP_STL_DIR/bsg_misc/bsg_encode_one_hot.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_dff.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_dff_en.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_dff_en_bypass.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_dff_reset.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_dff_reset_en.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_counter_clear_up.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_decode.v
@@ -19,7 +20,8 @@ $BASEJUMP_STL_DIR/bsg_misc/bsg_decode_with_v.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_round_robin_arb.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_round_robin_1_to_n.v
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_round_robin_n_to_1.v
-$BASEJUMP_STL_DIR/bsg_dataflow/bsg_serial_in_parallel_out_passthrough.v
+$BASEJUMP_STL_DIR/bsg_dataflow/bsg_serial_in_parallel_out_full.v
+$BASEJUMP_STL_DIR/bsg_dataflow/bsg_parallel_in_serial_out.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_crossbar_o_by_i.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_mux_one_hot.v
 $BASEJUMP_STL_DIR/bsg_misc/bsg_scan.v
