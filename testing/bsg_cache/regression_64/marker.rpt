@@ -1,11 +1,9 @@
 
 User Marker Report:
 Reference	Hidden	Name              	Time      	Delta to Cursor	Delta to Marker	Delta to Ref.	Color   	Line Style
-N     	N     	FILL              	3243256.144	-3193.856 	3243256.144	-3193.856 	ID_ORANGE5	long_dashed
-N     	N     	"NOT SURE"        	3252975.484	6525.484  	3252975.484	6525.484  	ID_RED5 	long_dashed
-N     	N     	FAIL              	3517422.599	270972.599	3517422.599	270972.599	ID_RED5 	long_dashed
-N     	N     	OP                	3242714.006	-3735.994 	3242714.006	-3735.994 	ID_CYAN5	long_dashed
-N     	N     	EVICT             	3246690   	240       	3246690   	240       	ID_ORANGE5	long_dashed
-N     	N     	LOAD              	3516030   	269580    	3516030   	269580    	ID_GREEN5	long_dashed
-N     	N     	dma_data_i        	3337176.962	90726.962 	3337176.962	90726.962 	ID_RED5 	long_dashed
+N     	N     	OP                	10436.96  	-3932904.92	10436.96  	-3932904.92	ID_GREEN5	long_dashed
+N     	N     	FAIL              	9225261.82	5281919.94	9225261.82	5281919.94	ID_RED5 	long_dashed
+N     	N     	"IN MEM"          	3943350   	8.12      	3943350   	8.12      	ID_GREEN5	long_dashed
+N     	N     	"NOT IN MEM"      	4017850   	74508.12  	4017850   	74508.12  	ID_RED5 	long_dashed
+N     	N     	"INCORRECT WB"    	3948077.2 	4735.32   	3948077.2 	4735.32   	ID_RED5 	long_dashed
 
