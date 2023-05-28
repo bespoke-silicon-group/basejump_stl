@@ -224,7 +224,7 @@ Selection-LineWidth = 1
 [FSM_Dlg-Print]
 Orientation = Landscape
 [FileBrowser]
-nWaveRestoreRCDirHistory = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/signal.rc\""
+nWaveRestoreRCDirHistory = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/signal.rc\"" "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64_working/signal.rc\""
 [Form]
 version = Verdi_Q-2020.03-SP2-8
 wave/unknownSave.fm = 1006,636,520,275
@@ -233,9 +233,10 @@ autoSaveSession = FALSE
 TclAutoSource = 
 cmd_enter_form = FALSE
 SyncBrowserDir = TRUE
+verdiAppFont = "Bitstream Vera Sans,-1,8,5,50,0,0,0,0,0", ""
+version = Verdi_Q-2020.03-SP2-8
 SignalCaseInSensitive = FALSE
 ShowWndCtntDuringResizing = FALSE
-version = Verdi_Q-2020.03-SP2-8
 [GlobalProp]
 ErrWindow_Font = Helvetica_M_R_12
 [Globals]
@@ -381,19 +382,21 @@ savePropDtl = TRUE
 [QtDialog]
 EventWindow = 544,351,829,402
 openFileDlg = 658,311,602,483
-usrMarkerDialog = 559,402,800,300
-restoreSigDlg = 683,333,551,438
-QwUserAskDlg = 798,480,324,148
+FileWithNoteForm_base = 631,281,655,543
+usrMarkerDialog_RestoreMarkerReport = 664,382,590,340
 saveSigDlg = 683,359,551,386
+restoreSigDlg = 683,333,551,438
 QwWarnMsgDlg = 311,792,600,250
+usrMarkerDialog = 559,402,800,300
+QwUserAskDlg = 798,493,324,122
 [Relationship]
 hideRecursiceNode = FALSE
 [Session Cache]
-2 = string (session file name)
 3 = string (session file name)
 4 = string (session file name)
 5 = string (session file name)
-1 = /home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/verdiLog/novas_autosave.ses
+1 = /home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64_working/verdiLog/novas_autosave.ses
+2 = /home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/verdiLog/novas_autosave.ses
 [Simulation]
 scsPath = scsim
 scsOption = 
@@ -663,9 +666,9 @@ Button1 = "Dump All Signals" "$fsdbDumpvars;\n"
 [VIA]
 viaLogViewerDefaultRuleOneSearchForm = "share/VIA/Apps/PredefinedRules/Misc/Onesearch_rule.rc"
 [VIA.oneSearch.preference]
-isOneSearchVisible = TRUE
 DefaultDisplayTimeUnit = "1.000000ns"
 DefaultLogTimeUnit = "1.000000ns"
+isOneSearchVisible = TRUE
 [VIA.oneSearch.preference.vgifColumnSettingRC]
 [VIA.oneSearch.preference.vgifColumnSettingRC.setting0]
 parRuleSets = ""
@@ -719,7 +722,7 @@ scope_to_save_with_macro
 open_file_dir
 open_rc_file_dir
 getSignalForm = 0 0 800 479 100 30 100 30
-viewPort = 0 25 1920 260 226 63
+viewPort = 0 25 1920 432 226 150
 signalSpacing = 5
 digitalSignalHeight = 15
 analogSignalHeight = 98
@@ -992,10 +995,11 @@ curveWindow_Drag&Drop_Mode = TRUE
 hspiceIncOpenMode = TRUE
 pcSelectMode = TRUE
 hierarchyDelimiter = /
-RecentFile1 = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/signal.rc\""
-RecentFile2 = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/out/test_random1/waveform.fsdb\""
-RecentFile3 = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/ref/out/test_random1/waveform.fsdb\""
-RecentFile4 = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/ref/waveform.fsdb\""
+RecentFile1 = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64_working/signal.rc\""
+RecentFile2 = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64_working/out/test_stride1/waveform.fsdb\""
+RecentFile3 = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/signal.rc\""
+RecentFile4 = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64_working/out/test_random1/waveform.fsdb\""
+RecentFile5 = "\"/home/rcrist/bsg_cache_research/basejump_stl/testing/bsg_cache/regression_64/out/test_random1/waveform.fsdb\""
 open_file_time_range = FALSE
 value_window_aligment = Right
 signal_window_alignment = Auto
@@ -1007,18 +1011,18 @@ group_name_font = -f COURIER12 -c ID_GREEN5
 ruler_value_font = -f COURIER12 -c ID_CYAN5
 analog_ruler_value_font = -f COURIER12 -c ID_CYAN5
 comment_string_font = -f COURIER12 -c ID_RED5
-getsignal_form_font = -f COURIER12
+getsignal_form_font = -f COURIER12 
 SigsCheckNum = on 1000
 filter_synthesized_net = off n
 filterOutNet = on
 exclude_signal_with_prefix = off n
 synthesizeNetOnly = on
-filter_synthesized_instance = off
+filter_synthesized_instance = off 
 filterOutInstance = on
 showGroupTree = TRUE
 hierGroupDelim = /
 MsgSeverityColor = {y \"Severity\"==\"1\" ID_RED5} {y \"Severity\"==\"2\" ID_RED6} {y \"Severity\"==\"3\" ID_RED7} {y \"Severity\"==\"4\" ID_RED8} {y \"Severity\"==\"5\" ID_ORANGE5} {y \"Severity\"==\"6\" ID_ORANGE6} {y \"Severity\"==\"7\" ID_ORANGE7} {y \"Severity\"==\"8\" \
-ID_GREEN7} {y \"Severity\"==\"9\" ID_GREEN6} {y \"Severity\"==\"10\" ID_GREEN5}
+ID_GREEN7} {y \"Severity\"==\"9\" ID_GREEN6} {y \"Severity\"==\"10\" ID_GREEN5} 
 AutoApplySeverityColor = TRUE
 AutoAdjustMsgWidthByLabel = off
 verilogStrengthDispType = type1
@@ -1036,7 +1040,7 @@ displayHorizontalRuler = FALSE
 displayVerticalGrid = FALSE
 displayHorizontalGrid = FALSE
 waveClickMemberNode = FALSE
-RotateAnalogColor = ID_RED5 ID_ORANGE5 ID_YELLOW5 ID_GREEN5 ID_CYAN5 ID_BLUE5 ID_PURPLE5 ID_RED7 ID_ORANGE7 ID_YELLOW4 ID_GREEN7 ID_CYAN7 ID_BLUE7 ID_PURPLE7 ID_ORANGE4 ID_YELLOW5
+RotateAnalogColor = ID_RED5 ID_ORANGE5 ID_YELLOW5 ID_GREEN5 ID_CYAN5 ID_BLUE5 ID_PURPLE5 ID_RED7 ID_ORANGE7 ID_YELLOW4 ID_GREEN7 ID_CYAN7 ID_BLUE7 ID_PURPLE7 ID_ORANGE4 ID_YELLOW5 
 [cov_hier_name_column]
 justify = TRUE
 [coverageColors]
@@ -1109,7 +1113,7 @@ OutputPinStatus = 2
 RevisedComponentColor = ID_BLUE5
 SpareCellColor = ID_RED5
 UserName = rcrist
-CommentFormat = Novas ECO updated by ${UserName} ${Date} ${Time}
+CommentFormat = Novas ECO updated by ${UserName} ${Date} ${Time} 
 PrefixN = eco_n
 PrefixP = eco_p
 PrefixI = eco_i
@@ -1363,7 +1367,7 @@ AddImportArgument = FALSE
 LineBreakWithScope = TRUE
 StopAfterCompileOption = -s
 [wave.0]
-viewPort = 0 25 1920 260 226 63
+viewPort = 0 25 1920 432 226 150
 [wave.1]
 viewPort = 0 25 900 258 100 65
 [wave.2]

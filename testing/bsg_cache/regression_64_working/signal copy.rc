@@ -2,7 +2,7 @@ Magic 271485
 Revision Verdi_Q-2020.03-SP2-8
 
 ; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
-viewPort 0 25 1920 473 226 141
+viewPort 0 25 1920 559 226 141
 
 ; File list:
 ; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
@@ -16,8 +16,8 @@ signalSpacing 5
 
 ; windowTimeUnit is used for zoom, cursor & marker
 ; waveform viewport range
-zoom 3943168.727046 3943893.818862
-cursor 3943341.88011109456
+zoom 3943132.472455 3943857.564271
+cursor 3943368.47155948728
 marker 0.000000
 
 ; user define markers
@@ -29,9 +29,9 @@ userMarker 4017850 "NOT IN MEM" ID_RED5 long_dashed
 userMarker 3948077.2 "INCORRECT WB" ID_RED5 long_dashed
 
 ; visible top row signal index
-top 1
+top 0
 ; marker line index
-markerPos 14
+markerPos 20
 
 ; event list
 ; addEvent event_name event_expression
@@ -66,14 +66,8 @@ addSignal -h 15 -UNSIGNED -HEX /testbench/cache_data_lo[63:0]
 addSignal -h 15 -holdScope v_lo
 addSignal -h 15 -holdScope yumi_li
 addGroup "G6"
-addSignal -h 15 -UNSIGNED -HEX /testbench/DUT/miss/addr_tag_v[23:0]
-addSignal -h 15 -UNSIGNED -HEX /testbench/DUT/dma/dma_addr_i[29:6]
 addSignal -h 15 /testbench/DUT/miss/addr_v_i[29:6]
-addSignal -h 15 /testbench/dma0/rd_counter_r[2:0]
-addSignal -h 15 -holdScope start_read
-addSignal -h 15 -UNSIGNED -HEX -holdScope dma_pkt.addr[29:0]
-addSignal -h 15 -holdScope rd_addr_n[29:0]
-addSignal -h 15 -holdScope rd_addr_r[16:6]
+addSignal -h 15 /testbench/dma0/start_read
 addSignal -h 15 -UNSIGNED -HEX -holdScope rd_upper_addr[10:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope dma_data_o[63:0]
 addSignal -h 15 -holdScope dma_data_v_o
