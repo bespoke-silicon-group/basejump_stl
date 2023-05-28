@@ -19,5 +19,11 @@ if __name__ == "__main__":
 
   tg.send_read(1, 0x00030201)
 
+  # Test read/write ordering
+  tg.send_write(0, 0xbeefbeef)
+  tg.send_read(0, 0xbeefbeef)
+  tg.send_write(0, 0x0deaddead)
+  tg.send_read(0, 0x0deaddead)
+
   tg.done()
 
