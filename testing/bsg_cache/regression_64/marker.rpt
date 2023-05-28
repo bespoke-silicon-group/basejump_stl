@@ -1,9 +1,0 @@
-
-User Marker Report:
-Reference	Hidden	Name              	Time      	Delta to Cursor	Delta to Marker	Delta to Ref.	Color   	Line Style
-N     	N     	OP                	10436.96  	-3932904.92	10436.96  	-3932904.92	ID_GREEN5	long_dashed
-N     	N     	FAIL              	9225261.82	5281919.94	9225261.82	5281919.94	ID_RED5 	long_dashed
-N     	N     	"IN MEM"          	3943350   	8.12      	3943350   	8.12      	ID_GREEN5	long_dashed
-N     	N     	"NOT IN MEM"      	4017850   	74508.12  	4017850   	74508.12  	ID_RED5 	long_dashed
-N     	N     	"INCORRECT WB"    	3948077.2 	4735.32   	3948077.2 	4735.32   	ID_RED5 	long_dashed
-
