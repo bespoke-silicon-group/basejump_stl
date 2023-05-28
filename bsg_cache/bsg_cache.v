@@ -35,7 +35,7 @@ module bsg_cache
     ,localparam bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p, block_size_in_words_p)
     ,localparam burst_size_in_words_lp=(dma_data_width_p/data_width_p)
 
-    ,parameter debug_p=1
+    ,parameter debug_p=0
   )
   (
     input clk_i
