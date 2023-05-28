@@ -2,7 +2,6 @@ import sys
 import random
 from test_base import *
 
-
 class TestRandom1(TestBase):
 
   def generate(self):
