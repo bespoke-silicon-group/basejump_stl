@@ -112,12 +112,8 @@ module bsg_cache
 
 
   if(sets_p == 1) begin
-    // assign addr_way
-    //   = cache_pkt.addr[block_offset_width_lp+:lg_ways_lp];
     assign addr_index = 0;
   end else begin 
-    // assign addr_way
-    //   = cache_pkt.addr[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
     assign addr_index
       = cache_pkt.addr[block_offset_width_lp+:lg_sets_lp];
   end
@@ -343,18 +339,10 @@ end
   logic [ways_p-1:0] tag_hit_v;
 
   if(sets_p == 1) begin
-    // assign addr_tag_v =
-    //   addr_v_r[block_offset_width_lp+:tag_width_lp];
     assign addr_index_v = 0;
-    // assign addr_way_v =
-    //   addr_v_r[block_offset_width_lp+:lg_ways_lp];
   end else begin
-    // assign addr_tag_v =
-    //   addr_v_r[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
     assign addr_index_v =
       addr_v_r[block_offset_width_lp+:lg_sets_lp];
-    // assign addr_way_v =
-    //   addr_v_r[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
   end
   
   assign addr_tag_v =
@@ -1004,13 +992,6 @@ end
         data_o = {{(data_width_p-2){1'b0}}, lock_v_r[addr_way_v], valid_v_r[addr_way_v]};
       end
       else if (decode_v_r.tagla_op) begin
-
-        // if(sets_p == 1) begin
-        //   data_o = {tag_v_r[addr_way_v], {(block_offset_width_lp){1'b0}}};
-        // end else begin
-        //   data_o = {tag_v_r[addr_way_v], addr_index_v, {(block_offset_width_lp){1'b0}}};
-        // end
-
         data_o = {tag_v_r[addr_way_v], {(sets_p>1){addr_index_v}}, {(block_offset_width_lp){1'b0}}};
       end
       else if (decode_v_r.mask_op) begin
@@ -1081,21 +1062,6 @@ end
   assign tag_mem_w_li = miss_v
     ? (miss_tag_mem_v_lo & miss_tag_mem_w_lo)
     : tagst_write_en;
-
-  // Hardcoding tag mem address if single set
-  // if(sets_p == 1) begin
-  //   assign tag_mem_addr_li = 1'b0;
-  // end else begin
-  //   always_comb begin
-  //     if(miss_v) begin
-  //       tag_mem_addr_li = recover_lo
-  //         ? addr_index_tl
-  //         : (miss_tag_mem_v_lo ? miss_tag_mem_addr_lo : addr_index);
-  //     end else begin
-  //       tag_mem_addr_li = addr_index;
-  //     end
-  //   end
-  // end
 
   always_comb begin
     if (miss_v) begin
@@ -1194,19 +1160,6 @@ end
     ,.data_o(plru_decode_data_lo)
     ,.mask_o(plru_decode_mask_lo)
   );
-
-  // hardcode stat mem address if single set
-  // if(sets_p == 1) begin
-  //   assign stat_mem_addr_li = 1'b0;
-  // end else begin
-  //   always_comb begin
-  //     if(miss_v) begin
-  //       stat_mem_addr_li = miss_stat_mem_addr_lo; // essentially same as addr_index_v
-  //     end else begin 
-  //       stat_mem_addr_li = addr_index_v;
-  //     end
-  //   end 
-  // end
 
   always_comb begin
     if (miss_v) begin
