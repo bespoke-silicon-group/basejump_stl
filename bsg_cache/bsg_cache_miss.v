@@ -334,24 +334,24 @@ module bsg_cache_miss
 
         dma_cmd_o = e_dma_send_fill_addr;
         
-        if(sets_p == 1) begin
-          dma_addr_o = {
-            addr_tag_v,
-            {(block_offset_width_lp){1'b0}}
-          };
-        end else begin
-          dma_addr_o = {
-            addr_tag_v,
-            addr_index_v,
-            {(block_offset_width_lp){1'b0}}
-          };
-        end
+        // if(sets_p == 1) begin
+        //   dma_addr_o = {
+        //     addr_tag_v,
+        //     {(block_offset_width_lp){1'b0}}
+        //   };
+        // end else begin
+        //   dma_addr_o = {
+        //     addr_tag_v,
+        //     addr_index_v,
+        //     {(block_offset_width_lp){1'b0}}
+        //   };
+        // end
         
-        // dma_addr_o = {
-        //   addr_tag_v,
-        //   addr_index_v,
-        //   {(block_offset_width_lp){1'b0}}
-        // };
+        dma_addr_o = {
+          addr_tag_v,
+          {(sets_p>1){addr_index_v}},
+          {(block_offset_width_lp){1'b0}}
+        };
 
         // if the chosen way is dirty and valid, then evict.
         miss_state_n = dma_done_i
@@ -421,24 +421,24 @@ module bsg_cache_miss
       SEND_EVICT_ADDR: begin
         dma_cmd_o = e_dma_send_evict_addr;
         
-        if(sets_p == 1)begin
-          dma_addr_o = {
-            tag_v_i[dma_way_o],
-            {(block_offset_width_lp){1'b0}}
-          };
-        end else begin
-          dma_addr_o = {
-            tag_v_i[dma_way_o],
-            addr_index_v,
-            {(block_offset_width_lp){1'b0}}
-          };
-        end
+        // if(sets_p == 1)begin
+        //   dma_addr_o = {
+        //     tag_v_i[dma_way_o],
+        //     {(block_offset_width_lp){1'b0}}
+        //   };
+        // end else begin
+        //   dma_addr_o = {
+        //     tag_v_i[dma_way_o],
+        //     addr_index_v,
+        //     {(block_offset_width_lp){1'b0}}
+        //   };
+        // end
         
-        // dma_addr_o = {
-        //   tag_v_i[dma_way_o],
-        //   addr_index_v,
-        //   {(block_offset_width_lp){1'b0}}
-        // };
+        dma_addr_o = {
+          tag_v_i[dma_way_o],
+          {(sets_p>1){addr_index_v}},
+          {(block_offset_width_lp){1'b0}}
+        };
 
         miss_state_n = dma_done_i
           ? SEND_EVICT_DATA
@@ -449,24 +449,24 @@ module bsg_cache_miss
       // For the flush ops, go straight to RECOVER.
       SEND_EVICT_DATA: begin
         dma_cmd_o = e_dma_send_evict_data;
-        if(sets_p == 1) begin
-          dma_addr_o = {
-            tag_v_i[dma_way_o],
-            {(block_offset_width_lp){1'b0}}
-          };
-        end else begin
-          dma_addr_o = {
-            tag_v_i[dma_way_o],
-            addr_index_v,
-            {(block_offset_width_lp){1'b0}}
-          };
-        end
+        // if(sets_p == 1) begin
+        //   dma_addr_o = {
+        //     tag_v_i[dma_way_o],
+        //     {(block_offset_width_lp){1'b0}}
+        //   };
+        // end else begin
+        //   dma_addr_o = {
+        //     tag_v_i[dma_way_o],
+        //     addr_index_v,
+        //     {(block_offset_width_lp){1'b0}}
+        //   };
+        // end
         
-        // dma_addr_o = {
-        //   tag_v_i[dma_way_o],
-        //   addr_index_v,
-        //   {(block_offset_width_lp){1'b0}}
-        // };
+        dma_addr_o = {
+          tag_v_i[dma_way_o],
+          {(sets_p>1){addr_index_v}},
+          {(block_offset_width_lp){1'b0}}
+        };
 
         // set stat mem entry on store tag miss.
         stat_mem_v_o = dma_done_i & st_tag_miss_op;
@@ -506,27 +506,27 @@ module bsg_cache_miss
       // Do not start until the store buffer is empty.
       GET_FILL_DATA: begin
         dma_cmd_o = e_dma_get_fill_data;
-        if(sets_p == 1) begin
-          dma_addr_o = {
-            addr_tag_v,
-            {(block_size_in_words_p > 1){addr_block_offset_v}}, // used for snoop data in dma.
-            {(lg_data_mask_width_lp){1'b0}}
-          };
-        end else begin
-          dma_addr_o = {
-            addr_tag_v,
-            addr_index_v,
-            {(block_size_in_words_p > 1){addr_block_offset_v}}, // used for snoop data in dma.
-            {(lg_data_mask_width_lp){1'b0}}
-          };
-        end
+        // if(sets_p == 1) begin
+        //   dma_addr_o = {
+        //     addr_tag_v,
+        //     {(block_size_in_words_p > 1){addr_block_offset_v}}, // used for snoop data in dma.
+        //     {(lg_data_mask_width_lp){1'b0}}
+        //   };
+        // end else begin
+        //   dma_addr_o = {
+        //     addr_tag_v,
+        //     addr_index_v,
+        //     {(block_size_in_words_p > 1){addr_block_offset_v}}, // used for snoop data in dma.
+        //     {(lg_data_mask_width_lp){1'b0}}
+        //   };
+        // end
 
-        // dma_addr_o = {
-        //   addr_tag_v,
-        //   addr_index_v,
-        //   {(block_size_in_words_p > 1){addr_block_offset_v}}, // used for snoop data in dma.
-        //   {(lg_data_mask_width_lp){1'b0}}
-        // };
+        dma_addr_o = {
+          addr_tag_v,
+          {(sets_p>1){addr_index_v}},
+          {(block_size_in_words_p > 1){addr_block_offset_v}}, // used for snoop data in dma.
+          {(lg_data_mask_width_lp){1'b0}}
+        };
 
         // For store tag miss, set the dirty bit for the chosen way.
         // For load tag miss, clear the dirty bit for the chosen way.
