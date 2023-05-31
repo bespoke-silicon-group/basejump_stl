@@ -2,8 +2,6 @@ import sys
 import random
 from test_base import *
 
-random.seed(1)
-
 class TestRandom1(TestBase):
 
   def generate(self):
