@@ -1,10 +1,7 @@
 module testbench();
 
   import bsg_cache_pkg::*;
-  initial begin
-    $fsdbDumpfile("waveform.fsdb");
-    $fsdbDumpvars(0);
-  end
+
   // clock/reset
   bit clk;
   bit reset;
@@ -28,8 +25,7 @@ module testbench();
   localparam addr_width_p = 30;
   localparam data_width_p = 512/`BLOCK_SIZE_IN_WORDS_P;
   localparam block_size_in_words_p = `BLOCK_SIZE_IN_WORDS_P;
-  localparam sets_p = 1;
-  //localparam sets_p = 64;
+  localparam sets_p = 64;
   localparam ways_p = 8;
   localparam mem_size_p = 2**(17-`BSG_SAFE_CLOG2(data_width_p/8));
   localparam word_tracking_p = 1;
@@ -41,13 +37,7 @@ module testbench();
     status = $value$plusargs("wave=%d",wave);
     status = $value$plusargs("checker=%s",checker);
     $display("checker=%s", checker);
-    if (wave) begin
-      // $vcdpluson;
-      // $fsdbDumpfile("waveform.fsdb");
-      // $fsdbDumpvars();
-    end
-
-    
+    if (wave) $vcdpluson;
   end
 
 
