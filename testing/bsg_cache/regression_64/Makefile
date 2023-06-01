@@ -1,37 +1,11 @@
-#dont need if on uw ece machine
-#include ../../../../bsg_cadenv/cadenv.mk
+include ../../../../bsg_cadenv/cadenv.mk
 export BASEJUMP_STL_DIR = $(abspath ../../..)
-
-export LM_LICENSE_FILE=27008@synopsysls.s.uw.edu
-export VCS_RELEASE=/home/projects/ee477.2023wtr/cad/synopsys/vcs/Q-2020.03-SP1
-export VCS_BIN=$(VCS_RELEASE)/bin
-export VCS=vcs
-export _DVE=dve
-export VERDI_HOME :=/home/projects/ee477.2023wtr/cad/synopsys/verdi/Q-2020.03-SP2-8
-export VERDI := $(VERDI_HOME)/bin/verdi
-export PATH:=$(VCS_BIN):$(PATH)
-
-export VCS_HOME=$(VCS_RELEASE)
-
-# export LM_LICENSE_FILE := 27020@localhost
-# export VCS_HOME := /gro/cad/synopsys/vcs/Q-2020.03-SP1
-# export UVM_HOME := $(VCS_HOME)/etc/uvm-1.2
-# export VERDI_HOME := /gro/cad/synopsys/verdi/Q-2020.03-SP2-8
-# export VERDI := $(VERDI_HOME)/bin/verdi
-# export VCS := $(VCS_HOME)/bin/vcss
-
-# $(error $(VCS_HOME))
 
 INCDIR =  +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_cache
 
-# VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access+all
-# VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4 -assert svaext 
-# VCS_FlAGS += +vcs+flush+all -kdb
-
-VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access+all
-VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4 -assert svaext -kdb
-VCS_FLAGS += +vcs+flush+all
+VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access
+VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4 -assert svaext
 
 ###### TEST SUITE ######
 BASIC_TEST += test_random1
@@ -72,7 +46,7 @@ VCS_DEFINES += +define+BLOCK_SIZE_IN_WORDS_P=$(BLOCK_SIZE_IN_WORDS_P)
 
 
 SIMV = $(abspath simv)
-WAVE ?= 1
+WAVE ?= 0
 
 BASIC_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BASIC_TEST)))
 
@@ -92,24 +66,16 @@ out/%/trace.tr:
 	python $*.py $(BLOCK_SIZE_IN_WORDS_P) > $@
 
 %.basic.run: simv out/%/trace.tr
-	(cd out/$*; $(SIMV) -reportstats +wave=$(WAVE) +fsdb+struct=on +fsdb+ignore_vhdl_complex=off +fsdb+packedmda=on +checker=basic -l simv.log) 
-
-basic: simv out/test_random1/trace.tr
-	(cd out/test_random1; $(SIMV) -reportstats +wave=$(WAVE) +checker=basic -l simv.log)
+	(cd out/$*; $(SIMV) -reportstats +vcs+nostdout +wave=$(WAVE) +checker=basic -l simv.log)
 
 %.dve:
-	$(_DVE) -full64 -vpd out/$*/vcdplus.vpd &
+	$(DVE) -full64 -vpd out/$*/vcdplus.vpd &
 
-%.verdi:
-	$(VERDI) -ssf out/$*/waveform.fsdb &
-
-openRef:
-	$(VERDI) -ssf ref/out/test_random1/waveform.fsdb &
 summary:
 	@$(foreach test, $(BASIC_TEST), grep -H --color -e "BSG_FINISH" -e "BSG_FATAL" \
 		-e "Error" -e "BSG_ERROR" out/$(test)/simv.log;)
 
-	
+
 clean:
 	rm -rf DVEfiles
 	rm -rf csrc simv
@@ -118,4 +84,3 @@ clean:
 	rm -rf stack.info.* *.pyc
 	rm -rf out
 	rm -f ../common/*.pyc
-
