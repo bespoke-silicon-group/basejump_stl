@@ -1064,13 +1064,9 @@ end
 
   always_comb begin
     if (miss_v) begin
-      if(sets_p == 1) begin
-        assign tag_mem_addr_li = 1'b0;
-      end else begin
-        tag_mem_addr_li = recover_lo
-            ? addr_index_tl
-            : (miss_tag_mem_v_lo ? miss_tag_mem_addr_lo : addr_index);
-      end
+      tag_mem_addr_li = recover_lo
+        ? addr_index_tl
+        : (miss_tag_mem_v_lo ? miss_tag_mem_addr_lo : addr_index);
       tag_mem_data_li = miss_tag_mem_data_lo;
       tag_mem_w_mask_li = miss_tag_mem_w_mask_lo;
     end
@@ -1130,18 +1126,13 @@ end
     ? miss_track_mem_w_mask_lo
     : tbuf_track_mem_w_mask;
 
-  if(sets_p == 1) begin
-    assign track_mem_addr_li = 0;
-  end
-  else begin
-    assign track_mem_addr_li = recover_lo
+  assign track_mem_addr_li = recover_lo
     ? addr_index_tl
     : (miss_track_mem_v_lo
       ? miss_track_mem_addr_lo
       : (((decode.ld_op | decode.atomic_op | partial_st) & yumi_o)
         ? addr_index
         : tbuf_track_mem_addr));
-  end
   
 
   // stat_mem ctrl logic
@@ -1164,13 +1155,7 @@ end
     if (miss_v) begin
       stat_mem_v_li = miss_stat_mem_v_lo;
       stat_mem_w_li = miss_stat_mem_w_lo;
-
-      if(sets_p == 1) begin
-        assign stat_mem_addr_li = 1'b0;
-      end else begin
-        stat_mem_addr_li = miss_stat_mem_addr_lo; // essentially same as addr_index_v
-      end
-
+      stat_mem_addr_li = miss_stat_mem_addr_lo; // essentially same as addr_index_v
       stat_mem_data_li = miss_stat_mem_data_lo;
       stat_mem_w_mask_li = miss_stat_mem_w_mask_lo;
     end
@@ -1260,7 +1245,7 @@ end
       end
     end
   end
-
+//test
 
   if (debug_p) begin
     always_ff @ (posedge clk_i) begin
