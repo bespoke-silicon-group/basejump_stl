@@ -109,7 +109,7 @@ module bsg_link_source_sync_downstream
     (.clk_i   (io_clk_i)
     ,.reset_i (io_link_reset_i)
     ,.v_i     (io_valid_i)
-    ,.ready_o (io_fifo_ready_lo)
+    ,.ready_param_o (io_fifo_ready_lo)
     ,.data_i  (io_data_i)
     ,.v_o     (io_fifo_valid_lo)
     ,.data_o  (io_async_fifo_data)
@@ -160,13 +160,13 @@ module bsg_link_source_sync_downstream
   ,.reset_i(core_link_reset_i)
 
   // we feed this into the local yumi, but only if it is valid
-  ,.ready_o(core_async_fifo_ready_li)
-  ,.data_i (core_async_fifo_data_lo)
-  ,.v_i    (core_async_fifo_valid_lo)
+  ,.ready_param_o (core_async_fifo_ready_li)
+  ,.data_i        (core_async_fifo_data_lo)
+  ,.v_i           (core_async_fifo_valid_lo)
 
-  ,.v_o    (core_valid_o)
-  ,.data_o (core_data_o)
-  ,.yumi_i (core_yumi_i)
+  ,.v_o           (core_valid_o)
+  ,.data_o        (core_data_o)
+  ,.yumi_i        (core_yumi_i)
   );
 
    // a word was transferred to fifo if ...

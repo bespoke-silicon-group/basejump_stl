@@ -271,14 +271,14 @@ module bsg_wormhole_network_tester
     bsg_two_fifo
    #(.width_p(flit_width_p))
     out_ct_fifo
-    (.clk_i       (router_clk_0  )
-    ,.reset_i     (router_reset_0)
-    ,.ready_and_o (out_router_link_li[i][E].ready_and_rev)
-    ,.data_i      (out_router_link_lo[i][E].data         )
-    ,.v_i         (out_router_link_lo[i][E].v            )
-    ,.v_o         (out_ct_fifo_valid_lo[i])
-    ,.data_o      (out_ct_fifo_data_lo[i] )
-    ,.yumi_i      (out_ct_fifo_yumi_li[i] )
+    (.clk_i  (router_clk_0  )
+    ,.reset_i(router_reset_0)
+    ,.ready_param_o(out_router_link_li[i][E].ready_and_rev)
+    ,.data_i (out_router_link_lo[i][E].data         )
+    ,.v_i    (out_router_link_lo[i][E].v            )
+    ,.v_o    (out_ct_fifo_valid_lo[i])
+    ,.data_o (out_ct_fifo_data_lo[i] )
+    ,.yumi_i (out_ct_fifo_yumi_li[i] )
     );
     
     assign out_router_link_li [i][E].v    = out_ct_fifo_valid_li[i];
@@ -471,14 +471,14 @@ module bsg_wormhole_network_tester
     bsg_two_fifo
    #(.width_p(flit_width_p))
     in_ct_fifo
-    (.clk_i       (router_clk_1  )
-    ,.reset_i     (router_reset_1)
-    ,.ready_and_o (in_router_link_li[i][W].ready_and_rev)
-    ,.data_i      (in_router_link_lo[i][W].data         )
-    ,.v_i         (in_router_link_lo[i][W].v            )
-    ,.v_o         (in_ct_fifo_valid_lo[i])
-    ,.data_o      (in_ct_fifo_data_lo[i] )
-    ,.yumi_i      (in_ct_fifo_yumi_li[i] )
+    (.clk_i  (router_clk_1  )
+    ,.reset_i(router_reset_1)
+    ,.ready_param_o(in_router_link_li[i][W].ready_and_rev)
+    ,.data_i (in_router_link_lo[i][W].data         )
+    ,.v_i    (in_router_link_lo[i][W].v            )
+    ,.v_o    (in_ct_fifo_valid_lo[i])
+    ,.data_o (in_ct_fifo_data_lo[i] )
+    ,.yumi_i (in_ct_fifo_yumi_li[i] )
     );
     
     assign in_router_link_li [i][W].v    = in_ct_fifo_valid_li[i];

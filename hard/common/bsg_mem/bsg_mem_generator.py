@@ -749,8 +749,8 @@ def print_ram(
         memgen_cfg += "\t`bsg_mem_{ports}_sync{maskstr}_{_type}_macro({depth},{width},{tag}) else\n".format(
             ports=ports,
             maskstr=maskstr,
-            depth=c["depth"] / c["adbanks"],
-            width=c["width"] / c["awbanks"],
+            depth=c["depth"] // c["adbanks"],
+            width=c["width"] // c["awbanks"],
             tag=c["tag"],
             _type=c["type"],
         )

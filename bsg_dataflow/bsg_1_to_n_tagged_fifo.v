@@ -87,9 +87,9 @@ module bsg_1_to_n_tagged_fifo   #(parameter `BSG_INV_PARAM(width_p)
                (.clk_i
                 ,.reset_i
 
-                ,.v_i      (valid_lo    [i])
-                ,.data_i   (data_i         )
-                ,.ready_o  (ready_and_li[i])
+                ,.v_i            (valid_lo    [i])
+                ,.data_i         (data_i         )
+                ,.ready_param_o  (ready_and_li[i])
 
                 ,.v_o      (v_o         [i])
                 ,.data_o   (data_o      [i])

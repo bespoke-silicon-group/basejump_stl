@@ -40,7 +40,7 @@ module bsg_mesosync_output
                    // Logic analyzer signals for mesosync_input module
                    , input                      LA_data_i
                    , input                      LA_valid_i
-                   , output                     ready_to_LA_o
+                   , output                     ready_and_to_LA_o
                    
                    // loopback mode signal for loopback module
                    , output logic               loopback_en_o
@@ -129,7 +129,7 @@ bsg_relay_fifo #(.width_p(1)) LA_relay
     (.clk_i(clk)
     ,.reset_i(channel_reset_o)
 
-    ,.ready_and_o(ready_to_LA_o)
+    ,.ready_and_o(ready_and_to_LA_o)
     ,.data_i(LA_data_i)
     ,.v_i(LA_valid_i)
 

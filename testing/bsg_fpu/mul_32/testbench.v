@@ -32,7 +32,7 @@ bsg_nonsynth_reset_gen #(
 logic v_li;
 logic [width_p-1:0] a_li;
 logic [width_p-1:0] b_li;
-logic ready_lo;
+logic ready_and_lo;
 
 logic v_lo;
 logic yumi_li;
@@ -54,7 +54,7 @@ bsg_fpu_mul #(
   ,.v_i(v_li)
   ,.a_i(a_li)
   ,.b_i(b_li)
-  ,.ready_o(ready_lo)
+  ,.ready_and_o(ready_and_lo)
   
   ,.v_o(v_lo)
   ,.z_o(z_lo)
@@ -66,7 +66,7 @@ bsg_fpu_mul #(
 );
 
 logic [ring_width_p-1:0] tr_data_li;
-logic tr_ready_lo;
+logic tr_ready_and_lo;
 
 logic tr_v_lo;
 logic [ring_width_p-1:0] tr_data_lo;
@@ -87,7 +87,7 @@ bsg_fsb_node_trace_replay #(
 
   ,.v_i(v_lo)
   ,.data_i(tr_data_li)
-  ,.ready_o(tr_ready_lo)
+  ,.ready_and_o(tr_ready_and_lo)
 
   ,.v_o(v_li)
   ,.data_o(tr_data_lo)
@@ -108,8 +108,8 @@ bsg_fpu_trace_rom #(
   ,.data_o(rom_data)
 );
 
-assign yumi_li = v_lo & tr_ready_lo;
-assign tr_yumi_li = v_li & ready_lo;
+assign yumi_li = v_lo & tr_ready_and_lo;
+assign tr_yumi_li = v_li & ready_and_lo;
 
 assign {sub_li, a_li, b_li} = tr_data_lo;
 assign tr_data_li = {

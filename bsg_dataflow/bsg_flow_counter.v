@@ -14,13 +14,13 @@ module bsg_flow_counter #(parameter `BSG_INV_PARAM(els_p              )
                         //localpara
                         , parameter ptr_width_lp = 
                           `BSG_WIDTH(els_p)
-                         )                           
+                         )
     
     ( input                     clk_i
     , input                     reset_i
 
     , input                     v_i
-    , input                     ready_i
+    , input                     ready_param_i
     , input                     yumi_i
 
     , output [ptr_width_lp-1:0] count_o
@@ -36,7 +36,7 @@ logic enque;
 if (ready_THEN_valid_p) begin: gen_blk_protocol_select
   assign enque = v_i;
 end else begin: gen_blk_protocol_select
-  assign enque = v_i & ready_i;
+  assign enque = v_i & ready_param_i;
 end
 
 generate

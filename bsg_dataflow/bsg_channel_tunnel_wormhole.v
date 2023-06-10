@@ -292,7 +292,7 @@ module  bsg_channel_tunnel_wormhole
     (.clk_i  (clk_i)
     ,.reset_i(reset_i)
 
-    ,.ready_o(ofifo_data_ready_lo)
+    ,.ready_param_o(ofifo_data_ready_lo)
     ,.data_i (data_li[i])
     ,.v_i    (ofifo_data_valid_li)
 
@@ -305,18 +305,18 @@ module  bsg_channel_tunnel_wormhole
     logic o_headerin_valid_li, o_headerin_ready_lo;
     
     bsg_two_fifo
-   #(.width_p(width_p)
+   #(.width_p       (width_p)
     ) o_headerin
-    (.clk_i  (clk_i)
-    ,.reset_i(reset_i)
+    (.clk_i         (clk_i)
+    ,.reset_i       (reset_i)
 
-    ,.ready_o(o_headerin_ready_lo)
-    ,.data_i (data_li[i])
-    ,.v_i    (o_headerin_valid_li)
+    ,.ready_param_o (o_headerin_ready_lo)
+    ,.data_i        (data_li[i])
+    ,.v_i           (o_headerin_valid_li)
 
-    ,.v_o    (inside_valid_li[i])
-    ,.data_o (inside_data_li[i])
-    ,.yumi_i (inside_yumi_lo[i])
+    ,.v_o           (inside_valid_li[i])
+    ,.data_o        (inside_data_li[i])
+    ,.yumi_i        (inside_yumi_lo[i])
     );
     
     // Demux splitting header flit and data flit traffic
@@ -334,18 +334,18 @@ module  bsg_channel_tunnel_wormhole
   assign outside_yumi_li = o_headerout_ready_lo & outside_valid_lo;
   
   bsg_two_fifo 
- #(.width_p(width_p)
+ #(.width_p       (width_p)
   ) o_headerout
-  (.clk_i  (clk_i)
-  ,.reset_i(reset_i)
+  (.clk_i         (clk_i)
+  ,.reset_i       (reset_i)
 
-  ,.ready_o(o_headerout_ready_lo)
-  ,.data_i (outside_data_lo)
-  ,.v_i    (outside_valid_lo)
+  ,.ready_param_o (o_headerout_ready_lo)
+  ,.data_i        (outside_data_lo)
+  ,.v_i           (outside_valid_lo)
 
-  ,.v_o    (ofifo_valid_lo[num_in_p])
-  ,.data_o (ofifo_data_lo[num_in_p])
-  ,.yumi_i (ofifo_yumi_li[num_in_p])
+  ,.v_o           (ofifo_valid_lo[num_in_p])
+  ,.data_o        (ofifo_data_lo[num_in_p])
+  ,.yumi_i        (ofifo_yumi_li[num_in_p])
   );  
   
   // Channel Tunnel Output Multiplexing
@@ -525,18 +525,18 @@ module  bsg_channel_tunnel_wormhole
   // TODO: might be removed later to reduce latency
   
   bsg_two_fifo 
- #(.width_p(width_p)
+ #(.width_p       (width_p)
   ) i_headerin
-  (.clk_i  (clk_i)
-  ,.reset_i(reset_i)
+  (.clk_i         (clk_i)
+  ,.reset_i       (reset_i)
 
-  ,.ready_o(ififo_ready_and_lo[num_in_p])
-  ,.data_i (multi_data_i)
-  ,.v_i    (ififo_valid_li[num_in_p])
+  ,.ready_param_o (ififo_ready_and_lo[num_in_p])
+  ,.data_i        (multi_data_i)
+  ,.v_i           (ififo_valid_li[num_in_p])
 
-  ,.v_o    (outside_valid_li)
-  ,.data_o (outside_data_li)
-  ,.yumi_i (outside_yumi_lo)
+  ,.v_o           (outside_valid_li)
+  ,.data_o        (outside_data_li)
+  ,.yumi_i        (outside_yumi_lo)
   );
   
   // This generated block is for wormhole data flits buffering.

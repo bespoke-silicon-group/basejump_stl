@@ -45,7 +45,7 @@ module bsg_mesosync_input
                    // Logic analyzer signals for mesosync_output module
                    , output                      LA_data_o
                    , output                      LA_valid_o
-                   , input                       ready_to_LA_i
+                   , input                       ready_and_to_LA_i
                    );
                    
 //------------------------------------------------
@@ -300,7 +300,7 @@ bsg_relay_fifo #(.width_p(1)) LA_relay
 
     ,.v_o(LA_valid_o)
     ,.data_o(LA_data_o)
-    ,.ready_and_i(ready_to_LA_i)
+    ,.ready_and_i(ready_and_to_LA_i)
     );
 
 // Logic Analyzer signals

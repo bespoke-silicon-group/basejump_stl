@@ -128,7 +128,7 @@ module bsg_test_master
 
       ,.dma_data_i(dma_data_i[i])
       ,.dma_data_v_i(dma_data_v_i[i])
-      ,.dma_data_ready_o(dma_data_ready_o[i])
+      ,.dma_data_ready_and_o(dma_data_ready_o[i])
 
       ,.dma_data_o(dma_data_o[i])
       ,.dma_data_v_o(dma_data_v_o[i])

@@ -47,7 +47,7 @@ module testbench();
 
   bsg_cache_pkt_s cache_pkt;
   logic v_li;
-  logic ready_lo;
+  logic yumi_lo;
 
   logic [data_width_p-1:0] cache_data_lo;
   logic v_lo;
@@ -59,7 +59,7 @@ module testbench();
 
   logic [data_width_p-1:0] dma_data_li;
   logic dma_data_v_li;
-  logic dma_data_ready_lo;
+  logic dma_data_ready_and_lo;
 
   logic [data_width_p-1:0] dma_data_lo;
   logic dma_data_v_lo;
@@ -80,7 +80,7 @@ module testbench();
 
     ,.cache_pkt_i(cache_pkt)
     ,.v_i(v_li)
-    ,.ready_o(ready_lo)
+    ,.yumi_o(yumi_lo)
 
     ,.data_o(cache_data_lo)
     ,.v_o(v_lo)
@@ -92,7 +92,7 @@ module testbench();
 
     ,.dma_data_i(dma_data_li)
     ,.dma_data_v_i(dma_data_v_li)
-    ,.dma_data_ready_o(dma_data_ready_lo)
+    ,.dma_data_ready_and_o(dma_data_ready_and_lo)
 
     ,.dma_data_o(dma_data_lo)
     ,.dma_data_v_o(dma_data_v_lo)
@@ -136,7 +136,7 @@ module testbench();
 
     ,.dma_data_o(dma_data_li)
     ,.dma_data_v_o(dma_data_v_li)
-    ,.dma_data_ready_i(dma_data_ready_lo)
+    ,.dma_data_ready_i(dma_data_ready_and_lo)
 
     ,.dma_data_i(dma_data_lo)
     ,.dma_data_v_i(dma_data_v_lo)
@@ -190,7 +190,7 @@ module testbench();
   
   assign cache_pkt = tr_data_lo;
   assign v_li = tr_v_lo;
-  assign tr_yumi_li = tr_v_lo & ready_lo;
+  assign tr_yumi_li = yumi_lo;
 
   bind bsg_cache basic_checker #(
     .data_width_p(data_width_p)
@@ -210,7 +210,7 @@ module testbench();
       recv_r <= '0;
     end
     else begin
-      if (v_li & ready_lo)
+      if (yumi_lo)
         sent_r <= sent_r + 1;
 
       if (v_lo & yumi_li)

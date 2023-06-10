@@ -45,7 +45,7 @@ module bsg_cache_to_test_dram
 
     , output logic [num_cache_p-1:0][dma_data_width_p-1:0] dma_data_o
     , output logic [num_cache_p-1:0] dma_data_v_o
-    , input [num_cache_p-1:0] dma_data_ready_i
+    , input [num_cache_p-1:0] dma_data_ready_and_i
 
     , input [num_cache_p-1:0][dma_data_width_p-1:0] dma_data_i
     , input [num_cache_p-1:0] dma_data_v_i
@@ -168,7 +168,7 @@ module bsg_cache_to_test_dram
 
     ,.dma_data_o(dma_data_o)
     ,.dma_data_v_o(dma_data_v_o)
-    ,.dma_data_ready_i(dma_data_ready_i)
+    ,.dma_data_ready_and_i(dma_data_ready_and_i)
 
     ,.dram_clk_i(dram_clk_i)
     ,.dram_reset_i(dram_reset_i)
@@ -182,7 +182,7 @@ module bsg_cache_to_test_dram
   // TX
   //
   logic tx_v_li;
-  logic tx_ready_lo;
+  logic tx_ready_and_lo;
   logic [(block_size_in_words_p/num_req_lp)-1:0] tx_mask_li;
 
   bsg_cache_to_test_dram_tx #(
@@ -198,7 +198,7 @@ module bsg_cache_to_test_dram
     ,.v_i(tx_v_li)
     ,.tag_i(rr_tag_n)
     ,.mask_i(tx_mask_li)
-    ,.ready_o(tx_ready_lo)
+    ,.ready_and_o(tx_ready_and_lo)
 
     ,.dma_data_i(dma_data_i)
     ,.dma_data_v_i(dma_data_v_i)
@@ -217,9 +217,9 @@ module bsg_cache_to_test_dram
   if (num_req_lp == 1) begin: req1
     assign counter_up = 1'b0;
     assign counter_clear = 1'b0;
-    assign rr_yumi_li = rr_v_lo & ~req_afifo_full & (rr_dma_pkt_lo.write_not_read ? tx_ready_lo : 1'b1);
-    assign req_afifo_enq = rr_v_lo & ~req_afifo_full & (rr_dma_pkt_lo.write_not_read ? tx_ready_lo : 1'b1);
-    assign tx_v_li = rr_v_lo & ~req_afifo_full & rr_dma_pkt_lo.write_not_read & tx_ready_lo;
+    assign rr_yumi_li = rr_v_lo & ~req_afifo_full & (rr_dma_pkt_lo.write_not_read ? tx_ready_and_lo : 1'b1);
+    assign req_afifo_enq = rr_v_lo & ~req_afifo_full & (rr_dma_pkt_lo.write_not_read ? tx_ready_and_lo : 1'b1);
+    assign tx_v_li = rr_v_lo & ~req_afifo_full & rr_dma_pkt_lo.write_not_read & tx_ready_and_lo;
     assign rr_tag_n = rr_tag_lo;
     assign dma_pkt_n = rr_dma_pkt_lo;
     assign tx_mask_li = rr_dma_pkt_lo.mask;
@@ -236,7 +236,7 @@ module bsg_cache_to_test_dram
       dma_pkt_n = dma_pkt_r;
 
       if (count_r == 0) begin
-        if (rr_v_lo & ~req_afifo_full & (rr_dma_pkt_lo.write_not_read ? tx_ready_lo : 1'b1)) begin
+        if (rr_v_lo & ~req_afifo_full & (rr_dma_pkt_lo.write_not_read ? tx_ready_and_lo : 1'b1)) begin
           counter_up = 1'b1;
           rr_yumi_li = 1'b1;
           req_afifo_enq = 1'b1;
@@ -246,14 +246,14 @@ module bsg_cache_to_test_dram
         end
       end
       else if (count_r == num_req_lp-1) begin
-        if (~req_afifo_full & (dma_pkt_r.write_not_read ? tx_ready_lo : 1'b1)) begin
+        if (~req_afifo_full & (dma_pkt_r.write_not_read ? tx_ready_and_lo : 1'b1)) begin
           counter_clear = 1'b1;
           req_afifo_enq = 1'b1;
           tx_v_li = dma_pkt_r.write_not_read;
         end
       end
       else begin
-        if (~req_afifo_full & (dma_pkt_r.write_not_read ? tx_ready_lo : 1'b1)) begin
+        if (~req_afifo_full & (dma_pkt_r.write_not_read ? tx_ready_and_lo : 1'b1)) begin
           counter_up = 1'b1;
           req_afifo_enq = 1'b1;
           tx_v_li = dma_pkt_r.write_not_read;

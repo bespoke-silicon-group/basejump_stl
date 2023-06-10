@@ -39,34 +39,34 @@ module bsg_parallel_in_serial_out_dynamic
   
   // Go fifo
   bsg_two_fifo
- #(.width_p(lg_max_els_lp  )
+ #(.width_p       (lg_max_els_lp  )
   ) go_fifo
-  (.clk_i  (clk_i          )
-  ,.reset_i(reset_i        )
+  (.clk_i         (clk_i          )
+  ,.reset_i       (reset_i        )
   
-  ,.ready_o(ready_and_o    )
-  ,.data_i (len_i          )
-  ,.v_i    (v_i            )
+  ,.ready_param_o (ready_and_o    )
+  ,.data_i        (len_i          )
+  ,.v_i           (v_i            )
   
-  ,.v_o    (v_o            )
-  ,.data_o (len_lo         )
-  ,.yumi_i (go_fifo_yumi_li)
+  ,.v_o           (v_o            )
+  ,.data_o        (len_lo         )
+  ,.yumi_i        (go_fifo_yumi_li)
   );
 
   // Data fifo
   bsg_two_fifo
- #(.width_p(max_els_p*width_p)
+ #(.width_p       (max_els_p*width_p)
   ) data_fifo
-  (.clk_i  (clk_i            )
-  ,.reset_i(reset_i          )
+  (.clk_i         (clk_i            )
+  ,.reset_i       (reset_i          )
 
-  ,.ready_o(                 )
-  ,.data_i (data_i           )
-  ,.v_i    (v_i              )
+  ,.ready_param_o (                 )
+  ,.data_i        (data_i           )
+  ,.v_i           (v_i              )
                              
-  ,.v_o    (                 )
-  ,.data_o (fifo_data_lo     )
-  ,.yumi_i (go_fifo_yumi_li  )
+  ,.v_o           (                 )
+  ,.data_o        (fifo_data_lo     )
+  ,.yumi_i        (go_fifo_yumi_li  )
   );
   
   logic [lg_max_els_lp-1:0] count_r, count_lo;

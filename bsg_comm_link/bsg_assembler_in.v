@@ -72,7 +72,7 @@ module bsg_assembler_in #(parameter `BSG_INV_PARAM(width_p)
              ,.reset_i(reset)
 
              // input side
-             ,.ready_o(fifo_not_full_vec[i])
+             ,.ready_param_o(fifo_not_full_vec[i])
              ,.v_i    (fifo_enq_vec     [i])
              ,.data_i (fifo_data_vec    [i])
 

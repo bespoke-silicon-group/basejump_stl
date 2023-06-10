@@ -120,33 +120,33 @@ module bsg_wormhole_router_test_node
   logic                           req_out_v;
 
   bsg_two_fifo
- #(.width_p(wh_rev_width_lp)
+ #(.width_p       (wh_rev_width_lp)
   ) resp_in_fifo
-  (.clk_i  (mc_clk_i)
-  ,.reset_i(mc_reset_i)
+  (.clk_i         (mc_clk_i)
+  ,.reset_i       (mc_reset_i)
 
-  ,.ready_o(mc_rev_sipof_ready_li)
-  ,.v_i    (mc_rev_sipof_valid_lo)
-  ,.data_i (mc_rev_sipof_data_lo_cast)
+  ,.ready_param_o (mc_rev_sipof_ready_li)
+  ,.v_i           (mc_rev_sipof_valid_lo)
+  ,.data_i        (mc_rev_sipof_data_lo_cast)
 
-  ,.v_o    (resp_in_v)
-  ,.data_o (resp_in_data)
-  ,.yumi_i (resp_in_yumi)
+  ,.v_o           (resp_in_v)
+  ,.data_o        (resp_in_data)
+  ,.yumi_i        (resp_in_yumi)
   );
 
   bsg_two_fifo
- #(.width_p(wh_fwd_width_lp)
+ #(.width_p       (wh_fwd_width_lp)
   ) req_out_fifo
-  (.clk_i  (mc_clk_i)
-  ,.reset_i(mc_reset_i)
+  (.clk_i         (mc_clk_i)
+  ,.reset_i       (mc_reset_i)
 
-  ,.ready_o(req_out_ready)
-  ,.v_i    (req_out_v)
-  ,.data_i (req_out_data)
+  ,.ready_param_o (req_out_ready)
+  ,.v_i           (req_out_v)
+  ,.data_i        (req_out_data)
 
-  ,.v_o    (mc_fwd_piso_valid_li)
-  ,.data_o (mc_fwd_piso_data_li_cast)
-  ,.yumi_i (mc_fwd_piso_valid_li & mc_fwd_piso_ready_lo)
+  ,.v_o           (mc_fwd_piso_valid_li)
+  ,.data_o        (mc_fwd_piso_data_li_cast)
+  ,.yumi_i        (mc_fwd_piso_valid_li & mc_fwd_piso_ready_lo)
   );
 
 
@@ -214,18 +214,18 @@ module bsg_wormhole_router_test_node
   logic                           resp_out_v;
 
   bsg_two_fifo
- #(.width_p(wh_fwd_width_lp)
+ #(.width_p       (wh_fwd_width_lp)
   ) req_in_fifo
-  (.clk_i  (mc_clk_i)
-  ,.reset_i(mc_reset_i)
+  (.clk_i         (mc_clk_i)
+  ,.reset_i       (mc_reset_i)
 
-  ,.ready_o(mc_fwd_sipof_ready_li)
-  ,.v_i    (mc_fwd_sipof_valid_lo)
-  ,.data_i (mc_fwd_sipof_data_lo_cast)
+  ,.ready_param_o (mc_fwd_sipof_ready_li)
+  ,.v_i           (mc_fwd_sipof_valid_lo)
+  ,.data_i        (mc_fwd_sipof_data_lo_cast)
 
-  ,.v_o    (req_in_v)
-  ,.data_o (req_in_data)
-  ,.yumi_i (req_in_yumi)
+  ,.v_o           (req_in_v)
+  ,.data_o        (req_in_data)
+  ,.yumi_i        (req_in_yumi)
   );
 
   // loopback any data received
@@ -238,18 +238,18 @@ module bsg_wormhole_router_test_node
   assign req_in_yumi = resp_out_v & resp_out_ready;
 
   bsg_two_fifo
- #(.width_p(wh_rev_width_lp)
+ #(.width_p       (wh_rev_width_lp)
   ) resp_out_fifo
-  (.clk_i  (mc_clk_i)
-  ,.reset_i(mc_reset_i)
+  (.clk_i         (mc_clk_i)
+  ,.reset_i       (mc_reset_i)
 
-  ,.ready_o(resp_out_ready)
-  ,.v_i    (resp_out_v)
-  ,.data_i (resp_out_data)
+  ,.ready_param_o (resp_out_ready)
+  ,.v_i           (resp_out_v)
+  ,.data_i        (resp_out_data)
 
-  ,.v_o    (mc_rev_piso_valid_li)
-  ,.data_o (mc_rev_piso_data_li_cast)
-  ,.yumi_i (mc_rev_piso_valid_li & mc_rev_piso_ready_lo)
+  ,.v_o           (mc_rev_piso_valid_li)
+  ,.data_o        (mc_rev_piso_data_li_cast)
+  ,.yumi_i        (mc_rev_piso_valid_li & mc_rev_piso_ready_lo)
   );
 
 

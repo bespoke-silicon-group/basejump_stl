@@ -32,7 +32,7 @@ module bsg_fifo_1r1w_small_hardened #(parameter `BSG_INV_PARAM(width_p)
     , input                reset_i
 
     , input                v_i
-    , output               ready_o
+    , output               ready_param_o
     , input [width_p-1:0]  data_i
 
     , output               v_o
@@ -47,7 +47,7 @@ module bsg_fifo_1r1w_small_hardened #(parameter `BSG_INV_PARAM(width_p)
 
    // vivado bug prohibits declaring wire inside of generate block
    wire enque;
-   logic ready_lo;
+   logic ready_param_lo;
 
    if (ready_THEN_valid_p)
      begin: rtv
@@ -55,7 +55,7 @@ module bsg_fifo_1r1w_small_hardened #(parameter `BSG_INV_PARAM(width_p)
      end
    else
      begin: rav
-        assign enque = v_i & ready_lo;
+        assign enque = v_i & ready_param_lo;
      end
 
    localparam ptr_width_lp = `BSG_SAFE_CLOG2(els_p);
@@ -121,9 +121,9 @@ module bsg_fifo_1r1w_small_hardened #(parameter `BSG_INV_PARAM(width_p)
    // during reset, we keep ready low
    // even though fifo is empty
 
-   //assign ready_lo = ~full & ~reset_i;
-   assign ready_lo = ~full;
-   assign ready_o = ready_lo;
+   //assign ready_param_lo = ~full & ~reset_i;
+   assign ready_param_lo = ~full;
+   assign ready_param_o = ready_param_lo;
    assign v_o_tmp = ~empty;
 
    //synopsys translate_off

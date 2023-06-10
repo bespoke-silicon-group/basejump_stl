@@ -59,14 +59,14 @@ module bsg_front_side_bus_hop_in
    wire                fifo_v, fifo_yumi;
 
    bsg_two_fifo #(.width_p(width_p)) fifo
-     (.clk_i    (clk_i)
-      ,.reset_i (reset_i)
-      ,.data_i  (data_i)
-      ,.data_o  (data_o_tmp)
-      ,.v_o     (fifo_v)
-      ,.yumi_i  (fifo_yumi)
-      ,.ready_o (ready_o)
-      ,.v_i     (v_i)
+     (.clk_i          (clk_i)
+      ,.reset_i       (reset_i)
+      ,.data_i        (data_i)
+      ,.data_o        (data_o_tmp)
+      ,.v_o           (fifo_v)
+      ,.yumi_i        (fifo_yumi)
+      ,.ready_param_o (ready_o)
+      ,.v_i           (v_i)
       );
 
    for (i = 0; i < fan_out_p; i = i+1)

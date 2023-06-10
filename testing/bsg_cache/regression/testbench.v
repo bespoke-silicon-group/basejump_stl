@@ -45,7 +45,7 @@ module testbench();
   bsg_cache_pkt_s cache_pkt;
 
   logic cache_v_li;
-  logic cache_ready_lo;
+  logic cache_yumi_lo;
 
   logic [data_width_p-1:0] cache_data_lo;
   logic cache_v_lo;
@@ -58,7 +58,7 @@ module testbench();
 
   logic [data_width_p-1:0] dma_data_li;
   logic dma_data_v_li;
-  logic dma_data_ready_lo;
+  logic dma_data_ready_and_lo;
 
   logic [data_width_p-1:0] dma_data_lo;
   logic dma_data_v_lo;
@@ -78,7 +78,7 @@ module testbench();
 
     ,.cache_pkt_i(cache_pkt)
     ,.v_i(cache_v_li)
-    ,.ready_o(cache_ready_lo)
+    ,.yumi_o(cache_yumi_lo)
 
     ,.data_o(cache_data_lo)
     ,.v_o(cache_v_lo)
@@ -90,7 +90,7 @@ module testbench();
   
     ,.dma_data_i(dma_data_li)
     ,.dma_data_v_i(dma_data_v_li)
-    ,.dma_data_ready_o(dma_data_ready_lo)
+    ,.dma_data_ready_and_o(dma_data_ready_and_lo)
 
     ,.dma_data_o(dma_data_lo)
     ,.dma_data_v_o(dma_data_v_lo)
@@ -167,7 +167,7 @@ module testbench();
   );
 
   assign fifo_yumi_li = fifo_v_lo & tr_ready_lo;
-  assign tr_yumi_li = cache_v_li & cache_ready_lo;
+  assign tr_yumi_li = cache_yumi_lo;
   
   assign tr_data_li = {{(ring_width_p-data_width_p){1'b0}}, fifo_data_lo};
 
@@ -196,7 +196,7 @@ module testbench();
 
     ,.dma_data_o(dma_data_li)
     ,.dma_data_v_o(dma_data_v_li)
-    ,.dma_data_ready_i(dma_data_ready_lo)
+    ,.dma_data_ready_i(dma_data_ready_and_lo)
 
     ,.dma_data_i(dma_data_lo)
     ,.dma_data_v_i(dma_data_v_lo)

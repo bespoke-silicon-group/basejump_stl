@@ -90,7 +90,7 @@ module top();
       ,.reset_i(ns_reset)
 
       ,.v_i(v_i)
-      ,.ready_o(ready_o)
+      ,.ready_param_o(ready_o)
       ,.data_i(data_i)
 
       ,.v_o(v_o)

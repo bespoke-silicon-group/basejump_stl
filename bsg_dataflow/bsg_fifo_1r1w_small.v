@@ -28,7 +28,7 @@ module bsg_fifo_1r1w_small #( parameter `BSG_INV_PARAM(width_p      )
     , input                reset_i
 
     , input                v_i
-    , output               ready_o
+    , output               ready_param_o
     , input [width_p-1:0]  data_i
 
     , output               v_o
@@ -42,7 +42,8 @@ module bsg_fifo_1r1w_small #( parameter `BSG_INV_PARAM(width_p      )
         bsg_two_fifo #(.width_p(width_p)
                       ,.ready_THEN_valid_p(ready_THEN_valid_p)
         ) twof
-        (.*);
+        (.ready_param_o
+        ,.*);
       end
       else begin:un
         bsg_fifo_1r1w_small_unhardened #(.width_p(width_p)

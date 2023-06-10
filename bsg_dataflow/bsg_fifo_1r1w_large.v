@@ -262,16 +262,16 @@ module bsg_fifo_1r1w_large #(parameter `BSG_INV_PARAM(width_p)
    for (i = 0; i < 2; i++)
      begin : twofer
         bsg_two_fifo #(.width_p(width_p)) little
-            (.clk_i   (clk_i)
-             ,.reset_i(reset_i)
+            (.clk_i           (clk_i)
+             ,.reset_i        (reset_i)
 
-             ,.ready_o(little_ready_rot[i]                 )
-             ,.data_i (little_data_rot [i*width_p+:width_p])
-             ,.v_i    (little_valid_rot[i]                 )
+             ,.ready_param_o  (little_ready_rot[i]                 )
+             ,.data_i         (little_data_rot [i*width_p+:width_p])
+             ,.v_i            (little_valid_rot[i]                 )
 
-             ,.v_o    (valid_int [i])
-             ,.data_o (data_int  [i])
-             ,.yumi_i (yumi_int  [i])
+             ,.v_o            (valid_int [i])
+             ,.data_o         (data_int  [i])
+             ,.yumi_i         (yumi_int  [i])
              );
      end
 

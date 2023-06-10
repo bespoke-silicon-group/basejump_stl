@@ -8,6 +8,8 @@ module bsg_8b10b_shift_decoder
   , output logic       k_o
   , output logic       v_o
   
+  // whether it would be a frame, but there was an error
+  , output logic       v_err_o
   , output logic       frame_align_o
   );
 
@@ -91,6 +93,7 @@ module bsg_8b10b_shift_decoder
       );
 
   assign v_o = frame_recv & ~(decode_data_err_lo | decode_rd_err_lo);
+  assign v_err_o = frame_recv & (decode_data_err_lo | decode_rd_err_lo);
 
   // Error Detection
   //=================
@@ -100,8 +103,10 @@ module bsg_8b10b_shift_decoder
   // synopsys translate_off
   always_ff @(negedge clk_i)
     begin
-      assert (shift_reg_r !== 10'b0001_111100 && shift_reg_r !== 10'b1110_000011) else
-        $display("## ERROR (%M) - K.28.7 Code Detected!");
+      if  (shift_reg_r !== 10'b0001_111100 && shift_reg_r !== 10'b1110_000011)
+       ;
+      else
+        $display("## decoding Error (%M) - K.28.7 Code Detected!");
     end
   // synopsys translate_on
 

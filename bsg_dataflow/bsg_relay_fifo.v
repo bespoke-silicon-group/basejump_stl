@@ -27,7 +27,7 @@ bsg_two_fifo #(.width_p(width_p)) two_fifo
     , .reset_i(reset_i)
 
     // input side
-    , .ready_o(ready_and_o)
+    , .ready_param_o(ready_and_o)
     , .data_i(data_i)
     , .v_i(v_i)    
 

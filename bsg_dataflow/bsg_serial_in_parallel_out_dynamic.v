@@ -92,17 +92,17 @@ module bsg_serial_in_parallel_out_dynamic
   logic one_word_lo;
   
   bsg_two_fifo
- #(.width_p(1)
+ #(.width_p       (1)
   ) go_fifo
-  (.clk_i  (clk_i          )
-  ,.reset_i(reset_i        )
-  ,.ready_o(/* This fifo has same size of lowest word data fifo
-               No need to check ready_o here */)
-  ,.data_i (count_r_is_zero) // Indicate whether it is single word packet
-  ,.v_i    (go_fifo_v_li   )
-  ,.v_o    (v_o            )
-  ,.data_o (one_word_lo    )
-  ,.yumi_i (yumi_i         )
+  (.clk_i         (clk_i          )
+  ,.reset_i       (reset_i        )
+  ,.ready_param_o (/* This fifo has same size of lowest word data fifo
+                    No need to check ready_o here */)
+  ,.data_i        (count_r_is_zero) // Indicate whether it is single word packet
+  ,.v_i           (go_fifo_v_li   )
+  ,.v_o           (v_o            )
+  ,.data_o        (one_word_lo    )
+  ,.yumi_i        (yumi_i         )
   );
 
   logic [max_els_p-1:0] fifo_valid_li, fifo_ready_and_lo;
@@ -146,16 +146,16 @@ module bsg_serial_in_parallel_out_dynamic
         bsg_two_fifo
        #(.width_p(width_p)
         ) fifo
-        (.clk_i  (clk_i  )
-        ,.reset_i(reset_i)
+        (.clk_i         (clk_i  )
+        ,.reset_i       (reset_i)
 
-        ,.ready_o(fifo_ready_and_lo[i])
-        ,.data_i (data_i          )
-        ,.v_i    (fifo_valid_li[i])
+        ,.ready_param_o (fifo_ready_and_lo[i])
+        ,.data_i        (data_i              )
+        ,.v_i           (fifo_valid_li[i]    )
 
-        ,.v_o    (fifo_valid_lo[i])
-        ,.data_o (data_o       [i])
-        ,.yumi_i (fifo_yumi_li [i])
+        ,.v_o           (fifo_valid_lo[i])
+        ,.data_o        (data_o       [i])
+        ,.yumi_i        (fifo_yumi_li [i])
         );
       end
     else

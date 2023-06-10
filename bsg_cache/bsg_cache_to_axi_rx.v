@@ -34,7 +34,7 @@ module bsg_cache_to_axi_rx
     // cache dma read channel
     ,output logic [num_cache_p-1:0][data_width_p-1:0] dma_data_o
     ,output logic [num_cache_p-1:0] dma_data_v_o
-    ,input [num_cache_p-1:0] dma_data_ready_i
+    ,input [num_cache_p-1:0] dma_data_ready_and_i
 
     // axi read address channel
     ,output logic [axi_id_width_p-1:0] axi_arid_o
@@ -80,7 +80,7 @@ module bsg_cache_to_axi_rx
     ,.reset_i(reset_i)
 
     ,.v_i(tag_fifo_v_li)
-    ,.ready_o(tag_fifo_ready_lo)
+    ,.ready_param_o(tag_fifo_ready_lo)
     ,.data_i(cache_id_i)
 
     ,.v_o(tag_fifo_v_lo)
@@ -166,7 +166,7 @@ module bsg_cache_to_axi_rx
     ,.count_o(count_lo)
   );
   
-  assign piso_yumi_li = dma_data_ready_i[tag_lo] & piso_v_lo & tag_fifo_v_lo;
+  assign piso_yumi_li = dma_data_ready_and_i[tag_lo] & piso_v_lo & tag_fifo_v_lo;
 
   always_comb begin
     if (count_lo == block_size_in_words_p-1) begin

@@ -39,7 +39,7 @@
 `define BSG_INV_PARAM(param) param = -1
 `elsif YOSYS // Bare default parameters are incompatible as of 0.9
 `define BSG_INV_PARAM(param) param = "inv"
-`else // VIVADO, DC, VERILATOR, GENUS
+`else // VIVADO, DC, VERILATOR, GENUS, SURELOG
 `define BSG_INV_PARAM(param) param
 `endif
 
@@ -83,6 +83,8 @@
   `ifdef DC
   `define BSG_VIVADO_SYNTH_FAILS
   `elsif CDS_TOOL_DEFINE
+  `define BSG_VIVADO_SYNTH_FAILS
+  `elsif SURELOG
   `define BSG_VIVADO_SYNTH_FAILS
   `else
   `define BSG_VIVADO_SYNTH_FAILS this_module_is_not_synthesizeable_in_vivado

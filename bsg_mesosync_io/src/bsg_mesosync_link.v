@@ -60,11 +60,11 @@ module bsg_mesosync_link
                     // connection to core, 2 bits are used for handshake
                     , input  [width_lp-3:0]       data_i
                     , input                       v_i
-                    , output logic                ready_o
+                    , output logic                ready_and_o
 
                     , output                      v_o
                     , output [width_lp-3:0]       data_o
-                    , input                       ready_i
+                    , input                       ready_and_i
      
                     );
 
@@ -156,11 +156,11 @@ bsg_mesosync_core #( .width_p(width_lp-2)
     // connection to core
     , .data_i(data_i)
     , .v_i(v_i)
-    , .ready_o(ready_o)
+    , .ready_and_o(ready_and_o)
 
     , .v_o(v_o)
     , .data_o(data_o)
-    , .ready_i(ready_i)
+    , .ready_and_i(ready_and_i)
   
     );
 

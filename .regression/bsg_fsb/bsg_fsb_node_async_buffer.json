@@ -1,0 +1,3155 @@
+{
+    "design_name": "bsg_fsb_node_async_buffer",
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_fsb/bsg_fsb_pkg.v",
+        "basejump_stl/bsg_fsb/bsg_fsb_node_async_buffer.v",
+        "basejump_stl/bsg_async/bsg_async_fifo.v",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w.v",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v",
+        "basejump_stl/bsg_async/bsg_async_ptr_gray.v",
+        "basejump_stl/bsg_async/bsg_launch_sync_sync.v",
+        "basejump_stl/bsg_async/bsg_sync_sync.v"
+    ],
+    "run_config": [
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30",
+            "design_size": "small",
+            "name": "bsg_fsb_node_async_buffer_small_L_clk_30_FO4_R_clk_30_FO4",
+            "parameters": [
+                "fifo_els_p=10",
+                "ring_width_p=5"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40",
+            "design_size": "small",
+            "name": "bsg_fsb_node_async_buffer_small_L_clk_30_FO4_R_clk_40_FO4",
+            "parameters": [
+                "fifo_els_p=10",
+                "ring_width_p=5"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50",
+            "design_size": "small",
+            "name": "bsg_fsb_node_async_buffer_small_L_clk_30_FO4_R_clk_50_FO4",
+            "parameters": [
+                "fifo_els_p=10",
+                "ring_width_p=5"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60",
+            "design_size": "small",
+            "name": "bsg_fsb_node_async_buffer_small_L_clk_30_FO4_R_clk_60_FO4",
+            "parameters": [
+                "fifo_els_p=10",
+                "ring_width_p=5"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30",
+            "design_size": "small",
+            "name": "bsg_fsb_node_async_buffer_small_L_clk_40_FO4_R_clk_30_FO4",
+            "parameters": [
+                "fifo_els_p=10",
+                "ring_width_p=5"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40",
+            "design_size": "small",
+            "name": "bsg_fsb_node_async_buffer_small_L_clk_40_FO4_R_clk_40_FO4",
+            "parameters": [
+                "fifo_els_p=10",
+                "ring_width_p=5"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50",
+            "design_size": "small",
+            "name": "bsg_fsb_node_async_buffer_small_L_clk_40_FO4_R_clk_50_FO4",
+            "parameters": [
+                "fifo_els_p=10",
+                "ring_width_p=5"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60",
+            "design_size": "small",
+            "name": "bsg_fsb_node_async_buffer_small_L_clk_40_FO4_R_clk_60_FO4",
+            "parameters": [
+                "fifo_els_p=10",
+                "ring_width_p=5"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30",
+            "design_size": "small",
+            "name": "bsg_fsb_node_async_buffer_small_L_clk_50_FO4_R_clk_30_FO4",
+            "parameters": [
+                "fifo_els_p=10",
+                "ring_width_p=5"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40",
+            "design_size": "small",
+            "name": "bsg_fsb_node_async_buffer_small_L_clk_50_FO4_R_clk_40_FO4",
+            "parameters": [
+                "fifo_els_p=10",
+                "ring_width_p=5"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50",
+            "design_size": "small",
+            "name": "bsg_fsb_node_async_buffer_small_L_clk_50_FO4_R_clk_50_FO4",
+            "parameters": [
+                "fifo_els_p=10",
+                "ring_width_p=5"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60",
+            "design_size": "small",
+            "name": "bsg_fsb_node_async_buffer_small_L_clk_50_FO4_R_clk_60_FO4",
+            "parameters": [
+                "fifo_els_p=10",
+                "ring_width_p=5"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30",
+            "design_size": "small",
+            "name": "bsg_fsb_node_async_buffer_small_L_clk_60_FO4_R_clk_30_FO4",
+            "parameters": [
+                "fifo_els_p=10",
+                "ring_width_p=5"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40",
+            "design_size": "small",
+            "name": "bsg_fsb_node_async_buffer_small_L_clk_60_FO4_R_clk_40_FO4",
+            "parameters": [
+                "fifo_els_p=10",
+                "ring_width_p=5"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50",
+            "design_size": "small",
+            "name": "bsg_fsb_node_async_buffer_small_L_clk_60_FO4_R_clk_50_FO4",
+            "parameters": [
+                "fifo_els_p=10",
+                "ring_width_p=5"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60",
+            "design_size": "small",
+            "name": "bsg_fsb_node_async_buffer_small_L_clk_60_FO4_R_clk_60_FO4",
+            "parameters": [
+                "fifo_els_p=10",
+                "ring_width_p=5"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30",
+            "design_size": "large",
+            "name": "bsg_fsb_node_async_buffer_large_L_clk_30_FO4_R_clk_30_FO4",
+            "parameters": [
+                "fifo_els_p=250",
+                "ring_width_p=500"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40",
+            "design_size": "large",
+            "name": "bsg_fsb_node_async_buffer_large_L_clk_30_FO4_R_clk_40_FO4",
+            "parameters": [
+                "fifo_els_p=250",
+                "ring_width_p=500"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50",
+            "design_size": "large",
+            "name": "bsg_fsb_node_async_buffer_large_L_clk_30_FO4_R_clk_50_FO4",
+            "parameters": [
+                "fifo_els_p=250",
+                "ring_width_p=500"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60",
+            "design_size": "large",
+            "name": "bsg_fsb_node_async_buffer_large_L_clk_30_FO4_R_clk_60_FO4",
+            "parameters": [
+                "fifo_els_p=250",
+                "ring_width_p=500"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30",
+            "design_size": "large",
+            "name": "bsg_fsb_node_async_buffer_large_L_clk_40_FO4_R_clk_30_FO4",
+            "parameters": [
+                "fifo_els_p=250",
+                "ring_width_p=500"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40",
+            "design_size": "large",
+            "name": "bsg_fsb_node_async_buffer_large_L_clk_40_FO4_R_clk_40_FO4",
+            "parameters": [
+                "fifo_els_p=250",
+                "ring_width_p=500"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50",
+            "design_size": "large",
+            "name": "bsg_fsb_node_async_buffer_large_L_clk_40_FO4_R_clk_50_FO4",
+            "parameters": [
+                "fifo_els_p=250",
+                "ring_width_p=500"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60",
+            "design_size": "large",
+            "name": "bsg_fsb_node_async_buffer_large_L_clk_40_FO4_R_clk_60_FO4",
+            "parameters": [
+                "fifo_els_p=250",
+                "ring_width_p=500"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30",
+            "design_size": "large",
+            "name": "bsg_fsb_node_async_buffer_large_L_clk_50_FO4_R_clk_30_FO4",
+            "parameters": [
+                "fifo_els_p=250",
+                "ring_width_p=500"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40",
+            "design_size": "large",
+            "name": "bsg_fsb_node_async_buffer_large_L_clk_50_FO4_R_clk_40_FO4",
+            "parameters": [
+                "fifo_els_p=250",
+                "ring_width_p=500"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50",
+            "design_size": "large",
+            "name": "bsg_fsb_node_async_buffer_large_L_clk_50_FO4_R_clk_50_FO4",
+            "parameters": [
+                "fifo_els_p=250",
+                "ring_width_p=500"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60",
+            "design_size": "large",
+            "name": "bsg_fsb_node_async_buffer_large_L_clk_50_FO4_R_clk_60_FO4",
+            "parameters": [
+                "fifo_els_p=250",
+                "ring_width_p=500"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30",
+            "design_size": "large",
+            "name": "bsg_fsb_node_async_buffer_large_L_clk_60_FO4_R_clk_30_FO4",
+            "parameters": [
+                "fifo_els_p=250",
+                "ring_width_p=500"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40",
+            "design_size": "large",
+            "name": "bsg_fsb_node_async_buffer_large_L_clk_60_FO4_R_clk_40_FO4",
+            "parameters": [
+                "fifo_els_p=250",
+                "ring_width_p=500"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50",
+            "design_size": "large",
+            "name": "bsg_fsb_node_async_buffer_large_L_clk_60_FO4_R_clk_50_FO4",
+            "parameters": [
+                "fifo_els_p=250",
+                "ring_width_p=500"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60",
+            "design_size": "large",
+            "name": "bsg_fsb_node_async_buffer_large_L_clk_60_FO4_R_clk_60_FO4",
+            "parameters": [
+                "fifo_els_p=250",
+                "ring_width_p=500"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30",
+            "design_size": "very_large",
+            "name": "bsg_fsb_node_async_buffer_very_large_L_clk_30_FO4_R_clk_30_FO4",
+            "parameters": [
+                "fifo_els_p=500",
+                "ring_width_p=1000"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40",
+            "design_size": "very_large",
+            "name": "bsg_fsb_node_async_buffer_very_large_L_clk_30_FO4_R_clk_40_FO4",
+            "parameters": [
+                "fifo_els_p=500",
+                "ring_width_p=1000"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50",
+            "design_size": "very_large",
+            "name": "bsg_fsb_node_async_buffer_very_large_L_clk_30_FO4_R_clk_50_FO4",
+            "parameters": [
+                "fifo_els_p=500",
+                "ring_width_p=1000"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60",
+            "design_size": "very_large",
+            "name": "bsg_fsb_node_async_buffer_very_large_L_clk_30_FO4_R_clk_60_FO4",
+            "parameters": [
+                "fifo_els_p=500",
+                "ring_width_p=1000"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30",
+            "design_size": "very_large",
+            "name": "bsg_fsb_node_async_buffer_very_large_L_clk_40_FO4_R_clk_30_FO4",
+            "parameters": [
+                "fifo_els_p=500",
+                "ring_width_p=1000"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40",
+            "design_size": "very_large",
+            "name": "bsg_fsb_node_async_buffer_very_large_L_clk_40_FO4_R_clk_40_FO4",
+            "parameters": [
+                "fifo_els_p=500",
+                "ring_width_p=1000"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50",
+            "design_size": "very_large",
+            "name": "bsg_fsb_node_async_buffer_very_large_L_clk_40_FO4_R_clk_50_FO4",
+            "parameters": [
+                "fifo_els_p=500",
+                "ring_width_p=1000"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60",
+            "design_size": "very_large",
+            "name": "bsg_fsb_node_async_buffer_very_large_L_clk_40_FO4_R_clk_60_FO4",
+            "parameters": [
+                "fifo_els_p=500",
+                "ring_width_p=1000"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30",
+            "design_size": "very_large",
+            "name": "bsg_fsb_node_async_buffer_very_large_L_clk_50_FO4_R_clk_30_FO4",
+            "parameters": [
+                "fifo_els_p=500",
+                "ring_width_p=1000"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40",
+            "design_size": "very_large",
+            "name": "bsg_fsb_node_async_buffer_very_large_L_clk_50_FO4_R_clk_40_FO4",
+            "parameters": [
+                "fifo_els_p=500",
+                "ring_width_p=1000"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50",
+            "design_size": "very_large",
+            "name": "bsg_fsb_node_async_buffer_very_large_L_clk_50_FO4_R_clk_50_FO4",
+            "parameters": [
+                "fifo_els_p=500",
+                "ring_width_p=1000"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60",
+            "design_size": "very_large",
+            "name": "bsg_fsb_node_async_buffer_very_large_L_clk_50_FO4_R_clk_60_FO4",
+            "parameters": [
+                "fifo_els_p=500",
+                "ring_width_p=1000"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30",
+            "design_size": "very_large",
+            "name": "bsg_fsb_node_async_buffer_very_large_L_clk_60_FO4_R_clk_30_FO4",
+            "parameters": [
+                "fifo_els_p=500",
+                "ring_width_p=1000"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40",
+            "design_size": "very_large",
+            "name": "bsg_fsb_node_async_buffer_very_large_L_clk_60_FO4_R_clk_40_FO4",
+            "parameters": [
+                "fifo_els_p=500",
+                "ring_width_p=1000"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50",
+            "design_size": "very_large",
+            "name": "bsg_fsb_node_async_buffer_very_large_L_clk_60_FO4_R_clk_50_FO4",
+            "parameters": [
+                "fifo_els_p=500",
+                "ring_width_p=1000"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60",
+            "design_size": "very_large",
+            "name": "bsg_fsb_node_async_buffer_very_large_L_clk_60_FO4_R_clk_60_FO4",
+            "parameters": [
+                "fifo_els_p=500",
+                "ring_width_p=1000"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30",
+            "design_size": "medium",
+            "name": "bsg_fsb_node_async_buffer_medium_L_clk_30_FO4_R_clk_30_FO4",
+            "parameters": [
+                "fifo_els_p=50",
+                "ring_width_p=50"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40",
+            "design_size": "medium",
+            "name": "bsg_fsb_node_async_buffer_medium_L_clk_30_FO4_R_clk_40_FO4",
+            "parameters": [
+                "fifo_els_p=50",
+                "ring_width_p=50"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50",
+            "design_size": "medium",
+            "name": "bsg_fsb_node_async_buffer_medium_L_clk_30_FO4_R_clk_50_FO4",
+            "parameters": [
+                "fifo_els_p=50",
+                "ring_width_p=50"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60",
+            "design_size": "medium",
+            "name": "bsg_fsb_node_async_buffer_medium_L_clk_30_FO4_R_clk_60_FO4",
+            "parameters": [
+                "fifo_els_p=50",
+                "ring_width_p=50"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30",
+            "design_size": "medium",
+            "name": "bsg_fsb_node_async_buffer_medium_L_clk_40_FO4_R_clk_30_FO4",
+            "parameters": [
+                "fifo_els_p=50",
+                "ring_width_p=50"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40",
+            "design_size": "medium",
+            "name": "bsg_fsb_node_async_buffer_medium_L_clk_40_FO4_R_clk_40_FO4",
+            "parameters": [
+                "fifo_els_p=50",
+                "ring_width_p=50"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50",
+            "design_size": "medium",
+            "name": "bsg_fsb_node_async_buffer_medium_L_clk_40_FO4_R_clk_50_FO4",
+            "parameters": [
+                "fifo_els_p=50",
+                "ring_width_p=50"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60",
+            "design_size": "medium",
+            "name": "bsg_fsb_node_async_buffer_medium_L_clk_40_FO4_R_clk_60_FO4",
+            "parameters": [
+                "fifo_els_p=50",
+                "ring_width_p=50"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30",
+            "design_size": "medium",
+            "name": "bsg_fsb_node_async_buffer_medium_L_clk_50_FO4_R_clk_30_FO4",
+            "parameters": [
+                "fifo_els_p=50",
+                "ring_width_p=50"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40",
+            "design_size": "medium",
+            "name": "bsg_fsb_node_async_buffer_medium_L_clk_50_FO4_R_clk_40_FO4",
+            "parameters": [
+                "fifo_els_p=50",
+                "ring_width_p=50"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50",
+            "design_size": "medium",
+            "name": "bsg_fsb_node_async_buffer_medium_L_clk_50_FO4_R_clk_50_FO4",
+            "parameters": [
+                "fifo_els_p=50",
+                "ring_width_p=50"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60",
+            "design_size": "medium",
+            "name": "bsg_fsb_node_async_buffer_medium_L_clk_50_FO4_R_clk_60_FO4",
+            "parameters": [
+                "fifo_els_p=50",
+                "ring_width_p=50"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30",
+            "design_size": "medium",
+            "name": "bsg_fsb_node_async_buffer_medium_L_clk_60_FO4_R_clk_30_FO4",
+            "parameters": [
+                "fifo_els_p=50",
+                "ring_width_p=50"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40",
+            "design_size": "medium",
+            "name": "bsg_fsb_node_async_buffer_medium_L_clk_60_FO4_R_clk_40_FO4",
+            "parameters": [
+                "fifo_els_p=50",
+                "ring_width_p=50"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50",
+            "design_size": "medium",
+            "name": "bsg_fsb_node_async_buffer_medium_L_clk_60_FO4_R_clk_50_FO4",
+            "parameters": [
+                "fifo_els_p=50",
+                "ring_width_p=50"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_i",
+                    "type": "input"
+                },
+                {
+                    "clock": "L_clk",
+                    "delay": "0",
+                    "port": "L_*_o",
+                    "type": "output"
+                },
+                {
+                    "clock": "R_clk",
+                    "delay": "0",
+                    "port": "R_*_o",
+                    "type": "output"
+                },
+                {
+                    "name": "L_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "L_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                },
+                {
+                    "name": "R_clk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "R_clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "This module converts the bsg_fsb node signals between different clock domains with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60",
+            "design_size": "medium",
+            "name": "bsg_fsb_node_async_buffer_medium_L_clk_60_FO4_R_clk_60_FO4",
+            "parameters": [
+                "fifo_els_p=50",
+                "ring_width_p=50"
+            ]
+        }
+    ],
+    "include_path": [
+        "basejump_stl/bsg_misc/"
+    ]
+}

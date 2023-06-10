@@ -54,7 +54,7 @@ module testbench();
 
   logic [data_width_p-1:0] dma_data_li;
   logic dma_data_v_li;
-  logic dma_data_ready_lo;
+  logic dma_data_ready_and_lo;
 
   logic [data_width_p-1:0] dma_data_lo;
   logic dma_data_v_lo;
@@ -64,7 +64,7 @@ module testbench();
     .addr_width_p(addr_width_p)
     ,.data_width_p(data_width_p)
     ,.block_size_in_words_p(block_size_in_words_p)
-    ,.sets_p(sets_p) 
+    ,.sets_p(sets_p)
     ,.ways_p(ways_p)
   ) DUT (
     .clk_i(clk)
@@ -84,7 +84,7 @@ module testbench();
   
     ,.dma_data_i(dma_data_li)
     ,.dma_data_v_i(dma_data_v_li)
-    ,.dma_data_ready_o(dma_data_ready_lo)
+    ,.dma_data_ready_and_o(dma_data_ready_and_lo)
 
     ,.dma_data_o(dma_data_lo)
     ,.dma_data_v_o(dma_data_v_lo)
@@ -120,7 +120,7 @@ module testbench();
 
     ,.dma_data_o(dma_data_li)
     ,.dma_data_v_o(dma_data_v_li)
-    ,.dma_data_ready_i(dma_data_ready_lo)
+    ,.dma_data_ready_i(dma_data_ready_and_lo)
 
     ,.dma_data_i(dma_data_lo)
     ,.dma_data_v_i(dma_data_v_lo)

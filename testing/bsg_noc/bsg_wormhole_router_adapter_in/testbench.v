@@ -75,7 +75,7 @@ module testbench();
 
     ,.v_i(v_lo)
     ,.data_i(data_lo)
-    ,.ready_o(fifo_ready_lo)
+    ,.ready_param_o(fifo_ready_lo)
 
     ,.data_o(fifo_data_lo)
     ,.v_o(fifo_v_lo)

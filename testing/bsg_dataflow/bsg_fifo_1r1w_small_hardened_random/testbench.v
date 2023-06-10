@@ -33,7 +33,7 @@ module testbench();
     ,.reset_i(reset)
     
     ,.v_i(v_li)
-    ,.ready_o(ready_lo)
+    ,.ready_param_o(ready_lo)
     ,.data_i(data_li)
 
     ,.v_o(v_lo)

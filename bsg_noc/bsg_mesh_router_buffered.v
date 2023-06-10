@@ -89,7 +89,7 @@ module bsg_mesh_router_buffered
 
         ,.v_i     (link_i_cast[i].v            )
         ,.data_i  (link_i_cast[i].data         )
-        ,.ready_o (fifo_ready_lo)
+        ,.ready_param_o (fifo_ready_lo)
 
         ,.v_o     (fifo_valid[i])
         ,.data_o  (fifo_data [i])

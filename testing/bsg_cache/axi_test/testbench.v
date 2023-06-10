@@ -88,7 +88,7 @@ module testbench();
   logic dma_pkt_v_lo, dma_pkt_yumi_li;
 
   logic [data_width_p-1:0] dma_data_li;
-  logic dma_data_v_li, dma_data_ready_lo;
+  logic dma_data_v_li, dma_data_ready_and_lo;
 
   logic [data_width_p-1:0] dma_data_lo;
   logic dma_data_v_lo, dma_data_yumi_li;
@@ -105,7 +105,7 @@ module testbench();
 
   assign tr_v_li           = dma_data_v_li;
   assign tr_data_li        = dma_data_li;
-  assign dma_data_ready_lo = tr_ready_lo;
+  assign dma_data_ready_and_lo = tr_ready_lo;
 
   logic [6-1:0] axi_awid;
   logic [addr_width_p-1:0] axi_awaddr;
@@ -159,7 +159,7 @@ module testbench();
 
      ,.dma_data_o(dma_data_li)
      ,.dma_data_v_o(dma_data_v_li)
-     ,.dma_data_ready_i(dma_data_ready_lo)
+     ,.dma_data_ready_and_i(dma_data_ready_and_lo)
 
      ,.dma_data_i(dma_data_lo)
      ,.dma_data_v_i(dma_data_v_lo)
