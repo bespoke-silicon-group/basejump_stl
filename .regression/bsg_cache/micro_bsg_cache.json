@@ -1,0 +1,12 @@
+include bsg_cache.json
+include bsg_cache_dma.json
+include bsg_cache_miss.json
+include bsg_cache_decode.json
+include bsg_cache_sbuf.json
+include bsg_cache_buffer_queue.json
+include bsg_cache_to_axi.json
+include bsg_cache_to_axi_rx.json
+include bsg_cache_to_axi_tx.json
+include bsg_cache_to_dram_ctrl.json
+include bsg_cache_to_dram_ctrl_rx.json
+include bsg_cache_to_dram_ctrl_tx.json

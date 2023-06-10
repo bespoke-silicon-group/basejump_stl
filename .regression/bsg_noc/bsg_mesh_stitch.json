@@ -1,0 +1,1037 @@
+{
+    "design_name": "bsg_mesh_stitch",
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_noc/bsg_mesh_stitch.v",
+        "basejump_stl/bsg_noc/bsg_noc_pkg.v"
+    ],
+    "run_config": [
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size small at a clock period (in num of FO4) = 30",
+            "design_size": "small",
+            "name": "bsg_mesh_stitch_small_vclk_30_FO4",
+            "parameters": [
+                "nets_p=1",
+                "x_max_p=1",
+                "y_max_p=1",
+                "width_p=16"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size small at a clock period (in num of FO4) = 40",
+            "design_size": "small",
+            "name": "bsg_mesh_stitch_small_vclk_40_FO4",
+            "parameters": [
+                "nets_p=1",
+                "x_max_p=1",
+                "y_max_p=1",
+                "width_p=16"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size small at a clock period (in num of FO4) = 50",
+            "design_size": "small",
+            "name": "bsg_mesh_stitch_small_vclk_50_FO4",
+            "parameters": [
+                "nets_p=1",
+                "x_max_p=1",
+                "y_max_p=1",
+                "width_p=16"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size small at a clock period (in num of FO4) = 60",
+            "design_size": "small",
+            "name": "bsg_mesh_stitch_small_vclk_60_FO4",
+            "parameters": [
+                "nets_p=1",
+                "x_max_p=1",
+                "y_max_p=1",
+                "width_p=16"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "70",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size small at a clock period (in num of FO4) = 70",
+            "design_size": "small",
+            "name": "bsg_mesh_stitch_small_vclk_70_FO4",
+            "parameters": [
+                "nets_p=1",
+                "x_max_p=1",
+                "y_max_p=1",
+                "width_p=16"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "80",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size small at a clock period (in num of FO4) = 80",
+            "design_size": "small",
+            "name": "bsg_mesh_stitch_small_vclk_80_FO4",
+            "parameters": [
+                "nets_p=1",
+                "x_max_p=1",
+                "y_max_p=1",
+                "width_p=16"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "90",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size small at a clock period (in num of FO4) = 90",
+            "design_size": "small",
+            "name": "bsg_mesh_stitch_small_vclk_90_FO4",
+            "parameters": [
+                "nets_p=1",
+                "x_max_p=1",
+                "y_max_p=1",
+                "width_p=16"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "100",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size small at a clock period (in num of FO4) = 100",
+            "design_size": "small",
+            "name": "bsg_mesh_stitch_small_vclk_100_FO4",
+            "parameters": [
+                "nets_p=1",
+                "x_max_p=1",
+                "y_max_p=1",
+                "width_p=16"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size large at a clock period (in num of FO4) = 30",
+            "design_size": "large",
+            "name": "bsg_mesh_stitch_large_vclk_30_FO4",
+            "parameters": [
+                "nets_p=4",
+                "x_max_p=32",
+                "y_max_p=32",
+                "width_p=80"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size large at a clock period (in num of FO4) = 40",
+            "design_size": "large",
+            "name": "bsg_mesh_stitch_large_vclk_40_FO4",
+            "parameters": [
+                "nets_p=4",
+                "x_max_p=32",
+                "y_max_p=32",
+                "width_p=80"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size large at a clock period (in num of FO4) = 50",
+            "design_size": "large",
+            "name": "bsg_mesh_stitch_large_vclk_50_FO4",
+            "parameters": [
+                "nets_p=4",
+                "x_max_p=32",
+                "y_max_p=32",
+                "width_p=80"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size large at a clock period (in num of FO4) = 60",
+            "design_size": "large",
+            "name": "bsg_mesh_stitch_large_vclk_60_FO4",
+            "parameters": [
+                "nets_p=4",
+                "x_max_p=32",
+                "y_max_p=32",
+                "width_p=80"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "70",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size large at a clock period (in num of FO4) = 70",
+            "design_size": "large",
+            "name": "bsg_mesh_stitch_large_vclk_70_FO4",
+            "parameters": [
+                "nets_p=4",
+                "x_max_p=32",
+                "y_max_p=32",
+                "width_p=80"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "80",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size large at a clock period (in num of FO4) = 80",
+            "design_size": "large",
+            "name": "bsg_mesh_stitch_large_vclk_80_FO4",
+            "parameters": [
+                "nets_p=4",
+                "x_max_p=32",
+                "y_max_p=32",
+                "width_p=80"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "90",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size large at a clock period (in num of FO4) = 90",
+            "design_size": "large",
+            "name": "bsg_mesh_stitch_large_vclk_90_FO4",
+            "parameters": [
+                "nets_p=4",
+                "x_max_p=32",
+                "y_max_p=32",
+                "width_p=80"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "100",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size large at a clock period (in num of FO4) = 100",
+            "design_size": "large",
+            "name": "bsg_mesh_stitch_large_vclk_100_FO4",
+            "parameters": [
+                "nets_p=4",
+                "x_max_p=32",
+                "y_max_p=32",
+                "width_p=80"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size very_large at a clock period (in num of FO4) = 30",
+            "design_size": "very_large",
+            "name": "bsg_mesh_stitch_very_large_vclk_30_FO4",
+            "parameters": [
+                "nets_p=8",
+                "x_max_p=256",
+                "y_max_p=256",
+                "width_p=128"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size very_large at a clock period (in num of FO4) = 40",
+            "design_size": "very_large",
+            "name": "bsg_mesh_stitch_very_large_vclk_40_FO4",
+            "parameters": [
+                "nets_p=8",
+                "x_max_p=256",
+                "y_max_p=256",
+                "width_p=128"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size very_large at a clock period (in num of FO4) = 50",
+            "design_size": "very_large",
+            "name": "bsg_mesh_stitch_very_large_vclk_50_FO4",
+            "parameters": [
+                "nets_p=8",
+                "x_max_p=256",
+                "y_max_p=256",
+                "width_p=128"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size very_large at a clock period (in num of FO4) = 60",
+            "design_size": "very_large",
+            "name": "bsg_mesh_stitch_very_large_vclk_60_FO4",
+            "parameters": [
+                "nets_p=8",
+                "x_max_p=256",
+                "y_max_p=256",
+                "width_p=128"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "70",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size very_large at a clock period (in num of FO4) = 70",
+            "design_size": "very_large",
+            "name": "bsg_mesh_stitch_very_large_vclk_70_FO4",
+            "parameters": [
+                "nets_p=8",
+                "x_max_p=256",
+                "y_max_p=256",
+                "width_p=128"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "80",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size very_large at a clock period (in num of FO4) = 80",
+            "design_size": "very_large",
+            "name": "bsg_mesh_stitch_very_large_vclk_80_FO4",
+            "parameters": [
+                "nets_p=8",
+                "x_max_p=256",
+                "y_max_p=256",
+                "width_p=128"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "90",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size very_large at a clock period (in num of FO4) = 90",
+            "design_size": "very_large",
+            "name": "bsg_mesh_stitch_very_large_vclk_90_FO4",
+            "parameters": [
+                "nets_p=8",
+                "x_max_p=256",
+                "y_max_p=256",
+                "width_p=128"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "100",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size very_large at a clock period (in num of FO4) = 100",
+            "design_size": "very_large",
+            "name": "bsg_mesh_stitch_very_large_vclk_100_FO4",
+            "parameters": [
+                "nets_p=8",
+                "x_max_p=256",
+                "y_max_p=256",
+                "width_p=128"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "30",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size medium at a clock period (in num of FO4) = 30",
+            "design_size": "medium",
+            "name": "bsg_mesh_stitch_medium_vclk_30_FO4",
+            "parameters": [
+                "nets_p=2",
+                "x_max_p=8",
+                "y_max_p=8",
+                "width_p=32"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "40",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size medium at a clock period (in num of FO4) = 40",
+            "design_size": "medium",
+            "name": "bsg_mesh_stitch_medium_vclk_40_FO4",
+            "parameters": [
+                "nets_p=2",
+                "x_max_p=8",
+                "y_max_p=8",
+                "width_p=32"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "50",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size medium at a clock period (in num of FO4) = 50",
+            "design_size": "medium",
+            "name": "bsg_mesh_stitch_medium_vclk_50_FO4",
+            "parameters": [
+                "nets_p=2",
+                "x_max_p=8",
+                "y_max_p=8",
+                "width_p=32"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "60",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size medium at a clock period (in num of FO4) = 60",
+            "design_size": "medium",
+            "name": "bsg_mesh_stitch_medium_vclk_60_FO4",
+            "parameters": [
+                "nets_p=2",
+                "x_max_p=8",
+                "y_max_p=8",
+                "width_p=32"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "70",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size medium at a clock period (in num of FO4) = 70",
+            "design_size": "medium",
+            "name": "bsg_mesh_stitch_medium_vclk_70_FO4",
+            "parameters": [
+                "nets_p=2",
+                "x_max_p=8",
+                "y_max_p=8",
+                "width_p=32"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "80",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size medium at a clock period (in num of FO4) = 80",
+            "design_size": "medium",
+            "name": "bsg_mesh_stitch_medium_vclk_80_FO4",
+            "parameters": [
+                "nets_p=2",
+                "x_max_p=8",
+                "y_max_p=8",
+                "width_p=32"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "90",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size medium at a clock period (in num of FO4) = 90",
+            "design_size": "medium",
+            "name": "bsg_mesh_stitch_medium_vclk_90_FO4",
+            "parameters": [
+                "nets_p=2",
+                "x_max_p=8",
+                "y_max_p=8",
+                "width_p=32"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "100",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "stitches together wires according to a mesh topology; edges are returned in hor and ver arrays with size medium at a clock period (in num of FO4) = 100",
+            "design_size": "medium",
+            "name": "bsg_mesh_stitch_medium_vclk_100_FO4",
+            "parameters": [
+                "nets_p=2",
+                "x_max_p=8",
+                "y_max_p=8",
+                "width_p=32"
+            ]
+        }
+    ],
+    "include_path": [
+        "basejump_stl/bsg_misc/"
+    ]
+}
