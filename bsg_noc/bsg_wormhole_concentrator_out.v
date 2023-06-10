@@ -85,12 +85,12 @@ module bsg_wormhole_concentrator_out
   bsg_two_fifo #(.width_p(flit_width_p)) concentrated_twofer
     (.clk_i
     ,.reset_i
-    ,.ready_o(concentrated_link_o_cast.ready_and_rev)
-    ,.data_i (concentrated_link_i_cast.data)
-    ,.v_i    (concentrated_link_i_cast.v)
-    ,.v_o    (concentrated_fifo_valid_lo)
-    ,.data_o (concentrated_fifo_data_lo )
-    ,.yumi_i (concentrated_any_yumi)
+    ,.ready_param_o (concentrated_link_o_cast.ready_and_rev)
+    ,.data_i        (concentrated_link_i_cast.data)
+    ,.v_i           (concentrated_link_i_cast.v)
+    ,.v_o           (concentrated_fifo_valid_lo)
+    ,.data_o        (concentrated_fifo_data_lo )
+    ,.yumi_i        (concentrated_any_yumi)
      );
 
   bsg_wormhole_concentrator_header_s concentrated_hdr;

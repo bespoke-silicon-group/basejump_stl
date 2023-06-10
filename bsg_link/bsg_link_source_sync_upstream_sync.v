@@ -46,16 +46,16 @@ module bsg_link_source_sync_upstream_sync
   if (bypass_twofer_fifo_p == 0)
   begin: twofer
     bsg_two_fifo
-   #(.width_p(width_p)
+   #(.width_p       (width_p)
     ) twofer_fifo
-    (.clk_i  (io_clk_i)
-    ,.reset_i(io_link_reset_i)
-    ,.ready_o(io_ready_and_o)
-    ,.data_i (io_data_i)
-    ,.v_i    (io_v_i)
-    ,.v_o    (io_fifo_v)
-    ,.data_o (io_fifo_data)
-    ,.yumi_i (io_fifo_v & io_fifo_ready)
+    (.clk_i         (io_clk_i)
+    ,.reset_i       (io_link_reset_i)
+    ,.ready_param_o (io_ready_and_o)
+    ,.data_i        (io_data_i)
+    ,.v_i           (io_v_i)
+    ,.v_o           (io_fifo_v)
+    ,.data_o        (io_fifo_data)
+    ,.yumi_i        (io_fifo_v & io_fifo_ready)
     );
   end
   else

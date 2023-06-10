@@ -58,7 +58,7 @@ module bsg_assembler_out #(parameter `BSG_INV_PARAM(width_p    )
              ,.reset_i(reset)
 
              // input side
-             ,.ready_o(fifo_not_full_vec[i])
+             ,.ready_param_o(fifo_not_full_vec[i])
              ,.v_i    (valid_i & ready_o_tmp)
              ,.data_i (data_i[width_p*i+:width_p])
 

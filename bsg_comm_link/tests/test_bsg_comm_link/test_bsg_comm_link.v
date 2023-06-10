@@ -127,7 +127,7 @@ module test_bsg_comm_link;
 
       ,.reset_i(core_reset_in[1])
 
-      ,.ready_o(core_ready_in[1])
+      ,.ready_param_o(core_ready_in[1])
       ,.v_i    (core_valid_in[1])
       ,.data_i (core_data_in [1])
 

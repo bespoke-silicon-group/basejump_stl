@@ -56,18 +56,18 @@ module bsg_parallel_in_serial_out_test_node
       logic                             req_out_v;
 
       bsg_two_fifo
-     #(.width_p(width_lp)
+     #(.width_p       (width_lp)
       ) req_out_fifo
-      (.clk_i  (node_clk_i)
-      ,.reset_i(node_reset_i)
+      (.clk_i         (node_clk_i)
+      ,.reset_i       (node_reset_i)
 
-      ,.ready_o(req_out_ready)
-      ,.v_i    (req_out_v)
-      ,.data_i (req_out_data)
+      ,.ready_param_o (req_out_ready)
+      ,.v_i           (req_out_v)
+      ,.data_i        (req_out_data)
 
-      ,.v_o    (node_async_fifo_valid_li)
-      ,.data_o (node_async_fifo_data_li)
-      ,.yumi_i (node_async_fifo_yumi_lo)
+      ,.v_o           (node_async_fifo_valid_li)
+      ,.data_o        (node_async_fifo_data_li)
+      ,.yumi_i        (node_async_fifo_yumi_lo)
       );
 
       logic [width_lp-1:0] data_gen;

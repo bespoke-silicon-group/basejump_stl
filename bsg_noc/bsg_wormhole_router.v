@@ -98,12 +98,12 @@ module bsg_wormhole_router
       bsg_two_fifo #(.width_p(flit_width_p)) twofer
         (.clk_i
          ,.reset_i
-        ,.ready_o(link_o_cast[i].ready_and_rev)
-        ,.data_i (link_i_cast[i].data)
-        ,.v_i    (link_i_cast[i].v)
-        ,.v_o    (fifo_valid_lo[i])
-        ,.data_o (fifo_data_lo [i])
-        ,.yumi_i (any_yumi)
+        ,.ready_param_o (link_o_cast[i].ready_and_rev)
+        ,.data_i        (link_i_cast[i].data)
+        ,.v_i           (link_i_cast[i].v)
+        ,.v_o           (fifo_valid_lo[i])
+        ,.data_o        (fifo_data_lo [i])
+        ,.yumi_i        (any_yumi)
          );
 
       bsg_wormhole_router_header_s hdr;

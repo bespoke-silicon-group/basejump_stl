@@ -1,0 +1,11 @@
+include bsg_async/daily_bsg_async.json
+include bsg_cache/daily_bsg_cache.json
+include bsg_comm_link/daily_bsg_comm_link.json
+include bsg_dataflow/daily_bsg_dataflow.json
+include bsg_fpu/daily_bsg_fpu.json
+include bsg_legacy/daily_bsg_legacy.json
+include bsg_link/daily_bsg_link.json
+include bsg_mem/daily_bsg_mem.json
+include bsg_mesosync_io/daily_bsg_mesosync_io.json
+include bsg_misc/daily_bsg_misc.json
+include bsg_noc/daily_bsg_noc.json

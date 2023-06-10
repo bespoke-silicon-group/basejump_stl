@@ -282,7 +282,7 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
       ,.reset_i(core_reset_i)
 
       // we feed this into the local yumi, but only if it is valid
-      ,.ready_o(core_twofer_ready)
+      ,.ready_param_o(core_twofer_ready)
       ,.data_i(core_data_o_pre_twofer)
       ,.v_i(core_valid_o_pre_twofer)
 

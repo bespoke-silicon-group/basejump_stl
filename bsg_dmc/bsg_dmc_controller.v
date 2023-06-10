@@ -420,7 +420,7 @@ module bsg_dmc_controller
     (.clk_i              ( dfi_clk_i          )
     ,.reset_i            ( dfi_clk_sync_rst_i )
     ,.v_i                ( cmd_sfifo_winc     )
-    ,.ready_o            ( cmd_sfifo_ready    )
+    ,.ready_param_o      ( cmd_sfifo_ready    )
     ,.data_i             ( cmd_sfifo_wdata    )
     ,.v_o                ( cmd_sfifo_valid    )
     ,.data_o             ( cmd_sfifo_rdata    )

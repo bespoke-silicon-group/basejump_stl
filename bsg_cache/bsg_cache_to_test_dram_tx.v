@@ -55,7 +55,7 @@ module bsg_cache_to_test_dram_tx
     ,.reset_i(core_reset_i)
 
     ,.v_i(v_i)
-    ,.ready_o(ready_and_o)
+    ,.ready_param_o(ready_and_o)
     ,.data_i({tag_i, mask_i})
 
     ,.v_o(tag_v_lo)
@@ -112,7 +112,7 @@ module bsg_cache_to_test_dram_tx
         ,.reset_i(core_reset_i)
 
         ,.v_i(dma_data_v_i[i])
-        ,.ready_o(fifo_ready_lo[i])
+        ,.ready_param_o(fifo_ready_lo[i])
         ,.data_i(dma_data_i[i])
 
         ,.v_o(sipo_v_li[i])

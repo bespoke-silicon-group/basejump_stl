@@ -156,7 +156,7 @@ module test_bsg
                           
                           ,.data_i (test_output_data[i][S])
                           ,.v_i    (test_output_valid[i][S])
-                          ,.ready_o(test_input_ready[i][S])
+                          ,.ready_param_o(test_input_ready[i][S])
 
                           ,.data_o(test_input_data[i+medge_lp][N])
                           ,.v_o   (test_input_valid[i+medge_lp][N])
@@ -172,7 +172,7 @@ module test_bsg
                           
                           ,.data_i (test_output_data[i+medge_lp][N])
                           ,.v_i    (test_output_valid[i+medge_lp][N])
-                          ,.ready_o(test_input_ready[i+medge_lp][N])
+                          ,.ready_param_o(test_input_ready[i+medge_lp][N])
 
                           ,.data_o(test_input_data[i][S])
                           ,.v_o   (test_input_valid[i][S])
@@ -194,7 +194,7 @@ module test_bsg
                             
                             ,.data_i (test_output_data[i*medge_lp + j][E])
                             ,.v_i    (test_output_valid[i*medge_lp + j][E])
-                            ,.ready_o(test_input_ready[i*medge_lp + j][E])
+                            ,.ready_param_o(test_input_ready[i*medge_lp + j][E])
 
                             ,.data_o(test_input_data[i*medge_lp+j+1][W])
                             ,.v_o   (test_input_valid[i*medge_lp+j+1][W])
@@ -210,7 +210,7 @@ module test_bsg
                             
                             ,.data_i (test_output_data[i*medge_lp+j+1][W])
                             ,.v_i    (test_output_valid[i*medge_lp+j+1][W])
-                            ,.ready_o(test_input_ready[i*medge_lp+j+1][W])
+                            ,.ready_param_o(test_input_ready[i*medge_lp+j+1][W])
 
                             ,.data_o(test_input_data[i*medge_lp+j][E])
                             ,.v_o   (test_input_valid[i*medge_lp+j][E])
@@ -239,7 +239,7 @@ module test_bsg
                           
                           ,.data_i (test_stim_data_in[i])
                           ,.v_i    (test_stim_valid_in[i])
-                          ,.ready_o(test_stim_ready_out[i])
+                          ,.ready_param_o(test_stim_ready_out[i])
 
                           ,.data_o(test_input_data[i][P])
                           ,.v_o   (test_input_valid[i][P])

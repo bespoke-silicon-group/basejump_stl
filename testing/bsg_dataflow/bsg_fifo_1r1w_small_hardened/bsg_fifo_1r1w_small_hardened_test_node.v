@@ -63,7 +63,7 @@ module bsg_fifo_1r1w_small_hardened_test_node
       (.clk_i  (node_clk_i)
       ,.reset_i(node_reset_i)
 
-      ,.ready_o(node_async_fifo_ready_li)
+      ,.ready_param_o(node_async_fifo_ready_li)
       ,.v_i    (node_async_fifo_valid_lo)
       ,.data_i (node_async_fifo_data_lo)
 
@@ -78,7 +78,7 @@ module bsg_fifo_1r1w_small_hardened_test_node
       (.clk_i  (node_clk_i)
       ,.reset_i(node_reset_i)
 
-      ,.ready_o(req_out_ready)
+      ,.ready_param_o(req_out_ready)
       ,.v_i    (req_out_v)
       ,.data_i (req_out_data)
 
@@ -168,7 +168,7 @@ module bsg_fifo_1r1w_small_hardened_test_node
       (.clk_i  (node_clk_i)
       ,.reset_i(node_reset_i)
 
-      ,.ready_o(node_async_fifo_ready_li)
+      ,.ready_param_o(node_async_fifo_ready_li)
       ,.v_i    (node_async_fifo_valid_lo)
       ,.data_i (node_async_fifo_data_lo)
 
@@ -188,7 +188,7 @@ module bsg_fifo_1r1w_small_hardened_test_node
       (.clk_i  (node_clk_i)
       ,.reset_i(node_reset_i)
 
-      ,.ready_o(resp_out_ready)
+      ,.ready_param_o(resp_out_ready)
       ,.v_i    (resp_out_v)
       ,.data_i (resp_out_data)
 

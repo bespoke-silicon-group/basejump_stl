@@ -21,7 +21,7 @@ module bsg_fifo_1r1w_narrowed
                 
                     , input [width_p-1:0]      data_i
                     , input                    v_i
-                    , output                   ready_o
+                    , output                   ready_param_o
                 
                     , output                   v_o
                     , output [width_out_p-1:0] data_o
@@ -45,7 +45,7 @@ module bsg_fifo_1r1w_narrowed
 
     , .data_i(data_i)
     , .v_i(v_i)
-    , .ready_o(ready_o)
+    , .ready_param_o(ready_param_o)
 
     , .v_o(v_o)
     , .data_o(data)
