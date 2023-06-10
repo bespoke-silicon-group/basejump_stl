@@ -28,18 +28,11 @@ module testbench();
   );
 
   `declare_bsg_ready_and_link_sif_s(flit_width_lp, bsg_ready_and_link_sif_s);
-  bsg_ready_and_link_sif_s link_lo, link_li;
 
   logic [max_packet_width_lp-1:0] data_li;
   logic v_li, ready_and_lo;
   logic [max_packet_width_lp-1:0] data_lo;
   logic v_lo, ready_and_li;
- 
-  assign link_li.data = data_li[0+:flit_width_lp];
-  assign link_li.v    = v_li;
-  assign link_li.ready_and_rev = 1'b0;
-
-  assign ready_and_lo = link_lo.ready_and_rev;
 
   bsg_wormhole_router_adapter_out #(
     .flit_width_p(flit_width_lp)
@@ -49,13 +42,14 @@ module testbench();
   ) adapter (
     .clk_i(clk)
     ,.reset_i(reset)
-    
-    ,.link_i(link_li)
-    ,.link_o(link_lo)
+
+    ,.link_v_i(v_li)
+    ,.link_data_i(data_li[0+:flit_width_lp])
+    ,.link_ready_and_o(ready_and_lo)
 
     ,.packet_o(data_lo)
-    ,.v_o(v_lo)
-    ,.ready_and_i(ready_and_li)
+    ,.packet_v_o(v_lo)
+    ,.packet_yumi_i(v_lo & ready_and_li)
   );
 
   parameter rom_addr_width_p = 10;
@@ -73,7 +67,7 @@ module testbench();
 
     ,.v_i(v_lo)
     ,.data_i(data_lo)
-    ,.ready_and_o(ready_and_li)
+    ,.ready_o(ready_and_li)
 
     ,.v_o(v_li)
     ,.data_o(data_li)

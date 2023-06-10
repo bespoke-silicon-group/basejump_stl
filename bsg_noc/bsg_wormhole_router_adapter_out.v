@@ -61,9 +61,7 @@ module bsg_wormhole_router_adapter_out
      );
   assign packet_o = packet_padded_lo[0+:bsg_wormhole_packet_width_lp];
 
-  // Stub the output data dna valid, since this is an output
-  assign link_cast_o.data = '0;
-  assign link_cast_o.v    = '0;
+
 
 `ifndef SYNTHESIS
   logic recv_r;
