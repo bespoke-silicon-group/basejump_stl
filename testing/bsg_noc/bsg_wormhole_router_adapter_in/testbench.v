@@ -30,7 +30,7 @@ module testbench();
   );
 
   logic [max_packet_width_lp-1:0] data_li;
-  logic v_li, ready_lo;
+  logic v_li, ready_and_lo;
   logic [flit_width_lp-1:0] data_lo;
   logic v_lo, ready_li;
 
@@ -45,17 +45,16 @@ module testbench();
     
     ,.packet_i(data_li)
     ,.packet_v_i(v_li)
-    ,.packet_ready_and_o(ready_lo)
+    ,.packet_ready_and_o(ready_and_lo)
 
-    ,.link_ready_and_i(ready_li)
-    ,.link_data_o(data_lo)
     ,.link_v_o(v_lo)
+    ,.link_data_o(data_lo)
+    ,.link_ready_and_i(ready_li)
   );
 
   logic [flit_width_lp-1:0] fifo_data_lo;
   logic fifo_yumi_li;
   logic fifo_v_lo;
-  logic fifo_ready_lo;
 
   bsg_fifo_1r1w_small #(
     .width_p(flit_width_lp)
@@ -66,13 +65,12 @@ module testbench();
 
     ,.v_i(v_lo)
     ,.data_i(data_lo)
-    ,.ready_param_o(fifo_ready_lo)
+    ,.ready_param_o(ready_li)
 
     ,.data_o(fifo_data_lo)
     ,.v_o(fifo_v_lo)
     ,.yumi_i(fifo_yumi_li)
   );
-  assign ready_li = fifo_ready_lo;
 
   parameter rom_addr_width_p = 10;
   logic [rom_addr_width_p-1:0] rom_addr;
@@ -94,7 +92,7 @@ module testbench();
   
     ,.v_o(v_li)
     ,.data_o(data_li)
-    ,.yumi_i(v_li & ready_lo)
+    ,.yumi_i(v_li & ready_and_lo)
 
     ,.rom_addr_o(rom_addr)
     ,.rom_data_i(rom_data)
