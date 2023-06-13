@@ -31,8 +31,21 @@ module testbench();
 
   logic [max_packet_width_lp-1:0] data_li;
   logic v_li, ready_and_lo;
-  logic [max_packet_width_lp-1:0] data_lo;
+  logic [max_packet_width_lp-1:0] packet_lo, data_lo;
   logic v_lo, ready_and_li;
+  logic [1:0] count;
+
+  bsg_counter_clear_up #(
+    .max_val_p(3)
+    ,.init_val_p(0)
+  ) counter (
+    .clk_i(clk)
+    ,.reset_i(reset)
+
+    ,.clear_i(ready_and_li * v_lo)
+    ,.up_i(v_li & ready_and_lo)
+    ,.count_o(count)
+  );
 
   bsg_wormhole_router_adapter_out #(
     .flit_width_p(flit_width_lp)
@@ -47,10 +60,24 @@ module testbench();
     ,.link_data_i(data_li[0+:flit_width_lp])
     ,.link_ready_and_o(ready_and_lo)
 
-    ,.packet_o(data_lo)
+    ,.packet_o(packet_lo)
     ,.packet_v_o(v_lo)
     ,.packet_yumi_i(v_lo & ready_and_li)
   );
+
+  wire [22:0] mask_3 = 23'b11111111111111111111111;
+  wire [22:0] mask_2 = 23'b00000001111111111111111;
+  wire [22:0] mask_1 = 23'b00000000000000011111111;
+
+  always_comb begin
+    case(count)
+      0: data_lo = '0;
+      1: data_lo = packet_lo & mask_1;
+      2: data_lo = packet_lo & mask_2;
+      3: data_lo = packet_lo & mask_3;
+      default: data_lo = '0;
+    endcase
+  end
 
   parameter rom_addr_width_p = 10;
 
