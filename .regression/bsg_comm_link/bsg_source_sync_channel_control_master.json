@@ -1,9 +1,9 @@
 {
     "design_name": "bsg_source_sync_channel_control_master",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_misc/bsg_defines.sv",
         "basejump_stl/bsg_comm_link/bsg_source_sync_channel_control_master",
-        "basejump_stl/bsg_async/bsg_launch_sync_sync.v"
+        "basejump_stl/bsg_async/bsg_launch_sync_sync.sv"
     ],
     "include_path": [
         "basejump_stl/bsg_misc/"

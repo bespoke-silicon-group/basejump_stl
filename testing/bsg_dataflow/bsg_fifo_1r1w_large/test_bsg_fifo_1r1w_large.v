@@ -2,7 +2,7 @@
 module testbench;
 
 
-`include "test_bsg_clock_params.v"
+`include "test_bsg_clock_params.sv"
 
    localparam cycle_time_lp = 20;
 

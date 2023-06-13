@@ -1,5 +1,5 @@
 //This module implements a simple adder with cin
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_adder_cin #(parameter `BSG_INV_PARAM(width_p)
                  , harden_p=1)

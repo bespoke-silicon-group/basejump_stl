@@ -1,5 +1,5 @@
 /**
- *  bsg_fpu_add_sub.v
+ *  bsg_fpu_add_sub.sv
  *
  *  @author tommy
  *
@@ -7,9 +7,9 @@
  *
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
-`include "bsg_fpu_defines.vh"
+`include "bsg_fpu_defines.svh"
 
 module bsg_fpu_add_sub
   #(parameter `BSG_INV_PARAM(e_p)     // exponent width
@@ -103,7 +103,7 @@ module bsg_fpu_add_sub
   // toolchain. It may stop the tool from inferring a timing loop in the FPU: 
   // [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is
   // shared. To prevent sharing consider applying a KEEP on the output of the
-  // operator [<path>/bsg_fpu_add_sub.v:104]. (Xilinx Vivado 2018.2)
+  // operator [<path>/bsg_fpu_add_sub.sv:104]. (Xilinx Vivado 2018.2)
   (* keep = "true" *) logic [e_p-1:0] diff_ab, diff_ba;
 
   assign diff_ab = exp_a - exp_b;

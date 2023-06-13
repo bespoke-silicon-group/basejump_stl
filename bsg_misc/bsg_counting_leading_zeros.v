@@ -1,10 +1,10 @@
 /**
- *	bsg_counting_leading_zeros.v
+ *	bsg_counting_leading_zeros.sv
  *
  *	@author Tommy Jung
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_counting_leading_zeros #(
   parameter `BSG_INV_PARAM(width_p)

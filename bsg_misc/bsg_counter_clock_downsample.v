@@ -6,7 +6,7 @@
 // one for the high duty cycle and one for the low duty cycle.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_counter_clock_downsample #(parameter `BSG_INV_PARAM(width_p ), harden_p=0)
     (input                clk_i

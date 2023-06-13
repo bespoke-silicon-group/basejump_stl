@@ -1,9 +1,9 @@
 /**
- *  testbench.v
+ *  testbench.sv
  *
  */
 
-`include "bsg_cache.vh"
+`include "bsg_cache.svh"
 
 module testbench();
   import bsg_cache_pkg::*;

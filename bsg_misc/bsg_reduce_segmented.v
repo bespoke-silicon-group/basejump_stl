@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_reduce_segmented #(parameter `BSG_INV_PARAM(segments_p )
                               ,parameter `BSG_INV_PARAM(segment_width_p )

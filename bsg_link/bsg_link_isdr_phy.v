@@ -21,7 +21,7 @@ data_o               D00                |  D01  |  D02  |  D03  |  D04  |
 
 ****************************************************************************/
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_link_isdr_phy
 

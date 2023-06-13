@@ -1,5 +1,5 @@
 package bsg_dramsim3_pkg;
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
   localparam int max_cfgs = 128;
   localparam int lg_max_cfgs = `BSG_SAFE_CLOG2(max_cfgs);

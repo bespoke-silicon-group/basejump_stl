@@ -3,7 +3,7 @@
 // This package is intended as a convenience for bringing up a chip with a bsg_link using bsg_tag.
 //
 // To bring up a chip with bsg_links, a specific reset sequence must be followed (see here:
-//   https://github.com/bespoke-silicon-group/basejump_stl/blob/master/bsg_link/bsg_link_sdr.v). In
+//   https://github.com/bespoke-silicon-group/basejump_stl/blob/master/bsg_link/bsg_link_sdr.sv). In
 //   the BSG methodology, we use bsg_tag (https://github.com/bespoke-silicon-group/blob/master/bsg_tag):
 //   a system-synchronous, decentralized broadcast configuration network. A bsg_tag_master_decentralized
 //   will snoop on tag lines corresponding to reset signals of the SDR links. Each of these tag lines will

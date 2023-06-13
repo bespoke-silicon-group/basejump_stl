@@ -7,7 +7,7 @@
 // /hard mechanisms allows for platform-specific implementations
 // to be swapped in.
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
   
 module bsg_mul_add_unsigned #(
     parameter  `BSG_INV_PARAM(width_a_p)

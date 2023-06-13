@@ -8,7 +8,7 @@
 // data_i and data_o are both synchronous to clk_i and have zero-cycle latency.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_link_source_sync_upstream_sync
 

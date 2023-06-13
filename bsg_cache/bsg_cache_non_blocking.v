@@ -1,5 +1,5 @@
 /**
- *    bsg_cache_non_blocking.v
+ *    bsg_cache_non_blocking.sv
  *
  *    Non-blocking cache.
  *
@@ -10,7 +10,7 @@
  */
 
 
-`include "bsg_cache_non_blocking.vh"
+`include "bsg_cache_non_blocking.svh"
 
 module bsg_cache_non_blocking 
   import bsg_cache_non_blocking_pkg::*;

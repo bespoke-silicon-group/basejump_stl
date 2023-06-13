@@ -1,11 +1,11 @@
 //====================================================================
-// bsg_dff_chain.v
+// bsg_dff_chain.sv
 // 04/01/2018, shawnless.xie@gmail.com
 //====================================================================
 //
 // Pass the input singal to a chainded  DFF registers
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_dff_chain #(
                  //the width of the input signal

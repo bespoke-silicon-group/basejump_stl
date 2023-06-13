@@ -1,7 +1,7 @@
 {
     "design_name": "bsg_fsb_murn_gateway",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_misc/bsg_defines.sv",
         "basejump_stl/bsg_fsb/bsg_fsb_pkg.v",
         "basejump_stl/bsg_fsb/bsg_fsb_murn_gateway.v"
     ],

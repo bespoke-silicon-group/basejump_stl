@@ -1,5 +1,5 @@
 /**
- *  bsg_fpu_classify.v
+ *  bsg_fpu_classify.sv
  *
  *  in the spirit of RISC-V FCLASS instruction.
  *
@@ -16,7 +16,7 @@
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_fpu_classify
   #(parameter `BSG_INV_PARAM(e_p)

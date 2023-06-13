@@ -1,5 +1,5 @@
-`include "bsg_tag.vh"
-`include "bsg_clk_gen.vh"
+`include "bsg_tag.svh"
+`include "bsg_clk_gen.svh"
 
 `timescale 1ps/1ps
 

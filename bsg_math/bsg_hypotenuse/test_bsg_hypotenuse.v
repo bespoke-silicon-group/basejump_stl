@@ -1,11 +1,11 @@
 
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module test_bsg_hypotenuse;
 
-//`include "test_bsg_clock_params.v"
+//`include "test_bsg_clock_params.sv"
 
    localparam cycle_time_lp = 20;
 

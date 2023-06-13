@@ -1,9 +1,9 @@
 /**
- *  bsg_mux_bitwise.v
+ *  bsg_mux_bitwise.sv
  *  @param width_p width of data
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mux_bitwise #(parameter `BSG_INV_PARAM(width_p))
 (

@@ -4,8 +4,8 @@
 //
 //
 
-`include "bsg_noc_links.vh"
-`include "bsg_wormhole_router.vh"
+`include "bsg_noc_links.svh"
+`include "bsg_wormhole_router.svh"
 
 module bsg_wormhole_router_test_node_client
 

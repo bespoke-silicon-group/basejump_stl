@@ -14,7 +14,7 @@
 //
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_compare_and_swap #(parameter `BSG_INV_PARAM(width_p)
                              , parameter t_p = width_p-1

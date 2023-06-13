@@ -16,7 +16,7 @@
 // use less area, at the cost of complexity and wire congestion.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_sbox
   #(parameter `BSG_INV_PARAM(  num_channels_p    )

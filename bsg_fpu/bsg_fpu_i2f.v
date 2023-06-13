@@ -1,5 +1,5 @@
 /**
- *  bsg_fpu_i2f.v
+ *  bsg_fpu_i2f.sv
  *
  *  @author Tommy Jung
  *
@@ -8,7 +8,7 @@
  *
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_fpu_i2f
   #(parameter `BSG_INV_PARAM(e_p)
@@ -54,7 +54,7 @@ module bsg_fpu_i2f
   // The following KEEP attribute prevents the following warning in the Xilinx
   // toolchain: [Synth 8-3936] Found unconnected internal register
   // 'chosen_abs_1_r_reg' and it is trimmed from '32' to '31'
-  // bits. [<path>/bsg_fpu_i2f.v:98] (Xilinx Vivado 2018.2)
+  // bits. [<path>/bsg_fpu_i2f.sv:98] (Xilinx Vivado 2018.2)
   (* keep = "true" *) logic [width_lp-1:0] chosen_abs;
 
   bsg_abs #(
@@ -86,7 +86,7 @@ module bsg_fpu_i2f
   // The following KEEP attribute prevents the following warning in the Xilinx
   // toolchain: [Synth 8-3936] Found unconnected internal register
   // 'chosen_abs_1_r_reg' and it is trimmed from '32' to '31'
-  // bits. [<path>/bsg_fpu_i2f.v:98] (Xilinx Vivado 2018.2)
+  // bits. [<path>/bsg_fpu_i2f.sv:98] (Xilinx Vivado 2018.2)
   (* keep = "true" *) logic [width_lp-1:0] chosen_abs_1_r;
   logic [`BSG_SAFE_CLOG2(width_lp)-1:0] shamt_1_r;
   logic sign_1_r;

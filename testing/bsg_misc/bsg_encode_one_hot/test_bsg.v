@@ -1,6 +1,6 @@
 `define WIDTH_P 2
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 /**************************** TEST RATIONALE *******************************
 1. STATE SPACE

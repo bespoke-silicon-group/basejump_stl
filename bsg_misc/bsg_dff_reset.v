@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_dff_reset #(`BSG_INV_PARAM(width_p), reset_val_p=0, harden_p=0)
    (input   clk_i

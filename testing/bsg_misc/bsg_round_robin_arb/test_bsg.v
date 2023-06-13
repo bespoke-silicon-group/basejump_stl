@@ -1,6 +1,6 @@
 `define INPUTS_P 4
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 /***************** TEST RATIONALE **********************
 1. STATE SPACE

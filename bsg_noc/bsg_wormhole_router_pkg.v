@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 package bsg_wormhole_router_pkg;
   localparam  bit [1:0][2:0][2:0] StrictX

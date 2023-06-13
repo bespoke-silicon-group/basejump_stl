@@ -1,6 +1,6 @@
-`include "bsg_defines.v"
-`include "bsg_noc_links.vh"
-`include "bsg_wormhole_router.vh"
+`include "bsg_defines.sv"
+`include "bsg_noc_links.svh"
+`include "bsg_wormhole_router.svh"
 
 module bsg_wormhole_router
      import bsg_wormhole_router_pkg::StrictXY;
@@ -41,7 +41,7 @@ module bsg_wormhole_router
   localparam input_dirs_lp  = dirs_lp;
   localparam output_dirs_lp = dirs_lp;
 
-  // FIXME: move to bsg_wormhole_router.vh
+  // FIXME: move to bsg_wormhole_router.svh
   `declare_bsg_wormhole_router_header_s(cord_markers_pos_p[dims_p], len_width_p, bsg_wormhole_router_header_s);
 
 `ifndef SYNTHESIS

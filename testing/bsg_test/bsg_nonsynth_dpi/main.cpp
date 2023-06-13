@@ -22,7 +22,7 @@
 // bsg_timekeeper::next(). See the relevant files for more information
 // about clock operation
 
-// Verilator-Generated Header. It is called Vtop.h because top.v is
+// Verilator-Generated Header. It is called Vtop.h because top.sv is
 // the top-level verilog file.
 #include <Vtop.h>
 

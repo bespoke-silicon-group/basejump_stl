@@ -41,7 +41,7 @@
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_binary_plus_one_to_gray #(parameter `BSG_INV_PARAM(width_p ))
    (input [width_p-1:0] binary_i

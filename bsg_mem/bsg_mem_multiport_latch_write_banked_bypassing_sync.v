@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_multiport_latch_write_banked_bypassing_sync
   #(`BSG_INV_PARAM(els_p)

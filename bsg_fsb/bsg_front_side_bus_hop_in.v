@@ -25,7 +25,7 @@
 // Let the hardware designer beware.
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_front_side_bus_hop_in
 

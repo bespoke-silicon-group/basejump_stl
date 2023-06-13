@@ -1,12 +1,12 @@
 /**
- *    bsg_cache_to_test_dram_rx_reorder.v
+ *    bsg_cache_to_test_dram_rx_reorder.sv
  *
  *    This module reorders dram data arriving out of order, and serializes them before feeding into vcache.
  *
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_cache_to_test_dram_rx_reorder
   #(parameter `BSG_INV_PARAM(data_width_p)

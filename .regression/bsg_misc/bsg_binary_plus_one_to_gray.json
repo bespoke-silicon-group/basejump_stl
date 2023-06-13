@@ -1,9 +1,9 @@
 {
     "design_name": "bsg_binary_plus_one_to_gray",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_binary_plus_one_to_gray.v",
-        "basejump_stl/bsg_misc/bsg_scan.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_binary_plus_one_to_gray.sv",
+        "basejump_stl/bsg_misc/bsg_scan.sv"
     ],
     "run_config": [
         {

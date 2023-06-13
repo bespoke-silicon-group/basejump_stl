@@ -31,10 +31,10 @@
 //
 // Most important feature of this IO is least latency.
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 `ifndef DEFINITIONS_V
-`include "definitions.v"
+`include "definitions.sv"
 `endif
 
 module bsg_mesosync_link

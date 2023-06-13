@@ -1,8 +1,8 @@
 /**
- *  bsg_serial_in_parallel_out_passthrough.v
+ *  bsg_serial_in_parallel_out_passthrough.sv
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_serial_in_parallel_out_passthrough
  #(parameter `BSG_INV_PARAM(width_p)

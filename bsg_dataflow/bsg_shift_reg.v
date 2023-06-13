@@ -4,7 +4,7 @@
 //
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_shift_reg #(parameter `BSG_INV_PARAM(width_p )
                        , parameter `BSG_INV_PARAM(stages_p )

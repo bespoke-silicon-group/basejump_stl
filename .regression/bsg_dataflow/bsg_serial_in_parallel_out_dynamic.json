@@ -1,15 +1,15 @@
 {
     "design_name": "bsg_serial_in_parallel_out_dynamic",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_dataflow/bsg_serial_in_parallel_out_dynamic.v",
-        "basejump_stl/bsg_misc/bsg_counter_clear_up.v",
-        "basejump_stl/bsg_misc/bsg_dff_reset_en.v",
-        "basejump_stl/bsg_misc/bsg_decode_with_v.v",
-        "basejump_stl/bsg_misc/bsg_decode.v",
-        "basejump_stl/bsg_dataflow/bsg_two_fifo.v",
-        "basejump_stl/bsg_mem/bsg_mem_1r1w.v",
-        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_dataflow/bsg_serial_in_parallel_out_dynamic.sv",
+        "basejump_stl/bsg_misc/bsg_counter_clear_up.sv",
+        "basejump_stl/bsg_misc/bsg_dff_reset_en.sv",
+        "basejump_stl/bsg_misc/bsg_decode_with_v.sv",
+        "basejump_stl/bsg_misc/bsg_decode.sv",
+        "basejump_stl/bsg_dataflow/bsg_two_fifo.sv",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w.sv",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.sv"
     ],
     "run_config": [
         {

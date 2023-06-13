@@ -1,5 +1,5 @@
 /**
- *  bsg_test_node_master.v
+ *  bsg_test_node_master.sv
  */
 
 `include "bsg_manycore_packet.vh"

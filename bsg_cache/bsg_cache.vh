@@ -1,4 +1,4 @@
- // Enum values in the structs come from bsg_cache_pkg.v
+ // Enum values in the structs come from bsg_cache_pkg.sv
 
 `ifndef BSG_CACHE_VH
 `define BSG_CACHE_VH

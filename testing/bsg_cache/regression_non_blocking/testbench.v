@@ -1,8 +1,8 @@
 /**
- *  testbench.v
+ *  testbench.sv
  */
 
-`include "bsg_cache_non_blocking.vh"
+`include "bsg_cache_non_blocking.svh"
 
 module testbench();
   import bsg_cache_non_blocking_pkg::*;

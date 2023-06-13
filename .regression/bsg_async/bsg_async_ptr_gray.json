@@ -1,9 +1,9 @@
 {
     "design_name": "bsg_async_ptr_gray",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_async/bsg_async_ptr_gray.v",
-        "basejump_stl/bsg_async/bsg_launch_sync_sync.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_async/bsg_async_ptr_gray.sv",
+        "basejump_stl/bsg_async/bsg_launch_sync_sync.sv"
     ],
     "run_config": [
         {

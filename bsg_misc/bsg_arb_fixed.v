@@ -3,7 +3,7 @@
 //
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_arb_fixed #(parameter `BSG_INV_PARAM(    inputs_p )
                        , parameter `BSG_INV_PARAM(lo_to_hi_p ))

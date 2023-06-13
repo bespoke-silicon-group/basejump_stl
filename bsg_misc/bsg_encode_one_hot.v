@@ -5,7 +5,7 @@
 // 1000     --> 3, v=1
 // 0000     --> 0, v=0
 // O*1O*1O* --> undefined
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 	
 // we implement at this as a parallel prefix computation

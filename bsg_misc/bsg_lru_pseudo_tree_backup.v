@@ -1,5 +1,5 @@
 /**
- *    bsg_lru_pseudo_tree_backup.v
+ *    bsg_lru_pseudo_tree_backup.sv
  *
  *    tree pseudo LRU backup finder.
  *
@@ -41,7 +41,7 @@
 
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_lru_pseudo_tree_backup
   #(parameter `BSG_INV_PARAM(ways_p)

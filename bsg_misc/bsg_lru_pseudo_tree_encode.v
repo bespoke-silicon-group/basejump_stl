@@ -1,5 +1,5 @@
 /**
- *    bsg_lru_pseudo_tree_encode.v
+ *    bsg_lru_pseudo_tree_encode.sv
  *
  *    Pseudo-Tree-LRU encode unit.
  *    Given the LRU bits, traverses the pseudo-LRU tree and returns the
@@ -26,7 +26,7 @@
  *
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_lru_pseudo_tree_encode
   #(parameter `BSG_INV_PARAM(ways_p)

@@ -32,7 +32,7 @@
 // fields correctly, then set the data to all 1's.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_tag_trace_replay
 
@@ -63,7 +63,7 @@ module bsg_tag_trace_replay
     , output error_o
     ) ;
 
-    `include "bsg_tag.vh"
+    `include "bsg_tag.svh"
 
     // The trace ring width is the size of the rom data width
     // minus the 4-bits for the trace-replay command.

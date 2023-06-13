@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_nor3",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_nor3.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_nor3.sv"
     ],
     "run_config": [
         {

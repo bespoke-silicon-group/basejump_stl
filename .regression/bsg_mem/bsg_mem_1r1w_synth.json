@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_mem_1r1w_synth",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.sv"
     ],
     "run_config": [
         {

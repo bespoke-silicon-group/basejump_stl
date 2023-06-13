@@ -1,5 +1,5 @@
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 `define bsg_dff_macro(bits,strength)                      \
 if (harden_p && (width_p==bits) && (strength_p==strength)) \

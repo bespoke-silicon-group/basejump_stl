@@ -7,9 +7,9 @@
  *    Caution: large fanouts may struggle with timing
  */
 
-`include "bsg_defines.v"
-`include "bsg_noc_links.vh"
-`include "bsg_cache.vh"
+`include "bsg_defines.sv"
+`include "bsg_noc_links.svh"
+`include "bsg_cache.svh"
 
 module bsg_wormhole_to_cache_dma_fanout
  import bsg_noc_pkg::*;

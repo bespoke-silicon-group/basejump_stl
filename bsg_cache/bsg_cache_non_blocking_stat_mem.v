@@ -1,5 +1,5 @@
 /**
- *    bsg_cache_non_blocking_stat_mem.v
+ *    bsg_cache_non_blocking_stat_mem.sv
  *
  *    stat_mem and peripheral circuits
  *
@@ -8,7 +8,7 @@
  */
 
 
-`include "bsg_cache_non_blocking.vh"
+`include "bsg_cache_non_blocking.svh"
 
 module bsg_cache_non_blocking_stat_mem
   import bsg_cache_non_blocking_pkg::*;

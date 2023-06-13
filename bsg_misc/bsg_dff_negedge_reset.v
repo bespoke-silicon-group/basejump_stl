@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_dff_negedge_reset #(`BSG_INV_PARAM(width_p), harden_p=0)
    (input   clk_i

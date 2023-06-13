@@ -3,7 +3,7 @@
 // It also supports a ready_i signal which declares when it can
 // assert token_o. For normal use it could be set to one.
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_credit_to_token #( parameter `BSG_INV_PARAM(decimation_p )
                             , parameter `BSG_INV_PARAM(max_val_p    )

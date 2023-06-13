@@ -1,5 +1,5 @@
 /**
- *  bsg_cache_buffer_queue.v
+ *  bsg_cache_buffer_queue.sv
  *
  *  Two element buffer queue.
  *
@@ -11,7 +11,7 @@
  *
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_cache_buffer_queue
   #(parameter `BSG_INV_PARAM(width_p))

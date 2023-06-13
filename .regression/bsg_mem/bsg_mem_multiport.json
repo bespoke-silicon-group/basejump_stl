@@ -4,8 +4,8 @@
         "basejump_stl/bsg_misc/"
     ],
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_mem/bsg_mem_multiport.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_mem/bsg_mem_multiport.sv"
     ],
     "run_config": [
         {

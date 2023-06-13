@@ -1,10 +1,10 @@
 /**
- *	bsg_fpu_preprocess.v
+ *	bsg_fpu_preprocess.sv
  *
  *	@author Tommy Jung
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_fpu_preprocess
   #(parameter `BSG_INV_PARAM(e_p )

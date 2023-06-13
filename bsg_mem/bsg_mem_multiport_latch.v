@@ -1,5 +1,5 @@
 /**
- *    bsg_mem_multiport_latch.v
+ *    bsg_mem_multiport_latch.sv
  *
  *    @author tommy
  *
@@ -17,7 +17,7 @@
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 
 module bsg_mem_multiport_latch

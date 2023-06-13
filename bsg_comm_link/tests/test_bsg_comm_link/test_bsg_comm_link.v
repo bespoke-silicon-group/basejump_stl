@@ -1,11 +1,11 @@
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
-`include "test_assembler_defines.v"
+`include "test_assembler_defines.sv"
 
 module test_bsg_comm_link;
 
-`include "test_bsg_clock_params.v"
+`include "test_bsg_clock_params.sv"
 
 
    // number of bits width of a channel

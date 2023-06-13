@@ -1,12 +1,12 @@
 {
     "design_name": "bsg_locking_arb_fixed",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_locking_arb_fixed.v",
-        "basejump_stl/bsg_misc/bsg_dff_reset_en.v",
-        "basejump_stl/bsg_misc/bsg_arb_fixed.v",
-        "basejump_stl/bsg_misc/bsg_priority_encode_one_hot_out.v",
-        "basejump_stl/bsg_misc/bsg_scan.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_locking_arb_fixed.sv",
+        "basejump_stl/bsg_misc/bsg_dff_reset_en.sv",
+        "basejump_stl/bsg_misc/bsg_arb_fixed.sv",
+        "basejump_stl/bsg_misc/bsg_priority_encode_one_hot_out.sv",
+        "basejump_stl/bsg_misc/bsg_scan.sv"
     ],
     "run_config": [
         {

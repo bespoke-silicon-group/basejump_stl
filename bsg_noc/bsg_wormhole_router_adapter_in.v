@@ -1,13 +1,13 @@
 /**
- *  bsg_wormhole_router_adapter_in.v
+ *  bsg_wormhole_router_adapter_in.sv
  *
  *  packet = {payload, length, cord}
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
-`include "bsg_noc_links.vh"
-`include "bsg_wormhole_router.vh"
+`include "bsg_noc_links.svh"
+`include "bsg_wormhole_router.svh"
 
 module bsg_wormhole_router_adapter_in
   #(parameter `BSG_INV_PARAM(max_payload_width_p )

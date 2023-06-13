@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 // MBT 11/26/2014,      bsg_fsb_node_trace_replay
 // Shaolin 01/06/2018,  generalized from the bsg_trace_replay

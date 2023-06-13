@@ -1,6 +1,6 @@
 
 // PP_i[210] = { S D N }
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mul_booth_4_block #(
                         S_above_vec_p  = 4'b0000

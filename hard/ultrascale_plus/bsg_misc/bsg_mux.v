@@ -1,7 +1,7 @@
 // Xilinx recommends for 3/4:1 clock muxes use 2 2:1 muxing instances
 // https://docs.xilinx.com/r/2021.1-English/ug1387-acap-hardware-ip-platform-dev-methodology/Clock-Multiplexing
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 // macro datasheet: https://docs.xilinx.com/r/en-US/ug1344-versal-architecture-libraries/BUFGMUX_CTRL
 `define bsg_macro_clk_mux(inst, data_o, data_i_1, data_i_0, sel_i) \

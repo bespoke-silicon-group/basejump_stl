@@ -14,7 +14,7 @@
 //   so it is legal for the user to assert both clear_i and up_i simultaneous and the effects of both to be reflected.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_counter_clear_up_one_hot
   #(parameter `BSG_INV_PARAM(max_val_p), width_lp=max_val_p+1, init_val_p=(width_lp) ' (1))

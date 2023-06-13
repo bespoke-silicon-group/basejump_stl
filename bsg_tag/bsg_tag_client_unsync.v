@@ -23,7 +23,7 @@
 // 2. Deassert reset on the receive side module.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_tag_client_unsync
   import bsg_tag_pkg::bsg_tag_s;

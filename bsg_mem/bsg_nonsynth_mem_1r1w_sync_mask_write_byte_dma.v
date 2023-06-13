@@ -1,11 +1,11 @@
 /**
- *    bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma.v
+ *    bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma.sv
  *
  * If a read and write are issued to the same address the new value is read back.
  *
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma
   #(parameter `BSG_INV_PARAM(width_p)

@@ -1,5 +1,5 @@
 //
-// bsg_wormhole_concentrator_in.v
+// bsg_wormhole_concentrator_in.sv
 // 
 // 08/2019
 //
@@ -9,16 +9,16 @@
 // From implementation perspective this is a simplified version bsg_wormhole_router.
 // Wormhole_router relies on 2D routing_matrix, while wormhole_concentrator has fixed 1-to-n 
 // and n-to-1 routing. This concentrator reuses most of the building blocks of wormhole_router, 
-// concentrator header struct is defined in bsg_wormhole_router.vh.
+// concentrator header struct is defined in bsg_wormhole_router.svh.
 //
 // This concentrator has 1-cycle delay from input wormhole link(s) to output wormhole link(s).
 // It has zero bubble between wormhole packets.
 //
 //
 
-`include "bsg_defines.v"
-`include "bsg_noc_links.vh"
-`include "bsg_wormhole_router.vh"
+`include "bsg_defines.sv"
+`include "bsg_noc_links.svh"
+`include "bsg_wormhole_router.svh"
 
 module bsg_wormhole_concentrator_in
 

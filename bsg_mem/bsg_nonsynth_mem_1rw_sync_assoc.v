@@ -1,5 +1,5 @@
 /**
- *  bsg_nonsynth_mem_1rw_sync_assoc.v
+ *  bsg_nonsynth_mem_1rw_sync_assoc.sv
  *
  *  bsg_mem_1rw_sync implementation using associative array.
  *
@@ -8,7 +8,7 @@
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_mem_1rw_sync_assoc
   #(parameter `BSG_INV_PARAM(width_p)

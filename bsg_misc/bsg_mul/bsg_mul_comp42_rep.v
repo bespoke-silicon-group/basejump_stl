@@ -1,6 +1,6 @@
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mul_comp42_rep #(parameter blocks_p=1, harden_p=0)
    // we do this so that it is easy to combine vectors of results from blocks

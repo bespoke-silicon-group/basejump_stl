@@ -1,5 +1,5 @@
 /*
-* bsg_mem_1rw_sync_mask_write_bit.v
+* bsg_mem_1rw_sync_mask_write_bit.sv
 *
 * distributed synchronous 1-port ram for xilinx ultrascale or ultrascale plus FPGA
 * Write mode: No-change | Read mode: No-change
@@ -13,7 +13,7 @@
 *
 */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_1rw_sync_mask_write_bit #(
   parameter `BSG_INV_PARAM(width_p )

@@ -1,7 +1,7 @@
 // note XOR mask starts at bit 0; which may
 // be shifted from mathematician's notation.
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_lfsr #(parameter `BSG_INV_PARAM(width_p)
                   , init_val_p = 1 // an initial value of zero is typically the null point for LFSR's.

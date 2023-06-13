@@ -1,5 +1,5 @@
 /**
- *	bsg_fpu_clz.v
+ *	bsg_fpu_clz.sv
  *	
  *	@author tommy
  *
@@ -19,7 +19,7 @@
  *
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_fpu_clz
   #(parameter `BSG_INV_PARAM(width_p)

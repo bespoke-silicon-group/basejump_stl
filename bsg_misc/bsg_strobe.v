@@ -28,7 +28,7 @@
 // FIXME (bug found by Yichao Wu): does not handle case of width_p=1
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_strobe #(`BSG_INV_PARAM(width_p)
                     ,harden_p=0)

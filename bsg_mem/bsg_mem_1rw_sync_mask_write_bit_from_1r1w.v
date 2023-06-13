@@ -22,7 +22,7 @@
 //        updated buffer is wired out
 //      Otherwise expect read data in next cycle
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
   parameter    `BSG_INV_PARAM(width_p)

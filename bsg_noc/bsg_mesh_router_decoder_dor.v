@@ -1,12 +1,12 @@
 /**
- *    bsg_mesh_router_decoder_dor.v
+ *    bsg_mesh_router_decoder_dor.sv
  *
  *    Dimension ordered routing decoder
  *    
  *    depopulated ruche router.
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mesh_router_decoder_dor
   import bsg_noc_pkg::*;

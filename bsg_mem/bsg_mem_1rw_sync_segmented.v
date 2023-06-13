@@ -1,5 +1,5 @@
 /*
- *  bsg_mem_1rw_sync_segmented.v
+ *  bsg_mem_1rw_sync_segmented.sv
  *
  *  This module has the same interface/functionality as bsg_mem_1rw_sync
     when num_segments_p = 1. When num_segments_p > 1, it has the similar
@@ -24,7 +24,7 @@
   // This may make sense in an FPGA environment, but we leave this to future work.
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_1rw_sync_segmented
   #(parameter `BSG_INV_PARAM(width_p)

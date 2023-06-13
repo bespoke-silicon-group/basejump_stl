@@ -12,7 +12,7 @@
 `timescale 1ps/1ps
 `endif
 
-`include "bsg_clk_gen.vh"
+`include "bsg_clk_gen.svh"
 
 module bsg_clk_gen_osc_v3
  import bsg_tag_pkg::*;

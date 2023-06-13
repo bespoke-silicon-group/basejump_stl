@@ -1,11 +1,11 @@
 /**
- *    bsg_crossbar_control_basic_o_by_i.v
+ *    bsg_crossbar_control_basic_o_by_i.sv
  *
  *    This module generates the control signals for bsg_router_crossbar_o_by_i.
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_crossbar_control_basic_o_by_i
   #(parameter `BSG_INV_PARAM(i_els_p)

@@ -1,10 +1,10 @@
 /**
- *  bsg_mul_array_row.v
+ *  bsg_mul_array_row.sv
  *
  *  @author Tommy Jung
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mul_array_row #(parameter `BSG_INV_PARAM(width_p)
                           , parameter `BSG_INV_PARAM(row_idx_p)

@@ -3,7 +3,7 @@
 // Synchronous 1-port ram.
 // Only one read or one write may be done per cycle.
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_1rw_sync_mask_write_bit #(
   parameter `BSG_INV_PARAM(width_p)

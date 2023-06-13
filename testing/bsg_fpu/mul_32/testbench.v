@@ -1,5 +1,5 @@
 /**
- *  testbench.v
+ *  testbench.sv
  *  
  *  mul_32 test
  *

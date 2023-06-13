@@ -1,12 +1,12 @@
 /**
- *    bsg_mem_multiport_latch_write_banked_bypassing.v
+ *    bsg_mem_multiport_latch_write_banked_bypassing.sv
  *
  *    Data latches are transparent when the clock is low, and the write data can be bypassed to the read outputs.
  *    Write enable signal needs to arrive before the negedge of the clock. 
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 
 module bsg_mem_multiport_latch_write_banked_bypassing

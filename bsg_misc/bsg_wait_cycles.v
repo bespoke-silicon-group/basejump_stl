@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_wait_cycles #(parameter `BSG_INV_PARAM(cycles_p))
    (

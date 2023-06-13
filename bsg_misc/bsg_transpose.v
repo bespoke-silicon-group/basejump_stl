@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_transpose #(`BSG_INV_PARAM(width_p)
 		       ,`BSG_INV_PARAM(els_p)

@@ -23,7 +23,7 @@
  *    be used over time.
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_id_pool_dealloc_alloc_one_hot
   #(parameter `BSG_INV_PARAM(els_p))

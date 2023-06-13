@@ -1,15 +1,15 @@
 /**
- *  bsg_wormhole_router_adapter.v
+ *  bsg_wormhole_router_adapter.sv
  *
  *  This is a full duplex link to wormhole
  *
  *  packet = {payload, length, cord}
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
-`include "bsg_noc_links.vh"
-`include "bsg_wormhole_router.vh"
+`include "bsg_noc_links.svh"
+`include "bsg_wormhole_router.svh"
 
 module bsg_wormhole_router_adapter
   #(parameter `BSG_INV_PARAM(max_payload_width_p )

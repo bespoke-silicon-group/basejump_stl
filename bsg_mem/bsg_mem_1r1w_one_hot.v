@@ -6,7 +6,7 @@
 // reads are asynchronous
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_1r1w_one_hot #(parameter `BSG_INV_PARAM(width_p)
                             , parameter `BSG_INV_PARAM(els_p)

@@ -19,7 +19,7 @@
 // it is typically used for constructing adders, multipliers, carry predictors, etc.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_pg_tree
 #(parameter `BSG_INV_PARAM(input_width_p)

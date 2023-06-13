@@ -1,10 +1,10 @@
 /**
- *    bsg_cache_to_test_dram_rx.v
+ *    bsg_cache_to_test_dram_rx.sv
  *
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_cache_to_test_dram_rx
   #(parameter `BSG_INV_PARAM(num_cache_p)

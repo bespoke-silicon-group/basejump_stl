@@ -1,11 +1,11 @@
 /**
- *    bsg_router_crossbar_o_by_i.v
+ *    bsg_router_crossbar_o_by_i.sv
  *
  *    This module connects N inputs to M outputs with a crossbar network.
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_router_crossbar_o_by_i
   #(parameter i_els_p=2

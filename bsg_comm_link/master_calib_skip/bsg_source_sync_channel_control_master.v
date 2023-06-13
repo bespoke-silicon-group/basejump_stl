@@ -14,7 +14,7 @@
 //
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module  bsg_source_sync_channel_control_master #(parameter `BSG_INV_PARAM(  width_p  )
                                                  , parameter lg_token_width_p = 6

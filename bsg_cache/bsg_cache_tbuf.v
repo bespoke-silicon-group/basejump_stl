@@ -1,5 +1,5 @@
 /**
- *  bsg_cache_tbuf.v
+ *  bsg_cache_tbuf.sv
  *
  *  track (write) buffer.
  *
@@ -12,8 +12,8 @@
  *  @author tommy
  */
 
-`include "bsg_defines.v"
-`include "bsg_cache.vh"
+`include "bsg_defines.sv"
+`include "bsg_cache.svh"
 
 module bsg_cache_tbuf
   import bsg_cache_pkg::*;

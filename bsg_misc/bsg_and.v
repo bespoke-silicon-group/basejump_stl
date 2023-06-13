@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_and #(parameter `BSG_INV_PARAM(width_p)
                  , harden_p=1)

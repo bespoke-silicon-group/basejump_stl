@@ -1,5 +1,5 @@
 /**
- *    bsg_mesh_router.v
+ *    bsg_mesh_router.sv
  *
  *
  *    dims_p      network
@@ -16,7 +16,7 @@
  *      - 2-D mesh + half ruche x
  */  
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 
 module bsg_mesh_router

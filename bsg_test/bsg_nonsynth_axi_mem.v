@@ -1,8 +1,8 @@
 /**
- *  bsg_nonsynth_axi_mem.v
+ *  bsg_nonsynth_axi_mem.sv
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_axi_mem
   import bsg_axi_pkg::*;

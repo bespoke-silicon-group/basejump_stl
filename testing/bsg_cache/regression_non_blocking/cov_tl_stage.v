@@ -1,5 +1,5 @@
 
-`include "bsg_cache_non_blocking.vh"
+`include "bsg_cache_non_blocking.svh"
 
 module cov_tl_stage
   import bsg_cache_non_blocking_pkg::*;

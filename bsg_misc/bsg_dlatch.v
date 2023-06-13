@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_dlatch #(parameter `BSG_INV_PARAM(width_p)
                    ,parameter i_know_this_is_a_bad_idea_p=0

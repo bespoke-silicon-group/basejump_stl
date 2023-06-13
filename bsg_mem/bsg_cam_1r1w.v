@@ -15,7 +15,7 @@
  *     of the data. If you find that functionality useful, let us know =)
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_cam_1r1w
  #(parameter `BSG_INV_PARAM(els_p)

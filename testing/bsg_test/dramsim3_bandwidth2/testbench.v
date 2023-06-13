@@ -1,6 +1,6 @@
 `include "bsg_nonsynth_dramsim3.svh"
 
-`include "bsg_cache.vh"
+`include "bsg_cache.svh"
 
 `define dram_pkg bsg_dramsim3_hbm2_4gb_x128_pkg
 

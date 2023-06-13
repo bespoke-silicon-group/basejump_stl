@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module test_case #(parameter width_p, parameter banks_p) (input clk_i, input go_i, output finish_o);
    

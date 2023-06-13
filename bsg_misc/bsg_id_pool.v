@@ -1,5 +1,5 @@
 /**
- *    bsg_id_pool.v
+ *    bsg_id_pool.sv
  *
  *    This module maintains of a pool of IDs, and supports allocation and deallocation of these IDs.
  *
@@ -7,7 +7,7 @@
 
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_id_pool
   #(parameter `BSG_INV_PARAM(els_p)

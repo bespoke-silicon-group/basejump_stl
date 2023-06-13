@@ -3,7 +3,7 @@
 // note: this does a reduction
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_reduce #(parameter `BSG_INV_PARAM(width_p )
                   , parameter xor_p = 0

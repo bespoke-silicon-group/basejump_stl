@@ -4,8 +4,8 @@
 //
 //
 
-`include "bsg_noc_links.vh"
-`include "bsg_wormhole_router.vh"
+`include "bsg_noc_links.svh"
+`include "bsg_wormhole_router.svh"
 
 `define declare_bsg_wormhole_router_test_node_s(cord_width, load_width, header_struct_name, in_struct_name) \
   typedef struct packed {                                                      \

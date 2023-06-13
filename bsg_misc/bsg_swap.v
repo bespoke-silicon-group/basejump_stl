@@ -1,10 +1,10 @@
 /**
- *  bsg_swap.v
+ *  bsg_swap.sv
  *
  *  @author tommy
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_swap
   #(parameter `BSG_INV_PARAM(width_p))

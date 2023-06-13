@@ -59,7 +59,7 @@
 //    implementations of virtual fifos
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_channel_tunnel #(parameter width_p        = 1
                             , parameter `BSG_INV_PARAM(num_in_p)

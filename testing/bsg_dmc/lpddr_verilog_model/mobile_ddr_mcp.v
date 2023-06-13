@@ -1,8 +1,8 @@
 /****************************************************************************************
 *
-*    File Name:  mobile_ddr_mcp.v
+*    File Name:  mobile_ddr_mcp.sv
 *
-* Dependencies:  mobile_ddr.v, mobile_ddr_parameters.vh
+* Dependencies:  mobile_ddr.sv, mobile_ddr_parameters.vh
 *
 *  Description:  Micron MOBILE DDR SDRAM multi-chip package model
 *
@@ -48,15 +48,15 @@ module mobile_ddr_mcp (
 );
 
     `ifdef den128Mb
-        `include "128Mb_mobile_ddr_parameters.vh"
+        `include "128Mb_mobile_ddr_parameters.svh"
     `elsif den256Mb
-        `include "256Mb_mobile_ddr_parameters.vh"
+        `include "256Mb_mobile_ddr_parameters.svh"
     `elsif den512Mb
-        `include "512Mb_mobile_ddr_parameters.vh"
+        `include "512Mb_mobile_ddr_parameters.svh"
     `elsif den1024Mb
-        `include "1024Mb_mobile_ddr_parameters.vh"
+        `include "1024Mb_mobile_ddr_parameters.svh"
     `elsif den2048Mb
-        `include "2048Mb_mobile_ddr_parameters.vh"
+        `include "2048Mb_mobile_ddr_parameters.svh"
     `else
         // NOTE: Intentionally cause a compile fail here to force the users
         //       to select the correct component density before continuing

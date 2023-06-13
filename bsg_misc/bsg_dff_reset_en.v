@@ -1,8 +1,8 @@
 /**
- *  bsg_dff_reset_en.v
+ *  bsg_dff_reset_en.sv
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_dff_reset_en
   #(parameter `BSG_INV_PARAM(width_p)

@@ -39,7 +39,7 @@
 // core_*: signals synchronous to core_clk_i
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_link_source_sync_downstream 
 

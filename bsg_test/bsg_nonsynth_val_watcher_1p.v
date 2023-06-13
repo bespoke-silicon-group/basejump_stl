@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_val_watcher_1p #(string_p = "unknown", trigger_val_p = -1, val_size_p = 32, one_time_trigger_p = 1'b1, p1_width_p=32, extra_p = 1)
    (input clk_i

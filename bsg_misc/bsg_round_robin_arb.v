@@ -1,5 +1,5 @@
 // Round robin arbitration unit
-// NOTE: generally prefer https://github.com/bespoke-silicon-group/basejump_stl/blob/master/bsg_misc/bsg_arb_round_robin.v to this module.
+// NOTE: generally prefer https://github.com/bespoke-silicon-group/basejump_stl/blob/master/bsg_misc/bsg_arb_round_robin.sv to this module.
 // Automatically generated using bsg_round_robin_arb.py
 // DO NOT MODIFY
 
@@ -13,7 +13,7 @@
 //                in some typical use cases, grants_en_i comes from a downstream consumer to indicate readiness;
 //                this can be used with v_o to implement ready/valid protocol at both producer (fed into yumi_i) and consumer
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 
 module bsg_round_robin_arb #(parameter `BSG_INV_PARAM(inputs_p)

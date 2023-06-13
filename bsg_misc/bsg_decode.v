@@ -1,10 +1,10 @@
 /**
- *  bsg_decode.v
+ *  bsg_decode.sv
  *
  *  https://www.youtube.com/watch?v=RvnkAtWcKYg
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_decode #(parameter `BSG_INV_PARAM(num_out_p))
 (

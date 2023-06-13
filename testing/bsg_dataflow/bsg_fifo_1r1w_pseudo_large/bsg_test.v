@@ -3,7 +3,7 @@ module testbench;
    localparam test_early_yumi_lp = 1;
    
 
-`include "test_bsg_clock_params.v"
+`include "test_bsg_clock_params.sv"
 
    localparam cycle_time_lp = 20;
 

@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_circular_ptr",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_circular_ptr.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_circular_ptr.sv"
     ],
     "run_config": [
         {

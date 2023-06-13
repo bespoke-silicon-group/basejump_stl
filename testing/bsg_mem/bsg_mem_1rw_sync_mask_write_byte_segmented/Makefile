@@ -1,10 +1,10 @@
-# Edited to test bsg_mem_1rw_sync_mask_write_bit_segmented.v
+# Edited to test bsg_mem_1rw_sync_mask_write_bit_segmented.sv
 
 TOP = ../../..
 
 ########################### SIMULATION PARAMETERS ##########################
 # place the parameters you want to scan here.
-BSG_TESTME_FILES    =   bsg_mem_1rw_sync_mask_write_byte_segmented.v
+BSG_TESTME_FILES    =   bsg_mem_1rw_sync_mask_write_byte_segmented.sv
 BSG_TESTME_DIR      =   
 BSG_MISC_FILES      =   
 BSG_ASYNC_FILES     = 
@@ -15,7 +15,7 @@ BSG_GUTS_FILES      =
 
 BSG_TEST_FILES      = 
                        
-TEST_MAIN   = test_bsg.v
+TEST_MAIN   = test_bsg.sv
 TEST_MODULE = test_bsg
 
 ALL_FILES = $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x)) \

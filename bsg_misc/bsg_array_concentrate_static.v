@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_array_concentrate_static 
   #(parameter `BSG_INV_PARAM(pattern_els_p)

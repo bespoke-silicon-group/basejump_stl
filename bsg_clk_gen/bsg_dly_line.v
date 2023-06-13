@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 `ifndef BSG_NO_TIMESCALE
 `timescale 1ps/1ps
@@ -8,12 +8,12 @@
 // A TSMC 40nm hardened implementation of this module
 // can be found at:
 //
-//  basejump_stl/hard/tsmc_40/bsg_clk_gen/bsg_dly_line.v
+//  basejump_stl/hard/tsmc_40/bsg_clk_gen/bsg_dly_line.sv
 //
 // This module should be replaced by the hardened version
 // when being synthesized.
 
-`include "bsg_clk_gen.vh"
+`include "bsg_clk_gen.svh"
 
 module bsg_dly_line
   import bsg_tag_pkg::bsg_tag_s;

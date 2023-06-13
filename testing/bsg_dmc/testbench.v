@@ -1,7 +1,7 @@
 `define WRITE 3'b000
 `define READ  3'b001
 
-`include "bsg_dmc.vh"
+`include "bsg_dmc.svh"
 
 module testbench
   import bsg_tag_pkg::*;
@@ -110,7 +110,7 @@ module testbench
 
   integer read_transactions;
 
-`include "tasks.v"
+`include "tasks.sv"
 
   initial begin
     dmc_p.trefi = 1023;

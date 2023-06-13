@@ -9,7 +9,7 @@ module test_bsg
   parameter reset_cycles_hi_p=5
   );
 
-//`include "test_bsg_clock_params.v"
+//`include "test_bsg_clock_params.sv"
 
    wire clk;
    wire reset;

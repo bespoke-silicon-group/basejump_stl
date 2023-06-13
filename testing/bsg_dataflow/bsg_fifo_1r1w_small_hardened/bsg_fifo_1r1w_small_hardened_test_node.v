@@ -4,7 +4,7 @@
 //
 //
 
-`include "bsg_noc_links.vh"
+`include "bsg_noc_links.svh"
 
 module bsg_fifo_1r1w_small_hardened_test_node
 

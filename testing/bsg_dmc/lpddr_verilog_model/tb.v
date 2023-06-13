@@ -1,10 +1,10 @@
 /****************************************************************************************
 *
-*    File Name:  tb.v
+*    File Name:  tb.sv
 *      Version:  6.00
 *        Model:  BUS Functional
 *
-* Dependencies:  mobile_ddr.v, mobile_ddr_parameters.vh, subtest.vh
+* Dependencies:  mobile_ddr.sv, mobile_ddr_parameters.vh, subtest.svh
 *
 *  Description:  Micron SDRAM DDR (Double Data Rate) test bench
 *
@@ -59,7 +59,7 @@
 * 6.0  DMR    12/03/2004  -new density
 * 6.01 BAAB   05/18/2006  -assimilating into Minneapolis site organization
 * 3.11 BAS    10/18/2006  -added read_verify
-* 3.35 bas    02/28/07    -mobile_ddr.v file  uses tAC correctly to calculate strobe/data launch
+* 3.35 bas    02/28/07    -mobile_ddr.sv file  uses tAC correctly to calculate strobe/data launch
 * 3.36 bas    03/05/07    -fixed error messages for different banks interrupting 
                              reads/writes w/autoprecharge
 * 3.37 bas    03/21/07    -added T47M part for 512Mb in parameters file,
@@ -89,15 +89,15 @@
 module tb;
 
 `ifdef den128Mb
-    `include "128Mb_mobile_ddr_parameters.vh"
+    `include "128Mb_mobile_ddr_parameters.svh"
 `elsif den256Mb
-    `include "256Mb_mobile_ddr_parameters.vh"
+    `include "256Mb_mobile_ddr_parameters.svh"
 `elsif den512Mb
-    `include "512Mb_mobile_ddr_parameters.vh"
+    `include "512Mb_mobile_ddr_parameters.svh"
 `elsif den1024Mb
-    `include "1024Mb_mobile_ddr_parameters.vh"
+    `include "1024Mb_mobile_ddr_parameters.svh"
 `elsif den2048Mb
-    `include "2048Mb_mobile_ddr_parameters.vh"
+    `include "2048Mb_mobile_ddr_parameters.svh"
 `else
     // NOTE: Intentionally cause a compile fail here to force the users
     //       to select the correct component density before continuing
@@ -520,7 +520,7 @@ module tb;
         end
     end
 
-    // End-of-test triggered in 'subtest.vh'
+    // End-of-test triggered in 'subtest.svh'
     task test_done;
         begin
             $display ("%m at time %t: INFO: Simulation is Complete", $time);
@@ -529,7 +529,7 @@ module tb;
     endtask
 
     // Test included from external file
-    `include "subtest.vh"
+    `include "subtest.svh"
 
 endmodule
 
@@ -538,15 +538,15 @@ module dqrx (
 );
 
 `ifdef den128Mb
-    `include "128Mb_mobile_ddr_parameters.vh"
+    `include "128Mb_mobile_ddr_parameters.svh"
 `elsif den256Mb
-    `include "256Mb_mobile_ddr_parameters.vh"
+    `include "256Mb_mobile_ddr_parameters.svh"
 `elsif den512Mb
-    `include "512Mb_mobile_ddr_parameters.vh"
+    `include "512Mb_mobile_ddr_parameters.svh"
 `elsif den1024Mb
-    `include "1024Mb_mobile_ddr_parameters.vh"
+    `include "1024Mb_mobile_ddr_parameters.svh"
 `elsif den2048Mb
-    `include "2048Mb_mobile_ddr_parameters.vh"
+    `include "2048Mb_mobile_ddr_parameters.svh"
 `else
     // NOTE: Intentionally cause a compile fail here to force the users
     //       to select the correct component density before continuing

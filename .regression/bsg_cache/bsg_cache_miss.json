@@ -1,10 +1,10 @@
 {
     "design_name": "bsg_cache_miss",
     "filelist": [
-        "basejump_stl/bsg_cache/bsg_cache.vh",
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_cache/bsg_cache_pkg.v",
-        "basejump_stl/bsg_cache/bsg_cache_miss.v"
+        "basejump_stl/bsg_cache/bsg_cache.svh",
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_cache/bsg_cache_pkg.sv",
+        "basejump_stl/bsg_cache/bsg_cache_miss.sv"
     ],
     "include_path": [
         "basejump_stl/bsg_misc/",

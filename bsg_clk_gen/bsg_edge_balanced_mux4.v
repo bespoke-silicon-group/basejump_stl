@@ -2,12 +2,12 @@
 // properties are process specific. A 250nm harded version
 // can be found at:
 //
-//      bsg_ip_cores/hard/bsg_clk_gen/bsg_edge_balanced_mux4.v
+//      bsg_ip_cores/hard/bsg_clk_gen/bsg_edge_balanced_mux4.sv
 //
 // This module should be replaced by the hardened version
 // when being synthesized.
 //
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_edge_balanced_mux4
   (input        A

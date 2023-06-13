@@ -39,7 +39,7 @@
 // are no attempts to transmit data on bsg_tag at the same time
 // otherwise it is a CDC violation.
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_tag_client
    import bsg_tag_pkg::bsg_tag_s;

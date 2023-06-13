@@ -4,7 +4,7 @@
 
 module test_bsg;
 
-//`include "test_bsg_clock_params.v"
+//`include "test_bsg_clock_params.sv"
 
    //parameter modulo_bits_p = 4;
    parameter modulo_bits_p = 0;

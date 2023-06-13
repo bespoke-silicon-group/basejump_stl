@@ -26,7 +26,7 @@
 //
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_scatter_gather #(parameter `BSG_INV_PARAM(vec_size_lp))
        (input [vec_size_lp-1:0] vec_i

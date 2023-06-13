@@ -2,7 +2,7 @@
 // from zero to overflow value. (it would get limit_i+1 different
 // values during this counting).
 // module renamed from bsg_counter_w_overflow
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_counter_dynamic_limit #(parameter `BSG_INV_PARAM(width_p ))
 

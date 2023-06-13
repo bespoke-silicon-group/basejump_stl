@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_locking_arb_fixed #( parameter `BSG_INV_PARAM(inputs_p)
                              , parameter lo_to_hi_p=0

@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_counter_dynamic_limit_en",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_counter_dynamic_limit_en.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_counter_dynamic_limit_en.sv"
     ],
     "run_config": [
         {

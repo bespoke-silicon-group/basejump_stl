@@ -9,7 +9,7 @@
 // A TSMC 28nm hardened implementation of this module
 // can be found at:
 //
-//      basejump_stl/hard/tsmc_28/bsg_dmc/bsg_dmc_dly_line_v3.v
+//      basejump_stl/hard/tsmc_28/bsg_dmc/bsg_dmc_dly_line_v3.sv
 //
 // This module should be replaced by the hardened version
 // when being synthesized.

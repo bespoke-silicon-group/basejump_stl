@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_counter_overflow_set_en #( parameter `BSG_INV_PARAM(max_val_p     )
                                     , parameter lg_max_val_lp = `BSG_SAFE_CLOG2(max_val_p+1)

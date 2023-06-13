@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_clkbuf #(parameter width_p=1
 		    , parameter strength_p=8

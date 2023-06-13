@@ -1,5 +1,5 @@
 /**
- *    bsg_icg_neg.v
+ *    bsg_icg_neg.sv
  *  
  *    negative-phase integrated clock gating cell
  *  
@@ -7,7 +7,7 @@
  *    Instead use a hardened version of this module for synthesis.
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 `BSG_SYNTH_MUST_HARDEN
 

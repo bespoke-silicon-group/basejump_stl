@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_wormhole_router_decoder_dor",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_noc/bsg_wormhole_router_decoder_dor.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_noc/bsg_wormhole_router_decoder_dor.sv"
     ],
     "run_config": [
         {

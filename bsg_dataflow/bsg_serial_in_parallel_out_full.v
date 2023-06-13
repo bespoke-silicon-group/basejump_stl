@@ -1,5 +1,5 @@
 /**
- *  bsg_serial_in_parallel_out_full.v
+ *  bsg_serial_in_parallel_out_full.sv
  *
  *  This is a simpler version of bsg_serial_in_parallel_out.
  *  Output is only valid, when the output array is fully assembled.
@@ -13,7 +13,7 @@
  *
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_serial_in_parallel_out_full
 

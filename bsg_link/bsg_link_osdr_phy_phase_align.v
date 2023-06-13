@@ -35,7 +35,7 @@ clk_o                  |   |   |   |   |   |   |   |   |   |   |   |   |
 
 ****************************************************************************/
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_link_osdr_phy_phase_align
 

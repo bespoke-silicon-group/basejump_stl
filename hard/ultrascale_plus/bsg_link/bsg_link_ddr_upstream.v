@@ -29,7 +29,7 @@
 // Step 5: Deassert core_link_reset_i. 
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_link_ddr_upstream
 

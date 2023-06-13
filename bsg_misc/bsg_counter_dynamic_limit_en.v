@@ -1,5 +1,5 @@
 //====================================================================
-// bsg_counter_dynamic_limit_en.v
+// bsg_counter_dynamic_limit_en.sv
 // 02/16/2016, shawnless.xie@gmail.com
 //====================================================================
 // This module implements simple counter with enable signal and dynamic
@@ -7,7 +7,7 @@
 //
 // The counter outputs 0 ~ (limit-1) value
 //module renamed from bsg_counter_en_overflow
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_counter_dynamic_limit_en #(parameter `BSG_INV_PARAM(width_p ))
 

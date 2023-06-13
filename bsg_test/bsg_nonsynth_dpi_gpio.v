@@ -19,7 +19,7 @@
 //     ENABLED / DEBUG DISABLED. No messages are printed if a state
 //     change does not occur.
 //   int bsg_dpi_width(): returns the parameter width_p
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_dpi_gpio
    #(parameter int width_p = 1

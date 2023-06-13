@@ -1,10 +1,10 @@
 /**
- *  bsg_mux_segmented.v
+ *  bsg_mux_segmented.sv
  *  @param segments_p number of segments.
  *  @param segment_width_p width of each segment.
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mux_segmented #(parameter `BSG_INV_PARAM(segments_p)
                           ,parameter `BSG_INV_PARAM(segment_width_p)

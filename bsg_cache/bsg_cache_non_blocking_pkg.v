@@ -1,10 +1,10 @@
 /**
- *  bsg_cache_non_blocking_pkg.v
+ *  bsg_cache_non_blocking_pkg.sv
  *  
  *  @author tommy
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 package bsg_cache_non_blocking_pkg;
 

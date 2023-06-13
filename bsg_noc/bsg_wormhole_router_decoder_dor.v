@@ -6,7 +6,7 @@
 //
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_wormhole_router_decoder_dor
 #(parameter dims_p=2

@@ -15,7 +15,7 @@ export DC_RELEASE    = syn/G-2012.06-SP5-4
 #
 # MBT 5/12/2015
 #
-# Edited to test bsg_counter_clock_downsample.v
+# Edited to test bsg_counter_clock_downsample.sv
 # Scott Davidson (stdavids@eng.ucsd.edu) 8/21/2016
 
 HARDEN = 1
@@ -24,22 +24,22 @@ TOP = ../..
 
 ########################### SIMULATION PARAMETERS ###########################
 # place the parameters you want to scan here.
-BSG_DEFINES_FILES   = $(TOP)/bsg_misc/bsg_defines.v
-BSG_TESTME_FILES    = bsg_clk_gen.v
+BSG_DEFINES_FILES   = $(TOP)/bsg_misc/bsg_defines.sv
+BSG_TESTME_FILES    = bsg_clk_gen.sv
 BSG_TESTME_DIR      = $(TOP)/bsg_clk_gen
-BSG_MISC_FILES      = bsg_counter_clock_downsample.v bsg_counter_clear_up.v bsg_strobe.v
-BSG_MISC_HARD_FILES = bsg_dff.v bsg_dff_en.v bsg_dff_reset_en.v  bsg_nand.v bsg_reduce.v bsg_nor3.v bsg_xnor.v bsg_buf.v bsg_mux.v
-BSG_ASYNC_FILES     = bsg_launch_sync_sync.v
-BSG_TAG_FILES       = bsg_tag_pkg.v bsg_tag_client.v bsg_tag_master.v
+BSG_MISC_FILES      = bsg_counter_clock_downsample.sv bsg_counter_clear_up.sv bsg_strobe.sv
+BSG_MISC_HARD_FILES = bsg_dff.sv bsg_dff_en.sv bsg_dff_reset_en.sv  bsg_nand.sv bsg_reduce.sv bsg_nor3.sv bsg_xnor.sv bsg_buf.sv bsg_mux.sv
+BSG_ASYNC_FILES     = bsg_launch_sync_sync.sv
+BSG_TAG_FILES       = bsg_tag_pkg.sv bsg_tag_client.sv bsg_tag_master.sv
 BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  =
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
 BSG_CONFIG_NET_FILES= config_node.v rNandMeta.v
-BSG_TEST_FILES      = bsg_nonsynth_clock_gen.v
+BSG_TEST_FILES      = bsg_nonsynth_clock_gen.sv
 
-BSG_CLK_GEN_FILES   = bsg_clk_gen_osc.v bsg_rp_clk_gen_fine_delay_tuner.v  bsg_rp_clk_gen_adg.v
-BSG_CLK_GEN_GENERATED_FILES =  ./bsg_rp_clk_gen_coarse_delay_element_8_6_4_2.v ./bsg_rp_clk_gen_coarse_delay_element_6_4_2_0.v ./bsg_rp_tsmc_250_MX2X1.v ./bsg_rp_tsmc_250_DFFNRX4.v ./bsg_rp_tsmc_250_dff_s2_b7.v bsg_rp_tsmc_250_dff_s4_b8.v bsg_rp_tsmc_250_dff_en_s1_b6.v bsg_rp_tsmc_250_dff_en_s1_b9.v bsg_rp_tsmc_250_dff_nreset_en_s2_b9.v  bsg_rp_tsmc_250_dff_nreset_en_s2_b7.v  bsg_rp_tsmc_250_dff_nreset_en_s2_b6.v bsg_rp_tsmc_250_AND2X1.v bsg_rp_tsmc_250_NAND2X1.v bsg_rp_tsmc_250_XOR2X1.v  bsg_rp_tsmc_250_reduce.v bsg_rp_tsmc_250_NOR3X1.v  bsg_rp_tsmc_250_XNOR2X1.v  bsg_muxi2_gatestack.v bsg_rp_tsmc_250_EDFF.v  bsg_rp_tsmc_250_BUFX8.v  bsg_rp_tsmc_250_MXI2X1.v bsg_rp_tsmc_250_MXI4X1.v  bsg_rp_tsmc_250_MXI4X4.v bsg_rp_tsmc_250_CLKINVX16.v
+BSG_CLK_GEN_FILES   = bsg_clk_gen_osc.sv bsg_rp_clk_gen_fine_delay_tuner.sv  bsg_rp_clk_gen_adg.v
+BSG_CLK_GEN_GENERATED_FILES =  ./bsg_rp_clk_gen_coarse_delay_element_8_6_4_2.v ./bsg_rp_clk_gen_coarse_delay_element_6_4_2_0.v ./bsg_rp_tsmc_250_MX2X1.v ./bsg_rp_tsmc_250_DFFNRX4.v ./bsg_rp_tsmc_250_dff_s2_b7.v bsg_rp_tsmc_250_dff_s4_b8.v bsg_rp_tsmc_250_dff_en_s1_b6.v bsg_rp_tsmc_250_dff_en_s1_b9.v bsg_rp_tsmc_250_dff_nreset_en_s2_b9.v  bsg_rp_tsmc_250_dff_nreset_en_s2_b7.v  bsg_rp_tsmc_250_dff_nreset_en_s2_b6.v bsg_rp_tsmc_250_AND2X1.v bsg_rp_tsmc_250_NAND2X1.v bsg_rp_tsmc_250_XOR2X1.v  bsg_rp_tsmc_250_reduce.v bsg_rp_tsmc_250_NOR3X1.v  bsg_rp_tsmc_250_XNOR2X1.v  bsg_muxi2_gatestack.sv bsg_rp_tsmc_250_EDFF.v  bsg_rp_tsmc_250_BUFX8.v  bsg_rp_tsmc_250_MXI2X1.v bsg_rp_tsmc_250_MXI4X1.v  bsg_rp_tsmc_250_MXI4X4.v bsg_rp_tsmc_250_CLKINVX16.v
 ifeq ($(HARDEN),0)
 BSG_CLK_GEN_DIR     = $(TOP)/bsg_clk_gen/
 BSG_HARD_LIB        =
@@ -49,7 +49,7 @@ BSG_CLK_GEN_GENERATED_DIR = $(TOP)/testing/bsg_clk_gen/generated
 BSG_HARD_LIB        = -v /gro/cad/mosis/pdk/tsmc/cl025g/std_cells/Rev_2004q2v1/aci/sc/verilog/tsmc25.v
 endif
 
-TEST_MAIN   = test_bsg.v bsg_nonsynth_clk_gen_tester.v
+TEST_MAIN   = test_bsg.sv bsg_nonsynth_clk_gen_tester.sv
 TEST_MODULE = test_bsg
 
 # this is a list of all variables you want to vary for the simulation
@@ -127,7 +127,7 @@ gen_verilog:
 	$(TOP)/hard/bsg_misc/bsg_gate_stack_gen.py NOR3X1     32 "#0 (.A (#1), .B(#2), .C(#3), .Y(#4));"            > generated/bsg_rp_tsmc_250_NOR3X1.v
 	$(TOP)/hard/bsg_misc/bsg_gate_stack_gen.py MXI4X1 32 "#0 (.A (#1), .B(#2), .C(#3), .D(#4), .S0(#5), .S1(#6), .Y(#7));" >  generated/bsg_rp_tsmc_250_MXI4X1.v
 	$(TOP)/hard/bsg_misc/bsg_gate_stack_gen.py MXI4X4 32 "#0 (.A (#1), .B(#2), .C(#3), .D(#4), .S0(#5), .S1(#6), .Y(#7));" >  generated/bsg_rp_tsmc_250_MXI4X4.v
-	$(TOP)/hard/bsg_misc/bsg_gate_stack_gen.py MXI2X1 32 "#0 (.A (#1), .B(#2), .S0(#3), .Y(#4));" muxi2_gatestack >  generated/bsg_muxi2_gatestack.v
+	$(TOP)/hard/bsg_misc/bsg_gate_stack_gen.py MXI2X1 32 "#0 (.A (#1), .B(#2), .S0(#3), .Y(#4));" muxi2_gatestack >  generated/bsg_muxi2_gatestack.sv
 	$(TOP)/hard/bsg_misc/bsg_reduce_gen.py > generated/bsg_rp_tsmc_250_reduce.v
 	$(TOP)/hard/bsg_misc/bsg_gate_stack_gen.py EDFFX1     40   "#0 (.D (#1), .E(#2), .CK(#3), .Q(#4), .QN());" > generated/bsg_rp_tsmc_250_EDFF.v
 	$(TOP)/hard/bsg_misc/bsg_gate_stack_gen.py EDFFX2     40   "#0 (.D (#1), .E(#2), .CK(#3), .Q(#4), .QN());" >>  generated/bsg_rp_tsmc_250_EDFF.v

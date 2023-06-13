@@ -5,7 +5,7 @@
 //
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_fifo_1r1w_small_hardened_cov
 

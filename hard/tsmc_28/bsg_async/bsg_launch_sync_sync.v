@@ -20,10 +20,10 @@
 // have two different clocks.
 //
 // DWP 02/09/2022
-//   Ported from hard/gf_14/bsg_async/bsg_sync_sync.v
+//   Ported from hard/gf_14/bsg_async/bsg_sync_sync.sv
 
 // ASYNC RESET: iclk cannot toggle at deassertion of reset
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 `define bsg_launch_sync_sync_unit(EDGE,bits)                            \
                                                                         \

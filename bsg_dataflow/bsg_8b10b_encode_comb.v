@@ -4,7 +4,7 @@
 //
 // https://patentimages.storage.googleapis.com/67/2d/ad/0258c2f0d807bf/US4486739.pdf
 //
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_8b10b_encode_comb
 ( input        [7:0] data_i

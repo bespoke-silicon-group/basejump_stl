@@ -1,5 +1,5 @@
 /**
- *  bsg_mux_butterfly.v
+ *  bsg_mux_butterfly.sv
  *
  *  @author tommy
  *
@@ -29,7 +29,7 @@
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mux_butterfly
   #(parameter `BSG_INV_PARAM(width_p)

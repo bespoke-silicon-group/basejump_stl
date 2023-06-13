@@ -6,7 +6,7 @@
  */
 
 
-`include "bsg_cache_non_blocking.vh"
+`include "bsg_cache_non_blocking.svh"
 
 module bsg_cache_non_blocking_decode
   import bsg_cache_non_blocking_pkg::*;

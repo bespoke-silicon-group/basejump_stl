@@ -48,7 +48,7 @@
 //
 //   For safe operation of this interface use the bsg_nonsynth_fifo_to_dpi
 //   class provided in bsg_nonsynth_fifo.hpp header.
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_dpi_to_fifo
   #(

@@ -1,10 +1,10 @@
 /**
- *  bsg_less_than.v
+ *  bsg_less_than.sv
  *
  *  @author Tommy Jung
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_less_than #(parameter `BSG_INV_PARAM(width_p)) (
   input [width_p-1:0] a_i

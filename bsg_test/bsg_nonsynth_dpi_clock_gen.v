@@ -24,7 +24,7 @@
 //
 // This drop-in replacement supports multiple clock generators and
 // can be embedded anywhere in the hierarchy.
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_dpi_clock_gen
   #(parameter `BSG_INV_PARAM(longint cycle_time_p)

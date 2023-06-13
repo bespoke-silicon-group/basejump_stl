@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_1rw_sync_mask_write_var #
   (parameter `BSG_INV_PARAM(width_p)

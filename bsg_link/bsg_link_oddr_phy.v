@@ -50,7 +50,7 @@ data_o    |                        |  d0   |  d1   |  d0   |  d1   |  d0   |  d1
 //
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_link_oddr_phy
 

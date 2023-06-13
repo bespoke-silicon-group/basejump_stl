@@ -1,6 +1,6 @@
 module testbench();
  
-  `include "bsg_noc_links.vh"
+  `include "bsg_noc_links.svh"
 
   import bsg_noc_pkg::*;
 

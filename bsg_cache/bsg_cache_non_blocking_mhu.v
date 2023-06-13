@@ -1,5 +1,5 @@
 /**
- *    bsg_cache_non_blocking_mhu.v
+ *    bsg_cache_non_blocking_mhu.sv
  *
  *    Miss Handling Unit.
  *
@@ -8,7 +8,7 @@
  */
 
 
-`include "bsg_cache_non_blocking.vh"
+`include "bsg_cache_non_blocking.svh"
 
 module bsg_cache_non_blocking_mhu
   import bsg_cache_non_blocking_pkg::*;

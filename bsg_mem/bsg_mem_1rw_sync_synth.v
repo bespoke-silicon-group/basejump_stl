@@ -6,7 +6,7 @@
 // NOTE: Users of BaseJump STL should not instantiate this module directly
 // they should use bsg_mem_1rw_sync.
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_1rw_sync_synth
   #(parameter `BSG_INV_PARAM(width_p)

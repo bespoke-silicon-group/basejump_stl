@@ -1,10 +1,10 @@
 {
     "design_name": "bsg_front_side_bus_hop_in_no_fc",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_misc/bsg_defines.sv",
         "basejump_stl/bsg_fsb/bsg_front_side_bus_hop_in_no_fc.v",
-        "basejump_stl/bsg_misc/bsg_dff_reset.v",
-        "basejump_stl/bsg_misc/bsg_dff.v"
+        "basejump_stl/bsg_misc/bsg_dff_reset.sv",
+        "basejump_stl/bsg_misc/bsg_dff.sv"
     ],
     "run_config": [
         {

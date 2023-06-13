@@ -1,5 +1,5 @@
 /**
- *  bsg_mem_1rw_sync_banked.v
+ *  bsg_mem_1rw_sync_banked.sv
  *
  *  This module has the same interface/functionality as
  *  bsg_mem_1rw_sync.
@@ -22,7 +22,7 @@
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_1rw_sync_banked 
   #(parameter `BSG_INV_PARAM(width_p)

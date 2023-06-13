@@ -1,11 +1,11 @@
 {
     "design_name": "bsg_fpu_f2i",
     "filelist": [
-        "basejump_stl/bsg_fpu/bsg_fpu_defines.vh",
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_fpu/bsg_fpu_f2i.v",
-        "basejump_stl/bsg_fpu/bsg_fpu_preprocess.v",
-        "basejump_stl/bsg_misc/bsg_less_than.v"
+        "basejump_stl/bsg_fpu/bsg_fpu_defines.svh",
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_fpu/bsg_fpu_f2i.sv",
+        "basejump_stl/bsg_fpu/bsg_fpu_preprocess.sv",
+        "basejump_stl/bsg_misc/bsg_less_than.sv"
     ],
     "run_config": [
         {

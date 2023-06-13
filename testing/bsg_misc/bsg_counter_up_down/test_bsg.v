@@ -2,7 +2,7 @@
 `define INIT_VAL_P 0
 `define MAX_STEP_P 1
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 /**************************** TEST RATIONALE *******************************
 1. STATE SPACE

@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_decode_with_v #(parameter `BSG_INV_PARAM(num_out_p))
    (

@@ -1,7 +1,7 @@
 /////////////////////////////////
 // bsg_nonsynth_dramsim3_unmap //
 /////////////////////////////////
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_dramsim3_unmap
   import bsg_dramsim3_pkg::*;

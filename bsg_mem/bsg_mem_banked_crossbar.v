@@ -6,7 +6,7 @@
 * bsg_mem_banked_crossbar_control_o_by_i 
 **********************************/
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_banked_crossbar_control_o_by_i 
   #( parameter `BSG_INV_PARAM(i_els_p     )

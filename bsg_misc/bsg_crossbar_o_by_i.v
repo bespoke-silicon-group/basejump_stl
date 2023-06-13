@@ -1,7 +1,7 @@
 // NB: for larger sizes, may make sense to have a benes network implementation option
 // since it is assymptotically better than a full crossbar for datapath.
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_crossbar_o_by_i #( parameter `BSG_INV_PARAM(i_els_p)
                              ,parameter `BSG_INV_PARAM(o_els_p)

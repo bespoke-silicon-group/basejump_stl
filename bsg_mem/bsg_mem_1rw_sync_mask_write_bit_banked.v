@@ -1,5 +1,5 @@
 /**
- *  bsg_mem_1rw_sync_mask_write_bit_banked.v
+ *  bsg_mem_1rw_sync_mask_write_bit_banked.sv
  *
  *  This module has the same interface/functionality as
  *  bsg_mem_1rw_sync_mask_write_bit.
@@ -23,7 +23,7 @@
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_1rw_sync_mask_write_bit_banked
   #(parameter `BSG_INV_PARAM(width_p)

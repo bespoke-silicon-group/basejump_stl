@@ -1,11 +1,11 @@
 /**
- *  bsg_cache_to_axi_tx.v
+ *  bsg_cache_to_axi_tx.sv
  *
  *  @author tommy
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_cache_to_axi_tx
  import bsg_axi_pkg::*;

@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 //
 // bsg_sparse_to_dense_boolean

@@ -8,7 +8,7 @@
 // Fixme: move this into asic-specific components.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 `ifndef rp_group
  `define rp_group(x)

@@ -14,7 +14,7 @@
 // save area by using this module.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_one_fifo #(parameter `BSG_INV_PARAM(width_p)
                       )

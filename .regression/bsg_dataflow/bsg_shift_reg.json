@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_shift_reg",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_dataflow/bsg_shift_reg.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_dataflow/bsg_shift_reg.sv"
     ],
     "run_config": [
         {

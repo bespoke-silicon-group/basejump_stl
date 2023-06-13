@@ -1,11 +1,11 @@
 /**
- *  bsg_serial_in_parallel_out_dynamic.v
+ *  bsg_serial_in_parallel_out_dynamic.sv
  *
  *  Paul Gao        06/2019
  *
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_serial_in_parallel_out_dynamic
                                

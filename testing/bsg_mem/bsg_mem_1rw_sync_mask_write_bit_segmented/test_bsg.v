@@ -2,7 +2,7 @@
 `define ELS_P   4
 `define SEED_P  20
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module test_bsg
 #(

@@ -1,7 +1,7 @@
 `define WIDTH_P    4
 `define OVERFLOW_P (2**(`WIDTH_P)-1)
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 /**************************** TEST RATIONALE *******************************
 1. STATE SPACE

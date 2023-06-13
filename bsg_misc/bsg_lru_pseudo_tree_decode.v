@@ -1,6 +1,6 @@
 /**
  *  Name:
- *    bsg_lru_pseudo_tree_decode.v
+ *    bsg_lru_pseudo_tree_decode.sv
  *
  *  Description:
  *    Pseudo-Tree-LRU decode unit.
@@ -10,7 +10,7 @@
  *    bitmaskable memory to update the corresponding LRU bits.
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_lru_pseudo_tree_decode
   #(parameter `BSG_INV_PARAM(ways_p)

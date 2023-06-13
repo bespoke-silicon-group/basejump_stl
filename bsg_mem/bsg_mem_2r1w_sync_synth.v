@@ -12,7 +12,7 @@
 // NOTE: Users of BaseJump STL should not instantiate this module directly
 // they should use bsg_mem_2r1w_sync.
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_2r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
 				 , parameter `BSG_INV_PARAM(els_p)
@@ -49,8 +49,8 @@ module bsg_mem_2r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
 
    logic [width_p-1:0]    mem [els_p-1:0];
 
-   // keep consistent with bsg_ip_cores/bsg_mem/bsg_mem_2r1w_sync.v
-   // keep consistent with bsg_ip_cores/hard/bsg_mem/bsg_mem_2r1w_sync.v
+   // keep consistent with bsg_ip_cores/bsg_mem/bsg_mem_2r1w_sync.sv
+   // keep consistent with bsg_ip_cores/hard/bsg_mem/bsg_mem_2r1w_sync.sv
    
    // this treats the ram as an array of registers for which the
    // read addr is latched on the clock, the write

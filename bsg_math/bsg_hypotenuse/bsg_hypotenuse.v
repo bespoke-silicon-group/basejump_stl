@@ -13,7 +13,7 @@
 // 10/29/14
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module cordic_stage #(parameter   stage_p = 1
                       , parameter width_p = 12)

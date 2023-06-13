@@ -1,5 +1,5 @@
 /**
- *    bsg_dff_reset_set_clear.v
+ *    bsg_dff_reset_set_clear.sv
  *
  *    Reset has priority over set.
  *    Set has priority over clear (by default).
@@ -7,7 +7,7 @@
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_dff_reset_set_clear
   #(parameter `BSG_INV_PARAM(width_p)

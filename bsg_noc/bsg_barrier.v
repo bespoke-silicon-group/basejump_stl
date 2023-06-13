@@ -51,7 +51,7 @@
 // that have barrier in progress, and then reset the corresponding Pi bit to clear the in progress barrier.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_barrier 
   #(`BSG_INV_PARAM(dirs_p),lg_dirs_lp=`BSG_SAFE_CLOG2(dirs_p+1))

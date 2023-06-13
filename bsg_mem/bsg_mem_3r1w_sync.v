@@ -11,7 +11,7 @@
 // to move to/from sync/async, and we want to reflect this.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_3r1w_sync #(parameter `BSG_INV_PARAM(width_p)
                            , parameter `BSG_INV_PARAM(els_p)

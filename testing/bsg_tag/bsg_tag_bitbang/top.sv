@@ -1,6 +1,6 @@
 
-`include "bsg_defines.v"
-`include "bsg_tag.vh"
+`include "bsg_defines.sv"
+`include "bsg_tag.svh"
 
 module top
     import bsg_tag_pkg::bsg_tag_s;

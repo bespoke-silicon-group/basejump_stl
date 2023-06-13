@@ -1,9 +1,9 @@
 /**
- *    bsg_nonsynth_mem_1r1w_sync_dma.v
+ *    bsg_nonsynth_mem_1r1w_sync_dma.sv
  *
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_mem_1r1w_sync_dma
   #(parameter `BSG_INV_PARAM(width_p)

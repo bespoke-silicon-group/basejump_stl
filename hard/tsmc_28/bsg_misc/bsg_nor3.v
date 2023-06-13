@@ -1,5 +1,5 @@
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 `define bsg_nor3_macro(bits)                      \
 if (harden_p && (width_p==bits))                  \

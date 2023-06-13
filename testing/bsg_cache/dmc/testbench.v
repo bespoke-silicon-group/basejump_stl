@@ -1,5 +1,5 @@
 
-`include "bsg_dmc.vh"
+`include "bsg_dmc.svh"
 
 module testbench
   import bsg_dmc_pkg::*;

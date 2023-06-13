@@ -1,10 +1,10 @@
 /**
- *  bsg_adder_ripple_carry.v
+ *  bsg_adder_ripple_carry.sv
  *
  *  @author Tommy Jung
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_adder_ripple_carry #(parameter `BSG_INV_PARAM(width_p ))
   (

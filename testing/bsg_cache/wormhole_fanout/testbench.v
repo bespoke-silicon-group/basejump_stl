@@ -1,5 +1,5 @@
 
-`include "bsg_noc_links.vh"
+`include "bsg_noc_links.svh"
 
 module testbench();
 

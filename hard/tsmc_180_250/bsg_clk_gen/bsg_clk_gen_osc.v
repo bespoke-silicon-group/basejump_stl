@@ -45,7 +45,7 @@
 // through the ICC-generate clock tree for the BTC.
 //
 
-`include "bsg_clk_gen.vh"
+`include "bsg_clk_gen.svh"
 
 module bsg_clk_gen_osc
    import bsg_tag_pkg::bsg_tag_s;

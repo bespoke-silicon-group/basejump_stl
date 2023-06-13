@@ -3,7 +3,7 @@ package test_pkg;
 
 
   
-  `include "bsg_noc_links.vh"
+  `include "bsg_noc_links.svh"
 
 
   `define test_packet_width(data_width_mp,x_cord_width_mp,y_cord_width_mp) \

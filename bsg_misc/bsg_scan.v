@@ -7,7 +7,7 @@
 //       which may have excessive wiring as width_p grows
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_scan #(parameter `BSG_INV_PARAM(width_p)
                   , parameter xor_p = 0

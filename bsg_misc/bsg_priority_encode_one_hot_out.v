@@ -7,7 +7,7 @@
 // to get typical priority encoder.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_priority_encode_one_hot_out #(parameter `BSG_INV_PARAM(width_p      )
                                          , parameter `BSG_INV_PARAM(lo_to_hi_p )

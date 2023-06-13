@@ -1,5 +1,5 @@
 /**
- *  bsg_nonsynth_mem_1rw_sync_mask_write_byte_assoc.v
+ *  bsg_nonsynth_mem_1rw_sync_mask_write_byte_assoc.sv
  *
  *  bsg_mem_1rw_sync_mask_write_byte implementation using associative array.
  *
@@ -8,7 +8,7 @@
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_mem_1rw_sync_mask_write_byte_assoc
   #(parameter `BSG_INV_PARAM(data_width_p)

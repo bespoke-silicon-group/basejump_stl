@@ -12,10 +12,10 @@
 // mean that it will not deadlock if traffic classes are not correctly separated.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
-`include "bsg_noc_links.vh"
-`include "bsg_wormhole_router.vh"
+`include "bsg_noc_links.svh"
+`include "bsg_wormhole_router.svh"
 
 module bsg_ready_and_link_async_to_wormhole
 

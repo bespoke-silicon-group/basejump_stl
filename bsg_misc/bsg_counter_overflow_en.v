@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_counter_overflow_en #(parameter `BSG_INV_PARAM(max_val_p    )
                                , parameter `BSG_INV_PARAM(init_val_p   )

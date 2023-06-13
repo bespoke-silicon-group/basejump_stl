@@ -1,7 +1,7 @@
 `ifndef BSG_CACHE_NON_BLOCKING_VH
 `define BSG_CACHE_NON_BLOCKING_VH
 
-  `include "bsg_defines.v"
+  `include "bsg_defines.sv"
 
   // bsg_cache_pkt_s
   //

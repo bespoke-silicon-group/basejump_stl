@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_delay_line # (parameter width_p=1
 				  ,parameter `BSG_INV_PARAM(delay_p))

@@ -1,10 +1,10 @@
 /**
- *  bsg_dff_reset_en_bypass.v
+ *  bsg_dff_reset_en_bypass.sv
  *
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_dff_reset_en_bypass
   #(parameter `BSG_INV_PARAM(width_p)

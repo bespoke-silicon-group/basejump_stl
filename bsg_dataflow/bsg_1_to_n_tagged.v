@@ -14,7 +14,7 @@
 // we do not include the data portion since it is just replicated
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_1_to_n_tagged #(
                            parameter `BSG_INV_PARAM(num_out_p)

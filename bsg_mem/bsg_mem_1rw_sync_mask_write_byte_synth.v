@@ -1,7 +1,7 @@
 // NOTE: Users of BaseJump STL should not instantiate this module directly
 // they should use bsg_mem_1r1w_sync_mask_write_byte.
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_1rw_sync_mask_write_byte_synth
   #(parameter `BSG_INV_PARAM(els_p)

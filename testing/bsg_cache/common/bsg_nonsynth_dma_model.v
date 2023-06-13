@@ -1,9 +1,9 @@
 /**
- *  bsg_nonsynth_dma_model.v
+ *  bsg_nonsynth_dma_model.sv
  *
  */
 
-`include "bsg_cache.vh"
+`include "bsg_cache.svh"
 
 module bsg_nonsynth_dma_model
   import bsg_cache_pkg::*;

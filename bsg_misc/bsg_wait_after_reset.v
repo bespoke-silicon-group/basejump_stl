@@ -5,7 +5,7 @@
 //
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_wait_after_reset  #(parameter `BSG_INV_PARAM(lg_wait_cycles_p))
    (input reset_i

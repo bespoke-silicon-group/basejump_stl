@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 `ifndef rp_group
  `define rp_group(x)
@@ -216,7 +216,7 @@ module bsg_dmc_phy_byte_lane
 endmodule
 
 /**
- *  bsg_dmc_phy.v
+ *  bsg_dmc_phy.sv
  *
  *  - DFI compatible.
  *  - 16-bit address, 32-bit data to off-chip DRAM devices.

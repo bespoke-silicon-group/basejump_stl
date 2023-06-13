@@ -1,6 +1,6 @@
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mul_comp42
    ( input [3:0] i  // 0-2: early; 3: middle

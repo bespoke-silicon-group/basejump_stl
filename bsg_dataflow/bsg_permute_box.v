@@ -2,7 +2,7 @@
 // FIXME: untested
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_permute_box #(parameter `BSG_INV_PARAM(width_p)
 			 , parameter `BSG_INV_PARAM(items_p)

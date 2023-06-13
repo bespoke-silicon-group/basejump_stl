@@ -1,11 +1,11 @@
 {
     "design_name": "bsg_mesh_router",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_noc/bsg_mesh_router.v",
-        "basejump_stl/bsg_noc/bsg_noc_pkg.v",
-        "basejump_stl/bsg_misc/bsg_round_robin_arb.v",
-        "basejump_stl/bsg_misc/bsg_mux_one_hot.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_noc/bsg_mesh_router.sv",
+        "basejump_stl/bsg_noc/bsg_noc_pkg.sv",
+        "basejump_stl/bsg_misc/bsg_round_robin_arb.sv",
+        "basejump_stl/bsg_misc/bsg_mux_one_hot.sv"
     ],
     "run_config": [
         {

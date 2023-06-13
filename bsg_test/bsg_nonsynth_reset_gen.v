@@ -10,7 +10,7 @@
 //**********************************************************************
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_reset_gen #(parameter num_clocks_p=1
                                 , parameter `BSG_INV_PARAM(reset_cycles_lo_p)

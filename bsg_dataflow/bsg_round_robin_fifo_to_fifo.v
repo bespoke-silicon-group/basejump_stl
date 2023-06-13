@@ -24,7 +24,7 @@
 // to facilitate dequeing from those original input channels.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_rr_f2f_input #(parameter `BSG_INV_PARAM(  width_p              )
                           , parameter num_in_p             = 0

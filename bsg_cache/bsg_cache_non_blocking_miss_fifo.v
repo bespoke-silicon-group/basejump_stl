@@ -1,5 +1,5 @@
 /**
- *    bsg_cache_non_blocking_miss_fifo.v
+ *    bsg_cache_non_blocking_miss_fifo.sv
  *
  *    Special Miss FIFO
  *
@@ -8,7 +8,7 @@
  */
 
 
-`include "bsg_cache_non_blocking.vh"
+`include "bsg_cache_non_blocking.svh"
 
 module bsg_cache_non_blocking_miss_fifo
   import bsg_cache_non_blocking_pkg::*;

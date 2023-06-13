@@ -1,11 +1,11 @@
 /**
- *  bsg_cache_to_dram_ctrl_rx.v
+ *  bsg_cache_to_dram_ctrl_rx.sv
  *
  *  @author tommy
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_cache_to_dram_ctrl_rx
   #(parameter `BSG_INV_PARAM(num_dma_p)

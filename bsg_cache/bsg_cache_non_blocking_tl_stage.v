@@ -1,5 +1,5 @@
 /**
- *  bsg_cache_non_blocking_tl_stage.v
+ *  bsg_cache_non_blocking_tl_stage.sv
  *
  *  tag-lookup stage
  *
@@ -8,7 +8,7 @@
  */
 
 
-`include "bsg_cache_non_blocking.vh"
+`include "bsg_cache_non_blocking.svh"
 
 module bsg_cache_non_blocking_tl_stage
   import bsg_cache_non_blocking_pkg::*;

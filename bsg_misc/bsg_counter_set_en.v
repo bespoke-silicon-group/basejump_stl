@@ -1,8 +1,8 @@
 /**
- *  bsg_counter_set_en.v
+ *  bsg_counter_set_en.sv
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_counter_set_en
   #(parameter `BSG_INV_PARAM(max_val_p)

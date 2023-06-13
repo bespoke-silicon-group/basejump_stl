@@ -1,12 +1,12 @@
 /**
- *  bsg_abs.v
+ *  bsg_abs.sv
  *
  *  calculate absolute value of signed integer.
  *
  *  @author Tommy Jung
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_abs #( parameter `BSG_INV_PARAM(width_p) )
 (

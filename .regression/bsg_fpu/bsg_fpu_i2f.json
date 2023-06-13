@@ -1,15 +1,15 @@
 {
     "design_name": "bsg_fpu_i2f",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_fpu/bsg_fpu_i2f.v",
-        "basejump_stl/bsg_fpu/bsg_fpu_preprocess.v",
-        "basejump_stl/bsg_fpu/bsg_fpu_clz.v",
-        "basejump_stl/bsg_misc/bsg_priority_encode.v",
-        "basejump_stl/bsg_misc/bsg_priority_encode_one_hot_out.v",
-        "basejump_stl/bsg_misc/bsg_encode_one_hot.v",
-        "basejump_stl/bsg_misc/bsg_scan.v",
-        "basejump_stl/bsg_misc/bsg_abs.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_fpu/bsg_fpu_i2f.sv",
+        "basejump_stl/bsg_fpu/bsg_fpu_preprocess.sv",
+        "basejump_stl/bsg_fpu/bsg_fpu_clz.sv",
+        "basejump_stl/bsg_misc/bsg_priority_encode.sv",
+        "basejump_stl/bsg_misc/bsg_priority_encode_one_hot_out.sv",
+        "basejump_stl/bsg_misc/bsg_encode_one_hot.sv",
+        "basejump_stl/bsg_misc/bsg_scan.sv",
+        "basejump_stl/bsg_misc/bsg_abs.sv"
     ],
     "run_config": [
         {

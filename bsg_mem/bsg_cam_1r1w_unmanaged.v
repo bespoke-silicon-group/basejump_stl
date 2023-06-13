@@ -7,7 +7,7 @@
  *   external replacement scheme
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_cam_1r1w_unmanaged
  #(parameter `BSG_INV_PARAM(els_p)

@@ -1,13 +1,13 @@
 /**
- *  bsg_cache_to_dram_ctrl.v
+ *  bsg_cache_to_dram_ctrl.sv
  *
  *  @author tommy
  *
  */
 
-`include "bsg_defines.v"
-`include "bsg_cache.vh"
-`include "bsg_dmc.vh"
+`include "bsg_defines.sv"
+`include "bsg_cache.svh"
+`include "bsg_dmc.svh"
 
 module bsg_cache_to_dram_ctrl
   import bsg_cache_pkg::*;

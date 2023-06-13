@@ -18,10 +18,10 @@
 //
 
 //`ifndef DEFINITIONS_V
-//`include "definitions.v"
+//`include "definitions.sv"
 //`endif
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mesosync_output
                   #( parameter `BSG_INV_PARAM(width_p           )

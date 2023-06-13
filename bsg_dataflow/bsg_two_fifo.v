@@ -23,7 +23,7 @@
 // note: ~v_o == fifo is empty.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_two_fifo #(parameter `BSG_INV_PARAM(width_p)
                       , parameter verbose_p=0

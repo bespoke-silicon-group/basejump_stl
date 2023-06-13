@@ -39,7 +39,7 @@
 //
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_flow_convert
   #(parameter send_v_and_ready_p    = 0

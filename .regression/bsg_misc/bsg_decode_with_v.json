@@ -1,9 +1,9 @@
 {
     "design_name": "bsg_decode_with_v",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_decode_with_v.v",
-        "basejump_stl/bsg_misc/bsg_decode.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_decode_with_v.sv",
+        "basejump_stl/bsg_misc/bsg_decode.sv"
     ],
     "run_config": [
         {

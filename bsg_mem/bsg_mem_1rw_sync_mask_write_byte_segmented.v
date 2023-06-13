@@ -1,5 +1,5 @@
 /*
- *  bsg_mem_1rw_sync_mask_write_byte_segmented.v
+ *  bsg_mem_1rw_sync_mask_write_byte_segmented.sv
  *
  *  This module has the same interface/functionality as
     bsg_mem_1rw_sync_mask_write_byte.
@@ -23,7 +23,7 @@
   // There could be an implementation to support independent segment r/w by using a 1r1w backing SRAM. 
   // This may make sense in an FPGA environment, but we leave this to future work.
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_1rw_sync_mask_write_byte_segmented
   #(parameter `BSG_INV_PARAM(width_p)

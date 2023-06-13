@@ -10,7 +10,7 @@
 //
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_source_sync_channel_control_master_master
   #(parameter `BSG_INV_PARAM( link_channels_p  )

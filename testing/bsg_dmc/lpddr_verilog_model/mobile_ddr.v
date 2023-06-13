@@ -1,6 +1,6 @@
 /****************************************************************************************
 *
-*    File Name:  mobile_ddr.v
+*    File Name:  mobile_ddr.sv
 *      Version:  6.05
 *        Model:  BUS Functional
 *
@@ -84,7 +84,7 @@
 * 6.02 sph    01/22/10    - Added check for nop/des is used when enter/exit stop clock mode
 * 6.03 sph    06/07/10    - Include all the mobile_ddr_parameters.vh into a single package
 * 6.04 sph    07/19/10    - Fixed Write with auto precharge tRP calculation
-* 6.05 sph    03/04/11    - Move function ceil into mobile_ddr.v
+* 6.05 sph    03/04/11    - Move function ceil into mobile_ddr.sv
 ****************************************************************************************/
 
 // DO NOT CHANGE THE TIMESCALE
@@ -94,15 +94,15 @@
 module mobile_ddr (Dq, Dqs, Addr, Ba, Clk, Clk_n, Cke, Cs_n, Ras_n, Cas_n, We_n, Dm);
 
 `ifdef den128Mb
-    `include "128Mb_mobile_ddr_parameters.vh"
+    `include "128Mb_mobile_ddr_parameters.svh"
 `elsif den256Mb
-    `include "256Mb_mobile_ddr_parameters.vh"
+    `include "256Mb_mobile_ddr_parameters.svh"
 `elsif den512Mb
-    `include "512Mb_mobile_ddr_parameters.vh"
+    `include "512Mb_mobile_ddr_parameters.svh"
 `elsif den1024Mb
-    `include "1024Mb_mobile_ddr_parameters.vh"
+    `include "1024Mb_mobile_ddr_parameters.svh"
 `elsif den2048Mb
-    `include "2048Mb_mobile_ddr_parameters.vh"
+    `include "2048Mb_mobile_ddr_parameters.svh"
 `else
     // NOTE: Intentionally cause a compile fail here to force the users
     //       to select the correct component density before continuing

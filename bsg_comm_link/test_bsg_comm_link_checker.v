@@ -18,7 +18,7 @@
    //
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module test_bsg_comm_link_checker #(parameter `BSG_INV_PARAM(channel_width_p)
                                     , parameter `BSG_INV_PARAM(num_channels_p)

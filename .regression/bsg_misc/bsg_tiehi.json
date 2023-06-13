@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_tiehi",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_tiehi.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_tiehi.sv"
     ],
     "run_config": [
         {

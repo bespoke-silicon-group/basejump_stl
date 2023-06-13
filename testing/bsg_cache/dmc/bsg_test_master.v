@@ -1,4 +1,4 @@
-`include "bsg_cache.vh"
+`include "bsg_cache.svh"
 
 module bsg_test_master
   import bsg_cache_pkg::*;

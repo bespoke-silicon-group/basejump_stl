@@ -9,7 +9,7 @@
 // Fixme: move this into asic-specific components.
 //
 // DWP 02/09/2022
-//   Ported from hard/gf_14/bsg_async/bsg_sync_sync.v
+//   Ported from hard/gf_14/bsg_async/bsg_sync_sync.sv
 //
 
 `define bsg_sync_sync_unit(width_p)                             \

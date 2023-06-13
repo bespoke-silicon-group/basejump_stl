@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 `ifndef DATA_WIDTH
   `define DATA_WIDTH 8
 `endif

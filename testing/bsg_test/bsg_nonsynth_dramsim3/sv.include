@@ -1,16 +1,16 @@
-$BASEJUMP_STL_DIR/bsg_misc/bsg_defines.v
-$BASEJUMP_STL_DIR/bsg_misc/bsg_reduce.v
-$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_clock_gen.v
-$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_reset_gen.v
-$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_test_rom.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_defines.sv
+$BASEJUMP_STL_DIR/bsg_misc/bsg_reduce.sv
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_clock_gen.sv
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_reset_gen.sv
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_test_rom.sv
 $BASEJUMP_STL_DIR/bsg_fsb/bsg_fsb_node_trace_replay.v
 
-$BASEJUMP_STL_DIR/bsg_test/bsg_dramsim3_pkg.v
-$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_dramsim3.v
-$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_dramsim3_map.v
-$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_dramsim3_unmap.v
+$BASEJUMP_STL_DIR/bsg_test/bsg_dramsim3_pkg.sv
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_dramsim3.sv
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_dramsim3_map.sv
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_dramsim3_unmap.sv
 $BASEJUMP_STL_DIR/bsg_test/bsg_dramsim3.cpp
-$BASEJUMP_STL_DIR/bsg_mem/bsg_nonsynth_mem_1r1w_sync_dma.v
+$BASEJUMP_STL_DIR/bsg_mem/bsg_nonsynth_mem_1r1w_sync_dma.sv
 $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_dma.cpp
 
 
@@ -27,4 +27,4 @@ $BASEJUMP_STL_DIR/imports/DRAMSim3/src/refresh.cc
 $BASEJUMP_STL_DIR/imports/DRAMSim3/src/simple_stats.cc
 $BASEJUMP_STL_DIR/imports/DRAMSim3/src/timing.cc
 
-testbench.v
+testbench.sv

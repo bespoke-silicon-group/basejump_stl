@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 `ifndef BSG_NO_TIMESCALE
 `timescale 1ps/1ps
@@ -8,12 +8,12 @@
 // oscillator. A TSMC 250nm hardened implementation of this module
 // can be found at:
 //
-//      bsg_ip_cores/hard/bsg_clk_gen/bsg_clk_gen_osc.v
+//      bsg_ip_cores/hard/bsg_clk_gen/bsg_clk_gen_osc.sv
 //
 // This module should be replaced by the hardened version
 // when being synthesized.
 
-`include "bsg_clk_gen.vh"
+`include "bsg_clk_gen.svh"
 
 module bsg_clk_gen_osc
   import bsg_tag_pkg::bsg_tag_s;

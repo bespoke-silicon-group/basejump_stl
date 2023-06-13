@@ -1,10 +1,10 @@
 /**
- *  bsg_mul_synth.v
+ *  bsg_mul_synth.sv
  *
  *  synthesized multiplier
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mul_synth #(parameter `BSG_INV_PARAM(width_p))
 (

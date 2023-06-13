@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_counter_up_down_variable",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_counter_up_down_variable.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_counter_up_down_variable.sv"
     ],
     "run_config": [
         {

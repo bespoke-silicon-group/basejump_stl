@@ -2,7 +2,7 @@
 // MBT: This module should never be used in actual synthesized RTL; it must be hardened.
 // For this reason, I am guarding it with an ifndef SYNTHESIS and we can fix it later.
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 `ifndef SYNTHESIS
 

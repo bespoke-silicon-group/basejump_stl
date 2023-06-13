@@ -11,9 +11,9 @@
 
 // these defines can be overridden by command line parameters
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
-`include "test_assembler_defines.v"
+`include "test_assembler_defines.sv"
 
 module test_assembler;
 

@@ -1,5 +1,5 @@
 //====================================================================
-// bsg_idiv_iterative.v
+// bsg_idiv_iterative.sv
 // 11/14/2016, shawnless.xie@gmail.com
 //====================================================================
 //
@@ -26,7 +26,7 @@
 //    is useful for a RISC ISA, in which only quotient or remainder is need in
 //    one instruction.
 // 2. usging data detection logic to reduce the iteration cycles.
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parameter bits_per_iter_p = 1)
     (input                  clk_i

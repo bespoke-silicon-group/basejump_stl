@@ -35,7 +35,7 @@
 // initially because the clock generators must already be running in order to absorb data
 // from the bsg_tag and be programmed. =)
 //
-// see bsg_ip_cores/testing/bsg_clk_gen/bsg_nonsynth_clk_gen_tester.v for an example usage
+// see bsg_ip_cores/testing/bsg_clk_gen/bsg_nonsynth_clk_gen_tester.sv for an example usage
 //
 // the bsg_tag clock should be asserted 180 degrees out of phase with the data/en signals, to
 // avoid setup/hold time violations. i.e. use negedge clock.

@@ -1,5 +1,5 @@
 // this is a partial packet header should always go at the bottom bits of a header flit
-// move to bsg_wormhole_router.vh
+// move to bsg_wormhole_router.svh
 // FIXME:  have them pass in the cord_markers_pos_p
 //         struct, then it will match bsg_wormhole_router
 //

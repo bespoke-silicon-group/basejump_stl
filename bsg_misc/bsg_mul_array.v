@@ -1,5 +1,5 @@
 /**
- *	bsg_mul_array.v
+ *	bsg_mul_array.sv
  *	pipelined unsigned array multiplier.
  *  @param width_p width of inputs
  *  @param pipeline_p binary vector that is (width_p-1) wide.
@@ -8,7 +8,7 @@
  *	@author Tommy Jung
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mul_array #(parameter `BSG_INV_PARAM(width_p), `BSG_INV_PARAM(pipeline_p))
   (

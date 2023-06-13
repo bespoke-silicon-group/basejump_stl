@@ -12,9 +12,9 @@
 //
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
-`include "bsg_tag.vh"
+`include "bsg_tag.svh"
 
 // will not build in verilator without this
 // possibly resulting incorrect behavior :(

@@ -1,6 +1,6 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
-`include "bsg_clk_gen.vh"
+`include "bsg_clk_gen.svh"
 
 module bsg_dmc_clk_rst_gen
   import bsg_tag_pkg::bsg_tag_s;

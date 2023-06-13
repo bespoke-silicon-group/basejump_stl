@@ -1,12 +1,12 @@
 //====================================================================
-// bsg_idiv_iterative_controller.v
+// bsg_idiv_iterative_controller.sv
 // 11/14/2016, shawnless.xie@gmail.com
 //====================================================================
 //
 // The controller of bsg_idiv_iterative module.
 // Code refactored based on Sam Larser's work
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_iter_p = 1)
       (input               clk_i

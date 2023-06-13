@@ -1,5 +1,5 @@
 /**
- *      bsg_mesh_router_pkg.v
+ *      bsg_mesh_router_pkg.sv
  *
  */
 

@@ -1,5 +1,5 @@
 /**
- *    bsg_latch.v
+ *    bsg_latch.sv
  *
  */
 

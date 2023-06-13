@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_dff_negedge_reset",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_dff_negedge_reset.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_dff_negedge_reset.sv"
     ],
     "run_config": [
         {

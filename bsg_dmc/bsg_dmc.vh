@@ -2,7 +2,7 @@
 `ifndef BSG_DMC_VH
 `define BSG_DMC_VH
 
-  `include "bsg_defines.v"
+  `include "bsg_defines.sv"
 
   `define declare_app_cmd_afifo_entry_s(addr_width_mp) \
     typedef struct packed {           \

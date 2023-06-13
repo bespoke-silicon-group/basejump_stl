@@ -1,9 +1,9 @@
 /**
- *  bsg_nonsynth_dramsim3.v
+ *  bsg_nonsynth_dramsim3.sv
  *
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_dramsim3
   #(parameter `BSG_INV_PARAM(channel_addr_width_p)

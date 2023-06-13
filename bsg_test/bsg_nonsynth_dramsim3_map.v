@@ -1,7 +1,7 @@
 /////////////////////////////////
-// bsg_nonsynth_dramsim3_map.v //
+// bsg_nonsynth_dramsim3_map.sv //
 /////////////////////////////////
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_dramsim3_map
   import bsg_dramsim3_pkg::*;

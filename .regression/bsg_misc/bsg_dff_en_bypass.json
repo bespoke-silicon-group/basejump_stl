@@ -1,9 +1,9 @@
 {
     "design_name": "bsg_dff_en_bypass",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_dff_en_bypass.v",
-        "basejump_stl/bsg_misc/bsg_dff_en.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_dff_en_bypass.sv",
+        "basejump_stl/bsg_misc/bsg_dff_en.sv"
     ],
     "run_config": [
         {

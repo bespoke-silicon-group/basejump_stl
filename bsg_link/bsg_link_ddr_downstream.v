@@ -21,7 +21,7 @@
 //
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_link_ddr_downstream
 

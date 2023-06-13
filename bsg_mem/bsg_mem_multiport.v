@@ -6,7 +6,7 @@
 //
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_multiport #(parameter `BSG_INV_PARAM(width_p)
                            , parameter `BSG_INV_PARAM(els_p)

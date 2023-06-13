@@ -1,7 +1,7 @@
 `define WIDTH_P 8   // unused for now...
 `define NUM_ADGS_P 1
 
-`include "bsg_tag.vh"
+`include "bsg_tag.svh"
 
 module test_bsg;
 

@@ -1,5 +1,5 @@
 /**
- *    bsg_cache_dma_to_wormhole.v
+ *    bsg_cache_dma_to_wormhole.sv
  *
  *    This module interfaces bsg_cache_dma to a wormhole link.
  *    dma_pkts come in two flavors:
@@ -9,9 +9,9 @@
  *          N data flits (the fill data) asynchronously.
  */
 
-`include "bsg_defines.v"
-`include "bsg_noc_links.vh"
-`include "bsg_cache.vh"
+`include "bsg_defines.sv"
+`include "bsg_noc_links.svh"
+`include "bsg_cache.svh"
 
 module bsg_cache_dma_to_wormhole
  import bsg_noc_pkg::*;

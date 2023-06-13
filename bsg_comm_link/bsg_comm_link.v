@@ -129,7 +129,7 @@ ASIC:
 
 */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_comm_link
   #(parameter `BSG_INV_PARAM(channel_width_p   )

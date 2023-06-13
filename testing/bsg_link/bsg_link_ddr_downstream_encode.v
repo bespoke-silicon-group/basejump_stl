@@ -35,7 +35,7 @@
 //
 // THIS MODULE MUST MATCH paired bsg_link_ddr_upstream with use_encode_p=1
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_link_ddr_downstream_encode
 

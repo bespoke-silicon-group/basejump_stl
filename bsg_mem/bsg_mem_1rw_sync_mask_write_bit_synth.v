@@ -7,7 +7,7 @@
 // they should use bsg_mem_1rw_sync_mask_write_bit.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_1rw_sync_mask_write_bit_synth
   #(parameter `BSG_INV_PARAM(width_p)
@@ -99,7 +99,7 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
 `else 
  
 // this code does not map correctly with Xilinx Ultrascale FPGAs 
-// in Vivado, substitute this file with hard/ultrascale_plus/bsg_mem/bsg_mem_1rw_sync_mask_write_bit.v
+// in Vivado, substitute this file with hard/ultrascale_plus/bsg_mem/bsg_mem_1rw_sync_mask_write_bit.sv
       
 `BSG_VIVADO_SYNTH_FAILS
       

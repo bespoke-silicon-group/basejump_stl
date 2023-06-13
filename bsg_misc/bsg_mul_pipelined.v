@@ -46,7 +46,7 @@
 // nested module or augmented package interface.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 `ifndef BSG_MUL_BOOTH_DOT_
 `define BSG_MUL_BOOTH_DOT_

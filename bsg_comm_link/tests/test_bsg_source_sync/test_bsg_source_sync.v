@@ -9,7 +9,7 @@
 // communication after reset.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module test_bsg_source_sync_input;
 

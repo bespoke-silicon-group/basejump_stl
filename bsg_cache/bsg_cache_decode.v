@@ -1,10 +1,10 @@
 /**
- *  bsg_cache_decode.v
+ *  bsg_cache_decode.sv
  *
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_cache_decode
   import bsg_cache_pkg::*;

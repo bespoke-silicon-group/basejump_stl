@@ -1,5 +1,5 @@
 //====================================================================
-// bsg_imul_iterative.v
+// bsg_imul_iterative.sv
 // 11/15/2016, shawnless.xie@gmail.com
 //====================================================================
 //
@@ -44,7 +44,7 @@
 // We add a one bit register to track whether the shifted out LSB of the result
 // are all zeros
 //
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_imul_iterative  #( width_p = 32)
     (input                  clk_i

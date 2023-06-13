@@ -1,10 +1,10 @@
 /**
- *  bsg_cache_to_axi_rx.v
+ *  bsg_cache_to_axi_rx.sv
  *
  *  @author tommy
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_cache_to_axi_rx
  import bsg_axi_pkg::*;

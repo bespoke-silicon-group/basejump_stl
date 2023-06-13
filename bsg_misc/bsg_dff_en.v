@@ -1,9 +1,9 @@
 /**
- *  bsg_dff_en.v
+ *  bsg_dff_en.sv
  *  @param width_p data width
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_dff_en #(parameter `BSG_INV_PARAM(width_p)
                    ,parameter harden_p=1   // mbt fixme: maybe this should not be a default

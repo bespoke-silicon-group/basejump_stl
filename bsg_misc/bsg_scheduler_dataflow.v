@@ -20,7 +20,7 @@
 //
 // outputs which dependences have recently been received
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_scheduler_dataflow_entry #(`BSG_INV_PARAM(tag_width_p)
                                       , `BSG_INV_PARAM(src_tags_p)

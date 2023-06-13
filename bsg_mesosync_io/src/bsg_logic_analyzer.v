@@ -10,7 +10,7 @@
 // It uses a 2 in 1 out FIFO, since during sampling each clock 2 
 // values are read but the signal would be send out 1 by 1. 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_logic_analyzer #( parameter `BSG_INV_PARAM(line_width_p )
                            , parameter `BSG_INV_PARAM(LA_els_p     )

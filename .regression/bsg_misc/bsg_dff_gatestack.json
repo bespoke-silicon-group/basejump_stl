@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_dff_gatestack",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_dff_gatestack.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_dff_gatestack.sv"
     ],
     "run_config": [
         {

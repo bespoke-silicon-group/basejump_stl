@@ -78,7 +78,7 @@
 
 `timescale 1ps/1ps
 
-`include "bsg_clk_gen.vh"
+`include "bsg_clk_gen.svh"
 
 module bsg_clk_gen_osc
    import bsg_tag_pkg::bsg_tag_s;

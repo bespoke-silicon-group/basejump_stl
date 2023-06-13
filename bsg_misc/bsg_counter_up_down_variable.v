@@ -3,7 +3,7 @@
 // for counter, in case of using for credit counters. Also
 // up and down values could be variable, having max threshold
 // of max_step_p.
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_counter_up_down_variable #( parameter `BSG_INV_PARAM(max_val_p    )
                                      , parameter `BSG_INV_PARAM(init_val_p   )

@@ -23,7 +23,7 @@
 //   int bsg_dpi_width(): returns the parameter width_p
 //   bit [width_p-1:0] bsg_dpi_rom_get(int): Read and return the value
 //     at index idx in arr_p
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_dpi_rom
    #(parameter int els_p = 1

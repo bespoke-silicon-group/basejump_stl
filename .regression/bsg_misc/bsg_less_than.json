@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_less_than",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_less_than.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_less_than.sv"
     ],
     "run_config": [
         {

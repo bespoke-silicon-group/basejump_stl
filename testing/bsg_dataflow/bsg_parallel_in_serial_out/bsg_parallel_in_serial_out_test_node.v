@@ -4,7 +4,7 @@
 //
 //
 
-`include "bsg_noc_links.vh"
+`include "bsg_noc_links.svh"
 
 module bsg_parallel_in_serial_out_test_node
 

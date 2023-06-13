@@ -1,12 +1,12 @@
 /**
- *  bsg_nonsynth_non_blocking_dma_model.v
+ *  bsg_nonsynth_non_blocking_dma_model.sv
  *
  *  There is nothing non-blocking about the DMA model,
  *  Rather this is only to be used with bsg_cache_non_blocking.
  *
  */
 
-`include "bsg_cache_non_blocking.vh"
+`include "bsg_cache_non_blocking.svh"
 
 module bsg_nonsynth_non_blocking_dma_model
   import bsg_cache_non_blocking_pkg::*;

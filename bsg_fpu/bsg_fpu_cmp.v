@@ -1,5 +1,5 @@
 /**
- *  bsg_fpu_cmp.v
+ *  bsg_fpu_cmp.sv
  *
  *  @author Tommy Jung
  *
@@ -25,9 +25,9 @@
  *
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
-`include "bsg_fpu_defines.vh"
+`include "bsg_fpu_defines.svh"
 
 module bsg_fpu_cmp
   #(parameter `BSG_INV_PARAM(e_p)

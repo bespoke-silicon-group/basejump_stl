@@ -18,7 +18,7 @@
 //
 // lg_start_credits_p should be consistent with the paired source_sync_output
 //
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_source_sync_output
      #(

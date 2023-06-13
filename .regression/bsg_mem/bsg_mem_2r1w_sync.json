@@ -1,10 +1,10 @@
 {
     "design_name": "bsg_mem_2r1w_sync",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_mem/bsg_mem_2r1w_sync.v",
-        "basejump_stl/bsg_mem/bsg_mem_2r1w_sync_synth.v",
-        "basejump_stl/bsg_misc/bsg_clkgate_optional.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_mem/bsg_mem_2r1w_sync.sv",
+        "basejump_stl/bsg_mem/bsg_mem_2r1w_sync_synth.sv",
+        "basejump_stl/bsg_misc/bsg_clkgate_optional.sv"
     ],
     "run_config": [
         {

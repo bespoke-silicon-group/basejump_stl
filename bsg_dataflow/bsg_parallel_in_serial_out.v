@@ -14,7 +14,7 @@
 // use_minimal_buffering_p = 1
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_parallel_in_serial_out 
 

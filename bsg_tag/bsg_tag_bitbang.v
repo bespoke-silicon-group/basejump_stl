@@ -1,5 +1,5 @@
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 /*
  * This module takes 1 bit of data and sends it out along with a clock pulse.

@@ -1,5 +1,5 @@
 /**
- *  testbench.v
+ *  testbench.sv
  */
 
 `include "bsg_manycore_packet.vh"

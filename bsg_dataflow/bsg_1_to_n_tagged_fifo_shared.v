@@ -29,7 +29,7 @@
 // because they can be consumed immediately.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_1_to_n_tagged_fifo_shared   #(parameter `BSG_INV_PARAM(width_p              )
                                          ,parameter `BSG_INV_PARAM(num_out_p           )

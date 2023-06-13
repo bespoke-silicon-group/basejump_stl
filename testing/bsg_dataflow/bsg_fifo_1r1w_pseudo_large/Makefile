@@ -32,17 +32,17 @@ DESIGNWARE_FLAGS = -y $(DESIGNWARE_DIR) +incdir+$(DESIGNWARE_DIR) +incdir+$(TOP)
 
 
 BSG_HYPOT_FILES     = 
-BSG_MISC_FILES      =   bsg_defines.v bsg_circular_ptr.v bsg_cycle_counter.v bsg_encode_one_hot.v
+BSG_MISC_FILES      =   bsg_defines.sv bsg_circular_ptr.sv bsg_cycle_counter.sv bsg_encode_one_hot.sv
 BSG_ASYNC_FILES     = 
 BSG_COMM_LINK_FILES =
-BSG_DATAFLOW_FILES  =  bsg_fifo_1r1w_pseudo_large.v bsg_fifo_1rw_large.v bsg_two_fifo.v bsg_round_robin_n_to_1.v 
+BSG_DATAFLOW_FILES  =  bsg_fifo_1r1w_pseudo_large.sv bsg_fifo_1rw_large.sv bsg_two_fifo.sv bsg_round_robin_n_to_1.sv 
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
-BSG_MEM_FILES       = bsg_mem_1r1w.v bsg_mem_1rw_sync.v bsg_mem_1r1w_synth.v bsg_mem_1rw_sync_synth.v
+BSG_MEM_FILES       = bsg_mem_1r1w.sv bsg_mem_1rw_sync.sv bsg_mem_1r1w_synth.sv bsg_mem_1rw_sync_synth.sv
 
-BSG_TEST_FILES =  bsg_nonsynth_reset_gen.v bsg_nonsynth_clock_gen.v
+BSG_TEST_FILES =  bsg_nonsynth_reset_gen.sv bsg_nonsynth_clock_gen.sv
 
-TEST_MAIN=test_bsg_fifo_1r1w_pseudo_large.v
+TEST_MAIN=test_bsg_fifo_1r1w_pseudo_large.sv
 
 
 ALL_FILES = $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x)) $(foreach x,$(BSG_ASYNC_FILES),$(TOP)/bsg_async/$(x)) $(foreach x,$(BSG_FSB_FILES),$(TOP)/bsg_fsb/$(x)) $(foreach x,$(BSG_GUTS_FILES),$(TOP)/bsg_guts/$(x)) $(foreach x,$(BSG_COMM_LINK_FILES),$(TOP)/bsg_comm_link/$(x)) $(foreach x,$(BSG_DATAFLOW_FILES),$(TOP)/bsg_dataflow/$(x)) $(foreach x,$(BSG_TEST_FILES),$(TOP)/bsg_test/$(x)) $(foreach x,$(BSG_MEM_FILES),$(TOP)/bsg_mem/$(x)) $(BSG_HYPOT_FILES) $(TEST_MAIN)
@@ -89,5 +89,5 @@ clean:
 small-clean:
 	- rm -rf simv csrc simv.daidir
 
-bsg_scatter_gather.v: bsg_scatter_gather.py
+bsg_scatter_gather.sv: bsg_scatter_gather.py
 	./$< > $@

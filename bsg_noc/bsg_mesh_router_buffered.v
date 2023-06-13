@@ -1,11 +1,11 @@
 /**
- *    bsg_mesh_router_buffered.v
+ *    bsg_mesh_router_buffered.sv
  *
  */
 
 
-`include "bsg_defines.v"
-`include "bsg_noc_links.vh"
+`include "bsg_defines.sv"
+`include "bsg_noc_links.svh"
 
 
 module bsg_mesh_router_buffered

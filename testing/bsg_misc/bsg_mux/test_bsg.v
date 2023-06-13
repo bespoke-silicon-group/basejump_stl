@@ -1,7 +1,7 @@
 `define WIDTH_P 3
 `define ELS_P   4
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 /**************************** TEST RATIONALE *******************************
 

@@ -1,5 +1,5 @@
 /**
- *  bsg_cache.v
+ *  bsg_cache.sv
  *
  *  - two-stage pipelined.
  *  - n-way set associative.
@@ -12,8 +12,8 @@
  */
 
 
-`include "bsg_defines.v"
-`include "bsg_cache.vh"
+`include "bsg_defines.sv"
+`include "bsg_cache.svh"
 
 module bsg_cache
   import bsg_cache_pkg::*;

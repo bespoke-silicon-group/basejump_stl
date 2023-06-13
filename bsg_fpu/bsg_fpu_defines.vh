@@ -1,5 +1,5 @@
 /**
- *  bsg_fpu_defines.vh
+ *  bsg_fpu_defines.svh
  *
  *  @author tommy
  *

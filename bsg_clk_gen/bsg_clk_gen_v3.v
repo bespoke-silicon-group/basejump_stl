@@ -22,9 +22,9 @@
 // all 0's is the slowest setting, and delay decreases as you increment the counter
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
-`include "bsg_clk_gen.vh"
+`include "bsg_clk_gen.svh"
 
 module bsg_clk_gen_v3
   import bsg_tag_pkg::bsg_tag_s;

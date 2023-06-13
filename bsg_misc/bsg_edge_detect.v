@@ -1,5 +1,5 @@
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_edge_detect
  #(parameter falling_not_rising_p = 0)

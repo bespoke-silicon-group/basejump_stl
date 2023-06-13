@@ -7,7 +7,7 @@
  * - Write with w_nuke_i flag invalidates the cam
  */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_cam_1r1w_sync
  #(parameter `BSG_INV_PARAM(els_p)

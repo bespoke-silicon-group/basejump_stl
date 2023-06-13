@@ -1,12 +1,12 @@
 /**
- *  bsg_nonsynth_test_rom.v
+ *  bsg_nonsynth_test_rom.sv
  *
  *  async read test_rom that uses readmemb to read its contents.
  *
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_test_rom
   #(parameter `BSG_INV_PARAM(filename_p)

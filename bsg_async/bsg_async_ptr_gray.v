@@ -15,7 +15,7 @@
 
 // ASYNC RESET: w_ clock cannot toggle during reset
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_async_ptr_gray #(parameter `BSG_INV_PARAM(lg_size_p )
                             ,parameter use_negedge_for_launch_p=0

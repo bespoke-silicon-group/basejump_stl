@@ -5,7 +5,7 @@
 // count_free_p it will count the number of free elements or
 // number of existing elements in the connected module.
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_flow_counter #(parameter `BSG_INV_PARAM(els_p              )
                         , parameter count_free_p       = 0

@@ -1,14 +1,14 @@
 /**
- *    bsg_crossbar_control_locking_o_by_i.v
+ *    bsg_crossbar_control_locking_o_by_i.sv
  *
  *    This module generates the control signals for bsg_router_crossbar_o_by_i.
- *    In addition to bsg_crossbar_control_basic_o_by_i.v, it also "locks" the
+ *    In addition to bsg_crossbar_control_basic_o_by_i.sv, it also "locks" the
  *      outputs so that streams of data will not be interleaved if multiple
  *      sources attempt to send to the same sink.
  */
 
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_crossbar_control_locking_o_by_i
   #(parameter `BSG_INV_PARAM(i_els_p)

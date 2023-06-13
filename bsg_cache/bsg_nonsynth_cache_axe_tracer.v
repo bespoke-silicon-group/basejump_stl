@@ -1,5 +1,5 @@
 /**
- *  bsg_nonsynth_cache_axe_tracer.v
+ *  bsg_nonsynth_cache_axe_tracer.sv
  *
  *  use SystemVerilog 'bind' on bsg_cache.
  *
@@ -9,8 +9,8 @@
  */
 
 
-`include "bsg_defines.v"
-`include "bsg_cache.vh"
+`include "bsg_defines.sv"
+`include "bsg_cache.svh"
 
 module bsg_nonsynth_cache_axe_tracer
   import bsg_cache_pkg::*;
