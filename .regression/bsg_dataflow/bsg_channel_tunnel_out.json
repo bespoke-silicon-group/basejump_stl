@@ -1,14 +1,14 @@
 {
     "design_name": "bsg_channel_tunnel_out",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_dataflow/bsg_channel_tunnel_out.v",
-        "basejump_stl/bsg_misc/bsg_counter_up_down_variable.v",
-        "basejump_stl/bsg_dataflow/bsg_round_robin_n_to_1.v",
-        "basejump_stl/bsg_misc/bsg_circular_ptr.v",
-        "basejump_stl/bsg_misc/bsg_round_robin_arb.v",
-        "basejump_stl/bsg_misc/bsg_crossbar_o_by_i.v",
-        "basejump_stl/bsg_misc/bsg_mux_one_hot.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_dataflow/bsg_channel_tunnel_out.sv",
+        "basejump_stl/bsg_misc/bsg_counter_up_down_variable.sv",
+        "basejump_stl/bsg_dataflow/bsg_round_robin_n_to_1.sv",
+        "basejump_stl/bsg_misc/bsg_circular_ptr.sv",
+        "basejump_stl/bsg_misc/bsg_round_robin_arb.sv",
+        "basejump_stl/bsg_misc/bsg_crossbar_o_by_i.sv",
+        "basejump_stl/bsg_misc/bsg_mux_one_hot.sv"
     ],
     "run_config": [
         {

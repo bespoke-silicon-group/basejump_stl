@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_buf",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_buf.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_buf.sv"
     ],
     "run_config": [
         {

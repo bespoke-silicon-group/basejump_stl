@@ -1,12 +1,12 @@
 {
     "design_name": "bsg_async_credit_counter",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_async/bsg_async_credit_counter.v",
-        "basejump_stl/bsg_async/bsg_async_ptr_gray.v",
-        "basejump_stl/bsg_async/bsg_launch_sync_sync.v",
-        "basejump_stl/bsg_misc/bsg_gray_to_binary.v",
-        "basejump_stl/bsg_misc/bsg_scan.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_async/bsg_async_credit_counter.sv",
+        "basejump_stl/bsg_async/bsg_async_ptr_gray.sv",
+        "basejump_stl/bsg_async/bsg_launch_sync_sync.sv",
+        "basejump_stl/bsg_misc/bsg_gray_to_binary.sv",
+        "basejump_stl/bsg_misc/bsg_scan.sv"
     ],
     "run_config": [
         {

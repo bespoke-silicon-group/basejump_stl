@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_counter_clear_up",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_counter_clear_up.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_counter_clear_up.sv"
     ],
     "run_config": [
         {

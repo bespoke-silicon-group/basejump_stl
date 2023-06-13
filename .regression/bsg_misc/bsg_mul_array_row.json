@@ -1,10 +1,10 @@
 {
     "design_name": "bsg_mul_array_row",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_mul_array_row.v",
-        "basejump_stl/bsg_misc/bsg_and.v",
-        "basejump_stl/bsg_misc/bsg_adder_ripple_carry.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_mul_array_row.sv",
+        "basejump_stl/bsg_misc/bsg_and.sv",
+        "basejump_stl/bsg_misc/bsg_adder_ripple_carry.sv"
     ],
     "run_config": [
         {

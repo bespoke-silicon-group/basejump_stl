@@ -1,9 +1,9 @@
 {
     "design_name": "bsg_mesh_stitch",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_noc/bsg_mesh_stitch.v",
-        "basejump_stl/bsg_noc/bsg_noc_pkg.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_noc/bsg_mesh_stitch.sv",
+        "basejump_stl/bsg_noc/bsg_noc_pkg.sv"
     ],
     "run_config": [
         {

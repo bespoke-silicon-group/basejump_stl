@@ -17,7 +17,7 @@ GENERATED_VERILOG_FILE = bsg_cordic_sine_cosine_hyperbolic.v
 #To generate the default design with the parameters at line #53, please use 
 # 'make bsg_cordic_sine_cosine_hyperbolic.v'. 
 
-SRC_FILES = $(GENERATED_VERILOG_FILE) bsg_cordic_sin_cos_hyperbolic_stage_negative.v bsg_cordic_sin_cos_hyperbolic_stage_positive.v
+SRC_FILES = $(GENERATED_VERILOG_FILE) bsg_cordic_sin_cos_hyperbolic_stage_negative.sv bsg_cordic_sin_cos_hyperbolic_stage_positive.sv
 
 TEST_FILES = bsg_cordic_sine_cosine_hyperbolic_test.cpp 
 

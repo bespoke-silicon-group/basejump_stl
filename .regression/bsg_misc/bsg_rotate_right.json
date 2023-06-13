@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_rotate_right",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_rotate_right.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_rotate_right.sv"
     ],
     "run_config": [
         {

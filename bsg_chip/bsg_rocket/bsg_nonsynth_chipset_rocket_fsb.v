@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_chipset_rocket
   #(parameter num_channels_p=4

@@ -1,12 +1,12 @@
 {
     "design_name": "bsg_cache_sbuf",
     "filelist": [
-        "basejump_stl/bsg_cache/bsg_cache.vh",
-        "basejump_stl/bsg_cache/bsg_cache_pkg.v",
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_cache/bsg_cache_sbuf.v",
-        "basejump_stl/bsg_cache/bsg_cache_buffer_queue.v",
-        "basejump_stl/bsg_misc/bsg_mux_segmented.v"
+        "basejump_stl/bsg_cache/bsg_cache.svh",
+        "basejump_stl/bsg_cache/bsg_cache_pkg.sv",
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_cache/bsg_cache_sbuf.sv",
+        "basejump_stl/bsg_cache/bsg_cache_buffer_queue.sv",
+        "basejump_stl/bsg_misc/bsg_mux_segmented.sv"
     ],
     "run_config": [
         {

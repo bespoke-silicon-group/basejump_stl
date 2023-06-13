@@ -24,4 +24,4 @@ clean:
 	rm -rf simv.daidir simv.vdb
 	rm -f ucli.key vcdplus.vpd simv cm.log *.tar.gz
 	rm -rf trace.tr
-	rm -rf bsg_trace_rom.v
+	rm -rf bsg_trace_rom.sv

@@ -1,9 +1,9 @@
 {
     "design_name": "bsg_mux_butterfly",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_mux_butterfly.v",
-        "basejump_stl/bsg_misc/bsg_swap.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_mux_butterfly.sv",
+        "basejump_stl/bsg_misc/bsg_swap.sv"
     ],
     "run_config": [
         {

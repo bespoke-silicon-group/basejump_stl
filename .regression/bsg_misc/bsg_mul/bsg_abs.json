@@ -1,7 +1,7 @@
 {
     "design_name": "bsg_abs",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_abs.v"
+        "basejump_stl/bsg_misc/bsg_abs.sv"
     ],
     "run_config": [
         {

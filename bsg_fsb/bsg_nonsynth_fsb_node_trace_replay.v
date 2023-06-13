@@ -17,7 +17,7 @@
 // 3: assert done_o; test complete.
 // 4: end test; call $finish
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_nonsynth_fsb_node_trace_replay
   #(parameter ring_width_p=80

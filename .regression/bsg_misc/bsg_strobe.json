@@ -1,15 +1,15 @@
 {
     "design_name": "bsg_strobe",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_strobe.v",
-        "basejump_stl/bsg_misc/bsg_dff.v",
-        "basejump_stl/bsg_misc/bsg_xnor.v",
-        "basejump_stl/bsg_misc/bsg_muxi2_gatestack.v",
-        "basejump_stl/bsg_misc/bsg_nand.v",
-        "basejump_stl/bsg_misc/bsg_nor3.v",
-        "basejump_stl/bsg_misc/bsg_reduce.v",
-        "basejump_stl/bsg_misc/bsg_buf.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_strobe.sv",
+        "basejump_stl/bsg_misc/bsg_dff.sv",
+        "basejump_stl/bsg_misc/bsg_xnor.sv",
+        "basejump_stl/bsg_misc/bsg_muxi2_gatestack.sv",
+        "basejump_stl/bsg_misc/bsg_nand.sv",
+        "basejump_stl/bsg_misc/bsg_nor3.sv",
+        "basejump_stl/bsg_misc/bsg_reduce.sv",
+        "basejump_stl/bsg_misc/bsg_buf.sv"
     ],
     "run_config": [
         {

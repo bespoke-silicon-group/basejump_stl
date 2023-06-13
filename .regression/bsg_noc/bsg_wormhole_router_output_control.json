@@ -1,11 +1,11 @@
 {
     "design_name": "bsg_wormhole_router_output_control",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_noc/bsg_wormhole_router_output_control.v",
-        "basejump_stl/bsg_misc/bsg_dff_reset.v",
-        "basejump_stl/bsg_misc/bsg_counter_set_down.v",
-        "basejump_stl/bsg_misc/bsg_round_robin_arb.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_noc/bsg_wormhole_router_output_control.sv",
+        "basejump_stl/bsg_misc/bsg_dff_reset.sv",
+        "basejump_stl/bsg_misc/bsg_counter_set_down.sv",
+        "basejump_stl/bsg_misc/bsg_round_robin_arb.sv"
     ],
     "run_config": [
         {

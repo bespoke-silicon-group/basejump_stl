@@ -1,11 +1,11 @@
-$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_clock_gen.v
-$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_reset_gen.v
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_clock_gen.sv
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_reset_gen.sv
 $BASEJUMP_STL_DIR/bsg_fsb/bsg_fsb_node_trace_replay.v
 
-$BASEJUMP_STL_DIR/bsg_misc/bsg_less_than.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_less_than.sv
 
-$BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_cmp.v
-$BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_preprocess.v
+$BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_cmp.sv
+$BASEJUMP_STL_DIR/bsg_fpu/bsg_fpu_preprocess.sv
 
 bsg_fpu_trace_rom.v
-testbench.v
+testbench.sv

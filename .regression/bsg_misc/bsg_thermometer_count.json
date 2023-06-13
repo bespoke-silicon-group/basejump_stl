@@ -1,9 +1,9 @@
 {
     "design_name": "bsg_thermometer_count",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_thermometer_count.v",
-        "basejump_stl/bsg_misc/bsg_encode_one_hot.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_thermometer_count.sv",
+        "basejump_stl/bsg_misc/bsg_encode_one_hot.sv"
     ],
     "run_config": [
         {

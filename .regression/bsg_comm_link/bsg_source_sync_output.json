@@ -1,17 +1,17 @@
 {
     "design_name": "bsg_source_sync_output",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_comm_link/bsg_source_sync_output.v",
-        "basejump_stl/bsg_async/bsg_sync_sync.v",
-        "basejump_stl/bsg_async/bsg_async_fifo.v",
-        "basejump_stl/bsg_mem/bsg_mem_1r1w.v",
-        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v",
-        "basejump_stl/bsg_async/bsg_async_ptr_gray.v",
-        "basejump_stl/bsg_async/bsg_launch_sync_sync.v",
-        "basejump_stl/bsg_dataflow/bsg_two_fifo.v",
-        "basejump_stl/bsg_misc/bsg_binary_plus_one_to_gray.v",
-        "basejump_stl/bsg_misc/bsg_scan.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_comm_link/bsg_source_sync_output.sv",
+        "basejump_stl/bsg_async/bsg_sync_sync.sv",
+        "basejump_stl/bsg_async/bsg_async_fifo.sv",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w.sv",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.sv",
+        "basejump_stl/bsg_async/bsg_async_ptr_gray.sv",
+        "basejump_stl/bsg_async/bsg_launch_sync_sync.sv",
+        "basejump_stl/bsg_dataflow/bsg_two_fifo.sv",
+        "basejump_stl/bsg_misc/bsg_binary_plus_one_to_gray.sv",
+        "basejump_stl/bsg_misc/bsg_scan.sv"
     ],
     "include_path": [
         "basejump_stl/bsg_misc/"

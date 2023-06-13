@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_adder_cin",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_adder_cin.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_adder_cin.sv"
     ],
     "run_config": [
         {

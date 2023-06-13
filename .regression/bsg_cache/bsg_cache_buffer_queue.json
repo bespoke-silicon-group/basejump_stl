@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_cache_buffer_queue",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_cache/bsg_cache_buffer_queue.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_cache/bsg_cache_buffer_queue.sv"
     ],
     "run_config": [
         {

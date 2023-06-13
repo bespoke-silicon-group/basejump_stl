@@ -36,20 +36,20 @@ DESIGNWARE_FLAGS = -y $(DESIGNWARE_DIR) +incdir+$(DESIGNWARE_DIR) +incdir+$(TOP)
 
 
 
-BSG_HYPOT_FILES     = bsg_hypotenuse.v 
-BSG_MISC_FILES      =   bsg_cycle_counter.v
+BSG_HYPOT_FILES     = bsg_hypotenuse.sv 
+BSG_MISC_FILES      =   bsg_cycle_counter.sv
 BSG_ASYNC_FILES     = 
 BSG_COMM_LINK_FILES =
-BSG_DATAFLOW_FILES  =  bsg_shift_reg.v
+BSG_DATAFLOW_FILES  =  bsg_shift_reg.sv
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
 
-BSG_TEST_FILES =  bsg_nonsynth_reset_gen.v bsg_nonsynth_clock_gen.v bsg_nonsynth_ascii_writer.v
+BSG_TEST_FILES =  bsg_nonsynth_reset_gen.sv bsg_nonsynth_clock_gen.sv bsg_nonsynth_ascii_writer.sv
 
 #TEST_FILES = test_assembler.v
-#TEST_MAIN = test_bsg_comm_link.v
+#TEST_MAIN = test_bsg_comm_link.sv
 
-TEST_MAIN=test_bsg_hypotenuse.v
+TEST_MAIN=test_bsg_hypotenuse.sv
 
 
 ALL_FILES = $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x)) $(foreach x,$(BSG_ASYNC_FILES),$(TOP)/bsg_async/$(x)) $(foreach x,$(BSG_FSB_FILES),$(TOP)/bsg_fsb/$(x)) $(foreach x,$(BSG_GUTS_FILES),$(TOP)/bsg_guts/$(x)) $(foreach x,$(BSG_COMM_LINK_FILES),$(TOP)/bsg_comm_link/$(x)) $(foreach x,$(BSG_DATAFLOW_FILES),$(TOP)/bsg_dataflow/$(x)) $(foreach x,$(BSG_TEST_FILES),$(TOP)/bsg_test/$(x)) $(BSG_HYPOT_FILES) $(TEST_MAIN)
@@ -95,5 +95,5 @@ clean:
 small-clean:
 	- rm -rf simv csrc simv.daidir
 
-bsg_scatter_gather.v: bsg_scatter_gather.py
+bsg_scatter_gather.sv: bsg_scatter_gather.py
 	./$< > $@

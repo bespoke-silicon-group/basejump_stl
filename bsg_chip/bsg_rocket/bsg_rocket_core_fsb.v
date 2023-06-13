@@ -1,6 +1,6 @@
 // mbt 2-16-16
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_rocket_core_fsb
   import bsg_fsb_packet::RingPacketType;

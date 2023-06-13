@@ -6,8 +6,8 @@ import json
 import os
 
 bsg_mem_1r1w_sync_template = """
-  `include "bsg_defines.v"
-  `include "bsg_mem_1r1w_sync_macros.vh"
+  `include "bsg_defines.sv"
+  `include "bsg_mem_1r1w_sync_macros.svh"
 
   module bsg_mem_1r1w_sync
     #(parameter `BSG_INV_PARAM(width_p)
@@ -71,8 +71,8 @@ bsg_mem_1r1w_sync_template = """
 """
 
 bsg_mem_1r1w_sync_mask_write_bit_template = """
-  `include "bsg_defines.v"
-  `include "bsg_mem_1r1w_sync_mask_write_bit_macros.vh"
+  `include "bsg_defines.sv"
+  `include "bsg_mem_1r1w_sync_mask_write_bit_macros.svh"
 
   module bsg_mem_1r1w_sync_mask_write_bit
     #(parameter `BSG_INV_PARAM(width_p)
@@ -137,8 +137,8 @@ bsg_mem_1r1w_sync_mask_write_bit_template = """
 """
 
 bsg_mem_1r1w_sync_mask_write_byte_template = """
-  `include "bsg_defines.v"
-  `include "bsg_mem_1r1w_sync_mask_write_byte_macros.vh"
+  `include "bsg_defines.sv"
+  `include "bsg_mem_1r1w_sync_mask_write_byte_macros.svh"
 
   module bsg_mem_1r1w_sync_mask_write_byte
     #(parameter `BSG_INV_PARAM(width_p)
@@ -204,8 +204,8 @@ bsg_mem_1r1w_sync_mask_write_byte_template = """
 """
 
 bsg_mem_1rw_sync_template = """
-  `include "bsg_defines.v"
-  `include "bsg_mem_1rw_sync_macros.vh"
+  `include "bsg_defines.sv"
+  `include "bsg_mem_1rw_sync_macros.svh"
 
 module bsg_mem_1rw_sync #(parameter `BSG_INV_PARAM(width_p)
                           , parameter `BSG_INV_PARAM(els_p)
@@ -256,8 +256,8 @@ endmodule
 
 bsg_mem_1rw_sync_mask_write_bit_template = """
 
-  `include "bsg_defines.v"
-  `include "bsg_mem_1rw_sync_mask_write_bit_macros.vh"
+  `include "bsg_defines.sv"
+  `include "bsg_mem_1rw_sync_mask_write_bit_macros.svh"
 
 module bsg_mem_1rw_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
                           , parameter `BSG_INV_PARAM(els_p)
@@ -308,8 +308,8 @@ endmodule
 
 bsg_mem_1rw_sync_mask_write_byte_template = """
 
-  `include "bsg_defines.v"
-  `include "bsg_mem_1rw_sync_mask_write_byte_macros.vh"
+  `include "bsg_defines.sv"
+  `include "bsg_mem_1rw_sync_mask_write_byte_macros.svh"
 
 module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(data_width_p)
                           , parameter `BSG_INV_PARAM(els_p)
@@ -359,8 +359,8 @@ endmodule
 """
 
 bsg_mem_2r1w_sync_template = """
-  `include "bsg_defines.v"
-  `include "bsg_mem_2r1w_sync_macros.vh"
+  `include "bsg_defines.sv"
+  `include "bsg_mem_2r1w_sync_macros.svh"
 
   module bsg_mem_2r1w_sync
     #(parameter `BSG_INV_PARAM(width_p)
@@ -420,8 +420,8 @@ bsg_mem_2r1w_sync_template = """
 """
 
 bsg_mem_2rw_sync_template = """
-  `include "bsg_defines.v"
-  `include "bsg_mem_2rw_sync_macros.vh"
+  `include "bsg_defines.sv"
+  `include "bsg_mem_2rw_sync_macros.svh"
 
   module bsg_mem_2rw_sync
     #(parameter `BSG_INV_PARAM(width_p)
@@ -484,8 +484,8 @@ bsg_mem_2rw_sync_template = """
 """
 
 bsg_mem_2rw_sync_mask_write_bit_template = """
-  `include "bsg_defines.v"
-  `include "bsg_mem_2rw_sync_mask_write_bit_macros.vh"
+  `include "bsg_defines.sv"
+  `include "bsg_mem_2rw_sync_mask_write_bit_macros.svh"
 
   module bsg_mem_2rw_sync_mask_write_bit
     #(parameter `BSG_INV_PARAM(width_p)
@@ -550,8 +550,8 @@ bsg_mem_2rw_sync_mask_write_bit_template = """
 """
 
 bsg_mem_2rw_sync_mask_write_byte_template = """
-  `include "bsg_defines.v"
-  `include "bsg_mem_2rw_sync_mask_write_byte_macros.vh"
+  `include "bsg_defines.sv"
+  `include "bsg_mem_2rw_sync_mask_write_byte_macros.svh"
 
   module bsg_mem_2rw_sync_mask_write_byte
     #(parameter `BSG_INV_PARAM(width_p)
@@ -617,8 +617,8 @@ bsg_mem_2rw_sync_mask_write_byte_template = """
 """
 
 bsg_mem_3r1w_sync_template = """
-  `include "bsg_defines.v"
-  `include "bsg_mem_3r1w_sync_macros.vh"
+  `include "bsg_defines.sv"
+  `include "bsg_mem_3r1w_sync_macros.svh"
 
   module bsg_mem_3r1w_sync
     #(parameter `BSG_INV_PARAM(width_p)

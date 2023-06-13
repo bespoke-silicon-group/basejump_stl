@@ -1,9 +1,9 @@
 {
     "design_name": "bsg_cache_decode",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_cache/bsg_cache_pkg.v",
-        "basejump_stl/bsg_cache/bsg_cache_decode.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_cache/bsg_cache_pkg.sv",
+        "basejump_stl/bsg_cache/bsg_cache_decode.sv"
     ],
     "run_config": [
         {

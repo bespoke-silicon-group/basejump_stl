@@ -9,7 +9,7 @@
 //default: FSB  on Right, 
 //         NODE on Left
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 `ifndef FSB_LEGACY 
 module  bsg_fsb_node_async_buffer 

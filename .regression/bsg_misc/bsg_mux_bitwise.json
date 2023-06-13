@@ -1,9 +1,9 @@
 {
     "design_name": "bsg_mux_bitwise",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_mux_bitwise.v",
-        "basejump_stl/bsg_misc/bsg_mux_segmented.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_mux_bitwise.sv",
+        "basejump_stl/bsg_misc/bsg_mux_segmented.sv"
     ],
     "run_config": [
         {

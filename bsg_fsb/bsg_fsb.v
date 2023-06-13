@@ -24,7 +24,7 @@
 // limits us to 4 bits of id's, or 16 nodes.
 //
 `ifndef FSB_LEGACY 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 module bsg_fsb #(parameter `BSG_INV_PARAM( width_p )
                  
                  ,parameter `BSG_INV_PARAM(nodes_p )

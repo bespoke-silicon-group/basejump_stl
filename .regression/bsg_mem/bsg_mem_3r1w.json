@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_mem_3r1w",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_mem/bsg_mem_3r1w.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_mem/bsg_mem_3r1w.sv"
     ],
     "run_config": [
         {

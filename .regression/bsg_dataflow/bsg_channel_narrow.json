@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_channel_narrow",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_dataflow/bsg_channel_narrow.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_dataflow/bsg_channel_narrow.sv"
     ],
     "run_config": [
         {

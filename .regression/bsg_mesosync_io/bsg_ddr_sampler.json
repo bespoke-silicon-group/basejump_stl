@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_ddr_sampler",
     "filelist": [
-        "basejump_stl/bsg_mesosync_io/src/bsg_ddr_sampler.v",
-        "basejump_stl/bsg_async/bsg_sync_sync.v"
+        "basejump_stl/bsg_mesosync_io/src/bsg_ddr_sampler.sv",
+        "basejump_stl/bsg_async/bsg_sync_sync.sv"
     ],
     "run_config": [
         {

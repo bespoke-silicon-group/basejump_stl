@@ -1,11 +1,11 @@
 {
     "design_name": "bsg_8b10b_shift_decoder",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_dataflow/bsg_8b10b_shift_decoder.v",
-        "basejump_stl/bsg_misc/bsg_counter_overflow_en.v",
-        "basejump_stl/bsg_dataflow/bsg_8b10b_decode_comb.v",
-        "basejump_stl/bsg_misc/bsg_dff.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_dataflow/bsg_8b10b_shift_decoder.sv",
+        "basejump_stl/bsg_misc/bsg_counter_overflow_en.sv",
+        "basejump_stl/bsg_dataflow/bsg_8b10b_decode_comb.sv",
+        "basejump_stl/bsg_misc/bsg_dff.sv"
     ],
     "run_config": [
         {

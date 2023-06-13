@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_clkbuf",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_clkbuf.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_clkbuf.sv"
     ],
     "run_config": [
         {

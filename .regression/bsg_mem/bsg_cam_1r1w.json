@@ -4,12 +4,12 @@
         "basejump_stl/bsg_misc/"
     ],
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_mem/bsg_cam_1r1w.v",
-        "basejump_stl/bsg_misc/bsg_priority_encode.v",
-        "basejump_stl/bsg_misc/bsg_priority_encode_one_hot_out.v",
-        "basejump_stl/bsg_misc/bsg_encode_one_hot.v",
-        "basejump_stl/bsg_misc/bsg_scan.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_mem/bsg_cam_1r1w.sv",
+        "basejump_stl/bsg_misc/bsg_priority_encode.sv",
+        "basejump_stl/bsg_misc/bsg_priority_encode_one_hot_out.sv",
+        "basejump_stl/bsg_misc/bsg_encode_one_hot.sv",
+        "basejump_stl/bsg_misc/bsg_scan.sv"
     ],
     "run_config": [
         {

@@ -1,12 +1,12 @@
 {
     "design_name": "bsg_mul",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_mul.v",
-        "basejump_stl/bsg_misc/bsg_mul_pipelined.v",
-        "basejump_stl/bsg_misc/bsg_transpose.v",
-        "basejump_stl/bsg_misc/bsg_dff_en.v",
-        "basejump_stl/bsg_misc/bsg_and.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_mul.sv",
+        "basejump_stl/bsg_misc/bsg_mul_pipelined.sv",
+        "basejump_stl/bsg_misc/bsg_transpose.sv",
+        "basejump_stl/bsg_misc/bsg_dff_en.sv",
+        "basejump_stl/bsg_misc/bsg_and.sv"
     ],
     "run_config": [
         {

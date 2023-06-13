@@ -1,15 +1,15 @@
 {
     "design_name": "bsg_fsb_node_async_buffer",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
+        "basejump_stl/bsg_misc/bsg_defines.sv",
         "basejump_stl/bsg_fsb/bsg_fsb_pkg.v",
         "basejump_stl/bsg_fsb/bsg_fsb_node_async_buffer.v",
-        "basejump_stl/bsg_async/bsg_async_fifo.v",
-        "basejump_stl/bsg_mem/bsg_mem_1r1w.v",
-        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v",
-        "basejump_stl/bsg_async/bsg_async_ptr_gray.v",
-        "basejump_stl/bsg_async/bsg_launch_sync_sync.v",
-        "basejump_stl/bsg_async/bsg_sync_sync.v"
+        "basejump_stl/bsg_async/bsg_async_fifo.sv",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w.sv",
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.sv",
+        "basejump_stl/bsg_async/bsg_async_ptr_gray.sv",
+        "basejump_stl/bsg_async/bsg_launch_sync_sync.sv",
+        "basejump_stl/bsg_async/bsg_sync_sync.sv"
     ],
     "run_config": [
         {

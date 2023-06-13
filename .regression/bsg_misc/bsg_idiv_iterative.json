@@ -1,17 +1,17 @@
 {
     "design_name": "bsg_idiv_iterative",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_misc/bsg_idiv_iterative.v",
-        "basejump_stl/bsg_misc/bsg_buf.v",
-        "basejump_stl/bsg_misc/bsg_dff_en.v",
-        "basejump_stl/bsg_misc/bsg_mux.v",
-        "basejump_stl/bsg_misc/bsg_mux_one_hot.v",
-        "basejump_stl/bsg_misc/bsg_buf_ctrl.v",
-        "basejump_stl/bsg_misc/bsg_xnor.v",
-        "basejump_stl/bsg_misc/bsg_nor2.v",
-        "basejump_stl/bsg_misc/bsg_adder_cin.v",
-        "basejump_stl/bsg_misc/bsg_idiv_iterative_controller.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_misc/bsg_idiv_iterative.sv",
+        "basejump_stl/bsg_misc/bsg_buf.sv",
+        "basejump_stl/bsg_misc/bsg_dff_en.sv",
+        "basejump_stl/bsg_misc/bsg_mux.sv",
+        "basejump_stl/bsg_misc/bsg_mux_one_hot.sv",
+        "basejump_stl/bsg_misc/bsg_buf_ctrl.sv",
+        "basejump_stl/bsg_misc/bsg_xnor.sv",
+        "basejump_stl/bsg_misc/bsg_nor2.sv",
+        "basejump_stl/bsg_misc/bsg_adder_cin.sv",
+        "basejump_stl/bsg_misc/bsg_idiv_iterative_controller.sv"
     ],
     "run_config": [
         {

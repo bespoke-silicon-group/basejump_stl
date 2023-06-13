@@ -8,7 +8,7 @@ which describes the design and usage.
 
 Please also see the [BSG SystemVerilog Style Guide](https://docs.google.com/document/d/1xA5XUzBtz_D6aSyIBQUwFk_kSUdckrfxa2uzGjMgmCU/edit#) which describes many of the conventions used in this library, including the variants of the valid/ready handshaking protocols.
 
-Note: bsg_misc/bsg_defines.v contains many macros used by BaseJump STL. Make sure it is in your include path.
+Note: bsg_misc/bsg_defines.sv contains many macros used by BaseJump STL. Make sure it is in your include path.
 
 ## Contents
 

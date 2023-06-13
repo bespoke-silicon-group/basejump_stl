@@ -1,8 +1,8 @@
 {
     "design_name": "bsg_fpu_preprocess",
     "filelist": [
-        "basejump_stl/bsg_misc/bsg_defines.v",
-        "basejump_stl/bsg_fpu/bsg_fpu_preprocess.v"
+        "basejump_stl/bsg_misc/bsg_defines.sv",
+        "basejump_stl/bsg_fpu/bsg_fpu_preprocess.sv"
     ],
     "run_config": [
         {
