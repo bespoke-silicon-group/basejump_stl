@@ -44,7 +44,6 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
     end
    else
     begin: nz
-   
    logic [width_p-1:0]    mem [els_p-1:0];
    logic read_en;
    logic [width_p-1:0] data_out;
