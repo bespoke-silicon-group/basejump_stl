@@ -170,8 +170,6 @@ module bsg_cache_miss
     = addr_v_i[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
   assign addr_way_v
     = addr_v_i[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
-  
-  
   assign addr_block_offset_v
     = addr_v_i[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
 
@@ -324,8 +322,7 @@ module bsg_cache_miss
         // On track miss, the chosen way is the tag hit way.
         chosen_way_n = track_miss_i ? tag_hit_way_id_i : (invalid_exist ? invalid_way_id : lru_way_id);
 
-        dma_cmd_o = e_dma_send_fill_addr;
-                
+        dma_cmd_o = e_dma_send_fill_addr;          
         dma_addr_o = {
           addr_tag_v,
           {(sets_p>1){addr_index_v}},
