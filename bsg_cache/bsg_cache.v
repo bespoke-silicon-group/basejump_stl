@@ -110,10 +110,9 @@ module bsg_cache
   );
 
   assign addr_index
-  = cache_pkt.addr[block_offset_width_lp+:lg_sets_lp];
-
+    = cache_pkt.addr[block_offset_width_lp+:lg_sets_lp];
   assign addr_way
-      = cache_pkt.addr[way_offset_width_lp+:lg_ways_lp];
+    = cache_pkt.addr[way_offset_width_lp+:lg_ways_lp];
 
   logic [lg_data_mem_els_lp-1:0] ld_data_mem_addr;
 
@@ -329,12 +328,11 @@ end
   logic [ways_p-1:0] tag_hit_v;
   
   assign addr_index_v =
-      addr_v_r[block_offset_width_lp+:lg_sets_lp];
-
+    addr_v_r[block_offset_width_lp+:lg_sets_lp];
   assign addr_tag_v =
-      addr_v_r[way_offset_width_lp+:tag_width_lp];
+    addr_v_r[way_offset_width_lp+:tag_width_lp];
   assign addr_way_v =
-      addr_v_r[way_offset_width_lp+:lg_ways_lp];
+    addr_v_r[way_offset_width_lp+:lg_ways_lp];
 
   assign addr_block_offset_v = (block_size_in_words_p > 1)
     ? addr_v_r[lg_data_mask_width_lp+:lg_block_size_in_words_lp]
@@ -648,7 +646,7 @@ end
   else if (burst_len_lp == block_size_in_words_p) begin
     assign sbuf_data_mem_addr = sbuf_entry_lo.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp];
   end
-  else begin   
+  else begin
     assign sbuf_data_mem_addr = sbuf_entry_lo.addr[lg_data_mask_width_lp+lg_burst_size_in_words_lp+:lg_burst_len_lp+lg_sets_lp];
   end
 
@@ -861,7 +859,6 @@ end
   logic [ways_p-1:0][block_size_in_words_p-1:0] tbuf_track_mem_data;
 
   assign tbuf_track_mem_addr = tbuf_addr_lo[block_offset_width_lp+:lg_sets_lp];
-  
   for (genvar i = 0 ; i < ways_p; i++) begin
     assign tbuf_track_mem_data[i] = {block_size_in_words_p{1'b1}};
     assign tbuf_track_mem_w_mask[i] = tbuf_way_decode[i] ? tbuf_word_offset_decode : {block_size_in_words_p{1'b0}};
@@ -1100,7 +1097,6 @@ end
       : (((decode.ld_op | decode.atomic_op | partial_st) & yumi_o)
         ? addr_index
         : tbuf_track_mem_addr));
-  
 
   // stat_mem ctrl logic
   // TAGST clears the stat_info as it exits tv stage.
