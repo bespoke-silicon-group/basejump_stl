@@ -164,12 +164,12 @@ module bsg_cache_miss
   logic [lg_ways_lp-1:0] addr_way_v;
   logic [lg_block_size_in_words_lp-1:0] addr_block_offset_v;
 
-    assign addr_tag_v
-      = addr_v_i[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
-    assign addr_index_v
-      = addr_v_i[block_offset_width_lp+:lg_sets_lp];
-    assign addr_way_v
-      = addr_v_i[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
+  assign addr_index_v
+    = addr_v_i[block_offset_width_lp+:lg_sets_lp];
+  assign addr_tag_v
+    = addr_v_i[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
+  assign addr_way_v
+    = addr_v_i[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
   
   
   assign addr_block_offset_v
@@ -399,7 +399,6 @@ module bsg_cache_miss
       // Send out the block addr for eviction, before initiating the eviction.
       SEND_EVICT_ADDR: begin
         dma_cmd_o = e_dma_send_evict_addr;
-        
         dma_addr_o = {
           tag_v_i[dma_way_o],
           {(sets_p>1){addr_index_v}},
@@ -414,8 +413,7 @@ module bsg_cache_miss
       // Set the DMA engine to evict the dirty block.
       // For the flush ops, go straight to RECOVER.
       SEND_EVICT_DATA: begin
-        dma_cmd_o = e_dma_send_evict_data;
-        
+        dma_cmd_o = e_dma_send_evict_data; 
         dma_addr_o = {
           tag_v_i[dma_way_o],
           {(sets_p>1){addr_index_v}},
@@ -460,7 +458,6 @@ module bsg_cache_miss
       // Do not start until the store buffer is empty.
       GET_FILL_DATA: begin
         dma_cmd_o = e_dma_get_fill_data;
-
         dma_addr_o = {
           addr_tag_v,
           {(sets_p>1){addr_index_v}},
