@@ -37,14 +37,14 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
 
    wire                   unused = reset_i;
 
-   if (width_p == 0)
+   if (width_p == 0 || els_p == 0)
     begin: z
       wire unused0 = &{clk_i, w_v_i, w_addr_i, r_v_i, r_addr_i};
       assign r_data_o = '0;
     end
    else
     begin: nz
-
+   
    logic [width_p-1:0]    mem [els_p-1:0];
    logic read_en;
    logic [width_p-1:0] data_out;
@@ -68,14 +68,19 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
    // "auto-update" based on new writes to the ram, a spooky behavior
    // that would never correspond to that of a hardened ram.
 
-   logic [addr_width_lp-1:0] r_addr_r;
+   logic [addr_width_lp-1:0] r_addr_r, r_addr_li;
 
    assign read_en = r_v_i;
    assign data_out = mem[r_addr_r];
 
+   if(els_p == 1) 
+     assign r_addr_li = '0;
+   else 
+     assign r_addr_li = r_addr_i;
+
    always_ff @(posedge clk_i)
      if (r_v_i)
-       r_addr_r <= r_addr_i;
+       r_addr_r <= r_addr_li;
      else
        r_addr_r <= 'X;
 
@@ -107,7 +112,11 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
 
    always_ff @(posedge clk_i)
      if (w_v_i)
-       mem[w_addr_i] <= w_data_i;
+       if(els_p == 1) begin
+         mem['0] <= w_data_i;
+       end else begin
+         mem[w_addr_i] <= w_data_i;
+       end
 
    end
 

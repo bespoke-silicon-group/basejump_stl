@@ -27,7 +27,7 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
 
    wire unused = reset_i;
 
-   if (width_p == 0)
+   if (width_p == 0 || els_p == 0)
     begin: z
       wire unused0 = &{clk_i, data_i, addr_i, v_i, w_mask_i, w_i};
       assign data_o = '0;
@@ -35,15 +35,21 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
    else
     begin: nz
 
-   logic [addr_width_lp-1:0] addr_r;
+   logic [addr_width_lp-1:0] addr_r, addr_li;
    logic [width_p-1:0] mem [els_p-1:0];
    logic read_en;
 
    assign read_en = v_i & ~w_i;
+   
+   if(els_p == 1) 
+     assign addr_li = '0;
+   else
+     assign addr_li = addr_i;
 
    always_ff @(posedge clk_i)
      if (read_en)
-       addr_r <= addr_i;
+
+       addr_r <= addr_li;
      else
        addr_r <= 'X;
 
@@ -94,7 +100,7 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
 
    always_ff @(posedge clk_i)
      if (v_i & w_i)
-       mem[addr_i] <= data_n;
+       mem[addr_li][i] <= data_i[i];
 
 `else 
  
@@ -107,7 +113,11 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
      if (v_i & w_i)
        for (integer i = 0; i < width_p; i=i+1)
          if (w_mask_i[i])
-           mem[addr_i][i] <= data_i[i];
+          //  if(els_p == 1)
+          //    mem['0][i] <= data_i[i];
+          //  else
+          //    mem[addr_i][i] <= data_i[i];
+           mem[addr_li][i] <= data_i[i];
 `endif
    end
 endmodule
