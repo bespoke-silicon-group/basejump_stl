@@ -327,14 +327,13 @@ end
   logic [lg_ways_lp-1:0] addr_way_v;
   logic [lg_block_size_in_words_lp-1:0] addr_block_offset_v;
   logic [ways_p-1:0] tag_hit_v;
-  
+
   assign addr_tag_v =
     addr_v_r[way_offset_width_lp+:tag_width_lp];
   assign addr_index_v =
     addr_v_r[block_offset_width_lp+:lg_sets_lp];
   assign addr_way_v =
     addr_v_r[way_offset_width_lp+:lg_ways_lp];
-
   assign addr_block_offset_v = (block_size_in_words_p > 1)
     ? addr_v_r[lg_data_mask_width_lp+:lg_block_size_in_words_lp]
     : 1'b0;
