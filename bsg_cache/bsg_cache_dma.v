@@ -224,7 +224,7 @@ module bsg_cache_dma
   //end
   else begin
     assign data_mem_addr_o = {
-      dma_addr_i[block_offset_width_lp+:lg_sets_lp],
+      {(sets_p>1){dma_addr_i[block_offset_width_lp+:lg_sets_lp]}},
       counter_r[0+:lg_burst_len_lp]
     };
   end
