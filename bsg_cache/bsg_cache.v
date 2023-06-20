@@ -120,7 +120,7 @@ module bsg_cache
     assign ld_data_mem_addr = addr_index;
   end
   else if (burst_len_lp == block_size_in_words_p) begin
-    assign ld_data_mem_addr = {addr_index, cache_pkt.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp]};
+    assign ld_data_mem_addr = {{(sets_p>1){addr_index}}, cache_pkt.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp]};
   end
   else begin
     assign ld_data_mem_addr = {addr_index, cache_pkt.addr[lg_data_mask_width_lp+lg_burst_size_in_words_lp+:lg_burst_len_lp]};
@@ -174,7 +174,7 @@ module bsg_cache
     assign recover_data_mem_addr = addr_index_tl;
   end
   else if (burst_len_lp == block_size_in_words_p) begin
-    assign recover_data_mem_addr = {addr_index_tl, addr_tl_r[lg_data_mask_width_lp+:lg_block_size_in_words_lp]};
+    assign recover_data_mem_addr = {{(sets_p>1){addr_index_tl}}, addr_tl_r[lg_data_mask_width_lp+:lg_block_size_in_words_lp]};
   end
   else begin
     assign recover_data_mem_addr = {addr_index_tl, addr_tl_r[lg_data_mask_width_lp+lg_burst_size_in_words_lp+:lg_burst_len_lp]};
@@ -643,7 +643,7 @@ end
     assign sbuf_data_mem_addr = sbuf_entry_lo.addr[block_offset_width_lp+:lg_sets_lp];
   end 
   else if (burst_len_lp == block_size_in_words_p) begin
-    assign sbuf_data_mem_addr = sbuf_entry_lo.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp+lg_sets_lp];
+    assign sbuf_data_mem_addr = sbuf_entry_lo.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp+((sets_p>1)?lg_sets_lp:0)];
   end
   else begin
     assign sbuf_data_mem_addr = sbuf_entry_lo.addr[lg_data_mask_width_lp+lg_burst_size_in_words_lp+:lg_burst_len_lp+lg_sets_lp];
