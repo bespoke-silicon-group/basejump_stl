@@ -43,7 +43,7 @@
   `define declare_bsg_cache_stat_info_s(ways_mp)    \
     typedef struct packed {                         \
       logic [ways_mp-1:0] dirty;                    \
-      logic [((ways_mp>1)?(ways_mp-2):0):0] lru_bits;                 \
+      logic [`BSG_SAFE_MINUS(ways_mp,2):0] lru_bits;                 \
     } bsg_cache_stat_info_s
 
   `define bsg_cache_stat_info_width(ways_mp) \
