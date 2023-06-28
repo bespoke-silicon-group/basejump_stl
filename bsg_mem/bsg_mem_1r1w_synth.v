@@ -42,9 +42,20 @@ module bsg_mem_1r1w_synth #(parameter `BSG_INV_PARAM(width_p)
 
   logic [width_p-1:0] mem [els_p-1:0];
 
-  wire [addr_width_lp-1:0] r_addr_li = (els_p > 0) ? r_addr_i:'0;
-  wire [addr_width_lp-1:0] w_addr_li = (els_p > 0) ? w_addr_i:'0;
+  logic [addr_width_lp-1:0]  r_addr_li, w_addr_li;
 
+  // wire [addr_width_lp-1:0] r_addr_li = (els_p > 0) ? r_addr_i:'0;
+  // wire [addr_width_lp-1:0] w_addr_li = (els_p > 0) ? w_addr_i:'0;
+  if(els_p == 1)
+   begin
+    assign r_addr_li = '0;
+    assign w_addr_li = '0;
+   end
+  else 
+   begin
+    assign r_addr_li = r_addr_i;
+    assign w_addr_li = w_addr_i;
+   end
   // this implementation ignores the r_v_i
   assign r_data_o = mem[r_addr_li];
 
