@@ -63,7 +63,7 @@ module test_bsg
     $display("ELS_P  : %d\n", els_p);
   end
 
-  logic [width_p-1:0]      test_input_wdata, test_input_wdata_r; 
+  logic [width_p-1:0]      test_input_wdata, sel_test_input_wdata, test_input_wdata_r; 
   logic [width_p-1:0]      test_output_rdata;
   logic [addr_width_p-1:0] test_input_waddr, test_input_raddr;
   logic                     test_input_wv;  
@@ -91,14 +91,19 @@ module test_bsg
                             , .data_o (test_input_wdata)
                            );
 
+  if(els_p > 0) 
+    assign sel_test_input_wdata = test_input_wdata;
+  else 
+    assign sel_test_input_wdata = '0;
+
   always_ff @(posedge clk)
   begin
-    test_input_wdata_r <= test_input_wdata;
+    test_input_wdata_r <= sel_test_input_wdata;
     
     if(reset)
       begin
-        test_input_waddr <= addr_width_p'(0);
-        test_input_raddr <= addr_width_p'(0);
+        test_input_waddr <= '0;
+        test_input_raddr <= '0;
         test_input_wv    <= 1'b1;
         finish_r         <= 1'b0;
       end
@@ -144,7 +149,6 @@ module test_bsg
   bsg_mem_1r1w #(  .width_p               (width_p)
                  , .els_p                 (els_p)
                  , .read_write_same_addr_p(1)
-                 , .addr_width_p         ()
                 )  DUT
                 (  .w_clk_i  (clk)
                  , .w_reset_i(reset)
