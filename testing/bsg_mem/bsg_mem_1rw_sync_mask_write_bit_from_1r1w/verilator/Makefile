@@ -14,32 +14,32 @@ INCLUDES = $(foreach x,$(VERILATOR_INCLUDE),-I$(x)) \
 	$(foreach x,$(BASEJUMP_INCLUDE),-I$(x)) \
 
 # Default variables
-RUNTIME = 100000
+RUNTIME = 1000
 ELS_P = 60
 WIDTH_P = 20
 # Values to iterate over
 ELS   = 33 64
 WIDTH = 16 7
 
+all: loopy
+
 # Stream edition to change instance names in CPP testbench
 generate = cp test_bsg_template test_bsg.cpp &&	sed -i 's/REPLACE/$(REPLACE)/' test_bsg.cpp
 
-verilate = verilator -cc -Wall -Wno-DECLFILENAME -Wno-UNUSED \
-  $(TOP_FILE) $(INCLUDES) \
-	-Gwidth_p=$(WIDTH_P) -Gels_p=$(ELS_P) -Gverbose_p=1
-
-compile = g++ test_bsg.cpp obj_dir/*.cpp $(VERILATOR_INCLUDE)/verilated.cpp \
-  -I$(VERILATOR_INCLUDE) -I./obj_dir/ -o v_out \
-	-DWIDTH_P=$(WIDTH_P) -DELS_P=$(ELS_P) -DRUNTIME=$(RUNTIME)
+verilate = verilator -cc -Wall --Wno-fatal --exe --build \
+		   -pvalue+els_p=$(ELS_P) -pvalue+width_p=$(WIDTH_P) \
+		   -CFLAGS "-DWIDTH_P=$(WIDTH_P) -DELS_P=$(ELS_P) -DRUNTIME=$(RUNTIME)" \
+		   -Wno-DECLFILENAME -Wno-UNUSED $(INCLUDES) \
+		   $(TOP_FILE) --top-module $(REPLACE) test_bsg.cpp \
+		   -o simsc
 
 # Single iteration
 .DEFAULT_GOAL := iter
 iter:
 	$(generate)
 	$(verilate)
-	$(compile)
-	./v_out >> transcript
-	$(stats)
+	./obj_dir/simsc >> transcript
+	$(MAKE) stats >> stats.txt
 
 # For multiple iterations based off of default variables previously set
 .SILENT:
@@ -67,4 +67,4 @@ stats:
 	grep "r_en 1" transcript | wc -l
 
 clean:
-	rm -rf obj_dir/ v_out transcript test_bsg.cpp
+	rm -rf obj_dir/ stats.txt transcript test_bsg.cpp

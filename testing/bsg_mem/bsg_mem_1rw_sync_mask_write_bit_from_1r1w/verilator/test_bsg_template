@@ -8,7 +8,7 @@ using namespace std;
 // AM: These have to be defined in the Makefile
 //#define ELS_P   34
 //#define WIDTH_P 12
-//#define RUNTIME 100000
+//#define RUNTIME 10000
 #define ADDR_WIDTH_P (int)ceil(log2(ELS_P))
 
 VREPLACE *top;
