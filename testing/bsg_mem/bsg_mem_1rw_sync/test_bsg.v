@@ -99,7 +99,7 @@ module test_bsg
 
     if(reset)
       begin
-        test_input_addr <= addr_width_p'(0);
+        test_input_addr <= '0;
         test_input_w    <= 1'b1;
         test_input_v    <= 1'b1;
       end

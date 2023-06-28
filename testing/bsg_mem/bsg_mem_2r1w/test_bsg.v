@@ -67,6 +67,8 @@ module test_bsg
   logic [addr_width_p-1:0] test_input_waddr, test_input_raddr0, test_input_raddr1;
   logic                     test_input_wv;
 
+  wire [width_p-1:0] sel_test_input_wdata = (els_p>0)?test_input_wdata:'0;
+
   bsg_mem_2r1w #(  .width_p               (width_p)
                  , .els_p                 (els_p)
                  , .read_write_same_addr_p(1)
@@ -107,9 +109,9 @@ module test_bsg
     if(reset)
       begin
         test_input_wv     <= 1'b1;
-        test_input_waddr  <= addr_width_p'(0);
-        test_input_raddr0 <= addr_width_p'(0);
-        test_input_raddr1 <= (els_p >= 2)? {addr_width_p'(0), 1'b1}:0;
+        test_input_waddr  <= '0;
+        test_input_raddr0 <= '0;
+        test_input_raddr1 <= (els_p >= 2)? {'0, 1'b1}:'0;
         prev_input        <= width_p'(0);
         count             <= 0;
         finish_r          <= 1'b0;
@@ -128,7 +130,7 @@ module test_bsg
           end
         if(count <= (els_p/4))
           begin
-            temp[count] <= test_input_wdata;
+            temp[count] <= sel_test_input_wdata;
           end
         if(count >= (els_p-1))
           begin
