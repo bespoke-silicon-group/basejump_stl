@@ -229,7 +229,8 @@ module bsg_cache_miss
   );
 
   bsg_mux_bitwise #(
-    .width_p(((ways_p>1) ? (ways_p-1):ways_p))
+    //.width_p(((ways_p>1) ? (ways_p-1):ways_p))
+    .width_p(ways_p-1)
   ) lru_bit_mux (
     .data0_i(stat_info_in.lru_bits)
     ,.data1_i(modify_data_lo)
