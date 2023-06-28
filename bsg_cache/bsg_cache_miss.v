@@ -24,8 +24,7 @@ module bsg_cache_miss
     ,parameter data_mask_width_lp=(data_width_p>>3)
     ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
     ,parameter block_offset_width_lp=(block_size_in_words_p > 1) ? lg_data_mask_width_lp+lg_block_size_in_words_lp : lg_data_mask_width_lp
-    ,parameter tag_offset_width_lp=(sets_p == 1) ? block_offset_width_lp : block_offset_width_lp+lg_sets_lp
-    ,parameter tag_width_lp=addr_width_p-tag_offset_width_lp
+    ,parameter tag_width_lp=(addr_width_p-lg_sets_lp-block_offset_width_lp)
     ,parameter tag_info_width_lp=`bsg_cache_tag_info_width(tag_width_lp)
     ,parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
     ,parameter stat_info_width_lp=`bsg_cache_stat_info_width(ways_p)
@@ -168,9 +167,9 @@ module bsg_cache_miss
   assign addr_index_v
     = addr_v_i[block_offset_width_lp+:lg_sets_lp];
   assign addr_tag_v
-    = addr_v_i[tag_offset_width_lp+:tag_width_lp];
+    = addr_v_i[block_offset_width_lp+lg_sets_lp+:tag_width_lp];
   assign addr_way_v
-    = addr_v_i[tag_offset_width_lp+:lg_ways_lp];
+    = addr_v_i[block_offset_width_lp+lg_sets_lp+:lg_ways_lp];
   assign addr_block_offset_v
     = addr_v_i[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
 
@@ -323,10 +322,10 @@ module bsg_cache_miss
         // On track miss, the chosen way is the tag hit way.
         chosen_way_n = track_miss_i ? tag_hit_way_id_i : (invalid_exist ? invalid_way_id : lru_way_id);
 
-        dma_cmd_o = e_dma_send_fill_addr;          
+        dma_cmd_o = e_dma_send_fill_addr;
         dma_addr_o = {
           addr_tag_v,
-          {(sets_p>1){addr_index_v}},
+          addr_index_v,
           {(block_offset_width_lp){1'b0}}
         };
 
@@ -399,7 +398,7 @@ module bsg_cache_miss
         dma_cmd_o = e_dma_send_evict_addr;
         dma_addr_o = {
           tag_v_i[dma_way_o],
-          {(sets_p>1){addr_index_v}},
+          addr_index_v,
           {(block_offset_width_lp){1'b0}}
         };
 
@@ -411,10 +410,10 @@ module bsg_cache_miss
       // Set the DMA engine to evict the dirty block.
       // For the flush ops, go straight to RECOVER.
       SEND_EVICT_DATA: begin
-        dma_cmd_o = e_dma_send_evict_data; 
+        dma_cmd_o = e_dma_send_evict_data;
         dma_addr_o = {
           tag_v_i[dma_way_o],
-          {(sets_p>1){addr_index_v}},
+          addr_index_v,
           {(block_offset_width_lp){1'b0}}
         };
 
@@ -458,7 +457,7 @@ module bsg_cache_miss
         dma_cmd_o = e_dma_get_fill_data;
         dma_addr_o = {
           addr_tag_v,
-          {(sets_p>1){addr_index_v}},
+          addr_index_v,
           {(block_size_in_words_p > 1){addr_block_offset_v}}, // used for snoop data in dma.
           {(lg_data_mask_width_lp){1'b0}}
         };
