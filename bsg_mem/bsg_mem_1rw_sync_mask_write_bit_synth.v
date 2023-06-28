@@ -35,16 +35,13 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
    else
     begin: nz
 
-   logic [addr_width_lp-1:0] addr_r, addr_li;
+   logic [addr_width_lp-1:0] addr_r;
    logic [width_p-1:0] mem [els_p-1:0];
    logic read_en;
-
-   assign read_en = v_i & ~w_i;
    
-   if(els_p == 1) 
-     assign addr_li = '0;
-   else
-     assign addr_li = addr_i;
+   wire [addr_width_lp-1:0] addr_li = (els_p>1) ? addr_i:'0;
+   
+   assign read_en = v_i & ~w_i;
 
    always_ff @(posedge clk_i)
      if (read_en)
