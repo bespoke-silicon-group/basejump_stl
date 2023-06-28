@@ -34,18 +34,15 @@ module bsg_mem_1rw_sync_synth
   else
    begin: nz
 
-    logic [addr_width_lp-1:0] addr_r, addr_li;
+    logic [addr_width_lp-1:0] addr_r;
     logic [width_p-1:0]    mem [els_p-1:0];
     logic read_en;
     logic [width_p-1:0] data_out;
 
+    wire [addr_width_lp-1:0] addr_li = (els_p>0) ? addr_i:'0;
+
     assign read_en = v_i & ~w_i;
     assign data_out = mem[addr_r];
-
-    if(els_p == 1)
-      assign addr_li = '0;
-    else
-      assign addr_li = addr_i;
 
     always_ff @ (posedge clk_i) 
       if (read_en)
@@ -92,12 +89,10 @@ module bsg_mem_1rw_sync_synth
      end
    
 
-   if (els_p > 1) begin
-     always_ff @(negedge clk_i)
-       if (v_i)
-         assert ( (v_i !== 1'b1) || (reset_i === 'X) || (reset_i === 1'b1) || (addr_i < els_p))
-           else $error("Invalid address %x to %m of size %x (reset_i = %b, v_i = %b, clk_i = %b)\n", addr_i, els_p, reset_i, v_i, clk_i);
-   end
+   always_ff @(negedge clk_i)
+     if (v_i)
+       assert ( (v_i !== 1'b1) || (reset_i === 'X) || (reset_i === 1'b1) || (addr_i < els_p) || (els_p <= 1))
+         else $error("Invalid address %x to %m of size %x (reset_i = %b, v_i = %b, clk_i = %b)\n", addr_i, els_p, reset_i, v_i, clk_i);
    // synopsys translate_on
 
 endmodule
