@@ -26,7 +26,7 @@ module test_bsg
   wire [num_segments_p-1:0][mask_width_lp-1:0] w_mask_i;
   wire [num_segments_p-1:0][segment_width_lp-1:0] test_input_data;
 	wire [num_segments_p-1:0][segment_width_lp-1:0] actual_data;
-  wire [lg_els_lp-1:0] test_input_addr ;
+  wire [`BSG_SAFE_MINUS(lg_els_lp,1):0] test_input_addr ;
 	wire [num_segments_p-1:0][segment_width_lp-1:0] expected_data;
 
   initial
@@ -59,7 +59,7 @@ module test_bsg
                             , .data_o (test_input_data)
                            );
   
-  bsg_nonsynth_random_gen #(  .width_p(lg_els_lp)
+  bsg_nonsynth_random_gen #(  .width_p(lg_els_lp>0?lg_els_lp:1)
                             , .seed_p (seed_p)
                            )  random_addr_gen
                            (  .clk_i  (clk)

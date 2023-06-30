@@ -43,7 +43,7 @@ module bsg_mem_1rw_sync_segmented
   	, input w_i
     , input [num_segments_p-1:0][mask_width_lp-1:0] w_mask_i
   	, input [num_segments_p-1:0][segment_width_lp-1:0] data_i
-  	, input [lg_els_lp-1:0] addr_i
+  	, input [`BSG_SAFE_MINUS(lg_els_lp,1):0] addr_i
   	, output logic [num_segments_p-1:0][segment_width_lp-1:0] data_o
   );
 
@@ -129,7 +129,7 @@ module bsg_mem_1rw_sync_segmented
       assign data_o = data_lo;
     end
 
-    if (!(`BSG_IS_POW2(width_p) && `BSG_IS_POW2(els_p)))
+    if (!(`BSG_IS_POW2(width_p) && (`BSG_IS_POW2(els_p) || (els_p == 0))))
       $error("width_p and els_p should be power of 2");      
 
     if (!(num_segments_p > 1) && !(segment_width_lp%8 == 0))

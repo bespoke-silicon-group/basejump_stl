@@ -14,7 +14,7 @@ module bsg_mem_1rw_sync_mask_write_bit #(
 ) (input   clk_i
     , input reset_i
     , input [`BSG_SAFE_MINUS(width_p, 1):0] data_i
-    , input [addr_width_lp-1:0] addr_i
+    , input [`BSG_SAFE_MINUS(addr_width_lp,1):0] addr_i
     , input v_i
     , input [`BSG_SAFE_MINUS(width_p, 1):0] w_mask_i
     , input w_i
@@ -54,16 +54,16 @@ module bsg_mem_1rw_sync_mask_write_bit #(
 
 
    // synopsys translate_off
-
+   /* verilator lint_off UNSIGNED */
    always_ff @(negedge clk_lo)
    if (((els_p > 1) && (v_i === 1)))
-     assert (((reset_i === 'X) || (reset_i === 1'b1) || (addr_i < els_p)))
+     assert (((reset_i === 'X) || (reset_i === 1'b1) || (addr_i < els_p) || (els_p <= 1)))
        else $error("Invalid address %x to %m of size %x (reset_i = %b, v_i = %b, clk_lo=%b)\n", addr_i, els_p, reset_i, v_i, clk_lo);
    initial
      begin
         $display("## %L: instantiating width_p=%d, els_p=%d (%m)",width_p,els_p);
      end
-
+  /* verilator lint_on UNSIGNED */
   // synopsys translate_on
 
    
