@@ -16,16 +16,11 @@ module bsg_mux_segmented #(parameter `BSG_INV_PARAM(segments_p)
   ,output logic [data_width_lp-1:0] data_o
 );
 
-  if(segment_width_p > 1) begin
-    genvar i;
-    for (i = 0; i < segments_p; i++) begin
-      assign data_o[i*segment_width_p+:segment_width_p] = sel_i[i]
-        ? data1_i[i*segment_width_p+:segment_width_p]
-        : data0_i[i*segment_width_p+:segment_width_p];
-    end
-  end else begin
-    wire unused = &{data0_i, data1_i, sel_i};
-    assign data_o = '0;
+  genvar i;
+  for (i = 0; i < segments_p; i++) begin
+    assign data_o[i*segment_width_p+:segment_width_p] = sel_i[i]
+      ? data1_i[i*segment_width_p+:segment_width_p]
+      : data0_i[i*segment_width_p+:segment_width_p];
   end
 
 endmodule
