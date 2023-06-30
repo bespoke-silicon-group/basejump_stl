@@ -18,7 +18,7 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
    (input   clk_i
     , input reset_i
     , input [`BSG_SAFE_MINUS(width_p, 1):0] data_i
-    , input [`BSG_SAFE_MINUS(addr_width_lp,1):0] addr_i
+    , input [addr_width_lp-1:0] addr_i
     , input v_i
     , input [`BSG_SAFE_MINUS(width_p, 1):0] w_mask_i
     , input w_i

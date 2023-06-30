@@ -41,7 +41,7 @@ module bsg_mem_1rw_sync_mask_write_bit_segmented
   	, input w_i
   	, input [num_segments_p-1:0][segment_width_lp-1:0] w_mask_i
   	, input [num_segments_p-1:0][segment_width_lp-1:0] data_i
-  	, input [`BSG_SAFE_MINUS(lg_els_lp,1):0] addr_i
+  	, input [lg_els_lp-1:0] addr_i
   	, output logic [num_segments_p-1:0][segment_width_lp-1:0] data_o
   );
 

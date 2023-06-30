@@ -26,7 +26,7 @@ module test_bsg
   wire [num_segments_p-1:0][mask_width_lp-1:0] w_mask_i;
   wire [num_segments_p-1:0][segment_width_lp-1:0] test_input_data;
 	wire [num_segments_p-1:0][segment_width_lp-1:0] actual_data;
-  wire [`BSG_SAFE_MINUS(lg_els_lp,1):0] test_input_addr ;
+  wire [lg_els_lp-1:0] test_input_addr ;
 	wire [num_segments_p-1:0][segment_width_lp-1:0] expected_data;
 
   initial
