@@ -96,7 +96,7 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
 
    always_ff @(posedge clk_i)
      if (v_i & w_i)
-       mem[addr_li][i] <= data_i[i];
+       mem[addr_li] <= data_n;
 
 `else
  
