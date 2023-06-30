@@ -8,8 +8,8 @@ using namespace std;
 // AM: These have to be defined in the Makefile
 //#define ELS_P   34
 //#define WIDTH_P 12
-//#define RUNTIME 100000
-#define ADDR_WIDTH_P (int)ceil(log2(ELS_P))
+//#define RUNTIME 10000
+#define ADDR_WIDTH_P ELS_P>1?(int)ceil(log2(ELS_P)):1
 
 VREPLACE *top;
 vluint64_t main_time = 0;
@@ -46,10 +46,14 @@ int main(int argc, char** argv) {
             mem[prev_addr] = (mem[prev_addr] & ~prev_mask) | (prev_data & prev_mask);
             printf("Writing %04lx to %04lx\n", mem[prev_addr], prev_addr);
           } else {
-            expect = mem[prev_addr];
-            printf("Expect to read %04lx from %04lx\n", mem[prev_addr], prev_addr);
-            printf("%s", (expect != top->data_o) ? 
-            "\n\n\n*****************************ERROR****************************\n\n\n" : "");
+            expect = (ELS_P > 0) ? mem[prev_addr]:0;
+            printf("Expect to read %04lx from %04lx\n", expect, prev_addr);
+            if((expect != top->data_o)) {
+              printf("%04lx %04lx %s ", expect, top->data_o, (expect != top->data_o) ? 
+                "\n\n\n*****************************ERROR**************************** \n\n\n" : "");
+            }
+            // printf("%s", (expect != top->data_o) ? 
+            // ("\n\n\n*****************************ERROR**************************** %04lx %04lx\n\n\n", expect, top->data_o) : "");
           }
         }
         top->reset_i = 0;

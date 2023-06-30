@@ -91,14 +91,14 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
 
    for (genvar i = 0; i < width_p; i++)
      begin : rof1
-       assign data_n[i] = w_mask_i[i] ? data_i[i] : mem[addr_i][i];
+       assign data_n[i] = w_mask_i[i] ? data_i[i] : mem[addr_li][i];
      end // rof1
 
    always_ff @(posedge clk_i)
      if (v_i & w_i)
-       mem[addr_li][i] <= data_i[i];
+       mem[addr_li] <= data_n;
 
-`else 
+`else
  
 // this code does not map correctly with Xilinx Ultrascale FPGAs 
 // in Vivado, substitute this file with hard/ultrascale_plus/bsg_mem/bsg_mem_1rw_sync_mask_write_bit.v
