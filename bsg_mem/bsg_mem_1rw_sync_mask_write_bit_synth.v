@@ -27,7 +27,7 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
 
    wire unused = reset_i;
 
-   if (width_p == 0)
+   if (width_p == 0 || els_p == 0)
     begin: z
       wire unused0 = &{clk_i, data_i, addr_i, v_i, w_mask_i, w_i};
       assign data_o = '0;
@@ -38,12 +38,14 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
    logic [addr_width_lp-1:0] addr_r;
    logic [width_p-1:0] mem [els_p-1:0];
    logic read_en;
-
+   
+   wire [addr_width_lp-1:0] addr_li = (els_p>1) ? addr_i:'0;
+   
    assign read_en = v_i & ~w_i;
 
    always_ff @(posedge clk_i)
      if (read_en)
-       addr_r <= addr_i;
+       addr_r <= addr_li;
      else
        addr_r <= 'X;
 
@@ -89,14 +91,14 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
 
    for (genvar i = 0; i < width_p; i++)
      begin : rof1
-       assign data_n[i] = w_mask_i[i] ? data_i[i] : mem[addr_i][i];
+       assign data_n[i] = w_mask_i[i] ? data_i[i] : mem[addr_li][i];
      end // rof1
 
    always_ff @(posedge clk_i)
      if (v_i & w_i)
-       mem[addr_i] <= data_n;
+       mem[addr_li] <= data_n;
 
-`else 
+`else
  
 // this code does not map correctly with Xilinx Ultrascale FPGAs 
 // in Vivado, substitute this file with hard/ultrascale_plus/bsg_mem/bsg_mem_1rw_sync_mask_write_bit.v
@@ -107,7 +109,7 @@ module bsg_mem_1rw_sync_mask_write_bit_synth
      if (v_i & w_i)
        for (integer i = 0; i < width_p; i=i+1)
          if (w_mask_i[i])
-           mem[addr_i][i] <= data_i[i];
+           mem[addr_li][i] <= data_i[i];
 `endif
    end
 endmodule

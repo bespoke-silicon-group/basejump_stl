@@ -27,7 +27,7 @@ module bsg_mem_1rw_sync_mask_write_byte_synth
 
   genvar i;
 
-  if (data_width_p == 0)
+  if (data_width_p == 0 || els_p == 0)
    begin: z
      wire unused0 = &{clk_i, reset_i, v_i, w_i, addr_i, data_i, write_mask_i};
      assign data_o = '0;
