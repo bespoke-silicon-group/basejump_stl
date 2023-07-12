@@ -90,7 +90,7 @@ module bsg_cache
   localparam dma_data_mask_width_lp=(dma_data_width_p>>3);
   localparam data_mem_els_lp = sets_p*burst_len_lp;
   localparam lg_data_mem_els_lp = `BSG_SAFE_CLOG2(data_mem_els_lp);
-  localparam sbuf_data_mem_addr_offset_lp=(burst_len_lp == block_size_in_words_p) ? lg_block_size_in_words_lp+$clog2(sets_p) : lg_burst_len_lp+$clog2(sets_p); 
+  localparam sbuf_data_mem_els_lp=(sets_p == 1) ? lg_block_size_in_words_lp : lg_block_size_in_words_lp+lg_sets_lp;
 
 
   // instruction decoding
@@ -655,7 +655,7 @@ end
     assign sbuf_data_mem_addr = sbuf_entry_lo.addr[block_offset_width_lp+:lg_sets_lp];
   end 
   else if (burst_len_lp == block_size_in_words_p) begin
-    assign sbuf_data_mem_addr = sbuf_entry_lo.addr[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
+    assign sbuf_data_mem_addr = sbuf_entry_lo.addr[lg_data_mask_width_lp+:sbuf_data_mem_els_lp];
 
   end
   else begin
