@@ -10,10 +10,10 @@ module bsg_mux_segmented #(parameter `BSG_INV_PARAM(segments_p)
                           ,parameter `BSG_INV_PARAM(segment_width_p)
                           ,parameter data_width_lp=segments_p*segment_width_p)
 (
-  input [data_width_lp-1:0] data0_i
-  ,input [data_width_lp-1:0] data1_i
-  ,input [segments_p-1:0] sel_i
-  ,output logic [data_width_lp-1:0] data_o
+  input [`BSG_SAFE_MINUS(data_width_lp,1):0] data0_i
+  ,input [`BSG_SAFE_MINUS(data_width_lp,1):0] data1_i
+  ,input [`BSG_SAFE_MINUS(segments_p,1):0] sel_i
+  ,output logic [`BSG_SAFE_MINUS(data_width_lp,1):0] data_o
 );
 
   if(segment_width_p > 1) begin
