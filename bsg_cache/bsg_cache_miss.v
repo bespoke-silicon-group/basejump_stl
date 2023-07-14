@@ -24,8 +24,8 @@ module bsg_cache_miss
     ,parameter data_mask_width_lp=(data_width_p>>3)
     ,parameter lg_data_mask_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3)
     ,parameter block_offset_width_lp=(block_size_in_words_p > 1) ? lg_data_mask_width_lp+lg_block_size_in_words_lp : lg_data_mask_width_lp
-    ,parameter tag_offset_width_lp=(sets_p == 1) ? block_offset_width_lp : block_offset_width_lp+lg_sets_lp
-    ,parameter tag_width_lp=addr_width_p-tag_offset_width_lp
+    ,parameter tag_offset_lp=(sets_p == 1) ? block_offset_width_lp : block_offset_width_lp+lg_sets_lp
+    ,parameter tag_width_lp=addr_width_p-tag_offset_lp
     ,parameter tag_info_width_lp=`bsg_cache_tag_info_width(tag_width_lp)
     ,parameter lg_ways_lp=`BSG_SAFE_CLOG2(ways_p)
     ,parameter stat_info_width_lp=`bsg_cache_stat_info_width(ways_p)
@@ -168,9 +168,9 @@ module bsg_cache_miss
   assign addr_index_v
     = addr_v_i[block_offset_width_lp+:lg_sets_lp];
   assign addr_tag_v
-    = addr_v_i[tag_offset_width_lp+:tag_width_lp];
+    = addr_v_i[tag_offset_lp+:tag_width_lp];
   assign addr_way_v
-    = addr_v_i[tag_offset_width_lp+:lg_ways_lp];
+    = addr_v_i[tag_offset_lp+:lg_ways_lp];
   assign addr_block_offset_v
     = addr_v_i[lg_data_mask_width_lp+:lg_block_size_in_words_lp];
 
