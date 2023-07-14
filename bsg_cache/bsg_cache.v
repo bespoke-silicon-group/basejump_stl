@@ -645,7 +645,6 @@ end
   end 
   else if (burst_len_lp == block_size_in_words_p) begin
     assign sbuf_data_mem_addr = sbuf_entry_lo.addr[lg_data_mask_width_lp+:sbuf_data_mem_addr_offset_lp];
-
   end
   else begin
     assign sbuf_data_mem_addr = sbuf_entry_lo.addr[lg_data_mask_width_lp+lg_burst_size_in_words_lp+:sbuf_data_mem_addr_offset_lp];
