@@ -344,7 +344,7 @@ end
   logic [lg_ways_lp-1:0] tag_hit_way_id;
   logic tag_hit_found;
 
-  bsg_priority_encode #(
+  bsg_encode_one_hot #(
     .width_p(ways_p)
     ,.lo_to_hi_p(1)
   ) tag_hit_pe (
