@@ -27,7 +27,7 @@ module bsg_two_buncher #(parameter `BSG_INV_PARAM(width_p))
     , input  reset_i
     , input  [width_p-1:0]   data_i
     , input                  v_i
-    , output                 yumi_o
+    , output                 ready_and_o
 
     , output [width_p*2-1:0] data_o
     , output [1:0]           v_o
@@ -65,7 +65,7 @@ module bsg_two_buncher #(parameter `BSG_INV_PARAM(width_p))
    // and we move forward on at least one elements
    // or, if we are empty
 
-   assign yumi_o = v_i & (ready_and_i[0] | ~data_v_r);
+   assign ready_and_o = ready_and_i[0] | ~data_v_r;
 
    // determine if we will latch data next cycle
    always_comb
