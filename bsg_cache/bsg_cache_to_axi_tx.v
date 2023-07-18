@@ -126,7 +126,7 @@ module bsg_cache_to_axi_tx
   // axi write data channel
   //
   logic sipo_v_li;
-  logic sipo_ready_lo;
+  logic sipo_ready_and_lo;
   logic [data_width_p-1:0] sipo_data_li;
   logic [strb_width_lp-1:0] sipo_strb_li;
   logic sipo_yumi_li;
@@ -151,7 +151,7 @@ module bsg_cache_to_axi_tx
   );
 
   assign sipo_data_li = dma_data_i[tag_lo];
-  assign dma_data_yumi_o = cache_sel & dma_data_v_i & {num_cache_p{sipo_ready_lo}};
+  assign dma_data_yumi_o = cache_sel & dma_data_v_i & {num_cache_p{sipo_ready_and_lo}};
 
   logic [data_width_ratio_lp-1:0][data_width_p-1:0] sipo_data_lo;
   bsg_serial_in_parallel_out_full #(
@@ -163,7 +163,7 @@ module bsg_cache_to_axi_tx
 
     ,.v_i(sipo_v_li)
     ,.data_i(sipo_data_li)
-    ,.ready_o(sipo_ready_lo)
+    ,.ready_and_o(sipo_ready_and_lo)
 
     ,.v_o(sipo_v_lo)
     ,.data_o(sipo_data_lo)
@@ -180,7 +180,7 @@ module bsg_cache_to_axi_tx
 
     ,.v_i(sipo_v_li)
     ,.data_i(sipo_strb_li)
-    ,.ready_o(/* Tracks data sipo */)
+    ,.ready_and_o(/* Tracks data sipo */)
 
     ,.v_o(/* Tracks data sipo */)
     ,.data_o(sipo_strb_lo)

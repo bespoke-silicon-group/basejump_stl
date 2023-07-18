@@ -118,7 +118,7 @@ module bsg_fifo_1r1w_large #(parameter `BSG_INV_PARAM(width_p)
 
     , input [width_p-1:0]  data_i
     , input                v_i
-    , output               ready_o
+    , output               ready_and_o
 
     , output               v_o
     , output [width_p-1:0] data_o
@@ -152,13 +152,13 @@ module bsg_fifo_1r1w_large #(parameter `BSG_INV_PARAM(width_p)
                                 ,.els_p(3)
                                 ,.out_els_p(2)
                                 ) sipo
-   (.clk_i      (clk_i)
-    ,.reset_i   (reset_i)
-    ,.valid_i   (v_i)
-    ,.data_i    (data_i)
-    ,.ready_o   (ready_o)
-    ,.valid_o   (valid_sipo)
-    ,.data_o    (data_sipo)
+   (.clk_i        (clk_i)
+    ,.reset_i     (reset_i)
+    ,.valid_i     (v_i)
+    ,.data_i      (data_i)
+    ,.ready_and_o (ready_and_o)
+    ,.valid_o     (valid_sipo)
+    ,.data_o      (data_sipo)
 
     ,.yumi_cnt_i(yumi_cnt_sipo)
     );

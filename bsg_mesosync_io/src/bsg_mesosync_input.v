@@ -294,13 +294,13 @@ bsg_relay_fifo #(.width_p(1)) LA_relay
     (.clk_i(clk)
     ,.reset_i(channel_reset)
 
-    ,.ready_o(ready_to_LA)
+    ,.ready_and_o(ready_to_LA)
     ,.data_i(LA_data)
     ,.v_i(LA_valid)
 
     ,.v_o(LA_valid_o)
     ,.data_o(LA_data_o)
-    ,.ready_i(ready_and_to_LA_i)
+    ,.ready_and_i(ready_and_to_LA_i)
     );
 
 // Logic Analyzer signals

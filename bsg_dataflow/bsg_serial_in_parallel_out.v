@@ -24,12 +24,12 @@ module bsg_serial_in_parallel_out #(parameter `BSG_INV_PARAM(width_p)
     , input               reset_i
     , input               valid_i
     , input [width_p-1:0] data_i
-    , output              ready_o
+    , output              ready_and_o
 
     , output logic [out_els_p-1:0]                valid_o
     , output logic [out_els_p-1:0][width_p-1:0]   data_o
 
-    , input  [$clog2(out_els_p+1)-1:0]        yumi_cnt_i
+    , input  [$clog2(out_els_p+1)-1:0]            yumi_cnt_i
     );
 
    localparam double_els_lp = els_p * 2;
@@ -63,10 +63,10 @@ module bsg_serial_in_parallel_out #(parameter `BSG_INV_PARAM(width_p)
   // we are ready if we have at least
   // one spot that is not full
 
-  assign ready_o = ~valid_r[els_p-1];
+  assign ready_and_o = ~valid_r[els_p-1];
 
   // update element count
-  assign num_els_n = (num_els_r + (valid_i & ready_o)) - yumi_cnt_i;
+  assign num_els_n = (num_els_r + (valid_i & ready_and_o)) - yumi_cnt_i;
 
   always_comb begin
     data_n  = data_r;
@@ -76,7 +76,7 @@ module bsg_serial_in_parallel_out #(parameter `BSG_INV_PARAM(width_p)
 
     // bypass in values
     data_n [num_els_r] = data_i;
-    valid_n[num_els_r] = valid_i & ready_o;
+    valid_n[num_els_r] = valid_i & ready_and_o;
 
     // this temporary value is
     // the output of this function

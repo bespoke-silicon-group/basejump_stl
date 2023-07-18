@@ -101,7 +101,7 @@ module testbench();
 
   // output fifo
   //
-  logic fifo_ready_lo;
+  logic fifo_ready_and_lo;
   logic fifo_v_lo;
   logic fifo_yumi_li;
   logic [data_width_p-1:0] fifo_data_lo;
@@ -115,14 +115,14 @@ module testbench();
 
     ,.data_i(cache_data_lo)
     ,.v_i(cache_v_lo)
-    ,.ready_o(fifo_ready_lo)
+    ,.ready_and_o(fifo_ready_and_lo)
 
     ,.v_o(fifo_v_lo)
     ,.data_o(fifo_data_lo)
     ,.yumi_i(fifo_yumi_li)
   );
 
-  assign cache_yumi_li = cache_v_lo & fifo_ready_lo;
+  assign cache_yumi_li = cache_v_lo & fifo_ready_and_lo;
 
   // trace_replay
   //
