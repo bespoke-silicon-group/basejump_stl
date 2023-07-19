@@ -90,7 +90,7 @@ module bsg_cache
   localparam dma_data_mask_width_lp=(dma_data_width_p>>3);
   localparam data_mem_els_lp = sets_p*burst_len_lp;
   localparam lg_data_mem_els_lp = `BSG_SAFE_CLOG2(data_mem_els_lp);
-  localparam sbuf_data_mem_addr_offset_lp=(burst_len_lp == block_size_in_words_p) ? ((sets_p == 1) ? lg_block_size_in_words_lp : lg_block_size_in_words_lp+lg_sets_lp) : ((sets_p==1) ? lg_burst_len_lp : lg_burst_len_lp+lg_sets_lp);
+  localparam sbuf_data_mem_addr_offset_lp=(burst_len_lp == block_size_in_words_p) ? lg_block_size_in_words_lp+$clog2(sets_p) : lg_burst_len_lp+$clog2(sets_p); 
 
 
   // instruction decoding
