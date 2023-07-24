@@ -1,8 +1,3 @@
-`define WIDTH_P              2
-`define T_P                  1
-`define BITS_P               1 // no. of bits included starting from T_P
-`define COND_SWAP_ON_EQUAL_P 0
-
 /**************************** TEST RATIONALE *******************************
 
 1. STATE SPACE
@@ -36,19 +31,20 @@ module test_bsg
   wire clk;
   wire reset;
   
-  bsg_nonsynth_clock_gen #(  .cycle_time_p(cycle_time_p)
-                          )  clock_gen
-                          (  .o(clk)
-                          );
-    
-  bsg_nonsynth_reset_gen #(  .num_clocks_p     (1)
-                           , .reset_cycles_lo_p(reset_cycles_lo_p)
-                           , .reset_cycles_hi_p(reset_cycles_hi_p)
-                          )  reset_gen
-                          (  .clk_i        (clk) 
-                           , .async_reset_o(reset)
-                          );
-                          
+  bsg_nonsynth_clock_gen
+    #(.cycle_time_p(cycle_time_p))
+    clock_gen (.o(clk));
+  
+  bsg_nonsynth_reset_gen
+    #(.num_clocks_p     (1)
+     ,.reset_cycles_lo_p(reset_cycles_lo_p)
+     ,.reset_cycles_hi_p(reset_cycles_hi_p)
+     )
+    reset_gen
+     (.clk_i        (clk)
+     ,.async_reset_o(reset)
+     );
+
   initial
   begin
     $display(  "\n\n\n"
@@ -68,14 +64,13 @@ module test_bsg
   		            , width_p, t_p, b_p, cond_swap_on_equal_p);
           $finish;
         end
-    
   end
-    
+
   logic [1:0] [width_p-1:0] test_input, test_output;
   logic test_input_swap, test_output_swapped, finish_r;
   
   always_ff @(posedge clk)
-  begin          
+  begin
     if(reset)
       begin
         test_input[0]   <= width_p ' (0);    // initiate with 00..0
@@ -102,26 +97,23 @@ module test_bsg
   
   always_ff @(posedge clk)
   begin
-    if(!reset)  
-      begin
-        assert(test_output_swapped == ((test_input[0][t_p:b_p] > test_input[1][t_p:b_p])
-                                       | ((cond_swap_on_equal_p & test_input_swap)
-                                          & (test_input[0] == test_input[1])
-                                         )
+    assert(reset || (test_output_swapped == ((test_input[0][t_p:b_p] > test_input[1][t_p:b_p])
+                                    | ((cond_swap_on_equal_p & test_input_swap)
+                                      & (test_input[0] == test_input[1])
                                       )
-              )
-          else $error("swapped_o: mismatch on input %x", test_input);
+                                  ))
+          )
+      else $error("swapped_o: mismatch on input %x", test_input);
 
-        assert(test_output == ((test_input[0][t_p:b_p] > test_input[1][t_p:b_p])
-                               | ((cond_swap_on_equal_p & test_input_swap)
-                                  & (test_input[0] == test_input[1])
-                                 )
+    assert(reset || (test_output == ((test_input[0][t_p:b_p] > test_input[1][t_p:b_p])
+                            | ((cond_swap_on_equal_p & test_input_swap)
+                              & (test_input[0] == test_input[1])
                               )
-                              ? {test_input[0], test_input[1]}
-                              : test_input
-              )
-          else $error("data_o: mismatch on input %x", test_input);
-      end
+                          )
+                          ? {test_input[0], test_input[1]}
+                          : test_input)
+          )
+      else $error("data_o: mismatch on input %x", test_input);
   end
 
  // generate DUT only if params are compatible

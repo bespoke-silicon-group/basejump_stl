@@ -22,7 +22,7 @@ run: $(RUNS)
 run-%:
 	mkdir run-$*;
 	cd run-$* && \
-        $(VCS_BIN)/vcs -full64 -sverilog -timescale=1ps/1ps -f $(TOP_DIR)/filelist -debug_pp -R -top bsg_parallel_in_serial_out_tester +vcs+vcdpluson \
+        $(VCS_BIN)/vcs -full64 -sverilog -timescale=1ps/1ps -assert svaext -f $(TOP_DIR)/filelist -debug_pp -R -top bsg_parallel_in_serial_out_tester +vcs+vcdpluson \
         -pvalue+top_master_clk_period_p=$(word 1, $(subst -, ,$*)) \
         -pvalue+top_piso_clk_period_p=$(word 2, $(subst -, ,$*)) \
         -pvalue+top_client_clk_period_p=$(word 3, $(subst -, ,$*)) \

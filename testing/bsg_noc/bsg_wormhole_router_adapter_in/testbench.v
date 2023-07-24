@@ -1,6 +1,4 @@
 module testbench();
- 
-  `include "bsg_noc_links.vh"
 
   parameter x_cord_width_p = 2;
   parameter y_cord_width_p = 2;
@@ -47,43 +45,21 @@ module testbench();
   assign link_li.ready_and_rev = ready_li;
 
   bsg_wormhole_router_adapter_in #(
-    .max_num_flit_p(max_num_flit_p)
+    .flit_width_p(flit_width_lp)
     ,.max_payload_width_p(max_payload_width_p)
-    ,.x_cord_width_p(x_cord_width_p)
-    ,.y_cord_width_p(y_cord_width_p) 
+    ,.cord_width_p(x_cord_width_p+y_cord_width_p)
+    ,.len_width_p(len_width_lp)
   ) adapter (
     .clk_i(clk)
     ,.reset_i(reset)
     
-    ,.data_i(data_li)
+    ,.packet_i(data_li)
     ,.v_i(v_li)
     ,.ready_o(ready_lo)
 
     ,.link_o(link_lo)
     ,.link_i(link_li)
   );
-
-  logic [flit_width_lp-1:0] fifo_data_lo;
-  logic fifo_yumi_li;
-  logic fifo_v_lo;
-  logic fifo_ready_lo;
-
-  bsg_fifo_1r1w_small #(
-    .width_p(flit_width_lp)
-    ,.els_p(16)
-  ) fifo_out (
-    .clk_i(clk)
-    ,.reset_i(reset)
-
-    ,.v_i(v_lo)
-    ,.data_i(data_lo)
-    ,.ready_o(fifo_ready_lo)
-
-    ,.data_o(fifo_data_lo)
-    ,.v_o(fifo_v_lo)
-    ,.yumi_i(fifo_yumi_li)
-  );
-  assign ready_li = fifo_ready_lo;
 
   logic [flit_width_lp-1:0] fifo_data_lo;
   logic fifo_yumi_li;

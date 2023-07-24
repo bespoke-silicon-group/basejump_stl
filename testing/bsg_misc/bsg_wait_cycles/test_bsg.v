@@ -65,9 +65,9 @@ module test_bsg
     
   always_ff @(posedge activate)
   begin  
-    active_time <= ($time + cycle_time_p); // test_input_activate is ON for 1 clock cycle
-                                            // after posedge of activate
-    test_input_activate  <= 1'b1;
+    // active_time <= ($time + cycle_time_p); // test_input_activate is ON for 1 clock cycle
+    //                                         // after posedge of activate
+    // test_input_activate  <= 1'b1;
   end
   
   always_ff @(posedge clk)
@@ -81,6 +81,11 @@ module test_bsg
       end  
     else
       begin
+        if (activate) begin
+          active_time <= ($time + cycle_time_p);   // test_input_activate is ON for 1 clock cycle
+                                                   // after posedge of activate
+          test_input_activate  <= 1'b1;
+        end
         if(test_input_activate)
           test_input_activate <= 1'b0;
         

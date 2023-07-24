@@ -1,10 +1,9 @@
 #
 #		Makefile
 #
-	
-include ../../../../bsg_cadenv/cadenv.mk
 
 export BASEJUMP_STL_DIR = $(abspath ../../..)
+include $(BASEJUMP_STL_DIR)/../bsg_cadenv/cadenv.mk
 
 INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 

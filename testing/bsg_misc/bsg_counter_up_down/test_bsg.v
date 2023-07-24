@@ -47,7 +47,8 @@ module test_bsg
                            , .async_reset_o(reset)
                           );
 
-  logic test_input_up, test_input_down, finish_r;
+  logic finish_r;
+  logic [max_step_p-1:0] test_input_up, test_input_down;
   logic [`BSG_WIDTH(max_val_p)-1:0] test_output;
   logic [`BSG_SAFE_CLOG2(max_val_p):0] prev_count, count;
 
@@ -75,18 +76,25 @@ module test_bsg
     if(reset)
       begin
         finish_r <= 0;
-        if(init_val_p < max_val_p)
-          {test_input_up, test_input_down} <= 2'b10;
-        else
-          {test_input_up, test_input_down} <= 2'b01;
+        if(init_val_p < max_val_p) begin
+          test_input_up = 1;
+          test_input_down = 0;
+        end
+        else begin
+          test_input_up = 0;
+          test_input_down = 1;
+        end
       end
     else
       begin
-        if((count == max_val_p-1) & test_input_up) // prevents overflow
-          {test_input_up, test_input_down} <= 2'b01;
-        else if((count == 1) & test_input_down)     // prevents underflow
-          {test_input_up, test_input_down} <= 2'b10;
-
+        if((count == max_val_p-1) & |test_input_up) begin // prevents overflow
+          test_input_up = 0;
+          test_input_down = 1;
+        end
+        else if((count == 1) & test_input_down) begin     // prevents underflow
+          test_input_up = 1;
+          test_input_down = 0;
+        end
         if(finish_r)
           begin
             $display("==============================================================\n");
@@ -109,9 +117,14 @@ module test_bsg
         //$display("count: %d, test_output: %d @  time: %d\n", count, test_output, $time);
         assert(count == test_output)
           else $error("mismatch on time %d\n", $time);
-
-        count      <= count + test_input_up - test_input_down;
-        prev_count <= count;
+        if (max_val_p == 1) begin
+          // typical test up/down calculations underflow on this case
+          count <= count == 0 ? 1 : 0;
+          prev_count <= count;
+        end else begin
+          count      <= count + test_input_up - test_input_down;
+          prev_count <= count;
+        end
       end
   end
 
@@ -119,7 +132,6 @@ module test_bsg
     bsg_counter_up_down #(  .max_val_p   (max_val_p)
                           , .init_val_p  (init_val_p)
                           , .max_step_p (max_step_p)
-                          , .ptr_width_lp()
                          )  DUT
                          (  .clk_i  (clk)
                           , .reset_i(reset)

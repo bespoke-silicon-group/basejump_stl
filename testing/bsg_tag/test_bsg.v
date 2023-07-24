@@ -6,11 +6,11 @@ module test_bsg;
 
   // Enable VPD dump file
   //
-  initial
-    begin
-      $vcdpluson;
-      $vcdplusmemon;
-    end
+  // initial
+  //   begin
+  //     $vcdpluson;
+  //     $vcdplusmemon;
+  //   end
 
    logic TCK,TDI,TMS;
 
