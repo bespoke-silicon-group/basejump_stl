@@ -31,38 +31,32 @@ module bsg_mem_1r1w_one_hot_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
 
   logic [`BSG_SAFE_CLOG2(safe_els_lp)-1:0] w_addr_lo;
 
-  logic [width_p-1:0] data_n;
-  
-  bsg_encode_one_hot #(.width_p(safe_els_lp)
-                      ) write_addr
-                      (.i(w_v_i)
-                      ,.addr_o(w_addr_lo)
-                      ,.v_o()
-                      );
-  
-  for (genvar i = 0; i < width_p; i=i+1)
-    begin : write_mask_bits
-      assign data_n[i] = w_mask_i[i] ? w_data_i[i] : data_r[w_addr_lo][i];
-    end
+  logic [safe_els_lp-1:0][width_p-1:0] data_n;
 
   for (genvar i = 0; i < els_p; i++)
     begin : mem_array
-      bsg_dff_en #(.width_p(width_p)
-                  ) mem_reg
-                  (.clk_i(w_clk_i)
-                  ,.en_i(w_v_i[i])
-                  ,.data_i(data_n)
-                  ,.data_o(data_r[i])
-                  );
+      for (genvar j = 0; j < width_p; j++)
+        begin : write_mask_bits
+          assign data_n[i][j] = w_mask_i[j] ? w_data_i[j] : data_r[i][j];
+        end
+      bsg_dff_en #(
+        .width_p(width_p)
+      ) mem_reg (
+        .clk_i(w_clk_i)
+        ,.en_i(w_v_i[i])
+        ,.data_i(data_n[i])
+        ,.data_o(data_r[i])
+      );
     end
 
-  bsg_mux_one_hot #(.width_p(width_p)
-                   ,.els_p(safe_els_lp)
-                   ) one_hot_sel
-                   (.data_i(data_r)
-                   ,.sel_one_hot_i(r_v_i)
-                   ,.data_o(r_data_o)
-                   );
+  bsg_mux_one_hot #(
+    .width_p(width_p)
+    ,.els_p(safe_els_lp)
+  ) one_hot_sel (
+    .data_i(data_r)
+    ,.sel_one_hot_i(r_v_i)
+    ,.data_o(r_data_o)
+  );
 
    //synopsys translate_off
 
