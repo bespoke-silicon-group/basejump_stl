@@ -7,7 +7,7 @@
 
 module bsg_mem_1r1w_one_hot_mask_write_byte #(parameter `BSG_INV_PARAM(width_p)
                                            , parameter `BSG_INV_PARAM(els_p)
-                                           , parameter mask_width_lp=(width_p>>3)
+                                           , parameter write_mask_width_lp=(width_p>>3)
                                            , parameter safe_els_lp=`BSG_MAX(els_p,1)
                                            )
    (input   w_clk_i
@@ -17,8 +17,8 @@ module bsg_mem_1r1w_one_hot_mask_write_byte #(parameter `BSG_INV_PARAM(width_p)
     // one or zero-hot
     , input [safe_els_lp-1:0] w_v_i
     , input [width_p-1:0] w_data_i
-
-    , input [mask_width_lp-1:0] w_mask_i
+    // for each bit set in the mask, a byte is written
+    , input [write_mask_width_lp-1:0] w_mask_i
 
     // one or zero-hot
     , input [safe_els_lp-1:0] r_v_i
@@ -27,26 +27,20 @@ module bsg_mem_1r1w_one_hot_mask_write_byte #(parameter `BSG_INV_PARAM(width_p)
 
   wire unused0 = w_reset_i;
 
-  logic [width_p-1:0] w_mask_expanded_lo;
-  
-  bsg_expand_bitmask #(.in_width_p(mask_width_lp)
-                      ,.expand_p(8)
-                      ) mask_expand
-                      (.i(w_mask_i)
-                      ,.o(w_mask_expanded_lo)
-                      );
-
-  bsg_mem_1r1w_one_hot_mask_write_bit #(.width_p(width_p)
-                                       ,.els_p(els_p)
-                                       ) mem_one_hot_write_bits
-                                       (.w_clk_i(w_clk_i)
-                                       ,.w_reset_i(w_reset_i)
-                                       ,.w_v_i(w_v_i)
-                                       ,.w_data_i(w_data_i)
-                                       ,.w_mask_i(w_mask_expanded_lo)
-                                       ,.r_v_i(r_v_i)
-                                       ,.r_data_o(r_data_o)
-                                       );
+  for(genvar i=0; i<write_mask_width_lp; i++)
+  begin: replicate_non_masked_one_hot_rams
+    bsg_mem_1r1w_one_hot #( 
+      .width_p(8)
+      ,.els_p(safe_els_lp)
+    ) mem_1r1w_sync ( 
+      .w_clk_i(w_clk_i)
+      ,.w_reset_i(w_reset_i)
+      ,.w_v_i(w_v_i & {safe_els_lp{w_mask_i[i]}})
+      ,.w_data_i(w_data_i[(i*8)+:8])
+      ,.r_v_i(r_v_i)
+      ,.r_data_o(r_data_o[(i*8)+:8])
+    );
+  end
 
 
    //synopsys translate_off
