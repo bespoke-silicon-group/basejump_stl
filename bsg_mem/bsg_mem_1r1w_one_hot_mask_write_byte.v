@@ -11,7 +11,6 @@ module bsg_mem_1r1w_one_hot_mask_write_byte #(parameter `BSG_INV_PARAM(width_p)
                                            , parameter safe_els_lp=`BSG_MAX(els_p,1)
                                            )
    (input   w_clk_i
-    // Currently unused
     , input w_reset_i
 
     // one or zero-hot
@@ -25,11 +24,9 @@ module bsg_mem_1r1w_one_hot_mask_write_byte #(parameter `BSG_INV_PARAM(width_p)
     , output logic [width_p-1:0] r_data_o
     );
 
-  wire unused0 = w_reset_i;
-
   for(genvar i=0; i<write_mask_width_lp; i++)
   begin: replicate_non_masked_one_hot_rams
-    bsg_mem_1r1w_one_hot #( 
+    bsg_mem_1r1w_one_hot_reset #( 
       .width_p(8)
       ,.els_p(safe_els_lp)
     ) mem_1r1w_sync ( 

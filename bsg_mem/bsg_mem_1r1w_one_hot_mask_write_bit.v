@@ -11,7 +11,6 @@ module bsg_mem_1r1w_one_hot_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
                                            , parameter safe_els_lp=`BSG_MAX(els_p,1)
                                            )
    (input   w_clk_i
-    // Currently unused
     , input w_reset_i
 
     // one or zero-hot
@@ -25,8 +24,6 @@ module bsg_mem_1r1w_one_hot_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
     , output logic [width_p-1:0] r_data_o
     );
 
-  wire unused0 = w_reset_i;
-
   logic [safe_els_lp-1:0][width_p-1:0] data_r;
 
   logic [`BSG_SAFE_CLOG2(safe_els_lp)-1:0] w_addr_lo;
@@ -39,10 +36,11 @@ module bsg_mem_1r1w_one_hot_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
         begin : write_mask_bits
           assign data_n[i][j] = w_mask_i[j] ? w_data_i[j] : data_r[i][j];
         end
-      bsg_dff_en #(
+      bsg_dff_reset_en #(
         .width_p(width_p)
       ) mem_reg (
         .clk_i(w_clk_i)
+        ,.reset_i(w_reset_i)
         ,.en_i(w_v_i[i])
         ,.data_i(data_n[i])
         ,.data_o(data_r[i])
