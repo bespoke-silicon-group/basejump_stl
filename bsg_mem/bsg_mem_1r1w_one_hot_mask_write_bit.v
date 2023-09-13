@@ -77,4 +77,4 @@ module bsg_mem_1r1w_one_hot_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
 
 endmodule
 
-`BSG_ABSTRACT_MODULE(bsg_mem_1r1w_one_hot)
+`BSG_ABSTRACT_MODULE(bsg_mem_1r1w_one_hot_mask_write_bit)
