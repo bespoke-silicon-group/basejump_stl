@@ -28,18 +28,24 @@ module testbench();
   );
 
   `declare_bsg_ready_and_link_sif_s(flit_width_lp, bsg_ready_and_link_sif_s);
-  bsg_ready_and_link_sif_s link_lo, link_li;
 
   logic [max_packet_width_lp-1:0] data_li;
-  logic v_li, ready_lo;
-  logic [max_packet_width_lp-1:0] data_lo;
-  logic v_lo, ready_li;
- 
-  assign link_li.data = data_li[0+:flit_width_lp];
-  assign link_li.v    = v_li;
-  assign link_li.ready_and_rev = 1'b0;
+  logic v_li, ready_and_lo;
+  logic [max_packet_width_lp-1:0] packet_lo, data_lo;
+  logic v_lo, ready_and_li;
+  logic [1:0] count;
 
-  assign ready_lo = link_lo.ready_and_rev;
+  bsg_counter_clear_up #(
+    .max_val_p(3)
+    ,.init_val_p(0)
+  ) counter (
+    .clk_i(clk)
+    ,.reset_i(reset)
+
+    ,.clear_i(ready_and_li * v_lo)
+    ,.up_i(v_li & ready_and_lo)
+    ,.count_o(count)
+  );
 
   bsg_wormhole_router_adapter_out #(
     .flit_width_p(flit_width_lp)
@@ -49,14 +55,29 @@ module testbench();
   ) adapter (
     .clk_i(clk)
     ,.reset_i(reset)
-    
-    ,.link_i(link_li)
-    ,.link_o(link_lo)
 
-    ,.packet_o(data_lo)
-    ,.v_o(v_lo)
-    ,.yumi_i(v_lo & ready_li)
+    ,.link_v_i(v_li)
+    ,.link_data_i(data_li[0+:flit_width_lp])
+    ,.link_ready_and_o(ready_and_lo)
+
+    ,.packet_o(packet_lo)
+    ,.packet_v_o(v_lo)
+    ,.packet_yumi_i(v_lo & ready_and_li)
   );
+
+  wire [22:0] mask_3 = 23'b11111111111111111111111;
+  wire [22:0] mask_2 = 23'b00000001111111111111111;
+  wire [22:0] mask_1 = 23'b00000000000000011111111;
+
+  always_comb begin
+    case(count)
+      0: data_lo = '0;
+      1: data_lo = packet_lo & mask_1;
+      2: data_lo = packet_lo & mask_2;
+      3: data_lo = packet_lo & mask_3;
+      default: data_lo = '0;
+    endcase
+  end
 
   parameter rom_addr_width_p = 10;
 
@@ -73,11 +94,11 @@ module testbench();
 
     ,.v_i(v_lo)
     ,.data_i(data_lo)
-    ,.ready_o(ready_li)
+    ,.ready_o(ready_and_li)
 
     ,.v_o(v_li)
     ,.data_o(data_li)
-    ,.yumi_i(v_li & ready_lo)
+    ,.yumi_i(v_li & ready_and_lo)
 
     ,.rom_addr_o(rom_addr)
     ,.rom_data_i(rom_data)

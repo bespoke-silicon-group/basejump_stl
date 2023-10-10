@@ -103,8 +103,8 @@ module test_bsg
                       ,.yumi_o (test_output_yumi[i])
 
                       ,.data_o (test_output_data[i])
-                      ,.v_o    (test_output_valid[i])
-                      ,.ready_i(test_input_ready[i])
+                      ,.valid_o(test_output_valid[i])
+                      ,.ready_and_i(test_input_ready[i])
 
                       ,.my_x_i(x_cord_width_lp'(i%medge_lp))
                       ,.my_y_i(y_cord_width_lp'(i/medge_lp))

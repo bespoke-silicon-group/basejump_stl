@@ -23,24 +23,18 @@ module bsg_wormhole_router_adapter_out
    (input                                          clk_i
     , input                                        reset_i
 
-    , input [bsg_ready_and_link_sif_width_lp-1:0]  link_i 
-    , output [bsg_ready_and_link_sif_width_lp-1:0] link_o
+    , input                                        link_v_i
+    , input  [max_payload_width_p-1:0]             link_data_i
+    , output                                       link_ready_and_o
 
     , output [bsg_wormhole_packet_width_lp-1:0]    packet_o
-    , output                                       v_o
-    , input                                        yumi_i
+    , output                                       packet_v_o
+    , input                                        packet_yumi_i
     );
-
-  // Casting ports
-  `declare_bsg_ready_and_link_sif_s(flit_width_p, bsg_ready_and_link_sif_s);
-  bsg_ready_and_link_sif_s link_cast_i, link_cast_o;
-
-  assign link_cast_i = link_i;
-  assign link_o = link_cast_o;
 
   `declare_bsg_wormhole_router_header_s(cord_width_p, len_width_p, bsg_wormhole_header_s);
   bsg_wormhole_header_s header_li;
-  assign header_li = link_cast_i.data;
+  assign header_li = link_data_i;
 
   `declare_bsg_wormhole_router_packet_s(cord_width_p,len_width_p,max_payload_width_p,bsg_wormhole_packet_s);
 
@@ -55,21 +49,19 @@ module bsg_wormhole_router_adapter_out
     (.clk_i(clk_i)
      ,.reset_i(reset_i)
 
-     ,.data_i(link_cast_i.data)
+     ,.data_i(link_data_i)
      ,.len_i(protocol_len_lp'(header_li.len))
-     ,.ready_and_o(link_cast_o.ready_and_rev)
+     ,.ready_and_o(link_ready_and_o)
      ,.len_ready_o(/* unused */)
-     ,.v_i(link_cast_i.v)
+     ,.v_i(link_v_i)
 
-     ,.v_o(v_o)
+     ,.v_o(packet_v_o)
      ,.data_o(packet_padded_lo)
-     ,.yumi_i(yumi_i)
+     ,.yumi_i(packet_yumi_i)
      );
   assign packet_o = packet_padded_lo[0+:bsg_wormhole_packet_width_lp];
 
-  // Stub the output data dna valid, since this is an output
-  assign link_cast_o.data = '0;
-  assign link_cast_o.v    = '0;
+
 
 `ifndef SYNTHESIS
   logic recv_r;
@@ -78,12 +70,12 @@ module bsg_wormhole_router_adapter_out
    recv_reg
     (.clk_i(clk_i)
      ,.reset_i(reset_i)
-     ,.en_i(link_cast_i.v || yumi_i)
+     ,.en_i(link_v_i || packet_yumi_i)
 
-     ,.data_i(link_cast_i.v)
+     ,.data_i(link_v_i)
      ,.data_o(recv_r)
      );
-  wire new_header_li = ~recv_r & link_cast_i.v;
+  wire new_header_li = ~recv_r & link_v_i;
 
   // TODO: This assertion is buggy and fires erroneously
   //always_ff @(negedge clk_i)
