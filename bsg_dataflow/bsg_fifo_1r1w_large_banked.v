@@ -72,7 +72,7 @@ module bsg_fifo_1r1w_large_banked #(parameter `BSG_INV_PARAM(width_p         )
     , input                reset_i
     , input [width_p-1:0]  data_i
     , input                v_i
-    , output               ready_o
+    , output               ready_and_o
 
     , output               v_o
     , output [width_p-1:0] data_o
@@ -84,7 +84,7 @@ module bsg_fifo_1r1w_large_banked #(parameter `BSG_INV_PARAM(width_p         )
 
    genvar i;
 
-   wire [1:0]               v_i_demux, ready_o_mux;
+   wire [1:0]               v_i_demux, ready_and_o_mux;
 
    bsg_round_robin_1_to_n #(.width_p(width_p)
                             ,.num_out_p(2)
@@ -93,10 +93,10 @@ module bsg_fifo_1r1w_large_banked #(parameter `BSG_INV_PARAM(width_p         )
     ,.reset_i(reset_i    )
 
     ,.valid_i(v_i        )
-    ,.ready_o(ready_o    )
+    ,.ready_and_o(ready_and_o)
 
     ,.valid_o(v_i_demux  )
-    ,.ready_i(ready_o_mux)
+    ,.ready_and_i(ready_and_o_mux)
     );
 
    wire [1:0]               v_int, yumi_int;
@@ -122,13 +122,13 @@ module bsg_fifo_1r1w_large_banked #(parameter `BSG_INV_PARAM(width_p         )
             (.clk_i   (clk_i)
              ,.reset_i(reset_i)
 
-             ,.v_i(v_i_demux  [i])
-             ,.data_i (data_i        )
-             ,.ready_o(ready_o_mux[i])
+             ,.v_i        (v_i_demux[i]      )
+             ,.data_i     (data_i            )
+             ,.ready_and_o(ready_and_o_mux[i])
 
-             ,.v_o    (v_int   [i])
-             ,.data_o (data_int[i])
-             ,.yumi_i (yumi_int[i])
+             ,.v_o        (v_int    [i]      )
+             ,.data_o     (data_int [i]      )
+             ,.yumi_i     (yumi_int [i]      )
              );
      end
 

@@ -51,7 +51,7 @@ module bsg_wormhole_router_adapter_in
      ,.v_i(packet_v_i)
      ,.len_i(protocol_len_lp'(packet_cast_i.len))
      ,.data_i(packet_padded_li)
-     ,.ready_o(packet_ready_and_o)
+     ,.ready_and_o(packet_ready_and_o)
 
      ,.v_o(link_v_o)
      ,.len_v_o(/* unused */)

@@ -41,7 +41,7 @@ module bsg_parallel_in_serial_out_test_node
 
   // Async fifo signals
   logic node_async_fifo_valid_li, node_async_fifo_yumi_lo;
-  logic node_async_fifo_valid_lo, node_async_fifo_ready_li;
+  logic node_async_fifo_valid_lo, node_async_fifo_ready_and_li;
 
   logic [link_width_p-1:0] node_async_fifo_data_li;
   logic [link_width_p-1:0] node_async_fifo_data_lo;
@@ -113,7 +113,7 @@ module bsg_parallel_in_serial_out_test_node
       (.clk_i  (node_clk_i)
       ,.reset_i(node_reset_i)
 
-      ,.ready_o(node_async_fifo_ready_li)
+      ,.ready_and_o(node_async_fifo_ready_and_li)
       ,.v_i    (node_async_fifo_valid_lo)
       ,.data_i (node_async_fifo_data_lo)
 
@@ -177,7 +177,7 @@ module bsg_parallel_in_serial_out_test_node
 
   // Node side async fifo output
   logic  node_async_fifo_deq_li;
-  assign node_async_fifo_deq_li = node_async_fifo_ready_li & node_async_fifo_valid_lo;
+  assign node_async_fifo_deq_li = node_async_fifo_ready_and_li & node_async_fifo_valid_lo;
 
   // Link side async fifo input
   logic  link_async_fifo_full_lo;
