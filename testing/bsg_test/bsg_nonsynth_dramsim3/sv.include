@@ -3,7 +3,7 @@ $BASEJUMP_STL_DIR/bsg_misc/bsg_reduce.sv
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_clock_gen.sv
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_reset_gen.sv
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_test_rom.sv
-$BASEJUMP_STL_DIR/bsg_fsb/bsg_fsb_node_trace_replay.v
+$BASEJUMP_STL_DIR/bsg_legacy/bsg_fsb/bsg_fsb_node_trace_replay.v
 
 $BASEJUMP_STL_DIR/bsg_test/bsg_dramsim3_pkg.sv
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_dramsim3.sv

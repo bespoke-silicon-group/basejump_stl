@@ -1,6 +1,6 @@
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_clock_gen.sv
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_reset_gen.sv
-$BASEJUMP_STL_DIR/bsg_fsb/bsg_fsb_node_trace_replay.v
+$BASEJUMP_STL_DIR/bsg_legacy/bsg_fsb/bsg_fsb_node_trace_replay.v
 
 $BASEJUMP_STL_DIR/bsg_misc/bsg_abs.sv
 $BASEJUMP_STL_DIR/bsg_misc/bsg_scan.sv

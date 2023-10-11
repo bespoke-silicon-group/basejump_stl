@@ -67,7 +67,7 @@ $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router_pkg.sv
 $BASEJUMP_STL_DIR/bsg_test/test_bsg_data_gen.sv
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router.sv
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_concentrator.sv
-$BASEJUMP_STL_DIR/bsg_fsb/bsg_fsb_pkg.v
+$BASEJUMP_STL_DIR/bsg_legacy/bsg_fsb/bsg_fsb_pkg.v
 
 $TOP_DIR/bsg_fifo_1r1w_small_hardened_tester.sv
 $TOP_DIR/bsg_fifo_1r1w_small_hardened_test_node.sv

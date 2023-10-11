@@ -53,7 +53,7 @@ BSG_IP_CORES_SIM  = vsim -t ps -batch -lib work $(TEST_MODULE) -do "run -all; qu
 
 ALL_FILES = $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x)) \
               $(foreach x,$(BSG_ASYNC_FILES),$(TOP)/bsg_async/$(x)) \
-              $(foreach x,$(BSG_FSB_FILES),$(TOP)/bsg_fsb/$(x)) \
+              $(foreach x,$(BSG_FSB_FILES),$(TOP)/bsg_legacy/bsg_fsb/$(x)) \
               $(foreach x,$(BSG_GUTS_FILES),$(TOP)/bsg_guts/$(x)) \
               $(foreach x,$(BSG_COMM_LINK_FILES),$(TOP)/bsg_comm_link/$(x)) \
               $(foreach x,$(BSG_DATAFLOW_FILES),$(TOP)/bsg_dataflow/$(x)) \

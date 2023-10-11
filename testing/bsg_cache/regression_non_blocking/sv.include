@@ -30,7 +30,7 @@ $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1r1w_small.sv
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1r1w_small_unhardened.sv
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_two_fifo.sv
 
-$BASEJUMP_STL_DIR/bsg_fsb/bsg_fsb_node_trace_replay.v
+$BASEJUMP_STL_DIR/bsg_legacy/bsg_fsb/bsg_fsb_node_trace_replay.v
 
 $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1rw_sync_mask_write_bit.sv
 $BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1rw_sync_mask_write_bit_synth.sv

@@ -80,7 +80,7 @@ ALL_FILES =   $(BSG_DEFINES_FILES) $(foreach x,$(BSG_TAG_FILES),$(TOP)/bsg_tag/$
               $(foreach x,$(BSG_ASYNC_FILES),$(TOP)/bsg_async/$(x)) \
               $(foreach x,$(BSG_COMM_LINK_FILES),$(TOP)/bsg_comm_link/$(x)) \
               $(foreach x,$(BSG_DATAFLOW_FILES),$(TOP)/bsg_dataflow/$(x)) \
-              $(foreach x,$(BSG_FSB_FILES),$(TOP)/bsg_fsb/$(x)) \
+              $(foreach x,$(BSG_FSB_FILES),$(TOP)/bsg_legacy/bsg_fsb/$(x)) \
               $(foreach x,$(BSG_GUTS_FILES),$(TOP)/bsg_guts/$(x)) \
               $(foreach x,$(BSG_TEST_FILES),$(TOP)/bsg_test/$(x)) \
               $(foreach x,$(BSG_CLK_GEN_FILES),$(BSG_CLK_GEN_DIR)/$(x)) \

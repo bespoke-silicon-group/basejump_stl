@@ -68,7 +68,7 @@ $BASEJUMP_STL_DIR/bsg_test/test_bsg_data_gen.sv
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_delay_line.sv
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_router.sv
 $BASEJUMP_STL_DIR/bsg_noc/bsg_wormhole_concentrator.sv
-$BASEJUMP_STL_DIR/bsg_fsb/bsg_fsb_pkg.v
+$BASEJUMP_STL_DIR/bsg_legacy/bsg_fsb/bsg_fsb_pkg.v
 $BASEJUMP_STL_DIR/bsg_link/bsg_link_ddr_downstream.sv
 $BASEJUMP_STL_DIR/bsg_link/bsg_link_ddr_upstream.sv
 $BASEJUMP_STL_DIR/bsg_link/bsg_link_iddr_phy.sv
