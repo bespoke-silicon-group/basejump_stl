@@ -25,6 +25,9 @@ module bsg_cache_to_axi
     ,parameter `BSG_INV_PARAM(axi_burst_len_p)
     ,parameter `BSG_INV_PARAM(axi_burst_type_p)
 
+    // enables read/write ordering
+    ,parameter `BSG_INV_PARAM(ordering_en_p)
+
     ,parameter lg_num_cache_lp=`BSG_SAFE_CLOG2(num_cache_p)
     ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p, mask_width_p)
 
@@ -188,6 +191,8 @@ module bsg_cache_to_axi
       : read_rr_yumi_lo[i];
   end
 
+  logic r_fence_lo, w_fence_lo;
+
   // rx
   //
   bsg_cache_to_axi_rx #(
@@ -208,6 +213,8 @@ module bsg_cache_to_axi
     ,.yumi_o(read_rr_yumi_li)
     ,.cache_id_i(read_rr_tag_lo)
     ,.addr_i(read_rr_dma_pkt.addr)
+
+    ,.fence_i(r_fence_lo)
 
     ,.dma_data_o(dma_data_o)
     ,.dma_data_v_o(dma_data_v_o)
@@ -256,6 +263,8 @@ module bsg_cache_to_axi
     ,.addr_i(write_rr_dma_pkt.addr)
     ,.mask_i(write_rr_dma_pkt.mask)
 
+    ,.fence_i(w_fence_lo)
+
     ,.dma_data_i(dma_data_i)
     ,.dma_data_v_i(dma_data_v_i)
     ,.dma_data_yumi_o(dma_data_yumi_o)
@@ -283,6 +292,49 @@ module bsg_cache_to_axi
     ,.axi_bvalid_i(axi_bvalid_i)
     ,.axi_bready_o(axi_bready_o)
   );
+
+  // ordering
+  //
+  if(ordering_en_p) begin: ordering
+    bsg_cache_to_axi_ordering #(
+      .num_cache_p(num_cache_p)
+      ,.addr_width_p(addr_width_p)
+      ,.data_width_p(data_width_p)
+      ,.mask_width_p(mask_width_p)
+      ,.block_size_in_words_p(block_size_in_words_p)
+      ,.tag_fifo_els_p(tag_fifo_els_p)
+      ,.axi_id_width_p(axi_id_width_p)
+      ,.axi_data_width_p(axi_data_width_p)
+      ,.axi_burst_len_p(axi_burst_len_p)
+      ,.axi_burst_type_p(axi_burst_type_p)
+    ) axi_ordering (
+      .clk_i(clk_i)
+      ,.reset_i(reset_i)
+  
+      ,.r_v_i(read_rr_v_lo)
+      ,.r_addr_i(read_rr_dma_pkt.addr)
+      ,.r_fence_o(r_fence_lo)
+  
+      ,.w_v_i(write_rr_v_lo)
+      ,.w_addr_i(write_rr_dma_pkt.addr)
+      ,.w_fence_o(w_fence_lo)
+  
+      ,.axi_awvalid_i(axi_awvalid_o)
+      ,.axi_awready_i(axi_awready_i)
+      ,.axi_bvalid_i(axi_bvalid_i)
+      ,.axi_bready_i(axi_bready_o)
+  
+      ,.axi_arvalid_i(axi_arvalid_o)
+      ,.axi_arready_i(axi_arready_i)
+      ,.axi_rlast_i(axi_rlast_i)
+      ,.axi_rvalid_i(axi_rvalid_i)
+      ,.axi_rready_i(axi_rready_o)
+    );
+  end
+  else begin: noordering
+    assign r_fence_lo = 1'b0;
+    assign w_fence_lo = 1'b0;
+  end
 
   // assertions
   //
