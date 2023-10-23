@@ -22,6 +22,8 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
       ,input               opA_is_neg_i
       ,input               opC_is_neg_i
 
+      ,input [`BSG_SAFE_CLOG2(width_p)-1:0] div_shift_i
+
       ,output logic [1:0]  opA_sel_o
       ,output logic        opA_ld_o
       ,output logic        opA_inv_o
@@ -38,6 +40,8 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
       ,output logic        latch_signed_div_o
       ,output logic        adder1_cin_o
 
+      ,output logic [`BSG_WIDTH(width_p)-1:0] shift_val_o
+
       ,output logic        v_o
       ,input               yumi_i
       );
@@ -46,7 +50,7 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
    logic r_neg_r;
    logic neg_ld;
    logic add1_neg_last_r, add2_neg_last_r;
-   
+
    typedef enum logic[5:0] 
            {WAIT, NEG0, NEG1, SHIFT,
             CALC,
@@ -67,9 +71,13 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
       end 
    end
 
+  wire [`BSG_WIDTH(width_p/bits_per_iter_p)-1:0] calc_cyc;
+  assign calc_cyc = ((!signed_div_r_i)) ? ((bits_per_iter_p==1)?div_shift_i:(div_shift_i+1)/2) : width_p/bits_per_iter_p;
+  assign shift_val_o = ((state == SHIFT) && ((!signed_div_r_i))) ? ((bits_per_iter_p==1)?div_shift_i:(calc_cyc*2)) : width_p;
+
   logic [`BSG_WIDTH(width_p/bits_per_iter_p)-1:0] calc_cnt;
-  wire calc_up_li = (state == CALC) && (calc_cnt < width_p/bits_per_iter_p);
-  wire calc_done  = (calc_cnt == width_p/bits_per_iter_p);
+  wire calc_up_li = (state == CALC) && (calc_cnt < calc_cyc);
+  wire calc_done  = (calc_cnt == calc_cyc);
   bsg_counter_clear_up#(.max_val_p(width_p/bits_per_iter_p)
                        ,.init_val_p(0)
                        ,.disable_overflow_warning_p(1)) calc_counter

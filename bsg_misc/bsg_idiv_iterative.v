@@ -73,8 +73,27 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
        ,.clk_i(clk_i)
         );
 
+   logic [`BSG_SAFE_CLOG2(width_p)-1:0] clz_c_result, clz_a_result;
+   
+   bsg_counting_leading_zeros #(
+     .width_p(width_p)
+     ) clz_c (
+       .a_i(dividend_i)
+       ,.num_zero_o(clz_c_result)
+   );
+
+   bsg_counting_leading_zeros #(
+     .width_p(width_p)
+     ) clz_a (
+       .a_i(divisor_i) 
+       ,.num_zero_o(clz_a_result)
+   );
+
    //if the divisor is zero
    wire         zero_divisor_li   =  ~(| opA_r);
+
+   wire [`BSG_SAFE_CLOG2(width_p)-1:0] div_shift_li;
+   assign div_shift_li = zero_divisor_li ? width_p-1 : clz_a_result - clz_c_result;
 
    wire [1:0]   opA_sel_lo;
    wire [width_p:0]  opA_mux;
@@ -88,17 +107,18 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
    
    wire [width_p:0]  opB_mux, opC_mux;
    wire [bits_per_iter_p + 1:0] opB_sel_lo, opC_sel_lo;
-   
+   wire [`BSG_WIDTH(width_p):0] shift_val_lo;
+
    if (bits_per_iter_p == 2) begin
 
       bsg_mux_one_hot #(.width_p(width_p+1), .els_p(4)) muxB
-        (.data_i( {opC_r, add1_out, {add1_out[width_p-1:0], opC_r[width_p]}, {add2_out[width_p-1:0], opC_r[width_p-1]}} )
+        (.data_i( {opC_r, add1_out, {(add1_out << (width_p-shift_val_lo+1)) | opC_r >> (shift_val_lo)}, {add2_out[width_p-1:0], opC_r[width_p-1]}} )
 	      ,.data_o(  opB_mux )
 	      ,.sel_one_hot_i(opB_sel_lo)
 	      );
 
       bsg_mux_one_hot #(.width_p(width_p+1), .els_p(4)) muxC
-        (.data_i( {{dividend_msb, dividend_i},add1_out, {opC_r[width_p-1:0], ~add1_out[width_p]}, {opC_r[width_p-2:0], ~add1_out[width_p], ~add2_out[width_p]}})
+        (.data_i( {{dividend_msb, dividend_i},add1_out, {(opC_r << (width_p-shift_val_lo+1)) | ((~add1_out >> width_p) << (width_p-shift_val_lo))}, {opC_r[width_p-2:0], ~add1_out[width_p], ~add2_out[width_p]}})
         ,.data_o(  opC_mux )
         ,.sel_one_hot_i(opC_sel_lo)
         );
@@ -106,19 +126,19 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
    end else begin
 
       bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxB
-        (.data_i( {opC_r, add1_out, {add1_out[width_p-1:0], opC_r[width_p]}} )
+        (.data_i( {opC_r, add1_out, {(add1_out << (width_p-shift_val_lo+1)) | opC_r >> shift_val_lo}} )
         ,.data_o( opB_mux )
         ,.sel_one_hot_i(opB_sel_lo)
         );
 
       bsg_mux_one_hot #(.width_p(width_p+1), .els_p(3)) muxC
-        (.data_i( {{dividend_msb, dividend_i},add1_out, {opC_r[width_p-1:0], ~add1_out[width_p]}} )
+        (.data_i( {{dividend_msb, dividend_i},add1_out, {(opC_r << (width_p-shift_val_lo+1)) | ((~add1_out >> width_p) << (width_p-shift_val_lo))}} )
         ,.data_o( opC_mux )
-	      ,.sel_one_hot_i(opC_sel_lo)
-	      );
+	,.sel_one_hot_i(opC_sel_lo)
+	);
        
   end
-   
+
    wire opA_ld_lo;
    bsg_dff_en#(.width_p(width_p+1)) opA_reg
        (.data_i (opA_mux)
@@ -240,6 +260,8 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
       ,.opA_is_neg_i             (opA_r[width_p])
       ,.opC_is_neg_i             (opC_r[width_p])
 
+      ,.div_shift_i              (div_shift_li)
+
       ,.opA_sel_o                (opA_sel_lo)
       ,.opA_ld_o                 (opA_ld_lo)
       ,.opA_inv_o                (opA_inv_lo)
@@ -256,7 +278,10 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
       ,.latch_signed_div_o       (latch_signed_div_lo)
       ,.adder1_cin_o             (adder1_cin_lo)
 
+      ,.shift_val_o              (shift_val_lo)
+
       ,.v_o(v_o)
       ,.yumi_i(yumi_i)
      );
+
 endmodule // divide
