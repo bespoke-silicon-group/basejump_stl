@@ -7,10 +7,10 @@
 
 module bsg_mux_bitwise #(parameter `BSG_INV_PARAM(width_p))
 (
-  input [width_p-1:0] data0_i
-  ,input [width_p-1:0] data1_i
-  ,input [width_p-1:0] sel_i
-  ,output logic [width_p-1:0] data_o
+  input [`BSG_SAFE_MINUS(width_p,1):0] data0_i
+  ,input [`BSG_SAFE_MINUS(width_p,1):0] data1_i
+  ,input [`BSG_SAFE_MINUS(width_p,1):0] sel_i
+  ,output logic [`BSG_SAFE_MINUS(width_p,1):0] data_o
 );
 
   bsg_mux_segmented #(
