@@ -2,7 +2,7 @@
 
 module bsg_counter_overflow_en #(parameter `BSG_INV_PARAM(max_val_p    )
                                , parameter `BSG_INV_PARAM(init_val_p   )
-                               , parameter ptr_width_lp = `BSG_SAFE_CLOG2(max_val_p)
+                                 , parameter ptr_width_lp = `BSG_SAFE_CLOG2(max_val_p+1)
                                )
   ( input  clk_i
   , input  reset_i
