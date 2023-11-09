@@ -36,7 +36,7 @@ module bsg_1_to_n_tagged_fifo   #(parameter `BSG_INV_PARAM(width_p)
     );
 
    wire [num_out_p-1:0]               valid_lo;
-   wire [num_out_p-1:0]               ready_li;
+   wire [num_out_p-1:0]               ready_and_li;
 
    bsg_1_to_n_tagged #(.num_out_p   (num_out_p   )
                        ) _1_to_n
@@ -48,7 +48,7 @@ module bsg_1_to_n_tagged_fifo   #(parameter `BSG_INV_PARAM(width_p)
       ,.yumi_o
 
       ,.v_o(valid_lo)
-      ,.ready_i(ready_li)
+      ,.ready_and_i(ready_and_li)
       );
 
    genvar i;
@@ -57,9 +57,9 @@ module bsg_1_to_n_tagged_fifo   #(parameter `BSG_INV_PARAM(width_p)
      begin: rof
         if (unbuffered_mask_p[i])
           begin: unbuf
-             assign v_o     [i] = valid_lo[i];
-             assign data_o  [i] = data_i;
-             assign ready_li[i] = 1'b1;
+             assign v_o         [i] = valid_lo[i];
+             assign data_o      [i] = data_i;
+             assign ready_and_li[i] = 1'b1;
           end
         else if (use_pseudo_large_fifo_p)
           begin : psdlrg
@@ -69,13 +69,13 @@ module bsg_1_to_n_tagged_fifo   #(parameter `BSG_INV_PARAM(width_p)
                (.clk_i
                 ,.reset_i
 
-                ,.v_i    (valid_lo[i])
+                ,.v_i        (valid_lo    [i])
                 ,.data_i
-                ,.ready_o(ready_li[i])
+                ,.ready_and_o(ready_and_li[i])
 
-                ,.v_o   (v_o   [i])
-                ,.data_o(data_o[i])
-                ,.yumi_i(yumi_i[i])
+                ,.v_o        (v_o         [i])
+                ,.data_o     (data_o      [i])
+                ,.yumi_i     (yumi_i      [i])
                 );
           end
         else
@@ -87,13 +87,13 @@ module bsg_1_to_n_tagged_fifo   #(parameter `BSG_INV_PARAM(width_p)
                (.clk_i
                 ,.reset_i
 
-                ,.v_i      (valid_lo    [i])
-                ,.data_i   (data_i         )
-                ,.ready_param_o  (ready_li[i])
+                ,.v_i            (valid_lo    [i])
+                ,.data_i         (data_i         )
+                ,.ready_param_o  (ready_and_li[i])
 
-                ,.v_o      (v_o   [i])
-                ,.data_o   (data_o[i])
-                ,.yumi_i   (yumi_i[i])
+                ,.v_o      (v_o         [i])
+                ,.data_o   (data_o      [i])
+                ,.yumi_i   (yumi_i      [i])
                 );
           end // block: fi
      end

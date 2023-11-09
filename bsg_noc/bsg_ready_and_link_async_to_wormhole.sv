@@ -201,7 +201,7 @@ module bsg_ready_and_link_async_to_wormhole
   (.clk_i  (ral_clk_i              )
   ,.reset_i(ral_reset_i            )
   ,.v_i    (ral_async_fifo_valid_lo)
-  ,.ready_o(ral_async_fifo_ready_li)
+  ,.ready_and_o(ral_async_fifo_ready_li)
   ,.data_i (ral_async_fifo_data_lo )
   ,.data_o (ral_sipof_data_lo      )
   ,.v_o    (ral_link_o_cast.v      )

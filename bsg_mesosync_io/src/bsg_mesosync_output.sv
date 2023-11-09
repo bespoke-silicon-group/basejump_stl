@@ -129,13 +129,13 @@ bsg_relay_fifo #(.width_p(1)) LA_relay
     (.clk_i(clk)
     ,.reset_i(channel_reset_o)
 
-    ,.ready_o(ready_and_to_LA_o)
+    ,.ready_and_o(ready_and_to_LA_o)
     ,.data_i(LA_data_i)
     ,.v_i(LA_valid_i)
 
     ,.v_o(LA_valid)
     ,.data_o(LA_data)
-    ,.ready_i(ready_to_LA)
+    ,.ready_and_i(ready_to_LA)
     );
 
 //------------------------------------------------

@@ -86,38 +86,38 @@ module bsg_wormhole_router_test_node_master
     wormhole_network_header_flit_s resp_in_data;
     logic                          resp_in_yumi;
 
-    logic                          req_out_ready;
+    logic                          req_out_ready_and;
     wormhole_network_header_flit_s req_out_data;
     logic                          req_out_v;
 
     bsg_one_fifo
    #(.width_p(flit_width_p)
     ) resp_in_fifo
-    (.clk_i  (clk_i)
-    ,.reset_i(reset_i)
+    (.clk_i      (clk_i)
+    ,.reset_i    (reset_i)
 
-    ,.ready_o(link_o_cast[i].ready_and_rev)
-    ,.v_i    (link_i_cast[i].v)
-    ,.data_i (link_i_cast[i].data)
+    ,.ready_and_o(link_o_cast[i].ready_and_rev)
+    ,.v_i        (link_i_cast[i].v)
+    ,.data_i     (link_i_cast[i].data)
 
-    ,.v_o    (resp_in_v)
-    ,.data_o (resp_in_data)
-    ,.yumi_i (resp_in_yumi)
+    ,.v_o        (resp_in_v)
+    ,.data_o     (resp_in_data)
+    ,.yumi_i     (resp_in_yumi)
     );
 
     bsg_one_fifo
    #(.width_p(flit_width_p)
     ) req_out_fifo
-    (.clk_i  (clk_i)
-    ,.reset_i(reset_i)
+    (.clk_i      (clk_i)
+    ,.reset_i    (reset_i)
 
-    ,.ready_o(req_out_ready)
-    ,.v_i    (req_out_v)
-    ,.data_i (req_out_data)
+    ,.ready_and_o(req_out_ready_and)
+    ,.v_i        (req_out_v)
+    ,.data_i     (req_out_data)
 
-    ,.v_o    (link_o_cast[i].v)
-    ,.data_o (link_o_cast[i].data)
-    ,.yumi_i (link_o_cast[i].v & link_i_cast[i].ready_and_rev)
+    ,.v_o        (link_o_cast[i].v)
+    ,.data_o     (link_o_cast[i].data)
+    ,.yumi_i     (link_o_cast[i].v & link_i_cast[i].ready_and_rev)
     );
 
     logic [width_lp-1:0] data_gen, data_check;
@@ -128,7 +128,7 @@ module bsg_wormhole_router_test_node_master
     ) gen_out
     (.clk_i  (clk_i)
     ,.reset_i(reset_i)
-    ,.yumi_i (req_out_v & req_out_ready)
+    ,.yumi_i (req_out_v & req_out_ready_and)
     ,.o      (data_gen)
     );
 
@@ -157,7 +157,7 @@ module bsg_wormhole_router_test_node_master
     (.clk_i  (clk_i)
     ,.reset_i(reset_i)
     ,.clear_i(1'b0)
-    ,.up_i   (req_out_v & req_out_ready)
+    ,.up_i   (req_out_v & req_out_ready_and)
     ,.count_o(sent_o[i])
     );
 

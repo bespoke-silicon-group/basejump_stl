@@ -23,7 +23,7 @@ module testbench;
       );
 
    logic [width_lp-1:0] test_data_in, test_data_out, test_data_check;
-   wire test_valid_in, test_valid_out, test_ready_out, test_ready_in;
+   wire test_valid_in, test_valid_out, test_ready_and_out, test_ready_in;
 
    logic [31:0] ctr;
 
@@ -76,7 +76,7 @@ module testbench;
                       ) gen
    (.clk(clk)
     ,.reset_i(reset)
-    ,.add_i  (test_valid_in & test_ready_out)
+    ,.add_i  (test_valid_in & test_ready_and_out)
     ,.o      (test_data_in)
     ,.n_o     ()
     );
@@ -88,7 +88,7 @@ module testbench;
 
    always @(posedge clk)
      begin
-        if (test_valid_in & test_ready_out & verbose_lp)
+        if (test_valid_in & test_ready_and_out & verbose_lp)
           $display("### %x sent     %x   bypass_mode=%x",ctr, test_data_in,fifo.bypass_mode);
      end
 
@@ -102,7 +102,7 @@ module testbench;
 
       ,.data_i (test_data_in)
       ,.v_i    (test_valid_in)
-      ,.ready_o(test_ready_out)
+      ,.ready_and_o(test_ready_and_out)
 
       ,.v_o    (test_valid_out)
       ,.data_o (test_data_out)
@@ -148,7 +148,7 @@ module testbench;
         // IMPORTANT TEST: test that the fifo will never register full with less than els_lp
         // elements actually stored.
 
-        if (~test_ready_out & test_valid_in)
+        if (~test_ready_and_out & test_valid_in)
 	  // mbt: seems like this should be "<" -- so this fifo actually stores N+1 elements?
           if (fifo.num_elements_debug <= els_lp)
             begin

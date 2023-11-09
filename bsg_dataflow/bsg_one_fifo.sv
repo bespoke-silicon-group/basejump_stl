@@ -22,19 +22,19 @@ module bsg_one_fifo #(parameter `BSG_INV_PARAM(width_p)
     , input reset_i
 
     // input side
-    , output              ready_o // early
-    , input [width_p-1:0] data_i  // late
-    , input               v_i     // late
+    , output              ready_and_o // early
+    , input [width_p-1:0] data_i      // late
+    , input               v_i         // late
 
     // output side
-    , output              v_o     // early
-    , output[width_p-1:0] data_o  // early
-    , input               yumi_i  // late
+    , output              v_o         // early
+    , output[width_p-1:0] data_o      // early
+    , input               yumi_i      // late
     );
   
   logic             full_r;
   
-  assign ready_o = ~full_r;
+  assign ready_and_o = ~full_r;
   assign v_o     =  full_r;
   
   bsg_dff_reset #(.width_p(1)) dff_full
@@ -49,7 +49,7 @@ module bsg_one_fifo #(parameter `BSG_INV_PARAM(width_p)
    ,.data_i
    // although technically it is okay to just look at v_o
    // this will cause unnecessary toggling of flip flops
-   ,.en_i(v_i & ready_o)
+   ,.en_i(v_i & ready_and_o)
    ,.data_o
   );
 

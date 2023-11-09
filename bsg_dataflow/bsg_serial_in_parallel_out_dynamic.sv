@@ -21,7 +21,7 @@ module bsg_serial_in_parallel_out_dynamic
   ,input                               v_i
   ,input  [lg_max_els_lp-1:0]          len_i
   ,input  [width_p-1:0]                data_i
-  ,output                              ready_o
+  ,output                              ready_and_o
   ,output                              len_ready_o
   
   // Output side
@@ -33,7 +33,7 @@ module bsg_serial_in_parallel_out_dynamic
   genvar i;
   
   logic yumi_lo;
-  assign yumi_lo = v_i & ready_o;
+  assign yumi_lo = v_i & ready_and_o;
   
   logic [lg_max_els_lp-1:0] count_r, count_lo, len_r, len_lo;
   logic clear_li, up_li, dff_en_li, go_fifo_v_li;
@@ -105,11 +105,11 @@ module bsg_serial_in_parallel_out_dynamic
   ,.yumi_i        (yumi_i         )
   );
 
-  logic [max_els_p-1:0] fifo_valid_li, fifo_ready_lo;
+  logic [max_els_p-1:0] fifo_valid_li, fifo_ready_and_lo;
   logic [max_els_p-1:0] fifo_valid_lo, fifo_yumi_li;
   
   // Ready signal from selected fifo
-  assign ready_o = fifo_ready_lo[count_lo];
+  assign ready_and_o = fifo_ready_and_lo[count_lo];
 
   for (i = 0; i < max_els_p; i++)
   begin: rof0
@@ -149,9 +149,9 @@ module bsg_serial_in_parallel_out_dynamic
         (.clk_i         (clk_i  )
         ,.reset_i       (reset_i)
 
-        ,.ready_param_o (fifo_ready_lo[i])
-        ,.data_i        (data_i          )
-        ,.v_i           (fifo_valid_li[i])
+        ,.ready_param_o (fifo_ready_and_lo[i])
+        ,.data_i        (data_i              )
+        ,.v_i           (fifo_valid_li[i]    )
 
         ,.v_o           (fifo_valid_lo[i])
         ,.data_o        (data_o       [i])
@@ -164,16 +164,16 @@ module bsg_serial_in_parallel_out_dynamic
         bsg_one_fifo
        #(.width_p(width_p)
         ) fifo
-        (.clk_i  (clk_i  )
-        ,.reset_i(reset_i)
+        (.clk_i      (clk_i  )
+        ,.reset_i    (reset_i)
 
-        ,.ready_o(fifo_ready_lo[i])
-        ,.data_i (data_i          )
-        ,.v_i    (fifo_valid_li[i])
+        ,.ready_and_o(fifo_ready_and_lo[i])
+        ,.data_i     (data_i          )
+        ,.v_i        (fifo_valid_li[i])
 
-        ,.v_o    (fifo_valid_lo[i])
-        ,.data_o (data_o       [i])
-        ,.yumi_i (fifo_yumi_li [i])
+        ,.v_o        (fifo_valid_lo[i])
+        ,.data_o     (data_o       [i])
+        ,.yumi_i     (fifo_yumi_li [i])
         );
       end
   end

@@ -88,7 +88,7 @@ module bsg_dmc_controller
 
   logic                                                                tx_sipo_valid_li;
   logic                         [ui_mask_width_lp+ui_data_width_p-1:0] tx_sipo_data_li;
-  logic                                                                tx_sipo_ready_lo;
+  logic                                                                tx_sipo_ready_and_lo;
   logic                                       [ui_burst_length_lp-1:0] tx_sipo_valid_lo;
   logic [ui_burst_length_lp-1:0][ui_mask_width_lp+ui_data_width_p-1:0] tx_sipo_data_lo;
   logic                                 [$clog2(ui_burst_length_lp):0] tx_sipo_yumi_cnt_li;
@@ -120,7 +120,7 @@ module bsg_dmc_controller
 
   logic                                                                rx_sipo_valid_li;
   logic                                         [dfi_data_width_p-1:0] rx_sipo_data_li;
-  logic                                                                rx_sipo_ready_lo;
+  logic                                                                rx_sipo_ready_and_lo;
   logic                                      [dfi_burst_length_lp-1:0] rx_sipo_valid_lo;
   logic                [dfi_burst_length_lp-1:0][dfi_data_width_p-1:0] rx_sipo_data_lo;
   logic                                [$clog2(dfi_burst_length_lp):0] rx_sipo_yumi_cnt_li;
@@ -228,7 +228,7 @@ module bsg_dmc_controller
   assign wrdata_afifo_wdata = {app_wdf_mask_i,app_wdf_data_i};
   assign wrdata_afifo_rclk  = dfi_clk_i;
   assign wrdata_afifo_rrst  = dfi_clk_sync_rst_i;
-  assign wrdata_afifo_rinc  = tx_sipo_ready_lo & wrdata_afifo_rvalid;
+  assign wrdata_afifo_rinc  = tx_sipo_ready_and_lo & wrdata_afifo_rvalid;
 
   assign app_wdf_rdy_o = ~wrdata_afifo_wfull;
 
@@ -259,7 +259,7 @@ module bsg_dmc_controller
     ,.reset_i    ( dfi_clk_sync_rst_i               )
     ,.valid_i    ( tx_sipo_valid_li                 )
     ,.data_i     ( tx_sipo_data_li                  )
-    ,.ready_o    ( tx_sipo_ready_lo                 ) 
+    ,.ready_and_o( tx_sipo_ready_and_lo             ) 
     ,.valid_o    ( tx_sipo_valid_lo                 )
     ,.data_o     ( tx_sipo_data_lo                  )
     ,.yumi_cnt_i ( tx_sipo_yumi_cnt_li              ));
@@ -666,7 +666,7 @@ module bsg_dmc_controller
 
   assign rddata_afifo_rclk  = ui_clk_i;
   assign rddata_afifo_rrst  = ui_clk_sync_rst_i;
-  assign rddata_afifo_rinc  = rx_sipo_ready_lo && rddata_afifo_rvalid;
+  assign rddata_afifo_rinc  = rx_sipo_ready_and_lo && rddata_afifo_rvalid;
 
   bsg_async_fifo #
     (.width_p   ( dfi_data_width_p                             )
@@ -695,7 +695,7 @@ module bsg_dmc_controller
     ,.reset_i    ( ui_clk_sync_rst_i   )
     ,.valid_i    ( rx_sipo_valid_li    )
     ,.data_i     ( rx_sipo_data_li     )
-    ,.ready_o    ( rx_sipo_ready_lo    ) 
+    ,.ready_and_o( rx_sipo_ready_and_lo    ) 
     ,.valid_o    ( rx_sipo_valid_lo    )
     ,.data_o     ( rx_sipo_data_lo     )
     ,.yumi_cnt_i ( rx_sipo_yumi_cnt_li ));

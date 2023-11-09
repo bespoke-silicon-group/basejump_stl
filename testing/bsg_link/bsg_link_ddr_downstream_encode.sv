@@ -208,7 +208,7 @@ module bsg_link_ddr_downstream_encode
   (.clk_i  (core_clk_i)
   ,.reset_i(core_link_reset_i)
   ,.v_i    (& core_sipo_valid_li)
-  ,.ready_o(core_sipo_ready_lo)
+  ,.ready_and_o(core_sipo_ready_lo)
   ,.data_i (core_sipo_data_li)
   ,.data_o (core_data_o)
   ,.v_o    (core_valid_o)
