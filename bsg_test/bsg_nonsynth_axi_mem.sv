@@ -12,6 +12,8 @@ module bsg_nonsynth_axi_mem
     , parameter `BSG_INV_PARAM(axi_len_width_p)
     , parameter `BSG_INV_PARAM(mem_els_p)
     , parameter init_data_p = 32'hdead_beef // 32 bits
+    , parameter rd_delay_p = 0
+    , parameter wr_delay_p = 0
 
     , parameter lg_mem_els_lp=`BSG_SAFE_CLOG2(mem_els_p)
     , parameter axi_strb_width_lp=(axi_data_width_p>>3)
@@ -82,8 +84,15 @@ module bsg_nonsynth_axi_mem
     (awaddr_incr == awaddr_wrap_upper)
     ? awaddr_wrap_boundary
     : (awaddr_incr > awaddr_wrap_upper)
-      ? awaddr_r + ((wr_burst_r-awlen_r)<<$clog2(axi_data_width_p>>3))
+      ? awaddr_r + ((wr_burst_r-(awlen_r+1))<<$clog2(axi_data_width_p>>3))
       : awaddr_incr;
+
+  logic wr_cnt_clr_li, wr_cnt_up_li;
+  logic [`BSG_SAFE_CLOG2(wr_delay_p)-1:0] wr_cnt_lo;
+
+  logic wfifo_v_lo, wfifo_ready_lo, wfifo_yumi_li;
+  logic [axi_data_width_p-1:0] wfifo_data_lo;
+  logic [axi_strb_width_lp-1:0] wfifo_strb_lo;
 
   always_comb begin
 
@@ -99,6 +108,9 @@ module bsg_nonsynth_axi_mem
     awaddr_n = awaddr_r;
     awid_n = awid_r;
 
+    wr_cnt_clr_li = 1'b0;
+    wr_cnt_up_li = 1'b0;
+
     case (wr_state_r)
       WR_RESET: begin
         axi_awready_o = 1'b0;
@@ -108,6 +120,8 @@ module bsg_nonsynth_axi_mem
 
       WR_WAIT_ADDR: begin
         axi_awready_o = 1'b1;
+        wr_cnt_clr_li = 1'b1;
+
         awid_n = axi_awvalid_i 
           ? axi_awid_i
           : awid_r;
@@ -129,11 +143,12 @@ module bsg_nonsynth_axi_mem
           ? WR_WAIT_DATA
           : WR_WAIT_ADDR;
       end
-      
-      WR_WAIT_DATA: begin
-        axi_wready_o = 1'b1;
 
-        wr_burst_n = axi_wvalid_i
+      WR_WAIT_DATA: begin
+        axi_wready_o = wfifo_ready_lo;
+        wr_cnt_up_li = (wr_cnt_lo != wr_delay_p-1);
+
+        wr_burst_n = wfifo_yumi_li
           ? wr_burst_r + 1
           : wr_burst_r;
 
@@ -143,8 +158,8 @@ module bsg_nonsynth_axi_mem
           : (awburst_r == e_axi_burst_wrap)
             ? awaddr_wrap
             : awaddr_r;
-    
-        wr_state_n = ((wr_burst_r == awlen_r) & axi_wvalid_i)
+
+        wr_state_n = ((wr_burst_r == awlen_r) & wfifo_yumi_li)
           ? WR_RESP
           : WR_WAIT_DATA;
       end
@@ -163,6 +178,7 @@ module bsg_nonsynth_axi_mem
   typedef enum logic [1:0] {
     RD_RESET
     ,RD_WAIT_ADDR
+    ,RD_DELAY
     ,RD_SEND_DATA
   } rd_state_e;
 
@@ -196,8 +212,11 @@ module bsg_nonsynth_axi_mem
     (araddr_incr == araddr_wrap_upper)
     ? araddr_wrap_boundary
     : (araddr_incr > araddr_wrap_upper)
-      ? araddr_r + ((rd_burst_r-arlen_r)<<$clog2(axi_data_width_p>>3))
+      ? araddr_r + ((rd_burst_r-(arlen_r+1))<<$clog2(axi_data_width_p>>3))
       : araddr_incr;
+
+  logic rd_cnt_clr_li, rd_cnt_up_li;
+  logic [`BSG_SAFE_CLOG2(rd_delay_p)-1:0] rd_cnt_lo;
 
   always_comb begin
 
@@ -208,6 +227,9 @@ module bsg_nonsynth_axi_mem
     axi_arready_o = 1'b0;
     araddr_lo = '0;
 
+    rd_cnt_clr_li = 1'b0;
+    rd_cnt_up_li = 1'b0;
+
     case (rd_state_r)
       RD_RESET: begin
         axi_arready_o = 1'b0;
@@ -217,6 +239,7 @@ module bsg_nonsynth_axi_mem
 
       RD_WAIT_ADDR: begin
         axi_arready_o = 1'b1;
+        rd_cnt_clr_li = 1'b1;
 
         arid_n = axi_arvalid_i
           ? axi_arid_i
@@ -236,8 +259,18 @@ module bsg_nonsynth_axi_mem
           : rd_burst_r;
         
         rd_state_n = axi_arvalid_i
-          ? RD_SEND_DATA
+          ? (rd_delay_p == 0)
+            ? RD_SEND_DATA
+            : RD_DELAY
           : RD_WAIT_ADDR;
+      end
+
+      RD_DELAY: begin
+        rd_cnt_up_li = 1'b1;
+
+        rd_state_n = (rd_cnt_lo == rd_delay_p-1)
+          ? RD_SEND_DATA
+          : RD_DELAY;
       end
 
       RD_SEND_DATA: begin
@@ -290,10 +323,10 @@ module bsg_nonsynth_axi_mem
       awlen_r <= awlen_n;
       wr_burst_r <= wr_burst_n;
 
-      if ((wr_state_r == WR_WAIT_DATA) & axi_wvalid_i) begin
+      if (wfifo_yumi_li) begin
         for (integer i = 0; i < axi_strb_width_lp; i++) begin
-          if (axi_wstrb_i[i]) begin
-            ram[wr_ram_idx][i*8+:8] <= axi_wdata_i[i*8+:8];
+          if (wfifo_strb_lo[i]) begin
+            ram[wr_ram_idx][i*8+:8] <= wfifo_data_lo[i*8+:8];
           end
         end
       end
@@ -307,7 +340,56 @@ module bsg_nonsynth_axi_mem
       
     end
   end
-  
+
+  if(rd_delay_p == 0) begin
+    assign rd_cnt_lo = '0;
+  end
+  else begin
+    bsg_counter_clear_up
+     #(.max_val_p(rd_delay_p), .init_val_p(0))
+     rd_dly_cnt
+     (.clk_i(clk_i)
+     ,.reset_i(reset_i)
+     ,.clear_i(rd_cnt_clr_li)
+     ,.up_i(rd_cnt_up_li)
+     ,.count_o(rd_cnt_lo)
+     );
+  end
+
+  if(wr_delay_p == 0) begin
+    assign wfifo_yumi_li = axi_wvalid_i & axi_wready_o;
+    assign wfifo_ready_lo = 1'b1;
+    assign wfifo_v_lo = axi_wvalid_i;
+    assign wfifo_data_lo = axi_wdata_i;
+    assign wfifo_strb_lo  = axi_wstrb_i;
+    assign wr_cnt_lo = '0;
+  end
+  else begin
+    assign wfifo_yumi_li = wfifo_v_lo & (wr_cnt_lo == wr_delay_p-1);
+    bsg_fifo_1r1w_small
+     #(.width_p(axi_data_width_p+axi_strb_width_lp), .els_p(wr_delay_p+1))
+     wr_fifo
+     (.clk_i(clk_i)
+     ,.reset_i(reset_i)
+     ,.v_i(axi_wvalid_i)
+     ,.data_i({axi_wdata_i, axi_wstrb_i})
+     ,.ready_o(wfifo_ready_lo)
+     ,.v_o(wfifo_v_lo)
+     ,.data_o({wfifo_data_lo, wfifo_strb_lo})
+     ,.yumi_i(wfifo_yumi_li)
+     );
+
+    bsg_counter_clear_up
+     #(.max_val_p(wr_delay_p), .init_val_p(0))
+     wr_dly_cnt
+     (.clk_i(clk_i)
+     ,.reset_i(reset_i)
+     ,.clear_i(wr_cnt_clr_li)
+     ,.up_i(wr_cnt_up_li)
+     ,.count_o(wr_cnt_lo)
+     );
+  end
+
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_nonsynth_axi_mem)

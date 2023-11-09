@@ -59,7 +59,7 @@ module test_bsg
                             , .data_o (test_input_data)
                            );
   
-  bsg_nonsynth_random_gen #(  .width_p(lg_els_lp)
+  bsg_nonsynth_random_gen #(  .width_p(lg_els_lp>0?lg_els_lp:1)
                             , .seed_p (seed_p)
                            )  random_addr_gen
                            (  .clk_i  (clk)

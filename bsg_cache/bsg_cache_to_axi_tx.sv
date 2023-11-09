@@ -38,6 +38,8 @@ module bsg_cache_to_axi_tx
     ,input [addr_width_p-1:0] addr_i
     ,input [mask_width_p-1:0] mask_i
 
+    ,input fence_i
+
     // cache dma write channel
     ,input [num_cache_p-1:0][data_width_p-1:0] dma_data_i
     ,input [num_cache_p-1:0] dma_data_v_i
@@ -100,14 +102,13 @@ module bsg_cache_to_axi_tx
   wire [axi_id_width_p-1:0] unused_bid = axi_bid_i;
   wire [1:0] unused_bresp = axi_bresp_i;
   wire unused_bvalid = axi_bvalid_i;
-  
 
   // tag 
   //
-  // yumi when both tag_fifo and axi_aw are ready
-  assign yumi_o = v_i & axi_awready_i & tag_fifo_ready_lo;
-  // tag_fifo is valid when axi_aw is ready
-  assign tag_fifo_v_li = v_i & axi_awready_i;
+  // yumi when address packet is consumed
+  assign yumi_o =axi_awvalid_o & axi_awready_i;
+  // tag_fifo is valid when address packet is consumed
+  assign tag_fifo_v_li = axi_awvalid_o & axi_awready_i;
 
   // axi write address channel
   //
@@ -120,8 +121,8 @@ module bsg_cache_to_axi_tx
   assign axi_awcache_o = e_axi_cache_wnarnanmnb; // non-bufferable
   assign axi_awprot_o = e_axi_prot_dsn;    // unprivileged
   assign axi_awlock_o = 1'b0;    // normal access
-  // axi_aw is valid when tag_fifo is ready
-  assign axi_awvalid_o = v_i & tag_fifo_ready_lo;
+  // axi_aw is valid when tag_fifo is ready and there's no ordering fence
+  assign axi_awvalid_o = v_i & tag_fifo_ready_lo & ~fence_i;
 
   // axi write data channel
   //
@@ -190,7 +191,7 @@ module bsg_cache_to_axi_tx
   assign axi_wstrb_o = sipo_strb_lo;
   assign axi_wdata_o = sipo_data_lo;
 
-  assign axi_wvalid_o = &sipo_v_lo;
+  assign axi_wvalid_o = sipo_v_lo;
   assign sipo_v_li = tag_fifo_v_lo & dma_data_v_i[tag_lo];
   assign sipo_yumi_li = axi_wvalid_o & axi_wready_i;
  

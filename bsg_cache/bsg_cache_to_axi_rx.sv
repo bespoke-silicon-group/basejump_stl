@@ -31,6 +31,8 @@ module bsg_cache_to_axi_rx
     ,input [lg_num_cache_lp-1:0] cache_id_i
     ,input [addr_width_p-1:0] addr_i
 
+    ,input fence_i
+
     // cache dma read channel
     ,output logic [num_cache_p-1:0][data_width_p-1:0] dma_data_o
     ,output logic [num_cache_p-1:0] dma_data_v_o
@@ -88,10 +90,10 @@ module bsg_cache_to_axi_rx
     ,.yumi_i(tag_fifo_yumi_li)
   );
   
-  // yumi when both tag_fifo and axi_ar are ready
-  assign yumi_o = v_i & axi_arready_i & tag_fifo_ready_lo;
-  // tag_fifo is valid when axi_ar is ready
-  assign tag_fifo_v_li = v_i & axi_arready_i;
+  // yumi when address packet is consumed
+  assign yumi_o = axi_arvalid_o & axi_arready_i;
+  // tag_fifo is valid when address packet is consumed
+  assign tag_fifo_v_li = axi_arvalid_o & axi_arready_i;
   
   // axi read address channel
   //
@@ -104,8 +106,8 @@ module bsg_cache_to_axi_rx
   assign axi_arcache_o = e_axi_cache_wnarnanmnb; // non-bufferable
   assign axi_arprot_o = e_axi_prot_dsn;    // unprivileged
   assign axi_arlock_o = 1'b0;    // normal access
-  // axi_ar is valid when tag_fifo is ready
-  assign axi_arvalid_o = v_i & tag_fifo_ready_lo;
+  // axi_ar is valid when tag_fifo is ready and there's no ordering fence
+  assign axi_arvalid_o = v_i & tag_fifo_ready_lo & ~fence_i;
 
  
   // axi read data channel

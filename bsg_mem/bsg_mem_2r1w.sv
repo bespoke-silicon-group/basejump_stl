@@ -41,7 +41,7 @@ module bsg_mem_2r1w #(parameter `BSG_INV_PARAM(width_p)
    always_ff @(negedge w_clk_i)
      if (w_v_i)
        begin
-          assert (w_addr_i < els_p)
+          assert ((w_addr_i < els_p) || (els_p <= 1))
             else $error("Invalid address %x to %m of size %x\n", w_addr_i, els_p);
 
           assert (!(r0_addr_i == w_addr_i && w_v_i && r0_v_i && !read_write_same_addr_p))

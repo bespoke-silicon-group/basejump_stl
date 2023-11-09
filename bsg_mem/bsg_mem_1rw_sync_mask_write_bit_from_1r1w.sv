@@ -47,7 +47,7 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
 
   // synopsys translate_off
   always @(negedge clk_i)
-    assert(int'(addr_i) < els_p) else $warning("%m Accessing uninitialized address!");
+    assert((int'(addr_i) < els_p) || (els_p <= 1)) else $warning("%m Accessing uninitialized address!");
   // synopsys translate_on
 
   wire                      v_and_w_n = v_i & w_i;
@@ -62,16 +62,18 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
     );
 
   wire [addr_width_lp-1:0]  w_addr_r;
-  wire                      addr_match = w_addr_r == addr_i;
+  wire                      addr_match = w_addr_r == addr_li;
   wire                      bypass_n = v_and_w_r & addr_match;
   wire                      bypass_r;
+  
+  wire [addr_width_lp-1:0]  addr_li = els_p > 1 ? addr_i : '0;
 
   bsg_dff_en
     #(.width_p(addr_width_lp+1))
     common_regs
     (.clk_i  (clk_i)
     ,.en_i   (v_i)
-    ,.data_i ({addr_i, bypass_n})
+    ,.data_i ({addr_li, bypass_n})
     ,.data_o ({w_addr_r, bypass_r})
     );
 
@@ -98,12 +100,17 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
   wire  [width_m1_lp:0] w_data_li = bypass_r
           ? bypass_data_r : (mem_data_lo & ~w_mask_r) | (bypass_data_r & w_mask_r);
 
-  always_ff @(posedge clk_i)
-    bypass_data_r <= bypass_n
-                 ? (w_i
-                   ? (w_data_li & ~w_mask_i) | (data_i & w_mask_i) // WAW
-                   : w_data_li) // RAW
-                 : data_i; // No hazard
+  if(els_p > 0) 
+    begin
+      always_ff @(posedge clk_i)
+        bypass_data_r <= bypass_n
+                    ? (w_i
+                      ? (w_data_li & ~w_mask_i) | (data_i & w_mask_i) // WAW
+                      : w_data_li) // RAW
+                    : data_i; // No hazard
+    end else begin
+      assign bypass_data_r = '0;
+    end
 
   // Read if not a hazard with next pipeline stage write
   // Write previous if not a write hazard currently
@@ -120,7 +127,7 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
     ,.w_addr_i (w_addr_r)
     ,.w_data_i (w_data_li)
     ,.r_v_i    (r_en_li)
-    ,.r_addr_i (addr_i)
+    ,.r_addr_i (addr_li)
     ,.r_data_o (mem_data_lo)
     );
 

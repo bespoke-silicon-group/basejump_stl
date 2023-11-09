@@ -148,6 +148,7 @@ module testbench();
      ,.axi_data_width_p(data_width_p)
      ,.axi_burst_len_p(block_width_p/data_width_p)
      ,.axi_burst_type_p(wrap_type_p)
+     ,.ordering_en_p(1)
      )
   cache2axi
     (.clk_i(clk)
@@ -216,6 +217,8 @@ module testbench();
      ,.axi_len_width_p(8)
      ,.mem_els_p(32)
      ,.init_data_p('0)
+     ,.rd_delay_p(0)
+     ,.wr_delay_p(8)
      )
    axi_mem
     (.clk_i(clk)

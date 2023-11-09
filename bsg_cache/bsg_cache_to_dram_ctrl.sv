@@ -95,6 +95,7 @@ module bsg_cache_to_dram_ctrl
 
   // tx module
   //
+  logic [dma_mask_width_p-1:0] mask_r, mask_n;
 
   bsg_cache_to_dram_ctrl_tx #(
     .num_dma_p(num_dma_p)
@@ -162,9 +163,6 @@ module bsg_cache_to_dram_ctrl
         addr_n = (app_rdy_i & app_en_o)
           ? addr_r + (1 << `BSG_SAFE_CLOG2(dram_ctrl_burst_len_p*dma_data_width_p/8))
           : addr_r;
-        mask_n = (app_rdy_i & app_en_o)
-          ? (mask_r >> (dma_mask_width_p/num_req_lp))
-          : mask_r;
         req_cnt_n = (app_rdy_i & app_en_o)
           ? req_cnt_r + 1
           : req_cnt_r;

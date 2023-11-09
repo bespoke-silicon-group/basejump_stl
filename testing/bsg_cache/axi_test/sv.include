@@ -1,4 +1,3 @@
-
 $BASEJUMP_STL_DIR/bsg_axi/bsg_axi_pkg.sv
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_pkg.sv
 $BASEJUMP_STL_DIR/bsg_misc/bsg_defines.sv
@@ -12,6 +11,8 @@ $BASEJUMP_STL_DIR/bsg_misc/bsg_encode_one_hot.sv
 $BASEJUMP_STL_DIR/bsg_misc/bsg_dff.sv
 $BASEJUMP_STL_DIR/bsg_misc/bsg_dff_en.sv
 $BASEJUMP_STL_DIR/bsg_misc/bsg_dff_en_bypass.sv
+$BASEJUMP_STL_DIR/bsg_misc/bsg_dff_reset.sv
+$BASEJUMP_STL_DIR/bsg_misc/bsg_dff_reset_en.sv
 $BASEJUMP_STL_DIR/bsg_misc/bsg_counter_clear_up.sv
 $BASEJUMP_STL_DIR/bsg_misc/bsg_decode.sv
 $BASEJUMP_STL_DIR/bsg_misc/bsg_decode_with_v.sv
@@ -40,11 +41,14 @@ $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1r1w_small.sv
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_1r1w_small_unhardened.sv
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_fifo_tracker.sv
 $BASEJUMP_STL_DIR/bsg_dataflow/bsg_parallel_in_serial_out.sv
+$BASEJUMP_STL_DIR/bsg_dataflow/bsg_parallel_in_serial_out_passthrough.sv
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_decode.sv
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_dma.sv
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_to_axi.sv
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_to_axi_rx.sv
 $BASEJUMP_STL_DIR/bsg_cache/bsg_cache_to_axi_tx.sv
+$BASEJUMP_STL_DIR/bsg_cache/bsg_cache_to_axi_ordering.sv
+$BASEJUMP_STL_DIR/bsg_mem/bsg_cam_1r1w_tag_array.sv
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_axi_mem.sv
 bsg_trace_rom.sv
 testbench.sv

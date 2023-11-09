@@ -37,7 +37,7 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
 
    wire                   unused = reset_i;
 
-   if (width_p == 0)
+   if (width_p == 0 || els_p == 0)
     begin: z
       wire unused0 = &{clk_i, w_v_i, w_addr_i, r_v_i, r_addr_i};
       assign r_data_o = '0;
@@ -69,13 +69,15 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
    // that would never correspond to that of a hardened ram.
 
    logic [addr_width_lp-1:0] r_addr_r;
+   wire [addr_width_lp-1:0] r_addr_li = (els_p > 1) ? r_addr_i:'0;
+   wire [addr_width_lp-1:0] w_addr_li = (els_p > 1) ? w_addr_i:'0;
 
    assign read_en = r_v_i;
    assign data_out = mem[r_addr_r];
 
    always_ff @(posedge clk_i)
      if (r_v_i)
-       r_addr_r <= r_addr_i;
+       r_addr_r <= r_addr_li;
      else
        r_addr_r <= 'X;
 
@@ -107,7 +109,7 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
 
    always_ff @(posedge clk_i)
      if (w_v_i)
-       mem[w_addr_i] <= w_data_i;
+       mem[w_addr_li] <= w_data_i;
 
    end
 

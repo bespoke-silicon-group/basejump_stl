@@ -32,7 +32,7 @@ module bsg_mem_1r1w_synth #(parameter `BSG_INV_PARAM(width_p)
   wire unused0 = w_reset_i;
   wire unused1 = r_v_i;
 
-  if (width_p == 0)
+  if (width_p == 0 || els_p == 0)
    begin: z
      wire unused2 = &{w_clk_i, w_addr_i, w_data_i, r_addr_i};
      assign r_data_o = '0;
@@ -42,13 +42,15 @@ module bsg_mem_1r1w_synth #(parameter `BSG_INV_PARAM(width_p)
 
   logic [width_p-1:0] mem [els_p-1:0];
 
+  wire [addr_width_lp-1:0] r_addr_li = (els_p > 0) ? r_addr_i:'0;
+  wire [addr_width_lp-1:0] w_addr_li = (els_p > 0) ? w_addr_i:'0;
 
   // this implementation ignores the r_v_i
-  assign r_data_o = mem[r_addr_i];
+  assign r_data_o = mem[r_addr_li];
 
   always_ff @(posedge w_clk_i) begin
     if (w_v_i) begin
-      mem[w_addr_i] <= w_data_i;
+      mem[w_addr_li] <= w_data_i;
     end
   end
    end
