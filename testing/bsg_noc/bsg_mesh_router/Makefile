@@ -5,31 +5,31 @@
 #
 # MBT 5/12/2015
 #
-# Edited to test bsg_mesh_router.v
+# Edited to test bsg_mesh_router.sv
 # Bandhav Veluri 2/4/2016
 
 TOP = ../../..
 
 # place the parameters you want to scan here.
-BSG_TESTME_FILES    = bsg_mesh_router.v
+BSG_TESTME_FILES    = bsg_mesh_router.sv
 BSG_TESTME_DIR      = $(TOP)/bsg_noc
-BSG_MISC_FILES      = bsg_scan.v bsg_defines.v bsg_mux_one_hot.v bsg_encode_one_hot.v bsg_circular_ptr.v bsg_arb_round_robin.v bsg_cycle_counter.v bsg_transpose.v bsg_array_concentrate_static.v bsg_unconcentrate_static.v bsg_concentrate_static.v
+BSG_MISC_FILES      = bsg_scan.sv bsg_defines.sv bsg_mux_one_hot.sv bsg_encode_one_hot.sv bsg_circular_ptr.sv bsg_arb_round_robin.sv bsg_cycle_counter.sv bsg_transpose.sv bsg_array_concentrate_static.sv bsg_unconcentrate_static.sv bsg_concentrate_static.sv
 BSG_ASYNC_FILES     =
 BSG_COMM_LINK_FILES =
-BSG_DATAFLOW_FILES  = bsg_fifo_1r1w_small.v bsg_fifo_1r1w_small_unhardened.v bsg_fifo_tracker.v
+BSG_DATAFLOW_FILES  = bsg_fifo_1r1w_small.sv bsg_fifo_1r1w_small_unhardened.sv bsg_fifo_tracker.sv
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
-BSG_NOC_FILES       = bsg_noc_pkg.v bsg_mesh_router_pkg.v bsg_mesh_router_decoder_dor.v
-BSG_MEM_FILES       = bsg_mem_1r1w.v bsg_mem_1r1w_synth.v
+BSG_NOC_FILES       = bsg_noc_pkg.sv bsg_mesh_router_pkg.sv bsg_mesh_router_decoder_dor.sv
+BSG_MEM_FILES       = bsg_mem_1r1w.sv bsg_mem_1r1w_synth.sv
 
-BSG_TEST_FILES =  bsg_nonsynth_reset_gen.v \
-                  bsg_nonsynth_clock_gen.v \
-                  bsg_nonsynth_ascii_writer.v
+BSG_TEST_FILES =  bsg_nonsynth_reset_gen.sv \
+                  bsg_nonsynth_clock_gen.sv \
+                  bsg_nonsynth_ascii_writer.sv
 
 #TEST_FILES = test_assembler.v
-#TEST_MAIN = test_bsg_comm_link.v
+#TEST_MAIN = test_bsg_comm_link.sv
 
-TEST_MAIN   = test_bsg.v
+TEST_MAIN   = test_bsg.sv
 TEST_MODULE = test_bsg
 
 # this is a list of all variables you want to vary for the simulation

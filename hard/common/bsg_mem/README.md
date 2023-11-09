@@ -18,5 +18,5 @@ Because the SRAMs generated depends on each project's requirements, it is most c
 
 ## Sample Usage
         python bsg_mem_generator.py <memgen.json> <ports> <mask>
-	    python bsg_mem_generator.py memgen.json 1rw  0 > bsg_mem_1rw_sync.v
+	    python bsg_mem_generator.py memgen.json 1rw  0 > bsg_mem_1rw_sync.sv
 

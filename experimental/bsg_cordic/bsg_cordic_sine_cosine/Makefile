@@ -20,7 +20,7 @@ GENERATED_VERILOG_FILE = bsg_cordic_sine_cosine.v
 #To generate the default design with the parameters at line #58, please use 
 # 'make bsg_cordic_sine_cosine.v'. 
 
-SRC_FILES = $(GENERATED_VERILOG_FILE) bsg_cordic_sine_cosine_stage.v 
+SRC_FILES = $(GENERATED_VERILOG_FILE) bsg_cordic_sine_cosine_stage.sv 
 
 TEST_FILES = bsg_cordic_sine_cosine_test.cpp 
 

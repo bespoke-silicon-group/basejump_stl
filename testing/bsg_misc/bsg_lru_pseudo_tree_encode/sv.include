@@ -1,4 +1,4 @@
-$BASEJUMP_STL_DIR/bsg_misc/bsg_defines.v
-$BASEJUMP_STL_DIR/bsg_misc/bsg_mux.v
-$BASEJUMP_STL_DIR/bsg_misc/bsg_lru_pseudo_tree_encode.v
-testbench.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_defines.sv
+$BASEJUMP_STL_DIR/bsg_misc/bsg_mux.sv
+$BASEJUMP_STL_DIR/bsg_misc/bsg_lru_pseudo_tree_encode.sv
+testbench.sv

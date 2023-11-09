@@ -1,5 +1,5 @@
-$BASEJUMP_STL_DIR/bsg_misc/bsg_defines.v
-$BASEJUMP_STL_DIR/bsg_misc/bsg_lru_pseudo_tree_decode.v
-$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_clock_gen.v
-$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_reset_gen.v
-testbench.v
+$BASEJUMP_STL_DIR/bsg_misc/bsg_defines.sv
+$BASEJUMP_STL_DIR/bsg_misc/bsg_lru_pseudo_tree_decode.sv
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_clock_gen.sv
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_reset_gen.sv
+testbench.sv

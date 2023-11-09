@@ -6,7 +6,7 @@ Also good would be a link to a google doc that contains advice for PCB stackup /
 
 ## How to use the source codes
 
-1. Remove bsg_link_oddr_phy.v, bsg_link_iddr_phy.v and bsg_link_ddr_upstream.v from the Vivado project.
+1. Remove bsg_link_oddr_phy.sv, bsg_link_iddr_phy.sv and bsg_link_ddr_upstream.sv from the Vivado project.
 2. Add source codes in this directory to the Vivado project.
 3. Generate a 90-degree phase delayed clock using the on-FPGA MMCM, connect CLK90 to the bsg_link_ddr_upstream module.
 

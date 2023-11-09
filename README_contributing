@@ -27,7 +27,7 @@ repo, so that ideally each file has a test.
 So for instance, the directory   
 bsg_ip_cores/testing/bsg_misc/bsg_binary_plus_one_to_gray
 is intended to test the file 
-bsg_ip_cores/bsg_misc/bsg_binary_plus_one_to_gray.v.  
+bsg_ip_cores/bsg_misc/bsg_binary_plus_one_to_gray.sv.  
 You can use that test as an example. 
 
 * Contributing through Testing * 

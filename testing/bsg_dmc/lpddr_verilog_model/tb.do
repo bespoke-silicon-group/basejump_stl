@@ -26,14 +26,14 @@
 #########################################################################################
 
 vlib work
-vlog +define+den512Mb +define+sg75 +define+x16 mobile_ddr.v tb.v
+vlog +define+den512Mb +define+sg75 +define+x16 mobile_ddr.sv tb.sv
 vsim tb
 add wave -p mobile_ddr/*
 run -a
 
 # For Reduced Page Parts run the following and comment out the lines above :
 
-#vlog +define+den512Mb  +define+sg75 +define+x32 mobile_ddr.v tb.v
+#vlog +define+den512Mb  +define+sg75 +define+x32 mobile_ddr.sv tb.sv
 #vsim tb
 #add wave -p mobile_ddr/*
 #run -a

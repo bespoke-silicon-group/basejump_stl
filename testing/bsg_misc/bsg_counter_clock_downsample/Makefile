@@ -5,14 +5,14 @@
 #
 # MBT 5/12/2015
 #
-# Edited to test bsg_counter_clock_downsample.v
+# Edited to test bsg_counter_clock_downsample.sv
 # Scott Davidson (stdavids@eng.ucsd.edu) 8/21/2016
 
 TOP = ../../..
 
 ########################### SIMULATION PARAMETERS ###########################
 # place the parameters you want to scan here.
-BSG_TESTME_FILES    = bsg_counter_clock_downsample.v bsg_strobe.v bsg_dff.v bsg_xnor.v bsg_muxi2_gatestack.v bsg_nand.v bsg_nor3.v bsg_reduce.v bsg_buf.v
+BSG_TESTME_FILES    = bsg_counter_clock_downsample.sv bsg_strobe.sv bsg_dff.sv bsg_xnor.sv bsg_muxi2_gatestack.sv bsg_nand.sv bsg_nor3.sv bsg_reduce.sv bsg_buf.sv
 BSG_TESTME_DIR      = $(TOP)/bsg_misc
 BSG_MISC_FILES      =
 BSG_ASYNC_FILES     =
@@ -20,9 +20,9 @@ BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  =
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
-BSG_TEST_FILES      = bsg_nonsynth_clock_gen.v
+BSG_TEST_FILES      = bsg_nonsynth_clock_gen.sv
 
-TEST_MAIN   = test_bsg.v
+TEST_MAIN   = test_bsg.sv
 TEST_MODULE = test_bsg
 
 # this is a list of all variables you want to vary for the simulation

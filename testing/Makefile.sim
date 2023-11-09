@@ -22,7 +22,7 @@ BSG_IP_CORES_SIM_CLEAN_FILES = xvlog* xelab* webtalk* xsim* *.wdb .Xil *.vpd csr
 ALL_FILES = $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x))     \
               $(foreach x,$(BSG_ASYNC_FILES),$(TOP)/bsg_async/$(x)) \
               $(foreach x,$(BSG_NOC_FILES),$(TOP)/bsg_noc/$(x)) \
-              $(foreach x,$(BSG_FSB_FILES),$(TOP)/bsg_fsb/$(x))     \
+              $(foreach x,$(BSG_FSB_FILES),$(TOP)/bsg_legacy/bsg_fsb/$(x))     \
               $(foreach x,$(BSG_MEM_FILES),$(TOP)/bsg_mem/$(x))     \
               $(foreach x,$(BSG_GUTS_FILES),$(TOP)/bsg_guts/$(x))   \
               $(foreach x,$(BSG_COMM_LINK_FILES),$(TOP)/bsg_comm_link/$(x)) \
