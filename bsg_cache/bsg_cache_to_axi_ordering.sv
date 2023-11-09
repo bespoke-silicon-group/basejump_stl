@@ -1,5 +1,5 @@
-`include "bsg_defines.v"
-`include "bsg_cache.vh"
+`include "bsg_defines.sv"
+`include "bsg_cache.svh"
 
 module bsg_cache_to_axi_ordering
   import bsg_axi_pkg::*;

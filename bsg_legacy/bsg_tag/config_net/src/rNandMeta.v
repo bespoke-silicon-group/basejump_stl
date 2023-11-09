@@ -1,5 +1,5 @@
 // The nand gate array that performs nand operation on corresponding input bits.
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module rNandMeta
   #(parameter `BSG_INV_PARAM(width_p ))

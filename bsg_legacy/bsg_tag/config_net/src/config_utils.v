@@ -1,4 +1,4 @@
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 `ifndef CONFIG_UTILS_V
 

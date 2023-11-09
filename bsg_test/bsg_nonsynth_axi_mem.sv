@@ -373,7 +373,7 @@ module bsg_nonsynth_axi_mem
      ,.reset_i(reset_i)
      ,.v_i(axi_wvalid_i)
      ,.data_i({axi_wdata_i, axi_wstrb_i})
-     ,.ready_o(wfifo_ready_lo)
+     ,.ready_param_o(wfifo_ready_lo)
      ,.v_o(wfifo_v_lo)
      ,.data_o({wfifo_data_lo, wfifo_strb_lo})
      ,.yumi_i(wfifo_yumi_li)
