@@ -1,5 +1,5 @@
 # cmd[3:0] + 32 bits paylod 
-# cmd formats refer to bsg_ip_cores/bsg_test/bsg_trace_replay.v comments.
+# cmd formats refer to bsg_ip_cores/bsg_test/bsg_trace_replay.sv comments.
 # In this example, the response is supposed to be the reversed stimulus.
 
 # record 0, recieve data 
