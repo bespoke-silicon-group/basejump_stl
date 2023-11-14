@@ -17,7 +17,7 @@ GENERATED_VERILOG_FILE = bsg_cordic_squaroot_natlog.v
 #To generate the default design with the parameters at line #55, please use 
 # 'make bsg_cordic_atan.v'. 
 
-SRC_FILES = $(GENERATED_VERILOG_FILE) bsg_cordic_squaroot_natlog_stage_negative.v bsg_cordic_squaroot_natlog_stage_positive.v
+SRC_FILES = $(GENERATED_VERILOG_FILE) bsg_cordic_squaroot_natlog_stage_negative.sv bsg_cordic_squaroot_natlog_stage_positive.sv
 
 TEST_FILES = bsg_cordic_squaroot_natlog_test.cpp
 

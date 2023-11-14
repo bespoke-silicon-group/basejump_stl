@@ -13,7 +13,7 @@
 // is retry->valid.
 //
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_murn_converter
   #(parameter `BSG_INV_PARAM(nodes_p)

@@ -12,7 +12,7 @@ ITERS - Number of simulation iterations (inputs tested)
 - get_stim retrieves inputs from the stimulus file specified in get_stim.c line 40.
 Inputs are retrieved from the stimulus file until the end of the file is reached.
 After which point, inputs are generated randomly for the remaining number of iterations
-in the simulation (specified at the top of test_bsg.v)
+in the simulation (specified at the top of test_bsg.sv)
 
 - An exhaustive stimulus file containing all possible inputs is provided in divide_4.stim
 A stimulus file testing a few edge cases for 32 and 64 bit designs is provided in
@@ -23,7 +23,7 @@ the simulation after the iteration matching the length of the file.
 and containing the inputs tested in the sim. They produce a text file of the expected
 outputs for signed and unsigned division of the inputs.
 
-- Different widths can be specified as parameters in the simulation (test_bsg.v) and
+- Different widths can be specified as parameters in the simulation (test_bsg.sv) and
 the generation of expected outputs (signed.c and unsigned.c)
 
 - Use make vcs to run the simulation

@@ -5,29 +5,29 @@
 #
 # MBT 5/12/2015
 #
-# Edited to test bsg_encode_one_hot.v
+# Edited to test bsg_encode_one_hot.sv
 # Bandhav Veluri 5/18/2015
 
 TOP = ../../..
 
 # place the parameters you want to scan here.
-BSG_TESTME_FILES    =   bsg_round_robin_arb.v
+BSG_TESTME_FILES    =   bsg_round_robin_arb.sv
 BSG_TESTME_DIR      =   $(TOP)/bsg_misc
-BSG_MISC_FILES      =   bsg_defines.v bsg_encode_one_hot.v bsg_popcount.v
+BSG_MISC_FILES      =   bsg_defines.sv bsg_encode_one_hot.sv bsg_popcount.sv
 BSG_ASYNC_FILES     = 
 BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  = 
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
 
-BSG_TEST_FILES =  bsg_nonsynth_reset_gen.v \
-                  bsg_nonsynth_clock_gen.v \
-                  bsg_nonsynth_ascii_writer.v
+BSG_TEST_FILES =  bsg_nonsynth_reset_gen.sv \
+                  bsg_nonsynth_clock_gen.sv \
+                  bsg_nonsynth_ascii_writer.sv
 
 #TEST_FILES = test_assembler.v
-#TEST_MAIN = test_bsg_comm_link.v
+#TEST_MAIN = test_bsg_comm_link.sv
 
-TEST_MAIN   = test_bsg.v
+TEST_MAIN   = test_bsg.sv
 TEST_MODULE = test_bsg
 
 # this is a list of all variables you want to vary for the simulation

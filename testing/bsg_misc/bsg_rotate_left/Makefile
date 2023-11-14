@@ -5,26 +5,26 @@
 #
 # MBT 5/12/2015
 #
-# Edited to test bsg_mux_one_hot.v
+# Edited to test bsg_mux_one_hot.sv
 # Bandhav Veluri 5/30/2015
 
 TOP = ../../..
 
 ######################### SIMULATION PARAMETERS ############################
 # place the parameters you want to scan here.
-BSG_TESTME_FILES    =   bsg_rotate_left.v
+BSG_TESTME_FILES    =   bsg_rotate_left.sv
 BSG_TESTME_DIR      =   $(TOP)/bsg_misc
-BSG_MISC_FILES      =   bsg_defines.v bsg_encode_one_hot.v
+BSG_MISC_FILES      =   bsg_defines.sv bsg_encode_one_hot.sv
 BSG_ASYNC_FILES     = 
 BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  = 
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
 
-BSG_TEST_FILES =  bsg_nonsynth_reset_gen.v \
-                  bsg_nonsynth_clock_gen.v
+BSG_TEST_FILES =  bsg_nonsynth_reset_gen.sv \
+                  bsg_nonsynth_clock_gen.sv
 
-TEST_MAIN   = main.v
+TEST_MAIN   = main.sv
 TEST_MODULE = main
 
 # this is a list of all variables you want to vary for the simulation
