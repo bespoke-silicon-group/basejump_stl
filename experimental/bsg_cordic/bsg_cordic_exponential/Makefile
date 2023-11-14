@@ -19,7 +19,7 @@ GENERATED_VERILOG_FILE = bsg_cordic_exponential.v
 #To generate the default design with the parameters at line #61, please use 
 # 'make bsg_cordic_atan.v'. 
 
-SRC_FILES = $(GENERATED_VERILOG_FILE) bsg_cordic_exponential_stage_positive.v bsg_cordic_exponential_stage_negative.v
+SRC_FILES = $(GENERATED_VERILOG_FILE) bsg_cordic_exponential_stage_positive.sv bsg_cordic_exponential_stage_negative.sv
 
 TEST_FILES = bsg_cordic_exponential_test.cpp 
 

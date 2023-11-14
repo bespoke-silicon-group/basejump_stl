@@ -5,32 +5,32 @@
 #
 # MBT 5/12/2015
 #
-# Edited to test bsg_mesh_router.v
+# Edited to test bsg_mesh_router.sv
 # Bandhav Veluri 2/4/2016
 
 TOP = ../../..
 
 # place the parameters you want to scan here.
-BSG_TESTME_FILES    = bsg_wormhole_router_adapter_out.v
+BSG_TESTME_FILES    = bsg_wormhole_router_adapter_out.sv
 BSG_TESTME_DIR      = $(TOP)/bsg_noc
-BSG_MISC_FILES      = bsg_decode_with_v.v bsg_dff_reset.v bsg_dff_en.v bsg_decode.v bsg_dff_reset_en.v bsg_counter_clear_up.v bsg_mux.v bsg_scan.v bsg_defines.v bsg_mux_one_hot.v bsg_encode_one_hot.v bsg_circular_ptr.v bsg_arb_round_robin.v bsg_cycle_counter.v bsg_transpose.v bsg_array_concentrate_static.v bsg_unconcentrate_static.v bsg_concentrate_static.v
+BSG_MISC_FILES      = bsg_decode_with_v.sv bsg_dff_reset.sv bsg_dff_en.sv bsg_decode.sv bsg_dff_reset_en.sv bsg_counter_clear_up.sv bsg_mux.sv bsg_scan.sv bsg_defines.sv bsg_mux_one_hot.sv bsg_encode_one_hot.sv bsg_circular_ptr.sv bsg_arb_round_robin.sv bsg_cycle_counter.sv bsg_transpose.sv bsg_array_concentrate_static.sv bsg_unconcentrate_static.sv bsg_concentrate_static.sv
 BSG_ASYNC_FILES     =
 BSG_COMM_LINK_FILES =
-BSG_DATAFLOW_FILES  = bsg_one_fifo.v bsg_serial_in_parallel_out_dynamic.v bsg_fifo_1r1w_small.v bsg_two_fifo.v bsg_fifo_1r1w_small_unhardened.v bsg_fifo_tracker.v bsg_parallel_in_serial_out_dynamic.v
+BSG_DATAFLOW_FILES  = bsg_one_fifo.sv bsg_serial_in_parallel_out_dynamic.sv bsg_fifo_1r1w_small.sv bsg_two_fifo.sv bsg_fifo_1r1w_small_unhardened.sv bsg_fifo_tracker.sv bsg_parallel_in_serial_out_dynamic.sv
 BSG_FSB_FILES       = bsg_fsb_node_trace_replay.v
 BSG_GUTS_FILES      =
-BSG_NOC_FILES       = bsg_noc_pkg.v bsg_mesh_router_pkg.v bsg_mesh_router_decoder_dor.v bsg_noc_links.vh
-BSG_MEM_FILES       = bsg_mem_1r1w.v bsg_mem_1r1w_synth.v
-ADDITIONAL_FILES		= bsg_trace_rom.v
+BSG_NOC_FILES       = bsg_noc_pkg.sv bsg_mesh_router_pkg.sv bsg_mesh_router_decoder_dor.sv bsg_noc_links.svh
+BSG_MEM_FILES       = bsg_mem_1r1w.sv bsg_mem_1r1w_synth.sv
+ADDITIONAL_FILES		= bsg_trace_rom.sv
 
-BSG_TEST_FILES =  bsg_nonsynth_reset_gen.v \
-                  bsg_nonsynth_clock_gen.v \
-                  bsg_nonsynth_ascii_writer.v
+BSG_TEST_FILES =  bsg_nonsynth_reset_gen.sv \
+                  bsg_nonsynth_clock_gen.sv \
+                  bsg_nonsynth_ascii_writer.sv
 
 #TEST_FILES = test_assembler.v
-#TEST_MAIN = test_bsg_comm_link.v
+#TEST_MAIN = test_bsg_comm_link.sv
 
-TEST_MAIN   = testbench.v
+TEST_MAIN   = testbench.sv
 TEST_MODULE = testbench
 
 # this is a list of all variables you want to vary for the simulation

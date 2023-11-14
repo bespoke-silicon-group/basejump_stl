@@ -12,22 +12,22 @@ TOP = ../../..
 
 ########################### SIMULATION PARAMETERS ##########################
 # place the parameters you want to scan here.
-BSG_TESTME_FILES    =   bsg_mem_banked_crossbar.v
+BSG_TESTME_FILES    =   bsg_mem_banked_crossbar.sv
 BSG_TESTME_DIR      =   $(TOP)/bsg_mem
-BSG_MISC_FILES      =   bsg_defines.v bsg_crossbar_o_by_i.v bsg_transpose.v bsg_cycle_counter.v bsg_encode_one_hot.v bsg_mux_one_hot.v bsg_round_robin_arb.v  bsg_arb_fixed.v bsg_priority_encode_one_hot_out.v bsg_scan.v
+BSG_MISC_FILES      =   bsg_defines.sv bsg_crossbar_o_by_i.sv bsg_transpose.sv bsg_cycle_counter.sv bsg_encode_one_hot.sv bsg_mux_one_hot.sv bsg_round_robin_arb.sv  bsg_arb_fixed.sv bsg_priority_encode_one_hot_out.sv bsg_scan.sv
 BSG_ASYNC_FILES     =
 BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  =
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
-BSG_MEM_FILES       =   bsg_mem_1rw_sync.v bsg_mem_1rw_sync_mask_write_byte.v bsg_mem_1rw_sync_mask_write_byte_synth.v bsg_mem_1rw_sync_synth.v
+BSG_MEM_FILES       =   bsg_mem_1rw_sync.sv bsg_mem_1rw_sync_mask_write_byte.sv bsg_mem_1rw_sync_mask_write_byte_synth.sv bsg_mem_1rw_sync_synth.sv
 
-BSG_TEST_FILES      =  bsg_nonsynth_reset_gen.v \
-                       bsg_nonsynth_clock_gen.v \
-                       bsg_nonsynth_ascii_writer.v \
-                       bsg_nonsynth_random_gen.v
+BSG_TEST_FILES      =  bsg_nonsynth_reset_gen.sv \
+                       bsg_nonsynth_clock_gen.sv \
+                       bsg_nonsynth_ascii_writer.sv \
+                       bsg_nonsynth_random_gen.sv
 
-TEST_MAIN   = test_bsg.v
+TEST_MAIN   = test_bsg.sv
 TEST_MODULE = test_bsg
 
 # this is a list of all values for each variable in the scan_params list
