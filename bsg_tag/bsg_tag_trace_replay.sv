@@ -83,9 +83,10 @@ module bsg_tag_trace_replay
     logic                           tr_yumi_li;
 
     // Instantiate the trace replay
-    bsg_fsb_node_trace_replay #( .ring_width_p(trace_ring_width_lp)
-                               , .rom_addr_width_p(rom_addr_width_p)
-			       , .uptime_p(uptime_p))
+    bsg_trace_replay #( .payload_width_p(trace_ring_width_lp)
+                        ,.rom_addr_width_p(rom_addr_width_p)
+                        ,.debug_p(0)
+			       )
       trace_replay
         (.clk_i   (clk_i)
         ,.reset_i (reset_i)
