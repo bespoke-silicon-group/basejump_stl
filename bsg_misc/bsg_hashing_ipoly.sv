@@ -18,7 +18,8 @@
  *    "Sacat: streaming-aware conflict-avoiding thrashing-resistant gpgpu
  *    cache management scheme." Khairy et al. IEEE TPDS 2017.
  *
- *    equations for 16 banks are corresponding to IPOLY(5)
+ *    equations for 8 banks are corresponding to IPOLY(13)
+ *    equations for 16 banks are corresponding to IPOLY(15)
  *    equations for 32 banks are corresponding to IPOLY(37)
  *    equations for 64 banks are corresponding to IPOLY(67)
  *    To see all the IPOLY equations for all the degrees, see
@@ -56,7 +57,16 @@ module bsg_hashing_ipoly
   wire [upper_width_p-1:0] a = upper_bits_i;
   wire [lg_num_banks_lp-1:0] b = bank_id_i;
   
-  if (num_banks_p == 16) begin
+  if (num_banks_p == 4) begin
+    assign new_bank_id_o[0]  = b[0] ^ a[10] ^ a[9] ^ a[7] ^ a[6] ^ a[4] ^ a[3] ^ a[1] ^ a[0];
+    assign new_bank_id_o[1]  = b[0] ^ a[11] ^ a[9] ^ a[8] ^ a[6] ^ a[5] ^ a[3] ^ a[2] ^ a[0];
+  end
+  else if (num_banks_p == 8) begin
+    assign new_bank_id_o[0]  = b[0] ^ a[11] ^ a[9] ^ a[8] ^ a[7] ^ a[4] ^ a[2] ^ a[1] ^ a[0];
+    assign new_bank_id_o[1]  = b[0] ^ a[12] ^ a[10] ^ a[9] ^ a[8] ^ a[5] ^ a[3] ^ a[2] ^ a[1];
+    assign new_bank_id_o[2]  = b[0] ^ a[13] ^ a[10] ^ a[8] ^ a[7] ^ a[6] ^ a[3] ^ a[1] ^ a[0];
+  end
+  else if (num_banks_p == 16) begin
     assign new_bank_id_o[0]  = b[0] ^ a[11] ^ a[10] ^ a[9] ^ a[8] ^ a[6] ^ a[4] ^ a[3] ^ a[0];
     assign new_bank_id_o[1]  = b[1] ^ a[12] ^ a[8]  ^ a[7] ^ a[6] ^ a[5] ^ a[3] ^ a[1] ^ a[0];
     assign new_bank_id_o[2]  = b[2] ^ a[9]  ^ a[8]  ^ a[7] ^ a[6] ^ a[4] ^ a[2] ^ a[1];
