@@ -169,4 +169,4 @@ endmodule
 '''
 else :
     print "Usage: bsg_gate_stack_gen.py AND2X1 32 > bsg_and_stacks.v # generate each individual netlist of each size"
-    print "       bsg_gate_stack_gen.py AND2X1 32 and > bsg_and.v    # generate the verilog function that thunks to the right netlist"
+    print "       bsg_gate_stack_gen.py AND2X1 32 and > bsg_and.sv    # generate the verilog function that thunks to the right netlist"

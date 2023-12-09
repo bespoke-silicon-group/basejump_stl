@@ -6,9 +6,9 @@ BASEJUMP_STL_DIR := $(abspath ../../../)
 #VERILATOR_ROOT=/home/drichmond/Research/repositories/git/verilator
 VERILATOR_ROOT=/usr/share/verilator
 VERILATOR=verilator
-VSOURCES += $(BASEJUMP_STL_DIR)/testing/bsg_test/bsg_nonsynth_dpi_rom/top.v
-VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_dpi_rom.v
-VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_dpi_clock_gen.v
+VSOURCES += $(BASEJUMP_STL_DIR)/testing/bsg_test/bsg_nonsynth_dpi_rom/top.sv
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_dpi_rom.sv
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_dpi_clock_gen.sv
 VINCLUDES += -I$(BASEJUMP_STL_DIR)/bsg_misc/
 
 CFLAGS += -CFLAGS -std=c++11

@@ -1,2 +1,2 @@
-../../bsg_misc/bsg_mux.v
-testbench.v
+../../bsg_misc/bsg_mux.sv
+testbench.sv

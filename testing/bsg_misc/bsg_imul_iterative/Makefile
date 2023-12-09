@@ -26,28 +26,28 @@
 #
 # MBT 5/12/2015
 #
-# Edited to test bsg_gray_to_binary.v
+# Edited to test bsg_gray_to_binary.sv
 # Bandhav Veluri 5/18/2015
 
 TOP = ../../..
 
 ##########################################################################
 # place the parameters you want to scan here.
-BSG_TESTME_FILES    =   bsg_imul_iterative.v
+BSG_TESTME_FILES    =   bsg_imul_iterative.sv
 BSG_TESTME_DIR      =   $(TOP)/bsg_misc
-BSG_MISC_FILES      =   bsg_defines.v
+BSG_MISC_FILES      =   bsg_defines.sv
 BSG_ASYNC_FILES     = 
 BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  = 
 BSG_FSB_FILES       =
 BSG_GUTS_FILES      =
 
-BSG_TEST_FILES =  bsg_nonsynth_reset_gen.v \
-                  bsg_nonsynth_clock_gen.v \
-                  bsg_nonsynth_ascii_writer.v
+BSG_TEST_FILES =  bsg_nonsynth_reset_gen.sv \
+                  bsg_nonsynth_clock_gen.sv \
+                  bsg_nonsynth_ascii_writer.sv
 
 TEST_MODULE = test_bsg
-TEST_MAIN   = test_bsg.v
+TEST_MAIN   = test_bsg.sv
 
 
 # this is a list of all variables you want to vary for the simulation

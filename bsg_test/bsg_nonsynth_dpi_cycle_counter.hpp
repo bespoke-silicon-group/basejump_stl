@@ -1,5 +1,5 @@
 // This header file defines a C++ API that wraps the System Verilog
-// DPI provided by bsg_nonsynth_dpi_cycle_counter.v
+// DPI provided by bsg_nonsynth_dpi_cycle_counter.sv
 #ifndef __BSG_NONSYNTH_DPI_CYCLE_COUNTER
 #define __BSG_NONSYNTH_DPI_CYCLE_COUNTER
 #include <bsg_nonsynth_dpi.hpp>
@@ -19,7 +19,7 @@ extern "C" {
 namespace bsg_nonsynth_dpi{
 
         // dpi_cycle_counter is the C++ Object wrapper around the DPI calls
-        // in bsg_nonsynth_dpi_cycle_counter.v
+        // in bsg_nonsynth_dpi_cycle_counter.sv
         //
         // This object must be destructed before $finish is called in
         // verilog.
@@ -45,7 +45,7 @@ namespace bsg_nonsynth_dpi{
 
                 // read wraps the bsg_dpi_cycle_counter_read(output bit
                 // [width_p-1:0] data_bo) DPI function exported by
-                // bsg_nonsynth_dpi_from_fifo.v
+                // bsg_nonsynth_dpi_from_fifo.sv
                 //
                 // read MUST be called after the positive edge of the
                 // input clock is evaluated. Failure will cause an

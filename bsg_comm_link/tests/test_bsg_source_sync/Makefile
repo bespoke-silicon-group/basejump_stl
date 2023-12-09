@@ -6,9 +6,9 @@ export VCS_BIN = $(VCS_HOME)/bin
 export DVE_BIN = $(VCS_HOME)/bin
 
 
-ASYNC_FILES = bsg_async_credit_counter.v bsg_async_fifo.v bsg_async_ptr_gray.v bsg_gray_to_binary.v bsg_launch_sync_sync.v bsg_sync_sync.v bsg_wait_after_reset.v 
-SOURCE_SYNC_FILES = bsg_source_sync_input.v bsg_source_sync_output.v bsg_cycle_counter.v
-TEST_FILES = test_bsg_source_sync.v
+ASYNC_FILES = bsg_async_credit_counter.sv bsg_async_fifo.sv bsg_async_ptr_gray.sv bsg_gray_to_binary.sv bsg_launch_sync_sync.sv bsg_sync_sync.sv bsg_wait_after_reset.sv 
+SOURCE_SYNC_FILES = bsg_source_sync_input.sv bsg_source_sync_output.sv bsg_cycle_counter.sv
+TEST_FILES = test_bsg_source_sync.sv
 
 
 all:  $(foreach x,$(ASYNC_FILES),../bsg_async_fifo/$(x)) $(SOURCE_SYNC_FILES) $(TEST_FILES)

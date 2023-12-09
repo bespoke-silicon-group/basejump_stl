@@ -22,7 +22,7 @@ GENERATED_VERILOG_FILE = bsg_cordic_atan.v
 #To generate the default design with the parameters at line #54, please use 
 # 'make bsg_cordic_atan.v'. 
 
-SRC_FILES = $(GENERATED_VERILOG_FILE) bsg_cordic_atan_stage.v 
+SRC_FILES = $(GENERATED_VERILOG_FILE) bsg_cordic_atan_stage.sv 
 
 TEST_FILES = bsg_cordic_atan_test.cpp 
 

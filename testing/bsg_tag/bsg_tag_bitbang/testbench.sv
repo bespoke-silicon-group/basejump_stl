@@ -1,6 +1,6 @@
 
-`include "bsg_defines.v"
-`include "bsg_tag.vh"
+`include "bsg_defines.sv"
+`include "bsg_tag.svh"
 
 program testbench #(
     parameter `BSG_INV_PARAM(els_p)

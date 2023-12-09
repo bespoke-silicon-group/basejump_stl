@@ -19,32 +19,32 @@ set MISC_PATH       ../../bsg_misc
 set MEM_PATH        ../../bsg_mem
 set GTECH_DIR       /gro/cad/synopsys/icc/J-2014.09-SP4/packages/gtech/src_ver
 
-set rtl_files [list $DEFINES_PATH/bsg_defines.v \
-                    $DEFINES_PATH/bsg_circular_ptr.v \
-                    $SRC_PATH/config_defs.v \
+set rtl_files [list $DEFINES_PATH/bsg_defines.sv \
+                    $DEFINES_PATH/bsg_circular_ptr.sv \
+                    $SRC_PATH/config_defs.sv \
                     $GTECH_DIR/GTECH_NAND2.v \
                     $CFG_TAG_PATH/rNandMeta.v \
                     $CFG_TAG_PATH/relay_node.v \
                     $CFG_TAG_PATH/config_node.v \
-                    $DATA_FLOW_PATH/bsg_fifo_1r1w_small.v \
-                    $MISC_PATH/bsg_counter_up_down.v \
-                    $MISC_PATH/bsg_counter_up_down_variable.v \
-                    $MISC_PATH/bsg_counter_dynamic_limit.v \
-                    $MEM_PATH/bsg_mem_1r1w.v \
-                    $DATA_FLOW_PATH/bsg_channel_narrow.v \
-                    $DATA_FLOW_PATH/bsg_fifo_1r1w_small_credit_on_input.v \
-                    $DATA_FLOW_PATH/bsg_ready_to_credit_flow_converter.v \
-                    $DATA_FLOW_PATH/bsg_two_fifo.v \
-                    $DATA_FLOW_PATH/bsg_relay_fifo.v \
-                    $DATA_FLOW_PATH/bsg_credit_to_token.v \
-                    $DATA_FLOW_PATH/bsg_fifo_1r1w_narrowed.v \
-                    $ASYNC_PATH/bsg_launch_sync_sync.v \
-                    $SRC_PATH/bsg_mesosync_core.v \
-                    $SRC_PATH/bsg_ddr_sampler.v \
-                    $SRC_PATH/bsg_logic_analyzer.v \
-                    $SRC_PATH/bsg_mesosync_link.v \
-                    $SRC_PATH/bsg_mesosync_input.v \
-                    $SRC_PATH/bsg_mesosync_output.v]
+                    $DATA_FLOW_PATH/bsg_fifo_1r1w_small.sv \
+                    $MISC_PATH/bsg_counter_up_down.sv \
+                    $MISC_PATH/bsg_counter_up_down_variable.sv \
+                    $MISC_PATH/bsg_counter_dynamic_limit.sv \
+                    $MEM_PATH/bsg_mem_1r1w.sv \
+                    $DATA_FLOW_PATH/bsg_channel_narrow.sv \
+                    $DATA_FLOW_PATH/bsg_fifo_1r1w_small_credit_on_input.sv \
+                    $DATA_FLOW_PATH/bsg_ready_to_credit_flow_converter.sv \
+                    $DATA_FLOW_PATH/bsg_two_fifo.sv \
+                    $DATA_FLOW_PATH/bsg_relay_fifo.sv \
+                    $DATA_FLOW_PATH/bsg_credit_to_token.sv \
+                    $DATA_FLOW_PATH/bsg_fifo_1r1w_narrowed.sv \
+                    $ASYNC_PATH/bsg_launch_sync_sync.sv \
+                    $SRC_PATH/bsg_mesosync_core.sv \
+                    $SRC_PATH/bsg_ddr_sampler.sv \
+                    $SRC_PATH/bsg_logic_analyzer.sv \
+                    $SRC_PATH/bsg_mesosync_link.sv \
+                    $SRC_PATH/bsg_mesosync_input.sv \
+                    $SRC_PATH/bsg_mesosync_output.sv]
 	
 analyze -format sverilog $rtl_files
 

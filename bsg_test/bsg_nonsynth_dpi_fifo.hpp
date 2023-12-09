@@ -13,7 +13,7 @@ extern "C" {
 
 namespace bsg_nonsynth_dpi{
         // dpi_from_fifo is the C++ Object wrapper around the DPI calls
-        // in bsg_nonsynth_dpi_from_fifo.v
+        // in bsg_nonsynth_dpi_from_fifo.sv
         //
         // This object must be destructed before $finish is called in
         // verilog.
@@ -37,7 +37,7 @@ namespace bsg_nonsynth_dpi{
                 }
 
                 // rx wraps the rx(output bit [width_p-1:0] data_o)
-                // DPI function exported by bsg_nonsynth_dpi_from_fifo.v
+                // DPI function exported by bsg_nonsynth_dpi_from_fifo.sv
                 // 
                 // To provide increased convenience, it unwraps the
                 // svBitVecVal and returns the C-Type that matches
@@ -66,7 +66,7 @@ namespace bsg_nonsynth_dpi{
                 }
 
                 // try_rx wraps the rx(output bit [width_p-1:0] data_o) DPI
-                // function exported by bsg_nonsynth_dpi_from_fifo.v with a more
+                // function exported by bsg_nonsynth_dpi_from_fifo.sv with a more
                 // programmer-friendly API
                 // 
                 // To provide increased convenience, it unwraps the svBitVecVal
@@ -105,7 +105,7 @@ namespace bsg_nonsynth_dpi{
         };
 
         // dpi_to_fifo is the C++ Object wrapper around the DPI calls
-        // in bsg_nonsynth_dpi_to_fifo.v
+        // in bsg_nonsynth_dpi_to_fifo.sv
         //
         // This object must be destructed before $finish is called in
         // verilog.
@@ -129,7 +129,7 @@ namespace bsg_nonsynth_dpi{
                 }
 
                 // tx wraps the tx(input logic [width_p-1:0] data_i) DPI
-                // function exported by bsg_nonsynth_dpi_to_fifo.v
+                // function exported by bsg_nonsynth_dpi_to_fifo.sv
                 // 
                 // To provide increased convenience, this function wraps the
                 // input argument data in the svBitVecVal type before sending it
@@ -160,7 +160,7 @@ namespace bsg_nonsynth_dpi{
                 }
 
                 // tx wraps the tx(input logic [width_p-1:0] data_i) DPI
-                // function exported by bsg_nonsynth_dpi_to_fifo.v in a more
+                // function exported by bsg_nonsynth_dpi_to_fifo.sv in a more
                 // programmer-friendly API
                 // 
                 // To provide increased convenience, this function wraps the

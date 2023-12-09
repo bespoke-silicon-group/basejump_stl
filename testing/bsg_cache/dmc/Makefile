@@ -6,6 +6,7 @@ WAYS_P ?= 2
 
 INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_cache
+INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_dmc
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/testing/bsg_dmc/lpddr_verilog_model
 
 DEFINE = +define+WAYS_P=$(WAYS_P)

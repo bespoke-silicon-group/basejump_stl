@@ -26,21 +26,21 @@ Copyright 2008 Micron Technology, Inc. All rights reserved.
 Getting Started:
 ----------------
 Unzip the included files to a folder.
-Compile mobile_ddr.v and tb.v using a verilog simulator.
+Compile mobile_ddr.sv and tb.sv using a verilog simulator.
 Simulate the top level test bench tb.
 Or, if you are using the ModelSim simulator, type "do tb.do" at the prompt.
 
 File Descriptions:
 ------------------
-mobile_ddr.v                    --mobile ddr model 
-mobile_ddr_mcp.v                --structural wrapper for mobile_ddr multi-chip package model
-128Mb_mobile_ddr_parameters.vh  --File that contains all parameters used by the model
-256Mb_mobile_ddr_parameters.vh  --File that contains all parameters used by the model
-512Mb_mobile_ddr_parameters.vh  --File that contains all parameters used by the model
-1024Mb_mobile_ddr_parameters.vh --File that contains all parameters used by the model
-2048Mb_mobile_ddr_parameters.vh --File that contains all parameters used by the model
+mobile_ddr.sv                    --mobile ddr model 
+mobile_ddr_mcp.sv                --structural wrapper for mobile_ddr multi-chip package model
+128Mb_mobile_ddr_parameters.svh  --File that contains all parameters used by the model
+256Mb_mobile_ddr_parameters.svh  --File that contains all parameters used by the model
+512Mb_mobile_ddr_parameters.svh  --File that contains all parameters used by the model
+1024Mb_mobile_ddr_parameters.svh --File that contains all parameters used by the model
+2048Mb_mobile_ddr_parameters.svh --File that contains all parameters used by the model
 readme.txt                      --This file
-tb.v                            --Test bench
+tb.sv                            --Test bench
 tb.do                           --File that compiles and runs the above files
 
 Defining the Density (part size):
@@ -53,9 +53,9 @@ the density.
 
     simulator   command line
     ---------   ------------
-    ModelSim    vlog +define+den512Mb mobile_ddr.v
-    VCS         vcs +define+den512Mb mobile_ddr.v
-    NC-Verilog  ncverilog +define+den512Mb mobile_ddr.v
+    ModelSim    vlog +define+den512Mb mobile_ddr.sv
+    VCS         vcs +define+den512Mb mobile_ddr.sv
+    NC-Verilog  ncverilog +define+den512Mb mobile_ddr.sv
 
 
 Defining the Speed Grade:
@@ -69,9 +69,9 @@ the speed grade.
 
     simulator   command line
     ---------   ------------
-    ModelSim    vlog +define+sg75 mobile_ddr.v
-    VCS         vcs +define+sg75 mobile_ddr.v
-    NC-Verilog  ncverilog +define+sg75 mobile_ddr.v
+    ModelSim    vlog +define+sg75 mobile_ddr.sv
+    VCS         vcs +define+sg75 mobile_ddr.sv
+    NC-Verilog  ncverilog +define+sg75 mobile_ddr.sv
 
 
 Defining the Organization:
@@ -83,12 +83,12 @@ mobile_ddr_parameters.vh file.  The organization is used to select the amount
 of memory and the port sizes of the mobile ddr model.  The following are
 examples of defining the organization.
 
-    vlog +define+x16 mobile_ddr.v
+    vlog +define+x16 mobile_ddr.sv
     simulator   command line
     ---------   ------------
-    ModelSim    vlog +define+x16 mobile_ddr.v
-    VCS         vcs +define+x16 mobile_ddr.v
-    NC-Verilog  ncverilog +define+x16 mobile_ddr.v
+    ModelSim    vlog +define+x16 mobile_ddr.sv
+    VCS         vcs +define+x16 mobile_ddr.sv
+    NC-Verilog  ncverilog +define+x16 mobile_ddr.sv
 
 All combinations of speed grade and organization are considered valid 
 by the mobile ddr model even though a Micron part may not exist for every 
@@ -107,8 +107,8 @@ The following are examples of setting the MEM_BITS parameter to 8.
     simulator   command line
     ---------   ------------
     ModelSim    vsim -Gpart_mem_bits=8 mobile_ddr
-    VCS         vcs -pvalue+part_mem_bits=8 mobile_ddr.v
-    NC-Verilog  ncverilog +defparam+mobile_ddr.part_mem_bits=8 mobile_ddr.v
+    VCS         vcs -pvalue+part_mem_bits=8 mobile_ddr.sv
+    NC-Verilog  ncverilog +defparam+mobile_ddr.part_mem_bits=8 mobile_ddr.sv
 
 It is possible to allocate memory for every address supported by the 
 mobile ddr model by using the verilog compiler directive "`define FULL_MEM".
@@ -118,9 +118,9 @@ every address.
 
     Simulator   command line
     ---------   ------------
-    ModelSim    vlog +define+FULL_MEM mobile_ddr.v
-    VCS         vcs +define+FULL_MEM mobile_ddr.v
-    NC-Verilog  ncverilog +define+FULL_MEM mobile_ddr.v
+    ModelSim    vlog +define+FULL_MEM mobile_ddr.sv
+    VCS         vcs +define+FULL_MEM mobile_ddr.sv
+    NC-Verilog  ncverilog +define+FULL_MEM mobile_ddr.sv
 
 
 Reduced Page Mode:
@@ -139,9 +139,9 @@ size the same.
 
     Simulator   command line
     ---------   ------------
-    ModelSim    vlog +define+RP mobile_ddr.v
-    VCS         vcs +define+RP mobile_ddr.v
-    NC-Verilog  ncverilog +define+RP mobile_ddr.v
+    ModelSim    vlog +define+RP mobile_ddr.sv
+    VCS         vcs +define+RP mobile_ddr.sv
+    NC-Verilog  ncverilog +define+RP mobile_ddr.sv
 
 Multi-Chip Package Model:
 -------------------------
@@ -161,7 +161,7 @@ model, the define needs to be added:
 
     Simulator   command line
     ---------   ------------
-    ModelSim    vlog +define+DUAL_RANK mobile_ddr.v mobile_ddr_mcp.v
-    VCS         vcs +define+DUAL_RANK mobile_ddr.v mobile_ddr_mcp.v
-    NC-Verilog  ncverilog +define+DUAL_RANK mobile_ddr.v mobile_ddr_mcp.v
+    ModelSim    vlog +define+DUAL_RANK mobile_ddr.sv mobile_ddr_mcp.sv
+    VCS         vcs +define+DUAL_RANK mobile_ddr.sv mobile_ddr_mcp.sv
+    NC-Verilog  ncverilog +define+DUAL_RANK mobile_ddr.sv mobile_ddr_mcp.sv
 

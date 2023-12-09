@@ -17,7 +17,7 @@ GENERATED_VERILOG_FILE = bsg_cordic_hypotenuse.v
 #To generate the default design with the parameters at line #52, please use 
 # 'make bsg_cordic_hypotenuse.v'.
 
-SRC_FILES = $(GENERATED_VERILOG_FILE) cordic_stage.v
+SRC_FILES = $(GENERATED_VERILOG_FILE) cordic_stage.sv
 
 TEST_FILES = bsg_hypotenuse_test.cpp
 

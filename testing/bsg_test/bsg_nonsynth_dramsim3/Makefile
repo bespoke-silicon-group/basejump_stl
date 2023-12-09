@@ -17,17 +17,17 @@ CFLAGS += -CFLAGS "-DBASEJUMP_STL_DIR=$(BASEJUMP_STL_DIR)"
 
 DRAMS := hbm2_8gb_x128 hbm2_4gb_x128
 
-VSOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_defines.v
-#VSOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_reduce.v
-VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_clock_gen.v
-VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_reset_gen.v
-VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_test_rom.v
-VSOURCES += $(BASEJUMP_STL_DIR)/bsg_fsb/bsg_fsb_node_trace_replay.v
-VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_dramsim3_pkg.v
-VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_dramsim3.v
-VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_dramsim3_map.v
-VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_dramsim3_unmap.v
-VSOURCES += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma.v
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_defines.sv
+#VSOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_reduce.sv
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_clock_gen.sv
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_reset_gen.sv
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_test_rom.sv
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_legacy/bsg_fsb/bsg_fsb_node_trace_replay.v
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_dramsim3_pkg.sv
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_dramsim3.sv
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_dramsim3_map.sv
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_nonsynth_dramsim3_unmap.sv
+VSOURCES += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma.sv
 
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_test/bsg_dramsim3.cpp
 VSOURCES += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_mem_dma.cpp
@@ -54,10 +54,10 @@ all: $(TESTS)
 
 $(TESTS): $(VSOURCES)
 $(TESTS-single): %.single: %.tr
-$(TESTS-single): %.single: testbench.v
+$(TESTS-single): %.single: testbench.sv
 $(TESTS-multi): %.multi:  %.tr
 $(TESTS-multi): %.multi:  %.tr_1
-$(TESTS-multi): %.multi:  testbench_multi.v
+$(TESTS-multi): %.multi:  testbench_multi.sv
 $(TESTS):
 	vcs -R +v2k +lint=all,noSVA-UA,noSVA-NSVU,noVCDE \
 		-cpp g++ $(CFLAGS) \
