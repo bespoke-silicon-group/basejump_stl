@@ -6,18 +6,35 @@
 TOP ?= $(shell git rev-parse --show-toplevel)
 BSG_CADENV_DIR ?= $(TOP)/../bsg_cadenv
 
-include $(BSG_CADENV_DIR)/cadenv.mk
+-include $(BSG_CADENV_DIR)/cadenv.mk
 
+SIMULATOR ?= vcs
+
+ifeq ($(SIMULATOR),vcs)
+##########
+# settings for Synopsys VCS 
+BSG_IP_CORES_COMP = vcs -full64 -sverilog -timescale=1ps/1ps
+BSG_IP_CORES_ELAB = /usr/bin/true || 
+BSG_IP_CORES_SIM = ./simv
+
+BSG_IP_CORES_SIM_DEFINE_PARAM = +define+
+BSG_IP_CORES_SIM_INCLUDE_DIRS = +incdir+$(TOP)/bsg_test +incdir+$(TOP)/bsg_misc +incdir+$(TOP)/bsg_dataflow
+BSG_IP_CORES_SIM_CLEAN_FILES  = simv*
+#
+##########
+else
 ##########
 # settings for Xilinx Vivado
 BSG_IP_CORES_COMP = xvlog --sv
 BSG_IP_CORES_ELAB = xelab -debug typical -s top_sim -timescale=1ps/1ps
 BSG_IP_CORES_SIM  = xsim --runall top_sim
-BSG_IP_CORES_SIM_DEFINE_PARAM =-d@
+
+BSG_IP_CORES_SIM_DEFINE_PARAM = -d@
 BSG_IP_CORES_SIM_INCLUDE_DIRS = -i $(TOP)/bsg_test -i $(TOP)/bsg_misc -i $(TOP)/bsg_dataflow
 BSG_IP_CORES_SIM_CLEAN_FILES = xvlog* xelab* webtalk* xsim* *.wdb .Xil *.vpd csrc/ simv.daidir/ ucli.key
 #
 ##########
+endif
 
 ALL_FILES = $(foreach x,$(BSG_MISC_FILES),$(TOP)/bsg_misc/$(x))     \
               $(foreach x,$(BSG_ASYNC_FILES),$(TOP)/bsg_async/$(x)) \
