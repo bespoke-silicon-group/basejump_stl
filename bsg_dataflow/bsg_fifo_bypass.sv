@@ -16,7 +16,7 @@ module bsg_fifo_bypass
 
    , output logic [width_p-1:0] fifo_data_o  // late
    , output logic               fifo_v_o     // late
-   , input                      fifo_ready_i // early
+   , input                      fifo_ready_param_i // early
 
    , input [width_p-1:0]        fifo_data_i  // early
    , input                      fifo_v_i     // early
