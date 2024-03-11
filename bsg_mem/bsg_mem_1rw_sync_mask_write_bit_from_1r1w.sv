@@ -62,11 +62,10 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
     );
 
   wire [addr_width_lp-1:0]  w_addr_r;
+  wire [addr_width_lp-1:0]  addr_li = els_p > 1 ? addr_i : '0;
   wire                      addr_match = w_addr_r == addr_li;
   wire                      bypass_n = v_and_w_r & addr_match;
   wire                      bypass_r;
-  
-  wire [addr_width_lp-1:0]  addr_li = els_p > 1 ? addr_i : '0;
 
   bsg_dff_en
     #(.width_p(addr_width_lp+1))
