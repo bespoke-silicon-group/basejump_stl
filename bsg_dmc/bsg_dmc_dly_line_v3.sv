@@ -14,6 +14,8 @@
 // This module should be replaced by the hardened version
 // when being synthesized.
 
+`include "bsg_defines.sv"
+
 module bsg_dmc_dly_line_v3
  #(parameter `BSG_INV_PARAM(num_taps_p)
    )
