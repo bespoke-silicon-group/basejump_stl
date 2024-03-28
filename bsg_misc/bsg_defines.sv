@@ -86,6 +86,8 @@
   `define BSG_VIVADO_SYNTH_FAILS
   `elsif SURELOG
   `define BSG_VIVADO_SYNTH_FAILS
+  `elsif YOSYS
+  `define BSG_VIVADO_SYNTH_FAILS
   `else
   `define BSG_VIVADO_SYNTH_FAILS this_module_is_not_synthesizeable_in_vivado
   `endif
