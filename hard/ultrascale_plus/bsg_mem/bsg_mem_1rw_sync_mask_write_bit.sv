@@ -15,7 +15,7 @@
 
 `include "bsg_defines.sv"
 
-module bsg_mem_1rw_sync_mask_write_bit #(
+module bsg_mem_1rw_sync_mask_write_bit_distributed #(
   parameter `BSG_INV_PARAM(width_p )
   , parameter `BSG_INV_PARAM(els_p )
   , parameter latch_last_read_p=0
@@ -68,4 +68,46 @@ module bsg_mem_1rw_sync_mask_write_bit #(
 
 endmodule
 
-`BSG_ABSTRACT_MODULE(bsg_mem_1rw_sync_mask_write_bit)
+`BSG_ABSTRACT_MODULE(bsg_mem_1rw_sync_mask_write_bit_distributed)
+
+/* For RAMs larger than 512b, we use a 1r1w bram (pseudo bit-mask), for smaller, we use lutram */
+ module bsg_mem_1rw_sync_mask_write_bit #(
+   parameter `BSG_INV_PARAM(width_p )
+   , parameter `BSG_INV_PARAM(els_p )
+   , parameter latch_last_read_p=0
+   , parameter enable_clock_gating_p=0
+   , localparam addr_width_lp = `BSG_SAFE_CLOG2(els_p)
+ ) (
+   input                                     clk_i
+   , input                                   reset_i
+   , input  [`BSG_SAFE_MINUS(width_p,1):0] data_i
+   , input  [ addr_width_lp-1:0]             addr_i
+   , input                                   v_i
+   , input  [`BSG_SAFE_MINUS(width_p,1):0] w_mask_i
+   , input                                   w_i
+   , output [`BSG_SAFE_MINUS(width_p,1):0] data_o
+ );
+
+  if (els_p*width_p >= 512)
+    begin : from1r1w
+     bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
+     .width_p(width_p)
+     ,.els_p(els_p)
+     ,.latch_last_read_p(latch_last_read_p)
+     ,.enable_clock_gating_p(enable_clock_gating_p)
+     ) ram (.*);
+    end
+  else
+  begin : fromlutram
+    bsg_mem_1rw_sync_mask_write_bit_distributed #(
+    .width_p(width_p)
+    ,.els_p(els_p)
+    ,.latch_last_read_p(latch_last_read_p)
+    ,.enable_clock_gating_p(enable_clock_gating_p)
+    ) ram (.*);
+  end
+
+ endmodule
+
+ `BSG_ABSTRACT_MODULE(bsg_mem_1rw_sync_mask_write_bit)
+
