@@ -208,4 +208,4 @@
         `define C \
     `endif
 
-`endif
+`endif // BSG_DEFINES_V
