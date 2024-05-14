@@ -26,20 +26,25 @@ module bsg_rp_clk_gen_osc_v3_row
   , output clk_o
   );
 
+  wire lobit, hibit;
+  sky130_fd_sc_hd__conb T0 (.HI(hibit) .LO(lobit));
+
   wire ctl_r;
-  DFCSNQD1BWP7T30P140ULVT D0 (.Q(ctl_r), .CP(clkgate_i), .D(ctl_i), .CDN(async_reset_neg_i), .SDN(async_set_neg_i));
+  sky130_fd_sc_hd__dfbbp D0 (.Q(ctl_r), .QN(), .D(ctl_i), .RESET_B(async_reset_neg_i), .SET_B(async_set_neg_i));
 
-  wire ctl_en;
-  CKND2D1BWP7T30P140ULVT N0 (.ZN(ctl_en), .A1(clkdly_i), .A2(ctl_r));
+  wire clkdly_inv, ctl_en;
+  sky130_fd_sc_hd__clkinv I0 (.Y(clkdly_inv), .A(clkdly_i));
+  sky130_fd_sc_hdll__clkmux2 M0 (.X(ctl_en), .A0(hibit), .A1(clkdly_inv), .S(ctl_r)
 
-  wire hibit;
-  TIEHBWP7T30P140ULVT T0 (.Z(hibit));
-  wire lobit;
-  TIELBWP7T30P140ULVT T1 (.ZN(lobit));
+  wire clkfb_inv, fb;
+  sky130_fd_sc_hd__clkinv I1 (.Y(clkfb_inv), .A(clkfb_i));
+  sky130_fd_sc_hdll__clkmux2 M1 (.X(fb), .A0(hibit), .A1(clkfb_inv), .S(hibit));
 
-  wire fb;
-  CKND2D1BWP7T30P140ULVT N1 (.ZN(fb), .A1(clkfb_i), .A2(hibit));
-  CKND2D1BWP7T30P140ULVT N2 (.ZN(clk_o), .A1(fb), .A2(ctl_en));
+  wire fb_inv, clk;
+  sky130_fd_sc_hd__clkinv I2 (.Y(fb_inv), .A(fb));
+  sky130_fd_sc_hdll__clkmux2 M2 (.X(clk), .A0(hibit), .A1(fb_inv), .S(ctl_en));
+
+  assign clk_o = clk;
 
 endmodule
 """)
@@ -54,20 +59,18 @@ module bsg_rp_clk_gen_osc_v3_col
    , output clk_o
    );
 
-  wire hibit;
-  TIEHBWP7T30P140ULVT T0 (.Z(hibit));
-  wire lobit;
-  TIELBWP7T30P140ULVT T1 (.ZN(lobit));
+  wire lobit, hibit;
+  sky130_fd_sc_hd__conb T0 (.HI(hibit) .LO(lobit));
 
   // Size to 1/4 of column load 
   wire clkgate_inv;
-  CKND2BWP7T30P140ULVT I0 (.ZN(clkgate_inv), .I(clkgate_i));
+  sky130_fd_sc_hd__clkinv I0 (.Y(clkgate_inv), .A(clkgate_i));
 
   wire clkdly_inv;
-  CKND2BWP7T30P140ULVT I1 (.ZN(clkdly_inv), .I(clkdly_i));
+  sky130_fd_sc_lp__clkinv I1 (.Y(clkdly_inv), .A(clkdly_i));
 
   wire async_reset_neg;
-  INVD1BWP7T30P140ULVT I2 (.ZN(async_reset_neg), .I(async_reset_i));
+  sky130_fd_sc_lp__inv I2 (.Y(async_reset_neg), .A(async_reset_i));
 
   wire [{num_rows_p}:0] clkfb;
   assign clkfb[0] = clkfb_i;
