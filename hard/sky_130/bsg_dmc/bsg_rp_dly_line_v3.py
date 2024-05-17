@@ -51,7 +51,7 @@ print("""
       , output clk_o
       );
       wire lobit, hibit;
-      sky130_fd_sc_hd__conb T0 (.HI(hibit) .LO(lobit));
+      sky130_fd_sc_hd__conb T0 (.HI(hibit), .LO(lobit));
   """.format(ctl_width_p_m1=num_cols_p*num_rows_p-1, num_dly_p=num_dly_p))
 print("""
   wire fb_inv;
@@ -76,7 +76,7 @@ for i in range(0, num_cols_p):
         );
 """.format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, i=i, ip1=i+1, i_num_rows_p=i*num_rows_p, ip1_num_rows_p=(i+1)*num_rows_p-1, num_rows_p_m1=num_rows_p-1))
 print("""
-  sky130_fd_sc_hd__clkbuf B0 (.X(clk_o), .A(fb_col[{num_cols_p}]));
+  sky130_fd_sc_hd__clkbuf_1 B0 (.X(clk_o), .A(fb_col[{num_cols_p}]));
 endmodule
 """.format(num_cols_p=num_cols_p))
 print("""
@@ -124,7 +124,7 @@ print("""
 
 for i in range(num_dly_p):
   print("""
-    sky130_fd_sc_hd__clkbuf B{i} (.X(n[{ip1}]), .A(n[{i}]));
+    sky130_fd_sc_hd__clkbuf_1 B{i} (.X(n[{ip1}]), .A(n[{i}]));
 """.format(i=i, ip1=i+1))
 
 print("""
@@ -132,7 +132,7 @@ print("""
   wire #100 clk_dly = n[{num_dly_p}];
 
   wire lobit, hibit;
-  sky130_fd_sc_hd__conb T0 (.HI(hibit) .LO(lobit));
+  sky130_fd_sc_hd__conb T0 (.HI(hibit), .LO(lobit));
 
   wire meta;
   sky130_fd_sc_hd__dfrtn meta_r (.Q(meta), .CLKN(clk_i), .RESET_B(async_reset_neg), .D(clk_dly));
