@@ -30,11 +30,11 @@ print("""
     wire set_left, set_right, set;
     wire ctl_n, ctl_r;
 
-    sky130_fd_sc_hd__and2 A0 (.A(shift_right), .B(ctl_m1), .X(set_right));
-    sky130_fd_sc_hd__and2 A1 (.A(shift_left), .B(ctl_p1), .X(set_left));
-    sky130_fd_sc_hd__or2 O0 (.A(set_left), .B(set_right), .X(set));
-    sky130_fd_sc_hd__mux2 M0 (.X(ctl_n), .S(counter_en), .A0(ctl_r), .A1(set));
-    sky130_fd_sc_hd__dfbbp D0 (.Q(ctl_r), .Q_N(), .CLK(clk_i), .D(ctl_n), .RESET_B(async_reset_neg), .SET_B(async_set_neg));
+    sky130_fd_sc_hd__and2_1 A0 (.A(shift_right), .B(ctl_m1), .X(set_right));
+    sky130_fd_sc_hd__and2_1 A1 (.A(shift_left), .B(ctl_p1), .X(set_left));
+    sky130_fd_sc_hd__or2_1 O0 (.A(set_left), .B(set_right), .X(set));
+    sky130_fd_sc_hd__mux2_1 M0 (.X(ctl_n), .S(counter_en), .A0(ctl_r), .A1(set));
+    sky130_fd_sc_hd__dfbbp_1 D0 (.Q(ctl_r), .Q_N(), .CLK(clk_i), .D(ctl_n), .RESET_B(async_reset_neg), .SET_B(async_set_neg));
 
     assign ctl_o = ctl_r;
 
@@ -51,16 +51,16 @@ print("""
       , output clk_o
       );
       wire lobit, hibit;
-      sky130_fd_sc_hd__conb T0 (.HI(hibit), .LO(lobit));
+      sky130_fd_sc_hd__conb_1 T0 (.HI(hibit), .LO(lobit));
   """.format(ctl_width_p_m1=num_cols_p*num_rows_p-1, num_dly_p=num_dly_p))
 print("""
   wire fb_inv;
-  sky130_fd_sc_hd__clkinv I0 (.Y(fb_inv), .A(clk_i));
+  sky130_fd_sc_hd__clkinv_1 I0 (.Y(fb_inv), .A(clk_i));
   wire gate_en_sync_1_r, gate_en_sync_2_r;
-  sky130_fd_sc_hd__dfxtp S1 (.D(trigger_i), .CLK(clk_i), .Q(gate_en_sync_1_r));
-  sky130_fd_sc_hd__dfxtp S2 (.D(gate_en_sync_1_r), .CLK(clk_i), .Q(gate_en_sync_2_r));
+  sky130_fd_sc_hd__dfxtp_1 S1 (.D(trigger_i), .CLK(clk_i), .Q(gate_en_sync_1_r));
+  sky130_fd_sc_hd__dfxtp_1 S2 (.D(gate_en_sync_1_r), .CLK(clk_i), .Q(gate_en_sync_2_r));
   wire fb_gated;
-  sky130_fd_sc_hd__dlclkp CG0 (.GCLK(fb_gated), .CLK(clk_i), .GATE(gate_en_sync_2_r));
+  sky130_fd_sc_hd__dlclkp_1 CG0 (.GCLK(fb_gated), .CLK(clk_i), .GATE(gate_en_sync_2_r));
   wire [{num_cols_p}:0] fb_col;
   assign fb_col[0] = 1'b0;
 """.format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, num_dly_p=num_dly_p, num_rows_p_m1=num_rows_p-1))
@@ -87,21 +87,21 @@ print("""
     );
 
   wire lobit, hibit;
-  sky130_fd_sc_hd__conb T0 (.HI(hibit), .LO(lobit));
+  sky130_fd_sc_hd__conb_1 T0 (.HI(hibit), .LO(lobit));
   wire async_reset_neg;
-  sky130_fd_sc_hd__inv I0 (.Y(async_reset_neg), .A(async_reset_i));
+  sky130_fd_sc_hd__inv_1 I0 (.Y(async_reset_neg), .A(async_reset_i));
   // State machine
   // Trigger off
   wire trigger_off, trigger_on;
-  sky130_fd_sc_hd__dfstp D0 (.Q(trigger_off), .CLK(clk_i), .D(trigger_on), .SET_B(async_reset_neg));
+  sky130_fd_sc_hd__dfstp_1 D0 (.Q(trigger_off), .CLK(clk_i), .D(trigger_on), .SET_B(async_reset_neg));
   // Change counter
   wire counter_en;
-  sky130_fd_sc_hd__dfrtp D1 (.Q(counter_en), .CLK(clk_i), .D(trigger_off), .RESET_B(async_reset_neg));
+  sky130_fd_sc_hd__dfrtp_1 D1 (.Q(counter_en), .CLK(clk_i), .D(trigger_off), .RESET_B(async_reset_neg));
   // Pause
   wire pause;
-  sky130_fd_sc_hd__dfrtp D2 (.Q(pause), .CLK(clk_i), .D(counter_en), .RESET_B(async_reset_neg));
+  sky130_fd_sc_hd__dfrtp_1 D2 (.Q(pause), .CLK(clk_i), .D(counter_en), .RESET_B(async_reset_neg));
   // Trigger on
-  sky130_fd_sc_hd__dfrtp D3 (.Q(trigger_on), .CLK(clk_i), .D(pause), .RESET_B(async_reset_neg));
+  sky130_fd_sc_hd__dfrtp_1 D3 (.Q(trigger_on), .CLK(clk_i), .D(pause), .RESET_B(async_reset_neg));
   wire [{num_els_p}-1:0] ctl_n, ctl_r;
   wire clk_90;
   bsg_rp_dly_line_unit_v3 d90_BSG_DONT_TOUCH
@@ -111,6 +111,7 @@ print("""
     ,.clk_i(clk_i)
     ,.clk_o(clk_90)
     );
+  wire clk_180;
   bsg_rp_dly_line_unit_v3 d180_BSG_DONT_TOUCH
    (.async_reset_i(async_reset_i)
     ,.trigger_i(trigger_on)
@@ -129,16 +130,16 @@ for i in range(num_dly_p):
 
 print("""
   // Delay value ignored in synthesis
-  wire #100 clk_dly = n[{num_dly_p}];
-
-  wire lobit, hibit;
-  sky130_fd_sc_hd__conb T0 (.HI(hibit), .LO(lobit));
-
+  wire
+`ifndef __openlane__
+  #100
+`endif
+  clk_dly = n[{num_dly_p}];
   wire meta;
-  sky130_fd_sc_hd__dfrtn meta_r (.Q(meta), .CLKN(clk_i), .RESET_B(async_reset_neg), .D(clk_dly));
+  sky130_fd_sc_hd__dfrtn_1 meta_r (.Q(meta), .CLK_N(clk_i), .RESET_B(async_reset_neg), .D(clk_dly));
   wire meta_sync, meta_sync_sync, meta_sync_sync_inv;
-  sky130_fd_sc_hd__dfrbp bsg_SYNC_1_r (.Q(meta_sync), .Q_N(), .CLK(clk_i), .D(meta), .RESET_B(async_reset_neg));
-  sky130_fd_sc_hd__dfrbp bsg_SYNC_2_r (.Q(meta_sync_sync), .Q_N(meta_sync_sync_inv), .CLK(clk_i), .D(meta_sync), .RESET_B(async_reset_neg));
+  sky130_fd_sc_hd__dfrbp_1 bsg_SYNC_1_r (.Q(meta_sync), .Q_N(), .CLK(clk_i), .D(meta), .RESET_B(async_reset_neg));
+  sky130_fd_sc_hd__dfrbp_1 bsg_SYNC_2_r (.Q(meta_sync_sync), .Q_N(meta_sync_sync_inv), .CLK(clk_i), .D(meta_sync), .RESET_B(async_reset_neg));
   wire shift_left = meta_sync_sync;
   wire shift_right = meta_sync_sync_inv;
   wire [{num_els_p}-1:0] set_right, set_left, set;

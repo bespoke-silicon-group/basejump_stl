@@ -27,22 +27,22 @@ module bsg_rp_clk_gen_osc_v3_row
   );
 
   wire lobit, hibit;
-  sky130_fd_sc_hd__conb T0 (.HI(hibit), .LO(lobit));
+  sky130_fd_sc_hd__conb_1 T0 (.HI(hibit), .LO(lobit));
 
   wire ctl_r;
-  sky130_fd_sc_hd__dfbbp D0 (.Q(ctl_r), .QN(), .D(ctl_i), .RESET_B(async_reset_neg_i), .SET_B(async_set_neg_i));
+  sky130_fd_sc_hd__dfbbp_1 D0 (.Q(ctl_r), .Q_N(), .CLK(clkgate_i), .D(ctl_i), .RESET_B(async_reset_neg_i), .SET_B(async_set_neg_i));
 
   wire clkdly_inv, ctl_en;
-  sky130_fd_sc_hd__clkinv_1 I0 (.Y(clkdly_inv), .A(clkdly_i));
-  sky130_fd_sc_hdll__clkmux2 M0 (.X(ctl_en), .A0(hibit), .A1(clkdly_inv), .S(ctl_r));
+  sky130_fd_sc_hd__inv_1 I0 (.Y(clkdly_inv), .A(clkdly_i));
+  sky130_fd_sc_hd__mux2_1 M0 (.X(ctl_en), .A0(hibit), .A1(clkdly_inv), .S(ctl_r));
 
   wire clkfb_inv, fb;
-  sky130_fd_sc_hd__clkinv_1 I1 (.Y(clkfb_inv), .A(clkfb_i));
-  sky130_fd_sc_hdll__clkmux2 M1 (.X(fb), .A0(hibit), .A1(clkfb_inv), .S(hibit));
+  sky130_fd_sc_hd__inv_1 I1 (.Y(clkfb_inv), .A(clkfb_i));
+  sky130_fd_sc_hd__mux2_1 M1 (.X(fb), .A0(hibit), .A1(clkfb_inv), .S(hibit));
 
   wire fb_inv, clk;
-  sky130_fd_sc_hd__clkinv_1 I2 (.Y(fb_inv), .A(fb));
-  sky130_fd_sc_hdll__clkmux2 M2 (.X(clk), .A0(hibit), .A1(fb_inv), .S(ctl_en));
+  sky130_fd_sc_hd__inv_1 I2 (.Y(fb_inv), .A(fb));
+  sky130_fd_sc_hd__mux2_1 M2 (.X(clk), .A0(hibit), .A1(fb_inv), .S(ctl_en));
 
   assign clk_o = clk;
 
@@ -60,17 +60,17 @@ module bsg_rp_clk_gen_osc_v3_col
    );
 
   wire lobit, hibit;
-  sky130_fd_sc_hd__conb T0 (.HI(hibit), .LO(lobit));
+  sky130_fd_sc_hd__conb_1 T0 (.HI(hibit), .LO(lobit));
 
   // Size to 1/4 of column load 
   wire clkgate_inv;
-  sky130_fd_sc_hd__clkinv_1 I0 (.Y(clkgate_inv), .A(clkgate_i));
+  sky130_fd_sc_hd__inv_1 I0 (.Y(clkgate_inv), .A(clkgate_i));
 
   wire clkdly_inv;
-  sky130_fd_sc_lp__clkinv_1 I1 (.Y(clkdly_inv), .A(clkdly_i));
+  sky130_fd_sc_hd__inv_1 I1 (.Y(clkdly_inv), .A(clkdly_i));
 
   wire async_reset_neg;
-  sky130_fd_sc_lp__inv I2 (.Y(async_reset_neg), .A(async_reset_i));
+  sky130_fd_sc_hd__inv_1 I2 (.Y(async_reset_neg), .A(async_reset_i));
 
   wire [{num_rows_p}:0] clkfb;
   assign clkfb[0] = clkfb_i;

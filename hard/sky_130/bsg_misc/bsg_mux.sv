@@ -11,28 +11,33 @@ module bsg_mux #(parameter width_p = 2
     ,output [width_p-1:0] data_o
     );
 
-   if ((els_p == 2) && (harden_p) && (balenced_p))
-     begin : fi
+   if ((els_p == 2) && (harden_p) && (balanced_p))
+     begin : macro
         for (genvar j = 0; j < width_p; j=j+1)
-          begin : macro
-            // https://diychip.org/sky130/sky130_fd_sc_hdll/cells/clkmux2/
-            sky130_fd_sc_hdll__clkmux2 m (.X(data_o[j]), .A1(data_i[1][j]), .A0(data_i[0][j]), .S(sel_i));
-          end
+          sky130_fd_sc_hd__mux2_1 m
+	    (.X(data_o[j])
+	     ,.A1(data_i[1][j])
+	     ,.A0(data_i[0][j])
+	     ,.S(sel_i)
+	     );
      end
-   if ((els_p == 4) && (harden_p) && (balanced_p))
-     begin : fi
-        wire [width_p-1:0] data32_lo, data10_lo;
-        // recurse
-        bsg_mux #(.width_p(width_p), .els_p(2), .harden_p(1), .balanced_p(1))
-          m32 (.data_o(data32_lo), .data_i({data_i[3], data_i[2]}), .sel_i(sel_i[0]));
-        bsg_mux #(.width_p(width_p), .els_p(2), .harden_p(1), .balanced_p(1))
-          m10 (.data_o(data10_lo), .data_i({data_i[1], data_i[0]}), .sel_i(sel_i[0]));
-        bsg_mux #(.width_p(width_p), .els_p(2), .harden_p(1), .balanced_p(1))
-          m (.data_o(data_o), .data_i({data32_lo, data10_lo}), .sel_i(sel_i[1]));
+   else if ((els_p == 4) && (harden_p) && (balanced_p))
+     begin : macro
+        for (genvar j = 0; j < width_p; j=j+1)
+          sky130_fd_sc_hd__mux4_1 m
+            (.X(data_o)
+             ,.A3(data_i[3][j])
+             ,.A2(data_i[2][j])
+             ,.A1(data_i[1][j])
+             ,.A0(data_i[0][j])
+             ,.S1(sel_i[1])
+             ,.S0(sel_i[0])
+             );
      end
    else
      begin : nofi
-        assign data_o = data_i[sel_i];
+	for (genvar j = 0; j < width_p; j+=1)
+          assign data_o[j] = data_i[sel_i][j];
      end
 
 endmodule
