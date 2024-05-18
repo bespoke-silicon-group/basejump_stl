@@ -21,34 +21,37 @@ module bsg_rp_clk_gen_osc_v3
    , input [{ctl_width_p_m1}:0] ctl_one_hot_i
    , output clk_o
    );
-  wire lobit;
-  TIELBWP7T30P140ULVT T0 (.ZN(lobit));
-  wire hibit;
-  TIEHBWP7T30P140ULVT T1 (.Z(hibit));
+  wire lobit, hibit;
+  sky130_fd_sc_hd__conb_1 T0 (.HI(hibit), .LO(lobit));
   wire async_reset_neg;
-  INVD1BWP7T30P140ULVT I0 (.ZN(async_reset_neg), .I(async_reset_i));
+  sky130_fd_sc_hd__inv_1 I0 (.Y(async_reset_neg), .A(async_reset_i));
   wire fb_inv, fb, fb_dly, fb_rst;
-  CKND1BWP7T30P140ULVT I1 (.ZN(fb_inv), .I(fb));
-  CKND2D1BWP7T30P140ULVT N0 (.ZN(fb_rst), .A1(fb_inv), .A2(async_reset_neg));
+  sky130_fd_sc_hd__clkinv_1 I1 (.Y(fb_inv), .A(fb));
+
+  sky130_fd_sc_hd__mux2_1 M0 (.X(fb_rst), .A0(hibit), .A1(fb_inv), .S(async_reset_neg));
   wire [{num_dly_p}:0] n;
   assign n[0] = fb_rst;
 """.format(ctl_width_p_m1=num_cols_p*num_rows_p-1, num_dly_p=num_dly_p))
 for i in range(0, num_dly_p):
     print("""
-    CKBD4BWP7T30P140ULVT B{i} (.Z(n[{ip1}]), .I(n[{i}]));
+    sky130_fd_sc_hd__clkbuf_1 B{i} (.X(n[{ip1}]), .A(n[{i}]));
 """.format(i=i, ip1=i+1))
 print("""
   // Delay value ignored in synthesis
-  assign #100 fb_dly = n[{num_dly_p}];
-  CKND4BWP7T30P140ULVT I2 (.ZN(clk_o), .I(fb_dly));
+  assign
+`ifndef __openlane__
+  #100
+`endif
+  fb_dly = n[{num_dly_p}];
+  sky130_fd_sc_hd__clkinv_1 I2 (.Y(clk_o), .A(fb_dly));
   wire fb_gate;
-  CKND1BWP7T30P140ULVT I3 (.ZN(fb_gate), .I(fb_dly));
+  sky130_fd_sc_hd__clkinv_1 I3 (.Y(fb_gate), .A(fb_dly));
   wire gate_en_sync_1_r, gate_en_sync_2_r;
-  DFQD1BWP7T30P140ULVT S1 (.D(trigger_i), .CP(fb_gate), .Q(gate_en_sync_1_r));
-  DFQD1BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(fb_gate), .Q(gate_en_sync_2_r));
+  sky130_fd_sc_hd__dfxtp_1 S1 (.D(trigger_i), .CLK(fb_gate), .Q(gate_en_sync_1_r));
+  sky130_fd_sc_hd__dfxtp_1 S2 (.D(gate_en_sync_1_r), .CLK(fb_gate), .Q(gate_en_sync_2_r));
   wire fb_gated;
   // Size to 1/4 of number of taps
-  CKLNQD16BWP7T30P140ULVT CG0 (.Q(fb_gated), .CP(fb_gate), .E(gate_en_sync_2_r), .TE(lobit));
+  sky130_fd_sc_hd__dlclkp_1 CG0 (.GCLK(fb_gated), .CLK(fb_gate), .GATE(gate_en_sync_2_r));
   wire [{num_cols_p}:0] fb_col;
   assign fb_col[0] = 1'b0;
 """.format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, num_dly_p=num_dly_p))
