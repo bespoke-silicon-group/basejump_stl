@@ -31,18 +31,13 @@ module bsg_rp_clk_gen_osc_v3_row
 
   wire ctl_r;
   sky130_fd_sc_hd__dfbbp_1 D0 (.Q(ctl_r), .Q_N(), .CLK(clkgate_i), .D(ctl_i), .RESET_B(async_reset_neg_i), .SET_B(async_set_neg_i));
+  wire ctl_en;
+  sky130_fd_sc_hd__nand2_1 N0 (.Y(ctl_en), .A(clkdly_i), .B(ctl_r));
 
-  wire clkdly_inv, ctl_en;
-  sky130_fd_sc_hd__inv_1 I0 (.Y(clkdly_inv), .A(clkdly_i));
-  sky130_fd_sc_hd__mux2_1 M0 (.X(ctl_en), .A0(hibit), .A1(clkdly_inv), .S(ctl_r));
-
-  wire clkfb_inv, fb;
-  sky130_fd_sc_hd__inv_1 I1 (.Y(clkfb_inv), .A(clkfb_i));
-  sky130_fd_sc_hd__mux2_1 M1 (.X(fb), .A0(hibit), .A1(clkfb_inv), .S(hibit));
-
-  wire fb_inv, clk;
-  sky130_fd_sc_hd__inv_1 I2 (.Y(fb_inv), .A(fb));
-  sky130_fd_sc_hd__mux2_1 M2 (.X(clk), .A0(hibit), .A1(fb_inv), .S(ctl_en));
+  wire fb;
+  sky130_fd_sc_hd__nand2_1 N1 (.Y(fb), .A(clkfb_i), .B(hibit));
+  wire clk;
+  sky130_fd_sc_hd__nand2_1 N2 (.Y(clk), .A(fb), .B(ctl_en));
 
   assign clk_o = clk;
 
