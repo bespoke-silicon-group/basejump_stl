@@ -28,7 +28,7 @@ module bsg_rp_clk_gen_osc_v3
   wire fb_inv, fb, fb_dly, fb_rst;
   sky130_fd_sc_hd__clkinv_1 I1 (.Y(fb_inv), .A(fb));
 
-  sky130_fd_sc_hd__mux2_1 M0 (.X(fb_rst), .A0(hibit), .A1(fb_inv), .S(async_reset_neg));
+  sky130_fd_sc_hd__nand2_1 N0 (.Y(fb_rst), .A(fb_inv), .B(async_reset_neg));
   wire [{num_dly_p}:0] n;
   assign n[0] = fb_rst;
 """.format(ctl_width_p_m1=num_cols_p*num_rows_p-1, num_dly_p=num_dly_p))
