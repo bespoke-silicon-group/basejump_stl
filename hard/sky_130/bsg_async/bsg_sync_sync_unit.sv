@@ -33,9 +33,13 @@ module bsg_sync_sync_unit
    ,.Q(bsg_SYNC_1_r)
    );
 
+  wire bsg_SYNC_2_n;
+  bsg_nonsynth_delay_line #(.width_p(1), .delay_p(10)) hard_sync_buf_BSG_DONT_TOUCH
+   (.o(bsg_SYNC_2_n), .i(bsg_SYNC_1_r));
+
   sky130_fd_sc_hd__dfxtp_1 hard_sync_int2_BSG_SYNC
    (.CLK(oclk_i)
-   ,.D(bsg_SYNC_1_r)
+   ,.D(bsg_SYNC_2_n)
    ,.Q(bsg_SYNC_2_r)
    );
 

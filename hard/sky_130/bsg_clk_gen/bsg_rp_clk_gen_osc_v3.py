@@ -25,7 +25,7 @@ module bsg_rp_clk_gen_osc_v3
   sky130_fd_sc_hd__conb_1 T0 (.HI(hibit), .LO(lobit));
   wire async_reset_neg;
   sky130_fd_sc_hd__inv_1 I0 (.Y(async_reset_neg), .A(async_reset_i));
-  wire fb_inv, fb, fb_dly, fb_rst;
+  wire fb_inv, fb, fb_rst;
   sky130_fd_sc_hd__clkinv_1 I1 (.Y(fb_inv), .A(fb));
 
   sky130_fd_sc_hd__nand2_1 N0 (.Y(fb_rst), .A(fb_inv), .B(async_reset_neg));
@@ -37,12 +37,9 @@ for i in range(0, num_dly_p):
     sky130_fd_sc_hd__clkbuf_1 B{i} (.X(n[{ip1}]), .A(n[{i}]));
 """.format(i=i, ip1=i+1))
 print("""
-  // Delay value ignored in synthesis
-  assign
-`ifndef __openlane__
-  #100
-`endif
-  fb_dly = n[{num_dly_p}];
+  // Synthesize as blackbox
+  wire fb_dly;
+  bsg_nonsynth_delay_line #(.width_p(1), .delay_p(10)) fb_dly_BSG_DONT_TOUCH (.o(fb_dly), .i(n[{num_dly_p}]));
   sky130_fd_sc_hd__clkinv_1 I2 (.Y(clk_o), .A(fb_dly));
   wire fb_gate;
   sky130_fd_sc_hd__clkinv_1 I3 (.Y(fb_gate), .A(fb_dly));
