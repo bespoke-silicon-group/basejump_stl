@@ -129,12 +129,9 @@ for i in range(num_dly_p):
 """.format(i=i, ip1=i+1))
 
 print("""
-  // Delay value ignored in synthesis
-  wire
-`ifndef __openlane__
-  #100
-`endif
-  clk_dly = n[{num_dly_p}];
+  // Synthesize as blackbox
+  wire clk_dly;
+  bsg_nonsynth_delay_line #(.width_p(1), .delay_p(10)) clk_dly_BSG_DONT_TOUCH (.o(clk_dly), .i(n[{num_dly_p}]));
   wire meta;
   sky130_fd_sc_hd__dfrtn_1 meta_r (.Q(meta), .CLK_N(clk_i), .RESET_B(async_reset_neg), .D(clk_dly));
   wire meta_sync, meta_sync_sync, meta_sync_sync_inv;
