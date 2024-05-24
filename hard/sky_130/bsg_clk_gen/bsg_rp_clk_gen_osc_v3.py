@@ -39,7 +39,7 @@ for i in range(0, num_dly_p):
 print("""
   // Synthesize as blackbox
   wire fb_dly;
-  bsg_nonsynth_delay_line #(.width_p(1), .delay_p(10)) fb_dly_BSG_DONT_TOUCH (.o(fb_dly), .i(n[{num_dly_p}]));
+  bsg_nonsynth_delay_line fb_dly_BSG_DONT_TOUCH (.o(fb_dly), .i(n[{num_dly_p}]));
   sky130_fd_sc_hd__clkinv_1 I2 (.Y(clk_o), .A(fb_dly));
   wire fb_gate;
   sky130_fd_sc_hd__clkinv_1 I3 (.Y(fb_gate), .A(fb_dly));
