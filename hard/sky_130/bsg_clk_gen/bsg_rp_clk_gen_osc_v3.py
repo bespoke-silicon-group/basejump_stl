@@ -34,15 +34,15 @@ module bsg_rp_clk_gen_osc_v3
 """.format(ctl_width_p_m1=num_cols_p*num_rows_p-1, num_dly_p=num_dly_p))
 for i in range(0, num_dly_p):
     print("""
-    sky130_fd_sc_hd__clkbuf_1 B{i} (.X(n[{ip1}]), .A(n[{i}]));
+    sky130_fd_sc_hd__clkbuf_2 B{i} (.X(n[{ip1}]), .A(n[{i}]));
 """.format(i=i, ip1=i+1))
 print("""
   // Synthesize as blackbox
   wire fb_dly;
   bsg_nonsynth_delay_line fb_dly_BSG_DONT_TOUCH (.o(fb_dly), .i(n[{num_dly_p}]));
-  sky130_fd_sc_hd__clkinv_1 I2 (.Y(clk_o), .A(fb_dly));
+  sky130_fd_sc_hd__clkinv_4 I2 (.Y(clk_o), .A(fb_dly));
   wire fb_gate;
-  sky130_fd_sc_hd__clkinv_1 I3 (.Y(fb_gate), .A(fb_dly));
+  sky130_fd_sc_hd__clkinv_4 I3 (.Y(fb_gate), .A(fb_dly));
   wire gate_en_sync_1_r, gate_en_sync_2_r;
   sky130_fd_sc_hd__dfxtp_1 S1 (.D(trigger_i), .CLK(fb_gate), .Q(gate_en_sync_1_r));
   sky130_fd_sc_hd__dfxtp_1 S2 (.D(gate_en_sync_1_r), .CLK(fb_gate), .Q(gate_en_sync_2_r));
