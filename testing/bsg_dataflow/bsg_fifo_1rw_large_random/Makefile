@@ -34,19 +34,19 @@ VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_dataflow/bsg_fifo_1r1w_small_hardened
 VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_dataflow/bsg_fifo_tracker.sv
 VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_dff_en.sv
 VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_circular_ptr.sv
-VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_mem_1r1w_sync.sv
-VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_mem_1r1w_sync_synth.sv
-VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_imul_iterative.sv
+VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_mem_1rw_sync.sv
+VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_mem/bsg_mem_1rw_sync_synth.sv
+VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_dataflow/bsg_fifo_1rw_large.sv
 
 # testbench verilog filelist
-VERILOG_SOURCES += $(PWD)/bsg_imul_iterative_wrapper.sv
-VERILOG_SOURCES += $(PWD)/bsg_imul_iterative_cov.sv
+VERILOG_SOURCES += $(PWD)/bsg_fifo_1rw_large_wrapper.sv
+VERILOG_SOURCES += $(PWD)/bsg_fifo_1rw_large_cov.sv
 
 # TOPLEVEL is the name of the toplevel module in your Verilog or VHDL file
-TOPLEVEL = bsg_imul_iterative_wrapper
+TOPLEVEL = bsg_fifo_1rw_large_wrapper
 
 # MODULE is the basename of the Python test file
-MODULE = bsg_imul_iterative_testbench
+MODULE = bsg_fifo_1rw_large_testbench
 
 # include cocotb's make rules to take care of the simulator setup
 include $(shell cocotb-config --makefiles)/Makefile.sim
