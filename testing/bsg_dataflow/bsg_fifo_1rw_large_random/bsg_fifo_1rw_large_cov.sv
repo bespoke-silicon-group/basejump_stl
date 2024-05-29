@@ -22,9 +22,11 @@ module bsg_fifo_1rw_large_cov
   // internal registers
   ,input [ptr_width_lp-1:0] rd_ptr  // registered in sub-module bsg_circular_ptr
   ,input [ptr_width_lp-1:0] wr_ptr  // registered in sub-module bsg_circular_ptr
+  ,input last_op_is_read_r
+
+  // internal nets for ease of verification
   ,input full_o  // not a register
   ,input empty_o // not a register
-  ,input last_op_is_read_r
   );
 
   // reset
@@ -39,8 +41,8 @@ module bsg_fifo_1rw_large_cov
     cp_v: coverpoint v_i;
     cp_rptr: coverpoint rd_ptr;
     cp_wptr: coverpoint wr_ptr;
-    cp_loir: coverpoint last_op_is_read_r {illegal_bins ig = {0};}  // resets to 1, and then only possible to read from cp_normal to get to cp_empty
-    cp_end: coverpoint enq_not_deq_i;// {illegal_bins ig = {0};}  // cannot deque when empty
+    cp_loir: coverpoint last_op_is_read_r {illegal_bins ig = {0};}  // resets to 1, and cannot empty fifo by writing
+    cp_end: coverpoint enq_not_deq_i;  // cannot deque when empty
 
     cross_all: cross cp_v, cp_rptr, cp_wptr, cp_loir, cp_end {
       // by definition, fifo empty means r/w pointers are the same
@@ -57,7 +59,7 @@ module bsg_fifo_1rw_large_cov
     cp_rptr: coverpoint rd_ptr;
     cp_wptr: coverpoint wr_ptr;
     cp_loir: coverpoint last_op_is_read_r {illegal_bins ig = {1};}  // cannot fill fifo by reading
-    cp_end: coverpoint enq_not_deq_i;// {illegal_bins ig = {1};}  // cannot write to full fifo
+    cp_end: coverpoint enq_not_deq_i;  // cannot write to full fifo
 
     cross_all: cross cp_v, cp_rptr, cp_wptr, cp_loir, cp_end {
       // by definition, fifo full means r/w pointers are the same
@@ -85,7 +87,7 @@ module bsg_fifo_1rw_large_cov
   endgroup
 
   // fifo impossible (fifo cannot be both empty and full at the same time)
-  // covergroup cg_impossible @ (negedge clk_i iff ~reset_i & empty & full);
+  // covergroup cg_impossible @ (negedge clk_i iff ~reset_i & empty_o & full_o);
 
   // create cover groups
   cg_reset cov_reset = new;
