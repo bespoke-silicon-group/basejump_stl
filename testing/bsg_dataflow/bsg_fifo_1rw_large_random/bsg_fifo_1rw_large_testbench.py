@@ -1,3 +1,6 @@
+# Davis Sauer
+# 05/2024
+
 # Import python libraries
 import math
 import time
@@ -13,7 +16,7 @@ from cocotb.triggers import RisingEdge, FallingEdge, Timer
 WIDTH_P = 16
 
 # Testbench iterations
-ITERATION = 350
+ITERATION = 1000
 
 # Flow control random seed
 # Use different seeds on input and output sides for more randomness
@@ -61,7 +64,9 @@ async def input_side_testbench(dut, seed):
             data.append(value)
             dut.data_i.setimmediatevalue(value)
             await RisingEdge(dut.clk_i); await Timer(1, units="ps")
+            # Deassert DUT signals
             dut.v_i.setimmediatevalue(0)
+            dut.enq_not_deq_i.setimmediatevalue(value > pow(2, WIDTH_P)/2)
             # iteration increment
             i += 1
             # Check iteration
@@ -69,12 +74,15 @@ async def input_side_testbench(dut, seed):
                 # Test finished
                 break
         elif dut.empty_o.value == 0:  # read
+            # Assert DUT signals
             dut.v_i.setimmediatevalue(1)
             dut.enq_not_deq_i.setimmediatevalue(0)
             await RisingEdge(dut.clk_i); await Timer(1, units="ps")
             assert dut.data_o.value == data[data_idx], "data mismatch!"
-            data_idx += 1
+            # Deassert DUT signals
             dut.v_i.setimmediatevalue(0)
+            dut.enq_not_deq_i.setimmediatevalue(data[data_idx] > pow(2, WIDTH_P)/2)
+            data_idx += 1
         else: # do nothing
             await RisingEdge(dut.clk_i); await Timer(1, units="ps")
 

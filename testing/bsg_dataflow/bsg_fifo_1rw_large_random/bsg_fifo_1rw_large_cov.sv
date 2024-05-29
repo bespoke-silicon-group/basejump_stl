@@ -37,14 +37,15 @@ module bsg_fifo_1rw_large_cov
   covergroup cg_empty @ (negedge clk_i iff ~reset_i & empty_o & ~full_o);
 
     cp_v: coverpoint v_i;
-    // cannot deque when empty
     cp_rptr: coverpoint rd_ptr;
     cp_wptr: coverpoint wr_ptr;
     cp_loir: coverpoint last_op_is_read_r {illegal_bins ig = {0};}  // resets to 1, and then only possible to read from cp_normal to get to cp_empty
+    cp_end: coverpoint enq_not_deq_i;// {illegal_bins ig = {0};}  // cannot deque when empty
 
-    cross_all: cross cp_v, cp_rptr, cp_wptr, cp_loir {
+    cross_all: cross cp_v, cp_rptr, cp_wptr, cp_loir, cp_end {
       // by definition, fifo empty means r/w pointers are the same
       illegal_bins ig0 = cross_all with (cp_rptr != cp_wptr);
+      illegal_bins ig1 = cross_all with (cp_v && !cp_end);  // cannot read from empty fifo
     }
 
   endgroup
@@ -55,14 +56,14 @@ module bsg_fifo_1rw_large_cov
     cp_v: coverpoint v_i;
     cp_rptr: coverpoint rd_ptr;
     cp_wptr: coverpoint wr_ptr;
-    // If read write same address happened in previous cycle, fifo should
-    // only have one element in current cycle, which contradicts with the
-    // condition that fifo is full.
     cp_loir: coverpoint last_op_is_read_r {illegal_bins ig = {1};}  // cannot fill fifo by reading
+    cp_end: coverpoint enq_not_deq_i;// {illegal_bins ig = {1};}  // cannot write to full fifo
 
-    cross_all: cross cp_v, cp_rptr, cp_wptr, cp_loir {
+    cross_all: cross cp_v, cp_rptr, cp_wptr, cp_loir, cp_end {
       // by definition, fifo full means r/w pointers are the same
       illegal_bins ig0 = cross_all with (cp_rptr != cp_wptr);
+
+      illegal_bins ig1 = cross_all with (cp_v && cp_end);  // cannot write to full fifo
     }
 
   endgroup
@@ -74,8 +75,9 @@ module bsg_fifo_1rw_large_cov
     cp_rptr: coverpoint rd_ptr;
     cp_wptr: coverpoint wr_ptr;
     cp_loir: coverpoint last_op_is_read_r;
+    cp_end: coverpoint enq_not_deq_i;
 
-    cross_all: cross cp_v, cp_rptr, cp_wptr, cp_loir {
+    cross_all: cross cp_v, cp_rptr, cp_wptr, cp_loir, cp_end {
       // by definition, r/w pointers are different when fifo is non-empty & non-full
       illegal_bins ig0 = cross_all with (cp_rptr == cp_wptr);
     }
