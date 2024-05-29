@@ -54,10 +54,22 @@ print("""
       sky130_fd_sc_hd__conb_1 T0 (.HI(hibit), .LO(lobit));
   """.format(ctl_width_p_m1=num_cols_p*num_rows_p-1, num_dly_p=num_dly_p))
 print("""
+  wire trigger0;
+  sky130_fd_sc_hd__dlygate4sd3_1 B1A (.X(trigger0), .A(trigger_i));
+  wire trigger1;
+  sky130_fd_sc_hd__dlygate4sd3_1 B1B (.X(trigger1), .A(trigger0));
+  wire trigger2;
+  sky130_fd_sc_hd__dlygate4sd3_1 B1C (.X(trigger2), .A(trigger1));
+  wire trigger3;
+  sky130_fd_sc_hd__dlygate4sd3_1 B1D (.X(trigger3), .A(trigger2));
+  wire trigger4;
+  sky130_fd_sc_hd__dlygate4sd3_1 B1E (.X(trigger4), .A(trigger3));
+  wire trigger;
+  sky130_fd_sc_hd__dlygate4sd3_1 B1X (.X(trigger), .A(trigger4));
   wire fb_inv;
-  sky130_fd_sc_hd__clkinv_1 I0 (.Y(fb_inv), .A(clk_i));
+  sky130_fd_sc_hd__clkinv_4 I0 (.Y(fb_inv), .A(clk_i));
   wire gate_en_sync_1_r, gate_en_sync_2_r;
-  sky130_fd_sc_hd__dfxtp_1 S1 (.D(trigger_i), .CLK(clk_i), .Q(gate_en_sync_1_r));
+  sky130_fd_sc_hd__dfxtp_1 S1 (.D(trigger), .CLK(clk_i), .Q(gate_en_sync_1_r));
   sky130_fd_sc_hd__dfxtp_1 S2 (.D(gate_en_sync_1_r), .CLK(clk_i), .Q(gate_en_sync_2_r));
   wire fb_gated;
   sky130_fd_sc_hd__dlclkp_1 CG0 (.GCLK(fb_gated), .CLK(clk_i), .GATE(gate_en_sync_2_r));
@@ -76,7 +88,7 @@ for i in range(0, num_cols_p):
         );
 """.format(num_rows_p=num_rows_p, num_cols_p=num_cols_p, i=i, ip1=i+1, i_num_rows_p=i*num_rows_p, ip1_num_rows_p=(i+1)*num_rows_p-1, num_rows_p_m1=num_rows_p-1))
 print("""
-  sky130_fd_sc_hd__clkbuf_1 B0 (.X(clk_o), .A(fb_col[{num_cols_p}]));
+  sky130_fd_sc_hd__clkbuf_4 B0 (.X(clk_o), .A(fb_col[{num_cols_p}]));
 endmodule
 """.format(num_cols_p=num_cols_p))
 print("""
@@ -93,15 +105,15 @@ print("""
   // State machine
   // Trigger off
   wire trigger_off, trigger_on;
-  sky130_fd_sc_hd__dfstp_1 D0 (.Q(trigger_off), .CLK(clk_i), .D(trigger_on), .SET_B(async_reset_neg));
+  sky130_fd_sc_hd__dfstp_2 D0 (.Q(trigger_off), .CLK(clk_i), .D(trigger_on), .SET_B(async_reset_neg));
   // Change counter
   wire counter_en;
-  sky130_fd_sc_hd__dfrtp_1 D1 (.Q(counter_en), .CLK(clk_i), .D(trigger_off), .RESET_B(async_reset_neg));
+  sky130_fd_sc_hd__dfrtp_2 D1 (.Q(counter_en), .CLK(clk_i), .D(trigger_off), .RESET_B(async_reset_neg));
   // Pause
   wire pause;
-  sky130_fd_sc_hd__dfrtp_1 D2 (.Q(pause), .CLK(clk_i), .D(counter_en), .RESET_B(async_reset_neg));
+  sky130_fd_sc_hd__dfrtp_2 D2 (.Q(pause), .CLK(clk_i), .D(counter_en), .RESET_B(async_reset_neg));
   // Trigger on
-  sky130_fd_sc_hd__dfrtp_1 D3 (.Q(trigger_on), .CLK(clk_i), .D(pause), .RESET_B(async_reset_neg));
+  sky130_fd_sc_hd__dfrtp_2 D3 (.Q(trigger_on), .CLK(clk_i), .D(pause), .RESET_B(async_reset_neg));
   wire [{num_els_p}-1:0] ctl_n, ctl_r;
   wire clk_90;
   bsg_rp_dly_line_unit_v3 d90_BSG_DONT_TOUCH
