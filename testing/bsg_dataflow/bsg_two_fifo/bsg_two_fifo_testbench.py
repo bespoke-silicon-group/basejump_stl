@@ -23,6 +23,35 @@ CTRL_OUTPUT_SEED = 2
 # Testbench clock period
 CLK_PERIOD = 10
 
+async def allow_enq_deq_on_full_p(dut, data_random):
+    # Check DUT ready signal OR we are reading (passthrough)
+    if dut.ready_param_o.value == 1 or (dut.yumi_i.value == 1 and dut.v_o.value == 1):
+        # Assert DUT valid signal
+        dut.v_i.setimmediatevalue(1)
+        # Generate send data
+        value = math.floor(data_random.random()*pow(2, WIDTH_P))
+        # print(f"Sent {value}")
+        dut.data_i.setimmediatevalue(value)
+        # iteration increment
+        return True
+
+    # Deassert DUT valid signal
+    dut.v_i.setimmediatevalue(0)
+
+    return False
+
+async def default(dut, data_random):
+    # Assert DUT valid signal
+    dut.v_i.setimmediatevalue(1)
+    # Check DUT ready signal
+    if dut.ready_param_o.value == 1:
+        # Generate send data
+        value = math.floor(data_random.random()*pow(2, WIDTH_P))
+        # print(f"Sent {value}")
+        dut.data_i.setimmediatevalue(value)
+        return True
+    return False
+
 
 async def input_side_testbench(dut, seed):
     """Handle input traffic"""
@@ -50,14 +79,14 @@ async def input_side_testbench(dut, seed):
         await RisingEdge(dut.clk_i); await Timer(2, units="ps")
         # Half chance to send data flit
         if control_random.random() >= 0.5:
-            # Assert DUT valid signal
-            dut.v_i.setimmediatevalue(1)
-            # Check DUT ready signal OR we are reading (passthrough)
-            if dut.ready_param_o.value == 1 or (dut.yumi_i.value == 1 and dut.v_o.value == 1 and dut.allow_enq_deq_on_full_p.value == 1):
-                # Generate send data
-                value = math.floor(data_random.random()*pow(2, WIDTH_P))
-                # print(f"Sent {value}")
-                dut.data_i.setimmediatevalue(value)
+            iteration = False
+
+            if dut.allow_enq_deq_on_full_p.value == 1:
+                iteration = await allow_enq_deq_on_full_p(dut, data_random)
+            else:
+                iteration = await default(dut, data_random)
+
+            if iteration:
                 # iteration increment
                 i += 1
                 # Check iteration

@@ -71,7 +71,7 @@ module bsg_two_fifo #(parameter `BSG_INV_PARAM(width_p)
    assign ready_param_o   = ~full_r;
 
    if (ready_THEN_valid_p)
-     assign enq_i = v_i & (full_r & deq_i | ~full_r);
+     assign enq_i = v_i;
    else
      assign enq_i = v_i & ~full_r;
 

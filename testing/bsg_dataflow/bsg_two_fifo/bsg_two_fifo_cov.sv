@@ -64,9 +64,15 @@ module bsg_two_fifo_cov
     cp_head: coverpoint head_r;
     cp_tail: coverpoint tail_r;
 
-    cross_all: cross cp_v, cp_yumi, cp_full, cp_empty, cp_head, cp_tail {
+    // Make sure that the inverse of the parameter is not allowed
+    cp_allow_enq_deq: coverpoint allow_enq_deq_on_full_p[0] {illegal_bins ig ={~allow_enq_deq_on_full_p[0]};}
+
+    cross_all: cross cp_v, cp_yumi, cp_full, cp_empty, cp_head, cp_tail, cp_allow_enq_deq {
       // by definition, fifo full means h/t pointers are the same
       illegal_bins ig0 = cross_all with (cp_head != cp_tail);
+
+      // Input cannot be valid when the fifo is full and we are not reading a value
+      illegal_bins ig1 = cross_all with (cp_v & ~cp_yumi & cp_allow_enq_deq);
     }
 
   endgroup
