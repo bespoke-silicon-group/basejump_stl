@@ -66,6 +66,22 @@ Mirrors the other directories, with tests.
 
 Mirrors other directories, contains replacement files for specific process technologies.
 
+## Interfaces
+Since the [docs/BaseJump_STL_DAC_2018_Camera_Ready.pdf](https://github.com/bespoke-silicon-group/basejump_stl/blob/master/docs/BaseJump_STL_DAC_2018_Camera_Ready.pdf) paper, we have expanded our understanding of the latency-insensitive paradigm. [BaseJump STL 2.0](https://github.com/bespoke-silicon-group/basejump_stl/pull/666) taxonomized several new producer and consumer interfaces. In BaseJump STL parlance, a latency-insensitive handshake consists of a "valid" and "ready" signal. The helpfulness of the handshake is classified by the extended name of the ready signal (the valid is always 'v'). The direction of dependencies is specified below. Dependencies may be combinational paths or latched. However, in all cases the handshake is considered "complete" during the single cycle when both "valid" and "ready" are high. Once a valid signal has been raised, it must not be lowered until a handshake has occurred.
+
+The following interface types are clarified from the original BaseJump STL paper (-> indicates combinational dependency):
+
+* ready_and_i || v_o (Helpful Producer)
+* ready_then_i -> v_i (Demanding Producer)
+* v_i -> yumi_o (Demanding Consumer)
+* ready_and_i || v_i (Helpful Consumer)
+
+Additionally, there are a few special cases:
+
+* v_i / v_o (no ready signal, "handshake" happens without backpressure)
+* ready_param_i / ready_param_o (helpfulness depends on parameterization)
+* ready_passthrough_i -> ready_passthrough_o (consumption helpfulness depends on production helpfulness)
+
 ## Contact
 
 Email: taylor-bsg@googlegroups.com
