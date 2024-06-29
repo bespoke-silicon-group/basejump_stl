@@ -8,8 +8,8 @@
 //      CREATED: 01/04/22
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-`include "bsg_defines.v"
-`include "bsg_dmc.vh"
+`include "bsg_defines.sv"
+`include "bsg_dmc.svh"
 
 module bsg_dmc_tester
 	  	import bsg_dmc_pkg::*;
