@@ -44,7 +44,7 @@ module bsg_dmc
   ,input                             app_sr_req_i
   ,output                            app_sr_active_o
   // Status signal
-  ,output                            dfi_init_calib_complete_o
+  ,output logic                      dfi_init_calib_complete_o
   ,output logic                      ui_transaction_in_progress_o
   ,output logic                      dfi_stall_transactions_o
   ,output logic						 dfi_refresh_in_progress_o

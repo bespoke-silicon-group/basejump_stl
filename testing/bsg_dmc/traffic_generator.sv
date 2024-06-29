@@ -1,5 +1,5 @@
-`include "bsg_defines.v"
-`include "bsg_dmc.vh"
+`include "bsg_defines.sv"
+`include "bsg_dmc.svh"
 
 `ifndef UI_CLK_PERIOD
   `define UI_CLK_PERIOD 2500.0
@@ -323,7 +323,7 @@ module traffic_generator
 
 `ifdef NONSYNTH_TB
 	// non-synthesisable testing
-	`include "tasks.v"
+	`include "tasks.sv"
 
   	  initial begin
   	      //$vcdplusmemon();
@@ -372,7 +372,7 @@ module traffic_generator
 	    ,.reset_i    ( ui_clk_sync_rst_i )
 	    ,.valid_i    ( app_rd_data_valid )
 	    ,.data_i     ( app_rd_data       )
-	    ,.ready_o    (                   )
+	    ,.ready_and_o(                   )
 	    ,.valid_o    ( sipo_valid_lo     )
 	    ,.data_o     ( sipo_data_lo      )
 	    ,.yumi_cnt_i ( sipo_yumi_cnt_li  ));

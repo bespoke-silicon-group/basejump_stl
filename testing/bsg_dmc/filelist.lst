@@ -31,7 +31,6 @@
 ../../bsg_dmc/bsg_dmc_controller.sv
 ../../bsg_dmc/bsg_dmc_dly_line_v3.sv
 ../../bsg_dmc/bsg_dmc_phy.sv
-../../bsg_fsb/bsg_fsb_node_trace_replay.sv
 ../../bsg_mem/bsg_mem_1r1w.sv
 ../../bsg_mem/bsg_mem_1r1w_synth.sv
 ../../bsg_misc/bsg_and.sv
@@ -71,12 +70,12 @@
 ../../bsg_dataflow/bsg_serial_in_parallel_out_full.sv
 ../../bsg_dataflow/bsg_round_robin_1_to_n.sv
 
-bsg_dmc_trace_rom.sv
+bsg_dmc_trace_rom.v
 ../../bsg_dmc/bsg_dmc_xilinx_ui_trace_replay.sv
 #bsg_dmc_tester.sv
 ../../bsg_dmc/bsg_dmc_sys_cfg_gen.sv
 
-bsg_tag_boot_rom.sv
+bsg_tag_boot_rom.v
 traffic_generator.sv
 bsg_nonsynth_dmc_clock_monitor.sv
 testbench.sv

@@ -39,7 +39,7 @@ BSG_TRACE_ROMS  := ${BSG_TRACE_FILES:.tr=_rom.v}
 bsg_dmc_trace_rom.tr:
 	python bsg_dmc_trace_rom.py 0 > $@
 
-%.v: %.tr
+%.sv: %.tr
 	../../bsg_mem/bsg_ascii_to_rom.py $< $* > $@
 
 elaborate : bsg_dmc_trace_rom.v bsg_tag_boot_rom.v

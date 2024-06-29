@@ -9,7 +9,7 @@
 //      CREATED: 01/07/22
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_dmc_xilinx_ui_trace_replay
 	import bsg_dmc_pkg::*;
@@ -25,7 +25,7 @@ module bsg_dmc_xilinx_ui_trace_replay
 		input									reset_i,
 
         // Trace data from producer
-		output logic     					    ready_o,
+		output logic     					    ready_and_o,
 		input [trace_data_width_lp -1 :0] 		data_i,
 		input 									v_i,
 
@@ -57,7 +57,7 @@ module bsg_dmc_xilinx_ui_trace_replay
 
     // Only enqueue onto fifo if it's an app_cmd
     bsg_dmc_trace_entry_s trace_data_li;
-    logic trace_ready_lo, trace_v_li;
+    logic trace_ready_and_lo, trace_v_li;
     bsg_dmc_trace_entry_s trace_data_lo;
     logic trace_v_lo, trace_yumi_li;
 	assign trace_data_li = data_i;
@@ -71,7 +71,7 @@ module bsg_dmc_xilinx_ui_trace_replay
     				
     				,.data_i (trace_data_li)
     				,.v_i    (trace_v_li)
-    				,.ready_o(trace_ready_lo)
+    				,.ready_param_o(trace_ready_and_lo)
     				
     				,.v_o    (trace_v_lo)
     				,.data_o (trace_data_lo)
@@ -102,7 +102,7 @@ module bsg_dmc_xilinx_ui_trace_replay
        ,.reset_i(reset_i)
 
        ,.v_i(app_rd_data_valid_i)
-       ,.ready_i(1'b1)
+       ,.ready_param_i(1'b1)
        ,.yumi_i(read_data_credit)
 
        ,.count_o(read_credit)
@@ -117,7 +117,7 @@ module bsg_dmc_xilinx_ui_trace_replay
     always_comb begin
       state_n = state_r;
 
-      ready_o = '0;
+      ready_and_o = '0;
 
       app_en_o = '0;
       app_cmd_o = trace_data_lo.app_cmd;
@@ -134,7 +134,7 @@ module bsg_dmc_xilinx_ui_trace_replay
       //   How to recover?
       case(state_r)
         e_fill: begin
-          ready_o = trace_ready_lo;
+          ready_and_o = trace_ready_and_lo;
           trace_v_li = v_i & (trace_data_li.app_cmd != TEX);
 
           state_n = (v_i & (trace_data_li.app_cmd == TEX)) ? e_drain : e_fill;
