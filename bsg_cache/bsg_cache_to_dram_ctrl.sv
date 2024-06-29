@@ -70,7 +70,7 @@ module bsg_cache_to_dram_ctrl
   bsg_cache_dma_pkt_s dma_pkt;
   assign dma_pkt = dma_pkt_i;
 
-  logic [dma_data_width_p-1:0] mask_r, mask_n;
+  logic [dma_mask_width_p-1:0] mask_r, mask_n;
 
   // rx module
   //
