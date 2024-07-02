@@ -79,7 +79,7 @@ module bsg_link_ddr_downstream
   ,input [num_channels_p-1:0] io_link_reset_i
   // Core side
   ,output [width_p-1:0] core_data_o
-  ,output               core_valid_o
+  ,output               core_v_o
   ,input                core_yumi_i
   // Physical IO side
   // The clock io_clk_i is being remotely sent from another chip's bsg_link_ddr_upstream
@@ -87,7 +87,7 @@ module bsg_link_ddr_downstream
   // so the clock will not start until the upstream link has come out of reset.
   ,input [num_channels_p-1:0]                      io_clk_i
   ,input [num_channels_p-1:0][channel_width_p-1:0] io_data_i
-  ,input [num_channels_p-1:0]                      io_valid_i
+  ,input [num_channels_p-1:0]                      io_v_i
   ,output logic [num_channels_p-1:0]               core_token_r_o
   );
   
@@ -96,7 +96,7 @@ module bsg_link_ddr_downstream
   logic [num_channels_p-1:0][ddr_width_lp-1:0] core_sipo_data_li;
   
   // Dequeue when all channels have valid data coming in
-  logic [num_channels_p-1:0] core_sipo_valid_li;
+  logic [num_channels_p-1:0] core_sipo_v_li;
   
   genvar i;
   
@@ -105,24 +105,24 @@ module bsg_link_ddr_downstream
   begin:ch
 
     // io side signals
-    logic io_iddr_valid_lo, io_iddr_data_v;
+    logic io_iddr_v_lo, io_iddr_data_v;
     logic [phy_width_lp-1:0] io_iddr_data_top;
     logic [1:0][channel_width_p/2-1:0] io_iddr_data_bottom;
 
     // core side signals
-    logic core_ss_valid_lo, core_ss_yumi_li, core_ss_data_nonzero;
+    logic core_ss_v_lo, core_ss_yumi_li, core_ss_data_nonzero;
     logic [phy_width_lp-1:0] core_ss_data_top;
     logic [1:0][channel_width_p/2-1:0] core_ss_data_bottom;
 
     // connect to sipo
     assign core_ss_yumi_li = core_sipo_yumi_lo;
-    assign core_sipo_valid_li[i] = core_ss_valid_lo;
+    assign core_sipo_v_li[i] = core_ss_v_lo;
     assign core_sipo_data_li[i][ddr_width_lp-1:channel_width_p] = core_ss_data_top;
 
     if (use_encode_p == 0)
       begin
         assign core_sipo_data_li[i][channel_width_p-1:0] = core_ss_data_bottom;
-        assign io_iddr_valid_lo = io_iddr_data_v;
+        assign io_iddr_v_lo = io_iddr_data_v;
       end
     else
       begin
@@ -136,7 +136,7 @@ module bsg_link_ddr_downstream
               {core_ss_data_bottom[0]}
             : {'0};
         // io side decode
-        assign io_iddr_valid_lo = io_iddr_data_v | io_iddr_data_bottom[1][channel_width_p/2-1];
+        assign io_iddr_v_lo = io_iddr_data_v | io_iddr_data_bottom[1][channel_width_p/2-1];
       end
 
     // valid and data signals are received together
@@ -144,7 +144,7 @@ module bsg_link_ddr_downstream
    #(.width_p(phy_width_lp)
     ) iddr_phy
     (.clk_i   (io_clk_i[i])
-    ,.data_i  ({io_valid_i[i], io_data_i[i]})
+    ,.data_i  ({io_v_i[i], io_data_i[i]})
     ,.data_r_o({io_iddr_data_top, io_iddr_data_v, io_iddr_data_bottom})
     );
 
@@ -162,12 +162,12 @@ module bsg_link_ddr_downstream
     // source synchronous input channel; coming from chip edge
     ,.io_clk_i         (io_clk_i[i])
     ,.io_data_i        ({io_iddr_data_top, io_iddr_data_v, io_iddr_data_bottom})
-    ,.io_valid_i       (io_iddr_valid_lo)
+    ,.io_v_i       (io_iddr_v_lo)
     ,.core_token_r_o   (core_token_r_o[i])
 
     // going into core; uses core clock
     ,.core_data_o      ({core_ss_data_top, core_ss_data_nonzero, core_ss_data_bottom})
-    ,.core_valid_o     (core_ss_valid_lo)
+    ,.core_v_o     (core_ss_v_lo)
     ,.core_yumi_i      (core_ss_yumi_li)
     );
   
@@ -175,13 +175,13 @@ module bsg_link_ddr_downstream
 
   if (sipo_ratio_lp == 1 && bypass_gearbox_p != 0)
   begin
-    assign core_valid_o = (& core_sipo_valid_li);
+    assign core_v_o = (& core_sipo_v_li);
     assign core_data_o  = core_sipo_data_li;
     assign core_sipo_yumi_lo = core_yumi_i;
   end
   else
   begin: sipo
-    assign core_sipo_yumi_lo = (& core_sipo_valid_li) & core_sipo_ready_lo;
+    assign core_sipo_yumi_lo = (& core_sipo_v_li) & core_sipo_ready_lo;
     // This sipof ensures no bubble cycle on receiving packets.
     bsg_serial_in_parallel_out_full
    #(.width_p(ddr_width_lp*num_channels_p)
@@ -189,11 +189,11 @@ module bsg_link_ddr_downstream
     ) in_sipof
     (.clk_i  (core_clk_i)
     ,.reset_i(core_link_reset_i)
-    ,.v_i    (& core_sipo_valid_li)
+    ,.v_i    (& core_sipo_v_li)
     ,.ready_and_o(core_sipo_ready_lo)
     ,.data_i (core_sipo_data_li)
     ,.data_o (core_data_o)
-    ,.v_o    (core_valid_o)
+    ,.v_o    (core_v_o)
     ,.yumi_i (core_yumi_i)
     );
   end

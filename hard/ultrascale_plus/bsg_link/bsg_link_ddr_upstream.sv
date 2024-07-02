@@ -84,8 +84,8 @@ module bsg_link_ddr_upstream
   ,input core_link_reset_i
 
   ,input [width_p-1:0] core_data_i
-  ,input               core_valid_i
-  ,output              core_ready_o  
+  ,input               core_v_i
+  ,output              core_ready_and_o  
   
   // Physical IO side
   ,input io_clk_i
@@ -95,12 +95,12 @@ module bsg_link_ddr_upstream
   
   ,output logic [num_channels_p-1:0]                      io_clk_r_o
   ,output logic [num_channels_p-1:0][channel_width_p-1:0] io_data_r_o
-  ,output logic [num_channels_p-1:0]                      io_valid_r_o
+  ,output logic [num_channels_p-1:0]                      io_v_r_o
   ,input        [num_channels_p-1:0]                      token_clk_i
   );
   
   
-  logic core_piso_valid_lo, core_piso_yumi_li;
+  logic core_piso_v_lo, core_piso_yumi_li;
   logic [num_channels_p-1:0][ddr_width_lp-1:0] core_piso_data_lo;
 
   // Dequeue from PISO when all channels are ready
@@ -108,23 +108,23 @@ module bsg_link_ddr_upstream
 
   if (piso_ratio_lp == 1 && bypass_gearbox_p != 0)
   begin
-    assign core_piso_valid_lo = core_valid_i;
+    assign core_piso_v_lo = core_v_i;
     assign core_piso_data_lo  = core_data_i;
-    assign core_ready_o = (& core_piso_ready_li);
+    assign core_ready_and_o = (& core_piso_ready_li);
   end
   else
   begin: piso
-    assign core_piso_yumi_li = (& core_piso_ready_li) & core_piso_valid_lo;
+    assign core_piso_yumi_li = (& core_piso_ready_li) & core_piso_v_lo;
     bsg_parallel_in_serial_out
    #(.width_p(ddr_width_lp*num_channels_p)
     ,.els_p  (piso_ratio_lp)
     ) out_piso
     (.clk_i  (core_clk_i)
     ,.reset_i(core_link_reset_i)
-    ,.valid_i(core_valid_i)
+    ,.v_i(core_v_i)
     ,.data_i (core_data_i)
-    ,.ready_and_o(core_ready_o)
-    ,.valid_o(core_piso_valid_lo)
+    ,.ready_and_o(core_ready_and_o)
+    ,.v_o(core_piso_v_lo)
     ,.data_o (core_piso_data_lo)
     ,.yumi_i (core_piso_yumi_li)
     );
@@ -137,16 +137,16 @@ module bsg_link_ddr_upstream
   begin: ch
 
     // core side signals
-    logic core_ss_valid_li, core_ss_ready_lo, core_ss_data_nonzero;
+    logic core_ss_v_li, core_ss_ready_lo, core_ss_data_nonzero;
     logic [phy_width_lp-1:0] core_ss_data_top;
     logic [1:0][channel_width_p/2-1:0] core_ss_data_bottom;
 
     // io side signals
-    logic io_oddr_valid_li, io_oddr_ready_lo;
+    logic io_oddr_v_li, io_oddr_ready_lo;
     logic [1:0][phy_width_lp-1:0] io_oddr_data_raw, io_oddr_data_final;
 
     // connect to piso
-    assign core_ss_valid_li = core_piso_valid_lo;
+    assign core_ss_v_li = core_piso_v_lo;
     assign core_piso_ready_li[i] = core_ss_ready_lo;
     assign core_ss_data_top = (phy_width_lp)'(core_piso_data_lo[i][ddr_width_lp-1:channel_width_p]);
 
@@ -156,7 +156,7 @@ module bsg_link_ddr_upstream
         assign core_ss_data_bottom = core_piso_data_lo[i][channel_width_p-1:0];
         // valid sent out in first cycle
         // When idle, balance hi / lo bits in each channel
-        assign io_oddr_data_final = (io_oddr_valid_li)?
+        assign io_oddr_data_final = (io_oddr_v_li)?
               {io_oddr_data_raw[1], 1'b1, io_oddr_data_raw[0][channel_width_p-1:0]}
             : {2{1'b0, {(channel_width_p/2){2'b10}}}};
       end
@@ -172,7 +172,7 @@ module bsg_link_ddr_upstream
             : {core_piso_data_lo[i][channel_width_p-1], (channel_width_p/2-1)'(1'b1)};
         // When idle, assign 1'b0 to certain wires to represent invalid state
         // Assign 1'b1 to rest of the wires to balance hi / lo bits in each channel
-        assign io_oddr_data_final = (io_oddr_valid_li)?
+        assign io_oddr_data_final = (io_oddr_v_li)?
               io_oddr_data_raw
             : {2{2'b00, (channel_width_p/2-1)'('1), (channel_width_p/2)'('0)}};
       end
@@ -192,12 +192,12 @@ module bsg_link_ddr_upstream
 
     // Input from chip core
     ,.core_data_i           ({core_ss_data_top, core_ss_data_nonzero, core_ss_data_bottom})
-    ,.core_valid_i          (core_ss_valid_li)
-    ,.core_ready_o          (core_ss_ready_lo)
+    ,.core_v_i          (core_ss_v_li)
+    ,.core_ready_and_o      (core_ss_ready_lo)
 
     // source synchronous output channel; going to chip edge
     ,.io_data_o             (io_oddr_data_raw)
-    ,.io_valid_o            (io_oddr_valid_li)
+    ,.io_v_o            (io_oddr_v_li)
     ,.io_ready_i            (io_oddr_ready_lo)
     ,.token_clk_i           (token_clk_i[i])
     );
@@ -210,8 +210,8 @@ module bsg_link_ddr_upstream
     ,.clk_i   (io_clk_i)
     ,.clk90_i (io_clk90_i)
     ,.data_i  (io_oddr_data_final)
-    ,.ready_o (io_oddr_ready_lo)
-    ,.data_r_o({io_valid_r_o[i], io_data_r_o[i]})
+    ,.ready_and_o (io_oddr_ready_lo)
+    ,.data_r_o({io_v_r_o[i], io_data_r_o[i]})
     ,.clk_r_o (io_clk_r_o[i])
     );
   

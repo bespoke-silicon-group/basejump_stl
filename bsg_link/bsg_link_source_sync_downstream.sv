@@ -57,16 +57,16 @@ module bsg_link_source_sync_downstream
   ,input                        core_link_reset_i
   ,input                        io_link_reset_i
 
-  // coming from IDDR PHY near the physical I/O. valid_i and data_i signals are assumed to be
+  // coming from IDDR PHY near the physical I/O. v_i and data_i signals are assumed to be
   // registered, but may be traversing long wires on the top level to reach this module.
   ,input                        io_clk_i       // sdi_sclk
   ,input  [channel_width_p-1:0] io_data_i      // sdi_data
-  ,input                        io_valid_i     // sdi_valid
+  ,input                        io_v_i     // sdi_valid
   ,output                       core_token_r_o // sdi_token; output registered
 
   // going into core; uses core clock
   ,output [channel_width_p-1:0] core_data_o
-  ,output                       core_valid_o
+  ,output                       core_v_o
   ,input                        core_yumi_i
   );
 
@@ -81,26 +81,26 @@ module bsg_link_source_sync_downstream
    //
 
    wire  io_async_fifo_full, io_async_fifo_enq;
-   logic io_fifo_valid_lo, io_fifo_ready_lo;
+   logic io_fifo_v_lo, io_fifo_ready_lo;
    logic [channel_width_p-1:0] io_async_fifo_data;
 
 `ifndef BSG_HIDE_FROM_SYNTHESIS
 
    always_ff @(negedge io_clk_i)
-     assert(!(io_fifo_ready_lo===0 && io_valid_i===1))
+     assert(!(io_fifo_ready_lo===0 && io_v_i===1))
        else $error("attempt to enque on full async fifo");
 
 `endif
 
   if (use_hardened_fifo_p == 0)
   begin
-    assign io_async_fifo_enq  = io_valid_i;
+    assign io_async_fifo_enq  = io_v_i;
     assign io_async_fifo_data = io_data_i;
     assign io_fifo_ready_lo   = ~io_async_fifo_full;
   end
   else
   begin: harden
-    assign io_async_fifo_enq  = io_fifo_valid_lo & ~io_async_fifo_full;
+    assign io_async_fifo_enq  = io_fifo_v_lo & ~io_async_fifo_full;
     bsg_fifo_1r1w_small
    #(.width_p (channel_width_p)
     ,.els_p   (1<<lg_fifo_depth_p)
@@ -108,16 +108,16 @@ module bsg_link_source_sync_downstream
     ) fifo
     (.clk_i   (io_clk_i)
     ,.reset_i (io_link_reset_i)
-    ,.v_i     (io_valid_i)
+    ,.v_i     (io_v_i)
     ,.ready_param_o (io_fifo_ready_lo)
     ,.data_i  (io_data_i)
-    ,.v_o     (io_fifo_valid_lo)
+    ,.v_o     (io_fifo_v_lo)
     ,.data_o  (io_async_fifo_data)
     ,.yumi_i  (io_async_fifo_enq)
     );
   end
 
-   wire  core_async_fifo_deque, core_async_fifo_valid_lo;
+   wire  core_async_fifo_deque, core_async_fifo_v_lo;
    logic [channel_width_p-1:0] core_async_fifo_data_lo;
 
   bsg_async_fifo 
@@ -136,7 +136,7 @@ module bsg_link_source_sync_downstream
 
   ,.r_deq_i  (core_async_fifo_deque)
   ,.r_data_o (core_async_fifo_data_lo)
-  ,.r_valid_o(core_async_fifo_valid_lo));
+  ,.r_valid_o(core_async_fifo_v_lo));
 
 
   if (bypass_twofer_fifo_p == 0)
@@ -162,21 +162,21 @@ module bsg_link_source_sync_downstream
   // we feed this into the local yumi, but only if it is valid
   ,.ready_param_o (core_async_fifo_ready_li)
   ,.data_i        (core_async_fifo_data_lo)
-  ,.v_i           (core_async_fifo_valid_lo)
+  ,.v_i           (core_async_fifo_v_lo)
 
-  ,.v_o           (core_valid_o)
+  ,.v_o           (core_v_o)
   ,.data_o        (core_data_o)
   ,.yumi_i        (core_yumi_i)
   );
 
    // a word was transferred to fifo if ...
-   assign core_async_fifo_deque = core_async_fifo_valid_lo & core_async_fifo_ready_li;
+   assign core_async_fifo_deque = core_async_fifo_v_lo & core_async_fifo_ready_li;
 
   end
   else
   begin
     // keep async_fifo isolated when reset is asserted
-    assign core_valid_o = (core_link_reset_i)? 1'b0 : core_async_fifo_valid_lo;
+    assign core_v_o = (core_link_reset_i)? 1'b0 : core_async_fifo_v_lo;
     assign core_data_o = core_async_fifo_data_lo;
     assign core_async_fifo_deque = core_yumi_i;
   end

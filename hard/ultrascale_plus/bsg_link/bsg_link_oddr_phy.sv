@@ -16,19 +16,19 @@ module bsg_link_oddr_phy
  #(parameter width_p = "inv")
 
   (// reset, data and ready signals synchronous to clk_i
-   // no valid signal required (assume valid_i is constant 1)
+   // no valid signal required (assume v_i is constant 1)
    input                      reset_i
   ,input                      clk_i
   ,input                      clk90_i
   ,input [1:0][width_p-1:0]   data_i
-  ,output                     ready_o
+  ,output                     ready_and_o
    // output clock and data
   ,output logic [width_p-1:0] data_r_o
   ,output logic               clk_r_o
   );
 
   // ODDR PHY is always ready for incoming data
-  assign ready_o = 1'b1;
+  assign ready_and_o = 1'b1;
   
   logic [1:0][width_p-1:0] data_r;  
   bsg_dff #(.width_p(width_p*2)) dff_oddr

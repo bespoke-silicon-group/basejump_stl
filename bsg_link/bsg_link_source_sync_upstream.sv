@@ -74,12 +74,12 @@ module bsg_link_source_sync_upstream
     
     // Input from chip core
     , input [channel_width_p-1:0]   core_data_i
-    , input                         core_valid_i
-    , output                        core_ready_o
+    , input                         core_v_i
+    , output                        core_ready_and_o
 
     // output channel to ODDR_PHY
     , output logic  [channel_width_p-1:0] io_data_o    // output data
-    , output logic                        io_valid_o   // output valid
+    , output logic                        io_v_o   // output valid
     , input                               io_ready_i   // output PHY is ready
     , input                               token_clk_i  // input token clock
    );
@@ -106,9 +106,9 @@ module bsg_link_source_sync_upstream
     ) fifo
     (.clk_i         (core_clk_i)
     ,.reset_i       (core_link_reset_i)
-    ,.ready_param_o (core_ready_o)
+    ,.ready_param_o (core_ready_and_o)
     ,.data_i        (core_data_i)
-    ,.v_i           (core_valid_i)
+    ,.v_i           (core_v_i)
     ,.v_o           (core_fifo_valid)
     ,.data_o        (core_fifo_data)
     ,.yumi_i        (core_fifo_yumi)
@@ -117,9 +117,9 @@ module bsg_link_source_sync_upstream
   else
   begin: no_twofer
     // keep async_fifo isolated when reset is asserted
-    assign core_fifo_valid = core_valid_i;
-    assign core_fifo_data  = core_data_i;
-    assign core_ready_o    = (core_link_reset_i)? 1'b1 : ~core_async_fifo_full;
+    assign core_fifo_valid  = core_v_i;
+    assign core_fifo_data   = core_data_i;
+    assign core_ready_and_o = (core_link_reset_i)? 1'b1 : ~core_async_fifo_full;
   end
   
   logic io_async_fifo_valid, io_async_fifo_yumi;
@@ -182,7 +182,7 @@ module bsg_link_source_sync_upstream
    
    
    // when fifo has valid data and token credit is available
-   logic io_valid_n;
+   logic io_v_n;
    
    always_comb
      begin
@@ -190,15 +190,15 @@ module bsg_link_source_sync_upstream
         io_data_o = inactive_pattern_p[0+:channel_width_p];
         if (io_link_reset_i)
           begin
-             io_valid_o = 1'b0;
+             io_v_o = 1'b0;
           end
         else
           begin
              // subtle: we assert the real data rather than the inactive_pattern when we have 
              // valid data and enough credit, even if the serdes is not ready to send, since 
              // the data is ignored and it will reduce spurious switching.
-             io_valid_o = io_valid_n;
-             if (io_valid_n)
+             io_v_o = io_v_n;
+             if (io_v_n)
                io_data_o = io_async_fifo_data;
           end
      end
@@ -234,9 +234,9 @@ module bsg_link_source_sync_upstream
         : io_posedge_credits_avail;
 
    // we send if we have both data to send and credits to send with
-   assign io_valid_n = io_credit_avail & io_async_fifo_valid;
+   assign io_v_n = io_credit_avail & io_async_fifo_valid;
    // dequeue from fifo when io_ready
-   assign io_async_fifo_yumi = io_valid_n & io_ready_i;
+   assign io_async_fifo_yumi = io_v_n & io_ready_i;
 
    wire io_negedge_credits_deque = io_async_fifo_yumi & io_on_negedge_token;
    wire io_posedge_credits_deque = io_async_fifo_yumi & ~io_on_negedge_token;

@@ -92,11 +92,11 @@ module bsg_link_sdr_downstream
   // source synchronous input channel
   ,.io_clk_i         (isdr_clk_lo)
   ,.io_data_i        (isdr_data_lo)
-  ,.io_valid_i       (isdr_v_lo)
+  ,.io_v_i       (isdr_v_lo)
   ,.core_token_r_o   (core_token_r_o)
   // going into core
   ,.core_data_o      (core_data_o)
-  ,.core_valid_o     (core_v_o)
+  ,.core_v_o     (core_v_o)
   ,.core_yumi_i      (core_yumi_i)
   );
 

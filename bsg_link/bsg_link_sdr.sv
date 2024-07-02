@@ -51,7 +51,7 @@ module bsg_link_sdr
 
    , input                 core_v_i
    , input  [width_p-1:0]  core_data_i
-   , output                core_ready_o
+   , output                core_ready_and_o
 
    , output                core_v_o
    , output [width_p-1:0]  core_data_o
@@ -81,7 +81,7 @@ module bsg_link_sdr
   ,.async_token_reset_i(async_token_reset_i)
   ,.io_data_i          (core_data_i)
   ,.io_v_i             (core_v_i)
-  ,.io_ready_and_o     (core_ready_o)
+  ,.io_ready_and_o     (core_ready_and_o)
   // IO side
   ,.io_clk_o           (link_clk_o)
   ,.io_data_o          (link_data_o)

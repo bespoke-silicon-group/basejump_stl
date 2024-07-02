@@ -57,11 +57,11 @@ module bsg_link_oddr_phy
  #(parameter `BSG_INV_PARAM(width_p ))
 
   (// reset, data and ready signals synchronous to clk_i
-   // no valid signal required (assume valid_i is constant 1)
+   // no valid signal required (assume v_i is constant 1)
    input                      reset_i
   ,input                      clk_i
   ,input [1:0][width_p-1:0]   data_i
-  ,output                     ready_o
+  ,output                     ready_and_o
    // output clock and data
   ,output logic [width_p-1:0] data_r_o
   ,output logic               clk_r_o
@@ -71,7 +71,7 @@ module bsg_link_oddr_phy
   logic [1:0][width_p-1:0] data_i_r;
   
   // ready to accept new data every two cycles
-  assign ready_o = ~odd_r;
+  assign ready_and_o = ~odd_r;
   
   // register 2x-wide input data in flops
   always_ff @(posedge clk_i)
