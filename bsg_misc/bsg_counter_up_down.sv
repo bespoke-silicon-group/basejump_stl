@@ -26,6 +26,7 @@
 module bsg_counter_up_down #( parameter `BSG_INV_PARAM(max_val_p    )
                                      , parameter `BSG_INV_PARAM(init_val_p   )
                                      , parameter `BSG_INV_PARAM(max_step_p   )
+                                     , parameter disable_overflow_warning_p = 0
 
                                      //localpara
                                      , parameter step_width_lp =
@@ -59,9 +60,9 @@ always_ff @(posedge clk_i)
 
 `ifndef BSG_HIDE_FROM_SYNTHESIS
   always_ff @ (negedge clk_i) begin
-	  if ((count_o==max_val_p) & up_i & ~down_i  & (reset_i === 1'b0))
+	  if (!disable_overflow_warning_p && (count_o==max_val_p) & up_i & ~down_i  & (reset_i === 1'b0))
 		  $display("%m error: counter overflow at time %t", $time);
-	  if ((count_o==0)          & down_i & ~up_i & (reset_i === 1'b0))
+	  if (!disable_overflow_warning_p && (count_o==0)          & down_i & ~up_i & (reset_i === 1'b0))
 		  $display("%m error: counter underflow at time %t", $time);
   end
 `endif
