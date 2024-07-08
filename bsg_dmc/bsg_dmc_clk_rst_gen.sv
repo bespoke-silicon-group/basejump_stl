@@ -43,7 +43,7 @@ module bsg_dmc_clk_rst_gen
        );
   end
 
-  `declare_bsg_clk_gen_ds_tag_payload_s(ds_width_p)
+  `declare_bsg_clk_gen_ds_tag_payload_s(ds_width_p);
 
   bsg_clk_gen_ds_tag_payload_s ds_tag_payload_r;
 

@@ -19,13 +19,13 @@
           logic [data_width_mp - 1:0] data; \
         } wdata; \
       } payload; \
-    } bsg_dmc_trace_entry_s;
+    } bsg_dmc_trace_entry_s
 
   `define declare_app_cmd_afifo_entry_s(addr_width_mp) \
     typedef struct packed {           \
       app_cmd_e cmd;                  \
       logic [addr_width_mp-1:0] addr; \
-    } app_cmd_afifo_entry_s;
+    } app_cmd_afifo_entry_s
 
   `define bsg_dmc_trace_entry_width(data_width_mp, addr_width_mp) \
     ($bits(app_cmd_e)+data_width_mp+(data_width_mp>>3))

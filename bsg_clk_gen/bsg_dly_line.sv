@@ -39,7 +39,7 @@ module bsg_dly_line
    localparam osc_granularity_lp = 100;
 `endif
 
-   `declare_bsg_clk_gen_osc_tag_payload_s(num_adgs_p)
+   `declare_bsg_clk_gen_osc_tag_payload_s(num_adgs_p);
 
    bsg_clk_gen_osc_tag_payload_s fb_tag_r;
    wire  fb_we_r;
