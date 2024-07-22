@@ -87,6 +87,15 @@ module bsg_hashing_ipoly
     assign new_bank_id_o[4]  = b[4] ^ a[18] ^ a[16] ^ a[15] ^ a[14] ^ a[13] ^ a[10] ^ a[8] ^ a[4] ^ a[3];
     assign new_bank_id_o[5]  = b[5] ^ a[17] ^ a[16] ^ a[15] ^ a[14] ^ a[11] ^ a[9]  ^ a[5] ^ a[4];
   end
+  else if (num_banks_p == 128) begin
+    assign new_bank_id_o[0]  = b[0] ^ a[0] ^ a[5] ^ a[7] ^ a[10] ^ a[14] ^ a[15] ^ a[17];
+    assign new_bank_id_o[1]  = b[1] ^ a[1] ^ a[6] ^ a[8] ^ a[11] ^ a[15] ^ a[16];
+    assign new_bank_id_o[2]  = b[2] ^ a[0] ^ a[2] ^ a[5] ^ a[9]  ^ a[10] ^ a[12] ^ a[14] ^ a[15] ^ a[16];
+    assign new_bank_id_o[3]  = b[3] ^ a[1] ^ a[3] ^ a[6] ^ a[10] ^ a[11] ^ a[13] ^ a[15] ^ a[16] ^ a[17];
+    assign new_bank_id_o[4]  = b[4] ^ a[2] ^ a[4] ^ a[7] ^ a[11] ^ a[12] ^ a[14] ^ a[16] ^ a[17];
+    assign new_bank_id_o[5]  = b[5] ^ a[3] ^ a[5] ^ a[8] ^ a[12] ^ a[13] ^ a[15] ^ a[17];
+    assign new_bank_id_o[6]  = b[6] ^ a[4] ^ a[6] ^ a[9] ^ a[13] ^ a[14] ^ a[16];
+  end
   else begin
     // Not supported;
     $error("num_banks_p not supported: %d", num_banks_p);
