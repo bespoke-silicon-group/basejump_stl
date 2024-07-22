@@ -14,6 +14,25 @@ using namespace std;
 
 namespace bsg_mem_dma {
     std::map<parameter_t, Memory *> global_memories;
+
+    Memory *bsg_mem_dma_get_memory(parameter_t id)
+    {
+        auto m = global_memories.find(id);
+        if (m != global_memories.end()) {
+            return m->second;
+        } else {
+            return nullptr;
+        }
+    }
+
+    void bsg_mem_dma_delete_memory(parameter_t id)
+    {
+        auto m = global_memories.find(id);
+        if (m != global_memories.end()) {
+            delete m->second;
+            global_memories.erase(m);
+        }
+    }
 }
 
 using namespace bsg_mem_dma;
@@ -30,9 +49,14 @@ extern "C" void * bsg_mem_dma_init(
            id, channel_addr_width_p, data_width_p, mem_els_p);
     
     assert(data_width_p % 8 == 0);
-    Memory *memory =  new Memory(channel_addr_width_p, data_width_p, mem_els_p, init_mem_p, id);
-    global_memories[id] = memory;
-    return memory;
+    if (bsg_mem_dma_get_memory(id) == nullptr) {
+      Memory *memory =  new Memory(channel_addr_width_p, data_width_p, mem_els_p, init_mem_p, id);
+      global_memories[id] = memory;
+      return memory;
+    } else {
+      return bsg_mem_dma_get_memory(id);
+    }
+
 }
 
 extern "C" void bsg_mem_dma_exit(
@@ -61,25 +85,4 @@ extern "C" void bsg_mem_dma_set(
     Memory *memory = reinterpret_cast<Memory*>(handle);
     pr_dbg("id = %llu: setting 0x%08llx to %02x\n", memory->_id, addr, val);
     memory->set(addr, val);
-}
-
-namespace bsg_mem_dma {
-    Memory *bsg_mem_dma_get_memory(parameter_t id)
-    {
-        auto m = global_memories.find(id);
-        if (m != global_memories.end()) {
-            return m->second;
-        } else {
-            return nullptr;
-        }
-    }
-
-    void bsg_mem_dma_delete_memory(parameter_t id)
-    {
-        auto m = global_memories.find(id);
-        if (m != global_memories.end()) {
-            delete m->second;
-            global_memories.erase(m);
-        }
-    }
 }
