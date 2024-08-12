@@ -9,6 +9,8 @@ package bsg_tag_pkg;
       logic en;    // this signal disables thru-transmit of new values
 } bsg_tag_s;
 
+  typedef bsg_tag_s bsg_tag_lines_s;
+  localparam bsg_tag_local_els_gp = $bits(bsg_tag_lines_s) / $bits(bsg_tag_s);
 
 endpackage // bsg_tag_pkg
 
