@@ -138,7 +138,7 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
   end
 
 
-  // synopsys translate_off
+`ifndef SYNTHESIS
 
   initial begin
 
@@ -153,7 +153,7 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
 
   end
   
-  // synopsys translate_on
+`endif
 
 
 endmodule

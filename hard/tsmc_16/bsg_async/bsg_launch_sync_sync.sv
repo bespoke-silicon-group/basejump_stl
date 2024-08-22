@@ -111,14 +111,14 @@ module bsg_launch_sync_sync #(parameter `BSG_INV_PARAM(width_p)
 
    genvar i;
 
-   // synopsys translate_off
+`ifndef SYNTHESIS
    initial assert (iclk_reset_i !== 'z)
      else
        begin
           $error("%m iclk_reset should be connected");
           $finish();
        end
-   // synopsys translate_on
+`endif
 
    if (use_negedge_for_launch_p)
      begin: n

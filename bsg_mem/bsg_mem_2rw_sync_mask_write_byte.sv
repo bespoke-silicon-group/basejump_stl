@@ -66,7 +66,7 @@ module bsg_mem_2rw_sync_mask_write_byte #( parameter `BSG_INV_PARAM(width_p )
        ,.b_data_o
        );
 
-   // synopsys translate_off
+`ifndef SYNTHESIS
 
    always_ff @(negedge clk_lo)
      if (a_v_i || b_v_i) begin
@@ -91,7 +91,7 @@ module bsg_mem_2rw_sync_mask_write_byte #( parameter `BSG_INV_PARAM(width_p )
           $display("## %m %L: disable_collision_warning_p is set; you should not have this on unless you have broken code. fix it!\n");
      end
 
-  // synopsys translate_on
+`endif
 
    
 endmodule

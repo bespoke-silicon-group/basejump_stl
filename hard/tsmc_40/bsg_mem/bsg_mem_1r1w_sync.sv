@@ -108,7 +108,7 @@ module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
      end // block: z
 
 
-   // synopsys translate_off
+`ifndef SYNTHESIS
    initial
      begin
         $display("## %L: instantiating width_p=%d, els_p=%d, substitute_1r1w_p=%d (%m)",width_p,els_p,substitute_1r1w_p);
@@ -118,7 +118,7 @@ module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
         end
      end
 
-   // synopsys translate_on
+`endif
 
 endmodule
 

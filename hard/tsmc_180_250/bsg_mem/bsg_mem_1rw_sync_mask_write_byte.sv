@@ -55,7 +55,7 @@ module bsg_mem_1rw_sync_mask_write_byte
     end
 
 
-  // synopsys translate_off
+`ifndef SYNTHESIS
 
   always_comb
     assert (data_width_p % 8 == 0)
@@ -66,7 +66,7 @@ module bsg_mem_1rw_sync_mask_write_byte
         $display("## bsg_mem_1rw_sync_mask_write_byte: instantiating data_width_p=%d, els_p=%d (%m)",data_width_p,els_p);
      end
 
-  // synopsys translate_on
+`endif
    
 endmodule
 

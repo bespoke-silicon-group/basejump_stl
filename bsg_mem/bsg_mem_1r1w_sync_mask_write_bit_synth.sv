@@ -76,7 +76,7 @@ module bsg_mem_1r1w_sync_mask_write_bit_synth #(parameter `BSG_INV_PARAM(width_p
         if (r_v_i)
           r_addr_r <= r_addr_i;
 
-        // synopsys translate_off
+`ifndef SYNTHESIS
         else
           r_addr_r <= 'X;
 
@@ -90,7 +90,7 @@ module bsg_mem_1r1w_sync_mask_write_bit_synth #(parameter `BSG_INV_PARAM(width_p
                end
              r_addr_r <= 'X;
           end
-        // synopsys translate_on
+`endif
 
      end
 

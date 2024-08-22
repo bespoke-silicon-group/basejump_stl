@@ -181,7 +181,7 @@ module bsg_fsb #(parameter `BSG_INV_PARAM( width_p )
         assign node_data_o[i] = node_data_o_int;
         assign node_en_r_o[i] = node_en_r_int;
 
-        // synopsys translate_off
+`ifndef SYNTHESIS
         always @(negedge node_reset_r_o[i])
           begin
              $display("   __         _                                    _");
@@ -202,7 +202,7 @@ module bsg_fsb #(parameter `BSG_INV_PARAM( width_p )
              $display(" |_|   |___/ |_.__/     \\___| |_| |_|  \\__,_| |_.__/  |_|  \\___|  ");
              $display("## enable high on FSB in module %m, node %2d, time = ",i, $stime);
           end
-        // synopsys translate_on
+`endif
      end
 
 endmodule
@@ -362,7 +362,7 @@ module bsg_fsb #(parameter `BSG_INV_PARAM( width_p )
         assign node_data_o[i] = node_data_o_int;
         assign node_en_r_o[i] = node_en_r_int;
 
-        // synopsys translate_off
+`ifndef SYNTHESIS
         always @(negedge node_reset_r_o[i])
           begin
              $display("   __         _                                    _");
@@ -383,7 +383,7 @@ module bsg_fsb #(parameter `BSG_INV_PARAM( width_p )
              $display(" |_|   |___/ |_.__/     \\___| |_| |_|  \\__,_| |_.__/  |_|  \\___|  ");
              $display("## enable high on FSB in module %m, node %2d, time = ",i, $stime);
           end
-        // synopsys translate_on
+`endif
      end
 
 endmodule

@@ -70,7 +70,7 @@ module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
        ,.r_data_o
        );
 
-   //synopsys translate_off
+`ifndef SYNTHESIS
    initial
      begin
 	// we warn if els_p >= 16 because it is a good candidate for hardening
@@ -94,7 +94,7 @@ module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
                  $error("X'ing matched read address %x (%m)",r_addr_i);
               end
        end
-   //synopsys translate_on
+`endif
 
 endmodule
 

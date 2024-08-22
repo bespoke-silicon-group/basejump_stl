@@ -24,11 +24,11 @@ module bsg_clkbuf #(parameter width_p=1
 
         assign o = i;
 
-        // synopsys translate_off
+`ifndef SYNTHESIS
 
         initial assert(harden_p==0) else $error("## %m wanted to harden but no macro");
 
-        // synopsys translate_on
+`endif
 
       end
 endmodule

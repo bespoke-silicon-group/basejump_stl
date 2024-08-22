@@ -71,13 +71,13 @@ module bsg_ready_and_link_async_to_wormhole
   localparam wormhole_width_lp = $bits(wormhole_packet_s);
   localparam wormhole_ratio_lp = `BSG_CDIV(wormhole_width_lp, flit_width_p);
   
-  // synopsys translate_off
+`ifndef SYNTHESIS
   initial
   begin
     assert (len_width_p >= `BSG_SAFE_CLOG2(wormhole_ratio_lp))
     else $error("Wormhole packet len width %d is too narrow for convertion ratio %d. Please increase len width.", len_width_p, wormhole_ratio_lp);
   end
-  // synopsys translate_on
+`endif
   
   
   /********************* Interfacing ral and wh link *********************/

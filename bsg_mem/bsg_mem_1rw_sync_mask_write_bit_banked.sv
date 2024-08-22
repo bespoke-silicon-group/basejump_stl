@@ -136,7 +136,7 @@ module bsg_mem_1rw_sync_mask_write_bit_banked
   end
 
 
-  // synopsys translate_off
+`ifndef SYNTHESIS
 
   initial begin
     assert(els_p % num_depth_bank_p == 0)
@@ -146,7 +146,7 @@ module bsg_mem_1rw_sync_mask_write_bit_banked
       else $error("[BSG_ERROR] num_width_bank_p does not divide even with width_p. %m");
   end
   
-  // synopsys translate_on
+`endif
 
 
 endmodule

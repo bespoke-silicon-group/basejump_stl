@@ -52,13 +52,13 @@ module bsg_wormhole_router_test_node_master
     bsg_wormhole_router_header_s  hdr;
   } wormhole_network_header_flit_s;
   
-  // synopsys translate_off
+`ifndef SYNTHESIS
   initial
   begin
     assert ($bits(wormhole_network_header_flit_s)-$bits(bsg_wormhole_router_header_s) >= width_lp)
     else $error("Packet data width %d is too narrow for data width %d.", $bits(wormhole_network_header_flit_s)-$bits(bsg_wormhole_router_header_s), width_lp);
   end
-  // synopsys translate_on
+`endif
   
   
   /********************* Interfacing bsg_noc link *********************/

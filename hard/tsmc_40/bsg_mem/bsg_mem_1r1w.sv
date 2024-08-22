@@ -161,7 +161,7 @@ module bsg_mem_1r1w
 		    (.*);
 	     end
 
-   // synopsys translate_off
+`ifndef SYNTHESIS
 
    initial begin
      if (debug_p) begin
@@ -181,7 +181,7 @@ module bsg_mem_1r1w
             else $error("%m: Attempt to read and write same address %x",w_addr_i);
        end
    
-   // synopsys translate_on
+`endif
 
 endmodule
 

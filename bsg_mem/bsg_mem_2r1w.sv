@@ -36,7 +36,7 @@ module bsg_mem_2r1w #(parameter `BSG_INV_PARAM(width_p)
        ) synth
        (.*);
 
-// synopsys translate_off
+`ifndef SYNTHESIS
 
    always_ff @(negedge w_clk_i)
      if (w_v_i)
@@ -56,7 +56,7 @@ module bsg_mem_2r1w #(parameter `BSG_INV_PARAM(width_p)
         $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d (%m)",width_p,els_p,read_write_same_addr_p);
      end
 
-// synopsys translate_on
+`endif
 
 endmodule
 

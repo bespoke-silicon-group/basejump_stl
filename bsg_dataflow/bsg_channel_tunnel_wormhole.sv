@@ -625,7 +625,7 @@ module  bsg_channel_tunnel_wormhole
   
 /*************************** Debugging Information ****************************/
   
-  // synopsys translate_off
+`ifndef SYNTHESIS
   initial 
   begin
   
@@ -637,7 +637,7 @@ module  bsg_channel_tunnel_wormhole
       end
 
   end
-  // synopsys translate_on
+`endif
 
 endmodule
 

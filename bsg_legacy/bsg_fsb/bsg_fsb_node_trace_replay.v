@@ -171,7 +171,7 @@ module bsg_fsb_node_trace_replay
           end
      end
 
-   // synopsys translate_off
+`ifndef SYNTHESIS
    // non-synthesizeable components
    always @(negedge clk_i)
      begin
@@ -246,6 +246,6 @@ module bsg_fsb_node_trace_replay
              endcase // case (op)
           end // if (instr_completed & ~reset_i & ~done_r)
      end // always @ (negedge clk_i)
-   // synopsys translate_on
+`endif
 
 endmodule

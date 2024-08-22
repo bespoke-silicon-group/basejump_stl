@@ -85,7 +85,7 @@ module bsg_mem_2rw_sync_mask_write_bit_synth #( parameter `BSG_INV_PARAM(width_p
              a_addr_r <= 'X;
              b_addr_r <= 'X;
           end
-        // synopsys translate_on
+`endif
 
      end
 

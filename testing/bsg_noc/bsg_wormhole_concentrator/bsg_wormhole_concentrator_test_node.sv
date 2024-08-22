@@ -71,13 +71,13 @@ module bsg_wormhole_concentrator_test_node
   // Determine PISO and SIPOF convertion ratio
   localparam wh_ratio_lp = `BSG_CDIV(wh_width_lp, flit_width_p);
 
-  // synopsys translate_off
+`ifndef SYNTHESIS
   initial
   begin
     assert (len_width_p >= `BSG_SAFE_CLOG2(wh_ratio_lp))
     else $error("Wormhole packet len width %d is too narrow for ratio %d. Please increase len width.", len_width_p, wh_ratio_lp);
   end
-  // synopsys translate_on
+`endif
 
   // wormhole packets
   wormhole_concentrator_test_node_s node_piso_data_li_cast, node_sipof_data_lo_cast;

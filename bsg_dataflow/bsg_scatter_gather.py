@@ -202,9 +202,9 @@ module bsg_scatter_gather #(`BSG_INV_PARAM(vec_size_lp))
 for x in channels :
     generate_code_for_channel(x)
 
-print "// synopsys translate_off";
+print "`ifndef SYNTHESIS";
 print "initial assert (vec_size_lp < ",max_channel,") else $error(\"bsg_scatter_gather: vec_size_lp too large %d\", vec_size_lp);";
-print "// synopsys translate_on";
+print "`endif";
 
 print "endmodule";
 

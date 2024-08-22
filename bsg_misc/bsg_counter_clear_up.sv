@@ -42,7 +42,7 @@ module bsg_counter_clear_up #(parameter `BSG_INV_PARAM(max_val_p)
         end
      end
 
-//synopsys translate_off
+`ifndef SYNTHESIS
 
    always_ff @ (negedge clk_i) 
      begin
@@ -50,7 +50,7 @@ module bsg_counter_clear_up #(parameter `BSG_INV_PARAM(max_val_p)
          $display("%m error: counter overflow at time %t", $time);
      end
 
-//synopsys translate_on
+`endif
 
 endmodule
 

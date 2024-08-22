@@ -85,7 +85,7 @@ module bsg_id_pool_dealloc_alloc_one_hot
   assign active_ids_r_o = allocated_r;
   
 
-  // synopsys translate_off
+`ifndef SYNTHESIS
     
   always_ff @ (negedge clk_i) begin
     if (~reset_i) begin
@@ -98,7 +98,7 @@ module bsg_id_pool_dealloc_alloc_one_hot
       $display("bsg_id_pool_one_hot: allocated_r=%b dealloc_ids_i=%b alloc_id_v_o=%b", allocated_r, dealloc_ids_i, alloc_id_v_o);
     end
   end
-  // synopsys translate_on
+`endif
 
 endmodule
 

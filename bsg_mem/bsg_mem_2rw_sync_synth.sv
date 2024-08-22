@@ -72,7 +72,7 @@ module bsg_mem_2rw_sync_synth #( parameter `BSG_INV_PARAM(width_p )
         else
             b_addr_r <= 'X;
 
-        // synopsys translate_off
+`ifndef SYNTHESIS
         // if addresses match and this is forbidden, then nuke the read address
 
         if (a_addr_i == b_addr_i && a_v_i && b_v_i && (a_w_i || b_w_i) && !read_write_same_addr_p)
@@ -84,7 +84,7 @@ module bsg_mem_2rw_sync_synth #( parameter `BSG_INV_PARAM(width_p )
              a_addr_r <= 'X;
              b_addr_r <= 'X;
           end
-        // synopsys translate_on
+`endif
 
      end
 

@@ -457,7 +457,7 @@ module bsg_cache_non_blocking_tl_stage
   end
 
 
-  // synopsys translate_off
+`ifndef SYNTHESIS
   always_ff @ (negedge clk_i) begin
     if (~reset_i & v_tl_r) begin
       assert($countones(tag_hit) <= 1) 
@@ -468,7 +468,7 @@ module bsg_cache_non_blocking_tl_stage
         else $error("[BSG_ERROR] %m. t=%t. There needs to be at least 2 unlocked ways.]", $time);
     end
   end
-  // synopsys translate_on
+`endif
 
 
 

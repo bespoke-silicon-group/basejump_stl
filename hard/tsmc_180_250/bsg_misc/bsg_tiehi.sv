@@ -47,9 +47,9 @@ module bsg_tiehi #(parameter `BSG_INV_PARAM(width_p)
        begin :notmacro
           assign o = { width_p {1'b1} };
 
-          // synopsys translate_off
+`ifndef SYNTHESIS
           initial assert(harden_p==0) else $error("## %m wanted to harden but no macro");
-          // synopsys translate_on
+`endif
 
       end
 endmodule

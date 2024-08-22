@@ -16709,9 +16709,9 @@ if (vec_size_lp == 11)
         default: fwd_datapath_o= 'X;
     endcase
   end
-// synopsys translate_off
+`ifndef SYNTHESIS
 initial assert (vec_size_lp <  12 ) else $error("bsg_scatter_gather: vec_size_lp too large %d", vec_size_lp);
-// synopsys translate_on
+`endif
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_scatter_gather)

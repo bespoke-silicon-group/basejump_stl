@@ -43,7 +43,7 @@ module bsg_mesh_router_decoder_dor
 
   // check parameters
 
-  // synopsys translate_off
+`ifndef SYNTHESIS
   initial begin
     if (ruche_factor_X_p > 0) begin
       assert(dims_p > 2) else $fatal(1, "ruche in X direction requires dims_p greater than 2.");
@@ -58,7 +58,7 @@ module bsg_mesh_router_decoder_dor
     assert(ruche_factor_X_p < (1<<x_cord_width_p)) else $fatal(1, "ruche factor in X direction is too large");
     assert(ruche_factor_Y_p < (1<<y_cord_width_p)) else $fatal(1, "ruche factor in Y direction is too large");
   end
-  // synopsys translate_on
+`endif
 
 
 
@@ -267,7 +267,7 @@ module bsg_mesh_router_decoder_dor
   end
 
 
-  // synopsys translate_off
+`ifndef SYNTHESIS
   if (debug_p) begin
     always_ff @ (negedge clk_i) begin
       if (~reset_i) begin
@@ -280,7 +280,7 @@ module bsg_mesh_router_decoder_dor
     wire unused0 = clk_i;
     wire unused1 = reset_i;
   end
-  // synopsys translate_on
+`endif
 
 
 

@@ -73,7 +73,7 @@ module bsg_cam_1r1w_tag_array
     end
       end
 
-  //synopsys translate_off
+`ifndef SYNTHESIS
   always_ff @(negedge clk_i) begin
     assert(multiple_entries_p || reset_i || $countones(r_match_o) <= 1)
       else $error("Multiple similar entries are found in match_array\
@@ -83,7 +83,7 @@ module bsg_cam_1r1w_tag_array
 	assert(reset_i || $countones(w_v_i & {safe_els_lp{w_set_not_clear_i}}) <= 1)
       else $error("Inv_r one-hot write address %b\n", w_v_i);
   end 
-  //synopsys translate_on
+`endif
 
 endmodule
 

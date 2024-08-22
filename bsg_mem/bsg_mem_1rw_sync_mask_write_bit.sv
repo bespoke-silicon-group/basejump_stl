@@ -53,7 +53,7 @@ module bsg_mem_1rw_sync_mask_write_bit #(
        );
 
 
-   // synopsys translate_off
+`ifndef SYNTHESIS
    always_ff @(negedge clk_lo)
    if (((els_p > 1) && (v_i === 1)))
      assert (((reset_i === 'X) || (reset_i === 1'b1) || (els_p <= 1) || (addr_i < els_p)))
@@ -62,7 +62,7 @@ module bsg_mem_1rw_sync_mask_write_bit #(
      begin
         $display("## %L: instantiating width_p=%d, els_p=%d (%m)",width_p,els_p);
      end
-  // synopsys translate_on
+`endif
 
    
 endmodule

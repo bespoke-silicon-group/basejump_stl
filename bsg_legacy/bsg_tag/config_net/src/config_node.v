@@ -118,7 +118,7 @@ module config_node
   assign shift_n = {config_i.cfg_bit, shift_r[1 +: shift_width_lp - 1]};
 
 
-  // synopsys translate_off
+`ifndef SYNTHESIS
 
    // non-synthesizeable helper message
   always @(negedge config_i.cfg_clk)
@@ -127,7 +127,7 @@ module config_node
          $display("## I: CONFIG NODE (id=%-d,default=%-d'b%-b,packet_size=%-d) received reset packet (%m)",id_p,data_bits_p,default_p,$bits(node_packet_s));
     end
 
-  // synopsys translate_on
+`endif
 
    // we break up the config register into three parts because it is too tall
 

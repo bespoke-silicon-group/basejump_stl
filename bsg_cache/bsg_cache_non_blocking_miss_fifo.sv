@@ -367,7 +367,7 @@ module bsg_cache_non_blocking_miss_fifo
 
 
 
-  // synopsys translate_off
+`ifndef SYNTHESIS
 
   always_ff @ (negedge clk_i) begin
     if (~reset_i) begin
@@ -375,7 +375,7 @@ module bsg_cache_non_blocking_miss_fifo
     end
   end
 
-  // synopsys translate_on
+`endif
 
 endmodule
 

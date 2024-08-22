@@ -84,7 +84,7 @@ module bsg_id_pool
   );
 
 
-  // synopsys translate_off
+`ifndef SYNTHESIS
   always_ff @ (negedge clk_i) begin
     if (~reset_i) begin
       if (dealloc_v_i) begin
@@ -100,7 +100,7 @@ module bsg_id_pool
       
     end
   end
-  // synopsys translate_on
+`endif
 
 
 endmodule

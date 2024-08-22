@@ -215,7 +215,7 @@ module bsg_link_ddr_downstream_encode
   ,.yumi_i (core_yumi_i)
   );
   
-  // synopsys translate_off
+`ifndef SYNTHESIS
   initial 
   begin
     assert (sipo_ratio_lp > 0)
@@ -232,7 +232,7 @@ module bsg_link_ddr_downstream_encode
         $finish;
       end
   end
-  // synopsys translate_on
+`endif
 
 endmodule
 `BSG_ABSTRACT_MODULE(bsg_link_ddr_downstream_encode)

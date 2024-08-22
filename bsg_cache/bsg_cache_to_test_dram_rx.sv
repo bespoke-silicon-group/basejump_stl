@@ -137,7 +137,7 @@ module bsg_cache_to_test_dram_rx
   assign ch_addr_afifo_deq = ch_addr_v_lo & dram_data_v_lo;
 
 
-  // synopsys translate_off
+`ifndef SYNTHESIS
   
   always_ff @ (negedge dram_clk_i) begin
     if (~dram_reset_i & dram_data_v_i) begin
@@ -146,7 +146,7 @@ module bsg_cache_to_test_dram_rx
     end
   end
 
-  // synopsys translate_on
+`endif
 
 
 endmodule

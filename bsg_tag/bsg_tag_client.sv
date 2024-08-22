@@ -99,7 +99,7 @@ module bsg_tag_client
 	      ,.data_o(tag_data_r)
 	      );
    
-   // synopsys translate_off
+`ifndef SYNTHESIS
    if (debug_level_lp > 1)
    always @(negedge bsg_tag_i.clk)
      begin
@@ -110,7 +110,7 @@ module bsg_tag_client
         if (send_now)
           $display("## bsg_tag_client (send) SENDING   %b (%m)",tag_data_r);
      end
-   // synopsys translate_on
+`endif
 
    logic recv_toggle_r, recv_toggle_n;
 

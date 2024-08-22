@@ -33,7 +33,7 @@ module testbench();
   localparam tag_width_lp = (addr_width_p-lg_sets_lp-lg_block_size_in_words_lp-byte_sel_width_lp);
   localparam block_offset_width_lp = lg_block_size_in_words_lp+byte_sel_width_lp;
 
-  // synopsys translate_off
+`ifndef SYNTHESIS
   integer status;
   integer wave;
   string checker;
@@ -64,7 +64,7 @@ module testbench();
     .clk_i(clk)
     ,.async_reset_o(reset)
   );
-  // synopsys translate_on
+`endif
 
 
   // non-blocking cache
@@ -127,7 +127,7 @@ module testbench();
     ,.dma_data_yumi_i(dma_data_yumi_li)
   );
 
-  // synopsys translate_off
+`ifndef SYNTHESIS
 
   // random yumi generator
   //
@@ -314,6 +314,6 @@ module testbench();
     $finish;
   end
 
-  // synopsys translate_on
+`endif
 
 endmodule

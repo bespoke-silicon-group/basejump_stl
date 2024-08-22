@@ -52,7 +52,7 @@ module bsg_mesh_router_buffered
 
    genvar                           i;
 
-   //synopsys translate_off
+`ifndef SYNTHESIS
    if (debug_p)
      for (i = 0; i < dirs_lp;i=i+1)
        begin
@@ -61,7 +61,7 @@ module bsg_mesh_router_buffered
                      ,my_x_i,my_y_i,i,link_i_cast[i].v,link_o_cast[i].ready_and_rev,
                      link_o_cast[i].v,link_i_cast[i].ready_and_rev,link_i[i]);
        end
-   //synopsys translate_on
+`endif
 
   for (i = 0; i < dirs_lp; i=i+1) begin: rof
     if (stub_p[i]) begin: fi
@@ -71,11 +71,11 @@ module bsg_mesh_router_buffered
       // accept no data from outside of stubbed port
       assign link_o_cast[i].ready_and_rev = 1'b0;
 
-      // synopsys translate_off
+`ifndef SYNTHESIS
       always @(negedge clk_i)
         assert (reset_i !== '0 || ~link_o_cast[i].v) else
           $warning("## stubbed port %x received word %x",i,link_i_cast[i].data);
-      // synopsys translate_on
+`endif
     end
     else begin: fi
       logic fifo_ready_lo;
@@ -107,7 +107,7 @@ module bsg_mesh_router_buffered
           ,.data_o(link_o_cast[i].ready_and_rev)
         );
         
-        // synopsys translate_off
+`ifndef SYNTHESIS
         always_ff @ (negedge clk_i) begin
           if (~reset_i) begin
             if (link_i_cast[i].v) begin
@@ -116,7 +116,7 @@ module bsg_mesh_router_buffered
             end
           end
         end
-        // synopsys translate_on
+`endif
 
       end
       else begin
@@ -144,12 +144,12 @@ module bsg_mesh_router_buffered
           begin : macro
 	     wire [width_p-1:0] tmp;
 
-            // synopsys translate_off
+`ifndef SYNTHESIS
             initial
                begin
                   $display("%m with buffers on %d",i);
                end
-            // synopsys translate_on
+`endif
              bsg_inv #(.width_p(width_p),.vertical_p(i < 3)) data_lo_inv
                (.i (data_lo[i]         )
                 ,.o(tmp)

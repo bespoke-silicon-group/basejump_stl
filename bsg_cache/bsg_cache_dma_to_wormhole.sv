@@ -329,14 +329,14 @@ module bsg_cache_dma_to_wormhole
     end
   end
 
-  //synopsys translate_off
+`ifndef SYNTHESIS
   if (wh_flit_width_p != dma_data_width_lp)
     $error("WH flit width must be equal to DMA data width");
   if (wh_flit_width_p < dma_addr_width_p)
     $error("WH flit width must be larger than address width");
   if (wh_len_width_p < `BSG_WIDTH(dma_burst_len_p+1))
     $error("WH len width %d must be large enough to hold the dma transfer size %d", wh_len_width_p, `BSG_WIDTH(dma_burst_len_p+1));
-  //synopsys translate_on
+`endif
 
 endmodule
 

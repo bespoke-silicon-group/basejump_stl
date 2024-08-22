@@ -92,7 +92,7 @@ module bsg_mem_2r1w_sync #(parameter `BSG_INV_PARAM(width_p)
      end
 
 
-//synopsys translate_off
+`ifndef SYNTHESIS
 
    always_ff @(posedge clk_i)
      if (w_v_i)
@@ -113,7 +113,7 @@ module bsg_mem_2r1w_sync #(parameter `BSG_INV_PARAM(width_p)
 		 ,width_p,els_p,read_write_same_addr_p,harden_p);
      end
 
-//synopsys translate_on
+`endif
 
    
 

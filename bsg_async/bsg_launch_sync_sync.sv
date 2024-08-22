@@ -229,7 +229,7 @@ module bsg_launch_sync_sync #(parameter `BSG_INV_PARAM(width_p)
     , output [width_p-1:0] oclk_data_o // after sync flops
     );
 
-// synopsys translate_off
+`ifndef SYNTHESIS
 
 /*   initial
      begin
@@ -246,7 +246,7 @@ module bsg_launch_sync_sync #(parameter `BSG_INV_PARAM(width_p)
           $finish();
        end
 `endif
-// synopsys translate_on
+`endif
 
    genvar i;
 

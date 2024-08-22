@@ -33,11 +33,11 @@ module bsg_mem_multiport_latch_write_banked_bypassing
 
 
   // parameter checking
-  // synopsys translate_off
+`ifndef SYNTHESIS
   initial begin
     assert((els_p%num_banks_p) == 0) else $error("els_p has to be multiples of num_banks_p.");
   end
-  // synopsys translate_on
+`endif
 
 
   wire unused = reset_i;

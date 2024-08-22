@@ -85,13 +85,13 @@ module bsg_router_crossbar_o_by_i
         ,.data_o(credit_ready_and_o[i])
       );
 
-      // synopsys translate_off
+`ifndef SYNTHESIS
       always_ff @ (negedge clk_i) begin
         if (~reset_i & valid_i[i]) begin
           assert(fifo_ready_lo[i]) else $error("Trying to enque when there is no space in FIFO, while using credit interface. i =%d", i);
         end
       end
-      // synopsys translate_on
+`endif
 
     end
     else begin: rd

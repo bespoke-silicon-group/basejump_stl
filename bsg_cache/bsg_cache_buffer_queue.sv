@@ -125,13 +125,13 @@ module bsg_cache_buffer_queue
 
 
 
-  // synopsys translate_off
+`ifndef SYNTHESIS
   always_ff @ (negedge clk_i) begin
     if (~reset_i & num_els_r !== 2'bx) 
       assert(num_els_r != 3) else $error("bsg_cache_buffer_queue cannot hold more than 2 entries.");
 
   end
-  // synopsys translate_on
+`endif
 
 
 endmodule

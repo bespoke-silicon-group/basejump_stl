@@ -125,10 +125,10 @@ module bsg_fifo_1r1w_large #(parameter `BSG_INV_PARAM(width_p)
     , input                yumi_i
     );
 
-   // synopsys translate_off
+`ifndef SYNTHESIS
    initial assert ((els_p & 1) == 0) else
      $error("odd number of elements for two port fifo not handled.");
-   // synopsys translate_on
+`endif
 
    wire [width_p*2-1:0] data_sipo;
    wire [1:0]          valid_sipo;
@@ -292,7 +292,7 @@ module bsg_fifo_1r1w_large #(parameter `BSG_INV_PARAM(width_p)
       ,.yumi_i (yumi_i    )
       );
 
-   // synopsys translate_off
+`ifndef SYNTHESIS
 
    // this sums up all of the storage in this fifo
    wire [31:0] num_elements_debug
@@ -301,7 +301,7 @@ module bsg_fifo_1r1w_large #(parameter `BSG_INV_PARAM(width_p)
                + sipo.valid_r[0] + sipo.valid_r[1]
                + !little_ready_rot[0] + !little_ready_rot[1];
 
-   // synopsys translate_on
+`endif
 
 
 endmodule

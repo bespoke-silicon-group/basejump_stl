@@ -199,7 +199,7 @@ module bsg_cache_non_blocking_tag_mem
   end
 
 
-  // synopsys translate_off
+`ifndef SYNTHESIS
   always_ff @ (negedge clk_i) begin
 
     if (v_i & debug_p)
@@ -208,7 +208,7 @@ module bsg_cache_non_blocking_tag_mem
   end
 
 
-  // synopsys translate_on
+`endif
 
 endmodule
 

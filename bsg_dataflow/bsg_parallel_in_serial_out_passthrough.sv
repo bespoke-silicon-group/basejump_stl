@@ -80,7 +80,7 @@ module bsg_parallel_in_serial_out_passthrough #( parameter `BSG_INV_PARAM(width_
      );
   assign v_o = v_i;
 
-  //synopsys translate_off
+`ifndef SYNTHESIS
   logic [els_p-1:0][width_p-1:0] initial_data_r;
   bsg_dff_en
    #(.width_p(width_p*els_p))
@@ -102,7 +102,7 @@ module bsg_parallel_in_serial_out_passthrough #( parameter `BSG_INV_PARAM(width_
             else $error("data_i must be held constant during the entire PISO transaction");
         end
     end
-  //synopsys translate_on
+`endif
 
 endmodule
 

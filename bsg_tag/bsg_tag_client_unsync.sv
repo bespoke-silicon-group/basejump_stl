@@ -84,7 +84,7 @@ module bsg_tag_client_unsync
   */ 
    
 
-   // synopsys translate_off
+`ifndef SYNTHESIS
    if (debug_level_lp > 1)
      begin: debug
 	wire reset_op = ~op_r & param_r;
@@ -100,7 +100,7 @@ module bsg_tag_client_unsync
                $display("## bsg_tag_client (send) SHIFTING  %b (%m)",tag_data_r);
 	  end
      end
-   // synopsys translate_on
+`endif
 
    assign data_async_r_o = tag_data_r;
 

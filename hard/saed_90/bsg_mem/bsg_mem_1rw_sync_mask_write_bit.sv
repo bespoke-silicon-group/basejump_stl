@@ -86,7 +86,7 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
     end // block: notmacro
 
 
-   // synopsys translate_off
+`ifndef SYNTHESIS
 
    always_ff @(posedge clk_lo)
      if (v_i === 1)
@@ -98,7 +98,7 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
         $display("## %L: instantiating width_p=%d, els_p=%d (%m)",width_p,els_p);
      end
 
-  // synopsys translate_on
+`endif
 
    
 endmodule

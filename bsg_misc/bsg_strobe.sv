@@ -125,7 +125,7 @@ module bsg_strobe #(`BSG_INV_PARAM(width_p)
    always_ff @(posedge clk_i)
      strobe_r_o <= strobe_n_buf;
 
-   // synopsys translate_off
+`ifndef SYNTHESIS
    if (debug_lp)
      begin : debug
         always @(negedge clk_i)
@@ -133,14 +133,14 @@ module bsg_strobe #(`BSG_INV_PARAM(width_p)
             $display("%t (C=%b,S=%b) reset_r_i=%d new_val=%b init_val=%d val(C,S)=%b C^S=%b",$time
                      ,  C_r,S_r, reset_r_i, new_val, init_val_r_i, (C_r << 1)+S_r, strobe_n);
      end
-   // synopsys translate_on
+`endif
 
 
-   // synopsys translate_off
+`ifndef SYNTHESIS
    always @(negedge clk_i)
      assert((strobe_n === 'X) || strobe_n == & ((C_r << 1) ^ S_r))
        else $error("## faulty assumption about strobe signal in %m (C_r=%b, S_r=%b, strobe_n=%b)", C_r,S_r, strobe_n);
-   // synopsys translate_on
+`endif
 
 endmodule
 
