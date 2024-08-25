@@ -47,7 +47,7 @@ module bsg_fifo_1rw_large_cov
     cross_all: cross cp_v, cp_rptr, cp_wptr, cp_loir, cp_end {
       // by definition, fifo empty means r/w pointers are the same
       illegal_bins ig0 = cross_all with (cp_rptr != cp_wptr);
-      illegal_bins ig1 = cross_all with (cp_v && !cp_end);  // cannot read from empty fifo
+      illegal_bins ig1 = cross_all with (cp_v && (cp_end == 0));  // cannot read from empty fifo
     }
 
   endgroup
