@@ -66,6 +66,10 @@ Mirrors the other directories, with tests.
 
 Mirrors other directories, contains replacement files for specific process technologies.
 
+## Example Usage
+
+Example usage of these modules can be found in the [HammerBlade manycore repository](https://github.com/bespoke-silicon-group/bsg_manycore), the [BlackParrot Repository](https://github.com/black-parrot/black-parrot) and the [Basejump STL Testing](https://github.com/bespoke-silicon-group/basejump_stl/tree/master/testing) repository.
+
 ## Contact
 
 Email: taylor-bsg@googlegroups.com
