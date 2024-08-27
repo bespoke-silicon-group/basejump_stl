@@ -3,6 +3,7 @@
 // it to a single word output. 
 //    v_i passes through to v_o
 //    data_i passes through to data_o (with a mux delay)
+//    ready_and_i passes through to ready_and_o
 //
 // Note:
 //   A transaction starts when ready_and_o & v_i. data_i must
