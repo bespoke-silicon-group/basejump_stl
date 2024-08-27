@@ -1,6 +1,9 @@
 /**
  *  bsg_serial_in_parallel_out_dynamic.sv
  *
+ *  In this SIPO, the output count must be presented with
+ *  the first data word in the stream to the module.
+ *
  *  Paul Gao        06/2019
  *
  */
