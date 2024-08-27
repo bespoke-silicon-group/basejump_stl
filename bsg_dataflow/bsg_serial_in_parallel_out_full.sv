@@ -1,7 +1,10 @@
 /**
  *  bsg_serial_in_parallel_out_full.sv
  *
- *  This is a simpler version of bsg_serial_in_parallel_out.
+ *  This module is a serial in parallel out module with a constant in/out ratio. 
+ *  The implementation is much simpler than bsg_serial_in_parallel_out.sv, presumably
+ *  leading to better timing and less area and power.
+ *
  *  Output is only valid, when the output array is fully assembled.
  *
  *  By default, this version has zero bubble.
