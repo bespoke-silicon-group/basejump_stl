@@ -11,7 +11,7 @@
 //   This may make the module incompatible with upstream modules that
 //     multiplex multiple inputs and can change which input they multiplex
 //     on the fly based on arrival of new inputs. Importantly, the wormhole router
-//     needs to be instantiated with the locking parameter.
+//     needs to be instantiated with the hold_on_valid_p  parameter.
 
 `include "bsg_defines.sv"
 
