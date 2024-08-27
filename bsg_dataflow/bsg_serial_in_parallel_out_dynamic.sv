@@ -1,8 +1,10 @@
 /**
  *  bsg_serial_in_parallel_out_dynamic.sv
  *
- *  In this SIPO, the output count must be presented with
- *  the first data word in the stream to the module.
+ * This SIPO supports a changing in/out ratio; but the 
+ * output count must be presented with the first data word 
+ * in the stream to the module. Because of this limitation,
+ * the hardware is much simpler than in bsg_serial_in_parallel_out.
  *
  *  Paul Gao        06/2019
  *
@@ -163,7 +165,7 @@ module bsg_serial_in_parallel_out_dynamic
       end
     else
       begin: onefifo
-        // Must use one element fifo to work correctly!
+        // one element FIFO is sufficient to enable full pipelined dataflow
         bsg_one_fifo
        #(.width_p(width_p)
         ) fifo
