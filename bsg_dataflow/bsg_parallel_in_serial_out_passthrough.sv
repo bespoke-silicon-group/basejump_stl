@@ -1,13 +1,17 @@
 //
 // This data structure takes in a multi-word data and serializes
-// it to a single word output. This module is helpful on both sides.
+// it to a single word output. 
+//    v_i passes through to v_o
+//    data_i passes through to data_o (with a mux delay)
+//
 // Note:
 //   A transaction starts when ready_and_o & v_i. data_i must
 //     stay constant for the entirety of the transaction until
 //     ready_and_o is asserted.
 //   This may make the module incompatible with upstream modules that
 //     multiplex multiple inputs and can change which input they multiplex
-//     on the fly based on arrival of new inputs.
+//     on the fly based on arrival of new inputs. Importantly, the wormhole router
+//     needs to be instantiated with the locking parameter.
 
 `include "bsg_defines.sv"
 
