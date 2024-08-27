@@ -1,19 +1,24 @@
 // MBT BSG 11/13/2014
 //
-// a data structure that takes one word per cycle
-// and allows more than one word per cycle to exit.
-// the number of words extracted can vary dynamically.
+// Single-Enque, Multi-Deque FIFO
+//
+// A FIFO that takes in one word per cycle
+// and allows more than one word per cycle to be removed.
+// the number of words removed can be determined on a cycle-by-cycle basis.
+//
+// This module is likely to be much more expensive than other
+// bsg_serial_in_parallel_out_* modules, and probably should be renamed.
 //
 // els_p and out_els_p can be set differently in order
 // to increase the amount of buffering internal to the module
 //
-// * this data structure supports bypassing, so can
-// have zero latency.
+// this data structure supports bypassing, so can
+// have zero latency (but possibly a larger cycle time.)
 //
 // this is a shifting-based fifo; so this is probably
 // not ideal from power perspective
 //
-//
+// 
 
 `include "bsg_defines.sv"
 
