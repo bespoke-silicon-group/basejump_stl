@@ -49,6 +49,10 @@ Unidirectional off-chip high-speed source synchronous communication interface. (
 
 Open source portable clock generator (all-standard cell)
 
+* bsg_tag
+
+High speed SPI-like interface for configuration state
+
 * bsg_dmc
 
 LPDDR1 Dram Controller and PHY.
@@ -59,6 +63,7 @@ Requires advanced knowledge to tapeout.
 Data, clock, and reset generator for test benches.
 
 * testing
+
 
 Mirrors the other directories, with tests.
 
