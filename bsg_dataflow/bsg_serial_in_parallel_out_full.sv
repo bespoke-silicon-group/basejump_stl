@@ -5,6 +5,9 @@
  *  The implementation is much simpler than bsg_serial_in_parallel_out.sv, presumably
  *  leading to better timing and less area and power.
  *
+ *  This module is like bsg_serial_in_parallel_out_passthru, except that it buffers
+ *  data with FIFOs and introduces one cycle of extra latency beyond the in/out ratio.
+ *
  *  Output is only valid, when the output array is fully assembled.
  *
  *  By default, this version has zero bubble.
