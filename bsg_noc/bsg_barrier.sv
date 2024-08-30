@@ -50,6 +50,7 @@
 // (Pi = Po) for all tiles or barrier in progress (Pi != Po for some subset of nodes.) For barrier in progress, we can record all of the nodes
 // that have barrier in progress, and then reset the corresponding Pi bit to clear the in progress barrier.
 //
+// https://docs.google.com/presentation/d/1LkmpxLuo4vvxT_m_Ww6FkqnFa1y8ePmZIGdC5xIN26w/edit#slide=id.p
 
 `include "bsg_defines.sv"
 
@@ -124,11 +125,15 @@ module bsg_barrier
   
   assign activate_n = data_gather_out[dirs_p];
 
-  localparam debug_p = 0;
+  // synopsys translate_off
   
+  localparam debug_p = 0;
+
   if (debug_p)
   always @(negedge clk_i)
     $display("%d: %m %b %b %b %b %b %b", $time, gather_and, gather_or, gather_out, sense_n, data_i, data_o);
+
+  // synopsys translate_on
   
 endmodule
 
