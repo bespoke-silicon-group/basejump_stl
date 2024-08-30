@@ -161,6 +161,18 @@ logic hold_on_sr, reset_on_sr;
 
 """)
 
+print """
+// synopsys translate_off
+initial begin
+assert (inputs_p <= %d)
+  else begin
+    $error("[%%m] Can not support inputs_p greater than %%d!", %s);
+    $finish();
+  end
+end
+// synopsys translate_on
+""" % (max_reqs, max_reqs)
+
 for reqs_w in range(1, max_reqs+1):
     print ("""
 if(inputs_p == %d)
