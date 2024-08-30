@@ -80,12 +80,18 @@ module bsg_mem_multiport_latch_write_banked_bypassing
 
     wire clk_neg = ~mem_we_clk[bank_id_lp][bank_addr_lp];
 
-    for (genvar j = 0; j < width_p; j++) begin: b
-      bsg_latch lat0 (
-        .clk_i(clk_neg)
-        ,.data_i(w_data_i[bank_id_lp][j])
-        ,.data_o(mem_r[i][j])
-      );
+    bsg_dlatch #(.width_p(width_p), .i_know_this_is_a_bad_idea_p(1'b1)) lat0
+    ( .clk_i(clk_neg)
+     ,.data_i(w_data_i[bank_id_lp])
+     ,.data_o(mem_r[i])
+    );
+    
+    //for (genvar j = 0; j < width_p; j++) begin: b
+    //  bsg_latch lat0 (
+    //    .clk_i(clk_neg)
+    //    ,.data_i(w_data_i[bank_id_lp][j])
+    //    ,.data_o(mem_r[i][j])
+    //  );
     end
   end
 
