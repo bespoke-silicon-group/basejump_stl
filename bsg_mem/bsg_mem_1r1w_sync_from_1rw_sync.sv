@@ -1,8 +1,8 @@
 // 1 read port, 1 write port memory implemented using two single port (1rw) memories
 //
-// reads are asynchronous
+// reads are synchronous
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_1r1w_sync_from_1rw_sync #(parameter width_p=-1
                                         ,parameter els_p=-1
