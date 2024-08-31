@@ -157,7 +157,7 @@ module bsg_fifo_1r1w_pseudo_large #(parameter `BSG_INV_PARAM(width_p )
 
    // ***** DEBUG ******
    // for debugging; whether we are bypassing the big fifo
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    wire bypass_mode = v_i & ~ big_enq;
 

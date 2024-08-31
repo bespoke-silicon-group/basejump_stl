@@ -81,7 +81,7 @@ module bsg_mem_1rw_sync_synth
       if (v_i & w_i) 
         mem[addr_li] <= data_i;
    end // non_zero_width
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    initial
      begin
         if (verbose_p)

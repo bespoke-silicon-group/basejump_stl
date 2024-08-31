@@ -554,7 +554,7 @@ module bsg_comm_link
              assign io_trigger_mode_alt_en [i]     = 1'b0;
              assign core_loopback_en       [i]     = 1'b0;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
              // activate the channel if all of the "real" tests passed
              // MBT: we use triple equals because this handles the X case in simulation
              //      DC of course does not like ===

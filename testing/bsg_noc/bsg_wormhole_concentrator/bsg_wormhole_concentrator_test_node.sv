@@ -71,7 +71,7 @@ module bsg_wormhole_concentrator_test_node
   // Determine PISO and SIPOF convertion ratio
   localparam wh_ratio_lp = `BSG_CDIV(wh_width_lp, flit_width_p);
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   initial
   begin
     assert (len_width_p >= `BSG_SAFE_CLOG2(wh_ratio_lp))

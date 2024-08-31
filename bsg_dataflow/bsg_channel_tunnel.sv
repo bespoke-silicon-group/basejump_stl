@@ -96,7 +96,7 @@ module bsg_channel_tunnel #(parameter width_p        = 1
     , input  [num_in_p-1:0]              yumi_i
     );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    initial
      assert(lg_credit_decimation_p <= lg_remote_credits_lp)
        else

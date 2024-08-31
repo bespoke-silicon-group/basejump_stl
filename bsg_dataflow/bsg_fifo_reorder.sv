@@ -130,7 +130,7 @@ module bsg_fifo_reorder
   assign fifo_deq_id_o = rptr_r;
 
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
   always_ff @ (negedge clk_i) begin
     if (~reset_i) begin

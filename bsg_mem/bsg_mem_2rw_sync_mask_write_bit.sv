@@ -64,7 +64,7 @@ module bsg_mem_2rw_sync_mask_write_bit #( parameter `BSG_INV_PARAM(width_p )
        ,.b_data_o
        );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    always_ff @(negedge clk_lo)
      if (a_v_i | b_v_i) begin

@@ -199,7 +199,7 @@ module bsg_cache_non_blocking_tag_mem
   end
 
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   always_ff @ (negedge clk_i) begin
 
     if (v_i & debug_p)

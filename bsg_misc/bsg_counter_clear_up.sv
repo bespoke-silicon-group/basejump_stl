@@ -42,7 +42,7 @@ module bsg_counter_clear_up #(parameter `BSG_INV_PARAM(max_val_p)
         end
      end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    always_ff @ (negedge clk_i) 
      begin

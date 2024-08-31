@@ -37,7 +37,7 @@ module bsg_two_buncher #(parameter `BSG_INV_PARAM(width_p))
    logic [width_p-1:0] data_r,   data_n;
    logic              data_v_r, data_v_n, data_en;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    always @(posedge clk_i)
      assert (  (ready_and_i[1] !== 1'b1) | ready_and_i[0])
        else $error("potentially invalid ready pattern\n");

@@ -36,7 +36,7 @@ module bsg_channel_narrow #( parameter `BSG_INV_PARAM(width_in_p   )
 
   localparam padding_p    = width_in_p % width_out_p;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    initial
     assert (width_in_p % width_out_p == 0)
       else $display ("zero is padded to the left (in=%d) vs (out=%d)", width_in_p, width_out_p);

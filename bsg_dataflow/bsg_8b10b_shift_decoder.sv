@@ -100,7 +100,7 @@ module bsg_8b10b_shift_decoder
   // Display an error if we ever see a K.28.7 code. This code is not allowed
   // with the given comma code detection logic.
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   always_ff @(negedge clk_i)
     begin
       if  (shift_reg_r !== 10'b0001_111100 && shift_reg_r !== 10'b1110_000011)

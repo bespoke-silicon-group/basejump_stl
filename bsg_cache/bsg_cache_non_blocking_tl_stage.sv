@@ -457,7 +457,7 @@ module bsg_cache_non_blocking_tl_stage
   end
 
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   always_ff @ (negedge clk_i) begin
     if (~reset_i & v_tl_r) begin
       assert($countones(tag_hit) <= 1) 

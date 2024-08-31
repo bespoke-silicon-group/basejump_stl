@@ -39,7 +39,7 @@ module bsg_mem_3r1w #(parameter `BSG_INV_PARAM(width_p)
      ) synth
     (.*);
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    always_ff @(negedge w_clk_i)
      if (w_v_i)
        begin

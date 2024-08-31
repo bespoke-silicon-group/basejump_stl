@@ -33,7 +33,7 @@ module bsg_mem_multiport_latch_write_banked_bypassing
 
 
   // parameter checking
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   initial begin
     assert((els_p%num_banks_p) == 0) else $error("els_p has to be multiples of num_banks_p.");
   end

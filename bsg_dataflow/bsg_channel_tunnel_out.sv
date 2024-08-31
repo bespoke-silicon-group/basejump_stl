@@ -47,7 +47,7 @@ module bsg_channel_tunnel_out #(
     , output credit_remote_return_yumi_o
     );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    initial
      begin
         assert(remote_credits_p >= (1 << lg_credit_decimation_p))
@@ -64,7 +64,7 @@ module bsg_channel_tunnel_out #(
    // that transmit sections of the remote credits
    // but we'll wait until we run into that problem before we build it out
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    initial
       assert (width_p >= num_in_p*lg_remote_credits_lp)
         else $error("%m not enough room in packet to transmit all credit counters");

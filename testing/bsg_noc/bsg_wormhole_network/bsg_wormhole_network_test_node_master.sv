@@ -52,7 +52,7 @@ module bsg_wormhole_router_test_node_master
     bsg_wormhole_router_header_s  hdr;
   } wormhole_network_header_flit_s;
   
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   initial
   begin
     assert ($bits(wormhole_network_header_flit_s)-$bits(bsg_wormhole_router_header_s) >= width_lp)

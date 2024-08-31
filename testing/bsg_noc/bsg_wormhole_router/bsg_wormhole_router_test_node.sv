@@ -87,7 +87,7 @@ module bsg_wormhole_router_test_node
   localparam wh_fwd_ratio_lp = `BSG_CDIV(wh_fwd_width_lp, flit_width_p);
   localparam wh_rev_ratio_lp = `BSG_CDIV(wh_rev_width_lp, flit_width_p);
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   initial
   begin
     assert (len_width_p >= `BSG_SAFE_CLOG2(wh_fwd_ratio_lp))

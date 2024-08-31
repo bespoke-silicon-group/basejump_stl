@@ -185,7 +185,7 @@ module bsg_source_sync_output
     );
     */
    
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    always @(posedge io_master_clk_i)
    begin
       if (io_clk_init_i === 1)

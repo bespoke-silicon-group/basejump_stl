@@ -55,7 +55,7 @@ module bsg_fifo_1rw_large #(parameter `BSG_INV_PARAM(width_p         )
    assign full_o  = fifo_full;
    assign empty_o = fifo_empty;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    always_ff @(posedge clk_i)
      assert (reset_i

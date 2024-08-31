@@ -229,7 +229,7 @@ module bsg_launch_sync_sync #(parameter `BSG_INV_PARAM(width_p)
     , output [width_p-1:0] oclk_data_o // after sync flops
     );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
 /*   initial
      begin

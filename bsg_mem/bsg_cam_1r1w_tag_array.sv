@@ -73,7 +73,7 @@ module bsg_cam_1r1w_tag_array
     end
       end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   always_ff @(negedge clk_i) begin
     assert(multiple_entries_p || reset_i || $countones(r_match_o) <= 1)
       else $error("Multiple similar entries are found in match_array\

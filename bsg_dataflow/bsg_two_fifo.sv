@@ -105,7 +105,7 @@ module bsg_two_fifo #(parameter `BSG_INV_PARAM(width_p)
           end // else: !if(reset_i)
      end // always_ff @
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    always_ff @(posedge clk_i)
      begin
         if (~reset_i)

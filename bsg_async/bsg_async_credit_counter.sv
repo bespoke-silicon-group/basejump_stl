@@ -130,7 +130,7 @@ module bsg_async_credit_counter #(parameter `BSG_INV_PARAM(max_tokens_p )
    //
 
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    bsg_gray_to_binary #(.width_p(w_counter_width_lp)) bsg_g2b
      (.gray_i(w_counter_gray_r_rsync)

@@ -48,7 +48,7 @@ module bsg_scan #(parameter `BSG_INV_PARAM(width_p)
 
    wire [$clog2(width_p):0][width_p-1:0] t;
 	
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    initial
       assert( $countones({xor_p[0], and_p[0], or_p[0]}) == 1)
         else $error("bsg_scan: only one function may be selected\n");

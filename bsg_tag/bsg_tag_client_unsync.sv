@@ -84,7 +84,7 @@ module bsg_tag_client_unsync
   */ 
    
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    if (debug_level_lp > 1)
      begin: debug
 	wire reset_op = ~op_r & param_r;

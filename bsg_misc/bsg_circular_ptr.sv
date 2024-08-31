@@ -68,7 +68,7 @@ module bsg_circular_ptr #(parameter `BSG_INV_PARAM(slots_p)
           // then we have wrapped around
           assign ptr_n = ~ptr_wrap[ptr_width_lp] ? ptr_wrap[0+:ptr_width_lp] : ptr_nowrap;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
           always_comb
             begin
               assert final( (ptr_n < slots_p) || (|ptr_n === 'X) || reset_i || (add_i > slots_p))

@@ -183,7 +183,7 @@ module bsg_mesh_router
 
 
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   if (debug_p) begin
     always_ff @ (negedge clk_i) begin
 

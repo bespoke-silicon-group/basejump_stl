@@ -329,7 +329,7 @@ module bsg_cache_dma_to_wormhole
     end
   end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   if (wh_flit_width_p != dma_data_width_lp)
     $error("WH flit width must be equal to DMA data width");
   if (wh_flit_width_p < dma_addr_width_p)

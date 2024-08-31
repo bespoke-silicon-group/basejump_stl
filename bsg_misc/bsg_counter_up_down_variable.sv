@@ -39,7 +39,7 @@ always_ff @(posedge clk_i)
       count_o <= count_o - down_i + up_i;
   end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   always_ff @ (posedge clk_i) begin
      if ((count_o==max_val_p) & up_i   & (reset_i===0))
        $display("%m error: counter overflow at time %t", $time);

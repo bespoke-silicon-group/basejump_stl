@@ -44,7 +44,7 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter `BSG_INV_PARAM(els_p )
     end // block: notmacro
 
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   always_comb
     begin
       assert (data_width_p % 8 == 0)

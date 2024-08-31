@@ -215,7 +215,7 @@ module bsg_link_ddr_downstream_encode
   ,.yumi_i (core_yumi_i)
   );
   
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   initial 
   begin
     assert (sipo_ratio_lp > 0)

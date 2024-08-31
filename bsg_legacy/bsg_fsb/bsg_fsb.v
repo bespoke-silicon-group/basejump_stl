@@ -181,7 +181,7 @@ module bsg_fsb #(parameter `BSG_INV_PARAM( width_p )
         assign node_data_o[i] = node_data_o_int;
         assign node_en_r_o[i] = node_en_r_int;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
         always @(negedge node_reset_r_o[i])
           begin
              $display("   __         _                                    _");
@@ -362,7 +362,7 @@ module bsg_fsb #(parameter `BSG_INV_PARAM( width_p )
         assign node_data_o[i] = node_data_o_int;
         assign node_en_r_o[i] = node_en_r_int;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
         always @(negedge node_reset_r_o[i])
           begin
              $display("   __         _                                    _");

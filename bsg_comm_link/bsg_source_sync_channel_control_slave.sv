@@ -208,7 +208,7 @@ module  bsg_source_sync_channel_control_slave #( parameter `BSG_INV_PARAM(width_
           out_rot_r                 <= out_rot_n;
      end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    always @(out_state_r)
      begin

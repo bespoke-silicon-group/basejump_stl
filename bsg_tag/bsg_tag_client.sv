@@ -99,7 +99,7 @@ module bsg_tag_client
 	      ,.data_o(tag_data_r)
 	      );
    
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    if (debug_level_lp > 1)
    always @(negedge bsg_tag_i.clk)
      begin

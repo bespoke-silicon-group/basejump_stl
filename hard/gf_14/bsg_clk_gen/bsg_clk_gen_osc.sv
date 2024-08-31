@@ -129,7 +129,7 @@ module bsg_clk_gen_osc
    wire [15:0] fb_clk_dly_time;
    assign #(fb_clk_dly_time) fb_clk_del = fb_clk;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    bsg_clk_gen_osc_tag_payload_s tag_r_sync;
    always @(posedge clk_o or posedge async_reset_i)
      tag_r_sync <= (async_reset_i)? '0 :

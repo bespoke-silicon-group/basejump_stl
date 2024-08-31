@@ -16709,7 +16709,7 @@ if (vec_size_lp == 11)
         default: fwd_datapath_o= 'X;
     endcase
   end
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 initial assert (vec_size_lp <  12 ) else $error("bsg_scatter_gather: vec_size_lp too large %d", vec_size_lp);
 `endif
 endmodule

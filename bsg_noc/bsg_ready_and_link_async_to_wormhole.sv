@@ -71,7 +71,7 @@ module bsg_ready_and_link_async_to_wormhole
   localparam wormhole_width_lp = $bits(wormhole_packet_s);
   localparam wormhole_ratio_lp = `BSG_CDIV(wormhole_width_lp, flit_width_p);
   
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   initial
   begin
     assert (len_width_p >= `BSG_SAFE_CLOG2(wormhole_ratio_lp))

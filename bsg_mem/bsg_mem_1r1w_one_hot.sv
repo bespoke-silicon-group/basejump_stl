@@ -52,7 +52,7 @@ module bsg_mem_1r1w_one_hot #(parameter `BSG_INV_PARAM(width_p)
      ,.data_o(r_data_o)
      );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    initial
      begin

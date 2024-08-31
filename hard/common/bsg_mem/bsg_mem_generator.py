@@ -33,7 +33,7 @@ bsg_mem_1r1w_sync_template = """
       , output logic [`BSG_SAFE_MINUS(width_p,1):0] r_data_o
     );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
     initial begin
       if (latch_last_read_p && !{latch_last_read_en})
         $error("BSG ERROR: latch_last_read_p is set but unsupported");
@@ -58,7 +58,7 @@ bsg_mem_1r1w_sync_template = """
       ) synth (.*);
     end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       initial
         begin
            $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p);
@@ -99,7 +99,7 @@ bsg_mem_1r1w_sync_mask_write_bit_template = """
       , output logic [`BSG_SAFE_MINUS(width_p,1):0] r_data_o
     );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
     initial begin
       if (latch_last_read_p && !{latch_last_read_en})
         $error("BSG ERROR: latch_last_read_p is set but unsupported");
@@ -124,7 +124,7 @@ bsg_mem_1r1w_sync_mask_write_bit_template = """
       ) synth (.*);
     end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       initial
         begin
            $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p);
@@ -166,7 +166,7 @@ bsg_mem_1r1w_sync_mask_write_byte_template = """
       , output logic [`BSG_SAFE_MINUS(width_p,1):0] r_data_o
     );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
     initial begin
       if (latch_last_read_p && !{latch_last_read_en})
         $error("BSG ERROR: latch_last_read_p is set but unsupported");
@@ -191,7 +191,7 @@ bsg_mem_1r1w_sync_mask_write_byte_template = """
       ) synth (.*);
     end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       initial
         begin
            $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p);
@@ -224,7 +224,7 @@ module bsg_mem_1rw_sync #(parameter `BSG_INV_PARAM(width_p)
     , output logic [`BSG_SAFE_MINUS(width_p,1):0]  data_o
     );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
     initial begin
       if (latch_last_read_p && !{latch_last_read_en})
         $error("BSG ERROR: latch_last_read_p is set but unsupported");
@@ -244,7 +244,7 @@ module bsg_mem_1rw_sync #(parameter `BSG_INV_PARAM(width_p)
       ) synth (.*);
     end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       initial
         begin
            $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p);
@@ -276,7 +276,7 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
     , output logic [`BSG_SAFE_MINUS(width_p,1):0]  data_o
     );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
     initial begin
       if (latch_last_read_p && !{latch_last_read_en})
         $error("BSG ERROR: latch_last_read_p is set but unsupported");
@@ -296,7 +296,7 @@ module bsg_mem_1rw_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
       ) synth (.*);
     end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       initial
         begin
            $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p);
@@ -329,7 +329,7 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(data_width_p)
     , output logic [`BSG_SAFE_MINUS(data_width_p,1):0]  data_o
     );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
     initial begin
       if (latch_last_read_p && !{latch_last_read_en})
         $error("BSG ERROR: latch_last_read_p is set but unsupported");
@@ -349,7 +349,7 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(data_width_p)
       ) synth (.*);
     end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       initial
         begin
            $display("## %L: instantiating data_width_p=%d, els_p=%d (%m)", data_width_p, els_p);
@@ -387,7 +387,7 @@ bsg_mem_2r1w_sync_template = """
       , output logic [`BSG_SAFE_MINUS(width_p,1):0] r1_data_o
     );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
     initial begin
       if (read_write_same_addr_p && !{read_write_same_addr_en})
         $error("BSG ERROR: read_write_same_addr_p is set but unsupported");
@@ -407,7 +407,7 @@ bsg_mem_2r1w_sync_template = """
       ) synth (.*);
     end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       initial
         begin
            $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p);
@@ -449,7 +449,7 @@ bsg_mem_2rw_sync_template = """
   , output logic [`BSG_SAFE_MINUS(width_p,1):0] b_data_o
   );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
     initial begin
       if (read_write_same_addr_p && !{read_write_same_addr_en})
         $error("BSG ERROR: read_write_same_addr_p is set but unsupported");
@@ -471,7 +471,7 @@ bsg_mem_2rw_sync_template = """
       ) synth (.*);
     end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       initial
         begin
            $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p);
@@ -515,7 +515,7 @@ bsg_mem_2rw_sync_mask_write_bit_template = """
   , output logic [`BSG_SAFE_MINUS(width_p,1):0] b_data_o
   );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
     initial begin
       if (read_write_same_addr_p && !{read_write_same_addr_en})
         $error("BSG ERROR: read_write_same_addr_p is set but unsupported");
@@ -537,7 +537,7 @@ bsg_mem_2rw_sync_mask_write_bit_template = """
       ) synth (.*);
     end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       initial
         begin
            $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p);
@@ -582,7 +582,7 @@ bsg_mem_2rw_sync_mask_write_byte_template = """
   , output logic [`BSG_SAFE_MINUS(width_p,1):0] b_data_o
   );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
     initial begin
       if (read_write_same_addr_p && !{read_write_same_addr_en})
         $error("BSG ERROR: read_write_same_addr_p is set but unsupported");
@@ -604,7 +604,7 @@ bsg_mem_2rw_sync_mask_write_byte_template = """
       ) synth (.*);
     end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       initial
         begin
            $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p);
@@ -649,7 +649,7 @@ bsg_mem_3r1w_sync_template = """
       , output logic [`BSG_SAFE_MINUS(width_p,1):0] r2_data_o
     );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
     initial begin
       if (read_write_same_addr_p && !{read_write_same_addr_en})
         $error("BSG ERROR: read_write_same_addr_p is set but unsupported");
@@ -669,7 +669,7 @@ bsg_mem_3r1w_sync_template = """
       ) synth (.*);
     end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       initial
         begin
            $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p);

@@ -138,7 +138,7 @@ module bsg_mem_1rw_sync_mask_write_byte_banked
   end
 
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
   initial begin
 

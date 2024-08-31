@@ -45,7 +45,7 @@ module bsg_idiv_iterative #(parameter width_p=32, parameter bitstack_p=0, parame
     ,input                  yumi_i
     );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    initial begin
         assert (bits_per_iter_p == 1 || bits_per_iter_p == 2)
         else $error("Illegal value for parameters bits_per_iter_p given: (%0d). Legal values are 1 or 2.", bits_per_iter_p);

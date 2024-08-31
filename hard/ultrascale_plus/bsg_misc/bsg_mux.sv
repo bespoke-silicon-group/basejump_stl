@@ -54,7 +54,7 @@ module bsg_mux #(parameter `BSG_INV_PARAM(width_p)
       else
         assign data_o = data_i[sel_i];
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       initial
         assert(balanced_p == 0)
           else $error("%m warning: synthesizable implementation of bsg_mux does not support the provided parameters");

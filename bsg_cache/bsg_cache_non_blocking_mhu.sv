@@ -812,7 +812,7 @@ module bsg_cache_non_blocking_mhu
     end
   end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
   always_ff @ (negedge clk_i) begin
     if (~reset_i) begin

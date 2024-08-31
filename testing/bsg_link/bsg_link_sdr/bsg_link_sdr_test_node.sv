@@ -107,7 +107,7 @@ module bsg_link_sdr_test_node
         else
             if (node_async_fifo_yumi_li && data_check != node_async_fifo_data_lo)
               begin
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
                 $error("%m mismatched resp data %x %x",data_check, node_async_fifo_data_lo);
 `endif
                 error_o <= 1;

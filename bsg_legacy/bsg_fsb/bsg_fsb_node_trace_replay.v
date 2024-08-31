@@ -171,7 +171,7 @@ module bsg_fsb_node_trace_replay
           end
      end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    // non-synthesizeable components
    always @(negedge clk_i)
      begin

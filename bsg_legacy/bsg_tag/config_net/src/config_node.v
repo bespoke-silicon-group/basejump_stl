@@ -118,7 +118,7 @@ module config_node
   assign shift_n = {config_i.cfg_bit, shift_r[1 +: shift_width_lp - 1]};
 
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    // non-synthesizeable helper message
   always @(negedge config_i.cfg_clk)

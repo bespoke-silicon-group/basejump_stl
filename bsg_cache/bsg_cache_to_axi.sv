@@ -338,7 +338,7 @@ module bsg_cache_to_axi
 
   // assertions
   //
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   initial begin
     assert(data_width_p*block_size_in_words_p == axi_data_width_p*axi_burst_len_p)
       else $error("cache block size and axi transfer size do not match.");

@@ -24,7 +24,7 @@ module bsg_clkbuf #(parameter width_p=1
 
         assign o = i;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
         initial assert(harden_p==0) else $error("## %m wanted to harden but no macro");
 

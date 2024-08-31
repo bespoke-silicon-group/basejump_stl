@@ -111,7 +111,7 @@ module bsg_launch_sync_sync #(parameter `BSG_INV_PARAM(width_p)
 
    genvar i;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    initial assert (iclk_reset_i !== 'z)
      else
        begin

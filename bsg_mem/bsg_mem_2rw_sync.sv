@@ -62,7 +62,7 @@ module bsg_mem_2rw_sync #( parameter `BSG_INV_PARAM(width_p )
        ,.b_data_o
        );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    always_ff @(negedge clk_lo)
    begin

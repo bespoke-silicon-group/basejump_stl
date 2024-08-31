@@ -79,7 +79,7 @@ module bsg_mem_3r1w_sync #(parameter `BSG_INV_PARAM(width_p)
     );
 
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    always_ff @(negedge clk_lo)
      if (w_v_i)

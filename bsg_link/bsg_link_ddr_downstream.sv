@@ -198,7 +198,7 @@ module bsg_link_ddr_downstream
     );
   end
   
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   initial 
   begin
     assert (sipo_ratio_lp > 0)

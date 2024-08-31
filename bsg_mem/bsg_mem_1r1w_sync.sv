@@ -70,7 +70,7 @@ module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
        ,.r_data_o
        );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    initial
      begin
 	// we warn if els_p >= 16 because it is a good candidate for hardening

@@ -138,7 +138,7 @@ module bsg_async_fifo #(parameter `BSG_INV_PARAM(  lg_size_p )
                                          , r_ptr_gray_r_wsync[0+:lg_size_p-1] });
 
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    always @(negedge w_clk_i)
      assert(!(w_full_o===1 && w_enq_i===1))   else $error("enqueing data on bsg_async_fifo when full");
 

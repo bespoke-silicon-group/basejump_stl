@@ -151,7 +151,7 @@ module bsg_mem_1r1w #(parameter `BSG_INV_PARAM(width_p)
 		    (.*);
 	     end
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    initial
      begin

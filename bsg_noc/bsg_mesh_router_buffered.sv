@@ -52,7 +52,7 @@ module bsg_mesh_router_buffered
 
    genvar                           i;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    if (debug_p)
      for (i = 0; i < dirs_lp;i=i+1)
        begin
@@ -71,7 +71,7 @@ module bsg_mesh_router_buffered
       // accept no data from outside of stubbed port
       assign link_o_cast[i].ready_and_rev = 1'b0;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       always @(negedge clk_i)
         assert (reset_i !== '0 || ~link_o_cast[i].v) else
           $warning("## stubbed port %x received word %x",i,link_i_cast[i].data);
@@ -107,7 +107,7 @@ module bsg_mesh_router_buffered
           ,.data_o(link_o_cast[i].ready_and_rev)
         );
         
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
         always_ff @ (negedge clk_i) begin
           if (~reset_i) begin
             if (link_i_cast[i].v) begin
@@ -144,7 +144,7 @@ module bsg_mesh_router_buffered
           begin : macro
 	     wire [width_p-1:0] tmp;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
             initial
                begin
                   $display("%m with buffers on %d",i);

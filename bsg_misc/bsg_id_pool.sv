@@ -84,7 +84,7 @@ module bsg_id_pool
   );
 
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   always_ff @ (negedge clk_i) begin
     if (~reset_i) begin
       if (dealloc_v_i) begin

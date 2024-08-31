@@ -45,7 +45,7 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
   , output [width_m1_lp:0]       data_o
 );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   always @(negedge clk_i)
     assert((int'(addr_i) < els_p) || (els_p <= 1)) else $warning("%m Accessing uninitialized address!");
 `endif
@@ -132,7 +132,7 @@ module bsg_mem_1rw_sync_mask_write_bit_from_1r1w #(
 
   wire [width_m1_lp:0] data_o_latchable = bypass_r ? bypass_data_r : mem_data_lo;
   
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   always_ff @(posedge clk_i)
     if(verbose_p==1)
       $display("w_en %b | r_en %b | w_data_li %b | mem_data_lo %b | w_addr_r %06h"

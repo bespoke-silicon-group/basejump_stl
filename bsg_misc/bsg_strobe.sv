@@ -125,7 +125,7 @@ module bsg_strobe #(`BSG_INV_PARAM(width_p)
    always_ff @(posedge clk_i)
      strobe_r_o <= strobe_n_buf;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    if (debug_lp)
      begin : debug
         always @(negedge clk_i)
@@ -136,7 +136,7 @@ module bsg_strobe #(`BSG_INV_PARAM(width_p)
 `endif
 
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    always @(negedge clk_i)
      assert((strobe_n === 'X) || strobe_n == & ((C_r << 1) ^ S_r))
        else $error("## faulty assumption about strobe signal in %m (C_r=%b, S_r=%b, strobe_n=%b)", C_r,S_r, strobe_n);

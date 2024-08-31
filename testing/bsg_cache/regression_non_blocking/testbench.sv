@@ -33,7 +33,7 @@ module testbench();
   localparam tag_width_lp = (addr_width_p-lg_sets_lp-lg_block_size_in_words_lp-byte_sel_width_lp);
   localparam block_offset_width_lp = lg_block_size_in_words_lp+byte_sel_width_lp;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   integer status;
   integer wave;
   string checker;
@@ -127,7 +127,7 @@ module testbench();
     ,.dma_data_yumi_i(dma_data_yumi_li)
   );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
   // random yumi generator
   //

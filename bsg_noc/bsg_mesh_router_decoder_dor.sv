@@ -43,7 +43,7 @@ module bsg_mesh_router_decoder_dor
 
   // check parameters
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   initial begin
     if (ruche_factor_X_p > 0) begin
       assert(dims_p > 2) else $fatal(1, "ruche in X direction requires dims_p greater than 2.");
@@ -267,7 +267,7 @@ module bsg_mesh_router_decoder_dor
   end
 
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   if (debug_p) begin
     always_ff @ (negedge clk_i) begin
       if (~reset_i) begin

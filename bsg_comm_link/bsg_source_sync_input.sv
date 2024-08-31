@@ -213,7 +213,7 @@ module bsg_source_sync_input #(parameter lg_fifo_depth_p=5
                ? io_trigger_mode_active             // enque if we in trigger mode
                : (io_valid_0_r | io_valid_1_r);     // enque if either valid bit set
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    always @(negedge io_clk_i)
      assert(!(io_async_fifo_full===1 && io_async_fifo_enq===1))

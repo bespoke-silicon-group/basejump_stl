@@ -625,7 +625,7 @@ module  bsg_channel_tunnel_wormhole
   
 /*************************** Debugging Information ****************************/
   
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   initial 
   begin
   

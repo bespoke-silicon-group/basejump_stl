@@ -4,7 +4,7 @@
 
 `include "bsg_defines.sv"
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
 // This is an integrated clock cell using a negative latch and an AND gate
 // This logic may be susceptible bug if en_i changes multiple times within a clk cyle

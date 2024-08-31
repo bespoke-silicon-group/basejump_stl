@@ -85,7 +85,7 @@ module bsg_id_pool_dealloc_alloc_one_hot
   assign active_ids_r_o = allocated_r;
   
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
     
   always_ff @ (negedge clk_i) begin
     if (~reset_i) begin

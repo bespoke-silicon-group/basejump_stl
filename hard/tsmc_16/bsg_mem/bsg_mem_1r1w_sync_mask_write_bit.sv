@@ -103,7 +103,7 @@ module bsg_mem_1r1w_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
          ) synth
          (.*);
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    always_ff @(posedge clk_i)
      if (w_v_i)

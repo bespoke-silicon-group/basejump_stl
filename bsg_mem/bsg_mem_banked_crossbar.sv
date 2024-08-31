@@ -169,7 +169,7 @@ module bsg_mem_banked_crossbar #
    localparam debug_reads_lp = debug_reads_p;
 //   localparam debug_reads_lp = 1;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   initial
     assert((bank_size_p & bank_size_p-1) == 0)
       else $error("bank_size_p must be a power of 2");
@@ -181,7 +181,7 @@ module bsg_mem_banked_crossbar #
 
   genvar i;
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    logic [num_ports_p-1:0][addr_width_lp-1:0] addr_r;
 
    always_ff @(posedge clk_i)
@@ -294,7 +294,7 @@ module bsg_mem_banked_crossbar #
   for(i=0; i<num_banks_p; i=i+1)
   begin: z
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    if (debug_lp > 1)
      always @(negedge clk_i)
        begin

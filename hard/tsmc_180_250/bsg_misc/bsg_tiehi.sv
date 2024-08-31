@@ -47,7 +47,7 @@ module bsg_tiehi #(parameter `BSG_INV_PARAM(width_p)
        begin :notmacro
           assign o = { width_p {1'b1} };
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
           initial assert(harden_p==0) else $error("## %m wanted to harden but no macro");
 `endif
 

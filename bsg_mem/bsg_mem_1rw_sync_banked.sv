@@ -134,7 +134,7 @@ module bsg_mem_1rw_sync_banked
   end
 
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
   initial begin
     assert(els_p % num_depth_bank_p == 0)

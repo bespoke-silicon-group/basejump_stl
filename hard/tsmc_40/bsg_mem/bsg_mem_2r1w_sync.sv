@@ -65,7 +65,7 @@ module bsg_mem_2r1w_sync #(parameter `BSG_INV_PARAM(width_p)
    else
    if ((width_p == 32) && (els_p == 32))
      begin: macro
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
         initial
           begin
              assert(read_write_same_addr_p==0)
@@ -127,7 +127,7 @@ module bsg_mem_2r1w_sync #(parameter `BSG_INV_PARAM(width_p)
      end
 
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    always_ff @(posedge clk_i)
      if (w_v_i)

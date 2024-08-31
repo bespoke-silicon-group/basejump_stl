@@ -97,7 +97,7 @@ module bsg_mem_2r1w_sync #( parameter `BSG_INV_PARAM(width_p )
         end // block: notmacro
     end // block: z
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   always_ff @(posedge clk_i)
     if (w_v_i)
     begin

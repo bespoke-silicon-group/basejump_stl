@@ -62,7 +62,7 @@ module bsg_cache_to_test_dram_rx_reorder
     assign piso_v_li = dram_v_i;
     wire unused = |dram_ch_addr_i; 
 
-`ifndef SYNTHESIS 
+`ifndef BSG_HIDE_FROM_SYNTHESIS 
     always_ff @ (negedge core_clk_i) begin
       if (~core_reset_i & dram_v_i) begin
         assert(piso_ready_lo) else $fatal(1, "piso is not ready!");
