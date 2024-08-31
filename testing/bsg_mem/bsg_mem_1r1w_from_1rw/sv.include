@@ -1,0 +1,13 @@
+$BASEJUMP_STL_DIR/bsg_misc/bsg_decode.sv
+$BASEJUMP_STL_DIR/bsg_misc/bsg_decode_with_v.sv
+$BASEJUMP_STL_DIR/bsg_misc/bsg_dff.sv
+$BASEJUMP_STL_DIR/bsg_misc/bsg_dff_reset_set_clear.sv
+$BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1rw_sync.sv
+$BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1rw_sync_synth.sv
+$BASEJUMP_STL_DIR/bsg_mem/bsg_mem_1r1w_sync_from_1rw_sync.sv
+$BASEJUMP_STL_DIR/bsg_misc/bsg_dff_chain.sv
+$BASEJUMP_STL_DIR/bsg_misc/bsg_cycle_counter.sv
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_clock_gen.sv
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_reset_gen.sv
+$BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_random_gen.sv
+testbench.sv
