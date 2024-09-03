@@ -169,19 +169,19 @@ module bsg_mem_banked_crossbar #
    localparam debug_reads_lp = debug_reads_p;
 //   localparam debug_reads_lp = 1;
 
-  // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   initial
     assert((bank_size_p & bank_size_p-1) == 0)
       else $error("bank_size_p must be a power of 2");
 
-  // synopsys translate_on
+`endif
 
 
   logic [num_ports_p-1:0][addr_hash_width_lp-1:0] bank_reqs;
 
   genvar i;
 
-  // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    logic [num_ports_p-1:0][addr_width_lp-1:0] addr_r;
 
    always_ff @(posedge clk_i)
@@ -202,7 +202,7 @@ module bsg_mem_banked_crossbar #
             if (v_o[i] && debug_reads_lp)
               $display("%m port %d  %x = [%x]", i,data_o[i],addr_r[i]*debug_lp);
          end
-  // synopsys translate_on
+`endif
 
   if(num_banks_p > 1)
     for(i=0; i<num_ports_p; i=i+1)
@@ -294,7 +294,7 @@ module bsg_mem_banked_crossbar #
   for(i=0; i<num_banks_p; i=i+1)
   begin: z
 
-   // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    if (debug_lp > 1)
      always @(negedge clk_i)
        begin
@@ -304,7 +304,7 @@ module bsg_mem_banked_crossbar #
             else
               $display("%m <= [%x]", bank_addr[i]*debug_p);
        end
-   // synopsys translate_on
+`endif
 
     // to be replaced with bsg_mem_1rw_sync_byte_masked
     bsg_mem_1rw_sync_mask_write_byte #( .data_width_p (data_width_p)

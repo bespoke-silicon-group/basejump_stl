@@ -52,7 +52,7 @@ module bsg_mem_1r1w_one_hot #(parameter `BSG_INV_PARAM(width_p)
      ,.data_o(r_data_o)
      );
 
-   //synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    initial
      begin
@@ -69,7 +69,7 @@ module bsg_mem_1r1w_one_hot #(parameter `BSG_INV_PARAM(width_p)
          else $error("Invalid read address %b to %m is not onehot (w_reset_i=%b)\n", r_v_i, w_reset_i);
      end
 
-   //synopsys translate_on
+`endif
 
 endmodule
 

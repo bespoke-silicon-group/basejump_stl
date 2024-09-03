@@ -97,7 +97,7 @@ module bsg_mem_2r1w_sync #( parameter `BSG_INV_PARAM(width_p )
         end // block: notmacro
     end // block: z
 
-  //synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   always_ff @(posedge clk_i)
     if (w_v_i)
     begin
@@ -115,7 +115,7 @@ module bsg_mem_2r1w_sync #( parameter `BSG_INV_PARAM(width_p )
     begin
       $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d, harden_p=%d (%m)",width_p,els_p,read_write_same_addr_p,harden_p);
     end
-  //synopsys translate_on
+`endif
 
 endmodule
 

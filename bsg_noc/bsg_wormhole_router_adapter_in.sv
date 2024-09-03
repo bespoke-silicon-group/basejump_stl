@@ -59,7 +59,7 @@ module bsg_wormhole_router_adapter_in
      ,.yumi_i(link_ready_and_i & link_v_o)
      );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   always_ff @(negedge clk_i)
     assert(reset_i || ~packet_v_i || (packet_cast_i.len <= max_num_flits_lp))
       else 

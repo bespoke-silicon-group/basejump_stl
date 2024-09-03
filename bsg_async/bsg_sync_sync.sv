@@ -89,14 +89,14 @@ module bsg_sync_sync #(parameter `BSG_INV_PARAM(width_p ))
 
    genvar   i;
 
-   // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
  /*
    initial
      begin
         $display("%m: instantiating bss of size %d",width_p);
      end
   */
-   // synopsys translate_on
+`endif
 
    for (i = 0; i < (width_p/`bss_max_block); i = i + 1)
      begin : maxb

@@ -36,11 +36,11 @@ module bsg_channel_narrow #( parameter `BSG_INV_PARAM(width_in_p   )
 
   localparam padding_p    = width_in_p % width_out_p;
 
-  //synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    initial
     assert (width_in_p % width_out_p == 0)
       else $display ("zero is padded to the left (in=%d) vs (out=%d)", width_in_p, width_out_p);
-  //synopsys translate_on
+`endif
 
   logic [width_out_p - 1: 0] data [divisions_lp - 1: 0];
   // in case of 2 divisions, it would be only 1 bit counter

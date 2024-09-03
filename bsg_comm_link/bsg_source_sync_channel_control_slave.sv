@@ -208,7 +208,7 @@ module  bsg_source_sync_channel_control_slave #( parameter `BSG_INV_PARAM(width_
           out_rot_r                 <= out_rot_n;
      end
 
-   // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    always @(out_state_r)
      begin
@@ -220,7 +220,7 @@ module  bsg_source_sync_channel_control_slave #( parameter `BSG_INV_PARAM(width_
      assert (width_p > 2)
        else $error("width_p currently must be >= 3 because of calibration codes");
 
-   // synopsys translate_on
+`endif
 
    assign  out_channel_active_o  = (out_state_r == sActive);
    wire  out_loopback_en         = (out_state_r == sPhase3)

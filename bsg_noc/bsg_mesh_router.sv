@@ -183,7 +183,7 @@ module bsg_mesh_router
 
 
 
-  // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   if (debug_p) begin
     always_ff @ (negedge clk_i) begin
 
@@ -196,7 +196,7 @@ module bsg_mesh_router
  
     end
   end
-  // synopsys translate_on
+`endif
 
 
 

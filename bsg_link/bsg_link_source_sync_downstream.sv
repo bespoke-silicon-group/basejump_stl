@@ -84,13 +84,13 @@ module bsg_link_source_sync_downstream
    logic io_fifo_valid_lo, io_fifo_ready_lo;
    logic [channel_width_p-1:0] io_async_fifo_data;
 
-   // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    always_ff @(negedge io_clk_i)
      assert(!(io_fifo_ready_lo===0 && io_valid_i===1))
        else $error("attempt to enque on full async fifo");
 
-   // synopsys translate_on
+`endif
 
   if (use_hardened_fifo_p == 0)
   begin

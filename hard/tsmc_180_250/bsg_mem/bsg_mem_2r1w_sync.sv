@@ -32,7 +32,7 @@ module bsg_mem_2r1w_sync #(parameter `BSG_INV_PARAM(width_p)
 
    if ((width_p == 32) && (els_p == 32))
      begin: macro
-        // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
         initial
           begin
              assert(read_write_same_addr_p==0)
@@ -42,7 +42,7 @@ module bsg_mem_2r1w_sync #(parameter `BSG_INV_PARAM(width_p)
                     $finish();
                  end
           end
-        // synopsys translate_on
+`endif
 
         // use two 1R1W rams to create
         tsmc180_2rf_lg5_w32_m1_all mem0
@@ -93,7 +93,7 @@ module bsg_mem_2r1w_sync #(parameter `BSG_INV_PARAM(width_p)
      end
 
 
-//synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    always_ff @(posedge clk_i)
      if (w_v_i)
@@ -114,7 +114,7 @@ module bsg_mem_2r1w_sync #(parameter `BSG_INV_PARAM(width_p)
 		 ,width_p,els_p,read_write_same_addr_p,harden_p);
      end
 
-//synopsys translate_on
+`endif
 
    
 

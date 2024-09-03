@@ -420,7 +420,7 @@ module bsg_cache_dma
     end
   end
 
-  // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   
   always_ff @ (posedge clk_i) begin
     if (debug_p) begin
@@ -430,7 +430,7 @@ module bsg_cache_dma
       end
     end
   end
-  // synopsys translate_on
+`endif
 
 endmodule
 

@@ -71,7 +71,7 @@ module bsg_wormhole_router_decoder_dor
           end
      end // else: !if(reverse_order_p)
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
        initial assert(bsg_noc_pkg::P == 0
                       && bsg_noc_pkg::W == 1
                       && bsg_noc_pkg::E == 2

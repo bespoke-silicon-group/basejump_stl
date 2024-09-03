@@ -12,12 +12,12 @@ module bsg_reduce_segmented #(parameter `BSG_INV_PARAM(segments_p )
    , output [segments_p-1:0] o
     );
 
-   // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    initial
      assert( $countones({xor_p[0], and_p[0], or_p[0], nor_p[0]}) == 1)
        else $error("%m: exactly one function may be selected\n");
 
-  // synopsys translate_on
+`endif
 
   
   genvar j;
