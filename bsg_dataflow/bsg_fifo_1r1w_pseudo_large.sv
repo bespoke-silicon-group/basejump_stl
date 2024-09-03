@@ -157,7 +157,7 @@ module bsg_fifo_1r1w_pseudo_large #(parameter `BSG_INV_PARAM(width_p )
 
    // ***** DEBUG ******
    // for debugging; whether we are bypassing the big fifo
-   // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    wire bypass_mode = v_i & ~ big_enq;
 
@@ -176,7 +176,7 @@ module bsg_fifo_1r1w_pseudo_large #(parameter `BSG_INV_PARAM(width_p )
      if (verbose_p & (reset_i === 0) & (~big_enq_r & big_enq))
        $display("## %L: overflowing into big fifo for the first time (%m)");
 
-   // synopsys translate_on
+`endif
 
    //
    // ***** END DEBUG ******

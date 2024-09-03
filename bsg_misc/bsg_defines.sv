@@ -95,6 +95,12 @@
 `define BSG_VIVADO_SYNTH_FAILS
 `endif
 
+// macro for denoting that a code snippet is unsynthesiable
+
+`ifdef SYNTHESIS
+  `define BSG_HIDE_FROM_SYNTHESIS
+`endif
+
 `define BSG_STRINGIFY(x) `"x`"
 
 

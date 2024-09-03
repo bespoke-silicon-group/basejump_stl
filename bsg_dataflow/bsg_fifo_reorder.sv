@@ -130,7 +130,7 @@ module bsg_fifo_reorder
   assign fifo_deq_id_o = rptr_r;
 
 
-  // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
   always_ff @ (negedge clk_i) begin
     if (~reset_i) begin
@@ -147,7 +147,7 @@ module bsg_fifo_reorder
     end    
   end
 
-  // synopsys translate_on
+`endif
 
 
 endmodule

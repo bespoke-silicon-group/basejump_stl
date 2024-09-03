@@ -55,11 +55,11 @@ module bsg_link_osdr_phy_phase_align
   bsg_dff_reset #(.width_p(1),.reset_val_p(0)) clk_ff_n
   (.clk_i(~clk_i),.reset_i(reset_i),.data_i(~clk_r_n),.data_o(clk_r_n));
 
-  // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   initial
   begin
     $display("## %L: instantiating unhardened bsg_link_osdr_phase_align (%m)");
   end
-  // synopsys translate_on
+`endif
 
 endmodule

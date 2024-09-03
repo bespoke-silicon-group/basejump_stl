@@ -63,7 +63,7 @@ module bsg_wormhole_router_adapter_out
 
 
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   logic recv_r;
   bsg_dff_reset_en
    #(.width_p(1))

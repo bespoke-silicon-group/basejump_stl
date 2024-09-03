@@ -34,7 +34,7 @@ module bsg_nonsynth_cache_axe_tracer
   assign sbuf_entry = sbuf_entry_li;
 
 
-  // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   
   localparam logfile_lp = "bsg_cache.axe";
 
@@ -58,7 +58,7 @@ module bsg_nonsynth_cache_axe_tracer
       end
     end 
   end   
-// synopsys translate_on
+`endif
 
 
 endmodule

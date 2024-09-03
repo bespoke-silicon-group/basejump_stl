@@ -151,7 +151,7 @@ module bsg_mem_1r1w #(parameter `BSG_INV_PARAM(width_p)
 		    (.*);
 	     end
 
-   // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    initial
      begin
@@ -170,7 +170,7 @@ module bsg_mem_1r1w #(parameter `BSG_INV_PARAM(width_p)
             else $error("%m: Attempt to read and write same address %x",w_addr_i);
        end
    
-   // synopsys translate_on
+`endif
 
 endmodule
 

@@ -51,7 +51,7 @@ module bsg_counter_set_down #(parameter `BSG_INV_PARAM(width_p), parameter init_
   
   assign count_r_o = ctr_r;
   
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   always_ff @(negedge clk_i)
     begin
       if (!reset_i && down_i && (ctr_n == '1))

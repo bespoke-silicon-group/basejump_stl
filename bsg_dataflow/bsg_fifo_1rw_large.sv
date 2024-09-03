@@ -55,7 +55,7 @@ module bsg_fifo_1rw_large #(parameter `BSG_INV_PARAM(width_p         )
    assign full_o  = fifo_full;
    assign empty_o = fifo_empty;
 
-   // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
    always_ff @(posedge clk_i)
      assert (reset_i
@@ -86,7 +86,7 @@ module bsg_fifo_1rw_large #(parameter `BSG_INV_PARAM(width_p         )
                                            ? (wr_ptr - rd_ptr)
                                            : (els_p - (rd_ptr - wr_ptr)))));
 
-   // synopsys translate_on
+`endif
 
    bsg_circular_ptr #(.slots_p(els_p)
                       ,.max_add_p(1)
