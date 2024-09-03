@@ -96,7 +96,7 @@ module bsg_channel_tunnel #(parameter width_p        = 1
     , input  [num_in_p-1:0]              yumi_i
     );
 
-   // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    initial
      assert(lg_credit_decimation_p <= lg_remote_credits_lp)
        else
@@ -114,7 +114,7 @@ module bsg_channel_tunnel #(parameter width_p        = 1
                    ,num_in_p*lg_remote_credits_lp);
             $finish;
          end
-   // synopsys translate_on
+`endif
 
    wire [num_in_p-1:0][lg_remote_credits_lp-1:0] credit_local_return_data_oi;
    wire                                          credit_local_return_v_oi;

@@ -94,7 +94,7 @@ module bsg_fifo_1r1w_small_unhardened #( parameter `BSG_INV_PARAM(width_p      )
    assign ready_param_o = ready_param_lo;
    assign v_o_tmp = ~empty;
 
-   //synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    always_ff @ (negedge clk_i)
      begin
         if (ready_THEN_valid_p & full  & v_i    & ~reset_i)
@@ -102,7 +102,7 @@ module bsg_fifo_1r1w_small_unhardened #( parameter `BSG_INV_PARAM(width_p      )
         if (empty & yumi_i & ~reset_i)
           $display("%m error: deque empty fifo at time %t", $time);
      end
-   //synopsys translate_on
+`endif
 
 /*
    always_ff @(negedge clk_i)

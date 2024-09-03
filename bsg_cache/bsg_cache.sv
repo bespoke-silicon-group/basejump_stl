@@ -1183,7 +1183,7 @@ end
   assign tbuf_bypass_v_li = (decode_tl_r.ld_op | decode_tl_r.atomic_op | partial_st_tl) & v_tl_r & v_we;
 
 
-  // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
 
   always_ff @ (negedge clk_i) begin
     if (~reset_i) begin
@@ -1234,7 +1234,7 @@ end
     end
   end
 
-  // synopsys translate_on
+`endif
 
 
 endmodule

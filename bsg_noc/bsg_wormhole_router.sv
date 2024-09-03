@@ -44,7 +44,7 @@ module bsg_wormhole_router
   // FIXME: move to bsg_wormhole_router.svh
   `declare_bsg_wormhole_router_header_s(cord_markers_pos_p[dims_p], len_width_p, bsg_wormhole_router_header_s);
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
     wire [dirs_lp-1:0][dirs_lp-1:0] matrix_out_in_transpose;
 
     bsg_transpose #(.width_p(dirs_lp),.els_p(dirs_lp)) tr (.i(routing_matrix_p[0])
@@ -110,7 +110,7 @@ module bsg_wormhole_router
 
       assign hdr = fifo_data_lo[i][$bits(bsg_wormhole_router_header_s)-1:0];
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       if (debug_lp)
         begin
            logic release_r;
@@ -178,7 +178,7 @@ module bsg_wormhole_router
          ,.o (reqs[i]) // unicast
        );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       always_ff @(negedge clk_i)
         if (debug_lp)
           assert (detected_header_lo!==1'b1 || !(decoded_dest_lo & ~ routing_matrix_p[0][i]))
@@ -226,7 +226,7 @@ module bsg_wormhole_router
       ,.data_sel_o  (data_sel_lo)
       );
 
-`ifndef SYNTHESIS
+`ifndef BSG_HIDE_FROM_SYNTHESIS
        always_ff @(negedge clk_i)
          begin
             if (debug_lp)

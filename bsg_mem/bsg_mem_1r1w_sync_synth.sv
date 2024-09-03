@@ -113,13 +113,13 @@ module bsg_mem_1r1w_sync_synth #(parameter `BSG_INV_PARAM(width_p)
 
    end
 
-   // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    initial
      begin
         if (verbose_p)
       $display("## %L: instantiating width_p=%d, els_p=%d (%m)",width_p,els_p);
      end
-   // synopsys translate_on
+`endif
 
 endmodule
 

@@ -138,14 +138,14 @@ module bsg_async_fifo #(parameter `BSG_INV_PARAM(  lg_size_p )
                                          , r_ptr_gray_r_wsync[0+:lg_size_p-1] });
 
 
-   // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    always @(negedge w_clk_i)
      assert(!(w_full_o===1 && w_enq_i===1))   else $error("enqueing data on bsg_async_fifo when full");
 
    always @(negedge r_clk_i)
      assert(!(r_valid_o_tmp===0 && r_deq_i===1)) else $error("dequeing data on bsg_async_fifo when empty");
 
-   // synopsys translate_on
+`endif
 
 endmodule // bsg_async_fifo
 

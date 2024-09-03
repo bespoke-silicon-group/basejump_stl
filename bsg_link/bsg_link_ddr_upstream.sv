@@ -215,7 +215,7 @@ module bsg_link_ddr_upstream
   
   end
   
-  // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   initial 
   begin
     assert (piso_ratio_lp > 0)
@@ -232,7 +232,7 @@ module bsg_link_ddr_upstream
         $finish;
       end
   end
-  // synopsys translate_on
+`endif
 
 endmodule
 `BSG_ABSTRACT_MODULE(bsg_link_ddr_upstream)

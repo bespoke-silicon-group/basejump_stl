@@ -105,7 +105,7 @@ module bsg_two_fifo #(parameter `BSG_INV_PARAM(width_p)
           end // else: !if(reset_i)
      end // always_ff @
 
-   // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    always_ff @(posedge clk_i)
      begin
         if (~reset_i)
@@ -140,7 +140,7 @@ module bsg_two_fifo #(parameter `BSG_INV_PARAM(width_p)
    // for debugging
    wire [31:0] num_elements_debug = full_r + (empty_r==0);
 
-   // synopsys translate_on
+`endif
 
 endmodule
 

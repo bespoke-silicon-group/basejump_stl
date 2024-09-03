@@ -20,11 +20,11 @@ module bsg_reduce #(parameter `BSG_INV_PARAM(width_p )
     , output o
     );
 
-   // synopsys translate_off
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    initial
       assert( $countones({xor_p & 1'b1, and_p & 1'b1, or_p & 1'b1}) == 1)
         else $error("bsg_scan: only one function may be selected\n");
-   // synopsys translate_on
+`endif
 
    if (xor_p)
      begin: xorr
