@@ -12,7 +12,7 @@ module bsg_counter_overflow_en #(parameter `BSG_INV_PARAM(max_val_p    )
   , output logic                    overflow_o
   );
 
-  assign overflow_o  = (int'(count_o) == max_val_p);
+  assign overflow_o  = (count_o == `BSG_WIDTH(count_o)'(max_val_p));
   
   always_ff @(posedge clk_i)
     begin
