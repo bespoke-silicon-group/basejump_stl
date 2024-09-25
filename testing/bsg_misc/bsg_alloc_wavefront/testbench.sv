@@ -102,7 +102,7 @@ module testbench();
 
       // Assert #2;
       for (integer i = 0; i < width_p; i++) begin
-        assert($countones(grants_lo[i]) < 2) else $error("Found more than one grant in column %d", i);
+        assert($countones(grants_lo[i]) < 2) else $error("Found more than one grant in row %d", i);
       end
 
       // Assert #3;
