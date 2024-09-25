@@ -10,7 +10,7 @@
  *               (Section 3.3)
  *
  *    This module coordinates an arbitration between N agents and N resources.
- *    Each agents may requests for one or more resources.
+ *    Each agent may request for one or more resources.
  *    Given a request matrix (row=agent, col=resource), it generates a grant matrix.
  *    It tries to maximize the number of matches between agents and resources for improved utilization.
  *
