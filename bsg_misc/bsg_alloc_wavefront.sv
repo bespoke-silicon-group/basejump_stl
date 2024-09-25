@@ -1,3 +1,22 @@
+/**
+ *    bsg_alloc_wavefront.sv
+ *
+ *    @author Tommy Jung
+ *
+ *    N:N wavefront allocator;
+ *
+ *    Based on "Efficient microarchitecture for network-on-chip routers",
+ *               Daniel U Becker, PhD Thesis, Stanford University, 2012.
+ *               (Section 3.3)
+ *
+ *    This module coordinates an arbitration between N agents and N resources.
+ *    Each agents may requests for one or more resources.
+ *    Given a request matrix (row=agent, col=resource), it generates a grant matrix.
+ *    It tries to maximize the number of matches between agents and resources for improved utilization.
+ *
+ */
+
+
 `include "bsg_defines.sv"
 
 
@@ -9,11 +28,12 @@ module bsg_alloc_wavefront
     input clk_i
     , input reset_i
 
-    // 2-D bit vector;
-    // [agent][resource] 
+    // 2-D bit matrix;
+    // [agent_idx][resource_idx] 
     , input        [width_p-1:0][width_p-1:0] reqs_i
     , output logic [width_p-1:0][width_p-1:0] grants_o
 
+    // assert yumi_i to accept the grant matrix;
     , input yumi_i
   );
 
