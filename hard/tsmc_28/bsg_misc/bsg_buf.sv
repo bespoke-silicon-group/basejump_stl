@@ -108,7 +108,9 @@ module bsg_buf #(parameter `BSG_INV_PARAM(width_p)
    `bsg_buf_macro(2) else
    `bsg_buf_macro(1) else
        begin :notmacro
+          // synopsys translate_off
           initial assert(harden_p==0) else $error("## %m wanted to harden but no macro");
+          // synopsys translate_on
 
              assign o = i;
       end

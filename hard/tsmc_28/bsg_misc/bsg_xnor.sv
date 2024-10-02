@@ -53,7 +53,9 @@ module bsg_xnor #(parameter `BSG_INV_PARAM(width_p)
    `bsg_xnor_macro(2) else
    `bsg_xnor_macro(1) else
        begin :notmacro
+          // synopsys translate_off
           initial assert(harden_p==0) else $error("## %m wanted to harden but no macro");
+          // synopsys translate_on
 
           assign o = ~(a_i ^ b_i);
       end

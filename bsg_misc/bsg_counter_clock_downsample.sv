@@ -25,14 +25,27 @@ module bsg_counter_clock_downsample #(parameter `BSG_INV_PARAM(width_p ), harden
     ,.strobe_r_o(strobe_r)
     );
 
+   wire clk_n, clk_r;
+
    // Clock output register
-   always_ff @(posedge clk_i)
-     begin
-        if (reset_i)
-          clk_r_o <= 1'b0;
-        else if (strobe_r)
-          clk_r_o <= ~clk_r_o;
-     end
+   bsg_dff_en #(.width_p(1), .harden_p(harden_p)) d
+   (.clk_i
+    ,.en_i(strobe_r)
+    ,.data_i(clk_n)
+    ,.data_o(clk_r)
+    );
+
+   // Clock inverter
+   bsg_clkinv #(.width_p(1), .harden_p(harden_p)) ci
+   (.i(clk_r)
+    ,.o(clk_n)
+    );
+
+   // Clock buffer
+   bsg_clkbuf #(.width_p(1), .harden_p(harden_p)) cb
+   (.i(clk_r)
+    ,.o(clk_r_o)
+    );
 
 endmodule
 

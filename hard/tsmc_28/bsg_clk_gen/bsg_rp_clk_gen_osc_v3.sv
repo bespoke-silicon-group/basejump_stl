@@ -49,7 +49,11 @@ module bsg_rp_clk_gen_osc_v3
 
 
   // Delay value ignored in synthesis
-  assign #100 fb_dly = n[8];
+  assign
+  `ifndef SYNTHESIS
+  #100
+  `endif
+  fb_dly = n[8];
   CKND4BWP7T30P140ULVT I2 (.ZN(clk_o), .I(fb_dly));
   wire fb_gate;
   CKND1BWP7T30P140ULVT I3 (.ZN(fb_gate), .I(fb_dly));
