@@ -12,7 +12,7 @@ if (harden_p && (width_p==bits))                              \
 
 module bsg_clkbuf #(parameter `BSG_INV_PARAM(width_p)
                  , parameter harden_p=1
-		 , parameter vertical_p=1
+                 , parameter strength_p=8
                  )
    (input    [width_p-1:0] i
     , output [width_p-1:0] o
@@ -108,7 +108,9 @@ module bsg_clkbuf #(parameter `BSG_INV_PARAM(width_p)
    `bsg_clkbuf_macro(2) else
    `bsg_clkbuf_macro(1) else
        begin :notmacro
+          // synopsys translate_off
           initial assert(harden_p==0) else $error("## %m wanted to harden but no macro");
+          // synopsys translate_on
 
              assign o = i;
       end

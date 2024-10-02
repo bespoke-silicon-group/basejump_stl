@@ -39,7 +39,11 @@ for i in range(0, num_dly_p):
 """.format(i=i, ip1=i+1))
 print("""
   // Delay value ignored in synthesis
-  assign #100 fb_dly = n[{num_dly_p}];
+  assign
+  // synopsys translate_off
+  #100
+  // synopsys translate_on
+  fb_dly = n[{num_dly_p}];
   CKND4BWP7T30P140ULVT I2 (.ZN(clk_o), .I(fb_dly));
   wire fb_gate;
   CKND1BWP7T30P140ULVT I3 (.ZN(fb_gate), .I(fb_dly));
