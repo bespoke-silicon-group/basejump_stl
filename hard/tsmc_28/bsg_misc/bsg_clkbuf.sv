@@ -6,7 +6,7 @@ if (harden_p && (width_p==bits))                              \
   begin: macro                                                \
     for (genvar j = 0; j < width_p; j++)                      \
       begin : b                                               \
-        CKBD8BWP7T40P140 cb (.I(i[j]), .Z(o[j]));             \
+        CKBD8BWP7T40P140 cb_BSG_RESIZE_OK (.I(i[j]), .Z(o[j])); \
       end                                                     \
   end
 

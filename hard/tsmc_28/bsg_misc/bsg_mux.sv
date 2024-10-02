@@ -19,7 +19,7 @@ module bsg_mux #(parameter `BSG_INV_PARAM(width_p)
         for (j = 0; j < width_p; j=j+1)
           begin: rof
              // fast, but not too extreme
-             MUX4D4BWP7T30P140ULVT M0 (.I0(data_i[0][j]), .I1(data_i[1][j]), .I2(data_i[2][j]), .I3(data_i[3][j]), .S0(sel_i[0]), .S1(sel_i[1]), .Z(data_o[j]));
+             MUX4D4BWP7T30P140ULVT M0_BSG_RESIZE_OK (.I0(data_i[0][j]), .I1(data_i[1][j]), .I2(data_i[2][j]), .I3(data_i[3][j]), .S0(sel_i[0]), .S1(sel_i[1]), .Z(data_o[j]));
           end
      end
    else

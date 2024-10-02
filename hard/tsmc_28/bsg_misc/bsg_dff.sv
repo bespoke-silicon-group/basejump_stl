@@ -6,7 +6,7 @@ if (harden_p && (width_p==bits) && (strength_p==strength)) \
   begin: macro                                                \
     for (genvar j = 0; j < width_p; j++)                      \
       begin : d                                               \
-        DFQD``strength``BWP7T40P140 d (.CP(clk_i), .D(data_i[j]), .Q(data_o[j])); \
+        DFQD``strength``BWP7T40P140 d_BSG_DONT_TOUCH (.CP(clk_i), .D(data_i[j]), .Q(data_o[j])); \
       end                                                     \
   end
 
