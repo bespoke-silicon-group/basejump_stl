@@ -6,7 +6,7 @@ if (harden_p && (width_p==bits))                  \
   begin: macro                                    \
     for (genvar j = 0; j < width_p; j++)          \
       begin : x                                   \
-        NR3D4BWP7T40P140 x (.A1(a_i[j]), .A2(b_i[j]), .A3(c_i[j]), .ZN(o[j])); \
+        NR3D4BWP7T40P140 x_BSG_RESIZE_OK (.A1(a_i[j]), .A2(b_i[j]), .A3(c_i[j]), .ZN(o[j])); \
       end                                                     \
   end
 
