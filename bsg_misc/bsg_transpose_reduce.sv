@@ -5,7 +5,7 @@
 //
 // Example:
 
-// els_p = 3, width_p = 4
+// els_p = 3, width_p = 4, or_p = 1
 //
 // { {1 0 1 0 },
 //   {0 0 1 0 },
@@ -25,11 +25,9 @@ module bsg_transpose_reduce #(`BSG_INV_PARAM(els_p)
                               , or_p  = 0
                              )
   (input [els_p-1:0][width_p-1:0] i
-   , input [width_p-1:0] o
+   , output [width_p-1:0] o
   );
 
-  genvar j;
-    
   wire [width_p-1:0][els_p-1:0] lo;
   
   bsg_transpose #(.els_p  (els_p)
@@ -39,7 +37,7 @@ module bsg_transpose_reduce #(`BSG_INV_PARAM(els_p)
    ,.o(lo)
   );
   
-  for (j = 0; j < width_p; j++)
+  for (genvar j = 0; j < width_p; j++)
     begin: rof
       // one day we will have an enum =)
       bsg_reduce #(.width_p(els_p)
@@ -48,7 +46,7 @@ module bsg_transpose_reduce #(`BSG_INV_PARAM(els_p)
                    ,.or_p  (or_p)
                   ) red
       (.i(lo[j])
-       ,.o(o)
+       ,.o(o[j])
       );
     end	
 
