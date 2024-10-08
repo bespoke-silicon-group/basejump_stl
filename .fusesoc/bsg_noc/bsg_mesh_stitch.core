@@ -1,0 +1,53 @@
+CAPI=2:
+
+name: ::bsg_mesh_stitch:0-r1
+description: stitches together wires according to a mesh topology; edges are returned in hor and ver arrays.
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_noc/bsg_mesh_stitch.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_noc_pkg
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+    toplevel: bsg_mesh_stitch
+    parameters:
+      - width_p=2
+      - x_max_p=2
+      - y_max_p=2
+
+parameters:
+  width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  x_max_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  y_max_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  nets_p:
+    datatype : int
+    default  : 1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

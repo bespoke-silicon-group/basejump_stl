@@ -1,0 +1,58 @@
+CAPI=2:
+
+name: ::bsg_nonsynth_ramulator_hbm:0-r1
+description: bsg_nonsynth_ramulator_hbm
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_test/bsg_nonsynth_ramulator_hbm.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_nonsynth_test_dram_channel
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        # verilator_options: [-Wno-WIDTH]
+    toplevel: bsg_nonsynth_ramulator_hbm
+    parameters:
+      - channel_addr_width_p=4
+      - data_width_p=4
+      - num_channels_p=2
+
+parameters:
+  channel_addr_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  data_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_channels_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  debug_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  init_mem_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

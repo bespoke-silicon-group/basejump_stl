@@ -1,0 +1,78 @@
+CAPI=2:
+
+name: ::bsg_mesh_router:0-r1
+description: mesh router
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_noc/bsg_mesh_router.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_mesh_router_pkg
+      - bsg_noc_pkg
+      - bsg_mesh_router_decoder_dor
+      - bsg_transpose
+      - bsg_array_concentrate_static
+      - bsg_concentrate_static
+      - bsg_arb_round_robin
+      - bsg_mux_one_hot
+      - bsg_unconcentrate_static
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH -Wno-UNOPTFLAT -Wno-SELRANGE]
+    toplevel: bsg_mesh_router
+    parameters:
+      - width_p=2
+      - x_cord_width_p=2
+      - y_cord_width_p=2
+
+parameters:
+  width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  x_cord_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  y_cord_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  ruche_factor_X_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  ruche_factor_Y_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  dims_p:
+    datatype : int
+    default  : 2
+    paramtype: vlogparam
+  XY_order_p:
+    datatype : int
+    default  : 1
+    paramtype: vlogparam
+  debug_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

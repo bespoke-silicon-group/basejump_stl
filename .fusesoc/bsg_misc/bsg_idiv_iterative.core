@@ -1,0 +1,65 @@
+CAPI=2:
+
+name: ::bsg_idiv_iterative:0-r1
+description: N-bit integer iterative divider
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_misc/bsg_idiv_iterative.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_dff_en
+      - bsg_mux
+      - bsg_mux_one_hot
+      - bsg_adder_cin
+      - bsg_xnor
+      - bsg_nor2
+      - bsg_idiv_iterative_controller
+
+  tb:
+    files:
+      - testing/bsg_misc/bsg_idiv_iterative/test_bsg.v
+      - testing/bsg_misc/test_bsg.cpp : { file_type : cppSource }
+    file_type: systemVerilogSource
+    depend:
+      - bsg_nonsynth_dpi_clock_gen
+      - bsg_nonsynth_reset_gen
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-CASEINCOMPLETE -Wno-PINMISSING]
+    toplevel: bsg_idiv_iterative
+
+  verilator_tb:
+    default_tool: verilator
+    filesets: [rtl, tb]
+    tools:
+      verilator:
+        verilator_options: [-Wno-lint --assert]
+    toplevel: test_bsg
+
+parameters:
+  width_p:
+    datatype : int
+    default  : 32
+    paramtype: vlogparam
+  bitstack_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

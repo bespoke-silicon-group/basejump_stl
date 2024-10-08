@@ -1,0 +1,31 @@
+CAPI=2:
+
+name: ::bsg_cache_decode:0-r1
+description: bsg_cache_decode
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_cache/bsg_cache_pkg.v
+      - bsg_cache/bsg_cache_decode.v
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-UNOPT]
+    toplevel: bsg_cache_decode
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

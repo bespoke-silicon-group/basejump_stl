@@ -1,0 +1,40 @@
+CAPI=2:
+
+name: ::bsg_fsb_node_level_shift_node_domain:0-r1
+description: This module is design to level shift all signals that connect the FSB to a node.
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_fsb/bsg_fsb_node_level_shift_node_domain.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_level_shift_up_down_source
+      - bsg_level_shift_up_down_sink
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+    toplevel: bsg_fsb_node_level_shift_node_domain
+    parameters:
+      - ring_width_p=2
+
+parameters:
+  ring_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

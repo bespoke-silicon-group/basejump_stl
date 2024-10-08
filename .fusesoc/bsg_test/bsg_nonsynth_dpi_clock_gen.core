@@ -1,0 +1,41 @@
+CAPI=2:
+
+name: ::bsg_nonsynth_dpi_clock_gen:0-r1
+description: drop-in replacement for bsg_nonsynth_clock_gen when using verilator
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_test/bsg_nonsynth_clock_gen.v
+      - bsg_test/bsg_nonsynth_dpi_clock_gen.v
+      - bsg_test/bsg_nonsynth_dpi_clock_gen.cpp: { file_type: cppSource } 
+      - bsg_test/bsg_nonsynth_dpi_clock_gen.hpp: { file_type: cppSource ,is_include_file : true} 
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH]
+    toplevel: bsg_nonsynth_dpi_clock_gen
+    parameters: 
+      - cycle_time_p=2
+
+parameters:
+  cycle_time_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

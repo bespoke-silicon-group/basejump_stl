@@ -1,0 +1,67 @@
+CAPI=2:
+
+name: ::bsg_mem_multiport:0-r1
+description: N read-port, M write-port ram; reads are asynchronous
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_mem/bsg_mem_multiport.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_mem_3r1w_synth
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH]
+    toplevel: bsg_mem_multiport
+    parameters: 
+      - width_p=3
+      - els_p=3
+      - read_ports_p=2
+      - read_ports_p=2
+
+parameters:
+  width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  els_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  read_write_same_addr_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  write_write_same_addr_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  read_ports_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  write_ports_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  harden_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

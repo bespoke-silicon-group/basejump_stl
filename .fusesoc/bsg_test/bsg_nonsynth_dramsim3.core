@@ -1,0 +1,118 @@
+CAPI=2:
+
+name: ::bsg_nonsynth_dramsim3:0-r1
+description: bsg_nonsynth_dramsim3
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_test/bsg_nonsynth_dramsim3.svh
+      - bsg_test/bsg_dramsim3.vh
+      - bsg_test/bsg_nonsynth_dramsim3.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_dramsim3_pkg
+      - bsg_nonsynth_dramsim3_map
+      - bsg_nonsynth_dramsim3_unmap
+      - bsg_nonsynth_mem_1r1w_sync_mask_write_byte_dma
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH]
+    toplevel: bsg_nonsynth_dramsim3
+    parameters:
+      - channel_addr_width_p=2
+      - data_width_p=2
+      - num_channels_p=4
+      - num_columns_p=2
+      - num_rows_p=2
+      - num_ba_p=2
+      - num_bg_p=2
+      - num_ranks_p=2
+      - address_mapping_p=2
+      - size_in_bits_p=2
+
+parameters:
+  channel_addr_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  data_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_channels_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_columns_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_rows_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_ba_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_bg_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_ranks_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  address_mapping_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  size_in_bits_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  masked_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  debug_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  init_mem_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  config_p:
+    datatype : string
+    default  : "inv"
+    paramtype: vlogparam
+  trace_file_p:
+    datatype : string
+    default  : "bsg_nonsynth_dramsim3_trace.txt"
+    paramtype: vlogparam
+  base_id_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  tag_width_p:
+    datatype : int
+    default  : 32
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

@@ -1,0 +1,50 @@
+CAPI=2:
+
+name: ::bsg_cam_1r1w_unmanaged:0-r1
+description: Synchnronous read 1r1w content addressable memory module.
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_mem/bsg_cam_1r1w_unmanaged.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_cam_1r1w_tag_array
+      - bsg_mem_1r1w_one_hot
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+    toplevel: bsg_cam_1r1w_unmanaged
+    parameters: 
+      - tag_width_p=3
+      - data_width_p=3
+      - els_p=4
+
+parameters:
+  tag_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  data_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  els_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

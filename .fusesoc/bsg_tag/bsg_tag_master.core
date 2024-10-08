@@ -1,0 +1,51 @@
+CAPI=2:
+
+name: ::bsg_tag_master:0-r1
+description: send a stream of 0's to reset master node and/or noop.
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_tag/bsg_tag.vh: {is_include_file : true}
+      - bsg_tag/bsg_tag_pkg.v
+      - bsg_tag/bsg_tag_master.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_counter_clear_up
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH]
+    toplevel: bsg_tag_master
+    parameters: 
+      - els_p=2
+      - lg_width_p=2
+
+parameters:
+  els_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  lg_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  debug_level_lp:
+    datatype : int
+    default  : 2
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

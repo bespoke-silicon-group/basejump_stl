@@ -1,0 +1,73 @@
+CAPI=2:
+
+name: ::bsg_cache_to_axi_rx:0-r1
+description: bsg_cache_to_axi_rx
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_cache/bsg_cache_to_axi_rx.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_fifo_1r1w_small
+      - bsg_parallel_in_serial_out
+      - bsg_counter_clear_up
+      - bsg_decode_with_v
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH -Wno-PINMISSING]
+    toplevel: bsg_cache_to_axi_rx
+    parameters:
+      - data_width_p=2
+      - num_cache_p=2
+      - block_size_in_words_p=2
+      - axi_id_width_p=2
+      - axi_addr_width_p=2
+      - axi_data_width_p=2
+      - axi_burst_len_p=2
+
+parameters:
+  data_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  block_size_in_words_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_cache_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  axi_id_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  axi_addr_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  axi_data_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  axi_burst_len_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

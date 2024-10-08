@@ -1,0 +1,45 @@
+CAPI=2:
+
+name: ::bsg_nonsynth_dpi_cycle_counter:0-r1
+description:  This modules defines a DPI interface for a counter that can be read periodically using DPI
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_test/bsg_nonsynth_dpi_clock_gen.hpp: { file_type: cppSource ,is_include_file : true} 
+      - bsg_test/bsg_nonsynth_dpi_cycle_counter.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_cycle_counter
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH]
+    toplevel: bsg_nonsynth_dpi_cycle_counter
+    parameters: 
+      - width_p=3
+
+parameters:
+  width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  debug_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

@@ -1,0 +1,62 @@
+CAPI=2:
+
+name: ::bsg_nonsynth_axi_mem:0-r1
+description: bsg_nonsynth_axi_mem
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_test/bsg_nonsynth_axi_mem.v
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+    toplevel: bsg_nonsynth_axi_mem
+    parameters:
+      - axi_id_width_p=2
+      - axi_addr_width_p=2
+      - axi_data_width_p=2
+      - axi_burst_len_p=2
+      - mem_els_p=2
+      - init_data_p=2
+
+parameters:
+  axi_id_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  axi_addr_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  axi_data_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  axi_burst_len_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  mem_els_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  init_data_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

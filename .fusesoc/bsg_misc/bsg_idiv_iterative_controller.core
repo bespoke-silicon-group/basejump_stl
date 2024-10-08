@@ -1,0 +1,55 @@
+CAPI=2:
+
+name: ::bsg_idiv_iterative_controller:0-r1
+description: controller of bsg_idiv_iterative
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_misc/bsg_idiv_iterative_controller.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_counter_clear_up
+
+  tb:
+    files:
+      - testing/bsg_misc/bsg_idiv_iterative_controller/test_bsg.v
+      - testing/bsg_misc/test_bsg.cpp : { file_type : cppSource }
+    file_type: systemVerilogSource
+    depend:
+      - bsg_nonsynth_dpi_clock_gen
+      - bsg_nonsynth_reset_gen
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-CASEINCOMPLETE]
+    toplevel: bsg_idiv_iterative_controller
+
+  verilator_tb:
+    default_tool: verilator
+    filesets: [rtl, tb]
+    tools:
+      verilator:
+        verilator_options: [-Wno-lint --assert]
+    toplevel: test_bsg
+
+parameters:
+  width_p:
+    datatype : int
+    default  : 32
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

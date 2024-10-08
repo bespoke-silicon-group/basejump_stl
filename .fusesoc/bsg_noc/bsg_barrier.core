@@ -1,0 +1,39 @@
+CAPI=2:
+
+name: ::bsg_barrier:0-r1
+description: Light-weight configurable wire/logic efficient barrier.
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_noc/bsg_barrier.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_dff_reset
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+    toplevel: bsg_barrier
+    parameters:
+      - dirs_p=2
+
+parameters:
+  dirs_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

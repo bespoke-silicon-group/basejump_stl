@@ -1,0 +1,87 @@
+CAPI=2:
+
+name: ::bsg_1_to_n_tagged_fifo_shared:0-r1
+description: This module implements a FIFO that takes in a multiplexed stream on one end, and provides demultiplexed access on the other.
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_dataflow/bsg_1_to_n_tagged_fifo_shared.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_1_to_n_tagged
+      - bsg_fifo_tracker
+      - bsg_counter_up_down
+      - bsg_round_robin_arb
+      - bsg_mem_1rw_sync
+      - bsg_mem_1r1w_sync
+      - bsg_dff_reset
+      - bsg_1_to_n_tagged_fifo
+
+  tb:
+    files:
+      - testing/bsg_dataflow/bsg_1_to_n_tagged_fifo_shared/test_bsg.v
+      - testing/bsg_misc/test_bsg.cpp : { file_type : cppSource }
+    file_type: systemVerilogSource
+    depend:
+      - bsg_nonsynth_dpi_clock_gen
+      - bsg_nonsynth_reset_gen
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-PINMISSING]
+    toplevel: bsg_1_to_n_tagged_fifo_shared
+    parameters: 
+      - width_p=2
+      - num_out_p=2
+      - els_p=2
+      - buffering_p=2
+
+  verilator_tb:
+    default_tool: verilator
+    filesets: [rtl, tb]
+    tools:
+      verilator:
+        verilator_options: [-Wno-lint --assert]
+    toplevel: test_bsg
+
+parameters:
+  width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_out_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  els_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  buffering_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  unbuffered_mask_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  sram_1rw_not_1r1w_p:
+    datatype : int
+    default  : 1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

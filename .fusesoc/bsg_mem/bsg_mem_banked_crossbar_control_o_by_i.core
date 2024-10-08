@@ -1,0 +1,51 @@
+CAPI=2:
+
+name: ::bsg_mem_banked_crossbar_control_o_by_i:0-r1
+description: bank mem banked crossbar
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_mem/bsg_mem_banked_crossbar_control_o_by_i.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_transpose
+      - bsg_round_robin_arb
+      - bsg_arb_fixed
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        # verilator_options: [-Wno-WIDTH]
+    toplevel: bsg_mem_banked_crossbar_control_o_by_i
+    parameters: 
+      - width_p=3
+      - els_p=4
+
+parameters:
+  width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  els_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  read_write_same_addr_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

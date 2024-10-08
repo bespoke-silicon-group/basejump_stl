@@ -1,0 +1,43 @@
+CAPI=2:
+
+name: ::bsg_wormhole_router_decoder_dor:0-r1
+description: N-dimensional wormhole dimension ordered decoder
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_noc/bsg_wormhole_router_decoder_dor.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_noc_pkg
+      - bsg_serial_in_parallel_out_dynamic
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+    toplevel: bsg_wormhole_router_decoder_dor
+    parameters:
+      - dims_p=2
+
+parameters:
+  dims_p:
+    datatype : int
+    default  : 2
+    paramtype: vlogparam
+  reverse_order_p:
+    datatype : int
+    default  : 0
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

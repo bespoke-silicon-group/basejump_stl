@@ -1,0 +1,50 @@
+CAPI=2:
+
+name: ::bsg_nonsynth_test_rom:0-r1
+description: async read test_rom that uses readmemb to read its contents.
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_test/bsg_nonsynth_test_rom.v
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+    toplevel: bsg_nonsynth_test_rom
+    parameters:
+      - data_width_p=4
+      - addr_width_p=4
+
+parameters:
+  data_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  addr_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  hex_not_bin_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  filename_p:
+    datatype : string
+    default  : "inv"
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

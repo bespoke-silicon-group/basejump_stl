@@ -1,0 +1,67 @@
+CAPI=2:
+
+name: ::bsg_parallel_in_serial_out_passthrough:0-r1
+description: This data structure takes in a multi-word data and serializes it to a single word output. This module is helpful on both sides.
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_dataflow/bsg_parallel_in_serial_out_passthrough.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_mux_one_hot
+      - bsg_counter_clear_up_one_hot
+      - bsg_dff_en
+
+  tb:
+    files:
+      - testing/bsg_dataflow/bsg_parallel_in_serial_out_passthrough/test_bsg.v
+      - testing/bsg_misc/test_bsg.cpp : { file_type : cppSource }
+    file_type: systemVerilogSource
+    depend:
+      - bsg_nonsynth_dpi_clock_gen
+      - bsg_nonsynth_reset_gen
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+    toplevel: bsg_parallel_in_serial_out_passthrough
+    parameters: 
+      - width_p=2
+      - els_p=2
+
+  verilator_tb:
+    default_tool: verilator
+    filesets: [rtl, tb]
+    tools:
+      verilator:
+        verilator_options: [-Wno-lint --assert]
+    toplevel: test_bsg
+
+parameters:
+  width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  els_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  hi_to_lo_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

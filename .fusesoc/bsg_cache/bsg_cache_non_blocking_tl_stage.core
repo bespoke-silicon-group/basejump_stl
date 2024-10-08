@@ -1,0 +1,68 @@
+CAPI=2:
+
+name: ::bsg_cache_non_blocking_tl_stage:0-r1
+description: tag-lookup stage
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_cache/bsg_cache_non_blocking_pkg.v
+      - bsg_cache/bsg_cache_non_blocking_tl_stage.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_counter_clear_up
+      - bsg_cache_non_blocking_tag_mem
+      - bsg_priority_encode
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-MODDUP]
+    toplevel: bsg_cache_non_blocking_tl_stage
+    parameters:
+      - id_width_p=2
+      - addr_width_p=2
+      - data_width_p=2
+      - ways_p=2
+      - sets_p=2
+      - block_size_in_words_p=1
+
+parameters:
+  id_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  addr_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  data_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  block_size_in_words_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  sets_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  ways_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

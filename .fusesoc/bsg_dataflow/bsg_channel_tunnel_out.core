@@ -1,0 +1,72 @@
+CAPI=2:
+
+name: ::bsg_channel_tunnel_out:0-r1
+description: takes N channels and tunnels them, with credit flow control.
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_dataflow/bsg_channel_tunnel_out.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_counter_up_down_variable
+      - bsg_round_robin_n_to_1
+
+  tb:
+    files:
+      - testing/bsg_dataflow/bsg_channel_tunnel_out/test_bsg.v
+      - testing/bsg_misc/test_bsg.cpp : { file_type : cppSource }
+    file_type: systemVerilogSource
+    depend:
+      - bsg_nonsynth_dpi_clock_gen
+      - bsg_nonsynth_reset_gen
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH -Wno-SELRANGE]
+    toplevel: bsg_channel_tunnel_out
+    parameters: 
+      - width_p=2
+      - num_in_p=2
+      - remote_credits_p=2
+
+  verilator_tb:
+    default_tool: verilator
+    filesets: [rtl, tb]
+    tools:
+      verilator:
+        verilator_options: [-Wno-lint --assert]
+    toplevel: test_bsg
+
+parameters:
+  width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_in_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  remote_credits_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  lg_credit_decimation_p:
+    datatype : int
+    default  : 4
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

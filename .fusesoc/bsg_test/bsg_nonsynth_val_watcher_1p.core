@@ -1,0 +1,57 @@
+CAPI=2:
+
+name: ::bsg_nonsynth_val_watcher_1p:0-r1
+description: bsg_nonsynth_val_watcher_1p
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_test/bsg_nonsynth_val_watcher_1p.v
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+    toplevel: bsg_nonsynth_val_watcher_1p
+    parameters:
+      - trigger_val_p=2
+
+parameters:
+  string_p:
+    datatype : string
+    default  : "unknown"
+    paramtype: vlogparam
+  trigger_val_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  val_size_p:
+    datatype : int
+    default  : 32
+    paramtype: vlogparam
+  one_time_trigger_p:
+    datatype : int
+    default  : 1
+    paramtype: vlogparam
+  p1_width_p:
+    datatype : int
+    default  : 32
+    paramtype: vlogparam
+  extra_p:
+    datatype : int
+    default  : 1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

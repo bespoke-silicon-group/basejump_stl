@@ -1,0 +1,41 @@
+CAPI=2:
+
+name: ::bsg_wormhole_router_output_control:0-r1
+description: wormhole_router_output_control
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_noc/bsg_wormhole_router_output_control.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_dff_reset
+      - bsg_round_robin_arb
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH]
+    toplevel: bsg_wormhole_router_output_control
+    parameters:
+      - input_dirs_p=2
+
+parameters:
+  input_dirs_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

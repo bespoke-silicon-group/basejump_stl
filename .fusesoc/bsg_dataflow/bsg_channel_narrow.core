@@ -1,0 +1,63 @@
+CAPI=2:
+
+name: ::bsg_channel_narrow:0-r1
+description: This module takes output of a previous module and sends this data in smaller number of bits by receiving deque from next module. When it is sending the last piece it would assert the deque to previous module.
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_dataflow/bsg_channel_narrow.v
+    file_type: systemVerilogSource
+
+  tb:
+    files:
+      - testing/bsg_dataflow/bsg_channel_narrow/test_bsg.v
+      - testing/bsg_misc/test_bsg.cpp : { file_type : cppSource }
+    file_type: systemVerilogSource
+    depend:
+      - bsg_nonsynth_dpi_clock_gen
+      - bsg_nonsynth_reset_gen
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+    toplevel: bsg_channel_narrow
+    parameters: 
+      - width_in_p=2
+      - width_out_p=2
+
+  verilator_tb:
+    default_tool: verilator
+    filesets: [rtl, tb]
+    tools:
+      verilator:
+        verilator_options: [-Wno-lint --assert]
+    toplevel: test_bsg
+
+parameters:
+  width_in_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  width_out_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  lsb_to_msb_p:
+    datatype : int
+    default  : 1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

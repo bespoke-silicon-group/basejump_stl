@@ -1,0 +1,67 @@
+CAPI=2:
+
+name: ::bsg_tag_trace_replay:0-r1
+description: This module uses the synthesizable bsg_fsb_node_trace_replay module to communicate over bsg_tag.
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_tag/bsg_tag.vh: {is_include_file : true}
+      - bsg_tag/bsg_tag_trace_replay.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_fsb_node_trace_replay
+      - bsg_parallel_in_serial_out
+      - bsg_dff_en
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH -Wno-PINMISSING -Wno-SELRANGE]
+    toplevel: bsg_tag_trace_replay
+    parameters: 
+      - rom_addr_width_p=5
+      - rom_data_width_p=5
+      - num_clients_p=5
+      - max_payload_width_p=5
+
+
+parameters:
+  rom_addr_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  rom_data_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_masters_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  num_clients_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  max_payload_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  uptime_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

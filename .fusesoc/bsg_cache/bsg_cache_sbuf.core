@@ -1,0 +1,53 @@
+CAPI=2:
+
+name: ::bsg_cache_sbuf:0-r1
+description: store (write) buffer
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_cache/bsg_cache_pkg.v
+      - bsg_cache/bsg_cache_sbuf.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_cache_sbuf_queue
+      - bsg_mux_segmented
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-MODDUP --debug]
+    toplevel: bsg_cache_sbuf
+    parameters:
+      - addr_width_p=2
+      - data_width_p=2
+      - ways_p=2
+
+parameters:
+  addr_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  data_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  ways_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl
+

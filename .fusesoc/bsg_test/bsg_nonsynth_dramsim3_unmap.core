@@ -1,0 +1,88 @@
+CAPI=2:
+
+name: ::bsg_nonsynth_dramsim3_unmap:0-r1
+description: bsg_nonsynth_dramsim3_unmap
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_test/bsg_nonsynth_dramsim3_unmap.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_dramsim3_pkg
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH -Wno-LITENDIAN]
+    toplevel: bsg_nonsynth_dramsim3_unmap
+    parameters:
+      - channel_addr_width_p=2
+      - data_width_p=2
+      - num_channels_p=2
+      - num_columns_p=2
+      - num_rows_p=2
+      - num_ba_p=2
+      - num_bg_p=2
+      - num_ranks_p=2
+      - address_mapping_p=2
+
+parameters:
+  channel_addr_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  data_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_channels_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_columns_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_rows_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_ba_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_bg_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_ranks_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  address_mapping_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  channel_select_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  debug_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

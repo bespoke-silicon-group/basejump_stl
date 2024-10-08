@@ -1,0 +1,59 @@
+CAPI=2:
+
+name: ::bsg_expand_bitmask:0-r1
+description: expands each bit in the input vector by the factor of expand_p
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_misc/bsg_expand_bitmask.v
+    file_type: systemVerilogSource
+
+  tb:
+    files:
+      - testing/bsg_misc/bsg_expand_bitmask/test_bsg.v
+      - testing/bsg_misc/test_bsg.cpp : { file_type : cppSource }
+    file_type: systemVerilogSource
+    depend:
+      - bsg_nonsynth_dpi_clock_gen
+      - bsg_nonsynth_reset_gen
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+    toplevel: bsg_expand_bitmask
+    parameters: 
+      - in_width_p=2
+      - expand_p=1
+
+  verilator_tb:
+    default_tool: verilator
+    filesets: [rtl, tb]
+    tools:
+      verilator:
+        verilator_options: [-Wno-lint --assert]
+    toplevel: test_bsg
+
+parameters:
+  in_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  expand_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

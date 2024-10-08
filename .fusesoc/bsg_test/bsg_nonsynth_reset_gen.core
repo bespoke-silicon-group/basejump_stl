@@ -1,0 +1,47 @@
+CAPI=2:
+
+name: ::bsg_nonsynth_reset_gen:0-r1
+description: nonsynth_reset_gen
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_test/bsg_nonsynth_reset_gen.v
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH]
+    toplevel: bsg_nonsynth_reset_gen
+    parameters: 
+      - reset_cycles_lo_p=1
+      - reset_cycles_hi_p=5
+
+parameters:
+  num_clocks_p:
+    datatype : int
+    default  : 1
+    paramtype: vlogparam
+  reset_cycles_lo_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  reset_cycles_hi_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

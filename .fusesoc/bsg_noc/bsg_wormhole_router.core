@@ -1,0 +1,57 @@
+CAPI=2:
+
+name: ::bsg_wormhole_router:0-r1
+description: wornhole router
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_noc/bsg_noc_links.vh: {is_include_file : true}
+      - bsg_noc/bsg_wormhole_router.vh: {is_include_file : true}
+      - bsg_noc/bsg_wormhole_router_pkg.v
+      - bsg_noc/bsg_wormhole_router.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_transpose
+      - bsg_concentrate_static
+      - bsg_two_fifo
+      - bsg_wormhole_router_decoder_dor
+      - bsg_concentrate_static
+      - bsg_wormhole_router_input_control
+      - bsg_unconcentrate_static
+      - bsg_array_concentrate_static
+      - bsg_wormhole_router_output_control
+      - bsg_mux_one_hot
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+    toplevel: bsg_wormhole_router__abstract
+
+parameters:
+  dims_p:
+    datatype : int
+    default  : 2
+    paramtype: vlogparam
+  reverse_order_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  debug_lp:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

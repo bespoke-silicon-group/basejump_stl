@@ -1,0 +1,83 @@
+CAPI=2:
+
+name: ::bsg_async_credit_counter:0-r1
+description: async credit counter
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_async/bsg_async_credit_counter.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_async_ptr_gray
+      - bsg_gray_to_binary
+
+  tb:
+    files:
+      - testing/bsg_async/bsg_async_credit_counter/test_bsg.v
+      - testing/bsg_misc/test_bsg.cpp : { file_type : cppSource }
+    file_type: systemVerilogSource
+    depend:
+      - bsg_nonsynth_dpi_clock_gen
+      - bsg_nonsynth_reset_gen
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH]
+    toplevel: bsg_async_credit_counter
+    parameters: 
+      - max_tokens_p=2
+      - lg_credit_to_token_decimation_p=2
+
+  verilator_tb:
+    default_tool: verilator
+    filesets: [rtl, tb]
+    tools:
+      verilator:
+        verilator_options: [-Wno-lint --assert]
+    toplevel: test_bsg
+
+parameters:
+  max_tokens_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  lg_credit_to_token_decimation_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  count_negedge_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  extra_margin_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+  check_excess_credits_p:
+    datatype : int
+    default  : 1
+    paramtype: vlogparam
+  start_full_p:
+    datatype : int
+    default  : 1
+    paramtype: vlogparam
+  use_async_w_reset_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

@@ -1,0 +1,47 @@
+CAPI=2:
+
+name: ::bsg_fsb:0-r1
+description: This is a *full duplex* front side bus that allows output and input traffic to proceed independently, from nodes into the bsg out assembler; and from bsg in assembler to nodes.
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_fsb/bsg_fsb.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_front_side_bus_hop_out
+      - bsg_front_side_bus_hop_in
+      - bsg_fsb_murn_gateway
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH -Wno-LITENDIAN]
+    toplevel: bsg_fsb
+    parameters:
+      - width_p=4
+      - nodes_p=4
+
+parameters:
+  width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  nodes_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

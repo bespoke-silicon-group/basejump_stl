@@ -1,0 +1,47 @@
+CAPI=2:
+
+name: ::test_bsg_data_gen:0-r1
+description: test_bsg_data_gen
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_test/test_bsg_data_gen.v
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH]
+    toplevel: test_bsg_data_gen
+    parameters:
+      - channel_width_p=4
+      - num_channels_p=4
+
+parameters:
+  channel_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  num_channels_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  debug_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

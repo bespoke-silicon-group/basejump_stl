@@ -1,0 +1,37 @@
+CAPI=2:
+
+name: ::bsg_nonsynth_clock_gen_plusarg:0-r1
+description: This module is a basic non-synthesizable clock generator.
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_test/bsg_nonsynth_clock_gen_plusarg.v
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+    toplevel: bsg_nonsynth_clock_gen_plusarg
+    parameters:
+      - default_clk_per_p=2
+
+parameters:
+  default_clk_per_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

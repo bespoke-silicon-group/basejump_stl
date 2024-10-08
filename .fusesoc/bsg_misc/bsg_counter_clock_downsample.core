@@ -1,0 +1,68 @@
+CAPI=2:
+
+name: ::bsg_counter_clock_downsample:0-r1
+description: counter will counter down from val_i to 0
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_misc/bsg_counter_clock_downsample.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_dff
+      - bsg_strobe
+      - bsg_xnor
+      - bsg_nand
+      - bsg_nor3
+      - bsg_reduce
+      - bsg_buf
+      - bsg_muxi2_gatestack
+
+  tb:
+    files:
+      - testing/bsg_misc/bsg_counter_clock_downsample/test_bsg.v
+      - testing/bsg_misc/test_bsg.cpp : { file_type : cppSource }
+    file_type: systemVerilogSource
+    depend:
+      - bsg_nonsynth_dpi_clock_gen
+      - bsg_nonsynth_reset_gen
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH -Wno-WIDTHCONCAT]
+    toplevel: bsg_counter_clock_downsample
+    parameters: 
+      - width_p=2
+
+  verilator_tb:
+    default_tool: verilator
+    filesets: [rtl, tb]
+    tools:
+      verilator:
+        verilator_options: [-Wno-lint --assert]
+    toplevel: test_bsg
+
+parameters:
+  width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  harden_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

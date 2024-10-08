@@ -1,0 +1,76 @@
+CAPI=2:
+
+name: ::bsg_cache_to_test_dram:0-r1
+description: bsg_cache_to_test_dram
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_cache/bsg_cache_pkg.v
+      - bsg_cache/bsg_cache.vh: {is_include_file : true}
+      - bsg_cache/bsg_cache_to_test_dram.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_round_robin_n_to_1
+      - bsg_counter_clear_up
+      - bsg_async_fifo
+      - bsg_cache_to_test_dram_rx
+      - bsg_cache_to_test_dram_tx
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH -Wno-WIDTHCONCAT]
+    toplevel: bsg_cache_to_test_dram
+    parameters: 
+      - num_cache_p=2
+      - addr_width_p=2
+      - data_width_p=2
+      - block_size_in_words_p=2
+      - cache_bank_addr_width_p=2
+      - dram_channel_addr_width_p=2
+      - dram_data_width_p=2
+
+parameters:
+  num_cache_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  addr_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  data_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  block_size_in_words_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  cache_bank_addr_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  dram_channel_addr_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  dram_data_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

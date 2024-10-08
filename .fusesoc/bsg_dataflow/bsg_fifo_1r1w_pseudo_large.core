@@ -1,0 +1,71 @@
+CAPI=2:
+
+name: ::bsg_fifo_1r1w_pseudo_large:0-r1
+description: This fifo looks like a 1R1W fifo but actually is implemented with a 1RW FIFO for the bulk of its storage, and has a small 1R1W FIFO to help decouple reads and writes that may conflict. This FIFO is useful for cases where reads and writes each individually have a duty cycle of 50% or less.
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_dataflow/bsg_fifo_1r1w_pseudo_large.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_fifo_1rw_large
+      - bsg_two_fifo
+
+  tb:
+    files:
+      - testing/bsg_dataflow/bsg_fifo_1r1w_pseudo_large/test_bsg.v
+      - testing/bsg_misc/test_bsg.cpp : { file_type : cppSource }
+    file_type: systemVerilogSource
+    depend:
+      - bsg_nonsynth_dpi_clock_gen
+      - bsg_nonsynth_reset_gen
+
+targets:
+  default:
+    filesets: [rtl]
+  
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH]
+    toplevel: bsg_fifo_1r1w_pseudo_large
+    parameters: 
+      - width_p=2
+      - els_p=2
+
+  verilator_tb:
+    default_tool: verilator
+    filesets: [rtl, tb]
+    tools:
+      verilator:
+        verilator_options: [-Wno-lint --assert]
+    toplevel: test_bsg
+
+parameters:
+  width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  els_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  early_yumi_p:
+    datatype : int
+    default  : 1
+    paramtype: vlogparam
+  verbose_p:
+    datatype : int
+    default  : 0
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl

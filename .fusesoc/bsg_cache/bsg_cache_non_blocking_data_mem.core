@@ -1,0 +1,60 @@
+CAPI=2:
+
+name: ::bsg_cache_non_blocking_data_mem:0-r1
+description: data memory and peripheral circuits.
+
+filesets:
+  rtl:
+    files:
+      - bsg_misc/bsg_defines.v: {is_include_file : true}
+      - bsg_cache/bsg_cache_non_blocking_pkg.v
+      - bsg_cache/bsg_cache_non_blocking_data_mem.v
+    file_type: systemVerilogSource
+    depend:
+      - bsg_mem_1rw_sync_mask_write_byte
+      - bsg_mux
+      - bsg_decode
+      - bsg_expand_bitmask
+      - bsg_dff_en
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool: verilator
+    filesets: [rtl]
+    tools:
+      verilator: 
+        mode: lint-only
+        verilator_options: [-Wwarn-lint -Wwarn-style]
+        verilator_options: [-Wno-WIDTH -Wno-PINMISSING -Wno-SELRANGE -Wno-LITENDIAN]
+    toplevel: bsg_cache_non_blocking_data_mem
+    parameters:
+      - data_width_p=2
+      - ways_p=2
+      - sets_p=2
+      - block_size_in_words_p=2
+
+parameters:
+  data_width_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  block_size_in_words_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  sets_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+  ways_p:
+    datatype : int
+    default  : -1
+    paramtype: vlogparam
+
+provider :
+  name : github
+  user : bespoke-silicon-group
+  repo : basejump_stl
