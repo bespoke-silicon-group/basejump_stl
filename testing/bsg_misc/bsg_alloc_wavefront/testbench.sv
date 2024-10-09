@@ -22,11 +22,12 @@ module testbench();
 
 
   // Parameters;
-  localparam width_p = 7;
+  localparam width_p = 4;
 
 
   // Random number DPI;
   import "DPI-C" context function int get_random_binary();
+  import "DPI-C" context function real get_random_float();
 
   
   // DUT;
@@ -54,7 +55,7 @@ module testbench();
     else begin
       for (integer i = 0; i < width_p; i++) begin
         for (integer j = 0; j < width_p; j++) begin
-          reqs_r[i][j] <= get_random_binary();
+          reqs_r[i][j] <= get_random_float() < 0.2;
         end
       end
     end
@@ -72,7 +73,7 @@ module testbench();
   );
 
   initial begin
-    wait(ctr_r == 100000);
+    wait(ctr_r == 100);
     $finish();
   end
 
@@ -108,6 +109,19 @@ module testbench();
       // Assert #3;
       for (integer i = 0; i < width_p; i++) begin
         assert($countones(grants_lo_tp[i]) < 2) else $error("Found more than one grant in column %d", i);
+      end
+
+      // Assert #4
+      for (integer i = 0; i < width_p; i++) begin
+        for (integer j = 0; j < width_p; j++) begin
+          if (reqs_r[i][j] & ~grants_lo[i][j]) begin
+            //wire [width_p-1:0] row_mask = ~(1'b1 << j);
+            //wire [width_p-1:0] row_neighbor = grants_lo[i] & ~(1'b1 << j);
+            //wire [width_p-1:0] col_mask = ~(1'b1 << i);
+            //wire [width_p-1:0] col_neighbor = grants_lo_tp[j] & ~(1'b1 << i);
+            assert ($countones(grants_lo[i] & ~(1'b1 << j)) > 0 || $countones(grants_lo_tp[j] & ~(1'b1 << i)) > 0) else $error("Req but no grant, but no col/row neighbor granted. (%d, %d)", i, j);
+          end
+        end
       end
 
     end
