@@ -13,7 +13,7 @@ module bsg_tielo
         begin: w
           TIELBWP7T40P140
             TIE_LO_BSG_DONT_TOUCH
-              (.ZN(o));
+              (.ZN(o[i]));
         end: w
     end: hard
   else
