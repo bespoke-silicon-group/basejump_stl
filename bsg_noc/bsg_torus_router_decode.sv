@@ -104,7 +104,6 @@ module bsg_torus_router_decode
   always_comb begin
 
     if (x_eq) begin
-
       // Go vertical;
       if (y_eq) begin
         // To Proc;
@@ -113,7 +112,7 @@ module bsg_torus_router_decode
       end
       else begin
 
-        if (y_cw_dist <= y_ccw_dist) begin
+        if (y_cw_dist < y_ccw_dist) begin
           // Go clockwise;
           if (my_y_i % 2 == 0) begin
             dir_sel_id = S;
@@ -126,7 +125,7 @@ module bsg_torus_router_decode
             vc_sel_id = (from_PEW ? 1'b0 : vc_id_p);
           end
         end
-        else begin
+        else if (y_cw_dist > y_ccw_dist) begin
           // go counter-clockwise;
           if (my_y_i % 2 == 0) begin
             dir_sel_id = N;
@@ -139,13 +138,42 @@ module bsg_torus_router_decode
             vc_sel_id = (from_PEW ? 1'b0 : vc_id_p);
           end
         end
+        else begin
+          // tie-breaker;
+          if (my_torus_y % 2 == 0) begin
+            // Go clockwise;
+            if (my_y_i % 2 == 0) begin
+              dir_sel_id = S;
+              vc_sel_id = (my_base_y == (num_tiles_y_p/2)-2)
+                ? 1'b1    // dateline;
+                : (from_PEW ? 1'b0 : vc_id_p);
+            end
+            else begin
+              dir_sel_id = N;
+              vc_sel_id = (from_PEW ? 1'b0 : vc_id_p);
+            end
+          end
+          else begin
+            // go counter-clockwise;
+            if (my_y_i % 2 == 0) begin
+              dir_sel_id = N;
+              vc_sel_id = (my_base_y == (num_tiles_y_p/2))
+                ? 1'b1    // dateline;
+                : (from_PEW ? 1'b0 : vc_id_p);
+            end
+            else begin
+              dir_sel_id = S;
+              vc_sel_id = (from_PEW ? 1'b0 : vc_id_p);
+            end
+          end
+        end
       end
 
     end
     else begin
 
       // Go horizontal;
-      if (x_cw_dist <= x_ccw_dist) begin
+      if (x_cw_dist < x_ccw_dist) begin
         // go clockwise;
         if (my_x_i % 2 == 0) begin
           dir_sel_id = E;
@@ -158,8 +186,8 @@ module bsg_torus_router_decode
           vc_sel_id = vc_id_p;
         end
       end
-      else begin
-        // go counter-clockwise;
+      else if (x_cw_dist > x_ccw_dist) begin
+        // go counter-clockwise
         if (my_x_i % 2 == 0) begin
           dir_sel_id = W;
           vc_sel_id = (my_base_x == (num_tiles_x_p/2))
@@ -169,6 +197,35 @@ module bsg_torus_router_decode
         else begin
           dir_sel_id = E;
           vc_sel_id = vc_id_p;
+        end
+      end
+      else begin
+        //  tie-breaker;
+        if (my_torus_x % 2 == 0) begin
+          // go clockwise;
+          if (my_x_i % 2 == 0) begin
+            dir_sel_id = E;
+            vc_sel_id = (my_base_x == (num_tiles_x_p/2)-2)
+              ? 1'b1    // dateline;
+              : vc_id_p;
+          end
+          else begin
+            dir_sel_id = W;
+            vc_sel_id = vc_id_p;
+          end
+        end
+        else begin
+          // go counter-clockwise
+          if (my_x_i % 2 == 0) begin
+            dir_sel_id = W;
+            vc_sel_id = (my_base_x == (num_tiles_x_p/2))
+              ? 1'b1    // dateline;
+              : vc_id_p;
+          end
+          else begin
+            dir_sel_id = E;
+            vc_sel_id = vc_id_p;
+          end
         end
       end 
       
