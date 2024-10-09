@@ -1,0 +1,3593 @@
+{
+    "design_name": "bsg_async_ptr_gray", 
+    "filelist": [
+        "basejump_stl/bsg_async/bsg_async_ptr_gray.v", 
+        "basejump_stl/bsg_async/bsg_launch_sync_sync.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_async_ptr_gray_small_w_clk_30_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "lg_size_p=5", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_async_ptr_gray_small_w_clk_30_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "lg_size_p=5", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_async_ptr_gray_small_w_clk_30_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "lg_size_p=5", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size small at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_async_ptr_gray_small_w_clk_30_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "lg_size_p=5", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_async_ptr_gray_small_w_clk_40_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "lg_size_p=5", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_async_ptr_gray_small_w_clk_40_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "lg_size_p=5", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_async_ptr_gray_small_w_clk_40_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "lg_size_p=5", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size small at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_async_ptr_gray_small_w_clk_40_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "lg_size_p=5", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_async_ptr_gray_small_w_clk_50_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "lg_size_p=5", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_async_ptr_gray_small_w_clk_50_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "lg_size_p=5", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_async_ptr_gray_small_w_clk_50_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "lg_size_p=5", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size small at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_async_ptr_gray_small_w_clk_50_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "lg_size_p=5", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_async_ptr_gray_small_w_clk_60_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "lg_size_p=5", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_async_ptr_gray_small_w_clk_60_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "lg_size_p=5", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_async_ptr_gray_small_w_clk_60_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "lg_size_p=5", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size small at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_async_ptr_gray_small_w_clk_60_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "lg_size_p=5", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_async_ptr_gray_large_w_clk_30_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "lg_size_p=7", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_async_ptr_gray_large_w_clk_30_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "lg_size_p=7", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_async_ptr_gray_large_w_clk_30_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "lg_size_p=7", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_async_ptr_gray_large_w_clk_30_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "lg_size_p=7", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_async_ptr_gray_large_w_clk_40_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "lg_size_p=7", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_async_ptr_gray_large_w_clk_40_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "lg_size_p=7", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_async_ptr_gray_large_w_clk_40_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "lg_size_p=7", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_async_ptr_gray_large_w_clk_40_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "lg_size_p=7", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_async_ptr_gray_large_w_clk_50_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "lg_size_p=7", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_async_ptr_gray_large_w_clk_50_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "lg_size_p=7", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_async_ptr_gray_large_w_clk_50_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "lg_size_p=7", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_async_ptr_gray_large_w_clk_50_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "lg_size_p=7", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_async_ptr_gray_large_w_clk_60_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "lg_size_p=7", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_async_ptr_gray_large_w_clk_60_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "lg_size_p=7", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_async_ptr_gray_large_w_clk_60_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "lg_size_p=7", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_async_ptr_gray_large_w_clk_60_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "lg_size_p=7", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_async_ptr_gray_very_large_w_clk_30_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "lg_size_p=8", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_async_ptr_gray_very_large_w_clk_30_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "lg_size_p=8", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_async_ptr_gray_very_large_w_clk_30_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "lg_size_p=8", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size very_large at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_async_ptr_gray_very_large_w_clk_30_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "lg_size_p=8", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_async_ptr_gray_very_large_w_clk_40_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "lg_size_p=8", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_async_ptr_gray_very_large_w_clk_40_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "lg_size_p=8", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_async_ptr_gray_very_large_w_clk_40_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "lg_size_p=8", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size very_large at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_async_ptr_gray_very_large_w_clk_40_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "lg_size_p=8", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_async_ptr_gray_very_large_w_clk_50_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "lg_size_p=8", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_async_ptr_gray_very_large_w_clk_50_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "lg_size_p=8", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_async_ptr_gray_very_large_w_clk_50_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "lg_size_p=8", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size very_large at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_async_ptr_gray_very_large_w_clk_50_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "lg_size_p=8", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_async_ptr_gray_very_large_w_clk_60_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "lg_size_p=8", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_async_ptr_gray_very_large_w_clk_60_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "lg_size_p=8", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_async_ptr_gray_very_large_w_clk_60_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "lg_size_p=8", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size very_large at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_async_ptr_gray_very_large_w_clk_60_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "lg_size_p=8", 
+                "use_negedge_for_launch_p=1", 
+                "use_async_reset_p=0"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_async_ptr_gray_medium_w_clk_30_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "lg_size_p=6", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_async_ptr_gray_medium_w_clk_30_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "lg_size_p=6", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_async_ptr_gray_medium_w_clk_30_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "lg_size_p=6", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size medium at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_async_ptr_gray_medium_w_clk_30_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "lg_size_p=6", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_async_ptr_gray_medium_w_clk_40_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "lg_size_p=6", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_async_ptr_gray_medium_w_clk_40_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "lg_size_p=6", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_async_ptr_gray_medium_w_clk_40_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "lg_size_p=6", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size medium at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_async_ptr_gray_medium_w_clk_40_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "lg_size_p=6", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_async_ptr_gray_medium_w_clk_50_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "lg_size_p=6", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_async_ptr_gray_medium_w_clk_50_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "lg_size_p=6", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_async_ptr_gray_medium_w_clk_50_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "lg_size_p=6", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size medium at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_async_ptr_gray_medium_w_clk_50_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "lg_size_p=6", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_async_ptr_gray_medium_w_clk_60_FO4_r_clk_30_FO4", 
+            "parameters": [
+                "lg_size_p=6", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_async_ptr_gray_medium_w_clk_60_FO4_r_clk_40_FO4", 
+            "parameters": [
+                "lg_size_p=6", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_async_ptr_gray_medium_w_clk_60_FO4_r_clk_50_FO4", 
+            "parameters": [
+                "lg_size_p=6", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=1"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_inc_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_binary_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "wclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "rclk", 
+                    "delay": "0", 
+                    "port": "w_ptr_gray_r_rsync_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "w_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "w_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "r_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "r_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "an async pointer with size medium at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_async_ptr_gray_medium_w_clk_60_FO4_r_clk_60_FO4", 
+            "parameters": [
+                "lg_size_p=6", 
+                "use_negedge_for_launch_p=0", 
+                "use_async_reset_p=1"
+            ]
+        }
+    ]
+}
