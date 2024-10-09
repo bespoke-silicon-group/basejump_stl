@@ -13,7 +13,7 @@ module bsg_tiehi
         begin: w
           TIEHBWP7T40P140
             TIE_HI_BSG_DONT_TOUCH
-              (.Z(o));
+              (.Z(o[i]));
         end: w
     end: hard
   else
