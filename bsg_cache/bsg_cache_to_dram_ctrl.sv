@@ -40,7 +40,7 @@ module bsg_cache_to_dram_ctrl
 
     , output logic [dma_data_width_p-1:0] dma_data_o
     , output logic dma_data_v_o
-    , input dma_data_ready_i
+    , input dma_data_ready_and_i
 
     , input [dma_data_width_p-1:0] dma_data_i
     , input dma_data_v_i
@@ -69,8 +69,6 @@ module bsg_cache_to_dram_ctrl
   `declare_bsg_cache_dma_pkt_s(dma_addr_width_p,dma_mask_width_p);
   bsg_cache_dma_pkt_s dma_pkt;
   assign dma_pkt = dma_pkt_i;
-
-  logic [dma_data_width_p-1:0] mask_r, mask_n;
 
   // rx module
   //

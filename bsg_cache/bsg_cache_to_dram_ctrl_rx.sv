@@ -24,7 +24,7 @@ module bsg_cache_to_dram_ctrl_rx
 
     , output logic [dma_data_width_p-1:0] dma_data_o
     , output logic dma_data_v_o
-    , input dma_data_ready_i
+    , input dma_data_ready_and_i
 
     , input app_rd_data_valid_i
     , input app_rd_data_end_i
@@ -57,7 +57,7 @@ module bsg_cache_to_dram_ctrl_rx
     ,.yumi_i(fifo_yumi_li)
   );
 
-  assign fifo_yumi_li = fifo_v_lo & dma_data_ready_i;
+  assign fifo_yumi_li = fifo_v_lo & dma_data_ready_and_i;
 
   // demux
   //
