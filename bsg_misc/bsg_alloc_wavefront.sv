@@ -15,6 +15,7 @@
  *    - no resource granted for more than one agent.
  *    - no agent granted more than one resource.
  *    - no grant when there is no request.
+ *    - if there is a request, which is not granted, it implies some other grant in the same column or row.
  *    It tries to maximize the number of matches between agents and resources for improved utilization.
  *
  */
