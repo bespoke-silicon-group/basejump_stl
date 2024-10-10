@@ -80,11 +80,16 @@ module bsg_alloc_wavefront
       end
       
       // connect x;
-      if ((i == 0) || (j == 0)) begin
+      if (i == 0) begin
         assign x_li[i][j]  = 1'b0;
       end
       else begin
-        assign x_li[i][j]  = x_lo[i-1][j-1];
+        if (j == 0) begin
+          assign x_li[i][j]  = x_lo[i-1][width_p-1];
+        end
+        else begin
+          assign x_li[i][j]  = x_lo[i-1][j-1];
+        end
       end
 
       // connect priority;
