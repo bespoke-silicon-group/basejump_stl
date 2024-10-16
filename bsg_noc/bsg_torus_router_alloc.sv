@@ -93,7 +93,7 @@ module bsg_torus_router_alloc
 
 
   // for each input, we want to know which VCs have output VC ready and sw grant matched;
-  wire [dirs_lp-1:0][num_vc_p-1:0] vc_good_to_go = vc_valid_ready & vc_sw_grant_match; // vc_valid_ready might be redundant...?
+  wire [dirs_lp-1:0][num_vc_p-1:0] vc_good_to_go = vc_valid_ready & vc_sw_grant_match;
   
 
   // for each input, we want to arbitrate if more than one VC are good to go;
