@@ -128,6 +128,7 @@ module bsg_torus_router
   logic [dirs_lp-1:0][width_p-1:0] xbar_data_lo;
   bsg_torus_router_xbar #(
     .width_p(width_p)
+    ,.XY_order_p(XY_order_p)
   ) xbar0 (
     .data_i   (xbar_data_li)
     ,.data_o  (xbar_data_lo)
