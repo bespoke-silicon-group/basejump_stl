@@ -6,8 +6,11 @@ package test_pkg;
   `define test_packet_width(data_width_mp,x_cord_width_mp,y_cord_width_mp) \
     (data_width_mp+x_cord_width_mp+y_cord_width_mp)
 
-  `define test_link_sif_width(data_width_mp,x_cord_width_mp,y_cord_width_mp,num_vc_mp) \
+  `define test_vc_link_sif_width(data_width_mp,x_cord_width_mp,y_cord_width_mp,num_vc_mp) \
     `bsg_vc_link_sif_width(`test_packet_width(data_width_mp,x_cord_width_mp,y_cord_width_mp),num_vc_mp)
+
+  `define test_link_sif_width(data_width_mp,x_cord_width_mp,y_cord_width_mp) \
+    `bsg_ready_and_link_sif_width(`test_packet_width(data_width_mp,x_cord_width_mp,y_cord_width_mp))
 
   `define declare_test_link_sif_s(data_width_mp,x_cord_width_mp,y_cord_width_mp,num_vc_mp) \
     typedef struct packed {                                   \
@@ -16,7 +19,9 @@ package test_pkg;
       logic [x_cord_width_mp-1:0] x_cord;                      \
     } test_packet_s;                                          \
                                                               \
-    `declare_bsg_vc_link_sif_s(`test_packet_width(data_width_mp,x_cord_width_mp,y_cord_width_mp),num_vc_mp,test_link_sif_s)
+    `declare_bsg_vc_link_sif_s(`test_packet_width(data_width_mp,x_cord_width_mp,y_cord_width_mp),num_vc_mp,test_vc_link_sif_s); \
+    `declare_bsg_ready_and_link_sif_s(`test_packet_width(data_width_mp,x_cord_width_mp,y_cord_width_mp),test_link_sif_s)
+    
 
 
 

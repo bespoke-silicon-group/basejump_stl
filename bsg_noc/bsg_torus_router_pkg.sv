@@ -9,7 +9,6 @@ package bsg_torus_router_pkg;
     9'b11_11_00_11_1,       // e0 
     9'b11_11_10_00_1,       // w1 
     9'b11_11_11_00_1,       // w0 
-    9'b01_01_01_01_1        // p      (input)
+    9'b11_11_11_11_1        // p      (input)
   };
-
 endpackage

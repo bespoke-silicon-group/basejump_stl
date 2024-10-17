@@ -13,14 +13,14 @@ module test_tile
     , `BSG_INV_PARAM(data_width_p)
     , `BSG_INV_PARAM(num_vc_p)
 
-    , localparam link_sif_width_lp = `test_link_sif_width(data_width_p,x_cord_width_p,y_cord_width_p,num_vc_p)
+    , localparam vc_link_sif_width_lp = `test_vc_link_sif_width(data_width_p,x_cord_width_p,y_cord_width_p,num_vc_p)
   )
   (
     input clk_i
     , input reset_i
 
-    , input [S:W][link_sif_width_lp-1:0] link_i
-    , output [S:W][link_sif_width_lp-1:0] link_o
+    , input [S:W][vc_link_sif_width_lp-1:0] link_i
+    , output [S:W][vc_link_sif_width_lp-1:0] link_o
 
     , input [x_cord_width_p-1:0] my_x_i
     , input [y_cord_width_p-1:0] my_y_i
@@ -31,13 +31,14 @@ module test_tile
 
   // Cast links;
   `declare_test_link_sif_s(data_width_p,x_cord_width_p,y_cord_width_p,num_vc_p);
-  test_link_sif_s [S:P] link_li, link_lo;
+  test_vc_link_sif_s [S:W] link_li, link_lo;
+  test_link_sif_s proc_link_li, proc_link_lo;
   assign link_li[S:W] = link_i;
   assign link_o = link_lo[S:W];
 
   test_packet_s packet_lo, packet_li;
-  assign link_li[P].data = packet_li;
-  assign packet_lo = link_lo[P].data;
+  assign proc_link_li.data = packet_li;
+  assign packet_lo = proc_link_lo.data;
 
   // Instantiate router;
   bsg_torus_router #(
@@ -46,12 +47,15 @@ module test_tile
     ,.y_cord_width_p(y_cord_width_p)
 
     ,.num_tiles_x_p(num_tiles_x_p)
-    ,.base_x_cord_p(base_x_cord_p)
     ,.num_tiles_y_p(num_tiles_y_p)
+    ,.base_x_cord_p(base_x_cord_p)
     ,.base_y_cord_p(base_y_cord_p)
   ) router0 (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
+
+    ,.proc_link_i(proc_link_li)
+    ,.proc_link_o(proc_link_lo)
 
     ,.link_i(link_li)
     ,.link_o(link_lo)
@@ -77,12 +81,11 @@ module test_tile
     send_count_n = send_count_r;
     curr_x_n = curr_x_r;
     curr_y_n = curr_y_r;
-    link_li[P].v[0] = 1'b0;
-    link_li[P].v[1] = 1'b0; // always zero;
+    proc_link_li.v = 1'b0;
     
     if (send_count_r != num_tiles_lp) begin
-      link_li[P].v = 1'b1;
-      if (link_lo[P].ready_and_rev[0]) begin
+      proc_link_li.v = 1'b1;
+      if (proc_link_lo.ready_and_rev) begin
         curr_x_n = (curr_x_r == num_tiles_x_p-1)
           ? '0
           : (curr_x_r + 1);
@@ -111,9 +114,8 @@ module test_tile
 
   // Receiver;
   logic [num_tiles_lp-1:0] received_r, received_n;
-  assign link_li[P].ready_and_rev[0] = 1'b1;
-  assign link_li[P].ready_and_rev[1] = 1'b1;
-  assign received_n = link_lo[P].v << packet_lo.data;
+  assign proc_link_li.ready_and_rev = 1'b1;
+  assign received_n = proc_link_lo.v << packet_lo.data;
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
@@ -128,11 +130,8 @@ module test_tile
         end
       end
 
-      // assert #1;
-      assert(~link_lo[P].v[1]) else $error("[BSG_ERROR] packet should not arrive at VC1.");
-
       // assert #2;
-      if (link_lo[P].v[0]) begin
+      if (proc_link_lo.v) begin
         assert((packet_lo.x_cord == my_x_i) && (packet_lo.y_cord == my_y_i)) else
           $error("[BSG_ERROR] wrong packet (%0d, %0d) arrived at (%0d, %0d).",
             packet_lo.x_cord, packet_lo.y_cord, my_x_i, my_y_i);
