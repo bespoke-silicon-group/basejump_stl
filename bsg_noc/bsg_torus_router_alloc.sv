@@ -3,6 +3,7 @@
 
 module bsg_torus_router_alloc
   import bsg_torus_router_pkg::*;
+  import bsg_mesh_router_pkg::*;
   #(parameter `BSG_INV_PARAM(width_p)
     , `BSG_INV_PARAM(num_vc_p)
 
@@ -11,6 +12,7 @@ module bsg_torus_router_alloc
     , localparam vc_dirs_lp=(dims_p*2*num_vc_p)+1
 
     , localparam bit [vc_dirs_lp-1:0][vc_dirs_lp-1:0] vc_matrix_lp = TorusXY
+    , localparam bit [sw_dirs_lp-1:0][sw_dirs_lp-1:0] sw_matrix_lp = StrictYX // we want the transpose of XY;
     //, localparam dir_id_width_lp=`BSG_SAFE_CLOG2(dirs_lp)
     //, localparam vc_id_width_lp=`BSG_SAFE_CLOG2(num_vc_p)
   )
@@ -83,6 +85,20 @@ module bsg_torus_router_alloc
   assign dir_sel_reduced[0] = dir_sel_masked[0];  // Proc;
 
 
+  logic [sw_dirs_lp-1:0][sw_dirs_lp-1:0] dir_sel_reduced_masked; // mask unused select signals;
+  for (genvar i = 0; i < sw_dirs_lp; i++) begin
+    for (genvar j = 0; j < sw_dirs_lp; j++) begin
+      if (sw_matrix_lp[i][j]) begin
+        assign dir_sel_reduced_masked[i][j] = dir_sel_reduced[i][j];
+      end
+      else begin
+        assign dir_sel_reduced_masked[i][j] = 1'b0;
+      end
+    end
+  end
+
+
+
   // SW wavefront alloc;
   logic [sw_dirs_lp-1:0][sw_dirs_lp-1:0] sw_grant; // [in][out];
   logic alloc_update;
@@ -93,13 +109,13 @@ module bsg_torus_router_alloc
     .clk_i(clk_i)
     ,.reset_i(reset_i)
 
-    ,.reqs_i(dir_sel_reduced)
+    ,.reqs_i(dir_sel_reduced_masked)
     ,.grants_o(sw_grant)
 
     ,.yumi_i(alloc_update)
   );
 
-  assign alloc_update = |dir_sel_reduced;
+  assign alloc_update = |dir_sel_reduced_masked;
 
 
   // Which input VCs have matching sw grant?
