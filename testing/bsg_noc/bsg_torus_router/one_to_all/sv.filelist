@@ -1,5 +1,6 @@
 test_pkg.sv
 $BASEJUMP_STL_DIR/bsg_noc/bsg_noc_pkg.sv
+$BASEJUMP_STL_DIR/bsg_noc/bsg_torus_router_pkg.sv
 $BASEJUMP_STL_DIR/bsg_noc/bsg_mesh_router_pkg.sv
 test_tile.sv
 $BASEJUMP_STL_DIR/bsg_test/bsg_nonsynth_clock_gen.sv

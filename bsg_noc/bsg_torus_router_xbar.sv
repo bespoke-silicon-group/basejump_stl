@@ -5,18 +5,18 @@ module bsg_torus_router_xbar
   #(parameter `BSG_INV_PARAM(width_p)
     , `BSG_INV_PARAM(XY_order_p)
     , parameter dims_p=2
-    , localparam dirs_lp=(dims_p*2)+1
-    , parameter bit [dirs_lp-1:0][dirs_lp-1:0] routing_matrix_p =
+    , localparam sw_dirs_lp=(dims_p*2)+1
+    , parameter bit [sw_dirs_lp-1:0][sw_dirs_lp-1:0] routing_matrix_p =
       (XY_order_p ? StrictXY : StrictYX)
   )
   (
-    input [dirs_lp-1:0][width_p-1:0] data_i             // [in]
-    , input [dirs_lp-1:0][dirs_lp-1:0] sel_i            // [out][in] one hot;
-    , output logic [dirs_lp-1:0][width_p-1:0] data_o    // [out]
+    input [sw_dirs_lp-1:0][width_p-1:0] data_i             // [in]
+    , input [sw_dirs_lp-1:0][sw_dirs_lp-1:0] sel_i            // [out][in] one hot;
+    , output logic [sw_dirs_lp-1:0][width_p-1:0] data_o    // [out]
   );
 
 
-  for (genvar i = 0; i < dirs_lp; i++) begin:xb
+  for (genvar i = 0; i < sw_dirs_lp; i++) begin:xb
     localparam input_els_lp = `BSG_COUNTONES_SYNTH(routing_matrix_p[i]);
 
     logic [input_els_lp-1:0][width_p-1:0] conc_data;
@@ -37,7 +37,6 @@ module bsg_torus_router_xbar
       ,.o(conc_sel)
     );
 
-
     bsg_mux_one_hot #(
       .width_p(width_p)
       ,.els_p(input_els_lp)
@@ -46,6 +45,7 @@ module bsg_torus_router_xbar
       ,.sel_one_hot_i(conc_sel)
       ,.data_o(data_o[i])
     );
+
   end
 
 

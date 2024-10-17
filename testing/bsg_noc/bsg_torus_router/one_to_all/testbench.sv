@@ -20,8 +20,8 @@ module testbench();
     ,.async_reset_o(reset)
   );
 
-  localparam sender_x_p = 2;
-  localparam sender_y_p = 3;
+  localparam sender_x_p = 0;
+  localparam sender_y_p = 0;
 
   localparam num_tiles_x_p    = 8;
   localparam num_tiles_y_p    = 8;
@@ -43,7 +43,7 @@ module testbench();
   
   // Instantiate test tiles;
   `declare_test_link_sif_s(data_width_p,x_cord_width_lp,y_cord_width_lp,num_vc_p);
-  test_link_sif_s [num_tiles_y_p-1:0][num_tiles_x_p-1:0][S:W] link_li, link_lo;
+  test_vc_link_sif_s [num_tiles_y_p-1:0][num_tiles_x_p-1:0][S:W] link_li, link_lo;
   logic [num_tiles_y_p-1:0][num_tiles_x_p-1:0] done_lo;
 
   for (genvar y = 0; y < num_tiles_y_p; y++) begin: ty

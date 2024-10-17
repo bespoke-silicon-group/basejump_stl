@@ -23,7 +23,7 @@ dve:
 clean:
 	rm -rf DVEfiles
 	rm -rf csrc
-	rm -rf simv.daidir simv.vdb
+	rm -rf simv.daidir simv.vdb stack.info.*
 	rm -f ucli.key vcdplus.vpd simv *.tar.gz
 	rm -f simv.log vcs.log
 

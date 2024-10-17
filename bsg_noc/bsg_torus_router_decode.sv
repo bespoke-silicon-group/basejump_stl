@@ -6,31 +6,27 @@ module bsg_torus_router_decode
   #(parameter `BSG_INV_PARAM(x_cord_width_p)
     , `BSG_INV_PARAM(y_cord_width_p)
     , `BSG_INV_PARAM(XY_order_p)
-    , `BSG_INV_PARAM(full_torus_p)
-    , `BSG_INV_PARAM(vc_id_p)
+    , `BSG_INV_PARAM(vc_id_p)   // this VC's id;
     , `BSG_INV_PARAM(num_vc_p)
 
     , `BSG_INV_PARAM(base_x_cord_p)
-    , `BSG_INV_PARAM(num_tiles_x_p)
     , `BSG_INV_PARAM(base_y_cord_p)
+    , `BSG_INV_PARAM(num_tiles_x_p)
     , `BSG_INV_PARAM(num_tiles_y_p)
 
     , `BSG_INV_PARAM(from_p)
 
     , parameter dims_p=2
-    , localparam dirs_lp=(dims_p*2)+1
-    , localparam dir_id_width_lp = `BSG_SAFE_CLOG2(dirs_lp)
-    , localparam vc_id_width_lp = `BSG_SAFE_CLOG2(num_vc_p)
+    , localparam sw_dirs_lp=(dims_p*2)+1
+    , localparam vc_dirs_lp=(num_vc_p*dims_p*2)+1
   )
   (
     input   [x_cord_width_p-1:0] dest_x_i
     , input [y_cord_width_p-1:0] dest_y_i
     , input [x_cord_width_p-1:0] my_x_i
     , input [y_cord_width_p-1:0] my_y_i
-    , output logic [dirs_lp-1:0]  dir_sel_o
-    , output logic [dir_id_width_lp-1:0] dir_sel_id_o
-    , output logic [num_vc_p-1:0] vc_sel_o
-    , output logic [vc_id_width_lp-1:0] vc_sel_id_o
+    , output logic [sw_dirs_lp-1:0]  sw_dir_sel_o
+    , output logic [vc_dirs_lp-1:0] vc_dir_sel_o
   );
 
 
@@ -96,8 +92,10 @@ module bsg_torus_router_decode
 
 
   // Routing rule;
-  logic [dir_id_width_lp-1:0] dir_sel_id;
-  logic [vc_id_width_lp-1:0] vc_sel_id;
+  localparam sw_idx_width_lp = `BSG_SAFE_CLOG2(sw_dirs_lp);
+  localparam vc_idx_width_lp = `BSG_SAFE_CLOG2(num_vc_p);
+  logic [sw_idx_width_lp-1:0] dir_sel_id;
+  logic [vc_idx_width_lp-1:0] vc_sel_id;
 
   wire from_PEW = (from_p == E) || (from_p == W) || (from_p == P);
 
@@ -232,23 +230,11 @@ module bsg_torus_router_decode
     end
   end
 
-  assign dir_sel_id_o = dir_sel_id;
-  assign vc_sel_id_o = vc_sel_id;
+  assign sw_dir_sel_o = sw_dirs_lp'(1'b1 << dir_sel_id);
+  assign vc_dir_sel_o = vc_dirs_lp'((dir_sel_id == P)
+    ? (1'b1)
+    : (1'b1 << ((num_vc_p*dir_sel_id)-1+vc_sel_id)));
  
-  bsg_decode #(
-    .num_out_p(dirs_lp)
-  ) dec0 (
-    .i(dir_sel_id)
-    ,.o(dir_sel_o)
-  );
-   
-
-  bsg_decode #(
-    .num_out_p(num_vc_p)
-  ) dec1 (
-    .i(vc_sel_id)
-    ,.o(vc_sel_o)
-  );
 
 
 endmodule

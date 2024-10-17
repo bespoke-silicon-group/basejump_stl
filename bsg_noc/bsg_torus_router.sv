@@ -14,25 +14,28 @@ module bsg_torus_router
     , `BSG_INV_PARAM(num_tiles_y_p)
 
     , parameter XY_order_p = 1
-    , parameter full_torus_p = 1
 
     , parameter num_vc_p=2
     , parameter dims_p=2
-    , localparam dirs_lp=(dims_p*2)+1
-    , localparam dir_id_width_lp=`BSG_SAFE_CLOG2(dirs_lp)
+    , localparam sw_dirs_lp=(dims_p*2)+1
+    , localparam vc_dirs_lp=(dims_p*2*num_vc_p)+1
+    , localparam dir_id_width_lp=`BSG_SAFE_CLOG2(sw_dirs_lp)
     , localparam vc_id_width_lp=`BSG_SAFE_CLOG2(num_vc_p)
 
+    , parameter int fifo_els_p[sw_dirs_lp-1:0] = '{2,2,2,2,2}
 
-    , parameter int fifo_els_p[dirs_lp-1:0] = '{2,2,2,2,2}
-    , parameter use_credits_p = {dirs_lp{1'b0}}
+    // link width;
     , localparam vc_link_width_lp=`bsg_vc_link_sif_width(width_p,num_vc_p)
+    , localparam proc_link_width_lp=`bsg_ready_and_link_sif_width(width_p)
   )
   ( 
     input clk_i
     , input reset_i
 
-    , input        [dirs_lp-1:0][vc_link_width_lp-1:0] link_i
-    , output logic [dirs_lp-1:0][vc_link_width_lp-1:0] link_o
+    , input        [proc_link_width_lp-1:0] proc_link_i
+    , output logic [proc_link_width_lp-1:0] proc_link_o
+    , input        [sw_dirs_lp-2:0][vc_link_width_lp-1:0] link_i
+    , output logic [sw_dirs_lp-2:0][vc_link_width_lp-1:0] link_o
 
     , input [x_cord_width_p-1:0] my_x_i
     , input [y_cord_width_p-1:0] my_y_i
@@ -41,51 +44,89 @@ module bsg_torus_router
 
   // Casting ports;
   `declare_bsg_vc_link_sif_s(width_p,num_vc_p,bsg_vc_link_sif_s);
-  bsg_vc_link_sif_s [dirs_lp-1:0] link_in, link_out;
+  `declare_bsg_ready_and_link_sif_s(width_p,bsg_proc_link_sif_s);
+  bsg_vc_link_sif_s [sw_dirs_lp-2:0] link_in, link_out;
+  bsg_proc_link_sif_s proc_link_in, proc_link_out;
   assign link_in = link_i;
   assign link_o = link_out;
+  assign proc_link_in = proc_link_i;
+  assign proc_link_o = proc_link_out;
 
 
-  // virtual channels;
-  logic [dirs_lp-1:0][num_vc_p-1:0] vc_v_lo, vc_yumi_li;
-  logic [dirs_lp-1:0][num_vc_p-1:0][width_p-1:0] vc_data_lo;
-  logic [dirs_lp-1:0][num_vc_p-1:0][num_vc_p-1:0] vc_sel_lo;
-  logic [dirs_lp-1:0][num_vc_p-1:0][vc_id_width_lp-1:0] vc_sel_id_lo;
-  logic [dirs_lp-1:0][num_vc_p-1:0][dirs_lp-1:0] dir_sel_lo;
-  logic [dirs_lp-1:0][num_vc_p-1:0][dir_id_width_lp-1:0] dir_sel_id_lo;
+  // virtual channels interface;
+  logic [vc_dirs_lp-1:0] vc_v_lo, vc_yumi_li;
+  logic [vc_dirs_lp-1:0][width_p-1:0] vc_data_lo;
+  logic [vc_dirs_lp-1:0][vc_dirs_lp-1:0] vc_dir_sel_lo;
+  logic [vc_dirs_lp-1:0][sw_dirs_lp-1:0] sw_dir_sel_lo;
 
-  for (genvar i = 0; i < dirs_lp; i++) begin: vc
+
+  // Proc input FIFO;
+  bsg_fifo_1r1w_small #(
+    .width_p(width_p)
+    ,.els_p(fifo_els_p[0])
+  ) proc_fifo0 (
+    .clk_i(clk_i)
+    ,.reset_i(reset_i)
+
+    ,.v_i           (proc_link_in.v)
+    ,.data_i        (proc_link_in.data)
+    ,.ready_param_o (proc_link_out.ready_and_rev)
+
+    ,.v_o           (vc_v_lo[0])
+    ,.data_o        (vc_data_lo[0])
+    ,.yumi_i        (vc_yumi_li[0])
+  );
+
+  bsg_torus_router_decode #(
+    .x_cord_width_p(x_cord_width_p)
+    ,.y_cord_width_p(y_cord_width_p)
+    ,.XY_order_p(XY_order_p)
+    ,.vc_id_p(0)
+    ,.num_vc_p(num_vc_p)
+    ,.base_x_cord_p(base_x_cord_p)
+    ,.base_y_cord_p(base_y_cord_p)
+    ,.num_tiles_x_p(num_tiles_x_p)
+    ,.num_tiles_y_p(num_tiles_y_p)
+    ,.from_p(0)
+  ) proc_decode0 (
+    .dest_x_i       (vc_data_lo[0][0+:x_cord_width_p])
+    ,.dest_y_i      (vc_data_lo[0][x_cord_width_p+:y_cord_width_p])
+    ,.my_x_i        (my_x_i)
+    ,.my_y_i        (my_y_i)
+    ,.sw_dir_sel_o  (sw_dir_sel_lo[0])
+    ,.vc_dir_sel_o  (vc_dir_sel_lo[0])
+  );
+
+
+  // virtual channel FIFOs;
+  for (genvar i = 0; i < sw_dirs_lp-1; i++) begin: vc
     bsg_torus_router_vc #(
       .width_p(width_p)
       ,.x_cord_width_p(x_cord_width_p)
       ,.y_cord_width_p(y_cord_width_p)
       ,.XY_order_p(XY_order_p)
       ,.num_vc_p(num_vc_p)
-      ,.full_torus_p(full_torus_p)
-      ,.fifo_els_p(fifo_els_p[i])
-      ,.use_credits_p(use_credits_p[i])
+      ,.fifo_els_p(fifo_els_p[i+1])
 
       ,.base_x_cord_p(base_x_cord_p)
       ,.base_y_cord_p(base_y_cord_p)
       ,.num_tiles_x_p(num_tiles_x_p)
       ,.num_tiles_y_p(num_tiles_y_p)
 
-      ,.from_p(i)
+      ,.from_p(i+1)
     ) vc0 (
       .clk_i(clk_i)
       ,.reset_i(reset_i)
 
-      ,.v_i(link_in[i].v)
-      ,.data_i(link_in[i].data)
-      ,.ready_o(link_out[i].ready_and_rev)
+      ,.v_i     (link_in[i].v)
+      ,.data_i  (link_in[i].data)
+      ,.ready_o (link_out[i].ready_and_rev)
 
-      ,.v_o(vc_v_lo[i])
-      ,.vc_sel_o(vc_sel_lo[i])
-      ,.vc_sel_id_o(vc_sel_id_lo[i])
-      ,.dir_sel_o(dir_sel_lo[i])
-      ,.dir_sel_id_o(dir_sel_id_lo[i])
-      ,.data_o(vc_data_lo[i])
-      ,.yumi_i(vc_yumi_li[i])
+      ,.v_o           (vc_v_lo[1+(num_vc_p*i)+:num_vc_p])
+      ,.vc_dir_sel_o  (vc_dir_sel_lo[1+(num_vc_p*i)+:num_vc_p])
+      ,.sw_dir_sel_o  (sw_dir_sel_lo[1+(num_vc_p*i)+:num_vc_p])
+      ,.data_o        (vc_data_lo[1+(num_vc_p*i)+:num_vc_p])
+      ,.yumi_i        (vc_yumi_li[1+(num_vc_p*i)+:num_vc_p])
       
       ,.my_x_i(my_x_i)
       ,.my_y_i(my_y_i)
@@ -93,10 +134,11 @@ module bsg_torus_router
   end
 
 
+
   // allocator;
-  logic [dirs_lp-1:0][width_p-1:0] xbar_data_li;
-  logic [dirs_lp-1:0][dirs_lp-1:0] xbar_sel_li;
-  logic [dirs_lp-1:0][num_vc_p-1:0] alloc_link_v_lo, alloc_link_ready_li;
+  logic [sw_dirs_lp-1:0][width_p-1:0] xbar_data_li;
+  logic [sw_dirs_lp-1:0][sw_dirs_lp-1:0] xbar_sel_li;
+  logic [vc_dirs_lp-1:0] alloc_link_v_lo, alloc_link_ready_li;
 
   bsg_torus_router_alloc #(
     .width_p(width_p)
@@ -108,10 +150,8 @@ module bsg_torus_router
     // VC side;
     ,.vc_v_i(vc_v_lo)
     ,.vc_data_i(vc_data_lo)
-    ,.vc_sel_i(vc_sel_lo)
-    ,.vc_sel_id_i(vc_sel_id_lo)
-    ,.dir_sel_i(dir_sel_lo) 
-    ,.dir_sel_id_i(dir_sel_id_lo)
+    ,.vc_dir_sel_i(vc_dir_sel_lo)
+    ,.sw_dir_sel_i(sw_dir_sel_lo)
     ,.vc_yumi_o(vc_yumi_li)
 
     // crossbar;
@@ -125,7 +165,7 @@ module bsg_torus_router
 
 
   // crossbar;
-  logic [dirs_lp-1:0][width_p-1:0] xbar_data_lo;
+  logic [sw_dirs_lp-1:0][width_p-1:0] xbar_data_lo;
   bsg_torus_router_xbar #(
     .width_p(width_p)
     ,.XY_order_p(XY_order_p)
@@ -137,10 +177,14 @@ module bsg_torus_router
 
 
   // connect output links;
-  for (genvar i = 0; i < dirs_lp; i++) begin
-    assign link_out[i].v = alloc_link_v_lo[i];
-    assign link_out[i].data = xbar_data_lo[i];
-    assign alloc_link_ready_li[i] = link_in[i].ready_and_rev; 
+  assign proc_link_out.v = alloc_link_v_lo[0];
+  assign proc_link_out.data = xbar_data_lo[0];
+  assign alloc_link_ready_li[0] = proc_link_in.ready_and_rev;
+
+  for (genvar i = 0; i < sw_dirs_lp-1; i++) begin
+    assign link_out[i].v = alloc_link_v_lo[1+(num_vc_p*i)+:num_vc_p];
+    assign link_out[i].data = xbar_data_lo[1+i];
+    assign alloc_link_ready_li[1+(num_vc_p*i)+:num_vc_p] = link_in[i].ready_and_rev; 
   end
 
 endmodule
