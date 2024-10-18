@@ -286,10 +286,14 @@ module bsg_hash_bank #(parameter `BSG_INV_PARAM(banks_p)
         end 	 
       end 
   else
+    begin
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       initial 
         begin 
-          assert(0) else $error("unhandled case, banks_p = ", banks_p); 
+          assert(0) else $error("unhandled case, banks_p = ", banks_p);
         end
+`endif
+    end
   
 endmodule
 

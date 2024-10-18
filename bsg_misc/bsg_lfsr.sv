@@ -29,11 +29,15 @@ module bsg_lfsr #(parameter `BSG_INV_PARAM(width_p)
             assign xor_mask = (1 << 63) | (1 << 62) | (1 << 60) | (1 << 59);
 
           default:
-            initial assert(width_p==-1)
-              else
-                begin
-                   $display("unhandled default mask for width %d in bsg_lfsr",width_p); $finish();
-                end
+            begin
+`ifndef BSG_HIDE_FROM_SYNTHESIS
+              initial assert(width_p==-1)
+                else
+                  begin
+                     $display("unhandled default mask for width %d in bsg_lfsr",width_p); $finish();
+                  end
+`endif
+            end
         endcase // case (width_p)
      end
    else

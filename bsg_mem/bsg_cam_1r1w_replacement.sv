@@ -156,10 +156,12 @@ module bsg_cam_1r1w_replacement
       assign lru_n = alloc_update_lo;
     end
 
+`ifndef BSG_HIDE_FROM_SYNTHESIS
   initial
     begin
       assert (scheme_p == "lru") else $error("Only LRU scheme is currently supported");
     end
+`endif
   
 endmodule
 

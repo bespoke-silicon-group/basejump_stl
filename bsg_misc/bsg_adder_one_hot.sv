@@ -18,10 +18,12 @@ module bsg_adder_one_hot #(parameter `BSG_INV_PARAM(width_p), parameter output_w
 
    genvar i,j;
 
+`ifndef BSG_HIDE_FROM_SYNTHESIS
    initial assert (output_width_p >= width_p)
      else begin $error("%m: unsupported output_width_p < width_p");
 	$finish();
      end
+`endif
 
    for (i=0; i < output_width_p; i++) // for each output wire
      begin: rof

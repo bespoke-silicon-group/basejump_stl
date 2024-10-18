@@ -115,10 +115,14 @@ module bsg_hash_bank_reverse #(parameter `BSG_INV_PARAM(banks_p), parameter `BSG
         end
     end
   else
+    begin
+`ifndef BSG_HIDE_FROM_SYNTHESIS
       initial 
-        begin 
+        begin
           assert(0) else $error("unhandled case, banks_p = ", banks_p); 
         end	
+`endif
+    end
   
 endmodule	
 
