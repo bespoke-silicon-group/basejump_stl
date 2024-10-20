@@ -2,6 +2,9 @@
  *    bsg_router_crossbar_o_by_i.sv
  *
  *    This module connects N inputs to M outputs with a crossbar network.
+ *
+ *    An example use of this module is located at: 
+ *    https://github.com/bespoke-silicon-group/bsg_manycore/blob/master/testbenches/common/v/bsg_manycore_crossbar.sv
  */
 
 
