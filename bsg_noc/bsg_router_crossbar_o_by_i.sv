@@ -46,8 +46,8 @@ module bsg_router_crossbar_o_by_i
     // for now we leave this case unhandled
     // awaiting an actual use case so we can
     // determine whether the code is cleaner with
-    // 0-bit or 1-bit source routing.
-    assert(o_els_p > 1) else $error("o_els_p needs to be greater than 1.");
+    // 0-bit or 1-bit source routing in drop header mode
+    assert(!drop_header_p || (o_els_p > 1)) else $error("o_els_p needs to be greater than 1.");
   end
 
 
