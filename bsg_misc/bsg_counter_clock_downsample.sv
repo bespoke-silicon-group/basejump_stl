@@ -19,7 +19,7 @@ module bsg_counter_clock_downsample #(parameter `BSG_INV_PARAM(width_p ), harden
 
    // asserts a "1" every val_i cycles
    bsg_strobe #(.width_p(width_p), .harden_p(harden_p)) strobe
-   (.clk_i
+   (.clk_i(clk_i)
     ,.reset_r_i(reset_i)
     ,.init_val_r_i(val_i)
     ,.strobe_r_o(strobe_r)
@@ -28,8 +28,9 @@ module bsg_counter_clock_downsample #(parameter `BSG_INV_PARAM(width_p ), harden
    wire clk_n, clk_r;
 
    // Clock output register
-   bsg_dff_en #(.width_p(1), .harden_p(harden_p)) d
-   (.clk_i
+   bsg_dff_reset_en #(.width_p(1), .harden_p(harden_p)) d
+   (.clk_i(clk_i)
+    ,.reset_i(reset_i)
     ,.en_i(strobe_r)
     ,.data_i(clk_n)
     ,.data_o(clk_r)
