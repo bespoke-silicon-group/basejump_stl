@@ -1,7 +1,7 @@
 
 module bsg_link_delay_line
- import bsg_chip_pkg::*;
  import bsg_tag_pkg::*;
+ import bsg_link_pkg::*;
 
  // Hardcoded for channel width 16
  #(localparam width_lp = 18)
