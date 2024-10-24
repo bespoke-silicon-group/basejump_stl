@@ -7,7 +7,7 @@ module bsg_link_delay_line
  #(localparam width_lp = 18)
 
   (input  tag_clk_i
-  ,input  bsg_chip_delay_tag_lines_s tag_lines_i
+  ,input  bsg_link_delay_tag_lines_s tag_lines_i
   ,input  [width_lp-1:0] i
   ,output [width_lp-1:0] o
   );
