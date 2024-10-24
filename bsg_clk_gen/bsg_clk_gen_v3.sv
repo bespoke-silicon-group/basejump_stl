@@ -94,6 +94,7 @@ module bsg_clk_gen_v3
 
   // edge balanced mux for selecting the clocks
 
+  wire clk_out;
   bsg_mux #(.width_p(1)
             ,.els_p(4)
             ,.balanced_p(1)
@@ -105,8 +106,11 @@ module bsg_clk_gen_v3
     // apart from each other
     (.data_i ({  1'b0, ext_clk_i, ds_clk_out, osc_clk_out })
      ,.sel_i (select_i)
-     ,.data_o(clk_o)
+     ,.data_o(clk_out)
      );
+
+  bsg_clkbuf #(.width_p(1), .harden_p(1)) cb
+   (.i(clk_out), .o(clk_o));
 
 endmodule
 
