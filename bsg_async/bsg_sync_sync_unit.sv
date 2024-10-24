@@ -13,7 +13,7 @@ module bsg_sync_sync_unit #(parameter harden_p=1)
     ,.data_o(bsg_SYNC_1_r)
     );
 
-  bsg_dff #(.width_p(1), .harden_p(harden_p) hard_sync_int2_BSG_SYNC
+ bsg_dff #(.width_p(1), .harden_p(harden_p)) hard_sync_int2_BSG_SYNC
    (.clk_i(oclk_i)
     ,.data_i(bsg_SYNC_1_r)
     ,.data_o(bsg_SYNC_2_r)
