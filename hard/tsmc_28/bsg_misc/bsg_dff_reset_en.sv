@@ -12,7 +12,7 @@ if (harden_p && (width_p==bits) && (strength_p==strength) && (reset_val_p==0)) \
       end                                                     \
   end
 
-module bsg_dff_reset_en #(`BSG_INV_PARAM(width_p), harden_p=1, reset_val_p=0, strength_p=1)
+module bsg_dff_reset_en #(`BSG_INV_PARAM(width_p), harden_p=0, reset_val_p=0, strength_p=1)
     (input clk_i
     , input reset_i
     , input en_i

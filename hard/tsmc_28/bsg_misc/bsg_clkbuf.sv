@@ -11,7 +11,7 @@ if (harden_p && (width_p==bits))                              \
   end
 
 module bsg_clkbuf #(parameter `BSG_INV_PARAM(width_p)
-                 , parameter harden_p=1
+                 , parameter harden_p=0
                  , parameter strength_p=8
                  )
    (input    [width_p-1:0] i
