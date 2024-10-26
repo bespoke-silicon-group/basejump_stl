@@ -11,7 +11,7 @@ module bsg_torus_router_xbar
   )
   (
     input [sw_dirs_lp-1:0][width_p-1:0] data_i             // [in]
-    , input [sw_dirs_lp-1:0][sw_dirs_lp-1:0] sel_i            // [out][in] one hot;
+    , input [sw_dirs_lp-1:0][sw_dirs_lp-1:0] sel_i         // [out][in] one hot;
     , output logic [sw_dirs_lp-1:0][width_p-1:0] data_o    // [out]
   );
 

@@ -15,6 +15,7 @@ module test_tile
 
     , `BSG_INV_PARAM(sender_x_p)
     , `BSG_INV_PARAM(sender_y_p)
+    , `BSG_INV_PARAM(XY_order_p)
 
     , localparam vc_link_sif_width_lp = `test_vc_link_sif_width(data_width_p,x_cord_width_p,y_cord_width_p,num_vc_p)
   )
@@ -54,6 +55,7 @@ module test_tile
     ,.num_tiles_y_p(num_tiles_y_p)
     ,.base_x_cord_p(base_x_cord_p)
     ,.base_y_cord_p(base_y_cord_p)
+    ,.XY_order_p(XY_order_p)
   ) router0 (
     .clk_i(clk_i)
     ,.reset_i(reset_i)

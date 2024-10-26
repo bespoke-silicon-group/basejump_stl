@@ -6,13 +6,14 @@ module bsg_torus_router_alloc
   import bsg_mesh_router_pkg::*;
   #(parameter `BSG_INV_PARAM(width_p)
     , `BSG_INV_PARAM(num_vc_p)
+    , `BSG_INV_PARAM(XY_order_p)
 
     , parameter dims_p=2
     , localparam sw_dirs_lp=(dims_p*2)+1
     , localparam vc_dirs_lp=(dims_p*2*num_vc_p)+1
 
-    , localparam bit [vc_dirs_lp-1:0][vc_dirs_lp-1:0] vc_matrix_lp = TorusXY
-    , localparam bit [sw_dirs_lp-1:0][sw_dirs_lp-1:0] sw_matrix_lp = StrictYX // we want the transpose of XY;
+    , localparam bit [vc_dirs_lp-1:0][vc_dirs_lp-1:0] vc_matrix_lp = XY_order_p ? TorusXY : TorusYX
+    , localparam bit [sw_dirs_lp-1:0][sw_dirs_lp-1:0] sw_matrix_lp = XY_order_p ? StrictYX : StrictXY // we want the transpose;
     //, localparam dir_id_width_lp=`BSG_SAFE_CLOG2(dirs_lp)
     //, localparam vc_id_width_lp=`BSG_SAFE_CLOG2(num_vc_p)
   )

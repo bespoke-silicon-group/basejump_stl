@@ -59,6 +59,7 @@ module testbench();
         ,.num_vc_p(num_vc_p)
         ,.sender_x_p(sender_x_p)
         ,.sender_y_p(sender_y_p)
+        ,.XY_order_p(XY_order_p)
       ) tile0 (
         .clk_i(clk)
         ,.reset_i(reset)

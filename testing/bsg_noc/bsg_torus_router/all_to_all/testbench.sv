@@ -54,6 +54,7 @@ module testbench();
         ,.base_y_cord_p(base_y_cord_p)
         ,.data_width_p(data_width_p)
         ,.num_vc_p(num_vc_p)
+        ,.XY_order_p(XY_order_p)
       ) tile0 (
         .clk_i(clk)
         ,.reset_i(reset)

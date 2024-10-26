@@ -143,6 +143,7 @@ module bsg_torus_router
   bsg_torus_router_alloc #(
     .width_p(width_p)
     ,.num_vc_p(num_vc_p)
+    ,.XY_order_p(XY_order_p)
   ) alloc0 (
     .clk_i(clk_i)
     ,.reset_i(reset_i)

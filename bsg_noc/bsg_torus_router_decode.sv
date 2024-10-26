@@ -97,6 +97,10 @@ module bsg_torus_router_decode
   logic [sw_idx_width_lp-1:0] dir_sel_id;
   logic [vc_idx_width_lp-1:0] vc_sel_id;
 
+
+if (XY_order_p) begin
+
+  /*            YX-order            */
   wire from_PEW = (from_p == E) || (from_p == W) || (from_p == P);
 
   always_comb begin
@@ -229,6 +233,144 @@ module bsg_torus_router_decode
       
     end
   end
+
+end
+/*            YX-order            */
+else begin
+
+  wire from_SNP = (from_p == S) || (from_p == N) || (from_p == P);
+
+  always_comb begin
+    if (y_eq) begin
+      // Go horizontal;
+      if (x_eq) begin
+        // To Proc;
+        dir_sel_id = P;
+        vc_sel_id = 1'b0;
+      end
+      else begin
+        // Go horizontal;
+        if (x_cw_dist < x_ccw_dist) begin
+          // go clockwise;
+          if (my_x_i % 2 == 0) begin
+            dir_sel_id = E;
+            vc_sel_id = (my_base_x == (num_tiles_x_p/2)-2)
+              ? 1'b1    // dateline;
+              : (from_SNP ? 1'b0 : vc_id_p);
+          end
+          else begin
+            dir_sel_id = W;
+            vc_sel_id = (from_SNP ? 1'b0 : vc_id_p);
+          end
+        end
+        else if (x_cw_dist > x_ccw_dist) begin
+          // go counter-clockwise
+          if (my_x_i % 2 == 0) begin
+            dir_sel_id = W;
+            vc_sel_id = (my_base_x == (num_tiles_x_p/2))
+              ? 1'b1    // dateline;
+              : (from_SNP ? 1'b0 : vc_id_p);
+          end
+          else begin
+            dir_sel_id = E;
+            vc_sel_id = (from_SNP ? 1'b0 : vc_id_p);
+          end
+        end
+        else begin
+          //  tie-breaker;
+          if (my_torus_x % 2 == 0) begin
+            // go clockwise;
+            if (my_x_i % 2 == 0) begin
+              dir_sel_id = E;
+              vc_sel_id = (my_base_x == (num_tiles_x_p/2)-2)
+                ? 1'b1    // dateline;
+              : (from_SNP ? 1'b0 : vc_id_p);
+            end
+            else begin
+              dir_sel_id = W;
+              vc_sel_id = (from_SNP ? 1'b0 : vc_id_p);
+            end
+          end
+          else begin
+            // go counter-clockwise
+            if (my_x_i % 2 == 0) begin
+              dir_sel_id = W;
+              vc_sel_id = (my_base_x == (num_tiles_x_p/2))
+                ? 1'b1    // dateline;
+                : (from_SNP ? 1'b0 : vc_id_p);
+            end
+            else begin
+              dir_sel_id = E;
+              vc_sel_id = (from_SNP ? 1'b0 : vc_id_p);
+            end
+          end
+        end 
+      end
+    end
+    else begin
+
+
+      // Go vertical;
+      if (y_cw_dist < y_ccw_dist) begin
+        // Go clockwise;
+        if (my_y_i % 2 == 0) begin
+          dir_sel_id = S;
+          vc_sel_id = (my_base_y == (num_tiles_y_p/2)-2)
+            ? 1'b1    // dateline;
+            : vc_id_p;
+        end
+        else begin
+          dir_sel_id = N;
+          vc_sel_id = vc_id_p;
+        end
+      end
+      else if (y_cw_dist > y_ccw_dist) begin
+        // go counter-clockwise;
+        if (my_y_i % 2 == 0) begin
+          dir_sel_id = N;
+          vc_sel_id = (my_base_y == (num_tiles_y_p/2))
+            ? 1'b1    // dateline;
+            : vc_id_p;
+        end
+        else begin
+          dir_sel_id = S;
+          vc_sel_id = vc_id_p;
+        end
+      end
+      else begin
+        // tie-breaker;
+        if (my_torus_y % 2 == 0) begin
+          // Go clockwise;
+          if (my_y_i % 2 == 0) begin
+            dir_sel_id = S;
+            vc_sel_id = (my_base_y == (num_tiles_y_p/2)-2)
+              ? 1'b1    // dateline;
+              : vc_id_p;
+          end
+          else begin
+            dir_sel_id = N;
+            vc_sel_id = vc_id_p;
+          end
+        end
+        else begin
+          // go counter-clockwise;
+          if (my_y_i % 2 == 0) begin
+            dir_sel_id = N;
+            vc_sel_id = (my_base_y == (num_tiles_y_p/2))
+              ? 1'b1    // dateline;
+              : vc_id_p;
+          end
+          else begin
+            dir_sel_id = S;
+            vc_sel_id = vc_id_p;
+          end
+        end
+      end
+    end
+
+  end
+end
+
 
   assign sw_dir_sel_o = sw_dirs_lp'(1'b1 << dir_sel_id);
   assign vc_dir_sel_o = vc_dirs_lp'((dir_sel_id == P)
