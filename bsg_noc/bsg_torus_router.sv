@@ -13,6 +13,7 @@ module bsg_torus_router
     , `BSG_INV_PARAM(num_tiles_x_p)
     , `BSG_INV_PARAM(num_tiles_y_p)
 
+    , parameter use_credits_p=0
     , parameter XY_order_p = 1
 
     , parameter num_vc_p=2
@@ -21,6 +22,7 @@ module bsg_torus_router
     , localparam vc_dirs_lp=(dims_p*2*num_vc_p)+1
     , localparam dir_id_width_lp=`BSG_SAFE_CLOG2(sw_dirs_lp)
     , localparam vc_id_width_lp=`BSG_SAFE_CLOG2(num_vc_p)
+
 
     , parameter int fifo_els_p[sw_dirs_lp-1:0] = '{2,2,2,2,2}
 
@@ -61,6 +63,8 @@ module bsg_torus_router
 
 
   // Proc input FIFO;
+  logic fifo_ready_lo;
+
   bsg_fifo_1r1w_small #(
     .width_p(width_p)
     ,.els_p(fifo_els_p[0])
@@ -70,12 +74,38 @@ module bsg_torus_router
 
     ,.v_i           (proc_link_in.v)
     ,.data_i        (proc_link_in.data)
-    ,.ready_param_o (proc_link_out.ready_and_rev)
+    ,.ready_param_o (fifo_ready_lo)
 
     ,.v_o           (vc_v_lo[0])
     ,.data_o        (vc_data_lo[0])
     ,.yumi_i        (vc_yumi_li[0])
   );
+
+  if (use_credits_p) begin: cr
+    bsg_dff_reset #(
+      .width_p(1)
+      ,.reset_val_p(0)
+    ) dff0 (
+      .clk_i(clk_i)
+      ,.reset_i(reset_i)
+      ,.data_i(vc_yumi_li[0])
+      ,.data_o(proc_link_out.ready_and_rev)
+    );
+
+    `ifndef BSG_HIDE_FROM_SYNTHESIS
+    always_ff @ (negedge clk_i) begin
+      if (reset_i == 1'b0) begin
+        if (proc_link_in.v) begin
+          assert(fifo_ready_lo) else $error("Trying to enqueu when there is no FIFO space.");
+        end
+      end
+    end
+    `endif
+  end
+  else begin
+    assign proc_link_out.ready_and_rev = fifo_ready_lo;
+  end
+
 
   bsg_torus_router_decode #(
     .x_cord_width_p(x_cord_width_p)
