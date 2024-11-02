@@ -50,7 +50,7 @@ module bsg_rp_clk_gen_osc_v3
 
   // Delay value ignored in synthesis
   assign
-  `ifndef SYNTHESIS
+  `ifndef BSG_HIDE_FROM_SYNTHESIS
   #100
   `endif
   fb_dly = n[8];
