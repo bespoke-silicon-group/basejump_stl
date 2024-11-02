@@ -112,7 +112,7 @@ module bsg_inv #(parameter `BSG_INV_PARAM(width_p)
           initial assert(harden_p==0) else $error("## %m wanted to harden but no macro");
           // synopsys translate_on
 
-             assign o = i;
+             assign o = ~i;
       end
 endmodule
 
