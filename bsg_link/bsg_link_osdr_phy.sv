@@ -41,7 +41,11 @@ module bsg_link_osdr_phy
   ,input  [width_p-1:0] data_i
   ,output               clk_o
   ,output [width_p-1:0] data_o
+  ,input                token_i
+  ,output               token_o
   );
+
+  assign token_o = token_i;
 
   bsg_link_osdr_phy_phase_align clk_pa
   (.clk_i  (clk_i)

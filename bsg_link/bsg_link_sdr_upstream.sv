@@ -63,6 +63,7 @@ module bsg_link_sdr_upstream
 
   logic osdr_v_li;
   logic [width_p-1:0] osdr_data_li;
+  logic osdr_token_lo;
 
   bsg_link_source_sync_upstream_sync
  #(.width_p                        (width_p)
@@ -78,7 +79,7 @@ module bsg_link_sdr_upstream
   ,.io_ready_and_o     (io_ready_and_o)
   ,.io_v_o             (osdr_v_li)
   ,.io_data_o          (osdr_data_li)
-  ,.token_clk_i        (token_clk_i)
+  ,.token_clk_i        (osdr_token_lo)
   );
 
   // valid and data signals are sent together
@@ -91,6 +92,8 @@ module bsg_link_sdr_upstream
   ,.data_i ({osdr_v_li, osdr_data_li})
   ,.clk_o  (io_clk_o)
   ,.data_o ({io_v_o, io_data_o})
+  ,.token_i(token_clk_i)
+  ,.token_o(osdr_token_lo)
   );
 
 endmodule
