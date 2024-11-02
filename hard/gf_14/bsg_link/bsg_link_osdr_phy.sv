@@ -37,7 +37,9 @@ module bsg_link_osdr_phy
   SC7P5T_CKXOR2X2_SSC14R BSG_OSDR_CKXOR2_BSG_DONT_TOUCH
   (.Z(clk_o_buf),.CLK(clk_r_p),.EN(clk_r_n));
   `BSG_LINK_OSDR_PHY_CKBUF_MACRO(BSG_OSDR_CKBUF_BSG_DONT_TOUCH, clk_o_buf, clk_o)
+  begin: token
   `BSG_LINK_OSDR_PHY_CKBUF_MACRO(BSG_OSDR_TKNBUF_BSG_DONT_TOUCH, token_i, token_o)
+  end
 
   SC7P5T_DFFQX2_SSC14R BSG_OSDR_DFFPOS_BSG_DONT_TOUCH
   (.D(~(clk_r_p|reset_i)),.CLK(clk_i),.Q(clk_r_p));
