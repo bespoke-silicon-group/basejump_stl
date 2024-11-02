@@ -173,11 +173,8 @@ module bsg_launch_sync_sync #(parameter `BSG_INV_PARAM(width_p)
 
 `ifndef BSG_HIDE_FROM_SYNTHESIS
 
-/*   initial
-     begin
-        $display("%m: instantiating blss of size %d",width_p);
-     end
- */
+   initial $display("%m: instantiating blss of size %d",width_p);
+
    initial assert (iclk_reset_i !== 'z)
      else
        begin
