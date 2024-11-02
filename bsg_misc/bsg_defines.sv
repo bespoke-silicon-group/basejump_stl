@@ -122,6 +122,8 @@
 `define BSG_SYNTH_MUST_HARDEN
 `endif
 
+`define BSG_SYNTH_HARDEN_ATTEMPT(harden_mp) \
+    initial assert((harden_mp)==0) else $error("## %m wanted to harden but no macro");
 
 // using C-style shifts instead of a[i] allows the parameter of BSG_GET_BIT to be a parameter subrange                                                                                                                                                                               
 // e.g., parameter[4:1][1], which DC 2016.12 does not allow                                                                                                                                                                                                                          

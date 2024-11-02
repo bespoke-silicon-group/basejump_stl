@@ -22,7 +22,7 @@ module bsg_link_isdr_phy
   begin: data
     CKBD4BWP7T40P140 BSG_ISDR_BUF_BSG_DONT_TOUCH
     (.I(data_i[i]),.Z(data_i_buf[i]));
-    DFQD1BWP7T40P140 BSG_ISDR_DFFQ
+    DFQD1BWP7T40P140 BSG_ISDR_DFFQ_BSG_DONT_TOUCH
     (.D(data_i_buf[i]),.CP(clk_o),.Q(data_o[i]));
   end
 

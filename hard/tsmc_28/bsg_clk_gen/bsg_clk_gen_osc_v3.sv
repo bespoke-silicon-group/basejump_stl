@@ -27,7 +27,7 @@ module bsg_clk_gen_osc_v3
   localparam ctl_width_lp = `BSG_SAFE_CLOG2(num_taps_p);
 
   logic trigger_r;
-  bsg_tag_client_unsync #(.width_p(1))
+  bsg_tag_client_unsync #(.width_p(1), .harden_p(1))
    btc_clkgate
     (.bsg_tag_i(bsg_tag_trigger_i)
      ,.data_async_r_o(trigger_r)
@@ -35,7 +35,7 @@ module bsg_clk_gen_osc_v3
 
   logic [ctl_width_lp-1:0] ctl_r;
   bsg_tag_client_unsync
-   #(.width_p(ctl_width_lp))
+   #(.width_p(ctl_width_lp), .harden_p(1))
    btc_ctl
     (.bsg_tag_i(bsg_tag_i)
      ,.data_async_r_o(ctl_r)
