@@ -4,7 +4,8 @@
 //
 // A FIFO that takes in one word per cycle
 // and allows more than one word per cycle to be removed.
-// the number of words removed can be determined on a cycle-by-cycle basis.
+// The number of words removed is determined by downstream consumer
+// on a cycle-by-cycle basis.
 //
 // This module is likely to be much more expensive than other
 // bsg_serial_in_parallel_out_* modules, and probably should be renamed.
