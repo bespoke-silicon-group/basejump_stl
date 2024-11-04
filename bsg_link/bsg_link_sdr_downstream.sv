@@ -62,6 +62,7 @@ module bsg_link_sdr_downstream
 
   logic isdr_clk_lo, isdr_v_lo;
   logic [width_p-1:0] isdr_data_lo;
+  logic isdr_token_li;
 
   // valid and data signals are received together
   bsg_link_isdr_phy
@@ -71,6 +72,8 @@ module bsg_link_sdr_downstream
   ,.clk_o  (isdr_clk_lo)
   ,.data_i ({io_v_i, io_data_i})
   ,.data_o ({isdr_v_lo, isdr_data_lo})
+  ,.token_i(isdr_token_li)
+  ,.token_o(core_token_r_o)
   );
 
   logic io_link_reset_sync;
@@ -93,7 +96,7 @@ module bsg_link_sdr_downstream
   ,.io_clk_i         (isdr_clk_lo)
   ,.io_data_i        (isdr_data_lo)
   ,.io_valid_i       (isdr_v_lo)
-  ,.core_token_r_o   (core_token_r_o)
+  ,.core_token_r_o   (isdr_token_li)
   // going into core
   ,.core_data_o      (core_data_o)
   ,.core_valid_o     (core_v_o)
