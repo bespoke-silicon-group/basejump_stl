@@ -67,12 +67,7 @@ module bsg_sync_sync #(parameter `BSG_INV_PARAM(width_p ))
    genvar   i;
 
 `ifndef BSG_HIDE_FROM_SYNTHESIS
- /*
-   initial
-     begin
-        $display("%m: instantiating bss of size %d",width_p);
-     end
-  */
+   initial $display("%m: instantiating bss of size %d",width_p);
 `endif
 
    for (i = 0; i < (width_p/`bss_max_block); i = i + 1)

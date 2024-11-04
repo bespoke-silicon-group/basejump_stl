@@ -49,6 +49,7 @@ proc bsg_link_ddr_constraints { \
   set tkn_clk_period         [expr $in_clk_period]
   create_clock -period $tkn_clk_period -name $tkn_clk_name $tkn_clk_port
   set_clock_uncertainty $uncertainty [get_clocks $tkn_clk_name]
+  set_driving_cell -no_design_rule -lib_cell "IN12LP_GPIO18_13M9S30P_IO_H" -pin Y $tkn_clk_port
 
   # input
   set max_input_delay        [expr ($in_clk_period/2.0)-$in_clk_margin]

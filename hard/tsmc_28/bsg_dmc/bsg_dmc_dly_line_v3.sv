@@ -15,3 +15,4 @@ module bsg_dmc_dly_line_v3
 
 endmodule
 
+`BSG_ABSTRACT_MODULE(bsg_dmc_dly_line_v3)
