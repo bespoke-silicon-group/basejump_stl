@@ -17,6 +17,7 @@
  *  @author tommy   02/2019
  *  Paul Gao        06/2019
  *
+ * BaseJump 3.0 suggestion: rename to bsg_serial_in_parallel_out_const
  */
 
 `include "bsg_defines.sv"
