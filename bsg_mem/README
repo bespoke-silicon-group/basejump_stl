@@ -1,1 +1,3 @@
-default is async read.
+A variety of memory interfaces that allow easy porting and hardening across process technologies including ASIC and FPGA.
+
+default, if the word sync is not present in the module name, is async read.
