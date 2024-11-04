@@ -68,6 +68,7 @@ proc bsg_link_sdr_constraints { \
   set tkn_clk_period         [expr 2*$in_clk_period]
   create_clock -period $tkn_clk_period -name $tkn_clk_name $tkn_clk_port
   set_clock_uncertainty $uncertainty [get_clocks $tkn_clk_name]
+  set_driving_cell -no_design_rule -lib_cell "SC7P5T_CKBUFX4_SSC14R" $tkn_clk_port
 
   # input
   set max_input_delay        [expr ($in_clk_period)-$in_clk_margin]
