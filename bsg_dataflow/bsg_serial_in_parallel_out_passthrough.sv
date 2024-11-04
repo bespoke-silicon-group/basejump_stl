@@ -10,6 +10,8 @@
  *  v_o and data_o depend combinationally on v_i and data_i.
  *
  *  Output is only valid, when the output array is fully assembled.
+ *
+ * BaseJump 3.0 suggestion: rename to bsg_serial_in_parallel_out_const_passthrough
  */
 
 `include "bsg_defines.sv"
