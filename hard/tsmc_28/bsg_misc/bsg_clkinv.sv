@@ -110,7 +110,7 @@ module bsg_clkinv #(parameter `BSG_INV_PARAM(width_p)
        begin :notmacro
          BSG_SYNTH_HARDEN_ATTEMPT(harden_p)
 
-         assign o = i;
+         assign o = ~i;
       end
 endmodule
 
