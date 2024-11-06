@@ -22,7 +22,7 @@ module testbench();
 
 
   // Parameters;
-  localparam width_p = 7;
+  localparam width_p = 5;
 
 
   // Random number DPI;
@@ -110,6 +110,14 @@ module testbench();
         assert($countones(grants_lo_tp[i]) < 2) else $error("Found more than one grant in column %d", i);
       end
 
+      // Assert #4;
+      for (integer i = 0; i < width_p; i++) begin
+        for (integer j = 0; j < width_p; j++) begin
+          if (reqs_r[i][j] & ~grants_lo[i][j]) begin
+            assert ($countones(grants_lo[i] & ~(1'b1 << j)) > 0 || $countones(grants_lo_tp[j] & ~(1'b1 << i)) > 0) else $error("Req but no grant, but no col/row neighbor granted. (%d, %d)", i, j);
+          end
+        end
+      end
     end
   end
 
