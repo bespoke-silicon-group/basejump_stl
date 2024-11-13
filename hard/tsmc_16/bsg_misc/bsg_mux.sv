@@ -1,7 +1,7 @@
 module bsg_mux #(
   parameter `BSG_INV_PARAM(width_p    ),
   parameter `BSG_INV_PARAM(els_p      ),
-  parameter harden_p   = 1,
+  parameter harden_p   = 0,
   parameter balanced_p = 0,
   parameter lg_els_lp  = `BSG_SAFE_CLOG2(els_p)
 ) (

@@ -6,7 +6,7 @@
 
 
 `define bsg_mem_1r1w_sync_macro_rf(words,bits,lgEls,mux)        \
-if (els_p == words && width_p == bits)                          \
+if (harden_p && els_p == words && width_p == bits)              \
   begin: macro                                                  \
           tsmc180_2rf_lg``lgEls``_w``bits``_m``mux``_bit mem    \
             (                                                   \

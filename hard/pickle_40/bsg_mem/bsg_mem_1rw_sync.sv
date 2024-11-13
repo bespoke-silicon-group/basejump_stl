@@ -1,6 +1,6 @@
 
 `define bsg_mem_1rw_sync_macro(words,bits)      \
-  if (els_p == words && width_p == bits)        \
+  if (harden_p && els_p == words && width_p == bits) \
     begin: macro                                \
       hard_mem_1rw_d``words``_w``bits``_wrapper \
         mem                                     \
@@ -20,6 +20,7 @@ module bsg_mem_1rw_sync #( parameter `BSG_INV_PARAM(width_p )
                          , parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
                          // whether to substitute a 1r1w
                          , parameter substitute_1r1w_p = 1
+                         , parameter harden_p=1
                          )
   ( input                     clk_i
   , input                     reset_i

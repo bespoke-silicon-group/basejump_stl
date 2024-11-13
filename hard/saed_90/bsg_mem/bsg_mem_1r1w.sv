@@ -4,7 +4,7 @@
 //
 
 `define bsg_mem_1r1w_macro(bits,words) \
-  if (els_p == words && width_p == bits)    \
+  if (harden_p && els_p == words && width_p == bits)    \
     begin: macro                            \
        saed90_``bits``x``words``_2P_ASYNC mem     \
          (.CE1  (w_clk_i)                     \

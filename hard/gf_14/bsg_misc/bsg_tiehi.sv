@@ -2,7 +2,7 @@
 
 module bsg_tiehi
 
-#(width_p="inv", harden_p=1)
+#(width_p="inv", harden_p=0)
 
 (output [width_p-1:0] o
 );

@@ -10,7 +10,7 @@ if (harden_p && (width_p==bits) && (strength_p==strength)) \
       end                                                     \
   end
 
-module bsg_dff #(`BSG_INV_PARAM(width_p), harden_p=1, strength_p=1)
+module bsg_dff #(`BSG_INV_PARAM(width_p), harden_p=0, strength_p=1)
    (input   clk_i
     ,input  [width_p-1:0] data_i
     ,output [width_p-1:0] data_o

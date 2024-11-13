@@ -4,7 +4,7 @@ if (harden_p && (width_p==bits) && (strength_p==strength)) \
      bsg_rp_tsmc_250_dff_s``strength``_b``bits dff(.*);   \
   end
 
-module bsg_dff #(width_p=-1, harden_p=1, strength_p=1)
+module bsg_dff #(width_p=-1, harden_p=0, strength_p=1)
    (input   clock_i
     ,input  [width_p-1:0] data_i
     ,output [width_p-1:0] data_o

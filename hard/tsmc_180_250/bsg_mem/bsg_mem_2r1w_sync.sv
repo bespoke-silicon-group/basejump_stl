@@ -30,7 +30,7 @@ module bsg_mem_2r1w_sync #(parameter `BSG_INV_PARAM(width_p)
 
    wire                   unused = reset_i;
 
-   if ((width_p == 32) && (els_p == 32))
+   if (harden_p && (width_p == 32) && (els_p == 32))
      begin: macro
 `ifndef BSG_HIDE_FROM_SYNTHESIS
         initial

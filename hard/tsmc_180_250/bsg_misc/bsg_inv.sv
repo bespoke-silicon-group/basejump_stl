@@ -10,7 +10,7 @@ if (harden_p && (width_p==bits) && ~vertical_p)                   \
   end
 
 module bsg_inv #(parameter `BSG_INV_PARAM(width_p)
-                 , parameter harden_p=1
+                 , parameter harden_p=0
 		 , parameter vertical_p=1
                  )
    (input    [width_p-1:0] i

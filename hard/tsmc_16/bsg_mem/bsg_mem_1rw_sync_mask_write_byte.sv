@@ -7,6 +7,7 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p )
                                          ,parameter `BSG_INV_PARAM(data_width_p )
                                          ,parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
                                          ,parameter write_mask_width_lp = data_width_p>>3
+                                         ,parameter harden_p=1
                                          )
   (input                           clk_i
   ,input                           reset_i
@@ -18,7 +19,7 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p )
   ,output [data_width_p-1:0]       data_o
   );
 
-  if ((els_p == 1024) & (data_width_p == 32))
+  if (harden_p && (els_p == 1024) & (data_width_p == 32))
     begin : macro
       wire [31:0] wen = ~{{8{write_mask_i[3]}}
                          ,{8{write_mask_i[2]}}

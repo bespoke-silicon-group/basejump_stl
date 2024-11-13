@@ -148,7 +148,7 @@ elif len(sys.argv) == 5 :
     input_params = ["input [width_p-1:0] i"+str(x) for x in range(0,num_inputs)]
     print '''
 
-module bsg_'''+sys.argv[4],'''#(width_p="inv",harden_p=1)
+module bsg_'''+sys.argv[4],'''#(width_p="inv",harden_p=0)
    ('''+"\n    ,".join(input_params)+'''
     , output [width_p-1:0] o
     );

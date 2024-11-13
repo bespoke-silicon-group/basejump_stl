@@ -7,7 +7,7 @@
 
 
 `define bsg_mem_1r1w_macro(words,bits)                                  \
-     if (els_p == words && width_p == bits)                             \
+     if (harden_p && els_p == words && width_p == bits)                             \
        begin: macro                                                     \
           wire [els_p-1:0] wa_one_hot = (w_v_i << w_addr_i);            \
           wire [els_p-1:0] ra_one_hot = (r_v_i << r_addr_i);            \
@@ -26,7 +26,7 @@ module bsg_mem_1r1w
     , parameter `BSG_INV_PARAM(els_p)
     , parameter read_write_same_addr_p=0
     , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
-		, parameter harden_p=1
+    , parameter harden_p=1
     , parameter debug_p=0
   )
    (input   w_clk_i

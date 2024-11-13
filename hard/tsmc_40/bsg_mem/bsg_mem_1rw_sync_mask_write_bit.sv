@@ -4,7 +4,7 @@
 // Only one read or one write may be done per cycle.
 
 `define bsg_mem_1rw_sync_macro_bit(words,bits,lgEls,mux) \
-if (els_p == words && width_p == bits)                   \
+if (harden_p && els_p == words && width_p == bits)                   \
   begin: macro                                           \
     tsmc40_1rw_lg``lgEls``_w``bits``_m``mux mem          \
       (.A     ( addr_i    )                              \
@@ -19,7 +19,7 @@ if (els_p == words && width_p == bits)                   \
   end
 
 `define bsg_mem_1rf_sync_macro_bit(words,bits,lgEls,mux) \
-if (els_p == words && width_p == bits)                   \
+if (harden_p && els_p == words && width_p == bits)                   \
   begin: macro                                           \
     tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem          \
       (.A     ( addr_i    )                              \
@@ -34,7 +34,8 @@ if (els_p == words && width_p == bits)                   \
 
 module bsg_mem_1rw_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
 			               , parameter `BSG_INV_PARAM(els_p)
-			               , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p))
+			               , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
+                           , parameter harden_p=1)
    (input   clk_i
     , input reset_i
     , input [width_p-1:0] data_i

@@ -5,7 +5,7 @@ if (harden_p && (width_p==bits))                    \
   end
 
 module bsg_tiehi #(parameter `BSG_INV_PARAM(width_p)
-                 , parameter harden_p=1
+                 , parameter harden_p=0
                  )
    (output [width_p-1:0] o
     );

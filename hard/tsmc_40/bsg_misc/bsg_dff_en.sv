@@ -10,7 +10,7 @@ if (harden_p && width_p==bits && (strength_p==womp))                         \
 
 
 module bsg_dff_en #(width_p="inv"
-                    , harden_p=1
+                    , harden_p=0
                     , strength_p=1
                     )
    (input   clk_i

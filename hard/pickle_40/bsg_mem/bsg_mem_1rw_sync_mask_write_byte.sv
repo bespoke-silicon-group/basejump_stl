@@ -1,6 +1,6 @@
 
 `define bsg_mem_1rw_sync_mask_write_byte_macro(words,bits) \
-  if (els_p == words && data_width_p == bits)              \
+  if (harden_p && els_p == words && data_width_p == bits)  \
     begin: macro                                           \
       hard_mem_1rw_byte_mask_d``words``_w``bits``_wrapper  \
         mem                                                \
@@ -19,6 +19,7 @@ module bsg_mem_1rw_sync_mask_write_byte #( parameter `BSG_INV_PARAM(els_p )
                                          , parameter `BSG_INV_PARAM(data_width_p )
                                          , parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
                                          , parameter write_mask_width_lp = data_width_p>>3
+                                         , parameter harden_p=1
                                          )
 
   ( input                           clk_i
