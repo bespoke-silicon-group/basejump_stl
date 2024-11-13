@@ -69,4 +69,4 @@ clean:
 CLK_SPEEDS := 100000 5000 2500 1250 1000
 
 regression:
-	$(foreach CLK_SPD, $(CLK_SPEEDS), make -B elaborate UI_CLK_PRD=$(CLK_SPD); make run UI_CLK_PRD=$(CLK_SPD))
+	$(foreach CLK_SPD, $(CLK_SPEEDS), make -B elaborate UI_CLK_PRD=$(CLK_SPD); make run UI_CLK_PRD=$(CLK_SPD);)
