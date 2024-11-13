@@ -19,8 +19,8 @@ ELABORATE_OPTIONS += +lint=TFIPC-L
 
 # ui_clk period
 CLK_SPEEDS := 100 1000 1250 2500 5000 6250 62500
-CMD_GAPS   := 0 3 8 11 16
-WRITE_GAPS := 0 1 2
+CMD_GAPS   := 0 3 8 11 80
+WRITE_GAPS := 0 1 2 20
 TOTAL_RUNS := $$(( $(words $(CLK_SPEEDS)) * $(words $(CMD_GAPS)) * $(words $(WRITE_GAPS)) ))
 
 RUNS := $(foreach CLK_SPEED_P, $(CLK_SPEEDS), \
