@@ -66,7 +66,7 @@ clean:
 	#rm -rf DVEfiles
 	rm -rf AN.DB
 
-CLK_SPEEDS := 100000 5000 2500 1250 1000
+CLK_SPEEDS := 1000 1250 2500 5000 100000
 
 regression:
 	$(foreach CLK_SPD, $(CLK_SPEEDS), make -B elaborate UI_CLK_PRD=$(CLK_SPD); make run UI_CLK_PRD=$(CLK_SPD);)
