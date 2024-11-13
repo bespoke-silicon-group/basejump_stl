@@ -3,11 +3,6 @@ include ../../../bsg_cadenv/cadenv.mk
 
 ELABORATE_OPTIONS = -full64
 ELABORATE_OPTIONS += -sverilog
-ELABORATE_OPTIONS += +incdir+../../bsg_clk_gen
-ELABORATE_OPTIONS += +incdir+../../bsg_misc
-ELABORATE_OPTIONS += +incdir+../../bsg_tag
-ELABORATE_OPTIONS += +incdir+../../bsg_dmc
-ELABORATE_OPTIONS += +incdir+lpddr_verilog_model
 ELABORATE_OPTIONS += -debug_pp
 ELABORATE_OPTIONS += -sverilog
 ELABORATE_OPTIONS += -lca
@@ -23,13 +18,10 @@ ELABORATE_OPTIONS += +define+NONSYNTH_TB
 ELABORATE_OPTIONS += +lint=TFIPC-L
 
 # ui_clk period
-# how to use: make elaborate UI_CLK_PRD=<desired clock period value>
-# Note unit is in ps and default is 400MHz as seen below
-UI_CLK_PRD = 2500
-ELABORATE_OPTIONS += +define+UI_CLK_PERIOD=$(UI_CLK_PRD)
-WRITE_GAP_CYC = 0
-CMD_GAP_CYC   = 0
-ELABORATE_OPTIONS += +define+WRITE_GAP_CYCLES=$(WRITE_GAP_CYC) +define+CMD_GAP_CYCLES=$(CMD_GAP_CYC)
+CLK_SPEEDS := 100 1000 1250 2500 5000 6250 62500
+
+RUNS       := $(foreach CLK_SPEED_P, $(CLK_SPEEDS), \
+                   run-$(CLK_SPEED_P))
 
 RUN_OPTIONS =
 #RUN_OPTIONS += +irritate_clk
@@ -43,16 +35,20 @@ bsg_dmc_trace_rom.tr:
 %.v: %.tr
 	../../bsg_mem/bsg_ascii_to_rom.py $< $* > $@
 
-elaborate : bsg_dmc_trace_rom.v bsg_tag_boot_rom.v
-	$(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l $@.$(UI_CLK_PRD).log -f filelist.lst
-	touch $@
+regression: run
+	grep -r "Regression\ test\ passed\!" */run-*.log
+	! grep -r "Regression\ test\ failed\!" */run-*.log
 
-run: elaborate
-	./simv $(RUN_OPTIONS)  -l $@.$(UI_CLK_PRD).log
-	touch $@
+run: $(RUNS)
+run-%: bsg_dmc_trace_rom.v bsg_tag_boot_rom.v
+	mkdir run-$*;
+	cd run-$* && \
+        $(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l run-$*.log -f ../filelist.lst -R \
+        +define+UI_CLK_PERIOD=$(word 1, $(subst -, ,$*))
 
-dve: 
-	$(VCS_BIN)/dve -full64 -vpd vcdplus.vpd &
+dve-%:
+	cd run-$* && \
+        $(VCS_BIN)/dve -full64 -vpd vcdplus.vpd &
 
 clean:
 	rm -rf elaborate* run*
@@ -66,8 +62,3 @@ clean:
 	rm -rf ucli.key
 	rm -rf DVEfiles
 	rm -rf AN.DB
-
-CLK_SPEEDS := 1000 1250 2500 5000 100000
-
-regression:
-	$(foreach CLK_SPD, $(CLK_SPEEDS), make -B elaborate UI_CLK_PRD=$(CLK_SPD); make run UI_CLK_PRD=$(CLK_SPD);)
