@@ -56,14 +56,14 @@ dve:
 clean:
 	rm -rf elaborate* run*
 	rm -rf *.log
-	#rm -rf bsg_dmc_trace_rom.tr
-	#rm -rf *_rom.v
+	rm -rf bsg_dmc_trace_rom.tr
+	rm -rf *_rom.v
 	rm -rf *.vpd
 	rm -rf vc_hdrs.h
 	rm -rf simv*
 	rm -rf csrc
 	rm -rf ucli.key
-	#rm -rf DVEfiles
+	rm -rf DVEfiles
 	rm -rf AN.DB
 
 CLK_SPEEDS := 1000 1250 2500 5000 100000
