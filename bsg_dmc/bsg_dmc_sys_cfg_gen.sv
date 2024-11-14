@@ -198,3 +198,5 @@ module bsg_dmc_sys_cfg_gen
       end
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_dmc_sys_cfg_gen)
