@@ -554,7 +554,7 @@ module traffic_generator
   						(.clk_i  (ui_clk)
   						,.reset_i(asic_link_reset_li)
   						
-  						,.ready_o(dmc_input_fifo_ready_lo)
+  						,.ready_param_o(dmc_input_fifo_ready_lo)
   						,.data_i (asic_link_downstream_core_data_lo)
   						,.v_i    (asic_link_downstream_core_valid_lo)
   						
@@ -583,7 +583,7 @@ module traffic_generator
 							.data_o(rdata_from_adapter_lo),
                             .yumi_i(asic_link_upstream_core_ready_lo & read_data_to_consumer_valid_lo),
 
-  						 	.ready_o(dmc_adapter_ready_lo),
+  						 	.ready_and_o(dmc_adapter_ready_lo),
   	
   						    // XILINX UI signals	
   							.app_addr_o(app_addr),

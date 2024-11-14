@@ -18,6 +18,7 @@
 ../../../bsg_clk_gen/bsg_clk_gen_osc.sv
 ../../../bsg_dataflow/bsg_fifo_1r1w_small.sv
 ../../../bsg_dataflow/bsg_fifo_1r1w_small_unhardened.sv
+../../../bsg_dataflow/bsg_fifo_1r1w_small_hardened.sv
 ../../../bsg_dataflow/bsg_fifo_1r1w_small_credit_on_input.sv
 ../../../bsg_dataflow/bsg_fifo_tracker.sv
 ../../../bsg_dataflow/bsg_flow_counter.sv
@@ -34,6 +35,8 @@
 ../../../bsg_dmc/bsg_dmc_phy.sv
 ../../../bsg_mem/bsg_mem_1r1w.sv
 ../../../bsg_mem/bsg_mem_1r1w_synth.sv
+../../../bsg_mem/bsg_mem_1r1w_sync.sv
+../../../bsg_mem/bsg_mem_1r1w_sync_synth.sv
 ../../../bsg_misc/bsg_and.sv
 ../../../bsg_misc/bsg_buf.sv
 ../../../bsg_misc/bsg_circular_ptr.sv
@@ -77,6 +80,7 @@
 
 ../bsg_tag_boot_rom.v
 ../traffic_generator.sv
+../bsg_dmc_tester.sv
 ../bsg_nonsynth_dmc_clock_monitor.sv
 ../testbench.sv
 
