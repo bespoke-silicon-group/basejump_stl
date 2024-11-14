@@ -21,12 +21,15 @@ ELABORATE_OPTIONS += +lint=TFIPC-L
 CLK_SPEEDS := 100 1000 1250 2500 5000 6250 62500
 CMD_GAPS   := 0 3 8 11 80
 WRITE_GAPS := 0 1 2 20
-TOTAL_RUNS := $$(( $(words $(CLK_SPEEDS)) * $(words $(CMD_GAPS)) * $(words $(WRITE_GAPS)) ))
+RAND_TRHDS := 10 30 50 70 90
+TOTAL_RUNS := $$(( $(words $(CLK_SPEEDS)) * ($(words $(CMD_GAPS)) * $(words $(WRITE_GAPS)) + $(words $(RAND_TRHDS))) ))
 
 RUNS := $(foreach CLK_SPEED_P, $(CLK_SPEEDS), \
-        $(foreach CMD_GAP_P,   $(CMD_GAPS), \
-        $(foreach WRITE_GAP_P, $(WRITE_GAPS), \
-        run-$(CLK_SPEED_P)-$(CMD_GAP_P)-$(WRITE_GAP_P))))
+            $(foreach RAND_TRHD_P,   $(RAND_TRHDS), \
+                run-$(CLK_SPEED_P)-0-0-$(RAND_TRHD_P)) \
+            $(foreach CMD_GAP_P,   $(CMD_GAPS), \
+            $(foreach WRITE_GAP_P, $(WRITE_GAPS), \
+                run-$(CLK_SPEED_P)-$(CMD_GAP_P)-$(WRITE_GAP_P)-0)))
 
 RUN_OPTIONS =
 #RUN_OPTIONS += +irritate_clk
@@ -55,7 +58,8 @@ run-%: bsg_dmc_trace_rom.v bsg_tag_boot_rom.v
         $(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l run-$*.log -f ../filelist.lst -R \
         +define+UI_CLK_PERIOD=$(word 1, $(subst -, ,$*)) \
         +define+CMD_GAP_CYCLES=$(word 2, $(subst -, ,$*)) \
-        +define+WRITE_GAP_CYCLES=$(word 3, $(subst -, ,$*))
+        +define+WRITE_GAP_CYCLES=$(word 3, $(subst -, ,$*)) \
+        +define+RANDOM_THRESHOLD=$(word 4, $(subst -, ,$*))
 
 dve-%:
 	cd run-$* && \
