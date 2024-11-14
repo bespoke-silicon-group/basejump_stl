@@ -165,5 +165,11 @@ if __name__ == "__main__":
 
     tg.send_read(tu[0])
     tg.send_exe()
-    tg.recv_data(tu[1])  
+    tg.recv_data(tu[1])
+
+    for j in range(8):
+      tg.send_read(tu[0])
+    tg.send_exe()
+    for j in range(8):
+      tg.recv_data(tu[1])
   tg.test_done()
