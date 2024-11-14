@@ -13,8 +13,6 @@ ELABORATE_OPTIONS += +define+BSG_OSC_BASE_DELAY=1000
 ELABORATE_OPTIONS += +define+BSG_OSC_GRANULARITY=50
 ELABORATE_OPTIONS += -timescale=1ps/1ps
 ELABORATE_OPTIONS += -assert svaext
-#Enable below line for using non-synthesisable TB
-ELABORATE_OPTIONS += +define+NONSYNTH_TB
 ELABORATE_OPTIONS += +lint=TFIPC-L
 
 # ui_clk period
@@ -44,25 +42,35 @@ bsg_dmc_trace_rom.tr:
 	../../bsg_mem/bsg_ascii_to_rom.py $< $* > $@
 
 regression:
-	make clean
 	make run -j32
-	@echo -n "TOTAL EXECUTED RUNS: "
+	make run_synth
+	@echo -n "TOTAL EXECUTED NONSYNTH RUNS: "
 	@echo $(TOTAL_RUNS)
-	@echo -n "TOTAL PASSED RUNS:   "
+	@echo -n "TOTAL PASSED NONSYNTH RUNS:   "
 	@grep "Regression\ test\ passed\!" */run-*.log | wc -l
+	@! grep "FAIL" */run_synth.log
+	@! grep "error:" */run_synth.log
+	@echo "SYNTH RUN PASSED"
 
 run: $(RUNS)
 run-%: bsg_dmc_trace_rom.v bsg_tag_boot_rom.v
 	mkdir run-$*;
 	cd run-$* && \
         $(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l run-$*.log -f ../filelist.lst -R \
+        +define+NONSYNTH_TB \
         +define+UI_CLK_PERIOD=$(word 1, $(subst -, ,$*)) \
         +define+CMD_GAP_CYCLES=$(word 2, $(subst -, ,$*)) \
         +define+WRITE_GAP_CYCLES=$(word 3, $(subst -, ,$*)) \
         +define+RANDOM_THRESHOLD=$(word 4, $(subst -, ,$*))
 
-dve-%:
-	cd run-$* && \
+run_synth: bsg_dmc_trace_rom.v bsg_tag_boot_rom.v
+	mkdir run_synth;
+	cd run_synth && \
+        $(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l run_synth.log -f ../filelist.lst -R \
+        ../bsg_dmc_tester.sv
+
+dve%:
+	cd run$* && \
         $(VCS_BIN)/dve -full64 -vpd vcdplus.vpd &
 
 clean:

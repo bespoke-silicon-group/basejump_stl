@@ -80,7 +80,6 @@
 
 ../bsg_tag_boot_rom.v
 ../traffic_generator.sv
-../bsg_dmc_tester.sv
 ../bsg_nonsynth_dmc_clock_monitor.sv
 ../testbench.sv
 
