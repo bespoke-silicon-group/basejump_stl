@@ -98,7 +98,7 @@ module bsg_dmc_tester
     				  ,.data_o(trace_rom_data_lo)
     				);
 
-	assign trace_yumi_li = fpga_link_upstream_core_ready_lo ;
+	assign trace_yumi_li = trace_valid_lo & fpga_link_upstream_core_ready_lo ;
 	assign fpga_link_upstream_edge_clk_o = fpga_link_upstream_edge_clk;
 
 	// FPGA SIDE LINKS START
@@ -134,7 +134,7 @@ module bsg_dmc_tester
   					 
   					 ,.core_data_o   (read_data_to_trace_replay)
   					 ,.core_valid_o  (read_data_to_trace_replay_valid)
-  					 ,.core_yumi_i   (read_data_to_trace_replay_valid)
+  					 ,.core_yumi_i   (read_data_to_trace_replay_valid & trace_replay_ready_to_read)
   					
   					 ,.io_clk_i      (asic_link_upstream_edge_clk_i)
   					 ,.io_data_i     (asic_link_upstream_edge_data_i)
