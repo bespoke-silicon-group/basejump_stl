@@ -601,6 +601,9 @@ module traffic_generator
   							.app_rd_data_i(app_rd_data),
   							.app_rd_data_end_i(app_rd_data_end)
   						 );
+
+    localparam rstdly_lp = `BSG_MAX(`BSG_MAX(`FPGA_CLK_PERIOD, `LINK_IO_CLK_PERIOD), `UI_CLK_PERIOD) * 10;
+
 	initial begin
 
 		fpga_link_reset_li = 1;
@@ -614,18 +617,18 @@ module traffic_generator
 
 		fpga_link_token_reset_li = 0;
 		asic_link_token_reset_li = 0;
-        
-        do #10000; while(ui_clk_sync_rst_i !== 1'b1);
+
+        do #(rstdly_lp); while(ui_clk_sync_rst_i !== 1'b1);
 
 		fpga_link_token_reset_li = 1;
 		asic_link_token_reset_li = 1;
 
-		#10000;
+		#(rstdly_lp);
 
 		fpga_link_token_reset_li = 0;
 		asic_link_token_reset_li = 0;
 
-		#10000;
+		#(rstdly_lp);
 
 		@(posedge fpga_link_io_clk_li); #1;
   		  	fpga_link_upstream_io_reset_li = 0;
@@ -633,21 +636,21 @@ module traffic_generator
 		@(posedge asic_link_io_clk); #1;
   		  	asic_link_upstream_io_reset = 0;
 
-		#10000;
+		#(rstdly_lp);
   	  	@(posedge fpga_link_upstream_edge_clk_lo); #1;
   		  	asic_link_downstream_io_reset = 0;
 
 		@(posedge asic_link_upstream_edge_clk_li); #1;
 			fpga_link_downstream_io_reset_li = 0;
 
-		#10000;	
+		#(rstdly_lp);
   	  	// core link reset
   	  	@(posedge fpga_link_clk); #1;
   	  		fpga_link_reset_li = 0;
 		@(posedge ui_clk); #1;
 			asic_link_reset_li = 0;
 
-		@(posedge trace_reading_done_lo); #10000;
+		@(posedge trace_reading_done_lo); #(rstdly_lp);
 		$finish();
 	end
 
