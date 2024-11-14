@@ -138,14 +138,14 @@ module bsg_dmc_xilinx_ui_trace_replay
       trace_v_li = '0;
       trace_yumi_li = '0;
 
-      // TODO: If trace fifo is full before drain command, we can get into a bad state.
-      //   How to recover?
+      // If trace fifo is full and there is an incoming command,
+      // jump to e_drain state automatically to prevent getting stuck
       case(state_r)
         e_fill: begin
           ready_and_o = trace_ready_and_lo;
           trace_v_li = v_i & (trace_data_li.app_cmd != TEX);
 
-          state_n = (v_i & (trace_data_li.app_cmd == TEX)) ? e_drain : e_fill;
+          state_n = (v_i & (trace_data_li.app_cmd == TEX || ready_and_o == '0)) ? e_drain : e_fill;
         end
         e_drain: begin
           app_en_o = trace_v_lo & (trace_is_write | (trace_is_read & read_avail));
