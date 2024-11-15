@@ -21,6 +21,7 @@ CMD_GAPS   := 0 3 8 11 80
 WRITE_GAPS := 0 1 2 20
 RAND_TRHDS := 10 30 50 70 90
 TOTAL_RUNS := $$(( $(words $(CLK_SPEEDS)) * ($(words $(CMD_GAPS)) * $(words $(WRITE_GAPS)) + $(words $(RAND_TRHDS))) ))
+TOTAL_RUN_SYNTHS := $$(( $(words $(CLK_SPEEDS)) ))
 
 RUNS := $(foreach CLK_SPEED_P, $(CLK_SPEEDS), \
             $(foreach RAND_TRHD_P,   $(RAND_TRHDS), \
@@ -28,6 +29,9 @@ RUNS := $(foreach CLK_SPEED_P, $(CLK_SPEEDS), \
             $(foreach CMD_GAP_P,   $(CMD_GAPS), \
             $(foreach WRITE_GAP_P, $(WRITE_GAPS), \
                 run-$(CLK_SPEED_P)-$(CMD_GAP_P)-$(WRITE_GAP_P)-0)))
+
+RUN_SYNTHS := $(foreach CLK_SPEED_P, $(CLK_SPEEDS), \
+                  run_synth-$(CLK_SPEED_P))
 
 RUN_OPTIONS =
 #RUN_OPTIONS += +irritate_clk
@@ -43,14 +47,15 @@ bsg_dmc_trace_rom.tr:
 
 regression:
 	make run -j32
-	make run_synth
+	make run_synth -j32
 	@echo -n "TOTAL EXECUTED NONSYNTH RUNS: "
 	@echo $(TOTAL_RUNS)
-	@echo -n "TOTAL PASSED NONSYNTH RUNS:   "
+	@echo -n "TOTAL PASSED NONSYNTH RUNS  : "
 	@grep "Regression\ test\ passed\!" */run-*.log | wc -l
-	@! grep "FAIL" */run_synth.log
-	@! grep "error:" */run_synth.log
-	@echo "SYNTH RUN PASSED"
+	@! grep "FAIL" */run_synth-*.log
+	@! grep "error:" */run_synth-*.log
+	@echo -n "RUN_SYNTH TESTS PASSED      : "
+	@echo $(TOTAL_RUN_SYNTHS)
 
 run: $(RUNS)
 run-%: bsg_dmc_trace_rom.v bsg_tag_boot_rom.v
@@ -63,11 +68,13 @@ run-%: bsg_dmc_trace_rom.v bsg_tag_boot_rom.v
         +define+WRITE_GAP_CYCLES=$(word 3, $(subst -, ,$*)) \
         +define+RANDOM_THRESHOLD=$(word 4, $(subst -, ,$*))
 
-run_synth: bsg_dmc_trace_rom.v bsg_tag_boot_rom.v
-	mkdir run_synth;
-	cd run_synth && \
-        $(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l run_synth.log -f ../filelist.lst -R \
-        ../bsg_dmc_tester.sv
+run_synth: $(RUN_SYNTHS)
+run_synth-%: bsg_dmc_trace_rom.v bsg_tag_boot_rom.v
+	mkdir run_synth-$*;
+	cd run_synth-$* && \
+        $(VCS_BIN)/vcs $(ELABORATE_OPTIONS) -l run_synth-$*.log -f ../filelist.lst -R \
+        ../bsg_dmc_tester.sv \
+        +define+UI_CLK_PERIOD=$(word 1, $(subst -, ,$*))
 
 dve%:
 	cd run$* && \
