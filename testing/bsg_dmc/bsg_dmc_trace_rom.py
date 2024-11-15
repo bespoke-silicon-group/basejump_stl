@@ -145,6 +145,13 @@ if __name__ == "__main__":
         write_val += 4
     else:
       tg.send_write(addr, write_val, mask_val)
+      tg.send_write(addr, write_val, mask_val)
+      tg.send_write(addr, write_val, mask_val)
+      tg.send_write(addr, write_val, mask_val)
+      tg.send_write(addr, write_val, mask_val)
+      tg.send_write(addr, write_val, mask_val)
+      tg.send_write(addr, write_val, mask_val)
+      tg.send_write(addr, write_val, mask_val)
       tg.send_exe()
       #tg.recv_data(0)
       mem_dict[addr] = write_val
