@@ -56,7 +56,7 @@ High speed SPI-like interface for configuration state
 * bsg_dmc
 
 LPDDR1 Dram Controller and PHY.
-Requires advanced knowledge to tapeout.
+Requires advanced knowledge to tapeout. Still experimental.
  
 * bsg_test
 
