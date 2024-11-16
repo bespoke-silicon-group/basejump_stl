@@ -1,5 +1,11 @@
 // this is intended for round robining
 // on the input to a pair of fifos.
+//
+// the model is that you have a one or two parallel elements
+// that you want to enqueue into a pair of FIFOs.
+// because at times you will only enque one element, the next
+// fifo to enque may be the second fifo. This module swizzles
+// the inputs to the two fifos accordingly.
 
 `include "bsg_defines.sv"
 
