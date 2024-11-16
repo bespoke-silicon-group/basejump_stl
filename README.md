@@ -67,6 +67,10 @@ Data, clock, and reset generator for test benches.
 
 Mirrors the other directories, with tests.
 
+* experimental
+
+Meaty blocks that are potentially useful but may require additional verificaiton.  With further iteration, they may be promoted out of experimental.
+
 * hard
 
 Mirrors other directories, contains replacement files for specific process technologies.
