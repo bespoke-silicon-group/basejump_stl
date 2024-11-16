@@ -21,11 +21,8 @@ module bsg_wormhole_router_packet_parser #(parameter `BSG_INV_PARAM(payload_len_
     // this cycle's word was requested to deque
     , input fifo_yumi_i
 
-    // we completed transferring all of the flits on the previous cycle
-    , output last_flit_r_o
-
-    // detected first flit of packet
-    , output first_flit_o
+    // if fifo_v_i is high, it is a header
+    , output expecting_header_r_o
     );
 
   bsg_wormhole_router_input_control #(.output_dirs_p(1)
@@ -38,8 +35,7 @@ module bsg_wormhole_router_packet_parser #(parameter `BSG_INV_PARAM(payload_len_
   ,.fifo_payload_len_i(fifo_payload_len_i)
   ,.fifo_yumi_i(fifo_yumi_i)
   ,.reqs_o()
-  ,.release_o(last_word_r_o)
-  ,.detected_header_o(first_word_o)
+   ,.release_o(expecting_header_r_o)
   );
 
 endmodule
