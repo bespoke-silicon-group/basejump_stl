@@ -1,5 +1,8 @@
 `include "bsg_defines.sv"
 
+// overflow_o indicates that counter is at its max, and will overflow on an en_i
+//
+
 module bsg_counter_overflow_en #(parameter `BSG_INV_PARAM(max_val_p    )
                                , parameter `BSG_INV_PARAM(init_val_p   )
                                , parameter ptr_width_lp = `BSG_WIDTH(max_val_p)
