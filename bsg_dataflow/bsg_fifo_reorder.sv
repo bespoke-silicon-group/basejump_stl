@@ -1,6 +1,10 @@
 /**
  *    bsg_fifo_reorder.sv
  *
+ *    This module implements a circular FIFO where entries are allocated in order
+ *    and deallocated/dequed in order, but writing the entries can occur out of order.
+ *
+ *    It can be used to implement things like reorder buffers or store buffers.
  */
 
 

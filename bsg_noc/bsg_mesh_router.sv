@@ -14,6 +14,8 @@
  *      Currently only tested for
  *      - 2-D mesh
  *      - 2-D mesh + half ruche x
+ *
+ *   In theory, we could drop data bits (e.g. the X coordinate) as we switch to different dimensions, but the code would be a little complicated.
  */  
 
 `include "bsg_defines.sv"

@@ -17,6 +17,7 @@
  *  @author tommy   02/2019
  *  Paul Gao        06/2019
  *
+ * BaseJump 3.0 suggestion: rename to bsg_serial_in_parallel_out_const
  */
 
 `include "bsg_defines.sv"
@@ -129,67 +130,3 @@ endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_serial_in_parallel_out_full)
 
-/*
-   MBT.  5/6/2019
-   
-   this version requires no fifo on the bottom, and has a potentially lower cycle time, 
-   but requires a valid/ready interface on the output, and has a 1-gate delay on the ready_i->ready_o path.
-   
-   it has been nominally tested.
-   
-// zero bubble SIPO
-// output pulls out a full width_p words at a time
-
-module bsg_serial_in_parallel_out_full
-  #(parameter `BSG_INV_PARAM(width_p)
-    , parameter `BSG_INV_PARAM(els_p)
-  )
-  (
-    input clk_i
-    , input reset_i
-    
-    , input v_i
-    , output logic ready_o
-    , input [width_p-1:0] data_i
-
-    , output logic [els_p-1:0][width_p-1:0]  data_o
-    , output logic v_o
-    , input ready_i
-  );
-  
-  logic [els_p:0] valid_r;
-  
-  assign v_o = valid_r[els_p];     // means we received all of the words
-  assign ready_o = ~v_o | ready_i; // have space, or we are dequeing; (one gate delay in-to-out)
-  
-  wire sending   = v_o & ready_i;  // we have all the items, and downstream is ready
-  wire receiving = v_i & ready_o;  // data is coming in, and we have space
-  
-  // counts one hot, from 0 to width_p
-  // contains one hot pointer to word to write to
-  // simultaneous restart and increment are allowed
-  
-  bsg_counter_clear_up_one_hot #(.max_val_p(els_p)) bcoh
-  (.clk_i
-   ,.reset_i
-   ,.clear_i(sending)
-   ,.up_i   (receiving)
-   ,.count_r_o(valid_r)
-  );
-  
-  genvar i;
-  
-  for (i = 0; i < els_p; i++)
-    begin: rof
-      wire my_turn = v_i & (valid_r[i] | ((i == 0) & sending));
-      bsg_dff_en #(.width_p(width_p), .harden_p(0)) dff
-      (.clk_i
-       ,.data_i
-       ,.en_i   (my_turn)
-       ,.data_o (data_o [i])
-      );
-    end	
-  
-endmodule
-
-*/

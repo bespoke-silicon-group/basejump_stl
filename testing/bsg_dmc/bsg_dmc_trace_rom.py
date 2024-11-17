@@ -145,6 +145,13 @@ if __name__ == "__main__":
         write_val += 4
     else:
       tg.send_write(addr, write_val, mask_val)
+      tg.send_write(addr, write_val, mask_val)
+      tg.send_write(addr, write_val, mask_val)
+      tg.send_write(addr, write_val, mask_val)
+      tg.send_write(addr, write_val, mask_val)
+      tg.send_write(addr, write_val, mask_val)
+      tg.send_write(addr, write_val, mask_val)
+      tg.send_write(addr, write_val, mask_val)
       tg.send_exe()
       #tg.recv_data(0)
       mem_dict[addr] = write_val
@@ -165,5 +172,11 @@ if __name__ == "__main__":
 
     tg.send_read(tu[0])
     tg.send_exe()
-    tg.recv_data(tu[1])  
+    tg.recv_data(tu[1])
+
+    for j in range(8):
+      tg.send_read(tu[0])
+    tg.send_exe()
+    for j in range(8):
+      tg.recv_data(tu[1])
   tg.test_done()

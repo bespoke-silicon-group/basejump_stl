@@ -8,6 +8,10 @@
 // we do approx round robin between port 0
 // and port 1, which is local.
 //
+// this is a legacy implementation, instead you can look at using
+// bsg_router_crossbar_o_by_i, specifically the example 
+// contained in https://github.com/bespoke-silicon-group/basejump_stl/tree/master/testing/bsg_noc/bsg_router_crossbar_o_by_i/i2_o1
+//
 
 `include "bsg_defines.sv"
 

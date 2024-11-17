@@ -5,11 +5,13 @@
  *  The implementation is much simpler than bsg_serial_in_parallel_out.sv, presumably
  *  leading to better timing and less area and power.
  *
- *  This module is like bsg_serial_in_parallel_out, except that it uses registers to buffer
+ *  This module is like bsg_serial_in_parallel_out_full, except that it uses registers to buffer
  *  data and does not introduce an extra cycle of latency beyond the in/out ratio.
  *  v_o and data_o depend combinationally on v_i and data_i.
  *
  *  Output is only valid, when the output array is fully assembled.
+ *
+ * BaseJump 3.0 suggestion: rename to bsg_serial_in_parallel_out_const_passthrough
  */
 
 `include "bsg_defines.sv"

@@ -503,24 +503,26 @@ module traffic_generator
   					 );
 
     logic read_data_to_consumer_valid_lo;
+    logic read_data_to_consumer_ready_li;
 	logic [payload_width_lp-1:0] read_data_to_consumer_lo;
     logic [ui_data_width_p-1:0] rdata_from_adapter_lo;
 
     assign read_data_to_consumer_lo = {{ui_mask_width_lp{1'b0}}, rdata_from_adapter_lo};
 
-    always@(posedge ui_clk) begin
-        if(asic_link_reset_li) begin
-            asic_link_upstream_core_valid_li <= 0;
-            asic_link_upstream_core_data_li <= 0; 
-        end
-        else if(read_data_to_consumer_valid_lo) begin
-            asic_link_upstream_core_valid_li <= 1;
-            asic_link_upstream_core_data_li <= read_data_to_consumer_lo;
-        end
-        else begin
-            asic_link_upstream_core_valid_li <= 0;
-        end
-    end
+  	bsg_two_fifo
+  						#(.width_p(payload_width_lp)
+  						) dmc_output_fifo
+  						(.clk_i  (ui_clk)
+  						,.reset_i(asic_link_reset_li)
+  						
+  						,.ready_param_o(read_data_to_consumer_ready_li)
+  						,.data_i (read_data_to_consumer_lo)
+  						,.v_i    (read_data_to_consumer_valid_lo)
+  						
+  						,.v_o    (asic_link_upstream_core_valid_li)
+  						,.data_o (asic_link_upstream_core_data_li)
+  						,.yumi_i (asic_link_upstream_core_valid_li & asic_link_upstream_core_ready_lo)
+  						);
 
 	bsg_link_ddr_upstream
  					#(.width_p        (payload_width_lp)
@@ -554,7 +556,7 @@ module traffic_generator
   						(.clk_i  (ui_clk)
   						,.reset_i(asic_link_reset_li)
   						
-  						,.ready_o(dmc_input_fifo_ready_lo)
+  						,.ready_param_o(dmc_input_fifo_ready_lo)
   						,.data_i (asic_link_downstream_core_data_lo)
   						,.v_i    (asic_link_downstream_core_valid_lo)
   						
@@ -581,9 +583,9 @@ module traffic_generator
 
 							.v_o(read_data_to_consumer_valid_lo),
 							.data_o(rdata_from_adapter_lo),
-                            .yumi_i(asic_link_upstream_core_ready_lo & read_data_to_consumer_valid_lo),
+                            .yumi_i(read_data_to_consumer_ready_li & read_data_to_consumer_valid_lo),
 
-  						 	.ready_o(dmc_adapter_ready_lo),
+  						 	.ready_and_o(dmc_adapter_ready_lo),
   	
   						    // XILINX UI signals	
   							.app_addr_o(app_addr),
@@ -599,6 +601,9 @@ module traffic_generator
   							.app_rd_data_i(app_rd_data),
   							.app_rd_data_end_i(app_rd_data_end)
   						 );
+
+    localparam rstdly_lp = `BSG_MAX(`BSG_MAX(`FPGA_CLK_PERIOD, `LINK_IO_CLK_PERIOD), `UI_CLK_PERIOD) * 10;
+
 	initial begin
 
 		fpga_link_reset_li = 1;
@@ -607,17 +612,23 @@ module traffic_generator
 		fpga_link_upstream_io_reset_li = 1;
 		asic_link_upstream_io_reset = 1;
 
-		#1000;
-
-		fpga_link_token_reset_li = 1;
-		asic_link_token_reset_li = 1;
-
-		#1000;
+		fpga_link_downstream_io_reset_li = 1;
+		asic_link_downstream_io_reset = 1;
 
 		fpga_link_token_reset_li = 0;
 		asic_link_token_reset_li = 0;
 
-		#1000;
+        do #(rstdly_lp); while(ui_clk_sync_rst_i !== 1'b1);
+
+		fpga_link_token_reset_li = 1;
+		asic_link_token_reset_li = 1;
+
+		#(rstdly_lp);
+
+		fpga_link_token_reset_li = 0;
+		asic_link_token_reset_li = 0;
+
+		#(rstdly_lp);
 
 		@(posedge fpga_link_io_clk_li); #1;
   		  	fpga_link_upstream_io_reset_li = 0;
@@ -625,29 +636,21 @@ module traffic_generator
 		@(posedge asic_link_io_clk); #1;
   		  	asic_link_upstream_io_reset = 0;
 
-		#100;
-
-		@(posedge fpga_link_upstream_edge_clk_lo); #1;
-  		  	asic_link_downstream_io_reset = 1;
-
-		@(posedge asic_link_upstream_edge_clk_li); #1;
-			fpga_link_downstream_io_reset_li = 1;
-
-		#1000;
+		#(rstdly_lp);
   	  	@(posedge fpga_link_upstream_edge_clk_lo); #1;
   		  	asic_link_downstream_io_reset = 0;
 
 		@(posedge asic_link_upstream_edge_clk_li); #1;
 			fpga_link_downstream_io_reset_li = 0;
 
-		#1000;	
+		#(rstdly_lp);
   	  	// core link reset
   	  	@(posedge fpga_link_clk); #1;
   	  		fpga_link_reset_li = 0;
 		@(posedge ui_clk); #1;
 			asic_link_reset_li = 0;
 
-		@(posedge trace_reading_done_lo); #1000;
+		@(posedge trace_reading_done_lo); #(rstdly_lp);
 		$finish();
 	end
 

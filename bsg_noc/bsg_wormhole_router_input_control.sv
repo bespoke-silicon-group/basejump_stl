@@ -1,5 +1,9 @@
 `include "bsg_defines.sv"
 
+// This module is primarily used by the wormhole router, but can also be used 
+// as an endpoint decoder with output_dirs_p=1, fifo_decoder_dest_i = '0, and reqs_o ignored, and release_o
+// signaling the end of the packet.
+
 module bsg_wormhole_router_input_control #(parameter `BSG_INV_PARAM(output_dirs_p), parameter `BSG_INV_PARAM(payload_len_bits_p))
    (input clk_i
     , input reset_i

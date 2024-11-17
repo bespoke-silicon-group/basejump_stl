@@ -97,16 +97,7 @@ module bsg_dmc_xilinx_ui_trace_replay
                     );
 
     logic [`BSG_WIDTH(rfifo_depth_p)-1:0] read_credit;
-    bsg_flow_counter #(.els_p(rfifo_depth_p), .count_free_p(1)) fc
-      (.clk_i(clk_i)
-       ,.reset_i(reset_i)
 
-       ,.v_i(app_rd_data_valid_i)
-       ,.ready_param_i(1'b1)
-       ,.yumi_i(read_data_credit)
-
-       ,.count_o(read_credit)
-       );
     wire read_avail = (read_credit >= burst_len_p);
 
     wire trace_is_write = trace_data_lo.app_cmd inside {WP, WR};
@@ -114,6 +105,23 @@ module bsg_dmc_xilinx_ui_trace_replay
     wire trace_is_wdone = trace_data_lo.app_cmd inside {TWT};
     wire trace_is_read = trace_data_lo.app_cmd inside {RP, RD};
     wire trace_is_nop = trace_data_lo.app_cmd inside {TNP};
+
+    // Count down when sending out read command to precent rfifo from overflowing
+    // Assume all reads are burst reads
+    bsg_counter_up_down #( .max_val_p(rfifo_depth_p)
+                         , .init_val_p(rfifo_depth_p)
+                         , .max_step_p(burst_len_p)
+                         ) counter
+
+        ( .clk_i(clk_i)
+        , .reset_i(reset_i)
+
+        , .up_i(`BSG_WIDTH(burst_len_p)'(read_data_credit))
+        , .down_i(`BSG_WIDTH(burst_len_p)'((app_en_o & app_rdy_i & trace_is_read)*burst_len_p))
+
+        , .count_o(read_credit)
+        );
+
     always_comb begin
       state_n = state_r;
 
@@ -130,14 +138,14 @@ module bsg_dmc_xilinx_ui_trace_replay
       trace_v_li = '0;
       trace_yumi_li = '0;
 
-      // TODO: If trace fifo is full before drain command, we can get into a bad state.
-      //   How to recover?
+      // If trace fifo is full and there is an incoming command,
+      // jump to e_drain state automatically to prevent getting stuck
       case(state_r)
         e_fill: begin
           ready_and_o = trace_ready_and_lo;
           trace_v_li = v_i & (trace_data_li.app_cmd != TEX);
 
-          state_n = (v_i & (trace_data_li.app_cmd == TEX)) ? e_drain : e_fill;
+          state_n = (v_i & (trace_data_li.app_cmd == TEX || ready_and_o == '0)) ? e_drain : e_fill;
         end
         e_drain: begin
           app_en_o = trace_v_lo & (trace_is_write | (trace_is_read & read_avail));

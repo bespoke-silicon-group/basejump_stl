@@ -2,6 +2,11 @@
  *  bsg_wormhole_router_adapter_out.sv
  *
  *  packet = {payload, length, cord}
+ *
+ *  Basic module that deserializes an incoming wormhole packet into a wide register.
+ *  This is especially useful for testbenches. (For hardware,
+ *  full deserialization adds latency and area, this is often undesireable, but for
+ *  small packets, it may make sense to use it.)
  */
 
 `include "bsg_defines.sv"

@@ -56,7 +56,7 @@ High speed SPI-like interface for configuration state
 * bsg_dmc
 
 LPDDR1 Dram Controller and PHY.
-Requires advanced knowledge to tapeout.
+Requires advanced knowledge to tapeout. Still experimental.
  
 * bsg_test
 
@@ -66,6 +66,10 @@ Data, clock, and reset generator for test benches.
 
 
 Mirrors the other directories, with tests.
+
+* experimental
+
+Meaty blocks that are potentially useful but may require additional verificaiton.  With further iteration, they may be promoted out of experimental.
 
 * hard
 

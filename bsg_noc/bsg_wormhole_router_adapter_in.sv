@@ -2,6 +2,10 @@
  *  bsg_wormhole_router_adapter_in.sv
  *
  *  packet = {payload, length, cord}
+ *
+ *  Goes from a wide register containing an entire packet to a serialized packet.
+ *  Most useful for testbenches, and in hardware, shorter packets where the data is
+ *  not naturally serialized.
  */
 
 `include "bsg_defines.sv"
