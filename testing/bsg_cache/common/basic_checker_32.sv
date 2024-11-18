@@ -29,7 +29,7 @@ module basic_checker_32
   assign cache_pkt = cache_pkt_i;
 
   logic [data_width_p-1:0] shadow_mem [mem_size_p-1:0];
-  logic [data_width_p-1:0] result [*];
+  logic [data_width_p-1:0] result [integer];
 
   wire [addr_width_p-1:0] cache_pkt_word_addr = cache_pkt.addr[addr_width_p-1:2];
 
@@ -140,16 +140,16 @@ module basic_checker_32
         if (yumi_o) begin
           case (cache_pkt.opcode)
             TAGST: begin
-              result[send_id] = '0;
-              send_id++;
+              result[send_id] <= '0;
+              send_id <= send_id + 1;
             end
             LM, LW, LH, LB, LHU, LBU: begin
-              result[send_id] = load_data_final;
-              send_id++;
+              result[send_id] <= load_data_final;
+              send_id <= send_id + 1;
             end
             SW, SH, SB, SM: begin
-              result[send_id] = '0;
-              send_id++;
+              result[send_id] <= '0;
+              send_id <= send_id + 1;
               for (integer i = 0; i < data_mask_width_lp; i++)
                 if (store_mask[i])
                   shadow_mem[cache_pkt_word_addr][8*i+:8] <= store_data[8*i+:8];
@@ -208,8 +208,8 @@ module basic_checker_32
                 : load_data;
             end
             ALOCK, AUNLOCK, TAGFL, AFLINV, AFL: begin
-              result[send_id] = '0;
-              send_id++;
+              result[send_id] <= '0;
+              send_id <= send_id + 1;
             end
           endcase
         end
@@ -219,7 +219,7 @@ module basic_checker_32
           assert(result[recv_id] == data_o)
             else $fatal(1, "[BSG_FATAL] output does not match expected result. Id=%d, Expected: %x. Actual: %x.",
                     recv_id, result[recv_id], data_o);
-          recv_id++;
+          recv_id <= recv_id + 1;
         end
       end
     end
