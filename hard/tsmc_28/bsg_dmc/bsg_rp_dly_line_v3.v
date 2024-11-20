@@ -18,12 +18,13 @@
      );
 
     wire set_left, set_right, set;
-    wire ctl_n, ctl_r;
+    wire _ctl_n, ctl_n, ctl_r;
 
     AN2D1BWP7T30P140ULVT A0 (.A1(shift_right), .A2(ctl_m1), .Z(set_right));
     AN2D1BWP7T30P140ULVT A1 (.A1(shift_left), .A2(ctl_p1), .Z(set_left));
     OR2D1BWP7T30P140ULVT O0 (.A1(set_left), .A2(set_right), .Z(set));
-    MUX2D1BWP7T30P140ULVT M0 (.Z(ctl_n), .S(counter_en), .I0(ctl_r), .I1(set));
+    MUX2D1BWP7T30P140ULVT M0 (.Z(_ctl_n), .S(counter_en), .I0(ctl_r), .I1(set));
+    DEL025D1BWP7T30P140ULVT H0 (.Z(ctl_n), .I(_ctl_n));
     DFCSNQD1BWP7T30P140ULVT D0 (.Q(ctl_r), .CP(clk_i), .D(ctl_n), .CDN(async_reset_neg), .SDN(async_set_neg));
 
     assign ctl_o = ctl_r;
@@ -36,36 +37,34 @@ endmodule
    (input clk_i
     , input async_reset_neg
     , input meta
+    , output trigger_off
+    , output counter_en
+    , output pause
     , output trigger_on
     , output [64-1:0] ctl_r
     );
 
-  wire lobit;
-  TIELBWP7T30P140ULVT T0 (.ZN(lobit));
-  wire hibit;
-  TIEHBWP7T30P140ULVT T1 (.Z(hibit));
+  wire _lobit, lobit;
+  TIELBWP7T30P140ULVT T0 (.ZN(_lobit));
+  BUFFD4BWP7T30P140ULVT B0 (.Z(lobit));
+
+  wire _hibit, hibit;
+  TIEHBWP7T30P140ULVT T1 (.Z(_hibit));
+  BUFFD4BWP7T30P140ULVT B1 (.Z(hibit));
 
   // State machine
-  wire _trigger_off, trigger_off;
-  wire _counter_en;
-  wire _pause, pause;
-  wire _trigger_on;
   // Trigger off
-  DFSNQD1BWP7T30P140ULVT D0 (.Q(_trigger_off), .CP(clk_i), .D(trigger_on), .SDN(async_reset_neg));
-  DEL025D1BWP7T30P140ULVT H0 (.Z(trigger_off), .I(_trigger_off));
+  DFSNQD4BWP7T30P140ULVT D0 (.Q(trigger_off), .CP(clk_i), .D(trigger_on), .SDN(async_reset_neg));
   // Change counter
-  DFCNQD1BWP7T30P140ULVT D1 (.Q(_counter_en), .CP(clk_i), .D(trigger_off), .CDN(async_reset_neg));
-  DEL025D1BWP7T30P140ULVT H1 (.Z(counter_en), .I(_counter_en));
+  DFCNQD4BWP7T30P140ULVT D1 (.Q(counter_en), .CP(clk_i), .D(trigger_off), .CDN(async_reset_neg));
   // Pause
-  DFCNQD1BWP7T30P140ULVT D2 (.Q(_pause), .CP(clk_i), .D(counter_en), .CDN(async_reset_neg));
-  DEL025D1BWP7T30P140ULVT H2 (.Z(pause), .I(_pause));
+  DFCNQD4BWP7T30P140ULVT D2 (.Q(pause), .CP(clk_i), .D(counter_en), .CDN(async_reset_neg));
   // Trigger on
-  DFCNQD1BWP7T30P140ULVT D3 (.Q(_trigger_on), .CP(clk_i), .D(pause), .CDN(async_reset_neg));
-  DEL025D1BWP7T30P140ULVT H3 (.Z(trigger_on), .I(_trigger_on));
+  DFCNQD4BWP7T30P140ULVT D3 (.Q(trigger_on), .CP(clk_i), .D(pause), .CDN(async_reset_neg));
 
   wire meta_sync, meta_sync_sync, meta_sync_sync_inv;
-  DFCND1BWP7T30P140ULVT bsg_SYNC_1_r (.Q(meta_sync), .QN(), .CP(clk_i), .D(meta), .CDN(async_reset_neg));
-  DFCND1BWP7T30P140ULVT bsg_SYNC_2_r (.Q(meta_sync_sync), .QN(meta_sync_sync_inv), .CP(clk_i), .D(meta_sync), .CDN(async_reset_neg));
+  DFCND4BWP7T30P140ULVT bsg_SYNC_1_r (.Q(meta_sync), .QN(), .CP(clk_i), .D(meta), .CDN(async_reset_neg));
+  DFCND4BWP7T30P140ULVT bsg_SYNC_2_r (.Q(meta_sync_sync), .QN(meta_sync_sync_inv), .CP(clk_i), .D(meta_sync), .CDN(async_reset_neg));
   wire shift_left = meta_sync_sync;
   wire shift_right = meta_sync_sync_inv;
 
@@ -982,10 +981,10 @@ endmodule
   
 
   wire fb_inv;
-  CKND1BWP7T30P140ULVT I0 (.ZN(fb_inv), .I(clk_i));
+  CKND4BWP7T30P140ULVT I0 (.ZN(fb_inv), .I(clk_i));
   wire gate_en_sync_1_r, gate_en_sync_2_r;
-  DFQD1BWP7T30P140ULVT S1 (.D(trigger_i), .CP(clk_i), .Q(gate_en_sync_1_r));
-  DFQD1BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(clk_i), .Q(gate_en_sync_2_r));
+  DFQD4BWP7T30P140ULVT S1 (.D(trigger_i), .CP(clk_i), .Q(gate_en_sync_1_r));
+  DFQD4BWP7T30P140ULVT S2 (.D(gate_en_sync_1_r), .CP(clk_i), .Q(gate_en_sync_2_r));
   wire fb_gated;
   CKLNQD20BWP7T30P140ULVT CG0 (.Q(fb_gated), .CP(clk_i), .E(gate_en_sync_2_r), .TE(lobit));
   wire [8:0] fb_col;
@@ -1138,7 +1137,7 @@ endmodule
   wire #100 clk_dly = n[8];
 
   wire meta;
-  DFNCND1BWP7T30P140ULVT meta_r (.Q(meta), .QN(), .CPN(clk_i), .CDN(async_reset_neg), .D(clk_dly));
+  DFNCND4BWP7T30P140ULVT meta_r (.Q(meta), .QN(), .CPN(clk_i), .CDN(async_reset_neg), .D(clk_dly));
 
 
 
