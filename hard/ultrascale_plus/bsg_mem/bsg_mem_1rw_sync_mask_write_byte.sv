@@ -1,4 +1,41 @@
 
+/*
+* bsg_mem_1rw_sync_mask_write_byte.sv
+*
+* 1-port byte write mask block ram for xilinx ultrascale or ultrascale plus FPGA
+* Write mode: No-change | Read mode: No-change
+* Note:
+* There are 2 basic BRAM library primitives, RAMB18E2 and RAMB36E2 in Vivado
+* There is 1 URAM library primitive, URAM288 in Vivado
+* All of them support byte write enable
+*
+* Refer to Vivado Design Suite User Guide: Synthesis (UG901), Byte Write Enable (Block RAM)
+* https://docs.xilinx.com/v/u/2019.1-English/ug901-vivado-synthesis
+*
+*
+* By default, the tool selects which type of RAM to infer based upon heuristics
+* that give the best results for most designs. Possible RAM mappings are:
+*
+* ┌───────────┬──────────┬──────┬─────┬─────┬─────┬──────────────────────────────┐
+* │ RAM Type  │Primitives│ Size │PortA│PortB│wb_en│           Mapping            │
+* ├───────────┼──────────┼──────┼─────┼─────┼─────┼──────────────────────────────┤
+* │Distributed│  LUTRAM  │ N/A  │ N/A │ N/A │ N/A │Memory with small depth       │
+* ├───────────┼──────────┼──────┼─────┼─────┼─────┼──────────────────────────────┤
+* │           │ RAMB18E2 │ 18Kb │ W R │  -  │  Y  │Width narrower than 2 bytes   │
+* │ Block RAM ├──────────┼──────┼─────┼─────┼─────┼──────────────────────────────┤
+* │           │ RAMB36E2 │ 36Kb │ W R │  -  │  Y  │Width narrower than 4 bytes   │
+* ├───────────┼──────────┼──────┼─────┼─────┼─────┼──────────────────────────────┤
+* │ Ultra RAM │ URAM288  │288Kb │ W R │  -  │  Y  │Width wider than 4 bytes      │
+* └───────────┴──────────┴──────┴─────┴─────┴─────┴──────────────────────────────┘
+*
+* To force the RAM into a specific type, use the RAM_STYLE attribute to tell
+* Vivado synthesis to infer the target primitives:
+*
+* (* ram_style = "x" *) logic [data_size-1:0] mem [2**addr_size-1:0];
+* Where x = [block, distributed, registers, ultra]
+*
+*/
+
 `include "bsg_defines.sv"
 
 // From vivado template
