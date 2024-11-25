@@ -10,7 +10,7 @@ There are 3 components for implementing hardened SRAMs:
 
       will result in a 512x64 (mux 2) RAM taking the place of any instantiated 512x64 RAMs in the chip. The fallthrough default case is to synthesize the RAM.
 
-- The actual hardened SRAM macro. This is generate by the user using the memory generator, ideally with a script. These should be named as per the scheme in the bsg\_mem\_\*.vh macro headers and their .lib / .v views should be accessible to the CAD tools as needed.
+- The actual hardened SRAM macro. This is generate by the user using the memory generator, ideally with a script. These should be named as per the scheme in the bsg\_mem\_\*.vh macro headers and their .lib / .v views should be accessible to the CAD tools as needed. We provide an example script, generate_memory_files.py, but this is likely not compatible with your memory generator and is just an example.
 
 Because the SRAMs generated depends on each project's requirements, it is most convenient if this wrapper is generated as well. We provide a generic generator script in this directory which can be used to generate a set of these SRAM wrappers which is process agnostic (The process information is included based on the .vh macro headers). The input to this generator script (bsg\_mem\_generator.py) is a json file. We have a sample memgen.json in this directory. This same memgen.json can be used for feeding the SRAM generator itself, which is useful for keeping front-end and back-end in sync. An example line from the memgen.json is:
 
