@@ -1,4 +1,3 @@
-
 /*
 * bsg_mem_1rw_sync_mask_write_byte.sv
 *
@@ -38,91 +37,70 @@
 
 `include "bsg_defines.sv"
 
-// From vivado template
-// Single-Port BRAM with Byte-wide Write Enable
-// Read-First mode
-// Single-process description
-// Compact description of the write with a generate-for 
-//   statement
-// Column width and number of columns easily configurable
-//
-// bytewrite_ram_1b.v
-//
+module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p)
+                                          ,parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
 
-module bytewrite_ram_1b (clk, ena, enb, we, addr, di, dout);
+                                          ,parameter `BSG_INV_PARAM(data_width_p )
+                                          ,parameter latch_last_read_p=0
+                                          ,parameter write_mask_width_lp = data_width_p>>3
+                                          ,parameter enable_clock_gating_p=0
+                                         )
+  ( input clk_i
+   ,input reset_i
 
-parameter SIZE = 1024; 
-parameter ADDR_WIDTH = 10; 
-parameter COL_WIDTH = 8; 
-parameter NB_COL = 4;
+   ,input v_i
+   ,input w_i
 
-input clk;
-input ena;
-input enb;
-input [NB_COL-1:0] we;
-input [ADDR_WIDTH-1:0] addr;
-input [NB_COL*COL_WIDTH-1:0] di;
-output reg [NB_COL*COL_WIDTH-1:0] dout;
+   ,input [addr_width_lp-1:0]       addr_i
+   ,input [`BSG_SAFE_MINUS(data_width_p, 1):0]        data_i
+    // for each bit set in the mask, a byte is written
+   ,input [`BSG_SAFE_MINUS(write_mask_width_lp, 1):0] write_mask_i
 
-reg [NB_COL*COL_WIDTH-1:0] RAM [SIZE-1:0];
+   ,output logic [`BSG_SAFE_MINUS(data_width_p, 1):0] data_o
+  );
 
-always @(posedge clk)
-begin
-    if (ena)
-        dout <= RAM[addr];
-end
+  wire unused = reset_i;
 
-generate genvar i;
-for (i = 0; i < NB_COL; i = i+1)
-begin
-always @(posedge clk)
-begin
-    if (enb & we[i])
-        RAM[addr][(i+1)*COL_WIDTH-1:i*COL_WIDTH] <= di[(i+1)*COL_WIDTH-1:i*COL_WIDTH];
-    end 
-end
-endgenerate
+  if (data_width_p == 0)
+  begin: z
+    wire unused0 = &{clk_i, v_i, w_i, addr_i, data_i, write_mask_i};
+    assign data_o = '0;
+  end
+  else
+  begin: nz
+
+  /* WARNING: Vivado will automatically choose between BRAM and URAM.
+   *
+   * We also can support URAM-only inference
+   * (https://github.com/bespoke-silicon-group/basejump_stl/pull/564/files)
+   * if we provide a hardened switch file which can choose between
+   * BRAM and URAM inference based on depth and width parameterizations.
+   */
+
+    logic [data_width_p-1:0] mem [els_p-1:0];
+    logic [write_mask_width_lp-1:0] write_enable;
+
+  /* In order to synthesize into a byte masked BRAM/URAM, follow instruction in
+   * Xilinx doc "UG901", Section "Byte Write Enable (Block RAM)"
+   *
+   * Note: must follow the example code line-to-line, Vivado is very inflexible on this
+   */
+
+    for(genvar i = 0; i < write_mask_width_lp; i++)
+      begin: write
+        assign write_enable[i] = w_i & write_mask_i[i];
+        always_ff @(posedge clk_i)
+            if(v_i)
+                if(write_enable[i])
+                    mem[addr_i][i*8+:8] <= data_i[i*8+:8];
+      end
+
+    always_ff @(posedge clk_i)
+        if(v_i)
+            if(~|write_enable)
+                data_o <= mem[addr_i];
+
+  end
 
 endmodule
-
- module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(data_width_p)
-                           , parameter `BSG_INV_PARAM(els_p)
-                           , parameter latch_last_read_p=0
-                           , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
-                           , parameter write_mask_width_lp = data_width_p>>3
-                           , parameter enable_clock_gating_p=0
-                           , parameter harden_p=1
-                           )
-   ( input clk_i
-    ,input reset_i
-
-    ,input v_i
-    ,input w_i
-
-    ,input [addr_width_lp-1:0]       addr_i
-    ,input [`BSG_SAFE_MINUS(data_width_p, 1):0]        data_i
-     // for each bit set in the mask, a byte is written
-    ,input [`BSG_SAFE_MINUS(write_mask_width_lp, 1):0] write_mask_i
-
-    ,output logic [`BSG_SAFE_MINUS(data_width_p, 1):0] data_o
-   );
-
-     bytewrite_ram_1b #(
-         .COL_WIDTH(8)
-		 ,.NB_COL(write_mask_width_lp)
-         ,.SIZE(els_p)
-		 ,.ADDR_WIDTH(addr_width_lp)
-     ) ram (
-		.clk(clk_i)
-        ,.ena(v_i & ~w_i)
-        ,.enb(v_i &  w_i)
-		,.we(write_mask_i)
-		,.addr(addr_i)
-        ,.di(data_i)
-        ,.dout(data_o)
-     );
-
- endmodule
-
- `BSG_ABSTRACT_MODULE(bsg_mem_1rw_sync_mask_write_byte)
-
+`BSG_ABSTRACT_MODULE(bsg_mem_1rw_sync_mask_write_byte)
