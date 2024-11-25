@@ -5,7 +5,7 @@
 //
 
 `define bsg_mem_1rw_sync_macro_byte(words,bits,lgEls,mux) \
-if (els_p == words && data_width_p == bits)               \
+if (harden_p && els_p == words && data_width_p == bits)   \
   begin: macro                                            \
     wire [data_width_p-1:0] wen;                          \
     genvar i;                                             \
@@ -24,7 +24,7 @@ if (els_p == words && data_width_p == bits)               \
   end
 
 `define bsg_mem_1rf_sync_macro_byte(words,bits,lgEls,mux) \
-if (els_p == words && data_width_p == bits)               \
+if (harden_p && els_p == words && data_width_p == bits)               \
   begin: macro                                            \
     wire [data_width_p-1:0] wen;                          \
     genvar i;                                             \
@@ -79,6 +79,7 @@ module bsg_mem_1rw_sync_mask_write_byte
   ,parameter `BSG_INV_PARAM(data_width_p )
   ,parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
   ,parameter write_mask_width_lp = data_width_p>>3
+  ,parameter harden_p=1
   )
 
   (input                           clk_i

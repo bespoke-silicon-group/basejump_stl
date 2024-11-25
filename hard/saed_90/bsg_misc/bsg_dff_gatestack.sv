@@ -1,4 +1,4 @@
-module bsg_dff_gatestack #(width_p="inv", harden_p=1)
+module bsg_dff_gatestack #(width_p="inv", harden_p=0)
    (input [width_p-1:0] i0
     , input [width_p-1:0] i1
     , output logic [width_p-1:0] o
