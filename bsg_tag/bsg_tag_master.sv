@@ -36,7 +36,7 @@ module bsg_tag_master
     , output bsg_tag_s [els_p-1:0] clients_r_o
     );
 
-   `declare_bsg_tag_header_s(els_p,lg_width_p)
+   `declare_bsg_tag_header_s(els_p,lg_width_p);
 
    localparam max_packet_len_lp    = `bsg_tag_max_packet_len(els_p,lg_width_p);
 
