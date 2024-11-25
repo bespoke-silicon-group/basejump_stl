@@ -1,5 +1,5 @@
 /*
-* bsg_mem_1r1w_sync_mask_write_byte.v
+* bsg_mem_1r1w_sync_mask_write_byte.sv
 *
 * 2-ports byte write mask block ram for xilinx ultrascale or ultrascale plus FPGA
 * Write mode: No-change | Read mode: No-change
@@ -37,7 +37,7 @@
 *
 */
 
-`include "bsg_defines.v"
+`include "bsg_defines.sv"
 
 module bsg_mem_1r1w_sync_mask_write_byte #(parameter `BSG_INV_PARAM(width_p)
                                          , parameter `BSG_INV_PARAM(els_p)
