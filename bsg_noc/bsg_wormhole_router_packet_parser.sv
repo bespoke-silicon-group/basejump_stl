@@ -1,3 +1,5 @@
+`include "bsg_defines.sv"
+
 // This module parses a packet as it comes in from a fifo
 // indicating where the first and last flits are
 //
