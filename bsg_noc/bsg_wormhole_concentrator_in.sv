@@ -35,36 +35,20 @@ module bsg_wormhole_concentrator_in
   ,input reset_i
 
   // unconcentrated multiple links
-  ,input  [num_in_p-1:0][`bsg_ready_and_link_sif_width(flit_width_p)-1:0] links_i
-  ,output [num_in_p-1:0][`bsg_ready_and_link_sif_width(flit_width_p)-1:0] links_o
+  ,input  [num_in_p-1:0]                   links_v_i
+  ,input  [num_in_p-1:0][flit_width_p-1:0] links_data_i
+  ,output [num_in_p-1:0]                   links_ready_and_rev_o
+//  ,output [num_in_p-1:0][`bsg_ready_and_link_sif_width(flit_width_p)-1:0] links_o
 
   // concentrated single link
-  ,input  [`bsg_ready_and_link_sif_width(flit_width_p)-1:0] concentrated_link_i
-  ,output [`bsg_ready_and_link_sif_width(flit_width_p)-1:0] concentrated_link_o
+  ,input                     concentrated_link_ready_and_rev_i
+  ,output                    concentrated_link_v_o
+  ,output [flit_width_p-1:0] concentrated_link_data_o
   );
 
-  `declare_bsg_ready_and_link_sif_s(flit_width_p,bsg_ready_and_link_sif_s);
   `declare_bsg_wormhole_concentrator_header_s(cord_width_p, len_width_p, cid_width_p, bsg_wormhole_concentrator_header_s);
   
-  bsg_ready_and_link_sif_s [num_in_p-1:0] links_i_cast, links_o_cast;
-  bsg_ready_and_link_sif_s concentrated_link_i_cast, concentrated_link_o_cast;
-  
-  assign links_i_cast = links_i;
-  assign links_o = links_o_cast;
-  
-  assign concentrated_link_i_cast = concentrated_link_i;
-  assign concentrated_link_o = concentrated_link_o_cast;
- 
   genvar i,j;
-
-  // Stub unused links
-  for (i = 0; i < num_in_p; i++)
-    begin : stub
-      assign links_o_cast[i].v    = 1'b0;
-      assign links_o_cast[i].data = '0;
-    end
-    
-  assign concentrated_link_o_cast.ready_and_rev = 1'b0;
 
   /********** From unconcentrated side to concentrated side **********/
   
@@ -86,9 +70,11 @@ module bsg_wormhole_concentrator_in
       bsg_two_fifo #(.width_p(flit_width_p)) twofer
         (.clk_i
         ,.reset_i
-        ,.ready_param_o (links_o_cast[i].ready_and_rev)
-        ,.data_i        (links_i_cast[i].data)
-        ,.v_i           (links_i_cast[i].v)
+
+        ,.v_i           (links_v_i   [i])
+        ,.data_i        (links_data_i[i])
+        ,.ready_param_o (links_ready_and_rev_o[i])
+
         ,.v_o           (fifo_valid_lo[i])
         ,.data_o        (fifo_data_lo [i])
         ,.yumi_i        (yumis[i])
@@ -121,8 +107,8 @@ module bsg_wormhole_concentrator_in
     ,.release_i   (releases     )
     ,.valid_i     (fifo_valid_lo)
     ,.yumi_o      (yumis        )
-    ,.ready_and_i (concentrated_link_i_cast.ready_and_rev)
-    ,.valid_o     (concentrated_link_o_cast.v)
+    ,.ready_and_i (concentrated_link_ready_and_rev_i)
+    ,.valid_o     (concentrated_link_v_o)
     ,.data_sel_o  (data_sel_lo)
     );
   
@@ -131,7 +117,7 @@ module bsg_wormhole_concentrator_in
                    ) data_mux
     (.data_i       (fifo_data_lo)
     ,.sel_one_hot_i(data_sel_lo)
-    ,.data_o       (concentrated_link_o_cast.data)
+    ,.data_o       (concentrated_link_data_o)
     );
 
 endmodule // bsg_wormhole_concentrator_in
