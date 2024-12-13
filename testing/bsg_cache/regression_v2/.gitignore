@@ -2,3 +2,5 @@
 out
 test_result.log
 vc_hdrs.h
+simsc
+obj_dir
