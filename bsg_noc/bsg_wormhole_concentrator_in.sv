@@ -38,7 +38,6 @@ module bsg_wormhole_concentrator_in
   ,input  [num_in_p-1:0]                   links_v_i
   ,input  [num_in_p-1:0][flit_width_p-1:0] links_data_i
   ,output [num_in_p-1:0]                   links_ready_and_rev_o
-//  ,output [num_in_p-1:0][`bsg_ready_and_link_sif_width(flit_width_p)-1:0] links_o
 
   // concentrated single link
   ,input                     concentrated_link_ready_and_rev_i
