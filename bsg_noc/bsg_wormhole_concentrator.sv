@@ -50,14 +50,22 @@ module bsg_wormhole_concentrator
   ,output [link_width_lp-1:0] concentrated_link_o
   );
 
+
+   logic [num_in_p-1:0] links_v_li;
+   logic [num_in_p-1:0][flit_width_p-1:0] links_data_li;
+   
   `declare_bsg_ready_and_link_sif_s(flit_width_p,bsg_ready_and_link_sif_s);
   
   bsg_ready_and_link_sif_s [num_in_p-1:0] links_i_cast, links_o_cast;
-  bsg_ready_and_link_sif_s [num_in_p-1:0] links_o_stubbed_v, links_o_stubbed_ready;
-  
+  logic [num_in_p-1:0] links_ready_and_rev_lo, links_ready_and_rev_li;
+   
   bsg_ready_and_link_sif_s concentrated_link_i_cast, concentrated_link_o_cast;
-  bsg_ready_and_link_sif_s concentrated_link_o_stubbed_v, concentrated_link_o_stubbed_ready;
-  
+
+  logic [num_in_p-1:0][flit_width_p-1:0] links_data_lo;
+  logic [num_in_p-1:0] 	          	 links_v_lo;
+ 
+  logic 	       concentrated_link_ready_and_rev_lo;
+   
   assign links_i_cast = links_i;
   assign links_o = links_o_cast;
 
@@ -66,14 +74,18 @@ module bsg_wormhole_concentrator
   
   for (genvar i = 0; i < num_in_p; i++)
     begin : cast
-      assign links_o_cast[i].data          = links_o_stubbed_ready[i].data;
-      assign links_o_cast[i].v             = links_o_stubbed_ready[i].v;
-      assign links_o_cast[i].ready_and_rev = links_o_stubbed_v[i].ready_and_rev;
+       assign links_o_cast[i].v             = links_v_lo   [i];
+       assign links_o_cast[i].data          = links_data_lo[i];
+
+       assign links_o_cast[i].ready_and_rev = links_ready_and_rev_lo[i];
+
+       assign links_ready_and_rev_li[i]        = links_i_cast[i].ready_and_rev;
+
+       assign links_v_li[i]    = links_i_cast[i].v;
+       assign links_data_li[i] = links_i_cast[i].data;       
     end
 
-  assign concentrated_link_o_cast.data          = concentrated_link_o_stubbed_ready.data;
-  assign concentrated_link_o_cast.v             = concentrated_link_o_stubbed_ready.v;
-  assign concentrated_link_o_cast.ready_and_rev = concentrated_link_o_stubbed_v.ready_and_rev;
+  assign concentrated_link_o_cast.ready_and_rev = concentrated_link_ready_and_rev_lo;
 
   bsg_wormhole_concentrator_in
    #(.flit_width_p(flit_width_p)
@@ -88,11 +100,13 @@ module bsg_wormhole_concentrator
     (.clk_i(clk_i)
      ,.reset_i(reset_i)
 
-     ,.links_i(links_i)
-     ,.links_o(links_o_stubbed_v)
+     ,.links_v_i            (links_v_li)
+     ,.links_data_i         (links_data_li)
+     ,.links_ready_and_rev_o(links_ready_and_rev_lo)
 
-     ,.concentrated_link_i(concentrated_link_i)
-     ,.concentrated_link_o(concentrated_link_o_stubbed_ready)
+     ,.concentrated_link_ready_and_rev_i(concentrated_link_i_cast.ready_and_rev)
+     ,.concentrated_link_v_o            (concentrated_link_o_cast.v)
+     ,.concentrated_link_data_o         (concentrated_link_o_cast.data)
      );
 
   bsg_wormhole_concentrator_out
@@ -108,11 +122,13 @@ module bsg_wormhole_concentrator
     (.clk_i(clk_i)
      ,.reset_i(reset_i)
 
-     ,.links_i(links_i)
-     ,.links_o(links_o_stubbed_ready)
+     ,.links_v_o            (links_v_lo)
+     ,.links_data_o         (links_data_lo)
+     ,.links_ready_and_rev_i(links_ready_and_rev_li)
 
-     ,.concentrated_link_i(concentrated_link_i)
-     ,.concentrated_link_o(concentrated_link_o_stubbed_v)
+     ,.concentrated_link_v_i            (concentrated_link_i_cast.v        )
+     ,.concentrated_link_data_i         (concentrated_link_i_cast.data     )     
+     ,.concentrated_link_ready_and_rev_o(concentrated_link_ready_and_rev_lo)
      );
 
 endmodule
