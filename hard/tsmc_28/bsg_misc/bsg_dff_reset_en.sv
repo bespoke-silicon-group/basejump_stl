@@ -4,11 +4,12 @@
 `define bsg_dff_reset_en_macro(bits,strength)                      \
 if (harden_p && (width_p==bits) && (strength_p==strength) && (reset_val_p==0)) \
   begin: macro                                                \
-    wire [width_p-1:0] data_en;                               \
+    wire [width_p-1:0] data_n, tielo;                         \
     for (genvar j = 0; j < width_p; j++)                      \
       begin : d                                               \
-        NR2D4BWP7T40P140 n_BSG_RESIZE_OK (.A1(data_i[j]), .A2(reset_i), .ZN(data_en[j])); \
-        DFMQD``strength``BWP7T40P140 d_BSG_DONT_TOUCH (.CP(clk_i), .SA(en_i), .DA(data_en[j]), .DB(data_o[j]), .Q(data_o[j])); \
+        TIELBWP7T40P140 t_BSG_DONT_TOUCH (.ZN(tielo[j])); \
+        MUX3D``strength``BWP7T40P140 m_BSG_RESIZE_OK (.I0(data_o[j]), .I1(data_i[j]), .I2(tielo[j]), .S0(en_i), .S1(reset_i), .Z(data_n[j])); \
+        DFQD``strength``BWP7T40P140 d_BSG_DONT_TOUCH (.CP(clk_i), .D(data_n[j]), .Q(data_o[j])); \
       end                                                     \
   end
 
