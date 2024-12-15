@@ -3,8 +3,9 @@
 // 
 // 08/2019
 //
-// This is an adapter between 1 concentrated wormhole link and N unconcentrated wormhole links.
-// Extra bits (cid) are used in wormhole header to indicate wormhole packet destination.
+// This is an adapter from N unconcentrated wormhole links to one concentrated wormhole link.
+// Extra bits (cid) are used in wormhole header to indicate wormhole packet destination, but these
+// are set by the sender and not by the concentrator. This field can be set to zero width.
 //
 // From implementation perspective this is a simplified version bsg_wormhole_router.
 // Wormhole_router relies on 2D routing_matrix, while wormhole_concentrator has fixed 1-to-n 
