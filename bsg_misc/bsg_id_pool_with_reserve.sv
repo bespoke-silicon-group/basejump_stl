@@ -1,5 +1,5 @@
 /**
- *    bsg_id_pool.sv
+ *    bsg_id_pool_with_reserve.sv
  *
  *    This module maintains of a pool of IDs, and supports allocation and deallocation of these IDs.
  *    Often used to implement a "coatcheck", where you need to retain metadata for a set of transactions,
@@ -10,13 +10,16 @@
 
 `include "bsg_defines.sv"
 
-module bsg_id_pool
+module bsg_id_pool_with_reserve
   #(parameter `BSG_INV_PARAM(els_p)
     , parameter id_width_lp=`BSG_SAFE_CLOG2(els_p)
   ) 
   (
     input clk_i,
     input reset_i
+
+    // IDs that you do not want to be allocated (one hot)
+    , input logic [els_p-1:0] reserve_i
 
     // next available id
     , output logic [id_width_lp-1:0] alloc_id_o
@@ -31,7 +34,10 @@ module bsg_id_pool
 
   // keeps track of which id has been allocated.
   logic [els_p-1:0] allocated_r;
+  logic [els_p-1:0] allocated_or_reserved_li;
 
+  assign allocated_or_reserved_li = allocated_r | reserved_i;
+  
   // next id to dealloc
   logic [els_p-1:0] dealloc_decode;
   bsg_decode_with_v #(
@@ -53,7 +59,7 @@ module bsg_id_pool
     .width_p(els_p)
     ,.lo_to_hi_p(1)
   ) pe0 (
-    .i(~allocated_r | dealloc_decode)
+    .i(~allocated_or_reserved_li  | dealloc_decode)
     ,.o(one_hot_out)
     ,.v_o(alloc_v_lo)
   );
@@ -90,6 +96,7 @@ module bsg_id_pool
     if (~reset_i) begin
       if (dealloc_v_i) begin
         assert(allocated_r[dealloc_id_i]) else $error("Cannot deallocate an id that hasn't been allocated.");
+        assert(reserved_i [dealloc_id_i]) else $error("Cannot deallocate an id that is reserved.");
         assert(dealloc_id_i < els_p) else $error("Cannot deallocate an id that is outside the range.");
       end
 
@@ -106,4 +113,4 @@ module bsg_id_pool
 
 endmodule
 
-`BSG_ABSTRACT_MODULE(bsg_id_pool)
+`BSG_ABSTRACT_MODULE(bsg_id_pool_with_reserve)
