@@ -4,6 +4,9 @@
  *    This module maintains of a pool of IDs, and supports allocation and deallocation of these IDs.
  *    Often used to implement a "coatcheck", where you need to retain metadata for a set of transactions,
  *    which may come back out-of-order.
+ *
+ *   The reserve feature allows certain IDs to be removed from the pool, for example to work around defects
+ *   in hardware.
  */
 
 
