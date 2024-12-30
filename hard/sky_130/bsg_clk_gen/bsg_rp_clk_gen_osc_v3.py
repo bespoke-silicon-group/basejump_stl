@@ -44,8 +44,9 @@ print("""
   wire fb_gate;
   sky130_fd_sc_hd__clkinv_4 I3 (.Y(fb_gate), .A(fb_dly));
   wire gate_en_sync_1_r, gate_en_sync_2_r;
-  sky130_fd_sc_hd__dfxtp_1 S1 (.D(trigger_i), .CLK(fb_gate), .Q(gate_en_sync_1_r));
-  sky130_fd_sc_hd__dfxtp_1 S2 (.D(gate_en_sync_1_r), .CLK(fb_gate), .Q(gate_en_sync_2_r));
+  sky130_fd_sc_hd__dfrtp_1 hard_sync_int1_BSG_SYNC (.RESET_B(async_reset_neg), .D(trigger_i), .CLK(fb_gate), .Q(gate_en_sync_1_r));
+  sky130_fd_sc_hd__dfrtp_1 hard_sync_int2_BSG_SYNC (.RESET_B(async_reset_neg), .D(gate_en_sync_1_r), .CLK(fb_gate), .Q(gate_en_sync_2_r));
+
   wire fb_gated;
   // Size to 1/4 of number of taps
   sky130_fd_sc_hd__dlclkp_1 CG0 (.GCLK(fb_gated), .CLK(fb_gate), .GATE(gate_en_sync_2_r));

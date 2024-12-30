@@ -160,7 +160,7 @@ endmodule
                                          ,.oclk_data_o(oclk_data_o[width_p-1-:num])  \
                                          ); end
 
-module bsg_launch_sync_sync #(parameter `BSG_INV_PARAM(width_p)
+module bsg_launch_sync_sync #(parameter width_p = 1
                               , parameter use_negedge_for_launch_p = 0
                               , parameter use_async_reset_p = 0)
    (input iclk_i
