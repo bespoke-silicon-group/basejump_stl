@@ -1,6 +1,6 @@
 
 //
-// Context: The tsmc28 PDK we used did not have a sync cell
+// Context: Some PDKs do not have a sync cell
 //   to use explicitly, so we compose one ourselves and call
 //   it a synchronization 'unit'.
 //
@@ -19,27 +19,35 @@
 //   correct, then this uncertainty is pessimistic and can be waived with
 //   set_false_path -hold -from bsg_SYNC_1_r/Q -to bsg_SYNC_1_r/D
 //
-module bsg_sync_sync_unit
+module bsg_sync_sync_unit #(parameter `BSG_INV_PARAM(width_p)
+                            , parameter `BSG_INV_PARAM(harden_p)
+                            )
  (input oclk_i
   , input iclk_data_i
   , output oclk_data_o // after sync flops
   );
 
-  logic bsg_SYNC_1_r, bsg_SYNC_2_r;
+  logic [width_p-1:0] bsg_SYNC_1_r, bsg_SYNC_2_r;
 
-  sky130_fd_sc_hd__dfxtp_1 hard_sync_int1_BSG_SYNC
-   (.CLK(oclk_i)
-   ,.D(iclk_data_i)
-   ,.Q(bsg_SYNC_1_r)
-   );
+  bsg_dff
+   #(.width_p(width_p), .harden_p(harden_p))
+   hard_sync_int1_BSG_SYNC
+    (.clk_i(oclk_i)
+     ,.data_i(iclk_data_i)
+     ,.data_o(bsg_SYNC_1_r)
+     );
 
-  sky130_fd_sc_hd__dfxtp_1 hard_sync_int2_BSG_SYNC
-   (.CLK(oclk_i)
-   ,.D(bsg_SYNC_1_r)
-   ,.Q(bsg_SYNC_2_r)
-   );
+  bsg_dff
+   #(.width_p(width_p), .harden_p(harden_p))
+   hard_sync_int2_BSG_SYNC
+    (.clk_i(oclk_i)
+     ,.data_i(bsg_SYNC_1_r)
+     ,.data_o(bsg_SYNC_2_r)
+     );
 
   assign oclk_data_o = bsg_SYNC_2_r;
 
 endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_sync_sync_unit)
 
