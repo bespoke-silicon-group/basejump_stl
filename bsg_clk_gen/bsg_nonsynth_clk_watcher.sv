@@ -18,40 +18,40 @@ module bsg_nonsynth_clk_watcher #(tolerance_p=0)
    longint                    cycles_negedge = -1;
    longint                    temp_time;
 
-   always @(posedge clk_i)
+   always_ff @(posedge clk_i)
      begin
         temp_time = $time;
 
         if ((temp_time-my_ticks_negedge > last_posedge+tolerance_p)
             || (temp_time-my_ticks_negedge < last_posedge-tolerance_p))
           begin
-             if (cycles_posedge != -1)
-               $write("## clock_watcher {                                                                                POSEDGE offset (after %-8d cycles) %-7d ps (n/p phase ratio=%2.3f)} (%m)\n"
-                      ,cycles_posedge, $time-my_ticks_negedge, ( real ' (last_negedge))/(real ' ($time-my_ticks_negedge)));
-             cycles_posedge = 0;
-             last_posedge = $time-my_ticks_negedge;
+             if (cycles_posedge > 0)
+               $write("## clock_watcher [%t] {                                                                                POSEDGE offset (after %-8d cycles) %-7d ps (n/p phase ratio=%2.3f)} (%m)\n"
+                      ,$time, cycles_posedge, $time-my_ticks_negedge, ( real ' (last_negedge))/(real ' ($time-my_ticks_negedge)));
+             cycles_posedge <= 0;
+             last_posedge <= $time-my_ticks_negedge;
           end
         else
-          cycles_posedge = cycles_posedge+1;
+          cycles_posedge <= cycles_posedge+1;
 
         my_ticks_posedge = $time;
 
      end // always @ (posedge clk_i)
 
-   always @(negedge clk_i)
+   always_ff @(negedge clk_i)
      begin
         temp_time = $time;
         if ((temp_time-my_ticks_posedge > last_negedge+tolerance_p)
             || (temp_time-my_ticks_posedge < last_negedge-tolerance_p))
           begin
-             if (cycles_negedge != -1)
-               $write("## clock_watcher { NEGEDGE offset (after %-7d cycles) %-7d ps (p/n phase ratio=%2.3f)} (%m)\n"
-                      ,cycles_negedge, $time-my_ticks_posedge, ( real ' (last_posedge))/(real ' ($time-my_ticks_posedge)));
-             cycles_negedge = 0;
-             last_negedge = $time-my_ticks_posedge;
+             if (cycles_negedge > 0)
+               $write("## clock_watcher [%t] { NEGEDGE offset (after %-7d cycles) %-7d ps (p/n phase ratio=%2.3f)} (%m)\n"
+                      ,$time, cycles_negedge, $time-my_ticks_posedge, ( real ' (last_posedge))/(real ' ($time-my_ticks_posedge)));
+             cycles_negedge <= 0;
+             last_negedge <= $time-my_ticks_posedge;
           end
         else
-          cycles_negedge = cycles_negedge+1;
+          cycles_negedge <= cycles_negedge+1;
 
         my_ticks_negedge = $time;
      end
