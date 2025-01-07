@@ -16,14 +16,14 @@ module bsg_nonsynth_clk_watcher #(tolerance_p=0)
    longint                    last_negedge = -1;
    longint                    cycles_posedge = -1;
    longint                    cycles_negedge = -1;
-   longint                    temp_time;
+   longint                    pos_temp_time, neg_temp_time;
 
    always_ff @(posedge clk_i)
      begin
-        temp_time = $time;
+        pos_temp_time = $time;
 
-        if ((temp_time-my_ticks_negedge > last_posedge+tolerance_p)
-            || (temp_time-my_ticks_negedge < last_posedge-tolerance_p))
+        if ((pos_temp_time-my_ticks_negedge > last_posedge+tolerance_p)
+            || (pos_temp_time-my_ticks_negedge < last_posedge-tolerance_p))
           begin
              if (cycles_posedge > 0)
                $write("## clock_watcher [%t] {                                                                                POSEDGE offset (after %-8d cycles) %-7d ps (n/p phase ratio=%2.3f)} (%m)\n"
@@ -40,9 +40,9 @@ module bsg_nonsynth_clk_watcher #(tolerance_p=0)
 
    always_ff @(negedge clk_i)
      begin
-        temp_time = $time;
-        if ((temp_time-my_ticks_posedge > last_negedge+tolerance_p)
-            || (temp_time-my_ticks_posedge < last_negedge-tolerance_p))
+        neg_temp_time = $time;
+        if ((neg_temp_time-my_ticks_posedge > last_negedge+tolerance_p)
+            || (neg_temp_time-my_ticks_posedge < last_negedge-tolerance_p))
           begin
              if (cycles_negedge > 0)
                $write("## clock_watcher [%t] { NEGEDGE offset (after %-7d cycles) %-7d ps (p/n phase ratio=%2.3f)} (%m)\n"
