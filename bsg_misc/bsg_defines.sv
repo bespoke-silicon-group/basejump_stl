@@ -50,6 +50,17 @@
 `define BSG_WIDTH(x) ($clog2(x+1))
 `define BSG_SAFE_MINUS(x, y) (((x)<(y))) ? 0 : ((x)-(y))
 
+// these "SAFE" shift functions handle a common problem that shifts default to 32 bits wide even
+// though the result may be more bits than that.
+
+// these macros ensure that a left shift is done with sufficient bits of precision not to lose data
+// extra is used if you want some extra bits of margin
+`define BSG_SAFE_SHIFT_LEFT_BY_CONST(a,b_const,extra) (( ($bits(a) + (b_const) + extra )'(a)) << (b_const))
+
+// b_max is the maximum value that b_variable can take on
+`define BSG_SAFE_SHIFT_LEFT_CONST_BY_VARIABLE(a_const,b_variable,b_max,extra) (( ($clog2( (a_const)+1)+(b_max)+(extra)) ' (a_const)) << (b_variable) )
+
+      
 // calculate ceil(x/y) 
 `define BSG_CDIV(x,y) (((x)+(y)-1)/(y))
 
