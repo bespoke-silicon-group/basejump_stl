@@ -49,7 +49,7 @@ module bsg_rp_clk_gen_osc_v3
 
   // Synthesize as blackbox
   wire fb_dly;
-  bsg_nonsynth_delay_line fb_dly_BSG_DONT_TOUCH (.o(fb_dly), .i(n[8]));
+  sky130_fd_sc_hd__clkbuf_4 fb_dly_BSG_DONT_TOUCH (.X(fb_dly), .A(n[8]));
   sky130_fd_sc_hd__clkinv_4 I2 (.Y(clk_o), .A(fb_dly));
   wire fb_gate;
   sky130_fd_sc_hd__clkinv_4 I3 (.Y(fb_gate), .A(fb_dly));
