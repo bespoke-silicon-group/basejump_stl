@@ -3,7 +3,8 @@
 // This module takes a binary address, and a constant number of banks, and then hashes the
 // address across the banks efficiently; outputing the bank #, and the index at that bank.
 // This is useful for banking memories; or spreading cache coherence directory information
-// across multiple directories.
+// across multiple directories. Alternatively, it could be viewed as divide and modulo by
+// a constant, for certain constants.
 //
 // Since we support non-power of two banks, some banks will be larger than others.
 // The hash function guarantees that the difference in size of the banks is no greater than 1.
