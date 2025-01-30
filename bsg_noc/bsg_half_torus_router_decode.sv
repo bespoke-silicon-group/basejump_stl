@@ -160,6 +160,7 @@ module bsg_half_torus_router_decode
   end
   else begin
     // yx order;
+    wire from_SNP = (from_p == S) || (from_p == N) || (from_p == P);
     always_comb begin
       if (y_eq) begin
         if (x_eq) begin
@@ -174,6 +175,12 @@ module bsg_half_torus_router_decode
           if (x_cw_dist < x_ccw_dist) begin
             // go clockwise;
             if (my_x_i % 2 == 0) begin
+                dir_sel_id = E;
+                vc_sel_id = from_SNP 
+                  ? 1'b0
+                  : ((my_base_x == (num_tiles_x_p/2)-2)
+                    ? 1'b1    // dateline;
+                    : vc_id_p);
             end
             else begin
               dir_sel_id = W;
@@ -184,9 +191,11 @@ module bsg_half_torus_router_decode
             // go counter-clockwise
             if (my_x_i % 2 == 0) begin
               dir_sel_id = W;
-              vc_sel_id = (my_base_x == (num_tiles_x_p/2))
-                ? 1'b1    // dateline;
-                : vc_id_p;
+              vc_sel_id = from_SNP 
+                ? 1'b0
+                : ((my_base_x == (num_tiles_x_p/2))
+                  ? 1'b1    // dateline;
+                  : vc_id_p);
             end
             else begin
               dir_sel_id = E;
@@ -199,9 +208,11 @@ module bsg_half_torus_router_decode
               // go clockwise;
               if (my_x_i % 2 == 0) begin
                 dir_sel_id = E;
-                vc_sel_id = (my_base_x == (num_tiles_x_p/2)-2)
-                  ? 1'b1    // dateline;
-                  : vc_id_p;
+                vc_sel_id = from_SNP 
+                  ? 1'b0
+                  : ((my_base_x == (num_tiles_x_p/2)-2)
+                    ? 1'b1    // dateline;
+                    : vc_id_p);
               end
               else begin
                 dir_sel_id = W;
@@ -212,9 +223,11 @@ module bsg_half_torus_router_decode
               // go counter-clockwise
               if (my_x_i % 2 == 0) begin
                 dir_sel_id = W;
-                vc_sel_id = (my_base_x == (num_tiles_x_p/2))
-                  ? 1'b1    // dateline;
-                  : vc_id_p;
+                vc_sel_id = from_SNP 
+                  ? 1'b0
+                  : ((my_base_x == (num_tiles_x_p/2)-2)
+                    ? 1'b1    // dateline;
+                    : vc_id_p);
               end
               else begin
                 dir_sel_id = E;
