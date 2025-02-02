@@ -39,7 +39,7 @@ module bsg_rp_clk_gen_osc_v3_row
   wire clk;
   sky130_fd_sc_hd__nand2_1 N2 (.Y(clk), .A(fb), .B(ctl_en));
 
-  assign clk_o = clk;
+  assign #50ps clk_o = clk;
 
 endmodule
 """)
@@ -57,7 +57,7 @@ module bsg_rp_clk_gen_osc_v3_col
   wire lobit, hibit;
   sky130_fd_sc_hd__conb_1 T0 (.HI(hibit), .LO(lobit));
 
-  // Size to 1/4 of column load 
+  // Size to 1/4 of column load
   wire clkgate_inv;
   sky130_fd_sc_hd__inv_1 I0 (.Y(clkgate_inv), .A(clkgate_i));
 
