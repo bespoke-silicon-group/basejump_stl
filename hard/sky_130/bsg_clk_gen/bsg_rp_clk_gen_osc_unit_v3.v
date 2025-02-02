@@ -28,7 +28,7 @@ module bsg_rp_clk_gen_osc_v3_row
   wire clk;
   sky130_fd_sc_hd__nand2_1 N2 (.Y(clk), .A(fb), .B(ctl_en));
 
-  assign clk_o = clk;
+  assign #50ps clk_o = clk;
 
 endmodule
 
