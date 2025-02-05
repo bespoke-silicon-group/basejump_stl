@@ -28,6 +28,11 @@ module bsg_circular_ptr #(parameter `BSG_INV_PARAM(slots_p)
    assign o = ptr_r;
    assign n_o = ptr_n;
 
+   initial 
+     begin
+	     assert(max_add_p == max_add_p[ptr_width_p-1])
+	        else $finish("%m: max_add_p parameter too large");
+     end
    // increment round robin pointers
 
    // synopsys sync_set_reset "reset_i"
