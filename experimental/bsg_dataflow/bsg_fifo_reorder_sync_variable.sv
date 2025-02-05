@@ -22,7 +22,7 @@ module bsg_fifo_reorder_sync_variable
     , input  [`BSG_WIDTH(els_p)-1:0]    fifo_alloc_yumi_variable_i
 
     // We provide how many free entries are currently available.
-    // The user can check  (fifo_alloc_v_count_o >= fifo_alloc_yumi_variable_i)
+    // The user can check (fifo_alloc_v_count_o >= fifo_alloc_yumi_variable_i)
     // before allocating a nonzero amount.
     , output [`BSG_WIDTH(els_p)-1:0]    fifo_alloc_v_count_o
 
@@ -42,7 +42,7 @@ module bsg_fifo_reorder_sync_variable
     , output [lg_els_lp-1:0]            fifo_deq_id_o
     , input                             fifo_deq_yumi_i
 
-    // Indicates the FIFO has no allocated entries 
+    // Indicates the FIFO has no allocated entries
     , output logic                      empty_o
   );
 
@@ -54,12 +54,12 @@ module bsg_fifo_reorder_sync_variable
     end
   end
 `endif
-  
+
   // ------------------------------------------------------------
   // (1) FIFO TRACKER (bsg_fifo_tracker_variable)
   // ------------------------------------------------------------
-  logic [lg_els_lp-1:0] wptr_r, rptr_r, rptr_n;
-  logic [`BSG_WIDTH(els_p)-1:0] free_entries_r, used_entries_r;
+  logic [lg_els_lp-1:0]          wptr_r, rptr_r, rptr_n;
+  logic [`BSG_WIDTH(els_p)-1:0]  free_entries_r, used_entries_r;
 
   bsg_fifo_tracker_variable #(
     .els_p            (els_p),
@@ -72,7 +72,7 @@ module bsg_fifo_reorder_sync_variable
     // Up to els_p allocated (enqueued) in a single cycle
     .enq_amount_i    (fifo_alloc_yumi_variable_i),
 
-    // Single dequeue
+    // Single dequeue (1 if dequeuing, else 0)
     .deq_amount_i    (fifo_deq_yumi_i ? 1 : 0),
 
     // Pointers
@@ -95,8 +95,8 @@ module bsg_fifo_reorder_sync_variable
   // ------------------------------------------------------------
   // (2) VALID BITS for random-access writes
   // ------------------------------------------------------------
-  // We only set valid when we actually write to a slot (write_v_i).
-  // We clear valid once the slot is dequeued.
+  // We only set a valid bit when we actually write to a slot (write_v_i).
+  // We clear the valid bit once the slot is dequeued.
   logic [els_p-1:0] valid_r;
   logic [els_p-1:0] set_valid, clear_valid;
 
@@ -128,29 +128,32 @@ module bsg_fifo_reorder_sync_variable
   );
 
   // ------------------------------------------------------------
-  // (3) SYNCHRONOUS MEMORY (1R/1W) with read_v gating
+  // (3) SYNCHRONOUS MEMORY (1R/1W) with address selection
   // ------------------------------------------------------------
-  // We read from either rptr_n (if we are dequeuing this cycle)
-  // or rptr_r (if not).  But if the read address == write address
-  // and we do read & write in the same cycle, that is disallowed
-  // by read_write_same_addr_p=0. So we gate the read in that case.
+  // We read from rptr_r_p1 if we are dequeuing this cycle (looking ahead to
+  // the next slot), or from rptr_r if we are not dequeuing. Then we gate the
+  // read enable based on whether the relevant slot is valid and not yet loaded.
   // ------------------------------------------------------------
 
-  logic [width_p-1:0]   mem_data_lo;
+  // Next pointer is rptr_r+1 (for power-of-2 indexing)
+  wire [lg_els_lp-1:0] rptr_r_p1 = rptr_r + 1'b1;
 
-  // the next read slot, requires power of 2 els_p
-  assign rptr_r_p1 = rptr_r+1'b1;
+  // Memory read address
+  wire [lg_els_lp-1:0] mem_r_addr = fifo_deq_yumi_i
+                                    ? rptr_r_p1
+                                    : rptr_r;
 
-   // we read the memory if we have a deque, and the data in the next slot is valid
- // or, when it is not a deque, and the current slot is valid but we have not loaded it
- // we do not bypass
- wire mem_r_v = fifo_deq_yumi_i ? valid_r[rptr_r_p1] : (valid_r[rptr_r] & ~loaded_r);
-  
+  // Memory read enable: we only read if we are about to load new data
+  wire mem_r_v = fifo_deq_yumi_i
+                 ? valid_r[rptr_r_p1]
+                 : (valid_r[rptr_r] & ~loaded_r);
+
+  logic [width_p-1:0] mem_data_lo;
+
   bsg_mem_1r1w_sync #(
     .width_p                (width_p),
     .els_p                  (els_p),
     .read_write_same_addr_p (0),
-    // We will let the design latch the data each cycle so we can hold it stable
     .latch_last_read_p      (1)
   ) mem0 (
     .clk_i   (clk_i),
@@ -163,29 +166,33 @@ module bsg_fifo_reorder_sync_variable
 
     // READ PORT
     .r_v_i   (mem_r_v),
-    .r_addr_i(r_ptr_n),
+    .r_addr_i(mem_r_addr),
     .r_data_o(mem_data_lo)
   );
 
   // ------------------------------------------------------------
   // (4) SINGLE-ITEM DEQUEUE HANDSHAKE
   // ------------------------------------------------------------
-  // We'll use a small "loaded_r" register to track if we have
-  // valid data latched in mem_data_lo for the current rptr_r.
-  // If the slot is invalid, we haven't truly "loaded" data yet,
-  // so we keep loaded_r=0.  Once the slot is valid, we set
-  // loaded_r=1.
-  //
-  // On a dequeue (fifo_deq_yumi_i=1), rptr_r advances to rptr_n,
-  // so we check whether the new pointer's slot is valid.
+  // We'll use a small "loaded_r" register to track if we have valid data
+  // latched in mem_data_lo for the current rptr_r.
   // ------------------------------------------------------------
   logic loaded_r;
 
-  always_ff @(posedge clk_i) 
-    if (reset_i) 
+  always_ff @(posedge clk_i) begin
+    if (reset_i) begin
       loaded_r <= 1'b0;
-    else
-      loaded_r <= fifo_deq_yumi_i ? valid_r[rptr_r_p1] : (loaded_r | valid_r[rptr_r]);
+    end
+    else begin
+      // If we dequeued, we move on to rptr_r_p1 => see if that slot is valid
+      if (fifo_deq_yumi_i) begin
+        loaded_r <= valid_r[rptr_r_p1];
+      end
+      else begin
+        // If we didn't dequeue, remain loaded or become loaded if rptr_r is valid
+        loaded_r <= loaded_r | valid_r[rptr_r];
+      end
+    end
+  end
 
   // Dequeue signals
   assign fifo_deq_v_o    = loaded_r;
@@ -195,10 +202,9 @@ module bsg_fifo_reorder_sync_variable
   // ------------------------------------------------------------
   // (5) EMPTY INDICATOR
   // ------------------------------------------------------------
-  // The FIFO is empty if used_entries_r == 0.
-  // (This does NOT mean we won't stall if a valid bit isn't set
-  // for the next read pointer, but it indicates no entries have
-  // been fully allocated.)
+  // The FIFO is empty if used_entries_r == 0. This does NOT mean we won't stall
+  // if the next pointer is not valid (i.e., never written), but it means no
+  // entries have been officially allocated.
   // ------------------------------------------------------------
   assign empty_o = (used_entries_r == '0);
 
@@ -227,4 +233,5 @@ module bsg_fifo_reorder_sync_variable
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_fifo_reorder_sync_variable)
+
 
