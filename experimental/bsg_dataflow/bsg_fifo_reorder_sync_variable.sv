@@ -8,6 +8,12 @@
 module bsg_fifo_reorder_sync_variable
   #(parameter `BSG_INV_PARAM(width_p)
     , parameter `BSG_INV_PARAM(els_p)
+
+    // how many entries to lookahead at to provide
+    // contiguous availability
+    
+    , parameter deq_v_width_p = 1'b1
+
     , localparam lg_els_lp          = `BSG_SAFE_CLOG2(els_p)
 
     // Because we can allocate up to els_p items in a cycle, set:
@@ -41,7 +47,7 @@ module bsg_fifo_reorder_sync_variable
     , input  [width_p-1:0]              write_data_i
 
     // DEQUEUE in order (single item)
-    , output                            fifo_deq_v_o
+    , output [deq_v_width_p-1:0]        fifo_deq_v_o
     , output [width_p-1:0]              fifo_deq_data_o
     , output [lg_els_lp-1:0]            fifo_deq_id_o
     , input                             fifo_deq_yumi_i
@@ -199,10 +205,34 @@ module bsg_fifo_reorder_sync_variable
   end
 
   // Dequeue signals
-  assign fifo_deq_v_o    = loaded_r;
+  assign fifo_deq_v_o[0] = loaded_r;
   assign fifo_deq_id_o   = rptr_r;
   assign fifo_deq_data_o = mem_data_lo;
 
+  wire [deq_v_width_p-1:0] valid_r_vector, scan_vector;
+
+  generate
+    
+  genvar i;
+
+  assign valid_r_vector[0] = loaded_r;
+  
+  for (i = 1; i < dev_v_width_p; i=i+1)
+    begin
+      assign valid_r_vector[i] = valid_r[(r_ptr_r + i) & (els_p-1)];
+    end
+
+  endgenerate
+    
+  bsg_scan #(.width_p(dev_v_width_p)
+             ,.and_p(1'b1)
+             ,.lo_to_hi_p(1'b1)
+            ) scan
+  (.i(valid_r_vector)
+   ,.o(scan_vector)
+  );
+
+  
   // ------------------------------------------------------------
   // (5) EMPTY INDICATOR
   // ------------------------------------------------------------
