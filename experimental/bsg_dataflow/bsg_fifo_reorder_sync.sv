@@ -1,4 +1,4 @@
-// mbt & ChatGPT o1
+// mbt & ChatGPT o1 (AI-generated)
 
 `include "bsg_defines.sv"
 
