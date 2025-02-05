@@ -31,7 +31,7 @@ module bsg_circular_ptr #(parameter `BSG_INV_PARAM(slots_p)
    initial 
      begin
 	     assert(max_add_p == max_add_p[ptr_width_lp-1])
-	        else $finish("%m: max_add_p parameter too large");
+	        else $error("%m: max_add_p parameter too large");
      end
    // increment round robin pointers
 
