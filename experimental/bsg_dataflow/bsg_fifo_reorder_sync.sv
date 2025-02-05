@@ -107,7 +107,7 @@ wire loaded_r;
    if (reset_i)
      loaded_r <= 1'b0;
     else
-     loaded_r <= fifo_deq_yumi ? valid_r[rptr_r_p1] : (loaded_r | valid_r[rptr_r]);
+     loaded_r <= fifo_deq_yumi_i ? valid_r[rptr_r_p1] : (loaded_r | valid_r[rptr_r]);
  end
 
   logic [width_p-1:0] mem_data_lo;
@@ -145,8 +145,6 @@ wire loaded_r;
     .v_i(fifo_deq_yumi_i),
     .o  (clear_valid)
   );
-
-  assign clear_valid = clear_onehot;
 
   // ----------------------------------------------------------------
   // (10) Assertions (optional)
