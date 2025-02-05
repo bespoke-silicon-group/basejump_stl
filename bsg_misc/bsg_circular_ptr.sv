@@ -53,7 +53,7 @@ module bsg_circular_ptr #(parameter `BSG_INV_PARAM(slots_p)
 	  // reduce critical path on add_i signal
 	if ((max_add_p == 1) || const_incr_p)
 	    begin
-	       wire [ptr_width_lp-1:0] ptr_r_p1 = ptr_r + max_add_p;
+	       wire [ptr_width_lp-1:0] ptr_r_p1 = ptr_r + max_add_p[ptr_width_lp-1:0];
 	       assign  ptr_n = add_i ? ptr_r_p1 : ptr_r;
 	    end
 	  else
