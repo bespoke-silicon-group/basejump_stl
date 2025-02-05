@@ -137,13 +137,13 @@ wire loaded_r;
   assign fifo_deq_data_o = mem_data_lo;
 
   // One-hot decode of data_id_r
-  wire [els_p-1:0] clear_onehot;
+
   bsg_decode_with_v #(
     .num_out_p(els_p)
   ) clear_demux (
     .i  (rptr_r),
     .v_i(fifo_deq_yumi_i),
-    .o  (clear_onehot)
+    .o  (clear_valid)
   );
 
   assign clear_valid = clear_onehot;
