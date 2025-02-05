@@ -1,4 +1,8 @@
 // mbt & ChatGPT o1 (AI-generated)
+
+// This module extends bsg_fifo_reorder_sync
+// by allowing multiple allocation.
+
 `include "bsg_defines.v"
 
 module bsg_fifo_reorder_sync_variable
