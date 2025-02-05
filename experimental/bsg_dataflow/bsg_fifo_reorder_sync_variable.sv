@@ -73,7 +73,7 @@ module bsg_fifo_reorder_sync_variable
     .enq_amount_i    (fifo_alloc_yumi_variable_i),
 
     // Single dequeue (1 if dequeuing, else 0)
-    .deq_amount_i    (fifo_deq_yumi_i ? 1 : 0),
+    .deq_amount_i    (fifo_deq_yumi_i),
 
     // Pointers
     .wptr_r_o        (wptr_r),
