@@ -42,8 +42,8 @@ module bsg_nonsynth_reset_gen #(parameter num_clocks_p=1
 
    for (i = 0; i < num_clocks_p; i=i+1)
      begin : rof
-        assign phase_lo_r[i] = (ctr_lo_r[i] == reset_cycles_lo_p);
-        assign phase_hi_r[i] = (ctr_hi_r[i] == reset_cycles_hi_p);
+       assign phase_lo_r[i] = (ctr_lo_r[i] == reset_cycles_lo_p[$bits(ctr_lo_r)-1:0]);
+       assign phase_hi_r[i] = (ctr_hi_r[i] == reset_cycles_hi_p[$bits(ctr_hi_r)-1:0]);
 
         always @(negedge clk_i[i])
           if (~phase_lo_r[i])
