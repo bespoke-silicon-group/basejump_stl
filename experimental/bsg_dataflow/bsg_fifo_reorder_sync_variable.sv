@@ -1,96 +1,105 @@
+// mbt & ChatGPT o1 (AI-generated)
 `include "bsg_defines.v"
 
 module bsg_fifo_reorder_sync_variable
   #(parameter `BSG_INV_PARAM(width_p)
     , parameter `BSG_INV_PARAM(els_p)
+    , localparam lg_els_lp          = `BSG_SAFE_CLOG2(els_p)
 
-    // Number of slots to allocate (enqueue) atomically in one cycle
-    , parameter `BSG_INV_PARAM(alloc_amount_p)
-
-    , localparam lg_els_lp = `BSG_SAFE_CLOG2(els_p)
+    // Because we can allocate up to els_p items in a cycle, set:
+    , localparam enq_amount_max_lp  = els_p
+    // Allow a single dequeue per cycle.
+    , localparam deq_amount_max_lp  = 1
   )
   (
-    input                         clk_i
-    , input                       reset_i
+    input                               clk_i
+    , input                             reset_i
 
-    // Allocate next FIFO addresses
-    // We allocate alloc_amount_p slots beginning at fifo_alloc_id_o
-    // in a single cycle if fifo_alloc_v_o & fifo_alloc_yumi_i handshake.
-    , output                      fifo_alloc_v_o
-    , output [lg_els_lp-1:0]      fifo_alloc_id_o
-    , input                       fifo_alloc_yumi_i
+    // VARIABLE ALLOCATION:
+    // Each cycle, fifo_alloc_yumi_variable_i (0..els_p) indicates
+    // how many items to allocate in this cycle. The user is responsible
+    // for not exceeding the available free entries.
+    , input  [`BSG_WIDTH(els_p)-1:0]    fifo_alloc_yumi_variable_i
 
-    // Random access write
-    , input                       write_v_i
-    , input  [lg_els_lp-1:0]      write_id_i
-    , input  [width_p-1:0]        write_data_i
+    // We provide how many free entries are currently available.
+    // The user can check  (fifo_alloc_v_count_o >= fifo_alloc_yumi_variable_i)
+    // before allocating a nonzero amount.
+    , output [`BSG_WIDTH(els_p)-1:0]    fifo_alloc_v_count_o
 
-    // Dequeue in order
-    // For simplicity, we dequeue one item at a time in-order.
-    , output                      fifo_deq_v_o
-    , output [width_p-1:0]        fifo_deq_data_o
-    , output [lg_els_lp-1:0]      fifo_deq_id_o
-    , input                       fifo_deq_yumi_i
+    // OUTPUT: Base pointer (ID) for the newly allocated block of slots.
+    // If you allocate X slots, you get { wptr_r, wptr_r+1, ..., wptr_r+X-1 },
+    // wrapping around circularly if needed.
+    , output [lg_els_lp-1:0]            fifo_alloc_id_o
 
-    // Indicates we have consumed everything that has been allocated
-    , output logic                empty_o
+    // RANDOM ACCESS WRITE
+    , input                             write_v_i
+    , input  [lg_els_lp-1:0]            write_id_i
+    , input  [width_p-1:0]              write_data_i
+
+    // DEQUEUE in order (single item)
+    , output                            fifo_deq_v_o
+    , output [width_p-1:0]              fifo_deq_data_o
+    , output [lg_els_lp-1:0]            fifo_deq_id_o
+    , input                             fifo_deq_yumi_i
+
+    // Indicates the FIFO has no allocated entries 
+    , output logic                      empty_o
   );
 
-  // ---------------------------
-  // (1) FIFO TRACKER (variable)
-  //     We allow up to alloc_amount_p enqueues in one cycle,
-  //     and 1 dequeue in one cycle.
-  // ---------------------------
-  localparam enq_amount_max_lp = alloc_amount_p;
-  localparam deq_amount_max_lp = 1;
-
-  // Pointers and counters from the tracker
+`ifndef BSG_HIDE_FROM_SYNTHESIS
+  initial begin
+    // If you want a run-time check:
+    if (!`BSG_IS_POW2(els_p)) begin
+      $error("%m ERROR: els_p(%0d) is not a power of two", els_p);
+    end
+  end
+`endif
+  
+  // ------------------------------------------------------------
+  // (1) FIFO TRACKER (bsg_fifo_tracker_variable)
+  // ------------------------------------------------------------
   logic [lg_els_lp-1:0] wptr_r, rptr_r, rptr_n;
   logic [`BSG_WIDTH(els_p)-1:0] free_entries_r, used_entries_r;
 
   bsg_fifo_tracker_variable #(
-    .els_p              (els_p),
-    .enq_amount_max_p   (enq_amount_max_lp),
-    .deq_amount_max_p   (deq_amount_max_lp)
+    .els_p            (els_p),
+    .enq_amount_max_p (enq_amount_max_lp),
+    .deq_amount_max_p (deq_amount_max_lp)
   ) tracker0 (
     .clk_i           (clk_i),
     .reset_i         (reset_i),
 
-    // Amount we want to enqueue/dequeue this cycle
-    .enq_amount_i    (fifo_alloc_yumi_i ? alloc_amount_p : '0),
-    .deq_amount_i    (fifo_deq_yumi_i    ? 1 : '0),
+    // Up to els_p allocated (enqueued) in a single cycle
+    .enq_amount_i    (fifo_alloc_yumi_variable_i),
 
-    // Tracker outputs
+    // Single dequeue
+    .deq_amount_i    (fifo_deq_yumi_i ? 1 : 0),
+
+    // Pointers
     .wptr_r_o        (wptr_r),
     .rptr_r_o        (rptr_r),
     .rptr_n_o        (rptr_n),
 
+    // Number of unallocated / allocated entries
     .free_entries_r_o(free_entries_r),
     .used_entries_r_o(used_entries_r)
   );
 
-  // ---------------------------
-  // (2) ALLOC HANDSHAKE
-  //
-  // fifo_alloc_v_o goes high only if we have enough
-  // space to allocate `alloc_amount_p` items.
-  // ---------------------------
-  assign fifo_alloc_v_o  = (free_entries_r >= alloc_amount_p);
-  assign fifo_alloc_id_o = wptr_r;
+  // Expose how many entries are free
+  assign fifo_alloc_v_count_o = free_entries_r;
 
-  // ---------------------------
-  // (3) VALID BITS
-  //
-  // We set valid bits only when there is a random-access write.
-  // The "allocate" itself does not automatically set valid bits,
-  // since you may fill those addresses later.  If you do not
-  // write all allocated addresses, the FIFO will stall on dequeue
-  // once it reaches an un-written (invalid) slot.
-  // ---------------------------
+  // Return the "base pointer" for the newly allocated block
+  // If the user requests N > 0, these IDs are wptr_r..(wptr_r+N-1).
+  assign fifo_alloc_id_o      = wptr_r;
+
+  // ------------------------------------------------------------
+  // (2) VALID BITS for random-access writes
+  // ------------------------------------------------------------
+  // We only set valid when we actually write to a slot (write_v_i).
+  // We clear valid once the slot is dequeued.
   logic [els_p-1:0] valid_r;
   logic [els_p-1:0] set_valid, clear_valid;
 
-  // Mark the slot as valid when we do a write
   bsg_decode_with_v #(
     .num_out_p(els_p)
   ) set_demux (
@@ -99,7 +108,6 @@ module bsg_fifo_reorder_sync_variable
     .o   (set_valid)
   );
 
-  // Mark the slot as invalid (cleared) once we dequeue it
   bsg_decode_with_v #(
     .num_out_p(els_p)
   ) clear_demux (
@@ -119,103 +127,99 @@ module bsg_fifo_reorder_sync_variable
     .data_o  (valid_r)
   );
 
-  // ---------------------------
-  // (4) SYNCHRONOUS MEMORY
-  //
-  // One read port, one write port. We latch the read data
-  // so we can hold it stable while the pointers move.
-  // ---------------------------
-  // We read the slot that we will be dequeueing next cycle.
-  // Because we are popping one item at a time, the next read
-  // address is rptr_n, which depends combinationally on fifo_deq_yumi_i.
-  // ---------------------------
-  logic [width_p-1:0] mem_data_lo;
+  // ------------------------------------------------------------
+  // (3) SYNCHRONOUS MEMORY (1R/1W) with read_v gating
+  // ------------------------------------------------------------
+  // We read from either rptr_n (if we are dequeuing this cycle)
+  // or rptr_r (if not).  But if the read address == write address
+  // and we do read & write in the same cycle, that is disallowed
+  // by read_write_same_addr_p=0. So we gate the read in that case.
+  // ------------------------------------------------------------
 
-  // We use a "read valid" to reduce spurious memory reads:
-  // * If we are dequeuing this cycle, next cycle's pointer is rptr_n,
-  //   so we read that address for next data.
-  // * If we are not dequeuing, we read the same pointer we would
-  //   dequeue next time.  However, we also need to ensure we
-  //   actually have a valid next slot before reading.
-  //
-  // A simpler approach is always read rptr_n each cycle, but
-  // below is an illustration for optional gating.
-  //
-  wire read_v = (fifo_deq_yumi_i)
-                ? valid_r[rptr_n]    // after pointer is advanced
-                : valid_r[rptr_r];   // if we are not advancing
+  logic [width_p-1:0]   mem_data_lo;
 
+  // the next read slot, requires power of 2 els_p
+  assign rptr_r_p1 = rptr_r+1'b1;
+
+   // we read the memory if we have a deque, and the data in the next slot is valid
+ // or, when it is not a deque, and the current slot is valid but we have not loaded it
+ // we do not bypass
+ wire mem_r_v = fifo_deq_yumi_i ? valid_r[rptr_r_p1] : (valid_r[rptr_r] & ~loaded_r);
+  
   bsg_mem_1r1w_sync #(
     .width_p                (width_p),
     .els_p                  (els_p),
     .read_write_same_addr_p (0),
+    // We will let the design latch the data each cycle so we can hold it stable
     .latch_last_read_p      (1)
   ) mem0 (
     .clk_i   (clk_i),
     .reset_i (reset_i),
 
-    // Write port
+    // WRITE PORT
     .w_v_i   (write_v_i),
     .w_addr_i(write_id_i),
     .w_data_i(write_data_i),
 
-    // Read port
-    .r_v_i   (read_v),
-    .r_addr_i(fifo_deq_yumi_i ? rptr_n : rptr_r),
+    // READ PORT
+    .r_v_i   (mem_r_v),
+    .r_addr_i(r_ptr_n),
     .r_data_o(mem_data_lo)
   );
 
-  // ---------------------------
-  // (5) DEQUEUE HANDSHAKE
+  // ------------------------------------------------------------
+  // (4) SINGLE-ITEM DEQUEUE HANDSHAKE
+  // ------------------------------------------------------------
+  // We'll use a small "loaded_r" register to track if we have
+  // valid data latched in mem_data_lo for the current rptr_r.
+  // If the slot is invalid, we haven't truly "loaded" data yet,
+  // so we keep loaded_r=0.  Once the slot is valid, we set
+  // loaded_r=1.
   //
-  // We have valid data (fifo_deq_v_o = 1) if the current slot
-  // has been written (valid_r[rptr_r]) and we have latched it
-  // from memory. We use a small register loaded_r to track when
-  // we have captured valid data in mem_data_lo.
-  // ---------------------------
+  // On a dequeue (fifo_deq_yumi_i=1), rptr_r advances to rptr_n,
+  // so we check whether the new pointer's slot is valid.
+  // ------------------------------------------------------------
   logic loaded_r;
 
-  always_ff @(posedge clk_i) begin
-    if (reset_i)
+  always_ff @(posedge clk_i) 
+    if (reset_i) 
       loaded_r <= 1'b0;
-    else begin
-      // If we just dequeued, next cycle's data will come from rptr_n if valid
-      // If we did not dequeue, we become loaded if current pointer has valid data
-      if (fifo_deq_yumi_i)
-        loaded_r <= valid_r[rptr_n];
-      else
-        loaded_r <= loaded_r | valid_r[rptr_r];
-    end
-  end
+    else
+      loaded_r <= fifo_deq_yumi_i ? valid_r[rptr_r_p1] : (loaded_r | valid_r[rptr_r]);
 
-  // Output handshake
+  // Dequeue signals
   assign fifo_deq_v_o    = loaded_r;
   assign fifo_deq_id_o   = rptr_r;
   assign fifo_deq_data_o = mem_data_lo;
 
-  // ---------------------------
-  // (6) FIFO EMPTY
-  // ---------------------------
-  // bsg_fifo_tracker_variable doesn't directly give "empty_o",
-  // so we compute it from the used-entries count.
-  // (Alternatively, you can track it inside an always_comb.)
-  // ---------------------------
+  // ------------------------------------------------------------
+  // (5) EMPTY INDICATOR
+  // ------------------------------------------------------------
+  // The FIFO is empty if used_entries_r == 0.
+  // (This does NOT mean we won't stall if a valid bit isn't set
+  // for the next read pointer, but it indicates no entries have
+  // been fully allocated.)
+  // ------------------------------------------------------------
   assign empty_o = (used_entries_r == '0);
 
-  // ---------------------------
-  // (7) Optional run-time checks
-  // ---------------------------
+  // ------------------------------------------------------------
+  // (6) OPTIONAL ASSERTIONS
+  // ------------------------------------------------------------
 `ifndef BSG_HIDE_FROM_SYNTHESIS
   always_ff @(negedge clk_i) begin
     if (~reset_i) begin
-      // Allocate handshake
-      if (fifo_alloc_yumi_i)
-        assert(fifo_alloc_v_o)
-          else $error("Handshake error: fifo_alloc_yumi_i with fifo_alloc_v_o=0.");
+      // Check user does not allocate more than available
+      if (fifo_alloc_yumi_variable_i > 0) begin
+        assert(fifo_alloc_yumi_variable_i <= free_entries_r)
+          else $error("%m Error: Over-allocation attempt (requested=%0d, free=%0d).",
+                      fifo_alloc_yumi_variable_i, free_entries_r);
+      end
+
       // Dequeue handshake
-      if (fifo_deq_yumi_i)
+      if (fifo_deq_yumi_i) begin
         assert(fifo_deq_v_o)
-          else $error("Handshake error: fifo_deq_yumi_i with fifo_deq_v_o=0.");
+          else $error("%m Error: Dequeue handshake with no valid data (fifo_deq_v_o=0).");
+      end
     end
   end
 `endif
@@ -223,3 +227,4 @@ module bsg_fifo_reorder_sync_variable
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_fifo_reorder_sync_variable)
+
