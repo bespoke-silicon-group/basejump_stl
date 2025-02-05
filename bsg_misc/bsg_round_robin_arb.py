@@ -233,7 +233,7 @@ else
         last_n = hold_on_sr ? last_r :
                ( yumi_i     ? tag_o  : last_r );  
       end else if( reset_on_sr_p ) begin: reset_on_last_n_gen
-        last_n = reset_on_sr? (inputs_p-2) :
+        last_n = reset_on_sr? (inputs_p-2'd2) :
                ( yumi_i     ?tag_o : last_r );  
       end else if( hold_on_valid_p ) begin: hold_on_last_n_gen
         // Need to manually handle wrap around on non-power of two case, else reuse subtraction
