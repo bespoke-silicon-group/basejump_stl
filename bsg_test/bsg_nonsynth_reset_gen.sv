@@ -47,7 +47,7 @@ module bsg_nonsynth_reset_gen #(parameter num_clocks_p=1
 
         always @(negedge clk_i[i])
           if (~phase_lo_r[i])
-            ctr_lo_r[i] <= ctr_lo_r[i] + 1;
+            ctr_lo_r[i] <= ctr_lo_r[i] + 1'b1;
           else if (~phase_hi_r[i])
             ctr_hi_r[i] <= ctr_hi_r[i] + in_phase_1;
      end
