@@ -1,0 +1,2 @@
+This directory contains modules that are considered experimental. Although we generally expect them to work, they have not experienced as much vetting as other parts of BaseJump STL.
+Some items will be graduated to non-experimental in future BaseJump STL releases. Other items may be retired, if they don't see much use.
