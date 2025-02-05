@@ -95,7 +95,7 @@ module bsg_fifo_reorder_sync
 // the next read slot, requires power of 2 els_p
 assign rptr_r_p1 = rptr_r+1'b1;
 
-wire loaded_r;
+logic loaded_r;
 
  // we read the memory if we have a deque, and the data in the next slot is valid
  // or, when it is not a deque, and the current slot is valid but we have not loaded it
