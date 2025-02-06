@@ -48,7 +48,7 @@ module bsg_wormhole_concentrator_in
 
   // we use bsg_wormhole_router_header_s here instead of bsg_wormhole_concentrator_header_s to allow for cid_width_p=0
   // this requires that they have the same layout
-  `declare_bsg_wormhole_header_s(cord_width_p, len_width_p, bsg_wormhole_router_header_s);
+  `declare_bsg_wormhole_router_header_s(cord_width_p, len_width_p, bsg_wormhole_router_header_s);
   
   
   genvar i,j;
