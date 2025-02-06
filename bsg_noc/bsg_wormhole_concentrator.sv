@@ -90,7 +90,6 @@ module bsg_wormhole_concentrator
   bsg_wormhole_concentrator_in
    #(.flit_width_p(flit_width_p)
      ,.len_width_p(len_width_p)
-     ,.cid_width_p(cid_width_p)
      ,.num_in_p(num_in_p)
      ,.cord_width_p(cord_width_p)
      ,.debug_lp(debug_lp)
