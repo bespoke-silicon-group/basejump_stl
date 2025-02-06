@@ -46,9 +46,9 @@ module bsg_wormhole_concentrator_in
   ,output [flit_width_p-1:0] concentrated_link_data_o
   );
 
-  // we use bsg_wormhole_header_s here instead of bsg_wormhole_concentrator_header_s to allow for cid_width_p=0
+  // we use bsg_wormhole_router_header_s here instead of bsg_wormhole_concentrator_header_s to allow for cid_width_p=0
   // this requires that they have the same layout
-  `declare_bsg_wormhole_header_s(cord_width_p, len_width_p, bsg_wormhole_header_s);
+  `declare_bsg_wormhole_header_s(cord_width_p, len_width_p, bsg_wormhole_router_header_s);
   
   
   genvar i,j;
@@ -83,8 +83,8 @@ module bsg_wormhole_concentrator_in
         ,.yumi_i        (yumis[i])
         );
 
-      bsg_wormhole_header_s concentrated_hdr;
-      assign concentrated_hdr = fifo_data_lo[i][$bits(bsg_wormhole_header_s)-1:0];
+      bsg_wormhole_router_header_s concentrated_hdr;
+      assign concentrated_hdr = fifo_data_lo[i][$bits(bsg_wormhole_router_header_s)-1:0];
 
       bsg_wormhole_router_input_control #(.output_dirs_p(1), .payload_len_bits_p($bits(concentrated_hdr.len))) wic
         (.clk_i
