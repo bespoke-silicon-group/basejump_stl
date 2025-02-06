@@ -10,6 +10,9 @@ typedef struct packed {                 \
   logic [cord_width_mp-1:0 ]  cord;     \
 } struct_name_mp
 
+// the low bits of this should have exactly the same format as the header above
+// this is particularly important for bsg_wormhole_concentrator_in.sv
+
 `define declare_bsg_wormhole_concentrator_header_s(cord_width_mp, len_width_mp, cid_width, struct_name_mp) \
   typedef struct packed {               \
     logic [cid_width-1:0]     cid;      \
