@@ -217,14 +217,14 @@ module bsg_fifo_reorder_sync_variable
 
   assign valid_r_vector[0] = loaded_r;
   
-  for (i = 1; i < dev_v_width_p; i=i+1)
+  for (i = 1; i < deq_v_width_p; i=i+1)
     begin
       assign valid_r_vector[i] = valid_r[(r_ptr_r + i) & (els_p-1)];
     end
 
   endgenerate
     
-  bsg_scan #(.width_p(dev_v_width_p)
+  bsg_scan #(.width_p(deq_v_width_p)
              ,.and_p(1'b1)
              ,.lo_to_hi_p(1'b1)
             ) scan
