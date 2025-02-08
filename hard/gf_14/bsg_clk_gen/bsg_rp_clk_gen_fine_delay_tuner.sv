@@ -65,5 +65,3 @@ module bsg_rp_clk_gen_fine_delay_tuner
   // synopsys rp_endgroup(bsg_clk_gen_fdt)
 
 endmodule
-
-`BSG_ABSTRACT_MODULE(bsg_rp_clk_gen_fine_delay_tuner)

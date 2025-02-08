@@ -54,5 +54,3 @@ module bsg_rp_clk_gen_coarse_delay_tuner
 // synopsys rp_endgroup (bsg_clk_gen_cde)
 
 endmodule
-
-`BSG_ABSTRACT_MODULE(bsg_rp_clk_gen_coarse_delay_tuner)
