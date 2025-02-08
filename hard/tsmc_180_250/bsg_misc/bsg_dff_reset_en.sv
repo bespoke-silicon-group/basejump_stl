@@ -10,7 +10,7 @@ if (harden_p && width_p==bits)                                          \
                                                ,.data_o);               \
   end
 
-module bsg_dff_reset_en #(width_p=-1, harden_p=1)
+module bsg_dff_reset_en #(width_p=-1, harden_p=0)
    (input   clk_i
     ,input  reset_i
     ,input  [width_p-1:0] data_i
