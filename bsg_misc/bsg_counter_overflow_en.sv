@@ -19,10 +19,15 @@ module bsg_counter_overflow_en #(parameter `BSG_INV_PARAM(max_val_p    )
   
   always_ff @(posedge clk_i)
     begin
-      if (reset_i | overflow_o)
+      if (reset_i)
         count_o <= init_val_p;
       else if (en_i)
-        count_o <= count_o + 1'b1;
+        begin
+          if (overflow_o)
+            count_o <= init_val_p;
+          else
+            count_o <= count_o + 1'b1;
+        end
     end
 
 endmodule
