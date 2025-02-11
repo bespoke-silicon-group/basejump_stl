@@ -19,10 +19,13 @@ module bsg_counter_overflow_set_en #( parameter `BSG_INV_PARAM(max_val_p     )
     begin
       if (set_i)
         count_o <= val_i;
-      else if (overflow_o)
-        count_o <= {lg_max_val_lp{1'b0}};
       else if (en_i)
-        count_o <= count_o + 1'b1;
+        begin
+          if (overflow_o)
+            count_o <= {lg_max_val_lp{1'b0}};
+          else 
+            count_o <= count_o + 1'b1;
+        end
     end
 
 endmodule
