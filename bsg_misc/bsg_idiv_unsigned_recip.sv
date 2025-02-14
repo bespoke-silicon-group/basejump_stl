@@ -5,8 +5,8 @@
 // Outside of this module the divisor is pre-processed into a multiply value and a shift value, 
 // which are inputs to this module and are applied to the input numerator.
 //
-// The shift value is calculated as ceil(log_2 divisor), and the multiply value is
-// calculated as ceil(2^(shift+numer_width_p) / divisor). Importantly the width of 
+// The shift value is calculated as numer_width_p + ceil(log_2 divisor), and the multiply value is
+// calculated as ceil(2^shift / divisor). Importantly the width of 
 // the multiply value is 1 bit wider than the numerator width. This creates some issue
 // in software implementations since it requires a 33-bit constant for a 32-bit numerator
 // but is not an issue in hardware.
