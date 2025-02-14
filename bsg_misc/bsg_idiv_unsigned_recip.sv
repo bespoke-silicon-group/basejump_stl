@@ -5,11 +5,13 @@
 // Outside of this module the divisor is pre-processed into a multiply value and a shift value, 
 // which are inputs to this module and are applied to the input numerator.
 //
-// The shift value is calculated as numer_width_p + ceil(log_2 divisor), and the multiply value is
-// calculated as ceil(2^shift / divisor). Importantly the width of 
+// The shift value is calculated as ceil(log_2 divisor), and the multiply value is
+// calculated as ceil(2^(shift+numer_width_p) / divisor). Importantly the width of 
 // the multiply value is 1 bit wider than the numerator width. This creates some issue
 // in software implementations since it requires a 33-bit constant for a 32-bit numerator
-// but is not an issue in hardware.
+// but is not an issue in hardware. Note that when the shift and multiply value are applied
+// the expression is   N * multiply >> (shift + numer_width_p). This is a slight operation vs.
+// than the publication below.
 
 // See also bsg_hash_bank, which implements division by constants of the form 2^n * (2^m-1).
 //
