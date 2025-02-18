@@ -39,7 +39,7 @@ module bsg_id_pool_with_reserve
   logic [els_p-1:0] allocated_r;
   logic [els_p-1:0] allocated_or_reserved_li;
 
-  assign allocated_or_reserved_li = allocated_r | reserved_i;
+  assign allocated_or_reserved_li = allocated_r | reserve_i;
   
   // next id to dealloc
   logic [els_p-1:0] dealloc_decode;
@@ -99,7 +99,7 @@ module bsg_id_pool_with_reserve
     if (~reset_i) begin
       if (dealloc_v_i) begin
         assert(allocated_r[dealloc_id_i]) else $error("Cannot deallocate an id that hasn't been allocated.");
-        assert(reserved_i [dealloc_id_i]) else $error("Cannot deallocate an id that is reserved.");
+        assert(!reserved_i [dealloc_id_i]) else $error("Cannot deallocate an id that is reserved.");
         assert(dealloc_id_i < els_p) else $error("Cannot deallocate an id that is outside the range.");
       end
 
