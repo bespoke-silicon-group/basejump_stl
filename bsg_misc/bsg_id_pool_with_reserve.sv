@@ -99,7 +99,7 @@ module bsg_id_pool_with_reserve
     if (~reset_i) begin
       if (dealloc_v_i) begin
         assert(allocated_r[dealloc_id_i]) else $error("Cannot deallocate an id that hasn't been allocated.");
-        assert(!reserved_i [dealloc_id_i]) else $error("Cannot deallocate an id that is reserved.");
+        assert(!reserve_i [dealloc_id_i]) else $error("Cannot deallocate an id that is reserved.");
         assert(dealloc_id_i < els_p) else $error("Cannot deallocate an id that is outside the range.");
       end
 
