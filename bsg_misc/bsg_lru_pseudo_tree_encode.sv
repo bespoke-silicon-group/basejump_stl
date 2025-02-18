@@ -68,4 +68,4 @@ module bsg_lru_pseudo_tree_encode
 
 endmodule
 
-`BSG_ABSTRACT_MODULE(bsg_lru_psuedo_tree_encode)
+`BSG_ABSTRACT_MODULE(bsg_lru_pseudo_tree_encode)
