@@ -46,10 +46,12 @@ module bsg_mem_1r1w #(parameter `BSG_INV_PARAM(width_p)
    always_ff @(negedge w_clk_i)
      if (w_v_i===1'b1)
        begin
-         assert ((w_reset_i === 'X) || (w_reset_i === 1'b1) || (w_addr_i < els_p) || (els_p <= 1))
-            else $error("Invalid address %x to %m of size %x (w_reset_i=%b, w_v_i=%b)\n", w_addr_i, els_p, w_reset_i, w_v_i);
-          assert ((w_reset_i === 'X) || (w_reset_i === 1'b1) || !(r_addr_i == w_addr_i && w_v_i && r_v_i && !read_write_same_addr_p))
-            else $error("%m: Attempt to read and write same address %x (w_v_i = %b, w_reset_i = %b)",w_addr_i,w_v_i,w_reset_i);
+         /* verilator lint_off UNSIGNED */
+         assert ((w_reset_i === 'X) || (w_reset_i === 1'b1) || (w_addr_i < addr_width_lp'(els_p)) || (els_p <= 1))
+           else $error("Invalid address %x to %m of size %x (w_reset_i=%b, w_v_i=%b)\n", w_addr_i, els_p, w_reset_i, w_v_i);
+         /* verilator lint_on UNSIGNED */
+         assert ((w_reset_i === 'X) || (w_reset_i === 1'b1) || !(r_addr_i == w_addr_i && w_v_i && r_v_i && !read_write_same_addr_p))
+           else $error("%m: Attempt to read and write same address %x (w_v_i = %b, w_reset_i = %b)",w_addr_i,w_v_i,w_reset_i);
        end
 
 `endif
