@@ -10,7 +10,7 @@
 // Register File Compiler Databook"
 //
 `define bsg_mem_1r1w_sync_macro_rf(words,bits,lgEls,newBits,mux) \
-if (els_p == words && width_p == bits)                          \
+if (harden_p && els_p == words && width_p == bits)                          \
   begin: macro                                                  \
           wire [newBits-1:0] tmp_lo,tmp_li;                     \
           assign r_data_o = tmp_lo[bits-1:0];                    \
@@ -39,6 +39,7 @@ module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
                           , parameter addr_width_lp=$clog2(els_p)
                           // whether to substitute a 1r1w
                           , parameter read_write_same_addr_p= 0
+                          , parameter harden_p=1
                           , parameter substitute_1r1w_p=1)
    (input   clk_i
     , input reset_i

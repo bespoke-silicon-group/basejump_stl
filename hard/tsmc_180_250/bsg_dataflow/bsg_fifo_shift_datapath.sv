@@ -5,7 +5,7 @@
 //
 
 `define bsg_fifo_shift_datapath_macro(words,bits)                             \
-        if (els_p == words && width_p == bits)                                \
+        if (harden_p && els_p == words && width_p == bits)                    \
           begin: macro                                                        \
              bsg_rp_tsmc_250_fifo_shift_w``words``_b``bits w``words``_b``bits \
                (.*                                                            \
@@ -18,6 +18,7 @@
 module bsg_fifo_shift_datapath #(parameter `BSG_INV_PARAM( width_p    )
                                  ,parameter `BSG_INV_PARAM(els_p      )
                                  ,parameter default_p  = { (width_p) {1'b0} }
+                                 ,parameter harden_p = 0
                                  )
    (input   clk_i
     , input [width_p-1:0]    data_i

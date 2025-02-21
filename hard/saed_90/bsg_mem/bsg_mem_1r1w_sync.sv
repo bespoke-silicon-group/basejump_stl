@@ -4,7 +4,7 @@
 //
 
 `define bsg_mem_1r1w_sync_macro(bits,words) \
-  if (els_p == words && width_p == bits)    \
+  if (harden_p && els_p == words && width_p == bits)    \
     begin: macro                            \
        saed90_``bits``x``words``_2P mem     \
          (.CE1  (clk_lo)                     \
@@ -26,7 +26,7 @@ module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
                          ,parameter read_write_same_addr_p=0
                          // whether to substitute a 1r1w
                          ,parameter substitute_1r1w_p=1
-                         ,parameter harden_p = 1
+                         ,parameter harden_p=1
                          ,parameter enable_clock_gating_p=1'b0
                          )
       
