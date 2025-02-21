@@ -43,10 +43,14 @@ module bsg_cache_dma
 
     ,input bsg_cache_dma_cmd_e dma_cmd_i
     ,input [lg_ways_lp-1:0] dma_way_i
-    ,input [addr_width_p-1:0] dma_addr_i
+    ,input dma_write_i
+    ,input dma_read_i
+    ,input [addr_width_p-1:0] dma_w_addr_i
+    ,input [addr_width_p-1:0] dma_r_addr_i
+    ,input dma_store_tag_miss_op_i
     ,output logic done_o
 
-    ,input track_data_we_i
+    ,input track_data_we_iß
 
     ,output logic [data_width_p-1:0] snoop_word_o
 
@@ -214,17 +218,17 @@ module bsg_cache_dma
   assign data_mem_w_mask_way_picked = (word_tracking_p & track_miss_i) ? ~track_bits_offset_picked_expanded : {dma_data_mask_width_lp{1'b1}};
 
   if (burst_len_lp == 1) begin
-    assign data_mem_addr_o = dma_addr_i[block_offset_width_lp+:lg_sets_lp];
+    assign data_mem_addr_o = dma_r_addr_i[block_offset_width_lp+:lg_sets_lp];
   end
   //else if (burst_len_lp == block_size_in_words_p) begin
   //  assign data_mem_addr_o = {
-  //    dma_addr_i[block_offset_width_lp+:lg_sets_lp],
+  //    dma_r_addr_i[block_offset_width_lp+:lg_sets_lp],
   //    counter_r[0+:lg_burst_len_lp]
   //  };
   //end
   else begin
     assign data_mem_addr_o = {
-      {(sets_p>1){dma_addr_i[block_offset_width_lp+:lg_sets_lp]}},
+      {(sets_p>1){dma_r_addr_i[block_offset_width_lp+:lg_sets_lp]}},
       counter_r[0+:lg_burst_len_lp]
     };
   end
@@ -245,12 +249,22 @@ module bsg_cache_dma
     done_o = 1'b0;
 
     dma_pkt_v_o = 1'b0;
-    dma_pkt.write_not_read = 1'b0;
-    dma_pkt.addr = {
-      dma_addr_i[addr_width_p-1:block_offset_width_lp],
+    // dma_pkt.write_not_read = 1'b0;
+
+    dma_pkt.read = 1'b0;
+    dma_pkt.write = 1'b0;
+    dma_pkt.stm = 1'b0;
+
+    dma_pkt.r_addr = {
+      dma_r_addr_i[addr_width_p-1:block_offset_width_lp],
       {(block_offset_width_lp){1'b0}}
     };
-    dma_pkt.mask = '0;
+    dma_pkt.w_addr = {
+      dma_w_addr_i[addr_width_p-1:block_offset_width_lp],
+      {(block_offset_width_lp){1'b0}}
+    };
+
+    dma_pkt.w_mask = '0;
 
     data_mem_v_o = 1'b0;
     data_mem_w_o = 1'b0;
@@ -273,25 +287,29 @@ module bsg_cache_dma
         counter_up = 1'b0;
         data_mem_v_o = 1'b0;
         dma_pkt_v_o = 1'b0;
-        dma_pkt.write_not_read = 1'b0;
+        // dma_pkt.write_not_read = 1'b0;
         done_o = 1'b0;
         dma_state_n = IDLE;
 
         case (dma_cmd_i)
-          e_dma_send_fill_addr: begin
+          e_dma_send_fill_and_evict_addr: begin
             dma_pkt_v_o = 1'b1;
-            dma_pkt.write_not_read = 1'b0;
+            // dma_pkt.write_not_read = 1'b0;
+            dma_pkt.write = dma_write_i;
+            dma_pkt.read = dma_read_i;
+            dma_pkt.stm = dma_store_tag_miss_op_i;
+            dma_pkt.w_mask = word_tracking_p ? track_data_way_picked : {block_size_in_words_p{1'b1}};
             done_o = dma_pkt_yumi_i;
             dma_state_n = IDLE;
           end
 
-          e_dma_send_evict_addr: begin
-            dma_pkt_v_o = 1'b1;
-            dma_pkt.write_not_read = 1'b1;
-            dma_pkt.mask = word_tracking_p ? track_data_way_picked : {block_size_in_words_p{1'b1}};
-            done_o = dma_pkt_yumi_i;
-            dma_state_n = IDLE;
-          end
+          // e_dma_send_evict_addr: begin
+          //   dma_pkt_v_o = 1'b1;
+          //   // dma_pkt.write_not_read = 1'b1;
+          //   dma_pkt.w_mask = word_tracking_p ? track_data_way_picked : {block_size_in_words_p{1'b1}};
+          //   done_o = dma_pkt_yumi_i;
+          //   dma_state_n = IDLE;
+          // end
 
           e_dma_get_fill_data: begin
             counter_clear = 1'b1;
@@ -378,18 +396,18 @@ module bsg_cache_dma
   logic snoop_word_we;
   logic [data_width_p-1:0] snoop_word_n;
 
-  assign snoop_word_offset = dma_addr_i[byte_offset_width_lp+:lg_burst_size_in_words_lp];
+  assign snoop_word_offset = dma_r_addr_i[byte_offset_width_lp+:lg_burst_size_in_words_lp];
 
   if (burst_len_lp == 1) begin
     assign snoop_word_we = (dma_state_r == GET_FILL_DATA) & in_fifo_v_lo;
   end
   else if (burst_len_lp == block_size_in_words_p) begin
     assign snoop_word_we = (dma_state_r == GET_FILL_DATA) & in_fifo_v_lo
-      & (counter_r[0+:lg_burst_len_lp] == dma_addr_i[byte_offset_width_lp+:lg_burst_len_lp]);
+      & (counter_r[0+:lg_burst_len_lp] == dma_r_addr_i[byte_offset_width_lp+:lg_burst_len_lp]);
   end
   else begin
     assign snoop_word_we = (dma_state_r == GET_FILL_DATA) & in_fifo_v_lo
-      & (counter_r[0+:lg_burst_len_lp] == dma_addr_i[byte_offset_width_lp+lg_burst_size_in_words_lp+:lg_burst_len_lp]);
+      & (counter_r[0+:lg_burst_len_lp] == dma_r_addr_i[byte_offset_width_lp+lg_burst_size_in_words_lp+:lg_burst_len_lp]);
   end
 
 
@@ -426,7 +444,8 @@ module bsg_cache_dma
     if (debug_p) begin
       if (dma_pkt_v_o & dma_pkt_yumi_i) begin
         $display("<VCACHE> DMA_PKT we:%0d addr:%8h // %8t",
-          dma_pkt.write_not_read, dma_pkt.addr, $time);
+          // dma_pkt.write_not_read, dma_pkt.addr, $time);
+          dma_pkt.addr, $time);
       end
     end
   end

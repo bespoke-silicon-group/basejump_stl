@@ -56,7 +56,11 @@ module bsg_cache_miss
     // to dma engine
     ,output bsg_cache_dma_cmd_e dma_cmd_o
     ,output logic [lg_ways_lp-1:0] dma_way_o
-    ,output logic [addr_width_p-1:0] dma_addr_o
+    ,output logic dma_write_o
+    ,output logic dma_read_o
+    ,output logic [addr_width_p-1:0] dma_w_addr_o
+    ,output logic [addr_width_p-1:0] dma_r_addr_o
+    ,output logic dma_store_tag_miss_op_o
     ,input dma_done_i
 
     // to dma engine for flopping track_mem's read data
@@ -133,8 +137,9 @@ module bsg_cache_miss
     START
     ,FLUSH_OP
     ,LOCK_OP
-    ,SEND_EVICT_ADDR
-    ,SEND_FILL_ADDR
+    // ,SEND_EVICT_ADDR
+    // ,SEND_FILL_ADDR
+    ,SEND_FILL_AND_EVICT_ADDR
     ,SEND_EVICT_DATA
     ,GET_FILL_DATA
     ,STORE_TAG_MISS
@@ -178,11 +183,14 @@ module bsg_cache_miss
   assign tag_mem_addr_o = addr_index_v;
   assign track_mem_addr_o = addr_index_v;
 
+  assign dma_store_tag_miss_op_o = st_tag_miss_op;
+
   assign chosen_way_o = chosen_way_r;
 
   assign dma_way_o = goto_flush_op
     ? flush_way_r
-    : chosen_way_r;
+    // : chosen_way_r;
+    : chosen_way_n;
 
   // chosen way lru decode
   //
@@ -284,7 +292,10 @@ module bsg_cache_miss
     chosen_way_n = chosen_way_r;
     flush_way_n = flush_way_r;
 
-    dma_addr_o = '0;
+    dma_write_o = '0;
+    dma_read_o = '0;
+    dma_w_addr_o = '0;
+    dma_r_addr_o = '0;
     dma_cmd_o = e_dma_nop;
 
     recover_o = '0;
@@ -306,14 +317,14 @@ module bsg_cache_miss
               ? LOCK_OP
               : (st_tag_miss_op
                 ? STORE_TAG_MISS
-                : SEND_FILL_ADDR)))
+                : SEND_FILL_AND_EVICT_ADDR)))
           : START;
       end
 
       // Send out the missing cache block address (to read).
       // Choose a block to replace/fill.
       // If the chosen block is dirty, then take evict route.
-      SEND_FILL_ADDR: begin
+      SEND_FILL_AND_EVICT_ADDR: begin
 
         // Replacement Policy:
         // If an invalid and unlocked way exists, pick that.
@@ -323,20 +334,47 @@ module bsg_cache_miss
         // On track miss, the chosen way is the tag hit way.
         chosen_way_n = track_miss_i ? tag_hit_way_id_i : (invalid_exist ? invalid_way_id : lru_way_id);
 
-        dma_cmd_o = e_dma_send_fill_addr;          
-        dma_addr_o = {
+        // dma_cmd_o = e_dma_send_fill_addr;     
+        dma_cmd_o = e_dma_send_fill_and_evict_addr;   
+        // TODO：split this signal into a stm one and a non-stm one for fpga to differentiate 
+        dma_read_o = ~goto_flush_op;
+        dma_r_addr_o = {
           addr_tag_v,
+          {(sets_p>1){addr_index_v}},
+          {(block_offset_width_lp){1'b0}}
+        };
+        dma_write_o = goto_flush_op | (~track_miss_i & (stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n]));
+        dma_w_addr_o = {
+          tag_v_i[dma_way_o],
           {(sets_p>1){addr_index_v}},
           {(block_offset_width_lp){1'b0}}
         };
 
         // if the chosen way is dirty and valid, then evict.
         miss_state_n = dma_done_i
-          ? ((~track_miss_i & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
-            ? SEND_EVICT_ADDR
-            : GET_FILL_DATA)
-          : SEND_FILL_ADDR;
+          // ? ((~track_miss_i & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
+          //   ? SEND_EVICT_ADDR
+          //   : GET_FILL_DATA)
+          ? (track_miss_i | (~(stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n]))
+            ? GET_FILL_DATA
+            : SEND_EVICT_DATA)
+          : SEND_FILL_AND_EVICT_ADDR;
       end
+
+     // Send out the block addr for eviction, before initiating the eviction.
+      // SEND_EVICT_ADDR: begin
+      //   dma_cmd_o = e_dma_send_evict_addr;
+      //   dma_addr_o = {
+      //     tag_v_i[dma_way_o],
+      //     {(sets_p>1){addr_index_v}},
+      //     {(block_offset_width_lp){1'b0}}
+      //   };
+
+      //   miss_state_n = dma_done_i
+      //     ? SEND_EVICT_DATA
+      //     : SEND_EVICT_ADDR;
+      // end
+
 
       // Handling the cases for TAGFL, AINV, AFL, AFLINV.
       FLUSH_OP: begin
@@ -373,7 +411,7 @@ module bsg_cache_miss
         // If it's not AINV, and the chosen set is dirty and valid, evict the
         // block.
         miss_state_n = (~decode_v_i.ainv_op & stat_info_in.dirty[flush_way_n] & valid_v_i[flush_way_n])
-          ? SEND_EVICT_ADDR
+          ? SEND_FILL_AND_EVICT_ADDR
           : RECOVER;
       end
 
@@ -394,25 +432,12 @@ module bsg_cache_miss
         miss_state_n = RECOVER;
       end
 
-      // Send out the block addr for eviction, before initiating the eviction.
-      SEND_EVICT_ADDR: begin
-        dma_cmd_o = e_dma_send_evict_addr;
-        dma_addr_o = {
-          tag_v_i[dma_way_o],
-          {(sets_p>1){addr_index_v}},
-          {(block_offset_width_lp){1'b0}}
-        };
-
-        miss_state_n = dma_done_i
-          ? SEND_EVICT_DATA
-          : SEND_EVICT_ADDR;
-      end
 
       // Set the DMA engine to evict the dirty block.
       // For the flush ops, go straight to RECOVER.
       SEND_EVICT_DATA: begin
         dma_cmd_o = e_dma_send_evict_data; 
-        dma_addr_o = {
+        dma_w_addr_o = {
           tag_v_i[dma_way_o],
           {(sets_p>1){addr_index_v}},
           {(block_offset_width_lp){1'b0}}
@@ -456,7 +481,7 @@ module bsg_cache_miss
       // Do not start until the store buffer is empty.
       GET_FILL_DATA: begin
         dma_cmd_o = e_dma_get_fill_data;
-        dma_addr_o = {
+        dma_r_addr_o = {
           addr_tag_v,
           {(sets_p>1){addr_index_v}},
           {(block_size_in_words_p > 1){addr_block_offset_v}}, // used for snoop data in dma.
@@ -512,11 +537,22 @@ module bsg_cache_miss
 
         // if the chosen way is dirty and valid, then evict.
         miss_state_n = (stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
-          ? SEND_EVICT_ADDR
+          ? SEND_FILL_AND_EVICT_ADDR
           : STORE_TAG_MISS_ALLOCATE;
       end
 
       STORE_TAG_MISS_ALLOCATE: begin
+        // TODO: stm needs to wait for its dma request to reach dma engine and the dic to get updated,
+        // but if it needs the request to come back, what's the point of this stm
+        dma_cmd_o = e_dma_send_fill_and_evict_addr;   
+        // dma_read_o = 1'b1;
+        // dma_r_addr_o = {
+        //   addr_tag_v,
+        //   {(sets_p>1){addr_index_v}},
+        //   {(block_offset_width_lp){1'b0}}
+        // };
+        
+
         stat_mem_v_o = 1'b1;
         stat_mem_w_o = 1'b1;
         stat_mem_data_out.dirty = {ways_p{1'b1}};

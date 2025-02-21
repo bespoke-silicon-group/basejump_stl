@@ -412,7 +412,11 @@ end
   // miss handler
   //
   bsg_cache_dma_cmd_e dma_cmd_lo;
-  logic [addr_width_p-1:0] dma_addr_lo;
+  logic dma_write_lo;
+  logic dma_read_lo;
+  logic dma_store_tag_miss_op_lo;
+  logic [addr_width_p-1:0] dma_w_addr_lo;
+  logic [addr_width_p-1:0] dma_r_addr_lo;
   logic [lg_ways_lp-1:0] dma_way_lo;
   logic dma_done_li;
 
@@ -471,7 +475,11 @@ end
  
     ,.dma_cmd_o(dma_cmd_lo) 
     ,.dma_way_o(dma_way_lo)
-    ,.dma_addr_o(dma_addr_lo)
+    ,.dma_write_o(dma_write_lo)
+    ,.dma_read_o(dma_read_lo)
+    ,.dma_w_addr_o(dma_w_addr_lo)
+    ,.dma_r_addr_o(dma_r_addr_lo)
+    ,.dma_store_tag_miss_op_o(dma_store_tag_miss_op_lo)
     ,.dma_done_i(dma_done_li)
 
     ,.track_data_we_o(miss_track_data_we_lo)
@@ -530,7 +538,11 @@ end
    
     ,.dma_cmd_i(dma_cmd_lo)
     ,.dma_way_i(dma_way_lo)
-    ,.dma_addr_i(dma_addr_lo)
+    ,.dma_write_i(dma_write_lo)
+    ,.dma_read_i(dma_read_lo)
+    ,.dma_w_addr_i(dma_w_addr_lo)
+    ,.dma_r_addr_i(dma_r_addr_lo)
+    ,.dma_store_tag_miss_op_i(dma_store_tag_miss_op_lo)
     ,.done_o(dma_done_li)
 
     ,.track_data_we_i(miss_track_data_we_lo)

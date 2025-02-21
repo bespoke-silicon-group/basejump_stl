@@ -125,14 +125,20 @@ package bsg_cache_pkg;
 
   // dma opcode (one-hot)
   //
-  typedef enum logic [3:0] {
-    e_dma_nop               = 4'b0000
-    ,e_dma_send_fill_addr   = 4'b0001
-    ,e_dma_send_evict_addr  = 4'b0010
-    ,e_dma_get_fill_data    = 4'b0100
-    ,e_dma_send_evict_data  = 4'b1000
-  } bsg_cache_dma_cmd_e;
+  // typedef enum logic [3:0] {
+  //   e_dma_nop               = 4'b0000
+  //   ,e_dma_send_fill_addr   = 4'b0001
+  //   ,e_dma_send_evict_addr  = 4'b0010
+  //   ,e_dma_get_fill_data    = 4'b0100
+  //   ,e_dma_send_evict_data  = 4'b1000
+  // } bsg_cache_dma_cmd_e;
 
+  typedef enum logic [2:0] {
+    e_dma_nop                         = 3'b000
+    ,e_dma_send_fill_and_evict_addr   = 3'b001
+    ,e_dma_get_fill_data              = 3'b010
+    ,e_dma_send_evict_data            = 3'b100
+  } bsg_cache_dma_cmd_e;
 
   // cache dma wormhole opcode
   // This opcode is included in the cache DMA wormhole header flit.
@@ -141,13 +147,15 @@ package bsg_cache_pkg;
     // header + addr
     e_cache_wh_read = 2'b00
 
+    ,e_cache_wh_stm = 2'b01
+
     // len = 1 + (# data flits)
     // header + addr + data
-    ,e_cache_wh_write_non_masked = 2'b10
+    ,e_cache_wh_write_non_masked = 2'b11
 
     // len = 2 + (# data flits)
     // header + addr + mask + data
-    ,e_cache_wh_write_masked = 2'b11
+    ,e_cache_wh_write_masked = 2'b10
   } bsg_cache_wh_opcode_e;
 
 endpackage

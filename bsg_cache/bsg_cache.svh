@@ -17,15 +17,28 @@
 
   // bsg_cache_dma_pkt_s
   //
+  // `define declare_bsg_cache_dma_pkt_s(addr_width_mp, mask_width_mp) \
+  //   typedef struct packed {                                         \
+  //     logic write_not_read;                                         \
+  //     logic [addr_width_mp-1:0] addr;                               \
+  //     logic [mask_width_mp-1:0] mask;                               \
+  //   } bsg_cache_dma_pkt_s
+
+  // `define bsg_cache_dma_pkt_width(addr_width_mp, mask_width_mp)     \
+  //   (1+addr_width_mp+mask_width_mp)
+
   `define declare_bsg_cache_dma_pkt_s(addr_width_mp, mask_width_mp) \
     typedef struct packed {                                         \
-      logic write_not_read;                                         \
-      logic [addr_width_mp-1:0] addr;                               \
-      logic [mask_width_mp-1:0] mask;                               \
+      logic write;                                                  \
+      logic read;                                                   \
+      logic stm;                                                    \
+      logic [addr_width_mp-1:0] r_addr;                             \
+      logic [addr_width_mp-1:0] w_addr;                             \
+      logic [mask_width_mp-1:0] w_mask;                             \
     } bsg_cache_dma_pkt_s
 
   `define bsg_cache_dma_pkt_width(addr_width_mp, mask_width_mp)     \
-    (1+addr_width_mp+mask_width_mp)
+    (3+addr_width_mp+addr_width_mp+mask_width_mp)
 
   // tag info s
   //
