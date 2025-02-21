@@ -12,3 +12,5 @@ ucli.key
 .nfs*
 *.pyc
 libdramsim3.so
+libdramsim3.a
+*.o
