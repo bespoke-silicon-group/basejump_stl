@@ -1,3 +1,19 @@
+
+
+// NOTE: it is very important to do a separate vcs/simv run
+// and to run simv with -xlrm hier_inst_seed in order for each instance of
+// rando to get a different value
+
+module rando (input clk_i);
+   logic [31:0] val;
+   
+   always @(posedge clk_i)
+     begin
+	val <= $urandom();
+     end
+endmodule
+
+
 module testbench();
 
   parameter els_p = 32;
@@ -5,7 +21,7 @@ module testbench();
 
   bit clk;
   bit reset;
-
+   
   bsg_nonsynth_clock_gen #(
     .cycle_time_p(1000)
   ) cg0 (
@@ -24,32 +40,27 @@ module testbench();
 
    for (geny = 0; geny < 100; geny++)
      begin: ctr
-	bsg_cycle_counter #(.width_p(32)
-			    ) ctr
-	       (.clk_i(clk)
-		,.reset_i(reset)
-		,.ctr_r_o()
-		);
+	rando bla(.clk_i(clk));
      end
+
    
-   bind bsg_cycle_counter bsg_nonsynth_profile_client      #(.suffix_p("_suff")) u_bind
+   bind rando bsg_nonsynth_profiler_client      #(.suffix_p("_suff")) u_bind
    (.clk_i(clk_i)
-    ,.reset_i(reset_i)
-    ,.countme_i(ctr_r_o[0] ^ ctr_r_o[1])
+    ,.countme_i(val[0])
     );
 
-   bsg_nonsynth_profile_master #(.max_counters_p(1000)) profiler (.clk_i(clk),.reset_i(reset));
+   bsg_nonsynth_profiler_master #(.max_counters_p(1000)) profiler ();
 
    int foo;
    string path;
    initial
      begin
-	@(negedge reset);
-	@(posedge clk);
-	@(posedge clk);	
-	@(posedge clk);
-	@(posedge clk);
-	@(posedge clk);	
+	for (foo = 0; foo < 1000; foo++)
+	  begin
+	     @(posedge clk);
+	     profiler.dump();
+	     profiler.clear();
+	  end
 	@(posedge clk);
 	$finish;
      end

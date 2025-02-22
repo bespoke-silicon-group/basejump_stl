@@ -1,17 +1,29 @@
 // bsg_nonsynth_profiler
 
-// This module is a easy-to-use generalized event counting profiling infrastructure
+// This module is a easy-to-use generalized event counting profiling infrastructure.
 
-// There are two modules, a master module and a client module.
+// There are two modules, a master module (bsg_nonsynth_profiler_master) and a client module (bsg_nonsynth_profiler_client).
+//
 // The master module contains all of the counters.
+// The user's testbench will bind the client modules to the target instances or modules.
+//
 // At initialization time, the client module will register itself with the master module and allocate a counter.
-// The client module will monitor a signal in the master module that says when to start and stop profiling
-// The master module has logic for periodically dumping and reseting the counters
-// The master module has a single that will cause it to dump the remaining data, and dump the directory of counters
+//
+// The user's testbench is responsible for calling into the master module for periodically dumping and clearing the counters on the posedge of the clock.
+//
+// The master module will write out the files when the simulator calls $finish.
+//
+// The generated files are profile.name and profile.dat.
+//
+//
+// The user can generate one or more profile.schema files that tells the post-processor program how to format the data for display.
+// For this purpose, the user can use the program bsg_nonsynth_profiler_analyzer.py
+//
+// See the example in testing/bsg_test/bsg_nonsynth_profiler, including the profile.schema file that was used.
 
-module bsg_nonsynth_profile_client #(string suffix_p="")
+
+module bsg_nonsynth_profiler_client #(string suffix_p="")
    (input clk_i
-    ,input reset_i
     ,input countme_i
     );
    
@@ -21,25 +33,20 @@ module bsg_nonsynth_profile_client #(string suffix_p="")
    
    initial
      begin
-	@(posedge clk_i);
-	@(negedge reset_i);
 	$sformat(path,"%m%s",suffix_p);
 	$root.testbench.profiler.allocate_counter(path,counter);
      end
 
    always @(negedge clk_i)
      begin
-	if ((reset_i===0) && countme_i)
+	if (countme_i)
 	  $root.testbench.profiler.increment_counter(counter);
      end
 
 endmodule
 
-module bsg_nonsynth_profile_master #(parameter max_counters_p=0)
-
-  (input clk_i
-   ,input reset_i
-   );
+module bsg_nonsynth_profiler_master #(parameter max_counters_p=0)
+   ();
 
    semaphore sem = new(1);
 
@@ -47,7 +54,7 @@ module bsg_nonsynth_profile_master #(parameter max_counters_p=0)
    int counter_limit = 0;
    int counters [max_counters_p-1:0];
    
-   string counter_name[];   
+   string counter_name[] = new[max_counters_p];	
 
    int counter;
 
@@ -74,18 +81,12 @@ module bsg_nonsynth_profile_master #(parameter max_counters_p=0)
 	     sem.put(1);
 	     return;
 	  end
-	
-
      end
    endtask
 
    initial
      begin
-	int counter;
-	
 	fd=$fopen("profile.dat","w");
-	counter_name = new[max_counters_p];	
-	allocate_counter("invalid", counter);
      end
 
    task dump();
