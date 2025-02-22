@@ -8,8 +8,9 @@
 // The user's testbench will bind the client modules to the target instances or modules.
 //
 // At initialization time, the client module will register itself with the master module and allocate a counter.
+// At CLOCK NEGEDGE, the client bound module (bsg_nonsynth_profiler_client) will use its input signal to conditionally increment the counter.
 //
-// The user's testbench is responsible for calling into the master module for periodically dumping and clearing the counters on the posedge of the clock.
+// The user's testbench is responsible for calling into the master module for periodically dumping and clearing the counters on the CLOCK POSEDGE of the clock.
 //
 // The master module will write out the files when the simulator calls $finish.
 //
