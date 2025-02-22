@@ -66,6 +66,8 @@ In my profile.name file, I have strings that look like testbench.ctr[44].ctr.u_b
 modify so that it outputs either pdf or an image file, based on the command line parameter.
 
 
+* See testing/bsg_test/bsg_nonsynth_profiler for an example of a complete test that uses this infrastructure
+
 """
 
 import sys
