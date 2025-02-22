@@ -1,0 +1,17 @@
+cat_0 red ^testbench\.ctr\[(0|1|2|3|4|5|6|7|8|9)\]\.bla\.u_bind_suff$
+cat_1 green ^testbench\.ctr\[(1[0-9])\]\.bla\.u_bind_suff$
+cat_2 blue ^testbench\.ctr\[(2[0-9])\]\.bla\.u_bind_suff$
+@ Frontend_Group
+
+cat_3 orange ^testbench\.ctr\[(3[0-9])\]\.bla\.u_bind_suff$
+cat_4 cyan ^testbench\.ctr\[(4[0-9])\]\.bla\.u_bind_suff$
+cat_5 magenta ^testbench\.ctr\[(5[0-9])\]\.bla\.u_bind_suff$
+@ Midstage_Group
+
+cat_6 brown ^testbench\.ctr\[(6[0-9])\]\.bla\.u_bind_suff$
+cat_7 purple ^testbench\.ctr\[(7[0-9])\]\.bla\.u_bind_suff$
+cat_8 black ^testbench\.ctr\[(8[0-9])\]\.bla\.u_bind_suff$
+@ Backend_Group
+
+cat_9 pink ^testbench\.ctr\[(9[0-9])\]\.bla\.u_bind_suff$
+@ Final_Group
