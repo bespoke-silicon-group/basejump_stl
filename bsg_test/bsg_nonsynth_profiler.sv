@@ -88,6 +88,7 @@ module bsg_nonsynth_profile_master #(parameter max_counters_p=0)
 	allocate_counter("invalid", counter);
      end
 
+   // other modules can use this to dump the stats	
    task dump();
       begin
 	 for (int i = 0; i < counter_limit; i++)
@@ -96,7 +97,8 @@ module bsg_nonsynth_profile_master #(parameter max_counters_p=0)
 	   end
      end
    endtask
-      
+
+// other modules can use this to clear the stats (often after a dump)		
    task clear();
     begin
        for (int i = 0; i < counter_limit; i++)
