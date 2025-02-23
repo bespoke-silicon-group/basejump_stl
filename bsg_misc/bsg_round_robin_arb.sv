@@ -55,7 +55,7 @@ logic hold_on_sr, reset_on_sr;
 initial begin
 assert (inputs_p <=  16 )
   else begin
-    $error("[%m] Can not support inputs_p greater than  16 );
+    $error("[%m] Can not support inputs_p greater than  16 ");
     $finish();
   end
 end

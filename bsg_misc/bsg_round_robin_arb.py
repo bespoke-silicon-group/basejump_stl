@@ -166,7 +166,7 @@ print ("""
 initial begin
 assert (inputs_p <= """,max_reqs,""")
   else begin
-    $error("[%m] Can not support inputs_p greater than """,max_reqs,""");
+    $error("[%m] Can not support inputs_p greater than """,max_reqs,"""\");
     $finish();
   end
 end
