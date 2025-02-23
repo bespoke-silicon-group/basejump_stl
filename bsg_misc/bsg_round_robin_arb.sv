@@ -51,6 +51,17 @@ logic hold_on_sr, reset_on_sr;
 
 
 
+// synopsys translate_off
+initial begin
+assert (inputs_p <=  16 )
+  else begin
+    $error("[%m] Can not support inputs_p greater than  16 );
+    $finish();
+  end
+end
+// synopsys translate_on
+
+
 if(inputs_p == 1)
 begin: inputs_1
 
@@ -2422,6 +2433,7 @@ end else begin:not_reset_on_sr_p
 end //end of reset_on_sr_p 
 
 end: inputs_16
+// if (inputs_p >  16 ) initial begin $error("unhandled number of inputs"); end
 
 
 assign v_o = | reqs_i ;
