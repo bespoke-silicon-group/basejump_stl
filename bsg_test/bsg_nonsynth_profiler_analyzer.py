@@ -313,6 +313,7 @@ def plot_stacked_bars(groups):
     """
     num_groups = len(groups)
 
+    matplotlib.rcParams['text.antialiased'] = False
     # Create subplots
     fig, axes = plt.subplots(num_groups, 1, sharex=True, figsize=(10, 3 * num_groups))
     # If there's only one group, axes is not a list
@@ -339,14 +340,20 @@ def plot_stacked_bars(groups):
                 bottom=bottoms,
                 color=cat['color'],
                 label=cat['name'],
-                linewidth=0
+                linewidth=0,
+                width=1.0,
+                antialiased=False,
+                edgecolor='none'              
             )
             # Update bottoms
             for i in range(num_frames):
                 bottoms[i] += cat_data[i]
 
+        # After all bars have been drawn on ax
+        handles, labels = ax.get_legend_handles_labels()
+      
         ax.set_title(group['title'])
-        ax.legend(loc='upper right')
+        ax.legend(handles[::-1], labels[::-1], loc='upper right')
         ax.set_ylabel("Counts")
         ax.set_xticks(x_indices)
         ax.set_xlabel("Frame Index")
