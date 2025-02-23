@@ -125,7 +125,7 @@ print ("""// Round robin arbitration unit
 
 """)
 
-print ("""module bsg_round_robin_arb #(`BSG_INV_PARAM(inputs_p)
+print ("""module bsg_round_robin_arb #(parameter `BSG_INV_PARAM(inputs_p)
                                      ,lg_inputs_p   =`BSG_SAFE_CLOG2(inputs_p)
                                      ,reset_on_sr_p = 1'b0
                                      ,hold_on_sr_p  = 1'b0
@@ -161,17 +161,17 @@ logic hold_on_sr, reset_on_sr;
 
 """)
 
-print """
+print ("""
 // synopsys translate_off
 initial begin
-assert (inputs_p <= %d)
+assert (inputs_p <= """,max_reqs,""")
   else begin
-    $error("[%%m] Can not support inputs_p greater than %%d!", %s);
+    $error("[%m] Can not support inputs_p greater than """,max_reqs,""");
     $finish();
   end
 end
 // synopsys translate_on
-""" % (max_reqs, max_reqs)
+""") 
 
 for reqs_w in range(1, max_reqs+1):
     print ("""
@@ -220,6 +220,7 @@ assign grants_o      = sel_one_hot_n & {%d{grants_en_i}} ;
     print ("""
 end: inputs_%d""" % (reqs_w))
 
+print ("// if (inputs_p > ",max_reqs,") initial begin $error(\"unhandled number of inputs\"); end");
 print ("""
 
 assign v_o = | reqs_i ;
