@@ -22,6 +22,10 @@
 //
 // See the example in testing/bsg_test/bsg_nonsynth_profiler, including the profile.schema file that was used.
 
+// set this macro to define the name of the top-level module
+`ifndef BSG_NONSYNTH_PROFILER_CLIENT_TOP
+`define BSG_NONSYNTH_PROFILER_CLIENT_TOP testbench
+`endif
 
 module bsg_nonsynth_profiler_client #(string suffix_p="")
    (input clk_i
@@ -35,13 +39,13 @@ module bsg_nonsynth_profiler_client #(string suffix_p="")
    initial
      begin
 	$sformat(path,"%m%s",suffix_p);
-	$root.testbench.profiler.allocate_counter(path,counter);
+	$root.`BSG_NONSYNTH_PROFILER_CLIENT_TOP.profiler.allocate_counter(path,counter);
      end
 
    always @(negedge clk_i)
      begin
 	if (countme_i)
-	  $root.testbench.profiler.increment_counter(counter);
+	  $root.`BSG_NONSYNTH_PROFILER_CLIENT_TOP.profiler.increment_counter(counter);
      end
 
 endmodule
