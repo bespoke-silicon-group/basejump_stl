@@ -166,7 +166,7 @@ print ("""
 initial begin
 assert (inputs_p <= """,max_reqs,""")
   else begin
-    $error("[%m] Can not support inputs_p greater than """,max_reqs,"""\");
+    $error("[%m] Can not support inputs_p greater than """,max_reqs,""". You can regenerate bsg_round_robin_arb.sv with a greater input range.\");
     $finish();
   end
 end
