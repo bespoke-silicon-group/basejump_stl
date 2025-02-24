@@ -44,7 +44,7 @@ module bsg_mem_1rw_sync #(parameter `BSG_INV_PARAM(width_p)
 	// we warn if els_p >= 16 because it is a good candidate for hardening
 	// and we warn for width_p >= 128 because this starts to add up to some real memory
 	if ((els_p >= 16) || (width_p >= 128) || (width_p*els_p > 256))
-          $display("## %L: instantiating width_p=%d, els_p=%d, read_write_same_addr_p=%d, harden_p=%d (%m)",width_p,els_p,read_write_same_addr_p,harden_p);
+	  $display("## %L: instantiating width_p=%d, els_p=%d (%m)",width_p,els_p);
      end
 `endif	
 
