@@ -7,6 +7,9 @@
  *
  *   The reserve feature allows certain IDs to be removed from the pool, for example to work around defects
  *   in hardware.
+ * 
+ *   Note that deallocated ID's are bypassed into allocation.
+ *   It is forbid to immediately in the same cycle deallocate an allocated ID.
  */
 
 
@@ -22,6 +25,8 @@ module bsg_id_pool_with_reserve
     input reset_i
 
     // IDs that you do not want to be allocated (one hot)
+    // this can be changed on the fly and does not prevent
+    // previously allocated from be returned
     , input logic [els_p-1:0] reserve_i
 
     // next available id
@@ -29,18 +34,18 @@ module bsg_id_pool_with_reserve
     , output logic alloc_v_o
     , input alloc_yumi_i
 
-    // id to return
+    // id to return, should come early in cycle
     , input dealloc_v_i
     , input [id_width_lp-1:0] dealloc_id_i    
+
+   // no id's are allocated
+    , output empty_o
   );
-
-
-  // keeps track of which id has been allocated.
-  logic [els_p-1:0] allocated_r;
-  logic [els_p-1:0] allocated_or_reserved_li;
-
-  assign allocated_or_reserved_li = allocated_r | reserve_i;
-  
+   
+   logic [els_p-1:0] allocated_r;
+   
+   assign empty_o = ~(|allocated_r);
+   
   // next id to dealloc
   logic [els_p-1:0] dealloc_decode;
   bsg_decode_with_v #(
@@ -50,6 +55,11 @@ module bsg_id_pool_with_reserve
     ,.v_i(dealloc_v_i)
     ,.o(dealloc_decode)
   );
+
+  // keeps track of which id has been allocated.
+  logic [els_p-1:0] allocated_or_reserved_li;
+
+  assign allocated_or_reserved_li = (allocated_r & ~dealloc_decode) | reserve_i;
   
   // find the next available id.
   logic [id_width_lp-1:0] alloc_id_lo;
@@ -62,7 +72,7 @@ module bsg_id_pool_with_reserve
     .width_p(els_p)
     ,.lo_to_hi_p(1)
   ) pe0 (
-    .i(~allocated_or_reserved_li  | dealloc_decode)
+    .i(~allocated_or_reserved_li)
     ,.o(one_hot_out)
     ,.v_o(alloc_v_lo)
   );
@@ -99,7 +109,7 @@ module bsg_id_pool_with_reserve
     if (~reset_i) begin
       if (dealloc_v_i) begin
         assert(allocated_r[dealloc_id_i]) else $error("Cannot deallocate an id that hasn't been allocated.");
-        assert(!reserve_i [dealloc_id_i]) else $error("Cannot deallocate an id (%b) that is reserved.",dealloc_id_i);
+        assert(!reserve_i [dealloc_id_i]) else $warning("Warning: deallocating an id (%b) that is reserved.",dealloc_id_i);
         assert(dealloc_id_i < els_p) else $error("Cannot deallocate an id that is outside the range.");
       end
 
