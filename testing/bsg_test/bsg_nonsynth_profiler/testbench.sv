@@ -44,7 +44,7 @@ module testbench();
      end
 
    
-   bind rando bsg_nonsynth_profiler_client      #(.suffix_p("_suff")) u_bind
+   bind rando bsg_nonsynth_profiler_client_inc      #(.suffix_p("_suff")) u_bind
    (.clk_i(clk_i)
     ,.countme_i(val[0])
     );
