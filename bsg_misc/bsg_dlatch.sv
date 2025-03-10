@@ -15,7 +15,7 @@ module bsg_dlatch #(parameter `BSG_INV_PARAM(width_p)
   always_latch
     begin
       if (clk_i)
-        data_r <= data_i;
+        data_r = data_i;
     end
 
   assign data_o = data_r;
