@@ -2,7 +2,7 @@
 
 module bsg_tielo
 
-#(`BSG_INV_PARAM(width_p), harden_p=1)
+#(`BSG_INV_PARAM(width_p), harden_p=0)
 
 (output [width_p-1:0] o
 );

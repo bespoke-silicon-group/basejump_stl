@@ -22,7 +22,7 @@ if (harden_p && els_p == words && data_width_p == bits)         \
     bsg_mem_1rw_sync_mask_write_bit                             \
      #(.width_p(data_width_p), .els_p(els_p))                   \
      bit_mem                                                    \
-      (.w_mask_i(w_mask_li), .*);                               \
+      (.write_mask_i(w_mask_li), .*);                               \
   end
 
 `define bsg_mem_1rw_sync_mask_write_byte_banked_macro(words,bits,wbank,dbank) \

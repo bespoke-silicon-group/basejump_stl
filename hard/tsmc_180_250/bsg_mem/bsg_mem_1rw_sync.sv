@@ -5,7 +5,7 @@
 //
 
 `define bsg_mem_1rw_sync_macro(words,bits,lgEls,newBits,mux)    \
-if (els_p == words && width_p == bits)                          \
+if (harden_p && els_p == words && width_p == bits)              \
   begin: macro                                                  \
      tsmc180_1rw_lg``lgEls``_w``newBits``_m``mux``_all mem      \
           (.Q(data_o)                                           \
@@ -20,7 +20,7 @@ if (els_p == words && width_p == bits)                          \
   end
 
 `define bsg_mem_1rw_sync_macro_rf(words,bits,lgEls,newBits,mux) \
-if (els_p == words && width_p == bits)                          \
+if (harden_p && els_p == words && width_p == bits)              \
   begin: macro                                                  \
           wire [newBits-1:0] tmp_lo,tmp_li;                     \
           assign data_o = tmp_lo[bits-1:0];                     \
@@ -41,7 +41,8 @@ module bsg_mem_1rw_sync #(parameter `BSG_INV_PARAM(width_p)
                           , parameter `BSG_INV_PARAM(els_p)
                           , parameter addr_width_lp=$clog2(els_p)
                           // whether to substitute a 1r1w
-                          , parameter substitute_1r1w_p=1)
+                          , parameter substitute_1r1w_p=1
+                          , parameter harden_p=1)
    (input   clk_i
     , input reset_i
     , input [width_p-1:0] data_i

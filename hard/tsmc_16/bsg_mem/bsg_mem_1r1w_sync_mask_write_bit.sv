@@ -26,7 +26,7 @@
 //
 
 `define bsg_mem_1r1w_sync_mask_write_bit_macro(words,bits,lgEls)     \
-if (els_p == words && width_p == bits)                               \
+if (harden_p && els_p == words && width_p == bits)                   \
   begin: macro                                                       \
       tsmc16_1r1w_lg``lgEls``_w``bits``_bit mem (                    \
          .CLK   (clk_i)                                              \
@@ -50,7 +50,7 @@ if (els_p == words && width_p == bits)                               \
   end
 
 `define bsg_mem_1r1w_sync_mask_write_bit_macro_rf(words,bits,lgEls)  \
-if (els_p == words && width_p == bits)                               \
+if (harden_p && els_p == words && width_p == bits)                   \
   begin: macro                                                       \
       tsmc16_1r1w_rf_lg``lgEls``_w``bits``_bit mem (                 \
          .CLKA  (clk_i)                                              \
@@ -99,7 +99,6 @@ module bsg_mem_1r1w_sync_mask_write_bit #(parameter `BSG_INV_PARAM(width_p)
        #(.width_p(width_p)
          ,.els_p (els_p  )
          ,.read_write_same_addr_p(read_write_same_addr_p)
-         ,.harden_p(harden_p)
          ) synth
          (.*);
 

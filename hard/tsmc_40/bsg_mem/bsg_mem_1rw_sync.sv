@@ -5,7 +5,7 @@
 //
 
 `define bsg_mem_1rw_sync_macro(words,bits,lgEls,mux) \
-if (els_p == words && width_p == bits)               \
+if (harden_p && els_p == words && width_p == bits)               \
   begin: macro                                       \
     tsmc40_1rw_lg``lgEls``_w``bits``_m``mux mem      \
       (.A     ( addr_i           )                   \
@@ -20,7 +20,7 @@ if (els_p == words && width_p == bits)               \
   end
 
 `define bsg_mem_1rf_sync_macro(words,bits,lgEls,mux) \
-if (els_p == words && width_p == bits)               \
+if (harden_p && els_p == words && width_p == bits)               \
   begin: macro                                       \
     tsmc40_1rf_lg``lgEls``_w``bits``_m``mux mem      \
       (.A     ( addr_i           )                   \
@@ -38,6 +38,7 @@ module bsg_mem_1rw_sync #(parameter `BSG_INV_PARAM(width_p)
                           , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
                           //, parameter addr_width_lp=$clog2(els_p)
                           // whether to substitute a 1r1w
+                          , parameter harden_p=1
                           , parameter substitute_1r1w_p=1)
    (input   clk_i
     , input reset_i

@@ -9,6 +9,7 @@ module bsg_mem_1rw_sync_mask_write_byte
   ,parameter `BSG_INV_PARAM(data_width_p )
   ,parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
   ,parameter write_mask_width_lp = data_width_p>>3
+  ,parameter harden_p=1
   )
 
   (input                           clk_i
@@ -26,7 +27,7 @@ module bsg_mem_1rw_sync_mask_write_byte
   );
 
   // TSMC 180 1024x32 Byte Mask
-  if ((els_p == 1024) & (data_width_p == 32))
+  if (harden_p && (els_p == 1024) & (data_width_p == 32))
     begin : macro
       wire [3:0] wen = {~(w_i & write_mask_i[3])
                        ,~(w_i & write_mask_i[2])
