@@ -109,7 +109,8 @@ module bsg_nonsynth_profiler_master #(parameter max_counters_p=0)
 	  end
 	else
 	  begin
-	     $error("(%m): not enough counters allocated");
+	     $error("(%m): ERROR not enough counters allocated");
+	     $finish();
 	     counter = 0;
 	     sem.put(1);
 	     return;
