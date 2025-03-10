@@ -27,7 +27,7 @@
 `define BSG_NONSYNTH_PROFILER_CLIENT_TOP testbench
 `endif
 
-module bsg_nonsynth_profiler_client #(string suffix_p="")
+module bsg_nonsynth_profiler_client_inc #(string suffix_p="")
    (input clk_i
     ,input countme_i
     );
@@ -50,6 +50,29 @@ module bsg_nonsynth_profiler_client #(string suffix_p="")
 
 endmodule
 
+module bsg_nonsynth_profiler_client_add #(string suffix_p="")
+   (input clk_i
+    ,input [31:0] countme_i
+    );
+   
+   string path;
+
+   int 	  counter;
+   
+   initial
+     begin
+	$sformat(path,"%m%s",suffix_p);
+	$root.`BSG_NONSYNTH_PROFILER_CLIENT_TOP.profiler.allocate_counter(path,counter);
+     end
+
+   always @(negedge clk_i)
+     begin
+	$root.`BSG_NONSYNTH_PROFILER_CLIENT_TOP.profiler.add_counter(counter,countme_i);
+     end
+
+endmodule
+
+
 module bsg_nonsynth_profiler_master #(parameter max_counters_p=0)
    ();
 
@@ -67,6 +90,11 @@ module bsg_nonsynth_profiler_master #(parameter max_counters_p=0)
      counters[counter] = counters[counter]+1;
    endtask
 
+   task add_counter(int counter, int val);
+     counters[counter] = counters[counter]+val;
+   endtask
+
+   
    task allocate_counter(string name, output int counter);
      begin
 	sem.get(1);
