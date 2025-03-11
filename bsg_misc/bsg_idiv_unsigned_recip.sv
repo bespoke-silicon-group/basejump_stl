@@ -10,7 +10,7 @@
 // the multiply value is 1 bit wider than the numerator width. This creates some issue
 // in software implementations since it requires a 33-bit constant for a 32-bit numerator
 // but is not an issue in hardware. Note that when the shift and multiply value are applied
-// the expression is   N * multiply >> (shift + numer_width_p). This is a slight operation vs.
+// the expression is   N * multiply >> (shift + numer_width_p). This is a slight reformulation vs.
 // than the publication below.
 
 // See also bsg_hash_bank, which implements division by constants of the form 2^n * (2^m-1).
