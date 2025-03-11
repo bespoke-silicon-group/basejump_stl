@@ -45,7 +45,7 @@ module testbench();
 
 
   `declare_bsg_cache_pkt_s(addr_width_p,data_width_p);
-  `declare_bsg_cache_dma_pkt_s(addr_width_p,block_size_in_words_p);
+  `declare_bsg_cache_dma_pkt_s(addr_width_p,block_size_in_words_p, ways_p);
 
   bsg_cache_pkt_s cache_pkt;
   logic v_li;
@@ -90,7 +90,7 @@ module testbench();
 
     ,.dma_pkt_o(dma_pkt)
     ,.dma_pkt_v_o(dma_pkt_v_lo)
-    ,.dma_pkt_yumi_i(dma_pkt_yumi_li)
+    ,.dma_pkt_yumi_i(((dma_pkt_v_lo & dma_pkt.write_validate) | dma_pkt_yumi_li))
 
     ,.dma_data_i(dma_data_li)
     ,.dma_data_v_i(dma_data_v_li)
@@ -101,6 +101,7 @@ module testbench();
     ,.dma_data_yumi_i(dma_data_yumi_li)
 
     ,.v_we_o()
+    ,.notification_en_i(1'b1)
   );
 
   // random yumi generator
@@ -122,6 +123,7 @@ module testbench();
     ,.mask_width_p(block_size_in_words_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.els_p(mem_size_p)
+    ,.ways_p(ways_p)
 
     ,.read_delay_p(`DMA_READ_DELAY_P)
     ,.write_delay_p(`DMA_WRITE_DELAY_P)
@@ -133,7 +135,7 @@ module testbench();
     ,.reset_i(reset)
 
     ,.dma_pkt_i(dma_pkt)
-    ,.dma_pkt_v_i(dma_pkt_v_lo)
+    ,.dma_pkt_v_i(dma_pkt_v_lo & ~dma_pkt.write_validate)
     ,.dma_pkt_yumi_o(dma_pkt_yumi_li)
 
     ,.dma_data_o(dma_data_li)
