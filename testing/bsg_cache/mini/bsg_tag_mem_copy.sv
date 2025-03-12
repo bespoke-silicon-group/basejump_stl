@@ -1,14 +1,17 @@
+`include "bsg_defines.sv"
+
 module bsg_tag_mem_copy #(
-  parameter width_p,
-  parameter els_p
+  parameter width_p=184
+  ,parameter els_p=128
 )(
-  input logic clk_i,
-  input logic reset_i,
-  input logic [width_p-1:0] data_i,
-  input logic [width_p-1:0] data_o,
-  input logic v_i,
-  input logic w_i,
-  input logic [$clog2(els_p)-1:0] addr_i
+  input clk_i
+  ,input reset_i
+  ,input [width_p-1:0] data_i
+  ,input [width_p-1:0] data_o
+  ,input v_i
+  ,input w_i
+  ,input [`BSG_SAFE_CLOG2(els_p)-1:0] addr_i
+  ,output logic [width_p-1:0] tag_mem_copy_o [els_p-1:0]
 );
 
   integer i;
@@ -22,6 +25,8 @@ module bsg_tag_mem_copy #(
       tag_mem_copy[addr_i] <= data_i;
     end
   end
+
+  assign tag_mem_copy_o = tag_mem_copy;
 
 //   always_ff @(posedge clk_i) begin
 //     if (v_i && !w_i) begin

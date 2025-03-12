@@ -1,5 +1,5 @@
 `include "bsg_noc_links.svh"
-`include "bsg_cache.svh"
+// `include "bsg_cache.svh"
 
 module testbench();
 
@@ -46,7 +46,8 @@ module testbench();
 
   localparam lg_sets_lp=`BSG_SAFE_CLOG2(sets_p);
   localparam tag_width_lp=addr_width_p-lg_sets_lp-block_offset_width_p;
-  localparam tag_info_width_lp=`bsg_cache_tag_info_width(tag_width_lp);
+  localparam tag_info_width_lp=tag_width_lp+2;
+  localparam tag_mem_width_lp=tag_info_width_lp*ways_p;
 
 
   integer status;
@@ -105,7 +106,7 @@ module testbench();
 
         ,.cache_pkt_i(cache_pkt[i])
         ,.v_i(v_li[i])
-        ,.ready_o(ready_lo[i])
+        ,.yumi_o(ready_lo[i])
 
         ,.data_o(cache_data_lo[i])
         ,.v_o(v_lo[i])
@@ -117,7 +118,7 @@ module testbench();
 
         ,.dma_data_i(dma_data_li[i])
         ,.dma_data_v_i(dma_data_v_li[i])
-        ,.dma_data_ready_o(dma_data_ready_and_lo[i])
+        ,.dma_data_ready_and_o(dma_data_ready_and_lo[i])
 
         ,.dma_data_o(dma_data_lo[i])
         ,.dma_data_v_o(dma_data_v_lo[i])
@@ -143,6 +144,7 @@ module testbench();
          .dma_addr_width_p(addr_width_p)
          ,.dma_burst_len_p(data_len_p)
          ,.dma_mask_width_p(block_size_in_words_p)
+         ,.dma_ways_p(ways_p)
          ,.wh_flit_width_p(wh_flit_width_p)
          ,.wh_cid_width_p(wh_cid_width_p)
          ,.wh_cord_width_p(wh_cord_width_p)
@@ -170,7 +172,7 @@ module testbench();
          ,.dest_wh_cord_i('1)
          ,.my_wh_cid_i(wh_cid_width_p'(i))
          ,.dest_wh_cid_i({wh_cord_width_p{1'b1}})
-         ,.io_wh_cord_i({(wh_cord_width_p-1){1'b1},1'b0})
+         ,.io_wh_cord_i({{(wh_cord_width_p-1){1'b1}},1'b0})
          );
     end
 
@@ -218,6 +220,7 @@ module testbench();
 //      ,.dma_addr_width_p(addr_width_p)
 //      ,.dma_burst_len_p(data_len_p)
 //      ,.dma_mask_width_p(block_size_in_words_p)
+//      ,.dma_ways_p(ways_p)
 //      ,.wh_flit_width_p(wh_flit_width_p)
 //      ,.wh_cid_width_p(wh_cid_width_p)
 //      ,.wh_cord_width_p(wh_cord_width_p)
@@ -251,6 +254,7 @@ module testbench();
 //     ,.block_size_in_words_p(data_len_p)
 //     ,.mask_width_p(block_size_in_words_p)
 //     ,.els_p(mem_size_p)
+//     ,.ways_p(ways_p)
 
 //     ,.read_delay_p(`DMA_READ_DELAY_P)
 //     ,.write_delay_p(`DMA_WRITE_DELAY_P)
@@ -290,7 +294,7 @@ module testbench();
 
   // TODO: SHADOW TAG MODULE
 
-
+  logic shadow_tag_mem[num_dma_p][sets_p] = '{default: '0};
 
   // TODO: PENDING EVICT TABLE
 
@@ -360,20 +364,22 @@ module testbench();
 //     ,.en_i($root.testbench.checker == "basic")
 //   );
 
+  logic [tag_mem_width_lp-1:0] tag_mem_copy_lo [num_dma_p][sets_p];
   
   for (genvar i = 0; i < num_dma_p; i++) 
     begin : btag
-      bind cache[i].tag_mem tag_mem_copy #(
-        .width_p(tag_info_width_lp * ways_p),
-        .els_p(sets_p)
+      bsg_tag_mem_copy #(
+        .width_p(tag_mem_width_lp)
+        ,.els_p(sets_p)
       ) tag_mem_cp (
-        .clk_i(clk_i),
-        .reset_i(reset_i),
-        .data_i(cache[i].tag_mem_data_li),
-        .data_o(cache[i].tag_mem_data_lo),
-        .v_i(cache[i].tag_mem_v_li),
-        .w_i(cache[i].tag_mem_w_li),
-        .addr_i(cache[i].tag_mem_addr_li)
+        .clk_i(clk)
+        ,.reset_i(reset)
+        ,.data_i(cache[i].cache.tag_mem_data_li)
+        ,.data_o(cache[i].cache.tag_mem_data_lo)
+        ,.v_i(cache[i].cache.tag_mem_v_li)
+        ,.w_i(cache[i].cache.tag_mem_w_li)
+        ,.addr_i(cache[i].cache.tag_mem_addr_li)
+        ,.tag_mem_copy_o(tag_mem_copy_lo[i])
       );
     end
 
@@ -392,6 +398,9 @@ module testbench();
     end
   end
 
+  integer dma_idx, set_idx;
+  // integer mismatch_count = 0;
+
   initial begin
 
     // TODO: is it sufficient? do we need to check there's no wh packet in dma_to_wormhole or on the link?
@@ -399,17 +408,14 @@ module testbench();
 
     $display("Starting tag memory comparison for all caches...");
 
-    integer dma_idx, set_idx;
-    // integer mismatch_count = 0;
-
     for (dma_idx = 0; dma_idx < num_dma_p; dma_idx = dma_idx + 1) begin
       for (set_idx = 0; set_idx < sets_p; set_idx = set_idx + 1) begin
 
         // TODO:shadow_tag_mem[dma_idx][set_idx] has to be replaced with the actual shadow tag memory data output form
-        assert(shadow_tag_mem[dma_idx][set_idx] == btag[dma_idx].tag_mem_cp.tag_mem_copy[set_idx])
+        assert(shadow_tag_mem[dma_idx][set_idx] == tag_mem_copy_lo[dma_idx][set_idx])
           else $fatal(1, "ERROR: Mismatch at cache %0d, set %0d: Cache = %h, Shadow = %h", 
                  dma_idx, set_idx, 
-                 btag[dma_idx].tag_mem_cp.tag_mem_copy[set_idx], 
+                 tag_mem_copy_lo[dma_idx][set_idx], 
                  shadow_tag_mem[dma_idx][set_idx]);
         //   mismatch_count++;
       end
