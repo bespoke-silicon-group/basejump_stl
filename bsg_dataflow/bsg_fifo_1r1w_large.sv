@@ -24,8 +24,8 @@
 //    so the DFF-RF will be cheaper up until to 512 bits. If you only need
 //    to access 32 bits in parallel, then the breakeven would be closer to 256 bits.
 //
-// b. Use a true 1R1W ram; about 2X larger than 1RW SRAM. Maybe available for FPGA
-//    but often not available, or not a good deal for ASIC.
+// b. (bsg_fifo_1r1w_small_hardened) Use a true 1R1W ram; about 2X larger than 1RW SRAM.
+//    A great fit for block RAMs, and for medium FIFOs around 64 elements.
 //
 // c. (not implemented) To get more ports, use two rams of half size, and then round
 //    robin odd/even elements. We can favor the
