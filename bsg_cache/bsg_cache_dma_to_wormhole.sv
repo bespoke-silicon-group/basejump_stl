@@ -19,14 +19,16 @@ module bsg_cache_dma_to_wormhole
  #(parameter `BSG_INV_PARAM(dma_addr_width_p) // cache addr width (byte addr)
    , parameter `BSG_INV_PARAM(dma_burst_len_p) // num of data beats in dma transfer
    , parameter `BSG_INV_PARAM(dma_mask_width_p) // mask width in the bsg_cache_dma_pkt_s. This should equal to the block_size_in_words_p set for bsg_cache.
+    , parameter `BSG_INV_PARAM(dma_ways_p)
 
    // flit width should match the cache dma width.
    , parameter `BSG_INV_PARAM(wh_flit_width_p)
    , parameter `BSG_INV_PARAM(wh_cid_width_p)
    , parameter `BSG_INV_PARAM(wh_len_width_p)
    , parameter `BSG_INV_PARAM(wh_cord_width_p)
-
-   , parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(dma_addr_width_p, dma_mask_width_p)
+   
+   , parameter lg_dma_ways_lp=`BSG_SAFE_CLOG2(dma_ways_p)
+   , parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(dma_addr_width_p, dma_mask_width_p, dma_ways_p)
    , parameter wh_link_sif_width_lp=`bsg_ready_and_link_sif_width(wh_flit_width_p)
    , parameter dma_data_width_lp=wh_flit_width_p
 
@@ -54,16 +56,19 @@ module bsg_cache_dma_to_wormhole
 
    , input [wh_cord_width_p-1:0] my_wh_cord_i
    , input [wh_cord_width_p-1:0] dest_wh_cord_i
+   , input [wh_cord_width_p-1:0] io_wh_cord_i
    , input [wh_cid_width_p-1:0] my_wh_cid_i
    , input [wh_cid_width_p-1:0] dest_wh_cid_i
    );
 
-  `declare_bsg_cache_dma_pkt_s(dma_addr_width_p, dma_mask_width_p);
+  `declare_bsg_cache_dma_pkt_s(dma_addr_width_p, dma_mask_width_p, dma_ways_p);
   `declare_bsg_ready_and_link_sif_s(wh_flit_width_p, wh_link_sif_s);
   wh_link_sif_s wh_link_sif_in;
   wh_link_sif_s wh_link_sif_out;
   assign wh_link_sif_in = wh_link_sif_i;
   assign wh_link_sif_o = wh_link_sif_out;
+
+  logic io_read_in_progress_n, io_read_in_progress_r;
 
   // dma pkt fifo
   logic dma_pkt_ready_lo;
@@ -142,7 +147,8 @@ module bsg_cache_dma_to_wormhole
     , SEND_READY
     , SEND_ADDR
     , SEND_MASK
-    , SEND_DATA
+    , SEND_REG_DATA
+    , SEND_IO_DATA
   } send_state_n, send_state_r;
 
 
@@ -153,12 +159,18 @@ module bsg_cache_dma_to_wormhole
   `declare_bsg_cache_wh_header_flit_s(wh_flit_width_p,wh_cord_width_p,wh_len_width_p,wh_cid_width_p);
 
   bsg_cache_wh_header_flit_s header_flit;
-  assign header_flit.unused = '0;
-  assign header_flit.opcode = dma_pkt_lo.write_not_read
-    ? (mask_all_one 
-      ? e_cache_wh_write_non_masked 
-      : e_cache_wh_write_masked)
-    : e_cache_wh_read;
+  // for convinience, we use the unused field to store the way_id and read_pending here
+  // instead of splitting them into separate new fields
+  assign header_flit.unused = {'0, dma_pkt_lo.read_pending, dma_pkt_lo.way_id};
+  assign header_flit.opcode = dma_pkt_lo.write_validate
+    ? e_cache_wh_write_validate
+    : (dma_pkt_lo.write_not_read
+      ? (dma_pkt_lo.uncached_op 
+        ? e_cache_wh_io_write
+        : (mask_all_one 
+          ? e_cache_wh_write_non_masked 
+          : e_cache_wh_write_masked))
+      : (dma_pkt_lo.uncached_op ? e_cache_wh_io_read : e_cache_wh_read));
   assign header_flit.src_cid = my_wh_cid_i;
   assign header_flit.src_cord = my_wh_cord_i;
   assign header_flit.len = dma_pkt_lo.write_not_read
@@ -166,7 +178,7 @@ module bsg_cache_dma_to_wormhole
       ? wh_len_width_p'(1+dma_burst_len_p) // header + addr + data
       : wh_len_width_p'(2+dma_burst_len_p)) // header + addr + mask + data
     : wh_len_width_p'(1);  // header + addr
-  assign header_flit.cord = dest_wh_cord_i;
+  assign header_flit.cord = dma_pkt_lo.uncached_op ? io_wh_cord_i : dest_wh_cord_i;
   assign header_flit.cid = dest_wh_cid_i;
 
 
@@ -203,16 +215,16 @@ module bsg_cache_dma_to_wormhole
  
           // If it's read, dequeue dma_pkt.
           // If it's masked write, don't dequeue yet, because it still needs to send the mask flit.
-          // If it's non-masked write, dequeue it .
+          // If it's non-masked/io write, dequeue it .
           dma_pkt_yumi_li = dma_pkt_lo.write_not_read
             ? (mask_all_one
-              ? wh_link_sif_in.ready_and_rev  // non-masked write
+              ? wh_link_sif_in.ready_and_rev  // non-masked/io write
               : 1'b0)  // masked write
             : wh_link_sif_in.ready_and_rev;
 
           send_state_n = wh_link_sif_in.ready_and_rev
             ? (dma_pkt_lo.write_not_read 
-              ? (mask_all_one ? SEND_DATA : SEND_MASK)
+              ? (mask_all_one ? (dma_pkt_lo.uncached_op ? SEND_IO_DATA : SEND_REG_DATA) : SEND_MASK)
               : SEND_READY)
             : SEND_ADDR;
         end
@@ -224,12 +236,12 @@ module bsg_cache_dma_to_wormhole
           wh_link_sif_out.v = 1'b1;
           dma_pkt_yumi_li = wh_link_sif_in.ready_and_rev;
           send_state_n = wh_link_sif_in.ready_and_rev
-            ? SEND_DATA
+            ? SEND_REG_DATA
             : SEND_MASK;
         end
       end
 
-      SEND_DATA: begin
+      SEND_REG_DATA: begin
         wh_link_sif_out.data = dma_data_i;
         if (dma_data_v_i) begin
           wh_link_sif_out.v = 1'b1;
@@ -238,7 +250,18 @@ module bsg_cache_dma_to_wormhole
           send_clear_li = dma_data_yumi_o & (send_count_lo == dma_burst_len_p-1);
           send_state_n = send_clear_li
             ? SEND_READY
-            : SEND_DATA;
+            : SEND_REG_DATA;
+        end
+      end
+
+      SEND_IO_DATA: begin
+        wh_link_sif_out.data = dma_data_i;
+        if (dma_data_v_i) begin
+          wh_link_sif_out.v = 1'b1;
+          dma_data_yumi_o = wh_link_sif_in.ready_and_rev & wh_link_sif_out.v;
+          send_state_n = dma_data_yumi_o
+            ? SEND_READY
+            : SEND_IO_DATA;
         end
       end
 
@@ -271,7 +294,8 @@ module bsg_cache_dma_to_wormhole
   typedef enum logic [1:0] {
     RECV_RESET
     , RECV_READY
-    , RECV_DATA
+    , RECV_REG_DATA
+    , RECV_IO_DATA
   } recv_state_e;
 
   recv_state_e recv_state_r, recv_state_n;
@@ -293,18 +317,26 @@ module bsg_cache_dma_to_wormhole
       RECV_READY: begin
         return_fifo_ready_li = 1'b1;
         recv_state_n = return_fifo_yumi_li
-          ? RECV_DATA
+          ? (io_read_in_progress_r ? RECV_IO_DATA : RECV_REG_DATA)
           : RECV_READY;
       end
 
-      RECV_DATA: begin
+      RECV_REG_DATA: begin
         return_fifo_ready_li = dma_data_ready_and_i;
         dma_data_v_o = return_fifo_v_lo;
         recv_up_li = return_fifo_yumi_li & (recv_count_lo != dma_burst_len_p-1);
         recv_clear_li = return_fifo_yumi_li & (recv_count_lo == dma_burst_len_p-1);
         recv_state_n = recv_clear_li
           ? RECV_READY
-          : RECV_DATA;
+          : RECV_REG_DATA;
+      end
+
+      RECV_IO_DATA: begin
+        return_fifo_ready_li = dma_data_ready_and_i;
+        dma_data_v_o = return_fifo_v_lo;
+        recv_state_n = return_fifo_yumi_li
+          ? RECV_READY
+          : RECV_IO_DATA;
       end
 
       default: begin
@@ -314,7 +346,11 @@ module bsg_cache_dma_to_wormhole
   end
 
 
-
+  assign io_read_in_progress_n = ((send_state_r == SEND_ADDR) & ~dma_pkt_lo.write_not_read & dma_pkt_lo.uncached_op & wh_link_sif_in.ready_and_rev)
+                               ? 1'b1
+                               : (((recv_state_r == RECV_IO_DATA) & return_fifo_yumi_li)
+                                 ? 1'b0
+                                 : io_read_in_progress_r);
 
   // sequential logic
   // synopsys sync_set_reset "reset_i"
@@ -322,10 +358,12 @@ module bsg_cache_dma_to_wormhole
     if (reset_i) begin
       send_state_r <= SEND_RESET;
       recv_state_r <= RECV_RESET;
+      io_read_in_progress_r <= 1'b0;
     end
     else begin
       send_state_r <= send_state_n;
       recv_state_r <= recv_state_n;
+      io_read_in_progress_r <= io_read_in_progress_n;
     end
   end
 
