@@ -9,7 +9,7 @@ module bsg_mem_2r1w_sync #(parameter `BSG_INV_PARAM(width_p)
                            , parameter `BSG_INV_PARAM(els_p)
                            , parameter read_write_same_addr_p=0
                            , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
-                           , parameter harden_p=0
+                           , parameter harden_p=1
                            )
    (input   clk_i
     , input reset_i
@@ -30,7 +30,7 @@ module bsg_mem_2r1w_sync #(parameter `BSG_INV_PARAM(width_p)
 
    wire                   unused = reset_i;
 
-   if ((width_p == 32) && (els_p == 32))
+   if (harden_p && (width_p == 32) && (els_p == 32))
      begin: macro
 `ifndef BSG_HIDE_FROM_SYNTHESIS
         initial
@@ -87,7 +87,6 @@ module bsg_mem_2r1w_sync #(parameter `BSG_INV_PARAM(width_p)
 	  #(.width_p(width_p)
 	    ,.els_p(els_p)
 	    ,.read_write_same_addr_p(read_write_same_addr_p)
-	    ,.harden_p(harden_p)
 	    ) synth
 	    (.*);
      end

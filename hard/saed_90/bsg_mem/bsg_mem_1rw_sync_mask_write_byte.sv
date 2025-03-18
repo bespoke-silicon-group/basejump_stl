@@ -5,7 +5,7 @@
 //
 
 `define bsg_mem_1rw_sync_mask_write_byte_macro(bits,words)  \
-  if (els_p == words && data_width_p == bits)    \
+  if (harden_p && els_p == words && data_width_p == bits)    \
     begin: macro                            \
        saed90_``bits``x``words``_1P_BM mem  \
          (.CE1  (clk_lo)                     \
@@ -24,6 +24,7 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p )
                                          ,parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
                                          ,parameter write_mask_width_lp = data_width_p>>3
                                          ,parameter enable_clock_gating_p=1'b0
+                                         ,parameter harden_p=1
                                          )
   (input                           clk_i
   ,input                           reset_i

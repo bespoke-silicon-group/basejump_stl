@@ -48,7 +48,7 @@ module bsg_mem_1r1w_sync_mask_write_byte #(parameter `BSG_INV_PARAM(width_p)
                                          , parameter read_write_same_addr_p=0
                                          , parameter latch_last_read_p=0 
                                          , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
-                                         , parameter harden_p=0
+                                         , parameter harden_p=1
                                          , parameter disable_collision_warning_p=0
                                          , parameter write_mask_width_lp = width_p>>3
                                          , parameter enable_clock_gating_p=0
