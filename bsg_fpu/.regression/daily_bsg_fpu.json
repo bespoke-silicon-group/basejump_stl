@@ -1,0 +1,9 @@
+include bsg_fpu_add_sub.json
+include bsg_fpu_classify.json
+include bsg_fpu_clz.json
+include bsg_fpu_cmp.json
+include bsg_fpu_f2i.json
+include bsg_fpu_i2f.json
+include bsg_fpu_mul.json
+include bsg_fpu_preprocess.json
+include bsg_fpu_sticky.json
