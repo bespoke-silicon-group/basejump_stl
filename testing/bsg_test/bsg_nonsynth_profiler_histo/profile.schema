@@ -1,0 +1,34 @@
+0 red ^testbench\.ctr\[0\]\.bla\.u_bind_suff_histo_0$
+1 pink ^testbench\.ctr\[0\]\.bla\.u_bind_suff_histo_1$
+2 green ^testbench\.ctr\[0\]\.bla\.u_bind_suff_histo_2$
+3 blue ^testbench\.ctr\[0\]\.bla\.u_bind_suff_histo_3$
+4 orange ^testbench\.ctr\[0\]\.bla\.u_bind_suff_histo_4$
+5 cyan ^testbench\.ctr\[0\]\.bla\.u_bind_suff_histo_5$
+6 magenta ^testbench\.ctr\[0\]\.bla\.u_bind_suff_histo_6$
+7 brown ^testbench\.ctr\[0\]\.bla\.u_bind_suff_histo_7$
+8 purple ^testbench\.ctr\[0\]\.bla\.u_bind_suff_histo_8$
+9 black ^testbench\.ctr\[0\]\.bla\.u_bind_suff_histo_9$
+10 pink ^testbench\.ctr\[0\]\.bla\.u_bind_suff_histo_10$
+11 yellow ^testbench\.ctr\[0\]\.bla\.u_bind_suff_histo_11$
+12 beige ^testbench\.ctr\[0\]\.bla\.u_bind_suff_histo_12$
+13 maroon ^testbench\.ctr\[0\]\.bla\.u_bind_suff_histo_13$
+14 goldenrod ^testbench\.ctr\[0\]\.bla\.u_bind_suff_histo_14$
+15 blue ^testbench\.ctr\[0\]\.bla\.u_bind_suff_histo_15$
+@ ctr0
+0 red ^testbench\.ctr\[1\]\.bla\.u_bind_suff_histo_0$
+1 pink ^testbench\.ctr\[1\]\.bla\.u_bind_suff_histo_1$
+2 green ^testbench\.ctr\[1\]\.bla\.u_bind_suff_histo_2$
+3 blue ^testbench\.ctr\[1\]\.bla\.u_bind_suff_histo_3$
+4 orange ^testbench\.ctr\[1\]\.bla\.u_bind_suff_histo_4$
+5 cyan ^testbench\.ctr\[1\]\.bla\.u_bind_suff_histo_5$
+6 magenta ^testbench\.ctr\[1\]\.bla\.u_bind_suff_histo_6$
+7 brown ^testbench\.ctr\[1\]\.bla\.u_bind_suff_histo_7$
+8 purple ^testbench\.ctr\[1\]\.bla\.u_bind_suff_histo_8$
+9 black ^testbench\.ctr\[1\]\.bla\.u_bind_suff_histo_9$
+10 pink ^testbench\.ctr\[1\]\.bla\.u_bind_suff_histo_10$
+11 yellow ^testbench\.ctr\[1\]\.bla\.u_bind_suff_histo_11$
+12 beige ^testbench\.ctr\[1\]\.bla\.u_bind_suff_histo_12$
+13 maroon ^testbench\.ctr\[1\]\.bla\.u_bind_suff_histo_13$
+14 goldenrod ^testbench\.ctr\[1\]\.bla\.u_bind_suff_histo_14$
+15 blue ^testbench\.ctr\[1\]\.bla\.u_bind_suff_histo_15$
+@ ctr1

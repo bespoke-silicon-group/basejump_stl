@@ -50,6 +50,39 @@ module bsg_nonsynth_profiler_client_inc #(string suffix_p="")
 
 endmodule
 
+// start_p to end_p inclusive
+module bsg_nonsynth_profiler_client_histo #(string suffix_p="",parameter `BSG_INV_PARAM(start_p),parameter `BSG_INV_PARAM(end_p))
+   (input clk_i
+    ,input v_i
+    ,input [`BSG_SAFE_CLOG2(end_p+1)-1:0] val_i
+    );
+   
+   string path;
+
+   int   counter [end_p:start_p];
+   integer new_counter;
+   
+   integer i;
+   
+   initial
+     begin
+	for (i = start_p; i <= end_p; i++)
+	  begin
+	     $sformat(path,"%m%s_histo_%-d",suffix_p,i);
+	     $root.`BSG_NONSYNTH_PROFILER_CLIENT_TOP.profiler.allocate_counter(path,new_counter);
+	     counter[i] = new_counter;
+	  end
+     end
+
+   always @(negedge clk_i)
+     begin
+	if (v_i)
+	  $root.`BSG_NONSYNTH_PROFILER_CLIENT_TOP.profiler.increment_counter(counter[val_i]);
+     end
+
+endmodule
+
+
 module bsg_nonsynth_profiler_client_add #(string suffix_p="")
    (input clk_i
     ,input [31:0] countme_i
