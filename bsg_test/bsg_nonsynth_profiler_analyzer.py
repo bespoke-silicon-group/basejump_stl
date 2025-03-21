@@ -103,7 +103,7 @@ def parse_schema(schema_file):
         ]
       }
 
-    Groups begin when encountering a line that starts with '@' or '#':
+    Groups end when encountering a line that starts with '@' or '#':
       - '@ MyTitle' => group that plots raw per-frame data
       - '# MyTitle' => group that accumulates counts up to each frame (prefix sums)
     """
