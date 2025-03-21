@@ -6,8 +6,10 @@ Post-processes the output of bsg_nonsynth_profiler.sv
 
 A Python 2.7 script that:
   1) Parses a schema file (profile.schema) to define category groups.
-     - Lines that start with "@" define a group that plots each frame individually (no accumulation).
-     - Lines that start with "#" define a group that accumulates counts **up to** each frame
+     - Each line defines a category name, its color, and a list of regular expressions for counters that correspond to the category
+     - After 1 or more categories, a line may have a "@" or "#" symbol followed by a group name
+         - Lines that start with "@" define a group that plots each frame individually (no accumulation).
+         - Lines that start with "#" define a group that accumulates counts **up to** each frame
        (prefix sums, so each bar is total up to that frame).
   2) Reads profile.names, which has lines of <counter_number> <hierarchical_path>.
      Ensures counter_number increments by 1 from 0 up to N-1 with no skips.
