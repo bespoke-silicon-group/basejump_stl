@@ -6,15 +6,20 @@ Post-processes the output of bsg_nonsynth_profiler.sv
 
 A Python 2.7 script that:
   1) Parses a schema file (profile.schema) to define category groups.
+     - Lines that start with "@" define a group that plots each frame individually (no accumulation).
+     - Lines that start with "#" define a group that accumulates counts **up to** each frame
+       (prefix sums, so each bar is total up to that frame).
   2) Reads profile.names, which has lines of <counter_number> <hierarchical_path>.
      Ensures counter_number increments by 1 from 0 up to N-1 with no skips.
   3) Reads binary data from profile.dat (unsigned 32-bit little-endian),
      organized in frames of N counters (one integer per counter).
-  4) Accumulates sums for each category (based on regex matches) per frame.
-  5) Plots one stacked-bar subplot per category group, titled by the group name
-     following each "@" line in the schema, with categories stacked in the order
-     they appear in the schema.
-  6) Optionally saves the plot to an png/pdf file via --output=filename
+  4) For each category, collects the per-frame counts of all counters in that category.
+     - If the group was defined by "@", we plot the raw per-frame data.
+     - If the group was defined by "#", we do a prefix-sum across frames.
+  5) Plots one stacked-bar subplot per category group, titled by the group name.
+     Each bar index corresponds to a frame index in both cases,
+     but for "#" groups, the bars are cumulative up to that frame.
+  6) Optionally saves the plot to a png/pdf file via --output=filename
      or shows the interactive plot window if --output is not provided.
 
 Usage example:
@@ -84,6 +89,7 @@ def parse_schema(schema_file):
     Returns a list of 'groups'. Each group is a dict with:
       {
         'title': <string>,
+        'accumulate': <True/False>,
         'categories': [
             {
               'name': <category_name>,
@@ -94,10 +100,15 @@ def parse_schema(schema_file):
             ...
         ]
       }
+
+    Groups begin when encountering a line that starts with '@' or '#':
+      - '@ MyTitle' => group that plots raw per-frame data
+      - '# MyTitle' => group that accumulates counts up to each frame (prefix sums)
     """
     groups = []
     current_group = {
         'title': None,
+        'accumulate': False,
         'categories': []
     }
 
@@ -108,8 +119,8 @@ def parse_schema(schema_file):
                 continue  # Skip empty lines
 
             # Check if line starts with '@'
-            if line.startswith('@'):
-                # Format: "@ <group_title>"
+            if (line.startswith('@') or line.startswith('#')):
+                # Format: "@ <group_title>" or "# <group_title>
                 parts = line.split(None, 1)
                 if len(parts) < 2:
                     sys.stderr.write(
@@ -120,6 +131,7 @@ def parse_schema(schema_file):
 
                 # Close out the current group
                 current_group['title'] = group_title
+                current_group['accumulate'] = (parts[0][0] == '#')
                 groups.append(current_group)
 
                 # Start a new group structure
@@ -236,6 +248,7 @@ def associate_counters_with_categories(groups, counters, debug_mapping=False):
         print("=== Category to Counters Mapping ===")
         for g in groups:
             print("Group Title: {}".format(g['title']))
+            print("  accumulate: {}".format(g['accumulate']))
             for cat in g['categories']:
                 print("  Category: {}".format(cat['name']))
                 for cnum in cat['counters']:
@@ -295,6 +308,14 @@ def accumulate_category_data(groups, frames, debug_data=False):
                 for cnum in cat['counters']:
                     total += frame_vals[cnum]
                 cat['data'][f_idx] = total
+
+    for g in groups:
+        if g['accumulate']:
+            for cat in g['categories']:
+                running_sum = 0
+                for i in range(num_frames):
+                    running_sum += cat['data'][i]
+                    cat['data'][i] = running_sum
 
     if debug_data:
         print("=== Per-Frame Category Sums ===")
