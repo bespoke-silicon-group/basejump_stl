@@ -58,7 +58,7 @@ module testbench();
      begin
 	for (bar = 0; bar < 16; bar++)
 	  begin
-	     for (foo = 0; foo < 100; foo++)
+	     for (foo = 0; foo < 8; foo++)
 	       @(posedge clk);
 	     
 	     begin

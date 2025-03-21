@@ -92,25 +92,30 @@ def parse_schema(schema_file):
       {
         'title': <string>,
         'accumulate': <True/False>,
+        'stacked': <True/False>,
         'categories': [
             {
               'name': <category_name>,
               'color': <color_string>,
               'regexes': [list_of_compiled_regex_objects],
-              'counters': []  # to be filled in later
+              'counters': [],
+              'data': []   # to be filled later
             },
             ...
         ]
       }
 
-    Groups end when encountering a line that starts with '@' or '#':
-      - '@ MyTitle' => group that plots raw per-frame data
-      - '# MyTitle' => group that accumulates counts up to each frame (prefix sums)
+    Group lines can start with one of the following symbols:
+      - '@ MyTitle': raw per-frame data, stacked
+      - '# MyTitle': prefix-sum (accumulate) data, stacked
+      - '! MyTitle': raw per-frame data, grouped (side-by-side)
+      - '$ MyTitle': prefix-sum (accumulate) data, grouped (side-by-side)
     """
     groups = []
     current_group = {
         'title': None,
         'accumulate': False,
+        'stacked': True,   # Default (overridden upon seeing symbol)
         'categories': []
     }
 
@@ -120,25 +125,43 @@ def parse_schema(schema_file):
             if not line:
                 continue  # Skip empty lines
 
-            # Check if line starts with '@'
-            if (line.startswith('@') or line.startswith('#')):
-                # Format: "@ <group_title>" or "# <group_title>
+            # Check if line starts with '@', '#', '!', or '$'
+            if line.startswith('@') or line.startswith('#') \
+               or line.startswith('!') or line.startswith('$'):
+                
                 parts = line.split(None, 1)
                 if len(parts) < 2:
                     sys.stderr.write(
-                        "Error: Found '@' line with no group title.\n"
+                        "Error: Found a group-designator line with no group title.\n"
                     )
                     sys.exit(1)
+                symbol = parts[0][0]
                 group_title = parts[1].strip()
 
                 # Close out the current group
                 current_group['title'] = group_title
-                current_group['accumulate'] = (parts[0][0] == '#')
+
+                # Decide accumulate vs stacked/grouped
+                if symbol == '@':
+                    current_group['accumulate'] = False
+                    current_group['stacked'] = True
+                elif symbol == '#':
+                    current_group['accumulate'] = True
+                    current_group['stacked'] = True
+                elif symbol == '!':
+                    current_group['accumulate'] = False
+                    current_group['stacked'] = False
+                elif symbol == '$':
+                    current_group['accumulate'] = True
+                    current_group['stacked'] = False
+
                 groups.append(current_group)
 
-                # Start a new group structure
+                # Start a new (empty) group structure for next iteration
                 current_group = {
                     'title': None,
+                    'accumulate': False,
+                    'stacked': True,
                     'categories': []
                 }
             else:
@@ -165,15 +188,16 @@ def parse_schema(schema_file):
                     'name': cat_name,
                     'color': cat_color,
                     'regexes': compiled_regexes,
-                    'counters': []
+                    'counters': [],
+                    'data': []
                 }
                 current_group['categories'].append(category)
 
-    # If the schema didn't end with an '@' line, we might have leftover categories
-    # with no group title. We'll ignore them (warn).
+    # If the schema didn't end with a recognized group line, we might
+    # have leftover categories with no group. We'll ignore them (warn).
     if current_group['categories']:
         sys.stderr.write(
-            "Warning: The schema file ended without an '@ <group_title>' line.\n"
+            "Warning: The schema file ended without a new group-designator line.\n"
             "The last set of categories will be ignored.\n"
         )
 
@@ -231,7 +255,7 @@ def associate_counters_with_categories(groups, counters, debug_mapping=False):
     For each category in each group, find all counters from 'counters'
     whose hierarchical_path fully matches any regex in that category.
     """
-    # Initialize counters list
+    # Clear counters in case they were set
     for g in groups:
         for cat in g['categories']:
             cat['counters'] = []
@@ -249,8 +273,8 @@ def associate_counters_with_categories(groups, counters, debug_mapping=False):
     if debug_mapping:
         print("=== Category to Counters Mapping ===")
         for g in groups:
-            print("Group Title: {}".format(g['title']))
-            print("  accumulate: {}".format(g['accumulate']))
+            print("Group Title: {}  (accumulate={}, stacked={})"
+                  .format(g['title'], g['accumulate'], g['stacked']))
             for cat in g['categories']:
                 print("  Category: {}".format(cat['name']))
                 for cnum in cat['counters']:
@@ -295,11 +319,13 @@ def accumulate_category_data(groups, frames, debug_data=False):
     """
     For each category in each group, compute sum of counters for each frame,
     storing an array in cat['data'].
+    For groups with accumulate=True, we do a prefix sum.
     """
     num_frames = len(frames)
-    # Initialize cat['data']
+
     for g in groups:
         for cat in g['categories']:
+            # Initialize cat['data']
             cat['data'] = [0] * num_frames
 
     for f_idx, frame_vals in enumerate(frames):
@@ -311,6 +337,7 @@ def accumulate_category_data(groups, frames, debug_data=False):
                     total += frame_vals[cnum]
                 cat['data'][f_idx] = total
 
+    # For accumulate=True, convert each cat's data to prefix-sum
     for g in groups:
         if g['accumulate']:
             for cat in g['categories']:
@@ -322,71 +349,92 @@ def accumulate_category_data(groups, frames, debug_data=False):
     if debug_data:
         print("=== Per-Frame Category Sums ===")
         for g in groups:
-            print("Group Title: {}".format(g['title']))
+            print("Group Title: {} (accumulate={}, stacked={})"
+                  .format(g['title'], g['accumulate'], g['stacked']))
             for cat in g['categories']:
                 print("  Category: {}".format(cat['name']))
                 print("    Data: {}".format(cat['data']))
         print("================================\n")
 
 
-def plot_stacked_bars(groups):
+def plot_groups(groups):
     """
-    Generate stacked bar charts in one figure.
+    Generate bar charts (stacked or grouped) in one figure.
     One subplot per group (vertical stack), with group['title'] as subplot title.
+
+    If group['stacked'] == True, we do stacked bars (original behavior).
+    If group['stacked'] == False, we do grouped (side-by-side) bars.
     """
     num_groups = len(groups)
-
     matplotlib.rcParams['text.antialiased'] = False
-    # Create subplots
     fig, axes = plt.subplots(num_groups, 1, sharex=True, figsize=(10, 3 * num_groups))
-    # If there's only one group, axes is not a list
+
     if num_groups == 1:
-        axes = [axes]
+        axes = [axes]  # Make it iterable
 
     for g_idx, group in enumerate(groups):
         ax = axes[g_idx]
         if not group['categories']:
-            # If the group has no categories (possibly an empty group), skip
+            # If the group has no categories (possibly empty), skip
             ax.set_title(group['title'] + " (No Categories)")
             continue
 
-        # We'll stack bars for each frame
+        # We assume all categories have the same number of frames
         num_frames = len(group['categories'][0]['data'])
         x_indices = range(num_frames)
-        bottoms = [0] * num_frames
 
-        for cat in group['categories']:
-            cat_data = cat['data']
-            ax.bar(
-                x_indices,
-                cat_data,
-                bottom=bottoms,
-                color=cat['color'],
-                label=cat['name'],
-                linewidth=0,
-                width=1.0,
-                antialiased=False,
-                edgecolor='none'              
-            )
-            # Update bottoms
-            for i in range(num_frames):
-                bottoms[i] += cat_data[i]
+        if group['stacked']:
+            # --- Stacked bars approach (original) ---
+            bottoms = [0] * num_frames
+            for cat in group['categories']:
+                cat_data = cat['data']
+                ax.bar(
+                    x_indices,
+                    cat_data,
+                    bottom=bottoms,
+                    color=cat['color'],
+                    label=cat['name'],
+                    linewidth=0,
+                    width=1.0,
+                    antialiased=False,
+                    edgecolor='none'
+                )
+                # Update bottoms
+                for i in range(num_frames):
+                    bottoms[i] += cat_data[i]
+        else:
+            # --- Grouped bars approach (side-by-side) ---
+            num_cats = len(group['categories'])
+            # We'll use a "group width" of e.g. 0.8 across each frame, subdivided by number of categories
+            bar_width = 0.8 / num_cats
+            for i, cat in enumerate(group['categories']):
+                cat_data = cat['data']
+                # Shift each category's bars by i*bar_width
+                bar_x = [x + i*bar_width for x in x_indices]
+                ax.bar(
+                    bar_x,
+                    cat_data,
+                    color=cat['color'],
+                    label=cat['name'],
+                    linewidth=0,
+                    width=bar_width,
+                    antialiased=False,
+                    edgecolor='none'
+                )
 
-        # After all bars have been drawn on ax
-        handles, labels = ax.get_legend_handles_labels()
-      
         ax.set_title(group['title'])
+        handles, labels = ax.get_legend_handles_labels()
+        # Reverse legend entries so they match the category order in code
         ax.legend(handles[::-1], labels[::-1], loc='upper right')
         ax.set_ylabel("Counts")
         ax.set_xticks(x_indices)
         ax.set_xlabel("Frame Index")
 
     plt.tight_layout()
-    # Removed plt.show() here. We'll either save or show in main().
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Profile Data Analyzer for Python 2.7")
+    parser = argparse.ArgumentParser(description="Profile Data Analyzer (with stacked & grouped bar modes)")
     parser.add_argument("--schema", required=True, help="Path to profile.schema")
     parser.add_argument("--names", required=True, help="Path to profile.names")
     parser.add_argument("--data", required=True, help="Path to profile.dat")
@@ -397,7 +445,6 @@ def main():
     parser.add_argument("--output", default=None,
                         help="Output filename (e.g. 'plot.pdf' or 'plot.png'). "
                              "If not set, an interactive window will be shown.")
-
     args = parser.parse_args()
 
     # 1) Parse schema
@@ -418,22 +465,19 @@ def main():
     # 4) Read profile.dat
     frames = read_profile_dat(args.data, num_counters=len(counters))
     if not frames:
-        sys.stderr.write("Warning: No frames read from profile.dat. The resulting plot will be empty.\n")
+        sys.stderr.write("Warning: No frames read from profile.dat. The resulting plot may be empty.\n")
 
     # 5) Accumulate data
     accumulate_category_data(groups, frames, debug_data=args.debug_data)
 
-    print("Generating plot..");
-
     # 6) Plot
-    plot_stacked_bars(groups)
-
-    print("Saving plot..");
+    print("Generating plot...")
+    plot_groups(groups)
 
     # 7) Either save or show
     if args.output:
+        print("Saving plot to '{}'...".format(args.output))
         plt.savefig(args.output, bbox_inches='tight')
-        print("Plot saved to '{}'".format(args.output))
     else:
         plt.show()
 
