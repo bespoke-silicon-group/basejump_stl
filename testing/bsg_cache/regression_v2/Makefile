@@ -1,13 +1,37 @@
 include ../../../../bsg_cadenv/cadenv.mk
 export BASEJUMP_STL_DIR = $(abspath ../../..)
 
+USE_VERILATOR ?= 0
+WAVE ?= 0
+
 INCDIR =  +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_cache
 
-VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE -debug_access
+VCS_FLAGS =  -full64 +lint=all,noSVA-UA,noSVA-NSVU,noVCDE
+ifeq ($(WAVE),1)
+VCS_FLAGS += -debug_access
+VCS_FLAGS += -DWAVE
+endif
 VCS_FLAGS += +v2k -sverilog -timescale=1ps/1ps -O4 -assert svaext
 VCS_FLAGS +=  -reportstats
 
+VERILATOR ?= verilator
+VERILATOR_THREADS ?= 4
+VERILATOR_FLAGS = --cc --binary
+VERILATOR_FLAGS += -Wno-TIMESCALEMOD
+VERILATOR_FLAGS += -Wno-fatal
+VERILATOR_FLAGS += -Wno-UNOPTFLAT
+ifeq ($(WAVE),1)
+VERILATOR_FLAGS += --trace-fst --trace-structs --trace-depth 15
+VERILATOR_FLAGS += -DWAVE
+endif
+VERILATOR_FLAGS += -O3
+VERILATOR_FLAGS += --verilate-jobs $(VERILATOR_THREADS)
+VERILATOR_FLAGS += --threads $(VERILATOR_THREADS)
+VERILATOR_FLAGS += --trace-threads 1
+#VERILATOR_FLAGS += --assert
+VERILATOR_FLAGS += --top-module testbench
+VERILATOR_FLAGS += -o simsc
 
 ##### Test Suite #######
 BASIC_TEST = test_random1 test_random2
@@ -48,9 +72,8 @@ VCS_DEFINES += +define+DMA_DATA_DELAY_P=$(DMA_DATA_DELAY_P)
 VCS_DEFINES += +define+WORD_TRACKING_P=$(WORD_TRACKING_P)
 ########################
 
-
+SIMSC = $(abspath simsc)
 SIMV = $(abspath simv)
-WAVE ?= 0
 
 BASIC_TRACE_TR = $(addprefix out/, $(addsuffix /trace.tr, $(BASIC_TEST)))
 
@@ -63,14 +86,23 @@ basic_test: $(addsuffix .basic.run, $(BASIC_TEST))
 simv:
 	$(VCS) $(VCS_FLAGS) -f sv.include $(INCDIR) $(VCS_DEFINES) -l vcs.log | $(HIGHLIGHT)
 
+simsc:
+	$(VERILATOR) $(VERILATOR_FLAGS) -f sv.include $(INCDIR) $(VCS_DEFINES) | $(HIGHLIGHT)
+	ln -nsf obj_dir/$(@F) $@ 
 
 out/%/trace.tr:
 	mkdir -p out/
 	mkdir -p out/$*
 	python $*.py > $@
 
+ifeq ($(USE_VERILATOR),1)
+%.basic.run: simsc out/%/trace.tr
+	ln -nsf $(SIMSC) out/$*/simsc
+	(cd out/$*; $(SIMSC) +wave=$(WAVE) +checker=basic &> simsc.log)
+else
 %.basic.run: simv out/%/trace.tr
 	(cd out/$*; $(SIMV) -reportstats +vcs+nostdout +wave=$(WAVE) +checker=basic -l simv.log)
+endif
 
 %.dve:
 	$(DVE) -full64 -vpd out/$*/vcdplus.vpd &
@@ -89,4 +121,6 @@ clean:
 	rm -rf ucli.key vcdplus.vpd simv cm.log *.tar.gz
 	rm -rf stack.info.* *.pyc
 	rm -rf out
+	rm -rf obj_dir
 	rm -f ../common/*.pyc
+	rm -rf simsc
