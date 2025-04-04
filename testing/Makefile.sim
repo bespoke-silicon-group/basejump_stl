@@ -19,7 +19,19 @@ BSG_IP_CORES_SIM = ./simv
 
 BSG_IP_CORES_SIM_DEFINE_PARAM = +define+
 BSG_IP_CORES_SIM_INCLUDE_DIRS = +incdir+$(TOP)/bsg_test +incdir+$(TOP)/bsg_misc +incdir+$(TOP)/bsg_dataflow
-BSG_IP_CORES_SIM_CLEAN_FILES  = simv*
+BSG_IP_CORES_SIM_CLEAN_FILES  = simv* csrc/ ucli.key
+#
+##########
+else ifeq ($(SIMULATOR),verilator)
+##########
+# settings for Verilator
+BSG_IP_CORES_COMP = verilator -sv --binary --timing --Wno-fatal --timescale 1ps/1ps -o Vtop_sim
+BSG_IP_CORES_ELAB = /usr/bin/true || 
+BSG_IP_CORES_SIM  = ./obj_dir/Vtop_sim
+
+BSG_IP_CORES_SIM_DEFINE_PARAM = +define+
+BSG_IP_CORES_SIM_INCLUDE_DIRS = +incdir+$(TOP)/bsg_test +incdir+$(TOP)/bsg_misc +incdir+$(TOP)/bsg_dataflow
+BSG_IP_CORES_SIM_CLEAN_FILES = obj_dir/
 #
 ##########
 else
