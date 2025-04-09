@@ -3,7 +3,7 @@ export BASEJUMP_STL_DIR = ../../..
 TOP ?= $(shell git rev-parse --show-toplevel)
 BSG_CADENV_DIR ?= $(TOP)/../bsg_cadenv
 
-include $(BSG_CADENV_DIR)/cadenv.mk
+-include $(BSG_CADENV_DIR)/cadenv.mk
 
 INCDIR = +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 INCDIR += +incdir+$(BASEJUMP_STL_DIR)/bsg_noc
