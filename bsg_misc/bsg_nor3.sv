@@ -1,7 +1,7 @@
 `include "bsg_defines.sv"
 
 module bsg_nor3 #(parameter `BSG_INV_PARAM(width_p)
-                 , harden_p=1)
+                 , harden_p=0)
    (input [width_p-1:0] a_i
     , input [width_p-1:0] b_i
     , input [width_p-1:0] c_i

@@ -2,7 +2,7 @@
 `include "bsg_defines.sv"
 
 module bsg_mul #(parameter `BSG_INV_PARAM(width_p)
-                 ,harden_p=1
+                 ,harden_p=0
                  )
    (input    [width_p-1:0]   x_i
     , input  [width_p-1:0]   y_i

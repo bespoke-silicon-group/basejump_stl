@@ -43,7 +43,7 @@
 
 module bsg_tag_client
    import bsg_tag_pkg::bsg_tag_s;
- #(parameter `BSG_INV_PARAM(width_p), harden_p=1)
+ #(parameter `BSG_INV_PARAM(width_p), harden_p=0)
    (
     input bsg_tag_s bsg_tag_i
 
