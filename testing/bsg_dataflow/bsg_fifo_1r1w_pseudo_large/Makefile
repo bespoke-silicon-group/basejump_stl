@@ -22,7 +22,7 @@ endif
 
 export BSG_CADENV_DIR = $(abspath .)/../../../../bsg_cadenv
 
-include $(BSG_CADENV_DIR)/cadenv.mk
+-include $(BSG_CADENV_DIR)/cadenv.mk
 
 TOP = ../../..
 
