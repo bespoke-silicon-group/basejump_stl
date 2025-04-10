@@ -5,7 +5,7 @@ module bsg_mem_2rw_sync_synth #( parameter `BSG_INV_PARAM(width_p )
                          , parameter `BSG_INV_PARAM(els_p )
                          , parameter read_write_same_addr_p=0
                          , parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
-                         , parameter harden_p = 1
+                         , parameter harden_p=0
                          , parameter disable_collision_warning_p=0                   
                          )
   ( input                      clk_i

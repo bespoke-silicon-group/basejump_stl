@@ -27,7 +27,7 @@
 
 module bsg_tag_client_unsync
   import bsg_tag_pkg::bsg_tag_s;
-   #(parameter `BSG_INV_PARAM(width_p), harden_p=1, debug_level_lp=0)
+   #(parameter `BSG_INV_PARAM(width_p), harden_p=0, debug_level_lp=0)
    (
     input 		 bsg_tag_s bsg_tag_i
 

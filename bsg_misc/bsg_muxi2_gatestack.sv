@@ -1,6 +1,6 @@
 `include "bsg_defines.sv"
 
-module bsg_muxi2_gatestack #(`BSG_INV_PARAM(width_p), harden_p=1)
+module bsg_muxi2_gatestack #(`BSG_INV_PARAM(width_p), harden_p=0)
    (input [width_p-1:0] i0
     , input [width_p-1:0] i1
     , input [width_p-1:0] i2
