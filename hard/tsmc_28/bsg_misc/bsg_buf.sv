@@ -6,12 +6,12 @@ if (harden_p && (width_p==bits))                              \
   begin: macro                                                \
     for (genvar j = 0; j < width_p; j++)                      \
       begin : b                                               \
-        BUFFD8BWP7T40P140 b (.I(i[j]), .Z(o[j]));             \
+        BUFFD8BWP7T40P140 b_BSG_RESIZE_OK (.I(i[j]), .Z(o[j])); \
       end                                                     \
   end
 
 module bsg_buf #(parameter `BSG_INV_PARAM(width_p)
-                 , parameter harden_p=1
+                 , parameter harden_p=0
 		 , parameter vertical_p=1
                  )
    (input    [width_p-1:0] i
@@ -108,9 +108,9 @@ module bsg_buf #(parameter `BSG_INV_PARAM(width_p)
    `bsg_buf_macro(2) else
    `bsg_buf_macro(1) else
        begin :notmacro
-          initial assert(harden_p==0) else $error("## %m wanted to harden but no macro");
+          `BSG_SYNTH_HARDEN_ATTEMPT(harden_p)
 
-             assign o = i;
+          assign o = i;
       end
 endmodule
 
