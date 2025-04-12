@@ -370,7 +370,7 @@ def plot_groups(groups):
     """
     num_groups = len(groups)
     matplotlib.rcParams['text.antialiased'] = False
-    fig, axes = plt.subplots(num_groups, 1, sharex=True, figsize=(10, 3 * num_groups))
+    fig, axes = plt.subplots(num_groups, 1, sharex=True, figsize=(20, 6 * num_groups))
 
     if num_groups == 1:
         axes = [axes]  # Make it iterable
