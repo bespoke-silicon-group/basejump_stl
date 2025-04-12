@@ -16,7 +16,7 @@ module bsg_router_crossbar_o_by_i
     , parameter `BSG_INV_PARAM(i_width_p)
 
     , parameter logic [i_els_p-1:0] i_use_credits_p = {i_els_p{1'b0}}
-    , parameter int i_fifo_els_p[i_els_p-1:0] = '{2,2}
+    , parameter int i_fifo_els_p[i_els_p-1:0] = '{ default: 2}
     , parameter lg_o_els_lp = `BSG_SAFE_CLOG2(o_els_p)
 
     // drop_header_p drops the lower bits to select dest id from the datapath.
