@@ -58,15 +58,42 @@ endmodule
 module bsg_nonsynth_profiler_client_inc_cond
   #(string suffix_p         = "",
     string match_format_p   = "",
-    parameter num_args_p=0,
-    arg1_p=0,
-    arg2_p=0
+    parameter int ints_p[] = '{}
     )
    (
     input clk_i,
     input countme_i
     );
 
+   //-------------------------------------------------------------------------
+   // Function: do_substitution
+   //   Scans the pattern, replacing each '@' with the next integer in ints_p.
+   //-------------------------------------------------------------------------
+   function automatic string do_substitution(string pattern, int ints[]);
+      string result  = "";
+      int    pat_len = pattern.len();
+      int    next_idx = 0;
+
+      for (int i = 0; i < pat_len; i++) 
+	begin
+	   if (pattern[i] == "@") 
+	     begin
+		if (next_idx < ints.size()) 
+		  begin
+		     // Append the integer as a decimal string
+		     result = { result, $sformatf("%0d", ints[next_idx]) };
+		     next_idx++;
+		  end
+		else 
+		  result = { result, "[ERR_NO_INT]" };
+	     end
+	   else
+	     result = { result, pattern[i] };
+	end // for (int i = 0; i < pat_len; i++)
+
+      return result;
+   endfunction
+   
    // -----------------------------------------------------------------------
    // Local substring search function
    // -----------------------------------------------------------------------
@@ -97,17 +124,7 @@ module bsg_nonsynth_profiler_client_inc_cond
    initial 
      begin
 	$sformat(path, "%m%s", suffix_p);
-	if (num_args_p == 0)
-	  match=$sformatf(match_format_p);
-	else if (num_args_p == 1)
-	  match=$sformatf(match_format_p, arg1_p);
-	else if (num_args_p == 2)
-	  match=$sformatf(match_format_p, arg1_p, arg2_p);
-        else
-	  begin
-	     $error("%m invalid number of args");
-	     $finish();
-	  end
+	match = do_substitution(match_format_p, ints_p);
 
 	if ((match.len() == 0) ||
             (substring_index(path, match) >= 0))
