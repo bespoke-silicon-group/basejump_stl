@@ -50,6 +50,83 @@ module bsg_nonsynth_profiler_client_inc #(string suffix_p="")
 
 endmodule
 
+// AI generated module
+// like the previous module, but checks if the module instance name
+// matches a substring. this allows us to have bind statements that
+// can be applied to a subset of modules
+
+module bsg_nonsynth_profiler_client_inc_cond
+  #(string suffix_p         = "",
+    string match_format_p   = "",
+    parameter num_args_p=0,
+    arg1_p=0,
+    arg2_p=0
+    )
+   (
+    input clk_i,
+    input countme_i
+    );
+
+   // -----------------------------------------------------------------------
+   // Local substring search function
+   // -----------------------------------------------------------------------
+   function automatic int substring_index(string base, string sub);
+      int base_len = base.len();
+      int sub_len  = sub.len();
+      if (sub_len == 0) return 0;
+      if (sub_len > base_len) return -1;
+
+      for (int i = 0; i <= base_len - sub_len; i++) begin
+         bit match = 1'b1;
+
+         for (int j = 0; j < sub_len; j++) begin
+            if (base[i + j] != sub[j]) begin
+               match = 1'b0;
+
+               break;
+            end
+         end
+         if (match) return i;
+      end
+      return -1;
+   endfunction
+
+   string path,match;
+   int    counter;
+
+   initial 
+     begin
+	$sformat(path, "%m%s", suffix_p);
+	if (num_args_p == 0)
+	  match=$sformatf(match_format_p);
+	else if (num_args_p == 1)
+	  match=$sformatf(match_format_p, arg1_p);
+	else if (num_args_p == 2)
+	  match=$sformatf(match_format_p, arg1_p, arg2_p);
+        else
+	  begin
+	     $error("%m invalid number of args");
+	     $finish();
+	  end
+
+	if ((match.len() == 0) ||
+            (substring_index(path, match) >= 0))
+	  begin
+             // Allocate the profiler counter
+	     $root.`BSG_NONSYNTH_PROFILER_CLIENT_TOP.profiler.allocate_counter(path, counter);
+
+	     forever 
+	       begin
+		  @(negedge clk_i);
+
+		  if (countme_i)
+		     $root.`BSG_NONSYNTH_PROFILER_CLIENT_TOP.profiler.increment_counter(counter);
+               end
+	  end
+     end
+endmodule
+
+
 // start_p to end_p inclusive
 module bsg_nonsynth_profiler_client_histo #(string suffix_p="",parameter `BSG_INV_PARAM(start_p),parameter `BSG_INV_PARAM(end_p))
    (input clk_i
@@ -82,6 +159,7 @@ module bsg_nonsynth_profiler_client_histo #(string suffix_p="",parameter `BSG_IN
 
 endmodule
 
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_profiler_client_histo)
 
 module bsg_nonsynth_profiler_client_add #(string suffix_p="")
    (input clk_i
