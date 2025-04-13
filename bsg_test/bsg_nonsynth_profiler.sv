@@ -56,9 +56,10 @@ endmodule
 // can be applied to a subset of modules
 
 module bsg_nonsynth_profiler_client_inc_cond
-  #(string suffix_p         = "",
-    string match_format_p   = "",
-    parameter int ints_p[] = '{}
+  #(string suffix_p = ""
+    ,string match_format_p = ""
+    ,parameter int num_ints_p = 0
+    ,parameter int ints_p[num_ints_p] = '{}
     )
    (
     input clk_i,
@@ -69,30 +70,25 @@ module bsg_nonsynth_profiler_client_inc_cond
    // Function: do_substitution
    //   Scans the pattern, replacing each '@' with the next integer in ints_p.
    //-------------------------------------------------------------------------
-   function automatic string do_substitution(string pattern, int ints[]);
+
+   // rewritten for verilator 5, it blows up if we pass in an array of ints for vals
+   function automatic string do_substitution(string pattern, int times, int val);
       string result  = "";
       int    pat_len = pattern.len();
       int    next_idx = 0;
-
-      for (int i = 0; i < pat_len; i++) 
+      for (int i = 0; i < pat_len; i++)
 	begin
-	   if (pattern[i] == "@") 
+	   if (next_idx < times && pattern[i] == "@")
 	     begin
-		if (next_idx < ints.size()) 
-		  begin
-		     // Append the integer as a decimal string
-		     result = { result, $sformatf("%0d", ints[next_idx]) };
-		     next_idx++;
-		  end
-		else 
-		  result = { result, "[ERR_NO_INT]" };
+		result = $sformatf("%s%0d", result, val);
+		next_idx++;
 	     end
 	   else
-	     result = { result, pattern[i] };
+	     result = $sformatf("%s%c", result, pattern[i]);
 	end // for (int i = 0; i < pat_len; i++)
 
       return result;
-   endfunction
+   endfunction // do_substitution
    
    // -----------------------------------------------------------------------
    // Local substring search function
@@ -120,12 +116,21 @@ module bsg_nonsynth_profiler_client_inc_cond
 
    string path,match;
    int    counter;
-
+   int    subst_iter, subst_val;
+      
    initial 
      begin
 	$sformat(path, "%m%s", suffix_p);
-	match = do_substitution(match_format_p, ints_p);
 
+	match=match_format_p;
+	for (subst_iter = 0; subst_iter < num_ints_p; subst_iter++)
+	  begin
+	     subst_val = ints_p[subst_iter];
+	     match = do_substitution(match, 1, subst_val);
+	  end
+
+	//$display("@@ %s %s",match,match_format_p);
+	
 	if ((match.len() == 0) ||
             (substring_index(path, match) >= 0))
 	  begin

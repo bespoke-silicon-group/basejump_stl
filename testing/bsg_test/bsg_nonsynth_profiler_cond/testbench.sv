@@ -46,7 +46,7 @@ module testbench();
 	  end
      end
    
-   bind rando bsg_nonsynth_profiler_client_inc_cond      #(.suffix_p("_suff"),.match_format_p("Xr[@]"),.ints_p({ 5 })) u_bind
+   bind rando bsg_nonsynth_profiler_client_inc_cond      #(.suffix_p("_suff"),.match_format_p("Xr[@]"),.num_ints_p(1),.ints_p({ 5 })) u_bind
    (.clk_i(clk_i)
     ,.countme_i(val[0])
     );
