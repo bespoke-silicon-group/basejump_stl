@@ -414,7 +414,9 @@ def plot_groups(groups):
                     cat_data,
                     color=cat['color'],
                     label=cat['name'],
-                    marker='o'
+                    marker='.',
+                    markersize=1,
+                    linewidth=1
                 )
 
         ax.set_title(group['title'])
