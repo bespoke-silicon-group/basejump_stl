@@ -370,7 +370,7 @@ def plot_groups(groups):
     """
     num_groups = len(groups)
     matplotlib.rcParams['text.antialiased'] = False
-    fig, axes = plt.subplots(num_groups, 1, sharex=True, figsize=(20, 6 * num_groups))
+    fig, axes = plt.subplots(num_groups, 1, figsize=(20, 6 * num_groups))
 
     if num_groups == 1:
         axes = [axes]  # Make it iterable
@@ -424,7 +424,10 @@ def plot_groups(groups):
         # Reverse legend entries so they match the category order in code
         ax.legend(handles[::-1], labels[::-1], loc='upper right')
         ax.set_ylabel("Counts")
-        ax.set_xticks(x_indices)
+        step = max(1, len(x_indices)//16)
+        tick_positions = range(0, len(x_indices), step)
+        ax.set_xticks(tick_positions)
+        ax.set_xticklabels([str(x) for x in tick_positions])   
         ax.set_xlabel("Frame Index")
 
     plt.tight_layout()
