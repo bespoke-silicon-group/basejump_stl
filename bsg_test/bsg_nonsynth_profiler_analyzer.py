@@ -10,8 +10,8 @@ A Python 2.7 script that:
      - After 1 or more categories, a line may have a "@" or "#" symbol followed by a group name
          - Lines that start with "@" define a group that plots each frame individually (no accumulation).
          - Lines that start with "#" define a group that accumulates counts **up to** each frame
-         - Lines that start with "!" are like @ but side-by-side not stacked
-         - Lines that start with "$" are like # but side-by-side not stacked
+         - Lines that start with "!" are like @ but line plot not stacked
+         - Lines that start with "$" are like # but line plot not stacked
 
        (prefix sums, so each bar is total up to that frame).
   2) Reads profile.names, which has lines of <counter_number> <hierarchical_path>.
@@ -111,8 +111,8 @@ def parse_schema(schema_file):
     Group lines can start with one of the following symbols:
       - '@ MyTitle': raw per-frame data, stacked
       - '# MyTitle': prefix-sum (accumulate) data, stacked
-      - '! MyTitle': raw per-frame data, grouped (side-by-side)
-      - '$ MyTitle': prefix-sum (accumulate) data, grouped (side-by-side)
+      - '! MyTitle': raw per-frame data, grouped (line plot)
+      - '$ MyTitle': prefix-sum (accumulate) data, grouped (line plot)
     """
     groups = []
     current_group = {
@@ -406,23 +406,15 @@ def plot_groups(groups):
                 for i in range(num_frames):
                     bottoms[i] += cat_data[i]
         else:
-            # --- Grouped bars approach (side-by-side) ---
-            num_cats = len(group['categories'])
-            # We'll use a "group width" of e.g. 0.8 across each frame, subdivided by number of categories
-            bar_width = 0.8 / num_cats
-            for i, cat in enumerate(group['categories']):
+            # --- Line plots with points ---
+            for cat in group['categories']:
                 cat_data = cat['data']
-                # Shift each category's bars by i*bar_width
-                bar_x = [x + i*bar_width for x in x_indices]
-                ax.bar(
-                    bar_x,
+                ax.plot(
+                    x_indices,
                     cat_data,
                     color=cat['color'],
                     label=cat['name'],
-                    linewidth=0,
-                    width=bar_width,
-                    antialiased=False,
-                    edgecolor='none'
+                    marker='o'
                 )
 
         ax.set_title(group['title'])
