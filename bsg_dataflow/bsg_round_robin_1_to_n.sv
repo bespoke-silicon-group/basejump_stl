@@ -12,8 +12,7 @@
 
 `include "bsg_defines.sv"
 
-module bsg_round_robin_1_to_n #(parameter `BSG_INV_PARAM(width_p )
-                                ,parameter num_out_p = 2)
+module bsg_round_robin_1_to_n #(parameter `BSG_INV_PARAM(num_out_p ))
    (input  clk_i
     , input  reset_i
 
