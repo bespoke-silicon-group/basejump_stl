@@ -86,8 +86,7 @@ module bsg_fifo_1r1w_large_banked #(parameter `BSG_INV_PARAM(width_p         )
 
    wire [1:0]               v_i_demux, ready_and_o_mux;
 
-   bsg_round_robin_1_to_n #(.width_p(width_p)
-                            ,.num_out_p(2)
+   bsg_round_robin_1_to_n #(.num_out_p(2)
 			   )  rr1n
    (.clk_i   (clk_i      )
     ,.reset_i(reset_i    )
