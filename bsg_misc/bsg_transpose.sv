@@ -2,8 +2,9 @@
 
 module bsg_transpose #(`BSG_INV_PARAM(width_p)
 		       ,`BSG_INV_PARAM(els_p)
-		       ) (input    [els_p-1:0  ][width_p-1:0] i
-			  , output [width_p-1:0][els_p-1:0]   o
+		       , type_width_p=1
+		      ) (input    [els_p-1:0  ][width_p-1:0][type_width_p-1:0] i
+			 , output [width_p-1:0][els_p-1:0][type_width_p-1:0]   o
 			  );
    genvar x, y;
 
