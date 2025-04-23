@@ -85,8 +85,7 @@ module bsg_serial_in_parallel_out_full
   
   // Push received data into fifos in round-robin way
   bsg_round_robin_1_to_n 
- #(.width_p(width_p)
-  ,.num_out_p(els_p)
+ #(.num_out_p(els_p)
   ) brr
   (.clk_i      (clk_i)
   ,.reset_i    (reset_i)
