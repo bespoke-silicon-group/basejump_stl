@@ -17,33 +17,33 @@
 
 `include "bsg_defines.sv"
 
-module bsg_arb_round_robin #(parameter `BSG_INV_PARAM(width_p))
+// worker module that externalizes the current state vector
+// so that more complex schedulers can be constructed hierarchically
+
+module bsg_arb_round_robin_composable #(parameter `BSG_INV_PARAM(width_p)
+					,localparam thermo_width_m1_lp=`BSG_SAFE_MINUS(width_p,2)
+					)
   (input          clk_i
    , input        reset_i
 
    , input        [width_p-1:0] reqs_i    // which items would like to go; OR this to get v_o equivalent
    , output logic [width_p-1:0] grants_o  // one hot, selected item
-   , input        yumi_i                  // the user of the arbiter accepts the arb output, change MRU
+
+   // the current start location is represented as a thermometer code
+   , input        [thermo_width_m1_lp:0] thermocode_r_i
+   , output logic [thermo_width_m1_lp:0] thermocode_n_o
     );
-  
+
   if (width_p == 1)
     begin: fi
       assign grants_o = reqs_i;
+      assign thermocode_n_o = 1'b0;
     end
   else
     begin: fi2
-      // the current start location is represented as a thermometer code
-      logic [width_p-1-1:0] thermocode_r, thermocode_n;  
-  
-      always_ff @(posedge clk_i)
-        if (reset_i)
-          thermocode_r <= '0; // initialize thermometer to all 0's
-        else
-          if (yumi_i)
-            thermocode_r <= thermocode_n;
   
       // this is essentially implementing a cyclic scan
-      wire [width_p*2-1:0] scan_li = { 1'b0, thermocode_r & reqs_i[width_p-1-1:0], reqs_i };
+      wire [width_p*2-1:0] scan_li = { 1'b0, thermocode_r_i & reqs_i[width_p-1-1:0], reqs_i };
       wire [width_p*2-1:0] scan_lo;
   
       // default is high-to-lo
@@ -54,7 +54,6 @@ module bsg_arb_round_robin #(parameter `BSG_INV_PARAM(width_p))
        .i(scan_li)
        ,.o(scan_lo) // thermometer code of the next item
       ); 
-
       // finds the first 1
       wire [width_p*2-1:0] edge_detect = ~(scan_lo >> 1) & scan_lo;
     
@@ -64,11 +63,49 @@ module bsg_arb_round_robin #(parameter `BSG_INV_PARAM(width_p))
       always_comb
         begin
           if (|scan_li[width_p*2-1-:width_p]) // no wrap around
-            thermocode_n = scan_lo[width_p*2-1-:width_p-1];
+            thermocode_n_o = scan_lo[width_p*2-1-:width_p-1];
           else // wrap around
-            thermocode_n = scan_lo[width_p-1:1];
+            thermocode_n_o = scan_lo[width_p-1:1];
         end  
     end
+endmodule
+
+`BSG_ABSTRACT_MODULE(bsg_arb_round_robin_composable)
+
+module bsg_arb_round_robin #(parameter `BSG_INV_PARAM(width_p))
+   (input          clk_i
+    , input        reset_i
+
+    , input        [width_p-1:0] reqs_i    // which items would like to go; OR this to get v_o equivalent
+    , output logic [width_p-1:0] grants_o  // one hot, selected item
+    , input        yumi_i                  // the user of the arbiter accepts the arb output, change MRU
+    );
+  
+   if (width_p == 1)
+     begin: fi
+	assign grants_o = reqs_i;
+     end
+   else
+     begin: fi2
+	// the current start location is represented as a thermometer code
+	logic [width_p-1-1:0] thermocode_r, thermocode_n;  
+  
+	always_ff @(posedge clk_i)
+          if (reset_i)
+            thermocode_r <= '0; // initialize thermometer to all 0's
+          else
+            if (yumi_i)
+              thermocode_r <= thermocode_n;
+
+        bsg_arb_round_robin_composable #(.width_p(width_p)) barrc
+          (.clk_i          (clk_i)
+	   ,.reset_i       (reset_i)
+	   ,.reqs_i        (reqs_i)
+	   ,.grants_o      (grants_o)
+	   ,.thermocode_r_i(thermocode_r)
+	   ,.thermocode_n_o(thermocode_n)
+	   );
+     end
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_arb_round_robin)
