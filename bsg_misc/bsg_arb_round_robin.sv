@@ -108,4 +108,51 @@ module bsg_arb_round_robin #(parameter `BSG_INV_PARAM(width_p))
      end
 endmodule
 
+//
+// this implements a two-level priority scheme. each item can be flagged as a high priority.
+// if nothing is high priority, then it acts as round robin among the items. If items are flagged
+// as high priority, it round robins among the high priority items. 
+//
+
+module bsg_arb_round_robin_two_level #(parameter `BSG_INV_PARAM(width_p))
+   (input          clk_i
+    , input        reset_i
+    , input        [1:0][width_p-1:0] reqs_i // 0 = high, 1 = low
+    , output logic [width_p-1:0] grants_o    // one hot, selected item
+    , output logic granted_high_o            // whether we granted a high priority item
+    , input        yumi_i                    // the user of the arbiter accepts the arb output, change MRU
+    );
+   logic [width_p-1:0] grants_low_lo;
+   logic [width_p-1:0] grants_high_lo;
+
+   logic granted_low_lo;
+   
+   bsg_arb_round_robin #(.width_p(width_p)) low
+     (.clk_i    (clk_i)
+      ,.reset_i (reset_i)
+      ,.reqs_i  (reqs_i[1])
+      ,.grants_o(grants_low_lo)
+      ,.yumi_i  (granted_low_lo & yumi_i)
+      );
+
+   bsg_arb_round_robin #(.width_p(width_p)) hi
+     (.clk_i    (clk_i)
+      ,.reset_i (reset_i)
+      ,.reqs_i  (reqs_i[0])
+      ,.grants_o(grants_high_lo)
+      ,.yumi_i  (granted_high_o & yumi_i)
+      );
+
+   // we had a high grant 
+   assign granted_high_o = (|reqs_i[0]);
+   // we had a low grant that was not overridden by high grants
+   assign granted_low_lo = (|reqs_i[1]) & ~granted_high_o;
+   
+   // if we did not grant high, then sub in the low grants
+   assign grants_o = granted_high_o ? grants_high_lo : grants_low_lo;
+
+endmodule
+   
+`BSG_ABSTRACT_MODULE(bsg_arb_round_robin_priority)   
 `BSG_ABSTRACT_MODULE(bsg_arb_round_robin)
+   
