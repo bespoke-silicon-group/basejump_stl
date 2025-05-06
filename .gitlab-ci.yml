@@ -1,0 +1,262 @@
+
+# Include common GitLab CI macros
+include: '.gitlab-ci.common.yml'
+
+###################################################
+## Mixins
+###################################################
+.basejump_stl_mixin:
+  variables:
+    REPO_NAME: "basejump_stl"
+    DOCKER_PLATFORM: "centos7" # only centos7 supported
+    DOCKERFILE_DIR: "testing/docker"
+    # used internally
+
+###################################################
+## Templates
+###################################################
+
+.image_template:
+  extends: [.docker_template, .basejump_stl_mixin]
+  stage: image
+  script:
+    - |
+      echo "[CI] Building image ${CONTAINER_IMAGE}" | tee -a ${JOB_LOG}
+      docker build docker -f ${DOCKERFILE_DIR}/Dockerfile.${DOCKER_PLATFORM} \
+          --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${CONTAINER_IMAGE} \
+          --build-arg USER_NAME="${USER_NAME}" \
+          --build-arg USER_ID="${USER_ID}" \
+          --build-arg GROUP_NAME="${GROUP_NAME}" \
+          --build-arg GROUP_ID="${GROUP_ID}" \
+          --build-arg OTHER_GROUPS="${OTHER_GROUPS}" \
+          --build-arg WORKDIR="${WORKDIR}" \
+          -t ${CONTAINER_IMAGE} >> ${JOB_LOG} 2>&1
+
+.test_template:
+  extends: [.repo_template, .basejump_stl_mixin]
+  stage: test
+  variables:
+    MODULE_GROUP: "setme"
+    MODULE_NAME: "setme"
+    SIMULATOR: "setme"
+    MODULE_TEST_DIR: "testing/${MODULE_GROUP}/${MODULE_NAME}"
+  script:
+    - |
+      echo "[CI] Testing ${MODULE_GROUP} / ${MODULE_NAME}" | tee -a ${JOB_LOG}
+      make -C ${MODULE_TEST_DIR} >> ${JOB_LOG} 2>&1
+
+###################################################
+## Workflow
+###################################################
+
+# Currently only run on pushes, merge requests do not run separately
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ "/^ci_.*$|master/"
+
+stages:
+  - image
+  - test
+
+build-image:
+  extends: [.image_template]
+  rules: !reference [.image_template, rules]
+
+test-bsg_cache:
+  extends: [.test_template]
+  parallel:
+    matrix:
+      - MODULE_GROUP: "bsg_cache"
+        MODULE_NAME:
+          - "axe_test"
+          - "axi_test"
+          - "dmc"
+          - "lock_test"
+          - "manycore_dram"
+          - "regression"
+          - "regression_64"
+          - "regression_non_blocking"
+          - "regression_v2"
+          - "wormhole_fanout"
+          - "wormhole_stream"
+        SIMULATOR: ["vcs", "verilator"]
+
+test-bsg_clk_gen:
+  extends: [.test_template]
+  parallel:
+    matrix:
+      - MODULE_GROUP: "bsg_clk_gen"
+        MODULE_NAME: "bsg_clk_gen_v2"
+        SIMULATOR: ["vcs", "verilator"]
+
+test-bsg_dataflow:
+  extends: [.test_template]
+  parallel:
+    matrix:
+      - MODULE_GROUP: "bsg_dataflow"
+        MODULE_NAME:
+          - "bsg_channel_narrow"
+          - "bsg_channel_tunnel"
+          - "bsg_compare_and_swap"
+          - "bsg_fifo_1r1w_large"
+          - "bsg_fifo_1r1w_pseudo_large"
+          - "bsg_fifo_1r1w_small_hardened"
+          - "bsg_fifo_1r1w_small_hardened_random"
+          - "bsg_fifo_bypass"
+          - "bsg_fifo_reorder"
+          - "bsg_parallel_in_serial_out"
+          - "bsg_parallel_in_serial_out_passthrough"
+          - "bsg_parallel_in_serial_out_passthrough_arb"
+          - "bsg_serial_in_parallel_out_passthrough"
+        SIMULATOR: ["vcs", "verilator"]
+
+test-bsg_dmc:
+  extends: [.test_template]
+  parallel:
+    matrix:
+      - MODULE_GROUP: "bsg_dmc"
+        MODULE_NAME: "bsg_dmc"
+        SIMULATOR: ["vcs", "verilator"]
+
+test-bsg_fpu:
+  extends: [.test_template]
+  parallel:
+    matrix:
+      - MODULE_GROUP: "bsg_fpu"
+        MODULE_NAME:
+          - "add_sub_32"
+          - "bsg_fpu_sticky"
+          - "cmp_32"
+          - "f2i_32"
+          - "i2f_32"
+          - "mul_32"
+        SIMULATOR: ["vcs", "verilator"]
+
+test-bsg_link:
+  extends: [.test_template]
+  parallel:
+    matrix:
+      - MODULE_GROUP: "bsg_link"
+        MODULE_NAME: ["bsg_link_ddr", "bsg_link_sdr"]
+        SIMULATOR: ["vcs", "verilator"]
+
+test-bsg_mem:
+  extends: [.test_template]
+  parallel:
+    matrix:
+      - MODULE_GROUP: "bsg_mem"
+        MODULE_NAME:
+          - "bsg_cam_1r1w_sync"
+          - "bsg_cam_1r1w_sync_unmanaged"
+          - "bsg_mem_1r1w"
+          - "bsg_mem_1r1w_from_1rw"
+          - "bsg_mem_1rw_sync"
+          - "bsg_mem_1rw_sync_mask_write_bit_from_1r1w"
+          - "bsg_mem_1rw_sync_mask_write_bit_segmented"
+          - "bsg_mem_1rw_sync_mask_write_byte_segmented"
+          - "bsg_mem_1rw_sync_segmented"
+          - "bsg_mem_2r1w"
+          - "bsg_mem_banked_crossbar"
+          - "bsg_nonsynth_mem_1rw_sync_mask_write_byte_dma"
+        SIMULATOR: ["vcs", "verilator"]
+
+test-bsg_misc:
+  extends: [.test_template]
+  parallel:
+    matrix:
+      - MODULE_GROUP: "bsg_misc"
+        MODULE_NAME:
+          - "bsg_adder_one_hot"
+          - "bsg_arb_round_robin"
+          - "bsg_binary_plus_one_to_gray"
+          - "bsg_counter_clock_downsample"
+          - "bsg_counter_dynamic_limit"
+          - "bsg_counter_up_down"
+          - "bsg_cycle_counter"
+          - "bsg_dff"
+          - "bsg_dff_reset_en"
+          - "bsg_encode_one_hot"
+          - "bsg_gray_to_binary"
+          - "bsg_hash_bank"
+          - "bsg_idiv_iterative"
+          - "bsg_idiv_unsigned_recip"
+          - "bsg_id_pool"
+          - "bsg_imod_range"
+          - "bsg_imul_iterative"
+          - "bsg_lru_pseudo_tree_backup"
+          - "bsg_lru_pseudo_tree_decode"
+          - "bsg_lru_pseudo_tree_encode"
+          - "bsg_mul"
+          - "bsg_mux"
+          - "bsg_mux_bitwise"
+          - "bsg_mux_one_hot"
+          - "bsg_pg_tree"
+          - "bsg_popcount"
+          - "bsg_priority_encode"
+          - "bsg_rotate_left"
+          - "bsg_round_robin_arb"
+          - "bsg_round_robin_reset_arb"
+          - "bsg_scan"
+          - "bsg_strobe"
+          - "bsg_thermometer_count"
+          - "bsg_wait_after_reset"
+          - "bsg_wait_cycles"
+        SIMULATOR: ["vcs", "verilator"]
+
+test-bsg_noc:
+  extends: [.test_template]
+  parallel:
+    matrix:
+      - MODULE_GROUP: "bsg_noc"
+        MODULE_NAME:
+          - "bsg_barrier"
+          - "bsg_mesh_router"
+          - "bsg_mesh_to_ring_stitch"
+          - "bsg_router_crossbar_o_by_i"
+          - "bsg_wormhole_concentrator"
+          - "bsg_wormhole_network"
+          - "bsg_wormhole_router"
+          - "bsg_wormhole_router_adapter_in"
+          - "bsg_wormhole_router_adapter_out"
+        SIMULATOR: ["vcs", "verilator"]
+
+test-bsg_tag:
+  extends: [.test_template]
+  parallel:
+    matrix:
+      - MODULE_GROUP: "bsg_tag"
+        MODULE_NAME: "bsg_tag_bitbang"
+        SIMULATOR: ["vcs", "verilator"]
+
+test-bsg_test:
+  extends: [.test_template]
+  parallel:
+    matrix:
+      - MODULE_GROUP: "bsg_test"
+        MODULE_NAME:
+          - "bsg_nonsynth_dpi"
+          - "bsg_nonsynth_dpi_rom"
+          - "bsg_nonsynth_dramsim3"
+          - "bsg_nonsynth_profiler"
+          - "bsg_nonsynth_profiler_histo"
+          - "bsg_nonsynth_profiler_sum"
+          - "bsg_nonsynth_ramulator_hbm"
+          - "bsg_nonsynth_random_gen"
+          - "bsg_nonsynth_sha256"
+          - "bsg_trace_replay"
+          - "dramsim3_bandwidth"
+          - "dramsim3_bandwidth2"
+          - "ramulator_hbm_bandwidth"
+        SIMULATOR: ["vcs", "verilator"]
+
+test-experimental:
+  extends: [.test_template]
+  parallel:
+    matrix:
+      - MODULE_GROUP: "experimental/bsg_cordic"
+        MODULE_NAME: "bsg_rect_to_polar"
+        SIMULATOR: ["vcs", "verilator"]
+      - MODULE_GROUP: "experimental/bsg_dataflow"
+        MODULE_NAME: "bsg_fifo_reorder_sync"
+        SIMULATOR: ["vcs", "verilator"]
+
