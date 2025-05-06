@@ -62,7 +62,7 @@ endfunction
 
 module bsg_mul_pipelined #(parameter `BSG_INV_PARAM(width_p)
                            , parameter pipeline_p=1
-                           , parameter harden_p  =1
+                           , parameter harden_p=0
                            )
    (  input clk_i
     , input en_i
@@ -570,7 +570,7 @@ endmodule
 module bsg_dff_en_rep_rep #(parameter blocks_p=0
                             , width_p=0
                             , group_vec_p=0
-                            , harden_p=1
+                            , harden_p=0
                             )
    (input clk_i
     , input en_i
@@ -607,7 +607,7 @@ endmodule
 module bsg_mul_comp42_rep_rep #(parameter blocks_p=0
                                 , width_p=0
                                 , group_vec_p=0
-                                , harden_p=1
+                                , harden_p=0
                                 )
 
    // we do this so that it is easy to combine vectors of results from blocks
@@ -659,7 +659,7 @@ module bsg_mul_B4B_rep_rep
     , parameter dot_bar_vec_p = 0
     , parameter B_vec_p     = 0
     , parameter one_vec_p   = 0
-    , parameter harden_p    = 1'b0
+    , parameter harden_p=0'b0
     )
    ( input [4:0][2:0] SDN_i
      , input cr_i

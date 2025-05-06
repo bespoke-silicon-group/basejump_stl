@@ -2,7 +2,7 @@
 `include "bsg_defines.sv"
 
 module bsg_buf_ctrl #(parameter `BSG_INV_PARAM(width_p)
-                 , harden_p=1)
+                 , harden_p=0)
    (input i
   , output [width_p-1:0] o
   );

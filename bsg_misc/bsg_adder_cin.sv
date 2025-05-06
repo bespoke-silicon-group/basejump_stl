@@ -2,7 +2,7 @@
 `include "bsg_defines.sv"
 
 module bsg_adder_cin #(parameter `BSG_INV_PARAM(width_p)
-                 , harden_p=1)
+                 , harden_p=0)
    ( input [width_p-1:0] a_i
     , input [width_p-1:0] b_i
     , input               cin_i
