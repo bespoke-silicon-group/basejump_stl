@@ -34,14 +34,21 @@ module testbench();
 
   integer status;
   integer wave;
-  string checker;
+  string _checker;
   initial begin
     status = $value$plusargs("wave=%d",wave);
-    status = $value$plusargs("checker=%s",checker);
-    $display("checker=%s", checker);
+    status = $value$plusargs("checker=%s",_checker);
+    $display("checker=%s", _checker);
+`ifdef WAVE
+`ifdef VERILATOR
+    if (wave) $dumpfile("dump.fst");
+    if (wave) $dumpvars(0,$root.testbench.DUT);
+`else
     if (wave) $vcdpluson;
+    if (wave) $vcdplusautoflushon;
+`endif
+`endif
   end
-
 
 
   `declare_bsg_cache_pkt_s(addr_width_p,data_width_p);
@@ -158,9 +165,10 @@ module testbench();
   logic tr_yumi_li;
   logic done;
 
-  bsg_fsb_node_trace_replay #(
-    .ring_width_p(ring_width_lp)
+  bsg_trace_replay #(
+    .payload_width_p(ring_width_lp)
     ,.rom_addr_width_p(rom_addr_width_lp)
+    ,.debug_p(5)
   ) trace_replay (
     .clk_i(clk)
     ,.reset_i(reset)
@@ -194,13 +202,23 @@ module testbench();
   assign v_li = tr_v_lo;
   assign tr_yumi_li = yumi_lo;
 
+`ifdef VERILATOR
+    if (mem_size_p > 32768)
+        $error("Please provide correct memory size for checker");
+`endif
+
   bind bsg_cache basic_checker_32 #(
     .data_width_p(data_width_p)
     ,.addr_width_p(addr_width_p)
+    // Error Verilator 5.030 %Error: testbench.sv:201:34: Parameter-resolved constants must not use dotted references: 'mem_size_p'
+`ifdef VERILATOR
+    ,.mem_size_p(32768)
+`else
     ,.mem_size_p($root.testbench.mem_size_p)
+`endif
   ) bc (
     .*
-    ,.en_i($root.testbench.checker == "basic")
+    ,.en_i($root.testbench._checker == "basic")
   );
 
   // wait for all responses to be received.
