@@ -57,7 +57,7 @@ endmodule
                                ); end
 
 
-module bsg_sync_sync #(parameter `BSG_INV_PARAM(width_p ))
+module bsg_sync_sync #(parameter `BSG_INV_PARAM(width_p), harden_p=1)
    (
       input oclk_i
     , input  [width_p-1:0] iclk_data_i
