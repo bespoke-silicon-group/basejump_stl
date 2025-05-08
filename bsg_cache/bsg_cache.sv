@@ -32,7 +32,7 @@ module bsg_cache
     ,parameter dma_data_width_p=data_width_p // default value. it can also be pow2 multiple of data_width_p.
 
     ,localparam bsg_cache_pkt_width_lp=`bsg_cache_pkt_width(addr_width_p,data_width_p)
-    ,localparam bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p, block_size_in_words_p)
+    ,localparam bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p, block_size_in_words_p, ways_p)
     ,localparam burst_size_in_words_lp=(dma_data_width_p/data_width_p)
 
     ,parameter debug_p=0
@@ -66,6 +66,8 @@ module bsg_cache
     // needs to move together with the corresponding instruction. The usage of
     // this signal is totally optional.
     ,output logic v_we_o
+
+    ,input notification_en_i
   );
 
 
@@ -373,15 +375,16 @@ end
   wire aflinv_hit = (decode_v_r.afl_op | decode_v_r.aflinv_op| decode_v_r.ainv_op) & tag_hit_found;
   wire alock_miss = decode_v_r.alock_op & (tag_hit_found ? ~lock_v_r[tag_hit_way_id] : 1'b1);   // either the line is miss, or the line is unlocked.
   wire aunlock_hit = decode_v_r.aunlock_op & (tag_hit_found ? lock_v_r[tag_hit_way_id] : 1'b0); // the line is hit and locked. 
+  wire uncached_op = decode_v_r.uncached_ld_op | decode_v_r.uncached_st_op;
 
   // miss_v signal activates the miss handling unit.
   // MBT: the ~decode_v_r.tagst_op is necessary at the top of this expression
   //      to avoid X-pessimism post synthesis due to X's coming out of the tags
   wire miss_v = (~decode_v_r.tagst_op) & v_v_r
-    & (ld_st_amo_tag_miss | track_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit);
+    & (ld_st_amo_tag_miss | track_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit | uncached_op);
   
   // ops that return some value other than '0.
-  assign retval_op_v = decode_v_r.ld_op | decode_v_r.taglv_op | decode_v_r.tagla_op | decode_v_r.atomic_op; 
+  assign retval_op_v = decode_v_r.ld_op | decode_v_r.uncached_ld_op | decode_v_r.taglv_op | decode_v_r.tagla_op | decode_v_r.atomic_op; 
 
   // stat_mem
   //
@@ -415,6 +418,8 @@ end
   logic [addr_width_p-1:0] dma_addr_lo;
   logic [lg_ways_lp-1:0] dma_way_lo;
   logic dma_done_li;
+  logic dma_st_tag_miss_op_lo;
+  logic dma_fill_then_evict_lo;
 
   logic recover_lo;
   logic miss_done_lo;
@@ -473,6 +478,8 @@ end
     ,.dma_way_o(dma_way_lo)
     ,.dma_addr_o(dma_addr_lo)
     ,.dma_done_i(dma_done_li)
+    ,.dma_st_tag_miss_op_o(dma_st_tag_miss_op_lo)
+    ,.dma_fill_then_evict_o(dma_fill_then_evict_lo)
 
     ,.track_data_we_o(miss_track_data_we_lo)
 
@@ -503,6 +510,8 @@ end
     
     ,.ack_i(v_o & yumi_i) 
     ,.select_snoop_data_r_o(select_snoop_data_r_lo)
+
+    ,.notification_en_i(notification_en_i)
   );
 
   // dma
@@ -532,6 +541,12 @@ end
     ,.dma_way_i(dma_way_lo)
     ,.dma_addr_i(dma_addr_lo)
     ,.done_o(dma_done_li)
+    ,.dma_st_tag_miss_op_i(dma_st_tag_miss_op_lo)
+    ,.dma_fill_then_evict_i(dma_fill_then_evict_lo)
+
+    ,.uncached_op_v_i(uncached_op)
+
+    ,.data_v_r_i(data_v_r)
 
     ,.track_data_we_i(miss_track_data_we_lo)
 
@@ -1146,6 +1161,7 @@ end
 
   // store buffer
   //
+  // assign sbuf_v_li = (decode_v_r.st_op | decode_v_r.uncached_st_op | decode_v_r.atomic_op) & v_o & yumi_i;
   assign sbuf_v_li = (decode_v_r.st_op | decode_v_r.atomic_op) & v_o & yumi_i;
   assign sbuf_entry_li.way_id = miss_v ? chosen_way_lo : tag_hit_way_id;
   assign sbuf_entry_li.addr = addr_v_r;
@@ -1157,8 +1173,8 @@ end
   //    During miss, the store buffer can be drained.
   assign sbuf_yumi_li = sbuf_v_lo
     & ~((decode.ld_op | decode.atomic_op) & yumi_o)
-    & (~dma_data_mem_v_lo)
-    & ~(v_tl_r & (decode_tl_r.ld_op | decode_tl_r.atomic_op) & (~v_we) & (~miss_v)); 
+    & (~dma_data_mem_v_lo)                        // bc io read/write don't do recovery in mhu ⬇ 
+    & ~(v_tl_r & (decode_tl_r.ld_op | decode_tl_r.atomic_op) & (~v_we) & (~(miss_v & (~uncached_op)))); 
 
   assign sbuf_bypass_addr_li = addr_tl_r;
   assign sbuf_bypass_v_li = (decode_tl_r.ld_op | decode_tl_r.atomic_op) & v_tl_r & v_we;
@@ -1177,7 +1193,7 @@ end
   assign tbuf_yumi_li = tbuf_v_lo
     & ~((decode.ld_op | decode.atomic_op | partial_st) & yumi_o)
     & (~miss_track_mem_v_lo)
-    & ~(v_tl_r & (decode_tl_r.ld_op | decode_tl_r.atomic_op | partial_st_tl) & (~v_we) & (~miss_v));
+    & ~(v_tl_r & (decode_tl_r.ld_op | decode_tl_r.atomic_op | partial_st_tl) & (~v_we) & (~(miss_v & (~uncached_op))));
 
   assign tbuf_bypass_addr_li = addr_tl_r;
   assign tbuf_bypass_v_li = (decode_tl_r.ld_op | decode_tl_r.atomic_op | partial_st_tl) & v_tl_r & v_we;
