@@ -33,7 +33,7 @@ module bsg_cache_dma
     ,parameter data_mem_els_lp=(sets_p*burst_len_lp)
     ,parameter lg_data_mem_els_lp=`BSG_SAFE_CLOG2(data_mem_els_lp)
 
-    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p, block_size_in_words_p)
+    ,parameter bsg_cache_dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p, block_size_in_words_p, ways_p)
   
     ,parameter debug_p=0
   )
@@ -45,6 +45,12 @@ module bsg_cache_dma
     ,input [lg_ways_lp-1:0] dma_way_i
     ,input [addr_width_p-1:0] dma_addr_i
     ,output logic done_o
+    ,input dma_st_tag_miss_op_i
+    ,input dma_fill_then_evict_i
+
+    ,input uncached_op_v_i
+
+    ,input [data_width_p-1:0] data_v_r_i
 
     ,input track_data_we_i
 
@@ -81,12 +87,16 @@ module bsg_cache_dma
   localparam byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3);
   localparam block_offset_width_lp=(block_size_in_words_p > 1) ? byte_offset_width_lp+lg_block_size_in_words_lp : byte_offset_width_lp;
 
+  // localparam dma_ratio_lp=dma_data_width_p/data_width_p;
+
   // dma states
   //
-  typedef enum logic [1:0] {
+  typedef enum logic [2:0] {
     IDLE
     ,GET_FILL_DATA
     ,SEND_EVICT_DATA
+    ,IO_GET_SNOOP_DATA
+    ,IO_SEND_DATA
   } dma_state_e;
 
   dma_state_e dma_state_n;
@@ -115,7 +125,7 @@ module bsg_cache_dma
 
   // dma packet
   //
-  `declare_bsg_cache_dma_pkt_s(addr_width_p, block_size_in_words_p);
+  `declare_bsg_cache_dma_pkt_s(addr_width_p, block_size_in_words_p, ways_p);
   bsg_cache_dma_pkt_s dma_pkt;
 
   // in fifo
@@ -143,6 +153,8 @@ module bsg_cache_dma
   logic out_fifo_v_li;
   logic out_fifo_ready_lo;
   logic [dma_data_width_p-1:0] out_fifo_data_li;
+
+  logic [dma_data_width_p-1:0] data_mem_data_way_selected;
 
   bsg_two_fifo #(
     .width_p(dma_data_width_p)
@@ -238,18 +250,23 @@ module bsg_cache_dma
   ) write_data_mux (
     .data_i(data_mem_data_i)
     ,.sel_i(dma_way_i)
-    ,.data_o(out_fifo_data_li)
+    ,.data_o(data_mem_data_way_selected)
   );
+
+  assign out_fifo_data_li = uncached_op_v_i ? {{(dma_data_width_p - data_width_p){1'b0}}, data_v_r_i} : data_mem_data_way_selected;
 
   always_comb begin
     done_o = 1'b0;
 
     dma_pkt_v_o = 1'b0;
     dma_pkt.write_not_read = 1'b0;
-    dma_pkt.addr = {
-      dma_addr_i[addr_width_p-1:block_offset_width_lp],
-      {(block_offset_width_lp){1'b0}}
-    };
+    dma_pkt.write_validate = 1'b0;
+    dma_pkt.read_pending = 1'b0;
+    dma_pkt.uncached_op = uncached_op_v_i;
+    dma_pkt.way_id = dma_way_i;
+    dma_pkt.addr = uncached_op_v_i 
+                 ? {dma_addr_i[addr_width_p-1:byte_offset_width_lp], {(byte_offset_width_lp){1'b0}}}
+                 : {dma_addr_i[addr_width_p-1:block_offset_width_lp], {(block_offset_width_lp){1'b0}}};
     dma_pkt.mask = '0;
 
     data_mem_v_o = 1'b0;
@@ -281,6 +298,8 @@ module bsg_cache_dma
           e_dma_send_fill_addr: begin
             dma_pkt_v_o = 1'b1;
             dma_pkt.write_not_read = 1'b0;
+            dma_pkt.write_validate = dma_st_tag_miss_op_i;
+            dma_pkt.read_pending = dma_fill_then_evict_i;
             done_o = dma_pkt_yumi_i;
             dma_state_n = IDLE;
           end
@@ -288,27 +307,31 @@ module bsg_cache_dma
           e_dma_send_evict_addr: begin
             dma_pkt_v_o = 1'b1;
             dma_pkt.write_not_read = 1'b1;
-            dma_pkt.mask = word_tracking_p ? track_data_way_picked : {block_size_in_words_p{1'b1}};
+            dma_pkt.mask = (word_tracking_p & ~uncached_op_v_i) ? track_data_way_picked : {block_size_in_words_p{1'b1}};
             done_o = dma_pkt_yumi_i;
             dma_state_n = IDLE;
           end
 
           e_dma_get_fill_data: begin
             counter_clear = 1'b1;
-            dma_state_n = GET_FILL_DATA;
+            dma_state_n = uncached_op_v_i
+                        ? IO_GET_SNOOP_DATA
+                        : GET_FILL_DATA;
           end
       
           e_dma_send_evict_data: begin
             // we are reading the first word, as we are transitioning out.
             // so the counter is incremented to 1.
             counter_clear = 1'b1;
-            counter_up = 1'b1;
+            counter_up = uncached_op_v_i ? 1'b0 : 1'b1;
             // When word_tracking_p is off, track_data_we_i is always zero, which means track_mem_data_r will always be 'X;
             // So if word_tracking_p is off, we tie this to constant 1.
-            data_mem_v_o = word_tracking_p 
-              ?(|track_bits_offset_picked)
-              : 1'b1;
-            dma_state_n = SEND_EVICT_DATA;
+            data_mem_v_o = uncached_op_v_i
+                          ? 1'b0
+                          : (word_tracking_p 
+                            ?(|track_bits_offset_picked)
+                            : 1'b1);
+            dma_state_n = uncached_op_v_i ? IO_SEND_DATA : SEND_EVICT_DATA;
           end
 
           e_dma_nop: begin
@@ -362,6 +385,25 @@ module bsg_cache_dma
         dma_evict_o = 1'b1;
       end
 
+      IO_GET_SNOOP_DATA: begin
+        dma_state_n = in_fifo_v_lo
+          ? IDLE
+          : IO_GET_SNOOP_DATA;
+        in_fifo_yumi_li = in_fifo_v_lo;
+
+        done_o = in_fifo_v_lo;
+      end
+
+      IO_SEND_DATA: begin
+        dma_state_n = out_fifo_ready_lo 
+          ? IDLE 
+          : IO_SEND_DATA;
+
+        out_fifo_v_li = 1'b1;
+
+        done_o = out_fifo_ready_lo;
+      end
+
       default: begin
         // this should never happen, but if it does, then go back to IDLE.
         dma_state_n = IDLE;
@@ -380,16 +422,22 @@ module bsg_cache_dma
 
   assign snoop_word_offset = dma_addr_i[byte_offset_width_lp+:lg_burst_size_in_words_lp];
 
+
+
   if (burst_len_lp == 1) begin
-    assign snoop_word_we = (dma_state_r == GET_FILL_DATA) & in_fifo_v_lo;
+    assign snoop_word_we = in_fifo_v_lo & ((dma_state_r == IO_GET_SNOOP_DATA) || (dma_state_r == GET_FILL_DATA)) ;
   end
   else if (burst_len_lp == block_size_in_words_p) begin
-    assign snoop_word_we = (dma_state_r == GET_FILL_DATA) & in_fifo_v_lo
-      & (counter_r[0+:lg_burst_len_lp] == dma_addr_i[byte_offset_width_lp+:lg_burst_len_lp]);
+    assign snoop_word_we = in_fifo_v_lo 
+                         & ((dma_state_r == IO_GET_SNOOP_DATA) ||
+                            ((dma_state_r == GET_FILL_DATA) 
+                              & (counter_r[0+:lg_burst_len_lp] == dma_addr_i[byte_offset_width_lp+:lg_burst_len_lp])));
   end
   else begin
-    assign snoop_word_we = (dma_state_r == GET_FILL_DATA) & in_fifo_v_lo
-      & (counter_r[0+:lg_burst_len_lp] == dma_addr_i[byte_offset_width_lp+lg_burst_size_in_words_lp+:lg_burst_len_lp]);
+    assign snoop_word_we = in_fifo_v_lo 
+                         & ((dma_state_r == IO_GET_SNOOP_DATA) ||
+                            ((dma_state_r == GET_FILL_DATA) 
+                             & (counter_r[0+:lg_burst_len_lp] == dma_addr_i[byte_offset_width_lp+lg_burst_size_in_words_lp+:lg_burst_len_lp])));
   end
 
 
@@ -425,8 +473,9 @@ module bsg_cache_dma
   always_ff @ (posedge clk_i) begin
     if (debug_p) begin
       if (dma_pkt_v_o & dma_pkt_yumi_i) begin
-        $display("<VCACHE> DMA_PKT we:%0d addr:%8h // %8t",
-          dma_pkt.write_not_read, dma_pkt.addr, $time);
+        $display("<VCACHE> DMA_PKT we:%0d addr:%8h wv:%0d rp:%0d unc:%0d // %8t",
+          dma_pkt.write_not_read, dma_pkt.addr, dma_pkt.write_validate, 
+          dma_pkt.read_pending, dma_pkt.uncached_op, $time);
       end
     end
   end

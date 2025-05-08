@@ -90,6 +90,9 @@ package bsg_cache_pkg;
     ,AMOMAX_D  = 6'b110110    // atomic max
     ,AMOMINU_D = 6'b110111    // atomic min unsigned
     ,AMOMAXU_D = 6'b111000    // atomic max unsigned
+
+    ,IO_LW     = 6'b111001    // uncached load word
+    ,IO_SW     = 6'b111010    // uncached store word
   } bsg_cache_opcode_e;
 
 
@@ -116,6 +119,8 @@ package bsg_cache_pkg;
     logic alock_op;
     logic aunlock_op;
     logic tag_read_op;
+    logic uncached_ld_op;
+    logic uncached_st_op;
    
     logic atomic_op;
     bsg_cache_amo_subop_e amo_subop;
@@ -126,28 +131,55 @@ package bsg_cache_pkg;
   // dma opcode (one-hot)
   //
   typedef enum logic [3:0] {
-    e_dma_nop               = 4'b0000
-    ,e_dma_send_fill_addr   = 4'b0001
-    ,e_dma_send_evict_addr  = 4'b0010
-    ,e_dma_get_fill_data    = 4'b0100
-    ,e_dma_send_evict_data  = 4'b1000
+    e_dma_nop                   = 4'b0000
+    ,e_dma_send_fill_addr       = 4'b0001
+    ,e_dma_send_evict_addr      = 4'b0010
+    ,e_dma_get_fill_data        = 4'b0100
+    ,e_dma_send_evict_data      = 4'b1000
   } bsg_cache_dma_cmd_e;
 
 
   // cache dma wormhole opcode
   // This opcode is included in the cache DMA wormhole header flit.
-  typedef enum logic [1:0] {
+  typedef enum logic [2:0] {
     // len = 1
     // header + addr
-    e_cache_wh_read = 2'b00
+    e_cache_wh_read = 3'b000
+
+    // len = 1
+    // header + addr
+    ,e_cache_wh_write_validate = 3'b001
 
     // len = 1 + (# data flits)
     // header + addr + data
-    ,e_cache_wh_write_non_masked = 2'b10
+    ,e_cache_wh_write_non_masked = 3'b010
 
     // len = 2 + (# data flits)
     // header + addr + mask + data
-    ,e_cache_wh_write_masked = 2'b11
+    ,e_cache_wh_write_masked = 3'b011
+
+    // len = 1
+    // header + addr 
+    ,e_cache_wh_io_read = 3'b100
+
+    // len = 1 + 1
+    // header + addr + data
+    ,e_cache_wh_io_write = 3'b101
   } bsg_cache_wh_opcode_e;
+
+  // typedef enum logic [1:0] {
+  //   // len = 1
+  //   // header + addr
+  //   e_cache_wh_read = 2'b00
+
+  //   // len = 1 + (# data flits)
+  //   // header + addr + data
+  //   ,e_cache_wh_write_non_masked = 2'b01
+
+  //   // len = 2 + (# data flits)
+  //   // header + addr + mask + data
+  //   ,e_cache_wh_write_masked = 2'b11
+
+  // } bsg_cache_wh_opcode_e;
 
 endpackage
