@@ -48,7 +48,7 @@ for line in myFile.readlines() :
     if (len(line)!=0):
         if (line[0] != "#") :
             if (not zero or not (set(line) <= all_zero)) :
-                digits_only = filter(lambda m:m.isdigit(), str(line));
+                digits_only = "".join(filter(lambda m:m.isdigit(), str(line)));
 
                 # http://stackoverflow.com/questions/2072351/python-conversion-from-binary-string-to-hexadecimal
                 hstr = '%0*X' % ((len(digits_only) + 3) // 4, int(digits_only, 2))
