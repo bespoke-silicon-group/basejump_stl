@@ -9,6 +9,7 @@
  *  @author tommy
  * 
  *  See https://docs.google.com/document/d/1AIjhuwTbOYwyZHdu-Uc4dr9Fwxi6ZKscKSGTiUeQEYo/edit for design doc
+ *  See https://docs.google.com/document/d/1j5Ofm-NdIBrm61ah_yq5PVB1XLLIJDCkDVet-P7yRN0/edit?usp=sharing for changes for miniblade
  */
 
 
@@ -67,6 +68,9 @@ module bsg_cache
     // this signal is totally optional.
     ,output logic v_we_o
 
+    // this is turned on to enable cache to send notifications to FPGA to keep
+    // track of the most up-to-date info of the data stored in cache, in order
+    // to maintain the data coherency between different chips.
     ,input notification_en_i
   );
 

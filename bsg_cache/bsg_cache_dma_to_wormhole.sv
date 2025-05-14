@@ -158,10 +158,10 @@ module bsg_cache_dma_to_wormhole
   `declare_bsg_cache_wh_header_flit_s(wh_flit_width_p,wh_cord_width_p,wh_len_width_p,wh_cid_width_p);
 
   bsg_cache_wh_header_flit_s header_flit;
-  // for convinience, we use the unused field to store the way_id, read_pending bit, uncached_op and write_validate bit here
+  // for convinience, we use the unused field to store the way_id, evict_pending bit, uncached_op and write_validate bit here
   // instead of splitting them into separate new fields
-  // assign header_flit.unused = {'0, dma_pkt_lo.write_validate, dma_pkt_lo.uncached_op, dma_pkt_lo.read_pending, dma_pkt_lo.way_id};
-  assign header_flit.unused = {'0, dma_pkt_lo.read_pending, dma_pkt_lo.way_id};
+  // assign header_flit.unused = {'0, dma_pkt_lo.write_validate, dma_pkt_lo.uncached_op, dma_pkt_lo.evict_pending, dma_pkt_lo.way_id};
+  assign header_flit.unused = {'0, dma_pkt_lo.evict_pending, dma_pkt_lo.way_id};
   assign header_flit.opcode = dma_pkt_lo.write_validate
     ? e_cache_wh_write_validate
     : (dma_pkt_lo.write_not_read
@@ -375,8 +375,8 @@ module bsg_cache_dma_to_wormhole
 
     // if (wh_link_sif_out.v & wh_link_sif_in.ready_and_rev) begin
     //   $display("opcode = %d", header_flit.opcode);
-    //   $display("write_not_read = %d, write_validate = %d, read_pending = %d, uncache = %d", 
-    //             dma_pkt_lo.write_not_read, dma_pkt_lo.write_validate, dma_pkt_lo.read_pending, dma_pkt_lo.uncached_op);
+    //   $display("write_not_read = %d, write_validate = %d, evict_pending = %d, uncache = %d", 
+    //             dma_pkt_lo.write_not_read, dma_pkt_lo.write_validate, dma_pkt_lo.evict_pending, dma_pkt_lo.uncached_op);
     // end
 
     // if (dma_pkt_v_lo) begin

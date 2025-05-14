@@ -91,8 +91,8 @@ package bsg_cache_pkg;
     ,AMOMINU_D = 6'b110111    // atomic min unsigned
     ,AMOMAXU_D = 6'b111000    // atomic max unsigned
 
-    ,IO_LW     = 6'b111001    // uncached load word
-    ,IO_SW     = 6'b111010    // uncached store word
+    ,UNCACHED_LW = 6'b111001  // uncached load word
+    ,UNCACHED_SW = 6'b111010  // uncached store word
   } bsg_cache_opcode_e;
 
 
@@ -130,12 +130,14 @@ package bsg_cache_pkg;
 
   // dma opcode (one-hot)
   //
-  typedef enum logic [3:0] {
-    e_dma_nop                   = 4'b0000
-    ,e_dma_send_fill_addr       = 4'b0001
-    ,e_dma_send_evict_addr      = 4'b0010
-    ,e_dma_get_fill_data        = 4'b0100
-    ,e_dma_send_evict_data      = 4'b1000
+  typedef enum logic [5:0] {
+    e_dma_nop                   = 6'b000000
+    ,e_dma_send_fill_addr       = 6'b000001
+    ,e_dma_send_evict_addr      = 6'b000010
+    ,e_dma_get_fill_data        = 6'b000100
+    ,e_dma_send_evict_data      = 6'b001000
+    ,e_dma_recv_io_data         = 6'b010000
+    ,e_dma_send_io_data         = 6'b100000
   } bsg_cache_dma_cmd_e;
 
 

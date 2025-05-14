@@ -21,7 +21,7 @@
     typedef struct packed {                                         \
       logic write_not_read;                                         \
       logic write_validate;                                         \
-      logic read_pending;                                           \
+      logic evict_pending;                                           \
       logic uncached_op;                                            \
       logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way_id;                  \
       logic [addr_width_mp-1:0] addr;                               \
@@ -86,7 +86,7 @@
       logic [wh_flit_width_mp-(wh_cord_width_mp*2)-$bits(bsg_cache_wh_opcode_e)-wh_len_width_mp-(wh_cid_width_mp*2)-`BSG_SAFE_CLOG2(ways_mp)-1-1-1-1:0] unused; \
       logic write_validate;                       \
       logic io_op;                                \
-      logic read_pending;                         \
+      logic evict_pending;                         \
       logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way_id;\
     } bsg_cache_wh_notify_info_s 
 
