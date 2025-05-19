@@ -68,9 +68,22 @@
 
   // wormhole
   //
+  // `define declare_bsg_cache_wh_header_flit_s(wh_flit_width_mp,wh_cord_width_mp,wh_len_width_mp,wh_cid_width_mp) \
+  //   typedef struct packed { \
+  //     logic [wh_flit_width_mp-(wh_cord_width_mp*2)-$bits(bsg_cache_wh_opcode_e)-wh_len_width_mp-(wh_cid_width_mp*2)-1:0] unused; \
+  //     bsg_cache_wh_opcode_e opcode; \
+  //     logic [wh_cid_width_mp-1:0] src_cid; \
+  //     logic [wh_cord_width_mp-1:0] src_cord; \
+  //     logic [wh_cid_width_mp-1:0] cid; \
+  //     logic [wh_len_width_mp-1:0] len; \
+  //     logic [wh_cord_width_mp-1:0] cord; \
+  //   } bsg_cache_wh_header_flit_s
+
   `define declare_bsg_cache_wh_header_flit_s(wh_flit_width_mp,wh_cord_width_mp,wh_len_width_mp,wh_cid_width_mp) \
     typedef struct packed { \
-      logic [wh_flit_width_mp-(wh_cord_width_mp*2)-$bits(bsg_cache_wh_opcode_e)-wh_len_width_mp-(wh_cid_width_mp*2)-1:0] unused; \
+      logic [wh_flit_width_mp-(wh_cord_width_mp*2)-$bits(bsg_cache_wh_opcode_e)-wh_len_width_mp-(wh_cid_width_mp*2)-1-1-1:0] unused; \
+      logic write_validate; \
+      logic uncached_op; \
       bsg_cache_wh_opcode_e opcode; \
       logic [wh_cid_width_mp-1:0] src_cid; \
       logic [wh_cord_width_mp-1:0] src_cord; \
@@ -81,14 +94,14 @@
 
   // wormhole unused bits for notification
   //
-  `define declare_bsg_cache_wh_notify_info_s(wh_flit_width_mp,wh_cord_width_mp,wh_len_width_mp,wh_cid_width_mp,ways_mp) \
-    typedef struct packed {                       \
-      logic [wh_flit_width_mp-(wh_cord_width_mp*2)-$bits(bsg_cache_wh_opcode_e)-wh_len_width_mp-(wh_cid_width_mp*2)-`BSG_SAFE_CLOG2(ways_mp)-1-1-1-1:0] unused; \
-      logic write_validate;                       \
-      logic io_op;                                \
-      logic evict_pending;                         \
-      logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way_id;\
-    } bsg_cache_wh_notify_info_s 
+  // `define declare_bsg_cache_wh_notify_info_s(wh_flit_width_mp,wh_cord_width_mp,wh_len_width_mp,wh_cid_width_mp,ways_mp) \
+  //   typedef struct packed {                       \
+  //     logic [wh_flit_width_mp-(wh_cord_width_mp*2)-$bits(bsg_cache_wh_opcode_e)-wh_len_width_mp-(wh_cid_width_mp*2)-`BSG_SAFE_CLOG2(ways_mp)-1-1-1-1:0] unused; \
+  //     logic write_validate;                       \
+  //     logic io_op;                                \
+  //     logic evict_pending;                         \
+  //     logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way_id;\
+  //   } bsg_cache_wh_notify_info_s 
 
 `endif //  `ifndef BSG_CACHE_VH
 

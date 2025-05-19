@@ -67,7 +67,7 @@ module bsg_cache_dma_to_wormhole
   assign wh_link_sif_in = wh_link_sif_i;
   assign wh_link_sif_o = wh_link_sif_out;
 
-  logic io_read_in_progress_n, io_read_in_progress_r;
+  logic uncached_read_in_progress_n, uncached_read_in_progress_r;
 
   // dma pkt fifo
   logic dma_pkt_ready_lo;
@@ -162,20 +162,20 @@ module bsg_cache_dma_to_wormhole
   // instead of splitting them into separate new fields
   // assign header_flit.unused = {'0, dma_pkt_lo.write_validate, dma_pkt_lo.uncached_op, dma_pkt_lo.evict_pending, dma_pkt_lo.way_id};
   assign header_flit.unused = {'0, dma_pkt_lo.evict_pending, dma_pkt_lo.way_id};
-  assign header_flit.opcode = dma_pkt_lo.write_validate
-    ? e_cache_wh_write_validate
-    : (dma_pkt_lo.write_not_read
-      ? (dma_pkt_lo.uncached_op 
-        ? e_cache_wh_io_write
-        : (mask_all_one 
-          ? e_cache_wh_write_non_masked 
-          : e_cache_wh_write_masked))
-      : (dma_pkt_lo.uncached_op ? e_cache_wh_io_read : e_cache_wh_read));
-  // assign header_flit.opcode = dma_pkt_lo.write_not_read
-  //                           ? (mask_all_one 
-  //                             ? e_cache_wh_write_non_masked 
-  //                             : e_cache_wh_write_masked)
-  //                           : e_cache_wh_read;
+  // assign header_flit.opcode = dma_pkt_lo.write_validate
+  //   ? e_cache_wh_write_validate
+  //   : (dma_pkt_lo.write_not_read
+  //     ? (dma_pkt_lo.uncached_op 
+  //       ? e_cache_wh_io_write
+  //       : (mask_all_one 
+  //         ? e_cache_wh_write_non_masked 
+  //         : e_cache_wh_write_masked))
+  //     : (dma_pkt_lo.uncached_op ? e_cache_wh_io_read : e_cache_wh_read));
+  assign header_flit.opcode = dma_pkt_lo.write_not_read
+                            ? (mask_all_one 
+                              ? e_cache_wh_write_non_masked 
+                              : e_cache_wh_write_masked)
+                            : e_cache_wh_read;
   assign header_flit.src_cid = my_wh_cid_i;
   assign header_flit.src_cord = my_wh_cord_i;
   assign header_flit.len = dma_pkt_lo.write_not_read
@@ -187,7 +187,8 @@ module bsg_cache_dma_to_wormhole
     : wh_len_width_p'(1);  // header + addr
   assign header_flit.cord = dest_wh_cord_i;
   assign header_flit.cid = dest_wh_cid_i;
-
+  assign header_flit.write_validate = dma_pkt_lo.write_validate;
+  assign header_flit.uncached_op = dma_pkt_lo.uncached_op;
 
   always_comb begin
 
@@ -198,6 +199,7 @@ module bsg_cache_dma_to_wormhole
     wh_link_sif_out.v = 1'b0;
     wh_link_sif_out.data = dma_data_i;
     dma_data_yumi_o = 1'b0;
+    
 
     case (send_state_r)
       SEND_RESET: begin
@@ -324,7 +326,7 @@ module bsg_cache_dma_to_wormhole
       RECV_READY: begin
         return_fifo_ready_li = 1'b1;
         recv_state_n = return_fifo_yumi_li
-          ? (io_read_in_progress_r ? RECV_IO_DATA : RECV_REG_DATA)
+          ? (uncached_read_in_progress_r ? RECV_IO_DATA : RECV_REG_DATA)
           : RECV_READY;
       end
 
@@ -353,11 +355,11 @@ module bsg_cache_dma_to_wormhole
   end
 
 
-  assign io_read_in_progress_n = ((send_state_r == SEND_ADDR) & ~dma_pkt_lo.write_not_read & dma_pkt_lo.uncached_op & wh_link_sif_in.ready_and_rev)
+  assign uncached_read_in_progress_n = ((send_state_r == SEND_ADDR) & ~dma_pkt_lo.write_not_read & dma_pkt_lo.uncached_op & wh_link_sif_in.ready_and_rev)
                                ? 1'b1
                                : (((recv_state_r == RECV_IO_DATA) & return_fifo_yumi_li)
                                  ? 1'b0
-                                 : io_read_in_progress_r);
+                                 : uncached_read_in_progress_r);
 
   // sequential logic
   // synopsys sync_set_reset "reset_i"
@@ -365,12 +367,12 @@ module bsg_cache_dma_to_wormhole
     if (reset_i) begin
       send_state_r <= SEND_RESET;
       recv_state_r <= RECV_RESET;
-      io_read_in_progress_r <= 1'b0;
+      uncached_read_in_progress_r <= 1'b0;
     end
     else begin
       send_state_r <= send_state_n;
       recv_state_r <= recv_state_n;
-      io_read_in_progress_r <= io_read_in_progress_n;
+      uncached_read_in_progress_r <= uncached_read_in_progress_n;
     end
 
     // if (wh_link_sif_out.v & wh_link_sif_in.ready_and_rev) begin

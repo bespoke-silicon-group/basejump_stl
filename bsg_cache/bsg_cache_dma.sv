@@ -312,7 +312,22 @@ module bsg_cache_dma
           e_dma_send_evict_addr: begin
             dma_pkt_v_o = 1'b1;
             dma_pkt.write_not_read = 1'b1;
-            dma_pkt.mask = (word_tracking_p & ~uncached_op_v_i) ? track_data_way_picked : {block_size_in_words_p{1'b1}};
+            dma_pkt.mask = word_tracking_p ? track_data_way_picked : {block_size_in_words_p{1'b1}};
+            done_o = dma_pkt_yumi_i;
+            dma_state_n = IDLE;
+          end
+
+          e_dma_send_io_lw_addr: begin
+            dma_pkt_v_o = 1'b1;
+            dma_pkt.write_not_read = 1'b0;
+            done_o = dma_pkt_yumi_i;
+            dma_state_n = IDLE;
+          end
+
+          e_dma_send_io_sw_addr: begin
+            dma_pkt_v_o = 1'b1;
+            dma_pkt.write_not_read = 1'b1;
+            dma_pkt.mask = {block_size_in_words_p{1'b1}};
             done_o = dma_pkt_yumi_i;
             dma_state_n = IDLE;
           end
