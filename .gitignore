@@ -12,3 +12,4 @@ ucli.key
 .nfs*
 *.pyc
 libdramsim3.so
+.DS_Store
