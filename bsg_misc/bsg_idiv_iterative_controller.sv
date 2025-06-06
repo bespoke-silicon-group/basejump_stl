@@ -126,6 +126,13 @@ module bsg_idiv_iterative_controller #(parameter width_p=32, parameter bits_per_
        if (v_i) begin
           opA_ld_o     = 1'b1;
           opC_ld_o     = 1'b1;
+          // althought opB is not used on the next cycle;
+          // we enable write with opB_sel_o = 0, to reset it;
+          opB_ld_o     = 1'b1;
+          if (bits_per_iter_p == 2)
+            opB_sel_o      = 4'b0000;
+          else
+            opB_sel_o      = 3'b000;
           latch_signed_div_o = 1'b1;
           next_state   = NEG0;
           opA_sel_o    = 2'b10;
