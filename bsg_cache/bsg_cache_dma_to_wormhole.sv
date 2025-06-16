@@ -56,9 +56,6 @@ module bsg_cache_dma_to_wormhole
 
    , input [wh_cord_width_p-1:0] my_wh_cord_i
    , input [wh_cord_width_p-1:0] dest_wh_cord_i
-
-   , input [wh_cord_width_p-1:0] dest_io_wh_cord_i
-
    , input [wh_cid_width_p-1:0] my_wh_cid_i
    , input [wh_cid_width_p-1:0] dest_wh_cid_i
    );
@@ -188,9 +185,7 @@ module bsg_cache_dma_to_wormhole
         : wh_len_width_p'(1+dma_burst_len_p)) // header + addr + data
       : wh_len_width_p'(2+dma_burst_len_p)) // header + addr + mask + data
     : wh_len_width_p'(1);  // header + addr
-  assign header_flit.cord = dma_pkt_lo.uncached_op
-      ? dest_io_wh_cord_i
-      : dest_wh_cord_i;
+  assign header_flit.cord = dest_wh_cord_i;
   assign header_flit.cid = dest_wh_cid_i;
   assign header_flit.write_validate = dma_pkt_lo.write_validate;
   assign header_flit.uncached_op = dma_pkt_lo.uncached_op;
