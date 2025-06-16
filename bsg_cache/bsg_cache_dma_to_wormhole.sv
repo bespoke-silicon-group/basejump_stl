@@ -55,7 +55,9 @@ module bsg_cache_dma_to_wormhole
    , output logic [wh_link_sif_width_lp-1:0] wh_link_sif_o
 
    , input [wh_cord_width_p-1:0] my_wh_cord_i
-   , input [wh_cord_width_p-1:0] dest_wh_cord_i
+   , input [wh_cord_width_p-1:0] dest_mem_wh_cord_i
+   , input [wh_cord_width_p-1:0] dest_io_wh_cord_i
+
    , input [wh_cid_width_p-1:0] my_wh_cid_i
    , input [wh_cid_width_p-1:0] dest_wh_cid_i
    );
@@ -158,19 +160,9 @@ module bsg_cache_dma_to_wormhole
   `declare_bsg_cache_wh_header_flit_s(wh_flit_width_p,wh_cord_width_p,wh_len_width_p,wh_cid_width_p);
 
   bsg_cache_wh_header_flit_s header_flit;
-  // for convinience, we use the unused field to store the way_id, evict_pending bit, uncached_op and write_validate bit here
+  // for convinience, we use the unused field to store the way_id, evict_pending bit here
   // instead of splitting them into separate new fields
-  // assign header_flit.unused = {'0, dma_pkt_lo.write_validate, dma_pkt_lo.uncached_op, dma_pkt_lo.evict_pending, dma_pkt_lo.way_id};
   assign header_flit.unused = {'0, dma_pkt_lo.evict_pending, dma_pkt_lo.way_id};
-  // assign header_flit.opcode = dma_pkt_lo.write_validate
-  //   ? e_cache_wh_write_validate
-  //   : (dma_pkt_lo.write_not_read
-  //     ? (dma_pkt_lo.uncached_op 
-  //       ? e_cache_wh_io_write
-  //       : (mask_all_one 
-  //         ? e_cache_wh_write_non_masked 
-  //         : e_cache_wh_write_masked))
-  //     : (dma_pkt_lo.uncached_op ? e_cache_wh_io_read : e_cache_wh_read));
   assign header_flit.opcode = dma_pkt_lo.write_not_read
                             ? (mask_all_one 
                               ? e_cache_wh_write_non_masked 
@@ -185,7 +177,9 @@ module bsg_cache_dma_to_wormhole
         : wh_len_width_p'(1+dma_burst_len_p)) // header + addr + data
       : wh_len_width_p'(2+dma_burst_len_p)) // header + addr + mask + data
     : wh_len_width_p'(1);  // header + addr
-  assign header_flit.cord = dest_wh_cord_i;
+  assign header_flit.cord = dma_pkt_lo.uncached_op
+      ? dest_io_wh_cord_i
+      : dest_mem_wh_cord_i;
   assign header_flit.cid = dest_wh_cid_i;
   assign header_flit.write_validate = dma_pkt_lo.write_validate;
   assign header_flit.uncached_op = dma_pkt_lo.uncached_op;
@@ -374,21 +368,6 @@ module bsg_cache_dma_to_wormhole
       recv_state_r <= recv_state_n;
       uncached_read_in_progress_r <= uncached_read_in_progress_n;
     end
-
-    // if (wh_link_sif_out.v & wh_link_sif_in.ready_and_rev) begin
-    //   $display("opcode = %d", header_flit.opcode);
-    //   $display("write_not_read = %d, write_validate = %d, evict_pending = %d, uncache = %d", 
-    //             dma_pkt_lo.write_not_read, dma_pkt_lo.write_validate, dma_pkt_lo.evict_pending, dma_pkt_lo.uncached_op);
-    // end
-
-    // if (dma_pkt_v_lo) begin
-    //   assert (dma_pkt_lo.uncached_op!= 1'b1)
-    //     else $fatal(1, "uncached_op must be 0 for this test");
-    // end
-
-    // if (dma_pkt_v_i & dma_pkt_yumi_o) begin
-    //   $display("dma_pkt_i = %b", dma_pkt_i);
-    // end
 
   end
 
