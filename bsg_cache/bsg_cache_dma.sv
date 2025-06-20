@@ -17,6 +17,7 @@ module bsg_cache_dma
     ,parameter `BSG_INV_PARAM(block_size_in_words_p)
     ,parameter `BSG_INV_PARAM(sets_p)
     ,parameter `BSG_INV_PARAM(ways_p)
+    ,parameter `BSG_INV_PARAM(word_tracking_p)
     ,parameter dma_data_width_p=data_width_p
 
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
@@ -86,6 +87,7 @@ module bsg_cache_dma
   localparam byte_offset_width_lp=`BSG_SAFE_CLOG2(data_width_p>>3);
   localparam block_offset_width_lp=(block_size_in_words_p > 1) ? byte_offset_width_lp+lg_block_size_in_words_lp : byte_offset_width_lp;
 
+  // localparam dma_ratio_lp=dma_data_width_p/data_width_p;
 
   // dma states
   //
@@ -224,7 +226,7 @@ module bsg_cache_dma
     ,.o(track_bits_offset_picked_expanded)
   );
 
-  assign data_mem_w_mask_way_picked = track_miss_i ? ~track_bits_offset_picked_expanded : {dma_data_mask_width_lp{1'b1}};
+  assign data_mem_w_mask_way_picked = (word_tracking_p & track_miss_i) ? ~track_bits_offset_picked_expanded : {dma_data_mask_width_lp{1'b1}};
 
   if (burst_len_lp == 1) begin
     assign data_mem_addr_o = dma_addr_i[block_offset_width_lp+:lg_sets_lp];
@@ -310,7 +312,7 @@ module bsg_cache_dma
           e_dma_send_evict_addr: begin
             dma_pkt_v_o = 1'b1;
             dma_pkt.write_not_read = 1'b1;
-            dma_pkt.mask = track_data_way_picked;
+            dma_pkt.mask = word_tracking_p ? track_data_way_picked : {block_size_in_words_p{1'b1}};
             done_o = dma_pkt_yumi_i;
             dma_state_n = IDLE;
           end
@@ -332,6 +334,9 @@ module bsg_cache_dma
 
           e_dma_get_fill_data: begin
             counter_clear = 1'b1;
+            // dma_state_n = uncached_op_v_i
+            //             ? IO_GET_SNOOP_DATA
+            //             : GET_FILL_DATA;
             dma_state_n = GET_FILL_DATA;
           end
 
@@ -344,9 +349,21 @@ module bsg_cache_dma
             // we are reading the first word, as we are transitioning out.
             // so the counter is incremented to 1.
             counter_clear = 1'b1;
+            // counter_up = uncached_op_v_i ? 1'b0 : 1'b1;
             counter_up = 1'b1;
 
-            data_mem_v_o = |track_bits_offset_picked;
+            // When word_tracking_p is off, track_data_we_i is always zero, which means track_mem_data_r will always be 'X;
+            // So if word_tracking_p is off, we tie this to constant 1.
+            // data_mem_v_o = uncached_op_v_i
+            //               ? 1'b0
+            //               : (word_tracking_p 
+            //                 ?(|track_bits_offset_picked)
+            //                 : 1'b1);
+            data_mem_v_o = word_tracking_p 
+                         ?(|track_bits_offset_picked)
+                         : 1'b1;
+
+            // dma_state_n = uncached_op_v_i ? IO_SEND_DATA : SEND_EVICT_DATA;
             dma_state_n = SEND_EVICT_DATA;
 
           end
@@ -411,7 +428,9 @@ module bsg_cache_dma
         // we only need to read words that have valid data
         // for invalid words we just send the previously read word from data_mem
         data_mem_v_o = out_fifo_ready_lo & ~counter_evict_max 
-                      & (|track_bits_offset_picked);
+                      & (word_tracking_p 
+                        ? (|track_bits_offset_picked)
+                        : 1'b1);
 
         done_o = counter_evict_max & out_fifo_ready_lo;
 
@@ -458,6 +477,22 @@ module bsg_cache_dma
   assign snoop_word_offset = dma_addr_i[byte_offset_width_lp+:lg_burst_size_in_words_lp];
 
 
+
+  // if (burst_len_lp == 1) begin
+  //   assign snoop_word_we = in_fifo_v_lo & ((dma_state_r == IO_GET_SNOOP_DATA) || (dma_state_r == GET_FILL_DATA)) ;
+  // end
+  // else if (burst_len_lp == block_size_in_words_p) begin
+  //   assign snoop_word_we = in_fifo_v_lo 
+  //                        & ((dma_state_r == IO_GET_SNOOP_DATA) ||
+  //                           ((dma_state_r == GET_FILL_DATA) 
+  //                             & (counter_r[0+:lg_burst_len_lp] == dma_addr_i[byte_offset_width_lp+:lg_burst_len_lp])));
+  // end
+  // else begin
+  //   assign snoop_word_we = in_fifo_v_lo 
+  //                        & ((dma_state_r == IO_GET_SNOOP_DATA) ||
+  //                           ((dma_state_r == GET_FILL_DATA) 
+  //                            & (counter_r[0+:lg_burst_len_lp] == dma_addr_i[byte_offset_width_lp+lg_burst_size_in_words_lp+:lg_burst_len_lp])));
+  // end
 
 
   bsg_mux #(

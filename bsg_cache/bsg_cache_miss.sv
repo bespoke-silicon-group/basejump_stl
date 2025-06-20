@@ -17,6 +17,7 @@ module bsg_cache_miss
     ,parameter `BSG_INV_PARAM(block_size_in_words_p)
     ,parameter `BSG_INV_PARAM(sets_p)
     ,parameter `BSG_INV_PARAM(ways_p)
+    ,parameter `BSG_INV_PARAM(word_tracking_p)
 
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter lg_sets_lp=`BSG_SAFE_CLOG2(sets_p)
@@ -62,11 +63,7 @@ module bsg_cache_miss
     // this outstanding miss is a store tag miss so DMA
     // can send out a write_validate notification pkt,
     // instead of a real dram request
-
-    // ,output logic dma_st_tag_miss_op_o 
-
-
-    ,output logic st_tag_miss_op_o
+    ,output logic dma_st_tag_miss_op_o
 
     // set to high when notification mode is on and
     // this outstanding miss requires a old cache line
@@ -112,7 +109,6 @@ module bsg_cache_miss
 
     ,input ack_i
 
-    ,input word_tracking_en_i
     ,input notification_en_i
   );
 
@@ -172,7 +168,6 @@ module bsg_cache_miss
   logic [lg_ways_lp-1:0] chosen_way_r, chosen_way_n;
   logic [lg_ways_lp-1:0] flush_way_r, flush_way_n;
   logic select_snoop_data_r, select_snoop_data_n;
-  logic st_tag_miss_op_r, st_tag_miss_op_n;
 
 
   // for flush/inv ops, go to FLUSH_OP.
@@ -183,7 +178,7 @@ module bsg_cache_miss
   wire full_word_op = decode_v_i.mask_op
     ? (&mask_v_i)
     : (decode_v_i.data_size_op >= lg_data_mask_width_lp);
-  wire st_tag_miss_op = word_tracking_en_i ? (decode_v_i.st_op & full_word_op & ~tag_hit_found_i) : 1'b0;
+  wire st_tag_miss_op = word_tracking_p ? (decode_v_i.st_op & full_word_op & ~tag_hit_found_i) : 1'b0;
 
   logic [tag_width_lp-1:0] addr_tag_v;
   logic [lg_sets_lp-1:0] addr_index_v;
@@ -203,8 +198,7 @@ module bsg_cache_miss
   assign tag_mem_addr_o = addr_index_v;
   assign track_mem_addr_o = addr_index_v;
 
-  // assign dma_st_tag_miss_op_o = notification_en_i & st_tag_miss_op_r;
-  assign st_tag_miss_op_o = st_tag_miss_op_r;
+  assign dma_st_tag_miss_op_o = notification_en_i & st_tag_miss_op;
 
   assign chosen_way_o = chosen_way_r;
 
@@ -324,16 +318,26 @@ module bsg_cache_miss
 
     select_snoop_data_n = select_snoop_data_r;
 
-    st_tag_miss_op_n = st_tag_miss_op_r;
-
     case (miss_state_r)
 
       // miss handler waits in this state, until the miss is detected in tv
       // stage.
       START: begin
         stat_mem_v_o = miss_v_i & ~uncached_op & sbuf_tbuf_empty;
-        track_mem_v_o = miss_v_i & ~uncached_op & sbuf_tbuf_empty;
-        st_tag_miss_op_n = st_tag_miss_op;
+        track_mem_v_o = word_tracking_p & miss_v_i & ~uncached_op & sbuf_tbuf_empty;
+        // miss_state_n = (miss_v_i & (uncached_op ? 1'b1 : sbuf_tbuf_empty))
+        //   ? (goto_flush_op
+        //     ? FLUSH_OP 
+        //     : (goto_lock_op
+        //       ? LOCK_OP
+        //       : (decode_v_i.uncached_st_op
+        //         ? IO_SEND_SW_ADDR
+        //         : (decode_v_i.uncached_ld_op
+        //           ? IO_SEND_LW_ADDR
+        //           : (st_tag_miss_op
+        //             ? STORE_TAG_MISS
+        //             : SEND_FILL_ADDR)))))
+        //   : START;
         if (miss_v_i && (uncached_op ? 1'b1 : sbuf_tbuf_empty)) begin
           if (goto_flush_op) begin
             miss_state_n = FLUSH_OP;
@@ -369,13 +373,29 @@ module bsg_cache_miss
         chosen_way_n = track_miss_i ? tag_hit_way_id_i : (invalid_exist ? invalid_way_id : lru_way_id);
 
         dma_cmd_o = e_dma_send_fill_addr;          
+        // dma_addr_o =  decode_v_i.uncached_ld_op
+        // ? {addr_tag_v,
+        //   {(sets_p>1){addr_index_v}},
+        //   {(block_size_in_words_p>1){addr_block_offset_v}},
+        //   {(lg_data_mask_width_lp){1'b0}}}
+        // : {addr_tag_v,
+        //   {(sets_p>1){addr_index_v}},
+        //   {(block_offset_width_lp){1'b0}}};
         dma_addr_o = {addr_tag_v,
           {(sets_p>1){addr_index_v}},
           {(block_offset_width_lp){1'b0}}};
 
+        // dma_fill_then_evict_o = notification_en_i & ~decode_v_i.uncached_ld_op & ~track_miss_i & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n];
         dma_fill_then_evict_o = notification_en_i & ~track_miss_i & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n];
 
         // if the chosen way is dirty and valid, then evict.
+        // miss_state_n = dma_done_i
+        //   ? (decode_v_i.uncached_ld_op
+        //     ? IO_RECV_LW_DATA
+        //     : ((~track_miss_i & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
+        //       ? SEND_EVICT_ADDR
+        //       : GET_FILL_DATA))
+        //   : SEND_FILL_ADDR;
         miss_state_n = dma_done_i
           ? ((~track_miss_i & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
               ? SEND_EVICT_ADDR
@@ -429,8 +449,7 @@ module bsg_cache_miss
         end
 
         // If it's not AINV, and the chosen set is dirty and valid, evict the
-        // block; If notification is on, then AFLINV will flush the block no
-        // matter it's dirty or not
+        // block.
         miss_state_n = (~decode_v_i.ainv_op & ((notification_en_i & decode_v_i.aflinv_op) | stat_info_in.dirty[flush_way_n]) & valid_v_i[flush_way_n])
           ? SEND_EVICT_ADDR
           : RECOVER;
@@ -456,10 +475,29 @@ module bsg_cache_miss
       // Send out the block addr for eviction, before initiating the eviction.
       SEND_EVICT_ADDR: begin
         dma_cmd_o = e_dma_send_evict_addr;
+        // dma_addr_o = decode_v_i.uncached_st_op
+        // ?  {addr_tag_v,
+        //   {(sets_p>1){addr_index_v}},
+        //   {(block_size_in_words_p>1){addr_block_offset_v}},
+        //   {(lg_data_mask_width_lp){1'b0}}}
+        // :  {tag_v_i[dma_way_o],
+        //   {(sets_p>1){addr_index_v}},
+        //   {(block_offset_width_lp){1'b0}}};
+
+        // dma_addr_o = decode_v_i.uncached_st_op 
+        //            ? addr_v_i
+        //            : {tag_v_i[dma_way_o],
+        //               {(sets_p>1){addr_index_v}},
+        //               {(block_offset_width_lp){1'b0}}};
         dma_addr_o = {tag_v_i[dma_way_o],
                       {(sets_p>1){addr_index_v}},
                       {(block_offset_width_lp){1'b0}}};
 
+        // miss_state_n = dma_done_i
+        //   ? (decode_v_i.uncached_st_op
+        //     ? IO_SEND_SW_DATA
+        //     : SEND_EVICT_DATA)
+        //   : SEND_EVICT_ADDR;
         miss_state_n = dma_done_i
           ? SEND_EVICT_DATA
           : SEND_EVICT_ADDR;
@@ -485,7 +523,7 @@ module bsg_cache_miss
         };
 
         // set stat mem entry on store tag miss.
-        stat_mem_v_o = dma_done_i & st_tag_miss_op_r;
+        stat_mem_v_o = dma_done_i & st_tag_miss_op;
         stat_mem_w_o = 1'b1;
         stat_mem_data_out.dirty = {ways_p{1'b1}};
         stat_mem_data_out.lru_bits = chosen_way_lru_data;
@@ -493,7 +531,7 @@ module bsg_cache_miss
         stat_mem_w_mask_out.lru_bits = chosen_way_lru_mask;
 
         // set the tag and the valid bit to 1'b1 for the chosen way on store tag miss.
-        tag_mem_v_o = dma_done_i & st_tag_miss_op_r;
+        tag_mem_v_o = dma_done_i & st_tag_miss_op;
         tag_mem_w_o = 1'b1;
 
         for (integer i = 0; i < ways_p; i++) begin
@@ -506,7 +544,7 @@ module bsg_cache_miss
         end
 
         // set track bits to zero for the chosen way on store tag miss.
-        track_mem_v_o = dma_done_i & st_tag_miss_op_r;
+        track_mem_v_o = dma_done_i & st_tag_miss_op;
         track_mem_w_o = 1'b1;
         for (integer i = 0; i < ways_p; i++) begin
           track_mem_data_o[i] = {block_size_in_words_p{1'b0}};
@@ -514,7 +552,7 @@ module bsg_cache_miss
         end
 
         miss_state_n = dma_done_i
-          ? ((decode_v_i.tagfl_op| decode_v_i.aflinv_op| decode_v_i.afl_op | st_tag_miss_op_r) ? RECOVER : GET_FILL_DATA)
+          ? ((decode_v_i.tagfl_op| decode_v_i.aflinv_op| decode_v_i.afl_op | st_tag_miss_op) ? RECOVER : GET_FILL_DATA)
           : SEND_EVICT_DATA;
       end
 
@@ -557,7 +595,7 @@ module bsg_cache_miss
         end
 
         // set track bits to one for the chosen way on store tag miss.
-        track_mem_v_o = dma_done_i;
+        track_mem_v_o = word_tracking_p ? dma_done_i : 1'b0;
         track_mem_w_o = 1'b1;
         for (integer i = 0; i < ways_p; i++) begin
           track_mem_data_o[i] = {block_size_in_words_p{1'b1}};
@@ -622,6 +660,7 @@ module bsg_cache_miss
       end
 
       IO_RECV_LW_DATA: begin
+        // dma_cmd_o = e_dma_get_fill_data;
         dma_cmd_o = e_dma_recv_io_data;
         dma_addr_o = {
           addr_tag_v,
@@ -641,6 +680,7 @@ module bsg_cache_miss
 
       
       IO_SEND_SW_DATA: begin
+        // dma_cmd_o = e_dma_send_evict_data; 
         dma_cmd_o = e_dma_send_io_data;
         dma_addr_o = {
           addr_tag_v,
@@ -687,7 +727,6 @@ module bsg_cache_miss
       select_snoop_data_r <= 1'b0;
       // added to be a little more X pessimism conservative
       track_data_we_o <= 1'b0;
-      st_tag_miss_op_r <= 1'b0;
     end
     else begin
       miss_state_r <= miss_state_n;
@@ -695,7 +734,6 @@ module bsg_cache_miss
       flush_way_r <= flush_way_n;
       select_snoop_data_r <= select_snoop_data_n;
       track_data_we_o <= track_mem_v_o & ~track_mem_w_o;
-      st_tag_miss_op_r <= st_tag_miss_op_n;
     end
   end
 

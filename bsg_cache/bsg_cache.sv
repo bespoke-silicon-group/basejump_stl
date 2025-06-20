@@ -23,6 +23,7 @@ module bsg_cache
     ,parameter `BSG_INV_PARAM(block_size_in_words_p)
     ,parameter `BSG_INV_PARAM(sets_p)
     ,parameter `BSG_INV_PARAM(ways_p)
+    ,parameter `BSG_INV_PARAM(word_tracking_p)
 
     // Explicit size prevents size inference and allows for ((foo == bar) << e_cache_amo_swap)
     ,parameter [31:0] amo_support_p=(1 << e_cache_amo_swap)
@@ -66,11 +67,6 @@ module bsg_cache
     // needs to move together with the corresponding instruction. The usage of
     // this signal is totally optional.
     ,output logic v_we_o
-    
-    // this signal is turned on to enable write validate strategy for store tag  
-    // miss in order to save the time spent on accessing DRAM. We made it an 
-    // input port so we can switch it on and off dynamically.
-    ,input word_tracking_en_i
 
     // this is turned on to enable cache to send notifications to FPGA to keep
     // track of the most up-to-date info of the data stored in cache, in order
@@ -262,6 +258,7 @@ module bsg_cache
   logic [ways_p-1:0][block_size_in_words_p-1:0] track_mem_w_mask_li;
   logic [ways_p-1:0][block_size_in_words_p-1:0] track_mem_data_lo;
 
+if (word_tracking_p) begin : track_mem_gen
   bsg_mem_1rw_sync_mask_write_bit #(
     .width_p(block_size_in_words_p*ways_p)
     ,.els_p(sets_p)
@@ -276,6 +273,12 @@ module bsg_cache
     ,.w_mask_i(track_mem_w_mask_li)
     ,.data_o(track_mem_data_lo)
   );
+end
+else begin
+  for (genvar i = 0; i < ways_p; i++) begin
+    assign track_mem_data_lo[i] = {block_size_in_words_p{1'b1}};
+  end
+end
 
   // v stage
   //
@@ -419,10 +422,8 @@ module bsg_cache
   logic [addr_width_p-1:0] dma_addr_lo;
   logic [lg_ways_lp-1:0] dma_way_lo;
   logic dma_done_li;
-  // logic dma_st_tag_miss_op_lo;
+  logic dma_st_tag_miss_op_lo;
   logic dma_fill_then_evict_lo;
-
-  logic miss_st_tag_miss_op_lo;
 
   logic recover_lo;
   logic miss_done_lo;
@@ -456,6 +457,7 @@ module bsg_cache
     ,.sets_p(sets_p)
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.ways_p(ways_p)
+    ,.word_tracking_p(word_tracking_p)
   ) miss (
     .clk_i(clk_i)
     ,.reset_i(reset_i)
@@ -480,10 +482,8 @@ module bsg_cache
     ,.dma_way_o(dma_way_lo)
     ,.dma_addr_o(dma_addr_lo)
     ,.dma_done_i(dma_done_li)
-    // ,.dma_st_tag_miss_op_o(dma_st_tag_miss_op_lo)
+    ,.dma_st_tag_miss_op_o(dma_st_tag_miss_op_lo)
     ,.dma_fill_then_evict_o(dma_fill_then_evict_lo)
-
-    ,.st_tag_miss_op_o(miss_st_tag_miss_op_lo)
 
     ,.track_data_we_o(miss_track_data_we_lo)
 
@@ -516,7 +516,6 @@ module bsg_cache
     ,.select_snoop_data_r_o(select_snoop_data_r_lo)
 
     ,.notification_en_i(notification_en_i)
-    ,.word_tracking_en_i(word_tracking_en_i)
   );
 
   // dma
@@ -535,6 +534,7 @@ module bsg_cache
     ,.block_size_in_words_p(block_size_in_words_p)
     ,.sets_p(sets_p)
     ,.ways_p(ways_p)
+    ,.word_tracking_p(word_tracking_p)
     ,.dma_data_width_p(dma_data_width_p)
     ,.debug_p(debug_p)
   ) dma (
@@ -545,8 +545,7 @@ module bsg_cache
     ,.dma_way_i(dma_way_lo)
     ,.dma_addr_i(dma_addr_lo)
     ,.done_o(dma_done_li)
-    // ,.dma_st_tag_miss_op_i(dma_st_tag_miss_op_lo)
-    ,.dma_st_tag_miss_op_i(miss_st_tag_miss_op_lo & notification_en_i)
+    ,.dma_st_tag_miss_op_i(dma_st_tag_miss_op_lo)
     ,.dma_fill_then_evict_i(dma_fill_then_evict_lo)
 
     ,.uncached_op_v_i(uncached_op)
@@ -824,6 +823,7 @@ module bsg_cache
   logic tbuf_bypass_v_li;
   logic tbuf_full_lo;
 
+if (word_tracking_p) begin : tbuf_gen
   bsg_cache_tbuf #(
     .data_width_p(data_width_p)
     ,.addr_width_p(addr_width_p)
@@ -848,7 +848,13 @@ module bsg_cache
     ,.bypass_v_i(tbuf_bypass_v_li)
     ,.bypass_track_o(bypass_track_lo)
   );
-
+end
+else begin
+  assign tbuf_v_lo = 1'b0;
+  assign tbuf_empty_lo = 1'b1;
+  assign tbuf_full_lo = 1'b0;
+  assign bypass_track_lo = 1'b0;
+end
 
   logic [ways_p-1:0] tbuf_way_decode;
   bsg_decode #(
@@ -1179,8 +1185,7 @@ module bsg_cache
 
   // track buffer
   //
-  assign tbuf_v_li = (decode_v_r.st_op & ~partial_st_v & (tag_hit_found | miss_st_tag_miss_op_lo)) 
-                      & v_o & yumi_i;
+  assign tbuf_v_li = (decode_v_r.st_op & ~partial_st_v) & v_o & yumi_i;
   assign tbuf_way_li = miss_v ? chosen_way_lo : tag_hit_way_id;
   assign tbuf_addr_li = addr_v_r;
   // track buffer can write to track mem when

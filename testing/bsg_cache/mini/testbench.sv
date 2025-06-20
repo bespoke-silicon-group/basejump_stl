@@ -111,7 +111,7 @@ module testbench();
         ,.block_size_in_words_p(block_size_in_words_p)
         ,.sets_p(sets_p)
         ,.ways_p(ways_p)
-        // ,.word_tracking_p(1)
+        ,.word_tracking_p(1)
         ,.amo_support_p(amo_support_level_arithmetic_lp)
       ) cache (
         .clk_i(clk)
@@ -139,7 +139,6 @@ module testbench();
 
         ,.v_we_o()
         ,.notification_en_i(notification_en_li)
-        ,.word_tracking_en_i(0)
       );
 
       // random yumi generator
@@ -157,6 +156,9 @@ module testbench();
       bsg_cache_wh_header_flit_s header_flit;
       assign header_flit = wh_link_sif_lo[i].data;
 
+      wire [wh_cord_width_p-1:0] dest_wh_cord_li = header_flit.uncached_op
+        ? io_cord_lp
+        : mem_cord_lp;
       wire [wh_cid_width_p-1:0] dest_wh_cid_li = header_flit.write_validate
         ? shadow_cid_lp
         : mem_cid_lp;
@@ -190,8 +192,7 @@ module testbench();
          ,.wh_link_sif_o(wh_link_sif_lo[i])
 
          ,.my_wh_cord_i('0)
-         ,.dest_mem_wh_cord_i(mem_cord_lp)
-         ,.dest_io_wh_cord_i(io_cord_lp)
+         ,.dest_wh_cord_i(dest_wh_cord_li)
          ,.my_wh_cid_i(wh_cid_width_p'(i))
          ,.dest_wh_cid_i(dest_wh_cid_li)
          );
