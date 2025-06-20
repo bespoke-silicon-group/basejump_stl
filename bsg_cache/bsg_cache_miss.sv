@@ -59,6 +59,20 @@ module bsg_cache_miss
     ,output logic [addr_width_p-1:0] dma_addr_o
     ,input dma_done_i
 
+    // set to high when the notification mode is on and
+    // this outstanding miss is a store tag miss so DMA
+    // can send out a write_validate notification pkt,
+    // instead of a real dram request
+    ,output logic dma_st_tag_miss_op_o
+
+    // set to high when notification mode is on and
+    // this outstanding miss requires a old cache line
+    // to be evicted before the new cache line is filled,
+    // so that the FPGA can move the info of the replaced
+    // cache line into a pending table when updating the 
+    // directory with the info of the new cache line
+    ,output logic dma_fill_then_evict_o
+
     // to dma engine for flopping track_mem's read data
     // used to avoid clk-to-q timing from memory
     ,output logic track_data_we_o
@@ -94,6 +108,8 @@ module bsg_cache_miss
     ,output logic select_snoop_data_r_o
 
     ,input ack_i
+
+    ,input notification_en_i
   );
 
   // stat/tag info
@@ -139,6 +155,10 @@ module bsg_cache_miss
     ,GET_FILL_DATA
     ,STORE_TAG_MISS
     ,STORE_TAG_MISS_ALLOCATE
+    ,IO_SEND_LW_ADDR
+    ,IO_SEND_SW_ADDR
+    ,IO_RECV_LW_DATA
+    ,IO_SEND_SW_DATA
     ,RECOVER
     ,DONE
   } miss_state_e;
@@ -177,6 +197,8 @@ module bsg_cache_miss
   assign stat_mem_addr_o = addr_index_v;
   assign tag_mem_addr_o = addr_index_v;
   assign track_mem_addr_o = addr_index_v;
+
+  assign dma_st_tag_miss_op_o = notification_en_i & st_tag_miss_op;
 
   assign chosen_way_o = chosen_way_r;
 
@@ -264,6 +286,9 @@ module bsg_cache_miss
 
   assign select_snoop_data_r_o = select_snoop_data_r;
 
+  wire uncached_op = decode_v_i.uncached_ld_op | decode_v_i.uncached_st_op;
+  wire sbuf_tbuf_empty = (sbuf_empty_i & tbuf_empty_i);
+
   always_comb begin
 
     stat_mem_v_o = 1'b0;
@@ -286,6 +311,7 @@ module bsg_cache_miss
 
     dma_addr_o = '0;
     dma_cmd_o = e_dma_nop;
+    dma_fill_then_evict_o = 1'b0;
 
     recover_o = '0;
     done_o = '0;
@@ -297,17 +323,38 @@ module bsg_cache_miss
       // miss handler waits in this state, until the miss is detected in tv
       // stage.
       START: begin
-        stat_mem_v_o = (miss_v_i & sbuf_empty_i & tbuf_empty_i);
-        track_mem_v_o = word_tracking_p ? (miss_v_i & sbuf_empty_i & tbuf_empty_i) : 1'b0;
-        miss_state_n = (miss_v_i & sbuf_empty_i & tbuf_empty_i)
-          ? (goto_flush_op
-            ? FLUSH_OP 
-            : (goto_lock_op
-              ? LOCK_OP
-              : (st_tag_miss_op
-                ? STORE_TAG_MISS
-                : SEND_FILL_ADDR)))
-          : START;
+        stat_mem_v_o = miss_v_i & ~uncached_op & sbuf_tbuf_empty;
+        track_mem_v_o = word_tracking_p & miss_v_i & ~uncached_op & sbuf_tbuf_empty;
+        // miss_state_n = (miss_v_i & (uncached_op ? 1'b1 : sbuf_tbuf_empty))
+        //   ? (goto_flush_op
+        //     ? FLUSH_OP 
+        //     : (goto_lock_op
+        //       ? LOCK_OP
+        //       : (decode_v_i.uncached_st_op
+        //         ? IO_SEND_SW_ADDR
+        //         : (decode_v_i.uncached_ld_op
+        //           ? IO_SEND_LW_ADDR
+        //           : (st_tag_miss_op
+        //             ? STORE_TAG_MISS
+        //             : SEND_FILL_ADDR)))))
+        //   : START;
+        if (miss_v_i && (uncached_op ? 1'b1 : sbuf_tbuf_empty)) begin
+          if (goto_flush_op) begin
+            miss_state_n = FLUSH_OP;
+          end else if (goto_lock_op) begin
+            miss_state_n = LOCK_OP;
+          end else if (decode_v_i.uncached_st_op) begin
+            miss_state_n = IO_SEND_SW_ADDR;
+          end else if (decode_v_i.uncached_ld_op) begin
+            miss_state_n = IO_SEND_LW_ADDR;
+          end else if (st_tag_miss_op) begin
+            miss_state_n = STORE_TAG_MISS;
+          end else begin
+            miss_state_n = SEND_FILL_ADDR;
+          end
+        end else begin
+          miss_state_n = START;
+        end
       end
 
       // Send out the missing cache block address (to read).
@@ -321,22 +368,53 @@ module bsg_cache_miss
         // by stats_mem_info is locked, it will be overridden by 
         // the bsg_lru_pseudo_tree_backup.
         // On track miss, the chosen way is the tag hit way.
+
+        // chosen_way_n = decode_v_i.uncached_ld_op ? '0 : (track_miss_i ? tag_hit_way_id_i : (invalid_exist ? invalid_way_id : lru_way_id));
         chosen_way_n = track_miss_i ? tag_hit_way_id_i : (invalid_exist ? invalid_way_id : lru_way_id);
 
         dma_cmd_o = e_dma_send_fill_addr;          
-        dma_addr_o = {
-          addr_tag_v,
+        // dma_addr_o =  decode_v_i.uncached_ld_op
+        // ? {addr_tag_v,
+        //   {(sets_p>1){addr_index_v}},
+        //   {(block_size_in_words_p>1){addr_block_offset_v}},
+        //   {(lg_data_mask_width_lp){1'b0}}}
+        // : {addr_tag_v,
+        //   {(sets_p>1){addr_index_v}},
+        //   {(block_offset_width_lp){1'b0}}};
+        dma_addr_o = {addr_tag_v,
           {(sets_p>1){addr_index_v}},
-          {(block_offset_width_lp){1'b0}}
-        };
+          {(block_offset_width_lp){1'b0}}};
+
+        // dma_fill_then_evict_o = notification_en_i & ~decode_v_i.uncached_ld_op & ~track_miss_i & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n];
+        dma_fill_then_evict_o = notification_en_i & ~track_miss_i & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n];
 
         // if the chosen way is dirty and valid, then evict.
+        // miss_state_n = dma_done_i
+        //   ? (decode_v_i.uncached_ld_op
+        //     ? IO_RECV_LW_DATA
+        //     : ((~track_miss_i & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
+        //       ? SEND_EVICT_ADDR
+        //       : GET_FILL_DATA))
+        //   : SEND_FILL_ADDR;
         miss_state_n = dma_done_i
           ? ((~track_miss_i & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
-            ? SEND_EVICT_ADDR
-            : GET_FILL_DATA)
+              ? SEND_EVICT_ADDR
+              : GET_FILL_DATA)
           : SEND_FILL_ADDR;
       end
+
+
+      IO_SEND_LW_ADDR: begin
+          // chosen_way_n = '0;
+
+          dma_cmd_o = e_dma_send_io_lw_addr;
+          dma_addr_o = addr_v_i;
+
+          miss_state_n = dma_done_i
+            ? IO_RECV_LW_DATA
+            : IO_SEND_LW_ADDR;
+      end
+
 
       // Handling the cases for TAGFL, AINV, AFL, AFLINV.
       FLUSH_OP: begin
@@ -372,7 +450,7 @@ module bsg_cache_miss
 
         // If it's not AINV, and the chosen set is dirty and valid, evict the
         // block.
-        miss_state_n = (~decode_v_i.ainv_op & stat_info_in.dirty[flush_way_n] & valid_v_i[flush_way_n])
+        miss_state_n = (~decode_v_i.ainv_op & ((notification_en_i & decode_v_i.aflinv_op) | stat_info_in.dirty[flush_way_n]) & valid_v_i[flush_way_n])
           ? SEND_EVICT_ADDR
           : RECOVER;
       end
@@ -397,15 +475,41 @@ module bsg_cache_miss
       // Send out the block addr for eviction, before initiating the eviction.
       SEND_EVICT_ADDR: begin
         dma_cmd_o = e_dma_send_evict_addr;
-        dma_addr_o = {
-          tag_v_i[dma_way_o],
-          {(sets_p>1){addr_index_v}},
-          {(block_offset_width_lp){1'b0}}
-        };
+        // dma_addr_o = decode_v_i.uncached_st_op
+        // ?  {addr_tag_v,
+        //   {(sets_p>1){addr_index_v}},
+        //   {(block_size_in_words_p>1){addr_block_offset_v}},
+        //   {(lg_data_mask_width_lp){1'b0}}}
+        // :  {tag_v_i[dma_way_o],
+        //   {(sets_p>1){addr_index_v}},
+        //   {(block_offset_width_lp){1'b0}}};
 
+        // dma_addr_o = decode_v_i.uncached_st_op 
+        //            ? addr_v_i
+        //            : {tag_v_i[dma_way_o],
+        //               {(sets_p>1){addr_index_v}},
+        //               {(block_offset_width_lp){1'b0}}};
+        dma_addr_o = {tag_v_i[dma_way_o],
+                      {(sets_p>1){addr_index_v}},
+                      {(block_offset_width_lp){1'b0}}};
+
+        // miss_state_n = dma_done_i
+        //   ? (decode_v_i.uncached_st_op
+        //     ? IO_SEND_SW_DATA
+        //     : SEND_EVICT_DATA)
+        //   : SEND_EVICT_ADDR;
         miss_state_n = dma_done_i
           ? SEND_EVICT_DATA
           : SEND_EVICT_ADDR;
+      end
+
+      IO_SEND_SW_ADDR: begin
+        dma_cmd_o = e_dma_send_io_sw_addr;
+        dma_addr_o = addr_v_i;
+
+        miss_state_n = dma_done_i
+          ? IO_SEND_SW_DATA
+          : IO_SEND_SW_ADDR;
       end
 
       // Set the DMA engine to evict the dirty block.
@@ -509,11 +613,21 @@ module bsg_cache_miss
 
       STORE_TAG_MISS: begin
         chosen_way_n = invalid_exist ? invalid_way_id : lru_way_id;
+        dma_cmd_o = notification_en_i ? e_dma_send_fill_addr : e_dma_nop; 
+        dma_addr_o = notification_en_i 
+                   ? { addr_tag_v,
+                      {(sets_p>1){addr_index_v}},
+                      {(block_offset_width_lp){1'b0}}}
+                   : '0;
+
+        dma_fill_then_evict_o = notification_en_i & stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n];
 
         // if the chosen way is dirty and valid, then evict.
-        miss_state_n = (stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
-          ? SEND_EVICT_ADDR
-          : STORE_TAG_MISS_ALLOCATE;
+        miss_state_n =  (~notification_en_i | dma_done_i) 
+                     ? ((stat_info_in.dirty[chosen_way_n] & valid_v_i[chosen_way_n])
+                        ? SEND_EVICT_ADDR
+                        : STORE_TAG_MISS_ALLOCATE)
+                     : STORE_TAG_MISS;
       end
 
       STORE_TAG_MISS_ALLOCATE: begin
@@ -543,6 +657,41 @@ module bsg_cache_miss
         end
 
         miss_state_n = RECOVER;
+      end
+
+      IO_RECV_LW_DATA: begin
+        // dma_cmd_o = e_dma_get_fill_data;
+        dma_cmd_o = e_dma_recv_io_data;
+        dma_addr_o = {
+          addr_tag_v,
+          {(sets_p>1){addr_index_v}},
+          {(block_size_in_words_p > 1){addr_block_offset_v}}, 
+          {(lg_data_mask_width_lp){1'b0}}
+        };
+
+        select_snoop_data_n = dma_done_i
+          ? 1'b1
+          : select_snoop_data_r;
+
+        miss_state_n = dma_done_i
+          ? DONE
+          : IO_RECV_LW_DATA;
+      end
+
+      
+      IO_SEND_SW_DATA: begin
+        // dma_cmd_o = e_dma_send_evict_data; 
+        dma_cmd_o = e_dma_send_io_data;
+        dma_addr_o = {
+          addr_tag_v,
+          {(sets_p>1){addr_index_v}},
+          {(block_size_in_words_p > 1){addr_block_offset_v}}, 
+          {(lg_data_mask_width_lp){1'b0}}
+        };
+
+        miss_state_n = dma_done_i
+          ? DONE
+          : IO_SEND_SW_DATA;
       end
 
       // Spend one cycle to recover the tl stage.
