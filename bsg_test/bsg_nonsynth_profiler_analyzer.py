@@ -434,8 +434,8 @@ def plot_groups(groups):
                     markersize=1,
                     linewidth=1
                 )
-+                if group['log'] :
-+                    ax.set_yscale('log')
+                if group['log'] :
+                    ax.set_yscale('log')
       
         ax.set_title(group['title'])
         handles, labels = ax.get_legend_handles_labels()
@@ -448,7 +448,7 @@ def plot_groups(groups):
         ax.set_xticklabels([str(x) for x in tick_positions])   
         ax.set_xlabel("Frame Index")
 
-    plt.tight_layout()
+        plt.tight_layout()
 
 
 def main():
