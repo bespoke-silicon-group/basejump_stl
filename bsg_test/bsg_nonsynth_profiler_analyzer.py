@@ -130,7 +130,8 @@ def parse_schema(schema_file):
 
             # Check if line starts with '@', '#', '!', or '$'
             if line.startswith('@') or line.startswith('#') \
-               or line.startswith('!') or line.startswith('$'):
+               or line.startswith('!') or line.startswith('$') \
+               or line.startswith('|') or line.startswith('&'):
                 
                 parts = line.split(None, 1)
                 if len(parts) < 2:
@@ -143,6 +144,7 @@ def parse_schema(schema_file):
 
                 # Close out the current group
                 current_group['title'] = group_title
+                current_group['log'] = False
 
                 # Decide accumulate vs stacked/grouped
                 if symbol == '@':
@@ -157,6 +159,15 @@ def parse_schema(schema_file):
                 elif symbol == '$':
                     current_group['accumulate'] = True
                     current_group['stacked'] = False
+                elif symbol == '|':
+                    current_group['accumulate'] = False
+                    current_group['stacked'] = False
+                    current_group['log']     = True
+                elif symbol == '&':
+                    current_group['accumulate'] = True
+                    current_group['stacked'] = False
+                    current_group['log']     = True
+                  
 
                 groups.append(current_group)
 
@@ -165,6 +176,7 @@ def parse_schema(schema_file):
                     'title': None,
                     'accumulate': False,
                     'stacked': True,
+                    'log' : False,                  
                     'categories': []
                 }
             else:
@@ -194,8 +206,12 @@ def parse_schema(schema_file):
                     'counters': [],
                     'data': []
                 }
-                current_group['categories'].append(category)
 
+                 #current_group['categories'].append(category)
+                 # possibly a little slow, but matches the order of stacked bars
+                 # with the order it is listed in the text
+                 current_group['categories'].insert(0,category)
+  
     # If the schema didn't end with a recognized group line, we might
     # have leftover categories with no group. We'll ignore them (warn).
     if current_group['categories']:
@@ -276,8 +292,8 @@ def associate_counters_with_categories(groups, counters, debug_mapping=False):
     if debug_mapping:
         print("=== Category to Counters Mapping ===")
         for g in groups:
-            print("Group Title: {}  (accumulate={}, stacked={})"
-                  .format(g['title'], g['accumulate'], g['stacked']))
+            print("Group Title: {}  (accumulate={}, stacked={}, log={})"
+                  .format(g['title'], g['accumulate'], g['stacked'], g['log']))
             for cat in g['categories']:
                 print("  Category: {}".format(cat['name']))
                 for cnum in cat['counters']:
@@ -352,8 +368,8 @@ def accumulate_category_data(groups, frames, debug_data=False):
     if debug_data:
         print("=== Per-Frame Category Sums ===")
         for g in groups:
-            print("Group Title: {} (accumulate={}, stacked={})"
-                  .format(g['title'], g['accumulate'], g['stacked']))
+            print("Group Title: {} (accumulate={}, stacked={}, log={})"
+                  .format(g['title'], g['accumulate'], g['stacked'], g['log']))
             for cat in g['categories']:
                 print("  Category: {}".format(cat['name']))
                 print("    Data: {}".format(cat['data']))
@@ -418,7 +434,9 @@ def plot_groups(groups):
                     markersize=1,
                     linewidth=1
                 )
-
++                if group['log'] :
++                    ax.set_yscale('log')
+      
         ax.set_title(group['title'])
         handles, labels = ax.get_legend_handles_labels()
         # Reverse legend entries so they match the category order in code
