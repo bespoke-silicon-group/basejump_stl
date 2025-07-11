@@ -91,7 +91,7 @@ module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
           assert ((reset_i === 'X) || (reset_i === 1'b1) || ~(r_addr_i == w_addr_i && w_v_i && r_v_i && !read_write_same_addr_p && !disable_collision_warning_p))
             else
               begin
-                 $error("X'ing matched read address %x (%m)",r_addr_i);
+		      $error("X'ing matched read address %x with write address %x (%m)",r_addr_i,w_addr_i);
               end
        end
 `endif
