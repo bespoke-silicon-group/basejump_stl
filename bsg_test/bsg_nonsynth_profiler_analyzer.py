@@ -207,10 +207,10 @@ def parse_schema(schema_file):
                     'data': []
                 }
 
-                 #current_group['categories'].append(category)
-                 # possibly a little slow, but matches the order of stacked bars
-                 # with the order it is listed in the text
-                 current_group['categories'].insert(0,category)
+                #current_group['categories'].append(category)
+                # possibly a little slow, but matches the order of stacked bars
+                # with the order it is listed in the text
+                current_group['categories'].insert(0,category)
   
     # If the schema didn't end with a recognized group line, we might
     # have leftover categories with no group. We'll ignore them (warn).
