@@ -19,7 +19,7 @@
 // check is unnecessary. We use ready_THEN_valid_p
 // to remove the check if it is unnecessary.
 //
-//
+// fixme: should be renamed to bsg_fifo_two
 // note: ~v_o == fifo is empty.
 //
 
