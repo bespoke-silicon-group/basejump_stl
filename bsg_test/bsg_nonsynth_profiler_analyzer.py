@@ -12,6 +12,9 @@ A Python 2.7 script that:
          - Lines that start with "#" define a group that accumulates counts **up to** each frame
          - Lines that start with "!" are like @ but line plot not stacked
          - Lines that start with "$" are like # but line plot not stacked
+         - Lines with "|" are like "!" but logarithmic.
+         - Lines with "&" are like "!" but logarithmic.
+         
 
        (prefix sums, so each bar is total up to that frame).
   2) Reads profile.names, which has lines of <counter_number> <hierarchical_path>.
