@@ -49,7 +49,7 @@ module bsg_pipeline_stall_collapse #(
 	// enable only if we are writing data into a register
 	wire shift_data = v_li[i] & ready_adj[i];	
  
-	bsg_dff_en #(.width_p(1))
+	bsg_dff_reset_en #(.width_p(1))
 	(.clk_i(clk_i)
 	 ,.reset_i(reset_i)
 	 ,.en_i(shift_v)
