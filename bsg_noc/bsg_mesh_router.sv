@@ -15,7 +15,10 @@
  *      - 2-D mesh
  *      - 2-D mesh + half ruche x
  *
- *   In theory, we could drop data bits (e.g. the X coordinate) as we switch to different dimensions, but the code would be a little complicated.
+ *   Fixme perf: In theory, we could drop data bits (e.g. the X coordinate) as we switch to different dimensions, but the code would be a little complicated.
+ *
+ *   For 2D mesh network, you can feed in in_dirs_lp > out_dirs_lp, and they will act as extra P ports. You also need to feed in an appropriate routing_matrix_p.
+ *   
  */  
 
 `include "bsg_defines.sv"
@@ -30,10 +33,11 @@ module bsg_mesh_router
     , parameter ruche_factor_X_p = 0
     , parameter ruche_factor_Y_p = 0
     , parameter dims_p = 2
-    , parameter dirs_lp = (2*dims_p)+1
+    , parameter out_dirs_lp = (2*dims_p)+1
+    , parameter in_dirs_lp = out_dirs_lp
     , parameter XY_order_p = 1
     , parameter depopulated_p = 1
-    , parameter bit [dirs_lp-1:0][dirs_lp-1:0]  routing_matrix_p = 
+    , parameter bit [out_dirs_lp-1:0][in_dirs_lp-1:0]  routing_matrix_p = 
       (dims_p == 2) ? (XY_order_p ? StrictXY : StrictYX) : (
       (dims_p == 3) ? (depopulated_p ? (XY_order_p ? HalfRucheX_StrictXY : HalfRucheX_StrictYX) 
                                      : (XY_order_p ? HalfRucheX_FullyPopulated_StrictXY : HalfRucheX_FullyPopulated_StrictYX)) : (
@@ -47,13 +51,13 @@ module bsg_mesh_router
     input clk_i
     , input reset_i
 
-    , input [dirs_lp-1:0][width_p-1:0] data_i
-    , input [dirs_lp-1:0]              v_i
-    , output logic [dirs_lp-1:0]       yumi_o
+    , input [in_dirs_lp-1:0][width_p-1:0] data_i
+    , input [in_dirs_lp-1:0]              v_i
+    , output logic [in_dirs_lp-1:0]       yumi_o
 
-    , input   [dirs_lp-1:0]               ready_and_i
-    , output  [dirs_lp-1:0][width_p-1:0]  data_o
-    , output logic [dirs_lp-1:0]          v_o
+    , input   [out_dirs_lp-1:0]               ready_and_i
+    , output  [out_dirs_lp-1:0][width_p-1:0]  data_o
+    , output logic [out_dirs_lp-1:0]          v_o
 
     // node's x and y coord
     , input   [x_cord_width_p-1:0] my_x_i           
@@ -62,20 +66,21 @@ module bsg_mesh_router
 
 
   // input x,y coords
-  logic [dirs_lp-1:0][x_cord_width_p-1:0] x_dirs;
-  logic [dirs_lp-1:0][y_cord_width_p-1:0] y_dirs;
+  logic [in_dirs_lp-1:0][x_cord_width_p-1:0] x_dirs;
+  logic [in_dirs_lp-1:0][y_cord_width_p-1:0] y_dirs;
 
-  for (genvar i = 0; i < dirs_lp; i++) begin
+  for (genvar i = 0; i < in_dirs_lp; i++) begin
     assign x_dirs[i] = data_i[i][0+:x_cord_width_p];
     assign y_dirs[i] = data_i[i][x_cord_width_p+:y_cord_width_p];
   end
 
 
   // dimension-ordered routing logic
-  logic [dirs_lp-1:0][dirs_lp-1:0] req, req_t;
-
-  for (genvar i = 0; i < dirs_lp; i++) begin: dor
-    logic [dirs_lp-1:0] temp_req;
+  logic [in_dirs_lp-1:0][out_dirs_lp-1:0] req;
+  logic [out_dirs_lp-1:0][in_dirs_lp-1:0] req_t;
+   
+  for (genvar i = 0; i < in_dirs_lp; i++) begin: dor
+    logic [out_dirs_lp-1:0] temp_req;
 
     bsg_mesh_router_decoder_dor #(
       .x_cord_width_p(x_cord_width_p)
@@ -84,7 +89,9 @@ module bsg_mesh_router
       ,.ruche_factor_Y_p(ruche_factor_Y_p)
       ,.dims_p(dims_p)
       ,.XY_order_p(XY_order_p)
-      ,.from_p((dirs_lp)'(1 << i))
+      // if in_dirs_lp > out_dirs_lp, then for the purposes of dimension 
+      // ordered routing only, we treat the extra directions as "P"			  
+      ,.from_p((out_dirs_lp)'(1 << (i < out_dirs_lp ? i : P)))
       ,.depopulated_p(depopulated_p)
       ,.debug_p(debug_p)
     ) dor_decoder (
@@ -98,12 +105,12 @@ module bsg_mesh_router
       ,.req_o(temp_req)
     );
     
-    assign req[i] = {dirs_lp{v_i[i]}} & temp_req;
+    assign req[i] = {out_dirs_lp{v_i[i]}} & temp_req;
   end
 
   bsg_transpose #(
-    .width_p(dirs_lp)
-    ,.els_p(dirs_lp) 
+    .width_p(out_dirs_lp)
+    ,.els_p(in_dirs_lp) 
   ) req_tp (
     .i(req)
     ,.o(req_t)
@@ -112,9 +119,10 @@ module bsg_mesh_router
 
 
   // Instantiate crossbars for each output direction
-  logic [dirs_lp-1:0][dirs_lp-1:0] yumi_lo, yumi_lo_t;
+   logic [out_dirs_lp-1:0][in_dirs_lp-1:0] yumi_lo;
+   logic [in_dirs_lp-1:0][out_dirs_lp-1:0] yumi_lo_t;
 
-  for (genvar i = 0; i < dirs_lp; i++) begin: xbar
+  for (genvar i = 0; i < out_dirs_lp; i++) begin: xbar
 
     localparam input_els_lp = `BSG_COUNTONES_SYNTH(routing_matrix_p[i]);
 
@@ -171,15 +179,15 @@ module bsg_mesh_router
 
 
   bsg_transpose #(
-    .width_p(dirs_lp)
-    ,.els_p(dirs_lp) 
+    .width_p(in_dirs_lp)
+    ,.els_p(out_dirs_lp) 
   ) yumi_tp (
     .i(yumi_lo)
     ,.o(yumi_lo_t)
   );
 
 
-  for (genvar i = 0; i < dirs_lp; i++) begin
+  for (genvar i = 0; i < in_dirs_lp; i++) begin
     assign yumi_o[i] = |yumi_lo_t[i];
   end
 
@@ -190,7 +198,7 @@ module bsg_mesh_router
     always_ff @ (negedge clk_i) begin
 
       if (~reset_i) begin
-        for (integer i = 0; i < dirs_lp; i++) begin
+        for (integer i = 0; i < in_dirs_lp; i++) begin
           assert($countones(yumi_lo_t[i]) < 2)
             else $error("multiple yumi detected. i=%d, %b", i, yumi_lo_t[i]);
         end
