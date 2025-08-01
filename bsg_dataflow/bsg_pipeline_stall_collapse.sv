@@ -9,10 +9,10 @@ module bsg_pipeline_stall_collapse #(
    (input clk_i
     ,input reset_i
     ,input valid_i
-    ,output ready_o
+    ,output ready_and_o
 
     ,output valid_o
-    ,input ready_i
+    ,input ready_and_i
     ,input  [stages_p-1:0][max_width_p-1:0] data_i
     ,output [stages_p-1:0][max_width_p-1:0] data_o
     );
@@ -23,7 +23,7 @@ module bsg_pipeline_stall_collapse #(
    wire [stages_p-1:0] 			   v_r_scan_lo;
    wire [stages_p:0] 			   v_li = { v_r_lo, valid_i };
 
-   wire [stages_p-1:0] 			   ready_adj;
+   wire [stages_p-1:0] 			   ready_and_adj;
    
    bsg_scan #(.width_p(stages_p)
 	      ,.and_p(1)
@@ -33,22 +33,22 @@ module bsg_pipeline_stall_collapse #(
     );
    
    assign valid_o = v_r_lo[stages_p-1];
-   assign ready_o = ready_adj[0];
+   assign ready_and_o = ready_and_adj[0];
    
    for (i = 0; i < stages_p; i++)
      begin: s
 	// enable register if we are shifting, or if there
 	// was nothing in the register to begin with
 	
-	//wire ready_adj[i] = ready_i | ~v_r_lo[i];
-	assign ready_adj[i] = ready_i | ~v_r_scan_lo[i];
+	//wire ready_and_adj[i] = ready_and_i | ~v_r_lo[i];
+	assign ready_and_adj[i] = ready_and_i | ~v_r_scan_lo[i];
 
 	// enable if we are ready; we will either shift in
 	// a 0 if there is no data, or a 1 if there is data
-	wire shift_v = ready_adj[i];
+	wire shift_v = ready_and_adj[i];
 
 	// enable only if we are writing data into a register
-	wire shift_data = v_li[i] & ready_adj[i];	
+	wire shift_data = v_li[i] & ready_and_adj[i];	
 
 	if (skip_p[i]) 
         begin : kip
