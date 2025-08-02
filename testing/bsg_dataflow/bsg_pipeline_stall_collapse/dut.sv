@@ -9,6 +9,9 @@ module dut (input clk_i
 	    ,input ready_and_i
 	    );
 
+   // design your datapath by specifying a structure which contains the intermediate
+   // registers.
+   
    typedef struct packed {
       struct 	  packed {
                           logic [31:0] a;
@@ -24,8 +27,8 @@ module dut (input clk_i
    
    pipeline_s stage_li, stage_lo;
 
-   // this is very irritating, but must be declared ascending, otherwise the count_prev
-   // function does not work correctly.
+   // note that index is 0:2 not 2:0, keeps it consistent looking with above struct
+   
    parameter int widths_p [0:2] = ' { int ' ($bits (stage_li.s1)),       // 0
                                       int ' ($bits (stage_li.s2)),       // 1
 		                      int ' ($bits (stage_li.s3)) };     // 2
@@ -52,6 +55,8 @@ module dut (input clk_i
       ,.ready_and_i(ready_and_i)
       );
 
+
+   // left hand side should all be stage_li, right hand side should all be stage_lo
    assign stage_li.s1.a = data_i[0];
    assign stage_li.s1.b = data_i[1];				 
    assign stage_li.s2.c = 32 ' (stage_lo.s1.a * stage_lo.s1.b);
