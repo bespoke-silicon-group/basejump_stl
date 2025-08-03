@@ -3,9 +3,9 @@
 `define BSG_MEM_1RW_SYNC_MASK_WRITE_BYTE_MACROS
 
 `define bsg_mem_1rw_sync_mask_write_byte_1rf_macro(words,bits,tag) \
-  if (harden_p && els_p == words && data_width_p == bits)      \
+  if (harden_p && els_p == words && width_p == bits)      \
     begin: macro                                               \
-      wire [data_width_p-1:0] wen;                             \
+      wire [width_p-1:0] wen;                             \
       genvar j;                                                \
       for(j = 0; j < write_mask_width_lp; j++)                 \
         assign wen[8*j+:8] = {8{write_mask_i[j]}};             \
@@ -28,9 +28,9 @@
     end: macro
 
 `define bsg_mem_1rw_sync_mask_write_byte_1sram_macro(words,bits,tag) \
-  if (harden_p && els_p == words && data_width_p == bits)      \
+  if (harden_p && els_p == words && width_p == bits)      \
     begin: macro                                               \
-      wire [data_width_p-1:0] wen;                             \
+      wire [width_p-1:0] wen;                             \
       genvar j;                                                \
       for(j = 0; j < write_mask_width_lp; j++)                 \
         assign wen[8*j+:8] = {8{write_mask_i[j]}};             \
@@ -53,9 +53,9 @@
     end: macro
 
 `define bsg_mem_1rw_sync_mask_write_byte_1hdsram_macro(words,bits,tag) \
-  if (harden_p && els_p == words && data_width_p == bits)      \
+  if (harden_p && els_p == words && width_p == bits)      \
     begin: macro                                               \
-      wire [data_width_p-1:0] wen;                             \
+      wire [width_p-1:0] wen;                             \
       genvar j;                                                \
       for(j = 0; j < write_mask_width_lp; j++)                 \
         assign wen[8*j+:8] = {8{write_mask_i[j]}};             \
@@ -78,9 +78,9 @@
     end: macro
 
 `define bsg_mem_1rw_sync_mask_write_byte_banked_macro(words,bits,wbank,dbank) \
-  if (harden_p && els_p == words && data_width_p == bits) begin: macro        \
+  if (harden_p && els_p == words && width_p == bits) begin: macro        \
       bsg_mem_1rw_sync_mask_write_byte_banked #(                              \
-        .data_width_p(data_width_p)                                           \
+        .width_p(width_p)                                           \
         ,.els_p(els_p)                                                        \
         ,.latch_last_read_p(latch_last_read_p)                                \
         ,.num_width_bank_p(wbank)                                             \
