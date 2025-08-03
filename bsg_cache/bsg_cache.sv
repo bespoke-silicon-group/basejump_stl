@@ -228,7 +228,7 @@ module bsg_cache
   logic [ways_p-1:0][dma_data_width_p-1:0] data_mem_data_lo;
 
   bsg_mem_1rw_sync_mask_write_byte #(
-    .data_width_p(dma_data_width_p*ways_p)
+    .width_p(dma_data_width_p*ways_p)
     ,.els_p(data_mem_els_lp)
     ,.latch_last_read_p(1)
   ) data_mem (
