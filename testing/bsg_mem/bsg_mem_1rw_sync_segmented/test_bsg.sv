@@ -107,7 +107,7 @@ module test_bsg
   else begin: byte_mask_sram
 
     bsg_mem_1rw_sync_mask_write_byte #(
-                                        .data_width_p(segment_width_lp)
+                                        .width_p(segment_width_lp)
                                         ,.els_p(els_p)
                                         ,.latch_last_read_p(latch_last_read_p)
                                       ) 
