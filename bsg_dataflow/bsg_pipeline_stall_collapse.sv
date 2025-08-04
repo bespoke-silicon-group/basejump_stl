@@ -1,5 +1,8 @@
 `include "bsg_defines.sv"
 
+// see testing/bsg_dataflow/bsg_pipeline_stall_collapse for example usage
+// works in concert with bsg_dff_en_segmented to implement datapath pipelines
+//
 
 module bsg_pipeline_stall_collapse #(
 			     `BSG_INV_PARAM(stages_p)
