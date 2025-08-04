@@ -12,7 +12,7 @@ TOP = ../../..
 # place the parameters you want to scan here.
 BSG_TESTME_FILES    =   bsg_pipeline_stall_collapse.sv
 BSG_TESTME_DIR      =   $(TOP)/bsg_dataflow
-BSG_MISC_FILES      =   bsg_defines.sv bsg_cycle_counter.sv bsg_scan.sv bsg_dff_en.sv bsg_dff_reset_en.sv
+BSG_MISC_FILES      =   bsg_defines.sv bsg_cycle_counter.sv bsg_scan.sv bsg_dff_en.sv bsg_dff_reset_en.sv bsg_dff_en_segmented.sv
 BSG_ASYNC_FILES     = 
 BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  = 
@@ -36,3 +36,14 @@ DUMMY = 0
 ############################################################################
 
 include ../../Makefile.sim
+
+
+synth:
+	$(DC_SHELL) -f synth.tcl
+
+
+clean:
+	-rm -f *.mr *.pvl *.syn
+	-rm -rf csrc WORK cksum_dir alib-52 simv.daidir
+	-rm -f *.log ucli.key *.svf moduleparamid outfile simv
+
