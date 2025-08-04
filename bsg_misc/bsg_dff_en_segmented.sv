@@ -4,9 +4,12 @@
 // of widths and then it generates the DFF's accordingly. to get around
 // synthesis issues, we take a tail recursive approach.
 
+// it also takes a parameter skip, which says to omit the register
+
 module bsg_dff_en_segmented #(`BSG_INV_PARAM(els_p)
 			      ,parameter int widths_p[els_p-1:0] = '{default: 1}
 			      ,`BSG_INV_PARAM(width_sum_p)
+			      ,parameter [els_p-1:0] skip_p = '0
 			      )
    (
     input clk_i
@@ -17,12 +20,19 @@ module bsg_dff_en_segmented #(`BSG_INV_PARAM(els_p)
 
    localparam local_width_p = widths_p[0];
 
-   bsg_dff_en #(.width_p(local_width_p)) dff
-     (.clk_i(clk_i)
-      ,.data_i(data_i[local_width_p-1:0])
-      ,.en_i(en_i[0])
-      ,.data_o(data_o[local_width_p-1:0])
-      );
+   if (skip_p[0])
+     begin: skip
+	assign data_o[local_width_p-1:0] = data_i[local_width_p-1:0];
+     end
+   else
+     begin: r
+	bsg_dff_en #(.width_p(local_width_p)) dff
+	  (.clk_i(clk_i)
+	   ,.data_i(data_i[local_width_p-1:0])
+	   ,.en_i(en_i[0])
+	   ,.data_o(data_o[local_width_p-1:0])
+	   );
+     end
 
    if (els_p > 1)
      begin
@@ -31,6 +41,7 @@ module bsg_dff_en_segmented #(`BSG_INV_PARAM(els_p)
 	bsg_dff_en_segmented #(.els_p(els_p-1)
 			       ,.widths_p(widths_p[els_p-1:1])
 			       ,.width_sum_p(rem_width_p)
+			       ,.skip_p(skip_p[els_p-1:1])
 			       ) r
 	  (.clk_i  (clk_i)
 	   ,.data_i(data_i[width_sum_p-1:local_width_p])

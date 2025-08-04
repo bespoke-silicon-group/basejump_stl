@@ -41,6 +41,7 @@ module dut (input clk_i
    wire [2:0] en_lo;
    
    bsg_pipeline_stall_collapse #(.stages_p(3)
+				 ,.skip_p('1)
 				 ) pipe_ctl
      (.clk_i(clk_i)
       ,.reset_i(reset_i)
@@ -58,6 +59,7 @@ module dut (input clk_i
    bsg_dff_en_segmented #(.els_p(3)
 			  ,.widths_p(widths_p)
 			  ,.width_sum_p($bits (pipeline_s))
+			  ,.skip_p('1)
 			  ) pipe_data
      (.clk_i(clk_i)
       ,.en_i(en_lo)
