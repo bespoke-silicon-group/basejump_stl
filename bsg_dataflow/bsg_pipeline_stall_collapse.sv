@@ -1,7 +1,11 @@
 `include "bsg_defines.sv"
 
 // see testing/bsg_dataflow/bsg_pipeline_stall_collapse for example usage
-// works in concert with bsg_dff_en_segmented to implement datapath pipelines
+//
+// works in concert with bsg_dff_en_segmented to implement pipelined datapaths
+// with flow control.
+//
+// skip_p parameter allows you to omit the pipeline register
 //
 
 module bsg_pipeline_stall_collapse #(

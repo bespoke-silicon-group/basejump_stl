@@ -10,7 +10,7 @@ module dut (input clk_i
 	    );
 
    // design your datapath by specifying a structure which contains the intermediate
-   // registers.
+   // registers. 
    
    typedef struct packed {
       struct 	  packed {
@@ -26,7 +26,12 @@ module dut (input clk_i
    } pipeline_s;
    
    pipeline_s stage_li, stage_lo;
-   
+
+
+   // keep in mind that the human readable order above means that the bits
+   // in the struct are actually stored with last stage in low bits
+   // and first stage in high bits.
+
    parameter int widths_p [2:0] = ' { int ' ($bits (stage_li.s1)),       // 2
                                       int ' ($bits (stage_li.s2)),       // 1
 		                      int ' ($bits (stage_li.s3)) };     // 0
@@ -41,7 +46,7 @@ module dut (input clk_i
    wire [2:0] en_lo;
    
    bsg_pipeline_stall_collapse #(.stages_p(3)
-				 ,.skip_p('1)
+				 ,.skip_p('0)
 				 ) pipe_ctl
      (.clk_i(clk_i)
       ,.reset_i(reset_i)
@@ -59,7 +64,7 @@ module dut (input clk_i
    bsg_dff_en_segmented #(.els_p(3)
 			  ,.widths_p(widths_p)
 			  ,.width_sum_p($bits (pipeline_s))
-			  ,.skip_p('1)
+			  ,.skip_p('0)
 			  ) pipe_data
      (.clk_i(clk_i)
       ,.en_i(en_lo)
