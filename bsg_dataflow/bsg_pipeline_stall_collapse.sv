@@ -11,6 +11,7 @@
 module bsg_pipeline_stall_collapse #(
 			     `BSG_INV_PARAM(stages_p)
 		             , parameter logic [stages_p-1:0] skip_p = '0
+	                     , parameter debug_p = 1'b0
 			     )
    (input clk_i
     ,input reset_i
@@ -40,6 +41,7 @@ module bsg_pipeline_stall_collapse #(
 
 
 `ifndef BSG_HIDE_FROM_SYNTHESIS   
+if (debug_p)	
    always @(negedge clk_i)
      $display("v_r: %b v_r_scan_lo: %b",v_r_lo,v_r_scan_lo);
 `endif
@@ -68,6 +70,7 @@ module bsg_pipeline_stall_collapse #(
 	     wire shift_data = v_li[i] & ready_and_adj[i];	
 
 `ifndef BSG_HIDE_FROM_SYNTHESIS   	     
+	 if (debug_p)		  
 	     always @(negedge clk_i)
 	       $display("@i=%d shift_v=%d shift_data=%d",i,shift_v,shift_data);
 `endif
