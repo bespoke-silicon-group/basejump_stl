@@ -12,7 +12,7 @@ TOP = ../../..
 # place the parameters you want to scan here.
 BSG_TESTME_FILES    =   bsg_dff_en_segmented.sv
 BSG_TESTME_DIR      =   $(TOP)/bsg_misc
-BSG_MISC_FILES      =   bsg_defines.sv bsg_cycle_counter.sv bsg_scan.sv bsg_dff_en.sv bsg_dff_reset_en.sv
+BSG_MISC_FILES      =   bsg_defines.sv bsg_cycle_counter.sv bsg_dff_en.sv bsg_dff_reset_en.sv
 BSG_ASYNC_FILES     = 
 BSG_COMM_LINK_FILES =
 BSG_DATAFLOW_FILES  = 
@@ -44,8 +44,11 @@ synth:
 
 clean:
 	-rm -f *.mr *.pvl *.syn
-	-rm -rf csrc WORK cksum_dir alib-52 simv.daidir
+	-rm -rf csrc WORK cksum_dir alib-52 simv.daidir  obj_dir
 	-rm -f *.log ucli.key *.svf moduleparamid outfile simv
+
+verilator:
+	/gro/cad/verilator/v5.036/verilator/bin/verilator -top-module test_bsg -y $(TOP)/bsg_test -I$(TOP)/bsg_misc --binary $(TEST_MAIN) $(BSG_TESTME_DIR)/$(BSG_TESTME_FILES) $(BSG_MISC_FLES)
 
 
 

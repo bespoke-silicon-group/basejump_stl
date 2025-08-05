@@ -26,7 +26,7 @@ module bsg_pipeline_stall_collapse #(
 
    wire [stages_p-1:0] 			   v_r_lo;
    wire [stages_p-1:0] 			   v_r_scan_lo;
-   wire [stages_p:0] 			   v_li = { valid_i, v_r_lo[stages_p-1:1] };
+   wire [stages_p-1:0] 			   v_li = { valid_i, v_r_lo[stages_p-1:1] };
 
    wire [stages_p-1:0] 			   ready_and_adj;
    

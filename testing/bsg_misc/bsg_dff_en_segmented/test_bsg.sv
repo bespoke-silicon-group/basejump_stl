@@ -1,5 +1,4 @@
 `include "bsg_defines.sv"
-`include "bsg_pipeline_stall_collapse.svh"
 
 module test_bsg
   ();

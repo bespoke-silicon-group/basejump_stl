@@ -47,3 +47,6 @@ clean:
 	-rm -rf csrc WORK cksum_dir alib-52 simv.daidir
 	-rm -f *.log ucli.key *.svf moduleparamid outfile simv
 
+
+verilator:
+	/gro/cad/verilator/v5.036/verilator/bin/verilator -Wno-fatal -top-module test_bsg -y $(TOP)/bsg_test -I$(TOP)/bsg_misc --binary $(TEST_MAIN) $(BSG_TESTME_DIR)/$(BSG_TESTME_FILES) $(BSG_MISC_FLES)

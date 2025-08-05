@@ -25,9 +25,9 @@ module dut (input clk_i
    
    pipeline_s stage_li, stage_lo;
    
-   parameter int widths_p [2:0] = ' { int ' ($bits (stage_li.s1)),       // 2
-                                      int ' ($bits (stage_li.s2)),       // 1
-		                      int ' ($bits (stage_li.s3)) };     // 0
+   parameter int widths_p [2:0] = { int ' ($bits (stage_li.s1)),       // 2
+                                    int ' ($bits (stage_li.s2)), // 1
+		                    int ' ($bits (stage_li.s3)) };     // 0
 
 `ifndef BSG_HIDE_FROM_SYNTHESIS
    initial

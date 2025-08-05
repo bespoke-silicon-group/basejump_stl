@@ -37,7 +37,7 @@ module dut (input clk_i
    // in the struct are actually stored with last stage in low bits
    // and first stage in high bits.
 
-   parameter int widths_p [2:0] = ' { int ' ($bits (stage_li.s1)),       // 2
+   parameter int widths_p [2:0] = { int ' ($bits (stage_li.s1)),       // 2
                                       int ' ($bits (stage_li.s2)),       // 1
 		                      int ' ($bits (stage_li.s3)) };     // 0
 
