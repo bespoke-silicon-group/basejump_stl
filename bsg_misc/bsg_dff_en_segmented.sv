@@ -54,7 +54,8 @@ module bsg_dff_en_segmented #(`BSG_INV_PARAM(els_p)
      end
 
 `ifndef BSG_HIDE_FROM_SYNTHESIS
-   always @(negedge clk_i)
+if (0)
+  always @(negedge clk_i)
      $display("i=%d widths=%p width=%d en=%b %h->%h",els_p,widths_p,local_width_p,en_i[0],data_i[local_width_p-1:0],data_o[local_width_p-1:0]);
 `endif
    
