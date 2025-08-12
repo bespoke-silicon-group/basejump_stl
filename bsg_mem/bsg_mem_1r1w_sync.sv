@@ -82,7 +82,7 @@ module bsg_mem_1r1w_sync #(parameter `BSG_INV_PARAM(width_p)
 	  $display("## %L: disable_collision_warning_p is set; you should not have this on unless you have broken code. fix it!\n");
      end
 
-	always_ff @(negedge clk_lo)
+	always_ff @(posedge clk_lo)
      if (w_v_i)
        begin
 	       assert ((reset_i === 'X) || (reset_i === 1'b1) || ((32 ' (w_addr_i)) < els_p) || (els_p <= 1))
