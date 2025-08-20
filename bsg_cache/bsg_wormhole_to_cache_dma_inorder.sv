@@ -17,6 +17,7 @@ module bsg_wormhole_to_cache_dma_inorder
    , parameter `BSG_INV_PARAM(dma_addr_width_p) // cache addr width (in bytes)
    , parameter `BSG_INV_PARAM(dma_burst_len_p) // num of data beats in dma transfer
    , parameter `BSG_INV_PARAM(dma_mask_width_p) // mask width in the bsg_cache_dma_pkt_s. This should equal to the block_size_in_words_p set for bsg_cache.
+   , parameter `BSG_INV_PARAM(dma_ways_p)
 
    // flit width must match the cache dma width.
    , parameter `BSG_INV_PARAM(wh_flit_width_p)
@@ -30,7 +31,7 @@ module bsg_wormhole_to_cache_dma_inorder
 
    , parameter wh_then_ready_link_sif_width_lp=`bsg_then_ready_link_sif_width(wh_flit_width_p)
    , parameter wh_ready_and_link_sif_width_lp=`bsg_ready_and_link_sif_width(wh_flit_width_p)
-   , parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(dma_addr_width_p, dma_mask_width_p)
+   , parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(dma_addr_width_p, dma_mask_width_p, dma_ways_p)
    , parameter dma_data_width_p=wh_flit_width_p
    )
   (
@@ -60,7 +61,7 @@ module bsg_wormhole_to_cache_dma_inorder
   // structs
   `declare_bsg_then_ready_link_sif_s(wh_flit_width_p,wh_then_ready_link_sif_s);
   `declare_bsg_ready_and_link_sif_s(wh_flit_width_p,wh_ready_and_link_sif_s);
-  `declare_bsg_cache_dma_pkt_s(dma_addr_width_p, dma_mask_width_p);
+  `declare_bsg_cache_dma_pkt_s(dma_addr_width_p, dma_mask_width_p, dma_ways_p);
   `declare_bsg_cache_wh_header_flit_s(wh_flit_width_p,wh_cord_width_p,wh_len_width_p,wh_cid_width_p);
 
 
