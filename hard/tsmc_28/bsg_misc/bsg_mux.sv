@@ -12,33 +12,44 @@ module bsg_mux #(parameter `BSG_INV_PARAM(width_p)
     ,output [width_p-1:0] data_o
     );
 
-   genvar j;
-
    if ((els_p == 4) && (harden_p == 1) && (balanced_p))
-     begin : fi
-        for (j = 0; j < width_p; j=j+1)
+     begin : macro
+        for (genvar j = 0; j < width_p; j=j+1)
           begin: rof
              // fast, but not too extreme
-             MUX4D4BWP7T30P140ULVT M0 (.I0(data_i[0][j]), .I1(data_i[1][j]), .I2(data_i[2][j]), .I3(data_i[3][j]), .S0(sel_i[0]), .S1(sel_i[1]), .Z(data_o[j]));
+             MUX4D4BWP7T30P140ULVT M0_BSG_RESIZE_OK (.I0(data_i[0][j]), .I1(data_i[1][j]), .I2(data_i[2][j]), .I3(data_i[3][j]), .S0(sel_i[0]), .S1(sel_i[1]), .Z(data_o[j]));
           end
      end
+   else if ((els_p == 2) && (harden_p == 1) && (balanced_p))
+     begin : macro
+        for (genvar j = 0; j < width_p; j=j+1)
+          begin: rof
+              // fast, but not too extreme
+              MUX2D4BWP7T30P140ULVT M0_BSG_RESIZE_OK (.I0(data_i[0][j]), .I1(data_i[1][j]), .S(sel_i[0]), .Z(data_o[j]));
+          end
+     end
+   else if ((els_p == 1) && (harden_p == 1) && (balanced_p))
+     begin : macro
+        wire unused_sel;
+        wire [width_p-1:0] unused;
+        TIELBWP7T40P140 TIE_LO_BSG_DONT_TOUCH (.ZN(unused_sel));
+        for (genvar j = 0; j < width_p; j=j+1)
+          begin: rof
+              // fast, but not too extreme
+              TIELBWP7T40P140 TIE_LO_BSG_DONT_TOUCH (.ZN(unused[j]));
+              MUX2D4BWP7T30P140ULVT M0_BSG_RESIZE_OK (.I0(data_i[0][j]), .I1(unused[j]), .S(unused_sel), .Z(data_o[j]));
+          end
+     end
+   else if (els_p == 1)
+     begin : notmacro
+       `BSG_SYNTH_HARDEN_ATTEMPT(harden_p)
+       assign data_o = data_i;
+       wire unused = sel_i;
+     end
    else
-     begin : nofi
-
-        if (els_p == 1) begin
-          assign data_o = data_i;
-          wire unused = sel_i;
-        end
-        else begin
-          assign data_o = data_i[sel_i];
-        end
-
-
-`ifndef BSG_HIDE_FROM_SYNTHESIS
-        initial
-          assert(balanced_p == 0)
-            else $error("%m warning: synthesizable implementation of bsg_mux does not support balanced_p");
-`endif
+     begin : notmacro
+       `BSG_SYNTH_HARDEN_ATTEMPT(harden_p)
+       assign data_o = data_i[sel_i];
      end
 
 endmodule
