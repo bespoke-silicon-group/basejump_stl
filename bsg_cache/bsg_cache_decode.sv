@@ -66,7 +66,10 @@ module bsg_cache_decode
   assign decode_o.alock_op = (opcode_i == ALOCK);
   assign decode_o.aunlock_op = (opcode_i == AUNLOCK);
 
-  assign decode_o.tag_read_op = ~decode_o.tagst_op;
+  assign decode_o.uncached_ld_op = (opcode_i == IO_LW); 
+  assign decode_o.uncached_st_op = (opcode_i == IO_SW);
+
+  assign decode_o.tag_read_op = ~(decode_o.tagst_op | decode_o.uncached_ld_op | decode_o.uncached_st_op);
 
   // atomic extension
   always_comb begin
