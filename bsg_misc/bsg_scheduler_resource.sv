@@ -1,0 +1,175 @@
+// =============================================================
+// bsg_resource_rr_scheduler (SRAM-less)
+// =============================================================
+// Overview
+// --------
+// A level-sensitive, multi-resource scheduler built from BaseJump STL blocks:
+// * bsg_id_pool_dealloc_alloc_one_hot : manages free/active entry IDs
+// * bsg_arb_round_robin               : fair selection among ready entries
+//
+// Each entry chooses one bit (index) from each resource’s availability bitmap.
+// An entry is ready when all chosen bits are 1. Ready entries are arbitrated
+// in round-robin order. The module exposes just IDs; the parent manages payload SRAM.
+//
+// Why not bsg_scheduler_dataflow?
+// -------------------------------
+// bsg_scheduler_dataflow uses event/tag wakeups (edge-like) rather than level
+// readiness across multiple resources. Converting level bitmaps into wakeup
+// streams would require extra glue logic and state; this module keeps a simple
+// AND-of-bits model.
+//
+//
+// Suggested interface (SRAM-less)
+// -------------------------------
+//   - Allocate:  alloc_v_i, alloc_yumi_o, alloc_sel_i[r], alloc_id_v_o, alloc_id_o
+//   - Resources: res_avail_i[r][max_dep_bits_p]
+//   - Dequeue :  v_o, deq_id_o, yumi_i
+//
+// Integration pattern
+// -------------------
+//   // On allocate (when alloc_id_v_o && alloc_yumi_o):
+//   payload_mem[alloc_id_o] <= payload_in;
+//
+//   // On dequeue (when v_o && yumi_i):
+//   payload_out <= payload_mem[deq_id_o];
+//   // (and perform side effects; ID is auto-freed by the scheduler)
+//
+// Parameter notes
+// ---------------
+//   resources_p     : number of independent resources to AND across
+//   els_p           : maximum concurrent entries tracked
+//   max_dep_bits_p  : width of each resource’s availability bitmap
+//   idx_width_lp    : clog2(max_dep_bits_p)
+//   id_width_lp     : clog2(els_p)
+//
+// Reset/X-safety
+// --------------
+// sel_idx_r is only observed when active_ids_r[i] is 1; we do not clear on
+// dealloc or reset (optional). This reduces reset fanout and surge power. The
+// readiness logic guards variable indexing with active_ids_r to avoid X-prop.
+
+`include "bsg_defines.sv"
+
+module bsg_scheduler_resource
+  // resources_p : number of independent level-sensitive resources
+  // els_p       : max number of in-flight entries
+  // max_dep_bits_p : width of each resource availability bitmap
+  #(parameter `BSG_INV_PARAM(resources_p)
+    ,parameter `BSG_INV_PARAM(els_p)
+    ,parameter `BSG_INV_PARAM(max_dep_bits_p)
+    ,localparam dep_width_lp = `BSG_SAFE_CLOG2(max_dep_bits_p)
+    ,localparam id_width_lp  = `BSG_SAFE_CLOG2(els_p)
+    )
+   ( input  clk_i
+     , input  reset_i
+
+     // ---------- Resource availability (level sensitive) ----------
+     , input  [resources_p-1:0][max_dep_bits_p-1:0] res_avail_i
+
+     // ---------- Allocate (enqueue) ----------
+     , input                              alloc_v_i
+     , output logic                       alloc_yumi_o     // accept allocation this cycle
+     , input  [resources_p-1:0][dep_width_lp-1:0] alloc_sel_i // per-resource dependency indices
+     , output logic                       alloc_id_v_o     // an ID has been allocated this cycle
+     , output logic [id_width_lp-1:0]     alloc_id_o       // allocated ID (binary)
+
+     // ---------- Dequeue (issue/dispatch) ----------
+     , output logic                       v_o              // at least one entry ready
+     , output logic [id_width_lp-1:0]     deq_id_o         // selected entry ID (binary)
+     , input                              yumi_i           // consumer accepts selected entry
+     );
+
+   // ----------------------------------------------------------------
+   // ID pool (manage active entries)
+   // ----------------------------------------------------------------
+   logic [els_p-1:0] active_ids_r;
+   logic [els_p-1:0] alloc_id_one_hot;
+   logic             alloc_id_v;
+
+   logic [els_p-1:0] grants_one_hot;
+   
+  bsg_id_pool_dealloc_alloc_one_hot #(.els_p(els_p)) idpool
+    ( .clk_i               (clk_i)
+      ,.reset_i            (reset_i)
+      ,.active_ids_r_o     (active_ids_r)
+      ,.alloc_id_one_hot_o (alloc_id_one_hot)
+      ,.alloc_id_v_o       (alloc_id_v)
+      ,.alloc_yumi_i       (alloc_yumi_o)
+      ,.dealloc_ids_i      ( { els_p { yumi_i } } & grants_one_hot )
+  );
+
+   // One-hot → binary for write row; also provide externally as alloc_id_o
+   bsg_encode_one_hot #(.width_p(els_p)) enc_alloc_id
+     ( .i(alloc_id_one_hot)
+       ,.addr_o(alloc_id_o)
+       ,.v_o()
+       );
+
+   assign alloc_id_v_o = alloc_v_i & alloc_id_v; // fire when we actually allocate
+
+   // ----------------------------------------------------------------
+   // Compact per-entry dependency indices
+   // ----------------------------------------------------------------
+   logic [els_p-1:0][resources_p-1:0][dep_width_lp-1:0] sel_idx_r;
+   wire wr_entry = alloc_v_i & alloc_id_v; // same cycle as alloc_yumi_o
+
+   genvar i, r;
+
+   for (i = 0; i < els_p; i++) 
+     begin : gen_sel_row
+	for (r = 0; r < resources_p; r++) 
+	  begin : gen_sel_res
+             always_ff @(posedge clk_i) 
+	       begin
+		  if (wr_entry && alloc_id_one_hot[i]) 
+		    begin
+		       sel_idx_r[i][r] <= alloc_sel_i[r];
+		    end
+	       end
+          end
+     end
+
+
+   // ----------------------------------------------------------------
+   // Ready calculation (level-sensitive across resources)
+   // ----------------------------------------------------------------
+   logic [els_p-1:0] entry_ready;
+
+   for (i = 0; i < els_p; i++) 
+     begin : gen_ready
+	logic [resources_p-1:0] per_res_ok;
+	for (r = 0; r < resources_p; r++) 
+	  begin : gen_per_res_ok
+             // Guard indexing to avoid X-prop on inactive rows
+             assign per_res_ok[r] = active_ids_r[i]
+               ? res_avail_i[r][ sel_idx_r[i][r] ]
+               : 1'b0;
+	  end
+	assign entry_ready[i] = active_ids_r[i] & (&per_res_ok);
+     end
+
+   // ----------------------------------------------------------------
+   // Round-robin arbitration
+   // ----------------------------------------------------------------
+
+   bsg_arb_round_robin #(.width_p(els_p)) rr
+     ( .clk_i    (clk_i)
+       ,.reset_i (reset_i)
+       ,.reqs_i  (entry_ready)
+       ,.grants_o(grants_one_hot)
+       ,.yumi_i  (yumi_i)
+       );
+
+   assign v_o = |entry_ready;
+   
+   // deq_id_o is the selected entry ID
+   bsg_encode_one_hot #(.width_p(els_p)) enc_grant
+     (.i(grants_one_hot)
+      ,.addr_o(deq_id_o)
+      ,.v_o() );
+
+  // Allocation handshake (accept when pool supplies an ID)
+  assign alloc_yumi_o = alloc_v_i & alloc_id_v;
+
+endmodule
+

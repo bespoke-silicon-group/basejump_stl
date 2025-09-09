@@ -153,6 +153,6 @@ module bsg_arb_round_robin_two_level #(parameter `BSG_INV_PARAM(width_p))
 
 endmodule
    
-`BSG_ABSTRACT_MODULE(bsg_arb_round_robin_priority)   
 `BSG_ABSTRACT_MODULE(bsg_arb_round_robin)
+`BSG_ABSTRACT_MODULE(bsg_arb_round_robin_two_level)
    
