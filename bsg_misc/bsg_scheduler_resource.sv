@@ -93,8 +93,10 @@ module bsg_scheduler_resource
     ( .clk_i               (clk_i)
       ,.reset_i            (reset_i)
       ,.active_ids_r_o     (active_ids_r)
-      ,.alloc_id_one_hot_o (alloc_id_one_hot)
-      ,.alloc_id_v_o       (alloc_id_v)
+
+	  ,.alloc_id_v_o       (alloc_id_v)
+	  ,.alloc_id_one_hot_o (alloc_id_one_hot)
+
       ,.alloc_yumi_i       (alloc_id_v_o)
       ,.dealloc_ids_i      ( { els_p { deq_yumi_i } } & grants_one_hot )
   );
