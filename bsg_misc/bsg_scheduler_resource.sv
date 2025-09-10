@@ -119,19 +119,16 @@ module bsg_scheduler_resource
    genvar i, r;
 
    for (i = 0; i < els_p; i++) 
-     begin : gen_sel_row
-	for (r = 0; r < resources_p; r++) 
-	  begin : gen_sel_res
-             always_ff @(posedge clk_i) 
-	       begin
-		  if (wr_entry && alloc_id_one_hot[i]) 
-		    begin
-		       sel_idx_r[i][r] <= alloc_sel_i[r];
-		    end
-	       end
-          end
+     begin : el
+       for (r = 0; r < resources_p; r++) 
+         begin : res
+           always_ff @(posedge clk_i) 
+             begin
+               if (wr_entry && alloc_id_one_hot[i]) 
+                 sel_idx_r[i][r] <= alloc_sel_i[r];
+	          end
+         end
      end
-
 
    // ----------------------------------------------------------------
    // Ready calculation (level-sensitive across resources)
@@ -140,15 +137,15 @@ module bsg_scheduler_resource
 
    for (i = 0; i < els_p; i++) 
      begin : gen_ready
-	   logic [resources_p-1:0] per_res_ok;
-	     for (r = 0; r < resources_p; r++) 
-	       begin : gen_per_res_ok
-             // Guard indexing to avoid X-prop on inactive rows
-             assign per_res_ok[r] = active_ids_r[i]
+	     logic [resources_p-1:0] per_res_ok;
+       for (r = 0; r < resources_p; r++) 
+         begin : gen_per_res_ok
+           // Guard indexing to avoid X-prop on inactive rows
+           assign per_res_ok[r] = active_ids_r[i]
                ? res_avail_i[r][ sel_idx_r[i][r] ]
                : 1'b0;
-	       end
-	      assign entry_ready[i] = active_ids_r[i] & (&per_res_ok);
+         end
+        assign entry_ready[i] = active_ids_r[i] & (&per_res_ok);
      end
 
    // ----------------------------------------------------------------
