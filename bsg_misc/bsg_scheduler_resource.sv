@@ -157,8 +157,8 @@ module bsg_scheduler_resource
        ,.reset_i (reset_i)
        ,.reqs_i  (entry_ready)
        ,.grants_o(grants_one_hot)
-	     ,.yumi_i  (deq_yumi_i)
-       );
+       ,.yumi_i  (deq_yumi_i)
+     );
 
    assign deq_v_o = |entry_ready;
    
