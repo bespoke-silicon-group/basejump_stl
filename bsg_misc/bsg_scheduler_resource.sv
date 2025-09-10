@@ -108,7 +108,8 @@ module bsg_scheduler_resource
        ,.v_o()
        );
 
-   assign alloc_id_v_o = alloc_v_i & alloc_id_v; // fire when we actually allocate
+   // user wants to allocate, and id pool has something available to allocate
+   assign alloc_id_v_o = alloc_v_i & alloc_id_v;
    wire wr_entry = alloc_id_v_o;
    // ----------------------------------------------------------------
    // Compact per-entry dependency indices
