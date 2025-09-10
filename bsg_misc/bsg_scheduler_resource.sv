@@ -75,9 +75,9 @@ module bsg_scheduler_resource
      , output logic [id_width_lp-1:0]     alloc_id_o       // allocated ID (binary)
 
      // ---------- Dequeue (issue/dispatch) ----------
-     , output logic                       deq_v_o              // at least one entry ready
+     , output logic                       deq_v_o          // at least one entry ready
      , output logic [id_width_lp-1:0]     deq_id_o         // selected entry ID (binary)
-     , input                              deq_yumi_i           // consumer accepts selected entry
+     , input                              deq_yumi_i       // consumer accepts selected entry
      );
 
    // ----------------------------------------------------------------
