@@ -21,16 +21,16 @@
 //
 // Suggested interface (SRAM-less)
 // -------------------------------
-//   - Allocate:  alloc_v_i, alloc_yumi_o, alloc_sel_i[r], alloc_id_v_o, alloc_id_o
+//   - Allocate:  alloc_v_i, alloc_sel_i[r], alloc_id_v_o, alloc_id_o
 //   - Resources: res_avail_i[r][max_dep_bits_p]
-//   - Dequeue :  v_o, deq_id_o, yumi_i
+//   - Dequeue :  deq_v_o, deq_id_o, deq_yumi_i
 //
 // Integration pattern
 // -------------------
-//   // On allocate (when alloc_id_v_o && alloc_yumi_o):
+//   // On allocate (when alloc_id_v_o):
 //   payload_mem[alloc_id_o] <= payload_in;
 //
-//   // On dequeue (when v_o && yumi_i):
+//   // On dequeue (when deq_yumi_i):
 //   payload_out <= payload_mem[deq_id_o];
 //   // (and perform side effects; ID is auto-freed by the scheduler)
 //
@@ -68,15 +68,16 @@ module bsg_scheduler_resource
 
      // ---------- Allocate (enqueue) ----------
      , input                              alloc_v_i
-     , output logic                       alloc_yumi_o     // accept allocation this cycle
      , input  [resources_p-1:0][dep_width_lp-1:0] alloc_sel_i // per-resource dependency indices
-     , output logic                       alloc_id_v_o     // an ID has been allocated this cycle
+
+     , output logic                       alloc_id_v_o     // an ID has been allocated this cycle;
+	                                                       // is also a kind of yumi
      , output logic [id_width_lp-1:0]     alloc_id_o       // allocated ID (binary)
 
      // ---------- Dequeue (issue/dispatch) ----------
-     , output logic                       v_o              // at least one entry ready
+     , output logic                       deq_v_o              // at least one entry ready
      , output logic [id_width_lp-1:0]     deq_id_o         // selected entry ID (binary)
-     , input                              yumi_i           // consumer accepts selected entry
+     , input                              deq_yumi_i           // consumer accepts selected entry
      );
 
    // ----------------------------------------------------------------
@@ -94,8 +95,8 @@ module bsg_scheduler_resource
       ,.active_ids_r_o     (active_ids_r)
       ,.alloc_id_one_hot_o (alloc_id_one_hot)
       ,.alloc_id_v_o       (alloc_id_v)
-      ,.alloc_yumi_i       (alloc_yumi_o)
-      ,.dealloc_ids_i      ( { els_p { yumi_i } } & grants_one_hot )
+      ,.alloc_yumi_i       (alloc_id_v_o)
+      ,.dealloc_ids_i      ( { els_p { deq_yumi_i } } & grants_one_hot )
   );
 
    // One-hot → binary for write row; also provide externally as alloc_id_o
@@ -106,12 +107,11 @@ module bsg_scheduler_resource
        );
 
    assign alloc_id_v_o = alloc_v_i & alloc_id_v; // fire when we actually allocate
-
+   wire wr_entry = alloc_id_v_o;
    // ----------------------------------------------------------------
    // Compact per-entry dependency indices
    // ----------------------------------------------------------------
    logic [els_p-1:0][resources_p-1:0][dep_width_lp-1:0] sel_idx_r;
-   wire wr_entry = alloc_v_i & alloc_id_v; // same cycle as alloc_yumi_o
 
    genvar i, r;
 
@@ -137,15 +137,15 @@ module bsg_scheduler_resource
 
    for (i = 0; i < els_p; i++) 
      begin : gen_ready
-	logic [resources_p-1:0] per_res_ok;
-	for (r = 0; r < resources_p; r++) 
-	  begin : gen_per_res_ok
+	   logic [resources_p-1:0] per_res_ok;
+	     for (r = 0; r < resources_p; r++) 
+	       begin : gen_per_res_ok
              // Guard indexing to avoid X-prop on inactive rows
              assign per_res_ok[r] = active_ids_r[i]
                ? res_avail_i[r][ sel_idx_r[i][r] ]
                : 1'b0;
-	  end
-	assign entry_ready[i] = active_ids_r[i] & (&per_res_ok);
+	       end
+	      assign entry_ready[i] = active_ids_r[i] & (&per_res_ok);
      end
 
    // ----------------------------------------------------------------
@@ -157,19 +157,16 @@ module bsg_scheduler_resource
        ,.reset_i (reset_i)
        ,.reqs_i  (entry_ready)
        ,.grants_o(grants_one_hot)
-       ,.yumi_i  (yumi_i)
+	     ,.yumi_i  (deq_yumi_i)
        );
 
-   assign v_o = |entry_ready;
+   assign deq_v_o = |entry_ready;
    
    // deq_id_o is the selected entry ID
    bsg_encode_one_hot #(.width_p(els_p)) enc_grant
      (.i(grants_one_hot)
       ,.addr_o(deq_id_o)
       ,.v_o() );
-
-  // Allocation handshake (accept when pool supplies an ID)
-  assign alloc_yumi_o = alloc_v_i & alloc_id_v;
 
 endmodule
 
