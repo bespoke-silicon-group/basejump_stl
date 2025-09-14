@@ -205,6 +205,28 @@ module bsg_nonsynth_profiler_client_add #(string suffix_p="")
 
 endmodule
 
+module bsg_nonsynth_profiler_client_max #(string suffix_p="")
+   (input clk_i
+    ,input [31:0] countme_i
+    );
+   
+   string path;
+
+   int 	  counter;
+   
+   initial
+     begin
+	$sformat(path,"%m%s",suffix_p);
+	$root.`BSG_NONSYNTH_PROFILER_CLIENT_TOP.profiler.allocate_counter(path,counter);
+     end
+
+   always @(negedge clk_i)
+     begin
+	$root.`BSG_NONSYNTH_PROFILER_CLIENT_TOP.profiler.max_counter(counter,countme_i);
+     end
+
+endmodule
+
 
 module bsg_nonsynth_profiler_master #(parameter max_counters_p=0)
    ();
@@ -225,6 +247,10 @@ module bsg_nonsynth_profiler_master #(parameter max_counters_p=0)
 
    task add_counter(int counter, int val);
      counters[counter] = counters[counter]+val;
+   endtask
+
+   task max_counter(int counter, int val);
+	 counters[counter] = max(counters[counter],val);
    endtask
 
    
