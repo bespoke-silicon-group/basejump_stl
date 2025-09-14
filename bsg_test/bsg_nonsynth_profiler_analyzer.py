@@ -8,8 +8,8 @@ A Python 2.7 script that:
   1) Parses a schema file (profile.schema) to define category groups.
      - Each line defines a category name, its color, and a list of regular expressions for counters that correspond to the category
      - After 1 or more categories, a line may have a "@" or "#" symbol followed by a group name
-         - Lines that start with "@" define a group that plots each frame individually (no accumulation).
-         - Lines that start with "#" define a group that accumulates counts **up to** each frame
+         - Lines that start with "@" define a group that plots each frame individually (no accumulation), stacked.
+         - Lines that start with "#" define a group that accumulates counts **up to** each frame, stacked.
          - Lines that start with "!" are like @ but line plot not stacked
          - Lines that start with "$" are like # but line plot not stacked
          - Lines with "|" are like "!" but logarithmic.
