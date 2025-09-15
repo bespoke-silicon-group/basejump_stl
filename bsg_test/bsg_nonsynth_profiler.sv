@@ -264,13 +264,13 @@ module bsg_nonsynth_profiler_master #(parameter max_counters_p=0)
    int counter;
 
    task increment_counter(int counter);
-	   if (counters[counter] == 32'sh800000000)
+	   if (counters[counter] == 32'sh8000_0000)
 		   counters[counter] = 0;
 	   counters[counter] = counters[counter]+1;
    endtask
 
    task add_counter(int counter, int val);
-	   if (counters[counter] == 32'sh800000000)
+	   if (counters[counter] == 32'sh8000_0000)
 		   counters[counter] = 0;
 	   counters[counter] = counters[counter]+val;
    endtask
@@ -280,7 +280,7 @@ module bsg_nonsynth_profiler_master #(parameter max_counters_p=0)
    endtask
 
    task min_counter(int counter, int val);
-	   if (counters[counter] == 32'sh800000000)
+	   if (counters[counter] == 32'sh8000_0000)
 		   counters[counter] = 32'sh7FFF_FFFF;	   
 	   counters[counter] = `BSG_MIN(counters[counter],val);
    endtask
