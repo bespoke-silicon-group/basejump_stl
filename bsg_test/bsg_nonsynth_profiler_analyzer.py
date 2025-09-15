@@ -15,7 +15,7 @@ A Python 2.7 script that:
          - Lines with "|" are like "!" but logarithmic.
          - Lines with "&" are like "!" but logarithmic.
          - Lines with "^" apply the max function.
-         - Lines with "%" apply the max function.
+         - Lines with "%" apply the min function.
 
        (prefix sums, so each bar is total up to that frame).
   2) Reads profile.names, which has lines of <counter_number> <hierarchical_path>.
