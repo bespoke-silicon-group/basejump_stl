@@ -371,7 +371,7 @@ def accumulate_category_data(groups, frames, debug_data=False):
                 if (g['min']) :
                    total = (1 << 30);
                 for cnum in cat['counters']:
-                    if (frames_vals[cnum] != 0x80000000):
+                    if (frame_vals[cnum] != 0x80000000):
                       if (g['max']) :
                         total = max(total,frame_vals[cnum])
                       elif (g['min']) :
