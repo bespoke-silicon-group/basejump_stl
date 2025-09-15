@@ -56,9 +56,9 @@ module bsg_crossbar_control_basic_o_by_i
   logic [i_els_p-1:0][o_els_p-1:0] rr_yumi_lo_t;
   
   for (genvar i = 0 ; i < o_els_p; i++) begin: rr
-
-    assign valid_o[i] = |o_select_t[i];
-    assign rr_yumi_li[i] = valid_o[i] & ready_and_i[i];
+    wire temp = |o_select_t[i];
+    assign valid_o[i] = temp;
+    assign rr_yumi_li[i] = temp & ready_and_i[i];
 
     bsg_arb_round_robin #(
       .width_p(i_els_p)
