@@ -29,6 +29,11 @@ module bsg_wormhole_concentrator_in
     ,parameter num_in_p            = 1
     ,parameter debug_lp            = 0
     ,parameter hold_on_valid_p     = 0
+    ,parameter els_p               = 2
+    ,parameter harden_p            = 0
+    // asserts that when v=1 ready_rev_o is always 1
+    // typically used when using credits
+    ,parameter assert_valid_credit_p = 0
    )
 
   (input clk_i
@@ -39,6 +44,10 @@ module bsg_wormhole_concentrator_in
   ,input  [num_in_p-1:0][flit_width_p-1:0] links_data_i
   ,output [num_in_p-1:0]                   links_ready_and_rev_o
 
+   // optional alternative interface, but occurs late, so often may
+   // want to register this
+   ,output [num_in_p-1:0]                   links_credit_late_o
+   
   // concentrated single link
   ,input                     concentrated_link_ready_and_rev_i
   ,output                    concentrated_link_v_o
@@ -49,9 +58,15 @@ module bsg_wormhole_concentrator_in
   // this requires that they have the same layout
   `declare_bsg_wormhole_router_header_s(cord_width_p, len_width_p, bsg_wormhole_router_header_s);
   
-  
   genvar i,j;
 
+`ifndef BSG_HIDE_FROM_SYNTHESIS
+   if (assert_valid_credit_p)
+     always @(posedge clk_i)
+       assert(reset_i !== 0 || ((links_v_i & ~links_ready_and_rev_o) == '0))
+        else $error("incoming data but not ready v_i=%b ready_and_rev_o=%b (%m)",links_v_i,links_ready_and_rev_o);
+`endif   
+  
   /********** From unconcentrated side to concentrated side **********/
   
   wire [num_in_p-1:0][flit_width_p-1:0] fifo_data_lo;
@@ -69,7 +84,9 @@ module bsg_wormhole_concentrator_in
   for (i = 0; i < num_in_p; i=i+1)
     begin: in_ch
 
-      bsg_two_fifo #(.width_p(flit_width_p)) twofer
+      bsg_fifo_1r1w_small #(.width_p(flit_width_p)
+                            ,.els_p(els_p)
+                            ,.harden_p(1)) twofer
         (.clk_i
         ,.reset_i
 
@@ -82,6 +99,8 @@ module bsg_wormhole_concentrator_in
         ,.yumi_i        (yumis[i])
         );
 
+      assign links_credit_late_o[i] = yumis[i];
+      
       bsg_wormhole_router_header_s concentrated_hdr;
       assign concentrated_hdr = fifo_data_lo[i][$bits(bsg_wormhole_router_header_s)-1:0];
 
