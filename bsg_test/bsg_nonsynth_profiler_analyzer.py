@@ -367,17 +367,17 @@ def accumulate_category_data(groups, frames, debug_data=False):
         for g in groups:
             for cat in g['categories']:
                 # sum up relevant counters
+                total = 0;
                 if (g['min']) :
                    total = (1 << 30);
-                else :
-                   total = 0
                 for cnum in cat['counters']:
-                    if (g['max']) :
-                      total = max(total,frame_vals[cnum])
-                    elif (g['min']) :
-                      total = min(total,frame_vals[cnum])
-                    else :
-                      total += frame_vals[cnum]
+                    if (frames_vals[cnum] != 0x80000000):
+                      if (g['max']) :
+                        total = max(total,frame_vals[cnum])
+                      elif (g['min']) :
+                        total = min(total,frame_vals[cnum])
+                      else :
+                        total += frame_vals[cnum]
                 cat['data'][f_idx] = total
 
     # For accumulate=True, convert each cat's data to prefix-sum
@@ -386,7 +386,8 @@ def accumulate_category_data(groups, frames, debug_data=False):
             for cat in g['categories']:
                 running_sum = 0
                 for i in range(num_frames):
-                    running_sum += cat['data'][i]
+                    if (cat['data'][i] != 0x80000000) :
+                       running_sum += cat['data'][i]
                     cat['data'][i] = running_sum
 
     if debug_data:
