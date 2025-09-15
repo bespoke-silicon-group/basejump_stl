@@ -227,6 +227,28 @@ module bsg_nonsynth_profiler_client_max #(string suffix_p="")
 
 endmodule
 
+module bsg_nonsynth_profiler_client_min #(string suffix_p="")
+   (input clk_i
+    ,input [31:0] countme_i
+    );
+   
+   string path;
+
+   int 	  counter;
+   
+   initial
+     begin
+	$sformat(path,"%m%s",suffix_p);
+	$root.`BSG_NONSYNTH_PROFILER_CLIENT_TOP.profiler.allocate_counter(path,counter);
+     end
+
+   always @(negedge clk_i)
+     begin
+	$root.`BSG_NONSYNTH_PROFILER_CLIENT_TOP.profiler.min_counter(counter,countme_i);
+     end
+
+endmodule
+
 
 module bsg_nonsynth_profiler_master #(parameter max_counters_p=0)
    ();
@@ -242,17 +264,27 @@ module bsg_nonsynth_profiler_master #(parameter max_counters_p=0)
    int counter;
 
    task increment_counter(int counter);
-     counters[counter] = counters[counter]+1;
+	   if (counters[counter] == 32'sh800000000)
+		   counters[counter] = 0;
+	   counters[counter] = counters[counter]+1;
    endtask
 
    task add_counter(int counter, int val);
-     counters[counter] = counters[counter]+val;
+	   if (counters[counter] == 32'sh800000000)
+		   counters[counter] = 0;
+	   counters[counter] = counters[counter]+val;
    endtask
 
-   task max_counter(int counter, int val);
+   task max_counter(int counter, int val);  
 	   counters[counter] = `BSG_MAX(counters[counter],val);
    endtask
 
+   task min_counter(int counter, int val);
+	   if (counters[counter] == 32'sh800000000)
+		   counters[counter] = 32'sh7FFF_FFFF;	   
+	   counters[counter] = `BSG_MIN(counters[counter],val);
+   endtask
+	
    
    task allocate_counter(string name, output int counter);
      begin
@@ -260,7 +292,7 @@ module bsg_nonsynth_profiler_master #(parameter max_counters_p=0)
 	if (counter_limit < max_counters_p)
 	  begin
 	     counter = counter_limit;
-	     counters[counter_limit] = 0;
+		 counters[counter_limit] = 32'sh8000_0000;
 	     counter_name[counter_limit] = name;
 	     counter_limit = counter_limit + 1;
 	     sem.put(1);
@@ -293,10 +325,11 @@ module bsg_nonsynth_profiler_master #(parameter max_counters_p=0)
    endtask
 
 // other modules can use this to clear the stats (often after a dump)		
+// we use a sentinel value of MAX_NEG_INT	
    task clear();
     begin
        for (int i = 0; i < counter_limit; i++)
-	 counters[i]=0;
+	      counters[i]=32'sh8000_0000;
     end
   endtask
    
