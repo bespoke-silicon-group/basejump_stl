@@ -250,7 +250,7 @@ module bsg_nonsynth_profiler_master #(parameter max_counters_p=0)
    endtask
 
    task max_counter(int counter, int val);
-	 counters[counter] = max(counters[counter],val);
+	   counters[counter] = `BSG_MAX(counters[counter],val);
    endtask
 
    
