@@ -185,7 +185,8 @@ def parse_schema(schema_file):
                     'title': None,
                     'accumulate': False,
                     'stacked': True,
-                    'log' : False,                  
+                    'log' : False,
+                    'max' : False,                   
                     'categories': []
                 }
             else:
