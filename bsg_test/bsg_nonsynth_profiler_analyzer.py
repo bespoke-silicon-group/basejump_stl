@@ -14,7 +14,8 @@ A Python 2.7 script that:
          - Lines that start with "$" are like # but line plot not stacked
          - Lines with "|" are like "!" but logarithmic.
          - Lines with "&" are like "!" but logarithmic.
-         
+         - Lines with "^" apply the max function.
+         - Lines with "%" apply the max function.
 
        (prefix sums, so each bar is total up to that frame).
   2) Reads profile.names, which has lines of <counter_number> <hierarchical_path>.
@@ -124,6 +125,7 @@ def parse_schema(schema_file):
         'stacked': True,   # Default (overridden upon seeing symbol)
         'log' : False,
         'max' : False,
+        'min' : False,      
         'categories': []
     }
 
@@ -137,7 +139,7 @@ def parse_schema(schema_file):
             if line.startswith('@') or line.startswith('#') \
                or line.startswith('!') or line.startswith('$') \
                or line.startswith('|') or line.startswith('&') \
-               or line.startswith('^'):
+               or line.startswith('^') or line.startswith('%'):
                 
                 parts = line.split(None, 1)
                 if len(parts) < 2:
@@ -176,7 +178,10 @@ def parse_schema(schema_file):
                     current_group['accumulate'] = False
                     current_group['stacked'] = False
                     current_group['max']     = True
-                  
+                elif symbol == '%':
+                    current_group['accumulate'] = False
+                    current_group['stacked'] = False
+                    current_group['min']     = False                  
 
                 groups.append(current_group)
 
@@ -187,7 +192,8 @@ def parse_schema(schema_file):
                     'stacked': True,
                     'log' : False,
                     'max' : False,                   
-                    'categories': []
+                    'min' : False,        
+                  'categories': []
                 }
             else:
                 # Normal category line: <category_name> <color> <regex1> <regex2> ...
@@ -361,10 +367,15 @@ def accumulate_category_data(groups, frames, debug_data=False):
         for g in groups:
             for cat in g['categories']:
                 # sum up relevant counters
-                total = 0
+                if (g['min']) :
+                   total = (1 << 30);
+                else :
+                   total = 0
                 for cnum in cat['counters']:
                     if (g['max']) :
                       total = max(total,frame_vals[cnum])
+                    elif (g['min']) :
+                      total = min(total,frame_vals[cnum])
                     else :
                       total += frame_vals[cnum]
                 cat['data'][f_idx] = total
