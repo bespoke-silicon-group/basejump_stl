@@ -122,6 +122,8 @@ def parse_schema(schema_file):
         'title': None,
         'accumulate': False,
         'stacked': True,   # Default (overridden upon seeing symbol)
+        'log' : False,
+        'max' : False,
         'categories': []
     }
 
@@ -134,7 +136,8 @@ def parse_schema(schema_file):
             # Check if line starts with '@', '#', '!', or '$'
             if line.startswith('@') or line.startswith('#') \
                or line.startswith('!') or line.startswith('$') \
-               or line.startswith('|') or line.startswith('&'):
+               or line.startswith('|') or line.startswith('&') \
+               or line.startswith('^'):
                 
                 parts = line.split(None, 1)
                 if len(parts) < 2:
@@ -147,7 +150,6 @@ def parse_schema(schema_file):
 
                 # Close out the current group
                 current_group['title'] = group_title
-                current_group['log'] = False
 
                 # Decide accumulate vs stacked/grouped
                 if symbol == '@':
@@ -170,6 +172,10 @@ def parse_schema(schema_file):
                     current_group['accumulate'] = True
                     current_group['stacked'] = False
                     current_group['log']     = True
+                elif symbol == '^':
+                    current_group['accumulate'] = False
+                    current_group['stacked'] = False
+                    current_group['max']     = True
                   
 
                 groups.append(current_group)
@@ -356,7 +362,10 @@ def accumulate_category_data(groups, frames, debug_data=False):
                 # sum up relevant counters
                 total = 0
                 for cnum in cat['counters']:
-                    total += frame_vals[cnum]
+                    if (g['max']) :
+                      total = max(total,frame_vals[cnum])
+                    else :
+                      total += frame_vals[cnum]
                 cat['data'][f_idx] = total
 
     # For accumulate=True, convert each cat's data to prefix-sum
