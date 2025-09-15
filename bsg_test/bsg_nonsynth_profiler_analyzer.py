@@ -181,7 +181,7 @@ def parse_schema(schema_file):
                 elif symbol == '%':
                     current_group['accumulate'] = False
                     current_group['stacked'] = False
-                    current_group['min']     = False                  
+                    current_group['min']     = True                  
 
                 groups.append(current_group)
 
