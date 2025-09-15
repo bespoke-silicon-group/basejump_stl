@@ -38,6 +38,7 @@ module bsg_wormhole_router_packet_parser #(parameter `BSG_INV_PARAM(payload_len_
   ,.fifo_yumi_i(fifo_yumi_i)
   ,.reqs_o()
    ,.release_o(expecting_header_r_o)
+   ,.detected_header_o()
   );
 
 endmodule
