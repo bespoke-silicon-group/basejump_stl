@@ -43,6 +43,8 @@ module bsg_wormhole_broadcast
    , input  [1:0] ready_and_i
    );
 
+  localparam debug_lp = 1'b0;
+
    wire v_lo, yumi_li;
    wire [flit_width_p-1:0] data_lo;
 
@@ -126,7 +128,8 @@ module bsg_wormhole_broadcast
    assign yumi_li = ~(|pending_n) & v_lo;
    
 `ifndef BSG_HIDE_FROM_SYNTHESIS
-   always @(negedge clk_i)
+ if (debug_lp)
+	always @(negedge clk_i)
      $display("%t v_lo=%b v_o=%b ready_and_i=%b expecting_header_r_lo=%b yumi_li=%b pending_r=%b pending_n=%b dest_vec_r=%b dest_vec_byp=%b dest_vec_decode=%b"
 	      ,$time,v_lo,v_o,ready_and_i,expecting_header_r_lo,yumi_li,pending_r,pending_n,dest_vec_r,dest_vec_byp,dest_vec_decode);
 `endif
