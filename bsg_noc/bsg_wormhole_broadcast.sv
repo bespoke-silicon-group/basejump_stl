@@ -6,7 +6,8 @@
 // If the coordinate bits are all 1's, the data gets broadcasted
 // to all nodes. If the coordinate bits are 0, it goes to the local node
 // (located at index 0 of the output signals). If the coordinate bits
-// are neither 0 nor all 1's, then the index is decremented and forwarded.
+// are neither 0 nor all 1's, then the coordinate is decremented and the packet
+// is forwarded to the next node (located at index 1).
 //
 // NOTE: A key requirement for this module is that the endpoints
 // must always be able to sink their incoming data independent
@@ -19,6 +20,11 @@
 // may have its own stall dependences, forming a cycle with the dependence
 // chain through the first network.
 //
+// A 2D broadcast network could be created by instantiating an X wormhole broadcast network
+// and then a bunch of Y wormhole networks (creating a kind of fishbone topology), and a small
+// packet translation facilitate that shifts a Y coordinate from the upper header bits into the 
+// lowest coordinate bits. As long as the second networks are all sinking their traffic independently
+// of each other, this would not deadlock.
 
 module bsg_wormhole_broadcast
   #(parameter `BSG_INV_PARAM(width_p)
