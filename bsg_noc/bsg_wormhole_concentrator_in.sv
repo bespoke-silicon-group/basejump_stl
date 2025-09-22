@@ -42,14 +42,14 @@ module bsg_wormhole_concentrator_in
   // unconcentrated multiple links
   ,input  [num_in_p-1:0]                   links_v_i
   ,input  [num_in_p-1:0][flit_width_p-1:0] links_data_i
-  ,output [num_in_p-1:0]                   links_ready_and_rev_o
+  ,output [num_in_p-1:0]                   links_ready_and_rev_o // fixme no need to have and_rev here
 
    // optional alternative interface, but occurs late, so often may
    // want to register this
    ,output [num_in_p-1:0]                   links_credit_late_o
    
   // concentrated single link
-  ,input                     concentrated_link_ready_and_rev_i
+  ,input                     concentrated_link_ready_and_rev_i   // fixme no need to have and_rev here
   ,output                    concentrated_link_v_o
   ,output [flit_width_p-1:0] concentrated_link_data_o
   );
