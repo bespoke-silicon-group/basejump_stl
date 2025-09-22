@@ -27,28 +27,28 @@
 // of each other, this would not deadlock.
 
 module bsg_wormhole_broadcast
-  #(parameter `BSG_INV_PARAM(width_p)
-    , `BSG_INV_PARAM(payload_len_bits_p)
-    , `BSG_INV_PARAM(coord_bits_p)
+	#(parameter `BSG_INV_PARAM(flit_width_p)  // naming is consistent with bsg_wormhold_concentrator_in
+    , `BSG_INV_PARAM(len_width_p)
+    , `BSG_INV_PARAM(cord_width_p)
     )
   (input clk_i
    , input reset_i
 
    , input v_i
-   , input [width_p-1:0] data_i
+   , input [flit_width_p-1:0] data_i
    , output ready_and_o
 
    , output [1:0] v_o
-   , output [1:0][width_p-1:0] data_o
+   , output [1:0][flit_width_p-1:0] data_o
    , input  [1:0] ready_and_i
    );
 
    wire v_lo, yumi_li;
-   wire [width_p-1:0] data_lo;
+   wire [flit_width_p-1:0] data_lo;
 
-   logic [width_p-1:0] data_lo_mod;
+   logic [flit_width_p-1:0] data_lo_mod;
    
-   bsg_two_fifo #(.width_p(width_p)) twofer
+   bsg_two_fifo #(.width_p(flit_width_p)) twofer
      (.clk_i(clk_i)
       ,.reset_i(reset_i)
 
@@ -65,11 +65,11 @@ module bsg_wormhole_broadcast
    logic [1:0] dest_vec_decode, dest_vec_r, dest_vec_byp;
    logic [1:0] pending_n, pending_r, pending_byp;
 
-   bsg_wormhole_router_packet_parser #(.payload_len_bits_p(payload_len_bits_p)) pp
+   bsg_wormhole_router_packet_parser #(.payload_len_bits_p(len_width_p)) pp
    (.clk_i                (clk_i)
     ,.reset_i             (reset_i)
     ,.fifo_v_i            (v_lo)
-    ,.fifo_payload_len_i  (data_lo[coord_bits_p+:payload_len_bits_p])
+    ,.fifo_payload_len_i  (data_lo[cord_width_p+:len_width_p])
     ,.fifo_yumi_i         (yumi_li)
     ,.expecting_header_r_o(expecting_header_r_lo)
     );
@@ -77,11 +77,11 @@ module bsg_wormhole_broadcast
    // decode destination vector
    always_comb 
      begin
-	case (data_lo[coord_bits_p-1:0])
-	  coord_bits_p'(0) :       dest_vec_decode = 2'b01;
-	  { coord_bits_p { 1'b1 }}:  dest_vec_decode = 2'b11;
+	case (data_lo[cord_width_p-1:0])
+	  cord_width_p'(0) :       dest_vec_decode = 2'b01;
+	  { cord_width_p { 1'b1 }}:  dest_vec_decode = 2'b11;
 	  default:                   dest_vec_decode = 2'b10;
-	endcase // case (data_lo[coord_bits_p-1:0])
+	endcase // case (data_lo[cord_width_p-1:0])
 
 	// if the data is not valid, zero it out
 	if (!v_lo)
@@ -102,7 +102,7 @@ module bsg_wormhole_broadcast
 
 	// modify header, decrement coordinate
 	if (expecting_header_r_lo && dest_vec_decode == 2'b10)
-	  data_lo_mod[0+:coord_bits_p] = data_lo[0+:coord_bits_p]-1'b1;
+	  data_lo_mod[0+:cord_width_p] = data_lo[0+:cord_width_p]-1'b1;
      end
 
    assign data_o = { data_lo_mod, data_lo };
