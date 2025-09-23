@@ -112,6 +112,12 @@
   `define BSG_HIDE_FROM_SYNTHESIS
 `endif
 
+`ifdef SYNTHESIS
+`define BSG_HIDE_FROM_SYNTHESIS_EXPR(val)
+`else
+`define BSG_HIDE_FROM_SYNTHESIS_EXPR(val) val
+`endif
+
 `define BSG_STRINGIFY(x) `"x`"
 
 
