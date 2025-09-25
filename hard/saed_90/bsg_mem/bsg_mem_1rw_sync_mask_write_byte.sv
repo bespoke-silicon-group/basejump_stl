@@ -5,7 +5,7 @@
 //
 
 `define bsg_mem_1rw_sync_mask_write_byte_macro(bits,words)  \
-  if (els_p == words && data_width_p == bits)    \
+  if (els_p == words && width_p == bits)    \
     begin: macro                            \
        saed90_``bits``x``words``_1P_BM mem  \
          (.CE1  (clk_lo)                     \
@@ -20,9 +20,9 @@
     end
 
 module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p )
-                                         ,parameter `BSG_INV_PARAM(data_width_p )
+                                         ,parameter `BSG_INV_PARAM(width_p )
                                          ,parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
-                                         ,parameter write_mask_width_lp = data_width_p>>3
+                                         ,parameter write_mask_width_lp = width_p>>3
                                          ,parameter enable_clock_gating_p=1'b0
                                          )
   (input                           clk_i
@@ -30,9 +30,9 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p )
   ,input                           v_i
   ,input                           w_i
   ,input [addr_width_lp-1:0]       addr_i
-  ,input [data_width_p-1:0]        data_i
+  ,input [width_p-1:0]        data_i
   ,input [write_mask_width_lp-1:0] write_mask_i
-  ,output [data_width_p-1:0]       data_o
+  ,output [width_p-1:0]       data_o
   );
 
    wire clk_lo;
@@ -58,7 +58,7 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p )
     begin: notmacro
 
       // Instantiate a synthesizale 1rw sync mask write byte
-      bsg_mem_1rw_sync_mask_write_byte_synth #(.els_p(els_p), .data_width_p(data_width_p)) synth 
+      bsg_mem_1rw_sync_mask_write_byte_synth #(.els_p(els_p), .width_p(width_p)) synth 
        (.clk_i(clk_lo)
        ,.reset_i
        ,.v_i
@@ -74,12 +74,12 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(els_p )
 
 `ifndef BSG_HIDE_FROM_SYNTHESIS
   always_comb
-    assert (data_width_p % 8 == 0)
+    assert (width_p % 8 == 0)
       else $error("data width should be a multiple of 8 for byte masking");
 
   initial
     begin
-      $display("## bsg_mem_1rw_sync_mask_write_byte: instantiating data_width_p=%d, els_p=%d (%m)",data_width_p,els_p);
+      $display("## bsg_mem_1rw_sync_mask_write_byte: instantiating width_p=%d, els_p=%d (%m)",width_p,els_p);
     end
 `endif
    
