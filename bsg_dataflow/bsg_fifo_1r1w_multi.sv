@@ -10,6 +10,14 @@
 //
 // Note: there is a one-cycle bubble if the FIFO is full
 // before new data will be accepted.
+//
+// The analysis of the multi-fifo versus a multiple FIFOs is
+// interesting. Unquestionably, multiple independent FIFOs have
+// more bandwidth. And the multi-FIFO has the area/power overhead of the 
+// pointer SRAM because it stores the data as multiple linked lists.
+//
+// One example where the multi-FIFO could be useful is where you
+// have a wide range in the occupancy of the FIFOs. 
 
 `include "bsg_defines.sv"
 
