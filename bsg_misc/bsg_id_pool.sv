@@ -24,6 +24,8 @@ module bsg_id_pool
     // id to return
     , input dealloc_v_i
     , input [id_width_lp-1:0] dealloc_id_i    
+
+    , output empty_o
   );
 
   bsg_id_pool_with_reserve #(.els_p(els_p)) idpr
@@ -35,6 +37,7 @@ module bsg_id_pool
    ,.dealloc_v_i(dealloc_v_i)
    ,.dealloc_id_i(dealloc_id_i)
    ,.reserve_i('0)
+   ,.empty_o(empty_o)
   );
                              
 
