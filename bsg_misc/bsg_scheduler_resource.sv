@@ -5,7 +5,7 @@
 // --------
 // A level-sensitive, multi-resource scheduler built from BaseJump STL blocks:
 // * bsg_id_pool_dealloc_alloc_one_hot : manages free/active entry IDs
-// * bsg_arb_round_robin               : fair selection among ready entries
+// * bsg_arb_round_robin               : fairish/starvation free selection among ready entries
 //
 // Each entry chooses one bit (index) from each resource’s availability bitmap.
 // An entry is ready when all chosen bits are 1. Ready entries are arbitrated
