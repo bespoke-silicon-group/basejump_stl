@@ -57,7 +57,8 @@ module bsg_scheduler_resource
   #(parameter `BSG_INV_PARAM(resources_p)
     ,parameter `BSG_INV_PARAM(els_p)
     ,parameter `BSG_INV_PARAM(max_dep_bits_p)
-    ,localparam dep_width_lp = `BSG_SAFE_CLOG2(max_dep_bits_p)
+    ,parameter output_res_p=1
+    ,localparam dep_width_p = `BSG_SAFE_CLOG2(max_dep_bits_p)
     ,localparam id_width_lp  = `BSG_SAFE_CLOG2(els_p)
     )
    ( input  clk_i
@@ -67,54 +68,58 @@ module bsg_scheduler_resource
      , input  [resources_p-1:0][max_dep_bits_p-1:0] res_avail_i
 
      // ---------- Allocate (enqueue) ----------
-     , input                              alloc_v_i
-     , input  [resources_p-1:0][dep_width_lp-1:0] alloc_sel_i // per-resource dependency indices
+     , input                                     alloc_v_i
+     , input  [resources_p-1:0][dep_width_p-1:0] alloc_sel_i // per-resource dependency indices
 
-     , output logic                       alloc_id_v_o     // an ID has been allocated this cycle;
-	                                                       // is also a kind of yumi
-     , output logic [id_width_lp-1:0]     alloc_id_o       // allocated ID (binary)
+     , output logic                       alloc_yumi_o        // an ID has been allocated this cycle;
+	                                                      // is also a kind of yumi
+     , output logic [id_width_lp-1:0]     alloc_id_o          // allocated ID (binary)
 
      // ---------- Dequeue (issue/dispatch) ----------
-     , output logic                       deq_v_o          // at least one entry ready
-     , output logic [id_width_lp-1:0]     deq_id_o         // selected entry ID (binary)
-     , input                              deq_yumi_i       // consumer accepts selected entry
+     , output logic                                    deq_v_o    // at least one entry ready
+     , output logic [id_width_lp-1:0]                  deq_id_o   // encoded selected entry ID (binary)
+     , output logic [resources_p-1:0][dep_width_p-1:0] deq_res_o  // resources used by selected ID
+     , input                                           deq_yumi_i // consumer accepts selected entry
      );
 
    // ----------------------------------------------------------------
    // ID pool (manage active entries)
    // ----------------------------------------------------------------
    logic [els_p-1:0] active_ids_r;
-   logic [els_p-1:0] alloc_id_one_hot;
-   logic             alloc_id_v;
+   logic [els_p-1:0] alloc_id_one_hot_lo;
+   logic             alloc_id_v_lo;
 
    logic [els_p-1:0] grants_one_hot;
+
+   // user wants to allocate, and id pool has something available to allocate
+   wire wr_entry = alloc_v_i & alloc_id_v_lo;
+   assign alloc_yumi_o = wr_entry;
+
    
   bsg_id_pool_dealloc_alloc_one_hot #(.els_p(els_p)) idpool
     ( .clk_i               (clk_i)
       ,.reset_i            (reset_i)
       ,.active_ids_r_o     (active_ids_r)
 
-	  ,.alloc_id_v_o       (alloc_id_v)
-	  ,.alloc_id_one_hot_o (alloc_id_one_hot)
+      ,.alloc_id_v_o       (alloc_id_v_lo)
+      ,.alloc_id_one_hot_o (alloc_id_one_hot_lo)
 
-      ,.alloc_yumi_i       (alloc_id_v_o)
+      ,.alloc_yumi_i       (wr_entry)
       ,.dealloc_ids_i      ( { els_p { deq_yumi_i } } & grants_one_hot )
   );
 
    // One-hot → binary for write row; also provide externally as alloc_id_o
    bsg_encode_one_hot #(.width_p(els_p)) enc_alloc_id
-     ( .i(alloc_id_one_hot)
+     ( .i(alloc_id_one_hot_lo)
        ,.addr_o(alloc_id_o)
        ,.v_o()
        );
 
-   // user wants to allocate, and id pool has something available to allocate
-   assign alloc_id_v_o = alloc_v_i & alloc_id_v;
-   wire wr_entry = alloc_id_v_o;
+
    // ----------------------------------------------------------------
    // Compact per-entry dependency indices
    // ----------------------------------------------------------------
-   logic [els_p-1:0][resources_p-1:0][dep_width_lp-1:0] sel_idx_r;
+   logic [els_p-1:0][resources_p-1:0][dep_width_p-1:0] sel_idx_r;
 
    genvar i, r;
 
@@ -124,7 +129,7 @@ module bsg_scheduler_resource
          begin : res
            always_ff @(posedge clk_i) 
              begin
-               if (wr_entry && alloc_id_one_hot[i]) 
+               if (wr_entry && alloc_id_one_hot_lo[i]) 
                  sel_idx_r[i][r] <= alloc_sel_i[r];
 	          end
          end
@@ -160,6 +165,21 @@ module bsg_scheduler_resource
        ,.yumi_i  (deq_yumi_i)
      );
 
+   if (output_res_p)
+     begin : res
+	bsg_mux_one_hot #(.width_p(resources_p*dep_width_p)
+			  ,.els_p(els_p)
+			  ) mux1h
+	  (.data_i(sel_idx_r)
+	   ,.sel_one_hot_i(grants_one_hot)
+	   ,.data_o(deq_res_o)
+	   );
+     end
+   else
+     begin : nores
+        assign deq_res_o = '0;
+     end
+   
    assign deq_v_o = |entry_ready;
    
    // deq_id_o is the selected entry ID
