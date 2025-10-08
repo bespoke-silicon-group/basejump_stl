@@ -13,7 +13,8 @@
 //
 // todo: maybe use some hardcoded case statements to optimize small cases
 //
-//
+// consider also using bsg_round_robin_n_to_1, which has a valid/ready wrapper
+// around an arb.
 
 `include "bsg_defines.sv"
 
