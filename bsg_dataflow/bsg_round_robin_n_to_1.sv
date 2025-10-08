@@ -11,7 +11,9 @@
 // module blocks until the head FIFO is valid, or if it just
 // goes to the next one.
 //
-//
+// watch out for: if you plan to sit on the output, processing, for a number of 
+// cycles before dequeing, the arrival of a new item on one of the
+// input channels can cause the value to change, resulting in an error.
 
 `include "bsg_defines.sv"
 
