@@ -95,7 +95,7 @@ module bsg_id_pool_dealloc_alloc_one_hot
       if (alloc_yumi_i)
         assert(alloc_id_v_o) else $error("Handshaking error. alloc_yumi_i raised without alloc_v_o.");
  
-      $display("bsg_id_pool_one_hot: allocated_r=%b dealloc_ids_i=%b alloc_id_v_o=%b", allocated_r, dealloc_ids_i, alloc_id_v_o);
+      //$display("bsg_id_pool_one_hot: allocated_r=%b dealloc_ids_i=%b alloc_id_v_o=%b", allocated_r, dealloc_ids_i, alloc_id_v_o);
     end
   end
 `endif
