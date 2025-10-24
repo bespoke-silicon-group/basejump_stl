@@ -64,7 +64,7 @@ module bsg_cache_non_blocking_data_mem
   assign addr_li = {data_mem_pkt.way_id, data_mem_pkt.addr};
 
   bsg_mem_1rw_sync_mask_write_byte #(
-    .data_width_p(data_width_p)
+    .width_p(data_width_p)
     ,.els_p(block_size_in_words_p*sets_p*ways_p)
     ,.latch_last_read_p(1)
   ) data_mem (
