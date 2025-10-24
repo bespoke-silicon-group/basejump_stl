@@ -66,6 +66,7 @@ module bsg_mem_1r1w_sync_banked
       bsg_mem_1r1w_sync #(
         .width_p(bank_width_lp)
         ,.els_p(bank_depth_lp)
+        ,.latch_last_read_p(latch_last_read_p)
         ,.read_write_same_addr_p(read_write_same_addr_p)
       ) bank (
         .clk_i(clk_i)
