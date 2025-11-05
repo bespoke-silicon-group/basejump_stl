@@ -148,6 +148,10 @@ module bsg_fifo_reorder
       if (write_v_i)
         assert(~valid_r[write_id_i]) else $error("Cannot write to an already valid data.");
 
+      if (0)
+        $display("enq=%b deq=%b write_v_i=%b write_id_i=%h write_data_i=%h valid_r[write_id_i]=%b valid_r[rptr_r]=%b rptr_r=%h wptr_r=%h valid_r=%h fifo_deq_v_lo=%b full=%b empty=%b fifo_alloc_yumi_i=%b fifo_deq_yumi_i=%b",
+               enq,   deq,   write_v_i,   write_id_i,   write_data_i,   valid_r[write_id_i],   valid_r[rptr_r],   rptr_r,   wptr_r,   valid_r,   fifo_deq_v_lo,   full,   empty,   fifo_alloc_yumi_i,fifo_deq_yumi_i);
+
     end    
   end
 
