@@ -1,10 +1,5 @@
 //*===========================================================================
 //
-//   FILE: get_stim.c:
-//   
-//   Author: Sam Larsen
-//   Date: Thu Sep 10 20:17:20 1998
-//
 //   Function:  PLI routine to get stimulus from an input data file,
 //and apply the values to input signals of the testbench
 //
