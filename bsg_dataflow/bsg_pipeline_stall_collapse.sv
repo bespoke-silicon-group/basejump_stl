@@ -16,12 +16,13 @@ module bsg_pipeline_stall_collapse #(
    (input clk_i
     ,input reset_i
     ,input valid_i
-    ,output ready_and_o
+    ,input global_stall_i
+	,output ready_and_o
 
-    ,output valid_o
     ,input ready_and_i
     ,output [stages_p-1:0] en_o 
-    );
+    ,output [stages_p-1:0] valid_o   // valid_o[0] is data coming out of pipeline
+   );
    
    genvar 				   i,k;
 
@@ -46,7 +47,7 @@ if (debug_p)
      $display("v_r: %b v_r_scan_lo: %b",v_r_lo,v_r_scan_lo);
 `endif
    
-   assign valid_o = v_r_lo[0];
+   assign valid_o = v_r_lo;
    assign ready_and_o = ready_and_adj[stages_p-1];
    
    for (i = 0; i < stages_p; i+=1)
@@ -54,7 +55,7 @@ if (debug_p)
 	// enable register if we are shifting, or if there
 	// was nothing in the register to begin with
 	
-	assign ready_and_adj[i] = ready_and_i | ~v_r_scan_lo[i];
+		 assign ready_and_adj[i] = (ready_and_i | ~v_r_scan_lo[i]) & ~global_stall_i;
 		
 	if (skip_p[i]) 
         begin : kip
@@ -72,7 +73,7 @@ if (debug_p)
 `ifndef BSG_HIDE_FROM_SYNTHESIS   	     
 	 if (debug_p)		  
 	     always @(negedge clk_i)
-	       $display("@i=%d shift_v=%d shift_data=%d",i,shift_v,shift_data);
+            $display("@i=%d shift_v=%d shift_data=%d global_stall=%b",i,shift_v,shift_data,global_stall_i);
 `endif
 	     bsg_dff_reset_en #(.width_p(1)) v_reg
 	     (.clk_i(clk_i)
