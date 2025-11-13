@@ -265,7 +265,6 @@ module bsg_tag_master_decentralized
         assign clients_o[i].clk   = clk_i;
         assign clients_o[i].op    = node_id_match & clients_decode[i] & bsg_tag_n.op;
         assign clients_o[i].param = node_id_match & clients_decode[i] & bsg_tag_n.param;
-        assign clients_o[i].en    = 1'b1;
      end
 
    
