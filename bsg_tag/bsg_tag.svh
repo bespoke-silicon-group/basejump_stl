@@ -15,8 +15,8 @@
 // each multibit register has a nodeID, and a customized length, and is implemented with a bsg_tag_client
 //
 // when you stream data into the chip, a single bsg_tag_master module demultiplexes the incoming packets 
-// according to nodeID out to the bsg_tag_client nodes. each client has a 4-wire connection to the master
-// -- the shared tag clock, the failsafe enable, and a two-bit opcode. the opcode encodes 4 operations:
+// according to nodeID out to the bsg_tag_client nodes. each client has a 3-wire connection to the master
+// -- the shared tag clock, and a two-bit opcode. the opcode encodes 4 operations:
 // shift in 1, shift in 0, reset, and noop. A noop immediately following a shift indicates that the 
 // transfer is done and should be sent across the CDC.
 //
