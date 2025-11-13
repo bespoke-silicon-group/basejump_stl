@@ -249,7 +249,6 @@ module bsg_tag_master
 
 
         assign clients_r_o[i].clk = clk_i;
-        assign clients_r_o[i].en  = en_i;
      end
 
    
