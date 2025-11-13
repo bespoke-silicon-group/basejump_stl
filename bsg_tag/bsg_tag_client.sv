@@ -34,10 +34,7 @@
 // 2. deassert async_reset
 // 3. go
 //
-//
-// note: operation of bsg_tag_i.en is only valid if there
-// are no attempts to transmit data on bsg_tag at the same time
-// otherwise it is a CDC violation.
+
 
 `include "bsg_defines.sv"
 
@@ -128,7 +125,7 @@ module bsg_tag_client
    // note: bsg_tag_i.en is wired from off-chip and should be
    // only toggled when there is no attempt to transmit data
 
-   wire  recv_new = (recv_toggle_r ^ recv_toggle_n) & bsg_tag_i.en;
+   wire  recv_new = (recv_toggle_r ^ recv_toggle_n);
 
    // we had to add recv_new_r_r to pipeline the receive logic
    // and the fanout to the recv_data_r register at the maximum
@@ -153,7 +150,7 @@ module bsg_tag_client
    // the recv_en_i signal has to come after the flop
    // so this works even when the clock is not working
 
-   assign recv_new_r_o    = recv_new_r_r & bsg_tag_i.en;
+   assign recv_new_r_o    = recv_new_r_r;
    assign recv_data_r_o   = recv_data_r;
 
 endmodule
