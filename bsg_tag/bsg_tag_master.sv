@@ -31,7 +31,6 @@ module bsg_tag_master
    (
     // from pins
     input clk_i
-    ,input en_i
     ,input data_i
     , output bsg_tag_s [els_p-1:0] clients_r_o
     );
