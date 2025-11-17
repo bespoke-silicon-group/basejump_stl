@@ -81,7 +81,7 @@ module bsg_link_source_sync_downstream
    //
 
    wire  io_async_fifo_full, io_async_fifo_enq;
-   logic io_fifo_valid_lo, io_fifo_ready_lo;
+   logic io_fifo_ready_lo;
    logic [channel_width_p-1:0] io_async_fifo_data;
 
 `ifndef BSG_HIDE_FROM_SYNTHESIS
@@ -100,6 +100,7 @@ module bsg_link_source_sync_downstream
   end
   else
   begin: harden
+    logic io_fifo_valid_lo;
     assign io_async_fifo_enq  = io_fifo_valid_lo & ~io_async_fifo_full;
     bsg_fifo_1r1w_small
    #(.width_p (channel_width_p)
