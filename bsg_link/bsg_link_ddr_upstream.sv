@@ -138,8 +138,9 @@ module bsg_link_ddr_upstream
     // core side signals
     logic core_ss_valid_li, core_ss_ready_lo, core_ss_data_nonzero;
     logic [phy_width_lp-1:0] core_ss_data_top;
-    logic [1:0][channel_width_p/2-1:0] core_ss_data_bottom;
-
+//    logic [1:0][channel_width_p/2-1:0] core_ss_data_bottom;
+     logic [channel_width_p-1:0] core_ss_data_bottom;
+     
     // io side signals
     logic io_oddr_valid_li, io_oddr_ready_lo;
     logic [1:0][phy_width_lp-1:0] io_oddr_data_raw, io_oddr_data_final;
@@ -163,10 +164,10 @@ module bsg_link_ddr_upstream
       begin
         // core side encode
         assign core_ss_data_nonzero = ~(core_piso_data_lo[i][channel_width_p/2-1:0] == '0);
-        assign core_ss_data_bottom[1] = (core_ss_data_nonzero)?
+        assign core_ss_data_bottom[channel_width_p-1:channel_width_p/2] = (core_ss_data_nonzero)?
               {      core_piso_data_lo[i][channel_width_p-0-1:channel_width_p/2]}
             : {1'b1, core_piso_data_lo[i][channel_width_p-1-1:channel_width_p/2]};
-        assign core_ss_data_bottom[0] = (core_ss_data_nonzero)?
+        assign core_ss_data_bottom[channel_width_p/2-1:0] = (core_ss_data_nonzero)?
               {core_piso_data_lo[i][channel_width_p/2-1:0]                          }
             : {core_piso_data_lo[i][channel_width_p-1], (channel_width_p/2-1)'(1'b1)};
         // When idle, assign 1'b0 to certain wires to represent invalid state

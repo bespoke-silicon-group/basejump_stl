@@ -107,13 +107,14 @@ module bsg_link_ddr_downstream
     // io side signals
     logic io_iddr_valid_lo, io_iddr_data_v;
     logic [phy_width_lp-1:0] io_iddr_data_top;
-    logic [1:0][channel_width_p/2-1:0] io_iddr_data_bottom;
-
+    logic [channel_width_p-1:0] io_iddr_data_bottom_whole;
+     
     // core side signals
     logic core_ss_valid_lo, core_ss_yumi_li, core_ss_data_nonzero;
     logic [phy_width_lp-1:0] core_ss_data_top;
-    logic [1:0][channel_width_p/2-1:0] core_ss_data_bottom;
-
+    logic [channel_width_p-1:0]       core_ss_data_bottom_whole;
+    
+     
     // connect to sipo
     assign core_ss_yumi_li = core_sipo_yumi_lo;
     assign core_sipo_valid_li[i] = core_ss_valid_lo;
@@ -121,11 +122,15 @@ module bsg_link_ddr_downstream
 
     if (use_encode_p == 0)
       begin
-        assign core_sipo_data_li[i][channel_width_p-1:0] = core_ss_data_bottom;
+        assign core_sipo_data_li[i][channel_width_p-1:0] = core_ss_data_bottom_whole;
         assign io_iddr_valid_lo = io_iddr_data_v;
       end
     else
       begin
+        // watch out if channel_width_p is not a multiple of two in this case though
+        wire [1:0][channel_width_p/2-1:0] io_iddr_data_bottom = io_iddr_data_bottom_whole;
+        wire [1:0][channel_width_p/2-1:0] core_ss_data_bottom = core_ss_data_bottom_whole;
+        
         // core side decode
         assign core_sipo_data_li[i][channel_width_p-1:channel_width_p/2] = 
             (core_ss_data_nonzero)?
@@ -145,7 +150,7 @@ module bsg_link_ddr_downstream
     ) iddr_phy
     (.clk_i   (io_clk_i[i])
     ,.data_i  ({io_valid_i[i], io_data_i[i]})
-    ,.data_r_o({io_iddr_data_top, io_iddr_data_v, io_iddr_data_bottom})
+    ,.data_r_o({io_iddr_data_top, io_iddr_data_v, io_iddr_data_bottom_whole})
     );
 
     bsg_link_source_sync_downstream
@@ -161,12 +166,12 @@ module bsg_link_ddr_downstream
 
     // source synchronous input channel; coming from chip edge
     ,.io_clk_i         (io_clk_i[i])
-    ,.io_data_i        ({io_iddr_data_top, io_iddr_data_v, io_iddr_data_bottom})
+    ,.io_data_i        ({io_iddr_data_top, io_iddr_data_v, io_iddr_data_bottom_whole})
     ,.io_valid_i       (io_iddr_valid_lo)
     ,.core_token_r_o   (core_token_r_o[i])
 
     // going into core; uses core clock
-    ,.core_data_o      ({core_ss_data_top, core_ss_data_nonzero, core_ss_data_bottom})
+    ,.core_data_o      ({core_ss_data_top, core_ss_data_nonzero, core_ss_data_bottom_whole})
     ,.core_valid_o     (core_ss_valid_lo)
     ,.core_yumi_i      (core_ss_yumi_li)
     );
