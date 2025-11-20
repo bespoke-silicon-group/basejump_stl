@@ -72,8 +72,10 @@
 
 `ifdef VERILATOR
 `define BSG_HIDE_FROM_VERILATOR(val)
+`define BSG_VERILATOR_ONLY(val) val
 `else
 `define BSG_HIDE_FROM_VERILATOR(val) val
+`define BSG_VERILATOR_ONLY(val)
 `endif
 
 `ifdef SYNTHESIS
