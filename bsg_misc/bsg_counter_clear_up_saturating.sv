@@ -11,7 +11,6 @@ module bsg_counter_clear_up_saturating #(parameter `BSG_INV_PARAM(max_val_p)
 			     ,parameter init_val_p   = `BSG_UNDEFINED_IN_SIM('0)
                              ,parameter ptr_width_lp =
                              `BSG_SAFE_CLOG2(max_val_p+1)
-			     ,parameter disable_overflow_warning_p = 0
                              )
    (input  clk_i
     , input reset_i
