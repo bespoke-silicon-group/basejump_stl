@@ -9,6 +9,9 @@
 // allocating and then de-allocating the same id in the same cycle
 // is okay.
 
+// note: because of X-pessimism, alloc_id_i and free_id_i
+// cannot be X for correct simulation.
+
 module bsg_scoreboard_dealloc_alloc #(`BSG_INV_PARAM(els_p))
    (input clk_i
     , input reset_i
