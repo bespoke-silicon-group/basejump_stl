@@ -1,6 +1,6 @@
 `include "bsg_defines.sv"
 
-// MBT popcount
+// MBT popcount (also know as countones, population count, or sideways add)
 //
 // 10-24-14
 //
