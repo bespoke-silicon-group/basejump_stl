@@ -59,9 +59,9 @@ always_ff @(posedge clk_i)
 
 `ifndef BSG_HIDE_FROM_SYNTHESIS
   always_ff @ (negedge clk_i) begin
-	  if ((count_o==max_val_p) & up_i & ~down_i  & (reset_i === 1'b0))
+	  if ((count_o==max_val_p) && up_i && !down_i  && (reset_i === 1'b0))
 		  $display("%m error: counter overflow at time %t", $time);
-	  if ((count_o==0)          & down_i & ~up_i & (reset_i === 1'b0))
+	  if ((count_o==0)         && down_i && !up_i && (reset_i === 1'b0))
 		  $display("%m error: counter underflow at time %t", $time);
   end
 `endif
