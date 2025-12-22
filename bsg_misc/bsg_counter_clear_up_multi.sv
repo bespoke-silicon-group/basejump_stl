@@ -13,7 +13,7 @@ module bsg_counter_clear_up_multi #(parameter `BSG_INV_PARAM(max_val_p)
 				    // which is a bad choice for a counter
 				    ,parameter init_val_p   = `BSG_UNDEFINED_IN_SIM('0)
 				    ,parameter ptr_width_lp =
-				    `BSG_SAFE_CLOG2(max_val_p+1)
+				    `BSG_WIDTH(max_val_p)
 				    ,parameter disable_overflow_warning_p = 0
 				    ,parameter els_p
 				    )
