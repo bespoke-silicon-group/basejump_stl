@@ -47,7 +47,7 @@
 // maps 1 --> 1 instead of to 0
 `define BSG_SAFE_CLOG2(x) ( (((x)==1) || ((x)==0))? 1 : $clog2((x)))
 `define BSG_IS_POW2(x) ( (1 << $clog2(x)) == (x))
-`define BSG_WIDTH(x) ($clog2(x+1))
+`define BSG_WIDTH(x) ($clog2({1'b0, x}+1))
 `define BSG_SAFE_MINUS(x, y) (((x)<(y))) ? 0 : ((x)-(y))
 
 // these "SAFE" shift functions handle a common problem that shifts default to 32 bits wide even
