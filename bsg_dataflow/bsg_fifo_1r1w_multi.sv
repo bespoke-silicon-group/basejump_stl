@@ -18,6 +18,11 @@
 //
 // One example where the multi-FIFO could be useful is where you
 // have a wide range in the occupancy of the FIFOs. 
+//
+// Typically you would only use this module at the endpoint of a NOC
+// where you are demultiplexing data from a single incoming channel,
+// since if this were used in a router inside the NOC, the various
+// channels would interfere with each other, potentially causing a deadlock.
 
 `include "bsg_defines.sv"
 
