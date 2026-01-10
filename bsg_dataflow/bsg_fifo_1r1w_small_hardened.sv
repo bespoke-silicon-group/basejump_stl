@@ -82,6 +82,8 @@ module bsg_fifo_1r1w_small_hardened #(parameter `BSG_INV_PARAM(width_p)
       ,.empty_o  (empty)
       );
 
+   wire read_mem_en = deque && (wptr_r != rptr_n);
+  
    // sync read
    // Prioritize write when reading/writing same address
    bsg_mem_1r1w_sync #(.width_p (width_p)
@@ -89,6 +91,7 @@ module bsg_fifo_1r1w_small_hardened #(parameter `BSG_INV_PARAM(width_p)
                       // MBT: this should be zero
                       ,.read_write_same_addr_p(0)
                       ,.disable_collision_warning_p(0)
+                       ,.latch_last_read_p(1)
                       ,.harden_p(1)
                       ) mem_1r1w_sync
      (.clk_i
@@ -96,7 +99,7 @@ module bsg_fifo_1r1w_small_hardened #(parameter `BSG_INV_PARAM(width_p)
       ,.w_v_i    (enque     )
       ,.w_addr_i (wptr_r    )
       ,.w_data_i (data_i    )
-      ,.r_v_i    (~read_write_same_addr_n)
+      ,.r_v_i    (read_mem_en & ~read_write_same_addr_n)
       ,.r_addr_i (rptr_n    )
       ,.r_data_o (data_o_mem)
       );
