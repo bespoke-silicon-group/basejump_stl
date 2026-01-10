@@ -61,10 +61,15 @@ module bsg_fifo_1r1w_small_hardened_cov
     cp_yumi: coverpoint yumi_i;
     cp_rptr: coverpoint rptr_r;
     cp_wptr: coverpoint wptr_r;
+    /*
+    *** OBSOLETE BELOW ***
     // If read write same address happened in previous cycle, fifo should
     // only have one element in current cycle, which contradicts with the
     // condition that fifo is full.
     cp_rwsa: coverpoint read_write_same_addr_r {illegal_bins ig = {1};}
+    *** OBSOLETE ABOVE ***
+    */
+    cp_rwsa: coverpoint read_write_same_addr_r;
 
     cross_all: cross cp_v, cp_yumi, cp_rptr, cp_wptr, cp_rwsa {
       // by definition, fifo full means r/w pointers are the same
@@ -85,6 +90,8 @@ module bsg_fifo_1r1w_small_hardened_cov
     cross_all: cross cp_v, cp_yumi, cp_rptr, cp_wptr, cp_rwsa {
       // by definition, r/w pointers are different when fifo is non-empty & non-full
       illegal_bins ig0 = cross_all with (cp_rptr == cp_wptr);
+      /*
+      *** OBSOLETE BELOW ***
       // If read write same address happened in previous cycle, fifo should
       // only have one element in current cycle. Write-pointer should be
       // read-pointer plus one (or wrapped-around).
@@ -93,6 +100,8 @@ module bsg_fifo_1r1w_small_hardened_cov
         && (cp_wptr - cp_rptr != 1)
         && (cp_wptr - cp_rptr != 1-els_p)
         );
+      *** OBSOLETE ABOVE ***
+      */
     }
 
   endgroup

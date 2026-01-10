@@ -2,7 +2,7 @@ module testbench();
 
   parameter width_p = 32;  
   parameter els_p = 4;
-  parameter test_els_p = 350;
+  parameter test_els_p = 4500;
 
   // clock and reset
   bit clk, reset;
