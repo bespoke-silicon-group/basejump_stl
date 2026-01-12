@@ -1,6 +1,8 @@
 //
 // bsg_fifo_1r1w_small_hardened_multi
 //
+// AI-generated: ChatGPT 5.2 Pro (codex)
+//
 // Multi-virtualized version of bsg_fifo_1r1w_small_hardened.
 // Each virtual fifo has its own tracker and bypass flag/register, but all data
 // lives in a single shared bsg_mem_1r1w_sync.
