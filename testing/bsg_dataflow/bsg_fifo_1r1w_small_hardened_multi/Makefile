@@ -7,9 +7,10 @@ $(warning $(BASEJUMP_STL))
 TOP      ?= tb_bsg_fifo_1r1w_small_hardened_multi
 
 WIDTH    ?= 32
-ELS      ?= 4
-FIFOS    ?= 4
-NUM_CYC  ?= 200000
+ELS      ?= 3
+FIFOS    ?= 2
+NUM_CYC  ?= 50000
+#NUM_CYC  ?= 20
 ENQ_PCT  ?= 60
 DEQ_PCT  ?= 60
 

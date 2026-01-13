@@ -74,6 +74,228 @@ module tb_bsg_fifo_1r1w_small_hardened_multi
   logic [SEQ_WIDTH-1:0] enq_seq [FIFOS];
   int unsigned enq_cnt [FIFOS];
   int unsigned deq_cnt [FIFOS];
+  int unsigned occ_pre [FIFOS];
+  int unsigned occ_post [FIFOS];
+  int signed   occ_delta [FIFOS];
+  logic [FIFOS-1:0] enq_evt, deq_evt, bypass_evt;
+  logic [FIFOS-1:0] wptr_wrap_pre, rptr_wrap_pre;
+  int unsigned wptr_pos_pre [FIFOS];
+  int unsigned rptr_pos_pre [FIFOS];
+
+  covergroup fifo_cg (int fifo_id) with function sample
+    (int occ_pre, int occ_post, int delta, bit enq, bit deq, bit bypass,
+     bit wptr_wrap, bit rptr_wrap, int wptr_pos, int rptr_pos);
+    option.per_instance = 1;
+    occ_pre_cp: coverpoint occ_pre { bins occ_bins[] = {[0:ELS]}; }
+    occ_post_cp: coverpoint occ_post { bins occ_bins[] = {[0:ELS]}; }
+    delta_cp: coverpoint delta
+      { bins dec = {-1};
+        bins hold = {0};
+        bins inc = {1};
+      }
+    op_cp: coverpoint {enq, deq}
+      { bins idle = {2'b00};
+        bins enq_only = {2'b10};
+        bins deq_only = {2'b01};
+        bins enq_deq = {2'b11};
+      }
+    bypass_cp: coverpoint bypass { bins no = {1'b0}; bins yes = {1'b1}; }
+    wptr_wrap_cp: coverpoint wptr_wrap { bins no = {1'b0}; bins yes = {1'b1}; }
+    rptr_wrap_cp: coverpoint rptr_wrap { bins no = {1'b0}; bins yes = {1'b1}; }
+    wptr_pos_cp: coverpoint wptr_pos { bins pos[] = {[0:ELS-1]}; }
+    rptr_pos_cp: coverpoint rptr_pos { bins pos[] = {[0:ELS-1]}; }
+    occ_delta_x: cross occ_pre_cp, delta_cp
+      {
+        ignore_bins underflow =
+          binsof(occ_pre_cp) intersect {0} && binsof(delta_cp.dec);
+        ignore_bins overflow =
+          binsof(occ_pre_cp) intersect {ELS} && binsof(delta_cp.inc);
+      }
+    occ_op_x: cross occ_pre_cp, op_cp
+      {
+        ignore_bins deq_on_empty =
+          binsof(occ_pre_cp) intersect {0} && binsof(op_cp.deq_only);
+        ignore_bins deq_on_empty_enq =
+          binsof(occ_pre_cp) intersect {0} && binsof(op_cp.enq_deq);
+        ignore_bins enq_on_full =
+          binsof(occ_pre_cp) intersect {ELS} && binsof(op_cp.enq_only);
+        ignore_bins enq_on_full_deq =
+          binsof(occ_pre_cp) intersect {ELS} && binsof(op_cp.enq_deq);
+      }
+    occ_rptr_x: cross occ_pre_cp, rptr_pos_cp;
+    occ_wptr_x: cross occ_pre_cp, wptr_pos_cp;
+  endgroup
+
+  fifo_cg fifo_cov [FIFOS];
+
+  localparam bit full_ctrl_cov_lp = (FIFOS == 2) && (ELS == 3);
+  localparam bit wrap_cov_lp = (ELS > 1);
+
+  if (full_ctrl_cov_lp) begin: full_ctrl_cov_gen
+    covergroup full_ctrl_cg with function sample
+      (int occ0, int occ1, int enq_sel, int deq_sel, bit bypass0, bit bypass1);
+      option.per_instance = 1;
+      occ0_cp: coverpoint occ0 { bins occ_bins[] = {[0:ELS]}; }
+      occ1_cp: coverpoint occ1 { bins occ_bins[] = {[0:ELS]}; }
+      enq_sel_cp: coverpoint enq_sel
+        { bins idle = {0};
+          bins fifo0 = {1};
+          bins fifo1 = {2};
+          ignore_bins invalid = {3};
+        }
+      deq_sel_cp: coverpoint deq_sel
+        { bins idle = {0};
+          bins fifo0 = {1};
+          bins fifo1 = {2};
+          ignore_bins invalid = {3};
+        }
+      bypass0_cp: coverpoint bypass0 { bins no = {1'b0}; bins yes = {1'b1}; }
+      bypass1_cp: coverpoint bypass1 { bins no = {1'b0}; bins yes = {1'b1}; }
+      full_ctrl_x: cross occ0_cp, occ1_cp, enq_sel_cp, deq_sel_cp, bypass0_cp, bypass1_cp
+        {
+          ignore_bins enq0_full =
+            binsof(occ0_cp) intersect {ELS} && binsof(enq_sel_cp.fifo0);
+          ignore_bins enq1_full =
+            binsof(occ1_cp) intersect {ELS} && binsof(enq_sel_cp.fifo1);
+          ignore_bins deq0_empty =
+            binsof(occ0_cp) intersect {0} && binsof(deq_sel_cp.fifo0);
+          ignore_bins deq1_empty =
+            binsof(occ1_cp) intersect {0} && binsof(deq_sel_cp.fifo1);
+          ignore_bins bypass0_without_enq0_idle =
+            binsof(bypass0_cp.yes) && binsof(enq_sel_cp.idle);
+          ignore_bins bypass0_without_enq0_fifo1 =
+            binsof(bypass0_cp.yes) && binsof(enq_sel_cp.fifo1);
+          ignore_bins bypass0_when_occ0_ge2 =
+            binsof(occ0_cp) intersect {[2:ELS]} && binsof(enq_sel_cp.fifo0)
+            && binsof(bypass0_cp.yes);
+          ignore_bins bypass0_must_be_1_empty =
+            binsof(occ0_cp) intersect {0} && binsof(enq_sel_cp.fifo0)
+            && binsof(bypass0_cp.no);
+          ignore_bins bypass0_must_be_1_deq0 =
+            binsof(occ0_cp) intersect {1} && binsof(enq_sel_cp.fifo0)
+            && binsof(deq_sel_cp.fifo0) && binsof(bypass0_cp.no);
+          ignore_bins bypass0_not_with_deq_idle =
+            binsof(occ0_cp) intersect {1} && binsof(enq_sel_cp.fifo0)
+            && binsof(deq_sel_cp.idle) && binsof(bypass0_cp.yes);
+          ignore_bins bypass0_not_with_deq1 =
+            binsof(occ0_cp) intersect {1} && binsof(enq_sel_cp.fifo0)
+            && binsof(deq_sel_cp.fifo1) && binsof(bypass0_cp.yes);
+          ignore_bins bypass1_without_enq1_idle =
+            binsof(bypass1_cp.yes) && binsof(enq_sel_cp.idle);
+          ignore_bins bypass1_without_enq1_fifo0 =
+            binsof(bypass1_cp.yes) && binsof(enq_sel_cp.fifo0);
+          ignore_bins bypass1_when_occ1_ge2 =
+            binsof(occ1_cp) intersect {[2:ELS]} && binsof(enq_sel_cp.fifo1)
+            && binsof(bypass1_cp.yes);
+          ignore_bins bypass1_must_be_1_empty =
+            binsof(occ1_cp) intersect {0} && binsof(enq_sel_cp.fifo1)
+            && binsof(bypass1_cp.no);
+          ignore_bins bypass1_must_be_1_deq1 =
+            binsof(occ1_cp) intersect {1} && binsof(enq_sel_cp.fifo1)
+            && binsof(deq_sel_cp.fifo1) && binsof(bypass1_cp.no);
+          ignore_bins bypass1_not_with_deq_idle =
+            binsof(occ1_cp) intersect {1} && binsof(enq_sel_cp.fifo1)
+            && binsof(deq_sel_cp.idle) && binsof(bypass1_cp.yes);
+          ignore_bins bypass1_not_with_deq0 =
+            binsof(occ1_cp) intersect {1} && binsof(enq_sel_cp.fifo1)
+            && binsof(deq_sel_cp.fifo0) && binsof(bypass1_cp.yes);
+        }
+    endgroup
+
+    covergroup full_ptr_cg with function sample
+      (int wptr0, int rptr0, int wptr1, int rptr1, int enq_sel, int deq_sel);
+      option.per_instance = 1;
+      wptr0_cp: coverpoint wptr0 { bins pos[] = {[0:ELS-1]}; }
+      rptr0_cp: coverpoint rptr0 { bins pos[] = {[0:ELS-1]}; }
+      wptr1_cp: coverpoint wptr1 { bins pos[] = {[0:ELS-1]}; }
+      rptr1_cp: coverpoint rptr1 { bins pos[] = {[0:ELS-1]}; }
+      enq_sel_cp: coverpoint enq_sel
+        { bins idle = {0};
+          bins fifo0 = {1};
+          bins fifo1 = {2};
+          ignore_bins invalid = {3};
+        }
+      deq_sel_cp: coverpoint deq_sel
+        { bins idle = {0};
+          bins fifo0 = {1};
+          bins fifo1 = {2};
+          ignore_bins invalid = {3};
+        }
+      full_ptr_x: cross wptr0_cp, rptr0_cp, wptr1_cp, rptr1_cp, enq_sel_cp, deq_sel_cp
+        {
+          ignore_bins enq_deq0_eq_0 =
+            binsof(enq_sel_cp.fifo0) && binsof(deq_sel_cp.fifo0)
+            && binsof(wptr0_cp) intersect {0} && binsof(rptr0_cp) intersect {0};
+          ignore_bins enq_deq0_eq_1 =
+            binsof(enq_sel_cp.fifo0) && binsof(deq_sel_cp.fifo0)
+            && binsof(wptr0_cp) intersect {1} && binsof(rptr0_cp) intersect {1};
+          ignore_bins enq_deq0_eq_2 =
+            binsof(enq_sel_cp.fifo0) && binsof(deq_sel_cp.fifo0)
+            && binsof(wptr0_cp) intersect {2} && binsof(rptr0_cp) intersect {2};
+          ignore_bins enq_deq1_eq_0 =
+            binsof(enq_sel_cp.fifo1) && binsof(deq_sel_cp.fifo1)
+            && binsof(wptr1_cp) intersect {0} && binsof(rptr1_cp) intersect {0};
+          ignore_bins enq_deq1_eq_1 =
+            binsof(enq_sel_cp.fifo1) && binsof(deq_sel_cp.fifo1)
+            && binsof(wptr1_cp) intersect {1} && binsof(rptr1_cp) intersect {1};
+          ignore_bins enq_deq1_eq_2 =
+            binsof(enq_sel_cp.fifo1) && binsof(deq_sel_cp.fifo1)
+            && binsof(wptr1_cp) intersect {2} && binsof(rptr1_cp) intersect {2};
+        }
+    endgroup
+
+    full_ctrl_cg full_ctrl_cov;
+    full_ptr_cg full_ptr_cov;
+
+    initial begin
+      full_ctrl_cov = new();
+      full_ptr_cov = new();
+    end
+
+    always_ff @(negedge clk) begin
+      if (!reset) begin
+        int enq_sel;
+        int deq_sel;
+        unique case (enq_evt)
+          2'b00: enq_sel = 0;
+          2'b01: enq_sel = 1;
+          2'b10: enq_sel = 2;
+          default: enq_sel = 3;
+        endcase
+        unique case (deq_evt)
+          2'b00: deq_sel = 0;
+          2'b01: deq_sel = 1;
+          2'b10: deq_sel = 2;
+          default: deq_sel = 3;
+        endcase
+        full_ctrl_cov.sample(occ_pre[0], occ_pre[1], enq_sel, deq_sel,
+                             bypass_evt[0], bypass_evt[1]);
+        full_ptr_cov.sample(wptr_pos_pre[0], rptr_pos_pre[0],
+                            wptr_pos_pre[1], rptr_pos_pre[1],
+                            enq_sel, deq_sel);
+      end
+    end
+  end
+
+  covergroup global_cg with function sample
+    (bit enq, bit deq, int enq_id, int deq_id, bit bypass);
+    option.per_instance = 1;
+    op_cp: coverpoint {enq, deq}
+      { bins idle = {2'b00};
+        bins enq_only = {2'b10};
+        bins deq_only = {2'b01};
+        bins enq_deq = {2'b11};
+      }
+    enq_id_cp: coverpoint enq_id iff (enq)
+      { bins ids[] = {[0:FIFOS-1]}; }
+    deq_id_cp: coverpoint deq_id iff (deq)
+      { bins ids[] = {[0:FIFOS-1]}; }
+    same_cp: coverpoint (enq_id == deq_id) iff (enq && deq)
+      { bins same = {1'b1}; bins diff = {1'b0}; }
+    bypass_cp: coverpoint bypass { bins no = {1'b0}; bins yes = {1'b1}; }
+  endgroup
+
+  global_cg global_cov;
 
   // Data generator: {fifo_id, seq}
   always_comb begin
@@ -86,6 +308,12 @@ module tb_bsg_fifo_1r1w_small_hardened_multi
     seed = 32'hBADC0FFE;
     void'($value$plusargs("seed=%d", seed));
     void'($urandom(seed));
+  end
+
+  initial begin
+    global_cov = new();
+    for (int i = 0; i < FIFOS; i++)
+      fifo_cov[i] = new(i);
   end
 
   // ------------------------ Phase control -----------------------
@@ -292,6 +520,18 @@ module tb_bsg_fifo_1r1w_small_hardened_multi
       end
     end
     else begin
+      for (int i = 0; i < FIFOS; i++) begin
+        occ_pre[i] = exp_q[i].size();
+        wptr_wrap_pre[i] = ((enq_cnt[i] % ELS) == (ELS-1));
+        rptr_wrap_pre[i] = ((deq_cnt[i] % ELS) == (ELS-1));
+        wptr_pos_pre[i] = enq_cnt[i] % ELS;
+        rptr_pos_pre[i] = deq_cnt[i] % ELS;
+        enq_evt[i] = do_enq_now && ($unsigned(enq_id_i) == i);
+        deq_evt[i] = yumi_i[i];
+        bypass_evt[i] = enq_evt[i]
+          && ((occ_pre[i] == 0) || ((occ_pre[i] == 1) && deq_evt[i]));
+      end
+
       if (do_deq_now) begin
         if (exp_q[deq_id_i].size() == 0) begin
           $error("[%0t] TB underflow on fifo %0d", $time, deq_id_i);
@@ -305,6 +545,16 @@ module tb_bsg_fifo_1r1w_small_hardened_multi
         exp_q[enq_id_i].push_back(data_i);
         enq_seq[enq_id_i] <= enq_seq[enq_id_i] + 1'b1;
         enq_cnt[enq_id_i] <= enq_cnt[enq_id_i] + 1;
+      end
+
+      global_cov.sample(do_enq_now, do_deq_now, enq_id_i, deq_id_i, |bypass_evt);
+      for (int i = 0; i < FIFOS; i++) begin
+        occ_post[i] = exp_q[i].size();
+        occ_delta[i] = $signed(occ_post[i]) - $signed(occ_pre[i]);
+        fifo_cov[i].sample(occ_pre[i], occ_post[i], occ_delta[i],
+                           enq_evt[i], deq_evt[i], bypass_evt[i],
+                           wptr_wrap_pre[i], rptr_wrap_pre[i],
+                           wptr_pos_pre[i], rptr_pos_pre[i]);
       end
     end
   end
@@ -324,6 +574,87 @@ module tb_bsg_fifo_1r1w_small_hardened_multi
       end
       if ((enq_cnt[i] - deq_cnt[i]) != 0) begin
         $error("FIFO %0d count mismatch: enq=%0d deq=%0d", i, enq_cnt[i], deq_cnt[i]);
+        $fatal(1);
+      end
+      if (fifo_cov[i].occ_pre_cp.get_coverage() < 100.0) begin
+        $error("FIFO %0d occ_pre coverage incomplete (%0.2f%%)", i,
+               fifo_cov[i].occ_pre_cp.get_coverage());
+        $fatal(1);
+      end
+      if (fifo_cov[i].occ_post_cp.get_coverage() < 100.0) begin
+        $error("FIFO %0d occ_post coverage incomplete (%0.2f%%)", i,
+               fifo_cov[i].occ_post_cp.get_coverage());
+        $fatal(1);
+      end
+      if (fifo_cov[i].occ_delta_x.get_coverage() < 100.0) begin
+        $error("FIFO %0d occ_delta coverage incomplete (%0.2f%%)", i,
+               fifo_cov[i].occ_delta_x.get_coverage());
+        $fatal(1);
+      end
+      if (fifo_cov[i].occ_op_x.get_coverage() < 100.0) begin
+        $error("FIFO %0d occ_op coverage incomplete (%0.2f%%)", i,
+               fifo_cov[i].occ_op_x.get_coverage());
+        $fatal(1);
+      end
+      if (wrap_cov_lp) begin
+        if (fifo_cov[i].occ_rptr_x.get_coverage() < 100.0) begin
+          $error("FIFO %0d occ_rptr coverage incomplete (%0.2f%%)", i,
+                 fifo_cov[i].occ_rptr_x.get_coverage());
+          $fatal(1);
+        end
+        if (fifo_cov[i].occ_wptr_x.get_coverage() < 100.0) begin
+          $error("FIFO %0d occ_wptr coverage incomplete (%0.2f%%)", i,
+                 fifo_cov[i].occ_wptr_x.get_coverage());
+          $fatal(1);
+        end
+      end
+      if (wrap_cov_lp) begin
+        if (fifo_cov[i].wptr_wrap_cp.get_coverage() < 100.0) begin
+          $error("FIFO %0d wptr_wrap coverage incomplete (%0.2f%%)", i,
+                 fifo_cov[i].wptr_wrap_cp.get_coverage());
+          $fatal(1);
+        end
+        if (fifo_cov[i].rptr_wrap_cp.get_coverage() < 100.0) begin
+          $error("FIFO %0d rptr_wrap coverage incomplete (%0.2f%%)", i,
+                 fifo_cov[i].rptr_wrap_cp.get_coverage());
+          $fatal(1);
+        end
+      end
+    end
+    if (global_cov.op_cp.get_coverage() < 100.0) begin
+      $error("Global op coverage incomplete (%0.2f%%)",
+             global_cov.op_cp.get_coverage());
+      $fatal(1);
+    end
+    if (global_cov.bypass_cp.get_coverage() < 100.0) begin
+      $error("Global bypass coverage incomplete (%0.2f%%)",
+             global_cov.bypass_cp.get_coverage());
+      $fatal(1);
+    end
+    if (global_cov.enq_id_cp.get_coverage() < 100.0) begin
+      $error("Global enq_id coverage incomplete (%0.2f%%)",
+             global_cov.enq_id_cp.get_coverage());
+      $fatal(1);
+    end
+    if (global_cov.deq_id_cp.get_coverage() < 100.0) begin
+      $error("Global deq_id coverage incomplete (%0.2f%%)",
+             global_cov.deq_id_cp.get_coverage());
+      $fatal(1);
+    end
+    if ((FIFOS > 1) && (global_cov.same_cp.get_coverage() < 100.0)) begin
+      $error("Global enq/deq same/diff coverage incomplete (%0.2f%%)",
+             global_cov.same_cp.get_coverage());
+      $fatal(1);
+    end
+    if (full_ctrl_cov_lp) begin
+      if (full_ctrl_cov_gen.full_ctrl_cov.full_ctrl_x.get_coverage() < 100.0) begin
+        $error("Full control cross coverage incomplete (%0.2f%%)",
+               full_ctrl_cov_gen.full_ctrl_cov.full_ctrl_x.get_coverage());
+        $fatal(1);
+      end
+      if (full_ctrl_cov_gen.full_ptr_cov.full_ptr_x.get_coverage() < 100.0) begin
+        $error("Full pointer/control cross coverage incomplete (%0.2f%%)",
+               full_ctrl_cov_gen.full_ptr_cov.full_ptr_x.get_coverage());
         $fatal(1);
       end
     end
