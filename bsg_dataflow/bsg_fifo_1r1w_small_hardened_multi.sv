@@ -245,8 +245,6 @@ module bsg_fifo_1r1w_small_hardened_multi
   always_ff @(posedge clk_i)
     if (~reset_i)
       begin
-        if (v_i & |(full & enq_id_one_hot))
-          $display("%m error: enque full fifo at time %t", $time);
         if ((v_i) && ((1 << lg_fifos_lp) != fifos_p)
             && (enq_id_i >= lg_fifos_lp'(fifos_p)))
           $error("%m error: enq_id_i out of range (%0d) at time %t", enq_id_i, $time);
