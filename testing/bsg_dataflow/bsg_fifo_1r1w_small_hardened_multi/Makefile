@@ -12,7 +12,6 @@ FIFOS    ?= 4
 NUM_CYC  ?= 200000
 ENQ_PCT  ?= 60
 DEQ_PCT  ?= 60
-READY_THEN_VALID ?= 0
 
 SEED     ?= 1
 
@@ -46,8 +45,7 @@ PVALUES := \
   -pvalue+$(TOP).FIFOS=$(FIFOS) \
   -pvalue+$(TOP).NUM_CYC=$(NUM_CYC) \
   -pvalue+$(TOP).ENQ_PCT=$(ENQ_PCT) \
-  -pvalue+$(TOP).DEQ_PCT=$(DEQ_PCT) \
-  -pvalue+$(TOP).READY_THEN_VALID=$(READY_THEN_VALID)
+  -pvalue+$(TOP).DEQ_PCT=$(DEQ_PCT)
 
 LINT_FLAGS := -lint=all,noVCDE,TFIPC-L
 
@@ -93,7 +91,7 @@ help:
 	@echo ""
 	@echo "Knobs (override on cmdline):"
 	@echo "  WIDTH=<bits> ELS=<depth> FIFOS=<count> NUM_CYC=<cycles>"
-	@echo "  ENQ_PCT=<pct> DEQ_PCT=<pct> READY_THEN_VALID=<0|1> SEED=<int>"
+	@echo "  ENQ_PCT=<pct> DEQ_PCT=<pct> SEED=<int>"
 	@echo ""
 	@echo "Examples:"
 	@echo "  make run FIFOS=8 ELS=8 SEED=42"
