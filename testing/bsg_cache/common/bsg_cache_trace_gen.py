@@ -54,6 +54,9 @@ AMOMAX_D = 0b110110
 AMOMINU_D = 0b110111
 AMOMAXU_D = 0b111000
 
+IO_LW = 0b111001
+IO_SW = 0b111010    
+
 class BsgCacheTraceGen:
 
   # constructor
