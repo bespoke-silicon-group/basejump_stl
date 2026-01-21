@@ -27,13 +27,13 @@ module bsg_sync_sync_unit
 
   logic bsg_SYNC_1_r, bsg_SYNC_2_r;
 
-  DFQD4BWP7T30P140ULVT hard_sync_int1_BSG_SYNC
+  DFQD4BWP7T30P140ULVT hard_sync_int1_BSG_SYNC1
    (.CP(oclk_i)
    ,.D(iclk_data_i)
    ,.Q(bsg_SYNC_1_r)
    );
 
-  DFQD4BWP7T30P140ULVT hard_sync_int2_BSG_SYNC
+  DFQD4BWP7T30P140ULVT hard_sync_int2_BSG_SYNC2
    (.CP(oclk_i)
    ,.D(bsg_SYNC_1_r)
    ,.Q(bsg_SYNC_2_r)
