@@ -10,6 +10,10 @@ module bsg_reduce #(parameter `BSG_INV_PARAM(width_p )
                   , parameter and_p = 0
                   , parameter or_p = 0
                   , parameter harden_p = 0
+                  // Used to specify hard/ version to e.g. select a
+                  //   balanced mux reduction vs a synthesized
+                  //   mux tree
+                  , parameter balanced_p = 0
                   )
    (input    [width_p-1:0] i
     , output o
