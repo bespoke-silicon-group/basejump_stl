@@ -5,9 +5,9 @@
 //
 
 `define bsg_mem_1rw_sync_macro_byte(words,bits,lgEls,mux) \
-if (els_p == words && data_width_p == bits)               \
+if (els_p == words && width_p == bits)               \
   begin: macro                                            \
-    wire [data_width_p-1:0] wen;                          \
+    wire [width_p-1:0] wen;                          \
     genvar i;                                             \
     for(i=0;i<write_mask_width_lp;i++)                    \
       assign wen[8*i+:8] = {8{write_mask_i[i]}};          \
@@ -24,9 +24,9 @@ if (els_p == words && data_width_p == bits)               \
   end
 
 `define bsg_mem_1rf_sync_macro_byte(words,bits,lgEls,mux) \
-if (els_p == words && data_width_p == bits)               \
+if (els_p == words && width_p == bits)               \
   begin: macro                                            \
-    wire [data_width_p-1:0] wen;                          \
+    wire [width_p-1:0] wen;                          \
     genvar i;                                             \
     for(i=0;i<write_mask_width_lp;i++)                    \
       assign wen[8*i+:8] = {8{write_mask_i[i]}};          \
@@ -42,10 +42,10 @@ if (els_p == words && data_width_p == bits)               \
   end
 
 `define bsg_mem_1rf_sync_macro_byte_banks(words,bits,lgEls,mux) \
-if (els_p == 2*``words`` && data_width_p == bits)               \
+if (els_p == 2*``words`` && width_p == bits)               \
   begin: macro                                                  \
-    wire [data_width_p-1:0] wen;                                \
-    wire [data_width_p-1:0] bank_data [0:1];                    \
+    wire [width_p-1:0] wen;                                \
+    wire [width_p-1:0] bank_data [0:1];                    \
     logic sel;                                                  \
     always_ff @(posedge clk_i)                                  \
       sel <= addr_i[0];                                         \
@@ -76,9 +76,9 @@ if (els_p == 2*``words`` && data_width_p == bits)               \
 module bsg_mem_1rw_sync_mask_write_byte
 
  #(parameter `BSG_INV_PARAM(els_p )
-  ,parameter `BSG_INV_PARAM(data_width_p )
+  ,parameter `BSG_INV_PARAM(width_p )
   ,parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
-  ,parameter write_mask_width_lp = data_width_p>>3
+  ,parameter write_mask_width_lp = width_p>>3
   )
 
   (input                           clk_i
@@ -88,11 +88,11 @@ module bsg_mem_1rw_sync_mask_write_byte
   ,input                           w_i
 
   ,input [addr_width_lp-1:0]       addr_i
-  ,input [data_width_p-1:0]        data_i
+  ,input [width_p-1:0]        data_i
 
   ,input [write_mask_width_lp-1:0] write_mask_i
 
-  ,output [data_width_p-1:0] data_o
+  ,output [width_p-1:0] data_o
   );
 
   wire unused = reset_i;
@@ -107,7 +107,7 @@ module bsg_mem_1rw_sync_mask_write_byte
     begin  : notmacro
 
        bsg_mem_1rw_sync_mask_write_byte_synth
-	 #(.els_p(els_p), .data_width_p(data_width_p))
+	 #(.els_p(els_p), .width_p(width_p))
        synth (.*);
 
     end
@@ -116,12 +116,12 @@ module bsg_mem_1rw_sync_mask_write_byte
 `ifndef BSG_HIDE_FROM_SYNTHESIS
 
   always_comb
-    assert (data_width_p % 8 == 0)
+    assert (width_p % 8 == 0)
       else $error("data width should be a multiple of 8 for byte masking");
 
    initial
      begin
-        $display("## bsg_mem_1rw_sync_mask_write_byte: instantiating data_width_p=%d, els_p=%d (%m)",data_width_p,els_p);
+        $display("## bsg_mem_1rw_sync_mask_write_byte: instantiating width_p=%d, els_p=%d (%m)",width_p,els_p);
      end
 
 `endif
