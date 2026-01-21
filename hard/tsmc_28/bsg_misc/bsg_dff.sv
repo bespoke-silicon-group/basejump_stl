@@ -6,11 +6,11 @@ if (harden_p && (width_p==bits) && (strength_p==strength)) \
   begin: macro                                                \
     for (genvar j = 0; j < width_p; j++)                      \
       begin : d                                               \
-        DFQD``strength``BWP7T40P140 d (.CP(clk_i), .D(data_i[j]), .Q(data_o[j])); \
+        DFQD``strength``BWP7T40P140 d_BSG_DONT_TOUCH (.CP(clk_i), .D(data_i[j]), .Q(data_o[j])); \
       end                                                     \
   end
 
-module bsg_dff #(`BSG_INV_PARAM(width_p), harden_p=1, strength_p=1)
+module bsg_dff #(`BSG_INV_PARAM(width_p), harden_p=0, strength_p=1)
    (input   clk_i
     ,input  [width_p-1:0] data_i
     ,output [width_p-1:0] data_o
@@ -95,7 +95,8 @@ module bsg_dff #(`BSG_INV_PARAM(width_p), harden_p=1, strength_p=1)
    `bsg_dff_macro(4,1) else
    `bsg_dff_macro(3,1) else
    `bsg_dff_macro(2,1) else
-   `bsg_dff_macro(1,1) else
+   `bsg_dff_macro(1,1)
+   else
    `bsg_dff_macro(40,2) else
    `bsg_dff_macro(39,2) else
    `bsg_dff_macro(38,2) else
@@ -135,7 +136,8 @@ module bsg_dff #(`BSG_INV_PARAM(width_p), harden_p=1, strength_p=1)
    `bsg_dff_macro(4,2) else
    `bsg_dff_macro(3,2) else
    `bsg_dff_macro(2,2) else
-   `bsg_dff_macro(1,2) else
+   `bsg_dff_macro(1,2)
+   else
    `bsg_dff_macro(40,4) else
    `bsg_dff_macro(39,4) else
    `bsg_dff_macro(38,4) else
@@ -175,12 +177,14 @@ module bsg_dff #(`BSG_INV_PARAM(width_p), harden_p=1, strength_p=1)
    `bsg_dff_macro(4,4) else
    `bsg_dff_macro(3,4) else
    `bsg_dff_macro(2,4) else
-   `bsg_dff_macro(1,4) else
+   `bsg_dff_macro(1,4)
+   else
     `bsg_dff_macro(32,2)
     else
    `bsg_dff_macro(32,8)
      else
      begin: notmacro
+       `BSG_SYNTH_HARDEN_ATTEMPT(harden_mp)
         reg [width_p-1:0] data_r;
 
         assign data_o = data_r;

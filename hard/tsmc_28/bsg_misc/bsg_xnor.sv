@@ -6,7 +6,7 @@ if (harden_p && (width_p==bits))                  \
   begin: macro                                    \
     for (genvar j = 0; j < width_p; j++)          \
       begin : x                                   \
-        XNR2D4BWP7T40P140 x (.A1(a_i[j]), .A2(b_i[j]), .ZN(o[j])); \
+        XNR2D4BWP7T40P140 x_BSG_RESIZE_ONLY (.A1(a_i[j]), .A2(b_i[j]), .ZN(o[j])); \
       end                                                     \
   end
 
@@ -53,7 +53,7 @@ module bsg_xnor #(parameter `BSG_INV_PARAM(width_p)
    `bsg_xnor_macro(2) else
    `bsg_xnor_macro(1) else
        begin :notmacro
-          initial assert(harden_p==0) else $error("## %m wanted to harden but no macro");
+          `BSG_SYNTH_HARDEN_ATTEMPT(harden_p)
 
           assign o = ~(a_i ^ b_i);
       end
