@@ -1,0 +1,1012 @@
+{
+    "design_name": "bsg_assembler_in", 
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v", 
+        "basejump_stl/bsg_comm_link/bsg_assembler_in.v", 
+        "basejump_stl/bsg_dataflow/bsg_round_robin_fifo_to_fifo.v", 
+        "basejump_stl/bsg_dataflow/bsg_make_2D_array.v", 
+        "basejump_stl/bsg_misc/bsg_rotate_right.v", 
+        "basejump_stl/bsg_misc/bsg_circular_ptr.v", 
+        "basejump_stl/bsg_misc/bsg_scan.v", 
+        "basejump_stl/bsg_misc/bsg_popcount.v", 
+        "basejump_stl/bsg_misc/bsg_thermometer_count.v", 
+        "basejump_stl/bsg_misc/bsg_encode_one_hot.v", 
+        "basejump_stl/bsg_dataflow/bsg_two_fifo.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v"
+    ], 
+    "run_config": [
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size small at a clock period (in num of FO4) = 30", 
+            "design_size": "small", 
+            "name": "bsg_assembler_in_small_clk_30_FO4", 
+            "parameters": [
+                "num_out_p=5", 
+                "num_in_p=10", 
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size small at a clock period (in num of FO4) = 40", 
+            "design_size": "small", 
+            "name": "bsg_assembler_in_small_clk_40_FO4", 
+            "parameters": [
+                "num_out_p=5", 
+                "num_in_p=10", 
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size small at a clock period (in num of FO4) = 50", 
+            "design_size": "small", 
+            "name": "bsg_assembler_in_small_clk_50_FO4", 
+            "parameters": [
+                "num_out_p=5", 
+                "num_in_p=10", 
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size small at a clock period (in num of FO4) = 60", 
+            "design_size": "small", 
+            "name": "bsg_assembler_in_small_clk_60_FO4", 
+            "parameters": [
+                "num_out_p=5", 
+                "num_in_p=10", 
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size small at a clock period (in num of FO4) = 70", 
+            "design_size": "small", 
+            "name": "bsg_assembler_in_small_clk_70_FO4", 
+            "parameters": [
+                "num_out_p=5", 
+                "num_in_p=10", 
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size small at a clock period (in num of FO4) = 80", 
+            "design_size": "small", 
+            "name": "bsg_assembler_in_small_clk_80_FO4", 
+            "parameters": [
+                "num_out_p=5", 
+                "num_in_p=10", 
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size small at a clock period (in num of FO4) = 90", 
+            "design_size": "small", 
+            "name": "bsg_assembler_in_small_clk_90_FO4", 
+            "parameters": [
+                "num_out_p=5", 
+                "num_in_p=10", 
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size small at a clock period (in num of FO4) = 100", 
+            "design_size": "small", 
+            "name": "bsg_assembler_in_small_clk_100_FO4", 
+            "parameters": [
+                "num_out_p=5", 
+                "num_in_p=10", 
+                "width_p=16"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size large at a clock period (in num of FO4) = 30", 
+            "design_size": "large", 
+            "name": "bsg_assembler_in_large_clk_30_FO4", 
+            "parameters": [
+                "num_out_p=10", 
+                "num_in_p=10", 
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size large at a clock period (in num of FO4) = 40", 
+            "design_size": "large", 
+            "name": "bsg_assembler_in_large_clk_40_FO4", 
+            "parameters": [
+                "num_out_p=10", 
+                "num_in_p=10", 
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size large at a clock period (in num of FO4) = 50", 
+            "design_size": "large", 
+            "name": "bsg_assembler_in_large_clk_50_FO4", 
+            "parameters": [
+                "num_out_p=10", 
+                "num_in_p=10", 
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size large at a clock period (in num of FO4) = 60", 
+            "design_size": "large", 
+            "name": "bsg_assembler_in_large_clk_60_FO4", 
+            "parameters": [
+                "num_out_p=10", 
+                "num_in_p=10", 
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size large at a clock period (in num of FO4) = 70", 
+            "design_size": "large", 
+            "name": "bsg_assembler_in_large_clk_70_FO4", 
+            "parameters": [
+                "num_out_p=10", 
+                "num_in_p=10", 
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size large at a clock period (in num of FO4) = 80", 
+            "design_size": "large", 
+            "name": "bsg_assembler_in_large_clk_80_FO4", 
+            "parameters": [
+                "num_out_p=10", 
+                "num_in_p=10", 
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size large at a clock period (in num of FO4) = 90", 
+            "design_size": "large", 
+            "name": "bsg_assembler_in_large_clk_90_FO4", 
+            "parameters": [
+                "num_out_p=10", 
+                "num_in_p=10", 
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size large at a clock period (in num of FO4) = 100", 
+            "design_size": "large", 
+            "name": "bsg_assembler_in_large_clk_100_FO4", 
+            "parameters": [
+                "num_out_p=10", 
+                "num_in_p=10", 
+                "width_p=64"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size very_large at a clock period (in num of FO4) = 30", 
+            "design_size": "very_large", 
+            "name": "bsg_assembler_in_very_large_clk_30_FO4", 
+            "parameters": [
+                "num_out_p=10", 
+                "num_in_p=10", 
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size very_large at a clock period (in num of FO4) = 40", 
+            "design_size": "very_large", 
+            "name": "bsg_assembler_in_very_large_clk_40_FO4", 
+            "parameters": [
+                "num_out_p=10", 
+                "num_in_p=10", 
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size very_large at a clock period (in num of FO4) = 50", 
+            "design_size": "very_large", 
+            "name": "bsg_assembler_in_very_large_clk_50_FO4", 
+            "parameters": [
+                "num_out_p=10", 
+                "num_in_p=10", 
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size very_large at a clock period (in num of FO4) = 60", 
+            "design_size": "very_large", 
+            "name": "bsg_assembler_in_very_large_clk_60_FO4", 
+            "parameters": [
+                "num_out_p=10", 
+                "num_in_p=10", 
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size very_large at a clock period (in num of FO4) = 70", 
+            "design_size": "very_large", 
+            "name": "bsg_assembler_in_very_large_clk_70_FO4", 
+            "parameters": [
+                "num_out_p=10", 
+                "num_in_p=10", 
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size very_large at a clock period (in num of FO4) = 80", 
+            "design_size": "very_large", 
+            "name": "bsg_assembler_in_very_large_clk_80_FO4", 
+            "parameters": [
+                "num_out_p=10", 
+                "num_in_p=10", 
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size very_large at a clock period (in num of FO4) = 90", 
+            "design_size": "very_large", 
+            "name": "bsg_assembler_in_very_large_clk_90_FO4", 
+            "parameters": [
+                "num_out_p=10", 
+                "num_in_p=10", 
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size very_large at a clock period (in num of FO4) = 100", 
+            "design_size": "very_large", 
+            "name": "bsg_assembler_in_very_large_clk_100_FO4", 
+            "parameters": [
+                "num_out_p=10", 
+                "num_in_p=10", 
+                "width_p=128"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size medium at a clock period (in num of FO4) = 30", 
+            "design_size": "medium", 
+            "name": "bsg_assembler_in_medium_clk_30_FO4", 
+            "parameters": [
+                "num_out_p=5", 
+                "num_in_p=10", 
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size medium at a clock period (in num of FO4) = 40", 
+            "design_size": "medium", 
+            "name": "bsg_assembler_in_medium_clk_40_FO4", 
+            "parameters": [
+                "num_out_p=5", 
+                "num_in_p=10", 
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size medium at a clock period (in num of FO4) = 50", 
+            "design_size": "medium", 
+            "name": "bsg_assembler_in_medium_clk_50_FO4", 
+            "parameters": [
+                "num_out_p=5", 
+                "num_in_p=10", 
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size medium at a clock period (in num of FO4) = 60", 
+            "design_size": "medium", 
+            "name": "bsg_assembler_in_medium_clk_60_FO4", 
+            "parameters": [
+                "num_out_p=5", 
+                "num_in_p=10", 
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "70", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size medium at a clock period (in num of FO4) = 70", 
+            "design_size": "medium", 
+            "name": "bsg_assembler_in_medium_clk_70_FO4", 
+            "parameters": [
+                "num_out_p=5", 
+                "num_in_p=10", 
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "80", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size medium at a clock period (in num of FO4) = 80", 
+            "design_size": "medium", 
+            "name": "bsg_assembler_in_medium_clk_80_FO4", 
+            "parameters": [
+                "num_out_p=5", 
+                "num_in_p=10", 
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "90", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size medium at a clock period (in num of FO4) = 90", 
+            "design_size": "medium", 
+            "name": "bsg_assembler_in_medium_clk_90_FO4", 
+            "parameters": [
+                "num_out_p=5", 
+                "num_in_p=10", 
+                "width_p=32"
+            ]
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "clk", 
+                    "delay": "0", 
+                    "port": "all", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "clk", 
+                    "period_in_num_of_FO4": "100", 
+                    "port": "clk", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "this design takes a number of input channels and round-robin assemblers them into a single wide channel with size medium at a clock period (in num of FO4) = 100", 
+            "design_size": "medium", 
+            "name": "bsg_assembler_in_medium_clk_100_FO4", 
+            "parameters": [
+                "num_out_p=5", 
+                "num_in_p=10", 
+                "width_p=32"
+            ]
+        }
+    ]
+}

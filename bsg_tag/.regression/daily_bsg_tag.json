@@ -1,0 +1,3 @@
+include bsg_tag_client.json
+include bsg_tag_client_unsync.json
+include bsg_tag_master.json
