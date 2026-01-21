@@ -1,0 +1,428 @@
+{
+    "design_name": "mul", 
+    "filelist": [ 
+        "basejump_stl/bsg_misc/mul.v"
+        ],  
+    "run_config": [
+        {
+            "constraints": [
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "clk",
+                    "period_in_num_of_FO4": "380",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_4_75MHz",
+            "parameters": [
+                "width_p=64",
+                "stage_p=4"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "clk",
+                    "period_in_num_of_FO4": "285",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_4_100MHz",
+            "parameters": [
+                "width_p=64",
+                "stage_p=4"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "clk",
+                    "period_in_num_of_FO4": "228",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_4_125MHz",
+            "parameters": [
+                "width_p=64",
+                "stage_p=4"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "clk",
+                    "period_in_num_of_FO4": "190",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_4_150MHz",
+            "parameters": [
+                "width_p=64",
+                "stage_p=4"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "clk",
+                    "period_in_num_of_FO4": "163",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_4_175MHz",
+            "parameters": [
+                "width_p=64",
+                "stage_p=4"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "clk",
+                    "period_in_num_of_FO4": "142",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_4_200MHz",
+            "parameters": [
+                "width_p=64",
+                "stage_p=4"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "clk",
+                    "period_in_num_of_FO4": "114",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_4_250MHz",
+            "parameters": [
+                "width_p=64",
+                "stage_p=4"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "clk",
+                    "period_in_num_of_FO4": "95",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_4_300MHz",
+            "parameters": [
+                "width_p=64",
+                "stage_p=4"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "clk",
+                    "period_in_num_of_FO4": "81",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_4_350MHz",
+            "parameters": [
+                "width_p=64",
+                "stage_p=4"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "clk",
+                    "period_in_num_of_FO4": "190",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_8_150MHz",
+            "parameters": [
+                "width_p=64",
+                "stage_p=8"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "clk",
+                    "period_in_num_of_FO4": "142",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_8_200MHz",
+            "parameters": [
+                "width_p=64",
+                "stage_p=8"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "clk",
+                    "period_in_num_of_FO4": "114",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_8_250MHz",
+            "parameters": [
+                "width_p=64",
+                "stage_p=8"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "clk",
+                    "period_in_num_of_FO4": "95",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_8_300MHz",
+            "parameters": [
+                "width_p=64",
+                "stage_p=8"
+            ]
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "clk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "clk",
+                    "period_in_num_of_FO4": "81",
+                    "port": "clk_i",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_8_350MHz",
+            "parameters": [
+                "width_p=64",
+                "stage_p=8"
+            ]
+        }
+    ]
+}

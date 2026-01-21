@@ -1,0 +1,251 @@
+{
+    "design_name": "bsg_mul_pipelined_width_64_radix16", 
+    "filelist": [ 
+        "basejump_stl/bsg_misc/bsg_mul_pipelined_width_64_radix16.v"
+        ],  
+    "run_config": [
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "380",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_18_75MHz",
+            "parameters": []
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "285",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_18_100MHz",
+            "parameters": []
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "228",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_18_125MHz",
+            "parameters": []
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "190",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_18_150MHz",
+            "parameters": []
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "163",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_18_175MHz",
+            "parameters": []
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "142",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_18_200MHz",
+            "parameters": []
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "114",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_18_250MHz",
+            "parameters": []
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "95",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_18_300MHz",
+            "parameters": []
+        },
+        {
+            "constraints": [
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "input"
+                },
+                {
+                    "clock": "vclk",
+                    "delay": "0",
+                    "port": "all",
+                    "type": "output"
+                },
+                {
+                    "name": "vclk",
+                    "period_in_num_of_FO4": "81",
+                    "port": "virtual",
+                    "type": "clock",
+                    "uncertainty": "0"
+                }
+            ],
+            "description": "",
+            "design_size": "",
+            "name": "mul_18_350MHz",
+            "parameters": []
+        }
+    ]
+}
