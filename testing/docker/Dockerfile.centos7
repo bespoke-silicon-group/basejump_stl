@@ -1,0 +1,105 @@
+FROM centos:centos7.9.2009
+
+# Update for deprecated Centos7 mirrors
+RUN sed -i 's|enabled=1|enabled=0|g' /etc/yum/pluginconf.d/fastestmirror.conf
+RUN sed -i 's|^mirrorlist=http|#mirrorlist=http|g' /etc/yum.repos.d/CentOS-*.repo
+RUN sed -i 's|^#.*baseurl=http|baseurl=http|g' /etc/yum.repos.d/CentOS-*.repo
+RUN sed -i 's|.*baseurl=http://mirror.centos.org/centos/\$releasever|baseurl=http://archive.kernel.org/centos-vault/7.9.2009|g' /etc/yum.repos.d/CentOS-*.repo
+
+# Install centos libraries
+RUN yum install -y \
+    autoconf automake bash bc binutils bison bzip2 cpio \
+    dtc expat-devel file flex gawk gcc gcc-c++ git gmp-devel gzip gtkwave \
+    java-11-openjdk-headless libmpc-devel libuuid-devel make mpfr-devel \
+    patch patchutils perl perl-ExtUtils-MakeMaker python3 python3-pip rsync \
+    sed tar tcl tcl-devel  tk tk-devel texinfo unzip vim vim-common virtualenv which zlib-devel \
+    help2man readline-devel libreadline-devel libffi-devel wget openssl-devel python-devel \
+    python3-devel python-devel \
+    && yum clean all
+
+# Install EPEL libraries
+RUN yum install -y \
+    epel-release centos-release-scl scl-utils \
+    && yum clean all
+
+# Same thing for SCL mirrors
+RUN sed -i 's|^mirrorlist|#mirrorlist|g' /etc/yum.repos.d/CentOS-*
+RUN sed -i 's|^#baseurl=http://mirror.centos.org/centos/7|baseurl=http://vault.epel.cloud/7.9.2009|g' /etc/yum.repos.d/CentOS-SCLo-*
+RUN sed -i 's|^# baseurl=http://mirror.centos.org/centos/7|baseurl=http://vault.epel.cloud/7.9.2009|g' /etc/yum.repos.d/CentOS-SCLo-*
+
+RUN yum install -y \
+    devtoolset-11 rh-git218 \
+    && yum clean all
+# Install cmake
+RUN wget https://cmake.org/files/v3.22/cmake-3.22.3.tar.gz && \
+    tar -xzvf cmake-3.* && \
+    cd cmake-3.* && \
+    ./bootstrap --prefix=/usr/local && \
+    make -j4 && \
+    make install
+# Install autotools
+RUN wget -qO- https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.gz | tar xzv; \
+    cd m4-1.4.19; ./configure; make all install; cd -
+RUN wget -qO- https://ftp.gnu.org/gnu/libtool/libtool-2.5.3.tar.gz | tar xzv; \
+    cd libtool-2.5.3; ./configure; make all install; cd -
+RUN wget -qO- https://ftp.gnu.org/gnu/automake/automake-1.17.tar.gz | tar xzv; \
+    cd automake-1.17; ./configure; make -j4 all; make install; cd -
+RUN wget -qO- https://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz | tar xzv; \
+    cd autoconf-2.69; ./configure; make -j4 all; make install; cd -
+
+# Install verilator
+RUN git clone -bv5.034 https://github.com/verilator/verilator verilator; \
+    cd verilator; autoconf; \
+    CC=/opt/rh/devtoolset-11/root/usr/bin/gcc CXX=/opt/rh/devtoolset-11/root/usr/bin/g++ ./configure; \
+    make -j4 all && \
+    make install
+
+# Accept arguments for user and group
+ARG USER_NAME
+ARG USER_ID
+ARG GROUP_NAME
+ARG GROUP_ID
+ARG OTHER_GROUPS
+ARG WORKDIR
+
+# Only create the group if it doesn't exist
+RUN getent group $GROUP_ID || groupadd --gid $GROUP_ID $GROUP_NAME
+
+# Use --no-log-init to deal with large userids creating giant log files
+RUN useradd --no-log-init --uid $USER_ID --gid $GROUP_ID --home-dir $WORKDIR $USER_NAME
+
+# Add the user to other groups
+RUN for gid in ${OTHER_GROUPS}; do \
+        echo "group$gid"; \
+        groupadd -g $gid "group$gid" || true; \
+        usermod -aG "group$gid" $USER_NAME; \
+    done
+
+# Create directory for extra installation
+RUN mkdir -p /opt && chgrp $GROUP_NAME /opt && chmod 775 /opt
+
+# Create custom entrypoint script
+COPY entrypoint.centos7.sh /usr/bin/entrypoint.sh
+RUN chmod +x /usr/bin/entrypoint.sh
+
+# Create the default workdir
+RUN mkdir -p ${WORKDIR}
+RUN chown ${USER_NAME} ${WORKDIR}
+
+# Set the default workdir
+WORKDIR $WORKDIR
+
+# Set the current user
+USER $USER_NAME
+
+# Create a python virtualenv
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+COPY requirements.txt /opt/venv/
+RUN /opt/venv/bin/pip install -r /opt/venv/requirements.txt
+
+
+# Kick off with bash
+ENTRYPOINT [ "/usr/bin/entrypoint.sh" ]
+CMD ["/bin/bash"]
+
