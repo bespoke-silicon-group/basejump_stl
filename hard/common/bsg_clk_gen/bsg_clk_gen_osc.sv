@@ -76,7 +76,9 @@
 //
 //
 
+`ifndef BSG_NO_TIMESCALE
 `timescale 1ps/1ps
+`endif
 
 `include "bsg_clk_gen.svh"
 
