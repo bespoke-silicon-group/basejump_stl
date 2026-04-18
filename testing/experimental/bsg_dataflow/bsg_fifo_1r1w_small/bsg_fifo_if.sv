@@ -7,7 +7,7 @@ interface fifo_if(input logic clk);
     logic v_i;       // Valid in 
     logic ready_o;   // Ready out 
     logic v_o;       // Valid out 
-    logic yumi_i;    // Yummy in 
+    logic yumi_i;    // Yumi in 
 
     // Driver Clocking Block
     clocking drv_cb @(posedge clk);
