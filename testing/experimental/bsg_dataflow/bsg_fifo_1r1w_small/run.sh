@@ -18,7 +18,7 @@ INCLUDE_DIRS=(
 #  Cleanup
 rm -rf obj_dir waveform.vcd
 
-# 4. Build Verilator Command
+# Build Verilator Command
 V_FLAGS=(
     --sv --timing --trace --coverage --cc
     "${TOP_FILE}"
