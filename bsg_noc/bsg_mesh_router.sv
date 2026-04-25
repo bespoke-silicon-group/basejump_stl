@@ -19,6 +19,7 @@
  *
  *   For 2D mesh network, you can feed in in_dirs_lp > out_dirs_lp, and they will act as extra P ports. You also need to feed in an appropriate routing_matrix_p.
  *   
+ *   NOTE: This version contains a work-in-progress multicast feature.
  */  
 
 `include "bsg_defines.sv"
@@ -122,6 +123,9 @@ module bsg_mesh_router
    logic [out_dirs_lp-1:0][in_dirs_lp-1:0] yumi_lo;
    logic [in_dirs_lp-1:0][out_dirs_lp-1:0] yumi_lo_t;
 
+  // For multicast logic in xbar
+   logic [out_dirs_lp-1:0] global_success = v_o & ready_and_i;
+
   for (genvar i = 0; i < out_dirs_lp; i++) begin: xbar
 
     localparam input_els_lp = `BSG_COUNTONES_SYNTH(routing_matrix_p[i]);
@@ -129,6 +133,37 @@ module bsg_mesh_router
     logic [input_els_lp-1:0][width_p-1:0] conc_data;
     logic [input_els_lp-1:0] conc_req;
     logic [input_els_lp-1:0] grants;
+
+    // Multicast logic 
+
+    // concentrate the request vectors
+    logic [input_els_lp-1:0][out_dirs_lp-1:0] conc_req_vectors;
+    bsg_array_concentrate_static #(
+    .pattern_els_p(routing_matrix_p[i])
+    ,.width_p(out_dirs_lp)
+    ) conc_rv (
+    .i(req) // req is [in_dirs][out_dirs]
+    ,.o(conc_req_vectors)
+    );
+
+    // find current port requests of current grant winner
+    logic [out_dirs_lp-1:0] winner_targets;
+    bsg_mux_one_hot #(
+    .els_p(input_els_lp)
+    ,.width_p(out_dirs_lp)
+    ) target_mux (
+    .data_i(conc_req_vectors)
+    ,.sel_one_hot_i(grants)
+    ,.data_o(winner_targets)
+    );
+
+    // highlight all desired output ports to send to except for current port
+    // should be all 0 if not multicasting
+    logic [out_dirs_lp-1:0] partner_mask = winner_targets & ~(out_dirs_lp'(1 << i));
+
+    // all multicast partner arbiters are ready to send (arbiter recieving yumi_i)
+    // gates the yumi_i port in arbiter in order to guarantee an atomic transaction
+    logic all_partners_succeeded = (partner_mask & global_success) == partner_mask;
     
     bsg_array_concentrate_static #(
       .pattern_els_p(routing_matrix_p[i])
@@ -155,7 +190,7 @@ module bsg_mesh_router
 
       ,.reqs_i(conc_req)
       ,.grants_o(grants)
-      ,.yumi_i(v_o[i] & ready_and_i[i])
+      ,.yumi_i(v_o[i] & ready_and_i[i] & all_partners_succeeded)
     );
 
     bsg_mux_one_hot #(
@@ -199,8 +234,8 @@ module bsg_mesh_router
 
       if (~reset_i) begin
         for (integer i = 0; i < in_dirs_lp; i++) begin
-          assert($countones(yumi_lo_t[i]) < 2)
-            else $error("multiple yumi detected. i=%d, %b", i, yumi_lo_t[i]);
+            assert($countones(yumi_lo_t[i]) == $countones(req[i])) 
+                else $error("Yumi count mismatch! Expected %d, got %d", $countones(req[i]), $countones(yumi_lo_t[i]));
         end
       end
  
