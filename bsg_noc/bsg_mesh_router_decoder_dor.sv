@@ -8,7 +8,7 @@
 
 `include "bsg_defines.sv"
 
-module bsg_mesh_router_decoder_dor_mc
+module bsg_mesh_router_decoder_dor
   import bsg_noc_pkg::*;
   import bsg_mesh_router_pkg::*;
   #(parameter `BSG_INV_PARAM(x_cord_width_p )
