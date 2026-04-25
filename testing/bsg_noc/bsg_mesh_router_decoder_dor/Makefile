@@ -42,22 +42,22 @@ EXTRA_ARGS += +incdir+$(BASEJUMP_STL_DIR)/bsg_misc
 
 VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_noc/bsg_noc_pkg.sv
 VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_noc/bsg_mesh_router_pkg.sv
-VERILOG_SOURCES += $(PWD)/bsg_mesh_router_decoder_dor_mc.sv
+VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_noc/bsg_mesh_router_decoder_dor.sv
 
 
 # testbench verilog filelist
 # VERILOG_SOURCES += $(PWD)/bsg_fifo_1r1w_small_hardened_wrapper.sv
 # VERILOG_SOURCES += $(PWD)/bsg_fifo_1r1w_small_hardened_cov.sv
-VERILOG_SOURCES += $(PWD)/bsg_mesh_router_decoder_dor_mc_wrapper.sv
-VERILOG_SOURCES += $(PWD)/bsg_mesh_router_decoder_dor_mc_cov.sv
+VERILOG_SOURCES += $(PWD)/bsg_mesh_router_decoder_dor_wrapper.sv
+VERILOG_SOURCES += $(PWD)/bsg_mesh_router_decoder_dor_cov.sv
 
 # TOPLEVEL is the name of the toplevel module in your Verilog or VHDL file
 # TOPLEVEL = bsg_fifo_1r1w_small_hardened_wrapper
-TOPLEVEL = bsg_mesh_router_decoder_dor_mc_wrapper
+TOPLEVEL = bsg_mesh_router_decoder_dor_wrapper
 
 # MODULE is the basename of the Python test file
 # MODULE = bsg_fifo_1r1w_small_hardened_testbench
-MODULE = bsg_mesh_router_decoder_dor_mc_testbench
+MODULE = bsg_mesh_router_decoder_dor_testbench
 
 # include cocotb's make rules to take care of the simulator setup
 include $(shell cocotb-config --makefiles)/Makefile.sim

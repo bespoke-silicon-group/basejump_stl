@@ -12,3 +12,11 @@ ucli.key
 .nfs*
 *.pyc
 libdramsim3.so
+
+# Lab specific
+*.fsdb
+novas.conf
+novas.rc
+verilog.dump
+results.xml
+sim_build/
