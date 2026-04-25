@@ -1,4 +1,4 @@
-module bsg_mesh_router_decoder_dor_mc_wrapper #(parameter x_cord_width_p = 4
+module bsg_mesh_router_decoder_dor_wrapper #(parameter x_cord_width_p = 4
                                                 , parameter y_cord_width_p = 4
                                                 , parameter dims_p = 2
                                                 , parameter dirs_lp = (2*dims_p)+1
@@ -22,7 +22,7 @@ module bsg_mesh_router_decoder_dor_mc_wrapper #(parameter x_cord_width_p = 4
     );
 
     // instantiate DUT
-    bsg_mesh_router_decoder_dor_mc #(.x_cord_width_p(x_cord_width_p)
+    bsg_mesh_router_decoder_dor #(.x_cord_width_p(x_cord_width_p)
                                     ,.y_cord_width_p(y_cord_width_p)
                                     ,.dims_p(dims_p)
                                     ,.dirs_lp(dirs_lp)
@@ -36,7 +36,7 @@ module bsg_mesh_router_decoder_dor_mc_wrapper #(parameter x_cord_width_p = 4
     (.*);
 
     // bind covergroups
-    bind bsg_mesh_router_decoder_dor_mc bsg_mesh_router_decoder_dor_mc_cov
+    bind bsg_mesh_router_decoder_dor bsg_mesh_router_decoder_dor_cov
     #(.x_cord_width_p(x_cord_width_p)
     ,.y_cord_width_p(y_cord_width_p)
     ,.dims_p(dims_p)

@@ -1,7 +1,7 @@
 // This module defines functional coverages of module bsg_mesh_router_decoder_dor_mc
 `include "bsg_defines.sv"
 
-module bsg_mesh_router_decoder_dor_mc_cov
+module bsg_mesh_router_decoder_dor_cov
     import bsg_noc_pkg::*;
     import bsg_mesh_router_pkg::*;
     #(parameter `BSG_INV_PARAM(x_cord_width_p )

@@ -14,7 +14,7 @@ module decoder_tb ();
     logic [y_cord_width_p-1:0] y_dirs_i, my_y_i;
     logic [dirs_lp-1:0] req_o;
 
-    bsg_mesh_router_decoder_dor_mc #(
+    bsg_mesh_router_decoder_dor #(
       .x_cord_width_p(x_cord_width_p)
       ,.y_cord_width_p(y_cord_width_p)
       ,.ruche_factor_X_p(ruche_factor_X_p)
