@@ -8,7 +8,7 @@
 
 `include "bsg_defines.sv"
 
-module bsg_mesh_router_decoder_dor
+module bsg_mesh_router_decoder_dor_mc
   import bsg_noc_pkg::*;
   import bsg_mesh_router_pkg::*;
   #(parameter `BSG_INV_PARAM(x_cord_width_p )
@@ -30,7 +30,8 @@ module bsg_mesh_router_decoder_dor
     , input reset_i     // debug only
 
     //, input v_i
-
+    , input mc_x  // multicast x
+    , input mc_y  // multicast y
     , input [x_cord_width_p-1:0] x_dirs_i
     , input [y_cord_width_p-1:0] y_dirs_i
 
@@ -64,12 +65,18 @@ module bsg_mesh_router_decoder_dor
 
 
   // compare coordinates
-  wire x_eq = (x_dirs_i == my_x_i);
-  wire y_eq = (y_dirs_i == my_y_i);
-  wire x_gt = x_dirs_i > my_x_i;
-  wire y_gt = y_dirs_i > my_y_i;
-  wire x_lt = ~x_gt & ~x_eq;
-  wire y_lt = ~y_gt & ~y_eq;
+  wire x_eq = (x_dirs_i == my_x_i); // x coordinate matches
+  wire y_eq = (y_dirs_i == my_y_i); // y coordinate matches
+  wire x_gt = x_dirs_i > my_x_i; // x destination coordinate is greater
+  wire y_gt = y_dirs_i > my_y_i; // y coordinate is greater
+  wire x_lt = ~x_gt & ~x_eq; // x destination coordinate is less
+  wire y_lt = ~y_gt & ~y_eq; // y destination coordinate is less
+
+  // multicast
+  // wire copy_x = mc_x & (req[W] | req[E]);  // moving horizontally and x multicast is set
+  // wire copy_y = mc_y & (req[S] | req[N]);  // moving verticallyand y multicast is set
+  wire copy_x, copy_y;
+  wire copy = copy_x | copy_y;  // send packet to processor and forward to next node
 
   // valid signal
   logic [dirs_lp-1:0] req;
@@ -77,10 +84,10 @@ module bsg_mesh_router_decoder_dor
 
 
   // P-port
-  assign req[P] = x_eq & y_eq;
+  assign req[P] = (x_eq & y_eq) | copy;  // consume if destination or if multicast desired
 
 
-  if (ruche_factor_X_p > 0) begin
+  if ((ruche_factor_X_p > 0) & !mc_x) begin
 
     if (XY_order_p) begin
       // make sure there is no under/overflow.
@@ -165,6 +172,7 @@ module bsg_mesh_router_decoder_dor
     if (XY_order_p) begin
       assign req[W] = x_lt;
       assign req[E] = x_gt;
+      assign copy_x = mc_x & (req[W] | req[E]);
     end
     else begin
       assign req[W] = y_eq & x_lt;
@@ -174,7 +182,7 @@ module bsg_mesh_router_decoder_dor
 
 
   
-  if (ruche_factor_Y_p > 0) begin
+  if ((ruche_factor_Y_p > 0) & !mc_y) begin
     if (XY_order_p == 0) begin
       // make sure there is no under/overflow.
       wire [y_cord_width_p:0] rs_cord = (y_cord_width_p+1)'(my_y_i + ruche_factor_Y_p);
@@ -263,6 +271,7 @@ module bsg_mesh_router_decoder_dor
     else begin
       assign req[N] = x_eq & y_lt;
       assign req[S] = x_eq & y_gt;
+      assign copy_y = mc_y & (req[S] | req[N]);
     end
   end
 
@@ -271,7 +280,7 @@ module bsg_mesh_router_decoder_dor
   if (debug_p) begin
     always_ff @ (negedge clk_i) begin
       if (~reset_i) begin
-        assert($countones(req_o) < 2)
+        assert($countones(req_o) < 3)
           else $fatal(1, "multiple req_o detected. %b", req_o);
       end
     end
@@ -288,4 +297,3 @@ module bsg_mesh_router_decoder_dor
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_mesh_router_decoder_dor)
-
