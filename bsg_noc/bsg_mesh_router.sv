@@ -69,10 +69,13 @@ module bsg_mesh_router
   // input x,y coords
   logic [in_dirs_lp-1:0][x_cord_width_p-1:0] x_dirs;
   logic [in_dirs_lp-1:0][y_cord_width_p-1:0] y_dirs;
+  logic [in_dirs_lp-1:0] mc_x, mc_y;
 
   for (genvar i = 0; i < in_dirs_lp; i++) begin
-    assign x_dirs[i] = data_i[i][0+:x_cord_width_p];
-    assign y_dirs[i] = data_i[i][x_cord_width_p+:y_cord_width_p];
+    assign mc_x[i] = data_i[i][0];
+    assign mc_y[i] = data_i[i][1];
+    assign x_dirs[i] = data_i[i][2+:x_cord_width_p];
+    assign y_dirs[i] = data_i[i][(2+x_cord_width_p)+:y_cord_width_p];
   end
 
 
@@ -98,6 +101,8 @@ module bsg_mesh_router
     ) dor_decoder (
       .clk_i(clk_i)
       ,.reset_i(reset_i)
+      ,.mc_x(mc_x[i])
+      ,.mc_y(mc_y[i])
       ,.x_dirs_i(x_dirs[i])
       ,.y_dirs_i(y_dirs[i])
       ,.my_x_i(my_x_i)
