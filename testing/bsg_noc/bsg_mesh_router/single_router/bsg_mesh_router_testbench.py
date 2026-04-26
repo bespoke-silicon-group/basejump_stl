@@ -14,15 +14,15 @@ OUT_DIRS = 5
 IN_DIRS_MAX_DECIMAL = math.pow(IN_DIRS, 2) - 1
 OUT_DIRS_MAX_DECIMAL = math.pow(OUT_DIRS, 2) - 1
 
-X_COORD_WIDTH = 4
-Y_COORD_WIDTH = 4
+X_COORD_WIDTH = 2
+Y_COORD_WIDTH = 2
 
 X_COORD_MAX_DECIMAL = math.pow(X_COORD_WIDTH, 2) - 1
 Y_COORD_MAX_DECIMAL = math.pow(Y_COORD_WIDTH, 2) - 1
 
 # keep routers coords fixed, change destination coords per test
-MY_X = 3
-MY_Y = 3
+MY_X = 1
+MY_Y = 1
 
 
 CLK_PERIOD = 10
@@ -46,10 +46,15 @@ async def testbench(dut):
         dest_y = rand.randint(0, Y_COORD_MAX_DECIMAL)
         mc_x = rand.randint(0, 1)
         mc_y = rand.randint(0, 1)
+        data_i = (dest_y << (2 + X_COORD_WIDTH)) | (dest_x << 2) | (mc_y << 1) | mc_x
 
-        
-        # data_i = ...
         v_i = rand.randint(0, IN_DIRS_MAX_DECIMAL)
         ready_and_i = rand.randint(0, OUT_DIRS_MAX_DECIMAL)
         my_x_i = MY_X
         my_y_i = MY_Y
+
+        dut.data_i.value = data_i
+        dut.v_i.value = v_i
+        dut.ready_and_i.value = ready_and_i
+        dut.my_x_i.value = my_x_i
+        dut.my_y_i.value = my_y_i
