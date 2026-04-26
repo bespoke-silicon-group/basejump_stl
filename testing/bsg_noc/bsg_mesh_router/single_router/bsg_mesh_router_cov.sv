@@ -38,9 +38,9 @@ module bsg_mesh_router_cov
     , input [y_cord_width_p-1:0] my_y_i
 
     // internal registers
-    // TODO: add internal control signals needed for coverage checks
     , input [in_dirs_lp-1:0] yumi_o
     , input [in_dirs_lp-1:0][out_dirs_lp-1:0] req;
+    , input [out_dirs_lp-1:0][in_dirs_lp-1:0] req_t;
   );
 
   // reset
@@ -57,6 +57,7 @@ module bsg_mesh_router_cov
     }
   endgroup
 
+  // make sure all port pairs are hit
   covergroup cg_port_pairing @(negedge clk_i iff ~reset_i);
     cp_request_vector: coverpoint req {
       bins e_p = {5'b10010};
