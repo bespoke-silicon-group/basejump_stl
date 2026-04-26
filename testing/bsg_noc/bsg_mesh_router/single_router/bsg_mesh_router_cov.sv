@@ -39,8 +39,8 @@ module bsg_mesh_router_cov
 
     // internal registers
     , input [in_dirs_lp-1:0] yumi_o
-    , input [in_dirs_lp-1:0][out_dirs_lp-1:0] req;
-    , input [out_dirs_lp-1:0][in_dirs_lp-1:0] req_t;
+    , input [in_dirs_lp-1:0][out_dirs_lp-1:0] req
+    , input [out_dirs_lp-1:0][in_dirs_lp-1:0] req_t
   );
 
   // reset
@@ -74,7 +74,7 @@ module bsg_mesh_router_cov
   covergroup cg_stall_check @(negedge clk_i iff ~reset_i);
     cp_is_mc: coverpoint ($countones(req) > 1);
 
-    cp_not_ready: coverpoint (|~ready_and_i);
+    cp_not_ready: coverpoint (| (~ready_and_i));
 
     cross_mc_stall: cross cp_is_mc, cp_not_ready {
       bins mc_while_stalled = binsof(cp_is_mc) intersect {1} && binsof(cp_not_ready) intersect {1};
@@ -104,17 +104,17 @@ module bsg_mesh_router_cov
   cg_stall_check cov_stall = new();
   cg_arbiter_contention arb_cov = new();
 
-  always_ff @(negedge clk_i) begin
-    if (!reset_i) begin 
-      for (int i = 0; i < out_dirs_lp; i++) begin
-        target_port = i;
-        num_reqs = $countones(req_t[i]);
-        if (num_reqs > 0) begin
-          arb_cov.sample();
-        end
-      end
-    end
-  end
+  // always_ff @(negedge clk_i) begin
+  //   if (!reset_i) begin 
+  //     for (int i = 0; i < out_dirs_lp; i++) begin
+  //       target_port = i;
+  //       num_reqs = $countones(req_t[i]);
+  //       if (num_reqs > 0) begin
+  //         arb_cov.sample();
+  //       end
+  //     end
+  //   end
+  // end
   
 
 endmodule
