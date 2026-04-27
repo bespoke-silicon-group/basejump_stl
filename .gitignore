@@ -20,3 +20,8 @@ novas.rc
 verilog.dump
 results.xml
 sim_build/
+
+# Verdi session and configuration files
+Verdi.ses*
+signal.rc
+verdiLog/
