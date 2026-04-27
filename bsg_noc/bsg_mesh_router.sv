@@ -129,7 +129,8 @@ module bsg_mesh_router
    logic [in_dirs_lp-1:0][out_dirs_lp-1:0] yumi_lo_t;
 
   // For multicast logic in xbar
-   logic [out_dirs_lp-1:0] global_success = v_o & ready_and_i;
+   logic [out_dirs_lp-1:0] global_success;
+   assign global_success = v_o & ready_and_i;
 
   for (genvar i = 0; i < out_dirs_lp; i++) begin: xbar
 
@@ -164,11 +165,14 @@ module bsg_mesh_router
 
     // highlight all desired output ports to send to except for current port
     // should be all 0 if not multicasting
-    logic [out_dirs_lp-1:0] partner_mask = winner_targets & ~(out_dirs_lp'(1 << i));
+    logic [out_dirs_lp-1:0] partner_mask;
+    assign partner_mask = winner_targets & ~(out_dirs_lp'(1 << i));
 
     // all multicast partner arbiters are ready to send (arbiter recieving yumi_i)
     // gates the yumi_i port in arbiter in order to guarantee an atomic transaction
-    logic all_partners_succeeded = (partner_mask & global_success) == partner_mask;
+ 
+     logic all_partners_succeeded;
+     assign all_partners_succeeded = (partner_mask & global_success) == partner_mask;
     
     bsg_array_concentrate_static #(
       .pattern_els_p(routing_matrix_p[i])
