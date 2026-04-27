@@ -48,7 +48,6 @@ VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_noc/bsg_mesh_router.sv
 VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_transpose.sv
 VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_array_concentrate_static.sv
 VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_mux_one_hot.sv
-VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_array_concentrate_static.sv
 VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_concentrate_static.sv
 VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_arb_round_robin.sv
 VERILOG_SOURCES += $(BASEJUMP_STL_DIR)/bsg_misc/bsg_unconcentrate_static.sv

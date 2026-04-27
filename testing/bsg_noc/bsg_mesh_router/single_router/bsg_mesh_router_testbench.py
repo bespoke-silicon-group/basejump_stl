@@ -156,16 +156,11 @@ async def testbench(dut):
         await Timer(1, units="ps") 
         if dut.yumi_o.value.is_resolvable and (dut.yumi_o.value >> src_port) & 1:
             yumi_o = 1
+        if dut.v_o.value.is_resolvable and (dut.v_o.value >> dest_port) & 1:
+            v_o = 1
             dut.v_i[src_port].value = 0
             break
     
-    # wait for output ready (v_o)
-    for _ in range(10):
-        await RisingEdge(dut.clk_i)
-        await Timer(1, units="ps") 
-        if dut.v_o.value.is_resolvable and (dut.v_o.value >> dest_port) & 1:
-            v_o = 1
-            break
     
     data_o = dut.data_o[dest_port].value
 
