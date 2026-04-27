@@ -8,7 +8,7 @@ from cocotb.triggers import RisingEdge, FallingEdge, Timer
 
 
 
-ITERATION = 5000
+ITERATION = 5
 
 IN_DIRS = 5
 OUT_DIRS = 5
@@ -47,37 +47,121 @@ async def testbench(dut):
     dut.reset_i.value = 1
     await Timer(CLK_PERIOD*5, units="ps")
     dut.reset_i.value = 0
-    dut.reset_i.value = 0
+
 
     rand = random.Random()
     rand.seed = time.time()
 
-    # for i in range (ITERATION):
-        # await RisingEdge(dut.clk_i)
+    for i in range (ITERATION):
+        dut._log.info(f"STARTING TEST {i}")
+        await RisingEdge(dut.clk_i)
 
-        # src_port = random.randint(0, IN_DIRS - 1)
+        # init ports to all 0
+        for i in range(IN_DIRS):
+            dut.v_i[i].value = 0
+            dut.data_i[i].value = 0
 
-        # dest_x = rand.randint(0, X_COORD_MAX_DECIMAL)
-        # dest_y = rand.randint(0, Y_COORD_MAX_DECIMAL)
-        # mc_x = rand.randint(0, 1)
-        # mc_y = rand.randint(0, 1)
-        # packet = (dest_y << (2 + X_COORD_WIDTH)) | (dest_x << 2) | (mc_y << 1) | mc_x
+        src_port = random.randint(0, IN_DIRS - 1)
+        dut._log.info(f"  Souce port = {src_port}")
 
-        # v_i = rand.randint(0, IN_DIRS_MAX_DECIMAL)
+        dest_x = rand.randint(0, X_COORD_MAX_DECIMAL)
+        dest_y = rand.randint(0, Y_COORD_MAX_DECIMAL)
+        dut._log.info(f"  Destination is: ({dest_x}, {dest_y})")
+        mc_x = rand.randint(0, 1)
+        mc_y = rand.randint(0, 1)
+        dut._log.info(f"  Multicast bits are: x: {mc_x}, y: {mc_y}")
+        my_x_i = MY_X
+        my_y_i = MY_Y
+
+        dest_ports = []
+        if ((my_x_i == dest_x and my_y_i == dest_y) or 
+            (mc_x and ((my_x_i != dest_x) or ((my_x_i == dest_x) and (src_port == E or src_port == W))) or
+             mc_y and (my_x_i == dest_x))):
+            dest_ports.append(P)
+
+        if (dest_x < my_x_i):
+            dest_ports.append(W)
+            
+        elif (dest_x > my_x_i):
+            dest_ports.append(E)
+            
+        elif (dest_y < my_y_i):
+            dest_ports.append(N)
+            
+        elif (dest_y > my_y_i):
+            dest_ports.append(S)
+        
+        dut._log.info(f"  Destination ports are: {dest_ports}")
+
+        # create mask for ports that should recv packet
+        dest_mask = 0
+        for port in dest_ports:
+            dest_mask |= (1 << port)
+
+        packet = (dest_y << (2 + X_COORD_WIDTH)) | (dest_x << 2) | (mc_y << 1) | mc_x
+        dut._log.info(f"  Data packet: {packet}")
+
         # ready_and_i = rand.randint(0, OUT_DIRS_MAX_DECIMAL)
-        # my_x_i = MY_X
-        # my_y_i = MY_Y
+        ready_and_i = 0b11111
 
-        # dut.data_i[src_port].value = packet
-        # dut.v_i[src_port].value = 1
-        # dut.ready_and_i.value = ready_and_i
-        # dut.my_x_i.value = my_x_i
-        # dut.my_y_i.value = my_y_i
+        outputs_should_accept = False
+        if ((dest_mask & ready_and_i) == dest_mask):
+            outputs_should_accept = True
+            dut._log.info(f"  Destination ports should be ready for input")
+
+        dut.data_i[src_port].value = packet
+        dut.v_i[src_port].value = 1
+        dut.ready_and_i.value = ready_and_i
+        dut.my_x_i.value = my_x_i
+        dut.my_y_i.value = my_y_i
+
+        if len(dest_ports) == 1:  # only one dest port
+            dest_port = dest_ports[0]
+            v_o, data_o, yumi_o = 0, 0, 0
+            for _ in range(100):
+                await RisingEdge(dut.clk_i)
+                await Timer(1, units="ps") 
+                if dut.yumi_o.value.is_resolvable and (dut.yumi_o.value >> src_port) & 1:
+                    yumi_o = 1
+                    dut._log.info(f"  Input port {src_port} accepted input packet!")
+                if dut.v_o.value.is_resolvable and (dut.v_o.value >> dest_port) & 1:
+                    v_o = 1
+                    dut._log.info(f"  Output port {dest_port} asserted valid output!")
+                    break
+
+            data_o = dut.data_o[dest_port].value
+
+            if (outputs_should_accept):
+                assert yumi_o == 1, f"Input port {src_port} did not accept the input packet (yumi_o low)"
+                assert v_o == 1, f"v_o at port {dest_port} not set!"
+                assert data_o == packet, f"output data packet at port {dest_port} modified from original!"
+            
+        else:  # multiple output ports
+            v_o, data_o, yumi_o = 0, 0, 0
+            for _ in range(100):  # wait for yumi
+                await RisingEdge(dut.clk_i)
+                await Timer(1, units="ps") 
+                if dut.yumi_o.value.is_resolvable and (dut.yumi_o.value >> src_port) & 1:
+                    yumi_o = 1
+                    break
+            
+            for port in dest_ports:
+                if dut.v_o.value.is_resolvable and (dut.v_o.value >> port) & 1:
+                    v_o = 1
+                    data_o = dut.data_o[port].value
+                if (outputs_should_accept):
+                    assert yumi_o == 1, f"Input port {src_port} did not accept the input packet! (yumi_o low)"
+                    assert v_o == 1, f"v_o at port {port} not set!"
+                    assert data_o == packet, f"output data packet at port {port} modified from original!"
+
+        dut.v_i.value = 0
+        dut.ready_and_i.value = 0
 
 
-
-
+    # WORKING TEST:
     # Test a simple send from West port to East with mc_x
+
+    dut._log.info(f"Starting manual test")
     await RisingEdge(dut.clk_i)
     await Timer(1, units="ps")
 
@@ -95,12 +179,6 @@ async def testbench(dut):
     my_x_i = MY_X  # (1, 1)
     my_y_i = MY_Y
 
-    # set other ports to all 0
-    for i in range(IN_DIRS):
-        dut.v_i[i].value = 0
-        dut.data_i[i].value = 0
-        dut.data_i[i].value = (MY_Y << (2 + X_COORD_WIDTH)) | (MY_X << 2) | 0
-        
     await Timer(CLK_PERIOD, units="ps")
 
     dut.data_i[src_port].value = packet
