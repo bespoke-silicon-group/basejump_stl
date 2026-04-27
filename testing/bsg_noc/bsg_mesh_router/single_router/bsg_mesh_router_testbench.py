@@ -77,7 +77,7 @@ async def testbench(dut):
 
 
 
-    # Test a simple send from West port to East
+    # Test a simple send from West port to East with mc_x
     await RisingEdge(dut.clk_i)
     await Timer(1, units="ps")
 
@@ -86,62 +86,22 @@ async def testbench(dut):
 
     dest_x = 2
     dest_y = 1
-    mc_x = 0
-    mc_y = 0
-    packet = (dest_y << (2 + X_COORD_WIDTH)) | (dest_x << 2) | (mc_y << 1) | mc_x
-    # for i in range (ITERATION):
-        # await RisingEdge(dut.clk_i)
-
-        # src_port = random.randint(0, IN_DIRS - 1)
-
-        # dest_x = rand.randint(0, X_COORD_MAX_DECIMAL)
-        # dest_y = rand.randint(0, Y_COORD_MAX_DECIMAL)
-        # mc_x = rand.randint(0, 1)
-        # mc_y = rand.randint(0, 1)
-        # packet = (dest_y << (2 + X_COORD_WIDTH)) | (dest_x << 2) | (mc_y << 1) | mc_x
-
-        # v_i = rand.randint(0, IN_DIRS_MAX_DECIMAL)
-        # ready_and_i = rand.randint(0, OUT_DIRS_MAX_DECIMAL)
-        # my_x_i = MY_X
-        # my_y_i = MY_Y
-
-        # dut.data_i[src_port].value = packet
-        # dut.v_i[src_port].value = 1
-        # dut.ready_and_i.value = ready_and_i
-        # dut.my_x_i.value = my_x_i
-        # dut.my_y_i.value = my_y_i
-
-
-
-
-    # Test a simple send from West port to East
-    await RisingEdge(dut.clk_i)
-    await Timer(1, units="ps")
-
-    src_port = W
-    dest_port = E
-
-    dest_x = 2
-    dest_y = 1
-    mc_x = 0
+    mc_x = 1
     mc_y = 0
     packet = (dest_y << (2 + X_COORD_WIDTH)) | (dest_x << 2) | (mc_y << 1) | mc_x
 
-    ready_and_i = (1 << dest_port)  # destination port is East
-    my_x_i = MY_X  # (1, 1)
-    my_y_i = MY_Y
-    ready_and_i = (1 << dest_port)  # destination port is East
+    ready_and_i = ((1 << dest_port) | (1 << P))  # destination port is East and P
+    
     my_x_i = MY_X  # (1, 1)
     my_y_i = MY_Y
 
-    # avoid X from other ports
+    # set other ports to all 0
     for i in range(IN_DIRS):
         dut.v_i[i].value = 0
         dut.data_i[i].value = 0
         dut.data_i[i].value = (MY_Y << (2 + X_COORD_WIDTH)) | (MY_X << 2) | 0
         
-    
-    await Timer(CLK_PERIOD*5, units="ps")
+    await Timer(CLK_PERIOD, units="ps")
 
     dut.data_i[src_port].value = packet
     dut.v_i[src_port].value = 1
@@ -156,26 +116,37 @@ async def testbench(dut):
         await Timer(1, units="ps") 
         if dut.yumi_o.value.is_resolvable and (dut.yumi_o.value >> src_port) & 1:
             yumi_o = 1
+            dut._log.info(f"Input port {src_port} accepted input packet!")
+        if dut.v_o.value.is_resolvable and (dut.v_o.value >> P) & 1:
+            v_o_p = 1
+            dut._log.info(f"Output port {P} asserted valid output!")
         if dut.v_o.value.is_resolvable and (dut.v_o.value >> dest_port) & 1:
-            v_o = 1
-            dut.v_i[src_port].value = 0
+            v_o_e = 1
+            dut._log.info(f"Output port {dest_port} asserted valid output!")
             break
     
     
-    data_o = dut.data_o[dest_port].value
+    data_o_e = dut.data_o[dest_port].value
+    data_o_p = dut.data_o[P].value
 
     assert yumi_o == 1, \
-        "Router did not accept the input packet (yumi_o low)"
+        f"Router at {src_port} did not accept the input packet (yumi_o low)"
             
-    assert v_o == 1, \
+    assert v_o_e == 1, \
         f"v_o at port {dest_port} not set!"
     
-    assert data_o == packet, \
+    assert v_o_p == 1, \
+        f"v_o at port {P} not set!"
+    
+    assert data_o_e == packet, \
         f"output data packet at port {dest_port} modified from original!"
+    
+    assert data_o_p == packet, \
+        f"output data packet at port {P} modified from original!"
 
 
 
-    dut.v_i[src_port].value = 0
+    dut.v_i.value = 0
     dut.ready_and_i.value = 0
 
     dut._log.info("Test finished!")
