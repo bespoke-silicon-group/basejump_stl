@@ -36,9 +36,6 @@ CLK_PERIOD = 10
 # define port mappings
 P, W, E, N, S = 0, 1, 2, 3, 4
 
-# define port mappings
-P, W, E, N, S = 0, 1, 2, 3, 4
-
 @cocotb.test()
 async def testbench(dut):
     clock = Clock(dut.clk_i, CLK_PERIOD, units="ps")
@@ -104,6 +101,7 @@ async def testbench(dut):
         if ((mc_x and ((my_x_i != dest_x) or ((my_x_i == dest_x) and (src_port == E or src_port == W))) or
             mc_y and (my_x_i == dest_x))):
             dest_ports.append(P)
+            dut._log.info(f"  Testing multicast condition")
         dut._log.info(f"  Destination ports are: {dest_ports}")
 
         # create mask for ports that should recv packet
@@ -116,7 +114,6 @@ async def testbench(dut):
 
         # ready_and_i = rand.randint(0, OUT_DIRS_MAX_DECIMAL)
         ready_and_i = 0b11111
-
         outputs_should_accept = False
         if ((dest_mask & ready_and_i) == dest_mask):
             outputs_should_accept = True
@@ -149,7 +146,7 @@ async def testbench(dut):
                 assert v_o == 1, f"v_o at port {dest_port} not set!"
                 assert data_o == packet, f"output data packet at port {dest_port} modified from original!"
             
-        else:  # multiple output ports
+        else:  # multiple output ports (multicast)
             v_o, data_o, yumi_o = 0, 0, 0
             for _ in range(100):  # wait for yumi
                 await RisingEdge(dut.clk_i)
@@ -157,7 +154,7 @@ async def testbench(dut):
                 if dut.yumi_o.value.is_resolvable and (dut.yumi_o.value >> src_port) & 1:
                     yumi_o = 1
                     break
-            
+            # TODO this needs to be more sophisticated for when we want to deal with output ports not both being ready instantly
             for port in dest_ports:
                 if dut.v_o.value.is_resolvable and (dut.v_o.value >> port) & 1:
                     v_o = 1
