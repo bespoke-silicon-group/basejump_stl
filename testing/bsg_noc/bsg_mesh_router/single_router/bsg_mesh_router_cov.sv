@@ -101,7 +101,17 @@ module bsg_mesh_router_cov
   covergroup cg_port_pairing @(negedge clk_i iff ~reset_i);
     cp_in  : coverpoint src_port { bins ports[] = {[0:in_dirs_lp-1]};  }
     cp_out : coverpoint dst_port { bins ports[] = {[0:out_dirs_lp-1]}; }
-    cross_all: cross cp_in, cp_out;
+    cross_all: cross cp_in, cp_out {
+      illegal_bins illegal_xy =
+        cross_all with (
+          // Y movement first → can't go X after entering from Y
+          ((cp_in == N && (cp_out == E || cp_out == W)) ||
+          (cp_in == S && (cp_out == E || cp_out == W)))
+          ||
+          // same input/output port is illegal
+          (cp_in == cp_out)
+        );
+    }
   endgroup
 
   covergroup cg_stall_check @(negedge clk_i iff ~reset_i);
