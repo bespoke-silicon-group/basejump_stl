@@ -8,7 +8,7 @@ from cocotb.triggers import RisingEdge, FallingEdge, Timer
 
 
 
-ITERATION = 5
+ITERATION = 50
 
 IN_DIRS = 5
 OUT_DIRS = 5
@@ -61,9 +61,6 @@ async def testbench(dut):
             dut.v_i[i].value = 0
             dut.data_i[i].value = 0
 
-        src_port = random.randint(0, IN_DIRS - 1)
-        dut._log.info(f"  Souce port = {src_port}")
-
         dest_x = rand.randint(0, X_COORD_MAX_DECIMAL)
         dest_y = rand.randint(0, Y_COORD_MAX_DECIMAL)
         dut._log.info(f"  Destination is: ({dest_x}, {dest_y})")
@@ -73,12 +70,8 @@ async def testbench(dut):
         my_x_i = MY_X
         my_y_i = MY_Y
 
+        # determine which direction packet goes with DOR
         dest_ports = []
-        if ((my_x_i == dest_x and my_y_i == dest_y) or 
-            (mc_x and ((my_x_i != dest_x) or ((my_x_i == dest_x) and (src_port == E or src_port == W))) or
-             mc_y and (my_x_i == dest_x))):
-            dest_ports.append(P)
-
         if (dest_x < my_x_i):
             dest_ports.append(W)
             
@@ -90,7 +83,27 @@ async def testbench(dut):
             
         elif (dest_y > my_y_i):
             dest_ports.append(S)
-        
+        else:
+            dest_ports.append(P)
+
+        # randomly select a legal output port
+        outward_port = dest_ports[0]
+        src_port = 0
+        if (outward_port == E or outward_port == W):
+            # source port must be E, W or P, due to DOR, and not the dest port
+            possible_ports = [E, W, P]
+            possible_ports.remove(outward_port)
+            src_port = random.choice(possible_ports)
+        else:
+            possible_ports = [N, E, S, W, P]
+            possible_ports.remove(outward_port)
+            src_port = random.choice(possible_ports)
+        dut._log.info(f"  Source port is {src_port}")
+
+        # check multicast condition (requires knowledge of src_port)
+        if ((mc_x and ((my_x_i != dest_x) or ((my_x_i == dest_x) and (src_port == E or src_port == W))) or
+            mc_y and (my_x_i == dest_x))):
+            dest_ports.append(P)
         dut._log.info(f"  Destination ports are: {dest_ports}")
 
         # create mask for ports that should recv packet
