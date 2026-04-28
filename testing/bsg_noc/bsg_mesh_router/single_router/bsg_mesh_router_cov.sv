@@ -49,26 +49,59 @@ module bsg_mesh_router_cov
   endgroup
 
   // check unicast and multicast cases
+  // covergroup cg_multicast @(negedge clk_i iff ~reset_i);
+  //   for (genvar i = 0; i < in_dirs_lp; i++) begin : per_port
+  //     cp_num_targets: coverpoint $countones(req[i]) {
+  //       bins no_request = {0};
+  //       bins unicast    = {1};
+  //       bins multicast  = {[2:out_dirs_lp]};
+  //     }
+  //   end
+  // endgroup
   covergroup cg_multicast @(negedge clk_i iff ~reset_i);
     cp_num_targets: coverpoint $countones(req) {
-      bins unicast = {1};
-      bins multicast = {2};
-      bins drop = {0};
+      bins no_request = {0};
+      bins unicast    = {1};
+      bins multicast  = {[2:$bits(req)]};
     }
   endgroup
 
   // make sure all port pairs are hit
+  // covergroup cg_port_pairing @(negedge clk_i iff ~reset_i);
+  //   cp_request_vector: coverpoint req {
+  //     bins e_p = {5'b10010};
+  //     bins w_p = {5'b10001};
+  //     bins n_p = {5'b10100};
+  //     bins s_p = {5'b11000};
+  //     bins e =   {5'b00010};
+  //     bins w =   {5'b00001};
+  //     bins n =   {5'b00100};
+  //     bins s =   {5'b01000};
+  //   }
+  // endgroup
+
+  // mia's implementation of cg_port_pairing
+  integer src_port;
+  integer dst_port;
+
+  // then sample it manually:
+  always_ff @(negedge clk_i) begin
+    if (!reset_i) begin
+      for (int i = 0; i < in_dirs_lp; i++) begin
+        for (int j = 0; j < out_dirs_lp; j++) begin
+          if (req[i][j]) begin
+            src_port = i;
+            dst_port = j;
+          end
+        end
+      end
+    end
+  end
+  
   covergroup cg_port_pairing @(negedge clk_i iff ~reset_i);
-    cp_request_vector: coverpoint req {
-      bins e_p = {5'b10010};
-      bins w_p = {5'b10001};
-      bins n_p = {5'b10100};
-      bins s_p = {5'b11000};
-      bins e =   {5'b00010};
-      bins w =   {5'b00001};
-      bins n =   {5'b00100};
-      bins s =   {5'b01000};
-    }
+    cp_in  : coverpoint src_port { bins ports[] = {[0:in_dirs_lp-1]};  }
+    cp_out : coverpoint dst_port { bins ports[] = {[0:out_dirs_lp-1]}; }
+    cross_all: cross cp_in, cp_out;
   endgroup
 
   covergroup cg_stall_check @(negedge clk_i iff ~reset_i);
@@ -115,6 +148,19 @@ module bsg_mesh_router_cov
   //     end
   //   end
   // end
-  
+  // print coverages when simulation is done
+  final
+  begin
+      $display("");
+      $display("Instance: %m");
+      $display("---------------------- Functional Coverage Results ----------------------");
+      $display("Reset                    functional coverage is %f%%", cov_reset.get_coverage());
+      $display("Multicast                functional coverage is %f%%", cov_mc.get_coverage());
+      $display("Port pairing             functional coverage is %f%%", cov_pp.get_coverage());
+      $display("Stall checking           functional coverage is %f%%", cov_stall.get_coverage());
+      $display("Arbiter contention       functional coverage is %f%%", arb_cov.get_coverage());
+      $display("-------------------------------------------------------------------------");
+      $display("");
+  end
 
 endmodule
