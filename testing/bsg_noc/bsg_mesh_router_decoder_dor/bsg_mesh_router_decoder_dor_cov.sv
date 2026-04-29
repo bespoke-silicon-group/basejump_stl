@@ -56,11 +56,26 @@ module bsg_mesh_router_decoder_dor_cov
         cross_all: cross cv_y_eq, cv_mc_y;
     endgroup
 
+    covergroup cg_xy_relation @(negedge clk_i iff ~reset_i);
+        cv_x_rel: coverpoint (my_x_i - x_dirs_i) {
+            bins less = {[$:-1]};
+            bins eq   = {0};
+            bins gt   = {[1:$]};
+        }
+        cv_y_rel: coverpoint (my_y_i - y_dirs_i) {
+            bins less = {[$:-1]};
+            bins eq   = {0};
+            bins gt   = {[1:$]};
+        }
+        cross_xy: cross cv_x_rel, cv_y_rel;
+    endgroup
+
     // create multicast covergroups
     cg_reset cov_reset = new;
     // cg_p_delivery cov_p_delivery = new;
     cg_mc_x cov_mc_x = new;
     cg_mc_y cov_mc_y = new;
+    cg_xy_relation cov_xy_relation = new;
 
     // print coverages when simulation is done
     final
@@ -72,6 +87,7 @@ module bsg_mesh_router_decoder_dor_cov
         // $display("P delivery               functional coverage is %f%%", cov_p_delivery.cross_all.get_coverage());
         $display("Multicast in x direction functional coverage is %f%%", cov_mc_x.cross_all.get_coverage());
         $display("Multicast in y direction functional coverage is %f%%", cov_mc_y.cross_all.get_coverage());
+        $display("Relation between my coordinate and destination coordinate functional coverage is %f%%", cov_xy_relation.cross_xy.get_coverage());
         $display("-------------------------------------------------------------------------");
         $display("");
     end
