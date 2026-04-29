@@ -58,6 +58,8 @@ module bsg_mesh_router_cov
   //     }
   //   end
   // endgroup
+
+  // todo change req-> req[input port], check multicast status of each individual port
   covergroup cg_multicast @(negedge clk_i iff ~reset_i);
     cp_num_targets: coverpoint $countones(req) {
       bins no_request = {0};
@@ -98,6 +100,7 @@ module bsg_mesh_router_cov
     end
   end
   
+  // todo cover all combinations of req[i][j] minus illegal pairings
   covergroup cg_port_pairing @(negedge clk_i iff ~reset_i);
     cp_in  : coverpoint src_port { bins ports[] = {[0:in_dirs_lp-1]};  }
     cp_out : coverpoint dst_port { bins ports[] = {[0:out_dirs_lp-1]}; }
@@ -114,19 +117,22 @@ module bsg_mesh_router_cov
     }
   endgroup
 
-  covergroup cg_stall_check @(negedge clk_i iff ~reset_i);
-    cp_is_mc: coverpoint ($countones(req) > 1);
+  // todo check per output port if attempt is made to multicast when not all partner ports ready
 
-    cp_not_ready: coverpoint (| (~ready_and_i));
+  covergroup cg_stall_check @(negedge clk_i iff ~reset_i);
+    cp_is_mc: coverpoint ($countones(req) > 1); // fixme sample req for each output port and count ones
+
+    cp_not_ready: coverpoint (| (~ready_and_i));  // fixme check if partner ports are not ready
 
     cross_mc_stall: cross cp_is_mc, cp_not_ready {
-      bins mc_while_stalled = binsof(cp_is_mc) intersect {1} && binsof(cp_not_ready) intersect {1};
+      bins mc_while_stalled = binsof(cp_is_mc) intersect {1} && binsof(cp_not_ready) intersect {1};  // fixme i have no idea what this line does
     }
   endgroup
 
   integer target_port;
   integer num_reqs;
 
+  // fixme this is only half implemented
   covergroup cg_arbiter_contention @(negedge clk_i iff ~reset_i);
     cp_output_port: coverpoint target_port {
       bins ports[] = {[0:out_dirs_lp-1]};
@@ -147,6 +153,7 @@ module bsg_mesh_router_cov
   cg_stall_check cov_stall = new();
   cg_arbiter_contention arb_cov = new();
 
+  // todo try to make this work
   // always_ff @(negedge clk_i) begin
   //   if (!reset_i) begin 
   //     for (int i = 0; i < out_dirs_lp; i++) begin
