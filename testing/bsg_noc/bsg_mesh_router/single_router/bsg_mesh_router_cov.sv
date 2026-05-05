@@ -85,13 +85,20 @@ module bsg_mesh_router_cov
   // mia's implementation of cg_port_pairing
   integer src_port;
   integer dst_port;
+  integer num_outputs_active;
+  bit has_P_output;
 
   // then sample it manually:
   always_ff @(negedge clk_i) begin
     if (!reset_i) begin
       for (int i = 0; i < in_dirs_lp; i++) begin
+        num_outputs_active = 0;
+        has_P_output = 0;
         for (int j = 0; j < out_dirs_lp; j++) begin
           if (req[i][j]) begin
+            num_outputs_active++;
+            if (j == P)
+              has_P_output = 1;
             src_port = i;
             dst_port = j;
           end
@@ -113,6 +120,8 @@ module bsg_mesh_router_cov
           ||
           // same input/output port is illegal
           (cp_in == cp_out)
+          // multiple outputs without P is illegal
+          || (num_outputs_active > 1 && !has_P_output)
         );
     }
   endgroup
