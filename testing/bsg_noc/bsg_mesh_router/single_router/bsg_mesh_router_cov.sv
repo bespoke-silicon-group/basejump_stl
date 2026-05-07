@@ -141,6 +141,19 @@ module bsg_mesh_router_cov
   integer target_port;
   integer num_reqs;
 
+  // todo try to make this work
+  always_ff @(negedge clk_i) begin
+    if (!reset_i) begin 
+      for (int i = 0; i < out_dirs_lp; i++) begin
+        target_port = i;
+        num_reqs = $countones(req_t[i]);
+        // if (num_reqs > 0) begin
+        //   arb_cov.sample();
+        // end
+      end
+    end
+  end
+
   // fixme this is only half implemented
   covergroup cg_arbiter_contention @(negedge clk_i iff ~reset_i);
     cp_output_port: coverpoint target_port {
@@ -148,12 +161,17 @@ module bsg_mesh_router_cov
     }
 
     cp_contention_level: coverpoint num_reqs {
-      bins solo = {1};
-      bins duel = {2};
-      bins many = {[3:5]};
+      bins solo = {1}; // no arbitration needed
+      bins duel = {2}; // simple arbitration
+      bins many = {[3:4]}; // heavy aribitration
     }
 
-    cross_port_contention: cross cp_output_port, cp_contention_level;
+    cross_port_contention: cross cp_output_port, cp_contention_level {
+      illegal_bins illegal_arb =
+        cross_port_contention with (
+          cp_contention_level == 5
+        );
+    }
   endgroup
 
   cg_reset cov_reset = new();
@@ -162,18 +180,6 @@ module bsg_mesh_router_cov
   cg_stall_check cov_stall = new();
   cg_arbiter_contention arb_cov = new();
 
-  // todo try to make this work
-  // always_ff @(negedge clk_i) begin
-  //   if (!reset_i) begin 
-  //     for (int i = 0; i < out_dirs_lp; i++) begin
-  //       target_port = i;
-  //       num_reqs = $countones(req_t[i]);
-  //       if (num_reqs > 0) begin
-  //         arb_cov.sample();
-  //       end
-  //     end
-  //   end
-  // end
   // print coverages when simulation is done
   final
   begin
