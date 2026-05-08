@@ -237,4 +237,82 @@ async def testbench(dut):
     dut.v_i.value = 0
     dut.ready_and_i.value = 0
 
-    dut._log.info("Test finished!")
+    dut._log.info("Manual Test finished!")
+
+    # ARBITER CONTENTION TEST: all ports trying to send to the same output port 
+    for i in range(30):  # fewer iterations needed
+        dut._log.info(f"[CONTENTION TEST] Iteration {i}")
+
+        await RisingEdge(dut.clk_i)
+
+        # clear inputs
+        for j in range(IN_DIRS):
+            dut.v_i[j].value = 0
+            dut.data_i[j].value = 0
+        
+        dut.ready_and_i.value = 0b11111
+        dut.my_x_i.value = MY_X
+        dut.my_y_i.value = MY_Y
+
+        # randomize output port (destination that multiple inputs are fighting for)
+        target_output = random.choice([P, W, E, N, S])
+        dut._log.info(f"  Target output port: {target_output}")
+
+        if target_output == P:
+            src_ports = [W, E, N, S]  # any port can send to P
+        elif target_output == E:
+            src_ports = [W, P]  # only W and P can send to E due to DOR
+        elif target_output == W:
+            src_ports = [E, P]  # only E and P can send to W due to DOR
+        elif target_output == N:
+            src_ports = [S, P, W, E]  # only S and P can send to N due to DOR
+        elif target_output == S:
+            src_ports = [N, P, W, E]  # only N and P can send to S due to DOR
+
+
+        # function for generating destination coordinates that would route to the same port
+        def gen_dest_for_port(port):
+            if port == E:
+                return (MY_X + 1, MY_Y)
+            elif port == W:
+                return (MY_X - 1, MY_Y)
+            elif port == S:
+                return (MY_X, MY_Y + 1)
+            elif port == N:
+                return (MY_X, MY_Y - 1)
+            else:
+                return (MY_X, MY_Y)
+
+
+        # pick a certain number of input ports to contend (2-4)
+        num_contenders = random.randint(2, IN_DIRS)
+        num_contenders = min(num_contenders, len(src_ports))  # can't have more contenders than legal source ports
+        active_ports = random.sample(src_ports, num_contenders)
+        dut._log.info(f"  Contending source ports: {active_ports}")
+
+        # randomly select the contender input ports (but it has to be legal given the dest port)
+        for src in active_ports:
+            dest_x, dest_y = gen_dest_for_port(target_output)
+
+            packet = (dest_y << (2 + X_COORD_WIDTH)) | (dest_x << 2) | (0 << 1) | 0  # no multicast
+            dut.data_i[src].value = packet
+            dut.v_i[src].value = 1
+        
+        # observe the arbitration outcome
+        saw_grant = False
+
+        for _ in range(20):
+            await RisingEdge(dut.clk_i)
+            await Timer(1, units="ps") 
+            if dut.v_o.value.is_resolvable:
+                if (dut.v_o.value >> target_output) & 1:
+                    saw_grant = True
+                    dut._log.info(f"Grant observed at port {target_output}")
+
+                    # find which source port won the arbitration by checking yumi_o
+                    for src in active_ports:
+                        if dut.yumi_o.value.is_resolvable and (dut.yumi_o.value >> src) & 1:
+                            dut._log.info(f"  Winning source port: {src}")
+                    break
+
+        assert saw_grant, f"No grant at port {target_output} under DOR contention"
