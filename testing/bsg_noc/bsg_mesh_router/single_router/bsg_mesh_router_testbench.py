@@ -8,7 +8,7 @@ from cocotb.triggers import RisingEdge, FallingEdge, Timer
 
 
 
-ITERATION = 50
+ITERATION = 5000
 
 IN_DIRS = 5
 OUT_DIRS = 5
@@ -240,7 +240,7 @@ async def testbench(dut):
     dut._log.info("Manual Test finished!")
 
     # ARBITER CONTENTION TEST: all ports trying to send to the same output port 
-    for i in range(30):  # fewer iterations needed
+    for i in range(300):  # fewer iterations needed
         dut._log.info(f"[CONTENTION TEST] Iteration {i}")
 
         await RisingEdge(dut.clk_i)
