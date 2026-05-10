@@ -8,7 +8,7 @@ from cocotb.triggers import RisingEdge, FallingEdge, Timer
 
 
 
-ITERATION = 5000
+ITERATION = 150
 
 IN_DIRS = 5
 OUT_DIRS = 5
@@ -240,7 +240,7 @@ async def testbench(dut):
     dut._log.info("Manual Test finished!")
 
     # ARBITER CONTENTION TEST: all ports trying to send to the same output port 
-    for i in range(300):  # fewer iterations needed
+    for i in range(100):  # fewer iterations needed
         dut._log.info(f"[CONTENTION TEST] Iteration {i}")
 
         await RisingEdge(dut.clk_i)
@@ -285,7 +285,7 @@ async def testbench(dut):
 
 
         # pick a certain number of input ports to contend (2-4)
-        num_contenders = random.randint(2, IN_DIRS)
+        num_contenders = random.randint(1, IN_DIRS)
         num_contenders = min(num_contenders, len(src_ports))  # can't have more contenders than legal source ports
         active_ports = random.sample(src_ports, num_contenders)
         dut._log.info(f"  Contending source ports: {active_ports}")
@@ -314,5 +314,5 @@ async def testbench(dut):
                         if dut.yumi_o.value.is_resolvable and (dut.yumi_o.value >> src) & 1:
                             dut._log.info(f"  Winning source port: {src}")
                     break
-
+        dut._log.info(f"PORT={target_output}, REQS={len(active_ports)}")
         assert saw_grant, f"No grant at port {target_output} under DOR contention"

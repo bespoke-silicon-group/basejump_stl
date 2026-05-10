@@ -155,7 +155,7 @@ module bsg_mesh_router_cov
   end
 
   // fixme this is only half implemented
-  covergroup cg_arbiter_contention @(negedge clk_i iff ~reset_i);
+  covergroup cg_arbiter_contention @(negedge clk_i iff (~reset_i && num_reqs > 0));
     cp_output_port: coverpoint target_port {
       bins ports[] = {[0:out_dirs_lp-1]};
     }
@@ -164,12 +164,17 @@ module bsg_mesh_router_cov
       bins solo = {1}; // no arbitration needed
       bins duel = {2}; // simple arbitration
       bins many = {[3:4]}; // heavy aribitration
+
+      illegal_bins too_many_reqs = {[5:$]}; // >= 5 is illegal
     }
 
     cross_port_contention: cross cp_output_port, cp_contention_level {
-      illegal_bins illegal_arb =
+      illegal_bins illegal_arb = 
         cross_port_contention with (
-          cp_contention_level == 5
+          // if output port is E, then num_reqs should never be > 2 because at most W and P can request it
+          (cp_output_port == E && cp_contention_level > 2) ||
+          // if output port is W, then num_reqs should never be > 2 because at most E and P can request it
+          (cp_output_port == W && cp_contention_level > 2)
         );
     }
   endgroup
