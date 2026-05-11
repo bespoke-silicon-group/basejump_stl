@@ -115,7 +115,7 @@ module test_tile
     end          
   end
 
-
+/* Comment out so python testbench has control
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       curr_x_r <= '0;
@@ -129,7 +129,7 @@ module test_tile
     end
   end
 
-
+*/
 
 
 
@@ -137,7 +137,7 @@ module test_tile
   logic [num_tiles_lp-1:0] v_r, v_n;
   assign link_li[P].ready_and_rev = 1'b1;
   assign v_n = link_lo[P].v << packet_lo.data;
-
+/*
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
       v_r <= '0;
@@ -160,7 +160,7 @@ module test_tile
       end
     end
   end
-
+*/
   assign done_o = &v_r;
 
 
