@@ -15,6 +15,7 @@ module bsg_fifo_1r1w_narrowed
 
                     , parameter lsb_to_msb_p       = 1
                     , parameter ready_THEN_valid_p = 0
+                    , parameter harden_p = 0
                     )
                     ( input                    clk_i
                     , input                    reset_i
@@ -38,6 +39,7 @@ module bsg_fifo_1r1w_narrowed
   bsg_fifo_1r1w_small #(.width_p(width_p)
                        ,.els_p(els_p) 
                        ,.ready_THEN_valid_p(ready_THEN_valid_p)
+                       ,.harden_p(harden_p)
                        ) main_fifo
     
     ( .clk_i(clk_i)
