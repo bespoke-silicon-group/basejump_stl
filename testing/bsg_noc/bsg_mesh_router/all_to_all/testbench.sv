@@ -168,11 +168,11 @@ module testbench();
 
 
 
-  // initial begin
-  //   wait(&done_lo);
-  //   $display("[BSG_FINISH] test successful.");
-  //   $finish;
-  // end
+  initial begin
+    wait(&done_lo);
+    $display("[BSG_FINISH] test successful.");
+    $finish;
+  end
 
 
 endmodule
