@@ -8,7 +8,7 @@ from cocotb.triggers import RisingEdge, FallingEdge, Timer
 
 
 
-ITERATION = 150
+ITERATION = 300
 
 IN_DIRS = 5
 OUT_DIRS = 5
@@ -259,7 +259,7 @@ async def testbench(dut):
         dut._log.info(f"  Target output port: {target_output}")
 
         if target_output == P:
-            src_ports = [W, E, N, S]  # any port can send to P
+            src_ports = [W, E, N, S, P]  # any port can send to P
         elif target_output == E:
             src_ports = [W, P]  # only W and P can send to E due to DOR
         elif target_output == W:

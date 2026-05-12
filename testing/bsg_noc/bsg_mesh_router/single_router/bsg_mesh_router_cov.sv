@@ -119,7 +119,7 @@ module bsg_mesh_router_cov
           (cp_in == S && (cp_out == E || cp_out == W)))
           ||
           // same input/output port is illegal
-          (cp_in == cp_out)
+          (cp_in == cp_out & cp_in != P)
           // multiple outputs without P is illegal
           || (num_outputs_active > 1 && !has_P_output)
         );
@@ -138,9 +138,6 @@ module bsg_mesh_router_cov
     }
   endgroup
 
-  integer target_port;
-  integer num_reqs;
-
   // module-level sampling variables
   int target_port;
   int num_reqs;
@@ -154,37 +151,40 @@ module bsg_mesh_router_cov
       bins solo  = {1};
       bins duel  = {2};
       bins many  = {[3:4]};
-      illegal_bins too_many_reqs = {[5:$]};
+      bins only_p = {5}; // only P can have >4 reqs, and it can have up to 5 reqs (from all 5 input ports)
     }
 
     cross_port_contention: cross cp_output_port, cp_contention_level {
       illegal_bins illegal_arb =
-        cross_port_contention with (
-          (cp_output_port == E && cp_contention_level > 2) ||
-          (cp_output_port == W && cp_contention_level > 2)
-        );
+        (binsof(cp_output_port.ports) intersect {2} && (binsof(cp_contention_level.many) || binsof(cp_contention_level.only_p))) ||
+        (binsof(cp_output_port.ports) intersect {1} && (binsof(cp_contention_level.many) || binsof(cp_contention_level.only_p))) ||
+        (binsof(cp_output_port.ports) intersect {3} && (binsof(cp_contention_level.only_p))) ||
+        (binsof(cp_output_port.ports) intersect {4} && (binsof(cp_contention_level.only_p)));
     }
   endgroup
 
   cg_arbiter_contention cg_inst = new();
 
   always_ff @(negedge clk_i) begin
-    if (!reset_i) begin
-      for (int i = 0; i < out_dirs_lp; i++) begin
-        target_port = i;
-        num_reqs    = $countones(req_t[i]);
-        if (num_reqs > 0) begin
-          cg_inst.sample();
-        end
+  if (!reset_i) begin
+    for (int i = 0; i < out_dirs_lp; i++) begin
+      target_port = i;
+      num_reqs    = $countones(req_t[i]);
+      if (num_reqs > 0
+        && !(i == 2 && num_reqs > 2)
+        && !(i == 1 && num_reqs > 2)
+        && !(i == 3 && num_reqs > 4)
+        && !(i == 4 && num_reqs > 4)) begin
+        cg_inst.sample();
       end
     end
   end
+end
 
   cg_reset cov_reset = new();
   cg_multicast cov_mc = new();
   cg_port_pairing cov_pp = new();
   cg_stall_check cov_stall = new();
-  cg_arbiter_contention arb_cov = new();
 
   // print coverages when simulation is done
   final
@@ -196,7 +196,7 @@ module bsg_mesh_router_cov
       $display("Multicast                functional coverage is %f%%", cov_mc.get_coverage());
       $display("Port pairing             functional coverage is %f%%", cov_pp.get_coverage());
       $display("Stall checking           functional coverage is %f%%", cov_stall.get_coverage());
-      $display("Arbiter contention       functional coverage is %f%%", arb_cov.get_coverage());
+      $display("Arbiter contention       functional coverage is %f%%", cg_inst.get_coverage());
       $display("-------------------------------------------------------------------------");
       $display("");
   end
