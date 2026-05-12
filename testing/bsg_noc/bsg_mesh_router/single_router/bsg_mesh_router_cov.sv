@@ -141,43 +141,44 @@ module bsg_mesh_router_cov
   integer target_port;
   integer num_reqs;
 
-  // todo try to make this work
-  always_ff @(negedge clk_i) begin
-    if (!reset_i) begin 
-      for (int i = 0; i < out_dirs_lp; i++) begin
-        target_port = i;
-        num_reqs = $countones(req_t[i]);
-        // if (num_reqs > 0) begin
-        //   arb_cov.sample();
-        // end
-      end
-    end
-  end
+  // module-level sampling variables
+  int target_port;
+  int num_reqs;
 
-  // fixme this is only half implemented
-  covergroup cg_arbiter_contention @(negedge clk_i iff (~reset_i && num_reqs > 0));
+  covergroup cg_arbiter_contention;
     cp_output_port: coverpoint target_port {
       bins ports[] = {[0:out_dirs_lp-1]};
     }
 
     cp_contention_level: coverpoint num_reqs {
-      bins solo = {1}; // no arbitration needed
-      bins duel = {2}; // simple arbitration
-      bins many = {[3:4]}; // heavy aribitration
-
-      illegal_bins too_many_reqs = {[5:$]}; // >= 5 is illegal
+      bins solo  = {1};
+      bins duel  = {2};
+      bins many  = {[3:4]};
+      illegal_bins too_many_reqs = {[5:$]};
     }
 
     cross_port_contention: cross cp_output_port, cp_contention_level {
-      illegal_bins illegal_arb = 
+      illegal_bins illegal_arb =
         cross_port_contention with (
-          // if output port is E, then num_reqs should never be > 2 because at most W and P can request it
           (cp_output_port == E && cp_contention_level > 2) ||
-          // if output port is W, then num_reqs should never be > 2 because at most E and P can request it
           (cp_output_port == W && cp_contention_level > 2)
         );
     }
   endgroup
+
+  cg_arbiter_contention cg_inst = new();
+
+  always_ff @(negedge clk_i) begin
+    if (!reset_i) begin
+      for (int i = 0; i < out_dirs_lp; i++) begin
+        target_port = i;
+        num_reqs    = $countones(req_t[i]);
+        if (num_reqs > 0) begin
+          cg_inst.sample();
+        end
+      end
+    end
+  end
 
   cg_reset cov_reset = new();
   cg_multicast cov_mc = new();
