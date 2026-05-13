@@ -7,7 +7,7 @@ package test_pkg;
 
 
   `define test_packet_width(data_width_mp,x_cord_width_mp,y_cord_width_mp) \
-      (data_width_mp+x_cord_width_mp+y_cord_width_mp)
+      (data_width_mp+x_cord_width_mp+y_cord_width_mp+2)  // +2 for mc bits
 
   `define test_link_sif_width(data_width_mp,x_cord_width_mp,y_cord_width_mp) \
       `bsg_ready_and_link_sif_width(`test_packet_width(data_width_mp,x_cord_width_mp,y_cord_width_mp))
@@ -18,6 +18,7 @@ package test_pkg;
       logic [data_width_mp-1:0] data;                          \
       logic [y_cord_width_mp-1:0] y_cord;                      \
       logic [x_cord_width_mp-1:0] x_cord;                      \
+      logic mc_x, mc_y;                                        \
     } test_packet_s;                                          \
                                                                                 \
     `declare_bsg_ready_and_link_sif_s(`test_packet_width(data_width_mp,x_cord_width_mp,y_cord_width_mp), test_link_sif_s)

@@ -1,7 +1,6 @@
 // (sender)   Each tile sends a packet to every tile.
 // (receiver) The tile assert done_o, when it has received packets from everyone.
 
-// TODO adapt packet format to multicast packet
 module test_tile
   import test_pkg::*;
   import bsg_noc_pkg::*;
@@ -90,6 +89,8 @@ module test_tile
   assign packet_li.x_cord = curr_x_r;
   assign packet_li.y_cord = curr_y_r;
   assign packet_li.data = my_id;
+  assign packet_li.mc_x = 1'b0;  // added for multicast
+  assign packet_li.mc_y = 1'b0;
 
   always_comb begin
 
@@ -150,18 +151,12 @@ module test_tile
       end
 
       // assert that packet arrived at correct dest.
-      // if (link_lo[P].v) begin
-      //   assert((packet_lo.x_cord == my_x_i) & (packet_lo.y_cord == my_y_i)) else
-      //     $error("[BSG_ERROR] wrong packet (%0d, %0d) arrived at (%0d, %0d).",
-      //       packet_lo.x_cord, packet_lo.y_cord,
-      //       my_x_i, my_y_i
-      //     );
-      // end
-
       if (link_lo[P].v) begin
-        assert((packet_lo.x_cord == my_x_i) & (packet_lo.y_cord == my_y_i)) 
-      else $error("[BSG_ERROR] wrong packet (%0d, %0d) arrived at local port of (%0d, %0d).",
-              packet_lo.x_cord, packet_lo.y_cord, my_x_i, my_y_i);
+        assert((packet_lo.x_cord == my_x_i) & (packet_lo.y_cord == my_y_i)) else
+          $error("[BSG_ERROR] wrong packet (%0d, %0d) arrived at (%0d, %0d).",
+            packet_lo.x_cord, packet_lo.y_cord,
+            my_x_i, my_y_i
+          );
       end
     end
   end
