@@ -28,10 +28,27 @@ VCS_DEFINE += +define+RUCHE_X=${RUCHE_X}
 VCS_DEFINE += +define+RUCHE_Y=${RUCHE_Y}
 VCS_DEFINE += +define+DEPOPULATED=${DEPOPULATED}
 
+benchmark: clean run_unicast run_multicast
+	@echo "========================================"
+	@echo "   BENCHMARK COMPARISON (N=$(NUM_X)x$(NUM_Y))"
+	@echo "========================================"
+	@echo -n "Unicast Total Time:   " && grep "Time:" unicast.log | awk '{print $$2, $$3}'
+	@echo -n "Multicast Total Time: " && grep "Time:" multicast.log | awk '{print $$2, $$3}'
+	@echo "========================================"
+
+run_unicast: clean
+	vcs -R +v2k -sverilog -full64 -f sv.include -l unicast.log $(VCS_DEFINE) \
+		-top testbench_mc -timescale=1ps/1ps \
+		+incdir+$(BASEJUMP_STL_DIR)/bsg_misc +incdir+$(BASEJUMP_STL_DIR)/bsg_noc
+
+run_multicast: clean
+	vcs -R +v2k -sverilog -full64 -f sv.include -l multicast.log $(VCS_DEFINE) \
+		+define+MULTICAST_MODE -top testbench_mc -timescale=1ps/1ps \
+		+incdir+$(BASEJUMP_STL_DIR)/bsg_misc +incdir+$(BASEJUMP_STL_DIR)/bsg_noc
 
 run:
 	vcs -R +v2k -sverilog -full64 -f sv.include -l vcs.log $(VCS_DEFINE)\
-		-debug_pp -timescale=1ps/1ps +vcs+vcdpluson	-top testbench -reportstats \
+		-debug_pp -timescale=1ps/1ps +vcs+vcdpluson	-top testbench_mc -reportstats \
 		+lint=all,noSVA-UA,noSVA-NSVU,noVCDE,noNS \
 		$(VCS_INCDIR) \
 		$(VCS_DEFINE)

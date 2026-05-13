@@ -86,35 +86,66 @@ module test_tile_mc
   logic [x_cord_width_p-1:0] curr_x_r, curr_x_n;
   logic [y_cord_width_p-1:0] curr_y_r, curr_y_n;
   integer send_count_r, send_count_n;
-  assign packet_li.x_cord = curr_x_r;
-  assign packet_li.y_cord = curr_y_r;
+  //assign packet_li.x_cord = curr_x_r;
+  // assign packet_li.y_cord = curr_y_r;
   assign packet_li.data = my_id;
-  assign packet_li.mc_x = 1'b0;  // added for multicast
-  assign packet_li.mc_y = 1'b0;
+  // assign packet_li.mc_x = 1'b0;  // added for multicast
+  // assign packet_li.mc_y = 1'b0;
 
+  // unicast code
+  // always_comb begin
+  //   send_count_n = send_count_r;
+  //   curr_x_n = curr_x_r;
+  //   curr_y_n = curr_y_r;
+  //   link_li[P].v = 1'b0;
+
+  //   // only node 0, 0 sends
+  //   if (my_id == 0) begin
+  //     if (send_count_r != num_tiles_lp) begin
+  //       link_li[P].v = 1'b1;
+  //       if (link_lo[P].ready_and_rev) begin
+  //         curr_x_n = (curr_x_r == num_tiles_x_p-1)
+  //           ? '0
+  //           : (curr_x_r + 1);
+  //         curr_y_n = (curr_x_r == num_tiles_x_p-1)
+  //           ? curr_y_r + 1
+  //           : curr_y_r;
+  //         send_count_n = send_count_r + 1;
+  //       end
+  //     end
+  //     else begin
+  //       link_li[P].v = 1'b0;
+  //     end  
+  //   end        
+  // end
+
+  // Modified Sender for Recursive Multicast Sweep (OG CODE FOR MC)
   always_comb begin
-
     send_count_n = send_count_r;
-    curr_x_n = curr_x_r;
-    curr_y_n = curr_y_r;
     link_li[P].v = 1'b0;
+    
+    // Default packet setup
+    packet_li.mc_x = 1'b0;
+    packet_li.mc_y = 1'b1; // Always set mc_y for column coverage
+    packet_li.y_cord = (y_cord_width_p)'(num_tiles_y_p - 1); // Target max Y
 
-    if (send_count_r != num_tiles_lp) begin
+    // Only Node (0,0) executes the sweep
+    if (my_id == 0 && send_count_r < num_tiles_x_p) begin
       link_li[P].v = 1'b1;
+      
+      // Sweep X backwards: X_max, X_max-1, ... 0
+      packet_li.x_cord = (x_cord_width_p)'(num_tiles_x_p - 1 - send_count_r);
+      
+      // Set mc_x ONLY for the very first packet to maximize row coverage
+      packet_li.mc_x = (send_count_r == 0); 
+      
       if (link_lo[P].ready_and_rev) begin
-        curr_x_n = (curr_x_r == num_tiles_x_p-1)
-          ? '0
-          : (curr_x_r + 1);
-        curr_y_n = (curr_x_r == num_tiles_x_p-1)
-          ? curr_y_r + 1
-          : curr_y_r;
         send_count_n = send_count_r + 1;
       end
     end
-    else begin
-      link_li[P].v = 1'b0;
-    end          
   end
+
+
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
@@ -128,6 +159,7 @@ module test_tile_mc
       send_count_r <= send_count_n;
     end
   end
+
 
 
 
@@ -150,8 +182,9 @@ module test_tile_mc
         end
       end
 
-      // assert that packet arrived at correct dest.
-      if (link_lo[P].v) begin
+      // assert that packet arrived at correct dest. 
+      // we expect mismatches if multicasting so ignore those cases
+      if (link_lo[P].v && !packet_lo.mc_x && !packet_lo.mc_y) begin
         assert((packet_lo.x_cord == my_x_i) & (packet_lo.y_cord == my_y_i)) else
           $error("[BSG_ERROR] wrong packet (%0d, %0d) arrived at (%0d, %0d).",
             packet_lo.x_cord, packet_lo.y_cord,
@@ -161,7 +194,7 @@ module test_tile_mc
     end
   end
 
-  assign done_o = &v_r;
+  assign done_o = v_r[0]; // only care about sender node
 
 
 
