@@ -89,37 +89,41 @@ module test_tile_mc
   //assign packet_li.x_cord = curr_x_r;
   // assign packet_li.y_cord = curr_y_r;
   assign packet_li.data = my_id;
-  // assign packet_li.mc_x = 1'b0;  // added for multicast
-  // assign packet_li.mc_y = 1'b0;
 
-  // unicast code
-  // always_comb begin
-  //   send_count_n = send_count_r;
-  //   curr_x_n = curr_x_r;
-  //   curr_y_n = curr_y_r;
-  //   link_li[P].v = 1'b0;
 
-  //   // only node 0, 0 sends
-  //   if (my_id == 0) begin
-  //     if (send_count_r != num_tiles_lp) begin
-  //       link_li[P].v = 1'b1;
-  //       if (link_lo[P].ready_and_rev) begin
-  //         curr_x_n = (curr_x_r == num_tiles_x_p-1)
-  //           ? '0
-  //           : (curr_x_r + 1);
-  //         curr_y_n = (curr_x_r == num_tiles_x_p-1)
-  //           ? curr_y_r + 1
-  //           : curr_y_r;
-  //         send_count_n = send_count_r + 1;
-  //       end
-  //     end
-  //     else begin
-  //       link_li[P].v = 1'b0;
-  //     end  
-  //   end        
-  // end
+  // unicast sender
+  always_comb begin
+    send_count_n = send_count_r;
+    curr_x_n = curr_x_r;
+    curr_y_n = curr_y_r;
+    link_li[P].v = 1'b0;
+    packet_li.mc_x = 1'b0;  // added for multicast
+    packet_li.mc_y = 1'b0;
+    packet_li.x_cord = curr_x_r;
+    packet_li.y_cord = curr_y_r;
 
-  // Modified Sender for Recursive Multicast Sweep (OG CODE FOR MC)
+    // only node 0, 0 sends
+    if (my_id == 0) begin
+      if (send_count_r != num_tiles_lp) begin
+        link_li[P].v = 1'b1;
+        if (link_lo[P].ready_and_rev) begin
+          curr_x_n = (curr_x_r == num_tiles_x_p-1)
+            ? '0
+            : (curr_x_r + 1);
+          curr_y_n = (curr_x_r == num_tiles_x_p-1)
+            ? curr_y_r + 1
+            : curr_y_r;
+          send_count_n = send_count_r + 1;
+        end
+      end
+      else begin
+        link_li[P].v = 1'b0;
+      end  
+    end        
+  end
+
+  // multicast sender
+  /*
   always_comb begin
     send_count_n = send_count_r;
     link_li[P].v = 1'b0;
@@ -143,7 +147,8 @@ module test_tile_mc
         send_count_n = send_count_r + 1;
       end
     end
-  end
+   end  
+  */
 
 
 
@@ -178,7 +183,7 @@ module test_tile_mc
       for (integer i = 0; i < num_tiles_lp; i++) begin: l
         if (v_n[i]) begin
           v_r[i] <= 1'b1;
-          $display("(x,y)=(%2d,%2d) receiving id=%6d.", my_x_i, my_y_i, packet_lo.data);
+          $display("[%0t ps] (x,y)=(%2d,%2d) receiving id=%6d.", $time, my_x_i, my_y_i, packet_lo.data);
         end
       end
 
