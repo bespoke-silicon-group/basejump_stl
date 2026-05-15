@@ -316,3 +316,54 @@ async def testbench(dut):
                     break
         dut._log.info(f"PORT={target_output}, REQS={len(active_ports)}")
         assert saw_grant, f"No grant at port {target_output} under DOR contention"
+
+    # simple test case for changing ready signals 
+    dut._log.info("Starting ready signal test")
+    await RisingEdge(dut.clk_i)
+    src_port = W
+    dest_ports = [E, P]
+
+    dest_x = 2
+    dest_y = 1
+    mc_x = 1
+    mc_y = 0
+    packet = (dest_y << (2 + X_COORD_WIDTH)) | (dest_x << 2) | (mc_y << 1) | mc_x 
+    my_x_i = MY_X
+    my_y_i = MY_Y
+
+    # E is blocked 
+    dut.data_i[src_port].value = packet
+    dut.v_i[src_port].value = 1
+    # all output ports ready except the destination port E
+    dut.ready_and_i.value = 0b11101  # all outputs ready except E
+    dut.my_x_i.value = my_x_i
+    dut.my_y_i.value = my_y_i
+
+    for cycle in range(5):
+        await RisingEdge(dut.clk_i)
+        # Router sees data heading to E and P
+        assert (dut.v_o.value >> E) & 1, "v_o[E] should be 1 — router has data for E"
+        assert (dut.v_o.value >> P) & 1, "v_o[P] should be 1 — router has data for P"
+
+        # Neither port's handshake completes
+        assert not (yumi_o >> W) & 1, (
+            "yumi_o[W]=0: packet must not be consumed — "
+            "E is blocking the atomic multicast"
+        )
+
+        dut._log.info(f"  Cycle {cycle}: Output ports correctly stalled due to E being blocked")
+
+    # now unblock E and check that the packet goes through
+    dut._log.info("Unblocking port E")
+    dut.ready_and_i.value = 0b11111  # all outputs ready
+    
+    await RisingEdge(dut.clk_i)
+
+    v_o  = int(dut.v_o.value)
+    yumi_o = int(dut.yumi_o.value)
+
+    assert (v_o >> E) & 1 == 1, f"Output port {E} should be valid when it's ready"
+    assert (v_o >> P) & 1 == 1, f"Output port {P} should be valid when E is ready due to multicast dependency"
+    assert (yumi_o >> src_port) & 1 == 1, f"Input port {src_port} should accept packet when destination is ready"
+
+    dut._log.info("Ready signal test passed!")
