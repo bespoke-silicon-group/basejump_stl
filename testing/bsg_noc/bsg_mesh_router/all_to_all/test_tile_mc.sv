@@ -86,41 +86,41 @@ module test_tile_mc
   logic [x_cord_width_p-1:0] curr_x_r, curr_x_n;
   logic [y_cord_width_p-1:0] curr_y_r, curr_y_n;
   integer send_count_r, send_count_n;
-  //assign packet_li.x_cord = curr_x_r;
+  // assign packet_li.x_cord = curr_x_r;
   // assign packet_li.y_cord = curr_y_r;
-  // assign packet_li.data = my_id;
+  assign packet_li.data = my_id;
 
 
   // unicast sender
-  // always_comb begin
-  //   send_count_n = send_count_r;
-  //   curr_x_n = curr_x_r;
-  //   curr_y_n = curr_y_r;
-  //   link_li[P].v = 1'b0;
-  //   packet_li.mc_x = 1'b0;  // added for multicast
-  //   packet_li.mc_y = 1'b0;
-  //   packet_li.x_cord = curr_x_r;
-  //   packet_li.y_cord = curr_y_r;
+  always_comb begin
+    send_count_n = send_count_r;
+    curr_x_n = curr_x_r;
+    curr_y_n = curr_y_r;
+    link_li[P].v = 1'b0;
+    packet_li.mc_x = 1'b0;  // added for multicast
+    packet_li.mc_y = 1'b0;
+    packet_li.x_cord = curr_x_r;
+    packet_li.y_cord = curr_y_r;
 
-  //   // only node 0, 0 sends
-  //   if (my_id == 0) begin
-  //     if (send_count_r != num_tiles_lp) begin
-  //       link_li[P].v = 1'b1;
-  //       if (link_lo[P].ready_and_rev) begin
-  //         curr_x_n = (curr_x_r == num_tiles_x_p-1)
-  //           ? '0
-  //           : (curr_x_r + 1);
-  //         curr_y_n = (curr_x_r == num_tiles_x_p-1)
-  //           ? curr_y_r + 1
-  //           : curr_y_r;
-  //         send_count_n = send_count_r + 1;
-  //       end
-  //     end
-  //     else begin
-  //       link_li[P].v = 1'b0;
-  //     end  
-  //   end        
-  // end
+    // only node 0, 0 sends
+    if (my_id == 0) begin
+      if (send_count_r != num_tiles_lp) begin
+        link_li[P].v = 1'b1;
+        if (link_lo[P].ready_and_rev) begin
+          curr_x_n = (curr_x_r == num_tiles_x_p-1)
+            ? '0
+            : (curr_x_r + 1);
+          curr_y_n = (curr_x_r == num_tiles_x_p-1)
+            ? curr_y_r + 1
+            : curr_y_r;
+          send_count_n = send_count_r + 1;
+        end
+      end
+      else begin
+        link_li[P].v = 1'b0;
+      end  
+    end        
+  end
 
   // multicast sender; one sends to all
   // always_comb begin
@@ -149,69 +149,69 @@ module test_tile_mc
   //  end  
 
   // multicast sender; middle sends to all
-  localparam sender_x_lp = 4;
-  localparam sender_y_lp = 4;
-  localparam cols_right_lp = num_tiles_x_p - 1 - sender_x_lp; // 3
-  localparam cols_left_lp = sender_x_lp;                       // 4
-  localparam total_packets_lp = 2 + 2*cols_right_lp + 2*cols_left_lp; // 16
+  // localparam sender_x_lp = 4;
+  // localparam sender_y_lp = 4;
+  // localparam cols_right_lp = num_tiles_x_p - 1 - sender_x_lp; // 3
+  // localparam cols_left_lp = sender_x_lp;                       // 4
+  // localparam total_packets_lp = 2 + 2*cols_right_lp + 2*cols_left_lp; // 16
 
-  always_comb begin
-    send_count_n = send_count_r;
-    link_li[P].v = 1'b0;
+  // always_comb begin
+  //   send_count_n = send_count_r;
+  //   link_li[P].v = 1'b0;
 
-    // default packet fields
-    packet_li.mc_x  = 1'b0;
-    packet_li.mc_y  = 1'b0;
-    packet_li.x_cord = (x_cord_width_p)'(sender_x_lp);
-    packet_li.y_cord = (y_cord_width_p)'(sender_y_lp);
-    packet_li.data   = my_id;
+  //   // default packet fields
+  //   packet_li.mc_x  = 1'b0;
+  //   packet_li.mc_y  = 1'b0;
+  //   packet_li.x_cord = (x_cord_width_p)'(sender_x_lp);
+  //   packet_li.y_cord = (y_cord_width_p)'(sender_y_lp);
+  //   packet_li.data   = my_id;
 
-    if (my_x_i == sender_x_lp && my_y_i == sender_y_lp && send_count_r < total_packets_lp) begin
-      link_li[P].v = 1'b1;
+  //   if (my_x_i == sender_x_lp && my_y_i == sender_y_lp && send_count_r < total_packets_lp) begin
+  //     link_li[P].v = 1'b1;
 
-      if (send_count_r == 0) begin
-        // OWN COL DOWN
-        packet_li.x_cord = (x_cord_width_p)'(sender_x_lp);
-        packet_li.y_cord = (y_cord_width_p)'(num_tiles_y_p - 1);
-        packet_li.mc_y   = 1'b1;
+  //     if (send_count_r == 0) begin
+  //       // OWN COL DOWN
+  //       packet_li.x_cord = (x_cord_width_p)'(sender_x_lp);
+  //       packet_li.y_cord = (y_cord_width_p)'(num_tiles_y_p - 1);
+  //       packet_li.mc_y   = 1'b1;
 
-      end else if (send_count_r == 1) begin
-        // OWN COL UP
-        packet_li.x_cord = (x_cord_width_p)'(sender_x_lp);
-        packet_li.y_cord = (y_cord_width_p)'(0);
-        packet_li.mc_y   = 1'b1;
+  //     end else if (send_count_r == 1) begin
+  //       // OWN COL UP
+  //       packet_li.x_cord = (x_cord_width_p)'(sender_x_lp);
+  //       packet_li.y_cord = (y_cord_width_p)'(0);
+  //       packet_li.mc_y   = 1'b1;
 
-      end else if (send_count_r < 2 + cols_right_lp) begin
-        // RIGHT DOWN: sweep x=7,6,5
-        packet_li.x_cord = (x_cord_width_p)'(num_tiles_x_p - 1 - (send_count_r - 2));
-        packet_li.y_cord = (y_cord_width_p)'(num_tiles_y_p - 1);
-        packet_li.mc_y   = 1'b1;
+  //     end else if (send_count_r < 2 + cols_right_lp) begin
+  //       // RIGHT DOWN: sweep x=7,6,5
+  //       packet_li.x_cord = (x_cord_width_p)'(num_tiles_x_p - 1 - (send_count_r - 2));
+  //       packet_li.y_cord = (y_cord_width_p)'(num_tiles_y_p - 1);
+  //       packet_li.mc_y   = 1'b1;
 
-      end else if (send_count_r < 2 + 2*cols_right_lp) begin
-        // RIGHT UP: sweep x=7,6,5
-        packet_li.x_cord = (x_cord_width_p)'(num_tiles_x_p - 1 - (send_count_r - 2 - cols_right_lp));
-        packet_li.y_cord = (y_cord_width_p)'(0);
-        packet_li.mc_y   = 1'b1;
+  //     end else if (send_count_r < 2 + 2*cols_right_lp) begin
+  //       // RIGHT UP: sweep x=7,6,5
+  //       packet_li.x_cord = (x_cord_width_p)'(num_tiles_x_p - 1 - (send_count_r - 2 - cols_right_lp));
+  //       packet_li.y_cord = (y_cord_width_p)'(0);
+  //       packet_li.mc_y   = 1'b1;
 
-      end else if (send_count_r < 2 + 2*cols_right_lp + cols_left_lp) begin
-        // LEFT DOWN: sweep x=3,2,1,0
-        packet_li.x_cord = (x_cord_width_p)'(sender_x_lp - 1 - (send_count_r - 2 - 2*cols_right_lp));
-        packet_li.y_cord = (y_cord_width_p)'(num_tiles_y_p - 1);
-        packet_li.mc_y   = 1'b1;
+  //     end else if (send_count_r < 2 + 2*cols_right_lp + cols_left_lp) begin
+  //       // LEFT DOWN: sweep x=3,2,1,0
+  //       packet_li.x_cord = (x_cord_width_p)'(sender_x_lp - 1 - (send_count_r - 2 - 2*cols_right_lp));
+  //       packet_li.y_cord = (y_cord_width_p)'(num_tiles_y_p - 1);
+  //       packet_li.mc_y   = 1'b1;
 
-      end else begin
-        // LEFT UP: sweep x=3,2,1,0
-        packet_li.x_cord = (x_cord_width_p)'(sender_x_lp - 1 - (send_count_r - 2 - 2*cols_right_lp - cols_left_lp));
-        packet_li.y_cord = (y_cord_width_p)'(0);
-        packet_li.mc_y   = 1'b1;
+  //     end else begin
+  //       // LEFT UP: sweep x=3,2,1,0
+  //       packet_li.x_cord = (x_cord_width_p)'(sender_x_lp - 1 - (send_count_r - 2 - 2*cols_right_lp - cols_left_lp));
+  //       packet_li.y_cord = (y_cord_width_p)'(0);
+  //       packet_li.mc_y   = 1'b1;
 
-      end
+  //     end
 
-      if (link_lo[P].ready_and_rev) begin
-        send_count_n = send_count_r + 1;
-      end
-    end
-  end
+  //     if (link_lo[P].ready_and_rev) begin
+  //       send_count_n = send_count_r + 1;
+  //     end
+  //   end
+  // end
 
 
 
@@ -262,7 +262,7 @@ module test_tile_mc
     end
   end
 
-  assign done_o = v_r[36]; // only care about sender node
+  assign done_o = v_r[0]; // only care about sender node
 
 
 
