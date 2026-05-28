@@ -20,6 +20,7 @@ module bsg_mesh_router_decoder_dor
     // XY_order_p = 1 :  X then Y
     // XY_order_p = 0 :  Y then X
     , parameter XY_order_p = 1
+    , parameter multicast_p = 0
     , parameter depopulated_p = 1
     , parameter from_p = {dirs_lp{1'b0}}  // one-hot, indicates which direction is the input coming from.
 
@@ -65,18 +66,16 @@ module bsg_mesh_router_decoder_dor
 
 
   // compare coordinates
-  wire x_eq = (x_dirs_i == my_x_i); // x coordinate matches
-  wire y_eq = (y_dirs_i == my_y_i); // y coordinate matches
-  wire x_gt = x_dirs_i > my_x_i; // x destination coordinate is greater
-  wire y_gt = y_dirs_i > my_y_i; // y coordinate is greater
-  wire x_lt = ~x_gt & ~x_eq; // x destination coordinate is less
-  wire y_lt = ~y_gt & ~y_eq; // y destination coordinate is less
+  wire x_eq = (x_dirs_i == my_x_i);
+  wire y_eq = (y_dirs_i == my_y_i);
+  wire x_gt = x_dirs_i > my_x_i;
+  wire y_gt = y_dirs_i > my_y_i;
+  wire x_lt = ~x_gt & ~x_eq;
+  wire y_lt = ~y_gt & ~y_eq;
 
   // multicast
-  // wire copy_x = mc_x & (req[W] | req[E]);  // moving horizontally and x multicast is set
-  // wire copy_y = mc_y & (req[S] | req[N]);  // moving verticallyand y multicast is set
   wire copy_x, copy_y;
-  wire copy = copy_x | copy_y;  // send packet to processor and forward to next node
+  wire copy = (copy_x | copy_y) & multicast_p;  // send packet to processor and forward to next node
 
   // valid signal
   logic [dirs_lp-1:0] req;
@@ -280,8 +279,12 @@ module bsg_mesh_router_decoder_dor
   if (debug_p) begin
     always_ff @ (negedge clk_i) begin
       if (~reset_i) begin
-        assert($countones(req_o) < 3)
-          else $fatal(1, "multiple req_o detected. %b", req_o);
+        if (multicast_p) begin
+          assert($countones(req_o) < 3)
+            else $fatal(1, "more than 2 req_o detected. %b", req_o);
+        end else 
+          assert($countones(req_o) < 2)
+            else $fatal(1, "multiple req_o detected. %b", req_o);
       end
     end
   end
