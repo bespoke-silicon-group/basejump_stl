@@ -31,8 +31,8 @@ module bsg_mesh_router_decoder_dor
     , input reset_i     // debug only
 
     //, input v_i
-    , input mc_x  // multicast x
-    , input mc_y  // multicast y
+    , input mc_x_i   // multicast x
+    , input mc_y_i   // multicast y
     , input [x_cord_width_p-1:0] x_dirs_i
     , input [y_cord_width_p-1:0] y_dirs_i
 
@@ -74,7 +74,9 @@ module bsg_mesh_router_decoder_dor
   wire y_lt = ~y_gt & ~y_eq;
 
   // multicast
-  wire copy_x, copy_y;
+  wire mc_x, mc_y, copy_x, copy_y;
+  assign mc_x = mc_x_i & multicast_p;
+  assign mc_y = mc_y_i & multicast_p;
   wire copy = (copy_x | copy_y) & multicast_p;  // send packet to processor and forward to next node
 
   // valid signal
