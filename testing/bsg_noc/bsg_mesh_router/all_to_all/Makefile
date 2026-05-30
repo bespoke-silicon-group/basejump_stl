@@ -30,7 +30,7 @@ VCS_DEFINE += +define+DEPOPULATED=${DEPOPULATED}
 
 run:
 	vcs -R +v2k -sverilog -full64 -f sv.include -l vcs.log $(VCS_DEFINE)\
-		-debug_pp -timescale=1ps/1ps +vcs+vcdpluson	-top testbench_mc -reportstats \
+		-debug_pp -timescale=1ps/1ps +vcs+vcdpluson	-top testbench -reportstats \
 		+lint=all,noSVA-UA,noSVA-NSVU,noVCDE,noNS \
 		$(VCS_INCDIR) \
 		$(VCS_DEFINE)

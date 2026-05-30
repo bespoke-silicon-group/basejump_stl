@@ -13,6 +13,7 @@ module test_tile
     , parameter ruche_factor_X_p=0
     , parameter ruche_factor_Y_p=0
     , parameter XY_order_p=1
+    , parameter multicast_p=0
     , parameter dirs_lp=(dims_p*2)+1
     , parameter depopulated_p=1
 
@@ -67,6 +68,7 @@ module test_tile
     ,.dims_p(dims_p)
     ,.fifo_els_p(get_fifo_els())
     ,.XY_order_p(XY_order_p)
+    ,.multicast_p(multicast_p)
     ,.depopulated_p(depopulated_p)
   ) router (
     .clk_i(clk_i)
@@ -89,8 +91,6 @@ module test_tile
   assign packet_li.x_cord = curr_x_r;
   assign packet_li.y_cord = curr_y_r;
   assign packet_li.data = my_id;
-  assign packet_li.mc_x = 1'b0;  // added for multicast
-  assign packet_li.mc_y = 1'b0;
 
   always_comb begin
 
