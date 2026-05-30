@@ -12,6 +12,7 @@ module bsg_mesh_router_wrapper
     , parameter out_dirs_lp = (2*dims_p)+1
     , parameter in_dirs_lp = out_dirs_lp
     , parameter XY_order_p = 1
+    , parameter multicast_p = 1
     , parameter depopulated_p = 1
     , parameter bit [out_dirs_lp-1:0][in_dirs_lp-1:0]  routing_matrix_p = 
       (dims_p == 2) ? (XY_order_p ? StrictXY : StrictYX) : (
@@ -43,6 +44,7 @@ module bsg_mesh_router_wrapper
     bsg_mesh_router #(.width_p(width_p)
                             ,.x_cord_width_p(x_cord_width_p)
                             ,.y_cord_width_p(y_cord_width_p)
+                            ,.multicast_p(multicast_p)
     ) dut
     (.*);
 
