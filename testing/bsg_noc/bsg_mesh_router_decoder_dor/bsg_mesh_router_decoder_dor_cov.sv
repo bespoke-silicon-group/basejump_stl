@@ -13,6 +13,7 @@ module bsg_mesh_router_decoder_dor_cov
         // XY_order_p = 1 :  X then Y
         // XY_order_p = 0 :  Y then X
         , parameter XY_order_p = 1
+        , parameter multicast_p = 1
         , parameter depopulated_p = 1
         , parameter from_p = {dirs_lp{1'b0}}  // one-hot, indicates which direction is the input coming from.
     
@@ -21,8 +22,8 @@ module bsg_mesh_router_decoder_dor_cov
     (
         input clk_i         // debug only
         , input reset_i     // debug only
-        , input mc_x  // multicast x
-        , input mc_y  // multicast y
+        , input mc_x_i  // multicast x
+        , input mc_y_i  // multicast y
         , input [x_cord_width_p-1:0] x_dirs_i
         , input [y_cord_width_p-1:0] y_dirs_i
     
@@ -43,7 +44,7 @@ module bsg_mesh_router_decoder_dor_cov
     // multicast in x direction
     covergroup cg_mc_x @(negedge clk_i iff ~reset_i);
         cv_x_eq: coverpoint x_eq;
-        cv_mc_x: coverpoint mc_x;
+        cv_mc_x: coverpoint mc_x_i;
     
         cross_all: cross cv_x_eq, cv_mc_x;
     endgroup
@@ -51,7 +52,7 @@ module bsg_mesh_router_decoder_dor_cov
     // multicast in y direction
     covergroup cg_mc_y @(negedge clk_i iff ~reset_i);
         cv_y_eq: coverpoint y_eq;
-        cv_mc_y: coverpoint mc_y;
+        cv_mc_y: coverpoint mc_y_i;
 
         cross_all: cross cv_y_eq, cv_mc_y;
     endgroup

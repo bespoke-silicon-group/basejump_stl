@@ -5,6 +5,7 @@ module bsg_mesh_router_decoder_dor_wrapper #(parameter x_cord_width_p = 4
                                                 , parameter ruche_factor_X_p=0
                                                 , parameter ruche_factor_Y_p=0
                                                 , parameter XY_order_p = 1
+                                                , parameter multicast_p = 1
                                                 , parameter depopulated_p = 1
                                                 , parameter from_p = 5'b00001  // one-hot, indicates which direction is the input coming from.
                                                 , parameter debug_p = 1
@@ -12,8 +13,8 @@ module bsg_mesh_router_decoder_dor_wrapper #(parameter x_cord_width_p = 4
     (
         input clk_i,
         input reset_i,          
-        input mc_x,
-        input mc_y,
+        input mc_x_i,
+        input mc_y_i,
         input [x_cord_width_p-1:0] x_dirs_i,
         input [y_cord_width_p-1:0] y_dirs_i,
         input [x_cord_width_p-1:0] my_x_i,
@@ -29,6 +30,7 @@ module bsg_mesh_router_decoder_dor_wrapper #(parameter x_cord_width_p = 4
                                     ,.ruche_factor_X_p(ruche_factor_X_p)
                                     ,.ruche_factor_Y_p(ruche_factor_Y_p)
                                     ,.XY_order_p(XY_order_p)
+                                    ,.multicast_p(multicast_p)
                                     ,.depopulated_p(depopulated_p)
                                     ,.from_p(from_p)
                                     ,.debug_p(debug_p)
@@ -44,6 +46,7 @@ module bsg_mesh_router_decoder_dor_wrapper #(parameter x_cord_width_p = 4
     ,.ruche_factor_X_p(ruche_factor_X_p)
     ,.ruche_factor_Y_p(ruche_factor_Y_p)
     ,.XY_order_p(XY_order_p)
+    ,.multicast_p(multicast_p)
     ,.depopulated_p(depopulated_p)
     ,.from_p(from_p)
     ,.debug_p(debug_p)

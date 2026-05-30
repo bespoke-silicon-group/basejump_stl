@@ -56,8 +56,8 @@ async def testbench(dut):
         dut.my_y_i.value = my_y
         dut.x_dirs_i.value = x_dirs
         dut.y_dirs_i.value = y_dirs
-        dut.mc_x.value = mc_x
-        dut.mc_y.value = mc_y
+        dut.mc_x_i.value = mc_x
+        dut.mc_y_i.value = mc_y
 
 
         await Timer(1, units="ps")
