@@ -106,6 +106,8 @@ module bsg_wormhole_concentrator
      ,.concentrated_link_ready_and_rev_i(concentrated_link_i_cast.ready_and_rev)
      ,.concentrated_link_v_o            (concentrated_link_o_cast.v)
      ,.concentrated_link_data_o         (concentrated_link_o_cast.data)
+
+     ,.links_credit_late_o()
      );
 
   bsg_wormhole_concentrator_out
