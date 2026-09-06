@@ -92,7 +92,7 @@ module bsg_mem_multiport_latch_write_banked_bypassing
     //    ,.data_i(w_data_i[bank_id_lp][j])
     //    ,.data_o(mem_r[i][j])
     //  );
-    end
+    //end
   end
 
 
