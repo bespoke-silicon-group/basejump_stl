@@ -48,6 +48,8 @@
 `define BSG_SAFE_CLOG2(x) ( (((x)==1) || ((x)==0))? 1 : $clog2((x)))
 `define BSG_IS_POW2(x) ( (1 << $clog2(x)) == (x))
 `define BSG_WIDTH(x) ( $clog2(x) + (`BSG_IS_POW2(x) ? 1 : 0))
+// Bits for an inclusive maximum x >= 0, with at least one storage bit.
+`define BSG_SAFE_WIDTH(x) (`BSG_MAX(1, `BSG_WIDTH(x)))
 `define BSG_SAFE_MINUS(x, y) (((x)<(y))) ? 0 : ((x)-(y))
 
 // these "SAFE" shift functions handle a common problem that shifts default to 32 bits wide even
