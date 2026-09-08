@@ -9,8 +9,10 @@ module bsg_counter_clear_up #(parameter `BSG_INV_PARAM(max_val_p)
 			      // this originally had an "invalid" default value of -1
 			      // which is a bad choice for a counter
 			     ,parameter init_val_p   = `BSG_UNDEFINED_IN_SIM('0)
+                             // Maximum zero still needs one bit for a legal register and casts.
+                             // The safe helper preserves BSG_WIDTH's full-range maximum handling.
                              ,parameter ptr_width_lp =
-                             `BSG_WIDTH(max_val_p)
+                             `BSG_SAFE_WIDTH(max_val_p)
 			     ,parameter disable_overflow_warning_p = 0
                              )
    (input  clk_i
