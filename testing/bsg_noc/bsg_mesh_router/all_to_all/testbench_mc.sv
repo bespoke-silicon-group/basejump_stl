@@ -1,7 +1,7 @@
 
 `include "bsg_defines.sv"
 
-module testbench();
+module testbench_mc();
 
   import test_pkg::*;
   import bsg_noc_pkg::*;
@@ -57,7 +57,7 @@ module testbench();
 
   for (genvar y = 0; y < num_tiles_y_p; y++) begin: ty
     for (genvar x = 0; x < num_tiles_x_p; x++) begin: tx
-      test_tile #(
+      test_tile_mc #(
         .dims_p(dims_p)
         ,.x_cord_width_p(x_cord_width_lp)
         ,.y_cord_width_p(y_cord_width_lp)
@@ -67,7 +67,6 @@ module testbench();
         ,.ruche_factor_X_p(ruche_factor_X_p)
         ,.ruche_factor_Y_p(ruche_factor_Y_p)
         ,.XY_order_p(XY_order_p)
-        ,.multicast_p(1'b0)
         ,.depopulated_p(depopulated_p)
       ) tile (
         .clk_i(clk)
