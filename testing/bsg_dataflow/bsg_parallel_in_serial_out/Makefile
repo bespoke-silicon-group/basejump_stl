@@ -5,7 +5,7 @@ export BSG_CADENV_DIR = $(TOP_DIR)/../../../../bsg_cadenv
 export BASEJUMP_STL_DIR = $(TOP_DIR)/../../..
 
 # Environment
-include $(BSG_CADENV_DIR)/cadenv.mk
+-include $(BSG_CADENV_DIR)/cadenv.mk
 
 CLK_SPEEDS := 41-5-5 20-5-5 10-5-5 7-5-5 5-5-5 3-5-5 5-5-7 5-5-3
 RATIOS := 4 2 1

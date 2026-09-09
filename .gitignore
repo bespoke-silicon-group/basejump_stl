@@ -12,3 +12,5 @@ ucli.key
 .nfs*
 *.pyc
 libdramsim3.so
+obj_dir/
+outfile

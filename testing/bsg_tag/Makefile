@@ -43,4 +43,4 @@ scan_params = WIDTH_P
 WIDTH_P    = 8
 ############################################################################
 
-include ../Makefile.sim
+-include ../Makefile.sim
