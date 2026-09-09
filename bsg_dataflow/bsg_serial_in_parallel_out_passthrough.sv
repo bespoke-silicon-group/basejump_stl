@@ -29,7 +29,7 @@ module bsg_serial_in_parallel_out_passthrough
   , input [width_p-1:0]                   data_i
 
   , output logic [els_p-1:0][width_p-1:0] data_o
-  , output logic                          v_o
+  , output logic [els_p-1:0]              v_o
   , input                                 ready_and_i
   );
   
@@ -37,7 +37,6 @@ module bsg_serial_in_parallel_out_passthrough
    
   logic [els_p-1:0] count_r;
 
-  assign v_o = v_i & count_r[els_p-1];     // means we received all of the words
   assign ready_and_o = ~count_r[els_p-1] | ready_and_i; // have space, or we are dequeing; (one gate delay in-to-out)
 
   wire sending   = v_o & ready_and_i;  // we have all the items, and downstream is ready
@@ -69,7 +68,7 @@ module bsg_serial_in_parallel_out_passthrough
   for (genvar i = 0; i < els_p-1; i++)
     begin: rof
       wire my_turn = v_i & count_r[i];
-      bsg_dff_en #(.width_p(width_p)) dff
+      bsg_dff_en_bypass #(.width_p(width_p)) dff
       (.clk_i
        ,.data_i
        ,.en_i   (my_turn)
@@ -77,6 +76,12 @@ module bsg_serial_in_parallel_out_passthrough
       );
     end
   assign data_lo[els_p-1] = data_i;
+
+  for (genvar i = 0; i < els_p; i++)
+    if (i == els_p-1)
+      assign v_o[i] = (v_i & count_r[i]);
+    else
+      assign v_o[i] = (v_i & count_r[i]) | (~v_i & count_r[i+1]);
 
   // If send hi_to_lo, reverse the output data array
   if (hi_to_lo_p == 0)
