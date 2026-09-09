@@ -1,0 +1,7 @@
+include bsg_assembler_in.json
+include bsg_assembler_out.json
+include bsg_source_sync_channel_control_master.json
+include bsg_source_sync_channel_control_master_master.json
+include bsg_source_sync_input.json
+include bsg_source_sync_output.json
+

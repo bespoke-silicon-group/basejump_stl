@@ -1,0 +1,1685 @@
+{
+    "design_name": "bsg_source_sync_input", 
+    "filelist": [
+        "basejump_stl/bsg_misc/bsg_defines.v", 
+        "basejump_stl/bsg_comm_link/bsg_source_sync_input.v", 
+        "basejump_stl/bsg_async/bsg_sync_sync.v", 
+        "basejump_stl/bsg_async/bsg_async_fifo.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w.v", 
+        "basejump_stl/bsg_mem/bsg_mem_1r1w_synth.v", 
+        "basejump_stl/bsg_async/bsg_async_ptr_gray.v", 
+        "basejump_stl/bsg_async/bsg_launch_sync_sync.v", 
+        "basejump_stl/bsg_dataflow/bsg_two_fifo.v", 
+        "basejump_stl/bsg_misc/bsg_binary_plus_one_to_gray.v", 
+        "basejump_stl/bsg_misc/bsg_scan.v"
+    ], 
+    "include_path": [
+        "basejump_stl/bsg_misc"
+    ], 
+    "run_config": [
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_bypass_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_valid_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_edge_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_alt_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_yumi_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_pos_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_neg_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_valid_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a DDR or center/edge-aligned SDR source synchronous input channel with size  at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 30", 
+            "name": "bsg_source_sync_input_io_clk_30_FO4_core_clk_30_FO4"
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_bypass_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_valid_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_edge_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_alt_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_yumi_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_pos_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_neg_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_valid_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a DDR or center/edge-aligned SDR source synchronous input channel with size  at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 40", 
+            "name": "bsg_source_sync_input_io_clk_30_FO4_core_clk_40_FO4"
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_bypass_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_valid_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_edge_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_alt_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_yumi_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_pos_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_neg_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_valid_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a DDR or center/edge-aligned SDR source synchronous input channel with size  at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 50", 
+            "name": "bsg_source_sync_input_io_clk_30_FO4_core_clk_50_FO4"
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_bypass_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_valid_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_edge_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_alt_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_yumi_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_pos_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_neg_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_valid_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a DDR or center/edge-aligned SDR source synchronous input channel with size  at a clk 1 period (in num of FO4) = 30 and a clk 2 period (in num of FO4) = 60", 
+            "name": "bsg_source_sync_input_io_clk_30_FO4_core_clk_60_FO4"
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_bypass_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_valid_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_edge_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_alt_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_yumi_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_pos_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_neg_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_valid_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a DDR or center/edge-aligned SDR source synchronous input channel with size  at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 30", 
+            "name": "bsg_source_sync_input_io_clk_40_FO4_core_clk_30_FO4"
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_bypass_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_valid_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_edge_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_alt_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_yumi_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_pos_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_neg_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_valid_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a DDR or center/edge-aligned SDR source synchronous input channel with size  at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 40", 
+            "name": "bsg_source_sync_input_io_clk_40_FO4_core_clk_40_FO4"
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_bypass_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_valid_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_edge_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_alt_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_yumi_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_pos_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_neg_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_valid_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a DDR or center/edge-aligned SDR source synchronous input channel with size  at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 50", 
+            "name": "bsg_source_sync_input_io_clk_40_FO4_core_clk_50_FO4"
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_bypass_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_valid_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_edge_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_alt_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_yumi_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_pos_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_neg_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_valid_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a DDR or center/edge-aligned SDR source synchronous input channel with size  at a clk 1 period (in num of FO4) = 40 and a clk 2 period (in num of FO4) = 60", 
+            "name": "bsg_source_sync_input_io_clk_40_FO4_core_clk_60_FO4"
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_bypass_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_valid_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_edge_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_alt_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_yumi_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_pos_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_neg_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_valid_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a DDR or center/edge-aligned SDR source synchronous input channel with size  at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 30", 
+            "name": "bsg_source_sync_input_io_clk_50_FO4_core_clk_30_FO4"
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_bypass_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_valid_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_edge_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_alt_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_yumi_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_pos_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_neg_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_valid_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a DDR or center/edge-aligned SDR source synchronous input channel with size  at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 40", 
+            "name": "bsg_source_sync_input_io_clk_50_FO4_core_clk_40_FO4"
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_bypass_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_valid_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_edge_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_alt_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_yumi_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_pos_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_neg_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_valid_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a DDR or center/edge-aligned SDR source synchronous input channel with size  at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 50", 
+            "name": "bsg_source_sync_input_io_clk_50_FO4_core_clk_50_FO4"
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_bypass_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_valid_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_edge_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_alt_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_yumi_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_pos_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_neg_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_valid_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a DDR or center/edge-aligned SDR source synchronous input channel with size  at a clk 1 period (in num of FO4) = 50 and a clk 2 period (in num of FO4) = 60", 
+            "name": "bsg_source_sync_input_io_clk_50_FO4_core_clk_60_FO4"
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_bypass_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_valid_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_edge_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_alt_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_yumi_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_pos_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_neg_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_valid_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "30", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a DDR or center/edge-aligned SDR source synchronous input channel with size  at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 30", 
+            "name": "bsg_source_sync_input_io_clk_60_FO4_core_clk_30_FO4"
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_bypass_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_valid_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_edge_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_alt_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_yumi_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_pos_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_neg_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_valid_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "40", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a DDR or center/edge-aligned SDR source synchronous input channel with size  at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 40", 
+            "name": "bsg_source_sync_input_io_clk_60_FO4_core_clk_40_FO4"
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_bypass_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_valid_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_edge_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_alt_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_yumi_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_pos_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_neg_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_valid_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "50", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a DDR or center/edge-aligned SDR source synchronous input channel with size  at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 50", 
+            "name": "bsg_source_sync_input_io_clk_60_FO4_core_clk_50_FO4"
+        }, 
+        {
+            "constraints": [
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_bypass_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_data_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_valid_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_edge_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_trigger_mode_alt_en_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_reset_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_yumi_i", 
+                    "type": "input"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_token_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_pos_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "io_clk", 
+                    "delay": "0", 
+                    "port": "io_snoop_neg_r_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_data_o", 
+                    "type": "output"
+                }, 
+                {
+                    "clock": "core_clk", 
+                    "delay": "0", 
+                    "port": "core_valid_o", 
+                    "type": "output"
+                }, 
+                {
+                    "name": "io_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "io_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }, 
+                {
+                    "name": "core_clk", 
+                    "period_in_num_of_FO4": "60", 
+                    "port": "core_clk_i", 
+                    "type": "clock", 
+                    "uncertainty": "0"
+                }
+            ], 
+            "description": "a DDR or center/edge-aligned SDR source synchronous input channel with size  at a clk 1 period (in num of FO4) = 60 and a clk 2 period (in num of FO4) = 60", 
+            "name": "bsg_source_sync_input_io_clk_60_FO4_core_clk_60_FO4"
+        }
+    ]
+}
