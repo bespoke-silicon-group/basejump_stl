@@ -77,4 +77,23 @@
     logic [x_cord_width-1:0]   x_cord;                                         \
   } in_struct_name
 
+
+
+
+
+
+
+// VC Links;
+`define declare_bsg_vc_link_sif_s(width_mp,num_vc_mp,struct_name_mp)    \
+   typedef struct packed {                                              \
+      logic       [num_vc_mp-1:0] v;                                    \
+      logic       [num_vc_mp-1:0] ready_and_rev;                        \
+      logic       [width_mp-1:0] data;                                  \
+  } struct_name_mp
+
+
+`define bsg_vc_link_sif_width(width_mp,num_vc_mp) (width_mp+(2*num_vc_mp))
+
+
+
  `endif // BSG_NOC_LINKS_VH
