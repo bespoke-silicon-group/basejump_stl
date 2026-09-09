@@ -311,22 +311,22 @@ bsg_mem_1rw_sync_mask_write_byte_template = """
   `include "bsg_defines.sv"
   `include "bsg_mem_1rw_sync_mask_write_byte_macros.svh"
 
-module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(data_width_p)
+module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(width_p)
                           , parameter `BSG_INV_PARAM(els_p)
                           , parameter latch_last_read_p=0
                           , parameter addr_width_lp=`BSG_SAFE_CLOG2(els_p)
-                          , parameter write_mask_width_lp=data_width_p>>3
+                          , parameter write_mask_width_lp=width_p>>3
                           , parameter enable_clock_gating_p=0
                           , parameter harden_p=1
                           )
    (input   clk_i
     , input reset_i
-    , input [`BSG_SAFE_MINUS(data_width_p,1):0] data_i
+    , input [`BSG_SAFE_MINUS(width_p,1):0] data_i
     , input [addr_width_lp-1:0] addr_i
     , input v_i
     , input [`BSG_SAFE_MINUS(write_mask_width_lp,1):0] write_mask_i
     , input w_i
-    , output logic [`BSG_SAFE_MINUS(data_width_p,1):0]  data_o
+    , output logic [`BSG_SAFE_MINUS(width_p,1):0]  data_o
     );
 
 `ifndef BSG_HIDE_FROM_SYNTHESIS
@@ -343,7 +343,7 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(data_width_p)
     {sram_cfg}
       begin: notmacro
       bsg_mem_1rw_sync_mask_write_byte_synth #(
-        .data_width_p(data_width_p)
+        .width_p(width_p)
         ,.els_p(els_p)
         ,.latch_last_read_p(latch_last_read_p)
       ) synth (.*);
@@ -352,7 +352,7 @@ module bsg_mem_1rw_sync_mask_write_byte #(parameter `BSG_INV_PARAM(data_width_p)
 `ifndef BSG_HIDE_FROM_SYNTHESIS
       initial
         begin
-           $display("## %L: instantiating data_width_p=%d, els_p=%d (%m)", data_width_p, els_p);
+           $display("## %L: instantiating width_p=%d, els_p=%d (%m)", width_p, els_p);
         end
 `endif
 endmodule

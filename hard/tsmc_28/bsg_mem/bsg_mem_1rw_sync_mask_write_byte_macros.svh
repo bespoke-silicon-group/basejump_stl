@@ -9,9 +9,9 @@
   `bsg_mem_1rw_sync_mask_write_byte_macro(words,bits)
 
 `define bsg_mem_1rw_sync_mask_write_byte_macro(words,bits) \
-if (harden_p && els_p == words && data_width_p == bits)         \
+if (harden_p && els_p == words && width_p == bits)         \
   begin: wrap                                                   \
-    logic [data_width_p-1:0] w_mask_li;                         \
+    logic [width_p-1:0] w_mask_li;                         \
     bsg_expand_bitmask                                          \
      #(.in_width_p(write_mask_width_lp), .expand_p(8))          \
      wmask_expand                                               \
@@ -20,15 +20,15 @@ if (harden_p && els_p == words && data_width_p == bits)         \
        );                                                       \
                                                                 \
     bsg_mem_1rw_sync_mask_write_bit                             \
-     #(.width_p(data_width_p), .els_p(els_p))                   \
+     #(.width_p(width_p), .els_p(els_p))                   \
      bit_mem                                                    \
       (.w_mask_i(w_mask_li), .*);                               \
   end
 
 `define bsg_mem_1rw_sync_mask_write_byte_banked_macro(words,bits,wbank,dbank) \
-  if (harden_p && els_p == words && data_width_p == bits) begin: macro        \
+  if (harden_p && els_p == words && width_p == bits) begin: macro        \
       bsg_mem_1rw_sync_mask_write_byte_banked #(                              \
-        .data_width_p(data_width_p)                                           \
+        .width_p(width_p)                                           \
         ,.els_p(els_p)                                                        \
         ,.latch_last_read_p(latch_last_read_p)                                \
         ,.num_width_bank_p(wbank)                                             \
