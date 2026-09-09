@@ -1,6 +1,8 @@
 `include "bsg_defines.sv"
 
+`ifndef BSG_NO_TIMESCALE
 `timescale 1ps/1ps
+`endif
 
 // This module is a behavioral model of the clock generator ring
 // oscillator. A TSMC 28nm hardened implementation of this module
@@ -23,6 +25,18 @@ module bsg_clk_gen_osc_v3
    ,input bsg_tag_s bsg_tag_trigger_i
    ,output logic clk_o
    );
+
+`ifdef BSG_OSC_BASE_DELAY
+   localparam osc_base_delay_lp = `BSG_OSC_BASE_DELAY;
+`else
+   localparam osc_base_delay_lp = 1000;
+`endif
+
+`ifdef BSG_OSC_GRANULARITY
+   localparam osc_granularity_lp = `BSG_OSC_GRANULARITY;
+`else
+   localparam osc_granularity_lp = 100;
+`endif
 
   localparam ctl_width_lp = `BSG_SAFE_CLOG2(num_taps_p);
 
@@ -55,10 +69,10 @@ module bsg_clk_gen_osc_v3
 
    always
      begin
-        #1000
+        #(osc_base_delay_lp);
         if (ctrl_rrr !== 'X)
           # (
-             ((1 << $bits(ctrl_rrr)) - ctrl_rrr)*100
+             ((1 << $bits(ctrl_rrr)) - ctrl_rrr)*osc_granularity_lp
             )
         clk_o <= ~(clk_o | async_reset_i);
 
