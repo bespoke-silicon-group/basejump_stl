@@ -29,6 +29,7 @@ extern "C" svScope svSetScope(svScope);
             binary = build / 'clock-test'
             compiler = shlex.split(os.environ.get('CXX', 'c++'))
             command = compiler + ['-std=c++11', '-O2', '-D_GLIBCXX_ASSERTIONS',
+                '-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG',
                 '-I' + str(includes), '-I' + str(BASEJUMP / 'bsg_test'),
                 str(HERE / 'main.cpp'), str(BASEJUMP / 'bsg_test/bsg_nonsynth_dpi_clock_gen.cpp'),
                 '-o', str(binary)]
