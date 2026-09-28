@@ -147,6 +147,10 @@ module bsg_nonsynth_profiler_client_inc_cond
 	  end
      end
 endmodule
+`BSG_ABSTRACT_MODULE(bsg_nonsynth_profiler_client_inc_cond)
+
+
+
 
 
 // start_p to end_p inclusive
