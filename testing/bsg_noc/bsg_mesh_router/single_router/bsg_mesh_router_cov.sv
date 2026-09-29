@@ -1,0 +1,205 @@
+// This module defines functional coverages of module bsg_mesh_router
+`include "bsg_defines.sv"
+
+module bsg_mesh_router_cov
+  import bsg_noc_pkg::*;
+  import bsg_mesh_router_pkg::*;
+  #(parameter `BSG_INV_PARAM(width_p )
+    , parameter `BSG_INV_PARAM(x_cord_width_p )
+    , parameter `BSG_INV_PARAM(y_cord_width_p )
+    , parameter ruche_factor_X_p = 0
+    , parameter ruche_factor_Y_p = 0
+    , parameter dims_p = 2
+    , parameter out_dirs_lp = (2*dims_p)+1
+    , parameter in_dirs_lp = out_dirs_lp
+    , parameter XY_order_p = 1
+    , parameter multicast_p = 1
+    , parameter depopulated_p = 1
+    , parameter bit [out_dirs_lp-1:0][in_dirs_lp-1:0]  routing_matrix_p = 
+      (dims_p == 2) ? (XY_order_p ? StrictXY : StrictYX) : (
+      (dims_p == 3) ? (depopulated_p ? (XY_order_p ? HalfRucheX_StrictXY : HalfRucheX_StrictYX) 
+                                     : (XY_order_p ? HalfRucheX_FullyPopulated_StrictXY : HalfRucheX_FullyPopulated_StrictYX)) : (
+      (dims_p == 4) ? (depopulated_p ? (XY_order_p ? FullRuche_StrictXY : FullRuche_StrictYX)
+                                     : (XY_order_p ? FullRuche_FullyPopulated_StrictXY : FullRuche_FullyPopulated_StrictYX))
+                    : "inv"))
+
+    , parameter debug_p = 0
+  )
+  (
+    input clk_i
+    , input reset_i
+    
+    // TODO: remove unneccessary inputs to coverage module
+
+    , input [in_dirs_lp-1:0] v_i
+    , input [out_dirs_lp-1:0] ready_and_i
+
+    // node's x and y coord
+    , input [x_cord_width_p-1:0] my_x_i           
+    , input [y_cord_width_p-1:0] my_y_i
+
+    // internal registers
+    , input [in_dirs_lp-1:0] yumi_o
+    , input [in_dirs_lp-1:0][out_dirs_lp-1:0] req
+    , input [out_dirs_lp-1:0][in_dirs_lp-1:0] req_t
+  );
+
+  // reset
+  covergroup cg_reset @(negedge clk_i);
+      coverpoint reset_i;
+  endgroup
+
+  // check unicast and multicast cases
+  // covergroup cg_multicast @(negedge clk_i iff ~reset_i);
+  //   for (genvar i = 0; i < in_dirs_lp; i++) begin : per_port
+  //     cp_num_targets: coverpoint $countones(req[i]) {
+  //       bins no_request = {0};
+  //       bins unicast    = {1};
+  //       bins multicast  = {[2:out_dirs_lp]};
+  //     }
+  //   end
+  // endgroup
+
+  // todo change req-> req[input port], check multicast status of each individual port
+  covergroup cg_multicast @(negedge clk_i iff ~reset_i);
+    cp_num_targets: coverpoint $countones(req) {
+      bins no_request = {0};
+      bins unicast    = {1};
+      bins multicast  = {[2:$bits(req)]};
+    }
+  endgroup
+
+  // make sure all port pairs are hit
+  // covergroup cg_port_pairing @(negedge clk_i iff ~reset_i);
+  //   cp_request_vector: coverpoint req {
+  //     bins e_p = {5'b10010};
+  //     bins w_p = {5'b10001};
+  //     bins n_p = {5'b10100};
+  //     bins s_p = {5'b11000};
+  //     bins e =   {5'b00010};
+  //     bins w =   {5'b00001};
+  //     bins n =   {5'b00100};
+  //     bins s =   {5'b01000};
+  //   }
+  // endgroup
+
+  // mia's implementation of cg_port_pairing
+  integer src_port;
+  integer dst_port;
+  integer num_outputs_active;
+  bit has_P_output;
+
+  // then sample it manually:
+  always_ff @(negedge clk_i) begin
+    if (!reset_i) begin
+      for (int i = 0; i < in_dirs_lp; i++) begin
+        num_outputs_active = 0;
+        has_P_output = 0;
+        for (int j = 0; j < out_dirs_lp; j++) begin
+          if (req[i][j]) begin
+            num_outputs_active++;
+            if (j == P)
+              has_P_output = 1;
+            src_port = i;
+            dst_port = j;
+          end
+        end
+      end
+    end
+  end
+  
+  // todo cover all combinations of req[i][j] minus illegal pairings
+  covergroup cg_port_pairing @(negedge clk_i iff ~reset_i);
+    cp_in  : coverpoint src_port { bins ports[] = {[0:in_dirs_lp-1]};  }
+    cp_out : coverpoint dst_port { bins ports[] = {[0:out_dirs_lp-1]}; }
+    cross_all: cross cp_in, cp_out {
+      illegal_bins illegal_xy =
+        cross_all with (
+          // Y movement first → can't go X after entering from Y
+          ((cp_in == N && (cp_out == E || cp_out == W)) ||
+          (cp_in == S && (cp_out == E || cp_out == W)))
+          ||
+          // same input/output port is illegal
+          (cp_in == cp_out & cp_in != P)
+          // multiple outputs without P is illegal
+          || (num_outputs_active > 1 && !has_P_output)
+        );
+    }
+  endgroup
+
+  // todo check per output port if attempt is made to multicast when not all partner ports ready
+
+  covergroup cg_stall_check @(negedge clk_i iff ~reset_i);
+    cp_is_mc: coverpoint ($countones(req) > 1); // fixme sample req for each output port and count ones
+
+    cp_not_ready: coverpoint (| (~ready_and_i));  // fixme check if partner ports are not ready
+
+    cross_mc_stall: cross cp_is_mc, cp_not_ready {
+      bins mc_while_stalled = binsof(cp_is_mc) intersect {1} && binsof(cp_not_ready) intersect {1};  // fixme i have no idea what this line does
+    }
+  endgroup
+
+  // module-level sampling variables
+  int target_port;
+  int num_reqs;
+
+  covergroup cg_arbiter_contention;
+    cp_output_port: coverpoint target_port {
+      bins ports[] = {[0:out_dirs_lp-1]};
+    }
+
+    cp_contention_level: coverpoint num_reqs {
+      bins solo  = {1};
+      bins duel  = {2};
+      bins many  = {[3:4]};
+      bins only_p = {5}; // only P can have >4 reqs, and it can have up to 5 reqs (from all 5 input ports)
+    }
+
+    cross_port_contention: cross cp_output_port, cp_contention_level {
+      illegal_bins illegal_arb =
+        (binsof(cp_output_port.ports) intersect {2} && (binsof(cp_contention_level.many) || binsof(cp_contention_level.only_p))) ||
+        (binsof(cp_output_port.ports) intersect {1} && (binsof(cp_contention_level.many) || binsof(cp_contention_level.only_p))) ||
+        (binsof(cp_output_port.ports) intersect {3} && (binsof(cp_contention_level.only_p))) ||
+        (binsof(cp_output_port.ports) intersect {4} && (binsof(cp_contention_level.only_p)));
+    }
+  endgroup
+
+  cg_arbiter_contention cg_inst = new();
+
+  always_ff @(negedge clk_i) begin
+  if (!reset_i) begin
+    for (int i = 0; i < out_dirs_lp; i++) begin
+      target_port = i;
+      num_reqs    = $countones(req_t[i]);
+      if (num_reqs > 0
+        && !(i == 2 && num_reqs > 2)
+        && !(i == 1 && num_reqs > 2)
+        && !(i == 3 && num_reqs > 4)
+        && !(i == 4 && num_reqs > 4)) begin
+        cg_inst.sample();
+      end
+    end
+  end
+end
+
+  cg_reset cov_reset = new();
+  cg_multicast cov_mc = new();
+  cg_port_pairing cov_pp = new();
+  cg_stall_check cov_stall = new();
+
+  // print coverages when simulation is done
+  final
+  begin
+      $display("");
+      $display("Instance: %m");
+      $display("---------------------- Functional Coverage Results ----------------------");
+      $display("Reset                    functional coverage is %f%%", cov_reset.get_coverage());
+      $display("Multicast                functional coverage is %f%%", cov_mc.get_coverage());
+      $display("Port pairing             functional coverage is %f%%", cov_pp.get_coverage());
+      $display("Stall checking           functional coverage is %f%%", cov_stall.get_coverage());
+      $display("Arbiter contention       functional coverage is %f%%", cg_inst.get_coverage());
+      $display("-------------------------------------------------------------------------");
+      $display("");
+  end
+
+endmodule

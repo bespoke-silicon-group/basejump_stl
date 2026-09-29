@@ -3,6 +3,14 @@
 Each tile sends a packet to every tile in the network.
 Once every tile has received packets from all tiles, the test finishes.
 
+For multicast or non-multicast testing:
+If using multicast:
+- uncomment line 21 in test_pkg.sv
+- make sure you target testbench_mc in line 33 of Makefile
+If not using multicast:
+- comment out line 21 in test_pkg.sv
+-make sure you target testbench in line 33 of Makefile
+
 HOW TO RUN
 ----------
 
