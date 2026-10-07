@@ -30,7 +30,7 @@ module bsg_wormhole_concentrator_in
     ,parameter debug_lp            = 0
     ,parameter hold_on_valid_p     = 0
     ,parameter els_p               = 2
-    ,parameter harden_p            = 0
+    ,parameter harden_p            = (els_p >= 16)
     // asserts that when v=1 ready_rev_o is always 1
     // typically used when using credits
     ,parameter assert_valid_credit_p = 0
@@ -86,7 +86,7 @@ module bsg_wormhole_concentrator_in
 
       bsg_fifo_1r1w_small #(.width_p(flit_width_p)
                             ,.els_p(els_p)
-                            ,.harden_p(1)) twofer
+                            ,.harden_p(harden_p)) twofer
         (.clk_i
         ,.reset_i
 
