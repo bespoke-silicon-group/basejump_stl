@@ -9,7 +9,6 @@
 //
 // Operand widths must be positive. The default output width preserves the full
 // unsigned result; override width_o_p to truncate or extend it.
-// Output-width fix: Michael Bedford Taylor & OpenAI Codex (AI-generated).
 
 `include "bsg_defines.sv"
   

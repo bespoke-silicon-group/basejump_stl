@@ -1,4 +1,3 @@
-# Michael Bedford Taylor & OpenAI Codex (AI-generated).
 # Generic: make SIMULATOR=verilator
 # FPGA: make SIMULATOR=verilator PIPELINE_P="3 5" \
 #         BSG_TESTME_DIR=../../../hard/ultrascale_plus/bsg_misc

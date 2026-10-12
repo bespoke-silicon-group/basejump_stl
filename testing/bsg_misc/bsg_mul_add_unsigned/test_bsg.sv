@@ -1,4 +1,3 @@
-// Michael Bedford Taylor & OpenAI Codex (AI-generated).
 `include "bsg_defines.sv"
 
 // Check default port sizing against the original maximum-result calculation,
