@@ -382,7 +382,18 @@ module bsg_dmc_controller
   always_ff @(posedge dfi_clk_i) begin
     if(dfi_clk_sync_rst_i)
       ldst_tick <= 0;
-    else if(cstate == IDLE && (nstate == LDST || nstate == CALR)) begin
+    else if(cstate == IDLE && nstate == CALR) begin
+      // CALR always targets bank 0, row 0; use that bank's open state, not the
+      // user command's bank, to avoid issuing ACT to an already-open bank or
+      // READ to an inactive bank.
+      if(open_bank[0] && open_row[0] == '0)
+        ldst_tick <= 1;
+      else if(open_bank[0])
+        ldst_tick <= 3;
+      else
+        ldst_tick <= 2;
+    end
+    else if(cstate == IDLE && nstate == LDST) begin
       if(open_bank[bank_addr] && open_row[bank_addr] == row_addr)
         ldst_tick <= 1;
       else if(open_bank[bank_addr])
