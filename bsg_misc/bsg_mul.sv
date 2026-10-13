@@ -14,7 +14,7 @@ module bsg_mul #(parameter `BSG_INV_PARAM(width_p)
                        ,.pipeline_p(0       )
                        ,.harden_p  (harden_p)
                        ) bmp
-   (.clock_i(1'b0)
+   (.clk_i(1'b0)
     ,.en_i(1'b0)
     ,.x_i
     ,.y_i
