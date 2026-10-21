@@ -12,6 +12,7 @@ module bsg_nonsynth_dma_model
     ,parameter `BSG_INV_PARAM(mask_width_p)
     ,parameter `BSG_INV_PARAM(block_size_in_words_p)
     ,parameter `BSG_INV_PARAM(els_p)
+    ,parameter `BSG_INV_PARAM(ways_p)
 
     ,parameter read_delay_p=16
     ,parameter write_delay_p=16
@@ -24,7 +25,7 @@ module bsg_nonsynth_dma_model
     ,parameter lg_block_size_in_words_lp=`BSG_SAFE_CLOG2(block_size_in_words_p)
     ,parameter block_offset_width_lp=(block_size_in_words_p>1) ? lg_data_mask_width_lp+lg_block_size_in_words_lp : lg_data_mask_width_lp
     ,parameter upper_addr_width_lp=(block_size_in_words_p>1) ? lg_els_lp-lg_block_size_in_words_lp : lg_els_lp
-    ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p, mask_width_p)
+    ,parameter dma_pkt_width_lp=`bsg_cache_dma_pkt_width(addr_width_p, mask_width_p, ways_p)
     ,parameter word_width_lp=(block_size_in_words_p*data_width_p)/mask_width_p
     ,parameter dma_ratio_lp=(mask_width_p/block_size_in_words_p)
   )
@@ -48,7 +49,7 @@ module bsg_nonsynth_dma_model
   logic [data_width_p-1:0] mem [els_p-1:0];
   
   
-  `declare_bsg_cache_dma_pkt_s(addr_width_p, mask_width_p);
+  `declare_bsg_cache_dma_pkt_s(addr_width_p, mask_width_p, ways_p);
   bsg_cache_dma_pkt_s dma_pkt;
   assign dma_pkt = dma_pkt_i;
 
