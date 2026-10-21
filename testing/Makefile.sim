@@ -5,6 +5,7 @@
 
 TOP ?= $(shell git rev-parse --show-toplevel)
 BSG_CADENV_DIR ?= $(TOP)/../bsg_cadenv
+BASEJUMP_STL_DIR ?= $(TOP)
 
 -include $(BSG_CADENV_DIR)/cadenv.mk
 
@@ -26,6 +27,7 @@ else ifeq ($(SIMULATOR),verilator)
 ##########
 # settings for Verilator
 BSG_IP_CORES_COMP = verilator -sv --binary --timing --Wno-fatal --timescale 1ps/1ps -o Vtop_sim
+BSG_IP_CORES_COMP += -LDFLAGS "-lpthread" --top-module $(TEST_MODULE)
 BSG_IP_CORES_ELAB = /usr/bin/true || 
 BSG_IP_CORES_SIM  = ./obj_dir/Vtop_sim
 

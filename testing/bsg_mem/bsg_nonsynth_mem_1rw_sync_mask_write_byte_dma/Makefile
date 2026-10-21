@@ -1,6 +1,6 @@
 export BSG_CADENV_DIR = $(abspath ../../../../bsg_cadenv)
 export BASEJUMP_STL_DIR = $(abspath ../../..)
-include $(BSG_CADENV_DIR)/cadenv.mk
+-include $(BSG_CADENV_DIR)/cadenv.mk
 
 # for building tests
 test_basename_from_data_addr_width = test_$(strip $(1))_$(strip $(2))

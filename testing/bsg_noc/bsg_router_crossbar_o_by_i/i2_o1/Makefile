@@ -6,7 +6,7 @@ export BSG_CADENV_DIR = $(dir)/bsg_cadenv
 export BASEJUMP_STL_DIR = $(dir)/basejump_stl
 
 # Environment
-include $(BSG_CADENV_DIR)/cadenv.mk
+-include $(BSG_CADENV_DIR)/cadenv.mk
 
 HISTO = | grep -E "[0-9]  CYCLE" | awk -v size=1 'BEGIN{bmin=10000000}{ b=int($$8/size); a[b]++; bmax=b>bmax?b:bmax; bmin=b<bmin?b:bmin } END { for(i=bmin;i<=bmax;++i) print i*size,(i+1)*size,a[i] }'
 #HISTO=
