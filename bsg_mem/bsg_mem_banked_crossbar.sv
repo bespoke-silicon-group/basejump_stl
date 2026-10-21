@@ -307,7 +307,7 @@ module bsg_mem_banked_crossbar #
 `endif
 
     // to be replaced with bsg_mem_1rw_sync_byte_masked
-    bsg_mem_1rw_sync_mask_write_byte #( .data_width_p (data_width_p)
+    bsg_mem_1rw_sync_mask_write_byte #( .width_p      (data_width_p)
                                        ,.els_p        (bank_size_p)
                                       ) m1rw_mask
                                       ( .clk_i        (clk_i)

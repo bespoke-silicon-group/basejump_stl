@@ -6,9 +6,9 @@
 module bsg_mem_1rw_sync_mask_write_byte
 
  #(parameter `BSG_INV_PARAM(els_p )
-  ,parameter `BSG_INV_PARAM(data_width_p )
+  ,parameter `BSG_INV_PARAM(width_p )
   ,parameter addr_width_lp = `BSG_SAFE_CLOG2(els_p)
-  ,parameter write_mask_width_lp = data_width_p>>3
+  ,parameter write_mask_width_lp = width_p>>3
   )
 
   (input                           clk_i
@@ -18,15 +18,15 @@ module bsg_mem_1rw_sync_mask_write_byte
   ,input                           w_i
 
   ,input [addr_width_lp-1:0]       addr_i
-  ,input [data_width_p-1:0]        data_i
+  ,input [width_p-1:0]        data_i
 
   ,input [write_mask_width_lp-1:0] write_mask_i
 
-  ,output [data_width_p-1:0] data_o
+  ,output [width_p-1:0] data_o
   );
 
   // TSMC 180 1024x32 Byte Mask
-  if ((els_p == 1024) & (data_width_p == 32))
+  if ((els_p == 1024) & (width_p == 32))
     begin : macro
       wire [3:0] wen = {~(w_i & write_mask_i[3])
                        ,~(w_i & write_mask_i[2])
@@ -49,7 +49,7 @@ module bsg_mem_1rw_sync_mask_write_byte
     begin  : notmacro
 
        bsg_mem_1rw_sync_mask_write_byte_synth
-	 #(.els_p(els_p), .data_width_p(data_width_p))
+	 #(.els_p(els_p), .width_p(width_p))
        synth (.*);
 
     end
@@ -58,12 +58,12 @@ module bsg_mem_1rw_sync_mask_write_byte
 `ifndef BSG_HIDE_FROM_SYNTHESIS
 
   always_comb
-    assert (data_width_p % 8 == 0)
+    assert (width_p % 8 == 0)
       else $error("data width should be a multiple of 8 for byte masking");
 
    initial
      begin
-        $display("## bsg_mem_1rw_sync_mask_write_byte: instantiating data_width_p=%d, els_p=%d (%m)",data_width_p,els_p);
+        $display("## bsg_mem_1rw_sync_mask_write_byte: instantiating width_p=%d, els_p=%d (%m)",width_p,els_p);
      end
 
 `endif
