@@ -22,3 +22,6 @@ $BASEJUMP_STL_DIR/bsg_misc/bsg_scan.sv
 test_pkg.sv
 testbench.sv
 test_tile.sv
+
+testbench_mc.sv
+test_tile_mc.sv
