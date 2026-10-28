@@ -15,8 +15,8 @@ module bsg_mux_one_hot #(parameter `BSG_INV_PARAM(width_p)
 //   flattens the design, so every instance gets its own copy of each single-bit assign in
 //   the reduce loop below (2,560 for a 256x10 mux), which can dominate its memory use.
 //   The Verilator model does the same AND-OR on whole words: first for the elements above
-//   the last whole 32-bit chunk of the select, then for each whole chunk that is not all
-//   zero (with a one-hot select, at most one).
+//   the last whole 32-bit chunk of the select, then for each whole chunk whose select bits
+//   are not all zero.
 `ifdef VERILATOR
    localparam int whole_els_lp = els_p - els_p % 32;
    logic [width_p-1:0] data_lo;
