@@ -11,6 +11,31 @@ module bsg_mux_one_hot #(parameter `BSG_INV_PARAM(width_p)
     ,output [width_p-1:0] data_o
     );
 
+// The Verilator and non-Verilator models are functionally equivalent. However, Verilator
+//   flattens the design, so every instance gets its own copy of each single-bit assign in
+//   the reduce loop below (2,560 for a 256x10 mux), which can dominate its memory use.
+//   The Verilator model does the same AND-OR on whole words: first for the elements above
+//   the last whole 32-bit chunk of the select, then for each whole chunk that is not all
+//   zero (with a one-hot select, at most one).
+`ifdef VERILATOR
+   localparam int whole_els_lp = els_p - els_p % 32;
+   logic [width_p-1:0] data_lo;
+
+   always_comb
+     begin
+        data_lo = '0;
+        for (int j = whole_els_lp; j < els_p; j++)
+          data_lo |= data_i[j] & { width_p { sel_one_hot_i[j] } };
+        for (int c = 0; c < whole_els_lp; c += 32)
+          if (32'(sel_one_hot_i >> c) != '0)
+            for (int j = c; j < c+32; j++)
+              data_lo |= data_i[j] & { width_p { sel_one_hot_i[j] } };
+     end
+
+   assign data_o = data_lo;
+
+`else
+
    wire [els_p-1:0][width_p-1:0]   data_masked;
 
    genvar                          i,j;
@@ -36,6 +61,8 @@ module bsg_mux_one_hot #(parameter `BSG_INV_PARAM(width_p)
      begin : zero
         assign data_o = '0;
      end
+
+`endif
 
 endmodule
 
