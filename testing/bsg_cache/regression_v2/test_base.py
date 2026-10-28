@@ -52,7 +52,7 @@ class TestBase:
    
   # LM 
   def send_lm(self, addr, mask):
-    self.tg.send(SM, addr, 0, mask)
+    self.tg.send(LM, addr, 0, mask)
 
   # LW
   def send_lw(self, addr):
