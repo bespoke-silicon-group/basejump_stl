@@ -67,6 +67,7 @@ module testbench();
         ,.ruche_factor_X_p(ruche_factor_X_p)
         ,.ruche_factor_Y_p(ruche_factor_Y_p)
         ,.XY_order_p(XY_order_p)
+        ,.multicast_p(1'b0)
         ,.depopulated_p(depopulated_p)
       ) tile (
         .clk_i(clk)
