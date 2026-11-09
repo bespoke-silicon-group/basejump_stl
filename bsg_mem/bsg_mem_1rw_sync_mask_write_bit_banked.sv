@@ -16,8 +16,10 @@
  *
  *  - num_width_bank_p : Number of banks for the memory's width. width_p has
  *  to be a multiple of this number.
- *  - num_depth_bank_p : Number of banks for the memory's depth. els_p has to
- *  be a multiple of this number.
+ *  - num_depth_bank_p : Number of banks for the memory's depth. If it is a
+ *  power of two, it has to divide els_p, and the low address bits pick the
+ *  bank. Otherwise els_p/num_depth_bank_p has to be a power of two, and the
+ *  high address bits pick the bank. Each bank needs at least two entries.
  *
  *
  */
@@ -53,6 +55,9 @@ module bsg_mem_1rw_sync_mask_write_bit_banked
     , output [width_p-1:0] data_o
   );
 
+  // Depth banks interleave on the low address bits when their count is a power of two,
+  // and otherwise split on the high bits, which needs a power-of-two bank depth.
+  localparam interleave_lp = (num_depth_bank_p == (1 << depth_bank_idx_width_lp));
 
   if (num_depth_bank_p==1) begin: db1
 
@@ -78,8 +83,12 @@ module bsg_mem_1rw_sync_mask_write_bit_banked
   end
   else begin: dbn
 
-    wire [depth_bank_idx_width_lp-1:0] depth_bank_idx_li = addr_i[0+:depth_bank_idx_width_lp];
-    wire [bank_addr_width_lp-1:0] bank_addr_li = addr_i[depth_bank_idx_width_lp+:bank_addr_width_lp];
+    wire [depth_bank_idx_width_lp-1:0] depth_bank_idx_li = interleave_lp
+      ? addr_i[0+:depth_bank_idx_width_lp]
+      : addr_i[bank_addr_width_lp+:depth_bank_idx_width_lp];
+    wire [bank_addr_width_lp-1:0] bank_addr_li = interleave_lp
+      ? addr_i[depth_bank_idx_width_lp+:bank_addr_width_lp]
+      : addr_i[0+:bank_addr_width_lp];
     logic [num_depth_bank_p-1:0] bank_v_li;
     logic [num_depth_bank_p-1:0][width_p-1:0] bank_data_lo;
    
@@ -139,8 +148,13 @@ module bsg_mem_1rw_sync_mask_write_bit_banked
 `ifndef BSG_HIDE_FROM_SYNTHESIS
 
   initial begin
-    assert(els_p % num_depth_bank_p == 0)
-      else $error("[BSG_ERROR] num_depth_bank_p does not divide even with els_p. %m");
+    // The depth banks must split the entries and the address bits exactly
+    assert(num_depth_bank_p == 1
+           || (interleave_lp ? (1 << depth_bank_idx_width_lp) * bank_depth_lp
+                             : num_depth_bank_p * (1 << bank_addr_width_lp)) == els_p)
+      else $error("[BSG_ERROR] the depth banks do not add up to els_p (num_depth_bank_p or els_p/num_depth_bank_p must be a power of two). %m");
+    assert(num_depth_bank_p == 1 || depth_bank_idx_width_lp + bank_addr_width_lp == addr_width_lp)
+      else $error("[BSG_ERROR] the bank index and bank address do not split the address exactly. %m");
 
     assert(width_p % num_width_bank_p == 0)
       else $error("[BSG_ERROR] num_width_bank_p does not divide even with width_p. %m");
