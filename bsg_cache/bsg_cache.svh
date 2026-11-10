@@ -17,15 +17,19 @@
 
   // bsg_cache_dma_pkt_s
   //
-  `define declare_bsg_cache_dma_pkt_s(addr_width_mp, mask_width_mp) \
+  `define declare_bsg_cache_dma_pkt_s(addr_width_mp, mask_width_mp, ways_mp) \
     typedef struct packed {                                         \
       logic write_not_read;                                         \
+      logic write_validate;                                         \
+      logic read_pending;                                           \
+      logic uncached_op;                                            \
+      logic [`BSG_SAFE_CLOG2(ways_mp)-1:0] way_id;                  \
       logic [addr_width_mp-1:0] addr;                               \
       logic [mask_width_mp-1:0] mask;                               \
     } bsg_cache_dma_pkt_s
 
-  `define bsg_cache_dma_pkt_width(addr_width_mp, mask_width_mp)     \
-    (1+addr_width_mp+mask_width_mp)
+  `define bsg_cache_dma_pkt_width(addr_width_mp, mask_width_mp, ways_mp)     \
+    (1+1+1+1+`BSG_SAFE_CLOG2(ways_mp)+addr_width_mp+mask_width_mp)
 
   // tag info s
   //
