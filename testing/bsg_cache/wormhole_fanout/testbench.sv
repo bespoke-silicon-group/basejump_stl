@@ -39,7 +39,7 @@ module testbench();
   localparam mem_size_p = block_size_in_words_p*sets_p*ways_p*4;
   localparam block_offset_width_p = `BSG_SAFE_CLOG2(data_width_p*block_size_in_words_p/8);
   localparam data_len_p=block_size_in_words_p*data_width_p/dma_data_width_p;
-  localparam wh_len_width_p=`BSG_WIDTH(data_len_p+1);
+  localparam wh_len_width_p=`BSG_WIDTH(data_len_p+2);
   localparam wh_cid_width_p=3;
   localparam wh_cord_width_p=3;
   localparam wh_flit_width_p=dma_data_width_p;

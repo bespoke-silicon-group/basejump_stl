@@ -373,15 +373,16 @@ end
   wire aflinv_hit = (decode_v_r.afl_op | decode_v_r.aflinv_op| decode_v_r.ainv_op) & tag_hit_found;
   wire alock_miss = decode_v_r.alock_op & (tag_hit_found ? ~lock_v_r[tag_hit_way_id] : 1'b1);   // either the line is miss, or the line is unlocked.
   wire aunlock_hit = decode_v_r.aunlock_op & (tag_hit_found ? lock_v_r[tag_hit_way_id] : 1'b0); // the line is hit and locked. 
+  wire uncached_op = decode_v_r.uncached_ld_op | decode_v_r.uncached_st_op;
 
   // miss_v signal activates the miss handling unit.
   // MBT: the ~decode_v_r.tagst_op is necessary at the top of this expression
   //      to avoid X-pessimism post synthesis due to X's coming out of the tags
   wire miss_v = (~decode_v_r.tagst_op) & v_v_r
-    & (ld_st_amo_tag_miss | track_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit);
+    & (ld_st_amo_tag_miss | track_miss | tagfl_hit | aflinv_hit | alock_miss | aunlock_hit | uncached_op);
   
   // ops that return some value other than '0.
-  assign retval_op_v = decode_v_r.ld_op | decode_v_r.taglv_op | decode_v_r.tagla_op | decode_v_r.atomic_op; 
+  assign retval_op_v = decode_v_r.ld_op | decode_v_r.uncached_ld_op | decode_v_r.taglv_op | decode_v_r.tagla_op | decode_v_r.atomic_op;
 
   // stat_mem
   //
@@ -532,6 +533,9 @@ end
     ,.dma_way_i(dma_way_lo)
     ,.dma_addr_i(dma_addr_lo)
     ,.done_o(dma_done_li)
+
+    ,.uncached_op_v_i(uncached_op)
+    ,.data_v_r_i(data_v_r)
 
     ,.track_data_we_i(miss_track_data_we_lo)
 
@@ -1158,7 +1162,7 @@ end
   assign sbuf_yumi_li = sbuf_v_lo
     & ~((decode.ld_op | decode.atomic_op) & yumi_o)
     & (~dma_data_mem_v_lo)
-    & ~(v_tl_r & (decode_tl_r.ld_op | decode_tl_r.atomic_op) & (~v_we) & (~miss_v)); 
+    & ~(v_tl_r & (decode_tl_r.ld_op | decode_tl_r.atomic_op) & (~v_we) & (~(miss_v & (~uncached_op))));
 
   assign sbuf_bypass_addr_li = addr_tl_r;
   assign sbuf_bypass_v_li = (decode_tl_r.ld_op | decode_tl_r.atomic_op) & v_tl_r & v_we;
@@ -1177,7 +1181,7 @@ end
   assign tbuf_yumi_li = tbuf_v_lo
     & ~((decode.ld_op | decode.atomic_op | partial_st) & yumi_o)
     & (~miss_track_mem_v_lo)
-    & ~(v_tl_r & (decode_tl_r.ld_op | decode_tl_r.atomic_op | partial_st_tl) & (~v_we) & (~miss_v));
+    & ~(v_tl_r & (decode_tl_r.ld_op | decode_tl_r.atomic_op | partial_st_tl) & (~v_we) & (~(miss_v & (~uncached_op))));
 
   assign tbuf_bypass_addr_li = addr_tl_r;
   assign tbuf_bypass_v_li = (decode_tl_r.ld_op | decode_tl_r.atomic_op | partial_st_tl) & v_tl_r & v_we;
@@ -1204,6 +1208,8 @@ end
           else $error("[BSG_ERROR][BSG_CACHE] AMO_D performed on data_width < 64. %m T=%t", $time);
         assert(~decode_v_r.atomic_op || (data_width_p >= 32))
           else $error("[BSG_ERROR][BSG_CACHE] AMO performed on data_width < 32. %m T=%t", $time);
+        assert(~uncached_op || (data_width_p == 32))
+          else $error("[BSG_ERROR][BSG_CACHE] Uncached word operation requires data_width_p=32. %m T=%t", $time);
       end
     end
   end

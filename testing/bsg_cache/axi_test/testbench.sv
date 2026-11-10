@@ -97,7 +97,7 @@ module testbench();
   wire               wr_not_rd = tr_data_lo[addr_width_p];
   wire [addr_width_p-1:0] addr = tr_data_lo[0+:addr_width_p];
 
-  assign dma_pkt_lo    = '{write_not_read: wr_not_rd, addr: addr, mask: '1};
+  assign dma_pkt_lo    = '{write_not_read: wr_not_rd, uncached_op: 1'b0, addr: addr, mask: '1};
   assign dma_data_lo   = tr_data_lo;
   assign dma_pkt_v_lo  = tr_v_lo & pkt_not_data;
   assign dma_data_v_lo = tr_v_lo & ~pkt_not_data;
