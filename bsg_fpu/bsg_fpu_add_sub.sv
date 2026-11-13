@@ -114,8 +114,8 @@ module bsg_fpu_add_sub
   // hidden bit of mantissa
   // filtered out denormalized input
   logic [m_p:0] man_a_norm, man_b_norm;
-  assign man_a_norm = {1'b1, man_a};
-  assign man_b_norm = {1'b1, man_b};
+  assign man_a_norm = {~a_zero, man_a};
+  assign man_b_norm = {~b_zero, man_b};
 
   // which mantissa is the one of larger exp?
   logic [m_p:0] larger_exp_man, smaller_exp_man;
@@ -422,7 +422,7 @@ module bsg_fpu_add_sub
       invalid_o = 1'b0;
       overflow_o = 1'b0;
       underflow_o = 1'b0;
-      z_o = `BSG_FPU_ZERO(sgn,e_p,m_p);
+      z_o = `BSG_FPU_ZERO(sgn & ~do_sub_3_r,e_p,m_p);
     end
     else if (adjusted_exp_cout_3_r) begin
       unimplemented_o = 1'b0;
