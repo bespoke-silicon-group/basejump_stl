@@ -195,6 +195,14 @@ int main()
   test_add_sub_32(0, 134.13111111, 2222.0229842);
   test_add_sub_32(0, 0.000042341, 505.0955842);
 
+  // zero operands, and sums that cancel exactly
+  test_add_sub_32(0, 0.0f, 0.0f);
+  test_add_sub_32(0, i2f(0x80000000), i2f(0x80000000));
+  test_add_sub_32(0, i2f(0x00800000), 0.0f);
+  test_add_sub_32(0, i2f(0x0c7fffff), i2f(0x80000000));
+  test_add_sub_32(0, -1.0f, 1.0f);
+  test_add_sub_32(1, 1.0f, 1.0f);
+
   for (int i = 0; i < 2500; i++)
   {
     int add_or_sub = rand() % 2;
