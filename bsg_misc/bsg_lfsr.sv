@@ -22,7 +22,8 @@ module bsg_lfsr #(parameter `BSG_INV_PARAM(width_p)
 	// fixme fill this in: http://www.eej.ulst.ac.uk/~ian/modules/EEE515/files/old_files/lfsr/lfsr_table.pdf
         case (width_p)
           32:
-            assign xor_mask = (1 << 31) | (1 << 29) | (1 << 26) | (1 << 25);
+            // x^32 + x^30 + x^26 + x^25 + 1, with x^k at bit k-1.
+            assign xor_mask = (1 << 31) | (1 << 29) | (1 << 25) | (1 << 24);
           60:
             assign xor_mask = (1 << 59) | (1 << 58);
           64:
