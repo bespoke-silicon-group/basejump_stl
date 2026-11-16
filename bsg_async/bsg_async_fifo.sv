@@ -46,6 +46,9 @@ module bsg_async_fifo #(parameter `BSG_INV_PARAM(  lg_size_p )
 
    localparam size_lp = 1 << lg_size_p;
 
+   `BSG_ELAB_CHECK(lg_size_p >= 2,
+     $error("%m: bsg_async_fifo requires lg_size_p >= 2 (at least four entries), got %0d", lg_size_p))
+
    // we use an extra bit for the pointers to detect wraparound
    logic [lg_size_p:0] r_ptr_gray_r;
 
@@ -140,9 +143,6 @@ module bsg_async_fifo #(parameter `BSG_INV_PARAM(  lg_size_p )
 
 
 `ifndef BSG_HIDE_FROM_SYNTHESIS
-   initial assert (lg_size_p >= 2)
-     else $error("%m: bsg_async_fifo requires lg_size_p >= 2 (at least four entries), got %0d", lg_size_p);
-
    always @(negedge w_clk_i)
      assert(!(w_full_o===1 && w_enq_i===1))   else $error("enqueing data on bsg_async_fifo when full");
 
