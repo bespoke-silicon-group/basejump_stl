@@ -109,15 +109,15 @@ module bsg_channel_tunnel #(parameter width_p        = 1
     , input  [num_in_p-1:0]              yumi_i
     );
 
+   // Require 1 <= 2**lg_credit_decimation_p <= remote_credits_p.
+   // Shift the credit count to avoid overflowing a left-shifted literal.
+   `BSG_ELAB_CHECK((remote_credits_p > 0)
+                  && (lg_credit_decimation_p >= 0)
+                  && ((remote_credits_p >> lg_credit_decimation_p) > 0)
+                  ,$error("%m bad params; remote_credits_p=%0d cannot support lg_credit_decimation_p=%0d"
+                          ,remote_credits_p,lg_credit_decimation_p))
+
 `ifndef BSG_HIDE_FROM_SYNTHESIS
-   initial
-     assert(lg_credit_decimation_p <= lg_remote_credits_lp)
-       else
-         begin
-            $error("%m bad params; insufficient remote credits 2^%d to allow for decimation factor 2^%d"
-                   ,lg_remote_credits_lp,lg_credit_decimation_p);
-            $finish;
-         end
    initial
      assert(width_p >= num_in_p*lg_remote_credits_lp)
        else
