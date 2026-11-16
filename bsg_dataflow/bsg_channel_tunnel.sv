@@ -117,17 +117,9 @@ module bsg_channel_tunnel #(parameter width_p        = 1
                   ,$error("%m bad params; remote_credits_p=%0d cannot support lg_credit_decimation_p=%0d"
                           ,remote_credits_p,lg_credit_decimation_p))
 
-`ifndef BSG_HIDE_FROM_SYNTHESIS
-   initial
-     assert(width_p >= num_in_p*lg_remote_credits_lp)
-       else
-         begin
-            $error("%m bad params; channel width (%d) must be at least wide enough to route back credits (%d)"
-                   ,width_p
-                   ,num_in_p*lg_remote_credits_lp);
-            $finish;
-         end
-`endif
+   `BSG_ELAB_CHECK(width_p >= num_in_p*lg_remote_credits_lp
+                  ,$error("%m bad params; channel width (%0d) must be at least wide enough to route back credits (%0d)"
+                          ,width_p,num_in_p*lg_remote_credits_lp))
 
    wire [num_in_p-1:0][lg_remote_credits_lp-1:0] credit_local_return_data_oi;
    wire                                          credit_local_return_v_oi;
