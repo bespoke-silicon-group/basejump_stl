@@ -29,7 +29,7 @@ module bsg_wormhole_router_adapter_out
     , input                                        reset_i
 
     , input                                        link_v_i
-    , input  [max_payload_width_p-1:0]             link_data_i
+    , input  [flit_width_p-1:0]                    link_data_i
     , output                                       link_ready_and_o
 
     , output [bsg_wormhole_packet_width_lp-1:0]    packet_o
