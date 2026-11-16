@@ -3,6 +3,12 @@ the highest-priority input, `(last + 1) % inputs_p`. The generator previously
 reversed the requester bit index in this comparison. For example, with four
 inputs and pointer 0, it held for requester 2 instead of requester 1.
 
+The hold logic decodes the pointer with `inputs_p'(1) << last_r`, rotates
+that one-hot vector left by one bit, and compares the entire request vector
+against it. The rotation handles wraparound at every width; a separate
+one-input branch avoids an empty part-select. The validity check prevents
+an unused pointer encoding from matching an idle request vector.
+
 Run from this directory with the selected simulator on `PATH`:
 
 ```sh

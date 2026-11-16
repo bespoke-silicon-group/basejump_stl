@@ -36,44 +36,34 @@ def calculate_grants(last, reqs_w):
 
 def get_single_request_str(last_r, reqs_w):
     """ 
-    Returns the string that represens the request which would trigger the hold 
-    on condition
+    Returns a one-hot request string for the reset-on-single-request logic
     """
     req_string = ["0"]*reqs_w
-    # Requester 0 is the rightmost bit, as in calculate_grants().
-    req_string[ -((last_r + 1) % reqs_w) - 1 ] = "1"
+    req_string[ (last_r + 1) % reqs_w ] = "1"
     
     return "".join(req_string)
 
-def print_hold_on_logic(last_w, reqs_w):
+def print_hold_on_logic():
     """
-    Print the logic of the hold on logic 
+    Print the single-request hold logic for any number of inputs.
     """
     print ("""
-if ( hold_on_sr_p ) begin """)
-    print ("""   
-    always_comb begin
-        unique casez( last_r )""")           
-    for last_r in range(reqs_w ):
-        last_r_str = bin(last_r)[2:].zfill(last_w);
-        req_str    = get_single_request_str(last_r, reqs_w)
-        #Full cases
-        if( (last_r == ( (1<< last_w) -1 ) ) & (last_r == (reqs_w-1) ) ):
-            print ("""           default: hold_on_sr = ( reqs_i == %d'b%s );"""%( reqs_w, req_str))
-        #Not Full cases
-        else : 
-            print ("""           %d'b%s : hold_on_sr = ( reqs_i == %d'b%s );"""%( last_w, last_r_str, reqs_w, req_str))
+if (hold_on_sr_p) begin: hold_on_sr_gen
+    logic [inputs_p-1:0] last_one_hot, highest_priority;
 
-    #Not full cases
-    if( (1<< last_w ) != reqs_w ):
-        print ("""           default : hold_on_sr = 1'b0;""")
-
-    print ("""       endcase
-    end //end of always_comb
-
-end else begin:not_hold_on_sr_p
-    assign hold_on_sr = '0;
-end //end of hold_on_sr_p """)
+    assign last_one_hot = inputs_p'(1) << last_r;
+    // Rotate left to select the requester immediately after the pointer.
+    if (inputs_p == 1) begin: single_input
+        assign highest_priority = last_one_hot;
+    end else begin: multiple_inputs
+        assign highest_priority = {last_one_hot[inputs_p-2:0], last_one_hot[inputs_p-1]};
+    end
+    // An unused pointer encoding decodes to zero; it must not hold on idle.
+    assign hold_on_sr = v_o && (reqs_i == highest_priority);
+end else begin: not_hold_on_sr_gen
+    assign hold_on_sr = 1'b0;
+end
+""")
 
 ################################################################################
 #    Logic for priority reset logic
@@ -88,11 +78,11 @@ def print_reset_on_logic(reqs_w):
 
     print ("""
 if ( reset_on_sr_p ) begin:reset_on_%d 
-    assign reset_on_sr = ( reqs_i == %d'b%s )"""%( reqs_w,reqs_w, req_str))
+    assign reset_on_sr = ( reqs_i == %d'b%s ) """%( reqs_w,reqs_w, req_str))
 
     for curr_r in range(1, reqs_w):
         req_str= get_single_request_str(curr_r, reqs_w)
-        print ("""                       | ( reqs_i == %d'b%s )""" %(reqs_w, req_str ))
+        print ("""                       | ( reqs_i == %d'b%s ) """ %(reqs_w, req_str ))
     
     print ("                       ;")
     print ("""
@@ -174,6 +164,8 @@ end
 // synopsys translate_on
 """) 
 
+print_hold_on_logic()
+
 for reqs_w in range(1, max_reqs+1):
     print ("""
 if(inputs_p == %d)
@@ -213,8 +205,6 @@ assign sel_one_hot_o = sel_one_hot_n;
 assign grants_o      = sel_one_hot_n & {%d{grants_en_i}} ;   
     """% (reqs_w))
 
-    print_hold_on_logic(last_w, reqs_w)
-
     print_reset_on_logic(reqs_w)
 
 
@@ -252,4 +242,3 @@ else
 endmodule
 
 `BSG_ABSTRACT_MODULE(bsg_round_robin_arb)""")
-
