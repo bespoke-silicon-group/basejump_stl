@@ -29,7 +29,11 @@
 // we can aggregrate the FIFO space into a single
 // large FIFO which is more efficient per bit than many smaller FIFOs.
 //
-// 1. remote_credits_p typical set to 2X bandwidth delay product of link
+// 1. remote_credits_p is the number of buffered words per channel. Budget the
+//    round-trip bandwidth-delay product plus D = 2**lg_credit_decimation_p:
+//      remote_credits_p >= ceil(R * round_trip_latency_cycles) + D.
+//    See the latency definition and assumptions below. These examples assume
+//    one channel uses the full link bandwidth and omit any additional delays.
 //
 //    ASIC<->ASIC
 //
@@ -38,19 +42,18 @@
 //    in the core domain is 5 cycles, and the latency in the off-chip
 //    domain is 10 cycles, then:
 //
-//    one-way chip latency = 5 * 1 ns + 10 * 3.3 ns = 38.3 ns
-//    bandwidth            = 0.4 words / 3.33 ns    = .133 words / ns
-//    bandwidth * delay    = .133 * 35 = 4.6 words
+//    one-way chip latency = 5 * 1 ns + 10 * (10/3) ns = 38.33 ns
+//    bandwidth            = 0.4 words / (10/3) ns    = 0.12 words/ns
+//    round-trip latency   = 2 ASICs * 2 directions * 38.33 ns = 153.33 ns
 //
-//    * 2 ASICS            = 9.2  words
-//    * 2 (roundtrip)      = 18.4 words
+//    remote_credits_p >= ceil(0.12 * 153.33) + D = 19 + D words per channel.
 //
 //    ASIC<->FPGA
 //
-//    note, if there is an FPGA in the loop, then latencies blow up.
-//    suppose the FPGA runs at 300*.4 = 120 Mhz=8.3ns, and so the on-FPGA latency
-//    is 38.3 * (8.3) = 314 ns. then one way latency is 352 ns, and buffering is
-//    (.133 * (352))*2 = 93 words.
+//    An FPGA can increase the latency. For example, with a 314 ns one-way
+//    FPGA path and the 38.33 ns ASIC path above, the round-trip latency is
+//    2 * (314 + 38.33) = 704.66 ns. At the same 0.12 words/ns link bandwidth:
+//    remote_credits_p >= ceil(0.12 * 704.66) + D = 85 + D words per channel.
 //
 // 2. area grows as num_in_p * remote_credits_p
 //
@@ -61,13 +64,23 @@
 
 `include "bsg_defines.sv"
 
+// The credit return threshold is D = 2**lg_credit_decimation_p words per channel.
+// To avoid credit-induced throttling at one word/cycle, use
+//   remote_credits_p >= round_trip_latency_cycles + D.
+// The round-trip latency includes data transit, receiver consumption, and
+// credit-return arbitration/transit, excluding batching and the sender's
+// one-cycle processing of the returned credit: (D-1) + 1 = D extra cycles.
+// For per-channel rates R <= 1 word/cycle, a conservative budget is
+//   remote_credits_p >= ceil(R * round_trip_latency_cycles) + D.
+// Use worst-case latency and account for traffic bursts.
+
 module bsg_channel_tunnel #(parameter width_p        = 1
                             , parameter `BSG_INV_PARAM(num_in_p)
                             , parameter `BSG_INV_PARAM(remote_credits_p)
                             , use_pseudo_large_fifo_p = 0
                             , harden_small_fifo_p    = 0
                             , lg_remote_credits_lp   = $clog2(remote_credits_p+1)
-                            , lg_credit_decimation_p = `BSG_MIN(lg_remote_credits_lp,4)
+                            , parameter `BSG_INV_PARAM(lg_credit_decimation_p)
                             , tag_width_lp           = $clog2(num_in_p+1)
                             , tagged_width_lp        = tag_width_lp + width_p
 
