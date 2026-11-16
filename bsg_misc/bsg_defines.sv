@@ -43,6 +43,22 @@
 `define BSG_INV_PARAM(param) param
 `endif
 
+// Check a constant Boolean condition at module/generate scope.
+// error is a complete $error(...) call with constant arguments and no semicolon.
+// Define VIVADO for Vivado synthesis, which evaluates the call in an initial block.
+// With Verilator -Wno-fatal, also use -Werror-USERERROR to reject failed checks.
+`ifdef VIVADO
+  `define BSG_ELAB_CHECK(cond,error) \
+    if ((cond) !== 1'b1) begin \
+      initial error; \
+    end
+`else
+  `define BSG_ELAB_CHECK(cond,error) \
+    if ((cond) !== 1'b1) begin \
+      error; \
+    end
+`endif
+
 
 // maps 0/1 --> 1 instead of to 0
 `define BSG_SAFE_CLOG2(x) ( (((x)==1) || ((x)==0))? 1 : $clog2((x)))
