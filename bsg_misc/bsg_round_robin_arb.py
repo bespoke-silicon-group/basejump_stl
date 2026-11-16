@@ -40,7 +40,8 @@ def get_single_request_str(last_r, reqs_w):
     on condition
     """
     req_string = ["0"]*reqs_w
-    req_string[ (last_r + 1) % reqs_w ] = "1"
+    # Requester 0 is the rightmost bit, as in calculate_grants().
+    req_string[ -((last_r + 1) % reqs_w) - 1 ] = "1"
     
     return "".join(req_string)
 
@@ -87,11 +88,11 @@ def print_reset_on_logic(reqs_w):
 
     print ("""
 if ( reset_on_sr_p ) begin:reset_on_%d 
-    assign reset_on_sr = ( reqs_i == %d'b%s ) """%( reqs_w,reqs_w, req_str))
+    assign reset_on_sr = ( reqs_i == %d'b%s )"""%( reqs_w,reqs_w, req_str))
 
     for curr_r in range(1, reqs_w):
         req_str= get_single_request_str(curr_r, reqs_w)
-        print ("""                       | ( reqs_i == %d'b%s ) """ %(reqs_w, req_str ))
+        print ("""                       | ( reqs_i == %d'b%s )""" %(reqs_w, req_str ))
     
     print ("                       ;")
     print ("""
