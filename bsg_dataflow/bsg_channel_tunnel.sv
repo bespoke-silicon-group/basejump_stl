@@ -114,11 +114,11 @@ module bsg_channel_tunnel #(parameter width_p        = 1
    `BSG_ELAB_CHECK((remote_credits_p > 0)
                   && (lg_credit_decimation_p >= 0)
                   && ((remote_credits_p >> lg_credit_decimation_p) > 0)
-                  ,$error("%m bad params; remote_credits_p=%0d cannot support lg_credit_decimation_p=%0d"
+                  ,$error("bsg_channel_tunnel: bad params; remote_credits_p=%0d cannot support lg_credit_decimation_p=%0d"
                           ,remote_credits_p,lg_credit_decimation_p))
 
    `BSG_ELAB_CHECK(width_p >= num_in_p*lg_remote_credits_lp
-                  ,$error("%m bad params; channel width (%0d) must be at least wide enough to route back credits (%0d)"
+                  ,$error("bsg_channel_tunnel: bad params; channel width (%0d) must be at least wide enough to route back credits (%0d)"
                           ,width_p,num_in_p*lg_remote_credits_lp))
 
    wire [num_in_p-1:0][lg_remote_credits_lp-1:0] credit_local_return_data_oi;
