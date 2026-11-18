@@ -10,6 +10,10 @@
 
 TOP = ../../..
 
+SHELL := /bin/bash
+.SHELLFLAGS := -o pipefail -c
+.NOTPARALLEL:
+
 ########################### SIMULATION PARAMETERS ##########################
 # place the parameters you want to scan here.
 BSG_TESTME_FILES    =   bsg_channel_tunnel.sv
@@ -45,4 +49,37 @@ ASYMMETRIC_P = 0
 # this is a list of all variables you want to vary for the simulation
 scan_params = WIDTH_P NUM_IN_P REMOTE_CREDITS_P LG_CREDIT_DECIMATION_P ASYMMETRIC_P USE_PSEUDO_LARGE_FIFO_P
 
+# Keep every valid combination from the scan. Invalid configurations are tested
+# separately in bsg_channel_tunnel_decimation, where elaboration must fail.
+# Override the common Makefile's command list before it expands the all target.
+override commands = $(foreach width,$(WIDTH_P),$(shell printf '%s\n' \
+  $(call bsg_param_scan,$(filter-out WIDTH_P,$(scan_params)),$(BSG_IP_CORES_SIM_DEFINE_PARAM),=,@$(BSG_IP_CORES_SIM_DEFINE_PARAM)WIDTH_P=$(width)) | \
+  awk -F'[@=]' '{ \
+    for (i=1; i<=NF; i++) { \
+      if ($$i ~ /WIDTH_P$$/) width=$$(i+1); \
+      if ($$i ~ /NUM_IN_P$$/) channels=$$(i+1); \
+      if ($$i ~ /REMOTE_CREDITS_P$$/) credits=$$(i+1); \
+      if ($$i ~ /LG_CREDIT_DECIMATION_P$$/) decimation=$$(i+1); \
+    } \
+    bits=0; for (n=credits; n>0; n=int(n/2)) bits++; \
+    if (credits>0 && decimation>=0 && 2^decimation<=credits \
+        && width>=channels*bits) print; \
+  }'))
+
 include ../../Makefile.sim
+
+BSG_IP_CORES_COMP += -y $(TOP)/bsg_misc -y $(TOP)/bsg_dataflow \
+                    -y $(TOP)/bsg_mem +libext+.sv+.v
+
+ifeq ($(SIMULATOR),verilator)
+BSG_IP_CORES_COMP += --top-module $(TEST_MODULE) --assert -Werror-USERERROR $(VERILATOR_FLAGS)
+else ifeq ($(SIMULATOR),vcs)
+BSG_IP_CORES_COMP += -top $(TEST_MODULE) $(VCS_FLAGS)
+endif
+
+# Require completion even when the simulator returns zero after a fatal error.
+run.%:
+	$(BSG_IP_CORES_COMP) $(subst @, ,$*) $(BSG_IP_CORES_SIM_INCLUDE_DIRS) $(ALL_FILES)
+	$(BSG_IP_CORES_ELAB) $(TEST_MODULE)
+	$(BSG_IP_CORES_SIM) | /usr/bin/tee outfile
+	grep -Fq '[BSG_FINISH]' outfile
