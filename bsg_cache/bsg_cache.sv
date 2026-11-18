@@ -136,6 +136,7 @@ module bsg_cache
   logic [addr_width_p-1:0] addr_tl_r;
   logic [data_width_p-1:0] data_tl_r;
   logic sbuf_hazard;
+  logic v_we; // tv stage takes tl's request; declared here for the tl stage
 
   always_ff @ (posedge clk_i) begin
     if (reset_i) begin
@@ -156,7 +157,10 @@ module bsg_cache
         end
       end
       else begin
-        if (sbuf_hazard) begin
+        // tv took this request (v_we), but tl could not accept a new one:
+        // sbuf_hazard, or a TAGST waiting while a miss completes. Empty tl,
+        // so the request does not go through tv a second time.
+        if (v_we) begin
           v_tl_r <= 1'b0;
         end
       end
@@ -276,7 +280,6 @@ end
 
   // v stage
   //
-  logic v_we;
   logic v_v_r;
   bsg_cache_decode_s decode_v_r;
   logic [data_mask_width_lp-1:0] mask_v_r;
