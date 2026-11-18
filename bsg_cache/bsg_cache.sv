@@ -1101,7 +1101,8 @@ end
         : tbuf_track_mem_addr));
 
   // stat_mem ctrl logic
-  // TAGST clears the stat_info as it exits tv stage.
+  // TAGST clears the dirty bit of the way it writes, and the LRU bits of its set,
+  // as it exits tv stage.
   // If it's load or store, and there is a hit, it updates the dirty bits and LRU.
   // If there is a miss, stat_mem may be modified by the miss handler.
 
@@ -1114,6 +1115,15 @@ end
     .way_id_i(tag_hit_way_id)
     ,.data_o(plru_decode_data_lo)
     ,.mask_o(plru_decode_mask_lo)
+  );
+
+  // way written by a TAGST in tv stage
+  logic [ways_p-1:0] addr_way_v_decode;
+  bsg_decode #(
+    .num_out_p(ways_p)
+  ) addr_way_v_demux (
+    .i(addr_way_v)
+    ,.o(addr_way_v_decode)
   );
 
   always_comb begin
@@ -1131,9 +1141,13 @@ end
 
       if (decode_v_r.tagst_op) begin
         // for TAGST
+        // Clear only the dirty bit of the way whose tag it writes: the other
+        // ways may hold lines that are not yet written back. Resetting the
+        // LRU bits is harmless, and the TAGST sweep after reset initializes
+        // them. bsg_cache_non_blocking's TAGST (e_stat_reset) does the same.
         stat_mem_data_li.dirty = {ways_p{1'b0}};
         stat_mem_data_li.lru_bits = {(ways_p-1){1'b0}};
-        stat_mem_w_mask_li.dirty = {ways_p{1'b1}};
+        stat_mem_w_mask_li.dirty = addr_way_v_decode;
         stat_mem_w_mask_li.lru_bits = {(ways_p-1){1'b1}};
       end
       else begin
