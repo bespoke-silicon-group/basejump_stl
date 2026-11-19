@@ -374,16 +374,21 @@ module bsg_cache_dma_to_wormhole
   if (wh_len_width_p < `BSG_WIDTH(dma_burst_len_p+1))
     $error("WH len width %d must be large enough to hold the dma transfer size %d", wh_len_width_p, `BSG_WIDTH(dma_burst_len_p+1));
 
-  // An uncached packet needs a header bit for uncached_op beside the other
-  // header fields. Whether one is ever sent is not known at elaboration, so
-  // this is checked as the packets come by.
+  // Two limits depend on which packets are sent, so they are checked as the
+  // packets come by rather than at elaboration.
   localparam wh_header_fields_width_lp =
     (2*wh_cord_width_p)+(2*wh_cid_width_p)+wh_len_width_p+$bits(bsg_cache_wh_opcode_e);
 
   always_ff @ (negedge clk_i) begin
     if (~reset_i & (dma_pkt_v_lo === 1'b1)) begin
+      // An uncached packet needs a header bit for uncached_op beside the
+      // other header fields.
       assert(~dma_pkt_lo.uncached_op | (wh_flit_width_p > wh_header_fields_width_lp))
         else $error("[BSG_ERROR][BSG_CACHE_DMA_TO_WORMHOLE] uncached packet, but the header flit has no bit left for uncached_op. %m T=%t", $time);
+      // A masked write (a cache with word tracking) is two flits longer than
+      // its data, one more than the elaboration check above allows for.
+      assert(~(dma_pkt_lo.write_not_read & ~mask_all_one) | ((2+dma_burst_len_p) < (1 << wh_len_width_p)))
+        else $error("[BSG_ERROR][BSG_CACHE_DMA_TO_WORMHOLE] masked write of %0d flits does not fit wh_len_width_p=%0d. %m T=%t", 2+dma_burst_len_p, wh_len_width_p, $time);
     end
   end
 `endif
