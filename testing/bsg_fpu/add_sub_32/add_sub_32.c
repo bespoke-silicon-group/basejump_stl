@@ -203,6 +203,15 @@ int main()
   test_add_sub_32(0, -1.0f, 1.0f);
   test_add_sub_32(1, 1.0f, 1.0f);
 
+  // the same with the other sign combinations, and with the zero as a_i
+  test_add_sub_32(0, 0.0f, i2f(0x80000000));            // (+0) + (-0) = +0
+  test_add_sub_32(0, i2f(0x80000000), 0.0f);            // (-0) + (+0) = +0
+  test_add_sub_32(1, i2f(0x80000000), 0.0f);            // (-0) - (+0) = -0
+  test_add_sub_32(1, i2f(0x80000000), i2f(0x80000000)); // (-0) - (-0) = +0
+  test_add_sub_32(1, -1.0f, -1.0f);                     // (-1) - (-1) = +0
+  test_add_sub_32(0, 0.0f, i2f(0x00800000));            // 0 + x
+  test_add_sub_32(1, 0.0f, i2f(0x0c7fffff));            // 0 - x
+
   for (int i = 0; i < 2500; i++)
   {
     int add_or_sub = rand() % 2;
