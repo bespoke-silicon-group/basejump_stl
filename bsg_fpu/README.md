@@ -90,6 +90,9 @@ bfloat16      8                 7
       dropping the fractional part does not fit the output integer.
     - A negative input above -1 leaves zero, so it is valid for unsigned output too. A negative
       input of -1 or less with unsigned output sets the output to zero and raises invalid.
+    - When invalid is raised, the output is the nearest integer the output can hold: the largest
+      one if the input is too big, +infinity or NaN, and the smallest one (zero for unsigned) if
+      the input is too negative or -infinity.
 
 
 

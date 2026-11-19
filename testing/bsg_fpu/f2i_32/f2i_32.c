@@ -93,7 +93,7 @@ void test_unsigned_f2i_32(float a_i)
   }
   else if (a_i >= 4294967296.0f) // 2^32 and above do not fit
   {
-    z_lo = 0x7fffffff;
+    z_lo = 0xffffffff;
     invalid = 1;
   }
   else

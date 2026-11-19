@@ -13,6 +13,10 @@
  *  the value left after dropping the fractional part does not fit the target
  *  int. A negative float above -1 leaves zero, which fits unsigned int too.
  *
+ *  With invalid, the output is the int nearest the input: the largest int if
+ *  the input is too big, +infinity or NaN, and the smallest int (zero for
+ *  unsigned) if it is too negative or -infinity. RISC-V FCVT gives the same.
+ *
  */
 
 `include "bsg_defines.sv"
@@ -140,9 +144,13 @@ module bsg_fpu_f2i
       invalid_o = 1'b0;
     end
     else if (exp_too_big) begin
-      z_o = sign
-        ? {1'b1, {(width_lp-1){1'b0}}}
-        : {1'b0, {(width_lp-1){1'b1}}};
+      // the largest or smallest int of the target. A negative input to
+      // unsigned int was taken above, so unsigned is too big here.
+      z_o = signed_i
+        ? (sign
+          ? {1'b1, {(width_lp-1){1'b0}}}
+          : {1'b0, {(width_lp-1){1'b1}}})
+        : {(width_lp){1'b1}};
       invalid_o = 1'b1;
     end
     else begin
