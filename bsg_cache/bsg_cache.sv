@@ -158,8 +158,9 @@ module bsg_cache
       end
       else begin
         // tv took this request (v_we), but tl could not accept a new one:
-        // sbuf_hazard, or a TAGST waiting while a miss completes. Empty tl,
-        // so the request does not go through tv a second time.
+        // sbuf_hazard, or a TAGST waiting for older requests to finish
+        // (tagst_hazard). Empty tl, so the request does not go through tv a
+        // second time.
         if (v_we) begin
           v_tl_r <= 1'b0;
         end
@@ -986,15 +987,27 @@ end
   assign sbuf_hazard = (sbuf_full_lo & (v_o & yumi_i & (decode_v_r.st_op | decode_v_r.atomic_op)))
     & (v_i & (decode.ld_op | decode.atomic_op));
 
+  // TAGST writes a tag, and clears that way's track bits, as it enters tl,
+  // outside the miss handler. Hold it while any other request is in tl or tv,
+  // or the store or track buffer holds an entry. Otherwise an older request
+  // could still act on the way after TAGST changed it: a miss could fill it;
+  // a flush or eviction could read the cleared track bits and write the line
+  // back with an empty mask; a store could land in the line after TAGST
+  // renamed it, or mark its word present again. This also covers TAGST during
+  // a miss. TAGSTs can follow each other back to back: they leave nothing in
+  // the buffers, and write tag, track and stat memory in order.
+  wire tagst_hazard = v_i & decode.tagst_op
+    & ((v_tl_r & ~decode_tl_r.tagst_op) | (v_v_r & ~decode_v_r.tagst_op)
+       | ~sbuf_empty_lo | ~tbuf_empty_lo);
+
   // during miss, tl pipeline cannot take next instruction when
-  // 1) input is tagst
-  // 2) miss handler is writing to tag_mem or track_mem
-  // 3) dma engine is writing to data_mem
-  // 4) tl_stage is recovering from tag_miss
-  // 5) DMA is evicting a block.
+  // 1) miss handler is writing to tag_mem or track_mem
+  // 2) dma engine is writing to data_mem
+  // 3) tl_stage is recovering from tag_miss
+  // 4) DMA is evicting a block.
   wire tl_ready = (miss_v
-    ? (~(decode.tagst_op & v_i) & ~miss_tag_mem_v_lo & ~miss_track_mem_v_lo & ~dma_data_mem_v_lo & ~recover_lo & ~dma_evict_lo)
-    : 1'b1) & ~sbuf_hazard;
+    ? (~miss_tag_mem_v_lo & ~miss_track_mem_v_lo & ~dma_data_mem_v_lo & ~recover_lo & ~dma_evict_lo)
+    : 1'b1) & ~sbuf_hazard & ~tagst_hazard;
   assign tl_we =  tl_ready & (v_tl_r ? v_we : 1'b1);
   assign yumi_o = v_i & tl_we;
 
@@ -1076,8 +1089,9 @@ end
   // track_mem ctrl logic
   // TAGST clears the track bits of the way it writes, as it writes the tag:
   // no word of the line is present yet, as after a store-miss allocation.
-  // TAGST does not enter during a miss, so the miss handler is not using
-  // track_mem, and the track buffer stays off the port in that cycle.
+  // When TAGST enters, no older request other than a TAGST is in tl or tv and
+  // both buffers are empty (tagst_hazard), so the miss handler is not using
+  // track_mem, and will not read it later for an older request.
   logic [ways_p-1:0][block_size_in_words_p-1:0] tagst_track_mem_w_mask;
   for (genvar i = 0; i < ways_p; i++) begin: tagst_track
     assign tagst_track_mem_w_mask[i] = {block_size_in_words_p{addr_way_decode[i]}};
@@ -1205,7 +1219,7 @@ end
   // 3) miss handler is not accessing track mem.
   // 4) TL read track mem (and bypass from tbuf), and TV is not stalled (v_we).
   //    During miss, the track buffer can be drained.
-  // 5) TAGST is not writing track mem.
+  // 5) TAGST is not writing track mem (the buffer is empty when TAGST enters).
   assign tbuf_yumi_li = tbuf_v_lo
     & ~((decode.ld_op | decode.atomic_op | partial_st) & yumi_o)
     & (~miss_track_mem_v_lo)

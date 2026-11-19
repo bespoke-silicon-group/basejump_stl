@@ -3,14 +3,15 @@
 
 // TAGST must clear the track bits of the way it writes: a line set up with
 // TAGST has no word present yet, as after a store-miss allocation. Each case
-// puts known data in memory, leaves a way holding a fully tracked line, and
-// reuses that way with TAGST. A1: a load fills from memory. A2: a full-word
-// store and AFLINV write back only that word. A3: a byte store merges with
-// memory, and AFLINV keeps the other words. Needs word tracking; run with
-// response backpressure. A load that misses returns the word straight from
-// the refill, so A1 reads again to check the copy the cache kept. No store is
-// issued just before a TAGST: TAGST does not wait for the store and track
-// buffers, so a buffered store to the same line could re-mark its word.
+// puts known data in memory, leaves a way holding a fully tracked line with
+// other data, and reuses that way with TAGST. A1: a load fills from memory.
+// A2: a full-word store and AFLINV write back only that word. A3: a byte store
+// merges with memory, and AFLINV keeps the other words. B: a store just ahead
+// of a TAGST that renames its line must not leave its track bit in the renamed
+// line (this also needs TAGST to wait for the requests ahead of it). Needs
+// word tracking; run with response backpressure. A load that misses returns
+// the word straight from the refill, so A1 and B read again to check the copy
+// the cache kept.
 module test_bsg;
   import bsg_cache_pkg::*;
 
@@ -170,12 +171,17 @@ module test_bsg;
     add(AFLINV, 10'h140);
     add(SW,     10'h184, 32'h33330001);                  // A2: 0x180, tag 6, set 0
     add(AFLINV, 10'h180);
+    add(SW,     10'h120, 32'h55550000);                  // B: 0x120, tag 4, set 1
+    add(AFLINV, 10'h120);
 
-    // Fully tracked lines of zeros from memory in set 0, ways 0-2 (empty ways
+    // Fully tracked lines with other data in set 0, ways 0-2 (empty ways
     // fill lowest first). TAGST discards them below.
     add(LW,     10'h000, '0, '0, 1, '0, "fill way 0");
     add(LW,     10'h040, '0, '0, 1, '0, "fill way 1");
     add(LW,     10'h080, '0, '0, 1, '0, "fill way 2");
+    add(SW,     10'h004, 32'hdead0001);
+    add(SW,     10'h05c, 32'hdead0007);
+    add(SW,     10'h084, 32'hdead0011);
 
     // A1: way 0 becomes 0x100. A load must fill from memory.
     add(TAGST,  tagst_addr(0, 0), 32'h80000004);         // valid, tag 4
@@ -195,6 +201,14 @@ module test_bsg;
     add(AFLINV, 10'h180);
     add(LW,     10'h184, '0, '0, 1, 32'h33330001, "A2 write-back keeps memory's words");
     add(LW,     10'h180, '0, '0, 1, 32'h33ff0000, "A2 stored word written back");
+
+    // B: a store hit just ahead of a TAGST that renames its line (set 1,
+    // way 0, to 0x120). The renamed line must not see the store's track bit.
+    add(LW,     10'h020, '0, '0, 1, '0, "fill set 1 way 0");
+    add(SW,     10'h020, 32'h44440001);
+    add(TAGST,  tagst_addr(0, 1), 32'h80000004);         // valid, tag 4
+    add(LW,     10'h120, '0, '0, 1, 32'h55550000, "B renamed line fills from memory");
+    add(LW,     10'h120, '0, '0, 1, 32'h55550000, "B cached word matches memory");
 
     if (`RESPONSE_INTERVAL_P < 1)
       $fatal(1, "%m: response interval must be positive");
