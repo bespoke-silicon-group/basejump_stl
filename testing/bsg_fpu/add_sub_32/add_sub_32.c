@@ -104,7 +104,7 @@ void test_add_sub_32(uint32_t sub_i, float a_i, float b_i)
   if (a_sig_nan || b_sig_nan)
   {
     invalid = 1;
-    z_o = i2f(0x7fbfffff);
+    z_o = i2f(0x7fc00000);
   }
   else if (a_nan || b_nan)
   {
@@ -226,6 +226,14 @@ int main()
   test_add_sub_32(0, infty(), 1.0f);                    // inf + x = inf
   test_add_sub_32(1, 1.0f, infty());                    // x - inf = -inf
   test_add_sub_32(1, -infty(), 1.0f);                   // -inf - x = -inf
+
+  // NaN operands: the result is quiet NaN, with invalid for a signaling one
+  test_add_sub_32(0, snanf(), 1.0f);
+  test_add_sub_32(1, 1.0f, snanf());
+  test_add_sub_32(0, snanf(), infty());
+  test_add_sub_32(0, snanf(), NAN);
+  test_add_sub_32(0, NAN, 1.0f);
+  test_add_sub_32(1, 1.0f, NAN);
 
   // overflow, also when it is rounding up that carries into the exponent
   test_add_sub_32(0, i2f(0x7f7fffff), i2f(0x7f7fffff)); // max + max

@@ -67,7 +67,7 @@ void test_mul_32(float a_i, float b_i)
   if (a_sig_nan || b_sig_nan)
   {
     invalid = 1;
-    z_o = i2f(0x7fbfffff);
+    z_o = i2f(0x7fc00000);
   }
   else if (a_nan || b_nan)
   {
@@ -158,6 +158,14 @@ int main()
   test_mul_32(3.141592, 2.718281); // pi + e
   test_mul_32(3.141592, 2.718281); // pi - e
   test_mul_32(1.42341, 0.09842);
+
+  // NaN operands: the result is quiet NaN, with invalid for a signaling one
+  test_mul_32(snanf(), 1.0f);
+  test_mul_32(1.0f, snanf());
+  test_mul_32(snanf(), 0.0f);
+  test_mul_32(snanf(), NAN);
+  test_mul_32(NAN, 1.0f);
+  test_mul_32(1.0f, NAN);
 
   // overflow, also when it is rounding up that carries into the exponent
   test_mul_32(i2f(0x7f7fffff), i2f(0x40000000)); // max * 2
