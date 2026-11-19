@@ -2,6 +2,10 @@ This regression checks that `TAGST` clears the track bits of the way it
 writes, so a line set up with `TAGST` starts with no word present, as after a
 store-miss allocation. It needs word tracking.
 
+With word tracking off there are no track bits to clear: a line set up with
+`TAGST` holds whatever data its way held before. Case C of `../tagst_interlock`
+relies on that.
+
 Each case first puts known data in memory, then leaves a way holding a fully
 tracked line with other data, and reuses that way with `TAGST`:
 
