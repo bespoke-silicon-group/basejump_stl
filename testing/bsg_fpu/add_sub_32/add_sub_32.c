@@ -112,9 +112,12 @@ void test_add_sub_32(uint32_t sub_i, float a_i, float b_i)
   }
   else if (a_infty && b_infty)
   {
+    // infinities of like effective sign give that infinity; of unlike sign,
+    // quiet NaN and invalid
+    invalid = (sub_mag == 0) ? 0 : 1;
     z_o = (sub_mag == 0) 
-      ? i2f(0x7fc00000)
-      : i2f(sign | 0x7fffffff);
+      ? i2f(sign | 0x7f800000)
+      : i2f(0x7fc00000);
   }
   else if (a_infty && !b_infty)
   {
@@ -211,6 +214,18 @@ int main()
   test_add_sub_32(1, -1.0f, -1.0f);                     // (-1) - (-1) = +0
   test_add_sub_32(0, 0.0f, i2f(0x00800000));            // 0 + x
   test_add_sub_32(1, 0.0f, i2f(0x0c7fffff));            // 0 - x
+
+  // infinities
+  test_add_sub_32(0, infty(), infty());                 // inf + inf = inf
+  test_add_sub_32(0, -infty(), -infty());               // -inf + -inf = -inf
+  test_add_sub_32(1, infty(), -infty());                // inf - -inf = inf
+  test_add_sub_32(1, -infty(), infty());                // -inf - inf = -inf
+  test_add_sub_32(1, infty(), infty());                 // inf - inf: invalid
+  test_add_sub_32(0, infty(), -infty());                // inf + -inf: invalid
+  test_add_sub_32(0, -infty(), infty());                // -inf + inf: invalid
+  test_add_sub_32(0, infty(), 1.0f);                    // inf + x = inf
+  test_add_sub_32(1, 1.0f, infty());                    // x - inf = -inf
+  test_add_sub_32(1, -infty(), 1.0f);                   // -inf - x = -inf
 
   for (int i = 0; i < 2500; i++)
   {
