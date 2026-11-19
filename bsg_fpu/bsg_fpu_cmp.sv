@@ -15,13 +15,16 @@
  *  - eq raises invalid exception only when there is signaling NaN input.
  *
  *  min-max
- *  - if either input is signaling NaN, the result is canonical NaN.
- *    also, the invalid exception is raised.
- *  - if both inputs are quiet NaN, the result is canonical NaN.
- *  - if one is quiet NaN and the other is non-NaN,
- *    then the result is non-NaN input.
- *  - if both inputs are (positive or negative zero), then the output is
- *    positive zero.
+ *  - if both inputs are NaN, the result is canonical NaN.
+ *  - if one input is NaN and the other is non-NaN, then the result is the
+ *    non-NaN input.
+ *  - in both cases, the invalid exception is raised if an input is
+ *    signaling NaN.
+ *  - negative zero is less than positive zero: the min of two zeros is
+ *    negative zero if either input is, and the max is negative zero only if
+ *    both are.
+ *  These are the rules of RISC-V FMIN and FMAX from version 2.2 of the F
+ *  extension (IEEE 754-2019 minimumNumber and maximumNumber).
  *
  */
 
