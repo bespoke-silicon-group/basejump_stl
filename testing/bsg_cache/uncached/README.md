@@ -25,3 +25,7 @@ make DMA_RATIO_P=2 WORD_TRACKING_P=0 STALL_P=1 BUFFER_RETURN_P=0 ZERO_LATENCY_P=
 Uncached operations use 32-bit cache words. A wider DMA beat carries the IO
 word in its low 32 bits. `dest_io_wh_cord_i` selects the IO endpoint; normal
 cached traffic continues to use `dest_wh_cord_i`.
+
+All cached requests of this test hit, and the IO endpoint is the only one
+behind the cache. `../uncached_random` runs uncached requests between cache
+misses, evictions and flushes.
